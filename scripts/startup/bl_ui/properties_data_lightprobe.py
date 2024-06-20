@@ -244,10 +244,18 @@ class DATA_PT_lightprobe_bake_capture(DataButtonsPanel, Panel):
 
         col.prop(probe, "capture_distance", text="Distance")
 
-        col = layout.column(heading="Contributions", align=True)
-        col.prop(probe, "capture_world", text="World")
-        col.prop(probe, "capture_indirect", text="Indirect Light")
-        col.prop(probe, "capture_emission", text="Emission")
+        col = layout.column(align=True)
+        col.use_property_split = False
+        col.label(text = "Contributions")
+        row = col.row()
+        row.separator()
+        row.prop(probe, "capture_world", text="World")
+        row = col.row()
+        row.separator()
+        row.prop(probe, "capture_indirect", text="Indirect Light")
+        row = col.row()
+        row.separator()
+        row.prop(probe, "capture_emission", text="Emission")
 
 
 class DATA_PT_lightprobe_bake_offset(DataButtonsPanel, Panel):
@@ -360,25 +368,49 @@ class DATA_PT_lightprobe_display_eevee_next(DataButtonsPanel, Panel):
         probe = context.lightprobe
 
         col = layout.column()
+        col.label(text = "Data")
 
         if probe.type in {'VOLUME', 'SPHERE'}:
-            row = col.row(heading="Data")
-            row.prop(probe, "use_data_display", text="")
-            subrow = row.row()
-            subrow.active = probe.use_data_display
-            subrow.prop(probe, "data_display_size", text="Size", slider=True)
-            col.prop(probe, "show_clip")
-            col.prop(probe, "show_influence")
+            row = col.row()
+            row.use_property_split = False
+            split = row.split(factor = 0.4)
+            row = split.row()
+            row.separator()
+            row.prop(probe, "use_data_display", text="Display Data")
+            row = split.row()
+            if probe.use_data_display:
+                row.prop(probe, "data_display_size", text="", slider=True)
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(probe, "show_clip")
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(probe, "show_influence")
 
         if probe.type == 'SPHERE':
-            sub = col.column()
-            sub.active = probe.use_custom_parallax
-            sub.prop(probe, "show_parallax")
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.active = probe.use_custom_parallax
+            row.prop(probe, "show_parallax")
 
         if probe.type == 'PLANE':
-            col.prop(ob, "empty_display_size", text="Arrow Size")
-            col.prop(probe, "use_data_display", text="Capture")
-            col.prop(probe, "show_influence")
+            row = col.row()
+            row.separator()
+            row.prop(ob, "empty_display_size", text="Arrow Size")
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(probe, "use_data_display", text="Capture")
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(probe, "show_influence")
 
 
 classes = (
