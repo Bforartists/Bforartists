@@ -629,6 +629,7 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
     uiLayoutSetEnabled(settings_col, !ctx.is_baked);
     {
       uiLayout *col = uiLayoutColumn(settings_col, true);
+      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
       uiItemR(col, &ctx.bake_rna, "use_custom_path", UI_ITEM_NONE, "Custom Path", ICON_NONE);
       uiLayout *subcol = uiLayoutColumn(col, true);
       uiLayoutSetActive(subcol, ctx.bake->flag & NODES_MODIFIER_BAKE_CUSTOM_PATH);
