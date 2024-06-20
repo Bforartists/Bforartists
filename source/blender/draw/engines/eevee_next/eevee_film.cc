@@ -171,12 +171,14 @@ static eViewLayerEEVEEPassType enabled_passes(const ViewLayer *view_layer)
 {
   eViewLayerEEVEEPassType result = eViewLayerEEVEEPassType(view_layer->eevee.render_passes);
 
+  /* We enforce the use of combined pass to be compliant with Cycles and EEVEE-Legacy (#122188). */
+  result |= EEVEE_RENDER_PASS_COMBINED;
+
 #define ENABLE_FROM_LEGACY(name_legacy, name_eevee) \
   SET_FLAG_FROM_TEST(result, \
                      (view_layer->passflag & SCE_PASS_##name_legacy) != 0, \
                      EEVEE_RENDER_PASS_##name_eevee);
 
-  ENABLE_FROM_LEGACY(COMBINED, COMBINED)
   ENABLE_FROM_LEGACY(Z, Z)
   ENABLE_FROM_LEGACY(MIST, MIST)
   ENABLE_FROM_LEGACY(NORMAL, NORMAL)
@@ -234,7 +236,7 @@ void Film::init(const int2 &extent, const rcti *output_rect)
     }
 
     /* Filter obsolete passes. */
-    enabled_passes_ &= ~(EEVEE_RENDER_PASS_UNUSED_8 | EEVEE_RENDER_PASS_BLOOM);
+    enabled_passes_ &= ~(EEVEE_RENDER_PASS_UNUSED_8 | EEVEE_RENDER_PASS_UNUSED_14);
 
     if (scene.r.mode & R_MBLUR) {
       /* Disable motion vector pass if motion blur is enabled. */
@@ -430,8 +432,6 @@ void Film::init(const int2 &extent, const rcti *output_rect)
       cryptomatte_tx_.clear(float4(0.0f));
     }
   }
-
-  force_disable_reprojection_ = (scene_eevee.flag & SCE_EEVEE_TAA_REPROJECTION) == 0;
 }
 
 void Film::sync()
@@ -516,7 +516,7 @@ void Film::end_sync()
   use_reprojection_ = inst_.sampling.interactive_mode();
 
   /* Just bypass the reprojection and reset the accumulation. */
-  if (inst_.is_viewport() && force_disable_reprojection_ && inst_.sampling.is_reset()) {
+  if (!use_reprojection_ && inst_.sampling.is_reset()) {
     use_reprojection_ = false;
     data_.use_history = false;
   }
