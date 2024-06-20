@@ -96,7 +96,7 @@ polyline_show
 frame_preview_range
 frame_scene_range
 named_layer_selection
-#~ DEF_ICON_BLANK(116)
+tag
 #~ DEF_ICON_BLANK(117)
 #~ DEF_ICON_BLANK(118)
 
