@@ -65,10 +65,10 @@ static bool seq_snap_source_points_build(const Scene *scene,
   int i = 0;
   for (Sequence *seq : snap_sources) {
     int left = 0, right = 0;
-    if (seq->flag & SEQ_LEFTSEL) {
+    if (seq->flag & SEQ_LEFTSEL && !(seq->flag & SEQ_RIGHTSEL)) {
       left = right = SEQ_time_left_handle_frame_get(scene, seq);
     }
-    else if (seq->flag & SEQ_RIGHTSEL) {
+    else if (seq->flag & SEQ_RIGHTSEL && !(seq->flag & SEQ_LEFTSEL)) {
       left = right = SEQ_time_right_handle_frame_get(scene, seq);
     }
     else {
@@ -207,10 +207,9 @@ static bool seq_snap_target_points_build(Scene *scene,
     i += 2;
 
     if (snap_mode & SEQ_SNAP_TO_STRIP_HOLD) {
-      int content_start = min_ii(SEQ_time_left_handle_frame_get(scene, seq),
-                                 SEQ_time_start_frame_get(seq));
-      int content_end = max_ii(SEQ_time_right_handle_frame_get(scene, seq),
-                               SEQ_time_content_end_frame_get(scene, seq));
+      int content_start = SEQ_time_start_frame_get(seq);
+      int content_end = SEQ_time_content_end_frame_get(scene, seq);
+
       /* Effects and single image strips produce incorrect content length. Skip these strips. */
       if ((seq->type & SEQ_TYPE_EFFECT) != 0 || seq->len == 1) {
         content_start = SEQ_time_left_handle_frame_get(scene, seq);
@@ -298,10 +297,9 @@ bool transform_snap_sequencer_calc(TransInfo *t)
 
   int best_dist = MAXFRAME, best_target_frame = 0, best_source_frame = 0;
 
-  for (int frame_src : snap_data->source_snap_points) {
-    int snap_source_frame = frame_src + round_fl_to_int(t->values[0]);
+  for (int snap_source_frame : snap_data->source_snap_points) {
     for (int snap_target_frame : snap_data->target_snap_points) {
-      int dist = abs(snap_target_frame - snap_source_frame);
+      int dist = abs(snap_target_frame - (snap_source_frame + round_fl_to_int(t->values[0])));
       if (dist > best_dist) {
         continue;
       }
@@ -323,7 +321,7 @@ bool transform_snap_sequencer_calc(TransInfo *t)
 
 void transform_snap_sequencer_apply_translate(TransInfo *t, float *vec)
 {
-  *vec += t->tsnap.snap_target[0] - t->tsnap.snap_source[0];
+  *vec = t->tsnap.snap_target[0] - t->tsnap.snap_source[0];
 }
 
 static int transform_snap_sequencer_to_closest_strip_ex(TransInfo *t, int frame_1, int frame_2)

@@ -137,8 +137,8 @@ static void extract_lines_mesh(const MeshRenderData &mr,
               for (const int corner : face) {
                 const int edge = corner_edges[corner];
                 if (!used[edge]) {
-                  data[edge] = edge_from_corners(face, corner);
                   used[edge] = true;
+                  data[edge] = edge_from_corners(face, corner);
                 }
               }
             }
@@ -156,9 +156,10 @@ static void extract_lines_mesh(const MeshRenderData &mr,
               const IndexRange face = faces[face_index];
               for (const int corner : face) {
                 const int edge = corner_edges[corner];
-                if (map[edge] != -1) {
-                  data[map[edge]] = edge_from_corners(face, corner);
+                const int vbo_index = map[edge];
+                if (vbo_index != -1) {
                   map[edge] = -1;
+                  data[vbo_index] = edge_from_corners(face, corner);
                 }
               }
             }
@@ -192,6 +193,15 @@ static void extract_lines_bm(const MeshRenderData &mr,
   const int max_index = mr.corners_num + loose_edges.size() * 2;
 
   no_loose_wire = visible_loose_edges.is_empty();
+
+  if (DRW_ibo_requested(lines_loose) && !DRW_ibo_requested(lines)) {
+    GPUIndexBufBuilder builder;
+    GPU_indexbuf_init(&builder, GPU_PRIM_LINES, visible_loose_edges.size(), max_index);
+    MutableSpan<uint2> data = GPU_indexbuf_get_data(&builder).cast<uint2>();
+    fill_loose_lines_ibo(mr, visible_loose_edges, data);
+    GPU_indexbuf_build_in_place_ex(&builder, 0, max_index, false, lines_loose);
+    return;
+  }
 
   const IndexMask all_loose_edges = IndexMask::from_indices(mr.loose_edges, memory);
   const IndexMask non_loose_edges = all_loose_edges.complement(IndexRange(bm.totedge), memory);
