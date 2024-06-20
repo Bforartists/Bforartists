@@ -11723,7 +11723,7 @@ static int node_type_to_icon(int type)
       return ICON_NAMED_ATTRIBUTE;
 
     case GEO_NODE_INPUT_NAMED_LAYER_SELECTION:
-      return ICON_DELETE;
+      return ICON_NAMED_LAYER_SELECTION;
 
     case GEO_NODE_INPUT_NORMAL:
       return ICON_RECALC_NORMALS;

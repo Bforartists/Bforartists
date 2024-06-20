@@ -3590,7 +3590,7 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Material               ", icon = "NODE_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterial"
-            
+
             props = col.operator("node.add_node", text=" Rotation               ", icon = "ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeInputRotation"
@@ -3635,7 +3635,7 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterial"
-            
+
             props = flow.operator("node.add_node", text="", icon = "ROTATION")
             props.use_transform = True
             props.type = "FunctionNodeInputRotation"
@@ -3701,6 +3701,10 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
 
+            props = col.operator("node.add_node", text=" Named Layer Selection  ", icon = "NAMED_LAYER_SELECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedLayerSelection"
+
             props = col.operator("node.add_node", text=" Object Info           ", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
@@ -3748,6 +3752,10 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "VIEW")
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
+
+            props = flow.operator("node.add_node", text="", icon = "NAMED_LAYER_SELECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedLayerSelection"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
@@ -3930,7 +3938,7 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
                 props = col.operator("node.add_node", text=" Selection                    ", icon = "RESTRICT_SELECT_OFF")
                 props.use_transform = True
                 props.type = "GeometryNodeToolSelection"
-                
+
                 props = col.operator("node.add_node", text=" Active Element          ", icon = "ACTIVE_ELEMENT")
                 props.use_transform = True
                 props.type = "GeometryNodeToolActiveElement"
@@ -3972,7 +3980,7 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel):
                 props = flow.operator("node.add_node", text="", icon = "RESTRICT_SELECT_OFF")
                 props.use_transform = True
                 props.type = "GeometryNodeToolSelection"
-                
+
                 props = flow.operator("node.add_node", text="", icon = "ACTIVE_ELEMENT")
                 props.use_transform = True
                 props.type = "GeometryNodeToolActiveElement"
@@ -4886,7 +4894,7 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Translate Instances      ", icon = "TRANSLATE_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeTranslateInstances"
-            
+
             props = col.operator("node.add_node", text=" Set Instance Transform      ", icon = "INSTANCE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeSetInstanceTransform"
@@ -4937,7 +4945,7 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "TRANSLATE_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodeTranslateInstances"
-            
+
             props = flow.operator("node.add_node", text="", icon = "INSTANCE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeSetInstanceTransform"
