@@ -87,7 +87,7 @@ class _template_widget:
         @staticmethod
         def draw_settings(_context, layout, tool):
             props = tool.gizmo_group_properties("VIEW3D_GGT_xform_extrude")
-            layout.prop(props, "axis_type", expand=True)
+            layout.prop(props, "axis_type", expand=True) # BFA
 
     class VIEW3D_GGT_xform_gizmo:
         @staticmethod
@@ -1185,11 +1185,11 @@ class _defs_edit_mesh:
 
                 layout.prop(props, "visible_measurements")
                 layout.prop(props, "angle_snapping")
-                layout.label(text="Angle Snapping Increment")
+                layout.label(text="Angle Snapping Increment") #BFA - make it explicit, and in a label
                 layout.row().prop(props, "angle_snapping_increment", text="", expand=True)
 
             if show_extra:
-                layout.popover("TOPBAR_PT_tool_settings_extra", text="Settings")
+                layout.popover("TOPBAR_PT_tool_settings_extra", text="Settings") #BFA - make it explicit
 
         return dict(
             idname="builtin.knife",
@@ -1491,6 +1491,67 @@ class _defs_sculpt:
         )
 
     @ToolDef.from_fn
+    def mask_border():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("paint.mask_box_gesture")
+            layout.prop(props, "use_front_faces_only", expand=False)
+
+        return dict(
+            idname="builtin.box_mask",
+            label="Box Mask",
+            icon="ops.sculpt.border_mask",
+            widget=None,
+            keymap=(),
+            draw_settings=draw_settings,
+        )
+
+    @ToolDef.from_fn
+    def mask_lasso():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("paint.mask_lasso_gesture")
+            layout.prop(props, "use_front_faces_only", expand=False)
+
+        return dict(
+            idname="builtin.lasso_mask",
+            label="Lasso Mask",
+            icon="ops.sculpt.lasso_mask",
+            widget=None,
+            keymap=(),
+            draw_settings=draw_settings,
+        )
+
+    @ToolDef.from_fn
+    def mask_line():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("paint.mask_line_gesture")
+            layout.prop(props, "use_front_faces_only", expand=False)
+            layout.prop(props, "use_limit_to_segment", expand=False)
+
+        return dict(
+            idname="builtin.line_mask",
+            label="Line Mask",
+            icon="ops.sculpt.line_mask",
+            widget=None,
+            keymap=(),
+            draw_settings=draw_settings,
+        )
+
+    @ToolDef.from_fn
+    def mask_polyline():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("paint.mask_polyline_gesture")
+            layout.prop(props, "use_front_faces_only", expand=False)
+
+        return dict(
+            idname="builtin.polyline_mask",
+            label="Polyline Mask",
+            icon="ops.sculpt.polyline_mask",
+            widget=None,
+            keymap=(),
+            draw_settings=draw_settings,
+        )
+
+    @ToolDef.from_fn
     def hide_border():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("paint.hide_show")
@@ -1545,70 +1606,6 @@ class _defs_sculpt:
             idname="builtin.polyline_hide",
             label="Polyline Hide",
             icon="ops.sculpt.polyline_hide",
-            widget=None,
-            keymap=(),
-            draw_settings=draw_settings,
-        )
-
-    @ToolDef.from_fn
-    def mask_border():
-        def draw_settings(_context, layout, tool):
-            props = tool.operator_properties("paint.mask_box_gesture")
-            layout.use_property_split = False
-            layout.prop(props, "use_front_faces_only", expand=False)
-
-        return dict(
-            idname="builtin.box_mask",
-            label="Box Mask",
-            icon="ops.sculpt.border_mask",
-            widget=None,
-            keymap=(),
-            draw_settings=draw_settings,
-        )
-
-    @ToolDef.from_fn
-    def mask_lasso():
-        def draw_settings(_context, layout, tool):
-            props = tool.operator_properties("paint.mask_lasso_gesture")
-            layout.use_property_split = False
-            layout.prop(props, "use_front_faces_only", expand=False)
-
-        return dict(
-            idname="builtin.lasso_mask",
-            label="Lasso Mask",
-            icon="ops.sculpt.lasso_mask",
-            widget=None,
-            keymap=(),
-            draw_settings=draw_settings,
-        )
-
-    @ToolDef.from_fn
-    def mask_line():
-        def draw_settings(_context, layout, tool):
-            props = tool.operator_properties("paint.mask_line_gesture")
-            layout.use_property_split = False
-            layout.prop(props, "use_front_faces_only", expand=False)
-            layout.prop(props, "use_limit_to_segment", expand=False)
-
-        return dict(
-            idname="builtin.line_mask",
-            label="Line Mask",
-            icon="ops.sculpt.line_mask",
-            widget=None,
-            keymap=(),
-            draw_settings=draw_settings,
-        )
-
-    @ToolDef.from_fn
-    def mask_polyline():
-        def draw_settings(_context, layout, tool):
-            props = tool.operator_properties("paint.mask_polyline_gesture")
-            layout.prop(props, "use_front_faces_only", expand=False)
-
-        return dict(
-            idname="builtin.polyline_mask",
-            label="Polyline Mask",
-            icon="ops.sculpt.polyline_mask",
             widget=None,
             keymap=(),
             draw_settings=draw_settings,
@@ -1998,8 +1995,10 @@ class _defs_weight_paint:
                 )
 
             props = tool.operator_properties("paint.weight_gradient")
-            layout.prop(props, "type", expand=True)
-            layout.popover("VIEW3D_PT_tools_weight_gradient")
+            row = layout.row()
+            row.prop(props, "type", expand=True)
+            row = layout.row()
+            row.popover("VIEW3D_PT_tools_weight_gradient")
 
         return dict(
             idname="builtin.gradient",
@@ -2635,7 +2634,6 @@ class _defs_gpencil_paint:
     def interpolate():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("gpencil.interpolate")
-
             layout.prop(props, "layers")
             layout.prop(props, "exclude_breakdowns")
             layout.prop(props, "flip")
@@ -3156,8 +3154,6 @@ class _defs_sequencer_generic:
         )
 
 
-
-
 class _defs_sequencer_select:
     @ToolDef.from_fn
     def select_timeline():
@@ -3361,7 +3357,7 @@ class NODE_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     # Private tools dictionary, store data to implement `tools_all` & `tools_from_context`.
-    # The keys match object-modes from: `context.mode`.
+    # The keys is always `None` since nodes don't use use modes to access different tools.
     # The values represent the tools, see `ToolSelectPanelHelper` for details.
     _tools = {
         None: [
@@ -3612,7 +3608,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             None,
             _defs_particle.generate_from_brushes,
         ],
-       'SCULPT': [
+        'SCULPT': [
             _defs_sculpt.generate_from_brushes,
             None,
             (
@@ -3868,6 +3864,10 @@ class SEQUENCER_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_sequencer_generic.blade,
         ],
         'SEQUENCER_PREVIEW': [
+            (
+                _defs_sequencer_select.select_timeline,
+                _defs_sequencer_select.box_timeline,
+            ),
             *_tools_annotate,
             None,
             _defs_sequencer_generic.blade,

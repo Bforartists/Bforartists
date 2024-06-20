@@ -1,7 +1,5 @@
 <bpy>
-  <Theme
-    filepath="C:\3D_Stuff\bfa_build_windows_x64_vc17_Debug\bin\4.2\scripts\presets\interface_theme\Bforartists.xml"
-    >
+  <Theme>
     <user_interface>
       <ThemeUserInterface
         menu_shadow_fac="0.5"
@@ -361,7 +359,7 @@
         gp_vertex="#000000"
         gp_vertex_select="#ff8500"
         gp_vertex_size="3"
-        text_grease_pencil="#b5e61d"
+        text_grease_pencil="#7a9b14"
         object_selected="#f15800"
         object_active="#ffaa40"
         text_keyframe="#ddd700"
@@ -683,6 +681,8 @@
         keyframe_jitter_selected="#87ff5c"
         keyframe_movehold="#9d9794"
         keyframe_movehold_selected="#ffeff1"
+        keyframe_generated="#585858"
+        keyframe_generated_selected="#a28962"
         keyframe_border="#000000ff"
         keyframe_border_selected="#000000ff"
         keyframe_scale_factor="1"
@@ -808,6 +808,13 @@
             </panelcolors>
           </ThemeSpaceGeneric>
         </space>
+        <asset_shelf>
+          <ThemeAssetShelf
+            header_back="#1d1d1dff"
+            back="#303030ff"
+            >
+          </ThemeAssetShelf>
+        </asset_shelf>
       </ThemeImageEditor>
     </image_editor>
     <sequence_editor>
@@ -837,6 +844,8 @@
         keyframe_breakdown_selected="#54bfed"
         keyframe_movehold="#808080"
         keyframe_movehold_selected="#ffaf23"
+        keyframe_generated="#585858"
+        keyframe_generated_selected="#a28962"
         keyframe_border="#000000ff"
         keyframe_border_selected="#000000ff"
         draw_action="#50c8ff"

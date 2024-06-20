@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.2.0 Alpha (b'5bc71c870435')\n"
+"Project-Id-Version: Blender 4.2.0 Beta (b'b143cc1885ef')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 07:20+0000\n"
+"POT-Creation-Date: 2020-01-01 00:00+0000\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -45,26 +45,6 @@ msgid "Select"
 msgstr "Тандоо"
 
 
-msgid "Influence"
-msgstr "Таасир"
-
-
-msgid "Replace"
-msgstr "Алмаштыруу"
-
-
-msgid "Add"
-msgstr "Кошуу"
-
-
-msgid "Subtract"
-msgstr "Алуу"
-
-
-msgid "Multiply"
-msgstr "Көбөйтүү"
-
-
 msgid "Module"
 msgstr "Модуль"
 
@@ -81,6 +61,18 @@ msgid "Auto"
 msgstr "Авто"
 
 
+msgid "Always"
+msgstr "Дайыма"
+
+
+msgid "Center"
+msgstr "Борбор"
+
+
+msgid "Bottom"
+msgstr "Асты"
+
+
 msgid "Animation Data"
 msgstr "Анимация маалыматтары"
 
@@ -89,8 +81,20 @@ msgid "Action"
 msgstr "Аракет"
 
 
-msgid "None"
-msgstr "Жок"
+msgid "Replace"
+msgstr "Алмаштыруу"
+
+
+msgid "Add"
+msgstr "Кошуу"
+
+
+msgid "Subtract"
+msgstr "Алуу"
+
+
+msgid "Multiply"
+msgstr "Көбөйтүү"
 
 
 msgid "Nothing"
@@ -197,6 +201,10 @@ msgid "Object"
 msgstr "Объект"
 
 
+msgid "None"
+msgstr "Жок"
+
+
 msgid "Emit"
 msgstr "Жаркыроосу"
 
@@ -301,6 +309,12 @@ msgid "Volume"
 msgstr "Көлөм"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Кошуу"
+
+
+msgctxt "Operator"
 msgid "Remove"
 msgstr "Өчүрүү"
 
@@ -401,10 +415,6 @@ msgid "Right"
 msgstr "Оң"
 
 
-msgid "Center"
-msgstr "Борбор"
-
-
 msgid "Cloth Settings"
 msgstr "Кездеме ырастоолору"
 
@@ -486,6 +496,10 @@ msgid "Error"
 msgstr "Ката"
 
 
+msgid "Influence"
+msgstr "Таасир"
+
+
 msgid "Armature"
 msgstr "Скелет"
 
@@ -516,10 +530,6 @@ msgstr "Камера"
 
 msgid "Bone"
 msgstr "Сөөк"
-
-
-msgid "Always"
-msgstr "Дайыма"
 
 
 msgid "Script"
@@ -813,10 +823,6 @@ msgstr "Кысылышы"
 
 msgid "Delete"
 msgstr "Өчүрүү"
-
-
-msgid "Bottom"
-msgstr "Асты"
 
 
 msgid "Top"
@@ -1390,11 +1396,6 @@ msgid "Align"
 msgstr "Түздөө"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "Кошуу"
-
-
 msgid "Node"
 msgstr "Түйүн"
 
@@ -1964,6 +1965,10 @@ msgstr "Айлантуу"
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Масштаб"
+
+
+msgid "Remove"
+msgstr "Өчүрүү"
 
 
 msgid "Sigma"
@@ -2641,10 +2646,6 @@ msgid "New World"
 msgstr "Жаңы дүйнө"
 
 
-msgid "Film"
-msgstr "Тасма"
-
-
 msgid "Solve"
 msgstr "Чечим"
 
@@ -2655,6 +2656,10 @@ msgstr "Трекингдин ырастоолору"
 
 msgid "Post Processing"
 msgstr "Постиштетүү"
+
+
+msgid "Film"
+msgstr "Тасма"
 
 
 msgid "Performance"
@@ -2896,10 +2901,6 @@ msgid "Gravitation"
 msgstr "Тартыш"
 
 
-msgid "Show Seconds"
-msgstr "Секундаларды көрсөтүү"
-
-
 msgctxt "MovieClip"
 msgid "View"
 msgstr "Көрүнүш"
@@ -3093,30 +3094,6 @@ msgid "Animation"
 msgstr "Анимация"
 
 
-msgid "File:"
-msgstr "Файлы:"
-
-
-msgid "Description:"
-msgstr "Баяндамасы:"
-
-
-msgid "Author:"
-msgstr "Автору:"
-
-
-msgid "Version:"
-msgstr "Версиясы:"
-
-
-msgid "Internet:"
-msgstr "Интернет:"
-
-
-msgid "Size:"
-msgstr "Өлчөмү:"
-
-
 msgctxt "Operator"
 msgid "Documentation"
 msgstr "Документация"
@@ -3158,11 +3135,6 @@ msgstr "Ачуу..."
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Колдонмо"
-
-
-msgctxt "Operator"
-msgid "Remove"
-msgstr "Өчүрүү"
 
 
 msgctxt "Operator"
@@ -3331,8 +3303,28 @@ msgid "Error (see console)"
 msgstr "Ката (консолду караңыз)"
 
 
+msgid "Description:"
+msgstr "Баяндамасы:"
+
+
 msgid "Location:"
 msgstr "Жайгашкан жери:"
+
+
+msgid "File:"
+msgstr "Файлы:"
+
+
+msgid "Author:"
+msgstr "Автору:"
+
+
+msgid "Version:"
+msgstr "Версиясы:"
+
+
+msgid "Internet:"
+msgstr "Интернет:"
 
 
 msgctxt "Operator"
@@ -3739,6 +3731,10 @@ msgstr "W:"
 
 msgid "4L"
 msgstr "4L"
+
+
+msgid "Size:"
+msgstr "Өлчөмү:"
 
 
 msgid "fps: %.2f"

@@ -60,6 +60,9 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
         props.select = True
         props = layout.operator("poselib.pose_asset_select_bones", icon="SELECT_NONE", text="Deselect Pose Bones")  #BFA - icon added
         props.select = False
+      
+        layout.separator()
+        layout.operator("asset.assign_action", icon="ACTION_TWEAK")  #BFA - icon added
 
         layout.separator()
         layout.operator("asset.open_containing_blend_file", icon="FILE_FOLDER")  #BFA - icon added
@@ -111,15 +114,12 @@ def pose_library_asset_browser_context_menu(self: UIList, context: Context) -> N
     props = layout.operator("poselib.pose_asset_select_bones", icon="SELECT_NONE", text="Deselect Pose Bones")  #BFA - icon added
     props.select = False
 
-    if not is_pose_asset_view():
-        layout.separator()
-        layout.operator("asset.assign_action", icon="ACTION_TWEAK")  #BFA - icon added
+    layout.separator()
+    layout.operator("asset.assign_action", icon="ACTION_TWEAK")  #BFA - icon added
 
     layout.separator()
-    if is_pose_asset_view():
-        layout.operator("asset.open_containing_blend_file", icon="FILE_FOLDER")  #BFA - icon added
 
-        props.select = False
+    layout.operator("asset.open_containing_blend_file", icon="FILE_FOLDER")  #BFA - icon added
 
 
 class DOPESHEET_PT_asset_panel(PoseLibraryPanel, Panel):

@@ -18,12 +18,13 @@ import sys
 
 from typing import (
     Any,
-    Dict,
     List,
     Optional,
     Tuple,
     Union,
 )
+
+from .bl_extension_utils import PkgManifest_Normalized
 
 show_color = (
     False if os.environ.get("NO_COLOR") else
@@ -128,7 +129,12 @@ class subcmd_utils:
         ):
             # Show any exceptions created while accessing the JSON,
             repo = repos_all[repo_index]
-            repo_map[repo.module] = (repo_index, set(pkg_manifest.keys()))
+            if pkg_manifest is None:
+                errors.append("Repository \"{:s}\" has no data, sync may be needed!".format(repo.module))
+                repo_packages = set()
+            else:
+                repo_packages = set(pkg_manifest.keys())
+            repo_map[repo.module] = (repo_index, repo_packages)
 
         repos_and_packages = []
 
@@ -189,19 +195,19 @@ class subcmd_query:
 
         def list_item(
                 pkg_id: str,
-                item_remote: Optional[Dict[str, Any]],
-                item_local: Optional[Dict[str, Any]],
+                item_remote: Optional[PkgManifest_Normalized],
+                item_local: Optional[PkgManifest_Normalized],
         ) -> None:
             # Both can't be None.
             assert item_remote is not None or item_local is not None
 
             if item_remote is not None:
-                item_version = item_remote["version"]
+                item_version = item_remote.version
                 if item_local is None:
                     item_local_version = None
                     is_outdated = False
                 else:
-                    item_local_version = item_local["version"]
+                    item_local_version = item_local.version
                     is_outdated = item_local_version != item_version
 
                 if item_local is not None:
@@ -218,15 +224,15 @@ class subcmd_query:
             else:
                 # All local-only packages are installed.
                 status_info = " [{:s}]".format(colorize("installed", "green"))
-                assert isinstance(item_local, dict)
+                assert isinstance(item_local, PkgManifest_Normalized)
                 item = item_local
 
             print(
                 "  {:s}{:s}: \"{:s}\", {:s}".format(
                     colorize(pkg_id, "bold"),
                     status_info,
-                    item["name"],
-                    colorize(item.get("tagline", "<no tagline>"), "faint"),
+                    item.name,
+                    colorize(item.tagline or "<no tagline>", "faint"),
                 ))
 
         if sync:
