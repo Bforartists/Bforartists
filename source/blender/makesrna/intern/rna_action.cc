@@ -788,30 +788,32 @@ bool rna_Action_id_poll(PointerRNA *ptr, PointerRNA value)
 bool rna_Action_actedit_assign_poll(PointerRNA *ptr, PointerRNA value)
 {
   SpaceAction *saction = (SpaceAction *)ptr->data;
-  bAction *act = (bAction *)value.owner_id;
+  bAction *action = (bAction *)value.owner_id;
 
-  if (act) {
-    /* there can still be actions that will have undefined id-root
-     * (i.e. floating "action-library" members) which we will not
-     * be able to resolve an idroot for automatically, so let these through
-     */
-    if (act->idroot == 0) {
-      return 1;
-    }
-
-    if (saction) {
-      if (saction->mode == SACTCONT_ACTION) {
-        /* this is only Object-level for now... */
-        return act->idroot == ID_OB;
-      }
-      else if (saction->mode == SACTCONT_SHAPEKEY) {
-        /* obviously shapekeys only */
-        return act->idroot == ID_KE;
-      }
-    }
+  if (!saction) {
+    /* Unable to determine what this Action is going to be assigned to, so
+     * reject it for now. This is mostly to have a non-functional refactor of
+     * this code; personally I (Sybren) wouldn't mind to always return `true` in
+     * this case. */
+    return false;
   }
 
-  return 0;
+  switch (saction->mode) {
+    case SACTCONT_ACTION:
+      return blender::animrig::is_action_assignable_to(action, ID_OB);
+    case SACTCONT_SHAPEKEY:
+      return blender::animrig::is_action_assignable_to(action, ID_KE);
+    case SACTCONT_GPENCIL:
+    case SACTCONT_DOPESHEET:
+    case SACTCONT_MASK:
+    case SACTCONT_CACHEFILE:
+    case SACTCONT_TIMELINE:
+      break;
+  }
+
+  /* Same as above, I (Sybren) wouldn't mind returning `true` here to just
+   * always show all Actions in an unexpected place. */
+  return false;
 }
 
 /* All FCurves need to be validated when the "show_only_errors" button is enabled. */
