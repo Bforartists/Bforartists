@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.2.0 Alpha (b'5bc71c870435')\n"
+"Project-Id-Version: Blender 4.2.0 Beta (b'b143cc1885ef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 07:20+0000\n"
+"POT-Creation-Date: 2020-01-01 00:00+0000\n"
 "PO-Revision-Date: 2023-12-21 01:55+0000\n"
 "Last-Translator: Lisa <blendergirl@tutanota.com>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
@@ -231,30 +231,6 @@ msgid "Collection of action groups"
 msgstr "Collectie van actiegroepen"
 
 
-msgid "Influence"
-msgstr "Invloed"
-
-
-msgid "Mix Mode"
-msgstr "Mixmodus"
-
-
-msgid "Replace"
-msgstr "Vervangen"
-
-
-msgid "Add"
-msgstr "Toevoegen"
-
-
-msgid "Subtract"
-msgstr "Aftrekken"
-
-
-msgid "Multiply"
-msgstr "Vermenigvuldigen"
-
-
 msgid "Module"
 msgstr "Module"
 
@@ -271,6 +247,18 @@ msgid "Auto"
 msgstr "Auto"
 
 
+msgid "Always"
+msgstr "Altijd"
+
+
+msgid "Center"
+msgstr "Midden"
+
+
+msgid "Bottom"
+msgstr "Onderkant"
+
+
 msgid "Animation Data"
 msgstr "Animatie Data"
 
@@ -279,12 +267,24 @@ msgid "Action"
 msgstr "Actie"
 
 
-msgid "None"
-msgstr "Geen"
+msgid "Replace"
+msgstr "Vervangen"
 
 
 msgid "Combine"
 msgstr "Combineer"
+
+
+msgid "Add"
+msgstr "Toevoegen"
+
+
+msgid "Subtract"
+msgstr "Aftrekken"
+
+
+msgid "Multiply"
+msgstr "Vermenigvuldigen"
 
 
 msgid "Nothing"
@@ -548,6 +548,10 @@ msgstr "-Y"
 
 msgid "Object"
 msgstr "Object"
+
+
+msgid "None"
+msgstr "Geen"
 
 
 msgid "Direct"
@@ -834,6 +838,12 @@ msgid "Has Color"
 msgstr "Heeft Kleur"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Toevoegen"
+
+
+msgctxt "Operator"
 msgid "Remove"
 msgstr "Verwijder"
 
@@ -946,10 +956,6 @@ msgid "Right"
 msgstr "Rechts"
 
 
-msgid "Center"
-msgstr "Midden"
-
-
 msgid "Friction"
 msgstr "Wrijving"
 
@@ -1059,6 +1065,10 @@ msgid "Rotation error"
 msgstr "Rotatiefout"
 
 
+msgid "Influence"
+msgstr "Invloed"
+
+
 msgid "Disable"
 msgstr "Uitzetten"
 
@@ -1107,6 +1117,10 @@ msgid "Floor"
 msgstr "Vloer"
 
 
+msgid "Mix Mode"
+msgstr "Mixmodus"
+
+
 msgid "Active Clip"
 msgstr "Actieve Clip"
 
@@ -1145,10 +1159,6 @@ msgstr "Vergrendel Z Rotatie"
 
 msgid "Bone"
 msgstr "Bot"
-
-
-msgid "Always"
-msgstr "Altijd"
 
 
 msgid "Front"
@@ -1607,10 +1617,6 @@ msgid "Delete"
 msgstr "Verwijder"
 
 
-msgid "Bottom"
-msgstr "Onderkant"
-
-
 msgid "Top"
 msgstr "Bovenkant"
 
@@ -2029,10 +2035,6 @@ msgid "Users"
 msgstr "Gebruikers"
 
 
-msgid "Layers"
-msgstr "Lagen"
-
-
 msgid "X-Axis Mirror"
 msgstr "X-As Spiegel"
 
@@ -2283,6 +2285,10 @@ msgstr "Gebruik Nodes"
 
 msgid "Annotation"
 msgstr "Annotatie"
+
+
+msgid "Layers"
+msgstr "Lagen"
 
 
 msgid "Only selected keyframes"
@@ -2825,11 +2831,6 @@ msgid "Select Linked"
 msgstr "Selecteer Aaneengesloten"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "Toevoegen"
-
-
 msgid "Layout"
 msgstr "Indeling"
 
@@ -2897,6 +2898,11 @@ msgstr "Opslaan & Laden"
 
 msgid "Names"
 msgstr "Namen"
+
+
+msgctxt "Operator"
+msgid "Parent"
+msgstr "Ouder"
 
 
 msgid "Select Similar"
@@ -4364,6 +4370,10 @@ msgid "Set Cursor"
 msgstr "Zet Cursor"
 
 
+msgid "Remove"
+msgstr "Verwijder"
+
+
 msgctxt "Operator"
 msgid "Create Ghost Curves"
 msgstr "Maak Spook Kromme"
@@ -4809,6 +4819,10 @@ msgstr "Knip Koppelingen"
 msgctxt "Operator"
 msgid "New Node Tree"
 msgstr "Nieuwe Node Boom"
+
+
+msgid "Current"
+msgstr "Huidige"
 
 
 msgctxt "Operator"
@@ -6901,10 +6915,6 @@ msgid "Show Red Channel"
 msgstr "Toon Rode Kanaal"
 
 
-msgid "Show Seconds"
-msgstr "Toon Seconden"
-
-
 msgctxt "MovieClip"
 msgid "View"
 msgstr "Weergave"
@@ -7008,10 +7018,6 @@ msgstr "Deeltjeseigenschappen"
 
 msgid "Reference"
 msgstr "Voorbeeld"
-
-
-msgid "Current"
-msgstr "Huidige"
 
 
 msgid "Find Text"
@@ -7248,32 +7254,8 @@ msgid "Animation Channels"
 msgstr "Animatie Kanalen"
 
 
-msgid "File:"
-msgstr "Bestand:"
-
-
-msgid "Description:"
-msgstr "Beschrijving:"
-
-
-msgid "Author:"
-msgstr "Auteur:"
-
-
-msgid "Version:"
-msgstr "Versie:"
-
-
-msgid "Warning:"
-msgstr "Waarschuwing:"
-
-
-msgid "Internet:"
-msgstr "Internet:"
-
-
-msgid "Path:"
-msgstr "Pad:"
+msgid "Warning"
+msgstr "Waarschuwing"
 
 
 msgctxt "Operator"
@@ -7421,11 +7403,6 @@ msgstr "Animeer Pad"
 
 
 msgctxt "Operator"
-msgid "Remove"
-msgstr "Verwijder"
-
-
-msgctxt "Operator"
 msgid "Add Image"
 msgstr "Voeg Afbeelding Toe"
 
@@ -7527,11 +7504,6 @@ msgstr "Ouder:"
 
 msgid "Transform:"
 msgstr "Transformeer:"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Ouder"
 
 
 msgid "Animation:"
@@ -8180,10 +8152,6 @@ msgid "Double Click Speed"
 msgstr "Snelheid Dubbelklik"
 
 
-msgid "Preferences:"
-msgstr "Instellingen:"
-
-
 msgid "Use Light"
 msgstr "Gebruik Licht"
 
@@ -8192,8 +8160,32 @@ msgid ":"
 msgstr ":"
 
 
+msgid "Description:"
+msgstr "Beschrijving:"
+
+
 msgid "Location:"
 msgstr "Locatie:"
+
+
+msgid "File:"
+msgstr "Bestand:"
+
+
+msgid "Author:"
+msgstr "Auteur:"
+
+
+msgid "Version:"
+msgstr "Versie:"
+
+
+msgid "Warning:"
+msgstr "Waarschuwing:"
+
+
+msgid "Internet:"
+msgstr "Internet:"
 
 
 msgctxt "Operator"
@@ -8669,10 +8661,6 @@ msgstr "var"
 
 msgid "%i frames found!"
 msgstr "%i frames gevonden!"
-
-
-msgid "Warning"
-msgstr "Waarschuwing"
 
 
 msgid "RenderView"
@@ -9305,6 +9293,10 @@ msgstr "Vouwranden"
 
 msgid "Center:"
 msgstr "Midden:"
+
+
+msgid "Path:"
+msgstr "Pad:"
 
 
 msgid "Old"

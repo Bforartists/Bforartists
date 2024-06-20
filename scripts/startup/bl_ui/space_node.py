@@ -1101,10 +1101,6 @@ class NODE_PT_quality(bpy.types.Panel):
         col.use_property_split = False
         col.prop(tree, "use_viewer_border")
 
-        col = layout.column()
-        col.use_property_split = False
-        col.prop(snode, "use_auto_render")
-
 
 class NODE_PT_overlay(Panel):
     bl_space_type = 'NODE_EDITOR'
