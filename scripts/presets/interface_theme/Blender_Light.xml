@@ -591,7 +591,6 @@
         grid="#5e5e5e"
         view_sliders="#969696"
         dopesheet_channel="#5a85b2"
-        dopesheet_subchannel="#7d98b3"
         nla_track="#424242"
         active_action="#cc701a66"
         active_action_unset="#9987614d"
@@ -831,13 +830,6 @@
         time_marker_line="#00000060"
         time_marker_line_selected="#ffffff60"
         keyframe="#ff8500"
-        keyframe_selected="#ffbe33"
-        keyframe_breakdown="#b3dbe8"
-        keyframe_breakdown_selected="#54bfed"
-        keyframe_movehold="#808080"
-        keyframe_movehold_selected="#ffaf23"
-        keyframe_border="#000000ff"
-        keyframe_border_selected="#000000ff"
         draw_action="#50c8ff"
         preview_back="#000000"
         metadatabg="#000000"
@@ -1617,7 +1609,6 @@
     <panel_title>
       <ThemeFontStyle
         points="12"
-        character_weight="400"
         shadow="3"
         shadow_offset_x="0"
         shadow_offset_y="-1"
@@ -1629,7 +1620,6 @@
     <widget_label>
       <ThemeFontStyle
         points="11"
-        character_weight="400"
         shadow="3"
         shadow_offset_x="0"
         shadow_offset_y="-1"
@@ -1641,7 +1631,6 @@
     <widget>
       <ThemeFontStyle
         points="11"
-        character_weight="400"
         shadow="1"
         shadow_offset_x="0"
         shadow_offset_y="-1"
