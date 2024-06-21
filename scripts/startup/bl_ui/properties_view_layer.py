@@ -487,22 +487,33 @@ class VIEWLAYER_PT_filter(ViewLayerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         scene = context.scene
         view_layer = context.view_layer
 
-        col = layout.column(heading="Include")
-        col.prop(view_layer, "use_sky", text="Environment")
-        col.prop(view_layer, "use_solid", text="Surfaces")
-        col.prop(view_layer, "use_strand", text="Curves")
-        col.prop(view_layer, "use_volumes", text="Volumes")
+        col = layout.column()
+        col.label(text="Include")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_sky", text="Environment")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_solid", text="Surfaces")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_strand", text="Curves")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_volumes", text="Volumes")
 
-        col = layout.column(heading="Use")
-        sub = col.row()
-        sub.prop(view_layer, "use_motion_blur", text="Motion Blur")
-        sub.active = scene.render.use_motion_blur
+        col = layout.column()
+        col.label(text="Use")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_motion_blur", text="Motion Blur")
+        row.active = scene.render.use_motion_blur
 
 
 class VIEWLAYER_PT_layer_custom_props(PropertyPanel, Panel):
