@@ -1493,6 +1493,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mask_border():
         def draw_settings(_context, layout, tool):
+            layout.use_property_split = False
             props = tool.operator_properties("paint.mask_box_gesture")
             layout.prop(props, "use_front_faces_only", expand=False)
 
@@ -1508,6 +1509,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mask_lasso():
         def draw_settings(_context, layout, tool):
+            layout.use_property_split = False
             props = tool.operator_properties("paint.mask_lasso_gesture")
             layout.prop(props, "use_front_faces_only", expand=False)
 
@@ -1523,6 +1525,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mask_line():
         def draw_settings(_context, layout, tool):
+            layout.use_property_split = False
             props = tool.operator_properties("paint.mask_line_gesture")
             layout.prop(props, "use_front_faces_only", expand=False)
             layout.prop(props, "use_limit_to_segment", expand=False)
@@ -1539,6 +1542,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mask_polyline():
         def draw_settings(_context, layout, tool):
+            layout.use_property_split = False
             props = tool.operator_properties("paint.mask_polyline_gesture")
             layout.prop(props, "use_front_faces_only", expand=False)
 
