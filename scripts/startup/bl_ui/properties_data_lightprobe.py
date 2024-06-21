@@ -71,7 +71,6 @@ class DATA_PT_lightprobe(DataButtonsPanel, Panel):
                 col.prop(probe, "influence_distance", text="Size")
 
             col.prop(probe, "falloff")
-            col.prop(probe, "intensity")
 
         sub = col.column(align=True)
         if probe.type != 'PLANE':
