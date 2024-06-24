@@ -62,9 +62,9 @@ void VKVertexBuffer::add_to_descriptor_set(AddToDescriptorSetContext &data,
     buffer_view_info.range = buffer_.size_in_bytes();
 
     VK_ALLOCATION_CALLBACKS;
-    const VKDevice &device = VKBackend::get().device_get();
+    const VKDevice &device = VKBackend::get().device;
     vkCreateBufferView(
-        device.device_get(), &buffer_view_info, vk_allocation_callbacks, &vk_buffer_view_);
+        device.vk_handle(), &buffer_view_info, vk_allocation_callbacks, &vk_buffer_view_);
   }
 
   /* TODO: Check if we can move this check inside the descriptor set. */
@@ -111,8 +111,8 @@ void VKVertexBuffer::acquire_data()
 
   /* Discard previous data if any. */
   /* TODO: Use mapped memory. */
-  MEM_SAFE_FREE(data);
-  data = (uchar *)MEM_mallocN(sizeof(uchar) * this->size_alloc_get(), __func__);
+  MEM_SAFE_FREE(data_);
+  data_ = (uchar *)MEM_mallocN(sizeof(uchar) * this->size_alloc_get(), __func__);
 }
 
 void VKVertexBuffer::resize_data()
@@ -121,19 +121,19 @@ void VKVertexBuffer::resize_data()
     return;
   }
 
-  data = (uchar *)MEM_reallocN(data, sizeof(uchar) * this->size_alloc_get());
+  data_ = (uchar *)MEM_reallocN(data_, sizeof(uchar) * this->size_alloc_get());
 }
 
 void VKVertexBuffer::release_data()
 {
   if (vk_buffer_view_ != VK_NULL_HANDLE) {
-    const VKDevice &device = VKBackend::get().device_get();
+    const VKDevice &device = VKBackend::get().device;
     VK_ALLOCATION_CALLBACKS;
-    vkDestroyBufferView(device.device_get(), vk_buffer_view_, vk_allocation_callbacks);
+    vkDestroyBufferView(device.vk_handle(), vk_buffer_view_, vk_allocation_callbacks);
     vk_buffer_view_ = VK_NULL_HANDLE;
   }
 
-  MEM_SAFE_FREE(data);
+  MEM_SAFE_FREE(data_);
 }
 
 void VKVertexBuffer::upload_data_direct(const VKBuffer &host_buffer)
@@ -143,11 +143,11 @@ void VKVertexBuffer::upload_data_direct(const VKBuffer &host_buffer)
     if (G.debug & G_DEBUG_GPU) {
       std::cout << "PERFORMANCE: Vertex buffer requires conversion.\n";
     }
-    vertex_format_converter.convert(host_buffer.mapped_memory_get(), data, vertex_len);
+    vertex_format_converter.convert(host_buffer.mapped_memory_get(), data_, vertex_len);
     host_buffer.flush();
   }
   else {
-    host_buffer.update(data);
+    host_buffer.update(data_);
   }
 }
 
@@ -177,7 +177,7 @@ void VKVertexBuffer::upload_data()
       upload_data_via_staging_buffer(context);
     }
     if (usage_ == GPU_USAGE_STATIC) {
-      MEM_SAFE_FREE(data);
+      MEM_SAFE_FREE(data_);
     }
 
     flag &= ~GPU_VERTBUF_DATA_DIRTY;
@@ -193,7 +193,7 @@ void VKVertexBuffer::duplicate_data(VertBuf * /*dst*/)
 void VKVertexBuffer::device_format_ensure()
 {
   if (!vertex_format_converter.is_initialized()) {
-    const VKWorkarounds &workarounds = VKBackend::get().device_get().workarounds_get();
+    const VKWorkarounds &workarounds = VKBackend::get().device.workarounds_get();
     vertex_format_converter.init(&format, workarounds);
   }
 }

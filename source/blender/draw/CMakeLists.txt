@@ -296,6 +296,7 @@ set(SRC
   engines/overlay/overlay_next_metaball.hh
   engines/overlay/overlay_next_prepass.hh
   engines/overlay/overlay_next_private.hh
+  engines/overlay/overlay_next_speaker.hh
   engines/overlay/overlay_private.hh
   engines/select/select_defines.hh
   engines/select/select_engine.hh
@@ -365,6 +366,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_display_lightprobe_planar_vert.glsl
   engines/eevee_next/shaders/eevee_display_lightprobe_sphere_frag.glsl
   engines/eevee_next/shaders/eevee_display_lightprobe_sphere_vert.glsl
+  engines/eevee_next/shaders/eevee_film_copy_frag.glsl
   engines/eevee_next/shaders/eevee_film_comp.glsl
   engines/eevee_next/shaders/eevee_film_cryptomatte_post_comp.glsl
   engines/eevee_next/shaders/eevee_film_frag.glsl

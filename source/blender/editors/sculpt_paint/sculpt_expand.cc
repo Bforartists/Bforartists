@@ -1385,6 +1385,8 @@ static void original_state_store(Object &ob, Cache *expand_cache)
   Mesh &mesh = *static_cast<Mesh *>(ob.data);
   const int totvert = SCULPT_vertex_count_get(ss);
 
+  face_set::create_face_sets_mesh(ob);
+
   /* Face Sets are always stored as they are needed for snapping. */
   expand_cache->initial_face_sets = face_set::duplicate_face_sets(mesh);
   expand_cache->original_face_sets = face_set::duplicate_face_sets(mesh);
