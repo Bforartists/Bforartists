@@ -1347,7 +1347,7 @@ class USERPREF_PT_theme_collection_colors(ThemePanel, CenterAlignMixIn, Panel):
 
 
 class USERPREF_PT_theme_strip_colors(ThemePanel, CenterAlignMixIn, Panel):
-    bl_label = "Strip Colors"
+    bl_label = "Strip Color Tags"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, _context):
@@ -2389,6 +2389,23 @@ class USERPREF_PT_extensions_repos(Panel):
 
 
 # -----------------------------------------------------------------------------
+# Extensions Panels
+
+class ExtensionsPanel:
+    bl_space_type = 'PREFERENCES'
+    bl_region_type = 'WINDOW'
+    bl_context = "extensions"
+
+
+class USERPREF_PT_extensions(ExtensionsPanel, Panel):
+    bl_label = "Extensions"
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        pass
+
+
+# -----------------------------------------------------------------------------
 # Add-on Panels
 
 # Only a popover.
@@ -2406,7 +2423,7 @@ class USERPREF_PT_addons_filter(Panel):
 class AddOnPanel:
     bl_space_type = 'PREFERENCES'
     bl_region_type = 'WINDOW'
-    bl_context = "extensions"
+    bl_context = "addons"
 
 
 class USERPREF_PT_addons(AddOnPanel, Panel):
@@ -2442,9 +2459,8 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
             return
 
         addon_preferences_class = type(addon_preferences)
+        layout.label(text=" Preferences")
         box_prefs = layout.box()
-        box_prefs.label(text="Preferences")
-        box_prefs.separator(type='LINE')
         addon_preferences_class.layout = box_prefs
         try:
             draw(context)
@@ -2594,8 +2610,6 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
             colsub = box.column()
             row = colsub.row(align=True)
 
-            is_extension = addon_utils.check_extension(addon_module_name)
-
             row.operator(
                 "preferences.addon_expand",
                 icon='DISCLOSURE_TRI_DOWN' if bl_info["show_expanded"] else 'DISCLOSURE_TRI_RIGHT',
@@ -2639,11 +2653,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                 if value := bl_info["version"]:
                     split = colsub.row().split(factor=0.15)
                     split.label(text="Version:")
-                    # Extensions use SEMVER.
-                    if is_extension:
-                        split.label(text=value, translate=False)
-                    else:
-                        split.label(text=".".join(str(x) for x in value), translate=False)
+                    split.label(text=".".join(str(x) for x in value), translate=False)
                 if value := bl_info["warning"]:
                     split = colsub.row().split(factor=0.15)
                     split.label(text="Warning:")
@@ -3086,6 +3096,7 @@ classes = (
 
     USERPREF_PT_keymap,
 
+    USERPREF_PT_extensions,
     USERPREF_PT_addons,
 
     USERPREF_MT_extensions_active_repo,

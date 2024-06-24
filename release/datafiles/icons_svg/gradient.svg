@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   sodipodi:docname="GRADIENT.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="47.375"
+     inkscape:cx="7.8416887"
+     inkscape:cy="8"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g8" />
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g8">
+    <g
+       id="GRADIENT">
+      <path
+         style="fill:#ffffff;stroke-width:0.03125"
+         d="M 0,8 V 0 h 8 8 v 8 8 H 8 0 Z m 2,6.5 V 14 H 3 4 V 14.5 15 H 5 6 V 14.5 14 H 6.5 7 V 13.5 13 H 7.5 8 V 12.5 12 H 8.5 9 V 11.5 11 H 9.5 10 V 10.5 10 H 10.5 11 V 9.5 9 H 11.5 12 V 8.5 8 H 12.5 13 V 7.5 7 H 13.5 14 V 6.5 6 H 14.5 15 V 5 4 H 14.5 14 V 3.5 3 H 13.5 13 V 2.5 2 H 12.5 12 V 1.5 1 H 11 10 V 1.5 2 H 9.5 9 V 2.5 3 H 8.5 8 V 3.5 4 H 7.5 7 V 4.5 5 H 6.5 6 V 5.5 6 H 5.5 5 V 6.5 7 H 4.5 4 V 7.5 8 H 3.5 3 V 8.5 9 H 2.5 2 V 9.5 10 H 1.5 1 v 1 1 H 1.5 2 v 1 1 H 1.5 1 V 14.5 15 H 1.5 2 Z"
+         id="path305" />
+      <path
+         style="fill:#fefefe;stroke-width:0.03125"
+         d="M 1,14.5 V 14 H 1.5 2 V 13.5 13 H 2.5 3 V 12.5 12 H 3.5 4 V 11.5 11 H 4.5 5 V 10.5 10 H 5.5 6 V 9.5 9 H 6.5 7 V 8.5 8 H 7.5 8 V 7.5 7 H 8.5 9 V 6.5 6 H 9.5 10 V 5 4 H 9.5 9 V 3 2 H 9.5 10 V 1.5 1 h 1 1 V 1.5 2 H 12.5 13 V 2.5 3 H 13.5 14 V 3.5 4 H 14.5 15 V 5 6 H 14.5 14 V 6.5 7 H 13 12 V 6.5 6 H 11 10 V 6.5 7 H 9.5 9 V 7.5 8 H 8.5 8 V 8.5 9 H 7.5 7 V 9.5 10 H 6.5 6 V 10.5 11 H 5.5 5 V 11.5 12 H 4.5 4 V 12.5 13 H 3.5 3 V 13.5 14 H 2.5 2 V 14.5 15 H 1.5 1 Z"
+         id="path303" />
+      <path
+         style="fill:#cbcbcb;stroke-width:0.03125"
+         d="M 10,8.5 V 8 H 9.5 9 V 7.5 7 H 8.5 8 V 6.5 6 H 7.5 7 V 5 4 H 7.5 8 V 3.5 3 H 8.5 9 V 3.5 4 H 9.5 10 v 1 1 h 1 1 V 6.5 7 H 12.5 13 V 7.5 8 H 12.5 12 V 8.5 9 h -1 -1 z m 0,-2 V 6 H 9.5 9 V 6.5 7 H 9.5 10 Z"
+         id="path301" />
+      <path
+         style="fill:#989898;stroke-width:0.03125"
+         d="M 8,10.5 V 10 H 7.5 7 V 9.5 9 H 6.5 6 V 8.5 8 H 5.5 5 V 7 6 H 5.5 6 V 5.5 5 H 6.5 7 V 5.5 6 H 7.5 8 v 1 1 h 1 1 V 8.5 9 H 10.5 11 V 9.5 10 H 10.5 10 V 10.5 11 H 9 8 Z m 0,-2 V 8 H 7.5 7 V 8.5 9 H 7.5 8 Z"
+         id="path299" />
+      <path
+         style="fill:#656565;stroke-width:0.03125"
+         d="M 6,12.5 V 12 H 5.5 5 V 11.5 11 H 4.5 4 V 10.5 10 H 3.5 3 V 9 8 H 3.5 4 V 7.5 7 H 4.5 5 V 7.5 8 H 5.5 6 v 1 1 H 7 8 V 10.5 11 H 8.5 9 V 11.5 12 H 8.5 8 V 12.5 13 H 7 6 Z m 0,-2 V 10 H 5.5 5 V 10.5 11 H 5.5 6 Z"
+         id="path297" />
+      <path
+         style="fill:#323232;stroke-width:0.03125"
+         d="M 4,14.5 V 14 H 3.5 3 V 13.5 13 H 2.5 2 V 12.5 12 H 1.5 1 V 11 10 H 1.5 2 V 9.5 9 H 2.5 3 V 9.5 10 H 3.5 4 v 1 1 H 5 6 V 12.5 13 H 6.5 7 V 13.5 14 H 6.5 6 V 14.5 15 H 5 4 Z m 0,-2 V 12 H 3.5 3 V 12.5 13 H 3.5 4 Z"
+         id="path295" />
+    </g>
+  </g>
+</svg>
