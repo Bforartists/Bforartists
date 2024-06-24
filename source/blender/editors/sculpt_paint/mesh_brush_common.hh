@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "BLI_array.hh"
 #include "BLI_bit_span.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_types.hh"
@@ -44,6 +45,7 @@ struct Cache;
 };
 
 void scale_translations(MutableSpan<float3> translations, Span<float> factors);
+void scale_translations(MutableSpan<float3> translations, float factor);
 void scale_factors(MutableSpan<float> factors, float strength);
 
 /**
@@ -75,8 +77,8 @@ void calc_front_face(const float3 &view_normal,
                      MutableSpan<float> factors);
 
 /**
- * Modify influence factors based on the distance from the brush cursor and various other settings.
- * Also fill an array of distances from the brush cursor for "in bounds" vertices.
+ * Calculate distances based on the distance from the brush cursor and various other settings.
+ * Also ignore vertices that are too far from the cursor.
  */
 void calc_distance_falloff(SculptSession &ss,
                            Span<float3> vert_positions,
@@ -84,6 +86,18 @@ void calc_distance_falloff(SculptSession &ss,
                            eBrushFalloffShape falloff_shape,
                            MutableSpan<float> r_distances,
                            MutableSpan<float> factors);
+
+/**
+ * Calculate distances based on a "square" brush tip falloff and ignore vertices that are too far
+ * away.
+ */
+void calc_cube_distance_falloff(SculptSession &ss,
+                                const Brush &brush,
+                                const float4x4 &mat,
+                                Span<float3> positions,
+                                Span<int> verts,
+                                MutableSpan<float> r_distances,
+                                MutableSpan<float> factors);
 
 /**
  * Modify the factors based on distances to the brush cursor, using various brush settings.
@@ -173,9 +187,16 @@ void write_translations(const Sculpt &sd,
                         MutableSpan<float3> positions_orig);
 
 /**
- * Find vertices connected to the indexed vertices across faces. For boundary vertices (stored in
- * the \a boundary_verts argument), only include other boundary vertices. Also skip connectivity
- * accross hidden faces and skip neighbors of corner vertices.
+ * Creates OffsetIndices based on each node's unique vertex count, allowing for easy slicing of a
+ * new array.
+ */
+OffsetIndices<int> create_node_vert_offsets(Span<PBVHNode *> nodes, Array<int> &node_data);
+
+/**
+ * Find vertices connected to the indexed vertices across faces.
+ *
+ * Does not handle boundary vertices differently, so this method is generally inappropriate for
+ * functions that are related to coordinates. See #calc_vert_neighbors_interior
  *
  * \note A vector allocated per element is typically not a good strategy for performance because
  * of each vector's 24 byte overhead, non-contiguous memory, and the possibility of further heap
@@ -184,6 +205,20 @@ void write_translations(const Sculpt &sd,
  *  2. We want to avoid using edges, and the remaining topology map we have access to is the
  *     vertex to face map. That requires deduplication when building the neighbors, which
  *     requires some intermediate data structure like a vector anyway.
+ */
+void calc_vert_neighbors(OffsetIndices<int> faces,
+                         Span<int> corner_verts,
+                         GroupedSpan<int> vert_to_face,
+                         Span<bool> hide_poly,
+                         Span<int> verts,
+                         MutableSpan<Vector<int>> result);
+
+/**
+ * Find vertices connected to the indexed vertices across faces. For boundary vertices (stored in
+ * the \a boundary_verts argument), only include other boundary vertices. Also skip connectivity
+ * across hidden faces and skip neighbors of corner vertices.
+ *
+ * \note See #calc_vert_neighbors for information on why we use a Vector per element.
  */
 void calc_vert_neighbors_interior(OffsetIndices<int> faces,
                                   Span<int> corner_verts,
