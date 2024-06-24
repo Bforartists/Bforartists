@@ -40,7 +40,7 @@
 /* ICON_ prefix added */
 
 /* ------------------------- Row 1 ---------------------------*/
-DEF_ICON_COLOR(NONE) /* never change! */
+DEF_ICON(NONE) /* never change! */
 DEF_ICON_COLOR(QUESTION)
 DEF_ICON_COLOR(ERROR)
 DEF_ICON_COLOR(CANCEL)
