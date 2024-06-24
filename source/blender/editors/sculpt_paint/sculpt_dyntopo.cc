@@ -73,7 +73,7 @@ void triangulate(BMesh *bm)
 
 void enable_ex(Main &bmain, Depsgraph &depsgraph, Object &ob)
 {
-  SculptSession *ss = ob.sculpt;
+  SculptSession &ss = *ob.sculpt;
   Mesh *mesh = static_cast<Mesh *>(ob.data);
   const BMAllocTemplate allocsize = BMALLOC_TEMPLATE_FROM_ME(mesh);
 
@@ -85,28 +85,28 @@ void enable_ex(Main &bmain, Depsgraph &depsgraph, Object &ob)
   /* Create triangles-only BMesh. */
   BMeshCreateParams create_params{};
   create_params.use_toolflags = false;
-  ss->bm = BM_mesh_create(&allocsize, &create_params);
+  ss.bm = BM_mesh_create(&allocsize, &create_params);
 
   BMeshFromMeshParams convert_params{};
   convert_params.calc_face_normal = true;
   convert_params.calc_vert_normal = true;
   convert_params.use_shapekey = true;
   convert_params.active_shapekey = ob.shapenr;
-  BM_mesh_bm_from_me(ss->bm, mesh, &convert_params);
-  triangulate(ss->bm);
+  BM_mesh_bm_from_me(ss.bm, mesh, &convert_params);
+  triangulate(ss.bm);
 
-  BM_data_layer_ensure_named(ss->bm, &ss->bm->vdata, CD_PROP_FLOAT, ".sculpt_mask");
+  BM_data_layer_ensure_named(ss.bm, &ss.bm->vdata, CD_PROP_FLOAT, ".sculpt_mask");
 
   /* Make sure the data for existing faces are initialized. */
-  if (mesh->faces_num != ss->bm->totface) {
-    BM_mesh_normals_update(ss->bm);
+  if (mesh->faces_num != ss.bm->totface) {
+    BM_mesh_normals_update(ss.bm);
   }
 
   /* Enable dynamic topology. */
   mesh->flag |= ME_SCULPT_DYNAMIC_TOPOLOGY;
 
   /* Enable logging for undo/redo. */
-  ss->bm_log = BM_log_create(ss->bm);
+  ss.bm_log = BM_log_create(ss.bm);
 
   /* Update dependency graph, so modifiers that depend on dyntopo being enabled
    * are re-evaluated and the PBVH is re-created. */
@@ -118,7 +118,8 @@ void enable_ex(Main &bmain, Depsgraph &depsgraph, Object &ob)
  *
  * If 'unode' is given, the BMesh's data is copied out to the unode
  * before the BMesh is deleted so that it can be restored from. */
-static void disable(Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob, undo::Node *unode)
+static void disable(
+    Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob, undo::StepData *undo_step)
 {
   SculptSession &ss = *ob.sculpt;
   Mesh *mesh = static_cast<Mesh *>(ob.data);
@@ -133,27 +134,8 @@ static void disable(Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob,
 
   SCULPT_pbvh_clear(ob);
 
-  if (unode) {
-    /* Free all existing custom data. */
-    BKE_mesh_clear_geometry(mesh);
-
-    /* Copy over stored custom data. */
-    undo::NodeGeometry *geometry = &unode->geometry_bmesh_enter;
-    mesh->verts_num = geometry->totvert;
-    mesh->corners_num = geometry->totloop;
-    mesh->faces_num = geometry->faces_num;
-    mesh->edges_num = geometry->totedge;
-    mesh->totface_legacy = 0;
-    CustomData_copy(&geometry->vert_data, &mesh->vert_data, CD_MASK_MESH.vmask, geometry->totvert);
-    CustomData_copy(&geometry->edge_data, &mesh->edge_data, CD_MASK_MESH.emask, geometry->totedge);
-    CustomData_copy(
-        &geometry->corner_data, &mesh->corner_data, CD_MASK_MESH.lmask, geometry->totloop);
-    CustomData_copy(
-        &geometry->face_data, &mesh->face_data, CD_MASK_MESH.pmask, geometry->faces_num);
-    implicit_sharing::copy_shared_pointer(geometry->face_offset_indices,
-                                          geometry->face_offsets_sharing_info,
-                                          &mesh->face_offset_indices,
-                                          &mesh->runtime->face_offsets_sharing_info);
+  if (undo_step) {
+    undo::restore_from_bmesh_enter_geometry(*undo_step, *mesh);
   }
   else {
     BKE_sculptsession_bm_to_me(&ob, true);
@@ -188,13 +170,13 @@ static void disable(Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob,
   BKE_scene_graph_update_tagged(&depsgraph, &bmain);
 }
 
-void disable(bContext *C, undo::Node *unode)
+void disable(bContext *C, undo::StepData *undo_step)
 {
   Main *bmain = CTX_data_main(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene = CTX_data_scene(C);
   Object *ob = CTX_data_active_object(C);
-  disable(*bmain, *depsgraph, *scene, *ob, unode);
+  disable(*bmain, *depsgraph, *scene, *ob, undo_step);
 }
 
 void disable_with_undo(Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob)
