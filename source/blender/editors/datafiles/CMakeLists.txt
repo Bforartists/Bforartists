@@ -234,8 +234,6 @@ if(WITH_BLENDER)
     # Blender UI only.
 
     set(SVG_SRC
-      # Order matches `UI_icons.hh`, final name will be formatted: `icons{size}_{name}.dat`.
-
       # ------------------------- row 1 --------------------------*/
 
       question
@@ -276,7 +274,6 @@ if(WITH_BLENDER)
       flip
       string
       set_roll
-      clear_roll
       clear_roll
       roll_x_neg
       roll_x_pos
@@ -2036,7 +2033,6 @@ if(WITH_BLENDER)
       desktop
 
       volume_distribute
-      volume_distribute
       corners_of_face
       corners_of_vertex
       edges_of_corner
@@ -2610,7 +2606,6 @@ if(WITH_BLENDER)
       #~ DEF_ICON_BLANK(2412)
       #~ DEF_ICON_BLANK(2413)
       #~ DEF_ICON_BLANK(2414)
-
     )
     set(SVGHCONTENTS )
     set(SVGCCCONTENTS )
