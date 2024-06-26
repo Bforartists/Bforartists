@@ -1075,9 +1075,6 @@ def extensions_panel_draw_impl(
                 else:
                     row_right.label(text="Installed   ")
 
-                else:
-                    row_right.label(text="Installed   ")
-
                 row_right.active = False
 
             row_right = row_right_toplevel.row(align=True)
@@ -1178,6 +1175,19 @@ class USERPREF_PT_extensions_filter(Panel):
         row.active = (not wm.extension_enabled_only) and (not wm.extension_updates_only) # BFA
         row.prop(wm, "extension_installed_only", text="Installed Extensions") # BFA
 
+
+class USERPREF_PT_addons_tags(Panel):
+    bl_label = "Addon Tags"
+
+    bl_space_type = 'TOPBAR'  # dummy.
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 13
+
+    _wm_tags_attr = "addon_tags"
+
+    def draw(self, _context):
+        # Extended by the `bl_pkg` add-on.
+        pass
 
 
 class USERPREF_PT_extensions_tags(Panel):
