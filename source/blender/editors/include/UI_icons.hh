@@ -40,7 +40,7 @@
 /* ICON_ prefix added */
 
 /* ------------------------- Row 1 ---------------------------*/
-DEF_ICON(NONE) /* never change! */
+DEF_ICON_COLOR(NONE) /* never change! */
 DEF_ICON_COLOR(QUESTION)
 DEF_ICON_COLOR(ERROR)
 DEF_ICON_COLOR(CANCEL)
@@ -2726,7 +2726,8 @@ DEF_ICON_COLOR(EVENT_NDOF_BUTTON_MINUS)
 #undef DEF_ICON_OBJECT_DATA
 #undef DEF_ICON_MODIFIER
 #undef DEF_ICON_SHADING
-#undef DEF_ICON_VECTOR
 #undef DEF_ICON_FOLDER
+#undef DEF_ICON_VECTOR
 #undef DEF_ICON_COLOR
+#undef DEF_ICON_FUND
 #undef DEF_ICON_BLANK
