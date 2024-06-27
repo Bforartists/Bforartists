@@ -239,7 +239,6 @@ if(WITH_BLENDER)
       none
 
       question
-      #question_large
       error
       cancel
       tria_right
