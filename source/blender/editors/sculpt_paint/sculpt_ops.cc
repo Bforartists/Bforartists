@@ -355,6 +355,10 @@ void ED_object_sculptmode_enter_ex(Main &bmain,
   const int mode_flag = OB_MODE_SCULPT;
   Mesh *mesh = BKE_mesh_from_object(&ob);
 
+  /* Re-triangulating the mesh for position changes in sculpt mode isn't worth the performance
+   * impact, so delay triangulation updates until the user exits sculpt mode. */
+  mesh->runtime->corner_tris_cache.freeze();
+
   /* Enter sculpt mode. */
   ob.mode |= mode_flag;
 
@@ -371,7 +375,7 @@ void ED_object_sculptmode_enter_ex(Main &bmain,
   Paint *paint = BKE_paint_get_active_from_paintmode(&scene, PaintMode::Sculpt);
   BKE_paint_init(&bmain, &scene, PaintMode::Sculpt, PAINT_CURSOR_SCULPT);
 
-  ED_paint_cursor_start(paint, SCULPT_poll);
+  ED_paint_cursor_start(paint, SCULPT_brush_cursor_poll);
 
   /* Check dynamic-topology flag; re-enter dynamic-topology mode when changing modes,
    * As long as no data was added that is not supported. */
@@ -449,6 +453,8 @@ void ED_object_sculptmode_exit_ex(Main &bmain, Depsgraph &depsgraph, Scene &scen
   using namespace blender::ed::sculpt_paint;
   const int mode_flag = OB_MODE_SCULPT;
   Mesh *mesh = BKE_mesh_from_object(&ob);
+
+  mesh->runtime->corner_tris_cache.unfreeze();
 
   multires_flush_sculpt_updates(&ob);
 
@@ -872,7 +878,8 @@ static int sculpt_mask_by_color_invoke(bContext *C, wmOperator *op, const wmEven
   const bool preserve_mask = RNA_boolean_get(op->ptr, "preserve_previous_mask");
 
   if (SCULPT_has_loop_colors(ob)) {
-    BKE_pbvh_ensure_node_loops(*ss.pbvh);
+    const Mesh &mesh = *static_cast<const Mesh *>(ob.data);
+    BKE_pbvh_ensure_node_loops(*ss.pbvh, mesh.corner_tris());
   }
 
   if (RNA_boolean_get(op->ptr, "contiguous")) {
