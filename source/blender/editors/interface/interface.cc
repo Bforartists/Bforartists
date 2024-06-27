@@ -1624,7 +1624,7 @@ static PointerRNA *ui_but_extra_operator_icon_add_ptr(uiBut *but,
                                                       wmOperatorCallContext opcontext,
                                                       int icon)
 {
-  uiButExtraOpIcon *extra_op_icon = MEM_new<uiButExtraOpIcon>(__func__);
+  uiButExtraOpIcon *extra_op_icon = MEM_cnew<uiButExtraOpIcon>(__func__);
 
   extra_op_icon->icon = icon;
   extra_op_icon->optype_params = MEM_cnew<wmOperatorCallParams>(__func__);
@@ -3612,7 +3612,7 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, std::string name, eU
     STRNCPY(block->display_device, scene->display_settings.display_device);
 
     /* Copy to avoid crash when scene gets deleted with UI still open. */
-    UnitSettings *unit = MEM_new<UnitSettings>(__func__);
+    UnitSettings *unit = MEM_cnew<UnitSettings>(__func__);
     memcpy(unit, &scene->unit, sizeof(scene->unit));
     block->unit = unit;
   }
@@ -4783,12 +4783,12 @@ uiBut *uiDefButImage(
   return but;
 }
 
-uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height)
+uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short /*height*/)
 {
-  ImBuf *ibuf = UI_icon_alert_imbuf_get((eAlertIcon)icon);
+  ImBuf *ibuf = UI_icon_alert_imbuf_get((eAlertIcon)icon, float(width));
   if (ibuf) {
     bTheme *btheme = UI_GetTheme();
-    return uiDefButImage(block, ibuf, x, y, width, height, btheme->tui.wcol_menu_back.text);
+    return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, btheme->tui.wcol_menu_back.text);
   }
   return nullptr;
 }

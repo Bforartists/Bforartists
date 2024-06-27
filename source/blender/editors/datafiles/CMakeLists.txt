@@ -239,6 +239,7 @@ if(WITH_BLENDER)
       none
 
       question
+      #question_large
       error
       cancel
       tria_right
@@ -2598,6 +2599,20 @@ if(WITH_BLENDER)
       marksharpangle
       collection_bone_new
 
+      warning
+      # ------------------------- large --------------------------
+      cancel_large
+      warning_large
+      info_large
+      disc_large
+      disk_drive_large
+      external_drive_large
+      file_folder_large
+      file_large
+      file_parent_large
+      network_drive_large
+      blender_logo_large
+
       #~ DEF_ICON_BLANK(2405)
       #~ DEF_ICON_BLANK(2406)
       #~ DEF_ICON_BLANK(2407)
@@ -2608,6 +2623,10 @@ if(WITH_BLENDER)
       #~ DEF_ICON_BLANK(2412)
       #~ DEF_ICON_BLANK(2413)
       #~ DEF_ICON_BLANK(2414)
+
+
+
+
     )
     set(SVGHCONTENTS )
     set(SVGCCCONTENTS )
@@ -2638,9 +2657,6 @@ if(WITH_BLENDER)
 
     # Images.
     data_to_c_simple(../../../../release/datafiles/splash.png SRC)
-    data_to_c_simple(../../../../release/datafiles/alert_icons.png SRC)
-    data_to_c_simple(../../../../release/datafiles/blender_logo.png SRC)
-    data_to_c_simple(../../../../release/datafiles/prvicons.png SRC)
 
     # Brushes.
     data_to_c_simple(../../../../release/datafiles/brushicons/blob.png SRC)
