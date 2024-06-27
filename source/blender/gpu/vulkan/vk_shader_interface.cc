@@ -27,8 +27,6 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
   constant_len_ = info.specialization_constants_.size();
   ssbo_len_ = 0;
   ubo_len_ = 0;
-  image_offset_ = -1;
-  int image_max_binding = -1;
   Vector<ShaderCreateInfo::Resource> all_resources;
   all_resources.extend(info.pass_resources_);
   all_resources.extend(info.batch_resources_);
@@ -36,11 +34,7 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
   for (ShaderCreateInfo::Resource &res : all_resources) {
     switch (res.bind_type) {
       case ShaderCreateInfo::Resource::BindType::IMAGE:
-        uniform_len_++;
-        image_max_binding = max_ii(image_max_binding, res.slot);
-        break;
       case ShaderCreateInfo::Resource::BindType::SAMPLER:
-        image_offset_ = max_ii(image_offset_, res.slot);
         uniform_len_++;
         break;
       case ShaderCreateInfo::Resource::BindType::UNIFORM_BUFFER:
@@ -52,10 +46,9 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
     }
   }
 
-  for (const ShaderCreateInfo::SubpassIn &subpass_in : info.subpass_inputs_) {
-    image_offset_ = max_ii(image_offset_, subpass_in.index);
-    uniform_len_++;
-  }
+  /* Subpass inputs are read as samplers.
+   * In future this can change depending on extensions that will be supported. */
+  uniform_len_ += info.subpass_inputs_.size();
 
   /* Reserve 1 uniform buffer for push constants fallback. */
   size_t names_size = info.interface_names_size_;
@@ -67,12 +60,6 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
     names_size += PUSH_CONSTANTS_FALLBACK_NAME_LEN + 1;
   }
   names_size += info.subpass_inputs_.size() * SUBPASS_FALLBACK_NAME_LEN;
-
-  /* Make sure that the image slots don't overlap with other sampler or image slots. */
-  image_offset_++;
-  if (image_offset_ != 0 && image_offset_ <= image_max_binding) {
-    image_offset_ = image_max_binding + 1;
-  }
 
   int32_t input_tot_len = attr_len_ + ubo_len_ + uniform_len_ + ssbo_len_ + constant_len_;
   inputs_ = static_cast<ShaderInput *>(
@@ -126,7 +113,7 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
     }
     else if (res.bind_type == ShaderCreateInfo::Resource::BindType::IMAGE) {
       copy_input_name(input, res.image.name, name_buffer_, name_buffer_offset);
-      input->location = input->binding = res.slot + image_offset_;
+      input->location = input->binding = res.slot + image_offset;
       input++;
     }
   }
@@ -187,6 +174,9 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
   descriptor_set_bind_types_.fill(shader::ShaderCreateInfo::Resource::BindType::UNIFORM_BUFFER);
   access_masks_ = Array<VkAccessFlags>(resources_len);
   access_masks_.fill(VK_ACCESS_NONE);
+  arrayed_ = Array<VKImageViewArrayed>(resources_len);
+  arrayed_.fill(VKImageViewArrayed::DONT_CARE);
+
   uint32_t descriptor_set_location = 0;
   for (const ShaderCreateInfo::SubpassIn &subpass_in : info.subpass_inputs_) {
     const ShaderInput *input = shader_input_get(
@@ -196,12 +186,50 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
     descriptor_set_location_update(input,
                                    descriptor_set_location++,
                                    shader::ShaderCreateInfo::Resource::BindType::SAMPLER,
-                                   std::nullopt);
+                                   std::nullopt,
+                                   VKImageViewArrayed::DONT_CARE);
   }
   for (ShaderCreateInfo::Resource &res : all_resources) {
     const ShaderInput *input = shader_input_get(res);
     BLI_assert(input);
-    descriptor_set_location_update(input, descriptor_set_location++, res.bind_type, res);
+    VKImageViewArrayed arrayed = VKImageViewArrayed::DONT_CARE;
+    if (res.bind_type == ShaderCreateInfo::Resource::BindType::IMAGE) {
+      arrayed = ELEM(res.image.type,
+                     shader::ImageType::FLOAT_1D_ARRAY,
+                     shader::ImageType::FLOAT_2D_ARRAY,
+                     shader::ImageType::FLOAT_CUBE_ARRAY,
+                     shader::ImageType::INT_1D_ARRAY,
+                     shader::ImageType::INT_2D_ARRAY,
+                     shader::ImageType::INT_CUBE_ARRAY,
+                     shader::ImageType::UINT_1D_ARRAY,
+                     shader::ImageType::UINT_2D_ARRAY,
+                     shader::ImageType::UINT_CUBE_ARRAY,
+                     shader::ImageType::UINT_2D_ARRAY_ATOMIC,
+                     shader::ImageType::INT_2D_ARRAY_ATOMIC) ?
+                    VKImageViewArrayed::ARRAYED :
+                    VKImageViewArrayed::NOT_ARRAYED;
+    }
+    else if (res.bind_type == ShaderCreateInfo::Resource::BindType::SAMPLER) {
+      arrayed = ELEM(res.sampler.type,
+                     shader::ImageType::FLOAT_1D_ARRAY,
+                     shader::ImageType::FLOAT_2D_ARRAY,
+                     shader::ImageType::FLOAT_CUBE_ARRAY,
+                     shader::ImageType::INT_1D_ARRAY,
+                     shader::ImageType::INT_2D_ARRAY,
+                     shader::ImageType::INT_CUBE_ARRAY,
+                     shader::ImageType::UINT_1D_ARRAY,
+                     shader::ImageType::UINT_2D_ARRAY,
+                     shader::ImageType::UINT_CUBE_ARRAY,
+                     shader::ImageType::SHADOW_2D_ARRAY,
+                     shader::ImageType::SHADOW_CUBE_ARRAY,
+                     shader::ImageType::DEPTH_2D_ARRAY,
+                     shader::ImageType::DEPTH_CUBE_ARRAY,
+                     shader::ImageType::UINT_2D_ARRAY_ATOMIC,
+                     shader::ImageType::INT_2D_ARRAY_ATOMIC) ?
+                    VKImageViewArrayed::ARRAYED :
+                    VKImageViewArrayed::NOT_ARRAYED;
+    }
+    descriptor_set_location_update(input, descriptor_set_location++, res.bind_type, res, arrayed);
   }
 
   /* Post initializing push constants. */
@@ -213,7 +241,8 @@ void VKShaderInterface::init(const shader::ShaderCreateInfo &info)
     descriptor_set_location_update(push_constant_input,
                                    push_constants_fallback_location,
                                    shader::ShaderCreateInfo::Resource::UNIFORM_BUFFER,
-                                   std::nullopt);
+                                   std::nullopt,
+                                   VKImageViewArrayed::DONT_CARE);
   }
   push_constants_layout_.init(
       info, *this, push_constants_storage_type, push_constant_descriptor_set_location);
@@ -230,7 +259,8 @@ void VKShaderInterface::descriptor_set_location_update(
     const ShaderInput *shader_input,
     const VKDescriptorSet::Location location,
     const shader::ShaderCreateInfo::Resource::BindType bind_type,
-    std::optional<const shader::ShaderCreateInfo::Resource> resource)
+    std::optional<const shader::ShaderCreateInfo::Resource> resource,
+    VKImageViewArrayed arrayed)
 {
   BLI_assert_msg(resource.has_value() ||
                      ELEM(bind_type,
@@ -245,6 +275,7 @@ void VKShaderInterface::descriptor_set_location_update(
   BLI_assert(descriptor_set_locations_[index].binding == -1);
   descriptor_set_locations_[index] = location;
   descriptor_set_bind_types_[index] = bind_type;
+  arrayed_[index] = arrayed;
 
   VkAccessFlags vk_access_flags = VK_ACCESS_NONE;
   if (resource.has_value()) {
@@ -339,6 +370,17 @@ const VkAccessFlags VKShaderInterface::access_mask(
   return access_mask(shader_input);
 }
 
+const VKImageViewArrayed VKShaderInterface::arrayed(
+    const shader::ShaderCreateInfo::Resource::BindType &bind_type, int binding) const
+{
+  const ShaderInput *shader_input = shader_input_get(bind_type, binding);
+  if (shader_input == nullptr) {
+    return VKImageViewArrayed::DONT_CARE;
+  }
+  int32_t index = shader_input_index(inputs_, shader_input);
+  return arrayed_[index];
+}
+
 const ShaderInput *VKShaderInterface::shader_input_get(
     const shader::ShaderCreateInfo::Resource &resource) const
 {
@@ -352,8 +394,8 @@ const ShaderInput *VKShaderInterface::shader_input_get(
     case shader::ShaderCreateInfo::Resource::BindType::IMAGE:
       /* Not really nice, but the binding namespace between OpenGL and Vulkan don't match. To fix
        * this we need to check if one of both cases return a binding.
-       * TODO: we might want to introduce a different API to fix this. */
-      return texture_get((binding >= image_offset_) ? binding : binding + image_offset_);
+       */
+      return texture_get((binding >= image_offset) ? binding : binding + image_offset);
     case shader::ShaderCreateInfo::Resource::BindType::SAMPLER:
       return texture_get(binding);
     case shader::ShaderCreateInfo::Resource::BindType::STORAGE_BUFFER:
