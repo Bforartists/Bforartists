@@ -102,9 +102,11 @@ class SubprocessShader {
 
     if (success_) {
       glGetProgramiv(program_, GL_PROGRAM_BINARY_LENGTH, &bin->size);
-      if (bin->size <= sizeof(ShaderBinaryHeader::data)) {
-        glGetProgramBinary(program_, bin->size, nullptr, &bin->format, bin->data);
+      if (bin->size > sizeof(ShaderBinaryHeader::data)) {
+        bin->size = 0;
+        return nullptr;
       }
+      glGetProgramBinary(program_, bin->size, nullptr, &bin->format, bin->data);
     }
 
     return bin;
@@ -229,14 +231,16 @@ void GPU_compilation_subprocess_run(const char *subprocess_name)
         file.seekg(0, std::ios::beg);
         file.read(reinterpret_cast<char *>(shared_mem.get_data()), size);
         /* Ensure it's valid. */
-        if (validate_binary(shared_mem.get_data())) {
-          end_semaphore.increment();
-          continue;
-        }
-        else {
+        if (!validate_binary(shared_mem.get_data())) {
           std::cout << "Compilation Subprocess: Failed to load cached shader binary " << hash_str
                     << "\n";
+          /* We can't compile the shader anymore since we have written over the source code,
+           * but we delete the cache for the next time this shader is requested. */
+          file.close();
+          BLI_delete(cache_path.c_str(), false, false);
         }
+        end_semaphore.increment();
+        continue;
       }
       else {
         /* This should never happen, since shaders larger than the pool size should be discarded
@@ -252,9 +256,11 @@ void GPU_compilation_subprocess_run(const char *subprocess_name)
 
     end_semaphore.increment();
 
-    fstream file(cache_path, std::ios::binary | std::ios::out);
-    file.write(reinterpret_cast<char *>(shared_mem.get_data()),
-               binary->size + offsetof(ShaderBinaryHeader, data));
+    if (binary) {
+      fstream file(cache_path, std::ios::binary | std::ios::out);
+      file.write(reinterpret_cast<char *>(shared_mem.get_data()),
+                 binary->size + offsetof(ShaderBinaryHeader, data));
+    }
   }
 
   GPU_exit();
