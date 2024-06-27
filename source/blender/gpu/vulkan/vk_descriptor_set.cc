@@ -84,21 +84,25 @@ void VKDescriptorSetTracker::bind_as_ssbo(VKUniformBuffer &buffer,
 }
 
 void VKDescriptorSetTracker::image_bind(VKTexture &texture,
-                                        const VKDescriptorSet::Location location)
+                                        const VKDescriptorSet::Location location,
+                                        VKImageViewArrayed arrayed)
 {
   Binding &binding = ensure_location(location);
   binding.type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
   binding.texture = &texture;
+  binding.arrayed = arrayed;
 }
 
 void VKDescriptorSetTracker::bind(VKTexture &texture,
                                   const VKDescriptorSet::Location location,
-                                  const VKSampler &sampler)
+                                  const VKSampler &sampler,
+                                  VKImageViewArrayed arrayed)
 {
   Binding &binding = ensure_location(location);
   binding.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
   binding.texture = &texture;
   binding.vk_sampler = sampler.vk_handle();
+  binding.arrayed = arrayed;
 }
 
 void VKDescriptorSetTracker::bind(VKVertexBuffer &vertex_buffer,
@@ -138,6 +142,8 @@ void VKDescriptorSetTracker::update(VKContext &context)
   BLI_assert(vk_descriptor_set != VK_NULL_HANDLE);
   debug::object_label(vk_descriptor_set, shader.name_get());
 
+  /* TODO: should be replaced by a better system. The buffer_infos and image_infos can be
+   * reallocated, making previous references invalid. */
   Vector<VkDescriptorBufferInfo> buffer_infos;
   buffer_infos.reserve(16);
   Vector<VkWriteDescriptorSet> descriptor_writes;
@@ -176,7 +182,7 @@ void VKDescriptorSetTracker::update(VKContext &context)
   }
 
   Vector<VkDescriptorImageInfo> image_infos;
-  image_infos.reserve(16);
+  image_infos.reserve(32);
   for (const Binding &binding : bindings_) {
     if (!binding.is_image()) {
       continue;
@@ -186,7 +192,7 @@ void VKDescriptorSetTracker::update(VKContext &context)
      * VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL or VK_IMAGE_LAYOUT_GENERAL. */
     VkDescriptorImageInfo image_info = {};
     image_info.sampler = binding.vk_sampler;
-    image_info.imageView = binding.texture->image_view_get().vk_handle();
+    image_info.imageView = binding.texture->image_view_get(binding.arrayed).vk_handle();
     image_info.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
     image_infos.append(image_info);
 
