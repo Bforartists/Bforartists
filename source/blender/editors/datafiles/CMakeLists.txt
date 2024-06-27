@@ -236,6 +236,8 @@ if(WITH_BLENDER)
     set(SVG_SRC
       # ------------------------- row 1 --------------------------*/
 
+      none
+
       question
       error
       cancel
