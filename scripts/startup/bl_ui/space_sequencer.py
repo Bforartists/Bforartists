@@ -2186,7 +2186,7 @@ class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False #BFA
         layout.use_property_decorate = False
 
         strip = context.active_sequence_strip
@@ -2197,7 +2197,7 @@ class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
         if strip.type == 'MOVIECLIP':
             col = layout.column(heading="Use")
             col.prop(strip, "stabilize2d", text="2D Stabilized Clip")
-            col.prop(strip, "undistort", text="Undestorted Clip")
+            col.prop(strip, "undistort", text="Undistorted Clip")
 
         clip = strip.clip
         if clip:
@@ -2663,31 +2663,7 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
         layout.active = not strip.mute
 
         col.prop(strip, "strobe")
-
-        if strip.type == 'MOVIECLIP':
-            col = layout.column()
-            col.label(text="Tracker")
-            col = layout.column(align=True)
-            row = col.row()
-            row.separator()
-            row.use_property_split = False
-            row.prop(strip, "stabilize2d")
-            row.prop_decorator(strip, "stabilize2d")
-
-            col = layout.column()
-            col.label(text="Distortion")
-            col = layout.column(align=True)
-            row = col.row()
-            row.separator()
-            row.use_property_split = False
-            row.prop(strip, "undistort")
-            row.prop_decorator(strip, "undistort")
-            col.separator()
-
-        row = col.row()
-        row.use_property_split = False
-        row.prop(strip, "use_reverse_frames")
-        row.prop_decorator(strip, "use_reverse_frames")
+        col.prop(strip, "use_reverse_frames")
 
 
 class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
