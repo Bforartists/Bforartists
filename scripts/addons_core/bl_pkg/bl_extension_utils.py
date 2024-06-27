@@ -283,12 +283,16 @@ def repository_iter_package_dirs(
         directory: str,
         *,
         error_fn: Callable[[Exception], None],
+        ignore_missing: bool = False,
 ) -> Generator[os.DirEntry[str], None, None]:
     try:
         dir_entries = os.scandir(directory)
     except Exception as ex:
+        # The `isinstance` check is ignored, suppress warning.
+        # pylint: disable-next=no-member
+        if not (ignore_missing and isinstance(ex, FileNotFoundError) and ex.filename == directory):
+            error_fn(ex)
         dir_entries = None
-        error_fn(ex)
 
     for entry in (dir_entries if dir_entries is not None else ()):
         # Only check directories.
@@ -593,6 +597,7 @@ def pkg_install(
 def pkg_uninstall(
         *,
         directory: str,
+        user_directory: str,
         pkg_id_sequence: Sequence[str],
         use_idle: bool,
 ) -> Generator[InfoItemSeq, None, None]:
@@ -603,6 +608,7 @@ def pkg_uninstall(
     yield from command_output_from_json_0([
         "uninstall", ",".join(pkg_id_sequence),
         "--local-dir", directory,
+        "--user-dir", user_directory,
     ], use_idle=use_idle)
     yield [COMPLETE_ITEM]
 
@@ -717,7 +723,7 @@ def pkg_is_legacy_addon(filepath: str) -> bool:
 
 
 def pkg_repo_cache_clear(local_dir: str) -> None:
-    local_cache_dir = os.path.join(local_dir, ".blender_ext", "cache")
+    local_cache_dir = os.path.join(local_dir, REPO_LOCAL_PRIVATE_DIR, "cache")
     if not os.path.isdir(local_cache_dir):
         return
 
@@ -1734,13 +1740,13 @@ class _RepoCacheEntry:
         has_remote = self.remote_url != ""
 
         if self._pkg_manifest_local is None:
-            self._json_data_ensure(
-                ignore_missing=ignore_missing,
-                error_fn=error_fn,
-            )
             pkg_manifest_local = {}
 
-            for entry in repository_iter_package_dirs(self.directory, error_fn=error_fn):
+            for entry in repository_iter_package_dirs(
+                    self.directory,
+                    ignore_missing=ignore_missing,
+                    error_fn=error_fn,
+            ):
                 dirname = entry.name
                 filepath_toml = os.path.join(self.directory, dirname, PKG_MANIFEST_FILENAME_TOML)
                 try:
@@ -1899,6 +1905,7 @@ class RepoCacheStore:
             *,
             error_fn: Callable[[Exception], None],
             check_files: bool = False,
+            ignore_missing: bool = False,
             directory_subset: Optional[Set[str]] = None,
     ) -> Generator[Optional[Dict[str, PkgManifest_Normalized]], None, None]:
         for repo_entry in self._repos:
@@ -1907,7 +1914,10 @@ class RepoCacheStore:
                     continue
             if check_files:
                 repo_entry.force_local_refresh()
-            yield repo_entry.pkg_manifest_from_local_ensure(error_fn=error_fn)
+            yield repo_entry.pkg_manifest_from_local_ensure(
+                ignore_missing=ignore_missing,
+                error_fn=error_fn,
+            )
 
     def clear(self) -> None:
         self._repos.clear()
