@@ -25,6 +25,7 @@
 #include "BKE_brush.hh"
 #include "BKE_context.hh"
 #include "BKE_layer.hh"
+#include "BKE_mesh.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object_types.hh"
 #include "BKE_paint.hh"
@@ -113,7 +114,8 @@ void cache_init(bContext *C,
   ss.filter_cache->random_seed = rand();
 
   if (undo_type == undo::Type::Color) {
-    BKE_pbvh_ensure_node_loops(pbvh);
+    const Mesh &mesh = *static_cast<const Mesh *>(ob.data);
+    BKE_pbvh_ensure_node_loops(pbvh, mesh.corner_tris());
   }
 
   ss.filter_cache->nodes = bke::pbvh::search_gather(
@@ -331,8 +333,7 @@ static void mesh_filter_task(Object &ob,
 {
   SculptSession &ss = *ob.sculpt;
 
-  SculptOrigVertData orig_data;
-  SCULPT_orig_vert_data_init(orig_data, ob, *node, undo::Type::Position);
+  SculptOrigVertData orig_data = SCULPT_orig_vert_data_init(ob, *node, undo::Type::Position);
 
   /* When using the relax face sets meshes filter,
    * each 3 iterations, do a whole mesh relax to smooth the contents of the Face Set. */
@@ -816,8 +817,7 @@ static void sculpt_mesh_filter_cancel(bContext *C, wmOperator * /*op*/)
   for (PBVHNode *node : nodes) {
     PBVHVertexIter vd;
 
-    SculptOrigVertData orig_data;
-    SCULPT_orig_vert_data_init(orig_data, ob, *node, undo::Type::Position);
+    SculptOrigVertData orig_data = SCULPT_orig_vert_data_init(ob, *node, undo::Type::Position);
 
     BKE_pbvh_vertex_iter_begin (*ss->pbvh, node, vd, PBVH_ITER_UNIQUE) {
       SCULPT_orig_vert_data_update(orig_data, vd);
