@@ -531,7 +531,10 @@ void blf_draw_svg_icon(
   font->pos[0] = int(x);
   font->pos[1] = int(y);
   font->pos[2] = 0;
-  rgba_float_to_uchar(font->color, color);
+
+  if (color != nullptr) {
+    rgba_float_to_uchar(font->color, color);
+  }
 
   if (outline_alpha > 0) {
     font->flags |= BLF_SHADOW;
@@ -547,7 +550,7 @@ void blf_draw_svg_icon(
   GlyphCacheBLF *gc = blf_glyph_cache_acquire(font);
   blf_batch_draw_begin(font);
 
-  GlyphBLF *g = blf_glyph_ensure_icon(gc, icon_id);
+  GlyphBLF *g = blf_glyph_ensure_icon(gc, icon_id, color == nullptr);
   if (g) {
     blf_glyph_draw(font, gc, g, 0, 0);
   }
