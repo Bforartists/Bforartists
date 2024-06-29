@@ -184,7 +184,7 @@ GlyphBLF *blf_glyph_ensure(FontBLF *font, GlyphCacheBLF *gc, uint charcode, uint
 GlyphBLF *blf_glyph_ensure_subpixel(FontBLF *font, GlyphCacheBLF *gc, GlyphBLF *g, int32_t pen_x);
 #endif
 
-GlyphBLF *blf_glyph_ensure_icon(GlyphCacheBLF *gc, uint icon_id);
+GlyphBLF *blf_glyph_ensure_icon(GlyphCacheBLF *gc, uint icon_id, bool color = false);
 
 /**
  * Convert a character's outlines into curves.
@@ -194,7 +194,8 @@ float blf_character_to_curves(FontBLF *font,
                               ListBase *nurbsbase,
                               const float scale);
 
-void blf_glyph_draw(FontBLF *font, GlyphCacheBLF *gc, GlyphBLF *g, int x, int y);
+void blf_glyph_draw(
+    FontBLF *font, GlyphCacheBLF *gc, GlyphBLF *g, int x, int y);
 
 #ifdef WIN32
 /* `blf_font_win32_compat.cc` */
