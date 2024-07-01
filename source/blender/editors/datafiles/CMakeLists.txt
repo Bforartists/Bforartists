@@ -422,7 +422,7 @@ if(WITH_BLENDER)
       duplicate
       fullscreen_enter
       fullscreen_exit
-      #blank1  // not actually blank - this is used all over the place
+      blank1  # BFA - not actually blank - this is used all over the place
       load_gltf
       save_gltf
       stucci_tex
@@ -2602,6 +2602,7 @@ if(WITH_BLENDER)
       # ------------------------- large --------------------------
       cancel_large
       warning_large
+      question_large
       info_large
       disc_large
       disk_drive_large
