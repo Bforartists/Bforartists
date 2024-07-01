@@ -41,23 +41,23 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
      inkscape:zoom="0.5"
-     inkscape:cx="681"
-     inkscape:cy="586"
+     inkscape:cx="832"
+     inkscape:cy="688"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="BLEND_OFFSET"
+     inkscape:current-layer="svg2"
      inkscape:showpageshadow="true"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#d1d1d1" />
   <g
      id="BLEND_OFFSET"
-     transform="translate(0,3168)">
+     transform="translate(2.302786e-4,3266.144)">
     <path
        style="fill:#fefefe;stroke-width:0.03125"
        d="m 370.8262,-2817.964 c 41.80349,13.1678 93.42059,12.205 144.50676,-2.6954 l 8.02821,-2.3416 v 240.59 240.59 l -25.86855,-4.5397 c -34.22228,-6.0058 -79.8826,-5.774 -115.07014,0.5823 -15.6995,2.8362 -29.74878,5.1894 -31.22065,5.2271 -1.47176,0.039 -2.67634,-108.9444 -2.67634,-242.1843 v -242.2529 z"

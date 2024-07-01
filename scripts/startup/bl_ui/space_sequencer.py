@@ -1125,6 +1125,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
                 layout.separator()  # BFA - added seperator
 
                 layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
+                layout.operator("sequencer.retiming_key_delete")
                 layout.operator("sequencer.retiming_add_freeze_frame_slide", icon='KEYTYPE_MOVING_HOLD_VEC')
                 col = layout.column()
                 col.operator("sequencer.retiming_add_transition_slide", icon='NODE_CURVE_TIME')
@@ -1374,6 +1375,7 @@ class SEQUENCER_MT_retiming(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
+        layout.operator("sequencer.retiming_key_delete")
         layout.operator("sequencer.retiming_add_freeze_frame_slide", icon='KEYTYPE_MOVING_HOLD_VEC')
 
 
