@@ -41,24 +41,24 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
-     inkscape:zoom="0.1767767"
-     inkscape:cx="25.455844"
-     inkscape:cy="582.65599"
+     inkscape:zoom="0.50000001"
+     inkscape:cx="1238"
+     inkscape:cy="893.99998"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="GROUP_BONE"
+     inkscape:current-layer="svg2"
      inkscape:showpageshadow="0"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#d1d1d1" />
   <g
      id="GROUP_BONE"
      style="stroke:none"
-     transform="translate(0,3168)">
+     transform="matrix(1.1428571,0,0,1.1428571,-114.2857,3480.2857)">
     <path
        style="fill:#fecb98;stroke:none;stroke-width:0.03125"
        d="m 497.68857,-2164.3659 v -363.2802 h 384.64963 384.6496 v 164.2389 562.4313 l -141.8663,-0.1111 H 811.40499 497.68857 Z m 545.44093,-71.621 c 16.0063,-7.8842 32.1637,-24.0416 40.0479,-40.048 8.8926,-18.0537 8.8926,-55.1091 0,-73.1628 -7.8842,-16.0064 -24.0416,-32.1638 -40.0479,-40.048 l -12.5409,-6.1771 H 881.00261 731.41664 l -12.54083,6.1771 c -16.05715,7.9092 -32.20845,24.0908 -39.97295,40.048 -7.38482,15.1769 -9.66656,43.6566 -4.87015,60.7877 6.51862,23.2822 28.9178,47.1151 52.4749,55.8337 8.46289,3.1321 35.88209,3.7044 157.16618,3.2802 l 146.91481,-0.5137 z"

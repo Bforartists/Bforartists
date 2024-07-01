@@ -24,9 +24,9 @@
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#303030"
      inkscape:zoom="0.1767767"
-     inkscape:cx="1462.2968"
-     inkscape:cy="299.81327"
-     inkscape:window-width="1993"
+     inkscape:cx="1781.909"
+     inkscape:cy="763.6753"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -45,8 +45,9 @@
      clip-rule="evenodd"
      enable-background="new"
      id="g15"
-     transform="matrix(0.24503405,0,0,0.24503405,75.510664,777.3234)"
-     style="stroke-width:4.08107">
+     transform="matrix(0.28003891,0,0,0.28003891,72.012188,674.0839)"
+     style="stroke-width:4.08107"
+     inkscape:label="Cancel">
     <path
        d="M 181.7395,1436.873 H 5813.4343 V 2949.2905 H 181.7395 Z"
        fill="none"
@@ -56,7 +57,7 @@
        id="path5" />
     <g
        id="CANCEL"
-       transform="matrix(357.09323,0,0,357.09323,99.942571,-2764.2012)"
+       transform="matrix(357.09323,0,0,357.09323,-245.99425,-2412.8116)"
        style="stroke-width:0.0114286">
       <path
          style="fill:none;stroke-width:0.000357143"
