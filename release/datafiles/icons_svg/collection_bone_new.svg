@@ -41,13 +41,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
      inkscape:zoom="0.5"
-     inkscape:cx="815"
-     inkscape:cy="668"
+     inkscape:cx="896"
+     inkscape:cy="1106"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -59,7 +59,7 @@
      id="COLLECTION_BONE_NEW"
      style="stroke:none;stroke-width:0.011699"
      inkscape:label="COLLECTION_BONE_NEW"
-     transform="matrix(85.477697,0,0,85.477697,100,122.36821)">
+     transform="scale(97.688797)">
     <path
        style="fill:#fecb98;stroke:none;stroke-width:0.000365592"
        d="M 4.6525419,10.309892 V 6.0598921 h 4.5 4.5000001 v 1.921425 6.5798599 l -1.659689,-0.0013 H 8.3226972 4.6525419 Z M 11.033632,9.4720009 c 0.187258,-0.092236 0.376282,-0.281261 0.468519,-0.4685191 0.104034,-0.2112097 0.104034,-0.6447197 0,-0.8559294 C 11.409914,7.9602943 11.22089,7.7712696 11.033632,7.6790333 l -0.146715,-0.072266 h -1.7500001 -1.75 L 7.2402022,7.6790333 C 7.0523503,7.7715621 6.8633969,7.9608699 6.7725603,8.1475524 6.6861656,8.3251062 6.6594716,8.6582899 6.7155847,8.8587055 6.7918457,9.131083 7.0538928,9.409903 7.3294863,9.5119012 c 0.099007,0.036643 0.4197831,0.043338 1.8386806,0.038376 l 1.7187501,-0.00601 z"
