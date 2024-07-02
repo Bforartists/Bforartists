@@ -61,8 +61,6 @@ const EnumPropertyItem rna_enum_fmodifier_type_items[] = {
      ICON_NOISE_MODIFIER,
      "Noise",
      "Add pseudo-random noise on top of F-Curves"},
-    // {FMODIFIER_TYPE_FILTER, "FILTER", 0, "Filter", ""}, /* FIXME: not implemented yet! */
-    // {FMODIFIER_TYPE_PYTHON, "PYTHON", 0, "Python", ""}, /* FIXME: not implemented yet! */
     {FMODIFIER_TYPE_LIMITS,
      "LIMITS",
      ICON_LIMIT_MODIFIER,
@@ -215,12 +213,6 @@ static StructRNA *rna_FModifierType_refine(PointerRNA *ptr)
       return &RNA_FModifierCycles;
     case FMODIFIER_TYPE_NOISE:
       return &RNA_FModifierNoise;
-#  if 0
-    case FMODIFIER_TYPE_FILTER:
-      return &RNA_FModifierFilter;
-#  endif
-    case FMODIFIER_TYPE_PYTHON:
-      return &RNA_FModifierPython;
     case FMODIFIER_TYPE_LIMITS:
       return &RNA_FModifierLimits;
     case FMODIFIER_TYPE_STEPPED:
@@ -1550,19 +1542,6 @@ static void rna_def_fmodifier_cycles(BlenderRNA *brna)
 
 /* --------- */
 
-static void rna_def_fmodifier_python(BlenderRNA *brna)
-{
-  StructRNA *srna;
-  // PropertyRNA *prop;
-
-  srna = RNA_def_struct(brna, "FModifierPython", "FModifier");
-  RNA_def_struct_ui_text(
-      srna, "Python F-Modifier", "Perform user-defined operation on the modified F-Curve");
-  RNA_def_struct_sdna_from(srna, "FMod_Python", "data");
-}
-
-/* --------- */
-
 static void rna_def_fmodifier_limits(BlenderRNA *brna)
 {
   StructRNA *srna;
@@ -1789,7 +1768,7 @@ static void rna_def_fmodifier(BlenderRNA *brna)
   // RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_boolean_funcs(prop, nullptr, "rna_FModifier_show_expanded_set");
   RNA_def_property_ui_text(prop, "Expanded", "F-Curve Modifier's panel is expanded in UI");
-  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1); /*BFA - icon*/
 
   prop = RNA_def_property(srna, "mute", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", FMODIFIER_FLAG_MUTED);
@@ -2725,7 +2704,6 @@ void RNA_def_fcurve(BlenderRNA *brna)
   rna_def_fmodifier_envelope_ctrl(brna);
 
   rna_def_fmodifier_cycles(brna);
-  rna_def_fmodifier_python(brna);
   rna_def_fmodifier_limits(brna);
   rna_def_fmodifier_noise(brna);
   rna_def_fmodifier_stepped(brna);
