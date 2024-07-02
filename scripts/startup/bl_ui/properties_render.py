@@ -885,13 +885,22 @@ class RENDER_PT_eevee_next_sampling_shadows(RenderButtonsPanel, Panel):
         col.prop(props, "shadow_ray_count", text="Rays")
         col.prop(props, "shadow_step_count", text="Steps")
 
-        col = layout.column(align=False, heading="Volume Shadows")
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(props, "use_volumetric_shadows", text="")
-        sub = sub.row(align=True)
-        sub.active = props.use_volumetric_shadows
-        sub.prop(props, "volumetric_shadow_samples", text="Steps")
+        col = layout.column(align=False)
+        row = layout.row()
+        row.use_property_split = False
+        split = row.split(factor = 0.366)
+        row = split.row()
+        row.prop(props, "use_volumetric_shadows", text = "Volume Shadows")
+        row = split.row()
+        if props.use_volumetric_shadows:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if props.use_volumetric_shadows:
+            row = layout.row()
+            row.separator()
+            row.prop(props, "volumetric_shadow_samples", text="Steps")
 
         col = layout.column()
         col.prop(props, "shadow_resolution_scale", text="Resolution")
