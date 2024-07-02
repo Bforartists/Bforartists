@@ -751,7 +751,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
       if (is_whole_array) {
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Drivers to Selected"),
-                       ICON_NONE,
+                       ICON_COPYDOWN, /*BFA*/
                        "UI_OT_copy_driver_to_selected_button",
                        "all",
                        true);
@@ -769,7 +769,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         }
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Driver to Selected"),
-                       ICON_NONE,
+                       ICON_COPYDOWN, /*BFA*/
                        "UI_OT_copy_driver_to_selected_button",
                        "all",
                        false);
@@ -777,7 +777,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
           uiItemBooleanO(
               layout,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy All Drivers to Selected"),
-              ICON_NONE,
+              ICON_COPYDOWN,/*BFA*/
               "UI_OT_copy_driver_to_selected_button",
               "all",
               true);
