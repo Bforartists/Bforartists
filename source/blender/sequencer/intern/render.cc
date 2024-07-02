@@ -923,7 +923,8 @@ static ImBuf *seq_render_effect_strip_impl(const SeqRenderData *context,
       for (i = 0; i < 3; i++) {
         /* Speed effect requires time remapping of `timeline_frame` for input(s). */
         if (input[0] && seq->type == SEQ_TYPE_SPEED) {
-          float target_frame = seq_speed_effect_target_frame_get(scene, seq, timeline_frame, i);
+          int target_frame = floor(
+              seq_speed_effect_target_frame_get(scene, seq, timeline_frame, i));
           ibuf[i] = seq_render_strip(context, state, input[0], target_frame);
         }
         else { /* Other effects. */
@@ -1678,10 +1679,13 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context,
 
       RE_AcquireResultImage(re, &rres, view_id);
 
+      /* TODO: Share the pixel data with the original image buffer from the render result using
+       * implicit sharing. */
       if (rres.ibuf && rres.ibuf->float_buffer.data) {
-        ibufs_arr[view_id] = IMB_allocImBuf(rres.rectx, rres.recty, 32, 0);
-        IMB_assign_float_buffer(
-            ibufs_arr[view_id], rres.ibuf->float_buffer.data, IB_DO_NOT_TAKE_OWNERSHIP);
+        ibufs_arr[view_id] = IMB_allocImBuf(rres.rectx, rres.recty, 32, IB_rectfloat);
+        memcpy(ibufs_arr[view_id]->float_buffer.data,
+               rres.ibuf->float_buffer.data,
+               sizeof(float[4]) * rres.rectx * rres.recty);
 
         /* float buffers in the sequencer are not linear */
         seq_imbuf_to_sequencer_space(context->scene, ibufs_arr[view_id], false);

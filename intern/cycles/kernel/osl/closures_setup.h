@@ -11,6 +11,8 @@
 #include "kernel/closure/bsdf.h"
 #include "kernel/closure/emissive.h"
 
+#include "kernel/geom/object.h"
+
 CCL_NAMESPACE_BEGIN
 
 #define OSL_CLOSURE_STRUCT_BEGIN(Upper, lower) \
@@ -95,6 +97,7 @@ ccl_device void osl_closure_diffuse_setup(KernelGlobals kg,
   sd->flag |= bsdf_diffuse_setup(bsdf);
 }
 
+/* Deprecated form, will be removed in OSL 2.0. */
 ccl_device void osl_closure_oren_nayar_setup(KernelGlobals kg,
                                              ccl_private ShaderData *sd,
                                              uint32_t path_flag,
@@ -115,7 +118,31 @@ ccl_device void osl_closure_oren_nayar_setup(KernelGlobals kg,
   bsdf->N = safe_normalize_fallback(closure->N, sd->N);
   bsdf->roughness = closure->roughness;
 
-  sd->flag |= bsdf_oren_nayar_setup(bsdf);
+  sd->flag |= bsdf_oren_nayar_setup(sd, bsdf, rgb_to_spectrum(weight));
+}
+
+ccl_device void osl_closure_oren_nayar_diffuse_bsdf_setup(
+    KernelGlobals kg,
+    ccl_private ShaderData *sd,
+    uint32_t path_flag,
+    float3 weight,
+    ccl_private const OrenNayarDiffuseBSDFClosure *closure,
+    float3 *layer_albedo)
+{
+  if (osl_closure_skip(kg, sd, path_flag, LABEL_DIFFUSE)) {
+    return;
+  }
+
+  ccl_private OrenNayarBsdf *bsdf = (ccl_private OrenNayarBsdf *)bsdf_alloc(
+      sd, sizeof(OrenNayarBsdf), rgb_to_spectrum(weight));
+  if (!bsdf) {
+    return;
+  }
+
+  bsdf->N = safe_normalize_fallback(closure->N, sd->N);
+  bsdf->roughness = closure->roughness;
+
+  sd->flag |= bsdf_oren_nayar_setup(sd, bsdf, rgb_to_spectrum(closure->albedo));
 }
 
 ccl_device void osl_closure_translucent_setup(KernelGlobals kg,
@@ -749,6 +776,9 @@ ccl_device void osl_closure_emission_setup(KernelGlobals kg,
                                            ccl_private const GenericEmissiveClosure *closure,
                                            float3 *layer_albedo)
 {
+  if (sd->flag & SD_IS_VOLUME_SHADER_EVAL) {
+    weight *= object_volume_density(kg, sd->object);
+  }
   emission_setup(sd, rgb_to_spectrum(weight));
 }
 
@@ -1031,7 +1061,7 @@ ccl_device void osl_closure_absorption_setup(KernelGlobals kg,
                                              ccl_private const VolumeAbsorptionClosure *closure,
                                              float3 *layer_albedo)
 {
-  volume_extinction_setup(sd, rgb_to_spectrum(weight));
+  volume_extinction_setup(sd, rgb_to_spectrum(weight * object_volume_density(kg, sd->object)));
 }
 
 ccl_device void osl_closure_henyey_greenstein_setup(
@@ -1042,6 +1072,7 @@ ccl_device void osl_closure_henyey_greenstein_setup(
     ccl_private const VolumeHenyeyGreensteinClosure *closure,
     float3 *layer_albedo)
 {
+  weight *= object_volume_density(kg, sd->object);
   volume_extinction_setup(sd, rgb_to_spectrum(weight));
 
   ccl_private HenyeyGreensteinVolume *volume = (ccl_private HenyeyGreensteinVolume *)bsdf_alloc(

@@ -672,9 +672,9 @@ class SEQUENCER_MT_select_linked(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.select_linked", text="All")
-        layout.operator("sequencer.select_less", text="Less")
-        layout.operator("sequencer.select_more", text="More")
+        layout.operator("sequencer.select_linked", text="All", icon="SELECT_ALL")
+        layout.operator("sequencer.select_less", text="Less", icon="SELECTLESS")
+        layout.operator("sequencer.select_more", text="More", icon="SELECTMORE")
 
 
 class SEQUENCER_MT_select(Menu):
@@ -683,7 +683,8 @@ class SEQUENCER_MT_select(Menu):
     def draw(self, _context):
         layout = self.layout
         st = _context.space_data
-        has_sequencer, _has_preview = _space_view_types(st)
+        has_sequencer, has_preview = _space_view_types(st)
+		#is_retiming = context.scene.sequence_editor.selected_retiming_keys # BFA
 
         layout.operator("sequencer.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("sequencer.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -697,6 +698,10 @@ class SEQUENCER_MT_select(Menu):
         if has_sequencer:
             props = col.operator("sequencer.select_box", text="Box Select (Include Handles)", icon='BORDER_RECT')
             props.include_handles = True
+        # BFA - redundant
+        #elif has_preview:
+        #    col.operator_context = 'INVOKE_REGION_PREVIEW'
+        #    col.operator("sequencer.select_box", text="Box Select", icon='BORDER_RECT')
 
         col.separator()
 
@@ -1120,6 +1125,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
                 layout.separator()  # BFA - added seperator
 
                 layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
+                layout.operator("sequencer.retiming_key_delete")
                 layout.operator("sequencer.retiming_add_freeze_frame_slide", icon='KEYTYPE_MOVING_HOLD_VEC')
                 col = layout.column()
                 col.operator("sequencer.retiming_add_transition_slide", icon='NODE_CURVE_TIME')
@@ -1369,6 +1375,7 @@ class SEQUENCER_MT_retiming(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("sequencer.retiming_key_add", icon='KEYFRAMES_INSERT')
+        layout.operator("sequencer.retiming_key_delete")
         layout.operator("sequencer.retiming_add_freeze_frame_slide", icon='KEYTYPE_MOVING_HOLD_VEC')
 
 

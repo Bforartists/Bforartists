@@ -2955,6 +2955,8 @@ def km_sequencer(params):
          {"properties": [("adjust_length", True)]}),
         ("sequencer.offset_clear", {"type": 'O', "value": 'PRESS', "alt": True}, None),
         ("sequencer.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        ("sequencer.retiming_key_delete", {"type": 'X', "value": 'PRESS'}, None),
+        ("sequencer.retiming_key_delete", {"type": 'DEL', "value": 'PRESS'}, None),
         ("sequencer.delete", {"type": 'X', "value": 'PRESS'}, None),
         ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
         ("sequencer.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
@@ -4591,16 +4593,22 @@ def km_grease_pencil_brush_stroke(_params):
     )
 
     items.extend([
-        ("brush.scale_size", {"type": 'LEFT_BRACKET', "value": 'PRESS', "repeat": True},
-         {"properties": [("scalar", 0.9)]}),
-        ("brush.scale_size", {"type": 'RIGHT_BRACKET', "value": 'PRESS', "repeat": True},
-         {"properties": [("scalar", 1.0 / 0.9)]}),
         ("grease_pencil.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
         ("grease_pencil.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("grease_pencil.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
          {"properties": [("mode", 'SMOOTH')]}),
-        *_template_paint_radial_control("gpencil_paint"),
+        # Brush size
+        ("wm.radial_control", {"type": 'F', "value": 'PRESS'},
+         {"properties": [("data_path_primary", 'tool_settings.gpencil_paint.brush.size')]}),
+        # Brush strength
+        ("wm.radial_control", {"type": 'F', "value": 'PRESS', "shift": True},
+         {"properties": [("data_path_primary", 'tool_settings.gpencil_paint.brush.strength')]}),
+        # Increase/Decrease brush size
+        ("brush.scale_size", {"type": 'LEFT_BRACKET', "value": 'PRESS', "repeat": True},
+         {"properties": [("scalar", 0.9)]}),
+        ("brush.scale_size", {"type": 'RIGHT_BRACKET', "value": 'PRESS', "repeat": True},
+         {"properties": [("scalar", 1.0 / 0.9)]}),
     ])
 
     return keymap
