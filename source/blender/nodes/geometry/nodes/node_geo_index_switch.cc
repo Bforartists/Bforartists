@@ -71,7 +71,7 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
   bNode &node = *static_cast<bNode *>(ptr->data);
   NodeIndexSwitch &storage = node_storage(node);
   if (uiLayout *panel = uiLayoutPanel(C, layout, "index_switch_items", false, TIP_("Items"))) {
-    uiItemO(panel, "Add Item", ICON_ADD, "node.index_switch_item_add");
+    uiItemO(panel, IFACE_("Add Item"), ICON_ADD, "node.index_switch_item_add");
     uiLayout *col = uiLayoutColumn(panel, false);
     for (const int i : IndexRange(storage.items_num)) {
       uiLayout *row = uiLayoutRow(col, false);
@@ -354,7 +354,7 @@ static void node_free_storage(bNode *node)
 static void node_copy_storage(bNodeTree * /*dst_tree*/, bNode *dst_node, const bNode *src_node)
 {
   const NodeIndexSwitch &src_storage = node_storage(*src_node);
-  auto *dst_storage = MEM_new<NodeIndexSwitch>(__func__, src_storage);
+  auto *dst_storage = MEM_cnew<NodeIndexSwitch>(__func__, src_storage);
   dst_node->storage = dst_storage;
 
   socket_items::copy_array<IndexSwitchItemsAccessor>(*src_node, *dst_node);

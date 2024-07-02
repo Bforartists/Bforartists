@@ -137,11 +137,7 @@ struct Material {
   bool is_transparent();
 };
 
-void get_material_image(Object *ob,
-                        int material_index,
-                        ::Image *&image,
-                        ImageUser *&iuser,
-                        GPUSamplerState &sampler_state);
+ImageGPUTextures get_material_texture(GPUSamplerState &sampler_state);
 
 struct SceneState {
   Scene *scene = nullptr;
@@ -186,18 +182,30 @@ struct SceneState {
   void init(Object *camera_ob = nullptr);
 };
 
-struct ObjectState {
-  eV3DShadingColorType color_type = V3D_SHADING_SINGLE_COLOR;
-  bool sculpt_pbvh = false;
-  ::Image *image_paint_override = nullptr;
-  GPUSamplerState override_sampler_state = GPUSamplerState::default_sampler();
-  bool draw_shadow = false;
-  bool use_per_material_batches = false;
+struct MaterialTexture {
+  const char *name = nullptr;
+  ImageGPUTextures gpu = {};
+  GPUSamplerState sampler_state = GPUSamplerState::default_sampler();
+  bool premultiplied = false;
+  bool alpha_cutoff = false;
 
-  ObjectState(const SceneState &scene_state, Object *ob);
+  MaterialTexture() = default;
+  MaterialTexture(Object *ob, int material_index);
+  MaterialTexture(::Image *image, ImageUser *user = nullptr);
 };
 
 struct SceneResources;
+
+struct ObjectState {
+  eV3DShadingColorType color_type = V3D_SHADING_SINGLE_COLOR;
+  MaterialTexture image_paint_override = {};
+  bool show_missing_texture = false;
+  bool draw_shadow = false;
+  bool use_per_material_batches = false;
+  bool sculpt_pbvh = false;
+
+  ObjectState(const SceneState &scene_state, const SceneResources &resources, Object *ob);
+};
 
 class CavityEffect {
  private:
@@ -273,6 +281,7 @@ struct SceneResources {
   TextureRef depth_in_front_tx;
 
   Framebuffer clear_fb = {"Clear Main"};
+  Framebuffer clear_depth_only_fb = {"Clear Depth"};
   Framebuffer clear_in_front_fb = {"Clear In Front"};
 
   StorageVectorBuffer<Material> material_buf = {"material_buf"};
@@ -284,6 +293,9 @@ struct SceneResources {
   CavityEffect cavity = {};
 
   StencilViewWorkaround stencil_view;
+
+  Texture missing_tx = "missing_tx";
+  MaterialTexture missing_texture;
 
   void init(const SceneState &scene_state);
   void load_jitter_tx(int total_samples);
@@ -309,9 +321,7 @@ class MeshPass : public PassMain {
   void init_subpasses(ePipelineType pipeline, eLightingType lighting, bool clip);
 
   PassMain::Sub &get_subpass(eGeometryType geometry_type,
-                             ::Image *image = nullptr,
-                             GPUSamplerState sampler_state = GPUSamplerState::default_sampler(),
-                             ImageUser *iuser = nullptr);
+                             const MaterialTexture *texture = nullptr);
 };
 
 enum class StencilBits : uint8_t {

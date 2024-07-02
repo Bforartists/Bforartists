@@ -252,7 +252,14 @@ void cubeface_sync(int tilemap_id,
 void main()
 {
   uint l_idx = gl_GlobalInvocationID.x;
-  if (l_idx >= light_cull_buf.items_count) {
+  /* We are dispatching (with padding) over the culled light array.
+   * This array is not contiguous. Visible local lights are packed at the begining
+   * and directional lights at the end. There is a range of uninitialized value in between that
+   * needs to be avoided. */
+  bool valid_local = (l_idx < light_cull_buf.visible_count);
+  bool valid_directional = (l_idx >= light_cull_buf.local_lights_len) &&
+                           (l_idx < light_cull_buf.items_count);
+  if (!valid_local && !valid_directional) {
     return;
   }
 
@@ -276,7 +283,14 @@ void main()
 
       shadow_direction = transform_direction(light.object_to_world, shadow_direction);
 
-      light.object_to_world = transform_from_matrix(mat4x4(from_up_axis(shadow_direction)));
+      if (light_sun_data_get(light).shadow_angle == 0.0) {
+        /* The shape is a point. There is nothing to jitter.
+         * `shape_radius` is clamped to a minimum for precision reasons, so `shadow_angle` is
+         * set to 0 only when the light radius is also 0 to detect this case. */
+      }
+      else {
+        light.object_to_world = transform_from_matrix(mat4x4(from_up_axis(shadow_direction)));
+      }
     }
 
     if (light.type == LIGHT_SUN_ORTHO) {
@@ -299,7 +313,14 @@ void main()
         position_on_light = vec3(point_on_unit_shape * light_area_data_get(light).size, 0.0);
       }
       else {
-        position_on_light = sample_ball(rand) * light_local_data_get(light).shape_radius;
+        if (light_local_data_get(light).shadow_radius == 0.0) {
+          /* The shape is a point. There is nothing to jitter.
+           * `shape_radius` is clamped to a minimum for precision reasons, so `shadow_radius` is
+           * set to 0 only when the light radius is also 0 to detect this case. */
+        }
+        else {
+          position_on_light = sample_ball(rand) * light_local_data_get(light).shape_radius;
+        }
       }
     }
 

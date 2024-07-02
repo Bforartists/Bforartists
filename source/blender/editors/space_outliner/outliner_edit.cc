@@ -347,7 +347,7 @@ static void do_item_rename(ARegion *region,
     BKE_report(reports, RPT_INFO, "External library data is not editable");
   }
   else if (TSE_IS_REAL_ID(tselem) && ID_IS_OVERRIDE_LIBRARY(tselem->id)) {
-    BKE_report(reports, RPT_INFO, "Overridden data names are not editable");
+    BKE_report(reports, RPT_INFO, "Overridden data names are not editable"); /*BFA*/
   }
   else if (outliner_is_collection_tree_element(te)) {
     Collection *collection = outliner_collection_from_tree_element(te);
@@ -498,7 +498,7 @@ static void id_delete_tag(bContext *C, ReportList *reports, TreeElement *te, Tre
   if (ID_REAL_USERS(id) <= 1 && BKE_library_ID_is_indirectly_used(bmain, id)) {
     BKE_reportf(reports,
                 RPT_WARNING,
-                "Cannot delete id '%s', indirectly used data need at least one user",
+                "Cannot delete id '%s', indirectly used data need at least one user",  /*BFA*/
                 id->name);
     return;
   }
@@ -592,7 +592,7 @@ static int outliner_id_delete_invoke(bContext *C, wmOperator *op, const wmEvent 
 
 void OUTLINER_OT_id_delete(wmOperatorType *ot)
 {
-  ot->name = "Delete Data";
+  ot->name = "Delete Data";  /*BFA*/
   ot->idname = "OUTLINER_OT_id_delete";
   ot->description = "Delete the ID under cursor";
 
@@ -823,14 +823,14 @@ static int outliner_id_copy_exec(bContext *C, wmOperator *op)
 
   const int num_ids = outliner_id_copy_tag(space_outliner, &space_outliner->tree);
   if (num_ids == 0) {
-    BKE_report(op->reports, RPT_INFO, "No selected data to copy");
+    BKE_report(op->reports, RPT_INFO, "No selected data to copy");  /*BFA*/
     return OPERATOR_CANCELLED;
   }
 
   outliner_copybuffer_filepath_get(filepath, sizeof(filepath));
   BKE_copybuffer_copy_end(bmain, filepath, op->reports);
 
-  BKE_reportf(op->reports, RPT_INFO, "Copied %d selected data", num_ids);
+  BKE_reportf(op->reports, RPT_INFO, "Copied %d selected data", num_ids);  /*BFA*/
 
   return OPERATOR_FINISHED;
 }
@@ -840,7 +840,7 @@ void OUTLINER_OT_id_copy(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Outliner ID Data Copy";
   ot->idname = "OUTLINER_OT_id_copy";
-  ot->description = "Selected data are copied to the clipboard";
+  ot->description = "Selected data are copied to the clipboard";  /*BFA*/
 
   /* callbacks */
   ot->exec = outliner_id_copy_exec;
@@ -871,7 +871,7 @@ static int outliner_id_paste_exec(bContext *C, wmOperator *op)
 
   WM_event_add_notifier(C, NC_WINDOW, nullptr);
 
-  BKE_reportf(op->reports, RPT_INFO, "%d data pasted", num_pasted);
+  BKE_reportf(op->reports, RPT_INFO, "%d data pasted", num_pasted);  /*BFA*/
 
   return OPERATOR_FINISHED;
 }
@@ -881,7 +881,7 @@ void OUTLINER_OT_id_paste(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Outliner ID Data Paste";
   ot->idname = "OUTLINER_OT_id_paste";
-  ot->description = "Data from the clipboard are pasted";
+  ot->description = "Data from the clipboard are pasted";  /*BFA*/
 
   /* callbacks */
   ot->exec = outliner_id_paste_exec;
@@ -1559,7 +1559,7 @@ static std::string outliner_ot_show_one_level_get_description(struct bContext * 
                                                               struct PointerRNA *values)
 {
   if (RNA_boolean_get(values, "open")) {
-    return "Expand all entries by one level";
+    return "Expand or Collapse all entries by one level";
   }
   return "";
 }
@@ -1571,7 +1571,7 @@ void OUTLINER_OT_show_one_level(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Show/Hide One Level";
   ot->idname = "OUTLINER_OT_show_one_level";
-  ot->description = "Collapse all entries by one level";
+  ot->description = "Expand/Collapse all entries by one level";
 
   /* callbacks */
   ot->exec = outliner_one_level_exec;
@@ -2322,7 +2322,9 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
   BKE_lib_query_unused_ids_tag(bmain, LIB_TAG_DOIT, data);
 
   if (data.num_total[INDEX_ID_NULL] == 0) {
-    BKE_report(op->reports, RPT_INFO, "No orphaned data to purge");
+    BKE_report(op->reports, RPT_INFO, "No orphaned data to purge");  /*BFA*/
+    MEM_delete(static_cast<LibQueryUnusedIDsData *>(op->customdata));
+    op->customdata = nullptr;
     return OPERATOR_CANCELLED;
   }
 

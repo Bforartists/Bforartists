@@ -21,16 +21,11 @@
 namespace blender::gpu {
 class VKShaderInterface : public ShaderInterface {
  private:
-  /**
-   * Offset when searching for a shader input based on a binding number.
-   *
-   * When shaders combine images and samplers, the images have to be offset to find the correct
-   * shader input. Both textures and images are stored in the uniform list and their ID can be
-   * overlapping.
-   */
-  uint32_t image_offset_ = 0;
   Array<VKDescriptorSet::Location> descriptor_set_locations_;
   Array<shader::ShaderCreateInfo::Resource::BindType> descriptor_set_bind_types_;
+
+  /** Image views should match the binding arrayed aspect.  */
+  Array<VKImageViewArrayed> arrayed_;
   Array<VkAccessFlags> access_masks_;
   VKDescriptorSetLayoutInfo descriptor_set_layout_info_;
 
@@ -39,6 +34,15 @@ class VKShaderInterface : public ShaderInterface {
   shader::BuiltinBits shader_builtins_;
 
  public:
+  /**
+   * Offset when searching for a shader input based on a binding number.
+   *
+   * When shaders combine images and samplers, the images have to be offset to find the correct
+   * shader input. Both textures and images are stored in the uniform list and their ID can be
+   * overlapping.
+   */
+  static constexpr uint32_t image_offset = 512;
+
   VKShaderInterface() = default;
 
   void init(const shader::ShaderCreateInfo &info);
@@ -58,6 +62,8 @@ class VKShaderInterface : public ShaderInterface {
    */
   const VkAccessFlags access_mask(const shader::ShaderCreateInfo::Resource::BindType &bind_type,
                                   int binding) const;
+  const VKImageViewArrayed arrayed(const shader::ShaderCreateInfo::Resource::BindType &bind_type,
+                                   int binding) const;
 
   /** Get the Layout of the shader. */
   const VKPushConstants::Layout &push_constants_layout_get() const
@@ -102,7 +108,8 @@ class VKShaderInterface : public ShaderInterface {
       const ShaderInput *shader_input,
       const VKDescriptorSet::Location location,
       const shader::ShaderCreateInfo::Resource::BindType bind_type,
-      std::optional<const shader::ShaderCreateInfo::Resource> resource);
+      std::optional<const shader::ShaderCreateInfo::Resource> resource,
+      VKImageViewArrayed arrayed);
 };
 
 }  // namespace blender::gpu

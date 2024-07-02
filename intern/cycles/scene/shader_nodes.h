@@ -241,6 +241,19 @@ class NoiseTextureNode : public TextureNode {
   NODE_SOCKET_API(float3, vector)
 };
 
+class GaborTextureNode : public TextureNode {
+ public:
+  SHADER_NODE_CLASS(GaborTextureNode)
+
+  NODE_SOCKET_API(NodeGaborType, type)
+  NODE_SOCKET_API(float3, vector)
+  NODE_SOCKET_API(float, scale)
+  NODE_SOCKET_API(float, frequency)
+  NODE_SOCKET_API(float, anisotropy)
+  NODE_SOCKET_API(float, orientation_2d)
+  NODE_SOCKET_API(float3, orientation_3d)
+};
+
 class VoronoiTextureNode : public TextureNode {
  public:
   SHADER_NODE_CLASS(VoronoiTextureNode)
@@ -512,6 +525,7 @@ class PrincipledBsdfNode : public BsdfBaseNode {
   NODE_SOCKET_API(float, ior)
   NODE_SOCKET_API(float3, normal)
   NODE_SOCKET_API(float, alpha)
+  NODE_SOCKET_API(float, diffuse_roughness)
   NODE_SOCKET_API(ClosureType, subsurface_method)
   NODE_SOCKET_API(float, subsurface_weight)
   NODE_SOCKET_API(float3, subsurface_radius)

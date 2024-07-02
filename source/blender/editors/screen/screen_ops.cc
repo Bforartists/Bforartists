@@ -64,7 +64,7 @@
 #include "ED_sequencer.hh"
 #include "ED_view3d.hh"
 
-#include "SEQ_sequencer.hh"
+#include "SEQ_sequencer.hh" /*BFA - 3D Sequencer*/
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -1480,7 +1480,7 @@ static int area_dupli_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 
   /* Create new window. No need to set space_type since it will be copied over. */
   wmWindow *newwin = WM_window_open(C,
-                                    "Bforartists",
+                                    nullptr, /*BFA wip - "Bforartists"*/
                                     &window_rect,
                                     SPACE_EMPTY,
                                     false,
@@ -2281,6 +2281,9 @@ static bool area_split_apply(bContext *C, wmOperator *op)
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
   /* Update preview thumbnail */
   BKE_icon_changed(screen->id.icon_id);
+
+  /* We have more than one area now, so reset window title. */
+  WM_window_title(CTX_wm_manager(C), CTX_wm_window(C));
 
   return true;
 }
@@ -3588,12 +3591,19 @@ static bool area_join_apply(bContext *C, wmOperator *op)
     return false;
   }
 
-  if (!screen_area_join(C, CTX_wm_screen(C), jd->sa1, jd->sa2)) {
+  bScreen *screen = CTX_wm_screen(C);
+
+  if (!screen_area_join(C, screen, jd->sa1, jd->sa2)) {
     return false;
   }
   if (CTX_wm_area(C) == jd->sa2) {
     CTX_wm_area_set(C, nullptr);
     CTX_wm_region_set(C, nullptr);
+  }
+
+  if (BLI_listbase_is_single(&screen->areabase)) {
+    /* Areas reduced to just one, so show nicer title. */
+    WM_window_title(CTX_wm_manager(C), CTX_wm_window(C));
   }
 
   return true;
@@ -3819,7 +3829,7 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
     uiItemFullO(layout,
                 "SCREEN_OT_area_join",
                 IFACE_("Join Areas"),
-                ICON_JOIN_AREAS,
+                ICON_JOIN_AREAS, /*BFA icon*/
                 nullptr,
                 WM_OP_INVOKE_DEFAULT,
                 UI_ITEM_NONE,
@@ -3832,7 +3842,7 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
     uiItemFullO(layout,
                 "SCREEN_OT_area_swap",
                 IFACE_("Swap Areas"),
-                ICON_SWAP_AREAS,
+                ICON_SWAP_AREAS, /*BFA icon*/
                 nullptr,
                 WM_OP_EXEC_DEFAULT,
                 UI_ITEM_NONE,
@@ -4415,14 +4425,14 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 
   uiItemO(layout,
           area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
-          ICON_MAXIMIZE_AREA,
+          ICON_MAXIMIZE_AREA, /*BFA icon*/
           "SCREEN_OT_screen_full_area");
 
   if (area->spacetype != SPACE_FILE && !area->full) {
     uiItemFullO(layout,
                 "SCREEN_OT_screen_full_area",
                 IFACE_("Full Screen Area"),
-                ICON_FULLSCREEN_ENTER,
+                ICON_FULLSCREEN_ENTER, /*BFA icon*/
                 nullptr,
                 WM_OP_INVOKE_DEFAULT,
                 UI_ITEM_NONE,
@@ -4430,9 +4440,9 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
     RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
 
-  uiItemO(layout, nullptr, ICON_NEW_WINDOW, "SCREEN_OT_area_dupli");
+  uiItemO(layout, nullptr, ICON_NEW_WINDOW, "SCREEN_OT_area_dupli"); /*BFA icon*/
   uiItemS(layout);
-  uiItemO(layout, nullptr, ICON_PANEL_CLOSE, "SCREEN_OT_area_close");
+  uiItemO(layout, nullptr, ICON_PANEL_CLOSE, "SCREEN_OT_area_close"); /*BFA icon*/
 }
 
 // bfa - show hide the editorsmenu
@@ -5102,7 +5112,7 @@ void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*
   /* default is WM_OP_INVOKE_REGION_WIN, which we don't want here. */
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
 
-  uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip");
+  uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip"); /*BFA icon*/
 }
 
 static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
@@ -5425,7 +5435,7 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
       if (delta_frames < 1.0) {
         /* We can render faster than the scene frame rate. However skipping or delaying frames
          * here seems to in practice lead to jittery playback so just step forward a minimum of
-         * one frame. (Even though this can lead to too fast playback, the jitteryness is more
+         * one frame. (Even though this can lead to too fast playback, the jitteriness is more
          * annoying)
          */
         delta_frames = 1.0f;
@@ -5884,7 +5894,7 @@ static int userpref_show_exec(bContext *C, wmOperator *op)
 
   /* changes context! */
   if (WM_window_open(C,
-                     IFACE_("Bforartists Preferences"),
+                     nullptr, /*BFA wip - IFACE_("Bforartists Preferences"),*/
                      &window_rect,
                      SPACE_USERPREF,
                      false,
