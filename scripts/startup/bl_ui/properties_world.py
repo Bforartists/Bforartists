@@ -236,13 +236,22 @@ class EEVEE_WORLD_PT_sun_shadow(WorldButtonsPanel, Panel):
 
         world = context.world
 
-        col = layout.column(align=False, heading="Jitter")
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(world, "use_sun_shadow_jitter", text="")
-        sub = sub.row(align=True)
-        sub.active = world.use_sun_shadow_jitter
-        sub.prop(world, "sun_shadow_jitter_overblur", text="Overblur")
+        col = layout.column(align=False)
+        row = layout.row()
+        row.use_property_split = False
+        split = row.split(factor = 0.366)
+        row = split.row()
+        row.prop(world, "use_sun_shadow_jitter", text = "Jitter")
+        row = split.row()
+        if world.use_sun_shadow_jitter:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if world.use_sun_shadow_jitter:
+            row = layout.row()
+            row.separator()
+            row.prop(world, "sun_shadow_jitter_overblur", text="Overblur")
 
         col.separator()
 
