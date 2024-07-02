@@ -2983,7 +2983,7 @@ static bool ed_object_select_pick(bContext *C,
   }
 
   if (gpu != nullptr) {
-    MEM_freeN(gpu);
+    MEM_delete(gpu);
   }
 
   return (changed_object || changed_pose || changed_track);
@@ -5054,7 +5054,6 @@ static bool armature_circle_select(const ViewContext *vc,
 
   if (data.is_changed) {
     ED_armature_edit_sync_selection(arm->edbo);
-    ED_armature_edit_validate_active(arm);
     WM_main_add_notifier(NC_OBJECT | ND_BONE_SELECT, vc->obedit);
   }
   return data.is_changed;

@@ -1093,7 +1093,7 @@ void filelist_setlibrary(FileList *filelist, const AssetLibraryReference *asset_
   }
 
   if (!filelist->asset_library_ref) {
-    filelist->asset_library_ref = MEM_new<AssetLibraryReference>("filelist asset library");
+    filelist->asset_library_ref = MEM_cnew<AssetLibraryReference>("filelist asset library");
     *filelist->asset_library_ref = *asset_library_ref;
 
     filelist->flags |= FL_FORCE_RESET;
@@ -1106,43 +1106,31 @@ void filelist_setlibrary(FileList *filelist, const AssetLibraryReference *asset_
 
 /* ********** Icon/image helpers ********** */
 
+static ImBuf *fileimage_from_icon(int icon_id)
+{
+  int width;
+  int height;
+  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, 256.0f, &width, &height);
+  if (bitmap.is_empty()) {
+    return nullptr;
+  }
+  ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
+  IMB_flipy(ibuf);
+  return ibuf;
+}
+
 void filelist_init_icons()
 {
-  short x, y, k;
-  ImBuf *bbuf;
-  ImBuf *ibuf;
-
   BLI_assert(G.background == false);
-
-#ifdef WITH_HEADLESS
-  bbuf = nullptr;
-#else
-  bbuf = IMB_ibImageFromMemory((const uchar *)datatoc_prvicons_png,
-                               datatoc_prvicons_png_size,
-                               IB_rect,
-                               nullptr,
-                               "<splash>");
+#ifndef WITH_HEADLESS
+  gSpecialFileImages[SPECIAL_IMG_DOCUMENT] = fileimage_from_icon(ICON_FILE_LARGE);
+  gSpecialFileImages[SPECIAL_IMG_DRIVE_DISC] = fileimage_from_icon(ICON_DISC_LARGE);
+  gSpecialFileImages[SPECIAL_IMG_FOLDER] = fileimage_from_icon(ICON_FILE_FOLDER_LARGE);
+  gSpecialFileImages[SPECIAL_IMG_PARENT] = fileimage_from_icon(ICON_FILE_PARENT_LARGE);
+  gSpecialFileImages[SPECIAL_IMG_DRIVE_FIXED] = fileimage_from_icon(ICON_DISK_DRIVE_LARGE);
+  gSpecialFileImages[SPECIAL_IMG_DRIVE_ATTACHED] = fileimage_from_icon(ICON_EXTERNAL_DRIVE_LARGE);
+  gSpecialFileImages[SPECIAL_IMG_DRIVE_REMOTE] = fileimage_from_icon(ICON_NETWORK_DRIVE_LARGE);
 #endif
-  if (bbuf) {
-    for (y = 0; y < SPECIAL_IMG_ROWS; y++) {
-      for (x = 0; x < SPECIAL_IMG_COLS; x++) {
-        int tile = SPECIAL_IMG_COLS * y + x;
-        if (tile < SPECIAL_IMG_MAX) {
-          ibuf = IMB_allocImBuf(SPECIAL_IMG_SIZE, SPECIAL_IMG_SIZE, 32, IB_rect);
-          for (k = 0; k < SPECIAL_IMG_SIZE; k++) {
-            memcpy(
-                &ibuf->byte_buffer.data[4 * (k * SPECIAL_IMG_SIZE)],
-                &bbuf->byte_buffer
-                     .data[4 * ((k + y * SPECIAL_IMG_SIZE) * SPECIAL_IMG_SIZE * SPECIAL_IMG_COLS +
-                                x * SPECIAL_IMG_SIZE)],
-                SPECIAL_IMG_SIZE * sizeof(uint8_t) * 4);
-          }
-          gSpecialFileImages[tile] = ibuf;
-        }
-      }
-    }
-    IMB_freeImBuf(bbuf);
-  }
 }
 
 void filelist_free_icons()
@@ -1673,7 +1661,7 @@ static void filelist_cache_previews_push(FileList *filelist, FileDirEntry *entry
   filelist_cache_preview_ensure_running(cache);
   entry->flags |= FILE_ENTRY_PREVIEW_LOADING;
 
-  FileListEntryPreview *preview = MEM_new<FileListEntryPreview>(__func__);
+  FileListEntryPreview *preview = MEM_cnew<FileListEntryPreview>(__func__);
   preview->index = index;
   preview->flags = entry->typeflag;
   preview->icon_id = 0;
@@ -1697,7 +1685,7 @@ static void filelist_cache_previews_push(FileList *filelist, FileDirEntry *entry
     }
     // printf("%s: %d - %s\n", __func__, preview->index, preview->filepath);
 
-    FileListEntryPreviewTaskData *preview_taskdata = MEM_new<FileListEntryPreviewTaskData>(
+    FileListEntryPreviewTaskData *preview_taskdata = MEM_cnew<FileListEntryPreviewTaskData>(
         __func__);
     preview_taskdata->preview = preview;
     BLI_task_pool_push(cache->previews_pool,
@@ -3222,8 +3210,9 @@ static void filelist_readjob_list_lib_add_datablock(FileListReadJob *job_params,
       if (job_params->load_asset_library) {
         /* Take ownership over the asset data (shallow copies into unique_ptr managed memory) to
          * pass it on to the asset system. */
-        std::unique_ptr metadata = std::make_unique<AssetMetaData>(*datablock_info->asset_data);
-        MEM_freeN(datablock_info->asset_data);
+        std::unique_ptr metadata = std::make_unique<AssetMetaData>(
+            std::move(*datablock_info->asset_data));
+        MEM_delete(datablock_info->asset_data);
         /* Give back a non-owning pointer, because the data-block info is still needed (e.g. to
          * update the asset index). */
         datablock_info->asset_data = metadata.get();

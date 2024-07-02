@@ -1540,6 +1540,11 @@ static void grease_pencil_brush_cursor_draw(PaintCursorContext *pcontext)
       return;
     }
 
+    /* Hide the cursor while drwaing. */
+    if (grease_pencil->runtime->is_drawing_stroke) {
+      return;
+    }
+
     if ((brush->flag & BRUSH_LOCK_SIZE) != 0) {
       const bke::greasepencil::Layer *layer = grease_pencil->get_active_layer();
       const ed::greasepencil::DrawingPlacement placement(
@@ -1941,7 +1946,7 @@ static void paint_cursor_cursor_draw_3d_view_brush_cursor_active(PaintCursorCont
   }
 
   if (brush.sculpt_tool == SCULPT_TOOL_MULTIPLANE_SCRAPE) {
-    SCULPT_multiplane_scrape_preview_draw(
+    multiplane_scrape_preview_draw(
         pcontext->pos, brush, ss, pcontext->outline_col, pcontext->outline_alpha);
   }
 

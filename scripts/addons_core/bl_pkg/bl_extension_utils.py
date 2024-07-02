@@ -25,10 +25,13 @@ __all__ = (
 
     # Public Stand-Alone Utilities.
     "pkg_theme_file_list",
+    "pkg_manifest_params_compatible_or_error",
     "platform_from_this_system",
     "url_append_query_for_blender",
     "url_parse_for_blender",
     "file_mtime_or_none",
+    "scandir_with_demoted_errors",
+    "rmtree_with_fallback_or_error",
 
     # Public API.
     "json_from_filepath",
@@ -36,7 +39,7 @@ __all__ = (
     "json_to_filepath",
 
     "pkg_manifest_dict_is_valid_or_error",
-    "pkg_manifest_dict_from_file_or_error",
+    "pkg_manifest_dict_from_archive_or_error",
     "pkg_manifest_archive_url_abs_from_remote_url",
 
     "CommandBatch",
@@ -191,6 +194,22 @@ def scandir_with_demoted_errors(path: str) -> Generator[os.DirEntry[str], None, 
         print("Error: scandir", ex)
 
 
+def rmtree_with_fallback_or_error(
+        path: str,
+        *,
+        remove_file: bool = True,
+        remove_link: bool = True,
+) -> Optional[str]:
+    from .cli.blender_ext import rmtree_with_fallback_or_error as fn
+    result = fn(
+        path,
+        remove_file=remove_file,
+        remove_link=remove_link,
+    )
+    assert result is None or isinstance(result, str)
+    return result
+
+
 # -----------------------------------------------------------------------------
 # Call JSON.
 #
@@ -282,12 +301,16 @@ def repository_iter_package_dirs(
         directory: str,
         *,
         error_fn: Callable[[Exception], None],
+        ignore_missing: bool = False,
 ) -> Generator[os.DirEntry[str], None, None]:
     try:
         dir_entries = os.scandir(directory)
     except Exception as ex:
+        # The `isinstance` check is ignored, suppress warning.
+        # pylint: disable-next=no-member
+        if not (ignore_missing and isinstance(ex, FileNotFoundError) and ex.filename == directory):
+            error_fn(ex)
         dir_entries = None
-        error_fn(ex)
 
     for entry in (dir_entries if dir_entries is not None else ()):
         # Only check directories.
@@ -436,19 +459,27 @@ def url_parse_for_blender(url: str) -> Tuple[str, Dict[str, str]]:
     ))
 
     query_known = {}
-    if repo_path := next((value for key, value in query if key == "repository"), None):
-        if repo_path.startswith("/"):
-            repo_url = urllib.parse.urlunparse((
-                parsed_url.scheme,
-                parsed_url.netloc,
-                repo_path[1:],
-                None,  # `parsed_url.params,`
-                None,  # `parsed_url.query,`
-                None,  # `parsed_url.fragment,`
-            ))
-        else:
-            repo_url = repo_path
-        query_known["repository"] = repo_url
+    for key, value in query:
+        value_xform = None
+        match key:
+            case "blender_version_min" | "blender_version_max" | "platforms":
+                if value:
+                    value_xform = value
+            case "repository":
+                if value:
+                    if value.startswith("/"):
+                        value_xform = urllib.parse.urlunparse((
+                            parsed_url.scheme,
+                            parsed_url.netloc,
+                            value[1:],
+                            None,  # `parsed_url.params,`
+                            None,  # `parsed_url.query,`
+                            None,  # `parsed_url.fragment,`
+                        ))
+                    else:
+                        value_xform = value
+        if value_xform is not None:
+            query_known[key] = value_xform
 
     return url_strip, query_known
 
@@ -584,6 +615,7 @@ def pkg_install(
 def pkg_uninstall(
         *,
         directory: str,
+        user_directory: str,
         pkg_id_sequence: Sequence[str],
         use_idle: bool,
 ) -> Generator[InfoItemSeq, None, None]:
@@ -594,6 +626,7 @@ def pkg_uninstall(
     yield from command_output_from_json_0([
         "uninstall", ",".join(pkg_id_sequence),
         "--local-dir", directory,
+        "--user-dir", user_directory,
     ], use_idle=use_idle)
     yield [COMPLETE_ITEM]
 
@@ -669,7 +702,7 @@ def pkg_manifest_dict_is_valid_or_error(
     return None
 
 
-def pkg_manifest_dict_from_file_or_error(
+def pkg_manifest_dict_from_archive_or_error(
         filepath: str,
 ) -> Union[Dict[str, Any], str]:
     from .cli.blender_ext import pkg_manifest_from_archive_and_validate
@@ -695,6 +728,11 @@ def pkg_manifest_archive_url_abs_from_remote_url(remote_url: str, archive_url: s
     return archive_url
 
 
+def pkg_manifest_dict_apply_build_generated_table(manifest_dict: Dict[str, Any]) -> None:
+    from .cli.blender_ext import pkg_manifest_dict_apply_build_generated_table as fn
+    fn(manifest_dict)
+
+
 def pkg_is_legacy_addon(filepath: str) -> bool:
     from .cli.blender_ext import pkg_is_legacy_addon as pkg_is_legacy_addon_extern
     result = pkg_is_legacy_addon_extern(filepath)
@@ -703,7 +741,7 @@ def pkg_is_legacy_addon(filepath: str) -> bool:
 
 
 def pkg_repo_cache_clear(local_dir: str) -> None:
-    local_cache_dir = os.path.join(local_dir, ".blender_ext", "cache")
+    local_cache_dir = os.path.join(local_dir, REPO_LOCAL_PRIVATE_DIR, "cache")
     if not os.path.isdir(local_cache_dir):
         return
 
@@ -1211,10 +1249,46 @@ def repository_filter_skip(
         item,
         filter_blender_version=filter_params.blender_version,
         filter_platform=filter_params.platform,
+        skip_message_fn=None,
         error_fn=error_fn,
     )
     assert isinstance(result, bool)
     return result
+
+
+def pkg_manifest_params_compatible_or_error(
+        *,
+        blender_version_min: str,
+        blender_version_max: str,
+        platforms: List[str],
+        this_platform: Tuple[int, int, int],
+        this_blender_version: Tuple[int, int, int],
+        error_fn: Callable[[Exception], None],
+) -> Optional[str]:
+    from .cli.blender_ext import repository_filter_skip as fn
+
+    # Weak, create the minimum information for a manifest to be checked against.
+    item: Dict[str, Any] = {}
+    if blender_version_min:
+        item["blender_version_min"] = blender_version_min
+    if blender_version_max:
+        item["blender_version_max"] = blender_version_max
+    if platforms:
+        item["platforms"] = platforms
+
+    result_report = []
+    result = fn(
+        item=item,
+        filter_blender_version=this_blender_version,
+        filter_platform=this_platform,
+        skip_message_fn=lambda msg: result_report.append(msg),
+        error_fn=error_fn,
+    )
+    assert isinstance(result, bool)
+    if result:
+        assert len(result_report) > 0
+        return "\n".join(result_report)
+    return None
 
 
 def repository_filter_packages(
@@ -1232,6 +1306,10 @@ def repository_filter_packages(
                 error_fn=error_fn,
         )) is None:
             continue
+
+        # No need to call: `pkg_manifest_dict_apply_build_generated_table(item_local)`
+        # Because these values will have been applied when generating the JSON.
+        assert "generated" not in item.get("build", {})
 
         if repository_filter_skip(item, filter_params, error_fn):
             continue
@@ -1498,6 +1576,9 @@ class _RepoDataSouce_TOML_FILES(_RepoDataSouce_ABC):
             )) is None:
                 continue
 
+            # Apply generated variables before filtering.
+            pkg_manifest_dict_apply_build_generated_table(item_local)
+
             if repository_filter_skip(item_local, self._filter_params, error_fn):
                 continue
 
@@ -1605,6 +1686,7 @@ class _RepoCacheEntry:
         self.directory = directory
         self.remote_url = remote_url
         # Manifest data per package loaded from the packages local JSON.
+        # TODO(@ideasman42): use `_RepoDataSouce_ABC` for `pkg_manifest_local`.
         self._pkg_manifest_local: Optional[Dict[str, PkgManifest_Normalized]] = None
         self._pkg_manifest_remote: Optional[Dict[str, PkgManifest_Normalized]] = None
         self._pkg_manifest_remote_data_source: _RepoDataSouce_ABC = (
@@ -1676,13 +1758,13 @@ class _RepoCacheEntry:
         has_remote = self.remote_url != ""
 
         if self._pkg_manifest_local is None:
-            self._json_data_ensure(
-                ignore_missing=ignore_missing,
-                error_fn=error_fn,
-            )
             pkg_manifest_local = {}
 
-            for entry in repository_iter_package_dirs(self.directory, error_fn=error_fn):
+            for entry in repository_iter_package_dirs(
+                    self.directory,
+                    ignore_missing=ignore_missing,
+                    error_fn=error_fn,
+            ):
                 dirname = entry.name
                 filepath_toml = os.path.join(self.directory, dirname, PKG_MANIFEST_FILENAME_TOML)
                 try:
@@ -1825,17 +1907,23 @@ class RepoCacheStore:
                 if repo_entry.directory not in directory_subset:
                     continue
 
-            yield repo_entry._json_data_ensure(
-                check_files=check_files,
-                ignore_missing=ignore_missing,
-                error_fn=error_fn,
-            )
+            # While we could yield a valid manifest here,
+            # leave it to the caller to skip "remote" data for local-only repositories.
+            if repo_entry.remote_url:
+                yield repo_entry._json_data_ensure(
+                    check_files=check_files,
+                    ignore_missing=ignore_missing,
+                    error_fn=error_fn,
+                )
+            else:
+                yield None
 
     def pkg_manifest_from_local_ensure(
             self,
             *,
             error_fn: Callable[[Exception], None],
             check_files: bool = False,
+            ignore_missing: bool = False,
             directory_subset: Optional[Set[str]] = None,
     ) -> Generator[Optional[Dict[str, PkgManifest_Normalized]], None, None]:
         for repo_entry in self._repos:
@@ -1844,7 +1932,10 @@ class RepoCacheStore:
                     continue
             if check_files:
                 repo_entry.force_local_refresh()
-            yield repo_entry.pkg_manifest_from_local_ensure(error_fn=error_fn)
+            yield repo_entry.pkg_manifest_from_local_ensure(
+                ignore_missing=ignore_missing,
+                error_fn=error_fn,
+            )
 
     def clear(self) -> None:
         self._repos.clear()
