@@ -55,6 +55,7 @@
 #include "vk_command_builder.hh"
 #include "vk_render_graph_links.hh"
 #include "vk_resource_state_tracker.hh"
+#include "vk_resource_tracker.hh"
 
 namespace blender::gpu::render_graph {
 class VKScheduler;
@@ -117,6 +118,8 @@ class VKRenderGraph : public NonCopyable {
   } debug_;
 
  public:
+  VKSubmissionID submission_id;
+
   /**
    * Construct a new render graph instance.
    *
@@ -146,6 +149,15 @@ class VKRenderGraph : public NonCopyable {
     std::scoped_lock lock(resources_.mutex);
     static VKRenderGraphNode node_template = {};
     NodeHandle node_handle = nodes_.append_and_get_index(node_template);
+#if 0
+    /* Useful during debugging. When a validation error occurs during submission we know the node
+     * type and node handle, but we don't know when and by who that specific node was added to the
+     * render graph. By enabling this part of the code and set the correct node_handle and node
+     * type a debugger can break at the moment the node has been added to the render graph. */
+    if (node_handle == 267 && NodeInfo::node_type == VKNodeType::DRAW) {
+      std::cout << "break\n";
+    }
+#endif
     if (nodes_.size() > links_.size()) {
       links_.resize(nodes_.size());
     }
@@ -238,6 +250,18 @@ class VKRenderGraph : public NonCopyable {
    * group.
    */
   void debug_group_end();
+
+  /**
+   * Utility function that is used during debugging.
+   *
+   * When debugging most of the time know the node_handle that is needed after the node has been
+   * constructed. When haunting a bug it is more useful to query what the next node handle will be
+   * so you can step through the node building process.
+   */
+  NodeHandle next_node_handle()
+  {
+    return nodes_.size();
+  }
 
  private:
   void remove_nodes(Span<NodeHandle> node_handles);

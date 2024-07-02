@@ -144,6 +144,20 @@ int active_update_and_get(bContext *C, Object &ob, const float mval[2])
   return active_face_set_get(ss);
 }
 
+bool create_face_sets_mesh(Object &object)
+{
+  Mesh &mesh = *static_cast<Mesh *>(object.data);
+  bke::MutableAttributeAccessor attributes = mesh.attributes_for_write();
+  if (attributes.contains(".sculpt_face_set")) {
+    return false;
+  }
+  attributes.add<int>(".sculpt_face_set",
+                      bke::AttrDomain::Face,
+                      bke::AttributeInitVArray(VArray<int>::ForSingle(1, mesh.faces_num)));
+  mesh.face_sets_color_default = 1;
+  return true;
+}
+
 bke::SpanAttributeWriter<int> ensure_face_sets_mesh(Object &object)
 {
   Mesh &mesh = *static_cast<Mesh *>(object.data);
@@ -415,11 +429,10 @@ static void do_draw_face_sets_brush_bmesh(Object &ob,
 
 static void do_relax_face_sets_brush_task(Object &ob,
                                           const Brush &brush,
-                                          const int iteration,
+                                          const float strength,
                                           PBVHNode *node)
 {
   SculptSession &ss = *ob.sculpt;
-  float bstrength = ss.cache->bstrength;
 
   PBVHVertexIter vd;
 
@@ -428,10 +441,6 @@ static void do_relax_face_sets_brush_task(Object &ob,
       ss, test, brush.falloff_shape);
 
   const bool relax_face_sets = !(ss.cache->iteration_count % 3 == 0);
-  /* This operations needs a strength tweak as the relax deformation is too weak by default. */
-  if (relax_face_sets && iteration < 2) {
-    bstrength *= 1.5f;
-  }
 
   const int thread_id = BLI_task_parallel_thread_id(nullptr);
   auto_mask::NodeData automask_data = auto_mask::node_begin(
@@ -447,20 +456,31 @@ static void do_relax_face_sets_brush_task(Object &ob,
       continue;
     }
 
-    const float fade = bstrength * SCULPT_brush_strength_factor(ss,
-                                                                brush,
-                                                                vd.co,
-                                                                sqrtf(test.dist),
-                                                                vd.no,
-                                                                vd.fno,
-                                                                vd.mask,
-                                                                vd.vertex,
-                                                                thread_id,
-                                                                &automask_data);
+    const float fade = SCULPT_brush_strength_factor(ss,
+                                                    brush,
+                                                    vd.co,
+                                                    sqrtf(test.dist),
+                                                    vd.no,
+                                                    vd.fno,
+                                                    vd.mask,
+                                                    vd.vertex,
+                                                    thread_id,
+                                                    &automask_data);
 
-    smooth::relax_vertex(ss, &vd, fade * bstrength, relax_face_sets, vd.co);
+    smooth::relax_vertex(ss, &vd, fade * strength * strength, relax_face_sets, vd.co);
   }
   BKE_pbvh_vertex_iter_end;
+}
+
+static std::array<float, 4> iteration_strengths(const float strength, const int stroke_iteration)
+{
+  if (stroke_iteration % 3 == 0) {
+    return {strength, strength, strength, strength};
+  }
+
+  /* This operations needs a strength tweak as the relax deformation is too weak by default. */
+  const float modified_strength = strength * 1.5f;
+  return {modified_strength, modified_strength, strength, strength};
 }
 
 void do_draw_face_sets_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
@@ -472,10 +492,13 @@ void do_draw_face_sets_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> node
 
   if (ss.cache->alt_smooth) {
     SCULPT_boundary_info_ensure(ob);
-    for (int i = 0; i < 4; i++) {
+    const SculptSession &ss = *ob.sculpt;
+    const std::array<float, 4> strengths = iteration_strengths(ss.cache->bstrength,
+                                                               ss.cache->iteration_count);
+    for (const float strength : strengths) {
       threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
         for (const int i : range) {
-          do_relax_face_sets_brush_task(ob, brush, i, nodes[i]);
+          do_relax_face_sets_brush_task(ob, brush, strength, nodes[i]);
         }
       });
     }
@@ -888,24 +911,16 @@ static int init_op_exec(bContext *C, wmOperator *op)
           "material_index", bke::AttrDomain::Face, 0);
       const VArraySpan<bool> hide_poly = *attributes.lookup<bool>(".hide_poly",
                                                                   bke::AttrDomain::Face);
-      const Set<int> hidden_face_sets = gather_hidden_face_sets(hide_poly, face_sets.span);
-
-      int prev_material = material_indices[0];
-      int material_face_set = 1;
       for (const int i : IndexRange(mesh->faces_num)) {
         if (!hide_poly.is_empty() && hide_poly[i]) {
           continue;
         }
-        if (prev_material != material_indices[i]) {
-          material_face_set += 1;
-        }
-        while (hidden_face_sets.contains(material_face_set)) {
-          material_face_set += 1;
-        }
 
-        face_sets.span[i] = material_face_set;
-        prev_material = material_indices[i];
+        /* In some cases material face set index could be same as hidden face set index
+         * A more robust implementation is needed to avoid this */
+        face_sets.span[i] = material_indices[i] + 1;
       }
+
       face_sets.finish();
       break;
     }
@@ -1726,10 +1741,11 @@ struct FaceSetOperation {
   int new_face_set_id;
 };
 
-static void gesture_begin(bContext &C, gesture::GestureData &gesture_data)
+static void gesture_begin(bContext &C, wmOperator &op, gesture::GestureData &gesture_data)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(&C);
   BKE_sculpt_update_object_for_edit(depsgraph, gesture_data.vc.obact, false);
+  undo::push_begin(*gesture_data.vc.obact, &op);
 }
 
 static void gesture_apply_mesh(gesture::GestureData &gesture_data, const Span<PBVHNode *> nodes)
@@ -1831,7 +1847,10 @@ static void gesture_apply_for_symmetry_pass(bContext & /*C*/, gesture::GestureDa
   }
 }
 
-static void gesture_end(bContext & /*C*/, gesture::GestureData & /*gesture_data*/) {}
+static void gesture_end(bContext & /*C*/, gesture::GestureData &gesture_data)
+{
+  undo::push_end(*gesture_data.vc.obact);
+}
 
 static void init_operation(gesture::GestureData &gesture_data, wmOperator & /*op*/)
 {

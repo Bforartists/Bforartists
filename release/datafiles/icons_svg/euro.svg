@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="1600"
+   height="1600"
+   viewBox="0 0 1600 1600"
+   sodipodi:docname="euro.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   inkscape:export-filename="EURO.png"
+   inkscape:export-xdpi="3072"
+   inkscape:export-ydpi="3072"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#808080"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1993"
+     inkscape:window-height="1009"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="0.5"
+     inkscape:cx="585"
+     inkscape:cy="588"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="EURO"
+     inkscape:showpageshadow="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1" />
+  <g
+     id="EURO"
+     inkscape:label="EURO"
+     transform="translate(0,3168)">
+    <path
+       style="fill:none;stroke-width:0.03125"
+       d="m 100,-2368 v -700 h 700 700 v 700 700 H 800 100 Z m 291.21094,165.3998 c 29.17977,-6.1535 51.66476,-18.5315 73.04592,-40.2117 l 18.55564,-18.8152 v 26.1104 26.1104 h 61.69136 61.69132 l -0.98289,-130.5664 c -0.93456,-124.1463 -1.276,-131.6184 -6.94409,-151.9615 -17.9279,-64.3445 -59.50995,-95.4906 -141.15365,-105.7279 -52.13467,-6.5371 -140.80577,0.9099 -196.47002,16.5003 l -10.25391,2.872 v 46.4114 46.4114 l 11.56866,-5.9019 c 58.79149,-29.9932 162.92083,-36.1689 199.68024,-11.8427 12.24402,8.1028 21.02287,24.8148 21.11293,40.1921 l 0.06,10.2539 -49.90234,0.022 c -97.22747,0.044 -146.77748,11.3065 -180.55758,41.0409 -25.63686,22.5665 -38.95214,66.013 -32.96599,107.5649 7.75977,53.8631 44.41715,91.2835 100.7306,102.8273 17.7482,3.6383 50.54603,3.0431 71.09375,-1.29 z m -19.0592,-82.0953 c -36.26577,-13.8244 -42.7572,-58.3068 -11.87377,-81.3647 12.01387,-8.9696 36.17774,-12.7889 81.20273,-12.8346 l 42.06661,-0.043 -1.36191,19.0348 c -2.34814,32.8181 -18.04464,56.9388 -46.61689,71.6358 -14.95249,7.6912 -47.76209,9.539 -63.41677,3.5714 z m 632.67196,82.0164 c 63.4363,-14.953 112.2921,-76.5753 123.0984,-155.2648 11.0628,-80.5583 -9.5714,-154.7172 -55.6749,-200.0952 -31.1463,-30.6562 -67.7127,-44.1661 -112.28626,-41.4855 -41.52816,2.4974 -72.22562,16.9527 -101.72832,47.9034 l -14.48262,15.1935 v -103.0908 -103.0909 h -61.52344 -61.52344 v 266.6016 266.6015 H 782.22656 843.75 v -26.5283 -26.5283 l 14.35547,15.0183 c 39.94419,41.7888 91.98493,57.6671 146.71823,44.7655 z m -106.3862,-90.062 c -6.76758,-2.1914 -16.6527,-7.5865 -21.96693,-11.9892 -43.59952,-36.1212 -43.59952,-153.2966 0,-189.4335 27.43915,-22.7426 78.23189,-20.2854 101.64653,4.9173 16.8805,18.1695 26.8661,51.5469 26.8661,89.8012 0,51.5066 -16.02179,88.2393 -45.02226,103.2218 -14.07824,7.2731 -44.49856,8.995 -61.52344,3.4824 z m 516.7969,-119.0089 v -49.2188 h -108.0078 -108.0078 v 49.2188 49.2187 h 108.0078 108.0078 z"
+       id="path821"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:1501.58px;font-family:Consolas;-inkscape-font-specification:'Consolas, Normal';text-align:end;text-anchor:end;fill:#ffffff;stroke:#ffffff;stroke-width:0.6;stroke-dasharray:none"
+       x="1236.2148"
+       y="-1899.8638"
+       id="text553"
+       transform="scale(1.0046475,0.995374)"><tspan
+         sodipodi:role="line"
+         id="tspan551"
+         x="1236.2148"
+         y="-1899.8638"
+         style="stroke:#ffffff;stroke-width:0.6;stroke-dasharray:none">€</tspan></text>
+    <rect
+       style="fill:none;stroke:none;stroke-width:0.6;stroke-dasharray:none"
+       id="rect1211"
+       width="1400"
+       height="1400"
+       x="100"
+       y="-3068" />
+  </g>
+</svg>

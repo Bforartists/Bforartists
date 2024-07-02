@@ -71,7 +71,7 @@ using namespace blender::ed::seq;
 
 #define MUTE_ALPHA 120
 
-constexpr float MISSING_ICON_SIZE = 16.0f;
+constexpr float MISSING_ICON_SIZE = 12.0f;
 
 struct StripDrawContext {
   Sequence *seq;
@@ -365,37 +365,37 @@ static void color3ubv_from_seq(const Scene *curscene,
 
       /* Slightly offset hue to distinguish different effects. */
       if (seq->type == SEQ_TYPE_ADD) {
-        rgb_byte_set_hue_float_offset(r_col, 0.03);
+        rgb_byte_set_hue_float_offset(r_col, 0.09);
       }
       else if (seq->type == SEQ_TYPE_SUB) {
-        rgb_byte_set_hue_float_offset(r_col, 0.06);
+        rgb_byte_set_hue_float_offset(r_col, 0.03);
       }
       else if (seq->type == SEQ_TYPE_MUL) {
-        rgb_byte_set_hue_float_offset(r_col, 0.13);
+        rgb_byte_set_hue_float_offset(r_col, 0.06);
       }
       else if (seq->type == SEQ_TYPE_ALPHAOVER) {
         rgb_byte_set_hue_float_offset(r_col, 0.16);
       }
       else if (seq->type == SEQ_TYPE_ALPHAUNDER) {
-        rgb_byte_set_hue_float_offset(r_col, 0.23);
+        rgb_byte_set_hue_float_offset(r_col, 0.19);
       }
       else if (seq->type == SEQ_TYPE_OVERDROP) {
-        rgb_byte_set_hue_float_offset(r_col, 0.26);
+        rgb_byte_set_hue_float_offset(r_col, 0.22);
       }
       else if (seq->type == SEQ_TYPE_COLORMIX) {
-        rgb_byte_set_hue_float_offset(r_col, 0.33);
+        rgb_byte_set_hue_float_offset(r_col, 0.25);
       }
       else if (seq->type == SEQ_TYPE_GAUSSIAN_BLUR) {
-        rgb_byte_set_hue_float_offset(r_col, 0.43);
+        rgb_byte_set_hue_float_offset(r_col, 0.31);
       }
       else if (seq->type == SEQ_TYPE_GLOW) {
-        rgb_byte_set_hue_float_offset(r_col, 0.46);
+        rgb_byte_set_hue_float_offset(r_col, 0.34);
       }
       else if (seq->type == SEQ_TYPE_ADJUSTMENT) {
-        rgb_byte_set_hue_float_offset(r_col, 0.55);
+        rgb_byte_set_hue_float_offset(r_col, 0.89);
       }
       else if (seq->type == SEQ_TYPE_SPEED) {
-        rgb_byte_set_hue_float_offset(r_col, 0.65);
+        rgb_byte_set_hue_float_offset(r_col, 0.72);
       }
       else if (seq->type == SEQ_TYPE_TRANSFORM) {
         rgb_byte_set_hue_float_offset(r_col, 0.75);
@@ -475,19 +475,20 @@ static void draw_seq_waveform_overlay(TimelineDrawContext *timeline_ctx,
   const float frames_per_pixel = BLI_rctf_size_x(&v2d->cur) / timeline_ctx->region->winx;
   const float samples_per_frame = SOUND_WAVE_SAMPLES_PER_SECOND / FPS;
   const float samples_per_pixel = samples_per_frame * frames_per_pixel;
+  const float bottom = strip_ctx->bottom + timeline_ctx->pixely * 2.0f;
+  const float top = strip_ctx->strip_content_top;
   /* The y coordinate of signal level zero. */
-  const float y_zero = half_style ? strip_ctx->bottom :
-                                    (strip_ctx->bottom + strip_ctx->strip_content_top) / 2.0f;
+  const float y_zero = half_style ? bottom : (bottom + top) / 2.0f;
   /* The y range of unit signal level. */
-  const float y_scale = half_style ? strip_ctx->strip_content_top - strip_ctx->bottom :
-                                     (strip_ctx->strip_content_top - strip_ctx->bottom) / 2.0f;
+  const float y_scale = half_style ? top - bottom : (top - bottom) / 2.0f;
 
   /* Align strip start with nearest pixel to prevent waveform flickering. */
-  const float strip_start_aligned = align_frame_with_pixel(strip_ctx->left_handle,
-                                                           frames_per_pixel);
+  const float strip_start_aligned = align_frame_with_pixel(
+      strip_ctx->left_handle + timeline_ctx->pixelx * 3.0f, frames_per_pixel);
   /* Offset x1 and x2 values, to match view min/max, if strip is out of bounds. */
   const float draw_start_frame = max_ff(v2d->cur.xmin, strip_start_aligned);
-  const float draw_end_frame = min_ff(v2d->cur.xmax, strip_ctx->right_handle);
+  const float draw_end_frame = min_ff(v2d->cur.xmax,
+                                      strip_ctx->right_handle - timeline_ctx->pixelx * 3.0f);
   /* Offset must be also aligned, otherwise waveform flickers when moving left handle. */
   float sample_start_frame = draw_start_frame + seq->sound->offset_time / FPS;
 
@@ -881,22 +882,23 @@ static void get_strip_text_color(const TimelineDrawContext *ctx,
                                  const StripDrawContext *strip,
                                  uchar r_col[4])
 {
-  /* Text: white 75% opacity, fully opaque when selected/active. */
   const Sequence *seq = strip->seq;
   const bool active_or_selected = (seq->flag & SELECT) || strip->is_active_strip;
-  if (active_or_selected) {
-    r_col[0] = r_col[1] = r_col[2] = 255;
-    r_col[3] = 255;
-  }
-  else {
-    r_col[0] = r_col[1] = r_col[2] = 224;
-    r_col[3] = 192;
-  }
 
-  /* Muted strips: gray color, reduce opacity. */
-  if (SEQ_render_is_muted(ctx->channels, seq)) {
-    r_col[0] = r_col[1] = r_col[2] = 192;
-    r_col[3] *= 0.66f;
+  /* Text: white when selected/active, black otherwise. */
+  r_col[0] = r_col[1] = r_col[2] = r_col[3] = 255;
+
+  /* If not active or selected, draw text black. */
+  if (!active_or_selected) {
+    r_col[0] = r_col[1] = r_col[2] = 0;
+
+    /* On muted and missing media/data-block strips: gray color, reduce opacity. */
+    if ((SEQ_render_is_muted(ctx->channels, seq)) ||
+        (strip->missing_data_block || strip->missing_media))
+    {
+      r_col[0] = r_col[1] = r_col[2] = 192;
+      r_col[3] *= 0.66f;
+    }
   }
 }
 
@@ -905,27 +907,39 @@ static void draw_icon_centered(TimelineDrawContext &ctx,
                                int icon_id,
                                const uchar color[4])
 {
-  const float icon_size_x = MISSING_ICON_SIZE * ctx.pixelx * UI_SCALE_FAC;
-  const float icon_size_y = MISSING_ICON_SIZE * ctx.pixely * UI_SCALE_FAC;
-  if (BLI_rctf_size_x(&rect) * 1.1f < icon_size_x || BLI_rctf_size_y(&rect) * 1.1f < icon_size_y) {
+  UI_view2d_view_ortho(ctx.v2d);
+  wmOrtho2_region_pixelspace(ctx.region);
+
+  const float icon_size = 16 * UI_SCALE_FAC;
+  if (BLI_rctf_size_x(&ctx.v2d->cur) < icon_size) {
+    UI_view2d_view_restore(ctx.C);
     return;
   }
 
-  UI_icon_draw_mono_rect(BLI_rctf_cent_x(&rect) - icon_size_x * 0.5f,
-                         BLI_rctf_cent_y(&rect) - icon_size_y * 0.5f,
-                         icon_size_x,
-                         icon_size_y,
-                         icon_id,
-                         color);
+  const float left = ((rect.xmin - ctx.v2d->cur.xmin) / ctx.pixelx);
+  const float right = ((rect.xmax - ctx.v2d->cur.xmin) / ctx.pixelx);
+  const float bottom = ((rect.ymin - ctx.v2d->cur.ymin) / ctx.pixely);
+  const float top = ((rect.ymax - ctx.v2d->cur.ymin) / ctx.pixely);
+  const float x_offset = (right - left - icon_size) * 0.5f;
+  const float y_offset = (top - bottom - icon_size) * 0.5f;
+
+  UI_icon_draw_ex(left + x_offset,
+                  bottom + y_offset,
+                  icon_id,
+                  UI_INV_SCALE_FAC,
+                  1.0f,
+                  0.0f,
+                  color,
+                  false,
+                  UI_NO_ICON_OVERLAY_TEXT);
+
+  /* Restore view matrix. */
+  UI_view2d_view_restore(ctx.C);
 }
 
 static void draw_strip_icons(TimelineDrawContext *timeline_ctx,
                              const Vector<StripDrawContext> &strips)
 {
-  GPU_blend(GPU_BLEND_ALPHA);
-
-  UI_icon_draw_cache_begin();
-
   const float icon_size_x = MISSING_ICON_SIZE * timeline_ctx->pixelx * UI_SCALE_FAC;
 
   for (const StripDrawContext &strip : strips) {
@@ -974,9 +988,6 @@ static void draw_strip_icons(TimelineDrawContext *timeline_ctx,
       }
     }
   }
-
-  UI_icon_draw_cache_end();
-  GPU_blend(GPU_BLEND_NONE);
 }
 
 /* Draw info text on a sequence strip. */
@@ -1247,15 +1258,10 @@ static void visible_strips_ordered_get(TimelineDrawContext *timeline_ctx,
   Vector<Sequence *> strips = sequencer_visible_strips_get(timeline_ctx->C);
   r_unselected.clear();
   r_selected.clear();
-  const bool act_seq_is_selected = act_seq != nullptr && (act_seq->flag & SELECT) != 0;
-
-  if (act_seq_is_selected) {
-    strips.remove_if([&](Sequence *seq) { return seq == act_seq; });
-  }
 
   for (Sequence *seq : strips) {
-    /* Selected active will be added last. */
-    if (act_seq_is_selected && seq == act_seq) {
+    /* Active will be added last. */
+    if (seq == act_seq) {
       continue;
     }
 
@@ -1267,10 +1273,15 @@ static void visible_strips_ordered_get(TimelineDrawContext *timeline_ctx,
       r_selected.append(strip_ctx);
     }
   }
-  /* Add selected active, if any. */
-  if (act_seq_is_selected) {
+  /* Add active, if any. */
+  if (act_seq) {
     StripDrawContext strip_ctx = strip_draw_context_get(timeline_ctx, act_seq);
-    r_selected.append(strip_ctx);
+    if ((act_seq->flag & SELECT) == 0) {
+      r_unselected.append(strip_ctx);
+    }
+    else {
+      r_selected.append(strip_ctx);
+    }
   }
 }
 
@@ -1301,7 +1312,7 @@ static void draw_strips_background(TimelineDrawContext *timeline_ctx,
     /* Muted strips: turn almost gray. */
     if (col[3] == MUTE_ALPHA) {
       uchar muted_color[3] = {128, 128, 128};
-      UI_GetColorPtrBlendShade3ubv(col, muted_color, col, 0.8f, 0);
+      UI_GetColorPtrBlendShade3ubv(col, muted_color, col, 0.5f, 0);
     }
     data.col_background = color_pack(col);
 
@@ -1435,33 +1446,24 @@ static void draw_strips_foreground(TimelineDrawContext *timeline_ctx,
 
     /* Handles on left/right side. */
     if (!locked && ED_sequencer_can_select_handle(scene, strip.seq, timeline_ctx->v2d)) {
-      data.flags |= GPU_SEQ_FLAG_HANDLES;
-      const bool selected_l = ED_sequencer_handle_is_selected(strip.seq, SEQ_HANDLE_LEFT);
-      const bool selected_r = ED_sequencer_handle_is_selected(strip.seq, SEQ_HANDLE_RIGHT);
-      const bool show_l = show_handles || (selected && selected_l);
-      const bool show_r = show_handles || (selected && selected_r);
-
-      /* Left handle color. */
-      col[0] = col[1] = col[2] = 0;
-      col[3] = 50;
-      if (selected && selected_l) {
-        UI_GetThemeColor4ubv(active ? TH_SEQ_ACTIVE : TH_SEQ_SELECTED, col);
+      const bool selected_l = selected &&
+                              ED_sequencer_handle_is_selected(strip.seq, SEQ_HANDLE_LEFT);
+      const bool selected_r = selected &&
+                              ED_sequencer_handle_is_selected(strip.seq, SEQ_HANDLE_RIGHT);
+      const bool show_l = show_handles || selected_l;
+      const bool show_r = show_handles || selected_r;
+      if (show_l) {
+        data.flags |= GPU_SEQ_FLAG_DRAW_LH;
       }
-      if (!show_l) {
-        col[3] = 0;
+      if (show_r) {
+        data.flags |= GPU_SEQ_FLAG_DRAW_RH;
       }
-      data.col_handle_left = color_pack(col);
-
-      /* Right handle color. */
-      col[0] = col[1] = col[2] = 0;
-      col[3] = 50;
-      if (selected && selected_r) {
-        UI_GetThemeColor4ubv(active ? TH_SEQ_ACTIVE : TH_SEQ_SELECTED, col);
+      if (selected_l) {
+        data.flags |= GPU_SEQ_FLAG_SELECTED_LH;
       }
-      if (!show_r) {
-        col[3] = 0;
+      if (selected_r) {
+        data.flags |= GPU_SEQ_FLAG_SELECTED_RH;
       }
-      data.col_handle_right = color_pack(col);
     }
   }
   strips_batch.flush_batch();
@@ -1521,13 +1523,8 @@ static void draw_seq_strips(TimelineDrawContext *timeline_ctx,
   /* Draw icons. */
   draw_strip_icons(timeline_ctx, strips);
 
-  /* Draw text labels with a drop shadow. */
-  const int font_id = BLF_default();
-  BLF_enable(font_id, BLF_SHADOW);
-  BLF_shadow(font_id, FontShadowType::Blur3x3, float4{0.0f, 0.0f, 0.0f, 1.0f});
-  BLF_shadow_offset(font_id, 1, -1);
+  /* Draw text labels. */
   UI_view2d_text_cache_draw(timeline_ctx->region);
-  BLF_disable(font_id, BLF_SHADOW);
   GPU_blend(GPU_BLEND_NONE);
 }
 

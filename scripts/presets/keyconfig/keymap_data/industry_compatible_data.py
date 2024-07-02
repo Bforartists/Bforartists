@@ -1798,6 +1798,8 @@ def km_sequencer(params):
          {"properties": [("adjust_length", True)]}),
         ("sequencer.offset_clear", {"type": 'O', "value": 'PRESS', "alt": True}, None),
         ("sequencer.duplicate_move", {"type": 'D', "value": 'PRESS', "ctrl": True}, None),
+        ("sequencer.retiming_key_delete", {"type": 'BACK_SPACE', "value": 'PRESS'}, None),
+        ("sequencer.retiming_key_delete", {"type": 'DEL', "value": 'PRESS'}, None),
         ("sequencer.delete", {"type": 'BACK_SPACE', "value": 'PRESS'}, None),
         ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
         ("sequencer.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
@@ -4392,7 +4394,7 @@ def km_sequencer_editor_tool_select_preview(params):
     return (
         "Sequencer Preview Tool: Tweak",
         {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
-        {"items": []}
+        {"items": _template_items_tool_select(params, "sequencer.select", extend="toggle")}
     )
 
 
@@ -4400,7 +4402,7 @@ def km_sequencer_editor_tool_select_timeline(params):
     return (
         "Sequencer Timeline Tool: Tweak",
         {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
-        {"items": []}
+        {"items": _template_items_tool_select(params, "sequencer.select", extend="toggle")}
     )
 
 # NOTE: duplicated from `blender_default.py`.

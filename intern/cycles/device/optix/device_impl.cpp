@@ -216,7 +216,7 @@ bool OptiXDevice::load_kernels(const uint kernel_features)
                             "";
   string ptx_filename;
   if (need_optix_kernels) {
-    ptx_filename = path_get("lib/kernel_optix" + suffix + ".ptx");
+    ptx_filename = path_get("lib/kernel_optix" + suffix + ".ptx.zst");
     if (use_adaptive_compilation() || path_file_size(ptx_filename) == -1) {
       std::string optix_include_dir = get_optix_include_dir();
       if (optix_include_dir.empty()) {
@@ -348,7 +348,7 @@ bool OptiXDevice::load_kernels(const uint kernel_features)
       string cflags = compile_kernel_get_common_cflags(kernel_features);
       ptx_filename = compile_kernel(cflags, ("kernel" + suffix).c_str(), "optix", true);
     }
-    if (ptx_filename.empty() || !path_read_text(ptx_filename, ptx_data)) {
+    if (ptx_filename.empty() || !path_read_compressed_text(ptx_filename, ptx_data)) {
       set_error(string_printf("Failed to load OptiX kernel from '%s'", ptx_filename.c_str()));
       return false;
     }
@@ -798,8 +798,8 @@ bool OptiXDevice::load_osl_kernels()
   osl_modules.resize(osl_kernels.size() + 1);
 
   { /* Load and compile PTX module with OSL services. */
-    string ptx_data, ptx_filename = path_get("lib/kernel_optix_osl_services.ptx");
-    if (!path_read_text(ptx_filename, ptx_data)) {
+    string ptx_data, ptx_filename = path_get("lib/kernel_optix_osl_services.ptx.zst");
+    if (!path_read_compressed_text(ptx_filename, ptx_data)) {
       set_error(string_printf("Failed to load OptiX OSL services kernel from '%s'",
                               ptx_filename.c_str()));
       return false;
@@ -916,27 +916,14 @@ bool OptiXDevice::load_osl_kernels()
         context, group_descs, 2, &group_options, nullptr, 0, &osl_groups[i * 2]));
   }
 
-  OptixStackSizes stack_size[NUM_PROGRAM_GROUPS] = {};
-  vector<OptixStackSizes> osl_stack_size(osl_groups.size());
-
   /* Update SBT with new entries. */
   sbt_data.alloc(NUM_PROGRAM_GROUPS + osl_groups.size());
   for (int i = 0; i < NUM_PROGRAM_GROUPS; ++i) {
     optix_assert(optixSbtRecordPackHeader(groups[i], &sbt_data[i]));
-#    if OPTIX_ABI_VERSION >= 84
-    optix_assert(optixProgramGroupGetStackSize(groups[i], &stack_size[i], nullptr));
-#    else
-    optix_assert(optixProgramGroupGetStackSize(groups[i], &stack_size[i]));
-#    endif
   }
   for (size_t i = 0; i < osl_groups.size(); ++i) {
     if (osl_groups[i] != NULL) {
       optix_assert(optixSbtRecordPackHeader(osl_groups[i], &sbt_data[NUM_PROGRAM_GROUPS + i]));
-#    if OPTIX_ABI_VERSION >= 84
-      optix_assert(optixProgramGroupGetStackSize(osl_groups[i], &osl_stack_size[i], nullptr));
-#    else
-      optix_assert(optixProgramGroupGetStackSize(osl_groups[i], &osl_stack_size[i]));
-#    endif
     }
     else {
       /* Default to "__direct_callable__dummy_services", so that OSL evaluation for empty
@@ -981,6 +968,28 @@ bool OptiXDevice::load_osl_kernels()
                                      nullptr,
                                      0,
                                      &pipelines[PIP_SHADE]));
+
+    /* Get program stack sizes. */
+    OptixStackSizes stack_size[NUM_PROGRAM_GROUPS] = {};
+    vector<OptixStackSizes> osl_stack_size(osl_groups.size());
+
+    for (int i = 0; i < NUM_PROGRAM_GROUPS; ++i) {
+#    if OPTIX_ABI_VERSION >= 84
+      optix_assert(optixProgramGroupGetStackSize(groups[i], &stack_size[i], nullptr));
+#    else
+      optix_assert(optixProgramGroupGetStackSize(groups[i], &stack_size[i]));
+#    endif
+    }
+    for (size_t i = 0; i < osl_groups.size(); ++i) {
+      if (osl_groups[i] != NULL) {
+#    if OPTIX_ABI_VERSION >= 84
+        optix_assert(optixProgramGroupGetStackSize(
+            osl_groups[i], &osl_stack_size[i], pipelines[PIP_SHADE]));
+#    else
+        optix_assert(optixProgramGroupGetStackSize(osl_groups[i], &osl_stack_size[i]));
+#    endif
+      }
+    }
 
     const unsigned int css = std::max(stack_size[PG_RGEN_SHADE_SURFACE_RAYTRACE].cssRG,
                                       stack_size[PG_RGEN_SHADE_SURFACE_MNEE].cssRG);

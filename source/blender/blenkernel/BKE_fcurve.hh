@@ -242,12 +242,9 @@ void BKE_fmodifier_name_set(FModifier *fcm, const char *name);
 /**
  * Callback used by lib_query to walk over all ID usages
  * (mimics `foreach_id` callback of #IDTypeInfo structure).
- */
-void BKE_fmodifiers_foreach_id(ListBase *fmodifiers, LibraryForeachIDData *data);
-
-/**
- * Callback used by lib_query to walk over all ID usages
- * (mimics `foreach_id` callback of #IDTypeInfo structure).
+ *
+ * Note that this is only relevant when the F-Curve is a driver. Otherwise it
+ * won't refer to any other ID.
  */
 void BKE_fcurve_foreach_id(FCurve *fcu, LibraryForeachIDData *data);
 
@@ -331,7 +328,7 @@ FCurve *BKE_fcurve_find_by_rna(PointerRNA *ptr,
                                bool *r_driven,
                                bool *r_special);
 /**
- * Same as above, but takes a context data,
+ * Same as #BKE_fcurve_find_by_rna, but takes a context data,
  * temp hack needed for complex paths like texture ones.
  *
  * \param r_special: Optional, ignored when NULL. Set to `true` if the given RNA `ptr` is a NLA

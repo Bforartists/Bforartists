@@ -231,7 +231,7 @@ string HIPDevice::compile_kernel(const uint kernel_features, const char *name, c
 
   /* Attempt to use kernel provided with Blender. */
   if (!use_adaptive_compilation()) {
-    const string fatbin = path_get(string_printf("lib/%s_%s.fatbin", name, arch.c_str()));
+    const string fatbin = path_get(string_printf("lib/%s_%s.fatbin.zst", name, arch.c_str()));
     VLOG_INFO << "Testing for pre-compiled kernel " << fatbin << ".";
     if (path_exists(fatbin)) {
       VLOG_INFO << "Using precompiled kernel.";
@@ -252,14 +252,14 @@ string HIPDevice::compile_kernel(const uint kernel_features, const char *name, c
   const char *const kernel_ext = "genco";
   std::string options;
 #  ifdef _WIN32
-  options.append("Wno-parentheses-equality -Wno-unused-value --hipcc-func-supp -ffast-math");
+  options.append("Wno-parentheses-equality -Wno-unused-value -ffast-math");
 #  else
-  options.append("Wno-parentheses-equality -Wno-unused-value --hipcc-func-supp -O3 -ffast-math");
+  options.append("Wno-parentheses-equality -Wno-unused-value -O3 -ffast-math");
 #  endif
 #  ifndef NDEBUG
   options.append(" -save-temps");
 #  endif
-  options.append(" --amdgpu-target=").append(arch.c_str());
+  options.append(" --offload-arch=").append(arch.c_str());
 
   const string include_path = source_path;
   const string fatbin_file = string_printf(
@@ -387,7 +387,7 @@ bool HIPDevice::load_kernels(const uint kernel_features)
   string fatbin_data;
   hipError_t result;
 
-  if (path_read_text(fatbin, fatbin_data))
+  if (path_read_compressed_text(fatbin, fatbin_data))
     result = hipModuleLoadData(&hipModule, fatbin_data.c_str());
   else
     result = hipErrorFileNotFound;

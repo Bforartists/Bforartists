@@ -21,6 +21,7 @@ apps:
     bforartists:
         command: ./bforartists-wrapper
         desktop: ./bforartists.desktop
+		common-id: org.blender.Blender
 
 base: core20
 version: '@VERSION@'
