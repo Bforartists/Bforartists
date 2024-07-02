@@ -110,7 +110,7 @@ static const IconType icontypes[] = {
 #  define DEF_ICON(name) {ICON_TYPE_MONO_TEXTURE, 0},
 #  define DEF_ICON_COLOR(name) {ICON_TYPE_SVG_COLOR, 0}, /*BFA - Colored Icons*/
 #  define DEF_ICON_SCENE(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_SCENE},
-#  define DEF_ICON_COLLECTION(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_COLLECTION}, /*BFA - Colored Icons*/
+#  define DEF_ICON_COLLECTION(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_COLLECTION},
 #  define DEF_ICON_OBJECT(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_OBJECT},
 #  define DEF_ICON_OBJECT_DATA(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_OBJECT_DATA},
 #  define DEF_ICON_MODIFIER(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_MODIFIER},
@@ -2140,15 +2140,15 @@ ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon, float size)
     return nullptr;
   }
 
-  int width;
-  int height;
-  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, size, &width, &height);
-  if (bitmap.is_empty()) {
-    return nullptr;
-  }
-  ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
-  IMB_flipy(ibuf);
-  IMB_premultiply_alpha(ibuf);
-  return ibuf;
+ int width;
+ int height;
+ blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, size, &width, &height);
+ if (bitmap.is_empty()) {
+   return nullptr;
+ }
+ ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
+ IMB_flipy(ibuf);
+ IMB_premultiply_alpha(ibuf);
+ return ibuf;
 #endif
 }
