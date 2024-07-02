@@ -38,7 +38,7 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
@@ -47,8 +47,8 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="0.5"
-     inkscape:cx="5"
-     inkscape:cy="8"
+     inkscape:cx="702"
+     inkscape:cy="562"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -58,15 +58,15 @@
      inkscape:deskcolor="#d1d1d1" />
   <g
      id="CON_SAMEVOL"
-     transform="matrix(87.500005,0,0,87.500005,100,100.00001)"
-     style="stroke-width:0.0114286">
+     transform="matrix(100.00001,0,0,100.00001,0,1e-5)"
+     style="stroke-width:0.01">
     <path
-       style="fill:none;stroke-width:0.000357143"
+       style="fill:none;stroke-width:0.0003125"
        d="M 8.9999997,11.499999 V 6.9999997 H 4.4999998 0 V 3.4999999 0 H 5.4999998 11 V 7.9999997 15.999999 H 9.9999996 8.9999997 Z m -7.99999974,0 V 7.9999997 H 4.4999998 7.9999997 V 11.499999 15 H 4.4999998 0.99999996 Z M 12,7.9999997 V 0.99999996 H 13.499999 15 V 7.9999997 15 H 13.499999 12 Z"
        id="path821"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#98cbfe;stroke-width:0.000357143"
+       style="fill:#98cbfe;stroke-width:0.0003125"
        d="M 0,11.499999 V 6.9999997 h 4.4999998 4.4999999 v 4.4999993 4.5 H 4.4999998 0 Z m 7.9999997,0 V 7.9999997 H 4.4999998 0.99999996 V 11.499999 15 H 4.4999998 7.9999997 Z M 11,7.9999997 V 0 h 2.499999 2.5 v 7.9999997 7.9999993 h -2.5 H 11 Z m 4,0 V 0.99999996 H 13.499999 12 V 7.9999997 15 H 13.499999 15 Z"
        id="path819"
        inkscape:connector-curvature="0" />
