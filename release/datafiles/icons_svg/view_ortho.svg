@@ -38,13 +38,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
-     inkscape:zoom="0.5"
-     inkscape:cx="459"
-     inkscape:cy="698"
+     inkscape:zoom="0.35355339"
+     inkscape:cx="749.53319"
+     inkscape:cy="854.18499"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -62,9 +62,14 @@
        id="path821"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#fefefe;stroke-width:0.000357143"
-       d="M 0,8 V 0 h 8 8 v 8 8 H 8 0 Z m 5,5 V 11 H 3 1 v 2 2 h 2 2 z m 5,0 V 11 H 8 6 v 2 2 h 2 2 z m 5,0 v -2 h -2 -2 v 2 2 h 2 2 z M 5,8 V 6 H 3 1 v 2 2 h 2 2 z m 5,0 V 6 H 8 6 v 2 2 h 2 2 z m 5,0 V 6 h -2 -2 v 2 2 h 2 2 z M 5,3 V 1 H 3 1 v 2 2 h 2 2 z m 5,0 V 1 H 8 6 v 2 2 h 2 2 z m 5,0 V 1 h -2 -2 v 2 2 h 2 2 z"
+       style="fill:#fefefe;stroke:#333333;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+       d="m 0.5,7.9999995 v -7.5 H 8 15.5 v 7.5 V 15.5 H 8 0.5 Z M 5.1875,12.6875 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z m 4.6875,0 v -1.875 H 8 6.125 v 1.875 1.875 H 8 9.875 Z m 4.6875,0 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z M 5.1875,7.9999995 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z m 4.6875,0 v -1.875 H 8 6.125 v 1.875 1.875 H 8 9.875 Z m 4.6875,0 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z m -9.375,-4.6875 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z m 4.6875,0 v -1.875 H 8 6.125 v 1.875 1.875 H 8 9.875 Z m 4.6875,0 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z"
        id="path819"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#fefefe;stroke-width:0.000357143"
+       d="m 0.5,7.9999995 v -7.5 H 8 15.5 v 7.5 V 15.5 H 8 0.5 Z M 5.1875,12.6875 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z m 4.6875,0 v -1.875 H 8 6.125 v 1.875 1.875 H 8 9.875 Z m 4.6875,0 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z M 5.1875,7.9999995 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z m 4.6875,0 v -1.875 H 8 6.125 v 1.875 1.875 H 8 9.875 Z m 4.6875,0 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z m -9.375,-4.6875 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z m 4.6875,0 v -1.875 H 8 6.125 v 1.875 1.875 H 8 9.875 Z m 4.6875,0 v -1.875 h -1.875 -1.875 v 1.875 1.875 h 1.875 1.875 z"
+       id="path819-8"
        inkscape:connector-curvature="0" />
   </g>
 </svg>
