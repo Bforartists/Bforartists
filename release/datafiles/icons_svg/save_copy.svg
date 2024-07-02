@@ -38,13 +38,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
      inkscape:zoom="0.5"
-     inkscape:cx="9"
-     inkscape:cy="8"
+     inkscape:cx="380"
+     inkscape:cy="856"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -54,35 +54,35 @@
      inkscape:deskcolor="#d1d1d1" />
   <g
      id="SAVE_COPY"
-     transform="matrix(87.5,0,0,87.5,100,99.977729)"
-     style="stroke-width:0.0114286">
+     transform="matrix(100,0,0,100,0,-0.0238585)"
+     style="stroke-width:0.01">
     <path
-       style="fill:none;stroke-width:0.000357143"
+       style="fill:none;stroke-width:0.0003125"
        d="M 0,12.507935 V 9.0158691 L 1.4923083,10.507935 2.9846167,12 H 3.4923084 4 v 0.507692 0.507691 L 5.4920653,14.507692 6.9841309,16 H 3.4920653 0 Z M 12,2 V 0 h 2 2 v 2 2 h -2 -2 z"
        id="path829"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#fefefe;stroke-width:0.000357143"
+       style="fill:#fefefe;stroke-width:0.0003125"
        d="M 5.5,8.125 V 4.75 H 10 14.5 V 8.125 11.5 H 10 5.5 Z m -4,-4 V 0.75 H 6 10.5 V 2.375 4 H 7.25 4 V 5.75 7.5 H 2.75 1.5 Z"
        id="path827"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#cbcbcb;stroke-width:0.000357143"
+       style="fill:#cbcbcb;stroke-width:0.0003125"
        d="m 7,14 v -2 h 3 3 v 2 2 H 10 7 Z m 2,0 V 13 H 8.5 8 v 1 1 H 8.5 9 Z M 3,10 V 8 H 3.5 4 v 2 2 H 3.5 3 Z"
        id="path825"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#0065cb;stroke-width:0.000357143"
+       style="fill:#0065cb;stroke-width:0.0003125"
        d="M 1.4921875,10.507819 0,9.0153834 V 5.6326916 2.25 H 0.75 1.5 V 4.875 7.5 H 2.75 4 V 7.75 8 H 3.5002297 3.0004593 l -0.00804,2.000127 -0.00804,2.000127 z M 10.5,2.375 V 0.75 H 5.25 0 V 0.375 0 h 6 6 V 2 4 H 11.25 10.5 Z"
        id="path823"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#32cb32;stroke-width:0.000357143"
+       style="fill:#32cb32;stroke-width:0.0003125"
        d="M 5.4921875,14.507819 4,13.015383 V 9.6326916 6.25 H 4.75 5.5 V 8.875 11.5 H 10 14.5 V 8.125 4.75 H 9.25 4 V 4.375 4 h 6 6 v 6 6 H 14.5 13 V 14 12 H 10.00023 7.0004594 l -0.00804,2.000127 -0.00804,2.000127 z"
        id="path821"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#323232;stroke-width:0.000357143"
+       style="fill:#323232;stroke-width:0.0003125"
        d="M 8,14 V 13 H 8.5 9 v 1 1 H 8.5 8 Z M 4,5.5 V 4.75 H 4.75 5.5 V 5.5 6.25 H 4.75 4 Z M 0,1.5 V 0.75 H 0.75 1.5 V 1.5 2.25 H 0.75 0 Z"
        id="path819"
        inkscape:connector-curvature="0" />
