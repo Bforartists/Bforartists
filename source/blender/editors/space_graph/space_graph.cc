@@ -554,7 +554,6 @@ static void graph_region_message_subscribe(const wmRegionMessageSubscribeParams 
         &RNA_FModifierGenerator,
         &RNA_FModifierLimits,
         &RNA_FModifierNoise,
-        &RNA_FModifierPython,
         &RNA_FModifierStepped,
     };
 
@@ -673,6 +672,8 @@ static void graph_refresh_fcurve_colors(const bContext *C)
 
   /* loop over F-Curves, assigning colors */
   for (ale = static_cast<bAnimListElem *>(anim_data.first), i = 0; ale; ale = ale->next, i++) {
+    BLI_assert_msg(ELEM(ale->type, ANIMTYPE_FCURVE, ANIMTYPE_NLACURVE),
+                   "Expecting only FCurves when using the ANIMFILTER_FCURVESONLY filter");
     FCurve *fcu = (FCurve *)ale->data;
 
     /* set color of curve here */

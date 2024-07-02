@@ -19,7 +19,6 @@ namespace blender::draw::pbvh {
 struct PBVHBatches;
 }
 
-struct PBVHGPUFormat;
 struct BMVert;
 struct BMFace;
 
@@ -70,8 +69,8 @@ struct PBVHNode {
    * Used for leaf nodes in a mesh-based PBVH (not multires.)
    */
   blender::Array<int, 0> vert_indices;
+  /** The number of vertices in #vert_indices not shared with (owned by) another node. */
   int uniq_verts = 0;
-  int face_verts = 0;
 
   /* Array of indices into the Mesh's corner array.
    * PBVH_FACES only.
@@ -130,12 +129,6 @@ struct PBVH {
 
   /* Memory backing for PBVHNode.prim_indices. */
   blender::Array<int> prim_indices;
-  int totprim;
-  int totvert;
-
-  int leaf_limit;
-  int pixel_leaf_limit;
-  int depth_limit;
 
   /* Mesh data. The evaluated deform mesh for mesh sculpting, and the base mesh for grids. */
   Mesh *mesh;
@@ -150,12 +143,6 @@ struct PBVH {
   blender::MutableSpan<blender::float3> vert_positions;
   blender::Span<blender::float3> vert_normals;
   blender::Span<blender::float3> face_normals;
-
-  /** Only valid for polygon meshes. */
-  blender::OffsetIndices<int> faces;
-  blender::Span<int> corner_verts;
-  /* Owned by the #PBVH, because after deformations they have to be recomputed. */
-  blender::Array<blender::int3> corner_tris;
 
   /* Grid Data */
   CCGKey gridkey;
@@ -178,19 +165,6 @@ struct PBVH {
   int num_planes;
 
   BMLog *bm_log;
-
-  CustomDataLayer *color_layer;
-  blender::bke::AttrDomain color_domain;
-
-  /* Initialize this to true, instead of waiting for a draw engine
-   * to set it. Prevents a crash in draw manager instancing code.
-   * TODO: This is fragile, another solution should be found. */
-  bool is_drawing = true;
-
-  /* Used by DynTopo to invalidate the draw cache. */
-  bool draw_cache_invalid = true;
-
-  PBVHGPUFormat *vbo_id;
 
   PBVHPixels pixels;
 

@@ -179,6 +179,8 @@ void Light::shape_parameters_set(const ::Light *la,
     float sun_half_angle = min_ff(la->sun_angle, DEG2RADF(179.9f)) / 2.0f;
     /* Use non-clamped radius for soft shadows. Avoid having a minimum blur. */
     this->sun.shadow_angle = sun_half_angle * trace_scaling_fac;
+    /* Clamp to a minimum to distinguish between point lights and area light shadow. */
+    this->sun.shadow_angle = (sun_half_angle > 0.0f) ? max_ff(1e-8f, sun.shadow_angle) : 0.0f;
     /* Clamp to minimum value before float imprecision artifacts appear. */
     this->sun.shape_radius = clamp(tanf(sun_half_angle), 0.001f, 20.0f);
     /* Stable shading direction. */
@@ -223,6 +225,8 @@ void Light::shape_parameters_set(const ::Light *la,
     }
     /* Use unclamped radius for soft shadows. Avoid having a minimum blur. */
     this->local.shadow_radius = max(0.0f, la->radius) * trace_scaling_fac;
+    /* Clamp to a minimum to distinguish between point lights and area light shadow. */
+    this->local.shadow_radius = (la->radius > 0.0f) ? max_ff(1e-8f, local.shadow_radius) : 0.0f;
     /* Set to default position. */
     this->local.shadow_position = float3(0.0f);
     /* Ensure a minimum radius/energy ratio to avoid harsh cut-offs. (See 114284) */
@@ -343,7 +347,7 @@ void LightModule::begin_sync()
   sun_lights_len_ = 0;
   local_lights_len_ = 0;
 
-  if (use_sun_lights_ && inst_.world.sun_threshold() > 0.0) {
+  if (use_sun_lights_ && inst_.world.sun_threshold() > 0.0f) {
     /* Create a placeholder light to be fed by the GPU after sunlight extraction.
      * Sunlight is disabled if power is zero. */
     ::Light la = blender::dna::shallow_copy(
@@ -436,9 +440,12 @@ void LightModule::end_sync()
   culling_light_buf_.resize(lights_allocated);
 
   {
+
+    int2 render_extent = inst_.film.render_extent_get();
+    int2 probe_extent = int2(inst_.sphere_probes.probe_render_extent());
+    int2 max_extent = math::max(render_extent, probe_extent);
     /* Compute tile size and total word count. */
     uint word_per_tile = divide_ceil_u(max_ii(lights_len_, 1), 32);
-    int2 render_extent = inst_.film.render_extent_get();
     int2 tiles_extent;
     /* Default to 32 as this is likely to be the maximum
      * tile size used by hardware or compute shading. */
@@ -446,7 +453,7 @@ void LightModule::end_sync()
     bool tile_size_valid = false;
     do {
       tile_size *= 2;
-      tiles_extent = math::divide_ceil(render_extent, int2(tile_size));
+      tiles_extent = math::divide_ceil(max_extent, int2(tile_size));
       uint tile_count = tiles_extent.x * tiles_extent.y;
       if (tile_count > max_tile_count_threshold) {
         continue;
@@ -576,7 +583,7 @@ void LightModule::set_view(View &view, const int2 extent)
   culling_data_buf_.push_update();
 
   inst_.manager->submit(culling_ps_, view);
-  inst_.manager->submit(update_ps_);
+  inst_.manager->submit(update_ps_, view);
 }
 
 void LightModule::debug_draw(View &view, GPUFrameBuffer *view_fb)

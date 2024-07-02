@@ -57,22 +57,25 @@ void VKCommandBuilder::build_nodes(VKRenderGraph &render_graph,
   command_buffer.begin_recording();
   state_.debug_level = 0;
   state_.active_debug_group_id = -1;
-  int64_t node_group_start = 0;
-  bool is_rendering = false;
   std::optional<NodeHandle> rendering_scope;
-  for (int64_t node_index : nodes.index_range()) {
-    NodeHandle node_handle = nodes[node_index];
+  IndexRange nodes_range = nodes.index_range();
+  while (!nodes_range.is_empty()) {
+    IndexRange node_group = nodes_range.slice(0, 1);
+    NodeHandle node_handle = nodes[nodes_range.first()];
     VKRenderGraphNode &node = render_graph.nodes_[node_handle];
-    int64_t node_group_end = node_index;
-    if (node.type == VKNodeType::END_RENDERING || !node_type_is_rendering(node.type)) {
-      build_node_group(render_graph,
-                       command_buffer,
-                       nodes.slice(node_group_start, (node_group_end - node_group_start) + 1),
-                       rendering_scope,
-                       is_rendering);
-      node_group_start = node_index + 1;
+    while (node_type_is_rendering(node.type) && node_group.size() < nodes_range.size()) {
+      NodeHandle node_handle = nodes[nodes_range[node_group.size()]];
+      VKRenderGraphNode &node = render_graph.nodes_[node_handle];
+      if (!node_type_is_rendering(node.type) || node.type == VKNodeType::BEGIN_RENDERING) {
+        break;
+      }
+      node_group = nodes_range.slice(0, node_group.size() + 1);
     }
+
+    build_node_group(render_graph, command_buffer, nodes.slice(node_group), rendering_scope);
+    nodes_range = nodes_range.drop_front(node_group.size());
   }
+
   finish_debug_groups(command_buffer);
   state_.debug_level = 0;
 
@@ -82,9 +85,9 @@ void VKCommandBuilder::build_nodes(VKRenderGraph &render_graph,
 void VKCommandBuilder::build_node_group(VKRenderGraph &render_graph,
                                         VKCommandBufferInterface &command_buffer,
                                         Span<NodeHandle> node_group,
-                                        std::optional<NodeHandle> &r_rendering_scope,
-                                        bool &r_is_rendering)
+                                        std::optional<NodeHandle> &r_rendering_scope)
 {
+  bool is_rendering = false;
   for (NodeHandle node_handle : node_group) {
     VKRenderGraphNode &node = render_graph.nodes_[node_handle];
     build_pipeline_barriers(render_graph, command_buffer, node_handle, node.pipeline_stage_get());
@@ -94,9 +97,9 @@ void VKCommandBuilder::build_node_group(VKRenderGraph &render_graph,
     VKRenderGraphNode &node = render_graph.nodes_[node_handle];
     if (node.type == VKNodeType::BEGIN_RENDERING) {
       BLI_assert(!r_rendering_scope.has_value());
-      BLI_assert(!r_is_rendering);
+      BLI_assert(!is_rendering);
       r_rendering_scope = node_handle;
-      r_is_rendering = true;
+      is_rendering = true;
 
       /* Check of the node_group spans a full rendering scope. In that case we don't need to set
        * the VK_RENDERING_SUSPENDING_BIT. */
@@ -110,33 +113,31 @@ void VKCommandBuilder::build_node_group(VKRenderGraph &render_graph,
     else if (node.type == VKNodeType::END_RENDERING) {
       BLI_assert(r_rendering_scope.has_value());
       r_rendering_scope.reset();
-      r_is_rendering = false;
+      is_rendering = false;
     }
     else if (node_type_is_within_rendering(node.type)) {
       BLI_assert(r_rendering_scope.has_value());
-      if (!r_is_rendering) {
+      if (!is_rendering) {
         // Resuming paused rendering scope.
         VKRenderGraphNode &rendering_node = render_graph.nodes_[*r_rendering_scope];
         rendering_node.begin_rendering.vk_rendering_info.flags = VK_RENDERING_RESUMING_BIT;
         rendering_node.build_commands(command_buffer, state_.active_pipelines);
-        r_is_rendering = true;
+        is_rendering = true;
       }
     }
-    else {
-      // Dispatch or data transfer command that cannot be done before rendering. We have to pause
-      // rendering
-      if (r_is_rendering) {
-        // Pause rendering.
-        r_is_rendering = false;
-        command_buffer.end_rendering();
-      }
-    }
-
-    // std::cout << "node_handle: " << node_handle << ", node_type: " << node.type << "\n";
+#if 0
+    std::cout << "node_group: " << node_group.first() << "-" << node_group.last()
+              << ", node_handle: " << node_handle << ", node_type: " << node.type << "\n";
+#endif
     if (G.debug & G_DEBUG_GPU) {
       activate_debug_group(render_graph, command_buffer, node_handle);
     }
     node.build_commands(command_buffer, state_.active_pipelines);
+  }
+  if (is_rendering) {
+    /* Suspend rendering as the next node group will contain data transfer/dispatch commands. */
+    is_rendering = false;
+    command_buffer.end_rendering();
   }
 }
 
@@ -283,22 +284,21 @@ void VKCommandBuilder::add_buffer_read_barriers(VKRenderGraph &render_graph,
     VkAccessFlags write_access = resource_state.write_access;
     VkAccessFlags wait_access = VK_ACCESS_NONE;
 
-    if (read_access == (read_access | link.vk_access_flags)) {
+    if (read_access == (read_access | link.vk_access_flags) &&
+        (resource_state.read_stages & node_stages))
+    {
       /* Has already been covered in a previous call no need to add this one. */
       continue;
     }
 
-    read_access |= link.vk_access_flags;
     wait_access |= write_access;
+    read_access |= link.vk_access_flags;
     state_.src_stage_mask |= resource_state.write_stages;
     state_.dst_stage_mask |= node_stages;
 
     resource_state.read_access = read_access;
-    resource_state.write_access = VK_ACCESS_NONE;
     resource_state.read_stages |= node_stages;
-    resource_state.write_stages = VK_PIPELINE_STAGE_NONE;
-
-    add_buffer_barrier(resource.buffer.vk_buffer, wait_access, read_access);
+    add_buffer_barrier(resource.buffer.vk_buffer, wait_access, link.vk_access_flags);
   }
 }
 
@@ -376,7 +376,7 @@ void VKCommandBuilder::add_image_read_barriers(VKRenderGraph &render_graph,
     VKResourceBarrierState &resource_state = resource.barrier_state;
     VkAccessFlags read_access = resource_state.read_access;
     VkAccessFlags write_access = resource_state.write_access;
-    VkAccessFlags wait_access = VK_ACCESS_NONE;
+    VkAccessFlags wait_access = read_access | write_access;
 
     if (read_access == (read_access | link.vk_access_flags) &&
         resource_state.image_layout == link.vk_image_layout)
@@ -385,19 +385,17 @@ void VKCommandBuilder::add_image_read_barriers(VKRenderGraph &render_graph,
       continue;
     }
 
-    read_access |= link.vk_access_flags;
-    wait_access |= write_access;
-    state_.src_stage_mask |= resource_state.write_stages;
+    state_.src_stage_mask |= resource_state.write_stages | resource_state.read_stages;
     state_.dst_stage_mask |= node_stages;
 
-    resource_state.read_access = read_access;
+    resource_state.read_access = link.vk_access_flags;
     resource_state.write_access = VK_ACCESS_NONE;
-    resource_state.read_stages |= node_stages;
+    resource_state.read_stages = node_stages;
     resource_state.write_stages = VK_PIPELINE_STAGE_NONE;
 
     add_image_barrier(resource.image.vk_image,
                       wait_access,
-                      read_access,
+                      link.vk_access_flags,
                       resource_state.image_layout,
                       link.vk_image_layout,
                       link.vk_image_aspect);
@@ -420,14 +418,7 @@ void VKCommandBuilder::add_image_write_barriers(VKRenderGraph &render_graph,
     VKResourceBarrierState &resource_state = resource.barrier_state;
     VkAccessFlags read_access = resource_state.read_access;
     VkAccessFlags write_access = resource_state.write_access;
-    VkAccessFlags wait_access = VK_ACCESS_NONE;
-
-    if (read_access != VK_ACCESS_NONE) {
-      wait_access |= read_access;
-    }
-    if (read_access == VK_ACCESS_NONE && write_access != VK_ACCESS_NONE) {
-      wait_access |= write_access;
-    }
+    VkAccessFlags wait_access = read_access | write_access;
 
     state_.src_stage_mask |= resource_state.read_stages | resource_state.write_stages;
     state_.dst_stage_mask |= node_stages;
@@ -464,6 +455,7 @@ void VKCommandBuilder::add_image_barrier(VkImage vk_image,
   vk_image_memory_barrier_.newLayout = new_layout;
   vk_image_memory_barrier_.subresourceRange.aspectMask = aspect_mask;
   vk_image_memory_barriers_.append(vk_image_memory_barrier_);
+  /* Reset state for reuse. */
   vk_image_memory_barrier_.srcAccessMask = VK_ACCESS_NONE;
   vk_image_memory_barrier_.dstAccessMask = VK_ACCESS_NONE;
   vk_image_memory_barrier_.image = VK_NULL_HANDLE;
