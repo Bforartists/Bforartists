@@ -1624,7 +1624,7 @@ static PointerRNA *ui_but_extra_operator_icon_add_ptr(uiBut *but,
                                                       wmOperatorCallContext opcontext,
                                                       int icon)
 {
-  uiButExtraOpIcon *extra_op_icon = MEM_new<uiButExtraOpIcon>(__func__);
+  uiButExtraOpIcon *extra_op_icon = MEM_cnew<uiButExtraOpIcon>(__func__);
 
   extra_op_icon->icon = icon;
   extra_op_icon->optype_params = MEM_cnew<wmOperatorCallParams>(__func__);
@@ -2088,7 +2088,6 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   }
 
   BLF_batch_draw_begin();
-  UI_icon_draw_cache_begin();
   UI_widgetbase_draw_cache_begin();
 
   /* widgets */
@@ -2111,7 +2110,6 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   }
 
   UI_widgetbase_draw_cache_end();
-  UI_icon_draw_cache_end();
   BLF_batch_draw_end();
 
   ui_block_views_draw_overlays(region, block);
@@ -3612,7 +3610,7 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, std::string name, eU
     STRNCPY(block->display_device, scene->display_settings.display_device);
 
     /* Copy to avoid crash when scene gets deleted with UI still open. */
-    UnitSettings *unit = MEM_new<UnitSettings>(__func__);
+    UnitSettings *unit = MEM_cnew<UnitSettings>(__func__);
     memcpy(unit, &scene->unit, sizeof(scene->unit));
     block->unit = unit;
   }
@@ -4730,9 +4728,7 @@ static uiBut *ui_def_but_operator_ptr(uiBlock *block,
   }
 
   uiBut *but = ui_def_but(block, type, -1, str, x, y, width, height, nullptr, 0, 0, tip);
-  but->optype = ot;
-  but->opcontext = opcontext;
-  but->flag &= ~UI_BUT_UNDO; /* no need for ui_but_is_rna_undo(), we never need undo here */
+  UI_but_operator_set(but, ot, opcontext);
 
   /* Enable quick tooltip label if this is a tool button without a label. */
   if (str.is_empty() && !ui_block_is_popover(block) && UI_but_is_tool(but)) {
@@ -4783,12 +4779,12 @@ uiBut *uiDefButImage(
   return but;
 }
 
-uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height)
+uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short /*height*/)
 {
-  ImBuf *ibuf = UI_icon_alert_imbuf_get((eAlertIcon)icon);
+  ImBuf *ibuf = UI_icon_alert_imbuf_get((eAlertIcon)icon, float(width));
   if (ibuf) {
     bTheme *btheme = UI_GetTheme();
-    return uiDefButImage(block, ibuf, x, y, width, height, btheme->tui.wcol_menu_back.text);
+    return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, btheme->tui.wcol_menu_back.text);
   }
   return nullptr;
 }
@@ -5618,6 +5614,21 @@ uiBut *uiDefIconTextButO(uiBlock *block,
     return uiDefIconButO_ptr(block, type, ot, opcontext, icon, x, y, width, height, tip);
   }
   return uiDefIconTextButO_ptr(block, type, ot, opcontext, icon, str, x, y, width, height, tip);
+}
+
+void UI_but_operator_set(uiBut *but,
+                         wmOperatorType *optype,
+                         wmOperatorCallContext opcontext,
+                         const PointerRNA *op_props)
+{
+  but->optype = optype;
+  but->opcontext = opcontext;
+  but->flag &= ~UI_BUT_UNDO; /* no need for ui_but_is_rna_undo(), we never need undo here */
+
+  MEM_SAFE_FREE(but->opptr);
+  if (op_props) {
+    but->opptr = MEM_new<PointerRNA>(__func__, *op_props);
+  }
 }
 
 /* END Button containing both string label and icon */

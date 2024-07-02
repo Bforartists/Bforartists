@@ -541,6 +541,8 @@ static StringRef get_legacy_socket_subtype_idname(StringRef idname, const void *
         return "NodeSocketFloatDistance";
       case PROP_WAVELENGTH:
         return "NodeSocketFloatWavelength";
+      case PROP_COLOR_TEMPERATURE:
+        return "NodeSocketFloatColorTemperature";
     }
   }
   if (idname == "NodeSocketInt") {
@@ -2118,6 +2120,8 @@ const char *nodeStaticSocketType(const int type, const int subtype)
           return "NodeSocketFloatDistance";
         case PROP_WAVELENGTH:
           return "NodeSocketFloatWavelength";
+        case PROP_COLOR_TEMPERATURE:
+          return "NodeSocketFloatColorTemperature";
         case PROP_NONE:
         default:
           return "NodeSocketFloat";
@@ -2161,7 +2165,12 @@ const char *nodeStaticSocketType(const int type, const int subtype)
     case SOCK_RGBA:
       return "NodeSocketColor";
     case SOCK_STRING:
-      return "NodeSocketString";
+      switch (PropertySubType(subtype)) {
+        case PROP_FILEPATH:
+          return "NodeSocketStringFilePath";
+        default:
+          return "NodeSocketString";
+      }
     case SOCK_SHADER:
       return "NodeSocketShader";
     case SOCK_OBJECT:
@@ -2205,6 +2214,8 @@ const char *nodeStaticSocketInterfaceTypeNew(const int type, const int subtype)
           return "NodeTreeInterfaceSocketFloatDistance";
         case PROP_WAVELENGTH:
           return "NodeTreeInterfaceSocketFloatWavelength";
+        case PROP_COLOR_TEMPERATURE:
+          return "NodeTreeInterfaceSocketFloatColorTemperature";
         case PROP_NONE:
         default:
           return "NodeTreeInterfaceSocketFloat";
@@ -2248,7 +2259,12 @@ const char *nodeStaticSocketInterfaceTypeNew(const int type, const int subtype)
     case SOCK_RGBA:
       return "NodeTreeInterfaceSocketColor";
     case SOCK_STRING:
-      return "NodeTreeInterfaceSocketString";
+      switch (PropertySubType(subtype)) {
+        case PROP_FILEPATH:
+          return "NodeTreeInterfaceSocketVectorTranslation";
+        default:
+          return "NodeTreeInterfaceSocketString";
+      }
     case SOCK_SHADER:
       return "NodeTreeInterfaceSocketShader";
     case SOCK_OBJECT:

@@ -83,7 +83,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
   data->items_num = 1;
 
   NodeGeometryBakeItem &item = data->items[0];
-  item.name = BLI_strdup("Geometry");
+  item.name = BLI_strdup(DATA_("Geometry"));
   item.identifier = data->next_identifier++;
   item.attribute_domain = int16_t(AttrDomain::Point);
   item.socket_type = SOCK_GEOMETRY;
@@ -100,7 +100,7 @@ static void node_free_storage(bNode *node)
 static void node_copy_storage(bNodeTree * /*tree*/, bNode *dst_node, const bNode *src_node)
 {
   const NodeGeometryBake &src_storage = node_storage(*src_node);
-  auto *dst_storage = MEM_new<NodeGeometryBake>(__func__, src_storage);
+  auto *dst_storage = MEM_cnew<NodeGeometryBake>(__func__, src_storage);
   dst_node->storage = dst_storage;
 
   socket_items::copy_array<BakeItemsAccessor>(*src_node, *dst_node);
@@ -590,7 +590,7 @@ static void node_layout(uiLayout *layout, bContext *C, PointerRNA *ptr)
   {
     uiLayout *row = uiLayoutRow(col, true);
     uiLayoutSetEnabled(row, !ctx.is_baked);
-    uiItemR(row, &ctx.bake_rna, "bake_mode", UI_ITEM_R_EXPAND, "Mode", ICON_NONE);
+    uiItemR(row, &ctx.bake_rna, "bake_mode", UI_ITEM_R_EXPAND, IFACE_("Mode"), ICON_NONE);
   }
   draw_bake_button(col, ctx);
 }
@@ -612,7 +612,7 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
     {
       uiLayout *row = uiLayoutRow(col, true);
       uiLayoutSetEnabled(row, !ctx.is_baked);
-      uiItemR(row, &ctx.bake_rna, "bake_mode", UI_ITEM_R_EXPAND, "Mode", ICON_NONE);
+      uiItemR(row, &ctx.bake_rna, "bake_mode", UI_ITEM_R_EXPAND, IFACE_("Mode"), ICON_NONE);
     }
 
     draw_bake_button(col, ctx);
@@ -630,10 +630,11 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
     {
       uiLayout *col = uiLayoutColumn(settings_col, true);
       uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-      uiItemR(col, &ctx.bake_rna, "use_custom_path", UI_ITEM_NONE, "Custom Path", ICON_NONE);
+      uiItemR(
+          col, &ctx.bake_rna, "use_custom_path", UI_ITEM_NONE, IFACE_("Custom Path"), ICON_NONE);
       uiLayout *subcol = uiLayoutColumn(col, true);
       uiLayoutSetActive(subcol, ctx.bake->flag & NODES_MODIFIER_BAKE_CUSTOM_PATH);
-      uiItemR(subcol, &ctx.bake_rna, "directory", UI_ITEM_NONE, "Path", ICON_NONE);
+      uiItemR(subcol, &ctx.bake_rna, "directory", UI_ITEM_NONE, IFACE_("Path"), ICON_NONE);
     }
     if (!ctx.bake_still) {
       uiLayout *col = uiLayoutColumn(settings_col, true);
@@ -641,13 +642,13 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
               &ctx.bake_rna,
               "use_custom_simulation_frame_range",
               UI_ITEM_NONE,
-              "Custom Range",
+              IFACE_("Custom Range"),
               ICON_NONE);
       uiLayout *subcol = uiLayoutColumn(col, true);
       uiLayoutSetActive(subcol,
                         ctx.bake->flag & NODES_MODIFIER_BAKE_CUSTOM_SIMULATION_FRAME_RANGE);
-      uiItemR(subcol, &ctx.bake_rna, "frame_start", UI_ITEM_NONE, "Start", ICON_NONE);
-      uiItemR(subcol, &ctx.bake_rna, "frame_end", UI_ITEM_NONE, "End", ICON_NONE);
+      uiItemR(subcol, &ctx.bake_rna, "frame_start", UI_ITEM_NONE, IFACE_("Start"), ICON_NONE);
+      uiItemR(subcol, &ctx.bake_rna, "frame_end", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
     }
   }
 

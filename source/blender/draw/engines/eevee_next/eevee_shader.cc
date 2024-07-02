@@ -90,20 +90,55 @@ ShaderModule::~ShaderModule()
  *
  * \{ */
 
-bool ShaderModule::is_ready(bool block)
+void ShaderModule::precompile_specializations(int render_buffers_shadow_id,
+                                              int shadow_ray_count,
+                                              int shadow_ray_step_count)
 {
-  if (compilation_handle_ == 0) {
-    return true;
+  BLI_assert(specialization_handle_ == 0);
+
+  if (!GPU_use_parallel_compilation()) {
+    return;
   }
 
-  if (block || GPU_shader_batch_is_ready(compilation_handle_)) {
-    Vector<GPUShader *> shaders = GPU_shader_batch_finalize(compilation_handle_);
-    for (int i : IndexRange(MAX_SHADER_TYPE)) {
-      shaders_[i] = shaders[i];
+  Vector<ShaderSpecialization> specializations;
+  for (int i = 0; i < 3; i++) {
+    GPUShader *sh = static_shader_get(eShaderType(DEFERRED_LIGHT_SINGLE + i));
+    for (bool use_split_indirect : {false, true}) {
+      for (bool use_lightprobe_eval : {false, true}) {
+        for (bool use_transmission : {false, true}) {
+          specializations.append({sh,
+                                  {{"render_pass_shadow_id", render_buffers_shadow_id},
+                                   {"use_split_indirect", use_split_indirect},
+                                   {"use_lightprobe_eval", use_lightprobe_eval},
+                                   {"use_transmission", use_transmission},
+                                   {"shadow_ray_count", shadow_ray_count},
+                                   {"shadow_ray_step_count", shadow_ray_step_count}}});
+        }
+      }
     }
   }
 
-  return compilation_handle_ == 0;
+  specialization_handle_ = GPU_shader_batch_specializations(specializations);
+}
+
+bool ShaderModule::is_ready(bool block)
+{
+  if (compilation_handle_) {
+    if (GPU_shader_batch_is_ready(compilation_handle_) || block) {
+      Vector<GPUShader *> shaders = GPU_shader_batch_finalize(compilation_handle_);
+      for (int i : IndexRange(MAX_SHADER_TYPE)) {
+        shaders_[i] = shaders[i];
+      }
+    }
+  }
+
+  if (specialization_handle_) {
+    while (!GPU_shader_batch_specializations_is_ready(specialization_handle_) && block) {
+      /* Block until ready. */
+    }
+  }
+
+  return compilation_handle_ == 0 && specialization_handle_ == 0;
 }
 
 const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_type)
@@ -111,12 +146,14 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
   switch (shader_type) {
     case AMBIENT_OCCLUSION_PASS:
       return "eevee_ambient_occlusion_pass";
-    case FILM_FRAG:
-      return "eevee_film_frag";
+    case FILM_COPY:
+      return "eevee_film_copy_frag";
     case FILM_COMP:
       return "eevee_film_comp";
     case FILM_CRYPTOMATTE_POST:
       return "eevee_film_cryptomatte_post";
+    case FILM_FRAG:
+      return "eevee_film_frag";
     case DEFERRED_COMBINE:
       return "eevee_deferred_combine";
     case DEFERRED_LIGHT_SINGLE:
@@ -273,6 +310,8 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "eevee_shadow_tilemap_bounds";
     case SHADOW_TILEMAP_FINALIZE:
       return "eevee_shadow_tilemap_finalize";
+    case SHADOW_TILEMAP_RENDERMAP:
+      return "eevee_shadow_tilemap_rendermap";
     case SHADOW_TILEMAP_INIT:
       return "eevee_shadow_tilemap_init";
     case SHADOW_TILEMAP_TAG_UPDATE:
@@ -383,7 +422,7 @@ class SamplerSlots {
   }
 };
 
-void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOutput *codegen_)
+void ShaderModule::material_create_info_amend(GPUMaterial *gpumat, GPUCodegenOutput *codegen_)
 {
   using namespace blender::gpu::shader;
 
@@ -403,12 +442,6 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
 
   GPUCodegenOutput &codegen = *codegen_;
   ShaderCreateInfo &info = *reinterpret_cast<ShaderCreateInfo *>(codegen.create_info);
-
-  /* WORKAROUND: Replace by new ob info. */
-  int64_t ob_info_index = info.additional_infos_.first_index_of_try("draw_object_infos");
-  if (ob_info_index != -1) {
-    info.additional_infos_[ob_info_index] = "draw_object_infos_new";
-  }
 
   /* WORKAROUND: Add new ob attr buffer. */
   if (GPU_material_uniform_attributes(gpumat) != nullptr) {
@@ -586,9 +619,6 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
         info.vertex_inputs_.clear();
         /* Volume materials require these for loading the grid attributes from smoke sims. */
         info.additional_info("draw_volume_infos");
-        if (ob_info_index == -1) {
-          info.additional_info("draw_object_infos_new");
-        }
       }
       break;
     case MAT_GEOM_POINT_CLOUD:
@@ -721,8 +751,14 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
         if (info.additional_infos_.first_index_of_try("draw_object_infos_new") == -1) {
           info.additional_info("draw_object_infos_new");
         }
+        /* TODO(fclem): Should use `to_scale` but the gpu_shader_math_matrix_lib.glsl isn't
+         * included everywhere yet. */
+        frag_gen << "vec3 ob_scale;\n";
+        frag_gen << "ob_scale.x = length(ModelMatrix[0].xyz);\n";
+        frag_gen << "ob_scale.y = length(ModelMatrix[1].xyz);\n";
+        frag_gen << "ob_scale.z = length(ModelMatrix[2].xyz);\n";
         frag_gen << "vec3 ls_dimensions = safe_rcp(abs(OrcoTexCoFactors[1].xyz));\n";
-        frag_gen << "vec3 ws_dimensions = mat3x3(ModelMatrix) * ls_dimensions;\n";
+        frag_gen << "vec3 ws_dimensions = ob_scale * ls_dimensions;\n";
         /* Choose the minimum axis so that cuboids are better represented. */
         frag_gen << "return reduce_min(ws_dimensions);\n";
       }
@@ -834,7 +870,7 @@ void ShaderModule::material_create_info_ammend(GPUMaterial *gpumat, GPUCodegenOu
  * thread unsafe manner. */
 static void codegen_callback(void *thunk, GPUMaterial *mat, GPUCodegenOutput *codegen)
 {
-  reinterpret_cast<ShaderModule *>(thunk)->material_create_info_ammend(mat, codegen);
+  reinterpret_cast<ShaderModule *>(thunk)->material_create_info_amend(mat, codegen);
 }
 
 static GPUPass *pass_replacement_cb(void *thunk, GPUMaterial *mat)

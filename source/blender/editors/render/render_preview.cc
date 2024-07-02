@@ -267,7 +267,7 @@ const char *ED_preview_collection_name(const ePreviewType pr_type)
 
 static bool render_engine_supports_ray_visibility(const Scene *sce)
 {
-  return !STREQ(sce->r.engine, RE_engine_id_BLENDER_EEVEE);
+  return !STREQ(sce->r.engine, RE_engine_id_BLENDER_EEVEE_NEXT);
 }
 
 static void switch_preview_collection_visibility(ViewLayer *view_layer, const ePreviewType pr_type)
@@ -509,7 +509,7 @@ static Scene *preview_prepare_scene(
 
     if (id_type == ID_TE) {
       /* Texture is not actually rendered with engine, just set dummy value. */
-      STRNCPY(sce->r.engine, RE_engine_id_BLENDER_EEVEE);
+      STRNCPY(sce->r.engine, RE_engine_id_BLENDER_EEVEE_NEXT);
     }
 
     if (id_type == ID_MA) {
@@ -2113,8 +2113,7 @@ void ED_preview_kill_jobs(wmWindowManager *wm, Main * /*bmain*/)
   if (wm) {
     /* This is called to stop all preview jobs before scene data changes, to
      * avoid invalid memory access. */
-    WM_jobs_kill(wm, nullptr, common_preview_startjob);
-    WM_jobs_kill(wm, nullptr, icon_preview_startjob_all_sizes);
+    WM_jobs_kill_type(wm, nullptr, WM_JOB_TYPE_RENDER_PREVIEW);
   }
 }
 

@@ -47,7 +47,7 @@ VKImageView::VKImageView(VKTexture &texture, const VKImageViewInfo &info, String
   VkImageViewCreateInfo image_view_info = {};
   image_view_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   image_view_info.image = texture.vk_image_handle();
-  image_view_info.viewType = to_vk_image_view_type(texture.type_get(), info.usage);
+  image_view_info.viewType = to_vk_image_view_type(texture.type_get(), info.usage, info.arrayed);
   image_view_info.format = vk_format_;
   image_view_info.components.r = to_vk_component_swizzle(info.swizzle[0]);
   image_view_info.components.g = to_vk_component_swizzle(info.swizzle[1]);
@@ -59,9 +59,9 @@ VKImageView::VKImageView(VKTexture &texture, const VKImageViewInfo &info, String
   image_view_info.subresourceRange.baseArrayLayer = info.layer_range.first();
   image_view_info.subresourceRange.layerCount = info.layer_range.size();
 
-  const VKDevice &device = VKBackend::get().device_get();
+  const VKDevice &device = VKBackend::get().device;
   vkCreateImageView(
-      device.device_get(), &image_view_info, vk_allocation_callbacks, &vk_image_view_);
+      device.vk_handle(), &image_view_info, vk_allocation_callbacks, &vk_image_view_);
   debug::object_label(vk_image_view_, name.c_str());
 }
 
@@ -76,7 +76,7 @@ VKImageView::VKImageView(VKImageView &&other) : info(other.info)
 VKImageView::~VKImageView()
 {
   if (vk_image_view_ != VK_NULL_HANDLE) {
-    VKDevice &device = VKBackend::get().device_get();
+    VKDevice &device = VKBackend::get().device;
     device.discard_image_view(vk_image_view_);
     vk_image_view_ = VK_NULL_HANDLE;
   }

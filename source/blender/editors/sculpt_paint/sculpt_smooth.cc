@@ -167,14 +167,21 @@ float neighbor_mask_average(SculptSession &ss,
   return 0.0f;
 }
 
-float4 neighbor_color_average(SculptSession &ss, PBVHVertRef vertex)
+float4 neighbor_color_average(SculptSession &ss,
+                              const OffsetIndices<int> faces,
+                              const Span<int> corner_verts,
+                              const GroupedSpan<int> vert_to_face_map,
+                              const GSpan color_attribute,
+                              const bke::AttrDomain color_domain,
+                              const int vert)
 {
   float4 avg(0);
   int total = 0;
 
   SculptVertexNeighborIter ni;
-  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vertex, ni) {
-    float4 tmp = SCULPT_vertex_color_get(ss, ni.vertex);
+  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, PBVHVertRef{vert}, ni) {
+    float4 tmp = color::color_vert_get(
+        faces, corner_verts, vert_to_face_map, color_attribute, color_domain, ni.index);
 
     avg += tmp;
     total++;
@@ -184,7 +191,8 @@ float4 neighbor_color_average(SculptSession &ss, PBVHVertRef vertex)
   if (total > 0) {
     return avg / total;
   }
-  return SCULPT_vertex_color_get(ss, vertex);
+  return color::color_vert_get(
+      faces, corner_verts, vert_to_face_map, color_attribute, color_domain, vert);
 }
 
 static void do_enhance_details_brush_task(Object &ob,
@@ -259,81 +267,6 @@ void enhance_details_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
   });
 }
 
-static void smooth_mask_node(Object &ob,
-                             const Brush &brush,
-                             const SculptMaskWriteInfo mask_write,
-                             float bstrength,
-                             PBVHNode *node)
-{
-  SculptSession &ss = *ob.sculpt;
-
-  PBVHVertexIter vd;
-
-  CLAMP(bstrength, 0.0f, 1.0f);
-
-  SculptBrushTest test;
-  SculptBrushTestFn sculpt_brush_test_sq_fn = SCULPT_brush_test_init_with_falloff_shape(
-      ss, test, brush.falloff_shape);
-
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
-  auto_mask::NodeData automask_data = auto_mask::node_begin(
-      ob, ss.cache->automasking.get(), *node);
-
-  BKE_pbvh_vertex_iter_begin (*ss.pbvh, node, vd, PBVH_ITER_UNIQUE) {
-    if (!sculpt_brush_test_sq_fn(test, vd.co)) {
-      continue;
-    }
-
-    auto_mask::node_update(automask_data, vd);
-
-    const float fade = bstrength * SCULPT_brush_strength_factor(ss,
-                                                                brush,
-                                                                vd.co,
-                                                                sqrtf(test.dist),
-                                                                vd.no,
-                                                                vd.fno,
-                                                                0.0f,
-                                                                vd.vertex,
-                                                                thread_id,
-                                                                &automask_data);
-    float val = neighbor_mask_average(ss, mask_write, vd.vertex) - vd.mask;
-    val *= fade * bstrength;
-    float new_mask = vd.mask + val;
-    CLAMP(new_mask, 0.0f, 1.0f);
-
-    SCULPT_mask_vert_set(BKE_pbvh_type(*ss.pbvh), mask_write, new_mask, vd);
-  }
-  BKE_pbvh_vertex_iter_end;
-}
-
-void do_smooth_mask_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes, float bstrength)
-{
-  SculptSession &ss = *ob.sculpt;
-  const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
-
-  const int max_iterations = 4;
-  const float fract = 1.0f / max_iterations;
-
-  CLAMP(bstrength, 0.0f, 1.0f);
-
-  const int count = int(bstrength * max_iterations);
-  const float last = max_iterations * (bstrength - count * fract);
-
-  SCULPT_vertex_random_access_ensure(ss);
-  SCULPT_boundary_info_ensure(ob);
-
-  SculptMaskWriteInfo mask_write = SCULPT_mask_get_for_write(ss);
-
-  for (const int iteration : IndexRange(count + 1)) {
-    const float strength = (iteration != count) ? 1.0f : last;
-    threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
-      for (const int i : range) {
-        smooth_mask_node(ob, brush, mask_write, strength, nodes[i]);
-      }
-    });
-  }
-}
-
 /* HC Smooth Algorithm. */
 /* From: Improved Laplacian Smoothing of Noisy Surface Meshes */
 
@@ -392,14 +325,13 @@ static void do_surface_smooth_brush_laplacian_task(Object &ob, const Brush &brus
   float alpha = brush.surface_smooth_shape_preservation;
 
   PBVHVertexIter vd;
-  SculptOrigVertData orig_data;
 
   SculptBrushTest test;
   SculptBrushTestFn sculpt_brush_test_sq_fn = SCULPT_brush_test_init_with_falloff_shape(
       ss, test, brush.falloff_shape);
   const int thread_id = BLI_task_parallel_thread_id(nullptr);
 
-  SCULPT_orig_vert_data_init(orig_data, ob, *node, undo::Type::Position);
+  SculptOrigVertData orig_data = SCULPT_orig_vert_data_init(ob, *node, undo::Type::Position);
   auto_mask::NodeData automask_data = auto_mask::node_begin(
       ob, ss.cache->automasking.get(), *node);
 
