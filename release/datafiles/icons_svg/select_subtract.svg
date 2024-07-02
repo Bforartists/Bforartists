@@ -38,7 +38,7 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
@@ -47,36 +47,36 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="0.5"
-     inkscape:cx="583"
+     inkscape:cx="574"
      inkscape:cy="776"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="SELECT_SUBTRACT"
+     inkscape:current-layer="svg2"
      inkscape:showpageshadow="0"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#d1d1d1" />
   <g
      id="SELECT_SUBTRACT"
-     transform="matrix(87.499995,0,0,87.499995,100,100)"
-     style="stroke-width:0.0114286">
+     transform="matrix(99.999994,0,0,99.999994,-3.9999941e-6,0)"
+     style="stroke-width:0.01">
     <path
-       style="fill:none;stroke-width:0.000357143"
+       style="fill:none;stroke-width:0.0003125"
        d="M 11,13.5 V 11 H 13.000001 15 V 6.0000002 1 H 10 5.0000002 V 3 5.0000002 H 2.5000001 0 V 2.5000001 0 H 8.0000002 16.000001 V 8.0000002 16.000001 H 13.5 11 Z M 1,10.5 V 6.0000002 H 5.5000001 10 V 10.5 15 H 5.5000001 1 Z"
        id="path825"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#ffffff;fill-opacity:1;stroke-width:0.000357143"
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.0003125"
        d="M 10,8.5000003 V 6.0000002 h -2.4999998 -2.5 v -2.5 V 1 H 10 15 V 6.0000002 11 H 12.5 10 Z"
        id="path823"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#fe9729;stroke-width:0.000357143"
+       style="fill:#fe9729;stroke-width:0.0003125"
        d="M 1,15.500001 V 15 H 2.0000001 3 v 0.500001 0.5 H 2.0000001 1 Z m 4.0000002,0 V 15 h 1 1.0000001 v 0.500001 0.5 h -1.0000001 -1 z m 4,0 V 15 H 9.5000004 10 V 14 13.000001 H 10.5 11 V 14 15 H 10.5 10 v 0.500001 0.5 H 9.5000004 9.0000002 Z M 0,13.000001 V 12 H 0.50000002 1 V 13.000001 14 H 0.50000002 0 Z M 0,9.0000002 v -1 H 0.50000002 1 v 1 V 10 H 0.50000002 0 Z M 2.0000001,5.5000001 V 5.0000002 H 3 4.0000001 V 5.5000001 6.0000002 H 3 2.0000001 Z"
        id="path821"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#311800;stroke-width:0.000357143"
+       style="fill:#311800;stroke-width:0.0003125"
        d="M 0,15 V 14 H 0.50000002 1 v 1 1.000001 H 0.50000002 0 Z m 3,0.500001 V 15 h 1.0000001 1.0000001 v 0.500001 0.5 H 4.0000001 3 Z m 4.0000003,0 V 15 h 0.9999999 1 v 0.500001 0.5 h -1 -0.9999999 z m 2.9999997,0 V 15 h 0.5 0.5 v 0.500001 0.5 H 10.5 10 Z M 10,12 v -1 h 0.5 0.5 v 1 1.000001 H 10.5 10 Z M 0,11 V 10 H 0.50000002 1 v 1 1 H 0.50000002 0 Z M 0,6.5000002 v -1.5 H 1 2.0000001 V 5.5000001 6.0000002 H 1.5 1 V 7.0000003 8.0000002 H 0.50000002 0 Z M 4.0000001,5.5000001 V 5.0000002 h 0.5000001 0.5 v 0.4999999 0.5000001 h -0.5 -0.5000001 z"
        id="path819"
        inkscape:connector-curvature="0" />
