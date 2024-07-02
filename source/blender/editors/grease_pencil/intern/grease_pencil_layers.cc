@@ -527,7 +527,7 @@ static void GREASE_PENCIL_OT_layer_lock_all(wmOperatorType *ot)
 
 static int grease_pencil_layer_duplicate_exec(bContext *C, wmOperator *op)
 {
-  using namespace ::blender::bke::greasepencil;
+  using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
   const bool empty_keyframes = RNA_boolean_get(op->ptr, "empty_keyframes");
@@ -585,7 +585,7 @@ static void GREASE_PENCIL_OT_layer_duplicate(wmOperatorType *ot)
 
 static int grease_pencil_layer_mask_add_exec(bContext *C, wmOperator *op)
 {
-  using namespace ::blender::bke::greasepencil;
+  using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
@@ -647,7 +647,7 @@ static void GREASE_PENCIL_OT_layer_mask_add(wmOperatorType *ot)
 
 static int grease_pencil_layer_mask_remove_exec(bContext *C, wmOperator * /*op*/)
 {
-  using namespace ::blender::bke::greasepencil;
+  using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
@@ -691,7 +691,7 @@ enum class LayerMaskMoveDirection : int8_t { Up = -1, Down = 1 };
 
 static int grease_pencil_layer_mask_reorder_exec(bContext *C, wmOperator *op)
 {
-  using namespace ::blender::bke::greasepencil;
+  using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
@@ -760,7 +760,7 @@ const EnumPropertyItem enum_layergroup_color_items[] = {
 
 static int grease_pencil_layer_group_color_tag_exec(bContext *C, wmOperator *op)
 {
-  using namespace ::blender::bke::greasepencil;
+  using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
@@ -784,8 +784,109 @@ static void GREASE_PENCIL_OT_layer_group_color_tag(wmOperatorType *ot)
   ot->exec = grease_pencil_layer_group_color_tag_exec;
   ot->poll = active_grease_pencil_poll;
 
+  ot->flag = OPTYPE_UNDO;
+
   ot->prop = RNA_def_enum(ot->srna, "color_tag", enum_layergroup_color_items, 0, "color tag", "");
 }
+
+enum class DuplicateCopyMode {
+  All = 0,
+  Active,
+};
+
+static void duplicate_layer_and_frames(GreasePencil &dst_grease_pencil,
+                                       const GreasePencil &src_grease_pencil,
+                                       const blender::bke::greasepencil::Layer &src_layer,
+                                       const DuplicateCopyMode copy_frame_mode,
+                                       const int current_frame)
+{
+  using namespace blender::bke::greasepencil;
+  Layer &dst_layer = dst_grease_pencil.duplicate_layer(src_layer);
+
+  dst_layer.frames_for_write().clear();
+  for (const auto [frame_number, frame] : src_layer.frames().items()) {
+    if ((copy_frame_mode == DuplicateCopyMode::Active) &&
+        (&frame != src_layer.frame_at(current_frame)))
+    {
+      continue;
+    }
+    const int duration = src_layer.get_frame_duration_at(frame_number);
+
+    Drawing *dst_drawing = dst_grease_pencil.insert_frame(
+        dst_layer, frame_number, duration, eBezTriple_KeyframeType(frame.type));
+    if (dst_drawing != nullptr) {
+      /* Duplicate drawing. */
+      const Drawing &src_drawing = *src_grease_pencil.get_drawing_at(src_layer, frame_number);
+      *dst_drawing = src_drawing;
+    }
+  }
+}
+
+static int grease_pencil_layer_duplicate_object_exec(bContext *C, wmOperator *op)
+{
+  using namespace blender::bke::greasepencil;
+  Object *src_object = CTX_data_active_object(C);
+  const Scene *scene = CTX_data_scene(C);
+  const int current_frame = scene->r.cfra;
+  const GreasePencil &src_grease_pencil = *static_cast<GreasePencil *>(src_object->data);
+  const bool only_active = RNA_boolean_get(op->ptr, "only_active");
+  const DuplicateCopyMode copy_frame_mode = DuplicateCopyMode(RNA_enum_get(op->ptr, "mode"));
+
+  CTX_DATA_BEGIN (C, Object *, ob, selected_objects) {
+    if (ob == src_object || ob->type != OB_GREASE_PENCIL) {
+      continue;
+    }
+    GreasePencil &dst_grease_pencil = *static_cast<GreasePencil *>(ob->data);
+
+    if (only_active) {
+      const Layer &active_layer = *src_grease_pencil.get_active_layer();
+      duplicate_layer_and_frames(
+          dst_grease_pencil, src_grease_pencil, active_layer, copy_frame_mode, current_frame);
+    }
+    else {
+      for (const Layer *layer : src_grease_pencil.layers()) {
+        duplicate_layer_and_frames(
+            dst_grease_pencil, src_grease_pencil, *layer, copy_frame_mode, current_frame);
+      }
+    }
+
+    DEG_id_tag_update(&dst_grease_pencil.id, ID_RECALC_GEOMETRY);
+    WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, nullptr);
+  }
+  CTX_DATA_END;
+
+  return OPERATOR_FINISHED;
+}
+
+static void GREASE_PENCIL_OT_layer_duplicate_object(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Duplicate Layer to New Object";
+  ot->idname = "GREASE_PENCIL_OT_layer_duplicate_object";
+  ot->description = "Make a copy of the active Grease Pencil layer to selected object";
+
+  /* api callbacks */
+  ot->poll = active_grease_pencil_layer_poll;
+  ot->exec = grease_pencil_layer_duplicate_object_exec;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  RNA_def_boolean(ot->srna,
+                  "only_active",
+                  true,
+                  "Only Active",
+                  "Copy only active Layer, uncheck to append all layers");
+
+  static const EnumPropertyItem copy_mode[] = {
+      {int(DuplicateCopyMode::All), "ALL", 0, "All Frames", ""},
+      {int(DuplicateCopyMode::Active), "ACTIVE", 0, "Active Frame", ""},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  ot->prop = RNA_def_enum(ot->srna, "mode", copy_mode, 0, "Mode", "");
+}
+
 }  // namespace blender::ed::greasepencil
 
 void ED_operatortypes_grease_pencil_layers()
@@ -808,4 +909,5 @@ void ED_operatortypes_grease_pencil_layers()
   WM_operatortype_append(GREASE_PENCIL_OT_layer_mask_remove);
   WM_operatortype_append(GREASE_PENCIL_OT_layer_mask_reorder);
   WM_operatortype_append(GREASE_PENCIL_OT_layer_group_color_tag);
+  WM_operatortype_append(GREASE_PENCIL_OT_layer_duplicate_object);
 }

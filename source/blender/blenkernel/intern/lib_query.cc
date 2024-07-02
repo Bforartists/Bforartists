@@ -95,9 +95,16 @@ void BKE_lib_query_foreachid_process(LibraryForeachIDData *data, ID **id_pp, int
   callback_data.id_pointer = id_pp;
   callback_data.cb_flag = cb_flag;
   const int callback_return = data->callback(&callback_data);
+
   if (flag & IDWALK_READONLY) {
     BLI_assert(*(id_pp) == old_id);
   }
+  else {
+    BLI_assert_msg((callback_return & (IDWALK_RET_STOP_ITER | IDWALK_RET_STOP_RECURSION)) == 0,
+                   "Iteration over ID usages should not be interrupted by the callback in "
+                   "non-readonly cases");
+  }
+
   if (old_id && (flag & IDWALK_RECURSE)) {
     if (BLI_gset_add((data)->ids_handled, old_id)) {
       if (!(callback_return & IDWALK_RET_STOP_RECURSION)) {
@@ -113,6 +120,11 @@ void BKE_lib_query_foreachid_process(LibraryForeachIDData *data, ID **id_pp, int
 int BKE_lib_query_foreachid_process_flags_get(const LibraryForeachIDData *data)
 {
   return data->flag;
+}
+
+Main *BKE_lib_query_foreachid_process_main_get(const LibraryForeachIDData *data)
+{
+  return data->bmain;
 }
 
 int BKE_lib_query_foreachid_process_callback_flag_override(LibraryForeachIDData *data,
@@ -257,7 +269,8 @@ static bool library_foreach_ID_link(Main *bmain,
   } \
   ((void)0)
 
-  for (; id != nullptr; id = (flag & IDWALK_RECURSE) ? BLI_LINKSTACK_POP(data.ids_todo) : nullptr)
+  for (; id != nullptr; id = (flag & IDWALK_RECURSE) ? BLI_LINKSTACK_POP(data.ids_todo) : nullptr,
+                        owner_id = nullptr)
   {
     data.self_id = id;
     /* owner ID is same as self ID, except for embedded ID case. */

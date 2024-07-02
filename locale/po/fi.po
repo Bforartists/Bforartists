@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.2.0 Beta (b'b143cc1885ef')\n"
+"Project-Id-Version: Blender 4.2.0 Beta (b'78330522d2ae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 00:00+0000\n"
+"POT-Creation-Date: 2024-07-01 09:24+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4619,10 +4619,6 @@ msgid "Add liquid"
 msgstr "Lisää neste"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Silhouette"
 msgstr "Siluetti"
 
@@ -4673,6 +4669,10 @@ msgstr "Teksti"
 
 msgid "World"
 msgstr "Maailma"
+
+
+msgid "Theme"
+msgstr "Teema"
 
 
 msgid "Push"
@@ -4741,6 +4741,10 @@ msgstr "Kanava"
 
 msgid "Move to Layer"
 msgstr "Siirrä tasolle"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgctxt "WindowManager"
@@ -7400,6 +7404,11 @@ msgid "Monkey"
 msgstr "Apina"
 
 
+msgctxt "Operator"
+msgid "New"
+msgstr "Uusi"
+
+
 msgid "Column"
 msgstr "Sarake"
 
@@ -7544,10 +7553,6 @@ msgstr "Näkymä"
 
 msgid "AOV"
 msgstr "AOV"
-
-
-msgid "Theme"
-msgstr "Teema"
 
 
 msgid "Active AOV"
@@ -7735,10 +7740,6 @@ msgid "Warning"
 msgstr "Varoitus"
 
 
-msgid "name"
-msgstr "nimi"
-
-
 msgid "Viewports"
 msgstr "Näkymät"
 
@@ -7749,6 +7750,26 @@ msgstr "Siivoa kuva"
 
 msgid "Limit to"
 msgstr "Rajoita"
+
+
+msgid "Description:"
+msgstr "Kuvaus­:"
+
+
+msgid "Internet:"
+msgstr "Internet:"
+
+
+msgid "Version:"
+msgstr "Versio:"
+
+
+msgid "Warning:"
+msgstr "Varoitus:"
+
+
+msgid "File:"
+msgstr "Tiedosto:"
 
 
 msgid "HP Reverb G2"
@@ -7780,11 +7801,6 @@ msgstr "Vie..."
 msgctxt "WindowManager"
 msgid "Add New"
 msgstr "Lisää uusi"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Uusi"
 
 
 msgctxt "Operator"
@@ -7982,6 +7998,10 @@ msgstr "Kartta"
 
 msgid "category"
 msgstr "kategoria"
+
+
+msgid "name"
+msgstr "nimi"
 
 
 msgid "B/W"
@@ -8372,28 +8392,8 @@ msgid "Error (see console)"
 msgstr "Virhe (katso konsoli)"
 
 
-msgid "Description:"
-msgstr "Kuvaus­:"
-
-
 msgid "Location:"
 msgstr "Sijainti:"
-
-
-msgid "File:"
-msgstr "Tiedosto:"
-
-
-msgid "Version:"
-msgstr "Versio:"
-
-
-msgid "Warning:"
-msgstr "Varoitus:"
-
-
-msgid "Internet:"
-msgstr "Internet:"
 
 
 msgctxt "Operator"

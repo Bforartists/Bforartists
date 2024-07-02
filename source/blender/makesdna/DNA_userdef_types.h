@@ -299,6 +299,7 @@ typedef struct ThemeSpace {
   unsigned char bone_solid[4], bone_pose[4], bone_pose_active[4], bone_locked_weight[4];
   unsigned char strip[4], strip_select[4];
   unsigned char cframe[4];
+  unsigned char before_current_frame[4], after_current_frame[4];
   unsigned char time_keyframe[4], time_gp_keyframe[4];
   unsigned char freestyle_edge_mark[4], freestyle_face_mark[4];
   unsigned char time_scrub_background[4];
@@ -1145,7 +1146,7 @@ typedef enum eUserPref_Section {
   USER_SECTION_SYSTEM = 3,
   USER_SECTION_THEME = 4,
   USER_SECTION_INPUT = 5,
-  USER_SECTION_EXTENSIONS = 6,
+  USER_SECTION_ADDONS = 6,
   USER_SECTION_LIGHT = 7,
   USER_SECTION_KEYMAP = 8,
 #ifdef WITH_USERDEF_WORKSPACES
@@ -1158,6 +1159,7 @@ typedef enum eUserPref_Section {
   USER_SECTION_NAVIGATION = 14,
   USER_SECTION_FILE_PATHS = 15,
   USER_SECTION_EXPERIMENTAL = 16,
+  USER_SECTION_EXTENSIONS = 17,
 } eUserPref_Section;
 
 /** #UserDef_SpaceData.flag (State of the user preferences UI). */

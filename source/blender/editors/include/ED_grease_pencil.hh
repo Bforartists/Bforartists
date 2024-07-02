@@ -119,7 +119,16 @@ class DrawingPlacement {
   float3 project(float2 co) const;
   void project(Span<float2> src, MutableSpan<float3> dst) const;
 
+  /**
+   * Projects a 3D position (in local space) to the drawing plane.
+   */
+  float3 reproject(float3 pos) const;
+  void reproject(Span<float3> src, MutableSpan<float3> dst) const;
+
   float4x4 to_world_space() const;
+
+ private:
+  float3 project_depth(float2 co) const;
 };
 
 void set_selected_frames_type(bke::greasepencil::Layer &layer,
@@ -242,6 +251,10 @@ float radius_from_input_sample(const RegionView3D *rv3d,
                                float4x4 to_world,
                                const BrushGpencilSettings *settings);
 int grease_pencil_draw_operator_invoke(bContext *C, wmOperator *op);
+float4x2 calculate_texture_space(const Scene *scene,
+                                 const ARegion *region,
+                                 const float2 &mouse,
+                                 const DrawingPlacement &placement);
 
 struct DrawingInfo {
   const bke::greasepencil::Drawing &drawing;
@@ -443,6 +456,7 @@ enum FillToolFitMethod {
  * \param boundary_layers: Layers that are purely for boundaries, regular strokes are not rendered.
  * \param src_drawings: Drawings to include as boundary strokes.
  * \param invert: Construct boundary around empty areas instead.
+ * \param alpha_threshold: Render transparent stroke where opacity is below the threshold.
  * \param fill_point: Point from which to start the bucket fill.
  * \param fit_method: View fitting method to include all strokes.
  * \param stroke_material_index: Material index to use for the new strokes.
@@ -455,6 +469,7 @@ bke::CurvesGeometry fill_strokes(const ViewContext &view_context,
                                  const VArray<bool> &boundary_layers,
                                  Span<DrawingInfo> src_drawings,
                                  bool invert,
+                                 const std::optional<float> alpha_threshold,
                                  const float2 &fill_point,
                                  FillToolFitMethod fit_method,
                                  int stroke_material_index,
@@ -557,5 +572,23 @@ void draw_grease_pencil_strokes(const RegionView3D &rv3d,
                                 float radius_scale = 1.0f);
 
 }  // namespace image_render
+
+/**
+ * Create new strokes tracing the rendered outline of existing strokes.
+ * \param drawing: Drawing with input strokes.
+ * \param strokes: Selection curves to trace.
+ * \param transform: Transform to apply to strokes.
+ * \param corner_subdivisions: Subdivisions for corners and start/end cap.
+ * \param outline_radius: Radius of the new outline strokes.
+ * \param outline_offset: Offset of the outline from the original stroke.
+ * \param material_index: The material index for the new outline strokes.
+ */
+bke::CurvesGeometry create_curves_outline(const bke::greasepencil::Drawing &drawing,
+                                          const IndexMask &strokes,
+                                          const float4x4 &transform,
+                                          int corner_subdivisions,
+                                          float outline_radius,
+                                          float outline_offset,
+                                          int material_index);
 
 }  // namespace blender::ed::greasepencil

@@ -226,6 +226,7 @@ typedef struct bNodeSocket {
   bNode &owner_node();
   const bNode &owner_node() const;
   /** Node tree this socket belongs to. */
+  bNodeTree &owner_tree();
   const bNodeTree &owner_tree() const;
 
   /** Links which are incident to this socket. */
@@ -483,6 +484,7 @@ typedef struct bNode {
   blender::MutableSpan<bNodePanelState> panel_states();
   /** Node tree this node belongs to. */
   const bNodeTree &owner_tree() const;
+  bNodeTree &owner_tree();
 #endif
 } bNode;
 
@@ -1299,6 +1301,13 @@ typedef struct NodeTexEnvironment {
   int interpolation;
   char _pad[4];
 } NodeTexEnvironment;
+
+typedef struct NodeTexGabor {
+  NodeTexBase base;
+  /* Stores NodeGaborType. */
+  char type;
+  char _pad[7];
+} NodeTexGabor;
 
 typedef struct NodeTexGradient {
   NodeTexBase base;
@@ -2210,6 +2219,11 @@ enum {
   SHD_PROJ_EQUIRECTANGULAR = 0,
   SHD_PROJ_MIRROR_BALL = 1,
 };
+
+typedef enum NodeGaborType {
+  SHD_GABOR_TYPE_2D = 0,
+  SHD_GABOR_TYPE_3D = 1,
+} NodeGaborType;
 
 enum {
   SHD_IMAGE_EXTENSION_REPEAT = 0,
