@@ -187,6 +187,8 @@ class AbstractTreeViewItem : public AbstractViewItem, public TreeViewItemContain
 
   virtual void build_row(uiLayout &row) = 0;
 
+  /* virtual */ std::optional<std::string> debug_name() const override;
+
   std::unique_ptr<DropTargetInterface> create_item_drop_target() final;
   virtual std::unique_ptr<TreeViewItemDropTarget> create_drop_target();
 
@@ -390,7 +392,9 @@ class TreeViewItemDropTarget : public DropTargetInterface {
 
 class TreeViewBuilder {
  public:
-  static void build_tree_view(AbstractTreeView &tree_view, uiLayout &layout);
+  static void build_tree_view(AbstractTreeView &tree_view,
+                              uiLayout &layout,
+                              std::optional<StringRef> search_string = {});
 
  private:
   static void ensure_min_rows_items(AbstractTreeView &tree_view);
