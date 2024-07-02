@@ -542,20 +542,18 @@ def addons_panel_draw_items(
                     box.separator(type='LINE')
                     USERPREF_PT_addons.draw_addon_preferences(box, context, addon_preferences)
 
-        ### BFA - Move Uninstall next to Install (Legacy) ###
-        user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths) # BFA
+#        ### BFA WIP - Move Uninstall next to Install (Legacy) ###
+#        user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths) # BFA
+#
+#        if user_addon: # BFA
+#            row_right = row.row() # BFA
+#            row_right.active = True # BFA
+#            row_right.alignment = 'RIGHT' # BFA
+#            row_right.operator( # BFA
+#                "preferences.addon_remove", text="Uninstall", icon='CANCEL', # BFA
+#            ).module = module_name # BFA
+#        ### BFA - end of changes ###
 
-        if user_addon: # BFA
-            row_right = row.row() # BFA
-            row_right.active = True # BFA
-            row_right.alignment = 'RIGHT' # BFA
-            row_right.operator( # BFA
-                "preferences.addon_remove", text="Uninstall", icon='CANCEL', # BFA
-            ).module = module_name # BFA
-        ### BFA - end of changes ###
-
-        if bl_info["show_expanded"]:
-            user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths)
 
 def addons_panel_draw_impl(
         self,
@@ -1610,7 +1608,7 @@ class USERPREF_MT_addons_settings(Menu):
 
         layout.separator()
 
-        layout.operator("extensions.package_install_files", text="Install from Disk") #BFA
+        layout.operator("extensions.package_install_files", text="Install from Disk") #BFA - name changed
 
 
 class USERPREF_MT_extensions_settings(Menu):
