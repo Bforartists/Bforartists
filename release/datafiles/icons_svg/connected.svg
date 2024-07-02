@@ -38,7 +38,7 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
@@ -47,18 +47,18 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="0.5"
-     inkscape:cx="401"
-     inkscape:cy="800"
+     inkscape:cx="664"
+     inkscape:cy="812"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="CONNECTED"
+     inkscape:current-layer="svg2"
      inkscape:showpageshadow="0"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#d1d1d1" />
   <g
      id="CONNECTED"
-     transform="matrix(87.499995,0,0,87.499995,100,99.999993)"
+     transform="scale(99.999994)"
      style="stroke-width:0.0114286">
     <path
        style="fill:none;stroke-width:0.000357143"
