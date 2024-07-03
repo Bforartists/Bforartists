@@ -24,7 +24,7 @@ jobs:
         git clone https://github.com/Bforartists/Bforartists
         cd Bforartists
         python ./build_files/utils/make_update.py
-        make release
+        make
         dir
         cd ..
         dir
