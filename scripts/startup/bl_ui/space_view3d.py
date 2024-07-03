@@ -7294,7 +7294,7 @@ class VIEW3D_MT_gpencil_animation(Menu):
         layout.operator(
             "gpencil.blank_frame_add",
             text="Insert Blank Keyframe (All Layers)",
-            icon="ADD").all_layers = True
+            icon="ADD_ALL").all_layers = True
 
         layout.separator()
 
@@ -7302,12 +7302,12 @@ class VIEW3D_MT_gpencil_animation(Menu):
         layout.operator(
             "gpencil.frame_duplicate",
             text="Duplicate Active Keyframe (All Layers)",
-            icon="DUPLICATE").mode = 'ALL'
+            icon="DUPLICATE_ALL").mode = 'ALL'
 
         layout.separator()
 
         layout.operator("gpencil.delete", text="Delete Active Keyframe (Active Layer)", icon="DELETE").type = 'FRAME'
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon="DELETE")
+        layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon="DELETE_ALL")
 
 
 class VIEW3D_MT_edit_greasepencil_animation(Menu):
@@ -7315,8 +7315,8 @@ class VIEW3D_MT_edit_greasepencil_animation(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)")
-        layout.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)").all_layers = True
+        layout.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)", icon="ADD")
+        layout.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)", icon="ADD_ALL").all_layers = True
 
 
 class VIEW3D_MT_edit_gpencil_transform(Menu):
