@@ -62,7 +62,7 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_EXTENSIONS,
      "EXTENSIONS",
      0,
-     "Get Extensions",
+     "Extensions", /* BFA - remove 'Get' for label consistency to Add-ons and Themes */
      "Browse, install and manage extensions from remote and local repositories"},
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", "Manage add-ons installed via Extensions"},
