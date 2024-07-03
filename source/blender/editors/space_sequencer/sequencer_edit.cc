@@ -1742,7 +1742,7 @@ void SEQUENCER_OT_delete(wmOperatorType *ot)
   /* Identifiers. */
   ot->name = "Delete Strips";
   ot->idname = "SEQUENCER_OT_delete";
-  ot->description = "Delete selected strips or retiming keyframes from the sequencer"; /*BFA - updated tooltip*/
+  ot->description = "Delete selected strips from the sequencer"; /*BFA - updated tooltip*/
 
   /* Api callbacks. */
   /*ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
