@@ -733,6 +733,7 @@ class VIEW3D_HT_header(Header):
     @staticmethod
     def draw_xform_template(layout, context):
         obj = context.active_object
+        mode_string = context.mode
         object_mode = 'OBJECT' if obj is None else obj.mode
         has_pose_mode = (
             (object_mode == 'POSE') or
@@ -844,6 +845,11 @@ class VIEW3D_HT_header(Header):
                     icon_only=True,
                     panel="VIEW3D_PT_proportional_edit",
                 )
+
+        # BFA - handle types for curves, formerly in the control points menu
+        if mode_string in {'EDIT_CURVE'}:
+            layout.operator_menu_enum("curve.handle_type_set", "type", text="", icon="HANDLE_AUTO")
+
 
     def draw(self, context):
         layout = self.layout
@@ -6482,7 +6488,6 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
                 layout.separator()
 
-                layout.menu("VIEW3D_MT_edit_curve_handle_type_set")  # bfa menu
                 layout.operator("curve.normals_make_consistent", icon='RECALC_NORMALS')
 
                 layout.separator()
@@ -6500,24 +6505,6 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
         layout.separator()
 
         layout.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
-
-
-# BFA menu
-class VIEW3D_MT_edit_curve_handle_type_set(Menu):
-    bl_label = "Set Handle Type"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("curve.handle_type_set", icon='HANDLE_AUTO', text="Automatic").type = 'AUTOMATIC'
-        layout.operator("curve.handle_type_set", icon='HANDLE_VECTOR', text="Vector").type = 'VECTOR'
-        layout.operator("curve.handle_type_set", icon='HANDLE_ALIGNED', text="Aligned").type = 'ALIGNED'
-        layout.operator("curve.handle_type_set", icon='HANDLE_FREE', text="Free").type = 'FREE_ALIGN'
-
-        layout.separator()
-
-        layout.operator("curve.handle_type_set", icon='HANDLE_FREE',
-                        text="Toggle Free / Aligned").type = 'TOGGLE_FREE_ALIGN'
 
 
 class VIEW3D_MT_edit_curve_segments(Menu):
@@ -11258,7 +11245,6 @@ classes = (
     VIEW3D_MT_edit_greasepencil_animation,
     VIEW3D_MT_edit_curve,
     VIEW3D_MT_edit_curve_ctrlpoints,
-    VIEW3D_MT_edit_curve_handle_type_set,  # bfa menu
     VIEW3D_MT_edit_curve_segments,
     VIEW3D_MT_edit_curve_clean,
     VIEW3D_MT_edit_curve_context_menu,
