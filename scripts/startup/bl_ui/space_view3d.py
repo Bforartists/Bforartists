@@ -7116,7 +7116,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.operator(
             "gpencil.frame_duplicate",
             text="Duplicate Active Frame All Layers",
-            icon="DUPLICATE").mode = 'ALL'
+            icon="DUPLICATE_ALL").mode = 'ALL'
 
         layout.separator()
 
