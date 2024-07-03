@@ -1,4 +1,4 @@
-keyconfig_version = (4, 2, 16)
+keyconfig_version = (4, 3, 6)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -9338,6 +9338,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("sequencer.retiming_key_delete", {"type": 'DEL', "value": 'PRESS', "repeat": True}, None),
     ],
    },
   ),
