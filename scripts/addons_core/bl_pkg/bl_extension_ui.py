@@ -245,7 +245,7 @@ def addon_draw_item_expanded(
         rowsub.label(text=iface_("Built-in"))
         rowsub.separator()
     elif addon_type == ADDON_TYPE_LEGACY_USER:
-        rowsub.operator("preferences.addon_remove", text="Uninstall").module = mod.__name__
+        rowsub.operator("preferences.addon_remove", text="Uninstall", icon='CANCEL').module = mod.__name__ #BFA - icon added
     del rowsub
 
     layout.separator(type='LINE')
@@ -1192,12 +1192,12 @@ def extension_draw_item(
         if is_installed:
             # Include uninstall below.
             if is_outdated:
-                props = row_right.operator("extensions.package_install", text="Update")
+                props = row_right.operator("extensions.package_install", text="Update", icon="FILE_REFRESH")  # BFA - icon added
                 props.repo_index = repo_index
                 props.pkg_id = pkg_id
                 del props
         else:
-            props = row_right.operator("extensions.package_install", text="Install")
+            props = row_right.operator("extensions.package_install", text="Install", icon="IMPORT") # BFA - icon added
             props.repo_index = repo_index
             props.pkg_id = pkg_id
             del props
@@ -1788,9 +1788,9 @@ class USERPREF_MT_extensions_item(Menu):
             layout.separator()
 
             if is_system_repo:
-                layout.operator("extensions.package_uninstall_system", text="Uninstall")
+                layout.operator("extensions.package_uninstall_system", text="Uninstall", icon='CANCEL') #BFA - icon added
             else:
-                props = layout.operator("extensions.package_uninstall", text="Uninstall")
+                props = layout.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') #BFA - icon added
                 props.repo_index = repo_index
                 props.pkg_id = pkg_id
                 del props
