@@ -63,7 +63,7 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
      "EXTENSIONS",
      0,
      "Extensions", /* BFA - remove 'Get' for label consistency to Add-ons and Themes */
-     "Browse, install and manage extensions from remote and local repositories"},
+     "Browse, install, uninstall and manage extensions from remote and local repositories. \nYou can also drag and drop extensions to install.\nExtensions include themes and addons made by the community."}, /*BFA - made it clear you can uninstall, drag and drop, and what are extensions*/
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", "Manage add-ons installed via Extensions"},
     {USER_SECTION_THEME, "THEMES", 0, "Themes", "Edit and save themes installed via Extensions"},
