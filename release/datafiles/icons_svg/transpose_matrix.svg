@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg14909"
+   width="1600"
+   height="1600"
+   viewBox="0 0 1600 1600"
+   sodipodi:docname="TRANSPOSE_MATRIX.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs14913" />
+  <sodipodi:namedview
+     id="namedview14911"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.5"
+     inkscape:cx="803"
+     inkscape:cy="896"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g14915" />
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g14915"
+     transform="translate(0,1584)">
+    <g
+       id="TRANSPOSE_MATRIX"
+       transform="matrix(100,0,0,100,0,-1584)">
+      <path
+         style="fill:#ffffff;stroke-width:0.03125;fill-opacity:0"
+         d="M 0,8 V 0 h 8 8 v 8 8 H 8 0 Z m 15,5.5 V 12 H 14.5 14 v 1 1 H 10 6 V 13 12 H 5.5 5 v 1.5 1.5 h 5 5 z M 9,12 V 11 H 8 7 v 1 1 h 1 1 z m 4,0 v -1 h -1 -1 v 1 1 h 1 1 z M 4,10.5 V 10 H 3 2 V 6 2 H 3 4 V 1.5 1 H 2.5 1 v 5 5 H 2.5 4 Z M 5,8 V 7 H 4 3 V 8 9 H 4 5 Z M 9,8 V 7 H 8 7 v 1 1 h 1 1 z m 4,0 V 7 h -1 -1 v 1 1 h 1 1 z M 5,4 V 3 H 4 3 V 4 5 H 4 5 Z M 9,4 V 3 H 8 7 v 1 1 h 1 1 z"
+         id="path15042" />
+      <path
+         style="fill:#fefefe;stroke-width:0.03125"
+         d="M 1,6 V 1 H 2.5 4 V 1.5 2 H 3 2 v 4 4 H 3 4 V 10.5 11 H 2.5 1 Z M 3,8 V 7 H 4 5 V 8 9 H 4 3 Z M 3,4 V 3 H 4 5 V 4 5 H 4 3 Z M 7,4 V 3 H 8 9 V 4 5 H 8 7 Z"
+         id="path15040" />
+      <path
+         style="fill:#fecb32;stroke-width:0.03125"
+         d="M 5,13.5 V 12 H 5.5 6 v 1 1 h 4 4 V 13 12 H 14.5 15 V 13.5 15 H 10 5 Z M 7,12 v -1 h 1 1 v 1 1 H 8 7 Z m 4,0 v -1 h 1 1 v 1 1 H 12 11 Z M 7,8 V 7 H 8 9 V 8 9 H 8 7 Z m 4,0 V 7 h 1 1 v 1 1 h -1 -1 z"
+         id="path15038" />
+    </g>
+  </g>
+</svg>
