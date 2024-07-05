@@ -170,7 +170,7 @@ addon_type_name = (
 )
 
 addon_type_icon = (
-    'COMMUNITY',  # `ADDON_TYPE_EXTENSION`.
+    'PLUGIN',  # `ADDON_TYPE_EXTENSION`. # BFA - we use PLUGIN icon instead
     'BLENDER',  # `ADDON_TYPE_LEGACY_CORE`.
     'FILE_FOLDER',  # `ADDON_TYPE_LEGACY_USER`.
     'PACKAGE',  # `ADDON_TYPE_LEGACY_OTHER`.
@@ -1546,7 +1546,7 @@ def extensions_panel_draw_impl(
         # to accessing repositories so it's not helpful to bother the user while this runs.
         if not operation_in_progress:
             display_errors.draw(layout_topmost)
-# BFA - WIP 
+# BFA - WIP
 #class USERPREF_PT_extensions_filter(Panel):
 #    bl_label = "Extensions Filter"
 #
@@ -1829,11 +1829,12 @@ def extensions_panel_draw(panel, context):
 
     layout = panel.layout
 
-    row = layout.split(factor=0.5)
+    row = layout.split(factor=0.4)
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM', placeholder="Search Extensions")
     row_b = row.row(align=True)
-    row_b.prop(wm, "extension_type", text="")
+    row_b.prop(wm, "extension_type", text="text", expand=True)
+    row_b.separator()
     row_b.popover("USERPREF_PT_extensions_tags", text="", icon='TAG')
 
     row_b.separator()
