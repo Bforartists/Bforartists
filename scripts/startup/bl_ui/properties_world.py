@@ -241,7 +241,7 @@ class EEVEE_WORLD_PT_sun_shadow(WorldButtonsPanel, Panel):
         row.use_property_split = False
         split = row.split(factor = 0.366)
         row = split.row()
-        row.prop(world, "use_sun_shadow_jitter", text = "Jitter")
+        row.prop(world, "use_sun_shadow_jitter", text = "Jittered Shadows")
         row = split.row()
         if world.use_sun_shadow_jitter:
             row.label(icon='DISCLOSURE_TRI_DOWN')
@@ -274,6 +274,13 @@ class WORLD_PT_viewport_display(WorldButtonsPanel, Panel):
         layout.use_property_split = True
         world = context.world
         layout.prop(world, "color")
+
+        engine = context.scene.render.engine
+        if engine in {'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT'}:
+            scene = context.scene
+            props = scene.eevee
+            layout.use_property_split = False
+            layout.prop(props, "use_shadow_jitter_viewport", text="Jittered Shadows")
 
 
 classes = (
