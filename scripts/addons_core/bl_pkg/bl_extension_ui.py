@@ -1829,12 +1829,12 @@ def extensions_panel_draw(panel, context):
 
     layout = panel.layout
 
-    row = layout.split(factor=0.4)
+    row = layout.split(factor=0.4) # BFA - slight adjustment for extension_type toggles
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM', placeholder="Search Extensions")
     row_b = row.row(align=True)
-    row_b.prop(wm, "extension_type", text="text", expand=True)
-    row_b.separator()
+    row_b.prop(wm, "extension_type", text="text", expand=True) # BFA - we use the expanded instead
+    row_b.separator() # BFA - separate extensions_tags from extension_type
     row_b.popover("USERPREF_PT_extensions_tags", text="", icon='TAG')
 
     row_b.separator()
