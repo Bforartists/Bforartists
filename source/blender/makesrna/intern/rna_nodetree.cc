@@ -11553,10 +11553,10 @@ static int node_type_to_icon(int type)
       return ICON_STRING_SUBSTRING;
 
     case FN_NODE_STRING_LENGTH:
-      return ICON_TRANSFORM_DIRECTION;
+      return ICON_STRING_LENGTH;
 
     case FN_NODE_TRANSFORM_DIRECTION:
-      return ICON_STRING_LENGTH;
+      return ICON_TRANSFORM_DIRECTION;
 
     case FN_NODE_TRANSFORM_POINT:
       return ICON_TRANSFORM_POINT;
