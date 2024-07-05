@@ -6605,6 +6605,126 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
             props.type = "ShaderNodeMix"
 
 
+#add utilities panel, matrix subpanel
+class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Matrix"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Combine Matrix     ", icon = "COMBINE_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeCombineMatrix"
+
+            props = col.operator("node.add_node", text=" Combine Transform     ", icon = "COMBINE_TRANSFORM")
+            props.use_transform = True
+            props.type = "FunctionNodeCombineTransform"
+
+            props = col.operator("node.add_node", text=" Invert Matrix", icon = "INVERT_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeInvertMatrix"
+
+            props = col.operator("node.add_node", text=" Multiply Matrix ", icon = "MULTIPLY_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeMatrixMultiply"
+
+            props = col.operator("node.add_node", text=" Project Point   ", icon = "PROJECT_POINT")
+            props.use_transform = True
+            props.type = "FunctionNodeProjectPoint"
+
+            props = col.operator("node.add_node", text=" Separate Matrix   ", icon = "SEPARATE_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeSeparateMatrix"
+
+            props = col.operator("node.add_node", text=" Separate Transform   ", icon = "SEPARATE_TRANSFORM")
+            props.use_transform = True
+            props.type = "FunctionNodeSeparateTransform"
+
+            props = col.operator("node.add_node", text=" Transform Direction  ", icon = "TRANSFORM_DIRECTION")
+            props.use_transform = True
+            props.type = "FunctionNodeTransformDirection"
+
+            props = col.operator("node.add_node", text=" Transform Point  ", icon = "TRANSFORM_POINT")
+            props.use_transform = True
+            props.type = "FunctionNodeTransformPoint"
+
+            props = col.operator("node.add_node", text=" Transpose Matrix ", icon = "TRANSPOSE_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeTransposeMatrix"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text="", icon = "COMBINE_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeCombineMatrix"
+
+            props = flow.operator("node.add_node", text="", icon = "COMBINE_TRANSFORM")
+            props.use_transform = True
+            props.type = "FunctionNodeCombineTransform"
+
+            props = flow.operator("node.add_node", text="", icon = "INVERT_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeInvertMatrix"
+
+            props = flow.operator("node.add_node", text="", icon = "MULTIPLY_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeMatrixMultiply"
+
+            props = flow.operator("node.add_node", text="", icon = "PROJECT_POINT")
+            props.use_transform = True
+            props.type = "FunctionNodeProjectPoint"
+
+            props = flow.operator("node.add_node", text="", icon = "SEPARATE_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeSeparateMatrix"
+
+            props = flow.operator("node.add_node", text="", icon = "SEPARATE_TRANSFORM")
+            props.use_transform = True
+            props.type = "FunctionNodeSeparateTransform"
+
+            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_DIRECTION")
+            props.use_transform = True
+            props.type = "FunctionNodeTransformDirection"
+
+            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_POINT")
+            props.use_transform = True
+            props.type = "FunctionNodeTransformPoint"
+
+            props = flow.operator("node.add_node", text="", icon = "TRANSPOSE_MATRIX")
+            props.use_transform = True
+            props.type = "FunctionNodeTransposeMatrix"
+
+
 #add utilities panel, rotation subpanel
 class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -7604,6 +7724,7 @@ classes = (
     NODES_PT_geom_add_utilities_vector,
     NODES_PT_geom_add_utilities_field,
     NODES_PT_geom_add_utilities_math,
+    NODES_PT_geom_add_utilities_matrix,
     NODES_PT_geom_add_utilities_rotation,
     NODES_PT_geom_add_utilities_deprecated,
 
