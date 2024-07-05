@@ -319,9 +319,7 @@ static void rna_def_light_shadow(StructRNA *srna, bool sun)
   RNA_def_property_boolean_sdna(prop, nullptr, "mode", LA_SHADOW_JITTER);
   RNA_def_property_ui_text(
       prop,
-      "Shadow Jitter",
-      "Enable jittered soft shadows to increase shadow precision (disabled in viewport unless "
-      "enabled in the render settings). Has a high performance impact");
+      "Shadow Jitter", "Enable jittered soft shadows to increase shadow precision");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, 0, "rna_Light_update");
 
