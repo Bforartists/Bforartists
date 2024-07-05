@@ -1104,21 +1104,6 @@ class VIEW3D_HT_header(Header):
                     if settings.use_guide:
                         sub.popover(panel="VIEW3D_PT_gpencil_guide", text="")
 
-              # Grease Pencil
-                if obj and obj.type == 'GPENCIL' and context.gpencil_data:
-                    gpd = context.gpencil_data
-
-                    if gpd.is_stroke_paint_mode:
-                        row = layout.row()
-                        sub = row.row(align=True)
-                        sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
-                        sub.separator(factor=0.4)
-                        sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
-                        sub.separator(factor=0.4)
-                        sub.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
-                        sub.separator(factor=0.4)
-                        sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
-
             if object_mode == 'SCULPT_GPENCIL':
                 layout.popover(
                     panel="VIEW3D_PT_gpencil_sculpt_automasking",
