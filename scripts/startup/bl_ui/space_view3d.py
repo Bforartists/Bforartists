@@ -1102,7 +1102,7 @@ class VIEW3D_HT_header(Header):
                     row.prop(settings, "use_guide", text="", icon='GRID')
                     sub = row.row(align=True)
                     if settings.use_guide:
-                        sub.popover(panel="VIEW3D_PT_gpencil_guide", text="Guides")
+                        sub.popover(panel="VIEW3D_PT_gpencil_guide", text="")
 
               # Grease Pencil
                 if obj and obj.type == 'GPENCIL' and context.gpencil_data:
