@@ -4021,7 +4021,7 @@ void CURVE_OT_handle_type_set(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Set Handle Type";
-  ot->description = "Set Handle Type\nSet type of handles for selected control points";
+  ot->description = "Set type of handles for selected control points";
   ot->idname = "CURVE_OT_handle_type_set";
 
   /* api callbacks */
