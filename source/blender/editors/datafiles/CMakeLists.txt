@@ -2609,7 +2609,8 @@ if(WITH_BLENDER)
 	transpose_matrix
 	combine_matrix
 	separate_matrix
-		  
+	
+	mouse_position
 	  
 
       warning
