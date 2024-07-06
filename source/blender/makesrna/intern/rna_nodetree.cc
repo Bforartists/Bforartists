@@ -12051,6 +12051,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_TOOL_FACE_SET:
       return ICON_FACE_SET;
 
+    case GEO_NODE_TOOL_MOUSE_POSITION:
+      return ICON_MOUSE_POSITION;
+
     case GEO_NODE_TOOL_SELECTION:
       return ICON_RESTRICT_SELECT_OFF;
 
