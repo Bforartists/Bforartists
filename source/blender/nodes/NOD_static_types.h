@@ -477,7 +477,7 @@ DefNode(GeometryNode, GEO_NODE_SUBDIVISION_SURFACE, 0, "SUBDIVISION_SURFACE",Sub
 DefNode(GeometryNode, GEO_NODE_SWITCH, 0, "SWITCH", Switch, "Switch", "Add a Switch Geometry node\nSwitch between two inputs")
 DefNode(GeometryNode, GEO_NODE_TOOL_3D_CURSOR, 0, "TOOL_3D_CURSOR", Tool3DCursor, "3D Cursor", "Add a 3D Cursor Geometry node\nThe scene's 3D cursor location and rotation")
 DefNode(GeometryNode, GEO_NODE_TOOL_FACE_SET, 0, "TOOL_FACE_SET", ToolFaceSet, "Face Set", "Add a Face Set Geometry node\nEach face's sculpt face set value")
-DefNode(GeometryNode, GEO_NODE_TOOL_MOUSE_POSITION, 0, "TOOL_MOUSE_POSITION", ToolMousePosition, "Mouse Position", "Add a 3D Cursor Geometry node\nRetrieve the position of the mouse cursor")
+DefNode(GeometryNode, GEO_NODE_TOOL_MOUSE_POSITION, 0, "TOOL_MOUSE_POSITION", ToolMousePosition, "Mouse Position", "Add a Mouse Position Geometry node\nRetrieve the position of the mouse cursor")
 DefNode(GeometryNode, GEO_NODE_TOOL_SELECTION, 0, "TOOL_SELECTION", ToolSelection, "Selection", "Add a Selection Geometry node\nUser selection of the edited geometry, for tool execution")
 DefNode(GeometryNode, GEO_NODE_TOOL_ACTIVE_ELEMENT, 0, "TOOL_ACTIVE_ELEMENT", ToolActiveElement, "Active Element", "Add an Active Element node\nActive element indices of the edited geometry, for tool execution")
 DefNode(GeometryNode, GEO_NODE_TOOL_SET_FACE_SET, 0, "TOOL_SET_FACE_SET", ToolSetFaceSet, "Set Face Set", "Add a Set Face Set Geometry node\nSet sculpt face set values for faces")
