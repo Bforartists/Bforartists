@@ -3705,6 +3705,11 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputNamedLayerSelection"
 
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = col.operator("node.add_node", text=" Mouse Position    ", icon = "MOUSE_POSITION")
+                props.use_transform = True
+                props.type = "GeometryNodeToolMousePosition"
+
             props = col.operator("node.add_node", text=" Object Info           ", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
@@ -3721,7 +3726,6 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
                 props = col.operator("node.add_node", text=" Viewport Transform ", icon = "VIEWPORT_TRANSFORM")
                 props.use_transform = True
                 props.type = "GeometryNodeViewportTransform"
-
 
 
         #### Icon Buttons
@@ -3757,6 +3761,11 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputNamedLayerSelection"
 
+            if context.space_data.geometry_nodes_type == 'TOOL':
+                props = flow.operator("node.add_node", text="", icon = "MOUSE_POSITION")
+                props.use_transform = True
+                props.type = "GeometryNodeToolMousePosition"
+
             props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
@@ -3773,7 +3782,6 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
                 props = flow.operator("node.add_node", text="", icon = "VIEWPORT_TRANSFORM")
                 props.use_transform = True
                 props.type = "GeometryNodeViewportTransform"
-
 
 
 #add output panel
