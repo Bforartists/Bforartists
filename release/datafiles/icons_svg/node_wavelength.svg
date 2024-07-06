@@ -54,7 +54,7 @@
      inkscape:deskcolor="#d1d1d1" />
   <g
      id="NODE_WAVELENGTH"
-     transform="translate(100,1484)">
+     transform="scale(100)">
     <path
        style="fill:none;stroke-width:0.03125"
        d="M 0,8 V 0 h 8 8 v 8 8 H 8 0 Z"
