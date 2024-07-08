@@ -143,6 +143,13 @@ struct Main {
    * could try to use more refined detection on load. */
   bool has_forward_compatibility_issues;
 
+  /**
+   * This file was written by the asset system with the #G_FILE_ASSET_EDIT_FILE flag (now cleared).
+   * It must not be overwritten, except by the asset system itself. Otherwise the file could end up
+   * with user created data that would be lost when the asset system regenerates the file.
+   */
+  bool is_asset_edit_file;
+
   /** Commit timestamp from `buildinfo`. */
   uint64_t build_commit_timestamp;
   /** Commit Hash from `buildinfo`. */
@@ -184,18 +191,18 @@ struct Main {
   bool is_global_main;
 
   /**
-   * True if the Action Binding-to-ID mapping is dirty.
+   * True if the Action Slot-to-ID mapping is dirty.
    *
-   * If this flag is set, the next call to `animrig::Binding::users(bmain)` and related functions
-   * will trigger a rebuild of the Binding-to-ID mapping. Since constructing this mapping requires
+   * If this flag is set, the next call to `animrig::Slot::users(bmain)` and related functions
+   * will trigger a rebuild of the Slot-to-ID mapping. Since constructing this mapping requires
    * a full scan of the animatable IDs in this `Main` anyway, it is kept as a flag here.
    *
-   * \note This flag should not be set directly. Use animrig::Binding::users_invalidate() instead.
-   * That way the handling of this flag is limited to the code in animrig::Binding.
+   * \note This flag should not be set directly. Use animrig::Slot::users_invalidate() instead.
+   * That way the handling of this flag is limited to the code in animrig::Slot.
    *
-   * \see blender::animrig::Binding::users_invalidate(Main &bmain)
+   * \see blender::animrig::Slot::users_invalidate(Main &bmain)
    */
-  bool is_action_binding_to_id_map_dirty;
+  bool is_action_slot_to_id_map_dirty;
 
   BlendThumbnail *blen_thumb;
 
@@ -343,6 +350,17 @@ void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &report
  * Check whether given `bmain` is empty or contains some IDs.
  */
 bool BKE_main_is_empty(Main *bmain);
+
+/**
+ * Check whether the bmain has issues, e.g. for reporting in the status bar.
+ */
+bool BKE_main_has_issues(const Main *bmain);
+
+/**
+ * Check whether user confirmation should be required when overwriting this `bmain` into its source
+ * blendfile.
+ */
+bool BKE_main_needs_overwrite_confirm(const Main *bmain);
 
 void BKE_main_lock(Main *bmain);
 void BKE_main_unlock(Main *bmain);

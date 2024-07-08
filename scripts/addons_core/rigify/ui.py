@@ -10,6 +10,12 @@ from bpy.props import (
     EnumProperty,
     StringProperty
 )
+from bpy.app.translations import (
+    pgettext_n as n_,
+    pgettext_iface as iface_,
+    pgettext_rpt as rpt_,
+    contexts as i18n_contexts,
+)
 
 from collections import defaultdict
 from typing import TYPE_CHECKING, Callable, Any
@@ -98,7 +104,7 @@ class DATA_PT_rigify(bpy.types.Panel):
             layout.operator("armature.rigify_upgrade_layers", text="Upgrade Metarig")
             return
 
-        WARNING = "Warning: Some features may change after generation"
+        WARNING = n_("Warning: Some features may change after generation")
         show_warning = False
         show_update_metarig = False
         show_not_updatable = False
@@ -138,13 +144,15 @@ class DATA_PT_rigify(bpy.types.Panel):
         enable_generate = not (show_not_updatable or show_update_metarig)
 
         if show_not_updatable:
-            layout.label(text="WARNING: This metarig contains deprecated rigify rig-types and "
+            layout.label(text="WARNING: This metarig contains deprecated Rigify rig-types and "
                               "cannot be upgraded automatically.", icon='ERROR')
-            layout.label(text="(" + old_rig + " on bone " + old_bone + ")")
+            text = iface_("({:s} on bone {:s})").format(old_rig, old_bone)
+            layout.label(text=text, translate=False)
         elif show_update_metarig:
             layout.label(text="This metarig contains old rig-types that can be automatically "
                               "upgraded to benefit from new rigify features.", icon='ERROR')
-            layout.label(text="(" + old_rig + " on bone " + old_bone + ")")
+            text = iface_("({:s} on bone {:s})").format(old_rig, old_bone)
+            layout.label(text=text, translate=False)
             layout.operator("pose.rigify_upgrade_types", text="Upgrade Metarig")
         elif show_upgrade_face:
             layout.label(text="This metarig uses the old face rig.", icon='INFO')
@@ -157,7 +165,10 @@ class DATA_PT_rigify(bpy.types.Panel):
 
         col.separator()
         row = col.row()
-        text = "Re-Generate Rig" if get_rigify_target_rig(obj.data) else "Generate Rig"
+        text = (
+            n_("Re-Generate Rig", i18n_contexts.operator_default) if get_rigify_target_rig(obj.data)
+            else n_("Generate Rig", i18n_contexts.operator_default)
+        )
         row.operator("pose.rigify_generate", text=text, icon='POSE_HLT')
         row.enabled = enable_generate
 
@@ -346,7 +357,8 @@ class DATA_PT_rigify_collection_list(bpy.types.Panel):
             row.prop(active_coll, "rigify_ui_title")
 
         if ROOT_COLLECTION not in arm.collections_all:
-            layout.label(text=f"The '{ROOT_COLLECTION}' collection will be added upon generation", icon='INFO')
+            text = iface_("The '{:s}' collection will be added upon generation").format(ROOT_COLLECTION)
+            layout.label(text=text, translate=False, icon='INFO')
 
 
 # noinspection PyPep8Naming
@@ -891,7 +903,8 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
             except (ImportError, AttributeError, KeyError):
                 row = layout.row()
                 box = row.box()
-                box.label(text="ERROR: type \"%s\" does not exist!" % rig_name, icon='ERROR')
+                text = iface_("ERROR: type \"{:s}\" does not exist!").format(rig_name)
+                box.label(text=text, icon='ERROR', translate=False)
             else:
                 if hasattr(rig.Rig, 'parameters_ui'):
                     rig = rig.Rig
@@ -1014,9 +1027,9 @@ def rigify_report_exception(operator, exception):
     fn = os.path.splitext(fn)[0]
     message = []
     if fn.startswith("__"):
-        message.append("Incorrect armature...")
+        message.append(rpt_("Incorrect armature..."))
     else:
-        message.append("Incorrect armature for type '%s'" % fn)
+        message.append(rpt_("Incorrect armature for type '{:s}'").format(fn))
     message.append(exception.message)
 
     message.reverse()  # XXX - stupid! menu's are upside down!
@@ -1036,12 +1049,10 @@ def is_metarig(obj):
 
 
 class Generate(bpy.types.Operator):
-    """Generates a rig from the active metarig armature"""
-
     bl_idname = "pose.rigify_generate"
     bl_label = "Rigify Generate Rig"
     bl_options = {'UNDO'}
-    bl_description = 'Generates a rig from the active metarig armature'
+    bl_description = "Generate a rig from the active metarig armature"
 
     @classmethod
     def poll(cls, context):
@@ -1056,7 +1067,7 @@ class Generate(bpy.types.Operator):
         else:
             self.report(
                 {'ERROR'},
-                'No bone collections have UI buttons assigned - please check the Bone Collections UI sub-panel.'
+                'No bone collections have UI buttons assigned - please check the Bone Collections UI sub-panel'
             )
             return {'CANCELLED'}
 
@@ -1071,10 +1082,12 @@ class Generate(bpy.types.Operator):
             import traceback
             traceback.print_exc()
 
-            self.report({'ERROR'}, 'Generation has thrown an exception: ' + str(rig_exception))
+            message = rpt_("Generation has thrown an exception: ") + str(rig_exception)
+            self.report({'ERROR'}, message)
         else:
             target_rig = get_rigify_target_rig(metarig.data)
-            self.report({'INFO'}, f'Successfully generated: "{target_rig.name}"')
+            message = rpt_('Successfully generated: "{:s}"').format(target_rig.name)
+            self.report({'INFO'}, message)
         finally:
             bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -1082,11 +1095,9 @@ class Generate(bpy.types.Operator):
 
 
 class UpgradeMetarigTypes(bpy.types.Operator):
-    """Upgrades metarig bones rigify_types"""
-
     bl_idname = "pose.rigify_upgrade_types"
     bl_label = "Rigify Upgrade Metarig Types"
-    bl_description = 'Upgrades the rigify types on the active metarig armature'
+    bl_description = "Upgrade the Rigify types on the active metarig armature"
     bl_options = {'UNDO'}
 
     def execute(self, context):
@@ -1099,7 +1110,7 @@ class UpgradeMetarigLayers(bpy.types.Operator):
 
     bl_idname = "armature.rigify_upgrade_layers"
     bl_label = "Rigify Upgrade Metarig Layers"
-    bl_description = 'Upgrades the metarig from bone layers to bone collections'
+    bl_description = "Upgrade the metarig from bone layers to bone collections"
     bl_options = {'UNDO'}
 
     def execute(self, context):
@@ -1112,8 +1123,10 @@ class ValidateMetarigLayers(bpy.types.Operator):
 
     bl_idname = "armature.rigify_validate_layers"
     bl_label = "Validate Collection References"
-    bl_description = 'Validate references from rig component settings to bone collections. Always run this both '\
-                     'before and after joining two metarig armature objects into one to avoid glitches'
+    bl_description = (
+        "Validate references from rig component settings to bone collections.\n"
+        "Always run this both before and after joining two metarig armature objects into one to avoid glitches"
+    )
     bl_options = {'UNDO'}
 
     @classmethod
@@ -1126,7 +1139,7 @@ class ValidateMetarigLayers(bpy.types.Operator):
         for msg in messages:
             self.report({'WARNING'}, msg)
         if not messages:
-            self.report({'INFO'}, "No issues detected.")
+            self.report({'INFO'}, "No issues detected")
         return {'FINISHED'}
 
 
@@ -1164,7 +1177,7 @@ class Sample(bpy.types.Operator):
 
     def execute(self, context):
         if self.metarig_type == "":
-            self.report({'ERROR'}, "You must select a rig type to create a sample of.")
+            self.report({'ERROR'}, "You must select a rig type to create a sample of")
             return {'CANCELLED'}
         try:
             rig = rig_lists.rigs[self.metarig_type]["module"]
@@ -1180,7 +1193,7 @@ class Sample(bpy.types.Operator):
 
 
 class EncodeMetarig(bpy.types.Operator):
-    """Creates Python code that will generate the selected metarig"""
+    """Create Python code that will generate the selected metarig"""
     bl_idname = "armature.rigify_encode_metarig"
     bl_label = "Rigify Encode Metarig"
     bl_options = {'UNDO'}
@@ -1202,12 +1215,13 @@ class EncodeMetarig(bpy.types.Operator):
         text = write_metarig(obj, layers=True, func_name="create", groups=True, widgets=True)
         text_block.write(text)
         bpy.ops.object.mode_set(mode='EDIT')
-        self.report({'INFO'}, f"Metarig written to text datablock: {text_block.name}")
+        message = rpt_("Metarig written to text datablock {:s}").format(text_block.name)
+        self.report({'INFO'}, message)
         return {'FINISHED'}
 
 
 class EncodeMetarigSample(bpy.types.Operator):
-    """Creates Python code that will generate the selected metarig as a sample"""
+    """Create Python code that will generate the selected metarig as a sample"""
     bl_idname = "armature.rigify_encode_metarig_sample"
     bl_label = "Rigify Encode Metarig Sample"
     bl_options = {'UNDO'}
@@ -1230,7 +1244,8 @@ class EncodeMetarigSample(bpy.types.Operator):
         text_block.write(text)
         bpy.ops.object.mode_set(mode='EDIT')
 
-        self.report({'INFO'}, f"Metarig Sample written to text datablock: {text_block.name}")
+        message = rpt_("Metarig Sample written to text datablock {:s}").format(text_block.name)
+        self.report({'INFO'}, message)
         return {'FINISHED'}
 
 
@@ -1247,7 +1262,10 @@ class VIEW3D_MT_rigify(bpy.types.Menu):
         obj = verify_armature_obj(context.object)
         target_rig = get_rigify_target_rig(obj.data)
 
-        text = "Re-Generate Rig" if target_rig else "Generate Rig"
+        text = (
+            n_("Re-Generate Rig", i18n_contexts.operator_default) if target_rig
+            else n_("Generate Rig", i18n_contexts.operator_default)
+        )
         layout.operator(Generate.bl_idname, text=text)
 
         if context.mode == 'EDIT_ARMATURE':
@@ -1264,8 +1282,7 @@ def draw_rigify_menu(self, context):
 
 
 class EncodeWidget(bpy.types.Operator):
-    """ Creates Python code that will generate the selected metarig.
-    """
+    """Create Python code that will generate the selected metarig"""
     bl_idname = "mesh.rigify_encode_mesh_widget"
     bl_label = "Rigify Encode Widget"
     bl_options = {'UNDO'}
@@ -1652,7 +1669,7 @@ class OBJECT_OT_TransferIKtoFK(bpy.types.Operator):
 class OBJECT_OT_ClearAnimation(bpy.types.Operator):
     bl_idname = "rigify.clear_animation"
     bl_label = "Clear Animation"
-    bl_description = "Clear Animation For FK or IK Bones"
+    bl_description = "Clear animation for FK or IK bones"
     bl_options = {'INTERNAL'}
 
     anim_type: StringProperty()
