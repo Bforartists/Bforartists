@@ -2427,6 +2427,7 @@ DEF_ICON_COLOR(COMBINE_MATRIX)
 DEF_ICON_COLOR(SEPARATE_MATRIX)
 
 DEF_ICON_COLOR(MOUSE_POSITION)
+DEF_ICON_COLOR(GABOR_NOISE)
 
 /* ------------------------- large --------------------------*/
 

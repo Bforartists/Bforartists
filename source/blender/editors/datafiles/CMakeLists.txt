@@ -2611,8 +2611,8 @@ if(WITH_BLENDER)
 	separate_matrix
 	
 	mouse_position
-	  
-
+	gabor_noise
+	
       warning
       # ------------------------- large --------------------------
       cancel_large
