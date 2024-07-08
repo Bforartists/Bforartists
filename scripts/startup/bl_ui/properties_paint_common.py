@@ -1,24 +1,77 @@
 # SPDX-FileCopyrightText: 2012-2023 Blender Authors
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
-from bpy.types import Menu, Panel # bfa - panel
+
+import bpy
+from bpy.types import Menu, Panel # BFA - panel
 
 
 class BrushAssetShelf:
     bl_options = {'DEFAULT_VISIBLE', 'NO_ASSET_DRAG', 'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
+    bl_activate_operator = "BRUSH_OT_asset_activate"
     bl_default_preview_size = 48
 
     @classmethod
     def poll(cls, context):
-        prefs = context.preferences
-        if not prefs.experimental.use_extended_asset_browser:
-            return False
-
-        return context.mode == 'SCULPT'
+        return context.object and context.object.mode == cls.mode
 
     @classmethod
     def asset_poll(cls, asset):
-        return asset.id_type == 'BRUSH'
+        if asset.id_type != 'BRUSH':
+            return False
+        if hasattr(cls, "mode_prop"):
+            return asset.metadata.get(cls.mode_prop, False)
+        return True
+
+    @classmethod
+    def get_active_asset(cls):
+        # Only show active highlight when using the brush tool.
+        from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+        tool = ToolSelectPanelHelper.tool_active_from_context(bpy.context)
+        if not tool or tool.idname != "builtin.brush":
+            return None
+
+        paint_settings = UnifiedPaintPanel.paint_settings(bpy.context)
+        return paint_settings.brush_asset_reference if paint_settings else None
+
+    @classmethod
+    def draw_context_menu(self, context, asset, layout):
+        # Currently this menu adds operators that deal with the affected brush and don't take the
+        # asset into account. Luckily that is okay for now, since right clicking in the grid view
+        # also activates the item.
+        layout.menu_contents("VIEW3D_MT_brush_context_menu")
+
+    @staticmethod
+    def get_shelf_name_from_context(context):
+        mode_map = {
+            'SCULPT': "VIEW3D_AST_brush_sculpt",
+            'PAINT_VERTEX': "VIEW3D_AST_brush_vertex_paint",
+            'PAINT_WEIGHT': "VIEW3D_AST_brush_weight_paint",
+            'PAINT_TEXTURE': "VIEW3D_AST_brush_texture_paint",
+            'PAINT_2D': "IMAGE_AST_brush_paint",
+            'PAINT_GPENCIL': "VIEW3D_AST_brush_gpencil_paint",
+            'SCULPT_GPENCIL': "VIEW3D_AST_brush_gpencil_sculpt",
+            'WEIGHT_GPENCIL': "VIEW3D_AST_brush_gpencil_weight",
+            'VERTEX_GPENCIL': "VIEW3D_AST_brush_gpencil_vertex",
+            'PAINT_GREASE_PENCIL': "VIEW3D_AST_brush_gpencil_paint",
+            'SCULPT_GREASE_PENCIL': "VIEW3D_AST_brush_gpencil_sculpt",
+            'WEIGHT_GREASE_PENCIL': "VIEW3D_AST_brush_gpencil_weight",
+            'VERTEX_GREASE_PENCIL': "VIEW3D_AST_brush_gpencil_vertex",
+            'SCULPT_CURVES': "VIEW3D_AST_brush_sculpt_curves",
+        }
+        mode = UnifiedPaintPanel.get_brush_mode(context)
+        return mode_map[mode]
+
+    @staticmethod
+    def draw_popup_selector(layout, context, brush, show_name=True):
+        preview_icon_id = brush.preview.icon_id if brush and brush.preview else 0
+
+        layout.template_asset_shelf_popover(
+            BrushAssetShelf.get_shelf_name_from_context(context),
+            name=brush.name if (brush and show_name) else None,
+            icon='BRUSH_DATA' if not preview_icon_id else 'NONE',
+            icon_value=preview_icon_id,
+        )
 
 
 class UnifiedPaintPanel:
@@ -155,27 +208,28 @@ class BrushPanel(UnifiedPaintPanel):
 
 
 class BrushSelectPanel(BrushPanel):
-    bl_label = "Brushes"
+    bl_label = "Brush Asset"
 
     def draw(self, context):
         layout = self.layout
         settings = self.paint_settings(context)
+        if settings is None:
+            return
+
         brush = settings.brush
 
         row = layout.row()
-        large_preview = True
-        if large_preview:
-            row.column().template_ID_preview(settings, "brush", new="brush.add", rows=3, cols=8, hide_buttons=False)
-        else:
-            row.column().template_ID(settings, "brush", new="brush.add")
+
+        col = row.column(align=True)
+        BrushAssetShelf.draw_popup_selector(col, context, brush, show_name=False)
+        if brush:
+            col.prop(brush, "name", text="")
+
+        if brush is None:
+            return
+
         col = row.column()
         col.menu("VIEW3D_MT_brush_context_menu", icon='DOWNARROW_HLT', text="")
-
-        if brush is not None:
-            col.prop(brush, "use_custom_icon", toggle=True, icon='FILE_IMAGE', text="")
-
-            if brush.use_custom_icon:
-                layout.prop(brush, "icon_filepath", text="")
 
 
 class ColorPalettePanel(BrushPanel):
@@ -1043,6 +1097,9 @@ def brush_settings_advanced(layout, context, brush, popover=False):
     use_frontface = False
 
     if mode == 'SCULPT':
+        layout.prop(brush, "sculpt_tool")
+        layout.separator()
+
         capabilities = brush.sculpt_capabilities
         use_accumulate = capabilities.has_accumulate
         use_frontface = True
@@ -1230,10 +1287,13 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     # 3D and 2D Texture Paint.
     elif mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
+        layout.prop(brush, "image_tool")
+        layout.separator()
+
         capabilities = brush.image_paint_capabilities
         use_accumulate = capabilities.has_accumulate
 
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
 
         if mode == 'PAINT_2D':
             layout.prop(brush, "use_paint_antialiasing")
@@ -1259,7 +1319,12 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     # Vertex Paint #
     elif mode == 'PAINT_VERTEX':
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
+        layout.prop(brush, "vertex_tool")
+        layout.separator()
+
+        layout.use_property_split = False # BFA
+        
         layout.prop(brush, "use_alpha")
         if brush.vertex_tool != 'SMEAR':
             use_accumulate = True
@@ -1267,17 +1332,53 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     # Weight Paint
     elif mode == 'PAINT_WEIGHT':
+        layout.use_property_split = False # BFA
+        layout.prop(brush, "weight_tool")
+        layout.separator()
+
+        layout.use_property_split = False # BFA
+
         if brush.weight_tool != 'SMEAR':
             use_accumulate = True
         use_frontface = True
 
+    # Sculpt Curves
+    elif mode == 'SCULPT_CURVES':
+        layout.use_property_split = False # BFA
+
+        layout.prop(brush, "curves_sculpt_tool")
+
     # Draw shared settings.
     if use_accumulate:
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.prop(brush, "use_accumulate")
 
     if use_frontface:
+        layout.use_property_split = False # BFA
         layout.prop(brush, "use_frontface", text="Front Faces Only")
+
+    # Brush modes
+    header, panel = layout.panel("modes", default_closed=True)
+    header.label(text="Modes")
+    if panel:
+        panel.use_property_split = True
+        panel.use_property_decorate = False
+
+        col = panel.column(align=True)
+        col.prop(brush, "use_paint_sculpt", text="Sculpt")
+        col.prop(brush, "use_paint_uv_sculpt", text="UV Sculpt")
+        col.prop(brush, "use_paint_vertex", text="Vertex Paint")
+        col.prop(brush, "use_paint_weight", text="Weight Paint")
+        col.prop(brush, "use_paint_image", text="Texture Paint")
+        col.prop(brush, "use_paint_sculpt_curves", text="Sculpt Curves")
+
+    if len(brush.icon_filepath) > 0:
+        header, panel = layout.panel("legacy", default_closed=True)
+        header.label(text="Legacy Icon")
+        if panel:
+            panel.label(text="Brush icons have moved to the asset preview image", icon='ERROR')
+            panel.prop(brush, "use_custom_icon")
+            panel.prop(brush, "icon_filepath")
 
 
 def draw_color_settings(context, layout, brush, color_type=False):
@@ -1345,16 +1446,16 @@ def brush_texture_settings(layout, brush, sculpt):
         col = layout.column()
         col.prop(tex_slot, "angle", text="Angle")
         if tex_slot.has_texture_angle_source:
-            col.use_property_split = False
+            col.use_property_split = False # BFA
             col.prop(tex_slot, "use_rake", text="Rake")
 
             if brush.brush_capabilities.has_random_texture_angle and tex_slot.has_random_texture_angle:
                 if sculpt:
                     if brush.sculpt_capabilities.has_random_texture_angle:
-                        col.use_property_split = False
+                        col.use_property_split = False # BFA
                         col.prop(tex_slot, "use_random", text="Random")
                         if tex_slot.use_random:
-                            col.use_property_split = True
+                            col.use_property_split = True # BFA
                             col.prop(tex_slot, "random_angle", text="Random Angle")
                 else:
                     col.prop(tex_slot, "use_random", text="Random")
@@ -1421,7 +1522,7 @@ def brush_basic_texpaint_settings(layout, context, brush, *, compact=False):
 
         row.separator()
 
-        row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="", emboss=False)
+        row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="", emboss=False) # BFA
 
         layout.prop(brush, "blend", text="" if compact else "Blend")
 
@@ -1516,7 +1617,6 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
         row.prop(brush, "size", text="Radius")
         row.prop(gp_settings, "use_pressure", text="", icon='STYLUS_PRESSURE')
         row.prop(gp_settings, "use_occlude_eraser", text="", icon='XRAY')
-        row.prop(gp_settings, "use_default_eraser", text="")
 
         row = layout.row(align=True)
         row.prop(gp_settings, "eraser_mode", expand=True)
@@ -1558,10 +1658,10 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
             row.separator()
             row.popover(panel="VIEW3D_PT_gpencil_brush_settings_radius", text="Radius Pressure Curve")
 
+# 		 BFA - alternative panel used
 #        if gp_settings.use_pressure and not compact:
 #            col = layout.column()
-#            col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True,
-#                                       use_negative_slope=True)
+#            col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
 
         row = layout.row(align=True)
         row.prop(gp_settings, "pen_strength", slider=True)
@@ -1572,10 +1672,11 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
             row.separator()
             row.popover(panel="VIEW3D_PT_gpencil_brush_settings_strength", text="Strength Pressure Curve")
 
+# 		 BFA - alternative panel used
 #        if gp_settings.use_strength_pressure and not compact:
 #            col = layout.column()
-#            col.template_curve_mapping(gp_settings, "curve_strength", brush=True,
-#                                       use_negative_slope=True)
+#            col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
+
 
         if brush.gpencil_tool == 'TINT':
             row = layout.row(align=True)
@@ -1749,15 +1850,16 @@ def brush_basic_gpencil_sculpt_settings(layout, _context, brush, *, compact=Fals
         use_property_split_prev = layout.use_property_split
         layout.use_property_split = False
         if tool in {'THICKNESS', 'STRENGTH'}:
-            layout.row().prop(gp_settings, "direction", expand=True)
+            layout.row().prop(brush, "direction", expand=True)
+        # BFA WIP - extra exposed options
         elif tool == 'PINCH':
             row = layout.row(align=True)
-            row.prop_enum(gp_settings, "direction", value='ADD', text="Pinch")
-            row.prop_enum(gp_settings, "direction", value='SUBTRACT', text="Inflate")
+            row.prop_enum(brush, "direction", value='ADD', text="Pinch")
+            row.prop_enum(brush, "direction", value='SUBTRACT', text="Inflate")
         elif tool == 'TWIST':
             row = layout.row(align=True)
-            row.prop_enum(gp_settings, "direction", value='ADD', text="CCW")
-            row.prop_enum(gp_settings, "direction", value='SUBTRACT', text="CW")
+            row.prop_enum(brush, "direction", value='ADD', text="CCW")
+            row.prop_enum(brush, "direction", value='SUBTRACT', text="CW")
         layout.use_property_split = use_property_split_prev
 
 
@@ -1835,7 +1937,7 @@ def brush_basic_grease_pencil_weight_settings(layout, context, brush, *, compact
         )
         layout.prop(brush, "direction", expand=True, text="" if compact else "Direction")
 
-
+# BFA menu
 class VIEW3D_PT_gpencil_brush_settings_radius(Panel): # BFA
     bl_space_type = 'VIEW_3D' # BFA
     bl_label = "Radius" # BFA
@@ -1854,7 +1956,7 @@ class VIEW3D_PT_gpencil_brush_settings_radius(Panel): # BFA
 
         layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True) # BFA
 
-
+# BFA menu
 class VIEW3D_PT_gpencil_brush_settings_strength(Panel): # BFA
     bl_space_type = 'VIEW_3D' # BFA
     bl_label = "Strength" # BFA
@@ -1876,8 +1978,8 @@ class VIEW3D_PT_gpencil_brush_settings_strength(Panel): # BFA
 
 classes = (
     VIEW3D_MT_tools_projectpaint_clone,
-    VIEW3D_PT_gpencil_brush_settings_radius, # BFA
-    VIEW3D_PT_gpencil_brush_settings_strength, # BFA
+    VIEW3D_PT_gpencil_brush_settings_radius, # BFA menu
+    VIEW3D_PT_gpencil_brush_settings_strength, # BFA menu
 )
 
 if __name__ == "__main__":  # only for live edit.

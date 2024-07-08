@@ -2611,6 +2611,7 @@ if(WITH_BLENDER)
       file_large
       file_parent_large
       network_drive_large
+      blender_large
       blender_logo_large
 
       #~ DEF_ICON_BLANK(2405)
