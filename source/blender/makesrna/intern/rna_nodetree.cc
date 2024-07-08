@@ -11059,6 +11059,9 @@ static int node_type_to_icon(int type)
     case SH_NODE_TEX_ENVIRONMENT:
       return ICON_NODE_ENVIRONMENT;
 
+    case SH_NODE_TEX_GABOR:
+      return ICON_GABOR_NOISE;
+
     case SH_NODE_TEX_SKY:
       return ICON_NODE_SKY;
 
