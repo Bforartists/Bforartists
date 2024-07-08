@@ -2314,11 +2314,11 @@ class USERPREF_MT_extensions_active_repo_remove(Menu):
 
         is_system_repo = (active_repo.use_remote_url is False) and (active_repo.source == 'SYSTEM')
 
-        props = layout.operator("preferences.extension_repo_remove", text="Remove Repository")
+        props = layout.operator("preferences.extension_repo_remove", text="Remove Repository", icon = 'DELETE')
         props.index = active_repo_index
 
         if not is_system_repo:
-            props = layout.operator("preferences.extension_repo_remove", text="Remove Repository & Files")
+            props = layout.operator("preferences.extension_repo_remove", text="Remove Repository & Files", icon = 'DELETE')
             props.index = active_repo_index
             props.remove_files = True
 
