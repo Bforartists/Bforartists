@@ -34,13 +34,6 @@ namespace blender::eevee {
  *
  * \{ */
 
-void SyncModule::view_update()
-{
-  if (DEG_id_type_updated(inst_.depsgraph, ID_WO)) {
-    world_updated_ = true;
-  }
-}
-
 ObjectHandle &SyncModule::sync_object(const ObjectRef &ob_ref)
 {
   ObjectKey key(ob_ref.object);
@@ -56,11 +49,10 @@ ObjectHandle &SyncModule::sync_object(const ObjectRef &ob_ref)
   return handle;
 }
 
-WorldHandle SyncModule::sync_world()
+WorldHandle SyncModule::sync_world(const ::World &world)
 {
   WorldHandle handle;
-  handle.recalc = world_updated_ ? int(ID_RECALC_SHADING) : 0;
-  world_updated_ = false;
+  handle.recalc = inst_.get_recalc_flags(world);
   return handle;
 }
 
@@ -124,6 +116,7 @@ void SyncModule::sync_mesh(Object *ob,
 
   bool is_alpha_blend = false;
   bool has_transparent_shadows = false;
+  bool has_volume = false;
   float inflate_bounds = 0.0f;
   for (auto i : material_array.gpu_materials.index_range()) {
     gpu::Batch *geom = mat_geom[i];
@@ -137,6 +130,7 @@ void SyncModule::sync_mesh(Object *ob,
     if (material.has_volume) {
       volume_call(material.volume_occupancy, inst_.scene, ob, geom, res_handle);
       volume_call(material.volume_material, inst_.scene, ob, geom, res_handle);
+      has_volume = true;
       /* Do not render surface if we are rendering a volume object
        * and do not have a surface closure. */
       if (!material.has_surface) {
@@ -164,6 +158,10 @@ void SyncModule::sync_mesh(Object *ob,
     if (GPU_material_has_displacement_output(gpu_material)) {
       inflate_bounds = math::max(inflate_bounds, mat->inflate_bounds);
     }
+  }
+
+  if (has_volume) {
+    inst_.volume.object_sync(ob_handle);
   }
 
   if (inflate_bounds != 0.0f) {
@@ -195,6 +193,7 @@ bool SyncModule::sync_sculpt(Object *ob,
 
   bool is_alpha_blend = false;
   bool has_transparent_shadows = false;
+  bool has_volume = false;
   float inflate_bounds = 0.0f;
   for (SculptBatch &batch :
        sculpt_batches_per_material_get(ob_ref.object, material_array.gpu_materials))
@@ -209,6 +208,7 @@ bool SyncModule::sync_sculpt(Object *ob,
     if (material.has_volume) {
       volume_call(material.volume_occupancy, inst_.scene, ob, geom, res_handle);
       volume_call(material.volume_material, inst_.scene, ob, geom, res_handle);
+      has_volume = true;
       /* Do not render surface if we are rendering a volume object
        * and do not have a surface closure. */
       if (material.has_surface == false) {
@@ -237,6 +237,10 @@ bool SyncModule::sync_sculpt(Object *ob,
     if (GPU_material_has_displacement_output(gpu_material)) {
       inflate_bounds = math::max(inflate_bounds, mat->inflate_bounds);
     }
+  }
+
+  if (has_volume) {
+    inst_.volume.object_sync(ob_handle);
   }
 
   /* Use a valid bounding box. The PBVH module already does its own culling, but a valid */
@@ -286,6 +290,7 @@ void SyncModule::sync_point_cloud(Object *ob,
     /* Only support single volume material for now. */
     drawcall_add(material.volume_occupancy);
     drawcall_add(material.volume_material);
+    inst_.volume.object_sync(ob_handle);
 
     /* Do not render surface if we are rendering a volume object
      * and do not have a surface closure. */
@@ -314,6 +319,8 @@ void SyncModule::sync_point_cloud(Object *ob,
     inst_.manager->update_handle_bounds(res_handle, ob_ref, mat->inflate_bounds);
   }
 
+  inst_.manager->extract_object_attributes(res_handle, ob_ref, material.shading.gpumat);
+
   inst_.shadows.sync_object(ob,
                             ob_handle,
                             res_handle,
@@ -327,7 +334,10 @@ void SyncModule::sync_point_cloud(Object *ob,
 /** \name Volume Objects
  * \{ */
 
-void SyncModule::sync_volume(Object *ob, ObjectHandle & /*ob_handle*/, ResourceHandle res_handle)
+void SyncModule::sync_volume(Object *ob,
+                             ObjectHandle &ob_handle,
+                             ResourceHandle res_handle,
+                             const ObjectRef &ob_ref)
 {
   if (!inst_.use_volumes) {
     return;
@@ -341,22 +351,44 @@ void SyncModule::sync_volume(Object *ob, ObjectHandle & /*ob_handle*/, ResourceH
   Material &material = inst_.materials.material_get(
       ob, has_motion, material_slot - 1, MAT_GEOM_VOLUME);
 
-  /* Use bounding box tag empty spaces. */
-  gpu::Batch *geom = DRW_cache_cube_get();
+  if (!GPU_material_has_volume_output(material.volume_material.gpumat)) {
+    return;
+  }
+
+  /* Do not render the object if there is no attribute used in the volume.
+   * This mimic Cycles behavior (see #124061). */
+  ListBase attr_list = GPU_material_attributes(material.volume_material.gpumat);
+  if (BLI_listbase_is_empty(&attr_list)) {
+    return;
+  }
 
   auto drawcall_add = [&](MaterialPass &matpass, gpu::Batch *geom, ResourceHandle res_handle) {
     if (matpass.sub_pass == nullptr) {
-      return;
+      return false;
     }
     PassMain::Sub *object_pass = volume_sub_pass(
         *matpass.sub_pass, inst_.scene, ob, matpass.gpumat);
     if (object_pass != nullptr) {
       object_pass->draw(geom, res_handle);
+      return true;
     }
+    return false;
   };
 
-  drawcall_add(material.volume_occupancy, geom, res_handle);
-  drawcall_add(material.volume_material, geom, res_handle);
+  /* Use bounding box tag empty spaces. */
+  gpu::Batch *geom = DRW_cache_cube_get();
+
+  bool is_rendered = false;
+  is_rendered |= drawcall_add(material.volume_occupancy, geom, res_handle);
+  is_rendered |= drawcall_add(material.volume_material, geom, res_handle);
+
+  if (!is_rendered) {
+    return;
+  }
+
+  inst_.manager->extract_object_attributes(res_handle, ob_ref, material.volume_material.gpumat);
+
+  inst_.volume.object_sync(ob_handle);
 }
 
 /** \} */
@@ -551,6 +583,7 @@ void SyncModule::sync_curves(Object *ob,
     /* Only support single volume material for now. */
     drawcall_add(material.volume_occupancy);
     drawcall_add(material.volume_material);
+    inst_.volume.object_sync(ob_handle);
     /* Do not render surface if we are rendering a volume object
      * and do not have a surface closure. */
     if (material.has_surface == false) {
@@ -577,6 +610,8 @@ void SyncModule::sync_curves(Object *ob,
   if (GPU_material_has_displacement_output(gpu_material) && mat->inflate_bounds != 0.0f) {
     inst_.manager->update_handle_bounds(res_handle, ob_ref, mat->inflate_bounds);
   }
+
+  inst_.manager->extract_object_attributes(res_handle, ob_ref, material.shading.gpumat);
 
   inst_.shadows.sync_object(ob,
                             ob_handle,
