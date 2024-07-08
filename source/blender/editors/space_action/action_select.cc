@@ -51,6 +51,8 @@
 
 #include "action_intern.hh"
 
+using namespace blender;
+
 /* -------------------------------------------------------------------- */
 /** \name Keyframes Stuff
  * \{ */
@@ -115,6 +117,14 @@ static void actkeys_list_element_to_keylist(bAnimContext *ac,
       case ALE_ACTION_LAYERED: {
         bAction *action = (bAction *)ale->key_data;
         action_to_keylist(adt, action, keylist, 0, range);
+        break;
+      }
+      case ALE_ACTION_SLOT: {
+        animrig::Action *action = static_cast<animrig::Action *>(ale->key_data);
+        animrig::Slot *slot = static_cast<animrig::Slot *>(ale->data);
+        BLI_assert(action);
+        BLI_assert(slot);
+        action_slot_to_keylist(adt, *action, slot->handle, keylist, 0, range);
         break;
       }
       case ALE_ACT: {
