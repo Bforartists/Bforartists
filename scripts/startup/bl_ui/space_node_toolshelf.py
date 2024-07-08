@@ -2342,6 +2342,10 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexEnvironment"
 
+            props = col.operator("node.add_node", text=" Gabor Texture        ", icon = "GABOR_NOISE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexGabor"
+
             props = col.operator("node.add_node", text=" Gradient Texture      ", icon = "NODE_GRADIENT")
             props.use_transform = True
             props.type = "ShaderNodeTexGradient"
@@ -2407,6 +2411,10 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
             props.use_transform = True
             props.type = "ShaderNodeTexEnvironment"
+
+            props = flow.operator("node.add_node", text="", icon = "GABOR_NOISE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexGabor"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
             props.use_transform = True
