@@ -1608,7 +1608,7 @@ class USERPREF_MT_addons_settings(Menu):
 
         layout.separator()
 
-        layout.operator("extensions.package_install_files", text="Install from Disk") #BFA - name changed
+        layout.operator("extensions.package_install_files", text="Install from Disk", icon='IMPORT' ) #BFA - name changed
 
 
 class USERPREF_MT_extensions_settings(Menu):
