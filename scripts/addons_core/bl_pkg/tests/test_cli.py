@@ -15,9 +15,8 @@ import sys
 import tempfile
 import tomllib
 import unittest
-import zipfile
-
 import unittest.util
+import zipfile
 
 from typing import (
     Any,
@@ -571,7 +570,7 @@ class TestCLI_WithRepo(unittest.TestCase):
             )
             self.assertEqual(
                 output_json, [
-                    ("ERROR", "Package not found \"another_package_\"")
+                    ("FATAL_ERROR", "Package not found \"another_package_\"")
                 ]
             )
 

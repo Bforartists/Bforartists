@@ -6,8 +6,12 @@ set(INC
   ../..
 
   ../include
+  ../asset
   ../uvedit
+  ../../asset_system
   ../../blenkernel
+  ../../blenlib
+  ../../blenloader
   ../../blentranslation
   ../../bmesh
   ../../draw
@@ -28,6 +32,7 @@ set(INC_SYS
 )
 
 set(SRC
+  brush_asset_ops.cc
   curves_sculpt_add.cc
   curves_sculpt_brush.cc
   curves_sculpt_comb.cc
@@ -114,11 +119,16 @@ set(SRC
   paint_intern.hh
   sculpt_intern.hh
 
+  brushes/bmesh_topology_rake.cc
   brushes/clay.cc
   brushes/clay_strips.cc
+  brushes/clay_thumb.cc
   brushes/crease.cc
+  brushes/draw_face_sets.cc
   brushes/draw_vector_displacement.cc
+  brushes/draw_sharp.cc
   brushes/draw.cc
+  brushes/elastic_deform.cc
   brushes/fill.cc
   brushes/flatten.cc
   brushes/grab.cc
@@ -126,9 +136,14 @@ set(SRC
   brushes/mask.cc
   brushes/multiplane_scrape.cc
   brushes/multires_displacement_eraser.cc
+  brushes/pinch.cc
+  brushes/multires_displacement_smear.cc
+  brushes/rotate.cc
   brushes/scrape.cc
   brushes/smooth.cc
   brushes/smooth_mask.cc
+  brushes/thumb.cc
+  brushes/topology_slide.cc
 
   brushes/types.hh
 )
