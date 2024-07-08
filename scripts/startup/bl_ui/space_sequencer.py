@@ -202,7 +202,10 @@ class SEQUENCER_HT_header(Header):
             row.prop(st, "show_gizmo", text="", toggle=True, icon='GIZMO')
             sub = row.row(align=True)
             sub.active = st.show_gizmo
-            sub.popover(panel="SEQUENCER_PT_gizmo_display", text="")
+            sub.popover(
+                panel="SEQUENCER_PT_gizmo_display",
+                text="",
+            )
 
         row = layout.row(align=True)
         row.prop(st, "show_overlays", text="", icon='OVERLAY')
@@ -3253,6 +3256,46 @@ class SEQUENCER_PT_snapping(Panel):
     bl_region_type = 'HEADER'
     bl_label = "Snapping"
 
+    def draw(self, _context):
+        pass
+
+
+class SEQUENCER_PT_preview_snapping(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "SEQUENCER_PT_snapping"
+    bl_label = "Preview Snapping"
+
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        return st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
+
+    def draw(self, context):
+        tool_settings = context.tool_settings
+        sequencer_tool_settings = tool_settings.sequencer_tool_settings
+
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        col = layout.column(heading="Snap to", align=True)
+        col.prop(sequencer_tool_settings, "snap_to_borders")
+        col.prop(sequencer_tool_settings, "snap_to_center")
+        col.prop(sequencer_tool_settings, "snap_to_strips_preview")
+
+
+class SEQUENCER_PT_sequencer_snapping(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "SEQUENCER_PT_snapping"
+    bl_label = "Sequencer Snapping"
+
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        return st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
+
     def draw(self, context):
         tool_settings = context.tool_settings
         sequencer_tool_settings = tool_settings.sequencer_tool_settings
@@ -3288,7 +3331,7 @@ class SEQUENCER_PT_snapping(Panel):
         row.separator()
         row.prop(sequencer_tool_settings, "use_snap_current_frame_to_strips", text="Snap to Strips")
 
-# BFA
+# BFA menu
 class SEQUENCER_PT_view_options(bpy.types.Panel):
     bl_label = "View Options"
     bl_category = "View"
@@ -3352,7 +3395,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col.prop(st, "use_marker_sync")
             col.prop(st, "use_clamp_view")
 
-#BFA
+# BFA menu
 class SEQUENCER_MT_fades_add(Menu):
     bl_label = "Fade"
 
@@ -3462,6 +3505,8 @@ classes = (
     SEQUENCER_PT_annotation_onion,
 
     SEQUENCER_PT_snapping,
+    SEQUENCER_PT_preview_snapping,
+    SEQUENCER_PT_sequencer_snapping,
 
     SEQUENCER_PT_view_options, #BFA
     SEQUENCER_MT_fades_add, #BFA

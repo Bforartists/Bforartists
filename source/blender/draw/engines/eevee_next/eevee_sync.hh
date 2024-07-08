@@ -155,16 +155,12 @@ class SyncModule {
 
   Map<ObjectKey, ObjectHandle> ob_handles = {};
 
-  bool world_updated_ = false;
-
  public:
   SyncModule(Instance &inst) : inst_(inst){};
   ~SyncModule(){};
 
-  void view_update();
-
   ObjectHandle &sync_object(const ObjectRef &ob_ref);
-  WorldHandle sync_world();
+  WorldHandle sync_world(const ::World &world);
 
   void sync_mesh(Object *ob,
                  ObjectHandle &ob_handle,
@@ -178,7 +174,10 @@ class SyncModule {
                         ObjectHandle &ob_handle,
                         ResourceHandle res_handle,
                         const ObjectRef &ob_ref);
-  void sync_volume(Object *ob, ObjectHandle &ob_handle, ResourceHandle res_handle);
+  void sync_volume(Object *ob,
+                   ObjectHandle &ob_handle,
+                   ResourceHandle res_handle,
+                   const ObjectRef &ob_ref);
   void sync_gpencil(Object *ob, ObjectHandle &ob_handle, ResourceHandle res_handle);
   void sync_curves(Object *ob,
                    ObjectHandle &ob_handle,
