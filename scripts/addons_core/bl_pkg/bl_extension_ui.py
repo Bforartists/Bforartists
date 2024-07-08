@@ -1175,8 +1175,8 @@ def extension_draw_item(
     # Without checking `is_enabled` here, there is no way for the user to know if an extension
     # is enabled or not, which is useful to show - when they may be considering removing/updating
     # extensions based on them being used or not.
-    sub.label(text=item.name, translate=False)
-
+    icon = 'PLUGIN' if item.type == 'add-on' else 'COLOR' # BFA - Add visual indicators to listings
+    sub.label(text=item.name, icon=icon, translate=False) # BFA - Add visual indicators to listings
     del sub
 
     # Add a top-level row so `row_right` can have a grayed out button/label
