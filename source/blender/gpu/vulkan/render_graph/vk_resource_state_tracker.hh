@@ -92,20 +92,13 @@ enum class ResourceOwner {
 
 /**
  * State being tracked for a resource.
- *
- * NOTE: write_access and read_access are mutual exclusive.
- * NOTE: write_stages and read_stages are mutual exclusive.
  */
 struct VKResourceBarrierState {
-  /* How was the resource accessed when last written to. */
-  VkAccessFlags write_access = VK_ACCESS_NONE;
-  /* How is the resource currently been read from. */
-  VkAccessFlags read_access = VK_ACCESS_NONE;
-  /* Pipeline stage that created wrote last to the resource. */
-  VkPipelineStageFlags write_stages = VK_PIPELINE_STAGE_NONE;
-  /* Pipeline stage that is currently reading from the resource. */
-  VkPipelineStageFlags read_stages = VK_PIPELINE_STAGE_NONE;
-  /* Current image layout of the image resource. */
+  /** Last used access flags. Will be reset by the last write. Reads will accumulate flags. */
+  VkAccessFlags vk_access = VK_ACCESS_NONE;
+  /* Last known pipeline stage. Will be reset by the last write. Reads will accumulate flags. */
+  VkPipelineStageFlags vk_pipeline_stages = VK_PIPELINE_STAGE_NONE;
+  /** Last known image layout of an image resource. */
   VkImageLayout image_layout = VK_IMAGE_LAYOUT_UNDEFINED;
 };
 
@@ -163,6 +156,10 @@ class VKResourceStateTracker {
      */
     VKResourceBarrierState barrier_state;
 
+#ifndef NDEBUG
+    const char *name;
+#endif
+
     /**
      * Reset the image layout to its original layout.
      *
@@ -200,7 +197,7 @@ class VKResourceStateTracker {
    * When a buffer is created in VKBuffer, it needs to be registered in the device resources so the
    * resource state can be tracked during its lifetime.
    */
-  void add_buffer(VkBuffer vk_buffer);
+  void add_buffer(VkBuffer vk_buffer, const char *name = nullptr);
 
   /**
    * Register an image resource.
@@ -208,7 +205,10 @@ class VKResourceStateTracker {
    * When an image is created in VKTexture, it needs to be registered in the device resources so
    * the resource state can be tracked during its lifetime.
    */
-  void add_image(VkImage vk_image, VkImageLayout vk_image_layout, ResourceOwner owner);
+  void add_image(VkImage vk_image,
+                 VkImageLayout vk_image_layout,
+                 ResourceOwner owner,
+                 const char *name = nullptr);
 
   /**
    * Remove an registered image.
@@ -248,7 +248,7 @@ class VKResourceStateTracker {
    * This function is called when adding a node to the render graph, during building resource
    * dependencies. See `VKNodeInfo.build_links`
    */
-  ResourceWithStamp get_buffer_and_increase_version(VkBuffer vk_buffer);
+  ResourceWithStamp get_buffer_and_increase_stamp(VkBuffer vk_buffer);
 
   /**
    * Return the current stamp of the resource.

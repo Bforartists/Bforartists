@@ -64,6 +64,7 @@ set(SRC
   intern/armature_update.cc
   intern/asset.cc
   intern/asset_weak_reference.cc
+  intern/asset_edit.cc
   intern/attribute.cc
   intern/attribute_access.cc
   intern/attribute_math.cc
@@ -253,7 +254,6 @@ set(SRC
   intern/packedFile.cc
   intern/paint.cc
   intern/paint_canvas.cc
-  intern/paint_toolslots.cc
   intern/particle.cc
   intern/particle_child.cc
   intern/particle_distribute.cc
@@ -331,6 +331,7 @@ set(SRC
   BKE_appdir.hh
   BKE_armature.hh
   BKE_asset.hh
+  BKE_asset_edit.hh
   BKE_attribute.h
   BKE_attribute.hh
   BKE_attribute_math.hh
