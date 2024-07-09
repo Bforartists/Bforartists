@@ -3489,7 +3489,7 @@ class EXTENSIONS_OT_userpref_show_online(Operator):
 
 class EXTENSIONS_OT_userpref_allow_online(Operator):
     """Allow internet access. Bforartists may access configured online extension repositories. """ \
-        """Installed third party add-ons may access the internet for their own functionality""" # BFA - not Blender
+        """Installed third party add-ons may access the internet for their own functionality""" #BFA - not Blender
     bl_idname = "extensions.userpref_allow_online"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -3498,15 +3498,15 @@ class EXTENSIONS_OT_userpref_allow_online(Operator):
     def poll(cls, _context):
         if bpy.app.online_access_override:
             if not bpy.app.online_access:
-                cls.poll_message_set("Bforartists was launched in offline-mode which cannot be changed at runtime") # BFA - not Blender
+                cls.poll_message_set("Bforartists was launched in offline-mode which cannot be changed at runtime") #BFA - not Blender
                 return False
         return True
 
     def execute(self, context):
         context.preferences.system.use_online_access = True
         
-        bpy.ops.extensions.activate_downloaded_extensions('INVOKE_DEFAULT') # BFA - when you enable, copy pre-downloaded extensions
-        bpy.ops.preferences.addon_refresh() # BFA - force refresh
+        #bpy.ops.extensions.activate_downloaded_extensions('INVOKE_DEFAULT') #BFA WIP - when you enable, copy pre-downloaded extensions
+        #bpy.ops.preferences.addon_refresh() #BFA WIP - force refresh
 
         return {'FINISHED'}
 

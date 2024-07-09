@@ -428,6 +428,8 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
   switch (repo_type) {
     case bUserExtensionRepoAddType::Remote: {
       uiItemR(layout, op->ptr, "remote_url", UI_ITEM_R_IMMEDIATE, nullptr, ICON_NONE);
+      uiLayoutSetPropSep(layout, false);
+          /* bfa - use_property_split = False */ /* bfa - use_property_split = False */
       uiItemR(layout, op->ptr, "use_sync_on_startup", UI_ITEM_NONE, nullptr, ICON_NONE);
 
       uiItemS_ex(layout, 0.2f, LayoutSeparatorType::Line);
@@ -436,13 +438,19 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
       const int token_icon = (use_access_token && RNA_string_length(op->ptr, "access_token")) ?
                                  ICON_LOCKED :
                                  ICON_UNLOCKED;
-
-      uiLayout *row = uiLayoutRowWithHeading(layout, true, IFACE_("Authentication"));
-      uiItemR(row, op->ptr, "use_access_token", UI_ITEM_NONE, nullptr, ICON_NONE);
+      
+      //uiLayout *row = uiLayoutRowWithHeading(layout, true, IFACE_("Authentication")); -/*bfa, old code*/
+      uiLayout *row = uiLayoutRow(layout, true);/*bfa*/
+      uiItemL(layout, IFACE_("Authentication"), ICON_NONE); /*BFA - separate label*/
+      row = uiLayoutRow(layout, false);                     /*bfa*/
+      uiItemS(row);                                         /*bfa -indent*/
+      uiItemR(row, op->ptr, "use_access_token", UI_ITEM_NONE, nullptr, ICON_NONE); /*bfa*/
       uiLayout *col = uiLayoutRow(layout, false);
       uiLayoutSetActive(col, use_access_token);
       /* Use "immediate" flag to refresh the icon. */
-      uiItemR(col, op->ptr, "access_token", UI_ITEM_R_IMMEDIATE, nullptr, token_icon);
+      row = uiLayoutRow(layout, false); /*bfa*/
+      uiItemS(row);/*bfa -indent*/    
+      uiItemR(row, op->ptr, "access_token", UI_ITEM_R_IMMEDIATE, nullptr, token_icon);
 
       uiItemS_ex(layout, 0.2f, LayoutSeparatorType::Line);
 
@@ -454,7 +462,9 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
     }
   }
 
+  uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
   uiItemR(layout, op->ptr, "use_custom_directory", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = False */
   uiLayout *col = uiLayoutRow(layout, false);
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_custom_directory"));
   uiItemR(col, op->ptr, "custom_directory", UI_ITEM_NONE, nullptr, ICON_NONE);
