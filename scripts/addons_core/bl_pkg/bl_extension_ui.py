@@ -1599,7 +1599,7 @@ def extensions_panel_draw_impl(
         # to accessing repositories so it's not helpful to bother the user while this runs.
         if not operation_in_progress:
             display_errors.draw(layout_topmost)
-# BFA - WIP 
+# BFA - WIP
 #class USERPREF_PT_extensions_filter(Panel):
 #    bl_label = "Extensions Filter"
 #

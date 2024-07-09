@@ -1419,7 +1419,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
             layout = self.layout
             ob = context.active_object
 
-            if ob and ob.type == 'GPENCIL' and context.gpencil_data and not context.preferences.experimental.use_grease_pencil_version3:
+            if ob and ob.type == 'GPENCIL' and context.gpencil_data:
                 col.operator_enum("gpencil.convert", "type")
 
             else:
@@ -1448,7 +1448,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                 layout = self.layout
                 ob = context.active_object
 
-                if ob and ob.type == 'GPENCIL' and context.gpencil_data and not context.preferences.experimental.use_grease_pencil_version3:
+                if ob and ob.type == 'GPENCIL' and context.gpencil_data:
                     row.operator("gpencil.convert", text = "", icon='CURVE_PATH').type = 'PATH'
                     row.operator("gpencil.convert", text = "", icon='OUTLINER_OB_CURVE').type = 'CURVE'
                     row.operator("gpencil.convert", text = "", icon='MESH_DATA').type = 'POLY'
@@ -1468,7 +1468,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
 
                 # Potrace lib dependency.
                 if bpy.app.build_options.potrace:
-                    col.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
+                    col.operator("gpencil.trace_image",  text="", icon='OUTLINER_OB_GREASEPENCIL')
 
                 if ob and ob.type == 'CURVES':
                     col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')
@@ -1481,7 +1481,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                 layout = self.layout
                 ob = context.active_object
 
-                if ob and ob.type == 'GPENCIL' and context.gpencil_data and not context.preferences.experimental.use_grease_pencil_version3:
+                if ob and ob.type == 'GPENCIL' and context.gpencil_data:
                     row.operator("gpencil.convert", text = "", icon='CURVE_PATH').type = 'PATH'
                     row.operator("gpencil.convert", text = "", icon='OUTLINER_OB_CURVE').type = 'CURVE'
                     #row.operator_enum("gpencil.convert", "type")
@@ -1499,7 +1499,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
 
                 # Potrace lib dependency.
                 if bpy.app.build_options.potrace:
-                    col.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
+                    col.operator("gpencil.trace_image", text="", icon='OUTLINER_OB_GREASEPENCIL')
 
                 if ob and ob.type == 'CURVES':
                     col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')
@@ -1511,7 +1511,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                 layout = self.layout
                 ob = context.active_object
 
-                if ob and ob.type == 'GPENCIL' and context.gpencil_data and not context.preferences.experimental.use_grease_pencil_version3:
+                if ob and ob.type == 'GPENCIL' and context.gpencil_data:
                     col.operator("gpencil.convert", text = "", icon='CURVE_PATH').type = 'PATH'
                     col.operator("gpencil.convert", text = "", icon='OUTLINER_OB_CURVE').type = 'CURVE'
                     col.operator("gpencil.convert", text = "", icon='MESH_DATA').type = 'POLY'
@@ -1529,7 +1529,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
 
                 # Potrace lib dependency.
                 if bpy.app.build_options.potrace:
-                    col.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
+                    col.operator("gpencil.trace_image", text="", icon='OUTLINER_OB_GREASEPENCIL')
 
                 if ob and ob.type == 'CURVES':
                     col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')
