@@ -742,6 +742,7 @@ class VIEW3D_HT_header(Header):
     @staticmethod
     def draw_xform_template(layout, context):
         obj = context.active_object
+        mode_string = context.mode
         object_mode = 'OBJECT' if obj is None else obj.mode
         has_pose_mode = (
             (object_mode == 'POSE') or
@@ -853,6 +854,11 @@ class VIEW3D_HT_header(Header):
                     icon_only=True,
                     panel="VIEW3D_PT_proportional_edit",
                 )
+
+        # BFA - handle types for curves, formerly in the control points menu
+        if mode_string in {'EDIT_CURVE'}:
+            layout.operator_menu_enum("curve.handle_type_set", "type", text="", icon="HANDLE_AUTO")
+
 
     def draw(self, context):
         layout = self.layout
@@ -6494,7 +6500,6 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
                 layout.separator()
 
-                layout.menu("VIEW3D_MT_edit_curve_handle_type_set")  # bfa menu
                 layout.operator("curve.normals_make_consistent", icon='RECALC_NORMALS')
 
                 layout.separator()
@@ -6512,24 +6517,6 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
         layout.separator()
 
         layout.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
-
-
-# BFA menu
-class VIEW3D_MT_edit_curve_handle_type_set(Menu):
-    bl_label = "Set Handle Type"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("curve.handle_type_set", icon='HANDLE_AUTO', text="Automatic").type = 'AUTOMATIC'
-        layout.operator("curve.handle_type_set", icon='HANDLE_VECTOR', text="Vector").type = 'VECTOR'
-        layout.operator("curve.handle_type_set", icon='HANDLE_ALIGNED', text="Aligned").type = 'ALIGNED'
-        layout.operator("curve.handle_type_set", icon='HANDLE_FREE', text="Free").type = 'FREE_ALIGN'
-
-        layout.separator()
-
-        layout.operator("curve.handle_type_set", icon='HANDLE_FREE',
-                        text="Toggle Free / Aligned").type = 'TOGGLE_FREE_ALIGN'
 
 
 class VIEW3D_MT_edit_curve_segments(Menu):
@@ -7141,7 +7128,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.operator(
             "gpencil.frame_duplicate",
             text="Duplicate Active Frame All Layers",
-            icon="DUPLICATE").mode = 'ALL'
+            icon="DUPLICATE_ALL").mode = 'ALL'
 
         layout.separator()
 
@@ -7319,7 +7306,7 @@ class VIEW3D_MT_gpencil_animation(Menu):
         layout.operator(
             "gpencil.blank_frame_add",
             text="Insert Blank Keyframe (All Layers)",
-            icon="ADD").all_layers = True
+            icon="ADD_ALL").all_layers = True
 
         layout.separator()
 
@@ -7327,12 +7314,12 @@ class VIEW3D_MT_gpencil_animation(Menu):
         layout.operator(
             "gpencil.frame_duplicate",
             text="Duplicate Active Keyframe (All Layers)",
-            icon="DUPLICATE").mode = 'ALL'
+            icon="DUPLICATE_ALL").mode = 'ALL'
 
         layout.separator()
 
         layout.operator("gpencil.delete", text="Delete Active Keyframe (Active Layer)", icon="DELETE").type = 'FRAME'
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon="DELETE")
+        layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon="DELETE_ALL")
 
 
 class VIEW3D_MT_edit_greasepencil_animation(Menu):
@@ -7340,8 +7327,8 @@ class VIEW3D_MT_edit_greasepencil_animation(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)")
-        layout.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)").all_layers = True
+        layout.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)", icon="ADD")
+        layout.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)", icon="ADD_ALL").all_layers = True
 
 
 class VIEW3D_MT_edit_gpencil_transform(Menu):
@@ -11318,7 +11305,6 @@ classes = (
     VIEW3D_MT_edit_greasepencil_animation,
     VIEW3D_MT_edit_curve,
     VIEW3D_MT_edit_curve_ctrlpoints,
-    VIEW3D_MT_edit_curve_handle_type_set,  # bfa menu
     VIEW3D_MT_edit_curve_segments,
     VIEW3D_MT_edit_curve_clean,
     VIEW3D_MT_edit_curve_context_menu,
