@@ -1271,6 +1271,14 @@ static bool write_file_handle(Main *mainvar,
     FOREACH_MAIN_ID_END;
   }
 
+  /* Recompute all ID user-counts if requested. Allows to avoid skipping writing of IDs wrongly
+   * detected as unused due to invalid user-count. */
+  if (!wd->use_memfile) {
+    if (USER_EXPERIMENTAL_TEST(&U, use_recompute_usercount_on_save_debug)) {
+      BKE_main_id_refcount_recompute(mainvar, false);
+    }
+  }
+
   blo_split_main(&mainlist, mainvar);
 
   SNPRINTF(buf,
@@ -1519,6 +1527,14 @@ static bool BLO_write_file_impl(Main *mainvar,
   const bool use_userdef = params->use_userdef;
   const BlendThumbnail *thumb = params->thumb;
   const bool relbase_valid = (mainvar->filepath[0] != '\0');
+
+  /* Extra protection: Never save a non asset file as asset file. Otherwise a normal file is turned
+   * into an asset file, which can result in data loss because the asset system will allow editing
+   * this file from the UI, regenerating its content with just the asset and it dependencies. */
+  if ((write_flags & G_FILE_ASSET_EDIT_FILE) && !mainvar->is_asset_edit_file) {
+    BKE_reportf(reports, RPT_ERROR, "Cannot save normal file (%s) as asset system file", tempname);
+    return false;
+  }
 
   /* Path backup/restore. */
   void *path_list_backup = nullptr;

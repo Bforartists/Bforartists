@@ -34,8 +34,11 @@ from rna_prop_ui import PropertyPanel
 def dopesheet_filter(layout, context):
     dopesheet = context.space_data.dopesheet
     is_nla = context.area.type == 'NLA_EDITOR'
+    is_action_editor = not is_nla and context.space_data.mode == 'ACTION'
 
     row = layout.row(align=True)
+    if is_action_editor and context.preferences.experimental.use_animation_baklava:
+        row.prop(dopesheet, "show_all_slots", text="")
     row.prop(dopesheet, "show_only_selected", text="")
     row.prop(dopesheet, "show_hidden", text="")
 
@@ -636,9 +639,9 @@ class DOPESHEET_MT_channel(Menu):
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
         layout.operator("anim.channels_delete", icon="DELETE")
+		#layout.operator("action.clean", text="Clean Channels").channels = True	# BFA - located in the keys channel
 
         layout.separator()
-
         layout.operator("anim.channels_group", icon="NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon="REMOVE_FROM_ALL_GROUPS")
 
@@ -656,11 +659,9 @@ class DOPESHEET_MT_channel(Menu):
 
 
         layout.separator()
-
         layout.menu("DOPESHEET_MT_channel_extrapolation")
 
         layout.separator()
-
         layout.operator("anim.channels_expand", icon="EXPANDMENU")
         layout.operator("anim.channels_collapse", icon="COLLAPSEMENU")
 
@@ -670,15 +671,15 @@ class DOPESHEET_MT_channel(Menu):
         layout.menu("GRAPH_MT_channel_move")
 
         layout.separator()
-
         layout.operator("anim.channels_fcurves_enable", icon="UNLOCKED")
 
         layout.separator()
-
+        layout.operator("anim.channels_bake")
+        
+        layout.separator()
         layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
         layout.separator()
-
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
 
 
@@ -846,7 +847,7 @@ class DopesheetActionPanelBase:
 
     @classmethod
     def draw_generic_panel(cls, _context, layout, action):
-        layout.label(text=action.name, icon='ACTION')
+        layout.label(text=action.name, icon='ACTION', translate=False)
 
         row = layout.row()
         row.use_property_split = False
@@ -1235,26 +1236,26 @@ class DOPESHEET_PT_grease_pencil_layer_relations(
 
 
 classes = (
-    ALL_MT_editormenu_dopesheet,
-    ANIM_OT_switch_editors_to_dopesheet,
-    ANIM_OT_switch_editors_to_graph,
-    ANIM_OT_switch_editors_to_driver,
-    ANIM_OT_switch_editors_to_nla,
-    ANIM_OT_switch_editors_in_dopesheet,
+    ALL_MT_editormenu_dopesheet, # BFA menu
+    ANIM_OT_switch_editors_to_dopesheet, # BFA menu
+    ANIM_OT_switch_editors_to_graph, # BFA menu
+    ANIM_OT_switch_editors_to_driver, # BFA menu
+    ANIM_OT_switch_editors_to_nla, # BFA menu
+    ANIM_OT_switch_editors_in_dopesheet, # BFA menu
     DOPESHEET_HT_header,
     DOPESHEET_PT_proportional_edit,
     DOPESHEET_MT_editor_menus,
     DOPESHEET_MT_view,
-    DOPESHEET_MT_view_pie_menus,
+    DOPESHEET_MT_view_pie_menus, # BFA menu
     DOPESHEET_MT_select,
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
-    DOPESHEET_MT_channel_extrapolation,
+    DOPESHEET_MT_channel_extrapolation, # BFA menu
     DOPESHEET_MT_key,
-    DOPESHEET_PT_view_view_options,
+    DOPESHEET_PT_view_view_options, # BFA menu
     DOPESHEET_MT_key_transform,
-    DOPESHEET_MT_key_mirror,
-    DOPESHEET_MT_key_snap,
+    DOPESHEET_MT_key_mirror, # BFA menu
+    DOPESHEET_MT_key_snap, # BFA menu
     DOPESHEET_MT_gpencil_channel,
     DOPESHEET_MT_gpencil_key,
     DOPESHEET_MT_delete,
