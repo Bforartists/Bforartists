@@ -175,7 +175,6 @@ void Instance::update_eval_members()
 void Instance::view_update()
 {
   sampling.reset();
-  sync.view_update();
 }
 
 /** \} */
@@ -291,7 +290,7 @@ void Instance::object_sync(Object *ob)
         sync.sync_point_cloud(ob, ob_handle, res_handle, ob_ref);
         break;
       case OB_VOLUME:
-        sync.sync_volume(ob, ob_handle, res_handle);
+        sync.sync_volume(ob, ob_handle, res_handle, ob_ref);
         break;
       case OB_CURVES:
         sync.sync_curves(ob, ob_handle, res_handle, ob_ref);
@@ -561,6 +560,13 @@ void Instance::draw_viewport()
   if (materials.queued_shaders_count > 0) {
     std::stringstream ss;
     ss << "Compiling Shaders (" << materials.queued_shaders_count << " remaining)";
+    if (!GPU_use_parallel_compilation() &&
+        GPU_type_matches_ex(GPU_DEVICE_ANY, GPU_OS_ANY, GPU_DRIVER_ANY, GPU_BACKEND_OPENGL))
+    {
+      ss << "\n"
+         << "Increasing Preferences > System > Max Shader Compilation Subprocesses "
+         << "may improve compilation time.";
+    }
     info = ss.str();
     DRW_viewport_request_redraw();
   }

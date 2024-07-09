@@ -2177,10 +2177,13 @@ static void gpencil_sculpt_brush_apply(bContext *C, wmOperator *op, PointerRNA *
 static Brush *gpencil_sculpt_get_smooth_brush(tGP_BrushEditData *gso)
 {
   Main *bmain = gso->bmain;
-  /*BFA - updated to call the default Smooth Stroke brush while holding down SHIFT+LMB to smooth strokes in sculpt mode*/
-  Brush *brush = static_cast<Brush *>(
-      BLI_findstring(&bmain->brushes, "GP_S_Smooth Stroke", offsetof(ID, name) + 2));
-
+  Brush *brush = BKE_paint_brush_from_essentials(bmain, "Smooth Stroke");
+  if (brush && !brush->gpencil_settings) {
+    BKE_brush_init_gpencil_settings(brush);
+  }
+  /*BFA WIP- updated to call the default Smooth Stroke brush while holding down SHIFT+LMB to smooth strokes in sculpt mode*/
+  //Brush *brush = static_cast<Brush *>(
+  //    BLI_findstring(&bmain->brushes, "GP_S_Smooth Stroke", offsetof(ID, name) + 2));
   return brush;
 }
 
