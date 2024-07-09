@@ -55,10 +55,10 @@ void BKE_main_init(Main &bmain)
   BLI_spin_init(reinterpret_cast<SpinLock *>(bmain.lock));
   bmain.is_global_main = false;
 
-  /* Just rebuilding the Action Binding to ID* map once is likely cheaper than,
+  /* Just rebuilding the Action Slot to ID* map once is likely cheaper than,
    * for every ID, when it's loaded from disk, check whether it's animated or
    * not, and then figure out which Main it went into, and then set the flag. */
-  bmain.is_action_binding_to_id_map_dirty = true;
+  bmain.is_action_slot_to_id_map_dirty = true;
 }
 
 void BKE_main_clear(Main &bmain)
@@ -464,6 +464,16 @@ bool BKE_main_is_empty(Main *bmain)
   }
   FOREACH_MAIN_ID_END;
   return result;
+}
+
+bool BKE_main_has_issues(const Main *bmain)
+{
+  return bmain->has_forward_compatibility_issues || bmain->is_asset_edit_file;
+}
+
+bool BKE_main_needs_overwrite_confirm(const Main *bmain)
+{
+  return bmain->has_forward_compatibility_issues || bmain->is_asset_edit_file;
 }
 
 void BKE_main_lock(Main *bmain)

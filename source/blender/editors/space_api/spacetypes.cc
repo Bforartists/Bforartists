@@ -100,7 +100,7 @@ void ED_spacetypes_init()
   ED_operatortypes_lattice();
   ED_operatortypes_mesh();
   ED_operatortypes_geometry();
-  ED_operatortypes_sculpt();
+  sculpt_paint::operatortypes_sculpt();
   ED_operatortypes_sculpt_curves();
   ED_operatortypes_uvedit();
   ED_operatortypes_paint();
@@ -200,7 +200,7 @@ void ED_spacetypes_keymap(wmKeyConfig *keyconf)
   ED_keymap_paint(keyconf);
   ED_keymap_mask(keyconf);
   ED_keymap_marker(keyconf);
-  ED_keymap_sculpt(keyconf);
+  sculpt_paint::keymap_sculpt(keyconf);
 
   ED_keymap_view2d(keyconf);
   ED_keymap_ui(keyconf);

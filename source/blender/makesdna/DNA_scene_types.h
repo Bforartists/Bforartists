@@ -915,27 +915,29 @@ typedef struct TimeMarker {
 
 typedef struct Paint_Runtime {
   /** Avoid having to compare with scene pointer everywhere. */
-  unsigned int tool_offset;
+  unsigned int initialized;
   unsigned short ob_mode;
   char _pad[2];
 } Paint_Runtime;
 
-/** We might want to store other things here. */
-typedef struct PaintToolSlot {
-  struct Brush *brush;
-} PaintToolSlot;
-
 /** Paint Tool Base. */
 typedef struct Paint {
+  /**
+   * The active brush. Possibly null. Possibly stored in a separate #Main data-base and not user-
+   * counted.
+   */
   struct Brush *brush;
 
   /**
-   * Each tool has its own active brush,
-   * The currently active tool is defined by the current 'brush'.
+   * A weak asset reference to the #brush, if not NULL.
+   * Used to attempt restoring the active brush from the AssetLibrary system, typically on
+   * file load.
    */
-  struct PaintToolSlot *tool_slots;
-  int tool_slots_len;
-  char _pad1[4];
+  struct AssetWeakReference *brush_asset_reference;
+
+  /** Default eraser brush and associated weak reference. */
+  struct Brush *eraser_brush;
+  struct AssetWeakReference *eraser_brush_asset_reference;
 
   struct Palette *palette;
   /** Cavity curve. */
@@ -2436,6 +2438,11 @@ enum {
   SEQ_SNAP_TO_CURRENT_FRAME = 1 << 1,
   SEQ_SNAP_TO_STRIP_HOLD = 1 << 2,
   SEQ_SNAP_TO_MARKERS = 1 << 3,
+
+  /* Preview snapping. */
+  SEQ_SNAP_TO_PREVIEW_BORDERS = 1 << 4,
+  SEQ_SNAP_TO_PREVIEW_CENTER = 1 << 5,
+  SEQ_SNAP_TO_STRIPS_PREVIEW = 1 << 6,
 };
 
 /** #SequencerToolSettings::snap_flag */

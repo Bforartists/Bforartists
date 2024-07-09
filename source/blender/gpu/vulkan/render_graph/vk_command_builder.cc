@@ -280,24 +280,21 @@ void VKCommandBuilder::add_buffer_read_barriers(VKRenderGraph &render_graph,
       continue;
     }
     VKResourceBarrierState &resource_state = resource.barrier_state;
-    VkAccessFlags read_access = resource_state.read_access;
-    VkAccessFlags write_access = resource_state.write_access;
-    VkAccessFlags wait_access = VK_ACCESS_NONE;
-
-    if (read_access == (read_access | link.vk_access_flags) &&
-        (resource_state.read_stages & node_stages))
+    if ((resource_state.vk_access & link.vk_access_flags) == link.vk_access_flags &&
+        (resource_state.vk_pipeline_stages & node_stages) == node_stages)
     {
       /* Has already been covered in a previous call no need to add this one. */
       continue;
     }
 
-    wait_access |= write_access;
-    read_access |= link.vk_access_flags;
-    state_.src_stage_mask |= resource_state.write_stages;
+    const VkAccessFlags wait_access = resource_state.vk_access;
+
+    state_.src_stage_mask |= resource_state.vk_pipeline_stages;
     state_.dst_stage_mask |= node_stages;
 
-    resource_state.read_access = read_access;
-    resource_state.read_stages |= node_stages;
+    resource_state.vk_access |= link.vk_access_flags;
+    resource_state.vk_pipeline_stages |= node_stages;
+
     add_buffer_barrier(resource.buffer.vk_buffer, wait_access, link.vk_access_flags);
   }
 }
@@ -315,24 +312,13 @@ void VKCommandBuilder::add_buffer_write_barriers(VKRenderGraph &render_graph,
       continue;
     }
     VKResourceBarrierState &resource_state = resource.barrier_state;
-    VkAccessFlags read_access = resource_state.read_access;
-    VkAccessFlags write_access = resource_state.write_access;
-    VkAccessFlags wait_access = VK_ACCESS_NONE;
+    const VkAccessFlags wait_access = resource_state.vk_access;
 
-    if (read_access != VK_ACCESS_NONE) {
-      wait_access |= read_access;
-    }
-    if (read_access == VK_ACCESS_NONE && write_access != VK_ACCESS_NONE) {
-      wait_access |= write_access;
-    }
-
-    state_.src_stage_mask |= resource_state.read_stages | resource_state.write_stages;
+    state_.src_stage_mask |= resource_state.vk_pipeline_stages;
     state_.dst_stage_mask |= node_stages;
 
-    resource_state.read_access = VK_ACCESS_NONE;
-    resource_state.write_access = link.vk_access_flags;
-    resource_state.read_stages = VK_PIPELINE_STAGE_NONE;
-    resource_state.write_stages = node_stages;
+    resource_state.vk_access = link.vk_access_flags;
+    resource_state.vk_pipeline_stages = node_stages;
 
     if (wait_access != VK_ACCESS_NONE) {
       add_buffer_barrier(resource.buffer.vk_buffer, wait_access, link.vk_access_flags);
@@ -344,6 +330,23 @@ void VKCommandBuilder::add_buffer_barrier(VkBuffer vk_buffer,
                                           VkAccessFlags src_access_mask,
                                           VkAccessFlags dst_access_mask)
 {
+  for (VkBufferMemoryBarrier &vk_buffer_memory_barrier : vk_buffer_memory_barriers_) {
+    if (vk_buffer_memory_barrier.buffer == vk_buffer) {
+      /* When registering read/write buffers, it can be that the node internally requires
+       * read/write. In this case we adjust the dstAccessMask of the read barrier. */
+      if ((vk_buffer_memory_barrier.dstAccessMask & src_access_mask) == src_access_mask) {
+        vk_buffer_memory_barrier.dstAccessMask |= dst_access_mask;
+        return;
+      }
+      /* When re-registering resources we can skip if access mask already contain all the flags. */
+      if ((vk_buffer_memory_barrier.dstAccessMask & dst_access_mask) == dst_access_mask &&
+          (vk_buffer_memory_barrier.srcAccessMask & src_access_mask) == src_access_mask)
+      {
+        return;
+      }
+    }
+  }
+
   vk_buffer_memory_barrier_.srcAccessMask = src_access_mask;
   vk_buffer_memory_barrier_.dstAccessMask = dst_access_mask;
   vk_buffer_memory_barrier_.buffer = vk_buffer;
@@ -374,24 +377,21 @@ void VKCommandBuilder::add_image_read_barriers(VKRenderGraph &render_graph,
       continue;
     }
     VKResourceBarrierState &resource_state = resource.barrier_state;
-    VkAccessFlags read_access = resource_state.read_access;
-    VkAccessFlags write_access = resource_state.write_access;
-    VkAccessFlags wait_access = read_access | write_access;
+    const VkAccessFlags wait_access = resource_state.vk_access;
 
-    if (read_access == (read_access | link.vk_access_flags) &&
+    if ((resource_state.vk_access & link.vk_access_flags) == link.vk_access_flags &&
+        (resource_state.vk_pipeline_stages & node_stages) == node_stages &&
         resource_state.image_layout == link.vk_image_layout)
     {
-      /* Has already been covered in a previous call no need to add this one. */
+      /* Has already been covered in previous barrier no need to add this one. */
       continue;
     }
 
-    state_.src_stage_mask |= resource_state.write_stages | resource_state.read_stages;
+    state_.src_stage_mask |= resource_state.vk_pipeline_stages;
     state_.dst_stage_mask |= node_stages;
 
-    resource_state.read_access = link.vk_access_flags;
-    resource_state.write_access = VK_ACCESS_NONE;
-    resource_state.read_stages = node_stages;
-    resource_state.write_stages = VK_PIPELINE_STAGE_NONE;
+    resource_state.vk_access |= link.vk_access_flags;
+    resource_state.vk_pipeline_stages |= node_stages;
 
     add_image_barrier(resource.image.vk_image,
                       wait_access,
@@ -416,17 +416,13 @@ void VKCommandBuilder::add_image_write_barriers(VKRenderGraph &render_graph,
       continue;
     }
     VKResourceBarrierState &resource_state = resource.barrier_state;
-    VkAccessFlags read_access = resource_state.read_access;
-    VkAccessFlags write_access = resource_state.write_access;
-    VkAccessFlags wait_access = read_access | write_access;
+    const VkAccessFlags wait_access = resource_state.vk_access;
 
-    state_.src_stage_mask |= resource_state.read_stages | resource_state.write_stages;
+    state_.src_stage_mask |= resource_state.vk_pipeline_stages;
     state_.dst_stage_mask |= node_stages;
 
-    resource_state.read_access = VK_ACCESS_NONE;
-    resource_state.write_access = link.vk_access_flags;
-    resource_state.read_stages = VK_PIPELINE_STAGE_NONE;
-    resource_state.write_stages = node_stages;
+    resource_state.vk_access = link.vk_access_flags;
+    resource_state.vk_pipeline_stages = node_stages;
 
     if (wait_access != VK_ACCESS_NONE || link.vk_image_layout != resource_state.image_layout) {
       add_image_barrier(resource.image.vk_image,
@@ -448,6 +444,25 @@ void VKCommandBuilder::add_image_barrier(VkImage vk_image,
                                          VkImageAspectFlags aspect_mask)
 {
   BLI_assert(aspect_mask != VK_IMAGE_ASPECT_NONE);
+  for (VkImageMemoryBarrier &vk_image_memory_barrier : vk_image_memory_barriers_) {
+    if (vk_image_memory_barrier.image == vk_image) {
+      /* When registering read/write buffers, it can be that the node internally requires
+       * read/write. In this case we adjust the dstAccessMask of the read barrier. An example is
+       * EEVEE update HIZ compute shader and shadow tagging. */
+      if ((vk_image_memory_barrier.dstAccessMask & src_access_mask) == src_access_mask) {
+        vk_image_memory_barrier.dstAccessMask |= dst_access_mask;
+        return;
+      }
+      /* When re-registering resources we can skip if access mask already contain all the flags. */
+      if ((vk_image_memory_barrier.dstAccessMask & dst_access_mask) == dst_access_mask &&
+          (vk_image_memory_barrier.srcAccessMask & src_access_mask) == src_access_mask &&
+          old_layout == new_layout)
+      {
+        return;
+      }
+    }
+  }
+
   vk_image_memory_barrier_.srcAccessMask = src_access_mask;
   vk_image_memory_barrier_.dstAccessMask = dst_access_mask;
   vk_image_memory_barrier_.image = vk_image;
