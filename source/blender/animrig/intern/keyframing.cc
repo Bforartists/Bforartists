@@ -160,10 +160,10 @@ void CombinedKeyingResult::generate_reports(ReportList *reports, const eReportTy
                               error_count));
   }
 
-  if (this->get_count(SingleKeyingResult::NO_VALID_BINDING) > 0) {
-    const int error_count = this->get_count(SingleKeyingResult::NO_VALID_BINDING);
+  if (this->get_count(SingleKeyingResult::NO_VALID_SLOT) > 0) {
+    const int error_count = this->get_count(SingleKeyingResult::NO_VALID_SLOT);
     errors.append(fmt::format(RPT_("Inserting keys on {:d} data-block(s) has been skipped because "
-                                   "of missing animation bindings."),
+                                   "of missing action slots."),
                               error_count));
   }
 
@@ -855,7 +855,7 @@ struct KeyInsertData {
 };
 
 static SingleKeyingResult insert_key_layer(Layer &layer,
-                                           Binding &binding,
+                                           const Slot &slot,
                                            const std::string &rna_path,
                                            const std::optional<PropertySubType> prop_subtype,
                                            const KeyInsertData &key_data,
@@ -866,7 +866,7 @@ static SingleKeyingResult insert_key_layer(Layer &layer,
   BLI_assert(layer.strips().size() == 1);
 
   Strip *strip = layer.strip(0);
-  return strip->as<KeyframeStrip>().keyframe_insert(binding,
+  return strip->as<KeyframeStrip>().keyframe_insert(slot,
                                                     {rna_path, key_data.array_index, prop_subtype},
                                                     key_data.position,
                                                     key_settings,
@@ -874,7 +874,6 @@ static SingleKeyingResult insert_key_layer(Layer &layer,
 }
 
 static CombinedKeyingResult insert_key_layered_action(Action &action,
-                                                      const int32_t binding_handle,
                                                       PointerRNA *rna_pointer,
                                                       const blender::Span<RNAPath> rna_paths,
                                                       const float scene_frame,
@@ -883,19 +882,13 @@ static CombinedKeyingResult insert_key_layered_action(Action &action,
 {
   BLI_assert(action.is_action_layered());
 
-  ID *id = rna_pointer->owner_id;
-  CombinedKeyingResult combined_result;
-
-  Binding *binding = action.binding_for_handle(binding_handle);
-  if (binding == nullptr) {
-    binding = &action.binding_add_for_id(*id);
-    const bool success = action.assign_id(binding, *id);
-    UNUSED_VARS_NDEBUG(success);
-    BLI_assert_msg(
-        success,
-        "With a new Binding, the only reason this could fail is that the ID itself cannot be "
-        "animated, which should have been caught and handled by higher-level functions.");
-  }
+  Slot &slot = action.slot_ensure_for_id(*rna_pointer->owner_id);
+  const bool success = action.assign_id(&slot, *rna_pointer->owner_id);
+  UNUSED_VARS_NDEBUG(success);
+  BLI_assert_msg(
+      success,
+      "The conditions that would cause this Slot assigment to fail (such as the ID not being "
+      "animatible) should have been caught and handled by higher-level functions.");
 
   /* Ensure that at least one layer exists. If not, create the default layer
    * with the default infinite keyframe strip. */
@@ -911,6 +904,7 @@ static CombinedKeyingResult insert_key_layered_action(Action &action,
 
   const bool use_visual_keyframing = insert_key_flags & INSERTKEY_MATRIX;
 
+  CombinedKeyingResult combined_result;
   for (const RNAPath &rna_path : rna_paths) {
     PointerRNA ptr;
     PropertyRNA *prop = nullptr;
@@ -918,8 +912,8 @@ static CombinedKeyingResult insert_key_layered_action(Action &action,
         rna_pointer, rna_path.path.c_str(), &ptr, &prop);
     if (!path_resolved) {
       std::fprintf(stderr,
-                   "Failed to insert key on binding %s due to unresolved RNA path: %s\n",
-                   binding->name,
+                   "Failed to insert key on slot %s due to unresolved RNA path: %s\n",
+                   slot.name,
                    rna_path.path.c_str());
       combined_result.add(SingleKeyingResult::CANNOT_RESOLVE_PATH);
       continue;
@@ -939,7 +933,7 @@ static CombinedKeyingResult insert_key_layered_action(Action &action,
 
       const KeyInsertData key_data = {{scene_frame, rna_values[property_index]}, property_index};
       const SingleKeyingResult result = insert_key_layer(*layer,
-                                                         *binding,
+                                                         slot,
                                                          *rna_path_id_to_prop,
                                                          prop_subtype,
                                                          key_data,
@@ -983,7 +977,6 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
         (insert_key_flags & INSERTKEY_NO_USERPREF) == 0);
     key_settings.keyframe_type = key_type;
     return insert_key_layered_action(action->wrap(),
-                                     adt->binding_handle,
                                      struct_pointer,
                                      rna_paths,
                                      scene_frame.value_or(anim_eval_context.eval_time),
@@ -1102,7 +1095,7 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
      * be tagged for a depsgraph update regardless. This code is here because it
      * was part of the function this one was refactored from, but at some point
      * this should be investigated and either documented or removed. */
-    if (adt->action != nullptr && adt->action != action) {
+    if (!ELEM(adt->action, nullptr, action)) {
       DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
     }
   }

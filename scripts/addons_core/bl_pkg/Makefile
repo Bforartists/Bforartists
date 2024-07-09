@@ -13,7 +13,6 @@ PY_FILES=$(shell find ./ -type f -name '*.py')
 PY_FILES_MYPY=$(filter-out \
 	./__init__.py \
 	./bl_extension_cli.py \
-	./bl_extension_local.py \
 	./bl_extension_monkeypatch.py \
 	./bl_extension_notify.py \
 	./bl_extension_ops.py \
@@ -27,8 +26,7 @@ PY_FILES_MYPY=$(filter-out \
 
 PY_FILES_MYPY_STANDALONE= \
 	./bl_extension_utils.py \
-	./bl_extension_cli.py \
-	./wheel_manager.py
+	./bl_extension_cli.py
 
 EXTRA_WATCH_FILES=Makefile
 
@@ -74,7 +72,8 @@ watch_check_ruff:
 check_pylint:
 	@cd "$(BASE_DIR)" && \
 	    pylint $(PY_FILES) \
-	    --disable=C0103,C0111,C0201,C0301,C0302,C0415,R1702,R1705,R0902,R0903,R0913,E0611,E0401,I1101,R0801,C0209,W0511,W0718,W0719,C0413,R0911,R0912,R0914,R0915 \
+	    --enable=useless-suppression \
+	    --disable=C0103,C0111,C0201,C0301,C0302,C0415,R0401,R1702,R1705,R0902,R0903,R0913,E0611,E0401,I1101,R0801,C0209,W0511,W0718,W0719,C0413,R0911,R0912,R0914,R0915 \
 	    --msg-template='{abspath}:{line}:{column}: {msg_id}: {msg} ({symbol})'
 watch_check_pylint:
 	@cd "$(BASE_DIR)" && \
