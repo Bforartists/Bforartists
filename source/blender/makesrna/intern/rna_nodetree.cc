@@ -11061,6 +11061,9 @@ static int node_type_to_icon(int type)
     case SH_NODE_TEX_ENVIRONMENT:
       return ICON_NODE_ENVIRONMENT;
 
+    case SH_NODE_TEX_GABOR:
+      return ICON_GABOR_NOISE;
+
     case SH_NODE_TEX_SKY:
       return ICON_NODE_SKY;
 
@@ -11467,8 +11470,14 @@ static int node_type_to_icon(int type)
     case FN_NODE_COMBINE_COLOR:
       return ICON_COMBINE_COLOR;
 
+    case FN_NODE_COMBINE_MATRIX:
+      return ICON_COMBINE_MATRIX;
+
     case FN_NODE_QUATERNION_TO_ROTATION:
       return ICON_QUATERNION_TO_ROTATION;
+
+    case FN_NODE_COMBINE_TRANSFORM:
+      return ICON_COMBINE_TRANSFORM;
 
     case FN_NODE_COMPARE:
       return ICON_FLOAT_COMPARE;
@@ -11500,8 +11509,17 @@ static int node_type_to_icon(int type)
     case FN_NODE_INPUT_VECTOR:
       return ICON_NODE_VECTOR;
 
+    case FN_NODE_INVERT_MATRIX:
+      return ICON_INVERT_MATRIX;
+
     case FN_NODE_INVERT_ROTATION:
       return ICON_INVERT_ROTATION;
+
+    case FN_NODE_MATRIX_MULTIPLY:
+      return ICON_MULTIPLY_MATRIX;
+
+    case FN_NODE_PROJECT_POINT:
+      return ICON_PROJECT_POINT;
 
     case FN_NODE_RANDOM_VALUE:
       return ICON_RANDOM_FLOAT;
@@ -11527,14 +11545,29 @@ static int node_type_to_icon(int type)
     case FN_NODE_SEPARATE_COLOR:
       return ICON_SEPARATE_COLOR;
 
+    case FN_NODE_SEPARATE_MATRIX:
+      return ICON_SEPARATE_MATRIX;
+
     case FN_NODE_ROTATION_TO_QUATERNION:
       return ICON_ROTATION_TO_QUATERNION;
+
+    case FN_NODE_SEPARATE_TRANSFORM:
+      return ICON_SEPARATE_TRANSFORM;
 
     case FN_NODE_SLICE_STRING:
       return ICON_STRING_SUBSTRING;
 
     case FN_NODE_STRING_LENGTH:
       return ICON_STRING_LENGTH;
+
+    case FN_NODE_TRANSFORM_DIRECTION:
+      return ICON_TRANSFORM_DIRECTION;
+
+    case FN_NODE_TRANSFORM_POINT:
+      return ICON_TRANSFORM_POINT;
+
+    case FN_NODE_TRANSPOSE_MATRIX:
+      return ICON_TRANSPOSE_MATRIX;
 
     case FN_NODE_VALUE_TO_STRING:
       return ICON_VALUE_TO_STRING;
@@ -12022,6 +12055,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_TOOL_FACE_SET:
       return ICON_FACE_SET;
+
+    case GEO_NODE_TOOL_MOUSE_POSITION:
+      return ICON_MOUSE_POSITION;
 
     case GEO_NODE_TOOL_SELECTION:
       return ICON_RESTRICT_SELECT_OFF;
