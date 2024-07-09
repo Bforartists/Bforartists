@@ -1009,6 +1009,25 @@ static int change_visibility_invoke(bContext *C, wmOperator *op, const wmEvent *
   return change_visibility_exec(C, op);
 }
 
+/*bfa - descriptions*/
+static std::string SCULPT_OT_face_set_change_visibility_get_description(bContext * /*C*/,
+                                                                        wmOperatorType * /*ot*/,
+                                                                        PointerRNA *ptr)
+{
+  // bfa - there is no way to get the show or hide functionality.
+  // but tooltip for hide shows with show active. So let's cheat here.
+  //if (RNA_boolean_get(ptr, "mode") == int(VisibilityMode::HideActive)) {
+  //  return "Hides the active Face Set";
+  //}
+  if (RNA_boolean_get(ptr, "mode") == int(VisibilityMode::ShowActive)) {
+    return "Hide the active Face Set";
+  }
+  else if (RNA_boolean_get(ptr, "mode") == int(VisibilityMode::Toggle)) {
+    return "Toggles the visibility of the Face Sets";
+  }
+  return "";
+}
+
 void SCULPT_OT_face_set_change_visibility(wmOperatorType *ot)
 {
   ot->name = "Face Sets Visibility";
@@ -1016,6 +1035,7 @@ void SCULPT_OT_face_set_change_visibility(wmOperatorType *ot)
   ot->description = "Change the visibility of the Face Sets of the sculpt";
 
   ot->exec = change_visibility_exec;
+  ot->get_description = SCULPT_OT_face_set_change_visibility_get_description; /*bfa - descriptions*/
   ot->invoke = change_visibility_invoke;
   ot->poll = SCULPT_mode_poll;
 
