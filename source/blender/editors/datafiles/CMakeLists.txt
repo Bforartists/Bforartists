@@ -2597,7 +2597,22 @@ if(WITH_BLENDER)
       unicode
       marksharpangle
       collection_bone_new
-
+	  
+	  
+	combine_transform
+	invert_matrix
+	multiply_matrix
+	project_point
+	separate_transform
+	transform_direction
+	transform_point
+	transpose_matrix
+	combine_matrix
+	separate_matrix
+	
+	mouse_position
+	gabor_noise
+	
       warning
       # ------------------------- large --------------------------
       cancel_large
