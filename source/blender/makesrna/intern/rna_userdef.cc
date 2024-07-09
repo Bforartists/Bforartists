@@ -53,20 +53,20 @@
 #include "ED_node.hh"
 
 const EnumPropertyItem rna_enum_preference_section_items[] = {
-    {USER_SECTION_INTERFACE, "INTERFACE", 0, "Interface", ""},
-    {USER_SECTION_VIEWPORT, "VIEWPORT", 0, "Viewport", ""},
-    {USER_SECTION_LIGHT, "LIGHTS", 0, "Lights", ""},
-    {USER_SECTION_EDITING, "EDITING", 0, "Editing", ""},
-    {USER_SECTION_ANIMATION, "ANIMATION", 0, "Animation", ""},
+    {USER_SECTION_INTERFACE, "INTERFACE", ICON_UI, "Interface", ""}, /* BFA - Added Icons */
+    {USER_SECTION_VIEWPORT, "VIEWPORT", ICON_VIEW, "Viewport", ""}, /* BFA - Added Icons */
+    {USER_SECTION_LIGHT, "LIGHTS", ICON_LIGHT, "Lights", ""}, /* BFA - Added Icons */
+    {USER_SECTION_EDITING, "EDITING", ICON_EDIT, "Editing", ""}, /* BFA - Added Icons */
+    {USER_SECTION_ANIMATION, "ANIMATION", ICON_RENDER_ANIMATION, "Animation", ""}, /* BFA - Added Icons */
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_EXTENSIONS,
      "EXTENSIONS",
-     0,
-     "Get Extensions",
-     "Browse, install and manage extensions from remote and local repositories"},
+     ICON_URL, /* BFA - Added Icons */
+     "Extensions", /* BFA - remove 'Get' for label consistency to Add-ons and Themes */
+     "Browse, install, uninstall and manage extensions from remote and local repositories. \nYou can also drag and drop extensions to install.\nExtensions include themes and addons made by the community."}, /*BFA - made it clear you can uninstall, drag and drop, and what are extensions*/
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", "Manage add-ons installed via Extensions"},
-    {USER_SECTION_THEME, "THEMES", 0, "Themes", "Edit and save themes installed via Extensions"},
+    {USER_SECTION_ADDONS, "ADDONS", ICON_PLUGIN, "Add-ons", "Manage add-ons installed via Extensions"}, /* BFA - Added Icons */
+    {USER_SECTION_THEME, "THEMES", ICON_COLOR, "Themes", "Edit and save themes installed via Extensions"}, /* BFA - Added Icons */
 #if 0 /* def WITH_USERDEF_WORKSPACES */
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_WORKSPACE_CONFIG, "WORKSPACE_CONFIG", 0, "Configuration File", ""},
@@ -74,15 +74,15 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_WORKSPACE_KEYMAPS, "WORKSPACE_KEYMAPS", 0, "Keymap Overrides", ""},
 #endif
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_INPUT, "INPUT", 0, "Input", ""},
-    {USER_SECTION_NAVIGATION, "NAVIGATION", 0, "Navigation", ""},
-    {USER_SECTION_KEYMAP, "KEYMAP", 0, "Keymap", ""},
+    {USER_SECTION_INPUT, "INPUT", ICON_INPUT_BOOL, "Input", ""}, /* BFA - Added Icons */
+    {USER_SECTION_NAVIGATION, "NAVIGATION", ICON_FLY_NAVIGATION, "Navigation", ""}, /* BFA - Added Icons */
+    {USER_SECTION_KEYMAP, "KEYMAP", ICON_MONKEY, "Keymap", ""}, /* BFA - Added Icons */
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_SYSTEM, "SYSTEM", 0, "System", ""},
-    {USER_SECTION_SAVE_LOAD, "SAVE_LOAD", 0, "Save & Load", ""},
-    {USER_SECTION_FILE_PATHS, "FILE_PATHS", 0, "File Paths", ""},
+    {USER_SECTION_SYSTEM, "SYSTEM", ICON_SYSTEM, "System", ""}, /* BFA - Added Icons */
+    {USER_SECTION_SAVE_LOAD, "SAVE_LOAD", ICON_FILE_TICK, "Save & Load", ""}, /* BFA - Added Icons */
+    {USER_SECTION_FILE_PATHS, "FILE_PATHS", ICON_RELATIVEPATH, "File Paths", ""}, /* BFA - Added Icons */
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_EXPERIMENTAL, "EXPERIMENTAL", 0, "Experimental", ""},
+    {USER_SECTION_EXPERIMENTAL, "EXPERIMENTAL", ICON_EXPERIMENTAL, "Experimental", ""}, /* BFA - Added Icons */
     {0, nullptr, 0, nullptr, nullptr},
 };
 

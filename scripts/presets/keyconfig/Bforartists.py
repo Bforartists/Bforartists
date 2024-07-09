@@ -1,4 +1,4 @@
-keyconfig_version = (4, 2, 16)
+keyconfig_version = (4, 3, 6)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6962,7 +6962,6 @@ keyconfig_data = \
      ),
     ("sequencer.offset_clear", {"type": 'O', "value": 'PRESS', "alt": True}, None),
     ("sequencer.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
-    ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("sequencer.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
     ("sequencer.paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
     ("sequencer.images_separate", {"type": 'Y', "value": 'PRESS'}, None),
@@ -7256,6 +7255,8 @@ keyconfig_data = \
        ],
       },
      ),
+    ("sequencer.retiming_key_delete", {"type": 'DEL', "value": 'PRESS'}, None),
+    ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ],
    },
   ),
