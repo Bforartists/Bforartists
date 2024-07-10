@@ -1204,6 +1204,9 @@ static bool gpencil_sculpt_brush_init(bContext *C, wmOperator *op)
 
   Paint *paint = &ts->gp_sculptpaint->paint;
   Brush *brush = BKE_paint_brush(paint);
+  if (brush && !brush->gpencil_settings) {
+    BKE_brush_init_gpencil_settings(brush);
+  }
   gso->brush = brush;
   BKE_curvemapping_init(gso->brush->curve);
 

@@ -346,6 +346,7 @@ if(WITH_BLENDER)
       plugin
       magic_tex
       marble_tex
+	  musgrave_tex
       view_graph_all
       noise_tex
 
