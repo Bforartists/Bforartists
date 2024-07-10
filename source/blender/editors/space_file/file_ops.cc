@@ -1917,7 +1917,7 @@ static void file_os_operations_menu_item(uiLayout *layout,
 	              nullptr,
 	              WM_OP_INVOKE_DEFAULT,
 	              UI_ITEM_NONE,
-	              &props_ptr);                
+	              &props_ptr);
   
   RNA_string_set(&props_ptr, "filepath", path);
   if (operation) {

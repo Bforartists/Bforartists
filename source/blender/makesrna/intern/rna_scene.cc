@@ -7910,22 +7910,6 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
-  static const EnumPropertyItem eevee_volumetric_tile_size_items[] = {
-      {1, "1", 0, "1 px", ""}, /*bfa - added one pixel*/
-      {2, "2", 0, "2 px", ""},
-      {4, "4", 0, "4 px", ""},
-      {8, "8", 0, "8 px", ""},
-      {16, "16", 0, "16 px", ""},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
-
-  static const EnumPropertyItem eevee_horizon_pixel_rate_items[] = {
-      {1, "1", 0, "1 px", ""},
-      {2, "2", 0, "4 px", ""},
-      {4, "4", 0, "16 px", ""},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
-
   static const EnumPropertyItem ray_tracing_method_items[] = {
       {RAYTRACE_EEVEE_METHOD_PROBE,
        "PROBE",
