@@ -547,13 +547,6 @@ static uiBlock *id_search_menu(bContext *C, ARegion *region, void *arg_litem)
         id_search_update_fn = id_search_cb_objects_from_scene;
       }
     }
-
-    /* Used to filter out the active scene. */
-    if (template_ui.idcode == ID_SCE) {
-      if (template_ui.filter == UI_TEMPLATE_ID_FILTER_INACTIVE) {
-        id_search_update_fn = id_search_cb_scenes_without_active;
-      }
-    }
   }
 
   return template_common_search_menu(C,
@@ -6507,7 +6500,7 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
       }
 
       if ((G.f & G_FLAG_INTERNET_OVERRIDE_PREF_OFFLINE) != 0) {
-        uiItemL( row, "", ICON_INTERNET_OFFLINE);
+        uiItemL(row, "", ICON_INTERNET_OFFLINE);
       }
       else {
         uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
