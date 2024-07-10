@@ -8598,7 +8598,7 @@ class VIEW3D_PT_gizmo_display(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Gizmos"
-    bl_ui_units_x = 8
+    bl_ui_units_x = 12 # BFA - wider
 
     def draw(self, context):
         layout = self.layout
@@ -8625,13 +8625,14 @@ class VIEW3D_PT_gizmo_display(Panel):
         row.separator()
         row.prop(view, "show_gizmo_navigate", text="Navigate")
 
-        col = layout.column()
-        col.active = view.show_gizmo and view.show_gizmo_context
-        col.label(text="Object Gizmos")
-        col.prop(scene.transform_orientation_slots[1], "type", text="")
-        col.prop(view, "show_gizmo_object_translate", text="Move", text_ctxt=i18n_contexts.operator_default)
-        col.prop(view, "show_gizmo_object_rotate", text="Rotate", text_ctxt=i18n_contexts.operator_default)
-        col.prop(view, "show_gizmo_object_scale", text="Scale", text_ctxt=i18n_contexts.operator_default)
+        # BFA - these are shown below with a conditional display
+        #col = layout.column()
+        #col.active = view.show_gizmo and view.show_gizmo_context
+        #col.label(text="Object Gizmos")
+        #col.prop(scene.transform_orientation_slots[1], "type", text="")
+        #col.prop(view, "show_gizmo_object_translate", text="Move", text_ctxt=i18n_contexts.operator_default)
+        #col.prop(view, "show_gizmo_object_rotate", text="Rotate", text_ctxt=i18n_contexts.operator_default)
+        #col.prop(view, "show_gizmo_object_scale", text="Scale", text_ctxt=i18n_contexts.operator_default)
 
         row = colsub.row()
         row.separator()
@@ -8639,25 +8640,36 @@ class VIEW3D_PT_gizmo_display(Panel):
         row = colsub.row()
         row.separator()
         row.prop(view, "show_gizmo_modifier", text="Active Modifier")
-        row = colsub.row()
+
+        split = col.split()
+        row = split.row()
         row.separator()
         row.prop(view, "show_gizmo_context", text="Active Object")
 
-        col = layout.column(align=True)
-        if view.show_gizmo and view.show_gizmo_context:
-            col.label(text="Object Gizmos")
-            row = col.row()
+        row = split.row(align=True)
+        if not view.show_gizmo_context:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+        else:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+            split = col.split()
+            row = split.row()
             row.separator()
-            row.prop(scene.transform_orientation_slots[1], "type", text="")
-            row = col.row()
-            row.separator()
-            row.prop(view, "show_gizmo_object_translate", text="Move", text_ctxt=i18n_contexts.operator_default) # BFA
-            row = col.row()
-            row.separator()
-            row.prop(view, "show_gizmo_object_rotate", text="Rotate", text_ctxt=i18n_contexts.operator_default) # BFA
-            row = col.row()
-            row.separator()
-            row.prop(view, "show_gizmo_object_scale", text="Scale", text_ctxt=i18n_contexts.operator_default) # BFA
+
+            col = layout.column(align=True)
+            if view.show_gizmo and view.show_gizmo_context:
+                col.label(text="Object Gizmos")
+                row = col.row()
+                row.separator()
+                row.prop(scene.transform_orientation_slots[1], "type", text="")
+                row = col.row()
+                row.separator()
+                row.prop(view, "show_gizmo_object_translate", text="Move", text_ctxt=i18n_contexts.operator_default) # BFA
+                row = col.row()
+                row.separator()
+                row.prop(view, "show_gizmo_object_rotate", text="Rotate", text_ctxt=i18n_contexts.operator_default) # BFA
+                row = col.row()
+                row.separator()
+                row.prop(view, "show_gizmo_object_scale", text="Scale", text_ctxt=i18n_contexts.operator_default) # BFA
 
         # Match order of object type visibility
         col = layout.column(align=True)
