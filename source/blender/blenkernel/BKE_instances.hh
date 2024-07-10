@@ -26,6 +26,7 @@
 #include "BLI_index_mask_fwd.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_shared_cache.hh"
+#include "BLI_string_ref.hh"
 #include "BLI_vector.hh"
 #include "BLI_virtual_array_fwd.hh"
 
@@ -94,7 +95,7 @@ class InstanceReference {
    */
   void to_geometry_set(GeometrySet &r_geometry_set) const;
 
-  std::string name() const;
+  StringRefNull name() const;
 
   bool owns_direct_data() const;
   void ensure_owns_direct_data();
@@ -222,14 +223,6 @@ inline InstanceReference::InstanceReference(Object &object) : type_(Type::Object
 inline InstanceReference::InstanceReference(Collection &collection)
     : type_(Type::Collection), data_(&collection)
 {
-}
-
-inline InstanceReference::InstanceReference(const InstanceReference &other)
-    : type_(other.type_), data_(other.data_)
-{
-  if (other.geometry_set_) {
-    geometry_set_ = std::make_unique<GeometrySet>(*other.geometry_set_);
-  }
 }
 
 inline InstanceReference::InstanceReference(InstanceReference &&other)
