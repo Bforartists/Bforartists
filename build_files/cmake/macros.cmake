@@ -31,7 +31,7 @@ function(list_assert_duplicates
   list_id
   )
 
-#  message(STATUS "list data: ${list_id}")
+  # message(STATUS "list data: ${list_id}")
 
   list(REMOVE_ITEM list_id "PUBLIC" "PRIVATE" "INTERFACE")
   list(LENGTH list_id _len_before)
