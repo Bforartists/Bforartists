@@ -1244,7 +1244,7 @@ static std::optional<std::string> ui_but_event_operator_string_from_operator(
     const bContext *C, wmOperatorCallParams *op_call_params)
 {
   BLI_assert(op_call_params->optype != nullptr);
-  IDProperty *prop = reinterpret_cast<IDProperty *>(op_call_params->opptr) ?
+  IDProperty *prop = op_call_params->opptr ?
                          static_cast<IDProperty *>(op_call_params->opptr->data) :
                          nullptr;
 
@@ -4121,6 +4121,8 @@ static uiBut *ui_def_but(uiBlock *block,
   but->funcN = block->funcN;
   if (block->func_argN) {
     but->func_argN = block->func_argN_copy_fn(block->func_argN);
+    but->func_argN_free_fn = block->func_argN_free_fn;
+    but->func_argN_copy_fn = block->func_argN_copy_fn;
   }
 
   but->pos = -1; /* cursor invisible */
