@@ -3793,8 +3793,8 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("sculpt.face_set_invert_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK")
-            col.operator("sculpt.reveal_all", text='Show Active Face Set', icon = "HIDE_OFF")
+            col.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK").mode = 'TOGGLE'
+            col.operator("paint.hide_show_all", text='Show Active Face Set', icon = "HIDE_OFF").action='SHOW'
 
             col.separator(factor = 0.5)
 
@@ -3832,10 +3832,10 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 props.use_mask_preserve = False
                 props.use_modify_active = True
                 row.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
-                row.operator("sculpt.face_set_invert_visibility", text='', icon = "INVERT_MASK")
+                row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'TOGGLE'
 
                 row = col.row(align=True)
-                row.operator("sculpt.reveal_all", text = '', icon = "HIDE_OFF")
+                row.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
             elif column_count == 2:
@@ -3867,8 +3867,8 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row.operator("mesh.face_set_extract", text = '', icon = "SEPARATE")
 
                 row = col.row(align=True)
-                row.operator("sculpt.face_set_invert_visibility", text='', icon = "INVERT_MASK")
-                row.operator("sculpt.reveal_all", text='', icon = "HIDE_OFF")
+                row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'TOGGLE'
+                row.operator("paint.hide_show_all", text='', icon = "HIDE_OFF").action='SHOW'
 
                 row = col.row(align=True)
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
@@ -3906,8 +3906,8 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator("sculpt.face_set_invert_visibility", text = '', icon = "INVERT_MASK")
-                col.operator("sculpt.reveal_all", text = '', icon = "HIDE_OFF").mode = 'SHOW_ACTIVE'
+                col.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'TOGGLE'
+                col.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
 
                 col.separator(factor = 0.5)
 
