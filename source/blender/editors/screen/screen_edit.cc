@@ -1152,7 +1152,7 @@ static int screen_global_header_size()
   return int(ceilf(ED_area_headersize() / UI_SCALE_FAC));
 }
 
-// BFA Top Toolbar
+//BFA Top Toolbar */
 static void screen_global_topbar_area_refresh(wmWindow *win, bScreen *screen)
 {
   const short size_min = screen_global_header_size();
@@ -1166,6 +1166,7 @@ static void screen_global_topbar_area_refresh(wmWindow *win, bScreen *screen)
   screen_global_area_refresh(
       win, screen, SPACE_TOPBAR, GLOBAL_AREA_ALIGN_TOP, &rect, size, size_min, size_max);
 }
+/*bfa -end*/
 
 static void screen_global_statusbar_area_refresh(wmWindow *win, bScreen *screen)
 {
