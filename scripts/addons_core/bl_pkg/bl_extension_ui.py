@@ -1707,8 +1707,8 @@ class USERPREF_MT_extensions_settings(Menu):
 
             layout.separator()
 
-            layout.operator("extensions.repo_lock")
-            layout.operator("extensions.repo_unlock")
+            layout.operator("extensions.repo_lock_all")
+            layout.operator("extensions.repo_unlock_all")
 
 
 # This menu is used as the icon-only top right drop-down for each extension.
@@ -1990,7 +1990,29 @@ def extensions_repo_active_draw(self, _context):
 
     layout.operator("extensions.repo_sync_all", text="", icon='FILE_REFRESH').use_active_only = True
 
-    layout.operator("extensions.package_upgrade_all", text="", icon='IMPORT').use_active_only = True
+    layout.separator()
+
+    # Extra items.
+    layout.menu("USERPREF_MT_extensions_active_repo_extra", text="", icon='DOWNARROW_HLT')
+
+
+class USERPREF_MT_extensions_active_repo_extra(Menu):
+    bl_label = "Active Extension Repository"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator(
+            "extensions.package_upgrade_all",
+            text="Install Available Updates",
+            icon='IMPORT',
+        ).use_active_only = True
+
+        layout.operator(
+            "extensions.repo_unlock",
+            text="Force Unlock Repository...",
+            icon='UNLOCKED',
+        )
 
 
 # -----------------------------------------------------------------------------
@@ -2204,6 +2226,7 @@ classes = (
     USERPREF_PT_extensions_tags,
     USERPREF_MT_extensions_settings,
     USERPREF_MT_extensions_item,
+    USERPREF_MT_extensions_active_repo_extra,
 )
 
 
