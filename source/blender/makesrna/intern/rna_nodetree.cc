@@ -12108,7 +12108,7 @@ static StructRNA *define_specific_node(BlenderRNA *brna,
                                        const char *struct_name,
                                        const char *base_name,
                                        void (*def_func)(StructRNA *),
-                                       const int ui_icon) /*BFA - used to show the cion*/
+                                       const int ui_icon) /*BFA - used to show the icon*/
 {
   StructRNA *srna;
   FunctionRNA *func;
