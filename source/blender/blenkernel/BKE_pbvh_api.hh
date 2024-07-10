@@ -129,7 +129,7 @@ void update_mesh_pointers(PBVH &pbvh, Mesh *mesh);
 /**
  * Do a full rebuild with on Grids data structure.
  */
-std::unique_ptr<PBVH> build_grids(const CCGKey *key, Mesh *mesh, SubdivCCG *subdiv_ccg);
+std::unique_ptr<PBVH> build_grids(Mesh *mesh, SubdivCCG *subdiv_ccg);
 /**
  * Build a PBVH from a BMesh.
  */
@@ -248,11 +248,6 @@ int count_grid_quads(const BitGroupVector<> &grid_visibility,
                      int display_gridsize);
 
 }  // namespace blender::bke::pbvh
-
-/**
- * Multi-res level, only valid for type == #PBVH_GRIDS.
- */
-const CCGKey *BKE_pbvh_get_grid_key(const PBVH &pbvh);
 
 int BKE_pbvh_get_grid_num_verts(const PBVH &pbvh);
 int BKE_pbvh_get_grid_num_faces(const PBVH &pbvh);
@@ -382,7 +377,6 @@ IndexMask nodes_to_face_selection_grids(const SubdivCCG &subdiv_ccg,
                                         Span<const PBVHNode *> nodes,
                                         IndexMaskMemory &memory);
 }
-void BKE_pbvh_grids_update(PBVH &pbvh, const CCGKey *key);
 void BKE_pbvh_subdiv_cgg_set(PBVH &pbvh, SubdivCCG *subdiv_ccg);
 
 void BKE_pbvh_vert_coords_apply(PBVH &pbvh, blender::Span<blender::float3> vert_positions);
@@ -526,9 +520,6 @@ void pbvh_vertex_iter_init(PBVH &pbvh, PBVHNode *node, PBVHVertexIter *vi, int m
 
 #define PBVH_FACE_ITER_VERTS_RESERVED 8
 
-blender::MutableSpan<PBVHProxyNode> BKE_pbvh_node_get_proxies(PBVHNode *node);
-void BKE_pbvh_node_free_proxies(PBVHNode *node);
-PBVHProxyNode &BKE_pbvh_node_add_proxy(PBVH &pbvh, PBVHNode &node);
 void BKE_pbvh_node_get_bm_orco_data(PBVHNode *node,
                                     int (**r_orco_tris)[3],
                                     int *r_orco_tris_num,
@@ -553,7 +544,6 @@ namespace blender::bke::pbvh {
 Vector<PBVHNode *> search_gather(PBVH &pbvh,
                                  FunctionRef<bool(PBVHNode &)> scb,
                                  PBVHNodeFlags leaf_flag = PBVH_Leaf);
-Vector<PBVHNode *> gather_proxies(PBVH &pbvh);
 
 void node_update_mask_mesh(Span<float> mask, PBVHNode &node);
 void node_update_mask_grids(const CCGKey &key, Span<CCGElem *> grids, PBVHNode &node);
