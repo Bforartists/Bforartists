@@ -373,7 +373,7 @@ static GlyphBLF *blf_glyph_cache_add_svg(GlyphCacheBLF *gc, uint charcode, bool 
 
   const float scale = (gc->size / 1600.0f);
   const int dest_h = int(ceil(image->height * scale));
-  const int dest_w = int(ceil(image->width * scale));
+  const int dest_w = int(ceil(image->width * scale + 1.00)); /*BFA - added a 1px padding to center default icons*/
   blender::Array<uchar> render_bmp(dest_w * dest_h * 4);
 
   /* Icon content has 100 units of padding around them. If
