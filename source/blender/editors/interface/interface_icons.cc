@@ -1880,15 +1880,15 @@ ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon, float size)
     return nullptr;
   }
 
- int width;
- int height;
- blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, size, &width, &height);
- if (bitmap.is_empty()) {
-   return nullptr;
- }
- ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
- IMB_flipy(ibuf);
- IMB_premultiply_alpha(ibuf);
- return ibuf;
+  int width;
+  int height;
+  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, size, &width, &height);
+  if (bitmap.is_empty()) {
+    return nullptr;
+  }
+  ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
+  IMB_flipy(ibuf);
+  IMB_premultiply_alpha(ibuf);
+  return ibuf;
 #endif
 }
