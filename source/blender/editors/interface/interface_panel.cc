@@ -1185,7 +1185,7 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
       GPU_blend(GPU_BLEND_NONE);
     }
     else {
-    GPU_matrix_push();
+      GPU_matrix_push();
       /* The magic numbers here center the widget vertically and offset it to the left.
        * Currently this depends on the height of the header, although it could be independent. */
       GPU_matrix_translate_2f(widget_rect.xmax - scaled_unit * 1.15,
@@ -1195,8 +1195,8 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
       GPU_batch_program_set_builtin(batch, GPU_SHADER_3D_FLAT_COLOR);
       GPU_batch_draw(batch);
       GPU_matrix_pop();
+    }
   }
-}
 }
 
 void ui_draw_layout_panels_backdrop(const ARegion *region,
