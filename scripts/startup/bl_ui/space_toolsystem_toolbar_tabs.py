@@ -3773,6 +3773,22 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
+            props = col.operator("sculpt.expand", text="Expand Face Set by Topology", icon='FACE_MAPS')
+            props.target = 'FACE_SETS'
+            props.falloff_type = 'GEODESIC'
+            props.invert = False
+            props.use_mask_preserve = False
+            props.use_modify_active = False
+
+            props = col.operator("sculpt.expand", text="Expand Active Face Set", icon='FACE_MAPS_ACTIVE')
+            props.target = 'FACE_SETS'
+            props.falloff_type = 'BOUNDARY_FACE_SET'
+            props.invert = False
+            props.use_mask_preserve = False
+            props.use_modify_active = True
+
+            col.separator(factor = 0.5)
+
             col.operator("mesh.face_set_extract", text='Extract Face Set', icon = "SEPARATE")
 
             col.separator(factor = 0.5)
@@ -3801,10 +3817,24 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("sculpt.face_set_edit", text='', icon = 'SELECTMORE').mode = 'GROW'
                 row.operator("sculpt.face_set_edit", text='', icon = 'SELECTLESS').mode = 'SHRINK'
-                row.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
+                props = row.operator("sculpt.expand", text="", icon='FACE_MAPS')
+                props.target = 'FACE_SETS'
+                props.falloff_type = 'GEODESIC'
+                props.invert = False
+                props.use_mask_preserve = False
+                props.use_modify_active = False
 
                 row = col.row(align=True)
+                props = row.operator("sculpt.expand", text="", icon='FACE_MAPS_ACTIVE')
+                props.target = 'FACE_SETS'
+                props.falloff_type = 'BOUNDARY_FACE_SET'
+                props.invert = False
+                props.use_mask_preserve = False
+                props.use_modify_active = True
+                row.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
                 row.operator("sculpt.face_set_invert_visibility", text='', icon = "INVERT_MASK")
+
+                row = col.row(align=True)
                 row.operator("sculpt.reveal_all", text = '', icon = "HIDE_OFF")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
@@ -3820,6 +3850,20 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("sculpt.face_set_edit", text='', icon = 'SELECTLESS').mode = 'SHRINK'
+                props = row.operator("sculpt.expand", text="", icon='FACE_MAPS')
+                props.target = 'FACE_SETS'
+                props.falloff_type = 'GEODESIC'
+                props.invert = False
+                props.use_mask_preserve = False
+                props.use_modify_active = False
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.expand", text="", icon='FACE_MAPS_ACTIVE')
+                props.target = 'FACE_SETS'
+                props.falloff_type = 'BOUNDARY_FACE_SET'
+                props.invert = False
+                props.use_mask_preserve = False
+                props.use_modify_active = True
                 row.operator("mesh.face_set_extract", text = '', icon = "SEPARATE")
 
                 row = col.row(align=True)
@@ -3839,6 +3883,22 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
                 col.operator("sculpt.face_set_edit", text='', icon = 'SELECTMORE').mode = 'GROW'
                 col.operator("sculpt.face_set_edit", text='', icon = 'SELECTLESS').mode = 'SHRINK'
+
+                col.separator(factor = 0.5)
+
+                props = col.operator("sculpt.expand", text="", icon='FACE_MAPS')
+                props.target = 'FACE_SETS'
+                props.falloff_type = 'GEODESIC'
+                props.invert = False
+                props.use_mask_preserve = False
+                props.use_modify_active = False
+
+                props = col.operator("sculpt.expand", text="", icon='FACE_MAPS_ACTIVE')
+                props.target = 'FACE_SETS'
+                props.falloff_type = 'BOUNDARY_FACE_SET'
+                props.invert = False
+                props.use_mask_preserve = False
+                props.use_modify_active = True
 
                 col.separator(factor = 0.5)
 
