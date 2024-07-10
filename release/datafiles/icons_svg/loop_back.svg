@@ -4,9 +4,9 @@
 <svg
    version="1.1"
    id="svg2"
-   width="1700"
+   width="1600"
    height="1600"
-   viewBox="0 0 1700 1600"
+   viewBox="0 0 1600 1600"
    sodipodi:docname="loop_back.svg"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -41,17 +41,25 @@
      inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
-     showgrid="false"
+     showgrid="true"
      inkscape:zoom="0.35355339"
-     inkscape:cx="992.77792"
-     inkscape:cy="811.75858"
+     inkscape:cx="731.14841"
+     inkscape:cy="890.95455"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:current-layer="LOOP_BACK"
      inkscape:showpageshadow="0"
      inkscape:pagecheckerboard="true"
-     inkscape:deskcolor="#d1d1d1" />
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid249"
+       spacingx="100"
+       originx="1600"
+       originy="0"
+       spacingy="100" />
+  </sodipodi:namedview>
   <g
      id="LOOP_BACK"
      transform="matrix(100,0,0,100,0,4.9999997e-5)"
