@@ -8614,8 +8614,13 @@ class VIEW3D_PT_gizmo_display(Panel):
         col.separator()
 
         col.active = view.show_gizmo
-        colsub = col.column(align=True)
-
+        colsub = col.column()
+		# BFA - these are shown below to float left under a label
+        #colsub.prop(view, "show_gizmo_navigate", text="Navigate")
+        #colsub.prop(view, "show_gizmo_tool", text="Active Tools")
+        #colsub.prop(view, "show_gizmo_modifier", text="Active Modifier")
+        #colsub.prop(view, "show_gizmo_context", text="Active Object")
+        
         row = colsub.row()
         row.separator()
         row.prop(view, "show_gizmo_navigate", text="Navigate")
@@ -8631,6 +8636,9 @@ class VIEW3D_PT_gizmo_display(Panel):
         row = colsub.row()
         row.separator()
         row.prop(view, "show_gizmo_tool", text="Active Tools")
+        row = colsub.row()
+        row.separator()
+        row.prop(view, "show_gizmo_modifier", text="Active Modifier")
         row = colsub.row()
         row.separator()
         row.prop(view, "show_gizmo_context", text="Active Object")
