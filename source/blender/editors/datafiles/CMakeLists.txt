@@ -14,6 +14,7 @@ set(INC_SYS
 # Part of the `blender` binary (sources for data-files are appended).
 set(SRC
 
+
 )
 
 set(LIB
@@ -2614,6 +2615,9 @@ if(WITH_BLENDER)
 	mouse_position
 	gabor_noise
 	geometry_name
+	dial_gizmo
+	linear_gizmo
+	transform_gizmo
 	
       warning
       # ------------------------- large --------------------------
