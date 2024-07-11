@@ -2613,6 +2613,7 @@ if(WITH_BLENDER)
 	
 	mouse_position
 	gabor_noise
+	geometry_name
 	dial_gizmo
 	linear_gizmo
 	transform_gizmo

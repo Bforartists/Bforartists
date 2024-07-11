@@ -4175,7 +4175,11 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Set ID                         ", icon = "SET_ID")
+            props = col.operator("node.add_node", text=" Set Geometry Name  ", icon = "GEOMETRY_NAME")
+            props.use_transform = True
+            props.type = "GeometryNodeSetGeometryName"
+
+            props = col.operator("node.add_node", text=" Set ID                          ", icon = "SET_ID")
             props.use_transform = True
             props.type = "GeometryNodeSetID"
 
@@ -4195,6 +4199,10 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_NAME")
+            props.use_transform = True
+            props.type = "GeometryNodeSetGeometryName"
 
             props = flow.operator("node.add_node", text = "", icon = "SET_ID")
             props.use_transform = True
