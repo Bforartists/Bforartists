@@ -11769,6 +11769,15 @@ static int node_type_to_icon(int type)
     
     case GEO_NODE_GEOMETRY_TO_INSTANCE:
       return ICON_GEOMETRY_INSTANCE;
+
+    case GEO_NODE_GIZMO_LINEAR:
+      return ICON_LINEAR_GIZMO;
+
+    case GEO_NODE_GIZMO_DIAL:
+      return ICON_DIAL_GIZMO;
+
+    case GEO_NODE_GIZMO_TRANSFORM:
+      return ICON_TRANSFORM_GIZMO;
     
     case GEO_NODE_IMAGE_INFO:
       return ICON_IMAGE_INFO;
