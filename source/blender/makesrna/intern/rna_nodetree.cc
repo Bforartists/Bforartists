@@ -12055,6 +12055,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_SET_CURVE_TILT:
       return ICON_SET_CURVE_TILT;
 
+    case GEO_NODE_SET_GEOMETRY_NAME:
+      return ICON_GEOMETRY_NAME;
+
     case GEO_NODE_SET_ID:
       return ICON_SET_ID;
 
