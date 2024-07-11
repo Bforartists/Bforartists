@@ -2706,7 +2706,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
-        props = layout.operator("armature.select_hierarchy", text="Parent", text_ctxt=i18n_contexts.default)
+        props = layout.operator("armature.select_hierarchy", text="Parent", text_ctxt=i18n_contexts.default, icon="PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
@@ -8620,7 +8620,7 @@ class VIEW3D_PT_gizmo_display(Panel):
         #colsub.prop(view, "show_gizmo_tool", text="Active Tools")
         #colsub.prop(view, "show_gizmo_modifier", text="Active Modifier")
         #colsub.prop(view, "show_gizmo_context", text="Active Object")
-        
+
         row = colsub.row()
         row.separator()
         row.prop(view, "show_gizmo_navigate", text="Navigate")
