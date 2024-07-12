@@ -3278,13 +3278,20 @@ class SEQUENCER_PT_preview_snapping(Panel):
         sequencer_tool_settings = tool_settings.sequencer_tool_settings
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
-        col = layout.column(heading="Snap to", align=True)
-        col.prop(sequencer_tool_settings, "snap_to_borders")
-        col.prop(sequencer_tool_settings, "snap_to_center")
-        col.prop(sequencer_tool_settings, "snap_to_strips_preview")
+        col = layout.column(align=True)
+        col.label(text = "Snap to")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "snap_to_borders")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "snap_to_center")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "snap_to_strips_preview")
 
 
 class SEQUENCER_PT_sequencer_snapping(Panel):
