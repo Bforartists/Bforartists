@@ -407,12 +407,12 @@ class POSE_PT_selection_sets(Panel):
         row = layout.row()
 
         sub = row.row(align=True)
-        sub.operator("pose.selection_set_assign", text="Assign")
-        sub.operator("pose.selection_set_unassign", text="Remove")
+        sub.operator("pose.selection_set_assign", text="Assign", icon = 'ADD')
+        sub.operator("pose.selection_set_unassign", text="Remove", icon = 'DELETE')
 
         sub = row.row(align=True)
-        sub.operator("pose.selection_set_select", text="Select")
-        sub.operator("pose.selection_set_deselect", text="Deselect")
+        sub.operator("pose.selection_set_select", text="Select", icon = 'RESTRICT_SELECT_OFF')
+        sub.operator("pose.selection_set_deselect", text="Deselect", icon = 'SELECT_NONE')
 
 
 class POSE_UL_selection_set(UIList):
