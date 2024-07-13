@@ -657,7 +657,6 @@ class DOPESHEET_MT_channel(Menu):
         #layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
         #layout.operator("anim.channels_editable_toggle", icon="LOCKED")
 
-
         layout.separator()
         layout.menu("DOPESHEET_MT_channel_extrapolation")
 
@@ -674,8 +673,8 @@ class DOPESHEET_MT_channel(Menu):
         layout.operator("anim.channels_fcurves_enable", icon="UNLOCKED")
 
         layout.separator()
-        layout.operator("anim.channels_bake")
-        
+        layout.operator("anim.channels_bake", icon= 'BAKE_ACTION')
+
         layout.separator()
         layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
