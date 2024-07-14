@@ -731,19 +731,24 @@ def addons_panel_draw(panel, context):
     wm = context.window_manager
     layout = panel.layout
 
-    split = layout.split(factor=0.5)
-    row_a = split.row()
-    row_b = split.row()
+    # BFA - Move Install and Refresh to top level - start
+    row = layout.split(factor=0.27)
+    row_a = row.row()
     row_a.prop(wm, "addon_search", text="", icon='VIEWZOOM', placeholder="Search Add-ons")
-    row_b.prop(view, "show_addons_enabled_only", text="Enabled Only")
-    rowsub = row_b.row(align=True)
 
-    rowsub.popover("USERPREF_PT_addons_tags", text="", icon='TAG')
+    row_b = row.row(align=True)
+    row_b.operator("extensions.repo_refresh_all", text="Refresh", icon='FILE_REFRESH')
+    row_b.operator("extensions.package_install_files", text="Install from Disk", icon='IMPORT') #BFA - name changed
 
-    rowsub.separator()
+    row_b.separator()
+    row_b.popover("USERPREF_PT_addons_tags", text="", icon='TAG')
 
-    rowsub.menu("USERPREF_MT_addons_settings", text="", icon='DOWNARROW_HLT')
-    del split, row_a, row_b, rowsub
+    row_b.separator()
+    row_b.prop(view, "show_addons_enabled_only", text="Enabled Only", icon='NONE', toggle=False)
+
+    #rowsub.menu("USERPREF_MT_addons_settings", text="", icon='DOWNARROW_HLT')
+    del row, row_a, row_b,
+    # BFA - Move Install and Refresh to top level - end
 
     # Create a set of tags marked False to simplify exclusion & avoid it altogether when all tags are enabled.
     addon_tags_exclude = {k for (k, v) in wm.get("addon_tags", {}).items() if v is False}
@@ -1882,7 +1887,9 @@ def extensions_panel_draw(panel, context):
 
     layout = panel.layout
 
-    row = layout.split(factor=0.4) # BFA - slight adjustment for extension_type toggles
+    # BFA - Move Install and Refresh to top level - start
+    row = layout.split(factor=0.27)
+    # BFA - Move Install and Refresh to top level - end
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM', placeholder="Search Extensions")
     row_b = row.row(align=True)
