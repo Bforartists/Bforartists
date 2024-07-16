@@ -270,6 +270,11 @@ struct uiBut {
   wmOperatorType *optype = nullptr;
   PointerRNA *opptr = nullptr;
   wmOperatorCallContext opcontext = WM_OP_INVOKE_DEFAULT;
+  /**
+   * Keep an operator attached but never actually call it through the button. See
+   * #UI_but_operator_set_never_call().
+   */
+  bool operator_never_call = false;
 
   /** When non-zero, this is the key used to activate a menu items (`a-z` always lower case). */
   uchar menu_key = 0;
@@ -1652,7 +1657,7 @@ blender::Vector<FCurve *> get_property_drivers(
  *
  * \param src_drivers: The span of drivers to paste.  If `is_array_prop` is
  * false, this must be a single element.  If `is_array_prop` is true then this
- * should have the same length as the the destination array property.  Nullptr
+ * should have the same length as the destination array property.  Nullptr
  * elements are skipped when pasting.
  * \param is_array_prop: Whether `src_drivers` are drivers for the elements
  * of an array property.
