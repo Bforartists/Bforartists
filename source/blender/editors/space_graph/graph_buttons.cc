@@ -42,7 +42,7 @@
 
 #include "RNA_access.hh"
 #include "RNA_path.hh"
-#include "RNA_prototypes.h"
+#include "RNA_prototypes.hh"
 
 #include "ED_anim_api.hh"
 #include "ED_screen.hh"
@@ -1033,17 +1033,16 @@ static void graph_draw_driver_settings_panel(uiLayout *layout,
     col = uiLayoutColumn(layout, true);
     block = uiLayoutGetBlock(col);
 
-    if (driver->flag & DRIVER_FLAG_INVALID) {
+    if (driver->flag & DRIVER_FLAG_PYTHON_BLOCKED) {
+      /* TODO: Add button to enable? */
+      uiItemL(col, RPT_("Python restricted for security"), ICON_ERROR);
+      uiItemL(col, RPT_("Slow Python expression"), ICON_INFO);
+    }
+    else if (driver->flag & DRIVER_FLAG_INVALID) {
       uiItemL(col, RPT_("ERROR: Invalid Python expression"), ICON_CANCEL);
     }
     else if (!BKE_driver_has_simple_expression(driver)) {
-      if ((G.f & G_FLAG_SCRIPT_AUTOEXEC) == 0) {
-        /* TODO: Add button to enable? */
-        uiItemL(col, RPT_("Python restricted for security"), ICON_ERROR);
-      }
-      else {
-        uiItemL(col, RPT_("Slow Python expression"), ICON_INFO);
-      }
+      uiItemL(col, RPT_("Slow Python expression"), ICON_INFO);
     }
 
     /* Explicit bpy-references are evil. Warn about these to prevent errors */

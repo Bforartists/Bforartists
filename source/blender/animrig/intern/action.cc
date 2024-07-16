@@ -29,7 +29,7 @@
 
 #include "RNA_access.hh"
 #include "RNA_path.hh"
-#include "RNA_prototypes.h"
+#include "RNA_prototypes.hh"
 
 #include "ED_keyframing.hh"
 
@@ -413,6 +413,23 @@ Slot &Action::slot_ensure_for_id(const ID &animated_id)
   return this->slot_add_for_id(animated_id);
 }
 
+void Action::slot_active_set(const slot_handle_t slot_handle)
+{
+  for (Slot *slot : slots()) {
+    slot->set_active(slot->handle == slot_handle);
+  }
+}
+
+Slot *Action::slot_active_get()
+{
+  for (Slot *slot : slots()) {
+    if (slot->is_active()) {
+      return slot;
+    }
+  }
+  return nullptr;
+}
+
 Slot *Action::find_suitable_slot_for(const ID &animated_id)
 {
   AnimData *adt = BKE_animdata_from_id(&animated_id);
@@ -708,6 +725,20 @@ void Slot::set_selected(const bool selected)
   }
   else {
     this->slot_flags &= ~(uint8_t(Flags::Selected));
+  }
+}
+
+bool Slot::is_active() const
+{
+  return this->slot_flags & uint8_t(Flags::Active);
+}
+void Slot::set_active(const bool active)
+{
+  if (active) {
+    this->slot_flags |= uint8_t(Flags::Active);
+  }
+  else {
+    this->slot_flags &= ~(uint8_t(Flags::Active));
   }
 }
 
@@ -1173,13 +1204,7 @@ FCurve *ChannelBag::fcurve(const int64_t index)
 
 const FCurve *ChannelBag::fcurve_find(const StringRefNull rna_path, const int array_index) const
 {
-  for (const FCurve *fcu : this->fcurves()) {
-    /* Check indices first, much cheaper than a string comparison. */
-    if (fcu->array_index == array_index && fcu->rna_path && StringRef(fcu->rna_path) == rna_path) {
-      return fcu;
-    }
-  }
-  return nullptr;
+  return animrig::fcurve_find(this->fcurves(), {rna_path, array_index});
 }
 
 /* Utility function implementations. */
@@ -1218,6 +1243,7 @@ static animrig::ChannelBag *channelbag_for_action_slot(Action &action,
 
 Span<FCurve *> fcurves_for_action_slot(Action &action, const slot_handle_t slot_handle)
 {
+  assert_baklava_phase_1_invariants(action);
   animrig::ChannelBag *bag = channelbag_for_action_slot(action, slot_handle);
   if (!bag) {
     return {};
@@ -1227,6 +1253,7 @@ Span<FCurve *> fcurves_for_action_slot(Action &action, const slot_handle_t slot_
 
 Span<const FCurve *> fcurves_for_action_slot(const Action &action, const slot_handle_t slot_handle)
 {
+  assert_baklava_phase_1_invariants(action);
   const animrig::ChannelBag *bag = channelbag_for_action_slot(action, slot_handle);
   if (!bag) {
     return {};
@@ -1310,6 +1337,46 @@ FCurve *action_fcurve_ensure(Main *bmain,
 {
   if (act == nullptr) {
     return nullptr;
+  }
+  Action &action = act->wrap();
+
+  if (USER_EXPERIMENTAL_TEST(&U, use_animation_baklava) && action.is_action_layered()) {
+    /* NOTE: for layered actions we require the following:
+     *
+     * - `ptr` is non-null.
+     * - `ptr` has an `owner_id` that already uses `act`.
+     *
+     * This isn't for any principled reason, but rather is because adding
+     * support for layered actions to this function was a fix to make Follow
+     * Path animation work properly with layered actions (see PR #124353), and
+     * those are the requirements the Follow Path code conveniently met.
+     * Moreover those requirements were also already met by the other call sites
+     * that potentially call this function with layered actions.
+     *
+     * Trying to puzzle out what "should" happen when these requirements don't
+     * hold, or if this is even the best place to handle the layered action
+     * cases at all, was leading to discussion of larger changes than made sense
+     * to tackle at that point. */
+    BLI_assert(ptr != nullptr);
+    if (ptr == nullptr) {
+      return nullptr;
+    }
+    AnimData *adt = BKE_animdata_from_id(ptr->owner_id);
+    BLI_assert(adt != nullptr && adt->action == act);
+    if (adt == nullptr || adt->action != act) {
+      return nullptr;
+    }
+
+    /* Ensure the id has an assigned slot. */
+    Slot &slot = action.slot_ensure_for_id(*ptr->owner_id);
+    action.assign_id(&slot, *ptr->owner_id);
+
+    action.layer_ensure_at_least_one();
+
+    assert_baklava_phase_1_invariants(action);
+    KeyframeStrip &strip = action.layer(0)->strip(0)->as<KeyframeStrip>();
+
+    return &strip.fcurve_find_or_create(slot, fcurve_descriptor);
   }
 
   /* Try to find f-curve matching for this setting.
@@ -1407,6 +1474,18 @@ ID *action_slot_get_id_for_keying(Main &bmain,
   return nullptr;
 }
 
+ID *action_slot_get_id_best_guess(Main &bmain, Slot &slot, ID *primary_id)
+{
+  blender::Span<ID *> users = slot.users(bmain);
+  if (users.is_empty()) {
+    return 0;
+  }
+  if (users.contains(primary_id)) {
+    return primary_id;
+  }
+  return users[0];
+}
+
 void assert_baklava_phase_1_invariants(const Action &action)
 {
   if (action.is_action_legacy()) {
@@ -1436,6 +1515,40 @@ void assert_baklava_phase_1_invariants(const Strip &strip)
   BLI_assert(strip.type() == Strip::Type::Keyframe);
   BLI_assert(strip.is_infinite());
   BLI_assert(strip.frame_offset == 0.0);
+}
+
+Action *convert_to_layered_action(Main &bmain, const Action &legacy_action)
+{
+  if (!legacy_action.is_action_legacy()) {
+    return nullptr;
+  }
+
+  std::string suffix = "_layered";
+  /* In case the legacy action has a long name it is shortened to make space for the suffix. */
+  char legacy_name[MAX_ID_NAME - 10];
+  /* Offsetting the id.name to remove the ID prefix (AC) which gets added back later. */
+  STRNCPY_UTF8(legacy_name, legacy_action.id.name + 2);
+
+  const std::string layered_action_name = std::string(legacy_name) + suffix;
+  bAction *dna_action = BKE_action_add(&bmain, layered_action_name.c_str());
+
+  Action &converted_action = dna_action->wrap();
+  Slot &slot = converted_action.slot_add();
+  Layer &layer = converted_action.layer_add(legacy_action.id.name);
+  KeyframeStrip &strip = layer.strip_add<KeyframeStrip>();
+  BLI_assert(strip.channelbags_array_num == 0);
+  ChannelBag *bag = &strip.channelbag_for_slot_add(slot);
+
+  const int fcu_count = BLI_listbase_count(&legacy_action.curves);
+  bag->fcurve_array = MEM_cnew_array<FCurve *>(fcu_count, "Convert to layered action");
+  bag->fcurve_array_num = fcu_count;
+
+  int i = 0;
+  LISTBASE_FOREACH_INDEX (FCurve *, fcu, &legacy_action.curves, i) {
+    bag->fcurve_array[i] = BKE_fcurve_copy(fcu);
+  }
+
+  return &converted_action;
 }
 
 }  // namespace blender::animrig

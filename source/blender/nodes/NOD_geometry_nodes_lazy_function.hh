@@ -29,6 +29,7 @@
 #include "NOD_multi_function.hh"
 
 #include "BLI_compute_context.hh"
+#include "BLI_math_quaternion_types.hh"
 
 #include "BKE_bake_items.hh"
 #include "BKE_node_tree_zones.hh"
@@ -193,7 +194,14 @@ struct GeoNodesOperatorData {
   Scene *scene_orig = nullptr;
   int2 mouse_position;
   int2 region_size;
-  const RegionView3D *rv3d = nullptr;
+
+  float3 cursor_position;
+  math::Quaternion cursor_rotation;
+
+  float4x4 viewport_winmat;
+  float4x4 viewport_viewmat;
+  bool viewport_is_perspective;
+
   int active_point_index = -1;
   int active_edge_index = -1;
   int active_face_index = -1;
