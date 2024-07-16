@@ -27,6 +27,7 @@ endif()
 
 # USD headers use deprecated TBB headers, silence warning.
 add_definitions(-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1)
+add_definitions(-DWITH_TBB)
 
 # Check if USD has the imaging headers available, if they are
 # add a USD_HAS_IMAGING define so code can dynamically detect this.
@@ -74,7 +75,7 @@ set(INC
   ../../python/intern
   ../../windowmanager
   ../../../../intern/utfconv
-  # RNA_prototypes.h
+  # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
 
@@ -252,7 +253,7 @@ endif()
 
 blender_add_lib(bf_io_usd "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
-# RNA_prototypes.h
+# RNA_prototypes.hh
 add_dependencies(bf_io_usd bf_rna)
 
 if(COMMAND target_precompile_headers)

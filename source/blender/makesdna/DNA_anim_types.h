@@ -288,7 +288,8 @@ typedef enum eFMod_Stepped_Flags {
 
 /* Drivers -------------------------------------- */
 
-/* Driver Target (dtar)
+/**
+ * Driver Target (`dtar`)
  *
  * Defines how to access a dependency needed for a driver variable.
  */
@@ -412,7 +413,7 @@ typedef enum eDriverTarget_ContextProperty {
 #define MAX_DRIVER_TARGETS 8
 
 /**
- * Driver Variable (dvar)
+ * Driver Variable (`dvar`)
  *
  * A 'variable' for use as an input for the driver evaluation.
  * Defines a way of accessing some channel to use, that can be
@@ -487,7 +488,7 @@ typedef enum eDriverVar_Flags {
   DVAR_FLAG_INVALID_EMPTY = (1 << 8),
 } eDriverVar_Flags;
 
-/* All invalid dvar name flags */
+/** All invalid `dvar` name flags. */
 #define DVAR_ALL_INVALID_FLAGS \
   (DVAR_FLAG_INVALID_NAME | DVAR_FLAG_INVALID_START_NUM | DVAR_FLAG_INVALID_START_CHAR | \
    DVAR_FLAG_INVALID_HAS_SPACE | DVAR_FLAG_INVALID_HAS_DOT | DVAR_FLAG_INVALID_HAS_SPECIAL | \
@@ -561,7 +562,8 @@ typedef enum eDriver_Flags {
   DRIVER_FLAG_RECOMPILE = (1 << 3),
   /** The names are cached so they don't need have python unicode versions created each time */
   DRIVER_FLAG_RENAMEVAR = (1 << 4),
-  // DRIVER_FLAG_UNUSED_5 = (1 << 5),
+  /* Set if the driver cannot run because it uses Python which isn't allowed to execute. */
+  DRIVER_FLAG_PYTHON_BLOCKED = (1 << 5),
   /** Include 'self' in the drivers namespace. */
   DRIVER_FLAG_USE_SELF = (1 << 6),
 } eDriver_Flags;

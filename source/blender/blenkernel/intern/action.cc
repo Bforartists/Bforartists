@@ -60,7 +60,7 @@
 
 #include "RNA_access.hh"
 #include "RNA_path.hh"
-#include "RNA_prototypes.h"
+#include "RNA_prototypes.hh"
 
 #include "BLO_read_write.hh"
 
@@ -486,7 +486,11 @@ static AssetTypeInfo AssetType_AC = {
 IDTypeInfo IDType_ID_AC = {
     /*id_code*/ ID_AC,
     /*id_filter*/ FILTER_ID_AC,
+
+    /* This value will be set dynamically in `BKE_idtype_init()` to only include
+     * animatable ID types (see `animrig::Binding::users()`). */
     /*dependencies_id_types*/ FILTER_ID_ALL,
+
     /*main_listbase_index*/ INDEX_ID_AC,
     /*struct_size*/ sizeof(bAction),
     /*name*/ "Action",
