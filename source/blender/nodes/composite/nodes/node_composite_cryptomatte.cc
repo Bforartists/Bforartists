@@ -314,7 +314,7 @@ class BaseCryptoMatteOperation : public NodeOperation {
      * which is a 32-bit float. See the shader for more information. */
     output_pick.set_precision(ResultPrecision::Full);
 
-    output_pick.is_data = true;
+    output_pick.meta_data.is_non_color_data = true;
 
     const Domain domain = compute_domain();
     output_pick.allocate_texture(domain);
@@ -603,7 +603,7 @@ class CryptoMatteOperation : public BaseCryptoMatteOperation {
     int layer_index;
     const std::string type_name = get_type_name();
     LISTBASE_FOREACH_INDEX (RenderLayer *, render_layer, &image->rr->layers, layer_index) {
-      /* If the Cryptomatte type name name doesn't start with the layer name, then it is not a
+      /* If the Cryptomatte type name doesn't start with the layer name, then it is not a
        * Cryptomatte layer. Unless it is an unnamed layer, in which case, we need to check its
        * passes. */
       const bool is_unnamed_layer = render_layer->name[0] == '\0';
