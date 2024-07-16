@@ -687,7 +687,8 @@ class SEQUENCER_MT_select(Menu):
         layout = self.layout
         st = _context.space_data
         has_sequencer, has_preview = _space_view_types(st)
-		#is_retiming = context.scene.sequence_editor.selected_retiming_keys # BFA
+        #is_retiming = context.scene.sequence_editor is not None and \ # BFA - redundant
+        #    context.scene.sequence_editor.selected_retiming_keys is not None # BFA - redundant
 
         layout.operator("sequencer.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("sequencer.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
@@ -1106,7 +1107,8 @@ class SEQUENCER_MT_strip_retiming(Menu):
 
     def draw(self, context):
         try:  # BFA - detect if correct relevant strip is selected to apply as a clearer UX. Only works on Movie and Image strips
-            is_retiming = context.scene.sequence_editor.selected_retiming_keys
+            is_retiming = context.scene.sequence_editor is not None and \
+            	context.scene.sequence_editor.selected_retiming_keys is not None
             strip = context.active_sequence_strip
             layout = self.layout
 
@@ -2542,6 +2544,21 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             split.label(text="Volume", text_ctxt=i18n_contexts.id_sound)
             split.prop(strip, "volume", text="")
 
+            split = col.split(factor=0.4)
+            split.alignment = 'RIGHT'
+            split.label(text="Offset", text_ctxt=i18n_contexts.id_sound)
+            split.prop(strip, "sound_offset", text="")
+
+            layout.use_property_split = False
+            col = layout.column()
+
+            split = col.split(factor=0.4)
+            split.label(text="")
+            split.prop(sound, "use_mono")
+
+            layout.use_property_split = True
+            col = layout.column()
+
             audio_channels = context.scene.render.ffmpeg.audio_channels
             pan_enabled = sound.use_mono and audio_channels != 'MONO'
             pan_text = "{:.2f}°".format(strip.pan * 90.0)
@@ -2566,7 +2583,9 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             layout.use_property_split = False
             col = layout.column()
 
-            col.prop(sound, "use_mono")
+            split = col.split(factor=0.4)
+            split.label(text="")
+            split.prop(sound, "use_mono")
             if overlay_settings.waveform_display_type == 'DEFAULT_WAVEFORMS':
                 col.prop(strip, "show_waveform")
 
