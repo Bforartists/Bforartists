@@ -97,6 +97,11 @@ void BKE_appdir_init()
 
 void BKE_appdir_exit()
 {
+  /* System paths can be created on-demand by calls to this API. So they need to be properly
+   * disposed of here. Note that there may be several calls to this in `exit` process
+   * (e.g. `wm_init/wm_exit` will currently both call GHOST API directly,
+   * & `BKE_appdir_init/_exit`). */
+  GHOST_DisposeSystemPaths();
 #ifndef NDEBUG
   BLI_assert(is_appdir_init == true);
   is_appdir_init = false;
