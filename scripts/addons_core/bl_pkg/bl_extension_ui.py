@@ -220,7 +220,7 @@ def addon_draw_item_expanded(
         item_description,  # `str`
         item_maintainer,  # `str`
         item_version,  # `str`
-        item_warning_legacy,  # `str`
+        item_warnings,  # `List[str]`
         item_doc_url,  # `str`
         item_tracker_url,  # `str`
 ):
@@ -293,10 +293,16 @@ def addon_draw_item_expanded(
     if item_version:
         col_a.label(text="Version")
         col_b.label(text=item_version, translate=False)
-    if item_warning_legacy:
+    if item_warnings:
         # Only for legacy add-ons.
         col_a.label(text="Warning")
-        col_b.label(text="  " + item_warning_legacy, icon='ERROR', translate=False)
+        col_b.label(text=item_warnings[0], icon='ERROR')
+        if len(item_warnings) > 1:
+            for value in item_warnings[1:]:
+                col_a.label(text="")
+                col_b.label(text=value, icon='BLANK1')
+            # pylint: disable-next=undefined-loop-variable
+            del value
 
     if addon_type != ADDON_TYPE_LEGACY_CORE:
         col_a.label(text="File")
@@ -426,6 +432,9 @@ def addons_panel_draw_items(
     # Initialized on demand.
     user_addon_paths = []
 
+    # pylint: disable-next=protected-access
+    extensions_warnings = addon_utils._extensions_warnings_get()
+
     for mod in addon_modules:
         module_names.add(module_name := mod.__name__)
 
@@ -438,13 +447,18 @@ def addons_panel_draw_items(
         show_expanded = bl_info["show_expanded"]
 
         if is_extension:
+            item_warnings = []
+
+            if value := extensions_warnings.get(module_name):
+                item_warnings.extend(value)
+            del value
+
             if (item_local := addon_extension_manifest_map.get(module_name)) is not None:
                 del bl_info
 
                 item_name = item_local.name
                 item_description = item_local.tagline
                 item_tags = item_local.tags
-                item_warning_legacy = ""
                 if show_expanded:
                     item_maintainer = item_local.maintainer
                     item_version = item_local.version
@@ -460,7 +474,7 @@ def addons_panel_draw_items(
 
                 item_description = ""
                 item_tags = ()
-                item_warning_legacy = "Unable to parse the manifest"
+                item_warnings.append("Unable to parse the manifest")
                 item_maintainer = ""
                 item_version = "0.0.0"
                 item_doc_url = ""
@@ -472,12 +486,18 @@ def addons_panel_draw_items(
             if (module_name in SECRET_ADDONS) and is_enabled and (show_development is False):
                 continue
 
+            item_warnings = []
+
             item_name = bl_info["name"]
             # A "." is added to the extensions manifest tag-line.
             # Avoid duplicate dot for legacy add-ons.
             item_description = bl_info["description"].rstrip(".")
             item_tags = (bl_info["category"],)
-            item_warning_legacy = bl_info["warning"]
+
+            if value := bl_info["warning"]:
+                item_warnings.append(value)
+            del value
+
             if show_expanded:
                 item_maintainer = value.split("<", 1)[0].rstrip() if (value := bl_info["author"]) else ""
                 item_version = ".".join(str(x) for x in value) if (value := bl_info["version"]) else ""
@@ -530,7 +550,7 @@ def addons_panel_draw_items(
 
         sub.label(text=" " + item_name, translate=False)
 
-        if item_warning_legacy:
+        if item_warnings:
             sub.label(icon='ERROR')
         elif USE_SHOW_ADDON_TYPE_AS_ICON:
             sub.label(icon=addon_type_icon[addon_type])
@@ -548,7 +568,7 @@ def addons_panel_draw_items(
                 item_maintainer=item_maintainer,
                 # pylint: disable-next=used-before-assignment
                 item_version=item_version,
-                item_warning_legacy=item_warning_legacy,
+                item_warnings=item_warnings,
                 item_doc_url=item_doc_url,
                 # pylint: disable-next=used-before-assignment
                 item_tracker_url=item_tracker_url,
@@ -583,18 +603,6 @@ def addons_panel_draw_error_generic(layout, lines):
     sub.label(icon='ERROR')
     for l in lines[1:]:
         box.label(text=l)
-
-#        ### BFA WIP - Move Uninstall next to Install (Legacy) ###
-#        user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths) # BFA
-#
-#        if user_addon: # BFA
-#            row_right = row.row() # BFA
-#            row_right.active = True # BFA
-#            row_right.alignment = 'RIGHT' # BFA
-#            row_right.operator( # BFA
-#                "preferences.addon_remove", text="Uninstall", icon='CANCEL', # BFA
-#            ).module = module_name # BFA
-#        ### BFA - end of changes ###
 
 
 def addons_panel_draw_impl(
@@ -731,19 +739,24 @@ def addons_panel_draw(panel, context):
     wm = context.window_manager
     layout = panel.layout
 
-    split = layout.split(factor=0.5)
-    row_a = split.row()
-    row_b = split.row()
+    ###### BFA - Move Install and Refresh to top level - start ######
+    row = layout.split(factor=0.27)
+    row_a = row.row()
     row_a.prop(wm, "addon_search", text="", icon='VIEWZOOM', placeholder="Search Add-ons")
-    row_b.prop(view, "show_addons_enabled_only", text="Enabled Only")
-    rowsub = row_b.row(align=True)
 
-    rowsub.popover("USERPREF_PT_addons_tags", text="", icon='TAG')
+    row_b = row.row(align=True)
+    row_b.operator("extensions.repo_refresh_all", text="Refresh", icon='FILE_REFRESH')
+    row_b.operator("extensions.package_install_files", text="Install from Disk", icon='IMPORT') #BFA - name changed
 
-    rowsub.separator()
+    row_b.separator()
+    row_b.popover("USERPREF_PT_addons_tags", text="", icon='TAG')
 
-    rowsub.menu("USERPREF_MT_addons_settings", text="", icon='DOWNARROW_HLT')
-    del split, row_a, row_b, rowsub
+    row_b.separator()
+    row_b.prop(view, "show_addons_enabled_only", text="Enabled Only", icon='NONE', toggle=False)
+
+    #rowsub.menu("USERPREF_MT_addons_settings", text="", icon='DOWNARROW_HLT')
+    del row, row_a, row_b,
+    ###### BFA - Move Install and Refresh to top level - end ######
 
     # Create a set of tags marked False to simplify exclusion & avoid it altogether when all tags are enabled.
     addon_tags_exclude = {k for (k, v) in wm.get("addon_tags", {}).items() if v is False}
@@ -1197,10 +1210,16 @@ def extension_draw_item(
         repo_index,  # `int`
         repo_item,  # `RepoItem`
         operation_in_progress,  # `bool`
+        extensions_warnings,  # `Dict[str, List[str]]`
 ):
     item = item_local or item_remote
     is_installed = item_local is not None
     has_remote = repo_item.remote_url != ""
+
+    if is_enabled:
+        item_warnings = extensions_warnings.get(pkg_repo_module_prefix(repo_item) + pkg_id, [])
+    else:
+        item_warnings = []
 
     # Left align so the operator text isn't centered.
     colsub = layout.column()
@@ -1229,7 +1248,11 @@ def extension_draw_item(
     # is enabled or not, which is useful to show - when they may be considering removing/updating
     # extensions based on them being used or not.
     icon = 'PLUGIN' if item.type == 'add-on' else 'COLOR' # BFA - Add visual indicators to listings
-    sub.label(text=item.name, icon=icon, translate=False) # BFA - Add visual indicators to listings
+    if item_warnings:
+        sub.label(text=item.name, icon='ERROR', translate=False)
+    else:
+        sub.label(text=item.name, icon=icon, translate=False) # BFA - Add visual indicators to listings
+
     del sub
 
     # Add a top-level row so `row_right` can have a grayed out button/label
@@ -1295,6 +1318,16 @@ def extension_draw_item(
         col_a = split.column()
         col_b = split.column()
         col_a.alignment = "RIGHT"
+
+        if item_warnings:
+            col_a.label(text="Warning")
+            col_b.label(text=item_warnings[0])
+            if len(item_warnings) > 1:
+                for value in item_warnings[1:]:
+                    col_a.label(text="")
+                    col_b.label(text=value)
+                # pylint: disable-next=undefined-loop-variable
+                del value
 
         if value := (item_remote or item_local).website:
             col_a.label(text="Website")
@@ -1365,6 +1398,10 @@ def extensions_panel_draw_impl(
     prefs = context.preferences
 
     repo_cache_store = repo_cache_store_ensure()
+
+    import addon_utils
+    # pylint: disable-next=protected-access
+    extensions_warnings = addon_utils._extensions_warnings_get()
 
     # This isn't elegant, but the preferences aren't available on registration.
     if not repo_cache_store.is_init():
@@ -1586,6 +1623,7 @@ def extensions_panel_draw_impl(
                 repo_index=ext_ui.repo_index,
                 repo_item=params.repos_all[ext_ui.repo_index],
                 operation_in_progress=operation_in_progress,
+                extensions_warnings=extensions_warnings,
             )
 
     # Finally show any errors in a single panel which can be dismissed.
@@ -1599,34 +1637,6 @@ def extensions_panel_draw_impl(
         # to accessing repositories so it's not helpful to bother the user while this runs.
         if not operation_in_progress:
             display_errors.draw(layout_topmost)
-# BFA - WIP
-#class USERPREF_PT_extensions_filter(Panel):
-#    bl_label = "Extensions Filter"
-#
-#    bl_space_type = 'TOPBAR'  # dummy.
-#    bl_region_type = 'HEADER'
-#    bl_ui_units_x = 13
-#
-#    def draw(self, context):
-#        layout = self.layout
-#
-#        wm = context.window_manager
-#        col = layout.column() # BFA - added indents and labels properly per standards
-#
-#        col.label(text="Show Only") # BFA
-#        col.use_property_split = False # BFA
-#
-#        row = col.row() # BFA
-#        row.separator() # BFA
-#        row.prop(wm, "extension_enabled_only", text="Enabled Extensions") # BFA
-#        row = col.row() # BFA
-#        row.separator() # BFA
-#        row.prop(wm, "extension_updates_only", text="Updates Available") # BFA
-#        row = col.row() # BFA
-#        row.separator() # BFA
-#        row.active = (not wm.extension_enabled_only) and (not wm.extension_updates_only) # BFA
-#        row.prop(wm, "extension_installed_only", text="Installed Extensions") # BFA
-
 
 
 class USERPREF_PT_addons_tags(Panel):
@@ -1882,7 +1892,9 @@ def extensions_panel_draw(panel, context):
 
     layout = panel.layout
 
-    row = layout.split(factor=0.4) # BFA - slight adjustment for extension_type toggles
+    # BFA - Move Install and Refresh to top level - start
+    row = layout.split(factor=0.27) # BFA
+    # BFA - Move Install and Refresh to top level - end
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM', placeholder="Search Extensions")
     row_b = row.row(align=True)
@@ -2222,7 +2234,6 @@ classes = (
     USERPREF_PT_addons_tags,
     USERPREF_MT_addons_settings,
 
-    #USERPREF_PT_extensions_filter #BFA - WIP
     USERPREF_PT_extensions_tags,
     USERPREF_MT_extensions_settings,
     USERPREF_MT_extensions_item,

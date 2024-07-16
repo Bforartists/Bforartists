@@ -16,7 +16,7 @@ set(INC
   ../../render
   ../../windowmanager
 
-  # RNA_prototypes.h
+  # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
 
@@ -62,7 +62,19 @@ if(WITH_IMAGE_WEBP)
   add_definitions(-DWITH_WEBP)
 endif()
 
+if(WITH_TBB)
+  add_definitions(-DWITH_TBB)
+
+  list(APPEND INC_SYS
+    ${TBB_INCLUDE_DIRS}
+  )
+
+  list(APPEND LIB
+    ${TBB_LIBRARIES}
+  )
+endif()
+
 blender_add_lib(bf_editor_space_image "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
-# RNA_prototypes.h dna_type_offsets.h
+# RNA_prototypes.hh dna_type_offsets.h
 add_dependencies(bf_editor_space_image bf_rna)

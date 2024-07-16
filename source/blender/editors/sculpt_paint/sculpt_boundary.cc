@@ -184,18 +184,20 @@ static bool floodfill_fn(SculptSession &ss,
   int from_v_i = BKE_pbvh_vertex_to_index(*ss.pbvh, from_v);
   int to_v_i = BKE_pbvh_vertex_to_index(*ss.pbvh, to_v);
 
+  const float3 from_v_co = SCULPT_vertex_co_get(ss, from_v);
+  const float3 to_v_co = SCULPT_vertex_co_get(ss, to_v);
+
   SculptBoundary &boundary = *data->boundary;
   if (!SCULPT_vertex_is_boundary(ss, to_v)) {
     return false;
   }
-  const float edge_len = len_v3v3(SCULPT_vertex_co_get(ss, from_v),
-                                  SCULPT_vertex_co_get(ss, to_v));
+  const float edge_len = len_v3v3(from_v_co, to_v_co);
   const float distance_boundary_to_dst = !boundary.distance.is_empty() ?
                                              boundary.distance[from_v_i] + edge_len :
                                              0.0f;
   add_index(boundary, to_v, to_v_i, distance_boundary_to_dst, data->included_verts);
   if (!is_duplicate) {
-    boundary.edges.append({from_v, to_v});
+    boundary.edges.append({from_v_co, to_v_co});
   }
   return is_vert_in_editable_boundary(ss, to_v);
 }
@@ -242,7 +244,11 @@ static void indices_init(SculptSession &ss,
       if (BLI_gset_haskey(included_verts, POINTER_FROM_INT(ni.index)) &&
           is_vert_in_editable_boundary(ss, ni.vertex))
       {
-        boundary.edges.append({fdata.last_visited_vertex, ni.vertex});
+
+        const float3 from_v_co = SCULPT_vertex_co_get(ss, fdata.last_visited_vertex);
+        const float3 to_v_co = SCULPT_vertex_co_get(ss, ni.vertex);
+
+        boundary.edges.append({from_v_co, to_v_co});
         boundary.forms_loop = true;
       }
     }
@@ -361,10 +367,8 @@ static void edit_data_init(SculptSession &ss,
           if (boundary.edit_info[from_v_i].original_vertex_i ==
               BKE_pbvh_vertex_to_index(*ss.pbvh, initial_vert))
           {
-            boundary.pivot_vertex = ni.vertex;
-            copy_v3_v3(boundary.initial_pivot_position, SCULPT_vertex_co_get(ss, ni.vertex));
-            accum_distance += len_v3v3(SCULPT_vertex_co_get(ss, from_v),
-                                       SCULPT_vertex_co_get(ss, ni.vertex));
+            boundary.pivot_position = SCULPT_vertex_co_get(ss, ni.vertex);
+            accum_distance += len_v3v3(SCULPT_vertex_co_get(ss, from_v), boundary.pivot_position);
           }
         }
       }
@@ -571,9 +575,8 @@ static void twist_data_init(SculptSession &ss, SculptBoundary &boundary)
                    boundary.verts.size());
   }
   else {
-    sub_v3_v3v3(boundary.twist.rotation_axis,
-                SCULPT_vertex_co_get(ss, boundary.pivot_vertex),
-                SCULPT_vertex_co_get(ss, boundary.initial_vert));
+    sub_v3_v3v3(
+        boundary.twist.rotation_axis, boundary.pivot_position, boundary.initial_vert_position);
     normalize_v3(boundary.twist.rotation_axis);
   }
 }
@@ -583,7 +586,7 @@ static float displacement_from_grab_delta_get(SculptSession &ss, SculptBoundary 
   float plane[4];
   float pos[3];
   float normal[3];
-  sub_v3_v3v3(normal, ss.cache->initial_location, boundary.initial_pivot_position);
+  sub_v3_v3v3(normal, ss.cache->initial_location, boundary.pivot_position);
   normalize_v3(normal);
   plane_from_point_normal_v3(plane, ss.cache->initial_location, normal);
   add_v3_v3v3(pos, ss.cache->initial_location, ss.cache->grab_delta_symmetry);
@@ -868,7 +871,7 @@ void do_boundary_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
     else {
       float location[3];
       flip_v3_v3(location, SCULPT_active_vertex_co_get(ss), symm_area);
-      initial_vert = SCULPT_nearest_vertex_get(ob, location, ss.cache->radius_squared, false);
+      initial_vert = nearest_vert_calc(ob, location, ss.cache->radius_squared, false);
     }
 
     ss.cache->boundaries[symm_area] = data_init(
@@ -958,8 +961,8 @@ void edges_preview_draw(const uint gpuattr,
   GPU_line_width(2.0f);
   immBegin(GPU_PRIM_LINES, ss.boundary_preview->edges.size() * 2);
   for (int i = 0; i < ss.boundary_preview->edges.size(); i++) {
-    immVertex3fv(gpuattr, SCULPT_vertex_co_get(ss, ss.boundary_preview->edges[i].v1));
-    immVertex3fv(gpuattr, SCULPT_vertex_co_get(ss, ss.boundary_preview->edges[i].v2));
+    immVertex3fv(gpuattr, ss.boundary_preview->edges[i].first);
+    immVertex3fv(gpuattr, ss.boundary_preview->edges[i].second);
   }
   immEnd();
 }
@@ -972,8 +975,8 @@ void pivot_line_preview_draw(const uint gpuattr, SculptSession &ss)
   immUniformColor4f(1.0f, 1.0f, 1.0f, 0.8f);
   GPU_line_width(2.0f);
   immBegin(GPU_PRIM_LINES, 2);
-  immVertex3fv(gpuattr, SCULPT_vertex_co_get(ss, ss.boundary_preview->pivot_vertex));
-  immVertex3fv(gpuattr, SCULPT_vertex_co_get(ss, ss.boundary_preview->initial_vert));
+  immVertex3fv(gpuattr, ss.boundary_preview->pivot_position);
+  immVertex3fv(gpuattr, ss.boundary_preview->initial_vert_position);
   immEnd();
 }
 

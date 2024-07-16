@@ -45,7 +45,7 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
-#include "RNA_prototypes.h"
+#include "RNA_prototypes.hh"
 
 #include "UI_interface.hh"
 #include "UI_interface_icons.hh"
@@ -612,9 +612,22 @@ static int collection_exporter_export(bContext *C,
   const Main *bmain = CTX_data_main(C);
   BLI_path_abs(filepath, BKE_main_blendfile_path(bmain));
 
+  /* Ensure that any properties from when this operator was "last used" are cleared. Save them for
+   * restoration later. Otherwise properties from a regular File->Export may contaminate this
+   * collection export. */
+  IDProperty *last_properties = ot->last_properties;
+  ot->last_properties = nullptr;
+
   RNA_string_set(&properties, "filepath", filepath);
   RNA_string_set(&properties, "collection", collection_name);
   int op_result = WM_operator_name_call_ptr(C, ot, WM_OP_EXEC_DEFAULT, &properties, nullptr);
+
+  /* Free the "last used" properties that were just set from the collection export and restore the
+   * original "last used" properties. */
+  if (ot->last_properties) {
+    IDP_FreeProperty(ot->last_properties);
+  }
+  ot->last_properties = last_properties;
 
   IDP_FreeProperty(op_props);
 
