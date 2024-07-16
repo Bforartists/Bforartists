@@ -38,6 +38,7 @@
 #include "BKE_scene.hh"
 
 #include "DEG_depsgraph.hh"
+#include "DEG_depsgraph_query.hh"
 
 #include "ED_keyframing.hh"
 #include "ED_object.hh"
@@ -61,7 +62,7 @@
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
 #include "RNA_path.hh"
-#include "RNA_prototypes.h"
+#include "RNA_prototypes.hh"
 
 #include "anim_intern.hh"
 
@@ -374,6 +375,9 @@ static int insert_key(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
+  /* The depsgraph needs to be in an evaluated state to ensure the values we get from the
+   * properties are actually the values of the current frame. */
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   const float scene_frame = BKE_scene_frame_get(scene);
@@ -381,7 +385,6 @@ static int insert_key(bContext *C, wmOperator *op)
   const eInsertKeyFlags insert_key_flags = animrig::get_keyframing_flags(scene);
   const eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(
       scene->toolsettings->keyframe_type);
-  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       depsgraph, BKE_scene_frame_get(scene));
 
@@ -874,7 +877,7 @@ static int delete_key_v3d_without_keying_set(bContext *C, wmOperator *op)
         /* delete keyframes on current frame
          * WARNING: this can delete the next F-Curve, hence the "fcn" copying
          */
-        success += blender::animrig::delete_keyframe_fcurve(adt, fcu, cfra_unmap);
+        success += blender::animrig::delete_keyframe_fcurve_legacy(adt, fcu, cfra_unmap);
       }
       DEG_id_tag_update(&ob->adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
     }
@@ -1137,8 +1140,12 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   PointerRNA ptr = {nullptr};
   PropertyRNA *prop = nullptr;
   uiBut *but;
+
+  /* The depsgraph needs to be in an evaluated state to ensure the values we get from the
+   * properties are actually the values of the current frame. */
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
-      CTX_data_depsgraph_pointer(C), BKE_scene_frame_get(scene));
+      depsgraph, BKE_scene_frame_get(scene));
   bool changed = false;
   int index;
   const bool all = RNA_boolean_get(op->ptr, "all");
