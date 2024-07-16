@@ -1289,6 +1289,21 @@ def extension_draw_item(
     row_right.alignment = 'RIGHT'
     row_right.separator()
 
+    # BFA - Moved Set and Clear Theme Operator to Top Level - Start
+    match item.type:
+            case "theme":
+                if is_installed:
+                    props = row_right.operator(
+                        "extensions.package_theme_disable" if is_enabled else "extensions.package_theme_enable",
+                        text="Clear Theme" if is_enabled else "Set Theme",
+                    )
+                    props.repo_index = repo_index
+                    props.pkg_id = pkg_id
+                    del props
+
+    row_right.separator()
+    # BFA - Moved Set and Clear Theme Operator to Top Level - End
+
     # NOTE: Keep space between any buttons and this menu to prevent stray clicks accidentally running install.
     # The separator is around together with the align to give some space while keeping the button and the menu still close-by.
     # Used `extension_path` so the menu can access "this" extension.
