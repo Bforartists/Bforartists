@@ -277,14 +277,6 @@ float3 SCULPT_vertex_limit_surface_get(const SculptSession &ss, PBVHVertRef vert
   return {};
 }
 
-float3 SCULPT_vertex_persistent_normal_get(const SculptSession &ss, PBVHVertRef vertex)
-{
-  if (ss.attrs.persistent_no) {
-    return (const float *)SCULPT_vertex_attr_get(vertex, ss.attrs.persistent_no);
-  }
-  return SCULPT_vertex_normal_get(ss, vertex);
-}
-
 float SCULPT_mask_get_at_grids_vert_index(const SubdivCCG &subdiv_ccg,
                                           const CCGKey &key,
                                           const int vert_index)
@@ -3053,41 +3045,6 @@ bool node_in_cylinder(const DistRayAABB_Precalc &ray_dist_precalc,
   return dist_sq < radius_sq || true;
 }
 
-}  // namespace blender::ed::sculpt_paint
-
-void SCULPT_clip(const Sculpt &sd, const SculptSession &ss, float co[3], const float val[3])
-{
-  for (int i = 0; i < 3; i++) {
-    if (sd.flags & (SCULPT_LOCK_X << i)) {
-      continue;
-    }
-
-    bool do_clip = false;
-    float co_clip[3];
-    if (ss.cache && (ss.cache->flag & (CLIP_X << i))) {
-      /* Take possible mirror object into account. */
-      mul_v3_m4v3(co_clip, ss.cache->clip_mirror_mtx.ptr(), co);
-
-      if (fabsf(co_clip[i]) <= ss.cache->clip_tolerance[i]) {
-        co_clip[i] = 0.0f;
-        float imtx[4][4];
-        invert_m4_m4(imtx, ss.cache->clip_mirror_mtx.ptr());
-        mul_m4_v3(imtx, co_clip);
-        do_clip = true;
-      }
-    }
-
-    if (do_clip) {
-      co[i] = co_clip[i];
-    }
-    else {
-      co[i] = val[i];
-    }
-  }
-}
-
-namespace blender::ed::sculpt_paint {
-
 static Vector<PBVHNode *> sculpt_pbvh_gather_cursor_update(Object &ob, bool use_original)
 {
   SculptSession &ss = *ob.sculpt;
@@ -3614,20 +3571,6 @@ void calc_brush_plane(
 
 }  // namespace blender::ed::sculpt_paint
 
-int SCULPT_plane_trim(const blender::ed::sculpt_paint::StrokeCache &cache,
-                      const Brush &brush,
-                      const float val[3])
-{
-  return (!(brush.flag & BRUSH_PLANE_TRIM) ||
-          (dot_v3v3(val, val) <= cache.radius_squared * cache.plane_trim_squared));
-}
-
-int SCULPT_plane_point_side(const float co[3], const float plane[4])
-{
-  float d = plane_point_side_v3(plane, co);
-  return d <= 0.0f;
-}
-
 float SCULPT_brush_plane_offset_get(const Sculpt &sd, const SculptSession &ss)
 {
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
@@ -3976,7 +3919,7 @@ static void do_brush_action(const Scene &scene,
       do_thumb_brush(sd, ob, nodes);
       break;
     case SCULPT_TOOL_LAYER:
-      SCULPT_do_layer_brush(sd, ob, nodes);
+      do_layer_brush(sd, ob, nodes);
       break;
     case SCULPT_TOOL_FLATTEN:
       do_flatten_brush(sd, ob, nodes);
@@ -6035,7 +5978,6 @@ static void sculpt_stroke_update_step(bContext *C,
   if ((ELEM(brush.sculpt_tool,
             SCULPT_TOOL_BOUNDARY,
             SCULPT_TOOL_CLOTH,
-            SCULPT_TOOL_LAYER,
             SCULPT_TOOL_MASK,
             SCULPT_TOOL_PAINT,
             SCULPT_TOOL_POSE,
@@ -6724,10 +6666,11 @@ void gather_bmesh_normals(const Set<BMVert *, 0> &verts, const MutableSpan<float
   }
 }
 
+template<typename T>
 void gather_data_grids(const SubdivCCG &subdiv_ccg,
-                       const Span<float3> src,
+                       const Span<T> src,
                        const Span<int> grids,
-                       const MutableSpan<float3> node_data)
+                       const MutableSpan<T> node_data)
 {
   const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
   BLI_assert(grids.size() * key.grid_area == node_data.size());
@@ -6739,9 +6682,10 @@ void gather_data_grids(const SubdivCCG &subdiv_ccg,
   }
 }
 
-void gather_data_vert_bmesh(const Span<float3> src,
+template<typename T>
+void gather_data_vert_bmesh(const Span<T> src,
                             const Set<BMVert *, 0> &verts,
-                            const MutableSpan<float3> node_data)
+                            const MutableSpan<T> node_data)
 {
   BLI_assert(verts.size() == node_data.size());
 
@@ -6752,10 +6696,11 @@ void gather_data_vert_bmesh(const Span<float3> src,
   }
 }
 
+template<typename T>
 void scatter_data_grids(const SubdivCCG &subdiv_ccg,
-                        const Span<float3> node_data,
+                        const Span<T> node_data,
                         const Span<int> grids,
-                        const MutableSpan<float3> dst)
+                        const MutableSpan<T> dst)
 {
   const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
   BLI_assert(grids.size() * key.grid_area == node_data.size());
@@ -6767,9 +6712,10 @@ void scatter_data_grids(const SubdivCCG &subdiv_ccg,
   }
 }
 
-void scatter_data_vert_bmesh(const Span<float3> node_data,
+template<typename T>
+void scatter_data_vert_bmesh(const Span<T> node_data,
                              const Set<BMVert *, 0> &verts,
-                             const MutableSpan<float3> dst)
+                             const MutableSpan<T> dst)
 {
   BLI_assert(verts.size() == node_data.size());
 
@@ -6779,6 +6725,36 @@ void scatter_data_vert_bmesh(const Span<float3> node_data,
     i++;
   }
 }
+
+template void gather_data_grids<float>(const SubdivCCG &,
+                                       Span<float>,
+                                       Span<int>,
+                                       MutableSpan<float>);
+template void gather_data_grids<float3>(const SubdivCCG &,
+                                        Span<float3>,
+                                        Span<int>,
+                                        MutableSpan<float3>);
+template void gather_data_vert_bmesh<float>(Span<float>,
+                                            const Set<BMVert *, 0> &,
+                                            MutableSpan<float>);
+template void gather_data_vert_bmesh<float3>(Span<float3>,
+                                             const Set<BMVert *, 0> &,
+                                             MutableSpan<float3>);
+
+template void scatter_data_grids<float>(const SubdivCCG &,
+                                        Span<float>,
+                                        Span<int>,
+                                        MutableSpan<float>);
+template void scatter_data_grids<float3>(const SubdivCCG &,
+                                         Span<float3>,
+                                         Span<int>,
+                                         MutableSpan<float3>);
+template void scatter_data_vert_bmesh<float>(Span<float>,
+                                             const Set<BMVert *, 0> &,
+                                             MutableSpan<float>);
+template void scatter_data_vert_bmesh<float3>(Span<float3>,
+                                              const Set<BMVert *, 0> &,
+                                              MutableSpan<float3>);
 
 void fill_factor_from_hide(const Mesh &mesh,
                            const Span<int> verts,
