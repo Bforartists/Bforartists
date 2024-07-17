@@ -93,7 +93,7 @@ static std::string asset_root_path_for_save(const bUserAssetLibrary &user_librar
   BLI_assert(user_library.dirpath[0] != '\0');
 
   char libpath[FILE_MAX];
-  BLI_strncpy(libpath, user_library.dirpath, sizeof(libpath));
+  STRNCPY(libpath, user_library.dirpath);
   BLI_path_slash_native(libpath);
   BLI_path_normalize(libpath);
 
@@ -119,7 +119,7 @@ static std::string asset_blendfile_path_for_save(const bUserAssetLibrary &user_l
     return "";
   }
 
-  /* Make sure filename only contains valid characters for filesystem. */
+  /* Make sure filename only contains valid characters for file-system. */
   char base_name_filesafe[FILE_MAXFILE];
   BLI_strncpy(base_name_filesafe,
               base_name.data(),
@@ -257,7 +257,7 @@ static void asset_reload(Main &global_main, Library *lib, ReportList &reports)
   BKE_blendfile_library_relocate(lapp_context, &reports, lib, true);
   BKE_blendfile_link_append_context_free(lapp_context);
 
-  /* Clear temporary tag from reloaction. */
+  /* Clear temporary tag from relocation. */
   BKE_main_id_tag_all(&global_main, LIB_TAG_PRE_EXISTING, false);
 
   /* Recreate dependency graph to include new IDs. */
@@ -307,7 +307,7 @@ static AssetWeakReference asset_weak_reference_for_essentials(const short idcode
 
 std::optional<std::string> asset_edit_id_save_as(Main &global_main,
                                                  const ID &id,
-                                                 const StringRef name,
+                                                 const StringRefNull name,
                                                  const bUserAssetLibrary &user_library,
                                                  AssetWeakReference &new_weak_ref,
                                                  ReportList &reports)
@@ -324,7 +324,7 @@ std::optional<std::string> asset_edit_id_save_as(Main &global_main,
   }
 
   new_weak_ref = asset_weak_reference_for_user_library(
-      user_library, GS(id.name), id.name + 2, filepath.c_str());
+      user_library, GS(id.name), name.c_str(), filepath.c_str());
 
   BKE_reportf(&reports, RPT_INFO, "Saved \"%s\"", filepath.c_str());
 
