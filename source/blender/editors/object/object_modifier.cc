@@ -86,7 +86,7 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
-#include "RNA_prototypes.h"
+#include "RNA_prototypes.hh"
 
 #include "ED_armature.hh"
 #include "ED_mesh.hh"
@@ -629,6 +629,7 @@ bool modifier_copy_to_object(Main *bmain,
     return false;
   }
 
+  WM_main_add_notifier(NC_OBJECT | ND_MODIFIER, ob_dst);
   DEG_id_tag_update(&ob_dst->id, ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);
   DEG_relations_tag_update(bmain);
   return true;
