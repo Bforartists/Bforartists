@@ -679,7 +679,10 @@ static Drawing legacy_gpencil_frame_to_grease_pencil_drawing(const bGPDframe &gp
   int num_points = 0;
   bool has_bezier_stroke = false;
   LISTBASE_FOREACH (bGPDstroke *, gps, &gpf.strokes) {
-    if (gps->editcurve != nullptr) {
+    /* Check for a valid edit curve. This is only the case when the `editcurve` exists and wasn't
+     * tagged for a stroke update. This tag indicates that the stroke points have changed,
+     * invalidating the edit curve. */
+    if (gps->editcurve != nullptr && (gps->editcurve->flag & GP_CURVE_NEEDS_STROKE_UPDATE) == 0) {
       if (gps->editcurve->tot_curve_points == 0) {
         continue;
       }
@@ -766,7 +769,6 @@ static Drawing legacy_gpencil_frame_to_grease_pencil_drawing(const bGPDframe &gp
   /* Curve Attributes. */
   SpanAttributeWriter<bool> stroke_cyclic = attributes.lookup_or_add_for_write_span<bool>(
       "cyclic", AttrDomain::Curve);
-  /* TODO: This should be a `double` attribute. */
   SpanAttributeWriter<float> stroke_init_times = attributes.lookup_or_add_for_write_span<float>(
       "init_time", AttrDomain::Curve);
   SpanAttributeWriter<int8_t> stroke_start_caps = attributes.lookup_or_add_for_write_span<int8_t>(
@@ -795,8 +797,8 @@ static Drawing legacy_gpencil_frame_to_grease_pencil_drawing(const bGPDframe &gp
     }
 
     stroke_cyclic.span[stroke_i] = (gps->flag & GP_STROKE_CYCLIC) != 0;
-    /* TODO: This should be a `double` attribute. */
-    stroke_init_times.span[stroke_i] = float(gps->inittime);
+    /* Truncating time in ms to uint32 then we don't lose precision in lower bits. */
+    stroke_init_times.span[stroke_i] = float(uint32_t(gps->inittime * double(1e3))) / float(1e3);
     stroke_start_caps.span[stroke_i] = int8_t(gps->caps[0]);
     stroke_end_caps.span[stroke_i] = int8_t(gps->caps[1]);
     stroke_softness.span[stroke_i] = 1.0f - gps->hardness;

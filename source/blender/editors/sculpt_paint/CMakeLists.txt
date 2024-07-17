@@ -24,7 +24,7 @@ set(INC
   ../../render
   ../../windowmanager
   ../../../../intern/eigen
-  # RNA_prototypes.h
+  # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
 
@@ -50,6 +50,7 @@ set(SRC
   grease_pencil_draw_ops.cc
   grease_pencil_erase.cc
   grease_pencil_fill.cc
+  grease_pencil_interpolate.cc
   grease_pencil_paint.cc
   grease_pencil_sculpt_clone.cc
   grease_pencil_sculpt_common.cc
@@ -129,15 +130,18 @@ set(SRC
   brushes/draw_sharp.cc
   brushes/draw.cc
   brushes/elastic_deform.cc
+  brushes/enhance_details.cc
   brushes/fill.cc
   brushes/flatten.cc
   brushes/grab.cc
   brushes/inflate.cc
+  brushes/layer.cc
   brushes/mask.cc
   brushes/multiplane_scrape.cc
   brushes/multires_displacement_eraser.cc
   brushes/pinch.cc
   brushes/multires_displacement_smear.cc
+  brushes/relax.cc
   brushes/rotate.cc
   brushes/scrape.cc
   brushes/smooth.cc
@@ -180,7 +184,7 @@ if(WITH_GTESTS)
   )
   set(TEST_LIB
     ${LIB}
-    bf_rna  # RNA_prototypes.h
+    bf_rna  # RNA_prototypes.hh
   )
   blender_add_test_suite_lib(editor_sculpt_paint "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${TEST_LIB}")
 endif()
@@ -192,5 +196,5 @@ if(WITH_TBB AND MSVC_CLANG)
 endif()
 
 blender_add_lib(bf_editor_sculpt_paint "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
-# RNA_prototypes.h
+# RNA_prototypes.hh
 add_dependencies(bf_editor_sculpt_paint bf_rna)

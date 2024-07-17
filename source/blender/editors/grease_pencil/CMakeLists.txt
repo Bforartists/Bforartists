@@ -14,7 +14,7 @@ set(INC
   ../../../../extern/curve_fit_nd
   ../../geometry
   ../sculpt_paint
-  # RNA_prototypes.h
+  # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
 
@@ -49,6 +49,18 @@ set(LIB
   extern_curve_fit_nd
   extern_fmtlib
 )
+
+if(WITH_TBB)
+  add_definitions(-DWITH_TBB)
+
+  list(APPEND INC_SYS
+    ${TBB_INCLUDE_DIRS}
+  )
+
+  list(APPEND LIB
+    ${TBB_LIBRARIES}
+  )
+endif()
 
 blender_add_lib(bf_editor_grease_pencil "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 add_dependencies(bf_editor_curves bf_rna)
