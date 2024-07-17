@@ -55,27 +55,6 @@ void neighbor_position_average_mesh(const Span<float3> positions,
   }
 }
 
-static bool subdiv_coord_is_boundary(const OffsetIndices<int> faces,
-                                     const Span<int> corner_verts,
-                                     const BitSpan boundary_verts,
-                                     const SubdivCCG &subdiv_ccg,
-                                     const SubdivCCGCoord coord)
-{
-  int v1, v2;
-  const SubdivCCGAdjacencyType adjacency = BKE_subdiv_ccg_coarse_mesh_adjacency_info_get(
-      subdiv_ccg, coord, corner_verts, faces, v1, v2);
-  switch (adjacency) {
-    case SUBDIV_CCG_ADJACENT_VERTEX:
-      return boundary_verts[v1];
-    case SUBDIV_CCG_ADJACENT_EDGE:
-      return boundary_verts[v1] && boundary_verts[v2];
-    case SUBDIV_CCG_ADJACENT_NONE:
-      return false;
-  }
-  BLI_assert_unreachable();
-  return false;
-}
-
 static float3 average_positions(const CCGKey &key,
                                 const Span<CCGElem *> elems,
                                 const Span<SubdivCCGCoord> coords)
@@ -86,6 +65,40 @@ static float3 average_positions(const CCGKey &key,
     result += CCG_grid_elem_co(key, elems[coord.grid_index], coord.x, coord.y) * factor;
   }
   return result;
+}
+
+void neighbor_position_average_grids(const SubdivCCG &subdiv_ccg,
+                                     const Span<int> grids,
+                                     const MutableSpan<float3> new_positions)
+{
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const Span<CCGElem *> elems = subdiv_ccg.grids;
+
+  BLI_assert(grids.size() * key.grid_area == new_positions.size());
+
+  for (const int i : grids.index_range()) {
+    const int grid = grids[i];
+    const int node_verts_start = i * key.grid_area;
+
+    /* TODO: This loop could be optimized in the future by skipping unnecessary logic for
+     * non-boundary grid vertices. */
+    for (const int y : IndexRange(key.grid_size)) {
+      for (const int x : IndexRange(key.grid_size)) {
+        const int offset = CCG_grid_xy_to_index(key.grid_size, x, y);
+        const int node_vert_index = node_verts_start + offset;
+
+        SubdivCCGCoord coord{};
+        coord.grid_index = grid;
+        coord.x = x;
+        coord.y = y;
+
+        SubdivCCGNeighbors neighbors;
+        BKE_subdiv_ccg_neighbor_coords_get(subdiv_ccg, coord, false, neighbors);
+
+        new_positions[node_vert_index] = average_positions(key, elems, neighbors.coords);
+      }
+    }
+  }
 }
 
 void neighbor_position_average_interior_grids(const OffsetIndices<int> faces,
@@ -120,7 +133,9 @@ void neighbor_position_average_interior_grids(const OffsetIndices<int> faces,
         SubdivCCGNeighbors neighbors;
         BKE_subdiv_ccg_neighbor_coords_get(subdiv_ccg, coord, false, neighbors);
 
-        if (subdiv_coord_is_boundary(faces, corner_verts, boundary_verts, subdiv_ccg, coord)) {
+        if (BKE_subdiv_ccg_coord_is_mesh_boundary(
+                faces, corner_verts, boundary_verts, subdiv_ccg, coord))
+        {
           if (neighbors.coords.size() == 2) {
             /* Do not include neighbors of corner vertices. */
             neighbors.coords.clear();
@@ -128,7 +143,7 @@ void neighbor_position_average_interior_grids(const OffsetIndices<int> faces,
           else {
             /* Only include other boundary vertices as neighbors of boundary vertices. */
             neighbors.coords.remove_if([&](const SubdivCCGCoord coord) {
-              return !subdiv_coord_is_boundary(
+              return !BKE_subdiv_ccg_coord_is_mesh_boundary(
                   faces, corner_verts, boundary_verts, subdiv_ccg, coord);
             });
           }
@@ -153,6 +168,21 @@ static float3 average_positions(const Span<const BMVert *> verts)
     result += float3(vert->co) * factor;
   }
   return result;
+}
+
+void neighbor_position_average_bmesh(const Set<BMVert *, 0> &verts,
+                                     const MutableSpan<float3> new_positions)
+{
+  BLI_assert(verts.size() == new_positions.size());
+  Vector<BMVert *, 64> neighbor_data;
+
+  int i = 0;
+  for (BMVert *vert : verts) {
+    neighbor_data.clear();
+    const Span<BMVert *> neighbors = vert_neighbors_get_bmesh(*vert, neighbor_data);
+    new_positions[i] = average_positions(neighbors);
+    i++;
+  }
 }
 
 void neighbor_position_average_interior_bmesh(const Set<BMVert *, 0> &verts,
@@ -345,85 +375,13 @@ float4 neighbor_color_average(SculptSession &ss,
       faces, corner_verts, vert_to_face_map, color_attribute, color_domain, vert);
 }
 
-static void do_enhance_details_brush_task(Object &ob,
-                                          const Sculpt &sd,
-                                          const Brush &brush,
-                                          PBVHNode *node)
-{
-  SculptSession &ss = *ob.sculpt;
-
-  PBVHVertexIter vd;
-
-  float bstrength = ss.cache->bstrength;
-  CLAMP(bstrength, -1.0f, 1.0f);
-
-  SculptBrushTest test;
-  SculptBrushTestFn sculpt_brush_test_sq_fn = SCULPT_brush_test_init_with_falloff_shape(
-      ss, test, brush.falloff_shape);
-
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
-  auto_mask::NodeData automask_data = auto_mask::node_begin(
-      ob, ss.cache->automasking.get(), *node);
-
-  BKE_pbvh_vertex_iter_begin (*ss.pbvh, node, vd, PBVH_ITER_UNIQUE) {
-    if (!sculpt_brush_test_sq_fn(test, vd.co)) {
-      continue;
-    }
-
-    auto_mask::node_update(automask_data, vd);
-
-    const float fade = bstrength * SCULPT_brush_strength_factor(ss,
-                                                                brush,
-                                                                vd.co,
-                                                                sqrtf(test.dist),
-                                                                vd.no,
-                                                                vd.fno,
-                                                                vd.mask,
-                                                                vd.vertex,
-                                                                thread_id,
-                                                                &automask_data);
-
-    float disp[3];
-    madd_v3_v3v3fl(disp, vd.co, ss.cache->detail_directions[vd.index], fade);
-    SCULPT_clip(sd, ss, vd.co, disp);
-  }
-  BKE_pbvh_vertex_iter_end;
-}
-
-void enhance_details_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
-{
-  SculptSession &ss = *ob.sculpt;
-  const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
-
-  SCULPT_vertex_random_access_ensure(ss);
-  SCULPT_boundary_info_ensure(ob);
-
-  if (SCULPT_stroke_is_first_brush_step(*ss.cache)) {
-    const int totvert = SCULPT_vertex_count_get(ss);
-    ss.cache->detail_directions = static_cast<float(*)[3]>(
-        MEM_malloc_arrayN(totvert, sizeof(float[3]), "details directions"));
-
-    for (int i = 0; i < totvert; i++) {
-      PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
-      const float3 avg = neighbor_coords_average(ss, vertex);
-      sub_v3_v3v3(ss.cache->detail_directions[i], avg, SCULPT_vertex_co_get(ss, vertex));
-    }
-  }
-
-  threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
-    for (const int i : range) {
-      do_enhance_details_brush_task(ob, sd, brush, nodes[i]);
-    }
-  });
-}
-
 /* HC Smooth Algorithm. */
 /* From: Improved Laplacian Smoothing of Noisy Surface Meshes */
 
 void surface_smooth_laplacian_step(SculptSession &ss,
                                    float *disp,
                                    const float co[3],
-                                   float (*laplacian_disp)[3],
+                                   MutableSpan<float3> laplacian_disp,
                                    const PBVHVertRef vertex,
                                    const float origco[3],
                                    const float alpha)
@@ -443,7 +401,7 @@ void surface_smooth_laplacian_step(SculptSession &ss,
 
 void surface_smooth_displace_step(SculptSession &ss,
                                   float *co,
-                                  float (*laplacian_disp)[3],
+                                  MutableSpan<float3> laplacian_disp,
                                   const PBVHVertRef vertex,
                                   const float beta,
                                   const float fade)
