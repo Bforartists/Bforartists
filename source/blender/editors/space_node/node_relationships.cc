@@ -27,7 +27,7 @@
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
-#include "RNA_prototypes.h"
+#include "RNA_prototypes.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -1087,6 +1087,9 @@ static void displace_links(bNodeTree *ntree, const bNode *node, bNodeLink *inser
 static void node_displace_existing_links(bNodeLinkDrag &nldrag, bNodeTree &ntree)
 {
   bNodeLink &link = nldrag.links.first();
+  if (!link.fromsock || !link.tosock) {
+    return;
+  }
   if (nldrag.start_socket->is_input()) {
     displace_links(&ntree, link.fromnode, &link);
   }
