@@ -740,12 +740,11 @@ def addons_panel_draw(panel, context):
     layout = panel.layout
 
     ###### BFA - Move Install and Refresh to top level - start ######
-    row = layout.split(factor=0.27)
+    row = layout.split(factor=0.37)
     row_a = row.row()
     row_a.prop(wm, "addon_search", text="", icon='VIEWZOOM', placeholder="Search Add-ons")
 
     row_b = row.row(align=True)
-    row_b.operator("extensions.repo_refresh_all", text="Refresh", icon='FILE_REFRESH')
     row_b.operator("extensions.package_install_files", text="Install from Disk", icon='IMPORT') #BFA - name changed
 
     row_b.separator()
@@ -753,6 +752,7 @@ def addons_panel_draw(panel, context):
 
     row_b.separator()
     row_b.prop(view, "show_addons_enabled_only", text="Enabled Only", icon='NONE', toggle=False)
+    row_b.operator("extensions.repo_refresh_all", text="", icon='FILE_REFRESH')
 
     #rowsub.menu("USERPREF_MT_addons_settings", text="", icon='DOWNARROW_HLT')
     del row, row_a, row_b,
@@ -1252,7 +1252,6 @@ def extension_draw_item(
         sub.label(text=item.name, icon='ERROR', translate=False)
     else:
         sub.label(text=item.name, icon=icon, translate=False) # BFA - Add visual indicators to listings
-
     del sub
 
     # Add a top-level row so `row_right` can have a grayed out button/label
@@ -1293,9 +1292,10 @@ def extension_draw_item(
     match item.type:
             case "theme":
                 if is_installed:
+                    icon = 'CANCEL' if is_enabled else 'CHECKMARK' # BFA - Add visual indicators to theme buttonss
                     props = row_right.operator(
                         "extensions.package_theme_disable" if is_enabled else "extensions.package_theme_enable",
-                        text="Clear Theme" if is_enabled else "Set Theme",
+                        text="Clear Theme" if is_enabled else "Set Theme", icon=icon #BFA - added icon
                     )
                     props.repo_index = repo_index
                     props.pkg_id = pkg_id
