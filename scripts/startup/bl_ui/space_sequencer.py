@@ -2583,9 +2583,6 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             layout.use_property_split = False
             col = layout.column()
 
-            split = col.split(factor=0.4)
-            split.label(text="")
-            split.prop(sound, "use_mono")
             if overlay_settings.waveform_display_type == 'DEFAULT_WAVEFORMS':
                 col.prop(strip, "show_waveform")
 
