@@ -292,10 +292,7 @@ def register():
 
     bpy.app.timers.register(register_addons, first_interval=0.1)
 
-    if "bl_pkg" in bpy.context.preferences.addons:
-        bpy.types.USERPREF_MT_extensions_settings.append(menu_func)
-    else:
-        pass
+    bpy.types.USERPREF_MT_extensions_settings.append(menu_func)
 
 def unregister():
     for cls in reversed(classes):
