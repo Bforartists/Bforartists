@@ -83,6 +83,8 @@ version_path = Path(user_path, major_minor)
 # Define the addons  sub-folder path
 destination_addon_folder = version_path / 'scripts' / 'addons'
 
+user_default = version_path / 'extensions' / 'user_default'
+
 legacy_addons_installed = False
 # ---------
 
@@ -222,6 +224,10 @@ def register_addons():
     if not destination_addon_folder.exists():
         destination_addon_folder.mkdir(parents=True)
 
+    # Ensure the user_default extensions sub-folder exists
+    if not user_default.exists():
+        user_default.mkdir(parents=True)
+
     # Check if extensions is on on first load, if not, bypass
     if prefs.extensions.use_online_access_handled == True :
         # If addon is enabled and extensions is on, do nothing
@@ -255,14 +261,20 @@ def register_addons():
         # Refresh to see all
         bpy.ops.preferences.addon_refresh()
 
+        bpy.data.window_managers["WinMan"].addon_search = ""
+
         legacy_addons_installed = True
+
+        # Reactivate the console by resetting stdout and stderr to default
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
         pass
 
     return
 
 def menu_func(self, context):
     self.layout.separator()
-    if not legacy_addons_installed:
+    if legacy_addons_installed:
         self.layout.operator("bfa.install_legacy_addons", text="Install All Legacy Addons", icon='IMPORT')
     else:
         self.layout.operator("bfa.remove_legacy_addons", text="Remove All Legacy Addons", icon='CANCEL')
@@ -280,7 +292,10 @@ def register():
 
     bpy.app.timers.register(register_addons, first_interval=0.1)
 
-    bpy.types.USERPREF_MT_extensions_settings.append(menu_func)
+    if "bl_pkg" in bpy.context.preferences.addons:
+        bpy.types.USERPREF_MT_extensions_settings.append(menu_func)
+    else:
+        pass
 
 def unregister():
     for cls in reversed(classes):
