@@ -3675,8 +3675,8 @@ class EXTENSIONS_OT_userpref_allow_online(Operator):
     def execute(self, context):
         context.preferences.system.use_online_access = True
         
-        #bpy.ops.extensions.activate_downloaded_extensions('INVOKE_DEFAULT') #BFA WIP - when you enable, copy pre-downloaded extensions
-        #bpy.ops.preferences.addon_refresh() #BFA WIP - force refresh
+        bpy.ops.extensions.activate_downloaded_extensions('INVOKE_DEFAULT') #BFA WIP - when you enable, copy pre-downloaded extensions
+        bpy.ops.preferences.addon_refresh() #BFA WIP - force refresh
 
         return {'FINISHED'}
 
