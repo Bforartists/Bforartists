@@ -83,6 +83,7 @@ version_path = Path(user_path, major_minor)
 # Define the addons  sub-folder path
 destination_addon_folder = version_path / 'scripts' / 'addons'
 
+legacy_addons_installed = False
 # ---------
 
 
@@ -160,6 +161,8 @@ class DEFAULTADDON_OT_installlegacy(Operator):
         # Refresh to see all
         bpy.ops.preferences.addon_refresh()
 
+        legacy_addons_installed = True
+
         return {'FINISHED'}
 
 
@@ -199,6 +202,11 @@ class DEFAULTADDON_OT_removelegacy(Operator):
                     shutil.rmtree(dest_dir)
         # Refresh to see all
         bpy.ops.preferences.addon_refresh()
+
+        # Runs a copy of the extensions equivalent
+        bpy.ops.extensions.activate_downloaded_extensions
+
+        legacy_addons_installed = False
 
         return {'FINISHED'}
 
@@ -246,10 +254,18 @@ def register_addons():
 
         # Refresh to see all
         bpy.ops.preferences.addon_refresh()
+
+        legacy_addons_installed = True
         pass
 
     return
 
+def menu_func(self, context):
+    self.layout.separator()
+    if not legacy_addons_installed:
+        self.layout.operator("bfa.install_legacy_addons", text="Install All Legacy Addons", icon='IMPORT')
+    else:
+        self.layout.operator("bfa.remove_legacy_addons", text="Remove All Legacy Addons", icon='CANCEL')
 
 classes = (
     DEFAULTADDON_APT_preferences,
@@ -264,6 +280,8 @@ def register():
 
     bpy.app.timers.register(register_addons, first_interval=0.1)
 
+    bpy.types.USERPREF_MT_extensions_settings.append(menu_func)
+
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
@@ -272,3 +290,5 @@ def unregister():
         bpy.app.timers.unregister(register_addons)
     except Exception:
         pass
+
+    bpy.types.USERPREF_MT_extensions_settings.remove(menu_func)
