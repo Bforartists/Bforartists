@@ -3675,6 +3675,9 @@ class EXTENSIONS_OT_userpref_allow_online(Operator):
     def execute(self, context):
         context.preferences.system.use_online_access = True
         
+        bpy.ops.extensions.repo_sync_all(use_active_only=False) # BFA - force refresh of extensions
+        print("NOTE: Loading Extensions") # BFA - notice of refresh of extensions
+
         return {'FINISHED'}
 
 
