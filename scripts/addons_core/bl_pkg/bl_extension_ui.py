@@ -1762,7 +1762,7 @@ class USERPREF_MT_extensions_settings(Menu):
 
         if "bfa_default_addons" in prefs.addons:
             extensions_installed = bpy.context.preferences.addons["bfa_default_addons"].preferences.extensions_installed
-            if extensions_installed:
+            if extensions_installed and context.preferences.system.use_online_access:
                 layout.separator()
                 self.layout.operator("bfa.install_downloaded_extensions", text="Install Pre-downloaded Extensions", icon='PLUGIN')
             else:
