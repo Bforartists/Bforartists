@@ -2,20 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-"""
-bl_info = {
-    "name": "Curveaceous Galore!",
-    "author": "Jimmy Hazevoet, testscreenings",
-    "version": (0, 2, 3),
-    "blender": (2, 80),
-    "location": "View3D > Add > Curve",
-    "description": "Adds many different types of Curves",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Add Curve",
-}
-"""
-
 import bpy
 from bpy_extras import object_utils
 from bpy.props import (

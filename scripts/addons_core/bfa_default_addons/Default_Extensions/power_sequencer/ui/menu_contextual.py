@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
+from .. import __package__ as base_package
 from ..operators.utils.global_settings import SequenceTypes
 
 
 class POWER_SEQUENCER_MT_contextual(bpy.types.Menu):
-    bl_label = "Power Sequencer"
+    bl_label = base_package
     # bl_idname = "SEQUENCER_MT_power_sequencer_menu"
 
     def draw(self, context):
