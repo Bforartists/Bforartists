@@ -4,19 +4,6 @@
 
 # DevBo Task: https://developer.blender.org/T37377
 
-bl_info = {
-    "name": "Bevel/Taper Curve",
-    "author": "Cmomoney",
-    "version": (1, 2, 1),
-    "blender": (2, 80, 0),
-    "location": "View3D > Object > Bevel/Taper",
-    "description": "Adds bevel and/or taper curve to active curve",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Curve",
-}
-
-
 import bpy
 from bpy.types import (
         Operator,

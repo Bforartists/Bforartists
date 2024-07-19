@@ -2,18 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Export Autocad DXF Format (.dxf)",
-    "author": "Remigiusz Fiedler (AKA migius), Vaclav Klecanda",
-    "version": (2, 2, 3),
-    "blender": (2, 80, 0),
-    "location": "File > Export > AutoCAD DXF",
-    "description": "The script exports Blender geometry to DXF format r12 version.",
-    "warning": "Under construction! Visit Wiki for details.",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_dxf.html",
-    "category": "Import-Export",
-}
-
 if "bpy" in locals():
     from importlib import reload
     reload(operator)

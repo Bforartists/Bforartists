@@ -2,21 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Simple Curve",
-    "author": "Vladimir Spivak (cwolf3d)",
-    "version": (1, 6, 1),
-    "blender": (2, 80, 0),
-    "location": "View3D > Add > Curve",
-    "description": "Adds Simple Curve",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Add Curve",
-}
-
-
-# ------------------------------------------------------------
-
 import bpy
 from bpy_extras import object_utils
 from bpy.types import (
