@@ -1994,10 +1994,9 @@ def extensions_panel_draw(panel, context):
 
     layout = panel.layout
 
-    # BFA - Move Install and Refresh to top level - start
-    row = layout.split(factor=0.57) # BFA - made wider
-    # BFA - Move Install and Refresh to top level - end
     ## BFA - change layout of header - START ##
+    row = layout.split(factor=0.57)
+
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM', placeholder="Search Extensions")
 
@@ -2009,13 +2008,13 @@ def extensions_panel_draw(panel, context):
     row_b.menu("USERPREF_MT_extensions_settings", text="", icon='DOWNARROW_HLT')
 
     layout = panel.layout
-    row = layout.split(factor=0.57) # BFA - made wider
+    row = layout.split(factor=0.57)
 
     row_a = row.row()
-    row_a.prop(wm, "extension_type", text="text", expand=True) # BFA - we use the expanded instead, moved to second row
+    row_a.prop(wm, "extension_type", text="text", expand=True)
 
     row_b = row.row()
-    # BFA - add tabs here?
+    # BFA - quick category tabs here?
     ## BFA - change layout of header - END ##
     del row, row_a, row_b
 
