@@ -2,20 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Export Camera Animation",
-    "author": "Campbell Barton",
-    "version": (0, 1),
-    "blender": (2, 80, 0),
-    "location": "File > Export > Cameras & Markers (.py)",
-    "description": "Export Cameras & Markers (.py)",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/anim_camera.html",
-    "support": 'OFFICIAL',
-    "category": "Import-Export",
-}
-
-
 import bpy
 
 

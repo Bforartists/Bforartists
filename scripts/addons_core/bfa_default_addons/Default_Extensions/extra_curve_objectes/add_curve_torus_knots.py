@@ -2,20 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-"""
-bl_info = {
-    "name": "Torus Knots",
-    "author": "Marius Giurgi (DolphinDream), testscreenings",
-    "version": (0, 3),
-    "blender": (2, 80, 0),
-    "location": "View3D > Add > Curve",
-    "description": "Adds many types of (torus) knots",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Add Curve",
-}
-"""
-
 import bpy
 from bpy.props import (
         BoolProperty,

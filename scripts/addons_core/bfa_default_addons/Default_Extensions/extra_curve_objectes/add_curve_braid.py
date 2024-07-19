@@ -2,20 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-"""
-bl_info = {
-    "name": "New Braid",
-    "author": "Jared Forsyth <github.com/jaredly>",
-    "version": (1, 0, 3),
-    "blender": (2, 80, 0),
-    "location": "View3D > Add > Mesh > New Braid",
-    "description": "Adds a new Braid",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Add Mesh",
-}
-"""
-
 import bpy
 from bpy.props import (
         FloatProperty,

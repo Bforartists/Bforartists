@@ -9,19 +9,6 @@
 # Sjaak-de-Draak, Phil Cote, cotejrp1, xyz presets by elfnor, revolt_randy, #
 # Vladimir Spivak (cwolf3d), #
 
-
-bl_info = {
-    "name": "Extra Objects",
-    "author": "Multiple Authors",
-    "version": (0, 3, 11),
-    "blender": (2, 80, 0),
-    "location": "View3D > Add > Mesh",
-    "description": "Add extra mesh object types",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_mesh/mesh_extra_objects.html",
-    "category": "Add Mesh",
-}
-
 # Note: Blocks has to be loaded before the WallFactory or the script
 #       will not work properly after (F8) reload
 
@@ -76,6 +63,7 @@ else:
 
 import bpy
 from bpy.types import Menu
+
 
 class VIEW3D_MT_mesh_vert_add(Menu):
     # Define the "Single Vert" menu
@@ -202,26 +190,21 @@ class VIEW3D_MT_mesh_pipe_joints_add(Menu):
 
 # Register all operators and panels
 
+
 # Define "Extras" menu
 def menu_func(self, context):
     layout = self.layout
     layout.operator_context = 'INVOKE_REGION_WIN'
 
     layout.separator()
-    layout.menu("VIEW3D_MT_mesh_vert_add",
-                text="Single Vert", icon="DECORATE")
-    oper = layout.operator("mesh.primitive_round_cube_add",
-                    text="Round Cube", icon="SPHERE")
+    layout.menu("VIEW3D_MT_mesh_vert_add", text="Single Vert", icon='DECORATE')
+    oper = layout.operator("mesh.primitive_round_cube_add", text="Round Cube", icon='SPHERE')
     oper.change = False
-    layout.menu("VIEW3D_MT_mesh_torus_add",
-                text="Torus Objects", icon="MESH_TORUS")
+    layout.menu("VIEW3D_MT_mesh_torus_add", text="Torus Objects", icon='MESH_TORUS')
     layout.separator()
-    layout.menu("VIEW3D_MT_mesh_math_add",
-                text="Math Function", icon="PACKAGE")
-    layout.menu("VIEW3D_MT_mesh_gears_add",
-                text="Gears", icon="PREFERENCES")
-    layout.menu("VIEW3D_MT_mesh_pipe_joints_add",
-                text="Pipe Joints", icon="EMPTY_DATA")
+    layout.menu("VIEW3D_MT_mesh_math_add", text="Math Function", icon='PACKAGE')
+    layout.menu("VIEW3D_MT_mesh_gears_add", text="Gears", icon='PREFERENCES')
+    layout.menu("VIEW3D_MT_mesh_pipe_joints_add", text="Pipe Joints", icon='EMPTY_DATA')
     layout.separator()
     layout.menu("VIEW3D_MT_mesh_diamonds_add", text="Diamonds")
     layout.menu("VIEW3D_MT_mesh_extras_add",
@@ -230,13 +213,14 @@ def menu_func(self, context):
     layout.operator("object.parent_to_empty",
                     text="Parent To Empty")
 
+
 def Extras_contex_menu(self, context):
     bl_label = 'Change'
 
     obj = context.object
     layout = self.layout
 
-    if obj == None or obj.data is None:
+    if obj is None or obj.data is None:
         return
 
     if 'Gear' in obj.data.keys():
@@ -372,6 +356,7 @@ def Extras_contex_menu(self, context):
             setattr(props, prm, obj.data[prm])
         layout.separator()
 
+
 # Register
 classes = [
     VIEW3D_MT_mesh_vert_add,
@@ -414,7 +399,10 @@ classes = [
     add_mesh_triangles.MakeTriangle,
 ]
 
+
 def register():
+    import os
+
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
@@ -425,8 +413,14 @@ def register():
     bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(Extras_contex_menu)
 
+    # Part of 4.3 may be back-ported to 4.2.
+    if register_preset_path := getattr(bpy.utils, "register_preset_path", None):
+        register_preset_path(os.path.join(os.path.dirname(__file__)))
+
 
 def unregister():
+    import os
+
     # Remove "Extras" menu from the "Add Mesh" menu and context menu.
     bpy.types.VIEW3D_MT_object_context_menu.remove(Extras_contex_menu)
     bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
@@ -436,6 +430,11 @@ def unregister():
         unregister_class(cls)
 
     add_mesh_rocks.unregister()
+
+    # Part of 4.3 may be back-ported to 4.2.
+    if unregister_preset_path := getattr(bpy.utils, "unregister_preset_path", None):
+        unregister_preset_path(os.path.join(os.path.dirname(__file__)))
+
 
 if __name__ == "__main__":
     register()
