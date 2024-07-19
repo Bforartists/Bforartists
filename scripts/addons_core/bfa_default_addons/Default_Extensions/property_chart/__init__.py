@@ -2,19 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Property Chart",
-    "author": "Campbell Barton (ideasman42)",
-    "version": (0, 1, 1),
-    "blender": (2, 80, 0),
-    "location": "View3D > Sidebar > Item Tab",
-    "description": ("Edit arbitrary selected properties for "
-                    "objects/sequence strips of the same type"),
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/system/property_chart.html",
-    "category": "System",
-}
-
 """List properties of selected objects"""
 
 import bpy
@@ -179,7 +166,7 @@ class View3DEditProps(Panel):
 
     _PROP_STORAGE_ID = "view3d_edit_props"
     _PROP_STORAGE_ID_DESCR = "Properties of objects in the context"
-    _PROP_STORAGE_DEFAULT = "data data.use_auto_smooth"
+    _PROP_STORAGE_DEFAULT = "data show_wire"
 
     # _property_chart_draw needs these
     context_data_path_active = "active_object"

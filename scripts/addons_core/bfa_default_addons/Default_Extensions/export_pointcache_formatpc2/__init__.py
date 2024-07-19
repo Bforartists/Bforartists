@@ -2,18 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Export Pointcache Format(.pc2)",
-    "author": "Florian Meyer (tstscr)",
-    "version": (1, 1, 2),
-    "blender": (2, 80, 0),
-    "location": "File > Export > Pointcache (.pc2)",
-    "description": "Export mesh Pointcache data (.pc2)",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/pc2.html",
-    "category": "Import-Export",
-}
-
 """
 Related links:
 https://developer.blender.org/T34456
