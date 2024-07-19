@@ -40,7 +40,7 @@ from bpy.types import Operator
 from bpy.props import BoolProperty
 
 bl_info = {
-    "name": "Built-in Legacy Addons ",
+    "name": "Built-in Legacy Addons and Extensions",
     "author": "Draise (@trinumedia)",
     "version": (1, 0, 1),
     "blender": (4, 2, 0),
@@ -88,6 +88,7 @@ destination_addon_folder = version_path / 'scripts' / 'addons'
 user_default = version_path / 'extensions' / 'user_default'
 
 legacy_addons_installed = False
+extensions_installed = False
 # ---------
 
 # --------- INTERFACE START -------
@@ -108,6 +109,7 @@ class DEFAULTADDON_APT_preferences(AddonPreferences):
 
         box.operator("bfa.install_legacy_addons", text="Install Built-In Legacy Addo-ns", icon='IMPORT')
         box.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Add-ons", icon='CANCEL')
+        box.operator("bfa.install_downloaded_extensions", text="Install Pre-downloaded Extensions Equivalents", icon='PLUGIN')
 
         layout.separator()
 
@@ -115,7 +117,7 @@ class DEFAULTADDON_APT_preferences(AddonPreferences):
         box.label(
             text="When enabled, this installs the Built-in Legacy Add-ons to the user preferences.", icon='INFO')
         box.label(
-            text="When you opt-in to use online Extensions, you should remove Built-in Legacy Add-ons.")
+            text="When you opt-in to use Online Access, you should remove Built-in Legacy Add-ons.")
         box.label(
             text="Built-in Legacy Add-ons can be replaced with Extensions that can update from the internet.")
 
@@ -171,7 +173,7 @@ class DEFAULTADDON_OT_installlegacy(Operator):
 
         return {'FINISHED'}
 
-# -------------------------- Remove the legacy addons
+
 class DEFAULTADDON_OT_removelegacy(Operator):
     """Removes all legacy addons that are not core addons"""
     bl_idname = "bfa.remove_legacy_addons"
@@ -240,14 +242,12 @@ class DEFAULTADDON_OT_removelegacy(Operator):
         return {'FINISHED'}
 
 
-
 class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
     """Copy and prepare pre-downloaded Extensions Addons when opt-in to be online is enabled"""
     bl_idname = "bfa.install_downloaded_extensions"
     bl_label = "Replace Legacy with Extension"
 
     def execute(self, context):
-        source_ext = "Default_Extensions"
 
         # ----------
         # Variables
@@ -271,7 +271,8 @@ class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
         version_path = Path(user_path, major_minor)
 
         # Get the source files
-        source_ext_folder = os.path.join(path, source_ext)
+        source_ext = "Default_Extensions"
+        source_ext_folder = os.path.join(current_script_path, source_ext)
 
         # Define the Extensions sub-folder path
         destination_ext_folder = version_path / 'extensions' / 'blender_org'
@@ -292,6 +293,8 @@ class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
                     shutil.copytree(s, d, False, None)
             else:
                 shutil.copy2(s, d)  # copies also metadata
+
+        bpy.types.AddonPreferences.extensions_installed = True
 
         return {'FINISHED'}
 
@@ -360,11 +363,13 @@ def register():
     bpy.app.timers.register(register_addons, first_interval=0.1)
 
     bpy.types.AddonPreferences.legacy_addons_installed = bpy.props.BoolProperty(name="legacy_addons_installed", default=False)
+    bpy.types.AddonPreferences.extensions_installed = bpy.props.BoolProperty(name="extensions_installed", default=False)
 
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
+    del bpy.types.AddonPreferences.extensions_installed
     del bpy.types.AddonPreferences.legacy_addons_installed
 
     try:
