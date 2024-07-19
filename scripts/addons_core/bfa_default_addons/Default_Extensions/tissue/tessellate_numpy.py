@@ -43,6 +43,7 @@ import os, mathutils
 from pathlib import Path
 
 from . import config
+from .weight_reaction_diffusion import reaction_diffusion_remove_handler, reaction_diffusion_scene
 
 def allowed_objects():
     return ('MESH', 'CURVE', 'SURFACE', 'FONT', 'META')

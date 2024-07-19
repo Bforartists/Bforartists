@@ -2,20 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-"""
-bl_info = {
-    "name": "Spirals",
-    "description": "Make spirals",
-    "author": "Alejandro Omar Chocano Vasquez",
-    "version": (1, 2, 2),
-    "blender": (2, 80, 0),
-    "location": "View3D > Add > Curve",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Add Curve",
-}
-"""
-
 import bpy
 import time
 from bpy.props import (
@@ -37,7 +23,6 @@ from bpy.types import (
         Operator,
         Menu,
         )
-from bl_operators.presets import AddPresetBase
 
 
 # make normal spiral
@@ -545,49 +530,9 @@ class CURVE_OT_spirals(Operator, object_utils.AddObjectHelper):
         return {'FINISHED'}
 
 
-class CURVE_EXTRAS_OT_spirals_presets(AddPresetBase, Operator):
-    bl_idname = "curve_extras.spiral_presets"
-    bl_label = "Spirals"
-    bl_description = "Spirals Presets"
-    preset_menu = "OBJECT_MT_spiral_curve_presets"
-    preset_subdir = "curve_extras/curve.spirals"
-
-    preset_defines = [
-            "op = bpy.context.active_operator",
-            ]
-    preset_values = [
-            "op.spiral_type",
-            "op.curve_type",
-            "op.spiral_direction",
-            "op.turns",
-            "op.steps",
-            "op.radius",
-            "op.dif_z",
-            "op.dif_radius",
-            "op.B_force",
-            "op.inner_radius",
-            "op.dif_inner_radius",
-            "op.cycles",
-            "op.curves_number",
-            "op.touch",
-            ]
-
-
-class OBJECT_MT_spiral_curve_presets(Menu):
-    '''Presets for curve.spiral'''
-    bl_label = "Spiral Curve Presets"
-    bl_idname = "OBJECT_MT_spiral_curve_presets"
-    preset_subdir = "curve_extras/curve.spirals"
-    preset_operator = "script.execute_preset"
-
-    draw = bpy.types.Menu.draw_preset
-
-
 # Register
 classes = [
     CURVE_OT_spirals,
-    CURVE_EXTRAS_OT_spirals_presets,
-    OBJECT_MT_spiral_curve_presets
 ]
 
 def register():

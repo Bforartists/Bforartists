@@ -2,19 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Triangles",
-    "description": "Create different types of triangles",
-    "author": "Sjaak-de-Draak",
-    "version": (1, 0, 1),
-    "blender": (2, 68, 0),
-    "location": "View3D > Add > Mesh",
-    "warning": "First Version",
-    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-               "Scripts/Triangles",
-    "category": "Add Mesh",
-}
-
 """
 This script provides a triangle mesh primitive
 and a toolbar menu to further specify settings
