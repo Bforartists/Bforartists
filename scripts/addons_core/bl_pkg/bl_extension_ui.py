@@ -348,14 +348,7 @@ def addons_panel_draw_missing_with_extension_impl(
 
     if not context.preferences.system.use_online_access:
         row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - opt into being online to install missing addons conveniently
-    else:
-        if "bfa_default_addons" in bpy.context.preferences.addons:
-            extensions = bpy.context.preferences.addons["bfa_default_addons"].preferences.extensions_installed
-            if extensions and bpy.context.preferences.system.use_online_access:
-                row.operator("bfa.install_downloaded_extensions", text="Install Pre-Downloaded Extensions", icon='PLUGIN')
-            else:
-                pass
-    ## BFA - - END
+    ## BFA - Changes to opt-into extensions and improve migration here - END
 
     if repo is None:
         # Most likely the user manually removed this.
@@ -757,7 +750,7 @@ def addons_panel_draw(panel, context):
     wm = context.window_manager
     layout = panel.layout
 
-    ###### BFA - Move Install and Refresh to top level - START ######
+    ###### BFA - Double row - START ######
     row = layout.split(factor=0.57)
     row_a = row.row()
     row_a.prop(wm, "addon_search", text="", icon='VIEWZOOM', placeholder="Search Add-ons")
@@ -777,28 +770,10 @@ def addons_panel_draw(panel, context):
     row = layout.split(factor=0.27)
     row_a = row.row()
     row_a.prop(view, "show_addons_enabled_only", text="Enabled Only", icon='NONE', toggle=False)
-
-    row_b = row.row(align=True)
-    if "bfa_default_addons" not in bpy.context.preferences.addons and not bpy.context.preferences.system.use_online_access:
-        row_b.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
-    else:
-        if "bfa_default_addons" in bpy.context.preferences.addons:
-            legacy_addons = bpy.context.preferences.addons["bfa_default_addons"].preferences.legacy_addons_installed
-            if not legacy_addons:
-                row_b.operator("bfa.install_legacy_addons", text="Install Built-in Add-ons", icon='IMPORT')
-            else:
-                row_b.operator("bfa.remove_legacy_addons", text="Remove Built-in Add-ons", icon='CANCEL')
-
-    if "bfa_default_addons" in bpy.context.preferences.addons:
-        extensions = bpy.context.preferences.addons["bfa_default_addons"].preferences.extensions_installed
-        if extensions and bpy.context.preferences.system.use_online_access:
-            row_b.operator("bfa.install_downloaded_extensions", text="Install Extensions", icon='PLUGIN')
-        else:
-            pass
-
+    # BFA - add category quick tabs?
     #rowsub.menu("USERPREF_MT_addons_settings", text="", icon='DOWNARROW_HLT')
     del row, row_a, row_b,
-    ###### BFA - Move Install and Refresh to top level - EMD ######
+    ###### BFA - Double row - END ######
 
     # Create a set of tags marked False to simplify exclusion & avoid it altogether when all tags are enabled.
     addon_tags_exclude = {k for (k, v) in wm.get("addon_tags", {}).items() if v is False}
@@ -1777,8 +1752,6 @@ class USERPREF_MT_extensions_settings(Menu):
             else:
                 self.layout.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Addons", icon='CANCEL')
 
-
-
         if "bfa_default_addons" not in bpy.context.preferences.addons and not context.preferences.system.use_online_access:
             layout.separator()
             layout.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
@@ -1786,13 +1759,15 @@ class USERPREF_MT_extensions_settings(Menu):
         if not context.preferences.system.use_online_access:
             layout.separator()
             layout.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - permenantly make this discoverable in Extensions (if a user continues offline)
-        else:
-            if "bfa_default_addons" in bpy.context.preferences.addons:
-                extensions = bpy.context.preferences.addons["bfa_default_addons"].preferences.extensions_installed
-                if extensions and bpy.context.preferences.system.use_online_access:
-                    layout.operator("bfa.install_downloaded_extensions", text="Install Pre-Downloaded Extensions", icon='PLUGIN')
-                else:
-                    pass
+
+        if "bfa_default_addons" in prefs.addons:
+            extensions_installed = bpy.context.preferences.addons["bfa_default_addons"].preferences.extensions_installed
+            if extensions_installed:
+                layout.separator()
+                self.layout.operator("bfa.install_downloaded_extensions", text="Install Pre-downloaded Extensions", icon='PLUGIN')
+            else:
+                return
+
         ## BFA - legacy addons operators END ##
 
         if prefs.experimental.use_extensions_debug:
@@ -2002,13 +1977,13 @@ def extensions_panel_draw(panel, context):
 
     row_b = row.row()
     row_b.popover("USERPREF_PT_extensions_repos", text="Repositories")
-    row_b = row.row()
+
     row_b.popover("USERPREF_PT_extensions_tags", text="", icon='TAG')
 
     row_b.menu("USERPREF_MT_extensions_settings", text="", icon='DOWNARROW_HLT')
 
     layout = panel.layout
-    row = layout.split(factor=0.57)
+    row = layout.split(factor=0.56)
 
     row_a = row.row()
     row_a.prop(wm, "extension_type", text="text", expand=True)
