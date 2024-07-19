@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 id = "tissue"
 name = "Tissue"
-version = "0.3.70"
+version = "0.3.71"
 tagline = "Tools for Computational Design"
 maintainer = "Community"
 type = "add-on"
