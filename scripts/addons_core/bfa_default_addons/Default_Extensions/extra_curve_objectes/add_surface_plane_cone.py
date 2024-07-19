@@ -2,18 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Surface: Plane / Cone/ Star / Wedge",
-    "description": "Create a NURBS surface plane",
-    "author": "Folkert de Vries",
-    "version": (1, 0, 2),
-    "blender": (2, 80, 0),
-    "location": "View3D > Add > Surface",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Add Mesh"
-}
-
 """
 Info:
 to add a surface star, plane or cone, go to add Menu > Surface > Star, Plane or Cone

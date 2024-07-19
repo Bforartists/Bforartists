@@ -2,19 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "NewTek MDD format",
-    "author": "Bill L.Nieuwendorp",
-    "version": (1, 0, 1),
-    "blender": (2, 80, 0),
-    "location": "File > Import-Export",
-    "description": "Import-Export MDD as mesh shape keys",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/shape_mdd.html",
-    "support": 'OFFICIAL',
-    "category": "Import-Export",
-}
-
 if "bpy" in locals():
     import importlib
     if "import_mdd" in locals():

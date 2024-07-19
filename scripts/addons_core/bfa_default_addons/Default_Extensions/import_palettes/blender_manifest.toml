@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 id = "import_palettes"
 name = "Import Palettes"
-version = "1.0.2"
+version = "1.0.4"
 tagline = "Import Palettes"
 maintainer = "Community"
 type = "add-on"
@@ -13,3 +13,5 @@ copyright = [
     "2024 Antonio Vazquez",
     "2024 Kevin C. Burke (@blastframe)",
 ]
+[permissions]
+files = "Requires access to directory with color palette files"
