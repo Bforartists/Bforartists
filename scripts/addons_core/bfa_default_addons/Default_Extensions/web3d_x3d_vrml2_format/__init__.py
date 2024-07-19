@@ -2,18 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Web3D X3D/VRML2 format",
-    "author": "Campbell Barton, Bart, Bastien Montagne, Seva Alekseyev",
-    "version": (2, 3, 1),
-    "blender": (2, 93, 0),
-    "location": "File > Import-Export",
-    "description": "Import-Export X3D, Import VRML2",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_x3d.html",
-    "category": "Import-Export",
-}
-
 if "bpy" in locals():
     import importlib
     if "import_x3d" in locals():

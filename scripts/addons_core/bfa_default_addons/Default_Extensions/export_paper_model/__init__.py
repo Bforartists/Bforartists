@@ -9,18 +9,6 @@
 # * User interface
 # During the unfold process, the mesh is mirrored into a 2D structure: UVFace, UVEdge, UVVertex.
 
-bl_info = {
-    "name": "Export Paper Model",
-    "author": "Addam Dominec",
-    "version": (1, 2),
-    "blender": (3, 0, 0),
-    "location": "File > Export > Paper Model",
-    "warning": "",
-    "description": "Export printable net of the active mesh",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/paper_model.html",
-    "category": "Import-Export",
-}
-
 # Task: split into four files (SVG and PDF separately)
 # * does any portion of baking belong into the export module?
 # * sketch out the code for GCODE and two-sided export

@@ -4,18 +4,6 @@
 
 # Blender plugin for generating celtic knot curves from 3d meshes
 
-bl_info = {
-    "name": "Celtic Knot",
-    "description": "",
-    "author": "Adam Newgas",
-    "version": (0, 1, 3),
-    "blender": (2, 80, 0),
-    "location": "View3D > Add > Curve",
-    "warning": "",
-    "doc_url": "https://github.com/BorisTheBrave/celtic-knot/wiki",
-    "category": "Add Curve",
-}
-
 import bpy
 import bmesh
 from bpy.types import Operator

@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 id = "extra_mesh_objects"
 name = "Extra Mesh Objects"
-version = "0.3.11"
+version = "0.3.12"
 tagline = "Add extra mesh object types"
 maintainer = "Community"
 type = "add-on"

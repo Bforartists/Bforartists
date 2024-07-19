@@ -2,22 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-
-bl_info = {
-    "name": "Edit Operator Source",
-    "author": "scorpion81",
-    "version": (1, 2, 3),
-    "blender": (3, 2, 0),
-    "location": "Text Editor > Sidebar > Edit Operator",
-    "description": "Opens source file of chosen operator or call locations, if source not available",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/development/edit_operator.html",
-    "category": "Development",
-}
-
 import bpy
 import sys
-import os
 import inspect
 from bpy.types import (
         Operator,
@@ -33,28 +19,23 @@ from bpy.props import (
         )
 
 def make_loc(prefix, c):
-    #too long and not helpful... omitting for now
-    space = ""
-    #if hasattr(c, "bl_space_type"):
-    #    space = c.bl_space_type
+    space = getattr(c, "bl_space_type", "")
+    region = getattr(c, "bl_region_type", "")
+    label = getattr(c, "bl_label", "")
+    return f"{prefix}: {space} {region} {label}"
 
-    region = ""
-    #if hasattr(c, "bl_region_type"):
-    #   region = c.bl_region_type
-
-    label = ""
-    if hasattr(c, "bl_label"):
-        label = c.bl_label
-
-    return prefix+": " + space + " " + region + " " + label
-
-def walk_module(opname, mod, calls=[], exclude=[]):
+def walk_module(opname, mod, calls=[], exclude=[], visited=None):
+    if visited is None:
+        visited = set()
+        
+    if mod in visited:
+        return
+    visited.add(mod)
 
     for name, m in inspect.getmembers(mod):
         if inspect.ismodule(m):
             if m.__name__ not in exclude:
-                #print(name, m.__name__)
-                walk_module(opname, m, calls, exclude)
+                walk_module(opname, m, calls, exclude, visited)
         elif inspect.isclass(m):
             if (issubclass(m, Panel) or \
                 issubclass(m, Header) or \
