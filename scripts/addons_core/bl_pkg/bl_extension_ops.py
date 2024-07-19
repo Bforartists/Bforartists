@@ -22,10 +22,9 @@ from typing import (
 
 import bpy
 
-import shutil # BFA - needed for legacy addons UX
-
-from pathlib import Path # BFA - needed for legacy addons UX
-from os import path as p # BFA - needed for legacy addons UX
+import shutil # BFA - needed to pre-downloaded extensions
+from pathlib import Path # BFA - needed to pre-downloaded extensions
+from os import path as p # BFA - needed to pre-downloaded extensions
 
 from bpy.types import (
     Operator,
@@ -358,7 +357,7 @@ def lock_result_any_failed_with_report(op, lock_result, report_type='ERROR'):
     # Hint for users as this is non-obvious, only show once.
     unlock_hint_text = (
         "\n"
-        "If the lock was held by a Blender instance that exited unexpectedly,\n"
+        "If the lock was held by a Bforartists instance that exited unexpectedly,\n" # BFA - not blender
         "use: \"Fore Unlock Repository\" to clear the lock.\n"
         "Access from the \"Repositories\" popover in the extensions preferences."
     )
@@ -1254,7 +1253,7 @@ def _extensions_maybe_online_action_poll_impl(cls, repo, action):
                 case _:
                     assert False, "Unreachable"
             if bpy.app.online_access_override:
-                message += " " + rpt_("Launch Blender without --offline-mode")
+                message += " " + rpt_("Launch Bforaritsts without --offline-mode") # BFA - not blender
             else:
                 message += " " + rpt_("Enable online access in System preferences")
             cls.poll_message_set(message)
@@ -1683,7 +1682,7 @@ class EXTENSIONS_OT_repo_unlock(Operator):
         if lock_is_ours:
             return (
                 "Active repository lock held by this session, "
-                "either wait until the operation is finished or restart Blender"
+                "either wait until the operation is finished or restart Bforaritsts" # BFA - not blender
             ), lock_mtime, lock_error
         return None, lock_mtime, lock_error
 
@@ -1739,7 +1738,7 @@ class EXTENSIONS_OT_repo_unlock(Operator):
 
         layout = self.layout
         col = layout.column()
-        col.label(text="Warning! Before unlocking, ensure another instance of Blender is not running.")
+        col.label(text="Warning! Before unlocking, ensure another instance of Bforaritsts is not running.") # BFA - not blender
         col.label(text="Force unlocking may be necessary in the case of a crash or power failure,")
         col.label(text="otherwise it should be avoided.")
 
@@ -3658,8 +3657,9 @@ class EXTENSIONS_OT_userpref_show_online(Operator):
 
 
 class EXTENSIONS_OT_userpref_allow_online(Operator):
-    """Allow internet access. Bforartists may access configured online extension repositories. """ \
-        """Installed third party add-ons may access the internet for their own functionality""" #BFA - not Blender
+    """Opt-in to allow internet access to download Extensions. """ \
+        """Bforartists may access configured online extension repositories to download and update. """ \
+        """Installed third party Extensions add-ons may access the internet for their own functionality""" #BFA - not Blender, made explicit
     bl_idname = "extensions.userpref_allow_online"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -3675,14 +3675,6 @@ class EXTENSIONS_OT_userpref_allow_online(Operator):
     def execute(self, context):
         context.preferences.system.use_online_access = True
         
-        # Remove the legacy addons
-        bpy.ops.bfa.remove_legacy_addons()
-        print("NOTE: Legacy addons removed")
-        bpy.ops.extensions.activate_downloaded_extensions('INVOKE_DEFAULT') #BFA WIP - when you enable, copy pre-downloaded extensions
-        print("NOTE: Extensions Installed")
-        bpy.ops.extensions.repo_refresh_all() #BFA WIP - force refresh
-        bpy.ops.preferences.addon_refresh() #BFA WIP - force refresh
-
         return {'FINISHED'}
 
 
@@ -3751,18 +3743,13 @@ class EXTENSIONS_OT_package_enable_not_installed(Operator):
         return {'CANCELLED'}
 
 
-# -----------------------------------------------------------------------------
-# BFA - Start of changes, a new operation to remove legacy and replace with pre-downloaded extension addons
-#
-
-class EXTENSIONS_OT_activate_downloaded_extensions(Operator):
+## BFA - custom operator to install pre-downlaoded extensions - START ##
+class EXTENSIONS_OT_install_downloaded_extensions(Operator):
     """Copy and prepare pre-downloaded Extensions Addons when opt-in to be online is enabled"""
-    bl_idname = "extensions.activate_downloaded_extensions"
-    bl_label = "Replace Legacy with Extension"
+    bl_idname = "extensions.install_downloaded_extensions"
+    bl_label = "Install Pre-downloaded Extensions curated by Bforartists"
 
     def execute(self, context):
-        source_ext = "Default_Extensions"
-
         # ----------
         # Variables
 
@@ -3784,19 +3771,27 @@ class EXTENSIONS_OT_activate_downloaded_extensions(Operator):
         version_path = Path(user_path, major_minor)
 
         # Get the source files
+        source_ext = "Default_Extensions"
         source_ext_folder = os.path.join(path, source_ext)
 
         # Define the Extensions sub-folder path
-        destination_ext_folder = version_path / 'extensions' / 'blender_org'
+        destination_ext_folder = Path(os.path.join(version_path, 'extensions', 'blender_org'))
+
+        # Define the Extensions sub-folder path
+        user_ext_folder = Path(os.path.join(version_path, 'extensions', 'user_default'))
 
         # --------------------------
-
         # Copy the extension addons
 
         # Ensure the extensions sub-folder exists
         if not destination_ext_folder.exists():
             destination_ext_folder.mkdir(parents=True)
-        
+
+        # Ensure the extensions sub-folder exists
+        if not user_ext_folder.exists():
+            print("NOTE: user_default folder doesn't exist, making")
+            user_ext_folder.mkdir(parents=True)
+
         # Copy the other extenions that are in sub-directories
         for item in os.listdir(source_ext_folder):
             s = os.path.join(source_ext_folder, item)
@@ -3807,10 +3802,12 @@ class EXTENSIONS_OT_activate_downloaded_extensions(Operator):
             else:
                 shutil.copy2(s, d)  # copies also metadata
 
-        legacy_addons_installed = False
+        bpy.ops.extensions.repo_refresh_all()
+        bpy.ops.preferences.addon_refresh()
 
         return {'FINISHED'}
-### BFA - End of changes
+## BFA - custom operator to install pre-downlaoded extensions - END ##
+
 
 # -----------------------------------------------------------------------------
 # Register
@@ -3862,7 +3859,7 @@ classes = (
     # Dummy commands (for testing).
     EXTENSIONS_OT_dummy_progress,
 
-    EXTENSIONS_OT_activate_downloaded_extensions, #BFA - custom operator for legacy addons
+    EXTENSIONS_OT_install_downloaded_extensions, # BFA - custom operator to install pre-downloaded extensions
 )
 
 
@@ -3870,11 +3867,9 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-
 
 if __name__ == "__main__":
     register()

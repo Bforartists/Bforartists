@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Robin Hohnsbeen
+# SPDX-FileCopyrightText: 2024 Robin Hohnsbeen
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -77,7 +77,7 @@ class PT_VDMBaker(bpy.types.Panel):
     It also has settings for name (image, texture and brush at once), resolution, compression and color depth.
     """
     bl_label = 'VDM Brush Baker'
-    bl_idname = 'VDM_PT_bake_tools'
+    bl_idname = 'Editor_PT_LayoutPanel'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'Tool'
