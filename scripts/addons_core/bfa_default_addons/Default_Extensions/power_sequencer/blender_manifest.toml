@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 id = "power_sequencer"
 name = "Power Sequencer"
-version = "2.0.2"
+version = "2.0.3"
 tagline = "Video editing tools for content creators"
 maintainer = "Community"
 type = "add-on"

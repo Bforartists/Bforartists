@@ -1,8 +1,8 @@
 schema_version = "1.0.0"
 id = "property_chart"
 name = "Property Chart"
-version = "0.1.1"
-tagline = "Edit arbitrary selected properties for objects/sequence str . . "
+version = "0.1.2"
+tagline = "Edit properties simultaneously for selected objects/sequencer"
 maintainer = "Community"
 type = "add-on"
 tags = ["System"]
