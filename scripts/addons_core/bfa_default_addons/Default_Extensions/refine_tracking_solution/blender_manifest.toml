@@ -1,8 +1,10 @@
 schema_version = "1.0.0"
 id = "refine_tracking_solution"
 name = "Refine tracking solution"
-version = "1.1.5"
-tagline = "Refine motion solution by setting track weight according to . . "
+version = "1.1.6"
+# NOTE: The tagline was longer, shortended to fit in max length:
+#    Refine motion solution by setting track weight according to reprojection error
+tagline = "Refine motion solution by adjusting track weight"
 maintainer = "Community"
 type = "add-on"
 tags = ["Tracking"]

@@ -1,8 +1,8 @@
 schema_version = "1.0.0"
 id = "edit_operator_source"
 name = "Edit Operator Source"
-version = "1.2.3"
-tagline = "Opens source file of chosen operator or call locations, if  . . "
+version = "1.2.4"
+tagline = "Opens source file of chosen operator or call locations"
 maintainer = "Community"
 type = "add-on"
 tags = ["Development"]

@@ -2,18 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Extra Objects",
-    "author": "Multiple Authors",
-    "version": (0, 1, 5),
-    "blender": (2, 93, 0),
-    "location": "View3D > Add > Curve > Extra Objects",
-    "description": "Add extra curve object types",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Add Curve",
-}
-
 if "bpy" in locals():
     import importlib
     importlib.reload(add_curve_aceous_galore)
@@ -50,89 +38,11 @@ from bpy.props import (
         )
 
 
-def convert_old_presets(data_path, msg_data_path, old_preset_subdir,
-                        new_preset_subdir, fixdic={}, ext=".py"):
-    """
-    convert old presets
-    """
-
-    def convert_presets(self, context):
-        if not getattr(self, data_path, False):
-            return None
-        import os
-
-        target_path = os.path.join("presets", old_preset_subdir)
-        target_path = bpy.utils.user_resource('SCRIPTS', path=target_path)
-
-        # created an anytype op to run against preset
-        op = type('', (), {})()
-
-        files = [f for f in os.listdir(target_path) if f.endswith(ext)]
-        if not files:
-            print("No old presets in %s" % target_path)
-            setattr(self, msg_data_path, "No old presets")
-            return None
-
-        new_target_path = os.path.join("presets", new_preset_subdir)
-        new_target_path = bpy.utils.user_resource('SCRIPTS', path=new_target_path, create=True)
-        for f in files:
-            file = open(os.path.join(target_path, f))
-            for line in file:
-                if line.startswith("op."):
-                    exec(line)
-            file.close()
-            for key, items in fixdic.items():
-                if hasattr(op, key) and isinstance(getattr(op, key), int):
-                    setattr(op, key, items[getattr(op, key)])
-            # create a new one
-            new_file_path = os.path.join(new_target_path, f)
-            if os.path.isfile(new_file_path):
-                # do nothing
-                print("Preset %s already exists, passing..." % f)
-                continue
-            file_preset = open(new_file_path, 'w')
-            file_preset.write("import bpy\n")
-            file_preset.write("op = bpy.context.active_operator\n")
-
-            for prop, value in vars(op).items():
-                if isinstance(value, str):
-                    file_preset.write("op.%s = '%s'\n" % (prop, str(value)))
-                else:
-                    file_preset.write("op.%s = %s\n" % (prop, str(value)))
-            file_preset.close()
-            print("Writing new preset to %s" % new_file_path)
-
-        setattr(self, msg_data_path, "Converted %d old presets" % len(files))
-        return None
-
-    return convert_presets
-
-
 # Addons Preferences
 
 class CurveExtraObjectsAddonPreferences(AddonPreferences):
     bl_idname = __name__
 
-    spiral_fixdic = {
-            "spiral_type": ['ARCH', 'ARCH', 'LOG', 'SPHERE', 'TORUS'],
-            "curve_type": ['POLY', 'NURBS'],
-            "spiral_direction": ['COUNTER_CLOCKWISE', 'CLOCKWISE']
-            }
-    update_spiral_presets_msg : StringProperty(
-            default="Nothing to do"
-            )
-    update_spiral_presets : BoolProperty(
-            name="Update Old Presets",
-            description="Update presets to reflect data changes",
-            default=False,
-            update=convert_old_presets(
-                    "update_spiral_presets",  # this props name
-                    "update_spiral_presets_msg",  # message prop
-                    "operator/curve.spirals",
-                    "curve_extras/curve.spirals",
-                    fixdic=spiral_fixdic
-                    )
-            )
     show_menu_list : BoolProperty(
             name="Menu List",
             description="Show/Hide the Add Menu items",
@@ -142,12 +52,6 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
     def draw(self, context):
         layout = self.layout
         box = layout.box()
-        box.label(text="Spirals:")
-
-        if self.update_spiral_presets:
-            box.label(text=self.update_spiral_presets_msg, icon="FILE_TICK")
-        else:
-            box.prop(self, "update_spiral_presets")
 
         icon_1 = "TRIA_RIGHT" if not self.show_menu_list else "TRIA_DOWN"
         box = layout.box()
