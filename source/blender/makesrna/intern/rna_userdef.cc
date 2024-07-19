@@ -7145,7 +7145,7 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Online Access",
-      "The user has been shown the \"Online Access\" prompt and make a choice");
+      "Opt-in or opt-out from using the internet for \"Online Access\" to use Extensions"); /*BFA - made explicit*/
 
   /* Directories. */
 
