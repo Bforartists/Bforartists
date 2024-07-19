@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Robin Hohnsbeen
+# SPDX-FileCopyrightText: 2024 Robin Hohnsbeen
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,15 +7,14 @@ import bpy
 
 def get_vdm_bake_material():
     """Creates a material that is used to bake the displacement from a plane against its UVs.
-
+    
     Returns:
     material: Baking material
     """
     material_name = 'VDM_baking_material'
     if material_name in bpy.data.materials:
         # Recreate material every time to ensure it is unchanged by the user which could lead to issues.
-        # I would like to keep it directly after bake though so people could look
-        # at how it is made, if they are interested.
+        # I would like to keep it directly after bake though so people could look at how it is made, if they are interested.
         bpy.data.materials.remove(bpy.data.materials[material_name])
 
     new_material = bpy.data.materials.new(name=material_name)

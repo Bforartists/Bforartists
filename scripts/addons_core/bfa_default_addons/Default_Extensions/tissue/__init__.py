@@ -16,20 +16,6 @@
 #                                                                              #
 # ############################################################################ #
 
-bl_info = {
-    "name": "Tissue",
-    "author": "Alessandro Zomparelli",
-    "version": (0, 3, 70),
-    "blender": (4, 0, 2),
-    "location": "",
-    "description": "Tools for Computational Design",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/tissue.html",
-    "tracker_url": "https://github.com/alessandro-zomparelli/tissue/issues",
-    "category": "Mesh",
-}
-
-
 if "bpy" in locals():
     import importlib
     importlib.reload(tessellate_numpy)

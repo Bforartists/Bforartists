@@ -4,18 +4,6 @@
 
 # DevBo Task https://developer.blender.org/T37299
 
-bl_info = {
-    "name": "Curly Curves",
-    "author": "Cmomoney",
-    "version": (1, 2, 0),
-    "blender": (2, 80, 0),
-    "location": "View3D > Add > Curve > Curly Curve",
-    "description": "Adds a new Curly Curve",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
-    "category": "Add Curve",
-}
-
 import bpy
 from bpy.types import Operator
 from bpy.props import (

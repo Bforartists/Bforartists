@@ -2,20 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Refine tracking solution",
-    "author": "Stephen Leger",
-    "license": "GPL",
-    "version": (1, 1, 5),
-    "blender": (2, 80, 0),
-    "location": "Clip Editor > Tools > Solve > Refine Solution",
-    "description": "Refine motion solution by setting track weight according"
-                   " to reprojection error",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/video_tools/refine_tracking.html",
-    "category": "Video Tools",
-}
-
 import bpy
 from bpy.types import (
         Operator,

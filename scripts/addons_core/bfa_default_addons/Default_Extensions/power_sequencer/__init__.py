@@ -18,23 +18,8 @@ from .utils.register_shortcuts import register_shortcuts
 # load and reload submodules
 ##################################
 modules = addon_auto_imports.setup_addon_modules(
-    __path__, __name__, ignore_packages=[".utils", ".audiosync"]
+    __path__, __package__, ignore_packages=[".utils", ".audiosync"]
 )
-
-
-bl_info = {
-    "name": "Power Sequencer",
-    "description": "Video editing tools for content creators",
-    "author": "Nathan Lovato",
-    "version": (2, 0, 2),
-    "blender": (2, 93, 3),
-    "location": "Sequencer",
-    "tracker_url": "https://github.com/GDquest/Blender-power-sequencer/issues",
-    "wiki_url": "https://www.gdquest.com/docs/documentation/power-sequencer/",
-    "support": "COMMUNITY",
-    "category": "Sequencer",
-}
-
 
 # We use globals to cache loaded keymaps, operators, and tools
 addon_keymaps: List[Type] = []
@@ -68,8 +53,6 @@ def register():
     keymaps = register_shortcuts(classes_operator)
     addon_keymaps += keymaps
 
-    print("Registered {} with {} modules".format(bl_info["name"], len(modules)))
-
 
 def unregister():
     """Unregister"""
@@ -91,5 +74,3 @@ def unregister():
     unregister_preferences()
     unregister_properties()
     unregister_handlers()
-
-    print("Unregistered {}".format(bl_info["name"]))
