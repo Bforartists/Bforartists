@@ -248,15 +248,15 @@ class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
     bl_label = "Replace Legacy with Extension"
 
     def execute(self, context):
-
+        print("NOTE: Copying Extensions..")
         # ----------
         # Variables
 
         current_script_path = p.dirname(__file__)
 
         # Get the addon path
-        #path = os.path.join(os.path.dirname(current_script_path), "bfa_default_addons")
-        path = os.path.join(os.path.dirname(current_script_path))
+        path = os.path.join(os.path.dirname(current_script_path), "bfa_default_addons")
+        #path = os.path.join(os.path.dirname(current_script_path))
 
         # Get the USER path
         user_path = Path(bpy.utils.resource_path('USER')).parent
@@ -272,7 +272,7 @@ class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
 
         # Get the source files
         source_ext = "Default_Extensions"
-        source_ext_folder = os.path.join(current_script_path, source_ext)
+        source_ext_folder = os.path.join(path, source_ext)
 
         # Define the Extensions sub-folder path
         destination_ext_folder = version_path / 'extensions' / 'blender_org'
@@ -294,8 +294,11 @@ class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
             else:
                 shutil.copy2(s, d)  # copies also metadata
 
-        bpy.types.AddonPreferences.extensions_installed = True
+        bpy.types.AddonPreferences.extensions_installed = False
 
+        print("NOTE: Extensions copied successfully.")
+
+        bpy.ops.extensions.repo_sync_all()
         return {'FINISHED'}
 
 
