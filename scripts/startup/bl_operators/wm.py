@@ -3244,7 +3244,7 @@ class WM_MT_splash_quick_setup(Menu):
             col = split.column()
             col.operator(
                 "preferences.copy_prev",
-                text=iface_("Load Bforartists {:d}.{:d} Preferences", "Operator").format(*old_version),
+                text=iface_("Load Bforartists {:d}.{:d} Preferences", "Operator").format(old_version[0], old_version[1] - 1), #BFA - made it subtract a version, since we are ahead one of Blender in the config settings
                 icon='DUPLICATE', #BFA
                 translate=False,
             )
@@ -3298,12 +3298,15 @@ class WM_MT_splash_quick_setup(Menu):
         sub.separator(factor=2)
 
         if can_import:
-            sub.operator("wm.save_userpref", text="Save New Preferences", icon='NONE')
+            sub.operator("wm.save_userpref", text="Save New Preferences", icon='FILE_TICK')
         else:
             sub.operator("wm.save_userpref", text="Continue")
 
         layout.separator(factor=2.0)
 
+        layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}") #BFA - added to first use
+
+        layout.separator()  #BFA - added to first use
 
 class WM_MT_splash(Menu):
     bl_label = "Splash"
