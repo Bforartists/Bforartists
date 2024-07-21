@@ -1898,15 +1898,7 @@ class USERPREF_MT_extensions_item(Menu):
                             text="Add-on Enabled",
                             emboss=False,
                         ).module = addon_module_name
-            case "theme":
-                if is_installed:
-                    props = layout.operator(
-                        "extensions.package_theme_disable" if is_enabled else "extensions.package_theme_enable",
-                        text="Clear Theme" if is_enabled else "Set Theme",
-                    )
-                    props.repo_index = repo_index
-                    props.pkg_id = pkg_id
-                    del props
+            # BFA - Moved Set and Clear Theme Operator to Top Level
 
         # Unlike most other value, prioritize the remote website,
         # see code comments in `extensions_panel_draw_impl`.
