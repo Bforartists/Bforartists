@@ -3635,6 +3635,18 @@ class EXTENSIONS_OT_userpref_show_for_update(Operator):
         return {'FINISHED'}
 
 
+# BFA - Operator to switch editing active theme.
+class EXTENSIONS_OT_userpref_theme_show_edit(Operator):
+    """Switch to the Themes section in preferences"""
+    bl_idname = "extensions.userpref_theme_show_edit"
+    bl_label = "Edit Theme"
+    bl_options = {'INTERNAL'}
+
+    def execute(self, context):
+        context.preferences.active_section = 'THEMES'
+        return {'FINISHED'}
+
+
 # NOTE: this is a wrapper for `SCREEN_OT_userpref_show`.
 # It exists *only* to add a poll function which sets a message when offline mode is forced.
 class EXTENSIONS_OT_userpref_show_online(Operator):
@@ -3674,7 +3686,7 @@ class EXTENSIONS_OT_userpref_allow_online(Operator):
 
     def execute(self, context):
         context.preferences.system.use_online_access = True
-        
+
         bpy.ops.extensions.repo_sync_all(use_active_only=False) # BFA - force refresh of extensions
         print("NOTE: Loading Extensions") # BFA - notice of refresh of extensions
 
@@ -3852,6 +3864,7 @@ classes = (
 
     EXTENSIONS_OT_userpref_tags_set,
     EXTENSIONS_OT_userpref_show_for_update,
+    EXTENSIONS_OT_userpref_theme_show_edit, # BFA - Operator to switch editing active theme.
     EXTENSIONS_OT_userpref_show_online,
     EXTENSIONS_OT_userpref_allow_online,
     EXTENSIONS_OT_userpref_allow_online_popup,
