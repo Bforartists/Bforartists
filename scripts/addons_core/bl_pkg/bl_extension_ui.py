@@ -1899,6 +1899,10 @@ class USERPREF_MT_extensions_item(Menu):
                             emboss=False,
                         ).module = addon_module_name
             # BFA - Moved Set and Clear Theme Operator to Top Level
+            # BFA - Operator to switch editing active theme.
+            case "theme":
+                if is_installed and is_enabled:
+                    layout.operator("extensions.userpref_theme_show_edit", icon='COLOR')
 
         # Unlike most other value, prioritize the remote website,
         # see code comments in `extensions_panel_draw_impl`.
