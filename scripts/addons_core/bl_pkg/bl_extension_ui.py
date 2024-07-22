@@ -1886,7 +1886,7 @@ class USERPREF_MT_extensions_item(Menu):
         match item.type:
             case "add-on":
                 if is_installed:
-                    props = layout.operator("preferences.addon_show", text="View Details")
+                    props = layout.operator("preferences.addon_show", text="View Details", icon='INFO') #BFA - added icon
                     props.module = addon_module_name
                     del props
 
