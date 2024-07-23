@@ -307,7 +307,6 @@ def register_addons():
     """and when Internet Access is disabled."""
 
     if bpy.context.preferences.system.use_online_access:
-        print("NOTE: Currently Online, skipping")
         return {'CANCELLED'}
 
     # Redirect stdout and stderr to /dev/null - surpresses terminal messages to not spam on first load.
