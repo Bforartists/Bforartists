@@ -324,7 +324,7 @@ def register_addons():
     # Check if extensions is on on first load, if not, bypass
     if prefs.extensions.use_online_access_handled == True :
         # If addon is enabled and extensions is on, do nothing
-        print("INFO: Extensions is already enabled, so never mind...")
+        #print("INFO: Extensions are already enabled, so never mind...")
         pass
     else:
         print("INFO: Extensions not enabled, copying Built-in Legacy addons...")
@@ -352,7 +352,7 @@ def register_addons():
         sys.stderr = sys.__stderr__
         pass
 
-    return
+    return None
 
 
 classes = (
