@@ -303,7 +303,11 @@ class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
 
 
 def register_addons():
-    """Register the addons in Bforartists, as long as the addon is enabled."""
+    """Register the built-in legacy add-ons in Bforartists, as long as the add-on is enabled."""
+    """and when Internet Access is disabled."""
+
+    if bpy.context.preferences.system.use_online_access:
+        return {'CANCELLED'}
 
     # Redirect stdout and stderr to /dev/null - surpresses terminal messages to not spam on first load.
     sys.stdout = open(os.devnull, 'w')
@@ -320,7 +324,7 @@ def register_addons():
     # Check if extensions is on on first load, if not, bypass
     if prefs.extensions.use_online_access_handled == True :
         # If addon is enabled and extensions is on, do nothing
-        print("INFO: Extensions is already enabled, so never mind...")
+        #print("INFO: Extensions are already enabled, so never mind...")
         pass
     else:
         print("INFO: Extensions not enabled, copying Built-in Legacy addons...")
@@ -348,7 +352,7 @@ def register_addons():
         sys.stderr = sys.__stderr__
         pass
 
-    return
+    return None
 
 
 classes = (
