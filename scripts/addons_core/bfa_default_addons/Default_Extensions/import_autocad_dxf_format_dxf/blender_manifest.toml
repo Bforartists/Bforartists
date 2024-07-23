@@ -1,11 +1,10 @@
 schema_version = "1.0.0"
 id = "import_autocad_dxf_format_dxf"
 name = "Import AutoCAD DXF Format (.dxf)"
-version = "0.9.9"
+version = "0.9.10"
 tagline = "Import files in the Autocad DXF format (.dxf)"
 maintainer = "Community"
 type = "add-on"
-permissions = {"files"}
 tags = ["Import-Export"]
 blender_version_min = "4.2.0"
 license = ["SPDX:GPL-2.0-or-later"]
@@ -17,3 +16,5 @@ copyright = [
     "2024 Bastien Montagne",
     "2024 Remigiusz Fiedler (AKA migius)",
 ]
+[permissions]
+files = "Requires access to directory with .dxf files"
