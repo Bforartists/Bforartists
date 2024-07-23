@@ -229,14 +229,41 @@ class BrushSelectPanel(BrushPanel):
 
         col = row.column(align=True)
         BrushAssetShelf.draw_popup_selector(col, context, brush, show_name=False)
+
+        ## BFA - Changed layout to expose common operators to top level for consistency - START ##
+        col = row.column(align=True)
+        col.menu("VIEW3D_MT_brush_context_menu", icon='DOWNARROW_HLT', text="")
+
         if brush:
-            col.prop(brush, "name", text="")
+            if brush.library and brush.library.is_editable:
+                col.separator()
+                col.operator("brush.asset_update", text="", icon="FILE_REFRESH") # BFA - exposed to top
+                col.operator("brush.asset_revert", text="", icon="UNDO") # BFA - exposed to top
+            else:
+                col.separator()
+                col.operator("brush.asset_save_as", text="Save As Asset", icon='FILE_TICK')# BFA - exposed to top
+                col.operator("brush.asset_revert", text="", icon="UNDO") # BFA - exposed to top
+
+        col.separator()
+
+        # skip if no active brush
+        if not brush:
+            layout.label(text="No brush selected", icon='INFO')
+            return
+
+        if brush:
+            row = layout.row(align=True)
+            row.prop(brush, "name", text="")
+            if brush.library and brush.library.is_editable:
+                row.operator("brush.asset_save_as", text="", icon='DUPLICATE') # BFA - exposed to top
+                row.operator("brush.asset_delete", text="", icon='X') # BFA - exposed to top
+            else:
+                row.operator("brush.asset_save_as", text="Save As Asset", icon='FILE_TICK') # BFA - exposed to top
+                row.operator("brush.asset_delete", text="Delete", icon='X') # BFA - exposed to top
+        ## BFA - Changed layout to expose common operators to top level for consistency - END ##
 
         if brush is None:
             return
-
-        col = row.column()
-        col.menu("VIEW3D_MT_brush_context_menu", icon='DOWNARROW_HLT', text="")
 
 
 class ColorPalettePanel(BrushPanel):
