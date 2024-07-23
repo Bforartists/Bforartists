@@ -561,10 +561,26 @@ def addons_panel_draw_items(
 
         sub.label(text=" " + item_name, translate=False)
 
+        ## BFA - Expose user type feedback - START ##
+        row_right = row.row()
+        if addon_type == ADDON_TYPE_LEGACY_CORE:
+            pass
+        elif addon_type == ADDON_TYPE_LEGACY_USER:
+            row_right.active = False
+            row_right.alignment = 'RIGHT'
+            row_right.label(text="Legacy")
+        ## BFA - Expose user type feedback - END ##
+
         if item_warnings:
-            sub.label(icon='ERROR')
+            row.active = True # BFA - Float left
+            row_right.alignment = 'RIGHT'# BFA - Float left
+            row_right.label(icon='ERROR')
+            row_right.label(icon=addon_type_icon[addon_type]) # BFA - Added icon type
         elif USE_SHOW_ADDON_TYPE_AS_ICON:
-            sub.label(icon=addon_type_icon[addon_type])
+            row.active = True # BFA - Float left
+            row_right.alignment = 'RIGHT' # BFA - Float left
+            row_right.label(icon=addon_type_icon[addon_type])
+
 
         if show_expanded:
             addon_draw_item_expanded(
@@ -1323,7 +1339,7 @@ def extension_draw_item(
     row_right.alignment = 'RIGHT'
     row_right.separator()
 
-    # BFA - Moved Set and Clear Theme Operator to Top Level - Start
+    ## BFA - Moved Set and Clear Theme Operator to Top Level - START ##
     match item.type:
             case "theme":
                 if is_installed:
@@ -1337,7 +1353,7 @@ def extension_draw_item(
                     del props
 
     row_right.separator()
-    # BFA - Moved Set and Clear Theme Operator to Top Level - End
+    ## BFA - Moved Set and Clear Theme Operator to Top Level - END ##
 
     # NOTE: Keep space between any buttons and this menu to prevent stray clicks accidentally running install.
     # The separator is around together with the align to give some space while keeping the button and the menu still close-by.
@@ -1358,6 +1374,18 @@ def extension_draw_item(
 
         # The full tagline may be multiple lines (not yet supported by Blender's UI).
         row.label(text=" {:s}.".format(item.tagline), translate=False)
+
+        ## BFA - expose uninstall in a consistent way to the addons - START ##
+        row_right = row.row()
+        if is_installed:
+            row_right.active = True
+            row_right.alignment = 'RIGHT'
+
+            props = row_right.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') # BFA - icon added
+            props.repo_index = repo_index
+            props.pkg_id = pkg_id
+            del props
+        ## BFA - expose uninstall in a consistent way to the addons - END ##
 
         col.separator(type='LINE')
         del col
@@ -1767,7 +1795,6 @@ class USERPREF_MT_extensions_settings(Menu):
                 self.layout.operator("bfa.install_downloaded_extensions", text="Install Pre-downloaded Extensions", icon='PLUGIN')
             else:
                 return
-
         ## BFA - legacy addons operators END ##
 
         if prefs.experimental.use_extensions_debug:
@@ -1920,17 +1947,18 @@ class USERPREF_MT_extensions_item(Menu):
 
         # Note that we could allow removing extensions from non-remote extension repos
         # although this is destructive, so don't enable this right now.
+
         if is_installed:
-            layout.separator()
-
             if is_system_repo:
-                layout.operator("extensions.package_uninstall_system", text="Uninstall", icon='CANCEL') # BFA - icon added
-            else:
-                props = layout.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') # BFA - icon added
-                props.repo_index = repo_index
-                props.pkg_id = pkg_id
-                del props
-
+                layout.separator() # BFA - moved to conditional
+                layout.operator("extensions.package_uninstall_system", text="Uninstall from System", icon='CANCEL') # BFA - icon added
+        ## BFA - displayed at a top level now like addons - START ##
+        #    else:
+        #        props = layout.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') # BFA - icon added
+        #        props.repo_index = repo_index
+        #        props.pkg_id = pkg_id
+        #        del props
+        ## BFA - displayed at a top level now like addons - END ##
 
 def extensions_panel_draw(panel, context):
     from . import (
