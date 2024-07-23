@@ -241,7 +241,6 @@ class BrushSelectPanel(BrushPanel):
                 col.operator("brush.asset_revert", text="", icon="UNDO") # BFA - exposed to top
             else:
                 col.separator()
-                col.operator("brush.asset_save_as", text="Save As Asset", icon='FILE_TICK')# BFA - exposed to top
                 col.operator("brush.asset_revert", text="", icon="UNDO") # BFA - exposed to top
 
         col.separator()
@@ -258,8 +257,8 @@ class BrushSelectPanel(BrushPanel):
                 row.operator("brush.asset_save_as", text="", icon='DUPLICATE') # BFA - exposed to top
                 row.operator("brush.asset_delete", text="", icon='X') # BFA - exposed to top
             else:
-                row.operator("brush.asset_save_as", text="Save As Asset", icon='FILE_TICK') # BFA - exposed to top
-                row.operator("brush.asset_delete", text="Delete", icon='X') # BFA - exposed to top
+                row.operator("brush.asset_save_as", text="", icon='FILE_TICK') # BFA - exposed to top
+                row.operator("brush.asset_delete", text="", icon='X') # BFA - exposed to top
         ## BFA - Changed layout to expose common operators to top level for consistency - END ##
 
         if brush is None:
