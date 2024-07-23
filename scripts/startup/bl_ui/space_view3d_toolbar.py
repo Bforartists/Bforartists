@@ -49,18 +49,18 @@ class VIEW3D_MT_brush_context_menu(Menu):
             return
 
         if brush.library and brush.library.is_editable:
-            layout.operator("brush.asset_save_as", text="Duplicate Asset...", icon='DUPLICATE')
-            layout.operator("brush.asset_delete", text="Delete Asset")
+            #layout.operator("brush.asset_save_as", text="Duplicate Asset", icon='DUPLICATE') # BFA - moved to top level
+            #layout.operator("brush.asset_delete", text="Delete Asset", icon='X') # BFA - moved to top level
 
             layout.separator()
 
-            layout.operator("brush.asset_edit_metadata", text="Edit Metadata...")
-            layout.operator("brush.asset_load_preview", text="Edit Preview Image...")
-            layout.operator("brush.asset_update", text="Update Asset")
-            layout.operator("brush.asset_revert", text="Revert to Asset")
+            layout.operator("brush.asset_edit_metadata", text="Edit Metadata", icon="INFO") # BFA - icon added
+            layout.operator("brush.asset_load_preview", text="Edit Preview Image", icon="IMAGE_DATA") # BFA - icon added
+            #layout.operator("brush.asset_update", text="Update Asset", icon="FILE_REFRESH") # BFA - moved to top level
+            #layout.operator("brush.asset_revert", text="Revert to Asset", icon="UNDO") # BFA - moved to top level
         else:
-            layout.operator("brush.asset_save_as", text="Save As Asset...", icon='FILE_TICK')
-            layout.operator("brush.asset_delete", text="Delete")
+            layout.operator("brush.asset_save_as", text="Save As Asset", icon='FILE_TICK') # BFA - icon added
+            layout.operator("brush.asset_delete", text="Delete", icon='X') # BFA - icon added
 
 
 class VIEW3D_MT_brush_gpencil_context_menu(Menu):
