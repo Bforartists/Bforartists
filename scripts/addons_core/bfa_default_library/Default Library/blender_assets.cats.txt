@@ -6,6 +6,31 @@
 
 VERSION 1
 
+72789395-9b63-419c-b9ce-7293e77952de:Brushes:Brushes
+284ed6d7-62e7-40f4-8c03-07e02e526fc3:Brushes/Curve Sculpt:Brushes-Curve Sculpt
+65d41c0d-3bda-43e7-8a00-0e581a6e420c:Brushes/Curve Sculpt/Deform:Brushes-Curve Sculpt-Deform
+3ba803d3-1974-4a05-82a0-8ef32a9a4cf0:Brushes/Curve Sculpt/Density:Brushes-Curve Sculpt-Density
+87bbba99-e465-41bf-9ffe-f665b053d623:Brushes/Curve Sculpt/General:Brushes-Curve Sculpt-General
+aa3cb120-188f-435e-9ac8-a61dac025467:Brushes/Grease Pencil Draw:Brushes-Grease Pencil Draw
+2cd5370a-9817-475e-aa73-40860883dc45:Brushes/Grease Pencil Draw/Foilage:Brushes-Grease Pencil Draw-Foilage
+09d86d53-049c-4a38-ac81-fb27a484fdf0:Brushes/Grease Pencil Draw/Oil:Brushes-Grease Pencil Draw-Oil
+a1245e4b-1d01-4c32-b623-0e55b40358ee:Brushes/Grease Pencil Draw/Pencil:Brushes-Grease Pencil Draw-Pencil
+7f702451-4c88-49b8-aa8a-281093a0ce52:Brushes/Grease Pencil Draw/Spray:Brushes-Grease Pencil Draw-Spray
+34b77eae-152c-4642-8f1a-cfe77e6379ef:Brushes/Grease Pencil Draw/Water Color:Brushes-Grease Pencil Draw-Water Color
+1f631251-10ed-410f-9f6e-62b42c99554a:Brushes/Grease Pencil Paint:Brushes-Grease Pencil Paint
+69218c34-d8ac-4853-8c55-81d9fdd29bfd:Brushes/Grease Pencil Sculpt:Brushes-Grease Pencil Sculpt
+806c36c3-0579-40a7-8788-a85166adbd5f:Brushes/Grease Pencil Weight Paint:Brushes-Grease Pencil Weight Paint
+d1a9f34a-c1c3-4782-bbea-2342ea79ca43:Brushes/Mesh Sculpt:Brushes-Mesh Sculpt
+4d1248c3-b0dd-46a9-b139-6b80dd9800f5:Brushes/Mesh Sculpt/Cloth:Brushes-Mesh Sculpt-Cloth
+cf5c3635-0acc-47e0-b75b-559f7e8166ef:Brushes/Mesh Sculpt/General:Brushes-Mesh Sculpt-General
+a2355ddd-256a-4243-a75e-a54940c16ab6:Brushes/Mesh Sculpt/General/Add & Subtract:Brushes-Mesh Sculpt-General-Add & Subtract
+a9f338b7-b9f0-4970-9050-028158066408:Brushes/Mesh Sculpt/General/Contrast:Brushes-Mesh Sculpt-General-Contrast
+12c5de2a-e282-49fb-8c17-034dcbcd04fe:Brushes/Mesh Sculpt/General/Transform:Brushes-Mesh Sculpt-General-Transform
+544adf4b-ab06-4c94-be49-a97e2208bef7:Brushes/Mesh Sculpt/General/Utilities:Brushes-Mesh Sculpt-General-Utilities
+9b9ffc4e-968c-44ce-9c6c-bba8ec554df6:Brushes/Mesh Sculpt/Paint:Brushes-Mesh Sculpt-Paint
+0c7fcc95-7a74-4a7e-a98b-6c02e42d0b9f:Brushes/Mesh Texture Paint:Brushes-Mesh Texture Paint
+379421df-5dd6-4aec-8d4f-53e43f9b55de:Brushes/Mesh Vertex Paint:Brushes-Mesh Vertex Paint
+3e7c7eb6-bcb2-4de9-a0f6-dd6881015181:Brushes/Mesh Weight Paint:Brushes-Mesh Weight Paint
 7e6b7476-c3ec-41e3-a656-29adfc00adfd:Collections:Collections
 8250fedd-f0e8-4f30-a82c-4ec132b06062:Collections:Collections
 3af0b203-39db-4201-80e5-0ee0cc0771c3:Collections/Lights:Collections-Lights
