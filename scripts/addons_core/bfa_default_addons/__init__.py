@@ -303,7 +303,12 @@ class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
 
 
 def register_addons():
-    """Register the addons in Bforartists, as long as the addon is enabled."""
+    """Register the built-in legacy add-ons in Bforartists, as long as the add-on is enabled."""
+    """and when Internet Access is disabled."""
+
+    if bpy.context.preferences.system.use_online_access:
+        print("NOTE: Currently Online, skipping")
+        return {'CANCELLED'}
 
     # Redirect stdout and stderr to /dev/null - surpresses terminal messages to not spam on first load.
     sys.stdout = open(os.devnull, 'w')
