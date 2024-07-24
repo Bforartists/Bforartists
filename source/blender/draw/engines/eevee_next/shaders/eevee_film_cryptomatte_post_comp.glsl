@@ -13,7 +13,7 @@ void cryptomatte_load_samples(ivec2 texel, int layer, out vec2 samples[CRYPTOMAT
 
   /* Read all samples from the cryptomatte layer. */
   for (int p = 0; p < pass_len; p++) {
-    vec4 pass_sample = imageLoad(cryptomatte_img, ivec3(texel, p + layer_id));
+    vec4 pass_sample = imageLoadFast(cryptomatte_img, ivec3(texel, p + layer_id));
     samples[p * 2] = pass_sample.xy;
     samples[p * 2 + 1] = pass_sample.zw;
   }
@@ -42,12 +42,6 @@ void cryptomatte_sort_samples(inout vec2 samples[CRYPTOMATTE_LEVELS_MAX])
     }
   }
 }
-void cryptomatte_normalize_weight(float total_weight, inout vec2 samples[CRYPTOMATTE_LEVELS_MAX])
-{
-  for (int i = 0; i < CRYPTOMATTE_LEVELS_MAX; i++) {
-    samples[i].y /= total_weight;
-  }
-}
 
 void cryptomatte_store_samples(ivec2 texel, int layer, vec2 samples[CRYPTOMATTE_LEVELS_MAX])
 {
@@ -59,7 +53,7 @@ void cryptomatte_store_samples(ivec2 texel, int layer, vec2 samples[CRYPTOMATTE_
     vec4 pass_sample;
     pass_sample.xy = samples[p * 2];
     pass_sample.zw = samples[p * 2 + 1];
-    imageStore(cryptomatte_img, ivec3(texel, p + layer_id), pass_sample);
+    imageStoreFast(cryptomatte_img, ivec3(texel, p + layer_id), pass_sample);
   }
   /* Ensure stores are visible to later reads. */
   imageFence(cryptomatte_img);
@@ -68,16 +62,15 @@ void cryptomatte_store_samples(ivec2 texel, int layer, vec2 samples[CRYPTOMATTE_
 void main()
 {
   ivec2 texel = ivec2(gl_GlobalInvocationID.xy);
+
+  if (any(greaterThanEqual(texel, uniform_buf.film.extent))) {
+    return;
+  }
+
   for (int layer = 0; layer < cryptomatte_layer_len; layer++) {
     vec2 samples[CRYPTOMATTE_LEVELS_MAX];
     cryptomatte_load_samples(texel, layer, samples);
     cryptomatte_sort_samples(samples);
-    /* Repeat texture coordinates as the weight can be optimized to a small portion of the film. */
-    float weight = imageLoad(
-                       weight_img,
-                       ivec3(texel % imageSize(weight_img).xy, FILM_WEIGHT_LAYER_ACCUMULATION))
-                       .x;
-    cryptomatte_normalize_weight(weight, samples);
     cryptomatte_store_samples(texel, layer, samples);
   }
 }
