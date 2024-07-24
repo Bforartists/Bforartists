@@ -4156,7 +4156,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
         IDProperty *clight = version_cycles_properties_from_ID(&light->id);
         if (clight) {
           bool value = version_cycles_property_boolean(
-              clight, "use_shadow", default_light->mode & LA_SHADOW);
+              clight, "cast_shadow", default_light->mode & LA_SHADOW);
           SET_FLAG_FROM_TEST(light->mode, value, LA_SHADOW);
         }
       }
@@ -4419,6 +4419,12 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
     FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 403, 11)) {
+    LISTBASE_FOREACH (Curves *, curves, &bmain->hair_curves) {
+      curves->geometry.attributes_active_index = curves->attributes_active_index_legacy;
+    }
   }
 
   /**

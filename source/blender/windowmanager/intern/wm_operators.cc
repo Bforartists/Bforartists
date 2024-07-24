@@ -1731,7 +1731,7 @@ int WM_operator_confirm_ex(bContext *C,
 
   /* Larger dialog needs a wider minimum width to balance with the big icon. */
   const float min_width = (message == nullptr) ? 180.0f : 230.0f;
-  data->width = int(min_width * UI_SCALE_FAC * UI_style_get()->widgetlabel.points /
+  data->width = int(min_width * UI_SCALE_FAC * UI_style_get()->widget.points /
                     UI_DEFAULT_TEXT_POINTS);
 
   data->free_op = true;
@@ -1841,7 +1841,7 @@ int WM_operator_props_dialog_popup(bContext *C,
 {
   wmOpPopUp *data = MEM_new<wmOpPopUp>(__func__);
   data->op = op;
-  data->width = int(float(width) * UI_SCALE_FAC * UI_style_get()->widgetlabel.points /
+  data->width = int(float(width) * UI_SCALE_FAC * UI_style_get()->widget.points /
                     UI_DEFAULT_TEXT_POINTS);
   data->free_op = true; /* If this runs and gets registered we may want not to free it. */
   data->title = title ? std::move(*title) : WM_operatortype_name(op->type, op->ptr);
@@ -2633,7 +2633,7 @@ static void radial_control_set_initial_mouse(bContext *C, RadialControl *rc, con
     d[1] *= zoom[1];
   }
   rc->scale_fac = 1.0f;
-  if (rc->ptr.owner_id && GS(rc->ptr.owner_id->name) == ID_BR && rc->prop == rna_Brush_size) {
+  if (rc->ptr.owner_id && GS(rc->ptr.owner_id->name) == ID_BR && rc->prop == &rna_Brush_size) {
     Brush *brush = reinterpret_cast<Brush *>(rc->ptr.owner_id);
     if ((brush && brush->gpencil_settings) && (brush->ob_mode == OB_MODE_PAINT_GPENCIL_LEGACY) &&
         (brush->gpencil_tool == GPAINT_TOOL_DRAW) && (brush->flag & BRUSH_LOCK_SIZE) != 0)
