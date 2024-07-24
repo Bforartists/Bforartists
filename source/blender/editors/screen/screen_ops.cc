@@ -4219,7 +4219,7 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
                   "SCREEN_OT_area_join",
                   (ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S)) ? IFACE_("Join Down") :
                                                             IFACE_("Join Left"),
-                  ICON_AREA_JOIN,
+                  ICON_JOIN_AREAS, /*BFA icon*/
                   nullptr,
                   WM_OP_EXEC_DEFAULT,
                   UI_ITEM_NONE,
