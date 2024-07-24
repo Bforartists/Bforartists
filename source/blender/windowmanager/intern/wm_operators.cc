@@ -1442,8 +1442,7 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *region, void *arg_op)
 
   uiLayout *col = uiLayoutColumn(layout, false);
   /* BFA - align operator properties to left in redo panel (UI_BUT_LABEL_ALIGN_SPLIT_COLUMN) */
-  uiTemplateOperatorPropertyButs(
-      C, col, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
+  uiTemplateOperatorPropertyButs(C, col, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
 
   UI_block_bounds_set_popup(block, 7 * UI_SCALE_FAC, nullptr);
 
