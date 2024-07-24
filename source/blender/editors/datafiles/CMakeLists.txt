@@ -2523,25 +2523,28 @@ if(WITH_BLENDER)
       collection_bone_new
 	  
 	  
-	combine_transform
-	invert_matrix
-	multiply_matrix
-	project_point
-	separate_transform
-	transform_direction
-	transform_point
-	transpose_matrix
-	combine_matrix
-	separate_matrix
-	
-	mouse_position
-	gabor_noise
-	geometry_name
-	dial_gizmo
-	linear_gizmo
-	transform_gizmo
-	
+      combine_transform
+      invert_matrix
+      multiply_matrix
+      project_point
+      separate_transform
+      transform_direction
+      transform_point
+      transpose_matrix
+      combine_matrix
+      separate_matrix
+
+      mouse_position
+      gabor_noise
+      geometry_name
+      dial_gizmo
+      linear_gizmo
+      transform_gizmo
+
       warning
+      face_corner
+      pointcloud_point
+
       # ------------------------- large --------------------------
       cancel_large
       warning_large
