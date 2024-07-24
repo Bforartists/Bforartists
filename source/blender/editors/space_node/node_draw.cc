@@ -4068,7 +4068,7 @@ static void frame_node_draw_label(TreeDrawContext &tree_draw_ctx,
 {
   const float aspect = snode.runtime->aspect;
   /* XXX font id is crap design */
-  const int fontid = UI_style_get()->widgetlabel.uifont_id;
+  const int fontid = UI_style_get()->widget.uifont_id;
   const NodeFrame *data = (const NodeFrame *)node.storage;
   const float font_size = data->label_size / aspect;
 
@@ -4715,7 +4715,7 @@ static void snode_setup_v2d(SpaceNode &snode, ARegion &region, const float2 &cen
   snode.runtime->aspect = BLI_rctf_size_x(&v2d.cur) / float(region.winx);
 }
 
-/* Similar to is_compositor_enabled() in `draw_manager.cc` but checks all 3D views. */
+/* Similar to DRW_is_viewport_compositor_enabled() in `draw_manager.cc` but checks all 3D views. */
 static bool realtime_compositor_is_in_use(const bContext &context)
 {
   const Scene *scene = CTX_data_scene(&context);
