@@ -94,6 +94,7 @@ set(SRC
   intern/collision.cc
   intern/colorband.cc
   intern/colortools.cc
+  intern/compositor.cc
   intern/compute_contexts.cc
   intern/constraint.cc
   intern/context.cc
@@ -363,6 +364,7 @@ set(SRC
   BKE_collision.h
   BKE_colorband.hh
   BKE_colortools.hh
+  BKE_compositor.hh
   BKE_compute_contexts.hh
   BKE_constraint.h
   BKE_context.hh
@@ -804,18 +806,6 @@ endif()
 
 if(WITH_XR_OPENXR)
   add_definitions(-DWITH_XR_OPENXR)
-endif()
-
-if(WITH_TBB)
-  add_definitions(-DWITH_TBB)
-
-  list(APPEND INC_SYS
-    ${TBB_INCLUDE_DIRS}
-  )
-
-  list(APPEND LIB
-    ${TBB_LIBRARIES}
-  )
 endif()
 
 if(WITH_EXPERIMENTAL_FEATURES)

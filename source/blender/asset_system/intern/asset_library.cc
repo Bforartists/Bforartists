@@ -35,12 +35,6 @@ using namespace blender::asset_system;
 
 bool AssetLibrary::save_catalogs_when_file_is_saved = true;
 
-bool AS_asset_libraries_available()
-{
-  const AssetLibraryService *service = AssetLibraryService::get();
-  return service != nullptr;
-}
-
 void AS_asset_libraries_exit()
 {
   /* NOTE: Can probably removed once #WITH_DESTROY_VIA_LOAD_HANDLER gets enabled by default. */
@@ -208,17 +202,19 @@ AssetCatalogService &AssetLibrary::catalog_service() const
 
 void AssetLibrary::refresh_catalogs() {}
 
-AssetRepresentation &AssetLibrary::add_external_asset(StringRef relative_asset_path,
-                                                      StringRef name,
-                                                      const int id_type,
-                                                      std::unique_ptr<AssetMetaData> metadata)
+std::weak_ptr<AssetRepresentation> AssetLibrary::add_external_asset(
+    StringRef relative_asset_path,
+    StringRef name,
+    const int id_type,
+    std::unique_ptr<AssetMetaData> metadata)
 {
   AssetIdentifier identifier = this->asset_identifier_from_library(relative_asset_path);
   return asset_storage_->add_external_asset(
       std::move(identifier), name, id_type, std::move(metadata), *this);
 }
 
-AssetRepresentation &AssetLibrary::add_local_id_asset(StringRef relative_asset_path, ID &id)
+std::weak_ptr<AssetRepresentation> AssetLibrary::add_local_id_asset(StringRef relative_asset_path,
+                                                                    ID &id)
 {
   AssetIdentifier identifier = this->asset_identifier_from_library(relative_asset_path);
   return asset_storage_->add_local_id_asset(std::move(identifier), id, *this);

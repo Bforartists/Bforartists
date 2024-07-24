@@ -350,12 +350,32 @@ def addons_panel_draw_missing_with_extension_impl(
         row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - opt into being online to install missing addons conveniently
     ## BFA - Changes to opt-into extensions and improve migration here - END
 
+    pkg_manifest_remote = {}
+
     if repo is None:
         # Most likely the user manually removed this.
         box.label(text="Online Extensions repository not found!", icon='ERROR') # BFA - Made explicit
     elif not repo.enabled:
         box.label(text="Online access to the Extensions repository must be enabled to install extensions!", icon='ERROR') # BFA - Made explicit
         repo_index = -1
+    else:
+        # Ensure the remote data is available from which to install the extensions.
+        # If not, show a button to refresh the remote repository, see: #124850.
+        from . import repo_cache_store_ensure
+        repo_cache_store = repo_cache_store_ensure()
+        pkg_manifest_remote = repo_cache_store.refresh_remote_from_directory(directory=repo.directory, error_fn=print)
+        if pkg_manifest_remote is None:
+            row = box.row()
+            row.label(text="The Extension repository must be refreshed!", icon='ERROR') # BFA - explicit
+            # Ideally this would only sync one repository, but there is no operator to do this
+            # and this one corner-case doesn't justify adding a new operator.
+            rowsub = row.row()
+            rowsub.alignment = 'RIGHT'
+            rowsub.operator("extensions.repo_sync_all", text="Refresh Remote", icon='FILE_REFRESH')
+            rowsub.label(text="", icon='BLANK1')
+            pkg_manifest_remote = {}
+            del row, rowsub
+        del repo_cache_store
     del repo
 
     for addon_module_name in sorted(missing_modules):
@@ -382,11 +402,17 @@ def addons_panel_draw_missing_with_extension_impl(
             # This is enough of a corner case that it's not especially worth detecting
             # and communicating this particular state of affairs to the user.
             # Worst case, they install and it will re-install an already installed extension.
-            props = row_right.operator("extensions.package_install", text="Install and Replace", icon="SWAP") # BFA - icon added, made explicit
+            rowsub = row_right.row()
+            rowsub.alignment = 'RIGHT'
+            props = rowsub.operator("extensions.package_install", text="Install and Replace", icon="SWAP") # BFA - icon added, made explicit
             props.repo_index = repo_index
             props.pkg_id = addon_pkg_id
             props.do_legacy_replace = True
             del props
+
+            if addon_pkg_id not in pkg_manifest_remote:
+                rowsub.enabled = False
+            del rowsub
 
         row_right.operator("preferences.addon_disable", text="", icon="X", emboss=False).module = addon_module_name
 
@@ -1205,7 +1231,7 @@ def extensions_panel_draw_online_extensions_request_impl(
     # is it will be disabled when `--offline-mode` is forced with a useful error for why.
     row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK')
 
-    ## BFA - - START
+    ## BFA - Indicative Icons for types - START
     row = box.row() # BFA
     if "bfa_default_addons" not in bpy.context.preferences.addons and not bpy.context.preferences.system.use_online_access:
         row.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
@@ -1215,7 +1241,7 @@ def extensions_panel_draw_online_extensions_request_impl(
             row.operator("bfa.install_legacy_addons", text="Install Built-in Legacy Add-ons", icon='IMPORT')
         else:
             row.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Add-ons", icon='CANCEL')
-    ## BFA - - END
+    ## BFA - Indicative Icons for types - END
 
 extensions_map_from_legacy_addons = None
 extensions_map_from_legacy_addons_url = None
@@ -1925,11 +1951,12 @@ class USERPREF_MT_extensions_item(Menu):
                             text="Add-on Enabled",
                             emboss=False,
                         ).module = addon_module_name
-            # BFA - Moved Set and Clear Theme Operator to Top Level
+
             # BFA - Operator to switch editing active theme.
             case "theme":
                 if is_installed and is_enabled:
                     layout.operator("extensions.userpref_theme_show_edit", icon='COLOR')
+            	# BFA - Moved Set and Clear Theme Operator to Top Level
 
         # Unlike most other value, prioritize the remote website,
         # see code comments in `extensions_panel_draw_impl`.
@@ -1949,6 +1976,8 @@ class USERPREF_MT_extensions_item(Menu):
         # although this is destructive, so don't enable this right now.
 
         if is_installed:
+			#layout.separator() # BFA
+
             if is_system_repo:
                 layout.separator() # BFA - moved to conditional
                 layout.operator("extensions.package_uninstall_system", text="Uninstall from System", icon='CANCEL') # BFA - icon added
