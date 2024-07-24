@@ -2848,11 +2848,11 @@ void GPENCIL_OT_delete(wmOperatorType *ot)
   static const EnumPropertyItem prop_gpencil_delete_types[] = {
       {GP_DELETEOP_POINTS,
        "POINTS",
-       ICON_DELETE,
+       ICON_DELETE, /*BFA icon*/
        "Points",
        "Delete selected points and split strokes into segments"},
-      {GP_DELETEOP_STROKES, "STROKES", ICON_DELETE, "Strokes", "Delete selected strokes"},
-      {GP_DELETEOP_FRAME, "FRAME", ICON_DELETE, "Frame", "Delete active frame"},
+      {GP_DELETEOP_STROKES, "STROKES", ICON_DELETE, "Strokes", "Delete selected strokes"}, /*BFA icon*/
+      {GP_DELETEOP_FRAME, "FRAME", ICON_DELETE, "Frame", "Delete active frame"}, /*BFA icon*/
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -2894,15 +2894,15 @@ static int gpencil_dissolve_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_dissolve(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_gpencil_dissolve_types[] = {
-      {GP_DISSOLVE_POINTS, "POINTS", ICON_DISSOLVE_VERTS, "Dissolve", "Dissolve selected points"},
+      {GP_DISSOLVE_POINTS, "POINTS", ICON_DISSOLVE_VERTS, "Dissolve", "Dissolve selected points"}, /*BFA icon*/
       {GP_DISSOLVE_BETWEEN,
        "BETWEEN",
-       ICON_DISSOLVE_BETWEEN,
+       ICON_DISSOLVE_BETWEEN, /*BFA icon*/
        "Dissolve Between",
        "Dissolve points between selected points"},
       {GP_DISSOLVE_UNSELECT,
        "UNSELECT",
-       ICON_DISSOLVE_UNSELECTED,
+       ICON_DISSOLVE_UNSELECTED, /*BFA icon*/
        "Dissolve Unselect",
        "Dissolve all unselected points"},
       {0, nullptr, 0, nullptr, nullptr},
@@ -3609,9 +3609,9 @@ static int gpencil_stroke_caps_set_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_stroke_caps_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem toggle_type[] = {
-      {GP_STROKE_CAPS_TOGGLE_BOTH, "TOGGLE", ICON_TOGGLECAPS_BOTH, "Both", ""},
-      {GP_STROKE_CAPS_TOGGLE_START, "START", ICON_TOGGLECAPS_START, "Start", ""},
-      {GP_STROKE_CAPS_TOGGLE_END, "END", ICON_TOGGLECAPS_END, "End", ""},
+      {GP_STROKE_CAPS_TOGGLE_BOTH, "TOGGLE", ICON_TOGGLECAPS_BOTH, "Both", ""}, /*BFA icon*/
+      {GP_STROKE_CAPS_TOGGLE_START, "START", ICON_TOGGLECAPS_START, "Start", ""}, /*BFA icon*/
+      {GP_STROKE_CAPS_TOGGLE_END, "END", ICON_TOGGLECAPS_END, "End", ""}, /*BFA icon*/
       {GP_STROKE_CAPS_TOGGLE_DEFAULT,
        "DEFAULT",
        ICON_TOGGLECAPS_DEFAULT,
@@ -3821,8 +3821,8 @@ static int gpencil_stroke_join_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_stroke_join(wmOperatorType *ot)
 {
   static const EnumPropertyItem join_type[] = {
-      {GP_STROKE_JOIN, "JOIN", ICON_JOIN, "Join", ""},
-      {GP_STROKE_JOINCOPY, "JOINCOPY", ICON_JOIN, "Join and Copy", ""},
+      {GP_STROKE_JOIN, "JOIN", ICON_JOIN, "Join", ""}, /*BFA icon*/
+      {GP_STROKE_JOINCOPY, "JOINCOPY", ICON_JOIN, "Join and Copy", ""}, /*BFA icon*/
       {0, nullptr, 0, nullptr, nullptr},
   };
 
