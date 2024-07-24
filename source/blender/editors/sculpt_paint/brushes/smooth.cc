@@ -60,7 +60,7 @@ BLI_NOINLINE static void apply_positions_faces(const Sculpt &sd,
                                                const Brush &brush,
                                                const Span<float3> positions_eval,
                                                const Span<float3> vert_normals,
-                                               const PBVHNode &node,
+                                               const bke::pbvh::Node &node,
                                                const float strength,
                                                Object &object,
                                                LocalData &tls,
@@ -108,7 +108,7 @@ BLI_NOINLINE static void apply_positions_faces(const Sculpt &sd,
 BLI_NOINLINE static void do_smooth_brush_mesh(const Sculpt &sd,
                                               const Brush &brush,
                                               Object &object,
-                                              Span<PBVHNode *> nodes,
+                                              Span<bke::pbvh::Node *> nodes,
                                               const float brush_strength)
 {
   const SculptSession &ss = *object.sculpt;
@@ -118,7 +118,7 @@ BLI_NOINLINE static void do_smooth_brush_mesh(const Sculpt &sd,
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
 
-  const PBVH &pbvh = *ss.pbvh;
+  const bke::pbvh::Tree &pbvh = *ss.pbvh;
 
   const Span<float3> positions_eval = BKE_pbvh_get_vert_positions(pbvh);
   const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(pbvh);
@@ -132,7 +132,7 @@ BLI_NOINLINE static void do_smooth_brush_mesh(const Sculpt &sd,
 
   /* Calculate the new positions into a separate array in a separate loop because multiple loops
    * are updated in parallel. Without this there would be non-threadsafe access to changing
-   * positions in other PBVH nodes. */
+   * positions in other bke::pbvh::Tree nodes. */
   for (const float strength : iteration_strengths(brush_strength)) {
     threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
       LocalData &tls = all_tls.local();
@@ -179,22 +179,17 @@ static void calc_grids(const Sculpt &sd,
                        Object &object,
                        const Brush &brush,
                        const float strength,
-                       const PBVHNode &node,
+                       const bke::pbvh::Node &node,
                        LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
   const StrokeCache &cache = *ss.cache;
   SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
-  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
 
   const Span<int> grids = bke::pbvh::node_grid_indices(node);
-  const int grid_verts_num = grids.size() * key.grid_area;
+  const MutableSpan positions = gather_grids_positions(subdiv_ccg, grids, tls.positions);
 
-  tls.positions.reinitialize(grid_verts_num);
-  const MutableSpan<float3> positions = tls.positions;
-  gather_grids_positions(subdiv_ccg, grids, positions);
-
-  tls.factors.reinitialize(grid_verts_num);
+  tls.factors.reinitialize(positions.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(subdiv_ccg, grids, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -202,7 +197,7 @@ static void calc_grids(const Sculpt &sd,
     calc_front_face(cache.view_normal, subdiv_ccg, grids, factors);
   }
 
-  tls.distances.reinitialize(grid_verts_num);
+  tls.distances.reinitialize(positions.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -217,12 +212,12 @@ static void calc_grids(const Sculpt &sd,
 
   calc_brush_texture_factors(ss, brush, positions, factors);
 
-  tls.new_positions.reinitialize(grid_verts_num);
+  tls.new_positions.reinitialize(positions.size());
   const MutableSpan<float3> new_positions = tls.new_positions;
   smooth::neighbor_position_average_interior_grids(
       faces, corner_verts, boundary_verts, subdiv_ccg, grids, new_positions);
 
-  tls.translations.reinitialize(grid_verts_num);
+  tls.translations.reinitialize(positions.size());
   const MutableSpan<float3> translations = tls.translations;
   translations_from_new_positions(new_positions, positions, translations);
   scale_translations(translations, factors);
@@ -235,17 +230,14 @@ static void calc_bmesh(const Sculpt &sd,
                        Object &object,
                        const Brush &brush,
                        const float strength,
-                       PBVHNode &node,
+                       bke::pbvh::Node &node,
                        LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
   const StrokeCache &cache = *ss.cache;
 
   const Set<BMVert *, 0> &verts = BKE_pbvh_bmesh_node_unique_verts(&node);
-
-  tls.positions.reinitialize(verts.size());
-  const MutableSpan<float3> positions = tls.positions;
-  gather_bmesh_positions(verts, positions);
+  const MutableSpan positions = gather_bmesh_positions(verts, tls.positions);
 
   tls.factors.reinitialize(verts.size());
   const MutableSpan<float> factors = tls.factors;
@@ -287,19 +279,19 @@ static void calc_bmesh(const Sculpt &sd,
 
 void do_smooth_brush(const Sculpt &sd,
                      Object &object,
-                     const Span<PBVHNode *> nodes,
+                     const Span<bke::pbvh::Node *> nodes,
                      const float brush_strength)
 {
   SculptSession &ss = *object.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
-  SCULPT_boundary_info_ensure(object);
+  boundary::ensure_boundary_info(object);
 
-  switch (BKE_pbvh_type(*object.sculpt->pbvh)) {
-    case PBVH_FACES:
+  switch (object.sculpt->pbvh->type()) {
+    case bke::pbvh::Type::Mesh:
       do_smooth_brush_mesh(sd, brush, object, nodes, brush_strength);
       break;
-    case PBVH_GRIDS: {
+    case bke::pbvh::Type::Grids: {
       const Mesh &base_mesh = *static_cast<const Mesh *>(object.data);
       const OffsetIndices faces = base_mesh.faces();
       const Span<int> corner_verts = base_mesh.corner_verts();
@@ -323,7 +315,7 @@ void do_smooth_brush(const Sculpt &sd,
       }
       break;
     }
-    case PBVH_BMESH: {
+    case bke::pbvh::Type::BMesh: {
       BM_mesh_elem_index_ensure(ss.bm, BM_VERT);
       BM_mesh_elem_table_ensure(ss.bm, BM_VERT);
       threading::EnumerableThreadSpecific<LocalData> all_tls;

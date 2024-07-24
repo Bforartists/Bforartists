@@ -116,7 +116,7 @@ class DopesheetFilterPopoverBase:
             flow.prop(dopesheet, "show_armatures", text="Armatures")
         if bpy.data.cameras:
             flow.prop(dopesheet, "show_cameras", text="Cameras")
-        if bpy.data.grease_pencils:
+        if bpy.data.grease_pencils_v3:
             flow.prop(dopesheet, "show_gpencil", text="Grease Pencil Objects")
         if bpy.data.lights:
             flow.prop(dopesheet, "show_lights", text="Lights")
@@ -1143,7 +1143,7 @@ class GreasePencilLayersDopeSheetPanel:
             return False
 
         grease_pencil = ob.data
-        active_layer = grease_pencil.layers.active_layer
+        active_layer = grease_pencil.layers.active
         if active_layer:
             return True
 
@@ -1219,7 +1219,7 @@ class DOPESHEET_PT_grease_pencil_mode(GreasePencilLayersDopeSheetPanel, Panel):
 
         ob = context.object
         grease_pencil = ob.data
-        active_layer = grease_pencil.layers.active_layer
+        active_layer = grease_pencil.layers.active
 
         if active_layer:
             row = layout.row(align=True)
