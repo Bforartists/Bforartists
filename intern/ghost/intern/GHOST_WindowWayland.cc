@@ -393,6 +393,12 @@ struct GWL_Window {
 
   bool is_dialog = false;
 
+  /** True once the window has been initialized. */
+  bool is_init = false;
+
+  /** True when the GPU context is valid. */
+  bool is_valid_setup = false;
+
   /** Currently only initialized on access (avoids allocations & allows to keep private). */
   GWL_WindowScaleParams scale_params;
 
@@ -1650,7 +1656,6 @@ GHOST_WindowWayland::GHOST_WindowWayland(GHOST_SystemWayland *system,
     : GHOST_Window(width, height, state, stereoVisual, exclusive),
       system_(system),
       window_(new GWL_Window),
-      valid_setup_(false),
       is_debug_context_(is_debug)
 {
 #ifdef USE_EVENT_BACKGROUND_THREAD
@@ -1912,11 +1917,17 @@ GHOST_WindowWayland::GHOST_WindowWayland(GHOST_SystemWayland *system,
     GHOST_PRINT("Failed to create drawing context" << std::endl);
   }
   else {
-    valid_setup_ = true;
+    window_->is_valid_setup = true;
   }
 
+  if (window_->is_valid_setup == false) {
+    /* Don't attempt to setup the window if there is no context.
+     * This window is considered invalid and will be removed. */
+  }
+  else
 #ifdef WITH_GHOST_WAYLAND_LIBDECOR
-  if (use_libdecor) {
+      if (use_libdecor)
+  {
     /* Commit needed so the top-level callbacks run (and `toplevel` can be accessed). */
     wl_surface_commit(window_->wl.surface);
     GWL_LibDecor_Window &decor = *window_->libdecor;
@@ -1998,6 +2009,8 @@ GHOST_WindowWayland::GHOST_WindowWayland(GHOST_SystemWayland *system,
    * While postponing until after the buffer drawing is context is set
    * isn't essential, it reduces flickering. */
   wl_surface_commit(window_->wl.surface);
+
+  window_->is_init = true;
 
   /* Set swap interval to 0 to prevent blocking. */
   setSwapInterval(0);
@@ -2151,7 +2164,7 @@ GHOST_TSuccess GHOST_WindowWayland::getCursorBitmap(GHOST_CursorBitmapRef *bitma
 
 bool GHOST_WindowWayland::getValid() const
 {
-  return GHOST_Window::getValid() && valid_setup_;
+  return GHOST_Window::getValid() && window_->is_valid_setup;
 }
 
 void GHOST_WindowWayland::setTitle(const char *title)
@@ -2470,8 +2483,12 @@ GHOST_TSuccess GHOST_WindowWayland::activate()
   if (is_main_thread)
 #endif
   {
-    if (system_->getWindowManager()->setActiveWindow(this) == GHOST_kFailure) {
-      return GHOST_kFailure;
+    /* This can run while the window being initialized.
+     * In this case, skip setting the window active but add the event, see: #120465. */
+    if (window_->is_init) {
+      if (system_->getWindowManager()->setActiveWindow(this) == GHOST_kFailure) {
+        return GHOST_kFailure;
+      }
     }
   }
   const GHOST_TSuccess success = system_->pushEvent_maybe_pending(
@@ -2495,7 +2512,10 @@ GHOST_TSuccess GHOST_WindowWayland::deactivate()
   if (is_main_thread)
 #endif
   {
-    system_->getWindowManager()->setWindowInactive(this);
+    /* See code comments for #GHOST_WindowWayland::activate. */
+    if (window_->is_init) {
+      system_->getWindowManager()->setWindowInactive(this);
+    }
   }
   const GHOST_TSuccess success = system_->pushEvent_maybe_pending(
       new GHOST_Event(system_->getMilliSeconds(), GHOST_kEventWindowDeactivate, this));
