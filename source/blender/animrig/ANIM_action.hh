@@ -657,24 +657,26 @@ class KeyframeStrip : public ::KeyframeActionStrip {
    * Should only be called when there is no `ChannelBag` for this slot yet.
    */
   ChannelBag &channelbag_for_slot_add(const Slot &slot);
-  /**
-   * Find an FCurve for this slot + RNA path + array index combination.
-   *
-   * If it cannot be found, `nullptr` is returned.
-   */
-  FCurve *fcurve_find(const Slot &slot, FCurveDescriptor fcurve_descriptor);
 
   /**
-   * Find an FCurve for this slot + RNA path + array index combination.
-   *
-   * If it cannot be found, a new one is created.
-   *
-   * \param `prop_subtype` The subtype of the property this fcurve is for, if
-   * available.
+   * Find the ChannelBag for `slot`, or if none exists, create it.
    */
-  FCurve &fcurve_find_or_create(const Slot &slot, FCurveDescriptor fcurve_descriptor);
+  ChannelBag &channelbag_for_slot_ensure(const Slot &slot);
 
-  SingleKeyingResult keyframe_insert(const Slot &slot,
+  /**
+   * Remove the ChannelBag from this slot.
+   *
+   * After this call the reference is no longer valid, as the memory will have been freed.
+   *
+   * \return true when the ChannelBag was found & removed, false if it wasn't found.
+   */
+  bool channelbag_remove(ChannelBag &channelbag_to_remove);
+
+  /** Return the channelbag's index, or -1 if there is none for this slot handle. */
+  int64_t find_channelbag_index(const ChannelBag &channelbag) const;
+
+  SingleKeyingResult keyframe_insert(Main *bmain,
+                                     const Slot &slot,
                                      FCurveDescriptor fcurve_descriptor,
                                      float2 time_value,
                                      const KeyframeSettings &settings,
@@ -701,7 +703,68 @@ class ChannelBag : public ::ActionChannelBag {
   const FCurve *fcurve(int64_t index) const;
   FCurve *fcurve(int64_t index);
 
-  const FCurve *fcurve_find(StringRefNull rna_path, int array_index) const;
+  /**
+   * Find an FCurve matching the fcurve descriptor.
+   *
+   * If it cannot be found, `nullptr` is returned.
+   */
+  const FCurve *fcurve_find(FCurveDescriptor fcurve_descriptor) const;
+  FCurve *fcurve_find(FCurveDescriptor fcurve_descriptor);
+
+  /**
+   * Find an FCurve matching the fcurve descriptor, or create one if it doesn't
+   * exist.
+   *
+   * \param bmain Used to tag the dependency graph(s) for relationship
+   * rebuilding. This is necessary when adding a new F-Curve, as a
+   * previously-unanimated depsgraph component may become animated now. Can be
+   * nullptr, in which case the tagging is skipped and is left as the
+   * responsibility of the caller.
+   */
+  FCurve &fcurve_ensure(Main *bmain, FCurveDescriptor fcurve_descriptor);
+
+  /**
+   * Create an F-Curve, but only if it doesn't exist yet in this ChannelBag.
+   *
+   * \return the F-Curve it it was created, or nullptr if it already existed.
+   *
+   * \param bmain Used to tag the dependency graph(s) for relationship
+   * rebuilding. This is necessary when adding a new F-Curve, as a
+   * previously-unanimated depsgraph component may become animated now. Can be
+   * nullptr, in which case the tagging is skipped and is left as the
+   * responsibility of the caller.
+   */
+  FCurve *fcurve_create_unique(Main *bmain, FCurveDescriptor fcurve_descriptor);
+
+  /**
+   * Remove an F-Curve from the ChannelBag.
+   *
+   * After this call, if the F-Curve was found, the reference will no longer be
+   * valid, as the curve will have been freed.
+   *
+   * \return true when the F-Curve was found & removed, false if it wasn't found.
+   */
+  bool fcurve_remove(FCurve &fcurve_to_remove);
+
+  /**
+   * Remove all F-Curves from this ChannelBag.
+   */
+  void fcurves_clear();
+
+ protected:
+  /**
+   * Create an F-Curve.
+   *
+   * Assumes that there is no such F-Curve yet on this ChannelBag. If it is
+   * uncertain whether this is the case, use `fcurve_create_unique()` instead.
+   *
+   * \param bmain Used to tag the dependency graph(s) for relationship
+   * rebuilding. This is necessary when adding a new F-Curve, as a
+   * previously-unanimated depsgraph component may become animated now. Can be
+   * nullptr, in which case the tagging is skipped and is left as the
+   * responsibility of the caller.
+   */
+  FCurve &fcurve_create(Main *bmain, FCurveDescriptor fcurve_descriptor);
 };
 static_assert(sizeof(ChannelBag) == sizeof(::ActionChannelBag),
               "DNA struct and its C++ wrapper must have the same size");
@@ -805,6 +868,10 @@ Vector<FCurve *> fcurves_all(Action &action);
  * nullptr for layered actions. See the comments in the implementation for more
  * details.
  *
+ * \note This function also ensures that dependency graph relationships are
+ * rebuilt. This is necessary when adding a new F-Curve, as a
+ * previously-unanimated depsgraph component may become animated now.
+ *
  * \param ptr: RNA pointer for the struct the fcurve is being looked up/created
  * for. For legacy actions this is optional and may be null.
  *
@@ -906,7 +973,17 @@ void assert_baklava_phase_1_invariants(const Strip &strip);
  * Creates a new `Action` that matches the old action but is converted to have layers.
  * Returns a nullptr if the action is empty or already layered.
  */
-Action *convert_to_layered_action(Main &bmain, const Action &action);
+Action *convert_to_layered_action(Main &bmain, const Action &legacy_action);
+
+/**
+ * Deselect the keys of all actions in the Span. Duplicate entries are only visited once.
+ */
+void deselect_keys_actions(blender::Span<bAction *> actions);
+
+/**
+ * Deselect all keys within the action.
+ */
+void action_deselect_keys(Action &action);
 
 }  // namespace blender::animrig
 
