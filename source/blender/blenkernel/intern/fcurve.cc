@@ -1018,6 +1018,16 @@ bool BKE_fcurve_has_selected_control_points(const FCurve *fcu)
   return false;
 }
 
+void BKE_fcurve_deselect_all_keys(FCurve &fcu)
+{
+  if (!fcu.bezt) {
+    return;
+  }
+  for (int i = 0; i < fcu.totvert; i++) {
+    BEZT_DESEL_ALL(&fcu.bezt[i]);
+  }
+}
+
 bool BKE_fcurve_is_keyframable(const FCurve *fcu)
 {
   /* F-Curve's keyframes must be "usable" (i.e. visible + have an effect on final result) */
@@ -2661,7 +2671,7 @@ void BKE_fcurve_blend_read_data(BlendDataReader *reader, FCurve *fcu)
 
     /* Give the driver a fresh chance - the operating environment may be different now
      * (addons, etc. may be different) so the driver namespace may be sane now #32155. */
-    driver->flag &= ~DRIVER_FLAG_INVALID;
+    driver->flag &= ~(DRIVER_FLAG_INVALID | DRIVER_FLAG_PYTHON_BLOCKED);
 
     /* relink variables, targets and their paths */
     BLO_read_struct_list(reader, DriverVar, &driver->variables);
