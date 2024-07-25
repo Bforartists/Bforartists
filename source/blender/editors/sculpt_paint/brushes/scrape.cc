@@ -43,7 +43,7 @@ static void calc_faces(const Sculpt &sd,
                        const float strength,
                        const Span<float3> positions_eval,
                        const Span<float3> vert_normals,
-                       const PBVHNode &node,
+                       const bke::pbvh::Node &node,
                        Object &object,
                        LocalData &tls,
                        const MutableSpan<float3> positions_orig)
@@ -94,22 +94,17 @@ static void calc_grids(const Sculpt &sd,
                        const Brush &brush,
                        const float4 &plane,
                        const float strength,
-                       PBVHNode &node,
+                       bke::pbvh::Node &node,
                        LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
   const StrokeCache &cache = *ss.cache;
   SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
-  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
 
   const Span<int> grids = bke::pbvh::node_grid_indices(node);
-  const int grid_verts_num = grids.size() * key.grid_area;
+  const MutableSpan positions = gather_grids_positions(subdiv_ccg, grids, tls.positions);
 
-  tls.positions.reinitialize(grid_verts_num);
-  MutableSpan<float3> positions = tls.positions;
-  gather_grids_positions(subdiv_ccg, grids, positions);
-
-  tls.factors.reinitialize(grid_verts_num);
+  tls.factors.reinitialize(positions.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(subdiv_ccg, grids, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -117,7 +112,7 @@ static void calc_grids(const Sculpt &sd,
     calc_front_face(cache.view_normal, subdiv_ccg, grids, factors);
   }
 
-  tls.distances.reinitialize(grid_verts_num);
+  tls.distances.reinitialize(positions.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -134,7 +129,7 @@ static void calc_grids(const Sculpt &sd,
 
   filter_below_plane_factors(positions, plane, factors);
 
-  tls.translations.reinitialize(grid_verts_num);
+  tls.translations.reinitialize(positions.size());
   const MutableSpan<float3> translations = tls.translations;
   calc_translations_to_plane(positions, plane, translations);
   filter_plane_trim_limit_factors(brush, cache, translations, factors);
@@ -149,7 +144,7 @@ static void calc_bmesh(const Sculpt &sd,
                        const Brush &brush,
                        const float4 &plane,
                        const float strength,
-                       PBVHNode &node,
+                       bke::pbvh::Node &node,
                        LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
@@ -157,9 +152,7 @@ static void calc_bmesh(const Sculpt &sd,
 
   const Set<BMVert *, 0> &verts = BKE_pbvh_bmesh_node_unique_verts(&node);
 
-  tls.positions.reinitialize(verts.size());
-  MutableSpan<float3> positions = tls.positions;
-  gather_bmesh_positions(verts, positions);
+  const MutableSpan positions = gather_bmesh_positions(verts, tls.positions);
 
   tls.factors.reinitialize(verts.size());
   const MutableSpan<float> factors = tls.factors;
@@ -198,7 +191,7 @@ static void calc_bmesh(const Sculpt &sd,
 
 }  // namespace scrape_cc
 
-void do_scrape_brush(const Sculpt &sd, Object &object, Span<PBVHNode *> nodes)
+void do_scrape_brush(const Sculpt &sd, Object &object, Span<bke::pbvh::Node *> nodes)
 {
   const SculptSession &ss = *object.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
@@ -216,10 +209,10 @@ void do_scrape_brush(const Sculpt &sd, Object &object, Span<PBVHNode *> nodes)
   plane_from_point_normal_v3(plane, area_co, area_no);
 
   threading::EnumerableThreadSpecific<LocalData> all_tls;
-  switch (BKE_pbvh_type(*object.sculpt->pbvh)) {
-    case PBVH_FACES: {
+  switch (object.sculpt->pbvh->type()) {
+    case bke::pbvh::Type::Mesh: {
       Mesh &mesh = *static_cast<Mesh *>(object.data);
-      const PBVH &pbvh = *ss.pbvh;
+      const bke::pbvh::Tree &pbvh = *ss.pbvh;
       const Span<float3> positions_eval = BKE_pbvh_get_vert_positions(pbvh);
       const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(pbvh);
       MutableSpan<float3> positions_orig = mesh.vert_positions_for_write();
@@ -241,7 +234,7 @@ void do_scrape_brush(const Sculpt &sd, Object &object, Span<PBVHNode *> nodes)
       });
       break;
     }
-    case PBVH_GRIDS:
+    case bke::pbvh::Type::Grids:
       threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
         LocalData &tls = all_tls.local();
         for (const int i : range) {
@@ -249,7 +242,7 @@ void do_scrape_brush(const Sculpt &sd, Object &object, Span<PBVHNode *> nodes)
         }
       });
       break;
-    case PBVH_BMESH:
+    case bke::pbvh::Type::BMesh:
       threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
         LocalData &tls = all_tls.local();
         for (const int i : range) {
