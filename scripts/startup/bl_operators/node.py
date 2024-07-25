@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import bpy
-
 from bpy.types import (
     FileHandler,
     Operator,
@@ -25,7 +24,6 @@ from mathutils import (
 from bpy.app.translations import (
     pgettext_tip as tip_,
     pgettext_rpt as rpt_,
-    pgettext_data as data_,
 )
 
 from nodeitems_builtins import node_tree_group_type
@@ -327,8 +325,8 @@ class NODE_OT_interface_item_new(Operator): # -bfa separated the add operators w
                 interface.move_to_parent(item, active_item, len(active_item.interface_items))
             else:
                 interface.move_to_parent(item, active_item.parent, active_pos + 1)
-
         interface.active = item
+
         return {'FINISHED'}
 
 

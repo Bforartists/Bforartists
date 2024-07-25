@@ -99,6 +99,7 @@ set(SRC
   sculpt_filter_color.cc
   sculpt_filter_mask.cc
   sculpt_filter_mesh.cc
+  sculpt_flood_fill.cc
   sculpt_geodesic.cc
   sculpt_gesture.cc
   sculpt_mask_init.cc
@@ -164,13 +165,6 @@ set(LIB
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
 )
-
-if(WITH_TBB)
-  list(APPEND INC_SYS
-    ${TBB_INCLUDE_DIRS}
-  )
-  add_definitions(-DWITH_TBB)
-endif()
 
 if(WIN32)
   add_definitions(-DNOMINMAX)
