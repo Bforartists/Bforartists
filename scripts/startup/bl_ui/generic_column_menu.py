@@ -1,6 +1,6 @@
 import bpy
 
-
+# BFA
 def fetch_op_data(class_name):
     type_class = getattr(bpy.types, class_name)
     type_props = type_class.bl_rna.properties["type"]
