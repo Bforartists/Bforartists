@@ -371,6 +371,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_film_cryptomatte_post_comp.glsl
   engines/eevee_next/shaders/eevee_film_frag.glsl
   engines/eevee_next/shaders/eevee_film_lib.glsl
+  engines/eevee_next/shaders/eevee_film_pass_convert_comp.glsl
   engines/eevee_next/shaders/eevee_filter_lib.glsl
   engines/eevee_next/shaders/eevee_forward_lib.glsl
   engines/eevee_next/shaders/eevee_gbuffer_lib.glsl
@@ -844,21 +845,11 @@ if(WITH_GTESTS)
 endif()
 
 if(WITH_TBB)
-  add_definitions(-DWITH_TBB)
-
   if(WIN32)
     # TBB includes Windows.h which will define min/max macros
     # that will collide with the stl versions.
     add_definitions(-DNOMINMAX)
   endif()
-
-  list(APPEND INC_SYS
-    ${TBB_INCLUDE_DIRS}
-  )
-
-  list(APPEND LIB
-    ${TBB_LIBRARIES}
-  )
 endif()
 
 blender_add_lib(bf_draw "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
