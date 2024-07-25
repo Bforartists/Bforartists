@@ -377,9 +377,9 @@ Span<uint3> Drawing::triangles() const
   };
   this->runtime->triangles_cache.ensure([&](Vector<uint3> &r_data) {
     const CurvesGeometry &curves = this->strokes();
-    const Span<float3> positions = curves.positions();
+    const Span<float3> positions = curves.evaluated_positions();
     const Span<float3> normals = this->curve_plane_normals();
-    const OffsetIndices<int> points_by_curve = curves.points_by_curve();
+    const OffsetIndices<int> points_by_curve = curves.evaluated_points_by_curve();
 
     int total_triangles = 0;
     Array<int> tris_offests(curves.curves_num());
@@ -752,6 +752,7 @@ void Drawing::tag_positions_changed()
 void Drawing::tag_topology_changed()
 {
   this->tag_positions_changed();
+  this->strokes_for_write().tag_topology_changed();
 }
 
 DrawingReference::DrawingReference()
@@ -2485,7 +2486,10 @@ void GreasePencil::remove_drawings_with_no_users()
   }
 
   /* Tail range of unused drawings that can be removed. */
-  const IndexRange drawings_to_remove = drawings.index_range().drop_front(last_used_drawing + 1);
+  const IndexRange drawings_to_remove = (first_unused_drawing > 0) ?
+                                            drawings.index_range().drop_front(last_used_drawing +
+                                                                              1) :
+                                            drawings.index_range();
   if (drawings_to_remove.is_empty()) {
     return;
   }

@@ -965,7 +965,7 @@ static void ui_apply_but_undo(uiBut *but)
      * because undo systems track data by their ID, see: #67002. */
     /* Exception for active shape-key, since changing this in edit-mode updates
      * the shape key from object mode data. */
-    if (ELEM(but->rnaprop, rna_ID_name, rna_Object_active_shape_key_index)) {
+    if (ELEM(but->rnaprop, &rna_ID_name, &rna_Object_active_shape_key_index)) {
       /* pass */
     }
     else {
@@ -11105,6 +11105,7 @@ static int ui_handle_menu_event(bContext *C,
         if ((but_default != nullptr) && (but_default->active == nullptr)) {
           if (but_default->type == UI_BTYPE_BUT) {
             UI_but_execute(C, region, but_default);
+            retval = WM_UI_HANDLER_BREAK;
           }
           else {
             ui_handle_button_activate_by_type(C, region, but_default);

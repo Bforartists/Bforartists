@@ -41,11 +41,13 @@
 #include "BLI_math_vector.h"
 #include "BLI_string_utf8.h"
 
+#ifndef WITH_HEADLESS
+#  include "nanosvgrast.h"
+
+#  include "svg_icons.h"
+#endif /* WITH_HEADLESS */
+
 #include "BLI_strict_flags.h" /* Keep last. */
-
-#include "nanosvgrast.h"
-
-#include "svg_icons.h"
 
 /**
  * Convert glyph coverage amounts to lightness values. Uses a LUT that perceptually improves
@@ -82,7 +84,7 @@ static float from_16dot16(FT_Fixed value)
 
 static GlyphCacheBLF *blf_glyph_cache_find(FontBLF *font)
 {
-  for (std::unique_ptr<GlyphCacheBLF> &gc : font->cache) {
+  for (const std::unique_ptr<GlyphCacheBLF> &gc : font->cache) {
     if (gc->size == font->size && (gc->bold == ((font->flags & BLF_BOLD) != 0)) &&
         (gc->italic == ((font->flags & BLF_ITALIC) != 0)) &&
         (gc->char_weight == font->char_weight) && (gc->char_slant == font->char_slant) &&
@@ -336,6 +338,7 @@ static GlyphBLF *blf_glyph_cache_add_glyph(
   return result;
 }
 
+#ifndef WITH_HEADLESS
 static GlyphBLF *blf_glyph_cache_add_blank(GlyphCacheBLF *gc, uint charcode)
 {
   /* Add an empty GlyphBLF to the cache and return it. With
@@ -348,7 +351,7 @@ static GlyphBLF *blf_glyph_cache_add_blank(GlyphCacheBLF *gc, uint charcode)
   return result;
 }
 
-static GlyphBLF *blf_glyph_cache_add_svg(GlyphCacheBLF *gc, uint charcode, bool color) /*bfa - icon  colorpatch*/
+static GlyphBLF *blf_glyph_cache_add_svg(GlyphCacheBLF *gc, uint charcode, bool color)
 {
   const char *svg_source = blf_get_icon_svg(int(charcode) - BLF_ICON_OFFSET);
   /* NanoSVG alters the source file while parsing. */
@@ -430,6 +433,7 @@ static GlyphBLF *blf_glyph_cache_add_svg(GlyphCacheBLF *gc, uint charcode, bool 
   gc->glyphs.add(key, std::move(g));
   return result;
 }
+#endif /* WITH_HEADLESS */
 
 /** \} */
 
@@ -1384,6 +1388,7 @@ GlyphBLF *blf_glyph_ensure(FontBLF *font, GlyphCacheBLF *gc, const uint charcode
   return g;
 }
 
+#ifndef WITH_HEADLESS
 GlyphBLF *blf_glyph_ensure_icon(GlyphCacheBLF *gc, const uint icon_id, bool color)
 {
   GlyphBLF *g = blf_glyph_cache_find_glyph(gc, icon_id + BLF_ICON_OFFSET, 0);
@@ -1392,6 +1397,7 @@ GlyphBLF *blf_glyph_ensure_icon(GlyphCacheBLF *gc, const uint icon_id, bool colo
   }
   return blf_glyph_cache_add_svg(gc, icon_id + BLF_ICON_OFFSET, color);
 }
+#endif /* WITH_HEADLESS */
 
 #ifdef BLF_SUBPIXEL_AA
 GlyphBLF *blf_glyph_ensure_subpixel(FontBLF *font, GlyphCacheBLF *gc, GlyphBLF *g, int32_t pen_x)
