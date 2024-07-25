@@ -3133,10 +3133,10 @@ enum eOutlinerLibOpTypes {
 static const EnumPropertyItem outliner_lib_op_type_items[] = {
     {OL_LIB_DELETE,
      "DELETE",
-     ICON_DELETE,
+     ICON_X,
      "Delete",
      "Delete this library and all its items.\n"
-     "Warning: No undo"},
+     "Warning: No undo"}, /*BFA - warning for UX*/
     {OL_LIB_RELOCATE,
      "RELOCATE",
      ICON_FILE_REFRESH,
@@ -3182,6 +3182,8 @@ static int outliner_lib_operation_exec(bContext *C, wmOperator *op)
       /* invalid - unhandled */
       break;
   }
+
+  ED_node_tree_propagate_change(C, bmain, nullptr);
 
   /* wrong notifier still... */
   WM_event_add_notifier(C, NC_ID | NA_EDITED, nullptr);
@@ -3653,7 +3655,7 @@ static const EnumPropertyItem *outliner_data_op_sets_enum_item_fn(bContext *C,
   TreeStoreElem *tselem = TREESTORE(te);
 
   static const EnumPropertyItem optype_sel_and_hide[] = {
-      /*bfa - need to use the OFF icon to display the ON icon. Blender code hiccup with dealing
+      /*BFA - need to use the OFF icon to display the ON icon. Blender code hiccup with dealing
          with values instead of icon names at other locations ...*/
       {OL_DOP_SELECT, "SELECT", ICON_RESTRICT_SELECT_OFF, "Select", ""},
       {OL_DOP_DESELECT, "DESELECT", ICON_SELECT_NONE, "Deselect", ""},
@@ -3709,7 +3711,7 @@ static int outliner_operator_menu(bContext *C, const char *opname)
 
     uiItemS(layout);
   }
-  /* bfa - only asset menu not whole context menu */
+  /* BFA - only asset menu not whole context menu */
   uiItemMContents(layout, "OUTLINER_MT_asset");
 
   UI_popup_menu_end(C, pup);

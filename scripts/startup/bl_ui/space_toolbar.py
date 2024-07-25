@@ -765,16 +765,16 @@ class TOOLBAR_MT_primitives(Menu):
             if addon_prefs.primitives_gpencil:
 
                 row = layout.row(align=True)
-                row.operator("object.gpencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
-                row.operator("object.gpencil_add", text="", icon='STROKE').type= 'STROKE'
-                row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'MONKEY'
+                row.operator("object.grease_pencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
+                row.operator("object.grease_pencil_add", text="", icon='STROKE').type= 'STROKE'
+                row.operator("object.grease_pencil_add", text="", icon='MONKEY').type= 'MONKEY'
 
             if addon_prefs.primitives_gpencil_lineart:
 
                 row = layout.row(align=True)
-                row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
-                row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
-                row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
+                row.operator("object.grease_pencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
+                row.operator("object.grease_pencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
+                row.operator("object.grease_pencil_add", text="", icon='LINEART_OBJECT').type= 'LRT_OBJECT'
 
             if addon_prefs.primitives_light:
 
@@ -904,16 +904,16 @@ class TOOLBAR_MT_primitives(Menu):
                 if addon_prefs.primitives_gpencil:
 
                     row = layout.row(align=True)
-                    row.operator("object.gpencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
-                    row.operator("object.gpencil_add", text="", icon='STROKE').type= 'STROKE'
-                    row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'MONKEY'
+                    row.operator("object.grease_pencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
+                    row.operator("object.grease_pencil_add", text="", icon='STROKE').type= 'STROKE'
+                    row.operator("object.grease_pencil_add", text="", icon='MONKEY').type= 'MONKEY'
 
                 if addon_prefs.primitives_gpencil_lineart:
 
                     row = layout.row(align=True)
-                    row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
-                    row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LINEART_COLLECTION'
-                    row.operator("object.gpencil_add", text="", icon='LINEART_OBJECT').type= 'LINEART_OBJECT'
+                    row.operator("object.grease_pencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
+                    row.operator("object.grease_pencil_add", text="", icon='LINEART_COLLECTION').type= 'LINEART_COLLECTION'
+                    row.operator("object.grease_pencil_add", text="", icon='LINEART_OBJECT').type= 'LINEART_OBJECT'
 
                 if addon_prefs.primitives_light:
 
