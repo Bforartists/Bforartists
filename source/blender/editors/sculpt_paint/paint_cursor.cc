@@ -1155,7 +1155,7 @@ static void sculpt_geometry_preview_lines_draw(const uint gpuattr,
     return;
   }
 
-  if (BKE_pbvh_type(*ss.pbvh) != PBVH_FACES) {
+  if (ss.pbvh->type() != blender::bke::pbvh::Type::Mesh) {
     return;
   }
 
@@ -1428,7 +1428,7 @@ static void paint_cursor_sculpt_session_update_and_init(PaintCursorContext *pcon
     paint_cursor_update_unprojected_radius(ups, brush, vc, pcontext->scene_space_location);
   }
 
-  pcontext->is_multires = ss.pbvh != nullptr && BKE_pbvh_type(*ss.pbvh) == PBVH_GRIDS;
+  pcontext->is_multires = ss.pbvh != nullptr && ss.pbvh->type() == blender::bke::pbvh::Type::Grids;
 
   pcontext->sd = CTX_data_tool_settings(pcontext->C)->sculpt;
 }
@@ -1473,7 +1473,7 @@ static void paint_draw_2D_view_brush_cursor_default(PaintCursorContext *pcontext
 
 static void grease_pencil_eraser_draw(PaintCursorContext *pcontext)
 {
-  float radius = float(pcontext->brush->size);
+  float radius = float(pcontext->pixel_radius);
 
   /* Red-ish color with alpha. */
   immUniformColor4ub(255, 100, 100, 20);
@@ -1528,7 +1528,15 @@ static void grease_pencil_brush_cursor_draw(PaintCursorContext *pcontext)
   /* for paint use paint brush size and color */
   if (pcontext->mode == PaintMode::GPencil) {
     /* Eraser has a special shape and uses a different shader program. */
-    if (brush->gpencil_tool == GPAINT_TOOL_ERASE || grease_pencil->runtime->use_eraser_temp) {
+    if (brush->gpencil_tool == GPAINT_TOOL_ERASE || grease_pencil->runtime->temp_use_eraser) {
+      /* If we use the eraser from the draw tool with a "scene" radius unit, we need to draw the
+       * cursor with the appropriate size. */
+      if (grease_pencil->runtime->temp_use_eraser && (brush->flag & BRUSH_LOCK_SIZE) != 0) {
+        pcontext->pixel_radius = grease_pencil->runtime->temp_eraser_size;
+      }
+      else {
+        pcontext->pixel_radius = float(pcontext->brush->size);
+      }
       grease_pencil_eraser_draw(pcontext);
       return;
     }

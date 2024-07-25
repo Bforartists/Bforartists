@@ -21,7 +21,7 @@ if(CMAKE_GENERATOR MATCHES ".*Unix Makefiles")
   add_definitions(-DUSE_MAKEFILE_WORKAROUND)
 endif()
 
-# files rna_access.cc rna_define.cc makesrna.cc intentionally excluded.
+# Files `rna_access.cc`, `rna_define.cc`, `makesrna.cc` intentionally excluded.
 set(DEFSRC
   rna_ID.cc
   rna_action.cc
@@ -141,7 +141,11 @@ set(APISRC
   rna_workspace_api.cc
 )
 
-string(REGEX REPLACE "rna_([a-zA-Z0-9_-]*).cc" "${CMAKE_CURRENT_BINARY_DIR}/rna_\\1_gen.cc" GENSRC "${DEFSRC}")
+string(
+  REGEX REPLACE
+  "rna_([a-zA-Z0-9_-]*).cc" "${CMAKE_CURRENT_BINARY_DIR}/rna_\\1_gen.cc"
+  GENSRC "${DEFSRC}"
+)
 list(APPEND GENSRC
   "${CMAKE_CURRENT_BINARY_DIR}/rna_prototypes_gen.hh"
   "${CMAKE_CURRENT_BINARY_DIR}/../RNA_prototypes.hh"
@@ -451,6 +455,7 @@ target_link_libraries(makesrna PRIVATE bf_dna)
 target_link_libraries(makesrna PRIVATE bf::intern::atomic)
 target_link_libraries(makesrna PRIVATE bf::intern::guardedalloc)
 target_link_libraries(makesrna PRIVATE bf_dna_blenlib)
+target_link_libraries(makesrna PRIVATE bf::dependencies::optional::tbb)
 
 if(WIN32 AND NOT UNIX)
   if(DEFINED PTHREADS_LIBRARIES)
@@ -463,7 +468,9 @@ endif()
 # `valgrind --leak-check=full --track-origins=yes`
 add_custom_command(
   OUTPUT ${GENSRC}
-  COMMAND "$<TARGET_FILE:makesrna>" ${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_CURRENT_BINARY_DIR}/../
+  COMMAND
+    ${CMAKE_COMMAND} -E env ${PLATFORM_ENV_BUILD}
+    "$<TARGET_FILE:makesrna>" ${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_CURRENT_BINARY_DIR}/../
   DEPENDS makesrna
 )
 
@@ -484,6 +491,7 @@ set(SRC
 set(LIB
   PRIVATE bf::animrig
   PRIVATE bf::dna
+  PRIVATE bf::dependencies::optional::tbb
   PRIVATE extern_fmtlib
   bf_editor_space_api
 
