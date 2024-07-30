@@ -190,6 +190,14 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(space_sequencer.after_current_frame);
   }
 
+  /* bfa - TODO: add version bump, since exposing asset browser is bfa exclusive not sure it should be bfa version or blender version */
+  {
+    FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.back);
+    FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.header_back);
+  }
+  /* bfa end */
+
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a USER_VERSION_ATLEAST check.
