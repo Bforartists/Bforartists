@@ -728,6 +728,7 @@ class _draw_tool_settings_context_mode:
             row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
 
         from bl_ui.properties_paint_common import (
+            brush_basic__draw_color_selector,
             brush_basic_grease_pencil_paint_settings,
         )
 
@@ -2073,7 +2074,7 @@ class VIEW3D_MT_select_object_more_less(Menu):
 
         layout.separator()
 
-        props = layout.operator("object.select_hierarchy", text_ctxt=i18n_contexts.default, text="Parent")
+        props = layout.operator("object.select_hierarchy", text_ctxt=i18n_contexts.default, text="Parent", icon="PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
@@ -2218,21 +2219,21 @@ class VIEW3D_MT_select_pose_more_less(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("pose.select_hierarchy", text="Parent", text_ctxt=i18n_contexts.default)
+        props = layout.operator("pose.select_hierarchy", text="Parent", text_ctxt=i18n_contexts.default, icon="PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
-        props = layout.operator("pose.select_hierarchy", text="Child")
+        props = layout.operator("pose.select_hierarchy", text="Child", icon="CHILD")
         props.extend = False
         props.direction = 'CHILD'
 
         layout.separator()
 
-        props = layout.operator("pose.select_hierarchy", text="Extend Parent")
+        props = layout.operator("pose.select_hierarchy", text="Extend Parent", icon="PARENT")
         props.extend = True
         props.direction = 'PARENT'
 
-        props = layout.operator("pose.select_hierarchy", text="Extend Child")
+        props = layout.operator("pose.select_hierarchy", text="Extend Child", icon="CHILD")
         props.extend = True
         props.direction = 'CHILD'
 
@@ -3430,8 +3431,8 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_liboverride")
         layout.menu("VIEW3D_MT_object_relations")
         layout.menu("VIEW3D_MT_object_parent")
-        layout.menu("VIEW3D_MT_object_modifiers", icon='MODIFIER')
-        layout.menu("VIEW3D_MT_object_constraints", icon='CONSTRAINT')
+        layout.menu("VIEW3D_MT_object_modifiers")
+        layout.menu("VIEW3D_MT_object_constraints")
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_make_links")
 
@@ -3667,9 +3668,9 @@ class VIEW3D_MT_object_clear(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.location_clear", text="Location", text_ctxt=i18n_contexts.default).clear_delta = False
-        layout.operator("object.rotation_clear", text="Rotation", text_ctxt=i18n_contexts.default).clear_delta = False
-        layout.operator("object.scale_clear", text="Scale", text_ctxt=i18n_contexts.default).clear_delta = False
+        layout.operator("object.location_clear", text="Location", text_ctxt=i18n_contexts.default, icon="CLEARMOVE").clear_delta = False
+        layout.operator("object.rotation_clear", text="Rotation", text_ctxt=i18n_contexts.default, icon="CLEARROTATE").clear_delta = False
+        layout.operator("object.scale_clear", text="Scale", text_ctxt=i18n_contexts.default, icon="CLEARSCALE").clear_delta = False
 
         layout.separator()
 
@@ -3768,7 +3769,7 @@ class VIEW3D_MT_object_context_menu(Menu):
             layout.separator()
 
             if obj.empty_display_type == 'IMAGE':
-                layout.operator("image.convert_to_mesh_plane", text="Convert to Mesh Plane")
+                layout.operator("image.convert_to_mesh_plane", text="Convert to Mesh Plane", icon='MESH_PLANE')
                 layout.operator("gpencil.trace_image", icon="FILE_IMAGE")
 
                 layout.separator()
@@ -5260,9 +5261,9 @@ class VIEW3D_MT_pose_transform(Menu):
 
         layout.separator()
 
-        layout.operator("pose.loc_clear", text="Location", text_ctxt=i18n_contexts.default)
-        layout.operator("pose.rot_clear", text="Rotation", text_ctxt=i18n_contexts.default)
-        layout.operator("pose.scale_clear", text="Scale", text_ctxt=i18n_contexts.default)
+        layout.operator("pose.loc_clear", text="Location", text_ctxt=i18n_contexts.default, icon="CLEARMOVE")
+        layout.operator("pose.rot_clear", text="Rotation", text_ctxt=i18n_contexts.default, icon="CLEARROTATE")
+        layout.operator("pose.scale_clear", text="Scale", text_ctxt=i18n_contexts.default, icon="CLEARSCALE")
 
         layout.separator()
 
@@ -7291,6 +7292,7 @@ class VIEW3D_MT_weight_grease_pencil(Menu):
 
     def draw(self, _context):
         pass
+
 class VIEW3D_MT_gpencil_animation(Menu):
     bl_label = "Animation"
 
@@ -7379,11 +7381,11 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
 
         layout = self.layout
 
-        layout.operator("grease_pencil.clean_loose")
-        layout.operator("grease_pencil.frame_clean_duplicate")
+        layout.operator("grease_pencil.clean_loose", icon="DELETE_LOOSE")
+        layout.operator("grease_pencil.frame_clean_duplicate", icon="DELETE_DUPLICATE")
 
         if ob.mode != 'PAINT_GREASE_PENCIL':
-            layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance")
+            layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
 
 
 class VIEW3D_MT_edit_greasepencil(Menu):
@@ -7401,7 +7403,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.separator()
 
-        layout.operator("grease_pencil.duplicate_move", text="Duplicate")
+        layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
 
         layout.separator()
 
@@ -7411,12 +7413,12 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
-        layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
-        layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
+        layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate", icon="SEPARATE")
+        layout.menu("VIEW3D_MT_edit_greasepencil_cleanup", icon="CLEAN_CHANNELS")
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_greasepencil_delete")
+        layout.menu("VIEW3D_MT_edit_greasepencil_delete", icon="DELETE")
 
 
 class VIEW3D_MT_edit_greasepencil_stroke(Menu):
@@ -7424,35 +7426,35 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("grease_pencil.stroke_subdivide", text="Subdivide")
-        layout.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth")
-        layout.operator("grease_pencil.stroke_simplify", text="Simplify")
+        layout.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
+        layout.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
+        layout.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
         layout.separator()
 
         layout.menu("GREASE_PENCIL_MT_move_to_layer")
         layout.menu("VIEW3D_MT_grease_pencil_assign_material")
-        layout.operator("grease_pencil.set_active_material")
+        layout.operator("grease_pencil.set_active_material", icon="MATERIAL")
         layout.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction")
 
         layout.separator()
 
-        layout.operator("grease_pencil.cyclical_set", text="Close").type = 'CLOSE'
-        layout.operator("grease_pencil.cyclical_set", text="Toggle Cyclic").type = 'TOGGLE'
+        layout.operator("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE").type = 'CLOSE'
+        layout.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
         layout.operator_menu_enum("grease_pencil.caps_set", text="Set Caps", property="type")
-        layout.operator("grease_pencil.stroke_switch_direction")
+        layout.operator("grease_pencil.stroke_switch_direction", icon="SWITCH_DIRECTION")
 
         layout.separator()
 
-        layout.operator("grease_pencil.set_uniform_thickness")
-        layout.operator("grease_pencil.set_uniform_opacity")
+        layout.operator("grease_pencil.set_uniform_thickness", icon="MOD_THICKNESS")
+        layout.operator("grease_pencil.set_uniform_opacity", icon="MOD_OPACITY")
 
         layout.operator_menu_enum("grease_pencil.reorder", text="Reorder", property="direction")
 
         layout.separator()
 
         layout.operator_menu_enum("grease_pencil.set_curve_type", property="type")
-        layout.operator("grease_pencil.set_curve_resolution")
+        layout.operator("grease_pencil.set_curve_resolution", icon="SPLINE_RESOLUTION")
 
 
 class VIEW3D_MT_edit_greasepencil_point(Menu):
@@ -7461,11 +7463,11 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("grease_pencil.extrude_move", text="Extrude")
+        layout.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
 
         layout.separator()
 
-        layout.operator("grease_pencil.stroke_smooth", text="Smooth")
+        layout.operator("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH")
 
         layout.separator()
 
@@ -7532,8 +7534,8 @@ class VIEW3D_MT_edit_curves_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.operator("curves.subdivide")
-        layout.operator("curves.extrude_move")
+        layout.operator("curves.subdivide", icon="SUBDIVIDE_EDGES")
+        layout.operator("curves.extrude_move", icon = "EXTRUDE_REGION")
 
 
 class VIEW3D_MT_edit_pointcloud(Menu):
@@ -7801,7 +7803,7 @@ class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
 
         pie.operator("paint.visibility_invert", text="Invert Visible", icon="INVERT_MASK")  # BFA - Icon
 
-        props = pie.operator("paint.hide_show_all", text="Show All")
+        props = pie.operator("paint.hide_show_all", icon="HIDE_OFF") #BFA - Icon
         props.action = "SHOW"
 
 
@@ -9632,6 +9634,7 @@ class VIEW3D_PT_sculpt_snapping(Panel):
         col.label(text="Rotation Increment")
         row = col.row(align=True)
         row.prop(tool_settings, "snap_angle_increment_3d", text="")
+
 class VIEW3D_PT_proportional_edit(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -10364,23 +10367,29 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
         if is_point_mode:
             col = row.column(align=True)
             col.label(text="Point", icon='GP_SELECT_POINTS')
+            col.separator()
+
+            # Copy/paste
+            col.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
+            col.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN")
+            col.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
 
             col.separator()
 
             # Main Strokes Operators
-            col.operator("grease_pencil.stroke_subdivide", text="Subdivide")
-            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth")
-            col.operator("grease_pencil.stroke_simplify", text="Simplify")
+            col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
+            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
+            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator()
 
             # Deform Operators
-            col.operator("transform.tosphere", text="To Sphere")
-            col.operator("transform.shear", text="Shear")
-            col.operator("transform.bend", text="Bend")
-            col.operator("transform.push_pull", text="Push/Pull")
-            col.operator("transform.transform", text="Radius").mode = 'GPENCIL_SHRINKFATTEN'
-            col.operator("grease_pencil.stroke_smooth", text="Smooth Points")
+            col.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
+            col.operator("transform.shear", text="Shear", icon="SHEAR")
+            col.operator("transform.bend", text="Bend", icon="BEND")
+            col.operator("transform.push_pull", text="Push/Pull", icon="PUSH_PULL")
+            col.operator("transform.transform", text="Radius", icon="RADIUS").mode = 'GPENCIL_SHRINKFATTEN'
+            col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX")
 
             col.separator()
 
@@ -10388,18 +10397,13 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            # Copy/paste
-            col.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
-            col.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
-            col.operator("grease_pencil.duplicate_move", text="Duplicate")
+
+
+            col.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
 
             col.separator()
 
-            col.operator("grease_pencil.extrude_move", text="Extrude")
-
-            col.separator()
-
-            col.operator("grease_pencil.separate", text="Separate").mode = 'SELECTED'
+            col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
 
             # Removal Operators
             col.separator()
@@ -10409,25 +10413,32 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
         if is_stroke_mode:
             col = row.column(align=True)
             col.label(text="Stroke", icon='GP_SELECT_STROKES')
+            col.separator()
+
+            # Copy/paste
+            col.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
+            col.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
+            col.operator("grease_pencil.duplicate_move", text="Duplicate")
+
 
             col.separator()
 
             # Main Strokes Operators
-            col.operator("grease_pencil.stroke_subdivide", text="Subdivide")
-            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth")
-            col.operator("grease_pencil.stroke_simplify", text="Simplify")
+            col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
+            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
+            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator()
 
             # Deform Operators
-            col.operator("grease_pencil.stroke_smooth", text="Smooth")
-            col.operator("transform.transform", text="Radius").mode = 'CURVE_SHRINKFATTEN'
+            col.operator("grease_pencil.stroke_smooth", text="Smooth", icon="SMOOTH_VERTEX")
+            col.operator("transform.transform", text="Radius", icon="RADIUS").mode = 'CURVE_SHRINKFATTEN'
 
             col.separator()
 
             col.menu("GREASE_PENCIL_MT_move_to_layer")
             col.menu("VIEW3D_MT_grease_pencil_assign_material")
-            col.operator("grease_pencil.set_active_material", text="Set as Active Material")
+            col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon="MATERIAL")
             col.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction")
 
             col.separator()
@@ -10436,18 +10447,11 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            # Copy/paste
-            col.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
-            col.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
-            col.operator("grease_pencil.duplicate_move", text="Duplicate")
+            col.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
 
             col.separator()
 
-            col.operator("grease_pencil.extrude_move", text="Extrude")
-
-            col.separator()
-
-            col.operator("grease_pencil.separate", text="Separate").mode = 'SELECTED'
+            col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
 
 
 def draw_gpencil_layer_active(context, layout):
@@ -11464,7 +11468,7 @@ classes = (
     VIEW3D_PT_overlay_sculpt,
     VIEW3D_PT_overlay_sculpt_curves,
     VIEW3D_PT_snapping,
-	VIEW3D_PT_sculpt_snapping,
+    VIEW3D_PT_sculpt_snapping,
     VIEW3D_PT_proportional_edit,
     VIEW3D_PT_gpencil_origin,
     VIEW3D_PT_gpencil_lock,
