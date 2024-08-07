@@ -1402,7 +1402,7 @@ static void node_space_blend_write(BlendWriter *writer, SpaceLink *sl)
   }
 }
 
-}  // namespace blender::ed::space_node 
+}  // namespace blender::ed::space_node
 
 void ED_spacetype_node()
 {
