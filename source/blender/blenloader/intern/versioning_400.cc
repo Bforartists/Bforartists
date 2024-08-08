@@ -2784,6 +2784,37 @@ static void fix_built_in_curve_attribute_defaults(Main *bmain)
   }
 }
 
+/* bfa - node asset sehlf versioning */
+static void add_node_editor_asset_shelf(Main &bmain)
+{
+  LISTBASE_FOREACH (bScreen *, screen, &bmain.screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+        if (sl->spacetype != SPACE_NODE) {
+          continue;
+        }
+
+        ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase : &sl->regionbase;
+
+        if (ARegion *new_shelf_region = do_versions_add_region_if_not_found(
+                regionbase, RGN_TYPE_ASSET_SHELF, __func__, RGN_TYPE_TOOL_HEADER))
+        {
+          new_shelf_region->regiondata = MEM_cnew<RegionAssetShelf>(__func__);
+          new_shelf_region->alignment = RGN_ALIGN_BOTTOM;
+          new_shelf_region->flag |= RGN_FLAG_HIDDEN;
+        }
+        if (ARegion *new_shelf_header = do_versions_add_region_if_not_found(
+                regionbase, RGN_TYPE_ASSET_SHELF_HEADER, __func__, RGN_TYPE_ASSET_SHELF))
+        {
+          new_shelf_header->alignment = RGN_ALIGN_BOTTOM | RGN_ALIGN_HIDE_WITH_PREV;
+        }
+      }
+    }
+  }
+}
+/* end bfa - node asset sehlf versioning */
+
+
 void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 1)) {
@@ -4425,6 +4456,11 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     LISTBASE_FOREACH (Curves *, curves, &bmain->hair_curves) {
       curves->geometry.attributes_active_index = curves->attributes_active_index_legacy;
     }
+  }
+
+  // bfa asset shelf versioning
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 403, 0)) {
+    add_node_editor_asset_shelf(*bmain);
   }
 
   /**
