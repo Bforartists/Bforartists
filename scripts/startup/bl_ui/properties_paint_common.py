@@ -1312,11 +1312,22 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         tool = brush.gpencil_sculpt_tool
         gp_settings = brush.gpencil_settings
 
-        col = layout.column(heading="Affect", align=True)
-        col.prop(gp_settings, "use_edit_position", text="Position")
-        col.prop(gp_settings, "use_edit_strength", text="Strength")
-        col.prop(gp_settings, "use_edit_thickness", text="Thickness")
-        col.prop(gp_settings, "use_edit_uv", text="UV")
+        col = layout.column() # BFA - float column left, update label
+        col.label(text="Affect")
+        col.use_property_split = False
+
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(gp_settings, "use_edit_position", text="Position")
+        row = col.row()
+        row.separator()
+        row.prop(gp_settings, "use_edit_strength", text="Strength")
+        row = col.row()
+        row.separator()
+        row.prop(gp_settings, "use_edit_thickness", text="Thickness")
+        row = col.row()
+        row.separator()
+        row.prop(gp_settings, "use_edit_uv", text="UV")
 
     # 3D and 2D Texture Paint.
     elif mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
