@@ -70,7 +70,7 @@ class VIEW3D_HT_tool_header(Header):
             is_valid_context = draw_fn(context, layout, tool)
 
         def draw_3d_brush_settings(layout, tool_mode):
-            layout.popover("VIEW3D_PT_tools_brush_settings_advanced", text="Brush")
+            layout.popover("VIEW3D_PT_tools_brush_settings_advanced")
             if tool_mode != 'PAINT_WEIGHT':
                 layout.popover("VIEW3D_PT_tools_brush_texture")
             if tool_mode == 'PAINT_TEXTURE':
@@ -115,8 +115,9 @@ class VIEW3D_HT_tool_header(Header):
 
                         if brush.gpencil_tool not in {'FILL', 'TINT'}:
                             layout.popover("VIEW3D_PT_tools_grease_pencil_brush_stroke")
-
-                    layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
+                    layout.popover("VIEW3D_PT_tools_brush_stroke")
+                    layout.popover("VIEW3D_PT_tools_brush_falloff")
+                    layout.popover("VIEW3D_PT_tools_brush_display")
         elif tool_mode == 'PAINT_GREASE_PENCIL':
             if is_valid_context:
                 brush = context.tool_settings.gpencil_paint.brush
@@ -127,29 +128,37 @@ class VIEW3D_HT_tool_header(Header):
 
                         if brush.gpencil_tool not in {'FILL', 'TINT'}:
                             layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_stroke")
-                    layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
+                    layout.popover("VIEW3D_PT_tools_brush_stroke")
+                    layout.popover("VIEW3D_PT_tools_brush_falloff")
+                    layout.popover("VIEW3D_PT_tools_brush_display")
         elif tool_mode == 'SCULPT_GPENCIL':
             if is_valid_context:
                 brush = context.tool_settings.gpencil_sculpt_paint.brush
                 if brush:
                     tool = brush.gpencil_sculpt_tool
                     if tool in {'SMOOTH', 'RANDOMIZE'}:
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover")
-                    layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
+                        layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_advanced_popover")
+                    layout.popover("VIEW3D_PT_tools_brush_stroke")
+                    layout.popover("VIEW3D_PT_tools_brush_falloff")
+                    layout.popover("VIEW3D_PT_tools_brush_display")
         elif tool_mode == 'SCULPT_GREASE_PENCIL':
             if is_valid_context:
                 brush = context.tool_settings.gpencil_sculpt_paint.brush
                 if brush:
                     tool = brush.gpencil_sculpt_tool
                     if tool in {'SMOOTH', 'RANDOMIZE'}:
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover")
-                    layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
+                        layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_advanced_popover")
+                    layout.popover("VIEW3D_PT_tools_brush_stroke")
+                    layout.popover("VIEW3D_PT_tools_brush_falloff")
+                    layout.popover("VIEW3D_PT_tools_brush_display")
         elif tool_mode == 'WEIGHT_GPENCIL' or tool_mode == 'WEIGHT_GREASE_PENCIL':
             if is_valid_context:
-                layout.popover("VIEW3D_PT_tools_grease_pencil_weight_appearance")
+                layout.popover("VIEW3D_PT_tools_brush_falloff")
+                layout.popover("VIEW3D_PT_tools_brush_display")
         elif tool_mode == 'VERTEX_GPENCIL':
             if is_valid_context:
-                layout.popover("VIEW3D_PT_tools_grease_pencil_vertex_appearance")
+                layout.popover("VIEW3D_PT_tools_brush_falloff")
+                layout.popover("VIEW3D_PT_tools_brush_display")
 
     def draw_mode_settings(self, context):
         layout = self.layout
@@ -500,7 +509,7 @@ class _draw_tool_settings_context_mode:
             layout.row().prop(brush, "direction", expand=True, text="")
 
         # Brush falloff
-        layout.popover("VIEW3D_PT_tools_brush_falloff")
+        #layout.popover("VIEW3D_PT_tools_brush_falloff") # BFA - moved to be consistent with other brushes in the properties_paint_common.py file
 
         # Active layer only switch
         layout.prop(brush.gpencil_settings, "use_active_layer_only")
