@@ -7185,16 +7185,16 @@ class VIEW3D_MT_edit_gpencil_hide(Menu):
 
 
 # bfa menu
-class VIEW3D_MT_edit_gpencil_arrange_strokes(Menu):
+class VIEW3D_MT_edit_greasepencil_arrange_strokes(Menu):
     bl_label = "Arrange Strokes"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.stroke_arrange", text="Bring Forward", icon='MOVE_UP').direction = 'UP'
-        layout.operator("gpencil.stroke_arrange", text="Send Backward", icon='MOVE_DOWN').direction = 'DOWN'
-        layout.operator("gpencil.stroke_arrange", text="Bring to Front", icon='MOVE_TO_TOP').direction = 'TOP'
-        layout.operator("gpencil.stroke_arrange", text="Send to Back", icon='MOVE_TO_BOTTOM').direction = 'BOTTOM'
+        layout.operator("grease_pencil.reorder", text="Bring Forward", icon='MOVE_UP').direction = 'UP'
+        layout.operator("grease_pencil.reorder", text="Send Backward", icon='MOVE_DOWN').direction = 'DOWN'
+        layout.operator("grease_pencil.reorder", text="Bring to Front", icon='MOVE_TO_TOP').direction = 'TOP'
+        layout.operator("grease_pencil.reorder", text="Send to Back", icon='MOVE_TO_BOTTOM').direction = 'BOTTOM'
 
 
 class VIEW3D_MT_edit_gpencil_stroke(Menu):
@@ -7222,7 +7222,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.menu("GPENCIL_MT_move_to_layer")
         layout.menu("VIEW3D_MT_assign_material")
         layout.operator("gpencil.set_active_material", text="Set as Active Material", icon="MATERIAL")
-        layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes")  # bfa menu
+        layout.menu("VIEW3D_MT_edit_greasepencil_arrange_strokes")  # bfa menu
 
         layout.separator()
 
@@ -7463,8 +7463,8 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.menu("GREASE_PENCIL_MT_move_to_layer")
         layout.menu("VIEW3D_MT_grease_pencil_assign_material")
         layout.operator("grease_pencil.set_active_material", icon="MATERIAL")
-        layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes")  # BFA - menu, legacy
-        layout.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction")
+        layout.menu("VIEW3D_MT_edit_greasepencil_arrange_strokes")  # BFA - menu
+        #layout.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction") # BFA - used our menu for icons
 
         layout.separator()
 
@@ -7472,20 +7472,17 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
         layout.operator_menu_enum("grease_pencil.caps_set", text="Set Caps", property="type")
         layout.operator("grease_pencil.stroke_switch_direction", icon="FLIP")
-        layout.operator("gpencil.stroke_start_set", text="Set Start Point", icon="STARTPOINT") # BFA - legacy
+        #layout.operator("gpencil.stroke_start_set", text="Set Start Point", icon="STARTPOINT") # BFA - legacy
 
-        layout.separator()
-
-        layout.operator_menu_enum("gpencil.reproject", property="type", text="Reproject Strokes") # BFA - legacy
+        #layout.operator_menu_enum("gpencil.reproject", property="type", text="Reproject Strokes") # BFA - legacy
 
         layout.separator()
 
         layout.operator("grease_pencil.set_uniform_thickness", icon="MOD_THICKNESS")
         layout.operator("grease_pencil.set_uniform_opacity", icon="MOD_OPACITY")
 
-        layout.separator()
 
-        layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon="RESET") # BFA - legacy
+        #layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon="RESET") # BFA - legacy
 
         layout.separator()
 
@@ -7505,9 +7502,7 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
         layout.operator("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH")
 
-        layout.separator()
-
-        layout.operator("gpencil.stroke_merge", text="Merge", icon="MERGE") # BFA - legacy
+        #layout.operator("gpencil.stroke_merge", text="Merge", icon="MERGE") # BFA - legacy
 
         layout.separator()
 
@@ -10482,7 +10477,8 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.menu("GREASE_PENCIL_MT_move_to_layer")
             col.menu("VIEW3D_MT_grease_pencil_assign_material")
             col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon="MATERIAL")
-            col.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction")
+            col.menu("VIEW3D_MT_edit_greasepencil_arrange_strokes")  # BFA - menu
+            #col.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction") # BFA - used our menu for icons
 
             col.separator()
 
@@ -11398,7 +11394,7 @@ classes = (
     VIEW3D_MT_edit_gpencil_stroke,
     VIEW3D_MT_edit_gpencil_point,
     VIEW3D_MT_edit_gpencil_hide,  # bfa menu
-    VIEW3D_MT_edit_gpencil_arrange_strokes,  # bfa menu
+    VIEW3D_MT_edit_greasepencil_arrange_strokes,  # bfa menu
     VIEW3D_MT_edit_gpencil_delete,
     VIEW3D_MT_sculpt_gpencil_copy,  # bfa menu
     VIEW3D_MT_edit_gpencil_showhide,
