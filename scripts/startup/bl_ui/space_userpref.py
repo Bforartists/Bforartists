@@ -234,6 +234,8 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.use_property_split = False
         flow.prop(prefs, "use_recent_searches", text="Sort search by Most Recent")
+        # bfa - gooengine
+        flow.prop(prefs.experimental, "disable_search_on_keypress", text="Disable search on Key press")
 
 
 class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):
@@ -3035,7 +3037,6 @@ class USERPREF_PT_experimental_debugging(ExperimentalPanel, Panel):
                 ({"property": "use_viewport_debug"}, None),
                 ({"property": "use_eevee_debug"}, None),
                 ({"property": "use_extensions_debug"}, ("/blender/blender/issues/119521", "#119521")),
-                ({"property": "disable_search_on_keypress"}, None)  # bfa - gooengine
             ),
         )
 
