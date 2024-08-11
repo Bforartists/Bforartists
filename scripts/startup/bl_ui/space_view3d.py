@@ -2746,29 +2746,29 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("grease_pencil.select_all", text="All").action = 'SELECT'
-        layout.operator("grease_pencil.select_all", text="None").action = 'DESELECT'
-        layout.operator("grease_pencil.select_all", text="Invert").action = 'INVERT'
+        layout.operator("grease_pencil.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("grease_pencil.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("grease_pencil.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("grease_pencil.select_linked", text="Linked")
+        layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
         layout.operator("grease_pencil.select_alternate", text="Alternated")
-        layout.operator("grease_pencil.select_random", text="Random")
+        layout.operator("grease_pencil.select_random", text="Random", icon="RANDOMIZE")
 
         layout.separator()
 
-        props = layout.operator("grease_pencil.select_ends", text="First")
+        props = layout.operator("grease_pencil.select_ends", text="First", icon="SELECT_TIP")
         props.amount_start = 1
         props.amount_end = 0
-        props = layout.operator("grease_pencil.select_ends", text="Last")
+        props = layout.operator("grease_pencil.select_ends", text="Last", icon="SELECT_ROOT")
         props.amount_start = 0
         props.amount_end = 1
 
         layout.separator()
 
-        layout.operator("grease_pencil.select_more")
-        layout.operator("grease_pencil.select_less")
+        layout.operator("grease_pencil.select_more", text="More", icon="SELECTMORE")
+        layout.operator("grease_pencil.select_less", text="Less", icon="SELECTLESS")
 
 
 class VIEW3D_MT_paint_grease_pencil(Menu):
@@ -4496,8 +4496,16 @@ class VIEW3D_MT_greasepencil_vertex_group(Menu):
         layout.operator_context = 'EXEC_AREA'
         ob = context.active_object
 
-        layout.operator("object.vertex_group_add", text="Add New Group")
+        layout.operator("object.vertex_group_add", text="Add New Group", icon="GROUP_VERTEX")
         ob = context.active_object
+        if ob.vertex_groups.active:
+            layout.separator()
+
+            layout.operator("gpencil.vertex_group_assign", text="Assign", icon="ADD_TO_ACTIVE") # BFA - Legacy
+            layout.operator("gpencil.vertex_group_remove_from", text="Remove", icon="REMOVE_SELECTED_FROM_ACTIVE_GROUP") # BFA - Legacy
+
+            layout.operator("gpencil.vertex_group_select", text="Select", icon="SELECT_ALL") # BFA - Legacy
+            layout.operator("gpencil.vertex_group_deselect", text="Deselect", icon="SELECT_NONE") # BFA - Legacy
 
 
 class VIEW3D_MT_paint_weight_lock(Menu):
@@ -7186,16 +7194,16 @@ class VIEW3D_MT_edit_gpencil_hide(Menu):
 
 
 # bfa menu
-class VIEW3D_MT_edit_gpencil_arrange_strokes(Menu):
+class VIEW3D_MT_edit_greasepencil_arrange_strokes(Menu):
     bl_label = "Arrange Strokes"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.stroke_arrange", text="Bring Forward", icon='MOVE_UP').direction = 'UP'
-        layout.operator("gpencil.stroke_arrange", text="Send Backward", icon='MOVE_DOWN').direction = 'DOWN'
-        layout.operator("gpencil.stroke_arrange", text="Bring to Front", icon='MOVE_TO_TOP').direction = 'TOP'
-        layout.operator("gpencil.stroke_arrange", text="Send to Back", icon='MOVE_TO_BOTTOM').direction = 'BOTTOM'
+        layout.operator("grease_pencil.reorder", text="Bring Forward", icon='MOVE_UP').direction = 'UP'
+        layout.operator("grease_pencil.reorder", text="Send Backward", icon='MOVE_DOWN').direction = 'DOWN'
+        layout.operator("grease_pencil.reorder", text="Bring to Front", icon='MOVE_TO_TOP').direction = 'TOP'
+        layout.operator("grease_pencil.reorder", text="Send to Back", icon='MOVE_TO_BOTTOM').direction = 'BOTTOM'
 
 
 class VIEW3D_MT_edit_gpencil_stroke(Menu):
@@ -7223,7 +7231,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.menu("GPENCIL_MT_move_to_layer")
         layout.menu("VIEW3D_MT_assign_material")
         layout.operator("gpencil.set_active_material", text="Set as Active Material", icon="MATERIAL")
-        layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes")  # bfa menu
+        layout.menu("VIEW3D_MT_edit_greasepencil_arrange_strokes")  # bfa menu
 
         layout.separator()
 
@@ -7360,13 +7368,13 @@ class VIEW3D_MT_edit_gpencil_showhide(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("gpencil.reveal", text="Show All Layers", icon="HIDE_OFF")
+        layout.operator("gpencil.reveal", text="Show Hidden Layer", icon="HIDE_OFF")
+        layout.operator("gpencil.hide", text="Hide selected Layer", icon="HIDE_ON").unselected = False
+        layout.operator("gpencil.hide", text="Hide unselected Layer", icon="HIDE_UNSELECTED").unselected = True
 
         layout.separator()
 
-        layout.operator("gpencil.hide", text="Hide Active Layer", icon="HIDE_ON").unselected = False
-        layout.operator("gpencil.hide", text="Hide Inactive Layers", icon="HIDE_UNSELECTED").unselected = True
-
+        layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon="HIDE_OFF")
 
 class VIEW3D_MT_edit_greasepencil_showhide(Menu):
     bl_label = "Show/Hide"
@@ -7374,12 +7382,13 @@ class VIEW3D_MT_edit_greasepencil_showhide(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("grease_pencil.layer_reveal", text="Show All Layers")
+        layout.operator("grease_pencil.layer_reveal", text="Show All Layers", icon="HIDE_OFF")
+        layout.operator("grease_pencil.layer_hide", text="Hide Active Layer", icon="HIDE_ON").unselected = False
+        layout.operator("grease_pencil.layer_hide", text="Hide Inactive Layers", icon="HIDE_UNSELECTED").unselected = True
 
         layout.separator()
 
-        layout.operator("grease_pencil.layer_hide", text="Hide Active Layer").unselected = False
-        layout.operator("grease_pencil.layer_hide", text="Hide Inactive Layers").unselected = True
+        layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon="HIDE_OFF") # BFA - Legacy
 
 
 class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
@@ -7412,22 +7421,41 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_gpencil_animation")
         layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
+        layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE") # BFA - Legacy
+
+
+        layout.separator()
+
+        layout.operator("gpencil.duplicate_move", text="Duplicate", icon="DUPLICATE") # BFA - Legacy
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon="DUPLICATE") # BFA - Legacy
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame All Layers", icon="DUPLICATE").mode = 'ALL' # BFA - Legacy
+
+        layout.separator()
+
+        layout.operator("gpencil.stroke_split", text="Split", icon="SPLIT")  # BFA - Legacy
 
         layout.separator()
 
         layout.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
         layout.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
+        layout.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER' # BFA
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
-        layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate", icon="SEPARATE")
-        layout.menu("VIEW3D_MT_edit_greasepencil_cleanup", icon="CLEAN_CHANNELS")
+        layout.menu("VIEW3D_MT_edit_greasepencil_delete")
+        layout.operator_menu_enum("gpencil.dissolve", "type") # BFA - legacy
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_greasepencil_delete", icon="DELETE")
+        layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
+        layout.menu("VIEW3D_MT_edit_greasepencil_showhide", text="Show/Hide")
+
+        layout.separator()
+
+        layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
+
 
 
 class VIEW3D_MT_edit_greasepencil_stroke(Menu):
@@ -7444,21 +7472,26 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.menu("GREASE_PENCIL_MT_move_to_layer")
         layout.menu("VIEW3D_MT_grease_pencil_assign_material")
         layout.operator("grease_pencil.set_active_material", icon="MATERIAL")
-        layout.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction")
+        layout.menu("VIEW3D_MT_edit_greasepencil_arrange_strokes")  # BFA - menu
+        #layout.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction") # BFA - used our menu for icons
 
         layout.separator()
 
         layout.operator("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE").type = 'CLOSE'
         layout.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
         layout.operator_menu_enum("grease_pencil.caps_set", text="Set Caps", property="type")
-        layout.operator("grease_pencil.stroke_switch_direction", icon="SWITCH_DIRECTION")
+        layout.operator("grease_pencil.stroke_switch_direction", icon="FLIP")
+        #layout.operator("gpencil.stroke_start_set", text="Set Start Point", icon="STARTPOINT") # BFA - legacy
+
+        #layout.operator_menu_enum("gpencil.reproject", property="type", text="Reproject Strokes") # BFA - legacy
 
         layout.separator()
 
         layout.operator("grease_pencil.set_uniform_thickness", icon="MOD_THICKNESS")
         layout.operator("grease_pencil.set_uniform_opacity", icon="MOD_OPACITY")
 
-        layout.operator_menu_enum("grease_pencil.reorder", text="Reorder", property="direction")
+
+        #layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon="RESET") # BFA - legacy
 
         layout.separator()
 
@@ -7477,6 +7510,8 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
         layout.separator()
 
         layout.operator("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH")
+
+        #layout.operator("gpencil.stroke_merge", text="Merge", icon="MERGE") # BFA - legacy
 
         layout.separator()
 
@@ -10376,19 +10411,15 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
         if is_point_mode:
             col = row.column(align=True)
             col.label(text="Point", icon='GP_SELECT_POINTS')
-            col.separator()
-
-            # Copy/paste
-            col.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
-            col.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN")
-            col.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
 
             col.separator()
 
-            # Main Strokes Operators
+            col.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
+
+            col.separator()
+
             col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
             col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
-            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator()
 
@@ -10403,60 +10434,77 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             col.menu("VIEW3D_MT_mirror", text="Mirror")
+            col.menu("GPENCIL_MT_snap", text="Snap")
 
             col.separator()
 
+            # Copy/paste
+            col.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
+            col.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
+            col.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN")
+            col.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER'
 
+            col.separator()
 
-            col.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
+            # Removal Operators
+            col.operator("gpencil.stroke_merge", text="Merge", icon="MERGE") # BFA - legacy
+            col.operator("gpencil.stroke_merge_by_distance", icon="MERGE").use_unselected = False  # BFA - legacy
+            col.operator("gpencil.stroke_split", text="Split", icon="SPLIT") # BFA - legacy
+            col.operator("gpencil.stroke_separate", text="Separate", icon="SEPARATE_GP_POINTS").mode = 'POINT' # BFA - legacy
+            col.operator_enum("grease_pencil.dissolve", "type")
+
+            col.separator()
+
+            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator()
 
             col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
 
-            # Removal Operators
-            col.separator()
-
-            col.operator_enum("grease_pencil.dissolve", "type")
 
         if is_stroke_mode:
             col = row.column(align=True)
             col.label(text="Stroke", icon='GP_SELECT_STROKES')
             col.separator()
 
-            # Copy/paste
-            col.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
-            col.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
-            col.operator("grease_pencil.duplicate_move", text="Duplicate")
-
-
-            col.separator()
-
             # Main Strokes Operators
             col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
             col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
-            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
-            col.separator()
 
             # Deform Operators
             col.operator("grease_pencil.stroke_smooth", text="Smooth", icon="SMOOTH_VERTEX")
+            col.operator("transform.bend", text="Bend", icon="BEND")
+            col.operator("transform.shear", text="Shear", icon="SHEAR")
+            col.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
             col.operator("transform.transform", text="Radius", icon="RADIUS").mode = 'CURVE_SHRINKFATTEN'
+
+            col.separator()
 
             col.separator()
 
             col.menu("GREASE_PENCIL_MT_move_to_layer")
             col.menu("VIEW3D_MT_grease_pencil_assign_material")
             col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon="MATERIAL")
-            col.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction")
+            col.menu("VIEW3D_MT_edit_greasepencil_arrange_strokes")  # BFA - menu
+            #col.operator_menu_enum("grease_pencil.reorder", text="Arrange", property="direction") # BFA - used our menu for icons
 
             col.separator()
 
             col.menu("VIEW3D_MT_mirror")
+            col.menu("GPENCIL_MT_snap", text="Snap")
 
             col.separator()
 
-            col.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
+            # Copy/paste
+            col.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
+            col.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
+            col.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN")
+            col.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER'
+
+            col.separator()
+
+            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator()
 
@@ -11355,7 +11403,7 @@ classes = (
     VIEW3D_MT_edit_gpencil_stroke,
     VIEW3D_MT_edit_gpencil_point,
     VIEW3D_MT_edit_gpencil_hide,  # bfa menu
-    VIEW3D_MT_edit_gpencil_arrange_strokes,  # bfa menu
+    VIEW3D_MT_edit_greasepencil_arrange_strokes,  # bfa menu
     VIEW3D_MT_edit_gpencil_delete,
     VIEW3D_MT_sculpt_gpencil_copy,  # bfa menu
     VIEW3D_MT_edit_gpencil_showhide,
