@@ -663,6 +663,12 @@ def brush_settings(layout, context, brush, popover=False):
     ### Draw simple settings unique to each paint mode. ###
     brush_shared_settings(layout, context, brush, popover)
 
+    # BFA - added from header to brush settings
+    if mode == 'SCULPT_GREASE_PENCIL':
+        col = layout.column()
+        col.use_property_split = False
+        col.prop(brush.gpencil_settings, "use_active_layer_only")
+
     # Sculpt Mode #
     if mode == 'SCULPT':
         capabilities = brush.sculpt_capabilities
@@ -1312,11 +1318,22 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         tool = brush.gpencil_sculpt_tool
         gp_settings = brush.gpencil_settings
 
-        col = layout.column(heading="Affect", align=True)
-        col.prop(gp_settings, "use_edit_position", text="Position")
-        col.prop(gp_settings, "use_edit_strength", text="Strength")
-        col.prop(gp_settings, "use_edit_thickness", text="Thickness")
-        col.prop(gp_settings, "use_edit_uv", text="UV")
+        col = layout.column() # BFA - float column left, update label
+        col.label(text="Affect")
+        col.use_property_split = False
+
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(gp_settings, "use_edit_position", text="Position")
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(gp_settings, "use_edit_strength", text="Strength")
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(gp_settings, "use_edit_thickness", text="Thickness")
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(gp_settings, "use_edit_uv", text="UV")
 
     # 3D and 2D Texture Paint.
     elif mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
@@ -1394,16 +1411,30 @@ def brush_settings_advanced(layout, context, brush, popover=False):
     header, panel = layout.panel("modes", default_closed=True)
     header.label(text="Modes")
     if panel:
-        panel.use_property_split = True
+        panel.use_property_split = False # BFA - float column left in panel
         panel.use_property_decorate = False
 
-        col = panel.column(align=True)
-        col.prop(brush, "use_paint_sculpt", text="Sculpt")
-        col.prop(brush, "use_paint_uv_sculpt", text="UV Sculpt")
-        col.prop(brush, "use_paint_vertex", text="Vertex Paint")
-        col.prop(brush, "use_paint_weight", text="Weight Paint")
-        col.prop(brush, "use_paint_image", text="Texture Paint")
-        col.prop(brush, "use_paint_sculpt_curves", text="Sculpt Curves")
+        col = panel.column() # BFA - float column left
+        col.use_property_split = False
+
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(brush, "use_paint_sculpt", text="Sculpt")
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(brush, "use_paint_uv_sculpt", text="UV Sculpt")
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(brush, "use_paint_vertex", text="Vertex Paint")
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(brush, "use_paint_weight", text="Weight Paint")
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(brush, "use_paint_image", text="Texture Paint")
+        row = col.row() # BFA - make prop a new row
+        row.separator()
+        row.prop(brush, "use_paint_sculpt_curves", text="Sculpt Curves")
 
     if len(brush.icon_filepath) > 0:
         header, panel = layout.panel("legacy", default_closed=True)
@@ -1853,7 +1884,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=
         layout.prop(gp_settings, "use_active_layer_only")
     elif grease_pencil_tool == 'TINT':
         layout.prop(gp_settings, "vertex_mode", text="Mode")
-        layout.popover("VIEW3D_PT_tools_brush_falloff")
+        #layout.popover("VIEW3D_PT_tools_brush_falloff") # BFA - moved to be consistent with other brushes in the properties_paint_common.py file
         layout.prop(gp_settings, "use_active_layer_only")
 
 
