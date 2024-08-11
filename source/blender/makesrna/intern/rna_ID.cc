@@ -197,7 +197,7 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
     {FILTER_ID_TXT, "filter_text", ICON_TEXT, "Texts", "Show Text data-blocks"},
     {FILTER_ID_VF, "filter_font", ICON_FONT_DATA, "Fonts", "Show Font data-blocks"},
     {FILTER_ID_VO, "filter_volume", ICON_VOLUME_DATA, "Volumes", "Show/hide Volume data-blocks"},
-    {FILTER_ID_WO, "filter_world", ICON_WORLD_DATA, "Worlds", "Show World data-blocks"},
+    {FILTER_ID_WO, "filter_world", ICON_WORLD, "Worlds", "Show World data-blocks"}, /* BFA - Change to World icon to match Properties Panel */
     {FILTER_ID_WS,
      "filter_work_space",
      ICON_WORKSPACE,
