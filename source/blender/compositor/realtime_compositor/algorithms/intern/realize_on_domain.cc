@@ -2,6 +2,8 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#include <limits>
+
 #include "BLI_math_angle_types.hh"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_matrix_types.hh"
@@ -76,16 +78,24 @@ void realize_on_domain(Context &context,
   GPUShader *shader = context.get_shader(get_realization_shader(input, realization_options));
   GPU_shader_bind(shader);
 
-  /* Transform the input space into the domain space. */
-  const float3x3 local_transformation = math::invert(domain.transformation) * input_transformation;
+  /* Translation from lower-left corner to center of input space. */
+  float2 input_translate(-float2(input_domain.size) / 2.0f);
 
-  /* Set the origin of the transformation to be the center of the domain. */
-  const float3x3 transformation = math::from_origin_transform<float3x3>(
-      local_transformation, float2(domain.size) / 2.0f);
+  /* Bias translations in case of nearest interpolation to avoids the round-to-even behavior of
+   * some GPUs at pixel boundaries. */
+  if (realization_options.interpolation == Interpolation::Nearest) {
+    input_translate += std::numeric_limits<float>::epsilon() * 10e3f;
+  }
 
-  /* Invert the transformation because the shader transforms the domain coordinates instead of the
-   * input image itself and thus expect the inverse. */
-  const float3x3 inverse_transformation = math::invert(transformation);
+  /* Transformation from input domain with 0,0 in lower-left to virtual compositing space. */
+  const float3x3 in_transformation = math::translate(input_transformation, input_translate);
+
+  /* Transformation from output domain with 0,0 in lower-left to virtual compositing space. */
+  const float3x3 out_transformation = math::translate(domain.transformation,
+                                                      -float2(domain.size) / 2.0f);
+
+  /* Concatenate to get full transform from output space to input space */
+  const float3x3 inverse_transformation = math::invert(in_transformation) * out_transformation;
 
   GPU_shader_uniform_mat3_as_mat4(shader, "inverse_transformation", inverse_transformation.ptr());
 

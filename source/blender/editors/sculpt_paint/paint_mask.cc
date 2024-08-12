@@ -185,24 +185,6 @@ void scatter_mask_bmesh(const Span<float> mask, const BMesh &bm, const Set<BMVer
   }
 }
 
-static float average_masks(const Span<float> masks, const Span<int> indices)
-{
-  float sum = 0;
-  for (const int i : indices) {
-    sum += masks[i];
-  }
-  return sum / float(indices.size());
-}
-
-void average_neighbor_mask_mesh(const Span<float> masks,
-                                const Span<Vector<int>> vert_neighbors,
-                                const MutableSpan<float> new_masks)
-{
-  for (const int i : vert_neighbors.index_range()) {
-    new_masks[i] = average_masks(masks, vert_neighbors[i]);
-  }
-}
-
 static float average_masks(const CCGKey &key,
                            const Span<CCGElem *> elems,
                            const Span<SubdivCCGCoord> coords)
@@ -290,7 +272,7 @@ void update_mask_mesh(Object &object,
     threading::isolate_task([&]() {
       for (bke::pbvh::Node *node : nodes.slice(range)) {
         const Span<int> verts = hide::node_visible_verts(*node, hide_vert, tls.visible_verts);
-        tls.mask.reinitialize(verts.size());
+        tls.mask.resize(verts.size());
         array_utils::gather<float>(mask.span, verts, tls.mask);
         update_fn(tls.mask, verts);
         if (array_utils::indexed_data_equal<float>(mask.span, verts, tls.mask)) {
@@ -305,6 +287,44 @@ void update_mask_mesh(Object &object,
   });
 
   mask.finish();
+}
+
+bool mask_equals_array_grids(const Span<CCGElem *> elems,
+                             const CCGKey &key,
+                             const Span<int> grids,
+                             const Span<float> values)
+{
+  BLI_assert(grids.size() * key.grid_area == values.size());
+
+  const IndexRange range = grids.index_range();
+  return std::all_of(range.begin(), range.end(), [&](const int i) {
+    const int grid = grids[i];
+    const int node_verts_start = i * key.grid_area;
+
+    CCGElem *elem = elems[grid];
+    for (const int offset : IndexRange(key.grid_area)) {
+      if (CCG_elem_offset_mask(key, elem, i) != values[node_verts_start + offset]) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+bool mask_equals_array_bmesh(const int mask_offset,
+                             const Set<BMVert *, 0> &verts,
+                             const Span<float> values)
+{
+  BLI_assert(verts.size() == values.size());
+
+  int i = 0;
+  for (const BMVert *vert : verts) {
+    if (BM_ELEM_CD_GET_FLOAT(vert, mask_offset) != values[i]) {
+      return false;
+    }
+    i++;
+  }
+  return true;
 }
 
 /** \} */
@@ -573,13 +593,14 @@ static void invert_mask_grids(Main &bmain,
   MultiresModifierData &mmd = *BKE_sculpt_multires_active(&scene, &object);
   BKE_sculpt_mask_layers_ensure(&depsgraph, &bmain, &object, &mmd);
 
+  undo::push_nodes(object, nodes, undo::Type::Mask);
+
   const BitGroupVector<> &grid_hidden = subdiv_ccg.grid_hidden;
 
   const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
   const Span<CCGElem *> grids = subdiv_ccg.grids;
   threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
     for (bke::pbvh::Node *node : nodes.slice(range)) {
-      undo::push_node(object, node, undo::Type::Mask);
 
       const Span<int> grid_indices = bke::pbvh::node_grid_indices(*node);
       if (grid_hidden.is_empty()) {
@@ -615,7 +636,7 @@ static void invert_mask_bmesh(Object &object, const Span<bke::pbvh::Node *> node
     return;
   }
 
-  undo::push_node(object, nodes.first(), undo::Type::Mask);
+  undo::push_nodes(object, nodes, undo::Type::Mask);
   threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
     for (bke::pbvh::Node *node : nodes.slice(range)) {
       for (BMVert *vert : BKE_pbvh_bmesh_node_unique_verts(node)) {
