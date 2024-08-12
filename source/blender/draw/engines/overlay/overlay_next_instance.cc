@@ -318,7 +318,7 @@ void Instance::draw(Manager &manager)
   outline.draw(resources, manager, view);
 
   auto overlay_fb_draw = [&](OverlayLayer &layer, Framebuffer &framebuffer) {
-    regular.facing.draw(framebuffer, manager, view);
+    layer.facing.draw(framebuffer, manager, view);
   };
 
   overlay_fb_draw(regular, resources.overlay_fb);
@@ -371,10 +371,11 @@ bool Instance::object_is_selected(const ObjectRef &ob_ref)
 
 bool Instance::object_is_paint_mode(const Object *object)
 {
-  if (object->type == OB_GREASE_PENCIL && state.object_mode & OB_MODE_WEIGHT_GPENCIL_LEGACY) {
+  if (object->type == OB_GREASE_PENCIL && (state.object_mode & OB_MODE_WEIGHT_GPENCIL_LEGACY)) {
     return true;
   }
-  return (object == state.active_base->object) && (state.object_mode & OB_MODE_ALL_PAINT);
+  return state.active_base && (object == state.active_base->object) &&
+         (state.object_mode & OB_MODE_ALL_PAINT);
 }
 
 bool Instance::object_is_sculpt_mode(const ObjectRef &ob_ref)
