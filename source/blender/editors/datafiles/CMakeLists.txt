@@ -459,6 +459,7 @@ if(WITH_BLENDER)
       scriptwin
       time
       nodetree
+      geometry_set
       rename
       console
       preferences
@@ -1554,6 +1555,7 @@ if(WITH_BLENDER)
       mouse_move
       mouse_lmb_drag
       mouse_mmb_drag
+      mouse_mmb_scroll # BFA - New
       mouse_rmb_drag
       automerge_off
       automerge_on
