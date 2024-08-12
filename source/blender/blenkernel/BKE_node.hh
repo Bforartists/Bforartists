@@ -1373,6 +1373,7 @@ void BKE_nodetree_remove_layer_n(bNodeTree *ntree, Scene *scene, int layer_index
 #define GEO_NODE_GIZMO_TRANSFORM 2143
 #define GEO_NODE_CURVES_TO_GREASE_PENCIL 2144
 #define GEO_NODE_GREASE_PENCIL_TO_CURVES 2145
+#define GEO_NODE_IMPORT_PLY 2146
 
 /** \} */
 
@@ -1793,3 +1794,8 @@ const bNodeZoneType *zone_type_by_node_type(const int node_type);
   { \
     return *static_cast<const StorageT *>(node.storage); \
   }
+
+constexpr int NODE_DEFAULT_MAX_WIDTH = 700;
+constexpr int GROUP_NODE_DEFAULT_WIDTH = 140;
+constexpr int GROUP_NODE_MAX_WIDTH = NODE_DEFAULT_MAX_WIDTH;
+constexpr int GROUP_NODE_MIN_WIDTH = 40;
