@@ -364,7 +364,7 @@ class OBJECT_MT_gpencil_modifier_add(GenericColumnMenu, Menu):
     bl_description = "Add a procedural operation/effect to the active grease pencil object"
 
     op_id = "object.gpencil_modifier_add"
-    OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="GpencilModifier")
+    #OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="GpencilModifier")
     search_header = "Grease Pencil Modifier"
     @classmethod
     def poll(cls, context):
