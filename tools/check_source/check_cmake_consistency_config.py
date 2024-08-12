@@ -3,9 +3,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import os
+from typing import (
+    Tuple,
+)
 
 IGNORE_SOURCE = (
-    "/scripts/",
+    "/lib/",
     "/test/",
     "/tests/gtests/",
 
@@ -96,8 +99,10 @@ IGNORE_SOURCE = (
     "intern/libmv/libmv/multiview/test_data_sets.h",
 )
 
-# Ignore cmake file, path pairs.
-IGNORE_SOURCE_MISSING = (
+# Ignore cmake file, path pairs,
+# NOTE: keep commented block to show the intended format.
+"""
+IGNORE_SOURCE_MISSING: Tuple[Tuple[str, Tuple[str, ...]], ...] = (
     (   # Use for `WITH_NANOVDB`.
         "intern/cycles/kernel/CMakeLists.txt", (
             "nanovdb/util/CSampleFromVoxels.h",
@@ -107,6 +112,10 @@ IGNORE_SOURCE_MISSING = (
         ),
     ),
 )
+"""
+IGNORE_SOURCE_MISSING: Tuple[Tuple[str, Tuple[str, ...]], ...] = (
+)
+
 
 IGNORE_CMAKE = (
     "extern/audaspace/CMakeLists.txt",

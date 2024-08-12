@@ -207,14 +207,26 @@ bool Action::layer_remove(Layer &layer_to_remove)
   return true;
 }
 
-void Action::layer_ensure_at_least_one()
+void Action::layer_keystrip_ensure()
 {
-  if (!this->layers().is_empty()) {
-    return;
+  /* Ensure a layer. */
+  Layer *layer;
+  if (this->layers().is_empty()) {
+    layer = &this->layer_add(DATA_(layer_default_name));
+  }
+  else {
+    layer = this->layer(0);
   }
 
-  Layer &layer = this->layer_add(DATA_(layer_default_name));
-  layer.strip_add(Strip::Type::Keyframe);
+  /* Ensure a KeyframeStrip. */
+  if (layer->strips().is_empty()) {
+    layer->strip_add<KeyframeStrip>();
+  }
+
+  /* Within the limits of Baklava Phase 1, the above code should not have
+   * created more than one layer, or more than one strip on the layer. And if a
+   * layer + strip already existed, that must have been a keyframe strip. */
+  assert_baklava_phase_1_invariants(*this);
 }
 
 int64_t Action::find_layer_index(const Layer &layer) const
@@ -483,6 +495,9 @@ Layer *Action::get_layer_for_keyframing()
 
 bool Action::assign_id(Slot *slot, ID &animated_id)
 {
+  BLI_assert_msg(!slot || this->slots().as_span().contains(slot),
+                 "Slot should be owned by this Action");
+
   AnimData *adt = BKE_animdata_ensure_id(&animated_id);
   if (!adt) {
     return false;
@@ -627,9 +642,9 @@ static void strip_ptr_destructor(ActionStrip **dna_strip_ptr)
   MEM_delete(&strip);
 };
 
-bool Layer::strip_remove(Strip &strip_to_remove)
+bool Layer::strip_remove(Strip &strip)
 {
-  const int64_t strip_index = this->find_strip_index(strip_to_remove);
+  const int64_t strip_index = this->find_strip_index(strip);
   if (strip_index < 0) {
     return false;
   }
@@ -1043,10 +1058,10 @@ const ChannelBag *KeyframeStrip::channelbag_for_slot(const slot_handle_t slot_ha
   }
   return nullptr;
 }
-int64_t KeyframeStrip::find_channelbag_index(const ChannelBag &channelbag_to_remove) const
+int64_t KeyframeStrip::find_channelbag_index(const ChannelBag &channelbag) const
 {
   for (int64_t index = 0; index < this->channelbag_array_num; index++) {
-    if (this->channelbag(index) == &channelbag_to_remove) {
+    if (this->channelbag(index) == &channelbag) {
       return index;
     }
   }
@@ -1172,7 +1187,7 @@ bool ChannelBag::fcurve_remove(FCurve &fcurve_to_remove)
   dna::array::remove_index(
       &this->fcurve_array, &this->fcurve_array_num, nullptr, fcurve_index, fcurve_ptr_destructor);
 
-  /* As an optimisation, this function could call `DEG_relations_tag_update(bmain)` to prune any
+  /* As an optimization, this function could call `DEG_relations_tag_update(bmain)` to prune any
    * relationships that are now no longer necessary. This is not needed for correctness of the
    * depsgraph evaluation results though. */
 
@@ -1397,6 +1412,9 @@ FCurve *action_fcurve_find(bAction *act, FCurveDescriptor fcurve_descriptor)
   if (act == nullptr) {
     return nullptr;
   }
+#ifdef WITH_ANIM_BAKLAVA
+  BLI_assert(act->wrap().is_action_legacy());
+#endif
   return BKE_fcurve_find(
       &act->curves, fcurve_descriptor.rna_path.c_str(), fcurve_descriptor.array_index);
 }
@@ -1443,7 +1461,7 @@ FCurve *action_fcurve_ensure(Main *bmain,
     Slot &slot = action.slot_ensure_for_id(*ptr->owner_id);
     action.assign_id(&slot, *ptr->owner_id);
 
-    action.layer_ensure_at_least_one();
+    action.layer_keystrip_ensure();
 
     assert_baklava_phase_1_invariants(action);
     KeyframeStrip &strip = action.layer(0)->strip(0)->as<KeyframeStrip>();
@@ -1510,6 +1528,25 @@ FCurve *action_fcurve_ensure(Main *bmain,
   DEG_relations_tag_update(bmain);
 
   return fcu;
+}
+
+bool action_fcurve_remove(Action &action, FCurve &fcu)
+{
+  for (Layer *layer : action.layers()) {
+    for (Strip *strip : layer->strips()) {
+      if (!(strip->type() == Strip::Type::Keyframe)) {
+        continue;
+      }
+      KeyframeStrip &key_strip = strip->template as<KeyframeStrip>();
+      for (ChannelBag *bag : key_strip.channelbags()) {
+        const bool removed = bag->fcurve_remove(fcu);
+        if (removed) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 
 ID *action_slot_get_id_for_keying(Main &bmain,

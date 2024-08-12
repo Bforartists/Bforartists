@@ -125,12 +125,12 @@ const EnumPropertyItem rna_enum_mapping_type_items[] = {
      "VECTOR",
      0,
      "Vector",
-     "Transform a direction vector. Location is ignored"},
+     "Transform a direction vector (Location is ignored)"},
     {NODE_MAPPING_TYPE_NORMAL,
      "NORMAL",
      0,
      "Normal",
-     "Transform a unit normal vector. Location is ignored"},
+     "Transform a unit normal vector (Location is ignored)"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -238,7 +238,7 @@ const EnumPropertyItem rna_enum_node_vec_math_items[] = {
      "REFLECT",
      0,
      "Reflect",
-     "Reflect A around the normal B. B doesn't need to be normalized"},
+     "Reflect A around the normal B. B doesn't need to be normalized."},
     {NODE_VECTOR_MATH_REFRACT,
      "REFRACT",
      0,
@@ -436,7 +436,7 @@ const EnumPropertyItem rna_enum_node_clamp_items[] = {
 
 static const EnumPropertyItem rna_enum_node_tex_dimensions_items[] = {
     {1, "1D", 0, "1D", "Use the scalar value W as input"},
-    {2, "2D", 0, "2D", "Use the 2D vector (X, Y) as input. The Z component is ignored"},
+    {2, "2D", 0, "2D", "Use the 2D vector (X, Y) as input. The Z component is ignored."},
     {3, "3D", 0, "3D", "Use the 3D vector (X, Y, Z) as input"},
     {4, "4D", 0, "4D", "Use the 4D vector (X, Y, Z, W) as input"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -4155,14 +4155,14 @@ static const EnumPropertyItem node_principled_hair_model_items[] = {
      0,
      "Chiang",
      "Near-field hair scattering model by Chiang et al. 2016, suitable for close-up looks, but is "
-     "more noisy when viewing from a distance"},
+     "more noisy when viewing from a distance."},
     {SHD_PRINCIPLED_HAIR_HUANG,
      "HUANG",
      0,
      "Huang",
      "Multi-scale hair scattering model by Huang et al. 2022, suitable for viewing both up close "
      "and from a distance, supports elliptical cross-sections and has more precise highlight in "
-     "forward scattering directions"},
+     "forward scattering directions."},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -4228,7 +4228,7 @@ static const EnumPropertyItem node_subsurface_method_items[] = {
      0,
      "Random Walk (Skin)",
      "Volumetric approximation to physically based volume scattering, with scattering radius "
-     "automatically adjusted to match color textures. Designed for skin shading"},
+     "automatically adjusted to match color textures. Designed for skin shading."},
     {0, nullptr, 0, nullptr, nullptr}};
 
 static const EnumPropertyItem prop_image_extension[] = {
@@ -4922,7 +4922,7 @@ static void def_sh_tex_gabor(StructRNA *srna)
        "2D",
        0,
        "2D",
-       "Use the 2D vector (X, Y) as input. The Z component is ignored"},
+       "Use the 2D vector (X, Y) as input. The Z component is ignored."},
       {SHD_GABOR_TYPE_3D, "3D", 0, "3D", "Use the 3D vector (X, Y, Z) as input"},
       {0, nullptr, 0, nullptr, nullptr},
   };
@@ -5205,7 +5205,7 @@ static void def_sh_tex_brick(StructRNA *srna)
   RNA_def_property_ui_text(
       prop,
       "Offset Frequency",
-      "How often rows are offset. A value of 2 gives an even/uneven pattern of rows");
+      "How often rows are offset. A value of 2 gives an even/uneven pattern of rows.");
   RNA_def_property_update(prop, 0, "rna_Node_update");
 
   prop = RNA_def_property(srna, "squash_frequency", PROP_INT, PROP_NONE);
@@ -5273,7 +5273,7 @@ static void def_sh_tex_voronoi(StructRNA *srna)
        "SMOOTH_F1",
        0,
        "Smooth F1",
-       "Smoothed version of F1. Weighted sum of neighbor voronoi cells"},
+       "Smoothed version of F1. Weighted sum of neighbor voronoi cells."},
       {SHD_VORONOI_DISTANCE_TO_EDGE,
        "DISTANCE_TO_EDGE",
        0,
@@ -6609,6 +6609,12 @@ static void def_cmp_output_file(BlenderRNA *brna, StructRNA *srna)
 
   prop = RNA_def_property(srna, "format", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "ImageFormatSettings");
+
+  prop = RNA_def_property(srna, "save_as_render", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "save_as_render", 1);
+  RNA_def_property_ui_text(
+      prop, "Save as Render", "Apply render part of display transform when saving byte image");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, nullptr);
 
   /* XXX using two different collections here for the same basic DNA list!
    * Details of the output slots depend on whether the node is in Multilayer EXR mode.
@@ -8882,13 +8888,13 @@ static void def_cmp_denoise(StructRNA *srna)
        0,
        "Fast",
        "Denoise image and guiding passes together. Improves quality when guiding passes are noisy "
-       "using least amount of extra processing time"},
+       "using least amount of extra processing time."},
       {CMP_NODE_DENOISE_PREFILTER_ACCURATE,
        "ACCURATE",
        0,
        "Accurate",
        "Prefilter noisy guiding passes before denoising image. Improves quality when guiding "
-       "passes are noisy using extra processing time"},
+       "passes are noisy using extra processing time."},
       {0, nullptr, 0, nullptr, nullptr}};
 
   RNA_def_struct_sdna_from(srna, "NodeDenoise", "storage");
@@ -8929,7 +8935,7 @@ static void def_cmp_kuwahara(StructRNA *srna)
   RNA_def_property_ui_text(
       prop,
       "High Precision",
-      "Uses a more precise but slower method. Use if the output contains undesirable noise");
+      "Uses a more precise but slower method. Use if the output contains undesirable noise.");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "uniformity", PROP_INT, PROP_NONE);
@@ -8939,7 +8945,7 @@ static void def_cmp_kuwahara(StructRNA *srna)
   RNA_def_property_ui_text(prop,
                            "Uniformity",
                            "Controls the uniformity of the direction of the filter. Higher values "
-                           "produces more uniform directions");
+                           "produces more uniform directions.");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "sharpness", PROP_FLOAT, PROP_FACTOR);
@@ -8949,7 +8955,7 @@ static void def_cmp_kuwahara(StructRNA *srna)
   RNA_def_property_ui_text(prop,
                            "Sharpness",
                            "Controls the sharpness of the filter. 0 means completely smooth while "
-                           "1 means completely sharp");
+                           "1 means completely sharp.");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "eccentricity", PROP_FLOAT, PROP_FACTOR);
@@ -8960,7 +8966,7 @@ static void def_cmp_kuwahara(StructRNA *srna)
       prop,
       "Eccentricity",
       "Controls how directional the filter is. 0 means the filter is completely omnidirectional "
-      "while 2 means it is maximally directed along the edges of the image");
+      "while 2 means it is maximally directed along the edges of the image.");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -9787,7 +9793,7 @@ static void def_geo_string_to_curves(StructRNA *srna)
        ICON_NONE,
        "Truncate",
        "Only output curves that fit within the width and height. Output the remainder to the "
-       "\"Remainder\" output"},
+       "\"Remainder\" output."},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -9881,7 +9887,8 @@ static void def_geo_string_to_curves(StructRNA *srna)
   prop = RNA_def_property(srna, "font", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "id");
   RNA_def_property_struct_type(prop, "VectorFont");
-  RNA_def_property_ui_text(prop, "Font", "Font of the text. Falls back to the UI font by default");
+  RNA_def_property_ui_text(
+      prop, "Font", "Font of the text. Falls back to the UI font by default.");
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
@@ -10004,7 +10011,7 @@ static void def_geo_menu_switch(StructRNA *srna)
   RNA_def_property_ui_text(prop,
                            "Enum Definition (deprecated)",
                            "The enum definition can now be accessed directly on the node. This "
-                           "exists for backward compatibility");
+                           "exists for backward compatibility.");
 }
 
 static void rna_def_shader_node(BlenderRNA *brna)
@@ -10180,7 +10187,7 @@ static void rna_def_node_sockets_api(BlenderRNA *brna, PropertyRNA *cprop, int i
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   RNA_def_string(func, "identifier", nullptr, MAX_NAME, "Identifier", "Unique socket identifier");
   RNA_def_boolean(
-      func, "use_multi_input", false, "", "Make the socket a multi-input. Only valid for inputs");
+      func, "use_multi_input", false, "", "Make the socket multi-input (valid for inputs only)");
   /* return value */
   parm = RNA_def_pointer(func, "socket", "NodeSocket", "", "New socket");
   RNA_def_function_return(func, parm);
@@ -10590,7 +10597,7 @@ static void rna_def_node_link(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Multi Input Sort ID",
-      "Used to sort multiple links coming into the same input. The highest ID is at the top");
+      "Used to sort multiple links coming into the same input. The highest ID is at the top.");
 
   func = RNA_def_function(
       srna, "swap_multi_input_sort_id", "rna_NodeLink_swap_multi_input_sort_id");
@@ -10601,7 +10608,7 @@ static void rna_def_node_link(BlenderRNA *brna)
                          "other",
                          "NodeLink",
                          "Other",
-                         "The other link. Must link to the same multi input socket");
+                         "The other link. Must link to the same multi-input socket.");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 }
 
@@ -10731,6 +10738,13 @@ static void rna_def_nodetree(BlenderRNA *brna)
       prop, "Color Tag", "Color tag of the node group which influences the header color");
   RNA_def_property_update(prop, NC_NODE, nullptr);
 
+  prop = RNA_def_property(srna, "default_group_node_width", PROP_INT, PROP_NONE);
+  RNA_def_property_int_default(prop, GROUP_NODE_DEFAULT_WIDTH);
+  RNA_def_property_range(prop, GROUP_NODE_MIN_WIDTH, GROUP_NODE_MAX_WIDTH);
+  RNA_def_property_ui_text(
+      prop, "Default Group Node Width", "The width for newly created group nodes");
+  RNA_def_property_update(prop, NC_NODE, nullptr);
+
   prop = RNA_def_property(srna, "view_center", PROP_FLOAT, PROP_XYZ);
   RNA_def_property_array(prop, 2);
   RNA_def_property_float_sdna(prop, nullptr, "view_center");
@@ -10792,7 +10806,7 @@ static void rna_def_nodetree(BlenderRNA *brna)
   func = RNA_def_function(srna, "contains_tree", "rna_NodeTree_contains_tree");
   RNA_def_function_ui_description(
       func,
-      "Check if the node tree contains another. Used to avoid creating recursive node groups");
+      "Check if the node tree contains another. Used to avoid creating recursive node groups.");
   parm = RNA_def_pointer(
       func, "sub_tree", "NodeTree", "Node Tree", "Node tree for recursive check");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);

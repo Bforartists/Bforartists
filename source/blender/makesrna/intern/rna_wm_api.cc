@@ -827,7 +827,7 @@ void RNA_api_wm(StructRNA *srna)
       func,
       "Opens a file selector with an operator. "
       "The string properties 'filepath', 'filename', 'directory' and a 'files' "
-      "collection are assigned when present in the operator");
+      "collection are assigned when present in the operator.");
   rna_generic_op_invoke(func, 0);
 
   func = RNA_def_function(srna, "modal_handler_add", "rna_event_modal_handler_add");
@@ -1042,7 +1042,7 @@ void RNA_api_wm(StructRNA *srna)
       "Is Interface Locked",
       "If true, the interface is currently locked by a running job and data shouldn't be modified "
       "from application timers. Otherwise, the running job might conflict with the handler "
-      "causing unexpected results or even crashes");
+      "causing unexpected results or even crashes.");
   RNA_def_property_clear_flag(parm, PROP_EDITABLE);
 }
 
@@ -1071,7 +1071,7 @@ void RNA_api_operator(StructRNA *srna)
   func = RNA_def_function(srna, "poll", nullptr);
   RNA_def_function_ui_description(func, "Test if the operator can be called or not");
   RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_REGISTER_OPTIONAL);
-  RNA_def_function_return(func, RNA_def_boolean(func, "visible", true, "", ""));
+  RNA_def_function_return(func, RNA_def_boolean(func, "visible", false, "", ""));
   parm = RNA_def_pointer(func, "context", "Context", "", "");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
@@ -1171,7 +1171,7 @@ void RNA_api_macro(StructRNA *srna)
   func = RNA_def_function(srna, "poll", nullptr);
   RNA_def_function_ui_description(func, "Test if the operator can be called or not");
   RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_REGISTER_OPTIONAL);
-  RNA_def_function_return(func, RNA_def_boolean(func, "visible", true, "", ""));
+  RNA_def_function_return(func, RNA_def_boolean(func, "visible", false, "", ""));
   parm = RNA_def_pointer(func, "context", "Context", "", "");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
