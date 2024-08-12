@@ -49,6 +49,8 @@
 
 #include "interface_intern.hh"
 
+#include "fmt/format.h"
+
 struct IconImage {
   int w;
   int h;
@@ -560,6 +562,9 @@ int UI_icon_from_event_type(short event_type, short event_value)
   } while ((di = di->data.input.next));
 
   if (event_type == LEFTMOUSE) {
+    if (event_value == KM_DBL_CLICK) {
+      return ICON_MOUSE_LMB_2X;
+    }
     return (event_value == KM_CLICK_DRAG) ? ICON_MOUSE_LMB_DRAG : ICON_MOUSE_LMB;
   }
   if (event_type == MIDDLEMOUSE) {
@@ -1294,6 +1299,155 @@ static int get_draw_size(enum eIconSizes size)
   }
 }
 
+static void svg_replace_color_attributes(std::string &svg,
+                                         const std::string &name,
+                                         const size_t start,
+                                         const size_t end)
+{
+  bTheme *btheme = UI_GetTheme();
+
+  uchar white[] = {255, 255, 255, 255};
+  uchar black[] = {0, 0, 0, 255};
+  uchar logo_orange[] = {232, 125, 13, 255};
+  uchar logo_blue[] = {38, 87, 135, 255};
+
+  /* Tool colors hardcoded for now. */
+  uchar tool_add[] = {117, 255, 175, 255};
+  uchar tool_remove[] = {245, 107, 91, 255};
+  uchar tool_select[] = {255, 176, 43, 255};
+  uchar tool_transform[] = {217, 175, 245, 255};
+  uchar tool_white[] = {255, 255, 255, 255};
+  uchar tool_red[] = {214, 45, 48, 255};
+
+  struct ColorItem {
+    const char *name;
+    uchar *col = nullptr;
+    int colorid = TH_UNDEFINED;
+    int spacetype = SPACE_TYPE_ANY;
+  } items[] = {
+      {"blender.white", white},
+      {"blender.black", black},
+      {"blender.logo_orange", logo_orange},
+      {"blender.logo_blue", logo_blue},
+      {"blender.selected", btheme->tui.wcol_regular.inner},
+      {"blender.mesh_selected", btheme->space_view3d.vertex_select},
+      {"blender.back", nullptr, TH_BACK},
+      {"blender.text", nullptr, TH_TEXT},
+      {"blender.text_hi", nullptr, TH_TEXT_HI},
+      {"blender.red_alert", nullptr, TH_REDALERT},
+      {"blender.error", nullptr, TH_INFO_ERROR, SPACE_INFO},
+      {"blender.warning", nullptr, TH_INFO_WARNING, SPACE_INFO},
+      {"blender.info", nullptr, TH_INFO_INFO, SPACE_INFO},
+      {"blender.scene", nullptr, TH_ICON_SCENE},
+      {"blender.collection", nullptr, TH_ICON_COLLECTION},
+      {"blender.object", nullptr, TH_ICON_OBJECT},
+      {"blender.object_data", nullptr, TH_ICON_OBJECT_DATA},
+      {"blender.modifier", nullptr, TH_ICON_MODIFIER},
+      {"blender.shading", nullptr, TH_ICON_SHADING},
+      {"blender.folder", nullptr, TH_ICON_FOLDER},
+      {"blender.fund", nullptr, TH_ICON_FUND},
+      {"blender.tool_add", tool_add},
+      {"blender.tool_remove", tool_remove},
+      {"blender.tool_select", tool_select},
+      {"blender.tool_transform", tool_transform},
+      {"blender.tool_white", tool_white},
+      {"blender.tool_red", tool_red},
+  };
+
+  for (const ColorItem &item : items) {
+    if (name != item.name) {
+      continue;
+    }
+
+    uchar color[4];
+    if (item.col) {
+      memcpy(color, item.col, sizeof(color));
+    }
+    else if (item.colorid != TH_UNDEFINED) {
+      if (item.spacetype != SPACE_TYPE_ANY) {
+        UI_GetThemeColorType4ubv(item.colorid, item.spacetype, color);
+      }
+      else {
+        UI_GetThemeColor4ubv(item.colorid, color);
+      }
+    }
+    else {
+      continue;
+    }
+
+    std::string hexcolor = fmt::format(
+        "{:02x}{:02x}{:02x}{:02x}", color[0], color[1], color[2], color[3]);
+
+    size_t att_start = start;
+    while (1) {
+      constexpr static blender::StringRef key = "fill=\"";
+      att_start = svg.find(key, att_start);
+      if (att_start == std::string::npos || att_start > end) {
+        break;
+      }
+      const size_t att_end = svg.find("\"", att_start + key.size());
+      if (att_end != std::string::npos && att_end < end) {
+        svg.replace(att_start, att_end - att_start, key + "#" + hexcolor);
+      }
+      att_start += blender::StringRef(key + "#rrggbbaa\"").size();
+    }
+
+    att_start = start;
+    while (1) {
+      constexpr static blender::StringRef key = "fill:";
+      att_start = svg.find(key, att_start);
+      if (att_start == std::string::npos || att_start > end) {
+        break;
+      }
+      const size_t att_end = svg.find(";", att_start + key.size());
+      if (att_end != std::string::npos && att_end - att_start < end) {
+        svg.replace(att_start, att_end - att_start, key + "#" + hexcolor);
+      }
+      att_start += blender::StringRef(key + "#rrggbbaa").size();
+    }
+  }
+}
+
+static void icon_source_edit_cb(std::string &svg)
+{
+  size_t g_start = 0;
+
+  /* Scan string, processing only groups with our keyword ids. */
+
+  while (1) {
+    /* Look for a blender id, quick exit if not found. */
+    constexpr static blender::StringRef key = "id=\"";
+    const size_t id_start = svg.find(key + "blender.", g_start);
+    if (id_start == std::string::npos) {
+      return;
+    }
+
+    /* Scan back to beginning of this group element. */
+    g_start = svg.rfind("<g", id_start);
+    if (g_start == std::string::npos) {
+      /* Malformed. */
+      return;
+    }
+
+    /* Scan forward to end of the group. */
+    const size_t g_end = svg.find("</g>", id_start);
+    if (g_end == std::string::npos) {
+      /* Malformed. */
+      return;
+    }
+
+    /* Get group id name. */
+    const size_t id_end = svg.find("\"", id_start + key.size());
+    if (id_end != std::string::npos) {
+      std::string id_name = svg.substr(id_start + key.size(), id_end - id_start - key.size());
+      /* Replace this group's colors. */
+      svg_replace_color_attributes(svg, id_name, g_start, g_end);
+    }
+
+    g_start = g_end;
+  }
+}
+
 static void icon_draw_size(float x,
                            float y,
                            int icon_id,
@@ -1381,30 +1535,42 @@ static void icon_draw_size(float x,
     GPU_blend(GPU_BLEND_ALPHA);
   }
   else if (di->type == ICON_TYPE_EVENT) {
-    const short event_type = di->data.input.event_type;
-    const short event_value = di->data.input.event_value;
-    icon_draw_rect_input(x, y, w, h, alpha, event_type, event_value, inverted);
+    icon_draw_rect_input(x, y, w, h, icon_id, aspect, alpha, inverted);
   }
   else if (ELEM(di->type, ICON_TYPE_SVG_MONO, ICON_TYPE_SVG_COLOR)) {
-    /* Monochrome icon that uses text or theme color. */
     float outline_intensity = mono_border ? (btheme->tui.icon_border_intensity > 0.0f ?
                                                  btheme->tui.icon_border_intensity :
                                                  0.5f) :
                                             0.0f;
-    if (di->type == ICON_TYPE_SVG_COLOR) {
-      BLF_draw_svg_icon(
-          uint(icon_id), x, y, float(draw_size) / aspect, nullptr, outline_intensity);
+    float color[4];
+    if (mono_rgba) {
+      rgba_uchar_to_float(color, (const uchar *)mono_rgba);
     }
     else {
-      float color[4];
-      if (mono_rgba) {
-        rgba_uchar_to_float(color, (const uchar *)mono_rgba);
-      }
-      else {
-        UI_GetThemeColor4fv(TH_TEXT, color);
-      }
-      color[3] *= alpha;
-      BLF_draw_svg_icon(uint(icon_id), x, y, float(draw_size) / aspect, color, outline_intensity);
+      UI_GetThemeColor4fv(TH_TEXT, color);
+    }
+
+    color[3] *= alpha;
+
+    if (di->type == ICON_TYPE_SVG_COLOR) {
+      BLF_draw_svg_icon(uint(icon_id),
+                        x,
+                        y,
+                        float(draw_size) / aspect,
+                        color,
+                        outline_intensity,
+                        true,
+                        icon_source_edit_cb);
+    }
+    else {
+      BLF_draw_svg_icon(uint(icon_id),
+                        x,
+                        y,
+                        float(draw_size) / aspect,
+                        color,
+                        outline_intensity,
+                        false,
+                        nullptr);
     }
 
     if (text_overlay && text_overlay->text[0] != '\0') {
