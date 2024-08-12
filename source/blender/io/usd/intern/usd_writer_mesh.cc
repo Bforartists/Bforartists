@@ -149,11 +149,11 @@ void USDGenericMeshWriter::do_write(HierarchyContext &context)
 
 void USDGenericMeshWriter::write_custom_data(const Object *obj,
                                              const Mesh *mesh,
-                                             pxr::UsdGeomMesh usd_mesh)
+                                             const pxr::UsdGeomMesh &usd_mesh)
 {
   const bke::AttributeAccessor attributes = mesh->attributes();
 
-  char *active_uvmap_name = nullptr;
+  const char *active_uvmap_name = nullptr;
   const int active_uv_set_index = CustomData_get_render_layer_index(&mesh->corner_data,
                                                                     CD_PROP_FLOAT2);
   if (active_uv_set_index != -1) {
@@ -166,7 +166,7 @@ void USDGenericMeshWriter::write_custom_data(const Object *obj,
          * Skip edge domain because USD doesn't have a good conversion for them. */
         if (attribute_id.name()[0] == '.' || attribute_id.is_anonymous() ||
             meta_data.domain == bke::AttrDomain::Edge ||
-            ELEM(attribute_id.name(), "position", "material_index", "velocity"))
+            ELEM(attribute_id.name(), "position", "material_index", "velocity", "crease_vert"))
         {
           return true;
         }
@@ -217,7 +217,7 @@ void USDGenericMeshWriter::write_custom_data(const Object *obj,
       });
 }
 
-static const std::optional<pxr::TfToken> convert_blender_domain_to_usd(
+static std::optional<pxr::TfToken> convert_blender_domain_to_usd(
     const bke::AttrDomain blender_domain)
 {
   switch (blender_domain) {
@@ -235,7 +235,7 @@ static const std::optional<pxr::TfToken> convert_blender_domain_to_usd(
 }
 
 void USDGenericMeshWriter::write_generic_data(const Mesh *mesh,
-                                              pxr::UsdGeomMesh usd_mesh,
+                                              const pxr::UsdGeomMesh &usd_mesh,
                                               const bke::AttributeIDRef &attribute_id,
                                               const bke::AttributeMetaData &meta_data)
 {
@@ -273,7 +273,7 @@ void USDGenericMeshWriter::write_generic_data(const Mesh *mesh,
 }
 
 void USDGenericMeshWriter::write_uv_data(const Mesh *mesh,
-                                         pxr::UsdGeomMesh usd_mesh,
+                                         const pxr::UsdGeomMesh &usd_mesh,
                                          const bke::AttributeIDRef &attribute_id,
                                          const char *active_uvmap_name)
 {
@@ -304,7 +304,7 @@ void USDGenericMeshWriter::write_uv_data(const Mesh *mesh,
 }
 
 void USDGenericMeshWriter::write_color_data(const Mesh *mesh,
-                                            pxr::UsdGeomMesh usd_mesh,
+                                            const pxr::UsdGeomMesh &usd_mesh,
                                             const bke::AttributeIDRef &attribute_id,
                                             const bke::AttributeMetaData &meta_data)
 {
@@ -325,12 +325,12 @@ void USDGenericMeshWriter::write_color_data(const Mesh *mesh,
                                      pxr::UsdGeomTokens->vertex;
 
   pxr::UsdGeomPrimvar colors_pv = pv_api.CreatePrimvar(
-      pv_name, pxr::SdfValueTypeNames->Color3fArray, pv_interp);
+      pv_name, pxr::SdfValueTypeNames->Color4fArray, pv_interp);
 
   switch (meta_data.domain) {
     case bke::AttrDomain::Corner:
     case bke::AttrDomain::Point:
-      copy_blender_buffer_to_primvar<ColorGeometry4f, pxr::GfVec3f>(
+      copy_blender_buffer_to_primvar<ColorGeometry4f, pxr::GfVec4f>(
           buffer, timecode, colors_pv, usd_value_writer_);
       break;
     default:
@@ -459,7 +459,7 @@ void USDGenericMeshWriter::write_mesh(HierarchyContext &context,
     usd_value_writer_.SetAttribute(
         attr_corner_indices, pxr::VtValue(usd_mesh_data.corner_indices), timecode);
     usd_value_writer_.SetAttribute(
-        attr_corner_sharpnesses, pxr::VtValue(usd_mesh_data.crease_sharpnesses), timecode);
+        attr_corner_sharpnesses, pxr::VtValue(usd_mesh_data.corner_sharpnesses), timecode);
   }
 
   write_custom_data(context.object, mesh, usd_mesh);
@@ -524,7 +524,7 @@ pxr::TfToken USDGenericMeshWriter::get_subdiv_scheme(const SubsurfModifierData *
 }
 
 void USDGenericMeshWriter::write_subdiv(const pxr::TfToken &subdiv_scheme,
-                                        pxr::UsdGeomMesh &usd_mesh,
+                                        const pxr::UsdGeomMesh &usd_mesh,
                                         const SubsurfModifierData *subsurfData)
 {
   usd_mesh.CreateSubdivisionSchemeAttr().Set(subdiv_scheme);
@@ -638,9 +638,10 @@ static void get_vert_creases(const Mesh *mesh, USDMeshData &usd_mesh_data)
   }
   const VArraySpan creases(*attribute);
   for (const int i : creases.index_range()) {
-    const float sharpness = creases[i];
+    const float crease = creases[i];
 
-    if (sharpness != 0.0f) {
+    if (crease > 0.0f) {
+      const float sharpness = crease >= 1.0f ? pxr::UsdGeomMesh::SHARPNESS_INFINITE : crease;
       usd_mesh_data.corner_indices.push_back(i);
       usd_mesh_data.corner_sharpnesses.push_back(sharpness);
     }
@@ -656,7 +657,7 @@ void USDGenericMeshWriter::get_geometry_data(const Mesh *mesh, USDMeshData &usd_
 }
 
 void USDGenericMeshWriter::assign_materials(const HierarchyContext &context,
-                                            pxr::UsdGeomMesh usd_mesh,
+                                            const pxr::UsdGeomMesh &usd_mesh,
                                             const MaterialFaceGroups &usd_face_groups)
 {
   if (context.object->totcol == 0) {
@@ -691,7 +692,7 @@ void USDGenericMeshWriter::assign_materials(const HierarchyContext &context,
     /* USD will require that prims with material bindings have the #MaterialBindingAPI applied
      * schema. While Bind() above will create the binding attribute, Apply() needs to be called as
      * well to add the #MaterialBindingAPI schema to the prim itself. */
-    material_binding_api.Apply(mesh_prim);
+    pxr::UsdShadeMaterialBindingAPI::Apply(mesh_prim);
   }
   else {
     /* Blender defaults to double-sided, but USD to single-sided. */
@@ -728,7 +729,7 @@ void USDGenericMeshWriter::assign_materials(const HierarchyContext &context,
   }
 }
 
-void USDGenericMeshWriter::write_normals(const Mesh *mesh, pxr::UsdGeomMesh usd_mesh)
+void USDGenericMeshWriter::write_normals(const Mesh *mesh, pxr::UsdGeomMesh &usd_mesh)
 {
   pxr::UsdTimeCode timecode = get_export_time_code();
 
@@ -764,30 +765,29 @@ void USDGenericMeshWriter::write_normals(const Mesh *mesh, pxr::UsdGeomMesh usd_
   usd_mesh.SetNormalsInterpolation(pxr::UsdGeomTokens->faceVarying);
 }
 
-void USDGenericMeshWriter::write_surface_velocity(const Mesh *mesh, pxr::UsdGeomMesh usd_mesh)
+void USDGenericMeshWriter::write_surface_velocity(const Mesh *mesh,
+                                                  const pxr::UsdGeomMesh &usd_mesh)
 {
   /* Export velocity attribute output by fluid sim, sequence cache modifier
    * and geometry nodes. */
-  AttributeOwner owner = AttributeOwner::from_id(const_cast<ID *>(&mesh->id));
-  CustomDataLayer *velocity_layer = BKE_attribute_find(
-      owner, "velocity", CD_PROP_FLOAT3, bke::AttrDomain::Point);
-
-  if (velocity_layer == nullptr) {
+  const VArraySpan velocity = *mesh->attributes().lookup<float3>("velocity",
+                                                                 blender::bke::AttrDomain::Point);
+  if (velocity.is_empty()) {
     return;
   }
 
-  const float(*velocities)[3] = reinterpret_cast<float(*)[3]>(velocity_layer->data);
-
   /* Export per-vertex velocity vectors. */
+  Span<pxr::GfVec3f> data = velocity.cast<pxr::GfVec3f>();
   pxr::VtVec3fArray usd_velocities;
-  usd_velocities.reserve(mesh->verts_num);
-
-  for (int vertex_idx = 0, totvert = mesh->verts_num; vertex_idx < totvert; ++vertex_idx) {
-    usd_velocities.push_back(pxr::GfVec3f(velocities[vertex_idx]));
-  }
+  usd_velocities.assign(data.begin(), data.end());
 
   pxr::UsdTimeCode timecode = get_export_time_code();
-  usd_mesh.CreateVelocitiesAttr().Set(usd_velocities, timecode);
+  pxr::UsdAttribute attr_vel = usd_mesh.CreateVelocitiesAttr(pxr::VtValue(), true);
+  if (!attr_vel.HasValue()) {
+    attr_vel.Set(usd_velocities, pxr::UsdTimeCode::Default());
+  }
+
+  usd_value_writer_.SetAttribute(attr_vel, usd_velocities, timecode);
 }
 
 USDMeshWriter::USDMeshWriter(const USDExporterContext &ctx)

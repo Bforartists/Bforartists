@@ -5,8 +5,8 @@
 set(INC
   ../..
 
-  ../include
   ../asset
+  ../include
   ../uvedit
   ../../asset_system
   ../../blenkernel
@@ -63,6 +63,8 @@ set(SRC
   grease_pencil_sculpt_thickness.cc
   grease_pencil_sculpt_twist.cc
   grease_pencil_tint.cc
+  grease_pencil_trace.cc
+  grease_pencil_trace_util.cc
   grease_pencil_weight_average.cc
   grease_pencil_weight_blur.cc
   grease_pencil_weight_draw.cc
@@ -116,8 +118,9 @@ set(SRC
 
   curves_sculpt_intern.hh
   grease_pencil_intern.hh
-  mesh_brush_common.hh
+  grease_pencil_trace_util.hh
   grease_pencil_weight_paint.hh
+  mesh_brush_common.hh
   paint_intern.hh
   sculpt_intern.hh
 
@@ -126,10 +129,10 @@ set(SRC
   brushes/clay_strips.cc
   brushes/clay_thumb.cc
   brushes/crease.cc
-  brushes/draw_face_sets.cc
-  brushes/draw_vector_displacement.cc
-  brushes/draw_sharp.cc
   brushes/draw.cc
+  brushes/draw_face_sets.cc
+  brushes/draw_sharp.cc
+  brushes/draw_vector_displacement.cc
   brushes/elastic_deform.cc
   brushes/enhance_details.cc
   brushes/fill.cc
@@ -140,14 +143,15 @@ set(SRC
   brushes/mask.cc
   brushes/multiplane_scrape.cc
   brushes/multires_displacement_eraser.cc
-  brushes/pinch.cc
   brushes/multires_displacement_smear.cc
+  brushes/pinch.cc
   brushes/relax.cc
   brushes/rotate.cc
   brushes/scrape.cc
   brushes/smooth.cc
   brushes/smooth_mask.cc
   brushes/snake_hook.cc
+  brushes/surface_smooth.cc
   brushes/thumb.cc
   brushes/topology_slide.cc
 
@@ -165,6 +169,16 @@ set(LIB
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
 )
+
+if(WITH_POTRACE)
+  list(APPEND INC
+    ${POTRACE_INCLUDE_DIRS}
+  )
+  list(APPEND LIB
+    ${POTRACE_LIBRARIES}
+  )
+  add_definitions(-DWITH_POTRACE)
+endif()
 
 if(WIN32)
   add_definitions(-DNOMINMAX)
