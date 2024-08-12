@@ -16,7 +16,6 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_context.hh"
-#include "BKE_gpencil_modifier_legacy.h" /* Types for registering panels. */
 #include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_modifier.hh"
@@ -319,21 +318,28 @@ static void buttons_main_region_layout_properties(const bContext *C,
 
 const char *ED_buttons_search_string_get(SpaceProperties *sbuts)
 {
-  return sbuts->runtime->search_string;
+  return (sbuts->runtime) ? sbuts->runtime->search_string : "";
 }
 
 int ED_buttons_search_string_length(SpaceProperties *sbuts)
 {
-  return BLI_strnlen(sbuts->runtime->search_string, sizeof(sbuts->runtime->search_string));
+  return (sbuts->runtime) ?
+             BLI_strnlen(sbuts->runtime->search_string, sizeof(sbuts->runtime->search_string)) :
+             0;
 }
 
 void ED_buttons_search_string_set(SpaceProperties *sbuts, const char *value)
 {
-  STRNCPY(sbuts->runtime->search_string, value);
+  if (sbuts->runtime) {
+    STRNCPY(sbuts->runtime->search_string, value);
+  }
 }
 
 bool ED_buttons_tab_has_search_result(SpaceProperties *sbuts, const int index)
 {
+  if (!sbuts->runtime) {
+    return false;
+  }
   return BLI_BITMAP_TEST(sbuts->runtime->tab_search_results, index);
 }
 
@@ -1010,12 +1016,6 @@ void ED_spacetype_buttons()
    * than per modifier type. */
   for (int i = 0; i < NUM_MODIFIER_TYPES; i++) {
     const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(i));
-    if (mti != nullptr && mti->panel_register != nullptr) {
-      mti->panel_register(art);
-    }
-  }
-  for (int i = 0; i < NUM_GREASEPENCIL_MODIFIER_TYPES; i++) {
-    const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(GpencilModifierType(i));
     if (mti != nullptr && mti->panel_register != nullptr) {
       mti->panel_register(art);
     }

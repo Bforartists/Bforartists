@@ -278,7 +278,7 @@ GPU_SHADER_CREATE_INFO(eevee_surf_shadow_tbdr)
     .define("SHADOW_UPDATE_TBDR")
     .builtins(BuiltinBits::LAYER)
     /* Use greater depth write to avoid loosing the early Z depth test but ensure correct fragment
-       ordering after slope bias. */
+     * ordering after slope bias. */
     .depth_write(DepthWrite::GREATER)
     /* F32 color attachment for on-tile depth accumulation without atomics. */
     .fragment_out(0, Type::FLOAT, "out_depth", DualBlend::NONE, SHADOW_ROG_ID);
@@ -312,10 +312,15 @@ GPU_SHADER_CREATE_INFO(eevee_surf_volume)
            ImageType::FLOAT_3D,
            "out_emissive_img")
     .image(VOLUME_PROP_PHASE_IMG_SLOT,
-           GPU_RG16F,
+           GPU_R16F,
            Qualifier::READ_WRITE,
            ImageType::FLOAT_3D,
            "out_phase_img")
+    .image(VOLUME_PROP_PHASE_WEIGHT_IMG_SLOT,
+           GPU_R16F,
+           Qualifier::READ_WRITE,
+           ImageType::FLOAT_3D,
+           "out_phase_weight_img")
     .image(VOLUME_OCCUPANCY_SLOT,
            GPU_R32UI,
            Qualifier::READ,
