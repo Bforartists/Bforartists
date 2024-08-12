@@ -308,14 +308,15 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
 /* Blender logo. */
 #ifndef WITH_HEADLESS
 
+  bool show_color = true; /* BFA - enable dialog colors */
   float size = 0.2f * dialog_width;
-  ImBuf *ibuf = nullptr;
+
   int width;
   int height;
-  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(
-      ICON_BLENDER_LOGO_LARGE, size, &width, &height);
-  if (!bitmap.is_empty()) {
-    ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
+  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(ICON_BLENDER_LOGO_LARGE, size, &width, &height, show_color);
+  ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
+  if (bitmap.is_empty()) {
+    return nullptr;
   }
 
   if (ibuf) {
@@ -332,7 +333,7 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
     /* The logo image. */
     row = uiLayoutRow(layout, false);
     uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_LEFT);
-    uiDefButImage(block, ibuf, 0, U.widget_unit, ibuf->x, ibuf->y, color);
+    uiDefButImage(block, ibuf, 0, U.widget_unit, ibuf->x, ibuf->y, show_color ? nullptr : color);
 
     /* Padding below the logo. */
     row = uiLayoutRow(layout, false);
@@ -342,7 +343,7 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
 
   uiLayout *col = uiLayoutColumn(layout, true);
 
-  uiItemL_ex(col, IFACE_("Blender"), ICON_NONE, true, false);
+  uiItemL_ex(col, IFACE_("Bforartists"), ICON_NONE, true, false); /* BFA - our name */
 
   MenuType *mt = WM_menutype_find("WM_MT_splash_about", true);
   if (mt) {
@@ -363,9 +364,9 @@ static int wm_splash_about_invoke(bContext *C, wmOperator * /*op*/, const wmEven
 
 void WM_OT_splash_about(wmOperatorType *ot)
 {
-  ot->name = "About Blender";
+  ot->name = "About Bforartists"; /* BFA - our name */
   ot->idname = "WM_OT_splash_about";
-  ot->description = "Open a window with information about Blender";
+  ot->description = "Open a window with information about Bforartists"; /* BFA - our name */
 
   ot->invoke = wm_splash_about_invoke;
   ot->poll = WM_operator_winactive;
