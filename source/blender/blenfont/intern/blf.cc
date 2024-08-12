@@ -609,8 +609,14 @@ int BLF_draw_mono(int fontid, const char *str, const size_t str_len, int cwidth,
   return columns;
 }
 
-void BLF_draw_svg_icon(
-    uint icon_id, float x, float y, float size, float color[4], float outline_alpha)
+void BLF_draw_svg_icon(uint icon_id,
+                       float x,
+                       float y,
+                       float size,
+                       float color[4],
+                       float outline_alpha,
+                       bool multicolor,
+                       blender::FunctionRef<void(std::string &)> edit_source_cb)
 {
 #ifndef WITH_HEADLESS
   FontBLF *font = global_font[0];
@@ -618,23 +624,24 @@ void BLF_draw_svg_icon(
     /* Avoid bgl usage to corrupt BLF drawing. */
     GPU_bgl_end();
     blf_draw_gpu__start(font);
-    blf_draw_svg_icon(font, icon_id, x, y, size, color, outline_alpha);
+    blf_draw_svg_icon(font, icon_id, x, y, size, color, outline_alpha, multicolor, edit_source_cb);
     blf_draw_gpu__end(font);
   }
 #else
-  UNUSED_VARS(icon_id, x, y, size, color, outline_alpha);
+  UNUSED_VARS(icon_id, x, y, size, color, outline_alpha, multicolor, edit_source_cb);
 #endif /* WITH_HEADLESS */
 }
 
-blender::Array<uchar> BLF_svg_icon_bitmap(uint icon_id, float size, int *r_width, int *r_height)
+blender::Array<uchar> BLF_svg_icon_bitmap(
+    uint icon_id, float size, int *r_width, int *r_height, bool multicolor)
 {
 #ifndef WITH_HEADLESS
   FontBLF *font = global_font[0];
   if (font) {
-    return blf_svg_icon_bitmap(font, icon_id, size, r_width, r_height);
+    return blf_svg_icon_bitmap(font, icon_id, size, r_width, r_height, multicolor);
   }
 #else
-  UNUSED_VARS(icon_id, size, r_width, r_height);
+  UNUSED_VARS(icon_id, size, r_width, r_height, multicolor);
 #endif /* WITH_HEADLESS */
   return {};
 }
