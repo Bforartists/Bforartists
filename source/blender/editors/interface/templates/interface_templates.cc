@@ -449,11 +449,11 @@ static void id_search_cb_tagged(const bContext *C,
 
   /* ID listbase */
   LISTBASE_FOREACH (ID *, id, lb) {
-    if (id->tag & LIB_TAG_DOIT) {
+    if (id->tag & ID_TAG_DOIT) {
       if (id_search_allows_id(template_ui, flag, id, str)) {
         search.add(id->name + 2, id);
       }
-      id->tag &= ~LIB_TAG_DOIT;
+      id->tag &= ~ID_TAG_DOIT;
     }
   }
 
@@ -487,10 +487,10 @@ static void id_search_cb_objects_from_scene(const bContext *C,
     scene = CTX_data_scene(C);
   }
 
-  BKE_main_id_flag_listbase(lb, LIB_TAG_DOIT, false);
+  BKE_main_id_flag_listbase(lb, ID_TAG_DOIT, false);
 
   FOREACH_SCENE_OBJECT_BEGIN (scene, ob_iter) {
-    ob_iter->id.tag |= LIB_TAG_DOIT;
+    ob_iter->id.tag |= ID_TAG_DOIT;
   }
   FOREACH_SCENE_OBJECT_END;
   id_search_cb_tagged(C, arg_template, str, items);
@@ -510,11 +510,11 @@ static void id_search_cb_scenes_without_active(const bContext *C,
   Scene *active_scene = WM_window_get_active_scene(CTX_wm_window(C));
   Main *main = CTX_data_main(C);
 
-  BKE_main_id_flag_listbase(lb, LIB_TAG_DOIT, false);
+  BKE_main_id_flag_listbase(lb, ID_TAG_DOIT, false);
 
   LISTBASE_FOREACH (Scene *, scene, &main->scenes) {
     if (scene != active_scene) {
-      scene->id.tag |= LIB_TAG_DOIT;
+      scene->id.tag |= ID_TAG_DOIT;
     }
   }
   id_search_cb_tagged(C, arg_template, str, items);
@@ -614,7 +614,7 @@ static void template_id_liboverride_hierarchy_collection_root_find_recursive(
 static void template_id_liboverride_hierarchy_collections_tag_recursive(
     Collection *root_collection, ID *target_id, const bool do_parents)
 {
-  root_collection->id.tag |= LIB_TAG_DOIT;
+  root_collection->id.tag |= ID_TAG_DOIT;
 
   /* Tag all local parents of the root collection, so that usages of the root collection and other
    * linked ones can be replaced by the local overrides in those parents too. */
@@ -627,7 +627,7 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
       if (ID_IS_LINKED(iter->collection)) {
         continue;
       }
-      iter->collection->id.tag |= LIB_TAG_DOIT;
+      iter->collection->id.tag |= ID_TAG_DOIT;
     }
   }
 
@@ -770,7 +770,7 @@ ID *ui_template_id_liboverride_hierarchy_make(
       {
         template_id_liboverride_hierarchy_collections_tag_recursive(collection_active, id, true);
         if (object_active != nullptr) {
-          object_active->id.tag |= LIB_TAG_DOIT;
+          object_active->id.tag |= ID_TAG_DOIT;
         }
         BKE_lib_override_library_create(bmain,
                                         scene,
@@ -785,7 +785,7 @@ ID *ui_template_id_liboverride_hierarchy_make(
       else if (object_active != nullptr && !ID_IS_LINKED(object_active) &&
                &object_active->instance_collection->id == id)
       {
-        object_active->id.tag |= LIB_TAG_DOIT;
+        object_active->id.tag |= ID_TAG_DOIT;
         BKE_lib_override_library_create(bmain,
                                         scene,
                                         view_layer,
@@ -803,7 +803,7 @@ ID *ui_template_id_liboverride_hierarchy_make(
       {
         template_id_liboverride_hierarchy_collections_tag_recursive(collection_active, id, true);
         if (object_active != nullptr) {
-          object_active->id.tag |= LIB_TAG_DOIT;
+          object_active->id.tag |= ID_TAG_DOIT;
         }
         BKE_lib_override_library_create(bmain,
                                         scene,
@@ -817,7 +817,7 @@ ID *ui_template_id_liboverride_hierarchy_make(
       }
       else {
         if (object_active != nullptr) {
-          object_active->id.tag |= LIB_TAG_DOIT;
+          object_active->id.tag |= ID_TAG_DOIT;
         }
         BKE_lib_override_library_create(
             bmain, scene, view_layer, nullptr, id, nullptr, nullptr, &id_override, false);
@@ -844,7 +844,7 @@ ID *ui_template_id_liboverride_hierarchy_make(
         {
           template_id_liboverride_hierarchy_collections_tag_recursive(collection_active, id, true);
           if (object_active != nullptr) {
-            object_active->id.tag |= LIB_TAG_DOIT;
+            object_active->id.tag |= ID_TAG_DOIT;
           }
           BKE_lib_override_library_create(bmain,
                                           scene,
@@ -857,7 +857,7 @@ ID *ui_template_id_liboverride_hierarchy_make(
                                           false);
         }
         else {
-          object_active->id.tag |= LIB_TAG_DOIT;
+          object_active->id.tag |= ID_TAG_DOIT;
           BKE_lib_override_library_create(bmain,
                                           scene,
                                           view_layer,
@@ -1005,7 +1005,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
       break;
     case UI_ID_FAKE_USER:
       if (id) {
-        if (id->flag & LIB_FAKEUSER) {
+        if (id->flag & ID_FLAG_FAKEUSER) {
           id_us_plus(id);
         }
         else {
@@ -1395,7 +1395,7 @@ static void template_ID(const bContext *C,
     if (!hide_buttons && !(idfrom && ID_IS_LINKED(idfrom))) {
       if (ID_IS_LINKED(id)) {
         const bool disabled = !BKE_idtype_idcode_is_localizable(GS(id->name));
-        if (id->tag & LIB_TAG_INDIRECT) {
+        if (id->tag & ID_TAG_INDIRECT) {
           but = uiDefIconBut(block,
                              UI_BTYPE_BUT,
                              0,
