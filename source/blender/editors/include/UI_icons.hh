@@ -1644,6 +1644,7 @@ DEF_ICON_COLOR(MOUSE_MOVE)     /*bfa- don't change the order of the mouse icons*
 DEF_ICON_COLOR(MOUSE_LMB_DRAG) /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_COLOR(MOUSE_MMB_DRAG) /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_COLOR(MOUSE_MMB_SCROLL) /*bfa- don't change the order of the mouse icons*/
+DEF_ICON_COLOR(MOUSE_LMB_2X) /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_COLOR(MOUSE_RMB_DRAG) /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_COLOR(AUTOMERGE_OFF)  /*bfa- don't change the order of the automerge icons*/
 DEF_ICON_COLOR(AUTOMERGE_ON)   /*bfa- don't change the order of the automerge icons*/
@@ -2332,6 +2333,34 @@ DEF_ICON_COLOR(BLENDER_LARGE)
 DEF_ICON_COLOR(BLENDER_LOGO_LARGE)
 
 
+/* The following are used when creating the Event Icons. */
+
+DEF_ICON(KEY_BACKSPACE)
+DEF_ICON(KEY_BACKSPACE_FILLED)
+DEF_ICON(KEY_COMMAND)
+DEF_ICON(KEY_COMMAND_FILLED)
+DEF_ICON(KEY_CONTROL)
+DEF_ICON(KEY_CONTROL_FILLED)
+DEF_ICON(KEY_EMPTY1)
+DEF_ICON(KEY_EMPTY1_FILLED)
+DEF_ICON(KEY_EMPTY2)
+DEF_ICON(KEY_EMPTY2_FILLED)
+DEF_ICON(KEY_EMPTY3)
+DEF_ICON(KEY_EMPTY3_FILLED)
+DEF_ICON(KEY_MENU)
+DEF_ICON(KEY_MENU_FILLED)
+DEF_ICON(KEY_OPTION)
+DEF_ICON(KEY_OPTION_FILLED)
+DEF_ICON(KEY_RETURN)
+DEF_ICON(KEY_RETURN_FILLED)
+DEF_ICON(KEY_RING)
+DEF_ICON(KEY_RING_FILLED)
+DEF_ICON(KEY_SHIFT)
+DEF_ICON(KEY_SHIFT_FILLED)
+DEF_ICON(KEY_TAB)
+DEF_ICON(KEY_TAB_FILLED)
+DEF_ICON(KEY_WINDOWS)
+DEF_ICON(KEY_WINDOWS_FILLED)
 
 /*----------------- newline END OF ICONSHEET -------------------------------------*/
 
