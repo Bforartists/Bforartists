@@ -142,6 +142,45 @@ ${body}
 '''
 
 
+# -----------------------------------------------------------------------------
+# Workarounds
+
+def _worlaround_win32_ssl_cert_failure() -> None:
+    # Applies workaround by `pukkandan` on GITHUB at run-time:
+    # See: https://github.com/python/cpython/pull/91740
+    import ssl
+
+    class SSLContext_DUMMY(ssl.SSLContext):
+        def _load_windows_store_certs(self, storename: str, purpose: ssl.Purpose) -> bytearray:
+            # WIN32 only.
+            enum_certificates = getattr(ssl, "enum_certificates", None)
+            assert callable(enum_certificates)
+            certs = bytearray()
+            try:
+                for cert, encoding, trust in enum_certificates(storename):
+                    try:
+                        self.load_verify_locations(cadata=cert)
+                    except ssl.SSLError:
+                        # warnings.warn("Bad certificate in Windows certificate store")
+                        pass
+                    else:
+                        # CA certs are never PKCS#7 encoded
+                        if encoding == "x509_asn":
+                            if trust is True or purpose.oid in trust:
+                                certs.extend(cert)
+            except PermissionError:
+                # warnings.warn("unable to enumerate Windows certificate store")
+                pass
+            # NOTE(@ideasman42): Python never uses this return value internally.
+            # Keep it for consistency.
+            return certs
+
+    ssl.SSLContext._load_windows_store_certs = SSLContext_DUMMY._load_windows_store_certs  # type: ignore
+
+
+# -----------------------------------------------------------------------------
+# Argument Overrides
+
 class _ArgsDefaultOverride:
     __slots__ = (
         "build_valid_tags",
@@ -154,6 +193,7 @@ class _ArgsDefaultOverride:
 # Support overriding this value so Blender can default to a different tags file.
 ARG_DEFAULTS_OVERRIDE = _ArgsDefaultOverride()
 del _ArgsDefaultOverride
+
 
 # Standard out may be communicating with a parent process,
 # arbitrary prints are NOT acceptable.
@@ -288,7 +328,7 @@ class CleanupPathsContext:
 
 class PkgRepoData(NamedTuple):
     version: str
-    blocklist: List[str]
+    blocklist: List[Dict[str, Any]]
     data: List[Dict[str, Any]]
 
 
@@ -382,6 +422,12 @@ class PkgManifest_Archive(NamedTuple):
     archive_size: int
     archive_hash: str
     archive_url: str
+
+
+class PkgServerRepoConfig(NamedTuple):
+    """Server configuration (for generating repositories)."""
+    schema_version: str
+    blocklist: List[Dict[str, Any]]
 
 
 # -----------------------------------------------------------------------------
@@ -520,10 +566,6 @@ def rmtree_with_fallback_or_error(
 
     On failure, a string will be returned containing the first error.
     """
-    try:
-        return shutil.rmtree(path)
-    except Exception as ex:
-        return str(ex)
 
     # Note that `shutil.rmtree` has link detection that doesn't match `os.path.islink` exactly,
     # so use it's callback that raises a link error and remove the link in that case.
@@ -833,6 +875,33 @@ def pkg_manifest_from_archive_and_validate(
         if (archive_subdir := pkg_zipfile_detect_subdir_or_none(zip_fh)) is None:
             return "Archive has no manifest: \"{:s}\"".format(PKG_MANIFEST_FILENAME_TOML)
         return pkg_manifest_from_zipfile_and_validate(zip_fh, archive_subdir, strict=strict)
+
+
+def pkg_server_repo_config_from_toml_and_validate(
+        filepath: str,
+) -> Union[PkgServerRepoConfig, str]:
+
+    if isinstance(result := toml_from_filepath_or_error(filepath), str):
+        return result
+
+    if not (field_schema_version := result.get("schema_version", "")):
+        return "missing \"schema_version\" field"
+
+    if not (field_blocklist := result.get("blocklist", "")):
+        return "missing \"blocklist\" field"
+
+    for item in field_blocklist:
+        if not isinstance(item, dict):
+            return "blocklist contains non dictionary item, found ({:s})".format(str(type(item)))
+        if not isinstance(value := item.get("id"), str):
+            return "blocklist items must have have a string typed \"id\" entry, found {:s}".format(str(type(value)))
+        if not isinstance(value := item.get("reason"), str):
+            return "blocklist items must have have a string typed \"reason\" entry, found {:s}".format(str(type(value)))
+
+    return PkgServerRepoConfig(
+        schema_version=field_schema_version,
+        blocklist=field_blocklist,
+    )
 
 
 def pkg_is_legacy_addon(filepath: str) -> bool:
@@ -2258,9 +2327,9 @@ def repo_json_is_valid_or_error(filepath: str) -> Optional[str]:
         if not isinstance(value, list):
             return "Expected \"blocklist\" to be a list, not a {:s}".format(str(type(value)))
         for item in value:
-            if isinstance(item, str):
+            if isinstance(item, dict):
                 continue
-            return "Expected \"blocklist\" to be a list of strings, found {:s}".format(str(type(item)))
+            return "Expected \"blocklist\" to be a list of dictionaries, found {:s}".format(str(type(item)))
 
     if (value := result.get("data")) is None:
         return "Expected a \"data\" key which was not found"
@@ -2605,9 +2674,15 @@ def pkg_repo_data_from_json_or_error(json_data: Dict[str, Any]) -> Union[PkgRepo
 
     if not isinstance((blocklist := json_data.get("blocklist", [])), list):
         return "expected \"blocklist\" to be a list"
+    for item in blocklist:
+        if not isinstance(item, dict):
+            return "expected \"blocklist\" contain dictionary items"
 
     if not isinstance((data := json_data.get("data", [])), list):
         return "expected \"data\" to be a list"
+    for item in data:
+        if not isinstance(item, dict):
+            return "expected \"data\" contain dictionary items"
 
     result_new = PkgRepoData(
         version=version,
@@ -2720,6 +2795,31 @@ def generic_arg_package_valid_tags(subparse: argparse.ArgumentParser) -> None:
 
 # -----------------------------------------------------------------------------
 # Argument Handlers ("server-generate" command)
+
+def generic_arg_server_generate_repo_config(subparse: argparse.ArgumentParser) -> None:
+    subparse.add_argument(
+        "--repo-config",
+        dest="repo_config",
+        default="",
+        metavar="REPO_CONFIG",
+        help=(
+            "An optional server configuration to include information which can't be detected.\n"
+            "Defaults to ``blender_repo.toml`` (in the repository directory).\n"
+            "\n"
+            "This can be used to defined blocked extensions, for example ::\n"
+            "\n"
+            "   schema_version = \"1.0.0\"\n"
+            "\n"
+            "   [[blocklist]]\n"
+            "   id = \"my_example_package\"\n"
+            "   reason = \"Explanation for why this extension was blocked\"\n"
+            "   [[blocklist]]\n"
+            "   id = \"other_extenison\"\n"
+            "   reason = \"Another reason for why this is blocked\"\n"
+            "\n"
+        ),
+    )
+
 
 def generic_arg_server_generate_html(subparse: argparse.ArgumentParser) -> None:
     subparse.add_argument(
@@ -3182,6 +3282,7 @@ class subcmd_server:
             msglog: MessageLogger,
             *,
             repo_dir: str,
+            repo_config_filepath: str,
             html: bool,
             html_template: str,
     ) -> bool:
@@ -3193,14 +3294,44 @@ class subcmd_server:
             msglog.fatal_error("Directory: {!r} not found!".format(repo_dir))
             return False
 
+        # Server manifest (optional), use if found.
+        server_manifest_default = "blender_repo.toml"
+        if not repo_config_filepath:
+            server_manifest_test = os.path.join(repo_dir, server_manifest_default)
+            if os.path.exists(server_manifest_test):
+                repo_config_filepath = server_manifest_test
+            del server_manifest_test
+        del server_manifest_default
+
+        repo_config = None
+        if repo_config_filepath:
+            repo_config = pkg_server_repo_config_from_toml_and_validate(repo_config_filepath)
+            if isinstance(repo_config, str):
+                msglog.fatal_error("parsing repository configuration {!r}, {:s}".format(
+                    repo_config,
+                    repo_config_filepath,
+                ))
+                return False
+            if repo_config.schema_version != "1.0.0":
+                msglog.fatal_error("unsupported schema version {!r} in {:s}, expected 1.0.0".format(
+                    repo_config.schema_version,
+                    repo_config_filepath,
+                ))
+                return False
+        assert repo_config is None or isinstance(repo_config, PkgServerRepoConfig)
+
         repo_data_idname_map: Dict[str, List[PkgManifest]] = {}
         repo_data: List[Dict[str, Any]] = []
+
         # Write package meta-data into each directory.
         repo_gen_dict = {
             "version": "v1",
-            "blocklist": [],
+            "blocklist": [] if repo_config is None else repo_config.blocklist,
             "data": repo_data,
         }
+
+        del repo_config
+
         for entry in os.scandir(repo_dir):
             if not entry.name.endswith(PKG_EXT):
                 continue
@@ -3599,6 +3730,14 @@ class subcmd_client:
         for pkg_info in json_data_pkg_info:
             json_data_pkg_info_map[pkg_info["id"]].append(pkg_info)
 
+        # NOTE: we could have full validation as a separate function,
+        # currently install is the only place this is needed.
+        json_data_pkg_block_map = {
+            pkg_idname: pkg_block.get("reason", "Unknown")
+            for pkg_block in pkg_repo_data.blocklist
+            if (pkg_idname := pkg_block.get("id"))
+        }
+
         platform_this = platform_from_this_system()
 
         has_fatal_error = False
@@ -3606,6 +3745,11 @@ class subcmd_client:
         for pkg_idname, pkg_info_list in json_data_pkg_info_map.items():
             if not pkg_info_list:
                 msglog.fatal_error("Package \"{:s}\", not found".format(pkg_idname))
+                has_fatal_error = True
+                continue
+
+            if (result := json_data_pkg_block_map.get(pkg_idname)) is not None:
+                msglog.fatal_error("Package \"{:s}\", is blocked: {:s}".format(pkg_idname, result))
                 has_fatal_error = True
                 continue
 
@@ -4407,6 +4551,7 @@ def unregister():
         if not subcmd_server.generate(
             MessageLogger(msg_fn_no_done),
             repo_dir=repo_dir,
+            repo_config_filepath="",
             html=True,
             html_template="",
         ):
@@ -4463,6 +4608,7 @@ def argparse_create_server_generate(
     )
 
     generic_arg_repo_dir(subparse)
+    generic_arg_server_generate_repo_config(subparse)
     generic_arg_server_generate_html(subparse)
     generic_arg_server_generate_html_template(subparse)
     if args_internal:
@@ -4472,6 +4618,7 @@ def argparse_create_server_generate(
         func=lambda args: subcmd_server.generate(
             msglog_from_args(args),
             repo_dir=args.repo_dir,
+            repo_config_filepath=args.repo_config,
             html=args.html,
             html_template=args.html_template,
         ),
@@ -4867,6 +5014,9 @@ def msglog_from_args(args: argparse.Namespace) -> MessageLogger:
     raise Exception("Unknown output!")
 
 
+# -----------------------------------------------------------------------------
+# Main Function
+
 def main(
         argv: Optional[List[str]] = None,
         args_internal: bool = True,
@@ -4887,6 +5037,9 @@ def main(
     if "--version" in sys.argv:
         sys.stdout.write("{:s}\n".format(VERSION))
         return 0
+
+    if sys.platform == "win32":
+        _worlaround_win32_ssl_cert_failure()
 
     parser = argparse_create(
         args_internal=args_internal,

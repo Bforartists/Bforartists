@@ -20,8 +20,6 @@
 #include "DNA_scene_enums.h"
 #include "DNA_vec_types.h"
 
-#include <memory>
-
 enum class PaintMode : int8_t;
 
 struct ARegion;
@@ -29,6 +27,8 @@ struct bContext;
 struct BMesh;
 struct BMVert;
 struct Brush;
+struct CCGElem;
+struct CCGKey;
 struct ColorManagedDisplay;
 struct ColorSpace;
 struct Depsgraph;
@@ -134,8 +134,24 @@ class PaintModeData {
 void paint_stroke_set_mode_data(PaintStroke *stroke, std::unique_ptr<PaintModeData> mode_data);
 
 bool paint_stroke_started(PaintStroke *stroke);
+void paint_stroke_jitter_pos(Scene &scene,
+                             const PaintStroke &stroke,
+                             const PaintMode mode,
+                             const Brush &brush,
+                             const float pressure,
+                             const float mval[2],
+                             float r_mouse_out[2]);
 
 bool paint_brush_tool_poll(bContext *C);
+bool paint_brush_update(bContext *C,
+                        const Brush &brush,
+                        PaintMode mode,
+                        PaintStroke *stroke,
+                        const float mouse_init[2],
+                        float mouse[2],
+                        float pressure,
+                        float r_location[3],
+                        bool *r_location_is_set);
 
 void BRUSH_OT_asset_activate(wmOperatorType *ot);
 void BRUSH_OT_asset_save_as(wmOperatorType *ot);
@@ -434,36 +450,34 @@ bool mask_paint_poll(bContext *C);
 bool paint_curve_poll(bContext *C);
 
 bool facemask_paint_poll(bContext *C);
-/**
- * Uses symm to selectively flip any axis of a coordinate.
- */
 
-BLI_INLINE void flip_v3_v3(float out[3], const float in[3], const ePaintSymmetryFlags symm)
+namespace blender::ed::sculpt_paint {
+
+inline float3 symmetry_flip(const float3 &src, const ePaintSymmetryFlags symm)
 {
+  float3 dst;
   if (symm & PAINT_SYMM_X) {
-    out[0] = -in[0];
+    dst.x = -src.x;
   }
   else {
-    out[0] = in[0];
+    dst.x = src.x;
   }
   if (symm & PAINT_SYMM_Y) {
-    out[1] = -in[1];
+    dst.y = -src.y;
   }
   else {
-    out[1] = in[1];
+    dst.y = src.y;
   }
   if (symm & PAINT_SYMM_Z) {
-    out[2] = -in[2];
+    dst.z = -src.z;
   }
   else {
-    out[2] = in[2];
+    dst.z = src.z;
   }
+  return dst;
 }
 
-BLI_INLINE void flip_v3(float v[3], const ePaintSymmetryFlags symm)
-{
-  flip_v3_v3(v, v, symm);
-}
+}  // namespace blender::ed::sculpt_paint
 
 /* stroke operator */
 enum BrushStrokeMode {
@@ -506,9 +520,6 @@ void gather_mask_bmesh(const BMesh &bm, const Set<BMVert *, 0> &verts, MutableSp
 void scatter_mask_grids(Span<float> mask, SubdivCCG &subdiv_ccg, Span<int> grids);
 void scatter_mask_bmesh(Span<float> mask, const BMesh &bm, const Set<BMVert *, 0> &verts);
 
-void average_neighbor_mask_mesh(Span<float> masks,
-                                Span<Vector<int>> vert_neighbors,
-                                MutableSpan<float> new_masks);
 void average_neighbor_mask_grids(const SubdivCCG &subdiv_ccg,
                                  Span<int> grids,
                                  MutableSpan<float> new_masks);
@@ -518,7 +529,7 @@ void average_neighbor_mask_bmesh(int mask_offset,
 
 /** Write to the mask attribute for each node, storing undo data. */
 void write_mask_mesh(Object &object,
-                     const Span<bke::pbvh::Node *> nodes,
+                     Span<bke::pbvh::Node *> nodes,
                      FunctionRef<void(MutableSpan<float>, Span<int>)> write_fn);
 
 /**
@@ -526,8 +537,15 @@ void write_mask_mesh(Object &object,
  * if the data is actually changed.
  */
 void update_mask_mesh(Object &object,
-                      const Span<bke::pbvh::Node *> nodes,
+                      Span<bke::pbvh::Node *> nodes,
                       FunctionRef<void(MutableSpan<float>, Span<int>)> update_fn);
+
+/** Check whether array data is the same as the stored mask for the referenced geometry. */
+bool mask_equals_array_grids(Span<CCGElem *> elems,
+                             const CCGKey &key,
+                             Span<int> grids,
+                             Span<float> values);
+bool mask_equals_array_bmesh(int mask_offset, const Set<BMVert *, 0> &verts, Span<float> values);
 
 void PAINT_OT_mask_flood_fill(wmOperatorType *ot);
 void PAINT_OT_mask_lasso_gesture(wmOperatorType *ot);

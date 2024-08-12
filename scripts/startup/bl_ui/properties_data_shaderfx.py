@@ -36,10 +36,11 @@ class OBJECT_MT_gpencil_shaderfx_add(GenericColumnMenu, Menu):
     OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="ShaderFx")
     search_header = "Effect"
 
-    @classmethod
-    def poll(cls, context):
-        ob = context.object
-        return ob and ob.type == 'GPENCIL'
+    # BFA - always show for now.
+    #@classmethod
+    #def poll(cls, context):
+    #    ob = context.object
+    #    return ob and ob.type == 'GPENCIL'
 
     def draw(self, _context):
         layout = self.layout.row()

@@ -1101,6 +1101,28 @@ class NODE_PT_quality(bpy.types.Panel):
         col.prop(tree, "use_viewer_border")
 
 
+class NODE_PT_compositor_debug(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Options"
+    bl_label = "Debug"
+    bl_parent_id = "NODE_PT_quality"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        render_data = context.scene.render
+        if render_data.compositor_device != "CPU":
+            return False
+
+        preferences = context.preferences
+        return preferences.view.show_developer_ui and preferences.experimental.enable_new_cpu_compositor
+
+    def draw(self, context):
+        render_data = context.scene.render
+        self.layout.prop(render_data, "use_new_cpu_compositor", text="Experimental CPU Implementation")
+
+
 class NODE_PT_overlay(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'HEADER'
@@ -1273,6 +1295,7 @@ class NODE_PT_node_tree_properties(Panel):
             layout.prop(group, "description", text="Description")
 
         layout.prop(group, "color_tag")
+        layout.prop(group, "default_group_node_width", text="Node Width")
 
         if group.bl_idname == "GeometryNodeTree":
             header, body = layout.panel("group_usage")
@@ -1374,6 +1397,7 @@ classes = (
     NODE_PT_active_tool,
     NODE_PT_backdrop,
     NODE_PT_quality,
+    NODE_PT_compositor_debug,
     NODE_PT_annotation,
     NODE_PT_overlay,
     NODE_PT_active_node_properties,
