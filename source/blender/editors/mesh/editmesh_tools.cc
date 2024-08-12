@@ -5244,6 +5244,8 @@ static int edbm_quads_convert_to_tris_exec(bContext *C, wmOperator *op)
     BMOIter oiter;
     BMFace *f;
 
+    BM_custom_loop_normals_to_vector_layer(em->bm);
+
     EDBM_op_init(em,
                  &bmop,
                  op,
@@ -5267,6 +5269,8 @@ static int edbm_quads_convert_to_tris_exec(bContext *C, wmOperator *op)
     if (!EDBM_op_finish(em, &bmop, op, true)) {
       continue;
     }
+
+    BM_custom_loop_normals_from_vector_layer(em->bm, false);
 
     EDBMUpdate_Params params{};
     params.calc_looptris = true;
