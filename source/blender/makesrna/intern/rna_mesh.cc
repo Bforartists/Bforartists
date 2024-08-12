@@ -3149,9 +3149,10 @@ static void rna_def_mesh(BlenderRNA *brna)
                                     nullptr);
   RNA_def_property_struct_type(prop, "MeshLoopColorLayer");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_IGNORE);
-  RNA_def_property_ui_text(prop,
-                           "Vertex Colors",
-                           "Legacy vertex color layers. Deprecated, use color attributes instead");
+  RNA_def_property_ui_text(
+      prop,
+      "Vertex Colors",
+      "Legacy vertex color layers. Deprecated, use color attributes instead");
   rna_def_loop_colors(brna, prop);
 
   /* Skin vertices */

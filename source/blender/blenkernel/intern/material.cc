@@ -844,6 +844,17 @@ int BKE_object_material_index_get(Object *ob, const Material *ma)
   return -1;
 }
 
+int BKE_object_material_index_get_with_hint(Object *ob, const Material *ma, const int hint_index)
+{
+  short *totcol = BKE_object_material_len_p(ob);
+  if ((hint_index >= 0) && (hint_index < *totcol)) {
+    if (ma == BKE_object_material_get(ob, hint_index + 1)) {
+      return hint_index;
+    }
+  }
+  return BKE_object_material_index_get(ob, ma);
+}
+
 int BKE_object_material_ensure(Main *bmain, Object *ob, Material *material)
 {
   if (!material) {
@@ -936,7 +947,7 @@ void BKE_object_materials_test(Main *bmain, Object *ob, ID *id)
     return;
   }
 
-  if ((ob->id.tag & LIB_TAG_MISSING) == 0 && (id->tag & LIB_TAG_MISSING) != 0) {
+  if ((ob->id.tag & ID_TAG_MISSING) == 0 && (id->tag & ID_TAG_MISSING) != 0) {
     /* Exception: In case the object is a valid data, but its obdata is an empty place-holder,
      * use object's material slots amount as reference.
      * This avoids losing materials in a local object when its linked obdata goes missing.
