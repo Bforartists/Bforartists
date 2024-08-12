@@ -743,7 +743,6 @@ typedef struct UserDef_Experimental {
   char use_all_linked_data_direct;
   char use_extensions_debug;
   char use_recompute_usercount_on_save_debug;
-  char disable_search_on_keypress; // bfa - gooengine disable_search_on_keypress
   char SANITIZE_AFTER_HERE;
   /* The following options are automatically sanitized (set to 0)
    * when the release cycle is not alpha. */
@@ -758,7 +757,7 @@ typedef struct UserDef_Experimental {
   char use_shader_node_previews;
   char use_animation_baklava;
   char use_docking;
-  char _pad[1];  // char _pad[2]; bfa - gooengine disable_search_on_keypress
+  char _pad[2];
   /** `makesdna` does not allow empty structs. */
 } UserDef_Experimental;
 
