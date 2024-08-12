@@ -1339,6 +1339,11 @@ class USERPREF_PT_theme_text_style(ThemePanel, CenterAlignMixIn, Panel):
         layout.label(text="Widget")
         self._ui_font_style(layout, style.widget)
 
+        layout.separator()
+
+        layout.label(text="Tooltip")
+        self._ui_font_style(layout, style.tooltip)
+
 
 class USERPREF_PT_theme_bone_color_sets(ThemePanel, CenterAlignMixIn, Panel):
     bl_label = "Bone Color Sets"
@@ -2707,22 +2712,12 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                         sub.operator(
                             "wm.url_open", text="Documentation", icon='HELP',
                         ).url = bl_info["doc_url"]
-                    # Only add "Report a Bug" button if tracker_url is set
-                    # or the add-on is bundled (use official tracker then).
+                    # Only add "Report a Bug" button if tracker_url is set.
+                    # None of the core add-ons are expected to have tracker info (glTF is the exception).
                     if bl_info.get("tracker_url"):
                         sub.operator(
                             "wm.url_open", text="Report a Bug", icon='URL',
                         ).url = bl_info["tracker_url"]
-                    elif not user_addon:
-                        addon_info = (
-                            "Name: {:s} {:s}\n"
-                            "Author: {:s}\n"
-                        ).format(bl_info["name"], str(bl_info["version"]), bl_info["author"])
-                        props = sub.operator(
-                            "wm.url_open_preset", text="Report a Bug", icon='URL',
-                        )
-                        props.type = 'BUG_ADDON'
-                        props.id = addon_info
 
                 if user_addon:
                     split = colsub.row().split(factor=0.15)
@@ -2994,6 +2989,7 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
                 ({"property": "use_sculpt_texture_paint"}, ("blender/blender/issues/96225", "#96225")),
                 ({"property": "enable_overlay_next"}, ("blender/blender/issues/102179", "#102179")),
                 ({"property": "use_animation_baklava"}, ("/blender/blender/issues/120406", "#120406")),
+                ({"property": "enable_new_cpu_compositor"}, ("/blender/blender/issues/125968", "#125968")),
             ),
         )
 

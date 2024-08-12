@@ -741,6 +741,9 @@ static void init_event_icons()
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_V1, NDOF_BUTTON_V1, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_V2, NDOF_BUTTON_V2, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_V3, NDOF_BUTTON_V3, KM_ANY);
+  INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_SAVE_V1, NDOF_BUTTON_SAVE_V1, KM_ANY);
+  INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_SAVE_V2, NDOF_BUTTON_SAVE_V2, KM_ANY);
+  INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_SAVE_V3, NDOF_BUTTON_SAVE_V3, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_1, NDOF_BUTTON_1, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_2, NDOF_BUTTON_2, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_3, NDOF_BUTTON_3, KM_ANY);
@@ -751,9 +754,8 @@ static void init_event_icons()
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_8, NDOF_BUTTON_8, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_9, NDOF_BUTTON_9, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_10, NDOF_BUTTON_10, KM_ANY);
-  INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_A, NDOF_BUTTON_A, KM_ANY);
-  INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_B, NDOF_BUTTON_B, KM_ANY);
-  INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_C, NDOF_BUTTON_C, KM_ANY);
+  INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_11, NDOF_BUTTON_11, KM_ANY);
+  INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_12, NDOF_BUTTON_12, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_MENU, NDOF_BUTTON_MENU, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_FIT, NDOF_BUTTON_FIT, KM_ANY);
   INIT_EVENT_ICON(ICON_EVENT_NDOF_BUTTON_TOP, NDOF_BUTTON_TOP, KM_ANY);
@@ -1858,6 +1860,8 @@ ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon, float size)
   return nullptr;
 #else
 
+  constexpr bool show_color = false;
+
   int icon_id = ICON_NONE;
   switch (icon) {
     case ALERT_ICON_WARNING:
@@ -1882,13 +1886,15 @@ ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon, float size)
 
   int width;
   int height;
-  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, size, &width, &height);
+  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, size, &width, &height, show_color);
   if (bitmap.is_empty()) {
     return nullptr;
   }
   ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
   IMB_flipy(ibuf);
-  IMB_premultiply_alpha(ibuf);
+  if (show_color) {
+    IMB_premultiply_alpha(ibuf);
+  }
   return ibuf;
 #endif
 }

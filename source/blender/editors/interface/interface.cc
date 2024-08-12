@@ -76,7 +76,7 @@ using blender::Vector;
 
 /* prototypes. */
 static void ui_def_but_rna__menu(bContext *C, uiLayout *layout, void *but_p);
-static void ui_def_but_rna__panel_type(bContext * /*C*/, uiLayout *layout, void *but_p);
+static void ui_def_but_rna__panel_type(bContext * /*C*/, uiLayout *layout, void *arg);
 static void ui_def_but_rna__menu_type(bContext * /*C*/, uiLayout *layout, void *but_p);
 
 /* avoid unneeded calls to ui_but_value_get */
@@ -323,8 +323,8 @@ static void ui_update_window_matrix(const wmWindow *window, const ARegion *regio
   else {
     /* No sub-window created yet, for menus for example, so we use the main
      * window instead, since buttons are created there anyway. */
-    const int width = WM_window_pixels_x(window);
-    const int height = WM_window_pixels_y(window);
+    const int width = WM_window_native_pixel_x(window);
+    const int height = WM_window_native_pixel_y(window);
     const rcti winrct = {0, width - 1, 0, height - 1};
 
     wmGetProjectionMatrix(block->winmat, &winrct);
@@ -475,8 +475,8 @@ static void ui_block_bounds_calc_centered(wmWindow *window, uiBlock *block)
   /* NOTE: this is used for the splash where window bounds event has not been
    * updated by ghost, get the window bounds from ghost directly */
 
-  const int xmax = WM_window_pixels_x(window);
-  const int ymax = WM_window_pixels_y(window);
+  const int xmax = WM_window_native_pixel_x(window);
+  const int ymax = WM_window_native_pixel_y(window);
 
   ui_block_bounds_calc(block);
 
@@ -513,8 +513,8 @@ static void ui_block_bounds_calc_popup(
   /* compute mouse position with user defined offset */
   ui_block_bounds_calc(block);
 
-  const int xmax = WM_window_pixels_x(window);
-  const int ymax = WM_window_pixels_y(window);
+  const int xmax = WM_window_native_pixel_x(window);
+  const int ymax = WM_window_native_pixel_y(window);
 
   int oldwidth = BLI_rctf_size_x(&block->rect);
   int oldheight = BLI_rctf_size_y(&block->rect);
@@ -762,6 +762,9 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
     return false;
   }
   if (!ELEM(oldbut->func_arg2, oldbut, but->func_arg2)) {
+    return false;
+  }
+  if (but->block_create_func != oldbut->block_create_func) {
     return false;
   }
   if (!but->funcN && ((but->poin != oldbut->poin && (uiBut *)oldbut->poin != oldbut) ||
@@ -2045,6 +2048,7 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   ui_fontscale(&style.paneltitle.points, block->aspect);
   ui_fontscale(&style.grouplabel.points, block->aspect);
   ui_fontscale(&style.widget.points, block->aspect);
+  ui_fontscale(&style.tooltip.points, block->aspect);
 
   /* scale block min/max to rect */
   rcti rect;
@@ -4309,7 +4313,7 @@ static void ui_def_but_rna__menu(bContext *C, uiLayout *layout, void *but_p)
   }
 
   /* If the estimated width is greater than available size, collapse to one column. */
-  if (columns > 1 && text_width > WM_window_pixels_x(win)) {
+  if (columns > 1 && text_width > WM_window_native_pixel_x(win)) {
     columns = 1;
     rows = totitems;
   }
@@ -5634,15 +5638,15 @@ uiBut *uiDefIconTextButO(uiBlock *block,
 void UI_but_operator_set(uiBut *but,
                          wmOperatorType *optype,
                          wmOperatorCallContext opcontext,
-                         const PointerRNA *op_props)
+                         const PointerRNA *opptr)
 {
   but->optype = optype;
   but->opcontext = opcontext;
   but->flag &= ~UI_BUT_UNDO; /* no need for ui_but_is_rna_undo(), we never need undo here */
 
   MEM_SAFE_FREE(but->opptr);
-  if (op_props) {
-    but->opptr = MEM_cnew<PointerRNA>(__func__, *op_props);
+  if (opptr) {
+    but->opptr = MEM_cnew<PointerRNA>(__func__, *opptr);
   }
 }
 
@@ -6660,6 +6664,7 @@ void UI_update_text_styles()
   style->paneltitle.character_weight = weight;
   style->grouplabel.character_weight = weight;
   style->widget.character_weight = weight;
+  style->tooltip.character_weight = weight;
 }
 
 void UI_exit()
