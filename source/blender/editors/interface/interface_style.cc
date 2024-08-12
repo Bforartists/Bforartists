@@ -89,6 +89,14 @@ static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id
   style->widget.shadowalpha = 0.25f; /* bfa 0.5f*/
   style->widget.shadowcolor = 0.0f;
 
+  style->tooltip.uifont_id = uifont_id;
+  style->tooltip.points = UI_DEFAULT_TOOLTIP_POINTS;
+  style->tooltip.character_weight = 400;
+  style->tooltip.shadow = 1;
+  style->tooltip.shady = -1;
+  style->tooltip.shadowalpha = 0.5f;
+  style->tooltip.shadowcolor = 0.0f;
+
   style->columnspace = 8;
   style->templatespace = 5;
   style->boxspace = 5;
@@ -319,6 +327,8 @@ const uiStyle *UI_style_get_dpi()
   _style.grouplabel.shady = short(UI_SCALE_FAC * _style.grouplabel.shady);
   _style.widget.shadx = short(UI_SCALE_FAC * _style.widget.shadx);
   _style.widget.shady = short(UI_SCALE_FAC * _style.widget.shady);
+  _style.tooltip.shadx = short(UI_SCALE_FAC * _style.tooltip.shadx);
+  _style.tooltip.shady = short(UI_SCALE_FAC * _style.tooltip.shady);
 
   _style.columnspace = short(UI_SCALE_FAC * _style.columnspace);
   _style.templatespace = short(UI_SCALE_FAC * _style.templatespace);
@@ -482,7 +492,7 @@ void uiStyleInit()
 
 static void fontstyle_set_ex(const uiFontStyle *fs, const float dpi_fac)
 {
-  uiFont *font = uifont_to_blfont(fs->uifont_id);
+  const uiFont *font = uifont_to_blfont(fs->uifont_id);
 
   BLF_size(font->blf_id, fs->points * dpi_fac);
   BLF_character_weight(font->blf_id, fs->character_weight);

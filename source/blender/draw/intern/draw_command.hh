@@ -350,15 +350,48 @@ struct SpecializeConstant {
 
 struct Draw {
   gpu::Batch *batch;
-  uint instance_len;
-  uint vertex_len;
-  uint vertex_first;
+  uint16_t instance_len;
+  uint8_t expand_prim_type; /* #GPUPrimType */
+  uint8_t expand_prim_len;
+  uint32_t vertex_first;
+  uint32_t vertex_len;
   ResourceHandle handle;
 #ifdef WITH_METAL_BACKEND
   /* Shader is required for extracting SSBO vertex fetch expansion parameters during draw command
    * generation. */
   GPUShader *shader;
 #endif
+
+  Draw() = default;
+
+  Draw(gpu::Batch *batch,
+       uint instance_len,
+       uint vertex_len,
+       uint vertex_first,
+#ifdef WITH_METAL_BACKEND
+       GPUShader *shader,
+#endif
+       GPUPrimType expanded_prim_type,
+       uint expanded_prim_len,
+       ResourceHandle handle)
+  {
+    this->batch = batch;
+    this->handle = handle;
+#ifdef WITH_METAL_BACKEND
+    this->shader = shader;
+#endif
+    BLI_assert(instance_len < SHRT_MAX);
+    this->instance_len = uint16_t(instance_len);
+    this->vertex_len = vertex_len;
+    this->vertex_first = vertex_first;
+    this->expand_prim_type = expanded_prim_type;
+    this->expand_prim_len = expanded_prim_len;
+  }
+
+  bool is_primitive_expansion() const
+  {
+    return expand_prim_type != GPU_PRIM_NONE;
+  }
 
   void execute(RecordingState &state) const;
   std::string serialize() const;
@@ -469,7 +502,13 @@ union Undetermined {
 };
 
 /** Try to keep the command size as low as possible for performance. */
-BLI_STATIC_ASSERT(sizeof(Undetermined) <= /*24*/ 32, "One of the command type is too large.")
+
+#ifdef WITH_METAL_BACKEND
+/* TODO(fclem): Remove. */
+BLI_STATIC_ASSERT(sizeof(Undetermined) <= 32, "One of the command type is too large.")
+#else
+BLI_STATIC_ASSERT(sizeof(Undetermined) <= 24, "One of the command type is too large.")
+#endif
 
 /** \} */
 
@@ -508,12 +547,12 @@ class DrawCommandBuf {
                    uint vertex_len,
                    uint vertex_first,
                    ResourceHandle handle,
-                   uint /*custom_id*/
+                   uint /*custom_id*/,
 #ifdef WITH_METAL_BACKEND
-                   ,
-                   GPUShader *shader = nullptr
+                   GPUShader *shader,
 #endif
-  )
+                   GPUPrimType expanded_prim_type,
+                   uint16_t expanded_prim_len)
   {
     vertex_first = vertex_first != -1 ? vertex_first : 0;
     instance_len = instance_len != -1 ? instance_len : 1;
@@ -524,12 +563,12 @@ class DrawCommandBuf {
                             instance_len,
                             vertex_len,
                             vertex_first,
-                            handle
 #ifdef WITH_METAL_BACKEND
-                            ,
-                            shader
+                            shader,
 #endif
-    };
+                            expanded_prim_type,
+                            expanded_prim_len,
+                            handle};
   }
 
   void bind(RecordingState &state,
@@ -628,16 +667,18 @@ class DrawMultiBuf {
                    uint vertex_len,
                    uint vertex_first,
                    ResourceHandle handle,
-                   uint custom_id
+                   uint custom_id,
 #ifdef WITH_METAL_BACKEND
-                   ,
-                   GPUShader *shader
+                   GPUShader *shader,
 #endif
-  )
+                   GPUPrimType expanded_prim_type,
+                   uint16_t expanded_prim_len)
   {
     /* Custom draw-calls cannot be batched and will produce one group per draw. */
     const bool custom_group = ((vertex_first != 0 && vertex_first != -1) || vertex_len != -1);
 
+    BLI_assert(vertex_len != 0);
+    vertex_len = vertex_len == -1 ? 0 : vertex_len;
     instance_len = instance_len != -1 ? instance_len : 1;
 
     /* If there was some state changes since previous call, we have to create another command. */
@@ -667,22 +708,22 @@ class DrawMultiBuf {
       group.next = cmd.group_first;
       group.len = instance_len;
       group.front_facing_len = inverted ? 0 : instance_len;
-      group.gpu_batch = batch;
-      group.front_proto_len = 0;
-      group.back_proto_len = 0;
-      group.vertex_len = vertex_len;
-      group.vertex_first = vertex_first;
+      group.front_facing_counter = 0;
+      group.back_facing_counter = 0;
+      group.desc.vertex_len = vertex_len;
+      group.desc.vertex_first = vertex_first;
+      group.desc.gpu_batch = batch;
+      group.desc.expand_prim_type = expanded_prim_type;
+      group.desc.expand_prim_len = expanded_prim_len;
 #ifdef WITH_METAL_BACKEND
-      /* If SSBO vertex fetch is used, shader must be known to extract vertex expansion parameters.
-       */
-      group.gpu_shader = shader;
+      group.desc.gpu_shader = shader;
 #endif
       /* Custom group are not to be registered in the group_ids_. */
       if (!custom_group) {
         group_id = new_group_id;
       }
-      /* For serialization only. */
-      (inverted ? group.back_proto_len : group.front_proto_len)++;
+      /* For serialization only. Reset before use on GPU. */
+      (inverted ? group.back_facing_counter : group.front_facing_counter)++;
       /* Append to list. */
       cmd.group_first = new_group_id;
     }
@@ -690,13 +731,19 @@ class DrawMultiBuf {
       DrawGroup &group = group_buf_[group_id];
       group.len += instance_len;
       group.front_facing_len += inverted ? 0 : instance_len;
+      /* For serialization only. Reset before use on GPU. */
+      (inverted ? group.back_facing_counter : group.front_facing_counter)++;
+      /* NOTE: We assume that primitive expansion is coupled to the shader itself. Meaning we rely
+       * on shader bind to isolate the expanded draws into their own group (as there could be
+       * regular draws and extended draws using the same batch mixed inside the same pass). This
+       * will cause issues if this assumption is broken. Also it is very hard to detect this case
+       * for error checking. At least we can check that expansion settings don't change inside a
+       * group. */
+      BLI_assert(group.desc.expand_prim_type == expanded_prim_type);
+      BLI_assert(group.desc.expand_prim_len == expanded_prim_len);
 #ifdef WITH_METAL_BACKEND
-      /* If SSBO vertex fetch is used, shader must be known to extract vertex expansion parameters.
-       */
-      group.gpu_shader = shader;
+      BLI_assert(group.desc.gpu_shader == shader);
 #endif
-      /* For serialization only. */
-      (inverted ? group.back_proto_len : group.front_proto_len)++;
     }
   }
 

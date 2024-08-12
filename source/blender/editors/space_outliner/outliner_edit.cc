@@ -34,6 +34,7 @@
 #include "BKE_appdir.hh"
 #include "BKE_armature.hh"
 #include "BKE_blender_copybuffer.hh"
+#include "BKE_blendfile.hh"
 #include "BKE_context.hh"
 #include "BKE_idtype.hh"
 #include "BKE_layer.hh"
@@ -491,7 +492,7 @@ static void id_delete_tag(bContext *C, ReportList *reports, TreeElement *te, Tre
     BKE_reportf(reports, RPT_WARNING, "Cannot delete indirectly linked library '%s'", id->name);
     return;
   }
-  if (id->tag & LIB_TAG_INDIRECT) {
+  if (id->tag & ID_TAG_INDIRECT) {
     BKE_reportf(reports, RPT_WARNING, "Cannot delete indirectly linked id '%s'", id->name);
     return;
   }
@@ -503,17 +504,17 @@ static void id_delete_tag(bContext *C, ReportList *reports, TreeElement *te, Tre
     return;
   }
   if (te->idcode == ID_WS) {
-    BKE_workspace_id_tag_all_visible(bmain, LIB_TAG_PRE_EXISTING);
-    if (id->tag & LIB_TAG_PRE_EXISTING) {
+    BKE_workspace_id_tag_all_visible(bmain, ID_TAG_PRE_EXISTING);
+    if (id->tag & ID_TAG_PRE_EXISTING) {
       BKE_reportf(
           reports, RPT_WARNING, "Cannot delete currently visible workspace id '%s'", id->name);
-      BKE_main_id_tag_idcode(bmain, ID_WS, LIB_TAG_PRE_EXISTING, false);
+      BKE_main_id_tag_idcode(bmain, ID_WS, ID_TAG_PRE_EXISTING, false);
       return;
     }
-    BKE_main_id_tag_idcode(bmain, ID_WS, LIB_TAG_PRE_EXISTING, false);
+    BKE_main_id_tag_idcode(bmain, ID_WS, ID_TAG_PRE_EXISTING, false);
   }
 
-  id->tag |= LIB_TAG_DOIT;
+  id->tag |= ID_TAG_DOIT;
 
   WM_event_add_notifier(C, NC_WINDOW, nullptr);
 }
@@ -574,19 +575,19 @@ static int outliner_id_delete_invoke(bContext *C, wmOperator *op, const wmEvent 
   UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
 
   int id_tagged_num = 0;
-  BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, false);
+  BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
   LISTBASE_FOREACH (TreeElement *, te, &space_outliner->tree) {
     if ((id_tagged_num += outliner_id_delete_tag(C, op->reports, te, fmval)) != 0) {
       break;
     }
   }
   if (id_tagged_num == 0) {
-    BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, false);
+    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
     return OPERATOR_CANCELLED;
   }
 
   BKE_id_multi_tagged_delete(bmain);
-  BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, false);
+  BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
   return OPERATOR_FINISHED;
 }
 
@@ -790,8 +791,12 @@ void id_remap_fn(bContext *C,
 /** \name ID Copy Operator
  * \{ */
 
-static int outliner_id_copy_tag(SpaceOutliner *space_outliner, ListBase *tree)
+static int outliner_id_copy_tag(SpaceOutliner *space_outliner,
+                                ListBase *tree,
+                                blender::bke::blendfile::PartialWriteContext &copybuffer)
 {
+  using namespace blender::bke::blendfile;
+
   int num_ids = 0;
 
   LISTBASE_FOREACH (TreeElement *, te, tree) {
@@ -799,15 +804,17 @@ static int outliner_id_copy_tag(SpaceOutliner *space_outliner, ListBase *tree)
 
     /* if item is selected and is an ID, tag it as needing to be copied. */
     if (tselem->flag & TSE_SELECTED && ELEM(tselem->type, TSE_SOME_ID, TSE_LAYER_COLLECTION)) {
-      ID *id = tselem->id;
-      if (!(id->tag & LIB_TAG_DOIT)) {
-        BKE_copybuffer_copy_tag_ID(tselem->id);
-        num_ids++;
-      }
+      copybuffer.id_add(tselem->id,
+                        PartialWriteContext::IDAddOptions{PartialWriteContext::IDAddOperations(
+                            PartialWriteContext::IDAddOperations::SET_FAKE_USER |
+                            PartialWriteContext::IDAddOperations::SET_CLIPBOARD_MARK |
+                            PartialWriteContext::IDAddOperations::ADD_DEPENDENCIES)},
+                        nullptr);
+      num_ids++;
     }
 
     /* go over sub-tree */
-    num_ids += outliner_id_copy_tag(space_outliner, &te->subtree);
+    num_ids += outliner_id_copy_tag(space_outliner, &te->subtree, copybuffer);
   }
 
   return num_ids;
@@ -815,20 +822,21 @@ static int outliner_id_copy_tag(SpaceOutliner *space_outliner, ListBase *tree)
 
 static int outliner_id_copy_exec(bContext *C, wmOperator *op)
 {
+  using namespace blender::bke::blendfile;
+
   Main *bmain = CTX_data_main(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
-  char filepath[FILE_MAX];
+  PartialWriteContext copybuffer{BKE_main_blendfile_path(bmain)};
 
-  BKE_copybuffer_copy_begin(bmain);
-
-  const int num_ids = outliner_id_copy_tag(space_outliner, &space_outliner->tree);
+  const int num_ids = outliner_id_copy_tag(space_outliner, &space_outliner->tree, copybuffer);
   if (num_ids == 0) {
     BKE_report(op->reports, RPT_INFO, "No selected data to copy");  /*BFA*/
     return OPERATOR_CANCELLED;
   }
 
+  char filepath[FILE_MAX];
   outliner_copybuffer_filepath_get(filepath, sizeof(filepath));
-  BKE_copybuffer_copy_end(bmain, filepath, op->reports);
+  copybuffer.write(filepath, *op->reports);
 
   BKE_reportf(op->reports, RPT_INFO, "Copied %d selected data", num_ids);  /*BFA*/
 
@@ -2319,7 +2327,7 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
   data.do_recursive = RNA_boolean_get(op->ptr, "do_recursive");
 
   /* Tag all IDs to delete. */
-  BKE_lib_query_unused_ids_tag(bmain, LIB_TAG_DOIT, data);
+  BKE_lib_query_unused_ids_tag(bmain, ID_TAG_DOIT, data);
 
   if (data.num_total[INDEX_ID_NULL] == 0) {
     BKE_report(op->reports, RPT_INFO, "No orphaned data to purge");  /*BFA*/

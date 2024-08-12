@@ -136,7 +136,6 @@ def register():
             register_class(cls)
 
     space_filebrowser.register_props()
-    temp_anim_layers.register_props()
 
     from bpy.props import (
         EnumProperty,
