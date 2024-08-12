@@ -988,7 +988,7 @@ void SCULPT_OT_mask_filter(wmOperatorType *ot)
    * or searched */
   ot->prop = RNA_def_enum(ot->srna,
                           "filter_type",
-                          prop_mask_filter_types,
+                          type_items,
                           int(FilterType::Smooth),
                           "Filter",
                           "Filter that is going to be applied to the mask");
