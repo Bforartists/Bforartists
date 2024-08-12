@@ -1394,17 +1394,22 @@ static void icon_draw_size(float x,
           uint(icon_id), x, y, float(draw_size) / aspect, nullptr, outline_intensity);
     }
     else {
-      float color[4];
-      if (mono_rgba) {
-        rgba_uchar_to_float(color, (const uchar *)mono_rgba);
-      }
-      else {
-        UI_GetThemeColor4fv(TH_TEXT, color);
-      }
-      color[3] *= alpha;
-      BLF_draw_svg_icon(uint(icon_id), x, y, float(draw_size) / aspect, color, outline_intensity);
+    float color[4];
+    if (mono_rgba) {
+      rgba_uchar_to_float(color, (const uchar *)mono_rgba);
     }
-
+    else {
+      UI_GetThemeColor4fv(TH_TEXT, color);
+    }
+    color[3] *= alpha;
+    BLF_draw_svg_icon(uint(icon_id),
+                      x,
+                      y,
+                      float(draw_size) / aspect,
+                      color,
+                      outline_intensity,
+                      di->type == ICON_TYPE_SVG_COLOR);
+    }
     if (text_overlay && text_overlay->text[0] != '\0') {
       /* Handle the little numbers on top of the icon. */
       uchar text_color[4];
@@ -1858,6 +1863,8 @@ ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon, float size)
   return nullptr;
 #else
 
+  constexpr bool show_color = true; /* BFA - enable color for alert icons */
+
   int icon_id = ICON_NONE;
   switch (icon) {
     case ALERT_ICON_WARNING:
@@ -1882,13 +1889,15 @@ ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon, float size)
 
   int width;
   int height;
-  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, size, &width, &height);
+  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, size, &width, &height, show_color);
   if (bitmap.is_empty()) {
     return nullptr;
   }
   ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
   IMB_flipy(ibuf);
-  IMB_premultiply_alpha(ibuf);
+  if (show_color) {
+    IMB_premultiply_alpha(ibuf);
+  }
   return ibuf;
 #endif
 }
