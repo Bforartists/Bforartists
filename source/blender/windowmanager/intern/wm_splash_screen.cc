@@ -305,10 +305,10 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
   uiLayout *layout = UI_block_layout(
       block, UI_LAYOUT_VERTICAL, UI_LAYOUT_PANEL, 0, 0, dialog_width, 0, 0, style);
 
-/* Blender logo. */
+/* BFA - Our logo. */
 #ifndef WITH_HEADLESS
 
-  bool show_color = true; /* BFA - enable dialog colors */
+  bool show_color = true; /* BFA - about logo in color */
   float size = 0.2f * dialog_width;
 
   int width;
