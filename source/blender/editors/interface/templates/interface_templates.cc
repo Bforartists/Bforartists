@@ -53,7 +53,6 @@
 #include "BKE_curveprofile.h"
 #include "BKE_file_handler.hh"
 #include "BKE_global.hh"
-#include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_idprop.hh"
 #include "BKE_idtype.hh"
 #include "BKE_layer.hh"
@@ -62,7 +61,7 @@
 #include "BKE_linestyle.h"
 #include "BKE_main.hh"
 #include "BKE_modifier.hh"
-#include "BKE_packedFile.h"
+#include "BKE_packedFile.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
@@ -2102,7 +2101,18 @@ static void template_search_add_button_name(uiBlock *block,
     return;
   }
 
-  PropertyRNA *name_prop = RNA_struct_name_property(type);
+  PropertyRNA *name_prop;
+#ifdef WITH_ANIM_BAKLAVA
+  if (type == &RNA_ActionSlot) {
+    name_prop = RNA_struct_find_property(active_ptr, "name_display");
+  }
+  else {
+#endif /* WITH_ANIM_BAKLAVA */
+    name_prop = RNA_struct_name_property(type);
+#ifdef WITH_ANIM_BAKLAVA
+  }
+#endif /* WITH_ANIM_BAKLAVA */
+
   const int width = template_search_textbut_width(active_ptr, name_prop);
   const int height = template_search_textbut_height();
   uiDefAutoButR(block, active_ptr, name_prop, 0, "", ICON_NONE, 0, 0, width, height);
@@ -2548,75 +2558,6 @@ void uiTemplateConstraints(uiLayout * /*layout*/, bContext *C, bool use_bone_con
 
 /** \} */
 
-/* -------------------------------------------------------------------- */
-/** \name Grease Pencil Modifiers Template
- * \{ */
-
-/**
- * Function with void * argument for #uiListPanelIDFromDataFunc.
- */
-static void gpencil_modifier_panel_id(void *md_link, char *r_name)
-{
-  ModifierData *md = (ModifierData *)md_link;
-  BKE_gpencil_modifierType_panel_id(GpencilModifierType(md->type), r_name);
-}
-
-void uiTemplateGpencilModifiers(uiLayout * /*layout*/, bContext *C)
-{
-  ARegion *region = CTX_wm_region(C);
-  Object *ob = blender::ed::object::context_active_object(C);
-  ListBase *modifiers = &ob->greasepencil_modifiers;
-
-  const bool panels_match = UI_panel_list_matches_data(
-      region, modifiers, gpencil_modifier_panel_id);
-
-  if (!panels_match) {
-    UI_panels_free_instanced(C, region);
-    LISTBASE_FOREACH (GpencilModifierData *, md, modifiers) {
-      const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(
-          GpencilModifierType(md->type));
-      if (mti->panel_register == nullptr) {
-        continue;
-      }
-
-      char panel_idname[MAX_NAME];
-      gpencil_modifier_panel_id(md, panel_idname);
-
-      /* Create custom data RNA pointer. */
-      PointerRNA *md_ptr = static_cast<PointerRNA *>(MEM_mallocN(sizeof(PointerRNA), __func__));
-      *md_ptr = RNA_pointer_create(&ob->id, &RNA_GpencilModifier, md);
-
-      UI_panel_add_instanced(C, region, &region->panels, panel_idname, md_ptr);
-    }
-  }
-  else {
-    /* Assuming there's only one group of instanced panels, update the custom data pointers. */
-    Panel *panel = static_cast<Panel *>(region->panels.first);
-    LISTBASE_FOREACH (ModifierData *, md, modifiers) {
-      const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(
-          GpencilModifierType(md->type));
-      if (mti->panel_register == nullptr) {
-        continue;
-      }
-
-      /* Move to the next instanced panel corresponding to the next modifier. */
-      while ((panel->type == nullptr) || !(panel->type->flag & PANEL_TYPE_INSTANCED)) {
-        panel = panel->next;
-        BLI_assert(panel !=
-                   nullptr); /* There shouldn't be fewer panels than modifiers with UIs. */
-      }
-
-      PointerRNA *md_ptr = static_cast<PointerRNA *>(MEM_mallocN(sizeof(PointerRNA), __func__));
-      *md_ptr = RNA_pointer_create(&ob->id, &RNA_GpencilModifier, md);
-      UI_panel_custom_data_set(panel, md_ptr);
-
-      panel = panel->next;
-    }
-  }
-}
-
-/** \} */
-
 #define ERROR_LIBDATA_MESSAGE N_("Can't edit external library data")
 
 /* -------------------------------------------------------------------- */
@@ -3049,7 +2990,6 @@ static void draw_exporter_item(uiList * /*ui_list*/,
   RNA_string_get(itemptr, "name", name);
 
   uiLayout *row = uiLayoutRow(layout, false);
-  uiItemS(row);
   uiItemL(row, name, ICON_NONE);
 }
 
@@ -3176,7 +3116,7 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
 
   uiItemO(layout,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy to Selected"),
-          ICON_COPYDOWN,
+          ICON_COPYDOWN, /*BFA - icon added*/
           "CONSTRAINT_OT_copy_to_selected");
 
   uiItemS(layout);
@@ -3610,7 +3550,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_FLIP,
+                                  ICON_FLIP, /*BFA - icon added*/
                                   IFACE_("Flip Color Ramp"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -3630,7 +3570,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_ALIGNVERTICAL,
+                                  ICON_ALIGNVERTICAL, /*BFA - icon added*/
                                   IFACE_("Distribute Stops from Left"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -3650,7 +3590,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_STRAIGHTEN_X,
+                                  ICON_STRAIGHTEN_X, /*BFA - icon added*/
                                   IFACE_("Distribute Stops Evenly"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -3677,7 +3617,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_RESET,
+                                  ICON_RESET, /*BFA - icon added*/
                                   IFACE_("Reset Color Ramp"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -4437,7 +4377,7 @@ static uiBlock *curvemap_tools_func(
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_VIEW_RESET,
+                                  ICON_VIEW_RESET, /*BFA - icon added*/
                                   IFACE_("Reset View"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -4458,7 +4398,7 @@ static uiBlock *curvemap_tools_func(
       uiBut *but = uiDefIconTextBut(block,
                                     UI_BTYPE_BUT_MENU,
                                     1,
-                                    ICON_EXTRAPOLATION_CONSTANT,
+                                    ICON_EXTRAPOLATION_CONSTANT, /*BFA - icon added*/
                                     IFACE_("Extend Horizontal"),
                                     0,
                                     yco -= UI_UNIT_Y,
@@ -4504,7 +4444,7 @@ static uiBlock *curvemap_tools_func(
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_RESET,
+                                  ICON_RESET, /*BFA - icon added*/
                                   IFACE_("Reset Curve"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -5110,7 +5050,7 @@ static uiBlock *curve_profile_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_RESET,
+                                  ICON_RESET, /*BFA - icon added*/
                                   IFACE_("Reset Curve"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -6492,6 +6432,29 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
 
   if (U.statusbar_flag & STATUSBAR_SHOW_EXTENSIONS_UPDATES) {
     wmWindowManager *wm = CTX_wm_manager(C);
+
+    /* Special case, always show an alert for any blocked extensions. */
+    if (wm->extensions_blocked > 0) {
+      if (has_status_info) {
+        uiItemS_ex(row, -0.5f);
+        uiItemL(row, "|", ICON_NONE);
+        uiItemS_ex(row, -0.5f);
+      }
+      uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+      /* This operator also works fine for blocked extensions. */
+      uiItemO(row, "", ICON_ERROR, "EXTENSIONS_OT_userpref_show_for_update");
+      uiBut *but = static_cast<uiBut *>(uiLayoutGetBlock(layout)->buttons.last);
+      uchar color[4];
+      UI_GetThemeColor4ubv(TH_TEXT, color);
+      copy_v4_v4_uchar(but->col, color);
+
+      BLI_str_format_integer_unit(but->icon_overlay_text.text, wm->extensions_blocked);
+      UI_but_icon_indicator_color_set(but, color);
+
+      uiItemS_ex(row, 1.0f);
+      has_status_info = true;
+    }
+
     if ((G.f & G_FLAG_INTERNET_ALLOW) == 0) {
       if (has_status_info) {
         uiItemS_ex(row, -0.5f);
@@ -6536,7 +6499,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
 
       if (wm->extensions_updates > 0) {
         BLI_str_format_integer_unit(but->icon_overlay_text.text, wm->extensions_updates);
-        UI_GetThemeColor4ubv(TH_TEXT, color);
         UI_but_icon_indicator_color_set(but, color);
       }
 
@@ -7333,7 +7295,7 @@ void uiTemplateCacheFile(uiLayout *layout,
 /* -------------------------------------------------------------------- */
 /** \name Recent Files Template
  * \{ */
-static void uiTemplateRecentFiles_tooltip_func(bContext * /*C*/, uiTooltipData *tip, void *argN)
+static void uiTemplateRecentFiles_tooltip_func(bContext & /*C*/, uiTooltipData &tip, void *argN)
 {
   char *path = (char *)argN;
 

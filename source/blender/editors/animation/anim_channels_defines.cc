@@ -991,7 +991,7 @@ static void acf_fcurve_name(bAnimListElem *ale, char *name)
     }
 
     BLI_assert(ale->bmain);
-    const std::string fcurve_name = getname_anim_fcurve_bound(*ale->bmain, *slot, *fcurve);
+    const std::string fcurve_name = getname_anim_fcurve_for_slot(*ale->bmain, *slot, *fcurve);
     const size_t num_chars_copied = fcurve_name.copy(name, std::string::npos);
     name[num_chars_copied] = '\0';
 
@@ -1396,7 +1396,12 @@ static bool acf_action_slot_name_prop(bAnimListElem *ale, PointerRNA *r_ptr, Pro
   return (*r_prop != nullptr);
 }
 
-static int acf_action_slot_icon(bAnimListElem *ale)
+static int acf_action_slot_icon(bAnimListElem * /*ale*/)
+{
+  return ICON_LINK_BLEND; /* TODO: design icon. */
+}
+
+static int acf_action_slot_idtype_icon(bAnimListElem *ale)
 {
   animrig::Slot *slot = static_cast<animrig::Slot *>(ale->data);
   return UI_icon_from_idcode(slot->idtype);
@@ -5046,6 +5051,8 @@ void ANIM_channel_draw(
           draw_sliders = (sipo->flag & SIPO_SLIDERS);
           break;
         }
+        default:
+          BLI_assert_unreachable();
       }
     }
 
@@ -5865,6 +5872,8 @@ void ANIM_channel_draw_widgets(const bContext *C,
           draw_sliders = (sipo->flag & SIPO_SLIDERS);
           break;
         }
+        default:
+          BLI_assert_unreachable();
       }
     }
 
@@ -5975,6 +5984,14 @@ void ANIM_channel_draw_widgets(const bContext *C,
 
         UI_block_emboss_set(block, UI_EMBOSS_NONE);
       }
+
+#ifdef WITH_ANIM_BAKLAVA
+      /* Slot ID type indicator. */
+      if (ale->type == ANIMTYPE_ACTION_SLOT) {
+        offset -= ICON_WIDTH;
+        UI_icon_draw(offset, ymid, acf_action_slot_idtype_icon(ale));
+      }
+#endif /* WITH_ANIM_BAKLAVA */
     }
 
     /* Draw slider:
