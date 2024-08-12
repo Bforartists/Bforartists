@@ -7581,7 +7581,7 @@ void RNA_def_userdef(BlenderRNA *brna)
 
   /* BFA - GooEngine disable_search_on_keypress */ 
   prop = RNA_def_property(srna, "disable_search_on_keypress", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "disable_search_on_keypress", USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS);
   RNA_def_property_ui_text(
       prop,
       "Disable Search On Key Press",
