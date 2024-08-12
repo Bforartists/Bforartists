@@ -292,7 +292,7 @@ struct PanelType {
   char translation_context[BKE_ST_MAXNAME];
   char context[BKE_ST_MAXNAME];   /* for buttons window */
   char category[BKE_ST_MAXNAME];  /* for category tabs */
-  char owner_id[BKE_ST_MAXNAME];  /* for work-spaces to selectively show. */
+  char owner_id[128];             /* for work-spaces to selectively show. */
   char parent_id[BKE_ST_MAXNAME]; /* parent idname for sub-panels */
   /** Boolean property identifier of the panel custom data. Used to draw a highlighted border. */
   char active_property[BKE_ST_MAXNAME];
@@ -504,7 +504,7 @@ struct MenuType {
   char idname[BKE_ST_MAXNAME]; /* unique name */
   char label[BKE_ST_MAXNAME];  /* for button text */
   char translation_context[BKE_ST_MAXNAME];
-  char owner_id[BKE_ST_MAXNAME]; /* optional, see: #wmOwnerID */
+  char owner_id[128]; /* optional, see: #wmOwnerID */
   const char *description;
 
   /* verify if the menu should draw or not */
@@ -657,7 +657,7 @@ ARegion *BKE_region_find_in_listbase_by_type(const ListBase *regionbase, const i
  * \note This does _not_ work if the region to look up is not in the active space.
  * Use #BKE_spacedata_find_region_type if that may be the case.
  */
-ARegion *BKE_area_find_region_type(const ScrArea *area, int type);
+ARegion *BKE_area_find_region_type(const ScrArea *area, int regon_type);
 ARegion *BKE_area_find_region_active_win(const ScrArea *area);
 ARegion *BKE_area_find_region_xy(const ScrArea *area, int regiontype, const int xy[2])
     ATTR_NONNULL(3);
@@ -677,6 +677,10 @@ ARegion *BKE_screen_find_main_region_at_xy(const bScreen *screen, int space_type
 ScrArea *BKE_screen_find_area_from_space(const bScreen *screen,
                                          const SpaceLink *sl) ATTR_WARN_UNUSED_RESULT
     ATTR_NONNULL(1, 2);
+/**
+ * \note used to get proper RNA paths for spaces (editors).
+ */
+std::optional<std::string> BKE_screen_path_from_screen_to_space(const PointerRNA *ptr);
 /**
  * \note Using this function is generally a last resort, you really want to be
  * using the context when you can - campbell
