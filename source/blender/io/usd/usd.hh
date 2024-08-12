@@ -42,11 +42,11 @@ enum eUSDMtlNameCollisionMode {
  *  attributes / properties outside
  *  a prim's regular schema.
  */
-typedef enum eUSDAttrImportMode {
+enum eUSDAttrImportMode {
   USD_ATTR_IMPORT_NONE = 0,
   USD_ATTR_IMPORT_USER = 1,
   USD_ATTR_IMPORT_ALL = 2,
-} eUSDAttrImportMode;
+};
 
 /**
  *  Behavior when importing textures from a package
@@ -79,13 +79,13 @@ enum eSubdivExportMode {
   USD_SUBDIV_BEST_MATCH = 2,
 };
 
-typedef enum eUSDXformOpMode {
+enum eUSDXformOpMode {
   USD_XFORM_OP_TRS = 0,
   USD_XFORM_OP_TOS = 1,
   USD_XFORM_OP_MAT = 2,
-} eUSDXformOpMode;
+};
 
-typedef enum eUSDZTextureDownscaleSize {
+enum eUSDZTextureDownscaleSize {
   USD_TEXTURE_SIZE_CUSTOM = -1,
   USD_TEXTURE_SIZE_KEEP = 0,
   USD_TEXTURE_SIZE_256 = 256,
@@ -93,48 +93,66 @@ typedef enum eUSDZTextureDownscaleSize {
   USD_TEXTURE_SIZE_1024 = 1024,
   USD_TEXTURE_SIZE_2048 = 2048,
   USD_TEXTURE_SIZE_4096 = 4096
-} eUSDZTextureDownscaleSize;
+};
+
+/**
+ *  Behavior when exporting textures.
+ */
+enum eUSDTexExportMode {
+  USD_TEX_EXPORT_KEEP = 0,
+  USD_TEX_EXPORT_PRESERVE,
+  USD_TEX_EXPORT_NEW_PATH,
+};
 
 struct USDExportParams {
   bool export_animation = false;
+  bool selected_objects_only = false;
+  bool visible_objects_only = true;
+
+  bool export_meshes = true;
+  bool export_lights = true;
+  bool export_cameras = true;
+  bool export_curves = true;
+  bool export_volumes = true;
   bool export_hair = true;
   bool export_uvmaps = true;
   bool rename_uvmaps = true;
   bool export_normals = true;
   bool export_mesh_colors = true;
   bool export_materials = true;
+
   bool export_armatures = true;
   bool export_shapekeys = true;
   bool only_deform_bones = false;
-  eSubdivExportMode export_subdiv = USD_SUBDIV_BEST_MATCH;
-  bool selected_objects_only = false;
-  bool visible_objects_only = true;
+
+  bool convert_world_material = true;
+
   bool use_instancing = false;
-  enum eEvaluationMode evaluation_mode = DAG_EVAL_VIEWPORT;
-  bool generate_preview_surface = true;
-  bool generate_materialx_network = true;
-  bool export_textures = true;
-  bool overwrite_textures = true;
-  bool relative_paths = true;
   bool export_custom_properties = true;
   bool author_blender_name = true;
+  bool allow_unicode = false;
+
+  eSubdivExportMode export_subdiv = USD_SUBDIV_BEST_MATCH;
+  enum eEvaluationMode evaluation_mode = DAG_EVAL_VIEWPORT;
+
+  bool generate_preview_surface = true;
+  bool generate_materialx_network = true;
+  bool export_textures = false;
+  bool overwrite_textures = true;
+  bool relative_paths = true;
+  bool use_original_paths = false;
+
   bool triangulate_meshes = false;
   int quad_method = MOD_TRIANGULATE_QUAD_SHORTEDGE;
   int ngon_method = MOD_TRIANGULATE_NGON_BEAUTY;
+
   bool convert_orientation = false;
   enum eIOAxis forward_axis = eIOAxis::IO_AXIS_NEGATIVE_Z;
   enum eIOAxis up_axis = eIOAxis::IO_AXIS_Y;
-  bool convert_world_material = true;
   eUSDXformOpMode xform_op_mode = eUSDXformOpMode::USD_XFORM_OP_TRS;
-  bool export_meshes = true;
-  bool export_lights = true;
-  bool export_cameras = true;
-  bool export_curves = true;
-  bool export_volumes = true;
+
   eUSDZTextureDownscaleSize usdz_downscale_size = eUSDZTextureDownscaleSize::USD_TEXTURE_SIZE_KEEP;
   int usdz_downscale_custom_size = 128;
-
-  bool allow_unicode = false;
 
   char root_prim_path[1024] = ""; /* FILE_MAX */
   char collection[MAX_IDPROP_NAME] = "";
@@ -146,43 +164,51 @@ struct USDExportParams {
 };
 
 struct USDImportParams {
+  char *prim_path_mask;
   float scale;
-  bool is_sequence;
+  float light_intensity_scale;
+
+  char mesh_read_flag;
   bool set_frame_range;
+  bool is_sequence;
   int sequence_len;
   int offset;
-  bool validate_meshes;
-  char mesh_read_flag;
+
+  bool import_defined_only;
+  bool import_visible_only;
+
   bool import_cameras;
   bool import_curves;
   bool import_lights;
   bool import_materials;
+  bool import_all_materials;
   bool import_meshes;
+  bool import_points;
+  bool import_subdiv;
   bool import_volumes;
+
   bool import_shapes;
   bool import_skeletons;
   bool import_blendshapes;
-  bool import_points;
-  char *prim_path_mask;
-  bool import_subdiv;
-  bool support_scene_instancing;
+
   bool create_collection;
+  bool create_world_material;
+  bool support_scene_instancing;
+
   bool import_guide;
   bool import_proxy;
   bool import_render;
-  bool import_visible_only;
-  bool use_instancing;
   bool import_usd_preview;
   bool set_material_blend;
-  float light_intensity_scale;
+
+  bool validate_meshes;
+
   eUSDMtlNameCollisionMode mtl_name_collision_mode;
   eUSDTexImportMode import_textures_mode;
-  bool import_defined_only;
+
   char import_textures_dir[768]; /* FILE_MAXDIR */
   eUSDTexNameCollisionMode tex_name_collision_mode;
-  bool import_all_materials;
   eUSDAttrImportMode attr_import_mode;
-  bool create_world_material;
 
   /**
    * Communication structure between the wmJob management code and the worker code. Currently used
@@ -211,13 +237,13 @@ USDMeshReadParams create_mesh_read_params(double motion_sample_time, int read_fl
  * When `as_background_job=false`, performs the export synchronously, and returns
  * true when the export was ok, and false if there were any errors.
  */
-bool USD_export(bContext *C,
+bool USD_export(const bContext *C,
                 const char *filepath,
                 const USDExportParams *params,
                 bool as_background_job,
                 ReportList *reports);
 
-bool USD_import(bContext *C,
+bool USD_import(const bContext *C,
                 const char *filepath,
                 const USDImportParams *params,
                 bool as_background_job,
@@ -227,6 +253,12 @@ int USD_get_version();
 
 /* USD Import and Mesh Cache interface. */
 
+/* Similar to BLI_path_abs(), but also invokes the USD asset resolver
+ * to determine the absolute path. This is necessary for resolving
+ * paths with URIs that BLI_path_abs() would otherwise alter when
+ * attempting to normalize the path. */
+void USD_path_abs(char *path, const char *basepath, bool for_import);
+
 CacheArchiveHandle *USD_create_handle(Main *bmain, const char *filepath, ListBase *object_paths);
 
 void USD_free_handle(CacheArchiveHandle *handle);
@@ -235,7 +267,7 @@ void USD_get_transform(CacheReader *reader, float r_mat[4][4], float time, float
 
 /** Either modifies current_mesh in-place or constructs a new mesh. */
 void USD_read_geometry(CacheReader *reader,
-                       Object *ob,
+                       const Object *ob,
                        blender::bke::GeometrySet &geometry_set,
                        USDMeshReadParams params,
                        const char **err_str);
