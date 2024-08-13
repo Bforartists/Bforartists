@@ -36,6 +36,7 @@ __all__ = (
     "previews",
     "resource_path",
     "script_path_user",
+    "extension_path_user",
     "script_paths",
     "smpte_from_frame",
     "smpte_from_seconds",
@@ -810,8 +811,8 @@ def user_resource(resource_type, *, path="", create=False):
     """
     Return a user resource path (normally from the users home directory).
 
-    :arg type: Resource type in ['DATAFILES', 'CONFIG', 'SCRIPTS', 'EXTENSIONS'].
-    :type type: string
+    :arg resource_type: Resource type in ['DATAFILES', 'CONFIG', 'SCRIPTS', 'EXTENSIONS'].
+    :type resource_type: string
     :arg path: Optional subdirectory.
     :type path: string
     :arg create: Treat the path as a directory and create it if its not existing.

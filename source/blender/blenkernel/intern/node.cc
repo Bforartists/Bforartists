@@ -103,8 +103,6 @@
 
 #include "BLO_read_write.hh"
 
-#define NODE_DEFAULT_MAX_WIDTH 700
-
 using blender::Array;
 using blender::Map;
 using blender::MutableSpan;
@@ -149,6 +147,7 @@ static void ntree_init_data(ID *id)
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   ntree->tree_interface.init_data();
   ntree->runtime = MEM_new<bNodeTreeRuntime>(__func__);
+  ntree->default_group_node_width = GROUP_NODE_DEFAULT_WIDTH;
   ntree_set_typeinfo(ntree, nullptr);
 }
 
@@ -306,7 +305,7 @@ static void ntree_free_data(ID *id)
     BKE_node_instance_hash_free(ntree->previews, (bNodeInstanceValueFP)node_preview_free);
   }
 
-  if (ntree->id.tag & LIB_TAG_LOCALIZED) {
+  if (ntree->id.tag & ID_TAG_LOCALIZED) {
     BKE_libblock_free_data(&ntree->id, true);
   }
 
@@ -461,11 +460,11 @@ static void node_foreach_path(ID *id, BPathForeachPathData *bpath_data)
 
 static ID **node_owner_pointer_get(ID *id, const bool debug_relationship_assert)
 {
-  if ((id->flag & LIB_EMBEDDED_DATA) == 0) {
+  if ((id->flag & ID_FLAG_EMBEDDED_DATA) == 0) {
     return nullptr;
   }
   /* TODO: Sort this NO_MAIN or not for embedded node trees. See #86119. */
-  // BLI_assert((id->tag & LIB_TAG_NO_MAIN) == 0);
+  // BLI_assert((id->tag & ID_TAG_NO_MAIN) == 0);
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   if (debug_relationship_assert) {
@@ -984,7 +983,11 @@ static void direct_link_node_socket(BlendDataReader *reader, bNodeSocket *sock)
 
   BLO_read_struct(reader, bNodeLink, &sock->link);
   sock->typeinfo = nullptr;
+  /* FIXME Avoid using low-level untyped read function here. Although this seems to be only for
+   * versioning code now? Does not seem to be written anymore at least. */
   BLO_read_data_address(reader, &sock->storage);
+  /* FIXME Avoid using low-level untyped read function here. Most likely by just mirroring
+   * #write_node_socket_default_value ? */
   BLO_read_data_address(reader, &sock->default_value);
   BLO_read_string(reader, &sock->default_attribute_name);
   sock->runtime = MEM_new<bNodeSocketRuntime>(__func__);
@@ -1036,12 +1039,12 @@ void ntreeBlendReadData(BlendDataReader *reader, ID *owner_id, bNodeTree *ntree)
    * NOTE: Old versions are very often 'broken' here, just fix it silently in these cases.
    */
   if (BLO_read_fileversion_get(reader) > 300) {
-    BLI_assert((ntree->id.flag & LIB_EMBEDDED_DATA) != 0 || owner_id == nullptr);
+    BLI_assert((ntree->id.flag & ID_FLAG_EMBEDDED_DATA) != 0 || owner_id == nullptr);
   }
   BLI_assert(owner_id == nullptr || owner_id->lib == ntree->id.lib);
-  if (owner_id != nullptr && (ntree->id.flag & LIB_EMBEDDED_DATA) == 0) {
+  if (owner_id != nullptr && (ntree->id.flag & ID_FLAG_EMBEDDED_DATA) == 0) {
     /* This is unfortunate, but currently a lot of existing files (including startup ones) have
-     * missing `LIB_EMBEDDED_DATA` flag.
+     * missing `ID_FLAG_EMBEDDED_DATA` flag.
      *
      * NOTE: Using do_version is not a solution here, since this code will be called before any
      * do_version takes place. Keeping it here also ensures future (or unknown existing) similar
@@ -1053,7 +1056,7 @@ void ntreeBlendReadData(BlendDataReader *reader, ID *owner_id, bNodeTree *ntree)
                 ntree->id.name,
                 owner_id->name);
     }
-    ntree->id.flag |= LIB_EMBEDDED_DATA;
+    ntree->id.flag |= ID_FLAG_EMBEDDED_DATA;
   }
   ntree->owner_id = owner_id;
 
@@ -1094,6 +1097,8 @@ void ntreeBlendReadData(BlendDataReader *reader, ID *owner_id, bNodeTree *ntree)
        * `IDTypeInfo.foreach_cache` callback. */
     }
     else {
+      /* FIXME Avoid using low-level untyped read function here. Most likely by just mirroring
+       * the matching logic in #ntreeBlendWrite ? */
       BLO_read_data_address(reader, &node->storage);
     }
 
@@ -1728,7 +1733,7 @@ bool node_type_is_undefined(const bNode *node)
     if (!ID_IS_LINKED(group_tree)) {
       return false;
     }
-    if ((group_tree->tag & LIB_TAG_MISSING) == 0) {
+    if ((group_tree->tag & ID_TAG_MISSING) == 0) {
       return false;
     }
     return true;
@@ -3181,7 +3186,7 @@ static bNodeTree *ntreeAddTree_do(Main *bmain,
   BKE_libblock_init_empty(&ntree->id);
   if (is_embedded) {
     BLI_assert(owner_id != nullptr);
-    ntree->id.flag |= LIB_EMBEDDED_DATA;
+    ntree->id.flag |= ID_FLAG_EMBEDDED_DATA;
     ntree->owner_id = owner_id;
     bNodeTree **ntree_owner_ptr = BKE_ntree_ptr_from_id(owner_id);
     BLI_assert(ntree_owner_ptr != nullptr);
@@ -3506,7 +3511,7 @@ void node_free_node(bNodeTree *ntree, bNode *node)
 void ntreeFreeLocalNode(bNodeTree *ntree, bNode *node)
 {
   /* For removing nodes while editing localized node trees. */
-  BLI_assert((ntree->id.tag & LIB_TAG_LOCALIZED) != 0);
+  BLI_assert((ntree->id.tag & ID_TAG_LOCALIZED) != 0);
 
   /* These two lines assume the caller might want to free a single node and maintain
    * a valid state in the node tree. */
@@ -3522,7 +3527,7 @@ void nodeRemoveNode(Main *bmain, bNodeTree *ntree, bNode *node, const bool do_id
   BLI_assert(ntree != nullptr);
   /* This function is not for localized node trees, we do not want
    * do to ID user reference-counting and removal of animation data then. */
-  BLI_assert((ntree->id.tag & LIB_TAG_LOCALIZED) == 0);
+  BLI_assert((ntree->id.tag & ID_TAG_LOCALIZED) == 0);
 
   bool node_has_id = false;
 
@@ -3585,7 +3590,7 @@ static void free_localized_node_groups(bNodeTree *ntree)
    * Each node group tree in a localized node tree can be freed,
    * since it is a localized copy itself (no risk of accessing freed
    * data in main, see #37939). */
-  if (!(ntree->id.tag & LIB_TAG_LOCALIZED)) {
+  if (!(ntree->id.tag & ID_TAG_LOCALIZED)) {
     return;
   }
 
@@ -3613,7 +3618,7 @@ void ntreeFreeEmbeddedTree(bNodeTree *ntree)
 
 void ntreeFreeLocalTree(bNodeTree *ntree)
 {
-  if (ntree->id.tag & LIB_TAG_LOCALIZED) {
+  if (ntree->id.tag & ID_TAG_LOCALIZED) {
     ntreeFreeTree(ntree);
   }
   else {
@@ -3738,7 +3743,7 @@ bNodeTree *ntreeLocalize(bNodeTree *ntree, ID *new_owner_id)
                          nullptr,
                          (LIB_ID_COPY_LOCALIZE | LIB_ID_COPY_NO_ANIMDATA)));
 
-  ltree->id.tag |= LIB_TAG_LOCALIZED;
+  ltree->id.tag |= ID_TAG_LOCALIZED;
 
   LISTBASE_FOREACH (bNode *, node, &ltree->nodes) {
     bNodeTree *group = reinterpret_cast<bNodeTree *>(node->id);
@@ -4206,7 +4211,7 @@ void ntreeUpdateAllNew(Main *main)
    * in groups nodes if the group changed, and handle any update flags that
    * might have been set in file reading or versioning. */
   FOREACH_NODETREE_BEGIN (main, ntree, owner_id) {
-    if (owner_id->tag & LIB_TAG_NEW) {
+    if (owner_id->tag & ID_TAG_NEW) {
       BKE_ntree_update_tag_all(ntree);
     }
   }

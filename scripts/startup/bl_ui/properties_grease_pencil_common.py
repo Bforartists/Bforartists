@@ -971,15 +971,15 @@ class GREASE_PENCIL_MT_snap(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("grease_pencil.snap_to_grid", text="Selection to Grid")
-        layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor").use_offset = False
-        layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor (Keep Offset)").use_offset = True
+        layout.operator("grease_pencil.snap_to_grid", text="Selection to Grid", icon = "SELECTIONTOGRID")
+        layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
+        layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor (Keep Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
 
         layout.separator()
 
-        layout.operator("grease_pencil.snap_cursor_to_selected", text="Cursor to Selected")
-        layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin")
-        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
+        layout.operator("grease_pencil.snap_cursor_to_selected", text="Cursor to Selected", icon = "CURSORTOSELECTION")
+        layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon = "CURSORTOCENTER")
+        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
 
 
 class GREASE_PENCIL_MT_snap_pie(Menu):
