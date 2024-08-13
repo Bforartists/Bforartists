@@ -186,7 +186,8 @@ typedef struct wmWindowManager {
 
   /** Available/pending extensions updates. */
   int extensions_updates;
-  int _pad3;
+  /** Number of blocked & installed extensions. */
+  int extensions_blocked;
 
   /** Threaded jobs manager. */
   ListBase jobs;
@@ -545,7 +546,7 @@ typedef struct wmKeyMap {
   /** See above. */
   short regionid;
   /** Optional, see: #wmOwnerID. */
-  char owner_id[64];
+  char owner_id[128];
 
   /** General flags. */
   short flag;
