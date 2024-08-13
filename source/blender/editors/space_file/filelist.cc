@@ -1136,7 +1136,7 @@ static ImBuf *fileimage_from_icon(int icon_id)
 {
   int width;
   int height;
-  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, 256.0f, &width, &height);
+  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, 256.1f, &width, &height); /* BFA - Fixes icons going monochrome */
   if (bitmap.is_empty()) {
     return nullptr;
   }
@@ -1174,7 +1174,7 @@ void filelist_file_get_full_path(const FileList *filelist,
                                  char r_filepath[/*FILE_MAX_LIBEXTRA*/])
 {
   if (file->asset) {
-    const std::string asset_path = file->asset->get_identifier().full_path();
+    const std::string asset_path = file->asset->full_path();
     BLI_strncpy(r_filepath, asset_path.c_str(), FILE_MAX_LIBEXTRA);
     return;
   }
@@ -3579,7 +3579,7 @@ static void filelist_readjob_main_recursive(Main *bmain, FileList *filelist)
 #  endif
           //                  files->entry->nr = totbl + 1;
           files->entry->poin = id;
-          fake = id->flag & LIB_FAKEUSER;
+          fake = id->flag & ID_FLAG_FAKEUSER;
           if (ELEM(idcode, ID_MA, ID_TE, ID_LA, ID_WO, ID_IM)) {
             files->typeflag |= FILE_TYPE_IMAGE;
           }
