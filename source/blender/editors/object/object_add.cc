@@ -573,9 +573,8 @@ void add_generic_get_opts(bContext *C,
           break;
         case ALIGN_CURSOR: {
           const Scene *scene = CTX_data_scene(C);
-          float tmat[3][3];
-          BKE_scene_cursor_rot_to_mat3(&scene->cursor, tmat);
-          mat3_normalized_to_eul(r_rot, tmat);
+          const float3x3 tmat = scene->cursor.matrix<float3x3>();
+          mat3_normalized_to_eul(r_rot, tmat.ptr());
           RNA_float_set_array(op->ptr, "rotation", r_rot);
           break;
         }
@@ -1370,15 +1369,11 @@ static bool object_gpencil_add_poll(bContext *C)
 
 static int object_gpencil_add_exec(bContext *C, wmOperator *op)
 {
-  Object *ob = CTX_data_active_object(C), *ob_orig = ob;
+  Object *ob = CTX_data_active_object(C);
   bGPdata *gpd = (ob && (ob->type == OB_GPENCIL_LEGACY)) ? static_cast<bGPdata *>(ob->data) :
                                                            nullptr;
 
   const int type = RNA_enum_get(op->ptr, "type");
-  const bool use_in_front = RNA_boolean_get(op->ptr, "use_in_front");
-  const bool use_lights = RNA_boolean_get(op->ptr, "use_lights");
-  const int stroke_depth_order = RNA_enum_get(op->ptr, "stroke_depth_order");
-  const float stroke_depth_offset = RNA_float_get(op->ptr, "stroke_depth_offset");
 
   ushort local_view_bits;
   float loc[3], rot[3];
@@ -1470,47 +1465,47 @@ static int object_gpencil_add_exec(bContext *C, wmOperator *op)
       gpd = static_cast<bGPdata *>(ob->data);
 
       /* Add Line Art modifier */
-      LineartGpencilModifierData *md = (LineartGpencilModifierData *)BKE_gpencil_modifier_new(
-          eGpencilModifierType_Lineart);
-      BLI_addtail(&ob->greasepencil_modifiers, md);
-      BKE_gpencil_modifier_unique_name(&ob->greasepencil_modifiers, (GpencilModifierData *)md);
+      // LineartGpencilModifierData *md = (LineartGpencilModifierData *)BKE_gpencil_modifier_new(
+      //     eGpencilModifierType_Lineart);
+      // BLI_addtail(&ob->greasepencil_modifiers, md);
+      // BKE_gpencil_modifier_unique_name(&ob->greasepencil_modifiers, (GpencilModifierData *)md);
 
-      if (type == GREASE_PENCIL_LINEART_COLLECTION) {
-        md->source_type = LINEART_SOURCE_COLLECTION;
-        md->source_collection = CTX_data_collection(C);
-      }
-      else if (type == GREASE_PENCIL_LINEART_OBJECT) {
-        md->source_type = LINEART_SOURCE_OBJECT;
-        md->source_object = ob_orig;
-      }
-      else {
-        /* Whole scene. */
-        md->source_type = LINEART_SOURCE_SCENE;
-      }
-      /* Only created one layer and one material. */
-      STRNCPY(md->target_layer, ((bGPDlayer *)gpd->layers.first)->info);
-      md->target_material = BKE_gpencil_material(ob, 1);
-      if (md->target_material) {
-        id_us_plus(&md->target_material->id);
-      }
+      // if (type == GREASE_PENCIL_LINEART_COLLECTION) {
+      //   md->source_type = LINEART_SOURCE_COLLECTION;
+      //   md->source_collection = CTX_data_collection(C);
+      // }
+      // else if (type == GREASE_PENCIL_LINEART_OBJECT) {
+      //   md->source_type = LINEART_SOURCE_OBJECT;
+      //   md->source_object = ob_orig;
+      // }
+      // else {
+      //   /* Whole scene. */
+      //   md->source_type = LINEART_SOURCE_SCENE;
+      // }
+      // /* Only created one layer and one material. */
+      // STRNCPY(md->target_layer, ((bGPDlayer *)gpd->layers.first)->info);
+      // md->target_material = BKE_gpencil_material(ob, 1);
+      // if (md->target_material) {
+      //   id_us_plus(&md->target_material->id);
+      // }
 
-      if (use_lights) {
-        ob->dtx |= OB_USE_GPENCIL_LIGHTS;
-      }
-      else {
-        ob->dtx &= ~OB_USE_GPENCIL_LIGHTS;
-      }
+      // if (use_lights) {
+      //   ob->dtx |= OB_USE_GPENCIL_LIGHTS;
+      // }
+      // else {
+      //   ob->dtx &= ~OB_USE_GPENCIL_LIGHTS;
+      // }
 
-      /* Stroke object is drawn in front of meshes by default. */
-      if (use_in_front) {
-        ob->dtx |= OB_DRAW_IN_FRONT;
-      }
-      else {
-        if (stroke_depth_order == GP_DRAWMODE_3D) {
-          gpd->draw_mode = GP_DRAWMODE_3D;
-        }
-        md->stroke_depth_offset = stroke_depth_offset;
-      }
+      // /* Stroke object is drawn in front of meshes by default. */
+      // if (use_in_front) {
+      //   ob->dtx |= OB_DRAW_IN_FRONT;
+      // }
+      // else {
+      //   if (stroke_depth_order == GP_DRAWMODE_3D) {
+      //     gpd->draw_mode = GP_DRAWMODE_3D;
+      //   }
+      //   md->stroke_depth_offset = stroke_depth_offset;
+      // }
 
       break;
     }
@@ -2455,10 +2450,10 @@ static int object_delete_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, false);
+  BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 
   CTX_DATA_BEGIN (C, Object *, ob, selected_objects) {
-    if (ob->id.tag & LIB_TAG_INDIRECT) {
+    if (ob->id.tag & ID_TAG_INDIRECT) {
       /* Can this case ever happen? */
       BKE_reportf(op->reports,
                   RPT_WARNING,
@@ -2495,7 +2490,7 @@ static int object_delete_exec(bContext *C, wmOperator *op)
 
     /* Use multi tagged delete if `use_global=True`, or the object is used only in one scene. */
     if (use_global || ID_REAL_USERS(ob) <= 1) {
-      ob->id.tag |= LIB_TAG_DOIT;
+      ob->id.tag |= ID_TAG_DOIT;
       tagged_count += 1;
     }
     else {
@@ -2531,12 +2526,12 @@ static int object_delete_exec(bContext *C, wmOperator *op)
   }
 
   /* delete has to handle all open scenes */
-  BKE_main_id_tag_listbase(&bmain->scenes, LIB_TAG_DOIT, true);
+  BKE_main_id_tag_listbase(&bmain->scenes, ID_TAG_DOIT, true);
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     scene = WM_window_get_active_scene(win);
 
-    if (scene->id.tag & LIB_TAG_DOIT) {
-      scene->id.tag &= ~LIB_TAG_DOIT;
+    if (scene->id.tag & ID_TAG_DOIT) {
+      scene->id.tag &= ~ID_TAG_DOIT;
 
       DEG_relations_tag_update(bmain);
 
@@ -2622,7 +2617,7 @@ static void copy_object_set_idnew(bContext *C)
        * will not always be cleared. */
       continue;
     }
-    BLI_assert((id_iter->tag & LIB_TAG_NEW) == 0);
+    BLI_assert((id_iter->tag & ID_TAG_NEW) == 0);
   }
   FOREACH_MAIN_ID_END;
 #endif
@@ -3195,7 +3190,7 @@ static int object_convert_exec(bContext *C, wmOperator *op)
 
       /* flag data that's not been edited (only needed for !keep_original) */
       if (ob->data) {
-        ((ID *)ob->data)->tag |= LIB_TAG_DOIT;
+        ((ID *)ob->data)->tag |= ID_TAG_DOIT;
       }
 
       /* possible metaball basis is not in this scene */
@@ -3827,7 +3822,7 @@ static int object_convert_exec(bContext *C, wmOperator *op)
        * It is not enough to tag only geometry and rely on the curve parenting relations because
        * this relation is lost when curve is converted to mesh. */
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY | ID_RECALC_TRANSFORM);
-      ((ID *)ob->data)->tag &= ~LIB_TAG_DOIT; /* flag not to convert this datablock again */
+      ((ID *)ob->data)->tag &= ~ID_TAG_DOIT; /* flag not to convert this datablock again */
     }
   }
 

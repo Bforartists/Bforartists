@@ -236,6 +236,11 @@ struct SequencesAllIterator {
   int index;
 };
 
+static std::optional<std::string> rna_SequenceEditor_path(const PointerRNA * /*ptr*/)
+{
+  return "sequence_editor";
+}
+
 static void rna_SequenceEditor_sequences_all_begin(CollectionPropertyIterator *iter,
                                                    PointerRNA *ptr)
 {
@@ -571,6 +576,13 @@ static int rna_Sequence_frame_length_get(PointerRNA *ptr)
   Sequence *seq = (Sequence *)ptr->data;
   Scene *scene = (Scene *)ptr->owner_id;
   return SEQ_time_right_handle_frame_get(scene, seq) - SEQ_time_left_handle_frame_get(scene, seq);
+}
+
+static int rna_Sequence_frame_duration_get(PointerRNA *ptr)
+{
+  Sequence *seq = static_cast<Sequence *>(ptr->data);
+  Scene *scene = reinterpret_cast<Scene *>(ptr->owner_id);
+  return SEQ_time_strip_length_get(scene, seq);
 }
 
 static int rna_Sequence_frame_editable(const PointerRNA *ptr, const char ** /*r_info*/)
@@ -2176,7 +2188,7 @@ static void rna_def_sequence(BlenderRNA *brna)
       prop, NC_SCENE | ND_SEQUENCER, "rna_Sequence_invalidate_preprocessed_update");
 
   prop = RNA_def_property(srna, "frame_duration", PROP_INT, PROP_TIME);
-  RNA_def_property_int_sdna(prop, nullptr, "len");
+  RNA_def_property_int_funcs(prop, "rna_Sequence_frame_duration_get", nullptr, nullptr);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE | PROP_ANIMATABLE);
   RNA_def_property_range(prop, 1, MAXFRAME);
   RNA_def_property_ui_text(
@@ -2389,7 +2401,8 @@ static void rna_def_editor(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
   srna = RNA_def_struct(brna, "SequenceEditor", nullptr);
-  RNA_def_struct_ui_text(srna, "Sequence Editor", "Sequence editing data for a Scene");
+  RNA_def_struct_ui_text(srna, "Sequence Editor", "Sequence editing data for a Scene data");
+  RNA_def_struct_path_func(srna, "rna_SequenceEditor_path");
   RNA_def_struct_ui_icon(srna, ICON_SEQUENCE);
   RNA_def_struct_sdna(srna, "Editing");
 
@@ -3357,7 +3370,8 @@ static void rna_def_text(StructRNA *srna)
   prop = RNA_def_property(srna, "font", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "text_font");
   RNA_def_property_ui_icon(prop, ICON_FILE_FONT, false);
-  RNA_def_property_ui_text(prop, "Font", "Font of the text. Falls back to the UI font by default");
+  RNA_def_property_ui_text(
+      prop, "Font", "Font of the text. Falls back to the UI font by default.");
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_pointer_funcs(prop, nullptr, "rna_Sequence_text_font_set", nullptr, nullptr);
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_Sequence_invalidate_raw_update");
