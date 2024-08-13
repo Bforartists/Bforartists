@@ -409,7 +409,7 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
   region->regiontype = RGN_TYPE_HEADER;
   region->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_BOTTOM : RGN_ALIGN_TOP;
 
-  /* bfa - asset shelf */
+  /* start bfa - asset shelf */
   region = MEM_cnew<ARegion>("asset shelf for node");
 
   BLI_addtail(&snode->regionbase, region);
@@ -423,7 +423,7 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
   BLI_addtail(&snode->regionbase, region);
   region->regiontype = RGN_TYPE_ASSET_SHELF_HEADER;
   region->alignment = RGN_ALIGN_BOTTOM | RGN_ALIGN_HIDE_WITH_PREV;
-  /* bfa end */
+  /* end bfa  */
 
 
   /* buttons/list view */
@@ -1051,7 +1051,7 @@ static void node_region_listener(const wmRegionListenerParams *params)
 
 }  // namespace blender::ed::space_node 
 
-/* bfa - add handlers, stuff you only do once or on area/region changes */
+/* start bfa - add handlers, stuff you only do once or on area/region changes */
 static void node_asset_shelf_region_init(wmWindowManager *wm, ARegion *region)
 {
   using namespace blender::ed;
