@@ -3401,7 +3401,7 @@ static void rna_def_userdef_theme_space_node(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Repeat Zone", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
   
-  rna_def_userdef_theme_spaces_asset_shelf_main(srna); // bfa assetshelf node editors
+  rna_def_userdef_theme_spaces_asset_shelf_main(srna); // bfa asset shelf node editors
 }
 
 static void rna_def_userdef_theme_space_buts(BlenderRNA *brna)
