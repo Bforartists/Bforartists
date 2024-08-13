@@ -190,12 +190,12 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(space_sequencer.after_current_frame);
   }
 
-  /* bfa - TODO: add version bump, since exposing asset browser is bfa exclusive not sure it should be bfa version or blender version */
-  {
+  /* start bfa asset shelf versioning */
+  if (!USER_VERSION_ATLEAST(403, 0)) {
     FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.back);
     FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.header_back);
   }
-  /* bfa end */
+  /* end bfa */
 
 
   /**
