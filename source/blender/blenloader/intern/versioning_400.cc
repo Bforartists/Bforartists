@@ -2795,7 +2795,7 @@ static void fix_built_in_curve_attribute_defaults(Main *bmain)
   }
 }
 
-/* bfa - node asset sehlf versioning */
+/* bfa - node asset shelf versioning */
 static void add_node_editor_asset_shelf(Main &bmain)
 {
   LISTBASE_FOREACH (bScreen *, screen, &bmain.screens) {
@@ -2823,7 +2823,7 @@ static void add_node_editor_asset_shelf(Main &bmain)
     }
   }
 }
-/* end bfa - node asset sehlf versioning */
+/* end bfa - node asset shelf versioning */
 
 
 void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
@@ -4469,10 +4469,11 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     }
   }
 
-  // bfa asset shelf versioning
+  /* start bfa asset shelf versioning */
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 403, 0)) {
     add_node_editor_asset_shelf(*bmain);
   }
+  /* end bfa */
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 403, 13)) {
     Camera default_cam = *DNA_struct_default_get(Camera);
