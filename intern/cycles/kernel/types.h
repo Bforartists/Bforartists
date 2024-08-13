@@ -673,7 +673,7 @@ enum PanoramaType {
   PANORAMA_MIRRORBALL = 3,
   PANORAMA_FISHEYE_LENS_POLYNOMIAL = 4,
   PANORAMA_EQUIANGULAR_CUBEMAP_FACE = 5,
-
+  PANORAMA_CENTRAL_CYLINDRICAL = 6,
   PANORAMA_NUM_TYPES,
 };
 
@@ -750,7 +750,8 @@ typedef struct Intersection {
  * specify that certain fields should be packed together. This improves cache hit ratios in cases
  * where fields are often accessed together (e.g. "ray" and "isect").
  */
-#if (defined(__APPLE__) && TARGET_CPU_ARM64) || defined(__KERNEL_METAL_APPLE__)
+#if (defined(__APPLE__) && TARGET_CPU_ARM64) || \
+    (defined(__KERNEL_METAL_APPLE__) && defined(__KERNEL_METAL_TARGET_CPU_ARM64__))
 #  define __INTEGRATOR_GPU_PACKED_STATE__
 
 /* Generate packed layouts for structs declared with KERNEL_STRUCT_BEGIN_PACKED. For example the
@@ -1281,6 +1282,7 @@ typedef struct KernelCamera {
   float fisheye_lens_polynomial_bias;
   float4 equirectangular_range;
   float4 fisheye_lens_polynomial_coefficients;
+  float4 central_cylindrical_range;
 
   /* stereo */
   float interocular_offset;

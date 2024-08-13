@@ -141,7 +141,7 @@ static void pointcloud_blend_read_data(BlendDataReader *reader, ID *id)
   CustomData_blend_read(reader, &pointcloud->pdata, pointcloud->totpoint);
 
   /* Materials */
-  BLO_read_pointer_array(reader, (void **)&pointcloud->mat);
+  BLO_read_pointer_array(reader, pointcloud->totcol, (void **)&pointcloud->mat);
 
   pointcloud->runtime = new blender::bke::PointCloudRuntime();
 }
@@ -248,7 +248,7 @@ PointCloud *BKE_pointcloud_new_nomain(const int totpoint)
 
 void BKE_pointcloud_nomain_to_pointcloud(PointCloud *pointcloud_src, PointCloud *pointcloud_dst)
 {
-  BLI_assert(pointcloud_src->id.tag & LIB_TAG_NO_MAIN);
+  BLI_assert(pointcloud_src->id.tag & ID_TAG_NO_MAIN);
 
   CustomData_free(&pointcloud_dst->pdata, pointcloud_dst->totpoint);
 
