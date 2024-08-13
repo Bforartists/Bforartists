@@ -49,6 +49,13 @@ typedef enum eSDNA_Type {
   SDNA_TYPE_INT64 = 10,
   SDNA_TYPE_UINT64 = 11,
   SDNA_TYPE_INT8 = 12,
+  /**
+   * Type used for untyped raw bytes buffers (written by #BLO_write_raw and read by
+   * #BLO_read_data_address).
+   *
+   * Technically, it also covers all 'raw data' types above.
+   */
+  SDNA_TYPE_RAW_DATA = 13,
 } eSDNA_Type;
 
 /**
@@ -96,24 +103,24 @@ struct DNA_ReconstructInfo *DNA_reconstruct_info_create(const struct SDNA *oldsd
 void DNA_reconstruct_info_free(struct DNA_ReconstructInfo *reconstruct_info);
 
 /**
- * \param index_last: Support faster lookups when there is the possibility
+ * \param struct_index_last: Support faster lookups when there is the possibility
  * of the same name being looked up multiple times. Initialize to `UINT_MAX`.
  *
  * \return the index of the struct or -1 on failure.
  */
-int DNA_struct_find_with_alias_ex(const struct SDNA *sdna,
-                                  const char *str,
-                                  unsigned int *index_last);
+int DNA_struct_find_index_with_alias_ex(const struct SDNA *sdna,
+                                        const char *str,
+                                        unsigned int *struct_index_last);
 /** \note prefer #DNA_struct_find_with_alias_ex unless there is a good reason not to. */
-int DNA_struct_find_without_alias_ex(const struct SDNA *sdna,
-                                     const char *str,
-                                     unsigned int *index_last);
+int DNA_struct_find_index_without_alias_ex(const struct SDNA *sdna,
+                                           const char *str,
+                                           unsigned int *struct_index_last);
 /**
  * \return the index of the struct or -1 on failure.
  */
 int DNA_struct_find_with_alias(const struct SDNA *sdna, const char *str);
 /** \note prefer #DNA_struct_find_with_alias unless there is a good reason not to. */
-int DNA_struct_find_without_alias(const struct SDNA *sdna, const char *str);
+int DNA_struct_find_index_without_alias(const struct SDNA *sdna, const char *str);
 
 /**
  * A convenience function, the equivalent of: `DNA_struct_find_with_alias(..) != -1`
@@ -141,7 +148,7 @@ bool DNA_struct_member_exists_without_alias(const struct SDNA *sdna,
  * \param struct_nr: Index of struct info within sdna
  * \param data: Struct data that is to be converted
  */
-void DNA_struct_switch_endian(const struct SDNA *sdna, int struct_nr, char *data);
+void DNA_struct_switch_endian(const struct SDNA *sdna, int struct_index, char *data);
 /**
  * Constructs and returns an array of byte flags with one element for each struct in oldsdna,
  * indicating how it compares to newsdna.
@@ -149,15 +156,17 @@ void DNA_struct_switch_endian(const struct SDNA *sdna, int struct_nr, char *data
 const char *DNA_struct_get_compareflags(const struct SDNA *sdna, const struct SDNA *newsdna);
 /**
  * \param reconstruct_info: Information preprocessed by #DNA_reconstruct_info_create.
- * \param old_struct_nr: Index of struct info within oldsdna.
+ * \param old_struct_index: Index of struct info within oldsdna.
  * \param blocks: The number of array elements.
  * \param old_blocks: Array of struct data.
+ * \param alloc_name: String to pass to the allocation calls for reconstructed data.
  * \return An allocated reconstructed struct.
  */
 void *DNA_struct_reconstruct(const struct DNA_ReconstructInfo *reconstruct_info,
-                             int old_struct_nr,
+                             int old_struct_index,
                              int blocks,
-                             const void *old_blocks);
+                             const void *old_blocks,
+                             const char *alloc_name);
 
 /**
  * A version of #DNA_struct_member_offset_by_name_with_alias that uses the non-aliased name.
@@ -177,13 +186,13 @@ int DNA_struct_member_offset_by_name_with_alias(const struct SDNA *sdna,
                                                 const char *name);
 
 /**
- * Returns the size of struct fields of the specified type and name.
+ * Returns the size of struct fields of the specified type and member_index.
  *
  * \param type: Index into sdna->types/types_size
- * \param name: Index into sdna->names,
- * needed to extract possible pointer/array information.
+ * \param member_index: Index into sdna->names, needed to extract possible pointer/array
+ * information.
  */
-int DNA_struct_member_size(const struct SDNA *sdna, short type, short name);
+int DNA_struct_member_size(const struct SDNA *sdna, short type, short member_index);
 
 /**
  * Returns the size in bytes of a primitive type.
@@ -191,25 +200,45 @@ int DNA_struct_member_size(const struct SDNA *sdna, short type, short name);
 int DNA_elem_type_size(eSDNA_Type elem_nr);
 
 /**
- * Get the alignment that should be used when allocating memory for this type.
+ * Returns the size of a struct.
+ *
+ * \param struct_index: Index into the #sdna.structs array (aka #BHead.SDNAnr).
  */
-int DNA_struct_alignment(const struct SDNA *sdna, int struct_nr);
+int DNA_struct_size(const struct SDNA *sdna, int struct_index);
 
 /**
- * Rename a struct
+ * Get the alignment that should be used when allocating memory for this type.
+ */
+int DNA_struct_alignment(const struct SDNA *sdna, int struct_index);
+
+/**
+ * Return the current (alias) type name of the given struct index.
+ */
+const char *DNA_struct_identifier(struct SDNA *sdna, int struct_index);
+
+/**
+ * Find the struct matching the given `old_type_name`, and rename its type (referenced by its
+ * #SDNA_Struct.type_index) to the given `new_type_name`.
+ *
+ * WARNING: Deprecated, do not use in new code. Only used to version some renaming done during
+ * early 2.80 development.
  */
 bool DNA_sdna_patch_struct_by_name(struct SDNA *sdna,
-                                   const char *struct_name_old,
-                                   const char *struct_name_new);
+                                   const char *old_type_name,
+                                   const char *new_type_name);
 /**
- * Replace \a elem_old with \a elem_new for struct \a struct_name
- * handles search & replace, maintaining surrounding non-identifier characters
- * such as pointer & array size.
+ * Rename \a old_member_name with \a new_member_name for struct matching \a type_name.
+ *
+ * Handles search & replace, maintaining surrounding non-identifier characters such as pointer &
+ * array size.
+ *
+ * WARNING: Deprecated, do not use in new code. Only used to version some renaming done during
+ * early 2.80 development.
  */
 bool DNA_sdna_patch_struct_member_by_name(struct SDNA *sdna,
-                                          const char *struct_name,
-                                          const char *elem_old,
-                                          const char *elem_new);
+                                          const char *type_name,
+                                          const char *old_member_name,
+                                          const char *new_member_name);
 
 void DNA_sdna_alias_data_ensure(struct SDNA *sdna);
 

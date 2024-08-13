@@ -18,7 +18,7 @@ elseif(DEFINED ENV{HIP_ROOT_DIR})
   set(HIP_ROOT_DIR $ENV{HIP_ROOT_DIR})
 elseif(DEFINED ENV{HIP_PATH})
   # Built-in environment variable from SDK.
-  set(HIP_ROOT_DIR $ENV{HIP_PATH})
+  file(TO_CMAKE_PATH $ENV{HIP_PATH} HIP_ROOT_DIR) # https://stackoverflow.com/a/28074988/8094047
 endif()
 
 set(_hip_SEARCH_DIRS

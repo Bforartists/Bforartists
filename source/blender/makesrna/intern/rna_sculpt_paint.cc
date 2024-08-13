@@ -483,7 +483,7 @@ static void rna_PaintModeSettings_canvas_source_update(bContext *C, PointerRNA *
 {
   Scene *scene = CTX_data_scene(C);
   Object *ob = CTX_data_active_object(C);
-  /* When canvas source changes the pbvh::Tree would require updates when switching between color
+  /* When canvas source changes the #pbvh::Tree would require updates when switching between color
    * attributes. */
   if (ob && ob->type == OB_MESH) {
     BKE_texpaint_slots_refresh_object(scene, ob);
@@ -879,7 +879,7 @@ static void rna_def_sculpt(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Occlusion",
-      "Only affect vertices that are not occluded by other faces. (Slower performance)");
+      "Only affect vertices that are not occluded by other faces (Slower performance)");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
   prop = RNA_def_property(srna, "automasking_start_normal_limit", PROP_FLOAT, PROP_ANGLE);
