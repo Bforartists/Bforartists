@@ -568,7 +568,7 @@ void draw_subdiv_init_origindex_buffer(gpu::VertBuf &buffer,
   GPU_vertbuf_init_with_format_ex(buffer, get_origindex_format(), GPU_USAGE_STATIC);
   GPU_vertbuf_data_alloc(buffer, num_loops + loose_len);
 
-  buffer.data<int32_t>().copy_from({vert_origindex, num_loops});
+  buffer.data<int32_t>().take_front(num_loops).copy_from({vert_origindex, num_loops});
 }
 
 gpu::VertBuf *draw_subdiv_build_origindex_buffer(int *vert_origindex, uint num_loops)
@@ -925,7 +925,10 @@ static bool draw_subdiv_topology_info_cb(const bke::subdiv::ForeachContext *fore
 
   /* Initialize cache buffers, prefer dynamic usage so we can reuse memory on the host even after
    * it was sent to the device, since we may use the data while building other buffers on the CPU
-   * side. */
+   * side.
+   *
+   * These VBOs are created even when there are no faces and only loose geometry. This avoids the
+   * need for many null checks. Binding them must be avoided if they are empty though. */
   cache->patch_coords = GPU_vertbuf_calloc();
   GPU_vertbuf_init_with_format_ex(
       *cache->patch_coords, get_blender_patch_coords_format(), GPU_USAGE_DYNAMIC);
@@ -1243,22 +1246,24 @@ static bool draw_subdiv_build_cache(DRWSubdivCache &cache,
 
   /* Save coordinates for corners, as attributes may vary for each loop connected to the same
    * vertex. */
-  memcpy(cache.corner_patch_coords->data<CompressedPatchCoord>().data(),
-         cache_building_context.patch_coords,
-         sizeof(CompressedPatchCoord) * cache.num_subdiv_loops);
+  if (cache.num_subdiv_loops > 0) {
+    memcpy(cache.corner_patch_coords->data<CompressedPatchCoord>().data(),
+           cache_building_context.patch_coords,
+           sizeof(CompressedPatchCoord) * cache.num_subdiv_loops);
 
-  for (int i = 0; i < cache.num_subdiv_loops; i++) {
-    const int vertex = cache_building_context.subdiv_loop_subdiv_vert_index[i];
-    if (first_loop_index[vertex] != -1) {
-      continue;
+    for (int i = 0; i < cache.num_subdiv_loops; i++) {
+      const int vertex = cache_building_context.subdiv_loop_subdiv_vert_index[i];
+      if (first_loop_index[vertex] != -1) {
+        continue;
+      }
+      first_loop_index[vertex] = i;
     }
-    first_loop_index[vertex] = i;
-  }
 
-  for (int i = 0; i < cache.num_subdiv_loops; i++) {
-    const int vertex = cache_building_context.subdiv_loop_subdiv_vert_index[i];
-    cache_building_context.patch_coords[i] =
-        cache_building_context.patch_coords[first_loop_index[vertex]];
+    for (int i = 0; i < cache.num_subdiv_loops; i++) {
+      const int vertex = cache_building_context.subdiv_loop_subdiv_vert_index[i];
+      cache_building_context.patch_coords[i] =
+          cache_building_context.patch_coords[first_loop_index[vertex]];
+    }
   }
 
   /* Cleanup. */

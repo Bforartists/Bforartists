@@ -983,8 +983,8 @@ static void recalcData_actedit(TransInfo *t)
   ac.area = t->area;
   ac.region = t->region;
   ac.sl = static_cast<SpaceLink *>((t->area) ? t->area->spacedata.first : nullptr);
-  ac.spacetype = (t->area) ? t->area->spacetype : 0;
-  ac.regiontype = (t->region) ? t->region->regiontype : 0;
+  ac.spacetype = eSpace_Type((t->area) ? t->area->spacetype : 0);
+  ac.regiontype = eRegion_Type((t->region) ? t->region->regiontype : 0);
 
   ANIM_animdata_context_getdata(&ac);
 
@@ -1213,7 +1213,7 @@ static void special_aftertrans_update__actedit(bContext *C, TransInfo *t)
     LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
       switch (ale->datatype) {
         case ALE_GPFRAME:
-          ale->id->tag &= ~LIB_TAG_DOIT;
+          ale->id->tag &= ~ID_TAG_DOIT;
           posttrans_gpd_clean((bGPdata *)ale->id);
           break;
 
@@ -1301,7 +1301,7 @@ static void special_aftertrans_update__actedit(bContext *C, TransInfo *t)
         case ALE_GPFRAME:
           /* Grease Pencil legacy. */
           if ((saction->flag & SACTION_NOTRANSKEYCULL) == 0 && ((canceled == 0) || (duplicate))) {
-            ale->id->tag &= ~LIB_TAG_DOIT;
+            ale->id->tag &= ~ID_TAG_DOIT;
             posttrans_gpd_clean((bGPdata *)ale->id);
           }
           break;
@@ -1340,7 +1340,7 @@ static void special_aftertrans_update__actedit(bContext *C, TransInfo *t)
 
       LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
         if (ale->datatype == ALE_MASKLAY) {
-          ale->id->tag &= ~LIB_TAG_DOIT;
+          ale->id->tag &= ~ID_TAG_DOIT;
           posttrans_mask_clean((Mask *)ale->id);
         }
       }

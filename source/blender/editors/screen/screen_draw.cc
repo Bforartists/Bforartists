@@ -166,8 +166,8 @@ void ED_screen_draw_edges(wmWindow *win)
     return;
   }
 
-  const int winsize_x = WM_window_pixels_x(win);
-  const int winsize_y = WM_window_pixels_y(win);
+  const int winsize_x = WM_window_native_pixel_x(win);
+  const int winsize_y = WM_window_native_pixel_y(win);
   float col[4], corner_scale, edge_thickness;
   int verts_per_corner = 0;
 
@@ -381,7 +381,7 @@ void screen_draw_join_highlight(ScrArea *sa1, ScrArea *sa2, eScreenDir dir)
   screen_draw_area_icon(&sa2new, ED_area_icon(sa1), icon_color, bg_color, outline_color);
 }
 
-void screen_draw_dock_preview(const struct wmWindow * /* win */,
+void screen_draw_dock_preview(const wmWindow * /* win */,
                               ScrArea *source,
                               ScrArea *target,
                               AreaDockTarget dock_target)

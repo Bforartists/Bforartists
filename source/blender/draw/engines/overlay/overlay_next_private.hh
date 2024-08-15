@@ -10,6 +10,8 @@
 
 #include "BLI_function_ref.hh"
 
+#include "GPU_matrix.hh"
+
 #include "DRW_gpu_wrapper.hh"
 #include "DRW_render.hh"
 #include "UI_resources.hh"
@@ -56,7 +58,24 @@ struct State {
   short v3d_gridflag; /* TODO: move to #View3DOverlay. */
   int cfra;
   DRWState clipping_state;
+
+  float view_dist_get(const float4x4 &winmat) const
+  {
+    float view_dist = rv3d->dist;
+    /* Special exception for orthographic camera:
+     * `view_dist` isn't used as the depth range isn't the same. */
+    if (rv3d->persp == RV3D_CAMOB && rv3d->is_persp == false) {
+      view_dist = 1.0f / max_ff(fabsf(winmat[0][0]), fabsf(winmat[1][1]));
+    }
+    return view_dist;
+  }
 };
+
+static inline float4x4 winmat_polygon_offset(float4x4 winmat, float view_dist, float offset)
+{
+  winmat[3][2] -= GPU_polygon_offset_calc(winmat.ptr(), view_dist, offset);
+  return winmat;
+}
 
 /**
  * Contains all overlay generic geometry batches.
@@ -73,16 +92,54 @@ class ShapeCache {
 
  public:
   BatchPtr quad_wire;
+  BatchPtr quad_solid;
   BatchPtr plain_axes;
   BatchPtr single_arrow;
   BatchPtr cube;
   BatchPtr circle;
   BatchPtr empty_sphere;
   BatchPtr empty_cone;
+  BatchPtr cylinder;
+  BatchPtr capsule_body;
+  BatchPtr capsule_cap;
   BatchPtr arrows;
   BatchPtr metaball_wire_circle;
 
   BatchPtr speaker;
+
+  BatchPtr camera_distances;
+  BatchPtr camera_frame;
+  BatchPtr camera_tria_wire;
+  BatchPtr camera_tria;
+
+  BatchPtr camera_volume;
+  BatchPtr camera_volume_wire;
+
+  BatchPtr sphere_low_detail;
+
+  BatchPtr ground_line;
+
+  BatchPtr light_icon_outer_lines;
+  BatchPtr light_icon_inner_lines;
+  BatchPtr light_icon_sun_rays;
+  BatchPtr light_point_lines;
+  BatchPtr light_sun_lines;
+  BatchPtr light_spot_lines;
+  BatchPtr light_area_disk_lines;
+  BatchPtr light_area_square_lines;
+  BatchPtr light_spot_volume;
+
+  BatchPtr field_force;
+  BatchPtr field_wind;
+  BatchPtr field_vortex;
+  BatchPtr field_curve;
+  BatchPtr field_sphere_limit;
+  BatchPtr field_tube_limit;
+  BatchPtr field_cone_limit;
+
+  BatchPtr lightprobe_cube;
+  BatchPtr lightprobe_planar;
+  BatchPtr lightprobe_grid;
 
   ShapeCache();
 };
@@ -110,15 +167,37 @@ class ShaderModule {
 
  public:
   /** Shaders */
-  ShaderPtr grid = shader("overlay_grid");
+  ShaderPtr anti_aliasing = shader("overlay_antialiasing");
   ShaderPtr background_fill = shader("overlay_background");
   ShaderPtr background_clip_bound = shader("overlay_clipbound");
+  ShaderPtr grid = shader("overlay_grid");
+  ShaderPtr mesh_analysis;
+  ShaderPtr mesh_edit_depth;
+  ShaderPtr mesh_edit_edge = shader("overlay_edit_mesh_edge_next");
+  ShaderPtr mesh_edit_face = shader("overlay_edit_mesh_face_next");
+  ShaderPtr mesh_edit_vert = shader("overlay_edit_mesh_vert_next");
+  ShaderPtr mesh_edit_facedot = shader("overlay_edit_mesh_facedot_next");
+  ShaderPtr mesh_edit_skin_root;
+  ShaderPtr mesh_face_normal, mesh_face_normal_subdiv;
+  ShaderPtr mesh_loop_normal, mesh_loop_normal_subdiv;
+  ShaderPtr mesh_vert_normal;
+  ShaderPtr outline_prepass_mesh;
+  ShaderPtr outline_prepass_wire;
+  ShaderPtr outline_prepass_curves;
+  ShaderPtr outline_prepass_pointcloud;
+  ShaderPtr outline_prepass_gpencil;
+  ShaderPtr outline_detect = shader("overlay_outline_detect");
 
   /** Selectable Shaders */
   ShaderPtr armature_sphere_outline;
   ShaderPtr depth_mesh;
+  ShaderPtr extra_grid;
   ShaderPtr extra_shape;
   ShaderPtr extra_wire_object;
+  ShaderPtr extra_wire;
+  ShaderPtr extra_loose_points;
+  ShaderPtr extra_ground_line;
+  ShaderPtr facing;
   ShaderPtr lattice_points;
   ShaderPtr lattice_wire;
 
@@ -134,6 +213,8 @@ class ShaderModule {
   {
     return ShaderPtr(GPU_shader_create_from_info_name(create_info_name));
   }
+  ShaderPtr shader(const char *create_info_name,
+                   FunctionRef<void(gpu::shader::ShaderCreateInfo &info)> patch);
   ShaderPtr selectable_shader(const char *create_info_name);
   ShaderPtr selectable_shader(const char *create_info_name,
                               FunctionRef<void(gpu::shader::ShaderCreateInfo &info)> patch);
@@ -142,27 +223,46 @@ class ShaderModule {
 struct Resources : public select::SelectMap {
   ShaderModule &shaders;
 
-  Framebuffer overlay_fb = {"overlay_fb"};
-  Framebuffer overlay_in_front_fb = {"overlay_in_front_fb"};
+  /* Overlay Color. */
   Framebuffer overlay_color_only_fb = {"overlay_color_only_fb"};
+  /* Overlay Color, Line Data. */
+  Framebuffer overlay_line_only_fb = {"overlay_line_only_fb"};
+  /* Depth, Overlay Color. */
+  Framebuffer overlay_fb = {"overlay_fb"};
+  /* Depth, Overlay Color, Line Data. */
   Framebuffer overlay_line_fb = {"overlay_line_fb"};
+  /* Depth In-Front, Overlay Color. */
+  Framebuffer overlay_in_front_fb = {"overlay_in_front_fb"};
+  /* Depth In-Front, Overlay Color, Line Data. */
   Framebuffer overlay_line_in_front_fb = {"overlay_line_in_front_fb"};
 
+  /* Output Color. */
+  Framebuffer overlay_output_fb = {"overlay_output_fb"};
+
+  /* Target containing line direction and data for line expansion and anti-aliasing. */
   TextureFromPool line_tx = {"line_tx"};
+  /* Target containing overlay color before anti-aliasing. */
+  TextureFromPool overlay_tx = {"overlay_tx"};
+
+  /* Texture that are usually allocated inside. These are fallback when they aren't.
+   * They are then wrapped inside the #TextureRefs below. */
   TextureFromPool depth_in_front_alloc_tx = {"overlay_depth_in_front_tx"};
   TextureFromPool color_overlay_alloc_tx = {"overlay_color_overlay_alloc_tx"};
   TextureFromPool color_render_alloc_tx = {"overlay_color_render_alloc_tx"};
+
+  Texture dummy_depth_tx = {"dummy_depth_tx"};
 
   /** TODO(fclem): Copy of G_data.block that should become theme colors only and managed by the
    * engine. */
   GlobalsUboStorage theme_settings;
   /* References, not owned. */
   GPUUniformBuf *globals_buf;
+  TextureRef weight_ramp_tx;
+  /* Wrappers around #DefaultTextureList members. */
   TextureRef depth_tx;
   TextureRef depth_in_front_tx;
   TextureRef color_overlay_tx;
   TextureRef color_render_tx;
-  TextureRef weight_ramp_tx;
 
   Resources(const SelectionType selection_type_, ShaderModule &shader_module)
       : select::SelectMap(selection_type_), shaders(shader_module){};
@@ -238,6 +338,19 @@ struct Resources : public select::SelectMap {
     ThemeColorID theme_id = object_wire_theme_id(ob_ref, state);
     return object_wire_color(ob_ref, theme_id);
   }
+
+  float4 background_blend_color(ThemeColorID theme_id) const
+  {
+    float4 color;
+    UI_GetThemeColorBlendShade4fv(theme_id, TH_BACK, 0.5, 0, color);
+    return color;
+  }
+
+  float4 object_background_blend_color(const ObjectRef &ob_ref, const State &state) const
+  {
+    ThemeColorID theme_id = object_wire_theme_id(ob_ref, state);
+    return background_blend_color(theme_id);
+  }
 };
 
 /**
@@ -262,7 +375,7 @@ template<typename InstanceDataT> struct ShapeInstanceBuf : private select::Selec
     data_buf.append(data);
   }
 
-  void end_sync(PassSimple &pass, gpu::Batch *shape)
+  void end_sync(PassSimple::Sub &pass, gpu::Batch *shape)
   {
     if (data_buf.is_empty()) {
       return;
@@ -271,6 +384,104 @@ template<typename InstanceDataT> struct ShapeInstanceBuf : private select::Selec
     data_buf.push_update();
     pass.bind_ssbo("data_buf", &data_buf);
     pass.draw(shape, data_buf.size());
+  }
+};
+
+struct VertexPrimitiveBuf {
+ protected:
+  select::SelectBuf select_buf;
+  StorageVectorBuffer<VertexData> data_buf;
+  int color_id = 0;
+
+  VertexPrimitiveBuf(const SelectionType selection_type, const char *name = nullptr)
+      : select_buf(selection_type), data_buf(name){};
+
+  void append(const float3 &position, const float4 &color)
+  {
+    data_buf.append({float4(position), color});
+  }
+
+  void end_sync(PassSimple::Sub &pass, GPUPrimType primitive)
+  {
+    if (data_buf.is_empty()) {
+      return;
+    }
+    select_buf.select_bind(pass);
+    data_buf.push_update();
+    pass.bind_ssbo("data_buf", &data_buf);
+    pass.push_constant("colorid", color_id);
+    pass.draw_procedural(primitive, 1, data_buf.size());
+  }
+
+ public:
+  void clear()
+  {
+    select_buf.select_clear();
+    data_buf.clear();
+    color_id = 0;
+  }
+};
+
+struct PointPrimitiveBuf : public VertexPrimitiveBuf {
+
+ public:
+  PointPrimitiveBuf(const SelectionType selection_type, const char *name = nullptr)
+      : VertexPrimitiveBuf(selection_type, name)
+  {
+  }
+
+  void append(const float3 &position, const float4 &color)
+  {
+    VertexPrimitiveBuf::append(position, color);
+  }
+
+  void append(const float3 &position, const float4 &color, select::ID select_id)
+  {
+    select_buf.select_append(select_id);
+    append(position, color);
+  }
+
+  void append(const float3 &position, const int color_id, select::ID select_id)
+  {
+    this->color_id = color_id;
+    append(position, float4(), select_id);
+  }
+
+  void end_sync(PassSimple::Sub &pass)
+  {
+    VertexPrimitiveBuf::end_sync(pass, GPU_PRIM_POINTS);
+  }
+};
+
+struct LinePrimitiveBuf : public VertexPrimitiveBuf {
+
+ public:
+  LinePrimitiveBuf(const SelectionType selection_type, const char *name = nullptr)
+      : VertexPrimitiveBuf(selection_type, name)
+  {
+  }
+
+  void append(const float3 &start, const float3 &end, const float4 &color)
+  {
+    VertexPrimitiveBuf::append(start, color);
+    VertexPrimitiveBuf::append(end, color);
+  }
+
+  void append(const float3 &start, const float3 &end, const float4 &color, select::ID select_id)
+  {
+    select_buf.select_append(select_id);
+    append(start, end, color);
+  }
+
+  void append(const float3 &start, const float3 &end, const int color_id, select::ID select_id)
+  {
+    this->color_id = color_id;
+    append(start, end, float4(), select_id);
+  }
+
+  void end_sync(PassSimple::Sub &pass)
+  {
+    VertexPrimitiveBuf::end_sync(pass, GPU_PRIM_LINES);
   }
 };
 

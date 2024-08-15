@@ -17,7 +17,6 @@
 #include "DNA_asset_types.h"
 #include "DNA_space_types.h"
 
-#include "AS_asset_identifier.hh"
 #include "AS_asset_library.hh"
 
 #include "BKE_asset.hh"
@@ -30,7 +29,7 @@
 #include "BKE_lib_remap.hh"
 #include "BKE_library.hh"
 #include "BKE_main.hh"
-#include "BKE_packedFile.h"
+#include "BKE_packedFile.hh"
 #include "BKE_preferences.h"
 #include "BKE_report.hh"
 
@@ -148,8 +147,8 @@ static void asset_main_create_expander(void * /*handle*/, Main * /*bmain*/, void
 {
   ID *id = static_cast<ID *>(vid);
 
-  if (id && (id->tag & LIB_TAG_DOIT) == 0) {
-    id->tag |= LIB_TAG_NEED_EXPAND | LIB_TAG_DOIT;
+  if (id && (id->tag & ID_TAG_DOIT) == 0) {
+    id->tag |= ID_TAG_NEED_EXPAND | ID_TAG_DOIT;
   }
 }
 
@@ -158,11 +157,11 @@ static Main *asset_main_create_from_ID(Main &bmain_src, ID &id_asset, ID **id_as
   /* Tag asset ID and its dependencies. */
   ID *id_src;
   FOREACH_MAIN_ID_BEGIN (&bmain_src, id_src) {
-    id_src->tag &= ~(LIB_TAG_NEED_EXPAND | LIB_TAG_DOIT);
+    id_src->tag &= ~(ID_TAG_NEED_EXPAND | ID_TAG_DOIT);
   }
   FOREACH_MAIN_ID_END;
 
-  id_asset.tag |= LIB_TAG_NEED_EXPAND | LIB_TAG_DOIT;
+  id_asset.tag |= ID_TAG_NEED_EXPAND | ID_TAG_DOIT;
 
   BLO_expand_main(nullptr, &bmain_src, asset_main_create_expander);
 
@@ -174,7 +173,7 @@ static Main *asset_main_create_from_ID(Main &bmain_src, ID &id_asset, ID **id_as
   blender::bke::id::IDRemapper id_remapper;
 
   FOREACH_MAIN_ID_BEGIN (&bmain_src, id_src) {
-    if (id_src->tag & LIB_TAG_DOIT) {
+    if (id_src->tag & ID_TAG_DOIT) {
       /* Note that this will not copy Library datablocks, and all copied
        * datablocks will become local as a result. */
       ID *id_dst = BKE_id_copy_ex(bmain_dst,
@@ -191,7 +190,7 @@ static Main *asset_main_create_from_ID(Main &bmain_src, ID &id_asset, ID **id_as
       id_remapper.add(id_src, nullptr);
     }
 
-    id_src->tag &= ~(LIB_TAG_NEED_EXPAND | LIB_TAG_DOIT);
+    id_src->tag &= ~(ID_TAG_NEED_EXPAND | ID_TAG_DOIT);
   }
   FOREACH_MAIN_ID_END;
 
@@ -201,7 +200,7 @@ static Main *asset_main_create_from_ID(Main &bmain_src, ID &id_asset, ID **id_as
   /* Compute reference counts. */
   ID *id_dst;
   FOREACH_MAIN_ID_BEGIN (bmain_dst, id_dst) {
-    id_dst->tag &= ~LIB_TAG_NO_USER_REFCOUNT;
+    id_dst->tag &= ~ID_TAG_NO_USER_REFCOUNT;
   }
   FOREACH_MAIN_ID_END;
   BKE_main_id_refcount_recompute(bmain_dst, false);
@@ -258,7 +257,7 @@ static void asset_reload(Main &global_main, Library *lib, ReportList &reports)
   BKE_blendfile_link_append_context_free(lapp_context);
 
   /* Clear temporary tag from relocation. */
-  BKE_main_id_tag_all(&global_main, LIB_TAG_PRE_EXISTING, false);
+  BKE_main_id_tag_all(&global_main, ID_TAG_PRE_EXISTING, false);
 
   /* Recreate dependency graph to include new IDs. */
   DEG_relations_tag_update(&global_main);
@@ -309,7 +308,7 @@ std::optional<std::string> asset_edit_id_save_as(Main &global_main,
                                                  const ID &id,
                                                  const StringRefNull name,
                                                  const bUserAssetLibrary &user_library,
-                                                 AssetWeakReference &new_weak_ref,
+                                                 AssetWeakReference &r_weak_ref,
                                                  ReportList &reports)
 {
   const std::string filepath = asset_blendfile_path_for_save(
@@ -323,7 +322,7 @@ std::optional<std::string> asset_edit_id_save_as(Main &global_main,
     return std::nullopt;
   }
 
-  new_weak_ref = asset_weak_reference_for_user_library(
+  r_weak_ref = asset_weak_reference_for_user_library(
       user_library, GS(id.name), name.c_str(), filepath.c_str());
 
   BKE_reportf(&reports, RPT_INFO, "Saved \"%s\"", filepath.c_str());
