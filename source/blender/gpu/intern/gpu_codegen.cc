@@ -109,6 +109,10 @@ struct GPUPass {
   bool should_optimize;
   /** Whether pass is in the GPUPass cache. */
   bool cached;
+  /** Protects pass shader from being created from multiple threads at the same time. */
+  ThreadMutex shader_creation_mutex;
+
+  BatchHandle async_compilation_handle;
 };
 
 /* -------------------------------------------------------------------- */
@@ -175,7 +179,7 @@ static GPUPass *gpu_pass_cache_resolve_collision(GPUPass *pass,
   return nullptr;
 }
 
-static bool gpu_pass_is_valid(GPUPass *pass)
+static bool gpu_pass_is_valid(const GPUPass *pass)
 {
   /* Shader is not null if compilation is successful. */
   return (pass->compiled == false || pass->shader != nullptr);
@@ -791,6 +795,8 @@ GPUPass *GPU_generate_pass(GPUMaterial *material,
      * Optimized passes cannot be optimized further, even if the heuristic is still not
      * favorable. */
     pass->should_optimize = (!optimize_graph) && codegen.should_optimize_heuristic();
+    pass->async_compilation_handle = -1;
+    BLI_mutex_init(&pass->shader_creation_mutex);
 
     codegen.create_info = nullptr;
 
@@ -894,13 +900,37 @@ bool GPU_pass_finalize_compilation(GPUPass *pass, GPUShader *shader)
   return success;
 }
 
+void GPU_pass_begin_async_compilation(GPUPass *pass, const char *shname)
+{
+  if (pass->async_compilation_handle == -1) {
+    GPUShaderCreateInfo *info = GPU_pass_begin_compilation(pass, shname);
+    BLI_assert(info);
+    pass->async_compilation_handle = GPU_shader_batch_create_from_infos({info});
+  }
+}
+
+bool GPU_pass_async_compilation_try_finalize(GPUPass *pass)
+{
+  BLI_assert(pass->async_compilation_handle != -1);
+  if (pass->async_compilation_handle) {
+    if (GPU_shader_batch_is_ready(pass->async_compilation_handle)) {
+      GPU_pass_finalize_compilation(
+          pass, GPU_shader_batch_finalize(pass->async_compilation_handle).first());
+    }
+  }
+
+  return pass->async_compilation_handle == 0;
+}
+
 bool GPU_pass_compile(GPUPass *pass, const char *shname)
 {
+  BLI_mutex_lock(&pass->shader_creation_mutex);
   bool success = true;
   if (GPUShaderCreateInfo *info = GPU_pass_begin_compilation(pass, shname)) {
     GPUShader *shader = GPU_shader_create_from_info(info);
     success = GPU_pass_finalize_compilation(pass, shader);
   }
+  BLI_mutex_unlock(&pass->shader_creation_mutex);
   return success;
 }
 
@@ -912,6 +942,7 @@ GPUShader *GPU_pass_shader_get(GPUPass *pass)
 static void gpu_pass_free(GPUPass *pass)
 {
   BLI_assert(pass->refcount == 0);
+  BLI_mutex_end(&pass->shader_creation_mutex);
   if (pass->shader) {
     GPU_shader_free(pass->shader);
   }

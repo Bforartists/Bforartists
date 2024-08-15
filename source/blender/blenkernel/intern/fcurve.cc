@@ -799,8 +799,8 @@ bool BKE_fcurve_calc_bounds(const FCurve *fcu,
 }
 
 bool BKE_fcurve_calc_range(const FCurve *fcu,
-                           float *r_start,
-                           float *r_end,
+                           float *r_min,
+                           float *r_max,
                            const bool selected_keys_only)
 {
   float min = 0.0f;
@@ -828,8 +828,8 @@ bool BKE_fcurve_calc_range(const FCurve *fcu,
     foundvert = true;
   }
 
-  *r_start = min;
-  *r_end = max;
+  *r_min = min;
+  *r_max = max;
 
   return foundvert;
 }
@@ -2576,8 +2576,16 @@ void BKE_fmodifiers_blend_write(BlendWriter *writer, ListBase *fmodifiers)
 void BKE_fmodifiers_blend_read_data(BlendDataReader *reader, ListBase *fmodifiers, FCurve *curve)
 {
   LISTBASE_FOREACH (FModifier *, fcm, fmodifiers) {
+    const FModifierTypeInfo *fmi = fmodifier_get_typeinfo(fcm);
+
     /* relink general data */
-    BLO_read_data_address(reader, &fcm->data);
+    if (fmi) {
+      fcm->data = BLO_read_struct_by_name_array(reader, fmi->struct_name, 1, fcm->data);
+    }
+    else {
+      BLI_assert_unreachable();
+      fcm->data = nullptr;
+    }
     fcm->curve = curve;
 
     /* do relinking of data for specific types */

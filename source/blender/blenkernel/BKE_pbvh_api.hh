@@ -48,38 +48,16 @@ namespace blender {
 namespace bke::pbvh {
 class Node;
 class Tree;
+namespace pixels {
+struct PBVHData;
+struct NodeData;
+}  // namespace pixels
 }  // namespace bke::pbvh
 namespace draw::pbvh {
 struct PBVHBatches;
 struct PBVH_GPU_Args;
 }  // namespace draw::pbvh
 }  // namespace blender
-
-struct PBVHProxyNode {
-  blender::Vector<blender::float3> co;
-};
-
-struct PBVHColorBufferNode {
-  float (*color)[4] = nullptr;
-};
-
-struct PBVHPixels {
-  /**
-   * Storage for texture painting on blender::bke::pbvh::Tree level.
-   *
-   * Contains #blender::bke::pbvh::pixels::PBVHData
-   */
-  void *data = nullptr;
-};
-
-struct PBVHPixelsNode {
-  /**
-   * Contains triangle/pixel data used during texture painting.
-   *
-   * Contains #blender::bke::pbvh::pixels::NodeData.
-   */
-  void *node_data = nullptr;
-};
 
 namespace blender::bke::pbvh {
 
@@ -138,7 +116,7 @@ class Node {
    */
   Array<int, 0> vert_indices_;
   /** The number of vertices in #vert_indices not shared with (owned by) another node. */
-  int uniq_verts_ = 0;
+  int unique_verts_num_ = 0;
 
   /* Array of indices into the Mesh's corner array.
    * Type::Mesh only.
@@ -178,9 +156,7 @@ class Node {
   BMVert **bm_orvert_ = nullptr;
   int bm_tot_ortri_ = 0;
 
-  /* Used to store the brush color during a stroke and composite it over the original color */
-  PBVHColorBufferNode color_buffer_;
-  PBVHPixelsNode pixels_;
+  pixels::NodeData *pixels_ = nullptr;
 
   /* Used to flash colors of updated node bounding boxes in
    * debug draw mode (when G.debug_value / bpy.app.debug_value is 889).
@@ -227,15 +203,11 @@ class Tree {
   /* Dynamic topology */
   float bm_max_edge_len_;
   float bm_min_edge_len_;
-  int cd_vert_node_offset_ = -1;
-  int cd_face_node_offset_ = -1;
 
   float planes_[6][4];
   int num_planes_;
 
-  BMLog *bm_log_ = nullptr;
-
-  PBVHPixels pixels_;
+  pixels::PBVHData *pixels_ = nullptr;
 
  public:
   Tree(const Type type) : type_(type) {}
@@ -303,14 +275,9 @@ std::unique_ptr<Tree> build_grids(Mesh *mesh, SubdivCCG *subdiv_ccg);
 /**
  * Build a Tree from a BMesh.
  */
-std::unique_ptr<Tree> build_bmesh(BMesh *bm,
-                                  BMLog *log,
-                                  int cd_vert_node_offset,
-                                  int cd_face_node_offset);
+std::unique_ptr<Tree> build_bmesh(BMesh *bm);
 
-void update_bmesh_offsets(Tree &pbvh, int cd_vert_node_offset, int cd_face_node_offset);
-
-void build_pixels(Tree &pbvh, Mesh *mesh, Image *image, ImageUser *image_user);
+void build_pixels(Tree &pbvh, const Mesh &mesh, Image &image, ImageUser &image_user);
 void free(std::unique_ptr<Tree> &pbvh);
 
 /* Hierarchical Search in the BVH, two methods:
@@ -334,7 +301,7 @@ void raycast(Tree &pbvh,
              bool original);
 
 bool raycast_node(Tree &pbvh,
-                  Node *node,
+                  Node &node,
                   const float (*origco)[3],
                   bool use_origco,
                   Span<int> corner_verts,
@@ -349,7 +316,7 @@ bool raycast_node(Tree &pbvh,
                   int *active_face_grid_index,
                   float *face_normal);
 
-bool bmesh_node_raycast_detail(Node *node,
+bool bmesh_node_raycast_detail(Node &node,
                                const float ray_start[3],
                                IsectRayPrecalc *isect_precalc,
                                float *depth,
@@ -375,7 +342,7 @@ void find_nearest_to_ray(Tree &pbvh,
                          bool original);
 
 bool find_nearest_to_ray_node(Tree &pbvh,
-                              Node *node,
+                              Node &node,
                               const float (*origco)[3],
                               bool use_origco,
                               Span<int> corner_verts,
@@ -439,6 +406,7 @@ namespace blender::bke::pbvh {
  * Collapse short edges, subdivide long edges.
  */
 bool bmesh_update_topology(Tree &pbvh,
+                           BMLog &bm_log,
                            PBVHTopologyUpdateMode mode,
                            const float center[3],
                            const float view_normal[3],
@@ -559,147 +527,6 @@ void BKE_pbvh_vert_coords_apply(blender::bke::pbvh::Tree &pbvh,
                                 blender::Span<blender::float3> vert_positions);
 bool BKE_pbvh_is_deformed(const blender::bke::pbvh::Tree &pbvh);
 
-/* Vertex Iterator. */
-
-/* This iterator has quite a lot of code, but it's designed to:
- * - allow the compiler to eliminate dead code and variables
- * - spend most of the time in the relatively simple inner loop */
-
-/* NOTE: PBVH_ITER_ALL does not skip hidden vertices,
- * PBVH_ITER_UNIQUE does */
-#define PBVH_ITER_ALL 0
-#define PBVH_ITER_UNIQUE 1
-
-struct PBVHVertexIter {
-  /* iteration */
-  int g;
-  int width;
-  int height;
-  int gx;
-  int gy;
-  int i;
-  int index;
-  PBVHVertRef vertex;
-
-  /* grid */
-  CCGKey key;
-  CCGElem *const *grids;
-  CCGElem *grid;
-  const blender::BitGroupVector<> *grid_hidden;
-  std::optional<blender::BoundedBitSpan> gh;
-  const int *grid_indices;
-  int totgrid;
-  int gridsize;
-
-  /* mesh */
-  blender::MutableSpan<blender::float3> vert_positions;
-  blender::Span<blender::float3> vert_normals;
-  const bool *hide_vert;
-  int totvert;
-  const int *vert_indices;
-  const float *vmask;
-  bool is_mesh;
-
-  /* bmesh */
-  std::optional<blender::Set<BMVert *, 0>::Iterator> bm_unique_verts;
-  std::optional<blender::Set<BMVert *, 0>::Iterator> bm_unique_verts_end;
-  std::optional<blender::Set<BMVert *, 0>::Iterator> bm_other_verts;
-  std::optional<blender::Set<BMVert *, 0>::Iterator> bm_other_verts_end;
-  CustomData *bm_vdata;
-  int cd_vert_mask_offset;
-
-  /* result: these are all computed in the macro, but we assume
-   * that compiler optimization's will skip the ones we don't use */
-  BMVert *bm_vert;
-  float *co;
-  const float *no;
-  const float *fno;
-  float mask;
-  bool visible;
-};
-
-void pbvh_vertex_iter_init(blender::bke::pbvh::Tree &pbvh,
-                           blender::bke::pbvh::Node *node,
-                           PBVHVertexIter *vi,
-                           int mode);
-
-#define BKE_pbvh_vertex_iter_begin(pbvh, node, vi, mode) \
-  pbvh_vertex_iter_init(pbvh, node, &vi, mode); \
-\
-  for (vi.i = 0, vi.g = 0; vi.g < vi.totgrid; vi.g++) { \
-    if (vi.grids) { \
-      vi.width = vi.gridsize; \
-      vi.height = vi.gridsize; \
-      vi.index = vi.vertex.i = vi.grid_indices[vi.g] * vi.key.grid_area - 1; \
-      vi.grid = CCG_elem_offset(vi.key, vi.grids[vi.grid_indices[vi.g]], -1); \
-      if (mode == PBVH_ITER_UNIQUE) { \
-        if (vi.grid_hidden) { \
-          vi.gh.emplace((*vi.grid_hidden)[vi.grid_indices[vi.g]]); \
-        } \
-        else { \
-          vi.gh.reset(); \
-        } \
-      } \
-    } \
-    else { \
-      vi.width = vi.totvert; \
-      vi.height = 1; \
-    } \
-\
-    for (vi.gy = 0; vi.gy < vi.height; vi.gy++) { \
-      for (vi.gx = 0; vi.gx < vi.width; vi.gx++, vi.i++) { \
-        if (vi.grid) { \
-          vi.grid = CCG_elem_next(vi.key, vi.grid); \
-          vi.co = CCG_elem_co(vi.key, vi.grid); \
-          vi.fno = CCG_elem_no(vi.key, vi.grid); \
-          vi.mask = vi.key.has_mask ? CCG_elem_mask(vi.key, vi.grid) : 0.0f; \
-          vi.index++; \
-          vi.vertex.i++; \
-          vi.visible = true; \
-          if (vi.gh) { \
-            if ((*vi.gh)[vi.gy * vi.gridsize + vi.gx]) { \
-              continue; \
-            } \
-          } \
-        } \
-        else if (!vi.vert_positions.is_empty()) { \
-          vi.visible = !(vi.hide_vert && vi.hide_vert[vi.vert_indices[vi.gx]]); \
-          if (mode == PBVH_ITER_UNIQUE && !vi.visible) { \
-            continue; \
-          } \
-          vi.co = vi.vert_positions[vi.vert_indices[vi.gx]]; \
-          vi.no = vi.vert_normals[vi.vert_indices[vi.gx]]; \
-          vi.index = vi.vertex.i = vi.vert_indices[vi.i]; \
-          vi.mask = vi.vmask ? vi.vmask[vi.index] : 0.0f; \
-        } \
-        else { \
-          if (*vi.bm_unique_verts != *vi.bm_unique_verts_end) { \
-            vi.bm_vert = **vi.bm_unique_verts; \
-            (*vi.bm_unique_verts)++; \
-          } \
-          else { \
-            vi.bm_vert = **vi.bm_other_verts; \
-            (*vi.bm_other_verts)++; \
-          } \
-          vi.visible = !BM_elem_flag_test_bool(vi.bm_vert, BM_ELEM_HIDDEN); \
-          if (mode == PBVH_ITER_UNIQUE && !vi.visible) { \
-            continue; \
-          } \
-          vi.co = vi.bm_vert->co; \
-          vi.fno = vi.bm_vert->no; \
-          vi.vertex = BKE_pbvh_make_vref((intptr_t)vi.bm_vert); \
-          vi.index = BM_elem_index_get(vi.bm_vert); \
-          vi.mask = BM_ELEM_CD_GET_FLOAT(vi.bm_vert, vi.cd_vert_mask_offset); \
-        }
-
-#define BKE_pbvh_vertex_iter_end \
-  } \
-  } \
-  } \
-  ((void)0)
-
-#define PBVH_FACE_ITER_VERTS_RESERVED 8
-
 void BKE_pbvh_node_get_bm_orco_data(blender::bke::pbvh::Node *node,
                                     int (**r_orco_tris)[3],
                                     int *r_orco_tris_num,
@@ -714,11 +541,8 @@ blender::Span<blender::float3> BKE_pbvh_get_vert_positions(const blender::bke::p
 blender::MutableSpan<blender::float3> BKE_pbvh_get_vert_positions(blender::bke::pbvh::Tree &pbvh);
 blender::Span<blender::float3> BKE_pbvh_get_vert_normals(const blender::bke::pbvh::Tree &pbvh);
 
-PBVHColorBufferNode *BKE_pbvh_node_color_buffer_get(blender::bke::pbvh::Node *node);
-void BKE_pbvh_node_color_buffer_free(blender::bke::pbvh::Tree &pbvh);
-
-void BKE_pbvh_ensure_node_loops(blender::bke::pbvh::Tree &pbvh,
-                                blender::Span<blender::int3> corner_tris);
+void BKE_pbvh_ensure_node_face_corners(blender::bke::pbvh::Tree &pbvh,
+                                       blender::Span<blender::int3> corner_tris);
 int BKE_pbvh_debug_draw_gen_get(blender::bke::pbvh::Node &node);
 
 namespace blender::bke::pbvh {

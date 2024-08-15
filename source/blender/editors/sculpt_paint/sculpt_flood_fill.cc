@@ -98,8 +98,7 @@ void add_initial_with_symmetry(const Object &ob,
     else {
       BLI_assert(radius > 0.0f);
       const float radius_squared = (radius == FLT_MAX) ? FLT_MAX : radius * radius;
-      float3 location;
-      flip_v3_v3(location, SCULPT_vertex_co_get(ss, vertex), ePaintSymmetryFlags(i));
+      float3 location = symmetry_flip(SCULPT_vertex_co_get(ss, vertex), ePaintSymmetryFlags(i));
       v = nearest_vert_calc(ob, location, radius_squared, false);
     }
 
@@ -110,7 +109,7 @@ void add_initial_with_symmetry(const Object &ob,
 }
 
 void FillDataMesh::add_initial_with_symmetry(const Object &object,
-                                             const SculptSession &ss,
+                                             const bke::pbvh::Tree &pbvh,
                                              const int vertex,
                                              const float radius)
 {
@@ -120,7 +119,7 @@ void FillDataMesh::add_initial_with_symmetry(const Object &object,
   }
 
   const Mesh &mesh = *static_cast<const Mesh *>(object.data);
-  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
+  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(pbvh);
   const bke::AttributeAccessor attributes = mesh.attributes();
   VArraySpan<bool> hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point);
 
@@ -137,10 +136,9 @@ void FillDataMesh::add_initial_with_symmetry(const Object &object,
     else {
       BLI_assert(radius > 0.0f);
       const float radius_squared = (radius == FLT_MAX) ? FLT_MAX : radius * radius;
-      float3 location;
-      flip_v3_v3(location, vert_positions[vertex], ePaintSymmetryFlags(i));
+      float3 location = symmetry_flip(vert_positions[vertex], ePaintSymmetryFlags(i));
       vert_to_add = nearest_vert_calc_mesh(
-          *ss.pbvh, vert_positions, hide_vert, location, radius_squared, false);
+          pbvh, vert_positions, hide_vert, location, radius_squared, false);
     }
 
     if (vert_to_add) {
@@ -150,16 +148,16 @@ void FillDataMesh::add_initial_with_symmetry(const Object &object,
 }
 
 void FillDataGrids::add_initial_with_symmetry(const Object &object,
-                                              const SculptSession &ss,
-                                              SubdivCCGCoord vertex,
-                                              float radius)
+                                              const bke::pbvh::Tree &pbvh,
+                                              const SubdivCCG &subdiv_ccg,
+                                              const SubdivCCGCoord vertex,
+                                              const float radius)
 {
   if (radius <= 0.0f) {
     this->add_initial(vertex);
     return;
   }
 
-  const SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
   const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
 
   const char symm = SCULPT_mesh_symmetry_xyz_get(object);
@@ -175,11 +173,10 @@ void FillDataGrids::add_initial_with_symmetry(const Object &object,
     else {
       BLI_assert(radius > 0.0f);
       const float radius_squared = (radius == FLT_MAX) ? FLT_MAX : radius * radius;
-      float3 location;
-      CCGElem *elem = ss.subdiv_ccg->grids[vertex.grid_index];
-      flip_v3_v3(
-          location, CCG_grid_elem_co(key, elem, vertex.x, vertex.y), ePaintSymmetryFlags(i));
-      vert_to_add = nearest_vert_calc_grids(*ss.pbvh, subdiv_ccg, location, radius_squared, false);
+      CCGElem *elem = subdiv_ccg.grids[vertex.grid_index];
+      float3 location = symmetry_flip(CCG_grid_elem_co(key, elem, vertex.x, vertex.y),
+                                      ePaintSymmetryFlags(i));
+      vert_to_add = nearest_vert_calc_grids(pbvh, subdiv_ccg, location, radius_squared, false);
     }
 
     if (vert_to_add) {
@@ -189,9 +186,9 @@ void FillDataGrids::add_initial_with_symmetry(const Object &object,
 }
 
 void FillDataBMesh::add_initial_with_symmetry(const Object &object,
-                                              const SculptSession &ss,
+                                              const bke::pbvh::Tree &pbvh,
                                               BMVert *vertex,
-                                              float radius)
+                                              const float radius)
 {
   if (radius <= 0.0f) {
     this->add_initial(vertex);
@@ -211,48 +208,14 @@ void FillDataBMesh::add_initial_with_symmetry(const Object &object,
     else {
       BLI_assert(radius > 0.0f);
       const float radius_squared = (radius == FLT_MAX) ? FLT_MAX : radius * radius;
-      float3 location;
-      flip_v3_v3(location, vertex->co, ePaintSymmetryFlags(i));
-      vert_to_add = nearest_vert_calc_bmesh(*ss.pbvh, location, radius_squared, false);
+      float3 location = symmetry_flip(vertex->co, ePaintSymmetryFlags(i));
+      vert_to_add = nearest_vert_calc_bmesh(pbvh, location, radius_squared, false);
     }
 
     if (vert_to_add) {
       this->add_initial(*vert_to_add);
     }
   }
-}
-
-void add_active(const Object &ob, const SculptSession &ss, FillData &flood, float radius)
-{
-  add_initial_with_symmetry(ob, ss, flood, SCULPT_active_vertex_get(ss), radius);
-}
-
-void FillDataMesh::add_active(const Object &object, const SculptSession &ss, float radius)
-{
-  PBVHVertRef active_vert = SCULPT_active_vertex_get(ss);
-  this->add_initial_with_symmetry(object, ss, active_vert.i, radius);
-}
-
-void FillDataGrids::add_active(const Object &object, const SculptSession &ss, float radius)
-{
-  PBVHVertRef active_vert = SCULPT_active_vertex_get(ss);
-
-  const SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
-  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
-  const int grid_index = active_vert.i / key.grid_area;
-  const int index_in_grid = active_vert.i - grid_index * key.grid_area;
-  SubdivCCGCoord coord{};
-  coord.grid_index = grid_index;
-  coord.x = index_in_grid % key.grid_size;
-  coord.y = index_in_grid / key.grid_size;
-
-  this->add_initial_with_symmetry(object, ss, coord, radius);
-}
-
-void FillDataBMesh::add_active(const Object &object, const SculptSession &ss, float radius)
-{
-  PBVHVertRef active_vert = SCULPT_active_vertex_get(ss);
-  this->add_initial_with_symmetry(object, ss, reinterpret_cast<BMVert *>(active_vert.i), radius);
 }
 
 void execute(SculptSession &ss,
@@ -287,7 +250,7 @@ void execute(SculptSession &ss,
 }
 
 void FillDataMesh::execute(Object &object,
-                           SculptSession &ss,
+                           const GroupedSpan<int> vert_to_face_map,
                            FunctionRef<bool(int from_v, int to_v)> func)
 {
   Mesh &mesh = *static_cast<Mesh *>(object.data);
@@ -303,22 +266,14 @@ void FillDataMesh::execute(Object &object,
     const int from_v = this->queue.front();
     this->queue.pop();
 
-    neighbors.clear();
-    for (const int face : ss.vert_to_face_map[from_v]) {
-      if (!hide_poly.is_empty() && hide_poly[face]) {
-        continue;
-      }
-      const int2 verts = bke::mesh::face_find_adjacent_verts(faces[face], corner_verts, from_v);
-      neighbors.append_non_duplicates(verts[0]);
-      neighbors.append_non_duplicates(verts[1]);
-    }
-
-    for (const int neighbor : neighbors) {
+    for (const int neighbor : vert_neighbors_get_mesh(
+             from_v, faces, corner_verts, vert_to_face_map, hide_poly, neighbors))
+    {
       if (this->visited_verts[neighbor]) {
         continue;
       }
 
-      if (hide_vert[neighbor]) {
+      if (!hide_vert.is_empty() && hide_vert[neighbor]) {
         continue;
       }
 
@@ -332,22 +287,21 @@ void FillDataMesh::execute(Object &object,
 
 void FillDataGrids::execute(
     Object & /*object*/,
-    SculptSession &ss,
+    const SubdivCCG &subdiv_ccg,
     FunctionRef<bool(SubdivCCGCoord from_v, SubdivCCGCoord to_v, bool is_duplicate)> func)
 {
-  const CCGKey key = BKE_subdiv_ccg_key_top_level(*ss.subdiv_ccg);
-  SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
   while (!this->queue.empty()) {
     SubdivCCGCoord from_v = this->queue.front();
     this->queue.pop();
 
     SubdivCCGNeighbors neighbors;
-    BKE_subdiv_ccg_neighbor_coords_get(*ss.subdiv_ccg, from_v, true, neighbors);
+    BKE_subdiv_ccg_neighbor_coords_get(subdiv_ccg, from_v, true, neighbors);
     const int num_unique = neighbors.coords.size() - neighbors.num_duplicates;
 
     /* Flood fill expects the duplicate entries to be passed to the per-neighbor lambda first, so
      * iterate from the end of the vector to the beginning. */
-    for (int i = neighbors.coords.size() - 1; i >= 0; i++) {
+    for (int i = neighbors.coords.size() - 1; i >= 0; i--) {
       SubdivCCGCoord neighbor = neighbors.coords[i];
       const int index_in_grid = neighbor.y * key.grid_size + neighbor.x;
       const int index = neighbor.grid_index * key.grid_area + index_in_grid;
@@ -371,7 +325,6 @@ void FillDataGrids::execute(
 }
 
 void FillDataBMesh::execute(Object & /*object*/,
-                            SculptSession & /*ss*/,
                             FunctionRef<bool(BMVert *from_v, BMVert *to_v)> func)
 {
   Vector<BMVert *, 64> neighbors;
