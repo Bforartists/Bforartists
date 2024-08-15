@@ -49,7 +49,6 @@
 #include "BKE_effect.h"
 #include "BKE_geometry_set.hh"
 #include "BKE_global.hh"
-#include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_idprop.hh"
 #include "BKE_key.hh"
 #include "BKE_lattice.hh"
@@ -132,9 +131,6 @@ static void object_force_modifier_update_for_bind(Depsgraph *depsgraph, Object *
   }
   else if (ELEM(ob->type, OB_CURVES_LEGACY, OB_SURF, OB_FONT)) {
     BKE_displist_make_curveTypes(depsgraph, scene_eval, ob_eval, false);
-  }
-  else if (ob->type == OB_GPENCIL_LEGACY) {
-    BKE_gpencil_modifiers_calc(depsgraph, scene_eval, ob_eval);
   }
   else if (ob->type == OB_CURVES) {
     BKE_curves_data_update(depsgraph, scene_eval, ob);
@@ -281,7 +277,7 @@ bool iter_other(Main *bmain,
   ID *ob_data_id = static_cast<ID *>(orig_ob->data);
   int users = ob_data_id->us;
 
-  if (ob_data_id->flag & LIB_FAKEUSER) {
+  if (ob_data_id->flag & ID_FLAG_FAKEUSER) {
     users--;
   }
 
@@ -808,7 +804,7 @@ static Mesh *create_applied_mesh_for_modifier(Depsgraph *depsgraph,
                    reinterpret_cast<Mesh *>(ob_eval->runtime->data_orig) :
                    reinterpret_cast<Mesh *>(ob_eval->data);
   const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(md_eval->type));
-  const ModifierEvalContext mectx = {depsgraph, ob_eval, MOD_APPLY_TO_BASE_MESH};
+  const ModifierEvalContext mectx = {depsgraph, ob_eval, MOD_APPLY_TO_ORIGINAL};
 
   if (!(md_eval->mode & eModifierMode_Realtime)) {
     return nullptr;
@@ -1053,7 +1049,7 @@ static bool modifier_apply_obdata(
     Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
     Curve *curve = static_cast<Curve *>(ob->data);
     Curve *curve_eval = static_cast<Curve *>(object_eval->data);
-    ModifierEvalContext mectx = {depsgraph, object_eval, ModifierApplyFlag(0)};
+    ModifierEvalContext mectx = {depsgraph, object_eval, MOD_APPLY_TO_ORIGINAL};
 
     if (ELEM(mti->type, ModifierTypeType::Constructive, ModifierTypeType::Nonconstructive)) {
       BKE_report(
@@ -1080,7 +1076,7 @@ static bool modifier_apply_obdata(
   else if (ob->type == OB_LATTICE) {
     Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
     Lattice *lattice = static_cast<Lattice *>(ob->data);
-    ModifierEvalContext mectx = {depsgraph, object_eval, ModifierApplyFlag(0)};
+    ModifierEvalContext mectx = {depsgraph, object_eval, MOD_APPLY_TO_ORIGINAL};
 
     if (ELEM(mti->type, ModifierTypeType::Constructive, ModifierTypeType::Nonconstructive)) {
       BKE_report(reports, RPT_ERROR, "Constructive modifiers cannot be applied");
@@ -1107,7 +1103,7 @@ static bool modifier_apply_obdata(
     bke::GeometrySet geometry_set = bke::GeometrySet::from_curves(
         &curves, bke::GeometryOwnershipType::ReadOnly);
 
-    ModifierEvalContext mectx = {depsgraph, ob, ModifierApplyFlag(0)};
+    ModifierEvalContext mectx = {depsgraph, ob, MOD_APPLY_TO_ORIGINAL};
     mti->modify_geometry_set(md_eval, &mectx, &geometry_set);
     if (!geometry_set.has_curves()) {
       BKE_report(reports, RPT_ERROR, "Evaluated geometry from modifier does not contain curves");
@@ -1132,7 +1128,7 @@ static bool modifier_apply_obdata(
     bke::GeometrySet geometry_set = bke::GeometrySet::from_pointcloud(
         &points, bke::GeometryOwnershipType::ReadOnly);
 
-    ModifierEvalContext mectx = {depsgraph, ob, ModifierApplyFlag(0)};
+    ModifierEvalContext mectx = {depsgraph, ob, MOD_APPLY_TO_ORIGINAL};
     mti->modify_geometry_set(md_eval, &mectx, &geometry_set);
     if (!geometry_set.has_pointcloud()) {
       BKE_report(

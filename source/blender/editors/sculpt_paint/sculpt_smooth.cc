@@ -9,7 +9,9 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_math_base.hh"
+#include "BLI_math_geom.h"
 #include "BLI_math_vector.h"
+#include "BLI_math_vector.hh"
 #include "BLI_task.h"
 
 #include "DNA_brush_types.h"
@@ -18,6 +20,7 @@
 #include "BKE_pbvh_api.hh"
 #include "BKE_subdiv_ccg.hh"
 
+#include "mesh_brush_common.hh"
 #include "sculpt_intern.hh"
 
 #include "bmesh.hh"
@@ -27,33 +30,67 @@
 
 namespace blender::ed::sculpt_paint::smooth {
 
-static float3 average_positions(const Span<float3> positions, const Span<int> indices)
+template<typename T> T calc_average(const Span<T> positions, const Span<int> indices)
 {
   const float factor = math::rcp(float(indices.size()));
-  float3 result(0);
+  T result{};
   for (const int i : indices) {
     result += positions[i] * factor;
   }
   return result;
 }
 
-void neighbor_position_average_mesh(const Span<float3> positions,
-                                    const Span<int> verts,
-                                    const Span<Vector<int>> vert_neighbors,
-                                    const MutableSpan<float3> new_positions)
+template<typename T>
+void neighbor_data_average_mesh_check_loose(const Span<T> src,
+                                            const Span<int> verts,
+                                            const Span<Vector<int>> vert_neighbors,
+                                            const MutableSpan<T> dst)
 {
-  BLI_assert(vert_neighbors.size() == new_positions.size());
+  BLI_assert(verts.size() == dst.size());
+  BLI_assert(vert_neighbors.size() == dst.size());
 
   for (const int i : vert_neighbors.index_range()) {
     const Span<int> neighbors = vert_neighbors[i];
     if (neighbors.is_empty()) {
-      new_positions[i] = positions[verts[i]];
+      dst[i] = src[verts[i]];
     }
     else {
-      new_positions[i] = average_positions(positions, neighbors);
+      dst[i] = calc_average(src, neighbors);
     }
   }
 }
+
+template void neighbor_data_average_mesh_check_loose<float>(Span<float>,
+                                                            Span<int>,
+                                                            Span<Vector<int>>,
+                                                            MutableSpan<float>);
+template void neighbor_data_average_mesh_check_loose<float3>(Span<float3>,
+                                                             Span<int>,
+                                                             Span<Vector<int>>,
+                                                             MutableSpan<float3>);
+
+template<typename T>
+void neighbor_data_average_mesh(const Span<T> src,
+                                const Span<Vector<int>> vert_neighbors,
+                                const MutableSpan<T> dst)
+{
+  BLI_assert(vert_neighbors.size() == dst.size());
+
+  for (const int i : vert_neighbors.index_range()) {
+    BLI_assert(!vert_neighbors[i].is_empty());
+    dst[i] = calc_average(src, vert_neighbors[i]);
+  }
+}
+
+template void neighbor_data_average_mesh<float>(Span<float>,
+                                                Span<Vector<int>>,
+                                                MutableSpan<float>);
+template void neighbor_data_average_mesh<float3>(Span<float3>,
+                                                 Span<Vector<int>>,
+                                                 MutableSpan<float3>);
+template void neighbor_data_average_mesh<float4>(Span<float4>,
+                                                 Span<Vector<int>>,
+                                                 MutableSpan<float4>);
 
 static float3 average_positions(const CCGKey &key,
                                 const Span<CCGElem *> elems,
@@ -160,6 +197,80 @@ void neighbor_position_average_interior_grids(const OffsetIndices<int> faces,
   }
 }
 
+template<typename T>
+void average_data_grids(const SubdivCCG &subdiv_ccg,
+                        const Span<T> src,
+                        const Span<int> grids,
+                        const MutableSpan<T> dst)
+{
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+
+  BLI_assert(grids.size() * key.grid_area == src.size());
+
+  for (const int i : grids.index_range()) {
+    const int grid = grids[i];
+    const int node_verts_start = i * key.grid_area;
+
+    /* TODO: This loop could be optimized in the future by skipping unnecessary logic for
+     * non-boundary grid vertices. */
+    for (const int y : IndexRange(key.grid_size)) {
+      for (const int x : IndexRange(key.grid_size)) {
+        const int offset = CCG_grid_xy_to_index(key.grid_size, x, y);
+        const int node_vert_index = node_verts_start + offset;
+
+        SubdivCCGCoord coord{};
+        coord.grid_index = grid;
+        coord.x = x;
+        coord.y = y;
+
+        SubdivCCGNeighbors neighbors;
+        BKE_subdiv_ccg_neighbor_coords_get(subdiv_ccg, coord, false, neighbors);
+
+        T sum{};
+        for (const SubdivCCGCoord neighbor : neighbors.coords) {
+          const int index = neighbor.grid_index * key.grid_area +
+                            CCG_grid_xy_to_index(key.grid_size, neighbor.x, neighbor.y);
+          sum += src[index];
+        }
+        dst[node_vert_index] = sum / neighbors.coords.size();
+      }
+    }
+  }
+}
+
+template<typename T>
+void average_data_bmesh(const Span<T> src, const Set<BMVert *, 0> &verts, const MutableSpan<T> dst)
+{
+  Vector<BMVert *, 64> neighbor_data;
+
+  int i = 0;
+  for (BMVert *vert : verts) {
+    T sum{};
+    neighbor_data.clear();
+    const Span<BMVert *> neighbors = vert_neighbors_get_bmesh(*vert, neighbor_data);
+    for (const BMVert *neighbor : neighbors) {
+      sum += src[BM_elem_index_get(neighbor)];
+    }
+    dst[i] = sum / neighbors.size();
+    i++;
+  }
+}
+
+template void average_data_grids<float>(const SubdivCCG &,
+                                        Span<float>,
+                                        Span<int>,
+                                        MutableSpan<float>);
+template void average_data_grids<float3>(const SubdivCCG &,
+                                         Span<float3>,
+                                         Span<int>,
+                                         MutableSpan<float3>);
+template void average_data_bmesh<float>(Span<float> src,
+                                        const Set<BMVert *, 0> &,
+                                        MutableSpan<float>);
+template void average_data_bmesh<float3>(Span<float3> src,
+                                         const Set<BMVert *, 0> &,
+                                         MutableSpan<float3>);
+
 static float3 average_positions(const Span<const BMVert *> verts)
 {
   const float factor = math::rcp(float(verts.size()));
@@ -203,44 +314,6 @@ void neighbor_position_average_interior_bmesh(const Set<BMVert *, 0> &verts,
     }
     i++;
   }
-}
-
-float3 neighbor_coords_average_interior(const SculptSession &ss, PBVHVertRef vertex)
-{
-  float3 avg(0);
-  int total = 0;
-  int neighbor_count = 0;
-  const bool is_boundary = boundary::vert_is_boundary(ss, vertex);
-
-  SculptVertexNeighborIter ni;
-  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vertex, ni) {
-    neighbor_count++;
-    if (is_boundary) {
-      /* Boundary vertices use only other boundary vertices. */
-      if (boundary::vert_is_boundary(ss, ni.vertex)) {
-        avg += SCULPT_vertex_co_get(ss, ni.vertex);
-        total++;
-      }
-    }
-    else {
-      /* Interior vertices use all neighbors. */
-      avg += SCULPT_vertex_co_get(ss, ni.vertex);
-      total++;
-    }
-  }
-  SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
-
-  /* Do not modify corner vertices. */
-  if (neighbor_count <= 2 && is_boundary) {
-    return SCULPT_vertex_co_get(ss, vertex);
-  }
-
-  /* Avoid division by 0 when there are no neighbors. */
-  if (total == 0) {
-    return SCULPT_vertex_co_get(ss, vertex);
-  }
-
-  return avg / total;
 }
 
 void bmesh_four_neighbor_average(float avg[3], const float3 &direction, const BMVert *v)
@@ -287,246 +360,367 @@ void bmesh_four_neighbor_average(float avg[3], const float3 &direction, const BM
   }
 }
 
-/* Generic functions for laplacian smoothing. These functions do not take boundary vertices into
- * account. */
-
-float3 neighbor_coords_average(SculptSession &ss, PBVHVertRef vertex)
+void neighbor_color_average(const OffsetIndices<int> faces,
+                            const Span<int> corner_verts,
+                            const GroupedSpan<int> vert_to_face_map,
+                            const GSpan color_attribute,
+                            const bke::AttrDomain color_domain,
+                            const Span<Vector<int>> vert_neighbors,
+                            const MutableSpan<float4> smooth_colors)
 {
-  float3 avg(0);
-  int total = 0;
+  BLI_assert(vert_neighbors.size() == smooth_colors.size());
 
-  SculptVertexNeighborIter ni;
-  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vertex, ni) {
-    avg += SCULPT_vertex_co_get(ss, ni.vertex);
-    total++;
-  }
-  SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
-
-  if (total > 0) {
-    return avg / total;
-  }
-  return SCULPT_vertex_co_get(ss, vertex);
-}
-
-float neighbor_mask_average(SculptSession &ss,
-                            const SculptMaskWriteInfo write_info,
-                            PBVHVertRef vertex)
-{
-  float avg = 0.0f;
-  int total = 0;
-  SculptVertexNeighborIter ni;
-  switch (ss.pbvh->type()) {
-    case bke::pbvh::Type::Mesh: {
-      SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vertex, ni) {
-        avg += write_info.layer[ni.vertex.i];
-        total++;
-      }
-      SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
-      return avg / total;
+  for (const int i : vert_neighbors.index_range()) {
+    float4 sum(0);
+    const Span<int> neighbors = vert_neighbors[i];
+    for (const int vert : neighbors) {
+      sum += color::color_vert_get(
+          faces, corner_verts, vert_to_face_map, color_attribute, color_domain, vert);
     }
-    case bke::pbvh::Type::Grids: {
-      SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vertex, ni) {
-        avg += SCULPT_mask_get_at_grids_vert_index(
-            *ss.subdiv_ccg, BKE_subdiv_ccg_key_top_level(*ss.subdiv_ccg), ni.vertex.i);
-        total++;
-      }
-      SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
-      return avg / total;
-    }
-    case bke::pbvh::Type::BMesh: {
-      Vector<BMVert *, 64> neighbors;
-      for (BMVert *neighbor :
-           vert_neighbors_get_bmesh(*reinterpret_cast<BMVert *>(vertex.i), neighbors))
-      {
-        avg += BM_ELEM_CD_GET_FLOAT(neighbor, write_info.bm_offset);
-      }
-      return avg / neighbors.size();
-    }
+    smooth_colors[i] = sum / neighbors.size();
   }
-  BLI_assert_unreachable();
-  return 0.0f;
-}
-
-float4 neighbor_color_average(SculptSession &ss,
-                              const OffsetIndices<int> faces,
-                              const Span<int> corner_verts,
-                              const GroupedSpan<int> vert_to_face_map,
-                              const GSpan color_attribute,
-                              const bke::AttrDomain color_domain,
-                              const int vert)
-{
-  float4 avg(0);
-  int total = 0;
-
-  SculptVertexNeighborIter ni;
-  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, PBVHVertRef{vert}, ni) {
-    float4 tmp = color::color_vert_get(
-        faces, corner_verts, vert_to_face_map, color_attribute, color_domain, ni.index);
-
-    avg += tmp;
-    total++;
-  }
-  SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
-
-  if (total > 0) {
-    return avg / total;
-  }
-  return color::color_vert_get(
-      faces, corner_verts, vert_to_face_map, color_attribute, color_domain, vert);
 }
 
 /* HC Smooth Algorithm. */
 /* From: Improved Laplacian Smoothing of Noisy Surface Meshes */
 
-void surface_smooth_laplacian_step(SculptSession &ss,
-                                   float *disp,
-                                   const float co[3],
+void surface_smooth_laplacian_step(const Span<float3> positions,
+                                   const Span<float3> orig_positions,
+                                   const Span<float3> average_positions,
+                                   const float alpha,
                                    MutableSpan<float3> laplacian_disp,
-                                   const PBVHVertRef vertex,
-                                   const float origco[3],
-                                   const float alpha)
+                                   MutableSpan<float3> translations)
 {
-  float weigthed_o[3], weigthed_q[3], d[3];
-  int v_index = BKE_pbvh_vertex_to_index(*ss.pbvh, vertex);
+  BLI_assert(positions.size() == orig_positions.size());
+  BLI_assert(positions.size() == average_positions.size());
+  BLI_assert(positions.size() == laplacian_disp.size());
+  BLI_assert(positions.size() == translations.size());
 
-  const float3 laplacian_smooth_co = neighbor_coords_average(ss, vertex);
-
-  mul_v3_v3fl(weigthed_o, origco, alpha);
-  mul_v3_v3fl(weigthed_q, co, 1.0f - alpha);
-  add_v3_v3v3(d, weigthed_o, weigthed_q);
-  sub_v3_v3v3(laplacian_disp[v_index], laplacian_smooth_co, d);
-
-  sub_v3_v3v3(disp, laplacian_smooth_co, co);
+  for (const int i : average_positions.index_range()) {
+    const float3 weighted_o = orig_positions[i] * alpha;
+    const float3 weighted_q = positions[i] * (1.0f - alpha);
+    const float3 d = weighted_o + weighted_q;
+    laplacian_disp[i] = average_positions[i] - d;
+    translations[i] = average_positions[i] - positions[i];
+  }
 }
 
-void surface_smooth_displace_step(SculptSession &ss,
-                                  float *co,
-                                  MutableSpan<float3> laplacian_disp,
-                                  const PBVHVertRef vertex,
+void surface_smooth_displace_step(const Span<float3> laplacian_disp,
+                                  const Span<float3> average_laplacian_disp,
                                   const float beta,
-                                  const float fade)
+                                  const MutableSpan<float3> translations)
 {
-  float b_avg[3] = {0.0f, 0.0f, 0.0f};
-  float b_current_vertex[3];
-  int total = 0;
-  SculptVertexNeighborIter ni;
-  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vertex, ni) {
-    add_v3_v3(b_avg, laplacian_disp[ni.index]);
-    total++;
-  }
+  BLI_assert(laplacian_disp.size() == average_laplacian_disp.size());
+  BLI_assert(laplacian_disp.size() == translations.size());
 
-  SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
-  if (total > 0) {
-    int v_index = BKE_pbvh_vertex_to_index(*ss.pbvh, vertex);
-
-    mul_v3_v3fl(b_current_vertex, b_avg, (1.0f - beta) / total);
-    madd_v3_v3fl(b_current_vertex, laplacian_disp[v_index], beta);
-    mul_v3_fl(b_current_vertex, clamp_f(fade, 0.0f, 1.0f));
-    sub_v3_v3(co, b_current_vertex);
+  for (const int i : laplacian_disp.index_range()) {
+    float3 b_current_vert = average_laplacian_disp[i] * (1.0f - beta);
+    b_current_vert += laplacian_disp[i] * beta;
+    translations[i] = -b_current_vert;
   }
 }
 
-static void do_surface_smooth_brush_laplacian_task(Object &ob,
-                                                   const Brush &brush,
-                                                   bke::pbvh::Node *node)
+static float3 translation_to_plane(const float3 &current_position,
+                                   const float3 &normal,
+                                   const float3 &smoothed_position)
 {
-  SculptSession &ss = *ob.sculpt;
-  const float bstrength = ss.cache->bstrength;
-  float alpha = brush.surface_smooth_shape_preservation;
+  float4 plane;
+  plane_from_point_normal_v3(plane, current_position, normal);
 
-  PBVHVertexIter vd;
+  float3 smooth_closest_plane;
+  closest_to_plane_v3(smooth_closest_plane, plane, smoothed_position);
 
-  SculptBrushTest test;
-  SculptBrushTestFn sculpt_brush_test_sq_fn = SCULPT_brush_test_init_with_falloff_shape(
-      ss, test, brush.falloff_shape);
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
+  return smooth_closest_plane - current_position;
+}
 
-  SculptOrigVertData orig_data = SCULPT_orig_vert_data_init(ob, *node, undo::Type::Position);
-  auto_mask::NodeData automask_data = auto_mask::node_begin(
-      ob, ss.cache->automasking.get(), *node);
+static float3 calc_boundary_normal_corner(const float3 &current_position,
+                                          const Span<float3> vert_positions,
+                                          const Span<int> neighbors)
+{
+  float3 normal(0);
+  for (const int vert : neighbors) {
+    const float3 to_neighbor = vert_positions[vert] - current_position;
+    normal += math::normalize(to_neighbor);
+  }
+  return math::normalize(normal);
+}
 
-  BKE_pbvh_vertex_iter_begin (*ss.pbvh, node, vd, PBVH_ITER_UNIQUE) {
-    SCULPT_orig_vert_data_update(orig_data, vd);
-    if (!sculpt_brush_test_sq_fn(test, vd.co)) {
+static float3 calc_boundary_normal_corner(const CCGKey &key,
+                                          const Span<CCGElem *> elems,
+                                          const float3 &current_position,
+                                          const Span<SubdivCCGCoord> neighbors)
+{
+  float3 normal(0);
+  for (const SubdivCCGCoord &coord : neighbors) {
+    const float3 to_neighbor = CCG_grid_elem_co(key, elems[coord.grid_index], coord.x, coord.y) -
+                               current_position;
+    normal += math::normalize(to_neighbor);
+  }
+  return math::normalize(normal);
+}
+
+static float3 average_positions(const CCGKey &key,
+                                const Span<CCGElem *> elems,
+                                const Span<float3> positions,
+                                const Span<SubdivCCGCoord> neighbors,
+                                const int current_grid,
+                                const int current_grid_start)
+{
+  const float factor = math::rcp(float(neighbors.size()));
+  float3 result(0);
+  for (const SubdivCCGCoord &coord : neighbors) {
+    if (current_grid == coord.grid_index) {
+      const int offset = CCG_grid_xy_to_index(key.grid_size, coord.x, coord.y);
+      result += positions[current_grid_start + offset] * factor;
+    }
+    else {
+      result += CCG_grid_elem_co(key, elems[coord.grid_index], coord.x, coord.y) * factor;
+    }
+  }
+  return result;
+}
+
+static float3 calc_boundary_normal_corner(const float3 &current_position,
+                                          const Span<BMVert *> neighbors)
+{
+  float3 normal(0);
+  for (BMVert *vert : neighbors) {
+    const float3 neighbor_pos = vert->co;
+    const float3 to_neighbor = neighbor_pos - current_position;
+    normal += math::normalize(to_neighbor);
+  }
+  return math::normalize(normal);
+}
+
+void calc_relaxed_translations_faces(const Span<float3> vert_positions,
+                                     const Span<float3> vert_normals,
+                                     const OffsetIndices<int> faces,
+                                     const Span<int> corner_verts,
+                                     const GroupedSpan<int> vert_to_face_map,
+                                     const BitSpan boundary_verts,
+                                     const int *face_sets,
+                                     const Span<bool> hide_poly,
+                                     const bool filter_boundary_face_sets,
+                                     const Span<int> verts,
+                                     const Span<float> factors,
+                                     Vector<Vector<int>> &neighbors,
+                                     const MutableSpan<float3> translations)
+{
+  BLI_assert(verts.size() == factors.size());
+  BLI_assert(verts.size() == translations.size());
+
+  neighbors.resize(verts.size());
+  calc_vert_neighbors_interior(
+      faces, corner_verts, vert_to_face_map, boundary_verts, hide_poly, verts, neighbors);
+
+  for (const int i : verts.index_range()) {
+    if (factors[i] == 0.0f) {
+      translations[i] = float3(0);
       continue;
     }
 
-    auto_mask::node_update(automask_data, vd);
-
-    const float fade = bstrength * SCULPT_brush_strength_factor(ss,
-                                                                brush,
-                                                                vd.co,
-                                                                sqrtf(test.dist),
-                                                                vd.no,
-                                                                vd.fno,
-                                                                vd.mask,
-                                                                vd.vertex,
-                                                                thread_id,
-                                                                &automask_data);
-
-    float disp[3];
-    surface_smooth_laplacian_step(
-        ss, disp, vd.co, ss.cache->surface_smooth_laplacian_disp, vd.vertex, orig_data.co, alpha);
-    madd_v3_v3fl(vd.co, disp, clamp_f(fade, 0.0f, 1.0f));
-  }
-  BKE_pbvh_vertex_iter_end;
-}
-
-static void do_surface_smooth_brush_displace_task(Object &ob,
-                                                  const Brush &brush,
-                                                  bke::pbvh::Node *node)
-{
-  SculptSession &ss = *ob.sculpt;
-  const float bstrength = ss.cache->bstrength;
-  const float beta = brush.surface_smooth_current_vertex;
-
-  PBVHVertexIter vd;
-
-  SculptBrushTest test;
-  SculptBrushTestFn sculpt_brush_test_sq_fn = SCULPT_brush_test_init_with_falloff_shape(
-      ss, test, brush.falloff_shape);
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
-  auto_mask::NodeData automask_data = auto_mask::node_begin(
-      ob, ss.cache->automasking.get(), *node);
-
-  BKE_pbvh_vertex_iter_begin (*ss.pbvh, node, vd, PBVH_ITER_UNIQUE) {
-    if (!sculpt_brush_test_sq_fn(test, vd.co)) {
+    /* Don't modify corner vertices */
+    if (neighbors[i].size() <= 2) {
+      translations[i] = float3(0);
       continue;
     }
 
-    auto_mask::node_update(automask_data, vd);
+    const bool is_boundary = boundary_verts[verts[i]];
+    if (is_boundary) {
+      neighbors[i].remove_if([&](const int vert) { return !boundary_verts[vert]; });
+    }
 
-    const float fade = bstrength * SCULPT_brush_strength_factor(ss,
-                                                                brush,
-                                                                vd.co,
-                                                                sqrtf(test.dist),
-                                                                vd.no,
-                                                                vd.fno,
-                                                                vd.mask,
-                                                                vd.vertex,
-                                                                thread_id,
-                                                                &automask_data);
-    surface_smooth_displace_step(
-        ss, vd.co, ss.cache->surface_smooth_laplacian_disp, vd.vertex, beta, fade);
+    if (filter_boundary_face_sets) {
+      neighbors[i].remove_if([&](const int vert) {
+        return face_set::vert_has_unique_face_set(vert_to_face_map, face_sets, vert);
+      });
+    }
+
+    if (neighbors[i].is_empty()) {
+      translations[i] = float3(0);
+      continue;
+    }
+
+    const float3 smoothed_position = calc_average(vert_positions, neighbors[i]);
+
+    /* Normal Calculation */
+    float3 normal;
+    if (is_boundary && neighbors[i].size() == 2) {
+      normal = calc_boundary_normal_corner(vert_positions[verts[i]], vert_positions, neighbors[i]);
+      if (math::is_zero(normal)) {
+        translations[i] = float3(0);
+        continue;
+      }
+    }
+    else {
+      normal = vert_normals[verts[i]];
+    }
+
+    const float3 translation = translation_to_plane(
+        vert_positions[verts[i]], normal, smoothed_position);
+
+    translations[i] = translation * factors[i];
   }
-  BKE_pbvh_vertex_iter_end;
 }
 
-void do_surface_smooth_brush(const Sculpt &sd, Object &ob, Span<bke::pbvh::Node *> nodes)
+void calc_relaxed_translations_grids(const SubdivCCG &subdiv_ccg,
+                                     const OffsetIndices<int> faces,
+                                     const Span<int> corner_verts,
+                                     const int *face_sets,
+                                     const GroupedSpan<int> vert_to_face_map,
+                                     const BitSpan boundary_verts,
+                                     const Span<int> grids,
+                                     const bool filter_boundary_face_sets,
+                                     const Span<float> factors,
+                                     const Span<float3> positions,
+                                     Vector<Vector<SubdivCCGCoord>> &neighbors,
+                                     const MutableSpan<float3> translations)
 {
-  const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
+  const Span<CCGElem *> elems = subdiv_ccg.grids;
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
 
-  for (int i = 0; i < brush.surface_smooth_iterations; i++) {
-    threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
-      for (const int i : range) {
-        do_surface_smooth_brush_laplacian_task(ob, brush, nodes[i]);
+  const int grid_verts_num = grids.size() * key.grid_area;
+  BLI_assert(grid_verts_num == translations.size());
+  BLI_assert(grid_verts_num == factors.size());
+
+  neighbors.resize(grid_verts_num);
+  calc_vert_neighbors_interior(faces, corner_verts, boundary_verts, subdiv_ccg, grids, neighbors);
+
+  for (const int i : grids.index_range()) {
+    CCGElem *elem = elems[grids[i]];
+    const int node_start = i * key.grid_area;
+    for (const int y : IndexRange(key.grid_size)) {
+      for (const int x : IndexRange(key.grid_size)) {
+        const int offset = CCG_grid_xy_to_index(key.grid_size, x, y);
+        const int node_vert = node_start + offset;
+        if (factors[node_vert] == 0.0f) {
+          translations[node_vert] = float3(0);
+          continue;
+        }
+
+        /* Don't modify corner vertices */
+        if (neighbors[node_vert].size() <= 2) {
+          translations[node_vert] = float3(0);
+          continue;
+        }
+
+        SubdivCCGCoord coord{};
+        coord.grid_index = grids[i];
+        coord.x = x;
+        coord.y = y;
+
+        const bool is_boundary = BKE_subdiv_ccg_coord_is_mesh_boundary(
+            faces, corner_verts, boundary_verts, subdiv_ccg, coord);
+
+        if (is_boundary) {
+          neighbors[node_vert].remove_if([&](const SubdivCCGCoord neighbor) {
+            return !BKE_subdiv_ccg_coord_is_mesh_boundary(
+                faces, corner_verts, boundary_verts, subdiv_ccg, neighbor);
+          });
+        }
+
+        if (filter_boundary_face_sets) {
+          neighbors[node_vert].remove_if([&](const SubdivCCGCoord neighbor) {
+            return face_set::vert_has_unique_face_set(
+                vert_to_face_map, corner_verts, faces, face_sets, subdiv_ccg, neighbor);
+          });
+        }
+
+        if (neighbors[i].is_empty()) {
+          translations[node_vert] = float3(0);
+          continue;
+        }
+
+        const float3 smoothed_position = average_positions(
+            key, elems, positions, neighbors[node_vert], grids[i], node_start);
+
+        /* Normal Calculation */
+        float3 normal;
+        if (is_boundary && neighbors[i].size() == 2) {
+          normal = calc_boundary_normal_corner(
+              key, elems, positions[node_vert], neighbors[node_vert]);
+          if (math::is_zero(normal)) {
+            translations[node_vert] = float3(0);
+            continue;
+          }
+        }
+        else {
+          normal = CCG_elem_offset_no(key, elem, offset);
+        }
+
+        const float3 translation = translation_to_plane(
+            positions[node_vert], normal, smoothed_position);
+
+        translations[node_vert] = translation * factors[node_vert];
       }
-    });
-    threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
-      for (const int i : range) {
-        do_surface_smooth_brush_displace_task(ob, brush, nodes[i]);
+    }
+  }
+}
+
+void calc_relaxed_translations_bmesh(const Set<BMVert *, 0> &verts,
+                                     const Span<float3> positions,
+                                     const bool filter_boundary_face_sets,
+                                     const Span<float> factors,
+                                     Vector<Vector<BMVert *>> &neighbors,
+                                     const MutableSpan<float3> translations)
+{
+  BLI_assert(verts.size() == factors.size());
+  BLI_assert(verts.size() == translations.size());
+
+  neighbors.resize(verts.size());
+  calc_vert_neighbors_interior(verts, neighbors);
+
+  int i = 0;
+  for (const BMVert *vert : verts) {
+    if (factors[i] == 0.0f) {
+      translations[i] = float3(0);
+      i++;
+      continue;
+    }
+
+    /* Don't modify corner vertices */
+    if (neighbors[i].size() <= 2) {
+      translations[i] = float3(0);
+      i++;
+      continue;
+    }
+
+    const bool is_boundary = BM_vert_is_boundary(vert);
+    if (is_boundary) {
+      neighbors[i].remove_if([&](const BMVert *vert) { return !BM_vert_is_boundary(vert); });
+    }
+
+    if (filter_boundary_face_sets) {
+      neighbors[i].remove_if(
+          [&](const BMVert *vert) { return face_set::vert_has_unique_face_set(vert); });
+    }
+
+    if (neighbors[i].is_empty()) {
+      translations[i] = float3(0);
+      i++;
+      continue;
+    }
+
+    const float3 smoothed_position = average_positions(neighbors[i]);
+
+    /* Normal Calculation */
+    float3 normal;
+    if (is_boundary && neighbors[i].size() == 2) {
+      normal = calc_boundary_normal_corner(positions[i], neighbors[i]);
+      if (math::is_zero(normal)) {
+        translations[i] = float3(0);
+        i++;
+        continue;
       }
-    });
+    }
+    else {
+      normal = vert->no;
+    }
+
+    const float3 translation = translation_to_plane(positions[i], normal, smoothed_position);
+
+    translations[i] = translation * factors[i];
+    i++;
   }
 }
 

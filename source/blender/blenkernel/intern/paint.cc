@@ -1662,12 +1662,10 @@ static void sculptsession_free_pbvh(Object *object)
   ss->vert_to_edge_indices = {};
   ss->vert_to_edge_map = {};
 
-  MEM_SAFE_FREE(ss->preview_vert_list);
-  ss->preview_vert_count = 0;
+  ss->preview_verts = {};
 
   ss->vertex_info.boundary.clear_and_shrink();
-
-  MEM_SAFE_FREE(ss->fake_neighbors.fake_neighbor_index);
+  ss->fake_neighbors.fake_neighbor_index = {};
 }
 
 void BKE_sculptsession_bm_to_me_for_render(Object *object)
@@ -1734,6 +1732,86 @@ SculptSession::~SculptSession()
   BKE_sculptsession_free_vwpaint_data(this);
 
   MEM_SAFE_FREE(this->last_paint_canvas_key);
+}
+
+PBVHVertRef SculptSession::active_vert_ref() const
+{
+  if (ELEM(this->pbvh->type(),
+           blender::bke::pbvh::Type::Mesh,
+           blender::bke::pbvh::Type::Grids,
+           blender::bke::pbvh::Type::BMesh))
+  {
+    return active_vert_;
+  }
+
+  return {PBVH_REF_NONE};
+}
+
+ActiveVert SculptSession::active_vert() const
+{
+  /* TODO: While this code currently translates the stored PBVHVertRef into the given type, once
+   * we stored the actual field as ActiveVertex, this call can replace #active_vertex. */
+  switch (this->pbvh->type()) {
+    case blender::bke::pbvh::Type::Mesh:
+      return int(active_vert_.i);
+    case blender::bke::pbvh::Type::Grids: {
+      const CCGKey key = BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg);
+      return SubdivCCGCoord::from_index(key, active_vert_.i);
+    }
+    case blender::bke::pbvh::Type::BMesh:
+      return reinterpret_cast<BMVert *>(active_vert_.i);
+    default:
+      BLI_assert_unreachable();
+  }
+
+  return {};
+}
+
+int SculptSession::active_vert_index() const
+{
+  const ActiveVert vert = this->active_vert();
+  if (std::holds_alternative<int>(vert)) {
+    return std::get<int>(vert);
+  }
+  else if (std::holds_alternative<SubdivCCGCoord>(vert)) {
+    const SubdivCCGCoord coord = std::get<SubdivCCGCoord>(vert);
+    return coord.to_index(BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg));
+  }
+  else if (std::holds_alternative<BMVert *>(vert)) {
+    BMVert *bm_vert = std::get<BMVert *>(vert);
+    return BM_elem_index_get(bm_vert);
+  }
+
+  return -1;
+}
+
+blender::float3 SculptSession::active_vert_position(const Object & /*object*/) const
+{
+  const ActiveVert vert = this->active_vert();
+  if (std::holds_alternative<int>(vert)) {
+    /* TODO: When we remove mesh positions from PBVH, this should be replaced with the positions
+     * array accessed via the object param */
+    const Span<float3> positions = BKE_pbvh_get_vert_positions(*this->pbvh);
+    return positions[std::get<int>(vert)];
+  }
+  else if (std::holds_alternative<SubdivCCGCoord>(vert)) {
+    const CCGKey key = BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg);
+    const SubdivCCGCoord coord = std::get<SubdivCCGCoord>(vert);
+
+    return CCG_grid_elem_co(key, this->subdiv_ccg->grids[coord.grid_index], coord.x, coord.y);
+  }
+  else if (std::holds_alternative<BMVert *>(vert)) {
+    BMVert *bm_vert = std::get<BMVert *>(vert);
+    return bm_vert->co;
+  }
+
+  BLI_assert_unreachable();
+  return float3(std::numeric_limits<float>::infinity());
+}
+
+void SculptSession::set_active_vert(const PBVHVertRef vert)
+{
+  active_vert_ = vert;
 }
 
 static MultiresModifierData *sculpt_multires_modifier_get(const Scene *scene,
@@ -1900,7 +1978,6 @@ static void sculpt_update_object(Depsgraph *depsgraph,
 
     /* These are assigned to the base mesh in Multires. This is needed because Face Sets operators
      * and tools use the Face Sets data from the base mesh when Multires is active. */
-    ss.vert_positions = mesh_orig->vert_positions_for_write();
     ss.faces = mesh_orig->faces();
     ss.corner_verts = mesh_orig->corner_verts();
   }
@@ -1908,7 +1985,6 @@ static void sculpt_update_object(Depsgraph *depsgraph,
     ss.totvert = mesh_orig->verts_num;
     ss.faces_num = mesh_orig->faces_num;
     ss.totfaces = mesh_orig->faces_num;
-    ss.vert_positions = mesh_orig->vert_positions_for_write();
     ss.faces = mesh_orig->faces();
     ss.corner_verts = mesh_orig->corner_verts();
     ss.multires.active = false;
@@ -2296,10 +2372,7 @@ static std::unique_ptr<pbvh::Tree> build_pbvh_for_dynamic_topology(Object *ob)
 {
   sculptsession_bmesh_add_layers(ob);
 
-  return pbvh::build_bmesh(ob->sculpt->bm,
-                           ob->sculpt->bm_log,
-                           ob->sculpt->attrs.dyntopo_node_id_vertex->bmesh_cd_offset,
-                           ob->sculpt->attrs.dyntopo_node_id_face->bmesh_cd_offset);
+  return pbvh::build_bmesh(ob->sculpt->bm);
 }
 
 static std::unique_ptr<pbvh::Tree> build_pbvh_from_regular_mesh(Object *ob,
@@ -2348,8 +2421,6 @@ blender::bke::pbvh::Tree *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Ob
 
     return ob->sculpt->pbvh.get();
   }
-
-  ob->sculpt->islands_valid = false;
 
   if (ob->sculpt->bm != nullptr) {
     /* Sculpting on a BMesh (dynamic-topology) gets a special pbvh::Tree. */
@@ -2815,20 +2886,6 @@ SculptAttribute *BKE_sculpt_attribute_ensure(Object *ob,
       ob, domain, proptype, name, &temp_params, ob->sculpt->pbvh->type(), true);
 }
 
-static void sculptsession_bmesh_attr_update_internal(Object *ob)
-{
-  using namespace blender;
-  SculptSession *ss = ob->sculpt;
-
-  sculptsession_bmesh_add_layers(ob);
-
-  if (ss->pbvh) {
-    bke::pbvh::update_bmesh_offsets(*ss->pbvh,
-                                    ob->sculpt->attrs.dyntopo_node_id_vertex->bmesh_cd_offset,
-                                    ob->sculpt->attrs.dyntopo_node_id_face->bmesh_cd_offset);
-  }
-}
-
 static void sculptsession_bmesh_add_layers(Object *ob)
 {
   SculptSession *ss = ob->sculpt;
@@ -2881,7 +2938,7 @@ static void sculpt_attribute_update_refs(Object *ob, blender::bke::pbvh::Type pb
     }
 
     if (ss->bm) {
-      sculptsession_bmesh_attr_update_internal(ob);
+      sculptsession_bmesh_add_layers(ob);
     }
   }
 }

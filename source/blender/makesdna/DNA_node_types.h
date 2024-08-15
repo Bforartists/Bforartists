@@ -700,7 +700,12 @@ typedef struct bNodeTree {
 
   /** #blender::bke::NodeGroupColorTag. */
   int color_tag;
-  char _pad[4];
+
+  /**
+   * Default width of a group node created for this group. May be zero, in which case this value
+   * should be ignored.
+   */
+  int default_group_node_width;
 
   rctf viewer_border;
 
@@ -853,7 +858,7 @@ enum {
   NTREE_VIEWER_BORDER = 1 << 4,
   /**
    * Tree is localized copy, free when deleting node groups.
-   * NOTE: DEPRECATED, use (id->tag & LIB_TAG_LOCALIZED) instead.
+   * NOTE: DEPRECATED, use (id->tag & ID_TAG_LOCALIZED) instead.
    */
   // NTREE_IS_LOCALIZED = 1 << 5,
 };
@@ -1126,7 +1131,8 @@ typedef struct NodeImageMultiFile {
   int sfra DNA_DEPRECATED, efra DNA_DEPRECATED;
   /** Selected input in details view list. */
   int active_input;
-  char _pad[4];
+  char save_as_render;
+  char _pad[3];
 } NodeImageMultiFile;
 typedef struct NodeImageMultiFileSocket {
   /* single layer file output */

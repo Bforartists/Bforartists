@@ -1192,15 +1192,6 @@ def km_property_editor(_params):
         ("object.modifier_copy", {"type": 'D', "value": 'PRESS', "shift": True}, None),
         ("object.add_modifier_menu", {"type": 'A', "value": 'PRESS', "shift": True}, None),
         ("object.modifier_apply", {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("report", True)]}),
-        # Grease pencil modifier panels
-        ("object.gpencil_modifier_remove",
-         {"type": 'X', "value": 'PRESS'}, {"properties": [("report", True)]}),
-        ("object.gpencil_modifier_remove",
-         {"type": 'DEL', "value": 'PRESS'}, {"properties": [("report", True)]}),
-        ("object.gpencil_modifier_copy",
-         {"type": 'D', "value": 'PRESS', "shift": True}, None),
-        ("object.gpencil_modifier_apply",
-         {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("report", True)]}),
         # ShaderFX panels
         ("object.shaderfx_remove", {"type": 'X', "value": 'PRESS'}, {"properties": [("report", True)]}),
         ("object.shaderfx_remove", {"type": 'DEL', "value": 'PRESS'}, {"properties": [("report", True)]}),
@@ -4641,6 +4632,7 @@ def km_grease_pencil_brush_stroke(_params):
          {"properties": [("scalar", 0.9)]}),
         ("brush.scale_size", {"type": 'RIGHT_BRACKET', "value": 'PRESS', "repeat": True},
          {"properties": [("scalar", 1.0 / 0.9)]}),
+        *_template_items_context_panel("VIEW3D_PT_greasepencil_draw_context_menu", _params.context_menu_event),
     ])
 
     return keymap
@@ -4769,6 +4761,7 @@ def km_grease_pencil_sculpt_mode(params):
             "VIEW3D_AST_brush_gpencil_sculpt",
             {"type": 'SPACE', "value": 'PRESS', "shift": True}
         ),
+        *_template_items_context_panel("VIEW3D_PT_greasepencil_sculpt_context_menu", params.context_menu_event),
     ])
 
     return keymap
@@ -6655,6 +6648,7 @@ def km_gesture_polyline(_params):
 
     items.extend([
         ("CONFIRM", {"type": 'RET', "value": 'PRESS', "any": True}, None),
+        ("CONFIRM", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "any": True}, None),
         ("CANCEL", {"type": 'ESC', "value": 'PRESS', "any": True}, None),
         ("CANCEL", {"type": 'RIGHTMOUSE', "value": 'ANY', "any": True}, None),
         ("SELECT", {"type": 'LEFTMOUSE', "value": 'PRESS', "any": True}, None),
