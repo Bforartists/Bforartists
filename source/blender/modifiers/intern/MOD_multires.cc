@@ -126,7 +126,7 @@ static Mesh *multires_as_mesh(MultiresModifierData *mmd,
   Mesh *result = mesh;
   const bool use_render_params = (ctx->flag & MOD_APPLY_RENDER);
   const bool ignore_simplify = (ctx->flag & MOD_APPLY_IGNORE_SIMPLIFY);
-  const bool ignore_control_edges = (ctx->flag & MOD_APPLY_TO_BASE_MESH);
+  const bool ignore_control_edges = (ctx->flag & MOD_APPLY_TO_ORIGINAL);
   const Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
   Object *object = ctx->object;
   blender::bke::subdiv::ToMeshSettings mesh_settings;
@@ -233,7 +233,6 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
       sculpt_session->multires.level = mmd->sculptlvl;
       sculpt_session->totvert = mesh->verts_num;
       sculpt_session->faces_num = mesh->faces_num;
-      sculpt_session->vert_positions = {};
       sculpt_session->faces = {};
       sculpt_session->corner_verts = {};
     }

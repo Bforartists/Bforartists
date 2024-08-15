@@ -410,6 +410,10 @@ option(WITH_OPENMP "Enable OpenMP (has to be supported by the compiler)" ON)
 if(UNIX AND NOT APPLE)
   option(WITH_OPENMP_STATIC "Link OpenMP statically (only used by the release environment)" OFF)
   mark_as_advanced(WITH_OPENMP_STATIC)
+elseif(WIN32 AND CMAKE_C_COMPILER_ID MATCHES "Clang" AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
+  # At time of testing (LLVM 18.1.6) OMP is not included in public LLVM builds for Windows ARM64
+  set(WITH_OPENMP OFF)
+  set(WITH_OPENMP_STATIC OFF)
 endif()
 
 if(WITH_GHOST_X11)
@@ -700,7 +704,7 @@ if(NOT APPLE AND NOT (WIN32 AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
     gfx900 gfx90c gfx902
     gfx1010 gfx1011 gfx1012
     gfx1030 gfx1031 gfx1032 gfx1034 gfx1035 gfx1036
-    gfx1100 gfx1101 gfx1102 gfx1103 gfx1150 gfx1151
+    gfx1100 gfx1101 gfx1102 gfx1103 #gfx1150 gfx1151 BFA - temporarily removed from the \\CMakeList.txt list, as they are not included in AMD HIP ROCm 5.5.1.
     CACHE STRING "AMD HIP architectures to build binaries for"
   )
   mark_as_advanced(WITH_CYCLES_DEVICE_HIP)
@@ -2167,6 +2171,9 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
       C_WARN_CLANG_CL_BITFIELD_ENUM_CONVERSION -Wno-bitfield-enum-conversion # 1
       C_WARN_CLANG_CL_UNUSED_LAMBDA_CAPTURE -Wno-unused-lambda-capture # 1
       C_WARN_CLANG_CL_SHADOW_FIELD_IN_CONSTRUCTOR_MODIFIED -Wno-shadow-field-in-constructor-modified # 1
+      # And some additional ones that came up when using LLVM 18.1.8 on Windows ARM64
+      C_WARN_CLANG_CL_SWITCH_DEFAULT -Wno-switch-default
+      C_WARN_CLANG_CL_NAN_INFINITY_DISABLED -Wno-nan-infinity-disabled
     )
 
   add_check_cxx_compiler_flags(
@@ -2298,6 +2305,9 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
       CXX_WARN_CLANG_CL_BITFIELD_ENUM_CONVERSION -Wno-bitfield-enum-conversion # 1
       CXX_WARN_CLANG_CL_UNUSED_LAMBDA_CAPTURE -Wno-unused-lambda-capture # 1
       CXX_WARN_CLANG_CL_SHADOW_FIELD_IN_CONSTRUCTOR_MODIFIED -Wno-shadow-field-in-constructor-modified # 1
+      # And some additional ones that came up when using LLVM 18.1.8 on Windows ARM64
+      CXX_WARN_CLANG_CL_SWITCH_DEFAULT -Wno-switch-default
+      CXX_WARN_CLANG_CL_NAN_INFINITY_DISABLED -Wno-nan-infinity-disabled
     )
   endif()
 

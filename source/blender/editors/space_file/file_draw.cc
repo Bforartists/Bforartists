@@ -127,7 +127,7 @@ static FileTooltipData *file_tooltip_data_create(const SpaceFile *sfile, const F
   return data;
 }
 
-static void file_draw_tooltip_custom_func(bContext * /*C*/, uiTooltipData *tip, void *argN)
+static void file_draw_tooltip_custom_func(bContext & /*C*/, uiTooltipData &tip, void *argN)
 {
   FileTooltipData *file_data = static_cast<FileTooltipData *>(argN);
   const SpaceFile *sfile = file_data->sfile;
@@ -751,8 +751,8 @@ static void file_draw_preview(const FileList *files,
   {
     /* Smaller, fainter icon at bottom-left for preview image thumbnail, but not for fonts. */
     const uchar light[4] = {255, 255, 255, 255};
-    const float icon_x = float(xco) + (2.0f * UI_SCALE_FAC);
-    const float icon_y = float(yco) + (2.0f * UI_SCALE_FAC);
+    const float icon_x = float(tile_draw_rect->xmin) + (3.0f * UI_SCALE_FAC);
+    const float icon_y = float(tile_draw_rect->ymin) + (17.0f * UI_SCALE_FAC);
     UI_icon_draw_ex(icon_x,
                     icon_y,
                     icon,
@@ -770,8 +770,8 @@ static void file_draw_preview(const FileList *files,
      * current file (from current #Main in fact). */
     float icon_x, icon_y;
     const uchar light[4] = {255, 255, 255, 255};
-    icon_x = xco + ex - UI_UNIT_X;
-    icon_y = yco + ey - UI_UNIT_Y;
+    icon_x = float(tile_draw_rect->xmax) - (16.0f * UI_SCALE_FAC);
+    icon_y = float(tile_draw_rect->ymax) - (20.0f * UI_SCALE_FAC);
     UI_icon_draw_ex(icon_x,
                     icon_y,
                     ICON_BLENDER,
@@ -779,7 +779,7 @@ static void file_draw_preview(const FileList *files,
                     0.6f,
                     0.0f,
                     light,
-                    false,
+                    true,
                     UI_NO_ICON_OVERLAY_TEXT);
   }
 

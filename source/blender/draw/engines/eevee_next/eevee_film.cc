@@ -893,7 +893,7 @@ static eShaderType get_write_pass_shader_type(eViewLayerEEVEEPassType pass_type)
 }
 
 /* Gets the appropriate shader to write the given AOV pass. */
-static eShaderType get_aov_write_pass_shader_type(ViewLayerAOV *aov)
+static eShaderType get_aov_write_pass_shader_type(const ViewLayerAOV *aov)
 {
   switch (aov->type) {
     case AOV_TYPE_VALUE:
@@ -914,6 +914,13 @@ void Film::write_viewport_compositor_passes()
     const eViewLayerEEVEEPassType pass_type = eViewLayerEEVEEPassType(
         viewport_compositor_enabled_passes_ & (1 << i));
     if (pass_type == 0) {
+      continue;
+    }
+
+    /* The compositor will use the viewport color texture as the combined pass because the viewport
+     * texture will include Grease Pencil, so no need to write the combined pass from the engine
+     * side. */
+    if (pass_type == EEVEE_RENDER_PASS_COMBINED) {
       continue;
     }
 
