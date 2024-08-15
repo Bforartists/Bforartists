@@ -780,7 +780,7 @@ static void scene_foreach_layer_collection(LibraryForeachIDData *data,
 
   LISTBASE_FOREACH (LayerCollection *, lc, lb) {
     if ((data_flags & IDWALK_NO_ORIG_POINTERS_ACCESS) == 0 && lc->collection != nullptr) {
-      BLI_assert(is_master == ((lc->collection->id.flag & LIB_EMBEDDED_DATA) != 0));
+      BLI_assert(is_master == ((lc->collection->id.flag & ID_FLAG_EMBEDDED_DATA) != 0));
     }
     const int cb_flag = is_master ? IDWALK_CB_EMBEDDED_NOT_OWNING : IDWALK_CB_NOP;
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, lc->collection, cb_flag | IDWALK_CB_DIRECT_WEAK_LINK);
@@ -1291,7 +1291,8 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
     BLO_read_struct(reader, Editing, &sce->ed);
     Editing *ed = sce->ed;
 
-    BLO_read_struct(reader, Sequence, &ed->act_seq);
+    ed->act_seq = static_cast<Sequence *>(
+        BLO_read_get_new_data_address_no_us(reader, ed->act_seq, sizeof(Sequence)));
     ed->cache = nullptr;
     ed->prefetch_job = nullptr;
     ed->runtime.sequence_lookup = nullptr;
@@ -1323,7 +1324,7 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
       else {
         seqbase_poin = POINTER_OFFSET(ed->seqbasep, -seqbase_offset);
 
-        seqbase_poin = BLO_read_get_new_data_address(reader, seqbase_poin);
+        seqbase_poin = BLO_read_get_new_data_address_no_us(reader, seqbase_poin, sizeof(Sequence));
 
         if (seqbase_poin) {
           ed->seqbasep = (ListBase *)POINTER_OFFSET(seqbase_poin, seqbase_offset);
@@ -1339,7 +1340,8 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
       }
       else {
         channels_poin = POINTER_OFFSET(ed->displayed_channels, -channels_offset);
-        channels_poin = BLO_read_get_new_data_address(reader, channels_poin);
+        channels_poin = BLO_read_get_new_data_address_no_us(
+            reader, channels_poin, sizeof(SeqTimelineChannel));
 
         if (channels_poin) {
           ed->displayed_channels = (ListBase *)POINTER_OFFSET(channels_poin, channels_offset);
@@ -1360,7 +1362,8 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
         }
         else {
           seqbase_poin = POINTER_OFFSET(ms->oldbasep, -seqbase_offset);
-          seqbase_poin = BLO_read_get_new_data_address(reader, seqbase_poin);
+          seqbase_poin = BLO_read_get_new_data_address_no_us(
+              reader, seqbase_poin, sizeof(Sequence));
           if (seqbase_poin) {
             ms->oldbasep = (ListBase *)POINTER_OFFSET(seqbase_poin, seqbase_offset);
           }
@@ -1374,7 +1377,8 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
         }
         else {
           channels_poin = POINTER_OFFSET(ms->old_channels, -channels_offset);
-          channels_poin = BLO_read_get_new_data_address(reader, channels_poin);
+          channels_poin = BLO_read_get_new_data_address_no_us(
+              reader, channels_poin, sizeof(SeqTimelineChannel));
 
           if (channels_poin) {
             ms->old_channels = (ListBase *)POINTER_OFFSET(channels_poin, channels_offset);
@@ -1866,7 +1870,7 @@ Scene *BKE_scene_duplicate(Main *bmain, Scene *sce, eSceneCopyMethod type)
     }
 
     if (!is_subprocess) {
-      /* This code will follow into all ID links using an ID tagged with LIB_TAG_NEW. */
+      /* This code will follow into all ID links using an ID tagged with ID_TAG_NEW. */
       BKE_libblock_relink_to_newid(bmain, &sce_copy->id, 0);
 
 #ifndef NDEBUG
@@ -1874,7 +1878,7 @@ Scene *BKE_scene_duplicate(Main *bmain, Scene *sce, eSceneCopyMethod type)
        * flags. */
       ID *id_iter;
       FOREACH_MAIN_ID_BEGIN (bmain, id_iter) {
-        BLI_assert((id_iter->tag & LIB_TAG_NEW) == 0);
+        BLI_assert((id_iter->tag & ID_TAG_NEW) == 0);
       }
       FOREACH_MAIN_ID_END;
 #endif
@@ -3464,116 +3468,117 @@ int BKE_scene_transform_orientation_get_index(const Scene *scene,
  * Matches #BKE_object_rot_to_mat3 and #BKE_object_mat3_to_rot.
  * \{ */
 
-void BKE_scene_cursor_rot_to_mat3(const View3DCursor *cursor, float mat[3][3])
+template<> blender::float3x3 View3DCursor::matrix<blender::float3x3>() const
 {
-  if (cursor->rotation_mode > 0) {
-    eulO_to_mat3(mat, cursor->rotation_euler, cursor->rotation_mode);
+  blender::float3x3 mat;
+  if (this->rotation_mode > 0) {
+    eulO_to_mat3(mat.ptr(), this->rotation_euler, this->rotation_mode);
   }
-  else if (cursor->rotation_mode == ROT_MODE_AXISANGLE) {
-    axis_angle_to_mat3(mat, cursor->rotation_axis, cursor->rotation_angle);
+  else if (this->rotation_mode == ROT_MODE_AXISANGLE) {
+    axis_angle_to_mat3(mat.ptr(), this->rotation_axis, this->rotation_angle);
   }
   else {
     float tquat[4];
-    normalize_qt_qt(tquat, cursor->rotation_quaternion);
-    quat_to_mat3(mat, tquat);
+    normalize_qt_qt(tquat, this->rotation_quaternion);
+    quat_to_mat3(mat.ptr(), tquat);
   }
+  return mat;
 }
 
-void BKE_scene_cursor_rot_to_quat(const View3DCursor *cursor, float quat[4])
+blender::math::Quaternion View3DCursor::rotation() const
 {
-  if (cursor->rotation_mode > 0) {
-    eulO_to_quat(quat, cursor->rotation_euler, cursor->rotation_mode);
+  blender::math::Quaternion quat;
+  if (this->rotation_mode > 0) {
+    eulO_to_quat(&quat.w, this->rotation_euler, this->rotation_mode);
   }
-  else if (cursor->rotation_mode == ROT_MODE_AXISANGLE) {
-    axis_angle_to_quat(quat, cursor->rotation_axis, cursor->rotation_angle);
+  else if (this->rotation_mode == ROT_MODE_AXISANGLE) {
+    axis_angle_to_quat(&quat.w, this->rotation_axis, this->rotation_angle);
   }
   else {
-    normalize_qt_qt(quat, cursor->rotation_quaternion);
+    normalize_qt_qt(&quat.w, this->rotation_quaternion);
   }
+  return quat;
 }
 
-void BKE_scene_cursor_mat3_to_rot(View3DCursor *cursor, const float mat[3][3], bool use_compat)
+void View3DCursor::set_matrix(const blender::float3x3 &mat, const bool use_compat)
 {
-  BLI_ASSERT_UNIT_M3(mat);
+  BLI_ASSERT_UNIT_M3(mat.ptr());
 
-  switch (cursor->rotation_mode) {
+  switch (this->rotation_mode) {
     case ROT_MODE_QUAT: {
       float quat[4];
-      mat3_normalized_to_quat(quat, mat);
+      mat3_normalized_to_quat(quat, mat.ptr());
       if (use_compat) {
         float quat_orig[4];
-        copy_v4_v4(quat_orig, cursor->rotation_quaternion);
-        quat_to_compatible_quat(cursor->rotation_quaternion, quat, quat_orig);
+        copy_v4_v4(quat_orig, this->rotation_quaternion);
+        quat_to_compatible_quat(this->rotation_quaternion, quat, quat_orig);
       }
       else {
-        copy_v4_v4(cursor->rotation_quaternion, quat);
+        copy_v4_v4(this->rotation_quaternion, quat);
       }
       break;
     }
     case ROT_MODE_AXISANGLE: {
-      mat3_to_axis_angle(cursor->rotation_axis, &cursor->rotation_angle, mat);
+      mat3_to_axis_angle(this->rotation_axis, &this->rotation_angle, mat.ptr());
       break;
     }
     default: {
       if (use_compat) {
         mat3_to_compatible_eulO(
-            cursor->rotation_euler, cursor->rotation_euler, cursor->rotation_mode, mat);
+            this->rotation_euler, this->rotation_euler, this->rotation_mode, mat.ptr());
       }
       else {
-        mat3_to_eulO(cursor->rotation_euler, cursor->rotation_mode, mat);
+        mat3_to_eulO(this->rotation_euler, this->rotation_mode, mat.ptr());
       }
       break;
     }
   }
 }
 
-void BKE_scene_cursor_quat_to_rot(View3DCursor *cursor, const float quat[4], bool use_compat)
+void View3DCursor::set_rotation(const blender::math::Quaternion &quat, bool use_compat)
 {
-  BLI_ASSERT_UNIT_QUAT(quat);
+  BLI_ASSERT_UNIT_QUAT(&quat.w);
 
-  switch (cursor->rotation_mode) {
+  switch (this->rotation_mode) {
     case ROT_MODE_QUAT: {
       if (use_compat) {
         float quat_orig[4];
-        copy_v4_v4(quat_orig, cursor->rotation_quaternion);
-        quat_to_compatible_quat(cursor->rotation_quaternion, quat, quat_orig);
+        copy_v4_v4(quat_orig, this->rotation_quaternion);
+        quat_to_compatible_quat(this->rotation_quaternion, &quat.w, quat_orig);
       }
       else {
-        copy_qt_qt(cursor->rotation_quaternion, quat);
+        copy_qt_qt(this->rotation_quaternion, &quat.w);
       }
       break;
     }
     case ROT_MODE_AXISANGLE: {
-      quat_to_axis_angle(cursor->rotation_axis, &cursor->rotation_angle, quat);
+      quat_to_axis_angle(this->rotation_axis, &this->rotation_angle, &quat.w);
       break;
     }
     default: {
       if (use_compat) {
         quat_to_compatible_eulO(
-            cursor->rotation_euler, cursor->rotation_euler, cursor->rotation_mode, quat);
+            this->rotation_euler, this->rotation_euler, this->rotation_mode, &quat.w);
       }
       else {
-        quat_to_eulO(cursor->rotation_euler, cursor->rotation_mode, quat);
+        quat_to_eulO(this->rotation_euler, this->rotation_mode, &quat.w);
       }
       break;
     }
   }
 }
 
-void BKE_scene_cursor_to_mat4(const View3DCursor *cursor, float mat[4][4])
+template<> blender::float4x4 View3DCursor::matrix<blender::float4x4>() const
 {
-  float mat3[3][3];
-  BKE_scene_cursor_rot_to_mat3(cursor, mat3);
-  copy_m4_m3(mat, mat3);
-  copy_v3_v3(mat[3], cursor->location);
+  blender::float4x4 mat(this->matrix<blender::float3x3>());
+  mat.location() = blender::float3(this->location);
+  return mat;
 }
 
-void BKE_scene_cursor_from_mat4(View3DCursor *cursor, const float mat[4][4], bool use_compat)
+void View3DCursor::set_matrix(const blender::float4x4 &mat, const bool use_compat)
 {
-  float mat3[3][3];
-  copy_m3_m4(mat3, mat);
-  BKE_scene_cursor_mat3_to_rot(cursor, mat3, use_compat);
-  copy_v3_v3(cursor->location, mat[3]);
+  this->set_matrix(blender::float3x3(mat), use_compat);
+  copy_v3_v3(this->location, mat.location());
 }
 
 /** \} */

@@ -156,6 +156,21 @@ const EnumPropertyItem prop_usdz_downscale_size[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+const EnumPropertyItem rna_enum_usd_tex_export_mode_items[] = {
+    {USD_TEX_EXPORT_KEEP, "KEEP", 0, "Keep", "Use original location of textures"},
+    {USD_TEX_EXPORT_PRESERVE,
+     "PRESERVE",
+     0,
+     "Preserve",
+     "Preserve file paths of textures from already imported USD files."
+     "Export remaining textures to a 'textures' folder next to the USD file"},
+    {USD_TEX_EXPORT_NEW_PATH,
+     "NEW",
+     0,
+     "New Path",
+     "Export textures to a 'textures' folder next to the USD file"},
+    {0, nullptr, 0, nullptr, nullptr}};
+
 /* Stored in the wmOperator's customdata field to indicate it should run as a background job.
  * This is set when the operator is invoked, and not set when it is only executed. */
 struct eUSDOperatorOptions {
@@ -234,7 +249,6 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
 
   const bool generate_preview_surface = RNA_boolean_get(op->ptr, "generate_preview_surface");
   const bool generate_materialx_network = RNA_boolean_get(op->ptr, "generate_materialx_network");
-  const bool export_textures = RNA_boolean_get(op->ptr, "export_textures");
   const bool overwrite_textures = RNA_boolean_get(op->ptr, "overwrite_textures");
   const bool relative_paths = RNA_boolean_get(op->ptr, "relative_paths");
 
@@ -269,6 +283,30 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
   const bool allow_unicode = false;
 #  endif
 
+  /* When the texture export settings were moved into an enum this bit
+   * became more involved, but it needs to stick around for API backwards
+   * compatibility until Blender 5.0. */
+
+  const eUSDTexExportMode textures_mode = eUSDTexExportMode(
+      RNA_enum_get(op->ptr, "export_textures_mode"));
+  bool export_textures = RNA_boolean_get(op->ptr, "export_textures");
+  bool use_original_paths = false;
+
+  if (!export_textures) {
+    switch (textures_mode) {
+      case eUSDTexExportMode::USD_TEX_EXPORT_PRESERVE:
+        export_textures = false;
+        use_original_paths = true;
+        break;
+      case eUSDTexExportMode::USD_TEX_EXPORT_NEW_PATH:
+        export_textures = true;
+        use_original_paths = false;
+        break;
+      default:
+        use_original_paths = false;
+    }
+  }
+
   char root_prim_path[FILE_MAX];
   RNA_string_get(op->ptr, "root_prim_path", root_prim_path);
   process_prim_path(root_prim_path);
@@ -276,46 +314,55 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
   char custom_properties_namespace[MAX_IDPROP_NAME];
   RNA_string_get(op->ptr, "custom_properties_namespace", custom_properties_namespace);
 
-  USDExportParams params = {
-      export_animation,
-      export_hair,
-      export_uvmaps,
-      rename_uvmaps,
-      export_normals,
-      export_mesh_colors,
-      export_materials,
-      export_armatures,
-      export_shapekeys,
-      only_deform_bones,
-      export_subdiv,
-      selected_objects_only,
-      visible_objects_only,
-      use_instancing,
-      eEvaluationMode(evaluation_mode),
-      generate_preview_surface,
-      generate_materialx_network,
-      export_textures,
-      overwrite_textures,
-      relative_paths,
-      export_custom_properties,
-      author_blender_name,
-      triangulate_meshes,
-      quad_method,
-      ngon_method,
-      convert_orientation,
-      eIOAxis(global_forward),
-      eIOAxis(global_up),
-      convert_world_material,
-      xform_op_mode,
-      export_meshes,
-      export_lights,
-      export_cameras,
-      export_curves,
-      export_volumes,
-      usdz_downscale_size,
-      usdz_downscale_custom_size,
-      allow_unicode,
-  };
+  USDExportParams params;
+  params.export_animation = export_animation;
+  params.selected_objects_only = selected_objects_only;
+  params.visible_objects_only = visible_objects_only;
+
+  params.export_meshes = export_meshes;
+  params.export_lights = export_lights;
+  params.export_cameras = export_cameras;
+  params.export_curves = export_curves;
+  params.export_volumes = export_volumes;
+  params.export_hair = export_hair;
+  params.export_uvmaps = export_uvmaps;
+  params.rename_uvmaps = rename_uvmaps;
+  params.export_normals = export_normals;
+  params.export_mesh_colors = export_mesh_colors;
+  params.export_materials = export_materials;
+
+  params.export_armatures = export_armatures;
+  params.export_shapekeys = export_shapekeys;
+  params.only_deform_bones = only_deform_bones;
+
+  params.convert_world_material = convert_world_material;
+
+  params.use_instancing = use_instancing;
+  params.export_custom_properties = export_custom_properties;
+  params.author_blender_name = author_blender_name;
+  params.allow_unicode = allow_unicode;
+
+  params.export_subdiv = export_subdiv;
+  params.evaluation_mode = eEvaluationMode(evaluation_mode);
+
+  params.generate_preview_surface = generate_preview_surface;
+  params.generate_materialx_network = generate_materialx_network;
+  params.export_textures = export_textures;
+  params.overwrite_textures = overwrite_textures;
+  params.relative_paths = relative_paths;
+  params.use_original_paths = use_original_paths;
+
+  params.triangulate_meshes = triangulate_meshes;
+  params.quad_method = quad_method;
+  params.ngon_method = ngon_method;
+
+  params.convert_orientation = convert_orientation;
+  params.forward_axis = eIOAxis(global_forward);
+  params.up_axis = eIOAxis(global_up);
+  params.xform_op_mode = xform_op_mode;
+
+  params.usdz_downscale_size = usdz_downscale_size;
+  params.usdz_downscale_custom_size = usdz_downscale_custom_size;
 
   STRNCPY(params.root_prim_path, root_prim_path);
   STRNCPY(params.custom_properties_namespace, custom_properties_namespace);
@@ -423,21 +470,18 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
       uiItemR(col, ptr, "generate_materialx_network", UI_ITEM_NONE, nullptr, ICON_NONE);
       uiItemR(col, ptr, "convert_world_material", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-      const bool preview = RNA_boolean_get(ptr, "generate_preview_surface");
-      const bool materialx = RNA_boolean_get(ptr, "generate_materialx_network");
-      const bool export_tex = RNA_boolean_get(ptr, "export_textures");
+      col = uiLayoutColumn(panel.body, true);
+      uiLayoutSetPropSep(col, true);
 
-      uiLayout *row = uiLayoutRow(col, true);
-      uiItemR(row, ptr, "export_textures", UI_ITEM_NONE, nullptr, ICON_NONE);
-      uiLayoutSetActive(row, export_materials && (preview || materialx));
+      uiItemR(col, ptr, "export_textures_mode", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-      row = uiLayoutRow(col, true);
-      uiItemR(row, ptr, "overwrite_textures", UI_ITEM_NONE, nullptr, ICON_NONE);
-      uiLayoutSetActive(row, export_tex && (preview || materialx));
+      const eUSDTexExportMode textures_mode = eUSDTexExportMode(
+          RNA_enum_get(op->ptr, "export_textures_mode"));
 
       uiLayout *col2 = uiLayoutColumn(col, true);
       uiLayoutSetPropSep(col2, true);
-      uiLayoutSetEnabled(col2, RNA_boolean_get(ptr, "export_textures"));
+      uiLayoutSetEnabled(col2, textures_mode == USD_TEX_EXPORT_NEW_PATH);
+      uiItemR(col2, ptr, "overwrite_textures", UI_ITEM_NONE, nullptr, ICON_NONE);
       uiItemR(col2, ptr, "usdz_downscale_size", UI_ITEM_NONE, nullptr, ICON_NONE);
       if (RNA_enum_get(ptr, "usdz_downscale_size") == USD_TEXTURE_SIZE_CUSTOM) {
         uiItemR(col2, ptr, "usdz_downscale_custom_size", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -645,10 +689,17 @@ void WM_OT_usd_export(wmOperatorType *ot)
 
   RNA_def_boolean(ot->srna,
                   "export_textures",
-                  true,
+                  false,
                   "Export Textures",
                   "If exporting materials, export textures referenced by material nodes "
                   "to a 'textures' directory in the same directory as the USD file");
+
+  RNA_def_enum(ot->srna,
+               "export_textures_mode",
+               rna_enum_usd_tex_export_mode_items,
+               USD_TEX_EXPORT_NEW_PATH,
+               "Export Textures",
+               "Texture export method");
 
   RNA_def_boolean(ot->srna,
                   "overwrite_textures",
@@ -862,14 +913,6 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
   int offset = 0;
   int sequence_len = 1;
 
-  /* Switch out of edit mode to avoid being stuck in it (#54326). */
-  Object *obedit = CTX_data_edit_object(C);
-  if (obedit) {
-    blender::ed::object::mode_set(C, OB_MODE_EDIT);
-  }
-
-  const bool use_instancing = false;
-
   const eUSDTexImportMode import_textures_mode = eUSDTexImportMode(
       RNA_enum_get(op->ptr, "import_textures_mode"));
 
@@ -880,44 +923,58 @@ static int wm_usd_import_exec(bContext *C, wmOperator *op)
       RNA_enum_get(op->ptr, "tex_name_collision_mode"));
 
   USDImportParams params{};
+  params.prim_path_mask = prim_path_mask;
   params.scale = scale;
-  params.is_sequence = is_sequence;
+  params.light_intensity_scale = light_intensity_scale;
+
+  params.mesh_read_flag = mesh_read_flag;
   params.set_frame_range = set_frame_range;
+  params.is_sequence = is_sequence;
   params.sequence_len = sequence_len;
   params.offset = offset;
-  params.validate_meshes = validate_meshes;
-  params.mesh_read_flag = mesh_read_flag;
+
+  params.import_visible_only = import_visible_only;
+  params.import_defined_only = import_defined_only;
+
   params.import_cameras = import_cameras;
   params.import_curves = import_curves;
   params.import_lights = import_lights;
   params.import_materials = import_materials;
+  params.import_all_materials = import_all_materials;
   params.import_meshes = import_meshes;
+  params.import_points = import_points;
+  params.import_subdiv = import_subdiv;
   params.import_volumes = import_volumes;
+
+  params.create_collection = create_collection;
+  params.create_world_material = create_world_material;
+  params.support_scene_instancing = support_scene_instancing;
+
   params.import_shapes = import_shapes;
   params.import_skeletons = import_skeletons;
   params.import_blendshapes = import_blendshapes;
-  params.import_points = import_points;
-  params.prim_path_mask = prim_path_mask;
-  params.import_subdiv = import_subdiv;
-  params.support_scene_instancing = support_scene_instancing;
-  params.create_collection = create_collection;
+
+  params.validate_meshes = validate_meshes;
+
   params.import_guide = import_guide;
   params.import_proxy = import_proxy;
   params.import_render = import_render;
-  params.import_visible_only = import_visible_only;
-  params.import_defined_only = import_defined_only;
-  params.use_instancing = use_instancing;
+
   params.import_usd_preview = import_usd_preview;
   params.set_material_blend = set_material_blend;
-  params.light_intensity_scale = light_intensity_scale;
   params.mtl_name_collision_mode = mtl_name_collision_mode;
   params.import_textures_mode = import_textures_mode;
   params.tex_name_collision_mode = tex_name_collision_mode;
-  params.import_all_materials = import_all_materials;
+
   params.attr_import_mode = attr_import_mode;
-  params.create_world_material = create_world_material;
 
   STRNCPY(params.import_textures_dir, import_textures_dir);
+
+  /* Switch out of edit mode to avoid being stuck in it (#54326). */
+  Object *obedit = CTX_data_edit_object(C);
+  if (obedit) {
+    blender::ed::object::mode_set(C, OB_MODE_EDIT);
+  }
 
   const bool ok = USD_import(C, filepath, &params, as_background_job, op->reports);
 
