@@ -219,7 +219,8 @@ static void copy_transformed_positions(const Span<float3> src_positions,
   }
 }
 
-static bool grease_pencil_batch_cache_is_edit_discarded(GreasePencilBatchCache *cache)
+[[maybe_unused]] static bool grease_pencil_batch_cache_is_edit_discarded(
+    GreasePencilBatchCache *cache)
 {
   return cache->edit_points_pos == nullptr && cache->edit_line_indices == nullptr &&
          cache->edit_points_indices == nullptr && cache->edit_points == nullptr &&
@@ -400,41 +401,6 @@ static void grease_pencil_weight_batch_ensure(Object &object,
   GPU_vertbuf_use(cache->edit_points_selection);
 
   cache->is_dirty = false;
-}
-
-static IndexMask grease_pencil_get_visible_bezier_points(Object &object,
-                                                         const bke::greasepencil::Drawing &drawing,
-                                                         int layer_index,
-                                                         IndexMaskMemory &memory)
-{
-  const bke::CurvesGeometry &curves = drawing.strokes();
-
-  if (!curves.has_curve_with_type(CURVE_TYPE_BEZIER)) {
-    return IndexMask(0);
-  }
-
-  const Array<int> point_to_curve_map = curves.point_to_curve_map();
-  const VArray<int8_t> types = curves.curve_types();
-
-  const VArray<bool> selected_point = *curves.attributes().lookup_or_default<bool>(
-      ".selection", bke::AttrDomain::Point, true);
-  const VArray<bool> selected_left = *curves.attributes().lookup_or_default<bool>(
-      ".selection_handle_left", bke::AttrDomain::Point, true);
-  const VArray<bool> selected_right = *curves.attributes().lookup_or_default<bool>(
-      ".selection_handle_right", bke::AttrDomain::Point, true);
-
-  const IndexMask editable_points = ed::greasepencil::retrieve_editable_points(
-      object, drawing, layer_index, memory);
-
-  const IndexMask selected_points = IndexMask::from_predicate(
-      curves.points_range(), GrainSize(4096), memory, [&](const int64_t point_i) {
-        const bool is_selected = selected_point[point_i] || selected_left[point_i] ||
-                                 selected_right[point_i];
-        const bool is_bezier = types[point_to_curve_map[point_i]] == CURVE_TYPE_BEZIER;
-        return is_selected && is_bezier;
-      });
-
-  return IndexMask::from_intersection(editable_points, selected_points, memory);
 }
 
 static IndexMask grease_pencil_get_visible_nurbs_points(Object &object,
@@ -623,7 +589,7 @@ static void index_buf_add_bezier_lines(Object &object,
                                        IndexMaskMemory &memory,
                                        int *r_drawing_line_start_offset)
 {
-  const IndexMask bezier_points = grease_pencil_get_visible_bezier_points(
+  const IndexMask bezier_points = ed::greasepencil::retrieve_visible_bezier_handle_points(
       object, drawing, layer_index, memory);
   if (bezier_points.is_empty()) {
     return;
@@ -676,7 +642,7 @@ static void index_buf_add_bezier_line_points(Object &object,
                                              IndexMaskMemory &memory,
                                              int *r_drawing_start_offset)
 {
-  const IndexMask bezier_points = grease_pencil_get_visible_bezier_points(
+  const IndexMask bezier_points = ed::greasepencil::retrieve_visible_bezier_handle_points(
       object, drawing, layer_index, memory);
 
   if (bezier_points.is_empty()) {
@@ -764,7 +730,7 @@ static void grease_pencil_edit_batch_ensure(Object &object,
   int total_bezier_point_num = 0;
   for (const ed::greasepencil::DrawingInfo &info : drawings) {
     IndexMaskMemory memory;
-    const IndexMask bezier_points = grease_pencil_get_visible_bezier_points(
+    const IndexMask bezier_points = ed::greasepencil::retrieve_visible_bezier_handle_points(
         object, info.drawing, info.layer_index, memory);
 
     total_bezier_point_num += bezier_points.size();
@@ -783,6 +749,10 @@ static void grease_pencil_edit_batch_ensure(Object &object,
   total_points_num += total_bezier_point_num * 2;
   /* Add three for each bezier point, (one left, one right and one for the center point). */
   total_line_points_num += total_bezier_point_num * 3;
+
+  if (total_points_num == 0) {
+    return;
+  }
 
   GPU_vertbuf_data_alloc(*cache->edit_points_pos, total_points_num);
   GPU_vertbuf_data_alloc(*cache->edit_points_selection, total_points_num);
@@ -897,7 +867,7 @@ static void grease_pencil_edit_batch_ensure(Object &object,
                                   &drawing_line_start_offset,
                                   &total_line_ids_num);
 
-    const IndexMask bezier_points = grease_pencil_get_visible_bezier_points(
+    const IndexMask bezier_points = ed::greasepencil::retrieve_visible_bezier_handle_points(
         object, info.drawing, info.layer_index, memory);
     if (bezier_points.is_empty()) {
       continue;

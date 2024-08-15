@@ -38,7 +38,6 @@
 #include "BKE_scene.hh"
 
 #include "DEG_depsgraph.hh"
-#include "DEG_depsgraph_query.hh"
 
 #include "ED_anim_api.hh"
 #include "ED_keyframing.hh"
@@ -46,6 +45,7 @@
 #include "ED_screen.hh"
 
 #include "ANIM_action.hh"
+#include "ANIM_action_iterators.hh"
 #include "ANIM_animdata.hh"
 #include "ANIM_bone_collections.hh"
 #include "ANIM_driver.hh"
@@ -377,9 +377,6 @@ static int insert_key(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  /* The depsgraph needs to be in an evaluated state to ensure the values we get from the
-   * properties are actually the values of the current frame. */
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   const float scene_frame = BKE_scene_frame_get(scene);
@@ -387,6 +384,7 @@ static int insert_key(bContext *C, wmOperator *op)
   const eInsertKeyFlags insert_key_flags = animrig::get_keyframing_flags(scene);
   const eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(
       scene->toolsettings->keyframe_type);
+  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       depsgraph, BKE_scene_frame_get(scene));
 
@@ -711,50 +709,70 @@ void ANIM_OT_keyframe_delete_by_name(wmOperatorType *ot)
  * it is more useful for animators working in the 3D view.
  */
 
+/* While in pose mode, the selection of bones has to be considered. */
+static bool can_delete_fcurve(FCurve *fcu, Object *ob)
+{
+  bool can_delete = false;
+  /* in pose mode, only delete the F-Curve if it belongs to a selected bone */
+  if (ob->mode & OB_MODE_POSE) {
+    if (fcu->rna_path) {
+      /* Get bone-name, and check if this bone is selected. */
+      bPoseChannel *pchan = nullptr;
+      char bone_name[sizeof(pchan->name)];
+      if (BLI_str_quoted_substr(fcu->rna_path, "pose.bones[", bone_name, sizeof(bone_name))) {
+        pchan = BKE_pose_channel_find_name(ob->pose, bone_name);
+        /* Delete if bone is selected. */
+        if ((pchan) && (pchan->bone)) {
+          if (pchan->bone->flag & BONE_SELECTED) {
+            can_delete = true;
+          }
+        }
+      }
+    }
+  }
+  else {
+    /* object mode - all of Object's F-Curves are affected */
+    /* TODO: this logic isn't solid. Only delete FCurves of the object, not of bones in this case.
+     */
+    can_delete = true;
+  }
+
+  return can_delete;
+}
+
 static int clear_anim_v3d_exec(bContext *C, wmOperator * /*op*/)
 {
+  using namespace blender::animrig;
   bool changed = false;
 
   CTX_DATA_BEGIN (C, Object *, ob, selected_objects) {
     /* just those in active action... */
     if ((ob->adt) && (ob->adt->action)) {
       AnimData *adt = ob->adt;
-      bAction *act = adt->action;
+      bAction *dna_action = adt->action;
       FCurve *fcu, *fcn;
 
-      for (fcu = static_cast<FCurve *>(act->curves.first); fcu; fcu = fcn) {
-        bool can_delete = false;
-
-        fcn = fcu->next;
-
-        /* in pose mode, only delete the F-Curve if it belongs to a selected bone */
-        if (ob->mode & OB_MODE_POSE) {
-          if (fcu->rna_path) {
-            /* Get bone-name, and check if this bone is selected. */
-            bPoseChannel *pchan = nullptr;
-            char bone_name[sizeof(pchan->name)];
-            if (BLI_str_quoted_substr(fcu->rna_path, "pose.bones[", bone_name, sizeof(bone_name)))
-            {
-              pchan = BKE_pose_channel_find_name(ob->pose, bone_name);
-              /* Delete if bone is selected. */
-              if ((pchan) && (pchan->bone)) {
-                if (pchan->bone->flag & BONE_SELECTED) {
-                  can_delete = true;
-                }
-              }
-            }
+      Action &action = dna_action->wrap();
+      if (action.is_action_layered()) {
+        blender::Vector<FCurve *> fcurves_to_delete;
+        action_foreach_fcurve(action, adt->slot_handle, [&](FCurve &fcurve) {
+          if (can_delete_fcurve(&fcurve, ob)) {
+            fcurves_to_delete.append(&fcurve);
           }
+        });
+        for (FCurve *fcurve : fcurves_to_delete) {
+          action_fcurve_remove(action, *fcurve);
         }
-        else {
-          /* object mode - all of Object's F-Curves are affected */
-          can_delete = true;
-        }
-
-        /* delete F-Curve completely */
-        if (can_delete) {
-          blender::animrig::animdata_fcurve_delete(nullptr, adt, fcu);
-          DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
-          changed = true;
+      }
+      else {
+        for (fcu = static_cast<FCurve *>(dna_action->curves.first); fcu; fcu = fcn) {
+          fcn = fcu->next;
+          /* delete F-Curve completely */
+          if (can_delete_fcurve(fcu, ob)) {
+            blender::animrig::animdata_fcurve_delete(nullptr, adt, fcu);
+            DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
+            changed = true;
+          }
         }
       }
 
@@ -823,6 +841,8 @@ static bool can_delete_key(FCurve *fcu, Object *ob, ReportList *reports)
   /* Special exception for bones, as this makes this operator more convenient to use
    * NOTE: This is only done in pose mode.
    * In object mode, we're dealing with the entire object.
+   * TODO: While this means bone animation is not deleted of all bones while in pose mode. Running
+   * the code on the armature object WILL delete keys of all bones.
    */
   if (ob->mode & OB_MODE_POSE) {
     bPoseChannel *pchan = nullptr;
@@ -883,11 +903,21 @@ static int delete_key_v3d_without_keying_set(bContext *C, wmOperator *op)
 
       Action &action = act->wrap();
       if (action.is_action_layered()) {
-        for (FCurve *fcu : fcurves_for_action_slot(action, adt->slot_handle)) {
-          if (!can_delete_key(fcu, ob, op->reports)) {
-            continue;
+        blender::Vector<FCurve *> modified_fcurves;
+        action_foreach_fcurve(action, adt->slot_handle, [&](FCurve &fcurve) {
+          if (!can_delete_key(&fcurve, ob, op->reports)) {
+            return;
           }
-          success += blender::animrig::fcurve_delete_keyframe_at_time(fcu, cfra_unmap);
+          if (blender::animrig::fcurve_delete_keyframe_at_time(&fcurve, cfra_unmap)) {
+            modified_fcurves.append(&fcurve);
+          }
+        });
+
+        success += modified_fcurves.size();
+        for (FCurve *fcurve : modified_fcurves) {
+          if (BKE_fcurve_is_empty(fcurve)) {
+            action_fcurve_remove(action, *fcurve);
+          }
         }
       }
       else {
@@ -900,7 +930,7 @@ static int delete_key_v3d_without_keying_set(bContext *C, wmOperator *op)
           /* Delete keyframes on current frame
            * WARNING: this can delete the next F-Curve, hence the "fcn" copying.
            */
-          success += blender::animrig::delete_keyframe_fcurve_legacy(adt, fcu, cfra_unmap);
+          success += delete_keyframe_fcurve_legacy(adt, fcu, cfra_unmap);
         }
       }
 
@@ -1165,12 +1195,8 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   PointerRNA ptr = {nullptr};
   PropertyRNA *prop = nullptr;
   uiBut *but;
-
-  /* The depsgraph needs to be in an evaluated state to ensure the values we get from the
-   * properties are actually the values of the current frame. */
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
-      depsgraph, BKE_scene_frame_get(scene));
+      CTX_data_depsgraph_pointer(C), BKE_scene_frame_get(scene));
   bool changed = false;
   int index;
   const bool all = RNA_boolean_get(op->ptr, "all");
@@ -1538,13 +1564,14 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
     else {
       /* standard properties */
       if (const std::optional<std::string> path = RNA_path_from_ID_to_property(&ptr, prop)) {
+        RNAPath rna_path = {path->c_str(), std::nullopt, index};
         if (all) {
-          /* -1 indicates operating on the entire array (or the property itself otherwise) */
-          index = -1;
+          /* nullopt indicates operating on the entire array (or the property itself otherwise). */
+          rna_path.index = std::nullopt;
         }
 
         changed = blender::animrig::delete_keyframe(
-                      bmain, op->reports, ptr.owner_id, nullptr, path->c_str(), index, cfra) != 0;
+                      bmain, op->reports, ptr.owner_id, rna_path, cfra) != 0;
 // BFA - Old version
 //        /* bfa - Apply animation to all selected through UI animate property */
 //        if (alt_held) {
@@ -1629,18 +1656,14 @@ static int clear_key_button_exec(bContext *C, wmOperator *op)
 
   if (ptr.owner_id && ptr.data && prop) {
     if (const std::optional<std::string> path = RNA_path_from_ID_to_property(&ptr, prop)) {
+      RNAPath rna_path = {path->c_str(), std::nullopt, index};
       if (all) {
-        /* -1 indicates operating on the entire array (or the property itself otherwise) */
-        index = -1;
+        /* nullopt indicates operating on the entire array (or the property itself otherwise). */
+        rna_path.index = std::nullopt;
       }
 
-      changed |= (blender::animrig::clear_keyframe(bmain,
-                                                   op->reports,
-                                                   ptr.owner_id,
-                                                   nullptr,
-                                                   path->c_str(),
-                                                   index,
-                                                   eInsertKeyFlags(0)) != 0);
+      changed |= (blender::animrig::clear_keyframe(bmain, op->reports, ptr.owner_id, rna_path) !=
+                  0);
     }
     else if (G.debug & G_DEBUG) {
       printf("Button Clear-Key: no path to property\n");

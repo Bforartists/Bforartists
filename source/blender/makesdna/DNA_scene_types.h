@@ -831,6 +831,11 @@ typedef struct RenderData {
 
   /** Precision used by the GPU execution of the compositor tree. */
   int compositor_precision; /* eCompositorPrecision */
+
+  /* If false and the experimental enable_new_cpu_compositor is true, use the new experimental
+   * CPU compositor implementation, otherwise, use the old CPU compositor. */
+  char use_old_cpu_compositor;
+  char _pad10[7];
 } RenderData;
 
 /** #RenderData::quality_flag */
@@ -2850,7 +2855,7 @@ enum {
   SCE_EEVEE_RAYTRACE_OPTIONS_SPLIT = (1 << 25),
   SCE_EEVEE_SHADOW_JITTERED_VIEWPORT = (1 << 26),
   SCE_EEVEE_VOLUME_CUSTOM_RANGE = (1 << 27),
-  SCE_EEVEE_VOLUMETRIC_BLENDING = (1 << 28), /* BFA - volumetric blending patch from lordloki */
+  SCE_EEVEE_FAST_GI_ENABLED = (1 << 28),
 };
 
 typedef enum RaytraceEEVEE_Flag {

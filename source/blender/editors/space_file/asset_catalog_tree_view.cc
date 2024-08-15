@@ -433,15 +433,16 @@ std::string AssetCatalogDropTarget::drop_tooltip_asset_list(const wmDrag &drag) 
   return basic_tip;
 }
 
-bool AssetCatalogDropTarget::on_drop(bContext *C, const ui::DragInfo &drag) const
+bool AssetCatalogDropTarget::on_drop(bContext *C, const ui::DragInfo &drag_info) const
 {
-  if (drag.drag_data.type == WM_DRAG_ASSET_CATALOG) {
-    return this->drop_asset_catalog_into_catalog(
-        drag.drag_data, this->get_view<AssetCatalogTreeView>(), catalog_item_.get_catalog_id());
+  if (drag_info.drag_data.type == WM_DRAG_ASSET_CATALOG) {
+    return this->drop_asset_catalog_into_catalog(drag_info.drag_data,
+                                                 this->get_view<AssetCatalogTreeView>(),
+                                                 catalog_item_.get_catalog_id());
   }
   return this->drop_assets_into_catalog(C,
                                         this->get_view<AssetCatalogTreeView>(),
-                                        drag.drag_data,
+                                        drag_info.drag_data,
                                         catalog_item_.get_catalog_id(),
                                         catalog_item_.get_simple_name());
 }
@@ -629,11 +630,11 @@ std::string AssetCatalogTreeViewAllItem::DropTarget::drop_tooltip(
 }
 
 bool AssetCatalogTreeViewAllItem::DropTarget::on_drop(bContext * /*C*/,
-                                                      const ui::DragInfo &drag) const
+                                                      const ui::DragInfo &drag_info) const
 {
-  BLI_assert(drag.drag_data.type == WM_DRAG_ASSET_CATALOG);
+  BLI_assert(drag_info.drag_data.type == WM_DRAG_ASSET_CATALOG);
   return AssetCatalogDropTarget::drop_asset_catalog_into_catalog(
-      drag.drag_data,
+      drag_info.drag_data,
       this->get_view<AssetCatalogTreeView>(),
       /* No value to drop into the root level. */
       std::nullopt);
@@ -673,11 +674,11 @@ std::string AssetCatalogTreeViewUnassignedItem::DropTarget::drop_tooltip(
 }
 
 bool AssetCatalogTreeViewUnassignedItem::DropTarget::on_drop(bContext *C,
-                                                             const ui::DragInfo &drag) const
+                                                             const ui::DragInfo &drag_info) const
 {
   /* Assign to nil catalog ID. */
   return AssetCatalogDropTarget::drop_assets_into_catalog(
-      C, this->get_view<AssetCatalogTreeView>(), drag.drag_data, CatalogID{});
+      C, this->get_view<AssetCatalogTreeView>(), drag_info.drag_data, CatalogID{});
 }
 
 /* ---------------------------------------------------------------------- */

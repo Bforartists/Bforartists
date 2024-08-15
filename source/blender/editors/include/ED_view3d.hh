@@ -889,7 +889,19 @@ bool ED_view3d_depth_read_cached_seg(
 /**
  * Returns viewport color in linear space, matching #ED_space_node_color_sample().
  */
-bool ED_view3d_viewport_color_sample(ARegion *region, const int mval[2], float r_col[3]);
+class ViewportColorSampleSession {
+  GPUTexture *tex = nullptr;
+  blender::ushort4 *data = nullptr;
+  int tex_w, tex_h;
+  rcti valid_rect;
+
+ public:
+  ViewportColorSampleSession() = default;
+  ~ViewportColorSampleSession();
+
+  bool init(ARegion *region);
+  bool sample(const int mval[2], float r_col[3]);
+};
 
 enum eV3DSelectMode {
   /* all elements in the region, ignore depth */
@@ -1307,11 +1319,11 @@ void ED_view3d_buttons_region_layout_ex(const bContext *C,
  * Exit 'local view' of given View3D editor, if it is active and there is nothing to display in it
  * anymore.
  *
- * \param depsgraph Optional, only required for #frame_selected.
- * \param frame_selected Frame the newly out-of-local view to show currently visible selected
+ * \param depsgraph: Optional, only required for #frame_selected.
+ * \param frame_selected: Frame the newly out-of-local view to show currently visible selected
  * objects. Will only do something if a valid #depsgraph pointer is also provided.
- * \param smooth_viewtx Smooth transition time (in milliseconds) between current view and final
- * view, if changes are hapenning. Currently only used if #frame_selected is enabled.
+ * \param smooth_viewtx: Smooth transition time (in milliseconds) between current view and final
+ * view, if changes are happening. Currently only used if #frame_selected is enabled.
  *
  * \return `true` if the local view was actually exited.
  */
