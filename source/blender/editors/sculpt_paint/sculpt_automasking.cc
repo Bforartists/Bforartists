@@ -36,7 +36,7 @@
 
 namespace blender::ed::sculpt_paint::auto_mask {
 
-Cache *active_cache_get(SculptSession &ss)
+const Cache *active_cache_get(const SculptSession &ss)
 {
   if (ss.cache) {
     return ss.cache->automasking.get();
@@ -550,7 +550,8 @@ float factor_get(const Cache *automasking,
 
   if (!automasking->settings.topology_use_brush_limit &&
       automasking->settings.flags & BRUSH_AUTOMASKING_TOPOLOGY &&
-      SCULPT_vertex_island_get(ss, vert) != automasking->settings.initial_island_nr)
+      islands::vert_id_get(ss, BKE_pbvh_vertex_to_index(*ss.pbvh, vert)) !=
+          automasking->settings.initial_island_nr)
   {
     return 0.0f;
   }
@@ -702,13 +703,6 @@ NodeData node_begin(const Object &object, const Cache *automasking, const bke::p
   return automask_data;
 }
 
-void node_update(auto_mask::NodeData &automask_data, const PBVHVertexIter &vd)
-{
-  if (automask_data.orig_data) {
-    SCULPT_orig_vert_data_update(*automask_data.orig_data, vd);
-  }
-}
-
 void node_update(auto_mask::NodeData &automask_data, const BMVert &vert)
 {
   if (automask_data.orig_data) {
@@ -723,53 +717,118 @@ void node_update(auto_mask::NodeData &automask_data, const int i)
   }
 }
 
-struct AutomaskFloodFillData {
-  float radius;
-  bool use_radius;
-  float location[3];
-  char symm;
-};
-
-static bool floodfill_cb(SculptSession &ss,
-                         PBVHVertRef from_v,
-                         PBVHVertRef to_v,
-                         AutomaskFloodFillData *data)
-{
-  *(float *)SCULPT_vertex_attr_get(to_v, ss.attrs.automasking_factor) = 1.0f;
-  *(float *)SCULPT_vertex_attr_get(from_v, ss.attrs.automasking_factor) = 1.0f;
-  return (!data->use_radius ||
-          SCULPT_is_vertex_inside_brush_radius_symm(
-              SCULPT_vertex_co_get(ss, to_v), data->location, data->radius, data->symm));
-}
-
-static void topology_automasking_init(const Sculpt &sd, Object &ob)
+/**
+ * Flood fill automask to connected vertices.
+ *
+ * Limited to vertices inside the brush radius if the tool requires it.
+ */
+static void fill_topology_automasking_factors_mesh(const Sculpt &sd,
+                                                   Object &ob,
+                                                   const Span<float3> vert_positions)
 {
   SculptSession &ss = *ob.sculpt;
   const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
 
-  const int totvert = SCULPT_vertex_count_get(ss);
-  for (int i : IndexRange(totvert)) {
-    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
+  const float radius = ss.cache ? ss.cache->radius : std::numeric_limits<float>::max();
+  const int active_vert = std::get<int>(ss.active_vert());
+  flood_fill::FillDataMesh flood = flood_fill::FillDataMesh(vert_positions.size());
 
-    (*(float *)SCULPT_vertex_attr_get(vertex, ss.attrs.automasking_factor)) = 0.0f;
-  }
+  flood.add_initial_with_symmetry(ob, *ss.pbvh, active_vert, radius);
 
-  /* Flood fill automask to connected vertices. Limited to vertices inside
-   * the brush radius if the tool requires it. */
-  flood_fill::FillData flood = flood_fill::init_fill(ss);
-  const float radius = ss.cache ? ss.cache->radius : FLT_MAX;
-  flood_fill::add_active(ob, ss, flood, radius);
+  const bool use_radius = ss.cache && is_constrained_by_radius(brush);
+  const ePaintSymmetryFlags symm = SCULPT_mesh_symmetry_xyz_get(ob);
 
-  AutomaskFloodFillData fdata = {0};
+  float3 location = vert_positions[active_vert];
 
-  fdata.radius = radius;
-  fdata.use_radius = ss.cache && is_constrained_by_radius(brush);
-  fdata.symm = SCULPT_mesh_symmetry_xyz_get(ob);
-
-  copy_v3_v3(fdata.location, SCULPT_active_vertex_co_get(ss));
-  flood_fill::execute(ss, flood, [&](PBVHVertRef from_v, PBVHVertRef to_v, bool /*is_duplicate*/) {
-    return floodfill_cb(ss, from_v, to_v, &fdata);
+  flood.execute(ob, ss.vert_to_face_map, [&](int from_v, int to_v) {
+    *(float *)SCULPT_vertex_attr_get(to_v, ss.attrs.automasking_factor) = 1.0f;
+    *(float *)SCULPT_vertex_attr_get(from_v, ss.attrs.automasking_factor) = 1.0f;
+    return (use_radius || SCULPT_is_vertex_inside_brush_radius_symm(
+                              vert_positions[to_v], location, radius, symm));
   });
+}
+
+static void fill_topology_automasking_factors_grids(const Sculpt &sd,
+                                                    Object &ob,
+                                                    const SubdivCCG &subdiv_ccg)
+
+{
+  SculptSession &ss = *ob.sculpt;
+  const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
+
+  const float radius = ss.cache ? ss.cache->radius : std::numeric_limits<float>::max();
+  const SubdivCCGCoord active_vert = std::get<SubdivCCGCoord>(ss.active_vert());
+
+  const Span<CCGElem *> grids = subdiv_ccg.grids;
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int grid_verts_num = subdiv_ccg.grids.size() * key.grid_area;
+
+  flood_fill::FillDataGrids flood = flood_fill::FillDataGrids(grid_verts_num);
+
+  flood.add_initial_with_symmetry(ob, *ss.pbvh, subdiv_ccg, active_vert, radius);
+
+  const bool use_radius = ss.cache && is_constrained_by_radius(brush);
+  const ePaintSymmetryFlags symm = SCULPT_mesh_symmetry_xyz_get(ob);
+
+  float3 location = CCG_grid_elem_co(
+      key, grids[active_vert.grid_index], active_vert.x, active_vert.y);
+
+  flood.execute(
+      ob, subdiv_ccg, [&](SubdivCCGCoord from_v, SubdivCCGCoord to_v, bool /*is_duplicate*/) {
+        *(float *)SCULPT_vertex_attr_get(key, to_v, ss.attrs.automasking_factor) = 1.0f;
+        *(float *)SCULPT_vertex_attr_get(key, from_v, ss.attrs.automasking_factor) = 1.0f;
+        return (use_radius || SCULPT_is_vertex_inside_brush_radius_symm(
+                                  CCG_grid_elem_co(key, grids[to_v.grid_index], to_v.x, to_v.y),
+                                  location,
+                                  radius,
+                                  symm));
+      });
+}
+
+static void fill_topology_automasking_factors_bmesh(const Sculpt &sd, Object &ob, BMesh &bm)
+{
+  SculptSession &ss = *ob.sculpt;
+  const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
+
+  const float radius = ss.cache ? ss.cache->radius : std::numeric_limits<float>::max();
+  BMVert *active_vert = std::get<BMVert *>(ss.active_vert());
+  const int num_verts = BM_mesh_elem_count(&bm, BM_VERT);
+  flood_fill::FillDataBMesh flood = flood_fill::FillDataBMesh(num_verts);
+
+  flood.add_initial_with_symmetry(ob, *ss.pbvh, active_vert, radius);
+
+  const bool use_radius = ss.cache && is_constrained_by_radius(brush);
+  const ePaintSymmetryFlags symm = SCULPT_mesh_symmetry_xyz_get(ob);
+
+  float3 location = active_vert->co;
+
+  flood.execute(ob, [&](BMVert *from_v, BMVert *to_v) {
+    *(float *)SCULPT_vertex_attr_get(to_v, ss.attrs.automasking_factor) = 1.0f;
+    *(float *)SCULPT_vertex_attr_get(from_v, ss.attrs.automasking_factor) = 1.0f;
+    return (use_radius ||
+            SCULPT_is_vertex_inside_brush_radius_symm(active_vert->co, location, radius, symm));
+  });
+}
+
+static void fill_topology_automasking_factors(const Sculpt &sd, Object &ob)
+{
+  /* TODO: This method is to be removed when more of the automasking code handles the different
+   * pbvh types. */
+  SculptSession &ss = *ob.sculpt;
+
+  switch (ss.pbvh->type()) {
+    case bke::pbvh::Type::Mesh:
+      fill_topology_automasking_factors_mesh(sd, ob, BKE_pbvh_get_vert_positions(*ss.pbvh));
+      break;
+    case bke::pbvh::Type::Grids:
+      fill_topology_automasking_factors_grids(sd, ob, *ss.subdiv_ccg);
+      break;
+    case bke::pbvh::Type::BMesh:
+      fill_topology_automasking_factors_bmesh(sd, ob, *ss.bm);
+      break;
+    default:
+      BLI_assert_unreachable();
+  }
 }
 
 static void init_face_sets_masking(const Sculpt &sd, Object &ob)
@@ -793,6 +852,11 @@ static void init_face_sets_masking(const Sculpt &sd, Object &ob)
 }
 
 #define EDGE_DISTANCE_INF -1
+
+enum eBoundaryAutomaskMode {
+  AUTOMASK_INIT_BOUNDARY_EDGES = 1,
+  AUTOMASK_INIT_BOUNDARY_FACE_SETS = 2,
+};
 
 static void init_boundary_masking(Object &ob, eBoundaryAutomaskMode mode, int propagation_steps)
 {
@@ -950,9 +1014,10 @@ std::unique_ptr<Cache> cache_init(const Sculpt &sd, const Brush *brush, Object &
 
   int mode = calc_effective_bits(sd, brush);
 
-  if (mode & BRUSH_AUTOMASKING_TOPOLOGY && ss.active_vertex.i != PBVH_REF_NONE) {
-    SCULPT_topology_islands_ensure(ob);
-    automasking->settings.initial_island_nr = SCULPT_vertex_island_get(ss, ss.active_vertex);
+  SCULPT_vertex_random_access_ensure(ss);
+  if (mode & BRUSH_AUTOMASKING_TOPOLOGY && ss.active_vert_index() != -1) {
+    islands::ensure_cache(ob);
+    automasking->settings.initial_island_nr = islands::vert_id_get(ss, ss.active_vert_index());
   }
 
   bool use_stroke_id = false;
@@ -1033,7 +1098,7 @@ std::unique_ptr<Cache> cache_init(const Sculpt &sd, const Brush *brush, Object &
 
   /* Topology builds up the mask from zero which other modes can subtract from.
    * If it isn't enabled, initialize to 1. */
-  float initial_value = !(mode & BRUSH_AUTOMASKING_TOPOLOGY) ? 1.0f : 0.0f;
+  const float initial_value = !(mode & BRUSH_AUTOMASKING_TOPOLOGY) ? 1.0f : 0.0f;
 
   const int totvert = SCULPT_vertex_count_get(ss);
   for (int i : IndexRange(totvert)) {
@@ -1047,7 +1112,7 @@ std::unique_ptr<Cache> cache_init(const Sculpt &sd, const Brush *brush, Object &
     SCULPT_vertex_random_access_ensure(ss);
 
     automasking->settings.topology_use_brush_limit = is_constrained_by_radius(brush);
-    topology_automasking_init(sd, ob);
+    fill_topology_automasking_factors(sd, ob);
   }
 
   if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_FACE_SETS)) {

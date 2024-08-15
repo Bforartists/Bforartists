@@ -548,6 +548,7 @@ static const EnumPropertyItem rna_enum_curve_display_handle_items[] = {
 #ifdef RNA_RUNTIME
 
 #  include <algorithm>
+#  include <fmt/format.h>
 
 #  include "AS_asset_representation.hh"
 
@@ -1597,6 +1598,23 @@ static std::optional<std::string> rna_View3DShading_path(const PointerRNA *ptr)
   if (GS(ptr->owner_id->name) == ID_SCE) {
     return "display.shading";
   }
+  else if (GS(ptr->owner_id->name) == ID_SCR) {
+    const bScreen *screen = reinterpret_cast<bScreen *>(ptr->owner_id);
+    const View3DShading *shading = static_cast<View3DShading *>(ptr->data);
+    int area_index;
+    int space_index;
+    LISTBASE_FOREACH_INDEX (ScrArea *, area, &screen->areabase, area_index) {
+      LISTBASE_FOREACH_INDEX (SpaceLink *, sl, &area->spacedata, space_index) {
+        if (sl->spacetype == SPACE_VIEW3D) {
+          View3D *v3d = reinterpret_cast<View3D *>(sl);
+          if (&v3d->shading == shading) {
+            return fmt::format("areas[{}].spaces[{}].shading", area_index, space_index);
+          }
+        }
+      }
+    }
+  }
+
   return "shading";
 }
 
@@ -1605,9 +1623,10 @@ static PointerRNA rna_SpaceView3D_overlay_get(PointerRNA *ptr)
   return rna_pointer_inherit_refine(ptr, &RNA_View3DOverlay, ptr->data);
 }
 
-static std::optional<std::string> rna_View3DOverlay_path(const PointerRNA * /*ptr*/)
+static std::optional<std::string> rna_View3DOverlay_path(const PointerRNA *ptr)
 {
-  return "overlay";
+  std::optional<std::string> editor_path = BKE_screen_path_from_screen_to_space(ptr);
+  return fmt::format("{}{}{}", editor_path.value_or(""), editor_path ? "." : "", "overlay");
 }
 
 /* Space Image Editor */
@@ -1617,14 +1636,16 @@ static PointerRNA rna_SpaceImage_overlay_get(PointerRNA *ptr)
   return rna_pointer_inherit_refine(ptr, &RNA_SpaceImageOverlay, ptr->data);
 }
 
-static std::optional<std::string> rna_SpaceImageOverlay_path(const PointerRNA * /*ptr*/)
+static std::optional<std::string> rna_SpaceImageOverlay_path(const PointerRNA *ptr)
 {
-  return "overlay";
+  std::optional<std::string> editor_path = BKE_screen_path_from_screen_to_space(ptr);
+  return fmt::format("{}{}{}", editor_path.value_or(""), editor_path ? "." : "", "overlay");
 }
 
-static std::optional<std::string> rna_SpaceUVEditor_path(const PointerRNA * /*ptr*/)
+static std::optional<std::string> rna_SpaceUVEditor_path(const PointerRNA *ptr)
 {
-  return "uv_editor";
+  std::optional<std::string> editor_path = BKE_screen_path_from_screen_to_space(ptr);
+  return fmt::format("{}{}{}", editor_path.value_or(""), editor_path ? "." : "", "uv_editor");
 }
 
 static PointerRNA rna_SpaceImageEditor_uvedit_get(PointerRNA *ptr)
@@ -2501,20 +2522,39 @@ static void rna_Sequencer_area_update(Main * /*bmain*/, Scene * /*scene*/, Point
   ED_area_tag_refresh(area);
 }
 
-static std::optional<std::string> rna_SpaceSequencerPreviewOverlay_path(const PointerRNA * /*ptr*/)
+static PointerRNA rna_SpaceSequenceEditor_preview_overlay_get(PointerRNA *ptr)
 {
-  return "preview_overlay";
+  return rna_pointer_inherit_refine(ptr, &RNA_SequencerPreviewOverlay, ptr->data);
 }
 
-static std::optional<std::string> rna_SpaceSequencerTimelineOverlay_path(
-    const PointerRNA * /*ptr*/)
+static std::optional<std::string> rna_SpaceSequencerPreviewOverlay_path(const PointerRNA *ptr)
 {
-  return "timeline_overlay";
+  std::optional<std::string> editor_path = BKE_screen_path_from_screen_to_space(ptr);
+  return fmt::format(
+      "{}{}{}", editor_path.value_or(""), editor_path ? "." : "", "preview_overlay");
 }
 
-static std::optional<std::string> rna_SpaceSequencerCacheOverlay_path(const PointerRNA * /*ptr*/)
+static PointerRNA rna_SpaceSequenceEditor_timeline_overlay_get(PointerRNA *ptr)
 {
-  return "cache_overlay";
+  return rna_pointer_inherit_refine(ptr, &RNA_SequencerTimelineOverlay, ptr->data);
+}
+
+static std::optional<std::string> rna_SpaceSequencerTimelineOverlay_path(const PointerRNA *ptr)
+{
+  std::optional<std::string> editor_path = BKE_screen_path_from_screen_to_space(ptr);
+  return fmt::format(
+      "{}{}{}", editor_path.value_or(""), editor_path ? "." : "", "timeline_overlay");
+}
+
+static PointerRNA rna_SpaceSequenceEditor_cache_overlay_get(PointerRNA *ptr)
+{
+  return rna_pointer_inherit_refine(ptr, &RNA_SequencerCacheOverlay, ptr->data);
+}
+
+static std::optional<std::string> rna_SpaceSequencerCacheOverlay_path(const PointerRNA *ptr)
+{
+  std::optional<std::string> editor_path = BKE_screen_path_from_screen_to_space(ptr);
+  return fmt::format("{}{}{}", editor_path.value_or(""), editor_path ? "." : "", "cache_overlay");
 }
 
 static float rna_SpaceSequenceEditor_zoom_percentage_get(PointerRNA *ptr)
@@ -2563,9 +2603,10 @@ static bool rna_SpaceNode_supports_previews(PointerRNA *ptr)
   return ED_node_supports_preview(static_cast<SpaceNode *>(ptr->data));
 }
 
-static std::optional<std::string> rna_SpaceNodeOverlay_path(const PointerRNA * /*ptr*/)
+static std::optional<std::string> rna_SpaceNodeOverlay_path(const PointerRNA *ptr)
 {
-  return "overlay";
+  std::optional<std::string> editor_path = BKE_screen_path_from_screen_to_space(ptr);
+  return fmt::format("{}{}{}", editor_path.value_or(""), editor_path ? "." : "", "overlay");
 }
 
 static void rna_SpaceNodeEditor_node_tree_set(PointerRNA *ptr,
@@ -3599,6 +3640,7 @@ static void rna_def_space(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "Space", nullptr);
   RNA_def_struct_sdna(srna, "SpaceLink");
   RNA_def_struct_ui_text(srna, "Space", "Space data for a screen area");
+  RNA_def_struct_path_func(srna, "BKE_screen_path_from_screen_to_space");
   RNA_def_struct_refine_func(srna, "rna_Space_refine");
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
@@ -5881,40 +5923,43 @@ static void rna_def_space_sequencer_preview_overlay(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "SequencerPreviewOverlay", nullptr);
-  RNA_def_struct_sdna(srna, "SequencerPreviewOverlay");
+  RNA_def_struct_sdna(srna, "SpaceSeq");
   RNA_def_struct_nested(brna, srna, "SpaceSequenceEditor");
   RNA_def_struct_path_func(srna, "rna_SpaceSequencerPreviewOverlay_path");
   RNA_def_struct_ui_text(srna, "Preview Overlay Settings", "");
 
   prop = RNA_def_property(srna, "show_safe_areas", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_PREVIEW_SHOW_SAFE_MARGINS);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_SAFE_MARGINS);
   RNA_def_property_ui_text(
       prop, "Safe Areas", "Show TV title safe and action safe areas in preview");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_safe_center", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_PREVIEW_SHOW_SAFE_CENTER);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_SAFE_CENTER);
   RNA_def_property_ui_text(
       prop, "Center-Cut Safe Areas", "Show safe areas to fit content in a different aspect ratio");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_metadata", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_PREVIEW_SHOW_METADATA);
+  RNA_def_property_boolean_sdna(prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_METADATA);
   RNA_def_property_ui_text(prop, "Show Metadata", "Show metadata of first visible strip");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_annotation", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_PREVIEW_SHOW_GPENCIL);
+  RNA_def_property_boolean_sdna(prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_GPENCIL);
   RNA_def_property_ui_text(prop, "Show Annotation", "Show annotations for this view");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_image_outline", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_PREVIEW_SHOW_OUTLINE_SELECTED);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_OUTLINE_SELECTED);
   RNA_def_property_ui_text(prop, "Image Outline", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_cursor", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_PREVIEW_SHOW_2D_CURSOR);
+  RNA_def_property_boolean_sdna(prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_2D_CURSOR);
   RNA_def_property_ui_text(prop, "2D Cursor", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 }
@@ -5925,7 +5970,7 @@ static void rna_def_space_sequencer_timeline_overlay(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "SequencerTimelineOverlay", nullptr);
-  RNA_def_struct_sdna(srna, "SequencerTimelineOverlay");
+  RNA_def_struct_sdna(srna, "SpaceSeq");
   RNA_def_struct_nested(brna, srna, "SpaceSequenceEditor");
   RNA_def_struct_path_func(srna, "rna_SpaceSequencerTimelineOverlay_path");
   RNA_def_struct_ui_text(srna, "Timeline Overlay Settings", "");
@@ -5946,7 +5991,7 @@ static void rna_def_space_sequencer_timeline_overlay(BlenderRNA *brna)
   };
 
   prop = RNA_def_property(srna, "waveform_display_type", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_bitflag_sdna(prop, nullptr, "flag");
+  RNA_def_property_enum_bitflag_sdna(prop, nullptr, "timeline_overlay.flag");
   RNA_def_property_enum_items(prop, waveform_type_display_items);
   RNA_def_property_ui_text(prop, "Waveform Display", "How Waveforms are displayed");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
@@ -5962,55 +6007,62 @@ static void rna_def_space_sequencer_timeline_overlay(BlenderRNA *brna)
   };
 
   prop = RNA_def_property(srna, "waveform_display_style", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_bitflag_sdna(prop, nullptr, "flag");
+  RNA_def_property_enum_bitflag_sdna(prop, nullptr, "timeline_overlay.flag");
   RNA_def_property_enum_items(prop, waveform_style_display_items);
   RNA_def_property_ui_text(prop, "Waveform Style", "How Waveforms are displayed");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_fcurves", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_FCURVES);
+  RNA_def_property_boolean_sdna(prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_FCURVES);
   RNA_def_property_ui_text(prop, "Show F-Curves", "Display strip opacity/volume curve");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_strip_name", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_STRIP_NAME);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_STRIP_NAME);
   RNA_def_property_ui_text(prop, "Show Name", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_strip_source", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_STRIP_SOURCE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_STRIP_SOURCE);
   RNA_def_property_ui_text(
       prop, "Show Source", "Display path to source file, or name of source datablock");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_strip_duration", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_STRIP_DURATION);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_STRIP_DURATION);
   RNA_def_property_ui_text(prop, "Show Duration", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_grid", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_GRID);
+  RNA_def_property_boolean_sdna(prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_GRID);
   RNA_def_property_ui_text(prop, "Show Grid", "Show vertical grid lines");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_strip_offset", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_STRIP_OFFSETS);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_STRIP_OFFSETS);
   RNA_def_property_ui_text(prop, "Show Offsets", "Display strip in/out offsets");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_thumbnails", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_THUMBNAILS);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_THUMBNAILS);
   RNA_def_property_ui_text(prop, "Show Thumbnails", "Show strip thumbnails");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_strip_tag_color", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG);
   RNA_def_property_ui_text(
       prop, "Show Color Tags", "Display the strip color tags in the sequencer");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_strip_retiming", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TIMELINE_SHOW_STRIP_RETIMING);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "timeline_overlay.flag", SEQ_TIMELINE_SHOW_STRIP_RETIMING);
   RNA_def_property_ui_text(prop, "Show Retiming Keys", "Display retiming keys on top of strips");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 }
@@ -6021,33 +6073,33 @@ static void rna_def_space_sequencer_cache_overlay(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "SequencerCacheOverlay", nullptr);
-  RNA_def_struct_sdna(srna, "SequencerCacheOverlay");
+  RNA_def_struct_sdna(srna, "SpaceSeq");
   RNA_def_struct_nested(brna, srna, "SpaceSequenceEditor");
   RNA_def_struct_path_func(srna, "rna_SpaceSequencerCacheOverlay_path");
   RNA_def_struct_ui_text(srna, "Cache Overlay Settings", "");
 
   prop = RNA_def_property(srna, "show_cache", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_CACHE_SHOW);
+  RNA_def_property_boolean_sdna(prop, nullptr, "cache_overlay.flag", SEQ_CACHE_SHOW);
   RNA_def_property_ui_text(prop, "Show Cache", "Visualize cached images on the timeline");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_cache_final_out", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_CACHE_SHOW_FINAL_OUT);
+  RNA_def_property_boolean_sdna(prop, nullptr, "cache_overlay.flag", SEQ_CACHE_SHOW_FINAL_OUT);
   RNA_def_property_ui_text(prop, "Final Images", "Visualize cached complete frames");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_cache_raw", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_CACHE_SHOW_RAW);
+  RNA_def_property_boolean_sdna(prop, nullptr, "cache_overlay.flag", SEQ_CACHE_SHOW_RAW);
   RNA_def_property_ui_text(prop, "Raw Images", "Visualize cached raw images");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_cache_preprocessed", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_CACHE_SHOW_PREPROCESSED);
+  RNA_def_property_boolean_sdna(prop, nullptr, "cache_overlay.flag", SEQ_CACHE_SHOW_PREPROCESSED);
   RNA_def_property_ui_text(prop, "Preprocessed Images", "Visualize cached pre-processed images");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_cache_composite", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_CACHE_SHOW_COMPOSITE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "cache_overlay.flag", SEQ_CACHE_SHOW_COMPOSITE);
   RNA_def_property_ui_text(prop, "Composite Images", "Visualize cached composite images");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
 }
@@ -6249,19 +6301,22 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   prop = RNA_def_property(srna, "preview_overlay", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_struct_type(prop, "SequencerPreviewOverlay");
-  RNA_def_property_pointer_sdna(prop, nullptr, "preview_overlay");
+  RNA_def_property_pointer_funcs(
+      prop, "rna_SpaceSequenceEditor_preview_overlay_get", nullptr, nullptr, nullptr);
   RNA_def_property_ui_text(prop, "Preview Overlay Settings", "Settings for display of overlays");
 
   prop = RNA_def_property(srna, "timeline_overlay", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_struct_type(prop, "SequencerTimelineOverlay");
-  RNA_def_property_pointer_sdna(prop, nullptr, "timeline_overlay");
+  RNA_def_property_pointer_funcs(
+      prop, "rna_SpaceSequenceEditor_timeline_overlay_get", nullptr, nullptr, nullptr);
   RNA_def_property_ui_text(prop, "Timeline Overlay Settings", "Settings for display of overlays");
 
   prop = RNA_def_property(srna, "cache_overlay", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_struct_type(prop, "SequencerCacheOverlay");
-  RNA_def_property_pointer_sdna(prop, nullptr, "cache_overlay");
+  RNA_def_property_pointer_funcs(
+      prop, "rna_SpaceSequenceEditor_cache_overlay_get", nullptr, nullptr, nullptr);
   RNA_def_property_ui_text(prop, "Cache Overlay Settings", "Settings for display of overlays");
   rna_def_space_sequencer_preview_overlay(brna);
   rna_def_space_sequencer_timeline_overlay(brna);

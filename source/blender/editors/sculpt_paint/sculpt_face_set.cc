@@ -53,6 +53,7 @@
 
 #include "ED_sculpt.hh"
 
+#include "mesh_brush_common.hh"
 #include "paint_intern.hh"
 #include "sculpt_intern.hh"
 
@@ -205,6 +206,72 @@ Array<int> duplicate_face_sets(const Mesh &mesh)
   return face_sets;
 }
 
+void filter_verts_with_unique_face_sets_mesh(const GroupedSpan<int> vert_to_face_map,
+                                             const int *face_sets,
+                                             const bool unique,
+                                             const Span<int> verts,
+                                             const MutableSpan<float> factors)
+{
+  BLI_assert(verts.size() == factors.size());
+
+  for (const int i : verts.index_range()) {
+    if (unique == face_set::vert_has_unique_face_set(vert_to_face_map, face_sets, verts[i])) {
+      factors[i] = 0.0f;
+    }
+  }
+}
+
+void filter_verts_with_unique_face_sets_grids(const GroupedSpan<int> vert_to_face_map,
+                                              const Span<int> corner_verts,
+                                              const OffsetIndices<int> faces,
+                                              const SubdivCCG &subdiv_ccg,
+                                              const int *face_sets,
+                                              const bool unique,
+                                              const Span<int> grids,
+                                              const MutableSpan<float> factors)
+{
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  BLI_assert(grids.size() * key.grid_area == factors.size());
+
+  for (const int i : grids.index_range()) {
+    const int node_start = i * key.grid_area;
+    for (const int y : IndexRange(key.grid_size)) {
+      for (const int x : IndexRange(key.grid_size)) {
+        const int offset = CCG_grid_xy_to_index(key.grid_size, x, y);
+        const int node_vert = node_start + offset;
+        if (factors[node_vert] == 0.0f) {
+          continue;
+        }
+
+        SubdivCCGCoord coord{};
+        coord.grid_index = grids[i];
+        coord.x = x;
+        coord.y = y;
+        if (unique == face_set::vert_has_unique_face_set(
+                          vert_to_face_map, corner_verts, faces, face_sets, subdiv_ccg, coord))
+        {
+          factors[node_vert] = 0.0f;
+        }
+      }
+    }
+  }
+}
+
+void filter_verts_with_unique_face_sets_bmesh(const bool unique,
+                                              const Set<BMVert *, 0> verts,
+                                              const MutableSpan<float> factors)
+{
+  BLI_assert(verts.size() == factors.size());
+
+  int i = 0;
+  for (const BMVert *vert : verts) {
+    if (unique == face_set::vert_has_unique_face_set(vert)) {
+      factors[i] = 0.0f;
+    }
+    i++;
+  }
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -236,7 +303,7 @@ static void face_sets_update(Object &object,
               bke::pbvh::node_face_indices_calc_mesh(tri_faces, *node, tls.face_indices) :
               bke::pbvh::node_face_indices_calc_grids(pbvh, *node, tls.face_indices);
 
-      tls.new_face_sets.reinitialize(faces.size());
+      tls.new_face_sets.resize(faces.size());
       MutableSpan<int> new_face_sets = tls.new_face_sets;
       array_utils::gather(face_sets.span.as_span(), faces, new_face_sets);
       calc_face_sets(faces, new_face_sets);
@@ -773,7 +840,7 @@ static void face_hide_update(Object &object,
               bke::pbvh::node_face_indices_calc_mesh(tri_faces, *node, tls.face_indices) :
               bke::pbvh::node_face_indices_calc_grids(pbvh, *node, tls.face_indices);
 
-      tls.new_hide.reinitialize(faces.size());
+      tls.new_hide.resize(faces.size());
       MutableSpan<bool> new_hide = tls.new_hide;
       array_utils::gather(hide_poly.span.as_span(), faces, new_hide);
       calc_hide(faces, new_hide);
@@ -886,8 +953,9 @@ static int change_visibility_exec(bContext *C, wmOperator *op)
    * navigation. */
   if (ELEM(mode, VisibilityMode::Toggle, VisibilityMode::ShowActive)) {
     UnifiedPaintSettings *ups = &CTX_data_tool_settings(C)->unified_paint_settings;
+
     float location[3];
-    copy_v3_v3(location, SCULPT_active_vertex_co_get(ss));
+    copy_v3_v3(location, ss.active_vert_position(object));
     mul_m4_v3(object.object_to_world().ptr(), location);
     copy_v3_v3(ups->average_stroke_accum, location);
     ups->average_stroke_counter = 1;
@@ -899,7 +967,7 @@ static int change_visibility_exec(bContext *C, wmOperator *op)
   bke::pbvh::update_visibility(*ss.pbvh);
   BKE_sculpt_hide_poly_pointer_update(object);
 
-  SCULPT_topology_islands_invalidate(*object.sculpt);
+  islands::invalidate(*object.sculpt);
   hide::tag_update_visibility(*C);
 
   return OPERATOR_FINISHED;
@@ -1052,6 +1120,9 @@ static void edit_grow_shrink(Object &object,
   const Span<int> corner_verts = mesh.corner_verts();
   const GroupedSpan<int> vert_to_face_map = ss.vert_to_face_map;
   const bke::AttributeAccessor attributes = mesh.attributes();
+
+  BLI_assert(attributes.contains(".sculpt_face_set"));
+
   const VArraySpan<bool> hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
   Array<int> prev_face_sets = duplicate_face_sets(mesh);
 
@@ -1176,40 +1247,53 @@ static void delete_geometry(Object &ob, const int active_face_set_id, const bool
   BM_mesh_free(bm);
 }
 
-static void edit_fairing(Object &ob,
+static void edit_fairing(const Sculpt &sd,
+                         Object &ob,
                          const int active_face_set_id,
                          const eMeshFairingDepth fair_order,
                          const float strength)
 {
   SculptSession &ss = *ob.sculpt;
-  const int totvert = SCULPT_vertex_count_get(ss);
+  Mesh &mesh = *static_cast<Mesh *>(ob.data);
+  const bke::pbvh::Tree &pbvh = *ss.pbvh;
 
-  Mesh *mesh = static_cast<Mesh *>(ob.data);
-  Vector<float3> orig_positions;
-  Vector<bool> fair_verts;
+  const Span<float3> positions = BKE_pbvh_get_vert_positions(pbvh);
+  MutableSpan<float3> positions_orig = mesh.vert_positions_for_write();
 
-  orig_positions.resize(totvert);
-  fair_verts.resize(totvert);
+  Array<bool> fair_verts(positions.size());
 
   boundary::ensure_boundary_info(ob);
 
-  for (int i = 0; i < totvert; i++) {
-    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
-
-    orig_positions[i] = SCULPT_vertex_co_get(ss, vertex);
-    fair_verts[i] = !boundary::vert_is_boundary(ss, vertex) &&
-                    vert_has_face_set(ss, vertex, active_face_set_id) &&
-                    vert_has_unique_face_set(ss, vertex);
+  for (const int vert : positions.index_range()) {
+    fair_verts[vert] = !boundary::vert_is_boundary(ss, PBVHVertRef{vert}) &&
+                       vert_has_face_set(ss, PBVHVertRef{vert}, active_face_set_id) &&
+                       vert_has_unique_face_set(ss, PBVHVertRef{vert});
   }
 
-  MutableSpan<float3> positions = SCULPT_mesh_deformed_positions_get(ss);
-  BKE_mesh_prefair_and_fair_verts(mesh, positions, fair_verts.data(), fair_order);
+  Array<float3> new_positions = positions;
+  BKE_mesh_prefair_and_fair_verts(&mesh, new_positions, fair_verts.data(), fair_order);
 
-  for (int i = 0; i < totvert; i++) {
-    if (fair_verts[i]) {
-      interp_v3_v3v3(positions[i], orig_positions[i], positions[i], strength);
+  struct LocalData {
+    Vector<float3> translations;
+  };
+
+  Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(const_cast<bke::pbvh::Tree &>(pbvh),
+                                                             {});
+
+  threading::EnumerableThreadSpecific<LocalData> all_tls;
+  threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
+    LocalData &tls = all_tls.local();
+    for (const int i : range) {
+      const Span<int> verts = bke::pbvh::node_unique_verts(*nodes[i]);
+      tls.translations.resize(verts.size());
+      const MutableSpan<float3> translations = tls.translations;
+      for (const int i : verts.index_range()) {
+        translations[i] = new_positions[verts[i]] - positions[verts[i]];
+      }
+      scale_translations(translations, strength);
+      write_translations(sd, ob, positions, verts, translations, positions_orig);
     }
-  }
+  });
 }
 
 static bool edit_is_operation_valid(const Object &object,
@@ -1242,6 +1326,18 @@ static bool edit_is_operation_valid(const Object &object,
        * directly by the fair algorithm. Multi-resolution topology needs to be exposed in a
        * different way or converted to a mesh for this operation. */
       return false;
+    }
+  }
+
+  if (ELEM(mode, EditMode::Grow, EditMode::Shrink)) {
+    if (object.sculpt->pbvh->type() == bke::pbvh::Type::Mesh) {
+      const Mesh &mesh = *static_cast<Mesh *>(object.data);
+      const bke::AttributeAccessor attributes = mesh.attributes();
+      if (!attributes.contains(".sculpt_face_set")) {
+        /* If a mesh does not have the face set attribute, growing or shrinking the face set will
+         * have no effect, exit early in this case. */
+        return false;
+      }
     }
   }
 
@@ -1282,24 +1378,21 @@ static void edit_modify_coordinates(
   const float strength = RNA_float_get(op->ptr, "strength");
 
   undo::push_begin(ob, op);
+  undo::push_nodes(ob, nodes, undo::Type::Position);
   for (bke::pbvh::Node *node : nodes) {
     BKE_pbvh_node_mark_positions_update(node);
-    undo::push_node(ob, node, undo::Type::Position);
   }
   switch (mode) {
     case EditMode::FairPositions:
-      edit_fairing(ob, active_face_set, MESH_FAIRING_DEPTH_POSITION, strength);
+      edit_fairing(sd, ob, active_face_set, MESH_FAIRING_DEPTH_POSITION, strength);
       break;
     case EditMode::FairTangency:
-      edit_fairing(ob, active_face_set, MESH_FAIRING_DEPTH_TANGENCY, strength);
+      edit_fairing(sd, ob, active_face_set, MESH_FAIRING_DEPTH_TANGENCY, strength);
       break;
     default:
       BLI_assert_unreachable();
   }
 
-  if (ss.deform_modifiers_active || ss.shapekey_active) {
-    SCULPT_flush_stroke_deform(sd, ob, true);
-  }
   flush_update_step(C, UpdateType::Position);
   flush_update_done(C, ob, UpdateType::Position);
   undo::push_end(ob);
@@ -1466,7 +1559,7 @@ static void gesture_apply_mesh(gesture::GestureData &gesture_data,
   SculptSession &ss = *gesture_data.ss;
   const bke::pbvh::Tree &pbvh = *ss.pbvh;
 
-  const Span<float3> positions = ss.vert_positions;
+  const Span<float3> positions = BKE_pbvh_get_vert_positions(pbvh);
   const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
   const Span<int> tri_faces = mesh.corner_tri_faces();

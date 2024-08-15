@@ -109,11 +109,11 @@ class NonManifoldUVEdges : public Vector<Edge<CoordSpace::UV>> {
           continue;
         }
         const int3 &tri = mesh_data.corner_tris[primitive_id];
-        const uv_islands::MeshEdge &mesh_edge = mesh_data.edges[edge_id];
+        const int2 mesh_edge = mesh_data.edges[edge_id];
         Edge<CoordSpace::UV> edge;
 
-        edge.vertex_1.coordinate = find_uv(mesh_data, tri, mesh_edge.vert1);
-        edge.vertex_2.coordinate = find_uv(mesh_data, tri, mesh_edge.vert2);
+        edge.vertex_1.coordinate = find_uv(mesh_data, tri, mesh_edge[0]);
+        edge.vertex_2.coordinate = find_uv(mesh_data, tri, mesh_edge[1]);
         append(edge);
       }
     }
@@ -175,7 +175,7 @@ class PixelNodesTileData : public Vector<std::reference_wrapper<UDIMTilePixels>>
 
     for (blender::bke::pbvh::Node &node : pbvh.nodes_) {
       if (should_add_node(node, image_tile)) {
-        NodeData &node_data = *static_cast<NodeData *>(node.pixels_.node_data);
+        NodeData &node_data = *static_cast<NodeData *>(node.pixels_);
         UDIMTilePixels &tile_pixels = *node_data.find_tile_data(image_tile);
         append(tile_pixels);
       }
@@ -189,10 +189,10 @@ class PixelNodesTileData : public Vector<std::reference_wrapper<UDIMTilePixels>>
     if ((node.flag_ & PBVH_Leaf) == 0) {
       return false;
     }
-    if (node.pixels_.node_data == nullptr) {
+    if (node.pixels_ == nullptr) {
       return false;
     }
-    NodeData &node_data = *static_cast<NodeData *>(node.pixels_.node_data);
+    NodeData &node_data = *static_cast<NodeData *>(node.pixels_);
     if (node_data.find_tile_data(image_tile) == nullptr) {
       return false;
     }
