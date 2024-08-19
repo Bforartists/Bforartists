@@ -800,7 +800,7 @@ static void icon_verify_datatoc(IconImage *iimg)
         iimg->datatoc_rect, iimg->datatoc_size, IB_rect, nullptr, "<matcap icon>");
     /* w and h were set on initialize */
     if (bbuf->x != iimg->h && bbuf->y != iimg->w) {
-      IMB_scaleImBuf(bbuf, iimg->w, iimg->h);
+      IMB_scale(bbuf, iimg->w, iimg->h, IMBScaleFilter::Box, false);
     }
 
     iimg->rect = IMB_steal_byte_buffer(bbuf);
@@ -1346,6 +1346,7 @@ static void svg_replace_color_attributes(std::string &svg,
       {"blender.shading", nullptr, TH_ICON_SHADING},
       {"blender.folder", nullptr, TH_ICON_FOLDER},
       {"blender.fund", nullptr, TH_ICON_FUND},
+      {"blender.autokey", nullptr, TH_ICON_AUTOKEY},
       {"blender.tool_add", tool_add},
       {"blender.tool_remove", tool_remove},
       {"blender.tool_select", tool_select},
@@ -1540,7 +1541,7 @@ static void icon_draw_size(float x,
   else if (ELEM(di->type, ICON_TYPE_SVG_MONO, ICON_TYPE_SVG_COLOR)) {
     float outline_intensity = mono_border ? (btheme->tui.icon_border_intensity > 0.0f ?
                                                  btheme->tui.icon_border_intensity :
-                                                 0.5f) :
+                                                 0.3f) :
                                             0.0f;
     float color[4];
     if (mono_rgba) {
