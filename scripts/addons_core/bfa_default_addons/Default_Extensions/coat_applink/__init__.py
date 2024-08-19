@@ -2,18 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "3D-Coat Applink",
-    "author": "Kalle-Samuli Riihikoski (haikalle)",
-    "version": (4, 9, 35),
-    "blender": (4, 1, 0),
-    "location": "Scene > 3D-Coat Applink",
-    "description": "Transfer data between 3D-Coat/Blender",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/coat3D.html",
-    "category": "Import-Export",
-}
-
 if "bpy" in locals():
     import importlib
     importlib.reload(tex)

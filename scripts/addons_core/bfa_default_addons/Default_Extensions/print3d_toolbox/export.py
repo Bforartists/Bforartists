@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2013-2023 Blender Foundation
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2013-2023 Campbell Barton
+# SPDX-FileContributor: Mikhail Rachinskiy
 
 # Export wrappers and integration with external tools.
 
@@ -63,14 +63,12 @@ def write_mesh(context, report_cb):
     scene = context.scene
     layer = context.view_layer
     unit = scene.unit_settings
-    print_3d = scene.print_3d
+    props = scene.print_3d
 
-    export_format = print_3d.export_format
-    global_scale = unit.scale_length if (unit.system != "NONE" and print_3d.use_apply_scale) else 1.0
-    path_mode = "COPY" if print_3d.use_export_texture else "AUTO"
-    export_path = bpy.path.abspath(print_3d.export_path)
+    global_scale = unit.scale_length if (unit.system != "NONE" and props.use_scene_scale) else 1.0
+    path_mode = "COPY" if props.use_copy_textures else "AUTO"
+    export_path = bpy.path.abspath(props.export_path)
     obj = layer.objects.active
-    export_data_layers = print_3d.use_data_layers
 
     # Create name 'export_path/blendname-objname'
     # add the filename component
@@ -96,45 +94,46 @@ def write_mesh(context, report_cb):
 
     filepath = os.path.join(export_path, name)
 
-    if export_format == "STL":
+    if props.export_format == "STL":
         filepath = bpy.path.ensure_ext(filepath, ".stl")
         ret = bpy.ops.wm.stl_export(
             filepath=filepath,
-            ascii_format=False,
+            ascii_format=props.use_ascii_format,
+            global_scale=global_scale,
             apply_modifiers=True,
             export_selected_objects=True,
-            global_scale=global_scale,
         )
-    elif export_format == "PLY":
+    elif props.export_format == "PLY":
         filepath = bpy.path.ensure_ext(filepath, ".ply")
         ret = bpy.ops.wm.ply_export(
             filepath=filepath,
-            ascii_format=False,
+            ascii_format=props.use_ascii_format,
+            global_scale=global_scale,
+            export_uv=props.use_uv,
+            export_normals=props.use_normals,
+            export_colors="SRGB" if props.use_colors else "NONE",
             apply_modifiers=True,
             export_selected_objects=True,
-            global_scale=global_scale,
-            export_normals=export_data_layers,
-            export_uv=export_data_layers,
-            export_colors="SRGB" if export_data_layers else "NONE",
+            export_attributes=False,
         )
-    elif export_format == "OBJ":
+    elif props.export_format == "OBJ":
         filepath = bpy.path.ensure_ext(filepath, ".obj")
         ret = bpy.ops.wm.obj_export(
             filepath=filepath,
+            global_scale=global_scale,
+            export_uv=props.use_uv,
+            export_normals=props.use_normals,
+            export_colors=props.use_colors,
+            export_materials=props.use_copy_textures,
+            path_mode=path_mode,
             apply_modifiers=True,
             export_selected_objects=True,
-            global_scale=global_scale,
-            path_mode=path_mode,
-            export_normals=export_data_layers,
-            export_uv=export_data_layers,
-            export_materials=export_data_layers,
-            export_colors=export_data_layers,
         )
     else:
         assert 0
 
     # for formats that don't support images
-    if path_mode == "COPY" and export_format in {"STL", "PLY"}:
+    if path_mode == "COPY" and props.export_format in {"STL", "PLY"}:
         image_copy_guess(filepath, context.selected_objects)
 
     if "FINISHED" in ret:
