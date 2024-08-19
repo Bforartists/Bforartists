@@ -49,10 +49,8 @@ class NormalizeOperation : public NodeOperation {
       return;
     }
 
-    const float maximum = maximum_float_in_range(
-        context(), input_image.texture(), -range_, range_);
-    const float minimum = minimum_float_in_range(
-        context(), input_image.texture(), -range_, range_);
+    const float maximum = maximum_float_in_range(context(), input_image, -range_, range_);
+    const float minimum = minimum_float_in_range(context(), input_image, -range_, range_);
     const float scale = (maximum != minimum) ? (1.0f / (maximum - minimum)) : 0.0f;
 
     GPUShader *shader = context().get_shader("compositor_normalize");
@@ -92,5 +90,5 @@ void register_node_type_cmp_normalize()
   ntype.declare = file_ns::cmp_node_normalize_declare;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
-  blender::bke::nodeRegisterType(&ntype);
+  blender::bke::node_register_type(&ntype);
 }
