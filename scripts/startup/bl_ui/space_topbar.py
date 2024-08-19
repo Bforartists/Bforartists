@@ -803,6 +803,7 @@ class TOPBAR_MT_help(Menu):
         layout.separator()
 
         layout.operator("wm.splash", icon='BLENDER')
+        layout.operator("wm.splash_about", icon='BLENDER') # BFA - show about window
 
 
 class TOPBAR_MT_file_context_menu(Menu):
