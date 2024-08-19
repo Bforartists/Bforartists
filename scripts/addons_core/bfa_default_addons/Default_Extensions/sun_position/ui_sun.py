@@ -100,7 +100,7 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
         layout.use_property_decorate = True
 
         col = layout.column(align=True)
-        col.prop(sun_props, "bind_to_sun", text="Bind Texture to Sun")
+        col.prop(sun_props, "bind_to_sun")
         col.prop(sun_props, "env_azimuth")
         row = col.row(align=True)
         row.active = not sun_props.bind_to_sun
@@ -177,7 +177,7 @@ class SUNPOS_PT_Location(bpy.types.Panel):
         col.separator()
 
         col = layout.column(align=True)
-        col.prop(sun_props, "north_offset", text="North Offset")
+        col.prop(sun_props, "north_offset")
 
         if addon_prefs.show_az_el:
             col = layout.column(align=True)
@@ -220,7 +220,7 @@ class SUNPOS_PT_Time(bpy.types.Panel):
         col.separator()
 
         col = layout.column(align=True)
-        col.prop(sun_props, "time", text="Time", text_ctxt="Hour")
+        col.prop(sun_props, "time")
         col.prop(sun_props, "UTC_zone")
         col.prop(sun_props, "use_daylight_savings")
         col.separator()

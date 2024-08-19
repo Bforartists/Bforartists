@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "sun_position"
-version = "4.0.1"
+version = "4.0.2"
 name = "Sun Position"
 tagline = "Show the position of the Sun with objects or an environment"
 maintainer = "Damien Picard <dam.pic@free.fr>"
@@ -19,4 +19,14 @@ license = [
 copyright = [
   "2011-2012 Michael Martin",
   "2019-2024 Damien Picard",
+]
+
+[build]
+paths_exclude_pattern = [
+  "/.git/",
+  "__pycache__/",
+  "docs",
+  "*.pot",
+  "*.po",
+  "*.zip",
 ]
