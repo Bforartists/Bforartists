@@ -1919,6 +1919,7 @@ if(WITH_BLENDER)
       filter
       newfolder
       open_recent
+      file_alias
       file_parent
       file_refresh
       file_folder
