@@ -1463,10 +1463,10 @@ def process_next_chunk(context, file, previous_chunk, imported_objects, CONSTRAI
             if child.name == '$$$DUMMY':
                 child.name = instance_name
             else:  # Child is an instance
-                child = child.copy()
-                child.name = object_name + "." + instance_name
+                child = bpy.data.objects.new(object_name + '.' + instance_name.split('.')[-1], child.data.copy())
                 context.view_layer.active_layer_collection.collection.objects.link(child)
-                object_dict[object_id] = child
+                matrix_dictionary[child.name] = matrix_dictionary.get(object_name, mathutils.Matrix()).copy()
+                imported_objects.append(child)
                 object_list[-1] = child
             object_dictionary[child.name] = child
             new_chunk.bytes_read += read_str_len
