@@ -3240,7 +3240,7 @@ class WM_MT_splash_quick_setup(Menu):
 
             layout.separator()
             layout.separator(type='LINE')
-            
+
         if can_import:
             layout.label(text="Create New Preferences")
         else:
@@ -3352,11 +3352,11 @@ class WM_MT_splash(Menu):
 
         if (not bpy.app.online_access) and bpy.app.online_access_override:
             self.layout.label(text="Running in Offline Mode", icon='DELETE') #BFA - wip, update icon to INTERNET_OFFLINE
-		
+
         layout.separator()
-		
+
         layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}")
-		
+
         layout.separator()
 
 
@@ -3390,18 +3390,18 @@ class WM_MT_splash_about(Menu):
         del _ghost_backend, ghost_backend
 
         col.separator(factor=2.0)
-        col.label(text="Blender is free software")
+        col.label(text="Bforartists is free software") # BFA - our name
         col.label(text="Licensed under the GNU General Public License")
 
         col = split.column(align=True)
         col.emboss = 'PULLDOWN_MENU'
-        col.operator("wm.url_open_preset", text="Donate", icon='FUND').type = 'FUND'
-        col.operator("wm.url_open_preset", text="What's New", icon='URL').type = 'RELEASE_NOTES'
-        col.separator(factor=2.0)
-        col.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'
-        col.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"
-        col.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"
-        col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'
+        # col.operator("wm.url_open_preset", text="Donate", icon='FUND').type = 'FUND' # BFA - Not Used
+        #col.operator("wm.url_open_preset", text="What's New", icon='URL').type = 'RELEASE_NOTES'  BFA - Not Used
+        #col.separator(factor=2.0)
+        #col.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'  BFA - Not Used
+        #col.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"  BFA - Not Used
+        #col.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"  BFA - Not Used
+        #col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'  BFA - Not Used
 
 
 class WM_MT_region_toggle_pie(Menu):
