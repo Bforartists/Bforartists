@@ -86,7 +86,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         return mathutils.Vector((center_x, center_y))
 
     def set_cam_view_offset_from_angle(self, context, angle):
-        '''apply inverse of the rotation on view offset in cam rotate from view center'''
+        '''Apply inverse of the rotation on view offset in cam rotate from view center'''
         neg = -angle
         rot_mat2d = mathutils.Matrix([[math.cos(neg), -math.sin(neg)], [math.sin(neg), math.cos(neg)]])
 
@@ -114,9 +114,8 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             bpy.ops.ed.undo_push(message='Rotate Canvas')
         return {'FINISHED'}
 
-
     def modal(self, context, event):
-        if event.type in {'MOUSEMOVE'}:#,'INBETWEEN_MOUSEMOVE'
+        if event.type in {'MOUSEMOVE'}:
             # Get current mouse coordination (region)
             self.pos_current = mathutils.Vector((event.mouse_region_x, event.mouse_region_y))
             # Get current vector
@@ -153,7 +152,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
                 rot.rotate_axis("Z", self.angle)
                 context.space_data.region_3d.view_rotation = rot.to_quaternion()
 
-        if event.type in {'RIGHTMOUSE', 'LEFTMOUSE', 'MIDDLEMOUSE'} and event.value == 'RELEASE':
+        if event.type in {self.input_type, 'LEFTMOUSE'} and event.value == 'RELEASE':
             # Trigger reset : Less than 150ms and less than 2 degrees move
             if time() - self.timer < 0.15 and abs(math.degrees(self.angle)) < 2:
                 # self.report({'INFO'}, 'Reset')
@@ -193,6 +192,7 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
 
     def invoke(self, context, event):
         self.current_area = context.area
+        self.input_type = event.type
         prefs = get_addon_prefs()
         self.hud = prefs.canvas_use_hud
         self.use_view_center = prefs.canvas_use_view_center
@@ -263,7 +263,6 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
 
         # Initializes the current vector with the same initial vector.
         self.vector_current = self.vector_initial.copy()
-
 
         #Snap keys
         self.snap_ctrl = not prefs.use_ctrl
