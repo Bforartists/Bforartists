@@ -234,6 +234,8 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.use_property_split = False
         flow.prop(prefs, "use_recent_searches", text="Sort search by Most Recent")
+        # bfa - gooengine disable_search_on_keypress
+        flow.prop(prefs, "disable_search_on_keypress", text="Disable search on Key press")
 
 
 class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):
