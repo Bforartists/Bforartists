@@ -30,7 +30,9 @@
 #include "IMB_colormanagement.hh"
 
 #include "mesh_brush_common.hh"
+#include "sculpt_color.hh"
 #include "sculpt_intern.hh"
+#include "sculpt_smooth.hh"
 
 #include "IMB_imbuf.hh"
 
@@ -255,7 +257,8 @@ struct ColorPaintLocalData {
   Vector<Vector<int>> vert_neighbors;
 };
 
-static void do_color_smooth_task(const Object &object,
+static void do_color_smooth_task(const Depsgraph &depsgraph,
+                                 const Object &object,
                                  const Span<float3> vert_positions,
                                  const Span<float3> vert_normals,
                                  const OffsetIndices<int> faces,
@@ -289,9 +292,7 @@ static void do_color_smooth_task(const Object &object,
   apply_hardness_to_distances(cache, distances);
   calc_brush_strength_factors(cache, brush, distances, factors);
 
-  if (cache.automasking) {
-    auto_mask::calc_vert_factors(object, *cache.automasking, node, verts, factors);
-  }
+  auto_mask::calc_vert_factors(depsgraph, object, cache.automasking.get(), node, verts, factors);
 
   calc_brush_texture_factors(ss, brush, vert_positions, verts, factors);
   scale_factors(factors, cache.bstrength);
@@ -336,7 +337,8 @@ static void do_color_smooth_task(const Object &object,
   }
 }
 
-static void do_paint_brush_task(Object &object,
+static void do_paint_brush_task(const Depsgraph &depsgraph,
+                                Object &object,
                                 const Span<float3> vert_positions,
                                 const Span<float3> vert_normals,
                                 const OffsetIndices<int> faces,
@@ -386,7 +388,7 @@ static void do_paint_brush_task(Object &object,
     tls.auto_mask.resize(verts.size());
     auto_mask = tls.auto_mask;
     auto_mask.fill(1.0f);
-    auto_mask::calc_vert_factors(object, *cache.automasking, node, verts, auto_mask);
+    auto_mask::calc_vert_factors(depsgraph, object, *cache.automasking, node, verts, auto_mask);
     scale_factors(factors, auto_mask);
   }
 
@@ -517,14 +519,15 @@ static void do_sample_wet_paint_task(const Object &object,
   }
 }
 
-void do_paint_brush(PaintModeSettings &paint_mode_settings,
+void do_paint_brush(const Depsgraph &depsgraph,
+                    PaintModeSettings &paint_mode_settings,
                     const Sculpt &sd,
                     Object &ob,
                     Span<bke::pbvh::Node *> nodes,
                     Span<bke::pbvh::Node *> texnodes)
 {
   if (SCULPT_use_image_paint_brush(paint_mode_settings, ob)) {
-    SCULPT_do_paint_brush_image(paint_mode_settings, sd, ob, texnodes);
+    SCULPT_do_paint_brush_image(depsgraph, paint_mode_settings, sd, ob, texnodes);
     return;
   }
 
@@ -553,8 +556,8 @@ void do_paint_brush(PaintModeSettings &paint_mode_settings,
   }
 
   Mesh &mesh = *static_cast<Mesh *>(ob.data);
-  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
-  const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(*ss.pbvh);
+  const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
+  const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, ob);
   const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
   const GroupedSpan<int> vert_to_face_map = ss.vert_to_face_map;
@@ -572,7 +575,8 @@ void do_paint_brush(PaintModeSettings &paint_mode_settings,
     threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
       ColorPaintLocalData &tls = all_tls.local();
       for (const int i : range) {
-        do_color_smooth_task(ob,
+        do_color_smooth_task(depsgraph,
+                             ob,
                              vert_positions,
                              vert_normals,
                              faces,
@@ -645,7 +649,8 @@ void do_paint_brush(PaintModeSettings &paint_mode_settings,
   threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
     ColorPaintLocalData &tls = all_tls.local();
     for (const int i : range) {
-      do_paint_brush_task(ob,
+      do_paint_brush_task(depsgraph,
+                          ob,
                           vert_positions,
                           vert_normals,
                           faces,
@@ -663,7 +668,8 @@ void do_paint_brush(PaintModeSettings &paint_mode_settings,
   color_attribute.finish();
 }
 
-static void do_smear_brush_task(Object &object,
+static void do_smear_brush_task(const Depsgraph &depsgraph,
+                                Object &object,
                                 const Span<float3> vert_positions,
                                 const Span<float3> vert_normals,
                                 const OffsetIndices<int> faces,
@@ -698,9 +704,7 @@ static void do_smear_brush_task(Object &object,
   apply_hardness_to_distances(cache, distances);
   calc_brush_strength_factors(cache, brush, distances, factors);
 
-  if (cache.automasking) {
-    auto_mask::calc_vert_factors(object, *cache.automasking, node, verts, factors);
-  }
+  auto_mask::calc_vert_factors(depsgraph, object, cache.automasking.get(), node, verts, factors);
 
   calc_brush_texture_factors(ss, brush, vert_positions, verts, factors);
   scale_factors(factors, strength);
@@ -820,7 +824,10 @@ static void do_smear_brush_task(Object &object,
   }
 }
 
-void do_smear_brush(const Sculpt &sd, Object &ob, Span<bke::pbvh::Node *> nodes)
+void do_smear_brush(const Depsgraph &depsgraph,
+                    const Sculpt &sd,
+                    Object &ob,
+                    Span<bke::pbvh::Node *> nodes)
 {
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
   SculptSession &ss = *ob.sculpt;
@@ -833,8 +840,8 @@ void do_smear_brush(const Sculpt &sd, Object &ob, Span<bke::pbvh::Node *> nodes)
   const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
   const GroupedSpan<int> vert_to_face_map = ss.vert_to_face_map;
-  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
-  const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(*ss.pbvh);
+  const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
+  const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, ob);
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
 
@@ -865,7 +872,8 @@ void do_smear_brush(const Sculpt &sd, Object &ob, Span<bke::pbvh::Node *> nodes)
     threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
       ColorPaintLocalData &tls = all_tls.local();
       for (const int i : range) {
-        do_color_smooth_task(ob,
+        do_color_smooth_task(depsgraph,
+                             ob,
                              vert_positions,
                              vert_normals,
                              faces,
@@ -897,7 +905,8 @@ void do_smear_brush(const Sculpt &sd, Object &ob, Span<bke::pbvh::Node *> nodes)
     threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
       ColorPaintLocalData &tls = all_tls.local();
       for (const int i : range) {
-        do_smear_brush_task(ob,
+        do_smear_brush_task(depsgraph,
+                            ob,
                             vert_positions,
                             vert_normals,
                             faces,

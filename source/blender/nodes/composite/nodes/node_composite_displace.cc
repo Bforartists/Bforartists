@@ -61,9 +61,9 @@ class DisplaceOperation : public NodeOperation {
     GPU_shader_bind(shader);
 
     const Result &input_image = get_input("Image");
-    GPU_texture_mipmap_mode(input_image.texture(), true, true);
-    GPU_texture_anisotropic_filter(input_image.texture(), true);
-    GPU_texture_extend_mode(input_image.texture(), GPU_SAMPLER_EXTEND_MODE_CLAMP_TO_BORDER);
+    GPU_texture_mipmap_mode(input_image, true, true);
+    GPU_texture_anisotropic_filter(input_image, true);
+    GPU_texture_extend_mode(input_image, GPU_SAMPLER_EXTEND_MODE_CLAMP_TO_BORDER);
     input_image.bind_as_texture(shader, "input_tx");
 
     const Result &input_displacement = get_input("Vector");
@@ -131,5 +131,5 @@ void register_node_type_cmp_displace()
   ntype.declare = file_ns::cmp_node_displace_declare;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
-  blender::bke::nodeRegisterType(&ntype);
+  blender::bke::node_register_type(&ntype);
 }
