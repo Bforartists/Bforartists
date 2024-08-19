@@ -7,25 +7,27 @@ from .ui import update_sidebar_category
 class BoolToolPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
+    # UI
     show_in_sidebar: bpy.props.BoolProperty(
         name = "Show Addon Panel in Sidebar",
-        description = "Add add-on operators and properties to 3D viewport sidebar category\n"
+        description = "Add add-on operators and properties to 3D viewport sidebar category.\n"
                     "Most of the features are already available in 3D viewport's Object > Boolean menu, but brush list is only in sidebar panel",
         default = True,
     )
     sidebar_category: bpy.props.StringProperty(
         name = "Category Name",
-        description = "Set sidebar category name. You can type in name of the existing category and panel will be added there, instead of creating new category.",
+        description = "Set sidebar category name. You can type in name of the existing category and panel will be added there, instead of creating new category",
         default = "Edit",
         update = update_sidebar_category,
     )
 
+    # Defaults
     solver: bpy.props.EnumProperty(
         name = "Boolean Solver",
         description = "Which solver to use for automatic and brush booleans",
         items = [('FAST', "Fast", ""),
                  ('EXACT', "Exact", "")],
-        default = 'EXACT',
+        default = 'FAST',
     )
     wireframe: bpy.props.BoolProperty(
         name = "Display Cutters as Wireframe",
@@ -38,21 +40,50 @@ class BoolToolPreferences(bpy.types.AddonPreferences):
         description = "Every new boolean modifier created with brush boolean wil have 'Show in Edit Mode' enabled by default",
         default = True,
     )
+
+    # Advanced
     parent: bpy.props.BoolProperty(
         name = "Parent Cutters to Object",
-        description = "Cutters will be parented to first canvas they're applied to. Works best when one cutter has one canvas",
+        description = ("Cutters will be parented to first canvas they're applied to. Works best when one cutter is used one canvas.\n"
+                       "NOTE: This doesn't affect Carver tool, which has its own property for this"),
         default = True,
     )
+    apply_order: bpy.props.EnumProperty(
+        name = "When Applying Cutters...",
+        description = ("What happens when boolean cutters are applied on object.\n"
+                       "Either when performing auto-boolean, using 'Apply All Cutters' operator.\n"
+                       "NOTE: This doesn't apply to Carver tool on 'Destructive' mode; or when applying individual cutters"),
+        items = (('ALL', "Apply All Modifiers", "All modifiers on object will be applied (this includes shape keys as well)"),
+                 ('BEFORE', "Apply Booleans & Everything Before", "Alongside boolean modifiers all modifiers will be applied that come before the last boolean"),
+                 ('BOOLEANS', "Only Apply Booleans", "Only apply boolean modifiers. This method will fail if object has shape keys")),
+        default = 'ALL',
+    )
+    pin: bpy.props.BoolProperty(
+        name = "Pin Boolean Modifiers",
+        description = ("When enabled boolean modifiers will be placed above every other modifier on the object (if there are any).\n"
+                       "Order of modifiers can drastically affect the result (especially when performing auto boolean).\n"
+                       "NOTE: This doesn't affect Carver tool, which has its own property for this"),
+        default = False,
+    )
 
+    # Features
+    double_click: bpy.props.BoolProperty(
+        name = "Double-click Select",
+        description = ("Select boolean cutters by dbl-clicking on the boolean modifier.\n"
+                       "This feature works in entire modifier properties area, not just on boolean modifier header,\n"
+                       "therefore can result in lot of misclicks and unintended selections."),
+        default = False,
+    )
+
+    # Debug
     versioning: bpy.props.BoolProperty(
         name = "Versioning",
         description = "Because of the drastic changes in add-on data, it's necessary to do versioning when loading old files\n"
-                    "Where Bool Tool cutters(brushes) are not applied. If you don't have files like that, you can ignore this"
+                    "where Bool Tool cutters(brushes) are not applied. If you don't have files like that, you can ignore this"
     )
     experimental: bpy.props.BoolProperty(
         name = "Experimental",
-        description = "Enable experimental features.\n"
-                    "WARNING: Only do that if you're aware of what those features are. They can damage your scene",
+        description = "Enable experimental features",
         default = False,
     )
 
@@ -77,13 +108,24 @@ class BoolToolPreferences(bpy.types.AddonPreferences):
         row.prop(self, "solver", text="Solver", expand=True)
         col.prop(self, "wireframe")
         col.prop(self, "show_in_editmode")
+
+        # Advanced
+        layout.separator()
+        col = layout.column(align=True, heading="Advanced")
         col.prop(self, "parent")
+        col.prop(self, "apply_order")
+        col.prop(self, "pin")
+
+        # Features
+        layout.separator()
+        col = layout.column(align=True, heading="Features")
+        col.prop(self, "double_click")
 
         # Experimentals
         layout.separator()
         col = layout.column(align=True)
-        col.prop(self, "versioning")
-        col.prop(self, "experimental")
+        col.prop(self, "versioning", text="⚠ Versioning")
+        col.prop(self, "experimental", text="⚠ Experimental")
 
 
 

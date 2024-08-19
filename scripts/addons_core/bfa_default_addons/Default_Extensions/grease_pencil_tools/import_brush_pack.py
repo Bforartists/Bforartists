@@ -76,12 +76,16 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         self._append_brushes(Path(self.temp) / blendname)
 
     def execute(self, context):
+        if bpy.app.version >= (4,2,0):
+            if not bpy.app.online_access:
+                self.report({'ERROR'}, 'Need "Allow Online Access" enabled in Preferences > System to download brushes')
+                return {'CANCELLED'}
         import tempfile
         import os
 
         temp = tempfile.gettempdir()
         if not temp:
-            self.report({'ERROR'}, 'no os temporary directory found to download brush pack (using python tempfile.gettempdir())')
+            self.report({'ERROR'}, 'No os temporary directory found to download brush pack (using python tempfile.gettempdir())')
             return {"CANCELLED"}
 
         self.temp = Path(temp)
