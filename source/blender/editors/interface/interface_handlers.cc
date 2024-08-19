@@ -11011,8 +11011,9 @@ static int ui_handle_menu_event(bContext *C,
 
             /* Menu search if space-bar or #MenuTypeFlag::SearchOnKeyPress. */
             MenuType *mt = WM_menutype_find(menu->menu_idname, true);
-            if ((mt && bool(mt->flag & MenuTypeFlag::SearchOnKeyPress)) ||
-                event->type == EVT_SPACEKEY)
+            // bfa - gooengine disable_search_on_keypress
+            if ((mt && bool(mt->flag & MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) ||
+                event->type == EVT_SPACEKEY) 
             {
               if ((level != 0) && (but == nullptr || !menu->menu_idname[0])) {
                 /* Search parent if the child is open but not activated or not searchable. */
