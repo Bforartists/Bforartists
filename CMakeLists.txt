@@ -653,12 +653,17 @@ Build Cycles kernels with address sanitizer when WITH_COMPILER_ASAN is on, even 
 set(CYCLES_TEST_DEVICES CPU CACHE STRING "\
 Run regression tests on the specified device types (CPU CUDA OPTIX HIP)"
 )
+option(WITH_CYCLES_TEST_OSL "\
+Run additional Cycles test with OSL enabled"
+  OFF
+)
 mark_as_advanced(WITH_CYCLES_KERNEL_ASAN)
 mark_as_advanced(WITH_CYCLES_LOGGING)
 mark_as_advanced(WITH_CYCLES_DEBUG_NAN)
 mark_as_advanced(WITH_CYCLES_NATIVE_ONLY)
 mark_as_advanced(WITH_CYCLES_PRECOMPUTE)
 mark_as_advanced(CYCLES_TEST_DEVICES)
+mark_as_advanced(WITH_CYCLES_TEST_OSL)
 
 # NVIDIA CUDA & OptiX
 if(NOT APPLE AND NOT (WIN32 AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
@@ -960,6 +965,28 @@ Can cause linking issues due to too large binary size."
 )
 mark_as_advanced(WITH_COMPILER_ASAN_EXTERN)
 
+option(WITH_COMPILER_CODE_COVERAGE "\
+Build and link with code coverage support (only for Debug targets)."
+OFF
+)
+mark_as_advanced(WITH_COMPILER_CODE_COVERAGE)
+
+if(WITH_COMPILER_CODE_COVERAGE)
+  if(NOT CMAKE_COMPILER_IS_GNUCC)
+    message("WITH_COMPILER_CODE_COVERAGE only works with GCC currently.")
+    set(WITH_COMPILER_CODE_COVERAGE OFF)
+  endif()
+endif()
+
+if(WITH_COMPILER_CODE_COVERAGE)
+  set(_code_coverage_defaults "--coverage")
+  set(COMPILER_CODE_COVERAGE_CFLAGS ${_code_coverage_defaults} CACHE STRING "C flags for code coverage")
+  mark_as_advanced(COMPILER_CODE_COVERAGE_CFLAGS)
+  set(COMPILER_CODE_COVERAGE_CXXFLAGS ${_code_coverage_defaults} CACHE STRING "C++ flags for code coverage")
+  mark_as_advanced(COMPILER_CODE_COVERAGE_CXXFLAGS)
+  unset(_code_coverage_defaults)
+endif()
+
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
   if(WITH_COMPILER_ASAN)
     set(_asan_defaults "\
@@ -1216,6 +1243,7 @@ set_and_warn_dependency(WITH_BOOST WITH_USD            OFF)
 if(WITH_CYCLES)
   set_and_warn_dependency(WITH_BOOST   WITH_CYCLES_OSL   OFF)
   set_and_warn_dependency(WITH_PUGIXML WITH_CYCLES_OSL   OFF)
+  set_and_warn_dependency(WITH_CYCLES_OSL WITH_CYCLES_TEST_OSL   OFF)
 endif()
 
 set_and_warn_dependency(WITH_TBB WITH_CYCLES            OFF)
@@ -1353,6 +1381,11 @@ set(PLATFORM_LINKFLAGS "")
 set(PLATFORM_LINKFLAGS_DEBUG "")
 set(PLATFORM_LINKFLAGS_RELEASE "")
 set(PLATFORM_LINKFLAGS_EXECUTABLE "")
+
+if(WITH_COMPILER_CODE_COVERAGE)
+  string(APPEND CMAKE_C_FLAGS_DEBUG " ${COMPILER_CODE_COVERAGE_CFLAGS}")
+  string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${COMPILER_CODE_COVERAGE_CXXFLAGS}")
+endif()
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "Release")
   if(WITH_COMPILER_ASAN)
