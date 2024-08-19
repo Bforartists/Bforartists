@@ -198,7 +198,7 @@ void compute_preview_from_result(Context &context, const DNode &node, Result &in
   bNodeTree *root_tree = const_cast<bNodeTree *>(
       &node.context()->derived_tree().root_context().btree());
   if (!root_tree->previews) {
-    root_tree->previews = bke::BKE_node_instance_hash_new("node previews");
+    root_tree->previews = bke::node_instance_hash_new("node previews");
   }
 
   const int2 preview_size = compute_preview_size(input_result.domain().size);
@@ -212,7 +212,7 @@ void compute_preview_from_result(Context &context, const DNode &node, Result &in
   GPU_shader_bind(shader);
 
   if (input_result.type() == ResultType::Float) {
-    GPU_texture_swizzle_set(input_result.texture(), "rrr1");
+    GPU_texture_swizzle_set(input_result, "rrr1");
   }
 
   input_result.bind_as_texture(shader, "input_tx");
@@ -229,7 +229,7 @@ void compute_preview_from_result(Context &context, const DNode &node, Result &in
 
   GPU_memory_barrier(GPU_BARRIER_TEXTURE_FETCH);
   float *preview_pixels = static_cast<float *>(
-      GPU_texture_read(preview_result.texture(), GPU_DATA_FLOAT, 0));
+      GPU_texture_read(preview_result, GPU_DATA_FLOAT, 0));
   preview_result.release();
 
   ColormanageProcessor *color_processor = IMB_colormanagement_display_processor_new(
@@ -247,11 +247,22 @@ void compute_preview_from_result(Context &context, const DNode &node, Result &in
 
   /* Restore original swizzle mask set above. */
   if (input_result.type() == ResultType::Float) {
-    GPU_texture_swizzle_set(input_result.texture(), "rgba");
+    GPU_texture_swizzle_set(input_result, "rgba");
   }
 
   IMB_colormanagement_processor_free(color_processor);
   MEM_freeN(preview_pixels);
+}
+
+void parallel_for(const int2 range, FunctionRef<void(int2)> function)
+{
+  threading::parallel_for(IndexRange(range.y), 1, [&](const IndexRange sub_y_range) {
+    for (const int64_t y : sub_y_range) {
+      for (const int64_t x : IndexRange(range.x)) {
+        function(int2(x, y));
+      }
+    }
+  });
 }
 
 }  // namespace blender::realtime_compositor
