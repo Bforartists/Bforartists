@@ -12,11 +12,12 @@
 
 #include "BLI_enumerable_thread_specific.hh"
 #include "BLI_math_base.hh"
-#include "BLI_task.h"
 
 #include "editors/sculpt_paint/mesh_brush_common.hh"
 #include "editors/sculpt_paint/paint_intern.hh"
+#include "editors/sculpt_paint/sculpt_boundary.hh"
 #include "editors/sculpt_paint/sculpt_intern.hh"
+#include "editors/sculpt_paint/sculpt_smooth.hh"
 
 namespace blender::ed::sculpt_paint {
 
@@ -64,7 +65,8 @@ static void calc_smooth_masks_faces(const OffsetIndices<int> faces,
   smooth::neighbor_data_average_mesh(masks, vert_neighbors, new_masks);
 }
 
-static void apply_masks_faces(const Brush &brush,
+static void apply_masks_faces(const Depsgraph &depsgraph,
+                              const Brush &brush,
                               const Span<float3> positions_eval,
                               const Span<float3> vert_normals,
                               const bke::pbvh::Node &node,
@@ -96,9 +98,8 @@ static void apply_masks_faces(const Brush &brush,
   apply_hardness_to_distances(cache, distances);
   calc_brush_strength_factors(cache, brush, distances, factors);
 
-  if (ss.cache->automasking) {
-    auto_mask::calc_vert_factors(object, *ss.cache->automasking, node, verts, factors);
-  }
+  auto_mask::calc_vert_factors(
+      depsgraph, object, ss.cache->automasking.get(), node, verts, factors);
 
   scale_factors(factors, strength);
 
@@ -114,7 +115,8 @@ static void apply_masks_faces(const Brush &brush,
   scatter_data_mesh(new_masks.as_span(), verts, mask);
 }
 
-static void do_smooth_brush_mesh(const Brush &brush,
+static void do_smooth_brush_mesh(const Depsgraph &depsgraph,
+                                 const Brush &brush,
                                  Object &object,
                                  Span<bke::pbvh::Node *> nodes,
                                  const float brush_strength)
@@ -126,10 +128,8 @@ static void do_smooth_brush_mesh(const Brush &brush,
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
 
-  const bke::pbvh::Tree &pbvh = *ss.pbvh;
-
-  const Span<float3> positions_eval = BKE_pbvh_get_vert_positions(pbvh);
-  const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(pbvh);
+  const Span<float3> positions_eval = bke::pbvh::vert_positions_eval(depsgraph, object);
+  const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, object);
 
   Array<int> node_vert_offset_data;
   OffsetIndices node_vert_offsets = create_node_vert_offsets(nodes, node_vert_offset_data);
@@ -161,7 +161,8 @@ static void do_smooth_brush_mesh(const Brush &brush,
     threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
       LocalData &tls = all_tls.local();
       for (const int i : range) {
-        apply_masks_faces(brush,
+        apply_masks_faces(depsgraph,
+                          brush,
                           positions_eval,
                           vert_normals,
                           *nodes[i],
@@ -176,7 +177,8 @@ static void do_smooth_brush_mesh(const Brush &brush,
   mask.finish();
 }
 
-static void calc_grids(Object &object,
+static void calc_grids(const Depsgraph &depsgraph,
+                       Object &object,
                        const Brush &brush,
                        const float strength,
                        const bke::pbvh::Node &node,
@@ -205,7 +207,8 @@ static void calc_grids(Object &object,
   calc_brush_strength_factors(cache, brush, distances, factors);
 
   if (ss.cache->automasking) {
-    auto_mask::calc_grids_factors(object, *cache.automasking, node, grids, factors);
+    auto_mask::calc_grids_factors(
+        depsgraph, object, cache.automasking.get(), node, grids, factors);
   }
 
   scale_factors(factors, strength);
@@ -226,7 +229,8 @@ static void calc_grids(Object &object,
   mask::scatter_mask_grids(masks, subdiv_ccg, grids);
 }
 
-static void calc_bmesh(Object &object,
+static void calc_bmesh(const Depsgraph &depsgraph,
+                       Object &object,
                        const int mask_offset,
                        const Brush &brush,
                        const float strength,
@@ -256,7 +260,7 @@ static void calc_bmesh(Object &object,
   calc_brush_strength_factors(cache, brush, distances, factors);
 
   if (ss.cache->automasking) {
-    auto_mask::calc_vert_factors(object, *cache.automasking, node, verts, factors);
+    auto_mask::calc_vert_factors(depsgraph, object, cache.automasking.get(), node, verts, factors);
   }
 
   scale_factors(factors, strength);
@@ -279,7 +283,8 @@ static void calc_bmesh(Object &object,
 
 }  // namespace smooth_mask_cc
 
-void do_smooth_mask_brush(const Sculpt &sd,
+void do_smooth_mask_brush(const Depsgraph &depsgraph,
+                          const Sculpt &sd,
                           Object &object,
                           Span<bke::pbvh::Node *> nodes,
                           float brush_strength)
@@ -289,7 +294,7 @@ void do_smooth_mask_brush(const Sculpt &sd,
   boundary::ensure_boundary_info(object);
   switch (ss.pbvh->type()) {
     case bke::pbvh::Type::Mesh: {
-      do_smooth_brush_mesh(brush, object, nodes, brush_strength);
+      do_smooth_brush_mesh(depsgraph, brush, object, nodes, brush_strength);
       break;
     }
     case bke::pbvh::Type::Grids: {
@@ -298,7 +303,7 @@ void do_smooth_mask_brush(const Sculpt &sd,
         threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
           LocalData &tls = all_tls.local();
           for (const int i : range) {
-            calc_grids(object, brush, strength, *nodes[i], tls);
+            calc_grids(depsgraph, object, brush, strength, *nodes[i], tls);
           }
         });
       }
@@ -314,7 +319,7 @@ void do_smooth_mask_brush(const Sculpt &sd,
         threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
           LocalData &tls = all_tls.local();
           for (const int i : range) {
-            calc_bmesh(object, mask_offset, brush, strength, *nodes[i], tls);
+            calc_bmesh(depsgraph, object, mask_offset, brush, strength, *nodes[i], tls);
           }
         });
       }
