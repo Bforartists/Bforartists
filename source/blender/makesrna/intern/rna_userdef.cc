@@ -7590,6 +7590,15 @@ void RNA_def_userdef(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", USER_FLAG_RECENT_SEARCHES_DISABLE);
   RNA_def_property_ui_text(prop, "Recent Searches", "Sort the recently searched items at the top");
 
+  /* BFA - GooEngine disable_search_on_keypress */ 
+  prop = RNA_def_property(srna, "disable_search_on_keypress", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS);
+  RNA_def_property_ui_text(
+      prop,
+      "Disable Search On Key Press",
+      "Ignore menus tagged with Search On Key Press, and fallback to using accelerator keys instead");
+   /* BFA - GooEngine end */
+
   /* nested structs */
   prop = RNA_def_property(srna, "view", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
