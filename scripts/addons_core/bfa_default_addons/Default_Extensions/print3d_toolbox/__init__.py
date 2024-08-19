@@ -1,16 +1,20 @@
-# SPDX-FileCopyrightText: 2013-2023 Blender Foundation
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2013-2024 Campbell Barton
+# SPDX-FileContributor: Mikhail Rachinskiy
 
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(ui)
-    importlib.reload(operators)
-    if "mesh_helpers" in locals():
-        importlib.reload(mesh_helpers)
+    importlib.reload(report)
     if "export" in locals():
         importlib.reload(export)
+    if "lib" in locals():
+        importlib.reload(lib)
+    importlib.reload(operators.analyze)
+    importlib.reload(operators.cleanup)
+    importlib.reload(operators.edit)
+    importlib.reload(operators)
+    importlib.reload(ui)
 else:
     import math
 
@@ -18,64 +22,22 @@ else:
     from bpy.props import BoolProperty, EnumProperty, FloatProperty, PointerProperty, StringProperty
     from bpy.types import PropertyGroup
 
-    from . import operators, ui
+    from . import operators, report, ui
 
 
 class SceneProperties(PropertyGroup):
-    use_alignxy_face_area: BoolProperty(
-        name="Face Areas",
-        description="Normalize normals proportional to face areas",
-        default=False,
-    )
-    export_format: EnumProperty(
-        name="Format",
-        description="Format type to export to",
-        items=(
-            ("OBJ", "OBJ", ""),
-            ("PLY", "PLY", ""),
-            ("STL", "STL", ""),
-        ),
-        default="STL",
-    )
-    use_export_texture: BoolProperty(
-        name="Copy Textures",
-        description="Copy textures on export to the output path",
-        default=False,
-    )
-    use_apply_scale: BoolProperty(
-        name="Apply Scale",
-        description="Apply scene scale setting on export",
-        default=False,
-    )
-    use_data_layers: BoolProperty(
-        name="Data Layers",
-        description=(
-            "Export normals, UVs, vertex colors and materials for formats that support it "
-            "significantly increasing file size"
-        ),
-    )
-    export_path: StringProperty(
-        name="Export Directory",
-        description="Path to directory where the files are created",
-        default="//",
-        maxlen=1024,
-        subtype="DIR_PATH",
-    )
-    thickness_min: FloatProperty(
-        name="Thickness",
-        description="Minimum thickness",
-        subtype="DISTANCE",
-        default=0.001,  # 1mm
-        min=0.0,
-        max=10.0,
-    )
+
+    # Analyze
+    # -------------------------------------
+
     threshold_zero: FloatProperty(
         name="Threshold",
         description="Limit for checking zero area/length",
         default=0.0001,
-        precision=5,
         min=0.0,
         max=0.2,
+        precision=5,
+        step=0.01
     )
     angle_distort: FloatProperty(
         name="Angle",
@@ -84,6 +46,17 @@ class SceneProperties(PropertyGroup):
         default=math.radians(45.0),
         min=0.0,
         max=math.radians(180.0),
+        step=100,
+    )
+    thickness_min: FloatProperty(
+        name="Thickness",
+        description="Minimum thickness",
+        subtype="DISTANCE",
+        default=0.001,  # 1mm
+        min=0.0,
+        max=10.0,
+        precision=3,
+        step=0.1
     )
     angle_sharp: FloatProperty(
         name="Angle",
@@ -91,6 +64,7 @@ class SceneProperties(PropertyGroup):
         default=math.radians(160.0),
         min=0.0,
         max=math.radians(180.0),
+        step=100,
     )
     angle_overhang: FloatProperty(
         name="Angle",
@@ -98,6 +72,49 @@ class SceneProperties(PropertyGroup):
         default=math.radians(45.0),
         min=0.0,
         max=math.radians(90.0),
+        step=100,
+    )
+
+    # Export
+    # -------------------------------------
+
+    export_path: StringProperty(
+        name="Export Directory",
+        description="Path to directory where the files are created",
+        default="//",
+        maxlen=1024,
+        subtype="DIR_PATH",
+    )
+    export_format: EnumProperty(
+        name="Format",
+        description="Export file format",
+        items=(
+            ("OBJ", "OBJ", ""),
+            ("PLY", "PLY", ""),
+            ("STL", "STL", ""),
+        ),
+        default="STL",
+    )
+    use_ascii_format: BoolProperty(
+        name="ASCII",
+        description="Export file in ASCII format, export as binary otherwise",
+    )
+    use_scene_scale: BoolProperty(
+        name="Scene Scale",
+        description="Apply scene scale setting on export",
+    )
+    use_copy_textures: BoolProperty(
+        name="Copy Textures",
+        description="Copy textures on export to the output path",
+    )
+    use_uv: BoolProperty(name="UVs")
+    use_normals: BoolProperty(
+        name="Normals",
+        description="Export specific vertex normals if available, export calculated normals otherwise"
+    )
+    use_colors: BoolProperty(
+        name="Colors",
+        description="Export vertex color attributes"
     )
 
 
@@ -108,25 +125,27 @@ classes = (
     ui.VIEW3D_PT_print3d_cleanup,
     ui.VIEW3D_PT_print3d_edit,
     ui.VIEW3D_PT_print3d_export,
+    ui.VIEW3D_PT_print3d_export_options,
 
-    operators.MESH_OT_print3d_info_volume,
-    operators.MESH_OT_print3d_info_area,
-    operators.MESH_OT_print3d_check_degenerate,
-    operators.MESH_OT_print3d_check_distorted,
-    operators.MESH_OT_print3d_check_solid,
-    operators.MESH_OT_print3d_check_intersections,
-    operators.MESH_OT_print3d_check_thick,
-    operators.MESH_OT_print3d_check_sharp,
-    operators.MESH_OT_print3d_check_overhang,
-    operators.MESH_OT_print3d_check_all,
-    operators.MESH_OT_print3d_clean_distorted,
-    operators.MESH_OT_print3d_clean_non_manifold,
-    operators.MESH_OT_print3d_select_report,
-    operators.MESH_OT_print3d_scale_to_volume,
-    operators.MESH_OT_print3d_scale_to_bounds,
-    operators.MESH_OT_print3d_align_to_xy,
-    operators.MESH_OT_print3d_export,
-    operators.MESH_OT_print3d_hollow,
+    operators.analyze.MESH_OT_info_volume,
+    operators.analyze.MESH_OT_info_area,
+    operators.analyze.MESH_OT_check_degenerate,
+    operators.analyze.MESH_OT_check_distorted,
+    operators.analyze.MESH_OT_check_solid,
+    operators.analyze.MESH_OT_check_intersections,
+    operators.analyze.MESH_OT_check_thick,
+    operators.analyze.MESH_OT_check_sharp,
+    operators.analyze.MESH_OT_check_overhang,
+    operators.analyze.MESH_OT_check_all,
+    operators.analyze.MESH_OT_report_select,
+    operators.analyze.WM_OT_report_clear,
+    operators.cleanup.MESH_OT_clean_distorted,
+    operators.cleanup.MESH_OT_clean_non_manifold,
+    operators.edit.MESH_OT_hollow,
+    operators.edit.OBJECT_OT_align_xy,
+    operators.edit.MESH_OT_scale_to_volume,
+    operators.edit.MESH_OT_scale_to_bounds,
+    operators.IO_OT_export,
 )
 
 
