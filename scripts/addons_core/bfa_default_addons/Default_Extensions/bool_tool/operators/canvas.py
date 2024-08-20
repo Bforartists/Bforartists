@@ -5,9 +5,12 @@ from ..functions.poll import (
     basic_poll,
     is_canvas
 )
-from ..functions.set import (
+from ..functions.object import (
+    convert_to_mesh,
     object_visibility_set,
     delete_empty_collection,
+    delete_cutter,
+    change_parent,
 )
 from ..functions.list import (
     list_canvases,
@@ -16,6 +19,7 @@ from ..functions.list import (
     list_cutter_users,
     list_selected_canvases,
     list_unused_cutters,
+    list_pre_boolean_modifiers,
 )
 
 
@@ -55,8 +59,8 @@ class OBJECT_OT_boolean_toggle_all(bpy.types.Operator):
         other_canvases = list_canvases()
         for obj in other_canvases:
             if obj not in canvases:
-                if any(modifier.object in cutters and modifier.show_viewport for modifier in obj.modifiers):
-                    cutters[:] = [cutter for cutter in cutters if cutter not in [modifier.object for modifier in obj.modifiers]]
+                if any(mod.object in cutters and mod.show_viewport for mod in obj.modifiers):
+                    cutters[:] = [cutter for cutter in cutters if cutter not in [mod.object for mod in obj.modifiers]]
 
         for cutter in cutters:
             cutter.hide_viewport = not cutter.hide_viewport
@@ -84,16 +88,16 @@ class OBJECT_OT_boolean_remove_all(bpy.types.Operator):
 
         # Remove Slices
         for slice in slices:
-            bpy.data.objects.remove(slice)
             if slice in canvases:
                 canvases.remove(slice)
+            delete_cutter(slice)
 
         for canvas in canvases:
             # Remove Modifiers
-            for modifier in canvas.modifiers:
-                if modifier.type == 'BOOLEAN' and "boolean_" in modifier.name:
-                    if modifier.object in cutters:
-                        canvas.modifiers.remove(modifier)
+            for mod in canvas.modifiers:
+                if mod.type == 'BOOLEAN' and "boolean_" in mod.name:
+                    if mod.object in cutters:
+                        canvas.modifiers.remove(mod)
 
             # remove_boolean_properties
             if canvas.booleans.canvas == True:
@@ -104,20 +108,23 @@ class OBJECT_OT_boolean_remove_all(bpy.types.Operator):
         unused_cutters, leftovers = list_unused_cutters(cutters, canvases, slices, do_leftovers=True)
 
         for cutter in unused_cutters:
-            # restore_visibility
-            cutter.display_type = 'TEXTURED'
-            object_visibility_set(cutter, value=True)
-            cutter.hide_render = False
-            if cutter.booleans.cutter:
-                cutter.booleans.cutter = ""
+            if cutter.booleans.carver:
+                delete_cutter(cutter)
+            else:
+                # restore_visibility
+                cutter.display_type = 'TEXTURED'
+                object_visibility_set(cutter, value=True)
+                cutter.hide_render = False
+                if cutter.booleans.cutter:
+                    cutter.booleans.cutter = ""
 
-            # remove_parent_&_collection
-            if prefs.parent and cutter.parent in canvases:
-                cutter.parent = None
+                # remove_parent_&_collection
+                if prefs.parent and cutter.parent in canvases:
+                    change_parent(cutter, None)
 
-            cutters_collection = bpy.data.collections.get("boolean_cutters")
-            if cutters_collection in cutter.users_collection:
-                bpy.data.collections.get("boolean_cutters").objects.unlink(cutter)
+                cutters_collection = bpy.data.collections.get("boolean_cutters")
+                if cutters_collection in cutter.users_collection:
+                    bpy.data.collections.get("boolean_cutters").objects.unlink(cutter)
 
         # purge_empty_collection
         delete_empty_collection()
@@ -128,7 +135,7 @@ class OBJECT_OT_boolean_remove_all(bpy.types.Operator):
             for cutter in leftovers:
                 if cutter.parent in canvases:
                     other_canvases = list_cutter_users([cutter])
-                    cutter.parent = other_canvases[0]
+                    change_parent(cutter, other_canvases[0])
 
         return {'FINISHED'}
 
@@ -148,19 +155,35 @@ class OBJECT_OT_boolean_apply_all(bpy.types.Operator):
         prefs = bpy.context.preferences.addons[base_package].preferences
 
         canvases = list_selected_canvases(context)
+        # excude_canvases_with_shape_keys
+        for canvas in canvases:
+            if canvas.data.shape_keys:
+                self.report({'ERROR'}, f"Modifiers can't be applied to {canvas.name} because it has shape keys")
+                canvases.remove(canvas)
+
         cutters, __ = list_canvas_cutters(canvases)
         slices = list_canvas_slices(canvases)
 
-        # Apply Modifiers
+        for cutter in cutters:
+            for face in cutter.data.polygons:
+                face.select = True
+
         for canvas in itertools.chain(canvases, slices):
-            bpy.context.view_layer.objects.active = canvas
-            for modifier in canvas.modifiers:
-                if "boolean_" in modifier.name:
-                    try:
-                        bpy.ops.object.modifier_apply(modifier=modifier.name)
-                    except:
-                        context.active_object.data = context.active_object.data.copy()
-                        bpy.ops.object.modifier_apply(modifier=modifier.name)
+            context.view_layer.objects.active = canvas
+
+            # Apply Modifiers
+            if prefs.apply_order == 'ALL':
+                convert_to_mesh(context, canvas)
+
+            elif prefs.apply_order == 'BEFORE':
+                modifiers = list_pre_boolean_modifiers(canvas)
+                for mod in modifiers:
+                    bpy.ops.object.modifier_apply(modifier=mod.name)
+
+            elif prefs.apply_order == 'BOOLEANS':
+                for mod in canvas.modifiers:
+                    if mod.type == 'BOOLEAN' and "boolean_" in mod.name:
+                        bpy.ops.object.modifier_apply(modifier=mod.name)
 
             # remove_boolean_properties
             canvas.booleans.canvas = False
@@ -173,9 +196,7 @@ class OBJECT_OT_boolean_apply_all(bpy.types.Operator):
         purged_cutters = []
         for cutter in unused_cutters:
             if cutter not in purged_cutters:
-                orphaned_mesh = cutter.data
-                bpy.data.objects.remove(cutter)
-                bpy.data.meshes.remove(orphaned_mesh)
+                delete_cutter(cutter)
                 purged_cutters.append(cutter)
 
         # purge_empty_collection
@@ -187,7 +208,7 @@ class OBJECT_OT_boolean_apply_all(bpy.types.Operator):
             for cutter in leftovers:
                 if cutter.parent in canvases:
                     other_canvases = list_cutter_users([cutter])
-                    cutter.parent = other_canvases[0]
+                    change_parent(cutter, other_canvases[0])
 
         return {'FINISHED'}
 

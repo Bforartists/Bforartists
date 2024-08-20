@@ -38,7 +38,10 @@
 #include "tools/bmesh_intersect.hh"
 
 #include "paint_intern.hh"
+#include "sculpt_face_set.hh"
+#include "sculpt_gesture.hh"
 #include "sculpt_intern.hh"
+#include "sculpt_islands.hh"
 
 namespace blender::ed::sculpt_paint::trim {
 
@@ -217,7 +220,7 @@ static void calculate_depth(gesture::GestureData &gesture_data,
   float depth_front = FLT_MAX;
   float depth_back = -FLT_MAX;
 
-  const Span<float3> positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
+  const Span<float3> positions = bke::pbvh::vert_positions_eval(*vc.depsgraph, *vc.obact);
   const float4x4 &object_to_world = vc.obact->object_to_world();
 
   for (const int i : positions.index_range()) {
