@@ -7121,7 +7121,7 @@ class VIEW3D_MT_assign_material(Menu):
                 layout.operator("gpencil.stroke_change_color", text=mat.name,
                                 icon='LAYER_ACTIVE' if mat == mat_active else 'BLANK1').material = mat.name
 
-
+# BFA - legacy menu
 class VIEW3D_MT_edit_gpencil(Menu):
     bl_label = "Grease Pencil"
 
@@ -7176,10 +7176,10 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate")
+        #layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate")
 
 
-# bfa menu
+# BFA - legacy menu
 class VIEW3D_MT_edit_gpencil_hide(Menu):
     bl_label = "Hide"
 
@@ -7195,7 +7195,7 @@ class VIEW3D_MT_edit_gpencil_hide(Menu):
         layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon="HIDE_OFF")
 
 
-# bfa menu
+# BFA - menu
 class VIEW3D_MT_edit_greasepencil_arrange_strokes(Menu):
     bl_label = "Arrange Strokes"
 
@@ -11625,10 +11625,10 @@ classes = (
     VIEW3D_PT_paint_vertex_context_menu,
     VIEW3D_PT_paint_texture_context_menu,
     VIEW3D_PT_paint_weight_context_menu,
-    VIEW3D_PT_gpencil_vertex_context_menu,
-    VIEW3D_PT_gpencil_sculpt_context_menu,
-    VIEW3D_PT_gpencil_weight_context_menu,
-    VIEW3D_PT_gpencil_draw_context_menu,
+    VIEW3D_PT_gpencil_vertex_context_menu, # BFA - legacy
+    VIEW3D_PT_gpencil_sculpt_context_menu, # BFA - legacy
+    VIEW3D_PT_gpencil_weight_context_menu, # BFA - legacy
+    VIEW3D_PT_gpencil_draw_context_menu, # BFA - legacy
     VIEW3D_PT_gpencil_edit_options,  # bfa menu
     VIEW3D_PT_sculpt_automasking,
     VIEW3D_PT_sculpt_context_menu,
