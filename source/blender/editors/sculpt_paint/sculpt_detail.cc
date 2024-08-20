@@ -5,6 +5,7 @@
 /** \file
  * \ingroup edsculpt
  */
+#include "sculpt_dyntopo.hh"
 
 #include "MEM_guardedalloc.h"
 
@@ -22,11 +23,10 @@
 #include "BKE_brush.hh"
 #include "BKE_context.hh"
 #include "BKE_layer.hh"
+#include "BKE_object.hh"
 #include "BKE_paint.hh"
 #include "BKE_pbvh_api.hh"
 #include "BKE_screen.hh"
-
-#include "DEG_depsgraph.hh"
 
 #include "GPU_immediate.hh"
 #include "GPU_immediate_util.hh"
@@ -39,6 +39,9 @@
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
 #include "ED_view3d.hh"
+
+#include "DEG_depsgraph.hh"
+
 #include "sculpt_intern.hh"
 
 #include "RNA_access.hh"
@@ -93,6 +96,7 @@ static bool sculpt_and_dynamic_topology_poll(bContext *C)
 
 static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *op)
 {
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
   Sculpt *sd = CTX_data_tool_settings(C)->sculpt;
   Object &ob = *CTX_data_active_object(C);
   SculptSession &ss = *ob.sculpt;
@@ -124,7 +128,7 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *op)
   BKE_pbvh_bmesh_detail_size_set(*ss.pbvh, object_space_constant_detail);
 
   undo::push_begin(ob, op);
-  undo::push_node(ob, nullptr, undo::Type::Position);
+  undo::push_node(depsgraph, ob, nullptr, undo::Type::Position);
 
   const double start_time = BLI_time_now_seconds();
 
@@ -141,7 +145,9 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *op)
   undo::push_end(ob);
 
   /* Force rebuild of bke::pbvh::Tree for better BB placement. */
-  SCULPT_pbvh_clear(ob);
+  BKE_sculptsession_free_pbvh(&ss);
+  DEG_id_tag_update(&ob.id, ID_RECALC_GEOMETRY);
+
   /* Redraw. */
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, &ob);
 
@@ -185,7 +191,7 @@ static void sample_detail_voxel(bContext *C, ViewContext *vc, const int mval[2])
   Object &ob = *vc->obact;
   SculptSession &ss = *ob.sculpt;
   Mesh &mesh = *static_cast<Mesh *>(ob.data);
-  const Span<float3> positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
+  const Span<float3> positions = bke::pbvh::vert_positions_eval(*depsgraph, ob);
   const OffsetIndices faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
   const bke::AttributeAccessor attributes = mesh.attributes();

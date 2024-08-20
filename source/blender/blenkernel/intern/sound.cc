@@ -187,8 +187,8 @@ static void sound_blend_read_data(BlendDataReader *reader, ID *id)
   /* clear waveform loading flag */
   sound->tags &= ~SOUND_TAGS_WAVEFORM_LOADING;
 
-  BKE_packedfile_blend_read(reader, &sound->packedfile);
-  BKE_packedfile_blend_read(reader, &sound->newpackedfile);
+  BKE_packedfile_blend_read(reader, &sound->packedfile, sound->filepath);
+  BKE_packedfile_blend_read(reader, &sound->newpackedfile, sound->filepath);
 }
 
 IDTypeInfo IDType_ID_SO = {
@@ -1410,13 +1410,13 @@ void BKE_sound_update_scene_sound(void * /*handle*/, bSound * /*sound*/) {}
 void BKE_sound_update_scene_listener(Scene * /*scene*/) {}
 void BKE_sound_update_fps(Main * /*bmain*/, Scene * /*scene*/) {}
 void BKE_sound_set_scene_sound_volume_at_frame(void * /*handle*/,
-                                               int /* frame */,
+                                               int /*frame*/,
                                                float /*volume*/,
                                                char /*animated*/)
 {
 }
 void BKE_sound_set_scene_sound_pan_at_frame(void * /*handle*/,
-                                            int /* frame */,
+                                            int /*frame*/,
                                             float /*pan*/,
                                             char /*animated*/)
 {

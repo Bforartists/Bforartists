@@ -26,6 +26,13 @@ def update_sidebar_category(self, context):
 
 #### ------------------------------ /ui/ ------------------------------ ####
 
+def carve_menu(self, context):
+    layout = self.layout
+    layout.operator("object.carve", text="Box Carve").shape='BOX'
+    layout.operator("object.carve", text="Circle Carve").shape='CIRCLE'
+    layout.operator("object.carve", text="Polyline Carve").shape='POLYLINE'
+
+
 def boolean_operators_menu(self, context):
     layout = self.layout
     col = layout.column(align=True)
@@ -48,20 +55,21 @@ def boolean_extras_menu(self, context):
     layout = self.layout
     col = layout.column(align=True)
 
-    # canvas_operators
-    active_object = context.active_object
-    if active_object.booleans.canvas == True and any(modifier.name.startswith("boolean_") for modifier in active_object.modifiers):
-        col.separator()
-        col.operator("object.boolean_toggle_all", text="Toggle All Cuters")
-        col.operator("object.boolean_apply_all", text="Apply All Cutters")
-        col.operator("object.boolean_remove_all", text="Remove All Cutters")
+    if context.active_object:
+        # canvas_operators
+        active_object = context.active_object
+        if active_object.booleans.canvas == True and any(mod.name.startswith("boolean_") for mod in active_object.modifiers):
+            col.separator()
+            col.operator("object.boolean_toggle_all", text="Toggle All Cuters")
+            col.operator("object.boolean_apply_all", text="Apply All Cutters")
+            col.operator("object.boolean_remove_all", text="Remove All Cutters")
 
-    # cutter_operators
-    if active_object.booleans.cutter:
-        col.separator()
-        col.operator("object.boolean_toggle_cutter", text="Toggle Cutter").method='ALL'
-        col.operator("object.boolean_apply_cutter", text="Apply Cutter").method='ALL'
-        col.operator("object.boolean_remove_cutter", text="Remove Cutter").method='ALL'
+        # cutter_operators
+        if active_object.booleans.cutter:
+            col.separator()
+            col.operator("object.boolean_toggle_cutter", text="Toggle Cutter").method='ALL'
+            col.operator("object.boolean_apply_cutter", text="Apply Cutter").method='ALL'
+            col.operator("object.boolean_remove_cutter", text="Remove Cutter").method='ALL'
 
 
 
@@ -159,20 +167,48 @@ class VIEW3D_PT_boolean_cutters(bpy.types.Panel):
 
 #### ------------------------------ /menus/ ------------------------------ ####
 
-# Object Mode Menu
+# Carve Menu
+class VIEW3D_MT_carve(bpy.types.Menu):
+    bl_label = "Carve"
+    bl_idname = "VIEW3D_MT_carve"
+
+    def draw(self, context):
+        carve_menu(self, context)
+
+
+# Object > Menu
 class VIEW3D_MT_boolean(bpy.types.Menu):
     bl_label = "Boolean"
     bl_idname = "VIEW3D_MT_boolean"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.menu("VIEW3D_MT_carve")
+        layout.separator()
+        boolean_operators_menu(self, context)
+        boolean_extras_menu(self, context)
+
+
+# Shift-Ctrl-B Menu
+class VIEW3D_MT_boolean_popup(bpy.types.Menu):
+    bl_label = "Boolean"
+    bl_idname = "VIEW3D_MT_boolean_popup"
 
     def draw(self, context):
         boolean_operators_menu(self, context)
         boolean_extras_menu(self, context)
 
 
-def bool_tool_menu(self, context):
+def object_mode_menu(self, context):
     layout = self.layout
     layout.separator()
     layout.menu("VIEW3D_MT_boolean")
+
+
+def edit_mode_menu(self, context):
+    layout = self.layout
+    layout.separator()
+    layout.menu("VIEW3D_MT_carve")
 
 
 def boolean_select_menu(self, context):
@@ -194,7 +230,9 @@ def boolean_select_menu(self, context):
 addon_keymaps = []
 
 classes = [
+    VIEW3D_MT_carve,
     VIEW3D_MT_boolean,
+    VIEW3D_MT_boolean_popup,
     VIEW3D_PT_boolean,
     VIEW3D_PT_boolean_properties,
     VIEW3D_PT_boolean_cutters,
@@ -208,14 +246,15 @@ def register():
     update_sidebar_category(prefs, bpy.context)
 
     # MENU
-    bpy.types.VIEW3D_MT_object.append(bool_tool_menu)
+    bpy.types.VIEW3D_MT_object.append(object_mode_menu)
     bpy.types.VIEW3D_MT_select_object.append(boolean_select_menu)
+    bpy.types.VIEW3D_MT_edit_mesh.append(edit_mode_menu)
 
     # KEYMAP
     addon = bpy.context.window_manager.keyconfigs.addon
     km = addon.keymaps.new(name="Object Mode")
     kmi = km.keymap_items.new("wm.call_menu", 'B', 'PRESS', ctrl=True, shift=True)
-    kmi.properties.name = "VIEW3D_MT_boolean"
+    kmi.properties.name = "VIEW3D_MT_boolean_popup"
     kmi.active = True
     addon_keymaps.append(km)
 
@@ -225,8 +264,9 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
     # MENU
-    bpy.types.VIEW3D_MT_object.remove(bool_tool_menu)
+    bpy.types.VIEW3D_MT_object.remove(object_mode_menu)
     bpy.types.VIEW3D_MT_select_object.remove(boolean_select_menu)
+    bpy.types.VIEW3D_MT_edit_mesh.remove(edit_mode_menu)
 
     # KEYMAP
     for km in addon_keymaps:

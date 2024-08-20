@@ -376,7 +376,7 @@ DefNode(GeometryNode, GEO_NODE_INPUT_INSTANCE_SCALE, 0, "INPUT_INSTANCE_SCALE", 
 DefNode(GeometryNode, GEO_NODE_INPUT_MATERIAL_INDEX, 0, "INPUT_MATERIAL_INDEX", InputMaterialIndex, "Material Index", "Add a Material Index node\nRetrieve the index of the material used for each element in the geometry's list of materials")
 DefNode(GeometryNode, GEO_NODE_INPUT_INSTANCE_TRANSFORM, 0, "INPUT_INSTANCE_TRANSFORM", InstanceTransform, "Instance Transform", "Add a Instance Transform node\nRetrieve the full transformation of each instance in the geometry")
 DefNode(GeometryNode, GEO_NODE_INPUT_MATERIAL, def_geo_input_material, "INPUT_MATERIAL", InputMaterial, "Material", "Add a Material node\nOutput a single material")
-DefNode(GeometryNode, GEO_NODE_INPUT_MESH_EDGE_ANGLE, 0, "MESH_EDGE_ANGLE", InputMeshEdgeAngle, "Edge Angle", "Add an Edge Angle node\nCalculate the surface area of each face in a mesh")
+DefNode(GeometryNode, GEO_NODE_INPUT_MESH_EDGE_ANGLE, 0, "MESH_EDGE_ANGLE", InputMeshEdgeAngle, "Edge Angle", "Add an Edge Angle node\nThe angle between the normals of connected manifold faces")
 DefNode(GeometryNode, GEO_NODE_INPUT_MESH_EDGE_NEIGHBORS, 0, "MESH_EDGE_NEIGHBORS",InputMeshEdgeNeighbors, "Edge Neighbors", "Add an Edge neighbors node\nRetrieve the number of faces that use each edge as one of their sides")
 DefNode(GeometryNode, GEO_NODE_INPUT_MESH_EDGE_VERTICES, 0, "MESH_EDGE_VERTICES", InputMeshEdgeVertices, "Edge Vertices", "Add an Edge Vertices node\nRetrieve topology information relating to each edge of a mesh")
 DefNode(GeometryNode, GEO_NODE_INPUT_MESH_FACE_AREA, 0, "MESH_FACE_AREA", InputMeshFaceArea, "Face Area", "Add a Face Area node\nCalculate the surface area of a mesh's faces")
