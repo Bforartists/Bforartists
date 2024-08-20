@@ -22,6 +22,10 @@ class OBJECT_PG_booleans(bpy.types.PropertyGroup):
         name = "Slice of...",
         type = bpy.types.Object,
     )
+    carver: bpy.props.BoolProperty(
+        name = "Is Carver Cutter",
+        default = False,
+    )
 
     cutters_active_index: bpy.props.IntProperty(
         name = "Active Cutter Index",
@@ -41,7 +45,7 @@ def register():
         bpy.utils.register_class(cls)
 
     # PROPERTY
-    bpy.types.Object.booleans = bpy.props.PointerProperty(type=OBJECT_PG_booleans, name="Boolean Tools")
+    bpy.types.Object.booleans = bpy.props.PointerProperty(type=OBJECT_PG_booleans, name="Booleans")
 
 
 def unregister():

@@ -1388,7 +1388,9 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_select_paint_mask")
             elif mesh.use_paint_mask_vertex and mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX'}:
                 layout.menu("VIEW3D_MT_select_paint_mask_vertex")
-        elif mode_string not in {'SCULPT', 'SCULPT_CURVES', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL'}:
+        elif mode_string not in {
+                'SCULPT', 'SCULPT_CURVES', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL',
+        }:
             layout.menu("VIEW3D_MT_select_" + mode_string.lower())
 
         if gp_edit:
@@ -7308,7 +7310,8 @@ class VIEW3D_MT_weight_grease_pencil(Menu):
     bl_label = "Weights"
 
     def draw(self, _context):
-        pass
+        layout = self.layout
+        layout.operator("grease_pencil.weight_invert", text="Invert Weight")
 
 class VIEW3D_MT_gpencil_animation(Menu):
     bl_label = "Animation"
@@ -7460,8 +7463,12 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 class VIEW3D_MT_edit_greasepencil_stroke(Menu):
     bl_label = "Stroke"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
+        
+        tool_settings = context.tool_settings
+        settings = tool_settings.gpencil_sculpt
+        
         layout.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
         layout.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
         layout.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
@@ -7491,6 +7498,9 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
 
         #layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon="RESET") # BFA - legacy
+        layout.operator("grease_pencil.set_uniform_opacity")
+
+        layout.prop(settings, "use_scale_thickness", text="Scale Thickness") # BFA - wip, move to options
 
         layout.separator()
 
@@ -7716,7 +7726,7 @@ class VIEW3D_MT_pivot_pie(Menu):
         pie.prop_enum(tool_settings, "transform_pivot_point", value='ACTIVE_ELEMENT')
         if (obj is None) or (mode in {'OBJECT', 'POSE', 'WEIGHT_PAINT'}):
             pie.prop(tool_settings, "use_transform_pivot_point_align")
-        if mode == 'EDIT_GPENCIL':
+        if mode in ['EDIT_GPENCIL', 'EDIT_GREASE_PENCIL']:
             pie.prop(tool_settings.gpencil_sculpt, "use_scale_thickness")
 
 
