@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2013-2022 Blender Foundation
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: 2013-2022 Campbell Barton
+# SPDX-FileContributor: Mikhail Rachinskiy
 
 
 import bmesh
@@ -9,7 +9,7 @@ from bpy.types import Panel
 from . import report
 
 
-class View3DPrintPanel:
+class Sidebar:
     bl_category = "3D Print"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -20,7 +20,7 @@ class View3DPrintPanel:
         return obj is not None and obj.type == "MESH" and obj.mode in {"OBJECT", "EDIT"}
 
 
-class VIEW3D_PT_print3d_analyze(View3DPrintPanel, Panel):
+class VIEW3D_PT_print3d_analyze(Sidebar, Panel):
     bl_label = "Analyze"
 
     _type_to_icon = {
@@ -36,7 +36,10 @@ class VIEW3D_PT_print3d_analyze(View3DPrintPanel, Panel):
         if info:
             is_edit = context.edit_object is not None
 
-            layout.label(text="Result")
+            row = layout.row()
+            row.label(text="Result")
+            row.operator("wm.print3d_report_clear", text="", icon="X")
+
             box = layout.box()
             col = box.column()
 
@@ -83,41 +86,34 @@ class VIEW3D_PT_print3d_analyze(View3DPrintPanel, Panel):
         self.draw_report(context)
 
 
-class VIEW3D_PT_print3d_cleanup(View3DPrintPanel, Panel):
+class VIEW3D_PT_print3d_cleanup(Sidebar, Panel):
     bl_label = "Clean Up"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         layout = self.layout
 
-        print_3d = context.scene.print_3d
-
-        row = layout.row(align=True)
-        row.operator("mesh.print3d_clean_distorted", text="Distorted")
-        row.prop(print_3d, "angle_distort", text="")
+        layout.operator("mesh.print3d_clean_distorted", text="Distorted")
         layout.operator("mesh.print3d_clean_non_manifold", text="Make Manifold")
 
 
-class VIEW3D_PT_print3d_edit(View3DPrintPanel, Panel):
+class VIEW3D_PT_print3d_edit(Sidebar, Panel):
     bl_label = "Edit"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         layout = self.layout
 
-        print_3d = context.scene.print_3d
-
         layout.operator("mesh.print3d_hollow")
+        layout.operator("object.print3d_align_xy")
+
         layout.label(text="Scale To")
         row = layout.row(align=True)
         row.operator("mesh.print3d_scale_to_volume", text="Volume")
         row.operator("mesh.print3d_scale_to_bounds", text="Bounds")
-        row = layout.row(align=True)
-        row.operator("mesh.print3d_align_to_xy", text="Align XY")
-        row.prop(print_3d, "use_alignxy_face_area")
 
 
-class VIEW3D_PT_print3d_export(View3DPrintPanel, Panel):
+class VIEW3D_PT_print3d_export(Sidebar, Panel):
     bl_label = "Export"
     bl_options = {"DEFAULT_CLOSED"}
 
@@ -126,16 +122,37 @@ class VIEW3D_PT_print3d_export(View3DPrintPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        print_3d = context.scene.print_3d
+        props = context.scene.print_3d
 
-        layout.prop(print_3d, "export_path", text="")
-        layout.prop(print_3d, "export_format")
+        layout.prop(props, "export_path", text="")
+        layout.prop(props, "export_format")
 
-        col = layout.column()
-        col.prop(print_3d, "use_apply_scale")
-        col.prop(print_3d, "use_export_texture")
+        layout.operator("io.print3d_export", text="Export", icon="EXPORT")
+
+
+class VIEW3D_PT_print3d_export_options(Sidebar, Panel):
+    bl_label = "Options"
+    bl_options = {"DEFAULT_CLOSED"}
+    bl_parent_id = "VIEW3D_PT_print3d_export"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        props = context.scene.print_3d
+
+        col = layout.column(heading="General")
         sub = col.column()
-        sub.active = print_3d.export_format != "STL"
-        sub.prop(print_3d, "use_data_layers")
+        sub.active = props.export_format != "OBJ"
+        sub.prop(props, "use_ascii_format")
+        col.prop(props, "use_scene_scale")
 
-        layout.operator("mesh.print3d_export", text="Export", icon="EXPORT")
+        col = layout.column(heading="Geometry")
+        col.active = props.export_format != "STL"
+        col.prop(props, "use_uv")
+        col.prop(props, "use_normals", text="Normals")
+        col.prop(props, "use_colors", text="Colors")
+
+        col = layout.column(heading="Materials")
+        col.prop(props, "use_copy_textures")
