@@ -2,8 +2,17 @@ import bpy
 from .. import __package__ as base_package
 
 from ..functions.poll import basic_poll
-from ..functions.set import add_boolean_modifier, object_visibility_set, create_slice
-from ..functions.list import list_candidate_objects
+from ..functions.object import (
+    convert_to_mesh,
+    add_boolean_modifier,
+    set_cutter_properties,
+    create_slice,
+    delete_cutter,
+)
+from ..functions.list import (
+    list_candidate_objects,
+    list_pre_boolean_modifiers,
+)
 
 
 #### ------------------------------ /brush_boolean/ ------------------------------ ####
@@ -12,8 +21,12 @@ class BrushBoolean():
     def execute(self, context):
         prefs = bpy.context.preferences.addons[base_package].preferences
 
-        canvas = bpy.context.active_object
-        cutters = list_candidate_objects(context)
+        canvas = context.active_object
+        cutters = list_candidate_objects(self, context, canvas=canvas, unique=True)
+
+        for cutter in cutters:
+            set_cutter_properties(context, canvas, cutter, self.mode, parent=prefs.parent)
+            add_boolean_modifier(self, canvas, cutter, "DIFFERENCE" if self.mode == "SLICE" else self.mode, prefs.solver, pin=prefs.pin)
 
         if self.mode == "SLICE":
             # Create Slices
@@ -21,41 +34,13 @@ class BrushBoolean():
             for i in range(len(cutters)):
                 create_slice(context, canvas, slices, modifier=True)
 
+            # add_modifiers_on_slices
             for cutter, slice in zip(cutters, slices):
-                # add_modifiers_on_slices
-                add_boolean_modifier(slice, cutter, "INTERSECT", prefs.solver)
+                add_boolean_modifier(self, slice, cutter, "INTERSECT", prefs.solver)
 
-        for cutter in cutters:
-            # hide_cutter
-            cutter.hide_render = True
-            cutter.display_type = 'WIRE' if prefs.wireframe else 'BOUNDS'
-            object_visibility_set(cutter, value=False)
-            if prefs.parent and cutter.parent == None:
-                cutter.parent = canvas
-                cutter.matrix_parent_inverse = canvas.matrix_world.inverted()
+        context.view_layer.objects.active = canvas
+        canvas.booleans.canvas = True
 
-            # cutters_collection
-            collection_name = "boolean_cutters"
-            cutters_collection = bpy.data.collections.get(collection_name)
-            if cutters_collection is None:
-                cutters_collection = bpy.data.collections.new(collection_name)
-                context.scene.collection.children.link(cutters_collection)
-                cutters_collection.hide_viewport = True
-                cutters_collection.hide_render = True
-                cutters_collection.color_tag = 'COLOR_01'
-                bpy.context.view_layer.layer_collection.children[collection_name].exclude = True
-
-            if cutters_collection not in cutter.users_collection:
-                cutters_collection.objects.link(cutter)
-
-            # Add Modifier
-            add_boolean_modifier(canvas, cutter, "DIFFERENCE" if self.mode == "SLICE" else self.mode, prefs.solver)
-
-            # add_boolean_properties
-            canvas.booleans.canvas = True
-            cutter.booleans.cutter = self.mode.capitalize()
-
-        bpy.context.view_layer.objects.active = canvas
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -125,8 +110,17 @@ class AutoBoolean:
     def execute(self, context):
         prefs = bpy.context.preferences.addons[base_package].preferences
 
-        canvas = bpy.context.active_object
-        cutters = list_candidate_objects(context)
+        canvas = context.active_object
+        cutters = list_candidate_objects(self, context)
+
+        # apply_modifiers
+        if (prefs.apply_order == 'ALL') or (prefs.apply_order == 'BEFORE' and prefs.pin == False):
+            convert_to_mesh(context, canvas)
+        else:
+            if canvas.data.shape_keys:
+                self.report({'ERROR'}, "Modifiers can't be applied to object with shape keys")
+                return {'CANCELLED'}
+
 
         if self.mode == "SLICE":
             # Create Slices
@@ -136,19 +130,26 @@ class AutoBoolean:
 
             for cutter, slice in zip(cutters, slices):
                 # add_modifiers_to_slices
-                add_boolean_modifier(slice, cutter, "INTERSECT", prefs.solver, apply=True)
+                add_boolean_modifier(self, slice, cutter, "INTERSECT", prefs.solver, apply=True)
 
         for cutter in cutters:
             # Add Modifier
             mode = "DIFFERENCE" if self.mode == "SLICE" else self.mode
-            add_boolean_modifier(canvas, cutter, mode, prefs.solver, apply=True)
+            add_boolean_modifier(self, canvas, cutter, mode, prefs.solver, apply=True, pin=prefs.pin)
 
             # Delete Cutter
-            bpy.data.objects.remove(cutter)
+            delete_cutter(cutter)
 
             if self.mode == "SLICE":
                 slice.select_set(True)
                 context.view_layer.objects.active = slice
+
+
+        # remove_modifiers_before_final_boolean
+        if prefs.apply_order == 'BEFORE' and prefs.pin:
+            modifiers = list_pre_boolean_modifiers(canvas)
+            for mod in modifiers:
+                bpy.ops.object.modifier_apply(modifier=mod.name)
 
         return {'FINISHED'}
 

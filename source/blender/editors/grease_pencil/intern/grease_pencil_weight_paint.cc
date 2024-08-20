@@ -13,6 +13,7 @@
 #include "BKE_grease_pencil.hh"
 #include "BKE_modifier.hh"
 #include "BKE_paint.hh"
+#include "BKE_report.hh"
 
 #include "DNA_meshdata_types.h"
 
@@ -357,6 +358,83 @@ static void GREASE_PENCIL_OT_weight_toggle_direction(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+static int grease_pencil_weight_invert_exec(bContext *C, wmOperator *op)
+{
+  const Scene &scene = *CTX_data_scene(C);
+  Object *object = CTX_data_active_object(C);
+  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
+
+  /* Object vgroup index. */
+  const int active_index = BKE_object_defgroup_active_index_get(object) - 1;
+  if (active_index == -1) {
+    return OPERATOR_CANCELLED;
+  }
+
+  const bDeformGroup *active_defgroup = static_cast<const bDeformGroup *>(
+      BLI_findlink(BKE_object_defgroup_list(object), active_index));
+
+  if (active_defgroup->flag & DG_LOCK_WEIGHT) {
+    BKE_report(op->reports, RPT_WARNING, "Active Vertex Group is locked");
+    return OPERATOR_CANCELLED;
+  }
+
+  Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(scene, grease_pencil);
+
+  threading::parallel_for_each(drawings, [&](MutableDrawingInfo info) {
+    bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
+    /* Active vgroup index of drawing. */
+    const int drawing_vgroup_index = BLI_findstringindex(
+        &curves.vertex_group_names, active_defgroup->name, offsetof(bDeformGroup, name));
+    if (drawing_vgroup_index == -1) {
+      return;
+    }
+
+    VMutableArray<float> weights = bke::varray_for_mutable_deform_verts(
+        curves.deform_verts_for_write(), drawing_vgroup_index);
+    if (weights.size() == 0) {
+      return;
+    }
+
+    for (const int i : weights.index_range()) {
+      const float invert_weight = 1.0f - weights[i];
+      weights.set(i, invert_weight);
+    }
+  });
+
+  DEG_id_tag_update(&grease_pencil.id, ID_RECALC_GEOMETRY);
+  WM_event_add_notifier(C, NC_GEOM | ND_DATA, &grease_pencil);
+  return OPERATOR_FINISHED;
+}
+
+static bool grease_pencil_vertex_group_weight_poll(bContext *C)
+{
+  if (!grease_pencil_weight_painting_poll(C)) {
+    return false;
+  }
+
+  const Object *ob = CTX_data_active_object(C);
+  if (ob == nullptr || BLI_listbase_is_empty(BKE_object_defgroup_list(ob))) {
+    return false;
+  }
+
+  return true;
+}
+
+static void GREASE_PENCIL_OT_weight_invert(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Invert Weight";
+  ot->idname = "GREASE_PENCIL_OT_weight_invert";
+  ot->description = "Invert the weight of active vertex group";
+
+  /* api callbacks */
+  ot->exec = grease_pencil_weight_invert_exec;
+  ot->poll = grease_pencil_vertex_group_weight_poll;
+
+  /* flags */
+  ot->flag = OPTYPE_UNDO | OPTYPE_REGISTER;
+}
+
 }  // namespace blender::ed::greasepencil
 
 void ED_operatortypes_grease_pencil_weight_paint()
@@ -364,4 +442,5 @@ void ED_operatortypes_grease_pencil_weight_paint()
   using namespace blender::ed::greasepencil;
   WM_operatortype_append(GREASE_PENCIL_OT_weight_toggle_direction);
   WM_operatortype_append(GREASE_PENCIL_OT_weight_sample);
+  WM_operatortype_append(GREASE_PENCIL_OT_weight_invert);
 }
