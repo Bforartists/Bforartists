@@ -4,21 +4,21 @@
 
 import bpy
 from mathutils import (
-        Matrix,
-        Vector,
-        geometry,
-        )
+    Matrix,
+    Vector,
+    geometry,
+)
 from math import (
-        sin, cos,
-        tan, radians,atan,degrees
-        )
+    sin, cos,
+    tan, radians, atan, degrees
+)
 from random import triangular
 from bpy_extras.object_utils import AddObjectHelper, object_data_add
 
 NARROW_UI = 180
 MAX_INPUT_NUMBER = 50
 
-GLOBAL_SCALE = 1       # 1 blender unit = X mm
+GLOBAL_SCALE = 0.001     # GLOBAL_SCALE blender unit = 1 mm
 
 
 # next two utility functions are stolen from import_obj.py
@@ -273,19 +273,21 @@ def Fill_Ring_Face(OFFSET, NUM, FACE_DOWN=0):
     return Ret
 
 # Returns a list of faces that makes up a fill pattern around the last vert
+
+
 def Fill_Fan_Face(OFFSET, NUM, FACE_DOWN=0):
     Ret = []
-    Face = [NUM-1,0,1]
+    Face = [NUM - 1, 0, 1]
     TempFace = [0, 0, 0]
     A = 0
-    #B = 1 unused
+    # B = 1 unused
     C = 2
     if NUM < 3:
         return None
     for _i in range(NUM - 2):
         TempFace[0] = Face[A]
         TempFace[1] = Face[C]
-        TempFace[2] = Face[C]+1
+        TempFace[2] = Face[C] + 1
         if FACE_DOWN:
             Ret.append([OFFSET + Face[2], OFFSET + Face[1], OFFSET + Face[0]])
         else:
@@ -299,6 +301,7 @@ def Fill_Fan_Face(OFFSET, NUM, FACE_DOWN=0):
 # ####################################################################
 #                    Create Allen Bit
 # ####################################################################
+
 
 def Allen_Fill(OFFSET, FLIP=0):
     faces = []
@@ -392,6 +395,7 @@ def Create_Allen_Bit(FLAT_DISTANCE, HEIGHT):
 #                    Create Torx Bit
 # ####################################################################
 
+
 def Torx_Bit_Size_To_Point_Distance(Bit_Size):
     if Bit_Size == 'bf_Torx_T10':
         return 2.83
@@ -408,70 +412,71 @@ def Torx_Bit_Size_To_Point_Distance(Bit_Size):
     elif Bit_Size == 'bf_Torx_T55':
         return 8.94
     else:
-        return 2.83  #default to M3
+        return 2.83  # default to M3
+
 
 def Torx_Fill(OFFSET, FLIP=0):
     faces = []
-    Lookup = [[0,10,11],
-            [0,11, 12],
-            [0,12,1],
+    Lookup = [[0, 10, 11],
+              [0, 11, 12],
+              [0, 12, 1],
 
-            [1, 12, 13],
-            [1, 13, 14],
-            [1, 14, 15],
-            [1, 15, 2],
+              [1, 12, 13],
+              [1, 13, 14],
+              [1, 14, 15],
+              [1, 15, 2],
 
-            [2, 15, 16],
-            [2, 16, 17],
-            [2, 17, 18],
-            [2, 18, 19],
-            [2, 19, 3],
+              [2, 15, 16],
+              [2, 16, 17],
+              [2, 17, 18],
+              [2, 18, 19],
+              [2, 19, 3],
 
-            [3, 19, 20],
-            [3, 20, 21],
-            [3, 21, 22],
-            [3, 22, 23],
-            [3, 23, 24],
-            [3, 24, 25],
-            [3, 25, 4],
+              [3, 19, 20],
+              [3, 20, 21],
+              [3, 21, 22],
+              [3, 22, 23],
+              [3, 23, 24],
+              [3, 24, 25],
+              [3, 25, 4],
 
 
-            [4, 25, 26],
-            [4, 26, 27],
-            [4, 27, 28],
-            [4, 28, 29],
-            [4, 29, 30],
-            [4, 30, 31],
-            [4, 31, 5],
+              [4, 25, 26],
+              [4, 26, 27],
+              [4, 27, 28],
+              [4, 28, 29],
+              [4, 29, 30],
+              [4, 30, 31],
+              [4, 31, 5],
 
-            [5, 31, 32],
-            [5, 32, 33],
-            [5, 33, 34],
-            [5, 34, 35],
-            [5, 35, 36],
-            [5, 36, 6],
+              [5, 31, 32],
+              [5, 32, 33],
+              [5, 33, 34],
+              [5, 34, 35],
+              [5, 35, 36],
+              [5, 36, 6],
 
-            [6, 36, 37],
-            [6, 37, 38],
-            [6, 38, 39],
-            [6, 39, 7],
+              [6, 36, 37],
+              [6, 37, 38],
+              [6, 38, 39],
+              [6, 39, 7],
 
-            [7, 39, 40],
-            [7, 40, 41],
-            [7, 41, 42],
-            [7, 42, 43],
-            [7, 43, 8],
+              [7, 39, 40],
+              [7, 40, 41],
+              [7, 41, 42],
+              [7, 42, 43],
+              [7, 43, 8],
 
-            [8, 43, 44],
-            [8, 44, 45],
-            [8, 45, 46],
-            [8, 46, 47],
-            [8, 47, 48],
-            [8, 48, 49],
-            [8, 49, 50],
-            [8, 50, 51],
-            [8, 51, 52],
-            [8, 52, 9],
+              [8, 43, 44],
+              [8, 44, 45],
+              [8, 45, 46],
+              [8, 46, 47],
+              [8, 47, 48],
+              [8, 48, 49],
+              [8, 49, 50],
+              [8, 50, 51],
+              [8, 51, 52],
+              [8, 52, 9],
               ]
     for i in Lookup:
         if FLIP:
@@ -480,7 +485,6 @@ def Torx_Fill(OFFSET, FLIP=0):
             faces.append([OFFSET + i[0], OFFSET + i[1], OFFSET + i[2]])
 
     return faces
-
 
 
 def Create_Torx_Bit(Point_Distance, HEIGHT):
@@ -520,8 +524,8 @@ def Create_Torx_Bit(Point_Distance, HEIGHT):
             verts.append([POINT_2_X + x, POINT_2_Y + y, Curve_Height])
 
         for i in range(340, 150 + 360, 10):
-            x = sin(radians(i%360)) * SMALL_RADIUS
-            y = cos(radians(i%360)) * SMALL_RADIUS
+            x = sin(radians(i % 360)) * SMALL_RADIUS
+            y = cos(radians(i % 360)) * SMALL_RADIUS
             verts.append([POINT_3_X + x, POINT_3_Y + y, Curve_Height])
 
         for i in range(320, 260, -10):
@@ -536,16 +540,16 @@ def Create_Torx_Bit(Point_Distance, HEIGHT):
         y = cos(radians(i)) * OUTTER_RADIUS
         verts.append([x, y, 0])
 
-    FaceStart_Top_Curve= len(verts)
+    FaceStart_Top_Curve = len(verts)
     Do_Curve(0)
     faces.extend(Torx_Fill(FaceStart_Outside, 0))
 
-    FaceStart_Bottom_Curve= len(verts)
+    FaceStart_Bottom_Curve = len(verts)
     Do_Curve(0 - HEIGHT)
 
-    faces.extend(Build_Face_List_Quads(FaceStart_Top_Curve,42 ,1 , True))
+    faces.extend(Build_Face_List_Quads(FaceStart_Top_Curve, 42, 1, True))
 
-    verts.append([0,0,0 - HEIGHT]) # add center point for fill Fan
+    verts.append([0, 0, 0 - HEIGHT])  # add center point for fill Fan
     faces.extend(Fill_Fan_Face(FaceStart_Bottom_Curve, 44))
 
     M_Verts, M_Faces = Mirror_Verts_Faces(verts, faces, 'x')
@@ -561,6 +565,7 @@ def Create_Torx_Bit(Point_Distance, HEIGHT):
 # ####################################################################
 #                    Create Phillips Bit
 # ####################################################################
+
 
 def Phillips_Fill(OFFSET, FLIP=0):
     faces = []
@@ -1059,14 +1064,13 @@ def Create_Hex_Head(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT):
     return Spin_Verts, Spin_Faces, 0 - (-HEIGHT)
 
 
-
-def Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT,FLANGE_DIA):
-    FLANGE_HEIGHT = (1.89/8.0)*HEIGHT
-    FLAT_HEIGHT = (4.18/8.0)*HEIGHT
+def Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT, FLANGE_DIA):
+    FLANGE_HEIGHT = (1.89 / 8.0) * HEIGHT
+    FLAT_HEIGHT = (4.18 / 8.0) * HEIGHT
 #     FLANGE_DIA = (13.27/8.0)*FLAT
 
     FLANGE_RADIUS = FLANGE_DIA * 0.5
-    FLANGE_TAPPER_HEIGHT =  HEIGHT - FLANGE_HEIGHT - FLAT_HEIGHT
+    FLANGE_TAPPER_HEIGHT = HEIGHT - FLANGE_HEIGHT - FLAT_HEIGHT
 
 #     HOLE_DIA = 0.0
 
@@ -1120,8 +1124,6 @@ def Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT,FLANGE_DIA):
 
     Row += 1
 
-
-
     # bevel
     x = sin(radians(0)) * TopBevelRadius
     y = cos(radians(0)) * TopBevelRadius
@@ -1160,41 +1162,40 @@ def Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT,FLANGE_DIA):
 
     Row += 1
 
+    # 45Deg bevel on the top
 
-    #45Deg bevel on the top
-
-    #First we work out how far up the Y axis the vert is
-    v_origin = Vector([0.0,0.0,0.0]) # center of the model
-    v_15Deg_Point = Vector([tan(radians(15)) * Half_Flat,Half_Flat,0.0])  #Is a know point to work back from
+    # First we work out how far up the Y axis the vert is
+    v_origin = Vector([0.0, 0.0, 0.0])  # center of the model
+    v_15Deg_Point = Vector([tan(radians(15)) * Half_Flat, Half_Flat, 0.0])  # Is a know point to work back from
 
     x = tan(radians(0)) * Half_Flat
-    Point_Distance =(tan(radians(30)) * v_15Deg_Point.x)+Half_Flat
+    Point_Distance = (tan(radians(30)) * v_15Deg_Point.x) + Half_Flat
     dvec = vec1 - Vector([x, Point_Distance, 0.0])
     verts.append([x, Point_Distance, -dvec.length])
     v_0_Deg_Top_Point = Vector([x, Point_Distance, -dvec.length])
 
-    v_0_Deg_Point = Vector([x, Point_Distance,0.0])
+    v_0_Deg_Point = Vector([x, Point_Distance, 0.0])
 
     v_5Deg_Line = Vector([tan(radians(5)) * Half_Flat, Half_Flat, 0.0])
     v_5Deg_Line.length *= 2  # extende out the line on a 5 deg angle
 
-    #We cross 2 lines. One from the origin to the 0 Deg point
-    #and the second is from the origin extended out past the first line
+    # We cross 2 lines. One from the origin to the 0 Deg point
+    # and the second is from the origin extended out past the first line
     # This gives the cross point of the
-    v_Cross = geometry.intersect_line_line_2d(v_0_Deg_Point,v_15Deg_Point,v_origin,v_5Deg_Line)
-    dvec = vec2 - Vector([v_Cross.x,v_Cross.y,0.0])
-    verts.append([v_Cross.x,v_Cross.y,-dvec.length])
-    v_5_Deg_Top_Point = Vector([v_Cross.x,v_Cross.y,-dvec.length])
+    v_Cross = geometry.intersect_line_line_2d(v_0_Deg_Point, v_15Deg_Point, v_origin, v_5Deg_Line)
+    dvec = vec2 - Vector([v_Cross.x, v_Cross.y, 0.0])
+    verts.append([v_Cross.x, v_Cross.y, -dvec.length])
+    v_5_Deg_Top_Point = Vector([v_Cross.x, v_Cross.y, -dvec.length])
 
     v_10Deg_Line = Vector([tan(radians(10)) * Half_Flat, Half_Flat, 0.0])
     v_10Deg_Line.length *= 2  # extende out the line
 
-    v_Cross = geometry.intersect_line_line_2d(v_0_Deg_Point,v_15Deg_Point,v_origin,v_10Deg_Line)
-    dvec = vec3 - Vector([v_Cross.x,v_Cross.y,0.0])
-    verts.append([v_Cross.x,v_Cross.y,-dvec.length])
-    v_10_Deg_Top_Point = Vector([v_Cross.x,v_Cross.y,-dvec.length])
+    v_Cross = geometry.intersect_line_line_2d(v_0_Deg_Point, v_15Deg_Point, v_origin, v_10Deg_Line)
+    dvec = vec3 - Vector([v_Cross.x, v_Cross.y, 0.0])
+    verts.append([v_Cross.x, v_Cross.y, -dvec.length])
+    v_10_Deg_Top_Point = Vector([v_Cross.x, v_Cross.y, -dvec.length])
 
-    #The remain points are stright forward because y is all the same y height (Half_Flat)
+    # The remain points are stright forward because y is all the same y height (Half_Flat)
     x = tan(radians(15)) * Half_Flat
     dvec = vec4 - Vector([x, Half_Flat, 0.0])
     Lowest_Point = -dvec.length
@@ -1220,16 +1221,13 @@ def Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT,FLANGE_DIA):
     v_30_Deg_Top_Point = Vector([x, Half_Flat, -dvec.length])
     Row += 1
 
-
-    #Down Bits
+    # Down Bits
 #     print ("Point_Distance")
 #     print (Point_Distance)
 
-
-
-    Flange_Adjacent  = FLANGE_RADIUS - Point_Distance
-    if (Flange_Adjacent  == 0.0):
-        Flange_Adjacent  = 0.000001
+    Flange_Adjacent = FLANGE_RADIUS - Point_Distance
+    if (Flange_Adjacent == 0.0):
+        Flange_Adjacent = 0.000001
     Flange_Opposite = FLANGE_TAPPER_HEIGHT
 
 #     print ("Flange_Opposite")
@@ -1237,100 +1235,104 @@ def Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT,FLANGE_DIA):
 #     print ("Flange_Adjacent")
 #     print (Flange_Adjacent)
 
-    FLANGE_ANGLE_RAD = atan(Flange_Opposite/Flange_Adjacent )
+    FLANGE_ANGLE_RAD = atan(Flange_Opposite / Flange_Adjacent)
 #     FLANGE_ANGLE_RAD = radians(45)
 #     print("FLANGE_ANGLE_RAD")
 #     print (degrees (FLANGE_ANGLE_RAD))
 
-
-    v_Extended_Flange_Edge = Vector([0.0,0.0,-HEIGHT + FLANGE_HEIGHT + (tan(FLANGE_ANGLE_RAD)* FLANGE_RADIUS) ])
+    v_Extended_Flange_Edge = Vector([0.0, 0.0, -HEIGHT + FLANGE_HEIGHT + (tan(FLANGE_ANGLE_RAD) * FLANGE_RADIUS)])
 #     print("v_Extended_Flange_Edge")
 #     print (v_Extended_Flange_Edge)
 
-    #0deg
-    v_Flange_Edge = Vector([sin(radians(0)) * FLANGE_RADIUS,cos(radians(0)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT ])
-    v_Cross = geometry.intersect_line_line(v_0_Deg_Top_Point,Vector([v_0_Deg_Top_Point.x,v_0_Deg_Top_Point.y,-HEIGHT]),v_Flange_Edge,v_Extended_Flange_Edge)
+    # 0deg
+    v_Flange_Edge = Vector([sin(radians(0)) * FLANGE_RADIUS, cos(radians(0)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    v_Cross = geometry.intersect_line_line(v_0_Deg_Top_Point, Vector(
+        [v_0_Deg_Top_Point.x, v_0_Deg_Top_Point.y, -HEIGHT]), v_Flange_Edge, v_Extended_Flange_Edge)
     verts.append(v_Cross[0])
 
-    #5deg
-    v_Flange_Edge = Vector([sin(radians(5)) * FLANGE_RADIUS,cos(radians(5)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT ])
-    v_Cross = geometry.intersect_line_line(v_5_Deg_Top_Point,Vector([v_5_Deg_Top_Point.x,v_5_Deg_Top_Point.y,-HEIGHT]),v_Flange_Edge,v_Extended_Flange_Edge)
+    # 5deg
+    v_Flange_Edge = Vector([sin(radians(5)) * FLANGE_RADIUS, cos(radians(5)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    v_Cross = geometry.intersect_line_line(v_5_Deg_Top_Point, Vector(
+        [v_5_Deg_Top_Point.x, v_5_Deg_Top_Point.y, -HEIGHT]), v_Flange_Edge, v_Extended_Flange_Edge)
     verts.append(v_Cross[0])
 
-    #10deg
-    v_Flange_Edge = Vector([sin(radians(10)) * FLANGE_RADIUS,cos(radians(10)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT ])
-    v_Cross = geometry.intersect_line_line(v_10_Deg_Top_Point,Vector([v_10_Deg_Top_Point.x,v_10_Deg_Top_Point.y,-HEIGHT]),v_Flange_Edge,v_Extended_Flange_Edge)
+    # 10deg
+    v_Flange_Edge = Vector([sin(radians(10)) * FLANGE_RADIUS, cos(radians(10))
+                           * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    v_Cross = geometry.intersect_line_line(v_10_Deg_Top_Point, Vector(
+        [v_10_Deg_Top_Point.x, v_10_Deg_Top_Point.y, -HEIGHT]), v_Flange_Edge, v_Extended_Flange_Edge)
     verts.append(v_Cross[0])
 
-    #15deg
-    v_Flange_Edge = Vector([sin(radians(15)) * FLANGE_RADIUS,cos(radians(15)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT ])
-    v_Cross = geometry.intersect_line_line(v_15_Deg_Top_Point,Vector([v_15_Deg_Top_Point.x,v_15_Deg_Top_Point.y,-HEIGHT]),v_Flange_Edge,v_Extended_Flange_Edge)
+    # 15deg
+    v_Flange_Edge = Vector([sin(radians(15)) * FLANGE_RADIUS, cos(radians(15))
+                           * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    v_Cross = geometry.intersect_line_line(v_15_Deg_Top_Point, Vector(
+        [v_15_Deg_Top_Point.x, v_15_Deg_Top_Point.y, -HEIGHT]), v_Flange_Edge, v_Extended_Flange_Edge)
     verts.append(v_Cross[0])
 
-
-    #20deg
-    v_Flange_Edge = Vector([sin(radians(20)) * FLANGE_RADIUS,cos(radians(20)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT ])
-    v_Cross = geometry.intersect_line_line(v_20_Deg_Top_Point,Vector([v_20_Deg_Top_Point.x,v_20_Deg_Top_Point.y,-HEIGHT]),v_Flange_Edge,v_Extended_Flange_Edge)
+    # 20deg
+    v_Flange_Edge = Vector([sin(radians(20)) * FLANGE_RADIUS, cos(radians(20))
+                           * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    v_Cross = geometry.intersect_line_line(v_20_Deg_Top_Point, Vector(
+        [v_20_Deg_Top_Point.x, v_20_Deg_Top_Point.y, -HEIGHT]), v_Flange_Edge, v_Extended_Flange_Edge)
     verts.append(v_Cross[0])
 
-    #25deg
-    v_Flange_Edge = Vector([sin(radians(25)) * FLANGE_RADIUS,cos(radians(25)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT ])
-    v_Cross = geometry.intersect_line_line(v_25_Deg_Top_Point,Vector([v_25_Deg_Top_Point.x,v_25_Deg_Top_Point.y,-HEIGHT]),v_Flange_Edge,v_Extended_Flange_Edge)
+    # 25deg
+    v_Flange_Edge = Vector([sin(radians(25)) * FLANGE_RADIUS, cos(radians(25))
+                           * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    v_Cross = geometry.intersect_line_line(v_25_Deg_Top_Point, Vector(
+        [v_25_Deg_Top_Point.x, v_25_Deg_Top_Point.y, -HEIGHT]), v_Flange_Edge, v_Extended_Flange_Edge)
     verts.append(v_Cross[0])
 
-
-    #30deg
-    v_Flange_Edge = Vector([sin(radians(30)) * FLANGE_RADIUS,cos(radians(30)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT ])
-    v_Cross = geometry.intersect_line_line(v_30_Deg_Top_Point,Vector([v_30_Deg_Top_Point.x,v_30_Deg_Top_Point.y,-HEIGHT]),v_Flange_Edge,v_Extended_Flange_Edge)
+    # 30deg
+    v_Flange_Edge = Vector([sin(radians(30)) * FLANGE_RADIUS, cos(radians(30))
+                           * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    v_Cross = geometry.intersect_line_line(v_30_Deg_Top_Point, Vector(
+        [v_30_Deg_Top_Point.x, v_30_Deg_Top_Point.y, -HEIGHT]), v_Flange_Edge, v_Extended_Flange_Edge)
     verts.append(v_Cross[0])
 
     Row += 1
 
-
-
-    verts.append([sin(radians(0)) * FLANGE_RADIUS,cos(radians(0)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT ])
-    verts.append([sin(radians(5)) * FLANGE_RADIUS,cos(radians(5)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT])
-    verts.append([sin(radians(10)) * FLANGE_RADIUS,cos(radians(10)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT])
-    verts.append([sin(radians(15)) * FLANGE_RADIUS,cos(radians(15)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT])
-    verts.append([sin(radians(20)) * FLANGE_RADIUS,cos(radians(20)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT])
-    verts.append([sin(radians(25)) * FLANGE_RADIUS,cos(radians(25)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT])
-    verts.append([sin(radians(30)) * FLANGE_RADIUS,cos(radians(30)) * FLANGE_RADIUS,-HEIGHT + FLANGE_HEIGHT])
+    verts.append([sin(radians(0)) * FLANGE_RADIUS, cos(radians(0)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    verts.append([sin(radians(5)) * FLANGE_RADIUS, cos(radians(5)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    verts.append([sin(radians(10)) * FLANGE_RADIUS, cos(radians(10)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    verts.append([sin(radians(15)) * FLANGE_RADIUS, cos(radians(15)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    verts.append([sin(radians(20)) * FLANGE_RADIUS, cos(radians(20)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    verts.append([sin(radians(25)) * FLANGE_RADIUS, cos(radians(25)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
+    verts.append([sin(radians(30)) * FLANGE_RADIUS, cos(radians(30)) * FLANGE_RADIUS, -HEIGHT + FLANGE_HEIGHT])
 
     Row += 1
 
-    verts.append([sin(radians(0)) * FLANGE_RADIUS,cos(radians(0)) * FLANGE_RADIUS,-HEIGHT])
-    verts.append([sin(radians(5)) * FLANGE_RADIUS,cos(radians(5)) * FLANGE_RADIUS,-HEIGHT])
-    verts.append([sin(radians(10)) * FLANGE_RADIUS,cos(radians(10)) * FLANGE_RADIUS,-HEIGHT])
-    verts.append([sin(radians(15)) * FLANGE_RADIUS,cos(radians(15)) * FLANGE_RADIUS,-HEIGHT])
-    verts.append([sin(radians(20)) * FLANGE_RADIUS,cos(radians(20)) * FLANGE_RADIUS,-HEIGHT])
-    verts.append([sin(radians(25)) * FLANGE_RADIUS,cos(radians(25)) * FLANGE_RADIUS,-HEIGHT])
-    verts.append([sin(radians(30)) * FLANGE_RADIUS,cos(radians(30)) * FLANGE_RADIUS,-HEIGHT])
+    verts.append([sin(radians(0)) * FLANGE_RADIUS, cos(radians(0)) * FLANGE_RADIUS, -HEIGHT])
+    verts.append([sin(radians(5)) * FLANGE_RADIUS, cos(radians(5)) * FLANGE_RADIUS, -HEIGHT])
+    verts.append([sin(radians(10)) * FLANGE_RADIUS, cos(radians(10)) * FLANGE_RADIUS, -HEIGHT])
+    verts.append([sin(radians(15)) * FLANGE_RADIUS, cos(radians(15)) * FLANGE_RADIUS, -HEIGHT])
+    verts.append([sin(radians(20)) * FLANGE_RADIUS, cos(radians(20)) * FLANGE_RADIUS, -HEIGHT])
+    verts.append([sin(radians(25)) * FLANGE_RADIUS, cos(radians(25)) * FLANGE_RADIUS, -HEIGHT])
+    verts.append([sin(radians(30)) * FLANGE_RADIUS, cos(radians(30)) * FLANGE_RADIUS, -HEIGHT])
 
     Row += 1
 
-
-    verts.append([sin(radians(0)) * SHANK_RADIUS,cos(radians(0)) * SHANK_RADIUS,-HEIGHT])
-    verts.append([sin(radians(0)) * SHANK_RADIUS,cos(radians(0)) * SHANK_RADIUS,-HEIGHT])
-    verts.append([sin(radians(10)) * SHANK_RADIUS,cos(radians(10)) * SHANK_RADIUS,-HEIGHT])
-    verts.append([sin(radians(10)) * SHANK_RADIUS,cos(radians(10)) * SHANK_RADIUS,-HEIGHT])
-    verts.append([sin(radians(20)) * SHANK_RADIUS,cos(radians(20)) * SHANK_RADIUS,-HEIGHT])
-    verts.append([sin(radians(20)) * SHANK_RADIUS,cos(radians(20)) * SHANK_RADIUS,-HEIGHT])
-    verts.append([sin(radians(30)) * SHANK_RADIUS,cos(radians(30)) * SHANK_RADIUS,-HEIGHT])
+    verts.append([sin(radians(0)) * SHANK_RADIUS, cos(radians(0)) * SHANK_RADIUS, -HEIGHT])
+    verts.append([sin(radians(0)) * SHANK_RADIUS, cos(radians(0)) * SHANK_RADIUS, -HEIGHT])
+    verts.append([sin(radians(10)) * SHANK_RADIUS, cos(radians(10)) * SHANK_RADIUS, -HEIGHT])
+    verts.append([sin(radians(10)) * SHANK_RADIUS, cos(radians(10)) * SHANK_RADIUS, -HEIGHT])
+    verts.append([sin(radians(20)) * SHANK_RADIUS, cos(radians(20)) * SHANK_RADIUS, -HEIGHT])
+    verts.append([sin(radians(20)) * SHANK_RADIUS, cos(radians(20)) * SHANK_RADIUS, -HEIGHT])
+    verts.append([sin(radians(30)) * SHANK_RADIUS, cos(radians(30)) * SHANK_RADIUS, -HEIGHT])
 
     Row += 1
-
 
     faces.extend(Build_Face_List_Quads(FaceStart, 6, Row - 1))
 
-    Spin_Verts, Spin_Faces = SpinDup(verts, faces, 360,12, 'z')
+    Spin_Verts, Spin_Faces = SpinDup(verts, faces, 360, 12, 'z')
 
     return Spin_Verts, Spin_Faces, 0 - (-HEIGHT)
 
 
-def Create_12_Point_Head(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT,FLANGE_DIA):
-    #TODO add under head radius
-    return  Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT,FLANGE_DIA)
-
+def Create_12_Point_Head(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT, FLANGE_DIA):
+    # TODO add under head radius
+    return Create_12_Point(FLAT, HOLE_DIA, SHANK_DIA, HEIGHT, FLANGE_DIA)
 
 
 # ####################################################################
@@ -1350,7 +1352,7 @@ def Thread_Start3(verts, INNER_RADIUS, OUTTER_RADIUS, PITCH, DIV_COUNT,
     Crest_Height = float(PITCH) * float(CREST_PERCENT) / float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT) / float(100)
     Root_to_Crest_Height = Crest_to_Root_Height = \
-                        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
+        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
 
     # thread start
     Rank = float(OUTTER_RADIUS - INNER_RADIUS) / float(DIV_COUNT)
@@ -1476,7 +1478,7 @@ def Create_Thread_Start_Verts(INNER_DIA, OUTTER_DIA, PITCH, CREST_PERCENT,
     Crest_Height = float(PITCH) * float(CREST_PERCENT) / float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT) / float(100)
     Root_to_Crest_Height = Crest_to_Root_Height = \
-                        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
+        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
 
     Rank = float(OUTTER_RADIUS - INNER_RADIUS) / float(DIV_COUNT)
 
@@ -1606,7 +1608,7 @@ def Create_Thread_Verts(INNER_DIA, OUTTER_DIA, PITCH, HEIGHT,
     Crest_Height = float(PITCH) * float(CREST_PERCENT) / float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT) / float(100)
     Root_to_Crest_Height = Crest_to_Root_Height = \
-                        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
+        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
 
     Height_Offset = Z_LOCATION
 
@@ -1666,7 +1668,7 @@ def Create_Thread_End_Verts(INNER_DIA, OUTTER_DIA, PITCH, CREST_PERCENT,
     Crest_Height = float(PITCH) * float(CREST_PERCENT) / float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT) / float(100)
     Root_to_Crest_Height = Crest_to_Root_Height = \
-                        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
+        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
 
     Row = 0
 
@@ -1749,27 +1751,27 @@ def Create_External_Thread(SHANK_DIA, SHANK_LENGTH, INNER_DIA, OUTTER_DIA,
     Offset = 0.0
 
     Shank_Verts, Shank_Row, Offset = Create_Shank_Verts(
-                                                    SHANK_DIA, OUTTER_DIA, SHANK_LENGTH,
-                                                    Offset, DIV_COUNT
-                                                    )
+        SHANK_DIA, OUTTER_DIA, SHANK_LENGTH,
+        Offset, DIV_COUNT
+    )
     Total_Row += Shank_Row
 
     Thread_Start_Verts, Thread_Start_Row, Offset = Create_Thread_Start_Verts(
-                                                    INNER_DIA, OUTTER_DIA, PITCH, CREST_PERCENT,
-                                                    ROOT_PERCENT, Offset, DIV_COUNT
-                                                    )
+        INNER_DIA, OUTTER_DIA, PITCH, CREST_PERCENT,
+        ROOT_PERCENT, Offset, DIV_COUNT
+    )
     Total_Row += Thread_Start_Row
 
     Thread_Verts, Thread_Row, Offset = Create_Thread_Verts(
-                                                    INNER_DIA, OUTTER_DIA, PITCH, LENGTH,
-                                                    CREST_PERCENT, ROOT_PERCENT, Offset, DIV_COUNT
-                                                    )
+        INNER_DIA, OUTTER_DIA, PITCH, LENGTH,
+        CREST_PERCENT, ROOT_PERCENT, Offset, DIV_COUNT
+    )
     Total_Row += Thread_Row
 
     Thread_End_Verts, Thread_End_Row, Offset, Lowest_Z_Vert = Create_Thread_End_Verts(
-                                                    INNER_DIA, OUTTER_DIA, PITCH, CREST_PERCENT,
-                                                    ROOT_PERCENT, Offset, DIV_COUNT
-                                                    )
+        INNER_DIA, OUTTER_DIA, PITCH, CREST_PERCENT,
+        ROOT_PERCENT, Offset, DIV_COUNT
+    )
     Total_Row += Thread_End_Row
 
     verts.extend(Shank_Verts)
@@ -1968,7 +1970,7 @@ def add_Nylon_Head(OUTSIDE_RADIUS, Z_LOCATION, DIV_COUNT):
     sVerts, sFaces = SpinDup(verts, faces, 360, DIV_COUNT, 'z')
     sVerts.extend(verts)        # add the start verts to the Spin verts to complete the loop
 
-    faces.extend(Build_Face_List_Quads(FaceStart, Row - 1, DIV_COUNT,1))
+    faces.extend(Build_Face_List_Quads(FaceStart, Row - 1, DIV_COUNT, 1))
 
     return Move_Verts_Up_Z(sVerts, 0), faces, Lowest_Z_Vert
 
@@ -2021,9 +2023,8 @@ def add_Nylon_Part(OUTSIDE_RADIUS, Z_LOCATION, DIV_COUNT):
     return sVerts, faces, 0 - Lowest_Z_Vert
 
 
-def add_12_Point_Nut(FLAT, HOLE_DIA, HEIGHT,FLANGE_DIA):
-    return Create_12_Point(FLAT, HOLE_DIA,HOLE_DIA, HEIGHT,FLANGE_DIA)
-
+def add_12_Point_Nut(FLAT, HOLE_DIA, HEIGHT, FLANGE_DIA):
+    return Create_12_Point(FLAT, HOLE_DIA, HOLE_DIA, HEIGHT, FLANGE_DIA)
 
 
 # ####################################################################
@@ -2045,7 +2046,7 @@ def Create_Internal_Thread_Start_Verts(verts, INNER_RADIUS, OUTTER_RADIUS, PITCH
     Crest_Height = float(PITCH) * float(CREST_PERCENT) / float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT) / float(100)
     Root_to_Crest_Height = Crest_to_Root_Height = \
-                        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
+        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
 
     Rank = float(OUTTER_RADIUS - INNER_RADIUS) / float(DIV)
 
@@ -2116,7 +2117,7 @@ def Create_Internal_Thread_End_Verts(verts, INNER_RADIUS, OUTTER_RADIUS, PITCH,
     Crest_Height = float(PITCH) * float(CREST_PERCENT) / float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT) / float(100)
     Root_to_Crest_Height = Crest_to_Root_Height = \
-                        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
+        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
 
     Rank = float(OUTTER_RADIUS - INNER_RADIUS) / float(DIV_COUNT)
 
@@ -2211,16 +2212,16 @@ def Create_Internal_Thread(INNER_DIA, OUTTER_DIA, PITCH, HEIGHT,
     Crest_Height = float(PITCH) * float(CREST_PERCENT) / float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT) / float(100)
     Root_to_Crest_Height = Crest_to_Root_Height = \
-                        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
+        (float(PITCH) - (Crest_Height + Root_Height)) / 2.0
 
     Height_Offset = 0
     FaceStart = len(verts)
 
     Row_Inc, Height_Offset = Create_Internal_Thread_Start_Verts(
-                                    verts, INNER_RADIUS, OUTTER_RADIUS, PITCH,
-                                    DIV_COUNT, CREST_PERCENT, ROOT_PERCENT,
-                                    Height_Offset
-                                    )
+        verts, INNER_RADIUS, OUTTER_RADIUS, PITCH,
+        DIV_COUNT, CREST_PERCENT, ROOT_PERCENT,
+        Height_Offset
+    )
     Row += Row_Inc
 
     for j in range(Num):
@@ -2254,10 +2255,10 @@ def Create_Internal_Thread(INNER_DIA, OUTTER_DIA, PITCH, HEIGHT,
         Row += 1
 
     Row_Inc, Height_Offset = Create_Internal_Thread_End_Verts(
-                                        verts, INNER_RADIUS, OUTTER_RADIUS,
-                                        PITCH, CREST_PERCENT,
-                                        ROOT_PERCENT, Height_Offset, DIV_COUNT
-                                        )
+        verts, INNER_RADIUS, OUTTER_RADIUS,
+        PITCH, CREST_PERCENT,
+        ROOT_PERCENT, Height_Offset, DIV_COUNT
+    )
 
     Row += Row_Inc
     faces.extend(Build_Face_List_Quads(FaceStart, DIV_COUNT, Row - 1, FLIP=1))
@@ -2272,21 +2273,19 @@ def Nut_Mesh(props, context):
     Head_Verts = []
     Head_Faces = []
 
-
     Face_Start = len(verts)
 
-
     if props.bf_Nut_Type == 'bf_Nut_12Pnt':
-        Nut_Height = props.bf_12_Point_Nut_Height
+        Nut_Height = props.bf_12_Point_Nut_Height / GLOBAL_SCALE
     else:
-        Nut_Height = props.bf_Hex_Nut_Height
+        Nut_Height = props.bf_Hex_Nut_Height / GLOBAL_SCALE
 
     Thread_Verts, Thread_Faces, New_Nut_Height = Create_Internal_Thread(
-                                                    props.bf_Minor_Dia, props.bf_Major_Dia,
-                                                    props.bf_Pitch, Nut_Height,
-                                                    props.bf_Crest_Percent, props.bf_Root_Percent,
-                                                    1, props.bf_Div_Count
-                                                    )
+        props.bf_Minor_Dia / GLOBAL_SCALE, props.bf_Major_Dia / GLOBAL_SCALE,
+        props.bf_Pitch / GLOBAL_SCALE, Nut_Height,
+        props.bf_Crest_Percent, props.bf_Root_Percent,
+        1, props.bf_Div_Count
+    )
     verts.extend(Thread_Verts)
     faces.extend(Copy_Faces(Thread_Faces, Face_Start))
 
@@ -2294,16 +2293,16 @@ def Nut_Mesh(props, context):
 
     if props.bf_Nut_Type == 'bf_Nut_12Pnt':
         Head_Verts, Head_Faces, Lock_Nut_Rad = add_12_Point_Nut(
-                                                props.bf_12_Point_Nut_Flat_Distance,
-                                                props.bf_Major_Dia, New_Nut_Height,
-                                                #Limit the size of the Flange to avoid calculation error
-                                                max(props.bf_12_Point_Nut_Flange_Dia,props.bf_12_Point_Nut_Flat_Distance)
-                                                )
+            props.bf_12_Point_Nut_Flat_Distance / GLOBAL_SCALE,
+            props.bf_Major_Dia / GLOBAL_SCALE, New_Nut_Height,
+            # Limit the size of the Flange to avoid calculation error
+            max(props.bf_12_Point_Nut_Flange_Dia / GLOBAL_SCALE, props.bf_12_Point_Nut_Flat_Distance / GLOBAL_SCALE)
+        )
     else:
         Head_Verts, Head_Faces, Lock_Nut_Rad = add_Hex_Nut(
-                                                props.bf_Hex_Nut_Flat_Distance,
-                                                props.bf_Major_Dia, New_Nut_Height
-                                                )
+            props.bf_Hex_Nut_Flat_Distance / GLOBAL_SCALE,
+            props.bf_Major_Dia / GLOBAL_SCALE, New_Nut_Height
+        )
     verts.extend((Head_Verts))
     faces.extend(Copy_Faces(Head_Faces, Face_Start))
 
@@ -2312,17 +2311,17 @@ def Nut_Mesh(props, context):
     if props.bf_Nut_Type == 'bf_Nut_Lock':
         Face_Start = len(verts)
         Nylon_Head_Verts, Nylon_Head_faces, LowZ = add_Nylon_Head(
-                                                        Lock_Nut_Rad, 0 - New_Nut_Height,
-                                                        props.bf_Div_Count
-                                                        )
+            Lock_Nut_Rad, 0 - New_Nut_Height,
+            props.bf_Div_Count
+        )
         verts.extend((Nylon_Head_Verts))
         faces.extend(Copy_Faces(Nylon_Head_faces, Face_Start))
 
         Face_Start = len(verts)
         Nylon_Verts, Nylon_faces, Temp_LowZ = add_Nylon_Part(
-                                                        Lock_Nut_Rad, 0 - New_Nut_Height,
-                                                        props.bf_Div_Count
-                                                        )
+            Lock_Nut_Rad, 0 - New_Nut_Height,
+            props.bf_Div_Count
+        )
         verts.extend((Nylon_Verts))
         faces.extend(Copy_Faces(Nylon_faces, Face_Start))
 
@@ -2344,82 +2343,85 @@ def Bolt_Mesh(props, context):
     Head_Faces = []
     Head_Height = 0.0
 
-    ReSized_Allen_Bit_Flat_Distance = props.bf_Allen_Bit_Flat_Distance  # set default
+    ReSized_Allen_Bit_Flat_Distance = props.bf_Allen_Bit_Flat_Distance / GLOBAL_SCALE  # set default
 
-    Head_Height = props.bf_Hex_Head_Height  # will be changed by the Head Functions
+    Head_Height = props.bf_Hex_Head_Height / GLOBAL_SCALE  # will be changed by the Head Functions
 
     if props.bf_Bit_Type == 'bf_Bit_Allen' and props.bf_Head_Type == 'bf_Head_Pan':
         # need to size Allen bit if it is too big.
-        if Allen_Bit_Dia(props.bf_Allen_Bit_Flat_Distance) > Max_Pan_Bit_Dia(props.bf_Pan_Head_Dia):
+        if Allen_Bit_Dia(
+                props.bf_Allen_Bit_Flat_Distance /
+                GLOBAL_SCALE) > Max_Pan_Bit_Dia(
+                props.bf_Pan_Head_Dia /
+                GLOBAL_SCALE):
             ReSized_Allen_Bit_Flat_Distance = Allen_Bit_Dia_To_Flat(
-                                                Max_Pan_Bit_Dia(props.bf_Pan_Head_Dia)
-                                                )
+                Max_Pan_Bit_Dia(props.bf_Pan_Head_Dia / GLOBAL_SCALE)
+            )
             ReSized_Allen_Bit_Flat_Distance -= ReSized_Allen_Bit_Flat_Distance * 0.05   # It looks better if it is just a bit smaller
             # print ("Resized Allen Bit Flat Distance to ",ReSized_Allen_Bit_Flat_Distance)
 
     # Bit Mesh
     if props.bf_Bit_Type == 'bf_Bit_Allen':
         Bit_Verts, Bit_Faces, Bit_Dia = Create_Allen_Bit(
-                                                ReSized_Allen_Bit_Flat_Distance,
-                                                props.bf_Allen_Bit_Depth
-                                                )
+            ReSized_Allen_Bit_Flat_Distance,
+            props.bf_Allen_Bit_Depth / GLOBAL_SCALE
+        )
 
     if props.bf_Bit_Type == 'bf_Bit_Torx':
         Bit_Verts, Bit_Faces, Bit_Dia = Create_Torx_Bit(
-                                                Torx_Bit_Size_To_Point_Distance(props.bf_Torx_Size_Type),
-                                                props.bf_Torx_Bit_Depth
-                                                )
-
+            Torx_Bit_Size_To_Point_Distance(props.bf_Torx_Size_Type),
+            props.bf_Torx_Bit_Depth / GLOBAL_SCALE
+        )
 
     if props.bf_Bit_Type == 'bf_Bit_Philips':
         Bit_Verts, Bit_Faces, Bit_Dia = Create_Phillips_Bit(
-                                                props.bf_Philips_Bit_Dia,
-                                                props.bf_Philips_Bit_Dia * (0.5 / 1.82),
-                                                props.bf_Phillips_Bit_Depth
-                                                )
+            props.bf_Philips_Bit_Dia / GLOBAL_SCALE,
+            props.bf_Philips_Bit_Dia / GLOBAL_SCALE * (0.5 / 1.82),
+            props.bf_Phillips_Bit_Depth / GLOBAL_SCALE
+        )
     # Head Mesh
     if props.bf_Head_Type == 'bf_Head_Hex':
         Head_Verts, Head_Faces, Head_Height = Create_Hex_Head(
-                                                props.bf_Hex_Head_Flat_Distance, Bit_Dia,
-                                                props.bf_Shank_Dia, props.bf_Hex_Head_Height
-                                                )
+            props.bf_Hex_Head_Flat_Distance / GLOBAL_SCALE, Bit_Dia,
+            props.bf_Shank_Dia / GLOBAL_SCALE, props.bf_Hex_Head_Height / GLOBAL_SCALE
+        )
 
     elif props.bf_Head_Type == 'bf_Head_12Pnt':
         Head_Verts, Head_Faces, Head_Height = Create_12_Point_Head(
-                                                props.bf_12_Point_Head_Flat_Distance, Bit_Dia,
-                                                props.bf_Shank_Dia, props.bf_12_Point_Head_Height,
-                                                #Limit the size of the Flange to avoid calculation error
-                                                max(props.bf_12_Point_Head_Flange_Dia,props.bf_12_Point_Head_Flat_Distance)
-                                                )
+            props.bf_12_Point_Head_Flat_Distance / GLOBAL_SCALE, Bit_Dia,
+            props.bf_Shank_Dia / GLOBAL_SCALE, props.bf_12_Point_Head_Height / GLOBAL_SCALE,
+            # Limit the size of the Flange to avoid calculation error
+            max(props.bf_12_Point_Head_Flange_Dia / GLOBAL_SCALE, props.bf_12_Point_Head_Flat_Distance / GLOBAL_SCALE)
+        )
     elif props.bf_Head_Type == 'bf_Head_Cap':
         Head_Verts, Head_Faces, Head_Height = Create_Cap_Head(
-                                                Bit_Dia, props.bf_Cap_Head_Dia,
-                                                props.bf_Shank_Dia, props.bf_Cap_Head_Height,
-                                                props.bf_Cap_Head_Dia * (1.0 / 19.0),
-                                                props.bf_Cap_Head_Dia * (1.0 / 19.0),
-                                                props.bf_Div_Count
-                                                )
+            Bit_Dia, props.bf_Cap_Head_Dia / GLOBAL_SCALE,
+            props.bf_Shank_Dia, props.bf_Cap_Head_Height / GLOBAL_SCALE,
+            props.bf_Cap_Head_Dia / GLOBAL_SCALE * (1.0 / 19.0),
+            props.bf_Cap_Head_Dia / GLOBAL_SCALE * (1.0 / 19.0),
+            props.bf_Div_Count
+        )
     elif props.bf_Head_Type == 'bf_Head_Dome':
         Head_Verts, Head_Faces, Head_Height = Create_Dome_Head(
-                                                Bit_Dia, props.bf_Dome_Head_Dia,
-                                                props.bf_Shank_Dia, props.bf_Hex_Head_Height,
-                                                1, 1, 0, props.bf_Div_Count
-                                                )
+            Bit_Dia, props.bf_Dome_Head_Dia / GLOBAL_SCALE,
+            props.bf_Shank_Dia / GLOBAL_SCALE, props.bf_Hex_Head_Height / GLOBAL_SCALE,
+            1, 1, 0, props.bf_Div_Count
+        )
 
     elif props.bf_Head_Type == 'bf_Head_Pan':
         Head_Verts, Head_Faces, Head_Height = Create_Pan_Head(
-                                                Bit_Dia, props.bf_Pan_Head_Dia,
-                                                props.bf_Shank_Dia,
-                                                props.bf_Hex_Head_Height, 1, 1, 0,
-                                                props.bf_Div_Count
-                                                )
+            Bit_Dia, props.bf_Pan_Head_Dia / GLOBAL_SCALE,
+            props.bf_Shank_Dia / GLOBAL_SCALE,
+            props.bf_Hex_Head_Height / GLOBAL_SCALE, 1, 1, 0,
+            props.bf_Div_Count
+        )
     elif props.bf_Head_Type == 'bf_Head_CounterSink':
         Head_Verts, Head_Faces, Head_Height = Create_CounterSink_Head(
-                                                Bit_Dia, props.bf_CounterSink_Head_Dia,
-                                                props.bf_Shank_Dia, props.bf_CounterSink_Head_Dia,
-                                                props.bf_CounterSink_Head_Dia * (0.09 / 6.31),
-                                                props.bf_Div_Count
-                                                )
+            Bit_Dia, props.bf_CounterSink_Head_Dia / GLOBAL_SCALE,
+            props.bf_Shank_Dia, props.bf_CounterSink_Head_Dia / GLOBAL_SCALE,
+            props.bf_CounterSink_Head_Dia / GLOBAL_SCALE * (0.09 / 6.31),
+            props.bf_Div_Count
+        )
 
     Face_Start = len(verts)
     verts.extend(Move_Verts_Up_Z(Bit_Verts, Head_Height))
@@ -2431,23 +2433,17 @@ def Bolt_Mesh(props, context):
 
     Face_Start = len(verts)
     Thread_Verts, Thread_Faces, Thread_Height = Create_External_Thread(
-                                                    props.bf_Shank_Dia, props.bf_Shank_Length,
-                                                    props.bf_Minor_Dia, props.bf_Major_Dia,
-                                                    props.bf_Pitch, props.bf_Thread_Length,
-                                                    props.bf_Crest_Percent,
-                                                    props.bf_Root_Percent, props.bf_Div_Count
-                                                    )
+        props.bf_Shank_Dia / GLOBAL_SCALE, props.bf_Shank_Length / GLOBAL_SCALE,
+        props.bf_Minor_Dia / GLOBAL_SCALE, props.bf_Major_Dia / GLOBAL_SCALE,
+        props.bf_Pitch / GLOBAL_SCALE, props.bf_Thread_Length / GLOBAL_SCALE,
+        props.bf_Crest_Percent,
+        props.bf_Root_Percent, props.bf_Div_Count
+    )
 
     verts.extend(Move_Verts_Up_Z(Thread_Verts, 0))
     faces.extend(Copy_Faces(Thread_Faces, Face_Start))
 
     return Move_Verts_Up_Z(verts, Thread_Height), faces
-
-
-
-
-
-
 
 
 def Create_New_Mesh(props, context):

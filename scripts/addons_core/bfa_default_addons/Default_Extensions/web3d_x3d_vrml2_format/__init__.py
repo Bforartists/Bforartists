@@ -24,6 +24,8 @@ from bpy_extras.io_utils import (
         path_reference_mode,
         )
 
+blender_version = bpy.app.version
+blender_version_higher_279 = blender_version[0] > 2 or (blender_version[0] == 2 and blender_version[1] >= 79)
 
 @orientation_helper(axis_forward='Z', axis_up='Y')
 class ImportX3D(bpy.types.Operator, ImportHelper):
@@ -77,7 +79,13 @@ class X3D_PT_export_include(bpy.types.Panel):
         layout.prop(operator, "use_selection")
         layout.prop(operator, "use_hierarchy")
         layout.prop(operator, "name_decorations")
-        layout.prop(operator, "use_h3d")
+        # keeping h3d disabled for now as the underlying gpu.export_shader() got removed since 2.80
+        # see https://projects.blender.org/blender/blender-addons/issues/79991 for details
+        # when readding it, don't forget to change the description
+        # layout.prop(operator, "use_h3d")
+        col = layout.column()
+        col.enabled = not blender_version_higher_279
+        col.prop(operator, "use_h3d")
 
 
 class X3D_PT_export_transform(bpy.types.Panel):
@@ -181,7 +189,11 @@ class ExportX3D(bpy.types.Operator, ExportHelper):
             )
     use_h3d: BoolProperty(
             name="H3D Extensions",
-            description="Export shaders for H3D",
+            description="Export shaders for H3D" +
+                        ".\nWARNING: This feature is disabled for blender versions higher than 2.79 "
+                        "as the needed API method for exporting shaders got removed from blender. "
+                        "\nThis feature may get fixed eventually, but no support expected"
+                        if blender_version_higher_279 else "",
             default=False,
             )
 
