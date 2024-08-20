@@ -1222,11 +1222,11 @@ static int grease_pencil_caps_set_exec(bContext *C, wmOperator *op)
 static void GREASE_PENCIL_OT_caps_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_caps_types[] = {
-      {int(CapsMode::ROUND), "ROUND", 0, "Rounded", "Set as default rounded"},
-      {int(CapsMode::FLAT), "FLAT", 0, "Flat", ""},
+      {int(CapsMode::ROUND), "ROUND", ICON_TOGGLECAPS_DEFAULT, "Rounded", "Set as default rounded caps"}, /*BFA - added icon*/
+      {int(CapsMode::FLAT), "FLAT", ICON_TOGGLECAPS_BOTH, "Flat", "Set as flat caps"}, /*BFA - added icon and explicit tooltip*/
       RNA_ENUM_ITEM_SEPR,
-      {int(CapsMode::START), "START", 0, "Toggle Start", ""},
-      {int(CapsMode::END), "END", 0, "Toggle End", ""},
+      {int(CapsMode::START), "START", ICON_TOGGLECAPS_START, "Toggle Start", ""}, /*BFA - added icon*/
+      {int(CapsMode::END), "END", ICON_TOGGLECAPS_END, "Toggle End", ""}, /*BFA - added icon*/
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1848,9 +1848,9 @@ enum class SeparateMode : int8_t {
 };
 
 static const EnumPropertyItem prop_separate_modes[] = {
-    {int(SeparateMode::SELECTED), "SELECTED", 0, "Selection", "Separate selected geometry"},
-    {int(SeparateMode::MATERIAL), "MATERIAL", 0, "By Material", "Separate by material"},
-    {int(SeparateMode::LAYER), "LAYER", 0, "By Layer", "Separate by layer"},
+    {int(SeparateMode::SELECTED), "SELECTED", ICON_SEPARATE_GP_POINTS, "Selection", "Separate selected geometry"}, /*BFA - icon added*/
+    {int(SeparateMode::MATERIAL), "MATERIAL", ICON_SEPARATE_BYMATERIAL, "By Material", "Separate by material"}, /*BFA - icon added*/
+    {int(SeparateMode::LAYER), "LAYER", ICON_SEPARATE_GP_LAYER, "By Layer", "Separate by layer"}, /*BFA - icon added*/
     {0, nullptr, 0, nullptr, nullptr},
 };
 

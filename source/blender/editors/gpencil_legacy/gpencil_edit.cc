@@ -7,6 +7,7 @@
  * Operators for editing Grease Pencil strokes.
  */
 
+/*BFA - this document is legacy*/
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
