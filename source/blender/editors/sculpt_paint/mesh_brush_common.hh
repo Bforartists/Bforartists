@@ -301,26 +301,66 @@ namespace auto_mask {
 /**
  * Calculate all auto-masking influence on each vertex.
  */
-void calc_vert_factors(const Object &object,
+void calc_vert_factors(const Depsgraph &depsgraph,
+                       const Object &object,
                        const Cache &cache,
                        const bke::pbvh::Node &node,
                        Span<int> verts,
                        MutableSpan<float> factors);
-void calc_grids_factors(const Object &object,
+inline void calc_vert_factors(const Depsgraph &depsgraph,
+                              const Object &object,
+                              const Cache *cache,
+                              const bke::pbvh::Node &node,
+                              Span<int> verts,
+                              MutableSpan<float> factors)
+{
+  if (cache == nullptr) {
+    return;
+  }
+  calc_vert_factors(depsgraph, object, *cache, node, verts, factors);
+}
+void calc_grids_factors(const Depsgraph &depsgraph,
+                        const Object &object,
                         const Cache &cache,
                         const bke::pbvh::Node &node,
                         Span<int> grids,
                         MutableSpan<float> factors);
-void calc_vert_factors(const Object &object,
+inline void calc_grids_factors(const Depsgraph &depsgraph,
+                               const Object &object,
+                               const Cache *cache,
+                               const bke::pbvh::Node &node,
+                               Span<int> grids,
+                               MutableSpan<float> factors)
+{
+  if (cache == nullptr) {
+    return;
+  }
+  calc_grids_factors(depsgraph, object, *cache, node, grids, factors);
+}
+void calc_vert_factors(const Depsgraph &depsgraph,
+                       const Object &object,
                        const Cache &cache,
                        const bke::pbvh::Node &node,
                        const Set<BMVert *, 0> &verts,
                        MutableSpan<float> factors);
+inline void calc_vert_factors(const Depsgraph &depsgraph,
+                              const Object &object,
+                              const Cache *cache,
+                              const bke::pbvh::Node &node,
+                              const Set<BMVert *, 0> &verts,
+                              MutableSpan<float> factors)
+{
+  if (cache == nullptr) {
+    return;
+  }
+  calc_vert_factors(depsgraph, object, *cache, node, verts, factors);
+}
 
 /**
  * Calculate all auto-masking influence on each face.
  */
-void calc_face_factors(const Object &object,
+void calc_face_factors(const Depsgraph &depsgraph,
+                       const Object &object,
                        OffsetIndices<int> faces,
                        Span<int> corner_verts,
                        const Cache &cache,
@@ -396,14 +436,18 @@ void update_shape_keys(Object &object,
  * \todo This should be removed one the pbvh::Tree no longer stores this copy of deformed
  * positions.
  */
-void apply_translations_to_pbvh(bke::pbvh::Tree &pbvh, Span<int> verts, Span<float3> translations);
+void apply_translations_to_pbvh(const Depsgraph &depsgraph,
+                                Object &object,
+                                Span<int> verts,
+                                Span<float3> translations);
 
 /**
  * Write the new translated positions to the original mesh, taking into account inverse
  * deformation from modifiers, axis locking, and clipping. Flush the deformation to shape keys as
  * well.
  */
-void write_translations(const Sculpt &sd,
+void write_translations(const Depsgraph &depsgraph,
+                        const Sculpt &sd,
                         Object &object,
                         Span<float3> positions_eval,
                         Span<int> verts,
