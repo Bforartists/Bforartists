@@ -7284,34 +7284,24 @@ class VIEW3D_MT_edit_gpencil_point(Menu):
 
         layout.menu("VIEW3D_MT_gpencil_vertex_group")
 
-
-class VIEW3D_MT_weight_gpencil(Menu):
-    bl_label = "Weights"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("gpencil.weight_sample", text="Sample Weight", icon="EYEDROPPER")
-
-        layout.separator()
-
-        layout.operator("gpencil.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL")
-        layout.operator("gpencil.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE")
-
-        layout.separator()
-
-        layout.operator("gpencil.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT')
-        layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
-
-        layout.menu("VIEW3D_MT_gpencil_autoweights")
-
-
 class VIEW3D_MT_weight_grease_pencil(Menu):
     bl_label = "Weights"
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("grease_pencil.weight_invert", text="Invert Weight")
+        #layout.operator("gpencil.weight_sample", text="Sample Weight", icon="EYEDROPPER") # BFA - Legacy
+
+        #layout.separator()
+
+        #layout.operator("gpencil.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL") # BFA - Legacy
+        #layout.operator("gpencil.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE") # BFA - Legacy
+
+        #layout.separator()
+
+        layout.operator("grease_pencil.weight_invert", text="Invert Weight", icon="WEIGHT_INVERT")
+        #layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH') # BFA - Legacy
+
+        #layout.menu("VIEW3D_MT_gpencil_autoweights") # BFA - Legacy
 
 class VIEW3D_MT_gpencil_animation(Menu):
     bl_label = "Animation"
@@ -7407,7 +7397,7 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
         if ob.mode != 'PAINT_GREASE_PENCIL':
             layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
 
-
+# BFA
 class VIEW3D_MT_edit_greasepencil(Menu):
     bl_label = "Grease Pencil"
 
@@ -11520,7 +11510,6 @@ classes = (
     VIEW3D_MT_edit_greasepencil_showhide,
     VIEW3D_MT_edit_greasepencil_cleanup,
     VIEW3D_MT_weight_grease_pencil,
-    VIEW3D_MT_weight_gpencil,
     VIEW3D_MT_gpencil_animation,
     VIEW3D_MT_gpencil_simplify,
     VIEW3D_MT_gpencil_autoweights,
