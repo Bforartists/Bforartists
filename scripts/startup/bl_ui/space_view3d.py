@@ -7425,29 +7425,29 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.menu("VIEW3D_MT_gpencil_animation")
         layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
-        layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE") # BFA - Legacy
+        #layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE") # BFA - Legacy
 
 
-        layout.separator()
+        #layout.separator()
 
-        layout.operator("gpencil.duplicate_move", text="Duplicate", icon="DUPLICATE") # BFA - Legacy
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon="DUPLICATE") # BFA - Legacy
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame All Layers", icon="DUPLICATE").mode = 'ALL' # BFA - Legacy
+        #layout.operator("gpencil.duplicate_move", text="Duplicate", icon="DUPLICATE") # BFA - Legacy
+        #layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon="DUPLICATE") # BFA - Legacy
+        #layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame All Layers", icon="DUPLICATE").mode = 'ALL' # BFA - Legacy
 
-        layout.separator()
+        #layout.separator()
 
-        layout.operator("gpencil.stroke_split", text="Split", icon="SPLIT")  # BFA - Legacy
+        #layout.operator("gpencil.stroke_split", text="Split", icon="SPLIT")  # BFA - Legacy
 
         layout.separator()
 
         layout.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
         layout.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
-        layout.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER' # BFA
+        #layout.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER' # BFA
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_greasepencil_delete")
-        layout.operator_menu_enum("gpencil.dissolve", "type") # BFA - legacy
+        #layout.operator_menu_enum("gpencil.dissolve", "type") # BFA - legacy
 
         layout.separator()
 
