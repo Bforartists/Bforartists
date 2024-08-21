@@ -1296,7 +1296,7 @@ static const char *data_mode_strings[] = {
     "mball_edit",
     "lattice_edit",
     "curves_edit",
-    "grease_pencil_edit",
+    "grease_pencil_edit", /*BFA - New*/
     "point_cloud_edit",
     "posemode",
     "sculpt_mode",
@@ -1306,7 +1306,7 @@ static const char *data_mode_strings[] = {
     "particlemode",
     "objectmode",
     "greasepencil_paint",
-    "greasepencil_edit",
+    "greasepencil_edit", /*BFA - legacy*/
     "greasepencil_sculpt",
     "greasepencil_weight",
     "greasepencil_vertex",
