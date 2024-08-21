@@ -51,7 +51,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'POSE'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL', 'POSE'}
 
     def draw(self, context):
         layout = self.layout
@@ -473,7 +473,7 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -595,7 +595,7 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -953,7 +953,7 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'POSE'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL', 'POSE'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1048,7 +1048,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1108,7 +1108,7 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1162,7 +1162,7 @@ class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1238,7 +1238,7 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1291,7 +1291,7 @@ class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1350,7 +1350,7 @@ class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1402,7 +1402,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
