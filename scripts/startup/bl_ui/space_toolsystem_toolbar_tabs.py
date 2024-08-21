@@ -4851,15 +4851,6 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
             col.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon = "MERGE")
 
-            #col.separator(factor = 0.5)
-
-            #col.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE' # BFA - legacy
-            #col.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL' # BFA - legacy
-
-            #col.separator(factor = 0.5)
-            #col.operator("gpencil.recalc_geometry", text="Recalculate Geometry", icon = "FILE_REFRESH") # BFA - legacy
-            #col.operator("gpencil.reproject", icon = "REPROJECT") # BFA - legacy
-
         # icon buttons
         else:
 
@@ -4870,53 +4861,28 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("grease_pencil.clean_loose", text="Clean Loose Points", icon="DELETE_LOOSE")
-                row.operator("grease_pencil.frame_clean_duplicate", text="Delete Duplicate Frames", icon="DELETE_DUPLICATE")
+                row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
+                row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
                 row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "MERGE")
-
-                # row = col.row(align=True)
-                #row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE' # BFA - legacy
-                #row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL' # BFA - legacy
-                #row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
-
-                #row = col.row(align=True)
-                #row.operator("gpencil.reproject", text = "", icon = "REPROJECT")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                #row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                #row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
+                row.operator("grease_pencil.clean_loose", text="", icon = "DELETE_LOOSE")
                 row.operator("grease_pencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "MERGE")
 
-                #row = col.row(align=True)
-                #row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                #row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
-
-                #row = col.row(align=True)
-                #row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
-                #row.operator("gpencil.reproject", text = "", icon = "REPROJECT")
-
             elif column_count == 1:
 
-                col.operator("grease_pencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
+                col.operator("grease_pencil.clean_loose", text="", icon = "DELETE_LOOSE")
                 col.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "MERGE")
 
                 col.separator(factor = 0.5)
 
                 col.operator("grease_pencil.frame_clean_duplicate", text="", icon = "DELETE")
 
-                #col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                #col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
-                #col.separator(factor = 0.5)
-                #col.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
-                #col.operator("gpencil.reproject", text = "", icon = "REPROJECT")
 
 
 class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
@@ -5005,36 +4971,36 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES").only_selected = False
-            col.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
+            col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
+            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
 
             col.separator(factor = 0.5)
 
-            col.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
-            col.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOINCOPY").type = 'JOINCOPY'
+            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator(factor = 0.5)
 
-            col.operator("gpencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
+            col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
 
             col.separator(factor = 0.5)
 
             # Convert
-            op = col.operator("gpencil.stroke_cyclical_set", text="Close", icon = 'TOGGLE_CLOSE')
-            op.type = 'CLOSE'
-            op.geometry = True
-            col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-            col.operator("gpencil.stroke_flip", text="Switch Direction", icon = "FLIP")
-            col.operator("gpencil.stroke_start_set", text="Set Start Point   ", icon = "STARTPOINT")
+            col.operator("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE").type = 'CLOSE'
+            col.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
+
+            col.operator_menu_enum("grease_pencil.caps_set", text="Set Caps", property="type", icon="TOGGLECAPS_BOTH")
+            col.operator("grease_pencil.stroke_flip", text="Switch Direction", icon = "FLIP")
 
             col.separator(factor = 0.5)
 
-            col.operator("gpencil.stroke_normalize", text="Normalize Thickness", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-            col.operator("gpencil.stroke_normalize", text="Normalize Opacity", icon = "MOD_OPACITY").mode = 'OPACITY'
+            col.operator("grease_pencil.stroke_normalize", text="Normalize Thickness", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+            col.operator("grease_pencil.stroke_normalize", text="Normalize Opacity", icon = "MOD_OPACITY").mode = 'OPACITY'
 
             col.separator(factor = 0.5)
-            col.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon = "RESET")
-            col.operator("gpencil.stroke_outline", text="Outline", icon="OUTLINE")
+
+            col.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="Curve Type", icon="OUTLINER_DATA_CURVE")
+            col.operator("grease_pencil.set_curve_resolution", text="Set Curve Resolution", icon="SPLINE_RESOLUTION")
+
 
         # icon buttons
         else:
@@ -5046,97 +5012,95 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
-                row.operator("gpencil.stroke_trim", text="", icon = "CUT")
-                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
+                row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
+                row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
-                row.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
+
+                row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+
+                row = col.row(align=True)
+
+                row.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
+
+                row = col.row(align=True)
+
                 # Convert
-                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
-                op.type = 'CLOSE'
-                op.geometry = True
+                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
+                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
+
+                row.operator_menu_enum("grease_pencil.caps_set", text="", property="type", icon="TOGGLECAPS_BOTH")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-                row.operator("gpencil.stroke_flip", text="", icon = "FLIP")
-                row.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
-
-
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
-                row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+                row.operator("grease_pencil.stroke_flip", text="", icon = "FLIP")
+                row.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                row.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
+
+                row.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="", icon="OUTLINER_DATA_CURVE")
+                row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
+
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
-                row.operator("gpencil.stroke_trim", text="", icon = "CUT")
+                row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
+                row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
-                row.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
+                row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                row.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
 
                 row = col.row(align=True)
-                row.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
                 # Convert
-                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
-                op.type = 'CLOSE'
-                op.geometry = True
+                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
+                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-                row.operator("gpencil.stroke_flip", text="", icon = "FLIP")
+                row.operator_menu_enum("grease_pencil.caps_set", text="", property="type", icon="TOGGLECAPS_BOTH")
+                row.operator("grease_pencil.stroke_flip", text="", icon = "FLIP")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                row.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                row.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
-                row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+                row.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="", icon="OUTLINER_DATA_CURVE")
+                row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
 
             elif column_count == 1:
 
-                col.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
-                col.operator("gpencil.stroke_trim", text="", icon = "CUT")
+                col.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
+                col.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
 
                 col.separator(factor = 0.5)
 
-                col.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
-                col.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
+                col.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
 
                 col.separator(factor = 0.5)
 
-                col.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
+                col.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
 
                 col.separator(factor = 0.5)
 
                 # Convert
-                op = col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
-                op.type = 'CLOSE'
-                op.geometry = True
-                col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-                col.operator("gpencil.stroke_flip", text="", icon = "FLIP")
-                col.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
+                col.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
+                col.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
+
+                col.operator_menu_enum("grease_pencil.caps_set", text="", property="type", icon="TOGGLECAPS_BOTH")
+
+                col.separator(factor = 0.5)
+                col.operator("grease_pencil.stroke_flip", text="", icon = "FLIP")
+                col.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                col.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
 
                 col.separator(factor = 0.5)
 
-                col.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-                col.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
+                col.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="", icon="OUTLINER_DATA_CURVE")
+                col.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
-                col.separator(factor = 0.5)
-
-                col.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
-                col.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
 
 
 class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):

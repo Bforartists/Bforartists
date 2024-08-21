@@ -7009,6 +7009,7 @@ class VIEW3D_MT_gpencil_autoweights(Menu):
             icon="PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
 
 
+# BFA - legacy
 class VIEW3D_MT_gpencil_simplify(Menu):
     bl_label = "Simplify"
 
@@ -7209,7 +7210,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         
         layout.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
         layout.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
-        layout.menu("VIEW3D_MT_gpencil_simplify") # BFA - menu
+        #layout.menu("VIEW3D_MT_gpencil_simplify") # BFA - menu
         layout.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
         # layout.operator("gpencil.stroke_trim", text="Trim", icon="CUT") # BFA - legacy
 
@@ -11119,7 +11120,7 @@ classes = (
     VIEW3D_MT_edit_greasepencil_showhide,
     VIEW3D_MT_edit_greasepencil_cleanup,
     VIEW3D_MT_weight_grease_pencil,
-    VIEW3D_MT_gpencil_simplify,
+    VIEW3D_MT_gpencil_simplify, # BFA - legacy
     VIEW3D_MT_gpencil_autoweights,
     VIEW3D_MT_greasepencil_edit_context_menu,
     VIEW3D_MT_grease_pencil_assign_material,
