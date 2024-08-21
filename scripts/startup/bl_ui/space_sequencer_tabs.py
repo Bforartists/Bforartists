@@ -408,7 +408,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                 strip = context.active_sequence_strip
                 strip_type = strip.type
 
-                if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
+                if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
 
                     strip = context.active_sequence_strip
 
@@ -442,7 +442,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
+                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
                         row = col.row(align=True)
                         row.operator(
                             "sequencer.retiming_show",
@@ -461,15 +461,15 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         #row.operator("sequencer.delete", text="", icon='DELETE')  #BFA - Redundant operator
                         row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
                     else:
-                        layout.label(text="Select a", icon="QUESTION")
-                        layout.label(text="movie strip")
+                        layout.label(text="Select a movie", icon="QUESTION")
+                        layout.label(text="or sound strip")
 
                 elif column_count == 2:
 
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
+                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
                         row = col.row(align=True)
                         col.operator(
                             "sequencer.retiming_show",
@@ -491,15 +491,15 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         #row.operator("sequencer.delete", text="", icon='DELETE')  #BFA - Redundant operator
                         row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
                     else:
-                        layout.label(text="Select a", icon="QUESTION")
-                        layout.label(text="movie strip")
+                        layout.label(text="Select a movie", icon="QUESTION")
+                        layout.label(text="or sound strip")
 
                 elif column_count == 1:
 
                     strip = context.active_sequence_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
+                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
                         col.operator(
                             "sequencer.retiming_show",
                             icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
@@ -520,8 +520,8 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         #col.operator("sequencer.delete", text="", icon='DELETE') #BFA - Redundant operator
                         col.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
                     else:
-                        layout.label(text="Select a", icon="QUESTION")
-                        layout.label(text="movie strip")
+                        layout.label(text="Select a movie", icon="QUESTION")
+                        layout.label(text="or sound strip")
 
         except:
             layout.label(text="Select a movie strip")
