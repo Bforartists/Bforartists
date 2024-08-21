@@ -7196,6 +7196,15 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
 
 
+# BFA - legacy
+class VIEW3D_MT_edit_gpencil_stroke(Menu):
+    bl_label = "Stroke"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO")
+
 
 class VIEW3D_MT_edit_greasepencil_stroke(Menu):
     bl_label = "Stroke"
@@ -11124,6 +11133,7 @@ classes = (
     VIEW3D_MT_grease_pencil_assign_material,
     VIEW3D_MT_edit_greasepencil,
     VIEW3D_MT_edit_greasepencil_delete, # BFA - not used
+    VIEW3D_MT_edit_gpencil_stroke, # BFA - legacy
     VIEW3D_MT_edit_greasepencil_stroke,
     VIEW3D_MT_edit_greasepencil_point,
     VIEW3D_MT_greasepencil_animation,
