@@ -4988,13 +4988,12 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             col.operator("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE").type = 'CLOSE'
             col.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
 
-            col.operator_menu_enum("grease_pencil.caps_set", text="Set Caps", property="type", icon="TOGGLECAPS_BOTH")
-            col.operator("grease_pencil.stroke_flip", text="Switch Direction", icon = "FLIP")
+            col.operator("grease_pencil.stroke_switch_direction", text="Switch Direction", icon = "FLIP")
 
             col.separator(factor = 0.5)
 
-            col.operator("grease_pencil.stroke_normalize", text="Normalize Thickness", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-            col.operator("grease_pencil.stroke_normalize", text="Normalize Opacity", icon = "MOD_OPACITY").mode = 'OPACITY'
+            col.operator("grease_pencil.set_uniform_thickness", text="Normalize Thickness", icon = "MOD_THICKNESS")
+            col.operator("grease_pencil.set_uniform_opacity", text="Normalize Opacity", icon = "MOD_OPACITY")
 
             col.separator(factor = 0.5)
 
@@ -5029,12 +5028,10 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
                 row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
 
-                row.operator_menu_enum("grease_pencil.caps_set", text="", property="type", icon="TOGGLECAPS_BOTH")
-
                 row = col.row(align=True)
-                row.operator("grease_pencil.stroke_flip", text="", icon = "FLIP")
-                row.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-                row.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
+                row.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
+                row.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
+                row.operator("grease_pencil.strokset_uniform_opacitye_normalize", text="", icon = "MOD_OPACITY")
 
                 row = col.row(align=True)
 
@@ -5058,12 +5055,11 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
 
                 row = col.row(align=True)
-                row.operator_menu_enum("grease_pencil.caps_set", text="", property="type", icon="TOGGLECAPS_BOTH")
-                row.operator("grease_pencil.stroke_flip", text="", icon = "FLIP")
+                row.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
 
                 row = col.row(align=True)
-                row.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-                row.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
+                row.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
+                row.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 row = col.row(align=True)
                 row.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="", icon="OUTLINER_DATA_CURVE")
@@ -5089,12 +5085,10 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
                 col.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
 
-                col.operator_menu_enum("grease_pencil.caps_set", text="", property="type", icon="TOGGLECAPS_BOTH")
-
                 col.separator(factor = 0.5)
-                col.operator("grease_pencil.stroke_flip", text="", icon = "FLIP")
-                col.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-                col.operator("grease_pencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
+                col.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
+                col.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
+                col.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 col.separator(factor = 0.5)
 
@@ -5102,7 +5096,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
 
-
+# BFA - Legacy
 class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
     bl_label = "Simplify"
     bl_space_type = 'VIEW_3D'
@@ -5129,9 +5123,9 @@ class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.stroke_simplify_fixed", text="Fixed", icon = "MOD_SIMPLIFY")
-            col.operator("gpencil.stroke_simplify", text="Adaptative", icon = "SIMPLIFY_ADAPTIVE")
-            col.operator("gpencil.stroke_sample", text="Sample", icon = "SIMPLIFY_SAMPLE")
+            col.operator("grease_pencil.stroke_simplify", text="Fixed", icon = "MOD_SIMPLIFY")
+            col.operator("gpencil.stroke_simplify", text="Adaptative", icon = "SIMPLIFY_ADAPTIVE") # BFA - Legacy
+            col.operator("gpencil.stroke_sample", text="Sample", icon = "SIMPLIFY_SAMPLE") # BFA - Legacy
 
         # icon buttons
         else:
@@ -5189,10 +5183,10 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.stroke_caps_set", text="Both", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-            col.operator("gpencil.stroke_caps_set", text="Start", icon = "TOGGLECAPS_START").type = 'START'
-            col.operator("gpencil.stroke_caps_set", text="End", icon = "TOGGLECAPS_END").type = 'END'
-            col.operator("gpencil.stroke_caps_set", text="Default", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+            col.operator("grease_pencil.caps_set", text="Both", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
+            col.operator("grease_pencil.caps_set", text="Start", icon = "TOGGLECAPS_START").type = 'START'
+            col.operator("grease_pencil.caps_set", text="End", icon = "TOGGLECAPS_END").type = 'END'
+            col.operator("grease_pencil.caps_set", text="Default", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
 
         # icon buttons
         else:
@@ -6920,7 +6914,7 @@ classes = (
     VIEW3D_PT_gp_gpenciltab_cleanup,
     VIEW3D_PT_gp_gpenciltab_separate,
     VIEW3D_PT_gp_stroketab_stroke,
-    VIEW3D_PT_gp_stroketab_simplify,
+    #VIEW3D_PT_gp_stroketab_simplify, # BFA - Legacy
     VIEW3D_PT_gp_stroketab_togglecaps,
     VIEW3D_PT_gp_stroketab_reproject,
     VIEW3D_PT_gp_pointtab_point,
