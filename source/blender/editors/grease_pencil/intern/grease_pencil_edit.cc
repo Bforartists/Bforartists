@@ -515,15 +515,15 @@ enum class DissolveMode : int8_t {
 };
 
 static const EnumPropertyItem prop_dissolve_types[] = {
-    {int(DissolveMode::POINTS), "POINTS", 0, "Dissolve", "Dissolve selected points"},
+    {int(DissolveMode::POINTS), "POINTS", ICON_DISSOLVE_VERTS, "Dissolve", "Dissolve selected points"}, /*BFA icon*/
     {int(DissolveMode::BETWEEN),
      "BETWEEN",
-     0,
+     ICON_DISSOLVE_BETWEEN, /*BFA icon*/
      "Dissolve Between",
      "Dissolve points between selected points"},
     {int(DissolveMode::UNSELECT),
      "UNSELECT",
-     0,
+     ICON_DISSOLVE_UNSELECTED, /*BFA icon*/
      "Dissolve Unselect",
      "Dissolve all unselected points"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -1848,7 +1848,7 @@ enum class SeparateMode : int8_t {
 };
 
 static const EnumPropertyItem prop_separate_modes[] = {
-    {int(SeparateMode::SELECTED), "SELECTED", ICON_SEPARATE_GP_POINTS, "Selection", "Separate selected geometry"}, /*BFA - icon added*/
+    {int(SeparateMode::SELECTED), "SELECTED", ICON_SEPARATE, "Selection", "Separate selected geometry"}, /*BFA - icon added*/
     {int(SeparateMode::MATERIAL), "MATERIAL", ICON_SEPARATE_BYMATERIAL, "By Material", "Separate by material"}, /*BFA - icon added*/
     {int(SeparateMode::LAYER), "LAYER", ICON_SEPARATE_GP_LAYER, "By Layer", "Separate by layer"}, /*BFA - icon added*/
     {0, nullptr, 0, nullptr, nullptr},
