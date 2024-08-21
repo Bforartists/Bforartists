@@ -8981,6 +8981,13 @@ keyconfig_data = \
      ),
     ("wm.batch_rename", {"type": 'F2', "value": 'PRESS', "ctrl": True}, None),
     ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "ctrl": True}, None),
+    ("wm.call_menu",
+     {"type": 'Q', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'SCREEN_MT_user_menu'),
+       ],
+      },
+     ),
     ],
    },
   ),
