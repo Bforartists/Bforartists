@@ -5407,17 +5407,17 @@ void GPENCIL_OT_stroke_separate(wmOperatorType *ot)
   static const EnumPropertyItem separate_type[] = {
       {GP_SEPARATE_POINT,
        "POINT",
-       ICON_SEPARATE_GP_POINTS,
+       ICON_SEPARATE_GP_POINTS,  /*BFA - icon added*/
        "Selected Points",
        "Separate the selected points"},
       {GP_SEPARATE_STROKE,
        "STROKE",
-       ICON_SEPARATE_GP_STROKES,
+       ICON_SEPARATE_GP_STROKES,  /*BFA - icon added*/
        "Selected Strokes",
        "Separate the selected strokes"},
       {GP_SEPARATE_LAYER,
        "LAYER",
-       ICON_SEPARATE_GP_LAYER,
+       ICON_SEPARATE_GP_LAYER, /*BFA - icon added*/
        "Active Layer",
        "Separate the strokes of the current layer"},
       {0, nullptr, 0, nullptr, nullptr},
