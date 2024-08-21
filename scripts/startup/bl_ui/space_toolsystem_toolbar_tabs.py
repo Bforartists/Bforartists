@@ -4911,9 +4911,9 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.stroke_separate", text="Separate Selected", icon = "SEPARATE").mode = 'SELECTED'
-            col.operator("gpencil.stroke_separate", text="Separate Selected Strokes", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
-            col.operator("gpencil.stroke_separate", text="Separate Active Layer", icon = "SEPARATE_GP_STROKES").mode = 'LAYER'
+            col.operator("grease_pencil.separate", text="Separate Selected", icon = "SEPARATE").mode = 'SELECTED'
+            col.operator("grease_pencil.separate", text="Separate Selected Strokes", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
+            col.operator("grease_pencil.separate", text="Separate Active Layer", icon = "SEPARATE_GP_STROKES").mode = 'LAYER'
 
         # icon buttons
         else:
@@ -4925,24 +4925,24 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE").mode = 'SELECTED'
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE").mode = 'SELECTED'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE").mode = 'SELECTED'
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE").mode = 'SELECTED'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
             elif column_count == 1:
 
-                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE").mode = 'SELECTED'
-                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
-                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+                col.operator("grease_pencil.separate", text="", icon = "SEPARATE").mode = 'SELECTED'
+                col.operator("grease_pencil.separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
+                col.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
 
 class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
