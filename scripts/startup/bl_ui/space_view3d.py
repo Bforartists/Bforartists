@@ -7132,8 +7132,7 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
         layout.operator("grease_pencil.clean_loose", icon="DELETE_LOOSE")
         layout.operator("grease_pencil.frame_clean_duplicate", icon="DELETE_DUPLICATE")
 
-        if ob.mode != 'PAINT_GREASE_PENCIL':
-            layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
+        layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
 
 
 # BFA menu - legacy
@@ -7166,7 +7165,6 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         #layout.separator()
 
         #col.operator("gpencil.stroke_merge", text="Merge", icon="MERGE") # BFA - legacy
-        layout.operator("grease_pencil.stroke_merge_by_distance", icon="MERGE").use_unselected = False
         #col.operator("gpencil.stroke_split", text="Split", icon="SPLIT") # BFA - legacy
         #col.operator("gpencil.stroke_separate", text="Separate", icon="SEPARATE_GP_POINTS").mode = 'POINT' # BFA - legacy
 
@@ -10066,7 +10064,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             # Removal Operators
             #col.operator("gpencil.stroke_merge", text="Merge", icon="MERGE") # BFA - legacy
-            col.operator("grease_pencil.stroke_merge_by_distance", icon="MERGE").use_unselected = False
+            col.operator("grease_pencil.stroke_merge_by_distance", icon="REMOVE_DOUBLES").use_unselected = False
             #col.operator("gpencil.stroke_split", text="Split", icon="SPLIT") # BFA - legacy
             #col.operator("gpencil.stroke_separate", text="Separate", icon="SEPARATE_GP_POINTS").mode = 'POINT' # BFA - legacy
             col.operator_enum("grease_pencil.dissolve", "type")
