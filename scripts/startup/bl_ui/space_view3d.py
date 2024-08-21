@@ -7246,7 +7246,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         #layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon="RESET") # BFA - legacy
 
-        layout.prop(settings, "use_scale_thickness", text="Scale Thickness") # BFA - wip, move to options
+        #layout.prop(settings, "use_scale_thickness", text="Scale Thickness") # BFA - moved to options
 
         layout.separator()
 
