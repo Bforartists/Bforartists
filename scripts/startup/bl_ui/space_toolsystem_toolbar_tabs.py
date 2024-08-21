@@ -4987,7 +4987,6 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             # Convert
             col.operator("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE").type = 'CLOSE'
             col.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
-
             col.operator("grease_pencil.stroke_switch_direction", text="Switch Direction", icon = "FLIP")
 
             col.separator(factor = 0.5)
@@ -4996,8 +4995,6 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             col.operator("grease_pencil.set_uniform_opacity", text="Normalize Opacity", icon = "MOD_OPACITY")
 
             col.separator(factor = 0.5)
-
-            col.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="Curve Type", icon="OUTLINER_DATA_CURVE")
             col.operator("grease_pencil.set_curve_resolution", text="Set Curve Resolution", icon="SPLINE_RESOLUTION")
 
 
@@ -5013,17 +5010,10 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
                 row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
-
-                row = col.row(align=True)
-
                 row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
 
                 row = col.row(align=True)
-
                 row.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
-
-                row = col.row(align=True)
-
                 # Convert
                 row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
                 row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
@@ -5031,11 +5021,9 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
                 row.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
-                row.operator("grease_pencil.strokset_uniform_opacitye_normalize", text="", icon = "MOD_OPACITY")
+                row.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 row = col.row(align=True)
-
-                row.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="", icon="OUTLINER_DATA_CURVE")
                 row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
 
@@ -5062,7 +5050,6 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 row = col.row(align=True)
-                row.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="", icon="OUTLINER_DATA_CURVE")
                 row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
 
@@ -5091,8 +5078,6 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 col.separator(factor = 0.5)
-
-                col.operator_menu_enum("grease_pencil.set_curve_type", property="type", text="", icon="OUTLINER_DATA_CURVE")
                 col.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
 
@@ -5326,10 +5311,7 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("grease_pencil.extrude_move", text="Extrude", icon = "EXTRUDE_REGION")
-            col.operator("grease_pencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-
-            col.operator_menu_enum("grease_pencil.set_handle_type", property="type")
-            col.menu("VIEW3D_MT_greasepencil_vertex_group")
+            col.operator("grease_pencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH")
 
         # icon buttons
         else:
@@ -5342,23 +5324,18 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                row.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-                row.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+                row.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                row.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+                row.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
 
             elif column_count == 1:
 
                 col.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                col.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-                col.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+                col.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
 
 
 class VIEW3D_PT_gp_drawtab_draw(toolshelf_calculate, Panel):
