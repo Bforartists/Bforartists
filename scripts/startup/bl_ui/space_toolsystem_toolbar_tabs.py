@@ -1048,7 +1048,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1108,7 +1108,7 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1162,7 +1162,7 @@ class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1238,7 +1238,7 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1291,7 +1291,7 @@ class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1350,7 +1350,7 @@ class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1402,7 +1402,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1457,12 +1457,11 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                 else:
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
-                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
 
                     row = col.row(align=True)
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
-                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     #row.operator_enum("object.convert", "target")
 
 
@@ -1490,11 +1489,10 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
                     row = col.row(align=True)
-                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     row = col.row(align=True)
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
-                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     #row.operator_enum("object.convert", "target")
 
                 # Potrace lib dependency.
@@ -1523,7 +1521,6 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
-                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     #row.operator_enum("object.convert", "target")
 
 
@@ -5441,7 +5438,7 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE").all = False
-                row.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").mode = 'ALL'
+                row.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").all = True
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE").all = False
