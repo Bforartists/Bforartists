@@ -4849,7 +4849,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon = "MERGE")
+            col.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon = "REMOVE_DOUBLES")
 
         # icon buttons
         else:
@@ -4863,7 +4863,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
                 row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
-                row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "MERGE")
+                row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
 
             elif column_count == 2:
 
@@ -4872,16 +4872,16 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
 
                 row = col.row(align=True)
-                row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "MERGE")
+                row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
 
             elif column_count == 1:
 
                 col.operator("grease_pencil.clean_loose", text="", icon = "DELETE_LOOSE")
-                col.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "MERGE")
+                col.operator("grease_pencil.frame_clean_duplicate", text="", icon = "DELETE")
 
                 col.separator(factor = 0.5)
 
-                col.operator("grease_pencil.frame_clean_duplicate", text="", icon = "DELETE")
+                col.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
 
 
 
@@ -5183,10 +5183,10 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("grease_pencil.caps_set", text="Both", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-            col.operator("grease_pencil.caps_set", text="Start", icon = "TOGGLECAPS_START").type = 'START'
-            col.operator("grease_pencil.caps_set", text="End", icon = "TOGGLECAPS_END").type = 'END'
-            col.operator("grease_pencil.caps_set", text="Default", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+            col.operator("grease_pencil.caps_set", text="Rounded", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
+            col.operator("grease_pencil.caps_set", text="Start", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
+            col.operator("grease_pencil.caps_set", text="End", icon = "TOGGLECAPS_START").type = 'START'
+            col.operator("grease_pencil.caps_set", text="Default", icon = "TOGGLECAPS_END").type = 'END'
 
         # icon buttons
         else:
@@ -5198,31 +5198,31 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
             elif column_count == 1:
 
-                col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-                col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
-                col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
-                col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+                col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
+                col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
+                col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
+                col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
-
+# BFA - legacy
 class VIEW3D_PT_gp_stroketab_reproject(toolshelf_calculate, Panel):
     bl_label = "Reproject Strokes"
     bl_space_type = 'VIEW_3D'
@@ -5325,9 +5325,11 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.extrude_move", text="Extrude", icon = "EXTRUDE_REGION")
-            col.operator("gpencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-            col.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
+            col.operator("grease_pencil.extrude_move", text="Extrude", icon = "EXTRUDE_REGION")
+            col.operator("grease_pencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+
+            col.operator_menu_enum("grease_pencil.set_handle_type", property="type")
+            col.menu("VIEW3D_MT_greasepencil_vertex_group")
 
         # icon buttons
         else:
@@ -5339,23 +5341,23 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                row.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+                row.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                row.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
                 row.operator("gpencil.stroke_merge", text="", icon = "MERGE")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                row.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+                row.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                row.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
 
                 row = col.row(align=True)
                 row.operator("gpencil.stroke_merge", text="", icon = "MERGE")
 
             elif column_count == 1:
 
-                col.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                col.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+                col.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                col.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
                 col.operator("gpencil.stroke_merge", text="", icon = "MERGE")
 
 
@@ -6916,7 +6918,7 @@ classes = (
     VIEW3D_PT_gp_stroketab_stroke,
     #VIEW3D_PT_gp_stroketab_simplify, # BFA - Legacy
     VIEW3D_PT_gp_stroketab_togglecaps,
-    VIEW3D_PT_gp_stroketab_reproject,
+    #VIEW3D_PT_gp_stroketab_reproject, # BFA - Legacy
     VIEW3D_PT_gp_pointtab_point,
 
     # grease pencil draw mode
