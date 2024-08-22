@@ -1666,7 +1666,7 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
         row = layout.row(align=True)
         row.prop(props, "subdivision")
 
-
+# BFA - legacy
 def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False):
     tool_settings = context.tool_settings
     settings = tool_settings.gpencil_paint
@@ -1926,7 +1926,7 @@ def brush_basic_gpencil_sculpt_settings(layout, _context, brush, *, compact=Fals
             row.prop_enum(brush, "direction", value='SUBTRACT', text="CW")
         layout.use_property_split = use_property_split_prev
 
-
+# BFA - legacy
 def brush_basic_gpencil_weight_settings(layout, _context, brush, *, compact=False):
 
 	# BFA - order changed to be consistent with others
