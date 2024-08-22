@@ -2008,6 +2008,10 @@ class USERPREF_PT_input_touchpad(InputPanel, CenterAlignMixIn, Panel):
         from _bpy import _wm_capabilities
         capabilities = _wm_capabilities()
         if not capabilities['TRACKPAD_PHYSICAL_DIRECTION']:
+
+            layout.use_property_split = True # BFA - float left
+            col = layout.column() # BFA - float left
+
             row = col.row()
             row.active = inputs.use_multitouch_gestures
             row.prop(inputs, "touchpad_scroll_direction", text="Scroll Direction")
