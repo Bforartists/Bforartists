@@ -4,6 +4,7 @@
 
 #include "BLI_bounds.hh"
 #include "BLI_map.hh"
+#include "BLI_memory_counter.hh"
 #include "BLI_task.hh"
 
 #include "BLT_translation.hh"
@@ -80,6 +81,8 @@ std::optional<MutableAttributeAccessor> GeometryComponent::attributes_for_write(
 {
   return std::nullopt;
 }
+
+void GeometryComponent::count_memory(MemoryCounter & /*memory*/) const {}
 
 GeometryComponent::Type GeometryComponent::type() const
 {
@@ -589,6 +592,17 @@ GreasePencil *GeometrySet::get_grease_pencil_for_write()
   return component == nullptr ? nullptr : component->get_for_write();
 }
 
+void GeometrySet::count_memory(MemoryCounter &memory) const
+{
+  for (const GeometryComponentPtr &component : components_) {
+    if (component) {
+      memory.add_shared(component.get(), [&](MemoryCounter &shared_memory) {
+        component->count_memory(shared_memory);
+      });
+    }
+  }
+}
+
 void GeometrySet::attribute_foreach(const Span<GeometryComponent::Type> component_types,
                                     const bool include_instances,
                                     const AttributeForeachCallback callback) const
@@ -767,37 +781,25 @@ bool object_has_geometry_set_instances(const Object &object)
   if (geometry_set == nullptr) {
     return false;
   }
-  for (const GeometryComponent *component : geometry_set->get_components()) {
-    if (component->is_empty()) {
-      continue;
-    }
-    const GeometryComponent::Type type = component->type();
-    bool is_instance = false;
-    switch (type) {
-      case GeometryComponent::Type::Mesh:
-        is_instance = object.type != OB_MESH;
-        break;
-      case GeometryComponent::Type::PointCloud:
-        is_instance = object.type != OB_POINTCLOUD;
-        break;
-      case GeometryComponent::Type::Instance:
-        is_instance = true;
-        break;
-      case GeometryComponent::Type::Volume:
-        is_instance = object.type != OB_VOLUME;
-        break;
-      case GeometryComponent::Type::Curve:
-        is_instance = !ELEM(object.type, OB_CURVES_LEGACY, OB_FONT);
-        break;
-      case GeometryComponent::Type::Edit:
-        break;
-      case GeometryComponent::Type::GreasePencil:
-        is_instance = object.type != OB_GREASE_PENCIL;
-        break;
-    }
-    if (is_instance) {
-      return true;
-    }
+  if (geometry_set->has_component<InstancesComponent>()) {
+    return true;
+  }
+  if (object.type != OB_MESH && geometry_set->has_component<MeshComponent>()) {
+    return true;
+  }
+  if (object.type != OB_POINTCLOUD && geometry_set->has_component<PointCloudComponent>()) {
+    return true;
+  }
+  if (object.type != OB_VOLUME && geometry_set->has_component<VolumeComponent>()) {
+    return true;
+  }
+  if (!ELEM(object.type, OB_CURVES_LEGACY, OB_FONT) &&
+      geometry_set->has_component<CurveComponent>())
+  {
+    return true;
+  }
+  if (object.type != OB_GREASE_PENCIL && geometry_set->has_component<GreasePencilComponent>()) {
+    return true;
   }
   return false;
 }
