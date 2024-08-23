@@ -16,10 +16,10 @@ def populate_boolean_properties(scene):
                 if obj.get("BoolTool_FTransform"):
                     del obj["BoolTool_FTransform"]
 
-                for modifier in obj.modifiers:
-                    if modifier.type == 'BOOLEAN' and "BTool_" in modifier.name:
-                        modifier.name = "boolean_" + modifier.object.name
-                        cutter = modifier.object
+                for mod in obj.modifiers:
+                    if mod.type == 'BOOLEAN' and "BTool_" in mod.name:
+                        mod.name = "boolean_" + mod.object.name
+                        cutter = mod.object
 
                         if cutter.get("BoolToolBrush"):
                             cutter.booleans.cutter = cutter.get("BoolToolBrush")

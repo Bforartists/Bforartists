@@ -33,7 +33,7 @@ def lat_long_update(self, context):
 def get_coordinates(self):
     if parse_success:
         return format_lat_long(self.latitude, self.longitude)
-    return iface_("ERROR: Could not parse coordinates")
+    return iface_("Error: could not parse coordinates")
 
 
 def get_day(self):
@@ -98,7 +98,8 @@ class SunPosProperties(PropertyGroup):
 
     use_daylight_savings: BoolProperty(
         name="Daylight Savings",
-        description="Daylight savings time adds 1 hour to standard time",
+        description=("Daylight savings time adds 1 hour to the standard time. "
+                     "It is usually used between in the spring and fall months"),
         default=False,
         update=sun_update)
 
@@ -116,7 +117,7 @@ class SunPosProperties(PropertyGroup):
 
     north_offset: FloatProperty(
         name="North Offset",
-        description="Rotate the scene to choose the North direction",
+        description="Rotate the scene to choose the north direction",
         unit="ROTATION",
         soft_min=-pi, soft_max=pi, step=10.0, default=0.0,
         update=sun_update)
@@ -129,13 +130,16 @@ class SunPosProperties(PropertyGroup):
 
     show_analemmas: BoolProperty(
         name="Show Analemmas",
-        description="Draw Sun analemmas. These help visualize the motion of the Sun in the sky during the year, for each hour of the day",
+        description=(
+            "Draw Sun analemmas. "
+            "These help visualize the motion of the Sun in the sky during the year, for each hour of the day"
+        ),
         default=False,
         update=analemmas_update)
 
     coordinates: StringProperty(
         name="Coordinates",
-        description="Enter coordinates from an online map",
+        description="Latitude and longitude on Earth. Coordinates can be directly entered from an online map",
         get=get_coordinates,
         set=set_coordinates,
         default="00°00′00.00″ 00°00′00.00″",
@@ -219,21 +223,23 @@ class SunPosProperties(PropertyGroup):
 
     UTC_zone: FloatProperty(
         name="UTC Zone",
-        description="Difference from Greenwich, England, in hours",
+        description="Time difference between Coordinated Universal Time and local time",
         precision=1,
-        min=-14.0, max=13, step=50, default=0.0,
+        soft_min=-12.0, max=14.0,
+        step=50, default=0.0,
         update=sun_update)
 
     time: FloatProperty(
         name="Time",
         description="Time of the day",
+        translation_context="Hour",
         precision=4,
         soft_min=0.0, soft_max=23.9999, step=1.0, default=12.0,
         update=sun_update)
 
     sun_distance: FloatProperty(
         name="Distance",
-        description="Distance to the Sun from the origin",
+        description="Distance to the sun object from the origin",
         unit="LENGTH",
         min=0.0, soft_max=3000.0, step=10.0, default=50.0,
         update=sun_update)
@@ -270,8 +276,10 @@ class SunPosProperties(PropertyGroup):
     env_texture: StringProperty(
         default="Environment Texture",
         name="Environment Texture",
-        description="Name of the environment texture to use. World nodes must be enabled "
-                    "and the color set to an environment Texture",
+        description=(
+            "Name of the environment texture to use. World nodes must be enabled "
+            "and the color set to an environment texture"
+        ),
         update=sun_update)
 
     env_azimuth: FloatProperty(
@@ -335,10 +343,9 @@ class SunPosAddonPreferences(AddonPreferences):
     def draw(self, context):
         layout = self.layout
 
-        box = layout.box()
-        col = box.column()
+        col = layout.column()
 
-        col.label(text="Show options and info:")
+        col.label(text="Show options and info")
         flow = col.grid_flow(columns=0, even_columns=True, even_rows=False, align=False)
         flow.prop(self, "show_refraction")
         flow.prop(self, "show_overlays")

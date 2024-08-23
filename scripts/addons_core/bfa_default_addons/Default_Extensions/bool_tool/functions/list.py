@@ -1,6 +1,6 @@
 import bpy
 from .. import __package__ as base_package
-from .set import convert_to_mesh
+from .object import convert_to_mesh
 
 
 #### ------------------------------ /all/ ------------------------------ ####
@@ -8,7 +8,7 @@ from .set import convert_to_mesh
 def list_canvases():
     """List all canvases in the scene"""
     canvas = []
-    for obj in bpy.data.objects:
+    for obj in bpy.context.scene.objects:
         if obj.booleans.canvas:
             canvas.append(obj)
 
@@ -18,20 +18,29 @@ def list_canvases():
 
 #### ------------------------------ /selected/ ------------------------------ ####
 
-def list_candidate_objects(context):
-    """List objects from selected ones that can be used as cutter"""
+def list_candidate_objects(self, context, canvas=None, unique=False):
+    """Filter out objects from selected ones that can't be used as a cutter"""
 
-    brushes = []
+    cutters = []
     for obj in context.selected_objects:
         if obj != context.active_object and obj.type in ('MESH', 'CURVE', 'FONT'):
             if obj.type in ('CURVE', 'FONT'):
                 if obj.data.bevel_depth != 0 or obj.data.extrude != 0:
                     convert_to_mesh(context, obj)
-                    brushes.append(obj)
+                    cutters.append(obj)
             else:
-                brushes.append(obj)
+                if unique and canvas:
+                    if obj.booleans.cutter == "":
+                        cutters.append(obj)
+                    else:
+                        if (canvas not in list_cutter_users([obj])):
+                            cutters.append(obj)
+                        else:
+                            self.report({'ERROR'}, f"{obj.name} is already a cutter for {canvas.name}")
+                else:
+                    cutters.append(obj)
 
-    return brushes
+    return cutters
 
 
 def list_selected_cutters(context):
@@ -83,11 +92,11 @@ def list_canvas_cutters(canvases):
     cutters = []
     modifiers = []
     for canvas in canvases:
-        for modifier in canvas.modifiers:
-            if modifier.type == 'BOOLEAN' and "boolean_" in modifier.name:
-                if modifier.object:
-                    cutters.append(modifier.object)
-                    modifiers.append(modifier)
+        for mod in canvas.modifiers:
+            if mod.type == 'BOOLEAN' and "boolean_" in mod.name:
+                if mod.object:
+                    cutters.append(mod.object)
+                    modifiers.append(mod)
 
     return cutters, modifiers
 
@@ -96,7 +105,7 @@ def list_canvas_slices(canvases):
     """Returns list of slices for specified canvases"""
 
     slices = []
-    for obj in bpy.data.objects:
+    for obj in bpy.context.scene.objects:
         if obj.booleans.slice:
             if obj.booleans.slice_of in canvases:
                 slices.append(obj)
@@ -108,10 +117,10 @@ def list_cutter_users(cutters):
     """List canvases that use specified cutters"""
 
     cutter_users = []
-    canvas = list_canvases()
-    for obj in canvas:
-        for modifier in obj.modifiers:
-            if modifier.type == 'BOOLEAN' and modifier.object in cutters:
+    canvases = list_canvases()
+    for obj in canvases:
+        for mod in obj.modifiers:
+            if mod.type == 'BOOLEAN' and mod.object in cutters:
                 cutter_users.append(obj)
 
     return cutter_users
@@ -125,10 +134,10 @@ def list_cutter_modifiers(canvases, cutters):
 
     modifiers = []
     for canvas in canvases:
-        for modifier in canvas.modifiers:
-            if modifier.type == 'BOOLEAN':
-                if modifier.object in cutters:
-                    modifiers.append(modifier)
+        for mod in canvas.modifiers:
+            if mod.type == 'BOOLEAN':
+                if mod.object in cutters:
+                    modifiers.append(mod)
 
     return modifiers
 
@@ -138,16 +147,34 @@ def list_unused_cutters(cutters, *canvases, do_leftovers=False):
     """When `include_visible` is True it will return cutters that aren't used by any visible modifiers"""
 
     prefs = bpy.context.preferences.addons[base_package].preferences
-    other_canvases = list_canvases()
 
+    other_canvases = list_canvases()
     leftovers = []
     original_cutters = cutters[:]
 
     for obj in other_canvases:
         if obj not in canvases:
-            if any(modifier.object in cutters for modifier in obj.modifiers):
-                cutters[:] = [cutter for cutter in cutters if cutter not in [modifier.object for modifier in obj.modifiers]]
+            if any(mod.object in cutters for mod in obj.modifiers):
+                cutters[:] = [cutter for cutter in cutters if cutter not in [mod.object for mod in obj.modifiers]]
                 if prefs.parent and do_leftovers:
+                    # return_cutters_that_do_have_other_users_(so_that_parents_can_be_reassigned)
                     leftovers = [cutter for cutter in original_cutters if cutter not in cutters]
 
     return cutters, leftovers
+
+
+def list_pre_boolean_modifiers(obj):
+    """Returns list of boolean modifiers + all modifiers that come before last boolean modifier"""
+
+    # find_the_index_of_last_boolean_modifier
+    last_boolean_index = -1
+    for i in reversed(range(len(obj.modifiers))):
+        if obj.modifiers[i].type == 'BOOLEAN':
+            last_boolean_index = i
+            break
+
+    # if_boolean_modifier_found_list_all_modifiers_before
+    if last_boolean_index != -1:
+        return [mod for mod in obj.modifiers[:last_boolean_index + 1]]
+    else:
+        return []

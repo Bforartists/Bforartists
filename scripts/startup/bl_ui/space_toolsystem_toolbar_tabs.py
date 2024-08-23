@@ -51,7 +51,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'POSE'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL', 'POSE'}
 
     def draw(self, context):
         layout = self.layout
@@ -473,7 +473,7 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -595,7 +595,7 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -953,7 +953,7 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'POSE'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL', 'POSE'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1048,7 +1048,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1108,7 +1108,7 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1162,7 +1162,7 @@ class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1238,7 +1238,7 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1291,7 +1291,7 @@ class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1350,7 +1350,7 @@ class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1402,7 +1402,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1457,12 +1457,11 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                 else:
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
-                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
 
                     row = col.row(align=True)
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
-                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     #row.operator_enum("object.convert", "target")
 
 
@@ -1490,11 +1489,10 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
                     row = col.row(align=True)
-                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     row = col.row(align=True)
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
-                    row.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     #row.operator_enum("object.convert", "target")
 
                 # Potrace lib dependency.
@@ -1523,7 +1521,6 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
-                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     #row.operator_enum("object.convert", "target")
 
 
@@ -4762,7 +4759,7 @@ class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
     bl_label = "Dissolve"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_edit"
+    bl_context = "grease_pencil_edit"
     bl_category = "Gpencil"
     bl_options = {'HIDE_BG'}
 
@@ -4784,9 +4781,9 @@ class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.dissolve", text="Dissolve", icon = "DISSOLVE_VERTS").type = 'POINTS'
-            col.operator("gpencil.dissolve", text="Dissolve Between", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
-            col.operator("gpencil.dissolve", text="Dissolve Unselected", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
+            col.operator("grease_pencil.dissolve", text="Dissolve", icon = "DISSOLVE_VERTS").type = 'POINTS'
+            col.operator("grease_pencil.dissolve", text="Dissolve Between", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+            col.operator("grease_pencil.dissolve", text="Dissolve Unselected", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
 
         # icon buttons
         else:
@@ -4798,31 +4795,31 @@ class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
-                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
-                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
+                row.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
+                row.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+                row.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
-                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+                row.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
+                row.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
 
                 row = col.row(align=True)
-                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
+                row.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
 
             elif column_count == 1:
 
-                col.operator("gpencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
-                col.operator("gpencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
-                col.operator("gpencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
+                col.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
+                col.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+                col.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
 
 
 class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_edit"
+    bl_context = "grease_pencil_edit"
     bl_category = "Gpencil"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -4844,19 +4841,12 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-            col.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
+            col.operator("grease_pencil.clean_loose", text="Clean Loose Points", icon="DELETE_LOOSE")
+            col.operator("grease_pencil.frame_clean_duplicate", text="Delete Duplicate Frames", icon="DELETE_DUPLICATE")
 
             col.separator(factor = 0.5)
 
-            col.operator("gpencil.frame_clean_loose", text="Delete Loose Points", icon = "DELETE_LOOSE")
-            col.operator("gpencil.stroke_merge_by_distance", text="Merge by Distance", icon = "MERGE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE_DUPLICATE")
-            col.operator("gpencil.recalc_geometry", text="Recalculate Geometry", icon = "FILE_REFRESH")
-            col.operator("gpencil.reproject", icon = "REPROJECT")
+            col.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon = "REMOVE_DOUBLES")
 
         # icon buttons
         else:
@@ -4868,57 +4858,35 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
-                row.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
-
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_merge_by_distance", text="", icon = "MERGE")
-                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
-                row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
-
-                row = col.row(align=True)
-                row.operator("gpencil.reproject", text = "", icon = "REPROJECT")
+                row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
+                row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
+                row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
+                row.operator("grease_pencil.clean_loose", text="", icon = "DELETE_LOOSE")
+                row.operator("grease_pencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
 
                 row = col.row(align=True)
-                row.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
-                row.operator("gpencil.stroke_merge_by_distance", text="", icon = "MERGE")
-
-                row = col.row(align=True)
-                row.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE_DUPLICATE")
-                row.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
-
-                row = col.row(align=True)
-                row.operator("gpencil.reproject", text = "", icon = "REPROJECT")
+                row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
 
             elif column_count == 1:
 
-                col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
+                col.operator("grease_pencil.clean_loose", text="", icon = "DELETE_LOOSE")
+                col.operator("grease_pencil.frame_clean_duplicate", text="", icon = "DELETE")
 
                 col.separator(factor = 0.5)
 
-                col.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
-                col.operator("gpencil.stroke_merge_by_distance", text="", icon = "MERGE")
+                col.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
 
-                col.separator(factor = 0.5)
-
-                col.operator("gpencil.frame_clean_duplicate", text="", icon = "DELETE")
-                col.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
-                col.operator("gpencil.reproject", text = "", icon = "REPROJECT")
 
 
 class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
     bl_label = "Separate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_edit"
+    bl_context = "grease_pencil_edit"
     bl_category = "Gpencil"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -4940,9 +4908,9 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.stroke_separate", text="Separate Selected Points", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
-            col.operator("gpencil.stroke_separate", text="Separate Selected Strokes", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
-            col.operator("gpencil.stroke_separate", text="Separate Active Layer", icon = "SEPARATE_GP_STROKES").mode = 'LAYER'
+            col.operator("grease_pencil.separate", text="Separate Selected", icon = "SEPARATE").mode = 'SELECTED'
+            col.operator("grease_pencil.separate", text="Separate Selected Strokes", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
+            col.operator("grease_pencil.separate", text="Separate Active Layer", icon = "SEPARATE_GP_STROKES").mode = 'LAYER'
 
         # icon buttons
         else:
@@ -4954,31 +4922,31 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE").mode = 'SELECTED'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE").mode = 'SELECTED'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+                row.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
             elif column_count == 1:
 
-                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
-                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
-                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+                col.operator("grease_pencil.separate", text="", icon = "SEPARATE").mode = 'SELECTED'
+                col.operator("grease_pencil.separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
+                col.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
 
 class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
     bl_label = "Stroke"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_edit"
+    bl_context = "grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG'}
 
@@ -5000,36 +4968,32 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES").only_selected = False
-            col.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
+            col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
+            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
 
             col.separator(factor = 0.5)
 
-            col.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
-            col.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOINCOPY").type = 'JOINCOPY'
+            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator(factor = 0.5)
 
-            col.operator("gpencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
+            col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
 
             col.separator(factor = 0.5)
 
             # Convert
-            op = col.operator("gpencil.stroke_cyclical_set", text="Close", icon = 'TOGGLE_CLOSE')
-            op.type = 'CLOSE'
-            op.geometry = True
-            col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-            col.operator("gpencil.stroke_flip", text="Switch Direction", icon = "FLIP")
-            col.operator("gpencil.stroke_start_set", text="Set Start Point   ", icon = "STARTPOINT")
+            col.operator("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE").type = 'CLOSE'
+            col.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
+            col.operator("grease_pencil.stroke_switch_direction", text="Switch Direction", icon = "FLIP")
 
             col.separator(factor = 0.5)
 
-            col.operator("gpencil.stroke_normalize", text="Normalize Thickness", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-            col.operator("gpencil.stroke_normalize", text="Normalize Opacity", icon = "MOD_OPACITY").mode = 'OPACITY'
+            col.operator("grease_pencil.set_uniform_thickness", text="Normalize Thickness", icon = "MOD_THICKNESS")
+            col.operator("grease_pencil.set_uniform_opacity", text="Normalize Opacity", icon = "MOD_OPACITY")
 
             col.separator(factor = 0.5)
-            col.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon = "RESET")
-            col.operator("gpencil.stroke_outline", text="Outline", icon="OUTLINE")
+            col.operator("grease_pencil.set_curve_resolution", text="Set Curve Resolution", icon="SPLINE_RESOLUTION")
+
 
         # icon buttons
         else:
@@ -5041,104 +5005,85 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
-                row.operator("gpencil.stroke_trim", text="", icon = "CUT")
-                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
+                row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
+                row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
+                row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
-                row.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
+                row.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
                 # Convert
-                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
-                op.type = 'CLOSE'
-                op.geometry = True
+                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
+                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-                row.operator("gpencil.stroke_flip", text="", icon = "FLIP")
-                row.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
-
-
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
-                row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+                row.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
+                row.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
+                row.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
+                row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
+
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
-                row.operator("gpencil.stroke_trim", text="", icon = "CUT")
+                row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
+                row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
-                row.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
+                row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                row.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
 
                 row = col.row(align=True)
-                row.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
                 # Convert
-                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
-                op.type = 'CLOSE'
-                op.geometry = True
+                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
+                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-                row.operator("gpencil.stroke_flip", text="", icon = "FLIP")
+                row.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                row.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
+                row.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
-                row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+                row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
 
             elif column_count == 1:
 
-                col.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
-                col.operator("gpencil.stroke_trim", text="", icon = "CUT")
+                col.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
+                col.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
 
                 col.separator(factor = 0.5)
 
-                col.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
-                col.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
+                col.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
 
                 col.separator(factor = 0.5)
 
-                col.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
+                col.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
 
                 col.separator(factor = 0.5)
 
                 # Convert
-                op = col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
-                op.type = 'CLOSE'
-                op.geometry = True
-                col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-                col.operator("gpencil.stroke_flip", text="", icon = "FLIP")
-                col.operator("gpencil.stroke_start_set", text="", icon = "STARTPOINT")
+                col.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
+                col.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
 
                 col.separator(factor = 0.5)
-
-                col.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
-                col.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
+                col.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
+                col.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
+                col.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 col.separator(factor = 0.5)
-
-                col.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
-                col.operator("gpencil.stroke_outline", text="", icon="OUTLINE")
+                col.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
 
+# BFA - Legacy
 class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
     bl_label = "Simplify"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_edit"
+    bl_context = "grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -5160,9 +5105,9 @@ class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.stroke_simplify_fixed", text="Fixed", icon = "MOD_SIMPLIFY")
-            col.operator("gpencil.stroke_simplify", text="Adaptative", icon = "SIMPLIFY_ADAPTIVE")
-            col.operator("gpencil.stroke_sample", text="Sample", icon = "SIMPLIFY_SAMPLE")
+            col.operator("grease_pencil.stroke_simplify", text="Fixed", icon = "MOD_SIMPLIFY")
+            col.operator("gpencil.stroke_simplify", text="Adaptative", icon = "SIMPLIFY_ADAPTIVE") # BFA - Legacy
+            col.operator("gpencil.stroke_sample", text="Sample", icon = "SIMPLIFY_SAMPLE") # BFA - Legacy
 
         # icon buttons
         else:
@@ -5198,7 +5143,7 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
     bl_label = "Toggle Caps"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_edit"
+    bl_context = "grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -5220,10 +5165,10 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.stroke_caps_set", text="Both", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-            col.operator("gpencil.stroke_caps_set", text="Start", icon = "TOGGLECAPS_START").type = 'START'
-            col.operator("gpencil.stroke_caps_set", text="End", icon = "TOGGLECAPS_END").type = 'END'
-            col.operator("gpencil.stroke_caps_set", text="Default", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+            col.operator("grease_pencil.caps_set", text="Rounded", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
+            col.operator("grease_pencil.caps_set", text="Start", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
+            col.operator("grease_pencil.caps_set", text="End", icon = "TOGGLECAPS_START").type = 'START'
+            col.operator("grease_pencil.caps_set", text="Default", icon = "TOGGLECAPS_END").type = 'END'
 
         # icon buttons
         else:
@@ -5235,36 +5180,36 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
-                row.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
             elif column_count == 1:
 
-                col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'TOGGLE'
-                col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
-                col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
-                col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
+                col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
+                col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
+                col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
+                col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
-
+# BFA - legacy
 class VIEW3D_PT_gp_stroketab_reproject(toolshelf_calculate, Panel):
     bl_label = "Reproject Strokes"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_edit"
+    bl_context = "grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -5340,7 +5285,7 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
     bl_label = "Point"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_context = "greasepencil_edit"
+    bl_context = "grease_pencil_edit"
     bl_category = "Point"
     bl_options = {'HIDE_BG'}
 
@@ -5362,9 +5307,8 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.extrude_move", text="Extrude", icon = "EXTRUDE_REGION")
-            col.operator("gpencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-            col.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
+            col.operator("grease_pencil.extrude_move", text="Extrude", icon = "EXTRUDE_REGION")
+            col.operator("grease_pencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH")
 
         # icon buttons
         else:
@@ -5376,24 +5320,19 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                row.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-                row.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+                row.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                row.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                row.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+                row.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                row.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
 
             elif column_count == 1:
 
-                col.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
-                col.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
-                col.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+                col.operator("grease_pencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                col.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
 
 
 class VIEW3D_PT_gp_drawtab_draw(toolshelf_calculate, Panel):
@@ -5462,7 +5401,7 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'VERTEX_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'PAINT_GPENCIL', 'PAINT_GREASE_PENCIL', 'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL', 'SCULPT_GPENCIL', 'SCULPT_GREASE_PENCIL', 'VERTEX_GPENCIL'}
 
     def draw(self, _context):
         layout = self.layout
@@ -5475,14 +5414,14 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (Active Layer)", icon = "ADD")
-            col.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (All Layers)", icon = "ADD_ALL").all_layers = True
+            col.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)", icon = "ADD")
+            col.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)", icon = "ADD_ALL").all_layers = True
 
-            col.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon = "DUPLICATE")
-            col.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon = "DUPLICATE_ALL").mode = 'ALL'
+            col.operator("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon = "DUPLICATE").all = False
+            col.operator("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon = "DUPLICATE_ALL").all = True
 
-            col.operator("gpencil.delete", text="Delete Active Keyframe (Active Layer)", icon = "DELETE").type = 'FRAME'
-            col.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon = "DELETE_ALL")
+            col.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframe (Active Layer)", icon = "DELETE").all = False
+            col.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframes (All Layers)", icon = "DELETE_ALL").all = True
 
         # icon buttons
         else:
@@ -5494,41 +5433,41 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
-                row.operator("gpencil.blank_frame_add", text="", icon = "ADD_ALL").all_layers = True
+                row.operator("grease_pencil.insert_blank_frame", text="", icon = "ADD")
+                row.operator("grease_pencil.insert_blank_frame", text="", icon = "ADD_ALL").all_layers = True
 
                 row = col.row(align=True)
-                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
-                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").mode = 'ALL'
+                row.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE").all = False
+                row.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").all = True
 
                 row = col.row(align=True)
-                row.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
-                row.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE_ALL")
+                row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE").all = False
+                row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE_ALL").all = True
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("gpencil.blank_frame_add", text="", icon = "ADD")
-                row.operator("gpencil.blank_frame_add", text="", icon = "ADD_ALL").all_layers = True
+                row.operator("grease_pencil.insert_blank_frame", text="", icon = "ADD")
+                row.operator("grease_pencil.insert_blank_frame", text="", icon = "ADD_ALL").all_layers = True
 
                 row = col.row(align=True)
-                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
-                row.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").mode = 'ALL'
+                row.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE").all = False
+                row.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").all = True
 
                 row = col.row(align=True)
-                row.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
-                row.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE_ALL")
+                row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE").all = False
+                row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE_ALL").all = True
 
             elif column_count == 1:
 
-                col.operator("gpencil.blank_frame_add", text="", icon = "ADD")
-                col.operator("gpencil.blank_frame_add", text="", icon = "ADD_ALL").all_layers = True
+                col.operator("grease_pencil.insert_blank_frame", text="", icon = "ADD")
+                col.operator("grease_pencil.insert_blank_frame", text="", icon = "ADD_ALL").all_layers = True
 
-                col.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE")
-                col.operator("gpencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").mode = 'ALL'
+                col.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE").all = False
+                col.operator("grease_pencil.frame_duplicate", text="", icon = "DUPLICATE_ALL").all = True
 
-                col.operator("gpencil.delete", text="", icon = "DELETE").type = 'FRAME'
-                col.operator("gpencil.active_frames_delete_all", text="", icon = "DELETE_ALL")
+                col.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE").all = False
+                col.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE_ALL").all = True
 
 
 class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
@@ -6951,9 +6890,9 @@ classes = (
     VIEW3D_PT_gp_gpenciltab_cleanup,
     VIEW3D_PT_gp_gpenciltab_separate,
     VIEW3D_PT_gp_stroketab_stroke,
-    VIEW3D_PT_gp_stroketab_simplify,
+    #VIEW3D_PT_gp_stroketab_simplify, # BFA - Legacy
     VIEW3D_PT_gp_stroketab_togglecaps,
-    VIEW3D_PT_gp_stroketab_reproject,
+    #VIEW3D_PT_gp_stroketab_reproject, # BFA - Legacy
     VIEW3D_PT_gp_pointtab_point,
 
     # grease pencil draw mode

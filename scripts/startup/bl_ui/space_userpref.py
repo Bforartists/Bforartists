@@ -234,6 +234,8 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.use_property_split = False
         flow.prop(prefs, "use_recent_searches", text="Sort search by Most Recent")
+        # bfa - gooengine disable_search_on_keypress
+        flow.prop(prefs, "disable_search_on_keypress", text="Disable search on Key press")
 
 
 class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):
@@ -1298,6 +1300,7 @@ class USERPREF_PT_theme_interface_icons(ThemePanel, CenterAlignMixIn, Panel):
         flow.prop(ui, "icon_modifier")
         flow.prop(ui, "icon_shading")
         flow.prop(ui, "icon_folder")
+        flow.prop(ui, "icon_autokey")
         flow.prop(ui, "icon_border_intensity")
 
 
@@ -2005,6 +2008,10 @@ class USERPREF_PT_input_touchpad(InputPanel, CenterAlignMixIn, Panel):
         from _bpy import _wm_capabilities
         capabilities = _wm_capabilities()
         if not capabilities['TRACKPAD_PHYSICAL_DIRECTION']:
+
+            layout.use_property_split = True # BFA - float left
+            col = layout.column() # BFA - float left
+
             row = col.row()
             row.active = inputs.use_multitouch_gestures
             row.prop(inputs, "touchpad_scroll_direction", text="Scroll Direction")
