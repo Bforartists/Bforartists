@@ -307,7 +307,7 @@ def register_addons():
     """and when Internet Access is disabled."""
 
     if bpy.context.preferences.system.use_online_access:
-        return {'CANCELLED'}
+        return None # BFA - don't cancel, just return none.
 
     # Redirect stdout and stderr to /dev/null - surpresses terminal messages to not spam on first load.
     sys.stdout = open(os.devnull, 'w')

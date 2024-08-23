@@ -4138,9 +4138,9 @@ static PyObject *pyrna_struct_bl_rna_get_subclass(PyObject *cls, PyObject *args)
 
   if (srna_base == &RNA_Node) {
     /* If the given idname is an alias, translate it to the proper idname. */
-    id = blender::bke::nodeTypeFindAlias(id);
+    id = blender::bke::node_type_find_alias(id);
 
-    blender::bke::bNodeType *nt = blender::bke::nodeTypeFind(id);
+    blender::bke::bNodeType *nt = blender::bke::node_type_find(id);
     if (nt) {
       PointerRNA ptr = RNA_pointer_create(nullptr, &RNA_Struct, nt->rna_ext.srna);
       return pyrna_struct_CreatePyObject(&ptr);
@@ -6872,7 +6872,7 @@ PyTypeObject pyrna_struct_Type = {
     /*tp_basicsize*/ sizeof(BPy_StructRNA),
     /*tp_itemsize*/ 0,
     /*tp_dealloc*/ (destructor)pyrna_struct_dealloc,
-    /*tp_vectorcall_offset */ 0,
+    /*tp_vectorcall_offset*/ 0,
     /*tp_getattr*/ nullptr,
     /*tp_setattr*/ nullptr,
     /*tp_as_async*/ nullptr,

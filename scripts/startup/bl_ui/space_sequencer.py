@@ -1115,7 +1115,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
             strip = context.active_sequence_strip  # BFA
             strip_type = strip.type  # BFA
 
-            if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
+            if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
                 # BFA - Moved retiming_show and retiming_segment_speed_set to top for UX
                 layout.operator(
                     "sequencer.retiming_show",
@@ -1143,9 +1143,9 @@ class SEQUENCER_MT_strip_retiming(Menu):
                 col.operator("sequencer.retiming_reset", icon='KEYFRAMES_REMOVE')
                 col.enabled = not is_retiming
             else:
-                layout.label(text="To Retime, select a movie strip", icon="QUESTION")  # BFA
+                layout.label(text="To retime, select a movie or sound strip", icon="QUESTION")  # BFA
         except:
-            layout.label(text="To Retime, select a movie strip", icon="QUESTION")  # BFA
+            layout.label(text="To retime, select a movie or sound strip", icon="QUESTION")  # BFA
 
 # BFA menu
 class SEQUENCER_MT_change_scene_with_icons(Menu):
@@ -2414,14 +2414,14 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
             strip = context.active_sequence_strip  # BFA
             strip_type = strip.type  # BFA
 
-            if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE':
+            if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
                 # BFA - Made the show_retiming_keys conditional
                 col = layout.column()
                 col.prop(strip, "show_retiming_keys", text="Show Retiming Keys")
             else:
-                layout.label(text="To retime, select a movie strip", icon="QUESTION")  # BFA
+                layout.label(text="To retime, select a movie or sound strip", icon="QUESTION")  # BFA
         except:
-            layout.label(text="To retime, select a movie strip", icon="QUESTION")  # BFA
+            layout.label(text="To retime, select a movie or sound strip", icon="QUESTION")  # BFA
 
         sub = layout.row(align=True)
         split = sub.split(factor=factor + max_factor)

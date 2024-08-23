@@ -100,8 +100,8 @@ class LensDistortionOperation : public NodeOperation {
     GPU_shader_bind(shader);
 
     const Result &input_image = get_input("Image");
-    GPU_texture_filter_mode(input_image.texture(), true);
-    GPU_texture_extend_mode(input_image.texture(), GPU_SAMPLER_EXTEND_MODE_CLAMP_TO_BORDER);
+    GPU_texture_filter_mode(input_image, true);
+    GPU_texture_extend_mode(input_image, GPU_SAMPLER_EXTEND_MODE_CLAMP_TO_BORDER);
     input_image.bind_as_texture(shader, "input_tx");
 
     const Domain domain = compute_domain();
@@ -126,8 +126,8 @@ class LensDistortionOperation : public NodeOperation {
     GPU_shader_bind(shader);
 
     const Result &input_image = get_input("Image");
-    GPU_texture_filter_mode(input_image.texture(), true);
-    GPU_texture_extend_mode(input_image.texture(), GPU_SAMPLER_EXTEND_MODE_CLAMP_TO_BORDER);
+    GPU_texture_filter_mode(input_image, true);
+    GPU_texture_extend_mode(input_image, GPU_SAMPLER_EXTEND_MODE_CLAMP_TO_BORDER);
     input_image.bind_as_texture(shader, "input_tx");
 
     const Domain domain = compute_domain();
@@ -254,5 +254,5 @@ void register_node_type_cmp_lensdist()
       &ntype, "NodeLensDist", node_free_standard_storage, node_copy_standard_storage);
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
-  blender::bke::nodeRegisterType(&ntype);
+  blender::bke::node_register_type(&ntype);
 }
