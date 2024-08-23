@@ -340,10 +340,10 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   STRNCPY(scene->r.engine, RE_engine_id_BLENDER_EEVEE_NEXT);
 
   scene->r.cfra = 1.0f;
-	/* bfa - NOPE. WE TURN USE NODES ON BY DEFAULT!*/
-  ///* Don't enable compositing nodes. */
+  /* BFA - Turn on the compositor nodes by default, or else they an unnecessary step for compsiting.*/
+  /* Don't enable compositing nodes. */
   //if (scene->nodetree) {
-  //blender::bke::ntreeFreeEmbeddedTree(scene->nodetree);
+  //  blender::bke::node_tree_free_embedded_tree(scene->nodetree);
   //  MEM_freeN(scene->nodetree);
   //  scene->nodetree = nullptr;
   //  scene->use_nodes = false;
@@ -645,11 +645,12 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
     if (ma->nodetree) {
       for (bNode *node : ma->nodetree->all_nodes()) {
         if (node->type == SH_NODE_BSDF_PRINCIPLED) {
-          bNodeSocket *roughness_socket = blender::bke::nodeFindSocket(node, SOCK_IN, "Roughness");
+          bNodeSocket *roughness_socket = blender::bke::node_find_socket(
+              node, SOCK_IN, "Roughness");
           *version_cycles_node_socket_float_value(roughness_socket) = 0.5f;
-          bNodeSocket *emission = blender::bke::nodeFindSocket(node, SOCK_IN, "Emission Color");
+          bNodeSocket *emission = blender::bke::node_find_socket(node, SOCK_IN, "Emission Color");
           copy_v4_fl(version_cycles_node_socket_rgba_value(emission), 1.0f);
-          bNodeSocket *emission_strength = blender::bke::nodeFindSocket(
+          bNodeSocket *emission_strength = blender::bke::node_find_socket(
               node, SOCK_IN, "Emission Strength");
           *version_cycles_node_socket_float_value(emission_strength) = 0.0f;
 

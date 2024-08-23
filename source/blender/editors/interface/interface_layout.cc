@@ -6231,7 +6231,8 @@ void UI_menutype_draw(bContext *C, MenuType *mt, uiLayout *layout)
   }
 
   uiBlock *block = uiLayoutGetBlock(layout);
-  if (bool(mt->flag & MenuTypeFlag::SearchOnKeyPress)) {
+  // bfa - gooengine disable_search_on_keypress
+  if (bool(mt->flag & MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
     UI_block_flag_enable(block, UI_BLOCK_NO_ACCELERATOR_KEYS);
   }
   if (mt->listener) {
