@@ -252,40 +252,77 @@ class EEVEE_MATERIAL_PT_thickness(MaterialButtonsPanel, Panel):
         panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Thickness")
 
 
+# BFA - this has been heavily modified to have labels and indents
 def draw_material_surface_settings(layout, mat, is_eevee=True):
-    col = layout.column(heading="Backface Culling")
-    col.prop(mat, "use_backface_culling", text="Camera")
-    col.prop(mat, "use_backface_culling_shadow", text="Shadow")
-    col.prop(mat, "use_backface_culling_lightprobe_volume", text="Light Probe Volume")
+        col = layout.column()
+        col.label(text="Backface Culling")
+        col.use_property_split = False
 
-    col = layout.column(align=True)
+        row = col.row()
+        row.separator()
+        row.prop(mat, "use_backface_culling", text="Camera")
+        row = col.row()
+        row.separator()
+        row.prop(mat, "use_backface_culling_shadow", text="Shadow")
 
-    if is_eevee:
-        col.prop(mat, "displacement_method", text="Displacement")
-        col = col.column(align=True)
+        col = layout.column()
+        col.label(text="Displacement")
+        col.use_property_split = False
 
-    col.enabled = mat.displacement_method != 'BUMP'
-    # Clarify that this is for displacement if the displacement method setting is not above.
-    max_diplacement_text = "Max Distance" if is_eevee else "Max Displacement"
-    col.prop(mat, "max_vertex_displacement", text=max_diplacement_text)
+        row = col.row()
+        row.separator()
+        row.prop(mat, "displacement_method", text="Method")
 
-    if mat.displacement_method == 'DISPLACEMENT':
-        layout.label(text="Unsupported displacement method", icon='ERROR')
+        row = col.row()
+        row.separator()
 
-    if is_eevee:
-        layout.prop(mat, "use_transparent_shadow")
+        if mat.displacement_method != 'BUMP':
+            row.prop(mat, "max_vertex_displacement", text="Max Distance")
 
-    col = layout.column()
-    col.prop(mat, "surface_render_method", text="Render Method")
-    if mat.surface_render_method == 'BLENDED':
-        col.prop(mat, "use_transparency_overlap", text="Transparency Overlap")
-    elif mat.surface_render_method == 'DITHERED':
-        col.prop(mat, "use_raytrace_refraction", text="Raytraced Transmission")
+        if mat.displacement_method == 'DISPLACEMENT':
+            row = col.row()
+            row.separator()
+            row.label(text="Unsupported displacement method", icon='ERROR')
 
-    col = layout.column()
-    col.prop(mat, "thickness_mode", text="Thickness")
-    if mat.surface_render_method == 'DITHERED':
-        col.prop(mat, "use_thickness_from_shadow", text="From Shadow")
+        col = layout.column()
+        col.label(text="Transparency")
+        col.use_property_split = False
+
+        row = col.row()
+        row.separator()
+        row.prop(mat, "use_transparent_shadow")
+
+        row = col.row()
+        row.separator()
+        row.prop(mat, "surface_render_method", text="Method")
+
+        row = col.row()
+        row.separator()
+        if mat.surface_render_method == 'BLENDED':
+            row.prop(mat, "use_transparency_overlap", text="Transparency Overlap")
+        elif mat.surface_render_method == 'DITHERED':
+            row.prop(mat, "use_raytrace_refraction", text="Raytraced Transmission")
+
+        if mat.surface_render_method == 'DITHERED':
+            row = col.row()
+            row.separator()
+            row.prop(mat, "use_thickness_from_shadow", text="From Shadow")
+
+        col = layout.column()
+        col.use_property_split = False
+        col.label(text="Render")
+
+        row = col.row()
+        row.separator()
+        row.prop(mat, "thickness_mode", text="Thickness")
+
+        col = layout.column()
+        col.use_property_split = False
+        col.label(text="Light Probe Volume")
+        row = col.row()
+        row.separator()
+        row.prop(mat, "use_backface_culling_lightprobe_volume", text="Light Probe Volume Backfaces") #BFA - made this explicit
+
 
 
 def draw_material_volume_settings(layout, mat, is_eevee=True):
@@ -387,6 +424,7 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
 
         mat = context.material
 
+        '''
         col = layout.column()
         col.label(text="Backface Culling")
         col.use_property_split = False
@@ -432,7 +470,7 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(mat, "use_backface_culling_lightprobe_volume", text="Light Probe Volume Backfaces") #BFA - made this explicit
-
+        '''
         draw_material_surface_settings(layout, mat)
 
 class EEVEE_NEXT_MATERIAL_PT_settings_volume(MaterialButtonsPanel, Panel):
@@ -450,7 +488,7 @@ class EEVEE_NEXT_MATERIAL_PT_settings_volume(MaterialButtonsPanel, Panel):
 
         layout.prop(mat, "volume_intersection_method", text="Intersection")
         
-        draw_material_volume_settings(layout, mat)
+        #draw_material_volume_settings(layout, mat)
 
 
 class MATERIAL_PT_viewport(MaterialButtonsPanel, Panel):

@@ -182,9 +182,9 @@ class PlaneTrackDeformOperation : public NodeOperation {
     GPU_uniformbuf_bind(homography_matrices_buffer, ubo_location);
 
     Result &input_image = get_input("Image");
-    GPU_texture_mipmap_mode(input_image.texture(), true, true);
-    GPU_texture_anisotropic_filter(input_image.texture(), true);
-    GPU_texture_extend_mode(input_image.texture(), GPU_SAMPLER_EXTEND_MODE_EXTEND);
+    GPU_texture_mipmap_mode(input_image, true, true);
+    GPU_texture_anisotropic_filter(input_image, true);
+    GPU_texture_extend_mode(input_image, GPU_SAMPLER_EXTEND_MODE_EXTEND);
     input_image.bind_as_texture(shader, "input_tx");
 
     plane_mask.bind_as_texture(shader, "mask_tx");
@@ -337,5 +337,5 @@ void register_node_type_cmp_planetrackdeform()
       &ntype, "NodePlaneTrackDeformData", node_free_standard_storage, node_copy_standard_storage);
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
-  blender::bke::nodeRegisterType(&ntype);
+  blender::bke::node_register_type(&ntype);
 }
