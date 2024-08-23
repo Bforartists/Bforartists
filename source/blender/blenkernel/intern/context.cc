@@ -1296,7 +1296,7 @@ static const char *data_mode_strings[] = {
     "mball_edit",
     "lattice_edit",
     "curves_edit",
-    "grease_pencil_edit",
+    "grease_pencil_edit", /*BFA - New*/
     "point_cloud_edit",
     "posemode",
     "sculpt_mode",
@@ -1305,15 +1305,15 @@ static const char *data_mode_strings[] = {
     "imagepaint",
     "particlemode",
     "objectmode",
-    "greasepencil_paint",
-    "greasepencil_edit",
-    "greasepencil_sculpt",
-    "greasepencil_weight",
+    "greasepencil_paint", /*BFA - legacy*/
+    "greasepencil_edit", /*BFA - legacy*/
+    "greasepencil_sculpt", /*BFA - legacy*/
+    "greasepencil_weight", /*BFA - legacy*/
     "greasepencil_vertex",
     "curves_sculpt",
-    "grease_pencil_paint",
-    "grease_pencil_sculpt",
-    "grease_pencil_weight",
+    "grease_pencil_paint", /*BFA - New*/
+    "grease_pencil_sculpt", /*BFA - New*/
+    "grease_pencil_weight", /*BFA - New*/
     nullptr,
 };
 BLI_STATIC_ASSERT(ARRAY_SIZE(data_mode_strings) == CTX_MODE_NUM + 1,

@@ -1886,6 +1886,11 @@ class WM_OT_properties_edit(Operator):
 
         self._update_blender_for_prop_change(context, item, name, prop_type_old, prop_type_new)
 
+        if name_old != name:
+            adt = getattr(item, "animation_data", None)
+            if adt is not None:
+                adt.fix_paths_rename_all(prefix="", old_name=name_old, new_name=name)
+
         return {'FINISHED'}
 
     def invoke(self, context, _event):
@@ -2897,7 +2902,8 @@ class WM_OT_batch_rename(Operator):
                     (
                         # Outliner.
                         cls._selected_ids_from_outliner_by_type(context, bpy.types.Scene)
-                        if ((space_type == 'OUTLINER') and only_selected) else [id for id in bpy.data.scenes if id.is_editable]
+                        if ((space_type == 'OUTLINER') and only_selected) else
+                        [id for id in bpy.data.scenes if id.is_editable]
                     ),
                     "name",
                     iface_("Scene(s)"),
@@ -2907,7 +2913,8 @@ class WM_OT_batch_rename(Operator):
                     (
                         # Outliner.
                         cls._selected_ids_from_outliner_by_type(context, bpy.types.Brush)
-                        if ((space_type == 'OUTLINER') and only_selected) else [id for id in bpy.data.brushes if id.is_editable]
+                        if ((space_type == 'OUTLINER') and only_selected) else
+                        [id for id in bpy.data.brushes if id.is_editable]
                     ),
                     "name",
                     iface_("Brush(es)"),
@@ -3240,7 +3247,7 @@ class WM_MT_splash_quick_setup(Menu):
 
             layout.separator()
             layout.separator(type='LINE')
-            
+
         if can_import:
             layout.label(text="Create New Preferences")
         else:
@@ -3352,11 +3359,11 @@ class WM_MT_splash(Menu):
 
         if (not bpy.app.online_access) and bpy.app.online_access_override:
             self.layout.label(text="Running in Offline Mode", icon='DELETE') #BFA - wip, update icon to INTERNET_OFFLINE
-		
+
         layout.separator()
-		
+
         layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}")
-		
+
         layout.separator()
 
 
@@ -3390,18 +3397,18 @@ class WM_MT_splash_about(Menu):
         del _ghost_backend, ghost_backend
 
         col.separator(factor=2.0)
-        col.label(text="Blender is free software")
+        col.label(text="Bforartists is free software") # BFA - our name
         col.label(text="Licensed under the GNU General Public License")
 
         col = split.column(align=True)
         col.emboss = 'PULLDOWN_MENU'
-        col.operator("wm.url_open_preset", text="Donate", icon='FUND').type = 'FUND'
-        col.operator("wm.url_open_preset", text="What's New", icon='URL').type = 'RELEASE_NOTES'
-        col.separator(factor=2.0)
-        col.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'
-        col.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"
-        col.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"
-        col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'
+        # col.operator("wm.url_open_preset", text="Donate", icon='FUND').type = 'FUND' # BFA - Not Used
+        #col.operator("wm.url_open_preset", text="What's New", icon='URL').type = 'RELEASE_NOTES'  BFA - Not Used
+        #col.separator(factor=2.0)
+        #col.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'  BFA - Not Used
+        #col.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"  BFA - Not Used
+        #col.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"  BFA - Not Used
+        #col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'  BFA - Not Used
 
 
 class WM_MT_region_toggle_pie(Menu):
