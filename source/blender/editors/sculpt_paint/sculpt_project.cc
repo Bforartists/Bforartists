@@ -8,9 +8,6 @@
 
 #include "BLI_array_utils.hh"
 #include "BLI_enumerable_thread_specific.hh"
-#include "BLI_math_geom.h"
-#include "BLI_math_matrix.h"
-#include "BLI_math_vector.h"
 
 #include "BKE_context.hh"
 #include "BKE_layer.hh"
@@ -21,6 +18,7 @@
 #include "WM_types.hh"
 
 #include "mesh_brush_common.hh"
+#include "sculpt_gesture.hh"
 #include "sculpt_intern.hh"
 
 namespace blender::ed::sculpt_paint::project {
@@ -44,7 +42,8 @@ struct LocalData {
   Vector<float3> translations;
 };
 
-static void apply_projection_mesh(const Sculpt &sd,
+static void apply_projection_mesh(const Depsgraph &depsgraph,
+                                  const Sculpt &sd,
                                   const gesture::GestureData &gesture_data,
                                   const Span<float3> positions_eval,
                                   const Span<float3> vert_normals,
@@ -70,7 +69,7 @@ static void apply_projection_mesh(const Sculpt &sd,
   calc_translations_to_plane(positions, gesture_data.line.plane, translations);
   scale_translations(translations, factors);
 
-  write_translations(sd, object, positions_eval, verts, translations, positions_orig);
+  write_translations(depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
 }
 
 static void apply_projection_grids(const Sculpt &sd,
@@ -137,6 +136,7 @@ static void apply_projection_bmesh(const Sculpt &sd,
 
 static void gesture_apply_for_symmetry_pass(bContext &C, gesture::GestureData &gesture_data)
 {
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(&C);
   Object &object = *gesture_data.vc.obact;
   SculptSession &ss = *object.sculpt;
   bke::pbvh::Tree &pbvh = *ss.pbvh;
@@ -149,14 +149,15 @@ static void gesture_apply_for_symmetry_pass(bContext &C, gesture::GestureData &g
       switch (pbvh.type()) {
         case bke::pbvh::Type::Mesh: {
           Mesh &mesh = *static_cast<Mesh *>(object.data);
-          const Span<float3> positions_eval = BKE_pbvh_get_vert_positions(pbvh);
-          const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(pbvh);
+          const Span<float3> positions_eval = bke::pbvh::vert_positions_eval(depsgraph, object);
+          const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, object);
           MutableSpan<float3> positions_orig = mesh.vert_positions_for_write();
-          undo::push_nodes(object, nodes, undo::Type::Position);
+          undo::push_nodes(depsgraph, object, nodes, undo::Type::Position);
           threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
             LocalData &tls = all_tls.local();
             for (const int i : range) {
-              apply_projection_mesh(sd,
+              apply_projection_mesh(depsgraph,
+                                    sd,
                                     gesture_data,
                                     positions_eval,
                                     vert_normals,
@@ -170,7 +171,7 @@ static void gesture_apply_for_symmetry_pass(bContext &C, gesture::GestureData &g
           break;
         }
         case bke::pbvh::Type::BMesh: {
-          undo::push_nodes(object, nodes, undo::Type::Position);
+          undo::push_nodes(depsgraph, object, nodes, undo::Type::Position);
           threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
             LocalData &tls = all_tls.local();
             for (const int i : range) {
@@ -181,7 +182,7 @@ static void gesture_apply_for_symmetry_pass(bContext &C, gesture::GestureData &g
           break;
         }
         case bke::pbvh::Type::Grids: {
-          undo::push_nodes(object, nodes, undo::Type::Position);
+          undo::push_nodes(depsgraph, object, nodes, undo::Type::Position);
           threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
             LocalData &tls = all_tls.local();
             for (const int i : range) {

@@ -8,6 +8,8 @@ DEBUG = False
 import os
 import shlex
 import math
+import re
+import mathutils
 from math import sin, cos, pi
 from itertools import chain
 
@@ -714,7 +716,7 @@ class vrmlNode(object):
         for v in f:
             if v != ',':
                 try:
-                    ret.append(float(v))
+                    ret.append(float(v.strip('"')))
                 except:
                     break  # quit of first non float, perhaps its a new field name on the same line? - if so we are going to ignore it :/ TODO
         # print(ret)
@@ -1218,6 +1220,11 @@ class vrmlNode(object):
                             else:
                                 value += '\n' + l
 
+                    # append a final quote if it is not there, like it's e.g. the case with multiline javascripts (#101717)
+                    quote_count = l.count('"')
+                    if quote_count % 2:  # odd number?
+                        value += '"'
+
                     # use shlex so we get '"a b" "b v"' --> '"a b"', '"b v"'
                     value_all = shlex.split(value, posix=False)
 
@@ -1593,8 +1600,32 @@ def getFinalMatrix(node, mtx, ancestry, global_matrix):
     return mtx
 
 
+def linear_to_srgb(linear):
+    """Converts a linear color value to srgb color space"""
+    if linear <= 0.0031308:
+        return linear * 12.92
+    else:
+        return 1.055 * (linear ** (1.0 / 2.4)) - 0.055
+
+def srgb_to_linear(srgb_value):
+    """Converts a srgb color value to linear space"""
+    if srgb_value <= 0.04045:
+        return srgb_value / 12.92
+    else:
+        return ((srgb_value + 0.055) / 1.055) ** 2.4
+
+
 # -----------------------------------------------------------------------------------
 # Mesh import utilities
+
+def set_new_float_color_attribute(bpymesh, color_data, name: str = "ColorPerCorner", convert_to_linear: bool = True):
+    """Uses the new blender api to apply colors to a mesh as vertex colors (domain face corner)"""
+    if (convert_to_linear):
+        # convert color spaces to account for api changes from legacy to newer api
+        color_data = [srgb_to_linear(col_val) for col_val in color_data]
+    # add new color attribute
+    bpymesh.color_attributes.new(name, 'FLOAT_COLOR', 'CORNER')
+    bpymesh.color_attributes[name].data.foreach_set("color", color_data)
 
 # Assumes that the mesh has polygons.
 def importMesh_ApplyColors(bpymesh, geom, ancestry):
@@ -1605,7 +1636,6 @@ def importMesh_ApplyColors(bpymesh, geom, ancestry):
         else:
             # Array of arrays; no need to flatten
             rgb = [c + [1.0] for c in colors.getFieldAsArray('color', 3, ancestry)]
-        lcol_layer = bpymesh.vertex_colors.new()
 
         if len(rgb) == len(bpymesh.vertices):
             rgb = [rgb[l.vertex_index] for l in bpymesh.loops]
@@ -1619,7 +1649,7 @@ def importMesh_ApplyColors(bpymesh, geom, ancestry):
             )
             return
 
-        lcol_layer.data.foreach_set("color", rgb)
+        set_new_float_color_attribute(bpymesh, rgb)
 
 
 # Assumes that the vertices have not been rearranged compared to the
@@ -1878,7 +1908,11 @@ def importMesh_IndexedFaceSet(geom, ancestry):
 
     ccw = geom.getFieldAsBool('ccw', True, ancestry)
     coord = geom.getChildBySpec('Coordinate')
-    if coord.reference:
+
+    if coord is None:
+        return None
+
+    if coord.reference and coord.getRealNode().parsed:
         points = coord.getRealNode().parsed
         # We need unflattened coord array here, while
         # importMesh_ReadVertices uses flattened. Can't cache both :(
@@ -1954,14 +1988,21 @@ def importMesh_IndexedFaceSet(geom, ancestry):
         vectors = normals.getFieldAsArray('vector', 3, ancestry)
         normal_index = geom.getFieldAsArray('normalIndex', 0, ancestry)
         if per_vertex:
+            if len(normal_index) == 0:
+                normal_index = index
             co = [co for f in processPerVertexIndex(normal_index)
                      for v in f
-                     for co in vectors[v]]
+                     for co in mathutils.Vector(vectors[v]).normalized().to_tuple()]
             bpymesh.vertices.foreach_set("normal", co)
+
+            # Mesh must be validated before assigning normals, but validation might
+            # reorder corners. We must store normals in a temporary attribute
+            bpymesh.attributes.new("temp_custom_normals", 'FLOAT_VECTOR', 'CORNER')
+            bpymesh.attributes["temp_custom_normals"].data.foreach_set("vector", co)
         else:
             co = [co for (i, f) in enumerate(faces)
                      for j in f
-                     for co in vectors[normal_index[i] if normal_index else i]]
+                     for co in mathutils.Vector(vectors[normal_index[i] if normal_index else i]).normalized().to_tuple()]
             bpymesh.polygons.foreach_set("normal", co)
 
     # Apply vertex/face colors
@@ -1975,21 +2016,46 @@ def importMesh_IndexedFaceSet(geom, ancestry):
 
         color_per_vertex = geom.getFieldAsBool('colorPerVertex', True, ancestry)
         color_index = geom.getFieldAsArray('colorIndex', 0, ancestry)
+        has_color_index = len(color_index) != 0
+        has_valid_color_index = index.count(-1) == color_index.count(-1)
 
-        d = bpymesh.vertex_colors.new().data
-        if color_per_vertex:
+        # rebuild a corrupted colorIndex field (assuming the end of face markers -1 are missing)
+        if has_color_index and not has_valid_color_index:
+            # remove all -1 beforehand to ensure clean working copy
+            color_index = [x for x in color_index if x != -1]
+            # copy all -1 from coordIndex to colorIndex
+            for i, v in enumerate(index):
+                if v == -1:
+                    color_index.insert(i, -1)
+
+        if color_per_vertex and has_color_index: # Color per vertex with index
             cco = [cco for f in processPerVertexIndex(color_index)
-                       for v in f
-                       for cco in rgb[v]]
+                   for v in f
+                   for cco in rgb[v]]
+        elif color_per_vertex: # Color per vertex without index
+            cco = [cco for f in faces
+                   for (i, v) in enumerate(f)
+                   for cco in rgb[i]]
         elif color_index:  # Color per face with index
             cco = [cco for (i, f) in enumerate(faces)
                        for j in f
                        for cco in rgb[color_index[i]]]
+        elif len(faces) > len(rgb):  # Static color per face without index, when all faces have the same color.
+            # Exported from SOLIDWORKS, see: `blender/blender-addons#105398`.
+            cco = [cco for (i, f) in enumerate(faces)
+                       for j in f
+                       for cco in rgb[0]]
         else:  # Color per face without index
             cco = [cco for (i, f) in enumerate(faces)
                        for j in f
                        for cco in rgb[i]]
-        d.foreach_set('color', cco)
+
+        if color_per_vertex:
+            # Mesh must be validated before assigning colors, but validation might
+            # reorder corners. We must store colors in a temporary attribute
+            set_new_float_color_attribute(bpymesh, cco, name="temp_custom_colors")
+        else:
+            set_new_float_color_attribute(bpymesh, cco)
 
     # Texture coordinates (UVs)
     tex_coord = geom.getChildBySpec('TextureCoordinate')
@@ -2039,7 +2105,22 @@ def importMesh_IndexedFaceSet(geom, ancestry):
 
     importMesh_ApplyTextureToLoops(bpymesh, loops)
 
-    bpymesh.validate()
+    bpymesh.validate(clean_customdata=False)
+
+    # Apply normals per vertex
+    if normals and per_vertex:
+        co2 = [0.0 for x in range(int(len(bpymesh.attributes["temp_custom_normals"].data)*3))]
+        bpymesh.attributes["temp_custom_normals"].data.foreach_get("vector", co2)
+        bpymesh.normals_split_custom_set(tuple(zip(*(iter(co2),) * 3)))
+        bpymesh.attributes.remove(bpymesh.attributes["temp_custom_normals"])
+
+    # Apply colors per vertex
+    if colors and color_per_vertex:
+        cco2 = [0.0 for x in range(int(len(bpymesh.attributes["temp_custom_colors"].data) * 4))]
+        bpymesh.attributes["temp_custom_colors"].data.foreach_get("color", cco2)
+        set_new_float_color_attribute(bpymesh, cco2)
+        bpymesh.attributes.remove(bpymesh.attributes["temp_custom_colors"])
+
     bpymesh.update()
     return bpymesh
 
@@ -2087,11 +2168,11 @@ def importMesh_ElevationGrid(geom, ancestry):
         else:
             rgb = colors.getFieldAsArray('color', 3, ancestry)
 
-        tc = bpymesh.vertex_colors.new().data
+        # TODO: this can probably be simplified
         if geom.getFieldAsBool('colorPerVertex', True, ancestry):
             # Per-vertex coloring
             # Note the 2/4 flip here
-            tc.foreach_set("color",
+            set_new_float_color_attribute(bpymesh,
                            [c for x in range(x_dim - 1)
                               for z in range(z_dim - 1)
                               for rgb_idx in (z * x_dim + x,
@@ -2100,7 +2181,7 @@ def importMesh_ElevationGrid(geom, ancestry):
                                               (z + 1) * x_dim + x if ccw else z * x_dim + x + 1)
                               for c in rgb[rgb_idx]])
         else:  # Coloring per face
-            tc.foreach_set("color",
+            set_new_float_color_attribute(bpymesh,
                            [c for x in range(x_dim - 1)
                               for z in range(z_dim - 1)
                               for rgb_idx in (z * (x_dim - 1) + x,) * 4
@@ -2710,10 +2791,10 @@ def appearance_CreateMaterial(vrmlname, mat, ancestry, is_vcol):
         bpymat.blend_method = "BLEND"
         bpymat.shadow_method = "HASHED"
 
-    # NOTE - leaving this disabled for now
-    if False and is_vcol:
+    if is_vcol:
         node_vertex_color = bpymat.node_tree.nodes.new("ShaderNodeVertexColor")
         node_vertex_color.location = (-200, 300)
+        node_vertex_color.layer_name = "ColorPerCorner"
 
         bpymat.node_tree.links.new(
             bpymat_wrap.node_principled_bsdf.inputs["Base Color"],
@@ -2968,32 +3049,49 @@ def importShape_LoadAppearance(vrmlname, appr, ancestry, node, is_vcol):
 
 
 def appearance_LoadPixelTexture(pixelTexture, ancestry):
+    def extract_pixel_colors(data_string):
+        """
+        Read all hexadecimal pixel color values, distributed across multiple fields (mutliline)
+        """
+        # Use a regular expression to find all hexadecimal color values
+        hex_pattern = re.compile(r'0x[0-9a-fA-F]{6}')
+        pixel_colors = hex_pattern.findall(data_string)
+        # Convert hexadecimal color values to integers
+        pixel_colors = [int(color, 0) for color in pixel_colors]
+        return pixel_colors
+
     image = pixelTexture.getFieldAsArray('image', 0, ancestry)
+    # read width, height and plane_count value, assuming all are in one field called 'image' (singleline)
     (w, h, plane_count) = image[0:3]
     has_alpha = plane_count in {2, 4}
-    pixels = image[3:]
+    # get either hex color values (multiline) or regular color values (singleline)
+    pixels = extract_pixel_colors(str(pixelTexture)) # converting to string may not be ideal, but works
+    if len(pixels) == 0:
+        pixels = image[3:]
     if len(pixels) != w * h:
-        print("ImportX3D warning: pixel count in PixelTexture is off")
+        print(f"ImportX3D warning: pixel count in PixelTexture is off. Pixels: {len(pixels)}, Width: {w}, Height: {h}")
 
-    bpyima = bpy.data.images.new("PixelTexture", w, h, has_alpha, True)
+    bpyima = bpy.data.images.new("PixelTexture", w, h, alpha=has_alpha, float_buffer=True)
     if not has_alpha:
         bpyima.alpha_mode = 'NONE'
 
-    # Conditional above the loop, for performance
-    if plane_count == 3:  # RGB
-        bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
-                         for cco in (pixel >> 16, pixel >> 8, pixel, 255)]
-    elif plane_count == 4:  # RGBA
-        bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
-                         for cco
-                         in (pixel >> 24, pixel >> 16, pixel >> 8, pixel)]
-    elif plane_count == 1:  # Intensity - does Blender even support that?
-        bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
-                         for cco in (pixel, pixel, pixel, 255)]
-    elif plane_count == 2:  # Intensity/alpha
-        bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
-                         for cco
-                         in (pixel >> 8, pixel >> 8, pixel >> 8, pixel)]
+    # as some image textures may have no pixel data, ignore those
+    if len(pixels) != 0:
+        # Conditional above the loop, for performance
+        if plane_count == 3:  # RGB
+            bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
+                            for cco in (pixel >> 16, pixel >> 8, pixel, 255)]
+        elif plane_count == 4:  # RGBA
+            bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
+                            for cco
+                            in (pixel >> 24, pixel >> 16, pixel >> 8, pixel)]
+        elif plane_count == 1:  # Intensity - does Blender even support that?
+            bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
+                            for cco in (pixel, pixel, pixel, 255)]
+        elif plane_count == 2:  # Intensity/alpha
+            bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
+                            for cco
+                            in (pixel >> 8, pixel >> 8, pixel >> 8, pixel)]
     bpyima.update()
     return bpyima
 
@@ -3012,7 +3110,7 @@ def importShape_ProcessObject(
         # solid, as understood by the spec, is always true in Blender
         # solid=false, we don't support it yet.
         creaseAngle = geom.getFieldAsFloat('creaseAngle', None, ancestry)
-        if creaseAngle is not None:
+        if creaseAngle is not None and not bpydata.has_custom_normals:
             bpydata.set_sharp_from_angle(angle=creaseAngle)
         else:
             bpydata.polygons.foreach_set("use_smooth", [False] * len(bpydata.polygons))
@@ -3141,6 +3239,10 @@ def importShape(bpycollection, node, ancestry, global_matrix):
     geom_fn = geometry_importers.get(geom_spec)
     if geom_fn is not None:
         bpydata = geom_fn(geom, ancestry)
+
+        if bpydata is None:
+            print('ImportX3D warning: empty shape, skipping node "%s"' % vrmlname)
+            return
 
         # There are no geometry importers that can legally return
         # no object.  It's either a bpy object, or an exception

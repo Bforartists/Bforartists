@@ -13,6 +13,7 @@
 #include "BKE_volume_enums.hh"
 
 #include "BLI_math_matrix_types.hh"
+#include "BLI_memory_counter_fwd.hh"
 
 /**
  * This header gives contains declarations for dealing with volume grids without requiring
@@ -68,11 +69,6 @@ VolumeGridType get_type(const VolumeGridData &grid);
 int get_channels_num(VolumeGridType type);
 
 /**
- * Unloads the tree data if no one is using it right now and it could be reloaded later on.
- */
-void unload_tree_if_possible(const VolumeGridData &grid);
-
-/**
  * Get the transform of the grid as an affine matrix.
  */
 float4x4 get_transform_matrix(const VolumeGridData &grid);
@@ -104,6 +100,8 @@ std::string error_message_from_load(const VolumeGridData &grid);
  * does not have to be loaded lazily anymore.
  */
 bool is_loaded(const VolumeGridData &grid);
+
+void count_memory(const VolumeGridData &grid, MemoryCounter &memory);
 
 }  // namespace blender::bke::volume_grid
 

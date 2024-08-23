@@ -1134,15 +1134,7 @@ void filelist_setlibrary(FileList *filelist, const AssetLibraryReference *asset_
 
 static ImBuf *fileimage_from_icon(int icon_id)
 {
-  int width;
-  int height;
-  blender::Array<uchar> bitmap = BLF_svg_icon_bitmap(icon_id, 256.1f, &width, &height); /* BFA - Fixes icons going monochrome */
-  if (bitmap.is_empty()) {
-    return nullptr;
-  }
-  ImBuf *ibuf = IMB_allocFromBuffer(bitmap.data(), nullptr, width, height, 4);
-  IMB_flipy(ibuf);
-  return ibuf;
+  return UI_svg_icon_bitmap(icon_id, 256.0f, true); /* BFA - colored file browser icons at 256.0 */
 }
 
 void filelist_init_icons()

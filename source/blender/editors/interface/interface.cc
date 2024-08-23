@@ -4800,10 +4800,12 @@ uiBut *uiDefButImage(
 
 uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short /*height*/)
 {
+  bool show_color = true; /* BFA - dont theme our alert icons */
   ImBuf *ibuf = UI_icon_alert_imbuf_get((eAlertIcon)icon, float(width));
   if (ibuf) {
     bTheme *btheme = UI_GetTheme();
-    return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, btheme->tui.wcol_menu_back.text);
+    const uchar *color = btheme->tui.wcol_menu_back.text_sel;
+    return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, show_color ? nullptr : color);  /* BFA - dont theme our alert icons */
   }
   return nullptr;
 }
