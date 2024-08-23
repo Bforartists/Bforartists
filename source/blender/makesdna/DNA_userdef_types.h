@@ -202,6 +202,9 @@ typedef struct ThemeUI {
   unsigned char icon_shading[4];
   /** File folders. */
   unsigned char icon_folder[4];
+  /** Auto Keying indicator. */
+  unsigned char icon_autokey[4];
+  char _pad3[4];
   /** Intensity of the border icons. >0 will render an border around themed
    * icons. */
   float icon_border_intensity;
@@ -1202,6 +1205,7 @@ typedef enum eUserPref_Flag {
   USER_TXT_TABSTOSPACES_DISABLE = (1 << 25),
   USER_TOOLTIPS_PYTHON = (1 << 26),
   USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
+  USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS = (1 << 28), /* bfa - gooengine disable_search_on_keypress */
 } eUserPref_Flag;
 
 /** #UserDef.extension_flag */

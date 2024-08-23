@@ -1,12 +1,11 @@
 schema_version = "1.0.0"
 id = "node_arrange"
+version = "1.2.1"
 name = "Node Arrange"
-version = "0.2.2"
-tagline = "Node Tree Arrangement Tools"
-maintainer = "Community"
+tagline = "Arrange node trees with one click"
+maintainer = "Leonardo Pike-Excell <leonardopike.excell@gmail.com>"
 type = "add-on"
+website = "https://github.com/Leonardo-Pike-Excell/node-arrange"
 tags = ["Node"]
 blender_version_min = "4.2.0"
 license = ["SPDX:GPL-2.0-or-later"]
-website = "https://projects.blender.org/extensions/node_arrange"
-copyright = ["2024 JuhaW"]
