@@ -10851,6 +10851,17 @@ class VIEW3D_AST_brush_gpencil_weight(View3DAssetShelf, bpy.types.AssetShelf):
     mode_prop = "use_weight_grease_pencil"
 
 
+# bfa - material object collection asset shelf
+class VIEW3D_AST_object(bpy.types.AssetShelf):
+    bl_space_type = "VIEW_3D"
+    bl_options = {'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
+    mode = 'OBJECT'
+
+    @classmethod
+    def asset_poll(cls, asset):
+        return asset.id_type in {'MATERIAL', 'OBJECT', 'COLLECTION'}
+
+
 classes = (
     VIEW3D_HT_header,
     VIEW3D_HT_tool_header,
@@ -11164,6 +11175,7 @@ classes = (
     VIEW3D_AST_brush_gpencil_sculpt,
     VIEW3D_AST_brush_gpencil_vertex,
     VIEW3D_AST_brush_gpencil_weight,
+    VIEW3D_AST_object,  # bfa assetshelf
     GREASE_PENCIL_MT_Layers,
     VIEW3D_PT_greasepencil_draw_context_menu,
     VIEW3D_PT_greasepencil_sculpt_context_menu,
