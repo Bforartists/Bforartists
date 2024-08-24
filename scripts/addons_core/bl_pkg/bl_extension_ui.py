@@ -1359,6 +1359,15 @@ def extension_draw_item(
     if pkg_block or item_warnings:
         sub.label(text=item.name, icon='ERROR', translate=False)
     else:
+        # BFA - Add ability to toggle extension from Extension tab
+        if is_installed and item.type == "add-on":
+            module_name = pkg_repo_module_prefix(repo_item) + pkg_id
+            sub.operator(
+                "preferences.addon_disable" if is_enabled else "preferences.addon_enable",
+                icon='CHECKBOX_HLT' if is_enabled else 'CHECKBOX_DEHLT', text="",
+                emboss=False,
+            ).module = module_name 
+        
         sub.label(text=item.name, icon=icon, translate=False) # BFA - Add visual indicators to listings
     del sub
 
