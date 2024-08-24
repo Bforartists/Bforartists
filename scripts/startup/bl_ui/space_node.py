@@ -464,6 +464,7 @@ class NODE_MT_view(Menu):
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
         layout.prop(addon_prefs, "node_show_toolshelf_tabs")
+        layout.prop(snode, "show_region_asset_shelf")
 
         layout.separator()
 
@@ -1366,6 +1367,47 @@ class NODE_PT_view(bpy.types.Panel):
         # Auto-offset nodes (called "insert_offset" in code)
         layout.prop(snode, "use_insert_offset")
 
+
+# BFA - asset shelf
+# TODO: Finalize the node asset shelf poll, for now use the current "S_" Shader asset name 
+class NodeAssetShelf:
+    bl_space_type = 'NODE_EDITOR'
+    bl_options = {'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
+
+
+class NODE_AST_composite_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'CompositorNodeTree'
+    
+    @classmethod
+    def asset_poll(cls, asset):
+        return asset.id_type == 'NODETREE' and not asset.name.startswith("S_")
+
+
+class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'GeometryNodeTree'
+        
+    @classmethod
+    def asset_poll(cls, asset):
+        return asset.id_type == 'NODETREE' and not asset.name.startswith("S_")
+
+
+class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'ShaderNodeTree'
+
+    @classmethod
+    def asset_poll(cls, asset):
+        return asset.id_type == 'NODETREE' and asset.name.startswith("S_")
+
+
 classes = (
     ALL_MT_editormenu_node,
     NODE_HT_header,
@@ -1421,6 +1463,10 @@ classes = (
     NODE_OT_switch_editors_in_compositor,
     NODE_OT_switch_editors_in_geometry,
     NODE_OT_switch_editors_in_shadereditor,
+    #bfa - assetshelf
+    NODE_AST_composite_node_groups,
+    NODE_AST_geometry_node_groups,
+    NODE_AST_shader_node_groups
 )
 
 
