@@ -839,7 +839,7 @@ ModifierTypeInfo modifierType_GreasePencilLineart = {
     /*srna*/ &RNA_GreasePencilLineartModifier,
     /*type*/ ModifierTypeType::Constructive,
     /*flags*/ eModifierTypeFlag_AcceptsGreasePencil,
-    /*icon*/ ICON_NONE,
+    /*icon*/ ICON_MOD_LINEART,
 
     /*copy_data*/ blender::copy_data,
 
