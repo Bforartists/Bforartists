@@ -13,11 +13,18 @@
 
 
 import bpy
-
+from bpy.props import BoolProperty
 from . import properties
+
 
 class BFA_UI_preferences(bpy.types.AddonPreferences):
     bl_idname = __package__
+
+    bfa_toggle_render_levels: BoolProperty(
+        name='Combine Viewport/Render Subdivision Levels',
+        description='When applying modifier levels using hotkeys in the 3D View to adjust the Subdivision Modifier levels\nthis will set the render levels to match the viewport',
+        default=False
+    )
 
     def draw(self, context):
         layout = self.layout
@@ -34,8 +41,12 @@ class BFA_UI_preferences(bpy.types.AddonPreferences):
         layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_jumpframes")
         layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_animationpanel")
 
+        row = layout.row()
+        col = row.column(align=True)
+        col.label(text="Custom Operators:", icon="MODIFIER")
+        layout.prop(self, "bfa_toggle_render_levels")
 
-
+ 
 preferences_classes = [
     BFA_UI_preferences,
 ]

@@ -242,6 +242,12 @@ class SubdivisionSet(Operator):
         if not relative and level < 0:
             self.level = level = 0
 
+        if bpy.context.preferences.addons.get("bfa_power_user_tools"): # BFA - combine viewport/render levels with power user tool addon
+            preferences = context.preferences.addons["bfa_power_user_tools"].preferences # BFA - combine viewport/render levels with power user tool addon
+            use_render_levels = preferences.bfa_toggle_render_levels # BFA - combine viewport/render levels with power user tool addon
+        else:
+            use_render_levels = False # BFA - combine viewport/render levels with power user tool addon
+
         def set_object_subd(obj):
             for mod in obj.modifiers:
                 if mod.type == 'MULTIRES':
@@ -257,6 +263,8 @@ class SubdivisionSet(Operator):
                         elif obj.mode == 'OBJECT':
                             if mod.levels != level:
                                 mod.levels = level
+                            if use_render_levels: # BFA - combine viewport/render levels with power user tool addon
+                                mod.render_levels = level  # BFA - combine viewport/render levels with power user tool addon
                         return
                     else:
                         if obj.mode == 'SCULPT':
@@ -265,6 +273,8 @@ class SubdivisionSet(Operator):
                         elif obj.mode == 'OBJECT':
                             if mod.levels + level <= mod.total_levels:
                                 mod.levels += level
+                            if use_render_levels:   # BFA - combine viewport/render levels with power user tool addon
+                                mod.render_levels += level  # BFA - combine viewport/render levels with power user tool addon
                         return
 
                 elif mod.type == 'SUBSURF':
@@ -273,6 +283,8 @@ class SubdivisionSet(Operator):
                     else:
                         if mod.levels != level:
                             mod.levels = level
+                    if use_render_levels: # BFA - combine viewport/render levels with power user tool addon
+                        mod.render_levels = level # BFA - combine viewport/render levels with power user tool addon
 
                     return
 
@@ -286,6 +298,8 @@ class SubdivisionSet(Operator):
                 else:
                     mod = obj.modifiers.new("Subdivision", 'SUBSURF')
                     mod.levels = level
+                    if use_render_levels:  # Set render_levels if toggle is enabled
+                        mod.render_levels = level
             except BaseException:
                 self.report({'WARNING'}, "Modifiers cannot be added to object: " + obj.name)
 
