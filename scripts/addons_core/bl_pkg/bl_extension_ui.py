@@ -223,6 +223,8 @@ def addon_draw_item_expanded(
         item_warnings,  # `List[str]`
         item_doc_url,  # `str`
         item_tracker_url,  # `str`
+        # BFA - Necessary info for uninstalling extensions
+        repo_index=-1, # `int`
 ):
     from bpy.app.translations import (
         contexts as i18n_contexts,
@@ -246,6 +248,14 @@ def addon_draw_item_expanded(
         rowsub.separator()
     elif addon_type == ADDON_TYPE_LEGACY_USER:
         rowsub.operator("preferences.addon_remove", text="Uninstall", icon='CANCEL').module = mod.__name__ # BFA - icon added
+    elif addon_type == ADDON_TYPE_EXTENSION:
+        # BFA - Add ability to uninstall extension
+        repo_module, pkg_id = mod.__name__.split(".")[1:]
+        props = rowsub.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') 
+        props.repo_index = repo_index
+        props.pkg_id = pkg_id
+        del props
+
     del rowsub
 
     layout.separator(type='LINE')
@@ -446,6 +456,8 @@ def addons_panel_draw_items(
         addon_extension_block_map,  # `Dict[str, PkgBlock_Normalized]`
 
         show_development,  # `bool`
+        # BFA - Mapping of repo indices for extensions to look up
+        extension_repo_index_map, # `Dict[str, int]`
 ):  # `-> Set[str]`
     # NOTE: this duplicates logic from `USERPREF_PT_addons` eventually this logic should be used instead.
     # Don't de-duplicate the logic as this is a temporary state - as long as extensions remains experimental.
@@ -473,6 +485,8 @@ def addons_panel_draw_items(
         is_extension = addon_utils.check_extension(module_name)
         bl_info = addon_utils.module_bl_info(mod)
         show_expanded = bl_info["show_expanded"]
+        # BFA - Look up repo index by module name, return -1 as fallback if addon is not an extension
+        repo_index = extension_repo_index_map.get(module_name, -1)
 
         if is_extension:
             item_warnings = []
@@ -619,6 +633,7 @@ def addons_panel_draw_items(
                 item_doc_url=item_doc_url,
                 # pylint: disable-next=used-before-assignment
                 item_tracker_url=item_tracker_url,
+                repo_index=repo_index # BFA - Necessary info for uninstalling extensions
             )
 
             if is_enabled:
@@ -710,6 +725,7 @@ def addons_panel_draw_impl(
 
     addon_extension_manifest_map = {}
     addon_extension_block_map = {}
+    extension_repo_index_map = {} # BFA - Initialize mapping of repo indices
 
     # The `pkg_manifest_remote` is only needed for `PkgBlock_Normalized` data.
     for repo_index, (
@@ -729,6 +745,8 @@ def addons_panel_draw_impl(
                 continue
             module_name = repo_module_prefix + pkg_id
             addon_extension_manifest_map[module_name] = item_local
+            # BFA - Map module name to their corresponding repo index
+            extension_repo_index_map[module_name] = repo_index
 
             if pkg_manifest_remote is not None:
                 if (item_remote := pkg_manifest_remote.get(pkg_id)) is not None:
@@ -748,6 +766,8 @@ def addons_panel_draw_impl(
         addon_extension_manifest_map=addon_extension_manifest_map,
         addon_extension_block_map=addon_extension_block_map,
         show_development=show_development,
+        # BFA - Pass mapping of repo indices, which is needed to allow for uninstalling extensions
+        extension_repo_index_map=extension_repo_index_map
     )
 
     # Append missing scripts.
