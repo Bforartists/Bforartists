@@ -223,6 +223,7 @@ def addon_draw_item_expanded(
         item_warnings,  # `List[str]`
         item_doc_url,  # `str`
         item_tracker_url,  # `str`
+        # BFA - Necessary info for uninstalling extensions
         repo_index=-1, # `int`
 ):
     from bpy.app.translations import (
@@ -455,6 +456,7 @@ def addons_panel_draw_items(
         addon_extension_block_map,  # `Dict[str, PkgBlock_Normalized]`
 
         show_development,  # `bool`
+        # BFA - Mapping of repo indices for extensions to look up
         extension_repo_index_map, # `Dict[str, int]`
 ):  # `-> Set[str]`
     # NOTE: this duplicates logic from `USERPREF_PT_addons` eventually this logic should be used instead.
@@ -483,6 +485,7 @@ def addons_panel_draw_items(
         is_extension = addon_utils.check_extension(module_name)
         bl_info = addon_utils.module_bl_info(mod)
         show_expanded = bl_info["show_expanded"]
+        # BFA - Look up repo index by module name, return -1 as fallback if addon is not an extension
         repo_index = extension_repo_index_map.get(module_name, -1)
 
         if is_extension:
@@ -630,7 +633,7 @@ def addons_panel_draw_items(
                 item_doc_url=item_doc_url,
                 # pylint: disable-next=used-before-assignment
                 item_tracker_url=item_tracker_url,
-                repo_index=repo_index
+                repo_index=repo_index # BFA - Necessary info for uninstalling extensions
             )
 
             if is_enabled:
@@ -722,7 +725,7 @@ def addons_panel_draw_impl(
 
     addon_extension_manifest_map = {}
     addon_extension_block_map = {}
-    extension_repo_index_map = {}
+    extension_repo_index_map = {} # BFA - Initialize mapping of repo indices
 
     # The `pkg_manifest_remote` is only needed for `PkgBlock_Normalized` data.
     for repo_index, (
@@ -742,6 +745,7 @@ def addons_panel_draw_impl(
                 continue
             module_name = repo_module_prefix + pkg_id
             addon_extension_manifest_map[module_name] = item_local
+            # BFA - Map module name to their corresponding repo index
             extension_repo_index_map[module_name] = repo_index
 
             if pkg_manifest_remote is not None:
