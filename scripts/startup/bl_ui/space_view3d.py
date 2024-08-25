@@ -1279,7 +1279,7 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_sculpt_grease_pencil_copy")  # bfa menu
 
             elif mode_string == "VERTEX_GPENCIL":  # BFA
-                layout.menu("VIEW3D_MT_greasepencil_animation")  # BFA
+                layout.menu("VIEW3D_MT_edit_greasepencil_animation")  # BFA
                 layout.menu("GPENCIL_MT_layer_active", text="Active Layer")  # BFA
 
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
@@ -6936,7 +6936,7 @@ class VIEW3D_MT_draw_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_greasepencil_animation") # BFA - menu
+        layout.menu("VIEW3D_MT_edit_greasepencil_animation") # BFA - menu
 
         layout.separator()
 
@@ -6977,7 +6977,7 @@ class VIEW3D_MT_weight_grease_pencil(Menu):
 
         #layout.menu("VIEW3D_MT_gpencil_autoweights") # BFA - Legacy
 
-class VIEW3D_MT_greasepencil_animation(Menu):
+class VIEW3D_MT_edit_greasepencil_animation(Menu):
     bl_label = "Animation"
 
     def draw(self, context):
@@ -7051,7 +7051,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_greasepencil_animation")
+        layout.menu("VIEW3D_MT_edit_greasepencil_animation")
         layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
         #layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE") # BFA - Legacy
 
@@ -11047,7 +11047,7 @@ classes = (
     VIEW3D_MT_edit_gpencil_stroke, # BFA - legacy
     VIEW3D_MT_edit_greasepencil_stroke,
     VIEW3D_MT_edit_greasepencil_point,
-    VIEW3D_MT_greasepencil_animation,
+    VIEW3D_MT_edit_greasepencil_animation,
     VIEW3D_MT_edit_curve,
     VIEW3D_MT_edit_curve_ctrlpoints,
     VIEW3D_MT_edit_curve_segments,
