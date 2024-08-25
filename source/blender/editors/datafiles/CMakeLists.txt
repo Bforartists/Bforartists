@@ -1313,6 +1313,7 @@ if(WITH_BLENDER)
       mod_mirror
       mod_soft
       mod_subsurf
+      mod_lineart
       hook
       mod_physics
       mod_particles
