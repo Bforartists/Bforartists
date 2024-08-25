@@ -789,7 +789,8 @@ class NODE_MT_node_color_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("node.node_copy_color", icon='COPY_ID')
+        # BFA - Remove "Copy Color" Operator from this context menu 
+        #layout.operator("node.node_copy_color", icon='COPY_ID')
 
 
 class NODE_MT_context_menu_show_hide_menu(Menu):
@@ -978,8 +979,13 @@ class NODE_PT_active_node_color(Panel):
         layout.enabled = node.use_custom_color
 
         row = layout.row()
-        row.prop(node, "color", text="")
-        row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
+        
+        subrow = row.row(align=True)
+        subrow.prop(node, "color", text="")
+        subrow.operator("node.node_copy_color", icon='COPY_ID', text="")
+        
+        # BFA - Temporarily disable this menu for as long as it doesn't have operators
+        #row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
 
 
 class NODE_PT_active_node_properties(Panel):
