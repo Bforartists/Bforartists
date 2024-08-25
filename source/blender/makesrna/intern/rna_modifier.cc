@@ -251,7 +251,7 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
      "Grease Pencil length modifier"},
     {eModifierType_GreasePencilLineart,
      "LINEART",
-     ICON_GREASEPENCIL,
+     ICON_MOD_LINEART,
      "Line Art",
      "Generate Line Art from scene geometries"},
     {eModifierType_GreasePencilMirror,
@@ -8546,7 +8546,7 @@ static void rna_def_modifier_grease_pencil_lineart(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna, "Line Art Modifier", "Generate Line Art strokes from selected source");
   RNA_def_struct_sdna(srna, "GreasePencilLineartModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_NONE);
+  RNA_def_struct_ui_icon(srna, ICON_MOD_LINEART);
 
   RNA_define_lib_overridable(true);
 
