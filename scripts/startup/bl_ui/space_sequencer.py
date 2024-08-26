@@ -1305,6 +1305,10 @@ class SEQUENCER_MT_strip(Menu):
             layout.menu("SEQUENCER_MT_strip_lock_mute")
 
             layout.separator()
+            layout.operator("sequencer.connect", icon="LINKED").toggle = True
+            layout.operator("sequencer.disconnect")
+
+            layout.separator()
             layout.menu("SEQUENCER_MT_strip_input")
 
 
@@ -1542,8 +1546,11 @@ class SEQUENCER_MT_context_menu(Menu):
         layout.menu("SEQUENCER_MT_color_tag_picker")
 
         layout.separator()
-
         layout.menu("SEQUENCER_MT_strip_lock_mute")
+
+        layout.separator()
+        layout.operator("sequencer.connect", icon="LINKED").toggle = True
+        layout.operator("sequencer.disconnect")
 
     def draw_retime(self, context):
         layout = self.layout
