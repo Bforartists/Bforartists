@@ -301,7 +301,7 @@ void do_enhance_details_brush(const Depsgraph &depsgraph,
   bke::pbvh::Tree &pbvh = *ss.pbvh;
 
   if (SCULPT_stroke_is_first_brush_step(*ss.cache)) {
-    ss.cache->detail_directions.reinitialize(SCULPT_vertex_count_get(ss));
+    ss.cache->detail_directions.reinitialize(SCULPT_vertex_count_get(object));
     Vector<bke::pbvh::Node *> effective_nodes = bke::pbvh::search_gather(
         pbvh, [&](bke::pbvh::Node &node) { return !node_fully_masked_or_hidden(node); });
     calc_smooth_translations(depsgraph, object, effective_nodes, ss.cache->detail_directions);
@@ -331,7 +331,7 @@ void do_enhance_details_brush(const Depsgraph &depsgraph,
                      object,
                      tls,
                      positions_orig);
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
+          BKE_pbvh_node_mark_positions_update(*nodes[i]);
         }
       });
       break;
