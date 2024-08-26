@@ -1334,7 +1334,7 @@ static void do_bend_brush(const Depsgraph &depsgraph,
                          strength,
                          deform_target,
                          positions_orig);
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
+          BKE_pbvh_node_mark_positions_update(*nodes[i]);
         }
       });
       break;
@@ -1621,7 +1621,7 @@ static void do_slide_brush(const Depsgraph &depsgraph,
                           strength,
                           deform_target,
                           positions_orig);
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
+          BKE_pbvh_node_mark_positions_update(*nodes[i]);
         }
       });
       break;
@@ -1891,7 +1891,7 @@ static void do_inflate_brush(const Depsgraph &depsgraph,
                             strength,
                             deform_target,
                             positions_orig);
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
+          BKE_pbvh_node_mark_positions_update(*nodes[i]);
         }
       });
       break;
@@ -2162,7 +2162,7 @@ static void do_grab_brush(const Depsgraph &depsgraph,
                          strength,
                          deform_target,
                          positions_orig);
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
+          BKE_pbvh_node_mark_positions_update(*nodes[i]);
         }
       });
       break;
@@ -2442,7 +2442,7 @@ static void do_twist_brush(const Depsgraph &depsgraph,
                           strength,
                           deform_target,
                           positions_orig);
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
+          BKE_pbvh_node_mark_positions_update(*nodes[i]);
         }
       });
       break;
@@ -2844,7 +2844,7 @@ static void do_smooth_brush(const Depsgraph &depsgraph,
                            strength,
                            deform_target,
                            positions_orig);
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
+          BKE_pbvh_node_mark_positions_update(*nodes[i]);
         }
       });
       break;
@@ -3427,28 +3427,24 @@ void do_boundary_brush(const Depsgraph &depsgraph,
 std::unique_ptr<SculptBoundary> data_init(const Depsgraph &depsgraph,
                                           Object &object,
                                           const Brush *brush,
-                                          const PBVHVertRef initial_vert,
+                                          const int initial_vert,
                                           const float radius)
 {
   /* TODO: Temporary bridge method to help in refactoring, this method should be deprecated
    * entirely. */
   const SculptSession &ss = *object.sculpt;
-  if (initial_vert.i == PBVH_REF_NONE) {
-    return nullptr;
-  }
 
   switch (ss.pbvh->type()) {
     case (bke::pbvh::Type::Mesh): {
-      const int vert = initial_vert.i;
-      return data_init_mesh(depsgraph, object, brush, vert, radius);
+      return data_init_mesh(depsgraph, object, brush, initial_vert, radius);
     }
     case (bke::pbvh::Type::Grids): {
       const CCGKey &key = BKE_subdiv_ccg_key_top_level(*ss.subdiv_ccg);
-      const SubdivCCGCoord vert = SubdivCCGCoord::from_index(key, initial_vert.i);
+      const SubdivCCGCoord vert = SubdivCCGCoord::from_index(key, initial_vert);
       return data_init_grids(object, brush, vert, radius);
     }
     case (bke::pbvh::Type::BMesh): {
-      BMVert *vert = reinterpret_cast<BMVert *>(initial_vert.i);
+      BMVert *vert = BM_vert_at_index(ss.bm, initial_vert);
       return data_init_bmesh(object, brush, vert, radius);
     }
   }
