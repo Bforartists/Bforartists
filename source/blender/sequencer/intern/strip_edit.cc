@@ -25,6 +25,8 @@
 #include "SEQ_add.hh"
 #include "SEQ_animation.hh"
 #include "SEQ_channels.hh"
+#include "SEQ_connect.hh"
+
 #include "SEQ_edit.hh"
 #include "SEQ_effects.hh"
 #include "SEQ_iterator.hh"
@@ -37,31 +39,34 @@
 
 #include <cstring>
 
-bool SEQ_edit_sequence_swap(Scene *scene, Sequence *seq_a, Sequence *seq_b, const char **error_str)
+bool SEQ_edit_sequence_swap(Scene *scene,
+                            Sequence *seq_a,
+                            Sequence *seq_b,
+                            const char **r_error_str)
 {
   char name[sizeof(seq_a->name)];
 
   if (SEQ_time_strip_length_get(scene, seq_a) != SEQ_time_strip_length_get(scene, seq_b)) {
-    *error_str = N_("Strips must be the same length");
+    *r_error_str = N_("Strips must be the same length");
     return false;
   }
 
   /* type checking, could be more advanced but disallow sound vs non-sound copy */
   if (seq_a->type != seq_b->type) {
     if (seq_a->type == SEQ_TYPE_SOUND_RAM || seq_b->type == SEQ_TYPE_SOUND_RAM) {
-      *error_str = N_("Strips were not compatible");
+      *r_error_str = N_("Strips were not compatible");
       return false;
     }
 
     /* disallow effects to swap with non-effects strips */
     if ((seq_a->type & SEQ_TYPE_EFFECT) != (seq_b->type & SEQ_TYPE_EFFECT)) {
-      *error_str = N_("Strips were not compatible");
+      *r_error_str = N_("Strips were not compatible");
       return false;
     }
 
     if ((seq_a->type & SEQ_TYPE_EFFECT) && (seq_b->type & SEQ_TYPE_EFFECT)) {
       if (SEQ_effect_get_num_inputs(seq_a->type) != SEQ_effect_get_num_inputs(seq_b->type)) {
-        *error_str = N_("Strips must have the same number of inputs");
+        *r_error_str = N_("Strips must have the same number of inputs");
         return false;
       }
     }
@@ -209,34 +214,34 @@ bool SEQ_edit_move_strip_to_seqbase(Scene *scene,
 bool SEQ_edit_move_strip_to_meta(Scene *scene,
                                  Sequence *src_seq,
                                  Sequence *dst_seqm,
-                                 const char **error_str)
+                                 const char **r_error_str)
 {
   /* Find the appropriate seqbase */
   Editing *ed = SEQ_editing_get(scene);
   ListBase *seqbase = SEQ_get_seqbase_by_seq(scene, src_seq);
 
   if (dst_seqm->type != SEQ_TYPE_META) {
-    *error_str = N_("Cannot move strip to non-meta strip");
+    *r_error_str = N_("Cannot move strip to non-meta strip");
     return false;
   }
 
   if (src_seq == dst_seqm) {
-    *error_str = N_("Strip cannot be moved into itself");
+    *r_error_str = N_("Strip cannot be moved into itself");
     return false;
   }
 
   if (seqbase == &dst_seqm->seqbase) {
-    *error_str = N_("Moved strip is already inside provided meta strip");
+    *r_error_str = N_("Moved strip is already inside provided meta strip");
     return false;
   }
 
   if (src_seq->type == SEQ_TYPE_META && SEQ_exists_in_seqbase(dst_seqm, &src_seq->seqbase)) {
-    *error_str = N_("Moved strip is parent of provided meta strip");
+    *r_error_str = N_("Moved strip is parent of provided meta strip");
     return false;
   }
 
   if (!SEQ_exists_in_seqbase(dst_seqm, &ed->seqbase)) {
-    *error_str = N_("Cannot move strip to different scene");
+    *r_error_str = N_("Cannot move strip to different scene");
     return false;
   }
 
@@ -305,9 +310,9 @@ static void seq_split_set_left_hold_offset(Main *bmain,
   SEQ_time_left_handle_frame_set(scene, seq, timeline_frame);
 }
 
-static bool seq_edit_split_effect_intersect_check(const Scene *scene,
-                                                  const Sequence *seq,
-                                                  const int timeline_frame)
+static bool seq_edit_split_intersect_check(const Scene *scene,
+                                           const Sequence *seq,
+                                           const int timeline_frame)
 {
   return timeline_frame > SEQ_time_left_handle_frame_get(scene, seq) &&
          timeline_frame < SEQ_time_right_handle_frame_get(scene, seq);
@@ -320,7 +325,7 @@ static void seq_edit_split_handle_strip_offsets(Main *bmain,
                                                 const int timeline_frame,
                                                 const eSeqSplitMethod method)
 {
-  if (seq_edit_split_effect_intersect_check(scene, right_seq, timeline_frame)) {
+  if (seq_edit_split_intersect_check(scene, right_seq, timeline_frame)) {
     switch (method) {
       case SEQ_SPLIT_SOFT:
         SEQ_time_left_handle_frame_set(scene, right_seq, timeline_frame);
@@ -331,7 +336,7 @@ static void seq_edit_split_handle_strip_offsets(Main *bmain,
     }
   }
 
-  if (seq_edit_split_effect_intersect_check(scene, left_seq, timeline_frame)) {
+  if (seq_edit_split_intersect_check(scene, left_seq, timeline_frame)) {
     switch (method) {
       case SEQ_SPLIT_SOFT:
         SEQ_time_right_handle_frame_set(scene, left_seq, timeline_frame);
@@ -349,24 +354,21 @@ static bool seq_edit_split_effect_inputs_intersect(const Scene *scene,
 {
   bool input_does_intersect = false;
   if (seq->seq1) {
-    input_does_intersect |= seq_edit_split_effect_intersect_check(
-        scene, seq->seq1, timeline_frame);
+    input_does_intersect |= seq_edit_split_intersect_check(scene, seq->seq1, timeline_frame);
     if ((seq->seq1->type & SEQ_TYPE_EFFECT) != 0) {
       input_does_intersect |= seq_edit_split_effect_inputs_intersect(
           scene, seq->seq1, timeline_frame);
     }
   }
   if (seq->seq2) {
-    input_does_intersect |= seq_edit_split_effect_intersect_check(
-        scene, seq->seq2, timeline_frame);
+    input_does_intersect |= seq_edit_split_intersect_check(scene, seq->seq2, timeline_frame);
     if ((seq->seq1->type & SEQ_TYPE_EFFECT) != 0) {
       input_does_intersect |= seq_edit_split_effect_inputs_intersect(
           scene, seq->seq2, timeline_frame);
     }
   }
   if (seq->seq3) {
-    input_does_intersect |= seq_edit_split_effect_intersect_check(
-        scene, seq->seq3, timeline_frame);
+    input_does_intersect |= seq_edit_split_intersect_check(scene, seq->seq3, timeline_frame);
     if ((seq->seq1->type & SEQ_TYPE_EFFECT) != 0) {
       input_does_intersect |= seq_edit_split_effect_inputs_intersect(
           scene, seq->seq3, timeline_frame);
@@ -389,7 +391,7 @@ static bool seq_edit_split_operation_permitted_check(const Scene *scene,
     if ((seq->type & SEQ_TYPE_EFFECT) == 0) {
       continue;
     }
-    if (!seq_edit_split_effect_intersect_check(scene, seq, timeline_frame)) {
+    if (!seq_edit_split_intersect_check(scene, seq, timeline_frame)) {
       continue;
     }
     if (SEQ_effect_get_num_inputs(seq->type) <= 1) {
@@ -415,11 +417,11 @@ Sequence *SEQ_edit_strip_split(Main *bmain,
                                const eSeqSplitMethod method,
                                const char **r_error)
 {
-  if (!seq_edit_split_effect_intersect_check(scene, seq, timeline_frame)) {
+  if (!seq_edit_split_intersect_check(scene, seq, timeline_frame)) {
     return nullptr;
   }
 
-  /* Whole strip chain must be duplicated in order to preserve relationships. */
+  /* Whole strip effect chain must be duplicated in order to preserve relationships. */
   blender::VectorSet<Sequence *> strips;
   strips.add(seq);
   SEQ_iterator_set_expand(scene, seqbase, strips, SEQ_query_strip_effect_chain);
@@ -427,6 +429,13 @@ Sequence *SEQ_edit_strip_split(Main *bmain,
   if (!seq_edit_split_operation_permitted_check(scene, strips, timeline_frame, r_error)) {
     return nullptr;
   }
+
+  /* All connected strips (that are selected and at the cut frame) must also be duplicated. */
+  blender::VectorSet<Sequence *> connections = SEQ_get_connected_strips(seq);
+  connections.remove_if([&](Sequence *seq) {
+    return !(seq->flag & SELECT) || !seq_edit_split_intersect_check(scene, seq, timeline_frame);
+  });
+  strips.add_multiple(connections.as_span());
 
   /* Store `F-Curves`, so original ones aren't renamed. */
   SeqAnimationBackup animation_backup{};
