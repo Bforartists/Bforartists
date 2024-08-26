@@ -573,6 +573,10 @@ if(WITH_BLENDER)
       marksharpverts
       rotateccw
       projectfromview_bounds
+      area_dock
+      area_join_down
+      area_join_left
+      area_join_up
       join_areas
       swap_areas
 
