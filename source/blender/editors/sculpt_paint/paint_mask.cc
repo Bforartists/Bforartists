@@ -5,6 +5,7 @@
 /** \file
  * \ingroup edsculpt
  */
+#include "paint_mask.hh"
 
 #include <cstdlib>
 
@@ -282,7 +283,7 @@ void update_mask_mesh(const Depsgraph &depsgraph,
         undo::push_node(depsgraph, object, node, undo::Type::Mask);
         array_utils::scatter<float>(tls.mask, verts, mask.span);
         bke::pbvh::node_update_mask_mesh(mask.span, *node);
-        BKE_pbvh_node_mark_redraw(node);
+        BKE_pbvh_node_mark_redraw(*node);
       }
     });
   });
@@ -370,7 +371,7 @@ static Span<int> get_hidden_verts(const bke::pbvh::Node &node,
     return {};
   }
   const Span<int> verts = bke::pbvh::node_unique_verts(node);
-  if (BKE_pbvh_node_fully_hidden_get(&node)) {
+  if (BKE_pbvh_node_fully_hidden_get(node)) {
     return verts;
   }
   indices.resize(verts.size());
@@ -427,7 +428,7 @@ static bool try_remove_mask_mesh(const Depsgraph &depsgraph,
         continue;
       }
       undo::push_node(depsgraph, object, node, undo::Type::Mask);
-      BKE_pbvh_node_mark_redraw(node);
+      BKE_pbvh_node_mark_redraw(*node);
     }
   });
 
@@ -462,7 +463,7 @@ static void fill_mask_mesh(const Depsgraph &depsgraph,
       }
       undo::push_node(depsgraph, object, node, undo::Type::Mask);
       mask.span.fill_indices(verts, value);
-      BKE_pbvh_node_mark_redraw(node);
+      BKE_pbvh_node_mark_redraw(*node);
     }
   });
 
@@ -523,7 +524,7 @@ static void fill_mask_grids(Main &bmain,
                                 [&](const int i) { CCG_elem_offset_mask(key, elem, i) = value; });
         }
       }
-      BKE_pbvh_node_mark_redraw(node);
+      BKE_pbvh_node_mark_redraw(*node);
       any_changed = true;
     }
   });
@@ -562,7 +563,7 @@ static void fill_mask_bmesh(const Depsgraph &depsgraph,
         }
       }
       if (redraw) {
-        BKE_pbvh_node_mark_redraw(node);
+        BKE_pbvh_node_mark_redraw(*node);
       }
     }
   });
@@ -572,7 +573,7 @@ static void fill_mask(
     Main &bmain, const Scene &scene, Depsgraph &depsgraph, Object &object, const float value)
 {
   bke::pbvh::Tree &pbvh = *object.sculpt->pbvh;
-  Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(pbvh, {});
+  Vector<bke::pbvh::Node *> nodes = bke::pbvh::all_leaf_nodes(pbvh);
   switch (pbvh.type()) {
     case bke::pbvh::Type::Mesh:
       fill_mask_mesh(depsgraph, object, value, nodes);
@@ -586,8 +587,8 @@ static void fill_mask(
   }
   /* Avoid calling #BKE_pbvh_node_mark_update_mask by doing that update here. */
   for (bke::pbvh::Node *node : nodes) {
-    BKE_pbvh_node_fully_masked_set(node, value == 1.0f);
-    BKE_pbvh_node_fully_unmasked_set(node, value == 0.0f);
+    BKE_pbvh_node_fully_masked_set(*node, value == 1.0f);
+    BKE_pbvh_node_fully_unmasked_set(*node, value == 0.0f);
   }
 }
 
@@ -628,7 +629,7 @@ static void invert_mask_grids(Main &bmain,
           });
         }
       }
-      BKE_pbvh_node_mark_update_mask(node);
+      BKE_pbvh_node_mark_update_mask(*node);
       bke::pbvh::node_update_mask_grids(key, grids, *node);
     }
   });
@@ -655,7 +656,7 @@ static void invert_mask_bmesh(const Depsgraph &depsgraph,
           BM_ELEM_CD_SET_FLOAT(vert, offset, 1.0f - BM_ELEM_CD_GET_FLOAT(vert, offset));
         }
       }
-      BKE_pbvh_node_mark_update_mask(node);
+      BKE_pbvh_node_mark_update_mask(*node);
       bke::pbvh::node_update_mask_bmesh(offset, *node);
     }
   });
@@ -820,7 +821,7 @@ static void gesture_apply_for_symmetry_pass(bContext & /*C*/, gesture::GestureDa
                 mask = mask_gesture_get_new_value(mask, op.mode, op.value);
               }
             });
-            BKE_pbvh_node_mark_update_mask(node);
+            BKE_pbvh_node_mark_update_mask(*node);
           }
         }
       });
@@ -843,7 +844,7 @@ static void gesture_apply_for_symmetry_pass(bContext & /*C*/, gesture::GestureDa
               BM_ELEM_CD_SET_FLOAT(vert, offset, new_mask);
             }
           }
-          BKE_pbvh_node_mark_update_mask(node);
+          BKE_pbvh_node_mark_update_mask(*node);
         }
       });
       break;
