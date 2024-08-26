@@ -27,7 +27,6 @@
 #include "DNA_brush_enums.h"
 
 #include "ED_view3d.hh"
-#include "sculpt_undo.hh"
 
 namespace blender::ed::sculpt_paint {
 namespace auto_mask {
@@ -39,6 +38,9 @@ struct SculptBoundary;
 }
 namespace cloth {
 struct SimulationData;
+}
+namespace pose {
+struct IKChain;
 }
 namespace undo {
 struct Node;
@@ -103,23 +105,6 @@ struct SculptVertexNeighborIter {
   bool is_duplicate;
 };
 
-/* Sculpt Original Data */
-struct SculptOrigVertData {
-  BMLog *bm_log;
-
-  blender::ed::sculpt_paint::undo::Type undo_type;
-  const blender::float3 *coords;
-  const blender::float3 *normals;
-  const float *vmasks;
-  const blender::float4 *colors;
-
-  /* Original coordinate, normal, and mask. */
-  const float *co;
-  const float *no;
-  float mask;
-  const float *col;
-};
-
 /* Factor of brush to have rake point following behind
  * (could be configurable but this is reasonable default). */
 #define SCULPT_RAKE_BRUSH_FACTOR 0.25f
@@ -143,30 +128,6 @@ enum class TransformDisplacementMode {
 #define SCULPT_CLAY_STABILIZER_LEN 10
 
 namespace blender::ed::sculpt_paint {
-
-/** Pose Brush IK Chain. */
-struct SculptPoseIKChainSegment {
-  float3 orig;
-  float3 head;
-
-  float3 initial_orig;
-  float3 initial_head;
-  float len;
-  float3 scale;
-  float rot[4];
-  Array<float> weights;
-
-  /* Store a 4x4 transform matrix for each of the possible combinations of enabled XYZ symmetry
-   * axis. */
-  std::array<float4x4, PAINT_SYMM_AREAS> trans_mat;
-  std::array<float4x4, PAINT_SYMM_AREAS> pivot_mat;
-  std::array<float4x4, PAINT_SYMM_AREAS> pivot_mat_inv;
-};
-
-struct SculptPoseIKChain {
-  Array<SculptPoseIKChainSegment> segments;
-  float3 grab_delta_offset;
-};
 
 /**
  * This structure contains all the temporary data
@@ -217,8 +178,7 @@ struct StrokeCache {
    */
   float bstrength;
   float normal_weight; /* from brush (with optional override) */
-  float x_tilt;
-  float y_tilt;
+  float2 tilt;
 
   /* Position of the mouse corresponding to the stroke location, modified by the paint_stroke
    * operator according to the stroke type. */
@@ -299,8 +259,6 @@ struct StrokeCache {
    */
   bool accum;
 
-  float3 anchored_location;
-
   /* Paint Brush. */
   struct {
     float hardness;
@@ -311,7 +269,7 @@ struct StrokeCache {
   } paint_brush;
 
   /* Pose brush */
-  std::unique_ptr<SculptPoseIKChain> pose_ik_chain;
+  std::unique_ptr<pose::IKChain> pose_ik_chain;
 
   /* Enhance Details. */
   Array<float3> detail_directions;
@@ -371,8 +329,6 @@ struct StrokeCache {
 
   rcti previous_r; /* previous redraw rectangle */
   rcti current_r;  /* current redraw rectangle */
-
-  int stroke_id;
 
   ~StrokeCache();
 };
@@ -521,7 +477,7 @@ void sculpt_project_v3_normal_align(const SculptSession &ss,
 /** Ensure random access; required for blender::bke::pbvh::Type::BMesh */
 void SCULPT_vertex_random_access_ensure(SculptSession &ss);
 
-int SCULPT_vertex_count_get(const SculptSession &ss);
+int SCULPT_vertex_count_get(const Object &object);
 const float *SCULPT_vertex_co_get(const Depsgraph &depsgraph,
                                   const Object &object,
                                   PBVHVertRef vertex);
