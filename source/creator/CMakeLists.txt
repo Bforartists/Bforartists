@@ -987,7 +987,7 @@ elseif(WIN32)
     ALL
   )
 
- if(WITH_VULKAN_BACKEND)
+  if(WITH_VULKAN_BACKEND)
     windows_install_shared_manifest(
       FILES ${LIBDIR}/vulkan/bin/vulkan-1.dll
       ALL
