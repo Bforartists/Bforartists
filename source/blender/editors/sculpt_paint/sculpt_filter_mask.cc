@@ -23,9 +23,11 @@
 
 #include "mesh_brush_common.hh"
 #include "paint_intern.hh"
+#include "paint_mask.hh"
 #include "sculpt_hide.hh"
 #include "sculpt_intern.hh"
 #include "sculpt_smooth.hh"
+#include "sculpt_undo.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -123,7 +125,7 @@ static void apply_new_mask_mesh(const Depsgraph &depsgraph,
       }
       undo::push_node(depsgraph, object, nodes[i], undo::Type::Mask);
       scatter_data_mesh(new_node_mask, verts, mask);
-      BKE_pbvh_node_mark_update_mask(nodes[i]);
+      BKE_pbvh_node_mark_update_mask(*nodes[i]);
     }
   });
 }
@@ -237,7 +239,7 @@ static void increase_contrast_mask_mesh(const Depsgraph &depsgraph,
 
   undo::push_node(depsgraph, object, &node, undo::Type::Mask);
   scatter_data_mesh(new_mask.as_span(), verts, mask);
-  BKE_pbvh_node_mark_update_mask(&node);
+  BKE_pbvh_node_mark_update_mask(node);
 }
 
 static void decrease_contrast_mask_mesh(const Depsgraph &depsgraph,
@@ -261,7 +263,7 @@ static void decrease_contrast_mask_mesh(const Depsgraph &depsgraph,
 
   undo::push_node(depsgraph, object, &node, undo::Type::Mask);
   scatter_data_mesh(new_mask.as_span(), verts, mask);
-  BKE_pbvh_node_mark_update_mask(&node);
+  BKE_pbvh_node_mark_update_mask(node);
 }
 
 BLI_NOINLINE static void copy_old_hidden_mask_grids(const SubdivCCG &subdiv_ccg,
@@ -302,7 +304,7 @@ static void apply_new_mask_grids(const Depsgraph &depsgraph,
       }
       undo::push_node(depsgraph, object, nodes[i], undo::Type::Mask);
       scatter_mask_grids(new_node_mask, subdiv_ccg, grids);
-      BKE_pbvh_node_mark_update_mask(nodes[i]);
+      BKE_pbvh_node_mark_update_mask(*nodes[i]);
     }
   });
 
@@ -438,7 +440,7 @@ static void increase_contrast_mask_grids(const Depsgraph &depsgraph,
 
   undo::push_node(depsgraph, object, &node, undo::Type::Mask);
   scatter_mask_grids(new_mask.as_span(), subdiv_ccg, grids);
-  BKE_pbvh_node_mark_update_mask(&node);
+  BKE_pbvh_node_mark_update_mask(node);
 }
 
 static void decrease_contrast_mask_grids(const Depsgraph &depsgraph,
@@ -469,7 +471,7 @@ static void decrease_contrast_mask_grids(const Depsgraph &depsgraph,
 
   undo::push_node(depsgraph, object, &node, undo::Type::Mask);
   scatter_mask_grids(new_mask.as_span(), subdiv_ccg, grids);
-  BKE_pbvh_node_mark_update_mask(&node);
+  BKE_pbvh_node_mark_update_mask(node);
 }
 
 BLI_NOINLINE static void copy_old_hidden_mask_bmesh(const int mask_offset,
@@ -504,7 +506,7 @@ static void apply_new_mask_bmesh(const Depsgraph &depsgraph,
       }
       undo::push_node(depsgraph, object, nodes[i], undo::Type::Mask);
       scatter_mask_bmesh(new_node_mask, bm, verts);
-      BKE_pbvh_node_mark_update_mask(nodes[i]);
+      BKE_pbvh_node_mark_update_mask(*nodes[i]);
     }
   });
 }
@@ -604,7 +606,7 @@ static void increase_contrast_mask_bmesh(const Depsgraph &depsgraph,
 
   undo::push_node(depsgraph, object, &node, undo::Type::Mask);
   scatter_mask_bmesh(new_mask.as_span(), bm, verts);
-  BKE_pbvh_node_mark_update_mask(&node);
+  BKE_pbvh_node_mark_update_mask(node);
 }
 
 static void decrease_contrast_mask_bmesh(const Depsgraph &depsgraph,
@@ -634,7 +636,7 @@ static void decrease_contrast_mask_bmesh(const Depsgraph &depsgraph,
 
   undo::push_node(depsgraph, object, &node, undo::Type::Mask);
   scatter_mask_bmesh(new_mask.as_span(), bm, verts);
-  BKE_pbvh_node_mark_update_mask(&node);
+  BKE_pbvh_node_mark_update_mask(node);
 }
 
 static int sculpt_mask_filter_exec(bContext *C, wmOperator *op)
@@ -658,7 +660,7 @@ static int sculpt_mask_filter_exec(bContext *C, wmOperator *op)
   SculptSession &ss = *ob.sculpt;
   bke::pbvh::Tree &pbvh = *ob.sculpt->pbvh;
 
-  Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(pbvh, {});
+  Vector<bke::pbvh::Node *> nodes = bke::pbvh::all_leaf_nodes(pbvh);
   undo::push_begin(ob, op);
 
   int iterations = RNA_int_get(op->ptr, "iterations");
@@ -668,7 +670,7 @@ static int sculpt_mask_filter_exec(bContext *C, wmOperator *op)
    * One iteration per 50000 vertices in the mesh should be fine in most cases.
    * Maybe we want this to be configurable. */
   if (RNA_boolean_get(op->ptr, "auto_iteration_count")) {
-    iterations = int(SCULPT_vertex_count_get(ss) / 50000.0f) + 1;
+    iterations = int(SCULPT_vertex_count_get(ob) / 50000.0f) + 1;
   }
 
   threading::EnumerableThreadSpecific<FilterLocalData> all_tls;
