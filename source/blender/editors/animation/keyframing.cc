@@ -1029,7 +1029,7 @@ static bool insert_key_multi(Main *bmain,
                              const blender::Vector<PointerRNA> &pointers,
                              const std::optional<blender::StringRefNull> channel_group,
                              const RNAPath &rna_path,
-                             const std::optional<float> scene_frame,
+                             const std::optional<float> /*scene_frame*/, /*BFA - This parameter is intentionally unused*/
                              const AnimationEvalContext &anim_eval_context,
                              const eBezTriple_KeyframeType key_type,
                              const eInsertKeyFlags insert_key_flags,

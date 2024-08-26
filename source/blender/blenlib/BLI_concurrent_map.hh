@@ -44,8 +44,8 @@ namespace blender {
  *
  * \note: #ConcurrentMap does not support iteration over all values.
  *
- * This is a thin wrapper around tbb::concurrent_hash_map that also has a fallback implemention if
- * TBB is not available. The fallback implementation is not optimized for performance. It mainly
+ * This is a thin wrapper around #tbb::concurrent_hash_map that also has a fallback implementation
+ * if TBB is not available. The fallback implementation is not optimized for performance. It mainly
  * intends to be a simple implementation that can compile whenever the TBB variant can compile.
  */
 template<typename Key,
@@ -55,6 +55,9 @@ template<typename Key,
 class ConcurrentMap {
  public:
   using size_type = int64_t;
+
+  /* Sometimes TBB requires the value to be constructible. */
+  static_assert(std::is_copy_constructible_v<Value>);
 
 #ifdef WITH_TBB
  private:
@@ -82,7 +85,7 @@ class ConcurrentMap {
    * may have write access to it at a time. The looked up value can be accessed through the
    * accessor.
    *
-   * \return True if the lookup was successfull.
+   * \return True if the lookup was successful.
    */
   bool lookup(MutableAccessor &accessor, const Key &key)
   {

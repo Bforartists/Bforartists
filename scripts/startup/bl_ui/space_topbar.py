@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-import os
-from pathlib import Path
+import os # BFA
+from pathlib import Path # BFA
 
-user_path = Path(bpy.utils.resource_path('USER')).parent
-local_path = Path(bpy.utils.resource_path('LOCAL')).parent
+user_path = Path(bpy.utils.resource_path('USER')).parent # BFA
+local_path = Path(bpy.utils.resource_path('LOCAL')).parent # BFA
 
 from bpy.types import Header, Menu, Panel
 
@@ -500,7 +500,7 @@ class TOPBAR_MT_file_import(Menu):
                 "wm.usd_import", text="Universal Scene Description (.usd*)", icon="LOAD_USD")
 
         if bpy.app.build_options.io_gpencil:
-            self.layout.operator("wm.gpencil_import_svg", text="SVG as Grease Pencil", icon="LOAD_SVG_GPENCIL")
+            self.layout.operator("wm.grease_pencil_import_svg", text="SVG as Grease Pencil", icon="LOAD_SVG_GPENCIL")
 
         if bpy.app.build_options.io_wavefront_obj:
             self.layout.operator("wm.obj_import", text="Wavefront (.obj)", icon="LOAD_OBJ")
@@ -527,10 +527,10 @@ class TOPBAR_MT_file_export(Menu):
         if bpy.app.build_options.io_gpencil:
             # PUGIXML library dependency.
             if bpy.app.build_options.pugixml:
-                self.layout.operator("wm.gpencil_export_svg", text="Grease Pencil as SVG", icon="SAVE_SVG")
+                self.layout.operator("wm.grease_pencil_export_svg", text="Grease Pencil as SVG", icon="SAVE_SVG")
             # HARU library dependency.
             if bpy.app.build_options.haru:
-                self.layout.operator("wm.gpencil_export_pdf", text="Grease Pencil as PDF", icon="SAVE_PDF")
+                self.layout.operator("wm.grease_pencil_export_pdf", text="Grease Pencil as PDF", icon="SAVE_PDF")
 
         if bpy.app.build_options.io_wavefront_obj:
             self.layout.operator("wm.obj_export", text="Wavefront (.obj)", icon="SAVE_OBJ")
