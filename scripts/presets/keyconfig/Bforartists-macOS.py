@@ -1,4 +1,4 @@
-keyconfig_version = (4, 3, 11)
+keyconfig_version = (4, 3, 20)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -3080,6 +3080,8 @@ keyconfig_data = \
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -3937,6 +3939,14 @@ keyconfig_data = \
        ],
       },
      ),
+    ("grease_pencil.set_selection_mode",
+     {"type": 'V', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("mode", 'SEGMENT'),
+       ],
+      },
+     ),
+    ("grease_pencil.extrude_move", {"type": 'S', "value": 'PRESS', "repeat": True}, None),
     ],
    },
   ),
@@ -3945,7 +3955,7 @@ keyconfig_data = \
   {"items":
    [("grease_pencil.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("grease_pencil.brush_stroke",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("mode", 'ERASE'),
        ],
@@ -4033,7 +4043,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("grease_pencil.dissolve", {"type": 'DEL', "value": 'PRESS', "oskey": True}, None),
+    ("grease_pencil.dissolve", {"type": 'DEL', "value": 'PRESS'}, None),
     ("grease_pencil.copy", {"type": 'C', "value": 'PRESS', "oskey": True}, None),
     ("grease_pencil.paste", {"type": 'V', "value": 'PRESS', "oskey": True}, None),
     ("grease_pencil.paste",
@@ -4074,8 +4084,6 @@ keyconfig_data = \
       },
      ),
     ("transform.translate", {"type": 'G', "value": 'PRESS'}, None),
-    ("transform.rotate", {"type": 'R', "value": 'PRESS'}, None),
-    ("transform.resize", {"type": 'S', "value": 'PRESS'}, None),
     ("transform.translate", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
     ("transform.bend", {"type": 'W', "value": 'PRESS', "shift": True}, None),
     ("transform.mirror", {"type": 'M', "value": 'PRESS', "oskey": True}, None),
@@ -4116,11 +4124,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("view3d.view_selected",
-     {"type": 'F', "value": 'PRESS'},
-     {    "active":False,
-      },
-     ),
+    ("view3d.view_selected", {"type": 'F', "value": 'PRESS'}, None),
     ("grease_pencil.cyclical_set",
      {"type": 'C', "value": 'PRESS', "alt": True},
      {"properties":
@@ -4197,6 +4201,34 @@ keyconfig_data = \
      {"type": 'C', "value": 'PRESS'},
      {"properties":
       [("mode", 'STROKE'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'W', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.move'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'E', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.rotate'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'R', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.scale'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'D', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.select'),
        ],
       },
      ),
@@ -4322,7 +4354,7 @@ keyconfig_data = \
      ),
     ("grease_pencil.sculpt_paint", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("grease_pencil.sculpt_paint",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("mode", 'INVERT'),
        ],
@@ -4486,7 +4518,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("gpencil.dissolve", {"type": 'DEL', "value": 'PRESS', "oskey": True, "repeat": True}, None),
+    ("gpencil.dissolve", {"type": 'DEL', "value": 'PRESS', "repeat": True}, None),
     ("gpencil.active_frames_delete_all", {"type": 'DEL', "value": 'PRESS', "shift": True, "repeat": True}, None),
     ("wm.call_menu",
      {"type": 'P', "value": 'PRESS'},
@@ -5532,7 +5564,7 @@ keyconfig_data = \
   {"items":
    [("grease_pencil.weight_brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("grease_pencil.weight_brush_stroke",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("mode", 'INVERT'),
        ],
@@ -5652,7 +5684,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "oskey": True}, None),
     ],
    },
   ),
@@ -5728,7 +5760,7 @@ keyconfig_data = \
   {"items":
    [("sculpt.uv_sculpt_grab", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("sculpt.uv_sculpt_grab",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("use_invert", True),
        ],
@@ -5759,7 +5791,7 @@ keyconfig_data = \
   {"items":
    [("sculpt.uv_sculpt_pinch", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("sculpt.uv_sculpt_pinch",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("use_invert", True),
        ],
@@ -5790,7 +5822,7 @@ keyconfig_data = \
   {"items":
    [("sculpt.uv_sculpt_relax", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("sculpt.uv_sculpt_relax",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("use_invert", True),
        ],
@@ -9989,6 +10021,22 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.call_panel",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'BFA_PT_FIND_AND_REPLACE'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("wm.call_panel",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'BFA_PT_FIND_AND_REPLACE'),
+       ("keep_open", True),
+       ],
+      },
+     ),
     ("text.move",
      {"type": 'LEFT_ARROW', "value": 'PRESS', "alt": True},
      {"properties":
@@ -10812,7 +10860,7 @@ keyconfig_data = \
       },
      ),
     ("brush.stencil_control",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True},
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True, "oskey": True, "alt": True},
      {"properties":
       [("mode", 'TRANSLATION'),
        ("texmode", 'SECONDARY'),
@@ -10828,7 +10876,7 @@ keyconfig_data = \
       },
      ),
     ("brush.stencil_control",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True, "oskey": True},
      {"properties":
       [("mode", 'ROTATION'),
        ("texmode", 'SECONDARY'),
