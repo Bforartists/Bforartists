@@ -32,7 +32,7 @@ extern "C" {
 /* Bforartists major and minor version. */
 #define BFORARTISTS_VERSION 42
 /* Bforartists patch version for bugfix releases. */
-#define BFORARTISTS_VERSION_PATCH 1
+#define BFORARTISTS_VERSION_PATCH 2
 /** Bforartists release cycle stage: alpha/beta/rc/release. */
 #define BFORARTISTS_VERSION_CYCLE release
 
