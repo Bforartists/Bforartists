@@ -10805,6 +10805,7 @@ class View3DAssetShelf(BrushAssetShelf):
     bl_space_type = "VIEW_3D"
 
 
+
 class VIEW3D_AST_brush_sculpt(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'SCULPT'
     mode_prop = "use_paint_sculpt"
@@ -10855,8 +10856,9 @@ class VIEW3D_AST_brush_gpencil_weight(View3DAssetShelf, bpy.types.AssetShelf):
     mode_prop = "use_weight_grease_pencil"
 
 
-# bfa - material object collection asset shelf
-class VIEW3D_AST_object(View3DAssetShelf, bpy.types.AssetShelf):
+# BFA - material object collection asset shelf
+class VIEW3D_AST_object(bpy.types.AssetShelf):
+    bl_space_type = "VIEW_3D"
     bl_options = {'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
     mode = 'OBJECT'
 
@@ -10864,6 +10866,9 @@ class VIEW3D_AST_object(View3DAssetShelf, bpy.types.AssetShelf):
     def asset_poll(cls, asset):
         return asset.id_type in {'MATERIAL', 'OBJECT', 'COLLECTION', 'WORLD'}
 
+    @classmethod
+    def poll(cls, context):
+        return context.mode == 'OBJECT'
 
 classes = (
     VIEW3D_HT_header,
