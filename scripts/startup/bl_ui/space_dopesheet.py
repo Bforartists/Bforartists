@@ -1243,6 +1243,7 @@ class DOPESHEET_PT_grease_pencil_mode(GreasePencilLayersDopeSheetPanel, Panel):
             row.prop(active_layer, "opacity", text="Opacity", slider=True)
 
             row = layout.row(align=True)
+            row.use_property_split = False
             row.prop(active_layer, "use_lights", text="Lights")
 
 
