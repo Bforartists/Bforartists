@@ -251,7 +251,9 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         row.prop(layer, "opacity", text="Opacity", slider=True)
 
         row = layout.row(align=True)
+        row.use_property_split = False
         row.prop(layer, "use_lights", text="Lights")
+        row.prop_decorator(layer, "use_lights")
 
 
 class DATA_PT_grease_pencil_layer_masks(LayerDataButtonsPanel, GreasePencil_LayerMaskPanel, Panel):
