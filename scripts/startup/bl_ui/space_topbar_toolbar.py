@@ -868,15 +868,16 @@ class TOPBAR_MT_primitives(Menu):
                 if addon_prefs.topbar_primitives_image:
 
                     row = layout.row(align=True)
-                    row.operator("object.load_reference_image", text="", icon='IMAGE_REFERENCE')
-                    row.operator("object.load_background_image", text="", icon='IMAGE_BACKGROUND')
+                    row.operator("object.empty_image_add", text="", icon='IMAGE_REFERENCE').background = False
+                    row.operator("object.empty_image_add", text="", icon='IMAGE_BACKGROUND').background = True
+                    row.operator("image.import_as_mesh_planes", text="", icon='MESH_PLANE')
 
                 if addon_prefs.topbar_primitives_lightprobe:
 
                     row = layout.row(align=True)
-                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_CUBEMAP').type='CUBEMAP'
-                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANAR').type='PLANAR'
-                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_GRID').type='GRID'
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_SPHERE').type='SPHERE'
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANE').type='PLANE'
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_VOLUME').type='VOLUME'
 
                 if addon_prefs.topbar_primitives_forcefield:
 
