@@ -3101,7 +3101,7 @@ class NODES_PT_shader_add_converter(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
 
-            if engine == 'BLENDER_EEVEE':
+            if engine == 'BLENDER_EEVEE_NEXT':
 
                 props = col.operator("node.add_node", text=" Shader to RGB   ", icon = "NODE_RGB")
                 props.use_transform = True
