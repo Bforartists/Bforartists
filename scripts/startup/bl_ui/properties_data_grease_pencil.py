@@ -126,8 +126,9 @@ class GreasPencil_LayerRelationsPanel:
 
         col = layout.row(align=True)
         # Only enable this property when a view layer is selected.
-        col.enabled = bool(layer.viewlayer_render)
-        col.prop(layer, "use_viewlayer_masks")
+        if  bool(layer.viewlayer_render):
+            col.use_property_split = False
+            col.prop(layer, "use_viewlayer_masks")
 
 
 class GREASE_PENCIL_MT_layer_mask_add(Menu):
@@ -327,7 +328,7 @@ class DATA_PT_grease_pencil_onion_skinning_display(DataButtonsPanel, Panel):
         grease_pencil = context.grease_pencil
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         # This was done in GPv2 but it's not entirely clear why. Presumably it was
         # to indicate that the settings will affect the onion skinning of the
         # other users.
