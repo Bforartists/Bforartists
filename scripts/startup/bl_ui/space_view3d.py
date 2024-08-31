@@ -3115,12 +3115,9 @@ class VIEW3D_MT_grease_pencil_add(Menu):
         layout.operator("object.grease_pencil_add", text="Stroke", icon='STROKE').type = 'STROKE'
         layout.operator("object.grease_pencil_add", text="Suzanne", icon='MONKEY').type = 'MONKEY'
         layout.separator()
-        layout.operator("object.grease_pencil_add", text="Scene Line Art", icon='SCENE').type = 'LINEART_SCENE'
-        layout.operator(
-            "object.grease_pencil_add",
-            text="Collection Line Art",
-            icon='GROUP').type = 'LINEART_COLLECTION'
-        layout.operator("object.grease_pencil_add", text="Object Line Art", icon='CUBE').type = 'LINEART_OBJECT'
+        layout.operator("object.grease_pencil_add", text="Scene Line Art", icon='LINEART_SCENE').type = 'LINEART_SCENE'
+        layout.operator("object.grease_pencil_add", text="Collection Line Art", icon='LINEART_COLLECTION').type = 'LINEART_COLLECTION'
+        layout.operator("object.grease_pencil_add", text="Object Line Art", icon='LINEART_OBJECT').type = 'LINEART_OBJECT'
 
 
 class VIEW3D_MT_add(Menu):
@@ -7115,10 +7112,10 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
     def draw(self, context):
         layout = self.layout
-        
+
         tool_settings = context.tool_settings
         settings = tool_settings.gpencil_sculpt
-        
+
         layout.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
         layout.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
         #layout.menu("VIEW3D_MT_gpencil_simplify") # BFA - menu
