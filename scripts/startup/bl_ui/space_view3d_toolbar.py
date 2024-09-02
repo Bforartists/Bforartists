@@ -3014,15 +3014,15 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_mixcolor(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
         col = layout.column()
-        col.enabled = settings.color_mode == 'VERTEXCOLOR'
+        if settings.color_mode == 'VERTEXCOLOR':
 
-        col.template_color_picker(brush, "color", value_slider=True)
+            col.template_color_picker(brush, "color", value_slider=True)
 
-        sub_row = col.row(align=True)
-        UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "color", text="")
-        UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "secondary_color", text="")
+            sub_row = col.row(align=True)
+            UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "color", text="")
+            UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "secondary_color", text="")
 
-        sub_row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
+            sub_row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
 
         if brush.gpencil_tool in {'DRAW', 'FILL'}:
             col.prop(gp_settings, "vertex_mode", text="Mode")
@@ -3066,12 +3066,12 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_mix_palette(View3DPanel, Panel):
         settings = tool_settings.gpencil_paint
 
         col = layout.column()
-        col.enabled = settings.color_mode == 'VERTEXCOLOR'
+        if settings.color_mode == 'VERTEXCOLOR':
 
-        row = col.row(align=True)
-        row.template_ID(settings, "palette", new="palette.new")
-        if settings.palette:
-            col.template_palette(settings, "palette", color=True)
+            row = col.row(align=True)
+            row.template_ID(settings, "palette", new="palette.new")
+            if settings.palette:
+                col.template_palette(settings, "palette", color=True)
 
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_eraser(View3DPanel, Panel):
