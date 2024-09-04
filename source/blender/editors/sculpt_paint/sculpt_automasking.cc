@@ -221,7 +221,7 @@ static float calc_brush_normal_factor(const Depsgraph &depsgraph,
   float3 initial_normal;
 
   if (ss.cache) {
-    initial_normal = ss.cache->initial_normal;
+    initial_normal = ss.cache->initial_normal_symm;
   }
   else {
     initial_normal = ss.filter_cache->initial_normal;
@@ -248,7 +248,7 @@ static float calc_view_normal_factor(const Depsgraph &depsgraph,
   float3 view_normal;
 
   if (ss.cache) {
-    view_normal = ss.cache->view_normal;
+    view_normal = ss.cache->view_normal_symm;
   }
   else {
     view_normal = ss.filter_cache->view_normal;
@@ -615,7 +615,7 @@ static float factor_get(const Depsgraph &depsgraph,
 void calc_vert_factors(const Depsgraph &depsgraph,
                        const Object &object,
                        const Cache &cache,
-                       const bke::pbvh::Node &node,
+                       const bke::pbvh::MeshNode &node,
                        const Span<int> verts,
                        const MutableSpan<float> factors)
 {
@@ -641,7 +641,7 @@ void calc_face_factors(const Depsgraph &depsgraph,
                        const OffsetIndices<int> faces,
                        const Span<int> corner_verts,
                        const Cache &cache,
-                       const bke::pbvh::Node & /*node*/,
+                       const bke::pbvh::MeshNode & /*node*/,
                        const Span<int> face_indices,
                        const MutableSpan<float> factors)
 {
@@ -658,7 +658,7 @@ void calc_face_factors(const Depsgraph &depsgraph,
 void calc_grids_factors(const Depsgraph &depsgraph,
                         const Object &object,
                         const Cache &cache,
-                        const bke::pbvh::Node &node,
+                        const bke::pbvh::GridsNode &node,
                         const Span<int> grids,
                         const MutableSpan<float> factors)
 {
@@ -691,7 +691,7 @@ void calc_grids_factors(const Depsgraph &depsgraph,
 void calc_vert_factors(const Depsgraph &depsgraph,
                        const Object &object,
                        const Cache &cache,
-                       const bke::pbvh::Node & /*node*/,
+                       const bke::pbvh::BMeshNode & /*node*/,
                        const Set<BMVert *, 0> &verts,
                        const MutableSpan<float> factors)
 {
@@ -822,8 +822,6 @@ static void fill_topology_automasking_factors(const Depsgraph &depsgraph,
     case bke::pbvh::Type::BMesh:
       fill_topology_automasking_factors_bmesh(sd, ob, *ss.bm);
       break;
-    default:
-      BLI_assert_unreachable();
   }
 }
 
@@ -839,7 +837,7 @@ static void init_face_sets_masking(const Sculpt &sd, Object &ob)
   int tot_vert = SCULPT_vertex_count_get(ob);
   int active_face_set = face_set::active_face_set_get(ss);
   for (int i : IndexRange(tot_vert)) {
-    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
+    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ob, i);
 
     if (!face_set::vert_has_face_set(ss, vertex, active_face_set)) {
       *(float *)SCULPT_vertex_attr_get(vertex, ss.attrs.automasking_factor) = 0.0f;
@@ -862,7 +860,7 @@ static void init_boundary_masking(Object &ob, BoundaryAutomaskMode mode, int pro
   Array<int> edge_distance(totvert, 0);
 
   for (int i : IndexRange(totvert)) {
-    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
+    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ob, i);
 
     edge_distance[i] = EDGE_DISTANCE_INF;
     switch (mode) {
@@ -881,7 +879,7 @@ static void init_boundary_masking(Object &ob, BoundaryAutomaskMode mode, int pro
 
   for (int propagation_it : IndexRange(propagation_steps)) {
     for (int i : IndexRange(totvert)) {
-      PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
+      PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ob, i);
 
       if (edge_distance[i] != EDGE_DISTANCE_INF) {
         continue;
@@ -897,7 +895,7 @@ static void init_boundary_masking(Object &ob, BoundaryAutomaskMode mode, int pro
   }
 
   for (int i : IndexRange(totvert)) {
-    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
+    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ob, i);
 
     if (edge_distance[i] == EDGE_DISTANCE_INF) {
       continue;
@@ -959,7 +957,7 @@ static void normal_occlusion_automasking_fill(const Depsgraph &depsgraph,
 
   /* No need to build original data since this is only called at the beginning of strokes. */
   for (int i = 0; i < totvert; i++) {
-    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
+    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ob, i);
 
     float f = *(float *)SCULPT_vertex_attr_get(vertex, ss.attrs.automasking_factor);
 
@@ -1100,7 +1098,7 @@ std::unique_ptr<Cache> cache_init(const Depsgraph &depsgraph,
 
   const int totvert = SCULPT_vertex_count_get(ob);
   for (int i : IndexRange(totvert)) {
-    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
+    PBVHVertRef vertex = BKE_pbvh_index_to_vertex(ob, i);
 
     (*(float *)SCULPT_vertex_attr_get(vertex, ss.attrs.automasking_factor)) = initial_value;
   }

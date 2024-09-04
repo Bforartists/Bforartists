@@ -49,7 +49,7 @@ static void calc_bmesh(const Depsgraph &depsgraph,
                        const Brush &brush,
                        const float3 &direction,
                        const float strength,
-                       bke::pbvh::Node &node,
+                       bke::pbvh::BMeshNode &node,
                        LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
@@ -63,7 +63,7 @@ static void calc_bmesh(const Depsgraph &depsgraph,
   fill_factor_from_hide_and_mask(*ss.bm, verts, factors);
   filter_region_clip_factors(ss, positions, factors);
   if (brush.flag & BRUSH_FRONTFACE) {
-    calc_front_face(cache.view_normal, verts, factors);
+    calc_front_face(cache.view_normal_symm, verts, factors);
   }
 
   tls.distances.resize(verts.size());
@@ -93,7 +93,7 @@ static void calc_bmesh(const Depsgraph &depsgraph,
 void do_bmesh_topology_rake_brush(const Depsgraph &depsgraph,
                                   const Sculpt &sd,
                                   Object &object,
-                                  Span<bke::pbvh::Node *> nodes,
+                                  const IndexMask &node_mask,
                                   const float input_strength)
 {
   const SculptSession &ss = *object.sculpt;
@@ -106,7 +106,7 @@ void do_bmesh_topology_rake_brush(const Depsgraph &depsgraph,
   const int count = iterations * strength + 1;
   const float factor = iterations * strength / count;
 
-  float3 direction = ss.cache->grab_delta_symmetry;
+  float3 direction = ss.cache->grab_delta_symm;
 
   /* TODO: Is this just the same as one of the projection utility functions? */
   float3 tmp = ss.cache->sculpt_normal_symm * math::dot(ss.cache->sculpt_normal_symm, direction);
@@ -120,12 +120,13 @@ void do_bmesh_topology_rake_brush(const Depsgraph &depsgraph,
 
   threading::EnumerableThreadSpecific<LocalData> all_tls;
   for ([[maybe_unused]] const int i : IndexRange(count)) {
-    threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
+    MutableSpan<bke::pbvh::BMeshNode> nodes = ss.pbvh->nodes<bke::pbvh::BMeshNode>();
+    threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
       LocalData &tls = all_tls.local();
-      for (const int i : range) {
+      node_mask.slice(range).foreach_index([&](const int i) {
         calc_bmesh(
-            depsgraph, sd, object, brush, direction, factor * ss.cache->pressure, *nodes[i], tls);
-      }
+            depsgraph, sd, object, brush, direction, factor * ss.cache->pressure, nodes[i], tls);
+      });
     });
   }
 }
