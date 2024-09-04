@@ -711,27 +711,31 @@ static void rna_ActionGroup_channels_begin(CollectionPropertyIterator *iter, Poi
 
   iter->internal.custom = custom_iter;
 
-  /* Group from a layered action. */
-  if (group->channel_bag != nullptr) {
-    MutableSpan<FCurve *> fcurves = group->channel_bag->wrap().fcurves();
+  /* We handle both the listbase (legacy action) and array (layered action)
+   * cases below. The code for each is based on the code in
+   * `rna_iterator_listbase_begin()` and `rna_iterator_array_begin()`,
+   * respectively. */
 
-    custom_iter->tag = ActionGroupChannelsIterator::ARRAY;
-    custom_iter->array.ptr = reinterpret_cast<char *>(fcurves.data() + group->fcurve_range_start);
-    custom_iter->array.endptr = reinterpret_cast<char *>(
-        fcurves.data() + group->fcurve_range_start + group->fcurve_range_length);
-    custom_iter->array.itemsize = sizeof(FCurve *);
-    custom_iter->array.length = group->fcurve_range_length;
+  /* Group from a legacy action. */
+  if (group->wrap().is_legacy()) {
+    custom_iter->tag = ActionGroupChannelsIterator::LISTBASE;
+    custom_iter->listbase.link = static_cast<Link *>(group->channels.first);
 
-    iter->valid = group->fcurve_range_length != 0;
-
+    iter->valid = custom_iter->listbase.link != nullptr;
     return;
   }
 
-  /* Group from a legacy action. */
-  custom_iter->tag = ActionGroupChannelsIterator::LISTBASE;
-  custom_iter->listbase.link = static_cast<Link *>(group->channels.first);
+  /* Group from a layered action. */
+  MutableSpan<FCurve *> fcurves = group->channel_bag->wrap().fcurves();
 
-  iter->valid = custom_iter->listbase.link != nullptr;
+  custom_iter->tag = ActionGroupChannelsIterator::ARRAY;
+  custom_iter->array.ptr = reinterpret_cast<char *>(fcurves.data() + group->fcurve_range_start);
+  custom_iter->array.endptr = reinterpret_cast<char *>(fcurves.data() + group->fcurve_range_start +
+                                                       group->fcurve_range_length);
+  custom_iter->array.itemsize = sizeof(FCurve *);
+  custom_iter->array.length = group->fcurve_range_length;
+
+  iter->valid = group->fcurve_range_length > 0;
 }
 
 static void rna_ActionGroup_channels_end(CollectionPropertyIterator *iter)
@@ -747,6 +751,9 @@ static void rna_ActionGroup_channels_next(CollectionPropertyIterator *iter)
   ActionGroupChannelsIterator *custom_iter = static_cast<ActionGroupChannelsIterator *>(
       iter->internal.custom);
 
+  /* The code for both cases here is written based on the code in
+   * `rna_iterator_array_next()` and `rna_iterator_listbase_next()`,
+   * respectively. */
   switch (custom_iter->tag) {
     case ActionGroupChannelsIterator::ARRAY: {
       custom_iter->array.ptr += custom_iter->array.itemsize;
@@ -1304,6 +1311,34 @@ static std::optional<std::string> rna_DopeSheet_path(const PointerRNA *ptr)
   return "dopesheet";
 }
 
+static const EnumPropertyItem *rna_id_root_itemf(bContext * /* C */,
+                                                 PointerRNA * /* ptr */,
+                                                 PropertyRNA * /* prop */,
+                                                 bool *r_free)
+{
+  int totitem = 0;
+  EnumPropertyItem *items = nullptr;
+
+  int i = 0;
+  while (rna_enum_id_type_items[i].identifier != nullptr) {
+    EnumPropertyItem item = {0};
+    item.value = rna_enum_id_type_items[i].value;
+    item.name = rna_enum_id_type_items[i].name;
+    item.identifier = rna_enum_id_type_items[i].identifier;
+    item.icon = rna_enum_id_type_items[i].icon;
+    item.description = rna_enum_id_type_items[i].description;
+    RNA_enum_item_add(&items, &totitem, &item);
+    i++;
+  }
+
+  const EnumPropertyItem id_root_any = {0, "ANY", ICON_NONE, "Any", ""};
+  RNA_enum_item_add(&items, &totitem, &id_root_any);
+
+  RNA_enum_item_end(&items, &totitem);
+  *r_free = true;
+  return items;
+}
+
 #else
 
 static void rna_def_dopesheet(BlenderRNA *brna)
@@ -1719,6 +1754,8 @@ static void rna_def_action_slot(BlenderRNA *brna)
       "Action slot",
       "Identifier for a set of channels in this Action, that can be used by a data-block "
       "to specify what it gets animated by");
+
+  RNA_define_lib_overridable(false);
 
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
   RNA_def_struct_name_property(srna, prop);
@@ -2382,6 +2419,13 @@ static void rna_def_action_pose_markers(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_property_ui_text(prop, "Active Pose Marker Index", "Index of active pose marker");
 }
 
+/* Cannot use rna_enum_dummy_DEFAULT_items because the OBJECT entry needs to exist as it is the
+ * default. */
+const EnumPropertyItem default_id_root_items[] = {
+    {0, "OBJECT", 0, "Object", ""},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
 /* Access to 'legacy' Action features, like the top-level F-Curves, the corresponding F-Curve
  * groups, and the top-level id_root. */
 static void rna_def_action_legacy(BlenderRNA *brna, StructRNA *srna)
@@ -2405,7 +2449,8 @@ static void rna_def_action_legacy(BlenderRNA *brna, StructRNA *srna)
    * but is still available/editable in 'emergencies' */
   prop = RNA_def_property(srna, "id_root", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "idroot");
-  RNA_def_property_enum_items(prop, rna_enum_id_type_items);
+  RNA_def_property_enum_items(prop, default_id_root_items);
+  RNA_def_property_enum_funcs(prop, nullptr, nullptr, "rna_id_root_itemf");
   RNA_def_property_ui_text(prop,
                            "ID Root Type",
                            "Type of ID block that action can be used on - "

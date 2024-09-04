@@ -29,6 +29,8 @@ class Prepass {
   void begin_sync(Resources &res, const State &state)
   {
     enabled = !state.xray_enabled || (selection_type_ != SelectionType::DISABLED);
+    enabled &= state.space_type == SPACE_VIEW3D;
+
     if (!enabled) {
       /* Not used. But release the data. */
       ps_.init();
@@ -40,9 +42,10 @@ class Prepass {
     DRWState backface_cull_state = use_cull ? DRW_STATE_CULL_BACK : DRWState(0);
 
     ps_.init();
-    ps_.state_set(DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL | state.clipping_state |
-                  backface_cull_state);
+    ps_.state_set(DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL | backface_cull_state,
+                  state.clipping_plane_count);
     ps_.shader_set(res.shaders.depth_mesh.get());
+    ps_.bind_ubo("globalsBlock", &res.globals_buf);
     res.select_bind(ps_);
   }
 
@@ -51,9 +54,30 @@ class Prepass {
     if (!enabled) {
       return;
     }
+
+    if (ob_ref.object->dt < OB_SOLID) {
+      return;
+    }
+
     /* TODO(fclem) This function should contain what `basic_cache_populate` contained. */
 
-    gpu::Batch *geom = DRW_cache_object_surface_get(ob_ref.object);
+    gpu::Batch *geom = nullptr;
+    switch (ob_ref.object->type) {
+      case OB_MESH:
+        geom = DRW_cache_mesh_surface_get(ob_ref.object);
+        break;
+      case OB_VOLUME:
+        if (selection_type_ == SelectionType::DISABLED) {
+          /* Disable during display, only enable for selection. */
+          /* TODO(fclem): Would be nice to have even when not selecting to occlude overlays. */
+          return;
+        }
+        geom = DRW_cache_volume_selection_surface_get(ob_ref.object);
+        break;
+      default:
+        break;
+    }
+
     if (geom) {
       ResourceHandle res_handle = manager.resource_handle(ob_ref);
       ps_.draw(geom, res_handle, res.select_id(ob_ref).get());

@@ -61,8 +61,6 @@ static bool lib_id_preview_editing_poll(bContext *C)
     return false;
   }
 
-  /*BFA - temporary fix from https://projects.blender.org/blender/blender/pulls/126874/files#issuecomment-1281130*/
-
   return true;
 }
 
@@ -145,8 +143,9 @@ static bool lib_id_generate_preview_poll(bContext *C)
 
   const PointerRNA idptr = CTX_data_pointer_get(C, "id");
   const ID *id = (ID *)idptr.data;
-  if (!ED_preview_id_is_supported(id)) { /*BFA - temporary fix from https://projects.blender.org/blender/blender/pulls/126874/files#issuecomment-1281130*/
-    CTX_wm_operator_poll_msg_set(C, "Object type does not support previews"); /*BFA - temporary fix from https://projects.blender.org/blender/blender/pulls/126874/files#issuecomment-1281130*/
+  const char *disabled_hint = nullptr;
+  if (!ED_preview_id_is_supported(id, &disabled_hint)) {
+    CTX_wm_operator_poll_msg_set(C, disabled_hint);
     return false;
   }
 
@@ -306,7 +305,7 @@ static int lib_id_unlink_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  memset(&idptr, 0, sizeof(idptr));
+  idptr = {};
   RNA_property_pointer_set(&pprop.ptr, pprop.prop, idptr, nullptr);
   RNA_property_update(C, &pprop.ptr, pprop.prop);
 
