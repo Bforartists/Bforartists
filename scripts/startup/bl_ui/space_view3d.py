@@ -988,6 +988,75 @@ class VIEW3D_HT_header(Header):
                         text="Multiframe",
                     )
 
+        # Grease Pencil (legacy) 
+        if obj and obj.type == 'GPENCIL' and context.gpencil_data:
+            gpd = context.gpencil_data
+
+            if gpd.is_stroke_paint_mode:
+                row = layout.row()
+                sub = row.row(align=True)
+                sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
+                sub.separator(factor=0.4)
+                sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
+                sub.separator(factor=0.4)
+                sub.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
+                sub.separator(factor=0.4)
+                sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
+
+            # Select mode for Editing
+            if gpd.use_stroke_edit_mode:
+                row = layout.row(align=True)
+                row.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='POINT')
+                row.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='STROKE')
+
+                subrow = row.row(align=True)
+                subrow.enabled = not gpd.use_curve_edit
+                subrow.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='SEGMENT')
+
+                # Curve edit sub-mode.
+                row = layout.row(align=True)
+                row.prop(gpd, "use_curve_edit", text="", icon='IPO_BEZIER')
+                sub = row.row(align=True)
+                sub.active = gpd.use_curve_edit
+                sub.popover(
+                    panel="VIEW3D_PT_gpencil_curve_edit",
+                    text="Curve Editing",
+                )
+
+            # Select mode for Sculpt
+            if gpd.is_stroke_sculpt_mode:
+                row = layout.row(align=True)
+                row.prop(tool_settings, "use_gpencil_select_mask_point", text="")
+                row.prop(tool_settings, "use_gpencil_select_mask_stroke", text="")
+                row.prop(tool_settings, "use_gpencil_select_mask_segment", text="")
+
+            # Select mode for Vertex Paint
+            if gpd.is_stroke_vertex_mode:
+                row = layout.row(align=True)
+                row.prop(tool_settings, "use_gpencil_vertex_select_mask_point", text="")
+                row.prop(tool_settings, "use_gpencil_vertex_select_mask_stroke", text="")
+                row.prop(tool_settings, "use_gpencil_vertex_select_mask_segment", text="")
+
+            if gpd.is_stroke_paint_mode:
+                row = layout.row(align=True)
+                row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
+
+            if (
+                    gpd.use_stroke_edit_mode or
+                    gpd.is_stroke_sculpt_mode or
+                    gpd.is_stroke_weight_mode or
+                    gpd.is_stroke_vertex_mode
+            ):
+                row = layout.row(align=True)
+                row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
+
+                sub = row.row(align=True)
+                sub.enabled = gpd.use_multiedit
+                sub.popover(
+                    panel="VIEW3D_PT_gpencil_multi_frame",
+                    text="Multiframe",
+                )
+
         overlay = view.overlay
 
         VIEW3D_MT_editor_menus.draw_collapsible(context, layout)
@@ -3113,7 +3182,7 @@ class VIEW3D_MT_grease_pencil_add(Menu):
         layout = self.layout
         layout.operator("object.grease_pencil_add", text="Empty", icon='EMPTY_AXIS').type = 'EMPTY'
         layout.operator("object.grease_pencil_add", text="Stroke", icon='STROKE').type = 'STROKE'
-        layout.operator("object.grease_pencil_add", text="Suzanne", icon='MONKEY').type = 'MONKEY'
+        layout.operator("object.grease_pencil_add", text="Monkey", icon='MONKEY').type = 'MONKEY'
         layout.separator()
         layout.operator("object.grease_pencil_add", text="Scene Line Art", icon='LINEART_SCENE').type = 'LINEART_SCENE'
         layout.operator("object.grease_pencil_add", text="Collection Line Art", icon='LINEART_COLLECTION').type = 'LINEART_COLLECTION'
@@ -4343,6 +4412,9 @@ class VIEW3D_MT_vertex_group(Menu):
                 text="Remove Active Group",
                 icon="REMOVE_ACTIVE_GROUP").all = False
             layout.operator("object.vertex_group_remove", text="Remove All Groups", icon="REMOVE_ALL_GROUPS").all = True
+
+
+# BFA VIEW3D_MT_gpencil_vertex_group legacy menu consolidated and removed
 
 
 class VIEW3D_MT_greasepencil_vertex_group(Menu):
@@ -9813,7 +9885,7 @@ class VIEW3D_PT_context_properties(Panel):
             # Draw with no edit button
             rna_prop_ui.draw(self.layout, context, member, object, use_edit=False)
 
-
+# BFA - VIEW3D_PT_gpencil_multi_frame legacy removed
 
 class VIEW3D_PT_grease_pencil_multi_frame(Panel):
     bl_space_type = 'VIEW_3D'
@@ -9871,6 +9943,7 @@ class VIEW3D_PT_gpencil_curve_edit(Panel):
         row.prop(gpd, "use_adaptive_curve_resolution")
 
 
+# BFA - VIEW3D_MT_gpencil_edit_context_menu legacy removed
 
 
 class VIEW3D_MT_greasepencil_material_active(Menu):
@@ -10096,16 +10169,16 @@ class VIEW3D_PT_greasepencil_draw_context_menu(Panel):
             layout.label(text="Active Layer")
             row = layout.row(align=True)
             row.operator_context = 'EXEC_REGION_WIN'
-            row.menu("GREASE_PENCIL_MT_Layers", text='', icon='GREASEPENCIL')
-            row.prop(layer, "name", text='')
+            row.menu("GREASE_PENCIL_MT_Layers", text="", icon='GREASEPENCIL')
+            row.prop(layer, "name", text="")
             row.operator("grease_pencil.layer_remove", text="", icon='X')
 
         layout.label(text="Active Material")
         row = layout.row(align=True)
-        row.menu("VIEW3D_MT_greasepencil_material_active", text='', icon='MATERIAL')
+        row.menu("VIEW3D_MT_greasepencil_material_active", text="", icon='MATERIAL')
         ob = context.active_object
         if ob.active_material:
-            row.prop(ob.active_material, "name", text='')
+            row.prop(ob.active_material, "name", text="")
 
 
 class VIEW3D_PT_greasepencil_sculpt_context_menu(Panel):
@@ -10122,8 +10195,8 @@ class VIEW3D_PT_greasepencil_sculpt_context_menu(Panel):
         ups = tool_settings.unified_paint_settings
         size_owner = ups if ups.use_unified_size else brush
         strength_owner = ups if ups.use_unified_strength else brush
-        layout.prop(size_owner, "size", text='')
-        layout.prop(strength_owner, "strength", text='')
+        layout.prop(size_owner, "size", text="")
+        layout.prop(strength_owner, "strength", text="")
 
         layer = context.object.data.layers.active
 
@@ -10131,8 +10204,8 @@ class VIEW3D_PT_greasepencil_sculpt_context_menu(Panel):
             layout.label(text="Active Layer")
             row = layout.row(align=True)
             row.operator_context = 'EXEC_REGION_WIN'
-            row.menu("GREASE_PENCIL_MT_Layers", text='', icon='GREASEPENCIL')
-            row.prop(layer, "name", text='')
+            row.menu("GREASE_PENCIL_MT_Layers", text="", icon='GREASEPENCIL')
+            row.prop(layer, "name", text="")
             row.operator("grease_pencil.layer_remove", text="", icon='X')
 
 
@@ -10920,6 +10993,7 @@ classes = (
     VIEW3D_MT_select_gpencil_legacy,  # bfa menu
     VIEW3D_MT_select_gpencil_grouped,  # bfa menu
     VIEW3D_MT_select_edit_grease_pencil,
+	#VIEW3D_MT_select_edit_gpencil # BFA - legacy removed
     VIEW3D_MT_select_paint_mask,
     VIEW3D_MT_select_paint_mask_face_more_less,  # bfa menu
     VIEW3D_MT_select_paint_mask_vertex,
@@ -10971,6 +11045,7 @@ classes = (
     VIEW3D_MT_paint_vertex,
     VIEW3D_MT_hook,
     VIEW3D_MT_vertex_group,
+	#VIEW3D_MT_gpencil_vertex_group,  # BFA - legacy removed
     VIEW3D_MT_greasepencil_vertex_group,
     VIEW3D_MT_paint_weight,
     VIEW3D_MT_paint_weight_legacy,  # bfa menu

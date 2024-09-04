@@ -37,7 +37,7 @@ static void calc_node(const Depsgraph &depsgraph,
                       Object &object,
                       const Brush &brush,
                       const float strength,
-                      const bke::pbvh::Node &node,
+                      const bke::pbvh::GridsNode &node,
                       LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
@@ -54,7 +54,7 @@ static void calc_node(const Depsgraph &depsgraph,
   fill_factor_from_hide_and_mask(subdiv_ccg, grids, factors);
   filter_region_clip_factors(ss, positions, factors);
   if (brush.flag & BRUSH_FRONTFACE) {
-    calc_front_face(cache.view_normal, subdiv_ccg, grids, factors);
+    calc_front_face(cache.view_normal_symm, subdiv_ccg, grids, factors);
   }
 
   tls.distances.resize(positions.size());
@@ -80,18 +80,19 @@ static void calc_node(const Depsgraph &depsgraph,
         const int node_vert_index = node_start + offset;
         const int grid_vert_index = start + offset;
 
-        float3 interp_limit_surface_disp = cache.prev_displacement[grid_vert_index];
+        float3 interp_limit_surface_disp =
+            cache.displacement_smear.prev_displacement[grid_vert_index];
 
         float3 current_disp;
         switch (brush.smear_deform_type) {
           case BRUSH_SMEAR_DEFORM_DRAG:
-            current_disp = cache.location - cache.last_location;
+            current_disp = cache.location_symm - cache.last_location_symm;
             break;
           case BRUSH_SMEAR_DEFORM_PINCH:
-            current_disp = cache.location - positions[node_vert_index];
+            current_disp = cache.location_symm - positions[node_vert_index];
             break;
           case BRUSH_SMEAR_DEFORM_EXPAND:
-            current_disp = positions[node_vert_index] - cache.location;
+            current_disp = positions[node_vert_index] - cache.location_symm;
             break;
         }
 
@@ -112,10 +113,11 @@ static void calc_node(const Depsgraph &depsgraph,
           const int neighbor_grid_vert_index = neighbor.grid_index * key.grid_area +
                                                CCG_grid_xy_to_index(
                                                    key.grid_size, neighbor.x, neighbor.y);
-          const float3 vert_disp = cache.limit_surface_co[neighbor_grid_vert_index] -
-                                   cache.limit_surface_co[grid_vert_index];
+          const float3 vert_disp =
+              cache.displacement_smear.limit_surface_co[neighbor_grid_vert_index] -
+              cache.displacement_smear.limit_surface_co[grid_vert_index];
           const float3 &neighbor_limit_surface_disp =
-              cache.prev_displacement[neighbor_grid_vert_index];
+              cache.displacement_smear.prev_displacement[neighbor_grid_vert_index];
           const float3 vert_disp_norm = math::normalize(vert_disp);
 
           if (math::dot(current_disp_norm, vert_disp_norm) >= 0.0f) {
@@ -130,7 +132,8 @@ static void calc_node(const Depsgraph &depsgraph,
 
         interp_limit_surface_disp *= math::rcp(weights_accum);
 
-        float3 new_co = cache.limit_surface_co[grid_vert_index] + interp_limit_surface_disp;
+        float3 new_co = cache.displacement_smear.limit_surface_co[grid_vert_index] +
+                        interp_limit_surface_disp;
         CCG_elem_offset_co(key, elem, offset) = math::interpolate(
             positions[node_vert_index], new_co, factors[node_vert_index]);
       }
@@ -154,7 +157,7 @@ BLI_NOINLINE static void eval_all_limit_positions(const SubdivCCG &subdiv_ccg,
 BLI_NOINLINE static void store_node_prev_displacement(const Span<float3> limit_positions,
                                                       const Span<CCGElem *> elems,
                                                       const CCGKey &key,
-                                                      const bke::pbvh::Node &node,
+                                                      const bke::pbvh::GridsNode &node,
                                                       const MutableSpan<float3> prev_displacement)
 {
   for (const int grid : bke::pbvh::node_grid_indices(node)) {
@@ -171,36 +174,40 @@ BLI_NOINLINE static void store_node_prev_displacement(const Span<float3> limit_p
 void do_displacement_smear_brush(const Depsgraph &depsgraph,
                                  const Sculpt &sd,
                                  Object &ob,
-                                 Span<bke::pbvh::Node *> nodes)
+                                 const IndexMask &node_mask)
 {
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
   SculptSession &ss = *ob.sculpt;
+  MutableSpan<bke::pbvh::GridsNode> nodes = ss.pbvh->nodes<bke::pbvh::GridsNode>();
+
   SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
   const Span<CCGElem *> elems = subdiv_ccg.grids;
   const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
 
-  if (ss.cache->limit_surface_co.is_empty()) {
-    ss.cache->prev_displacement = Array<float3>(elems.size() * key.grid_area);
-    ss.cache->limit_surface_co = Array<float3>(elems.size() * key.grid_area);
+  if (ss.cache->displacement_smear.limit_surface_co.is_empty()) {
+    ss.cache->displacement_smear.prev_displacement = Array<float3>(elems.size() * key.grid_area);
+    ss.cache->displacement_smear.limit_surface_co = Array<float3>(elems.size() * key.grid_area);
 
-    eval_all_limit_positions(subdiv_ccg, ss.cache->limit_surface_co);
+    eval_all_limit_positions(subdiv_ccg, ss.cache->displacement_smear.limit_surface_co);
   }
 
-  threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
-    for (const int i : range) {
-      store_node_prev_displacement(
-          ss.cache->limit_surface_co, elems, key, *nodes[i], ss.cache->prev_displacement);
-    }
+  threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
+    node_mask.slice(range).foreach_index([&](const int i) {
+      store_node_prev_displacement(ss.cache->displacement_smear.limit_surface_co,
+                                   elems,
+                                   key,
+                                   nodes[i],
+                                   ss.cache->displacement_smear.prev_displacement);
+    });
   });
 
   const float strength = std::clamp(ss.cache->bstrength, 0.0f, 1.0f);
 
   threading::EnumerableThreadSpecific<LocalData> all_tls;
-  threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
+  threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
     LocalData &tls = all_tls.local();
-    for (const int i : range) {
-      calc_node(depsgraph, ob, brush, strength, *nodes[i], tls);
-    }
+    node_mask.slice(range).foreach_index(
+        [&](const int i) { calc_node(depsgraph, ob, brush, strength, nodes[i], tls); });
   });
 }
 
