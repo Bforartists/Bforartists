@@ -61,6 +61,7 @@ DefNode(ShaderNode,     SH_NODE_ATTRIBUTE,           def_sh_attribute,        "A
 DefNode(ShaderNode,     SH_NODE_AMBIENT_OCCLUSION,   def_sh_ambient_occlusion, "AMBIENT_OCCLUSION",  AmbientOcclusion,  "Ambient Occlusion",  "Add a Ambient Occlusion Shader node\nAmbient Occlusion is a technique to self shadow the geometry of objects"       )
 DefNode(ShaderNode,     SH_NODE_BACKGROUND,          0,                       "BACKGROUND",          Background,        "Background",         "Add a Background Shader node\nAdd background light emission"       )
 DefNode(ShaderNode,     SH_NODE_HOLDOUT,             0,                       "HOLDOUT",             Holdout,           "Holdout",            "Add a Holdout Shader node\nCreate a “hole” in the image with zero alpha transparency"       )
+DefNode(ShaderNode,     SH_NODE_BSDF_METALLIC,        def_metallic,             "BSDF_METALLIC",        BsdfMetallic,  "Metallic BSDF",       "Add a Metallic BSDF Shader node\Metallic reflection with microfacet distribution, and metallic fresnel")
 DefNode(ShaderNode,     SH_NODE_BSDF_DIFFUSE,        0,                       "BSDF_DIFFUSE",        BsdfDiffuse,       "Diffuse BSDF",       "Add a Diffuse BSDF Shader node\nLambertian and Oren-Nayar diffuse reflection"       )
 DefNode(ShaderNode,     SH_NODE_BSDF_PRINCIPLED,     def_principled,          "BSDF_PRINCIPLED",     BsdfPrincipled,    "Principled BSDF",    "Add a Principled BSDF Shader node\nPhysically-based, easy-to-use combined shader node for rendering surface materials.\n Based on the Disney principled model also known as the PBR Shader"       )
 DefNode(ShaderNode,     SH_NODE_BSDF_GLOSSY,         def_glossy,              "BSDF_GLOSSY",         BsdfAnisotropic,        "Glossy BSDF",        "Add a Glossy BSDF Shader node\nadd reflection with micro facet distribution"       )
@@ -276,6 +277,7 @@ DefNode(FunctionNode, FN_NODE_COMBINE_TRANSFORM, 0, "COMBINE_TRANSFORM", Combine
 DefNode(FunctionNode, FN_NODE_COMPARE, 0,  "COMPARE",  Compare,  "Compare",     "Add a Compare Function node\nAdds a mathematical compare between two inputs")
 DefNode(FunctionNode, FN_NODE_EULER_TO_ROTATION, 0, "EULER_TO_ROTATION", EulerToRotation, "Euler to Rotation", "Add a Euler to Rotation Function node\nConverts a euler angle to a rotation vector")
 DefNode(FunctionNode, FN_NODE_FLOAT_TO_INT, def_float_to_int,  "FLOAT_TO_INT",  FloatToInt,  "Float to Integer",  "Add a Float to Integer Function node\nConverts float values into integer values")
+DefNode(FunctionNode, FN_NODE_HASH_VALUE, 0, "HASH_VALUE", HashValue, "Add a Hash node\nShows a hash value", "")
 DefNode(FunctionNode, FN_NODE_INPUT_BOOL, def_fn_input_bool,  "INPUT_BOOL",  InputBool,  "Boolean",  "Add a Boolean Function node\nAdds a boolean that can be on or off")
 DefNode(FunctionNode, FN_NODE_INPUT_COLOR, def_fn_input_color,  "INPUT_COLOR",  InputColor,  "Color",  "Add a Color Function node\nAdds a color picker that allows you to set a color")
 DefNode(FunctionNode, FN_NODE_INPUT_INT, def_fn_input_int,  "INPUT_INT",  InputInt,  "Integer",  "Add a Integer Function node\nAllows to add a integer number")
@@ -500,6 +502,7 @@ DefNode(GeometryNode, GEO_NODE_UV_UNWRAP, 0, "UV_UNWRAP", UVUnwrap, "UV Unwrap",
 DefNode(GeometryNode, GEO_NODE_VIEWER, 0, "VIEWER", Viewer, "Viewer", "Add a Viewer Geometry node\nDisplay the input data in the Spreadsheet Editor")
 DefNode(GeometryNode, GEO_NODE_VOLUME_CUBE, 0, "VOLUME_CUBE", VolumeCube, "Volume Cube", "Add a Volume Cube Geometry node\nGenerate a dense volume with a field that controls the density at each grid voxel based on its position")
 DefNode(GeometryNode, GEO_NODE_VOLUME_TO_MESH, 0, "VOLUME_TO_MESH", VolumeToMesh, "Volume to Mesh", "Add a Volume to Mesh Geometry node\nGenerate a mesh on the \"surface\" of a volume")
+DefNode(GeometryNode, GEO_NODE_WARNING, 0, "WARNING", Warning, "Warning", "Add a Warning node\nCreate custom warnings in node groups")
 
 /* undefine macros */
 #undef DefNode

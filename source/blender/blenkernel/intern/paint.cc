@@ -977,6 +977,34 @@ uint BKE_paint_get_brush_tool_offset_from_paintmode(const PaintMode mode)
   return 0;
 }
 
+std::optional<int> BKE_paint_get_brush_tool_from_obmode(const Brush *brush,
+                                                        const eObjectMode ob_mode)
+{
+  switch (ob_mode) {
+    case OB_MODE_TEXTURE_PAINT:
+    case OB_MODE_EDIT:
+      return brush->imagepaint_tool;
+    case OB_MODE_SCULPT:
+      return brush->sculpt_tool;
+    case OB_MODE_VERTEX_PAINT:
+      return brush->vertexpaint_tool;
+    case OB_MODE_WEIGHT_PAINT:
+      return brush->weightpaint_tool;
+    case OB_MODE_PAINT_GPENCIL_LEGACY:
+      return brush->gpencil_tool;
+    case OB_MODE_VERTEX_GPENCIL_LEGACY:
+      return brush->gpencil_vertex_tool;
+    case OB_MODE_SCULPT_GPENCIL_LEGACY:
+      return brush->gpencil_sculpt_tool;
+    case OB_MODE_WEIGHT_GPENCIL_LEGACY:
+      return brush->gpencil_weight_tool;
+    case OB_MODE_SCULPT_CURVES:
+      return brush->curves_sculpt_tool;
+    default:
+      return {};
+  }
+}
+
 PaintCurve *BKE_paint_curve_add(Main *bmain, const char *name)
 {
   PaintCurve *pc = static_cast<PaintCurve *>(BKE_id_new(bmain, ID_PC, name));
@@ -1734,49 +1762,36 @@ SculptSession::~SculptSession()
 
 PBVHVertRef SculptSession::active_vert_ref() const
 {
-  if (ELEM(this->pbvh->type(),
-           blender::bke::pbvh::Type::Mesh,
-           blender::bke::pbvh::Type::Grids,
-           blender::bke::pbvh::Type::BMesh))
-  {
-    return active_vert_;
+  if (std::holds_alternative<int>(active_vert_)) {
+    return {std::get<int>(active_vert_)};
   }
-
+  if (std::holds_alternative<SubdivCCGCoord>(active_vert_)) {
+    const CCGKey key = BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg);
+    const int index = std::get<SubdivCCGCoord>(active_vert_).to_index(key);
+    return {index};
+  }
+  if (std::holds_alternative<BMVert *>(active_vert_)) {
+    return {reinterpret_cast<intptr_t>(std::get<BMVert *>(active_vert_))};
+  }
   return {PBVH_REF_NONE};
 }
 
 ActiveVert SculptSession::active_vert() const
 {
-  /* TODO: While this code currently translates the stored PBVHVertRef into the given type, once
-   * we stored the actual field as ActiveVertex, this call can replace #active_vertex. */
-  switch (this->pbvh->type()) {
-    case blender::bke::pbvh::Type::Mesh:
-      return int(active_vert_.i);
-    case blender::bke::pbvh::Type::Grids: {
-      const CCGKey key = BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg);
-      return SubdivCCGCoord::from_index(key, active_vert_.i);
-    }
-    case blender::bke::pbvh::Type::BMesh:
-      return reinterpret_cast<BMVert *>(active_vert_.i);
-    default:
-      BLI_assert_unreachable();
-  }
-
-  return {};
+  return active_vert_;
 }
 
 int SculptSession::active_vert_index() const
 {
-  const ActiveVert vert = this->active_vert();
-  if (std::holds_alternative<int>(vert)) {
-    return std::get<int>(vert);
+  if (std::holds_alternative<int>(active_vert_)) {
+    return std::get<int>(active_vert_);
   }
-  else if (std::holds_alternative<SubdivCCGCoord>(vert)) {
-    const SubdivCCGCoord coord = std::get<SubdivCCGCoord>(vert);
+  if (std::holds_alternative<SubdivCCGCoord>(active_vert_)) {
+    const SubdivCCGCoord coord = std::get<SubdivCCGCoord>(active_vert_);
     return coord.to_index(BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg));
   }
-  else if (std::holds_alternative<BMVert *>(vert)) {
-    BMVert *bm_vert = std::get<BMVert *>(vert);
+  if (std::holds_alternative<BMVert *>(active_vert_)) {
+    BMVert *bm_vert = std::get<BMVert *>(active_vert_);
     return BM_elem_index_get(bm_vert);
   }
 
@@ -1786,19 +1801,18 @@ int SculptSession::active_vert_index() const
 blender::float3 SculptSession::active_vert_position(const Depsgraph &depsgraph,
                                                     const Object &object) const
 {
-  const ActiveVert vert = this->active_vert();
-  if (std::holds_alternative<int>(vert)) {
+  if (std::holds_alternative<int>(active_vert_)) {
     const Span<float3> positions = blender::bke::pbvh::vert_positions_eval(depsgraph, object);
-    return positions[std::get<int>(vert)];
+    return positions[std::get<int>(active_vert_)];
   }
-  else if (std::holds_alternative<SubdivCCGCoord>(vert)) {
+  if (std::holds_alternative<SubdivCCGCoord>(active_vert_)) {
     const CCGKey key = BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg);
-    const SubdivCCGCoord coord = std::get<SubdivCCGCoord>(vert);
+    const SubdivCCGCoord coord = std::get<SubdivCCGCoord>(active_vert_);
 
     return CCG_grid_elem_co(key, this->subdiv_ccg->grids[coord.grid_index], coord.x, coord.y);
   }
-  else if (std::holds_alternative<BMVert *>(vert)) {
-    BMVert *bm_vert = std::get<BMVert *>(vert);
+  if (std::holds_alternative<BMVert *>(active_vert_)) {
+    BMVert *bm_vert = std::get<BMVert *>(active_vert_);
     return bm_vert->co;
   }
 
@@ -1808,10 +1822,10 @@ blender::float3 SculptSession::active_vert_position(const Depsgraph &depsgraph,
 
 void SculptSession::clear_active_vert()
 {
-  active_vert_ = {PBVH_REF_NONE};
+  active_vert_ = {};
 }
 
-void SculptSession::set_active_vert(const PBVHVertRef vert)
+void SculptSession::set_active_vert(const ActiveVert vert)
 {
   active_vert_ = vert;
 }
@@ -2028,7 +2042,10 @@ static void sculpt_update_object(Depsgraph *depsgraph,
       }
     }
 
-    if (!used_me_eval) {
+    /* We depend on the deform coordinates not being updated in the middle of a stroke. This array
+     * eventually gets cleared inside BKE_sculpt_update_object_before_eval.
+     * See #126713 for more information. */
+    if (ss.deform_cos.is_empty() && !used_me_eval) {
       BKE_sculptsession_free_deformMats(&ss);
 
       BKE_crazyspace_build_sculpt(depsgraph, scene, ob, ss.deform_imats, ss.deform_cos);
@@ -2092,6 +2109,7 @@ static void sculpt_update_object(Depsgraph *depsgraph,
 
 void BKE_sculpt_update_object_before_eval(Object *ob_eval)
 {
+  using namespace blender;
   /* Update before mesh evaluation in the dependency graph. */
   SculptSession *ss = ob_eval->sculpt;
 
@@ -2117,8 +2135,24 @@ void BKE_sculpt_update_object_before_eval(Object *ob_eval)
       BKE_sculptsession_free_vwpaint_data(ob_eval->sculpt);
     }
     else if (ss->pbvh) {
-      for (blender::bke::pbvh::Node *node : blender::bke::pbvh::all_leaf_nodes(*ss->pbvh)) {
-        BKE_pbvh_node_mark_update(*node);
+      IndexMaskMemory memory;
+      const IndexMask node_mask = bke::pbvh::all_leaf_nodes(*ss->pbvh, memory);
+      switch (ss->pbvh->type()) {
+        case bke::pbvh::Type::Mesh: {
+          MutableSpan<bke::pbvh::MeshNode> nodes = ss->pbvh->nodes<bke::pbvh::MeshNode>();
+          node_mask.foreach_index([&](const int i) { BKE_pbvh_node_mark_update(nodes[i]); });
+          break;
+        }
+        case bke::pbvh::Type::Grids: {
+          MutableSpan<bke::pbvh::GridsNode> nodes = ss->pbvh->nodes<bke::pbvh::GridsNode>();
+          node_mask.foreach_index([&](const int i) { BKE_pbvh_node_mark_update(nodes[i]); });
+          break;
+        }
+        case bke::pbvh::Type::BMesh: {
+          MutableSpan<bke::pbvh::BMeshNode> nodes = ss->pbvh->nodes<bke::pbvh::BMeshNode>();
+          node_mask.foreach_index([&](const int i) { BKE_pbvh_node_mark_update(nodes[i]); });
+          break;
+        }
       }
     }
   }
@@ -2309,26 +2343,23 @@ static bool check_sculpt_object_deformed(Object *object, const bool for_construc
   return deformed;
 }
 
-void BKE_sculpt_sync_face_visibility_to_grids(Mesh *mesh, SubdivCCG *subdiv_ccg)
+void BKE_sculpt_sync_face_visibility_to_grids(const Mesh &mesh, SubdivCCG &subdiv_ccg)
 {
   using namespace blender;
   using namespace blender::bke;
-  if (!subdiv_ccg) {
-    return;
-  }
 
-  const AttributeAccessor attributes = mesh->attributes();
+  const AttributeAccessor attributes = mesh.attributes();
   const VArray<bool> hide_poly = *attributes.lookup_or_default<bool>(
       ".hide_poly", AttrDomain::Face, false);
   if (hide_poly.is_single() && !hide_poly.get_internal_single()) {
-    BKE_subdiv_ccg_grid_hidden_free(*subdiv_ccg);
+    BKE_subdiv_ccg_grid_hidden_free(subdiv_ccg);
     return;
   }
 
-  const OffsetIndices<int> faces = mesh->faces();
+  const OffsetIndices<int> faces = mesh.faces();
 
   const VArraySpan<bool> hide_poly_span(hide_poly);
-  BitGroupVector<> &grid_hidden = BKE_subdiv_ccg_grid_hidden_ensure(*subdiv_ccg);
+  BitGroupVector<> &grid_hidden = BKE_subdiv_ccg_grid_hidden_ensure(subdiv_ccg);
   threading::parallel_for(faces.index_range(), 1024, [&](const IndexRange range) {
     for (const int i : range) {
       const bool face_hidden = hide_poly_span[i];
@@ -2353,7 +2384,7 @@ static std::unique_ptr<pbvh::Tree> build_pbvh_for_dynamic_topology(Object *ob)
 static std::unique_ptr<pbvh::Tree> build_pbvh_from_regular_mesh(Object *ob,
                                                                 const Mesh *me_eval_deform)
 {
-  Mesh *mesh = BKE_object_get_original_mesh(ob);
+  const Mesh &mesh = *BKE_object_get_original_mesh(ob);
   std::unique_ptr<pbvh::Tree> pbvh = pbvh::build_mesh(mesh);
 
   const bool is_deformed = check_sculpt_object_deformed(ob, true);
@@ -2364,9 +2395,9 @@ static std::unique_ptr<pbvh::Tree> build_pbvh_from_regular_mesh(Object *ob,
   return pbvh;
 }
 
-static std::unique_ptr<pbvh::Tree> build_pbvh_from_ccg(Object *ob, SubdivCCG *subdiv_ccg)
+static std::unique_ptr<pbvh::Tree> build_pbvh_from_ccg(Object *ob, SubdivCCG &subdiv_ccg)
 {
-  Mesh *base_mesh = BKE_mesh_from_object(ob);
+  const Mesh &base_mesh = *BKE_mesh_from_object(ob);
   BKE_sculpt_sync_face_visibility_to_grids(base_mesh, subdiv_ccg);
 
   return pbvh::build_grids(base_mesh, subdiv_ccg);
@@ -2393,7 +2424,7 @@ blender::bke::pbvh::Tree *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Ob
     Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
     Mesh *mesh_eval = static_cast<Mesh *>(object_eval->data);
     if (mesh_eval->runtime->subdiv_ccg != nullptr) {
-      ob->sculpt->pbvh = build_pbvh_from_ccg(ob, mesh_eval->runtime->subdiv_ccg.get());
+      ob->sculpt->pbvh = build_pbvh_from_ccg(ob, *mesh_eval->runtime->subdiv_ccg);
     }
     else if (ob->type == OB_MESH) {
       const Mesh *me_eval_deform = BKE_object_get_mesh_deform_eval(object_eval);
