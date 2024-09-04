@@ -18,6 +18,7 @@
 #  include <io.h>
 #endif
 
+#include "BLI_math_base.hh"
 #include "BLI_path_util.h"
 #include "BLI_string.h"
 #include "BLI_threads.h"
@@ -272,8 +273,8 @@ static int startffmpeg(ImBufAnim *anim)
     if (frame_rate.den != 0 && pFormatCtx->duration > 0) {
       double stream_sec = anim->duration_in_frames / av_q2d(frame_rate);
       double container_sec = pFormatCtx->duration / double(AV_TIME_BASE);
-      if (stream_sec > 4.0 * container_sec) {
-        /* The stream is significantly longer than the container duration, which is
+      if (blender::math::abs(stream_sec - container_sec) > container_sec / 3.0) {
+        /* The stream duration is significantly different than the container duration, which is
          * suspicious. */
         anim->duration_in_frames = 0;
       }
@@ -1081,6 +1082,11 @@ static int ffmpeg_seek_to_key_frame(ImBufAnim *anim,
   return ret;
 }
 
+static bool ffmpeg_must_decode(ImBufAnim *anim, int position)
+{
+  return !anim->pFrame_complete || anim->cur_position != position;
+}
+
 static bool ffmpeg_must_seek(ImBufAnim *anim, int position)
 {
   bool must_seek = position != anim->cur_position + 1 || ffmpeg_is_first_frame_decode(anim);
@@ -1112,11 +1118,13 @@ static ImBuf *ffmpeg_fetchibuf(ImBufAnim *anim, int position, IMB_Timecode_Type 
          frame_rate,
          start_pts);
 
-  if (ffmpeg_must_seek(anim, position)) {
-    ffmpeg_seek_to_key_frame(anim, position, tc_index, pts_to_search);
-  }
+  if (ffmpeg_must_decode(anim, position)) {
+    if (ffmpeg_must_seek(anim, position)) {
+      ffmpeg_seek_to_key_frame(anim, position, tc_index, pts_to_search);
+    }
 
-  ffmpeg_decode_video_frame_scan(anim, pts_to_search);
+    ffmpeg_decode_video_frame_scan(anim, pts_to_search);
+  }
 
   /* Update resolution as it can change per-frame with WebM. See #100741 & #100081. */
   anim->x = anim->pCodecCtx->width;
