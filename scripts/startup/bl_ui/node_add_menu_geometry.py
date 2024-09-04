@@ -504,6 +504,7 @@ class NODE_MT_category_GEO_OUTPUT(Menu):
         layout = self.layout
         #node_add_menu.add_node_type(layout, "NodeGroupOutput")# BFA - double menu entry
         node_add_menu.add_node_type(layout, "GeometryNodeViewer")
+        node_add_menu.add_node_type(layout, "GeometryNodeWarning")
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
@@ -673,6 +674,7 @@ class NODE_MT_category_GEO_UTILITIES_MATH(Menu):
         node_add_menu.add_node_type(layout, "FunctionNodeCompare")
         node_add_menu.add_node_type(layout, "ShaderNodeFloatCurve")
         node_add_menu.add_node_type(layout, "FunctionNodeFloatToInt")
+        node_add_menu.add_node_type(layout, "FunctionNodeHashValue")
         node_add_menu.add_node_type(layout, "ShaderNodeMapRange")
         node_add_menu.add_node_type(layout, "ShaderNodeMath")
         node_add_menu.add_node_type(layout, "ShaderNodeMix")
