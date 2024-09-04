@@ -4116,6 +4116,33 @@ static const EnumPropertyItem node_ycc_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+static const EnumPropertyItem node_metallic_distribution_items[] = {
+    {SHD_GLOSSY_BECKMANN, "BECKMANN", 0, "Beckmann", ""},
+    {SHD_GLOSSY_GGX, "GGX", 0, "GGX", ""},
+    {SHD_GLOSSY_MULTI_GGX,
+     "MULTI_GGX",
+     0,
+     "Multiscatter GGX",
+     "GGX with additional correction to account for multiple scattering, preserve energy and "
+     "prevent unexpected darkening at high roughness"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+static const EnumPropertyItem node_metallic_fresnel_type_items[] = {
+    {SHD_PHYSICAL_CONDUCTOR,
+     "PHYSICAL_CONDUCTOR",
+     0,
+     "Physical Conductor",
+     "Fresnel conductor based on the complex refractive index per color channel"},
+    {SHD_CONDUCTOR_F82,
+     "F82",
+     0,
+     "F82 Tint",
+     "An approximation of the Fresnel conductor curve based on the colors at perpendicular and "
+     "near-grazing (roughly 82°) angles"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
 static const EnumPropertyItem node_glossy_items[] = {
     {SHD_GLOSSY_BECKMANN, "BECKMANN", 0, "Beckmann", ""},
     {SHD_GLOSSY_GGX, "GGX", 0, "GGX", ""},
@@ -5653,6 +5680,23 @@ static void def_sh_tex_pointdensity(StructRNA *srna)
   RNA_def_property_array(parm, 3);
   RNA_def_parameter_flags(parm, PROP_THICK_WRAP, ParameterFlag(0));
   RNA_def_function_output(func, parm);
+}
+
+static void def_metallic(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  prop = RNA_def_property(srna, "distribution", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "custom1");
+  RNA_def_property_enum_items(prop, node_metallic_distribution_items);
+  RNA_def_property_ui_text(prop, "Distribution", "Light scattering distribution on rough surface");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "fresnel_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "custom2");
+  RNA_def_property_enum_items(prop, node_metallic_fresnel_type_items);
+  RNA_def_property_ui_text(prop, "Fresnel Type", "Fresnel method used to tint the metal");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
 static void def_glossy(StructRNA *srna)
@@ -10253,6 +10297,18 @@ static void rna_def_node(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem warning_propagation_items[] = {
+      {NODE_WARNING_PROPAGATION_ALL, "ALL", 0, "All", ""},
+      {NODE_WARNING_PROPAGATION_NONE, "NONE", 0, "None", ""},
+      {NODE_WARNING_PROPAGATION_ONLY_ERRORS, "ERRORS", 0, "Errors", ""},
+      {NODE_WARNING_PROPAGATION_ONLY_ERRORS_AND_WARNINGS,
+       "ERRORS_AND_WARNINGS",
+       0,
+       "Errors and Warnings",
+       ""},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   srna = RNA_def_struct(brna, "Node", nullptr);
   RNA_def_struct_ui_text(srna, "Node", "Node in a node tree");
   RNA_def_struct_sdna(srna, "bNode");
@@ -10364,6 +10420,14 @@ static void rna_def_node(BlenderRNA *brna)
   RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_struct_type(prop, "Node");
   RNA_def_property_ui_text(prop, "Parent", "Parent this node is attached to");
+
+  prop = RNA_def_property(srna, "warning_propagation", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, warning_propagation_items);
+  RNA_def_property_ui_text(
+      prop,
+      "Warning Propagation",
+      "The kinds of messages that should be propagated from this node to the parent group node");
+  RNA_def_property_update(prop, 0, "rna_Node_update");
 
   prop = RNA_def_property(srna, "use_custom_color", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", NODE_CUSTOM_COLOR);

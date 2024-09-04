@@ -339,8 +339,8 @@ class ALL_MT_editormenu_dopesheet(Menu):
 
 class DOPESHEET_HT_editor_buttons:
 
-    @staticmethod
-    def draw_header(context, layout):
+    @classmethod
+    def draw_header(cls, context, layout):
         st = context.space_data
         tool_settings = context.tool_settings
 
@@ -359,21 +359,9 @@ class DOPESHEET_HT_editor_buttons:
             row.operator("action.push_down", text="Push Down", icon='NLA_PUSHDOWN')
             row.operator("action.stash", text="Stash", icon='FREEZE')
 
-            layout.separator_spacer()
-
-            layout.template_action(context.object, new="action.new", unlink="action.unlink")
-
-            # Show slot selector.
-            if context.preferences.experimental.use_animation_baklava:
-                # context.space_data.action comes from the active object.
-                adt = context.object and context.object.animation_data
-                if adt and st.action and st.action.is_action_layered:
-                    layout.template_search(
-                        adt, "action_slot",
-                        adt, "action_slots",
-                        new="",
-                        unlink="anim.slot_unassign_object",
-                    )
+            if context.object:
+                layout.separator_spacer()
+                cls._draw_action_selector(context, layout)
 
         # Layer management
         if st.mode == 'GPENCIL':
@@ -444,6 +432,27 @@ class DOPESHEET_HT_editor_buttons:
 
         row = layout.row()
         row.popover(panel = "DOPESHEET_PT_view_view_options", text = "Options")
+
+    @staticmethod
+    def _draw_action_selector(context, layout):
+        layout.template_action(context.object, new="action.new", unlink="action.unlink")
+
+        if not context.preferences.experimental.use_animation_baklava:
+            return
+
+        adt = context.object and context.object.animation_data
+        if not adt or not adt.action or not adt.action.is_action_layered:
+            return
+
+        # Store the animated ID in the context, so that the new/unlink operators
+        # have access to it.
+        layout.context_pointer_set("animated_id", context.object)
+        layout.template_search(
+            adt, "action_slot",
+            adt, "action_slots",
+            new="anim.slot_new_for_id",
+            unlink="anim.slot_unassign_from_id",
+        )
 
 
 class DOPESHEET_PT_snapping(Panel):

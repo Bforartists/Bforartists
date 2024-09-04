@@ -1026,6 +1026,12 @@ void UI_but_disable(uiBut *but, const char *disabled_hint);
 void UI_but_type_set_menu_from_pulldown(uiBut *but);
 
 /**
+ * Sets the button's color, normally only used to recolor the icon. In the
+ * special case of UI_BTYPE_LABEL without icon this is used as text color.
+ */
+void UI_but_color_set(uiBut *but, const uchar color[4]);
+
+/**
  * Set at hint that describes the expected value when empty.
  */
 void UI_but_placeholder_set(uiBut *but, const char *placeholder_text) ATTR_NONNULL(1);
@@ -2503,8 +2509,8 @@ void uiTemplateAnyID(uiLayout *layout,
 /**
  * Action selector.
  *
- * This is a specialisation of #uiTemplateID, hard-coded to assign Actions to the given ID.
- * Such a specialisation is necessary, as the RNA property (`id.animation_data.action`) does not
+ * This is a specialization of #uiTemplateID, hard-coded to assign Actions to the given ID.
+ * Such a specialization is necessary, as the RNA property (`id.animation_data.action`) does not
  * exist when the ID's `adt` pointer is `nullptr`. In that case uiTemplateID will not be able
  * to find the RNA type of that property, which in turn it needs to determine the type of IDs to
  * show.
