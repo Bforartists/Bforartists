@@ -1632,7 +1632,7 @@ static PointerRNA *ui_but_extra_operator_icon_add_ptr(uiBut *but,
   extra_op_icon->icon = icon;
   extra_op_icon->optype_params = MEM_cnew<wmOperatorCallParams>(__func__);
   extra_op_icon->optype_params->optype = optype;
-  extra_op_icon->optype_params->opptr = MEM_cnew<PointerRNA>(__func__);
+  extra_op_icon->optype_params->opptr = MEM_new<PointerRNA>(__func__);
   WM_operator_properties_create_ptr(extra_op_icon->optype_params->opptr,
                                     extra_op_icon->optype_params->optype);
   extra_op_icon->optype_params->opcontext = opcontext;
@@ -1647,7 +1647,7 @@ static PointerRNA *ui_but_extra_operator_icon_add_ptr(uiBut *but,
 static void ui_but_extra_operator_icon_free(uiButExtraOpIcon *extra_icon)
 {
   WM_operator_properties_free(extra_icon->optype_params->opptr);
-  MEM_freeN(extra_icon->optype_params->opptr);
+  MEM_delete(extra_icon->optype_params->opptr);
   MEM_freeN(extra_icon->optype_params);
   MEM_freeN(extra_icon);
 }
@@ -3385,12 +3385,75 @@ static void ui_but_free_type_specific(uiBut *but)
   }
 }
 
+/**
+ * Ensures that the proper type of data is destructed, from a generic #uiBut pointer. Should always
+ * match behavior of #ui_but_new.
+ */
+static void ui_but_mem_delete(const uiBut *but)
+{
+  switch (but->type) {
+    case UI_BTYPE_NUM:
+      MEM_delete(reinterpret_cast<const uiButNumber *>(but));
+      break;
+    case UI_BTYPE_NUM_SLIDER:
+      MEM_delete(reinterpret_cast<const uiButNumberSlider *>(but));
+      break;
+    case UI_BTYPE_COLOR:
+      MEM_delete(reinterpret_cast<const uiButColor *>(but));
+      break;
+    case UI_BTYPE_DECORATOR:
+      MEM_delete(reinterpret_cast<const uiButDecorator *>(but));
+      break;
+    case UI_BTYPE_TAB:
+      MEM_delete(reinterpret_cast<const uiButTab *>(but));
+      break;
+    case UI_BTYPE_SEARCH_MENU:
+      MEM_delete(reinterpret_cast<const uiButSearch *>(but));
+      break;
+    case UI_BTYPE_PROGRESS:
+      MEM_delete(reinterpret_cast<const uiButProgress *>(but));
+      break;
+    case UI_BTYPE_SEPR_LINE:
+      MEM_delete(reinterpret_cast<const uiButSeparatorLine *>(but));
+      break;
+    case UI_BTYPE_HSVCUBE:
+      MEM_delete(reinterpret_cast<const uiButHSVCube *>(but));
+      break;
+    case UI_BTYPE_COLORBAND:
+      MEM_delete(reinterpret_cast<const uiButColorBand *>(but));
+      break;
+    case UI_BTYPE_CURVE:
+      MEM_delete(reinterpret_cast<const uiButCurveMapping *>(but));
+      break;
+    case UI_BTYPE_CURVEPROFILE:
+      MEM_delete(reinterpret_cast<const uiButCurveProfile *>(but));
+      break;
+    case UI_BTYPE_HOTKEY_EVENT:
+      MEM_delete(reinterpret_cast<const uiButHotkeyEvent *>(but));
+      break;
+    case UI_BTYPE_VIEW_ITEM:
+      MEM_delete(reinterpret_cast<const uiButViewItem *>(but));
+      break;
+    case UI_BTYPE_LABEL:
+      MEM_delete(reinterpret_cast<const uiButLabel *>(but));
+      break;
+    case UI_BTYPE_SCROLL:
+      MEM_delete(reinterpret_cast<const uiButScrollBar *>(but));
+      break;
+    default:
+      BLI_assert_msg(MEM_allocN_len(but) == sizeof(uiBut),
+                     "Derived button type needs type specific deletion");
+      MEM_delete(but);
+      break;
+  }
+}
+
 /* can be called with C==nullptr */
 static void ui_but_free(const bContext *C, uiBut *but)
 {
   if (but->opptr) {
     WM_operator_properties_free(but->opptr);
-    MEM_freeN(but->opptr);
+    MEM_delete(but->opptr);
   }
 
   if (but->func_argN) {
@@ -3442,7 +3505,7 @@ static void ui_but_free(const bContext *C, uiBut *but)
 
   BLI_assert(UI_butstore_is_registered(but->block, but) == false);
 
-  MEM_delete(but);
+  ui_but_mem_delete(but);
 }
 
 static void ui_block_free_active_operator(uiBlock *block)
@@ -3954,6 +4017,8 @@ void ui_block_cm_to_display_space_v3(uiBlock *block, float pixel[3])
 
 /**
  * Factory function: Allocate button and set #uiBut.type.
+ *
+ * \note: #ui_but_mem_delete is the matching 'destructor' function.
  */
 static uiBut *ui_but_new(const eButType type)
 {
@@ -4056,7 +4121,7 @@ uiBut *ui_but_change_type(uiBut *but, eButType new_type)
   }
 #endif
 
-  MEM_delete(old_but_ptr);
+  ui_but_mem_delete(old_but_ptr);
 
   return but;
 }
@@ -5646,9 +5711,12 @@ void UI_but_operator_set(uiBut *but,
   but->opcontext = opcontext;
   but->flag &= ~UI_BUT_UNDO; /* no need for ui_but_is_rna_undo(), we never need undo here */
 
-  MEM_SAFE_FREE(but->opptr);
+  if (but->opptr) {
+    MEM_delete(but->opptr);
+    but->opptr = nullptr;
+  }
   if (opptr) {
-    but->opptr = MEM_cnew<PointerRNA>(__func__, *opptr);
+    but->opptr = MEM_new<PointerRNA>(__func__, *opptr);
   }
 }
 
@@ -5741,6 +5809,11 @@ void UI_but_disable(uiBut *but, const char *disabled_hint)
   but->disabled_info = disabled_hint;
 }
 
+void UI_but_color_set(uiBut *but, const uchar color[4])
+{
+  copy_v4_v4_uchar(but->col, color);
+}
+
 void UI_but_placeholder_set(uiBut *but, const char *placeholder_text)
 {
   MEM_SAFE_FREE(but->placeholder);
@@ -5787,7 +5860,7 @@ int UI_but_return_value_get(uiBut *but)
 PointerRNA *UI_but_operator_ptr_ensure(uiBut *but)
 {
   if (but->optype && !but->opptr) {
-    but->opptr = MEM_cnew<PointerRNA>(__func__);
+    but->opptr = MEM_new<PointerRNA>(__func__);
     WM_operator_properties_create_ptr(but->opptr, but->optype);
   }
 
