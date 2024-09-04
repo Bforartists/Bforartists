@@ -463,7 +463,7 @@ TEST_F(ActionLayersTest, active_slot)
   }
 
   { /* Single slot case. */
-    Slot &slot_cube = action->slot_ensure_for_id(cube->id);
+    Slot &slot_cube = *assign_action_ensure_slot_for_keying(*action, cube->id);
     EXPECT_EQ(nullptr, action->slot_active_get())
         << "Adding the first slot should not change what is the active slot.";
 
@@ -483,8 +483,8 @@ TEST_F(ActionLayersTest, active_slot)
     Slot &slot_cube = *action->slot(0);
     action->slot_active_set(slot_cube.handle);
 
-    Slot &slot_suz = action->slot_ensure_for_id(suzanne->id);
-    Slot &slot_bob = action->slot_ensure_for_id(bob->id);
+    Slot &slot_suz = *assign_action_ensure_slot_for_keying(*action, suzanne->id);
+    Slot &slot_bob = *assign_action_ensure_slot_for_keying(*action, bob->id);
     EXPECT_EQ(&slot_cube, action->slot_active_get())
         << "Adding a subsequent slot should not change what is the active slot.";
     EXPECT_TRUE(slot_cube.is_active());
@@ -990,6 +990,11 @@ TEST_F(ChannelBagTest, channel_group_fcurve_creation)
   EXPECT_EQ(fcu2, channel_bag->fcurve(2));
   EXPECT_EQ(fcu4, channel_bag->fcurve(3));
   EXPECT_EQ(fcu0, channel_bag->fcurve(4));
+  EXPECT_EQ(group0, fcu1->grp);
+  EXPECT_EQ(group0, fcu3->grp);
+  EXPECT_EQ(group1, fcu2->grp);
+  EXPECT_EQ(group1, fcu4->grp);
+  EXPECT_EQ(nullptr, fcu0->grp);
   EXPECT_EQ(0, group0->fcurve_range_start);
   EXPECT_EQ(2, group0->fcurve_range_length);
   EXPECT_EQ(2, group1->fcurve_range_start);
@@ -1006,41 +1011,63 @@ TEST_F(ChannelBagTest, channel_group_fcurve_removal)
 
   ASSERT_EQ(5, channel_bag->fcurves().size());
   ASSERT_EQ(2, channel_bag->channel_groups().size());
-  EXPECT_EQ(0, channel_bag->channel_group(0)->fcurve_range_start);
-  EXPECT_EQ(2, channel_bag->channel_group(0)->fcurve_range_length);
-  EXPECT_EQ(2, channel_bag->channel_group(1)->fcurve_range_start);
-  EXPECT_EQ(2, channel_bag->channel_group(1)->fcurve_range_length);
+
+  bActionGroup *group0 = channel_bag->channel_group(0);
+  bActionGroup *group1 = channel_bag->channel_group(1);
+
+  EXPECT_EQ(0, group0->fcurve_range_start);
+  EXPECT_EQ(2, group0->fcurve_range_length);
+  EXPECT_EQ(2, group1->fcurve_range_start);
+  EXPECT_EQ(2, group1->fcurve_range_length);
+  EXPECT_EQ(group0, fcu0->grp);
+  EXPECT_EQ(group0, fcu1->grp);
+  EXPECT_EQ(group1, fcu2->grp);
+  EXPECT_EQ(group1, fcu3->grp);
+  EXPECT_EQ(nullptr, fcu4->grp);
 
   channel_bag->fcurve_remove(*fcu3);
   ASSERT_EQ(4, channel_bag->fcurves().size());
   ASSERT_EQ(2, channel_bag->channel_groups().size());
-  EXPECT_EQ(0, channel_bag->channel_group(0)->fcurve_range_start);
-  EXPECT_EQ(2, channel_bag->channel_group(0)->fcurve_range_length);
-  EXPECT_EQ(2, channel_bag->channel_group(1)->fcurve_range_start);
-  EXPECT_EQ(1, channel_bag->channel_group(1)->fcurve_range_length);
+  EXPECT_EQ(group0, channel_bag->channel_group(0));
+  EXPECT_EQ(group1, channel_bag->channel_group(1));
+  EXPECT_EQ(0, group0->fcurve_range_start);
+  EXPECT_EQ(2, group0->fcurve_range_length);
+  EXPECT_EQ(2, group1->fcurve_range_start);
+  EXPECT_EQ(1, group1->fcurve_range_length);
+  EXPECT_EQ(group0, fcu0->grp);
+  EXPECT_EQ(group0, fcu1->grp);
+  EXPECT_EQ(group1, fcu2->grp);
+  EXPECT_EQ(nullptr, fcu4->grp);
 
   channel_bag->fcurve_remove(*fcu0);
   ASSERT_EQ(3, channel_bag->fcurves().size());
   ASSERT_EQ(2, channel_bag->channel_groups().size());
-  EXPECT_EQ(0, channel_bag->channel_group(0)->fcurve_range_start);
-  EXPECT_EQ(1, channel_bag->channel_group(0)->fcurve_range_length);
-  EXPECT_EQ(1, channel_bag->channel_group(1)->fcurve_range_start);
-  EXPECT_EQ(1, channel_bag->channel_group(1)->fcurve_range_length);
-
-  bActionGroup *group1 = channel_bag->channel_group(1);
+  EXPECT_EQ(group0, channel_bag->channel_group(0));
+  EXPECT_EQ(group1, channel_bag->channel_group(1));
+  EXPECT_EQ(0, group0->fcurve_range_start);
+  EXPECT_EQ(1, group0->fcurve_range_length);
+  EXPECT_EQ(1, group1->fcurve_range_start);
+  EXPECT_EQ(1, group1->fcurve_range_length);
+  EXPECT_EQ(group0, fcu1->grp);
+  EXPECT_EQ(group1, fcu2->grp);
+  EXPECT_EQ(nullptr, fcu4->grp);
 
   channel_bag->fcurve_remove(*fcu1);
   ASSERT_EQ(2, channel_bag->fcurves().size());
   ASSERT_EQ(1, channel_bag->channel_groups().size());
   EXPECT_EQ(group1, channel_bag->channel_group(0));
-  EXPECT_EQ(0, channel_bag->channel_group(0)->fcurve_range_start);
-  EXPECT_EQ(1, channel_bag->channel_group(0)->fcurve_range_length);
+  EXPECT_EQ(0, group1->fcurve_range_start);
+  EXPECT_EQ(1, group1->fcurve_range_length);
+  EXPECT_EQ(group1, fcu2->grp);
+  EXPECT_EQ(nullptr, fcu4->grp);
 
   channel_bag->fcurve_remove(*fcu4);
   ASSERT_EQ(1, channel_bag->fcurves().size());
   ASSERT_EQ(1, channel_bag->channel_groups().size());
-  EXPECT_EQ(0, channel_bag->channel_group(0)->fcurve_range_start);
-  EXPECT_EQ(1, channel_bag->channel_group(0)->fcurve_range_length);
+  EXPECT_EQ(group1, channel_bag->channel_group(0));
+  EXPECT_EQ(0, group1->fcurve_range_start);
+  EXPECT_EQ(1, group1->fcurve_range_length);
+  EXPECT_EQ(group1, fcu2->grp);
 
   channel_bag->fcurve_remove(*fcu2);
   ASSERT_EQ(0, channel_bag->fcurves().size());
