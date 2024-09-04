@@ -375,7 +375,7 @@ static bool ui_template_list_data_retrieve(const char *listtype_name,
                                            TemplateListInputData *r_input_data,
                                            uiListType **r_list_type)
 {
-  memset(r_input_data, 0, sizeof(*r_input_data));
+  *r_input_data = {};
 
   /* Forbid default UI_UL_DEFAULT_CLASS_NAME list class without a custom list_id! */
   if (STREQ(UI_UL_DEFAULT_CLASS_NAME, listtype_name) && !(list_id && list_id[0])) {
@@ -1212,7 +1212,7 @@ uiList *uiTemplateList_ex(uiLayout *layout,
                           enum uiTemplateListFlags flags,
                           void *customdata)
 {
-  TemplateListInputData input_data = {{nullptr}};
+  TemplateListInputData input_data = {};
   uiListType *ui_list_type;
   if (!ui_template_list_data_retrieve(listtype_name,
                                       list_id,
