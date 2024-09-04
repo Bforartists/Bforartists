@@ -91,12 +91,15 @@ static void buttons_free(SpaceLink *sl)
   SpaceProperties *sbuts = (SpaceProperties *)sl;
 
   if (sbuts->path) {
-    MEM_freeN(sbuts->path);
+    MEM_delete(static_cast<ButsContextPath *>(sbuts->path));
   }
 
   if (sbuts->texuser) {
     ButsContextTexture *ct = static_cast<ButsContextTexture *>(sbuts->texuser);
-    BLI_freelistN(&ct->users);
+    LISTBASE_FOREACH_MUTABLE (ButsTextureUser *, user, &ct->users) {
+      MEM_delete(user);
+    }
+    BLI_listbase_clear(&ct->users);
     MEM_freeN(ct);
   }
 
@@ -611,6 +614,9 @@ static void buttons_navigation_bar_region_init(wmWindowManager *wm, ARegion *reg
 
 static void buttons_navigation_bar_region_draw(const bContext *C, ARegion *region)
 {
+  SpaceProperties *sbuts = CTX_wm_space_properties(C);
+  buttons_context_compute(C, sbuts);
+
   LISTBASE_FOREACH (PanelType *, pt, &region->type->paneltypes) {
     pt->flag |= PANEL_TYPE_LAYOUT_VERT_BAR;
   }
@@ -633,6 +639,10 @@ static void buttons_navigation_bar_region_message_subscribe(
   msg_sub_value_region_tag_redraw.notify = ED_region_do_msg_notify_tag_redraw;
 
   WM_msg_subscribe_rna_anon_prop(mbus, Window, view_layer, &msg_sub_value_region_tag_redraw);
+  /* Redraw when image editor mode changes, texture tab needs to be added when switching to "Paint"
+   * mode. */
+  WM_msg_subscribe_rna_anon_prop(
+      mbus, SpaceImageEditor, ui_mode, &msg_sub_value_region_tag_redraw);
 }
 
 /* draw a certain button set only if properties area is currently
@@ -885,7 +895,9 @@ static void buttons_id_remap(ScrArea * /*area*/,
           if (i != 0) {
             /* If the first item in the path is cleared, the whole path is cleared, so no need to
              * clear further items here, see also at the end of this block. */
-            memset(&path->ptr[i], 0, sizeof(path->ptr[i]) * (path->len - i));
+            for (int j = i; j < path->len; j++) {
+              path->ptr[j] = {};
+            }
           }
           break;
         }
@@ -894,7 +906,9 @@ static void buttons_id_remap(ScrArea * /*area*/,
           /* There is no easy way to check/make path downwards valid, just nullify it.
            * Next redraw will rebuild this anyway. */
           i++;
-          memset(&path->ptr[i], 0, sizeof(path->ptr[i]) * (path->len - i));
+          for (int j = i; j < path->len; j++) {
+            path->ptr[j] = {};
+          }
           path->len = i;
           break;
         }
@@ -906,15 +920,19 @@ static void buttons_id_remap(ScrArea * /*area*/,
         }
       }
     }
-    if (path->len == 0) {
-      MEM_SAFE_FREE(sbuts->path);
+    if (path->len == 0 && sbuts->path) {
+      MEM_delete(static_cast<ButsContextPath *>(sbuts->path));
+      sbuts->path = nullptr;
     }
   }
 
   if (sbuts->texuser) {
     ButsContextTexture *ct = static_cast<ButsContextTexture *>(sbuts->texuser);
     mappings.apply(reinterpret_cast<ID **>(&ct->texture), ID_REMAP_APPLY_DEFAULT);
-    BLI_freelistN(&ct->users);
+    LISTBASE_FOREACH_MUTABLE (ButsTextureUser *, user, &ct->users) {
+      MEM_delete(user);
+    }
+    BLI_listbase_clear(&ct->users);
     ct->user = nullptr;
   }
 }
@@ -932,7 +950,10 @@ static void buttons_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data
     }
     /* NOTE: Restoring path pointers is complicated, if not impossible, because this contains
      * data pointers too, not just ID ones. See #40046. */
-    MEM_SAFE_FREE(sbuts->path);
+    if (sbuts->path) {
+      MEM_delete(static_cast<ButsContextPath *>(sbuts->path));
+      sbuts->path = nullptr;
+    }
   }
 
   if (sbuts->texuser) {
@@ -940,7 +961,10 @@ static void buttons_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, ct->texture, IDWALK_CB_DIRECT_WEAK_LINK);
 
     if (!is_readonly) {
-      BLI_freelistN(&ct->users);
+      LISTBASE_FOREACH_MUTABLE (ButsTextureUser *, user, &ct->users) {
+        MEM_delete(user);
+      }
+      BLI_listbase_clear(&ct->users);
       ct->user = nullptr;
     }
   }
