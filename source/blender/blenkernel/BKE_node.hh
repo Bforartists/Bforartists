@@ -997,6 +997,7 @@ void node_tree_remove_layer_n(bNodeTree *ntree, Scene *scene, int layer_index);
 #define SH_NODE_MIX 713
 #define SH_NODE_BSDF_RAY_PORTAL 714
 #define SH_NODE_TEX_GABOR 715
+#define SH_NODE_BSDF_METALLIC 716
 
 /** \} */
 
@@ -1374,6 +1375,7 @@ void node_tree_remove_layer_n(bNodeTree *ntree, Scene *scene, int layer_index);
 #define GEO_NODE_CURVES_TO_GREASE_PENCIL 2144
 #define GEO_NODE_GREASE_PENCIL_TO_CURVES 2145
 #define GEO_NODE_IMPORT_PLY 2146
+#define GEO_NODE_WARNING 2147
 
 /** \} */
 
@@ -1422,6 +1424,7 @@ void node_tree_remove_layer_n(bNodeTree *ntree, Scene *scene, int layer_index);
 #define FN_NODE_SEPARATE_MATRIX 1242
 #define FN_NODE_INPUT_ROTATION 1243
 #define FN_NODE_AXES_TO_ROTATION 1244
+#define FN_NODE_HASH_VALUE 1245
 
 /** \} */
 
