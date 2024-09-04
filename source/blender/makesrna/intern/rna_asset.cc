@@ -29,12 +29,12 @@ const EnumPropertyItem rna_enum_asset_library_type_items[] = {
      "LOCAL",
      ICON_CURRENT_FILE,
      "Current File",
-     "Show the assets currently available in this session"},
+     "Show the assets currently available in this Bforartists session"}, /*BFA*/
     {ASSET_LIBRARY_ESSENTIALS,
      "ESSENTIALS",
      ICON_BLENDER,
      "Essentials",
-     "Show the basic building blocks and utilities coming with Bforartists"},
+     "Show the basic building blocks and utilities coming with Bforartists"}, /*BFA*/
     {ASSET_LIBRARY_CUSTOM,
      "CUSTOM",
      0,

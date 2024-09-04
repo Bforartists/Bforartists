@@ -47,7 +47,7 @@ static void calc_faces(const Depsgraph &depsgraph,
                        const float strength,
                        const Span<float3> positions_eval,
                        const Span<float3> vert_normals,
-                       const bke::pbvh::Node &node,
+                       const bke::pbvh::MeshNode &node,
                        Object &object,
                        LocalData &tls,
                        const MutableSpan<float3> positions_orig)
@@ -65,7 +65,7 @@ static void calc_faces(const Depsgraph &depsgraph,
   filter_region_clip_factors(ss, positions, factors);
 
   if (brush.flag & BRUSH_FRONTFACE) {
-    calc_front_face(cache.view_normal, vert_normals, verts, factors);
+    calc_front_face(cache.view_normal_symm, vert_normals, verts, factors);
   }
 
   tls.distances.resize(verts.size());
@@ -95,7 +95,7 @@ static void calc_grids(const Depsgraph &depsgraph,
                        const Brush &brush,
                        const float4 &plane_tilt,
                        const float strength,
-                       const bke::pbvh::Node &node,
+                       const bke::pbvh::GridsNode &node,
                        Object &object,
                        LocalData &tls)
 {
@@ -111,7 +111,7 @@ static void calc_grids(const Depsgraph &depsgraph,
   fill_factor_from_hide_and_mask(subdiv_ccg, grids, factors);
   filter_region_clip_factors(ss, positions, factors);
   if (brush.flag & BRUSH_FRONTFACE) {
-    calc_front_face(cache.view_normal, subdiv_ccg, grids, factors);
+    calc_front_face(cache.view_normal_symm, subdiv_ccg, grids, factors);
   }
 
   tls.distances.resize(positions.size());
@@ -143,7 +143,7 @@ static void calc_bmesh(const Depsgraph &depsgraph,
                        const float4 &plane_tilt,
                        const float strength,
                        Object &object,
-                       bke::pbvh::Node &node,
+                       bke::pbvh::BMeshNode &node,
                        LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
@@ -157,7 +157,7 @@ static void calc_bmesh(const Depsgraph &depsgraph,
   fill_factor_from_hide_and_mask(*ss.bm, verts, factors);
   filter_region_clip_factors(ss, positions, factors);
   if (brush.flag & BRUSH_FRONTFACE) {
-    calc_front_face(cache.view_normal, verts, factors);
+    calc_front_face(cache.view_normal_symm, verts, factors);
   }
 
   tls.distances.resize(verts.size());
@@ -188,11 +188,11 @@ static void calc_bmesh(const Depsgraph &depsgraph,
 void do_clay_thumb_brush(const Depsgraph &depsgraph,
                          const Sculpt &sd,
                          Object &object,
-                         Span<bke::pbvh::Node *> nodes)
+                         const IndexMask &node_mask)
 {
   const SculptSession &ss = *object.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
-  const float3 &location = ss.cache->location;
+  const float3 &location = ss.cache->location_symm;
 
   /* Sampled geometry normal and area center. */
   float3 area_no_sp;
@@ -201,10 +201,10 @@ void do_clay_thumb_brush(const Depsgraph &depsgraph,
 
   float4x4 tmat;
 
-  calc_brush_plane(depsgraph, brush, object, nodes, area_no_sp, area_co_tmp);
+  calc_brush_plane(depsgraph, brush, object, node_mask, area_no_sp, area_co_tmp);
 
   if (brush.sculpt_plane != SCULPT_DISP_DIR_AREA || (brush.flag & BRUSH_ORIGINAL_NORMAL)) {
-    area_no = calc_area_normal(depsgraph, brush, object, nodes).value_or(float3(0));
+    area_no = calc_area_normal(depsgraph, brush, object, node_mask).value_or(float3(0));
   }
   else {
     area_no = area_no_sp;
@@ -212,27 +212,28 @@ void do_clay_thumb_brush(const Depsgraph &depsgraph,
 
   /* Delay the first daub because grab delta is not setup. */
   if (SCULPT_stroke_is_first_brush_step_of_symmetry_pass(*ss.cache)) {
-    ss.cache->clay_thumb_front_angle = 0.0f;
+    ss.cache->clay_thumb_brush.front_angle = 0.0f;
     return;
   }
 
   /* Simulate the clay accumulation by increasing the plane angle as more samples are added to the
    * stroke. */
   if (SCULPT_stroke_is_main_symmetry_pass(*ss.cache)) {
-    ss.cache->clay_thumb_front_angle += 0.8f;
-    ss.cache->clay_thumb_front_angle = clamp_f(ss.cache->clay_thumb_front_angle, 0.0f, 60.0f);
+    ss.cache->clay_thumb_brush.front_angle += 0.8f;
+    ss.cache->clay_thumb_brush.front_angle = std::clamp(
+        ss.cache->clay_thumb_brush.front_angle, 0.0f, 60.0f);
   }
 
-  if (math::is_zero(ss.cache->grab_delta_symmetry)) {
+  if (math::is_zero(ss.cache->grab_delta_symm)) {
     return;
   }
 
   /* Initialize brush local-space matrix. */
   float4x4 mat = float4x4::identity();
-  mat.x_axis() = math::cross(area_no, ss.cache->grab_delta_symmetry);
+  mat.x_axis() = math::cross(area_no, ss.cache->grab_delta_symm);
   mat.y_axis() = math::cross(area_no, mat.x_axis());
   mat.z_axis() = area_no;
-  mat.location() = ss.cache->location;
+  mat.location() = ss.cache->location_symm;
   normalize_m4(mat.ptr());
 
   /* Scale brush local space matrix. */
@@ -247,7 +248,8 @@ void do_clay_thumb_brush(const Depsgraph &depsgraph,
   float4x4 imat;
 
   invert_m4_m4(imat.ptr(), mat.ptr());
-  rotate_v3_v3v3fl(normal_tilt, area_no_sp, imat[0], DEG2RADF(-ss.cache->clay_thumb_front_angle));
+  rotate_v3_v3v3fl(
+      normal_tilt, area_no_sp, imat[0], DEG2RADF(-ss.cache->clay_thumb_brush.front_angle));
 
   /* Tilted plane (front part of the brush). */
   plane_from_point_normal_v3(plane_tilt, location, normal_tilt);
@@ -255,13 +257,14 @@ void do_clay_thumb_brush(const Depsgraph &depsgraph,
   threading::EnumerableThreadSpecific<LocalData> all_tls;
   switch (object.sculpt->pbvh->type()) {
     case bke::pbvh::Type::Mesh: {
+      MutableSpan<bke::pbvh::MeshNode> nodes = ss.pbvh->nodes<bke::pbvh::MeshNode>();
       Mesh &mesh = *static_cast<Mesh *>(object.data);
       const Span<float3> positions_eval = bke::pbvh::vert_positions_eval(depsgraph, object);
       const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, object);
       MutableSpan<float3> positions_orig = mesh.vert_positions_for_write();
-      threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
+      threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
         LocalData &tls = all_tls.local();
-        for (const int i : range) {
+        node_mask.slice(range).foreach_index([&](const int i) {
           calc_faces(depsgraph,
                      sd,
                      brush,
@@ -269,41 +272,44 @@ void do_clay_thumb_brush(const Depsgraph &depsgraph,
                      clay_strength,
                      positions_eval,
                      vert_normals,
-                     *nodes[i],
+                     nodes[i],
                      object,
                      tls,
                      positions_orig);
-          BKE_pbvh_node_mark_positions_update(*nodes[i]);
-        }
+          BKE_pbvh_node_mark_positions_update(nodes[i]);
+        });
       });
       break;
     }
-    case bke::pbvh::Type::Grids:
-      threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
+    case bke::pbvh::Type::Grids: {
+      MutableSpan<bke::pbvh::GridsNode> nodes = ss.pbvh->nodes<bke::pbvh::GridsNode>();
+      threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
         LocalData &tls = all_tls.local();
-        for (const int i : range) {
-          calc_grids(depsgraph, sd, brush, plane_tilt, clay_strength, *nodes[i], object, tls);
-        }
+        node_mask.slice(range).foreach_index([&](const int i) {
+          calc_grids(depsgraph, sd, brush, plane_tilt, clay_strength, nodes[i], object, tls);
+        });
       });
       break;
-    case bke::pbvh::Type::BMesh:
-      threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
+    }
+    case bke::pbvh::Type::BMesh: {
+      MutableSpan<bke::pbvh::BMeshNode> nodes = ss.pbvh->nodes<bke::pbvh::BMeshNode>();
+      threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
         LocalData &tls = all_tls.local();
-        for (const int i : range) {
-          calc_bmesh(depsgraph, sd, brush, plane_tilt, clay_strength, object, *nodes[i], tls);
-        }
+        node_mask.slice(range).foreach_index([&](const int i) {
+          calc_bmesh(depsgraph, sd, brush, plane_tilt, clay_strength, object, nodes[i], tls);
+        });
       });
       break;
+    }
   }
 }
 
-float clay_thumb_get_stabilized_pressure(const blender::ed::sculpt_paint::StrokeCache &cache)
+float clay_thumb_get_stabilized_pressure(const StrokeCache &cache)
 {
-  float final_pressure = 0.0f;
-  for (int i = 0; i < SCULPT_CLAY_STABILIZER_LEN; i++) {
-    final_pressure += cache.clay_pressure_stabilizer[i];
-  }
-  return final_pressure / SCULPT_CLAY_STABILIZER_LEN;
+  const float pressure_sum = std::accumulate(cache.clay_thumb_brush.pressure_stabilizer.begin(),
+                                             cache.clay_thumb_brush.pressure_stabilizer.end(),
+                                             0.0f);
+  return pressure_sum / cache.clay_thumb_brush.pressure_stabilizer.size();
 }
 
 }  // namespace blender::ed::sculpt_paint
