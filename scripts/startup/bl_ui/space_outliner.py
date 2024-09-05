@@ -682,6 +682,8 @@ class OUTLINER_PT_filter(Panel):
                 row.prop(space, "use_filter_object_camera", text="Cameras")
             if bpy.data.grease_pencils_v3:
                 row = sub.row()
+                row.separator()
+                row.separator()
                 row.label(icon='STROKE')
                 row.prop(space, "use_filter_object_grease_pencil", text="Grease Pencil")
             row = sub.row()
