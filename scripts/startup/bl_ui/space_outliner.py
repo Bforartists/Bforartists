@@ -646,49 +646,41 @@ class OUTLINER_PT_filter(Panel):
             sub = col.column(align=True)
 
             row = sub.row()
-            row.separator()
-            row.separator()
+            row.separator(factor=2.0)
             row.label(icon='OBJECT_CONTENTS')
             row.prop(space, "use_filter_object_content", text="Object Contents")
             row = sub.row()
-            row.separator()
-            row.separator()
+            row.separator(factor=2.0)
             row.label(icon='CHILD')
             row.prop(space, "use_filter_children", text="Object Children")
 
             if bpy.data.meshes:
                 row = sub.row()
-                row.separator()
-                row.separator()
+                row.separator(factor=2.0)
                 row.label(icon='MESH_DATA')
                 row.prop(space, "use_filter_object_mesh", text="Meshes")
             if bpy.data.armatures:
                 row = sub.row()
-                row.separator()
-                row.separator()
+                row.separator(factor=2.0)
                 row.label(icon='ARMATURE_DATA')
                 row.prop(space, "use_filter_object_armature", text="Armatures")
             if bpy.data.lights:
                 row = sub.row()
-                row.separator()
-                row.separator()
+                row.separator(factor=2.0)
                 row.label(icon='LIGHT_DATA')
                 row.prop(space, "use_filter_object_light", text="Lights")
             if bpy.data.cameras:
                 row = sub.row()
-                row.separator()
-                row.separator()
+                row.separator(factor=2.0)
                 row.label(icon='CAMERA_DATA')
                 row.prop(space, "use_filter_object_camera", text="Cameras")
             if bpy.data.grease_pencils_v3:
                 row = sub.row()
-                row.separator()
-                row.separator()
+                row.separator(factor=2.0)
                 row.label(icon='STROKE')
                 row.prop(space, "use_filter_object_grease_pencil", text="Grease Pencil")
             row = sub.row()
-            row.separator()
-            row.separator()
+            row.separator(factor=2.0)
             row.label(icon='EMPTY_DATA')
             row.prop(space, "use_filter_object_empty", text="Empties")
 
@@ -704,8 +696,7 @@ class OUTLINER_PT_filter(Panel):
                     bpy.data.speakers
             ):
                 row = sub.row()
-                row.separator()
-                row.separator()
+                row.separator(factor=2.0)
                 row.label(icon='OBJECT_DATAMODE')
                 row.prop(space, "use_filter_object_others", text="Others")
 
