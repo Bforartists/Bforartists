@@ -285,7 +285,7 @@ BLI_NOINLINE static void interpolate_attribute(const Mesh &mesh,
 
 BLI_NOINLINE static void propagate_existing_attributes(
     const Mesh &mesh,
-    const Map<AttributeIDRef, AttributeKind> &attributes,
+    const Map<StringRef, AttributeKind> &attributes,
     PointCloud &points,
     const Span<float3> bary_coords,
     const Span<int> tri_indices)
@@ -293,8 +293,8 @@ BLI_NOINLINE static void propagate_existing_attributes(
   const AttributeAccessor mesh_attributes = mesh.attributes();
   MutableAttributeAccessor point_attributes = points.attributes_for_write();
 
-  for (MapItem<AttributeIDRef, AttributeKind> entry : attributes.items()) {
-    const AttributeIDRef attribute_id = entry.key;
+  for (MapItem<StringRef, AttributeKind> entry : attributes.items()) {
+    const StringRef attribute_id = entry.key;
     const eCustomDataType output_data_type = entry.value.data_type;
 
     GAttributeReader src = mesh_attributes.lookup(attribute_id);
@@ -318,8 +318,8 @@ BLI_NOINLINE static void propagate_existing_attributes(
 
 namespace {
 struct AttributeOutputs {
-  AnonymousAttributeIDPtr normal_id;
-  AnonymousAttributeIDPtr rotation_id;
+  std::optional<std::string> normal_id;
+  std::optional<std::string> rotation_id;
 };
 }  // namespace
 
@@ -413,11 +413,11 @@ BLI_NOINLINE static void compute_attribute_outputs(const Mesh &mesh,
 
   if (attribute_outputs.normal_id) {
     normals = point_attributes.lookup_or_add_for_write_only_span<float3>(
-        attribute_outputs.normal_id.get(), AttrDomain::Point);
+        *attribute_outputs.normal_id, AttrDomain::Point);
   }
   if (attribute_outputs.rotation_id) {
     rotations = point_attributes.lookup_or_add_for_write_only_span<math::Quaternion>(
-        attribute_outputs.rotation_id.get(), AttrDomain::Point);
+        *attribute_outputs.rotation_id, AttrDomain::Point);
   }
 
   threading::parallel_for(bary_coords.index_range(), 1024, [&](const IndexRange range) {
@@ -554,11 +554,11 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
 
   geometry_set.replace_pointcloud(pointcloud);
 
-  Map<AttributeIDRef, AttributeKind> attributes;
+  Map<StringRef, AttributeKind> attributes;
   geometry_set.gather_attributes_for_propagation({GeometryComponent::Type::Mesh},
                                                  GeometryComponent::Type::PointCloud,
                                                  false,
-                                                 params.get_output_propagation_info("Points"),
+                                                 params.get_attribute_filter("Points"),
                                                  attributes);
 
   /* Position is set separately. */

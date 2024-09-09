@@ -4,19 +4,21 @@
 
 #pragma once
 
+#include <optional>
+#include <string>
+
 #include "BLI_math_vector_types.hh"
+#include "BLI_string_ref.hh"
 
 struct Mesh;
-namespace blender {
-namespace bke {
-class AttributeIDRef;
-}
-}  // namespace blender
 
 namespace blender::geometry {
 
-Mesh *create_cuboid_mesh(
-    const float3 &size, int verts_x, int verts_y, int verts_z, const bke::AttributeIDRef &uv_id);
+Mesh *create_cuboid_mesh(const float3 &size,
+                         int verts_x,
+                         int verts_y,
+                         int verts_z,
+                         const std::optional<StringRef> &uv_id);
 
 Mesh *create_cuboid_mesh(const float3 &size, int verts_x, int verts_y, int verts_z);
 

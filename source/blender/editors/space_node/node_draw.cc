@@ -1588,7 +1588,7 @@ static void create_inspection_string_for_geometry_socket(fmt::memory_buffer &buf
 
   Span<bke::GeometryComponent::Type> supported_types = socket_decl->supported_types();
   if (supported_types.is_empty()) {
-    fmt::format_to(fmt::appender(buf), TIP_("Supported: All Types\nHold CTRL and click on the label to rename"));
+    fmt::format_to(fmt::appender(buf), TIP_("Supported: All Types\nHold CTRL and click on the label to rename")); /*BFA - more explicit tooltip*/
     return;
   }
 
@@ -3422,12 +3422,14 @@ static void node_draw_basis(const bContext &C,
   }
   /* Preview. */
   if (node_is_previewable(snode, ntree, node)) {
+    const bool is_active = node.flag & NODE_PREVIEW;
     iconofs -= iconbutw;
     UI_block_emboss_set(&block, UI_EMBOSS_NONE);
     uiBut *but = uiDefIconBut(&block,
                               UI_BTYPE_BUT_TOGGLE,
                               0,
-                              ICON_TOGGLE_NODE_PREVIEW, /* BFA - better icon for node preview toggle button */
+                              is_active ? ICON_HIDE_OFF : ICON_HIDE_ON,
+                              //ICON_TOGGLE_NODE_PREVIEW, /* BFA - wip, could be a better icon for node preview toggle button */*/
                               iconofs,
                               rct.ymax - NODE_DY,
                               iconbutw,

@@ -52,6 +52,14 @@ ShaderModule::ShaderPtr ShaderModule::selectable_shader(const char *create_info_
 
   if (selection_type_ != SelectionType::DISABLED) {
     info.define("SELECT_ENABLE");
+    info.depth_write(gpu::shader::DepthWrite::UNCHANGED);
+    /* Replace additional info. */
+    for (StringRefNull &str : info.additional_infos_) {
+      if (str == "draw_modelmat_new") {
+        str = "draw_modelmat_new_with_custom_id";
+      }
+    }
+    info.additional_info("select_id_patch");
   }
 
   if (clipping_enabled_) {
@@ -115,6 +123,15 @@ ShaderModule::ShaderModule(const SelectionType selection_type, const bool clippi
     : selection_type_(selection_type), clipping_enabled_(clipping_enabled)
 {
   /** Shaders */
+
+  armature_degrees_of_freedom = shader(
+      "overlay_armature_dof", [](gpu::shader::ShaderCreateInfo &info) {
+        info.storage_buf(0, Qualifier::READ, "ExtraInstanceData", "data_buf[]");
+        info.define("inst_obmat", "data_buf[gl_InstanceID].object_to_world_");
+        info.define("color", "data_buf[gl_InstanceID].color_");
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+      });
 
   curve_edit_points = shader(
       "overlay_edit_particle_point",
@@ -219,11 +236,63 @@ ShaderModule::ShaderModule(const SelectionType selection_type, const bool clippi
         info.additional_info("draw_gpencil_new", "draw_object_infos_new");
       });
 
+  sculpt_mesh = shader("overlay_sculpt_mask",
+                       [](gpu::shader::ShaderCreateInfo &info) { shader_patch_common(info); });
+  sculpt_curves = shader("overlay_sculpt_curves_selection",
+                         [](gpu::shader::ShaderCreateInfo &info) {
+                           shader_patch_common(info);
+                           info.additional_info("draw_hair_new");
+                         });
+  sculpt_curves_cage = shader(
+      "overlay_sculpt_curves_cage",
+      [](gpu::shader::ShaderCreateInfo &info) { shader_patch_common(info); });
+
   xray_fade = shader("overlay_xray_fade", [](gpu::shader::ShaderCreateInfo &info) {
     info.sampler(2, ImageType::DEPTH_2D, "xrayDepthTexInfront");
   });
 
   /** Selectable Shaders */
+
+  armature_envelope_fill = selectable_shader(
+      "overlay_armature_envelope_solid", [](gpu::shader::ShaderCreateInfo &info) {
+        info.storage_buf(0, Qualifier::READ, "BoneEnvelopeData", "data_buf[]");
+        info.define("headSphere", "data_buf[gl_InstanceID].head_sphere");
+        info.define("tailSphere", "data_buf[gl_InstanceID].tail_sphere");
+        info.define("xAxis", "data_buf[gl_InstanceID].x_axis.xyz");
+        info.define("stateColor", "data_buf[gl_InstanceID].state_color.xyz");
+        info.define("boneColor", "data_buf[gl_InstanceID].bone_color_and_wire_width.xyz");
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+      });
+
+  armature_envelope_outline = selectable_shader(
+      "overlay_armature_envelope_outline", [](gpu::shader::ShaderCreateInfo &info) {
+        info.storage_buf(0, Qualifier::READ, "BoneEnvelopeData", "data_buf[]");
+        info.define("headSphere", "data_buf[gl_InstanceID].head_sphere");
+        info.define("tailSphere", "data_buf[gl_InstanceID].tail_sphere");
+        info.define("outlineColorSize", "data_buf[gl_InstanceID].bone_color_and_wire_width");
+        info.define("xAxis", "data_buf[gl_InstanceID].x_axis.xyz");
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+      });
+
+  armature_shape_outline = selectable_shader("overlay_armature_shape_outline_next",
+                                             [](gpu::shader::ShaderCreateInfo & /*info*/) {});
+
+  armature_shape_fill = selectable_shader(
+      "overlay_armature_shape_solid", [](gpu::shader::ShaderCreateInfo &info) {
+        info.storage_buf(0, Qualifier::READ, "mat4", "data_buf[]");
+        info.define("inst_obmat", "data_buf[gl_InstanceID]");
+        info.vertex_inputs_.pop_last();
+      });
+
+  armature_shape_wire = selectable_shader("overlay_armature_shape_wire_next",
+                                          [](gpu::shader::ShaderCreateInfo & /*info*/) {});
 
   armature_sphere_outline = selectable_shader(
       "overlay_armature_sphere_outline", [](gpu::shader::ShaderCreateInfo &info) {
@@ -231,12 +300,53 @@ ShaderModule::ShaderModule(const SelectionType selection_type, const bool clippi
         info.define("inst_obmat", "data_buf[gl_InstanceID]");
         info.vertex_inputs_.pop_last();
       });
+  armature_sphere_fill = selectable_shader(
+      "overlay_armature_sphere_solid", [](gpu::shader::ShaderCreateInfo &info) {
+        info.storage_buf(0, Qualifier::READ, "mat4", "data_buf[]");
+        info.define("inst_obmat", "data_buf[gl_InstanceID]");
+        info.vertex_inputs_.pop_last();
+      });
 
-  depth_mesh = selectable_shader("overlay_depth_only", [](gpu::shader::ShaderCreateInfo &info) {
-    info.additional_infos_.clear();
-    info.additional_info(
-        "draw_view", "draw_globals", "draw_modelmat_new", "draw_resource_handle_new");
-  });
+  armature_stick = selectable_shader(
+      "overlay_armature_stick", [](gpu::shader::ShaderCreateInfo &info) {
+        info.additional_infos_.clear();
+        info.additional_info("overlay_frag_output",
+                             "overlay_armature_common",
+                             "draw_resource_handle_new",
+                             "draw_modelmat_new",
+                             "draw_globals");
+        info.storage_buf(0, Qualifier::READ, "BoneStickData", "data_buf[]");
+        info.define("boneStart", "data_buf[gl_InstanceID].bone_start.xyz");
+        info.define("boneEnd", "data_buf[gl_InstanceID].bone_end.xyz");
+        info.define("wireColor", "data_buf[gl_InstanceID].wire_color");
+        info.define("boneColor", "data_buf[gl_InstanceID].bone_color");
+        info.define("headColor", "data_buf[gl_InstanceID].head_color");
+        info.define("tailColor", "data_buf[gl_InstanceID].tail_color");
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+        info.vertex_in(1, gpu::shader::Type::INT, "vclass");
+        info.define("flag", "vclass");
+      });
+
+  armature_wire = selectable_shader(
+      "overlay_armature_wire", [](gpu::shader::ShaderCreateInfo &info) {
+        info.additional_infos_.clear();
+        info.additional_info("draw_view",
+                             "overlay_frag_output",
+                             "draw_resource_handle_new",
+                             "draw_modelmat_new",
+                             "draw_globals");
+        info.storage_buf(0, Qualifier::READ, "VertexData", "data_buf[]");
+        info.define("pos", "data_buf[gl_VertexID].pos_.xyz");
+        info.define("color", "data_buf[gl_VertexID].color_");
+        info.vertex_inputs_.pop_last();
+        info.vertex_inputs_.pop_last();
+      });
 
   facing = shader("overlay_facing", [](gpu::shader::ShaderCreateInfo &info) {
     info.additional_infos_.clear();
