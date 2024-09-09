@@ -225,7 +225,6 @@ set(SRC
   intern/draw_manager_testing.hh
   intern/draw_manager_text.hh
   intern/draw_pass.hh
-  intern/draw_pbvh.hh
   intern/draw_resource.hh
   intern/draw_sculpt.hh
   intern/draw_shader.hh
@@ -312,6 +311,7 @@ set(SRC
   engines/overlay/overlay_next_prepass.hh
   engines/overlay/overlay_next_private.hh
   engines/overlay/overlay_next_relation.hh
+  engines/overlay/overlay_next_sculpt.hh
   engines/overlay/overlay_next_speaker.hh
   engines/overlay/overlay_next_wireframe.hh
   engines/overlay/overlay_next_xray_fade.hh
@@ -641,10 +641,12 @@ set(GLSL_SRC
   engines/overlay/shaders/overlay_armature_envelope_solid_frag.glsl
   engines/overlay/shaders/overlay_armature_envelope_solid_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_outline_geom.glsl
+  engines/overlay/shaders/overlay_armature_shape_outline_next_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_outline_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_outline_vert_no_geom.glsl
   engines/overlay/shaders/overlay_armature_shape_solid_frag.glsl
   engines/overlay/shaders/overlay_armature_shape_solid_vert.glsl
+  engines/overlay/shaders/overlay_armature_shape_wire_next_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_wire_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_wire_vert_no_geom.glsl
   engines/overlay/shaders/overlay_armature_shape_wire_frag.glsl
@@ -660,6 +662,9 @@ set(GLSL_SRC
   engines/overlay/shaders/overlay_clipbound_vert.glsl
   engines/overlay/shaders/overlay_common_lib.glsl
   engines/overlay/shaders/overlay_depth_only_frag.glsl
+  engines/overlay/shaders/overlay_depth_only_gpencil_frag.glsl
+  engines/overlay/shaders/overlay_depth_only_gpencil_vert.glsl
+  engines/overlay/shaders/overlay_depth_only_mesh_conservative_vert.glsl
   engines/overlay/shaders/overlay_depth_only_vert.glsl
   engines/overlay/shaders/overlay_edit_curve_handle_geom.glsl
   engines/overlay/shaders/overlay_edit_curve_handle_next_vert.glsl
