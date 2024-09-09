@@ -316,11 +316,7 @@ static void transform_active_color(bContext *C,
 
   undo::push_begin(obact, op);
 
-  bke::pbvh::Tree &pbvh = *obact.sculpt->pbvh;
-  const Mesh &mesh = *static_cast<const Mesh *>(obact.data);
-  /* The sculpt undo system needs pbvh::Tree node corner indices for corner domain color
-   * attributes. */
-  BKE_pbvh_ensure_node_face_corners(pbvh, mesh.corner_tris());
+  bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(obact);
 
   IndexMaskMemory memory;
   const IndexMask node_mask = bke::pbvh::all_leaf_nodes(pbvh, memory);
