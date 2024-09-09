@@ -26,6 +26,7 @@
 
 #include "BKE_animsys.h"
 #include "BKE_attribute.hh"
+#include "BKE_compute_contexts.hh"
 #include "BKE_curveprofile.h"
 #include "BKE_customdata.hh"
 #include "BKE_data_transfer.h"
@@ -48,6 +49,7 @@
 #include "WM_types.hh"
 
 #include "MOD_nodes.hh"
+#include "NOD_geometry_nodes_log.hh"
 
 const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
     RNA_ENUM_ITEM_HEADING(N_("Modify"), nullptr),
@@ -562,6 +564,13 @@ const EnumPropertyItem rna_enum_shrinkwrap_face_cull_items[] = {
      "Front",
      "No projection when in front of the face"},
     {MOD_SHRINKWRAP_CULL_TARGET_BACKFACE, "BACK", 0, "Back", "No projection when behind the face"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+const EnumPropertyItem rna_enum_node_warning_type_items[] = {
+    {int(blender::nodes::geo_eval_log::NodeWarningType::Error), "ERROR", 0, "Error", ""},
+    {int(blender::nodes::geo_eval_log::NodeWarningType::Warning), "WARNING", 0, "Warning", ""},
+    {int(blender::nodes::geo_eval_log::NodeWarningType::Info), "INFO", 0, "Info", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1368,6 +1377,27 @@ static void rna_BevelModifier_update_segments(Main *bmain, Scene *scene, Pointer
   rna_Modifier_update(bmain, scene, ptr);
 }
 
+static void rna_BevelModifier_weight_attribute_visit_for_search(
+    const bContext * /*C*/,
+    PointerRNA *ptr,
+    PropertyRNA * /*prop*/,
+    const char * /*edit_text*/,
+    blender::FunctionRef<void(StringPropertySearchVisitParams)> visit_fn)
+{
+  Object *ob = (Object *)ptr->owner_id;
+  PointerRNA mesh_ptr = RNA_id_pointer_create(static_cast<ID *>(ob->data));
+  PropertyRNA *attributes_prop = RNA_struct_find_property(&mesh_ptr, "attributes");
+  RNA_PROP_BEGIN (&mesh_ptr, itemptr, attributes_prop) {
+    const CustomDataLayer *layer = static_cast<const CustomDataLayer *>(itemptr.data);
+    if (blender::bke::allow_procedural_attribute_access(layer->name)) {
+      StringPropertySearchVisitParams visit_params{};
+      visit_params.text = layer->name;
+      visit_fn(visit_params);
+    }
+  }
+  RNA_PROP_END;
+}
+
 static void rna_UVProjectModifier_num_projectors_set(PointerRNA *ptr, int value)
 {
   UVProjectModifierData *md = (UVProjectModifierData *)ptr->data;
@@ -1915,6 +1945,73 @@ static void rna_NodesModifier_node_group_update(Main *bmain, Scene *scene, Point
   NodesModifierData *nmd = static_cast<NodesModifierData *>(ptr->data);
   rna_Modifier_dependency_update(bmain, scene, ptr);
   MOD_nodes_update_interface(object, nmd);
+}
+
+static blender::nodes::geo_eval_log::GeoTreeLog *get_nodes_modifier_log(NodesModifierData &nmd)
+{
+  if (!nmd.runtime->eval_log) {
+    return nullptr;
+  }
+  blender::bke::ModifierComputeContext compute_context{nullptr, nmd.modifier.name};
+  return &nmd.runtime->eval_log->get_tree_log(compute_context.hash());
+}
+
+static blender::Span<blender::nodes::geo_eval_log::NodeWarning> get_node_modifier_warnings(
+    NodesModifierData &nmd)
+{
+  if (auto *log = get_nodes_modifier_log(nmd)) {
+    log->ensure_node_warnings(nmd.node_group);
+    return log->all_warnings;
+  }
+  return {};
+}
+
+static void rna_NodesModifier_node_warnings_iterator_begin(CollectionPropertyIterator *iter,
+                                                           PointerRNA *ptr)
+{
+  NodesModifierData *nmd = static_cast<NodesModifierData *>(ptr->data);
+  iter->internal.count.item = 0;
+  iter->valid = !get_node_modifier_warnings(*nmd).is_empty();
+}
+
+static void rna_NodesModifier_node_warnings_iterator_next(CollectionPropertyIterator *iter)
+{
+  NodesModifierData *nmd = static_cast<NodesModifierData *>(iter->parent.data);
+  iter->internal.count.item++;
+  iter->valid = get_node_modifier_warnings(*nmd).size() > iter->internal.count.item;
+}
+
+static PointerRNA rna_NodesModifier_node_warnings_iterator_get(CollectionPropertyIterator *iter)
+{
+  NodesModifierData *nmd = static_cast<NodesModifierData *>(iter->parent.data);
+  blender::Span warnings = get_node_modifier_warnings(*nmd);
+  return RNA_pointer_create(iter->parent.owner_id,
+                            &RNA_NodesModifierWarning,
+                            (void *)&warnings[iter->internal.count.item]);
+}
+
+static int rna_NodesModifier_node_warnings_length(PointerRNA *ptr)
+{
+  NodesModifierData *nmd = static_cast<NodesModifierData *>(ptr->data);
+  return get_node_modifier_warnings(*nmd).size();
+}
+
+static void rna_NodesModifierWarning_message_get(PointerRNA *ptr, char *r_value)
+{
+  const auto *warning = static_cast<const blender::nodes::geo_eval_log::NodeWarning *>(ptr->data);
+  strcpy(r_value, warning->message.c_str());
+}
+
+static int rna_NodesModifierWarning_message_length(PointerRNA *ptr)
+{
+  const auto *warning = static_cast<const blender::nodes::geo_eval_log::NodeWarning *>(ptr->data);
+  return warning->message.size();
+}
+
+static int rna_NodesModifierWarning_type_get(PointerRNA *ptr)
+{
+  const auto *warning = static_cast<const blender::nodes::geo_eval_log::NodeWarning *>(ptr->data);
+  return int(warning->type);
 }
 
 static IDProperty **rna_NodesModifier_properties(PointerRNA *ptr)
@@ -4827,6 +4924,20 @@ static void rna_def_modifier_bevel(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, nullptr, "lim_flags");
   RNA_def_property_enum_items(prop, prop_limit_method_items);
   RNA_def_property_ui_text(prop, "Limit Method", "");
+  RNA_def_property_update(prop, 0, "rna_Modifier_update");
+
+  prop = RNA_def_property(srna, "edge_weight", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_sdna(prop, nullptr, "edge_weight_name");
+  RNA_def_property_ui_text(prop, "Edge Weight", "Attribute name for edge weight");
+  RNA_def_property_string_search_func(
+      prop, "rna_BevelModifier_weight_attribute_visit_for_search", PROP_STRING_SEARCH_SUGGESTION);
+  RNA_def_property_update(prop, 0, "rna_Modifier_update");
+
+  prop = RNA_def_property(srna, "vertex_weight", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_sdna(prop, nullptr, "vertex_weight_name");
+  RNA_def_property_ui_text(prop, "Vertex Weight", "Attribute name for vertex weight");
+  RNA_def_property_string_search_func(
+      prop, "rna_BevelModifier_weight_attribute_visit_for_search", PROP_STRING_SEARCH_SUGGESTION);
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
   prop = RNA_def_property(srna, "angle_limit", PROP_FLOAT, PROP_ANGLE);
@@ -7865,6 +7976,31 @@ static void rna_def_modifier_nodes_panels(BlenderRNA *brna)
   RNA_def_struct_ui_text(srna, "Panels", "State of all panels defined by the node group");
 }
 
+static void rna_def_modifier_nodes_warning(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  PropertyRNA *prop;
+
+  srna = RNA_def_struct(brna, "NodesModifierWarning", nullptr);
+  RNA_def_struct_ui_text(srna,
+                         "Nodes Modifier Warning",
+                         "Warning created during evaluation of a geometry nodes modifier");
+
+  prop = RNA_def_property(srna, "message", PROP_STRING, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Message", nullptr);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_string_funcs(prop,
+                                "rna_NodesModifierWarning_message_get",
+                                "rna_NodesModifierWarning_message_length",
+                                nullptr);
+
+  prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Type", nullptr);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_enum_items(prop, rna_enum_node_warning_type_items);
+  RNA_def_property_enum_funcs(prop, "rna_NodesModifierWarning_type_get", nullptr, nullptr);
+}
+
 static void rna_def_modifier_nodes(BlenderRNA *brna)
 {
   StructRNA *srna;
@@ -7877,6 +8013,8 @@ static void rna_def_modifier_nodes(BlenderRNA *brna)
 
   rna_def_modifier_nodes_panel(brna);
   rna_def_modifier_nodes_panels(brna);
+
+  rna_def_modifier_nodes_warning(brna);
 
   srna = RNA_def_struct(brna, "NodesModifier", "Modifier");
   RNA_def_struct_ui_text(srna, "Nodes Modifier", "");
@@ -7914,6 +8052,18 @@ static void rna_def_modifier_nodes(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Show Node Group", "");
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
   RNA_def_property_update(prop, NC_OBJECT | ND_MODIFIER, nullptr);
+
+  prop = RNA_def_property(srna, "node_warnings", PROP_COLLECTION, PROP_NONE);
+  RNA_def_property_collection_funcs(prop,
+                                    "rna_NodesModifier_node_warnings_iterator_begin",
+                                    "rna_NodesModifier_node_warnings_iterator_next",
+                                    nullptr,
+                                    "rna_NodesModifier_node_warnings_iterator_get",
+                                    "rna_NodesModifier_node_warnings_length",
+                                    nullptr,
+                                    nullptr,
+                                    nullptr);
+  RNA_def_property_struct_type(prop, "NodesModifierWarning");
 
   rna_def_modifier_panel_open_prop(srna, "open_output_attributes_panel", 0);
   rna_def_modifier_panel_open_prop(srna, "open_manage_panel", 1);
