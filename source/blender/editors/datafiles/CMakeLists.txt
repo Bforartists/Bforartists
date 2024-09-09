@@ -199,6 +199,7 @@ if(WITH_BLENDER)
       absolutepath
       accumulate
       action
+      action_slot
       action_tweak
       action_tweak_solo
       active_element

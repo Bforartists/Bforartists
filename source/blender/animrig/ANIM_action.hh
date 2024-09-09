@@ -200,6 +200,15 @@ class Action : public ::bAction {
   Slot &slot_add_for_id(const ID &animated_id);
 
   /**
+   * Remove a slot, and ALL animation data that belongs to it.
+   *
+   * After this call, the reference is no longer valid as the slot will have been freed.
+   *
+   * \return true when the layer was found & removed, false if it wasn't found.
+   */
+  bool slot_remove(Slot &slot_to_remove);
+
+  /**
    * Set the active Slot, ensuring only one Slot is flagged as the Active one.
    *
    * \param slot_handle if Slot::unassigned, there will not be any active slot.
@@ -275,6 +284,9 @@ class Action : public ::bAction {
  protected:
   /** Return the layer's index, or -1 if not found in this Action. */
   int64_t find_layer_index(const Layer &layer) const;
+
+  /** Return the slot's index, or -1 if not found in this Action. */
+  int64_t find_slot_index(const Slot &slot) const;
 
  private:
   Slot &slot_allocate();
@@ -368,6 +380,13 @@ class Strip : public ::ActionStrip {
    * (negative for frame_start, positive for frame_end) are supported.
    */
   void resize(float frame_start, float frame_end);
+
+  /**
+   * Remove all data belonging to the given slot.
+   *
+   * This is typically only called from Layer::slot_data_remove().
+   */
+  void slot_data_remove(slot_handle_t slot_handle);
 };
 static_assert(sizeof(Strip) == sizeof(::ActionStrip),
               "DNA struct and its C++ wrapper must have the same size");
@@ -454,6 +473,13 @@ class Layer : public ::ActionLayer {
    * \return true when the strip was found & removed, false if it wasn't found.
    */
   bool strip_remove(Strip &strip);
+
+  /**
+   * Remove all data belonging to the given slot.
+   *
+   * This is typically only called from Action::slot_remove().
+   */
+  void slot_data_remove(slot_handle_t slot_handle);
 
  protected:
   /** Return the strip's index, or -1 if not found in this layer. */
@@ -659,6 +685,13 @@ class KeyframeStrip : public ::KeyframeActionStrip {
    */
   bool channelbag_remove(ChannelBag &channelbag_to_remove);
 
+  /**
+   * Remove all strip data for the given slot.
+   *
+   * Typically only called from Strip::slot_data_remove().
+   */
+  void slot_data_remove(slot_handle_t slot_handle);
+
   /** Return the channelbag's index, or -1 if there is none for this slot handle. */
   int64_t find_channelbag_index(const ChannelBag &channelbag) const;
 
@@ -726,12 +759,26 @@ class ChannelBag : public ::ActionChannelBag {
   /**
    * Remove an F-Curve from the ChannelBag.
    *
+   * Additionally, if the fcurve was the last fcurve in a channel group, that
+   * channel group is also deleted.
+   *
    * After this call, if the F-Curve was found, the reference will no longer be
    * valid, as the curve will have been freed.
    *
    * \return true when the F-Curve was found & removed, false if it wasn't found.
    */
   bool fcurve_remove(FCurve &fcurve_to_remove);
+
+  /**
+   * Move the given fcurve to position `to_fcurve_index` in the fcurve array.
+   *
+   * Note: this can indirectly alter channel group memberships, because the
+   * channel groups don't change what ranges in the fcurve array they cover.
+   *
+   * `fcurve` must belong to this channel bag, and `to_fcurve_index` must be a
+   * valid index in the fcurve array.
+   */
+  void fcurve_move(FCurve &fcurve, int to_fcurve_index);
 
   /**
    * Remove all F-Curves from this ChannelBag.
@@ -770,6 +817,9 @@ class ChannelBag : public ::ActionChannelBag {
    * The new group is added to the end of the channel group array of the
    * ChannelBag.
    *
+   * This function ensures the group has a unique name, and thus the name of the
+   * created group may differ from the `name` parameter.
+   *
    * \return A reference to the new channel group.
    */
   bActionGroup &channel_group_create(StringRefNull name);
@@ -796,6 +846,18 @@ class ChannelBag : public ::ActionChannelBag {
   bool channel_group_remove(bActionGroup &group);
 
   /**
+   * Move the given channel group's to position `to_group_index` among the
+   * channel groups.
+   *
+   * The fcurves in the channel group are moved with it, so that membership
+   * doesn't change.
+   *
+   * `group` must belong to this channel bag, and `to_group_index` must be a
+   * valid index in the channel group array.
+   */
+  void channel_group_move(bActionGroup &group, int to_group_index);
+
+  /**
    * Assigns the given FCurve to the given channel group.
    *
    * Fails if either doesn't belong to this channel bag, but otherwise always
@@ -804,6 +866,20 @@ class ChannelBag : public ::ActionChannelBag {
    * \return True on success, false on failure.
    */
   bool fcurve_assign_to_channel_group(FCurve &fcurve, bActionGroup &group);
+
+  /**
+   * Removes the the given FCurve from the channel group it's in, if any.
+   *
+   * As part of removing `fcurve` from its group, `fcurve` is moved to the end
+   * of the fcurve array. However, if `fcurve` is already ungrouped then this
+   * method is a no-op.
+   *
+   * Fails if the fcurve doesn't belong to this channel bag, but otherwise
+   * always succeeds.
+   *
+   * \return True on success, false on failure.
+   */
+  bool fcurve_ungroup(FCurve &fcurve);
 
  protected:
   /**

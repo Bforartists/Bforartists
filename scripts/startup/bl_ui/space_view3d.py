@@ -2781,6 +2781,8 @@ class VIEW3D_MT_paint_gpencil(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - Warning
+
         layout.operator("gpencil.vertex_color_set", text="Set Color Attribute", icon="NODE_VERTEX_COLOR")
         layout.operator("gpencil.stroke_reset_vertex_color", icon="RESET")
         layout.separator()
@@ -5528,8 +5530,6 @@ class VIEW3D_MT_edit_mesh_legacy(Menu):
         layout.operator("mesh.knife_tool", text="Knife", icon='KNIFE')
 
 # bfa menu
-
-
 class VIEW3D_MT_edit_mesh_sort_elements(Menu):
     bl_label = "Sort Elements"
 
@@ -6336,7 +6336,7 @@ class VIEW3D_MT_sculpt_grease_pencil_copy(Menu):
 
         layout.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
 
-# BFA - not used
+# BFA - not used, redundant
 class VIEW3D_MT_edit_greasepencil_delete(Menu):
     bl_label = "Delete"
 
@@ -6349,10 +6349,10 @@ class VIEW3D_MT_edit_greasepencil_delete(Menu):
 
         layout.operator_enum("grease_pencil.dissolve", "type") # BFA - exposed to a top level like context menu
 
-        #layout.separator()
+        layout.separator()
 
-        #layout.operator("grease_pencil.delete_frame", text="Delete Active Keyframe (Active Layer)", icon="DELETE").type = 'ACTIVE_FRAME' # BFA - redundant, in animation menu
-        #layout.operator("grease_pencil.delete_frame", text="Delete Active Keyframes (All Layers)", icon="DELETE_ALL").type = 'ALL_FRAMES' # BFA - redundant, in animation menu
+        layout.operator("grease_pencil.delete_frame", text="Delete Active Keyframe (Active Layer)", icon="DELETE").type = 'ACTIVE_FRAME' # BFA - redundant, in animation menu
+        layout.operator("grease_pencil.delete_frame", text="Delete Active Keyframes (All Layers)", icon="DELETE_ALL").type = 'ALL_FRAMES' # BFA - redundant, in animation menu
 
 
 # Edit Curve
@@ -6616,8 +6616,6 @@ class VIEW3D_MT_edit_font_kerning(Menu):
         layout.operator("font.change_spacing", text="Reset Kerning", icon="RESET").delta = -kerning
 
 # bfa menu
-
-
 class VIEW3D_MT_edit_font_move(Menu):
     bl_label = "Move Cursor"
 
@@ -6754,8 +6752,6 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
 
 # bfa menu - blender uses enum
-
-
 class VIEW3D_MT_edit_lattice_flip(Menu):
     bl_label = "Flip"
 
@@ -6988,6 +6984,9 @@ class VIEW3D_MT_gpencil_simplify(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - Warning
+
         layout.operator("gpencil.stroke_simplify_fixed", text="Fixed", icon="MOD_SIMPLIFY")
         layout.operator("gpencil.stroke_simplify", text="Adaptive", icon="SIMPLIFY_ADAPTIVE")
         layout.operator("gpencil.stroke_sample", text="Sample", icon="SIMPLIFY_SAMPLE")
@@ -7017,6 +7016,7 @@ class VIEW3D_MT_draw_gpencil(Menu):
         layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
 
 
+# BFA - VIEW3D_MT_edit_gpencil consolidated and removed
 
 # BFA - menu
 class VIEW3D_MT_edit_grease_pencil_arrange_strokes(Menu):
@@ -7036,7 +7036,23 @@ class VIEW3D_MT_weight_grease_pencil(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        #layout.operator("gpencil.weight_sample", text="Sample Weight", icon="EYEDROPPER") # BFA - Legacy
+        layout.operator("grease_pencil.weight_invert", text="Invert Weight", icon="EYEDROPPER")
+        layout.operator("grease_pencil.vertex_group_smooth", text="Smooth", icon="WEIGHT_SMOOTH")
+
+
+# BFA - Legacy
+class VIEW3D_MT_gpencil_animation(Menu):
+    bl_label = "Animation"
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.active_object
+        return ob and ob.type == 'GPENCIL' and ob.mode != 'OBJECT'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - warning
 
         #layout.separator()
 
@@ -7046,7 +7062,7 @@ class VIEW3D_MT_weight_grease_pencil(Menu):
         #layout.separator()
 
         layout.operator("grease_pencil.weight_invert", text="Invert Weight", icon="WEIGHT_INVERT")
-        #layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH') # BFA - Legacy
+        layout.operator("grease_pencil.vertex_group_smooth", text="Smooth", icon="WEIGHT_SMOOTH")
 
         #layout.menu("VIEW3D_MT_gpencil_autoweights") # BFA - Legacy
 
@@ -7077,6 +7093,9 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
         layout.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
         layout.operator("transform.transform", text="Shrink Fatten", icon='SHRINK_FATTEN').mode = 'GPENCIL_SHRINKFATTEN'
+
+
+# BFA - legacy VIEW3D_MT_edit_gpencil_showhide consolidated and removed
 
 
 class VIEW3D_MT_edit_greasepencil_showhide(Menu):
@@ -7114,6 +7133,9 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - warning
+
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("GREASE_PENCIL_MT_snap")
@@ -7176,7 +7198,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.label(text="Legacy Grease Pencil menu", icon="INFO")
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - Warning
 
 
 class VIEW3D_MT_edit_greasepencil_stroke(Menu):
@@ -9885,7 +9907,7 @@ class VIEW3D_PT_context_properties(Panel):
             # Draw with no edit button
             rna_prop_ui.draw(self.layout, context, member, object, use_edit=False)
 
-# BFA - VIEW3D_PT_gpencil_multi_frame legacy removed
+# BFA - VIEW3D_PT_gpencil_multi_frame legacy consolidated and removed
 
 class VIEW3D_PT_grease_pencil_multi_frame(Panel):
     bl_space_type = 'VIEW_3D'
@@ -9943,7 +9965,7 @@ class VIEW3D_PT_gpencil_curve_edit(Panel):
         row.prop(gpd, "use_adaptive_curve_resolution")
 
 
-# BFA - VIEW3D_MT_gpencil_edit_context_menu legacy removed
+# BFA - VIEW3D_MT_gpencil_edit_context_menu legacy consolidated and removed
 
 
 class VIEW3D_MT_greasepencil_material_active(Menu):
@@ -10158,7 +10180,10 @@ class VIEW3D_PT_greasepencil_draw_context_menu(Panel):
             col.prop_menu_enum(gp_settings, "vertex_mode", text="Mode")
             col.separator()
 
-        if brush.gpencil_tool not in {'FILL', 'CUTTER'}:
+        if brush.gpencil_tool not in {'FILL', 'CUTTER', 'ERASE'}:
+            radius = "size" if (brush.use_locked_size == 'VIEW') else "unprojected_radius"
+            layout.prop(brush, radius, text="Radius", slider=True)
+        if brush.gpencil_tool == 'ERASE':
             layout.prop(brush, "size", slider=True)
         if brush.gpencil_tool not in {'ERASE', 'FILL', 'CUTTER'}:
             layout.prop(gp_settings, "pen_strength")
@@ -10253,7 +10278,7 @@ class VIEW3D_PT_gpencil_sculpt_automasking(Panel):
         col.prop(tool_settings.gpencil_sculpt, "use_automasking_material_active", text="Active Material")
 
 
-# BFA - Legcy
+# BFA - Legacy
 class VIEW3D_PT_gpencil_sculpt_context_menu(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
@@ -10266,6 +10291,8 @@ class VIEW3D_PT_gpencil_sculpt_context_menu(Panel):
 
         settings = tool_settings.gpencil_sculpt_paint
         brush = settings.brush
+
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - Warning
 
         layout.prop(brush, "size", slider=True)
         layout.prop(brush, "strength")
@@ -10326,6 +10353,8 @@ class VIEW3D_PT_gpencil_draw_context_menu(Panel):
 
         is_pin_vertex = gp_settings.brush_draw_mode == 'VERTEXCOLOR'
         is_vertex = settings.color_mode == 'VERTEXCOLOR' or brush.gpencil_tool == 'TINT' or is_pin_vertex
+
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - Warning
 
         if brush.gpencil_tool not in {'ERASE', 'CUTTER', 'EYEDROPPER'} and is_vertex:
             split = layout.split(factor=0.1)
@@ -11040,28 +11069,28 @@ classes = (
     VIEW3D_MT_make_single_user,
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush_paint_modes, # BFA wip menu, removed?
-    VIEW3D_MT_brush,  # bfa menu
-    VIEW3D_MT_facemask_showhide,  # bfa menu
+    VIEW3D_MT_brush,  # BFA - menu
+    VIEW3D_MT_facemask_showhide,  # BFA - menu
     VIEW3D_MT_paint_vertex,
     VIEW3D_MT_hook,
     VIEW3D_MT_vertex_group,
 	#VIEW3D_MT_gpencil_vertex_group,  # BFA - legacy removed
     VIEW3D_MT_greasepencil_vertex_group,
     VIEW3D_MT_paint_weight,
-    VIEW3D_MT_paint_weight_legacy,  # bfa menu
+    VIEW3D_MT_paint_weight_legacy,  # BFA - menu
     VIEW3D_MT_paint_weight_lock,
-    VIEW3D_MT_subdivision_set,  # bfa menu
+    VIEW3D_MT_subdivision_set,  # BFA - menu
     VIEW3D_MT_sculpt,
-    VIEW3D_MT_sculpt_legacy,  # bfa menu
-    VIEW3D_MT_bfa_sculpt_transform,  # bfa menu
-    VIEW3D_MT_bfa_sculpt_showhide,  # bfa menu
+    VIEW3D_MT_sculpt_legacy,  # BFA - menu
+    VIEW3D_MT_bfa_sculpt_transform,  # BFA - menu
+    VIEW3D_MT_bfa_sculpt_showhide,  # BFA - menu
     VIEW3D_MT_sculpt_set_pivot,
     VIEW3D_MT_sculpt_transform, # BFA - not used
     VIEW3D_MT_sculpt_showhide, # BFA - menu
     VIEW3D_MT_sculpt_trim, # BFA - not used
     VIEW3D_MT_mask,
-    VIEW3D_MT_mask_legacy,  # bfa menu
-    VIEW3D_MT_face_sets_showhide,  # bfa menu
+    VIEW3D_MT_mask_legacy,  # BFA - menu
+    VIEW3D_MT_face_sets_showhide,  # BFA - menu
     VIEW3D_MT_face_sets,
     VIEW3D_MT_face_sets_init,
     VIEW3D_MT_random_mask,
@@ -11091,11 +11120,11 @@ classes = (
     VIEW3D_MT_edit_mesh_extrude_dupli_rotate,  # bfa operator for separated tooltip
     VIEW3D_MT_edit_mesh_extrude,
     VIEW3D_MT_edit_mesh_vertices,
-    VIEW3D_MT_edit_mesh_vertices_legacy,  # bfa menu
+    VIEW3D_MT_edit_mesh_vertices_legacy,  # BFA - menu
     VIEW3D_MT_edit_mesh_edges,
-    VIEW3D_MT_edit_mesh_edges_legacy,  # bfa menu
+    VIEW3D_MT_edit_mesh_edges_legacy,  # BFA - menu
     VIEW3D_MT_edit_mesh_faces,
-    VIEW3D_MT_edit_mesh_faces_legacy,  # bfa menu
+    VIEW3D_MT_edit_mesh_faces_legacy,  # BFA - menu
     VIEW3D_MT_edit_mesh_faces_data,
     VIEW3D_MT_edit_mesh_normals,
     VIEW3D_MT_edit_mesh_normals_select_strength,
@@ -11107,14 +11136,14 @@ classes = (
     VIEW3D_MT_edit_mesh_delete,
     VIEW3D_MT_edit_mesh_merge,
     VIEW3D_MT_edit_mesh_split,
-    VIEW3D_MT_edit_mesh_dissolve,  # bfa menu
+    VIEW3D_MT_edit_mesh_dissolve,  # BFA - menu
     VIEW3D_MT_edit_mesh_showhide,
     VIEW3D_MT_greasepencil_material_active,
     VIEW3D_MT_paint_grease_pencil,
     VIEW3D_MT_paint_gpencil, # BFA - legacy
     VIEW3D_MT_draw_gpencil,
-    VIEW3D_MT_edit_grease_pencil_arrange_strokes,  # bfa menu
-    VIEW3D_MT_sculpt_grease_pencil_copy,  # bfa menu
+    VIEW3D_MT_edit_grease_pencil_arrange_strokes,  # BFA - menu
+    VIEW3D_MT_sculpt_grease_pencil_copy,  # BFA - menu
     VIEW3D_MT_edit_greasepencil_showhide,
     VIEW3D_MT_edit_greasepencil_cleanup,
     VIEW3D_MT_weight_grease_pencil,
@@ -11124,6 +11153,7 @@ classes = (
     VIEW3D_MT_grease_pencil_assign_material,
     VIEW3D_MT_edit_greasepencil,
     VIEW3D_MT_edit_greasepencil_delete, # BFA - not used
+    #VIEW3D_MT_edit_gpencil_showhide # BFA - legacy menu consolidated and removed
     VIEW3D_MT_edit_gpencil_stroke, # BFA - legacy
     VIEW3D_MT_edit_greasepencil_stroke,
     VIEW3D_MT_edit_greasepencil_point,
@@ -11139,15 +11169,15 @@ classes = (
     VIEW3D_MT_edit_font,
     VIEW3D_MT_edit_font_chars,
     VIEW3D_MT_edit_font_kerning,
-    VIEW3D_MT_edit_font_move,  # bfa menu
+    VIEW3D_MT_edit_font_move,  # BFA - menu
     VIEW3D_MT_edit_font_delete,
     VIEW3D_MT_edit_font_context_menu,
     VIEW3D_MT_edit_meta,
     VIEW3D_MT_edit_meta_showhide,
     VIEW3D_MT_edit_lattice,
-    VIEW3D_MT_edit_lattice_flip,  # bfa menu - blender uses enum
+    VIEW3D_MT_edit_lattice_flip,  # BFA - menu - blender uses enum
     VIEW3D_MT_edit_armature,
-    VIEW3D_MT_armature_showhide,  # bfa menu
+    VIEW3D_MT_armature_showhide,  # BFA - menu
     VIEW3D_MT_armature_context_menu,
     VIEW3D_MT_edit_armature_parent,
     VIEW3D_MT_edit_armature_roll,
