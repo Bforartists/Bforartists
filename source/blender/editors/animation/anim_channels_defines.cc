@@ -286,6 +286,36 @@ static short acf_generic_group_offset(bAnimContext *ac, bAnimListElem *ale)
   short offset = acf_generic_basic_offset(ac, ale);
 
   if (ale->id) {
+
+    /* Action Editor. */
+    if (ac->datatype == ANIMCONT_ACTION) {
+      /* For Action Editor mode, we have a limited set of channel types we need
+       * to account for, so we can handle them very simply here in one place. */
+      switch (ale->type) {
+        case ANIMTYPE_FCURVE:
+        case ANIMTYPE_GROUP: {
+          const bAction *action = reinterpret_cast<bAction *>(ale->fcurve_owner_id);
+          if (action->wrap().is_action_layered()) {
+            offset += short(0.35f * U.widget_unit);
+          }
+          break;
+        }
+
+        case ANIMTYPE_SUMMARY:
+        case ANIMTYPE_ACTION_SLOT:
+          break;
+
+        /* There should be no types except the above in Action Editor mode. */
+        default:
+          BLI_assert_unreachable();
+          break;
+      }
+
+      return offset;
+    }
+
+    /* Other editors. */
+
     /* texture animdata */
     if (GS(ale->id->name) == ID_TE) {
       offset += U.widget_unit;
@@ -296,7 +326,7 @@ static short acf_generic_group_offset(bAnimContext *ac, bAnimListElem *ale)
     }
     /* If not in Action Editor mode, action-groups (and their children)
      * must carry some offset too. */
-    else if (ac->datatype != ANIMCONT_ACTION) {
+    else {
       offset += short(0.7f * U.widget_unit);
     }
 
@@ -1278,7 +1308,7 @@ static bAnimChannelType ACF_NLACURVE = {
 /* TODO: just get this from RNA? */
 static int acf_fillanim_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_ACTION; /* TODO: give Animation its own icon? */
+  return ICON_ACTION;
 }
 
 /* check if some setting exists for this channel */
@@ -1398,7 +1428,7 @@ static bool acf_action_slot_name_prop(bAnimListElem *ale, PointerRNA *r_ptr, Pro
 
 static int acf_action_slot_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_LINK_BLEND; /* TODO: design icon. */
+  return ICON_ACTION_SLOT;
 }
 
 static int acf_action_slot_idtype_icon(bAnimListElem *ale)
@@ -4791,6 +4821,50 @@ static bool achannel_is_being_renamed(const bAnimContext *ac,
   return false;
 }
 
+/**
+ * Check if the animation channel is an item that either is or belongs to a
+ * disconnected action slot.
+ */
+static bool achannel_is_part_of_disconnected_slot(const bAnimListElem *ale)
+{
+  BLI_assert(ale->bmain != nullptr);
+  if (ale->bmain == nullptr) {
+    return false;
+  }
+
+  switch (ale->type) {
+    case ANIMTYPE_ACTION_SLOT: {
+      const animrig::Slot &slot = static_cast<const ActionSlot *>(ale->data)->wrap();
+
+      return slot.users(*ale->bmain).is_empty();
+    }
+
+    case ANIMTYPE_GROUP:
+    case ANIMTYPE_FCURVE: {
+      if (ale->fcurve_owner_id == nullptr || GS(ale->fcurve_owner_id->name) != ID_AC) {
+        return false;
+      }
+
+      const animrig::Action &action =
+          reinterpret_cast<const bAction *>(ale->fcurve_owner_id)->wrap();
+      if (action.is_action_legacy()) {
+        return false;
+      }
+
+      const animrig::Slot *slot = action.slot_for_handle(ale->slot_handle);
+      if (slot == nullptr) {
+        return false;
+      }
+
+      return slot->users(*ale->bmain).is_empty();
+    }
+
+    /* No other types are currently drawn as children of action slots. */
+    default:
+      return false;
+  }
+}
+
 /** Check if the animation channel name should be underlined in red due to errors. */
 static bool achannel_is_broken(const bAnimListElem *ale)
 {
@@ -4982,6 +5056,11 @@ void ANIM_channel_draw(
     }
     else {
       UI_GetThemeColor4ubv(TH_TEXT, col);
+    }
+
+    /* Gray out disconnected action slots and their children. */
+    if (!selected && achannel_is_part_of_disconnected_slot(ale)) {
+      col[3] = col[3] / 3 * 2;
     }
 
     /* get name */

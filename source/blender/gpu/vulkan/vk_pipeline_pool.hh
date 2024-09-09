@@ -101,7 +101,7 @@ struct VKGraphicsInfo {
 
     bool operator==(const FragmentShader &other) const
     {
-      // TODO: Do not use hash.
+      /* TODO: Do not use hash. */
       return vk_fragment_module == other.vk_fragment_module && hash() == other.hash();
     }
 
@@ -275,10 +275,16 @@ class VKPipelinePool : public NonCopyable {
   Vector<VkSpecializationMapEntry> vk_specialization_map_entries_;
   VkPushConstantRange vk_push_constant_range_;
 
+  VkPipelineCache vk_pipeline_cache_static_;
+  VkPipelineCache vk_pipeline_cache_non_static_;
+
   std::mutex mutex_;
 
  public:
   VKPipelinePool();
+
+  void init();
+
   /**
    * Get an existing or create a new compute pipeline based on the provided ComputeInfo.
    *
@@ -286,7 +292,8 @@ class VKPipelinePool : public NonCopyable {
    * pipeline creation process.
    */
   VkPipeline get_or_create_compute_pipeline(VKComputeInfo &compute_info,
-                                            VkPipeline vk_pipeline_base = VK_NULL_HANDLE);
+                                            bool is_static_shader,
+                                            VkPipeline vk_pipeline_base);
 
   /**
    * Get an existing or create a new compute pipeline based on the provided ComputeInfo.
@@ -295,7 +302,8 @@ class VKPipelinePool : public NonCopyable {
    * pipeline creation process.
    */
   VkPipeline get_or_create_graphics_pipeline(VKGraphicsInfo &graphics_info,
-                                             VkPipeline vk_pipeline_base = VK_NULL_HANDLE);
+                                             bool is_static_shader,
+                                             VkPipeline vk_pipeline_base);
 
   /**
    * Remove all shader pipelines that uses the given shader_module.
@@ -309,6 +317,38 @@ class VKPipelinePool : public NonCopyable {
    * that would be called after the device is removed.
    */
   void free_data();
+
+  /**
+   * Read the static pipeline cache from cache file.
+   *
+   * Pipeline caches requires blender to be build with `WITH_BUILDINFO` enabled . Between commits
+   * shader modules can change and shader module identifiers cannot be used. We use the build info
+   * to check if the identifiers can be reused.
+   *
+   * Previous stored pipeline cache will not be read when G_DEBUG_GPU is enabled. In this case the
+   * shader modules will be compiled with other settings and any cached pipeline will not be used
+   * during this session.
+   *
+   * NOTE: When developing shaders we assume that `WITH_BUILDINFO` is turned off or `G_DEBUG_GPU`
+   * flag is set.
+   */
+  void read_from_disk();
+
+  /**
+   * Store the static pipeline cache to disk.
+   *
+   * Pipeline caches requires blender to be build with `WITH_BUILDINFO` enabled . Between commits
+   * shader modules can change and shader module identifiers cannot be used. We use the build info
+   * to check if the identifiers can be reused.
+   *
+   * The cache will not be written when G_DEBUG_GPU is active. In this case the shader modules have
+   * been generated with debug information and other compiler settings are used. This will clutter
+   * the pipeline cache.
+   *
+   * NOTE: When developing shaders we assume that `WITH_BUILDINFO` is turned off or `G_DEBUG_GPU`
+   * flag is set.
+   */
+  void write_to_disk();
 
  private:
   VkSpecializationInfo *specialization_info_update(
