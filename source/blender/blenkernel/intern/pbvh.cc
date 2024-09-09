@@ -42,8 +42,6 @@
 
 #include "DEG_depsgraph_query.hh"
 
-#include "DRW_pbvh.hh"
-
 #include "bmesh.hh"
 
 #include "atomic_ops.h"
@@ -52,7 +50,11 @@
 
 namespace blender::bke::pbvh {
 
-#define LEAF_LIMIT 10000
+// #define DEBUG_BUILD_TIME
+
+constexpr int LEAF_LIMIT = 10000;
+static_assert(LEAF_LIMIT < std::numeric_limits<MeshNode::LocalVertMapIndexT>::max());
+
 #define STACK_FIXED_DEPTH 100
 
 /** Create invalid bounds for use with #math::min_max. */
@@ -61,18 +63,15 @@ static Bounds<float3> negative_bounds()
   return {float3(std::numeric_limits<float>::max()), float3(std::numeric_limits<float>::lowest())};
 }
 
-static bool face_materials_match(const Span<int> material_indices,
-                                 const Span<bool> sharp_faces,
-                                 const int a,
-                                 const int b)
+static Bounds<float3> merge_bounds(const Bounds<float3> &a, const Bounds<float3> &b)
+{
+  return bounds::merge(a, b);
+}
+
+static bool face_materials_match(const Span<int> material_indices, const int a, const int b)
 {
   if (!material_indices.is_empty()) {
     if (material_indices[a] != material_indices[b]) {
-      return false;
-    }
-  }
-  if (!sharp_faces.is_empty()) {
-    if (sharp_faces[a] != sharp_faces[b]) {
       return false;
     }
   }
@@ -112,27 +111,39 @@ static int partition_prim_indices(MutableSpan<int> prim_indices,
   return lo2;
 }
 
+static int partition_along_axis(const Span<float3> face_centers,
+                                MutableSpan<int> faces,
+                                const int axis,
+                                const float middle)
+{
+  const int *split = std::partition(faces.begin(), faces.end(), [&](const int face) {
+    return face_centers[face][axis] >= middle;
+  });
+  return split - faces.begin();
+}
+
+static int partition_material_indices(const Span<int> material_indices, MutableSpan<int> faces)
+{
+  const int first = material_indices[faces.first()];
+  const int *split = std::partition(
+      faces.begin(), faces.end(), [&](const int face) { return material_indices[face] == first; });
+  return split - faces.begin();
+}
+
 /* Returns the index of the first element on the right of the partition */
 static int partition_indices_material_faces(MutableSpan<int> indices,
                                             const Span<int> prim_to_face_map,
                                             const Span<int> material_indices,
-                                            const Span<bool> sharp_faces,
                                             const int lo,
                                             const int hi)
 {
   int i = lo, j = hi;
   for (;;) {
     const int first = prim_to_face_map[indices[lo]];
-    for (;
-         face_materials_match(material_indices, sharp_faces, first, prim_to_face_map[indices[i]]);
-         i++)
-    {
+    for (; face_materials_match(material_indices, first, prim_to_face_map[indices[i]]); i++) {
       /* pass */
     }
-    for (;
-         !face_materials_match(material_indices, sharp_faces, first, prim_to_face_map[indices[j]]);
-         j--)
-    {
+    for (; !face_materials_match(material_indices, first, prim_to_face_map[indices[j]]); j--) {
       /* pass */
     }
     if (!(i < j)) {
@@ -143,72 +154,52 @@ static int partition_indices_material_faces(MutableSpan<int> indices,
   }
 }
 
-/* Add a vertex to the map, with a positive value for unique vertices and
- * a negative value for additional vertices */
-static int map_insert_vert(Map<int, int> &map,
-                           MutableSpan<bool> vert_bitmap,
-                           int *face_verts,
-                           int *uniq_verts,
-                           int vertex)
+BLI_NOINLINE static void build_mesh_leaf_nodes(const int verts_num,
+                                               const OffsetIndices<int> faces,
+                                               const Span<int> corner_verts,
+                                               MutableSpan<MeshNode> nodes)
 {
-  return map.lookup_or_add_cb(vertex, [&]() {
-    int value;
-    if (!vert_bitmap[vertex]) {
-      vert_bitmap[vertex] = true;
-      value = *uniq_verts;
-      (*uniq_verts)++;
+#ifdef DEBUG_BUILD_TIME
+  SCOPED_TIMER_AVERAGED(__func__);
+#endif
+  Array<Array<int>> verts_per_node(nodes.size(), NoInitialization());
+  threading::parallel_for(nodes.index_range(), 8, [&](const IndexRange range) {
+    Set<int> verts;
+    for (const int i : range) {
+      MeshNode &node = nodes[i];
+
+      verts.clear();
+      for (const int face : node.face_indices_) {
+        verts.add_multiple(corner_verts.slice(faces[face]));
+      }
+
+      new (&verts_per_node[i]) Array<int>(verts.size());
+      std::copy(verts.begin(), verts.end(), verts_per_node[i].begin());
+      std::sort(verts_per_node[i].begin(), verts_per_node[i].end());
     }
-    else {
-      value = ~(*face_verts);
-      (*face_verts)++;
-    }
-    return value;
   });
-}
 
-/* Find vertices used by the faces in this node and update the draw buffers */
-static void build_mesh_leaf_node(const Span<int> corner_verts,
-                                 const Span<int3> corner_tris,
-                                 MutableSpan<bool> vert_bitmap,
-                                 MeshNode &node)
-{
-  node.unique_verts_num_ = 0;
-  int shared_verts = 0;
-  const Span<int> prim_indices = node.prim_indices_;
+  Vector<int> owned_verts;
+  Vector<int> shared_verts;
+  BitVector<> vert_used(verts_num);
+  for (const int i : nodes.index_range()) {
+    MeshNode &node = nodes[i];
 
-  /* reserve size is rough guess */
-  Map<int, int> map;
-  map.reserve(prim_indices.size());
-
-  node.face_vert_indices_.reinitialize(prim_indices.size());
-
-  for (const int i : prim_indices.index_range()) {
-    const int3 &tri = corner_tris[prim_indices[i]];
-    for (int j = 0; j < 3; j++) {
-      node.face_vert_indices_[i][j] = map_insert_vert(
-          map, vert_bitmap, &shared_verts, &node.unique_verts_num_, corner_verts[tri[j]]);
-    }
-  }
-
-  node.vert_indices_.reinitialize(node.unique_verts_num_ + shared_verts);
-
-  /* Build the vertex list, unique verts first */
-  for (const MapItem<int, int> item : map.items()) {
-    int value = item.value;
-    if (value < 0) {
-      value = -value + node.unique_verts_num_ - 1;
-    }
-
-    node.vert_indices_[value] = item.key;
-  }
-
-  for (const int i : prim_indices.index_range()) {
-    for (int j = 0; j < 3; j++) {
-      if (node.face_vert_indices_[i][j] < 0) {
-        node.face_vert_indices_[i][j] = -node.face_vert_indices_[i][j] + node.unique_verts_num_ -
-                                        1;
+    owned_verts.clear();
+    shared_verts.clear();
+    for (const int vert : verts_per_node[i]) {
+      if (vert_used[vert]) {
+        shared_verts.append(vert);
+      }
+      else {
+        vert_used[vert].set();
+        owned_verts.append(vert);
       }
     }
+    node.unique_verts_num_ = owned_verts.size();
+    node.vert_indices_.reserve(owned_verts.size() + shared_verts.size());
+    node.vert_indices_.add_multiple(owned_verts);
+    node.vert_indices_.add_multiple(shared_verts);
   }
 }
 
@@ -217,54 +208,45 @@ static void build_mesh_leaf_node(const Span<int> corner_verts,
 static bool leaf_needs_material_split(const Span<int> prim_indices,
                                       const Span<int> prim_to_face_map,
                                       const Span<int> material_indices,
-                                      const Span<bool> sharp_faces,
-                                      int offset,
-                                      int count)
+                                      const IndexRange prim_range)
 {
-  if (count <= 1) {
+  if (material_indices.is_empty()) {
     return false;
   }
-
-  const int first = prim_to_face_map[prim_indices[offset]];
-  for (int i = offset + count - 1; i > offset; i--) {
-    int prim = prim_indices[i];
-    if (!face_materials_match(material_indices, sharp_faces, first, prim_to_face_map[prim])) {
-      return true;
-    }
-  }
-
+  const int first = material_indices[prim_to_face_map[prim_indices[prim_range.first()]]];
+  return std::any_of(prim_range.begin(), prim_range.end(), [&](const int i) {
+    return material_indices[prim_to_face_map[prim_indices[i]]] != first;
+  });
   return false;
 }
 
-static void build_nodes_recursive_mesh(const Span<int> corner_verts,
-                                       const Span<int3> corner_tris,
-                                       const Span<int> tri_faces,
-                                       const Span<int> material_indices,
-                                       const Span<bool> sharp_faces,
+static bool leaf_needs_material_split(const Span<int> faces, const Span<int> material_indices)
+{
+  if (material_indices.is_empty()) {
+    return false;
+  }
+  const int first = material_indices[faces.first()];
+  return std::any_of(
+      faces.begin(), faces.end(), [&](const int face) { return material_indices[face] != first; });
+  return false;
+}
+
+static void build_nodes_recursive_mesh(const Span<int> material_indices,
                                        const int leaf_limit,
-                                       MutableSpan<bool> vert_bitmap,
                                        const int node_index,
-                                       const Bounds<float3> *cb,
-                                       const Span<Bounds<float3>> prim_bounds,
-                                       const int prim_offset,
-                                       const int prims_num,
-                                       MutableSpan<int> prim_scratch,
+                                       const std::optional<Bounds<float3>> &bounds_precalc,
+                                       const Span<float3> face_centers,
                                        const int depth,
-                                       MutableSpan<int> prim_indices,
+                                       MutableSpan<int> faces,
                                        Vector<MeshNode> &nodes)
 {
-  int end;
-
   /* Decide whether this is a leaf or not */
-  const bool below_leaf_limit = prims_num <= leaf_limit || depth >= STACK_FIXED_DEPTH - 1;
+  const bool below_leaf_limit = faces.size() <= leaf_limit || depth >= STACK_FIXED_DEPTH - 1;
   if (below_leaf_limit) {
-    if (!leaf_needs_material_split(
-            prim_indices, tri_faces, material_indices, sharp_faces, prim_offset, prims_num))
-    {
+    if (!leaf_needs_material_split(faces, material_indices)) {
       MeshNode &node = nodes[node_index];
       node.flag_ |= PBVH_Leaf;
-      node.prim_indices_ = prim_indices.as_span().slice(prim_offset, prims_num);
-      build_mesh_leaf_node(corner_verts, corner_tris, vert_bitmap, node);
+      node.face_indices_ = faces;
       return;
     }
   }
@@ -273,138 +255,116 @@ static void build_nodes_recursive_mesh(const Span<int> corner_verts,
   nodes[node_index].children_offset_ = nodes.size();
   nodes.resize(nodes.size() + 2);
 
-  Bounds<float3> cb_backing;
+  int split;
   if (!below_leaf_limit) {
     /* Find axis with widest range of primitive centroids */
-    if (!cb) {
-      cb_backing = negative_bounds();
-      for (int i = prim_offset + prims_num - 1; i >= prim_offset; i--) {
-        const int prim = prim_indices[i];
-        const float3 center = math::midpoint(prim_bounds[prim].min, prim_bounds[prim].max);
-        math::min_max(center, cb_backing.min, cb_backing.max);
-      }
-      cb = &cb_backing;
+    Bounds<float3> bounds;
+    if (bounds_precalc) {
+      bounds = *bounds_precalc;
     }
-    const int axis = math::dominant_axis(cb->max - cb->min);
+    else {
+      bounds = threading::parallel_reduce(
+          faces.index_range(),
+          1024,
+          negative_bounds(),
+          [&](const IndexRange range, Bounds<float3> value) {
+            for (const int face : faces.slice(range)) {
+              math::min_max(face_centers[face], value.min, value.max);
+            }
+            return value;
+          },
+          merge_bounds);
+    }
+    const int axis = math::dominant_axis(bounds.max - bounds.min);
 
     /* Partition primitives along that axis */
-    end = partition_prim_indices(prim_indices,
-                                 prim_scratch,
-                                 prim_offset,
-                                 prim_offset + prims_num,
-                                 axis,
-                                 math::midpoint(cb->min[axis], cb->max[axis]),
-                                 prim_bounds,
-                                 tri_faces);
+    split = partition_along_axis(
+        face_centers, faces, axis, math::midpoint(bounds.min[axis], bounds.max[axis]));
   }
   else {
     /* Partition primitives by material */
-    end = partition_indices_material_faces(prim_indices,
-                                           tri_faces,
-                                           material_indices,
-                                           sharp_faces,
-                                           prim_offset,
-                                           prim_offset + prims_num - 1);
+    split = partition_material_indices(material_indices, faces);
   }
 
   /* Build children */
-  build_nodes_recursive_mesh(corner_verts,
-                             corner_tris,
-                             tri_faces,
-                             material_indices,
-                             sharp_faces,
+  build_nodes_recursive_mesh(material_indices,
                              leaf_limit,
-                             vert_bitmap,
                              nodes[node_index].children_offset_,
-                             nullptr,
-                             prim_bounds,
-                             prim_offset,
-                             end - prim_offset,
-                             prim_scratch,
+                             std::nullopt,
+                             face_centers,
                              depth + 1,
-                             prim_indices,
+                             faces.take_front(split),
                              nodes);
-  build_nodes_recursive_mesh(corner_verts,
-                             corner_tris,
-                             tri_faces,
-                             material_indices,
-                             sharp_faces,
+  build_nodes_recursive_mesh(material_indices,
                              leaf_limit,
-                             vert_bitmap,
                              nodes[node_index].children_offset_ + 1,
-                             nullptr,
-                             prim_bounds,
-                             end,
-                             prim_offset + prims_num - end,
-                             prim_scratch,
+                             std::nullopt,
+                             face_centers,
                              depth + 1,
-                             prim_indices,
+                             faces.drop_front(split),
                              nodes);
+}
+
+inline Bounds<float3> calc_face_bounds(const Span<float3> vert_positions,
+                                       const Span<int> face_verts)
+{
+  Bounds<float3> bounds{vert_positions[face_verts.first()]};
+  for (const int vert : face_verts.slice(1, face_verts.size() - 1)) {
+    math::min_max(vert_positions[vert], bounds.min, bounds.max);
+  }
+  return bounds;
 }
 
 std::unique_ptr<Tree> build_mesh(const Mesh &mesh)
 {
+#ifdef DEBUG_BUILD_TIME
+  SCOPED_TIMER_AVERAGED(__func__);
+#endif
   std::unique_ptr<Tree> pbvh = std::make_unique<Tree>(Type::Mesh);
   const Span<float3> vert_positions = mesh.vert_positions();
+  const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
-  const Span<int3> corner_tris = mesh.corner_tris();
-  if (corner_tris.is_empty()) {
+  if (faces.is_empty()) {
     return pbvh;
   }
 
-  const Span<int> tri_faces = mesh.corner_tri_faces();
-
-  Array<bool> vert_bitmap(mesh.verts_num, false);
-
   const int leaf_limit = LEAF_LIMIT;
 
-  /* For each face, store the AABB and the AABB centroid */
-  Array<Bounds<float3>> prim_bounds(corner_tris.size());
-  const Bounds<float3> cb = threading::parallel_reduce(
-      corner_tris.index_range(),
+  Array<float3> face_centers(faces.size());
+  const Bounds<float3> bounds = threading::parallel_reduce(
+      faces.index_range(),
       1024,
       negative_bounds(),
       [&](const IndexRange range, const Bounds<float3> &init) {
         Bounds<float3> current = init;
         for (const int i : range) {
-          const int3 &tri = corner_tris[i];
-          Bounds<float3> &bounds = prim_bounds[i];
-          bounds = {vert_positions[corner_verts[tri[0]]]};
-          math::min_max(vert_positions[corner_verts[tri[1]]], bounds.min, bounds.max);
-          math::min_max(vert_positions[corner_verts[tri[2]]], bounds.min, bounds.max);
-          const float3 center = math::midpoint(prim_bounds[i].min, prim_bounds[i].max);
-          math::min_max(center, current.min, current.max);
+          const Bounds<float3> bounds = calc_face_bounds(vert_positions,
+                                                         corner_verts.slice(faces[i]));
+          face_centers[i] = bounds.center();
+          current = bounds::merge(current, bounds);
         }
         return current;
       },
-      [](const Bounds<float3> &a, const Bounds<float3> &b) { return bounds::merge(a, b); });
+      merge_bounds);
 
   const AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_vert = *attributes.lookup<bool>(".hide_vert", AttrDomain::Point);
   const VArraySpan material_index = *attributes.lookup<int>("material_index", AttrDomain::Face);
-  const VArraySpan sharp_face = *attributes.lookup<bool>("sharp_face", AttrDomain::Face);
 
-  pbvh->prim_indices_.reinitialize(corner_tris.size());
+  pbvh->prim_indices_.reinitialize(faces.size());
   array_utils::fill_index_range<int>(pbvh->prim_indices_);
 
   Vector<MeshNode> &nodes = std::get<Vector<MeshNode>>(pbvh->nodes_);
   nodes.resize(1);
-  build_nodes_recursive_mesh(corner_verts,
-                             corner_tris,
-                             tri_faces,
-                             material_index,
-                             sharp_face,
-                             leaf_limit,
-                             vert_bitmap,
-                             0,
-                             &cb,
-                             prim_bounds,
-                             0,
-                             corner_tris.size(),
-                             Array<int>(pbvh->prim_indices_.size()),
-                             0,
-                             pbvh->prim_indices_,
-                             nodes);
+  {
+#ifdef DEBUG_BUILD_TIME
+    SCOPED_TIMER_AVERAGED("build_nodes_recursive_mesh");
+#endif
+    build_nodes_recursive_mesh(
+        material_index, leaf_limit, 0, bounds, face_centers, 0, pbvh->prim_indices_, nodes);
+  }
+
+  build_mesh_leaf_nodes(mesh.verts_num, faces, corner_verts, nodes);
 
   update_bounds_mesh(vert_positions, *pbvh);
   store_bounds_orig(*pbvh);
@@ -412,7 +372,7 @@ std::unique_ptr<Tree> build_mesh(const Mesh &mesh)
   if (!hide_vert.is_empty()) {
     threading::parallel_for(nodes.index_range(), 8, [&](const IndexRange range) {
       for (const int i : range) {
-        const Span<int> verts = node_verts(nodes[i]);
+        const Span<int> verts = nodes[i].all_verts();
         if (std::all_of(verts.begin(), verts.end(), [&](const int i) { return hide_vert[i]; })) {
           nodes[i].flag_ |= PBVH_FullyHidden;
         }
@@ -425,10 +385,9 @@ std::unique_ptr<Tree> build_mesh(const Mesh &mesh)
 
 static void build_nodes_recursive_grids(const Span<int> grid_to_face_map,
                                         const Span<int> material_indices,
-                                        const Span<bool> sharp_faces,
                                         const int leaf_limit,
                                         const int node_index,
-                                        const Bounds<float3> *cb,
+                                        const std::optional<Bounds<float3>> &bounds_precalc,
                                         const Span<Bounds<float3>> prim_bounds,
                                         const int prim_offset,
                                         const int prims_num,
@@ -443,7 +402,7 @@ static void build_nodes_recursive_grids(const Span<int> grid_to_face_map,
   const bool below_leaf_limit = prims_num <= leaf_limit || depth >= STACK_FIXED_DEPTH - 1;
   if (below_leaf_limit) {
     if (!leaf_needs_material_split(
-            prim_indices, grid_to_face_map, material_indices, sharp_faces, prim_offset, prims_num))
+            prim_indices, grid_to_face_map, material_indices, IndexRange(prim_offset, prims_num)))
     {
       GridsNode &node = nodes[node_index];
       node.flag_ |= PBVH_Leaf;
@@ -456,19 +415,27 @@ static void build_nodes_recursive_grids(const Span<int> grid_to_face_map,
   nodes[node_index].children_offset_ = nodes.size();
   nodes.resize(nodes.size() + 2);
 
-  Bounds<float3> cb_backing;
   if (!below_leaf_limit) {
-    /* Find axis with widest range of primitive centroids */
-    if (!cb) {
-      cb_backing = negative_bounds();
-      for (int i = prim_offset + prims_num - 1; i >= prim_offset; i--) {
-        const int prim = prim_indices[i];
-        const float3 center = math::midpoint(prim_bounds[prim].min, prim_bounds[prim].max);
-        math::min_max(center, cb_backing.min, cb_backing.max);
-      }
-      cb = &cb_backing;
+    Bounds<float3> bounds;
+    if (bounds_precalc) {
+      bounds = *bounds_precalc;
     }
-    const int axis = math::dominant_axis(cb->max - cb->min);
+    else {
+      bounds = threading::parallel_reduce(
+          IndexRange(prim_offset, prims_num),
+          1024,
+          negative_bounds(),
+          [&](const IndexRange range, Bounds<float3> value) {
+            for (const int i : range) {
+              const int prim = prim_indices[i];
+              const float3 center = math::midpoint(prim_bounds[prim].min, prim_bounds[prim].max);
+              math::min_max(center, value.min, value.max);
+            }
+            return value;
+          },
+          merge_bounds);
+    }
+    const int axis = math::dominant_axis(bounds.max - bounds.min);
 
     /* Partition primitives along that axis */
     end = partition_prim_indices(prim_indices,
@@ -476,7 +443,7 @@ static void build_nodes_recursive_grids(const Span<int> grid_to_face_map,
                                  prim_offset,
                                  prim_offset + prims_num,
                                  axis,
-                                 math::midpoint(cb->min[axis], cb->max[axis]),
+                                 math::midpoint(bounds.min[axis], bounds.max[axis]),
                                  prim_bounds,
                                  grid_to_face_map);
   }
@@ -485,7 +452,6 @@ static void build_nodes_recursive_grids(const Span<int> grid_to_face_map,
     end = partition_indices_material_faces(prim_indices,
                                            grid_to_face_map,
                                            material_indices,
-                                           sharp_faces,
                                            prim_offset,
                                            prim_offset + prims_num - 1);
   }
@@ -493,10 +459,9 @@ static void build_nodes_recursive_grids(const Span<int> grid_to_face_map,
   /* Build children */
   build_nodes_recursive_grids(grid_to_face_map,
                               material_indices,
-                              sharp_faces,
                               leaf_limit,
                               nodes[node_index].children_offset_,
-                              nullptr,
+                              std::nullopt,
                               prim_bounds,
                               prim_offset,
                               end - prim_offset,
@@ -506,10 +471,9 @@ static void build_nodes_recursive_grids(const Span<int> grid_to_face_map,
                               nodes);
   build_nodes_recursive_grids(grid_to_face_map,
                               material_indices,
-                              sharp_faces,
                               leaf_limit,
                               nodes[node_index].children_offset_ + 1,
-                              nullptr,
+                              std::nullopt,
                               prim_bounds,
                               end,
                               prim_offset + prims_num - end,
@@ -521,6 +485,9 @@ static void build_nodes_recursive_grids(const Span<int> grid_to_face_map,
 
 std::unique_ptr<Tree> build_grids(const Mesh &base_mesh, const SubdivCCG &subdiv_ccg)
 {
+#ifdef DEBUG_BUILD_TIME
+  SCOPED_TIMER_AVERAGED(__func__);
+#endif
   std::unique_ptr<Tree> pbvh = std::make_unique<Tree>(Type::Grids);
 
   /* Find maximum number of grids per face. */
@@ -544,7 +511,7 @@ std::unique_ptr<Tree> build_grids(const Mesh &base_mesh, const SubdivCCG &subdiv
 
   /* For each grid, store the AABB and the AABB centroid */
   Array<Bounds<float3>> prim_bounds(elems.size());
-  const Bounds<float3> cb = threading::parallel_reduce(
+  const Bounds<float3> bounds = threading::parallel_reduce(
       elems.index_range(),
       1024,
       negative_bounds(),
@@ -562,30 +529,33 @@ std::unique_ptr<Tree> build_grids(const Mesh &base_mesh, const SubdivCCG &subdiv
         }
         return current;
       },
-      [](const Bounds<float3> &a, const Bounds<float3> &b) { return bounds::merge(a, b); });
+      merge_bounds);
 
   const AttributeAccessor attributes = base_mesh.attributes();
   const VArraySpan material_index = *attributes.lookup<int>("material_index", AttrDomain::Face);
-  const VArraySpan sharp_face = *attributes.lookup<bool>("sharp_face", AttrDomain::Face);
 
   pbvh->prim_indices_.reinitialize(elems.size());
   array_utils::fill_index_range<int>(pbvh->prim_indices_);
 
   Vector<GridsNode> &nodes = std::get<Vector<GridsNode>>(pbvh->nodes_);
   nodes.resize(1);
-  build_nodes_recursive_grids(subdiv_ccg.grid_to_face_map,
-                              material_index,
-                              sharp_face,
-                              leaf_limit,
-                              0,
-                              &cb,
-                              prim_bounds,
-                              0,
-                              elems.size(),
-                              Array<int>(pbvh->prim_indices_.size()),
-                              0,
-                              pbvh->prim_indices_,
-                              nodes);
+  {
+#ifdef DEBUG_BUILD_TIME
+    SCOPED_TIMER_AVERAGED("build_nodes_recursive_grids");
+#endif
+    build_nodes_recursive_grids(subdiv_ccg.grid_to_face_map,
+                                material_index,
+                                leaf_limit,
+                                0,
+                                bounds,
+                                prim_bounds,
+                                0,
+                                elems.size(),
+                                Array<int>(pbvh->prim_indices_.size()),
+                                0,
+                                pbvh->prim_indices_,
+                                nodes);
+  }
 
   update_bounds_grids(key, elems, *pbvh);
   store_bounds_orig(*pbvh);
@@ -594,7 +564,7 @@ std::unique_ptr<Tree> build_grids(const Mesh &base_mesh, const SubdivCCG &subdiv
   if (!grid_hidden.is_empty()) {
     threading::parallel_for(nodes.index_range(), 8, [&](const IndexRange range) {
       for (const int i : range) {
-        const Span<int> grids = node_grid_indices(nodes[i]);
+        const Span<int> grids = nodes[i].grids();
         if (std::all_of(grids.begin(), grids.end(), [&](const int i) {
               return !bits::any_bit_unset(grid_hidden[i]);
             }))
@@ -621,6 +591,11 @@ Tree::Tree(const Type type) : type_(type)
       nodes_ = Vector<BMeshNode>();
       break;
   }
+}
+
+int Tree::nodes_num() const
+{
+  return std::visit([](const auto &nodes) { return nodes.size(); }, this->nodes_);
 }
 
 template<> Span<MeshNode> Tree::nodes() const
@@ -653,12 +628,6 @@ Tree::~Tree()
   std::visit(
       [](auto &nodes) {
         for (Node &node : nodes) {
-          if (node.flag_ & PBVH_Leaf) {
-            if (node.draw_batches_) {
-              blender::draw::pbvh::node_free(node.draw_batches_);
-            }
-          }
-
           if (node.flag_ & (PBVH_Leaf | PBVH_TexLeaf)) {
             node_pixels_free(&node);
           }
@@ -678,11 +647,6 @@ static Node &first_node(Tree &pbvh)
 {
   BLI_assert(!tree_is_empty(pbvh));
   return std::visit([](auto &nodes) -> Node & { return nodes.first(); }, pbvh.nodes_);
-}
-
-void free(std::unique_ptr<Tree> &pbvh)
-{
-  pbvh.reset();
 }
 
 struct StackItem {
@@ -910,7 +874,7 @@ static const SharedCache<Vector<float3>> &vert_normals_cache_eval(const Object &
 {
   const SculptSession &ss = *object_orig.sculpt;
   const Mesh &mesh_orig = *static_cast<const Mesh *>(object_orig.data);
-  BLI_assert(object_orig.sculpt->pbvh->type() == Type::Mesh);
+  BLI_assert(bke::object::pbvh_get(object_orig)->type() == Type::Mesh);
   if (object_orig.mode & (OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT)) {
     if (const Mesh *mesh_eval = BKE_object_get_evaluated_mesh_no_subsurf(&object_eval)) {
       if (mesh_topology_count_matches(*mesh_eval, mesh_orig)) {
@@ -941,7 +905,7 @@ static const SharedCache<Vector<float3>> &face_normals_cache_eval(const Object &
 {
   const SculptSession &ss = *object_orig.sculpt;
   const Mesh &mesh_orig = *static_cast<const Mesh *>(object_orig.data);
-  BLI_assert(object_orig.sculpt->pbvh->type() == Type::Mesh);
+  BLI_assert(bke::object::pbvh_get(object_orig)->type() == Type::Mesh);
   if (object_orig.mode & (OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT)) {
     if (const Mesh *mesh_eval = BKE_object_get_evaluated_mesh_no_subsurf(&object_eval)) {
       if (mesh_topology_count_matches(*mesh_eval, mesh_orig)) {
@@ -992,21 +956,12 @@ static void calc_boundary_face_normals(const Span<float3> positions,
 static void calc_node_face_normals(const Span<float3> positions,
                                    const OffsetIndices<int> faces,
                                    const Span<int> corner_verts,
-                                   const Span<int> corner_tri_faces,
                                    const Span<MeshNode> nodes,
                                    const IndexMask &nodes_to_update,
                                    MutableSpan<float3> face_normals)
 {
-  threading::EnumerableThreadSpecific<Vector<int>> all_index_data;
-  threading::parallel_for(nodes_to_update.index_range(), 1, [&](const IndexRange range) {
-    Vector<int> &node_faces = all_index_data.local();
-    nodes_to_update.slice(range).foreach_index([&](const int i) {
-      normals_calc_faces(positions,
-                         faces,
-                         corner_verts,
-                         node_face_indices_calc_mesh(corner_tri_faces, nodes[i], node_faces),
-                         face_normals);
-    });
+  nodes_to_update.foreach_index(GrainSize(1), [&](const int i) {
+    normals_calc_faces(positions, faces, corner_verts, nodes[i].faces(), face_normals);
   });
 }
 
@@ -1041,8 +996,7 @@ static void calc_node_vert_normals(const GroupedSpan<int> vert_to_face_map,
                                    MutableSpan<float3> vert_normals)
 {
   nodes_to_update.foreach_index(GrainSize(1), [&](const int i) {
-    normals_calc_verts_simple(
-        vert_to_face_map, face_normals, node_unique_verts(nodes[i]), vert_normals);
+    normals_calc_verts_simple(vert_to_face_map, face_normals, nodes[i].verts(), vert_normals);
   });
 }
 
@@ -1067,7 +1021,6 @@ static void update_normals_mesh(Object &object_orig,
   const Span<float3> positions = bke::pbvh::vert_positions_eval_from_eval(object_eval);
   const OffsetIndices faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
-  const Span<int> tri_faces = mesh.corner_tri_faces();
   const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
 
   SharedCache<Vector<float3>> &vert_normals_cache = vert_normals_cache_eval_for_write(object_orig,
@@ -1095,8 +1048,7 @@ static void update_normals_mesh(Object &object_orig,
         }
         else {
           face_normals_cache.update([&](Vector<float3> &r_data) {
-            calc_node_face_normals(
-                positions, faces, corner_verts, tri_faces, nodes, nodes_to_update, r_data);
+            calc_node_face_normals(positions, faces, corner_verts, nodes, nodes_to_update, r_data);
             calc_boundary_face_normals(positions, faces, corner_verts, boundary_faces, r_data);
           });
         }
@@ -1176,7 +1128,7 @@ void update_normals_from_eval(Object &object_eval, Tree &pbvh)
 void update_node_bounds_mesh(const Span<float3> positions, MeshNode &node)
 {
   Bounds<float3> bounds = negative_bounds();
-  for (const int vert : node_verts(node)) {
+  for (const int vert : node.all_verts()) {
     math::min_max(positions[vert], bounds.min, bounds.max);
   }
   node.bounds_ = bounds;
@@ -1185,7 +1137,7 @@ void update_node_bounds_mesh(const Span<float3> positions, MeshNode &node)
 void update_node_bounds_grids(const CCGKey &key, const Span<CCGElem *> grids, GridsNode &node)
 {
   Bounds<float3> bounds = negative_bounds();
-  for (const int grid : node_grid_indices(node)) {
+  for (const int grid : node.grids()) {
     for (const int i : IndexRange(key.grid_area)) {
       math::min_max(CCG_elem_offset_co(key, grids[grid], i), bounds.min, bounds.max);
     }
@@ -1320,7 +1272,7 @@ void store_bounds_orig(Tree &pbvh)
 
 void node_update_mask_mesh(const Span<float> mask, MeshNode &node)
 {
-  const Span<int> verts = node_verts(node);
+  const Span<int> verts = node.all_verts();
   const bool fully_masked = std::all_of(
       verts.begin(), verts.end(), [&](const int vert) { return mask[vert] == 1.0f; });
   const bool fully_unmasked = std::all_of(
@@ -1354,7 +1306,7 @@ void node_update_mask_grids(const CCGKey &key, const Span<CCGElem *> grids, Grid
   BLI_assert(key.has_mask);
   bool fully_masked = true;
   bool fully_unmasked = true;
-  for (const int grid : node_grid_indices(node)) {
+  for (const int grid : node.grids()) {
     CCGElem *elem = grids[grid];
     for (const int i : IndexRange(key.grid_area)) {
       const float mask = CCG_elem_offset_mask(key, elem, i);
@@ -1451,7 +1403,7 @@ void update_mask(const Object &object, Tree &pbvh)
 void node_update_visibility_mesh(const Span<bool> hide_vert, MeshNode &node)
 {
   BLI_assert(!hide_vert.is_empty());
-  const Span<int> verts = node_verts(node);
+  const Span<int> verts = node.all_verts();
   const bool fully_hidden = std::all_of(
       verts.begin(), verts.end(), [&](const int vert) { return hide_vert[vert]; });
   SET_FLAG_FROM_TEST(node.flag_, fully_hidden, PBVH_FullyHidden);
@@ -1585,7 +1537,7 @@ int count_grid_quads(const BitGroupVector<> &grid_hidden,
 
 }  // namespace blender::bke::pbvh
 
-blender::Bounds<blender::float3> BKE_pbvh_redraw_BB(blender::bke::pbvh::Tree &pbvh)
+blender::Bounds<blender::float3> BKE_pbvh_redraw_BB(const blender::bke::pbvh::Tree &pbvh)
 {
   using namespace blender;
   using namespace blender::bke::pbvh;
@@ -1595,7 +1547,7 @@ blender::Bounds<blender::float3> BKE_pbvh_redraw_BB(blender::bke::pbvh::Tree &pb
   Bounds<float3> bounds = negative_bounds();
 
   PBVHIter iter;
-  pbvh_iter_begin(&iter, pbvh, {});
+  pbvh_iter_begin(&iter, const_cast<blender::bke::pbvh::Tree &>(pbvh), {});
   Node *node;
   while ((node = pbvh_iter_next(&iter, PBVH_Leaf))) {
     if (node->flag_ & PBVH_UpdateRedraw) {
@@ -1619,7 +1571,7 @@ IndexMask nodes_to_face_selection_grids(const SubdivCCG &subdiv_ccg,
    * overhead regardless of selection size, but that is small. */
   Array<bool> faces_to_update(subdiv_ccg.faces.size(), false);
   nodes_mask.foreach_index(GrainSize(1), [&](const int i) {
-    for (const int grid : node_grid_indices(nodes[i])) {
+    for (const int grid : nodes[i].grids()) {
       faces_to_update[grid_to_face_map[grid]] = true;
     }
   });
@@ -1643,7 +1595,7 @@ Bounds<float3> bounds_get(const Tree &pbvh)
 int BKE_pbvh_get_grid_num_verts(const Object &object)
 {
   const SculptSession &ss = *object.sculpt;
-  BLI_assert(ss.pbvh->type() == blender::bke::pbvh::Type::Grids);
+  BLI_assert(blender::bke::object::pbvh_get(object)->type() == blender::bke::pbvh::Type::Grids);
   const CCGKey key = BKE_subdiv_ccg_key_top_level(*ss.subdiv_ccg);
   return ss.subdiv_ccg->grids.size() * key.grid_area;
 }
@@ -1651,7 +1603,7 @@ int BKE_pbvh_get_grid_num_verts(const Object &object)
 int BKE_pbvh_get_grid_num_faces(const Object &object)
 {
   const SculptSession &ss = *object.sculpt;
-  BLI_assert(ss.pbvh->type() == blender::bke::pbvh::Type::Grids);
+  BLI_assert(blender::bke::object::pbvh_get(object)->type() == blender::bke::pbvh::Type::Grids);
   const CCGKey key = BKE_subdiv_ccg_key_top_level(*ss.subdiv_ccg);
   return ss.subdiv_ccg->grids.size() * square_i(key.grid_size - 1);
 }
@@ -1766,35 +1718,31 @@ bool BKE_pbvh_node_fully_unmasked_get(const blender::bke::pbvh::Node &node)
 
 namespace blender::bke::pbvh {
 
-Span<int> node_corners(const MeshNode &node)
+void remove_node_draw_tags(bke::pbvh::Tree &pbvh, const IndexMask &node_mask)
 {
-  return node.corner_indices_;
-}
-
-Span<int> node_verts(const MeshNode &node)
-{
-  return node.vert_indices_;
-}
-
-Span<int> node_unique_verts(const MeshNode &node)
-{
-  return node.vert_indices_.as_span().take_front(node.unique_verts_num_);
-}
-
-Span<int> node_face_indices_calc_mesh(const Span<int> corner_tri_faces,
-                                      const MeshNode &node,
-                                      Vector<int> &faces)
-{
-  faces.clear();
-  int prev_face = -1;
-  for (const int tri : node_tri_indices(node)) {
-    const int face = corner_tri_faces[tri];
-    if (face != prev_face) {
-      faces.append(face);
-      prev_face = face;
+  switch (pbvh.type()) {
+    case bke::pbvh::Type::Mesh: {
+      MutableSpan<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
+      node_mask.foreach_index([&](const int i) {
+        nodes[i].flag_ &= ~(PBVH_UpdateDrawBuffers | PBVH_RebuildDrawBuffers);
+      });
+      break;
+    }
+    case bke::pbvh::Type::Grids: {
+      MutableSpan<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
+      node_mask.foreach_index([&](const int i) {
+        nodes[i].flag_ &= ~(PBVH_UpdateDrawBuffers | PBVH_RebuildDrawBuffers);
+      });
+      break;
+    }
+    case bke::pbvh::Type::BMesh: {
+      MutableSpan<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
+      node_mask.foreach_index([&](const int i) {
+        nodes[i].flag_ &= ~(PBVH_UpdateDrawBuffers | PBVH_RebuildDrawBuffers);
+      });
+      break;
     }
   }
-  return faces.as_span();
 }
 
 Span<int> node_face_indices_calc_grids(const SubdivCCG &subdiv_ccg,
@@ -1804,7 +1752,7 @@ Span<int> node_face_indices_calc_grids(const SubdivCCG &subdiv_ccg,
   faces.clear();
   const Span<int> grid_to_face_map = subdiv_ccg.grid_to_face_map;
   int prev_face = -1;
-  for (const int grid : node_grid_indices(node)) {
+  for (const int grid : node.grids()) {
     const int face = grid_to_face_map[grid];
     if (face != prev_face) {
       faces.append(face);
@@ -1812,16 +1760,6 @@ Span<int> node_face_indices_calc_grids(const SubdivCCG &subdiv_ccg,
     }
   }
   return faces.as_span();
-}
-
-Span<int> node_tri_indices(const MeshNode &node)
-{
-  return node.prim_indices_;
-}
-
-Span<int> node_grid_indices(const GridsNode &node)
-{
-  return node.prim_indices_;
 }
 
 }  // namespace blender::bke::pbvh
@@ -1841,19 +1779,12 @@ blender::Bounds<blender::float3> BKE_pbvh_node_get_original_BB(
   return node->bounds_orig_;
 }
 
-void BKE_pbvh_node_get_bm_orco_data(blender::bke::pbvh::BMeshNode *node,
-                                    int (**r_orco_tris)[3],
-                                    int *r_orco_tris_num,
-                                    float (**r_orco_coords)[3],
-                                    BMVert ***r_orco_verts)
+void BKE_pbvh_node_get_bm_orco_data(const blender::bke::pbvh::BMeshNode &node,
+                                    blender::Span<blender::float3> &r_orig_positions,
+                                    blender::Span<blender::int3> &r_orig_tris)
 {
-  *r_orco_tris = node->bm_ortri_;
-  *r_orco_tris_num = node->bm_tot_ortri_;
-  *r_orco_coords = node->bm_orco_;
-
-  if (r_orco_verts) {
-    *r_orco_verts = node->bm_orvert_;
-  }
+  r_orig_positions = node.orig_positions_;
+  r_orig_tris = node.orig_tris_;
 }
 
 /********************************* Ray-cast ***********************************/
@@ -1875,8 +1806,8 @@ static bool ray_aabb_intersect(Node &node, const RaycastData &rcd)
 
 void raycast(Tree &pbvh,
              const FunctionRef<void(Node &node, float *tmin)> hit_fn,
-             const float ray_start[3],
-             const float ray_normal[3],
+             const float3 &ray_start,
+             const float3 &ray_normal,
              bool original)
 {
   RaycastData rcd;
@@ -1888,12 +1819,12 @@ void raycast(Tree &pbvh,
       pbvh, [&](Node &node) { return ray_aabb_intersect(node, rcd); }, hit_fn);
 }
 
-bool ray_face_intersection_quad(const float ray_start[3],
+bool ray_face_intersection_quad(const float3 &ray_start,
                                 IsectRayPrecalc *isect_precalc,
-                                const float t0[3],
-                                const float t1[3],
-                                const float t2[3],
-                                const float t3[3],
+                                const float3 &t0,
+                                const float3 &t1,
+                                const float3 &t2,
+                                const float3 &t3,
                                 float *depth)
 {
   float depth_test;
@@ -1910,11 +1841,11 @@ bool ray_face_intersection_quad(const float ray_start[3],
   return false;
 }
 
-bool ray_face_intersection_tri(const float ray_start[3],
+bool ray_face_intersection_tri(const float3 &ray_start,
                                IsectRayPrecalc *isect_precalc,
-                               const float t0[3],
-                               const float t1[3],
-                               const float t2[3],
+                               const float3 &t0,
+                               const float3 &t1,
+                               const float3 &t2,
                                float *depth)
 {
   float depth_test;
@@ -1930,18 +1861,19 @@ bool ray_face_intersection_tri(const float ray_start[3],
 
 /* Take advantage of the fact we know this won't be an intersection.
  * Just handle ray-tri edges. */
-static float dist_squared_ray_to_tri_v3_fast(const float ray_origin[3],
-                                             const float ray_direction[3],
-                                             const float v0[3],
-                                             const float v1[3],
-                                             const float v2[3],
-                                             float r_point[3],
+static float dist_squared_ray_to_tri_v3_fast(const float3 &ray_origin,
+                                             const float3 &ray_direction,
+                                             const float3 &v0,
+                                             const float3 &v1,
+                                             const float3 &v2,
+                                             float3 &r_point,
                                              float *r_depth)
 {
   const float *tri[3] = {v0, v1, v2};
   float dist_sq_best = FLT_MAX;
   for (int i = 0, j = 2; i < 3; j = i++) {
-    float point_test[3], depth_test = FLT_MAX;
+    float3 point_test;
+    float depth_test = FLT_MAX;
     const float dist_sq_test = dist_squared_ray_to_seg_v3(
         ray_origin, ray_direction, tri[i], tri[j], point_test, &depth_test);
     if (dist_sq_test < dist_sq_best || i == 0) {
@@ -1953,17 +1885,18 @@ static float dist_squared_ray_to_tri_v3_fast(const float ray_origin[3],
   return dist_sq_best;
 }
 
-bool ray_face_nearest_quad(const float ray_start[3],
-                           const float ray_normal[3],
-                           const float t0[3],
-                           const float t1[3],
-                           const float t2[3],
-                           const float t3[3],
+bool ray_face_nearest_quad(const float3 &ray_start,
+                           const float3 &ray_normal,
+                           const float3 &t0,
+                           const float3 &t1,
+                           const float3 &t2,
+                           const float3 &t3,
                            float *depth,
                            float *dist_sq)
 {
   float dist_sq_test;
-  float co[3], depth_test;
+  float3 co;
+  float depth_test;
 
   if ((dist_sq_test = dist_squared_ray_to_tri_v3_fast(
            ray_start, ray_normal, t0, t1, t2, co, &depth_test)) < *dist_sq)
@@ -1982,16 +1915,17 @@ bool ray_face_nearest_quad(const float ray_start[3],
   return false;
 }
 
-bool ray_face_nearest_tri(const float ray_start[3],
-                          const float ray_normal[3],
-                          const float t0[3],
-                          const float t1[3],
-                          const float t2[3],
+bool ray_face_nearest_tri(const float3 &ray_start,
+                          const float3 &ray_normal,
+                          const float3 &t0,
+                          const float3 &t1,
+                          const float3 &t2,
                           float *depth,
                           float *dist_sq)
 {
   float dist_sq_test;
-  float co[3], depth_test;
+  float3 co;
+  float depth_test;
 
   if ((dist_sq_test = dist_squared_ray_to_tri_v3_fast(
            ray_start, ray_normal, t0, t1, t2, co, &depth_test)) < *dist_sq)
@@ -2004,70 +1938,116 @@ bool ray_face_nearest_tri(const float ray_start[3],
   return false;
 }
 
+static void calc_mesh_intersect_data(const Span<int> corner_verts,
+                                     const Span<int3> corner_tris,
+                                     const float3 &ray_start,
+                                     const float3 &ray_normal,
+                                     const int face_index,
+                                     const int tri_index,
+                                     const std::array<const float *, 3> co,
+                                     float *depth,
+                                     PBVHVertRef *r_active_vertex,
+                                     int *r_active_face_index,
+                                     float *r_face_normal)
+
+{
+  float nearest_vertex_co[3] = {0.0f};
+
+  if (r_face_normal) {
+    normal_tri_v3(r_face_normal, co[0], co[1], co[2]);
+  }
+
+  if (r_active_vertex) {
+    const float3 location = ray_start + ray_normal * *depth;
+    for (int j = 0; j < 3; j++) {
+      /* Always assign nearest_vertex_co in the first iteration to avoid comparison against
+       * uninitialized values. This stores the closest vertex in the current intersecting
+       * triangle. */
+      if (j == 0 ||
+          len_squared_v3v3(location, co[j]) < len_squared_v3v3(location, nearest_vertex_co))
+      {
+        copy_v3_v3(nearest_vertex_co, co[j]);
+        r_active_vertex->i = corner_verts[corner_tris[tri_index][j]];
+        *r_active_face_index = face_index;
+      }
+    }
+  }
+}
+
 static bool pbvh_faces_node_raycast(const MeshNode &node,
-                                    const float (*origco)[3],
+                                    const Span<float3> node_positions,
                                     const Span<float3> vert_positions,
+                                    const OffsetIndices<int> faces,
                                     const Span<int> corner_verts,
                                     const Span<int3> corner_tris,
-                                    const Span<int> corner_tri_faces,
                                     const Span<bool> hide_poly,
-                                    const float ray_start[3],
-                                    const float ray_normal[3],
+                                    const float3 &ray_start,
+                                    const float3 &ray_normal,
                                     IsectRayPrecalc *isect_precalc,
                                     float *depth,
                                     PBVHVertRef *r_active_vertex,
                                     int *r_active_face_index,
                                     float *r_face_normal)
 {
-  using namespace blender;
+  const Span<int> face_indices = node.faces();
+
   bool hit = false;
-  float nearest_vertex_co[3] = {0.0f};
-  const Span<int> tris = node_tri_indices(node);
-
-  for (const int i : tris.index_range()) {
-    const int tri_i = tris[i];
-    const int3 &tri = corner_tris[tri_i];
-    const int3 face_verts = node.face_vert_indices_[i];
-
-    if (!hide_poly.is_empty() && hide_poly[corner_tri_faces[tri_i]]) {
-      continue;
-    }
-
-    const float *co[3];
-    if (origco) {
-      /* Intersect with backed up original coordinates. */
-      co[0] = origco[face_verts[0]];
-      co[1] = origco[face_verts[1]];
-      co[2] = origco[face_verts[2]];
-    }
-    else {
-      /* intersect with current coordinates */
-      co[0] = vert_positions[corner_verts[tri[0]]];
-      co[1] = vert_positions[corner_verts[tri[1]]];
-      co[2] = vert_positions[corner_verts[tri[2]]];
-    }
-
-    if (ray_face_intersection_tri(ray_start, isect_precalc, co[0], co[1], co[2], depth)) {
-      hit = true;
-
-      if (r_face_normal) {
-        normal_tri_v3(r_face_normal, co[0], co[1], co[2]);
+  if (node_positions.is_empty()) {
+    for (const int i : face_indices.index_range()) {
+      const int face_i = face_indices[i];
+      if (!hide_poly.is_empty() && hide_poly[face_i]) {
+        continue;
       }
 
-      if (r_active_vertex) {
-        float location[3] = {0.0f};
-        madd_v3_v3v3fl(location, ray_start, ray_normal, *depth);
-        for (int j = 0; j < 3; j++) {
-          /* Always assign nearest_vertex_co in the first iteration to avoid comparison against
-           * uninitialized values. This stores the closest vertex in the current intersecting
-           * triangle. */
-          if (j == 0 ||
-              len_squared_v3v3(location, co[j]) < len_squared_v3v3(location, nearest_vertex_co))
-          {
-            copy_v3_v3(nearest_vertex_co, co[j]);
-            r_active_vertex->i = corner_verts[tri[j]];
-            *r_active_face_index = corner_tri_faces[tri_i];
-          }
+      for (const int tri_i : bke::mesh::face_triangles_range(faces, face_i)) {
+        const int3 &tri = corner_tris[tri_i];
+        const std::array<const float *, 3> co{{vert_positions[corner_verts[tri[0]]],
+                                               vert_positions[corner_verts[tri[1]]],
+                                               vert_positions[corner_verts[tri[2]]]}};
+        if (ray_face_intersection_tri(ray_start, isect_precalc, co[0], co[1], co[2], depth)) {
+          hit = true;
+          calc_mesh_intersect_data(corner_verts,
+                                   corner_tris,
+                                   ray_start,
+                                   ray_normal,
+                                   face_i,
+                                   tri_i,
+                                   co,
+                                   depth,
+                                   r_active_vertex,
+                                   r_active_face_index,
+                                   r_face_normal);
+        }
+      }
+    }
+  }
+  else {
+    const MeshNode::LocalVertMap &vert_map = node.vert_indices_;
+    for (const int i : face_indices.index_range()) {
+      const int face_i = face_indices[i];
+      if (!hide_poly.is_empty() && hide_poly[face_i]) {
+        continue;
+      }
+
+      for (const int tri_i : bke::mesh::face_triangles_range(faces, face_i)) {
+        const int3 &tri = corner_tris[tri_i];
+        const std::array<const float *, 3> co{
+            {node_positions[vert_map.index_of(corner_verts[tri[0]])],
+             node_positions[vert_map.index_of(corner_verts[tri[1]])],
+             node_positions[vert_map.index_of(corner_verts[tri[2]])]}};
+        if (ray_face_intersection_tri(ray_start, isect_precalc, co[0], co[1], co[2], depth)) {
+          hit = true;
+          calc_mesh_intersect_data(corner_verts,
+                                   corner_tris,
+                                   ray_start,
+                                   ray_normal,
+                                   face_i,
+                                   tri_i,
+                                   co,
+                                   depth,
+                                   r_active_vertex,
+                                   r_active_face_index,
+                                   r_face_normal);
         }
       }
     }
@@ -2076,11 +2056,53 @@ static bool pbvh_faces_node_raycast(const MeshNode &node,
   return hit;
 }
 
+static void calc_grids_intersect_data(const CCGKey &key,
+                                      const float3 &ray_start,
+                                      const float3 &ray_normal,
+                                      const int grid,
+                                      const short x,
+                                      const short y,
+                                      const std::array<const float *, 4> co,
+                                      float *depth,
+                                      PBVHVertRef *r_active_vertex,
+                                      int *r_active_grid_index,
+                                      float *r_face_normal)
+
+{
+  float3 nearest_vertex_co;
+  if (r_face_normal) {
+    normal_quad_v3(r_face_normal, co[0], co[1], co[2], co[3]);
+  }
+
+  if (r_active_vertex) {
+    const float3 location = ray_start + ray_normal * *depth;
+
+    const int x_it[4] = {0, 1, 1, 0};
+    const int y_it[4] = {1, 1, 0, 0};
+
+    for (int j = 0; j < 4; j++) {
+      /* Always assign nearest_vertex_co in the first iteration to avoid comparison against
+       * uninitialized values. This stores the closest vertex in the current intersecting
+       * quad. */
+      if (j == 0 ||
+          len_squared_v3v3(location, co[j]) < len_squared_v3v3(location, nearest_vertex_co))
+      {
+        copy_v3_v3(nearest_vertex_co, co[j]);
+
+        r_active_vertex->i = key.grid_area * grid + (y + y_it[j]) * key.grid_size + (x + x_it[j]);
+      }
+    }
+  }
+  if (r_active_grid_index) {
+    *r_active_grid_index = grid;
+  }
+}
+
 static bool pbvh_grids_node_raycast(const SubdivCCG &subdiv_ccg,
                                     GridsNode &node,
-                                    const float (*origco)[3],
-                                    const float ray_start[3],
-                                    const float ray_normal[3],
+                                    const Span<float3> node_positions,
+                                    const float3 &ray_start,
+                                    const float3 &ray_normal,
                                     IsectRayPrecalc *isect_precalc,
                                     float *depth,
                                     PBVHVertRef *r_active_vertex,
@@ -2088,78 +2110,80 @@ static bool pbvh_grids_node_raycast(const SubdivCCG &subdiv_ccg,
                                     float *r_face_normal)
 {
   const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
-  const Span<int> grids = node_grid_indices(node);
-  const int gridsize = key.grid_size;
+  const Span<int> grids = node.grids();
+  const int grid_size = key.grid_size;
   bool hit = false;
-  float nearest_vertex_co[3] = {0.0};
   const BitGroupVector<> &grid_hidden = subdiv_ccg.grid_hidden;
   const Span<CCGElem *> elems = subdiv_ccg.grids;
 
-  for (const int grid : grids) {
-    CCGElem *elem = elems[grid];
+  if (node_positions.is_empty()) {
+    for (const int grid : grids) {
+      CCGElem *elem = elems[grid];
 
-    for (int y = 0; y < gridsize - 1; y++) {
-      for (int x = 0; x < gridsize - 1; x++) {
-        /* check if grid face is hidden */
-        if (!grid_hidden.is_empty()) {
-          if (paint_is_grid_face_hidden(grid_hidden[grid], gridsize, x, y)) {
-            continue;
-          }
-        }
-
-        const float *co[4];
-        if (origco) {
-          co[0] = origco[(y + 1) * gridsize + x];
-          co[1] = origco[(y + 1) * gridsize + x + 1];
-          co[2] = origco[y * gridsize + x + 1];
-          co[3] = origco[y * gridsize + x];
-        }
-        else {
-          co[0] = CCG_grid_elem_co(key, elem, x, y + 1);
-          co[1] = CCG_grid_elem_co(key, elem, x + 1, y + 1);
-          co[2] = CCG_grid_elem_co(key, elem, x + 1, y);
-          co[3] = CCG_grid_elem_co(key, elem, x, y);
-        }
-
-        if (ray_face_intersection_quad(
-                ray_start, isect_precalc, co[0], co[1], co[2], co[3], depth))
-        {
-          hit = true;
-
-          if (r_face_normal) {
-            normal_quad_v3(r_face_normal, co[0], co[1], co[2], co[3]);
-          }
-
-          if (r_active_vertex) {
-            float location[3] = {0.0};
-            madd_v3_v3v3fl(location, ray_start, ray_normal, *depth);
-
-            const int x_it[4] = {0, 1, 1, 0};
-            const int y_it[4] = {1, 1, 0, 0};
-
-            for (int j = 0; j < 4; j++) {
-              /* Always assign nearest_vertex_co in the first iteration to avoid comparison against
-               * uninitialized values. This stores the closest vertex in the current intersecting
-               * quad. */
-              if (j == 0 || len_squared_v3v3(location, co[j]) <
-                                len_squared_v3v3(location, nearest_vertex_co))
-              {
-                copy_v3_v3(nearest_vertex_co, co[j]);
-
-                r_active_vertex->i = key.grid_area * grid + (y + y_it[j]) * key.grid_size +
-                                     (x + x_it[j]);
-              }
+      for (const short y : IndexRange(grid_size - 1)) {
+        for (const short x : IndexRange(grid_size - 1)) {
+          if (!grid_hidden.is_empty()) {
+            if (paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
+              continue;
             }
           }
-          if (r_active_grid_index) {
-            *r_active_grid_index = grid;
+          const std::array<const float *, 4> co{{CCG_grid_elem_co(key, elem, x, y + 1),
+                                                 CCG_grid_elem_co(key, elem, x + 1, y + 1),
+                                                 CCG_grid_elem_co(key, elem, x + 1, y),
+                                                 CCG_grid_elem_co(key, elem, x, y)}};
+          if (ray_face_intersection_quad(
+                  ray_start, isect_precalc, co[0], co[1], co[2], co[3], depth))
+          {
+            hit = true;
+            calc_grids_intersect_data(key,
+                                      ray_start,
+                                      ray_normal,
+                                      grid,
+                                      x,
+                                      y,
+                                      co,
+                                      depth,
+                                      r_active_vertex,
+                                      r_active_grid_index,
+                                      r_face_normal);
           }
         }
       }
     }
-
-    if (origco) {
-      origco += gridsize * gridsize;
+  }
+  else {
+    for (const int i : grids.index_range()) {
+      const int grid = grids[i];
+      const Span<float3> grid_positions = node_positions.slice(key.grid_area * i, key.grid_area);
+      for (const short y : IndexRange(grid_size - 1)) {
+        for (const short x : IndexRange(grid_size - 1)) {
+          if (!grid_hidden.is_empty()) {
+            if (paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
+              continue;
+            }
+          }
+          const std::array<const float *, 4> co{grid_positions[(y + 1) * grid_size + x],
+                                                grid_positions[(y + 1) * grid_size + x + 1],
+                                                grid_positions[y * grid_size + x + 1],
+                                                grid_positions[y * grid_size + x]};
+          if (ray_face_intersection_quad(
+                  ray_start, isect_precalc, co[0], co[1], co[2], co[3], depth))
+          {
+            hit = true;
+            calc_grids_intersect_data(key,
+                                      ray_start,
+                                      ray_normal,
+                                      grid,
+                                      x,
+                                      y,
+                                      co,
+                                      depth,
+                                      r_active_vertex,
+                                      r_active_grid_index,
+                                      r_face_normal);
+          }
+        }
+      }
     }
   }
 
@@ -2168,36 +2192,33 @@ static bool pbvh_grids_node_raycast(const SubdivCCG &subdiv_ccg,
 
 bool raycast_node(Tree &pbvh,
                   Node &node,
-                  const float (*origco)[3],
+                  const Span<float3> node_positions,
                   bool use_origco,
                   const Span<float3> vert_positions,
+                  const OffsetIndices<int> faces,
                   const Span<int> corner_verts,
                   const Span<int3> corner_tris,
-                  const Span<int> corner_tri_faces,
                   const Span<bool> hide_poly,
                   const SubdivCCG *subdiv_ccg,
-                  const float ray_start[3],
-                  const float ray_normal[3],
+                  const float3 &ray_start,
+                  const float3 &ray_normal,
                   IsectRayPrecalc *isect_precalc,
                   float *depth,
                   PBVHVertRef *active_vertex,
                   int *active_face_grid_index,
                   float *face_normal)
 {
-  bool hit = false;
-
   if (node.flag_ & PBVH_FullyHidden) {
     return false;
   }
-
   switch (pbvh.type()) {
     case Type::Mesh:
-      hit |= pbvh_faces_node_raycast(static_cast<MeshNode &>(node),
-                                     origco,
+      return pbvh_faces_node_raycast(static_cast<MeshNode &>(node),
+                                     node_positions,
                                      vert_positions,
+                                     faces,
                                      corner_verts,
                                      corner_tris,
-                                     corner_tri_faces,
                                      hide_poly,
                                      ray_start,
                                      ray_normal,
@@ -2206,11 +2227,10 @@ bool raycast_node(Tree &pbvh,
                                      active_vertex,
                                      active_face_grid_index,
                                      face_normal);
-      break;
     case Type::Grids:
-      hit |= pbvh_grids_node_raycast(*subdiv_ccg,
+      return pbvh_grids_node_raycast(*subdiv_ccg,
                                      static_cast<GridsNode &>(node),
-                                     origco,
+                                     node_positions,
                                      ray_start,
                                      ray_normal,
                                      isect_precalc,
@@ -2218,20 +2238,18 @@ bool raycast_node(Tree &pbvh,
                                      active_vertex,
                                      active_face_grid_index,
                                      face_normal);
-      break;
     case Type::BMesh:
-      hit = bmesh_node_raycast(static_cast<BMeshNode &>(node),
-                               ray_start,
-                               ray_normal,
-                               isect_precalc,
-                               depth,
-                               use_origco,
-                               active_vertex,
-                               face_normal);
-      break;
+      return bmesh_node_raycast(static_cast<BMeshNode &>(node),
+                                ray_start,
+                                ray_normal,
+                                isect_precalc,
+                                depth,
+                                use_origco,
+                                active_vertex,
+                                face_normal);
   }
-
-  return hit;
+  BLI_assert_unreachable();
+  return false;
 }
 
 void clip_ray_ortho(
@@ -2348,8 +2366,8 @@ static bool nearest_to_ray_aabb_dist_sq(Node *node,
 
 void find_nearest_to_ray(Tree &pbvh,
                          const FunctionRef<void(Node &node, float *tmin)> fn,
-                         const float ray_start[3],
-                         const float ray_normal[3],
+                         const float3 &ray_start,
+                         const float3 &ray_normal,
                          const bool original)
 {
   const DistRayAABB_Precalc ray_dist_precalc = dist_squared_ray_to_aabb_v3_precalc(ray_start,
@@ -2362,48 +2380,57 @@ void find_nearest_to_ray(Tree &pbvh,
 }
 
 static bool pbvh_faces_node_nearest_to_ray(const MeshNode &node,
-                                           const float (*origco)[3],
+                                           const Span<float3> node_positions,
                                            const Span<float3> vert_positions,
+                                           const OffsetIndices<int> faces,
                                            const Span<int> corner_verts,
                                            const Span<int3> corner_tris,
-                                           const Span<int> corner_tri_faces,
                                            const Span<bool> hide_poly,
-                                           const float ray_start[3],
-                                           const float ray_normal[3],
+                                           const float3 &ray_start,
+                                           const float3 &ray_normal,
                                            float *depth,
                                            float *dist_sq)
 {
+  const Span<int> face_indices = node.faces();
+
   bool hit = false;
-  const Span<int> tris = node_tri_indices(node);
+  if (node_positions.is_empty()) {
+    for (const int i : face_indices.index_range()) {
+      const int face_i = face_indices[i];
+      if (!hide_poly.is_empty() && hide_poly[face_i]) {
+        continue;
+      }
 
-  for (const int i : tris.index_range()) {
-    const int tri_i = tris[i];
-    const int3 &corner_tri = corner_tris[tri_i];
-    const int3 face_verts = node.face_vert_indices_[i];
-
-    if (!hide_poly.is_empty() && hide_poly[corner_tri_faces[tri_i]]) {
-      continue;
+      for (const int tri_i : bke::mesh::face_triangles_range(faces, face_i)) {
+        const int3 &corner_tri = corner_tris[tri_i];
+        hit |= ray_face_nearest_tri(ray_start,
+                                    ray_normal,
+                                    vert_positions[corner_verts[corner_tri[0]]],
+                                    vert_positions[corner_verts[corner_tri[1]]],
+                                    vert_positions[corner_verts[corner_tri[2]]],
+                                    depth,
+                                    dist_sq);
+      }
     }
+  }
+  else {
+    const MeshNode::LocalVertMap &vert_map = node.vert_indices_;
+    for (const int i : face_indices.index_range()) {
+      const int face_i = face_indices[i];
+      if (!hide_poly.is_empty() && hide_poly[face_i]) {
+        continue;
+      }
 
-    if (origco) {
-      /* Intersect with backed-up original coordinates. */
-      hit |= ray_face_nearest_tri(ray_start,
-                                  ray_normal,
-                                  origco[face_verts[0]],
-                                  origco[face_verts[1]],
-                                  origco[face_verts[2]],
-                                  depth,
-                                  dist_sq);
-    }
-    else {
-      /* intersect with current coordinates */
-      hit |= ray_face_nearest_tri(ray_start,
-                                  ray_normal,
-                                  vert_positions[corner_verts[corner_tri[0]]],
-                                  vert_positions[corner_verts[corner_tri[1]]],
-                                  vert_positions[corner_verts[corner_tri[2]]],
-                                  depth,
-                                  dist_sq);
+      for (const int tri_i : bke::mesh::face_triangles_range(faces, face_i)) {
+        const int3 &corner_tri = corner_tris[tri_i];
+        hit |= ray_face_nearest_tri(ray_start,
+                                    ray_normal,
+                                    node_positions[vert_map.index_of(corner_verts[corner_tri[0]])],
+                                    node_positions[vert_map.index_of(corner_verts[corner_tri[1]])],
+                                    node_positions[vert_map.index_of(corner_verts[corner_tri[2]])],
+                                    depth,
+                                    dist_sq);
+      }
     }
   }
 
@@ -2412,42 +2439,29 @@ static bool pbvh_faces_node_nearest_to_ray(const MeshNode &node,
 
 static bool pbvh_grids_node_nearest_to_ray(const SubdivCCG &subdiv_ccg,
                                            GridsNode &node,
-                                           const float (*origco)[3],
+                                           const Span<float3> node_positions,
                                            const float ray_start[3],
                                            const float ray_normal[3],
                                            float *depth,
                                            float *dist_sq)
 {
   const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
-  const Span<int> grids = node_grid_indices(node);
-  const int gridsize = key.grid_size;
-  bool hit = false;
+  const Span<int> grids = node.grids();
+  const int grid_size = key.grid_size;
   const BitGroupVector<> &grid_hidden = subdiv_ccg.grid_hidden;
   const Span<CCGElem *> elems = subdiv_ccg.grids;
 
-  for (const int grid : grids) {
-    CCGElem *elem = elems[grid];
-
-    for (int y = 0; y < gridsize - 1; y++) {
-      for (int x = 0; x < gridsize - 1; x++) {
-        /* check if grid face is hidden */
-        if (!grid_hidden.is_empty()) {
-          if (paint_is_grid_face_hidden(grid_hidden[grid], gridsize, x, y)) {
-            continue;
+  bool hit = false;
+  if (node_positions.is_empty()) {
+    for (const int grid : grids) {
+      CCGElem *elem = elems[grid];
+      for (const short y : IndexRange(grid_size - 1)) {
+        for (const short x : IndexRange(grid_size - 1)) {
+          if (!grid_hidden.is_empty()) {
+            if (paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
+              continue;
+            }
           }
-        }
-
-        if (origco) {
-          hit |= ray_face_nearest_quad(ray_start,
-                                       ray_normal,
-                                       origco[y * gridsize + x],
-                                       origco[y * gridsize + x + 1],
-                                       origco[(y + 1) * gridsize + x + 1],
-                                       origco[(y + 1) * gridsize + x],
-                                       depth,
-                                       dist_sq);
-        }
-        else {
           hit |= ray_face_nearest_quad(ray_start,
                                        ray_normal,
                                        CCG_grid_elem_co(key, elem, x, y),
@@ -2459,9 +2473,28 @@ static bool pbvh_grids_node_nearest_to_ray(const SubdivCCG &subdiv_ccg,
         }
       }
     }
-
-    if (origco) {
-      origco += gridsize * gridsize;
+  }
+  else {
+    for (const int i : grids.index_range()) {
+      const int grid = grids[i];
+      const Span<float3> grid_positions = node_positions.slice(key.grid_area * i, key.grid_area);
+      for (const short y : IndexRange(grid_size - 1)) {
+        for (const short x : IndexRange(grid_size - 1)) {
+          if (!grid_hidden.is_empty()) {
+            if (paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
+              continue;
+            }
+          }
+          hit |= ray_face_nearest_quad(ray_start,
+                                       ray_normal,
+                                       grid_positions[y * grid_size + x],
+                                       grid_positions[y * grid_size + x + 1],
+                                       grid_positions[(y + 1) * grid_size + x + 1],
+                                       grid_positions[(y + 1) * grid_size + x],
+                                       depth,
+                                       dist_sq);
+        }
+      }
     }
   }
 
@@ -2470,12 +2503,12 @@ static bool pbvh_grids_node_nearest_to_ray(const SubdivCCG &subdiv_ccg,
 
 bool find_nearest_to_ray_node(Tree &pbvh,
                               Node &node,
-                              const float (*origco)[3],
+                              const Span<float3> node_positions,
                               bool use_origco,
                               const Span<float3> vert_positions,
+                              const OffsetIndices<int> faces,
                               const Span<int> corner_verts,
                               const Span<int3> corner_tris,
-                              const Span<int> corner_tri_faces,
                               const Span<bool> hide_poly,
                               const SubdivCCG *subdiv_ccg,
                               const float ray_start[3],
@@ -2483,42 +2516,36 @@ bool find_nearest_to_ray_node(Tree &pbvh,
                               float *depth,
                               float *dist_sq)
 {
-  bool hit = false;
-
   if (node.flag_ & PBVH_FullyHidden) {
     return false;
   }
-
   switch (pbvh.type()) {
     case Type::Mesh:
-      hit |= pbvh_faces_node_nearest_to_ray(static_cast<MeshNode &>(node),
-                                            origco,
+      return pbvh_faces_node_nearest_to_ray(static_cast<MeshNode &>(node),
+                                            node_positions,
                                             vert_positions,
+                                            faces,
                                             corner_verts,
                                             corner_tris,
-                                            corner_tri_faces,
                                             hide_poly,
                                             ray_start,
                                             ray_normal,
                                             depth,
                                             dist_sq);
-      break;
     case Type::Grids:
-      hit |= pbvh_grids_node_nearest_to_ray(*subdiv_ccg,
+      return pbvh_grids_node_nearest_to_ray(*subdiv_ccg,
                                             static_cast<GridsNode &>(node),
-                                            origco,
+                                            node_positions,
                                             ray_start,
                                             ray_normal,
                                             depth,
                                             dist_sq);
-      break;
     case Type::BMesh:
-      hit = bmesh_node_nearest_to_ray(
+      return bmesh_node_nearest_to_ray(
           static_cast<BMeshNode &>(node), ray_start, ray_normal, depth, dist_sq, use_origco);
-      break;
   }
-
-  return hit;
+  BLI_assert_unreachable();
+  return false;
 }
 
 enum PlaneAABBIsect {
@@ -2578,203 +2605,6 @@ bool BKE_pbvh_node_frustum_exclude_AABB(const blender::bke::pbvh::Node *node,
   return blender::bke::pbvh::test_frustum_aabb(node->bounds_, data) !=
          blender::bke::pbvh::ISECT_INSIDE;
 }
-
-static blender::draw::pbvh::PBVH_GPU_Args pbvh_draw_args_init(const Object &object_orig,
-                                                              const Object &object_eval,
-                                                              blender::bke::pbvh::Tree &pbvh,
-                                                              const blender::bke::pbvh::Node &node)
-{
-  const Mesh &mesh_orig = *static_cast<const Mesh *>(object_orig.data);
-  const Mesh &mesh_eval = *static_cast<const Mesh *>(object_eval.data);
-  blender::draw::pbvh::PBVH_GPU_Args args{};
-
-  args.pbvh_type = pbvh.type();
-
-  args.face_sets_color_default = mesh_orig.face_sets_color_default;
-  args.face_sets_color_seed = mesh_orig.face_sets_color_seed;
-
-  args.active_color = mesh_orig.active_color_attribute;
-  args.render_color = mesh_orig.default_color_attribute;
-
-  switch (pbvh.type()) {
-    case blender::bke::pbvh::Type::Mesh:
-      args.vert_data = &mesh_eval.vert_data;
-      args.corner_data = &mesh_eval.corner_data;
-      args.face_data = &mesh_eval.face_data;
-      args.mesh = &mesh_orig;
-      args.vert_positions = blender::bke::pbvh::vert_positions_eval_from_eval(object_eval);
-      args.corner_verts = mesh_eval.corner_verts();
-      args.corner_edges = mesh_eval.corner_edges();
-      args.corner_tris = mesh_eval.corner_tris();
-      args.vert_normals = blender::bke::pbvh::vert_normals_eval_from_eval(object_eval);
-      args.face_normals =
-          blender::bke::pbvh::face_normals_cache_eval(object_orig, object_eval).data();
-      args.hide_poly = *mesh_orig.attributes().lookup<bool>(".hide_poly",
-                                                            blender::bke::AttrDomain::Face);
-
-      args.prim_indices = static_cast<const blender::bke::pbvh::MeshNode &>(node).prim_indices_;
-      args.tri_faces = mesh_eval.corner_tri_faces();
-      break;
-    case blender::bke::pbvh::Type::Grids: {
-      const SubdivCCG &subdiv_ccg = *mesh_eval.runtime->subdiv_ccg;
-      args.vert_data = &mesh_orig.vert_data;
-      args.corner_data = &mesh_orig.corner_data;
-      args.face_data = &mesh_orig.face_data;
-      args.ccg_key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
-      args.mesh = &mesh_orig;
-      args.grid_indices = static_cast<const blender::bke::pbvh::GridsNode &>(node).prim_indices_;
-      args.subdiv_ccg = &const_cast<SubdivCCG &>(subdiv_ccg);
-      args.grids = subdiv_ccg.grids;
-      break;
-    }
-    case blender::bke::pbvh::Type::BMesh: {
-      BMesh &bm = *object_orig.sculpt->bm;
-      args.bm = &bm;
-      args.vert_data = &args.bm->vdata;
-      args.corner_data = &args.bm->ldata;
-      args.face_data = &args.bm->pdata;
-      args.bm_faces = &static_cast<const blender::bke::pbvh::BMeshNode &>(node).bm_faces_;
-      args.cd_mask_layer = CustomData_get_offset_named(&bm.vdata, CD_PROP_FLOAT, ".sculpt_mask");
-
-      break;
-    }
-  }
-
-  return args;
-}
-
-namespace blender::bke::pbvh {
-
-static void node_update_draw_buffers(const Object &object_orig,
-                                     const Object &object_eval,
-                                     Tree &pbvh,
-                                     Node &node)
-{
-  /* Create and update draw buffers. The functions called here must not
-   * do any OpenGL calls. Flags are not cleared immediately, that happens
-   * after GPU_pbvh_buffer_flush() which does the final OpenGL calls. */
-  if (node.flag_ & PBVH_RebuildDrawBuffers) {
-    const blender::draw::pbvh::PBVH_GPU_Args args = pbvh_draw_args_init(
-        object_orig, object_eval, pbvh, node);
-    node.draw_batches_ = blender::draw::pbvh::node_create(args);
-  }
-
-  if (node.flag_ & PBVH_UpdateDrawBuffers) {
-    node.debug_draw_gen_++;
-
-    if (node.draw_batches_) {
-      const blender::draw::pbvh::PBVH_GPU_Args args = pbvh_draw_args_init(
-          object_orig, object_eval, pbvh, node);
-      blender::draw::pbvh::node_update(node.draw_batches_, args);
-    }
-  }
-}
-
-void free_draw_buffers(Tree & /*pbvh*/, Node *node)
-{
-  if (node->draw_batches_) {
-    draw::pbvh::node_free(node->draw_batches_);
-    node->draw_batches_ = nullptr;
-  }
-}
-
-static void pbvh_update_draw_buffers(const Object &object_orig,
-                                     const Object &object_eval,
-                                     Tree &pbvh,
-                                     Span<Node *> nodes,
-                                     int update_flag)
-{
-  if (pbvh.type() == Type::BMesh && !object_orig.sculpt->bm) {
-    /* BMesh hasn't been created yet */
-    return;
-  }
-
-  if ((update_flag & PBVH_RebuildDrawBuffers) || ELEM(pbvh.type(), Type::Grids, Type::BMesh)) {
-    /* Free buffers uses OpenGL, so not in parallel. */
-    for (Node *node : nodes) {
-      if (node->flag_ & PBVH_RebuildDrawBuffers) {
-        free_draw_buffers(pbvh, node);
-      }
-      else if ((node->flag_ & PBVH_UpdateDrawBuffers) && node->draw_batches_) {
-        const draw::pbvh::PBVH_GPU_Args args = pbvh_draw_args_init(
-            object_orig, object_eval, pbvh, *node);
-        draw::pbvh::update_pre(node->draw_batches_, args);
-      }
-    }
-  }
-
-  /* Parallel creation and update of draw buffers. */
-  threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
-    for (Node *node : nodes.slice(range)) {
-      node_update_draw_buffers(object_orig, object_eval, pbvh, *node);
-    }
-  });
-
-  /* Flush buffers uses OpenGL, so not in parallel. */
-  for (Node *node : nodes) {
-    if (node->flag_ & PBVH_UpdateDrawBuffers) {
-
-      if (node->draw_batches_) {
-        draw::pbvh::node_gpu_flush(node->draw_batches_);
-      }
-    }
-
-    node->flag_ &= ~(PBVH_RebuildDrawBuffers | PBVH_UpdateDrawBuffers);
-  }
-}
-
-void draw_cb(const Object &object_eval,
-             Tree &pbvh,
-             bool update_only_visible,
-             const PBVHFrustumPlanes &update_frustum,
-             const PBVHFrustumPlanes &draw_frustum,
-             const FunctionRef<void(draw::pbvh::PBVHBatches *batches,
-                                    const draw::pbvh::PBVH_GPU_Args &args)> draw_fn)
-{
-  /* Using the original object/geometry is necessary because we skip depsgraph updates in sculpt
-   * mode to improve performance. This means the evaluated mesh doesn't have the latest position,
-   * face set, visibility, and mask data. */
-  const Object &object_orig = *DEG_get_original_object(&const_cast<Object &>(object_eval));
-  if (update_only_visible) {
-    int update_flag = 0;
-    Vector<Node *> nodes = search_gather(pbvh, [&](Node &node) {
-      if (!BKE_pbvh_node_frustum_contain_AABB(&node, &update_frustum)) {
-        return false;
-      }
-      update_flag |= node.flag_;
-      return true;
-    });
-    if (update_flag & (PBVH_RebuildDrawBuffers | PBVH_UpdateDrawBuffers)) {
-      pbvh_update_draw_buffers(object_orig, object_eval, pbvh, nodes, update_flag);
-    }
-  }
-  else {
-    /* Get all nodes with draw updates, also those outside the view. */
-    Vector<Node *> nodes = search_gather(pbvh, [&](Node &node) {
-      return update_search(node, PBVH_RebuildDrawBuffers | PBVH_UpdateDrawBuffers);
-    });
-    pbvh_update_draw_buffers(
-        object_orig, object_eval, pbvh, nodes, PBVH_RebuildDrawBuffers | PBVH_UpdateDrawBuffers);
-  }
-
-  /* Draw visible nodes. */
-  Vector<Node *> nodes = search_gather(
-      pbvh, [&](Node &node) { return BKE_pbvh_node_frustum_contain_AABB(&node, &draw_frustum); });
-
-  for (Node *node : nodes) {
-    if (node->flag_ & PBVH_FullyHidden) {
-      continue;
-    }
-    if (!node->draw_batches_) {
-      continue;
-    }
-    const draw::pbvh::PBVH_GPU_Args args = pbvh_draw_args_init(
-        object_orig, object_eval, pbvh, *node);
-    draw_fn(node->draw_batches_, args);
-  }
-}
-
-}  // namespace blender::bke::pbvh
 
 void BKE_pbvh_draw_debug_cb(blender::bke::pbvh::Tree &pbvh,
                             void (*draw_fn)(blender::bke::pbvh::Node *node,
@@ -2839,7 +2669,7 @@ static Span<float3> vert_positions_eval(const Object &object_orig, const Object 
 {
   const SculptSession &ss = *object_orig.sculpt;
   const Mesh &mesh_orig = *static_cast<const Mesh *>(object_orig.data);
-  BLI_assert(object_orig.sculpt->pbvh->type() == Type::Mesh);
+  BLI_assert(bke::object::pbvh_get(object_orig)->type() == Type::Mesh);
   if (object_orig.mode & (OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT)) {
     if (const Mesh *mesh_eval = BKE_object_get_evaluated_mesh_no_subsurf(&object_eval)) {
       if (mesh_topology_count_matches(*mesh_eval, mesh_orig)) {
@@ -2862,7 +2692,7 @@ static MutableSpan<float3> vert_positions_eval_for_write(Object &object_orig, Ob
 {
   SculptSession &ss = *object_orig.sculpt;
   Mesh &mesh_orig = *static_cast<Mesh *>(object_orig.data);
-  BLI_assert(object_orig.sculpt->pbvh->type() == Type::Mesh);
+  BLI_assert(bke::object::pbvh_get(object_orig)->type() == Type::Mesh);
   if (object_orig.mode & (OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT)) {
     if (const Mesh *mesh_eval = BKE_object_get_evaluated_mesh_no_subsurf(&object_eval)) {
       if (mesh_topology_count_matches(*mesh_eval, mesh_orig)) {
@@ -2918,56 +2748,14 @@ Span<float3> vert_normals_eval_from_eval(const Object &object_eval)
   return vert_normals_cache_eval(object_orig, object_eval).data();
 }
 
-}  // namespace blender::bke::pbvh
-
-void BKE_pbvh_ensure_node_face_corners(blender::bke::pbvh::Tree &pbvh,
-                                       const blender::Span<blender::int3> corner_tris)
+Span<float3> face_normals_eval_from_eval(const Object &object_eval)
 {
-  using namespace blender;
-  BLI_assert(pbvh.type() == blender::bke::pbvh::Type::Mesh);
-
-  int totloop = 0;
-
-  /* Check if nodes already have loop indices. */
-  for (blender::bke::pbvh::MeshNode &node : pbvh.nodes<blender::bke::pbvh::MeshNode>()) {
-    if (!(node.flag_ & PBVH_Leaf)) {
-      continue;
-    }
-
-    if (!node.corner_indices_.is_empty()) {
-      return;
-    }
-
-    totloop += node.prim_indices_.size() * 3;
-  }
-
-  BLI_bitmap *visit = BLI_BITMAP_NEW(totloop, __func__);
-
-  /* Create loop indices from node loop triangles. */
-  Vector<int> corner_indices;
-  for (blender::bke::pbvh::MeshNode &node : pbvh.nodes<blender::bke::pbvh::MeshNode>()) {
-    if (!(node.flag_ & PBVH_Leaf)) {
-      continue;
-    }
-
-    corner_indices.clear();
-
-    for (const int i : node.prim_indices_) {
-      const int3 &tri = corner_tris[i];
-
-      for (int k = 0; k < 3; k++) {
-        if (!BLI_BITMAP_TEST(visit, tri[k])) {
-          corner_indices.append(tri[k]);
-          BLI_BITMAP_ENABLE(visit, tri[k]);
-        }
-      }
-    }
-
-    node.corner_indices_ = corner_indices.as_span();
-  }
-
-  MEM_SAFE_FREE(visit);
+  BLI_assert(!DEG_is_original_object(&object_eval));
+  Object &object_orig = *DEG_get_original_object(&const_cast<Object &>(object_eval));
+  return face_normals_cache_eval(object_orig, object_eval).data();
 }
+
+}  // namespace blender::bke::pbvh
 
 int BKE_pbvh_debug_draw_gen_get(blender::bke::pbvh::Node &node)
 {
@@ -2979,7 +2767,7 @@ void BKE_pbvh_sync_visibility_from_verts(Object &object)
   using namespace blender;
   using namespace blender::bke;
   const SculptSession &ss = *object.sculpt;
-  switch (ss.pbvh->type()) {
+  switch (object::pbvh_get(object)->type()) {
     case blender::bke::pbvh::Type::Mesh: {
       Mesh &mesh = *static_cast<Mesh *>(object.data);
       mesh_hide_vert_flush(mesh);
@@ -3068,9 +2856,9 @@ IndexMask all_leaf_nodes(const Tree &pbvh, IndexMaskMemory &memory)
       pbvh.nodes_);
 }
 
-Vector<Node *> search_gather(Tree &pbvh,
-                             const FunctionRef<bool(Node &)> scb,
-                             PBVHNodeFlags leaf_flag)
+static Vector<Node *> search_gather(Tree &pbvh,
+                                    const FunctionRef<bool(Node &)> scb,
+                                    PBVHNodeFlags leaf_flag)
 {
   if (tree_is_empty(pbvh)) {
     return {};
@@ -3095,8 +2883,8 @@ IndexMask search_nodes(const Tree &pbvh,
                        IndexMaskMemory &memory,
                        FunctionRef<bool(const Node &)> filter_fn)
 {
-  Vector<Node *> nodes = search_gather(const_cast<Tree &>(pbvh),
-                                       [&](Node &node) { return filter_fn(node); });
+  Vector<Node *> nodes = search_gather(
+      const_cast<Tree &>(pbvh), [&](Node &node) { return filter_fn(node); }, PBVH_Leaf);
   Array<int> indices(nodes.size());
   std::visit(
       [&](const auto &pbvh_nodes) {
@@ -3110,12 +2898,25 @@ IndexMask search_nodes(const Tree &pbvh,
   return IndexMask::from_indices(indices.as_span(), memory);
 }
 
+IndexMask node_draw_update_mask(const Tree &pbvh,
+                                const IndexMask &node_mask,
+                                IndexMaskMemory &memory)
+{
+  return std::visit(
+      [&](const auto &nodes) {
+        return IndexMask::from_predicate(node_mask, GrainSize(1024), memory, [&](const int i) {
+          return nodes[i].flag_ & PBVH_UpdateDrawBuffers;
+        });
+      },
+      pbvh.nodes_);
+}
+
 }  // namespace blender::bke::pbvh
 
 PBVHVertRef BKE_pbvh_index_to_vertex(const Object &object, int index)
 {
   const SculptSession &ss = *object.sculpt;
-  const blender::bke::pbvh::Tree &pbvh = *ss.pbvh;
+  const blender::bke::pbvh::Tree &pbvh = *blender::bke::object::pbvh_get(object);
   switch (pbvh.type()) {
     case blender::bke::pbvh::Type::Mesh:
     case blender::bke::pbvh::Type::Grids:
