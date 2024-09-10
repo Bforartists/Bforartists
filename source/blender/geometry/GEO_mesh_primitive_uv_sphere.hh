@@ -4,13 +4,13 @@
 
 #pragma once
 
+#include <optional>
+
 #include "BLI_bounds_types.hh"
 #include "BLI_math_vector_types.hh"
+#include "BLI_string_ref.hh"
 
 struct Mesh;
-namespace blender::bke {
-class AttributeIDRef;
-}  // namespace blender::bke
 
 namespace blender::geometry {
 
@@ -26,6 +26,6 @@ Bounds<float3> calculate_bounds_radial_primitive(float radius_top,
 Mesh *create_uv_sphere_mesh(float radius,
                             int segments,
                             int rings,
-                            const bke::AttributeIDRef &uv_map_id);
+                            const std::optional<StringRef> &uv_map_id);
 
 }  // namespace blender::geometry

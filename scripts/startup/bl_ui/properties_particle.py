@@ -15,6 +15,7 @@ from bpy.app.translations import (
     pgettext_rpt as rpt_,
 )
 from bl_ui.utils import PresetPanel
+from .space_properties import PropertiesAnimationMixin
 
 from bl_ui.properties_physics_common import (
     point_cache_ui,
@@ -2400,6 +2401,20 @@ class PARTICLE_PT_hair_shape(ParticleButtonsPanel, Panel):
         row.prop_decorator(part, "use_close_tip")
 
 
+class PARTICLE_PT_animation(ParticleButtonsPanel, PropertiesAnimationMixin, PropertyPanel, Panel):
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+    }
+
+    @classmethod
+    def _animated_id(cls, context):
+        psys = getattr(context, 'particle_system', None)
+        return psys and psys.settings
+
+
 class PARTICLE_PT_custom_props(ParticleButtonsPanel, PropertyPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
@@ -2463,6 +2478,7 @@ classes = (
     PARTICLE_PT_force_fields_type2_falloff,
     PARTICLE_PT_vertexgroups,
     PARTICLE_PT_textures,
+    PARTICLE_PT_animation,
     PARTICLE_PT_custom_props,
 )
 
