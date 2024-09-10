@@ -35,7 +35,6 @@ void VKDevice::reinit()
 
 void VKDevice::deinit()
 {
-  VK_ALLOCATION_CALLBACKS
   if (!is_initialized()) {
     return;
   }
@@ -51,8 +50,8 @@ void VKDevice::deinit()
     }
     thread_data_.clear();
   }
+  pipelines.write_to_disk();
   pipelines.free_data();
-  vkDestroyPipelineCache(vk_device_, vk_pipeline_cache_, vk_allocation_callbacks);
   descriptor_set_layouts_.deinit();
   vmaDestroyAllocator(mem_allocator_);
   mem_allocator_ = VK_NULL_HANDLE;
@@ -92,7 +91,8 @@ void VKDevice::init(void *ghost_context)
   init_functions();
   init_debug_callbacks();
   init_memory_allocator();
-  init_pipeline_cache();
+  pipelines.init();
+  pipelines.read_from_disk();
 
   samplers_.init();
   init_dummy_buffer();
@@ -182,14 +182,6 @@ void VKDevice::init_memory_allocator()
   info.instance = vk_instance_;
   info.pAllocationCallbacks = vk_allocation_callbacks;
   vmaCreateAllocator(&info, &mem_allocator_);
-}
-
-void VKDevice::init_pipeline_cache()
-{
-  VK_ALLOCATION_CALLBACKS;
-  VkPipelineCacheCreateInfo create_info = {};
-  create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-  vkCreatePipelineCache(vk_device_, &create_info, vk_allocation_callbacks, &vk_pipeline_cache_);
 }
 
 void VKDevice::init_dummy_buffer()
