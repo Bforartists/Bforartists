@@ -1391,7 +1391,8 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_edit_greasepencil_stroke")
                 layout.menu("VIEW3D_MT_edit_greasepencil_point")
             elif obj and obj.mode == 'WEIGHT_GPENCIL':
-                layout.menu("VIEW3D_MT_weight_gpencil")
+                #layout.menu("VIEW3D_MT_weight_gpencil") # BFA - legacy
+                layout.menu("VIEW3D_MT_weight_grease_pencil")
             if obj and obj.mode == 'VERTEX_GPENCIL':
                 layout.menu("VIEW3D_MT_paint_gpencil") # BFA - legacy
 
@@ -7177,7 +7178,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         #layout.separator()
 
-        #layout.menu("VIEW3D_MT_weight_gpencil") # BFA - legacy
+        layout.menu("VIEW3D_MT_weight_grease_pencil")
 
         layout.separator()
 
