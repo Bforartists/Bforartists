@@ -29,6 +29,7 @@ void Instance::init()
   state.view_layer = ctx->view_layer;
   state.scene = ctx->scene;
   state.v3d = ctx->v3d;
+  state.region = ctx->region;
   state.rv3d = ctx->rv3d;
   state.active_base = BKE_view_layer_active_base_get(ctx->view_layer);
   state.object_mode = ctx->object_mode;
@@ -65,6 +66,10 @@ void Instance::init()
       state.overlay.wireframe_threshold = state.v3d->overlay.wireframe_threshold;
       state.overlay.wireframe_opacity = state.v3d->overlay.wireframe_opacity;
     }
+
+    state.do_pose_xray = (state.overlay.flag & V3D_OVERLAY_BONE_SELECT);
+    state.do_pose_fade_geom = state.do_pose_xray && !(state.object_mode & OB_MODE_WEIGHT_PAINT) &&
+                              ctx->object_pose != nullptr;
   }
 
   /* TODO(fclem): Remove DRW global usage. */
@@ -73,10 +78,9 @@ void Instance::init()
   resources.weight_ramp_tx.wrap(G_draw.weight_ramp);
   {
     eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ;
-    if (resources.dummy_depth_tx.ensure_2d(GPU_DEPTH24_STENCIL8, int2(1, 1), usage)) {
-      uint32_t data = 0;
-      GPU_texture_update_sub(
-          resources.dummy_depth_tx, GPU_DATA_UINT_24_8, &data, 0, 0, 0, 1, 1, 1);
+    if (resources.dummy_depth_tx.ensure_2d(GPU_DEPTH_COMPONENT32F, int2(1, 1), usage)) {
+      float data = 1.0f;
+      GPU_texture_update_sub(resources.dummy_depth_tx, GPU_DATA_FLOAT, &data, 0, 0, 0, 1, 1, 1);
     }
   }
 }
@@ -85,7 +89,7 @@ void Instance::begin_sync()
 {
   const DRWView *view_legacy = DRW_view_default_get();
   View view("OverlayView", view_legacy);
-
+  state.dt = DRW_text_cache_ensure();
   state.camera_position = view.viewinv().location();
   state.camera_forward = view.viewinv().z_axis();
 
@@ -95,6 +99,7 @@ void Instance::begin_sync()
   outline.begin_sync(resources, state);
 
   auto begin_sync_layer = [&](OverlayLayer &layer) {
+    layer.armatures.begin_sync(resources, state);
     layer.bounds.begin_sync();
     layer.cameras.begin_sync(resources, state, view);
     layer.curves.begin_sync(resources, state, view);
@@ -111,6 +116,7 @@ void Instance::begin_sync()
     layer.prepass.begin_sync(resources, state);
     layer.relations.begin_sync();
     layer.speakers.begin_sync();
+    layer.sculpts.begin_sync(resources, state);
     layer.wireframe.begin_sync(resources, state);
   };
   begin_sync_layer(regular);
@@ -131,19 +137,23 @@ void Instance::object_sync(ObjectRef &ob_ref, Manager &manager)
       ob_ref, in_edit_mode, in_paint_mode, in_sculpt_mode);
   const bool needs_prepass = !state.xray_enabled; /* TODO */
 
-  OverlayLayer &layer = (state.use_in_front && ob_ref.object->dtx & OB_DRAW_IN_FRONT) ? infront :
-                                                                                        regular;
+  OverlayLayer &layer = object_is_in_front(ob_ref.object, state) ? infront : regular;
 
   if (needs_prepass) {
-    layer.prepass.object_sync(manager, ob_ref, resources);
+    layer.prepass.object_sync(manager, ob_ref, resources, state);
+  }
+
+  if (in_sculpt_mode) {
+    layer.sculpts.object_sync(manager, ob_ref, state);
   }
 
   if (in_edit_mode && !state.hide_overlays) {
     switch (ob_ref.object->type) {
       case OB_MESH:
-        layer.meshes.edit_object_sync(manager, ob_ref, resources);
+        layer.meshes.edit_object_sync(manager, ob_ref, state, resources);
         break;
       case OB_ARMATURE:
+        layer.armatures.edit_object_sync(ob_ref, resources, shapes, state);
         break;
       case OB_CURVES_LEGACY:
         layer.curves.edit_object_sync_legacy(manager, ob_ref, resources);
@@ -177,6 +187,9 @@ void Instance::object_sync(ObjectRef &ob_ref, Manager &manager)
         layer.cameras.object_sync(ob_ref, shapes, manager, resources, state);
         break;
       case OB_ARMATURE:
+        if (!in_edit_mode) {
+          layer.armatures.object_sync(ob_ref, resources, shapes, state);
+        }
         break;
       case OB_LATTICE:
         if (!in_edit_mode) {
@@ -218,6 +231,7 @@ void Instance::end_sync()
   resources.end_sync();
 
   auto end_sync_layer = [&](OverlayLayer &layer) {
+    layer.armatures.end_sync(resources, shapes, state);
     layer.bounds.end_sync(resources, shapes, state);
     layer.cameras.end_sync(resources, shapes, state);
     layer.empties.end_sync(resources, shapes, state);
@@ -254,6 +268,9 @@ void Instance::draw(Manager &manager)
   resources.depth_in_front_tx.wrap(DRW_viewport_texture_list_get()->depth_in_front);
   resources.color_overlay_tx.wrap(DRW_viewport_texture_list_get()->color_overlay);
   resources.color_render_tx.wrap(DRW_viewport_texture_list_get()->color);
+
+  resources.render_fb = DRW_viewport_framebuffer_list_get()->default_fb;
+  resources.render_in_front_fb = DRW_viewport_framebuffer_list_get()->in_front_fb;
 
   int2 render_size = int2(resources.depth_tx.size());
 
@@ -322,6 +339,9 @@ void Instance::draw(Manager &manager)
   resources.overlay_output_fb.ensure(GPU_ATTACHMENT_NONE,
                                      GPU_ATTACHMENT_TEXTURE(resources.color_overlay_tx));
 
+  regular.sculpts.draw_on_render(resources.render_fb, manager, view);
+  infront.sculpts.draw_on_render(resources.render_in_front_fb, manager, view);
+
   GPU_framebuffer_bind(resources.overlay_line_fb);
   float4 clear_color(0.0f);
   if (state.xray_enabled) {
@@ -364,6 +384,8 @@ void Instance::draw(Manager &manager)
     layer.relations.draw(framebuffer, manager, view);
     layer.fluids.draw(framebuffer, manager, view);
     layer.particles.draw(framebuffer, manager, view);
+    layer.armatures.draw(framebuffer, manager, view);
+    layer.sculpts.draw(framebuffer, manager, view);
     layer.meshes.draw(framebuffer, manager, view);
   };
 
@@ -425,7 +447,13 @@ bool Instance::object_is_sculpt_mode(const ObjectRef &ob_ref)
     bool is_geonode_preview = ob_ref.dupli_object && ob_ref.dupli_object->preview_base_geometry;
     bool is_active_dupli_parent = ob_ref.dupli_parent == active_object;
     return is_active_object || (is_active_dupli_parent && is_geonode_preview);
-  };
+  }
+
+  if (state.object_mode == OB_MODE_SCULPT) {
+    const Object *active_object = state.active_base->object;
+    const bool is_active_object = ob_ref.object == active_object;
+    return is_active_object;
+  }
 
   return false;
 }
@@ -484,21 +512,24 @@ bool Instance::object_is_edit_mode(const Object *object)
   return false;
 }
 
-}  // namespace blender::draw::overlay
-
-#include "overlay_private.hh"
-
-/* TODO(fclem): Move elsewhere. */
-BoneInstanceData::BoneInstanceData(Object *ob,
-                                   const float *pos,
-                                   const float radius,
-                                   const float color[4])
+bool Instance::object_is_in_front(const Object *object, const State &state)
 {
-  /* TODO(fclem): Use C++ math API. */
-  mul_v3_v3fl(this->mat[0], ob->object_to_world().ptr()[0], radius);
-  mul_v3_v3fl(this->mat[1], ob->object_to_world().ptr()[1], radius);
-  mul_v3_v3fl(this->mat[2], ob->object_to_world().ptr()[2], radius);
-  mul_v3_m4v3(this->mat[3], ob->object_to_world().ptr(), pos);
-  /* WATCH: Reminder, alpha is wire-size. */
-  OVERLAY_bone_instance_data_set_color(this, color);
+  switch (object->type) {
+    case OB_ARMATURE:
+      return (object->dtx & OB_DRAW_IN_FRONT) ||
+             (state.do_pose_xray && Armatures::is_pose_mode(object, state));
+    case OB_MESH:
+    case OB_CURVES_LEGACY:
+    case OB_SURF:
+    case OB_LATTICE:
+    case OB_MBALL:
+    case OB_FONT:
+    case OB_CURVES:
+    case OB_POINTCLOUD:
+    case OB_VOLUME:
+      return state.use_in_front && (object->dtx & OB_DRAW_IN_FRONT);
+  }
+  return false;
 }
+
+}  // namespace blender::draw::overlay
