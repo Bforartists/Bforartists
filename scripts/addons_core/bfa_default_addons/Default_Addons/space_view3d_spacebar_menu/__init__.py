@@ -751,7 +751,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
-                layout.menu("VIEW3D_MT_weight_gpencil", icon="GPBRUSH_WEIGHT")
+                #layout.menu("VIEW3D_MT_weight_gpencil", icon="GPBRUSH_WEIGHT") # BFA - legacy
+                layout.menu("VIEW3D_MT_weight_grease_pencil", icon="GPBRUSH_WEIGHT")
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 
