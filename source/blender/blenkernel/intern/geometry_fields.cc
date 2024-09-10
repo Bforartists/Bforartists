@@ -430,6 +430,9 @@ GVArray AttributeExistsFieldInput::get_varray_for_context(const bke::GeometryFie
 
 std::string AttributeFieldInput::socket_inspection_name() const
 {
+  if (socket_inspection_name_) {
+    return *socket_inspection_name_;
+  }
   return fmt::format(TIP_("\"{}\" attribute from geometry"), name_);
 }
 
@@ -501,47 +504,6 @@ bool IDAttributeFieldInput::is_equal_to(const fn::FieldNode &other) const
 {
   /* All random ID attribute inputs are the same within the same evaluation context. */
   return dynamic_cast<const IDAttributeFieldInput *>(&other) != nullptr;
-}
-
-GVArray AnonymousAttributeFieldInput::get_varray_for_context(const GeometryFieldContext &context,
-                                                             const IndexMask & /*mask*/) const
-{
-  const eCustomDataType data_type = cpp_type_to_custom_data_type(*type_);
-  return *context.attributes()->lookup(*anonymous_id_, context.domain(), data_type);
-}
-
-std::string AnonymousAttributeFieldInput::socket_inspection_name() const
-{
-  return fmt::format(TIP_("\"{}\" from {}"), TIP_(debug_name_.c_str()), producer_name_);
-}
-
-uint64_t AnonymousAttributeFieldInput::hash() const
-{
-  return get_default_hash(anonymous_id_.get(), type_);
-}
-
-bool AnonymousAttributeFieldInput::is_equal_to(const fn::FieldNode &other) const
-{
-  if (const AnonymousAttributeFieldInput *other_typed =
-          dynamic_cast<const AnonymousAttributeFieldInput *>(&other))
-  {
-    return anonymous_id_.get() == other_typed->anonymous_id_.get() && type_ == other_typed->type_;
-  }
-  return false;
-}
-
-std::optional<AttrDomain> AnonymousAttributeFieldInput::preferred_domain(
-    const GeometryComponent &component) const
-{
-  const std::optional<AttributeAccessor> attributes = component.attributes();
-  if (!attributes.has_value()) {
-    return std::nullopt;
-  }
-  const std::optional<AttributeMetaData> meta_data = attributes->lookup_meta_data(*anonymous_id_);
-  if (!meta_data.has_value()) {
-    return std::nullopt;
-  }
-  return meta_data->domain;
 }
 
 GVArray NamedLayerSelectionFieldInput::get_varray_for_context(
@@ -759,13 +721,10 @@ bool NormalFieldInput::is_equal_to(const fn::FieldNode &other) const
   return dynamic_cast<const NormalFieldInput *>(&other) != nullptr;
 }
 
-static std::optional<AttributeIDRef> try_get_field_direct_attribute_id(const fn::GField &any_field)
+static std::optional<StringRefNull> try_get_field_direct_attribute_id(const fn::GField &any_field)
 {
   if (const auto *field = dynamic_cast<const AttributeFieldInput *>(&any_field.node())) {
     return field->attribute_name();
-  }
-  if (const auto *field = dynamic_cast<const AnonymousAttributeFieldInput *>(&any_field.node())) {
-    return *field->anonymous_id();
   }
   return {};
 }
@@ -782,11 +741,11 @@ static bool attribute_kind_matches(const AttributeMetaData meta_data,
  * and domain, use implicit sharing to avoid duplication when creating the captured attribute.
  */
 static bool try_add_shared_field_attribute(MutableAttributeAccessor attributes,
-                                           const AttributeIDRef &id_to_create,
+                                           const StringRef id_to_create,
                                            const AttrDomain domain,
                                            const fn::GField &field)
 {
-  const std::optional<AttributeIDRef> field_id = try_get_field_direct_attribute_id(field);
+  const std::optional<StringRef> field_id = try_get_field_direct_attribute_id(field);
   if (!field_id) {
     return false;
   }
@@ -823,7 +782,7 @@ static bool attribute_data_matches_varray(const GAttributeReader &attribute, con
 
 bool try_capture_fields_on_geometry(MutableAttributeAccessor attributes,
                                     const fn::FieldContext &field_context,
-                                    const Span<AttributeIDRef> attribute_ids,
+                                    const Span<StringRef> attribute_ids,
                                     const AttrDomain domain,
                                     const fn::Field<bool> &selection,
                                     const Span<fn::GField> fields)
@@ -859,7 +818,7 @@ bool try_capture_fields_on_geometry(MutableAttributeAccessor attributes,
   Vector<AddResult> results_to_add;
 
   for (const int input_index : attribute_ids.index_range()) {
-    const AttributeIDRef &id = attribute_ids[input_index];
+    const StringRef id = attribute_ids[input_index];
     const AttributeValidator validator = attributes.lookup_validator(id);
     const fn::GField field = validator.validate_field_if_necessary(fields[input_index]);
     const CPPType &type = field.cpp_type();
@@ -895,7 +854,7 @@ bool try_capture_fields_on_geometry(MutableAttributeAccessor attributes,
   const IndexMask &mask = evaluator.get_evaluated_selection_as_mask();
 
   for (const StoreResult &result : results_to_store) {
-    const AttributeIDRef &id = attribute_ids[result.input_index];
+    const StringRef id = attribute_ids[result.input_index];
     const GVArray &result_data = evaluator.get_evaluated(result.evaluator_index);
     const GAttributeReader dst = attributes.lookup(id);
     if (!attribute_data_matches_varray(dst, result_data)) {
@@ -907,7 +866,7 @@ bool try_capture_fields_on_geometry(MutableAttributeAccessor attributes,
 
   bool success = true;
   for (const AddResult &result : results_to_add) {
-    const AttributeIDRef &id = attribute_ids[result.input_index];
+    const StringRef id = attribute_ids[result.input_index];
     attributes.remove(id);
     const CPPType &type = fields[result.input_index].cpp_type();
     const eCustomDataType data_type = bke::cpp_type_to_custom_data_type(type);
@@ -924,7 +883,7 @@ bool try_capture_fields_on_geometry(MutableAttributeAccessor attributes,
 }
 
 bool try_capture_fields_on_geometry(GeometryComponent &component,
-                                    const Span<AttributeIDRef> attribute_ids,
+                                    const Span<StringRef> attribute_ids,
                                     const AttrDomain domain,
                                     const fn::Field<bool> &selection,
                                     const Span<fn::GField> fields)
@@ -973,7 +932,7 @@ bool try_capture_fields_on_geometry(GeometryComponent &component,
 }
 
 bool try_capture_fields_on_geometry(GeometryComponent &component,
-                                    const Span<AttributeIDRef> attribute_ids,
+                                    const Span<StringRef> attribute_ids,
                                     const AttrDomain domain,
                                     const Span<fn::GField> fields)
 {
