@@ -99,6 +99,10 @@ float *Film::read_aov(ViewLayerAOV *aov)
 {
   GPUTexture *pass_tx = this->get_aov_texture(aov);
 
+  if (pass_tx == nullptr) {
+    return nullptr;
+  }
+
   GPU_memory_barrier(GPU_BARRIER_TEXTURE_UPDATE);
 
   return (float *)GPU_texture_read(pass_tx, GPU_DATA_FLOAT, 0);
@@ -282,7 +286,7 @@ void Film::init(const int2 &extent, const rcti *output_rect)
       enabled_passes_ = eViewLayerEEVEEPassType(inst_.v3d->shading.render_pass) |
                         viewport_compositor_enabled_passes_;
 
-      if (inst_.overlays_enabled() || inst_.gpencil_engine_enabled) {
+      if (inst_.overlays_enabled() || inst_.gpencil_engine_enabled()) {
         /* Overlays and Grease Pencil needs the depth for correct compositing.
          * Using the render pass ensure we store the center depth. */
         enabled_passes_ |= EEVEE_RENDER_PASS_Z;
