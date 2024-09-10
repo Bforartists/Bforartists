@@ -1001,7 +1001,7 @@ static bool wpaint_stroke_test_start(bContext *C, wmOperator *op, const float mo
 
   /* Brush may have changed after initialization. */
   brush = BKE_paint_brush(&vp.paint);
-  if (ELEM(brush->weightpaint_tool, WPAINT_TOOL_SMEAR, WPAINT_TOOL_BLUR)) {
+  if (ELEM(brush->weight_brush_type, WPAINT_BRUSH_TYPE_SMEAR, WPAINT_BRUSH_TYPE_BLUR)) {
     wpd->precomputed_weight = (float *)MEM_mallocN(sizeof(float) * mesh.verts_num, __func__);
   }
 
@@ -1102,7 +1102,7 @@ static void do_wpaint_brush_blur(const Depsgraph &depsgraph,
 {
   using namespace blender;
   SculptSession &ss = *ob.sculpt;
-  MutableSpan<bke::pbvh::MeshNode> nodes = ss.pbvh->nodes<bke::pbvh::MeshNode>();
+  MutableSpan<bke::pbvh::MeshNode> nodes = bke::object::pbvh_get(ob)->nodes<bke::pbvh::MeshNode>();
   const StrokeCache &cache = *ss.cache;
   const GroupedSpan<int> vert_to_face = mesh.vert_to_face_map();
 
@@ -1135,7 +1135,7 @@ static void do_wpaint_brush_blur(const Depsgraph &depsgraph,
   parallel_nodes_loop_with_mirror_check(mesh, node_mask, [&](const IndexRange range) {
     LocalData &tls = all_tls.local();
     node_mask.slice(range).foreach_index([&](const int i) {
-      const Span<int> verts = bke::pbvh::node_unique_verts(nodes[i]);
+      const Span<int> verts = nodes[i].verts();
       tls.factors.resize(verts.size());
       const MutableSpan<float> factors = tls.factors;
       fill_factor_from_hide(mesh, verts, factors);
@@ -1210,7 +1210,7 @@ static void do_wpaint_brush_smear(const Depsgraph &depsgraph,
 {
   using namespace blender;
   SculptSession &ss = *ob.sculpt;
-  MutableSpan<bke::pbvh::MeshNode> nodes = ss.pbvh->nodes<bke::pbvh::MeshNode>();
+  MutableSpan<bke::pbvh::MeshNode> nodes = bke::object::pbvh_get(ob)->nodes<bke::pbvh::MeshNode>();
   const GroupedSpan<int> vert_to_face = mesh.vert_to_face_map();
   const StrokeCache &cache = *ss.cache;
   if (!cache.is_last_valid) {
@@ -1253,7 +1253,7 @@ static void do_wpaint_brush_smear(const Depsgraph &depsgraph,
   parallel_nodes_loop_with_mirror_check(mesh, node_mask, [&](const IndexRange range) {
     LocalData &tls = all_tls.local();
     node_mask.slice(range).foreach_index([&](const int i) {
-      const Span<int> verts = bke::pbvh::node_unique_verts(nodes[i]);
+      const Span<int> verts = nodes[i].verts();
       tls.factors.resize(verts.size());
       const MutableSpan<float> factors = tls.factors;
       fill_factor_from_hide(mesh, verts, factors);
@@ -1337,7 +1337,7 @@ static void do_wpaint_brush_draw(const Depsgraph &depsgraph,
 {
   using namespace blender;
   SculptSession &ss = *ob.sculpt;
-  MutableSpan<bke::pbvh::MeshNode> nodes = ss.pbvh->nodes<bke::pbvh::MeshNode>();
+  MutableSpan<bke::pbvh::MeshNode> nodes = bke::object::pbvh_get(ob)->nodes<bke::pbvh::MeshNode>();
 
   const StrokeCache &cache = *ss.cache;
   /* NOTE: normally `BKE_brush_weight_get(scene, brush)` is used,
@@ -1370,7 +1370,7 @@ static void do_wpaint_brush_draw(const Depsgraph &depsgraph,
   parallel_nodes_loop_with_mirror_check(mesh, node_mask, [&](const IndexRange range) {
     LocalData &tls = all_tls.local();
     node_mask.slice(range).foreach_index([&](const int i) {
-      const Span<int> verts = bke::pbvh::node_unique_verts(nodes[i]);
+      const Span<int> verts = nodes[i].verts();
       tls.factors.resize(verts.size());
       const MutableSpan<float> factors = tls.factors;
       fill_factor_from_hide(mesh, verts, factors);
@@ -1426,7 +1426,7 @@ static float calculate_average_weight(const Depsgraph &depsgraph,
 {
   using namespace blender;
   SculptSession &ss = *ob.sculpt;
-  MutableSpan<bke::pbvh::MeshNode> nodes = ss.pbvh->nodes<bke::pbvh::MeshNode>();
+  MutableSpan<bke::pbvh::MeshNode> nodes = bke::object::pbvh_get(ob)->nodes<bke::pbvh::MeshNode>();
   const StrokeCache &cache = *ss.cache;
 
   const bool use_normal = vwpaint::use_normal(vp);
@@ -1457,7 +1457,7 @@ static float calculate_average_weight(const Depsgraph &depsgraph,
       [&](const IndexRange range, WPaintAverageAccum accum) {
         LocalData &tls = all_tls.local();
         node_mask.slice(range).foreach_index([&](const int i) {
-          const Span<int> verts = bke::pbvh::node_unique_verts(nodes[i]);
+          const Span<int> verts = nodes[i].verts();
           tls.factors.resize(verts.size());
           const MutableSpan<float> factors = tls.factors;
           fill_factor_from_hide(mesh, verts, factors);
@@ -1508,8 +1508,8 @@ static void wpaint_paint_leaves(bContext *C,
   const Brush &brush = *ob.sculpt->cache->brush;
   const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
 
-  switch ((eBrushWeightPaintTool)brush.weightpaint_tool) {
-    case WPAINT_TOOL_AVERAGE: {
+  switch ((eBrushWeightPaintType)brush.weight_brush_type) {
+    case WPAINT_BRUSH_TYPE_AVERAGE: {
       do_wpaint_brush_draw(
           depsgraph,
           scene,
@@ -1523,13 +1523,13 @@ static void wpaint_paint_leaves(bContext *C,
           node_mask);
       break;
     }
-    case WPAINT_TOOL_SMEAR:
+    case WPAINT_BRUSH_TYPE_SMEAR:
       do_wpaint_brush_smear(depsgraph, scene, ob, brush, vp, wpd, wpi, mesh, node_mask);
       break;
-    case WPAINT_TOOL_BLUR:
+    case WPAINT_BRUSH_TYPE_BLUR:
       do_wpaint_brush_blur(depsgraph, scene, ob, brush, vp, wpd, wpi, mesh, node_mask);
       break;
-    case WPAINT_TOOL_DRAW:
+    case WPAINT_BRUSH_TYPE_DRAW:
       do_wpaint_brush_draw(depsgraph,
                            scene,
                            ob,

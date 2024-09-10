@@ -245,7 +245,7 @@ bool SyncModule::sync_sculpt(Object *ob,
 
   /* Use a valid bounding box. The pbvh::Tree module already does its own culling, but a valid */
   /* bounding box is still needed for directional shadow tile-map bounds computation. */
-  const Bounds<float3> bounds = bke::pbvh::bounds_get(*ob_ref.object->sculpt->pbvh);
+  const Bounds<float3> bounds = bke::pbvh::bounds_get(*bke::object::pbvh_get(*ob_ref.object));
   const float3 center = math::midpoint(bounds.min, bounds.max);
   const float3 half_extent = bounds.max - center + inflate_bounds;
   inst_.manager->update_handle_bounds(res_handle, center, half_extent);
@@ -514,10 +514,8 @@ static void gpencil_stroke_sync(bGPDlayer * /*gpl*/,
 void SyncModule::sync_gpencil(Object *ob, ObjectHandle &ob_handle, ResourceHandle res_handle)
 {
   /* TODO(fclem): Waiting for a user option to use the render engine instead of gpencil engine. */
-  if (true) {
-    inst_.gpencil_engine_enabled = true;
-    return;
-  }
+  return;
+
   /* Is this a surface or curves? */
   if (!inst_.use_surfaces) {
     return;
