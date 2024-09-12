@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # BFA - this document is heavily modified, so best compare Blender new with Blender old (a week back or so)
-# BFA - then when you see any changes, splice them in. Bforartists icon list is completely different. 
+# BFA - then when you see any changes, splice them in. Bforartists icon list is completely different.
 
 set(INC
   PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
@@ -163,9 +163,9 @@ if(WITH_BLENDER)
       # ------------------------- icons --------------------------*/
 
    	  none    # never change, needs to stay on top of the list!
-	  
+
 	  # letter def icon
-	  
+
 	  anim
 	  area_dock
       area_join_down
@@ -188,14 +188,14 @@ if(WITH_BLENDER)
       strands
       trash
       group_bright
-	   
+
 	 # letter numbers
-	 
+
       4l_off
       4l_on
-	  
+
 	  # letter A
-	  
+
       absolutepath
       accumulate
       action
@@ -290,9 +290,9 @@ if(WITH_BLENDER)
       axis_front
       axis_side
       axis_top
-	  
+
 	  # letter B
-	  
+
       back
       background
       bake
@@ -343,9 +343,9 @@ if(WITH_BLENDER)
       builtin_modifier
       buts
       buts_active
-	  
+
 	  # letter c
-	  
+
       camera_data
       camera_stereo
       cancel
@@ -491,9 +491,9 @@ if(WITH_BLENDER)
       cut_links
       cycles_modifier
       cylinderproject
-	  
+
 	  # letter d
-	  
+
       datablock_clear
       debug
       dec_contrast
@@ -502,9 +502,12 @@ if(WITH_BLENDER)
       decorate_animate
       decorate_driver
       decorate_keyframe
-      decorate_locked
+
       decorate_override
-      decorate_unlocked
+
+      decorate_unlocked #bfa- don't change the order
+      decorate_locked #bfa- don't change the order
+
       decrease_kerning
       deform_curves
       degenerate_dissolve
@@ -554,9 +557,9 @@ if(WITH_BLENDER)
       duplicate
       duplicate_all
       dutch_florin
-	  
+
 	  # letter e
-	  
+
       edge_angle
       edge_collapse
       edge_neighbors
@@ -601,9 +604,9 @@ if(WITH_BLENDER)
       extrude_region
       extrudesize
       eyedropper
-	  
+
 	  # letter f
-	  
+
       face_corner
       face_maps
       face_maps_active
@@ -690,9 +693,9 @@ if(WITH_BLENDER)
       fullscreen
       fullscreen_enter
       fullscreen_exit
-	  
+
 	  # letter g
-	  
+
       gabor_noise
       game
       generator_modifier
@@ -733,9 +736,9 @@ if(WITH_BLENDER)
       group_vertex
       groupinput
       groupoutput
-	  
+
 	  # letter h
-	  
+
       hair_data
       hand
       handle_align_single
@@ -745,8 +748,10 @@ if(WITH_BLENDER)
       handle_free
       handle_vector
       help
-      hide_off
-      hide_on
+
+	  hide_on # bfa - don't change the order of the icons
+      hide_off # bfa - don't change the order of the icons
+
       hide_renderview
       hide_unselected
       hierarchy
@@ -770,9 +775,9 @@ if(WITH_BLENDER)
       hue
       huecorrect
       huesatval
-	  
+
 	  # letter i
-	  
+
       image
       image_alpha
       image_aspect
@@ -833,16 +838,16 @@ if(WITH_BLENDER)
       ipo_sine
       is_spline_cyclic
       italic
-	  
+
 	  # letter j
-	  
+
       join
       join_areas
       joincopy
       jump_to_keyframes
-	  
+
 	  # letter k
-	  
+
       key_dehlt
       key_hlt
       keyframe
@@ -854,9 +859,9 @@ if(WITH_BLENDER)
       knife
       knife_project
       kuwahara
-	  
+
 	  # letter L
-	  
+
       lasso_add
       lasso_hide
       lasso_mask
@@ -906,7 +911,6 @@ if(WITH_BLENDER)
       link_blend
       link_data
       link_replace
-      linked
       load_3ds
       load_abc
       load_bvh
@@ -929,7 +933,6 @@ if(WITH_BLENDER)
       lock_rotation
       lock_to_camview
       lock_to_camview_on
-      locked
       locktoactive
       locktocenter
       longdisplay
@@ -937,9 +940,9 @@ if(WITH_BLENDER)
       loop_cut_and_slide
       loop_forwards
       loopsel
-	  
+
 	  # letter m
-	  
+
       magic_tex
       make_curvesegment
       make_edgeface
@@ -1087,16 +1090,20 @@ if(WITH_BLENDER)
       motionpaths_clear
       motionpaths_update
       motionpaths_update_all
+
+	  # bfa - don't change the order of the icons
       mouse_lmb
-      mouse_lmb_2x # BFA - New
-      mouse_lmb_drag
-      mouse_mmb
-      mouse_mmb_drag
-      mouse_mmb_scroll # BFA - New
+	  mouse_mmb
+	  mouse_rmb
+	  mouse_mmb_scroll
+      mouse_lmb_2x
       mouse_move
-      mouse_position
-      mouse_rmb
+	  mouse_lmb_drag
+      mouse_mmb_drag
       mouse_rmb_drag
+	  ###
+
+      mouse_position
       move_down
       move_texturespace
       move_to_bottom
@@ -1107,9 +1114,9 @@ if(WITH_BLENDER)
 	  musgrave_tex
       mute_ipo_off
       mute_ipo_on
-	  
+
 	  # letter n
-	  
+
       named_attribute
       named_layer_selection
       network_drive
@@ -1184,8 +1191,10 @@ if(WITH_BLENDER)
       node_holdoutshader
       node_huesaturation
       node_impaint
-      node_insert_off
-      node_insert_on
+
+	  node_insert_on # bfa - don't change the order of the icons
+      node_insert_off # bfa - don't change the order of the icons
+
       node_invert
       node_keying
       node_keyingscreen
@@ -1277,9 +1286,9 @@ if(WITH_BLENDER)
       normals_face
       normals_vertex
       normals_vertex_face
-	  
+
 	  # letter o
-	  
+
       object_contents
       object_data
       object_datamode
@@ -1355,9 +1364,9 @@ if(WITH_BLENDER)
       output
       overlap
       overlay
-	  
+
 	  # letter p
-	  
+
       package
       packisland
       paint_add
@@ -1406,7 +1415,6 @@ if(WITH_BLENDER)
       perimeter
       persp_ortho
       physics
-      pinned
       pivot_active
       pivot_boundbox
       pivot_cursor
@@ -1462,9 +1470,11 @@ if(WITH_BLENDER)
       projectfromview
       projectfromview_bounds
       promille
-      prop_con
-      prop_off
-      prop_on
+
+      prop_off # bfa - don't change the order of the icons
+      prop_on # bfa - don't change the order of the icons
+	  prop_con # bfa - don't change the order of the icons
+
       prop_projected
       propagate
       propagate_marker
@@ -1475,16 +1485,16 @@ if(WITH_BLENDER)
       protect
       push_pose
       push_pull
-	  
+
 	  # letter q
-	  
+
       quadview
       quaternion_to_rotation
       question
       quit
-	  
+
 	  # letter r
-	  
+
       radio
       radiobut_off
       radiobut_on
@@ -1528,14 +1538,18 @@ if(WITH_BLENDER)
       replace_string
       reproject
       reset
+	  
+	  # bfa-don't change the order of the icons
+	  restrict_color_on
       restrict_color_off
-      restrict_color_on
-      restrict_render_off
       restrict_render_on
-      restrict_select_off
+      restrict_render_off
       restrict_select_on
-      restrict_view_off
+      restrict_select_off
       restrict_view_on
+      restrict_view_off
+	  ###
+
       retopo
       reverse_colors
       reverse_uvs
@@ -1589,9 +1603,9 @@ if(WITH_BLENDER)
       rotation_to_euler
       rotation_to_quaternion
       ruler
-	  
+
 	  # letter s
-	  
+
       sample_index
       sample_keyframes
       sample_nearest
@@ -1863,9 +1877,9 @@ if(WITH_BLENDER)
       syntax_off
       syntax_on
       system
-	  
+
 	  # letter t
-	  
+
       tag
       temp
       template
@@ -1929,9 +1943,9 @@ if(WITH_BLENDER)
       triangulate
       tristoquads
       type
-	  
+
 	  # letter u
-	  
+
       uglypackage
       ui
       uncomment
@@ -1941,9 +1955,16 @@ if(WITH_BLENDER)
       undo_history
       unicode
       unindent
+
+	  # bfa - don't change the order of the icons
       unlinked
+	  linked
       unlocked
+	  locked
       unpinned
+	  pinned
+	  ###
+
       unsubdivide
       unwrap_abf
       unwrap_lscm
@@ -1956,9 +1977,9 @@ if(WITH_BLENDER)
       uv_islandsel
       uv_sync_select
       uv_vertexsel
-	  
+
 	  # letter v
-	  
+
       value_to_selection
       value_to_string
       vector_displace
@@ -2025,9 +2046,9 @@ if(WITH_BLENDER)
       volume_to_mesh
       voroni_tex
       vpaint_hlt
-	  
+
 	  # letter w
-	  
+
       walk_navigation
       wall
       warning
@@ -2056,20 +2077,20 @@ if(WITH_BLENDER)
       workspace
       world
       wpaint_hlt
-	  
+
 	  # letter x
-	  
+
       x
       x_icon
       xray
-	  
+
 	  # letter y
-	  
+
       y_icon
       yen
-	  
+
 	  # letter z
-	  
+
       z_icon
       zoom_all
       zoom_border
@@ -2081,15 +2102,15 @@ if(WITH_BLENDER)
       zoom_set
       zoomin
       zoomout
-	  
+
 	  # letter unsorted
-	  
+
       mod_instance
       outliner_data_hair
       outliner_data_pointcloud
       texture_data
       world_data
- 
+
 
       # ------------------------- large --------------------------
       cancel_large
