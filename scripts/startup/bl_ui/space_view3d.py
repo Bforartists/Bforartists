@@ -988,7 +988,7 @@ class VIEW3D_HT_header(Header):
                         text="Multiframe",
                     )
 
-        # Grease Pencil (legacy) 
+        # Grease Pencil (legacy)
         if obj and obj.type == 'GPENCIL' and context.gpencil_data:
             gpd = context.gpencil_data
 
@@ -4078,11 +4078,12 @@ class VIEW3D_MT_object_modifiers(Menu):
             elif active_object.type == 'GPENCIL':
                 layout.operator("object.gpencil_modifier_add", text="Add Modifier")
 
-        layout.operator("object.modifiers_copy_to_selected", text="Copy Modifiers to Selected Objects")
+        # bfa - pastedown icon by purpose, it copies, then pastes the modifiers to the selected objects
+        layout.operator("object.modifiers_copy_to_selected", text="Copy Modifiers to Selected Objects", icon = "PASTEDOWN")
 
         layout.separator()
 
-        layout.operator("object.modifiers_clear")
+        layout.operator("object.modifiers_clear", icon = "CLEAR")
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
