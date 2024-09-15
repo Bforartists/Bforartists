@@ -1194,10 +1194,7 @@ class VIEW3D_HT_header(Header):
         row.prop(view, "show_gizmo", text="", toggle=True, icon='GIZMO')
         sub = row.row(align=True)
         sub.active = view.show_gizmo
-        sub.popover(
-            panel="VIEW3D_PT_gizmo_display",
-            text="",
-        )
+        sub.popover(panel="VIEW3D_PT_gizmo_display", text="",)
 
         # Overlay toggle & popover.
         row = layout.row(align=True)
@@ -3391,7 +3388,6 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_liboverride")
         layout.menu("VIEW3D_MT_object_relations")
         layout.menu("VIEW3D_MT_object_parent")
-        layout.menu("VIEW3D_MT_object_modifiers")
         layout.menu("VIEW3D_MT_object_constraints")
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_make_links")
@@ -4059,29 +4055,6 @@ class VIEW3D_MT_object_constraints(Menu):
         layout.separator()
 
         layout.operator("object.constraints_clear", icon="CLEAR_CONSTRAINT")
-
-
-class VIEW3D_MT_object_modifiers(Menu):
-    bl_label = "Modifiers"
-
-    def draw(self, _context):
-        active_object = bpy.context.active_object
-        supported_types = {'MESH', 'CURVE', 'CURVES', 'SURFACE', 'FONT', 'VOLUME', 'GREASEPENCIL'}
-
-        layout = self.layout
-
-        if active_object:
-            if active_object.type in supported_types:
-                layout.menu("OBJECT_MT_modifier_add", text="Add Modifier")
-            elif active_object.type == 'GPENCIL':
-                layout.operator("object.gpencil_modifier_add", text="Add Modifier")
-
-        # bfa - pastedown icon by purpose, it copies, then pastes the modifiers to the selected objects
-        layout.operator("object.modifiers_copy_to_selected", text="Copy Modifiers to Selected Objects", icon = "PASTEDOWN")
-
-        layout.separator()
-
-        layout.operator("object.modifiers_clear", icon = "CLEAR")
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
@@ -11062,7 +11035,7 @@ classes = (
     VIEW3D_MT_object_track,
     VIEW3D_MT_object_collection,
     VIEW3D_MT_object_constraints,
-    VIEW3D_MT_object_modifiers,
+    #VIEW3D_MT_object_modifiers, # bfa - renamed and moved to properties editor
     VIEW3D_MT_object_quick_effects,
     VIEW3D_MT_object_showhide,
     VIEW3D_MT_object_cleanup,

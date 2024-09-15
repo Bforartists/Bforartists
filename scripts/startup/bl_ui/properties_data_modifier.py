@@ -37,6 +37,23 @@ class ModifierAddMenu:
         ).type = mod_type
 
 
+class DATA_PT_modifiers_special(Menu):
+    bl_label = "Modifiers Special"
+
+    def draw(self, _context):
+        active_object = bpy.context.active_object
+        supported_types = {'MESH', 'CURVE', 'CURVES', 'SURFACE', 'FONT', 'VOLUME', 'GREASEPENCIL'}
+
+        layout = self.layout
+
+        # bfa - pastedown icon by purpose, it copies, then pastes the modifiers to the selected objects
+        layout.operator("object.modifiers_copy_to_selected", text="Copy Modifiers to Selected Objects", icon = "PASTEDOWN")
+
+        layout.separator()
+
+        layout.operator("object.modifiers_clear", icon = "CLEAR")
+
+
 class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
     bl_label = "Modifiers"
 
@@ -56,16 +73,26 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
             'MESH', 'CURVE', 'CURVES',
             'FONT', 'VOLUME', 'POINTCLOUD', 'GREASEPENCIL',
         }
-		# BFA - changed to be columns
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False)
-        col1 = flow.column()
-        col2 = flow.column()
 
-        col1.operator("object.add_modifier_menu", icon='ADD')
         if geometry_nodes_supported:
-            col2.operator("object.add_asset_modifier_menu", icon='ADD')
+		    # BFA - changed to be columns
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False)
+            col1 = flow.column()
+            col2 = flow.column()
+            col1.operator("object.add_modifier_menu", icon='ADD')
+            row = col2.row()
+            row.operator("object.add_asset_modifier_menu", icon='ADD')
+            row.menu("DATA_PT_modifiers_special", icon='DOWNARROW_HLT', text="")
+
+        else:
+            row = layout.row()
+            row.operator("object.add_modifier_menu", icon='ADD')
+            if geometry_nodes_supported:
+                row.operator("object.add_asset_modifier_menu", icon='ADD')
+            row.menu("DATA_PT_modifiers_special", icon='DOWNARROW_HLT', text="")
 
         layout.template_modifiers()
+
 
 # BFA - Heavily modified to be a column menu
 class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
@@ -414,6 +441,7 @@ class AddModifierMenu(Operator):
 
 classes = (
     DATA_PT_modifiers,
+    DATA_PT_modifiers_special, # bfa - former VIEW3D_MT_object_modifiers menu from the object menu
     OBJECT_MT_modifier_add,
     OBJECT_MT_modifier_add_edit,
     OBJECT_MT_modifier_add_generate,
