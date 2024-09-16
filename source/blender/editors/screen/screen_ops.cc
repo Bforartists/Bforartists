@@ -1209,7 +1209,12 @@ static int actionzone_modal(bContext *C, wmOperator *op, const wmEvent *event)
           }
         }
         else {
-          WM_cursor_set(win, WM_CURSOR_CROSS);
+#if defined(__APPLE__)
+          const int cursor = U.experimental.use_docking ? WM_CURSOR_HAND_CLOSED : WM_CURSOR_EDIT;
+#else
+          const int cursor = U.experimental.use_docking ? WM_CURSOR_MOVE : WM_CURSOR_EDIT;
+#endif
+          WM_cursor_set(win, cursor);
           is_gesture = false;
         }
       }
@@ -3873,17 +3878,30 @@ static int area_join_cursor(sAreaJoinData *jd, const wmEvent *event)
     return WM_CURSOR_STOP;
   }
 
+  if (jd->win2 && jd->win2->workspace_hook) {
+    bScreen *screen = BKE_workspace_active_screen_get(jd->win2->workspace_hook);
+    if (screen && screen->temp) {
+      return WM_CURSOR_STOP;
+    }
+  }
+
+#if defined(__APPLE__)
+  const int move_cursor = WM_CURSOR_HAND_CLOSED;
+#else
+  const int move_cursor = WM_CURSOR_MOVE;
+#endif
+
   if (jd->sa1 && jd->sa1 == jd->sa2 && U.experimental.use_docking) {
     if (jd->split_fac >= 0.0001f) {
       /* Mouse inside source area, so allow splitting. */
       return (jd->split_dir == SCREEN_AXIS_V) ? WM_CURSOR_V_SPLIT : WM_CURSOR_H_SPLIT;
     }
-    return WM_CURSOR_EDIT;
+    return move_cursor;
   }
 
   if (jd->dock_target == AreaDockTarget::None) {
     if (U.experimental.use_docking) {
-      return WM_CURSOR_DEFAULT;
+      return move_cursor;
     }
     else {
       if (jd->dir == SCREEN_DIR_N) {
@@ -3904,7 +3922,7 @@ static int area_join_cursor(sAreaJoinData *jd, const wmEvent *event)
   if (U.experimental.use_docking &&
       (jd->dir != SCREEN_DIR_NONE || jd->dock_target != AreaDockTarget::None))
   {
-    return WM_CURSOR_DEFAULT;
+    return move_cursor;
   }
 
   return U.experimental.use_docking ? WM_CURSOR_PICK_AREA : WM_CURSOR_STOP;
@@ -3959,6 +3977,13 @@ static AreaDockTarget area_docking_target(sAreaJoinData *jd, const wmEvent *even
 
   if (jd->sa1 == jd->sa2) {
     return AreaDockTarget::None;
+  }
+
+  if (jd->win2 && jd->win2->workspace_hook) {
+    bScreen *screen = BKE_workspace_active_screen_get(jd->win2->workspace_hook);
+    if (screen && screen->temp) {
+      return AreaDockTarget::None;
+    }
   }
 
   /* Convert to local coordinates in sa2. */
@@ -4665,6 +4690,7 @@ static void view3d_localview_update_rv3d(RegionView3D *rv3d)
 {
   if (rv3d->localvd) {
     rv3d->localvd->view = rv3d->view;
+    rv3d->localvd->view_axis_roll = rv3d->view_axis_roll;
     rv3d->localvd->persp = rv3d->persp;
     copy_qt_qt(rv3d->localvd->viewquat, rv3d->viewquat);
   }

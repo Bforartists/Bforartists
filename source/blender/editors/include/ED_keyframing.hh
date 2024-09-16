@@ -13,18 +13,13 @@
 #include "RNA_types.hh"
 
 struct ID;
-struct ListBase;
 struct Main;
 struct Scene;
 
 struct KeyingSet;
 
 struct AnimationEvalContext;
-struct BezTriple;
 struct FCurve;
-struct bAction;
-
-struct bPoseChannel;
 
 struct ReportList;
 struct bContext;
@@ -32,8 +27,6 @@ struct bContext;
 struct EnumPropertyItem;
 struct PointerRNA;
 struct PropertyRNA;
-
-struct NlaKeyframingContext;
 
 namespace blender::animrig {
 enum class ModifyKeyReturn;
@@ -175,7 +168,7 @@ KeyingSetInfo *ANIM_keyingset_info_find_name(const char name[]);
 /**
  * Check if the ID appears in the paths specified by the #KeyingSet.
  */
-bool ANIM_keyingset_find_id(KeyingSet *ks, ID *id);
+bool ANIM_keyingset_find_id(KeyingSet *keyingset, ID *id);
 
 /**
  * Add the given KeyingSetInfo to the list of type infos,
