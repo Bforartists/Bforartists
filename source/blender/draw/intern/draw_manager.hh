@@ -14,12 +14,16 @@
  * \note It is currently work in progress and should replace the old global draw manager.
  */
 
+#include "BKE_paint.hh"
+#include "BKE_pbvh_api.hh"
+
 #include "BLI_map.hh"
 #include "BLI_sys_types.h"
 
 #include "GPU_material.hh"
 
 #include "draw_resource.hh"
+#include "draw_sculpt.hh"
 #include "draw_view.hh"
 
 #include <string>
@@ -118,14 +122,20 @@ class Manager {
   ~Manager();
 
   /**
+   * Create a unique resource handle for the given object.
+   * Returns the existing handle if it exists.
+   */
+  ResourceHandle unique_handle(const ObjectRef &ref);
+  /**
    * Create a new resource handle for the given object.
    */
-  ResourceHandle resource_handle(const ObjectRef ref, float inflate_bounds = 0.0f);
+  /* WORKAROUND: Instead of breaking const correctness everywhere, we only break it for this. */
+  ResourceHandle resource_handle(const ObjectRef &ref, float inflate_bounds = 0.0f);
   /**
    * Create a new resource handle for the given object, but optionally override model matrix and
    * bounds.
    */
-  ResourceHandle resource_handle(const ObjectRef ref,
+  ResourceHandle resource_handle(const ObjectRef &ref,
                                  const float4x4 *model_matrix,
                                  const float3 *bounds_center,
                                  const float3 *bounds_half_extent);
@@ -146,11 +156,20 @@ class Manager {
    * Get resource id for particle system. The draw-calls for this resource won't be culled. The
    * associated object info will contain the info from its parent object.
    */
-  ResourceHandle resource_handle_for_psys(const ObjectRef ref, const float4x4 &model_matrix);
+  ResourceHandle resource_handle_for_psys(const ObjectRef &ref, const float4x4 &model_matrix);
+
+  ResourceHandle resource_handle_for_sculpt(const ObjectRef &ref)
+  {
+    /* TODO(fclem): Deduplicate with other engine. */
+    const blender::Bounds<float3> bounds = bke::pbvh::bounds_get(*ref.object->sculpt->pbvh);
+    const float3 center = math::midpoint(bounds.min, bounds.max);
+    const float3 half_extent = bounds.max - center;
+    return resource_handle(ref, nullptr, &center, &half_extent);
+  }
 
   /** Update the bounds of an already created handle. */
   void update_handle_bounds(ResourceHandle handle,
-                            const ObjectRef ref,
+                            const ObjectRef &ref,
                             float inflate_bounds = 0.0f);
   /** Update the bounds of an already created handle. */
   void update_handle_bounds(ResourceHandle handle,
@@ -225,7 +244,16 @@ class Manager {
   void sync_layer_attributes();
 };
 
-inline ResourceHandle Manager::resource_handle(const ObjectRef ref, float inflate_bounds)
+inline ResourceHandle Manager::unique_handle(const ObjectRef &ref)
+{
+  if (ref.handle.raw == 0) {
+    /* WORKAROUND: Instead of breaking const correctness everywhere, we only break it for this. */
+    const_cast<ObjectRef &>(ref).handle = resource_handle(ref);
+  }
+  return ref.handle;
+}
+
+inline ResourceHandle Manager::resource_handle(const ObjectRef &ref, float inflate_bounds)
 {
   bool is_active_object = (ref.dupli_object ? ref.dupli_parent : ref.object) == object_active;
   matrix_buf.current().get_or_resize(resource_len_).sync(*ref.object);
@@ -234,7 +262,7 @@ inline ResourceHandle Manager::resource_handle(const ObjectRef ref, float inflat
   return ResourceHandle(resource_len_++, (ref.object->transflag & OB_NEG_SCALE) != 0);
 }
 
-inline ResourceHandle Manager::resource_handle(const ObjectRef ref,
+inline ResourceHandle Manager::resource_handle(const ObjectRef &ref,
                                                const float4x4 *model_matrix,
                                                const float3 *bounds_center,
                                                const float3 *bounds_half_extent)
@@ -274,7 +302,7 @@ inline ResourceHandle Manager::resource_handle(const float4x4 &model_matrix,
   return ResourceHandle(resource_len_++, false);
 }
 
-inline ResourceHandle Manager::resource_handle_for_psys(const ObjectRef ref,
+inline ResourceHandle Manager::resource_handle_for_psys(const ObjectRef &ref,
                                                         const float4x4 &model_matrix)
 {
   bool is_active_object = (ref.dupli_object ? ref.dupli_parent : ref.object) == object_active;
@@ -285,7 +313,7 @@ inline ResourceHandle Manager::resource_handle_for_psys(const ObjectRef ref,
 }
 
 inline void Manager::update_handle_bounds(ResourceHandle handle,
-                                          const ObjectRef ref,
+                                          const ObjectRef &ref,
                                           float inflate_bounds)
 {
   bounds_buf.current()[handle.resource_index()].sync(*ref.object, inflate_bounds);

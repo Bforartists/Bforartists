@@ -156,10 +156,12 @@ static void toolsystem_ref_link(const bContext *C, WorkSpace *workspace, bToolRe
     }
   }
 
-  if (tref_rt->data_block[0]) {
+  if (tref_rt->flag & TOOLREF_FLAG_USE_BRUSHES) {
     Main *bmain = CTX_data_main(C);
 
-    if ((tref->space_type == SPACE_VIEW3D) && (tref->mode == CTX_MODE_PARTICLE)) {
+    if ((tref->space_type == SPACE_VIEW3D) && (tref->mode == CTX_MODE_PARTICLE) &&
+        tref_rt->data_block[0])
+    {
       const EnumPropertyItem *items = rna_enum_particle_edit_hair_brush_items;
       const int i = RNA_enum_from_identifier(items, tref_rt->data_block);
       if (i != -1) {
@@ -670,6 +672,7 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
         case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
         case CTX_MODE_WEIGHT_GREASE_PENCIL:
         case CTX_MODE_VERTEX_GPENCIL_LEGACY:
+        case CTX_MODE_VERTEX_GREASE_PENCIL:
         case CTX_MODE_SCULPT_CURVES:
           return "builtin.brush";
         case CTX_MODE_PARTICLE:
@@ -778,7 +781,13 @@ void WM_toolsystem_update_from_context(
 bool WM_toolsystem_active_tool_is_brush(const bContext *C)
 {
   bToolRef_Runtime *tref_rt = WM_toolsystem_runtime_from_context((bContext *)C);
-  return tref_rt && (tref_rt->data_block[0] != '\0');
+  return tref_rt && (tref_rt->flag & TOOLREF_FLAG_USE_BRUSHES);
+}
+
+bool WM_toolsystem_active_tool_has_custom_cursor(const bContext *C)
+{
+  bToolRef_Runtime *tref_rt = WM_toolsystem_runtime_from_context((bContext *)C);
+  return tref_rt && (tref_rt->cursor != WM_CURSOR_DEFAULT);
 }
 
 void WM_toolsystem_do_msg_notify_tag_refresh(bContext *C,
