@@ -572,7 +572,7 @@ class TOPBAR_MT_file_external_data(Menu):
         layout.separator()
 
         layout.operator("file.report_missing_files", icon="ERROR")
-        layout.operator("file.find_missing_files", icon="VIEWZOOM")
+        layout.operator("file.find_missing_files", icon="VIEWZOOM", text="Find Missing Files")
 
 
 class TOPBAR_MT_file_previews(Menu):
@@ -582,12 +582,12 @@ class TOPBAR_MT_file_previews(Menu):
         layout = self.layout
 
         layout.operator("wm.previews_ensure", icon="FILE_REFRESH")
-        layout.operator("wm.previews_batch_generate", icon="BATCH_GENERATE")
+        layout.operator("wm.previews_batch_generate", icon="BATCH_GENERATE", text="Batch-Generate Preview")
 
         layout.separator()
 
-        layout.operator("wm.previews_clear", icon="DATABLOCK_CLEAR")
-        layout.operator("wm.previews_batch_clear", icon="BATCH_GENERATE_CLEAR")
+        layout.operator("wm.previews_clear", icon="DATABLOCK_CLEAR", text="Clear Data-Block Previews")
+        layout.operator("wm.previews_batch_clear", icon="BATCH_GENERATE_CLEAR", text="Batch-Clear Previews")
 
 
 class TOPBAR_MT_render(Menu):
@@ -999,6 +999,58 @@ class TOPBAR_PT_name_marker(Panel):
         row.prop(marker, "name", text="")
 
 
+class TOPBAR_PT_grease_pencil_layers(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Layers"
+    bl_ui_units_x = 14
+
+    @classmethod
+    def poll(cls, context):
+        object = context.object
+        if object is None:
+            return False
+        if object.type != "GREASEPENCIL":
+            return False
+
+        return True
+
+    def draw(self, context):
+        grease_pencil = context.object.data
+        layer = grease_pencil.layers.active
+
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.template_grease_pencil_layer_tree()
+
+        if not layer:
+            return
+
+        col = row.column()
+        sub = col.column(align=True)
+        sub.operator("grease_pencil.layer_add", icon='ADD', text="")
+        sub.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="")
+
+        col.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
+
+        col.separator()
+
+        sub = col.column(align=True)
+        sub.operator("grease_pencil.layer_isolate", icon="HIDE_OFF", text="").affect_visibility = True
+        sub.operator("grease_pencil.layer_isolate", icon="LOCKED", text="").affect_visibility = False
+
+        # Layer main properties
+        row = layout.row(align=True)
+        row.prop(layer, "blend_mode", text="Blend Mode")
+
+        row = layout.row(align=True)
+        row.prop(layer, "opacity", text="Opacity", slider=True)
+
+        row = layout.row(align=True)
+        row.prop(layer, "use_lights", text="Lights")
+
+
 classes = (
     TOPBAR_HT_upper_bar,
     TOPBAR_MT_file_context_menu,
@@ -1027,6 +1079,7 @@ classes = (
     TOPBAR_PT_gpencil_primitive,
     TOPBAR_PT_name,
     TOPBAR_PT_name_marker,
+    TOPBAR_PT_grease_pencil_layers,
 )
 
 if __name__ == "__main__":  # only for live edit.
