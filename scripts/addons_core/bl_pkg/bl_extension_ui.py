@@ -1456,26 +1456,27 @@ def extension_draw_item(
         import os
         from bpy.app.translations import pgettext_iface as iface_
 
-        col = layout.column()
+        grid = layout.grid_flow(columns=2) # BFA - Make Uninstall always active
 
-        row = col.row()
+        row = grid.row()
         row.active = is_enabled
 
         # The full tagline may be multiple lines (not yet supported by Blender's UI).
         row.label(text=" {:s}.".format(item.tagline), translate=False)
 
         ## BFA - expose uninstall in a consistent way to the addons - START ##
-        row_right = row.row()
         if is_installed:
-            row_right.active = True
-            row_right.alignment = 'RIGHT'
+            row = grid.row() # BFA - Make Uninstall always active
+            row.active = True # BFA - Make Uninstall always active
+            row.alignment = 'RIGHT'
 
-            props = row_right.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') # BFA - icon added
+            props = row.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') # BFA - icon added
             props.repo_index = repo_index
             props.pkg_id = pkg_id
             del props
         ## BFA - expose uninstall in a consistent way to the addons - END ##
 
+        col = layout.column()
         col.separator(type='LINE')
         del col
 
