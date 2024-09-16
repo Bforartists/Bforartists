@@ -2764,6 +2764,26 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.operator("armature.select_less", text="Less", icon="SELECTLESS")
 
 
+# BFA - legacy menu
+class VIEW3D_MT_select_gpencil_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("gpencil.select_box", icon="BORDER_RECT")
+        layout.operator("gpencil.select_circle", icon="CIRCLE_SELECT")
+
+# BFA - legacy menu
+class VIEW3D_MT_select_gpencil_grouped(Menu):
+    bl_label = "Grouped"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.select_grouped", text="Layer", icon="LAYER").type = 'LAYER'
+        layout.operator("gpencil.select_grouped", text="Color", icon="COLOR").type = 'MATERIAL'
+
 class VIEW3D_MT_select_edit_grease_pencil(Menu):
     bl_label = "Select"
 
@@ -7066,7 +7086,7 @@ class VIEW3D_MT_weight_grease_pencil(Menu):
     def draw(self, _context):
         layout = self.layout
 		
-		layout.operator("grease_pencil.weight_sample", text="Sample Weight")
+        layout.operator("grease_pencil.weight_sample", text="Sample Weight")
 
         layout.separator()
 
@@ -11131,8 +11151,8 @@ classes = (
     VIEW3D_MT_select_edit_metaball_select_similar,  # bfa menu
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature,
-    VIEW3D_MT_select_gpencil_legacy,  # bfa menu
-    VIEW3D_MT_select_gpencil_grouped,  # bfa menu
+    VIEW3D_MT_select_gpencil_legacy,  # BFA - legacy menu
+    VIEW3D_MT_select_gpencil_grouped,  # BFA - legacy menu
     VIEW3D_MT_select_edit_grease_pencil,
 	#VIEW3D_MT_select_edit_gpencil # BFA - legacy removed
     VIEW3D_MT_select_paint_mask,
