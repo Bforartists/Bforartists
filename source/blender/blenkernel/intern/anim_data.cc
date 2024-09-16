@@ -12,7 +12,7 @@
 
 #include "ANIM_action.hh"
 
-#include "BKE_action.h"
+#include "BKE_action.hh"
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_context.hh"
@@ -23,7 +23,7 @@
 #include "BKE_lib_id.hh"
 #include "BKE_lib_query.hh"
 #include "BKE_main.hh"
-#include "BKE_nla.h"
+#include "BKE_nla.hh"
 #include "BKE_node.hh"
 #include "BKE_report.hh"
 
@@ -211,7 +211,7 @@ bool BKE_animdata_set_action(ReportList *reports, ID *id, bAction *act)
     return true;
   }
   animrig::Action &action = act->wrap();
-  return animrig::assign_action(action, *id);
+  return animrig::assign_action(&action, *id);
 #else
   return animdata_set_action(reports, id, &adt->action, act);
 #endif  // WITH_ANIM_BAKLAVA
@@ -522,6 +522,10 @@ void BKE_animdata_merge_copy(
     dst->tmpact = src->tmpact;
     id_us_plus((ID *)dst->tmpact);
   }
+  dst->slot_handle = src->slot_handle;
+  dst->tmp_slot_handle = src->tmp_slot_handle;
+  STRNCPY(dst->slot_name, src->slot_name);
+  STRNCPY(dst->tmp_slot_name, src->tmp_slot_name);
 
   /* duplicate NLA data */
   if (src->nla_tracks.first) {
