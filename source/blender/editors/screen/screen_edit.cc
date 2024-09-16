@@ -683,7 +683,7 @@ static bool region_poll(const bContext *C,
 /**
  * \return true if any region polling state changed, and a screen refresh is needed.
  */
-static bool screen_regions_poll(bContext *C, wmWindow *win, bScreen *screen)
+static bool screen_regions_poll(bContext *C, wmWindow *win, const bScreen *screen)
 {
   wmWindow *prev_win = CTX_wm_window(C);
   ScrArea *prev_area = CTX_wm_area(C);
@@ -974,7 +974,12 @@ static void screen_cursor_set(wmWindow *win, const int xy[2])
 
   if (area) {
     if (az->type == AZONE_AREA) {
-      WM_cursor_set(win, WM_CURSOR_EDIT);
+#if defined(__APPLE__)
+      const int cursor = U.experimental.use_docking ? WM_CURSOR_HAND : WM_CURSOR_EDIT;
+#else
+      const int cursor = U.experimental.use_docking ? WM_CURSOR_MOVE : WM_CURSOR_EDIT;
+#endif
+      WM_cursor_set(win, cursor);
     }
     else if (az->type == AZONE_REGION) {
       if (ELEM(az->edge, AE_LEFT_TO_TOPRIGHT, AE_RIGHT_TO_TOPLEFT)) {
@@ -1225,12 +1230,13 @@ static void screen_global_topbar_area_refresh(wmWindow *win, bScreen *screen)
 
 static void screen_global_statusbar_area_refresh(wmWindow *win, bScreen *screen)
 {
+  const blender::int2 win_size = WM_window_native_pixel_size(win);
   const short size_min = 1;
   const short size_max = 0.85f * screen_global_header_size();
   const short size = (screen->flag & SCREEN_COLLAPSE_STATUSBAR) ? size_min : size_max;
   rcti rect;
 
-  BLI_rcti_init(&rect, 0, WM_window_native_pixel_x(win) - 1, 0, WM_window_native_pixel_y(win) - 1);
+  BLI_rcti_init(&rect, 0, win_size[0] - 1, 0, win_size[1] - 1);
   rect.ymax = rect.ymin + size_max;
 
   screen_global_area_refresh(

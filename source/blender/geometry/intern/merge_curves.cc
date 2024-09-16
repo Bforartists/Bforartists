@@ -166,6 +166,7 @@ static bke::CurvesGeometry reorder_and_flip_curves(const bke::CurvesGeometry &sr
 
   bke::gather_attributes(src_curves.attributes(),
                          bke::AttrDomain::Curve,
+                         bke::AttrDomain::Curve,
                          {},
                          old_by_new_map,
                          dst_curves.attributes_for_write());
@@ -253,6 +254,7 @@ static bke::CurvesGeometry join_curves_ranges(const bke::CurvesGeometry &src_cur
   const Span<int> old_by_new_map = old_curves_by_new.data().drop_back(1);
   bke::gather_attributes(src_curves.attributes(),
                          bke::AttrDomain::Curve,
+                         bke::AttrDomain::Curve,
                          bke::attribute_filter_from_skip_ref({"cyclic"}),
                          old_by_new_map,
                          dst_curves.attributes_for_write());
@@ -262,15 +264,16 @@ static bke::CurvesGeometry join_curves_ranges(const bke::CurvesGeometry &src_cur
   new_offsets.fill(0);
   for (const int new_i : new_offsets.index_range().drop_back(1)) {
     const IndexRange old_curves = old_curves_by_new[new_i];
-    for (const int old_i : old_curves) {
-      new_offsets[new_i] += old_points_by_curve[old_i].size();
-    }
+    new_offsets[new_i] = offset_indices::sum_group_sizes(old_points_by_curve, old_curves);
   }
   offset_indices::accumulate_counts_to_offsets(new_offsets);
 
   /* Point attributes copied without changes. */
-  bke::copy_attributes(
-      src_curves.attributes(), bke::AttrDomain::Point, {}, dst_curves.attributes_for_write());
+  bke::copy_attributes(src_curves.attributes(),
+                       bke::AttrDomain::Point,
+                       bke::AttrDomain::Point,
+                       {},
+                       dst_curves.attributes_for_write());
 
   dst_curves.tag_topology_changed();
   return dst_curves;

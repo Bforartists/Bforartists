@@ -19,6 +19,8 @@
 #include "BLI_blenlib.h"
 #include "BLI_math_base.h"
 
+#include "BLF_api.hh"
+
 #include "BKE_global.hh"
 #include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
@@ -96,7 +98,8 @@ static SpaceLink *sequencer_create(const ScrArea * /*area*/, const Scene *scene)
   sseq->timeline_overlay.flag = SEQ_TIMELINE_SHOW_STRIP_NAME | SEQ_TIMELINE_SHOW_STRIP_SOURCE |
                                 SEQ_TIMELINE_SHOW_STRIP_DURATION | SEQ_TIMELINE_SHOW_GRID |
                                 SEQ_TIMELINE_SHOW_FCURVES | SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG |
-                                SEQ_TIMELINE_SHOW_STRIP_RETIMING | SEQ_TIMELINE_WAVEFORMS_HALF;
+                                SEQ_TIMELINE_SHOW_STRIP_RETIMING | SEQ_TIMELINE_WAVEFORMS_HALF |
+                                SEQ_TIMELINE_SHOW_THUMBNAILS;
   sseq->cache_overlay.flag = SEQ_CACHE_SHOW | SEQ_CACHE_SHOW_FINAL_OUT;
   sseq->draw_flag |= SEQ_DRAW_TRANSFORM_PREVIEW;
 
@@ -668,7 +671,7 @@ static void sequencer_main_cursor(wmWindow *win, ScrArea *area, ARegion *region)
   int wmcursor = WM_CURSOR_DEFAULT;
 
   const bToolRef *tref = area->runtime.tool;
-  if (!STREQ(tref->idname, "builtin.select")) {
+  if (!STRPREFIX(tref->idname, "builtin.select")) {
     WM_cursor_set(win, wmcursor);
     return;
   }
@@ -889,6 +892,17 @@ static void sequencer_preview_region_draw(const bContext *C, ARegion *region)
     const rcti *rect = ED_region_visible_rect(region);
     int xoffset = rect->xmin + U.widget_unit;
     int yoffset = rect->ymax;
+
+    /* #ED_scene_draw_fps does not set text/shadow colors, except when
+     * frame-rate is too low, then it sets text color to red.
+     * Make sure the "normal case" also has legible colors. */
+    const int font_id = BLF_default();
+    float text_color[4] = {1, 1, 1, 1}, shadow_color[4] = {0, 0, 0, 0.8f};
+    BLF_color4fv(font_id, text_color);
+    BLF_enable(font_id, BLF_SHADOW);
+    BLF_shadow_offset(font_id, 0, 0);
+    BLF_shadow(font_id, FontShadowType::Outline, shadow_color);
+
     ED_scene_draw_fps(scene, xoffset, &yoffset);
   }
 }

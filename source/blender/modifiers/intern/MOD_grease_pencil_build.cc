@@ -258,8 +258,18 @@ static bke::CurvesGeometry build_concurrent(bke::greasepencil::Drawing &drawing,
   const bke::AttributeAccessor src_attributes = curves.attributes();
   bke::MutableAttributeAccessor dst_attributes = dst_curves.attributes_for_write();
 
-  gather_attributes(src_attributes, bke::AttrDomain::Point, {}, dst_to_src_point, dst_attributes);
-  gather_attributes(src_attributes, bke::AttrDomain::Curve, {}, dst_to_src_curve, dst_attributes);
+  gather_attributes(src_attributes,
+                    bke::AttrDomain::Point,
+                    bke::AttrDomain::Point,
+                    {},
+                    dst_to_src_point,
+                    dst_attributes);
+  gather_attributes(src_attributes,
+                    bke::AttrDomain::Curve,
+                    bke::AttrDomain::Curve,
+                    {},
+                    dst_to_src_curve,
+                    dst_attributes);
 
   dst_curves.update_curve_types();
 
@@ -285,9 +295,7 @@ static void points_info_sequential(const bke::CurvesGeometry &curves,
 
   const bool is_vanishing = transition == MOD_GREASE_PENCIL_BUILD_TRANSITION_VANISH;
 
-  int effective_points_num = 0;
-  selection.foreach_index(
-      [&](const int index) { effective_points_num += points_by_curve[index].size(); });
+  int effective_points_num = offset_indices::sum_group_sizes(points_by_curve, selection);
 
   const int untouched_points_num = points_by_curve.total_size() - effective_points_num;
   effective_points_num *= factor_to_keep;
@@ -411,8 +419,18 @@ static bke::CurvesGeometry build_sequential(bke::greasepencil::Drawing &drawing,
   const bke::AttributeAccessor src_attributes = curves.attributes();
   bke::MutableAttributeAccessor dst_attributes = dst_curves.attributes_for_write();
 
-  gather_attributes(src_attributes, bke::AttrDomain::Point, {}, dst_to_src_point, dst_attributes);
-  gather_attributes(src_attributes, bke::AttrDomain::Curve, {}, dst_to_src_curve, dst_attributes);
+  gather_attributes(src_attributes,
+                    bke::AttrDomain::Point,
+                    bke::AttrDomain::Point,
+                    {},
+                    dst_to_src_point,
+                    dst_attributes);
+  gather_attributes(src_attributes,
+                    bke::AttrDomain::Curve,
+                    bke::AttrDomain::Curve,
+                    {},
+                    dst_to_src_curve,
+                    dst_attributes);
 
   dst_curves.update_curve_types();
 
