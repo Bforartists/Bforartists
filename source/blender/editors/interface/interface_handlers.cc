@@ -2767,10 +2767,11 @@ static bool ui_but_copy_popover(uiBut *but, char *output, int output_maxncpy)
   return false;
 }
 
-static void ui_but_copy(bContext *C, uiBut *but, const bool copy_array)
+/** Returns true if any data was copied. */
+static bool ui_but_copy(bContext *C, uiBut *but, const bool copy_array)
 {
   if (ui_but_contains_password(but)) {
-    return;
+    return false;
   }
 
   /* Arbitrary large value (allow for paths: 'PATH_MAX') */
@@ -2861,6 +2862,7 @@ static void ui_but_copy(bContext *C, uiBut *but, const bool copy_array)
   if (is_buf_set) {
     WM_clipboard_text_set(buf, false);
   }
+  return is_buf_set;
 }
 
 static void ui_but_paste(bContext *C, uiBut *but, uiHandleButtonData *data, const bool paste_array)
@@ -3442,6 +3444,10 @@ static void ui_textedit_begin(bContext *C, uiBut *but, uiHandleButtonData *data)
 
   MEM_SAFE_FREE(text_edit.edit_string);
 
+  /* Clear the status bar. */
+  WorkspaceStatus status(C);
+  status.item(" ", ICON_NONE);
+
 #ifdef USE_DRAG_MULTINUM
   /* this can happen from multi-drag */
   if (data->applied_interactive) {
@@ -3561,6 +3567,8 @@ static void ui_textedit_end(bContext *C, uiBut *but, uiHandleButtonData *data)
 {
   uiTextEdit &text_edit = data->text_edit;
   wmWindow *win = data->window;
+
+  ED_workspace_status_text(C, nullptr);
 
   if (but) {
     if (UI_but_is_utf8(but)) {
@@ -4337,6 +4345,12 @@ static void ui_block_open_begin(bContext *C, uiBut *but, uiHandleButtonData *dat
   PanelType *popover_panel_type = nullptr;
   void *arg = nullptr;
 
+  if (but->type != UI_BTYPE_PULLDOWN) {
+    /* Clear the status bar. */
+    WorkspaceStatus status(C);
+    status.item(" ", ICON_NONE);
+  }
+
   switch (but->type) {
     case UI_BTYPE_BLOCK:
     case UI_BTYPE_PULLDOWN:
@@ -4436,6 +4450,8 @@ static void ui_block_open_end(bContext *C, uiBut *but, uiHandleButtonData *data)
 
     but->block->auto_open_last = BLI_time_now_seconds();
   }
+
+  ED_workspace_status_text(C, nullptr);
 
   if (data->menu) {
     ui_popup_block_free(C, data->menu);
@@ -8128,8 +8144,9 @@ static int ui_do_button(bContext *C, uiBlock *block, uiBut *but, const wmEvent *
 
     /* do copy first, because it is the only allowed operator when disabled */
     if (do_copy) {
-      ui_but_copy(C, but, event->modifier & KM_ALT);
-      return WM_UI_HANDLER_BREAK;
+      if (ui_but_copy(C, but, event->modifier & KM_ALT)) {
+        return WM_UI_HANDLER_BREAK;
+      }
     }
 
     /* handle menu */
@@ -8558,11 +8575,18 @@ static void button_activate_state(bContext *C, uiBut *but, uiHandleButtonState s
       else {
         WM_cursor_grab_enable(CTX_wm_window(C), WM_CURSOR_WRAP_XY, nullptr, true);
       }
+      /* Clear the status bar. */
+      WorkspaceStatus status(C);
+      status.item(" ", ICON_NONE);
     }
     ui_numedit_begin(but, data);
   }
   else if (data->state == BUTTON_STATE_NUM_EDITING) {
     ui_numedit_end(but, data);
+
+    if (state != BUTTON_STATE_TEXT_EDITING) {
+      ED_workspace_status_text(C, nullptr);
+    }
 
     if (but->flag & UI_BUT_DRIVEN) {
       /* Only warn when editing stepping/dragging the value.
@@ -10588,7 +10612,7 @@ static int ui_handle_menu_event(bContext *C,
   /* check if mouse is inside block */
   const bool inside = BLI_rctf_isect_pt(&block->rect, mx, my);
   /* check for title dragging */
-  const bool inside_title = inside && ((my + (UI_UNIT_Y * 1.5f)) > block->rect.ymax);
+  const bool inside_title = inside && ((my + (UI_UNIT_Y * 1.4f)) > block->rect.ymax);
 
   /* if there's an active modal button, don't check events or outside, except for search menu */
   but = ui_region_find_active_but(region);
@@ -10606,13 +10630,18 @@ static int ui_handle_menu_event(bContext *C,
   wmWindow *win = CTX_wm_window(C);
 
   if (!menu->is_grab && is_floating) {
-    if (event->type == LEFTMOUSE && event->val == KM_PRESS && inside_title) {
-      /* Initial press before starting to drag. */
-      WM_cursor_set(win, PopupTitleDragCursor);
+    if (inside_title && (!but || but->type == UI_BTYPE_IMAGE)) {
+      if (event->type == LEFTMOUSE && event->val == KM_PRESS) {
+        /* Initial press before starting to drag. */
+        WM_cursor_set(win, PopupTitleDragCursor);
+      }
+      else if (event->type == MOUSEMOVE && !win->modalcursor) {
+        /* Hover over draggable area. */
+        WM_cursor_set(win, PopupTitleHoverCursor);
+      }
     }
-    else if (event->type == MOUSEMOVE && !win->modalcursor) {
-      /* Hover over draggable area. */
-      WM_cursor_set(win, inside_title ? PopupTitleHoverCursor : WM_CURSOR_DEFAULT);
+    else if (win->cursor == PopupTitleHoverCursor) {
+      WM_cursor_set(win, WM_CURSOR_DEFAULT);
     }
   }
 
