@@ -232,22 +232,6 @@ class VIEW3D_HT_tool_header(Header):
             layout.popover_group(context=".particlemode", **popover_kw)
         elif mode_string == 'OBJECT':
             layout.popover_group(context=".objectmode", **popover_kw)
-        elif mode_string in {'PAINT_GPENCIL', 'PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL', 'SCULPT_GPENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GPENCIL'}:
-            # Grease pencil layer.
-            gpl = context.active_gpencil_layer
-            if gpl and gpl.info is not None:
-                text = gpl.info
-                maxw = 25
-                if len(text) > maxw:
-                    text = text[:maxw - 5] + '..' + text[-3:]
-            else:
-                text = ""
-
-            sub = layout.row()
-            sub.popover(
-                panel="TOPBAR_PT_gpencil_layers",
-                text="Layer: " + text,  # BFA - Legacy
-            )
         elif mode_string in {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL'}:
             layer = context.object.data.layers.active
             group = context.object.data.layer_groups.active
@@ -10075,7 +10059,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
         tool_settings = context.tool_settings
 
         is_point_mode = tool_settings.gpencil_selectmode_edit == 'POINT'
-        is_stroke_mode = tool_settings.gpencil_selectmode_edit == 'STROKE'
+        is_stroke_mode = tool_settings.gpencil_selectmode_edit in {'STROKE', 'SEGMENT'} # BFA - added segment mode to show context menu
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
