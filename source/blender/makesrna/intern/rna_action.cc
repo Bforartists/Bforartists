@@ -18,7 +18,7 @@
 
 #include "BLT_translation.hh"
 
-#include "BKE_action.h"
+#include "BKE_action.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -97,12 +97,12 @@ const EnumPropertyItem rna_enum_strip_type_items[] = {
 
 #  include <fmt/format.h>
 
-#  ifdef WITH_ANIM_BAKLAVA
-
 static animrig::Action &rna_action(const PointerRNA *ptr)
 {
   return reinterpret_cast<bAction *>(ptr->owner_id)->wrap();
 }
+
+#  ifdef WITH_ANIM_BAKLAVA
 
 static animrig::Slot &rna_data_slot(const PointerRNA *ptr)
 {
@@ -367,6 +367,29 @@ static void rna_ActionSlot_name_update(Main *bmain, Scene *, PointerRNA *ptr)
   action.slot_name_propagate(*bmain, slot);
 }
 
+#    ifndef NDEBUG
+static void rna_ActionSlot_debug_log_users(const ID *action_id, ActionSlot *dna_slot, Main *bmain)
+{
+  using namespace blender::animrig;
+  const Action &action = reinterpret_cast<const bAction *>(action_id)->wrap();
+  Slot &slot = dna_slot->wrap();
+
+  printf("\033[38;5;214mAction Slot users of '%s' on Action '%s':\033[0m\n",
+         slot.name,
+         action.id.name + 2);
+  if (bmain->is_action_slot_to_id_map_dirty) {
+    printf("  User map is \033[93mdirty\033[0m, this will trigger a recompute.\n");
+  }
+  else {
+    printf("  User map is \033[92mclean\033[0m.\n");
+  }
+
+  for (const ID *user : slot.users(*bmain)) {
+    printf("  - %s\n", user->name);
+  }
+}
+#    endif /* NDEBUG */
+
 static std::optional<std::string> rna_ActionLayer_path(const PointerRNA *ptr)
 {
   animrig::Layer &layer = rna_data_layer(ptr);
@@ -484,7 +507,7 @@ static ActionChannelBag *rna_ChannelBags_new(KeyframeActionStrip *dna_strip,
     return nullptr;
   }
 
-  ChannelBag &channelbag = key_strip.channelbag_for_slot_add(slot);
+  animrig::ChannelBag &channelbag = key_strip.channelbag_for_slot_add(slot);
 
   WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN, nullptr);
   /* No need to tag the depsgraph, as there is no new animation yet. */
@@ -1278,7 +1301,9 @@ static bool rna_Action_is_action_layered_get(PointerRNA *ptr)
 
 static void rna_Action_frame_range_get(PointerRNA *ptr, float *r_values)
 {
-  BKE_action_frame_range_get((bAction *)ptr->owner_id, &r_values[0], &r_values[1]);
+  const float2 frame_range = rna_action(ptr).get_frame_range();
+  r_values[0] = frame_range[0];
+  r_values[1] = frame_range[1];
 }
 
 static void rna_Action_frame_range_set(PointerRNA *ptr, const float *values)
@@ -1294,23 +1319,27 @@ static void rna_Action_frame_range_set(PointerRNA *ptr, const float *values)
 static void rna_Action_curve_frame_range_get(PointerRNA *ptr, float *values)
 { /* don't include modifiers because they too easily can have very large
    * ranges: MINAFRAMEF to MAXFRAMEF. */
-  BKE_action_frame_range_calc((bAction *)ptr->owner_id, false, values, values + 1);
+  const float2 frame_range = rna_action(ptr).get_frame_range_of_keys(false);
+  values[0] = frame_range[0];
+  values[1] = frame_range[1];
 }
 
 static void rna_Action_use_frame_range_set(PointerRNA *ptr, bool value)
 {
-  bAction *data = (bAction *)ptr->owner_id;
+  animrig::Action &action = rna_action(ptr);
 
   if (value) {
     /* If the frame range is blank, initialize it by scanning F-Curves. */
-    if ((data->frame_start == data->frame_end) && (data->frame_start == 0)) {
-      BKE_action_frame_range_calc(data, false, &data->frame_start, &data->frame_end);
+    if ((action.frame_start == action.frame_end) && (action.frame_start == 0)) {
+      const float2 frame_range = action.get_frame_range_of_keys(false);
+      action.frame_start = frame_range[0];
+      action.frame_end = frame_range[1];
     }
 
-    data->flag |= ACT_FRAME_RANGE;
+    action.flag |= ACT_FRAME_RANGE;
   }
   else {
-    data->flag &= ~ACT_FRAME_RANGE;
+    action.flag &= ~ACT_FRAME_RANGE;
   }
 }
 
@@ -1341,22 +1370,29 @@ static void rna_Action_deselect_keys(bAction *act)
 bool rna_Action_id_poll(PointerRNA *ptr, PointerRNA value)
 {
   ID *srcId = ptr->owner_id;
-  bAction *act = (bAction *)value.owner_id;
+  bAction *dna_action = (bAction *)value.owner_id;
 
-  if (act) {
+  if (!dna_action) {
+    return false;
+  }
+
+  animrig::Action &action = dna_action->wrap();
+  if (action.is_action_legacy()) {
     /* there can still be actions that will have undefined id-root
      * (i.e. floating "action-library" members) which we will not
      * be able to resolve an idroot for automatically, so let these through
      */
-    if (act->idroot == 0) {
+    if (action.idroot == 0) {
       return 1;
     }
     else if (srcId) {
-      return GS(srcId->name) == act->idroot;
+      return GS(srcId->name) == action.idroot;
     }
   }
 
-  return 0;
+  /* Layered Actions can always be assigned. */
+  BLI_assert(action.idroot == 0);
+  return true;
 }
 
 /* Used to check if an action (value pointer)
@@ -1956,6 +1992,16 @@ static void rna_def_action_slot(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update_notifier(prop, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED);
+
+#    ifndef NDEBUG
+  /* Slot.debug_log_users() */
+  {
+    FunctionRNA *func;
+
+    func = RNA_def_function(srna, "debug_log_users", "rna_ActionSlot_debug_log_users");
+    RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
+  }
+#    endif
 }
 
 static void rna_def_ActionLayer_strips(BlenderRNA *brna, PropertyRNA *cprop)

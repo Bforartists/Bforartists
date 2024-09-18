@@ -25,7 +25,7 @@
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_meshdata_types.h"
 
-#include "BKE_action.h"
+#include "BKE_action.hh"
 #include "BKE_armature.hh"
 #include "BKE_context.hh"
 #include "BKE_deform.hh"
@@ -516,7 +516,7 @@ static bool gpencil_generate_weights_poll(bContext *C)
   ViewLayer *view_layer = CTX_data_view_layer(C);
   bGPdata *gpd = (bGPdata *)ob->data;
 
-  if (BLI_listbase_count(&gpd->layers) == 0) {
+  if (BLI_listbase_is_empty(&gpd->layers)) {
     return false;
   }
 

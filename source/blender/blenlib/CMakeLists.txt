@@ -323,6 +323,7 @@ set(SRC
   BLI_math_vector.hh
   BLI_math_vector_mpq_types.hh
   BLI_math_vector_types.hh
+  BLI_math_vector_unroll.hh
   BLI_memarena.h
   BLI_memblock.h
   BLI_memiter.h
@@ -577,6 +578,7 @@ if(WITH_GTESTS)
     tests/BLI_mesh_boolean_test.cc
     tests/BLI_mesh_intersect_test.cc
     tests/BLI_multi_value_map_test.cc
+    tests/BLI_offset_indices_test.cc
     tests/BLI_path_util_test.cc
     tests/BLI_polyfill_2d_test.cc
     tests/BLI_pool_test.cc

@@ -5,7 +5,7 @@
 #include "ANIM_action.hh"
 #include "ANIM_keyframing.hh"
 
-#include "BKE_action.h"
+#include "BKE_action.hh"
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_armature.hh"
@@ -13,10 +13,13 @@
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
-#include "BKE_nla.h"
+#include "BKE_material.h"
+#include "BKE_mesh.hh"
+#include "BKE_nla.hh"
 #include "BKE_object.hh"
 
 #include "DNA_anim_types.h"
+#include "DNA_material_types.h"
 #include "DNA_object_types.h"
 
 #include "RNA_access.hh"
@@ -49,6 +52,14 @@ class KeyframingTest : public testing::Test {
   Object *object_with_nla;
   PointerRNA object_with_nla_rna_pointer;
   bAction *nla_action;
+
+  /* For action reuse testing. */
+  Object *cube;
+  PointerRNA cube_rna_pointer;
+  Mesh *cube_mesh;
+  PointerRNA cube_mesh_rna_pointer;
+  Material *material;
+  PointerRNA material_rna_pointer;
 
   static void SetUpTestSuite()
   {
@@ -96,11 +107,25 @@ class KeyframingTest : public testing::Test {
     object_with_nla_rna_pointer = RNA_id_pointer_create(&object_with_nla->id);
     nla_action = static_cast<bAction *>(BKE_id_new(bmain, ID_AC, "NLAAction"));
 
+    cube = BKE_object_add_only_object(bmain, OB_MESH, "cube");
+    cube_rna_pointer = RNA_id_pointer_create(&cube->id);
+    cube_mesh = BKE_mesh_add(bmain, "cube_mesh");
+    cube_mesh_rna_pointer = RNA_id_pointer_create(&cube_mesh->id);
+    /* Removing the implicit id user. Using BKE_mesh_assign_object increments the user count which
+     * would leave it at 2 otherwise. */
+    id_us_min(&cube_mesh->id);
+    BKE_mesh_assign_object(bmain, cube, cube_mesh);
+    material = BKE_material_add(bmain, "material");
+    material_rna_pointer = RNA_id_pointer_create(&material->id);
+
+    id_us_min(&material->id);
+    BKE_object_material_assign(bmain, cube, material, 0, BKE_MAT_ASSIGN_OBDATA);
+
     /* Set up an NLA system with a single NLA track with a single offset-in-time
      * NLA strip, and make that strip active and in tweak mode. */
     AnimData *adt = BKE_animdata_ensure_id(&object_with_nla->id);
     NlaTrack *track = BKE_nlatrack_new_head(&adt->nla_tracks, false);
-    NlaStrip *strip = BKE_nlastack_add_strip(adt, nla_action, false);
+    NlaStrip *strip = BKE_nlastack_add_strip({object_with_nla->id, *adt}, nla_action, false);
     track->flag |= NLATRACK_ACTIVE;
     strip->flag |= NLASTRIP_FLAG_ACTIVE;
     strip->start = -10.0;
@@ -109,7 +134,7 @@ class KeyframingTest : public testing::Test {
     strip->actend = 1000.0;
     strip->scale = 1.0;
     strip->blendmode = NLASTRIP_MODE_COMBINE;
-    BKE_nla_tweakmode_enter(adt);
+    BKE_nla_tweakmode_enter({object_with_nla->id, *adt});
   }
 
   void TearDown() override
@@ -216,6 +241,190 @@ TEST_F(KeyframingTest, insert_keyframes__layered_action__non_array_property)
   EXPECT_EQ(86.0, fcurve->bezt[0].vec[1][1]);
   EXPECT_EQ(10.0, fcurve->bezt[1].vec[1][0]);
   EXPECT_EQ(7.0, fcurve->bezt[1].vec[1][1]);
+}
+
+TEST_F(KeyframingTest, insert_keyframes__layered_action__action_reuse)
+{
+  /* Turn on Baklava experimental flag. */
+  U.flag |= USER_DEVELOPER_UI;
+  U.experimental.use_animation_baklava = 1;
+
+  AnimationEvalContext anim_eval_context = {nullptr, 1.0};
+  CombinedKeyingResult result_ob;
+  result_ob = insert_keyframes(bmain,
+                               &armature_object_rna_pointer,
+                               std::nullopt,
+                               {{"location"}},
+                               10.0,
+                               anim_eval_context,
+                               BEZT_KEYTYPE_KEYFRAME,
+                               INSERTKEY_NOFLAGS);
+
+  ASSERT_EQ(result_ob.get_count(SingleKeyingResult::SUCCESS), 3);
+  ASSERT_TRUE(armature_object->adt != nullptr);
+  ASSERT_TRUE(armature_object->adt->action != nullptr);
+
+  PointerRNA armature_rna_pointer = RNA_id_pointer_create(&armature->id);
+
+  result_ob = insert_keyframes(bmain,
+                               &armature_rna_pointer,
+                               std::nullopt,
+                               {{"display_type"}},
+                               10.0,
+                               anim_eval_context,
+                               BEZT_KEYTYPE_KEYFRAME,
+                               INSERTKEY_NOFLAGS);
+  ASSERT_EQ(result_ob.get_count(SingleKeyingResult::SUCCESS), 1);
+  ASSERT_TRUE(armature->adt != nullptr);
+  ASSERT_TRUE(armature->adt->action != nullptr);
+
+  /* Action is expected to be reused between object and data. */
+  ASSERT_EQ(armature->adt->action, armature_object->adt->action);
+
+  Action &action = armature->adt->action->wrap();
+  /* Should have two slots now. */
+  ASSERT_EQ(action.slot_array_num, 2);
+  for (Slot *slot : action.slots()) {
+    ASSERT_TRUE(slot->idtype == ID_AR || slot->idtype == ID_OB);
+  }
+
+  U.experimental.use_animation_baklava = 0;
+  U.flag &= ~USER_DEVELOPER_UI;
+}
+
+TEST_F(KeyframingTest, insert_keyframes__layered_action__action_reuse_material)
+{
+  U.flag |= USER_DEVELOPER_UI;
+  U.experimental.use_animation_baklava = 1;
+
+  AnimationEvalContext anim_eval_context = {nullptr, 1.0};
+  CombinedKeyingResult result_ob;
+
+  result_ob = insert_keyframes(bmain,
+                               &material_rna_pointer,
+                               std::nullopt,
+                               {{"pass_index"}},
+                               1.0,
+                               anim_eval_context,
+                               BEZT_KEYTYPE_KEYFRAME,
+                               INSERTKEY_NOFLAGS);
+
+  ASSERT_EQ(result_ob.get_count(SingleKeyingResult::SUCCESS), 1);
+  ASSERT_TRUE(material->adt != nullptr);
+  ASSERT_TRUE(material->adt->action != nullptr);
+
+  result_ob = insert_keyframes(bmain,
+                               &cube_rna_pointer,
+                               std::nullopt,
+                               {{"location"}},
+                               1.0,
+                               anim_eval_context,
+                               BEZT_KEYTYPE_KEYFRAME,
+                               INSERTKEY_NOFLAGS);
+
+  ASSERT_EQ(result_ob.get_count(SingleKeyingResult::SUCCESS), 3);
+  ASSERT_TRUE(cube->adt != nullptr);
+  ASSERT_TRUE(cube->adt->action != nullptr);
+
+  /* Actions are not shared between object and material. */
+  ASSERT_NE(cube->adt->action, material->adt->action);
+
+  result_ob = insert_keyframes(bmain,
+                               &cube_mesh_rna_pointer,
+                               std::nullopt,
+                               {{"remesh_voxel_size"}},
+                               1.0,
+                               anim_eval_context,
+                               BEZT_KEYTYPE_KEYFRAME,
+                               INSERTKEY_NOFLAGS);
+
+  ASSERT_EQ(result_ob.get_count(SingleKeyingResult::SUCCESS), 1);
+  ASSERT_TRUE(cube_mesh->adt != nullptr);
+  ASSERT_TRUE(cube_mesh->adt->action != nullptr);
+
+  /* Reuse between Object and object data. */
+  ASSERT_EQ(cube_mesh->adt->action, cube->adt->action);
+  /* Still no reuse from mesh to material. */
+  ASSERT_NE(cube_mesh->adt->action, material->adt->action);
+
+  Action &action = cube->adt->action->wrap();
+  /* Should have two slots now. */
+  ASSERT_EQ(action.slot_array_num, 2);
+
+  /* Material action should have only 1 slot. */
+  ASSERT_EQ(material->adt->action->wrap().slot_array_num, 1);
+
+  for (Slot *slot : action.slots()) {
+    ASSERT_TRUE(slot->idtype == ID_ME || slot->idtype == ID_OB);
+    ASSERT_NE(slot->idtype, ID_MA);
+  }
+
+  U.experimental.use_animation_baklava = 0;
+  U.flag &= ~USER_DEVELOPER_UI;
+}
+
+TEST_F(KeyframingTest, insert_keyframes__layered_action__action_reuse_multiuser)
+{
+  U.flag |= USER_DEVELOPER_UI;
+  U.experimental.use_animation_baklava = 1;
+
+  Object *another_object = BKE_object_add_only_object(bmain, OB_MESH, "another_object");
+  PointerRNA another_object_rna_pointer = RNA_id_pointer_create(&another_object->id);
+  BKE_mesh_assign_object(bmain, another_object, cube_mesh);
+
+  ASSERT_EQ(ID_REFCOUNTING_USERS(&cube_mesh->id), 2);
+
+  AnimationEvalContext anim_eval_context = {nullptr, 1.0};
+  CombinedKeyingResult result_ob;
+
+  result_ob = insert_keyframes(bmain,
+                               &cube_rna_pointer,
+                               std::nullopt,
+                               {{"location"}},
+                               1.0,
+                               anim_eval_context,
+                               BEZT_KEYTYPE_KEYFRAME,
+                               INSERTKEY_NOFLAGS);
+
+  ASSERT_EQ(result_ob.get_count(SingleKeyingResult::SUCCESS), 3);
+  ASSERT_TRUE(cube->adt != nullptr);
+  ASSERT_TRUE(cube->adt->action != nullptr);
+
+  result_ob = insert_keyframes(bmain,
+                               &cube_mesh_rna_pointer,
+                               std::nullopt,
+                               {{"remesh_voxel_size"}},
+                               1.0,
+                               anim_eval_context,
+                               BEZT_KEYTYPE_KEYFRAME,
+                               INSERTKEY_NOFLAGS);
+
+  ASSERT_EQ(result_ob.get_count(SingleKeyingResult::SUCCESS), 1);
+  ASSERT_TRUE(cube_mesh->adt != nullptr);
+  ASSERT_TRUE(cube_mesh->adt->action != nullptr);
+
+  /* When an ID is used more than once, the action should not be reused. */
+  ASSERT_NE(cube->adt->action, cube_mesh->adt->action);
+
+  result_ob = insert_keyframes(bmain,
+                               &another_object_rna_pointer,
+                               std::nullopt,
+                               {{"location"}},
+                               1.0,
+                               anim_eval_context,
+                               BEZT_KEYTYPE_KEYFRAME,
+                               INSERTKEY_NOFLAGS);
+
+  ASSERT_EQ(result_ob.get_count(SingleKeyingResult::SUCCESS), 3);
+  ASSERT_TRUE(another_object->adt != nullptr);
+  ASSERT_TRUE(another_object->adt->action != nullptr);
+
+  /* Given that those two objects are connected by a mesh (which due to this has two users) the
+   * action shouldn't be reused between them. */
+  ASSERT_NE(cube->adt->action, another_object->adt->action);
+
+  U.experimental.use_animation_baklava = 0;
+  U.flag &= ~USER_DEVELOPER_UI;
 }
 
 /* Keying a single element of an array property. */
@@ -441,7 +650,8 @@ TEST_F(KeyframingTest, insert_keyframes__layered_action__multiple_ids)
   ASSERT_NE(nullptr, channel_bag_1);
 
   /* Assign the action to the second object, with no slot. */
-  action.assign_id(nullptr, armature_object->id);
+  assign_action(&action, armature_object->id);
+  ASSERT_EQ(assign_action_slot(nullptr, armature_object->id), ActionSlotAssignmentResult::OK);
 
   /* Keying the second object should go into the same action, creating a new
    * slot and channel bag. */

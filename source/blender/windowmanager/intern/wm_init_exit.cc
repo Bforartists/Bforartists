@@ -474,7 +474,8 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
       /* Save quit.blend. */
       Main *bmain = CTX_data_main(C);
       char filepath[FILE_MAX];
-      const int fileflags = G.fileflags & ~G_FILE_COMPRESS;
+      int fileflags = G.fileflags & ~G_FILE_COMPRESS;
+      fileflags |= G_FILE_RECOVER_WRITE;
 
       BLI_path_join(filepath, sizeof(filepath), BKE_tempdir_base(), BLENDER_QUIT_FILE);
 
@@ -655,6 +656,7 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
     DRW_gpu_context_enable_ex(false);
     UI_exit();
     GPU_pass_cache_free();
+    GPU_shader_cache_dir_clear_old();
     GPU_exit();
     DRW_gpu_context_disable_ex(false);
     DRW_gpu_context_destroy();
@@ -689,10 +691,6 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
   wm_autosave_delete();
 
   BKE_tempdir_session_purge();
-
-#if defined(WITH_OPENGL_BACKEND) && BLI_SUBPROCESS_SUPPORT
-  GPU_shader_cache_dir_clear_old();
-#endif
 
   /* Logging cannot be called after exiting (#CLOG_INFO, #CLOG_WARN etc will crash).
    * So postpone exiting until other sub-systems that may use logging have shut down. */
