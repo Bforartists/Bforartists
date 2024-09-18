@@ -113,10 +113,6 @@ if(WITH_HEADLESS)
 endif()
 
 if(WITH_SDL)
-  if(WITH_SDL_DYNLOAD)
-    list(APPEND INC ../../extern/sdlew/include)
-    add_definitions(-DWITH_SDL_DYNLOAD)
-  endif()
   add_definitions(-DWITH_SDL)
 endif()
 
@@ -745,7 +741,7 @@ if(UNIX AND NOT APPLE)
       )
 
       # Remove from old location, so existing builds don't start with software
-      # OpenGL now that the lib/ folder is used for other libraries.
+      # OpenGL now that the `./lib/` directory is used for other libraries.
       install(
         CODE "\
 file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/libGL.so)\n
@@ -1024,7 +1020,7 @@ elseif(WIN32)
       ALL
     )
   endif()
-  # 4.1 fftw libs need to be installed, in 4.2 fftw got turned into a static lib
+  # 4.1 FFTW libs need to be installed, in 4.2 FFTW got turned into a static lib
   # and the files below no longer exist.
   if(EXISTS ${LIBDIR}/fftw3/lib/fftw3.dll)
     windows_install_shared_manifest(
@@ -1035,7 +1031,7 @@ elseif(WIN32)
     )
   endif()
   if(MSVC_ASAN)
-    # The ASAN DLL's can be found in the same folder as the compiler,
+    # The ASAN DLL's can be found in the same directory as the compiler,
     # this is the easiest way to find these.
     string(
       REPLACE "cl.exe" "clang_rt.asan_dynamic-x86_64.dll"
@@ -1303,9 +1299,8 @@ elseif(WIN32)
         )
       endif()
 
-      # This will not exist for 3.4 and earlier lib folders
-      # to ease the transition, support both 3.4 and 3.5 lib
-      # folders.
+      # This will not exist for 3.4 and earlier `./lib` directory
+      # to ease the transition, support both 3.4 and 3.5 `./lib` directories.
       if(EXISTS ${USD_LIBRARY_DIR}/python/)
         install(
           DIRECTORY ${USD_LIBRARY_DIR}/python/
@@ -1327,9 +1322,8 @@ elseif(WIN32)
         )
       endif()
 
-      # This will not exist for 3.4 and earlier lib folders
-      # to ease the transition, support both 3.4 and 3.5 lib
-      # folders.
+      # This will not exist for 3.4 and earlier `./lib` directories
+      # to ease the transition, support both 3.4 and 3.5 `./lib` directories.
       if(EXISTS ${LIBDIR}/openvdb/python/pyopenvdb_d.pyd)
         install(
           FILES ${LIBDIR}/openvdb/python/pyopenvdb_d.pyd
@@ -1343,7 +1337,7 @@ elseif(WIN32)
         )
       endif()
 
-      # this will exist for 4.1 lib folders
+      # This will exist for 4.1 `./lib` directories.
       if(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
         set(_openvdb_arch arm64)
       else()
@@ -1849,8 +1843,8 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
     endif()
   endif()
   if(WIN32)
-    # If this file exists we are building against a 3.5 22.03 library folder
-    # that needs these dll's installed.
+    # If this file exists we are building against a 3.5 22.03 library directory
+    # that needs these DLL's installed.
     if(EXISTS ${LIBDIR}/usd/lib/usd_usd_ms.dll)
       windows_install_shared_manifest(FILES
         ${LIBDIR}/usd/lib/usd_usd_ms.dll
@@ -1861,8 +1855,8 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
         DEBUG
       )
     endif()
-    # If this file exists we are building against a 3.5 22.11 library folder
-    # that needs these dll's installed.
+    # If this file exists we are building against a 3.5 22.11 library directory
+    # that needs these DLL's installed.
     if(EXISTS ${LIBDIR}/usd/lib/usd_ms.dll)
       windows_install_shared_manifest(FILES
         ${LIBDIR}/usd/lib/usd_ms.dll

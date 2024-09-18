@@ -9,7 +9,7 @@
 #include <iostream>
 #include <optional>
 
-#include "BKE_action.h"
+#include "BKE_action.hh"
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_bake_data_block_id.hh"
@@ -1882,6 +1882,8 @@ static void grease_pencil_evaluate_modifiers(Depsgraph *depsgraph,
       continue;
     }
 
+    blender::bke::ScopedModifierTimer modifier_timer{*md};
+
     if (mti->modify_geometry_set != nullptr) {
       mti->modify_geometry_set(tmd, &mectx, &geometry_set);
     }
@@ -1896,6 +1898,8 @@ static void grease_pencil_evaluate_modifiers(Depsgraph *depsgraph,
     {
       continue;
     }
+
+    blender::bke::ScopedModifierTimer modifier_timer{*md};
 
     if (mti->modify_geometry_set != nullptr) {
       mti->modify_geometry_set(md, &mectx, &geometry_set);
@@ -1954,6 +1958,131 @@ void BKE_grease_pencil_duplicate_drawing_array(const GreasePencil *grease_pencil
       grease_pencil_src->drawing_array_num, __func__);
   bke::greasepencil::copy_drawing_array(grease_pencil_src->drawings(),
                                         grease_pencil_dst->drawings());
+}
+
+/** \} */
+
+/* ------------------------------------------------------------------- */
+/** \name Grease Pencil origin functions
+ *  \note Used for "move only origins" in object_data_transform.cc.
+ * \{ */
+
+int BKE_grease_pencil_stroke_point_count(const GreasePencil &grease_pencil)
+{
+  using namespace blender;
+
+  int total_points = 0;
+
+  for (const int layer_i : grease_pencil.layers().index_range()) {
+    const bke::greasepencil::Layer &layer = *grease_pencil.layer(layer_i);
+    const Map<bke::greasepencil::FramesMapKeyT, GreasePencilFrame> frames = layer.frames();
+    frames.foreach_item(
+        [&](const bke::greasepencil::FramesMapKeyT /*key*/, const GreasePencilFrame frame) {
+          const GreasePencilDrawingBase *base = grease_pencil.drawing(frame.drawing_index);
+          if (base->type != GP_DRAWING) {
+            return;
+          }
+          const bke::greasepencil::Drawing &drawing =
+              reinterpret_cast<const GreasePencilDrawing *>(base)->wrap();
+          const bke::CurvesGeometry &curves = drawing.strokes();
+          total_points += curves.points_num();
+        });
+  }
+
+  return total_points;
+}
+
+void BKE_grease_pencil_point_coords_get(const GreasePencil &grease_pencil,
+                                        GreasePencilPointCoordinates *elem_data)
+{
+  using namespace blender;
+
+  for (const int layer_i : grease_pencil.layers().index_range()) {
+    const bke::greasepencil::Layer &layer = *grease_pencil.layer(layer_i);
+    const float4x4 layer_to_object = layer.local_transform();
+    const Map<bke::greasepencil::FramesMapKeyT, GreasePencilFrame> frames = layer.frames();
+    frames.foreach_item(
+        [&](const bke::greasepencil::FramesMapKeyT /*key*/, const GreasePencilFrame frame) {
+          const GreasePencilDrawingBase *base = grease_pencil.drawing(frame.drawing_index);
+          if (base->type != GP_DRAWING) {
+            return;
+          }
+          const bke::greasepencil::Drawing &drawing =
+              reinterpret_cast<const GreasePencilDrawing *>(base)->wrap();
+          const bke::CurvesGeometry &curves = drawing.strokes();
+          const Span<float3> positions = curves.positions();
+          const VArray<float> radii = drawing.radii();
+
+          for (const int i : curves.points_range()) {
+            copy_v3_v3(elem_data->co, math::transform_point(layer_to_object, positions[i]));
+            elem_data->radius = radii[i];
+            elem_data++;
+          }
+        });
+  }
+}
+
+void BKE_grease_pencil_point_coords_apply(GreasePencil &grease_pencil,
+                                          GreasePencilPointCoordinates *elem_data)
+{
+  using namespace blender;
+
+  for (const int layer_i : grease_pencil.layers().index_range()) {
+    bke::greasepencil::Layer &layer = *grease_pencil.layer(layer_i);
+    const float4x4 layer_to_object = layer.local_transform();
+    const float4x4 object_to_layer = math::invert(layer_to_object);
+    const Map<bke::greasepencil::FramesMapKeyT, GreasePencilFrame> frames = layer.frames();
+    frames.foreach_item([&](bke::greasepencil::FramesMapKeyT /*key*/, GreasePencilFrame frame) {
+      GreasePencilDrawingBase *base = grease_pencil.drawing(frame.drawing_index);
+      if (base->type != GP_DRAWING) {
+        return;
+      }
+      bke::greasepencil::Drawing &drawing = reinterpret_cast<GreasePencilDrawing *>(base)->wrap();
+      bke::CurvesGeometry &curves = drawing.strokes_for_write();
+
+      MutableSpan<float3> positions = curves.positions_for_write();
+      MutableSpan<float> radii = drawing.radii_for_write();
+
+      for (const int i : curves.points_range()) {
+        positions[i] = math::transform_point(object_to_layer, float3(elem_data->co));
+        radii[i] = elem_data->radius;
+        elem_data++;
+      }
+    });
+  }
+}
+
+void BKE_grease_pencil_point_coords_apply_with_mat4(GreasePencil &grease_pencil,
+                                                    GreasePencilPointCoordinates *elem_data,
+                                                    const blender::float4x4 &mat)
+{
+  using namespace blender;
+
+  const float scalef = mat4_to_scale(mat.ptr());
+
+  for (const int layer_i : grease_pencil.layers().index_range()) {
+    bke::greasepencil::Layer &layer = *grease_pencil.layer(layer_i);
+    const float4x4 layer_to_object = layer.local_transform();
+    const float4x4 object_to_layer = math::invert(layer_to_object);
+    const Map<bke::greasepencil::FramesMapKeyT, GreasePencilFrame> frames = layer.frames();
+    frames.foreach_item([&](bke::greasepencil::FramesMapKeyT /*key*/, GreasePencilFrame frame) {
+      GreasePencilDrawingBase *base = grease_pencil.drawing(frame.drawing_index);
+      if (base->type != GP_DRAWING) {
+        return;
+      }
+      bke::greasepencil::Drawing &drawing = reinterpret_cast<GreasePencilDrawing *>(base)->wrap();
+      bke::CurvesGeometry &curves = drawing.strokes_for_write();
+
+      MutableSpan<float3> positions = curves.positions_for_write();
+      MutableSpan<float> radii = drawing.radii_for_write();
+
+      for (const int i : curves.points_range()) {
+        positions[i] = math::transform_point(object_to_layer * mat, float3(elem_data->co));
+        radii[i] = elem_data->radius * scalef;
+        elem_data++;
+      }
+    });
+  }
 }
 
 /** \} */
