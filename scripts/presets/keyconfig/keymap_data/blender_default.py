@@ -2315,7 +2315,9 @@ def km_file_browser(params):
          {"properties": [("data_path", 'space_data.show_region_tool_props')]}),
         ("file.parent", {"type": 'UP_ARROW', "value": 'PRESS', "alt": True}, None),
         ("file.previous", {"type": 'LEFT_ARROW', "value": 'PRESS', "alt": True}, None),
+        ("file.previous", {"type": 'BUTTON4MOUSE', "value": 'PRESS'}, None),
         ("file.next", {"type": 'RIGHT_ARROW', "value": 'PRESS', "alt": True}, None),
+        ("file.next", {"type": 'BUTTON5MOUSE', "value": 'PRESS'}, None),
         # The two refresh operators have polls excluding each other (so only one is available depending on context).
         ("file.refresh", {"type": 'R', "value": 'PRESS'}, None),
         ("asset.library_refresh", {"type": 'R', "value": 'PRESS'}, None),
@@ -4634,6 +4636,8 @@ def km_grease_pencil_brush_stroke(_params):
          {"properties": [("mode", 'ERASE')]}),
         ("grease_pencil.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
          {"properties": [("mode", 'SMOOTH')]}),
+        ("grease_pencil.brush_stroke", {"type": 'ERASER', "value": 'PRESS'},
+         {"properties": [("mode", 'ERASE')]}),
         # Brush size
         ("wm.radial_control", {"type": 'F', "value": 'PRESS'},
          {"properties": [("data_path_primary", 'tool_settings.gpencil_paint.brush.size')]}),
@@ -4839,7 +4843,35 @@ def km_grease_pencil_weight_paint(params):
     return keymap
 
 
+def km_grease_pencil_vertex_paint(params):
+    items = []
+    keymap = (
+        "Grease Pencil Vertex Paint",
+        {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+        {"items": items}
+    )
+
+    items.extend([
+        # Paint vertex
+        ("grease_pencil.vertex_brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+        ("grease_pencil.vertex_brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+         {"properties": [("mode", 'INVERT')]}),
+        # Increase/Decrease brush size
+        ("brush.scale_size", {"type": 'LEFT_BRACKET', "value": 'PRESS', "repeat": True},
+         {"properties": [("scalar", 0.9)]}),
+        ("brush.scale_size", {"type": 'RIGHT_BRACKET', "value": 'PRESS', "repeat": True},
+         {"properties": [("scalar", 1.0 / 0.9)]}),
+        # Radial controls
+        *_template_paint_radial_control("gpencil_vertex_paint"),
+        # Context menu
+        *_template_items_context_panel("VIEW3D_PT_greasepencil_vertex_paint_context_menu", params.context_menu_event),
+    ])
+
+    return keymap
+
 # Grease Pencil v3 Fill Tool.
+
+
 def km_grease_pencil_fill_tool(_params):
     items = []
     keymap = (
@@ -8608,12 +8640,12 @@ def km_3d_view_tool_paint_gpencil_cutter(params):
     )
 
 
-def km_3d_view_tool_paint_grease_pencil_cutter(params):
+def km_3d_view_tool_paint_grease_pencil_trim(params):
     return (
-        "3D View Tool: Paint Grease Pencil, Cutter",
+        "3D View Tool: Paint Grease Pencil, Trim",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            ("grease_pencil.stroke_cutter", {"type": params.tool_mouse, "value": 'PRESS'}, None),
+            ("grease_pencil.stroke_trim", {"type": params.tool_mouse, "value": 'PRESS'}, None),
         ]},
     )
 
@@ -9145,6 +9177,7 @@ def generate_keymaps(params=None):
         km_grease_pencil_edit_mode(params),
         km_grease_pencil_sculpt_mode(params),
         km_grease_pencil_weight_paint(params),
+        km_grease_pencil_vertex_paint(params),
         km_grease_pencil_brush_stroke(params),
         km_grease_pencil_fill_tool(params),
         # Object mode.
@@ -9346,7 +9379,7 @@ def generate_keymaps(params=None):
           for fallback in (False, True)),
         *(km_sequencer_editor_tool_generic_select_box_preview(params, fallback=fallback)
           for fallback in (False, True)),
-        km_3d_view_tool_paint_grease_pencil_cutter(params),
+        km_3d_view_tool_paint_grease_pencil_trim(params),
         km_sequencer_editor_tool_generic_cursor(params),
         km_sequencer_editor_tool_blade(params),
         km_sequencer_editor_tool_sample(params),

@@ -37,7 +37,8 @@ class ModifierAddMenu:
         ).type = mod_type
 
 
-class DATA_PT_modifiers_special(Menu):
+# BFA - menu
+class DATA_MT_modifiers_special(Menu):
     bl_label = "Modifiers Special"
 
     def draw(self, _context):
@@ -82,14 +83,14 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
             col1.operator("object.add_modifier_menu", icon='ADD')
             row = col2.row()
             row.operator("object.add_asset_modifier_menu", icon='ADD')
-            row.menu("DATA_PT_modifiers_special", icon='DOWNARROW_HLT', text="")
+            row.menu("DATA_MT_modifiers_special", icon='DOWNARROW_HLT', text="")
 
         else:
             row = layout.row()
             row.operator("object.add_modifier_menu", icon='ADD')
             if geometry_nodes_supported:
                 row.operator("object.add_asset_modifier_menu", icon='ADD')
-            row.menu("DATA_PT_modifiers_special", icon='DOWNARROW_HLT', text="")
+            row.menu("DATA_MT_modifiers_special", icon='DOWNARROW_HLT', text="")
 
         layout.template_modifiers()
 
@@ -441,7 +442,7 @@ class AddModifierMenu(Operator):
 
 classes = (
     DATA_PT_modifiers,
-    DATA_PT_modifiers_special, # bfa - former VIEW3D_MT_object_modifiers menu from the object menu
+    DATA_MT_modifiers_special, # bfa - former VIEW3D_MT_object_modifiers menu from the object menu
     OBJECT_MT_modifier_add,
     OBJECT_MT_modifier_add_edit,
     OBJECT_MT_modifier_add_generate,
