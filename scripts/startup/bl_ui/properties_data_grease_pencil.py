@@ -2,10 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 import bpy
-from bpy.types import Panel, Menu, UIList
+from bpy.types import Panel, Menu, UIList, Operator # BFA - needed for move layer up and down operators
 from rna_prop_ui import PropertyPanel
 from .space_properties import PropertiesAnimationMixin
 
+# BFA - needed for move layer up and down operators
+from bpy.props import (
+    EnumProperty,
+)
 
 class DataButtonsPanel:
     bl_space_type = 'PROPERTIES'
@@ -234,9 +238,16 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         sub = col.column(align=True)
         sub.operator_context = 'EXEC_DEFAULT'
         sub.operator("grease_pencil.layer_add", icon='ADD', text="")
-        sub.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="")
+        sub.operator("grease_pencil.layer_remove", icon='REMOVE', text="") # BFA - moved to sub
 
-        col.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
+        col.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="") # BFA - moved below per standards
+
+        sub = col.column(align=True)
+        sub.operator_context = 'EXEC_DEFAULT'
+        sub.operator("grease_pencil.interface_item_move", icon='TRIA_UP', text="").direction = 'UP' # BFA operator for GUI buttons to re-order
+        sub.operator("grease_pencil.interface_item_move", icon='TRIA_DOWN', text="").direction = 'DOWN' # BFA operator for GUI buttons to re-order
+
+        col.separator()
 
         if not layer:
             return
@@ -258,7 +269,7 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         row.prop_decorator(layer, "use_lights")
 
 
-class DATA_PT_grease_pencil_layer_masks(LayerDataButtonsPanel, GreasePencil_LayerMaskPanel, Panel):
+class DATA_PT_grease_pencil_layer_masks(LayerDataButtonsPanel, GreasePencil_LayerMaskPanel, Panel):#
     bl_label = "Masks"
     bl_parent_id = "DATA_PT_grease_pencil_layers"
     bl_options = {'DEFAULT_CLOSED'}
@@ -364,6 +375,47 @@ class DATA_PT_grease_pencil_custom_props(DataButtonsPanel, PropertyPanel, Panel)
     _property_type = bpy.types.GreasePencilv3
 
 
+
+## BFA - BFA operator for GUI buttons to re-order items - Start
+class GREASE_PENCIL_OT_interface_item_move(DataButtonsPanel, Operator):
+    '''Move the active layer or group to the specified direction\nYou can also alternatively drag and drop the active layer or group to reorder'''
+    bl_idname = "grease_pencil.interface_item_move"
+    bl_label = "Move Item"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    direction: EnumProperty(
+        name="Direction",
+        description="Specifies which direction the active item is moved towards",
+        items=(
+            ('UP', "Move Up", ""),
+            ('DOWN', "Move Down", "")
+        ),
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return context.grease_pencil is not None and context.grease_pencil.layers.active is not None
+
+    def execute(self, context):
+        grease_pencil = context.grease_pencil
+        layers = grease_pencil.layers
+        active_layer = layers.active
+        active_layer_index = layers.find(active_layer.name)
+
+        if self.direction == 'DOWN':
+            # Move the active layer down
+            layers.move(active_layer, 'DOWN')  # Use the layer object instead of index
+            self.report({'INFO'}, 'Layer moved down')
+
+        elif self.direction == 'UP':
+            # Move the active layer up
+            layers.move(active_layer, 'UP')  # Use the layer object instead of index
+            self.report({'INFO'}, 'Layer moved up')
+
+        return {'FINISHED'}
+## BFA - BFA operator for GUI buttons to re-order items - End
+
+
 classes = (
     GREASE_PENCIL_UL_masks,
     GREASE_PENCIL_MT_layer_mask_add,
@@ -380,6 +432,7 @@ classes = (
     GREASE_PENCIL_MT_grease_pencil_add_layer_extra,
     GREASE_PENCIL_MT_group_context_menu,
     DATA_PT_grease_pencil_animation,
+    GREASE_PENCIL_OT_interface_item_move, # BFA - custom operators to move layers up and down
 )
 
 
