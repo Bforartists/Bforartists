@@ -1264,7 +1264,12 @@ enum eContextObjectMode CTX_data_mode_enum_ex(const Object *obedit,
         }
       }
       if (object_mode & OB_MODE_VERTEX_GPENCIL_LEGACY) {
-        return CTX_MODE_VERTEX_GPENCIL_LEGACY;
+        if (ob->type == OB_GPENCIL_LEGACY) {
+          return CTX_MODE_VERTEX_GPENCIL_LEGACY;
+        }
+        if (ob->type == OB_GREASE_PENCIL) {
+          return CTX_MODE_VERTEX_GREASE_PENCIL;
+        }
       }
       if (object_mode & OB_MODE_SCULPT_CURVES) {
         return CTX_MODE_SCULPT_CURVES;
@@ -1309,11 +1314,12 @@ static const char *data_mode_strings[] = {
     "greasepencil_edit", /*BFA - legacy*/
     "greasepencil_sculpt", /*BFA - legacy*/
     "greasepencil_weight", /*BFA - legacy*/
-    "greasepencil_vertex",
+    "greasepencil_vertex", /*BFA - legacy*/
     "curves_sculpt",
     "grease_pencil_paint", /*BFA - New*/
     "grease_pencil_sculpt", /*BFA - New*/
     "grease_pencil_weight", /*BFA - New*/
+	"grease_pencil_vertex", /*BFA - New*/
     nullptr,
 };
 BLI_STATIC_ASSERT(ARRAY_SIZE(data_mode_strings) == CTX_MODE_NUM + 1,
