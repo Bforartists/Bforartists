@@ -57,7 +57,7 @@
 #include "DNA_volume_types.h"
 #include "DNA_world_types.h"
 
-#include "BKE_action.h"
+#include "BKE_action.hh"
 #include "BKE_anim_data.hh"
 #include "BKE_armature.hh"
 #include "BKE_collection.hh"
@@ -1746,13 +1746,8 @@ void DepsgraphRelationBuilder::build_animdata_nlastrip_targets(ID *id,
       ComponentKey action_key(&strip->act->id, NodeType::ANIMATION);
       add_relation(action_key, adt_key, "Action -> Animation");
 
-      if (!strip->act->wrap().is_action_legacy()) {
-        /* TODO: add NLA support for layered actions. */
-        continue;
-      }
-      /* TODO: get slot handle from the owning ID. */
-      const animrig::slot_handle_t slot_handle = animrig::Slot::unassigned;
-      build_animdata_action_targets(id, slot_handle, adt_key, operation_from, strip->act);
+      build_animdata_action_targets(
+          id, strip->action_slot_handle, adt_key, operation_from, strip->act);
     }
     else if (strip->strips.first != nullptr) {
       build_animdata_nlastrip_targets(id, adt_key, operation_from, &strip->strips);

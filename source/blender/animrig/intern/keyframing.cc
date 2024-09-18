@@ -19,13 +19,13 @@
 #include "ANIM_rna.hh"
 #include "ANIM_visualkey.hh"
 
-#include "BKE_action.h"
+#include "BKE_action.hh"
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_fcurve.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
-#include "BKE_nla.h"
+#include "BKE_nla.hh"
 #include "BKE_report.hh"
 
 #include "DNA_scene_types.h"
@@ -533,7 +533,7 @@ static SingleKeyingResult insert_keyframe_fcurve_value(Main *bmain,
   const bool is_new_curve = (fcu->totvert == 0);
 
   /* If the curve has only one key, make it cyclic if appropriate. */
-  const bool is_cyclic_action = (flag & INSERTKEY_CYCLE_AWARE) && BKE_action_is_cyclic(act);
+  const bool is_cyclic_action = (flag & INSERTKEY_CYCLE_AWARE) && act->wrap().is_cyclic();
 
   if (is_cyclic_action && fcu->totvert == 1) {
     make_new_fcurve_cyclic(fcu, {act->frame_start, act->frame_end});
