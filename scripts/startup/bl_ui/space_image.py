@@ -72,6 +72,7 @@ class IMAGE_MT_view_legacy(Menu):
         layout.operator("uv.cursor_set", text="Set 2D Cursor", icon='CURSOR')
 
 
+# BFA - heavily modified, most props moved to options
 class IMAGE_MT_view(Menu):
     bl_label = "View"
 
@@ -85,6 +86,7 @@ class IMAGE_MT_view(Menu):
 
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
+        show_maskedit = sima.show_maskedit
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -112,8 +114,6 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        layout.separator()
-
         layout.menu("IMAGE_MT_view_annotations")
 
         layout.separator()
@@ -128,7 +128,7 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        if show_uvedit:
+        if show_uvedit or show_maskedit:
             layout.operator("image.view_selected", text="View Selected", icon='VIEW_SELECTED')
 
         layout.operator("image.view_all", text="Frame All", icon="VIEWALL")
@@ -911,7 +911,7 @@ class IMAGE_HT_tool_header(Header):
             draw_fn(context, layout, tool)
 
         if tool_mode == 'PAINT':
-            if (tool is not None) and tool.has_datablock:
+            if (tool is not None) and tool.use_brushes:
                 layout.popover("IMAGE_PT_paint_settings_advanced")
                 layout.popover("IMAGE_PT_paint_stroke")
                 layout.popover("IMAGE_PT_paint_curve")
@@ -935,7 +935,7 @@ class IMAGE_HT_tool_header(Header):
 class _draw_tool_settings_context_mode:
     @staticmethod
     def UV(context, layout, tool):
-        if tool and tool.has_datablock:
+        if tool and tool.use_brushes:
             if context.mode == 'EDIT_MESH':
                 tool_settings = context.tool_settings
                 uv_sculpt = tool_settings.uv_sculpt
@@ -964,7 +964,7 @@ class _draw_tool_settings_context_mode:
 
     @staticmethod
     def PAINT(context, layout, tool):
-        if (tool is None) or (not tool.has_datablock):
+        if (tool is None) or (not tool.use_brushes):
             return
 
         paint = context.tool_settings.image_paint
@@ -1290,7 +1290,7 @@ class IMAGE_PT_snapping(Panel):
         row.prop(tool_settings, "snap_angle_increment_2d", text="")
         row.prop(tool_settings, "snap_angle_increment_2d_precision", text="")
 
-# BFA
+# BFA menu
 class IMAGE_PT_image_options(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'

@@ -117,6 +117,22 @@ bool grease_pencil_weight_painting_poll(bContext *C)
   return true;
 }
 
+bool grease_pencil_vertex_painting_poll(bContext *C)
+{
+  if (!active_grease_pencil_poll(C)) {
+    return false;
+  }
+  Object *object = CTX_data_active_object(C);
+  if ((object->mode & OB_MODE_VERTEX_GPENCIL_LEGACY) == 0) {
+    return false;
+  }
+  ToolSettings *ts = CTX_data_tool_settings(C);
+  if (!ts || !ts->gp_vertexpaint) {
+    return false;
+  }
+  return true;
+}
+
 static void keymap_grease_pencil_edit_mode(wmKeyConfig *keyconf)
 {
   wmKeyMap *keymap = WM_keymap_ensure(
@@ -145,7 +161,14 @@ static void keymap_grease_pencil_weight_paint_mode(wmKeyConfig *keyconf)
   keymap->poll = grease_pencil_weight_painting_poll;
 }
 
-/* Enabled for all tools except the fill tool. */
+static void keymap_grease_pencil_vertex_paint_mode(wmKeyConfig *keyconf)
+{
+  wmKeyMap *keymap = WM_keymap_ensure(
+      keyconf, "Grease Pencil Vertex Paint", SPACE_EMPTY, RGN_TYPE_WINDOW);
+  keymap->poll = grease_pencil_vertex_painting_poll;
+}
+
+/* Enabled for all tools except the fill tool and primitive tools. */
 static bool keymap_grease_pencil_brush_stroke_poll(bContext *C)
 {
   if (!grease_pencil_painting_poll(C)) {
@@ -154,6 +177,24 @@ static bool keymap_grease_pencil_brush_stroke_poll(bContext *C)
   if (!WM_toolsystem_active_tool_is_brush(C)) {
     return false;
   }
+
+  /* Don't use the normal brush stroke keymap while the primitive tools are active. Otherwise
+   * simple mouse presses start freehand drawing instead of invoking the primitive operators. Could
+   * be a flag on the tool itself, for now making it a hardcoded exception. */
+  if (const bToolRef *tref = WM_toolsystem_ref_from_context(C)) {
+    const Set<StringRef> primitive_tools = {
+        "builtin.line",
+        "builtin.polyline",
+        "builtin.arc",
+        "builtin.curve",
+        "builtin.box",
+        "builtin.circle",
+    };
+    if (primitive_tools.contains(tref->idname)) {
+      return false;
+    }
+  }
+
   ToolSettings *ts = CTX_data_tool_settings(C);
   Brush *brush = BKE_paint_brush(&ts->gp_paint->paint);
   return brush && brush->gpencil_settings && brush->gpencil_brush_type != GPAINT_BRUSH_TYPE_FILL;
@@ -199,6 +240,7 @@ void ED_operatortypes_grease_pencil()
   ED_operatortypes_grease_pencil_material();
   ED_operatortypes_grease_pencil_primitives();
   ED_operatortypes_grease_pencil_weight_paint();
+  ED_operatortypes_grease_pencil_vertex_paint();
   ED_operatortypes_grease_pencil_interpolate();
   ED_operatortypes_grease_pencil_lineart();
   ED_operatortypes_grease_pencil_trace();
@@ -246,6 +288,7 @@ void ED_keymap_grease_pencil(wmKeyConfig *keyconf)
   keymap_grease_pencil_paint_mode(keyconf);
   keymap_grease_pencil_sculpt_mode(keyconf);
   keymap_grease_pencil_weight_paint_mode(keyconf);
+  keymap_grease_pencil_vertex_paint_mode(keyconf);
   keymap_grease_pencil_brush_stroke(keyconf);
   keymap_grease_pencil_fill_tool(keyconf);
   ED_primitivetool_modal_keymap(keyconf);

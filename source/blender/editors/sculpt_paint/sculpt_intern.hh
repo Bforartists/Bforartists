@@ -31,7 +31,6 @@
 
 namespace blender::ed::sculpt_paint {
 namespace auto_mask {
-struct NodeData;
 struct Cache;
 }
 namespace boundary {
@@ -45,7 +44,6 @@ struct IKChain;
 }
 namespace undo {
 struct Node;
-struct StepData;
 enum class Type : int8_t;
 }
 }
@@ -56,14 +54,10 @@ struct Image;
 struct ImageUser;
 struct KeyBlock;
 struct Object;
-struct SculptProjectVector;
 struct bContext;
 struct PaintModeSettings;
-struct WeightPaintInfo;
-struct WPaintData;
 struct wmKeyConfig;
 struct wmKeyMap;
-struct wmOperator;
 struct wmOperatorType;
 
 /* -------------------------------------------------------------------- */
@@ -492,7 +486,8 @@ const blender::float3 SCULPT_vertex_normal_get(const Depsgraph &depsgraph,
                                                const Object &object,
                                                PBVHVertRef vertex);
 
-bool SCULPT_vertex_is_occluded(const Object &object,
+bool SCULPT_vertex_is_occluded(const Depsgraph &depsgraph,
+                               const Object &object,
                                const blender::float3 &position,
                                bool original);
 
@@ -916,7 +911,8 @@ bool SCULPT_paint_image_canvas_get(PaintModeSettings &paint_mode_settings,
                                    Object &ob,
                                    Image **r_image,
                                    ImageUser **r_image_user) ATTR_NONNULL();
-void SCULPT_do_paint_brush_image(const Depsgraph &depsgraph,
+void SCULPT_do_paint_brush_image(const Scene &scene,
+                                 const Depsgraph &depsgraph,
                                  PaintModeSettings &paint_mode_settings,
                                  const Sculpt &sd,
                                  Object &ob,
@@ -947,9 +943,6 @@ BLI_INLINE bool SCULPT_brush_type_is_attribute_only(int tool)
          ELEM(tool, SCULPT_BRUSH_TYPE_DRAW_FACE_SETS);
 }
 
-void SCULPT_stroke_id_ensure(Object &ob);
-void SCULPT_stroke_id_next(Object &ob);
-
 namespace blender::ed::sculpt_paint {
 void ensure_valid_pivot(const Object &ob, Scene &scene);
 }
@@ -959,64 +952,4 @@ float sculpt_calc_radius(const ViewContext &vc,
                          const Brush &brush,
                          const Scene &scene,
                          float3 location);
-}
-
-inline void *SCULPT_vertex_attr_get(const PBVHVertRef vert, const SculptAttribute *attr)
-{
-  if (attr->data) {
-    char *p = (char *)attr->data;
-    int idx = (int)vert.i;
-
-    if (attr->data_for_bmesh) {
-      BMElem *v = (BMElem *)vert.i;
-      idx = v->head.index;
-    }
-
-    return p + attr->elem_size * idx;
-  }
-
-  BMElem *v = (BMElem *)vert.i;
-  return BM_ELEM_CD_GET_VOID_P(v, attr->bmesh_cd_offset);
-}
-inline void *SCULPT_vertex_attr_get(const int vert, const SculptAttribute *attr)
-{
-  if (attr->data) {
-    char *p = (char *)attr->data;
-
-    return p + attr->elem_size * vert;
-  }
-
-  BLI_assert_unreachable();
-  return nullptr;
-}
-
-inline void *SCULPT_vertex_attr_get(const CCGKey &key,
-                                    const SubdivCCGCoord vert,
-                                    const SculptAttribute *attr)
-{
-  if (attr->data) {
-    char *p = (char *)attr->data;
-    int idx = vert.to_index(key);
-
-    return p + attr->elem_size * idx;
-  }
-
-  BLI_assert_unreachable();
-  return nullptr;
-}
-
-inline void *SCULPT_vertex_attr_get(const BMVert *vert, const SculptAttribute *attr)
-{
-  if (attr->data) {
-    char *p = (char *)attr->data;
-    int idx = BM_elem_index_get(vert);
-
-    if (attr->data_for_bmesh) {
-      idx = vert->head.index;
-    }
-
-    return p + attr->elem_size * idx;
-  }
-
-  return BM_ELEM_CD_GET_VOID_P(vert, attr->bmesh_cd_offset);
 }
