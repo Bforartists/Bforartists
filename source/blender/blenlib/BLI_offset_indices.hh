@@ -5,6 +5,7 @@
 #pragma once
 
 #include <algorithm>
+#include <optional>
 
 #include "BLI_index_mask_fwd.hh"
 #include "BLI_index_range.hh"
@@ -148,6 +149,9 @@ template<typename T> struct GroupedSpan {
 OffsetIndices<int> accumulate_counts_to_offsets(MutableSpan<int> counts_to_offsets,
                                                 int start_offset = 0);
 
+std::optional<OffsetIndices<int>> accumulate_counts_to_offsets_with_overflow_check(
+    MutableSpan<int> counts_to_offsets, int start_offset = 0);
+
 /** Create offsets where every group has the same size. */
 void fill_constant_group_size(int size, int start_offset, MutableSpan<int> offsets);
 
@@ -156,8 +160,11 @@ void copy_group_sizes(OffsetIndices<int> offsets, const IndexMask &mask, Mutable
 
 /** Gather the number of indices in each indexed group to sizes. */
 void gather_group_sizes(OffsetIndices<int> offsets, const IndexMask &mask, MutableSpan<int> sizes);
-
 void gather_group_sizes(OffsetIndices<int> offsets, Span<int> indices, MutableSpan<int> sizes);
+
+/** Calculate the total size of all the referenced groups. */
+int sum_group_sizes(OffsetIndices<int> offsets, const IndexMask &mask);
+int sum_group_sizes(OffsetIndices<int> offsets, Span<int> indices);
 
 /** Build new offsets that contains only the groups chosen by \a selection. */
 OffsetIndices<int> gather_selected_offsets(OffsetIndices<int> src_offsets,
