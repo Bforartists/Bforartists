@@ -19,7 +19,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BKE_nla.h"
+#include "BKE_nla.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -114,7 +114,7 @@ const EnumPropertyItem rna_enum_keying_flag_api_items[] = {
 #  include "BKE_anim_data.hh"
 #  include "BKE_animsys.h"
 #  include "BKE_fcurve.hh"
-#  include "BKE_nla.h"
+#  include "BKE_nla.hh"
 
 #  include "DEG_depsgraph.hh"
 #  include "DEG_depsgraph_build.hh"
@@ -164,18 +164,14 @@ static PointerRNA rna_AnimData_action_get(PointerRNA *ptr)
 static void rna_AnimData_action_set(PointerRNA *ptr, PointerRNA value, ReportList * /*reports*/)
 {
 #  ifdef WITH_ANIM_BAKLAVA
+  using namespace blender::animrig;
   BLI_assert(ptr->owner_id);
   ID &animated_id = *ptr->owner_id;
 
   /* TODO: protect against altering action in NLA tweak mode, see BKE_animdata_action_editable() */
 
-  bAction *action = static_cast<bAction *>(value.data);
-  if (!action) {
-    blender::animrig::unassign_action(animated_id);
-    return;
-  }
-
-  blender::animrig::assign_action(action->wrap(), animated_id);
+  Action *action = static_cast<Action *>(value.data);
+  assign_action(action, animated_id);
 #  else
   ID *ownerId = ptr->owner_id;
   BKE_animdata_set_action(nullptr, ownerId, static_cast<bAction *>(value.data));
@@ -192,6 +188,7 @@ static void rna_AnimData_tmpact_set(PointerRNA *ptr, PointerRNA value, ReportLis
 
 static void rna_AnimData_tweakmode_set(PointerRNA *ptr, const bool value)
 {
+  ID *animated_id = ptr->owner_id;
   AnimData *adt = (AnimData *)ptr->data;
 
   /* NOTE: technically we should also set/unset SCE_NLA_EDIT_ON flag on the
@@ -200,10 +197,10 @@ static void rna_AnimData_tweakmode_set(PointerRNA *ptr, const bool value)
    * dealt with at some point. */
 
   if (value) {
-    BKE_nla_tweakmode_enter(adt);
+    BKE_nla_tweakmode_enter({*animated_id, *adt});
   }
   else {
-    BKE_nla_tweakmode_exit(adt);
+    BKE_nla_tweakmode_exit({*animated_id, *adt});
   }
 }
 
@@ -262,7 +259,8 @@ static void rna_AnimData_action_slot_handle_set(
   }
 
   blender::animrig::Slot *slot = action->slot_for_handle(new_slot_handle);
-  if (!action->assign_id(slot, animated_id)) {
+  /* TODO: switch over the possible assignment results, and improve the error message. */
+  if (assign_action_slot(slot, animated_id) != animrig::ActionSlotAssignmentResult::OK) {
     if (slot) {
       WM_reportf(RPT_ERROR,
                  "Action '%s' slot '%s' (%d) could not be assigned to %s",
@@ -309,45 +307,39 @@ static PointerRNA rna_AnimData_action_slot_get(PointerRNA *ptr)
 
 static void rna_AnimData_action_slot_set(PointerRNA *ptr, PointerRNA value, ReportList *reports)
 {
-  using animrig::Action;
-  using animrig::Slot;
+  using namespace blender::animrig;
 
   ID *animated_id = ptr->owner_id;
   BLI_assert(animated_id); /* Otherwise there is nothing to own this AnimData. */
 
-  /* A 'None' value for the slot is always valid, regardless of whether an
-   * Action was assigned or not. */
   ActionSlot *dna_slot = static_cast<ActionSlot *>(value.data);
-  if (!dna_slot) {
-    animrig::unassign_slot(*animated_id);
-    return;
-  }
+  Slot *slot = dna_slot ? &dna_slot->wrap() : nullptr;
 
-  AnimData &adt = rna_animdata(ptr);
-  if (!adt.action) {
-    BKE_report(reports, RPT_ERROR, "Cannot set slot without an assigned Action.");
-    return;
+  switch (assign_action_slot(slot, *animated_id)) {
+    case ActionSlotAssignmentResult::OK:
+      break;
+    case ActionSlotAssignmentResult::SlotNotFromAction:
+      BKE_reportf(
+          reports, RPT_ERROR, "This slot (%s) does not belong to the assigned Action", slot->name);
+      break;
+    case ActionSlotAssignmentResult::SlotNotSuitable:
+      BKE_reportf(reports,
+                  RPT_ERROR,
+                  "This slot (%s) is not suitable for this data-block type (%c%c)",
+                  slot->name,
+                  animated_id->name[0],
+                  animated_id->name[1]);
+      break;
+    case ActionSlotAssignmentResult::MissingAction:
+      BKE_report(reports, RPT_ERROR, "Cannot set slot without an assigned Action.");
+      break;
   }
-  BLI_assert(BKE_animdata_from_id(animated_id) == &adt);
+}
 
-  Action &action = adt.action->wrap();
-  Slot &slot = dna_slot->wrap();
-
-  if (!action.slots().as_span().contains(&slot)) {
-    BKE_reportf(reports,
-                RPT_ERROR,
-                "This slot (%s) does not belong to the assigned Action (%s)",
-                slot.name,
-                action.id.name + 2);
-    return;
-  }
-
-  if (!action.assign_id(&slot, *animated_id)) {
-    /* TODO: make assign_id() return a different type that gives us more info about what went
-     * wrong. */
-    BKE_reportf(reports, RPT_ERROR, "Cannot assign slot %s to %s.", slot.name, animated_id->name);
-    return;
-  }
+static void rna_AnimData_action_slot_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+  blender::animrig::Slot::users_invalidate(*bmain);
+  rna_AnimData_dependency_update(bmain, scene, ptr);
 }
 
 /* Skip any slot that is not suitable for the ID owning the AnimData. */
@@ -670,9 +662,9 @@ static void rna_KeyingSet_name_set(PointerRNA *ptr, const char *value)
         if (adt && adt->action) {
           bActionGroup *agrp;
 
-          /* lazy check - should really find the F-Curve for the affected path and check its group
-           * but this way should be faster and work well for most cases, as long as there are no
-           * conflicts
+          /* lazy check - should really find the F-Curve for the affected path and check its
+           * group but this way should be faster and work well for most cases, as long as there
+           * are no conflicts
            */
           for (agrp = static_cast<bActionGroup *>(adt->action->groups.first); agrp;
                agrp = agrp->next)
@@ -962,8 +954,8 @@ bool rna_AnimaData_override_apply(Main *bmain, RNAPropertyOverrideApplyContext &
   UNUSED_VARS_NDEBUG(ptr_storage, len_dst, len_src, len_storage, opop);
 
   /* AnimData is a special case, since you cannot edit/replace it, it's either existent or not.
-   * Further more, when an animdata is added to the linked reference later on, the one created for
-   * the liboverride needs to be 'merged', such that its overridable data is kept. */
+   * Further more, when an animdata is added to the linked reference later on, the one created
+   * for the liboverride needs to be 'merged', such that its overridable data is kept. */
   AnimData *adt_dst = static_cast<AnimData *>(RNA_property_pointer_get(ptr_dst, prop_dst).data);
   AnimData *adt_src = static_cast<AnimData *>(RNA_property_pointer_get(ptr_src, prop_src).data);
 
@@ -980,9 +972,9 @@ bool rna_AnimaData_override_apply(Main *bmain, RNAPropertyOverrideApplyContext &
     return true;
   }
   else if (adt_dst != nullptr && adt_src != nullptr) {
-    /* Override had to create an anim data, but now its reference also has one, need to merge them
-     * by keeping the few overridable data from the liboverride, while using the animdata of the
-     * reference.
+    /* Override had to create an anim data, but now its reference also has one, need to merge
+     * them by keeping the few overridable data from the liboverride, while using the animdata of
+     * the reference.
      *
      * Note that this case will not be encountered when the linked reference data already had
      * anim data, since there will be no operation for the animdata pointer itself then, only
@@ -1714,7 +1706,8 @@ static void rna_def_animdata(BlenderRNA *brna)
       "data-block, and its name is used to find the right slot when assigning an Action");
   RNA_def_property_pointer_funcs(
       prop, "rna_AnimData_action_slot_get", "rna_AnimData_action_slot_set", nullptr, nullptr);
-  RNA_def_property_update(prop, NC_ANIMATION | ND_NLA_ACTCHANGE, "rna_AnimData_dependency_update");
+  RNA_def_property_update(
+      prop, NC_ANIMATION | ND_NLA_ACTCHANGE, "rna_AnimData_action_slot_update");
   /* `adt.action_slot` is exposed to RNA as a pointer for things like the action slot selector in
    * the GUI. The ground truth of the assigned slot, however, is `action_slot_handle` declared
    * above. That property is used for library override operations, and this pointer property should

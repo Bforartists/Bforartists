@@ -103,8 +103,7 @@ class UnifiedPaintPanel:
             # If there is no active tool, then there can't be an active brush.
             return None
 
-        if not tool.has_datablock:
-            # tool.has_datablock is always true for tools that use brushes.
+        if not tool.use_brushes:
             return None
 
         space_data = context.space_data
@@ -162,6 +161,8 @@ class UnifiedPaintPanel:
             return tool_settings.gpencil_sculpt_paint
         elif mode == 'WEIGHT_GREASE_PENCIL':
             return tool_settings.gpencil_weight_paint
+        elif mode == 'VERTEX_GREASE_PENCIL':
+            return tool_settings.gpencil_vertex_paint
         return None
 
     @staticmethod
@@ -2040,6 +2041,37 @@ class VIEW3D_PT_gpencil_brush_settings_strength(Panel): # BFA
         gp_settings = brush.gpencil_settings # BFA
 
         layout.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True) # BFA
+
+
+def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact=False):
+    UnifiedPaintPanel.prop_unified(
+        layout,
+        context,
+        brush,
+        "size",
+        pressure_name="use_pressure_size",
+        unified_name="use_unified_size",
+        text="Radius",
+        slider=True,
+        header=compact,
+    )
+
+    if brush.gpencil_vertex_tool in {'DRAW', 'BLUR', 'SMEAR'}:
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            "strength",
+            pressure_name="use_pressure_strength",
+            unified_name="use_unified_strength",
+            text="Strength",
+            header=compact,
+        )
+
+    gp_settings = brush.gpencil_settings
+    if brush.gpencil_vertex_tool in {'DRAW', 'REPLACE'}:
+        row = layout.row(align=True)
+        row.prop(gp_settings, "vertex_mode", text="Mode")
 
 
 classes = (

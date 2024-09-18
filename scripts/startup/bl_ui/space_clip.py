@@ -1566,6 +1566,16 @@ class CLIP_MT_clip(Menu):
             layout.operator("clip.set_viewport_background", icon='FILE_IMAGE')
             layout.operator("clip.setup_tracking_scene", icon='SCENE_DATA')
 
+# BFA - not used
+class CLIP_MT_proxy(Menu):
+    bl_label = "Proxy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("clip.rebuild_proxy", icon="MAKE_PROXY")
+        layout.operator("clip.delete_proxy", icon="DELETE")
+
 
 class CLIP_MT_track_motion(Menu):
     bl_label = "Track Motion"
@@ -2196,9 +2206,10 @@ classes = (
     CLIP_PT_tools_grease_pencil_draw,
     CLIP_MT_view_zoom,
     CLIP_MT_view,
-    CLIP_MT_view_annotations,
-    CLIP_MT_view_pie_menus,
+    CLIP_MT_view_annotations, # BFA - menu
+    CLIP_MT_view_pie_menus,  # BFA - menu
     CLIP_MT_clip,
+	#CLIP_MT_proxy # BFA - not used
     CLIP_MT_reconstruction,
     CLIP_MT_track,
     CLIP_MT_track_transform,
