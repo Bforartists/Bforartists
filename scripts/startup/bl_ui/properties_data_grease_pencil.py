@@ -180,14 +180,14 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         space = context.space_data
 
         if space.type == 'PROPERTIES':
-            layout.operator("grease_pencil.layer_group_add", text="Add Group")
+            layout.operator("grease_pencil.layer_group_add", text="Add Group", icon = "GROUP")
 
             layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
             layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
 
         layout.separator()
         layout.operator("grease_pencil.layer_duplicate", text="Duplicate", icon='DUPLICATE').empty_keyframes = False
-        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Keyframes").empty_keyframes = True
+        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Keyframes", icon='DUPLICATE' ).empty_keyframes = True
 
         layout.separator()
         layout.operator("grease_pencil.layer_reveal", icon='RESTRICT_VIEW_OFF', text="Show All")
@@ -204,8 +204,8 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
             layout.prop(layer, "ignore_locked_materials")
 
         layout.separator()
-        layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected").only_active = True
-        layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected").only_active = False
+        layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
+        layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected", icon = 'PASTEDOWN').only_active = False
 
 
 class GREASE_PENCIL_MT_group_context_menu(Menu):
