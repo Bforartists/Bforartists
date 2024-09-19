@@ -146,7 +146,8 @@ class GREASE_PENCIL_MT_layer_mask_add(Menu):
                 continue
 
             found = True
-            layout.operator("grease_pencil.layer_mask_add", text=layer.name).name = layer.name
+            props = layout.operator("grease_pencil.layer_mask_add", text=layer.name, icon="GREASEPENCIL")
+            props.name = layer.name
 
         if not found:
             layout.label(text="No layers to add")
