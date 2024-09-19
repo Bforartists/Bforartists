@@ -198,12 +198,6 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.operator("grease_pencil.layer_lock_all", icon='UNLOCKED', text="Unlock All").lock = False
 
         layout.separator()
-        layout.prop(grease_pencil, "use_autolock_layers", text="Autolock Inactive Layers")
-
-        if layer:
-            layout.prop(layer, "ignore_locked_materials")
-
-        layout.separator()
         layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
         layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected", icon = 'PASTEDOWN').only_active = False
 
@@ -246,7 +240,16 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
 
         layout.use_property_split = True
         layout.use_property_decorate = True
+
         col = layout.column(align=True)
+        col.use_property_split = False
+
+        col.separator()
+
+        col.prop(grease_pencil, "use_autolock_layers", text="Autolock Inactive Layers")
+
+        if layer:
+            col.prop(layer, "ignore_locked_materials")
 
         # Layer main properties
         row = layout.row(align=True)
