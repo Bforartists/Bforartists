@@ -3887,6 +3887,11 @@ class NODES_PT_geom_add_output(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeViewer"
 
+            props = col.operator("node.add_node", text=" Warning   ", icon = "ERROR")
+            props.use_transform = True
+            props.type = "GeometryNodeWarning"
+
+
         #### Icon Buttons
 
         else:
@@ -3898,6 +3903,10 @@ class NODES_PT_geom_add_output(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VIEWER")
             props.use_transform = True
             props.type = "GeometryNodeViewer"
+
+            props = flow.operator("node.add_node", text="", icon = "ERROR")
+            props.use_transform = True
+            props.type = "GeometryNodeWarning"
 
 
 #add geometry panel
