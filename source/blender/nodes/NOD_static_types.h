@@ -277,7 +277,7 @@ DefNode(FunctionNode, FN_NODE_COMBINE_TRANSFORM, 0, "COMBINE_TRANSFORM", Combine
 DefNode(FunctionNode, FN_NODE_COMPARE, 0,  "COMPARE",  Compare,  "Compare",     "Add a Compare Function node\nAdds a mathematical compare between two inputs")
 DefNode(FunctionNode, FN_NODE_EULER_TO_ROTATION, 0, "EULER_TO_ROTATION", EulerToRotation, "Euler to Rotation", "Add a Euler to Rotation Function node\nConverts a euler angle to a rotation vector")
 DefNode(FunctionNode, FN_NODE_FLOAT_TO_INT, def_float_to_int,  "FLOAT_TO_INT",  FloatToInt,  "Float to Integer",  "Add a Float to Integer Function node\nConverts float values into integer values")
-DefNode(FunctionNode, FN_NODE_HASH_VALUE, 0, "HASH_VALUE", HashValue, "Add a Hash node\nShows a hash value", "")
+DefNode(FunctionNode, FN_NODE_HASH_VALUE, 0, "HASH_VALUE", HashValue, "Hash Value", "Add a Hash Value node\nShows a hash value")
 DefNode(FunctionNode, FN_NODE_INPUT_BOOL, def_fn_input_bool,  "INPUT_BOOL",  InputBool,  "Boolean",  "Add a Boolean Function node\nAdds a boolean that can be on or off")
 DefNode(FunctionNode, FN_NODE_INPUT_COLOR, def_fn_input_color,  "INPUT_COLOR",  InputColor,  "Color",  "Add a Color Function node\nAdds a color picker that allows you to set a color")
 DefNode(FunctionNode, FN_NODE_INPUT_INT, def_fn_input_int,  "INPUT_INT",  InputInt,  "Integer",  "Add a Integer Function node\nAllows to add a integer number")
