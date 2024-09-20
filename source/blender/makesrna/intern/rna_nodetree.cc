@@ -12500,6 +12500,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_VOLUME_TO_MESH:
       return ICON_VOLUME_TO_MESH;
+
+    case GEO_NODE_WARNING:
+      return ICON_ERROR;
   }
   return ICON_NONE;
 }
