@@ -6637,6 +6637,10 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeFloatToInt"
 
+            props = col.operator("node.add_node", text=" Hash Value      ", icon = "HASH")
+            props.use_transform = True
+            props.type = "FunctionNodeHashValue"
+
             props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
@@ -6676,6 +6680,10 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
             props.use_transform = True
             props.type = "FunctionNodeFloatToInt"
+
+            props = flow.operator("node.add_node", text="", icon = "HASH")
+            props.use_transform = True
+            props.type = "FunctionNodeHashValue"
 
             props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
             props.use_transform = True
