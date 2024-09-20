@@ -11873,6 +11873,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_FLOAT_TO_INT:
       return ICON_FLOAT_TO_INT;
 
+    case FN_NODE_HASH_VALUE:
+      return ICON_HASH;
+
     case FN_NODE_INPUT_BOOL:
       return ICON_INPUT_BOOL;
 
