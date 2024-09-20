@@ -493,7 +493,7 @@ static void vicon_layergroup_color_draw(
 
   UI_icon_draw_ex(x,
                   y,
-                  ICON_FILE_FOLDER,
+                  ICON_GROUP_BRIGHT, /*bfa - the icon for the enum for the colored grease pencil layers. we use the group icon here*/
                   aspect,
                   1.0f,
                   0.0f,
