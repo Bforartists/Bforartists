@@ -1025,12 +1025,6 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   // WM_operator_properties_confirm_or_exec(ot); /*BFA - Remove confirmation dialog*/
 }
 
-/* BFA - Apply animation to all selected object through UI animate property - wip pose bones*/
-/**
- * \return Whether keyframes were added or not.
- * caller should update animation data afterwards.
- */
-
 static bool insert_key_multi(Main *bmain,
                              const blender::Vector<PointerRNA> &pointers,
                              const std::optional<blender::StringRefNull> channel_group,
@@ -1065,15 +1059,14 @@ static bool insert_key_multi(Main *bmain,
   }
   return changed;
 }
-/*BFA - end*/
-
 
 /* Insert Key Button Operator ------------------------ */
 
 static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
   using namespace blender::animrig;
-  bool is_alt_held = ((CTX_wm_window(C)->eventstate->modifier & KM_ALT) != 0); /* BFA - Apply animation to all selected through UI animate property */
+  /* bfa - Apply animation to all selected through UI animate property */
+  bool is_alt_held = ((CTX_wm_window(C)->eventstate->modifier & KM_ALT) != 0);
 
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -1156,34 +1149,15 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
          * elements" or "not an array property". */
         const std::optional<int> array_index = (all || index < 0) ? std::nullopt :
                                                                     std::optional(index);
-
-        PointerRNA owner_ptr = RNA_id_pointer_create(ptr.owner_id); /*BFA*/
-
-        /* BFA - NOTE: this has to be called anyways for UI button's object
-         * as it is possible to show property for non selected object,
-         * exclude ptr.data from selected objects/bones
-         * to make sure delete/insert_frame is not called twice on same object/bone.
-         */
         RNAPath rna_path = {*path, {}, array_index};
         eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(ts->keyframe_type);
         CombinedKeyingResult result = insert_keyframes(
-                                                    bmain,
-                                                    &owner_ptr,
-                                                    group,
-                                                    {rna_path},
-                                                    std::nullopt,
-                                                    anim_eval_context,
-                                                    key_type,
-                                                    flag);
-        /*BFA - end*/
+            bmain, &ptr, group, {rna_path}, std::nullopt, anim_eval_context, key_type, flag);
         changed = result.get_count(SingleKeyingResult::SUCCESS) != 0;
 
-
-        /* BFA - Apply animation to all selected through UI animate property */
+        /* bfa - Apply animation to all selected through UI animate property */
         if (is_alt_held) {
           blender::Vector<PointerRNA> pointers;
-
-          /* BFA - wip broken example that doesn't works on selectes pose bones, but works on objects*/
           if (ptr.type == &RNA_Object) {
             CTX_data_selected_objects(C, &pointers);
           }
@@ -1274,11 +1248,6 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "all", true, "All", "Insert a keyframe for all element of the array");
 }
 
-
-/* bfa - Apply animation to all selected through UI animate property */
-/**
- * \return Whether keyframes were deleted or not.
- */
 static bool delete_key_multi(Main *bmain,
                              ReportList *reports,
                              const blender::Vector<PointerRNA> &pointers,
@@ -1302,7 +1271,6 @@ static bool delete_key_multi(Main *bmain,
   }
   return changed;
 }
-/*BFA - end*/
 
 /* Delete Key Button Operator ------------------------ */
 
@@ -1378,8 +1346,6 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
         /* bfa - Apply animation to all selected through UI animate property */
         if (is_alt_held) {
           blender::Vector<PointerRNA> pointers;
-
-          /* BFA - wip broken example that doesn't works on selectes pose bones, but works on objects*/
           if (ptr.type == &RNA_Object) {
             CTX_data_selected_objects(C, &pointers);
           }
