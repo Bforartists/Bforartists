@@ -1025,7 +1025,7 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   // WM_operator_properties_confirm_or_exec(ot); /*BFA - Remove confirmation dialog*/
 }
 
-/* BFA - Apply animation to all selected object through UI animate property - pose bones missing*/
+/* BFA - Apply animation to all selected object through UI animate property - wip pose bones*/
 /**
  * \return Whether keyframes were added or not.
  * caller should update animation data afterwards.
@@ -1054,13 +1054,13 @@ static bool insert_key_multi(Main *bmain,
       continue;
     }
     CombinedKeyingResult result = insert_keyframes(bmain,
-                                                  &ptr,
-                                                  channel_group,
-                                                  {rna_path},
-                                                  std::nullopt,
-                                                  anim_eval_context,
-                                                  key_type,
-                                                  insert_key_flags);
+                                                   &ptr,
+                                                   channel_group,
+                                                   {rna_path},
+                                                   std::nullopt,
+                                                   anim_eval_context,
+                                                   key_type,
+                                                   insert_key_flags);
     changed |= result.get_count(SingleKeyingResult::SUCCESS) != 0;
   }
   return changed;
@@ -1183,13 +1183,11 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         if (is_alt_held) {
           blender::Vector<PointerRNA> pointers;
 
-          /* BFA - wip example mixxing detection of selectes pose bones, but works on selected objects*/
-          const eContextObjectMode context_mode = CTX_data_mode_enum(C);
-          if (context_mode == CTX_MODE_OBJECT && ptr.type == &RNA_Object) {
-              CTX_data_selected_objects(C, &pointers);
+          /* BFA - wip broken example that doesn't works on selectes pose bones, but works on objects*/
+          if (ptr.type == &RNA_Object) {
+            CTX_data_selected_objects(C, &pointers);
           }
-          else if (context_mode == CTX_MODE_POSE && ptr.type == &RNA_PoseBone) {
-            // Check if we are in the right pose mode of the armature
+          else if (ptr.type == &RNA_PoseBone) {
             CTX_data_selected_pose_bones(C, &pointers);
           }
           changed |= insert_key_multi(bmain,
@@ -1377,17 +1375,15 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
 
         changed = blender::animrig::delete_keyframe(
                       bmain, op->reports, ptr.owner_id, rna_path, cfra) != 0;
-        /* BFA - Apply animation to all selected through UI animate property */
+        /* bfa - Apply animation to all selected through UI animate property */
         if (is_alt_held) {
           blender::Vector<PointerRNA> pointers;
 
-          /* BFA - wip example mixxing detection of selectes pose bones, but works on selected objects*/
-          const eContextObjectMode context_mode = CTX_data_mode_enum(C);
-          if (context_mode == CTX_MODE_OBJECT && ptr.type == &RNA_Object) {
-              CTX_data_selected_objects(C, &pointers);
+          /* BFA - wip broken example that doesn't works on selectes pose bones, but works on objects*/
+          if (ptr.type == &RNA_Object) {
+            CTX_data_selected_objects(C, &pointers);
           }
-          else if (context_mode == CTX_MODE_POSE && ptr.type == &RNA_PoseBone) {
-            // Check if we are in the right pose mode of the armature
+          else if (ptr.type == &RNA_PoseBone) {
             CTX_data_selected_pose_bones(C, &pointers);
           }
           changed |= delete_key_multi(bmain, op->reports, pointers, rna_path, cfra, ptr.owner_id);
