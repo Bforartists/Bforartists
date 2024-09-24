@@ -38,6 +38,8 @@ fe2efd2a-b482-4543-b917-8222f6f1cabf:Collections/Lights:Collections-Lights
 2047f9d0-6fd3-4fb8-9227-8e7b125895bf:Collections/Static Meshes:Collections-Static Meshes
 7330e2d1-25b0-4fa6-8ab4-1f7f6d41d5e1:Collections/Static Meshes/Backgrounds:Collections-Static Meshes-Backgrounds
 4bb18048-62ea-4868-951c-31e08f6e9dd9:Collections/Static Meshes/Utility:Collections-Static Meshes-Utility
+c19d5a02-5874-4a4a-8e65-e1710c15a9c6:Curve:Curve
+fae56923-cd12-49fb-8396-1b87a93e60ba:Curve/Grease Pencil:Curve-Grease Pencil
 6fb38818-1a3d-4f90-8fdb-b7883ab58436:Materials:Materials
 e038739b-6354-4e3b-8fd6-e9d25b8c11fa:Materials:Materials
 6d148120-6504-4110-bc73-8bc3f3fb512b:Materials/Ceramic:Materials-Ceramic
