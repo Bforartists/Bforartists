@@ -886,7 +886,7 @@ typedef struct UserDef {
   int virtual_pixel;
 
   float viewport_line_width; /* BFA - GooEngine */
-  char _pad16[4]; /* BFA - GooEngine */
+  char _pad16[4]; /* BFA - GooEngine, declared below
 
   /** Console scroll-back limit. */
   int scrollback;
@@ -1006,6 +1006,11 @@ typedef struct UserDef {
   /** Seconds to zoom around current frame. */
   float view_frame_seconds;
 
+  /** Preferred device/vendor for GPU device selection. */
+  int gpu_preferred_index;
+  uint32_t gpu_preferred_vendor_id;
+  uint32_t gpu_preferred_device_id;
+  char _pad17[4]; /*BFA - bumped padding to fit with line width padding above from Goo Engine*/
   /** #eGPUBackendType */
   short gpu_backend;
 
