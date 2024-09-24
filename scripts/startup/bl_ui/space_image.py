@@ -611,8 +611,10 @@ class IMAGE_MT_uvs_unwrap(Menu):
     def draw(self, _context):
         layout = self.layout
 		# BFA - exposed both methods to top level
-        layout.operator("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-        layout.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+        layout.operator_enum("uv.unwrap", "method")
+
+        #layout.operator("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+        #layout.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
         layout.separator()
 
@@ -2086,6 +2088,8 @@ class ImageAssetShelf(BrushAssetShelf):
 
 class IMAGE_AST_brush_paint(ImageAssetShelf, AssetShelf):
     mode_prop = "use_paint_image"
+    brush_type_prop = "image_brush_type"
+    tool_prop = "image_tool"
 
     @classmethod
     def poll(cls, context):
@@ -2169,8 +2173,8 @@ classes = (
     IMAGE_PT_overlay_image,
     IMAGE_AST_brush_paint,
     
-    IMAGE_OT_switch_editors_to_uv, # BFA
-    IMAGE_OT_switch_editors_to_image, # BFA
+    IMAGE_OT_switch_editors_to_uv, # BFA menu
+    IMAGE_OT_switch_editors_to_image, # BFA menu
 )
 
 
