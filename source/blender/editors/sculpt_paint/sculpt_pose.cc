@@ -28,6 +28,7 @@
 
 #include "mesh_brush_common.hh"
 #include "paint_intern.hh"
+#include "sculpt_automask.hh"
 #include "sculpt_cloth.hh"
 #include "sculpt_face_set.hh"
 #include "sculpt_flood_fill.hh"
@@ -157,18 +158,17 @@ BLI_NOINLINE static void add_arrays(const MutableSpan<float3> a, const Span<floa
 static void calc_mesh(const Depsgraph &depsgraph,
                       const Sculpt &sd,
                       const Brush &brush,
-                      const Span<float3> positions_eval,
                       const bke::pbvh::MeshNode &node,
                       Object &object,
                       BrushLocalData &tls,
-                      const MutableSpan<float3> positions_orig)
+                      const PositionDeformData &position_data)
 {
   SculptSession &ss = *object.sculpt;
   const StrokeCache &cache = *ss.cache;
   const Mesh &mesh = *static_cast<Mesh *>(object.data);
 
   const Span<int> verts = node.verts();
-  const Span<float3> positions = gather_data_mesh(positions_eval, verts, tls.positions);
+  const Span<float3> positions = gather_data_mesh(position_data.eval, verts, tls.positions);
   const OrigPositionData orig_data = orig_position_data_get_mesh(object, node);
 
   tls.factors.resize(verts.size());
@@ -196,8 +196,8 @@ static void calc_mesh(const Depsgraph &depsgraph,
   switch (eBrushDeformTarget(brush.deform_target)) {
     case BRUSH_DEFORM_TARGET_GEOMETRY:
       reset_translations_to_original(translations, positions, orig_data.positions);
-      write_translations(
-          depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
+      clip_and_lock_translations(sd, ss, position_data.eval, verts, translations);
+      position_data.deform(translations, verts);
       break;
     case BRUSH_DEFORM_TARGET_CLOTH_SIM:
       add_arrays(translations, orig_data.positions);
@@ -334,8 +334,9 @@ BLI_NOINLINE static void add_fake_neighbors(const Span<int> fake_neighbors,
                                             const MutableSpan<Vector<int>> neighbors)
 {
   for (const int i : verts.index_range()) {
-    if (fake_neighbors[verts[i]] != FAKE_NEIGHBOR_NONE) {
-      neighbors[i].append(fake_neighbors[verts[i]]);
+    const int neighbor = fake_neighbors[verts[i]];
+    if (neighbor != FAKE_NEIGHBOR_NONE) {
+      neighbors[i].append(neighbor);
     }
   }
 }
@@ -894,12 +895,12 @@ static int brush_num_effective_segments(const Brush &brush)
   return brush.pose_ik_segments;
 }
 
-static std::unique_ptr<IKChain> pose_ik_chain_init_topology(const Depsgraph &depsgraph,
-                                                            Object &object,
-                                                            SculptSession &ss,
-                                                            const Brush &brush,
-                                                            const float3 &initial_location,
-                                                            const float radius)
+static std::unique_ptr<IKChain> ik_chain_init_topology(const Depsgraph &depsgraph,
+                                                       Object &object,
+                                                       SculptSession &ss,
+                                                       const Brush &brush,
+                                                       const float3 &initial_location,
+                                                       const float radius)
 {
 
   const float chain_segment_len = radius * (1.0f + brush.pose_offset);
@@ -1001,33 +1002,47 @@ static std::unique_ptr<IKChain> pose_ik_chain_init_topology(const Depsgraph &dep
   return ik_chain;
 }
 
-static std::unique_ptr<IKChain> ik_chain_init_face_sets(const Depsgraph &depsgraph,
-                                                        Object &object,
-                                                        SculptSession &ss,
-                                                        const Brush &brush,
-                                                        const float radius)
+static std::unique_ptr<IKChain> ik_chain_init_face_sets_mesh(const Depsgraph &depsgraph,
+                                                             Object &object,
+                                                             SculptSession &ss,
+                                                             const Brush &brush,
+                                                             const float radius)
 {
   struct SegmentData {
-    PBVHVertRef vert;
+    int vert;
     int face_set;
   };
 
-  const int totvert = SCULPT_vertex_count_get(object);
-  std::unique_ptr<IKChain> ik_chain = ik_chain_new(brush_num_effective_segments(brush), totvert);
+  Mesh &mesh = *static_cast<Mesh *>(object.data);
+  Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, object);
+  const OffsetIndices faces = mesh.faces();
+  const Span<int> corner_verts = mesh.corner_verts();
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
+  const bke::AttributeAccessor attributes = mesh.attributes();
+  const VArraySpan<bool> hide_vert = *attributes.lookup<bool>(".hide_vert",
+                                                              bke::AttrDomain::Point);
+  const VArraySpan<bool> hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
+  const VArraySpan face_sets = *attributes.lookup_or_default<int>(
+      ".sculpt_face_set", bke::AttrDomain::Face, 0);
+
+  std::unique_ptr<IKChain> ik_chain = ik_chain_new(brush_num_effective_segments(brush),
+                                                   vert_positions.size());
 
   /* Each vertex can only be assigned to one face set. */
-  BitVector<> is_weighted(totvert);
+  BitVector<> is_weighted(vert_positions.size());
   Set<int> visited_face_sets;
 
-  SegmentData current_data = {ss.active_vert_ref(), SCULPT_FACE_SET_NONE};
+  SegmentData current_data = {std::get<int>(ss.active_vert()), SCULPT_FACE_SET_NONE};
 
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const int symm = SCULPT_mesh_symmetry_xyz_get(object);
+  Vector<int> neighbors;
   for (const int i : ik_chain->segments.index_range()) {
     const bool is_first_iteration = i == 0;
 
-    flood_fill::FillData flood = flood_fill::init_fill(object);
-    flood_fill::add_initial_with_symmetry(
-        depsgraph, object, flood, current_data.vert, std::numeric_limits<float>::max());
+    flood_fill::FillDataMesh flood_fill(vert_positions.size());
+    flood_fill.add_initial_with_symmetry(
+        depsgraph, object, pbvh, current_data.vert, std::numeric_limits<float>::max());
 
     visited_face_sets.add(current_data.face_set);
 
@@ -1040,31 +1055,195 @@ static std::unique_ptr<IKChain> ik_chain_init_face_sets(const Depsgraph &depsgra
     float3 fallback_accum(0);
     int fallback_count = 0;
 
-    const float3 pose_initial_co = SCULPT_vertex_co_get(depsgraph, object, current_data.vert);
-    flood_fill::execute(
-        object, flood, [&](PBVHVertRef /*from_v*/, PBVHVertRef to_v, bool is_duplicate) {
-          const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
-          const int index = BKE_pbvh_vertex_to_index(pbvh, to_v);
-          const PBVHVertRef vertex = to_v;
+    const float3 &pose_initial_co = vert_positions[current_data.vert];
+    flood_fill.execute(object, vert_to_face_map, [&](int /*from_v*/, int to_v) {
+      const float3 &to_v_position = vert_positions[to_v];
+      const bool symmetry_check = SCULPT_check_vertex_pivot_symmetry(
+          to_v_position, pose_initial_co, symm);
 
-          const float3 co = SCULPT_vertex_co_get(depsgraph, object, vertex);
+      /* First iteration. Continue expanding using topology until a vertex is outside the brush
+       * radius to determine the first face set. */
+      if (current_data.face_set == SCULPT_FACE_SET_NONE) {
+
+        pose_factor[to_v] = 1.0f;
+        is_weighted[to_v].set();
+
+        if (vert_inside_brush_radius(to_v_position, pose_initial_co, radius, symm)) {
+          const int visited_face_set = face_set::vert_face_set_get(
+              vert_to_face_map, face_sets, to_v);
+          visited_face_sets.add(visited_face_set);
+        }
+        else if (symmetry_check) {
+          current_data.face_set = face_set::vert_face_set_get(vert_to_face_map, face_sets, to_v);
+          visited_face_sets.add(current_data.face_set);
+        }
+        return true;
+      }
+
+      /* We already have a current face set, so we can start checking the face sets of the
+       * vertices. */
+      /* In the first iteration we need to check all face sets we already visited as the flood
+       * fill may still not be finished in some of them. */
+      bool is_vertex_valid = false;
+      if (is_first_iteration) {
+        for (const int visited_face_set : visited_face_sets) {
+          is_vertex_valid |= face_set::vert_has_face_set(
+              vert_to_face_map, face_sets, to_v, visited_face_set);
+        }
+      }
+      else {
+        is_vertex_valid = face_set::vert_has_face_set(
+            vert_to_face_map, face_sets, to_v, current_data.face_set);
+      }
+
+      if (!is_vertex_valid) {
+        return false;
+      }
+
+      bool visit_next = false;
+      if (!is_weighted[to_v]) {
+        pose_factor[to_v] = 1.0f;
+        is_weighted[to_v].set();
+        visit_next = true;
+      }
+
+      /* Fallback origin accumulation. */
+      if (symmetry_check) {
+        fallback_accum += to_v_position;
+        fallback_count++;
+      }
+
+      if (!symmetry_check || face_set::vert_has_unique_face_set(vert_to_face_map, face_sets, to_v))
+      {
+        return visit_next;
+      }
+
+      /* We only add coordinates for calculating the origin when it is possible to go from this
+       * vertex to another vertex in a valid face set for the next iteration. */
+      bool count_as_boundary = false;
+
+      for (const int neighbor_idx : vert_neighbors_get_mesh(
+               faces, corner_verts, vert_to_face_map, hide_poly, to_v, neighbors))
+      {
+        const int next_face_set_candidate = face_set::vert_face_set_get(
+            vert_to_face_map, face_sets, neighbor_idx);
+
+        /* Check if we can get a valid face set for the next iteration from this neighbor. */
+        if (face_set::vert_has_unique_face_set(vert_to_face_map, face_sets, neighbor_idx) &&
+            !visited_face_sets.contains(next_face_set_candidate))
+        {
+          if (!next_segment_data) {
+            next_segment_data = {neighbor_idx, next_face_set_candidate};
+          }
+          count_as_boundary = true;
+        }
+      }
+
+      /* Origin accumulation. */
+      if (count_as_boundary) {
+        face_set_boundary_accum += to_v_position;
+        face_set_boundary_count++;
+      }
+      return visit_next;
+    });
+
+    if (face_set_boundary_count > 0) {
+      ik_chain->segments[i].orig = face_set_boundary_accum / float(face_set_boundary_count);
+    }
+    else if (fallback_count > 0) {
+      ik_chain->segments[i].orig = fallback_accum / float(fallback_count);
+    }
+    else {
+      ik_chain->segments[i].orig = float3(0);
+    }
+
+    current_data = *next_segment_data;
+  }
+
+  ik_chain_origin_heads_init(*ik_chain, vert_positions[std::get<int>(ss.active_vert())]);
+
+  return ik_chain;
+}
+
+static std::unique_ptr<IKChain> ik_chain_init_face_sets_grids(Object &object,
+                                                              SculptSession &ss,
+                                                              const Brush &brush,
+                                                              const float radius)
+{
+  struct SegmentData {
+    SubdivCCGCoord vert;
+    int face_set;
+  };
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
+
+  const Mesh &mesh = *static_cast<const Mesh *>(object.data);
+  const OffsetIndices<int> faces = mesh.faces();
+  const Span<int> corner_verts = mesh.corner_verts();
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
+  const bke::AttributeAccessor attributes = mesh.attributes();
+  const VArraySpan face_sets = *attributes.lookup_or_default<int>(
+      ".sculpt_face_set", bke::AttrDomain::Face, 0);
+
+  const SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
+  const Span<float3> positions = subdiv_ccg.positions;
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int grids_num = ss.subdiv_ccg->grids_num * key.grid_area;
+
+  std::unique_ptr<IKChain> ik_chain = ik_chain_new(brush_num_effective_segments(brush), grids_num);
+
+  /* Each vertex can only be assigned to one face set. */
+  BitVector<> is_weighted(grids_num);
+  Set<int> visited_face_sets;
+
+  SegmentData current_data = {std::get<SubdivCCGCoord>(ss.active_vert()), SCULPT_FACE_SET_NONE};
+
+  const int symm = SCULPT_mesh_symmetry_xyz_get(object);
+  SubdivCCGNeighbors neighbors;
+  for (const int i : ik_chain->segments.index_range()) {
+    const bool is_first_iteration = i == 0;
+
+    flood_fill::FillDataGrids flood_fill(grids_num);
+    flood_fill.add_initial_with_symmetry(
+        object, pbvh, subdiv_ccg, current_data.vert, std::numeric_limits<float>::max());
+
+    visited_face_sets.add(current_data.face_set);
+
+    MutableSpan<float> pose_factor = ik_chain->segments[i].weights;
+    std::optional<SegmentData> next_segment_data;
+
+    float3 face_set_boundary_accum(0);
+    int face_set_boundary_count = 0;
+
+    float3 fallback_accum(0);
+    int fallback_count = 0;
+
+    const float3 &pose_initial_co = positions[current_data.vert.to_index(key)];
+    flood_fill.execute(
+        object,
+        subdiv_ccg,
+        [&](SubdivCCGCoord /*from_v*/, SubdivCCGCoord to_v, bool is_duplicate) {
+          const int to_v_i = to_v.to_index(key);
+
+          const float3 to_v_position = positions[to_v_i];
           const bool symmetry_check = SCULPT_check_vertex_pivot_symmetry(
-                                          co, pose_initial_co, symm) &&
+                                          to_v_position, pose_initial_co, symm) &&
                                       !is_duplicate;
 
           /* First iteration. Continue expanding using topology until a vertex is outside the brush
            * radius to determine the first face set. */
           if (current_data.face_set == SCULPT_FACE_SET_NONE) {
 
-            pose_factor[index] = 1.0f;
-            is_weighted[index].set();
+            pose_factor[to_v_i] = 1.0f;
+            is_weighted[to_v_i].set();
 
-            if (vert_inside_brush_radius(co, pose_initial_co, radius, symm)) {
-              const int visited_face_set = face_set::vert_face_set_get(object, vertex);
+            if (vert_inside_brush_radius(to_v_position, pose_initial_co, radius, symm)) {
+              const int visited_face_set = face_set::vert_face_set_get(
+                  subdiv_ccg, face_sets, to_v.grid_index);
               visited_face_sets.add(visited_face_set);
             }
             else if (symmetry_check) {
-              current_data.face_set = face_set::vert_face_set_get(object, vertex);
+              current_data.face_set = face_set::vert_face_set_get(
+                  subdiv_ccg, face_sets, to_v.grid_index);
               visited_face_sets.add(current_data.face_set);
             }
             return true;
@@ -1077,11 +1256,13 @@ static std::unique_ptr<IKChain> ik_chain_init_face_sets(const Depsgraph &depsgra
           bool is_vertex_valid = false;
           if (is_first_iteration) {
             for (const int visited_face_set : visited_face_sets) {
-              is_vertex_valid |= face_set::vert_has_face_set(object, vertex, visited_face_set);
+              is_vertex_valid |= face_set::vert_has_face_set(
+                  subdiv_ccg, face_sets, to_v.grid_index, visited_face_set);
             }
           }
           else {
-            is_vertex_valid = face_set::vert_has_face_set(object, vertex, current_data.face_set);
+            is_vertex_valid = face_set::vert_has_face_set(
+                subdiv_ccg, face_sets, to_v.grid_index, current_data.face_set);
           }
 
           if (!is_vertex_valid) {
@@ -1089,19 +1270,22 @@ static std::unique_ptr<IKChain> ik_chain_init_face_sets(const Depsgraph &depsgra
           }
 
           bool visit_next = false;
-          if (!is_weighted[index]) {
-            pose_factor[index] = 1.0f;
-            is_weighted[index].set();
+          if (!is_weighted[to_v_i]) {
+            pose_factor[to_v_i] = 1.0f;
+            is_weighted[to_v_i].set();
             visit_next = true;
           }
 
           /* Fallback origin accumulation. */
           if (symmetry_check) {
-            fallback_accum += SCULPT_vertex_co_get(depsgraph, object, vertex);
+            fallback_accum += to_v_position;
             fallback_count++;
           }
 
-          if (!symmetry_check || face_set::vert_has_unique_face_set(object, vertex)) {
+          if (!symmetry_check ||
+              face_set::vert_has_unique_face_set(
+                  faces, corner_verts, vert_to_face_map, face_sets, subdiv_ccg, to_v))
+          {
             return visit_next;
           }
 
@@ -1109,25 +1293,26 @@ static std::unique_ptr<IKChain> ik_chain_init_face_sets(const Depsgraph &depsgra
            * vertex to another vertex in a valid face set for the next iteration. */
           bool count_as_boundary = false;
 
-          SculptVertexNeighborIter ni;
-          SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (object, vertex, ni) {
-            const int next_face_set_candidate = face_set::vert_face_set_get(object, ni.vertex);
+          BKE_subdiv_ccg_neighbor_coords_get(subdiv_ccg, to_v, false, neighbors);
+          for (const SubdivCCGCoord neighbor : neighbors.coords) {
+            const int next_face_set_candidate = face_set::vert_face_set_get(
+                subdiv_ccg, face_sets, neighbor.grid_index);
 
             /* Check if we can get a valid face set for the next iteration from this neighbor. */
-            if (face_set::vert_has_unique_face_set(object, ni.vertex) &&
+            if (face_set::vert_has_unique_face_set(
+                    faces, corner_verts, vert_to_face_map, face_sets, subdiv_ccg, neighbor) &&
                 !visited_face_sets.contains(next_face_set_candidate))
             {
               if (!next_segment_data) {
-                next_segment_data = {ni.vertex, next_face_set_candidate};
+                next_segment_data = {neighbor, next_face_set_candidate};
               }
               count_as_boundary = true;
             }
           }
-          SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
 
           /* Origin accumulation. */
           if (count_as_boundary) {
-            face_set_boundary_accum += SCULPT_vertex_co_get(depsgraph, object, vertex);
+            face_set_boundary_accum += to_v_position;
             face_set_boundary_count++;
           }
           return visit_next;
@@ -1147,28 +1332,248 @@ static std::unique_ptr<IKChain> ik_chain_init_face_sets(const Depsgraph &depsgra
   }
 
   ik_chain_origin_heads_init(*ik_chain,
-                             SCULPT_vertex_co_get(depsgraph, object, ss.active_vert_ref()));
+                             positions[std::get<SubdivCCGCoord>(ss.active_vert()).to_index(key)]);
 
   return ik_chain;
 }
 
+static std::unique_ptr<IKChain> ik_chain_init_face_sets_bmesh(Object &object,
+                                                              SculptSession &ss,
+                                                              const Brush &brush,
+                                                              const float radius)
+{
+  struct SegmentData {
+    BMVert *vert;
+    int face_set;
+  };
+
+  const int verts_num = BM_mesh_elem_count(ss.bm, BM_VERT);
+  const int face_set_offset = CustomData_get_offset_named(
+      &ss.bm->pdata, CD_PROP_INT32, ".sculpt_face_set");
+  std::unique_ptr<IKChain> ik_chain = ik_chain_new(brush_num_effective_segments(brush), verts_num);
+
+  /* Each vertex can only be assigned to one face set. */
+  BitVector<> is_weighted(verts_num);
+  Set<int> visited_face_sets;
+
+  SegmentData current_data = {std::get<BMVert *>(ss.active_vert()), SCULPT_FACE_SET_NONE};
+
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
+  const int symm = SCULPT_mesh_symmetry_xyz_get(object);
+  Vector<BMVert *, 64> neighbors;
+  for (const int i : ik_chain->segments.index_range()) {
+    const bool is_first_iteration = i == 0;
+
+    flood_fill::FillDataBMesh flood_fill(verts_num);
+    flood_fill.add_initial_with_symmetry(
+        object, pbvh, current_data.vert, std::numeric_limits<float>::max());
+
+    visited_face_sets.add(current_data.face_set);
+
+    MutableSpan<float> pose_factor = ik_chain->segments[i].weights;
+    std::optional<SegmentData> next_segment_data;
+
+    float3 face_set_boundary_accum(0);
+    int face_set_boundary_count = 0;
+
+    float3 fallback_accum(0);
+    int fallback_count = 0;
+
+    const float3 pose_initial_co = current_data.vert->co;
+    flood_fill.execute(object, [&](BMVert * /*from_v*/, BMVert *to_v) {
+      const int to_v_i = BM_elem_index_get(to_v);
+
+      const float3 to_v_position = to_v->co;
+      const bool symmetry_check = SCULPT_check_vertex_pivot_symmetry(
+          to_v_position, pose_initial_co, symm);
+
+      /* First iteration. Continue expanding using topology until a vertex is outside the brush
+       * radius to determine the first face set. */
+      if (current_data.face_set == SCULPT_FACE_SET_NONE) {
+
+        pose_factor[to_v_i] = 1.0f;
+        is_weighted[to_v_i].set();
+
+        if (vert_inside_brush_radius(to_v_position, pose_initial_co, radius, symm)) {
+          const int visited_face_set = face_set::vert_face_set_get(face_set_offset, *to_v);
+          visited_face_sets.add(visited_face_set);
+        }
+        else if (symmetry_check) {
+          current_data.face_set = face_set::vert_face_set_get(face_set_offset, *to_v);
+          visited_face_sets.add(current_data.face_set);
+        }
+        return true;
+      }
+
+      /* We already have a current face set, so we can start checking the face sets of the
+       * vertices. */
+      /* In the first iteration we need to check all face sets we already visited as the flood
+       * fill may still not be finished in some of them. */
+      bool is_vertex_valid = false;
+      if (is_first_iteration) {
+        for (const int visited_face_set : visited_face_sets) {
+          is_vertex_valid |= face_set::vert_has_face_set(face_set_offset, *to_v, visited_face_set);
+        }
+      }
+      else {
+        is_vertex_valid = face_set::vert_has_face_set(
+            face_set_offset, *to_v, current_data.face_set);
+      }
+
+      if (!is_vertex_valid) {
+        return false;
+      }
+
+      bool visit_next = false;
+      if (!is_weighted[to_v_i]) {
+        pose_factor[to_v_i] = 1.0f;
+        is_weighted[to_v_i].set();
+        visit_next = true;
+      }
+
+      /* Fallback origin accumulation. */
+      if (symmetry_check) {
+        fallback_accum += to_v_position;
+        fallback_count++;
+      }
+
+      if (!symmetry_check || face_set::vert_has_unique_face_set(face_set_offset, *to_v)) {
+        return visit_next;
+      }
+
+      /* We only add coordinates for calculating the origin when it is possible to go from this
+       * vertex to another vertex in a valid face set for the next iteration. */
+      bool count_as_boundary = false;
+
+      for (BMVert *neighbor : vert_neighbors_get_bmesh(*to_v, neighbors)) {
+        const int next_face_set_candidate = face_set::vert_face_set_get(face_set_offset,
+                                                                        *neighbor);
+
+        /* Check if we can get a valid face set for the next iteration from this neighbor. */
+        if (face_set::vert_has_unique_face_set(face_set_offset, *neighbor) &&
+            !visited_face_sets.contains(next_face_set_candidate))
+        {
+          if (!next_segment_data) {
+            next_segment_data = {neighbor, next_face_set_candidate};
+          }
+          count_as_boundary = true;
+        }
+      }
+
+      /* Origin accumulation. */
+      if (count_as_boundary) {
+        face_set_boundary_accum += to_v_position;
+        face_set_boundary_count++;
+      }
+      return visit_next;
+    });
+
+    if (face_set_boundary_count > 0) {
+      ik_chain->segments[i].orig = face_set_boundary_accum / float(face_set_boundary_count);
+    }
+    else if (fallback_count > 0) {
+      ik_chain->segments[i].orig = fallback_accum / float(fallback_count);
+    }
+    else {
+      ik_chain->segments[i].orig = float3(0);
+    }
+
+    current_data = *next_segment_data;
+  }
+
+  ik_chain_origin_heads_init(*ik_chain, std::get<BMVert *>(ss.active_vert())->co);
+
+  return ik_chain;
+}
+
+static std::unique_ptr<IKChain> ik_chain_init_face_sets(const Depsgraph &depsgraph,
+                                                        Object &object,
+                                                        SculptSession &ss,
+                                                        const Brush &brush,
+                                                        const float radius)
+{
+  switch (bke::object::pbvh_get(object)->type()) {
+    case bke::pbvh::Type::Mesh:
+      return ik_chain_init_face_sets_mesh(depsgraph, object, ss, brush, radius);
+    case bke::pbvh::Type::Grids:
+      return ik_chain_init_face_sets_grids(object, ss, brush, radius);
+    case bke::pbvh::Type::BMesh:
+      return ik_chain_init_face_sets_bmesh(object, ss, brush, radius);
+  }
+
+  BLI_assert_unreachable();
+  return nullptr;
+}
+
 static std::optional<float3> calc_average_face_set_center(const Depsgraph &depsgraph,
                                                           Object &object,
-                                                          const int totvert,
                                                           const Span<int> floodfill_step,
                                                           const int active_face_set,
                                                           const int target_face_set)
 {
   int count = 0;
   float3 sum(0.0f);
-  for (int i = 0; i < totvert; i++) {
-    const PBVHVertRef vertex = BKE_pbvh_index_to_vertex(object, i);
 
-    if (floodfill_step[i] != 0 && face_set::vert_has_face_set(object, vertex, active_face_set) &&
-        face_set::vert_has_face_set(object, vertex, target_face_set))
-    {
-      sum += SCULPT_vertex_co_get(depsgraph, object, vertex);
-      count++;
+  switch (bke::object::pbvh_get(object)->type()) {
+    case bke::pbvh::Type::Mesh: {
+      const Mesh &mesh = *static_cast<Mesh *>(object.data);
+      const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
+      const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, object);
+      const bke::AttributeAccessor attributes = mesh.attributes();
+      const VArraySpan face_sets = *attributes.lookup_or_default<int>(
+          ".sculpt_face_set", bke::AttrDomain::Face, 0);
+
+      for (const int vert : vert_positions.index_range()) {
+        if (floodfill_step[vert] != 0 &&
+            face_set::vert_has_face_set(vert_to_face_map, face_sets, vert, active_face_set) &&
+            face_set::vert_has_face_set(vert_to_face_map, face_sets, vert, target_face_set))
+        {
+          sum += vert_positions[vert];
+          count++;
+        }
+      }
+      break;
+    }
+    case bke::pbvh::Type::Grids: {
+      const SubdivCCG &subdiv_ccg = *object.sculpt->subdiv_ccg;
+      const Span<float3> positions = subdiv_ccg.positions;
+
+      const Mesh &mesh = *static_cast<Mesh *>(object.data);
+      const bke::AttributeAccessor attributes = mesh.attributes();
+      const VArraySpan face_sets = *attributes.lookup_or_default<int>(
+          ".sculpt_face_set", bke::AttrDomain::Face, 0);
+
+      const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+      for (const int grid : IndexRange(subdiv_ccg.grids_num)) {
+        for (const int index : bke::ccg::grid_range(key, grid)) {
+          if (floodfill_step[index] != 0 &&
+              face_set::vert_has_face_set(subdiv_ccg, face_sets, grid, active_face_set) &&
+              face_set::vert_has_face_set(subdiv_ccg, face_sets, grid, target_face_set))
+          {
+            sum += positions[index];
+            count++;
+          }
+        }
+      }
+      break;
+    }
+    case bke::pbvh::Type::BMesh: {
+      SCULPT_vertex_random_access_ensure(object);
+      BMesh &bm = *object.sculpt->bm;
+      const int face_set_offset = CustomData_get_offset_named(
+          &bm.pdata, CD_PROP_INT32, ".sculpt_face_set");
+      for (const int vert : IndexRange(BM_mesh_elem_count(&bm, BM_VERT))) {
+        const BMVert *bm_vert = BM_vert_at_index(&bm, vert);
+        if (floodfill_step[vert] != 0 &&
+            face_set::vert_has_face_set(face_set_offset, *bm_vert, active_face_set) &&
+            face_set::vert_has_face_set(face_set_offset, *bm_vert, target_face_set))
+        {
+          sum += bm_vert->co;
+          count++;
+        }
+      }
+
+      break;
     }
   }
 
@@ -1179,35 +1584,125 @@ static std::optional<float3> calc_average_face_set_center(const Depsgraph &depsg
   return std::nullopt;
 }
 
-static std::unique_ptr<IKChain> ik_chain_init_face_sets_fk(const Depsgraph &depsgraph,
-                                                           Object &object,
-                                                           SculptSession &ss,
-                                                           const float radius,
-                                                           const float3 &initial_location)
+static std::unique_ptr<IKChain> ik_chain_init_face_sets_fk_mesh(const Depsgraph &depsgraph,
+                                                                Object &object,
+                                                                SculptSession &ss,
+                                                                const float radius,
+                                                                const float3 &initial_location)
 {
-  const int totvert = SCULPT_vertex_count_get(object);
+  const Mesh &mesh = *static_cast<Mesh *>(object.data);
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
+  const bke::AttributeAccessor attributes = mesh.attributes();
+  const VArraySpan face_sets = *attributes.lookup_or_default<int>(
+      ".sculpt_face_set", bke::AttrDomain::Face, 0);
 
-  std::unique_ptr<IKChain> ik_chain = ik_chain_new(1, totvert);
+  std::unique_ptr<IKChain> ik_chain = ik_chain_new(1, mesh.verts_num);
 
-  const PBVHVertRef active_vertex = ss.active_vert_ref();
+  const int active_vert = std::get<int>(ss.active_vert());
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
-  const int active_vertex_index = BKE_pbvh_vertex_to_index(pbvh, active_vertex);
 
   const int active_face_set = face_set::active_face_set_get(object);
 
   Set<int> visited_face_sets;
-  Array<int> floodfill_step(totvert);
-  floodfill_step[active_vertex_index] = 1;
+  Array<int> floodfill_step(mesh.verts_num);
+  floodfill_step[active_vert] = 1;
 
   int masked_face_set = SCULPT_FACE_SET_NONE;
   int target_face_set = SCULPT_FACE_SET_NONE;
   int masked_face_set_it = 0;
-  flood_fill::FillData step_floodfill = flood_fill::init_fill(object);
-  flood_fill::add_initial(step_floodfill, active_vertex);
-  flood_fill::execute(
-      object, step_floodfill, [&](PBVHVertRef from_v, PBVHVertRef to_v, bool is_duplicate) {
-        const int from_v_i = BKE_pbvh_vertex_to_index(pbvh, from_v);
-        const int to_v_i = BKE_pbvh_vertex_to_index(pbvh, to_v);
+  flood_fill::FillDataMesh step_floodfill(mesh.verts_num);
+  step_floodfill.add_initial(active_vert);
+  step_floodfill.execute(object, vert_to_face_map, [&](int from_v, int to_v) {
+    floodfill_step[to_v] = floodfill_step[from_v] + 1;
+
+    const int to_face_set = face_set::vert_face_set_get(vert_to_face_map, face_sets, to_v);
+    if (!visited_face_sets.contains(to_face_set)) {
+      if (face_set::vert_has_unique_face_set(vert_to_face_map, face_sets, to_v) &&
+          !face_set::vert_has_unique_face_set(vert_to_face_map, face_sets, from_v) &&
+          face_set::vert_has_face_set(vert_to_face_map, face_sets, from_v, to_face_set))
+      {
+
+        visited_face_sets.add(to_face_set);
+
+        if (floodfill_step[to_v] >= masked_face_set_it) {
+          masked_face_set = to_face_set;
+          masked_face_set_it = floodfill_step[to_v];
+        }
+
+        if (target_face_set == SCULPT_FACE_SET_NONE) {
+          target_face_set = to_face_set;
+        }
+      }
+    }
+
+    return face_set::vert_has_face_set(vert_to_face_map, face_sets, to_v, active_face_set);
+  });
+
+  const std::optional<float3> origin = calc_average_face_set_center(
+      depsgraph, object, floodfill_step, active_face_set, masked_face_set);
+  ik_chain->segments[0].orig = origin.value_or(float3(0));
+
+  std::optional<float3> head = std::nullopt;
+  if (target_face_set != masked_face_set) {
+    head = calc_average_face_set_center(
+        depsgraph, object, floodfill_step, active_face_set, target_face_set);
+  }
+
+  ik_chain->segments[0].head = head.value_or(initial_location);
+  ik_chain->grab_delta_offset = ik_chain->segments[0].head - initial_location;
+
+  flood_fill::FillDataMesh weight_floodfill(mesh.verts_num);
+  weight_floodfill.add_initial_with_symmetry(depsgraph, object, pbvh, active_vert, radius);
+  MutableSpan<float> fk_weights = ik_chain->segments[0].weights;
+  weight_floodfill.execute(object, vert_to_face_map, [&](int /*from_v*/, int to_v) {
+    fk_weights[to_v] = 1.0f;
+    return !face_set::vert_has_face_set(vert_to_face_map, face_sets, to_v, masked_face_set);
+  });
+
+  ik_chain_origin_heads_init(*ik_chain, ik_chain->segments[0].head);
+  return ik_chain;
+}
+
+static std::unique_ptr<IKChain> ik_chain_init_face_sets_fk_grids(const Depsgraph &depsgraph,
+                                                                 Object &object,
+                                                                 SculptSession &ss,
+                                                                 const float radius,
+                                                                 const float3 &initial_location)
+{
+  const Mesh &mesh = *static_cast<const Mesh *>(object.data);
+  const OffsetIndices<int> faces = mesh.faces();
+  const Span<int> corner_verts = mesh.corner_verts();
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
+  const bke::AttributeAccessor attributes = mesh.attributes();
+  const VArraySpan face_sets = *attributes.lookup_or_default<int>(
+      ".sculpt_face_set", bke::AttrDomain::Face, 0);
+
+  const SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const Span<int> grid_to_face_map = subdiv_ccg.grid_to_face_map;
+  const int grids_num = ss.subdiv_ccg->grids_num * key.grid_area;
+
+  std::unique_ptr<IKChain> ik_chain = ik_chain_new(1, grids_num);
+
+  const SubdivCCGCoord active_vert = std::get<SubdivCCGCoord>(ss.active_vert());
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
+  const int active_vert_index = ss.active_vert_index();
+
+  const int active_face_set = face_set::active_face_set_get(object);
+
+  Set<int> visited_face_sets;
+  Array<int> floodfill_step(grids_num);
+  floodfill_step[active_vert_index] = 1;
+
+  int masked_face_set = SCULPT_FACE_SET_NONE;
+  int target_face_set = SCULPT_FACE_SET_NONE;
+  int masked_face_set_it = 0;
+  flood_fill::FillDataGrids step_floodfill(grids_num);
+  step_floodfill.add_initial(active_vert);
+  step_floodfill.execute(
+      object, subdiv_ccg, [&](SubdivCCGCoord from_v, SubdivCCGCoord to_v, bool is_duplicate) {
+        const int from_v_i = from_v.to_index(key);
+        const int to_v_i = to_v.to_index(key);
 
         if (!is_duplicate) {
           floodfill_step[to_v_i] = floodfill_step[from_v_i] + 1;
@@ -1216,11 +1711,13 @@ static std::unique_ptr<IKChain> ik_chain_init_face_sets_fk(const Depsgraph &deps
           floodfill_step[to_v_i] = floodfill_step[from_v_i];
         }
 
-        const int to_face_set = face_set::vert_face_set_get(object, to_v);
+        const int to_face_set = face_sets[grid_to_face_map[to_v.grid_index]];
         if (!visited_face_sets.contains(to_face_set)) {
-          if (face_set::vert_has_unique_face_set(object, to_v) &&
-              !face_set::vert_has_unique_face_set(object, from_v) &&
-              face_set::vert_has_face_set(object, from_v, to_face_set))
+          if (face_set::vert_has_unique_face_set(
+                  faces, corner_verts, vert_to_face_map, face_sets, subdiv_ccg, to_v) &&
+              !face_set::vert_has_unique_face_set(
+                  faces, corner_verts, vert_to_face_map, face_sets, subdiv_ccg, from_v) &&
+              face_set::vert_has_face_set(subdiv_ccg, face_sets, from_v.grid_index, to_face_set))
           {
 
             visited_face_sets.add(to_face_set);
@@ -1236,37 +1733,143 @@ static std::unique_ptr<IKChain> ik_chain_init_face_sets_fk(const Depsgraph &deps
           }
         }
 
-        return face_set::vert_has_face_set(object, to_v, active_face_set);
+        return face_set::vert_has_face_set(
+            subdiv_ccg, face_sets, to_v.grid_index, active_face_set);
       });
 
   const std::optional<float3> origin = calc_average_face_set_center(
-      depsgraph, object, totvert, floodfill_step, active_face_set, masked_face_set);
+      depsgraph, object, floodfill_step, active_face_set, masked_face_set);
   ik_chain->segments[0].orig = origin.value_or(float3(0));
 
   std::optional<float3> head = std::nullopt;
   if (target_face_set != masked_face_set) {
     head = calc_average_face_set_center(
-        depsgraph, object, totvert, floodfill_step, active_face_set, target_face_set);
+        depsgraph, object, floodfill_step, active_face_set, target_face_set);
   }
 
   ik_chain->segments[0].head = head.value_or(initial_location);
   ik_chain->grab_delta_offset = ik_chain->segments[0].head - initial_location;
 
-  flood_fill::FillData weight_floodfill = flood_fill::init_fill(object);
-  flood_fill::add_initial_with_symmetry(
-      depsgraph, object, weight_floodfill, ss.active_vert_ref(), radius);
+  flood_fill::FillDataGrids weight_floodfill(grids_num);
+  weight_floodfill.add_initial_with_symmetry(object, pbvh, subdiv_ccg, active_vert, radius);
   MutableSpan<float> fk_weights = ik_chain->segments[0].weights;
-  flood_fill::execute(object,
-                      weight_floodfill,
-                      [&](PBVHVertRef /*from_v*/, PBVHVertRef to_v, bool /*is_duplicate*/) {
-                        int to_v_i = BKE_pbvh_vertex_to_index(pbvh, to_v);
+  weight_floodfill.execute(
+      object,
+      subdiv_ccg,
+      [&](SubdivCCGCoord /*from_v*/, SubdivCCGCoord to_v, bool /*is_duplicate*/) {
+        int to_v_i = to_v.to_index(key);
 
-                        fk_weights[to_v_i] = 1.0f;
-                        return !face_set::vert_has_face_set(object, to_v, masked_face_set);
-                      });
+        fk_weights[to_v_i] = 1.0f;
+        return !face_set::vert_has_face_set(
+            subdiv_ccg, face_sets, to_v.grid_index, masked_face_set);
+      });
 
   ik_chain_origin_heads_init(*ik_chain, ik_chain->segments[0].head);
   return ik_chain;
+}
+
+static std::unique_ptr<IKChain> ik_chain_init_face_sets_fk_bmesh(const Depsgraph &depsgraph,
+                                                                 Object &object,
+                                                                 SculptSession &ss,
+                                                                 const float radius,
+                                                                 const float3 &initial_location)
+{
+  SCULPT_vertex_random_access_ensure(object);
+
+  BMesh &bm = *ss.bm;
+  const int face_set_offset = CustomData_get_offset_named(
+      &bm.pdata, CD_PROP_INT32, ".sculpt_face_set");
+  const int verts_num = BM_mesh_elem_count(&bm, BM_VERT);
+
+  std::unique_ptr<IKChain> ik_chain = ik_chain_new(1, verts_num);
+
+  BMVert *active_vert = std::get<BMVert *>(ss.active_vert());
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
+  const int active_vert_index = BM_elem_index_get(active_vert);
+
+  const int active_face_set = face_set::active_face_set_get(object);
+
+  Set<int> visited_face_sets;
+  Array<int> floodfill_step(verts_num);
+  floodfill_step[active_vert_index] = 1;
+
+  int masked_face_set = SCULPT_FACE_SET_NONE;
+  int target_face_set = SCULPT_FACE_SET_NONE;
+  int masked_face_set_it = 0;
+  flood_fill::FillDataBMesh step_floodfill(verts_num);
+  step_floodfill.add_initial(active_vert);
+  step_floodfill.execute(object, [&](BMVert *from_v, BMVert *to_v) {
+    const int from_v_i = BM_elem_index_get(from_v);
+    const int to_v_i = BM_elem_index_get(to_v);
+
+    floodfill_step[to_v_i] = floodfill_step[from_v_i] + 1;
+
+    const int to_face_set = face_set::vert_face_set_get(face_set_offset, *to_v);
+    if (!visited_face_sets.contains(to_face_set)) {
+      if (face_set::vert_has_unique_face_set(face_set_offset, *to_v) &&
+          !face_set::vert_has_unique_face_set(face_set_offset, *from_v) &&
+          face_set::vert_has_face_set(face_set_offset, *from_v, to_face_set))
+      {
+
+        visited_face_sets.add(to_face_set);
+
+        if (floodfill_step[to_v_i] >= masked_face_set_it) {
+          masked_face_set = to_face_set;
+          masked_face_set_it = floodfill_step[to_v_i];
+        }
+
+        if (target_face_set == SCULPT_FACE_SET_NONE) {
+          target_face_set = to_face_set;
+        }
+      }
+    }
+
+    return face_set::vert_has_face_set(face_set_offset, *to_v, active_face_set);
+  });
+
+  const std::optional<float3> origin = calc_average_face_set_center(
+      depsgraph, object, floodfill_step, active_face_set, masked_face_set);
+  ik_chain->segments[0].orig = origin.value_or(float3(0));
+
+  std::optional<float3> head = std::nullopt;
+  if (target_face_set != masked_face_set) {
+    head = calc_average_face_set_center(
+        depsgraph, object, floodfill_step, active_face_set, target_face_set);
+  }
+
+  ik_chain->segments[0].head = head.value_or(initial_location);
+  ik_chain->grab_delta_offset = ik_chain->segments[0].head - initial_location;
+
+  flood_fill::FillDataBMesh weight_floodfill(verts_num);
+  weight_floodfill.add_initial_with_symmetry(object, pbvh, active_vert, radius);
+  MutableSpan<float> fk_weights = ik_chain->segments[0].weights;
+  weight_floodfill.execute(object, [&](BMVert * /*from_v*/, BMVert *to_v) {
+    int to_v_i = BM_elem_index_get(to_v);
+
+    fk_weights[to_v_i] = 1.0f;
+    return !face_set::vert_has_face_set(face_set_offset, *to_v, masked_face_set);
+  });
+
+  ik_chain_origin_heads_init(*ik_chain, ik_chain->segments[0].head);
+  return ik_chain;
+}
+
+static std::unique_ptr<IKChain> ik_chain_init_face_sets_fk(const Depsgraph &depsgraph,
+                                                           Object &object,
+                                                           SculptSession &ss,
+                                                           const float radius,
+                                                           const float3 &initial_location)
+{
+  switch (bke::object::pbvh_get(object)->type()) {
+    case bke::pbvh::Type::Mesh:
+      return ik_chain_init_face_sets_fk_mesh(depsgraph, object, ss, radius, initial_location);
+    case bke::pbvh::Type::Grids:
+      return ik_chain_init_face_sets_fk_grids(depsgraph, object, ss, radius, initial_location);
+    case bke::pbvh::Type::BMesh:
+      return ik_chain_init_face_sets_fk_bmesh(depsgraph, object, ss, radius, initial_location);
+  }
+  BLI_assert_unreachable();
+  return nullptr;
 }
 
 static std::unique_ptr<IKChain> ik_chain_init(const Depsgraph &depsgraph,
@@ -1282,12 +1885,14 @@ static std::unique_ptr<IKChain> ik_chain_init(const Depsgraph &depsgraph,
 
   if (use_fake_neighbors) {
     SCULPT_fake_neighbors_ensure(depsgraph, ob, brush.disconnected_distance_max);
-    SCULPT_fake_neighbors_enable(ob);
+  }
+  else {
+    SCULPT_fake_neighbors_free(ob);
   }
 
   switch (brush.pose_origin_type) {
     case BRUSH_POSE_ORIGIN_TOPOLOGY:
-      ik_chain = pose_ik_chain_init_topology(depsgraph, ob, ss, brush, initial_location, radius);
+      ik_chain = ik_chain_init_topology(depsgraph, ob, ss, brush, initial_location, radius);
       break;
     case BRUSH_POSE_ORIGIN_FACE_SETS:
       ik_chain = ik_chain_init_face_sets(depsgraph, ob, ss, brush, radius);
@@ -1295,10 +1900,6 @@ static std::unique_ptr<IKChain> ik_chain_init(const Depsgraph &depsgraph,
     case BRUSH_POSE_ORIGIN_FACE_SETS_FK:
       ik_chain = ik_chain_init_face_sets_fk(depsgraph, ob, ss, radius, initial_location);
       break;
-  }
-
-  if (use_fake_neighbors) {
-    SCULPT_fake_neighbors_disable(ob);
   }
 
   return ik_chain;
@@ -1533,14 +2134,12 @@ void do_pose_brush(const Depsgraph &depsgraph,
   switch (pbvh.type()) {
     case bke::pbvh::Type::Mesh: {
       MutableSpan<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
-      Mesh &mesh = *static_cast<Mesh *>(ob.data);
-      const Span<float3> positions_eval = bke::pbvh::vert_positions_eval(depsgraph, ob);
-      MutableSpan<float3> positions_orig = mesh.vert_positions_for_write();
+      const PositionDeformData position_data(depsgraph, ob);
       threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
         BrushLocalData &tls = all_tls.local();
         node_mask.slice(range).foreach_index([&](const int i) {
-          calc_mesh(depsgraph, sd, brush, positions_eval, nodes[i], ob, tls, positions_orig);
-          bke::pbvh::update_node_bounds_mesh(positions_eval, nodes[i]);
+          calc_mesh(depsgraph, sd, brush, nodes[i], ob, tls, position_data);
+          bke::pbvh::update_node_bounds_mesh(position_data.eval, nodes[i]);
         });
       });
       break;

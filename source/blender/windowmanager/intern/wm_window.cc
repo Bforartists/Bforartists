@@ -716,6 +716,8 @@ static void wm_window_ensure_eventstate(wmWindow *win)
   wm_window_update_eventstate(win);
 }
 
+static bool wm_window_update_size_position(wmWindow *win);
+
 /* Belongs to below. */
 static void wm_window_ghostwindow_add(wmWindowManager *wm,
                                       const char *title,
@@ -734,6 +736,9 @@ static void wm_window_ghostwindow_add(wmWindowManager *wm,
 
   eGPUBackendType gpu_backend = GPU_backend_type_selection_get();
   gpuSettings.context_type = wm_ghost_drawing_context_type(gpu_backend);
+  gpuSettings.preferred_device.index = U.gpu_preferred_index;
+  gpuSettings.preferred_device.vendor_id = U.gpu_preferred_vendor_id;
+  gpuSettings.preferred_device.device_id = U.gpu_preferred_device_id;
 
   int posx = 0;
   int posy = 0;
@@ -779,17 +784,12 @@ static void wm_window_ghostwindow_add(wmWindowManager *wm,
     wm_window_ensure_eventstate(win);
 
     /* Store actual window size in blender window. */
-    GHOST_RectangleHandle bounds = GHOST_GetClientBounds(
-        static_cast<GHOST_WindowHandle>(win->ghostwin));
-
     /* WIN32: gives undefined window size when minimized. */
     if (GHOST_GetWindowState(static_cast<GHOST_WindowHandle>(win->ghostwin)) !=
         GHOST_kWindowStateMinimized)
     {
-      win->sizex = GHOST_GetWidthRectangle(bounds);
-      win->sizey = GHOST_GetHeightRectangle(bounds);
+      wm_window_update_size_position(win);
     }
-    GHOST_DisposeRectangle(bounds);
 
 #ifndef __APPLE__
     /* Set the state here, so minimized state comes up correct on windows. */
@@ -2533,12 +2533,6 @@ void WM_progress_clear(wmWindow *win)
 /** \name Window Position/Size (internal)
  * \{ */
 
-void wm_window_get_position(wmWindow *win, int *r_pos_x, int *r_pos_y)
-{
-  *r_pos_x = win->posx;
-  *r_pos_y = win->posy;
-}
-
 void wm_window_set_size(wmWindow *win, int width, int height)
 {
   GHOST_SetClientSize(static_cast<GHOST_WindowHandle>(win->ghostwin), width, height);
@@ -3048,6 +3042,10 @@ void *WM_system_gpu_context_create()
   if (G.debug & G_DEBUG_GPU) {
     gpuSettings.flags |= GHOST_gpuDebugContext;
   }
+  gpuSettings.preferred_device.index = U.gpu_preferred_index;
+  gpuSettings.preferred_device.vendor_id = U.gpu_preferred_vendor_id;
+  gpuSettings.preferred_device.device_id = U.gpu_preferred_device_id;
+
   return GHOST_CreateGPUContext(g_system, gpuSettings);
 }
 
