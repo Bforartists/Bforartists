@@ -1025,55 +1025,59 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   // WM_operator_properties_confirm_or_exec(ot); /*BFA - Remove confirmation dialog*/
 }
 
-/* BFA - Apply animation to all selected object through UI animate property - pose bones missing*/
-/**
- * \return Whether keyframes were added or not.
- * caller should update animation data afterwards.
- */
-
-static bool insert_key_multi(Main *bmain,
-                             const blender::Vector<PointerRNA> &pointers,
-                             const std::optional<blender::StringRefNull> channel_group,
-                             const RNAPath &rna_path,
-                             const std::optional<float> /*scene_frame*/, /*BFA - This parameter is intentionally unused*/
-                             const AnimationEvalContext &anim_eval_context,
-                             const eBezTriple_KeyframeType key_type,
-                             const eInsertKeyFlags insert_key_flags,
-                             const ID *exclude_id)
+static void insert_keyframes_multi(Main *bmain,
+                                   blender::Vector<PointerRNA> &ptrs,
+                                   PropertyRNA *prop,
+                                   const AnimationEvalContext &anim_eval_context,
+                                   eBezTriple_KeyframeType key_type,
+                                   eInsertKeyFlags insert_key_flags,
+                                   ID *exclude_owner_id,
+                                   const RNAPath &exclude_rna_path,
+                                   blender::Set<ID *> &changed_owner_ids)
 {
+  changed_owner_ids.reserve(ptrs.size());
   using namespace blender::animrig;
-  bool changed = false;
-  for (PointerRNA ptr : pointers) {
-    if (ptr.owner_id == exclude_id) {
+  for (const PointerRNA &p : ptrs) {
+    const std::optional<std::string> path = RNA_path_from_ID_to_property(&p, prop);
+    if (!path) {
       continue;
     }
-    /* Skip non existing properties */
-    PropertyRNA *prop;
-    PointerRNA ptr_out;
-    if (RNA_path_resolve_property(&ptr, rna_path.path.c_str(), &ptr_out, &prop) == false) {
+    /* Avoid inserting keyframe for active object in case it existed in the PointerRNA
+     * blender::Vector
+     */
+    if (p.owner_id == exclude_owner_id && (*path) == exclude_rna_path.path) {
       continue;
     }
-    CombinedKeyingResult result = insert_keyframes(bmain,
-                                                  &ptr,
-                                                  channel_group,
-                                                  {rna_path},
-                                                  std::nullopt,
-                                                  anim_eval_context,
-                                                  key_type,
-                                                  insert_key_flags);
-    changed |= result.get_count(SingleKeyingResult::SUCCESS) != 0;
-  }
-  return changed;
-}
-/*BFA - end*/
 
+    RNAPath rna_path = {*path, exclude_rna_path.key, exclude_rna_path.index};
+    const char *identifier = RNA_property_identifier(prop);
+    const std::optional<blender::StringRefNull> group = default_channel_group_for_path(&p,
+                                                                                       identifier);
+    PointerRNA owner_ptr = RNA_id_pointer_create((p.owner_id));
+    CombinedKeyingResult result = insert_keyframes(bmain,
+                                                   &owner_ptr,
+                                                   group,
+                                                   {rna_path},
+                                                   std::nullopt,
+                                                   anim_eval_context,
+                                                   key_type,
+                                                   insert_key_flags);
+    bool changed = result.get_count(SingleKeyingResult::SUCCESS) != 0;
+    if (changed) {
+      changed_owner_ids.add(p.owner_id);
+    }
+  }
+}
 
 /* Insert Key Button Operator ------------------------ */
 
 static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
   using namespace blender::animrig;
-  bool is_alt_held = ((CTX_wm_window(C)->eventstate->modifier & KM_ALT) != 0); /* BFA - Apply animation to all selected through UI animate property */
+  /* BFA - Check if alt key is selected to apply animation to all selected through UI animate
+   * property, NOTE: this can be also done via the operator invoke event
+   */
+  bool is_alt_held = ((CTX_wm_window(C)->eventstate->modifier & KM_ALT) != 0);
 
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -1095,6 +1099,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
     return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
   }
 
+  blender::Set<ID *> changed_owner_ids;
   if ((ptr.owner_id && ptr.data && prop) && RNA_property_anim_editable(&ptr, prop)) {
     if (ptr.type == &RNA_NlaStrip) {
       /* Handle special properties for NLA Strips, whose F-Curves are stored on the
@@ -1156,52 +1161,35 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
          * elements" or "not an array property". */
         const std::optional<int> array_index = (all || index < 0) ? std::nullopt :
                                                                     std::optional(index);
-
-        PointerRNA owner_ptr = RNA_id_pointer_create(ptr.owner_id); /*BFA*/
-
-        /* BFA - NOTE: this has to be called anyways for UI button's object
-         * as it is possible to show property for non selected object,
-         * exclude ptr.data from selected objects/bones
-         * to make sure delete/insert_frame is not called twice on same object/bone.
-         */
-        RNAPath rna_path = {*path, {}, array_index};
+        PointerRNA owner_ptr = RNA_id_pointer_create(ptr.owner_id);
+        /* BFA */
         eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(ts->keyframe_type);
+        RNAPath rna_path = {*path, {}, array_index};
+        /* BFA END */
         CombinedKeyingResult result = insert_keyframes(
-                                                    bmain,
-                                                    &owner_ptr,
-                                                    group,
-                                                    {rna_path},
-                                                    std::nullopt,
-                                                    anim_eval_context,
-                                                    key_type,
-                                                    flag);
-        /*BFA - end*/
+            bmain, &owner_ptr, group, {rna_path}, std::nullopt, anim_eval_context, key_type, flag);
         changed = result.get_count(SingleKeyingResult::SUCCESS) != 0;
 
-
-        /* BFA - Apply animation to all selected through UI animate property */
+        /* BFA */
         if (is_alt_held) {
-          blender::Vector<PointerRNA> pointers;
-
-          /* BFA - wip example mixxing detection of selectes pose bones, but works on selected objects*/
-          const eContextObjectMode context_mode = CTX_data_mode_enum(C);
-          if (context_mode == CTX_MODE_OBJECT && ptr.type == &RNA_Object) {
-              CTX_data_selected_objects(C, &pointers);
+          blender::Vector<PointerRNA> selected_ptrs;
+          if (ptr.type == &RNA_Object) {
+            CTX_data_selected_objects(C, &selected_ptrs);
           }
-          else if (context_mode == CTX_MODE_POSE && ptr.type == &RNA_PoseBone) {
-            // Check if we are in the right pose mode of the armature
-            CTX_data_selected_pose_bones(C, &pointers);
+          else if (ptr.type == &RNA_PoseBone) {
+            CTX_data_selected_pose_bones(C, &selected_ptrs);
           }
-          changed |= insert_key_multi(bmain,
-                                      pointers,
-                                      group,
-                                      rna_path,
-                                      std::nullopt,
-                                      anim_eval_context,
-                                      key_type,
-                                      flag,
-                                      ptr.owner_id);
+          insert_keyframes_multi(bmain,
+                                 selected_ptrs,
+                                 prop,
+                                 anim_eval_context,
+                                 key_type,
+                                 flag,
+                                 owner_ptr.owner_id,
+                                 rna_path,
+                                 changed_owner_ids);
         }
+        /* BFA END */
       }
       else {
         BKE_report(op->reports,
@@ -1228,13 +1216,17 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
     }
   }
 
-  if (changed) {
-    ID *id = ptr.owner_id;
-    AnimData *adt = BKE_animdata_from_id(id);
-    if (adt->action != nullptr) {
-      DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
+  if (changed || !changed_owner_ids.is_empty()) {
+    if (changed) {
+      changed_owner_ids.add(ptr.owner_id);
     }
-    DEG_id_tag_update(id, ID_RECALC_ANIMATION_NO_FLUSH);
+    for (ID *id : changed_owner_ids) {
+      AnimData *adt = BKE_animdata_from_id(id);
+      if (adt->action != nullptr) {
+        DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
+      }
+      DEG_id_tag_update(id, ID_RECALC_ANIMATION_NO_FLUSH);
+    }
 
     /* send updates */
     UI_context_update_anim_flag(C);
@@ -1276,35 +1268,31 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "all", true, "All", "Insert a keyframe for all element of the array");
 }
 
-
-/* bfa - Apply animation to all selected through UI animate property */
-/**
- * \return Whether keyframes were deleted or not.
- */
 static bool delete_key_multi(Main *bmain,
                              ReportList *reports,
-                             const blender::Vector<PointerRNA> &pointers,
-                             const RNAPath &rna_path,
+                             const blender::Vector<PointerRNA> &ptrs,
+                             PropertyRNA *prop,
                              float cfra,
-                             const ID *exclude_id)
+                             const RNAPath &exclude_rna_path,
+                             const ID *exclude_owner_id)
 {
   bool changed = false;
-  for (PointerRNA ptr : pointers) {
-    if (ptr.owner_id == exclude_id) {
+  for (const PointerRNA &p : ptrs) {
+    const std::optional<std::string> path = RNA_path_from_ID_to_property(&p, prop);
+    if (!path) {
       continue;
     }
-    /* Skip non existing properties */
-    PropertyRNA *prop;
-    PointerRNA ptr_out;
-    if (RNA_path_resolve_property(&ptr, rna_path.path.c_str(), &ptr_out, &prop) == false) {
+    /* Avoid deleting keyframe for active object in case it existed in the PointerRNA
+     * blender::Vector
+     */
+    if (p.owner_id == exclude_owner_id && (*path) == exclude_rna_path.path) {
       continue;
     }
-    changed |= (blender::animrig::delete_keyframe(bmain, reports, ptr.owner_id, rna_path, cfra) >
-                0);
+    RNAPath rna_path = {*path, exclude_rna_path.key, exclude_rna_path.index};
+    changed |= (blender::animrig::delete_keyframe(bmain, reports, p.owner_id, rna_path, cfra) > 0);
   }
   return changed;
 }
-/*BFA - end*/
 
 /* Delete Key Button Operator ------------------------ */
 
@@ -1377,20 +1365,17 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
 
         changed = blender::animrig::delete_keyframe(
                       bmain, op->reports, ptr.owner_id, rna_path, cfra) != 0;
-        /* BFA - Apply animation to all selected through UI animate property */
+        /* bfa - Apply animation to all selected through UI animate property */
         if (is_alt_held) {
           blender::Vector<PointerRNA> pointers;
-
-          /* BFA - wip example mixxing detection of selectes pose bones, but works on selected objects*/
-          const eContextObjectMode context_mode = CTX_data_mode_enum(C);
-          if (context_mode == CTX_MODE_OBJECT && ptr.type == &RNA_Object) {
-              CTX_data_selected_objects(C, &pointers);
+          if (ptr.type == &RNA_Object) {
+            CTX_data_selected_objects(C, &pointers);
           }
-          else if (context_mode == CTX_MODE_POSE && ptr.type == &RNA_PoseBone) {
-            // Check if we are in the right pose mode of the armature
+          else if (ptr.type == &RNA_PoseBone) {
             CTX_data_selected_pose_bones(C, &pointers);
           }
-          changed |= delete_key_multi(bmain, op->reports, pointers, rna_path, cfra, ptr.owner_id);
+          changed |= delete_key_multi(
+              bmain, op->reports, pointers, prop, cfra, rna_path, ptr.owner_id);
         }
       }
       else if (G.debug & G_DEBUG) {
