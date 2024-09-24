@@ -910,6 +910,9 @@ class USDImportTest(AbstractUSDTest):
 
         stage = Usd.Stage.Open(testfile)
 
+        def round_vector(vector):
+            return (round(vector[0], 5), round(vector[1], 5), round(vector[2], 5))
+
         #
         # Validate Mesh data
         #
@@ -923,9 +926,6 @@ class USDImportTest(AbstractUSDTest):
         for i in range(0, mesh_num):
             self.assertTrue(len(blender_mesh[i].modifiers) == 1 and blender_mesh[i].modifiers[0].type ==
                             'MESH_SEQUENCE_CACHE', f"{blender_mesh[i].name} has incorrect modifiers")
-
-        def round_vector(vector):
-            return (round(vector[0], 5), round(vector[1], 5), round(vector[2], 5))
 
         # Compare Blender and USD data against each other for every frame
         for frame in range(1, 16):
@@ -955,6 +955,68 @@ class USDImportTest(AbstractUSDTest):
                     blender_test_data,
                     usd_test_data,
                     f"Frame {frame}: {blender_mesh[i].name} test attributes do not match")
+
+        #
+        # Validate Point Cloud data
+        #
+        blender_pointclouds = [
+            bpy.data.objects["PointCloud"],
+            bpy.data.objects["PointCloud.001"],
+            bpy.data.objects["PointCloud.002"],
+            bpy.data.objects["PointCloud.003"]]
+        usd_points = [UsdGeom.Points(stage.GetPrimAtPath("/root/pointcloud1/PointCloud")),
+                      UsdGeom.Points(stage.GetPrimAtPath("/root/pointcloud2/PointCloud")),
+                      UsdGeom.Points(stage.GetPrimAtPath("/root/pointcloud3/PointCloud")),
+                      UsdGeom.Points(stage.GetPrimAtPath("/root/pointcloud4/PointCloud"))]
+        pointclouds_num = len(blender_pointclouds)
+
+        # Workaround: GeometrySet processing loses the data-block name on export. This is why the
+        # .001 etc. names are being used above. Since we need the order of Blender objects to match
+        # the order of USD prims, sort by the Y location to make them match in our test setup.
+        blender_pointclouds.sort(key=lambda ob: ob.location.y)
+
+        # A MeshSequenceCache modifier should be present on every imported object
+        for i in range(0, pointclouds_num):
+            self.assertTrue(len(blender_pointclouds[i].modifiers) == 1 and blender_pointclouds[i].modifiers[0].type ==
+                            'MESH_SEQUENCE_CACHE', f"{blender_pointclouds[i].name} has incorrect modifiers")
+
+        # Compare Blender and USD data against each other for every frame
+        for frame in range(1, 16):
+            bpy.context.scene.frame_set(frame)
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            for i in range(0, mesh_num):
+                blender_pointclouds[i] = blender_pointclouds[i].evaluated_get(depsgraph)
+
+            # Check positions, velocity, radius, and test data
+            for i in range(0, mesh_num):
+                blender_pos_data = [round_vector(d.vector)
+                                    for d in blender_pointclouds[i].data.attributes["position"].data]
+                blender_vel_data = [round_vector(d.vector)
+                                    for d in blender_pointclouds[i].data.attributes["velocity"].data]
+                blender_radius_data = [round(d.value, 5) for d in blender_pointclouds[i].data.attributes["radius"].data]
+                blender_test_data = [round(d.value, 5) for d in blender_pointclouds[i].data.attributes["test"].data]
+                usd_pos_data = [round_vector(d) for d in usd_points[i].GetPointsAttr().Get(frame)]
+                usd_vel_data = [round_vector(d) for d in usd_points[i].GetVelocitiesAttr().Get(frame)]
+                usd_radius_data = [round(d / 2, 5) for d in usd_points[i].GetWidthsAttr().Get(frame)]
+                usd_test_data = [round(d, 5) for d in UsdGeom.PrimvarsAPI(usd_points[i]).GetPrimvar("test").Get(frame)]
+
+                name = usd_points[i].GetPath().GetParentPath().name
+                self.assertEqual(
+                    blender_pos_data,
+                    usd_pos_data,
+                    f"Frame {frame}: {name} positions do not match")
+                self.assertEqual(
+                    blender_vel_data,
+                    usd_vel_data,
+                    f"Frame {frame}: {name} velocities do not match")
+                self.assertEqual(
+                    blender_radius_data,
+                    usd_radius_data,
+                    f"Frame {frame}: {name} radii do not match")
+                self.assertEqual(
+                    blender_test_data,
+                    usd_test_data,
+                    f"Frame {frame}: {name} test attributes do not match")
 
     def test_import_shapes(self):
         """Test importing USD Shape prims with time-varying attributes."""
@@ -1081,6 +1143,74 @@ class USDImportTest(AbstractUSDTest):
             0.5, 1.5, "tokenstring", "assetstring", [0, 1], [0, 1, 2], [0, 1, 2, 3], [0, 1], [0, 1, 2], [0, 1, 2, 3]
         ]
         assert_all_props_present(properties, "")
+
+    def test_import_usdz_image_processing(self):
+        """Test importing of images from USDZ files in various ways."""
+
+        # USDZ processing needs the destination directory to exist
+        self.tempdir.mkdir(parents=True, exist_ok=True)
+
+        # Use the existing materials test file to create the USD file
+        # for import. It is validated as part of the bl_usd_export test.
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_materials_export.blend"))
+        usdz1 = str(self.tempdir / "usd_materials_export.usdz")
+        res = bpy.ops.wm.usd_export(filepath=usdz1, export_materials=True)
+        self.assertEqual({'FINISHED'}, res, f"Unable to export to {usdz1}")
+
+        usdz2 = str(self.tempdir / "usd_materials_export_downscaled.usdz")
+        res = bpy.ops.wm.usd_export(
+            filepath=usdz2,
+            export_materials=True,
+            usdz_downscale_size='CUSTOM',
+            usdz_downscale_custom_size=128)
+        self.assertEqual({'FINISHED'}, res, f"Unable to export to {usdz2}")
+
+        def check_image(name, tiles_num, size, is_packed):
+            self.assertTrue(name in bpy.data.images)
+
+            image = bpy.data.images[name]
+            self.assertEqual(len(image.tiles), tiles_num)
+            self.assertEqual(image.packed_file is not None, is_packed)
+            for tile in range(0, tiles_num):
+                self.assertEqual(image.tiles[tile].size[0], size)
+                self.assertEqual(image.tiles[tile].size[1], size)
+
+        def check_materials():
+            self.assertEqual(len(bpy.data.materials), 7)  # +1 because of the "Dots Stroke" material
+            self.assertTrue("Clip_With_LessThanInvert" in bpy.data.materials)
+            self.assertTrue("Clip_With_Round" in bpy.data.materials)
+            self.assertTrue("Material" in bpy.data.materials)
+            self.assertTrue("NormalMap" in bpy.data.materials)
+            self.assertTrue("NormalMap_Scale_Bias" in bpy.data.materials)
+            self.assertTrue("Transforms" in bpy.data.materials)
+
+        # Reload the empty file and import back in using IMPORT_PACK
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "empty.blend"))
+        res = bpy.ops.wm.usd_import(filepath=usdz1, import_textures_mode='IMPORT_PACK')
+        self.assertEqual({'FINISHED'}, res, f"Unable to import USD file {usdz1}")
+
+        self.assertEqual(len(bpy.data.images), 4)
+        check_image("test_grid_<UDIM>.png", 2, 1024, True)
+        check_image("test_normal.exr", 1, 128, True)
+        check_image("test_normal_invertY.exr", 1, 128, True)
+        check_image("color_121212.hdr", 1, 4, True)
+        check_materials()
+
+        # Reload the empty file and import back in using IMPORT_COPY
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "empty.blend"))
+        res = bpy.ops.wm.usd_import(
+            filepath=usdz2,
+            import_textures_mode='IMPORT_COPY',
+            import_textures_dir=str(
+                self.tempdir))
+        self.assertEqual({'FINISHED'}, res, f"Unable to import USD file {usdz2}")
+
+        self.assertEqual(len(bpy.data.images), 4)
+        check_image("test_grid_<UDIM>.png", 2, 128, False)
+        check_image("test_normal.exr", 1, 128, False)
+        check_image("test_normal_invertY.exr", 1, 128, False)
+        check_image("color_121212.hdr", 1, 4, False)
+        check_materials()
 
 
 def main():

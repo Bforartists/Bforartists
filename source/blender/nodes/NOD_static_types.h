@@ -23,7 +23,7 @@ DefNode(Node,            NODE_FRAME,               def_frame,              "FRAM
 DefNode(Node,            NODE_GROUP,               def_group,              "GROUP",           Group,             "Group",              "Create a node group from the selected nodes")
 DefNode(Node,            NODE_GROUP_INPUT,         def_group_input,        "GROUP_INPUT",     GroupInput,        "Group Input",        "Add a Group Input node\nExpose connected data from inside a node group as inputs to its interface")
 DefNode(Node,            NODE_GROUP_OUTPUT,        def_group_output,       "GROUP_OUTPUT",    GroupOutput,       "Group Output",       "Add a Group Output node\nOutput data from inside of a node group")
-DefNode(Node,            NODE_REROUTE,             0,                      "REROUTE",         Reroute,           "Reroute",            "Add a reroute point\nReroute points can be used to reroute connections\nSupports one input and multiple outputs")
+DefNode(Node,            NODE_REROUTE,             def_reroute,            "REROUTE",         Reroute,           "Reroute",            "Add a reroute point\nReroute points can be used to reroute connections for organization\nSupports one input and multiple outputs")
 
 DefNode(ShaderNode,     SH_NODE_RGB,             0,                      "RGB",            RGB,              "RGB",               "Add a RGB Shader node\nSet a color with a color picker")
 DefNode(ShaderNode,     SH_NODE_VALUE,           0,                      "VALUE",          Value,            "Value",             "Add a Value Shader node\nUsed to Input numerical values to other nodes in the tree")
@@ -285,6 +285,7 @@ DefNode(FunctionNode, FN_NODE_INPUT_ROTATION, def_fn_input_rotation, "INPUT_ROTA
 DefNode(FunctionNode, FN_NODE_INPUT_SPECIAL_CHARACTERS,  0,  "INPUT_SPECIAL_CHARACTERS",  InputSpecialCharacters,  "Special Characters",  "Add a Special Character Function node\nAdd special characters")
 DefNode(FunctionNode, FN_NODE_INPUT_STRING, def_fn_input_string,  "INPUT_STRING",  InputString,  "String",  "Add a String Function node\nAdds a string")
 DefNode(FunctionNode, FN_NODE_INPUT_VECTOR, def_fn_input_vector,  "INPUT_VECTOR",  InputVector,  "Vector",  "Add a Vector Function Function node\nCreates a single vector of three values that can be used as an input")
+DefNode(FunctionNode, FN_NODE_INTEGER_MATH, 0, "INTEGER_MATH", IntegerMath, "Integer Math", "Add a Integer Math node\nCreates a math node that works with integers")
 DefNode(FunctionNode, FN_NODE_INVERT_MATRIX, 0, "INVERT_MATRIX", InvertMatrix, "Invert Matrix", "Add a Invert Matrix node\nInverts the matrix")
 DefNode(FunctionNode, FN_NODE_INVERT_ROTATION, 0, "INVERT_ROTATION", InvertRotation, "Invert Rotation", "Add a Invert Rotation Function node\nInverts a rotation verctor")
 DefNode(FunctionNode, FN_NODE_MATRIX_MULTIPLY, 0, "MATRIX_MULTIPLY", MatrixMultiply, "Multiply Matrices", "Add a Multiply Matrices Function node\nMultiplies the matrices")

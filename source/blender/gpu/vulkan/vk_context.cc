@@ -34,7 +34,7 @@ VKContext::VKContext(void *ghost_window, void *ghost_context, VKThreadData &thre
   front_left = new VKFrameBuffer("front_left");
   active_fb = back_left;
 
-  compiler = new ShaderCompilerGeneric();
+  compiler = &VKBackend::get().shader_compiler;
 }
 
 VKContext::~VKContext()
@@ -50,7 +50,7 @@ VKContext::~VKContext()
   delete imm;
   imm = nullptr;
 
-  delete compiler;
+  compiler = nullptr;
 }
 
 void VKContext::sync_backbuffer()
@@ -235,7 +235,6 @@ void VKContext::update_pipeline_data(GPUPrimType primitive,
                                      render_graph::VKPipelineData &r_pipeline_data)
 {
   VKShader &vk_shader = unwrap(*shader);
-  BLI_assert(vk_shader.is_graphics_shader());
   VKFrameBuffer &framebuffer = *active_framebuffer_get();
   update_pipeline_data(
       vk_shader,
@@ -246,7 +245,6 @@ void VKContext::update_pipeline_data(GPUPrimType primitive,
 void VKContext::update_pipeline_data(render_graph::VKPipelineData &r_pipeline_data)
 {
   VKShader &vk_shader = unwrap(*shader);
-  BLI_assert(vk_shader.is_compute_shader());
   update_pipeline_data(vk_shader, vk_shader.ensure_and_get_compute_pipeline(), r_pipeline_data);
 }
 
