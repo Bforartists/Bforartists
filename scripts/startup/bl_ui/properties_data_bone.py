@@ -346,6 +346,10 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         row.use_property_split = False
         row.prop(bone, "hide", text = "Hide", toggle=False)
         row.prop_decorator(bone, "hide")
+				
+        hide_select_sub = row.column()
+        hide_select_sub.active = not bone.hide
+        hide_select_sub.prop(bone, "hide_select", invert_checkbox=True)
 
         # Figure out the pose bone.
         ob = context.object
@@ -376,6 +380,9 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         col = layout.column()
         col.use_property_split = False # BFA - Left align checkbox
         col.prop(bone, "hide", text="Hide", toggle=False)
+        hide_select_sub = col.column()
+        hide_select_sub.active = not bone.hide
+        hide_select_sub.prop(bone, "hide_select", invert_checkbox=True)
         layout.prop(bone.color, "palette", text="Bone Color")
         self.draw_bone_color_ui(layout, bone.color)
 
