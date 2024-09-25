@@ -1459,15 +1459,6 @@ static void do_version_bbone_len_scale_fcurve_fix(FCurve *fcu)
   replace_bbone_len_scale_rnapath(&fcu->rna_path, &fcu->array_index);
 }
 
-static void do_version_bbone_len_scale_animdata_cb(ID * /*id*/,
-                                                   AnimData *adt,
-                                                   void * /*wrapper_data*/)
-{
-  LISTBASE_FOREACH_MUTABLE (FCurve *, fcu, &adt->drivers) {
-    do_version_bbone_len_scale_fcurve_fix(fcu);
-  }
-}
-
 static void do_version_bones_bbone_len_scale(ListBase *lb)
 {
   LISTBASE_FOREACH (Bone *, bone, lb) {
@@ -2369,7 +2360,7 @@ static void version_liboverride_nla_strip_frame_start_end(IDOverrideLibrary *lib
 }
 
 /** Fix the `frame_start` and `frame_end` overrides on NLA strips. See #102662. */
-static void version_liboverride_nla_frame_start_end(ID *id, AnimData *adt, void * /*user_data*/)
+static void version_liboverride_nla_frame_start_end(ID *id, AnimData *adt)
 {
   IDOverrideLibrary *liboverride = id->override_library;
   if (!liboverride) {
@@ -2511,7 +2502,11 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
         }
       }
 
-      BKE_animdata_main_cb(bmain, do_version_bbone_len_scale_animdata_cb, nullptr);
+      BKE_animdata_main_cb(bmain, [](ID * /*id*/, AnimData *adt) {
+        LISTBASE_FOREACH_MUTABLE (FCurve *, fcu, &adt->drivers) {
+          do_version_bbone_len_scale_fcurve_fix(fcu);
+        }
+      });
     }
   }
 
@@ -3058,7 +3053,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
                                                                      &sl->regionbase;
               LISTBASE_FOREACH (ARegion *, region, regionbase) {
                 if (region->regiontype == RGN_TYPE_WINDOW) {
-                  region->v2d.max[1] = MAXSEQ;
+                  region->v2d.max[1] = SEQ_MAX_CHANNELS;
                 }
               }
               break;
@@ -4516,7 +4511,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 306, 11)) {
-    BKE_animdata_main_cb(bmain, version_liboverride_nla_frame_start_end, nullptr);
+    BKE_animdata_main_cb(bmain, version_liboverride_nla_frame_start_end);
 
     LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
       LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
@@ -4553,4 +4548,12 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
    *
    * \note Keep this message at the bottom of the function.
    */
+  {
+    /* Keep this block, even when empty. */
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      scene->toolsettings->uvcalc_iterations = 10;
+      scene->toolsettings->uvcalc_weight_factor = 1.0f;
+      STRNCPY(scene->toolsettings->uvcalc_weight_group, "uv_importance");
+    }
+  }
 }
