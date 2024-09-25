@@ -2056,6 +2056,26 @@ class _defs_weight_paint:
 class _defs_grease_pencil_paint:
 
     @ToolDef.from_fn
+    def fill():
+        return dict(
+            idname="builtin_brush.Fill",
+            label="Fill",
+            icon="brush.gpencil_draw.fill",
+            brush_type='FILL',
+            options={'USE_BRUSHES'},
+        )
+
+    @ToolDef.from_fn
+    def erase():
+        return dict(
+            idname="builtin_brush.Erase",
+            label="Erase",
+            icon="brush.gpencil_draw.erase",
+            brush_type='ERASE',
+            options={'USE_BRUSHES'},
+        )
+
+    @ToolDef.from_fn
     def trim():
         def draw_settings(context, layout, _tool):
             brush = context.tool_settings.gpencil_paint.brush
@@ -2112,7 +2132,7 @@ class _defs_grease_pencil_paint:
             keymap=(),
             draw_settings=draw_settings,
             # Only allow draw brushes, no eraser, fill or tint.
-            data_block='DRAW',
+            brush_type='DRAW',
             options={'USE_BRUSHES'},
         )
 
@@ -2131,7 +2151,7 @@ class _defs_grease_pencil_paint:
             keymap=(),
             draw_settings=draw_settings,
             # Only allow draw brushes, no eraser, fill or tint.
-            data_block='DRAW',
+            brush_type='DRAW',
             options={'USE_BRUSHES'},
         )
 
@@ -2150,7 +2170,7 @@ class _defs_grease_pencil_paint:
             keymap=(),
             draw_settings=draw_settings,
             # Only allow draw brushes, no eraser, fill or tint.
-            data_block='DRAW',
+            brush_type='DRAW',
             options={'USE_BRUSHES'},
         )
 
@@ -2169,7 +2189,7 @@ class _defs_grease_pencil_paint:
             keymap=(),
             draw_settings=draw_settings,
             # Only allow draw brushes, no eraser, fill or tint.
-            data_block='DRAW',
+            brush_type='DRAW',
             options={'USE_BRUSHES'},
         )
 
@@ -2188,7 +2208,7 @@ class _defs_grease_pencil_paint:
             keymap=(),
             draw_settings=draw_settings,
             # Only allow draw brushes, no eraser, fill or tint.
-            data_block='DRAW',
+            brush_type='DRAW',
             options={'USE_BRUSHES'},
         )
 
@@ -2207,7 +2227,7 @@ class _defs_grease_pencil_paint:
             keymap=(),
             draw_settings=draw_settings,
             # Only allow draw brushes, no eraser, fill or tint.
-            data_block='DRAW',
+            brush_type='DRAW',
             options={'USE_BRUSHES'},
         )
 
@@ -2968,26 +2988,6 @@ class _defs_grease_pencil_vertex:
                 tool_settings.use_gpencil_vertex_select_mask_segment
             )
         )
-
-    @staticmethod
-    def generate_from_brushes(context):
-        # Though `data_block` is conceptually unnecessary with a single brush tool,
-        # it's still used because many areas assume that brush tools have it set #bToolRef.
-        tool = None
-        if context:
-            brush = context.tool_settings.gpencil_vertex_paint.brush
-            if brush:
-                tool = brush.gpencil_vertex_tool
-        return [
-            ToolDef.from_dict(
-                dict(
-                    idname="builtin.brush",
-                    label="Brush",
-                    icon="brush.sculpt.paint",
-                    data_block=tool
-                )
-            )
-        ]
 
 
 class _defs_curves_sculpt:
@@ -3761,6 +3761,9 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_view3d_generic.cursor,
             None,
             _brush_tool,
+            _defs_grease_pencil_paint.fill,
+            _defs_grease_pencil_paint.erase,
+            None,
             _defs_grease_pencil_paint.trim,
             None,
             _defs_grease_pencil_paint.eyedropper,
@@ -3844,7 +3847,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             ),
         ],
         'VERTEX_GREASE_PENCIL': [
-            _defs_grease_pencil_vertex.generate_from_brushes,
+            _brush_tool,
             None,
             *_tools_annotate,
             None,
