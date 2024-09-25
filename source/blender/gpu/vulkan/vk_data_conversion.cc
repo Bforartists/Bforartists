@@ -12,6 +12,7 @@
 #include "gpu_vertex_format_private.hh"
 
 #include "BLI_color.hh"
+#include "BLI_math_half.hh"
 
 namespace blender::gpu {
 
@@ -623,7 +624,6 @@ using I8 = ComponentValue<int8_t>;
 using I16 = ComponentValue<int16_t>;
 using I32 = ComponentValue<int32_t>;
 using F32 = ComponentValue<float>;
-using F16 = ComponentValue<uint16_t>;
 using SRGBA8 = PixelValue<ColorSceneLinearByteEncoded4b<eAlpha::Premultiplied>>;
 using FLOAT3 = PixelValue<float3>;
 using FLOAT4 = PixelValue<ColorSceneLinear4f<eAlpha::Premultiplied>>;
@@ -800,16 +800,6 @@ void convert(DestinationType &dst, const SourceType &src)
   dst.value = src.value;
 }
 
-static void convert(F16 &dst, const F32 &src)
-{
-  dst.value = convert_float_formats<FormatF16, FormatF32>(float_to_uint32_t(src.value));
-}
-
-static void convert(F32 &dst, const F16 &src)
-{
-  dst.value = uint32_t_to_float(convert_float_formats<FormatF32, FormatF16>(src.value));
-}
-
 static void convert(SRGBA8 &dst, const FLOAT4 &src)
 {
   dst.value = src.value.encode();
@@ -822,17 +812,17 @@ static void convert(FLOAT4 &dst, const SRGBA8 &src)
 
 static void convert(FLOAT3 &dst, const HALF4 &src)
 {
-  dst.value.x = uint32_t_to_float(convert_float_formats<FormatF32, FormatF16>(src.get_r()));
-  dst.value.y = uint32_t_to_float(convert_float_formats<FormatF32, FormatF16>(src.get_g()));
-  dst.value.z = uint32_t_to_float(convert_float_formats<FormatF32, FormatF16>(src.get_b()));
+  dst.value.x = math::half_to_float(src.get_r());
+  dst.value.y = math::half_to_float(src.get_g());
+  dst.value.z = math::half_to_float(src.get_b());
 }
 
 static void convert(HALF4 &dst, const FLOAT3 &src)
 {
-  dst.set_r(convert_float_formats<FormatF16, FormatF32>(float_to_uint32_t(src.value.x)));
-  dst.set_g(convert_float_formats<FormatF16, FormatF32>(float_to_uint32_t(src.value.y)));
-  dst.set_b(convert_float_formats<FormatF16, FormatF32>(float_to_uint32_t(src.value.z)));
-  dst.set_a(convert_float_formats<FormatF16, FormatF32>(float_to_uint32_t(1.0f)));
+  dst.set_r(math::float_to_half(src.value.x));
+  dst.set_g(math::float_to_half(src.value.y));
+  dst.set_b(math::float_to_half(src.value.z));
+  dst.set_a(0x3c00); /* FP16 1.0 */
 }
 
 static void convert(FLOAT3 &dst, const FLOAT4 &src)
@@ -1002,10 +992,14 @@ static void convert_buffer(void *dst_memory,
       break;
 
     case ConversionType::FLOAT_TO_HALF:
-      convert_per_component<F16, F32>(dst_memory, src_memory, buffer_size, device_format);
+      blender::math::float_to_half_array(static_cast<const float *>(src_memory),
+                                         static_cast<uint16_t *>(dst_memory),
+                                         to_component_len(device_format) * buffer_size);
       break;
     case ConversionType::HALF_TO_FLOAT:
-      convert_per_component<F32, F16>(dst_memory, src_memory, buffer_size, device_format);
+      blender::math::half_to_float_array(static_cast<const uint16_t *>(src_memory),
+                                         static_cast<float *>(dst_memory),
+                                         to_component_len(device_format) * buffer_size);
       break;
 
     case ConversionType::FLOAT_TO_SRGBA8:
