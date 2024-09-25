@@ -21,7 +21,6 @@ set(INC_SYS
 )
 
 set(SRC
-  intern/BLI_array.c
   intern/BLI_assert.c
   intern/BLI_color.cc
   intern/BLI_dial_2d.c
@@ -106,6 +105,7 @@ set(SRC
   intern/math_color_inline.c
   intern/math_geom.cc
   intern/math_geom_inline.c
+  intern/math_half.cc
   intern/math_interp.cc
   intern/math_matrix.cc
   intern/math_matrix_c.cc
@@ -178,7 +178,6 @@ set(SRC
   BLI_alloca.h
   BLI_allocator.hh
   BLI_any.hh
-  BLI_array.h
   BLI_array.hh
   BLI_array_store.h
   BLI_array_store_utils.h
@@ -303,6 +302,7 @@ set(SRC
   BLI_math_euler.hh
   BLI_math_euler_types.hh
   BLI_math_geom.h
+  BLI_math_half.hh
   BLI_math_inline.h
   BLI_math_interp.hh
   BLI_math_matrix.h
@@ -487,8 +487,8 @@ endif()
 
 if(APPLE)
   list(APPEND SRC
-    intern/storage_apple.mm
     intern/fileops_apple.mm
+    intern/storage_apple.mm
   )
 endif()
 
@@ -562,6 +562,7 @@ if(WITH_GTESTS)
     tests/BLI_math_bits_test.cc
     tests/BLI_math_color_test.cc
     tests/BLI_math_geom_test.cc
+    tests/BLI_math_half_test.cc
     tests/BLI_math_interp_test.cc
     tests/BLI_math_matrix_test.cc
     tests/BLI_math_matrix_types_test.cc
