@@ -756,7 +756,10 @@ bool parent_set(ReportList *reports,
     if (partype == PAR_ARMATURE_NAME) {
       ed::greasepencil::add_armature_vertex_groups(*ob, *par);
     }
-    else if (ELEM(partype, PAR_ARMATURE_AUTO, PAR_ARMATURE_ENVELOPE)) {
+    else if (partype == PAR_ARMATURE_ENVELOPE) {
+      ed::greasepencil::add_armature_envelope_weights(*scene, *ob, *par);
+    }
+    else if (partype == PAR_ARMATURE_AUTO) {
       /* TODO. */
     }
     /* get corrected inverse */
@@ -982,11 +985,9 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
   CTX_DATA_END;
 
   if (parent->type == OB_ARMATURE) {
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME);
-    if (!has_children_of_type.gpencil) {
-      uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE);
-    }
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE); /*BFA icon*/
     if (has_children_of_type.mesh || has_children_of_type.gpencil) {
       uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE_AUTO);
     }

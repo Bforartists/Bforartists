@@ -449,6 +449,9 @@ option(WITH_MOD_FLUID "Enable Mantaflow Fluid Simulation Framework" ON)
 option(WITH_MOD_REMESH "Enable Remesh Modifier" ON)
 option(WITH_MOD_OCEANSIM "Enable Ocean Modifier" ON)
 
+# UV solvers.
+option(WITH_UV_SLIM "SLIM UV unwrapping solver" ON)
+
 # Image format support
 option(WITH_IMAGE_OPENEXR "Enable OpenEXR Support (http://www.openexr.com)" ON)
 option(WITH_IMAGE_OPENJPEG "Enable OpenJpeg Support (http://www.openjpeg.org)" ON)
@@ -744,7 +747,7 @@ This option is only for debugging purposes."
   # https://www.intel.com/content/www/us/en/develop/documentation/oneapi-dpcpp-cpp-compiler-dev-guide-and-reference/top/compilation/ahead-of-time-compilation.html
   # The supported devices can be retrieved from `ocloc` output when running
   # `ocloc compile --help`.
-  set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH dg2 mtl CACHE STRING "\
+  set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH dg2 mtl lnl CACHE STRING "\
 oneAPI Intel GPU architectures to build binaries for"
   )
   set(CYCLES_ONEAPI_SYCL_TARGETS spir64 spir64_gen CACHE STRING "\
@@ -913,8 +916,8 @@ endif()
 if(NOT WITH_EXPERIMENTAL_FEATURES)
   if(APPLE)
     set(WITH_VULKAN_MOLTENVK OFF)
+    set(WITH_VULKAN_BACKEND OFF)
   endif()
-  set(WITH_VULKAN_BACKEND OFF)
 endif()
 
 # Metal
@@ -1227,6 +1230,13 @@ endif()
 set_and_warn_dependency(WITH_PYTHON WITH_CYCLES        OFF)
 set_and_warn_dependency(WITH_PYTHON WITH_DRACO         OFF)
 set_and_warn_dependency(WITH_PYTHON WITH_MOD_FLUID     OFF)
+
+if(NOT WITH_PYTHON_MODULE)
+  if(WITH_DRACO AND NOT WITH_PYTHON_INSTALL)
+    message(STATUS "WITH_DRACO requires WITH_PYTHON_INSTALL to be ON, disabling WITH_DRACO for now")
+    set(WITH_DRACO OFF)
+  endif()
+endif()
 
 # enable boost for cycles, audaspace or i18n
 # otherwise if the user disabled
