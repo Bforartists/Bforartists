@@ -701,8 +701,8 @@ BLI_NOINLINE static void calc_perpendicular_pinch_forces(const Span<float3> posi
   const float3 z_object_space = math::normalize(imat.z_axis());
   for (const int i : positions.index_range()) {
     const float3 disp_center = math::normalize(location - positions[i]);
-    const float3 x_disp = x_object_space - math::dot(disp_center, x_object_space);
-    const float3 z_disp = z_object_space - math::dot(disp_center, z_object_space);
+    const float3 x_disp = x_object_space * math::dot(disp_center, x_object_space);
+    const float3 z_disp = z_object_space * math::dot(disp_center, z_object_space);
     forces[i] = x_disp + z_disp;
   }
 }
@@ -1406,8 +1406,7 @@ void do_simulation_step(const Depsgraph &depsgraph,
             return cloth_sim.node_state[node_index] == SCULPT_CLOTH_NODE_ACTIVE;
           });
       Mesh &mesh = *static_cast<Mesh *>(object.data);
-      const Span<float3> positions_eval = bke::pbvh::vert_positions_eval(depsgraph, object);
-      MutableSpan<float3> positions_orig = mesh.vert_positions_for_write();
+      const PositionDeformData position_data(depsgraph, object);
       threading::parallel_for(active_nodes.index_range(), 1, [&](const IndexRange range) {
         LocalData &tls = all_tls.local();
         active_nodes.slice(range).foreach_index([&](const int i) {
@@ -1424,14 +1423,15 @@ void do_simulation_step(const Depsgraph &depsgraph,
           tls.translations.resize(verts.size());
           const MutableSpan<float3> translations = tls.translations;
           for (const int i : verts.index_range()) {
-            translations[i] = cloth_sim.pos[verts[i]] - positions_eval[verts[i]];
+            translations[i] = cloth_sim.pos[verts[i]] - position_data.eval[verts[i]];
           }
-          write_translations(
-              depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
+
+          clip_and_lock_translations(sd, ss, position_data.eval, verts, translations);
+          position_data.deform(translations, verts);
 
           cloth_sim.node_state[cloth_sim.node_state_index.lookup(&nodes[i])] =
               SCULPT_CLOTH_NODE_INACTIVE;
-          bke::pbvh::update_node_bounds_mesh(positions_eval, nodes[i]);
+          bke::pbvh::update_node_bounds_mesh(position_data.eval, nodes[i]);
         });
       });
       break;
@@ -2403,6 +2403,7 @@ static int sculpt_cloth_filter_modal(bContext *C, wmOperator *op, const wmEvent 
 
 static int sculpt_cloth_filter_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
+  const Scene &scene = *CTX_data_scene(C);
   Object &ob = *CTX_data_active_object(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   const Sculpt &sd = *CTX_data_tool_settings(C)->sculpt;
@@ -2428,7 +2429,7 @@ static int sculpt_cloth_filter_invoke(bContext *C, wmOperator *op, const wmEvent
     return OPERATOR_CANCELLED;
   }
 
-  undo::push_begin(ob, op);
+  undo::push_begin(scene, ob, op);
   filter::cache_init(C,
                      ob,
                      sd,

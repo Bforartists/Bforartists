@@ -301,6 +301,7 @@ class TOPBAR_PT_main(Panel):
                 row.prop(addon_prefs, "topbar_edit_objectapply",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_edit_objectapply2",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_edit_objectapplydeltas",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "topbar_edit_objectclear",toggle=addon_prefs.bfa_button_style)
             else:
                 row = box.row()
                 row.alignment = 'Center'.upper()

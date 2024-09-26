@@ -116,6 +116,7 @@ static int sculpt_mask_init_exec(bContext *C, wmOperator *op)
   if (!BKE_base_is_visible(v3d, base)) {
     return OPERATOR_CANCELLED;
   }
+  const Scene &scene = *CTX_data_scene(C);
   Object &ob = *CTX_data_active_object(C);
   SculptSession &ss = *ob.sculpt;
   Depsgraph &depsgraph = *CTX_data_ensure_evaluated_depsgraph(C);
@@ -129,7 +130,7 @@ static int sculpt_mask_init_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  undo::push_begin(ob, op);
+  undo::push_begin(scene, ob, op);
 
   const InitMode mode = InitMode(RNA_enum_get(op->ptr, "mode"));
   const int seed = BLI_time_now_seconds();
@@ -144,14 +145,21 @@ static int sculpt_mask_init_exec(bContext *C, wmOperator *op)
             }
           });
           break;
-        case InitMode::FaceSet:
+        case InitMode::FaceSet: {
+          const Mesh &mesh = *static_cast<const Mesh *>(ob.data);
+          const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
+          const bke::AttributeAccessor attributes = mesh.attributes();
+          const VArraySpan face_sets = *attributes.lookup_or_default<int>(
+              ".sculpt_face_set", bke::AttrDomain::Face, 1);
+
           write_mask_mesh(depsgraph, ob, node_mask, [&](MutableSpan<float> mask, Span<int> verts) {
             for (const int vert : verts) {
-              const int face_set = face_set::vert_face_set_get(ob, PBVHVertRef{vert});
+              const int face_set = face_set::vert_face_set_get(vert_to_face_map, face_sets, vert);
               mask[vert] = BLI_hash_int_01(face_set + seed);
             }
           });
           break;
+        }
         case InitMode::Island:
           islands::ensure_cache(ob);
           write_mask_mesh(depsgraph, ob, node_mask, [&](MutableSpan<float> mask, Span<int> verts) {

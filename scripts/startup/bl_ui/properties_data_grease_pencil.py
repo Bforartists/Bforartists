@@ -150,7 +150,8 @@ class GREASE_PENCIL_MT_layer_mask_add(Menu):
                 continue
 
             found = True
-            layout.operator("grease_pencil.layer_mask_add", text=layer.name).name = layer.name
+            props = layout.operator("grease_pencil.layer_mask_add", text=layer.name, icon="GREASEPENCIL")
+            props.name = layer.name
 
         if not found:
             layout.label(text="No layers to add")
@@ -184,11 +185,14 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         space = context.space_data
 
         if space.type == 'PROPERTIES':
-            layout.operator("grease_pencil.layer_group_add", text="Add Group")
+            layout.operator("grease_pencil.layer_group_add", text="Add Group", icon = "GROUP")
+
+            layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
+            layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
 
         layout.separator()
         layout.operator("grease_pencil.layer_duplicate", text="Duplicate", icon='DUPLICATE').empty_keyframes = False
-        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Keyframes").empty_keyframes = True
+        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Keyframes", icon='DUPLICATE' ).empty_keyframes = True
 
         layout.separator()
         layout.operator("grease_pencil.layer_reveal", icon='RESTRICT_VIEW_OFF', text="Show All")
@@ -199,14 +203,8 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.operator("grease_pencil.layer_lock_all", icon='UNLOCKED', text="Unlock All").lock = False
 
         layout.separator()
-        layout.prop(grease_pencil, "use_autolock_layers", text="Autolock Inactive Layers")
-
-        if layer:
-            layout.prop(layer, "ignore_locked_materials")
-
-        layout.separator()
-        layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected").only_active = True
-        layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected").only_active = False
+        layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
+        layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected", icon = 'PASTEDOWN').only_active = False
 
 
 class GREASE_PENCIL_MT_group_context_menu(Menu):
@@ -214,8 +212,8 @@ class GREASE_PENCIL_MT_group_context_menu(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("grease_pencil.layer_group_remove", text="Delete Group").keep_children = False
-        layout.operator("grease_pencil.layer_group_remove", text="Ungroup").keep_children = True
+        layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
+        layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
 
         layout.separator()
         row = layout.row(align=True)
@@ -254,7 +252,16 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
 
         layout.use_property_split = True
         layout.use_property_decorate = True
+
         col = layout.column(align=True)
+        col.use_property_split = False
+
+        col.separator()
+
+        col.prop(grease_pencil, "use_autolock_layers", text="Autolock Inactive Layers")
+
+        if layer:
+            col.prop(layer, "ignore_locked_materials")
 
         # Layer main properties
         row = layout.row(align=True)
