@@ -247,6 +247,12 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
 
         col.separator()
 
+        sub = col.column(align=True)
+        sub.operator("grease_pencil.layer_isolate", icon="HIDE_OFF", text="").affect_visibility = True # BFA - added for v2 consistency
+        sub.operator("grease_pencil.layer_isolate", icon="LOCKED", text="").affect_visibility = False # BFA - added for v2 consistency
+
+        col.separator()
+
         if not layer:
             return
 
@@ -383,9 +389,9 @@ class DATA_PT_grease_pencil_custom_props(DataButtonsPanel, PropertyPanel, Panel)
 
 
 
-## BFA - BFA operator for GUI buttons to re-order items - Start
+## BFA - operator for GUI buttons to re-order items - Start
 class GREASE_PENCIL_OT_interface_item_move(DataButtonsPanel, Operator):
-    '''Move the active layer or group to the specified direction\nYou can also alternatively drag and drop the active layer or group to reorder'''
+    '''Move the active layer to the specified direction\nYou can also alternatively drag and drop the active layer or group to reorder and change hierarchy'''
     bl_idname = "grease_pencil.interface_item_move"
     bl_label = "Move Item"
     bl_options = {'REGISTER', 'UNDO'}
@@ -406,21 +412,28 @@ class GREASE_PENCIL_OT_interface_item_move(DataButtonsPanel, Operator):
     def execute(self, context):
         grease_pencil = context.grease_pencil
         layers = grease_pencil.layers
+
+        # The selected layer
         active_layer = layers.active
-        active_layer_index = layers.find(active_layer.name)
+
+        # BFA - WIP
+        # In theory the layer_groups are shown on a seperate indice, but names are ok.
+        # We can detect the layer_parent by name, and do something like move_to_layer_group either to None (root) or name
+        # We cannot detect if next in index is a layer_group or not yet.
+        # Refer to node.py  NODE_OT_interface_item_move for info on how this could potentially work
 
         if self.direction == 'DOWN':
             # Move the active layer down
-            layers.move(active_layer, 'DOWN')  # Use the layer object instead of index
+            layers.move(active_layer, 'DOWN')  # Move down normally
             self.report({'INFO'}, 'Layer moved down')
 
         elif self.direction == 'UP':
-            # Move the active layer up
-            layers.move(active_layer, 'UP')  # Use the layer object instead of index
+            layers.move(active_layer, 'UP')  # Move up normally
             self.report({'INFO'}, 'Layer moved up')
 
         return {'FINISHED'}
-## BFA - BFA operator for GUI buttons to re-order items - End
+
+## BFA - operator for GUI buttons to re-order items - End
 
 
 classes = (
