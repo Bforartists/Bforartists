@@ -1030,9 +1030,9 @@ class TOPBAR_PT_grease_pencil_layers(Panel):
         col = row.column()
         sub = col.column(align=True)
         sub.operator("grease_pencil.layer_add", icon='ADD', text="")
-        sub.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="")
+        sub.operator("grease_pencil.layer_remove", icon='REMOVE', text="") # BFA - moved to sub
 
-        col.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
+        col.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="") # BFA - moved below per standards
 
         col.separator()
 
