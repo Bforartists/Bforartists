@@ -34,7 +34,7 @@ class OBJECT_PT_constraints(ObjectConstraintPanel, Panel):
 
         layout.template_constraints(use_bone_constraints=False)
 
-
+# BFA menu
 class OBJECT_MT_constraint_add(GenericColumnMenu, Menu):
     bl_description = "Add a constraint to the active object"
 
@@ -54,7 +54,7 @@ class OBJECT_MT_constraint_add(GenericColumnMenu, Menu):
         self.draw_operator_column(layout, header="Relationship",
             types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
 
-
+# BFA menu
 class OBJECT_OT_add_constraints_menu(InvokeMenuOperator, Operator):
     bl_idname = "object.add_constraints_menu"
     bl_label = "Add Object Constraint"
@@ -77,7 +77,7 @@ class BONE_PT_constraints(BoneConstraintPanel, Panel):
 
         layout.template_constraints(use_bone_constraints=True)
 
-
+# BFA - menu
 class BONE_MT_constraint_add(GenericColumnMenu, Menu):
     bl_description = "Add a constraint to the active bone"
 
@@ -97,7 +97,7 @@ class BONE_MT_constraint_add(GenericColumnMenu, Menu):
         self.draw_operator_column(layout, header="Relationship",
             types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
 
-
+# BFA - menu
 class BONE_OT_add_constraints_menu(InvokeMenuOperator, Operator):
     bl_idname = "bone.add_constraints_menu"
     bl_label = "Add Bone Constraint"
@@ -1379,7 +1379,18 @@ class ConstraintButtonsSubPanel:
         layout.use_property_split = True
         layout.use_property_decorate = True
 
-        layout.prop(con, "action")
+        col = layout.column(align=True)
+        col.prop(con, "action")
+        if context.preferences.experimental.use_animation_baklava and con.action and con.action.is_action_layered:
+            col.context_pointer_set("animated_id", con.id_data)
+            col.template_search(
+                con, "action_slot",
+                con, "action_slots",
+                new="",  # No use in making a new slot here.
+                unlink="anim.slot_unassign_from_constraint",
+                text="Slot",
+            )
+
 
         row = layout.row()
         row.use_property_split = False
@@ -1927,11 +1938,11 @@ class BONE_PT_bKinematicConstraint(BoneConstraintPanel, ConstraintButtonsPanel, 
 classes = (
     # Object Panels
     OBJECT_PT_constraints,
-    OBJECT_MT_constraint_add,
-    OBJECT_OT_add_constraints_menu,
+    OBJECT_MT_constraint_add, # BFA menu
+    OBJECT_OT_add_constraints_menu, # BFA menu
     BONE_PT_constraints,
-    BONE_MT_constraint_add,
-    BONE_OT_add_constraints_menu,
+    BONE_MT_constraint_add, # BFA menu
+    BONE_OT_add_constraints_menu, # BFA menu
     OBJECT_PT_bChildOfConstraint,
     OBJECT_PT_bTrackToConstraint,
     OBJECT_PT_bKinematicConstraint,
