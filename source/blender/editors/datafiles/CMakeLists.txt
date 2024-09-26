@@ -747,6 +747,7 @@ if(WITH_BLENDER)
       handle_autoclamped
       handle_free
       handle_vector
+	  hash
       help
 
 	  hide_on # bfa - don't change the order of the icons
