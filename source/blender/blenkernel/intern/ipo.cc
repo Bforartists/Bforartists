@@ -56,6 +56,8 @@
 #include "BKE_main.hh"
 #include "BKE_nla.hh"
 
+#include "ANIM_action.hh"
+
 #include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
@@ -69,6 +71,8 @@
 #endif
 
 static CLG_LogRef LOG = {"bke.ipo"};
+
+using namespace blender;
 
 static void ipo_free_data(ID *id)
 {
@@ -1621,10 +1625,10 @@ static void icu_to_fcurves(ID *id,
          * - their values were 0-1
          * - we now need as 'frames'
          */
-        if ((id) && (icu->blocktype == GS(id->name)) &&
+        if ((id) && (icu->blocktype == GS(id->name)) && (GS(id->name) == ID_CU_LEGACY) &&
             (fcu->rna_path && STREQ(fcu->rna_path, "eval_time")))
         {
-          Curve *cu = (Curve *)id;
+          const Curve *cu = (const Curve *)id;
 
           dst->vec[0][1] *= cu->pathlen;
           dst->vec[1][1] *= cu->pathlen;
@@ -1637,8 +1641,8 @@ static void icu_to_fcurves(ID *id,
          * - were also degrees/10
          */
         if (fcu->driver && fcu->driver->variables.first) {
-          DriverVar *dvar = static_cast<DriverVar *>(fcu->driver->variables.first);
-          DriverTarget *dtar = &dvar->targets[0];
+          const DriverVar *dvar = static_cast<const DriverVar *>(fcu->driver->variables.first);
+          const DriverTarget *dtar = &dvar->targets[0];
 
           if (ELEM(dtar->transChan, DTAR_TRANSCHAN_ROTX, DTAR_TRANSCHAN_ROTY, DTAR_TRANSCHAN_ROTZ))
           {
@@ -1874,7 +1878,9 @@ static void ipo_to_animdata(
 
       SNPRINTF(nameBuf, "CDA:%s", ipo->id.name + 2);
 
-      adt->action = BKE_action_add(bmain, nameBuf);
+      bAction *action = BKE_action_add(bmain, nameBuf);
+      id_us_min(&action->id);
+      animrig::assign_action(action, {*id, *adt});
       if (G.debug & G_DEBUG) {
         printf("\t\tadded new action - '%s'\n", nameBuf);
       }
@@ -1912,7 +1918,7 @@ static void action_to_animdata(ID *id, bAction *act)
     if (G.debug & G_DEBUG) {
       printf("act_to_adt - set adt action to act\n");
     }
-    adt->action = act;
+    animrig::assign_action(act, {*id, *adt});
   }
 
   /* convert Action data */
@@ -2127,18 +2133,14 @@ void do_versions_ipos_to_animato(Main *bmain)
       nlastrips_to_animdata(id, &ob->nlastrips);
     }
     else if ((ob->ipo) || (ob->action)) {
-      /* Add AnimData block */
-      AnimData *adt = BKE_animdata_ensure_id(id);
+      BKE_animdata_ensure_id(id);
 
       /* Action first - so that Action name get conserved */
       if (ob->action) {
         action_to_animdata(id, ob->action);
 
-        /* Only decrease user-count if this Action isn't now being used by AnimData. */
-        if (ob->action != adt->action) {
-          id_us_min(&ob->action->id);
-          ob->action = nullptr;
-        }
+        id_us_min(&ob->action->id);
+        ob->action = nullptr;
       }
 
       /* IPO second... */
