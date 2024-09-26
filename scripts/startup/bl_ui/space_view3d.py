@@ -232,10 +232,11 @@ class VIEW3D_HT_tool_header(Header):
             layout.popover_group(context=".particlemode", **popover_kw)
         elif mode_string == 'OBJECT':
             layout.popover_group(context=".objectmode", **popover_kw)
-        elif mode_string in {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL'}:
+        elif mode_string in {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL', 'VERTEX_GREASE_PENCIL'}:
             layer = context.object.data.layers.active
             group = context.object.data.layer_groups.active
             text = "Layer"
+            node_name = None
 
             if layer:
                 node_name = layer.name
@@ -1557,11 +1558,8 @@ class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base, Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        # XXX see alignmenu() in edit.c of b2.4x to get this working
-        layout.operator(
-            "transform.transform",
-            text="Align to Transform Orientation",
-            icon="ALIGN_TRANSFORM").mode = 'ALIGN'
+        # XXX: see `alignmenu()` in `edit.c` of b2.4x to get this working.
+        layout.operator("transform.transform", text="Align to Transform Orientation", icon="ALIGN_TRANSFORM").mode = 'ALIGN'
 
         layout.separator()
 
@@ -1593,12 +1591,8 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base, Menu):
             elif obj.data.display_type == 'ENVELOPE':
                 layout.separator()
 
-                layout.operator(
-                    "transform.transform",
-                    text="Scale Envelope Distance",
-                    icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
-                layout.operator("transform.transform", text="Scale Radius",
-                                icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
+                layout.operator("transform.transform", text="Scale Envelope Distance", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+                layout.operator("transform.transform", text="Scale Radius", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
 
         if context.edit_object and context.edit_object.type == 'ARMATURE':
             layout.separator()
@@ -1678,8 +1672,11 @@ class VIEW3D_MT_uv_map(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-        layout.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+        layout.operator_enum("uv.unwrap", "method")
+		# layout.menu("IMAGE_MT_uvs_unwrap") # BFA - redundant, exposed to top level
+		
+        #layout.operator("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+        #layout.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
         layout.separator()
 
@@ -2825,6 +2822,7 @@ class VIEW3D_MT_paint_grease_pencil(Menu):
         layout.separator()
 
         layout.operator("paint.sample_color")
+        layout.operator("grease_pencil.interpolate_sequence", text="Interpolate Sequence")
 
 
 # BFA - legacy
@@ -3009,7 +3007,13 @@ class VIEW3D_MT_select_sculpt_curves(Menu):
         layout.operator("curves.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curves.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("curves.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        
+        layout.separator()
+        
         layout.operator("sculpt_curves.select_random", text="Random", icon="RANDOMIZE")
+        
+        layout.separator()
+        
         layout.operator("curves.select_ends", text="Endpoints", icon="SELECT_TIP")
         layout.operator("sculpt_curves.select_grow", text="Grow", icon="SELECTMORE")
 
@@ -3626,10 +3630,7 @@ class VIEW3D_MT_object_animation(Menu):
         layout = self.layout
 
         layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon='KEYFRAMES_INSERT')
-        layout.operator(
-            "anim.keyframe_insert_menu",
-            text="Insert Keyframe with Keying Set",
-            icon='KEYFRAMES_INSERT').always_prompt = True
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon='KEYFRAMES_INSERT').always_prompt = True
         layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes", icon='KEYFRAMES_REMOVE')
         layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes", icon='KEYFRAMES_CLEAR')
         layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon='KEYINGSET')
@@ -3638,10 +3639,7 @@ class VIEW3D_MT_object_animation(Menu):
 
         layout.operator("nla.bake", text="Bake Action", icon='BAKE_ACTION')
         layout.operator("gpencil.bake_mesh_animation", text="Bake Mesh to Grease Pencil", icon='BAKE_ACTION')
-        layout.operator(
-            "gpencil.bake_grease_pencil_animation",
-            text="Bake Object Transform to Grease Pencil",
-            icon='BAKE_ACTION')
+        layout.operator("gpencil.bake_grease_pencil_animation", text="Bake Object Transform to Grease Pencil", icon='BAKE_ACTION')
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -4021,6 +4019,8 @@ class VIEW3D_MT_object_apply(Menu):
             text="Parent Inverse",
             text_ctxt=i18n_contexts.default,
             icon="APPLY_PARENT_INVERSE")
+        #layout.operator("object.duplicates_make_real") # BFA - redundant
+        #layout.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default)  # BFA - redundant
 
         layout.template_node_operator_asset_menu_items(catalog_path="Object/Apply")
 
@@ -4111,6 +4111,28 @@ class VIEW3D_MT_object_constraints(Menu):
         layout.separator()
 
         layout.operator("object.constraints_clear", icon="CLEAR_CONSTRAINT")
+
+# BFA - not used
+class VIEW3D_MT_object_modifiers(Menu):
+    bl_label = "Modifiers"
+
+    def draw(self, _context):
+        active_object = bpy.context.active_object
+        supported_types = {'MESH', 'CURVE', 'CURVES', 'SURFACE', 'FONT', 'VOLUME', 'GREASEPENCIL'}
+
+        layout = self.layout
+
+        if active_object:
+            if active_object.type in supported_types:
+                layout.menu("OBJECT_MT_modifier_add", text="Add Modifier")
+            elif active_object.type == 'GPENCIL':
+                layout.operator("object.gpencil_modifier_add", text="Add Modifier")
+
+        layout.operator("object.modifiers_copy_to_selected", text="Copy Modifiers to Selected Objects")
+
+        layout.separator()
+
+        layout.operator("object.modifiers_clear")
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
@@ -7034,19 +7056,25 @@ class VIEW3D_MT_draw_gpencil(Menu):
 
         layout.menu("GPENCIL_MT_layer_active", text="Active Layer")
 
-        #layout.separator()
+        layout.separator()
 
-        #layout.operator("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE")  # BFA - Legacy
-        #layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE") # BFA - Legacy
+        # layout.menu("VIEW3D_MT_gpencil_animation") # BFA - legacy
+        layout.menu("VIEW3D_MT_edit_greasepencil_animation") # BFA - menu
+        layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_greasepencil_animation") # BFA - menu
+        #layout.menu("VIEW3D_MT_edit_gpencil_showhide") # BFA - legacy
+        layout.menu("GPENCIL_MT_cleanup")
+
+        #layout.operator("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE")  # BFA - Legacy
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
         layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
+
+
 
 
 # BFA - VIEW3D_MT_edit_gpencil consolidated and removed
@@ -7062,6 +7090,7 @@ class VIEW3D_MT_edit_grease_pencil_arrange_strokes(Menu):
         layout.operator("grease_pencil.reorder", text="Send Backward", icon='MOVE_DOWN').direction = 'DOWN'
         layout.operator("grease_pencil.reorder", text="Bring to Front", icon='MOVE_TO_TOP').direction = 'TOP'
         layout.operator("grease_pencil.reorder", text="Send to Back", icon='MOVE_TO_BOTTOM').direction = 'BOTTOM'
+
 # BFA - VIEW3D_MT_weight_gpencil legacy menu consolidated and removed
 
 class VIEW3D_MT_weight_grease_pencil(Menu):
@@ -7161,6 +7190,8 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
 
         layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
 
+        layout.operator("grease_pencil.reproject")
+
 
 # BFA menu - legacy
 class VIEW3D_MT_edit_greasepencil(Menu):
@@ -7168,8 +7199,6 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
     def draw(self, _context):
         layout = self.layout
-
-        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - warning
 
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
@@ -7183,12 +7212,10 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.menu("VIEW3D_MT_edit_greasepencil_animation")
         layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
-        #layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE") # BFA - Legacy
-
+        layout.operator("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
 
         #layout.separator()
 
-        #layout.operator("gpencil.duplicate_move", text="Duplicate", icon="DUPLICATE") # BFA - Legacy
         #layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon="DUPLICATE") # BFA - Legacy
         #layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame All Layers", icon="DUPLICATE").mode = 'ALL' # BFA - Legacy
 
@@ -7216,14 +7243,12 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.separator()
 
-        layout.separator()
-
         layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide", text="Show/Hide")
 
         layout.separator()
-
         layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
+
 
 
 # BFA - legacy
@@ -7247,7 +7272,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         layout.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
         layout.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
-        #layout.menu("VIEW3D_MT_gpencil_simplify") # BFA - menu
+        # layout.menu("VIEW3D_MT_gpencil_simplify") # BFA - menu
         layout.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
         # layout.operator("gpencil.stroke_trim", text="Trim", icon="CUT") # BFA - legacy
 
@@ -7296,6 +7321,10 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         #layout.separator()
         #layout.operator("gpencil.stroke_outline", text="Outline", icon="OUTLINE")  # BFA - legacy
 
+        layout.separator()
+
+        layout.operator("grease_pencil.reset_uvs")
+
 
 class VIEW3D_MT_edit_greasepencil_point(Menu):
     bl_label = "Point"
@@ -7315,11 +7344,11 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("grease_pencil.set_handle_type", property="type")
+        layout.menu("VIEW3D_MT_greasepencil_vertex_group")
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_greasepencil_vertex_group")
+        layout.operator_menu_enum("grease_pencil.set_handle_type", property="type")
 
 
 class VIEW3D_MT_edit_curves_add(Menu):
@@ -11024,51 +11053,71 @@ class View3DAssetShelf(BrushAssetShelf):
 class VIEW3D_AST_brush_sculpt(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'SCULPT'
     mode_prop = "use_paint_sculpt"
+    brush_type_prop = "sculpt_brush_type"
+    tool_prop = "sculpt_tool"
 
 
 class VIEW3D_AST_brush_sculpt_curves(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'SCULPT_CURVES'
     mode_prop = "use_paint_sculpt_curves"
+    brush_type_prop = "curves_sculpt_brush_type"
+    tool_prop = "curves_sculpt_tool"
 
 
 class VIEW3D_AST_brush_vertex_paint(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'VERTEX_PAINT'
     mode_prop = "use_paint_vertex"
+    brush_type_prop = "vertex_brush_type"
+    tool_prop = "vertex_tool"
 
 
 class VIEW3D_AST_brush_weight_paint(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'WEIGHT_PAINT'
     mode_prop = "use_paint_weight"
+    brush_type_prop = "weight_brush_type"
+    tool_prop = "weight_tool"
 
 
 class VIEW3D_AST_brush_texture_paint(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'TEXTURE_PAINT'
     mode_prop = "use_paint_image"
+    brush_type_prop = "image_brush_type"
+    tool_prop = "image_tool"
 
 
 class VIEW3D_AST_brush_gpencil_paint(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'PAINT_GPENCIL'
     mode_prop = "use_paint_grease_pencil"
+    brush_type_prop = "gpencil_brush_type"
+    tool_prop = "gpencil_tool"
 
 
 class VIEW3D_AST_brush_grease_pencil_paint(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'PAINT_GREASE_PENCIL'
     mode_prop = "use_paint_grease_pencil"
+    brush_type_prop = "gpencil_brush_type"
+    tool_prop = "gpencil_tool"
 
 
 class VIEW3D_AST_brush_gpencil_sculpt(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'SCULPT_GPENCIL'
     mode_prop = "use_sculpt_grease_pencil"
+    brush_type_prop = "gpencil_sculpt_brush_type"
+    tool_prop = "gpencil_sculpt_tool"
 
 
 class VIEW3D_AST_brush_gpencil_vertex(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'VERTEX_GPENCIL'
     mode_prop = "use_vertex_grease_pencil"
+    brush_type_prop = "gpencil_vertex_brush_type"
+    tool_prop = "gpencil_vertex_tool"
 
 
 class VIEW3D_AST_brush_gpencil_weight(View3DAssetShelf, bpy.types.AssetShelf):
     mode = 'WEIGHT_GPENCIL'
     mode_prop = "use_weight_grease_pencil"
+    brush_type_prop = "gpencil_weight_brush_type"
+    tool_prop = "gpencil_weight_tool"
 
 
 # BFA - material object collection asset shelf

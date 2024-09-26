@@ -63,10 +63,7 @@ static void add_object_data_users(const Main &bmain, const ID &id, Vector<ID *> 
   FOREACH_MAIN_LISTBASE_ID_END;
 }
 
-/* Find an action on an ID that is related to the given ID. Related things are e.g. Object<->Data,
- * Mesh<->Material and so on. The exact relationships are defined per ID type. Only relationships
- * of 1:1 are traced. The case of multiple users for 1 ID is treated as not related. */
-static bAction *find_related_action(Main &bmain, ID &id)
+Vector<ID *> find_related_ids(Main &bmain, ID &id)
 {
   Vector<ID *> related_ids({&id});
 
@@ -74,13 +71,6 @@ static bAction *find_related_action(Main &bmain, ID &id)
    * code that defines relationships. */
   for (int i = 0; i < related_ids.size(); i++) {
     ID *related_id = related_ids[i];
-
-    Action *action = get_action(*related_id);
-    if (action && action->is_action_layered()) {
-      /* Returning the first action found means highest priority has the action closest in the
-       * relationship graph. */
-      return action;
-    }
 
     if (related_id->flag & ID_FLAG_EMBEDDED_DATA) {
       /* No matter the type of embedded ID, their owner can always be added to the related IDs. */
@@ -115,9 +105,9 @@ static bAction *find_related_action(Main &bmain, ID &id)
       }
 
       case ID_KE: {
-        /* Shapekeys.  */
+        /* Shape-keys. */
         Key *key = (Key *)related_id;
-        /* Shapekeys are not embedded but there is currently no way to reuse them. */
+        /* Shape-keys are not embedded but there is currently no way to reuse them. */
         BLI_assert(ID_REAL_USERS(related_id) == 1);
         related_ids.append_non_duplicates(key->from);
         break;
@@ -172,7 +162,7 @@ static bAction *find_related_action(Main &bmain, ID &id)
 
         Key *key = BKE_key_from_id(related_id);
         if (key) {
-          /* No check for multi user because the Shapekey cannot be shared. */
+          /* No check for multi user because the shape-key cannot be shared. */
           BLI_assert(ID_REAL_USERS(&key->id) == 1);
           related_ids.append_non_duplicates(&key->id);
         }
@@ -181,21 +171,32 @@ static bAction *find_related_action(Main &bmain, ID &id)
     }
   }
 
+  return related_ids;
+}
+
+/* Find an action on an ID that is related to the given ID. Related things are e.g. Object<->Data,
+ * Mesh<->Material and so on. */
+static bAction *find_related_action(Main &bmain, ID &id)
+{
+  Vector<ID *> related_ids = find_related_ids(bmain, id);
+
+  for (ID *related_id : related_ids) {
+    Action *action = get_action(*related_id);
+    if (action && action->is_action_layered()) {
+      /* Returning the first action found means highest priority has the action closest in the
+       * relationship graph. */
+      return action;
+    }
+  }
+
   return nullptr;
 }
 
 bAction *id_action_ensure(Main *bmain, ID *id)
 {
-  AnimData *adt;
-
-  /* init animdata if none available yet */
-  adt = BKE_animdata_from_id(id);
+  AnimData *adt = BKE_animdata_ensure_id(id);
   if (adt == nullptr) {
-    adt = BKE_animdata_ensure_id(id);
-  }
-  if (adt == nullptr) {
-    /* if still none (as not allowed to add, or ID doesn't have animdata for some reason) */
-    printf("ERROR: Couldn't add AnimData (ID = %s)\n", (id) ? (id->name) : "<None>");
+    printf("ERROR: data-block type is not animatable (ID = %s)\n", (id) ? (id->name) : "<None>");
     return nullptr;
   }
 
@@ -226,13 +227,12 @@ bAction *id_action_ensure(Main *bmain, ID *id)
 
       /* create action */
       action = BKE_action_add(bmain, actname);
-      /* set ID-type from ID-block that this is going to be assigned to
-       * so that users can't accidentally break actions by assigning them
-       * to the wrong places
-       */
-      BKE_animdata_action_ensure_idroot(id, adt->action);
+
+      /* Decrement the default-1 user count, as assigning it will increase it again. */
+      BLI_assert(action->id.us == 1);
+      id_us_min(&action->id);
     }
-    adt->action = action;
+    animrig::assign_action(action, {*id, *adt});
 
     /* Tag depsgraph to be rebuilt to include time dependency. */
     DEG_relations_tag_update(bmain);
@@ -387,8 +387,8 @@ const FCurve *fcurve_find_by_rna_path(const AnimData &adt,
     for (const Strip *strip : layer->strips()) {
       switch (strip->type()) {
         case Strip::Type::Keyframe: {
-          const KeyframeStrip &key_strip = strip->as<KeyframeStrip>();
-          const ChannelBag *channelbag_for_slot = key_strip.channelbag_for_slot(*slot);
+          const StripKeyframeData &strip_data = strip->data<StripKeyframeData>(action);
+          const ChannelBag *channelbag_for_slot = strip_data.channelbag_for_slot(*slot);
           if (!channelbag_for_slot) {
             continue;
           }
