@@ -1430,7 +1430,7 @@ class VIEW3D_MT_editor_menus(Menu):
             elif obj and obj.mode == 'WEIGHT_GPENCIL':
                 layout.menu("VIEW3D_MT_weight_grease_pencil")
             if obj and obj.mode == 'VERTEX_GPENCIL':
-                layout.menu("VIEW3D_MT_paint_gpencil") # BFA - legacy
+                layout.menu("VIEW3D_MT_paint_vertex_grease_pencil")
 
         elif edit_object:
             layout.menu("VIEW3D_MT_edit_" + edit_object.type.lower())
