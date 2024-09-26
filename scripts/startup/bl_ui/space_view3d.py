@@ -1389,7 +1389,7 @@ class VIEW3D_MT_editor_menus(Menu):
 
             elif mode_string == "VERTEX_GPENCIL":  # BFA
                 layout.menu("VIEW3D_MT_edit_greasepencil_animation")  # BFA
-                layout.menu("GPENCIL_MT_layer_active", text="Active Layer")  # BFA
+                layout.menu("GREASE_PENCIL_MT_layer_active", text="Active Layer")  # BFA
 
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             mesh = obj.data
@@ -1422,16 +1422,15 @@ class VIEW3D_MT_editor_menus(Menu):
 
         if gp_edit:
             if obj and obj.mode == 'PAINT_GPENCIL':
-                layout.menu("VIEW3D_MT_draw_gpencil")
+                layout.menu("VIEW3D_MT_paint_grease_pencil")
             elif obj and obj.mode == 'EDIT_GREASE_PENCIL':
                 layout.menu("VIEW3D_MT_edit_greasepencil")
                 layout.menu("VIEW3D_MT_edit_greasepencil_stroke")
                 layout.menu("VIEW3D_MT_edit_greasepencil_point")
             elif obj and obj.mode == 'WEIGHT_GPENCIL':
-                #layout.menu("VIEW3D_MT_weight_gpencil") # BFA - legacy
                 layout.menu("VIEW3D_MT_weight_grease_pencil")
             if obj and obj.mode == 'VERTEX_GPENCIL':
-                layout.menu("VIEW3D_MT_paint_gpencil") # BFA - legacy
+                layout.menu("VIEW3D_MT_paint_vertex_grease_pencil")
 
         elif edit_object:
             layout.menu("VIEW3D_MT_edit_" + edit_object.type.lower())
@@ -2765,6 +2764,7 @@ class VIEW3D_MT_select_gpencil_grouped(Menu):
         layout.operator("gpencil.select_grouped", text="Layer", icon="LAYER").type = 'LAYER'
         layout.operator("gpencil.select_grouped", text="Color", icon="COLOR").type = 'MATERIAL'
 
+
 class VIEW3D_MT_select_edit_grease_pencil(Menu):
     bl_label = "Select"
 
@@ -2816,13 +2816,17 @@ class VIEW3D_MT_paint_grease_pencil(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_edit_greasepencil_animation") # BFA - menu
+        layout.operator("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
+        #layout.operator("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE")  # BFA - Legacy
+
+        layout.separator()
+
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
         layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
 
         layout.separator()
-
-        layout.operator("paint.sample_color")
-        layout.operator("grease_pencil.interpolate_sequence", text="Interpolate Sequence")
+        layout.operator("paint.sample_color", icon="EYEDROPPER")
 
 
 # BFA - legacy
@@ -7054,6 +7058,8 @@ class VIEW3D_MT_draw_gpencil(Menu):
 
         layout = self.layout
 
+        layout.label(text="Legacy Grease Pencil menu", icon="INFO") # BFA - Warning
+
         layout.menu("GPENCIL_MT_layer_active", text="Active Layer")
 
         layout.separator()
@@ -7172,9 +7178,9 @@ class VIEW3D_MT_edit_greasepencil_showhide(Menu):
         layout.operator("grease_pencil.layer_hide", text="Hide Active Layer", icon="HIDE_ON").unselected = False
         layout.operator("grease_pencil.layer_hide", text="Hide Inactive Layers", icon="HIDE_UNSELECTED").unselected = True
 
-        layout.separator()
+        #layout.separator()
 
-        layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon="HIDE_OFF") # BFA - Legacy
+        #layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon="HIDE_OFF") # BFA - Legacy
 
 
 class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
@@ -7188,9 +7194,9 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
         layout.operator("grease_pencil.clean_loose", icon="DELETE_LOOSE")
         layout.operator("grease_pencil.frame_clean_duplicate", icon="DELETE_DUPLICATE")
 
-        layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
+        layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES") # BFA - should only show in edit mode
 
-        layout.operator("grease_pencil.reproject")
+        layout.operator("grease_pencil.reproject") # BFA - should only show in edit mode
 
 
 # BFA menu - legacy
