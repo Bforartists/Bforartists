@@ -34,6 +34,7 @@
 #include "BLI_math_euler_types.hh"
 #include "BLI_math_geom.h"
 #include "BLI_math_matrix.h"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_memarena.h"
@@ -1974,7 +1975,7 @@ int BKE_grease_pencil_stroke_point_count(const GreasePencil &grease_pencil)
   int total_points = 0;
 
   for (const int layer_i : grease_pencil.layers().index_range()) {
-    const bke::greasepencil::Layer &layer = *grease_pencil.layer(layer_i);
+    const bke::greasepencil::Layer &layer = grease_pencil.layer(layer_i);
     const Map<bke::greasepencil::FramesMapKeyT, GreasePencilFrame> frames = layer.frames();
     frames.foreach_item(
         [&](const bke::greasepencil::FramesMapKeyT /*key*/, const GreasePencilFrame frame) {
@@ -1998,7 +1999,7 @@ void BKE_grease_pencil_point_coords_get(const GreasePencil &grease_pencil,
   using namespace blender;
 
   for (const int layer_i : grease_pencil.layers().index_range()) {
-    const bke::greasepencil::Layer &layer = *grease_pencil.layer(layer_i);
+    const bke::greasepencil::Layer &layer = grease_pencil.layer(layer_i);
     const float4x4 layer_to_object = layer.local_transform();
     const Map<bke::greasepencil::FramesMapKeyT, GreasePencilFrame> frames = layer.frames();
     frames.foreach_item(
@@ -2028,7 +2029,7 @@ void BKE_grease_pencil_point_coords_apply(GreasePencil &grease_pencil,
   using namespace blender;
 
   for (const int layer_i : grease_pencil.layers().index_range()) {
-    bke::greasepencil::Layer &layer = *grease_pencil.layer(layer_i);
+    bke::greasepencil::Layer &layer = grease_pencil.layer(layer_i);
     const float4x4 layer_to_object = layer.local_transform();
     const float4x4 object_to_layer = math::invert(layer_to_object);
     const Map<bke::greasepencil::FramesMapKeyT, GreasePencilFrame> frames = layer.frames();
@@ -2061,7 +2062,7 @@ void BKE_grease_pencil_point_coords_apply_with_mat4(GreasePencil &grease_pencil,
   const float scalef = mat4_to_scale(mat.ptr());
 
   for (const int layer_i : grease_pencil.layers().index_range()) {
-    bke::greasepencil::Layer &layer = *grease_pencil.layer(layer_i);
+    bke::greasepencil::Layer &layer = grease_pencil.layer(layer_i);
     const float4x4 layer_to_object = layer.local_transform();
     const float4x4 object_to_layer = math::invert(layer_to_object);
     const Map<bke::greasepencil::FramesMapKeyT, GreasePencilFrame> frames = layer.frames();
@@ -2465,6 +2466,38 @@ blender::bke::greasepencil::Drawing *GreasePencil::insert_frame(
   return &drawing->wrap();
 }
 
+void GreasePencil::insert_frames(Span<blender::bke::greasepencil::Layer *> layers,
+                                 const int frame_number,
+                                 const int duration,
+                                 const eBezTriple_KeyframeType keytype)
+{
+  using namespace blender;
+  if (layers.is_empty()) {
+    return;
+  }
+  Vector<GreasePencilFrame *> frames;
+  frames.reserve(layers.size());
+  for (bke::greasepencil::Layer *layer : layers) {
+    BLI_assert(layer != nullptr);
+    GreasePencilFrame *frame = layer->add_frame(frame_number, duration);
+    if (frame != nullptr) {
+      frames.append(frame);
+    }
+  }
+
+  if (frames.is_empty()) {
+    return;
+  }
+
+  this->add_empty_drawings(frames.size());
+  const IndexRange new_drawings = this->drawings().index_range().take_back(frames.size());
+  for (const int frame_i : frames.index_range()) {
+    GreasePencilFrame *frame = frames[frame_i];
+    frame->drawing_index = new_drawings[frame_i];
+    frame->type = int8_t(keytype);
+  }
+}
+
 bool GreasePencil::insert_duplicate_frame(blender::bke::greasepencil::Layer &layer,
                                           const int src_frame_number,
                                           const int dst_frame_number,
@@ -2812,6 +2845,19 @@ blender::bke::greasepencil::Drawing *GreasePencil::get_eval_drawing(
   return this->get_drawing_at(layer, this->runtime->eval_frame);
 }
 
+static void transform_positions(const Span<blender::float3> src,
+                                const blender::float4x4 &transform,
+                                blender::MutableSpan<blender::float3> dst)
+{
+  BLI_assert(src.size() == dst.size());
+
+  blender::threading::parallel_for(src.index_range(), 4096, [&](const blender::IndexRange range) {
+    for (const int i : range) {
+      dst[i] = blender::math::transform_point(transform, src[i]);
+    }
+  });
+}
+
 std::optional<blender::Bounds<blender::float3>> GreasePencil::bounds_min_max(const int frame) const
 {
   using namespace blender;
@@ -2819,12 +2865,16 @@ std::optional<blender::Bounds<blender::float3>> GreasePencil::bounds_min_max(con
   const Span<const bke::greasepencil::Layer *> layers = this->layers();
   for (const int layer_i : layers.index_range()) {
     const bke::greasepencil::Layer &layer = *layers[layer_i];
+    const float4x4 layer_to_object = layer.local_transform();
     if (!layer.is_visible()) {
       continue;
     }
     if (const bke::greasepencil::Drawing *drawing = this->get_drawing_at(layer, frame)) {
       const bke::CurvesGeometry &curves = drawing->strokes();
-      bounds = bounds::merge(bounds, curves.bounds_min_max());
+
+      Array<float3> world_pos(curves.evaluated_positions().size());
+      transform_positions(curves.evaluated_positions(), layer_to_object, world_pos);
+      bounds = bounds::merge(bounds, bounds::min_max(world_pos.as_span()));
     }
   }
   return bounds;

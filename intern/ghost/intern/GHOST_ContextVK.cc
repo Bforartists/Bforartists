@@ -265,8 +265,10 @@ class GHOST_DeviceVK {
     dynamic_rendering_unused_attachments.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_FEATURES_EXT;
     dynamic_rendering_unused_attachments.dynamicRenderingUnusedAttachments = VK_TRUE;
-    dynamic_rendering_unused_attachments.pNext = device_create_info_p_next;
-    device_create_info_p_next = &dynamic_rendering_unused_attachments;
+    if (has_extensions({VK_EXT_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_EXTENSION_NAME})) {
+      dynamic_rendering_unused_attachments.pNext = device_create_info_p_next;
+      device_create_info_p_next = &dynamic_rendering_unused_attachments;
+    }
 
     /* Query for Mainenance4 (core in Vulkan 1.3). */
     VkPhysicalDeviceMaintenance4FeaturesKHR maintenance_4 = {};
@@ -318,6 +320,7 @@ static std::optional<GHOST_DeviceVK> vulkan_device;
 
 static GHOST_TSuccess ensure_vulkan_device(VkInstance vk_instance,
                                            VkSurfaceKHR vk_surface,
+                                           const GHOST_GPUDevice &preferred_device,
                                            const vector<const char *> &required_extensions)
 {
   if (vulkan_device.has_value()) {
@@ -333,8 +336,10 @@ static GHOST_TSuccess ensure_vulkan_device(VkInstance vk_instance,
   vkEnumeratePhysicalDevices(vk_instance, &device_count, physical_devices.data());
 
   int best_device_score = -1;
+  int device_index = -1;
   for (const auto &physical_device : physical_devices) {
     GHOST_DeviceVK device_vk(vk_instance, physical_device);
+    device_index++;
 
     if (!device_vk.has_extensions(required_extensions)) {
       continue;
@@ -384,6 +389,16 @@ static GHOST_TSuccess ensure_vulkan_device(VkInstance vk_instance,
       default:
         break;
     }
+    /* User has configured a preferred device. Add bonus score when vendor and device match. Driver
+     * id isn't considered as drivers update more frequently and can break the device selection. */
+    if (device_vk.properties.deviceID == preferred_device.device_id &&
+        device_vk.properties.vendorID == preferred_device.vendor_id)
+    {
+      device_score += 500;
+      if (preferred_device.index == device_index) {
+        device_score += 10;
+      }
+    }
     if (device_score > best_device_score) {
       best_physical_device = physical_device;
       best_device_score = device_score;
@@ -419,7 +434,8 @@ GHOST_ContextVK::GHOST_ContextVK(bool stereoVisual,
 #endif
                                  int contextMajorVersion,
                                  int contextMinorVersion,
-                                 int debug)
+                                 int debug,
+                                 const GHOST_GPUDevice &preferred_device)
     : GHOST_Context(stereoVisual),
 #ifdef _WIN32
       m_hwnd(hwnd),
@@ -438,6 +454,7 @@ GHOST_ContextVK::GHOST_ContextVK(bool stereoVisual,
       m_context_major_version(contextMajorVersion),
       m_context_minor_version(contextMinorVersion),
       m_debug(debug),
+      m_preferred_device(preferred_device),
       m_command_pool(VK_NULL_HANDLE),
       m_command_buffer(VK_NULL_HANDLE),
       m_surface(VK_NULL_HANDLE),
@@ -1050,7 +1067,7 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
 #endif
   }
 
-  if (!ensure_vulkan_device(instance, m_surface, required_device_extensions)) {
+  if (!ensure_vulkan_device(instance, m_surface, m_preferred_device, required_device_extensions)) {
     return GHOST_kFailure;
   }
 
