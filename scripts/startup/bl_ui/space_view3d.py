@@ -7194,9 +7194,9 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
         layout.operator("grease_pencil.clean_loose", icon="DELETE_LOOSE")
         layout.operator("grease_pencil.frame_clean_duplicate", icon="DELETE_DUPLICATE")
 
-        layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES") # BFA - should only show in edit mode
-
-        layout.operator("grease_pencil.reproject") # BFA - should only show in edit mode
+        if ob.mode == "EDIT": # BFA - should only show in edit mode
+            layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
+            layout.operator("grease_pencil.reproject", icon="REPROJECT")
 
 
 # BFA menu - legacy
