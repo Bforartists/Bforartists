@@ -7245,7 +7245,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         #layout.separator()
 
-        layout.menu("VIEW3D_MT_weight_grease_pencil")
+        # layout.menu("VIEW3D_MT_weight_grease_pencil") # BFA - not used
 
         layout.separator()
 
