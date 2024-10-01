@@ -886,7 +886,7 @@ typedef struct UserDef {
   int virtual_pixel;
 
   float viewport_line_width; /* BFA - GooEngine */
-  char _pad16[4]; /* BFA - GooEngine, declared below /*
+  char _pad16[4]; /* BFA - GooEngine, declared below */
 
   /** Console scroll-back limit. */
   int scrollback;
