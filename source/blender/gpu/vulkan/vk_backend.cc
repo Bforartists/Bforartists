@@ -103,12 +103,6 @@ static Vector<StringRefNull> missing_capabilities_get(VkPhysicalDevice vk_physic
   if (!extensions.contains(VK_KHR_SWAPCHAIN_EXTENSION_NAME)) {
     missing_capabilities.append(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
   }
-  if (!extensions.contains(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME)) {
-    missing_capabilities.append(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME);
-  }
-  if (!extensions.contains(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME)) {
-    missing_capabilities.append(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME);
-  }
   if (!extensions.contains(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME)) {
     missing_capabilities.append(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
   }
@@ -128,12 +122,8 @@ bool VKBackend::is_supported()
   vk_application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   vk_application_info.apiVersion = VK_API_VERSION_1_2;
 
-  const char *instance_extensions[] = {VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME};
-
   VkInstanceCreateInfo vk_instance_info = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
   vk_instance_info.pApplicationInfo = &vk_application_info;
-  vk_instance_info.enabledExtensionCount = 1;
-  vk_instance_info.ppEnabledExtensionNames = instance_extensions;
 
   VkInstance vk_instance = VK_NULL_HANDLE;
   vkCreateInstance(&vk_instance_info, nullptr, &vk_instance);
@@ -158,7 +148,7 @@ bool VKBackend::is_supported()
     if (missing_capabilities.is_empty()) {
       /* This device meets minimum requirements. */
       CLOG_INFO(&LOG,
-                0,
+                2,
                 "Device [%s] supports minimum requirements. Skip checking other GPUs. Another GPU "
                 "can still be selected during auto-detection.",
                 vk_properties.deviceName);
@@ -218,12 +208,8 @@ void VKBackend::platform_init()
   vk_application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   vk_application_info.apiVersion = VK_API_VERSION_1_2;
 
-  const char *instance_extensions[] = {VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME};
-
   VkInstanceCreateInfo vk_instance_info = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
   vk_instance_info.pApplicationInfo = &vk_application_info;
-  vk_instance_info.enabledExtensionCount = 1;
-  vk_instance_info.ppEnabledExtensionNames = instance_extensions;
 
   VkInstance vk_instance = VK_NULL_HANDLE;
   vkCreateInstance(&vk_instance_info, nullptr, &vk_instance);
@@ -279,6 +265,13 @@ void VKBackend::platform_init(const VKDevice &device)
            properties.deviceName,
            driver_version.c_str(),
            GPU_ARCHITECTURE_IMR);
+
+  CLOG_INFO(&LOG,
+            0,
+            "Using vendor [%s] device [%s] driver version [%s].",
+            vendor_name.c_str(),
+            device.vk_physical_device_properties_.deviceName,
+            driver_version.c_str());
 }
 
 void VKBackend::detect_workarounds(VKDevice &device)
@@ -296,6 +289,7 @@ void VKBackend::detect_workarounds(VKDevice &device)
     workarounds.shader_output_layer = true;
     workarounds.shader_output_viewport_index = true;
     workarounds.vertex_formats.r8g8b8 = true;
+    workarounds.fragment_shader_barycentric = true;
 
     device.workarounds_ = workarounds;
     return;
@@ -318,6 +312,9 @@ void VKBackend::detect_workarounds(VKDevice &device)
       device.physical_device_get(), VK_FORMAT_R8G8B8_UNORM, &format_properties);
   workarounds.vertex_formats.r8g8b8 = (format_properties.bufferFeatures &
                                        VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT) == 0;
+
+  workarounds.fragment_shader_barycentric = !device.supports_extension(
+      VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);
 
   device.workarounds_ = workarounds;
 }
@@ -344,7 +341,7 @@ void VKBackend::samplers_update()
 void VKBackend::compute_dispatch(int groups_x_len, int groups_y_len, int groups_z_len)
 {
   VKContext &context = *VKContext::get();
-  render_graph::VKResourceAccessInfo &resources = context.update_and_get_access_info();
+  render_graph::VKResourceAccessInfo &resources = context.reset_and_get_access_info();
   render_graph::VKDispatchNode::CreateInfo dispatch_info(resources);
   context.update_pipeline_data(dispatch_info.dispatch_node.pipeline_data);
   dispatch_info.dispatch_node.group_count_x = groups_x_len;
@@ -358,7 +355,7 @@ void VKBackend::compute_dispatch_indirect(StorageBuf *indirect_buf)
   BLI_assert(indirect_buf);
   VKContext &context = *VKContext::get();
   VKStorageBuffer &indirect_buffer = *unwrap(indirect_buf);
-  render_graph::VKResourceAccessInfo &resources = context.update_and_get_access_info();
+  render_graph::VKResourceAccessInfo &resources = context.reset_and_get_access_info();
   render_graph::VKDispatchIndirectNode::CreateInfo dispatch_indirect_info(resources);
   context.update_pipeline_data(dispatch_indirect_info.dispatch_indirect_node.pipeline_data);
   dispatch_indirect_info.dispatch_indirect_node.buffer = indirect_buffer.vk_handle();
@@ -459,10 +456,15 @@ void VKBackend::render_end()
   thread_data.rendering_depth -= 1;
   BLI_assert_msg(thread_data.rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
 
-  if (G.background) {
+  if (G.background || !BLI_thread_is_main()) {
+    /* When **not** running on the main thread (or doing background rendering) we assume that there
+     * is no swap chain in play. Rendering happens on a single thread and when finished all the
+     * resources have been used and are in a state that they can be discarded. It can still be that
+     * a non-main thread discards a resource that is in use by another thread. We move discarded
+     * resources to a device global discard pool (`device.orphaned_data`). The next time the main
+     * thread goes to the next swap chain image the device global discard pool will be added to the
+     * discard pool of the new swap chain image.*/
     if (thread_data.rendering_depth == 0) {
-      thread_data.resource_pool_next();
-
       VKResourcePool &resource_pool = thread_data.resource_pool_get();
       resource_pool.discard_pool.destroy_discarded_resources(device);
       resource_pool.reset();
