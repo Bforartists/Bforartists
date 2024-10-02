@@ -13,8 +13,10 @@
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
+#include "NOD_inverse_eval_params.hh"
 #include "NOD_rna_define.hh"
 #include "NOD_socket_search_link.hh"
+#include "NOD_value_elem_eval.hh"
 
 #include "node_function_util.hh"
 
@@ -55,6 +57,10 @@ static void node_update(bNodeTree *ntree, bNode *node)
       node_sock_label(sockA, N_("Value"));
       node_sock_label(sockB, N_("Multiplier"));
       node_sock_label(sockC, N_("Addend"));
+      break;
+    case NODE_INTEGER_MATH_POWER:
+      node_sock_label(sockA, N_("Base"));
+      node_sock_label(sockB, N_("Exponent"));
       break;
   }
 }
@@ -105,6 +111,14 @@ static void node_label(const bNodeTree * /*ntree*/, const bNode *node, char *lab
   BLI_strncpy(label, IFACE_(name), maxlen);
 }
 
+/* Derived from `divide_round_i` but fixed to be safe and handle negative inputs. */
+static int safe_divide_round_i(const int a, const int b)
+{
+  const int c = math::abs(b);
+  return (a >= 0) ? math::safe_divide((2 * a + c), (2 * c)) * math::sign(b) :
+                    -math::safe_divide((2 * -a + c), (2 * c)) * math::sign(b);
+}
+
 static const mf::MultiFunction *get_multi_function(const bNode &bnode)
 {
   NodeIntegerMathOperation operation = NodeIntegerMathOperation(bnode.custom1);
@@ -119,16 +133,14 @@ static const mf::MultiFunction *get_multi_function(const bNode &bnode)
       "Divide", [](int a, int b) { return math::safe_divide(a, b); }, exec_preset);
   static auto divide_floor_fn = mf::build::SI2_SO<int, int, int>(
       "Divide Floor",
-      [](int a, int b) { return int(math::floor(math::safe_divide(float(a), float(b)))); },
+      [](int a, int b) { return (b != 0) ? divide_floor_i(a, b) : 0; },
       exec_preset);
   static auto divide_ceil_fn = mf::build::SI2_SO<int, int, int>(
       "Divide Ceil",
-      [](int a, int b) { return int(math::ceil(math::safe_divide(float(a), float(b)))); },
+      [](int a, int b) { return (b != 0) ? -divide_floor_i(a, -b) : 0; },
       exec_preset);
   static auto divide_round_fn = mf::build::SI2_SO<int, int, int>(
-      "Divide Round",
-      [](int a, int b) { return int(math::round(math::safe_divide(float(a), float(b)))); },
-      exec_preset);
+      "Divide Round", [](int a, int b) { return safe_divide_round_i(a, b); }, exec_preset);
   static auto pow_fn = mf::build::SI2_SO<int, int, int>(
       "Power", [](int a, int b) { return math::pow(a, b); }, exec_preset);
   static auto madd_fn = mf::build::SI3_SO<int, int, int, int>(
@@ -202,6 +214,75 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
   builder.set_matching_fn(fn);
 }
 
+static void node_eval_elem(value_elem::ElemEvalParams &params)
+{
+  using namespace value_elem;
+  const NodeIntegerMathOperation op = NodeIntegerMathOperation(params.node.custom1);
+  switch (op) {
+    case NODE_INTEGER_MATH_ADD:
+    case NODE_INTEGER_MATH_SUBTRACT:
+    case NODE_INTEGER_MATH_MULTIPLY:
+    case NODE_INTEGER_MATH_DIVIDE: {
+      IntElem output_elem = params.get_input_elem<IntElem>("Value");
+      output_elem.merge(params.get_input_elem<IntElem>("Value_001"));
+      params.set_output_elem("Value", output_elem);
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+static void node_eval_inverse_elem(value_elem::InverseElemEvalParams &params)
+{
+  const NodeIntegerMathOperation op = NodeIntegerMathOperation(params.node.custom1);
+  switch (op) {
+    case NODE_INTEGER_MATH_ADD:
+    case NODE_INTEGER_MATH_SUBTRACT:
+    case NODE_INTEGER_MATH_MULTIPLY:
+    case NODE_INTEGER_MATH_DIVIDE: {
+      params.set_input_elem("Value", params.get_output_elem<value_elem::IntElem>("Value"));
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+static void node_eval_inverse(inverse_eval::InverseEvalParams &params)
+{
+  const NodeIntegerMathOperation op = NodeIntegerMathOperation(params.node.custom1);
+  const StringRef first_input_id = "Value";
+  const StringRef second_input_id = "Value_001";
+  const StringRef output_id = "Value";
+  switch (op) {
+    case NODE_INTEGER_MATH_ADD: {
+      params.set_input(first_input_id,
+                       params.get_output<int>(output_id) - params.get_input<int>(second_input_id));
+      break;
+    }
+    case NODE_INTEGER_MATH_SUBTRACT: {
+      params.set_input(first_input_id,
+                       params.get_output<int>(output_id) + params.get_input<int>(second_input_id));
+      break;
+    }
+    case NODE_INTEGER_MATH_MULTIPLY: {
+      params.set_input(first_input_id,
+                       math::safe_divide(params.get_output<int>(output_id),
+                                         params.get_input<int>(second_input_id)));
+      break;
+    }
+    case NODE_INTEGER_MATH_DIVIDE: {
+      params.set_input(first_input_id,
+                       params.get_output<int>(output_id) * params.get_input<int>(second_input_id));
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+}
+
 static void node_rna(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -227,6 +308,9 @@ static void node_register()
   ntype.build_multi_function = node_build_multi_function;
   ntype.draw_buttons = node_layout;
   ntype.gather_link_search_ops = node_gather_link_searches;
+  ntype.eval_elem = node_eval_elem;
+  ntype.eval_inverse_elem = node_eval_inverse_elem;
+  ntype.eval_inverse = node_eval_inverse;
 
   blender::bke::node_register_type(&ntype);
 
