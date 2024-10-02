@@ -298,9 +298,9 @@ class SubdivisionSet(Operator):
                 else:
                     mod = obj.modifiers.new("Subdivision", 'SUBSURF')
                     mod.levels = level
-                    if use_render_levels:  # Set render_levels if toggle is enabled
+                    if use_render_levels:  # BFA - Set render_levels if toggle is enabled
                         mod.render_levels = level
-            except BaseException:
+            except Exception:
                 self.report({'WARNING'}, "Modifiers cannot be added to object: " + obj.name)
 
         for obj in context.selected_editable_objects:
@@ -673,7 +673,7 @@ class MakeDupliFace(Operator):
 
 
 class IsolateTypeRender(Operator):
-    """Render just the selected Item, disables rendering for all others\nHave a look in the outliner """ \
+    """Render just the selected Item, disables rendering for all others.\nBest used in the Outliner editor view columns""" \
         """by setting the hide render flag"""
     bl_idname = "object.isolate_type_render"
     bl_label = "Restrict Render Unselected"
@@ -699,7 +699,8 @@ class IsolateTypeRender(Operator):
 
 
 class ClearAllRestrictRender(Operator):
-    """Render all Objects in the scene\nHave a look in the outliner"""
+    """Render all Objects in the scene\nnBest used in the Outliner editor view columns""" \
+        """by setting the hide render flag"""
     bl_idname = "object.hide_render_clear_all"
     bl_label = "Clear All Restrict Render"
     bl_options = {'REGISTER', 'UNDO'}
