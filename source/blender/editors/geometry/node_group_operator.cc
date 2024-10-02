@@ -6,7 +6,7 @@
  * \ingroup edcurves
  */
 
-#include "BLI_path_util.h"
+#include "BLI_path_utils.hh"
 #include "BLI_rect.h"
 #include "BLI_string.h"
 
@@ -72,6 +72,7 @@
 #include "AS_asset_catalog_tree.hh"
 #include "AS_asset_library.hh"
 #include "AS_asset_representation.hh"
+#include "BKE_paint.hh"
 
 #include "geometry_intern.hh"
 
@@ -274,6 +275,7 @@ static void store_result_geometry(
 
       if (object.mode == OB_MODE_SCULPT) {
         sculpt_paint::undo::geometry_end(object);
+        BKE_sculptsession_free_pbvh(object);
       }
       break;
     }
