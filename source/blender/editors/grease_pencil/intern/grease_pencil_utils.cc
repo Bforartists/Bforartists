@@ -282,7 +282,7 @@ void DrawingPlacement::cache_viewport_depths(Depsgraph *depsgraph, ARegion *regi
       mode = V3D_DEPTH_SELECTED_ONLY;
     }
     else {
-      mode = V3D_DEPTH_NO_OVERLAYS;
+      mode = V3D_DEPTH_NO_GPENCIL;
     }
   }
   ED_view3d_depth_override(depsgraph, region, view3d, nullptr, mode, &this->depth_cache_);
@@ -311,9 +311,9 @@ float3 DrawingPlacement::project_depth(const float2 co) const
   float depth;
   if (depth_cache_ != nullptr && ED_view3d_depth_read_cached(depth_cache_, int2(co), 4, &depth)) {
     ED_view3d_depth_unproject_v3(region_, int2(co), depth, proj_point);
-    float3 normal;
-    ED_view3d_depth_read_cached_normal(region_, depth_cache_, int2(co), normal);
-    proj_point += normal * surface_offset_;
+    float3 view_normal;
+    ED_view3d_win_to_vector(region_, co, view_normal);
+    proj_point -= view_normal * surface_offset_;
   }
   else {
     /* Fallback to `View` placement. */
@@ -1501,6 +1501,7 @@ int grease_pencil_draw_operator_invoke(bContext *C,
                                        wmOperator *op,
                                        const bool use_duplicate_previous_key)
 {
+  const Scene *scene = CTX_data_scene(C);
   const Object *object = CTX_data_active_object(C);
   if (!object || object->type != OB_GREASE_PENCIL) {
     return OPERATOR_CANCELLED;
@@ -1528,7 +1529,7 @@ int grease_pencil_draw_operator_invoke(bContext *C,
   /* Ensure a drawing at the current keyframe. */
   bool inserted_keyframe = false;
   if (!ed::greasepencil::ensure_active_keyframe(
-          C, grease_pencil, use_duplicate_previous_key, inserted_keyframe))
+          *scene, grease_pencil, active_layer, use_duplicate_previous_key, inserted_keyframe))
   {
     BKE_report(op->reports, RPT_ERROR, "No Grease Pencil frame to draw on");
     return OPERATOR_CANCELLED;

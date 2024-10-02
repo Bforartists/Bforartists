@@ -507,25 +507,25 @@ static Vector<std::pair<int, GSpan>> prepare_attribute_fallbacks(
 {
   Vector<std::pair<int, GSpan>> attributes_to_override;
   const bke::AttributeAccessor attributes = instances.attributes();
-  attributes.for_all([&](const StringRef attribute_id, const AttributeMetaData &meta_data) {
-    const int attribute_index = ordered_attributes.ids.index_of_try(attribute_id);
+  attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
+    const int attribute_index = ordered_attributes.ids.index_of_try(iter.name);
     if (attribute_index == -1) {
       /* The attribute is not propagated to the final geometry. */
-      return true;
+      return;
     }
-    const bke::GAttributeReader attribute = attributes.lookup(attribute_id);
+    const bke::GAttributeReader attribute = iter.get();
     if (!attribute || !attribute.varray.is_span()) {
-      return true;
+      return;
     }
     GSpan span = attribute.varray.get_internal_span();
     const eCustomDataType expected_type = ordered_attributes.kinds[attribute_index].data_type;
-    if (meta_data.data_type != expected_type) {
+    if (iter.data_type != expected_type) {
       const CPPType &from_type = span.type();
       const CPPType &to_type = *bke::custom_data_type_to_cpp_type(expected_type);
       const bke::DataTypeConversions &conversions = bke::get_implicit_type_conversions();
       if (!conversions.is_convertible(from_type, to_type)) {
         /* Ignore the attribute because it can not be converted to the desired type. */
-        return true;
+        return;
       }
       /* Convert the attribute on the instances component to the expected attribute type. */
       std::unique_ptr<GArray<>> temporary_array = std::make_unique<GArray<>>(
@@ -535,7 +535,6 @@ static Vector<std::pair<int, GSpan>> prepare_attribute_fallbacks(
       gather_info.r_temporary_arrays.append(std::move(temporary_array));
     }
     attributes_to_override.append({attribute_index, span});
-    return true;
   });
   return attributes_to_override;
 }
@@ -834,10 +833,9 @@ static bool attribute_foreach(const bke::GeometrySet &geometry_set,
         const bke::GeometryComponent &component = *geometry_set.get_component(component_type);
         const std::optional<bke::AttributeAccessor> attributes = component.attributes();
         if (attributes.has_value()) {
-          attributes->for_all([&](const StringRef attributeId, const AttributeMetaData &metaData) {
-            callback(attributeId, metaData, component);
+          attributes->foreach_attribute([&](const bke::AttributeIter &iter) {
+            callback(iter.name, {iter.domain, iter.data_type}, component);
             any_attribute_found = true;
-            return true;
           });
         }
       }
@@ -2118,7 +2116,9 @@ static void execute_realize_grease_pencil_task(
   for (const int layer_i : src_layers.index_range()) {
     const bke::greasepencil::Layer &src_layer = *src_layers[layer_i];
     bke::greasepencil::Layer &dst_layer = *dst_layers[layer_i];
+    BKE_grease_pencil_copy_layer_parameters(src_layer, dst_layer);
 
+    dst_layer.set_name(src_layer.name());
     dst_layer.set_local_transform(task.transform * src_layer.local_transform());
 
     const bke::greasepencil::Drawing *src_drawing = src_grease_pencil.get_eval_drawing(src_layer);
@@ -2185,19 +2185,16 @@ static void execute_realize_grease_pencil_tasks(
     return;
   }
 
+  const RealizeGreasePencilTask &last_task = tasks.last();
+  const int new_layers_num = last_task.start_index +
+                             last_task.grease_pencil_info->grease_pencil->layers().size();
+
   /* Allocate new grease pencil. */
   GreasePencil *dst_grease_pencil = BKE_grease_pencil_new_nomain();
   r_realized_geometry.replace_grease_pencil(dst_grease_pencil);
 
-  /* Prepare layer names. This is currently quadratic in the number of layers because layer names
-   * are made unique. */
-  for (const RealizeGreasePencilTask &task : tasks) {
-    const GreasePencil &src_grease_pencil = *task.grease_pencil_info->grease_pencil;
-    for (const bke::greasepencil::Layer *src_layer : src_grease_pencil.layers()) {
-      bke::greasepencil::Layer &dst_layer = dst_grease_pencil->add_layer(src_layer->name());
-      dst_grease_pencil->insert_frame(dst_layer, dst_grease_pencil->runtime->eval_frame);
-    }
-  }
+  /* Allocate all layers. */
+  dst_grease_pencil->add_layers_with_empty_drawings_for_eval(new_layers_num);
 
   /* Transfer material pointers. The material indices are updated for each task separately. */
   if (!all_grease_pencils_info.materials.is_empty()) {
@@ -2366,9 +2363,9 @@ bke::GeometrySet realize_instances(bke::GeometrySet geometry_set,
 
   if (not_to_realize_set.has_instances()) {
     gather_info.instances.instances_components_to_merge.append(
-        (not_to_realize_set.get_component_for_write<bke::InstancesComponent>()).copy());
+        not_to_realize_set.get_component_for_write<bke::InstancesComponent>().copy());
     gather_info.instances.instances_components_transforms.append(float4x4::identity());
-    gather_info.instances.attribute_fallback.append((gather_info.instances_attriubutes.size()));
+    gather_info.instances.attribute_fallback.append(gather_info.instances_attriubutes.size());
   }
 
   const float4x4 transform = float4x4::identity();

@@ -20,7 +20,7 @@
 
 #include "BLI_listbase.h"
 #include "BKE_context.hh" /*BFA - 3D Sequencer*/
-#include "BLI_path_util.h"
+#include "BLI_path_utils.hh"
 
 #include "BKE_fcurve.hh"
 #include "BKE_idprop.hh"
