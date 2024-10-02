@@ -165,7 +165,9 @@ typedef struct ThemeUI {
   float menu_shadow_fac;
   short menu_shadow_width;
 
+  unsigned char editor_border[4];
   unsigned char editor_outline[4];
+  unsigned char editor_outline_active[4];
 
   /* Transparent Grid */
   unsigned char transparent_checker_primary[4], transparent_checker_secondary[4];
@@ -343,7 +345,6 @@ typedef struct ThemeSpace {
   unsigned char syntaxd[4], syntaxr[4]; /* In node-space used for distort. */
 
   unsigned char line_numbers[4];
-  char _pad6[3];
 
   unsigned char nodeclass_output[4], nodeclass_filter[4];
   unsigned char nodeclass_vector[4], nodeclass_texture[4];
@@ -353,6 +354,7 @@ typedef struct ThemeSpace {
 
   unsigned char node_zone_simulation[4];
   unsigned char node_zone_repeat[4];
+  unsigned char node_zone_foreach_geometry_element[4];
   unsigned char simulated_frames[4];
 
   /** For sequence editor. */
@@ -361,7 +363,6 @@ typedef struct ThemeSpace {
   unsigned char active_strip[4], selected_strip[4];
 
   /** For dopesheet - scale factor for size of keyframes (i.e. height of channels). */
-  char _pad7[1];
   float keyframe_scale_fac;
 
   unsigned char editmesh_active[4];
@@ -760,9 +761,8 @@ typedef struct UserDef_Experimental {
   char use_new_file_import_nodes;
   char use_shader_node_previews;
   char use_animation_baklava;
-  char use_docking;
   char enable_new_cpu_compositor;
-  char _pad[1];
+  char _pad[2];
   /** `makesdna` does not allow empty structs. */
 } UserDef_Experimental;
 

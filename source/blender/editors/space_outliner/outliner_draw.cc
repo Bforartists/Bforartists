@@ -378,7 +378,7 @@ static void outliner_collection_set_flag_recursive(Scene *scene,
   }
   PointerRNA ptr;
   outliner_layer_or_collection_pointer_create(scene, layer_collection, collection, &ptr);
-  if (!RNA_property_editable(&ptr, base_or_object_prop)) {
+  if (base_or_object_prop && !RNA_property_editable(&ptr, base_or_object_prop)) {
     return;
   }
 
@@ -2947,7 +2947,12 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.icon = ICON_OUTLINER_DATA_GP_LAYER;
         }
         else if (node.is_group()) {
-          data.icon = ICON_FILE_FOLDER;
+          const bke::greasepencil::LayerGroup &group = node.as_group();
+
+          data.icon = ICON_GREASEPENCIL_LAYER_GROUP;
+          if (group.color_tag != LAYERGROUP_COLOR_NONE) {
+            data.icon = ICON_LAYERGROUP_COLOR_01 + group.color_tag;
+          }
         }
         break;
       }
