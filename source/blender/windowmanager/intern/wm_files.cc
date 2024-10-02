@@ -125,8 +125,8 @@
 #include "RE_engine.h"
 
 #ifdef WITH_PYTHON
-#  include "BPY_extern_python.h"
-#  include "BPY_extern_run.h"
+#  include "BPY_extern_python.hh"
+#  include "BPY_extern_run.hh"
 #endif
 
 #include "DEG_depsgraph.hh"
@@ -1151,17 +1151,6 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
   else {
     BKE_reportf(reports, RPT_ERROR, "Unknown error loading \"%s\"", filepath);
     BLI_assert_msg(0, "invalid 'retval'");
-  }
-
-  if (success == false) {
-    /* Remove from recent files list. */
-    if (do_history_file_update) {
-      RecentFile *recent = wm_file_history_find(filepath);
-      if (recent) {
-        wm_history_file_free(recent);
-        wm_history_file_write();
-      }
-    }
   }
 
   WM_cursor_wait(false);
