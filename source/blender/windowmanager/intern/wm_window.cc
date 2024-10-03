@@ -1889,6 +1889,7 @@ void wm_ghost_init(bContext *C)
   GHOST_SetBacktraceHandler((GHOST_TBacktraceFn)BLI_system_backtrace);
 
   g_system = GHOST_CreateSystem();
+  GPU_backend_ghost_system_set(g_system);
 
   if (UNLIKELY(g_system == nullptr)) {
     /* GHOST will have reported the back-ends that failed to load. */
@@ -1929,6 +1930,7 @@ void wm_ghost_init_background()
   GHOST_SetBacktraceHandler((GHOST_TBacktraceFn)BLI_system_backtrace);
 
   g_system = GHOST_CreateSystemBackground();
+  GPU_backend_ghost_system_set(g_system);
 
   GHOST_Debug debug = {0};
   if (G.debug & G_DEBUG_GHOST) {
