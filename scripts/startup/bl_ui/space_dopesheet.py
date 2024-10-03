@@ -398,9 +398,11 @@ class DOPESHEET_HT_editor_buttons:
             row.prop(st.dopesheet, "show_only_selected", text="")
             row.prop(st.dopesheet, "show_hidden", text="")
 
-        if ds_mode in {'DOPESHEET'}:
-            layout.popover(panel="DOPESHEET_PT_filters",
-                           text="", icon='FILTER')
+        layout.popover(
+            panel="DOPESHEET_PT_filters",
+            text="",
+            icon='FILTER',
+        )
 
         # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
         if st.mode != 'GPENCIL':
@@ -469,9 +471,9 @@ class DOPESHEET_HT_editor_buttons:
             case 'ACTION':
                 return context.object
             case 'SHAPEKEY':
-                return context.object.data and getattr(context.object.data, 'shape_keys', None)
+                return getattr(context.object.data, "shape_keys", None)
             case _:
-                print("Dope Sheet mode '{}' not expected to have an Action selector".format(st.mode))
+                print("Dope Sheet mode '{:s}' not expected to have an Action selector".format(st.mode))
                 return context.object
 
 
@@ -529,6 +531,10 @@ class DOPESHEET_MT_editor_menus(Menu):
             layout.menu("DOPESHEET_MT_key")
         else:
             layout.menu("DOPESHEET_MT_gpencil_key")
+
+        if st.mode in {'ACTION', 'SHAPEKEY'} and st.action is not None:
+            if context.preferences.experimental.use_animation_baklava:
+                layout.menu("DOPESHEET_MT_action")
 
 
 class DOPESHEET_MT_view(Menu):
@@ -741,6 +747,18 @@ class DOPESHEET_MT_channel_extrapolation(Menu):
         layout.separator()
 
         layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
+
+
+class DOPESHEET_MT_action(Menu):
+    bl_label = "Action"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("anim.merge_animation")
+        layout.operator("anim.separate_slots")
+
+        layout.separator()
+        layout.operator("anim.slot_channels_move_to_new_action")
 
 
 class DOPESHEET_MT_key(Menu):
@@ -960,7 +978,21 @@ class DOPESHEET_PT_action_slot(Panel):
         action = context.active_action
         slot = action.slots.active
 
-        layout.prop(slot, "name_display", text="Name", icon_value=slot.idtype_icon)
+        layout.prop(slot, "name_display", text="Name")
+
+        # Draw the ID type of the slot.
+        try:
+            enum_items = slot.bl_rna.properties['id_root'].enum_items
+            idtype_label = enum_items[slot.id_root].name
+        except (KeyError, IndexError, AttributeError) as ex:
+            idtype_label = str(ex)
+
+        split = layout.split(factor=0.4)
+        split.alignment = 'RIGHT'
+        split.label(text="Type")
+        split.alignment = 'LEFT'
+
+        split.label(text=idtype_label, icon_value=slot.id_root_icon)
 
 
 #######################################
@@ -1316,6 +1348,7 @@ classes = (
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
     DOPESHEET_MT_channel_extrapolation, # BFA menu
+    DOPESHEET_MT_action,
     DOPESHEET_MT_key,
     DOPESHEET_PT_view_view_options, # BFA menu
     DOPESHEET_MT_key_transform,
