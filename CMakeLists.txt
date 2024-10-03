@@ -719,11 +719,8 @@ if(NOT APPLE AND NOT (WIN32 AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
   mark_as_advanced(WITH_CYCLES_DEVICE_HIP)
   mark_as_advanced(CYCLES_HIP_BINARIES_ARCH)
 
-  # HIPRT is only available on Windows for now.
-  if(WIN32)
-    option(WITH_CYCLES_DEVICE_HIPRT "Enable Cycles AMD HIPRT support" OFF)
-    mark_as_advanced(WITH_CYCLES_DEVICE_HIPRT)
-  endif()
+  option(WITH_CYCLES_DEVICE_HIPRT "Enable Cycles AMD HIPRT support" OFF)
+  mark_as_advanced(WITH_CYCLES_DEVICE_HIPRT)
 endif()
 
 # Apple Metal
@@ -1337,7 +1334,7 @@ endif()
 # Check if Sub-modules are Cloned
 
 if(WITH_PYTHON)
-  # While we have this as an '#error' in 'bpy_capi_utils.h',
+  # While we have this as an '#error' in 'bpy_capi_utils.hh',
   # upgrading Python tends to cause confusion for users who build.
   # Give the error message early to make this more obvious.
   #
@@ -2825,8 +2822,6 @@ if(FIRST_RUN)
       info_cfg_option(WITH_CYCLES_ONEAPI_BINARIES)
       info_cfg_option(WITH_CYCLES_DEVICE_HIP)
       info_cfg_option(WITH_CYCLES_HIP_BINARIES)
-    endif()
-    if(WIN32)
       info_cfg_option(WITH_CYCLES_DEVICE_HIPRT)
     endif()
   endif()
