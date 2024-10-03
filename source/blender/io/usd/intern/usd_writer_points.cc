@@ -71,40 +71,36 @@ static std::optional<pxr::TfToken> convert_blender_domain_to_usd(
   }
 }
 
-void USDPointsWriter::write_generic_data(const PointCloud *points,
-                                         const StringRef attribute_id,
-                                         const bke::AttributeMetaData &meta_data,
+void USDPointsWriter::write_generic_data(const bke::AttributeIter &attr,
                                          const pxr::UsdGeomPoints &usd_points,
                                          const pxr::UsdTimeCode timecode)
 {
-  const std::optional<pxr::TfToken> pv_interp = convert_blender_domain_to_usd(meta_data.domain);
-  const std::optional<pxr::SdfValueTypeName> pv_type = convert_blender_type_to_usd(
-      meta_data.data_type);
+  const std::optional<pxr::TfToken> pv_interp = convert_blender_domain_to_usd(attr.domain);
+  const std::optional<pxr::SdfValueTypeName> pv_type = convert_blender_type_to_usd(attr.data_type);
 
   if (!pv_interp || !pv_type) {
     BKE_reportf(this->reports(),
                 RPT_WARNING,
                 "Attribute '%s' (Blender domain %d, type %d) cannot be converted to USD",
-                std::string(attribute_id).c_str(),
-                int(meta_data.domain),
-                meta_data.data_type);
+                attr.name.c_str(),
+                int(attr.domain),
+                attr.data_type);
     return;
   }
 
-  const GVArray attribute = *points->attributes().lookup(
-      attribute_id, meta_data.domain, meta_data.data_type);
+  const GVArray attribute = *attr.get();
   if (attribute.is_empty()) {
     return;
   }
 
   const pxr::TfToken pv_name(
-      make_safe_name(attribute_id, usd_export_context_.export_params.allow_unicode));
+      make_safe_name(attr.name, usd_export_context_.export_params.allow_unicode));
   const pxr::UsdGeomPrimvarsAPI pv_api = pxr::UsdGeomPrimvarsAPI(usd_points);
 
   pxr::UsdGeomPrimvar pv_attr = pv_api.CreatePrimvar(pv_name, *pv_type, *pv_interp);
 
   copy_blender_attribute_to_primvar(
-      attribute, meta_data.data_type, timecode, pv_attr, usd_value_writer_);
+      attribute, attr.data_type, timecode, pv_attr, usd_value_writer_);
 }
 
 void USDPointsWriter::write_custom_data(const PointCloud *points,
@@ -113,17 +109,15 @@ void USDPointsWriter::write_custom_data(const PointCloud *points,
 {
   const bke::AttributeAccessor attributes = points->attributes();
 
-  attributes.for_all([&](const StringRef attribute_id, const bke::AttributeMetaData &meta_data) {
+  attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
     /* Skip "internal" Blender properties and attributes dealt with elsewhere. */
-    if (attribute_id[0] == '.' || bke::attribute_name_is_anonymous(attribute_id) ||
-        ELEM(attribute_id, "position", "radius", "id", "velocity"))
+    if (iter.name[0] == '.' || bke::attribute_name_is_anonymous(iter.name) ||
+        ELEM(iter.name, "position", "radius", "id", "velocity"))
     {
-      return true;
+      return;
     }
 
-    this->write_generic_data(points, attribute_id, meta_data, usd_points, timecode);
-
-    return true;
+    this->write_generic_data(iter, usd_points, timecode);
   });
 }
 
