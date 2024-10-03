@@ -5534,8 +5534,9 @@ static void draw_setting_widget(bAnimContext *ac,
       break;
 
     case ACHANNEL_SETTING_EXPAND: /* expanded triangle */
-      // icon = (enabled ? ICON_TRIA_DOWN : ICON_TRIA_RIGHT);
-      icon = ICON_TRIA_RIGHT;
+      icon = (enabled ? ICON_TRIA_DOWN : ICON_TRIA_RIGHT); /* BFA - use proper icons */
+      usetoggle = false; /* BFA - use proper icons */
+      // icon = ICON_TRIA_RIGHT;
       tooltip = TIP_("Expand\nMake channels grouped under this channel visible");
       break;
 
