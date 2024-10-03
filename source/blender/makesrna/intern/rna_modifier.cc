@@ -239,7 +239,7 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
     {eModifierType_GreasePencilArray,
      "GREASE_PENCIL_ARRAY",
      ICON_MOD_ARRAY,
-     "Array strokes",
+     "Array",
      "Duplicate strokes into an array"},
     {eModifierType_GreasePencilBuild,
      "GREASE_PENCIL_BUILD",
@@ -259,7 +259,7 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
     {eModifierType_GreasePencilMirror,
      "GREASE_PENCIL_MIRROR",
      ICON_MOD_MIRROR,
-     "Mirror strokes",
+     "Mirror",
      "Duplicate strokes like a mirror"},
     {eModifierType_GreasePencilMultiply,
      "GREASE_PENCIL_MULTIPLY",
@@ -273,8 +273,8 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
      "Simplify stroke reducing number of points"},
     {eModifierType_GreasePencilSubdiv,
      "GREASE_PENCIL_SUBDIV",
-     ICON_MOD_SUBSURF,
-     "Subdivide strokes",
+     ICON_MOD_SMOOTH,
+     "Subdivide",
      "Grease Pencil subdivide modifier"},
     {eModifierType_GreasePencilEnvelope,
      "GREASE_PENCIL_ENVELOPE",
@@ -285,7 +285,7 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
      "GREASE_PENCIL_OUTLINE",
      ICON_OUTLINE,
      "Outline",
-     "Convert stroke to perimeter"},
+     "Convert stroke to outline"},
 
     RNA_ENUM_ITEM_HEADING(N_("Deform"), nullptr),
     {eModifierType_Armature,
@@ -568,9 +568,13 @@ const EnumPropertyItem rna_enum_shrinkwrap_face_cull_items[] = {
 };
 
 const EnumPropertyItem rna_enum_node_warning_type_items[] = {
-    {int(blender::nodes::geo_eval_log::NodeWarningType::Error), "ERROR", 0, "Error", ""},
-    {int(blender::nodes::geo_eval_log::NodeWarningType::Warning), "WARNING", 0, "Warning", ""},
-    {int(blender::nodes::geo_eval_log::NodeWarningType::Info), "INFO", 0, "Info", ""},
+    {int(blender::nodes::geo_eval_log::NodeWarningType::Error), "ERROR", ICON_CANCEL, "Error", ""},
+    {int(blender::nodes::geo_eval_log::NodeWarningType::Warning),
+     "WARNING",
+     ICON_ERROR,
+     "Warning",
+     ""},
+    {int(blender::nodes::geo_eval_log::NodeWarningType::Info), "INFO", ICON_INFO, "Info", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -8114,11 +8118,15 @@ static void rna_def_modifier_nodes(BlenderRNA *brna)
                                     nullptr);
   RNA_def_property_struct_type(prop, "NodesModifierWarning");
 
-  rna_def_modifier_panel_open_prop(srna, "open_output_attributes_panel", 0);
-  rna_def_modifier_panel_open_prop(srna, "open_manage_panel", 1);
-  rna_def_modifier_panel_open_prop(srna, "open_bake_panel", 2);
-  rna_def_modifier_panel_open_prop(srna, "open_named_attributes_panel", 3);
-  rna_def_modifier_panel_open_prop(srna, "open_bake_data_blocks_panel", 4);
+  rna_def_modifier_panel_open_prop(
+      srna, "open_output_attributes_panel", NODES_MODIFIER_PANEL_OUTPUT_ATTRIBUTES);
+  rna_def_modifier_panel_open_prop(srna, "open_manage_panel", NODES_MODIFIER_PANEL_MANAGE);
+  rna_def_modifier_panel_open_prop(srna, "open_bake_panel", NODES_MODIFIER_PANEL_BAKE);
+  rna_def_modifier_panel_open_prop(
+      srna, "open_named_attributes_panel", NODES_MODIFIER_PANEL_NAMED_ATTRIBUTES);
+  rna_def_modifier_panel_open_prop(
+      srna, "open_bake_data_blocks_panel", NODES_MODIFIER_PANEL_BAKE_DATA_BLOCKS);
+  rna_def_modifier_panel_open_prop(srna, "open_warnings_panel", NODES_MODIFIER_PANEL_WARNINGS);
 
   RNA_define_lib_overridable(false);
 }

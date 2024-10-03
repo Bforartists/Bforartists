@@ -382,8 +382,6 @@ class LayerGroupViewItem : public AbstractTreeViewItem {
 
   void build_layer_group_name(uiLayout &row)
   {
-    uiItemS_ex(&row, 0.8f);
-
     /*short icon = ICON_FILE_FOLDER;*/ 
     short icon = ICON_GROUP; /*bfa - we use group icon for groups*/
     if (group_.color_tag != LAYERGROUP_COLOR_NONE) {
@@ -476,7 +474,7 @@ void uiTemplateGreasePencilLayerTree(uiLayout *layout, bContext *C)
       "Grease Pencil Layer Tree View",
       std::make_unique<blender::ui::greasepencil::LayerTreeView>(grease_pencil));
   tree_view->set_context_menu_title("Grease Pencil Layer");
-  tree_view->set_min_rows(3);
+  tree_view->set_default_rows(6);
 
   ui::TreeViewBuilder::build_tree_view(*tree_view, *layout);
 }
