@@ -2923,28 +2923,6 @@ static int unwrap_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*BFA - wip tool name*/
-//static std::string uv_ot_unwrap_get_name(wmOperatorType *ot, PointerRNA *ptr)
-//{
-//  if (RNA_boolean_get(ptr, "method")) {
-//    return CTX_IFACE_(ot->translation_context, "Unwrap Conformal");
-//  }
-//  return "";
-//}
-
-/*bfa - descriptions*/
-//static std::string uv_ot_unwrap_get_description(bContext * /*C*/,
-//                                                wmOperatorType * /*ot*/,
-//                                                PointerRNA *ptr)
-//{
-//  if (RNA_boolean_get(ptr, "method")) {
-//    return "Unwrap Conformal unwraps the "
-//           "mesh with the method Least Square Conformal Mapping (LSCM)";
-//  }
-//  return "";
-//}
-
-
 static void unwrap_draw(bContext * /*C*/, wmOperator *op)
 {
   uiLayout *layout = op->layout;
@@ -2999,15 +2977,13 @@ void UV_OT_unwrap(wmOperatorType *ot)
   };
 
   /* identifiers */
-  ot->name = "Unwrap ABF";
-  ot->description = "ABF unwraps the mesh with the method Angle Based Flattening (ABF)";
+  ot->name = "Unwrap";
+  ot->description = "Unwrap the mesh with the following method";
   ot->idname = "UV_OT_unwrap";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* api callbacks */
   ot->exec = unwrap_exec;
-  //ot->get_name = uv_ot_unwrap_get_name;               /*bfa - tool name*/
-  //ot->get_description = uv_ot_unwrap_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_uvmap;
 
   /* Only draw relevant ui elements */
@@ -3020,8 +2996,7 @@ void UV_OT_unwrap(wmOperatorType *ot)
       method_items,
       tool_settings_default->unwrapper,
       "Method",
-      "Unwrapping method (Angle Based usually gives better results than Conformal, while "
-      "being somewhat slower)");
+      "The method to unwrap the mesh");
   RNA_def_boolean(ot->srna,
                   "fill_holes",
                   tool_settings_default->uvcalc_flag & UVCALC_FILLHOLES,
