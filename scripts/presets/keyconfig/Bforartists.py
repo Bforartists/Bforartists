@@ -1,4 +1,4 @@
-keyconfig_version = (4, 3, 23)
+keyconfig_version = (4, 4, 0)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -8638,6 +8638,8 @@ keyconfig_data = \
       },
      ),
     ("ui.view_item_rename", {"type": 'F2', "value": 'PRESS', "repeat": True}, None),
+    ("ui.view_scroll", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS'}, None),
+    ("ui.view_scroll", {"type": 'WHEELUPMOUSE', "value": 'PRESS'}, None),
     ],
    },
   ),
