@@ -7156,26 +7156,18 @@ class VIEW3D_MT_draw_gpencil(Menu):
 
         layout.separator()
 
-        # layout.menu("VIEW3D_MT_gpencil_animation") # BFA - legacy
         layout.menu("VIEW3D_MT_edit_greasepencil_animation") # BFA - menu
         layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
 
         layout.separator()
 
-        #layout.menu("VIEW3D_MT_edit_gpencil_showhide") # BFA - legacy
         layout.menu("GPENCIL_MT_cleanup")
-
-        #layout.operator("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE")  # BFA - Legacy
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
         layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
 
-
-
-
-# BFA - VIEW3D_MT_edit_gpencil consolidated and removed
 
 # BFA - menu
 class VIEW3D_MT_edit_grease_pencil_arrange_strokes(Menu):
@@ -7189,7 +7181,6 @@ class VIEW3D_MT_edit_grease_pencil_arrange_strokes(Menu):
         layout.operator("grease_pencil.reorder", text="Bring to Front", icon='MOVE_TO_TOP').direction = 'TOP'
         layout.operator("grease_pencil.reorder", text="Send to Back", icon='MOVE_TO_BOTTOM').direction = 'BOTTOM'
 
-# BFA - VIEW3D_MT_weight_gpencil legacy menu consolidated and removed
 
 class VIEW3D_MT_weight_grease_pencil(Menu):
     bl_label = "Weights"
@@ -7197,17 +7188,17 @@ class VIEW3D_MT_weight_grease_pencil(Menu):
     def draw(self, _context):
         layout = self.layout
 		
-        layout.operator("grease_pencil.vertex_group_normalize_all", text="Normalize All")
-        layout.operator("grease_pencil.vertex_group_normalize", text="Normalize")
+        layout.operator("grease_pencil.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL")
+        layout.operator("grease_pencil.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE")
 
         layout.separator()
 
-        layout.operator("grease_pencil.weight_invert", text="Invert Weight")
-        layout.operator("grease_pencil.vertex_group_smooth", text="Smooth")
+        layout.operator("grease_pencil.weight_invert", text="Invert Weight", icon='WEIGHT_INVERT')
+        layout.operator("grease_pencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
 
         layout.separator()
 
-        layout.operator("grease_pencil.weight_sample", text="Sample Weight")
+        layout.operator("grease_pencil.weight_sample", text="Sample Weight", icon="EYEDROPPER")
 
 
 # BFA - Legacy
