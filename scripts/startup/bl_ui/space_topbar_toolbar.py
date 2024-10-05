@@ -1216,6 +1216,7 @@ class TOPBAR_MT_image(Menu):
 
                     row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
                     row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL'
+                    row.operator("uv.unwrap", text = "", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
                     row.operator_context = 'EXEC_REGION_WIN'
                     row.operator("uv.cube_project", text= "",icon = "CUBEPROJECT")
                     row.operator("uv.cylinder_project", text= "",icon = "CYLINDERPROJECT")
