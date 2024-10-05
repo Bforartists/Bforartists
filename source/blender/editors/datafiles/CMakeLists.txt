@@ -1994,6 +1994,7 @@ if(WITH_BLENDER)
       unsubdivide
       unwrap_abf
       unwrap_lscm
+	  unwrap_minstretch
       url
       user
       uv
