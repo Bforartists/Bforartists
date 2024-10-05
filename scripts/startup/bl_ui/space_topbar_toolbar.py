@@ -1726,7 +1726,6 @@ class TOPBAR_MT_edit(Menu):
                         row.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="")
                         row.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="")
                         row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="")
-                        row.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="")
 
                 if addon_prefs.topbar_edit_objectapply:
 
