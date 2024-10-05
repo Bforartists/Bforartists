@@ -2055,10 +2055,14 @@ if(WITH_BLENDER)
       viewcameracenter
       viewport_transform
       viewzoom
-      vis_sel_00
-      vis_sel_01
+      
+	  # bfa - don't change the order of the icons
+	  vis_sel_11
       vis_sel_10
-      vis_sel_11
+	  vis_sel_01
+	  vis_sel_00
+	  ####
+      
       visual_loc_rot
       visual_loc_rot_scale
       visual_loc_scale
