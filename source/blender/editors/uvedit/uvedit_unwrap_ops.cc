@@ -2941,11 +2941,12 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
 
   if (is_slim) {
     uiItemR(col, &ptr, "iterations", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiLayoutSetPropSep(col, false); /* bfa - float left */
     uiItemR(col, &ptr, "no_flip", UI_ITEM_NONE, nullptr, ICON_NONE);
 
     uiItemS(col);
+    uiLayoutSetPropSep(col, false); /* bfa - float left */
     uiItemR(col, &ptr, "use_weights", UI_ITEM_NONE, nullptr, ICON_NONE);
-
     if (RNA_boolean_get(op->ptr, "use_weights")) {
       col = uiLayoutColumn(layout, true);
       uiItemR(col, &ptr, "weight_group", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -2953,14 +2954,18 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
     }
   }
   else {
+    uiLayoutSetPropSep(col, false); /* bfa - float left */
     uiItemR(col, &ptr, "fill_holes", UI_ITEM_NONE, nullptr, ICON_NONE);
   }
 
   uiItemS(col);
+  uiLayoutSetPropSep(col, false); /* bfa - float left */
   uiItemR(col, &ptr, "use_subsurf_data", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   uiItemS(col);
+  uiLayoutSetPropSep(col, false); /* bfa - float left */
   uiItemR(col, &ptr, "correct_aspect", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiLayoutSetPropSep(col, true); /* bfa - float left */
   uiItemR(col, &ptr, "margin_method", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, &ptr, "margin", UI_ITEM_NONE, nullptr, ICON_NONE);
 }
