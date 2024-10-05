@@ -346,10 +346,13 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         row.use_property_split = False
         row.prop(bone, "hide", text = "Hide", toggle=False)
         row.prop_decorator(bone, "hide")
-				
+
         hide_select_sub = row.column()
-        hide_select_sub.active = not bone.hide
-        hide_select_sub.prop(bone, "hide_select", invert_checkbox=True)
+        if not bone.hide:
+            row = layout.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(bone, "hide_select", invert_checkbox=True)
 
         # Figure out the pose bone.
         ob = context.object
@@ -380,9 +383,12 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         col = layout.column()
         col.use_property_split = False # BFA - Left align checkbox
         col.prop(bone, "hide", text="Hide", toggle=False)
-        hide_select_sub = col.column()
-        hide_select_sub.active = not bone.hide
-        hide_select_sub.prop(bone, "hide_select", invert_checkbox=True)
+
+        if not bone.hide:
+            row = col.row()
+            row.separator()
+            row.prop(bone, "hide_select", invert_checkbox=True)
+
         layout.prop(bone.color, "palette", text="Bone Color")
         self.draw_bone_color_ui(layout, bone.color)
 
@@ -432,42 +438,42 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
             col.prop(pchan, "custom_shape")
 
             sub = col.column()
-            sub.active = bool(pchan and pchan.custom_shape)
-            sub.separator()
+            if bool(pchan and pchan.custom_shape):
+                sub.separator()
 
-            sub.prop(pchan, "custom_shape_scale_xyz", text="Scale")
-            sub.prop(pchan, "custom_shape_translation", text="Translation")
-            sub.prop(pchan, "custom_shape_rotation_euler", text="Rotation")
+                sub.prop(pchan, "custom_shape_scale_xyz", text="Scale")
+                sub.prop(pchan, "custom_shape_translation", text="Translation")
+                sub.prop(pchan, "custom_shape_rotation_euler", text="Rotation")
 
-            sub.prop_search(pchan, "custom_shape_transform", ob.pose, "bones", text="Override Transform")
-            sub.separator()
+                sub.prop_search(pchan, "custom_shape_transform", ob.pose, "bones", text="Override Transform")
+                sub.separator()
 
-            row = sub.row()
-            row.use_property_split = False
-            row.prop(pchan, "use_custom_shape_bone_size")
-            row.prop_decorator(pchan, "use_custom_shape_bone_size")
-
-            row = sub.row()
-            row.use_property_split = False
-            row.prop(bone, "show_wire", text="Wireframe")
-            if bone.show_wire:
-                row.label(icon='DISCLOSURE_TRI_DOWN', text = "      ")
-            else:
-                row.label(icon='DISCLOSURE_TRI_RIGHT', text = "      ")
-            row.prop_decorator(bone, "show_wire")
-
-            # Disabled on Mac due to drawing issues with lacking geometry shader support. See #124691.
-            is_darwin = platform.system() == "Darwin"
-            
-            if bone.show_wire:
                 row = sub.row()
-                row.use_property_split = True
-                row.separator()
-                row.prop(pchan, "custom_shape_wire_width")
+                row.use_property_split = False
+                row.prop(pchan, "use_custom_shape_bone_size")
+                row.prop_decorator(pchan, "use_custom_shape_bone_size")
 
-            if is_darwin:
                 row = sub.row()
-                row.label(text="Custom wire width not available on MacOS", icon='INFO')
+                row.use_property_split = False
+                row.prop(bone, "show_wire", text="Wireframe")
+                if bone.show_wire:
+                    row.label(icon='DISCLOSURE_TRI_DOWN', text = "      ")
+                else:
+                    row.label(icon='DISCLOSURE_TRI_RIGHT', text = "      ")
+                row.prop_decorator(bone, "show_wire")
+
+                # Disabled on Mac due to drawing issues with lacking geometry shader support. See #124691.
+                is_darwin = platform.system() == "Darwin"
+
+                if bone.show_wire:
+                    row = sub.row()
+                    row.use_property_split = True
+                    row.separator()
+                    row.prop(pchan, "custom_shape_wire_width")
+
+                if is_darwin:
+                    row = sub.row()
+                    row.label(text="Custom wire width not available on MacOS", icon='INFO')
 
 
 class BONE_PT_inverse_kinematics(BoneButtonsPanel, Panel):
