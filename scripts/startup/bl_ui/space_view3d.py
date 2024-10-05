@@ -9668,7 +9668,7 @@ class VIEW3D_PT_gpencil_guide(Panel):
 class VIEW3D_PT_overlay_gpencil_options(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
-    bl_label = ""
+    bl_label = "Grease Pencil Options"
     bl_ui_units_x = 13
 
     @classmethod
@@ -9787,7 +9787,7 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
 class VIEW3D_PT_overlay_grease_pencil_options(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
-    bl_label = ""
+    bl_label = "Grease Pencil Options"
     bl_ui_units_x = 13
 
     @classmethod
