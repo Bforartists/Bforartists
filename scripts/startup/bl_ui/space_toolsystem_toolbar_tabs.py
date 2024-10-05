@@ -4232,7 +4232,6 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
                 row.operator("object.vertex_group_limit_total", text="", icon='WEIGHT_LIMIT_TOTAL')
 
                 row = col.row(align=True)
-                row.operator("object.vertex_group_fix", text="", icon='WEIGHT_FIX_DEFORMS')
                 row.operator("paint.weight_set", text="", icon = "MOD_VERTEX_WEIGHT")
 
             elif column_count == 2:
@@ -4293,7 +4292,6 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
                 props.data_type = 'VGROUP_WEIGHTS'
 
                 col.operator("object.vertex_group_limit_total", text="", icon='WEIGHT_LIMIT_TOTAL')
-                col.operator("object.vertex_group_fix", text="", icon='WEIGHT_FIX_DEFORMS')
 
                 col.separator(factor = 0.5)
 
