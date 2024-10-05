@@ -2972,7 +2972,11 @@ void UV_OT_unwrap(wmOperatorType *ot)
   static const EnumPropertyItem method_items[] = {
       {UVCALC_UNWRAP_METHOD_ANGLE, "ANGLE_BASED", ICON_UNWRAP_ABF, "Angle Based", ""},
       {UVCALC_UNWRAP_METHOD_CONFORMAL, "CONFORMAL", ICON_UNWRAP_LSCM, "Conformal", ""},
-      {UVCALC_UNWRAP_METHOD_MINIMUM_STRETCH, "MINIMUM_STRETCH", 0, "Minimum Stretch", ""},
+      {UVCALC_UNWRAP_METHOD_MINIMUM_STRETCH,
+       "MINIMUM_STRETCH",
+       ICON_UNWRAP_MINSTRETCH,
+       "Minimum Stretch",
+       ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
