@@ -2691,6 +2691,7 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
 
             col.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
             col.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+            col.operator("uv.unwrap", text = "Unwrap Minimum Stretch", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
 
             col.separator(factor = 0.5)
 
@@ -2733,28 +2734,28 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
                 row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
 
+                row = col.row(align=True)
                 row.operator_context = 'INVOKE_DEFAULT'
                 row.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
-
-                row = col.row(align=True)
                 row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
                 row.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+
+                row = col.row(align=True)
                 row.operator_context = 'EXEC_REGION_WIN'
                 row.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
-
-                row = col.row(align=True)
                 row.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
                 row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+
+                row = col.row(align=True)
                 row.operator_context = 'INVOKE_REGION_WIN'
                 row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = False
+                row.operator("uv.project_from_view", text="", icon = "PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
 
                 row = col.row(align=True)
-                row.operator("uv.project_from_view", text="", icon = "PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
                 row.operator("mesh.mark_seam", text = "", icon = "MARK_SEAM").clear = False
                 row.operator("mesh.clear_seam", text = "", icon = 'CLEAR_SEAM')
-
-                row = col.row(align=True)
                 row.operator("uv.reset", text = "", icon = "RESET")
 
             elif column_count == 2:
@@ -2764,35 +2765,37 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
                 row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
                 row = col.row(align=True)
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
                 row.operator_context = 'INVOKE_DEFAULT'
                 row.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
-                row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
 
                 row = col.row(align=True)
+                row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
                 row.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
                 row.operator_context = 'EXEC_REGION_WIN'
+
+                row = col.row(align=True)
                 row.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
-
-                row = col.row(align=True)
                 row.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
-                row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
 
                 row = col.row(align=True)
+                row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
                 row.operator_context = 'INVOKE_REGION_WIN'
                 row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = False
+
+                row = col.row(align=True)
                 row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
-
-                row = col.row(align=True)
                 row.operator("mesh.mark_seam", text = "", icon = "MARK_SEAM").clear = False
-                row.operator("mesh.clear_seam", text = "", icon = 'CLEAR_SEAM')
 
                 row = col.row(align=True)
+                row.operator("mesh.clear_seam", text = "", icon = 'CLEAR_SEAM')
                 row.operator("uv.reset", text = "", icon = "RESET")
 
             elif column_count == 1:
 
                 col.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
                 col.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+                col.operator("uv.unwrap", text = "", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
 
                 col.separator(factor = 0.5)
 
