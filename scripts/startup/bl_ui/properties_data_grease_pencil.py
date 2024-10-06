@@ -211,6 +211,10 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
             layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
 
         layout.separator()
+        layout.operator("grease_pencil.layer_move_top", text="Move to Top", icon='TRIA_UP_BAR') # bfa - added move up/down operators
+        layout.operator("grease_pencil.layer_move_bottom", text="Move to Bottom", icon='TRIA_DOWN_BAR') # bfa - added move up/down operators
+
+        layout.separator()
         layout.operator("grease_pencil.layer_duplicate", text="Duplicate", icon='DUPLICATE').empty_keyframes = False
         layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Keyframes", icon='DUPLICATE' ).empty_keyframes = True
 
