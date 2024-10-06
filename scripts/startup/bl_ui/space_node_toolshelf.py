@@ -6626,6 +6626,10 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeBooleanMath"
 
+            props = col.operator("node.add_node", text=" Integer Math  ", icon = "INTEGER_MATH")
+            props.use_transform = True
+            props.type = "FunctionNodeIntegerMath"
+
             props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
@@ -6673,6 +6677,10 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
             props.use_transform = True
             props.type = "FunctionNodeBooleanMath"
+
+            props = flow.operator("node.add_node", text="", icon = "INTEGER_MATH")
+            props.use_transform = True
+            props.type = "FunctionNodeIntegerMath"
 
             props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
             props.use_transform = True
