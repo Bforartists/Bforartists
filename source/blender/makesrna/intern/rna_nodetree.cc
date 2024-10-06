@@ -12188,6 +12188,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_INPUT_VECTOR:
       return ICON_NODE_VECTOR;
 
+    case FN_NODE_INTEGER_MATH:
+      return ICON_INTEGER_MATH;
+
     case FN_NODE_INVERT_MATRIX:
       return ICON_INVERT_MATRIX;
 
