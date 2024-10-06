@@ -835,6 +835,7 @@ if(WITH_BLENDER)
       instance_transform_get
       instances_to_points
       integer
+	  integer_math
       internet
       internet_offline
       interpolate
