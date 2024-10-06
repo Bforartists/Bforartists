@@ -9811,48 +9811,62 @@ class VIEW3D_PT_overlay_grease_pencil_options(Panel):
             'VERTEX_GREASE_PENCIL': iface_("Vertex Grease Pencil"),
         }[context.mode], translate=False)
 
-        layout.prop(overlay, "use_gpencil_onion_skin", text="Onion Skin")
-
-        col = layout.column()
-        row = col.row()
-        row.prop(overlay, "use_gpencil_grid", text="")
-        sub = row.row(align=True)
-        sub.active = overlay.use_gpencil_grid
-        sub.prop(overlay, "gpencil_grid_opacity", text="Canvas", slider=True)
-        sub.prop(overlay, "use_gpencil_canvas_xray", text="", icon='XRAY')
+        col = layout.column(align = True)
 
         row = col.row()
-        row.prop(overlay, "use_gpencil_fade_layers", text="")
-        sub = row.row()
-        sub.active = overlay.use_gpencil_fade_layers
-        sub.prop(overlay, "gpencil_fade_layer", text="Fade Inactive Layers", slider=True)
+        row.separator()
+        row.prop(overlay, "use_gpencil_onion_skin", text="Onion Skin")
 
         row = col.row()
-        row.prop(overlay, "use_gpencil_fade_objects", text="")
-        sub = row.row(align=True)
-        sub.active = overlay.use_gpencil_fade_objects
-        sub.prop(overlay, "gpencil_fade_objects", text="Fade Inactive Objects", slider=True)
-        sub.prop(overlay, "use_gpencil_fade_gp_objects", text="", icon='OUTLINER_OB_GREASEPENCIL')
+        row.use_property_split = False
+        split = row.split(factor = 0.5)
+        row = split.row()
+        row.separator()
+        row.prop(overlay, "use_gpencil_fade_layers")
+        row = split.row()
+        if overlay.use_gpencil_fade_layers:
+            row.prop(overlay, "gpencil_fade_layer", text="", slider=True)
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        row = col.row()
+        row.use_property_split = False
+        split = row.split(factor = 0.5)
+        row = split.row()
+        row.separator()
+        row.prop(overlay, "use_gpencil_fade_objects")
+        row = split.row(align=True)
+        if overlay.use_gpencil_fade_objects:
+            row.prop(overlay, "gpencil_fade_objects", text="", slider=True)
+            row.prop(overlay, "use_gpencil_fade_gp_objects", text="", icon='OUTLINER_OB_GREASEPENCIL')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if ob.mode in {'EDIT', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}:
-            split = layout.split()
-            col = split.column()
-            col.prop(overlay, "use_gpencil_edit_lines", text="Edit Lines")
-            col = split.column()
-            col.prop(overlay, "use_gpencil_multiedit_line_only", text="Only in Multiframe")
+
+            col = layout.column(align = True)
+            row = col.row()
+            row.separator()
+            row.prop(overlay, "use_gpencil_edit_lines", text="Edit Lines")
+            row = col.row()
+            row.separator()
+            row.prop(overlay, "use_gpencil_multiedit_line_only", text="Only in Multiframe")
 
         if ob.mode == 'EDIT':
-            split = layout.split()
-            col = split.column()
-            col.prop(overlay, "use_gpencil_show_directions")
-            col = split.column()
-            col.prop(overlay, "use_gpencil_show_material_name", text="Material Name")
+            col = layout.column(align = True)
+            row = col.row()
+            row.separator()
+            row.prop(overlay, "use_gpencil_show_directions")
+            row = col.row()
+            row.separator()
+            row.prop(overlay, "use_gpencil_show_material_name", text="Material Name")
 
         if ob.mode in {'PAINT_GPENCIL', 'VERTEX_GPENCIL'}:
             layout.label(text="Vertex Paint")
             row = layout.row()
             shading = VIEW3D_PT_shading.get_shading(context)
             row.enabled = shading.type not in {'WIREFRAME', 'RENDERED'}
+            row.separator()
             row.prop(overlay, "gpencil_vertex_paint_opacity", text="Opacity", slider=True)
 
 
@@ -9873,25 +9887,44 @@ class VIEW3D_PT_overlay_grease_pencil_canvas_options(Panel):
         view = context.space_data
         overlay = view.overlay
 
+        layout.use_property_decorate = False  # No animation.
+
         col = layout.column()
-        col.active = overlay.use_gpencil_grid
         row = col.row()
-        row.prop(overlay, "use_gpencil_grid", text="")
-        sub = row.row(align=True)
-        sub.prop(overlay, "gpencil_grid_opacity", text="Canvas", slider=True)
-        sub.prop(overlay, "use_gpencil_canvas_xray", text="", icon='XRAY')
+        row.use_property_split = False
+        split = row.split(factor = 0.5)
+        row = split.row()
+        row.separator()
+        row.prop(overlay, "use_gpencil_grid")
+        row = split.row()
+        if overlay.use_gpencil_grid:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        col = col.column(align=True)
-        row = col.row(align=True)
-        row.prop(overlay, "gpencil_grid_subdivisions")
-        row = col.row(align=True)
-        row.prop(overlay, "gpencil_grid_color", text="")
+        if overlay.use_gpencil_grid:
+            row = col.row()
+            row.separator(factor = 2.0)
+            row.use_property_split = True
+            row.prop(overlay, "gpencil_grid_opacity", text="Opacity", slider=True)
+            row.prop(overlay, "use_gpencil_canvas_xray", text="", icon='XRAY')
 
-        col = col.column(align=True)
-        row = col.row()
-        row.prop(overlay, "gpencil_grid_scale", text="Scale", expand=True)
-        row = col.row()
-        row.prop(overlay, "gpencil_grid_offset", text="Offset", expand=True)
+            col = col.column(align=True)
+            col.use_property_split = True
+            row = col.row(align=True)
+            row.separator(factor = 3.5)
+            row.prop(overlay, "gpencil_grid_subdivisions")
+            row = col.row(align=True)
+            row.separator(factor = 3.5)
+            row.prop(overlay, "gpencil_grid_color", text="Grid Color")
+
+            col = col.column(align=True)
+            row = col.row()
+            row.separator(factor = 2.0)
+            row.prop(overlay, "gpencil_grid_scale", text="Scale", expand=True)
+            row = col.row()
+            row.separator(factor = 2.0)
+            row.prop(overlay, "gpencil_grid_offset", text="Offset", expand=True)
 
 
 class VIEW3D_PT_quad_view(Panel):
