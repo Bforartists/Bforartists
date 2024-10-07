@@ -2060,6 +2060,10 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeAddShader"
 
+            props = col.operator("node.add_node", text=" Metallic             ", icon = "METALLIC")
+            props.use_transform = True
+            props.type = "ShaderNodeBsdfMetallic"
+
             if context.space_data.shader_type == 'OBJECT':
 
                 if engine == 'CYCLES':
@@ -2191,6 +2195,10 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "NODE_ADD_SHADER")
             props.use_transform = True
             props.type = "ShaderNodeAddShader"
+
+            props = flow.operator("node.add_node", text="", icon = "METALLIC")
+            props.use_transform = True
+            props.type = "ShaderNodeBsdfMetallic"
 
             if context.space_data.shader_type == 'OBJECT':
 
