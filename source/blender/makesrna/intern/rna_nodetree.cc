@@ -11637,6 +11637,9 @@ static int node_type_to_icon(int type)
     case SH_NODE_HOLDOUT:
       return ICON_NODE_HOLDOUTSHADER;
 
+    case SH_NODE_BSDF_METALLIC:
+      return ICON_METALLIC;
+
     case SH_NODE_BSDF_DIFFUSE:
       return ICON_NODE_DIFFUSESHADER;
 
