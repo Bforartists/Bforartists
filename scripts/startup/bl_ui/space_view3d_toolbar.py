@@ -515,6 +515,7 @@ class VIEW3D_MT_tools_projectpaint_uvlayer(Menu):
             props.data_path = "active_object.data.uv_layers.active_index"
             props.value = i
 
+
 class SelectPaintSlotHelper:
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -2218,9 +2219,9 @@ class VIEW3D_PT_tools_grease_pencil_sculpt_brush_advanced(GreasePencilSculptAdva
         return tool in {'SMOOTH', 'RANDOMIZE'}
 
 
-class VIEW3D_PT_tools_grease_pencil_sculpt_advanced_popover(GreasePencilSculptAdvancedPanel, View3DPanel, Panel):
+class VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover(GreasePencilSculptAdvancedPanel, View3DPanel, Panel):
     bl_context = ".greasepencil_sculpt"
-    bl_label = "Advanced"
+    bl_label = "Brush"
     bl_category = "Tool"
 
     @classmethod
@@ -3209,7 +3210,7 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_sculpt_select,
     VIEW3D_PT_tools_grease_pencil_sculpt_settings,
     VIEW3D_PT_tools_grease_pencil_sculpt_brush_advanced,
-    VIEW3D_PT_tools_grease_pencil_sculpt_advanced_popover,
+    VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover,
     VIEW3D_PT_tools_grease_pencil_sculpt_appearance,
     VIEW3D_PT_tools_grease_pencil_weight_paint_select,
     VIEW3D_PT_tools_grease_pencil_weight_paint_settings,
