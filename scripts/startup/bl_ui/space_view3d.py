@@ -116,9 +116,7 @@ class VIEW3D_HT_tool_header(Header):
 
                         if brush.gpencil_tool not in {'FILL', 'TINT'}:
                             layout.popover("VIEW3D_PT_tools_grease_pencil_brush_stroke")
-                    layout.popover("VIEW3D_PT_tools_brush_stroke")
-                    layout.popover("VIEW3D_PT_tools_brush_falloff")
-                    layout.popover("VIEW3D_PT_tools_brush_display")
+
                     layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
         elif tool_mode == 'PAINT_GREASE_PENCIL':
             if is_valid_context:
@@ -130,9 +128,6 @@ class VIEW3D_HT_tool_header(Header):
 
                         if brush.gpencil_tool not in {'FILL', 'TINT'}:
                             layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_stroke")
-                    layout.popover("VIEW3D_PT_tools_brush_stroke")
-                    layout.popover("VIEW3D_PT_tools_brush_falloff")
-                    layout.popover("VIEW3D_PT_tools_brush_display")
                     layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
         elif tool_mode == 'SCULPT_GPENCIL':
             if is_valid_context:
@@ -140,11 +135,7 @@ class VIEW3D_HT_tool_header(Header):
                 if brush:
                     tool = brush.gpencil_sculpt_tool
                     if tool in {'SMOOTH', 'RANDOMIZE'}:
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_advanced_popover")
                         layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover")
-                    layout.popover("VIEW3D_PT_tools_brush_stroke")
-                    layout.popover("VIEW3D_PT_tools_brush_falloff")
-                    layout.popover("VIEW3D_PT_tools_brush_display")
                     layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
         elif tool_mode == 'SCULPT_GREASE_PENCIL':
             if is_valid_context:
@@ -152,21 +143,13 @@ class VIEW3D_HT_tool_header(Header):
                 if brush:
                     tool = brush.gpencil_sculpt_tool
                     if tool in {'SMOOTH', 'RANDOMIZE'}:
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_advanced_popover")
                         layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover")
-                    layout.popover("VIEW3D_PT_tools_brush_stroke")
-                    layout.popover("VIEW3D_PT_tools_brush_falloff")
-                    layout.popover("VIEW3D_PT_tools_brush_display")
                     layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
         elif tool_mode == 'WEIGHT_GPENCIL' or tool_mode == 'WEIGHT_GREASE_PENCIL':
             if is_valid_context:
-                layout.popover("VIEW3D_PT_tools_brush_falloff")
-                layout.popover("VIEW3D_PT_tools_brush_display")
                 layout.popover("VIEW3D_PT_tools_grease_pencil_weight_appearance")
         elif tool_mode == 'VERTEX_GPENCIL' or tool_mode == 'VERTEX_GREASE_PENCIL':
             if is_valid_context:
-                layout.popover("VIEW3D_PT_tools_brush_falloff")
-                layout.popover("VIEW3D_PT_tools_brush_display")
                 layout.popover("VIEW3D_PT_tools_grease_pencil_vertex_appearance")
 
     def draw_mode_settings(self, context):
@@ -176,7 +159,9 @@ class VIEW3D_HT_tool_header(Header):
 
         def row_for_mirror():
             row = layout.row(align=True)
+            row.label(icon='MOD_MIRROR')
             sub = row.row(align=True)
+            sub.scale_x = 0.6
             return row, sub
 
         if mode_string == 'EDIT_ARMATURE':
@@ -241,31 +226,56 @@ class VIEW3D_HT_tool_header(Header):
         elif mode_string == 'OBJECT':
             layout.popover_group(context=".objectmode", **popover_kw)
         elif mode_string in {
-        		'EDIT_GREASE_PENCIL',
-        		'PAINT_GREASE_PENCIL',
-        		'SCULPT_GREASE_PENCIL',
-        		'WEIGHT_GREASE_PENCIL',
-        		'VERTEX_GREASE_PENCIL'}:
+                'PAINT_GPENCIL',
+                'EDIT_GPENCIL',
+                'SCULPT_GPENCIL',
+                'WEIGHT_GPENCIL',
+        }:
+            # Grease pencil layer.
+            gpl = context.active_gpencil_layer
+            if gpl and gpl.info is not None:
+                text = gpl.info
+                maxw = 25
+                if len(text) > maxw:
+                    text = text[:maxw - 5] + '..' + text[-3:]
+            else:
+                text = ""
 
-            layer = context.object.data.layers.active
-            group = context.object.data.layer_groups.active
-            text = "Layer"
-            node_name = None
-
-            if layer:
-                node_name = layer.name
-            elif group:
-                text = "Group"
-                node_name = group.name
-
-            layout.label(text=text + ":")
+            layout.label(text="Layer:")
             sub = layout.row()
             sub.popover(
-                panel="TOPBAR_PT_grease_pencil_layers",
-                text=node_name,
+                panel="TOPBAR_PT_gpencil_layers",
+                text=text,
             )
-            if mode_string == 'EDIT_GREASE_PENCIL':
-                sub.popover(panel="VIEW3D_PT_greasepencil_edit_options", text="Options")  # BFA menu
+
+        if mode_string in {
+            'EDIT_GREASE_PENCIL',
+            'PAINT_GREASE_PENCIL',
+            'SCULPT_GREASE_PENCIL',
+            'WEIGHT_GREASE_PENCIL',
+            'VERTEX_GREASE_PENCIL',
+        }:
+            row = layout.row(align=True)
+            row.prop(tool_settings, "use_grease_pencil_multi_frame_editing", text="")
+
+            if mode_string in {
+                'EDIT_GREASE_PENCIL',
+                'SCULPT_GREASE_PENCIL',
+                'WEIGHT_GREASE_PENCIL',
+                'VERTEX_GREASE_PENCIL',
+            }:
+                sub = row.row(align=True)
+                sub.active = tool_settings.use_grease_pencil_multi_frame_editing
+                sub.popover(
+                    panel="VIEW3D_PT_grease_pencil_multi_frame",
+                    text="Multiframe",
+                )
+
+        if mode_string == 'PAINT_GREASE_PENCIL':
+            layout.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
+            layout.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
+            layout.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
+            layout.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
 
 
 class _draw_tool_settings_context_mode:
