@@ -1044,6 +1044,7 @@ if(WITH_BLENDER)
       meta_ellipsoid
       meta_empty
       meta_plane
+	  metallic
       minimizestretch
       mirror_cursorvalue
       mirror_marker
