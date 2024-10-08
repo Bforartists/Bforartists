@@ -161,7 +161,7 @@ class VIEW3D_HT_tool_header(Header):
             row = layout.row(align=True)
             row.label(icon='MOD_MIRROR')
             sub = row.row(align=True)
-            sub.scale_x = 0.6
+            #sub.scale_x = 0.6 #bfa - just needed for text buttons. we use icons, and then the buttons are too small
             return row, sub
 
         if mode_string == 'EDIT_ARMATURE':
