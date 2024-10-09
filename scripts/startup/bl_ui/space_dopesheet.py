@@ -9,14 +9,6 @@ from bpy.types import (
     Panel,
 )
 
-from bl_ui.properties_grease_pencil_common import (
-    GreasePencilLayerMasksPanel,
-    GreasePencilLayerTransformPanel,
-    GreasePencilLayerAdjustmentsPanel,
-    GreasePencilLayerRelationsPanel,
-    GreasePencilLayerDisplayPanel,
-)
-
 from bl_ui.properties_data_grease_pencil import (
     GreasePencil_LayerMaskPanel,
     GreasePencil_LayerTransformPanel,
@@ -527,10 +519,7 @@ class DOPESHEET_MT_editor_menus(Menu):
         elif st.mode == 'GPENCIL':
             layout.menu("DOPESHEET_MT_gpencil_channel")
 
-        if st.mode != 'GPENCIL':
-            layout.menu("DOPESHEET_MT_key")
-        else:
-            layout.menu("DOPESHEET_MT_gpencil_key")
+        layout.menu("DOPESHEET_MT_key")
 
         if st.mode in {'ACTION', 'SHAPEKEY'} and st.action is not None:
             if context.preferences.experimental.use_animation_baklava:
@@ -1013,13 +1002,13 @@ class DOPESHEET_MT_gpencil_channel(Menu):
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
         # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
-        '''
-        layout.separator()
+        
+        #layout.separator()
 
-        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
-        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
-        layout.operator("anim.channels_editable_toggle", icon="LOCKED")
-        '''
+        #layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
+        #layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
+        #layout.operator("anim.channels_editable_toggle", icon="LOCKED")
+        
 
         # XXX: to be enabled when these are ready for use!
         # layout.separator()
@@ -1028,31 +1017,12 @@ class DOPESHEET_MT_gpencil_channel(Menu):
 
         layout.separator()
         layout.operator_menu_enum(
-            "anim.channels_move", "direction", text="Move...")
+            "anim.channels_move", "direction", text="Move")
 
         layout.separator()
 
         layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
-
-class DOPESHEET_MT_gpencil_key(Menu):
-    bl_label = "Key"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.menu("DOPESHEET_MT_key_transform", text="Transform")
-        layout.operator_menu_enum("action.snap", "type", text="Snap")
-        layout.operator_menu_enum("action.mirror", "type", text="Mirror")
-
-        layout.separator()
-
-        layout.operator_menu_enum("action.keyframe_insert", "type")
-
-        layout.separator()
-
-        layout.operator("action.delete", icon="DELETE")
-        layout.operator("gpencil.interpolate_reverse", icon="DELETE")
 
 
 class DOPESHEET_MT_delete(Menu):
@@ -1080,13 +1050,12 @@ class DOPESHEET_MT_context_menu(Menu):
 
         layout.operator("action.copy", text="Copy", icon='COPYDOWN')
         layout.operator("action.paste", text="Paste", icon='PASTEDOWN')
-        layout.operator("action.paste", text="Paste Flipped",
-                        icon='PASTEFLIPDOWN').flipped = True
+        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
         layout.separator()
 
-        layout.operator_menu_enum(
-            "action.keyframe_type", "type", text="Keyframe Type")
+        layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
+
         if st.mode != 'GPENCIL':
             layout.operator_menu_enum("action.handle_type", "type", text="Handle Type")
             layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
@@ -1102,10 +1071,6 @@ class DOPESHEET_MT_context_menu(Menu):
 
         layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("action.delete", icon='DELETE')
-
-        if st.mode == 'GPENCIL':
-            layout.operator("gpencil.interpolate_reverse", icon = "DELETE")
-            layout.operator("gpencil.frame_clean_duplicate", text="Delete Duplicate Frames", icon = "DELETE_DUPLICATE")
 
         layout.separator()
 
@@ -1225,65 +1190,6 @@ class GreasePencilLayersDopeSheetPanel:
         return False
 
 
-class DOPESHEET_PT_gpencil_mode(LayersDopeSheetPanel, Panel):
-    # bl_space_type = 'DOPESHEET_EDITOR'
-    # bl_region_type = 'UI'
-    # bl_category = "View"
-    bl_label = "Layer"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        ob = context.object
-        gpd = ob.data
-        gpl = gpd.layers.active
-
-        if gpl:
-            row = layout.row(align=True)
-            row.prop(gpl, "blend_mode", text="Blend")
-
-            row = layout.row(align=True)
-            row.prop(gpl, "opacity", text="Opacity", slider=True)
-
-            col = layout.column(align=True)
-            col.use_property_split = False
-            col.prop(gpl, "use_lights", text="Lights")
-            col.prop(gpd, "use_autolock_layers", text="Autolock Inactive Layers") #BFA - consistent prop exposed
-            col.prop(gpl, "lock_material")
-
-
-class DOPESHEET_PT_gpencil_layer_masks(LayersDopeSheetPanel, GreasePencilLayerMasksPanel, Panel):
-    bl_label = "Masks"
-    bl_parent_id = "DOPESHEET_PT_gpencil_mode"
-    bl_options = {'DEFAULT_CLOSED'}
-
-
-class DOPESHEET_PT_gpencil_layer_transform(LayersDopeSheetPanel, GreasePencilLayerTransformPanel, Panel):
-    bl_label = "Transform"
-    bl_parent_id = "DOPESHEET_PT_gpencil_mode"
-    bl_options = {'DEFAULT_CLOSED'}
-
-
-class DOPESHEET_PT_gpencil_layer_adjustments(LayersDopeSheetPanel, GreasePencilLayerAdjustmentsPanel, Panel):
-    bl_label = "Adjustments"
-    bl_parent_id = "DOPESHEET_PT_gpencil_mode"
-    bl_options = {'DEFAULT_CLOSED'}
-
-
-class DOPESHEET_PT_gpencil_layer_relations(LayersDopeSheetPanel, GreasePencilLayerRelationsPanel, Panel):
-    bl_label = "Relations"
-    bl_parent_id = "DOPESHEET_PT_gpencil_mode"
-    bl_options = {'DEFAULT_CLOSED'}
-
-
-class DOPESHEET_PT_gpencil_layer_display(LayersDopeSheetPanel, GreasePencilLayerDisplayPanel, Panel):
-    bl_label = "Display"
-    bl_parent_id = "DOPESHEET_PT_gpencil_mode"
-    bl_options = {'DEFAULT_CLOSED'}
-
-
 class DOPESHEET_PT_grease_pencil_mode(GreasePencilLayersDopeSheetPanel, Panel):
     bl_label = "Layer"
 
@@ -1355,7 +1261,6 @@ classes = (
     DOPESHEET_MT_key_mirror, # BFA menu
     DOPESHEET_MT_key_snap, # BFA menu
     DOPESHEET_MT_gpencil_channel,
-    DOPESHEET_MT_gpencil_key,
     DOPESHEET_MT_delete,
     DOPESHEET_MT_context_menu,
     DOPESHEET_MT_channel_context_menu,
@@ -1364,12 +1269,6 @@ classes = (
     DOPESHEET_PT_filters,
     DOPESHEET_PT_action,
     DOPESHEET_PT_action_slot,
-    DOPESHEET_PT_gpencil_mode,
-    DOPESHEET_PT_gpencil_layer_masks,
-    DOPESHEET_PT_gpencil_layer_transform,
-    DOPESHEET_PT_gpencil_layer_adjustments,
-    DOPESHEET_PT_gpencil_layer_relations,
-    DOPESHEET_PT_gpencil_layer_display,
     DOPESHEET_PT_custom_props_action,
     DOPESHEET_PT_snapping,
     DOPESHEET_PT_grease_pencil_mode,
