@@ -47,16 +47,14 @@ class GREASE_PENCIL_UL_masks(UIList):
 
 class GreasePencil_LayerMaskPanel:
     def draw_header(self, context):
-        ob = context.object
-        grease_pencil = ob.data
+        grease_pencil = context.grease_pencil
         layer = grease_pencil.layers.active
 
         self.layout.prop(layer, "use_masks", text="", toggle=0)
 
     def draw(self, context):
         layout = self.layout
-        ob = context.object
-        grease_pencil = ob.data
+        grease_pencil = context.grease_pencil
         layer = grease_pencil.layers.active
 
         layout = self.layout
@@ -89,8 +87,7 @@ class GreasePencil_LayerTransformPanel:
         layout = self.layout
         layout.use_property_split = True
 
-        ob = context.object
-        grease_pencil = ob.data
+        grease_pencil = context.grease_pencil
         layer = grease_pencil.layers.active
         layout.active = not layer.lock
 
@@ -109,8 +106,7 @@ class GreasePencil_LayerAdjustmentsPanel:
         layout = self.layout
         layout.use_property_split = True
 
-        ob = context.object
-        grease_pencil = ob.data
+        grease_pencil = context.grease_pencil
         layer = grease_pencil.layers.active
         layout.active = not layer.lock
 
@@ -129,8 +125,7 @@ class GreasPencil_LayerRelationsPanel:
         layout = self.layout
         layout.use_property_split = True
 
-        ob = context.object
-        grease_pencil = ob.data
+        grease_pencil = context.grease_pencil
         layer = grease_pencil.layers.active
         layout.active = not layer.lock
 
@@ -199,8 +194,7 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
 
     def draw(self, context):
         layout = self.layout
-        ob = context.object
-        grease_pencil = ob.data
+        grease_pencil = context.grease_pencil
         layer = grease_pencil.layers.active
         space = context.space_data
 
@@ -227,6 +221,11 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.operator("grease_pencil.layer_lock_all", icon='UNLOCKED', text="Unlock All").lock = False
 
         layout.separator()
+        layout.operator("grease_pencil.layer_merge", text="Merge Down").mode = 'ACTIVE'
+        layout.operator("grease_pencil.layer_merge", text="Merge Group").mode = 'GROUP'
+        layout.operator("grease_pencil.layer_merge", text="Merge All").mode = 'ALL'
+        
+        layout.separator()
         layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
         layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected", icon = 'PASTEDOWN').only_active = False
 
@@ -238,6 +237,7 @@ class GREASE_PENCIL_MT_group_context_menu(Menu):
         layout = self.layout
         layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
         layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
+        layout.operator("grease_pencil.layer_merge", text="Merge Group").mode = 'GROUP'
 
         layout.separator()
         row = layout.row(align=True)
@@ -261,6 +261,9 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         sub.operator_context = 'EXEC_DEFAULT'
         sub.operator("grease_pencil.layer_add", icon='ADD', text="")
         sub.operator("grease_pencil.layer_group_add", icon='COLLECTION_NEW', text="")
+
+        sub.separator()
+
         if is_layer_active:
             sub.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
         if is_group_active:
@@ -464,7 +467,39 @@ class GREASE_PENCIL_UL_attributes(UIList):
         sub.active = False
         sub.label(text=data_type.name)
 
-## BFA - operator for GUI buttons to re-order items - Start
+class DATA_PT_grease_pencil_attributes(DataButtonsPanel, Panel):
+    bl_label = "Attributes"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+    }
+
+    def draw(self, context):
+        grease_pencil = context.grease_pencil
+
+        layout = self.layout
+        row = layout.row()
+
+        col = row.column()
+        col.template_list(
+            "GREASE_PENCIL_UL_attributes",
+            "attributes",
+            grease_pencil,
+            "attributes",
+            grease_pencil.attributes,
+            "active_index",
+            rows=3,
+        )
+
+        col = row.column(align=True)
+        col.operator("geometry.attribute_add", icon='ADD', text="")
+        col.operator("geometry.attribute_remove", icon='REMOVE', text="")
+        
+        
+## BFA - WIP - operator for GUI buttons to re-order items through groups - Start
 class GREASE_PENCIL_OT_interface_item_move(DataButtonsPanel, Operator):
     '''Move the active layer to the specified direction\nYou can also alternatively drag and drop the active layer or group to reorder and change hierarchy'''
     bl_idname = "grease_pencil.interface_item_move"
@@ -528,6 +563,8 @@ classes = (
     GREASE_PENCIL_MT_grease_pencil_add_layer_extra,
     GREASE_PENCIL_MT_group_context_menu,
     DATA_PT_grease_pencil_animation,
+    GREASE_PENCIL_UL_attributes,
+    DATA_PT_grease_pencil_attributes
 )
 
 
