@@ -2,10 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#pragma BLENDER_REQUIRE(common_view_clipping_lib.glsl)
-#pragma BLENDER_REQUIRE(common_view_lib.glsl)
-#pragma BLENDER_REQUIRE(gpu_shader_utildefines_lib.glsl)
-#pragma BLENDER_REQUIRE(select_lib.glsl)
+#include "common_view_clipping_lib.glsl"
+#include "common_view_lib.glsl"
+#include "gpu_shader_utildefines_lib.glsl"
+#include "select_lib.glsl"
 
 #if !defined(POINTS) && !defined(CURVES)
 bool is_edge_sharpness_visible(float wire_data)
@@ -100,7 +100,7 @@ void main()
   if (isHair) {
     mat4 obmat = hairDupliMatrix;
     wpos = (obmat * vec4(pos, 1.0)).xyz;
-    wnor = -normalize(mat3(obmat) * nor);
+    wnor = -normalize(to_float3x3(obmat) * nor);
   }
 
   bool is_persp = (drw_view.winmat[3][3] == 0.0);

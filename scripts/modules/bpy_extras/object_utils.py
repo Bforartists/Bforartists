@@ -166,8 +166,8 @@ def object_data_add(context, obdata, operator=None, name=None):
                 mode = None
                 if obtype in {'ARMATURE', 'CURVE', 'CURVES', 'FONT', 'LATTICE', 'MESH', 'META', 'SURFACE'}:
                     mode = 'EDIT'
-                elif obtype == 'GPENCIL':
-                    mode = 'EDIT_GPENCIL'
+                elif obtype == 'GREASEPENCIL':
+                    mode = 'EDIT_GREASE_PENCIL'
 
                 if mode is not None:
                     bpy.ops.object.mode_set(mode=mode)
