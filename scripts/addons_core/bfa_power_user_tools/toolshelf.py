@@ -161,12 +161,12 @@ class BFA_PT_toolshelf_frames(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         wm = context.window_manager
-        if context.object is not None and context.object.mode in {'OBJECT', 'POSE', 'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'VERTEX_GPENCIL'}:
+        if context.object is not None and context.object.mode in {'OBJECT', 'POSE', 'PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'VERTEX_GREASE_PENCIL'}:
             return wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes
         else:
             return False
 
-        #return ((wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes) and context.object.mode in {'OBJECT', 'POSE', 'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'VERTEX_GPENCIL'})
+        #return ((wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes) and context.object.mode in {'OBJECT', 'POSE', 'PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL', 'SCULPT_GPENCIL_LEGACY', 'VERTEX_GPENCIL'})
 
     def draw(self, context):
         layout = self.layout
