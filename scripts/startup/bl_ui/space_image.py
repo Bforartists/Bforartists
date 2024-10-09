@@ -432,11 +432,9 @@ class IMAGE_MT_image(Menu):
 
                     layout.separator()
 
-                    layout.operator("palette.extract_from_image", text="Extract Palette", icon="PALETTE")
-                    layout.operator(
-                        "gpencil.image_to_grease_pencil",
-                        text="Generate Grease Pencil",
-                        icon="GREASEPENCIL")
+        if ima and context.area.ui_type == 'IMAGE_EDITOR':
+            layout.separator()
+            layout.operator("palette.extract_from_image", text="Extract Palette", icon="PALETTE")
 
 
 class IMAGE_MT_image_transform(Menu):
