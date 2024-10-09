@@ -42,6 +42,7 @@ namespace blender::nodes {
 
 using lf::LazyFunction;
 using mf::MultiFunction;
+using ReferenceSetIndex = int;
 
 /** The structs in here describe the different possible behaviors of a simulation input node. */
 namespace sim_input {
@@ -350,7 +351,7 @@ struct GeometryNodeLazyFunctionGraphMapping {
   /* Indexed by #bNodeSocket::index_in_all_outputs. */
   Array<int> lf_input_index_for_output_bsocket_usage;
   /* Indexed by #bNodeSocket::index_in_all_outputs. */
-  Array<int> lf_input_index_for_attribute_propagation_to_output;
+  Array<int> lf_input_index_for_reference_set_for_output;
   /* Indexed by #bNodeSocket::index_in_tree. */
   Array<int> lf_index_by_bsocket;
 };
@@ -384,7 +385,7 @@ struct GeometryNodesGroupFunction {
     struct {
       IndexRange range;
       Vector<int> geometry_outputs;
-    } attributes_to_propagate;
+    } references_to_propagate;
   } inputs;
 
   struct {
@@ -449,6 +450,9 @@ std::unique_ptr<LazyFunction> get_warning_node_lazy_function(const bNode &node);
  * type is used for both.
  */
 void set_default_remaining_node_outputs(lf::Params &params, const bNode &node);
+void set_default_value_for_output_socket(lf::Params &params,
+                                         const int lf_index,
+                                         const bNodeSocket &bsocket);
 
 std::string make_anonymous_attribute_socket_inspection_string(const bNodeSocket &socket);
 std::string make_anonymous_attribute_socket_inspection_string(StringRef node_name,
@@ -497,5 +501,79 @@ class ScopedComputeContextTimer {
     }
   }
 };
+
+bool should_log_socket_values_for_context(const GeoNodesLFUserData &user_data,
+                                          const ComputeContextHash hash);
+
+/**
+ * Computes the logical or of the inputs and supports short-circuit evaluation (i.e. if the first
+ * input is true already, the other inputs are not checked).
+ */
+class LazyFunctionForLogicalOr : public lf::LazyFunction {
+ public:
+  LazyFunctionForLogicalOr(const int inputs_num);
+
+  void execute_impl(lf::Params &params, const lf::Context &context) const override;
+};
+
+struct ZoneFunctionIndices {
+  struct {
+    Vector<int> main;
+    Vector<int> border_links;
+    Vector<int> output_usages;
+    Map<ReferenceSetIndex, int> reference_sets;
+  } inputs;
+  struct {
+    Vector<int> main;
+    Vector<int> border_link_usages;
+    Vector<int> input_usages;
+  } outputs;
+};
+
+struct ZoneBuildInfo {
+  /** The lazy function that contains the zone. */
+  const LazyFunction *lazy_function = nullptr;
+
+  /** Information about what the various inputs and outputs of the lazy-function are. */
+  ZoneFunctionIndices indices;
+};
+
+/**
+ * Contains the lazy-function for the "body" of a zone. It contains all the nodes inside of the
+ * zone. The "body" function is wrapped by another lazy-function which represents the zone as a
+ * hole. The wrapper function might invoke the zone body multiple times (like for repeat zones).
+ */
+struct ZoneBodyFunction {
+  const LazyFunction *function = nullptr;
+  ZoneFunctionIndices indices;
+};
+
+LazyFunction &build_repeat_zone_lazy_function(ResourceScope &scope,
+                                              const bNodeTree &btree,
+                                              const bke::bNodeTreeZone &zone,
+                                              ZoneBuildInfo &zone_info,
+                                              const ZoneBodyFunction &body_fn);
+
+LazyFunction &build_foreach_geometry_element_zone_lazy_function(ResourceScope &scope,
+                                                                const bNodeTree &btree,
+                                                                const bke::bNodeTreeZone &zone,
+                                                                ZoneBuildInfo &zone_info,
+                                                                const ZoneBodyFunction &body_fn);
+
+void initialize_zone_wrapper(const bke::bNodeTreeZone &zone,
+                             ZoneBuildInfo &zone_info,
+                             const ZoneBodyFunction &body_fn,
+                             Vector<lf::Input> &r_inputs,
+                             Vector<lf::Output> &r_outputs);
+
+std::string zone_wrapper_input_name(const ZoneBuildInfo &zone_info,
+                                    const bke::bNodeTreeZone &zone,
+                                    const Span<lf::Input> inputs,
+                                    const int lf_socket_i);
+
+std::string zone_wrapper_output_name(const ZoneBuildInfo &zone_info,
+                                     const bke::bNodeTreeZone &zone,
+                                     const Span<lf::Output> outputs,
+                                     const int lf_socket_i);
 
 }  // namespace blender::nodes
