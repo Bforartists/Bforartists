@@ -9,15 +9,12 @@ CCL_NAMESPACE_BEGIN
 /* Given a random number, sample a direction that makes an angle of theta with direction D. */
 ccl_device float3 phase_sample_direction(float3 D, float cos_theta, float rand)
 {
-  float sin_theta = sin_from_cos(cos_theta);
   float phi = M_2PI_F * rand;
-  float3 dir = make_float3(sin_theta * cosf(phi), sin_theta * sinf(phi), cos_theta);
+  float3 dir = spherical_cos_to_direction(cos_theta, phi);
 
   float3 T, B;
   make_orthonormals(D, &T, &B);
-  dir = dir.x * T + dir.y * B + dir.z * D;
-
-  return dir;
+  return to_global(dir, T, B, D);
 }
 
 /* Given cosine between rays, return probability density that a photon bounces
@@ -69,7 +66,7 @@ ccl_device float3 phase_rayleigh_sample(float3 D, float2 rand, ccl_private float
 }
 
 /* Given cosine between rays, return probability density that a photon bounces to that direction
- * according to the Draine phase function. This is a generalisation of the Henyey-Greenstein
+ * according to the Draine phase function. This is a generalization of the Henyey-Greenstein
  * function which bridges the cases of HG and Rayleigh scattering. The parameter g mainly controls
  * the first moment <cos theta>, and alpha the second moment <cos2 theta> of the exact phase
  * function. alpha=0 reduces to HG function, g=0, alpha=1 reduces to Rayleigh function, alpha=1
@@ -91,7 +88,7 @@ ccl_device float phase_draine(float cos_theta, float g, float alpha)
          ((1 + (alpha * (1 + 2 * g2)) * (1 / 3.0f)) * M_4PI_F * fac * sqrtf(fac));
 }
 
-/* Adapted from the hlsl code provided in https://research.nvidia.com/labs/rtr/approximate-mie/ */
+/* Adapted from the HLSL code provided in https://research.nvidia.com/labs/rtr/approximate-mie/ */
 ccl_device float phase_draine_sample_cos(float g, float alpha, float rand)
 {
   const float g2 = sqr(g), g3 = g * g2, g4 = sqr(g2), g6 = g2 * g4;
