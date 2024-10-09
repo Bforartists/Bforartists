@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-from bpy.types import Menu, Panel # BFA - panel
+from bpy.types import Menu, Panel
 
 
 class BrushAssetShelf:
@@ -19,11 +19,41 @@ class BrushAssetShelf:
         return hasattr(context, "object") and context.object and context.object.mode == cls.mode
 
     @classmethod
+    def has_tool_with_brush_type(cls, context, brush_type):
+        from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+        space_type = context.space_data.type
+
+        brush_type_items = bpy.types.Brush.bl_rna.properties[cls.tool_prop].enum_items
+
+        tool_helper_cls = ToolSelectPanelHelper._tool_class_from_space_type(space_type)
+        for item in ToolSelectPanelHelper._tools_flatten(
+                tool_helper_cls.tools_from_context(context, mode=context.mode),
+        ):
+            if item is None:
+                continue
+            if item.idname in {
+                    "builtin.arc",
+                    "builtin.curve",
+                    "builtin.line",
+                    "builtin.box",
+                    "builtin.circle",
+                    "builtin.polyline",
+            }:
+                continue
+            if item.options is None or ('USE_BRUSHES' not in item.options):
+                continue
+            if item.brush_type is not None:
+                if brush_type_items[item.brush_type].value == brush_type:
+                    return True
+
+        return False
+
+    @classmethod
     def brush_type_poll(cls, context, asset):
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
         tool = ToolSelectPanelHelper.tool_active_from_context(context)
 
-        if not tool or tool.brush_type == 'ANY':
+        if not tool:
             return True
         if not cls.brush_type_prop or not cls.tool_prop:
             return True
@@ -33,9 +63,14 @@ class BrushAssetShelf:
         # certain brush type.
         if asset_brush_type is None:
             return False
-        brush_type_items = bpy.types.Brush.bl_rna.properties[cls.tool_prop].enum_items
 
-        return brush_type_items[asset_brush_type].identifier == tool.brush_type
+        # For the general brush that supports any brush type, filter out brushes that show up for
+        # other tools already.
+        if tool.brush_type == 'ANY':
+            return not cls.has_tool_with_brush_type(context, asset_brush_type)
+
+        brush_type_items = bpy.types.Brush.bl_rna.properties[cls.tool_prop].enum_items
+        return brush_type_items[tool.brush_type].value == asset_brush_type
 
     @classmethod
     def asset_poll(cls, asset):
@@ -45,12 +80,13 @@ class BrushAssetShelf:
             return False
 
         context = bpy.context
+        prefs = context.preferences
 
         is_asset_shelf_region = context.region and context.region.type == 'ASSET_SHELF'
-        # Show all brushes in the permanent asset shelf region. Otherwise filter out brushes that
+        # Show all brushes in the popup asset shelves. Otherwise filter out brushes that
         # are incompatible with the tool.
-        if not is_asset_shelf_region and not cls.brush_type_poll(context, asset):
-            return False
+        if is_asset_shelf_region and prefs.view.use_filter_brushes_by_tool:
+            return cls.brush_type_poll(context, asset)
 
         return True
 
@@ -80,10 +116,6 @@ class BrushAssetShelf:
             'PAINT_WEIGHT': "VIEW3D_AST_brush_weight_paint",
             'PAINT_TEXTURE': "VIEW3D_AST_brush_texture_paint",
             'PAINT_2D': "IMAGE_AST_brush_paint",
-            'PAINT_GPENCIL': "VIEW3D_AST_brush_gpencil_paint",
-            'SCULPT_GPENCIL': "VIEW3D_AST_brush_gpencil_sculpt",
-            'WEIGHT_GPENCIL': "VIEW3D_AST_brush_gpencil_weight",
-            'VERTEX_GPENCIL': "VIEW3D_AST_brush_gpencil_vertex",
             'PAINT_GREASE_PENCIL': "VIEW3D_AST_brush_gpencil_paint",
             'SCULPT_GREASE_PENCIL': "VIEW3D_AST_brush_gpencil_sculpt",
             'WEIGHT_GREASE_PENCIL': "VIEW3D_AST_brush_gpencil_weight",
@@ -110,6 +142,25 @@ class BrushAssetShelf:
             icon='BRUSH_DATA' if not preview_icon_id else 'NONE',
             icon_value=preview_icon_id,
         )
+
+
+class VIEW3D_PT_brush_asset_shelf_filter(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Filter"
+    bl_parent_id = "ASSETSHELF_PT_display"
+
+    @classmethod
+    def poll(cls, context):
+        if context.asset_shelf is None:
+            return False
+        return context.asset_shelf.bl_idname == BrushAssetShelf.get_shelf_name_from_context(context)
+
+    def draw(self, context):
+        layout = self.layout
+        prefs = context.preferences
+
+        layout.prop(prefs.view, "use_filter_brushes_by_tool", text="By Active Tool")
 
 
 class UnifiedPaintPanel:
@@ -1668,7 +1719,7 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
     sub.enabled = not gp_settings.use_material_pin
     sub.ui_units_x = 8
     sub.popover(
-        panel="TOPBAR_PT_gpencil_materials",
+        panel="TOPBAR_PT_grease_pencil_materials",
         text=txt_ma,
         icon_value=icon_id,
     )
@@ -1690,7 +1741,7 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
         if settings.color_mode == 'VERTEXCOLOR' or gp_settings.brush_draw_mode == 'VERTEXCOLOR':
             sub = row.row(align=True)
             sub.scale_x = 0.33
-            sub.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
+            sub.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
             sub.prop(brush, "secondary_color", text="")
             row.operator("gpencil.tint_flip", icon='FILE_REFRESH', text="")
             row.prop(gp_settings, "pin_draw_mode", text="")
@@ -1813,7 +1864,7 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
                 layout.template_curve_mapping(settings, "thickness_primitive_curve", brush=True)
 
 
-def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=False):
+def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, compact=False):
     gp_settings = brush.gpencil_settings
     tool = context.workspace.tools.from_space_view3d_mode(context.mode, create=False)
     if gp_settings is None:
@@ -1854,6 +1905,9 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, *, compact=
         if brush.use_pressure_strength and not compact:
             col = layout.column()
             col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
+
+    if props:
+        layout.prop(props, "subdivision")
 
     # Brush details
     if tool.idname in {
@@ -2035,42 +2089,42 @@ def brush_basic_grease_pencil_weight_settings(layout, context, brush, *, compact
         layout.prop(brush, "direction", expand=True, text="" if compact else "Direction")
 
 # BFA menu
-class VIEW3D_PT_gpencil_brush_settings_radius(Panel): # BFA
-    bl_space_type = 'VIEW_3D' # BFA
-    bl_label = "Radius" # BFA
-    bl_region_type = 'HEADER' # BFA
-    bl_ui_units_x = 10 # BFA
+class VIEW3D_PT_gpencil_brush_settings_radius(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_label = "Radius"
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 10
 
-    def draw(self, context): # BFA
-        layout = self.layout # BFA
-        layout.use_property_split = True # BFA
-        layout.use_property_decorate = False # BFA
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        tool_settings = context.scene.tool_settings # BFA
-        gpencil_paint = tool_settings.gpencil_paint # BFA
-        brush = gpencil_paint.brush # BFA
-        gp_settings = brush.gpencil_settings # BFA
+        tool_settings = context.scene.tool_settings
+        gpencil_paint = tool_settings.gpencil_paint
+        brush = gpencil_paint.brush
+        gp_settings = brush.gpencil_settings
 
-        layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True) # BFA
+        layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
 
 # BFA menu
-class VIEW3D_PT_gpencil_brush_settings_strength(Panel): # BFA
-    bl_space_type = 'VIEW_3D' # BFA
-    bl_label = "Strength" # BFA
-    bl_region_type = 'HEADER' # BFA
-    bl_ui_units_x = 10 # BFA
+class VIEW3D_PT_gpencil_brush_settings_strength(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_label = "Strength"
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 10
 
-    def draw(self, context): # BFA
-        layout = self.layout # BFA
-        layout.use_property_split = True # BFA
-        layout.use_property_decorate = False # BFA
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        tool_settings = context.scene.tool_settings # BFA
-        gpencil_paint = tool_settings.gpencil_paint # BFA
-        brush = gpencil_paint.brush # BFA
-        gp_settings = brush.gpencil_settings # BFA
+        tool_settings = context.scene.tool_settings
+        gpencil_paint = tool_settings.gpencil_paint
+        brush = gpencil_paint.brush
+        gp_settings = brush.gpencil_settings
 
-        layout.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True) # BFA
+        layout.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
 
 
 def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact=False):
@@ -2105,6 +2159,7 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
 
 
 classes = (
+    VIEW3D_PT_brush_asset_shelf_filter,
     VIEW3D_MT_tools_projectpaint_clone,
     VIEW3D_PT_gpencil_brush_settings_radius, # BFA menu
     VIEW3D_PT_gpencil_brush_settings_strength, # BFA menu
