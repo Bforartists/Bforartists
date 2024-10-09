@@ -649,7 +649,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 
 # Grease Pencil Object Mode #
-            if obj and obj.type == 'GPENCIL' and obj.mode in {'OBJECT'}:
+            if obj and obj.type == 'GREASEPENCIL' and obj.mode in {'OBJECT'}:
 
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
@@ -677,7 +677,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 
 # Grease Pencil Edit Mode #
-            if obj and obj.type == 'GPENCIL' and obj.mode in {'EDIT_GPENCIL'}:
+            if obj and obj.type == 'GREASEPENCIL' and obj.mode in {'EDIT_GREASE_PENCIL'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
 
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
@@ -699,7 +699,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 
 # Grease Pencil Sculpt Mode #
-            if obj and obj.type == 'GPENCIL' and obj.mode in {'SCULPT_GPENCIL'}:
+            if obj and obj.type == 'GPENCIL' and obj.mode in {'SCULPT_GREASE_PENCIL'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
 
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
@@ -719,7 +719,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 
 # Grease Pencil Paint Mode #
-            if obj and obj.type == 'GPENCIL' and obj.mode in {'PAINT_GPENCIL'}:
+            if obj and obj.type == 'GPENCIL' and obj.mode in {'PAINT_GREASE_PENCIL'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
 
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
@@ -730,7 +730,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
-                layout.menu("VIEW3D_MT_paint_gpencil", icon='RESTRICT_SELECT_OFF')
+                layout.menu("VIEW3D_MT_PAINT_GREASE_PENCIL", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.operator("view3d.snap_cursor_to_center",
                                 text="Cursor to World Origin", icon='CURSOR')
@@ -740,7 +740,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 
 # Grease Pencil Weight Mode #
-            if obj and obj.type == 'GPENCIL' and obj.mode in {'WEIGHT_GPENCIL'}:
+            if obj and obj.type == 'GPENCIL' and obj.mode in {'WEIGHT_GREASE_PENCIL'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
 
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
@@ -751,7 +751,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
-                #layout.menu("VIEW3D_MT_weight_gpencil", icon="GPBRUSH_WEIGHT") # BFA - legacy
+                #layout.menu("VIEW3D_MT_WEIGHT_GREASE_PENCIL", icon="GPBRUSH_WEIGHT") # BFA - legacy
                 layout.menu("VIEW3D_MT_weight_grease_pencil", icon="GPBRUSH_WEIGHT")
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
