@@ -70,7 +70,7 @@ def view_cage(obj):
     initial_mode = bpy.context.mode
 
     ## get points
-    if bpy.context.mode == 'EDIT_GPENCIL':
+    if bpy.context.mode == 'EDIT_GREASE_PENCIL':
         for l in gpl:
             if l.lock or l.hide or not l.active_frame:#or len(l.frames)
                 continue
@@ -117,13 +117,13 @@ def view_cage(obj):
         ## maybe silent return instead (need special str code to manage errorless return)
         return 'No points found!'
 
-    if bpy.context.mode in ('EDIT_GPENCIL', 'PAINT_GPENCIL') and len(coords) < 2:
+    if bpy.context.mode in ('EDIT_GREASE_PENCIL', 'PAINT_GPENCIL') and len(coords) < 2:
         # Dont block object mod
         return 'Less than two point selected'
 
     vg_name = 'lattice_cage_deform_group'
 
-    if bpy.context.mode == 'EDIT_GPENCIL':
+    if bpy.context.mode == 'EDIT_GREASE_PENCIL':
         vg = assign_vg(obj, vg_name)
 
     if bpy.context.mode == 'PAINT_GPENCIL':
@@ -144,7 +144,7 @@ def view_cage(obj):
             p.select = True
 
         # assign
-        bpy.ops.object.mode_set(mode='EDIT_GPENCIL')
+        bpy.ops.object.mode_set(mode='EDIT_GREASE_PENCIL')
         vg = assign_vg(obj, vg_name)
 
         # restore
@@ -251,7 +251,7 @@ def view_cage(obj):
 
     # note : if initial was Paint, changed to Edit
     #        so vertex attribution is valid even for paint
-    if bpy.context.mode == 'EDIT_GPENCIL':
+    if bpy.context.mode == 'EDIT_GREASE_PENCIL':
         mod.vertex_group = vg.name
 
     # Go in object mode if not already
@@ -554,7 +554,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
 
         #store (scene properties needed in case of ctrlZ revival)
         self.store_prefs(context)
-        self.gp_mode = 'EDIT_GPENCIL'
+        self.gp_mode = 'EDIT_GREASE_PENCIL'
 
         # --- special Case of lattice revive modal, just after ctrl+Z back into lattice with modal stopped
         if context.mode == 'EDIT_LATTICE' and context.object.name == 'lattice_cage_deform' and len(context.object.vertex_groups):
@@ -580,7 +580,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
             ## silent return
             return {'CANCELLED'}
 
-        if context.mode not in ('EDIT_GPENCIL', 'OBJECT', 'PAINT_GPENCIL'):
+        if context.mode not in ('EDIT_GREASE_PENCIL', 'OBJECT', 'PAINT_GPENCIL'):
             # self.report({'WARNING'}, "Works only in following GPencil modes: object / edit/ paint")# ERROR
             ## silent return
             return {'CANCELLED'}

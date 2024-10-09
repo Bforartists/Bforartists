@@ -45,21 +45,18 @@ def menu_boxdeform_entry(self, context):
     """Transform shortcut to append in existing menu"""
     layout = self.layout
     obj = bpy.context.object
-    # {'EDIT_GPENCIL', 'PAINT_GPENCIL','SCULPT_GPENCIL','WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}
-    if obj and obj.type == 'GPENCIL' and context.mode in {'OBJECT', 'EDIT_GPENCIL', 'PAINT_GPENCIL'}:
+    if obj and obj.type == 'GPENCIL' and context.mode in {'OBJECT', 'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator('view3d.gp_box_deform', text='Box Deform')
 
 def menu_stroke_entry(self, context):
     layout = self.layout
-    # Gpencil modes : {'EDIT_GPENCIL', 'PAINT_GPENCIL','SCULPT_GPENCIL','WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}
-    if context.mode in {'EDIT_GPENCIL', 'PAINT_GPENCIL'}:
+    if context.mode in {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator('gpencil.straight_stroke', text='Straight Stroke')
 
 def menu_brush_pack(self, context):
     layout = self.layout
-    # if context.mode in {'EDIT_GPENCIL', 'PAINT_GPENCIL'}:
     self.layout.operator_context = 'INVOKE_DEFAULT'
     layout.operator('gp.import_brush_pack')#, text='Import brush pack'
 
