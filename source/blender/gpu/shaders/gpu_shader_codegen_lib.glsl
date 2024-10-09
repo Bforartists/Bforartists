@@ -2,6 +2,8 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#pragma once
+
 vec3 calc_barycentric_distances(vec3 pos0, vec3 pos1, vec3 pos2)
 {
   vec3 edge21 = pos2 - pos1;
@@ -336,8 +338,8 @@ vec3 dF_impl(vec3 v)
 
 void dF_branch(float fn, out vec2 result)
 {
-  result.x = DFDX_SIGN * dFdx(fn);
-  result.y = DFDY_SIGN * dFdy(fn);
+  result.x = dFdx(fn);
+  result.y = dFdy(fn);
 }
 
 #else
@@ -347,10 +349,10 @@ int g_derivative_flag = 0;
 vec3 dF_impl(vec3 v)
 {
   if (g_derivative_flag > 0) {
-    return DFDX_SIGN * dFdx(v);
+    return dFdx(v);
   }
   else if (g_derivative_flag < 0) {
-    return DFDY_SIGN * dFdy(v);
+    return dFdy(v);
   }
   return vec3(0.0);
 }
