@@ -1956,9 +1956,6 @@ static void grease_pencil_do_layer_adjustments(GreasePencil &grease_pencil)
   using namespace bke::greasepencil;
 
   const bke::AttributeAccessor layer_attributes = grease_pencil.attributes();
-  if (!layer_attributes.contains("tint_color") && !layer_attributes.contains("radius_offset")) {
-    return;
-  }
 
   struct LayerDrawingInfo {
     Drawing *drawing;
@@ -2024,6 +2021,7 @@ static void grease_pencil_do_layer_adjustments(GreasePencil &grease_pencil)
 
 void BKE_grease_pencil_data_update(Depsgraph *depsgraph, Scene *scene, Object *object)
 {
+  using namespace blender;
   using namespace blender::bke;
   /* Free any evaluated data and restore original data. */
   BKE_object_free_derived_caches(object);
@@ -2032,12 +2030,15 @@ void BKE_grease_pencil_data_update(Depsgraph *depsgraph, Scene *scene, Object *o
   GreasePencil *grease_pencil = static_cast<GreasePencil *>(object->data);
   /* Store the frame that this grease pencil is evaluated on. */
   grease_pencil->runtime->eval_frame = int(DEG_get_ctime(depsgraph));
+  GeometrySet geometry_set = GeometrySet::from_grease_pencil(grease_pencil,
+                                                             GeometryOwnershipType::ReadOnly);
   /* The layer adjustments for tinting and radii offsets are applied before modifier evaluation.
    * This ensures that the evaluated geometry contains the modifications. In the future, it would
    * be better to move these into modifiers. For now, these are hardcoded. */
-  grease_pencil_do_layer_adjustments(*grease_pencil);
-  GeometrySet geometry_set = GeometrySet::from_grease_pencil(grease_pencil,
-                                                             GeometryOwnershipType::ReadOnly);
+  const bke::AttributeAccessor layer_attributes = grease_pencil->attributes();
+  if (layer_attributes.contains("tint_color") || layer_attributes.contains("radius_offset")) {
+    grease_pencil_do_layer_adjustments(*geometry_set.get_grease_pencil_for_write());
+  }
   /* Only add the edit hint component in edit mode for now so users can properly select deformed
    * drawings. */
   if (object->mode == OB_MODE_EDIT) {
@@ -3236,10 +3237,11 @@ static std::string unique_layer_group_name(const GreasePencil &grease_pencil,
   return unique_node_name(grease_pencil, DATA_("Group"), name);
 }
 
-blender::bke::greasepencil::Layer &GreasePencil::add_layer(const blender::StringRefNull name)
+blender::bke::greasepencil::Layer &GreasePencil::add_layer(const blender::StringRefNull name,
+                                                           const bool check_name_is_unique)
 {
   using namespace blender;
-  std::string unique_name = unique_layer_name(*this, name);
+  std::string unique_name = check_name_is_unique ? unique_layer_name(*this, name) : name.c_str();
   const int numLayers = layers().size();
   CustomData_realloc(&layers_data, numLayers, numLayers + 1);
   bke::greasepencil::Layer *new_layer = MEM_new<bke::greasepencil::Layer>(__func__, unique_name);
@@ -3258,10 +3260,12 @@ blender::bke::greasepencil::Layer &GreasePencil::add_layer(const blender::String
 }
 
 blender::bke::greasepencil::Layer &GreasePencil::add_layer(
-    blender::bke::greasepencil::LayerGroup &parent_group, const blender::StringRefNull name)
+    blender::bke::greasepencil::LayerGroup &parent_group,
+    const blender::StringRefNull name,
+    const bool check_name_is_unique)
 {
   using namespace blender;
-  blender::bke::greasepencil::Layer &new_layer = this->add_layer(name);
+  blender::bke::greasepencil::Layer &new_layer = this->add_layer(name, check_name_is_unique);
   move_node_into(new_layer.as_node(), parent_group);
   return new_layer;
 }
@@ -3305,10 +3309,13 @@ blender::bke::greasepencil::Layer &GreasePencil::duplicate_layer(
 }
 
 blender::bke::greasepencil::LayerGroup &GreasePencil::add_layer_group(
-    blender::bke::greasepencil::LayerGroup &parent_group, const blender::StringRefNull name)
+    blender::bke::greasepencil::LayerGroup &parent_group,
+    const blender::StringRefNull name,
+    const bool check_name_is_unique)
 {
   using namespace blender;
-  std::string unique_name = unique_layer_group_name(*this, name);
+  std::string unique_name = check_name_is_unique ? unique_layer_group_name(*this, name) :
+                                                   name.c_str();
   bke::greasepencil::LayerGroup *new_group = MEM_new<bke::greasepencil::LayerGroup>(__func__,
                                                                                     unique_name);
   /* Hide masks by default. */
