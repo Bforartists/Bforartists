@@ -141,7 +141,7 @@ class VIEW3D_HT_tool_header(Header):
             row = layout.row(align=True)
             row.label(icon='MOD_MIRROR')
             sub = row.row(align=True)
-            sub.scale_x = 0.6
+            #sub.scale_x = 0.6 #bfa - just needed for text buttons. we use icons, and then the buttons are too small
             return row, sub
 
         if mode_string == 'EDIT_ARMATURE':
@@ -170,9 +170,9 @@ class VIEW3D_HT_tool_header(Header):
         elif mode_string == 'SCULPT_CURVES':
             ob = context.object
             _row, sub = row_for_mirror()
-            sub.prop(ob.data, "use_mirror_x", text="X", toggle=True)
-            sub.prop(ob.data, "use_mirror_y", text="Y", toggle=True)
-            sub.prop(ob.data, "use_mirror_z", text="Z", toggle=True)
+            sub.prop(ob.data, "use_mirror_x", icon='MIRROR_X', toggle=True, icon_only=True)
+            sub.prop(ob.data, "use_mirror_y", icon='MIRROR_Y', toggle=True, icon_only=True)
+            sub.prop(ob.data, "use_mirror_z", icon='MIRROR_Z', toggle=True, icon_only=True)
 
             layout.prop(ob.data, "use_sculpt_collision", icon='MOD_PHYSICS', icon_only=True, toggle=True)
 
