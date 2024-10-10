@@ -655,7 +655,7 @@ static void file_draw_preview(const FileList *files,
       uchar icon_col[4];
       rgba_float_to_uchar(icon_col, document_img_col);
       float icon_x = float(xco) + (file->typeflag & FILE_TYPE_DIR ? 0.0f : ex * -0.142f);
-      float icon_y = float(yco) + (file->typeflag & FILE_TYPE_DIR ? ex * -0.11f : 0.0f);
+      float icon_y = float(yco) + (file->typeflag & FILE_TYPE_DIR ? ex * -0.0f : 0.0f); /*bfa - center folder icon - don't change*/
       UI_icon_draw_ex(icon_x,
                       icon_y,
                       icon_large,
@@ -701,8 +701,7 @@ static void file_draw_preview(const FileList *files,
     }
 
     icon_x = xco + (file->typeflag & FILE_TYPE_DIR ? ex * 0.31f : ex * 0.178f);
-    /* BFA - mini icon position y changed from 0.18f to 0.08f to have better positioning with our folder icon*/
-    icon_y = yco + (file->typeflag & FILE_TYPE_DIR ? ex * 0.08f : ex * 0.15f); /*bfa - don't change*/
+    icon_y = yco + (file->typeflag & FILE_TYPE_DIR ? ex * 0.19f : ex * 0.15f); /*bfa - center folder icon - don't change*/
     UI_icon_draw_ex(icon_x,
                     icon_y,
                     is_loading ? ICON_TEMP : icon,
