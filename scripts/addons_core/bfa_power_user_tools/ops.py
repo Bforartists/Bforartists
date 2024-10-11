@@ -233,7 +233,7 @@ class BFA_OT_removeframe_right(op):
             self.layout.operator(BFA_OT_removeframe_right.bl_idname, icon=BFA_OT_removeframe_right.bl_icon)
 
 
-class BFA_OT_jump_forward(bpy.types.Operator):
+class BFA_OT_jump_forward(op):
     bl_idname = "anim.jump_forward"
     bl_label = "Frame Jump Forward"
     bl_options = {'REGISTER', 'UNDO'}
@@ -243,7 +243,7 @@ class BFA_OT_jump_forward(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class BFA_OT_jump_back(bpy.types.Operator):
+class BFA_OT_jump_back(op):
     bl_idname = "anim.jump_back"
     bl_label = "Frame Jump Back"
     bl_options = {'REGISTER', 'UNDO'}
@@ -251,6 +251,85 @@ class BFA_OT_jump_back(bpy.types.Operator):
     def execute(self, context):
         context.scene.frame_current -= context.scene.frameskip
         return {'FINISHED'}
+
+
+################## Viewport Operators ##################
+
+# Store the previous settings in a dictionary
+previous_viewport_settings = {}
+
+class BFA_OT_viewport_silhuette_toggle(op):
+    bl_idname = "view3d.viewport_silhouette_toggle"
+    bl_label = "Viewport Silhuette Toggle Operator"
+    bl_description = "Toggles the viewport overlay to a viewport material color silhuette mode"
+    bl_icon = 'ARMATURE_DATA'
+
+    def execute(self, context):
+        # Find the active 3D viewport
+        area = next((area for area in bpy.context.screen.areas if area.type == 'VIEW_3D' and area == context.area), None)
+
+        if not area:
+            self.report({'WARNING'}, "No active 3D viewport found")
+            return {'CANCELLED'}
+
+        shading = area.spaces.active.shading
+
+        global previous_viewport_settings
+
+        # If the previous settings are stored, restore them
+        if previous_viewport_settings:
+            shading.type = previous_viewport_settings['type']
+            shading.light = previous_viewport_settings['light']
+            shading.show_object_outline = previous_viewport_settings['show_object_outline']
+            shading.background_type = previous_viewport_settings['background_type']
+            shading.background_color = previous_viewport_settings['background_color']
+            shading.show_xray = previous_viewport_settings['show_xray']
+            shading.show_shadows = previous_viewport_settings['show_shadows']
+            shading.show_cavity = previous_viewport_settings['show_cavity']
+            shading.color_type = previous_viewport_settings['color_type']
+            shading.single_color = previous_viewport_settings['single_color']
+            shading.show_backface_culling = previous_viewport_settings['backface']
+
+            # Clear the previous settings
+            previous_viewport_settings = {}
+        else:
+            # Store the current settings
+            previous_viewport_settings = {
+                'type': shading.type,
+                'light': shading.light,
+                'show_object_outline': shading.show_object_outline,
+                'background_type': shading.background_type,
+                'background_color': shading.background_color,
+                'show_xray': shading.show_xray,
+                'show_shadows': shading.show_shadows,
+                'show_cavity': shading.show_cavity,
+                'color_type': shading.color_type,
+                'single_color': shading.single_color,
+                'backface': shading.show_backface_culling,
+            }
+
+            # Change the settings to the desired values
+            shading.type = 'SOLID'
+            shading.light = 'FLAT'
+            shading.show_object_outline = False
+            shading.background_type = 'VIEWPORT'
+            shading.background_color = (0, 0, 0)
+            shading.show_xray = False
+            shading.show_shadows = False
+            shading.show_cavity = False
+            shading.color_type = 'MATERIAL'
+            shading.single_color = (1, 1, 1)
+            shading.show_backface_culling = True
+
+        return {'FINISHED'}
+
+
+    def menu_func(self, context):
+        wm = context.window_manager
+        if wm.BFA_UI_addon_props.BFA_PROP_toggle_viewport:
+            self.layout.operator(BFA_PROP_toggle_viewport.bl_idname, icon=BFA_PROP_toggle_viewport.bl_icon)
+
+
 
 
 operator_list = [
@@ -261,6 +340,8 @@ operator_list = [
     BFA_OT_removeframe_right,
     BFA_OT_jump_forward,
     BFA_OT_jump_back,
+    # Viewport Operators
+    BFA_OT_viewport_silhuette_toggle
     # Add more operators as needed
 ]
 
