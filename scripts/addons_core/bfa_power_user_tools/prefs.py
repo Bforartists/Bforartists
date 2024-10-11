@@ -46,7 +46,11 @@ class BFA_UI_preferences(bpy.types.AddonPreferences):
         col.label(text="Custom Operators:", icon="MODIFIER")
         layout.prop(self, "bfa_toggle_render_levels")
 
- 
+        row = layout.row()
+        col = row.column(align=True)
+        col.label(text="Viewport Operators:", icon="VIEW3D")
+        layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_viewport")
+
 preferences_classes = [
     BFA_UI_preferences,
 ]
