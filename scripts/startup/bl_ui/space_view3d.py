@@ -1081,7 +1081,7 @@ class VIEW3D_HT_header(Header):
         ):
             sub.popover(panel="VIEW3D_PT_overlay_bones", text="", icon='POSE_HLT')
 
-        row = layout.row()
+        row = layout.row(align=True)
         row.active = (object_mode == 'EDIT') or (shading.type in {'WIREFRAME', 'SOLID'})
 
         # While exposing `shading.show_xray(_wireframe)` is correct.
@@ -1098,6 +1098,10 @@ class VIEW3D_HT_header(Header):
             icon='XRAY',
             depress=draw_depressed,
         )
+        # BFA - custom operator from the Power User Tools to toggle the viewport silhuette
+        if context.preferences.addons.get('bfa_power_user_tools'):
+            if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_viewport:
+                row.operator("view3d.viewport_silhouette_toggle", text="", icon='IMAGE_ALPHA')
 
         row = layout.row(align=True)
         row.prop(shading, "type", text="", expand=True)
