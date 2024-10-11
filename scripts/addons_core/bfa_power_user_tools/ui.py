@@ -108,17 +108,7 @@ def register():
     bpy.types.GRAPH_MT_key.append(ops.BFA_OT_removeframe_right.menu_func)
 
     ## Timeline Editor
-    #bpy.types.TIME_MT_editor_menus.append(BFA_MT_timeline_key.menu_func) # Creates menu before adding in operators
-
-    #bpy.types.BFA_MT_timeline_key.append(seperator)
-    #bpy.types.BFA_MT_timeline_key.append(ops.BFA_OT_insertframe_left.menu_func)
-    #bpy.types.BFA_MT_timeline_key.append(ops.BFA_OT_removeframe_left.menu_func)
-    #bpy.types.BFA_MT_timeline_key.append(seperator)
-    #bpy.types.BFA_MT_timeline_key.append(ops.BFA_OT_insertframe_right.menu_func)
-    #bpy.types.BFA_MT_timeline_key.append(ops.BFA_OT_removeframe_right.menu_func)
-
     bpy.types.DOPESHEET_HT_header.append(BFA_HT_timeline_skipframes)
-
 
 def unregister():
     ## 3D View Editor
@@ -154,18 +144,7 @@ def unregister():
     bpy.types.GRAPH_MT_key.remove(ops.BFA_OT_removeframe_right.menu_func)
 
     ## Timeline Editor
-    #bpy.types.BFA_MT_timeline_key.remove(seperator)
-    #bpy.types.BFA_MT_timeline_key.remove(ops.BFA_OT_insertframe_left.menu_func)
-    #bpy.types.BFA_MT_timeline_key.remove(ops.BFA_OT_removeframe_left.menu_func)
-    #bpy.types.BFA_MT_timeline_key.remove(seperator)
-    #bpy.types.BFA_MT_timeline_key.remove(ops.BFA_OT_insertframe_right.menu_func)
-    #bpy.types.BFA_MT_timeline_key.remove(ops.BFA_OT_removeframe_right.menu_func)
-
-    #bpy.types.TIME_MT_editor_menus.remove(BFA_MT_timeline_key.menu_func) # Removes menu after removing operators
-
     bpy.types.DOPESHEET_HT_header.remove(BFA_HT_timeline_skipframes)
-
-
 
 
     for cls in menu_classes:
