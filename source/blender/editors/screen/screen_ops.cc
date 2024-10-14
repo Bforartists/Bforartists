@@ -4420,7 +4420,7 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
     uiItemFullO(layout,
                 "SCREEN_OT_area_swap",
                 IFACE_("Swap Areas"),
-                ICON_SWAP_AREAS, /*BFA icon*/
+                ICON_AREA_SWAP, /*BFA icon*/
                 nullptr,
                 WM_OP_EXEC_DEFAULT,
                 UI_ITEM_NONE,
