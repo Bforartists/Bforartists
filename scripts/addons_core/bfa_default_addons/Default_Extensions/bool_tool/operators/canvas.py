@@ -34,7 +34,7 @@ class OBJECT_OT_boolean_toggle_all(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return basic_poll(context) and is_canvas(context.active_object)
+        return basic_poll(context, check_linked=True) and is_canvas(context.active_object)
 
     def execute(self, context):
         canvases = list_selected_canvases(context)
@@ -49,17 +49,17 @@ class OBJECT_OT_boolean_toggle_all(bpy.types.Operator):
         # Hide Slices
         for slice in slices:
             slice.hide_viewport = not slice.hide_viewport
+            slice.hide_render = not slice.hide_render
             for mod in slice.modifiers:
                 if mod.type == 'BOOLEAN' and mod.object in cutters:
                     mod.show_viewport = not mod.show_viewport
                     mod.show_render = not mod.show_render
 
-
         # Hide Unused Cutters
         other_canvases = list_canvases()
         for obj in other_canvases:
-            if obj not in canvases:
-                if any(mod.object in cutters and mod.show_viewport for mod in obj.modifiers):
+            if obj not in canvases + slices:
+                if any(mod.object in cutters and mod.show_viewport for mod in obj.modifiers if mod.type == 'BOOLEAN'):
                     cutters[:] = [cutter for cutter in cutters if cutter not in [mod.object for mod in obj.modifiers]]
 
         for cutter in cutters:
@@ -77,7 +77,7 @@ class OBJECT_OT_boolean_remove_all(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return basic_poll(context) and is_canvas(context.active_object)
+        return basic_poll(context, check_linked=True) and is_canvas(context.active_object)
 
     def execute(self, context):
         prefs = bpy.context.preferences.addons[base_package].preferences
@@ -122,12 +122,14 @@ class OBJECT_OT_boolean_remove_all(bpy.types.Operator):
                 if prefs.parent and cutter.parent in canvases:
                     change_parent(cutter, None)
 
-                cutters_collection = bpy.data.collections.get("boolean_cutters")
-                if cutters_collection in cutter.users_collection:
-                    bpy.data.collections.get("boolean_cutters").objects.unlink(cutter)
+                if prefs.use_collection:
+                    cutters_collection = bpy.data.collections.get(prefs.collection_name)
+                    if cutters_collection in cutter.users_collection:
+                        bpy.data.collections.get(prefs.collection_name).objects.unlink(cutter)
 
         # purge_empty_collection
-        delete_empty_collection()
+        if prefs.use_collection:
+            delete_empty_collection()
 
 
         # Change Leftover Cutter Parent
@@ -149,7 +151,7 @@ class OBJECT_OT_boolean_apply_all(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return basic_poll(context) and is_canvas(context.active_object)
+        return basic_poll(context, check_linked=True) and is_canvas(context.active_object)
 
     def execute(self, context):
         prefs = bpy.context.preferences.addons[base_package].preferences
@@ -195,12 +197,19 @@ class OBJECT_OT_boolean_apply_all(bpy.types.Operator):
 
         purged_cutters = []
         for cutter in unused_cutters:
+            # Transfer Children
+            children = [obj for obj in cutter.children]
+            for child in children:
+                change_parent(child, cutter.parent)
+
+            # purge
             if cutter not in purged_cutters:
                 delete_cutter(cutter)
                 purged_cutters.append(cutter)
 
         # purge_empty_collection
-        delete_empty_collection()
+        if prefs.use_collection:
+            delete_empty_collection()
 
 
         # Change Leftover Cutter Parent

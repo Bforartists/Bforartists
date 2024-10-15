@@ -1,12 +1,19 @@
 schema_version = "1.0.0"
 id = "amaranth"
 name = "Amaranth"
-version = "1.0.23"
+version = "1.0.25"
 tagline = "A collection of tools to improve productivity"
 maintainer = "Pablo Vazquez <pablo@blender.org>"
 type = "add-on"
 tags = ["3D View", "Render", "Compositing", "User Interface", "Scene", "Lighting"]
 blender_version_min = "4.2.0"
-license = ["SPDX:GPL-2.0-or-later"]
+license = ["SPDX:GPL-3.0-or-later"]
 website = "https://docs.blender.org/manual/en/latest/addons/interface/amaranth.html"
-copyright = ["2024 Pablo Vazquez", "2024 Bassam Kurdali", "2024 Sergey Sharybin", "2024 Lukas Tönne", "2024 Cesar Saez", "2024 CansecoGPC"]
+copyright = [
+    "2024 Pablo Vazquez",
+    "2024 Bassam Kurdali",
+    "2024 Sergey Sharybin",
+    "2024 Lukas Tönne",
+    "2024 Cesar Saez",
+    "2024 CansecoGPC",
+]

@@ -11,7 +11,7 @@ it on the Specials menu W.
 """
 
 import bpy
-
+from ..prefs import get_preferences
 
 KEYMAPS = list()
 
@@ -22,11 +22,11 @@ class AMTH_SCENE_OT_refresh(bpy.types.Operator):
     bl_label = "Refresh!"
 
     def execute(self, context):
-        get_addon = "amaranth" in context.preferences.addons.keys()
+        get_addon = __package__ in context.preferences.addons.keys()
         if not get_addon:
             return {"CANCELLED"}
 
-        preferences = context.preferences.addons["amaranth"].preferences
+        preferences = context.preferences.addons[__package__].preferences
         scene = context.scene
 
         if preferences.use_scene_refresh:
@@ -38,11 +38,13 @@ class AMTH_SCENE_OT_refresh(bpy.types.Operator):
 
 
 def button_refresh(self, context):
-    get_addon = "amaranth" in context.preferences.addons.keys()
+    get_addon = __package__ in context.preferences.addons.keys()
     if not get_addon:
         return
 
-    if context.preferences.addons["amaranth"].preferences.use_scene_refresh:
+    preferences = get_preferences()
+
+    if preferences.use_scene_refresh:
         self.layout.separator()
         self.layout.operator(AMTH_SCENE_OT_refresh.bl_idname,
                              text="Refresh!",
