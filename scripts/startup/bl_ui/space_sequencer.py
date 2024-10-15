@@ -3460,6 +3460,7 @@ classes = (
     SEQUENCER_MT_proxy,
     SEQUENCER_MT_select_handle,
     SEQUENCER_MT_select_channel,
+    SEQUENCER_MT_select_linked, # BFA - sub menu
     SEQUENCER_MT_select,
     SEQUENCER_MT_marker,
     SEQUENCER_MT_navigation,
