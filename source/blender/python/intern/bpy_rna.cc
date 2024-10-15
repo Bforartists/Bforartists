@@ -855,7 +855,7 @@ static PyObject *pyrna_struct_richcmp(PyObject *a, PyObject *b, int op)
       return nullptr;
   }
 
-  return Py_INCREF_RET(res);
+  return Py_NewRef(res);
 }
 
 static PyObject *pyrna_prop_richcmp(PyObject *a, PyObject *b, int op)
@@ -886,7 +886,7 @@ static PyObject *pyrna_prop_richcmp(PyObject *a, PyObject *b, int op)
       return nullptr;
   }
 
-  return Py_INCREF_RET(res);
+  return Py_NewRef(res);
 }
 
 /*----------------------repr--------------------------------------------*/
@@ -3565,7 +3565,7 @@ PyDoc_STRVAR(
     "   dictionary function of the same name).\n"
     "\n"
     "   :return: custom property keys.\n"
-    "   :rtype: :class:`idprop.type.IDPropertyGroupViewKeys`\n"
+    "   :rtype: :class:`idprop.types.IDPropertyGroupViewKeys`\n"
     "\n" BPY_DOC_ID_PROP_TYPE_NOTE);
 static PyObject *pyrna_struct_keys(BPy_StructRNA *self)
 {
@@ -3590,7 +3590,7 @@ PyDoc_STRVAR(
     "   dictionary function of the same name).\n"
     "\n"
     "   :return: custom property key, value pairs.\n"
-    "   :rtype: :class:`idprop.type.IDPropertyGroupViewItems`\n"
+    "   :rtype: :class:`idprop.types.IDPropertyGroupViewItems`\n"
     "\n" BPY_DOC_ID_PROP_TYPE_NOTE);
 static PyObject *pyrna_struct_items(BPy_StructRNA *self)
 {
@@ -3615,7 +3615,7 @@ PyDoc_STRVAR(
     "   dictionary function of the same name).\n"
     "\n"
     "   :return: custom property values.\n"
-    "   :rtype: :class:`idprop.type.IDPropertyGroupViewValues`\n"
+    "   :rtype: :class:`idprop.types.IDPropertyGroupViewValues`\n"
     "\n" BPY_DOC_ID_PROP_TYPE_NOTE);
 static PyObject *pyrna_struct_values(BPy_StructRNA *self)
 {
@@ -4114,7 +4114,7 @@ static PyObject *pyrna_struct_bl_rna_get_subclass_py(PyObject *cls, PyObject *ar
   if (ret == nullptr) {
     ret = ret_default;
   }
-  return Py_INCREF_RET(ret);
+  return Py_NewRef(ret);
 }
 
 PyDoc_STRVAR(
@@ -4160,7 +4160,7 @@ static PyObject *pyrna_struct_bl_rna_get_subclass(PyObject *cls, PyObject *args)
     return nullptr;
   }
 
-  return Py_INCREF_RET(ret_default);
+  return Py_NewRef(ret_default);
 }
 
 static void pyrna_dir_members_py__add_keys(PyObject *list, PyObject *dict)
@@ -4299,7 +4299,7 @@ PyDoc_STRVAR(
     ".. method:: id_properties_ensure()\n"
     "\n"
     "   :return: the parent group for an RNA struct's custom IDProperties.\n"
-    "   :rtype: :class:`bpy.types.IDPropertyGroup`\n");
+    "   :rtype: :class:`idprop.types.IDPropertyGroup`\n");
 static PyObject *pyrna_struct_id_properties_ensure(BPy_StructRNA *self)
 {
   PYRNA_STRUCT_CHECK_OBJ(self);
@@ -5169,7 +5169,7 @@ static PyObject *pyrna_struct_get(BPy_StructRNA *self, PyObject *args)
     }
   }
 
-  return Py_INCREF_RET(def);
+  return Py_NewRef(def);
 }
 
 PyDoc_STRVAR(
@@ -5225,7 +5225,7 @@ static PyObject *pyrna_struct_pop(BPy_StructRNA *self, PyObject *args)
     PyErr_SetString(PyExc_KeyError, "key not found");
     return nullptr;
   }
-  return Py_INCREF_RET(def);
+  return Py_NewRef(def);
 }
 
 PyDoc_STRVAR(
@@ -5296,7 +5296,7 @@ static PyObject *pyrna_prop_collection_get(BPy_PropertyRNA *self, PyObject *args
                  Py_TYPE(key_ob)->tp_name);
   }
 
-  return Py_INCREF_RET(def);
+  return Py_NewRef(def);
 }
 
 PyDoc_STRVAR(
@@ -6237,7 +6237,7 @@ static PyObject *pyrna_prop_new(PyTypeObject *type, PyObject *args, PyObject * /
   }
 
   if (type == Py_TYPE(base)) {
-    return Py_INCREF_RET((PyObject *)base);
+    return Py_NewRef(base);
   }
   if (PyType_IsSubtype(type, &pyrna_prop_Type)) {
     BPy_PropertyRNA *ret = (BPy_PropertyRNA *)type->tp_alloc(type, 0);
@@ -7560,7 +7560,7 @@ static PyObject *pyrna_srna_Subtype(StructRNA *srna)
 
       /* arg[1] (bases=...) */
       PyTuple_SET_ITEM(args, 1, item = PyTuple_New(1));
-      PyTuple_SET_ITEM(item, 0, Py_INCREF_RET(py_base));
+      PyTuple_SET_ITEM(item, 0, Py_NewRef(py_base));
 
       /* arg[2] (dict=...) */
       PyTuple_SET_ITEM(args, 2, item = PyDict_New());
