@@ -9177,6 +9177,7 @@ keyconfig_data = \
     ("ui.view_item_rename", {"type": 'F2', "value": 'PRESS', "repeat": True}, None),
     ("ui.view_scroll", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS'}, None),
     ("ui.view_scroll", {"type": 'WHEELUPMOUSE', "value": 'PRESS'}, None),
+    ("ui.view_scroll", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
     ],
    },
   ),
