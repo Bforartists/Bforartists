@@ -7,7 +7,7 @@
    width="1600"
    height="1600"
    viewBox="0 0 1600 1600"
-   sodipodi:docname="swap_areas.svg"
+   sodipodi:docname="area_swap.svg"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -48,12 +48,12 @@
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="SWAP_AREAS"
+     inkscape:current-layer="AREA_SWAP"
      inkscape:showpageshadow="0"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#d1d1d1" />
   <g
-     id="SWAP_AREAS"
+     id="AREA_SWAP"
      transform="matrix(100,0,0,100,0,4.9999997e-5)"
      style="stroke-width:0.0114286">
     <path
