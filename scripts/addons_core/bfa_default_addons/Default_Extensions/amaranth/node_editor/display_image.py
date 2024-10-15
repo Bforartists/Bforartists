@@ -14,7 +14,7 @@ editor, there must be at least one image editor available.
 """
 
 import bpy
-
+from ..prefs import get_preferences
 
 KEYMAPS = list()
 
@@ -47,53 +47,56 @@ class AMTH_NODE_OT_show_active_node_image(bpy.types.Operator):
         mlocy = event.mouse_region_y
         select_node = bpy.ops.node.select(location=(mlocx, mlocy), extend=False)
 
-        if 'FINISHED' in select_node:  # Only run if we're clicking on a node
-            get_addon = "amaranth" in context.preferences.addons.keys()
-            if not get_addon:
-                return {"CANCELLED"}
-
-            preferences = context.preferences.addons["amaranth"].preferences
-            if preferences.use_image_node_display:
-                if context.active_node:
-                    active_node = context.active_node
-
-                    if active_node.bl_idname in image_nodes:
-                        # Use largest image editor
-                        area = None
-                        area_size = 0
-                        for a in context.screen.areas:
-                            if a.type == "IMAGE_EDITOR":
-                                size = a.width * a.height
-                                if size > area_size:
-                                    area_size = size
-                                    area = a
-                        if area:
-                            for space in area.spaces:
-                                if space.type == "IMAGE_EDITOR":
-                                    if active_node.bl_idname == "CompositorNodeViewer":
-                                        space.image = bpy.data.images[
-                                            "Viewer Node"]
-                                    elif active_node.bl_idname in ["CompositorNodeComposite", "CompositorNodeRLayers"]:
-                                        space.image = bpy.data.images[
-                                            "Render Result"]
-                                    elif active_node.bl_idname == "GeometryNodeImageTexture":
-                                        if active_node.inputs['Image'].is_linked:
-                                            self.report({'INFO'}, "Previewing linked sockets is not supported yet")
-                                            break
-                                        if active_node.inputs['Image'].default_value:
-                                            space.image = active_node.inputs['Image'].default_value
-                                    elif active_node.image:
-                                        space.image = active_node.image
-                                    else:
-                                        self.report({'INFO'}, "No image detected")
-                                        break
-                                break
-                        else:
-                            return {'CANCELLED'}
-
-            return {"FINISHED"}
-        else:
+        # Only run if we're clicking on a node.
+        if not 'FINISHED' in select_node:
             return {"PASS_THROUGH"}
+
+        preferences = get_preferences()
+        if not preferences.use_image_node_display:
+            return {"PASS_THROUGH"}
+
+        if not context.active_node:
+            return
+
+        active_node = context.active_node
+        if not active_node.bl_idname in image_nodes:
+            return
+
+        # Find the largest Image Editor.
+        area = None
+        area_size = 0
+        for a in context.screen.areas:
+            if a.type == "IMAGE_EDITOR":
+                size = a.width * a.height
+                if size > area_size:
+                    area_size = size
+                    area = a
+
+        if area:
+            for space in area.spaces:
+                if space.type == "IMAGE_EDITOR":
+                    if active_node.bl_idname == "CompositorNodeViewer":
+                        space.image = bpy.data.images[
+                            "Viewer Node"]
+                    elif active_node.bl_idname in ["CompositorNodeComposite", "CompositorNodeRLayers"]:
+                        space.image = bpy.data.images[
+                            "Render Result"]
+                    elif active_node.bl_idname == "GeometryNodeImageTexture":
+                        if active_node.inputs['Image'].is_linked:
+                            self.report({'INFO'}, "Previewing linked sockets is not supported yet")
+                            break
+                        if active_node.inputs['Image'].default_value:
+                            space.image = active_node.inputs['Image'].default_value
+                    elif active_node.image:
+                        space.image = active_node.image
+                    else:
+                        self.report({'INFO'}, "No image detected")
+                        break
+                break
+        else:
+            return {'CANCELLED'}
+
+        return {"FINISHED"}
 
 
 def ui(self, context):

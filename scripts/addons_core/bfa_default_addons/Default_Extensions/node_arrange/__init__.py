@@ -15,13 +15,13 @@ if should_reload:
     ui = reload(ui)
 
 
-def register():
+def register() -> None:
     ui.register()
     operators.register()
     properties.register()
 
 
-def unregister():
+def unregister() -> None:
     properties.unregister()
     operators.unregister()
     ui.unregister()

@@ -1,13 +1,13 @@
 schema_version = "1.0.0"
 id = "add_camera_rigs"
 name = "Add Camera Rigs"
-version = "1.6.1"
+version = "1.6.2"
 tagline = "Adds a Camera Rig with UI"
 maintainer = "Community"
 type = "add-on"
 tags = ["Camera"]
 blender_version_min = "4.2.0"
-license = ["SPDX:GPL-2.0-or-later"]
+license = ["SPDX:GPL-3.0-or-later"]
 website = "https://projects.blender.org/extensions/add_camera_rigs"
 copyright = [
     "2024 Wayne Dixon",
