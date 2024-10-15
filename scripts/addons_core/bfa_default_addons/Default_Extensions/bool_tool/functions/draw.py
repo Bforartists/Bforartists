@@ -160,9 +160,10 @@ def draw_circle(self, subdivision, rotation):
             modifier /= 2
 
         verts = []
-        for angle in range(0, 360, int(step)):
-            verts.append(math.cos(math.radians(angle + rotation)) * ((self.mouse_path[1][0] - self.mouse_path[0][0]) / modifier))
-            verts.append(math.sin(math.radians(angle + rotation)) * ((self.mouse_path[1][1] - self.mouse_path[0][1]) / modifier))
+        for i in range(step):
+            angle = (360 / step) * i + rotation
+            verts.append(math.cos(math.radians(angle)) * ((self.mouse_path[1][0] - self.mouse_path[0][0]) / modifier))
+            verts.append(math.sin(math.radians(angle)) * ((self.mouse_path[1][1] - self.mouse_path[0][1]) / modifier))
             verts.append(0.0)
 
         verts.append(math.cos(math.radians(0.0 + rotation)) * ((self.mouse_path[1][0] - self.mouse_path[0][0]) / modifier))
@@ -173,7 +174,7 @@ def draw_circle(self, subdivision, rotation):
 
     tris_verts = []
     indices = []
-    verts = create_2d_circle(self, 360 / int(subdivision), rotation)
+    verts = create_2d_circle(self, int(subdivision), rotation)
 
     rotation_matrix = mathutils.Matrix.Rotation(self.rotation, 4, 'Z')
     fixed_point = mathutils.Vector((self.mouse_path[0][0], self.mouse_path[0][1], 0.0))
@@ -194,7 +195,7 @@ def draw_circle(self, subdivision, rotation):
         tris_verts.append(vert)
 
         i1 = idx + 1
-        i2 = idx + 2 if idx + 2 <= 360 / int(subdivision) else 1
+        i2 = idx + 2 if idx + 2 <= ((360 / int(subdivision)) * (idx + 1) + rotation) else 1
         indices.append((0, i1, i2))
 
 
