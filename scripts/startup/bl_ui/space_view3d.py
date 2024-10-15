@@ -10445,6 +10445,8 @@ class VIEW3D_AST_object(bpy.types.AssetShelf):
 
     @classmethod
     def asset_poll(cls, asset):
+        if asset.id_type == 'NODETREE' and "Geometry Nodes" in asset.metadata.tags:
+            return True
         return asset.id_type in {'MATERIAL', 'OBJECT', 'COLLECTION', 'WORLD'}
 
     @classmethod
