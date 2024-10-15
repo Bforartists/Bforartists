@@ -1,13 +1,13 @@
 schema_version = "1.0.0"
 id = "import_palettes"
 name = "Import Palettes"
-version = "1.0.4"
+version = "1.0.5"
 tagline = "Import Palettes"
 maintainer = "Community"
 type = "add-on"
 tags = ["Import-Export"]
 blender_version_min = "4.2.0"
-license = ["SPDX:GPL-2.0-or-later"]
+license = ["SPDX:GPL-3.0-or-later"]
 website = "https://projects.blender.org/extensions/io_import_palette"
 copyright = [
     "2024 Antonio Vazquez",
