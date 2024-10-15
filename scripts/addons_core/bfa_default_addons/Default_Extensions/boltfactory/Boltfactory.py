@@ -26,7 +26,7 @@ class add_mesh_bolt(Operator, AddObjectHelper):
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
     bl_description = "Construct many types of Bolts"
 
-    MAX_INPUT_NUMBER = 50  # mm
+    MAX_INPUT_NUMBER = 250  # mm
 
     Bolt: BoolProperty(name="Bolt",
                        default=True,
@@ -264,16 +264,16 @@ class add_mesh_bolt(Operator, AddObjectHelper):
         description='Inside diameter of the Thread',
         unit='LENGTH',
     )
-    bf_Crest_Percent: IntProperty(
+    bf_Crest_Percent: FloatProperty(
         attr='bf_Crest_Percent',
-        name='Crest Percent', default=10,
+        name='Crest Percent', default=12.5,
         min=1, soft_min=1,
         max=90,
         description='Percent of the pitch that makes up the Crest',
     )
-    bf_Root_Percent: IntProperty(
+    bf_Root_Percent: FloatProperty(
         attr='bf_Root_Percent',
-        name='Root Percent', default=10,
+        name='Root Percent', default=25,
         min=1, soft_min=1,
         max=90,
         description='Percent of the pitch that makes up the Root',

@@ -127,8 +127,6 @@ def register():
 
 def unregister():
     if utils.cycles_exists():
-        panel = CYCLES_RENDER_PT_amaranth_samples
-        if "bl_rna" in panel.__dict__:
-            bpy.utils.unregister_class(panel)
+        bpy.utils.unregister_class(CYCLES_RENDER_PT_amaranth_samples)
 
     clear()
