@@ -2396,7 +2396,7 @@ def Bolt_Mesh(props, context):
     elif props.bf_Head_Type == 'bf_Head_Cap':
         Head_Verts, Head_Faces, Head_Height = Create_Cap_Head(
             Bit_Dia, props.bf_Cap_Head_Dia / GLOBAL_SCALE,
-            props.bf_Shank_Dia, props.bf_Cap_Head_Height / GLOBAL_SCALE,
+            props.bf_Shank_Dia / GLOBAL_SCALE, props.bf_Cap_Head_Height / GLOBAL_SCALE,
             props.bf_Cap_Head_Dia / GLOBAL_SCALE * (1.0 / 19.0),
             props.bf_Cap_Head_Dia / GLOBAL_SCALE * (1.0 / 19.0),
             props.bf_Div_Count
@@ -2418,7 +2418,7 @@ def Bolt_Mesh(props, context):
     elif props.bf_Head_Type == 'bf_Head_CounterSink':
         Head_Verts, Head_Faces, Head_Height = Create_CounterSink_Head(
             Bit_Dia, props.bf_CounterSink_Head_Dia / GLOBAL_SCALE,
-            props.bf_Shank_Dia, props.bf_CounterSink_Head_Dia / GLOBAL_SCALE,
+            props.bf_Shank_Dia / GLOBAL_SCALE, props.bf_CounterSink_Head_Dia / GLOBAL_SCALE,
             props.bf_CounterSink_Head_Dia / GLOBAL_SCALE * (0.09 / 6.31),
             props.bf_Div_Count
         )

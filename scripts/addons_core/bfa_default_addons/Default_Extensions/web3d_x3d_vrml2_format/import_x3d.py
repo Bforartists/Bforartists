@@ -2033,9 +2033,17 @@ def importMesh_IndexedFaceSet(geom, ancestry):
                    for v in f
                    for cco in rgb[v]]
         elif color_per_vertex: # Color per vertex without index
-            cco = [cco for f in faces
-                   for (i, v) in enumerate(f)
-                   for cco in rgb[i]]
+            # use vertex value by default, however if lengths mismatch use the positional value to access rgb value
+            # ain't ideal by far, but should most likely work
+            try:
+                cco = [cco for f in faces
+                       for v in f
+                       for cco in rgb[v]]
+            except IndexError:
+                print("reattempting reading color_per_vertex without index by using positional value because vertex value failed")
+                cco = [cco for f in faces
+                       for (i, v) in enumerate(f)
+                       for cco in rgb[i]]
         elif color_index:  # Color per face with index
             cco = [cco for (i, f) in enumerate(faces)
                        for j in f
