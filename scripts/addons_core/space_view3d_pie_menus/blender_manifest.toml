@@ -1,12 +1,23 @@
 schema_version = "1.0.0"
 id = "viewport_pie_menus"
-name = "3D Viewport Pie Menus - Bforartists Version"
-version = "1.3.0"
-tagline = "Extra Pie Menus" #BFA - a bit more explicit
+name = "3D Viewport Pie Menus"
+version = "1.6.2"
+tagline = "Various pie menus to speed up your workflow"
 maintainer = "Community"
 type = "add-on"
 tags = ["User Interface"]
 blender_version_min = "4.2.0"
-license = ["SPDX:GPL-2.0-or-later"]
+license = ["SPDX:GPL-3.0-or-later"]
 website = "https://projects.blender.org/extensions/space_view3d_pie_menus"
-copyright = ["2024 meta-androcto"]
+copyright = [
+    "2024 Demeter Dzadik",
+    "2016-2022 meta-androcto",
+    "2016-2022 pitiwazou",
+    "2016-2022 chromoly",
+    "2016-2022 italic",
+    "2016-2022 kc98",
+    "2016-2022 saidenka",
+    "2021 Yashar JafarKhanpour",
+]
+[permissions]
+files = "To load brush icons from disk"
