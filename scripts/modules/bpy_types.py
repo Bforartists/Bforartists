@@ -1387,6 +1387,8 @@ class NodeSocket(_StructRNA, metaclass=_RNAMetaPropGroup):
         """
         List of node links from or to this socket.
 
+        :type: :class:`NodeLinks`
+
         .. note:: Takes ``O(len(nodetree.links))`` time."""
         links = (link for link in self.id_data.links
                  if self in (link.from_socket, link.to_socket))
@@ -1532,5 +1534,4 @@ class GreasePencilDrawing(_StructRNA):
         """
         from _bpy_internal.grease_pencil.stroke import GreasePencilStrokeSlice
         num_strokes = self.attributes.domain_size('CURVE')
-        if num_strokes > 0:
-            return GreasePencilStrokeSlice(self, 0, num_strokes)
+        return GreasePencilStrokeSlice(self, 0, num_strokes)
