@@ -12,7 +12,7 @@ Usage: Hit Ctrl + Shift + W or find it at the bottom of the File menu.
 """
 
 import bpy
-
+from ..prefs import get_preferences
 
 KEYMAPS = list()
 
@@ -59,11 +59,13 @@ class AMTH_WM_OT_save_reload(bpy.types.Operator):
 
 
 def button_save_reload(self, context):
-    get_addon = "amaranth" in context.preferences.addons.keys()
+    get_addon = __package__ in context.preferences.addons.keys()
     if not get_addon:
         return
 
-    if context.preferences.addons["amaranth"].preferences.use_file_save_reload:
+    preferences = get_preferences()
+
+    if preferences.use_file_save_reload:
         self.layout.separator()
         self.layout.operator(
             AMTH_WM_OT_save_reload.bl_idname,

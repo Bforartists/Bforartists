@@ -12,14 +12,17 @@ On the Info header.
 
 import bpy
 from .. import utils
+from ..prefs import get_preferences
 
 
 def stats_scene(self, context):
-    get_addon = "amaranth" in context.preferences.addons.keys()
+    get_addon = __package__ in context.preferences.addons.keys()
     if not get_addon:
         return
 
-    if context.preferences.addons["amaranth"].preferences.use_scene_stats:
+    preferences = get_preferences()
+
+    if preferences.use_scene_stats:
         scenes_count = str(len(bpy.data.scenes))
         cameras_count = str(len(bpy.data.cameras))
         cameras_selected = 0

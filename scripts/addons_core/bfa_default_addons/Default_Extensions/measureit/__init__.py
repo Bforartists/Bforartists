@@ -7,21 +7,6 @@
 # ----------------------------------------------------------
 
 # ----------------------------------------------
-# Define Addon info
-# ----------------------------------------------
-bl_info = {
-    "name": "MeasureIt",
-    "author": "Antonio Vazquez (antonioya)",
-    "location": "View3D > Sidebar > View Tab",
-    "version": (1, 8, 2),
-    "blender": (3, 0, 0),
-    "description": "Tools for measuring objects.",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/measureit.html",
-    "category": "3D View"
-}
-
-
-# ----------------------------------------------
 # Import modules
 # ----------------------------------------------
 if "bpy" in locals():
@@ -48,6 +33,8 @@ from bpy.props import (
         FloatProperty,
         EnumProperty,
         )
+
+from .measureit_sum_edge_lengths import *
 
 # --------------------------------------------------------------
 # Register all operators and panels
@@ -404,6 +391,9 @@ def register():
     # register internal property
     wm.measureit_run_opengl = BoolProperty(default=False)
 
+    #Register Sum Edge Lengths
+    bpy.utils.register_class(Sum_Edge_Lengths)
+    bpy.types.VIEW3D_MT_edit_mesh_edges.append(measureit_sum_edge_lengths.menu_func)
 
 def unregister():
     from bpy.utils import unregister_class
@@ -475,6 +465,9 @@ def unregister():
     if p in wm:
         del wm[p]
 
+    #Remove Sum Edge Lengths
+    bpy.utils.unregister_class(Sum_Edge_Lengths)
+    bpy.types.VIEW3D_MT_edit_mesh_edges.remove(measureit_sum_edge_lengths.menu_func)
 
 if __name__ == '__main__':
     register()
