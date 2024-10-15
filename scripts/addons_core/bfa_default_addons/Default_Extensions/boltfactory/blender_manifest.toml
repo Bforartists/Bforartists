@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 id = "boltfactory"
 name = "BoltFactory"
-version = "0.4.1"
+version = "0.4.2"
 tagline = "Add a bolt or nut"
 maintainer = "Community"
 type = "add-on"

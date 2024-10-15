@@ -9,8 +9,8 @@ from bpy.props import (
         )
 
 
-class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
-    bl_idname = "amaranth"
+class AmaranthPreferences(bpy.types.AddonPreferences):
+    bl_idname = __package__
     use_frame_current: BoolProperty(
         name="Current Frame Slider",
         description="Set the current frame from the Specials menu in the 3D View",
@@ -108,9 +108,13 @@ class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
                  "(if any)")
 
 
+def get_preferences():
+    return bpy.context.preferences.addons[__package__].preferences
+
+
 def register():
-    bpy.utils.register_class(AmaranthToolsetPreferences)
+    bpy.utils.register_class(AmaranthPreferences)
 
 
 def unregister():
-    bpy.utils.unregister_class(AmaranthToolsetPreferences)
+    bpy.utils.unregister_class(AmaranthPreferences)

@@ -21,6 +21,7 @@ Find it on the User Preferences, Editing.
 import bpy
 from bpy.types import Operator, Panel
 from bpy.props import BoolProperty
+from ..prefs import get_preferences
 
 KEYMAPS = list()
 
@@ -114,11 +115,11 @@ class AMTH_SCREEN_OT_frame_jump(Operator):
     def execute(self, context):
         scene = context.scene
 
-        get_addon = "amaranth" in context.preferences.addons.keys()
+        get_addon = __package__ in context.preferences.addons.keys()
         if not get_addon:
             return {"CANCELLED"}
 
-        preferences = context.preferences.addons["amaranth"].preferences
+        preferences = get_preferences()
 
         if preferences.use_framerate:
             framedelta = scene.render.fps
@@ -139,7 +140,7 @@ class AMTH_USERPREF_PT_animation(Panel):
     bl_parent_id = "USERPREF_PT_animation_keyframes"
 
     def draw(self, context):
-        preferences = context.preferences.addons["amaranth"].preferences
+        preferences = get_preferences()
 
         layout = self.layout
 

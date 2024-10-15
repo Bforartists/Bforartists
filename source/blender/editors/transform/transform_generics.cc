@@ -6,10 +6,6 @@
  * \ingroup edtransform
  */
 
-#include <cmath>
-
-#include "MEM_guardedalloc.h"
-
 #include "DNA_gpencil_legacy_types.h"
 
 #include "BLI_blenlib.h"
@@ -22,6 +18,7 @@
 
 #include "RNA_access.hh"
 
+#include "BKE_brush.hh"
 #include "BKE_context.hh"
 #include "BKE_layer.hh"
 #include "BKE_mask.h"
@@ -38,7 +35,6 @@
 #include "ED_uvedit.hh"
 
 #include "WM_api.hh"
-#include "WM_types.hh"
 
 #include "UI_view2d.hh"
 
@@ -1109,6 +1105,7 @@ bool calculateCenterActive(TransInfo *t, bool select_only, float r_center[3])
     Brush *br = BKE_paint_brush(paint);
     PaintCurve *pc = br->paint_curve;
     copy_v3_v3(r_center, pc->points[pc->add_index - 1].bez.vec[1]);
+    BKE_brush_tag_unsaved_changes(br);
     r_center[2] = 0.0f;
     return true;
   }
@@ -1261,6 +1258,7 @@ void transformViewUpdate(TransInfo *t)
   }
 
   calculateCenter2D(t);
+  transform_snap_grid_init(t, t->snap_spatial, &t->snap_spatial_precision);
   transform_input_update(t, zoom_prev / zoom_new);
 }
 
