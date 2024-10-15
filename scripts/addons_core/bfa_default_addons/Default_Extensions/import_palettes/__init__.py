@@ -27,6 +27,7 @@ if "bpy" in locals():
 else:
     from . import import_ase
     from . import import_krita
+    from . import import_jascpal
 
 import bpy
 from bpy.props import (
@@ -75,15 +76,34 @@ class importKPL(bpy.types.Operator, ImportHelper):
     def draw(self, context):
         pass
 
+class ImportJASCPAL(bpy.types.Operator, ImportHelper):
+    """Load a JASC Palette File"""
+    bl_idname = "import_jascpal.read"
+    bl_label = "Import Palette"
+    bl_options = {'PRESET', 'UNDO'}
+
+    filename_ext = ".pal"
+    filter_glob: StringProperty(
+        default="*.pal",
+        options={'HIDDEN'},
+    )
+
+    def execute(self, context):
+        return import_jascpal.load(context, self.properties.filepath)
+
+    def draw(self, context):
+        pass
 
 def menu_func_import(self, context):
     self.layout.operator(importKPL.bl_idname, text="KPL Palette (.kpl)")
     self.layout.operator(ImportASE.bl_idname, text="ASE Palette (.ase)")
+    self.layout.operator(ImportJASCPAL.bl_idname, text="JASC/Gale Palette (.pal)")
 
 
 classes = (
     ImportASE,
     importKPL,
+    ImportJASCPAL,
 )
 
 
