@@ -851,6 +851,8 @@ static SingleKeyingResult insert_key_layer(
   assert_baklava_phase_1_invariants(layer);
   BLI_assert(layer.strips().size() == 1);
 
+  const bool do_cyclic = (insert_key_flags & INSERTKEY_CYCLE_AWARE) && action.is_cyclic();
+
   Strip *strip = layer.strip(0);
   return strip->data<StripKeyframeData>(action).keyframe_insert(
       bmain,
@@ -858,7 +860,8 @@ static SingleKeyingResult insert_key_layer(
       {rna_path, key_data.array_index, prop_subtype, channel_group},
       key_data.position,
       key_settings,
-      insert_key_flags);
+      insert_key_flags,
+      do_cyclic ? std::optional(action.get_frame_range()) : std::nullopt);
 }
 
 static std::pair<Layer *, Slot *> prep_action_layer_for_keying(Action &action, ID &animated_id)
@@ -891,14 +894,14 @@ static CombinedKeyingResult insert_key_layered_action(
     Main *bmain,
     Action &action,
     Layer &layer,
-    Slot &slot,
+    const Slot &slot,
     PropertyRNA *prop,
     const std::optional<StringRefNull> channel_group,
     const std::string &rna_path,
     const float frame,
     const Span<float> values,
     const eInsertKeyFlags insert_key_flags,
-    const KeyframeSettings key_settings,
+    const KeyframeSettings &key_settings,
     const BitSpan keying_mask)
 {
   BLI_assert(bmain != nullptr);
@@ -1073,12 +1076,16 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
        * moved out of the for-loop. */
       auto [layer, slot] = prep_action_layer_for_keying(action, *struct_pointer->owner_id);
 
+      const std::optional<blender::StringRefNull> this_rna_path_channel_group =
+          channel_group.has_value() ? *channel_group :
+                                      default_channel_group_for_path(&ptr, *rna_path_id_to_prop);
+
       result = insert_key_layered_action(bmain,
                                          action,
                                          *layer,
                                          *slot,
                                          prop,
-                                         channel_group,
+                                         this_rna_path_channel_group,
                                          *rna_path_id_to_prop,
                                          nla_frame,
                                          rna_values,

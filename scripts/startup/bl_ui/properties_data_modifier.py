@@ -4,7 +4,7 @@
 
 import bpy
 from bpy.types import Panel, Menu, Operator
-from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator
+from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator # BFA
 
 
 class ModifierButtonsPanel:
@@ -121,7 +121,7 @@ class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
 
         if ob_type in {'MESH'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_normals) #BFA - moved to the front, closer to where they originally were
-        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'GREASEPENCIL'}:
+        if ob_type in {'MESH', 'CURVE', 'CURVES', 'FONT', 'SURFACE', 'LATTICE', 'GREASEPENCIL', 'POINTCLOUD'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_edit)
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'VOLUME', 'GREASEPENCIL'}:
             self.draw_menu_column(layout, menu=OBJECT_MT_modifier_add_generate)
@@ -148,7 +148,7 @@ class OBJECT_MT_modifier_add_edit(ModifierAddMenu, Menu):
             self.operator_modifier_add(layout, 'DATA_TRANSFER')
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
             self.operator_modifier_add(layout, 'MESH_CACHE')
-        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE'}:
+        if ob_type in {'MESH', 'CURVE', 'CURVES', 'FONT', 'SURFACE', 'POINTCLOUD'}:
             self.operator_modifier_add(layout, 'MESH_SEQUENCE_CACHE')
         if ob_type == 'MESH':
             self.operator_modifier_add(layout, 'UV_PROJECT')
