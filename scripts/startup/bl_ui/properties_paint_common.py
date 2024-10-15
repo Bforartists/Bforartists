@@ -1763,7 +1763,7 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
             sub.scale_x = 0.33
             sub.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
             sub.prop(brush, "secondary_color", text="")
-            row.operator("gpencil.tint_flip", icon='FILE_REFRESH', text="")
+            row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
             row.prop(gp_settings, "pin_draw_mode", text="")
 
     if props:
