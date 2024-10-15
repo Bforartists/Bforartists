@@ -1,21 +1,21 @@
 schema_version = "1.0.0"
 id = "web3d_x3d_vrml2_format"
 name = "Web3D X3D/VRML2 format"
-version = "2.3.5"
+version = "2.3.6"
 tagline = "Import-Export X3D, Import VRML2"
 maintainer = "Bujus_Krachus"
 type = "add-on"
 tags = ["Import-Export"]
 blender_version_min = "4.2.0"
-license = ["SPDX:GPL-2.0-or-later"]
+license = ["SPDX:GPL-3.0-or-later"]
 website = "https://projects.blender.org/extensions/io_scene_x3d"
 copyright = [
-    "2024 Bujus_Krachus",
+    "2024 Cedric Steiert (Bujus_Krachus)",
     "2024 Hombre57",
-    "2024 Campbell Barton",
-    "2024 Bart",
-    "2024 Bastien Montagne",
-    "2024 Seva Alekseyev",
+    "2011-2024 Campbell Barton",
+    "2011-2024 Bart",
+    "2012-2024 Bastien Montagne",
+    "2015-2024 Seva Alekseyev",
 ]
 
 [permissions]

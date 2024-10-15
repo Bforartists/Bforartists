@@ -17,10 +17,22 @@ import bpy
 
 
 def register():
+    import os
+
     Boltfactory.register()
+
+    # Presets
+    if register_preset_path := getattr(bpy.utils, "register_preset_path", None):
+        register_preset_path(os.path.join(os.path.dirname(__file__)))
 
 
 def unregister():
+    import os
+
+    # Presets
+    if unregister_preset_path := getattr(bpy.utils, "unregister_preset_path", None):
+        unregister_preset_path(os.path.join(os.path.dirname(__file__)))
+
     Boltfactory.unregister()
 
 
