@@ -658,6 +658,29 @@ class _draw_tool_settings_context_mode:
 
         return True
 
+def draw_topbar_grease_pencil_layer_panel(context, layout):
+    grease_pencil = context.object.data
+    layer = grease_pencil.layers.active
+    group = grease_pencil.layer_groups.active
+
+    icon = 'OUTLINER_DATA_GP_LAYER'
+    node_name = None
+    if layer or group:
+        icon = 'OUTLINER_DATA_GP_LAYER' if layer else 'GREASEPENCIL_LAYER_GROUP' # BFA - wip, icons needs updating
+        node_name = layer.name if layer else group.name
+
+        # Clamp long names otherwise the selector can get too wide.
+        max_width = 25
+        if len(node_name) > max_width:
+            node_name = node_name[:max_width - 5] + '..' + node_name[-3:]
+
+    sub = layout.row()
+    sub.popover(
+        panel="TOPBAR_PT_grease_pencil_layers",
+        text=node_name,
+        icon=icon,
+    )
+
 
 class VIEW3D_HT_header(Header):
     bl_space_type = 'VIEW_3D'
@@ -780,6 +803,8 @@ class VIEW3D_HT_header(Header):
         if mode_string in {'EDIT_CURVE'}:
             layout.operator_menu_enum("curve.handle_type_set", "type", text="", icon="HANDLE_AUTO")
 
+        if object_mode == 'EDIT' and obj.type == 'GREASEPENCIL':
+            draw_topbar_grease_pencil_layer_panel(context, layout)
 
     def draw(self, context):
         layout = self.layout
@@ -910,33 +935,7 @@ class VIEW3D_HT_header(Header):
                     panel="VIEW3D_PT_grease_pencil_lock",
                 )
 
-            if mode_string in {
-                'EDIT_GREASE_PENCIL',
-                'PAINT_GREASE_PENCIL',
-                'SCULPT_GREASE_PENCIL',
-                'WEIGHT_GREASE_PENCIL',
-                    'VERTEX_GREASE_PENCIL'}:
-                grease_pencil = context.object.data
-                layer = grease_pencil.layers.active
-                group = grease_pencil.layer_groups.active
-
-                icon = 'OUTLINER_DATA_GP_LAYER' #BFA - wip needs updating
-                node_name = None
-                if layer or group:
-                    icon = 'OUTLINER_DATA_GP_LAYER' if layer else 'GREASEPENCIL_LAYER_GROUP'
-                    node_name = layer.name if layer else group.name
-
-                    # Clamp long names otherwise the selector can get too wide.
-                    max_width = 25
-                    if len(node_name) > max_width:
-                        node_name = node_name[:max_width - 5] + '..' + node_name[-3:]
-
-                sub = layout.row()
-                sub.popover(
-                    panel="TOPBAR_PT_grease_pencil_layers",
-                    text=node_name,
-                    icon=icon,
-                )
+            draw_topbar_grease_pencil_layer_panel(context, layout)
 
             if object_mode == 'PAINT_GREASE_PENCIL':
                 # FIXME: this is bad practice!
@@ -1003,10 +1002,12 @@ class VIEW3D_HT_header(Header):
         elif object_mode == 'VERTEX_PAINT':
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_color_attributes", icon='GROUP_VCOL')
-
+        elif object_mode == 'VERTEX_GREASE_PENCIL':
+            draw_topbar_grease_pencil_layer_panel(context, layout)
         elif object_mode in {'WEIGHT_PAINT', 'WEIGHT_GREASE_PENCIL'}:
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon='GROUP_VERTEX')
+            draw_topbar_grease_pencil_layer_panel(context, row)
 
             if object_mode != 'WEIGHT_GREASE_PENCIL':
                 layout.popover(
@@ -1220,7 +1221,9 @@ class VIEW3D_MT_editor_menus(Menu):
             elif mode_string in {'EDIT_CURVE', 'EDIT_SURFACE'}:
                 layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
                 layout.menu("VIEW3D_MT_edit_curve_segments")
-            elif mode_string in {'EDIT_CURVES', 'EDIT_POINT_CLOUD'}:
+            elif mode_string == 'EDIT_POINT_CLOUD':
+                layout.template_node_operator_asset_root_items()
+            elif mode_string == 'EDIT_CURVES':
                 layout.menu("VIEW3D_MT_edit_curves_control_points")
                 layout.menu("VIEW3D_MT_edit_curves_segments")
                 layout.template_node_operator_asset_root_items()
@@ -7401,7 +7404,7 @@ class VIEW3D_PT_view3d_camera_lock(Panel):
 
         col.use_property_split = False
         col.prop(view, "lock_camera", text="Camera to View")
-        col.prop(context.space_data.region_3d, 'lock_rotation', text='Lock View Rotation')
+        col.prop(view.region_3d, 'lock_rotation', text='Lock View Rotation')
 
 
 class VIEW3D_PT_view3d_cursor(Panel):
@@ -8715,6 +8718,29 @@ class VIEW3D_PT_overlay_edit_curve(Panel):
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
+class VIEW3D_PT_overlay_edit_curves(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Curves Edit Mode"
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode == 'EDIT_CURVES'
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data
+        overlay = view.overlay
+        display_all = overlay.show_overlays
+
+        layout.label(text="Curves Edit Mode Overlays")
+
+        col = layout.column()
+        col.active = display_all
+
+        row = col.row()
+        row.prop(overlay, "display_handle", text="Handles")
+
 
 class VIEW3D_PT_overlay_sculpt(Panel):
     bl_space_type = 'VIEW_3D'
@@ -8984,6 +9010,9 @@ class VIEW3D_PT_snapping(Panel):
         col.prop(tool_settings, "snap_elements_individual", expand=True)
 
         col.separator()
+
+        if 'INCREMENT' in tool_settings.snap_elements:
+            col.prop(tool_settings, "use_snap_grid_absolute")
 
         if 'VOLUME' in tool_settings.snap_elements:
             col.prop(tool_settings, "use_snap_peel_object")
@@ -9547,66 +9576,16 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
         layout = self.layout
         tool_settings = context.tool_settings
 
-        is_point_mode = tool_settings.gpencil_selectmode_edit == 'POINT'
         is_stroke_mode = tool_settings.gpencil_selectmode_edit in {'STROKE', 'SEGMENT'} # BFA - added segment mode to show context menu
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         row = layout.row()
 
-        if is_point_mode:
-            col = row.column(align=True)
-            col.label(text="Point", icon='GP_SELECT_POINTS')
-
-            col.separator()
-
-            col.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
-
-            col.separator()
-
-            col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
-            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
-
-            col.separator()
-
-            # Deform Operators
-            col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX")
-            col.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
-            col.operator("transform.shear", text="Shear", icon="SHEAR")
-            col.operator("transform.bend", text="Bend", icon="BEND")
-            col.operator("transform.push_pull", text="Push/Pull", icon="PUSH_PULL")
-            col.operator("transform.transform", text="Radius", icon="RADIUS").mode = 'GPENCIL_SHRINKFATTEN'
-
-            col.separator()
-
-            col.menu("VIEW3D_MT_mirror", text="Mirror")
-            col.menu("GREASE_PENCIL_MT_snap", text="Snap")
-
-            col.separator()
-
-            # Copy/paste
-            col.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
-            col.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
-            col.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN")
-
-            col.separator()
-
-            # Removal Operators
-            col.operator("grease_pencil.stroke_merge_by_distance", icon="REMOVE_DOUBLES").use_unselected = False
-            col.operator_enum("grease_pencil.dissolve", "type")
-
-            col.separator()
-
-            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
-
-            col.separator()
-
-            col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
-
-
         if is_stroke_mode:
             col = row.column(align=True)
             col.label(text="Stroke", icon='GP_SELECT_STROKES')
+
             col.separator()
 
             # Main Strokes Operators
@@ -9616,9 +9595,6 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             # Deform Operators
             col.operator("grease_pencil.stroke_smooth", text="Smooth", icon="SMOOTH_VERTEX")
-            col.operator("transform.bend", text="Bend", icon="BEND")
-            col.operator("transform.shear", text="Shear", icon="SHEAR")
-            col.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
             col.operator("transform.transform", text="Radius", icon="RADIUS").mode = 'CURVE_SHRINKFATTEN'
 
             col.separator()
@@ -9639,6 +9615,52 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
             col.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
             col.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN")
+
+            col.separator()
+
+            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
+
+            col.separator()
+
+            col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
+
+        else:
+            col = row.column(align=True)
+            col.label(text="Point", icon='GP_SELECT_POINTS')
+
+            col.separator()
+
+            col.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
+
+            col.separator()
+
+            col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
+            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
+
+            col.separator()
+
+            # Deform Operators
+            col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX")
+
+            col.operator("transform.transform", text="Radius", icon="RADIUS").mode = 'GPENCIL_SHRINKFATTEN'
+
+            col.separator()
+
+            col.menu("VIEW3D_MT_mirror", text="Mirror")
+            col.menu("GREASE_PENCIL_MT_snap", text="Snap")
+
+            col.separator()
+
+            # Copy/paste
+            col.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
+            col.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
+            col.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN")
+
+            col.separator()
+
+            # Removal Operators
+            col.operator("grease_pencil.stroke_merge_by_distance", icon="REMOVE_DOUBLES").use_unselected = False
+            col.operator_enum("grease_pencil.dissolve", "type")
 
             col.separator()
 
@@ -10692,6 +10714,7 @@ classes = (
     VIEW3D_PT_overlay_edit_mesh_normals,
     VIEW3D_PT_overlay_edit_mesh_freestyle,
     VIEW3D_PT_overlay_edit_curve,
+    VIEW3D_PT_overlay_edit_curves,
     VIEW3D_PT_overlay_texture_paint,
     VIEW3D_PT_overlay_vertex_paint,
     VIEW3D_PT_overlay_weight_paint,
