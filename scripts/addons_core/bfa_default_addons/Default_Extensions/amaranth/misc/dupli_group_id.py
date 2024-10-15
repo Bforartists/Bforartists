@@ -85,7 +85,7 @@ class AMTH_OBJECT_OT_id_dupligroup(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object.instance_collection
+        return context.active_object and context.active_object.instance_collection
 
     def execute(self, context):
         self.__class__.clear = False
@@ -134,7 +134,7 @@ class AMTH_OBJECT_OT_id_dupligroup_clear(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object.instance_collection
+        return context.active_object and context.active_object.instance_collection
 
     def execute(self, context):
         context.active_object.pass_index = 0
