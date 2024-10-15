@@ -14,7 +14,7 @@ import bpy
 
 
 def time_extra_info(self, context):
-    get_addon = "amaranth" in context.preferences.addons.keys()
+    get_addon = __package__ in context.preferences.addons.keys()
     if not get_addon:
         return
 

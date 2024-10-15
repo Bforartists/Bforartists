@@ -42,6 +42,16 @@ class BoolToolPreferences(bpy.types.AddonPreferences):
     )
 
     # Advanced
+    use_collection: bpy.props.BoolProperty(
+        name = "Put Cutters in Collection",
+        description = ("Brush boolean operators will put all cutters in same collection, and create one if it doesn't exist.\n"
+                       "Useful for scene management, and quickly selecting and removing all clutter when needed"),
+        default = True,
+    )
+    collection_name: bpy.props.StringProperty(
+        name = "Collection Name",
+        default = "boolean_cutters",
+    )
     parent: bpy.props.BoolProperty(
         name = "Parent Cutters to Object",
         description = ("Cutters will be parented to first canvas they're applied to. Works best when one cutter is used one canvas.\n"
@@ -111,7 +121,15 @@ class BoolToolPreferences(bpy.types.AddonPreferences):
 
         # Advanced
         layout.separator()
-        col = layout.column(align=True, heading="Advanced")
+        col = layout.column(align=True, heading="Put Cutters in Collection")
+        row = col.row(align=True)
+        sub = row.row(align=True)
+        sub.prop(self, "use_collection", text="")
+        sub = sub.row(align=True)
+        sub.active = self.show_in_sidebar
+        sub.prop(self, "collection_name", text="")
+
+        # col = layout.column(align=True, heading="Advanced")
         col.prop(self, "parent")
         col.prop(self, "apply_order")
         col.prop(self, "pin")
