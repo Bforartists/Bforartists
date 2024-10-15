@@ -718,16 +718,6 @@ void DrawCommandBuf::finalize_commands(Vector<Header, 0> &headers,
       cmd.vertex_len = batch_vert_len;
     }
 
-#ifdef WITH_METAL_BACKEND
-    /* For SSBO vertex fetch, mutate output vertex count by ssbo vertex fetch expansion factor. */
-    if (cmd.shader) {
-      int num_input_primitives = gpu_get_prim_count_from_type(cmd.vertex_len,
-                                                              cmd.batch->prim_type);
-      cmd.vertex_len = num_input_primitives *
-                       GPU_shader_get_ssbo_vertex_fetch_num_verts_per_prim(cmd.shader);
-    }
-#endif
-
     if (cmd.handle.raw > 0) {
       /* Save correct offset to start of resource_id buffer region for this draw. */
       uint instance_first = resource_id_count;
@@ -777,7 +767,7 @@ void DrawMultiBuf::bind(RecordingState &state,
   for (DrawGroup &group : MutableSpan<DrawGroup>(group_buf_.data(), group_count_)) {
     /* Compute prefix sum of all instance of previous group. */
     group.start = resource_id_count_;
-    resource_id_count_ += group.len * view_len;
+    resource_id_count_ += group.len;
 
     int batch_vert_len, batch_vert_first, batch_base_index, batch_inst_len;
     /* Now that GPUBatches are guaranteed to be finished, extract their parameters. */
@@ -811,21 +801,6 @@ void DrawMultiBuf::bind(RecordingState &state,
       group.base_index = -1;
     }
 
-#ifdef WITH_METAL_BACKEND
-    /* For SSBO vertex fetch, mutate output vertex count by ssbo vertex fetch expansion factor. */
-    if (group.desc.gpu_shader) {
-      int num_input_primitives = gpu_get_prim_count_from_type(group.vertex_len,
-                                                              group.desc.gpu_batch->prim_type);
-      group.vertex_len = num_input_primitives *
-                         GPU_shader_get_ssbo_vertex_fetch_num_verts_per_prim(
-                             group.desc.gpu_shader);
-      /* Override base index to -1, as all SSBO calls are submitted as non-indexed, with the
-       * index buffer indirection handled within the implementation. This is to ensure
-       * command generation can correctly assigns baseInstance in the non-indexed formatting. */
-      group.base_index = -1;
-    }
-#endif
-
     /* Reset counters to 0 for the GPU. */
     group.total_counter = group.front_facing_counter = group.back_facing_counter = 0;
   }
@@ -833,7 +808,7 @@ void DrawMultiBuf::bind(RecordingState &state,
   group_buf_.push_update();
   prototype_buf_.push_update();
   /* Allocate enough for the expansion pass. */
-  resource_id_buf_.get_or_resize(resource_id_count_ * (use_custom_ids ? 2 : 1));
+  resource_id_buf_.get_or_resize(resource_id_count_ * view_len * (use_custom_ids ? 2 : 1));
   /* Two commands per group (inverted and non-inverted scale). */
   command_buf_.get_or_resize(group_count_ * 2);
 
@@ -842,6 +817,7 @@ void DrawMultiBuf::bind(RecordingState &state,
     GPU_shader_bind(shader);
     GPU_shader_uniform_1i(shader, "prototype_len", prototype_count_);
     GPU_shader_uniform_1i(shader, "visibility_word_per_draw", visibility_word_per_draw);
+    GPU_shader_uniform_1i(shader, "view_len", view_len);
     GPU_shader_uniform_1i(shader, "view_shift", log2_ceil_u(view_len));
     GPU_shader_uniform_1b(shader, "use_custom_ids", use_custom_ids);
     GPU_storagebuf_bind(group_buf_, GPU_shader_get_ssbo_binding(shader, "group_buf"));
