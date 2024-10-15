@@ -21,7 +21,7 @@ from ..functions.select import (
 )
 
 
-#### ------------------------------ /toolshelf_draw/ ------------------------------ ####
+#### ------------------------------ /tool_shelf_draw/ ------------------------------ ####
 
 class CarverToolshelf():
     def draw_settings(context, layout, tool):
@@ -150,12 +150,12 @@ class OBJECT_WT_carve_box(bpy.types.WorkSpaceTool, CarverToolshelf):
     bl_icon = os.path.join(os.path.join(os.path.dirname(os.path.dirname(__file__)), "icons") , "ops.object.carver_box")
     # bl_widget = 'VIEW3D_GGT_placement'
     bl_keymap = (
-        ("object.carve", {"type": 'LEFTMOUSE', "value": 'PRESS'}, {"properties": [("shape", 'BOX')]}),
-        ("object.carve", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True}, {"properties": [("shape", 'BOX')]}),
+        ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, {"properties": [("shape", 'BOX')]}),
+        ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True}, {"properties": [("shape", 'BOX')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "alt": True}, {"properties": [("shape", 'BOX')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True, "alt": True}, {"properties": [("shape", 'BOX')]}),
-        ("object.carve", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, {"properties": [("shape", 'BOX')]}),
-        ("object.carve", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True, "shift": True}, {"properties": [("shape", 'BOX')]}),
+        ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True}, {"properties": [("shape", 'BOX')]}),
+        ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True, "shift": True}, {"properties": [("shape", 'BOX')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True, "alt": True}, {"properties": [("shape", 'BOX')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True, "shift": True, "alt": True}, {"properties": [("shape", 'BOX')]}),
     )
@@ -175,12 +175,12 @@ class OBJECT_WT_carve_circle(bpy.types.WorkSpaceTool, CarverToolshelf):
     bl_icon = os.path.join(os.path.join(os.path.dirname(os.path.dirname(__file__)), "icons") , "ops.object.carver_circle")
     # bl_widget = 'VIEW3D_GGT_placement'
     bl_keymap = (
-        ("object.carve", {"type": 'LEFTMOUSE', "value": 'PRESS'}, {"properties": [("shape", 'CIRCLE')]}),
-        ("object.carve", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True}, {"properties": [("shape", 'CIRCLE')]}),
+        ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, {"properties": [("shape", 'CIRCLE')]}),
+        ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True}, {"properties": [("shape", 'CIRCLE')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "alt": True}, {"properties": [("shape", 'CIRCLE')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True, "alt": True}, {"properties": [("shape", 'CIRCLE')]}),
-        ("object.carve", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, {"properties": [("shape", 'CIRCLE')]}),
-        ("object.carve", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True, "shift": True}, {"properties": [("shape", 'CIRCLE')]}),
+        ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True}, {"properties": [("shape", 'CIRCLE')]}),
+        ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True, "shift": True}, {"properties": [("shape", 'CIRCLE')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True, "alt": True}, {"properties": [("shape", 'CIRCLE')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True, "shift": True, "alt": True}, {"properties": [("shape", 'CIRCLE')]}),
     )
@@ -202,6 +202,10 @@ class OBJECT_WT_carve_polyline(bpy.types.WorkSpaceTool, CarverToolshelf):
     bl_keymap = (
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK'}, {"properties": [("shape", 'POLYLINE')]}),
         ("object.carve", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True}, {"properties": [("shape", 'POLYLINE')]}),
+        # select
+        ("view3d.select_box", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
+        ("view3d.select_box", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True}, {"properties": [("mode", 'ADD')]}),
+        ("view3d.select_box", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True}, {"properties": [("mode", 'SUB')]}),
     )
 
 class MESH_WT_carve_polyline(OBJECT_WT_carve_polyline):
@@ -719,7 +723,7 @@ class OBJECT_OT_carve(bpy.types.Operator):
     def cancel(self, context):
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
         context.area.header_text_set(None)
-        context.window.cursor_set("DEFAULT")
+        context.window.cursor_set('DEFAULT' if context.object.mode == 'OBJECT' else 'CROSSHAIR')
 
 
     def selection_fallback(self, context):
@@ -743,9 +747,9 @@ class OBJECT_OT_carve(bpy.types.Operator):
         # Add Modifier
         for obj in self.selected_objects:
             if self.mode == 'DESTRUCTIVE':
-                add_boolean_modifier(self, obj, self.cutter, "DIFFERENCE", self.solver, apply=True, pin=self.pin)
+                add_boolean_modifier(self, obj, self.cutter, "DIFFERENCE", self.solver, apply=True, pin=self.pin, redo=False)
             elif self.mode == 'MODIFIER':
-                add_boolean_modifier(self, obj, self.cutter, "DIFFERENCE", self.solver, pin=self.pin)
+                add_boolean_modifier(self, obj, self.cutter, "DIFFERENCE", self.solver, pin=self.pin, redo=False)
                 obj.booleans.canvas = True
 
         if self.mode == 'DESTRUCTIVE':

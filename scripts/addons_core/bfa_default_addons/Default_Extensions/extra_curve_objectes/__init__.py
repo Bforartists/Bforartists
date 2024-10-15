@@ -143,6 +143,8 @@ classes = [
 ]
 
 def register():
+    import os
+
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
@@ -163,8 +165,14 @@ def register():
     # Add "Extras" menu to the "Add Surface" menu
     bpy.types.VIEW3D_MT_surface_add.append(menu_surface)
 
+    # Presets
+    if register_preset_path := getattr(bpy.utils, "register_preset_path", None):
+        register_preset_path(os.path.join(os.path.dirname(__file__)))
+
 
 def unregister():
+    import os
+
     # Remove "Extras" menu from the "Add Curve" menu.
     bpy.types.VIEW3D_MT_curve_add.remove(menu_func)
     # Remove "Extras" menu from the "Add Surface" menu.
@@ -184,6 +192,10 @@ def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
+
+    # Presets
+    if unregister_preset_path := getattr(bpy.utils, "unregister_preset_path", None):
+        unregister_preset_path(os.path.join(os.path.dirname(__file__)))
 
 if __name__ == "__main__":
     register()

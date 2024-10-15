@@ -15,8 +15,6 @@ What is it about? Anything, whatever I think it can speedup workflow,
 I'll try to add it. Enjoy <3
 """
 
-import sys
-
 # import amaranth's modules
 
 # NOTE: avoid local imports whenever possible!
@@ -82,3 +80,7 @@ def register():
 
 def unregister():
     _call_globals("unregister")
+
+
+if __name__ == "__main__":
+    register()
