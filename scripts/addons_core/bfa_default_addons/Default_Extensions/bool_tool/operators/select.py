@@ -3,7 +3,7 @@ from .. import __package__ as base_package
 
 from ..functions.poll import (
     basic_poll,
-    modifier_poll,
+    active_modifier_poll,
     is_canvas,
 )
 from ..functions.list import (
@@ -72,7 +72,7 @@ class OBJECT_OT_boolean_select_cutter(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         prefs = bpy.context.preferences.addons[base_package].preferences
-        return (basic_poll(context) and modifier_poll(context, context.object) and
+        return (basic_poll(context) and active_modifier_poll(context) and
                 context.area.type == 'PROPERTIES' and context.space_data.context == 'MODIFIER' and
                 prefs.double_click)
 

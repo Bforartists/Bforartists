@@ -18,27 +18,24 @@ def list_canvases():
 
 #### ------------------------------ /selected/ ------------------------------ ####
 
-def list_candidate_objects(self, context, canvas=None, unique=False):
+def list_candidate_objects(self, context, canvas):
     """Filter out objects from selected ones that can't be used as a cutter"""
 
     cutters = []
     for obj in context.selected_objects:
         if obj != context.active_object and obj.type in ('MESH', 'CURVE', 'FONT'):
-            if obj.type in ('CURVE', 'FONT'):
-                if obj.data.bevel_depth != 0 or obj.data.extrude != 0:
-                    convert_to_mesh(context, obj)
-                    cutters.append(obj)
+            if obj.library or obj.override_library:
+                self.report({'ERROR'}, f"{obj.name} is linked and can not be used as a cutter")
+
             else:
-                if unique and canvas:
-                    if obj.booleans.cutter == "":
+                if obj.type in ('CURVE', 'FONT'):
+                    if obj.data.bevel_depth != 0 or obj.data.extrude != 0:
+                        convert_to_mesh(context, obj)
                         cutters.append(obj)
-                    else:
-                        if (canvas not in list_cutter_users([obj])):
-                            cutters.append(obj)
-                        else:
-                            self.report({'ERROR'}, f"{obj.name} is already a cutter for {canvas.name}")
+
                 else:
-                    cutters.append(obj)
+                    if (obj.booleans.cutter == "") or (canvas not in list_cutter_users([obj])):
+                        cutters.append(obj)
 
     return cutters
 
@@ -146,19 +143,20 @@ def list_unused_cutters(cutters, *canvases, do_leftovers=False):
     """Takes in list of cutters and returns only those that have no other user besides specified canvas"""
     """When `include_visible` is True it will return cutters that aren't used by any visible modifiers"""
 
-    prefs = bpy.context.preferences.addons[base_package].preferences
-
     other_canvases = list_canvases()
-    leftovers = []
     original_cutters = cutters[:]
 
     for obj in other_canvases:
-        if obj not in canvases:
-            if any(mod.object in cutters for mod in obj.modifiers):
-                cutters[:] = [cutter for cutter in cutters if cutter not in [mod.object for mod in obj.modifiers]]
-                if prefs.parent and do_leftovers:
-                    # return_cutters_that_do_have_other_users_(so_that_parents_can_be_reassigned)
-                    leftovers = [cutter for cutter in original_cutters if cutter not in cutters]
+        if obj in canvases:
+            return
+
+        if any(mod.object in cutters for mod in obj.modifiers if mod.type == 'BOOLEAN'):
+            cutters[:] = [cutter for cutter in cutters if cutter not in [mod.object for mod in obj.modifiers]]
+
+    leftovers = []
+    # return_cutters_that_do_have_other_users_(so_that_parents_can_be_reassigned)
+    if do_leftovers:
+        leftovers = [cutter for cutter in original_cutters if cutter not in cutters]
 
     return cutters, leftovers
 

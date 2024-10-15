@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "node_arrange"
-version = "1.2.1"
+version = "1.3.1"
 name = "Node Arrange"
 tagline = "Arrange node trees with one click"
 maintainer = "Leonardo Pike-Excell <leonardopike.excell@gmail.com>"
@@ -8,4 +8,4 @@ type = "add-on"
 website = "https://github.com/Leonardo-Pike-Excell/node-arrange"
 tags = ["Node"]
 blender_version_min = "4.2.0"
-license = ["SPDX:GPL-2.0-or-later"]
+license = ["SPDX:GPL-3.0-or-later"]
