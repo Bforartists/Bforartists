@@ -278,6 +278,7 @@ if(WITH_BLENDER)
       applyscaledelta
       apptemplate
       area
+      area_swap
       armature_data
 	  arrow_leftright
       asset_manager
@@ -1896,7 +1897,6 @@ if(WITH_BLENDER)
       surface_ntorus
       surface_smooth
       swap
-      swap_areas
       swirl
       switch
       switch_direction
