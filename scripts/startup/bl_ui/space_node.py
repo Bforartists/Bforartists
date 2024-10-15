@@ -1396,7 +1396,9 @@ class NODE_AST_composite_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
     
     @classmethod
     def asset_poll(cls, asset):
-        return asset.id_type == 'NODETREE' and not asset.name.startswith("S_")
+        if asset.id_type == 'NODETREE' and "Compositor" in asset.metadata.tags:
+            return True
+        return asset.id_type == 'NODETREE' and not "Geometry Nodes" in asset.metadata.tags and not "Shader" in asset.metadata.tags
 
 
 class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
@@ -1407,7 +1409,9 @@ class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
         
     @classmethod
     def asset_poll(cls, asset):
-        return asset.id_type == 'NODETREE' and not asset.name.startswith("S_")
+        if asset.id_type == 'NODETREE' and "Geometry Nodes" in asset.metadata.tags:
+            return True
+        return asset.id_type == 'NODETREE' and not "Compositor" in asset.metadata.tags and not "Shader" in asset.metadata.tags
 
 
 class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
@@ -1418,7 +1422,9 @@ class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
     @classmethod
     def asset_poll(cls, asset):
-        return asset.id_type == 'NODETREE' and asset.name.startswith("S_")
+        if asset.id_type == 'NODETREE' and "Shader" in asset.metadata.tags:
+            return True
+        return asset.id_type == 'NODETREE' and asset.name.startswith("S_") and not "Geometry Nodes" in asset.metadata.tags and not "Compositor" in asset.metadata.tags
 
 
 classes = (
