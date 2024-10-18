@@ -2725,7 +2725,7 @@ class WM_OT_batch_rename(Operator):
     bl_label = "Batch Rename"
 
     bl_options = {'UNDO'}
-
+    # BFA - tooltips and icons added, a long with unique identifier per the EnumProperty guidelines
     data_type: EnumProperty(
         name="Type",
         items=(
@@ -3096,9 +3096,9 @@ class WM_OT_batch_rename(Operator):
         layout = self.layout
 
         split = layout.split(align=True)
-        icon = "BLANK1"
-        split.row(align=True).prop(self, "data_source", expand=True, icon=icon)
-        split.prop(self, "data_type", text="", icon=icon)
+        icon = "BLANK1" # BFA - added icon references from the enums
+        split.row(align=True).prop(self, "data_source", expand=True, icon=icon) # BFA - added icons
+        split.prop(self, "data_type", text="", icon=icon) # BFA - added icons
 
         for action in self.actions:
             box = layout.box()
