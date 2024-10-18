@@ -2729,31 +2729,31 @@ class WM_OT_batch_rename(Operator):
     data_type: EnumProperty(
         name="Type",
         items=(
-            ('OBJECT', "Objects", ""),
-            ('COLLECTION', "Collections", ""),
-            ('MATERIAL', "Materials", ""),
+            ('OBJECT', "Objects", "Rename selected objects in the scene", 'OBJECT_DATA', 1),
+            ('COLLECTION', "Collections", "Rename selected collections in the outliner editor", 'OUTLINER_COLLECTION', 2),
+            ('MATERIAL', "Materials", "Rename selected materials in the outliner editor ", 'MATERIAL', 3),
             None,
             # Enum identifiers are compared with `object.type`.
             # Follow order in "Add" menu.
-            ('MESH', "Meshes", ""),
-            ('CURVE', "Curves", ""),
-            ('META', "Metaballs", ""),
-            ('VOLUME', "Volumes", ""),
-            ('GPENCIL', "Grease Pencils", ""),
-            ('ARMATURE', "Armatures", ""),
-            ('LATTICE', "Lattices", ""),
-            ('LIGHT', "Light", ""),
-            ('LIGHT_PROBE', "Light Probes", ""),
-            ('CAMERA', "Cameras", ""),
-            ('SPEAKER', "Speakers", ""),
+            ('MESH', "Meshes", "Rename selected mesh data in the scene", 'MESH_DATA', 4),
+            ('CURVE', "Curves", "Rename selected curve data in the scene", 'CURVE_DATA', 5),
+            ('META', "Metaballs", "Rename selected metaball data in the scene", 'META_BALL', 6),
+            ('VOLUME', "Volumes", "Rename selected volume data in the scene", 'VOLUME_DATA', 7),
+            ('GPENCIL', "Grease Pencils", "Rename selected grease pencil data in the scene", 'OUTLINER_OB_GREASEPENCIL', 8),
+            ('ARMATURE', "Armatures", "Rename selected armature data in the scene", 'ARMATURE_DATA', 9),
+            ('LATTICE', "Lattices", "Rename selected lattice data in the scene", 'LATTICE_DATA', 10),
+            ('LIGHT', "Light", "Rename selected light data in the scene", 'LIGHT', 11),
+            ('LIGHT_PROBE', "Light Probes", "Rename selected light probe data in the scene", 'LIGHTPROBE_SPHERE', 12),
+            ('CAMERA', "Cameras", "Rename selected camera data in the scene", 'CAMERA_DATA', 13),
+            ('SPEAKER', "Speakers", "Rename selected speaker data in the scene", 'SPEAKER', 14),
             None,
-            ('BONE', "Bones", ""),
-            ('NODE', "Nodes", ""),
-            ('SEQUENCE_STRIP', "Sequence Strips", ""),
-            ('ACTION_CLIP', "Action Clips", ""),
+            ('BONE', "Bones", "Rename selected bones in the scene", 'BONE_DATA', 15),
+            ('NODE', "Nodes", "Rename selected nodes in the scene", 'NODETREE', 16),
+            ('SEQUENCE_STRIP', "Sequence Strips", "Rename selected sequence strips in the scene", 'SEQUENCE', 17),
+            ('ACTION_CLIP', "Action Clips", "Rename selected action clips in the outliner editor", 'ACTION', 18),
             None,
-            ('SCENE', "Scenes", ""),
-            ('BRUSH', "Brushes", ""),
+            ('SCENE', "Scenes", "Rename selected scenes in the outliner editor", 'SCENE_DATA', 19),
+            ('BRUSH', "Brushes", "Rename selected brushes in the outliner editor", 'BRUSH_DATA', 20),
         ),
         description="Type of data to rename",
     )
@@ -2761,8 +2761,8 @@ class WM_OT_batch_rename(Operator):
     data_source: EnumProperty(
         name="Source",
         items=(
-            ('SELECT', "Selected", ""),
-            ('ALL', "All", ""),
+            ('SELECT', "Selected", "Use objects selected in the 3D View", 'RESTRICT_SELECT_OFF', 0),
+            ('ALL', "All", "Use all available objects in the scene", 'SELECT_ALL', 1)
         ),
     )
 
@@ -3096,8 +3096,9 @@ class WM_OT_batch_rename(Operator):
         layout = self.layout
 
         split = layout.split(align=True)
-        split.row(align=True).prop(self, "data_source", expand=True)
-        split.prop(self, "data_type", text="")
+        icon = "BLANK1"
+        split.row(align=True).prop(self, "data_source", expand=True, icon=icon)
+        split.prop(self, "data_type", text="", icon=icon)
 
         for action in self.actions:
             box = layout.box()
