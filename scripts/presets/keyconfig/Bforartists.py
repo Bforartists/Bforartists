@@ -1,4 +1,4 @@
-keyconfig_version = (4, 4, 0)
+keyconfig_version = (4, 4, 1)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -2726,7 +2726,7 @@ keyconfig_data = \
     ],
    },
   ),
- ("Grease Pencil", #
+ ("Grease Pencil",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
    [("gpencil.annotate",
@@ -6951,10 +6951,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("transform.translate", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
-    ("transform.translate", {"type": 'W', "value": 'PRESS'}, None),
-    ("transform.rotate", {"type": 'E', "value": 'PRESS'}, None),
-    ("transform.resize", {"type": 'R', "value": 'PRESS'}, None),
     ("sequencer.strip_transform_clear",
      {"type": 'W', "value": 'PRESS', "alt": True},
      {"properties":
@@ -7032,6 +7028,27 @@ keyconfig_data = \
      {"type": 'TAB', "value": 'PRESS'},
      {"properties":
       [("data_path", 'space_data.show_overlays'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'W', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.move'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'E', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.rotate'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'R', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.scale'),
        ],
       },
      ),
