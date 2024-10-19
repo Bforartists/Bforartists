@@ -24,6 +24,8 @@
 
 #include <algorithm>
 
+#include "UI_resources.hh" /*bfa - needed for the icons*/
+
 namespace blender::ed::greasepencil {
 
 namespace {
@@ -500,12 +502,12 @@ void GREASE_PENCIL_OT_join_selection(wmOperatorType *ot)
   static const EnumPropertyItem active_layer_behavior[] = {
       {int(ActiveLayerBehavior::JoinAndCopySelection),
        "JOINCOPY",
-       0,
+       ICON_JOINCOPY,
        "Join and Copy",
        "Copy the selection in the new stroke"},
       {int(ActiveLayerBehavior::JoinSelection),
        "JOIN",
-       0,
+       ICON_JOIN,
        "Join",
        "Move the selection to the new stroke"},
       {0, nullptr, 0, nullptr, nullptr},
