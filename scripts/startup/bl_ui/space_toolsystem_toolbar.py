@@ -567,9 +567,9 @@ class _defs_view3d_add:
         if extra:
             props = tool.operator_properties("view3d.interactive_add")
             layout.use_property_split = True
-            layout.row().prop(props, "plane_axis", expand=True)
+            layout.row().prop(tool_settings, "plane_axis", expand=True)
             layout.use_property_split = False
-            layout.row().prop(props, "plane_axis_auto")
+            layout.row().prop(tool_settings, "plane_axis_auto")
             layout.use_property_split = True
 
             layout.label(text="Base")
@@ -2184,7 +2184,7 @@ class _defs_weight_paint:
             cursor='EYEDROPPER',
             widget=None,
             keymap=(),
-            draw_settings=draw_settings
+            draw_settings=draw_settings,
         )
 
     @ToolDef.from_fn
@@ -2211,7 +2211,7 @@ class _defs_weight_paint:
                     "weight",
                     unified_name="use_unified_weight",
                     slider=True,
-                    header=True
+                    header=True,
                 )
                 UnifiedPaintPanel.prop_unified(
                     layout,
@@ -2219,7 +2219,7 @@ class _defs_weight_paint:
                     brush,
                     "strength",
                     unified_name="use_unified_strength",
-                    header=True
+                    header=True,
                 )
 
             props = tool.operator_properties("paint.weight_gradient")
@@ -3109,6 +3109,7 @@ class _defs_sequencer_select:
             widget=None,
             keymap="Sequencer Timeline Tool: Tweak",
         )
+
     @ToolDef.from_fn
     def select_preview():
         return dict(
@@ -3275,8 +3276,8 @@ class NODE_PT_tools_active(ToolSelectPanelHelper, Panel):
         (
             _defs_node_select.select,
             _defs_node_select.box,
-            _defs_node_select.circle,
             _defs_node_select.lasso,
+            _defs_node_select.circle,
         ),
     )
 
