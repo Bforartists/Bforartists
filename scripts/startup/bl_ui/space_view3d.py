@@ -6093,7 +6093,6 @@ class VIEW3D_MT_sculpt_grease_pencil_copy(Menu):
         layout.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
 
 
-# BFA - not used, redundant
 class VIEW3D_MT_edit_greasepencil_delete(Menu):
     bl_label = "Delete"
 
@@ -6104,18 +6103,12 @@ class VIEW3D_MT_edit_greasepencil_delete(Menu):
 
         layout.separator()
 
-        layout.operator_enum("grease_pencil.dissolve", "type") # BFA - exposed to a top level like context menu
-
-        layout.separator()
-
         layout.operator("grease_pencil.delete_frame", text="Delete Active Keyframe (Active Layer)", icon="DELETE").type = 'ACTIVE_FRAME' # BFA - redundant, in animation menu
         layout.operator("grease_pencil.delete_frame", text="Delete Active Keyframes (All Layers)", icon="DELETE_ALL").type = 'ALL_FRAMES' # BFA - redundant, in animation menu
 
 
 # Edit Curve
 # draw_curve is used by VIEW3D_MT_edit_curve and VIEW3D_MT_edit_surface
-
-
 def draw_curve(self, context):
     layout = self.layout
 
@@ -6820,28 +6813,23 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.menu("VIEW3D_MT_edit_greasepencil_animation", text="Animation")
         layout.operator("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
-        layout.operator("grease_pencil.duplicate_move", text="Duplicate")
+        layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon = 'DUPLICATE')
 
         layout.separator()
 
         layout.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
         layout.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN')
 
-        layout.operator("grease_pencil.delete", icon="DELETE")
         layout.operator_menu_enum("grease_pencil.dissolve", "type")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
-        layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
-        layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
-        layout.menu("VIEW3D_MT_edit_greasepencil_showhide", text="Show/Hide")
-
-        layout.separator()
-        layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
-
-
         layout.menu("VIEW3D_MT_edit_greasepencil_delete")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
+        layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
+
+        layout.separator()
+        layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
 
 
 class VIEW3D_MT_edit_greasepencil_stroke(Menu):
