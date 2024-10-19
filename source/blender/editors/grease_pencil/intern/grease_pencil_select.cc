@@ -32,6 +32,8 @@
 
 #include "WM_api.hh"
 
+#include "UI_resources.hh" /*bfa - needed for the icons*/
+
 namespace blender::ed::greasepencil {
 
 /* -------------------------------------------------------------------- */
@@ -576,11 +578,11 @@ enum class SelectSimilarMode {
 };
 
 static const EnumPropertyItem select_similar_mode_items[] = {
-    {int(SelectSimilarMode::LAYER), "LAYER", 0, "Layer", ""},
-    {int(SelectSimilarMode::MATERIAL), "MATERIAL", 0, "Material", ""},
-    {int(SelectSimilarMode::VERTEX_COLOR), "VERTEX_COLOR", 0, "Vertex Color", ""},
-    {int(SelectSimilarMode::RADIUS), "RADIUS", 0, "Radius", ""},
-    {int(SelectSimilarMode::OPACITY), "OPACITY", 0, "Opacity", ""},
+    {int(SelectSimilarMode::LAYER), "LAYER", ICON_LAYER, "Layer", ""},
+    {int(SelectSimilarMode::MATERIAL), "MATERIAL", ICON_MATERIAL, "Material", ""},
+    {int(SelectSimilarMode::VERTEX_COLOR), "VERTEX_COLOR", ICON_NODE_VERTEX_COLOR, "Vertex Color", ""},
+    {int(SelectSimilarMode::RADIUS), "RADIUS", ICON_RADIUS, "Radius", ""},
+    {int(SelectSimilarMode::OPACITY), "OPACITY", ICON_MOD_OPACITY, "Opacity", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
