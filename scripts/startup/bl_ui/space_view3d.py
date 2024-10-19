@@ -2542,16 +2542,6 @@ class VIEW3D_MT_select_greasepencil_legacy(Menu):
         layout.operator("view3d.select_box", icon="BORDER_RECT")
         layout.operator("view3d.select_circle", icon="CIRCLE_SELECT")
 
-# BFA - legacy menu
-class VIEW3D_MT_select_greasepencil_grouped(Menu):
-    bl_label = "Grouped"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("gpencil.select_grouped", text="Layer", icon="LAYER").type = 'LAYER'
-        layout.operator("gpencil.select_grouped", text="Color", icon="COLOR").type = 'MATERIAL'
-
 
 class VIEW3D_MT_select_edit_grease_pencil(Menu):
     bl_label = "Select"
@@ -2577,7 +2567,6 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
 
         layout.operator("grease_pencil.select_alternate", text="Alternated", icon="ALTERNATED")
         layout.operator("grease_pencil.select_random", text="Random", icon="RANDOMIZE")
-        layout.menu("VIEW3D_MT_select_greasepencil_grouped", text="Grouped")  # BFA - menu
 
         layout.separator()
 
@@ -6790,9 +6779,9 @@ class VIEW3D_MT_edit_greasepencil_showhide(Menu):
         layout = self.layout
 
         layout.operator("grease_pencil.layer_reveal", text="Show All Layers", icon="HIDE_OFF")
-        
+
         layout.separator()
-        
+
         layout.operator("grease_pencil.layer_hide", text="Hide Active Layer", icon="HIDE_ON").unselected = False
         layout.operator("grease_pencil.layer_hide", text="Hide Inactive Layers", icon="HIDE_UNSELECTED").unselected = True
 
@@ -10505,7 +10494,6 @@ classes = (
     VIEW3D_MT_select_edit_armature,
     VIEW3D_PT_greasepencil_edit_options, # BFA - menu
     VIEW3D_MT_select_greasepencil_legacy,  # BFA - legacy menu
-    VIEW3D_MT_select_greasepencil_grouped,  # BFA - legacy menu
     VIEW3D_MT_select_edit_grease_pencil,
     VIEW3D_MT_select_paint_mask_face_more_less,  # bfa menu
     VIEW3D_MT_select_paint_mask_vertex,
