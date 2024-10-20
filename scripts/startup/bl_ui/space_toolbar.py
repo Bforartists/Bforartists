@@ -1061,24 +1061,38 @@ class TOOLBAR_PT_menu_image(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbars Image:")
+        obj = context.object
 
-        col = layout.column(align = True)
-        row = col.row()
-        row.separator()
-        row.prop(addon_prefs, "image_uv_mirror")
-        row = col.row()
-        row.separator()
-        row.prop(addon_prefs, "image_uv_rotate")
-        row = col.row()
-        row.separator()
-        row.prop(addon_prefs, "image_uv_align")
-        row = col.row()
-        row.separator()
-        row.prop(addon_prefs, "image_uv_unwrap")
-        row = col.row()
-        row.separator()
-        row.prop(addon_prefs, "image_uv_modify")
+        if obj is None:
+            col = layout.column(align = True)
+            row = col.row()
+            col.label(text = "Toolbar Image:", icon="NONE")
+            col.alert=True
+            col.label(text = "No Active Mesh", icon="INFO")
+
+        if obj is not None:
+            col = layout.column(align = True)
+            col.label(text = "Toolbar Image:", icon="NONE")
+            col.alert=True
+            col.label(text = "Edit Mode Only", icon="NONE")
+            col.label(text = "UV Editor must be open!", icon="NONE")
+
+            col = layout.column(align = True)
+            row = col.row()
+            row.separator()
+            row.prop(addon_prefs, "image_uv_mirror")
+            row = col.row()
+            row.separator()
+            row.prop(addon_prefs, "image_uv_rotate")
+            row = col.row()
+            row.separator()
+            row.prop(addon_prefs, "image_uv_align")
+            row = col.row()
+            row.separator()
+            row.prop(addon_prefs, "image_uv_unwrap")
+            row = col.row()
+            row.separator()
+            row.prop(addon_prefs, "image_uv_modify")
 
 
 ############### bfa - menu hidable by the flag in the right click menu
@@ -1159,77 +1173,79 @@ class TOOLBAR_MT_image(Menu):
         obj = context.active_object
         mode = 'OBJECT' if obj is None else obj.mode
 
+        if mode == 'EDIT':
+
         ## ------------------ image sub toolbars
 
-        if addon_prefs.image_uv_mirror:
+            if addon_prefs.image_uv_mirror:
 
-            row = layout.row(align=True)
+                row = layout.row(align=True)
 
-            row.operator("image.uv_mirror_x", text="", icon = "MIRROR_X")
-            row.operator("image.uv_mirror_y", text="", icon = "MIRROR_Y")
+                row.operator("image.uv_mirror_x", text="", icon = "MIRROR_X")
+                row.operator("image.uv_mirror_y", text="", icon = "MIRROR_Y")
 
-        if addon_prefs.image_uv_rotate:
+            if addon_prefs.image_uv_rotate:
 
-            row = layout.row(align=True)
+                row = layout.row(align=True)
 
-            row.operator("image.uv_rotate_clockwise", text="", icon = "ROTATE_PLUS_90")
-            row.operator("image.uv_rotate_counterclockwise", text="", icon = "ROTATE_MINUS_90")
+                row.operator("image.uv_rotate_clockwise", text="", icon = "ROTATE_PLUS_90")
+                row.operator("image.uv_rotate_counterclockwise", text="", icon = "ROTATE_MINUS_90")
 
-        if addon_prefs.image_uv_align:
+            if addon_prefs.image_uv_align:
 
-            row = layout.row(align=True)
+                row = layout.row(align=True)
 
-            #row.operator_enum("uv.align", "axis")  # W, 2/3/4 # bfa - enum is no good idea in header. It enums below each other. And the header just shows besides ...
+                #row.operator_enum("uv.align", "axis")  # W, 2/3/4 # bfa - enum is no good idea in header. It enums below each other. And the header just shows besides ...
 
-            row.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
-            row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
-            row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
-            row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
-            row.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
-            row.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
-            row.operator("uv.align_rotation", text= "", icon = "DRIVER_ROTATIONAL_DIFFERENCE")
+                row.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
+                row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
+                row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
+                row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
+                row.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
+                row.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+                row.operator("uv.align_rotation", text= "", icon = "DRIVER_ROTATIONAL_DIFFERENCE")
 
-            # Try to give unique tooltip fails at wrong context issue. It throws an error when you are not in edit mode, have no uv editor open, and there is no mesh selected.
-            # Code remains here for now. Maybe we find a solution at a later point.
-            #row.operator("image.uv_straighten", text= "straighten")
+                # Try to give unique tooltip fails at wrong context issue. It throws an error when you are not in edit mode, have no uv editor open, and there is no mesh selected.
+                # Code remains here for now. Maybe we find a solution at a later point.
+                #row.operator("image.uv_straighten", text= "straighten")
 
-        if addon_prefs.image_uv_unwrap:
+            if addon_prefs.image_uv_unwrap:
 
-            row = layout.row(align=True)
-            row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
-            sub = row.row()
-            sub.active = (mode == 'EDIT')
-            sub.operator("uv.clear_seam", text="", icon ="CLEAR_SEAM")
-            row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
+                row = layout.row(align=True)
+                row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
+                sub = row.row()
+                sub.active = (mode == 'EDIT')
+                sub.operator("uv.clear_seam", text="", icon ="CLEAR_SEAM")
+                row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
 
-            row = layout.row(align=True)
-            row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
-            row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL'
-            row.operator("uv.unwrap", text = "", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
-            row.operator_context = 'EXEC_REGION_WIN'
-            row.operator("uv.cube_project", text= "",icon = "CUBEPROJECT")
-            row.operator("uv.cylinder_project", text= "",icon = "CYLINDERPROJECT")
-            row.operator("uv.sphere_project", text= "",icon = "SPHEREPROJECT")
+                row = layout.row(align=True)
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL'
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("uv.cube_project", text= "",icon = "CUBEPROJECT")
+                row.operator("uv.cylinder_project", text= "",icon = "CYLINDERPROJECT")
+                row.operator("uv.sphere_project", text= "",icon = "SPHEREPROJECT")
 
-        if addon_prefs.image_uv_modify:
+            if addon_prefs.image_uv_modify:
 
-            row = layout.row(align=True)
+                row = layout.row(align=True)
 
-            row.operator("uv.pin", text= "", icon = "PINNED").clear = False
-            row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
+                row.operator("uv.pin", text= "", icon = "PINNED").clear = False
+                row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
 
-            row = layout.row(align=True)
-            row.operator("uv.weld", text="", icon='WELD')
-            #row.operator("uv.stitch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
-            row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
+                row = layout.row(align=True)
+                row.operator("uv.weld", text="", icon='WELD')
+                #row.operator("uv.stitch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
+                row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
 
-            row = layout.row(align=True)
-            row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
-            row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
-            sub = row.row()
-            sub.active = (mode == 'EDIT')
-            sub.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
-            #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
+                row = layout.row(align=True)
+                row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
+                row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
+                sub = row.row()
+                sub.active = (mode == 'EDIT')
+                sub.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
+                #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
 
 
 ######################################## Tools ##############################################
