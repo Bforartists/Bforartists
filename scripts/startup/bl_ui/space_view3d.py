@@ -2138,7 +2138,7 @@ class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
         layout.operator("mesh.select_loose", text="Loose Geometry", icon="SELECT_LOOSE")
         layout.operator("mesh.select_interior_faces", text="Interior Faces", icon="SELECT_INTERIOR")
         layout.operator("mesh.select_face_by_sides", text="Faces by Sides", icon="SELECT_FACES_BY_SIDE")
-        layout.operator("mesh.select_by_pole_count", text="Poles by Count")
+        layout.operator("mesh.select_by_pole_count", text="Poles by Count", icon = 'POLE')
 
         layout.separator()
 
