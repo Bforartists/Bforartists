@@ -1478,6 +1478,7 @@ if(WITH_BLENDER)
       points_to_curves
       points_to_vertices
       pokefaces
+	  pole
       polygonsides
       polyline_hide
       polyline_show
