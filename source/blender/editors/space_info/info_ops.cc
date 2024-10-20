@@ -212,20 +212,24 @@ void FILE_OT_pack_all(wmOperatorType *ot)
  * \{ */
 
 static const EnumPropertyItem unpack_all_method_items[] = {
-    {PF_USE_LOCAL, "USE_LOCAL", 0, "Use files in current directory (create when necessary)", ""},
+    {PF_USE_LOCAL,
+     "USE_LOCAL",
+     ICON_FILE_FOLDER,
+     "Use files in current directory (create when necessary)",
+     ""},
     {PF_WRITE_LOCAL,
      "WRITE_LOCAL",
-     0,
+     ICON_FILE_FOLDER,
      "Write files to current directory (overwrite existing files)",
      ""},
     {PF_USE_ORIGINAL,
      "USE_ORIGINAL",
-     0,
+     ICON_FILE_FOLDER,
      "Use files in original location (create when necessary)",
      ""},
     {PF_WRITE_ORIGINAL,
      "WRITE_ORIGINAL",
-     0,
+     ICON_FILE_FOLDER,
      "Write files to original location (overwrite existing files)",
      ""},
     /*{PF_KEEP, "KEEP", 0, "Disable auto-pack, keep all packed files", ""},*/  // bfa - disabled
@@ -237,7 +241,7 @@ static const EnumPropertyItem unpack_all_method_items[] = {
                                                                                // auto-pack is a
                                                                                // checkbox in same
                                                                                // menu.
-    {PF_REMOVE, "REMOVE", 0, "Remove Pack", ""},
+    {PF_REMOVE, "REMOVE", ICON_DELETE, "Remove Pack", ""},
     /* {PF_ASK, "ASK", 0, "Ask for each file", ""}, */
     {0, nullptr, 0, nullptr, nullptr},
 };
