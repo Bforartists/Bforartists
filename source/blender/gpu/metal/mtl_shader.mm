@@ -218,18 +218,8 @@ void MTLShader::fragment_shader_from_glsl(MutableSpan<const char *> sources)
   std::stringstream ss;
   int i;
   for (i = 0; i < sources.size(); i++) {
-    /* Output preprocessor directive to improve shader log. */
-    StringRefNull name = shader::gpu_shader_dependency_get_filename_from_source_string(sources[i]);
-    if (name.is_empty()) {
-      ss << "#line 1 \"generated_code_" << i << "\"\n";
-    }
-    else {
-      ss << "#line 1 \"" << name << "\"\n";
-    }
-
     ss << sources[i] << '\n';
   }
-  ss << "#line 1 \"msl_wrapper_code\"\n";
   shd_builder_->glsl_fragment_source_ = ss.str();
 }
 
@@ -245,14 +235,6 @@ void MTLShader::compute_shader_from_glsl(MutableSpan<const char *> sources)
   /* Consolidate GLSL compute sources. */
   std::stringstream ss;
   for (int i = 0; i < sources.size(); i++) {
-    /* Output preprocessor directive to improve shader log. */
-    StringRefNull name = shader::gpu_shader_dependency_get_filename_from_source_string(sources[i]);
-    if (name.is_empty()) {
-      ss << "#line 1 \"generated_code_" << i << "\"\n";
-    }
-    else {
-      ss << "#line 1 \"" << name << "\"\n";
-    }
     ss << sources[i] << std::endl;
   }
   shd_builder_->glsl_compute_source_ = ss.str();
@@ -1864,13 +1846,36 @@ MTLParallelShaderCompiler::MTLParallelShaderCompiler()
 
 MTLParallelShaderCompiler::~MTLParallelShaderCompiler()
 {
-  BLI_assert(batches.is_empty());
+  /* Shutdown the compiler threads. */
   terminate_compile_threads = true;
   cond_var.notify_all();
 
   for (auto &thread : compile_threads) {
     thread.join();
   }
+
+  /* Mark any unprocessed work items as ready so we can move
+   * them into a batch for cleanup. */
+  if (!parallel_work_queue.empty()) {
+    std::unique_lock<std::mutex> lock(queue_mutex);
+    while (!parallel_work_queue.empty()) {
+      ParallelWork *work_item = parallel_work_queue.front();
+      work_item->is_ready = true;
+      parallel_work_queue.pop_front();
+    }
+  }
+
+  /* Clean up any outstanding batches. */
+  for (BatchHandle handle : batches.keys()) {
+    Vector<Shader *> shaders = batch_finalize(handle);
+    /* Delete any shaders in the batch. */
+    for (Shader *shader : shaders) {
+      if (shader) {
+        delete shader;
+      }
+    }
+  }
+  BLI_assert(batches.is_empty());
 }
 
 void MTLParallelShaderCompiler::create_compile_threads()
