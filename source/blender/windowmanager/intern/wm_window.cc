@@ -500,7 +500,7 @@ void WM_window_title(wmWindowManager *wm, wmWindow *win, const char *title)
     bScreen *screen = WM_window_get_active_screen(win);
     const bool is_single = screen && BLI_listbase_is_single(&screen->areabase);
     ScrArea *area = (screen) ? static_cast<ScrArea *>(screen->areabase.first) : nullptr;
-    const char *name = "Blender";
+    const char *name = "Bforartists"; /*bfa   we are not Blender*/
     if (is_single && area && area->spacetype != SPACE_EMPTY) {
       name = IFACE_(ED_area_name(area).c_str());
     }
