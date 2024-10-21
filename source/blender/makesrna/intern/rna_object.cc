@@ -164,7 +164,7 @@ const EnumPropertyItem rna_enum_object_gpencil_type_items[] = {
      "MONKEY",
      ICON_MONKEY,
      "Monkey",
-     "Construct a Suzanne grease pencil object\nSwitch to Draw mode to draw grease pencil "
+     "Construct a Monkey names Suzanne grease pencil object\nSwitch to Draw mode to draw grease pencil "
      "strokes"},
     RNA_ENUM_ITEM_SEPR,
     {GREASE_PENCIL_LINEART_SCENE,
@@ -916,8 +916,7 @@ static void rna_VertexGroup_name_set(PointerRNA *ptr, const char *value)
   }
 
   bDeformGroup *dg = static_cast<bDeformGroup *>(ptr->data);
-  STRNCPY_UTF8(dg->name, value);
-  BKE_object_defgroup_unique_name(dg, ob);
+  BKE_object_defgroup_set_name(dg, ob, value);
 }
 
 static int rna_VertexGroup_index_get(PointerRNA *ptr)
@@ -3571,7 +3570,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_grease_pencil_lights", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "dtx", OB_USE_GPENCIL_LIGHTS);
   RNA_def_property_boolean_default(prop, true);
-  RNA_def_property_ui_text(prop, "Use Lights", "Lights affect grease pencil object");
+  RNA_def_property_ui_text(prop, "Use Lights", "Lights affect Grease Pencil object");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_GPencil_update");
 
   prop = RNA_def_property(srna, "show_transparent", PROP_BOOLEAN, PROP_NONE);
