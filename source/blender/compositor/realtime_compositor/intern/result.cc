@@ -26,6 +26,11 @@ Result::Result(Context &context, ResultType type, ResultPrecision precision)
 {
 }
 
+Result::Result(Context &context, eGPUTextureFormat format)
+    : context_(&context), type_(Result::type(format)), precision_(Result::precision(format))
+{
+}
+
 eGPUTextureFormat Result::gpu_texture_format(ResultType type, ResultPrecision precision)
 {
   switch (precision) {
@@ -620,6 +625,17 @@ void Result::release()
    * texture pool. */
   reference_count_--;
   if (reference_count_ != 0) {
+    return;
+  }
+
+  this->free();
+}
+
+void Result::free()
+{
+  /* If there is a master result, free it instead. */
+  if (master_) {
+    master_->free();
     return;
   }
 
