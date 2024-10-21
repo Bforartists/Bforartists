@@ -4685,7 +4685,10 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-
+            props = col.operator("node.add_node", text=" Curves to Grease Pencil", icon = "OUTLINER_OB_GREASEPENCIL")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvesToGreasePencil"
+            
             props = col.operator("node.add_node", text=" Curve to Mesh            ", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
@@ -4705,8 +4708,16 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Fillet Curve                ", icon = "CURVE_FILLET")
             props.use_transform = True
             props.type = "GeometryNodeFilletCurve"
+            
+            props = col.operator("node.add_node", text=" Grease Pencil to Curves", icon = "OUTLINER_OB_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeGreasePencilToCurves"
 
-            props = col.operator("node.add_node", text=" Interpolate Curve        ", icon = "CURVE_RESAMPLE")
+            props = col.operator("node.add_node", text=" Interpolate Curve    ", icon = "INTERPOLATE_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeInterpolateCurves"
+            
+            props = col.operator("node.add_node", text=" Merge Layers            ", icon = "MERGE")
             props.use_transform = True
             props.type = "GeometryNodeInterpolateCurves"
 
@@ -4718,7 +4729,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeReverseCurve"
 
-            props = col.operator("node.add_node", text=" Subdivide Curve         ", icon = "SUBDIVIDE_EDGES")
+            props = col.operator("node.add_node", text=" Subdivide Curve       ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivideCurve"
 
@@ -4732,7 +4743,10 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
+            
+            props = flow.operator("node.add_node", text="", icon = "OUTLINER_OB_GREASEPENCIL")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvesToGreasePencil"
 
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
@@ -4753,8 +4767,16 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_FILLET")
             props.use_transform = True
             props.type = "GeometryNodeFilletCurve"
+            
+            props = flow.operator("node.add_node", text="", icon = "OUTLINER_OB_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeGreasePencilToCurves"
 
-            props = flow.operator("node.add_node", text="", icon = "CURVE_RESAMPLE")
+            props = flow.operator("node.add_node", text="", icon = "INTERPOLATE_CURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeInterpolateCurves"
+            
+            props = flow.operator("node.add_node", text="", icon = "MERGE")
             props.use_transform = True
             props.type = "GeometryNodeInterpolateCurves"
 
