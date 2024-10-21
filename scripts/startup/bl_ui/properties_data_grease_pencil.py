@@ -221,10 +221,10 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.operator("grease_pencil.layer_lock_all", icon='UNLOCKED', text="Unlock All").lock = False
 
         layout.separator()
-        layout.operator("grease_pencil.layer_merge", text="Merge Down").mode = 'ACTIVE'
-        layout.operator("grease_pencil.layer_merge", text="Merge Group").mode = 'GROUP'
-        layout.operator("grease_pencil.layer_merge", text="Merge All").mode = 'ALL'
-        
+        layout.operator("grease_pencil.layer_merge", text="Merge Down", icon = 'MERGE').mode = 'ACTIVE'
+        layout.operator("grease_pencil.layer_merge", text="Merge Group", icon = 'MERGE').mode = 'GROUP'
+        layout.operator("grease_pencil.layer_merge", text="Merge All", icon = 'MERGE').mode = 'ALL'
+
         layout.separator()
         layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
         layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected", icon = 'PASTEDOWN').only_active = False
@@ -268,7 +268,7 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
             sub.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
         if is_group_active:
             sub.operator("grease_pencil.layer_group_remove", icon='REMOVE', text="").keep_children = True
- 
+
         col.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="") # BFA - moved below per standards
 
         sub = col.column(align=True)
@@ -285,7 +285,7 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         sub.operator("grease_pencil.layer_isolate", icon="LOCKED", text="").affect_visibility = False # BFA - added for v2 consistency
 
         col.separator()
-        
+
         if not is_layer_active:
             return
 
@@ -497,8 +497,8 @@ class DATA_PT_grease_pencil_attributes(DataButtonsPanel, Panel):
         col = row.column(align=True)
         col.operator("geometry.attribute_add", icon='ADD', text="")
         col.operator("geometry.attribute_remove", icon='REMOVE', text="")
-        
-        
+
+
 ## BFA - WIP - operator for GUI buttons to re-order items through groups - Start
 class GREASE_PENCIL_OT_interface_item_move(DataButtonsPanel, Operator):
     '''Move the active layer to the specified direction\nYou can also alternatively drag and drop the active layer or group to reorder and change hierarchy'''
