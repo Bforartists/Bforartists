@@ -16,7 +16,7 @@ class BrushAssetShelf:
 
     @classmethod
     def poll(cls, context):
-        return hasattr(context, "object") and context.object and context.object.mode == cls.mode
+        return (ob := getattr(context, "object", None)) is not None and ob.mode == cls.mode
 
     @classmethod
     def has_tool_with_brush_type(cls, context, brush_type):
@@ -318,7 +318,7 @@ class BrushSelectPanel(BrushPanel):
         if brush is None:
             return
 
-        if brush.has_unsaved_changes and bpy.ops.brush.asset_update.poll():
+        if brush.has_unsaved_changes and bpy.ops.brush.asset_save.poll():
             layout.label(text="*Unsaved Changes")
             layout.separator()
 
@@ -342,7 +342,8 @@ class BrushSelectPanel(BrushPanel):
         if brush:
             if brush.library and brush.library.is_editable:
                 col.separator()
-                col.operator("brush.asset_update", text="", icon="FILE_REFRESH") # BFA - exposed to top
+                if brush.has_unsaved_changes:
+                    col.operator("brush.asset_save", text="", icon="FILE_TICK") # BFA - exposed to top
                 col.operator("brush.asset_revert", text="", icon="UNDO") # BFA - exposed to top
             else:
                 col.separator()
@@ -362,8 +363,7 @@ class BrushSelectPanel(BrushPanel):
                 row.operator("brush.asset_save_as", text="", icon='DUPLICATE') # BFA - exposed to top
                 row.operator("brush.asset_delete", text="", icon='X') # BFA - exposed to top
             else:
-                row.operator("brush.asset_save_as", text="", icon='FILE_TICK') # BFA - exposed to top
-                row.operator("brush.asset_delete", text="", icon='X') # BFA - exposed to top
+                row.operator("brush.asset_save_as", text="", icon='DUPLICATE') # BFA - exposed to top
         ## BFA - Changed layout to expose common operators to top level for consistency - END ##
 
         if brush is None:
