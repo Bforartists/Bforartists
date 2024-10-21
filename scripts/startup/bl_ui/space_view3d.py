@@ -125,10 +125,10 @@ class VIEW3D_HT_tool_header(Header):
                     if tool in {'SMOOTH', 'RANDOMIZE'}:
                         layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover")
                     layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
-        elif tool_mode == 'WEIGHT_GREASE_PENCIL':
+        elif tool_mode == 'WEIGHT_GPENCIL' or tool_mode == 'WEIGHT_GREASE_PENCIL':
             if is_valid_context:
                 layout.popover("VIEW3D_PT_tools_grease_pencil_weight_appearance")
-        elif tool_mode == 'VERTEX_GREASE_PENCIL':
+        elif tool_mode == 'VERTEX_GPENCIL' or tool_mode == 'VERTEX_GREASE_PENCIL':
             if is_valid_context:
                 layout.popover("VIEW3D_PT_tools_grease_pencil_vertex_appearance")
 
@@ -238,6 +238,13 @@ class VIEW3D_HT_tool_header(Header):
                     panel="VIEW3D_PT_greasepencil_edit_options",
                     text="Options",
                 )
+
+        if mode_string == 'PAINT_GREASE_PENCIL':
+            layout.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
+            layout.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
+            layout.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
+            layout.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
+
 
 class _draw_tool_settings_context_mode:
     @staticmethod
@@ -949,16 +956,6 @@ class VIEW3D_HT_header(Header):
                     if settings.use_guide:
                         sub.popover(panel="VIEW3D_PT_grease_pencil_guide", text="Guides")
 
-                # BFA - Show Grease Pencil options
-                row = layout.row()
-                sub = row.row(align=True)
-                sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
 
             if object_mode == 'SCULPT_GREASE_PENCIL':
                 layout.popover(
