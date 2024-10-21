@@ -12338,6 +12338,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_CURVE_TOPOLOGY_POINTS_OF_CURVE:
       return ICON_POINT_OF_CURVE;
+
+    case GEO_NODE_CURVES_TO_GREASE_PENCIL:
+      return ICON_OUTLINER_OB_GREASEPENCIL;
     
     case GEO_NODE_DEFORM_CURVES_ON_SURFACE:
       return ICON_DEFORM_CURVES;
@@ -12395,6 +12398,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_GIZMO_TRANSFORM:
       return ICON_TRANSFORM_GIZMO;
+
+    case GEO_NODE_GREASE_PENCIL_TO_CURVES:
+      return ICON_OUTLINER_OB_CURVES;
     
     case GEO_NODE_IMAGE_INFO:
       return ICON_IMAGE_INFO;
@@ -12527,6 +12533,9 @@ static int node_type_to_icon(int type)
 
     case GEO_NODE_MERGE_BY_DISTANCE:
       return ICON_REMOVE_DOUBLES;
+
+    case GEO_NODE_MERGE_LAYERS:
+      return ICON_MERGE;
 
     case GEO_NODE_MESH_BOOLEAN:
       return ICON_MOD_BOOLEAN;
