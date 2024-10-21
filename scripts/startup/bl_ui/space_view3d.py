@@ -985,7 +985,7 @@ class VIEW3D_HT_header(Header):
 
             layout.popover(
                 panel="VIEW3D_PT_sculpt_snapping",
-                icon="SNAP_INCREMENT",
+                icon='SNAP_INCREMENT',
                 text="",
                 translate=False,
             )
@@ -1001,18 +1001,20 @@ class VIEW3D_HT_header(Header):
             row.popover(panel="VIEW3D_PT_slots_color_attributes", icon='GROUP_VCOL')
         elif object_mode == 'VERTEX_GREASE_PENCIL':
             draw_topbar_grease_pencil_layer_panel(context, layout)
-        elif object_mode in {'WEIGHT_PAINT', 'WEIGHT_GREASE_PENCIL'}:
+        elif object_mode == 'WEIGHT_PAINT':
+            row = layout.row()
+            row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon='GROUP_VERTEX')
+
+            layout.popover(
+                panel="VIEW3D_PT_sculpt_snapping",
+                icon='SNAP_INCREMENT',
+                text="",
+                translate=False,
+            )
+        elif object_mode == 'WEIGHT_GREASE_PENCIL':
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon='GROUP_VERTEX')
             draw_topbar_grease_pencil_layer_panel(context, row)
-
-            if object_mode != 'WEIGHT_GREASE_PENCIL':
-                layout.popover(
-                    panel="VIEW3D_PT_sculpt_snapping",
-                    icon="SNAP_INCREMENT",
-                    text="",
-                    translate=False,
-                )
 
         elif object_mode == 'TEXTURE_PAINT':
             tool_mode = tool_settings.image_paint.mode
@@ -1059,6 +1061,8 @@ class VIEW3D_HT_header(Header):
             sub.popover(panel="VIEW3D_PT_overlay_edit_mesh", text="", icon='EDITMODE_HLT')
         if mode_string == 'EDIT_CURVE':
             sub.popover(panel="VIEW3D_PT_overlay_edit_curve", text="", icon='EDITMODE_HLT')
+        elif mode_string == 'EDIT_CURVES':
+            sub.popover(panel="VIEW3D_PT_overlay_edit_curves", text="", icon='EDITMODE_HLT')
         elif mode_string == 'SCULPT':
             sub.popover(panel="VIEW3D_PT_overlay_sculpt", text="", icon='SCULPTMODE_HLT')
         elif mode_string == 'SCULPT_CURVES':
@@ -1393,10 +1397,11 @@ class VIEW3D_MT_mirror(Menu):
 
         for (space_name, space_id) in (("Global", 'GLOBAL'), ("Local", 'LOCAL')):
             for axis_index, axis_name in enumerate("XYZ"):
-                props = layout.operator("transform.mirror",
-                                        text="{:s} {:s}".format(axis_name, iface_(space_name)),
-                                        translate=False,
-                                        icon="MIRROR_" + axis_name)  # BFA: set icon
+                props = layout.operator(
+                		"transform.mirror",
+                        text="{:s} {:s}".format(axis_name, iface_(space_name)),
+                        translate=False,
+                        icon="MIRROR_" + axis_name)  # BFA: set icon
                 props.constraint_axis[axis_index] = True
                 props.orient_type = space_id
 
@@ -4365,7 +4370,7 @@ class VIEW3D_MT_sculpt(Menu):
             ('RELAX_FACE_SETS', iface_("Relax Face Sets"), 'RELAX_FACE_SETS'),
             ('SHARPEN', iface_("Sharpen"), 'SHARPEN'),
             ('ENHANCE_DETAILS', iface_("Enhance Details"), 'ENHANCE'),
-            ('ERASE_DISCPLACEMENT', iface_("Erase Multires Displacement"), 'DELETE'),
+            ('ERASE_DISPLACEMENT', iface_("Erase Multires Displacement"), 'DELETE'),
             ('RANDOM', iface_("Randomize"), 'RANDOMIZE')
         ]
         # BFA - added icons to the list above
@@ -6755,11 +6760,11 @@ class VIEW3D_MT_edit_greasepencil_animation(Menu):
 
         layout.separator()
         layout.operator("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon="DUPLICATE").all = False
-        layout.operator("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (All Layer)", icon="DUPLICATE_ALL").all = True
+        layout.operator("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon="DUPLICATE_ALL").all = True
 
         layout.separator()
         layout.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframe (Active Layer)", icon="DELETE").all = False
-        layout.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframe (All Layer)", icon="DELETE_ALL").all = True
+        layout.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframe (All Layers)", icon="DELETE_ALL").all = True
 
 
 class VIEW3D_MT_edit_greasepencil_showhide(Menu):
@@ -7186,6 +7191,23 @@ class VIEW3D_MT_sculpt_automasking_pie(Menu):
         pie.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
         pie.prop(sculpt, "use_automasking_start_normal", text="Area Normal")
         pie.prop(sculpt, "use_automasking_view_normal", text="View Normal")
+
+
+class VIEW3D_MT_grease_pencil_sculpt_automasking_pie(Menu):
+    bl_label = "Automasking"
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        tool_settings = context.tool_settings
+        sculpt = tool_settings.gpencil_sculpt
+
+        pie.prop(sculpt, "use_automasking_stroke", text="Stroke")
+        pie.prop(sculpt, "use_automasking_layer_stroke", text="Layer")
+        pie.prop(sculpt, "use_automasking_material_stroke", text="Material")
+        pie.prop(sculpt, "use_automasking_layer_active", text="Active Layer")
+        pie.prop(sculpt, "use_automasking_material_active", text="Active Material")
 
 
 class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
@@ -10231,6 +10253,13 @@ class TOPBAR_PT_grease_pencil_vertex_color(Panel):
         if paint.palette:
             layout.template_palette(paint, "palette", color=True)
 
+        gp_settings = brush.gpencil_settings
+        if brush.gpencil_tool in {'DRAW', 'FILL'}:
+            row = layout.row(align=True)
+            row.prop(gp_settings, "vertex_mode", text="Mode")
+            row = layout.row(align=True)
+            row.prop(gp_settings, "vertex_color_factor", slider=True, text="Mix Factor")
+
 
 class VIEW3D_PT_curves_sculpt_add_shape(Panel):
     # Only for popover, these are dummy values.
@@ -10650,6 +10679,7 @@ classes = (
     VIEW3D_MT_proportional_editing_falloff_pie,
     VIEW3D_MT_sculpt_mask_edit_pie,
     VIEW3D_MT_sculpt_automasking_pie,
+    VIEW3D_MT_grease_pencil_sculpt_automasking_pie,
     VIEW3D_MT_wpaint_vgroup_lock_pie,
     VIEW3D_MT_sculpt_face_sets_edit_pie,
     VIEW3D_MT_sculpt_curves,
@@ -10657,7 +10687,7 @@ classes = (
     VIEW3D_PT_active_tool_duplicate,
     VIEW3D_PT_view3d_properties,
     VIEW3D_PT_view3d_properties_edit,  # bfa panel
-    #VIEW3D_PT_view3d_lock, # BFA - not used
+    #VIEW3D_PT_view3d_lock, # BFA - not used, and Blender hotkeys doesn't call this, so ommitted
     VIEW3D_PT_view3d_camera_lock,  # bfa panel
     VIEW3D_PT_view3d_cursor,
     VIEW3D_PT_collections,
