@@ -345,7 +345,7 @@ class NODE_OT_interface_item_new(Operator): # -bfa separated the add operators w
 
 
 class NODE_OT_interface_item_new_input(NODE_OT_interface_item_new):# -bfa separated add input operator with own description.
-    '''Add a new input socket'''
+    """Add a new input socket"""
     bl_idname = "node.interface_item_new_input"
     bl_label = "New Input Socket"
     bl_options = {'REGISTER', 'UNDO'}
@@ -358,7 +358,7 @@ class NODE_OT_interface_item_new_input(NODE_OT_interface_item_new):# -bfa separa
 
 
 class NODE_OT_interface_item_new_panel(NODE_OT_interface_item_new):# -bfa separated add output operator with own description.
-    '''Add a new panel interface'''
+    """Add a new panel interface"""
     bl_idname = "node.interface_item_new_panel"
     bl_label = "New Panel Interface"
     bl_options = {'REGISTER', 'UNDO'}
@@ -371,7 +371,7 @@ class NODE_OT_interface_item_new_panel(NODE_OT_interface_item_new):# -bfa separa
 
 
 class NODE_OT_interface_item_new_output(NODE_OT_interface_item_new):# -bfa separated add panel operator with own description.
-    '''Add a new output socket'''
+    """Add a new output socket"""
     bl_idname = "node.interface_item_new_output"
     bl_label = "New Output Socket"
     bl_options = {'REGISTER', 'UNDO'}
@@ -384,7 +384,7 @@ class NODE_OT_interface_item_new_output(NODE_OT_interface_item_new):# -bfa separ
 
 
 class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
-    '''Add a copy of the active item to the interface'''
+    """Add a copy of the active item to the interface"""
     bl_idname = "node.interface_item_duplicate"
     bl_label = "Duplicate Item"
     bl_options = {'REGISTER', 'UNDO'}
@@ -413,7 +413,7 @@ class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
 
 
 class NODE_OT_interface_item_remove(NodeInterfaceOperator, Operator):
-    '''Remove active item from the interface'''
+    """Remove active item from the interface"""
     bl_idname = "node.interface_item_remove"
     bl_label = "Remove Item"
     bl_options = {'REGISTER', 'UNDO'}
@@ -432,7 +432,7 @@ class NODE_OT_interface_item_remove(NodeInterfaceOperator, Operator):
 
 ## BFA - BFA operator for GUI buttons to re-order items - Start
 class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
-    '''Move the active item to the specified direction\nYou can also alternatively drag and drop the active item to reorder'''
+    """Move the active item to the specified direction\nYou can also alternatively drag and drop the active item to reorder"""
     bl_idname = "node.interface_item_move"
     bl_label = "Move Item"
     bl_options = {'REGISTER', 'UNDO'}
