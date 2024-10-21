@@ -579,6 +579,7 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
         # Output quality
         use_crf = needs_codec and ffmpeg.codec in {
             'H264',
+            'H265',
             'MPEG4',
             'WEBM',
             'AV1',
