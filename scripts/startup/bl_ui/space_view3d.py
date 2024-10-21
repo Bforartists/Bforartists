@@ -223,10 +223,10 @@ class VIEW3D_HT_tool_header(Header):
                 'VERTEX_GREASE_PENCIL',
             }:
                 sub = row.row(align=True)
-                sub.active = tool_settings.use_grease_pencil_multi_frame_editing
-                sub.popover(
-                    panel="VIEW3D_PT_grease_pencil_multi_frame",
-                    text="",
+                if tool_settings.use_grease_pencil_multi_frame_editing:
+                    sub.popover(
+                        panel="VIEW3D_PT_grease_pencil_multi_frame",
+                        text="",
                 )
 
             # BFA - menu
