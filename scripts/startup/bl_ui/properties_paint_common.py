@@ -319,7 +319,7 @@ class BrushSelectPanel(BrushPanel):
             return
 
         if brush.has_unsaved_changes and bpy.ops.brush.asset_save.poll():
-            layout.label(text="*Unsaved Changes")
+            layout.label(text="", icon="INFO") # BFA - made it more compact and visual
             layout.separator()
 
     def draw(self, context):
@@ -364,6 +364,15 @@ class BrushSelectPanel(BrushPanel):
                 row.operator("brush.asset_delete", text="", icon='X') # BFA - exposed to top
             else:
                 row.operator("brush.asset_save_as", text="", icon='DUPLICATE') # BFA - exposed to top
+
+        row = layout.row()
+
+        if brush.has_unsaved_changes and bpy.ops.brush.asset_save.poll():
+            row = layout.row()
+            row.label(text="Settings Changed!", icon='INFO') # BFA - made save explicit
+            row = layout.row()
+            row.label(text="Save to keep changes.", icon='BLANK1') # BFA - made save explicit
+
         ## BFA - Changed layout to expose common operators to top level for consistency - END ##
 
         if brush is None:
