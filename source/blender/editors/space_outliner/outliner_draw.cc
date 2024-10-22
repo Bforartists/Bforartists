@@ -3777,6 +3777,17 @@ static void outliner_draw_struct_marks(ARegion *region,
   }
 }
 
+// Define the calculate_hierarchy_depth function before it is used
+int calculate_hierarchy_depth(const TreeElement *te, const SpaceOutliner *space_outliner) {
+    int depth = 0;
+    const TreeElement *current_te = te;
+    while (current_te) {
+        depth++;
+        current_te = current_te->parent;
+    }
+    return depth;
+}
+
 // Define the calculate_children_height function before it is used
 int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_outliner) {
     int total_height = 0;
@@ -3832,7 +3843,7 @@ static void outliner_draw_highlights(uint pos,
 
       /*BFA - WIP*/
       if (collection && TSELEM_OPEN(tselem, space_outliner)) {
-        int child_start_y = start_y + 1;
+        int child_start_y = start_y;
         int total_height = 0;
 
         // Calculate the total height of the collection content and children rows
@@ -3851,14 +3862,40 @@ static void outliner_draw_highlights(uint pos,
           is_nested_once = true;
         }
 
+        /*FOR ROOT*/
         if (is_nested_once) {
+          /* Draw the background rectangle with the modified alpha */
+          uchar background_color[4];
+          copy_v4_v4_uchar(background_color, col_collection);
+          background_color[3] = 20;  // Set the alpha channel for the background
+
+          immUniformColor4ubv(background_color);
+          immRecti(pos, 0, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
+        }
+        /*FOR CHILDREN*/
+        else {
+          int depth = calculate_hierarchy_depth(te, space_outliner);  // Calculate the hierarchy depth of the tree item
+          int offset_x = depth * UI_UNIT_X;  // Define the offset based on the hierarchy depth
+
           /* Draw the background rectangle with the modified alpha */
           uchar background_color[4];
           copy_v4_v4_uchar(background_color, col_collection);
           background_color[3] = 25;  // Set the alpha channel for the background
 
+          /*HORIZONTAL*/
           immUniformColor4ubv(background_color);
-          immRecti(pos, 0, child_start_y, int(region->v2d.cur.xmax), start_y - total_height);
+          //immRecti(pos, offset_x, child_start_y, int(region->v2d.cur.xmax), start_y - total_height);
+          immRecti(pos, offset_x, child_start_y, int(region->v2d.cur.xmax), child_start_y);
+
+          /*VERTICAL*/
+          /* Draw the background rectangle with the modified alpha */
+          uchar nested_color[4];
+          copy_v4_v4_uchar(nested_color, col_collection);
+          nested_color[3] = 30;  // Set the alpha channel for the background
+
+          immUniformColor4ubv(nested_color);
+          //immRecti(pos, offset_x, child_start_y + UI_UNIT_Y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
+          immRecti(pos, offset_x, child_start_y + UI_UNIT_Y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
         }
       }
 
