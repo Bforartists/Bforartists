@@ -3777,8 +3777,8 @@ static void outliner_draw_struct_marks(ARegion *region,
   }
 }
 
-// Define the calculate_hierarchy_depth function before it is used
-int calculate_hierarchy_depth(const TreeElement *te, const SpaceOutliner *space_outliner) {
+/* BFA - Define the calculate_hierarchy_depth function before it is used*/
+int calculate_hierarchy_depth(const TreeElement *te) {
     int depth = 0;
     const TreeElement *current_te = te;
     while (current_te) {
@@ -3788,7 +3788,7 @@ int calculate_hierarchy_depth(const TreeElement *te, const SpaceOutliner *space_
     return depth;
 }
 
-// Define the calculate_children_height function before it is used
+/* BFA - Define the calculate_children_height function before it is used*/
 int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_outliner) {
     int total_height = 0;
     LISTBASE_FOREACH (TreeElement *, child_te, &te->subtree) {
@@ -3828,18 +3828,19 @@ static void outliner_draw_highlights(uint pos,
                                 btheme->collection_color[collection->color_tag].color :
                                 btheme->space_outliner.back;
 
-      /* Collection color. */
+      int depth = calculate_hierarchy_depth(te);  // Calculate the hierarchy depth of the tree item
+      int offset_x = depth * UI_UNIT_X;  // Define the offset based on the hierarchy depth
+      int alpha = 20;
+
+      /* Draw the collection icon with the original alpha */
       immUniformColor4ubv(col_collection);
 
       /* Draw the background rectangle with the modified alpha */
       uchar background_color[4];
       copy_v4_v4_uchar(background_color, col_collection);
-      background_color[3] = 25;  // Set the alpha channel for the background
+      background_color[3] = alpha;  // Set the alpha channel for the background
       immUniformColor4ubv(background_color);
-      immRecti(pos, 0, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
-
-      /* Draw the collection icon with the original alpha */
-      immUniformColor4ubv(col_collection);
+      immRecti(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
 
       /*BFA - WIP*/
       if (collection && TSELEM_OPEN(tselem, space_outliner)) {
@@ -3867,38 +3868,32 @@ static void outliner_draw_highlights(uint pos,
           /* Draw the background rectangle with the modified alpha */
           uchar background_color[4];
           copy_v4_v4_uchar(background_color, col_collection);
-          background_color[3] = 20;  // Set the alpha channel for the background
+          background_color[3] = alpha;  // Set the alpha channel for the background
 
           immUniformColor4ubv(background_color);
-          immRecti(pos, 0, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
+          immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
         }
         /*FOR CHILDREN*/
         else {
-          int depth = calculate_hierarchy_depth(te, space_outliner);  // Calculate the hierarchy depth of the tree item
-          int offset_x = depth * UI_UNIT_X;  // Define the offset based on the hierarchy depth
-
+          /*HORIZONTAL*/
           /* Draw the background rectangle with the modified alpha */
           uchar background_color[4];
           copy_v4_v4_uchar(background_color, col_collection);
-          background_color[3] = 25;  // Set the alpha channel for the background
+          background_color[3] = alpha;  // Set the alpha channel for the background
 
-          /*HORIZONTAL*/
           immUniformColor4ubv(background_color);
-          //immRecti(pos, offset_x, child_start_y, int(region->v2d.cur.xmax), start_y - total_height);
-          immRecti(pos, offset_x, child_start_y, int(region->v2d.cur.xmax), child_start_y);
+          immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
 
           /*VERTICAL*/
           /* Draw the background rectangle with the modified alpha */
           uchar nested_color[4];
           copy_v4_v4_uchar(nested_color, col_collection);
-          nested_color[3] = 30;  // Set the alpha channel for the background
+          nested_color[3] = alpha + alpha;  // Set the alpha channel for the background
 
           immUniformColor4ubv(nested_color);
-          //immRecti(pos, offset_x, child_start_y + UI_UNIT_Y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
-          immRecti(pos, offset_x, child_start_y + UI_UNIT_Y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
+          immRecti(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
         }
       }
-
     }
 
     /* Selection status. */
