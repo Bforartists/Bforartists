@@ -6842,10 +6842,13 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         tool_settings = context.tool_settings
         settings = tool_settings.gpencil_sculpt
+        mode = tool_settings.gpencil_selectmode_edit #bfa - the select mode for grease pencils
 
         layout.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
         layout.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
-        layout.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
+        #bfa - not in stroke mode. It is greyed out for this mode, so hide.
+        if mode != 'STROKE':
+            layout.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
         layout.operator("grease_pencil.stroke_trim", text="Trim", icon="CUT")
         layout.separator()
         layout.operator_menu_enum("grease_pencil.join_selection", "type", text="Join")
@@ -9571,6 +9574,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
     def draw(self, context):
         layout = self.layout
         tool_settings = context.tool_settings
+        mode = tool_settings.gpencil_selectmode_edit #bfa - the select mode for grease pencils
 
         is_stroke_mode = tool_settings.gpencil_selectmode_edit in {'STROKE', 'SEGMENT'} # BFA - added segment mode to show context menu
 
@@ -9614,9 +9618,11 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
+                    #bfa - not in stroke mode. It is greyed out for this mode, so hide.
+            if mode != 'STROKE':
+                col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
-            col.separator()
+                col.separator()
 
             col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
 
