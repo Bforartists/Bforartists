@@ -483,7 +483,12 @@ class _draw_tool_settings_context_mode:
             layout.separator(factor=0.4)
             ups = context.tool_settings.unified_paint_settings
             prop_owner = ups if ups.use_unified_color else brush
-            layout.prop_with_popover(prop_owner, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
+
+            sub = layout.row(align=True)
+            sub.prop_with_popover(prop_owner, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
+            sub.prop(prop_owner, "secondary_color", text="")
+            sub.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
+
 
         brush_basic_grease_pencil_vertex_settings(layout, context, brush, compact=True)
 
