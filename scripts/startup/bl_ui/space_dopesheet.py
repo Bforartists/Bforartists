@@ -739,11 +739,11 @@ class DOPESHEET_MT_action(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("anim.merge_animation")
-        layout.operator("anim.separate_slots")
+        layout.operator("anim.merge_animation", icon = 'MERGE')
+        layout.operator("anim.separate_slots", icon = 'SEPARATE')
 
         layout.separator()
-        layout.operator("anim.slot_channels_move_to_new_action")
+        layout.operator("anim.slot_channels_move_to_new_action", icon = 'ACTION_SLOT')
 
 
 class DOPESHEET_MT_key(Menu):
@@ -996,13 +996,13 @@ class DOPESHEET_MT_gpencil_channel(Menu):
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
         # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
-        
+
         #layout.separator()
 
         #layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
         #layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
         #layout.operator("anim.channels_editable_toggle", icon="LOCKED")
-        
+
 
         # XXX: to be enabled when these are ready for use!
         # layout.separator()
