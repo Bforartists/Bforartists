@@ -1,4 +1,4 @@
-keyconfig_version = (4, 4, 1)
+keyconfig_version = (4, 4, 3)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -5032,6 +5032,27 @@ keyconfig_data = \
     ("node.links_mute", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True}, None),
     ("node.links_cut", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "ctrl": True}, None),
     ("node.group_make", {"type": 'G', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("node.connect_to_output",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "alt": True},
+     {"properties":
+      [("run_in_geometry_nodes", True),
+       ],
+      },
+     ),
+    ("node.connect_to_output",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True},
+     {"properties":
+      [("run_in_geometry_nodes", False),
+       ],
+      },
+     ),
+    ("node.connect_to_output",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "alt": True},
+     {"properties":
+      [("run_in_geometry_nodes", False),
+       ],
+      },
+     ),
     ],
    },
   ),
