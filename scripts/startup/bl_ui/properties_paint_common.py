@@ -1675,6 +1675,7 @@ def brush_mask_texture_settings(layout, brush):
         col = layout.column()
         col.prop(mask_tex_slot, "angle", text="Angle")
         if mask_tex_slot.has_texture_angle_source:
+            col.use_property_split = False # BFA
             col.prop(mask_tex_slot, "use_rake", text="Rake")
 
             if brush.brush_capabilities.has_random_texture_angle and mask_tex_slot.has_random_texture_angle:
@@ -1683,6 +1684,7 @@ def brush_mask_texture_settings(layout, brush):
                     col.prop(mask_tex_slot, "random_angle", text="Random Angle")
 
     # scale and offset
+    col.use_property_split = True # BFA
     col.prop(mask_tex_slot, "offset")
     col.prop(mask_tex_slot, "scale")
 
