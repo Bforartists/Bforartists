@@ -36,32 +36,54 @@ from bl_ui.utils import PresetPanel
 class VIEW3D_MT_brush_context_menu(Menu):
     bl_label = "Brush Specials"
 
+     # BFA - made the context menu shelf contextual
     def draw(self, context):
         layout = self.layout
 
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = getattr(settings, "brush", None)
 
-        # skip if no active brush
-        if not brush:
-            layout.label(text="No brush selected", icon='INFO')
-            return
+        if context.region.type == 'UI' and context.space_data.type == 'VIEW_3D':
+            # skip if no active brush
+            if not brush:
+                layout.label(text="No brush selected", icon='INFO')
+                return
 
-        if brush.library and brush.library.is_editable:
-            #layout.operator("brush.asset_save_as", text="Duplicate Asset", icon='DUPLICATE') # BFA - moved to top level
-            #layout.operator("brush.asset_delete", text="Delete Asset", icon='X') # BFA - moved to top level
+            if brush.library and brush.library.is_editable:
+                layout.operator("brush.asset_edit_metadata", text="Edit Metadata", icon="INFO") # BFA - icon added
+                layout.operator("brush.asset_load_preview", text="Edit Preview Image", icon="IMAGE_DATA") # BFA - icon added
+            else:
+                layout.label(text="This brush is built-in and not editable", icon='INFO')
 
-            layout.separator()
-
-            layout.operator("brush.asset_edit_metadata", text="Edit Metadata", icon="INFO") # BFA - icon added
-            layout.operator("brush.asset_load_preview", text="Edit Preview Image", icon="IMAGE_DATA") # BFA - icon added
-            #layout.operator("brush.asset_update", text="Update Asset", icon="FILE_REFRESH") # BFA - moved to top level
-            #layout.operator("brush.asset_revert", text="Revert to Asset", icon="UNDO") # BFA - moved to top level
         else:
-            layout.operator("brush.asset_save_as", text="Save As Asset", icon='FILE_TICK') # BFA - icon added
-            layout.operator("brush.asset_delete", text="Delete", icon='X') # BFA - icon added
+            # skip if no active brush
+            if not brush:
+                layout.label(text="No brush selected", icon='INFO')
+                return
+
+            if brush.library and brush.library.is_editable:
+                if brush.has_unsaved_changes:
+                    layout.operator("brush.asset_save", text="Save Asset", icon="FILE_TICK")
+                layout.operator("brush.asset_revert", text="Revert to Asset", icon="UNDO") # BFA - moved to context menu
+
+                layout.separator()
+
+                layout.operator("brush.asset_save_as", text="Duplicate Asset", icon='DUPLICATE') # BFA - moved to top level
+                layout.operator("brush.asset_delete", text="Delete Asset", icon='X') # BFA - moved to context menu
+
+                layout.separator()
+
+                layout.operator("brush.asset_edit_metadata", text="Edit Metadata", icon="INFO") # BFA - icon added
+                layout.operator("brush.asset_load_preview", text="Edit Preview Image", icon="IMAGE_DATA") # BFA - icon added
+
+            else:
+                layout.label(text="This brush is built-in and not editable", icon='INFO')
 
 
+    @classmethod
+    def poll(cls, context):
+        return True if context.region.type == 'UI' and context.space_data.type == 'VIEW_3D' else context.region.type == 'ASSET_SHELF'
+    # BFA - end of changes
 class VIEW3D_MT_brush_gpencil_context_menu(Menu):
     bl_label = "Brush Specials"
 
