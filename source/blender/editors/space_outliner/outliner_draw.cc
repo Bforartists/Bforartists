@@ -3777,7 +3777,7 @@ static void outliner_draw_struct_marks(ARegion *region,
   }
 }
 
-/* BFA - Define the calculate_hierarchy_depth function before it is used*/
+/* BFA - Define the calculate_hierarchy_depth function for outliner coloring*/
 int calculate_hierarchy_depth(const TreeElement *te) {
     int depth = 0;
     const TreeElement *current_te = te;
@@ -3787,8 +3787,9 @@ int calculate_hierarchy_depth(const TreeElement *te) {
     }
     return depth;
 }
+/* BFA - End*/
 
-/* BFA - Define the calculate_children_height function before it is used*/
+/* BFA - Define the calculate_children_height function for outiner coloring*/
 int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_outliner) {
     int total_height = 0;
     LISTBASE_FOREACH (TreeElement *, child_te, &te->subtree) {
@@ -3799,7 +3800,7 @@ int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_
     }
     return total_height;
 }
-
+/* BFA - End*/
 
 static void outliner_draw_highlights(uint pos,
                                      const ARegion *region,
@@ -3820,6 +3821,7 @@ static void outliner_draw_highlights(uint pos,
     const TreeStoreElem *tselem = TREESTORE(te);
     const int start_y = *io_start_y;
 
+    /*BFA - Start*/
     Collection *collection = nullptr;
     bTheme *btheme = UI_GetTheme();
     if (outliner_is_collection_tree_element(te)) {
@@ -3842,7 +3844,6 @@ static void outliner_draw_highlights(uint pos,
       immUniformColor4ubv(background_color);
       immRecti(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
 
-      /*BFA - WIP*/
       if (collection && TSELEM_OPEN(tselem, space_outliner)) {
         int child_start_y = start_y;
         int total_height = 0;
@@ -3895,6 +3896,7 @@ static void outliner_draw_highlights(uint pos,
         }
       }
     }
+    /*BFA - End*/
 
     /* Selection status. */
     if ((tselem->flag & TSE_ACTIVE) && (tselem->flag & TSE_SELECTED)) {
