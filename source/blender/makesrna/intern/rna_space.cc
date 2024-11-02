@@ -4543,9 +4543,9 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   /*bfa - the toolshelf tabs*/
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, NULL, "gridflag", V3D_SHOW_TOOLSHELF_TABS);
+  RNA_def_property_boolean_negative_sdna(prop, nullptr, "gridflag", V3D_SHOW_TOOLSHELF_TABS);
   RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show the tabs in the tool shelf");
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_axis_x", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_X);
