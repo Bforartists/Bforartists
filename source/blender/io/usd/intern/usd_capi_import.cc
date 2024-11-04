@@ -51,7 +51,7 @@
 #include <pxr/usd/usdGeom/metrics.h>
 #include <pxr/usd/usdGeom/tokens.h>
 
-#include <iostream>
+#include <fmt/core.h>
 
 namespace blender::io::usd {
 
@@ -186,9 +186,9 @@ struct ImportJobData {
 static void report_job_duration(const ImportJobData *data)
 {
   timeit::Nanoseconds duration = timeit::Clock::now() - data->start_time;
-  std::cout << "USD import of '" << data->filepath << "' took ";
+  fmt::print("USD import of '{}' took ", data->filepath);
   timeit::print_duration(duration);
-  std::cout << '\n';
+  fmt::print("\n");
 }
 
 static void import_startjob(void *customdata, wmJobWorkerStatus *worker_status)
@@ -643,6 +643,10 @@ CacheReader *CacheReader_open_usd_object(CacheArchiveHandle *handle,
 
   if (usd_reader == nullptr) {
     /* This object is not supported. */
+    return nullptr;
+  }
+  if (!usd_reader->valid()) {
+    /* This object is invalid for some reason. */
     return nullptr;
   }
   usd_reader->object(object);

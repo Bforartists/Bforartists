@@ -116,7 +116,7 @@ def dna_rename_defs(blend):
         r'([a-zA-Z0-9_]+)' r'\)',
     )
 
-    re_dna_struct_rename_member = re.compile(
+    re_dna_struct_rename_elem = re.compile(
         r'DNA_STRUCT_RENAME_MEMBER+\('
         r'([a-zA-Z0-9_]+)' r',\s*'
         r'([a-zA-Z0-9_]+)' r',\s*'
@@ -135,7 +135,7 @@ def dna_rename_defs(blend):
             struct_runtime_to_storage_map[struct_runtime] = struct_storage
             continue
 
-        m = re_dna_struct_rename_member.match(line)
+        m = re_dna_struct_rename_elem.match(line)
         if m is not None:
             struct_name_runtime, member_storage, member_runtime = m.groups()
             if struct_name_runtime not in member_runtime_to_storage_map:

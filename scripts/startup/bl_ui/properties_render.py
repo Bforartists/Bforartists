@@ -52,7 +52,6 @@ class RENDER_PT_color_management(RenderButtonsPanel, Panel):
     bl_order = 100
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -91,7 +90,6 @@ class RENDER_PT_color_management_display_settings(RenderButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -124,7 +122,6 @@ class RENDER_PT_color_management_curves(RenderButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -163,7 +160,6 @@ class RENDER_PT_color_management_white_balance(RenderButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -1158,7 +1154,7 @@ def draw_curves_settings(self, context):
 class RENDER_PT_eevee_hair(RenderButtonsPanel, Panel):
     bl_label = "Curves"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -1171,7 +1167,10 @@ class RENDER_PT_eevee_hair(RenderButtonsPanel, Panel):
 class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
     bl_label = "Performance"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+    }
 
     @classmethod
     def poll(cls, context):
@@ -1210,7 +1209,10 @@ class CompositorPerformanceButtonsPanel:
 class RENDER_PT_eevee_performance_compositor(RenderButtonsPanel, CompositorPerformanceButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "RENDER_PT_eevee_performance"
-    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT', 'BLENDER_WORKBENCH'}
+    COMPAT_ENGINES = {
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
+    }
 
 
 class RENDER_PT_eevee_performance_memory(RenderButtonsPanel, Panel):
@@ -1263,7 +1265,6 @@ class RENDER_PT_gpencil(RenderButtonsPanel, Panel):
     bl_order = 10
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -1356,7 +1357,6 @@ class RENDER_PT_simplify(RenderButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -1374,7 +1374,6 @@ class RENDER_PT_simplify_viewport(RenderButtonsPanel, Panel):
     bl_parent_id = "RENDER_PT_simplify"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -1408,7 +1407,6 @@ class RENDER_PT_simplify_render(RenderButtonsPanel, Panel):
     bl_parent_id = "RENDER_PT_simplify"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -1435,9 +1433,6 @@ class RENDER_PT_simplify_greasepencil(RenderButtonsPanel, Panel, GreasePencilSim
     bl_parent_id = "RENDER_PT_simplify"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_GAME',
-        'BLENDER_CLAY',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -1465,7 +1460,6 @@ class RENDER_PT_hydra_debug(RenderButtonsPanel, Panel):
 
 classes = (
     RENDER_PT_context,
-    RENDER_PT_eevee_sampling,
     RENDER_PT_eevee_next_sampling,
     RENDER_PT_eevee_next_sampling_viewport,
     RENDER_PT_eevee_next_sampling_render,
@@ -1474,34 +1468,21 @@ classes = (
     RENDER_PT_eevee_next_clamping,
     RENDER_PT_eevee_next_clamping_surface,
     RENDER_PT_eevee_next_clamping_volume,
-    RENDER_PT_eevee_ambient_occlusion,
-    RENDER_PT_eevee_bloom,
-    RENDER_PT_eevee_subsurface_scattering,
-    RENDER_PT_eevee_screen_space_reflections,
     RENDER_PT_eevee_next_raytracing_presets,
     RENDER_PT_eevee_next_raytracing,
     RENDER_PT_eevee_next_screen_trace,
     RENDER_PT_eevee_next_denoise,
     RENDER_PT_eevee_next_gi_approximation,
-    RENDER_PT_eevee_motion_blur,
-    RENDER_PT_eevee_volumetric,
-    RENDER_PT_eevee_volumetric_lighting,
-    RENDER_PT_eevee_volumetric_shadows,
     RENDER_PT_eevee_next_volumes,
     RENDER_PT_eevee_next_volumes_range,
     RENDER_PT_eevee_hair,
-    RENDER_PT_eevee_shadows,
-    RENDER_PT_eevee_indirect_lighting,
-    RENDER_PT_eevee_indirect_lighting_display,
     RENDER_PT_simplify,
     RENDER_PT_simplify_viewport,
     RENDER_PT_simplify_render,
     RENDER_PT_simplify_greasepencil,
-    RENDER_PT_eevee_depth_of_field,
     RENDER_PT_eevee_next_depth_of_field,
     RENDER_PT_eevee_next_motion_blur,
     RENDER_PT_eevee_next_motion_blur_curve,
-    RENDER_PT_eevee_film,
     RENDER_PT_eevee_next_film,
     RENDER_PT_eevee_performance,
     RENDER_PT_eevee_performance_memory,
