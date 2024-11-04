@@ -116,8 +116,8 @@ def dna_rename_defs(blend):
         r'([a-zA-Z0-9_]+)' r'\)',
     )
 
-    re_dna_struct_rename_elem = re.compile(
-        r'DNA_STRUCT_RENAME_ELEM+\('
+    re_dna_struct_rename_member = re.compile(
+        r'DNA_STRUCT_RENAME_MEMBER+\('
         r'([a-zA-Z0-9_]+)' r',\s*'
         r'([a-zA-Z0-9_]+)' r',\s*'
         r'([a-zA-Z0-9_]+)' r'\)',
@@ -135,7 +135,7 @@ def dna_rename_defs(blend):
             struct_runtime_to_storage_map[struct_runtime] = struct_storage
             continue
 
-        m = re_dna_struct_rename_elem.match(line)
+        m = re_dna_struct_rename_member.match(line)
         if m is not None:
             struct_name_runtime, member_storage, member_runtime = m.groups()
             if struct_name_runtime not in member_runtime_to_storage_map:
@@ -147,8 +147,8 @@ def dna_rename_defs(blend):
         if len(members) > 1:
             # Order renames that are themselves destinations to go first, so that the item is not removed.
             # Needed for e.g.
-            # `DNA_STRUCT_RENAME_ELEM(Light, energy_new, energy);`
-            # `DNA_STRUCT_RENAME_ELEM(Light, energy, energy_deprecated)`
+            # `DNA_STRUCT_RENAME_MEMBER(Light, energy_new, energy);`
+            # `DNA_STRUCT_RENAME_MEMBER(Light, energy, energy_deprecated)`
             # ... in this case the order matters.
             member_runtime_set = set(member_runtime for (_member_storage, member_runtime) in members)
             members_ordered = ([], [])
