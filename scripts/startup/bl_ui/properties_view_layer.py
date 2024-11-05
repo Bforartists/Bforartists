@@ -56,7 +56,6 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
     bl_label = "View Layer"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE',
         'BLENDER_EEVEE_NEXT',
         'BLENDER_WORKBENCH',
     }
@@ -96,7 +95,7 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
 
 class VIEWLAYER_PT_layer_passes(ViewLayerButtonsPanel, Panel):
     bl_label = "Passes"
-    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
 
     def draw(self, context):
         pass
@@ -127,7 +126,7 @@ class VIEWLAYER_PT_eevee_layer_passes_data(ViewLayerButtonsPanel, Panel):
 class VIEWLAYER_PT_eevee_layer_passes_mist(ViewLayerButtonsPanel, Panel):
     bl_label = "Mist Pass"
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
 
     @classmethod
     def poll(cls, context):
@@ -381,7 +380,7 @@ class ViewLayerAOVPanelHelper(ViewLayerButtonsPanel):
 
 class VIEWLAYER_PT_layer_passes_aov(ViewLayerAOVPanelHelper, Panel):
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
 
 
 class ViewLayerCryptomattePanelHelper(ViewLayerButtonsPanel):
@@ -436,7 +435,7 @@ class ViewLayerCryptomattePanelHelper(ViewLayerButtonsPanel):
 
 class VIEWLAYER_PT_layer_passes_cryptomatte(ViewLayerCryptomattePanelHelper, Panel):
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
 
 
 class VIEWLAYER_MT_lightgroup_sync(Menu):
@@ -533,9 +532,7 @@ classes = (
     VIEWLAYER_PT_eevee_layer_passes_data,
     VIEWLAYER_PT_eevee_layer_passes_mist,  # bfa - move mist panel to viewlayers
     VIEWLAYER_PT_eevee_next_layer_passes_data,
-    VIEWLAYER_PT_eevee_layer_passes_light,
     VIEWLAYER_PT_eevee_next_layer_passes_light,
-    VIEWLAYER_PT_eevee_layer_passes_effects,
     VIEWLAYER_PT_layer_passes_cryptomatte,
     VIEWLAYER_PT_layer_passes_aov,
     VIEWLAYER_PT_layer_passes_lightgroups,
