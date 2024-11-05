@@ -1608,6 +1608,7 @@ typedef enum eUserpref_SeqProxySetup {
 typedef enum eUserpref_SeqEditorFlags {
   USER_SEQ_ED_SIMPLE_TWEAKING = (1 << 0),
   USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT = (1 << 1),
+  USER_OUTLINER_COL_COLLECTION_ROWS = 2, /*bfa - outliner colored collection rows*/
 } eUserpref_SeqEditorFlags;
 
 /* Locale Ids. Auto will try to get local from OS. Our default is English though. */
