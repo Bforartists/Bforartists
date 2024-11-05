@@ -809,7 +809,7 @@ void MATERIAL_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Material";
   ot->idname = "MATERIAL_OT_new";
-  ot->description = "Add a new material";
+  ot->description = "Creates a Duplicate of the current material";
 
   /* api callbacks */
   ot->exec = new_material_exec;
@@ -867,7 +867,7 @@ void TEXTURE_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Texture";
   ot->idname = "TEXTURE_OT_new";
-  ot->description = "Add a new texture";
+  ot->description = "Creates a duplicate of the current texture";
 
   /* api callbacks */
   ot->exec = new_texture_exec;
