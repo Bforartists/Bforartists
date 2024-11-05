@@ -1676,13 +1676,13 @@ static void rna_def_ID_materials(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "append", "rna_IDMaterials_append_id");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Add a new material to the data-block");
+  RNA_def_function_ui_description(func, "Add a new material to the data");
   parm = RNA_def_pointer(func, "material", "Material", "", "Material to add");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 
   func = RNA_def_function(srna, "pop", "rna_IDMaterials_pop_id");
   RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Remove a material from the data-block");
+  RNA_def_function_ui_description(func, "Remove a material from the data");
   parm = RNA_def_int(
       func, "index", -1, -MAXMAT, MAXMAT, "", "Index of material to remove", 0, MAXMAT);
   parm = RNA_def_pointer(func, "material", "Material", "", "Material to remove");
@@ -1690,7 +1690,7 @@ static void rna_def_ID_materials(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "clear", "rna_IDMaterials_clear_id");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Remove all materials from the data-block");
+  RNA_def_function_ui_description(func, "Remove all materials from the data");
 }
 
 static void rna_def_image_preview(BlenderRNA *brna)
