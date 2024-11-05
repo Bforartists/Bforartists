@@ -312,7 +312,7 @@ void ACTION_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Action";
   ot->idname = "ACTION_OT_new";
-  ot->description = "Create new action";
+  ot->description = "Creates a duplicate of the current action";
 
   /* api callbacks */
   ot->exec = action_new_exec;
