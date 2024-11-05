@@ -5878,6 +5878,15 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
       "Connect Movie Strips by Default",
       "Connect newly added movie strips by default if they have multiple channels");
 
+  /*bfa - outliner colored collection rows*/
+  prop = RNA_def_property(srna, "outliner_colored_collection_rows", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "sequencer_editor_flag", USER_OUTLINER_COL_COLLECTION_ROWS);
+  RNA_def_property_ui_text(
+      prop,
+      "Colored Collection Rows",
+      "Display colored collection rows in the outliner");
+
   /* duplication linking */
   prop = RNA_def_property(srna, "use_duplicate_mesh", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "dupflag", USER_DUP_MESH);
