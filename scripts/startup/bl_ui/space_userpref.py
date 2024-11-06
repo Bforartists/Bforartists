@@ -587,6 +587,18 @@ class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):
         layout.prop(edit, "connect_strips_by_default") # BFA - wip
 
 
+class USERPREF_PT_edit_outliner_editor(EditingPanel, CenterAlignMixIn, Panel):
+    bl_label = "Outliner"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_centered(self, context, layout):
+        prefs = context.preferences
+        edit = prefs.edit
+        layout.use_property_split = False
+
+        layout.prop(edit, "outliner_colored_collection_rows") # BFA - colored collection rows
+
+
 class USERPREF_PT_edit_misc(EditingPanel, CenterAlignMixIn, Panel):
     bl_label = "Miscellaneous"
     bl_options = {'DEFAULT_CLOSED'}
@@ -3119,6 +3131,7 @@ classes = (
     USERPREF_PT_edit_text_editor,
     USERPREF_PT_edit_node_editor,
     USERPREF_PT_edit_sequence_editor,
+    USERPREF_PT_edit_outliner_editor,
     USERPREF_PT_edit_misc,
 
     USERPREF_PT_animation_timeline,
