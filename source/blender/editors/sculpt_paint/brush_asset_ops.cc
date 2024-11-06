@@ -398,7 +398,7 @@ void BRUSH_OT_asset_save_as(wmOperatorType *ot)
 {
   ot->name = "Save as Brush Asset";
   ot->description =
-      "Save a copy of the active brush asset into the default asset library, and make it the "
+      "Duplicates the active brush asset, saves it into the default asset library, and make it the "
       "active brush";
   ot->idname = "BRUSH_OT_asset_save_as";
 

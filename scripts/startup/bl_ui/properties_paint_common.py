@@ -342,8 +342,7 @@ class BrushSelectPanel(BrushPanel):
         if brush:
             if brush.library and brush.library.is_editable:
                 col.separator()
-                if brush.has_unsaved_changes:
-                    col.operator("brush.asset_save", text="", icon="FILE_TICK") # BFA - exposed to top
+                col.operator("brush.asset_save", text="", icon="FILE_TICK") # BFA - exposed to top
                 col.operator("brush.asset_revert", text="", icon="UNDO") # BFA - exposed to top
             else:
                 col.separator()
@@ -360,7 +359,7 @@ class BrushSelectPanel(BrushPanel):
             row = layout.row(align=True)
             row.prop(brush, "name", text="")
             if brush.library and brush.library.is_editable:
-                row.operator("brush.asset_save_as", text="", icon='DUPLICATE') # BFA - exposed to top
+                row.operator("brush.asset_save_as", text="", icon='ADD') # BFA - exposed to top
                 row.operator("brush.asset_delete", text="", icon='X') # BFA - exposed to top
             else:
                 row.operator("brush.asset_save_as", text="", icon='DUPLICATE') # BFA - exposed to top
