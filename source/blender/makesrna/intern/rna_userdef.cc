@@ -3509,7 +3509,7 @@ static void rna_def_userdef_theme_space_node(BlenderRNA *brna)
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "For Each Geometry Element Zone", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
-  
+
   rna_def_userdef_theme_spaces_asset_shelf_main(srna); // bfa asset shelf node editors
 }
 
@@ -5881,11 +5881,12 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   /*bfa - outliner colored collection rows*/
   prop = RNA_def_property(srna, "outliner_colored_collection_rows", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
-      prop, nullptr, "sequencer_editor_flag", USER_OUTLINER_COL_COLLECTION_ROWS);
+      prop, nullptr, "outliner_editor_flag", USER_OUTLINER_COL_COLLECTION_ROWS);
   RNA_def_property_ui_text(
       prop,
       "Colored Collection Rows",
       "Display colored collection rows in the outliner");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   /* duplication linking */
   prop = RNA_def_property(srna, "use_duplicate_mesh", PROP_BOOLEAN, PROP_NONE);
@@ -7727,7 +7728,7 @@ void RNA_def_userdef(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", USER_FLAG_RECENT_SEARCHES_DISABLE);
   RNA_def_property_ui_text(prop, "Recent Searches", "Sort the recently searched items at the top");
 
-  /* BFA - GooEngine disable_search_on_keypress */ 
+  /* BFA - GooEngine disable_search_on_keypress */
   prop = RNA_def_property(srna, "disable_search_on_keypress", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS);
   RNA_def_property_ui_text(
