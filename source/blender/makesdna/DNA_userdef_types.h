@@ -1108,6 +1108,9 @@ typedef struct UserDef {
 
   int sequencer_editor_flag; /* eUserpref_SeqEditorFlags */
 
+  int outliner_editor_flag;  /* eUserpref_OutlinerEditorFlags */
+  char _pad[4]; /*bfa - outliner colored collection rows*/
+
   char factor_display_type;
 
   char viewport_aa;
@@ -1609,6 +1612,11 @@ typedef enum eUserpref_SeqEditorFlags {
   USER_SEQ_ED_SIMPLE_TWEAKING = (1 << 0),
   USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT = (1 << 1),
 } eUserpref_SeqEditorFlags;
+
+ /*bfa - outliner colored collection rows*/
+typedef enum eUserpref_OutlinerEditorFlags {
+  USER_OUTLINER_COL_COLLECTION_ROWS = (1 << 0),
+} eUserpref_OutlinerEditorFlags;
 
 /* Locale Ids. Auto will try to get local from OS. Our default is English though. */
 /** #UserDef.language */
