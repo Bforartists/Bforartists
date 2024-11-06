@@ -3817,6 +3817,9 @@ static void outliner_draw_highlights(uint pos,
                              (space_outliner->outlinevis == SO_DATA_API &&
                               space_outliner->search_string[0] != 0));
 
+  /*bfa - outliner colored collection rows*/
+  const bool outliner_colored_collection_rows = (U.outliner_editor_flag & USER_OUTLINER_COL_COLLECTION_ROWS) != 0;
+
   tree_iterator::all_open(*space_outliner, [&](const TreeElement *te) {
     const TreeStoreElem *tselem = TREESTORE(te);
     const int start_y = *io_start_y;
@@ -3824,78 +3827,79 @@ static void outliner_draw_highlights(uint pos,
     /*BFA - Start*/
     Collection *collection = nullptr;
     bTheme *btheme = UI_GetTheme();
-    if (outliner_is_collection_tree_element(te)) {
-      collection = outliner_collection_from_tree_element(te);
-      col_collection = (collection && collection->color_tag != COLLECTION_COLOR_NONE) ?
-                                btheme->collection_color[collection->color_tag].color :
-                                btheme->space_outliner.back;
+    if (outliner_colored_collection_rows) /*bfa - outliner colored collection rows*/
+      if (outliner_is_collection_tree_element(te)) {
+        collection = outliner_collection_from_tree_element(te);
+        col_collection = (collection && collection->color_tag != COLLECTION_COLOR_NONE) ?
+                                  btheme->collection_color[collection->color_tag].color :
+                                  btheme->space_outliner.back;
 
-      int depth = calculate_hierarchy_depth(te);  // Calculate the hierarchy depth of the tree item
-      int offset_x = depth * UI_UNIT_X;  // Define the offset based on the hierarchy depth
-      int alpha = 20;
+        int depth = calculate_hierarchy_depth(te);  // Calculate the hierarchy depth of the tree item
+        int offset_x = depth * UI_UNIT_X;  // Define the offset based on the hierarchy depth
+        int alpha = 20;
 
-      /* Draw the collection icon with the original alpha */
-      immUniformColor4ubv(col_collection);
+        /* Draw the collection icon with the original alpha */
+        immUniformColor4ubv(col_collection);
 
-      /* Draw the background rectangle with the modified alpha */
-      uchar background_color[4];
-      copy_v4_v4_uchar(background_color, col_collection);
-      background_color[3] = alpha;  // Set the alpha channel for the background
-      immUniformColor4ubv(background_color);
-      immRecti(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
+        /* Draw the background rectangle with the modified alpha */
+        uchar background_color[4];
+        copy_v4_v4_uchar(background_color, col_collection);
+        background_color[3] = alpha;  // Set the alpha channel for the background
+        immUniformColor4ubv(background_color);
+        immRecti(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
 
-      if (collection && TSELEM_OPEN(tselem, space_outliner)) {
-        int child_start_y = start_y;
-        int total_height = 0;
+        if (collection && TSELEM_OPEN(tselem, space_outliner)) {
+          int child_start_y = start_y;
+          int total_height = 0;
 
-        // Calculate the total height of the collection content and children rows
-        total_height += UI_UNIT_Y;  // Add the height of the current collection row
-        LISTBASE_FOREACH (TreeElement *, child_te, &te->subtree) {
-          total_height += UI_UNIT_Y;  // Add the height of each child row, offset by one row
-          if (TSELEM_OPEN(TREESTORE(child_te), space_outliner)) {
-            total_height += calculate_children_height(child_te, space_outliner);  // Recursively calculate height of children
+          // Calculate the total height of the collection content and children rows
+          total_height += UI_UNIT_Y;  // Add the height of the current collection row
+          LISTBASE_FOREACH (TreeElement *, child_te, &te->subtree) {
+            total_height += UI_UNIT_Y;  // Add the height of each child row, offset by one row
+            if (TSELEM_OPEN(TREESTORE(child_te), space_outliner)) {
+              total_height += calculate_children_height(child_te, space_outliner);  // Recursively calculate height of children
+            }
+          }
+
+          // Check if the collection is nested once to the Scene Collection
+          bool is_nested_once = false;
+          TreeElement *parent_te = te->parent;
+          if (parent_te && parent_te->parent == nullptr) {
+            is_nested_once = true;
+          }
+
+          /*FOR ROOT*/
+          if (is_nested_once) {
+            /* Draw the background rectangle with the modified alpha */
+            uchar background_color[4];
+            copy_v4_v4_uchar(background_color, col_collection);
+            background_color[3] = alpha;  // Set the alpha channel for the background
+
+            immUniformColor4ubv(background_color);
+            immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
+          }
+          /*FOR CHILDREN*/
+          else {
+            /*HORIZONTAL*/
+            /* Draw the background rectangle with the modified alpha */
+            uchar background_color[4];
+            copy_v4_v4_uchar(background_color, col_collection);
+            background_color[3] = alpha;  // Set the alpha channel for the background
+
+            immUniformColor4ubv(background_color);
+            immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
+
+            /*VERTICAL*/
+            /* Draw the background rectangle with the modified alpha */
+            uchar nested_color[4];
+            copy_v4_v4_uchar(nested_color, col_collection);
+            nested_color[3] = alpha + alpha;  // Set the alpha channel for the background
+
+            immUniformColor4ubv(nested_color);
+            immRecti(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
           }
         }
-
-        // Check if the collection is nested once to the Scene Collection
-        bool is_nested_once = false;
-        TreeElement *parent_te = te->parent;
-        if (parent_te && parent_te->parent == nullptr) {
-          is_nested_once = true;
-        }
-
-        /*FOR ROOT*/
-        if (is_nested_once) {
-          /* Draw the background rectangle with the modified alpha */
-          uchar background_color[4];
-          copy_v4_v4_uchar(background_color, col_collection);
-          background_color[3] = alpha;  // Set the alpha channel for the background
-
-          immUniformColor4ubv(background_color);
-          immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
-        }
-        /*FOR CHILDREN*/
-        else {
-          /*HORIZONTAL*/
-          /* Draw the background rectangle with the modified alpha */
-          uchar background_color[4];
-          copy_v4_v4_uchar(background_color, col_collection);
-          background_color[3] = alpha;  // Set the alpha channel for the background
-
-          immUniformColor4ubv(background_color);
-          immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
-
-          /*VERTICAL*/
-          /* Draw the background rectangle with the modified alpha */
-          uchar nested_color[4];
-          copy_v4_v4_uchar(nested_color, col_collection);
-          nested_color[3] = alpha + alpha;  // Set the alpha channel for the background
-
-          immUniformColor4ubv(nested_color);
-          immRecti(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
-        }
       }
-    }
     /*BFA - End*/
 
     /* Selection status. */
