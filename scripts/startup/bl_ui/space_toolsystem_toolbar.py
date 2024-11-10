@@ -3176,6 +3176,15 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
     def tools_all(cls):
         yield from cls._tools.items()
 
+    _brush_tool = ToolDef.from_dict(
+        dict(
+            idname="builtin.brush",
+            label="Brush",
+            icon="brush.generic",
+            options={'USE_BRUSHES'},
+        )
+    )
+
     # Private tool lists for convenient reuse in `_tools`.
 
     _tools_transform = (
@@ -3232,7 +3241,7 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
             None,
         ],
         'PAINT': [
-            _defs_texture_paint.brush,
+            _brush_tool,
             _defs_texture_paint.blur,
             _defs_texture_paint.smear,
             _defs_texture_paint.fill,
@@ -3345,7 +3354,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         dict(
             idname="builtin.brush",
             label="Brush",
-            icon="brush.sculpt.paint",
+            icon="brush.generic",
             options={'USE_BRUSHES'},
         )
     )
@@ -3635,7 +3644,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             ),
         ],
         'PAINT_TEXTURE': [
-            _defs_texture_paint.brush,
+            _brush_tool,
             _defs_texture_paint.blur,
             _defs_texture_paint.smear,
             _defs_texture_paint.clone,

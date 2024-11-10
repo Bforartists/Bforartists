@@ -3361,6 +3361,9 @@ class SEQUENCER_PT_sequencer_snapping(Panel):
         row = col.row()
         row.separator()
         row.prop(sequencer_tool_settings, "snap_to_markers")
+        row = col.row()
+        row.separator()
+        col.prop(sequencer_tool_settings, "snap_to_retiming_keys")
 
         col = layout.column(align=True)
         col.label(text="Ignore")
