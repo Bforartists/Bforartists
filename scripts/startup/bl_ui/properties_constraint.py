@@ -518,6 +518,13 @@ class ConstraintButtonsPanel:
         sub.prop(con, "invert_z", text="Z", toggle=True)
         row.label(icon='BLANK1')
 
+        # bfa - goo engine - copy rotation constraint invert rotation patch
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "invert_all", text="Invert Rotation")
+        row.prop_decorator(con, "invert_all")
+        # end bfa - goo engine
+
         layout.prop(con, "mix_mode", text="Mix", text_ctxt=i18n_contexts.constraint)
 
         self.space_template(layout, con)
