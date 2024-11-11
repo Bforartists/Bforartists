@@ -1623,7 +1623,7 @@ def pyrna2sphinx(basepath):
                 fw("   .. data:: {:s}\n".format(identifier))
             else:
                 fw("   .. attribute:: {:s}\n".format(identifier))
-            # Also write `noindex` on requerst.
+            # Also write `noindex` on request.
             if ("bpy.types", struct_id, identifier) in RST_NOINDEX_ATTR:
                 fw("      :noindex:\n")
             fw("\n")
@@ -1658,7 +1658,18 @@ def pyrna2sphinx(basepath):
         del key, descr
 
         for func in struct.functions:
-            args_str = ", ".join(prop.get_arg_default(force=False) for prop in func.args)
+            args_kw_only_index = next((i for i in i, prop in enumerate(func.args) if not prop.is_required), -1)
+            if args_kw_only_index == -1:
+                args_str = ", ".join(prop.get_arg_default(force=False) for prop in func.args)
+            else:
+                args_str = ", ".join([
+                    *[prop.get_arg_default(force=False) for prop in func.args[:args_kw_only_index]],
+                    # Keyword only.
+                    "*",
+                    *[prop.get_arg_default(force=False) for prop in func.args[args_kw_only_index:]],
+
+                ])
+            del args_kw_only_index
 
             fw("   .. {:s}:: {:s}({:s})\n\n".format(
                 "classmethod" if func.is_classmethod else "method",
@@ -1893,7 +1904,7 @@ def pyrna2sphinx(basepath):
             for op in ops_mod:
                 args_str = ", ".join(prop.get_arg_default(force=True) for prop in op.args)
                 # All operator arguments are keyword only (denoted by the leading `*`).
-                fw(".. function:: {:s}(*, {:s})\n\n".format(op.func_name, args_str))
+                fw(".. function:: {:s}({:s}{:s})\n\n".format(op.func_name, "*, " if args_str else "", args_str))
 
                 # If the description isn't valid, we output the standard warning
                 # with a link to the wiki so that people can help.
