@@ -275,13 +275,17 @@ void VKBackend::platform_init(const VKDevice &device)
   const VkPhysicalDeviceProperties &properties = device.physical_device_properties_get();
 
   eGPUDeviceType device_type = device.device_type();
+  eGPUDriverType driver = device.driver_type();
   eGPUOSType os = determine_os_type();
-  eGPUDriverType driver = GPU_DRIVER_ANY;
   eGPUSupportLevel support_level = GPU_SUPPORT_LEVEL_SUPPORTED;
 
   std::string vendor_name = device.vendor_name();
   std::string driver_version = device.driver_version();
 
+  /* GPG has already been initialized, but without a specific device. Calling init twice will
+   * clear the list of devices. Making a copy of the device list and set it after initialization to
+   * make sure the list isn't destroyed at this moment, but only when the backend is destroyed. */
+  Vector<GPUDevice> devices = GPG.devices;
   GPG.init(device_type,
            os,
            driver,
@@ -291,6 +295,7 @@ void VKBackend::platform_init(const VKDevice &device)
            properties.deviceName,
            driver_version.c_str(),
            GPU_ARCHITECTURE_IMR);
+  GPG.devices = devices;
 
   CLOG_INFO(&LOG,
             0,
