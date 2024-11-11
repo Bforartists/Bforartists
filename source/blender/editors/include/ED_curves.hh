@@ -134,6 +134,7 @@ bool curves_poll(bContext *C);
 void CURVES_OT_attribute_set(wmOperatorType *ot);
 void CURVES_OT_draw(wmOperatorType *ot);
 void CURVES_OT_extrude(wmOperatorType *ot);
+void CURVES_OT_select_linked_pick(wmOperatorType *ot);
 
 /** \} */
 
@@ -303,7 +304,7 @@ void select_adjacent(bke::CurvesGeometry &curves, const IndexMask &curves_mask, 
  */
 struct FindClosestData {
   int index = -1;
-  float distance = FLT_MAX;
+  float distance_sq = FLT_MAX;
 };
 
 /**
@@ -340,7 +341,7 @@ bool select_box(const ViewContext &vc,
 bool select_lasso(const ViewContext &vc,
                   bke::CurvesGeometry &curves,
                   const bke::crazyspace::GeometryDeformation &deformation,
-                  const float4x4 &projection_matrix,
+                  const float4x4 &projection,
                   const IndexMask &selection_mask,
                   const IndexMask &bezier_mask,
                   bke::AttrDomain selection_domain,
