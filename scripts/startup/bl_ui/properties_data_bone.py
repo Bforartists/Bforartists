@@ -101,13 +101,24 @@ class BONE_PT_transform(BoneButtonsPanel, Panel):
         elif context.edit_bone:
             bone = context.edit_bone
             col = layout.column()
+            col.use_property_decorate = False #bfa - hide dysfunctional decorators
             col.prop(bone, "head")
+            row =col.row()
+            row.separator()
+            row.prop(bone, "head_radius", text = "Radius")
+
             col.prop(bone, "tail")
+            row =col.row()
+            row.separator()
+            row.prop(bone, "tail_radius", text = "Radius")
 
             col = layout.column()
-            col.use_property_split = False # BFA
+            col.use_property_decorate = False #bfa - hide dysfunctional decorators
             col.prop(bone, "roll")
             col.prop(bone, "length")
+            col.prop(bone, "envelope_distance", text = "Envelope")
+
+            col.use_property_split = False # BFA
             col.prop(bone, "lock")
 
 
