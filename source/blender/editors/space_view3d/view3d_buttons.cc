@@ -1784,6 +1784,8 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
   uiItemR(col, &eboneptr, "roll", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, &eboneptr, "length", UI_ITEM_NONE, nullptr, ICON_NONE);
   uiItemR(col, &eboneptr, "envelope_distance", UI_ITEM_NONE, IFACE_("Envelope"), ICON_NONE);
+  uiLayoutSetPropSep(col, false); /* bfa - no split */
+  uiItemR(col, &eboneptr, "lock", UI_ITEM_NONE, IFACE_("Lock"), ICON_NONE); /* bfa - lock from properties editor*/
 }
 
 static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
