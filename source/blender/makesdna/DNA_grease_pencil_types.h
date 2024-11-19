@@ -16,7 +16,7 @@
 #ifdef __cplusplus
 #  include "BLI_bounds_types.hh"
 #  include "BLI_function_ref.hh"
-#  include "BLI_generic_virtual_array.hh"
+#  include "BLI_index_mask_fwd.hh"
 #  include "BLI_map.hh"
 #  include "BLI_math_vector_types.hh"
 #  include "BLI_memory_counter_fwd.hh"
@@ -557,6 +557,9 @@ typedef struct GreasePencil {
   blender::bke::greasepencil::Layer &duplicate_layer(
       blender::bke::greasepencil::LayerGroup &parent_group,
       const blender::bke::greasepencil::Layer &duplicate_layer);
+  /** Add new layer group into the root group. */
+  blender::bke::greasepencil::LayerGroup &add_layer_group(blender::StringRefNull name,
+                                                          bool check_name_is_unique = true);
   blender::bke::greasepencil::LayerGroup &add_layer_group(
       blender::bke::greasepencil::LayerGroup &parent_group,
       blender::StringRefNull name,
@@ -593,6 +596,8 @@ typedef struct GreasePencil {
 
   void remove_layer(blender::bke::greasepencil::Layer &layer);
   void remove_group(blender::bke::greasepencil::LayerGroup &group, bool keep_children = false);
+
+  std::string unique_layer_name(blender::StringRef name);
 
   /* Frames API functions. */
 

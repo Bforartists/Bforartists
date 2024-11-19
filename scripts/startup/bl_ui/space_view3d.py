@@ -959,7 +959,10 @@ class VIEW3D_HT_header(Header):
                     row.prop(settings, "use_guide", text="", icon='GRID')
                     sub = row.row(align=True)
                     if settings.use_guide:
-                        sub.popover(panel="VIEW3D_PT_grease_pencil_guide", text="Guides")
+                        sub.popover(
+                            panel="VIEW3D_PT_grease_pencil_guide",
+                            text="Guides",
+                        )
 
 
             if object_mode == 'SCULPT_GREASE_PENCIL':
