@@ -50,7 +50,7 @@
 
 #include "BKE_anim_visualization.h"
 #include "BKE_customdata.hh"
-#include "BKE_image.h"
+#include "BKE_image.hh"
 #include "BKE_main.hh" /* for Main */
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_modifier.hh"
@@ -2637,7 +2637,7 @@ void blo_do_versions_260(FileData *fd, Library * /*lib*/, Main *bmain)
             continue;
           }
 
-          ARegion *arnew = MEM_cnew<ARegion>("node tools");
+          ARegion *arnew = BKE_area_region_new();
 
           BLI_insertlinkafter(&area->regionbase, region, arnew);
           arnew->regiontype = RGN_TYPE_TOOLS;

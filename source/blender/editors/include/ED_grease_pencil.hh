@@ -22,9 +22,11 @@
 #include "WM_api.hh"
 
 struct bContext;
+struct BrushGpencilSettings;
 struct Main;
 struct Object;
 struct KeyframeEditData;
+struct MDeformVert;
 struct wmKeyConfig;
 struct wmOperator;
 struct GPUOffScreen;
@@ -891,7 +893,7 @@ struct LineartLimitInfo {
 void get_lineart_modifier_limits(const Object &ob, LineartLimitInfo &info);
 void set_lineart_modifier_limits(GreasePencilLineartModifierData &lmd,
                                  const LineartLimitInfo &info,
-                                 const bool is_first_lineart);
+                                 const bool cache_is_ready);
 
 GreasePencilLineartModifierData *get_first_lineart_modifier(const Object &ob);
 
