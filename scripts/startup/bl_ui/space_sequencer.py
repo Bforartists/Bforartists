@@ -2066,6 +2066,11 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         else:
             sub.label(icon='DISCLOSURE_TRI_RIGHT')
 
+        row = layout.row(align=True, heading="Box Roundness")
+        sub = row.row(align=True)
+        sub.prop(strip, "box_roundness")
+        sub.active = strip.use_box and (not strip.mute)
+
 
 class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
     bl_label = "Source"

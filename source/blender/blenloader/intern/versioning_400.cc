@@ -62,7 +62,7 @@
 #include "BKE_file_handler.hh"
 #include "BKE_grease_pencil.hh"
 #include "BKE_idprop.hh"
-#include "BKE_image_format.h"
+#include "BKE_image_format.hh"
 #include "BKE_lib_query.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
@@ -3148,6 +3148,20 @@ static void add_node_editor_asset_shelf(Main &bmain)
 }
 /* end bfa - node asset shelf versioning */
 
+static void add_subsurf_node_limit_surface_option(Main &bmain)
+{
+  LISTBASE_FOREACH (bNodeTree *, ntree, &bmain.nodetrees) {
+    if (ntree->type == NTREE_GEOMETRY) {
+      LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+        if (node->type == GEO_NODE_SUBDIVISION_SURFACE) {
+          bNodeSocket *socket = version_node_add_socket_if_not_exist(
+              ntree, node, SOCK_IN, SOCK_BOOLEAN, PROP_NONE, "Limit Surface", "Limit Surface");
+          static_cast<bNodeSocketValueBoolean *>(socket->default_value)->value = false;
+        }
+      }
+    }
+  }
+}
 
 void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 {
@@ -5053,6 +5067,10 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       SequencerToolSettings *sequencer_tool_settings = SEQ_tool_settings_ensure(scene);
       sequencer_tool_settings->snap_mode |= SEQ_SNAP_TO_RETIMING;
     }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 6)) {
+    add_subsurf_node_limit_surface_option(*bmain);
   }
 
   /* Always run this versioning; meshes are written with the legacy format which always needs to

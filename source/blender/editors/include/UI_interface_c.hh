@@ -878,7 +878,21 @@ uiBlock *UI_block_begin(const bContext *C,
                         ARegion *region,
                         std::string name,
                         eUIEmbossType emboss);
-void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_xy[2]);
+uiBlock *UI_block_begin(const bContext *C,
+                        Scene *scene,
+                        wmWindow *window,
+                        ARegion *region,
+                        std::string name,
+                        eUIEmbossType emboss);
+void UI_block_end_ex(const bContext *C,
+                     Main *bmain,
+                     wmWindow *window,
+                     Scene *scene,
+                     ARegion *region,
+                     Depsgraph *depsgraph,
+                     uiBlock *block,
+                     const int xy[2] = nullptr,
+                     int r_xy[2] = nullptr);
 void UI_block_end(const bContext *C, uiBlock *block);
 /**
  * Uses local copy of style, to scale things down, and allow widgets to change stuff.
@@ -2847,6 +2861,7 @@ void template_asset_shelf_popover(uiLayout &layout,
 }
 
 void uiTemplateLightLinkingCollection(uiLayout *layout,
+                                      bContext *C,
                                       uiLayout *context_layout,
                                       PointerRNA *ptr,
                                       const char *propname);
@@ -2854,7 +2869,7 @@ void uiTemplateLightLinkingCollection(uiLayout *layout,
 void uiTemplateBoneCollectionTree(uiLayout *layout, bContext *C);
 void uiTemplateGreasePencilLayerTree(uiLayout *layout, bContext *C);
 
-void uiTemplateNodeTreeInterface(uiLayout *layout, PointerRNA *ptr);
+void uiTemplateNodeTreeInterface(uiLayout *layout, bContext *C, PointerRNA *ptr);
 /**
  * Draw all node buttons and socket default values with the same panel structure used by the node.
  */

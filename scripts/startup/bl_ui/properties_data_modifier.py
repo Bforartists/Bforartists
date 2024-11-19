@@ -214,12 +214,12 @@ class OBJECT_MT_modifier_add_generate(ModifierAddMenu, Menu):
             self.operator_modifier_add(layout, 'GREASE_PENCIL_DASH')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_ENVELOPE')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_LENGTH')
+            self.operator_modifier_add(layout, 'LINEART')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_MIRROR')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_MULTIPLY')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_OUTLINE')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_SIMPLIFY')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_SUBDIV')
-            self.operator_modifier_add(layout, 'LINEART')
         layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
 
 
@@ -311,8 +311,9 @@ class OBJECT_MT_modifier_add_color(ModifierAddMenu, Menu):
         ob_type = context.object.type
         if ob_type == 'GREASEPENCIL':
             self.operator_modifier_add(layout, 'GREASE_PENCIL_COLOR')
-            self.operator_modifier_add(layout, 'GREASE_PENCIL_TINT')
             self.operator_modifier_add(layout, 'GREASE_PENCIL_OPACITY')
+            self.operator_modifier_add(layout, 'GREASE_PENCIL_TINT')
+        layout.template_modifier_asset_menu_items(catalog_path=self.bl_label)
 
 # BFA - Modifier Assets
 class OBJECT_MT_modifier_add_assets(ModifierAddMenu, Menu):
@@ -372,6 +373,7 @@ class OBJECT_OT_add_asset_modifier_menu(InvokeMenuOperator, Operator):
     menu_id = "OBJECT_MT_modifier_add_assets"
     space_type = 'PROPERTIES'
     space_context = 'MODIFIER'
+
 
 
 class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
