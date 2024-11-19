@@ -2388,6 +2388,7 @@ void RNA_api_ui_layout(StructRNA *srna)
       srna, "template_light_linking_collection", "uiTemplateLightLinkingCollection");
   RNA_def_function_ui_description(func,
                                   "Visualization of a content of a light linking collection");
+  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
   parm = RNA_def_pointer(func,
                          "context_layout",
                          "UILayout",
@@ -2407,6 +2408,7 @@ void RNA_api_ui_layout(StructRNA *srna)
 
   func = RNA_def_function(srna, "template_node_tree_interface", "uiTemplateNodeTreeInterface");
   RNA_def_function_ui_description(func, "Show a node tree interface");
+  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
   parm = RNA_def_pointer(func,
                          "interface",
                          "NodeTreeInterface",
