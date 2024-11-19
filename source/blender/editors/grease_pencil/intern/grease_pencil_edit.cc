@@ -24,6 +24,7 @@
 
 #include "DNA_anim_types.h"
 #include "DNA_array_utils.hh"
+#include "DNA_gpencil_legacy_types.h"
 #include "DNA_material_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
@@ -103,7 +104,7 @@ static int grease_pencil_stroke_smooth_exec(bContext *C, wmOperator *op)
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(*scene, grease_pencil);
   threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
     bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
-    if (curves.points_num() == 0) {
+    if (curves.is_empty()) {
       return;
     }
 
@@ -262,7 +263,7 @@ static int grease_pencil_stroke_simplify_exec(bContext *C, wmOperator *op)
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(*scene, grease_pencil);
   threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
     bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
-    if (curves.points_num() == 0) {
+    if (curves.is_empty()) {
       return;
     }
 
@@ -618,7 +619,7 @@ static int grease_pencil_dissolve_exec(bContext *C, wmOperator *op)
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(*scene, grease_pencil);
   threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
     bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
-    if (curves.points_num() == 0) {
+    if (curves.is_empty()) {
       return;
     }
 
@@ -1786,6 +1787,12 @@ static int grease_pencil_move_to_layer_invoke(bContext *C, wmOperator *op, const
 {
   const bool add_new_layer = RNA_boolean_get(op->ptr, "add_new_layer");
   if (add_new_layer) {
+    Object *object = CTX_data_active_object(C);
+    GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
+
+    const std::string unique_name = grease_pencil.unique_layer_name("Layer");
+    RNA_string_set(op->ptr, "target_layer_name", unique_name.c_str());
+
     return WM_operator_props_popup_confirm_ex(
         C, op, event, IFACE_("Move to New Layer"), IFACE_("Create"));
   }
@@ -1807,7 +1814,7 @@ static void GREASE_PENCIL_OT_move_to_layer(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   prop = RNA_def_string(
-      ot->srna, "target_layer_name", "Layer", INT16_MAX, "Name", "Target Grease Pencil Layer");
+      ot->srna, "target_layer_name", nullptr, INT16_MAX, "Name", "Target Grease Pencil Layer");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
   prop = RNA_def_boolean(
       ot->srna, "add_new_layer", false, "New Layer", "Move selection to a new layer");
@@ -2314,7 +2321,7 @@ static int grease_pencil_copy_strokes_exec(bContext *C, wmOperator *op)
     const Layer &layer = grease_pencil.layer(drawing_info.layer_index);
     const float4x4 layer_to_object = layer.to_object_space(*object);
 
-    if (curves.curves_num() == 0) {
+    if (curves.is_empty()) {
       continue;
     }
     if (!ed::curves::has_anything_selected(curves)) {
@@ -2679,26 +2686,10 @@ static bke::CurvesGeometry extrude_grease_pencil_curves(const bke::CurvesGeometr
   const bke::AttributeAccessor src_attributes = src.attributes();
   bke::MutableAttributeAccessor dst_attributes = dst.attributes_for_write();
 
-  bke::gather_attributes(src_attributes,
-                         bke::AttrDomain::Curve,
-                         bke::AttrDomain::Curve,
-                         {},
-                         dst_to_src_curves,
-                         dst_attributes);
-
-  bke::gather_attributes(src_attributes,
-                         bke::AttrDomain::Point,
-                         bke::AttrDomain::Point,
-                         {},
-                         dst_to_src_points,
-                         dst_attributes);
-
   /* Selection attribute. */
-  const std::string &selection_attr_name = ".selection";
-  bke::SpanAttributeWriter<bool> selection =
-      dst_attributes.lookup_or_add_for_write_only_span<bool>(selection_attr_name,
-                                                             bke::AttrDomain::Point);
-  array_utils::copy(dst_selected.as_span(), selection.span);
+  bke::GSpanAttributeWriter selection = ed::curves::ensure_selection_attribute(
+      dst, bke::AttrDomain::Point, CD_PROP_BOOL);
+  selection.span.copy_from(dst_selected.as_span());
   selection.finish();
 
   /* Cyclic attribute : newly created curves cannot be cyclic.
@@ -2707,6 +2698,20 @@ static bke::CurvesGeometry extrude_grease_pencil_curves(const bke::CurvesGeometr
   if (src_cyclic.get_if_single().value_or(true)) {
     dst.cyclic_for_write().drop_front(old_curves_num).fill(false);
   }
+
+  bke::gather_attributes(src_attributes,
+                         bke::AttrDomain::Curve,
+                         bke::AttrDomain::Curve,
+                         bke::attribute_filter_from_skip_ref({"cyclic"}),
+                         dst_to_src_curves,
+                         dst_attributes);
+
+  bke::gather_attributes(src_attributes,
+                         bke::AttrDomain::Point,
+                         bke::AttrDomain::Point,
+                         bke::attribute_filter_from_skip_ref({".selection"}),
+                         dst_to_src_points,
+                         dst_attributes);
 
   dst.update_curve_types();
   return dst;
@@ -2750,7 +2755,7 @@ static void GREASE_PENCIL_OT_extrude(wmOperatorType *ot)
   ot->description = "Extrude the selected points";
 
   ot->exec = grease_pencil_extrude_exec;
-  ot->poll = editable_grease_pencil_poll;
+  ot->poll = editable_grease_pencil_point_selection_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
@@ -2975,7 +2980,7 @@ static int grease_pencil_snap_to_grid_exec(bContext *C, wmOperator * /*op*/)
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(scene, grease_pencil);
   for (const MutableDrawingInfo &drawing_info : drawings) {
     bke::CurvesGeometry &curves = drawing_info.drawing.strokes_for_write();
-    if (curves.curves_num() == 0) {
+    if (curves.is_empty()) {
       continue;
     }
     if (!ed::curves::has_anything_selected(curves)) {
@@ -3037,7 +3042,7 @@ static int grease_pencil_snap_to_cursor_exec(bContext *C, wmOperator *op)
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(scene, grease_pencil);
   for (const MutableDrawingInfo &drawing_info : drawings) {
     bke::CurvesGeometry &curves = drawing_info.drawing.strokes_for_write();
-    if (curves.curves_num() == 0) {
+    if (curves.is_empty()) {
       continue;
     }
     if (!ed::curves::has_anything_selected(curves)) {
@@ -3133,7 +3138,7 @@ static bool grease_pencil_snap_compute_centroid(const Scene &scene,
       continue;
     }
     const bke::CurvesGeometry &curves = drawing_info.drawing.strokes();
-    if (curves.curves_num() == 0) {
+    if (curves.is_empty()) {
       continue;
     }
     if (!ed::curves::has_anything_selected(curves)) {
@@ -3894,10 +3899,11 @@ static void join_object_with_active(Main &bmain,
   const IndexRange new_drawings_src = IndexRange::from_begin_size(
       grease_pencil_dst.drawing_array_num, grease_pencil_src.drawing_array_num);
 
-  new_drawings.slice(new_drawings_dst).copy_from(grease_pencil_dst.drawings());
-  new_drawings.slice(new_drawings_src).copy_from(grease_pencil_src.drawings());
+  copy_drawing_array(grease_pencil_dst.drawings(), new_drawings.slice(new_drawings_dst));
+  copy_drawing_array(grease_pencil_src.drawings(), new_drawings.slice(new_drawings_src));
 
-  MEM_SAFE_FREE(grease_pencil_dst.drawing_array);
+  /* Free existing drawings array. */
+  grease_pencil_dst.resize_drawings(0);
   grease_pencil_dst.drawing_array = new_drawing_array;
   grease_pencil_dst.drawing_array_num = new_drawing_array_num;
 
