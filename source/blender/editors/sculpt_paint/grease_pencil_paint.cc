@@ -29,7 +29,7 @@
 
 #include "DEG_depsgraph_query.hh"
 
-#include "DNA_brush_enums.h"
+#include "DNA_brush_types.h"
 #include "DNA_material_types.h"
 #include "DNA_modifier_types.h"
 
@@ -1200,7 +1200,7 @@ static void trim_stroke_ends(bke::greasepencil::Drawing &drawing,
       true);
 
   /* No intersection found. */
-  if (stroke_trimmed.points_num() == 0) {
+  if (stroke_trimmed.is_empty()) {
     return;
   }
 

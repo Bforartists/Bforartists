@@ -1557,8 +1557,8 @@ static void region_rect_recursive(
     BLI_rcti_resize(&overlap_remainder_margin,
                     max_ii(0, BLI_rcti_size_x(overlap_remainder) - UI_UNIT_X / 2),
                     max_ii(0, BLI_rcti_size_y(overlap_remainder) - UI_UNIT_Y / 2));
-    region->winrct.xmin = overlap_remainder_margin.xmin + region->runtime.offset_x;
-    region->winrct.ymin = overlap_remainder_margin.ymin + region->runtime.offset_y;
+    region->winrct.xmin = overlap_remainder_margin.xmin + region->runtime->offset_x;
+    region->winrct.ymin = overlap_remainder_margin.ymin + region->runtime->offset_y;
     region->winrct.xmax = region->winrct.xmin + prefsizex - 1;
     region->winrct.ymax = region->winrct.ymin + prefsizey - 1;
 
@@ -1798,7 +1798,7 @@ static void region_rect_recursive(
   }
 
   /* Clear, initialize on demand. */
-  memset(&region->runtime.visible_rect, 0, sizeof(region->runtime.visible_rect));
+  memset(&region->runtime->visible_rect, 0, sizeof(region->runtime->visible_rect));
 }
 
 static void area_calc_totrct(ScrArea *area, const rcti *window_rect)
@@ -1854,13 +1854,6 @@ static void region_evaulate_visibility(ARegion *region)
   region->visible = !hidden;
 }
 
-static bool event_in_markers_region(const ARegion *region, const wmEvent *event)
-{
-  rcti rect = region->winrct;
-  rect.ymax = rect.ymin + UI_MARKER_MARGIN_Y;
-  return BLI_rcti_isect_pt_v(&rect, event->xy);
-}
-
 /**
  * \param region: Region, may be nullptr when adding handlers for \a area.
  */
@@ -1907,11 +1900,11 @@ static void ed_default_handlers(
 
     /* time-markers */
     keymap = WM_keymap_ensure(wm->defaultconf, "Markers", SPACE_EMPTY, RGN_TYPE_WINDOW);
-    WM_event_add_keymap_handler_poll(handlers, keymap, event_in_markers_region);
+    WM_event_add_keymap_handler_poll(handlers, keymap, WM_event_handler_region_marker_poll);
 
     /* time-scrub */
     keymap = WM_keymap_ensure(wm->defaultconf, "Time Scrub", SPACE_EMPTY, RGN_TYPE_WINDOW);
-    WM_event_add_keymap_handler_poll(handlers, keymap, ED_time_scrub_event_in_region);
+    WM_event_add_keymap_handler_poll(handlers, keymap, ED_time_scrub_event_in_region_poll);
 
     /* frame changing and timeline operators (for time spaces) */
     keymap = WM_keymap_ensure(wm->defaultconf, "Animation", SPACE_EMPTY, RGN_TYPE_WINDOW);
@@ -3122,7 +3115,7 @@ void ED_region_panels_layout_ex(const bContext *C,
     }
   }
 
-  region->runtime.category = nullptr;
+  region->runtime->category = nullptr;
 
   ScrArea *area = CTX_wm_area(C);
   View2D *v2d = &region->v2d;
@@ -3274,7 +3267,7 @@ void ED_region_panels_layout_ex(const bContext *C,
   }
 
   if (use_category_tabs) {
-    region->runtime.category = category;
+    region->runtime->category = category;
   }
 }
 
@@ -3309,14 +3302,14 @@ void ED_region_panels_draw(const bContext *C, ARegion *region)
   UI_view2d_view_restore(C);
 
   /* Set in layout. */
-  if (region->runtime.category) {
-    UI_panel_category_draw_all(region, region->runtime.category);
+  if (region->runtime->category) {
+    UI_panel_category_draw_all(region, region->runtime->category);
   }
 
   /* scrollers */
   bool use_mask = false;
   rcti mask;
-  if (region->runtime.category &&
+  if (region->runtime->category &&
       (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) == RGN_ALIGN_RIGHT) &&
       UI_panel_category_is_visible(region))
   {
@@ -4019,7 +4012,7 @@ static void region_visible_rect_calc(ARegion *region, rcti *rect)
 
 const rcti *ED_region_visible_rect(ARegion *region)
 {
-  rcti *rect = &region->runtime.visible_rect;
+  rcti *rect = &region->runtime->visible_rect;
   if (rect->xmin == 0 && rect->ymin == 0 && rect->xmax == 0 && rect->ymax == 0) {
     region_visible_rect_calc(region, rect);
   }

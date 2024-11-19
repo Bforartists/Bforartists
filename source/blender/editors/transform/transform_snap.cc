@@ -414,8 +414,9 @@ static bool applyFaceProject(TransInfo *t, TransDataContainer *tc, TransData *td
     mul_m4_v3(tc->mat, iloc);
   }
   else if (t->options & CTX_OBJECT) {
-    BKE_object_eval_transform_all(t->depsgraph, t->scene, td->ob);
-    copy_v3_v3(iloc, td->ob->object_to_world().location());
+    Object *ob = static_cast<Object *>(td->extra);
+    BKE_object_eval_transform_all(t->depsgraph, t->scene, ob);
+    copy_v3_v3(iloc, ob->object_to_world().location());
   }
 
   if (ED_view3d_project_float_global(t->region, iloc, mval_fl, V3D_PROJ_TEST_NOP) !=
@@ -427,7 +428,7 @@ static bool applyFaceProject(TransInfo *t, TransDataContainer *tc, TransData *td
   SnapObjectParams snap_object_params{};
   snap_object_params.snap_target_select = t->tsnap.target_operation;
   snap_object_params.edit_mode_type = (t->flag & T_EDIT) != 0 ? SNAP_GEOM_EDIT : SNAP_GEOM_FINAL;
-  snap_object_params.use_occlusion_test = false;
+  snap_object_params.occlusion_test = SNAP_OCCLUSION_ALWAYS;
   snap_object_params.use_backface_culling = (t->tsnap.flag & SCE_SNAP_BACKFACE_CULLING) != 0;
 
   eSnapMode hit = ED_transform_snap_object_project_view3d(t->tsnap.object_context,
@@ -483,14 +484,15 @@ static void applyFaceNearest(TransInfo *t, TransDataContainer *tc, TransData *td
     mul_m4_v3(tc->mat, prev_loc);
   }
   else if (t->options & CTX_OBJECT) {
-    BKE_object_eval_transform_all(t->depsgraph, t->scene, td->ob);
-    copy_v3_v3(init_loc, td->ob->object_to_world().location());
+    Object *ob = static_cast<Object *>(td->extra);
+    BKE_object_eval_transform_all(t->depsgraph, t->scene, ob);
+    copy_v3_v3(init_loc, ob->object_to_world().location());
   }
 
   SnapObjectParams snap_object_params{};
   snap_object_params.snap_target_select = t->tsnap.target_operation;
   snap_object_params.edit_mode_type = (t->flag & T_EDIT) != 0 ? SNAP_GEOM_EDIT : SNAP_GEOM_FINAL;
-  snap_object_params.use_occlusion_test = false;
+  snap_object_params.occlusion_test = SNAP_OCCLUSION_ALWAYS;
   snap_object_params.use_backface_culling = false;
   snap_object_params.face_nearest_steps = t->tsnap.face_nearest_steps;
   snap_object_params.keep_on_same_target = t->tsnap.flag & SCE_SNAP_KEEP_ON_SAME_OBJECT;
@@ -1508,7 +1510,8 @@ static void snap_source_closest_fn(TransInfo *t)
           std::optional<blender::Bounds<blender::float3>> bounds;
 
           if ((t->options & CTX_OBMODE_XFORM_OBDATA) == 0) {
-            bounds = BKE_object_boundbox_eval_cached_get(td->ob);
+            Object *ob = static_cast<Object *>(td->extra);
+            bounds = BKE_object_boundbox_eval_cached_get(ob);
           }
 
           /* Use bound-box if possible. */
@@ -1603,7 +1606,7 @@ static eSnapMode snapObjectsTransform(
                                      t->snap_spatial[0] * t->snap_spatial_precision :
                                      t->snap_spatial[0];
   snap_object_params.edit_mode_type = (t->flag & T_EDIT) != 0 ? SNAP_GEOM_EDIT : SNAP_GEOM_FINAL;
-  snap_object_params.use_occlusion_test = true;
+  snap_object_params.occlusion_test = SNAP_OCCLUSION_AS_SEEM;
   snap_object_params.use_backface_culling = (t->tsnap.flag & SCE_SNAP_BACKFACE_CULLING) != 0;
 
   float *prev_co = (t->tsnap.status & SNAP_SOURCE_FOUND) ? t->tsnap.snap_source : t->center_global;
