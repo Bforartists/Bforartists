@@ -68,6 +68,8 @@
 
 #include "BLI_threads.h"
 
+#include "ANIM_keyingsets.hh"
+
 #include "DEG_depsgraph.hh"
 
 #ifdef WITH_OPENEXR
@@ -748,8 +750,8 @@ static const EnumPropertyItem eevee_resolution_scale_items[] = {
 #  include "BKE_global.hh"
 #  include "BKE_gpencil_legacy.h"
 #  include "BKE_idprop.hh"
-#  include "BKE_image.h"
-#  include "BKE_image_format.h"
+#  include "BKE_image.hh"
+#  include "BKE_image_format.hh"
 #  include "BKE_layer.hh"
 #  include "BKE_main.hh"
 #  include "BKE_mesh.hh"
@@ -1111,7 +1113,8 @@ static void rna_Scene_frame_update(Main * /*bmain*/, Scene * /*current_scene*/, 
 static PointerRNA rna_Scene_active_keying_set_get(PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->data;
-  return rna_pointer_inherit_refine(ptr, &RNA_KeyingSet, ANIM_scene_get_active_keyingset(scene));
+  return rna_pointer_inherit_refine(
+      ptr, &RNA_KeyingSet, blender::animrig::scene_get_active_keyingset(scene));
 }
 
 static void rna_Scene_active_keying_set_set(PointerRNA *ptr,
@@ -1143,7 +1146,7 @@ static void rna_Scene_active_keying_set_index_set(PointerRNA *ptr, int value)
   scene->active_keyingset = value + 1;
 }
 
-/* XXX: evil... builtin_keyingsets is defined in `keyingsets.cc`! */
+/* XXX: evil... builtin_keyingsets is defined in `blender::animrig::keyingsets.cc`! */
 /* TODO: make API function to retrieve this... */
 extern ListBase builtin_keyingsets;
 
