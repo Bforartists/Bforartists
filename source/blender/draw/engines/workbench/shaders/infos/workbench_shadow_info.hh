@@ -2,6 +2,24 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#ifdef GPU_SHADER
+#  pragma once
+
+#  include "BLI_utildefines_variadic.h"
+
+#  include "gpu_glsl_cpp_stubs.hh"
+
+#  include "draw_object_infos_info.hh"
+#  include "draw_view_info.hh"
+#  include "gpu_index_load_info.hh"
+
+#  include "workbench_shader_shared.h"
+#  define DYNAMIC_PASS_SELECTION
+#  define SHADOW_PASS
+#  define SHADOW_FAIL
+#  define DOUBLE_MANIFOLD
+#endif
+
 #include "draw_defines.hh"
 
 #include "gpu_shader_create_info.hh"
@@ -16,7 +34,7 @@ STORAGE_BUF_FREQ(3, READ, float, pos[], GEOMETRY)
 PUSH_CONSTANT(IVEC2, gpu_attr_3)
 UNIFORM_BUF(1, ShadowPassData, pass_data)
 TYPEDEF_SOURCE("workbench_shader_shared.h")
-ADDITIONAL_INFO(gpu_index_load)
+ADDITIONAL_INFO(gpu_index_buffer_load)
 ADDITIONAL_INFO(draw_view)
 ADDITIONAL_INFO(draw_modelmat_new)
 ADDITIONAL_INFO(draw_resource_handle_new)
