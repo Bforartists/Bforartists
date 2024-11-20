@@ -1213,6 +1213,7 @@ typedef enum eUserPref_Flag {
   USER_TOOLTIPS_PYTHON = (1 << 26),
   USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
   USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS = (1 << 28), /* bfa - gooengine disable_search_on_keypress */
+  USER_DISABLE_MATERIAL_ICON = (1 << 29), /* bfa - gooengine disable material icon rendering */
 } eUserPref_Flag;
 
 /** #UserDef.extension_flag */
