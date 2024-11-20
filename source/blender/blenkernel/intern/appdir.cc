@@ -210,11 +210,11 @@ bool BKE_appdir_folder_caches(char *path, const size_t path_maxncpy)
 
 #ifdef WIN32
   BLI_path_join(
-      path, path_maxncpy, caches_root_path, "Blender Foundation", "Blender", "Cache", SEP_STR);
+      path, path_maxncpy, caches_root_path, "Bforartists", "Cache", SEP_STR); /* bfa - use our own cache folder instead */
 #elif defined(__APPLE__)
-  BLI_path_join(path, path_maxncpy, caches_root_path, "Blender", SEP_STR);
+  BLI_path_join(path, path_maxncpy, caches_root_path, "Bforartists", SEP_STR); /* bfa - use our own cache folder instead */
 #else /* __linux__ */
-  BLI_path_join(path, path_maxncpy, caches_root_path, "blender", SEP_STR);
+  BLI_path_join(path, path_maxncpy, caches_root_path, "bforartists", SEP_STR); /* bfa - use our own cache folder instead */
 #endif
 
   return true;
