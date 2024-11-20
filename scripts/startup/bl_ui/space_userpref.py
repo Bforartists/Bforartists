@@ -236,6 +236,8 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(prefs, "use_recent_searches", text="Sort search by Most Recent")
         # bfa - gooengine disable_search_on_keypress
         flow.prop(prefs, "disable_search_on_keypress", text="Disable search on Key press")
+        # bfa - gooengine disable_material_icon
+        flow.prop(prefs, "disable_material_icon", text="Disable Material Icon Rendering")
 
 
 class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):
