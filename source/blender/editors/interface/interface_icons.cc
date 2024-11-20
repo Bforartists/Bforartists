@@ -1148,6 +1148,10 @@ static void icon_set_image(const bContext *C,
                            enum eIconSizes size,
                            const bool use_job)
 {
+  /* bfa - disable material icons rendering */
+  if (U.flag & USER_DISABLE_MATERIAL_ICON && GS(id->name) == ID_MA) {
+    return;
+  }
   if (!prv_img) {
     if (G.debug & G_DEBUG) {
       printf("%s: no preview image for this ID: %s\n", __func__, id->name);
@@ -1729,6 +1733,10 @@ int ui_id_icon_get(const bContext *C, ID *id, const bool big)
     case ID_IM: /* fall through */
     case ID_WO: /* fall through */
     case ID_LA: /* fall through */
+      /* bfa - disable material icons rendering, just show Material icon when enabled */
+      if (GS(id->name) == ID_MA && U.flag & USER_DISABLE_MATERIAL_ICON) {
+        return ICON_MATERIAL;
+      }
       iconid = BKE_icon_id_ensure(id);
       /* checks if not exists, or changed */
       UI_icon_render_id(C, nullptr, id, big ? ICON_SIZE_PREVIEW : ICON_SIZE_ICON, true);
