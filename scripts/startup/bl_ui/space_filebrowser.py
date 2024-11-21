@@ -137,6 +137,8 @@ class FILEBROWSER_PT_display(FileBrowserPanel, Panel):
 
         layout.prop(params, "recursion_level", text="Recursions")
 
+        layout.label(text="Sort By") # BFA - added label
+
         layout.column().prop(params, "sort_method", text="Sort By", expand=True)
         layout.use_property_split = False
         layout.prop(params, "use_sort_invert")
@@ -629,6 +631,8 @@ class ASSETBROWSER_PT_display(asset_utils.AssetBrowserPanel, Panel):
             col = layout.column(heading="Columns", align=True)
             col.prop(params, "show_details_size", text="Size")
             col.prop(params, "show_details_datetime", text="Date")
+
+        layout.label(text="Sort By") # BFA - added label
 
         layout.column().prop(params, "sort_method", text="Sort By", expand=True)
 
