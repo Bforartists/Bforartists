@@ -3813,7 +3813,7 @@ static void outliner_draw_highlights(uint pos,
                               space_outliner->search_string[0] != 0));
 
   /*bfa - outliner colored collection rows*/
-  const bool outliner_colored_collection_rows = (U.outliner_editor_flag & USER_OUTLINER_COL_COLLECTION_ROWS) != 0;
+  const bool outliner_colored_collection_rows = (U.outliner_editor_flag & USER_OUTLINER_COL_COLLECTION_ROWS) != 1;
 
   tree_iterator::all_open(*space_outliner, [&](const TreeElement *te) {
     const TreeStoreElem *tselem = TREESTORE(te);
