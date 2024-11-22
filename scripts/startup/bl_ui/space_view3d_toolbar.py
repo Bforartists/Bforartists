@@ -2639,17 +2639,32 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_settings(Panel, View3DPanel, Grease
 
         if brush is not None:
             gp_settings = brush.gpencil_settings
+            ma = gp_settings.material
 
-            if brush.gpencil_tool in {'DRAW', 'FILL'}:
-                row = layout.row(align=True)
-                row_mat = row.row()
-                if gp_settings.use_material_pin:
-                    row_mat.template_ID(gp_settings, "material", live_icon=True)
-                else:
-                    row_mat.template_ID(context.active_object, "active_material", live_icon=True)
-                    row_mat.enabled = False  # will otherwise allow changing material in active slot
+            row = layout.row(align=True)
+            if not gp_settings.use_material_pin:
+                ma = context.object.active_material
+            icon_id = 0
+            txt_ma = ""
+            if ma:
+                ma.id_data.preview_ensure()
+                if ma.id_data.preview:
+                    icon_id = ma.id_data.preview.icon_id
+                    txt_ma = ma.name
+                    maxw = 25
+                    if len(txt_ma) > maxw:
+                        txt_ma = txt_ma[:maxw - 5] + '..' + txt_ma[-3:]
 
-                row.prop(gp_settings, "use_material_pin", text="")
+            sub = row.row(align=True)
+            sub.enabled = not gp_settings.use_material_pin
+            sub.ui_units_x = 8
+            sub.popover(
+                panel="TOPBAR_PT_grease_pencil_materials",
+                text=txt_ma,
+                icon_value=icon_id,
+                )
+
+            row.prop(gp_settings, "use_material_pin", text="")
 
             if not self.is_popover:
                 from bl_ui.properties_paint_common import (
