@@ -1196,6 +1196,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
             slider=True,
         )
 
+
     size_owner = ups if ups.use_unified_size else brush
     size_prop = "size"
     if size_mode and (size_owner.use_locked_size == 'SCENE'):
@@ -1213,7 +1214,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
                 slider=True,
             )
         if size_mode:
-            layout.row().prop(size_owner, "use_locked_size", expand=True)
+            layout.row().prop(size_owner, "use_locked_size", expand=False)
             layout.separator()
 
     if strength:
@@ -1767,13 +1768,14 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
             sub_row.prop_enum(settings, "color_mode", 'MATERIAL', text="", icon='MATERIAL')
             sub_row.prop_enum(settings, "color_mode", 'VERTEXCOLOR', text="", icon='VPAINT_HLT')
 
-        sub_row = row.row(align=True)
-        if settings.color_mode == 'VERTEXCOLOR' or gp_settings.brush_draw_mode == 'VERTEXCOLOR':
-            sub = row.row(align=True)
-            sub.scale_x = 0.33
-            sub.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
-            sub.prop(brush, "secondary_color", text="")
-            row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
+        show_vertex_color = settings.color_mode == 'VERTEXCOLOR' or gp_settings.brush_draw_mode == 'VERTEXCOLOR'
+
+        if show_vertex_color:
+            row = row.row(align=True)
+            row.scale_x = 0.33
+            row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
+            row.prop(brush, "secondary_color", text="")
+            row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="") # BFA
             row.prop(gp_settings, "pin_draw_mode", text="")
 
     if props:
@@ -1836,11 +1838,6 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
             row.separator()
             row.popover(panel="VIEW3D_PT_gpencil_brush_settings_radius", text="Radius Pressure Curve")
 
-# 		 BFA - alternative panel used
-#        if gp_settings.use_pressure and not compact:
-#            col = layout.column()
-#            col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
-
         row = layout.row(align=True)
         row.prop(gp_settings, "pen_strength", slider=True)
         row.prop(gp_settings, "use_strength_pressure", text="", icon='STYLUS_PRESSURE')
@@ -1849,12 +1846,6 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
             row = layout.row()
             row.separator()
             row.popover(panel="VIEW3D_PT_gpencil_brush_settings_strength", text="Strength Pressure Curve")
-
-# 		 BFA - alternative panel used
-#        if gp_settings.use_strength_pressure and not compact:
-#            col = layout.column()
-#            col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
-
 
         if brush.gpencil_tool == 'TINT':
             row = layout.row(align=True)
@@ -1925,16 +1916,20 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         row.prop(brush, "use_pressure_size", text="")
 
         if brush.use_pressure_size and not compact:
-            col = layout.column()
-            col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
+            row = layout.row()
+            row.separator()
+            row.popover(panel="VIEW3D_PT_gpencil_brush_settings_radius", text="Radius Pressure Curve") # BFA - collapsed
 
         row = layout.row(align=True)
         row.prop(brush, "strength", slider=True, text="Strength")
         row.prop(brush, "use_pressure_strength", text="")
 
         if brush.use_pressure_strength and not compact:
-            col = layout.column()
-            col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
+            #col = layout.column()
+            #col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
+            row = layout.row()
+            row.separator()
+            row.popover(panel="VIEW3D_PT_gpencil_brush_settings_strength", text="Strength Pressure Curve")
 
     if props:
         layout.prop(props, "subdivision")
