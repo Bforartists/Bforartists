@@ -3602,12 +3602,12 @@ static float3 boundbox_to_dimensions(const Object *ob, const std::optional<Bound
   return scale * (bounds->max - bounds->min);
 }
 
-void BKE_object_dimensions_get(Object *ob, float r_vec[3])
+void BKE_object_dimensions_get(const Object *ob, float r_vec[3])
 {
   copy_v3_v3(r_vec, boundbox_to_dimensions(ob, BKE_object_boundbox_get(ob)));
 }
 
-void BKE_object_dimensions_eval_cached_get(Object *ob, float r_vec[3])
+void BKE_object_dimensions_eval_cached_get(const Object *ob, float r_vec[3])
 {
   copy_v3_v3(r_vec, boundbox_to_dimensions(ob, BKE_object_boundbox_eval_cached_get(ob)));
 }
@@ -4188,10 +4188,6 @@ const Mesh *BKE_object_get_editmesh_eval_cage(const Object *object)
 {
   BLI_assert(!DEG_is_original_id(&object->id));
   BLI_assert(object->type == OB_MESH);
-
-  const Mesh *mesh = static_cast<const Mesh *>(object->data);
-  BLI_assert(mesh->runtime->edit_mesh != nullptr);
-  UNUSED_VARS_NDEBUG(mesh);
 
   return object->runtime->editmesh_eval_cage;
 }

@@ -10,23 +10,23 @@
 
 #include <string>
 
-#include "DNA_brush_types.h"
-#include "DNA_mesh_types.h"
-
 #include "BKE_customdata.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_global.hh"
 #include "BKE_mask.h"
 #include "BKE_mesh_types.hh"
+#include "BKE_paint.hh"
 #include "BKE_subdiv_modifier.hh"
-
+#include "DEG_depsgraph_query.hh"
+#include "DNA_brush_types.h"
+#include "DNA_mesh_types.h"
 #include "ED_image.hh"
-
+#include "ED_view3d.hh"
 #include "GPU_capabilities.hh"
 
 #include "draw_cache_impl.hh"
-
-#include "overlay_next_private.hh"
+#include "draw_manager_text.hh"
+#include "overlay_next_base.hh"
 
 namespace blender::draw::overlay {
 
@@ -34,7 +34,10 @@ constexpr int overlay_edit_text = V3D_OVERLAY_EDIT_EDGE_LEN | V3D_OVERLAY_EDIT_F
                                   V3D_OVERLAY_EDIT_FACE_ANG | V3D_OVERLAY_EDIT_EDGE_ANG |
                                   V3D_OVERLAY_EDIT_INDICES;
 
-class Meshes {
+/**
+ * Draw edit mesh overlays.
+ */
+class Meshes : Overlay {
  private:
   PassSimple edit_mesh_normals_ps_ = {"Normals"};
   PassSimple::Sub *face_normals_ = nullptr;
@@ -75,12 +78,11 @@ class Meshes {
   View view_edit_vert_ = {"view_edit_vert"};
   float view_dist_ = 0.0f;
 
-  bool enabled_ = false;
-
  public:
+  /* TODO(fclem): Remove dependency on view. */
   void begin_sync(Resources &res, const State &state, const View &view)
   {
-    enabled_ = state.space_type == SPACE_VIEW3D;
+    enabled_ = state.is_space_v3d();
 
     if (!enabled_) {
       return;
@@ -142,12 +144,12 @@ class Meshes {
 
       auto &pass = edit_mesh_normals_ps_;
       pass.init();
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.state_set(pass_state, state.clipping_plane_count);
 
       auto shader_pass = [&](GPUShader *shader, const char *name) {
         auto &sub = pass.sub(name);
         sub.shader_set(shader);
-        sub.bind_ubo("globalsBlock", &res.globals_buf);
         sub.bind_texture("depthTex", depth_tex);
         sub.push_constant("alpha", backwire_opacity);
         sub.push_constant("isConstantScreenSizeNormals", use_screen_size);
@@ -183,7 +185,7 @@ class Meshes {
                      state.clipping_plane_count);
       pass.shader_set(shadeless ? res.shaders.paint_weight.get() :
                                   res.shaders.paint_weight_fake_shading.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.bind_texture("colorramp", &res.weight_ramp_tx);
       pass.push_constant("drawContours", false);
       pass.push_constant("opacity", state.overlay.weight_paint_mode_opacity);
@@ -210,7 +212,7 @@ class Meshes {
       pass.push_constant("alpha", alpha);
       pass.push_constant("retopologyOffset", retopology_offset);
       pass.push_constant("dataMask", int4(data_mask));
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     };
 
     {
@@ -268,14 +270,14 @@ class Meshes {
                      state.clipping_plane_count);
       pass.shader_set(res.shaders.mesh_edit_skin_root.get());
       pass.push_constant("retopologyOffset", retopology_offset);
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     }
   }
 
   void edit_object_sync(Manager &manager,
                         const ObjectRef &ob_ref,
-                        const State &state,
-                        Resources & /*res*/)
+                        Resources & /*res*/,
+                        const State &state) final
   {
     if (!enabled_) {
       return;
@@ -346,12 +348,12 @@ class Meshes {
       gpu::Batch *geom = DRW_mesh_batch_cache_get_edit_skin_roots(mesh);
       edit_mesh_skin_roots_ps_.draw_expand(geom, GPU_PRIM_LINES, 32, 1, res_handle);
     }
-    if (DRW_state_show_text() && (state.overlay.edit_flag & overlay_edit_text)) {
+    if (state.show_text && (state.overlay.edit_flag & overlay_edit_text)) {
       DRW_text_edit_mesh_measure_stats(state.region, state.v3d, ob, &state.scene->unit, state.dt);
     }
   }
 
-  void draw(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw_line(Framebuffer &framebuffer, Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
@@ -384,7 +386,7 @@ class Meshes {
     GPU_debug_group_end();
   }
 
-  void draw_color_only(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw_color_only(Framebuffer &framebuffer, Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
@@ -415,7 +417,7 @@ class Meshes {
   static bool mesh_has_edit_cage(const Object *ob)
   {
     const Mesh &mesh = *static_cast<const Mesh *>(ob->data);
-    if (mesh.runtime->edit_mesh.get() != nullptr) {
+    if (mesh.runtime->edit_mesh != nullptr) {
       const Mesh *editmesh_eval_final = BKE_object_get_editmesh_eval_final(ob);
       const Mesh *editmesh_eval_cage = BKE_object_get_editmesh_eval_cage(ob);
 
@@ -448,7 +450,10 @@ class Meshes {
   }
 };
 
-class MeshUVs {
+/**
+ * Draw edit uv overlays.
+ */
+class MeshUVs : Overlay {
  private:
   PassSimple analysis_ps_ = {"Mesh Analysis"};
 
@@ -510,12 +515,10 @@ class MeshUVs {
   /* Set of original objects that have been drawn. */
   Set<const Object *> drawn_object_set_;
 
-  bool enabled_ = false;
-
  public:
-  void begin_sync(Resources &res, const State &state)
+  void begin_sync(Resources &res, const State &state) final
   {
-    enabled_ = state.space_type == SPACE_IMAGE;
+    enabled_ = state.is_space_image();
 
     if (!enabled_) {
       return;
@@ -630,7 +633,7 @@ class MeshUVs {
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
                      DRW_STATE_BLEND_ALPHA);
       pass.shader_set(res.shaders.uv_wireframe.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("alpha", space_image->uv_opacity);
       pass.push_constant("doSmoothWire", do_smooth_wire);
     }
@@ -644,7 +647,7 @@ class MeshUVs {
       GPUShader *sh = res.shaders.uv_edit_edge.get();
       pass.specialize_constant(sh, "use_edge_select", !show_vert_);
       pass.shader_set(sh);
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("lineStyle", int(edit_uv_line_style_from_space_image(space_image)));
       pass.push_constant("alpha", space_image->uv_opacity);
       pass.push_constant("dashLength", dash_length);
@@ -662,7 +665,7 @@ class MeshUVs {
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
                      DRW_STATE_BLEND_ALPHA);
       pass.shader_set(res.shaders.uv_edit_vert.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("pointSize", (point_size + 1.5f) * float(M_SQRT2));
       pass.push_constant("outlineWidth", 0.75f);
       pass.push_constant("color", theme_color);
@@ -676,8 +679,8 @@ class MeshUVs {
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
                      DRW_STATE_BLEND_ALPHA);
       pass.shader_set(res.shaders.uv_edit_facedot.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
-      pass.push_constant("pointSize", (point_size + 1.5f) * float(M_SQRT2));
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
+      pass.push_constant("pointSize", point_size);
     }
 
     if (show_face_) {
@@ -685,7 +688,7 @@ class MeshUVs {
       pass.init();
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_ALWAYS | DRW_STATE_BLEND_ALPHA);
       pass.shader_set(res.shaders.uv_edit_face.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("uvOpacity", space_image->uv_opacity);
     }
 
@@ -696,7 +699,7 @@ class MeshUVs {
       pass.shader_set(mesh_analysis_type_ == SI_UVDT_STRETCH_ANGLE ?
                           res.shaders.uv_analysis_stretch_angle.get() :
                           res.shaders.uv_analysis_stretch_area.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("aspect", state.image_uv_aspect);
       pass.push_constant("stretch_opacity", space_image->stretch_opacity);
       pass.push_constant("totalAreaRatio", &total_area_ratio_);
@@ -708,7 +711,10 @@ class MeshUVs {
     drawn_object_set_.clear();
   }
 
-  void edit_object_sync(Manager &manager, const ObjectRef &ob_ref, const State &state)
+  void edit_object_sync(Manager &manager,
+                        const ObjectRef &ob_ref,
+                        Resources & /*res*/,
+                        const State &state) final
   {
     if (!enabled_ || ob_ref.object->type != OB_MESH) {
       return;
@@ -781,7 +787,7 @@ class MeshUVs {
     }
   }
 
-  void end_sync(Resources &res, ShapeCache &shapes, const State &state)
+  void end_sync(Resources &res, const ShapeCache &shapes, const State &state) final
   {
     if (!enabled_) {
       return;
@@ -899,7 +905,7 @@ class MeshUVs {
     }
   }
 
-  void draw(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw(Framebuffer &framebuffer, Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
@@ -939,7 +945,7 @@ class MeshUVs {
     GPU_debug_group_end();
   }
 
-  void draw_on_render(GPUFrameBuffer *framebuffer, Manager &manager, View &view)
+  void draw_on_render(GPUFrameBuffer *framebuffer, Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
