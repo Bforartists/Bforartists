@@ -1049,12 +1049,19 @@ void blo_do_versions_userdef(UserDef *userdef)
   }
 
   if (!USER_VERSION_ATLEAST(403, 3)) {
+    /*BFA - expose default categories for large amount of brushes on hand3*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/Cloth");
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Add & Subtract");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General");
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Contrast");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Transform");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Utilities");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/Paint");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/Simulation");
   }
 
   if (!USER_VERSION_ATLEAST(403, 12)) {
@@ -1067,6 +1074,7 @@ void blo_do_versions_userdef(UserDef *userdef)
       style->tooltip.shadowcolor = 0.0f;
     }
   }
+
   if (!USER_VERSION_ATLEAST(403, 19)) {
     userdef->sequencer_editor_flag |= USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT;
   }
@@ -1088,6 +1096,51 @@ void blo_do_versions_userdef(UserDef *userdef)
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_brush_gpencil_sculpt", "Brushes/Grease Pencil Sculpt/Utilities");
   }
+
+  /* start bfa asset shelf default catalogs versioning */
+  if (!USER_VERSION_ATLEAST(404, 0)) {
+    /* 3D Viewport*/
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_object", "Collections/Lights");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_object", "Collections/Static Meshes");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_object", "Materials");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Curve/Grease Pencil");
+    /* Node editors*/
+
+    /*Shader*/
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Color");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Mapping");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Masks");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Patterns");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shader");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shapes");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Utility");
+
+
+    /*Geometry Nodes*/
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Curve/Grease Pencil");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Hair");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Normals");
+
+    /*Compositor*/
+    /*To Be created*/
+  }
+  /* end bfa asset shelf default catalogs versioning */
+
+
 
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
