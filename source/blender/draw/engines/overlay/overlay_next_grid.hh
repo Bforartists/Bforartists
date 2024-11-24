@@ -19,11 +19,14 @@
 #include "GPU_texture.hh"
 
 #include "draw_shader_shared.hh"
-#include "overlay_next_private.hh"
+#include "overlay_next_base.hh"
 
 namespace blender::draw::overlay {
 
-class Grid {
+/**
+ * Draw 2D or 3D grid as well at global X, Y and Z axes.
+ */
+class Grid : Overlay {
  private:
   UniformBuffer<OVERLAY_GridData> data_;
   StorageVectorBuffer<float4> tile_pos_buf_;
@@ -36,9 +39,8 @@ class Grid {
   OVERLAY_GridBits zneg_flag_ = OVERLAY_GridBits(0);
   OVERLAY_GridBits zpos_flag_ = OVERLAY_GridBits(0);
 
-  bool enabled_ = false;
-
  public:
+  /* TODO(fclem): Remove dependency on view. */
   void begin_sync(Resources &res, ShapeCache &shapes, const State &state, const View &view)
   {
     enabled_ = init(state, view);
@@ -50,10 +52,12 @@ class Grid {
     data_.push_update();
 
     GPUTexture **depth_tx = state.xray_enabled ? &res.xray_depth_tx : &res.depth_tx;
+    GPUTexture **depth_infront_tx = &res.depth_target_in_front_tx;
 
     grid_ps_.init();
+    grid_ps_.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     grid_ps_.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA);
-    if (state.space_type == SPACE_IMAGE) {
+    if (state.is_space_image()) {
       /* Add quad background. */
       auto &sub = grid_ps_.sub("grid_background");
       sub.shader_set(res.shaders.grid_background.get());
@@ -68,8 +72,8 @@ class Grid {
       auto &sub = grid_ps_.sub("grid");
       sub.shader_set(res.shaders.grid.get());
       sub.bind_ubo("grid_buf", &data_);
-      sub.bind_ubo("globalsBlock", &res.globals_buf);
       sub.bind_texture("depth_tx", depth_tx, GPUSamplerState::default_sampler());
+      sub.bind_texture("depth_infront_tx", depth_infront_tx, GPUSamplerState::default_sampler());
       if (zneg_flag_ & SHOW_AXIS_Z) {
         sub.push_constant("grid_flag", zneg_flag_);
         sub.push_constant("plane_axes", zplane_axes_);
@@ -86,7 +90,7 @@ class Grid {
         sub.draw(shapes.grid.get());
       }
     }
-    if (state.space_type == SPACE_IMAGE) {
+    if (state.is_space_image()) {
       float4 theme_color;
       UI_GetThemeColorShade4fv(TH_BACK, 60, theme_color);
       srgb_to_linearrgb_v4(theme_color, theme_color);
@@ -107,7 +111,7 @@ class Grid {
     }
   }
 
-  void draw(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw_color_only(Framebuffer &framebuffer, Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
@@ -124,7 +128,7 @@ class Grid {
     /* Default, nothing is drawn. */
     grid_flag_ = zneg_flag_ = zpos_flag_ = OVERLAY_GridBits(0);
 
-    return (state.space_type == SPACE_IMAGE) ? init_2d(state) : init_3d(state, view);
+    return (state.is_space_image()) ? init_2d(state) : init_3d(state, view);
   }
 
   void copy_steps_to_data(Span<float> grid_steps_x, Span<float> grid_steps_y)

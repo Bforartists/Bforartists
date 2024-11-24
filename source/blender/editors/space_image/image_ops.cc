@@ -21,7 +21,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_fileops.h"
-#include "BLI_ghash.h"
+#include "BLI_set.hh"
 #include "BLI_string.h"
 #include "BLI_time.h"
 #include "BLI_utildefines.h"
@@ -327,7 +327,7 @@ bool space_image_main_region_poll(bContext *C)
   // ARegion *region = CTX_wm_region(C); /* XXX. */
 
   if (sima) {
-    return true; /* XXX (region && region->type->regionid == RGN_TYPE_WINDOW); */
+    return true; /* XXX (region && region->runtime->type->regionid == RGN_TYPE_WINDOW); */
   }
   return false;
 }
@@ -2390,7 +2390,7 @@ bool ED_image_should_save_modified(const Main *bmain)
 
 int ED_image_save_all_modified_info(const Main *bmain, ReportList *reports)
 {
-  GSet *unique_paths = BLI_gset_str_new(__func__);
+  blender::Set<std::string> unique_paths;
 
   int num_saveable_images = 0;
 
@@ -2421,14 +2421,14 @@ int ED_image_save_all_modified_info(const Main *bmain, ReportList *reports)
       else {
         if (image_has_valid_path(ima)) {
           num_saveable_images++;
-          if (BLI_gset_haskey(unique_paths, ima->filepath)) {
+          if (unique_paths.contains_as(ima->filepath)) {
             BKE_reportf(reports,
                         RPT_WARNING,
                         "Multiple images can't be saved to an identical path: \"%s\"",
                         ima->filepath);
           }
           else {
-            BLI_gset_insert(unique_paths, BLI_strdup(ima->filepath));
+            unique_paths.add(ima->filepath);
           }
         }
         else {
@@ -2441,7 +2441,6 @@ int ED_image_save_all_modified_info(const Main *bmain, ReportList *reports)
     }
   }
 
-  BLI_gset_free(unique_paths, MEM_freeN);
   return num_saveable_images;
 }
 
