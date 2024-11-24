@@ -1443,14 +1443,14 @@ macro(windows_install_shared_manifest)
     endif()
     install(
       FILES ${WINDOWS_INSTALL_FILES}
-      DESTINATION "./bforartists.shared"
+      DESTINATION "bforartists.shared"
       CONFIGURATIONS ${WINDOWS_CONFIGURATIONS}
     )
   else()
     # Python module without manifest.
     install(
       FILES ${WINDOWS_INSTALL_FILES}
-      DESTINATION "./bpy"
+      DESTINATION "bpy"
       CONFIGURATIONS ${WINDOWS_CONFIGURATIONS}
     )
   endif()
@@ -1488,7 +1488,7 @@ macro(windows_generate_shared_manifest)
     )
     install(
       FILES ${CMAKE_BINARY_DIR}/Debug/bforartists.shared.manifest
-      DESTINATION "./bforartists.shared"
+      DESTINATION "bforartists.shared"
       CONFIGURATIONS Debug
     )
   endif()
@@ -1500,7 +1500,7 @@ macro(windows_generate_shared_manifest)
     )
     install(
       FILES ${CMAKE_BINARY_DIR}/Release/bforartists.shared.manifest
-      DESTINATION "./bforartists.shared"
+      DESTINATION "bforartists.shared"
       CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
     )
   endif()

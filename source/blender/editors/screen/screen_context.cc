@@ -26,6 +26,7 @@
 
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
+#include "BLI_set.hh"
 #include "BLI_utildefines.h"
 
 #include "BKE_action.hh"
@@ -950,7 +951,7 @@ static eContextResult screen_ctx_sel_actions_impl(const bContext *C,
   ANIM_animdata_filter(
       &ac, &anim_data, eAnimFilter_Flags(filter), ac.data, eAnimCont_Types(ac.datatype));
 
-  GSet *seen_set = active_only ? nullptr : BLI_gset_ptr_new("seen actions");
+  blender::Set<bAction *> seen_set;
 
   LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     /* In dopesheet check selection status of individual items, skipping
@@ -974,7 +975,7 @@ static eContextResult screen_ctx_sel_actions_impl(const bContext *C,
     }
 
     /* Add the action to the output list if not already added. */
-    if (BLI_gset_add(seen_set, action)) {
+    if (seen_set.add(action)) {
       CTX_data_id_list_add(result, &action->id);
     }
   }
@@ -982,7 +983,6 @@ static eContextResult screen_ctx_sel_actions_impl(const bContext *C,
   ANIM_animdata_freelist(&anim_data);
 
   if (!active_only) {
-    BLI_gset_free(seen_set, nullptr);
     CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
   }
 
