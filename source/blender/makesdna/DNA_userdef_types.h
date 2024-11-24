@@ -1614,7 +1614,7 @@ typedef enum eUserpref_SeqEditorFlags {
   USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT = (1 << 1),
 } eUserpref_SeqEditorFlags;
 
- /*bfa - outliner colored collection rows*/
+/*bfa - outliner colored collection rows*/
 typedef enum eUserpref_OutlinerEditorFlags {
   USER_OUTLINER_COL_COLLECTION_ROWS = (1 << 0),
 } eUserpref_OutlinerEditorFlags;
