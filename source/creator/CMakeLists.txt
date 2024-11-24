@@ -40,6 +40,12 @@ if(WITH_TBB)
   list(INSERT LIB 0 bf_blenkernel)
 endif()
 
+if(WITH_OPENMP AND WITH_OPENMP_STATIC)
+  list(APPEND LIB
+    ${OpenMP_LIBRARIES}
+  )
+endif()
+
 if(WIN32)
   list(APPEND INC ../../intern/utfconv)
 endif()
@@ -379,9 +385,9 @@ endif()
 if(UNIX AND NOT APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_BPY "./bpy")
-      set(TARGETDIR_VER "./bpy/${BLENDER_VERSION}")
-      set(TARGETDIR_LIB "./bpy/lib")
+      set(TARGETDIR_BPY "bpy")
+      set(TARGETDIR_VER "bpy/${BLENDER_VERSION}")
+      set(TARGETDIR_LIB "bpy/lib")
     else()
       set(TARGETDIR_BPY ${PYTHON_SITE_PACKAGES}/bpy)
       set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/bpy/${BLENDER_VERSION})
@@ -389,12 +395,12 @@ if(UNIX AND NOT APPLE)
     endif()
   else()
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_VER "./${BLENDER_VERSION}")
+      set(TARGETDIR_VER "${BLENDER_VERSION}")
       set(TARGETDIR_TEXT ".")
-      set(TARGETDIR_LIB "./lib")
+      set(TARGETDIR_LIB "lib")
     else()
-      set(TARGETDIR_VER "./share/bforartists/${BLENDER_VERSION}")
-      set(TARGETDIR_TEXT "./share/doc/bforartists")
+      set(TARGETDIR_VER "share/bforartists/${BLENDER_VERSION}")
+      set(TARGETDIR_TEXT "share/doc/bforartists")
     endif()
   endif()
 
@@ -406,17 +412,17 @@ elseif(WIN32)
     set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX_WITH_CONFIG}/bpy)
     set(TARGETDIR_EXE ${CMAKE_INSTALL_PREFIX_WITH_CONFIG}/bpy)
   else()
-    set(TARGETDIR_VER "./${BLENDER_VERSION}")
+    set(TARGETDIR_VER "${BLENDER_VERSION}")
     set(TARGETDIR_TEXT ".")
-    set(TARGETDIR_LIB "./bforartists.shared")
+    set(TARGETDIR_LIB "bforartists.shared")
     set(TARGETDIR_EXE ".")
   endif()
 elseif(APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_BPY "./bpy")
-      set(TARGETDIR_VER "./bpy/${BLENDER_VERSION}")
-      set(TARGETDIR_LIB "./bpy/lib")
+      set(TARGETDIR_BPY "bpy")
+      set(TARGETDIR_VER "bpy/${BLENDER_VERSION}")
+      set(TARGETDIR_LIB "bpy/lib")
     else()
       # Paths defined in terms of `site-packages` since the `site-packages`
       # directory can be a symbolic-link (brew for example).
@@ -425,9 +431,9 @@ elseif(APPLE)
       set(TARGETDIR_LIB ${PYTHON_SITE_PACKAGES}/bpy/lib)
     endif()
   else()
-    set(TARGETDIR_VER "./Bforartists.app/Contents/Resources/${BLENDER_VERSION}")
-    set(TARGETDIR_LIB "./Bforartists.app/Contents/Resources/lib")
-    set(TARGETDIR_TEXT "./Bforartists.app/Contents/Resources/text")
+    set(TARGETDIR_VER "Bforartists.app/Contents/Resources/${BLENDER_VERSION}")
+    set(TARGETDIR_LIB "Bforartists.app/Contents/Resources/lib")
+    set(TARGETDIR_TEXT "Bforartists.app/Contents/Resources/text")
   endif()
   # Skip re-linking on CPACK / install.
   set_target_properties(bforartists PROPERTIES BUILD_WITH_INSTALL_RPATH true)
@@ -628,7 +634,7 @@ if(NOT ("${_install_cmd}" STREQUAL ""))
   # Message to display after building.
   get_filename_component(_install_dst ${TARGETDIR_VER} ABSOLUTE BASE_DIR ${CMAKE_INSTALL_PREFIX})
   add_custom_command(
-    TARGET bforartists POST_BUILD MAIN_DEPENDENCY bforartists
+    TARGET bforartists POST_BUILD
     COMMAND
       ${CMAKE_COMMAND} -E echo
       "Run: \\\"${_install_cmd}\\\" to copy runtime files and scripts to: ${_install_dst}"
@@ -1540,7 +1546,7 @@ elseif(WIN32)
     else()
       install(
         PROGRAMS $<TARGET_FILE:extern_draco>
-        DESTINATION ${TARGETDIR_VER}/python/lib/python${PYTHON_VERSION}/site-packages
+        DESTINATION ${TARGETDIR_VER}/python/lib/site-packages
       )
     endif()
   endif()
@@ -1819,7 +1825,7 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
         ${LIBDIR}/usd/plugin/usd/hdStorm
         ${LIBDIR}/usd/plugin/usd/usdShaders
         ${LIBDIR}/usd/plugin/usd/hioOiio
-        DESTINATION "./bforartists.shared/usd"
+        DESTINATION "bforartists.shared/usd"
       )
     elseif(USD_PYTHON_SUPPORT)
       install(DIRECTORY
