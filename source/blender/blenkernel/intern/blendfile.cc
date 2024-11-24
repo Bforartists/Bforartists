@@ -1566,7 +1566,7 @@ UserDef *BKE_blendfile_userdef_from_defaults()
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Materials");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Curve/Grease Pencil");
+        userdef, "VIEW3D_AST_object", "Curve/Grease Pencil");
     /* Node editors*/
 
     /*Shader*/
