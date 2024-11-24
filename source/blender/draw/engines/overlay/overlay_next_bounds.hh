@@ -15,10 +15,22 @@
 
 #include "DNA_rigidbody_types.h"
 
-#include "overlay_next_private.hh"
+#include "overlay_next_base.hh"
 
 namespace blender::draw::overlay {
-class Bounds {
+
+/**
+ * Draw object bounds and texture space.
+ *
+ * The object bound can be drawn because of:
+ * - display option (Object > Viewport Display > Bounds)
+ * - display as (Object > Viewport Display > Bounds)
+ * - rigid body (Physics > Rigid Body > Collision > Shape)
+ *
+ * Texture space can be modified by (Data > Texture Space)
+ * and displayed by (Object > Viewport Display > Texture Space)
+ */
+class Bounds : Overlay {
   using BoundsInstanceBuf = ShapeInstanceBuf<ExtraInstanceData>;
 
  private:
@@ -38,7 +50,7 @@ class Bounds {
  public:
   Bounds(const SelectionType selection_type) : call_buffers_{selection_type} {}
 
-  void begin_sync()
+  void begin_sync(Resources & /*res*/, const State & /*state*/) final
   {
     call_buffers_.box.clear();
     call_buffers_.sphere.clear();
@@ -48,27 +60,23 @@ class Bounds {
     call_buffers_.capsule_cap.clear();
   }
 
-  void object_sync(const ObjectRef &ob_ref, Resources &res, const State &state)
+  void object_sync(Manager & /*manager*/,
+                   const ObjectRef &ob_ref,
+                   Resources &res,
+                   const State &state) final
   {
     const Object *ob = ob_ref.object;
-    const bool from_dupli = (ob->base_flag & (BASE_FROM_SET | BASE_FROM_DUPLI)) != 0;
-    const bool has_bounds = !ELEM(
-        ob->type, OB_LAMP, OB_CAMERA, OB_EMPTY, OB_SPEAKER, OB_LIGHTPROBE);
+    const bool from_dupli = is_from_dupli_or_set(ob);
+    const bool has_bounds =
+        !ELEM(ob->type, OB_LAMP, OB_CAMERA, OB_EMPTY, OB_SPEAKER, OB_LIGHTPROBE) &&
+        (ob->type != OB_MBALL || BKE_mball_is_basis(ob));
     const bool draw_bounds = has_bounds && ((ob->dt == OB_BOUNDBOX) ||
                                             ((ob->dtx & OB_DRAWBOUNDOX) && !from_dupli));
     const float4 color = res.object_wire_color(ob_ref, state);
 
-    auto add_bounds = [&](const bool around_origin, const char bound_type) {
-      if (ob->type == OB_MBALL && !BKE_mball_is_basis(ob)) {
-        return;
-      }
+    auto add_bounds_ex = [&](const float3 center, const float3 size, const char bound_type) {
       const float4x4 object_mat{ob->object_to_world().ptr()};
-      const blender::Bounds<float3> bounds = BKE_object_boundbox_get(ob).value_or(
-          blender::Bounds(float3(-1.0f), float3(1.0f)));
-      const float3 size = (bounds.max - bounds.min) * 0.5f;
-      const float3 center = around_origin ? float3(0) : math::midpoint(bounds.min, bounds.max);
       const select::ID select_id = res.select_id(ob_ref);
-
       switch (bound_type) {
         case OB_BOUND_BOX: {
           float4x4 scale = math::from_scale<float4x4>(size);
@@ -121,9 +129,20 @@ class Bounds {
       }
     };
 
+    auto add_bounds = [&](const bool around_origin, const char bound_type) {
+      const blender::Bounds<float3> bounds = BKE_object_boundbox_get(ob).value_or(
+          blender::Bounds(float3(-1.0f), float3(1.0f)));
+      const float3 size = (bounds.max - bounds.min) * 0.5f;
+      const float3 center = around_origin ? float3(0) : math::midpoint(bounds.min, bounds.max);
+      add_bounds_ex(center, size, bound_type);
+    };
+
+    /* Bounds */
     if (draw_bounds) {
       add_bounds(false, ob->boundtype);
     }
+
+    /* Rigid Body Shape */
     if (!from_dupli && ob->rigidbody_object != nullptr) {
       switch (ob->rigidbody_object->shape) {
         case RB_SHAPE_BOX:
@@ -143,15 +162,47 @@ class Bounds {
           break;
       };
     }
+
+    /* Texture Space */
+    if (!from_dupli && ob->data && (ob->dtx & OB_TEXSPACE)) {
+      switch (GS(static_cast<ID *>(ob->data)->name)) {
+        case ID_ME: {
+          Mesh *me = static_cast<Mesh *>(ob->data);
+          BKE_mesh_texspace_ensure(me);
+          add_bounds_ex(me->texspace_location, me->texspace_size, OB_BOUND_BOX);
+          break;
+        }
+        case ID_CU_LEGACY: {
+          Curve *cu = static_cast<Curve *>(ob->data);
+          BKE_curve_texspace_ensure(cu);
+          add_bounds_ex(cu->texspace_location, cu->texspace_size, OB_BOUND_BOX);
+          break;
+        }
+        case ID_MB: {
+          MetaBall *mb = static_cast<MetaBall *>(ob->data);
+          add_bounds_ex(mb->texspace_location, mb->texspace_size, OB_BOUND_BOX);
+          break;
+        }
+        case ID_CV:
+        case ID_PT:
+        case ID_VO: {
+          /* No user defined texture space support. */
+          add_bounds(false, OB_BOUND_BOX);
+          break;
+        }
+        default:
+          BLI_assert_unreachable();
+      }
+    }
   }
 
-  void end_sync(Resources &res, ShapeCache &shapes, const State &state)
+  void end_sync(Resources &res, const ShapeCache &shapes, const State &state) final
   {
     ps_.init();
     ps_.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL,
                   state.clipping_plane_count);
     ps_.shader_set(res.shaders.extra_shape.get());
-    ps_.bind_ubo("globalsBlock", &res.globals_buf);
+    ps_.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     res.select_bind(ps_);
 
     call_buffers_.box.end_sync(ps_, shapes.cube.get());
@@ -162,7 +213,7 @@ class Bounds {
     call_buffers_.capsule_cap.end_sync(ps_, shapes.capsule_cap.get());
   }
 
-  void draw(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw_line(Framebuffer &framebuffer, Manager &manager, View &view) final
   {
     GPU_framebuffer_bind(framebuffer);
     manager.submit(ps_, view);
