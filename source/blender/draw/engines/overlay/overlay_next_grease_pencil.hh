@@ -17,11 +17,17 @@
 
 #include "ED_grease_pencil.hh"
 
-#include "overlay_next_private.hh"
+#include "draw_manager_text.hh"
+
+#include "overlay_next_base.hh"
 
 namespace blender::draw::overlay {
 
-class GreasePencil {
+/**
+ * Draw grease pencil overlays.
+ * Also contains grease pencil helper functions for other overlays.
+ */
+class GreasePencil : Overlay {
  private:
   PassSimple edit_grease_pencil_ps_ = {"GPencil Edit"};
   PassSimple::Sub *edit_points_ = nullptr;
@@ -33,18 +39,18 @@ class GreasePencil {
   bool show_lines_ = false;
   bool show_grid_ = false;
   bool show_weight_ = false;
+  bool show_material_name_ = false;
 
   /* TODO(fclem): This is quite wasteful and expensive, prefer in shader Z modification like the
    * retopology offset. */
   View view_edit_cage = {"view_edit_cage"};
   float view_dist = 0.0f;
 
-  bool enabled_ = false;
-
  public:
+  /* TODO(fclem): Remove dependency on view. */
   void begin_sync(Resources &res, const State &state, const View &view)
   {
-    enabled_ = state.space_type == SPACE_VIEW3D;
+    enabled_ = state.is_space_v3d();
 
     if (!enabled_) {
       return;
@@ -55,8 +61,7 @@ class GreasePencil {
     const View3D *v3d = state.v3d;
     const ToolSettings *ts = state.scene->toolsettings;
 
-    const bke::AttrDomain selection_domain_edit = ED_grease_pencil_edit_selection_domain_get(ts);
-    const bool show_edit_point = selection_domain_edit == bke::AttrDomain::Point;
+    show_material_name_ = (v3d->gp_flag & V3D_GP_SHOW_MATERIAL_NAME) && state.show_text;
     const bool show_lines = (v3d->gp_flag & V3D_GP_SHOW_EDIT_LINES);
     const bool show_direction = (v3d->gp_flag & V3D_GP_SHOW_STROKE_DIRECTION);
 
@@ -68,10 +73,12 @@ class GreasePencil {
         break;
       case OB_MODE_VERTEX_GREASE_PENCIL:
         /* Vertex paint mode. */
+        show_lines_ = ED_grease_pencil_vertex_selection_domain_get(ts) == bke::AttrDomain::Point;
+        show_lines_ = show_lines;
         break;
       case OB_MODE_EDIT:
         /* Edit mode. */
-        show_points_ = show_edit_point;
+        show_points_ = ED_grease_pencil_edit_selection_domain_get(ts) == bke::AttrDomain::Point;
         show_lines_ = show_lines;
         break;
       case OB_MODE_WEIGHT_GREASE_PENCIL:
@@ -82,7 +89,7 @@ class GreasePencil {
         break;
       case OB_MODE_SCULPT_GREASE_PENCIL:
         /* Sculpt mode. */
-        show_points_ = (selection_domain_edit == bke::AttrDomain::Point);
+        show_points_ = ED_grease_pencil_sculpt_selection_domain_get(ts) == bke::AttrDomain::Point;
         show_lines_ = show_lines && (ts->gpencil_selectmode_sculpt != 0);
         break;
       default:
@@ -96,6 +103,7 @@ class GreasePencil {
     {
       auto &pass = edit_grease_pencil_ps_;
       pass.init();
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
                          DRW_STATE_BLEND_ALPHA,
                      state.clipping_plane_count);
@@ -103,7 +111,6 @@ class GreasePencil {
       if (show_points_) {
         auto &sub = pass.sub("Points");
         sub.shader_set(res.shaders.curve_edit_points.get());
-        sub.bind_ubo("globalsBlock", &res.globals_buf);
         sub.bind_texture("weightTex", &res.weight_ramp_tx);
         sub.push_constant("useWeight", show_weight_);
         sub.push_constant("useGreasePencil", true);
@@ -114,7 +121,6 @@ class GreasePencil {
       if (show_lines_) {
         auto &sub = pass.sub("Lines");
         sub.shader_set(res.shaders.curve_edit_line.get());
-        sub.bind_ubo("globalsBlock", &res.globals_buf);
         sub.bind_texture("weightTex", &res.weight_ramp_tx);
         sub.push_constant("useWeight", show_weight_);
         sub.push_constant("useGreasePencil", true);
@@ -137,7 +143,7 @@ class GreasePencil {
       if (show_grid_) {
         const float4 col_grid(0.5f, 0.5f, 0.5f, state.overlay.gpencil_grid_opacity);
         pass.shader_set(res.shaders.grid_grease_pencil.get());
-        pass.bind_ubo("globalsBlock", &res.globals_buf);
+        pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
         pass.push_constant("color", col_grid);
       }
     }
@@ -145,8 +151,8 @@ class GreasePencil {
 
   void edit_object_sync(Manager &manager,
                         const ObjectRef &ob_ref,
-                        const State &state,
-                        Resources & /*res*/)
+                        Resources &res,
+                        const State &state) final
   {
     if (!enabled_) {
       return;
@@ -158,34 +164,45 @@ class GreasePencil {
       gpu::Batch *geom = show_weight_ ?
                              DRW_cache_grease_pencil_weight_points_get(state.scene, ob) :
                              DRW_cache_grease_pencil_edit_points_get(state.scene, ob);
-      edit_points_->draw(geom, manager.unique_handle(ob_ref));
+      if (geom) {
+        edit_points_->draw(geom, manager.unique_handle(ob_ref));
+      }
     }
     if (show_lines_) {
       gpu::Batch *geom = show_weight_ ? DRW_cache_grease_pencil_weight_lines_get(state.scene, ob) :
                                         DRW_cache_grease_pencil_edit_lines_get(state.scene, ob);
-      edit_lines_->draw(geom, manager.unique_handle(ob_ref));
+      if (geom) {
+        edit_lines_->draw(geom, manager.unique_handle(ob_ref));
+      }
+    }
+
+    if (show_material_name_) {
+      draw_material_names(ob_ref, state, res);
     }
   }
 
   void paint_object_sync(Manager &manager,
                          const ObjectRef &ob_ref,
-                         const State &state,
-                         Resources &res)
+                         Resources &res,
+                         const State &state)
   {
     /* Reuse same logic as edit mode. */
-    edit_object_sync(manager, ob_ref, state, res);
+    edit_object_sync(manager, ob_ref, res, state);
   }
 
   void sculpt_object_sync(Manager &manager,
                           const ObjectRef &ob_ref,
-                          const State &state,
-                          Resources &res)
+                          Resources &res,
+                          const State &state)
   {
     /* Reuse same logic as edit mode. */
-    edit_object_sync(manager, ob_ref, state, res);
+    edit_object_sync(manager, ob_ref, res, state);
   }
 
-  void object_sync(const ObjectRef &ob_ref, Resources & /*res*/, State &state)
+  void object_sync(Manager & /*manager*/,
+                   const ObjectRef &ob_ref,
+                   Resources & /*res*/,
+                   const State &state) final
   {
     if (!enabled_) {
       return;
@@ -209,7 +226,7 @@ class GreasePencil {
     }
   }
 
-  void draw(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw_line(Framebuffer &framebuffer, Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
@@ -219,7 +236,7 @@ class GreasePencil {
     manager.submit(grid_ps_, view);
   }
 
-  void draw_color_only(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw_color_only(Framebuffer &framebuffer, Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
@@ -420,6 +437,65 @@ class GreasePencil {
       mat.location() = layer.to_world_space(object).location();
     }
     return mat;
+  }
+
+  void draw_material_names(const ObjectRef &ob_ref, const State &state, Resources &res)
+  {
+    Object &object = *ob_ref.object;
+
+    uchar4 color;
+    UI_GetThemeColor4ubv(res.object_wire_theme_id(ob_ref, state), color);
+
+    ::GreasePencil &grease_pencil = *static_cast<::GreasePencil *>(object.data);
+
+    Vector<ed::greasepencil::DrawingInfo> drawings = ed::greasepencil::retrieve_visible_drawings(
+        *state.scene, grease_pencil, false);
+    if (drawings.is_empty()) {
+      return;
+    }
+
+    for (const ed::greasepencil::DrawingInfo &info : drawings) {
+      const bke::greasepencil::Drawing &drawing = info.drawing;
+
+      const bke::CurvesGeometry strokes = drawing.strokes();
+      const OffsetIndices<int> points_by_curve = strokes.points_by_curve();
+      const bke::AttrDomain domain = show_points_ ? bke::AttrDomain::Point :
+                                                    bke::AttrDomain::Curve;
+      const VArray<bool> selections = *strokes.attributes().lookup_or_default<bool>(
+          ".selection", domain, true);
+      const VArray<int> materials = *strokes.attributes().lookup_or_default<int>(
+          "material_index", bke::AttrDomain::Curve, 0);
+      const Span<float3> positions = strokes.positions();
+
+      auto show_stroke_name = [&](const int stroke_i) {
+        if (show_points_) {
+          for (const int point_i : points_by_curve[stroke_i]) {
+            if (selections[point_i]) {
+              return true;
+            }
+          }
+          return false;
+        }
+        return selections[stroke_i];
+      };
+
+      for (const int stroke_i : strokes.curves_range()) {
+        if (!show_stroke_name(stroke_i)) {
+          continue;
+        }
+        const int point_i = points_by_curve[stroke_i].first();
+        const float3 fpt = math::transform_point(object.object_to_world(), positions[point_i]);
+        Material *ma = BKE_object_material_get_eval(&object, materials[stroke_i] + 1);
+        DRW_text_cache_add(state.dt,
+                           fpt,
+                           ma->id.name + 2,
+                           strlen(ma->id.name + 2),
+                           10,
+                           0,
+                           DRW_TEXT_CACHE_GLOBALSPACE | DRW_TEXT_CACHE_STRING_PTR,
+                           color);
+      }
+    }
   }
 };
 
