@@ -24,6 +24,7 @@
 #include "BKE_main.hh"
 #include "BKE_modifier.hh"
 #include "BKE_outliner_treehash.hh"
+#include "BKE_screen.hh"
 
 #include "ED_screen.hh"
 
@@ -582,7 +583,7 @@ static void outliner_sort(ListBase *lb)
         if (!ELEM(tselem->type, TSE_SOME_ID, TSE_DEFGROUP)) {
           tp->idcode = 0; /* Don't sort this. */
         }
-        if (tselem->type == TSE_ID_BASE) {
+        if (ELEM(tselem->type, TSE_ID_BASE, TSE_DEFGROUP)) {
           tp->idcode = 1; /* Do sort this. */
         }
 
@@ -1166,7 +1167,7 @@ void outliner_build_tree(Main *mainvar,
   }
   space_outliner->storeflag &= ~SO_TREESTORE_REBUILD;
 
-  if (region->do_draw & RGN_DRAW_NO_REBUILD) {
+  if (region->runtime->do_draw & RGN_DRAW_NO_REBUILD) {
     BLI_assert_msg(space_outliner->runtime->tree_display != nullptr,
                    "Skipping rebuild before tree was built properly, a full redraw should be "
                    "triggered instead");

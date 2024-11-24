@@ -16,7 +16,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_ghash.h"
+#include "BLI_map.hh"
 #include "BLI_math_matrix.h"
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.h"
@@ -318,15 +318,16 @@ static void pre_edit_bone_duplicate(ListBase *editbones)
  * Helper function for #pose_edit_bone_duplicate,
  * return the destination pchan from the original.
  */
-static bPoseChannel *pchan_duplicate_map(const bPose *pose,
-                                         GHash *name_map,
-                                         bPoseChannel *pchan_src)
+static bPoseChannel *pchan_duplicate_map(
+    const bPose *pose,
+    blender::Map<blender::StringRefNull, blender::StringRefNull> &name_map,
+    bPoseChannel *pchan_src)
 {
   bPoseChannel *pchan_dst = nullptr;
   const char *name_src = pchan_src->name;
-  const char *name_dst = static_cast<const char *>(BLI_ghash_lookup(name_map, name_src));
-  if (name_dst) {
-    pchan_dst = BKE_pose_channel_find_name(pose, name_dst);
+  const blender::StringRefNull name_dst = name_map.lookup_default(name_src, "");
+  if (!name_dst.is_empty()) {
+    pchan_dst = BKE_pose_channel_find_name(pose, name_dst.c_str());
   }
 
   if (pchan_dst == nullptr) {
@@ -345,7 +346,7 @@ static void pose_edit_bone_duplicate(ListBase *editbones, Object *ob)
   BKE_pose_channels_hash_free(ob->pose);
   BKE_pose_channels_hash_ensure(ob->pose);
 
-  GHash *name_map = BLI_ghash_str_new(__func__);
+  blender::Map<blender::StringRefNull, blender::StringRefNull> name_map;
 
   LISTBASE_FOREACH (EditBone *, ebone_src, editbones) {
     EditBone *ebone_dst = ebone_src->temp.ebone;
@@ -354,7 +355,7 @@ static void pose_edit_bone_duplicate(ListBase *editbones, Object *ob)
     }
 
     if (ebone_dst) {
-      BLI_ghash_insert(name_map, ebone_src->name, ebone_dst->name);
+      name_map.add_as(ebone_src->name, ebone_dst->name);
     }
   }
 
@@ -384,8 +385,6 @@ static void pose_edit_bone_duplicate(ListBase *editbones, Object *ob)
       pchan_dst->bbone_next = pchan_duplicate_map(ob->pose, name_map, pchan_src->bbone_next);
     }
   }
-
-  BLI_ghash_free(name_map, nullptr, nullptr);
 }
 
 static void update_duplicate_subtarget(EditBone *dup_bone,
@@ -996,6 +995,49 @@ static void mirror_pose_bone(Object &ob, EditBone &ebone)
   pose_bone->limitmax[2] = -limit_min;
 }
 
+static void mirror_bone_collection_assignments(bArmature &armature,
+                                               EditBone &source_bone,
+                                               EditBone &target_bone)
+{
+  BLI_assert_msg(armature.edbo != nullptr, "Expecting the armature to be in edit mode");
+  char name_flip[64];
+  /* Avoiding modification of the ListBase in the iteration. */
+  blender::Vector<BoneCollection *> unassign_collections;
+  blender::Vector<BoneCollection *> assign_collections;
+
+  /* Find all collections from source_bone that can be flipped. */
+  LISTBASE_FOREACH (BoneCollectionReference *, collection_reference, &source_bone.bone_collections)
+  {
+    BoneCollection *collection = collection_reference->bcoll;
+    BLI_string_flip_side_name(name_flip, collection->name, false, sizeof(name_flip));
+    if (STREQ(name_flip, collection->name)) {
+      /* Name flipping failed. */
+      continue;
+    }
+    BoneCollection *flipped_collection = ANIM_armature_bonecoll_get_by_name(&armature, name_flip);
+    if (!flipped_collection) {
+      const int bcoll_index = blender::animrig::armature_bonecoll_find_index(&armature,
+                                                                             collection);
+      const int parent_index = blender::animrig::armature_bonecoll_find_parent_index(&armature,
+                                                                                     bcoll_index);
+      flipped_collection = ANIM_armature_bonecoll_new(&armature, name_flip, parent_index);
+    }
+    BLI_assert(flipped_collection != nullptr);
+    unassign_collections.append(collection);
+    assign_collections.append(flipped_collection);
+  }
+
+  /* The target_bone might not be in unassign_collections anymore, or might already be in
+   * assign_collections. The assign functions will just do nothing in those cases. */
+  for (BoneCollection *collection : unassign_collections) {
+    ANIM_armature_bonecoll_unassign_editbone(collection, &target_bone);
+  }
+
+  for (BoneCollection *collection : assign_collections) {
+    ANIM_armature_bonecoll_assign_editbone(collection, &target_bone);
+  }
+}
+
 static void copy_pchan(EditBone *src_bone, EditBone *dst_bone, Object *src_ob, Object *dst_ob)
 {
   /* copy the ID property */
@@ -1422,6 +1464,7 @@ static int armature_symmetrize_exec(bContext *C, wmOperator *op)
         update_duplicate_custom_bone_shapes(C, ebone, obedit);
         /* Mirror any settings on the pose bone. */
         mirror_pose_bone(*obedit, *ebone);
+        mirror_bone_collection_assignments(*arm, *ebone_iter, *ebone);
       }
     }
 
