@@ -2047,7 +2047,7 @@ DEF_ICON(KEY_WINDOWS_FILLED)
 
 /* The items above are initiated sequentially while the ones that
  * follow are initiated individually. Therefore this item marks
- * the boundary. Add regular SVG icons above this one.*/
+ * the boundary. Add regular SVG icons above this one. */
 
 DEF_ICON_BLANK(LAST_SVG_ITEM)
 
