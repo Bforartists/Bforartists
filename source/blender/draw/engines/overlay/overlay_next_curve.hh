@@ -45,11 +45,10 @@ class Curves : Overlay {
   /* TODO(fclem): This is quite wasteful and expensive, prefer in shader Z modification like the
    * retopology offset. */
   View view_edit_cage = {"view_edit_cage"};
-  float view_dist = 0.0f;
+  State::ViewOffsetData offset_data_;
 
  public:
-  /* TODO(fclem): Remove dependency on view. */
-  void begin_sync(Resources &res, const State &state, const View &view)
+  void begin_sync(Resources &res, const State &state) final
   {
     enabled_ = state.is_space_v3d();
 
@@ -57,7 +56,7 @@ class Curves : Overlay {
       return;
     }
 
-    view_dist = state.view_dist_get(view.winmat());
+    offset_data_ = state.offset_data_get();
 
     {
       auto &pass = edit_curves_ps_;
@@ -103,6 +102,7 @@ class Curves : Overlay {
     {
       auto &pass = edit_legacy_curve_ps_;
       pass.init();
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       {
         auto &sub = pass.sub("Wires");
         sub.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_WRITE_DEPTH,
@@ -148,6 +148,7 @@ class Curves : Overlay {
     {
       auto &pass = edit_legacy_surface_handles_ps;
       pass.init();
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
 
       auto create_sub = [&](const char *name, DRWState drw_state, float alpha) {
         auto &sub = pass.sub(name);
@@ -238,6 +239,7 @@ class Curves : Overlay {
       return;
     }
 
+    float view_dist = State::view_dist_get(offset_data_, view.winmat());
     view_edit_cage.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 0.5f));
 
     GPU_framebuffer_bind(framebuffer);
@@ -250,11 +252,12 @@ class Curves : Overlay {
       return;
     }
 
+    float view_dist = State::view_dist_get(offset_data_, view.winmat());
     view_edit_cage.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 0.5f));
 
     GPU_framebuffer_bind(framebuffer);
-    manager.submit(edit_curves_ps_, view_edit_cage);
     manager.submit(edit_legacy_curve_ps_, view);
+    manager.submit(edit_curves_ps_, view_edit_cage);
   }
 };
 

@@ -76,11 +76,10 @@ class Meshes : Overlay {
   View view_edit_cage_ = {"view_edit_cage"};
   View view_edit_edge_ = {"view_edit_edge"};
   View view_edit_vert_ = {"view_edit_vert"};
-  float view_dist_ = 0.0f;
+  State::ViewOffsetData offset_data_;
 
  public:
-  /* TODO(fclem): Remove dependency on view. */
-  void begin_sync(Resources &res, const State &state, const View &view)
+  void begin_sync(Resources &res, const State &state) final
   {
     enabled_ = state.is_space_v3d();
 
@@ -88,7 +87,7 @@ class Meshes : Overlay {
       return;
     }
 
-    view_dist_ = state.view_dist_get(view.winmat());
+    offset_data_ = state.offset_data_get();
     xray_enabled_ = state.xray_enabled;
 
     ToolSettings *tsettings = state.scene->toolsettings;
@@ -371,9 +370,10 @@ class Meshes : Overlay {
       return;
     }
 
-    view_edit_cage_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist_, 0.5f));
-    view_edit_edge_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist_, 1.0f));
-    view_edit_vert_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist_, 1.5f));
+    float view_dist = State::view_dist_get(offset_data_, view.winmat());
+    view_edit_cage_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 0.5f));
+    view_edit_edge_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 1.0f));
+    view_edit_vert_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 1.5f));
 
     manager.submit(edit_mesh_normals_ps_, view);
     manager.submit(edit_mesh_faces_ps_, view);
@@ -398,9 +398,10 @@ class Meshes : Overlay {
 
     GPU_debug_group_begin("Mesh Edit Color Only");
 
-    view_edit_cage_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist_, 0.5f));
-    view_edit_edge_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist_, 1.0f));
-    view_edit_vert_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist_, 1.5f));
+    float view_dist = State::view_dist_get(offset_data_, view.winmat());
+    view_edit_cage_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 0.5f));
+    view_edit_edge_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 1.0f));
+    view_edit_vert_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 1.5f));
 
     GPU_framebuffer_bind(framebuffer);
     manager.submit(edit_mesh_normals_ps_, view);
@@ -416,6 +417,7 @@ class Meshes : Overlay {
 
   static bool mesh_has_edit_cage(const Object *ob)
   {
+    BLI_assert(ob->type == OB_MESH);
     const Mesh &mesh = *static_cast<const Mesh *>(ob->data);
     if (mesh.runtime->edit_mesh != nullptr) {
       const Mesh *editmesh_eval_final = BKE_object_get_editmesh_eval_final(ob);
@@ -787,7 +789,7 @@ class MeshUVs : Overlay {
     }
   }
 
-  void end_sync(Resources &res, const ShapeCache &shapes, const State &state) final
+  void end_sync(Resources &res, const State &state) final
   {
     if (!enabled_) {
       return;
@@ -832,7 +834,7 @@ class MeshUVs : Overlay {
         const float3 tile_location(tile_x, tile_y, 0.0f);
         pass.push_constant("tile_pos", tile_location);
         pass.push_constant("ucolor", is_active ? selected_color : theme_color);
-        pass.draw(shapes.quad_wire.get());
+        pass.draw(res.shapes.quad_wire.get());
 
         /* Note: don't draw label twice for active tile. */
         if (show_tiled_image_label_ && !is_active) {
@@ -881,7 +883,7 @@ class MeshUVs : Overlay {
         pass.push_constant("ucolor", float4(1.0f, 1.0f, 1.0f, brush->clone.alpha));
         pass.push_constant("brush_offset", float2(brush->clone.offset));
         pass.push_constant("brush_scale", float2(stencil_texture.size().xy()) / size_image);
-        pass.draw(shapes.quad_solid.get());
+        pass.draw(res.shapes.quad_solid.get());
       }
     }
 
@@ -901,7 +903,7 @@ class MeshUVs : Overlay {
       pass.push_constant("opacity", opacity);
       pass.push_constant("brush_offset", float2(0.0f));
       pass.push_constant("brush_scale", float2(1.0f));
-      pass.draw(shapes.quad_solid.get());
+      pass.draw(res.shapes.quad_solid.get());
     }
   }
 
