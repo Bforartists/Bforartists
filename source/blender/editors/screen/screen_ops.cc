@@ -3118,39 +3118,46 @@ static bool screen_animation_region_supports_time_follow(eSpace_Type spacetype,
          (spacetype == SPACE_CLIP && regiontype == RGN_TYPE_PREVIEW);
 }
 
-static void areas_do_frame_follow(bContext *C, bool middle)
+void ED_areas_do_frame_follow(bContext *C, bool center_view)
 {
   bScreen *screen_ctx = CTX_wm_screen(C);
-  Scene *scene = CTX_data_scene(C);
+  if (!(screen_ctx->redraws_flag & TIME_FOLLOW)) {
+    return;
+  }
+
+  const int current_frame = CTX_data_scene(C)->r.cfra;
   wmWindowManager *wm = CTX_wm_manager(C);
   LISTBASE_FOREACH (wmWindow *, window, &wm->windows) {
     const bScreen *screen = WM_window_get_active_screen(window);
 
     LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
       LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-        /* do follow here if editor type supports it */
-        if ((screen_ctx->redraws_flag & TIME_FOLLOW) &&
-            screen_animation_region_supports_time_follow(eSpace_Type(area->spacetype),
-                                                         eRegion_Type(region->regiontype)))
+        /* Only frame/center the playhead here if editor type supports it */
+        if (!screen_animation_region_supports_time_follow(eSpace_Type(area->spacetype),
+                                                          eRegion_Type(region->regiontype)))
         {
-          float w = BLI_rctf_size_x(&region->v2d.cur);
+          continue;
+        }
 
-          if (middle) {
-            if ((scene->r.cfra < region->v2d.cur.xmin) || (scene->r.cfra > region->v2d.cur.xmax)) {
-              region->v2d.cur.xmax = scene->r.cfra + (w / 2);
-              region->v2d.cur.xmin = scene->r.cfra - (w / 2);
-            }
-          }
-          else {
-            if (scene->r.cfra < region->v2d.cur.xmin) {
-              region->v2d.cur.xmax = scene->r.cfra;
-              region->v2d.cur.xmin = region->v2d.cur.xmax - w;
-            }
-            else if (scene->r.cfra > region->v2d.cur.xmax) {
-              region->v2d.cur.xmin = scene->r.cfra;
-              region->v2d.cur.xmax = region->v2d.cur.xmin + w;
-            }
-          }
+        if ((current_frame >= region->v2d.cur.xmin) && (current_frame <= region->v2d.cur.xmax)) {
+          /* The playhead is already in view, do nothing. */
+          continue;
+        }
+
+        const float w = BLI_rctf_size_x(&region->v2d.cur);
+
+        if (center_view) {
+          region->v2d.cur.xmax = current_frame + (w / 2);
+          region->v2d.cur.xmin = current_frame - (w / 2);
+          continue;
+        }
+        if (current_frame < region->v2d.cur.xmin) {
+          region->v2d.cur.xmax = current_frame;
+          region->v2d.cur.xmin = region->v2d.cur.xmax - w;
+        }
+        else {
+          region->v2d.cur.xmin = current_frame;
+          region->v2d.cur.xmax = region->v2d.cur.xmin + w;
         }
       }
     }
@@ -3173,7 +3180,7 @@ static int frame_offset_exec(bContext *C, wmOperator *op)
   FRAMENUMBER_MIN_CLAMP(scene->r.cfra);
   scene->r.subframe = 0.0f;
 
-  areas_do_frame_follow(C, false);
+  ED_areas_do_frame_follow(C, false);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -3234,7 +3241,7 @@ static int frame_jump_exec(bContext *C, wmOperator *op)
       scene->r.cfra = PSFRA;
     }
 
-    areas_do_frame_follow(C, true);
+    ED_areas_do_frame_follow(C, true);
 
     DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -3298,11 +3305,6 @@ static int keyframe_jump_exec(bContext *C, wmOperator *op)
   if (ob) {
     ob_to_keylist(&ads, ob, keylist, 0, {-FLT_MAX, FLT_MAX});
 
-    if (ob->type == OB_GPENCIL_LEGACY) {
-      const bool active = !(scene->flag & SCE_KEYS_NO_SELONLY);
-      gpencil_to_keylist(&ads, static_cast<bGPdata *>(ob->data), keylist, active);
-    }
-
     if (ob->type == OB_GREASE_PENCIL) {
       const bool active_layer_only = !(scene->flag & SCE_KEYS_NO_SELONLY);
       grease_pencil_data_block_to_keylist(
@@ -3358,7 +3360,7 @@ static int keyframe_jump_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  areas_do_frame_follow(C, true);
+  ED_areas_do_frame_follow(C, true);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -3428,7 +3430,7 @@ static int marker_jump_exec(bContext *C, wmOperator *op)
 
   scene->r.cfra = closest;
 
-  areas_do_frame_follow(C, true);
+  ED_areas_do_frame_follow(C, true);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -3868,6 +3870,10 @@ void static area_docking_apply(bContext *C, wmOperator *op)
 
     if (jd->factor <= 0.5f) {
       jd->sa2 = newa;
+    }
+    else {
+      /* Force full rebuild. #130732 */
+      ED_area_tag_redraw(newa);
     }
   }
 

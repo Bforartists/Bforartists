@@ -43,20 +43,22 @@ class GreasePencil : Overlay {
 
   /* TODO(fclem): This is quite wasteful and expensive, prefer in shader Z modification like the
    * retopology offset. */
-  View view_edit_cage = {"view_edit_cage"};
-  float view_dist = 0.0f;
+  View view_edit_cage_ = {"view_edit_cage"};
+  State::ViewOffsetData offset_data_;
 
  public:
-  /* TODO(fclem): Remove dependency on view. */
-  void begin_sync(Resources &res, const State &state, const View &view)
+  void begin_sync(Resources &res, const State &state) final
   {
     enabled_ = state.is_space_v3d();
+
+    res.depth_planes.clear();
+    res.depth_planes_count = 0;
 
     if (!enabled_) {
       return;
     }
 
-    view_dist = state.view_dist_get(view.winmat());
+    offset_data_ = state.offset_data_get();
 
     const View3D *v3d = state.v3d;
     const ToolSettings *ts = state.scene->toolsettings;
@@ -73,12 +75,14 @@ class GreasePencil : Overlay {
         break;
       case OB_MODE_VERTEX_GREASE_PENCIL:
         /* Vertex paint mode. */
-        show_lines_ = ED_grease_pencil_vertex_selection_domain_get(ts) == bke::AttrDomain::Point;
-        show_lines_ = show_lines;
+        show_points_ = ts->gpencil_selectmode_vertex &
+                       (GP_VERTEX_MASK_SELECTMODE_POINT | GP_VERTEX_MASK_SELECTMODE_SEGMENT);
+        show_lines_ = show_lines && ts->gpencil_selectmode_vertex;
         break;
       case OB_MODE_EDIT:
         /* Edit mode. */
-        show_points_ = ED_grease_pencil_edit_selection_domain_get(ts) == bke::AttrDomain::Point;
+        show_points_ = ELEM(
+            ts->gpencil_selectmode_edit, GP_SELECTMODE_POINT, GP_SELECTMODE_SEGMENT);
         show_lines_ = show_lines;
         break;
       case OB_MODE_WEIGHT_GREASE_PENCIL:
@@ -89,8 +93,9 @@ class GreasePencil : Overlay {
         break;
       case OB_MODE_SCULPT_GREASE_PENCIL:
         /* Sculpt mode. */
-        show_points_ = ED_grease_pencil_sculpt_selection_domain_get(ts) == bke::AttrDomain::Point;
-        show_lines_ = show_lines && (ts->gpencil_selectmode_sculpt != 0);
+        show_points_ = ts->gpencil_selectmode_sculpt &
+                       (GP_SCULPT_MASK_SELECTMODE_POINT | GP_SCULPT_MASK_SELECTMODE_SEGMENT);
+        show_lines_ = show_lines && ts->gpencil_selectmode_sculpt;
         break;
       default:
         /* Not a Grease Pencil mode. */
@@ -208,7 +213,7 @@ class GreasePencil : Overlay {
       return;
     }
 
-    if ((!state.active_base) || (ob_ref.object != state.active_base->object)) {
+    if (ob_ref.object != state.object_active) {
       /* Only display for the active object. */
       return;
     }
@@ -223,6 +228,19 @@ class GreasePencil : Overlay {
       grid_ps_.push_constant("origin", grid_mat.location());
       grid_ps_.push_constant("halfLineCount", line_count / 2);
       grid_ps_.draw_procedural(GPU_PRIM_LINES, 1, line_count * 2);
+    }
+  }
+
+  static void compute_depth_planes(Manager &manager,
+                                   View &view,
+                                   Resources &res,
+                                   const State & /*state*/)
+  {
+    for (auto i : IndexRange(res.depth_planes_count)) {
+      GreasePencilDepthPlane &plane = res.depth_planes[i];
+      const float4x4 &object_to_world =
+          manager.matrix_buf.current().get_or_resize(plane.handle.resource_index()).model;
+      plane.plane = GreasePencil::depth_plane_get(object_to_world, plane.bounds, view);
     }
   }
 
@@ -242,35 +260,15 @@ class GreasePencil : Overlay {
       return;
     }
 
-    view_edit_cage.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 0.5f));
+    float view_dist = State::view_dist_get(offset_data_, view.winmat());
+    view_edit_cage_.sync(view.viewmat(), winmat_polygon_offset(view.winmat(), view_dist, 0.5f));
 
     GPU_framebuffer_bind(framebuffer);
-    manager.submit(edit_grease_pencil_ps_, view_edit_cage);
+    manager.submit(edit_grease_pencil_ps_, view_edit_cage_);
   }
 
-  struct ViewParameters {
-    bool is_perspective;
-    union {
-      /* Z axis if ortho or position if perspective. */
-      float3 z_axis;
-      float3 location;
-    };
-
-    ViewParameters() = default;
-
-    ViewParameters(bool is_perspective, const float4x4 &viewinv)
-    {
-      if (is_perspective) {
-        location = viewinv.location();
-      }
-      else {
-        z_axis = viewinv.z_axis();
-      }
-    }
-  };
-
-  static void draw_grease_pencil(PassMain::Sub &pass,
-                                 const ViewParameters &view,
+  static void draw_grease_pencil(Resources &res,
+                                 PassMain::Sub &pass,
                                  const Scene *scene,
                                  Object *ob,
                                  ResourceHandle res_handle,
@@ -280,15 +278,25 @@ class GreasePencil : Overlay {
     using namespace blender::ed::greasepencil;
     ::GreasePencil &grease_pencil = *static_cast<::GreasePencil *>(ob->data);
 
-    float4 plane = (grease_pencil.flag & GREASE_PENCIL_STROKE_ORDER_3D) ?
-                       float4(0.0f) :
-                       depth_plane_get(ob, view);
-    pass.push_constant("gpDepthPlane", plane);
+    const bool is_stroke_order_3d = (grease_pencil.flag & GREASE_PENCIL_STROKE_ORDER_3D) != 0;
+
+    if (is_stroke_order_3d) {
+      pass.push_constant("gpDepthPlane", float4(0.0f));
+    }
+    else {
+      int64_t index = res.depth_planes.append_and_get_index({});
+      res.depth_planes_count++;
+
+      GreasePencilDepthPlane &plane = res.depth_planes[index];
+      plane.bounds = BKE_object_boundbox_get(ob).value_or(blender::Bounds(float3(0)));
+      plane.handle = res_handle;
+
+      pass.push_constant("gpDepthPlane", &plane.plane);
+    }
 
     int t_offset = 0;
     const Vector<DrawingInfo> drawings = retrieve_visible_drawings(*scene, grease_pencil, true);
     for (const DrawingInfo info : drawings) {
-      const bool is_stroke_order_3d = (grease_pencil.flag & GREASE_PENCIL_STROKE_ORDER_3D) != 0;
 
       const float object_scale = mat4_to_scale(ob->object_to_world().ptr());
       const float thickness_scale = bke::greasepencil::LEGACY_RADIUS_CONVERSION_FACTOR;
@@ -359,7 +367,9 @@ class GreasePencil : Overlay {
 
  private:
   /* Returns the normal plane in NDC space. */
-  static float4 depth_plane_get(const Object *ob, const ViewParameters &view)
+  static float4 depth_plane_get(const float4x4 &object_to_world,
+                                const blender::Bounds<float3> &bounds,
+                                const View &view)
   {
     using namespace blender::math;
 
@@ -368,19 +378,17 @@ class GreasePencil : Overlay {
      * strokes not aligned with the object axes. Maybe we could try to
      * compute the minimum axis of all strokes. But this would be more
      * computationally heavy and should go into the GPData evaluation. */
-    const std::optional<blender::Bounds<float3>> bounds = BKE_object_boundbox_get(ob).value_or(
-        blender::Bounds(float3(0)));
-
-    float3 center = midpoint(bounds->min, bounds->max);
-    float3 size = (bounds->max - bounds->min) * 0.5f;
+    float3 center = bounds.center();
+    float3 size = bounds.size();
     /* Avoid division by 0.0 later. */
     size += 1e-8f;
+
     /* Convert Bbox unit space to object space. */
-    float4x4 bbox_to_object = from_loc_scale<float4x4>(center, size);
-    float4x4 bbox_to_world = ob->object_to_world() * bbox_to_object;
+    float4x4 bbox_to_object = from_loc_scale<float4x4>(center, size * 0.5f);
+    float4x4 bbox_to_world = object_to_world * bbox_to_object;
 
     float3 bbox_center = bbox_to_world.location();
-    float3 view_vector = (view.is_perspective) ? view.location - bbox_center : view.z_axis;
+    float3 view_vector = (view.is_persp()) ? (view.location() - bbox_center) : view.forward();
 
     float3x3 world_to_bbox = invert(float3x3(bbox_to_world));
 

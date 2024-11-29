@@ -469,7 +469,7 @@ bool vert_is_boundary(const OffsetIndices<int> faces,
                       const SubdivCCGCoord vert)
 {
   /* TODO: Unlike the base mesh implementation this method does NOT take into account face
-   * visibility. Either this should be noted as a intentional limitation or fixed.*/
+   * visibility. Either this should be noted as a intentional limitation or fixed. */
   int v1, v2;
   const SubdivCCGAdjacencyType adjacency = BKE_subdiv_ccg_coarse_mesh_adjacency_info_get(
       subdiv_ccg, vert, corner_verts, faces, v1, v2);
@@ -488,7 +488,7 @@ bool vert_is_boundary(const OffsetIndices<int> faces,
 bool vert_is_boundary(BMVert *vert)
 {
   /* TODO: Unlike the base mesh implementation this method does NOT take into account face
-   * visibility. Either this should be noted as a intentional limitation or fixed.*/
+   * visibility. Either this should be noted as a intentional limitation or fixed. */
   return BM_vert_is_boundary(vert);
 }
 
@@ -5039,11 +5039,11 @@ void flush_update_step(bContext *C, UpdateType update_type)
 
   if (update_type == UpdateType::Position && !ss.shapekey_active) {
     if (pbvh.type() == bke::pbvh::Type::Mesh) {
-      /* Various operations inside sculpt mode can cause either the MeshRuntimeData or the entire
+      /* Various operations inside sculpt mode can cause either the #MeshRuntimeData or the entire
        * Mesh to be changed (e.g. Undoing the very first operation after opening a file, performing
        * remesh, etc).
        *
-       * This is an unideal fix for the core issue here, but to mitigate the drastic performance
+       * This isn't an ideal fix for the core issue here, but to mitigate the drastic performance
        * falloff, we refreeze the cache before we do any operation that would tag this runtime
        * cache as dirty.
        *
