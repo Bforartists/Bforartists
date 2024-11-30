@@ -47,7 +47,6 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
                 col.separator()
 
                 col.operator("nla.bake", text="Bake Action", icon='BAKE_ACTION')
-                col.operator("gpencil.bake_mesh_animation", text="Bake Mesh to Grease Pencil", icon='BAKE_ACTION')
 
 
             #col = layout.column(align=True)
@@ -79,8 +78,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
                     row.operator("anim.keying_set_active_set", text="", icon='KEYINGSET')
                     row.operator("nla.bake", text="", icon='BAKE_ACTION')
 
-                    row = col.row(align=True)
-                    row.operator("gpencil.bake_mesh_animation", text="", icon='BAKE_ACTION')
+
 
                 #col.separator( factor = 0.5) # Button Separator
 
@@ -108,8 +106,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
                     row.operator("anim.keying_set_active_set", text="", icon='KEYINGSET')
                     row.operator("nla.bake", text="", icon='BAKE_ACTION')
 
-                    row = col.row(align=True)
-                    row.operator("gpencil.bake_mesh_animation", text="", icon='BAKE_ACTION')
+
 
                 #col.separator( factor = 0.5) # Button Separator
 
@@ -134,7 +131,6 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
                     col.separator()
 
                     col.operator("nla.bake", text="", icon='BAKE_ACTION')
-                    col.operator("gpencil.bake_mesh_animation", text="", icon='BAKE_ACTION')
 
 
                 #col.separator( factor = 0.5)
