@@ -70,17 +70,24 @@ class BFA_OT_insertframe_right(op):
     bl_description = "Inserts an empty frame and nudges all frames to the right of the timeline cursor"
     bl_icon = 'TRIA_RIGHT'
 
+    _running = False  # Class variable to track if the operator is running
+
     def execute(self, context):
+
         # Get the current frame
         current_frame = bpy.context.scene.frame_current
 
         # Get all selected objects
         selected_objects = bpy.context.selected_objects
 
+        # Create a list to store frames to be moved for GP
+        frames_to_move = []
+
         # Iterate over each selected object
         for obj in selected_objects:
             # Check if the object has animation data
             if obj.animation_data and obj.animation_data.action:
+                print("Found animation data")
                 # Iterate over each fcurve in the action
                 for fcurve in obj.animation_data.action.fcurves:
                     # Iterate over each keyframe point in the fcurve
@@ -91,19 +98,47 @@ class BFA_OT_insertframe_right(op):
                             keyframe.co.x += 1
 
             # Check if the object is a grease pencil object
-            if obj.type == 'GPENCIL':
-                # Iterate over each layer in the grease pencil object
+            if obj.type == 'GREASEPENCIL':
+                print("Detected the GP object...")
                 for layer in obj.data.layers:
-                    # Iterate over each frame in the layer
+                    print(f"Layer: {layer.name}")
+
+                    # Clear the frames_to_move list
+                    frames_to_move.clear()
+
                     for frame in layer.frames:
-                        # If the frame is after the current frame
-                        if frame.frame_number > current_frame:
-                            # Nudge the frame one frame backward
-                            frame.frame_number += 1
+                        # Ensure frames to move are only those higher than the current frame, and not 0.
+                        if frame.frame_number > current_frame and frame.frame_number != 0:
+                            frames_to_move.append(frame.frame_number)
+
+                    # Print the frames that were appended to frames_to_move
+                    for frame in frames_to_move:
+                        print(f"Appended frame: {frame}")
+
+                    # Sort the frames in descending order of their frame numbers
+                    frames_to_move.sort(key=lambda frame: frame, reverse=True)
+
+                    # Print frames_to_move frames
+                    for frame in frames_to_move:
+                        print(f"Frame to move in order: {frame}")
+
+                    # Move all frames in the list one frame forward
+                    for frame in frames_to_move:
+                        source_frame = frame
+                        target_frame = frame + 1
+                        layer.frames.move(source_frame, target_frame)
+                        print(f"Moved frame: {source_frame} to {target_frame}")
+
+                        # Ensure frames are aligned correctly after movement
+                        layer.frames.update()
+
+
 
         # Update the scene
         bpy.context.scene.frame_set(current_frame)
+
         return {'FINISHED'}
+
 
     def menu_func(self, context):
         wm = context.window_manager
