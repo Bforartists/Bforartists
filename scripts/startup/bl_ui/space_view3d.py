@@ -6864,7 +6864,10 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
         #bfa - not in stroke mode. It is greyed out for this mode, so hide.
         if mode != 'STROKE':
-            layout.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
+            layout.operator("grease_pencil.stroke_simplify", text="Fixed", icon="MOD_SIMPLIFY").mode = 'FIXED'
+            layout.operator("grease_pencil.stroke_simplify", text="Adaptive").mode = 'ADAPTIVE'
+            layout.operator("grease_pencil.stroke_simplify", text="Sample").mode = 'SAMPLE'
+            layout.operator("grease_pencil.stroke_simplify", text="Merge").mode = 'MERGE'
         layout.separator()
         layout.operator_menu_enum("grease_pencil.join_selection", "type", text="Join")
 
