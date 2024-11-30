@@ -1185,53 +1185,22 @@ static void write_thumb(WriteData *wd, const BlendThumbnail *thumb)
 /** \name File Writing (Private)
  * \{ */
 
-#define ID_BUFFER_STATIC_SIZE 8192
-
-struct BLO_Write_IDBuffer {
-  const IDTypeInfo *id_type;
-  ID *temp_id;
-  char id_buffer_static[ID_BUFFER_STATIC_SIZE];
-};
-
-static void id_buffer_init_for_id_type(BLO_Write_IDBuffer *id_buffer, const IDTypeInfo *id_type)
+BLO_Write_IDBuffer::BLO_Write_IDBuffer(ID &id, const bool is_undo)
+    : buffer_(BKE_idtype_get_info_from_id(&id)->struct_size, alignof(ID))
 {
-  if (id_type != id_buffer->id_type) {
-    const size_t idtype_struct_size = id_type->struct_size;
-    if (idtype_struct_size > ID_BUFFER_STATIC_SIZE) {
-      CLOG_ERROR(&LOG,
-                 "ID maximum buffer size (%d bytes) is not big enough to fit IDs of type %s, "
-                 "which needs %lu bytes",
-                 ID_BUFFER_STATIC_SIZE,
-                 id_type->name,
-                 idtype_struct_size);
-      id_buffer->temp_id = static_cast<ID *>(MEM_mallocN(idtype_struct_size, __func__));
-    }
-    else {
-      if (static_cast<void *>(id_buffer->temp_id) != id_buffer->id_buffer_static) {
-        MEM_SAFE_FREE(id_buffer->temp_id);
-      }
-      id_buffer->temp_id = reinterpret_cast<ID *>(id_buffer->id_buffer_static);
-    }
-    id_buffer->id_type = id_type;
-  }
-}
-
-static void id_buffer_init_from_id(BLO_Write_IDBuffer *id_buffer, ID *id, const bool is_undo)
-{
-  BLI_assert(id_buffer->id_type == BKE_idtype_get_info_from_id(id));
+  const IDTypeInfo *id_type = BKE_idtype_get_info_from_id(&id);
+  ID *temp_id = static_cast<ID *>(buffer_.buffer());
 
   if (is_undo) {
     /* Record the changes that happened up to this undo push in
      * recalc_up_to_undo_push, and clear `recalc_after_undo_push` again
      * to start accumulating for the next undo push. */
-    id->recalc_up_to_undo_push = id->recalc_after_undo_push;
-    id->recalc_after_undo_push = 0;
+    id.recalc_up_to_undo_push = id.recalc_after_undo_push;
+    id.recalc_after_undo_push = 0;
   }
 
   /* Copy ID data itself into buffer, to be able to freely modify it. */
-  const size_t idtype_struct_size = id_buffer->id_type->struct_size;
-  ID *temp_id = id_buffer->temp_id;
-  memcpy(temp_id, id, idtype_struct_size);
+  memcpy(temp_id, &id, id_type->struct_size);
 
   /* Clear runtime data to reduce false detection of changed data in undo/redo context. */
   if (is_undo) {
@@ -1260,6 +1229,11 @@ static void id_buffer_init_from_id(BLO_Write_IDBuffer *id_buffer, ID *id, const 
   if (drawdata) {
     BLI_listbase_clear(reinterpret_cast<ListBase *>(drawdata));
   }
+}
+
+BLO_Write_IDBuffer::BLO_Write_IDBuffer(ID &id, BlendWriter *writer)
+    : BLO_Write_IDBuffer(id, BLO_write_is_undo(writer))
+{
 }
 
 /* Helper callback for checking linked IDs used by given ID (assumed local), to ensure directly
@@ -1382,18 +1356,9 @@ static bool write_file_handle(Main *mainvar,
    * avoid thumbnail detecting changes because of this. */
   mywrite_flush(wd);
 
-  OverrideLibraryStorage *override_storage = wd->use_memfile ?
-                                                 nullptr :
-                                                 BKE_lib_override_library_operations_store_init();
-
-  /* This outer loop allows to save first data-blocks from real mainvar,
-   * then the temp ones from override process,
-   * if needed, without duplicating whole code. */
-  Main *bmain = mainvar;
-  BLO_Write_IDBuffer *id_buffer = BLO_write_allocate_id_buffer();
-  do {
+  {
     ListBase *lbarray[INDEX_ID_MAX];
-    int a = set_listbasepointers(bmain, lbarray);
+    int a = set_listbasepointers(mainvar, lbarray);
     while (a--) {
       ID *id = static_cast<ID *>(lbarray[a]->first);
 
@@ -1402,7 +1367,6 @@ static bool write_file_handle(Main *mainvar,
       }
 
       const IDTypeInfo *id_type = BKE_idtype_get_info_from_id(id);
-      id_buffer_init_for_id_type(id_buffer, id_type);
 
       for (; id; id = static_cast<ID *>(id->next)) {
         /* We should never attempt to write non-regular IDs
@@ -1451,32 +1415,27 @@ static bool write_file_handle(Main *mainvar,
           continue;
         }
 
-        const bool do_override = !ELEM(override_storage, nullptr, bmain) &&
-                                 ID_IS_OVERRIDE_LIBRARY_REAL(id);
-
         /* If not writing undo data, properly set directly linked IDs as `ID_TAG_EXTERN`. */
         if (!wd->use_memfile) {
-          BKE_library_foreach_ID_link(bmain,
+          BKE_library_foreach_ID_link(mainvar,
                                       id,
                                       write_id_direct_linked_data_process_cb,
                                       nullptr,
                                       IDWALK_READONLY | IDWALK_INCLUDE_UI);
         }
 
-        if (do_override) {
-          BKE_lib_override_library_operations_store_start(bmain, override_storage, id);
+        if (!wd->use_memfile && ID_IS_OVERRIDE_LIBRARY_REAL(id) &&
+            !ID_IS_OVERRIDE_LIBRARY_VIRTUAL(id))
+        {
+          /* Forcefully ensure we know about all needed override operations. */
+          BKE_lib_override_library_operations_create(mainvar, id, nullptr);
         }
 
         mywrite_id_begin(wd, id);
 
-        id_buffer_init_from_id(id_buffer, id, wd->use_memfile);
-
         if (id_type->blend_write != nullptr) {
-          id_type->blend_write(&writer, static_cast<ID *>(id_buffer->temp_id), id);
-        }
-
-        if (do_override) {
-          BKE_lib_override_library_operations_store_end(override_storage, id);
+          BLO_Write_IDBuffer id_buffer{*id, &writer};
+          id_type->blend_write(&writer, id_buffer.get(), id);
         }
 
         mywrite_id_end(wd, id);
@@ -1484,13 +1443,6 @@ static bool write_file_handle(Main *mainvar,
 
       mywrite_flush(wd);
     }
-  } while ((bmain != override_storage) && (bmain = override_storage));
-
-  BLO_write_destroy_id_buffer(&id_buffer);
-
-  if (override_storage) {
-    BKE_lib_override_library_operations_store_finalize(override_storage);
-    override_storage = nullptr;
   }
 
   /* Special handling, operating over split Mains... */
@@ -1794,35 +1746,6 @@ bool BLO_write_file_mem(Main *mainvar, MemFile *compare, MemFile *current, const
       mainvar, nullptr, compare, current, write_flags, use_userdef, nullptr);
 
   return (err == 0);
-}
-
-/*
- * API to handle writing IDs while clearing some of their runtime data.
- */
-
-BLO_Write_IDBuffer *BLO_write_allocate_id_buffer()
-{
-  return MEM_cnew<BLO_Write_IDBuffer>(__func__);
-}
-
-void BLO_write_init_id_buffer_from_id(BLO_Write_IDBuffer *id_buffer, ID *id, const bool is_undo)
-{
-  const IDTypeInfo *id_type = BKE_idtype_get_info_from_id(id);
-  id_buffer_init_for_id_type(id_buffer, id_type);
-  id_buffer_init_from_id(id_buffer, id, is_undo);
-}
-
-ID *BLO_write_get_id_buffer_temp_id(BLO_Write_IDBuffer *id_buffer)
-{
-  return id_buffer->temp_id;
-}
-
-void BLO_write_destroy_id_buffer(BLO_Write_IDBuffer **id_buffer)
-{
-  if (static_cast<void *>((*id_buffer)->temp_id) != (*id_buffer)->id_buffer_static) {
-    MEM_SAFE_FREE((*id_buffer)->temp_id);
-  }
-  MEM_SAFE_FREE(*id_buffer);
 }
 
 /*

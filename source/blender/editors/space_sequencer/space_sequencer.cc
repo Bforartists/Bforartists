@@ -512,7 +512,7 @@ static void sequencer_main_clamp_view(const bContext *C, ARegion *region)
     /* Make sure that we can always scroll off at least by one channel. */
     bottom_channel_padding = 1.0f;
   }
-  /* Add the padding and make sure we have a margin of one channel in each direction.*/
+  /* Add the padding and make sure we have a margin of one channel in each direction. */
   strip_boundbox.ymax += 1.0f + pad_top * pixel_view_size_y;
   strip_boundbox.ymin -= bottom_channel_padding;
 
@@ -642,7 +642,7 @@ static void sequencer_main_region_message_subscribe(const wmRegionMessageSubscri
         &RNA_SequenceModifier,
         &RNA_SequenceColorBalanceData,
     };
-    wmMsgParams_RNA msg_key_params = {{nullptr}};
+    wmMsgParams_RNA msg_key_params = {{}};
     for (int i = 0; i < ARRAY_SIZE(type_array); i++) {
       msg_key_params.ptr.type = type_array[i];
       WM_msg_subscribe_rna_params(

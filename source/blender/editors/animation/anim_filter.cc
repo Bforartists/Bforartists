@@ -2215,9 +2215,9 @@ static size_t animdata_filter_grease_pencil_data(bAnimContext *ac,
   if (filter_mode & ANIMFILTER_ANIMDATA) {
     if (show_animdata) {
       items += animfilter_block_data(ac, anim_data, (ID *)grease_pencil, filter_mode);
+      ANIMCHANNEL_NEW_CHANNEL(
+          ac->bmain, grease_pencil, ANIMTYPE_GREASE_PENCIL_DATABLOCK, grease_pencil, nullptr);
     }
-    ANIMCHANNEL_NEW_CHANNEL(
-        ac->bmain, grease_pencil, ANIMTYPE_GREASE_PENCIL_DATABLOCK, grease_pencil, nullptr);
   }
   else {
     ListBase tmp_data = {nullptr, nullptr};
@@ -2830,7 +2830,7 @@ static size_t animdata_filter_ds_modifiers(bAnimContext *ac,
    *    use to walk through the dependencies of the modifiers
    *
    * Assumes that all other unspecified values (i.e. accumulation buffers)
-   * are zero'd out properly!
+   * are zeroed out properly!
    */
   afm.ac = ac;
   afm.ads = ac->ads; /* TODO: Remove this pointer from the struct and just use afm.ac->ads. */
@@ -3234,7 +3234,7 @@ static size_t animdata_filter_dopesheet_ob(bAnimContext *ac,
     }
 
     /* object data */
-    if ((ob->data) && (ob->type != OB_GPENCIL_LEGACY)) {
+    if (ob->data) {
       tmp_items += animdata_filter_ds_obdata(ac, &tmp_data, ob, filter_mode);
     }
 
@@ -3244,13 +3244,9 @@ static size_t animdata_filter_dopesheet_ob(bAnimContext *ac,
     }
 
     /* grease pencil */
-    if (ELEM(ob->type, OB_GREASE_PENCIL, OB_GPENCIL_LEGACY) && (ob->data) &&
-        !(ads_filterflag & ADS_FILTER_NOGPENCIL))
-    {
-      if (ob->type == OB_GREASE_PENCIL) {
-        tmp_items += animdata_filter_grease_pencil_data(
-            ac, &tmp_data, static_cast<GreasePencil *>(ob->data), filter_mode);
-      }
+    if (ob->type == OB_GREASE_PENCIL && (ob->data) && !(ads_filterflag & ADS_FILTER_NOGPENCIL)) {
+      tmp_items += animdata_filter_grease_pencil_data(
+          ac, &tmp_data, static_cast<GreasePencil *>(ob->data), filter_mode);
     }
   }
   END_ANIMFILTER_SUBCHANNELS;
