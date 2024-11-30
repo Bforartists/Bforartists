@@ -1117,6 +1117,7 @@ class VIEW3D_HT_header(Header):
             depress=draw_depressed,
         )
         # BFA - custom operator from the Power User Tools to toggle the viewport silhuette
+        row = layout.row(align=True)
         if context.preferences.addons.get('bfa_power_user_tools'):
             if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_viewport:
                 row.operator("view3d.viewport_silhouette_toggle", text="", icon='IMAGE_ALPHA')
