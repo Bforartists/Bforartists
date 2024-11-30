@@ -815,7 +815,8 @@ class IH_OT_ModalDrawOperator(bpy.types.Operator):
     # We need to limit the check loop so that it only runs once.
     # For that we need the involved variables to be accessible across the functions
     # And a flag so that the stuff runs just onc
-    def __init__(self):
+    def __init__(self, *args, **kwargs): # must call the parent function, introduced in 1dbe94c8ac commit
+        super().__init__(*args, **kwargs) # must call the parent function, introduced in 1dbe94c8ac commit
         self._flag = False # our run once flag for the modal text
         self._flag2 = False # our run once flag for the fixed text
         self.mod_Y = 0
@@ -1030,7 +1031,7 @@ def clear_properties():
 
 classes = (
     IH_OT_ModalDrawOperator,
-	VIEW3D_PT_ShowtextPanel,
+    VIEW3D_PT_ShowtextPanel,
 )
 
 def register():
