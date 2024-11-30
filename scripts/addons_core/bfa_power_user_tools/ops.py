@@ -48,10 +48,7 @@ class BFA_OT_insertframe_left(op):
 
             # Check if the object is a grease pencil object
             if obj.type == 'GREASEPENCIL':
-                print("Detected the GP object...")
                 for layer in obj.data.layers:
-                    print(f"Layer: {layer.name}")
-
                     # Clear the frames_to_move list
                     frames_to_move.clear()
 
@@ -60,23 +57,15 @@ class BFA_OT_insertframe_left(op):
                         if frame.frame_number < current_frame and frame.frame_number != 0:
                             frames_to_move.append(frame.frame_number)
 
-                    # Print the frames that were appended to frames_to_move
-                    for frame in frames_to_move:
-                        print(f"Appended frame: {frame}")
-
                     # Sort the frames in descending order of their frame numbers
                     frames_to_move.sort(key=lambda frame: frame, reverse=False)
-
-                    # Print frames_to_move frames
-                    for frame in frames_to_move:
-                        print(f"Frame to move in order: {frame}")
 
                     # Move all frames in the list one frame forward
                     for frame in frames_to_move:
                         source_frame = frame
                         target_frame = frame - 1
                         layer.frames.move(source_frame, target_frame)
-                        print(f"Moved frame: {source_frame} to {target_frame}")
+
 
                         # Ensure frames are aligned correctly after movement
                         layer.frames.update()
@@ -112,7 +101,6 @@ class BFA_OT_insertframe_right(op):
         for obj in selected_objects:
             # Check if the object has animation data
             if obj.animation_data and obj.animation_data.action:
-                print("Found animation data")
                 # Iterate over each fcurve in the action
                 for fcurve in obj.animation_data.action.fcurves:
                     # Iterate over each keyframe point in the fcurve
@@ -124,10 +112,7 @@ class BFA_OT_insertframe_right(op):
 
             # Check if the object is a grease pencil object
             if obj.type == 'GREASEPENCIL':
-                print("Detected the GP object...")
                 for layer in obj.data.layers:
-                    print(f"Layer: {layer.name}")
-
                     # Clear the frames_to_move list
                     frames_to_move.clear()
 
@@ -136,28 +121,17 @@ class BFA_OT_insertframe_right(op):
                         if frame.frame_number > current_frame and frame.frame_number != 0:
                             frames_to_move.append(frame.frame_number)
 
-                    # Print the frames that were appended to frames_to_move
-                    for frame in frames_to_move:
-                        print(f"Appended frame: {frame}")
-
                     # Sort the frames in descending order of their frame numbers
                     frames_to_move.sort(key=lambda frame: frame, reverse=True)
-
-                    # Print frames_to_move frames
-                    for frame in frames_to_move:
-                        print(f"Frame to move in order: {frame}")
 
                     # Move all frames in the list one frame forward
                     for frame in frames_to_move:
                         source_frame = frame
                         target_frame = frame + 1
                         layer.frames.move(source_frame, target_frame)
-                        print(f"Moved frame: {source_frame} to {target_frame}")
 
                         # Ensure frames are aligned correctly after movement
                         layer.frames.update()
-
-
 
         # Update the scene
         bpy.context.scene.frame_set(current_frame)
@@ -206,10 +180,7 @@ class BFA_OT_removeframe_left(op):
 
             # Check if the object is a grease pencil object
             if obj.type == 'GREASEPENCIL':
-                print("Detected the GP object...")
                 for layer in obj.data.layers:
-                    print(f"Layer: {layer.name}")
-
                     # Clear the frames_to_move list
                     frames_to_move.clear()
 
@@ -218,16 +189,8 @@ class BFA_OT_removeframe_left(op):
                         if frame.frame_number <= current_frame and frame.frame_number != 0:
                             frames_to_move.append(frame.frame_number)
 
-                    # Print the frames that were appended to frames_to_move
-                    for frame in frames_to_move:
-                        print(f"Appended frame: {frame}")
-
                     # Sort the frames in descending order of their frame numbers
                     frames_to_move.sort(key=lambda frame: frame, reverse=True)
-
-                    # Print frames_to_move frames
-                    for frame in frames_to_move:
-                        print(f"Frame to move in order: {frame}")
 
                     # Move all frames in the list one frame forward
                     for frame in frames_to_move:
@@ -236,10 +199,9 @@ class BFA_OT_removeframe_left(op):
 
                         if frame == current_frame:
                             layer.frames.remove(frame)
-                            print(f"Removed frame: {frame}")
                         else:
                             layer.frames.move(source_frame, target_frame)
-                            print(f"Moved frame: {source_frame} to {target_frame}")
+
 
         # Update the scene
         bpy.context.scene.frame_set(current_frame)
@@ -287,9 +249,9 @@ class BFA_OT_removeframe_right(op):
 
             # Check if the object is a grease pencil object
             if obj.type == 'GREASEPENCIL':
-                print("Detected the GP object...")
+
                 for layer in obj.data.layers:
-                    print(f"Layer: {layer.name}")
+
 
                     # Clear the frames_to_move list
                     frames_to_move.clear()
@@ -320,7 +282,7 @@ class BFA_OT_removeframe_right(op):
                             print(f"Removed frame: {frame}")
                         else:
                             layer.frames.move(source_frame, target_frame)
-                            print(f"Moved frame: {source_frame} to {target_frame}")
+
 
 
 
