@@ -184,6 +184,9 @@ class BFA_OT_removeframe_left(op):
         # Get all selected objects
         selected_objects = bpy.context.selected_objects
 
+        # Create a list to store frames to be moved for GP
+        frames_to_move = []
+
         # Iterate over each selected object
         for obj in selected_objects:
             # Check if the object has animation data
@@ -201,25 +204,42 @@ class BFA_OT_removeframe_left(op):
                             # Nudge the key frame one frame backward
                             keyframe.co.x += 1
 
-        # Check if the object is a grease pencil object
-        if obj.type == 'GPENCIL':
-            # Iterate over each layer in the grease pencil object
-            for layer in obj.data.layers:
-                # Create a list of frames to remove
-                frames_to_remove = []
-                # Iterate over each frame in the layer
-                for frame in layer.frames:
-                    # If the frame is on the current frame
-                    if frame.frame_number == current_frame:
-                        # Add the frame to the list of frames to remove
-                        frames_to_remove.append(frame)
-                    # If the frame is to the right of the current frame
-                    elif frame.frame_number < current_frame:
-                        # Nudge the frame one frame backwards
-                        frame.frame_number += 1
-                # Remove the frames at the current frame
-                for frame in frames_to_remove:
-                    layer.frames.remove(frame)
+            # Check if the object is a grease pencil object
+            if obj.type == 'GREASEPENCIL':
+                print("Detected the GP object...")
+                for layer in obj.data.layers:
+                    print(f"Layer: {layer.name}")
+
+                    # Clear the frames_to_move list
+                    frames_to_move.clear()
+
+                    for frame in layer.frames:
+                        # Ensure frames to move are only those higher than the current frame, and not 0.
+                        if frame.frame_number <= current_frame and frame.frame_number != 0:
+                            frames_to_move.append(frame.frame_number)
+
+                    # Print the frames that were appended to frames_to_move
+                    for frame in frames_to_move:
+                        print(f"Appended frame: {frame}")
+
+                    # Sort the frames in descending order of their frame numbers
+                    frames_to_move.sort(key=lambda frame: frame, reverse=True)
+
+                    # Print frames_to_move frames
+                    for frame in frames_to_move:
+                        print(f"Frame to move in order: {frame}")
+
+                    # Move all frames in the list one frame forward
+                    for frame in frames_to_move:
+                        source_frame = frame
+                        target_frame = frame + 1
+
+                        if frame == current_frame:
+                            layer.frames.remove(frame)
+                            print(f"Removed frame: {frame}")
+                        else:
+                            layer.frames.move(source_frame, target_frame)
+                            print(f"Moved frame: {source_frame} to {target_frame}")
 
         # Update the scene
         bpy.context.scene.frame_set(current_frame)
@@ -276,7 +296,7 @@ class BFA_OT_removeframe_right(op):
 
                     for frame in layer.frames:
                         # Ensure frames to move are only those higher than the current frame, and not 0.
-                        if frame.frame_number < current_frame and frame.frame_number != 0:
+                        if frame.frame_number >= current_frame and frame.frame_number != 0:
                             frames_to_move.append(frame.frame_number)
 
                     # Print the frames that were appended to frames_to_move
@@ -294,8 +314,15 @@ class BFA_OT_removeframe_right(op):
                     for frame in frames_to_move:
                         source_frame = frame
                         target_frame = frame - 1
-                        layer.frames.move(source_frame, target_frame)
-                        print(f"Moved frame: {source_frame} to {target_frame}")
+
+                        if frame == current_frame:
+                            layer.frames.remove(frame)
+                            print(f"Removed frame: {frame}")
+                        else:
+                            layer.frames.move(source_frame, target_frame)
+                            print(f"Moved frame: {source_frame} to {target_frame}")
+
+
 
                         # Ensure frames are aligned correctly after movement
                         layer.frames.update()
