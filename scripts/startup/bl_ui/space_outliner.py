@@ -664,6 +664,13 @@ class OUTLINER_PT_filter(Panel):
                 row.separator(factor=2.0)
                 row.label(icon='ARMATURE_DATA')
                 row.prop(space, "use_filter_object_armature", text="Armatures")
+                #bfa - hide pose bones - start
+                if space.use_filter_object_armature:
+                    row = sub.row()
+                    row.separator(factor=2.0)
+                    row.label(icon='BONE_DATA')
+                    row.prop(space, "use_filter_pose_bones", text="Pose Bones")
+                #bfa - hide pose bones - end
             if bpy.data.lights:
                 row = sub.row()
                 row.separator(factor=2.0)
