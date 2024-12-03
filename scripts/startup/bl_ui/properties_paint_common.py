@@ -1487,7 +1487,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         layout.separator()
 
         layout.use_property_split = False # BFA
-        
+
         layout.prop(brush, "use_alpha")
         if brush.vertex_tool != 'SMEAR':
             use_accumulate = True
@@ -1992,9 +1992,12 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         row.prop(brush, "size", text="Thickness")
         layout.use_property_split = use_property_split_prev
     elif grease_pencil_tool == 'ERASE':
+
         layout.prop(gp_settings, "eraser_mode", expand=True)
         if gp_settings.eraser_mode in {'HARD', 'SOFT'}:
+            layout.use_property_split = False
             layout.prop(gp_settings, "use_keep_caps_eraser")
+        layout.use_property_split = False
         layout.prop(gp_settings, "use_active_layer_only")
     elif grease_pencil_tool == 'TINT':
         layout.prop(gp_settings, "vertex_mode", text="Mode")
