@@ -2423,6 +2423,7 @@ class _defs_grease_pencil_paint:
             layout.prop(props, "flip")
             layout.prop(props, "smooth_factor")
             layout.prop(props, "smooth_steps")
+            layout.use_property_split = False
             layout.prop(props, "exclude_breakdowns")
 
         return dict(
