@@ -2757,6 +2757,7 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_advanced(View3DPanel, Panel):
 
             col.separator()
             row = col.row(align=True)
+            row.use_property_split = False
             row.prop(gp_settings, "use_fill_limit")
 
 
@@ -2825,12 +2826,14 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_post_processing(View3DPanel, Panel)
         col1.prop(gp_settings, "simplify_pixel_threshold", slider=True)
 
         col1 = col.column(align=True)
+        col1.use_property_split = False
         col1.prop(gp_settings, "use_trim")
 
         col.separator()
 
-        row = col.row(heading="Outline", align=True)
-        row.prop(gp_settings, "use_settings_outline", text="")
+        row = col.row(align = True)
+        row.use_property_split = False
+        row.prop(gp_settings, "use_settings_outline")
         row2 = row.row(align=True)
         row2.enabled = gp_settings.use_settings_outline
         row2.prop(gp_settings, "material_alt", text="")
@@ -3127,10 +3130,12 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_gap_closure(View3DPanel, Panel):
         row = col.row(align=True)
         row.prop(gp_settings, "fill_extend_mode", text="Mode")
         row = col.row(align=True)
+        row.use_property_split = False
         row.prop(gp_settings, "show_fill_extend", text="Visual Aids")
 
         if gp_settings.fill_extend_mode == 'EXTEND':
             row = col.row(align=True)
+            row.use_property_split = False
             row.prop(gp_settings, "use_collide_strokes")
 
 
