@@ -1591,7 +1591,8 @@ class _defs_sculpt:
 
     @ToolDef.from_fn
     def mask_lasso():
-        def draw_settings(_context, layout, tool):
+        def draw_settings(_context, layout, tool, *, extra=False):
+            draw_popover = False
             props = tool.operator_properties("paint.mask_lasso_gesture")
 
             if not extra:

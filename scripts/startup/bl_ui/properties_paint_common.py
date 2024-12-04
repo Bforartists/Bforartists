@@ -1727,7 +1727,7 @@ def brush_basic_texpaint_settings(layout, context, brush, *, compact=False):
     )
 
 
-def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props):
+def brush_basic__draw_color_selector(context, layout, brush, gp_settings):
     tool_settings = context.scene.tool_settings
     settings = tool_settings.gpencil_paint
     ma = gp_settings.material
@@ -1780,11 +1780,7 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
             row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="") # BFA
             row.prop(gp_settings, "pin_draw_mode", text="")
 
-    if props:
-        row = layout.row(align=True)
-        row.prop(props, "subdivision")
 
-# BFA - legacy
 def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False):
     tool_settings = context.tool_settings
     settings = tool_settings.gpencil_paint
@@ -1992,7 +1988,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         row.prop(brush, "size", text="Thickness")
         layout.use_property_split = use_property_split_prev
     elif grease_pencil_tool == 'ERASE':
-
+        
         layout.prop(gp_settings, "eraser_mode", expand=True)
         if gp_settings.eraser_mode in {'HARD', 'SOFT'}:
             layout.use_property_split = False
@@ -2001,7 +1997,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         layout.prop(gp_settings, "use_active_layer_only")
     elif grease_pencil_tool == 'TINT':
         layout.prop(gp_settings, "vertex_mode", text="Mode")
-        #layout.popover("VIEW3D_PT_tools_brush_falloff") # BFA - moved to be consistent with other brushes in the properties_paint_common.py file
+        layout.use_property_split = False
         layout.prop(gp_settings, "use_active_layer_only")
 
 
