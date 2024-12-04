@@ -654,7 +654,7 @@ class _draw_tool_settings_context_mode:
             from bl_ui.properties_paint_common import (
                 brush_basic__draw_color_selector,
             )
-            brush_basic__draw_color_selector(context, layout, brush, brush.gpencil_settings, None)
+            brush_basic__draw_color_selector(context, layout, brush, brush.gpencil_settings)
 
         if grease_pencil_tool == 'TINT':
             row.separator(factor=0.4)
@@ -663,13 +663,13 @@ class _draw_tool_settings_context_mode:
             row.prop_with_popover(prop_owner, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
 
         from bl_ui.properties_paint_common import (
-            brush_basic__draw_color_selector,
             brush_basic_grease_pencil_paint_settings,
         )
 
         brush_basic_grease_pencil_paint_settings(layout, context, brush, None, compact=True)
 
         return True
+
 
 def draw_topbar_grease_pencil_layer_panel(context, layout):
     grease_pencil = context.object.data
