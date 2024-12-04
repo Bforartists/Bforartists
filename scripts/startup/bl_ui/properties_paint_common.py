@@ -1959,6 +1959,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
             )
         else:
             row = layout.row(align=True)
+            row.use_property_split = False
             row.prop(settings, "use_thickness_curve", text="Use Thickness Profile")
             sub = row.row(align=True)
             if settings.use_thickness_curve:
@@ -1988,7 +1989,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         row.prop(brush, "size", text="Thickness")
         layout.use_property_split = use_property_split_prev
     elif grease_pencil_tool == 'ERASE':
-        
+
         layout.prop(gp_settings, "eraser_mode", expand=True)
         if gp_settings.eraser_mode in {'HARD', 'SOFT'}:
             layout.use_property_split = False
