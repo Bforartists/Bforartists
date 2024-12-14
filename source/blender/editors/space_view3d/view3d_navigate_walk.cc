@@ -1230,11 +1230,7 @@ static int walkApply(bContext *C, WalkInfo *walk, bool is_confirm)
 
           copy_v3_fl3(dvec_tmp, 0.0f, 0.0f, direction);
           mul_m3_v3(mat, dvec_tmp);
-
-          if (walk->navigation_mode == WALK_MODE_GRAVITY) {
             dvec_tmp[2] = 0.0f;
-          }
-
           add_v3_v3(dvec, dvec_tmp);
         }
 
