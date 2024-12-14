@@ -19,22 +19,15 @@ jobs:
     - name: make
       shell: cmd
       run: |
-        mkdir C:/Users/runneradmin/bforartistsrepo
-        cd C:/Users/runneradmin/bforartistsrepo
-        git clone https://github.com/Bforartists/Bforartists
+        git clone https://github.com/happymimimix/Bforartists
         cd Bforartists
         python ./build_files/utils/make_update.py
         make
-        dir
-        cd ..
-        dir
 
 
     - name: Upload Build
       uses: actions/upload-artifact@v4
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: | 
-          C:/Users/runneradmin/bforartistsrepo/bfa_build_windows_x64_vc17_Release/bin
-          D:/a/Bforartists/Bforartists/bfa_build_windows_x64_vc17_Release/bin
+        path: D:/a/Bforartists/Bforartists/bfa_build_windows_x64_vc17_Release/bin
                 
