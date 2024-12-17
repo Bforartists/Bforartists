@@ -221,7 +221,7 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         is_wire = (obj_type in {'CAMERA', 'EMPTY'})
         is_empty_image = (obj_type == 'EMPTY' and obj.empty_display_type == 'IMAGE')
         is_dupli = (obj.instance_type != 'NONE')
-        is_gpencil = (obj_type == 'GPENCIL')
+        is_gpencil = (obj_type == 'GREASEPENCIL')
 
         col = layout.column(align = True)
         col.label(text = "Show")
@@ -505,7 +505,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
                 col.prop(ob, "hide_probe_sphere", text="Sphere", toggle=False, invert_checkbox=True)
                 col.prop(ob, "hide_probe_plane", text="Plane", toggle=False, invert_checkbox=True)
 
-        if ob.type in {'GPENCIL', 'GREASEPENCIL'}:
+        if ob.type == 'GREASEPENCIL':
 
             col = layout.column(align = True)
             col.label(text = "Grease Pencil")

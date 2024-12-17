@@ -7,7 +7,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
-from pxr import Gf, Sdf, Usd, UsdGeom, UsdShade
+from pxr import Ar, Gf, Sdf, Usd, UsdGeom, UsdShade
 
 import bpy
 
@@ -18,12 +18,15 @@ class AbstractUSDTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.testdir = args.testdir
-        cls._tempdir = tempfile.TemporaryDirectory()
-        cls.tempdir = pathlib.Path(cls._tempdir.name)
 
     def setUp(self):
+        self._tempdir = tempfile.TemporaryDirectory()
+        self.tempdir = pathlib.Path(self._tempdir.name)
+
         self.assertTrue(self.testdir.exists(),
                         'Test dir {0} should exist'.format(self.testdir))
+        self.assertTrue(self.tempdir.exists(),
+                        'Temp dir {0} should exist'.format(self.tempdir))
 
         # Make sure we always start with a known-empty file.
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "empty.blend"))
@@ -197,6 +200,28 @@ class USDImportTest(AbstractUSDTest):
         coords = get_coords(uvmap)
         coords = list(filter(lambda x: x[0] > 1.0, coords))
         self.assertGreater(len(coords), 16)
+
+    def test_import_mesh_subd(self):
+        """Test importing meshes with subdivision attributes."""
+
+        # Use the existing mesh subd test file to create the USD file
+        # for import. It is validated as part of the bl_usd_export test.
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_mesh_subd.blend"))
+        testfile = str(self.tempdir / "usd_mesh_subd.usda")
+        bpy.ops.wm.usd_export(filepath=testfile, export_subdivision='BEST_MATCH', evaluation_mode="RENDER")
+        res = bpy.ops.wm.usd_export(filepath=testfile, export_materials=True)
+        self.assertEqual({'FINISHED'}, res, f"Unable to export to {testfile}")
+
+        # Reload the empty file and import back in
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "empty.blend"))
+        res = bpy.ops.wm.usd_import(filepath=testfile)
+        self.assertEqual({'FINISHED'}, res, f"Unable to import USD file {testfile}")
+
+        # Validate crease attributes
+
+        mesh = bpy.data.objects["crease_verts"].data
+        blender_crease_vert_data = [round(d.value, 5) for d in mesh.attributes["crease_vert"].data]
+        self.assertEqual(blender_crease_vert_data, [0.3, 0.0, 0.2, 0.1, 0.8, 0.7, 1.0, 0.9])
 
     def test_import_camera_properties(self):
         """Test importing camera to ensure properties set correctly."""
@@ -533,6 +558,7 @@ class USDImportTest(AbstractUSDTest):
         ob_arm = bpy.data.objects["column_anim_armature"]
         ob_arm2_side_a = bpy.data.objects["side_a"]
         ob_arm2_side_b = bpy.data.objects["side_b"]
+        self.assertEqual(bpy.data.objects["Armature"].animation_data.action.name, "ArmatureAction_001")
 
         bpy.context.scene.frame_set(1)
         self.assertEqual(len(ob_xform.constraints), 1)
@@ -678,7 +704,7 @@ class USDImportTest(AbstractUSDTest):
             self.assertAlmostEqual(mesh_obj.vertex_groups['Elbow'].weight(
                 8 + i), 1.0, 2, "Unexpected weight for Elbow deform vert")
 
-        action = bpy.data.actions['SkelAction']
+        action = bpy.data.actions['Anim1']
 
         # Verify the Elbow joint rotation animation.
         curve_path = 'pose.bones["Elbow"].rotation_quaternion'
@@ -1526,6 +1552,213 @@ class USDImportTest(AbstractUSDTest):
         check_image("test_normal_invertY.exr", 1, 128, False)
         check_image("color_121212.hdr", 1, 4, False)
         check_materials()
+
+    def test_get_prim_map_parent_xform_not_merged(self):
+        bpy.utils.register_class(GetPrimMapUsdImportHook)
+        bpy.ops.wm.usd_import(filepath=str(self.testdir / "usd_name_property_template.usda"), merge_parent_xform=False)
+        prim_map = GetPrimMapUsdImportHook.prim_map
+        bpy.utils.unregister_class(GetPrimMapUsdImportHook)
+
+        expected_prim_map = {
+            "/Cube": [bpy.data.objects["Cube.002"], bpy.data.meshes["Cube.002"]],
+            "/XformThenCube": [bpy.data.objects["XformThenCube"]],
+            "/XformThenCube/Cube": [bpy.data.objects["Cube"], bpy.data.meshes["Cube"]],
+            "/XformThenXformCube": [bpy.data.objects["XformThenXformCube"]],
+            "/XformThenXformCube/XformIntermediate": [bpy.data.objects["XformIntermediate"]],
+            "/XformThenXformCube/XformIntermediate/Cube": [bpy.data.objects["Cube.001"], bpy.data.meshes["Cube.001"]],
+            "/Material": [bpy.data.materials["Material"]],
+        }
+
+        self.assertDictEqual(prim_map, expected_prim_map)
+
+    def test_get_prim_map_parent_xform_merged(self):
+        bpy.utils.register_class(GetPrimMapUsdImportHook)
+        bpy.ops.wm.usd_import(filepath=str(self.testdir / "usd_name_property_template.usda"), merge_parent_xform=True)
+        prim_map = GetPrimMapUsdImportHook.prim_map
+        bpy.utils.unregister_class(GetPrimMapUsdImportHook)
+
+        expected_prim_map = {
+            "/Cube": [bpy.data.objects["Cube.002"], bpy.data.meshes["Cube.002"]],
+            "/XformThenCube": [bpy.data.objects["Cube"]],
+            "/XformThenCube/Cube": [bpy.data.meshes["Cube"]],
+            "/XformThenXformCube": [bpy.data.objects["XformThenXformCube"]],
+            "/XformThenXformCube/XformIntermediate": [bpy.data.objects["Cube.001"]],
+            "/XformThenXformCube/XformIntermediate/Cube": [bpy.data.meshes["Cube.001"]],
+            "/Material": [bpy.data.materials["Material"]],
+        }
+
+        self.assertDictEqual(prim_map, expected_prim_map)
+
+    def test_material_import_usd_hook(self):
+        """Test importing color from an mtlx shader."""
+
+        bpy.utils.register_class(ImportMtlxColorUSDHook)
+        bpy.ops.wm.usd_import(filepath=str(self.testdir / "usd_simple_mtlx.usda"))
+        bpy.utils.unregister_class(ImportMtlxColorUSDHook)
+
+        # Check that the correct color was read.
+        imported_color = ImportMtlxColorUSDHook.imported_color
+        self.assertEqual(imported_color, [0, 1, 0, 1], "Wrong mtlx shader color imported")
+
+        # Check that a Principled BSDF shader with the expected Base Color input.
+        # was created.
+        mtl = bpy.data.materials["Material"]
+        self.assertTrue(mtl.use_nodes)
+        bsdf = mtl.node_tree.nodes.get("Principled BSDF")
+        self.assertIsNotNone(bsdf)
+        base_color_input = bsdf.inputs['Base Color']
+        self.assertEqual(self.round_vector(base_color_input.default_value), [0, 1, 0, 1])
+
+    def test_usd_hook_import_texture(self):
+        """
+        Test importing a texture from a USDZ archive, using two different
+        texture import modes.
+        """
+
+        bpy.utils.register_class(ImportMtlxTextureUSDHook)
+        bpy.ops.wm.usd_import(filepath=str(self.testdir / "usd_simple_mtlx_texture.usdz"),
+                              import_textures_mode='IMPORT_COPY',
+                              import_textures_dir=str(self.tempdir / "textures"))
+
+        # The resolved path should be a package-relative path for the USDZ, in this case
+        # self.testdir / "usd_simple_mtlx_texture.usdz[textures/test_single.png]"
+        resolved_path = ImportMtlxTextureUSDHook.resolved_path
+
+        self.assertTrue(Ar.IsPackageRelativePath(resolved_path),
+                        "Resolved path is not relative to the USDZ")
+        path_inner = Ar.SplitPackageRelativePathInner(resolved_path)
+        self.assertEqual(path_inner[1], "textures/test_single.png",
+                         "Resolved path does not have the expected format")
+
+        # Confirm that file was copied from the USDZ archive to the textures
+        # directory.
+        import_path = ImportMtlxTextureUSDHook.result[0]
+        self.assertTrue(pathlib.Path(import_path).exists(),
+                        "Imported texture does not exist")
+        # Path should not be temporary
+        is_temporary = ImportMtlxTextureUSDHook.result[1]
+        self.assertFalse(is_temporary,
+                         "Imported texture should not be temporary")
+
+        # Repeat the test with texture packing enabled.
+        bpy.ops.wm.usd_import(filepath=str(self.testdir / "usd_simple_mtlx_texture.usdz"),
+                              import_textures_mode='IMPORT_PACK',
+                              import_textures_dir="")
+
+        # Confirm that the copied file exists.
+        import_path = ImportMtlxTextureUSDHook.result[0]
+        self.assertTrue(pathlib.Path(import_path).exists(),
+                        "Imported texture does not exist")
+        # Path should be temporary
+        is_temporary = ImportMtlxTextureUSDHook.result[1]
+        self.assertTrue(is_temporary,
+                        "Imported texture should be temporary")
+
+        bpy.utils.unregister_class(ImportMtlxTextureUSDHook)
+
+
+class GetPrimMapUsdImportHook(bpy.types.USDHook):
+    bl_idname = "get_prim_map_usd_import_hook"
+    bl_label = "Get Prim Map Usd Import Hook"
+
+    prim_map = None
+
+    @staticmethod
+    def on_import(context):
+        GetPrimMapUsdImportHook.prim_map = context.get_prim_map()
+
+
+class ImportMtlxColorUSDHook(bpy.types.USDHook):
+    """
+    Simple test for importing an mtxl shader from the usd_simple_mtlx.usda
+    test file.
+    """
+    bl_idname = "import_mtlx_color_usd_hook"
+    bl_label = "Import Mtlx Color USD Hook"
+
+    imported_color = None
+
+    @staticmethod
+    def material_import_poll(import_context, usd_material):
+        # We can import the material if it has an 'mtlx' context.
+        surf_output = usd_material.GetSurfaceOutput("mtlx")
+        return bool(surf_output)
+
+    @staticmethod
+    def on_material_import(import_context, bl_material, usd_material):
+
+        # Get base_color from connected surface shader.
+        surf_output = usd_material.GetSurfaceOutput("mtlx")
+        assert surf_output
+        source = surf_output.GetConnectedSource()
+        assert source
+        shader = UsdShade.Shader(source[0])
+        assert shader
+        color_attr = shader.GetInput("base_color")
+        assert color_attr
+        # Get the authored default color.
+        color = color_attr.Get()
+
+        # Add a Principled BSDF shader and set its 'Base Color' input to
+        # the color we read from mtlx.
+        bl_material.use_nodes = True
+        node_tree = bl_material.node_tree
+        nodes = node_tree.nodes
+        bsdf = nodes.get("Principled BSDF")
+        assert bsdf
+        color4 = [color[0], color[1], color[2], 1]
+        ImportMtlxColorUSDHook.imported_color = color4
+        bsdf.inputs['Base Color'].default_value = color4
+
+        return True
+
+
+class ImportMtlxTextureUSDHook(bpy.types.USDHook):
+    """
+    Simple test for importing a texture file from the
+    usd_simple_mtlx_texture.usdz archive test file.
+    """
+    bl_idname = "import_mtlx_texture_usd_hook"
+    bl_label = "Import Mtlx Texture USD Hook"
+
+    resolved_path = None
+    result = None
+
+    @staticmethod
+    def material_import_poll(import_context, usd_material):
+        # We can import the material if it has an 'mtlx' context.
+        surf_output = usd_material.GetSurfaceOutput("mtlx")
+        return bool(surf_output)
+
+    @staticmethod
+    def on_material_import(import_context, bl_material, usd_material):
+        # For the test, we get the texture file input of a shader known
+        # to exist in the usd_simple_mtlx_texture.usdz archive.
+        surf_output = usd_material.GetSurfaceOutput("mtlx")
+        assert surf_output
+        stage = import_context.get_stage()
+        assert stage
+        prim = stage.GetPrimAtPath("/root/_materials/Material/NodeGraphs/Image_Texture_Color")
+        assert prim
+        tex_node = UsdShade.Shader(prim)
+        assert tex_node
+        file_attr = tex_node.GetInput("file")
+        assert file_attr
+        file = file_attr.Get()
+
+        # Record the file's resolved path, which should be a package-relative
+        # path, e.g.,
+        # c:/foo/bar/usd_simple_mtlx_texture.usdz[textures/test_single.png
+        resolved_path = file.resolvedPath
+        ImportMtlxTextureUSDHook.resolved_path = resolved_path
+
+        result = import_context.import_texture(resolved_path)
+        # Record the returned result tuple.  The first element of the tuple
+        # is the texture path and the second is a flag indicating whether the
+        # returned path references a temporary file.
+        ImportMtlxTextureUSDHook.result = result
+
+        return True
 
 
 def main():
