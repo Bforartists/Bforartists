@@ -257,8 +257,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "frame_start", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "frame_duration", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "frame_start", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(layout, ptr, "frame_duration", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "use_reverse", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -266,7 +266,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayout *row;
   row = uiLayoutRow(layout, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_reverse", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_reverse", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
@@ -279,7 +279,7 @@ static void random_panel_header_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiItemR(layout, ptr, "use_random_order", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "use_random_order", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void random_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -291,7 +291,7 @@ static void random_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   uiLayoutSetActive(layout, RNA_boolean_get(ptr, "use_random_order"));
-  uiItemR(layout, ptr, "seed", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "seed", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)
