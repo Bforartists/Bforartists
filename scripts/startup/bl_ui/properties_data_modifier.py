@@ -61,7 +61,7 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         ob = context.object
-        return ob and ob.type != 'GPENCIL'
+        return ob
 
 		# BFA - changed to be columns
     def draw(self, context):
@@ -432,13 +432,10 @@ class AddModifierMenu(Operator):
     @classmethod
     def poll(cls, context):
         # NOTE: This operator only exists to add a poll to the add modifier shortcut in the property editor.
-        object = context.object
         space = context.space_data
-        if object and object.type == 'GPENCIL':
-            return False
         return space and space.type == 'PROPERTIES' and space.context == 'MODIFIER'
 
-    def invoke(self, context, event):
+    def invoke(self, _context, _event):
         return bpy.ops.wm.call_menu(name="OBJECT_MT_modifier_add")
 
 

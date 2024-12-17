@@ -38,7 +38,7 @@
 #include "gpu_shader_text_info.hh"
 #include "gpu_srgb_to_framebuffer_space_info.hh"
 
-#ifdef WITH_GTEST
+#ifdef WITH_GTESTS
 #  ifdef WITH_GPU_DRAW_TESTS
 #    include "gpu_shader_test_info.hh"
 #  endif
@@ -70,6 +70,7 @@
 #include "compositor_ellipse_mask_info.hh"
 #include "compositor_filter_info.hh"
 #include "compositor_flip_info.hh"
+#include "compositor_gamma_correct_info.hh"
 #include "compositor_glare_info.hh"
 #include "compositor_id_mask_info.hh"
 #include "compositor_image_crop_info.hh"
@@ -117,11 +118,9 @@
 #include "draw_object_infos_info.hh"
 #include "draw_view_info.hh"
 
-/* Basic engine. */
-#include "basic_depth_info.hh"
-
 /* EEVEE engine. */
 #include "eevee_ambient_occlusion_info.hh"
+#include "eevee_common_info.hh"
 #include "eevee_deferred_info.hh"
 #include "eevee_depth_of_field_info.hh"
 #include "eevee_film_info.hh"

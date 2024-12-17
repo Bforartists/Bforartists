@@ -135,6 +135,7 @@ set(SRC
   intern/fluid.cc
   intern/fmodifier.cc
   intern/freestyle.cc
+  intern/geometry_compare.cc
   intern/geometry_component_curves.cc
   intern/geometry_component_edit_data.cc
   intern/geometry_component_grease_pencil.cc
@@ -200,7 +201,6 @@ set(SRC
   intern/mesh.cc
   intern/mesh_attributes.cc
   intern/mesh_calc_edges.cc
-  intern/mesh_compare.cc
   intern/mesh_convert.cc
   intern/mesh_data_update.cc
   intern/mesh_debug.cc
@@ -311,6 +311,7 @@ set(SRC
   intern/undo_system.cc
   intern/unit.cc
   intern/vfont.cc
+  intern/vfont_curve.cc
   intern/vfontdata_freetype.cc
   intern/viewer_path.cc
   intern/volume.cc
@@ -403,6 +404,7 @@ set(SRC
   BKE_file_handler.hh
   BKE_fluid.h
   BKE_freestyle.h
+  BKE_geometry_compare.hh
   BKE_geometry_fields.hh
   BKE_geometry_nodes_gizmos_transforms.hh
   BKE_geometry_nodes_reference_set.hh
@@ -449,7 +451,6 @@ set(SRC
   BKE_mball_tessellate.hh
   BKE_mesh.h
   BKE_mesh.hh
-  BKE_mesh_compare.hh
   BKE_mesh_fair.hh
   BKE_mesh_iterators.hh
   BKE_mesh_legacy_convert.hh
