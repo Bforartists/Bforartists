@@ -472,32 +472,31 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "cast_type", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "cast_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   row = uiLayoutRowWithHeading(layout, true, IFACE_("Axis"));
-  uiItemR(row, ptr, "use_x", toggles_flag, nullptr, ICON_NONE);
-  uiItemR(row, ptr, "use_y", toggles_flag, nullptr, ICON_NONE);
-  uiItemR(row, ptr, "use_z", toggles_flag, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_x", toggles_flag, std::nullopt, ICON_NONE);
+  uiItemR(row, ptr, "use_y", toggles_flag, std::nullopt, ICON_NONE);
+  uiItemR(row, ptr, "use_z", toggles_flag, std::nullopt, ICON_NONE);
 
-  uiItemR(layout, ptr, "factor", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "radius", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "size", UI_ITEM_NONE, nullptr, ICON_NONE);
-
-  /*------------------- bfa - original prop */
-  // uiItemR(layout, ptr, "use_radius_as_size", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(layout, ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(layout, ptr, "size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  
+  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   row = uiLayoutRow(layout, true);
   uiItemS(row);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_radius_as_size", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_radius_as_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_radius_as_size", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", nullptr);
+  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  uiItemR(layout, ptr, "object", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (!RNA_pointer_is_null(&cast_object_ptr)) {
-    uiItemR(layout, ptr, "use_transform", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, ptr, "use_transform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   modifier_panel_end(layout, ptr);

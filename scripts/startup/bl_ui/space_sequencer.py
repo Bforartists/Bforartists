@@ -504,6 +504,7 @@ class SEQUENCER_MT_view(Menu):
         st = context.space_data
         is_preview = st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
+        is_sequencer_only = st.view_type == 'SEQUENCER'
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -522,6 +523,7 @@ class SEQUENCER_MT_view(Menu):
         layout.operator_context = 'INVOKE_DEFAULT'
         if is_sequencer_view:
             layout.prop(st, "show_region_hud")
+        if is_sequencer_only:
             layout.prop(st, "show_region_channels")
 
         layout.prop(addon_prefs, "vse_show_toolshelf_tabs") # BFA
@@ -530,7 +532,7 @@ class SEQUENCER_MT_view(Menu):
 
         layout.menu("SEQUENCER_MT_view_annotations") # BFA
         # BFA - properties in properties menu
-        #if st.view_type == 'SEQUENCER':
+        #if is_sequencer_only
         #    layout.prop(st, "show_backdrop", text="Preview as Backdrop")
         #if is_preview or st.show_backdrop:
         #    layout.prop(st, "show_transform_preview", text="Preview During Transform")
@@ -806,6 +808,7 @@ class SEQUENCER_MT_navigation(Menu):
         layout = self.layout
 
         layout.operator("screen.animation_play", icon='PLAY')
+		# layout.operator("sequencer.view_frame") # BFA - redundant
 
         layout.separator()
 
@@ -1034,8 +1037,8 @@ class SEQUENCER_MT_strip_transform(Menu):
             layout.operator("sequencer.swap", text="Swap Strip Right", icon="SEQ_SWAP_RIGHT").side = 'RIGHT' #BFA
 
             layout.separator()
-
             layout.operator("sequencer.gap_remove", icon="SEQ_REMOVE_GAPS").all = False
+            layout.operator("sequencer.gap_remove", text="Remove Gaps (All)", icon="SEQ_REMOVE_GAPS").all = True
             layout.operator("sequencer.gap_insert", icon="SEQ_INSERT_GAPS")
 
 
