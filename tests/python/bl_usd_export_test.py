@@ -753,6 +753,7 @@ class USDExportTest(AbstractUSDTest):
         self.assertEqual(prim.GetTypeName(), "Skeleton")
         prim_skel = UsdSkel.BindingAPI(prim)
         anim = UsdSkel.Animation(prim_skel.GetAnimationSource())
+        self.assertEqual(anim.GetPrim().GetName(), "ArmatureAction_001")
         self.assertEqual(anim.GetJointsAttr().Get(),
                          ['Bone',
                           'Bone/Bone_001',
@@ -762,9 +763,9 @@ class USDExportTest(AbstractUSDTest):
         loc_samples = anim.GetTranslationsAttr().GetTimeSamples()
         rot_samples = anim.GetRotationsAttr().GetTimeSamples()
         scale_samples = anim.GetScalesAttr().GetTimeSamples()
-        self.assertEqual(loc_samples, [1.0, 2.0, 3.0, 4.0, 5.0])
-        self.assertEqual(rot_samples, [1.0, 2.0, 3.0, 4.0, 5.0])
-        self.assertEqual(scale_samples, [1.0, 2.0, 3.0, 4.0, 5.0])
+        self.assertEqual(loc_samples, [])
+        self.assertEqual(rot_samples, [1.0, 2.0, 3.0])
+        self.assertEqual(scale_samples, [])
 
         # Validate the shape key animation
         prim = stage.GetPrimAtPath("/root/cube_anim_keys")
@@ -1123,6 +1124,86 @@ class USDExportTest(AbstractUSDTest):
 
         self.assertTupleEqual(expected, actual)
 
+    def test_texture_export_hook(self):
+        """Exporting textures from on_material_export USD hook."""
+
+        # Clear USD hook results.
+        ExportTextureUSDHook.exported_textures = {}
+
+        bpy.utils.register_class(ExportTextureUSDHook)
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_materials_export.blend"))
+
+        export_path = self.tempdir / "usd_materials_export.usda"
+
+        self.export_and_validate(
+            filepath=str(export_path),
+            export_materials=True,
+            generate_preview_surface=False,
+        )
+
+        # Verify that the exported texture paths were returned as expected.
+        expected = {'/root/_materials/Transforms': './textures/test_grid_<UDIM>.png',
+                    '/root/_materials/Clip_With_Round': './textures/test_grid_<UDIM>.png',
+                    '/root/_materials/NormalMap': './textures/test_normal.exr',
+                    '/root/_materials/Material': './textures/test_grid_<UDIM>.png',
+                    '/root/_materials/Clip_With_LessThanInvert': './textures/test_grid_<UDIM>.png',
+                    '/root/_materials/NormalMap_Scale_Bias': './textures/test_normal_invertY.exr'}
+
+        self.assertDictEqual(ExportTextureUSDHook.exported_textures,
+                             expected,
+                             "Unexpected texture export paths")
+
+        bpy.utils.unregister_class(ExportTextureUSDHook)
+
+        # Verify that the texture files were copied as expected.
+        tex_names = ['test_grid_1001.png', 'test_grid_1002.png',
+                     'test_normal.exr', 'test_normal_invertY.exr']
+
+        for name in tex_names:
+            tex_path = self.tempdir / "textures" / name
+            self.assertTrue(tex_path.exists(),
+                            f"Exported texture {tex_path} doesn't exist")
+
+    def test_inmem_pack_texture_export_hook(self):
+        """Exporting packed and in memory textures from on_material_export USD hook."""
+
+        # Clear hook results.
+        ExportTextureUSDHook.exported_textures = {}
+
+        bpy.utils.register_class(ExportTextureUSDHook)
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_materials_inmem_pack.blend"))
+
+        export_path = self.tempdir / "usd_materials_inmem_pack.usda"
+
+        self.export_and_validate(
+            filepath=str(export_path),
+            export_materials=True,
+            generate_preview_surface=False,
+        )
+
+        # Verify that the exported texture paths were returned as expected.
+        expected = {'/root/_materials/MAT_pack_udim': './textures/test_grid_<UDIM>.png',
+                    '/root/_materials/MAT_pack_single': './textures/test_single.png',
+                    '/root/_materials/MAT_inmem_udim': './textures/inmem_udim.<UDIM>.png',
+                    '/root/_materials/MAT_inmem_single': './textures/inmem_single.png'}
+
+        self.assertDictEqual(ExportTextureUSDHook.exported_textures,
+                             expected,
+                             "Unexpected texture export paths")
+
+        bpy.utils.unregister_class(ExportTextureUSDHook)
+
+        # Verify that the texture files were copied as expected.
+        tex_names = ['test_grid_1001.png', 'test_grid_1002.png',
+                     'test_single.png',
+                     'inmem_udim.1001.png', 'inmem_udim.1002.png',
+                     'inmem_single.png']
+
+        for name in tex_names:
+            tex_path = self.tempdir / "textures" / name
+            self.assertTrue(tex_path.exists(),
+                            f"Exported texture {tex_path} doesn't exist")
+
 
 class USDHookBase():
     instructions = {}
@@ -1205,6 +1286,36 @@ class USDHook2(USDHookBase, bpy.types.USDHook):
     @staticmethod
     def on_import(import_context):
         return USDHookBase.do_on_import(USDHook2.bl_label, import_context)
+
+
+class ExportTextureUSDHook(bpy.types.USDHook):
+    bl_idname = "export_texture_usd_hook"
+    bl_label = "Export Texture USD Hook"
+
+    exported_textures = {}
+
+    @staticmethod
+    def on_material_export(export_context, bl_material, usd_material):
+        """
+        If a texture image node exists in the given material's
+        node tree, call exprt_texture() on the image and cache
+        the returned path.
+        """
+        tex_image_node = None
+        if bl_material and bl_material.node_tree:
+            for node in bl_material.node_tree.nodes:
+                if node.type == 'TEX_IMAGE':
+                    tex_image_node = node
+
+        if tex_image_node is None:
+            return False
+
+        tex_path = export_context.export_texture(tex_image_node.image)
+
+        ExportTextureUSDHook.exported_textures[usd_material.GetPath()
+                                               .pathString] = tex_path
+
+        return True
 
 
 def main():

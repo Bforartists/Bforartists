@@ -914,7 +914,7 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 
   PointerRNA opptr;
 #if 0
-  uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_OBJECT);
+  uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_OBJECT);
 #else
   uiItemFullO_ptr(
       layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, nullptr, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE, &opptr);
@@ -968,34 +968,33 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
   CTX_DATA_END;
 
   if (parent->type == OB_ARMATURE) {
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE); /*BFA icon*/
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME); /*BFA icon*/
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE); /*BFA icon*/
     if (has_children_of_type.mesh || has_children_of_type.gpencil) {
-      uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_ARMATURE_AUTO);
+      uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_ARMATURE_AUTO);
     }
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_BONE);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_BONE, "type", PAR_BONE_RELATIVE);
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_BONE);
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_BONE_RELATIVE);
   }
   else if (parent->type == OB_CURVES_LEGACY) {
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_CURVE, "type", PAR_CURVE);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_CURVE, "type", PAR_FOLLOW);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_CURVE, "type", PAR_PATH_CONST);
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_CURVE);
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_FOLLOW);
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_PATH_CONST);
   }
   else if (parent->type == OB_LATTICE) {
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_PARENT_LATTICE, "type", PAR_LATTICE);
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_LATTICE);
   }
   else if (parent->type == OB_MESH) {
     if (has_children_of_type.curves) {
-      uiItemO(
-          layout, "Object (Attach Curves to Surface)", ICON_PARENT_CURVE, "CURVES_OT_surface_set");
+      uiItemO(layout, "Object (Attach Curves to Surface)", ICON_NONE, "CURVES_OT_surface_set");
     }
   }
 
   /* vertex parenting */
   if (OB_TYPE_SUPPORT_PARVERT(parent->type)) {
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_VERTEX_PARENT, "type", PAR_VERTEX);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_VERTEX_PARENT, "type", PAR_VERTEX_TRI);
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_VERTEX);
+    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_VERTEX_TRI);
   }
 
   UI_popup_menu_end(C, pup);
@@ -1568,26 +1567,22 @@ static int make_links_data_exec(bContext *C, wmOperator *op)
               break;
             }
 
-            if (cu_dst->vfont) {
-              id_us_min(&cu_dst->vfont->id);
-            }
-            cu_dst->vfont = cu_src->vfont;
-            id_us_plus((ID *)cu_dst->vfont);
-            if (cu_dst->vfontb) {
-              id_us_min(&cu_dst->vfontb->id);
-            }
-            cu_dst->vfontb = cu_src->vfontb;
-            id_us_plus((ID *)cu_dst->vfontb);
-            if (cu_dst->vfonti) {
-              id_us_min(&cu_dst->vfonti->id);
-            }
-            cu_dst->vfonti = cu_src->vfonti;
-            id_us_plus((ID *)cu_dst->vfonti);
-            if (cu_dst->vfontbi) {
-              id_us_min(&cu_dst->vfontbi->id);
-            }
-            cu_dst->vfontbi = cu_src->vfontbi;
-            id_us_plus((ID *)cu_dst->vfontbi);
+#define CURVE_VFONT_SET(vfont_member) \
+  { \
+    if (cu_dst->vfont_member) { \
+      id_us_min(&cu_dst->vfont_member->id); \
+    } \
+    cu_dst->vfont_member = cu_src->vfont_member; \
+    id_us_plus((ID *)cu_dst->vfont_member); \
+  } \
+  ((void)0)
+
+            CURVE_VFONT_SET(vfont);
+            CURVE_VFONT_SET(vfontb);
+            CURVE_VFONT_SET(vfonti);
+            CURVE_VFONT_SET(vfontbi);
+
+#undef CURVE_VFONT_SET
 
             DEG_id_tag_update(&ob_dst->id,
                               ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);

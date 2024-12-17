@@ -20,53 +20,28 @@
 
 namespace blender::realtime_compositor {
 
-/* Preprocess the input of the blur filter by squaring it in its alpha straight form, assuming
- * the given color is alpha pre-multiplied. */
-static float4 gamma_correct_blur_input(const float4 &color)
-{
-  float alpha = color.w > 0.0f ? color.w : 1.0f;
-  float3 corrected_color = math::square(math::max(color.xyz() / alpha, float3(0.0f))) * alpha;
-  return float4(corrected_color, color.w);
-}
-
-/* Postprocess the output of the blur filter by taking its square root it in its alpha straight
- * form, assuming the given color is alpha pre-multiplied. This essential undoes the processing
- * done by the gamma_correct_blur_input function. */
-static float4 gamma_uncorrect_blur_output(const float4 &color)
-{
-  float alpha = color.w > 0.0f ? color.w : 1.0f;
-  float3 uncorrected_color = math::sqrt(math::max(color.xyz() / alpha, float3(0.0f))) * alpha;
-  return float4(uncorrected_color, color.w);
-}
-
+template<typename T>
 static void blur_pass(const Result &input,
                       const Result &weights,
                       Result &output,
-                      const bool extend_bounds,
-                      const bool gamma_correct_input,
-                      const bool gamma_uncorrect_output)
+                      const bool extend_bounds)
 {
-  /* Loads the input color of the pixel at the given texel. If gamma correction is enabled, the
-   * color is gamma corrected. If bounds are extended, then the input is treated as padded by a
-   * blur size amount of pixels of zero color, and the given texel is assumed to be in the space of
-   * the image after padding. So we offset the texel by the blur radius amount and fallback to a
-   * zero color if it is out of bounds. For instance, if the input is padded by 5 pixels to the
-   * left of the image, the first 5 pixels should be out of bounds and thus zero, hence the
-   * introduced offset. */
+  /* Loads the input color of the pixel at the given texel. If bounds are extended, then the input
+   * is treated as padded by a blur size amount of pixels of zero color, and the given texel is
+   * assumed to be in the space of the image after padding. So we offset the texel by the blur
+   * radius amount and fallback to a zero color if it is out of bounds. For instance, if the input
+   * is padded by 5 pixels to the left of the image, the first 5 pixels should be out of bounds and
+   * thus zero, hence the introduced offset. */
   auto load_input = [&](const int2 texel) {
-    float4 color;
+    T color;
     if (extend_bounds) {
       /* Notice that we subtract 1 because the weights result have an extra center weight, see the
        * SymmetricBlurWeights class for more information. */
       int2 blur_radius = weights.domain().size - 1;
-      color = input.load_pixel_fallback(texel - blur_radius, float4(0.0f));
+      color = input.load_pixel_zero<T>(texel - blur_radius);
     }
     else {
-      color = input.load_pixel_extended(texel);
-    }
-
-    if (gamma_correct_input) {
-      color = gamma_correct_blur_input(color);
+      color = input.load_pixel_extended<T>(texel);
     }
 
     return color;
@@ -76,24 +51,20 @@ static void blur_pass(const Result &input,
    * information on the reasoning behind this. */
   const int2 size = int2(output.domain().size.y, output.domain().size.x);
   parallel_for(size, [&](const int2 texel) {
-    float4 accumulated_color = float4(0.0f);
+    T accumulated_color = T(0);
 
     /* First, compute the contribution of the center pixel. */
-    float4 center_color = load_input(texel);
-    accumulated_color += center_color * weights.load_pixel(int2(0)).x;
+    T center_color = load_input(texel);
+    accumulated_color += center_color * weights.load_pixel<float>(int2(0));
 
     /* Then, compute the contributions of the pixel to the right and left, noting that the
      * weights texture only stores the weights for the positive half, but since the filter is
      * symmetric, the same weight is used for the negative half and we add both of their
      * contributions. */
     for (int i = 1; i < weights.domain().size.x; i++) {
-      float weight = weights.load_pixel(int2(i, 0)).x;
+      float weight = weights.load_pixel<float>(int2(i, 0));
       accumulated_color += load_input(texel + int2(i, 0)) * weight;
       accumulated_color += load_input(texel + int2(-i, 0)) * weight;
-    }
-
-    if (gamma_uncorrect_output) {
-      accumulated_color = gamma_uncorrect_blur_output(accumulated_color);
     }
 
     /* Write the color using the transposed texel. See the horizontal_pass method for more
@@ -107,16 +78,13 @@ static const char *get_blur_shader(const ResultType type)
   switch (type) {
     case ResultType::Float:
       return "compositor_symmetric_separable_blur_float";
-    case ResultType::Float2:
-      return "compositor_symmetric_separable_blur_float2";
     case ResultType::Vector:
     case ResultType::Color:
       return "compositor_symmetric_separable_blur_float4";
+    case ResultType::Float2:
     case ResultType::Float3:
-      /* GPU module does not support float3 outputs. */
-      break;
     case ResultType::Int2:
-      /* Blur does not support integer types. */
+      /* Not supported. */
       break;
   }
 
@@ -128,15 +96,12 @@ static Result horizontal_pass_gpu(Context &context,
                                   const Result &input,
                                   const float radius,
                                   const int filter_type,
-                                  const bool extend_bounds,
-                                  const bool gamma_correct)
+                                  const bool extend_bounds)
 {
   GPUShader *shader = context.get_shader(get_blur_shader(input.type()));
   GPU_shader_bind(shader);
 
   GPU_shader_uniform_1b(shader, "extend_bounds", extend_bounds);
-  GPU_shader_uniform_1b(shader, "gamma_correct_input", gamma_correct);
-  GPU_shader_uniform_1b(shader, "gamma_uncorrect_output", false);
 
   input.bind_as_texture(shader, "input_tx");
 
@@ -177,8 +142,7 @@ static Result horizontal_pass_cpu(Context &context,
                                   const Result &input,
                                   const float radius,
                                   const int filter_type,
-                                  const bool extend_bounds,
-                                  const bool gamma_correct)
+                                  const bool extend_bounds)
 {
   const Result &weights = context.cache_manager().symmetric_separable_blur_weights.get(
       context, filter_type, radius);
@@ -201,7 +165,21 @@ static Result horizontal_pass_cpu(Context &context,
   Result output = context.create_result(input.type());
   output.allocate_texture(transposed_domain);
 
-  blur_pass(input, weights, output, extend_bounds, gamma_correct, false);
+  switch (input.type()) {
+    case ResultType::Float:
+      blur_pass<float>(input, weights, output, extend_bounds);
+      break;
+    case ResultType::Vector:
+    case ResultType::Color:
+      blur_pass<float4>(input, weights, output, extend_bounds);
+      break;
+    case ResultType::Float2:
+    case ResultType::Float3:
+    case ResultType::Int2:
+      /* Not supported. */
+      BLI_assert_unreachable();
+      break;
+  }
 
   return output;
 }
@@ -210,13 +188,12 @@ static Result horizontal_pass(Context &context,
                               const Result &input,
                               const float radius,
                               const int filter_type,
-                              const bool extend_bounds,
-                              const bool gamma_correct)
+                              const bool extend_bounds)
 {
   if (context.use_gpu()) {
-    return horizontal_pass_gpu(context, input, radius, filter_type, extend_bounds, gamma_correct);
+    return horizontal_pass_gpu(context, input, radius, filter_type, extend_bounds);
   }
-  return horizontal_pass_cpu(context, input, radius, filter_type, extend_bounds, gamma_correct);
+  return horizontal_pass_cpu(context, input, radius, filter_type, extend_bounds);
 }
 
 static void vertical_pass_gpu(Context &context,
@@ -225,15 +202,12 @@ static void vertical_pass_gpu(Context &context,
                               Result &output,
                               const float2 &radius,
                               const int filter_type,
-                              const bool extend_bounds,
-                              const bool gamma_correct)
+                              const bool extend_bounds)
 {
   GPUShader *shader = context.get_shader(get_blur_shader(original_input.type()));
   GPU_shader_bind(shader);
 
   GPU_shader_uniform_1b(shader, "extend_bounds", extend_bounds);
-  GPU_shader_uniform_1b(shader, "gamma_correct_input", false);
-  GPU_shader_uniform_1b(shader, "gamma_uncorrect_output", gamma_correct);
 
   horizontal_pass_result.bind_as_texture(shader, "input_tx");
 
@@ -266,8 +240,7 @@ static void vertical_pass_cpu(Context &context,
                               Result &output,
                               const float2 &radius,
                               const int filter_type,
-                              const bool extend_bounds,
-                              const bool gamma_correct)
+                              const bool extend_bounds)
 {
   const Result &weights = context.cache_manager().symmetric_separable_blur_weights.get(
       context, filter_type, radius.y);
@@ -279,7 +252,21 @@ static void vertical_pass_cpu(Context &context,
   }
   output.allocate_texture(domain);
 
-  blur_pass(horizontal_pass_result, weights, output, extend_bounds, false, gamma_correct);
+  switch (original_input.type()) {
+    case ResultType::Float:
+      blur_pass<float>(horizontal_pass_result, weights, output, extend_bounds);
+      break;
+    case ResultType::Vector:
+    case ResultType::Color:
+      blur_pass<float4>(horizontal_pass_result, weights, output, extend_bounds);
+      break;
+    case ResultType::Float2:
+    case ResultType::Float3:
+    case ResultType::Int2:
+      /* Not supported. */
+      BLI_assert_unreachable();
+      break;
+  }
 }
 
 static void vertical_pass(Context &context,
@@ -288,8 +275,7 @@ static void vertical_pass(Context &context,
                           Result &output,
                           const float2 &radius,
                           const int filter_type,
-                          const bool extend_bounds,
-                          const bool gamma_correct)
+                          const bool extend_bounds)
 {
   if (context.use_gpu()) {
     vertical_pass_gpu(context,
@@ -298,8 +284,7 @@ static void vertical_pass(Context &context,
                       output,
                       radius,
                       filter_type,
-                      extend_bounds,
-                      gamma_correct);
+                      extend_bounds);
   }
   else {
     vertical_pass_cpu(context,
@@ -308,8 +293,7 @@ static void vertical_pass(Context &context,
                       output,
                       radius,
                       filter_type,
-                      extend_bounds,
-                      gamma_correct);
+                      extend_bounds);
   }
 }
 
@@ -318,20 +302,13 @@ void symmetric_separable_blur(Context &context,
                               Result &output,
                               const float2 &radius,
                               const int filter_type,
-                              const bool extend_bounds,
-                              const bool gamma_correct)
+                              const bool extend_bounds)
 {
   Result horizontal_pass_result = horizontal_pass(
-      context, input, radius.x, filter_type, extend_bounds, gamma_correct);
+      context, input, radius.x, filter_type, extend_bounds);
 
-  vertical_pass(context,
-                input,
-                horizontal_pass_result,
-                output,
-                radius,
-                filter_type,
-                extend_bounds,
-                gamma_correct);
+  vertical_pass(
+      context, input, horizontal_pass_result, output, radius, filter_type, extend_bounds);
 
   horizontal_pass_result.release();
 }
