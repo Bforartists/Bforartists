@@ -172,13 +172,16 @@ Vector<mf::Variable *> MultiFunctionProcedureOperation::get_input_variables(DNod
       continue;
     }
 
-    /* Get the output linked to the input. If it is null, that means the input is unlinked and we
-     * generate a constant variable for it. */
-    const DOutputSocket output = get_output_linked_to_input(input);
-    if (!output) {
-      input_variables.append(this->get_constant_input_variable(input));
+    /* The origin socket is an input, that means the input is unlinked and we generate a constant
+     * variable for it. */
+    const DSocket origin = get_input_origin_socket(input);
+    if (origin->is_input()) {
+      input_variables.append(this->get_constant_input_variable(DInputSocket(origin)));
       continue;
     }
+
+    /* Otherwise, the origin socket is an output, which means it is linked. */
+    const DOutputSocket output = DOutputSocket(origin);
 
     /* If the origin node is part of the multi-function procedure operation, then the output has an
      * existing variable for it. */
@@ -234,16 +237,20 @@ mf::Variable *MultiFunctionProcedureOperation::get_multi_function_input_variable
     DInputSocket input_socket, DOutputSocket output_socket)
 {
   /* An input was already declared for that same output socket, so no need to declare it again and
-   * we just return its variable. But we update the domain priority of the input descriptor to be
-   * the higher priority of the existing descriptor and the descriptor of the new input socket.
-   * That's because the same output might be connected to multiple inputs inside the multi-function
-   * procedure operation which have different priorities. */
+   * we just return its variable.  */
   if (output_to_variable_map_.contains(output_socket)) {
+    /* But first we update the domain priority of the input descriptor to be the higher priority of
+     * the existing descriptor and the descriptor of the new input socket. That's because the same
+     * output might be connected to multiple inputs inside the multi-function procedure operation
+     * which have different priorities. */
     const std::string input_identifier = outputs_to_declared_inputs_map_.lookup(output_socket);
     InputDescriptor &input_descriptor = this->get_input_descriptor(input_identifier);
     input_descriptor.domain_priority = math::min(
         input_descriptor.domain_priority,
         input_descriptor_from_input_socket(input_socket.bsocket()).domain_priority);
+
+    /* Increment the input's reference count. */
+    inputs_to_reference_counts_map_.lookup(input_identifier)++;
 
     return output_to_variable_map_.lookup(output_socket);
   }
@@ -270,6 +277,10 @@ mf::Variable *MultiFunctionProcedureOperation::get_multi_function_input_variable
 
   /* Map the output socket to the identifier of the operation input that was declared for it. */
   outputs_to_declared_inputs_map_.add_new(output_socket, input_identifier);
+
+  /* Map the identifier of the operation input to a reference count of 1, this will later be
+   * incremented if that same output was referenced again. */
+  inputs_to_reference_counts_map_.add_new(input_identifier, 1);
 
   return &variable;
 }

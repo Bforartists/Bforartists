@@ -14,6 +14,7 @@ from bl_ui.properties_data_grease_pencil import (
     GreasePencil_LayerTransformPanel,
     GreasePencil_LayerRelationsPanel,
     GreasePencil_LayerAdjustmentsPanel,
+    GreasePencil_LayerDisplayPanel,
 )
 
 from rna_prop_ui import PropertyPanel
@@ -1154,7 +1155,7 @@ class LayersDopeSheetPanel:
     def poll(cls, context):
         st = context.space_data
         ob = context.object
-        if st.mode != 'GPENCIL' or ob is None or ob.type != 'GPENCIL':
+        if st.mode != 'GPENCIL' or ob is None or ob.type != 'GREASEPENCIL':
             return False
 
         gpd = ob.data
@@ -1242,6 +1243,15 @@ class DOPESHEET_PT_grease_pencil_layer_adjustments(
     bl_options = {'DEFAULT_CLOSED'}
 
 
+class DOPESHEET_PT_grease_pencil_layer_display(
+        GreasePencilLayersDopeSheetPanel,
+        GreasePencil_LayerDisplayPanel,
+        Panel):
+    bl_label = "Display"
+    bl_parent_id = "DOPESHEET_PT_grease_pencil_mode"
+    bl_options = {'DEFAULT_CLOSED'}
+
+
 classes = (
     ALL_MT_editormenu_dopesheet, # BFA menu
     ANIM_OT_switch_editors_to_dopesheet, # BFA menu
@@ -1280,6 +1290,7 @@ classes = (
     DOPESHEET_PT_grease_pencil_layer_transform,
     DOPESHEET_PT_grease_pencil_layer_adjustments,
     DOPESHEET_PT_grease_pencil_layer_relations,
+    DOPESHEET_PT_grease_pencil_layer_display,
 )
 
 if __name__ == "__main__":  # only for live edit.
