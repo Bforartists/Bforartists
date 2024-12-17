@@ -555,6 +555,7 @@ class NODE_MT_node(Menu):
     def draw(self, context):
         layout = self.layout
         snode = context.space_data
+        group = snode.edit_tree
         is_compositor = snode.tree_type == 'CompositorNodeTree'
 
         myvar = layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
@@ -838,6 +839,7 @@ class NODE_MT_context_menu(Menu):
         snode = context.space_data
         is_nested = (len(snode.path) > 1)
         is_geometrynodes = snode.tree_type == 'GeometryNodeTree'
+        group = snode.edit_tree
 
         selected_nodes_len = len(context.selected_nodes)
         active_node = context.active_node
@@ -897,17 +899,18 @@ class NODE_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("node.group_make", text="Make Group", icon="NODE_MAKEGROUP")
-        layout.operator("node.group_insert", text="Insert Into Group", icon = 'NODE_GROUPINSERT')
-
-        if active_node and active_node.type == 'GROUP':
-            layout.operator("node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP").exit = False
-            layout.operator("node.group_ungroup", text="Ungroup", icon="NODE_UNGROUP")
-
-        if is_nested:
-            layout.operator("node.tree_path_parent", text="Exit Group", icon='FILE_PARENT')
-
-        layout.separator()
+        if group and group.bl_use_group_interface:
+	        layout.operator("node.group_make", text="Make Group", icon="NODE_MAKEGROUP")
+	        layout.operator("node.group_insert", text="Insert Into Group", icon = 'NODE_GROUPINSERT')
+	
+	        if active_node and active_node.type == 'GROUP':
+	            layout.operator("node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP").exit = False
+	            layout.operator("node.group_ungroup", text="Ungroup", icon="NODE_UNGROUP")
+	
+	            if is_nested:
+	                layout.operator("node.tree_path_parent", text="Exit Group", icon='FILE_PARENT')
+	
+	            layout.separator()
 
         layout.operator("node.join", text="Join in New Frame", icon = 'JOIN')
         layout.operator("node.detach", text="Remove from Frame", icon = 'DELETE')
@@ -1117,28 +1120,6 @@ class NODE_PT_quality(bpy.types.Panel):
         col.prop(tree, "use_viewer_border")
 
 
-class NODE_PT_compositor_debug(Panel):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Options"
-    bl_label = "Debug"
-    bl_parent_id = "NODE_PT_quality"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        render_data = context.scene.render
-        if render_data.compositor_device != "CPU":
-            return False
-
-        preferences = context.preferences
-        return preferences.view.show_developer_ui and preferences.experimental.enable_new_cpu_compositor
-
-    def draw(self, context):
-        render_data = context.scene.render
-        self.layout.prop(render_data, "use_new_cpu_compositor", text="Experimental CPU Implementation")
-
-
 class NODE_PT_overlay(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'HEADER'
@@ -1220,6 +1201,8 @@ class NODE_PT_node_tree_interface(Panel):
         if tree is None:
             return False
         if tree.is_embedded_data:
+            return False
+        if not tree.bl_use_group_interface:
             return False
         return True
 
@@ -1309,6 +1292,9 @@ class NODE_PT_node_tree_properties(Panel):
             layout.prop(group.asset_data, "description", text="Description")
         else:
             layout.prop(group, "description", text="Description")
+
+        if not group.bl_use_group_interface:
+            return
 
         layout.prop(group, "color_tag")
         row = layout.row(align=True)
@@ -1462,7 +1448,6 @@ classes = (
     NODE_PT_active_tool,
     NODE_PT_backdrop,
     NODE_PT_quality,
-    NODE_PT_compositor_debug,
     NODE_PT_annotation,
     NODE_PT_overlay,
     NODE_PT_active_node_properties,

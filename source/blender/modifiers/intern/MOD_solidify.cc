@@ -84,7 +84,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "solidify_mode", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "solidify_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   if (solidify_mode == MOD_SOLIDIFY_MODE_NONMANIFOLD) {
     uiItemR(layout,
@@ -96,20 +96,20 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     uiItemR(layout, ptr, "nonmanifold_boundary_mode", UI_ITEM_NONE, IFACE_("Boundary"), ICON_NONE);
   }
 
-  uiItemR(layout, ptr, "thickness", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "offset", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(layout, ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   if (solidify_mode == MOD_SOLIDIFY_MODE_NONMANIFOLD) {
-    uiItemR(layout, ptr, "nonmanifold_merge_threshold", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, ptr, "nonmanifold_merge_threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else {
     /*------------------- bfa - original props */
-    // uiItemR(layout, ptr, "use_even_offset", UI_ITEM_NONE, nullptr, ICON_NONE);
+    // uiItemR(layout, ptr, "use_even_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     col = uiLayoutColumn(layout, true);
     row = uiLayoutRow(col, true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    uiItemR(row, ptr, "use_even_offset", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(row, ptr, "use_even_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
     /* ------------ end bfa */
   }
@@ -119,7 +119,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(col, ptr, "use_rim", UI_ITEM_NONE, IFACE_("Fill"), ICON_NONE);
   // sub = uiLayoutColumn(col, false);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_rim"));
-  // uiItemR(sub, ptr, "use_rim_only", UI_ITEM_NONE, nullptr, ICON_NONE);
+  // uiItemR(sub, ptr, "use_rim_only", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
@@ -131,14 +131,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row = uiLayoutRow(col, true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemS(row);
-    uiItemR(row, ptr, "use_rim_only", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(row, ptr, "use_rim_only", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_rim_only", 0); /*bfa - decorator*/
   }
   /* ------------ end bfa */
 
   uiItemS(layout);
 
-  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", nullptr);
+  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
   row = uiLayoutRow(layout, false);
   uiLayoutSetActive(row, has_vertex_group);
   uiItemS(row); /*bfa -indent*/
@@ -153,7 +153,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemS(row);                   /*bfa -indent*/
-    uiItemR(row, ptr, "use_flat_faces", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(row, ptr, "use_flat_faces", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_flat_faces", 0); /*bfa - decorator*/
     /* ------------ end bfa */
   }
@@ -206,7 +206,7 @@ static void materials_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "material_offset", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "material_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col = uiLayoutColumn(layout, true);
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_rim"));
   uiItemR(col,
@@ -240,7 +240,7 @@ static void edge_data_panel_draw(const bContext * /*C*/, Panel *panel)
             CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Rim"),
             ICON_NONE);
   }
-  uiItemR(layout, ptr, "bevel_convex", UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "bevel_convex", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 }
 
 static void clamp_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -254,16 +254,16 @@ static void clamp_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, ptr, "thickness_clamp", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "thickness_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row = uiLayoutRow(col, false);
   uiLayoutSetActive(row, RNA_float_get(ptr, "thickness_clamp") > 0.0f);
 
   /*------------------- bfa - original props */
-  // uiItemR(row, ptr, "use_thickness_angle_clamp", UI_ITEM_NONE, nullptr, ICON_NONE);
+  // uiItemR(row, ptr, "use_thickness_angle_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
-  uiItemR(row, ptr, "use_thickness_angle_clamp", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_thickness_angle_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_thickness_angle_clamp", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 }
