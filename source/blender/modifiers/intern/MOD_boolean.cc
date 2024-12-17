@@ -612,19 +612,19 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayout *layout = panel->layout;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiItemR(layout, ptr, "operation", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "operation", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "operand_type", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "operand_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (RNA_enum_get(ptr, "operand_type") == eBooleanModifierFlag_Object) {
-    uiItemR(layout, ptr, "object", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else {
-    uiItemR(layout, ptr, "collection", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, ptr, "collection", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  uiItemR(layout, ptr, "solver", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "solver", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   modifier_panel_end(layout, ptr);
 }
@@ -651,7 +651,7 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
       col = uiLayoutColumn(layout, true);
       row = uiLayoutRow(col, true);
       uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-      uiItemR(row, ptr, "use_self", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(row, ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       uiItemDecoratorR(row, ptr, "use_self", 0); /*bfa - decorator*/
       /* ------------ end bfa */
     }
@@ -662,16 +662,16 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
     col = uiLayoutColumn(layout, true);
     row = uiLayoutRow(col, true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    uiItemR(row, ptr, "use_hole_tolerant", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(row, ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_hole_tolerant", 0); /*bfa - decorator*/
                                                         /* ------------ end bfa */
   }
   else {
-    uiItemR(col, ptr, "double_threshold", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, ptr, "double_threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   if (G.debug) {
-    uiItemR(col, ptr, "debug_options", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, ptr, "debug_options", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 }
 

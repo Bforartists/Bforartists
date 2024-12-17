@@ -228,12 +228,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   char count_info[64];
   SNPRINTF(count_info, RPT_("Face Count: %d"), RNA_int_get(ptr, "face_count"));
 
-  uiItemR(layout, ptr, "decimate_type", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "decimate_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   uiLayoutSetPropSep(layout, true);
 
   if (decimate_type == MOD_DECIM_MODE_COLLAPSE) {
-    uiItemR(layout, ptr, "ratio", UI_ITEM_R_SLIDER, nullptr, ICON_NONE);
+    uiItemR(layout, ptr, "ratio", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
     /*------------------- bfa - original props */
 
@@ -243,7 +243,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     // uiItemR(sub, ptr, "use_symmetry", UI_ITEM_NONE, "", ICON_NONE);
     // sub = uiLayoutRow(sub, true);
     // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_symmetry"));
-    // uiItemR(sub, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+    // uiItemR(sub, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
     // uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
 
     // ------------------ bfa new left aligned prop with triangle button to hide the inactive
@@ -263,7 +263,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row = uiLayoutRow(split, false);
     if (RNA_boolean_get(ptr, "use_symmetry")) {
       uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-      uiItemR(row, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+      uiItemR(row, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
       uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
     }
     else {
@@ -280,29 +280,29 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     col = uiLayoutColumn(layout, true);
     row = uiLayoutRow(col, true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    uiItemR(row, ptr, "use_collapse_triangulate", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(row, ptr, "use_collapse_triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/
 
     /* ------------ end bfa */
 
-    modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", nullptr);
+    modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
     sub = uiLayoutRow(layout, true);
     bool has_vertex_group = RNA_string_length(ptr, "vertex_group") != 0;
     uiLayoutSetActive(sub, has_vertex_group);
-    uiItemR(sub, ptr, "vertex_group_factor", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(sub, ptr, "vertex_group_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (decimate_type == MOD_DECIM_MODE_UNSUBDIV) {
-    uiItemR(layout, ptr, "iterations", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else { /* decimate_type == MOD_DECIM_MODE_DISSOLVE. */
-    uiItemR(layout, ptr, "angle_limit", UI_ITEM_NONE, nullptr, ICON_NONE);
-    uiItemR(uiLayoutColumn(layout, false), ptr, "delimit", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, ptr, "angle_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemR(uiLayoutColumn(layout, false), ptr, "delimit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /*------------------- bfa - original prop */
     // uiItemR(layout, ptr, "use_dissolve_boundaries", UI_ITEM_NONE, nullptr, ICON_NONE);
     row = uiLayoutRow(layout, true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    uiItemR(row, ptr, "use_dissolve_boundaries", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(row, ptr, "use_dissolve_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/
     /* ------------ end bfa */
   }
