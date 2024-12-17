@@ -707,7 +707,7 @@ static void rna_update_cb(bContext *C, void *arg_cb, void * /*arg*/)
 void uiTemplateImage(uiLayout *layout,
                      bContext *C,
                      PointerRNA *ptr,
-                     const char *propname,
+                     const blender::StringRefNull propname,
                      PointerRNA *userptr,
                      bool compact,
                      bool multiview)
@@ -716,10 +716,12 @@ void uiTemplateImage(uiLayout *layout,
     return;
   }
 
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
   if (!prop) {
-    printf(
-        "%s: property not found: %s.%s\n", __func__, RNA_struct_identifier(ptr->type), propname);
+    printf("%s: property not found: %s.%s\n",
+           __func__,
+           RNA_struct_identifier(ptr->type),
+           propname.c_str());
     return;
   }
 
@@ -727,7 +729,7 @@ void uiTemplateImage(uiLayout *layout,
     printf("%s: expected pointer property for %s.%s\n",
            __func__,
            RNA_struct_identifier(ptr->type),
-           propname);
+           propname.c_str());
     return;
   }
 
@@ -802,7 +804,7 @@ void uiTemplateImage(uiLayout *layout,
   {
     uiLayout *col = uiLayoutColumn(layout, false);
     uiLayoutSetPropSep(col, true);
-    uiItemR(col, &imaptr, "source", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, &imaptr, "source", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   /* Filepath */
@@ -842,7 +844,7 @@ void uiTemplateImage(uiLayout *layout,
     uiItemR(sub, &imaptr, "generated_height", UI_ITEM_NONE, "Y", ICON_NONE);
 
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-    uiItemR(col, &imaptr, "use_generated_float", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, &imaptr, "use_generated_float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
 
     uiItemS(col);
@@ -850,7 +852,7 @@ void uiTemplateImage(uiLayout *layout,
     uiItemR(col, &imaptr, "generated_type", UI_ITEM_R_EXPAND, IFACE_("Type"), ICON_NONE);
     ImageTile *base_tile = BKE_image_get_tile(ima, 0);
     if (base_tile->gen_type == IMA_GENTYPE_BLANK) {
-      uiItemR(col, &imaptr, "generated_color", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(col, &imaptr, "generated_color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
   }
   else if (compact == 0) {
@@ -876,11 +878,11 @@ void uiTemplateImage(uiLayout *layout,
     uiItemO(row, "", ICON_FILE_REFRESH, "IMAGE_OT_match_movie_length");
 
     uiItemR(sub, userptr, "frame_start", UI_ITEM_NONE, IFACE_("Start"), ICON_NONE);
-    uiItemR(sub, userptr, "frame_offset", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(sub, userptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-    uiItemR(col, userptr, "use_cyclic", UI_ITEM_NONE, nullptr, ICON_NONE);
-    uiItemR(col, userptr, "use_auto_refresh", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, userptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemR(col, userptr, "use_auto_refresh", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
 
     if (ima->source == IMA_SRC_MOVIE && compact == 0) {
@@ -897,7 +899,7 @@ void uiTemplateImage(uiLayout *layout,
 
       uiLayout *col = uiLayoutColumn(layout, false);
       uiLayoutSetPropSep(col, true);
-      uiItemR(col, &imaptr, "use_multiview", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(col, &imaptr, "use_multiview", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
       if (RNA_boolean_get(&imaptr, "use_multiview")) {
         uiTemplateImageViews(layout, &imaptr);
@@ -929,15 +931,15 @@ void uiTemplateImage(uiLayout *layout,
 
           if (ibuf && ibuf->float_buffer.data && (ibuf->flags & IB_halffloat) == 0) {
             uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-            uiItemR(col, &imaptr, "use_half_precision", UI_ITEM_NONE, nullptr, ICON_NONE);
+            uiItemR(col, &imaptr, "use_half_precision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
             uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
           }
           BKE_image_release_ibuf(ima, ibuf, lock);
         }
       }
       uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-      uiItemR(col, &imaptr, "use_view_as_render", UI_ITEM_NONE, nullptr, ICON_NONE);
-      uiItemR(col, &imaptr, "seam_margin", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(col, &imaptr, "use_view_as_render", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      uiItemR(col, &imaptr, "seam_margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
     }
   }
@@ -963,7 +965,7 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
   uiLayoutSetPropSep(col, true);
   uiLayoutSetPropDecorate(col, false);
 
-  uiItemR(col, imfptr, "file_format", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, imfptr, "file_format", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   /* Multi-layer always saves raw unmodified channels. */
   if (imf->imtype != R_IMF_IMTYPE_MULTILAYER) {
@@ -985,44 +987,45 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
            R_IMF_CHAN_DEPTH_24,
            R_IMF_CHAN_DEPTH_32) == 0)
   {
-    uiItemR(uiLayoutRow(col, true), imfptr, "color_depth", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+    uiItemR(
+        uiLayoutRow(col, true), imfptr, "color_depth", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
   }
 
   if (BKE_imtype_supports_quality(imf->imtype)) {
-    uiItemR(col, imfptr, "quality", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   if (BKE_imtype_supports_compress(imf->imtype)) {
-    uiItemR(col, imfptr, "compression", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "compression", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   if (ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
-    uiItemR(col, imfptr, "exr_codec", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "exr_codec", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     if (ELEM(imf->exr_codec & OPENEXR_CODEC_MASK, R_IMF_EXR_CODEC_DWAA, R_IMF_EXR_CODEC_DWAB)) {
-      uiItemR(col, imfptr, "quality", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(col, imfptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
   }
 
   if (is_render_out && ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-    uiItemR(col, imfptr, "use_preview", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "use_preview", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_JP2) {
-    uiItemR(col, imfptr, "jpeg2k_codec", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "jpeg2k_codec", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-    uiItemR(col, imfptr, "use_jpeg2k_cinema_preset", UI_ITEM_NONE, nullptr, ICON_NONE);
-    uiItemR(col, imfptr, "use_jpeg2k_cinema_48", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "use_jpeg2k_cinema_preset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemR(col, imfptr, "use_jpeg2k_cinema_48", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    uiItemR(col, imfptr, "use_jpeg2k_ycc", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "use_jpeg2k_ycc", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_DPX) {
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-    uiItemR(col, imfptr, "use_cineon_log", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "use_cineon_log", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
@@ -1030,21 +1033,21 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
 #if 1
     uiItemL(col, RPT_("Hard coded Non-Linear, Gamma:1.7"), ICON_NONE);
 #else
-    uiItemR(col, imfptr, "use_cineon_log", UI_ITEM_NONE, nullptr, ICON_NONE);
-    uiItemR(col, imfptr, "cineon_black", UI_ITEM_NONE, nullptr, ICON_NONE);
-    uiItemR(col, imfptr, "cineon_white", UI_ITEM_NONE, nullptr, ICON_NONE);
-    uiItemR(col, imfptr, "cineon_gamma", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "use_cineon_log", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemR(col, imfptr, "cineon_black", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemR(col, imfptr, "cineon_white", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemR(col, imfptr, "cineon_gamma", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 #endif
   }
 
   if (imf->imtype == R_IMF_IMTYPE_TIFF) {
-    uiItemR(col, imfptr, "tiff_codec", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "tiff_codec", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   /* Override color management */
   if (color_management) {
     uiItemS(col);
-    uiItemR(col, imfptr, "color_management", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col, imfptr, "color_management", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     if (imf->color_management == R_IMF_COLOR_MANAGEMENT_OVERRIDE) {
       if (BKE_imtype_requires_linear_float(imf->imtype)) {
@@ -1053,7 +1056,8 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
       }
       else {
         PointerRNA display_settings_ptr = RNA_pointer_get(imfptr, "display_settings");
-        uiItemR(col, &display_settings_ptr, "display_device", UI_ITEM_NONE, nullptr, ICON_NONE);
+        uiItemR(
+            col, &display_settings_ptr, "display_device", UI_ITEM_NONE, std::nullopt, ICON_NONE);
         uiTemplateColormanagedViewSettings(col, nullptr, imfptr, "view_settings");
       }
     }
@@ -1066,25 +1070,31 @@ void uiTemplateImageStereo3d(uiLayout *layout, PointerRNA *stereo3d_format_ptr)
   uiLayout *col;
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, stereo3d_format_ptr, "display_mode", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, stereo3d_format_ptr, "display_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   switch (stereo3d_format->display_mode) {
     case S3D_DISPLAY_ANAGLYPH: {
-      uiItemR(col, stereo3d_format_ptr, "anaglyph_type", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(col, stereo3d_format_ptr, "anaglyph_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     }
     case S3D_DISPLAY_INTERLACE: {
-      uiItemR(col, stereo3d_format_ptr, "interlace_type", UI_ITEM_NONE, nullptr, ICON_NONE);
-      uiItemR(col, stereo3d_format_ptr, "use_interlace_swap", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(col, stereo3d_format_ptr, "interlace_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      uiItemR(
+          col, stereo3d_format_ptr, "use_interlace_swap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     }
     case S3D_DISPLAY_SIDEBYSIDE: {
-      uiItemR(
-          col, stereo3d_format_ptr, "use_sidebyside_crosseyed", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(col,
+              stereo3d_format_ptr,
+              "use_sidebyside_crosseyed",
+              UI_ITEM_NONE,
+              std::nullopt,
+              ICON_NONE);
       ATTR_FALLTHROUGH;
     }
     case S3D_DISPLAY_TOPBOTTOM: {
-      uiItemR(col, stereo3d_format_ptr, "use_squeezed_frame", UI_ITEM_NONE, nullptr, ICON_NONE);
+      uiItemR(
+          col, stereo3d_format_ptr, "use_squeezed_frame", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     }
   }
@@ -1101,7 +1111,7 @@ static void uiTemplateViewsFormat(uiLayout *layout,
   uiLayoutSetPropSep(col, true);
   uiLayoutSetPropDecorate(col, false);
 
-  uiItemR(col, ptr, "views_format", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "views_format", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   if (stereo3d_format_ptr && RNA_enum_get(ptr, "views_format") == R_IMF_VIEWS_STEREO_3D) {
     uiTemplateImageStereo3d(col, stereo3d_format_ptr);
@@ -1131,7 +1141,7 @@ void uiTemplateImageFormatViews(uiLayout *layout, PointerRNA *imfptr, PointerRNA
   ImageFormatData *imf = static_cast<ImageFormatData *>(imfptr->data);
 
   if (ptr != nullptr) {
-    uiItemR(layout, ptr, "use_multiview", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(layout, ptr, "use_multiview", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     if (!RNA_boolean_get(ptr, "use_multiview")) {
       return;
     }
