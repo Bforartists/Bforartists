@@ -21,6 +21,8 @@
 #  endif
 #endif
 
+#include "vulkan/vk_ghost_api.hh"
+
 #include <vector>
 
 #include <cassert>
@@ -254,6 +256,14 @@ class GHOST_DeviceVK {
     vulkan_12_features.pNext = device_create_info_p_next;
     device_create_info_p_next = &vulkan_12_features;
 
+    /* Enable provoking vertex. */
+    VkPhysicalDeviceProvokingVertexFeaturesEXT provoking_vertex_features = {};
+    provoking_vertex_features.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT;
+    provoking_vertex_features.provokingVertexLast = VK_TRUE;
+    provoking_vertex_features.pNext = device_create_info_p_next;
+    device_create_info_p_next = &provoking_vertex_features;
+
     /* Enable dynamic rendering. */
     VkPhysicalDeviceDynamicRenderingFeatures dynamic_rendering = {};
     dynamic_rendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
@@ -355,6 +365,9 @@ static GHOST_TSuccess ensure_vulkan_device(VkInstance vk_instance,
     device_index++;
 
     if (!device_vk.has_extensions(required_extensions)) {
+      continue;
+    }
+    if (!blender::gpu::GPU_vulkan_is_supported_driver(physical_device)) {
       continue;
     }
 
@@ -997,6 +1010,11 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
 
     required_device_extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
   }
+#ifdef __APPLE__
+  optional_device_extensions.push_back(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME);
+#else
+  required_device_extensions.push_back(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME);
+#endif
   optional_device_extensions.push_back(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
   optional_device_extensions.push_back(VK_EXT_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_EXTENSION_NAME);
   optional_device_extensions.push_back(VK_EXT_SHADER_STENCIL_EXPORT_EXTENSION_NAME);

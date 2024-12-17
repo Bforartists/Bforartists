@@ -335,8 +335,6 @@ unset(_option_default)
 
 option(WITH_GMP "Enable features depending on GMP (Exact Boolean)" ON)
 
-# Compositor
-option(WITH_COMPOSITOR_CPU "Enable the Full-Frame CPU nodal compositor" ON)
 option(WITH_OPENIMAGEDENOISE "Enable the OpenImageDenoise compositing node" ON)
 
 option(WITH_OPENSUBDIV "Enable OpenSubdiv for surface subdivision" ON)
@@ -512,8 +510,11 @@ endif()
 if(UNIX AND NOT APPLE)
   option(WITH_PULSEAUDIO "Enable PulseAudio for audio support on Linux" ON)
   option(WITH_PULSEAUDIO_DYNLOAD "Enable runtime dynamic PulseAudio libraries loading" OFF)
+  option(WITH_PIPEWIRE "Enable Pipewire for audio support on Linux" ON)
+  option(WITH_PIPEWIRE_DYNLOAD "Enable runtime dynamic Pipewire libraries loading" OFF)
 else()
   set(WITH_PULSEAUDIO OFF)
+  set(WITH_PIPEWIRE OFF)
 endif()
 if(WIN32)
   option(WITH_WASAPI "Enable Windows Audio Sessions API for audio support on Windows" ON)
@@ -818,6 +819,11 @@ option(WITH_GPU_RENDER_TESTS "\
 Enable GPU render related unit testing (EEVEE, Workbench and Grease Pencil)"
   OFF
 )
+option(WITH_GPU_RENDER_TESTS_VULKAN "\
+Enable GPU render related unit testing using Vulkan"
+  OFF
+)
+mark_as_advanced(WITH_GPU_RENDER_TESTS_VULKAN)
 option(WITH_GPU_RENDER_TESTS_SILENT "\
 Run GPU render tests silently (finished tests will pass). \
 Generated report will show failing tests"
@@ -973,6 +979,10 @@ Can cause linking issues due to too large binary size."
   OFF
 )
 mark_as_advanced(WITH_COMPILER_ASAN_EXTERN)
+set_and_warn_incompatible(WITH_COMPILER_ASAN WITH_MEM_JEMALLOC OFF)
+set_and_warn_incompatible(WITH_COMPILER_ASAN WITH_MEM_VALGRIND OFF)
+set_and_warn_incompatible(WITH_COMPILER_ASAN_EXTERN WITH_MEM_JEMALLOC OFF)
+set_and_warn_incompatible(WITH_COMPILER_ASAN_EXTERN WITH_MEM_VALGRIND OFF)
 
 option(WITH_COMPILER_CODE_COVERAGE "\
 Build and link with code coverage support (only for Debug targets)."
@@ -1236,13 +1246,6 @@ endif()
 set_and_warn_dependency(WITH_PYTHON WITH_CYCLES        OFF)
 set_and_warn_dependency(WITH_PYTHON WITH_DRACO         OFF)
 set_and_warn_dependency(WITH_PYTHON WITH_MOD_FLUID     OFF)
-
-if(NOT WITH_PYTHON_MODULE)
-  if(WITH_DRACO AND NOT WITH_PYTHON_INSTALL)
-    message(STATUS "WITH_DRACO requires WITH_PYTHON_INSTALL to be ON, disabling WITH_DRACO for now")
-    set(WITH_DRACO OFF)
-  endif()
-endif()
 
 # enable boost for cycles, audaspace or i18n
 # otherwise if the user disabled

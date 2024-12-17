@@ -518,21 +518,21 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = uiLayoutColumn(layout, true);
   uiLayoutSetEnabled(col, !is_bound);
-  uiItemR(col, ptr, "object", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", nullptr);
+  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   col = uiLayoutColumn(layout, false);
   uiLayoutSetEnabled(col, !is_bound);
-  uiItemR(col, ptr, "precision", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, ptr, "precision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   /*------------------- bfa - original props */
-  // uiItemR(col, ptr, "use_dynamic_bind", UI_ITEM_NONE, nullptr, ICON_NONE);
+  // uiItemR(col, ptr, "use_dynamic_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_dynamic_bind", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_dynamic_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_dynamic_bind", 0); /*bfa - decorator*/
 
   /* ------------ end bfa */
