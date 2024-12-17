@@ -50,14 +50,14 @@ static void node_composit_init_dilateerode(bNodeTree * /*ntree*/, bNode *node)
 
 static void node_composit_buts_dilateerode(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  uiItemR(layout, ptr, "mode", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "distance", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "mode", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+  uiItemR(layout, ptr, "distance", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
   switch (RNA_enum_get(ptr, "mode")) {
     case CMP_NODE_DILATE_ERODE_DISTANCE_THRESHOLD:
-      uiItemR(layout, ptr, "edge", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+      uiItemR(layout, ptr, "edge", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
       break;
     case CMP_NODE_DILATE_ERODE_DISTANCE_FEATHER:
-      uiItemR(layout, ptr, "falloff", UI_ITEM_R_SPLIT_EMPTY_NAME, nullptr, ICON_NONE);
+      uiItemR(layout, ptr, "falloff", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
       break;
   }
 }
@@ -135,7 +135,7 @@ class DilateErodeOperation : public NodeOperation {
     const Domain domain = compute_domain();
     const int2 transposed_domain = int2(domain.size.y, domain.size.x);
 
-    Result horizontal_pass_result = context().create_result(ResultType::Color);
+    Result horizontal_pass_result = context().create_result(ResultType::Float);
     horizontal_pass_result.allocate_texture(transposed_domain);
     horizontal_pass_result.bind_as_image(shader, "output_img");
 
@@ -163,10 +163,15 @@ class DilateErodeOperation : public NodeOperation {
     const Domain domain = compute_domain();
     const int2 transposed_domain = int2(domain.size.y, domain.size.x);
 
-    Result horizontal_pass_result = context().create_result(ResultType::Color);
+    Result horizontal_pass_result = context().create_result(ResultType::Float);
     horizontal_pass_result.allocate_texture(transposed_domain);
 
-    this->execute_step_pass_cpu(input, horizontal_pass_result);
+    if (this->get_distance() > 0) {
+      this->execute_step_pass_cpu<true>(input, horizontal_pass_result);
+    }
+    else {
+      this->execute_step_pass_cpu<false>(input, horizontal_pass_result);
+    }
 
     return horizontal_pass_result;
   }
@@ -211,47 +216,45 @@ class DilateErodeOperation : public NodeOperation {
     Result &output_mask = get_result("Mask");
     output_mask.allocate_texture(domain);
 
-    this->execute_step_pass_cpu(horizontal_pass_result, output_mask);
+    if (this->get_distance() > 0) {
+      this->execute_step_pass_cpu<true>(horizontal_pass_result, output_mask);
+    }
+    else {
+      this->execute_step_pass_cpu<false>(horizontal_pass_result, output_mask);
+    }
   }
 
-  void execute_step_pass_cpu(const Result &input, Result &output)
+  template<bool IsDilate> void execute_step_pass_cpu(const Result &input, Result &output)
   {
+    const float limit = IsDilate ? std::numeric_limits<float>::lowest() :
+                                   std::numeric_limits<float>::max();
+    const auto morphology_operator = [](const float a, const float b) {
+      if constexpr (IsDilate) {
+        return math::max(a, b);
+      }
+      else {
+        return math::min(a, b);
+      }
+    };
+
     /* We have specialized code for each sign, so use the absolute value. */
     const int radius = math::abs(this->get_distance());
 
     /* Notice that the size is transposed, see the note on the horizontal pass method for more
      * information on the reasoning behind this. */
     const int2 size = int2(output.domain().size.y, output.domain().size.x);
-    if (this->get_distance() > 0) {
-      parallel_for(size, [&](const int2 texel) {
-        /* Find the maximum value in the window of the given radius around the pixel. This
-         * is essentially a morphological dilate operator with a square structuring element. */
-        const float limit = std::numeric_limits<float>::lowest();
-        float value = limit;
-        for (int i = -radius; i <= radius; i++) {
-          value = math::max(value, input.load_pixel_fallback(texel + int2(i, 0), float4(limit)).x);
-        }
+    parallel_for(size, [&](const int2 texel) {
+      /* Find the maximum/minimum value in the window of the given radius around the pixel. This
+       * is essentially a morphological dilate/erode operator with a square structuring element. */
+      float value = limit;
+      for (int i = -radius; i <= radius; i++) {
+        value = morphology_operator(value, input.load_pixel_fallback(texel + int2(i, 0), limit));
+      }
 
-        /* Write the value using the transposed texel. See the horizontal pass method
-         * for more information on the rational behind this. */
-        output.store_pixel(int2(texel.y, texel.x), float4(value));
-      });
-    }
-    else {
-      parallel_for(size, [&](const int2 texel) {
-        /* Find the minimum value in the window of the given radius around the pixel. This
-         * is essentially a morphological erode operator with a square structuring element. */
-        const float limit = std::numeric_limits<float>::max();
-        float value = limit;
-        for (int i = -radius; i <= radius; i++) {
-          value = math::min(value, input.load_pixel_fallback(texel + int2(i, 0), float4(limit)).x);
-        }
-
-        /* Write the value using the transposed texel. See the horizontal pass method
-         * for more information on the rational behind this. */
-        output.store_pixel(int2(texel.y, texel.x), float4(value));
-      });
-    }
+      /* Write the value using the transposed texel. See the horizontal pass method for more
+       * information on the rational behind this. */
+      output.store_pixel(int2(texel.y, texel.x), value);
+    });
   }
 
   const char *get_morphological_step_shader_name()
@@ -328,6 +331,8 @@ class DilateErodeOperation : public NodeOperation {
     const Domain domain = compute_domain();
     output.allocate_texture(domain);
 
+    const int2 image_size = input.domain().size;
+
     const float inset = math::max(this->get_inset(), 10e-6f);
     const int radius = this->get_morphological_distance_threshold_radius();
     const int distance = this->get_distance();
@@ -382,28 +387,27 @@ class DilateErodeOperation : public NodeOperation {
      * add it in both cases. */
     parallel_for(domain.size, [&](const int2 texel) {
       /* Apply a threshold operation on the center pixel, where the threshold is currently
-       * hard-coded at 0.5. The pixels with values larger than the threshold are said to be masked.
-       */
-      bool is_center_masked = input.load_pixel(texel).x > 0.5f;
-
-      /* Since the distance search window will access pixels outside of the bounds of the image, we
-       * use a texture loader with a fallback value. And since we don't want those values to affect
-       * the result, the fallback value is chosen such that the inner condition fails, which is
-       * when the sampled pixel and the center pixel are the same, so choose a fallback that will
-       * be considered masked if the center pixel is masked and unmasked otherwise. */
-      float4 fallback = float4(is_center_masked ? 1.0f : 0.0f);
+       * hard-coded at 0.5. The pixels with values larger than the threshold are said to be
+       * masked. */
+      bool is_center_masked = input.load_pixel<float>(texel) > 0.5f;
 
       /* Since the distance search window is limited to the given radius, the maximum possible
        * squared distance to the center is double the squared radius. */
       int minimum_squared_distance = radius * radius * 2;
 
+      /* Compute the start and end bounds of the window such that no out-of-bounds processing
+       * happen in the loops. */
+      const int2 start = math::max(texel - radius, int2(0)) - texel;
+      const int2 end = math::min(texel + radius + 1, image_size) - texel;
+
       /* Find the squared distance to the nearest different pixel in the search window of the given
        * radius. */
-      for (int y = -radius; y <= radius; y++) {
-        for (int x = -radius; x <= radius; x++) {
-          bool is_sample_masked = input.load_pixel_fallback(texel + int2(x, y), fallback).x > 0.5f;
+      for (int y = start.y; y < end.y; y++) {
+        const int yy = y * y;
+        for (int x = start.x; x < end.x; x++) {
+          bool is_sample_masked = input.load_pixel<float>(texel + int2(x, y)) > 0.5f;
           if (is_center_masked != is_sample_masked) {
-            minimum_squared_distance = math::min(minimum_squared_distance, x * x + y * y);
+            minimum_squared_distance = math::min(minimum_squared_distance, x * x + yy);
           }
         }
       }
@@ -417,7 +421,7 @@ class DilateErodeOperation : public NodeOperation {
        * discussion, then clamp to the [0, 1] range. */
       float value = math::clamp((signed_minimum_distance + distance) / inset, 0.0f, 1.0f);
 
-      output.store_pixel(texel, float4(value));
+      output.store_pixel(texel, value);
     });
   }
 

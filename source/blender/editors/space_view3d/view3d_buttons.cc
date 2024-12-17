@@ -1421,7 +1421,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
     row = uiLayoutRow(bcol, true); /* The filter button row */
 
     PointerRNA tools_ptr = RNA_pointer_create(nullptr, &RNA_ToolSettings, ts);
-    uiItemR(row, &tools_ptr, "vertex_group_subset", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+    uiItemR(row, &tools_ptr, "vertex_group_subset", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
     col = uiLayoutColumn(bcol, true);
 
@@ -1588,7 +1588,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
             ptr,
             "location",
             UI_ITEM_NONE,
-            nullptr,
+            std::nullopt,
             ICON_NONE);                     /* bfa - row.prop(ob, "location") */
     uiLayoutSetPropDecorate(row, false);    /* bfa - row.use_property_decorate = False */
     uiLayoutSetEmboss(row, UI_EMBOSS_NONE); /* bfa - emboss=False */
@@ -1769,7 +1769,7 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
   uiLayoutSetPropDecorate(layout, false); /* bfa */
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, &eboneptr, "head", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &eboneptr, "head", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (ebone->parent && ebone->flag & BONE_CONNECTED) {
     PointerRNA parptr = RNA_pointer_get(&eboneptr, "parent");
     uiItemR(col, &parptr, "tail_radius", UI_ITEM_NONE, IFACE_("Radius (Parent)"), ICON_NONE);
@@ -1778,11 +1778,11 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
     uiItemR(col, &eboneptr, "head_radius", UI_ITEM_NONE, IFACE_("Radius"), ICON_NONE);
   }
 
-  uiItemR(col, &eboneptr, "tail", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &eboneptr, "tail", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemR(col, &eboneptr, "tail_radius", UI_ITEM_NONE, IFACE_("Radius"), ICON_NONE);
 
-  uiItemR(col, &eboneptr, "roll", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(col, &eboneptr, "length", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &eboneptr, "roll", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(col, &eboneptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemR(col, &eboneptr, "envelope_distance", UI_ITEM_NONE, IFACE_("Envelope"), ICON_NONE);
   uiLayoutSetPropSep(col, false); /* bfa - no split */
   uiItemR(col, &eboneptr, "lock", UI_ITEM_NONE, IFACE_("Lock"), ICON_NONE); /* bfa - lock from properties editor*/
@@ -1804,14 +1804,14 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
   uiLayoutSetPropDecorate(layout, false); /* bfa */
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, &ptr, "co", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &ptr, "co", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiItemS_ex(col, .25f); /* bfa - separator*/
-  uiItemR(col, &ptr, "radius", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(col, &ptr, "stiffness", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(col, &ptr, "stiffness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiItemS_ex(col, .25f); /* bfa - separator*/
-  uiItemR(col, &ptr, "type", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiItemS_ex(col, .25f); /* bfa - separator*/
   col = uiLayoutColumn(layout, true);

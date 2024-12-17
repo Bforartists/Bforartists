@@ -79,6 +79,7 @@
 #include "ED_fileselect.hh"
 #include "ED_id_management.hh"
 #include "ED_info.hh"
+#include "ED_node.hh"
 #include "ED_object.hh"
 #include "ED_render.hh"
 #include "ED_screen.hh"
@@ -104,6 +105,7 @@
 #include "interface_intern.hh"
 
 using blender::StringRef;
+using blender::StringRefNull;
 using blender::Vector;
 
 /* we may want to make this optional, disable for now. */
@@ -1102,6 +1104,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
           WM_event_add_notifier(C, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
           DEG_relations_tag_update(bmain);
         }
+        ED_node_tree_propagate_change(C, CTX_data_main(C), nullptr);
         undo_push_label = "Make Single User";
       }
       break;
@@ -1350,7 +1353,7 @@ static void template_ID(const bContext *C,
                         const char *newop,
                         const char *openop,
                         const char *unlinkop,
-                        const char *text,
+                        const std::optional<StringRef> text,
                         const bool live_icon,
                         const bool hide_buttons)
 {
@@ -1373,9 +1376,9 @@ static void template_ID(const bContext *C,
     type = idptr.type;
   }
 
-  if (text && text[0]) {
+  if (text && !text->is_empty()) {
     /* Add label respecting the separated layout property split state. */
-    uiItemL_respect_property_split(layout, text, ICON_NONE);
+    uiItemL_respect_property_split(layout, *text, ICON_NONE);
   }
 
   if (flag & UI_ID_BROWSE) {
@@ -1821,13 +1824,13 @@ static void template_ID_tabs(const bContext *C,
 static void ui_template_id(uiLayout *layout,
                            const bContext *C,
                            PointerRNA *ptr,
-                           const char *propname,
+                           const StringRefNull propname,
                            const char *newop,
                            const char *openop,
                            const char *unlinkop,
                            /* Only respected by tabs (use_tabs). */
                            const char *menu,
-                           const char *text,
+                           const std::optional<StringRef> text,
                            int flag,
                            int prv_rows,
                            int prv_cols,
@@ -1837,10 +1840,11 @@ static void ui_template_id(uiLayout *layout,
                            const bool live_icon,
                            const bool hide_buttons)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop || RNA_property_type(prop) != PROP_POINTER) {
-    RNA_warning("pointer property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning(
+        "pointer property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
@@ -1898,13 +1902,13 @@ static void ui_template_id(uiLayout *layout,
 void uiTemplateID(uiLayout *layout,
                   const bContext *C,
                   PointerRNA *ptr,
-                  const char *propname,
+                  const StringRefNull propname,
                   const char *newop,
                   const char *openop,
                   const char *unlinkop,
                   int filter,
                   const bool live_icon,
-                  const char *text)
+                  const std::optional<StringRef> text)
 {
   ui_template_id(layout,
                  C,
@@ -1930,7 +1934,7 @@ void uiTemplateAction(uiLayout *layout,
                       ID *id,
                       const char *newop,
                       const char *unlinkop,
-                      const char *text)
+                      const std::optional<StringRef> text)
 {
   if (!id_can_have_animdata(id)) {
     RNA_warning("Cannot show Action selector for non-animatable ID: %s", id->name + 2);
@@ -1973,7 +1977,7 @@ void uiTemplateAction(uiLayout *layout,
 void uiTemplateIDBrowse(uiLayout *layout,
                         bContext *C,
                         PointerRNA *ptr,
-                        const char *propname,
+                        const StringRefNull propname,
                         const char *newop,
                         const char *openop,
                         const char *unlinkop,
@@ -2002,7 +2006,7 @@ void uiTemplateIDBrowse(uiLayout *layout,
 void uiTemplateIDPreview(uiLayout *layout,
                          bContext *C,
                          PointerRNA *ptr,
-                         const char *propname,
+                         const StringRefNull propname,
                          const char *newop,
                          const char *openop,
                          const char *unlinkop,
@@ -2033,7 +2037,7 @@ void uiTemplateIDPreview(uiLayout *layout,
 void uiTemplateGpencilColorPreview(uiLayout *layout,
                                    bContext *C,
                                    PointerRNA *ptr,
-                                   const char *propname,
+                                   const StringRefNull propname,
                                    int rows,
                                    int cols,
                                    float scale,
@@ -2061,7 +2065,7 @@ void uiTemplateGpencilColorPreview(uiLayout *layout,
 void uiTemplateIDTabs(uiLayout *layout,
                       bContext *C,
                       PointerRNA *ptr,
-                      const char *propname,
+                      const StringRefNull propname,
                       const char *newop,
                       const char *menu,
                       int filter)
@@ -2093,21 +2097,23 @@ void uiTemplateIDTabs(uiLayout *layout,
 
 void uiTemplateAnyID(uiLayout *layout,
                      PointerRNA *ptr,
-                     const char *propname,
-                     const char *proptypename,
-                     const char *text)
+                     const StringRefNull propname,
+                     const StringRefNull proptypename,
+                     const std::optional<StringRef> text)
 {
   /* get properties... */
-  PropertyRNA *propID = RNA_struct_find_property(ptr, propname);
-  PropertyRNA *propType = RNA_struct_find_property(ptr, proptypename);
+  PropertyRNA *propID = RNA_struct_find_property(ptr, propname.c_str());
+  PropertyRNA *propType = RNA_struct_find_property(ptr, proptypename.c_str());
 
   if (!propID || RNA_property_type(propID) != PROP_POINTER) {
-    RNA_warning("pointer property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning(
+        "pointer property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
   if (!propType || RNA_property_type(propType) != PROP_ENUM) {
-    RNA_warning(
-        "pointer-type property not found: %s.%s", RNA_struct_identifier(ptr->type), proptypename);
+    RNA_warning("pointer-type property not found: %s.%s",
+                RNA_struct_identifier(ptr->type),
+                proptypename.c_str());
     return;
   }
 
@@ -2121,8 +2127,8 @@ void uiTemplateAnyID(uiLayout *layout,
 
   /* Label - either use the provided text, or will become "ID-Block:" */
   if (text) {
-    if (text[0]) {
-      uiItemL(row, text, ICON_NONE);
+    if (!text->is_empty()) {
+      uiItemL(row, *text, ICON_NONE);
     }
   }
   else {
@@ -2266,7 +2272,7 @@ static void template_search_buttons(const bContext *C,
                                     TemplateSearch &template_search,
                                     const char *newop,
                                     const char *unlinkop,
-                                    const char *text)
+                                    const std::optional<StringRef> text)
 {
   uiBlock *block = uiLayoutGetBlock(layout);
   uiRNACollectionSearch *search_data = &template_search.search_data;
@@ -2285,9 +2291,9 @@ static void template_search_buttons(const bContext *C,
   UI_block_align_begin(block);
 
   uiLayout *decorator_layout = nullptr;
-  if (text && text[0]) {
+  if (text && !text->is_empty()) {
     /* Add label respecting the separated layout property split state. */
-    decorator_layout = uiItemL_respect_property_split(row, text, ICON_NONE);
+    decorator_layout = uiItemL_respect_property_split(row, *text, ICON_NONE);
   }
 
   template_search_add_button_searchmenu(C, row, block, template_search, editable, false);
@@ -2299,7 +2305,7 @@ static void template_search_buttons(const bContext *C,
   UI_block_align_end(block);
 
   if (decorator_layout) {
-    uiItemDecoratorR(decorator_layout, nullptr, nullptr, RNA_NO_INDEX);
+    uiItemDecoratorR(decorator_layout, nullptr, "", RNA_NO_INDEX);
   }
 }
 
@@ -2352,15 +2358,16 @@ static PropertyRNA *template_search_get_searchprop(PointerRNA *targetptr,
 
 static bool template_search_setup(TemplateSearch &template_search,
                                   PointerRNA *ptr,
-                                  const char *const propname,
+                                  const StringRefNull propname,
                                   PointerRNA *searchptr,
                                   const char *const searchpropname)
 {
   template_search = {};
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop || RNA_property_type(prop) != PROP_POINTER) {
-    RNA_warning("pointer property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning(
+        "pointer property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return false;
   }
   PropertyRNA *searchprop = template_search_get_searchprop(ptr, prop, searchptr, searchpropname);
@@ -2376,12 +2383,12 @@ static bool template_search_setup(TemplateSearch &template_search,
 void uiTemplateSearch(uiLayout *layout,
                       const bContext *C,
                       PointerRNA *ptr,
-                      const char *propname,
+                      const StringRefNull propname,
                       PointerRNA *searchptr,
                       const char *searchpropname,
                       const char *newop,
                       const char *unlinkop,
-                      const char *text)
+                      const std::optional<StringRef> text)
 {
   TemplateSearch template_search;
   if (template_search_setup(template_search, ptr, propname, searchptr, searchpropname)) {
@@ -2392,14 +2399,14 @@ void uiTemplateSearch(uiLayout *layout,
 void uiTemplateSearchPreview(uiLayout *layout,
                              bContext *C,
                              PointerRNA *ptr,
-                             const char *propname,
+                             const StringRefNull propname,
                              PointerRNA *searchptr,
                              const char *searchpropname,
                              const char *newop,
                              const char *unlinkop,
                              const int rows,
                              const int cols,
-                             const char *text)
+                             const std::optional<StringRef> text)
 {
   TemplateSearch template_search;
   if (template_search_setup(template_search, ptr, propname, searchptr, searchpropname)) {
@@ -2421,14 +2428,15 @@ void uiTemplateSearchPreview(uiLayout *layout,
 
 void uiTemplatePathBuilder(uiLayout *layout,
                            PointerRNA *ptr,
-                           const char *propname,
+                           const StringRefNull propname,
                            PointerRNA * /*root_ptr*/,
-                           const char *text)
+                           const std::optional<StringRefNull> text)
 {
   /* check that properties are valid */
-  PropertyRNA *propPath = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *propPath = RNA_struct_find_property(ptr, propname.c_str());
   if (!propPath || RNA_property_type(propPath) != PROP_STRING) {
-    RNA_warning("path property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning(
+        "path property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
@@ -2815,7 +2823,7 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
   UI_block_lock_clear(block);
 
   if (layout_flags & UI_TEMPLATE_OP_PROPS_SHOW_TITLE) {
-    uiItemL(layout, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
+    uiItemL(layout, WM_operatortype_name(op->type, op->ptr), ICON_NONE);
   }
 
   /* menu */
@@ -2828,7 +2836,7 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
     UI_block_set_active_operator(block, op, false);
 
     row = uiLayoutRow(layout, true);
-    uiItemM(row, "WM_MT_operator_presets", nullptr, ICON_NONE);
+    uiItemM(row, "WM_MT_operator_presets", std::nullopt, ICON_NONE);
 
     wmOperatorType *ot = WM_operatortype_find("WM_OT_operator_preset_add", false);
     uiItemFullO_ptr(row, ot, "", ICON_ADD, nullptr, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE, &op_ptr);
@@ -3081,7 +3089,7 @@ static wmOperator *minimal_operator_create(wmOperatorType *ot, PointerRNA *prope
 static void draw_export_controls(
     bContext *C, uiLayout *layout, const std::string &label, int index, bool valid)
 {
-  uiItemL(layout, label.c_str(), ICON_NONE);
+  uiItemL(layout, label, ICON_NONE);
   if (valid) {
     uiLayout *row = uiLayoutRow(layout, false);
     uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
@@ -3102,8 +3110,15 @@ static void draw_export_properties(bContext *C,
 
   PropertyRNA *prop = RNA_struct_find_property(op->ptr, "filepath");
   std::string placeholder = "//" + filename;
-  uiItemFullR(
-      col, op->ptr, prop, RNA_NO_INDEX, 0, UI_ITEM_NONE, nullptr, ICON_NONE, placeholder.c_str());
+  uiItemFullR(col,
+              op->ptr,
+              prop,
+              RNA_NO_INDEX,
+              0,
+              UI_ITEM_NONE,
+              std::nullopt,
+              ICON_NONE,
+              placeholder.c_str());
 
   template_operator_property_buts_draw_single(
       C, op, layout, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_HIDE_PRESETS);
@@ -3163,7 +3178,7 @@ void uiTemplateCollectionExporters(uiLayout *layout, bContext *C)
   uiItemIntO(col, "", ICON_REMOVE, "COLLECTION_OT_exporter_remove", "index", index);
 
   col = uiLayoutColumn(layout, true);
-  uiItemO(col, nullptr, ICON_EXPORT, "COLLECTION_OT_export_all");
+  uiItemO(col, std::nullopt, ICON_EXPORT, "COLLECTION_OT_export_all");
   uiLayoutSetEnabled(col, !BLI_listbase_is_empty(exporters));
 
   /* Draw the active exporter. */
@@ -3597,7 +3612,7 @@ void uiTemplatePreview(uiLayout *layout,
       /* Alpha button for texture preview */
       if (*pr_texture != TEX_PR_OTHER) {
         row = uiLayoutRow(layout, false);
-        uiItemR(row, &texture_ptr, "use_preview_alpha", UI_ITEM_NONE, nullptr, ICON_NONE);
+        uiItemR(row, &texture_ptr, "use_preview_alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       }
     }
   }
@@ -3988,9 +4003,12 @@ static void colorband_buttons_layout(uiLayout *layout,
   }
 }
 
-void uiTemplateColorRamp(uiLayout *layout, PointerRNA *ptr, const char *propname, bool expand)
+void uiTemplateColorRamp(uiLayout *layout,
+                         PointerRNA *ptr,
+                         const StringRefNull propname,
+                         bool expand)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop || RNA_property_type(prop) != PROP_POINTER) {
     return;
@@ -4116,16 +4134,17 @@ static uiBlock *ui_icon_view_menu_cb(bContext *C, ARegion *region, void *arg_lit
 
 void uiTemplateIconView(uiLayout *layout,
                         PointerRNA *ptr,
-                        const char *propname,
+                        const StringRefNull propname,
                         bool show_labels,
                         float icon_scale,
                         float icon_scale_popup)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop || RNA_property_type(prop) != PROP_ENUM) {
-    RNA_warning(
-        "property of type Enum not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning("property of type Enum not found: %s.%s",
+                RNA_struct_identifier(ptr->type),
+                propname.c_str());
     return;
   }
 
@@ -4188,9 +4207,9 @@ void uiTemplateIconView(uiLayout *layout,
 /** \name Histogram Template
  * \{ */
 
-void uiTemplateHistogram(uiLayout *layout, PointerRNA *ptr, const char *propname)
+void uiTemplateHistogram(uiLayout *layout, PointerRNA *ptr, const StringRefNull propname)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop || RNA_property_type(prop) != PROP_POINTER) {
     return;
@@ -4235,9 +4254,9 @@ void uiTemplateHistogram(uiLayout *layout, PointerRNA *ptr, const char *propname
 /** \name Waveform Template
  * \{ */
 
-void uiTemplateWaveform(uiLayout *layout, PointerRNA *ptr, const char *propname)
+void uiTemplateWaveform(uiLayout *layout, PointerRNA *ptr, const StringRefNull propname)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop || RNA_property_type(prop) != PROP_POINTER) {
     return;
@@ -4293,9 +4312,9 @@ void uiTemplateWaveform(uiLayout *layout, PointerRNA *ptr, const char *propname)
 /** \name Vector-Scope Template
  * \{ */
 
-void uiTemplateVectorscope(uiLayout *layout, PointerRNA *ptr, const char *propname)
+void uiTemplateVectorscope(uiLayout *layout, PointerRNA *ptr, const StringRefNull propname)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop || RNA_property_type(prop) != PROP_POINTER) {
     return;
@@ -4673,7 +4692,7 @@ static void curvemap_buttons_layout(uiLayout *layout,
 
   if (tone) {
     uiLayout *split = uiLayoutSplit(layout, 0.0f, false);
-    uiItemR(uiLayoutRow(split, false), ptr, "tone", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+    uiItemR(uiLayoutRow(split, false), ptr, "tone", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
   }
 
   /* curve chooser */
@@ -5052,10 +5071,18 @@ static void curvemap_buttons_layout(uiLayout *layout,
   /* black/white levels */
   if (levels) {
     uiLayout *split = uiLayoutSplit(layout, 0.0f, false);
-    uiItemR(
-        uiLayoutColumn(split, false), ptr, "black_level", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
-    uiItemR(
-        uiLayoutColumn(split, false), ptr, "white_level", UI_ITEM_R_EXPAND, nullptr, ICON_NONE);
+    uiItemR(uiLayoutColumn(split, false),
+            ptr,
+            "black_level",
+            UI_ITEM_R_EXPAND,
+            std::nullopt,
+            ICON_NONE);
+    uiItemR(uiLayoutColumn(split, false),
+            ptr,
+            "white_level",
+            UI_ITEM_R_EXPAND,
+            std::nullopt,
+            ICON_NONE);
 
     uiLayoutRow(layout, false);
     bt = uiDefBut(block,
@@ -5090,23 +5117,25 @@ static void curvemap_buttons_layout(uiLayout *layout,
 
 void uiTemplateCurveMapping(uiLayout *layout,
                             PointerRNA *ptr,
-                            const char *propname,
+                            const StringRefNull propname,
                             int type,
                             bool levels,
                             bool brush,
                             bool neg_slope,
                             bool tone)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
   uiBlock *block = uiLayoutGetBlock(layout);
 
   if (!prop) {
-    RNA_warning("curve property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning(
+        "curve property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
   if (RNA_property_type(prop) != PROP_POINTER) {
-    RNA_warning("curve is not a pointer: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning(
+        "curve is not a pointer: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
@@ -5608,27 +5637,29 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, const
     }
   }
 
-  uiItemR(layout, ptr, "use_sample_straight_edges", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "use_sample_even_lengths", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "use_sample_straight_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(layout, ptr, "use_sample_even_lengths", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   UI_block_funcN_set(block, nullptr, nullptr, nullptr);
 }
 
-void uiTemplateCurveProfile(uiLayout *layout, PointerRNA *ptr, const char *propname)
+void uiTemplateCurveProfile(uiLayout *layout, PointerRNA *ptr, const StringRefNull propname)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   uiBlock *block = uiLayoutGetBlock(layout);
 
   if (!prop) {
-    RNA_warning(
-        "Curve Profile property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning("Curve Profile property not found: %s.%s",
+                RNA_struct_identifier(ptr->type),
+                propname.c_str());
     return;
   }
 
   if (RNA_property_type(prop) != PROP_POINTER) {
-    RNA_warning(
-        "Curve Profile is not a pointer: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning("Curve Profile is not a pointer: %s.%s",
+                RNA_struct_identifier(ptr->type),
+                propname.c_str());
     return;
   }
 
@@ -5655,18 +5686,18 @@ void uiTemplateCurveProfile(uiLayout *layout, PointerRNA *ptr, const char *propn
 
 void uiTemplateColorPicker(uiLayout *layout,
                            PointerRNA *ptr,
-                           const char *propname,
+                           const StringRefNull propname,
                            bool value_slider,
                            bool lock,
                            bool lock_luminosity,
                            bool cubic)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
   uiBlock *block = uiLayoutGetBlock(layout);
   ColorPicker *cpicker = ui_block_colorpicker_create(block);
 
   if (!prop) {
-    RNA_warning("property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning("property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
@@ -5859,15 +5890,18 @@ static void ui_template_palette_menu(bContext * /*C*/, uiLayout *layout, void * 
   uiItemEnumO_value(row, IFACE_("Luminance"), ICON_NODE_LUMINANCE, "PALETTE_OT_sort", "type", 4); /*BFA - icon added*/
 }
 
-void uiTemplatePalette(uiLayout *layout, PointerRNA *ptr, const char *propname, bool /*colors*/)
+void uiTemplatePalette(uiLayout *layout,
+                       PointerRNA *ptr,
+                       const StringRefNull propname,
+                       bool /*colors*/)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
   uiBut *but = nullptr;
 
   const int cols_per_row = std::max(uiLayoutGetWidth(layout) / UI_UNIT_X, 1);
 
   if (!prop) {
-    RNA_warning("property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning("property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
@@ -5966,12 +6000,15 @@ void uiTemplatePalette(uiLayout *layout, PointerRNA *ptr, const char *propname, 
   }
 }
 
-void uiTemplateCryptoPicker(uiLayout *layout, PointerRNA *ptr, const char *propname, int icon)
+void uiTemplateCryptoPicker(uiLayout *layout,
+                            PointerRNA *ptr,
+                            const StringRefNull propname,
+                            int icon)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop) {
-    RNA_warning("property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning("property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
@@ -6023,16 +6060,17 @@ static void handle_layer_buttons(bContext *C, void *arg1, void *arg2)
 
 void uiTemplateLayers(uiLayout *layout,
                       PointerRNA *ptr,
-                      const char *propname,
+                      const StringRefNull propname,
                       PointerRNA *used_ptr,
                       const char *used_propname,
                       int active_layer)
 {
   const int cols_per_group = 5;
 
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
   if (!prop) {
-    RNA_warning("layers property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    RNA_warning(
+        "layers property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
@@ -6549,7 +6587,7 @@ void uiTemplateInputStatus(uiLayout *layout, bContext *C)
         uiItemS_ex(row, item.space_factor);
       }
       else {
-        uiBut *but = uiItemL_ex(row, item.text.c_str(), item.icon, false, false);
+        uiBut *but = uiItemL_ex(row, item.text, item.icon, false, false);
         if (item.inverted) {
           but->drawflag |= UI_BUT_ICON_INVERT;
         }
@@ -6764,7 +6802,7 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
   else {
     /* For other issues, still show the version if enabled. */
     if (U.statusbar_flag & STATUSBAR_SHOW_VERSION) {
-      uiItemL(layout, version_string.c_str(), ICON_NONE);
+      uiItemL(layout, version_string, ICON_NONE);
     }
   }
 
@@ -6899,7 +6937,7 @@ static void template_keymap_item_properties(uiLayout *layout, const char *title,
     uiLayout *row = uiLayoutRow(box, false);
 
     /* property value */
-    uiItemFullR(row, ptr, prop, -1, 0, UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemFullR(row, ptr, prop, -1, 0, UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     if (is_set) {
       /* unset operator */
@@ -7047,7 +7085,7 @@ int uiTemplateStatusBarModalItem(uiLayout *layout,
 }
 
 bool uiTemplateEventFromKeymapItem(uiLayout *layout,
-                                   const char *text,
+                                   const StringRefNull text,
                                    const wmKeyMapItem *kmi,
                                    bool text_fallback)
 {
@@ -7062,6 +7100,10 @@ bool uiTemplateEventFromKeymapItem(uiLayout *layout,
   if (icon != 0) {
     for (int j = 0; j < ARRAY_SIZE(icon_mod) && icon_mod[j]; j++) {
       uiItemL(layout, "", icon_mod[j]);
+      const float offset = ui_event_icon_offset(icon_mod[j]);
+      if (offset != 0.0f) {
+        uiItemS_ex(layout, offset);
+      }
     }
 
     /* Icon and text separately is closer together with aligned layout. */
@@ -7077,14 +7119,14 @@ bool uiTemplateEventFromKeymapItem(uiLayout *layout,
       uiItemS_ex(layout, offset);
     }
 
-    uiItemL(layout, CTX_IFACE_(BLT_I18NCONTEXT_ID_WINDOWMANAGER, text), ICON_NONE);
+    uiItemL(layout, CTX_IFACE_(BLT_I18NCONTEXT_ID_WINDOWMANAGER, text.c_str()), ICON_NONE);
     uiItemS_ex(layout, 0.7f);
     ok = true;
   }
   else if (text_fallback) {
     const char *event_text = WM_key_event_string(kmi->type, true);
     uiItemL(layout, event_text, ICON_NONE);
-    uiItemL(layout, CTX_IFACE_(BLT_I18NCONTEXT_ID_WINDOWMANAGER, text), ICON_NONE);
+    uiItemL(layout, CTX_IFACE_(BLT_I18NCONTEXT_ID_WINDOWMANAGER, text.c_str()), ICON_NONE);
     uiItemS_ex(layout, 0.5f);
     ok = true;
   }
@@ -7097,13 +7139,15 @@ bool uiTemplateEventFromKeymapItem(uiLayout *layout,
 /** \name Color Management Template
  * \{ */
 
-void uiTemplateColorspaceSettings(uiLayout *layout, PointerRNA *ptr, const char *propname)
+void uiTemplateColorspaceSettings(uiLayout *layout, PointerRNA *ptr, const StringRefNull propname)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop) {
-    printf(
-        "%s: property not found: %s.%s\n", __func__, RNA_struct_identifier(ptr->type), propname);
+    printf("%s: property not found: %s.%s\n",
+           __func__,
+           RNA_struct_identifier(ptr->type),
+           propname.c_str());
     return;
   }
 
@@ -7116,13 +7160,15 @@ void uiTemplateColorspaceSettings(uiLayout *layout, PointerRNA *ptr, const char 
 void uiTemplateColormanagedViewSettings(uiLayout *layout,
                                         bContext * /*C*/,
                                         PointerRNA *ptr,
-                                        const char *propname)
+                                        const StringRefNull propname)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop) {
-    printf(
-        "%s: property not found: %s.%s\n", __func__, RNA_struct_identifier(ptr->type), propname);
+    printf("%s: property not found: %s.%s\n",
+           __func__,
+           RNA_struct_identifier(ptr->type),
+           propname.c_str());
     return;
   }
 
@@ -7135,23 +7181,26 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   uiItemR(col, &view_transform_ptr, "look", UI_ITEM_NONE, IFACE_("Look"), ICON_NONE);
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, &view_transform_ptr, "exposure", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(col, &view_transform_ptr, "gamma", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "exposure", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "gamma", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = uiLayoutColumn(layout, false);
-  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-  uiItemR(col, &view_transform_ptr, "use_curve_mapping", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "use_curve_mapping", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (view_settings->flag & COLORMANAGE_VIEW_USE_CURVES) {
     uiTemplateCurveMapping(
         col, &view_transform_ptr, "curve_mapping", 'c', true, false, false, false);
   }
 
   col = uiLayoutColumn(layout, false);
-  uiItemR(col, &view_transform_ptr, "use_white_balance", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(col, &view_transform_ptr, "use_white_balance", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (view_settings->flag & COLORMANAGE_VIEW_USE_WHITE_BALANCE) {
-    uiItemR(
-        col, &view_transform_ptr, "white_balance_temperature", UI_ITEM_NONE, nullptr, ICON_NONE);
-    uiItemR(col, &view_transform_ptr, "white_balance_tint", UI_ITEM_NONE, nullptr, ICON_NONE);
+    uiItemR(col,
+            &view_transform_ptr,
+            "white_balance_temperature",
+            UI_ITEM_NONE,
+            std::nullopt,
+            ICON_NONE);
+    uiItemR(col, &view_transform_ptr, "white_balance_tint", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 }
 
@@ -7193,13 +7242,13 @@ static uiBlock *component_menu(bContext *C, ARegion *region, void *args_v)
 }
 void uiTemplateComponentMenu(uiLayout *layout,
                              PointerRNA *ptr,
-                             const char *propname,
-                             const char *name)
+                             const StringRefNull propname,
+                             const StringRef name)
 {
   ComponentMenuArgs *args = MEM_new<ComponentMenuArgs>(__func__);
 
   args->ptr = *ptr;
-  STRNCPY(args->propname, propname);
+  STRNCPY(args->propname, propname.c_str());
 
   uiBlock *block = uiLayoutGetBlock(layout);
   UI_block_align_begin(block);
@@ -7217,7 +7266,7 @@ void uiTemplateComponentMenu(uiLayout *layout,
                               but_func_argN_copy<ComponentMenuArgs>);
   /* set rna directly, uiDefBlockButN doesn't do this */
   but->rnapoin = *ptr;
-  but->rnaprop = RNA_struct_find_property(ptr, propname);
+  but->rnaprop = RNA_struct_find_property(ptr, propname.c_str());
   but->rnaindex = 0;
 
   UI_block_align_end(block);
@@ -7259,8 +7308,8 @@ void uiTemplateCacheFileVelocity(uiLayout *layout, PointerRNA *fileptr)
   /* Ensure that the context has a CacheFile as this may not be set inside of modifiers panels. */
   uiLayoutSetContextPointer(layout, "edit_cachefile", fileptr);
 
-  uiItemR(layout, fileptr, "velocity_name", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(layout, fileptr, "velocity_unit", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, fileptr, "velocity_name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(layout, fileptr, "velocity_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerRNA *fileptr)
@@ -7308,7 +7357,7 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   row = uiLayoutRow(layout, false);
   uiLayoutSetActive(row, is_alembic && engine_supports_procedural);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "use_render_procedural", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, fileptr, "use_render_procedural", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "use_render_procedural", 0); /*bfa - decorator*/
 
   const bool use_render_procedural = RNA_boolean_get(fileptr, "use_render_procedural");
@@ -7317,12 +7366,12 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   row = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(row, use_render_procedural);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "use_prefetch", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, fileptr, "use_prefetch", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "use_prefetch", 0); /*bfa - decorator*/
 
   sub = uiLayoutRow(layout, false);
   uiLayoutSetEnabled(sub, use_prefetch && use_render_procedural);
-  uiItemR(sub, fileptr, "prefetch_cache_size", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(sub, fileptr, "prefetch_cache_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
@@ -7344,19 +7393,9 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   col = uiLayoutColumn(layout, true);
   row = uiLayoutRow(col, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
   /* ------------ end bfa */
-
-  /*------------------- bfa - original props */
-  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Override Frame"));
-  // sub = uiLayoutRow(row, true);
-  // uiLayoutSetPropDecorate(sub, false);
-  // uiItemR(sub, fileptr, "override_frame", UI_ITEM_NONE, "", ICON_NONE);
-  // subsub = uiLayoutRow(sub, true);
-  // uiLayoutSetActive(subsub, RNA_boolean_get(fileptr, "override_frame"));
-  // uiItemR(subsub, fileptr, "frame", UI_ITEM_NONE, "", ICON_NONE);
-  // uiItemDecoratorR(row, fileptr, "frame", 0);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
@@ -7381,7 +7420,7 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   // ------------------------------- end bfa
 
   row = uiLayoutRow(layout, false);
-  uiItemR(row, fileptr, "frame_offset", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, fileptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiLayoutSetActive(row, !RNA_boolean_get(fileptr, "is_sequence"));
 }
 
@@ -7450,13 +7489,17 @@ void uiTemplateCacheFileLayers(uiLayout *layout, const bContext *C, PointerRNA *
   }
 }
 
-bool uiTemplateCacheFilePointer(PointerRNA *ptr, const char *propname, PointerRNA *r_file_ptr)
+bool uiTemplateCacheFilePointer(PointerRNA *ptr,
+                                const StringRefNull propname,
+                                PointerRNA *r_file_ptr)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop) {
-    printf(
-        "%s: property not found: %s.%s\n", __func__, RNA_struct_identifier(ptr->type), propname);
+    printf("%s: property not found: %s.%s\n",
+           __func__,
+           RNA_struct_identifier(ptr->type),
+           propname.c_str());
     return false;
   }
 
@@ -7464,7 +7507,7 @@ bool uiTemplateCacheFilePointer(PointerRNA *ptr, const char *propname, PointerRN
     printf("%s: expected pointer property for %s.%s\n",
            __func__,
            RNA_struct_identifier(ptr->type),
-           propname);
+           propname.c_str());
     return false;
   }
 
@@ -7475,7 +7518,7 @@ bool uiTemplateCacheFilePointer(PointerRNA *ptr, const char *propname, PointerRN
 void uiTemplateCacheFile(uiLayout *layout,
                          const bContext *C,
                          PointerRNA *ptr,
-                         const char *propname)
+                         const StringRefNull propname)
 {
   if (!ptr->data) {
     return;
@@ -7503,7 +7546,7 @@ void uiTemplateCacheFile(uiLayout *layout,
   uiLayoutSetPropSep(layout, true);
 
   row = uiLayoutRow(layout, true);
-  uiItemR(row, &fileptr, "filepath", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, &fileptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   sub = uiLayoutRow(row, true);
   uiItemO(sub, "", ICON_FILE_REFRESH, "cachefile.reload");
 
