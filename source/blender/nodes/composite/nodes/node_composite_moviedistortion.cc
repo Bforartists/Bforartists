@@ -153,7 +153,7 @@ class MovieDistortionOperation : public NodeOperation {
 
     parallel_for(domain.size, [&](const int2 texel) {
       output.store_pixel(texel,
-                         input.sample_bilinear_zero(distortion_grid.load_pixel(texel).xy()));
+                         input.sample_bilinear_zero(distortion_grid.load_pixel<float2>(texel)));
     });
   }
 
@@ -186,7 +186,8 @@ void register_node_type_cmp_moviedistortion()
   ntype.draw_buttons = file_ns::node_composit_buts_moviedistortion;
   ntype.labelfunc = file_ns::label;
   ntype.initfunc_api = file_ns::init;
-  blender::bke::node_type_storage(&ntype, nullptr, file_ns::storage_free, file_ns::storage_copy);
+  blender::bke::node_type_storage(
+      &ntype, std::nullopt, file_ns::storage_free, file_ns::storage_copy);
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
   blender::bke::node_register_type(&ntype);

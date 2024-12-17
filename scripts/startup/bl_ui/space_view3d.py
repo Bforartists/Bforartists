@@ -558,13 +558,14 @@ class _draw_tool_settings_context_mode:
         )
 
         if brush.curves_sculpt_tool not in {'ADD', 'DELETE'}:
+            use_strength_pressure = brush.curves_sculpt_tool not in {'SLIDE'}
             UnifiedPaintPanel.prop_unified(
                 layout,
                 context,
                 brush,
                 "strength",
                 unified_name="use_unified_strength",
-                pressure_name="use_pressure_strength",
+                pressure_name="use_pressure_strength" if use_strength_pressure else None,
                 header=True,
             )
 
@@ -658,9 +659,7 @@ class _draw_tool_settings_context_mode:
 
         if grease_pencil_tool == 'TINT':
             row.separator(factor=0.4)
-            ups = context.tool_settings.unified_paint_settings
-            prop_owner = ups if ups.use_unified_color else brush
-            row.prop_with_popover(prop_owner, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
+            row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
 
         from bl_ui.properties_paint_common import (
             brush_basic_grease_pencil_paint_settings,
@@ -3589,16 +3588,24 @@ class VIEW3D_MT_object_context_menu(Menu):
                 layout.operator("object.shade_flat", text="Shade Flat", icon="SHADING_FLAT")
                 layout.separator()
 
-            if obj.type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'GPENCIL'}:
+            if obj.type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'GREASEPENCIL'}:
                 if selected_objects_len > 1:
                     layout.operator("object.join")
 
             if obj.type in {'MESH', 'CURVE', 'CURVES', 'SURFACE', 'POINTCLOUD', 'META', 'FONT'}:
                 layout.operator_menu_enum("object.convert", "target")
 
-            if (obj.type in {
-                'MESH', 'CURVE', 'CURVES', 'SURFACE', 'GPENCIL', 'LATTICE', 'ARMATURE', 'META', 'FONT', 'POINTCLOUD',
-            } or (obj.type == 'EMPTY' and obj.instance_collection is not None)):
+            if (obj.type in {'MESH',
+                             'CURVE',
+                             'CURVES',
+                             'SURFACE',
+                             'GREASEPENCIL',
+                             'LATTICE',
+                             'ARMATURE',
+                             'META',
+                             'FONT',
+                             'POINTCLOUD',
+                             } or (obj.type == 'EMPTY' and obj.instance_collection is not None)):
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
                 layout.operator_context = 'INVOKE_DEFAULT'
@@ -3859,8 +3866,6 @@ class VIEW3D_MT_object_modifiers(Menu):
         if active_object:
             if active_object.type in supported_types:
                 layout.menu("OBJECT_MT_modifier_add", text="Add Modifier")
-            elif active_object.type == 'GPENCIL':
-                layout.operator("object.gpencil_modifier_add", text="Add Modifier")
 
         layout.operator("object.modifiers_copy_to_selected", text="Copy Modifiers to Selected Objects")
 
@@ -6885,6 +6890,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
         layout.operator_menu_enum("grease_pencil.caps_set", text="Set Caps", property="type")
         layout.operator("grease_pencil.stroke_switch_direction", icon="FLIP")
+        layout.operator("grease_pencil.set_start_point", text="Set Start Point")
 
         layout.separator()
 
@@ -7968,7 +7974,8 @@ class VIEW3D_PT_shading_options(Panel):
         if shading.type == 'SOLID':
             col = layout.column()
             if shading.light in {'STUDIO', 'MATCAP'}:
-                if shading.selected_studio_light.has_specular_highlight_pass:
+                studio_light = shading.selected_studio_light
+                if (studio_light is not None) and studio_light.has_specular_highlight_pass:
                     row = col.row()
                     row.separator()
                     row.prop(shading, "show_specular_highlight", text="Specular Lighting")
@@ -9641,7 +9648,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-                    #bfa - not in stroke mode. It is greyed out for this mode, so hide.
+            #bfa - not in stroke mode. It is greyed out for this mode, so hide.
             if mode != 'STROKE':
                 col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
@@ -9664,10 +9671,8 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            # Deform Operators
             col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX")
-
-            col.operator("transform.transform", text="Radius", icon="RADIUS").mode = 'GPENCIL_SHRINKFATTEN'
+            col.operator("grease_pencil.set_start_point", text="Set Start Point")
 
             col.separator()
 

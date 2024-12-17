@@ -750,11 +750,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   uiItemR(layout, ptr, "factor", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
-  uiItemR(layout, ptr, "iterations", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "scale", UI_ITEM_NONE, nullptr, ICON_NONE);
-  uiItemR(layout, ptr, "smooth_type", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(layout, ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemR(layout, ptr, "smooth_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", nullptr);
+  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "use_only_smooth", UI_ITEM_NONE, nullptr, ICON_NONE);
@@ -763,15 +763,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayout *row;
   row = uiLayoutRow(layout, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_only_smooth", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_only_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_only_smooth", 0); /*bfa - decorator*/
   row = uiLayoutRow(layout, true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_pin_boundary", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(row, ptr, "use_pin_boundary", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_pin_boundary", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  uiItemR(layout, ptr, "rest_source", UI_ITEM_NONE, nullptr, ICON_NONE);
+  uiItemR(layout, ptr, "rest_source", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (RNA_enum_get(ptr, "rest_source") == MOD_CORRECTIVESMOOTH_RESTSOURCE_BIND) {
     uiItemO(layout,
             (RNA_boolean_get(ptr, "is_bind") ? IFACE_("Unbind") : IFACE_("Bind")),
