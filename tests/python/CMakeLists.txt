@@ -109,7 +109,7 @@ endfunction()
 
 # Run Python render test.
 function(add_render_test testname testscript)
-  set(_args ${ARGN} -blender "${TEST_BLENDER_EXE}" -oiiotool "${OPENIMAGEIO_TOOL}")
+  set(_args ${ARGN} --blender "${TEST_BLENDER_EXE}" --oiiotool "${OPENIMAGEIO_TOOL}")
   if(WITH_TESTS_BATCHED)
     list(APPEND _args --batch)
   endif()
@@ -283,6 +283,14 @@ add_blender_test(
   curves_extrude
   ${TEST_SRC_DIR}/modeling/curves_extrude.blend
   --python ${TEST_PYTHON_DIR}/curves_extrude.py
+  --
+  --run-all-tests
+)
+
+add_blender_test(
+  object_conversion
+  ${TEST_SRC_DIR}/modeling/object_conversion.blend
+  --python ${TEST_PYTHON_DIR}/object_conversion.py
   --
   --run-all-tests
 )
@@ -614,8 +622,8 @@ if(TRUE)
       add_render_test(
         io_curve_svg_${render_test}
         ${CMAKE_CURRENT_LIST_DIR}/bl_io_curve_svg_test.py
-        -testdir "${TEST_SRC_DIR}/io_tests/svg/${render_test}"
-        -outdir "${TEST_OUT_DIR}/io_curve_svg"
+        --testdir "${TEST_SRC_DIR}/io_tests/svg/${render_test}"
+        --outdir "${TEST_OUT_DIR}/io_curve_svg"
       )
     endforeach()
 
@@ -630,8 +638,6 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
     message(
       WARNING "Disabling render tests because tests directory doesn't exist at ${TEST_SRC_DIR}"
     )
-  elseif(NOT WITH_COMPOSITOR_CPU)
-    message(WARNING "Disabling render tests because WITH_COMPOSITOR_CPU is disabled")
   elseif(NOT WITH_OPENCOLORIO)
     message(WARNING "Disabling render tests because WITH_OPENCOLORIO is disabled")
   else()
@@ -649,7 +655,7 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
       light_linking
       mesh
       pointcloud
-      principled
+      principled_bsdf
       shader
       shadow_catcher
       sss
@@ -706,10 +712,10 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
             add_render_test(
               ${_cycles_test_name}
               ${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
-              -testdir "${TEST_SRC_DIR}/render/${render_test}"
-              -outdir "${TEST_OUT_DIR}/cycles"
-              -device ${_cycles_device}
-              -blocklist ${_cycles_blocklist}
+              --testdir "${TEST_SRC_DIR}/render/${render_test}"
+              --outdir "${TEST_OUT_DIR}/cycles"
+              --device ${_cycles_device}
+              --blocklist ${_cycles_blocklist}
             )
             if(NOT ("${_cycles_device_lower}" STREQUAL "cpu"))
               set_tests_properties(${_cycles_test_name} PROPERTIES RUN_SERIAL TRUE)
@@ -723,10 +729,10 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
               add_render_test(
                 ${_cycles_test_name}_osl
                 ${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
-                -testdir "${TEST_SRC_DIR}/render/${render_test}"
-                -outdir "${TEST_OUT_DIR}/cycles_osl"
-                -device ${_cycles_device}
-                -osl
+                --testdir "${TEST_SRC_DIR}/render/${render_test}"
+                --outdir "${TEST_OUT_DIR}/cycles_osl"
+                --device ${_cycles_device}
+                --osl
               )
               # Doesn't do anything until OptiX is enabled
               if(NOT ("${_cycles_device_lower}" STREQUAL "cpu"))
@@ -756,8 +762,8 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
           add_render_test(
             eevee_next_${render_test}_opengl
             ${CMAKE_CURRENT_LIST_DIR}/eevee_next_render_tests.py
-            -testdir "${TEST_SRC_DIR}/render/${render_test}"
-            -outdir "${TEST_OUT_DIR}/eevee_next"
+            --testdir "${TEST_SRC_DIR}/render/${render_test}"
+            --outdir "${TEST_OUT_DIR}/eevee_next"
             --gpu-backend opengl
             ${_gpu_render_tests_arguments}
           )
@@ -769,21 +775,21 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
           add_render_test(
             eevee_next_${render_test}_metal
             ${CMAKE_CURRENT_LIST_DIR}/eevee_next_render_tests.py
-            -testdir "${TEST_SRC_DIR}/render/${render_test}"
-            -outdir "${TEST_OUT_DIR}/eevee_next"
+            --testdir "${TEST_SRC_DIR}/render/${render_test}"
+            --outdir "${TEST_OUT_DIR}/eevee_next"
             --gpu-backend metal
             ${_gpu_render_tests_arguments}
           )
         endforeach()
       endif()
 
-      if(WITH_VULKAN_BACKEND)
+      if(WITH_VULKAN_BACKEND AND WITH_GPU_RENDER_TESTS_VULKAN)
         foreach(render_test ${gpu_render_tests})
           add_render_test(
             eevee_next_${render_test}_vulkan
             ${CMAKE_CURRENT_LIST_DIR}/eevee_next_render_tests.py
-            -testdir "${TEST_SRC_DIR}/render/${render_test}"
-            -outdir "${TEST_OUT_DIR}/eevee_next"
+            --testdir "${TEST_SRC_DIR}/render/${render_test}"
+            --outdir "${TEST_OUT_DIR}/eevee_next"
             --gpu-backend vulkan
             ${_gpu_render_tests_arguments}
           )
@@ -796,8 +802,8 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
           add_render_test(
             workbench_${render_test}_opengl
             ${CMAKE_CURRENT_LIST_DIR}/workbench_render_tests.py
-            -testdir "${TEST_SRC_DIR}/render/${render_test}"
-            -outdir "${TEST_OUT_DIR}/workbench"
+            --testdir "${TEST_SRC_DIR}/render/${render_test}"
+            --outdir "${TEST_OUT_DIR}/workbench"
             --gpu-backend opengl
             ${_gpu_render_tests_arguments}
           )
@@ -809,21 +815,21 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
           add_render_test(
             workbench_${render_test}_metal
             ${CMAKE_CURRENT_LIST_DIR}/workbench_render_tests.py
-            -testdir "${TEST_SRC_DIR}/render/${render_test}"
-            -outdir "${TEST_OUT_DIR}/workbench"
+            --testdir "${TEST_SRC_DIR}/render/${render_test}"
+            --outdir "${TEST_OUT_DIR}/workbench"
             --gpu-backend metal
             ${_gpu_render_tests_arguments}
           )
         endforeach()
       endif()
 
-      if(WITH_VULKAN_BACKEND)
+      if(WITH_VULKAN_BACKEND AND WITH_GPU_RENDER_TESTS_VULKAN)
         foreach(render_test ${gpu_render_tests})
           add_render_test(
             workbench_${render_test}_vulkan
             ${CMAKE_CURRENT_LIST_DIR}/workbench_render_tests.py
-            -testdir "${TEST_SRC_DIR}/render/${render_test}"
-            -outdir "${TEST_OUT_DIR}/workbench"
+            --testdir "${TEST_SRC_DIR}/render/${render_test}"
+            --outdir "${TEST_OUT_DIR}/workbench"
             --gpu-backend vulkan
             ${_gpu_render_tests_arguments}
           )
@@ -836,9 +842,9 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
           add_render_test(
             storm_hydra_${render_test}
             ${CMAKE_CURRENT_LIST_DIR}/storm_render_tests.py
-            -testdir "${TEST_SRC_DIR}/render/${render_test}"
-            -outdir "${TEST_OUT_DIR}/storm_hydra"
-            -export_method "HYDRA"
+            --testdir "${TEST_SRC_DIR}/render/${render_test}"
+            --outdir "${TEST_OUT_DIR}/storm_hydra"
+            --export_method "HYDRA"
             ${_gpu_render_tests_arguments}
           )
         endforeach()
@@ -847,9 +853,9 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
           add_render_test(
             storm_usd_${render_test}
             ${CMAKE_CURRENT_LIST_DIR}/storm_render_tests.py
-            -testdir "${TEST_SRC_DIR}/render/${render_test}"
-            -outdir "${TEST_OUT_DIR}/storm_usd"
-            -export_method "USD"
+            --testdir "${TEST_SRC_DIR}/render/${render_test}"
+            --outdir "${TEST_OUT_DIR}/storm_usd"
+            --export_method "USD"
             ${_gpu_render_tests_arguments}
           )
         endforeach()
@@ -859,39 +865,36 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
   endif()
 endif()
 
-if(WITH_COMPOSITOR_CPU)
-  if(NOT OPENIMAGEIO_TOOL)
-    message(WARNING "Disabling Compositor CPU tests because OIIO oiiotool does not exist")
-  else()
-    set(compositor_tests
-      color
-      converter
-      filter
-      input
-      output
-      vector
+if(NOT OPENIMAGEIO_TOOL)
+  message(WARNING "Disabling Compositor tests because OIIO oiiotool does not exist")
+else()
+  set(compositor_tests
+    color
+    converter
+    filter
+    input
+    output
+    vector
 
-      multiple_node_setups
-    )
+    multiple_node_setups
+  )
 
-    if(WITH_LIBMV)
-      list(APPEND compositor_tests distort matte)
-    endif()
-
-    foreach(comp_test ${compositor_tests})
-      add_render_test(
-        compositor_${comp_test}_cpu
-        ${CMAKE_CURRENT_LIST_DIR}/compositor_cpu_render_tests.py
-        -testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
-        -outdir "${TEST_OUT_DIR}/compositor_cpu"
-      )
-    endforeach()
-
+  if(WITH_LIBMV)
+    list(APPEND compositor_tests distort matte)
   endif()
+
+  foreach(comp_test ${compositor_tests})
+    add_render_test(
+      compositor_${comp_test}_cpu
+      ${CMAKE_CURRENT_LIST_DIR}/compositor_cpu_render_tests.py
+      --testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
+      --outdir "${TEST_OUT_DIR}/compositor_cpu"
+    )
+  endforeach()
+
 endif()
 
-# NOTE: WITH_COMPOSITOR_CPU is needed for rendering.
-if(WITH_COMPOSITOR_REALTIME_TESTS AND WITH_COMPOSITOR_CPU)
+if(WITH_COMPOSITOR_REALTIME_TESTS)
   if(NOT OPENIMAGEIO_TOOL)
     message(WARNING "Disabling realtime compositor tests because OIIO oiiotool does not exist")
   else()
@@ -914,8 +917,8 @@ if(WITH_COMPOSITOR_REALTIME_TESTS AND WITH_COMPOSITOR_CPU)
       add_render_test(
         compositor_${comp_test}_realtime
         ${CMAKE_CURRENT_LIST_DIR}/compositor_realtime_render_tests.py
-        -testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
-        -outdir "${TEST_OUT_DIR}/compositor_realtime"
+        --testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
+        --outdir "${TEST_OUT_DIR}/compositor_realtime"
       )
     endforeach()
   endif()
@@ -1005,8 +1008,8 @@ if(WITH_GPU_DRAW_TESTS)
           add_render_test(
             opengl_draw_${child}
             ${CMAKE_CURRENT_LIST_DIR}/opengl_draw_tests.py
-            -testdir "${child_path}"
-            -outdir "${TEST_OUT_DIR}/opengl_draw"
+            --testdir "${child_path}"
+            --outdir "${TEST_OUT_DIR}/opengl_draw"
           )
         endif()
       endif()
@@ -1120,8 +1123,8 @@ else()
     add_render_test(
       sequencer_render_${render_test}
       ${CMAKE_CURRENT_LIST_DIR}/sequencer_render_tests.py
-      -testdir "${TEST_SRC_DIR}/sequence_editing/${render_test}"
-      -outdir "${TEST_OUT_DIR}/sequence_editing"
+      --testdir "${TEST_SRC_DIR}/sequence_editing/${render_test}"
+      --outdir "${TEST_OUT_DIR}/sequence_editing"
     )
   endforeach()
 endif()
