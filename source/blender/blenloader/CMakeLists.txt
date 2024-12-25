@@ -4,18 +4,15 @@
 
 set(INC
   .
-  ../blenkernel
   ../blentranslation
   ../draw
   ../editors/include
-  ../bmesh
-  ../gpu
   ../imbuf
+  ../imbuf/movie
   ../makesrna
   ../nodes
   ../render
   ../sequencer
-  ../windowmanager
 
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -59,14 +56,17 @@ set(SRC
 
 set(LIB
   PRIVATE bf::animrig
-  bf_blenkernel
+  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
+  PRIVATE bf::gpu
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::extern::fmtlib
   PRIVATE bf::intern::memutil
+  PRIVATE bf::windowmanager
 )
 
 if(WITH_BUILDINFO)
