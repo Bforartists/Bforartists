@@ -49,7 +49,7 @@ static void node_composit_buts_viewer(uiLayout *layout, bContext * /*C*/, Pointe
   uiItemR(layout, ptr, "use_alpha", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class ViewerOperation : public NodeOperation {
  public:
@@ -153,7 +153,8 @@ class ViewerOperation : public NodeOperation {
       if (output_texel.x > bounds.max.x || output_texel.y > bounds.max.y) {
         return;
       }
-      output.store_pixel(texel + bounds.min, float4(image.load_pixel<float4>(texel).xyz(), 1.0f));
+      output.store_pixel(texel + bounds.min,
+                         float4(image.load_pixel<float4, true>(texel).xyz(), 1.0f));
     });
   }
 
@@ -265,9 +266,9 @@ class ViewerOperation : public NodeOperation {
       if (output_texel.x > bounds.max.x || output_texel.y > bounds.max.y) {
         return;
       }
-      output.store_pixel(
-          texel + bounds.min,
-          float4(image.load_pixel<float4>(texel).xyz(), alpha.load_pixel<float>(texel)));
+      output.store_pixel(texel + bounds.min,
+                         float4(image.load_pixel<float4, true>(texel).xyz(),
+                                alpha.load_pixel<float, true>(texel)));
     });
   }
 
@@ -324,6 +325,7 @@ void register_node_type_cmp_viewer()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_VIEWER, "Viewer", NODE_CLASS_OUTPUT);
+  ntype.enum_name_legacy = "VIEWER";
   ntype.declare = file_ns::cmp_node_viewer_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_viewer;
   ntype.initfunc = file_ns::node_composit_init_viewer;
