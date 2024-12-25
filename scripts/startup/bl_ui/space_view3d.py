@@ -2621,7 +2621,8 @@ class VIEW3D_MT_paint_grease_pencil(Menu):
 
         layout.separator()
 
-        layout.operator("paint.sample_color", icon="EYEDROPPER")
+        layout.operator("paint.sample_color", icon="EYEDROPPER").merged = False
+
 
 class VIEW3D_MT_paint_vertex_grease_pencil(Menu):
     bl_label = "Paint"
@@ -2986,6 +2987,18 @@ class VIEW3D_MT_grease_pencil_add(Menu):
         layout.operator("object.grease_pencil_add", text="Object Line Art", icon='LINEART_OBJECT').type = 'LINEART_OBJECT'
 
 
+class VIEW3D_MT_empty_add(Menu):
+    bl_idname = "VIEW3D_MT_empty_add"
+    bl_label = "Empty"
+    bl_translation_context = i18n_contexts.operator_default
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator_enum("object.empty_add", "type")
+
+
 class VIEW3D_MT_add(Menu):
     bl_label = "Add"
     bl_translation_context = i18n_contexts.operator_default
@@ -3032,6 +3045,9 @@ class VIEW3D_MT_add(Menu):
             layout.operator("object.armature_add", text="Armature", icon='OUTLINER_OB_ARMATURE')
 
         layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.separator()
+
+
         layout.operator_menu_enum("object.empty_add", "type", text="Empty",
                                   text_ctxt=i18n_contexts.id_id, icon='OUTLINER_OB_EMPTY')
         layout.menu("VIEW3D_MT_image_add", text="Image", icon='OUTLINER_OB_IMAGE')
@@ -4152,7 +4168,7 @@ class VIEW3D_MT_paint_vertex(Menu):
         layout.separator()
 
         layout.operator("paint.vertex_color_set")
-        layout.operator("paint.sample_color")
+        layout.operator("paint.sample_color").merged = False
 
 
 class VIEW3D_MT_hook(Menu):
@@ -10568,6 +10584,7 @@ classes = (
     VIEW3D_MT_camera_add,
     VIEW3D_MT_volume_add,
     VIEW3D_MT_grease_pencil_add,
+    VIEW3D_MT_empty_add,
     VIEW3D_MT_add,
     VIEW3D_MT_image_add,
     VIEW3D_MT_origin_set,  # bfa menu

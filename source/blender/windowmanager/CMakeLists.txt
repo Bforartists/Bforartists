@@ -3,24 +3,22 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
-  .
+  PUBLIC .
   gizmo
   gizmo/intern
   ../asset_system
-  ../blenkernel
   ../blenloader
   ../blentranslation
   ../compositor
   ../editors/include
   ../draw
-  ../gpu
   ../imbuf
+  ../imbuf/movie
   ../makesrna
   ../nodes
   ../render
   ../sequencer
   ../../../intern/memutil
-  ../bmesh
 
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -97,12 +95,15 @@ set(SRC
 
 set(LIB
   PRIVATE bf::blenfont
+  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   bf_editor_screen
   bf_editor_undo
   PRIVATE bf::extern::fmtlib
+  PRIVATE bf::gpu
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::animrig
@@ -203,6 +204,7 @@ if(WITH_XR_OPENXR)
 endif()
 
 blender_add_lib_nolist(bf_windowmanager "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+add_library(bf::windowmanager ALIAS bf_windowmanager)
 
 # RNA_prototypes.hh
 add_dependencies(bf_windowmanager bf_rna)

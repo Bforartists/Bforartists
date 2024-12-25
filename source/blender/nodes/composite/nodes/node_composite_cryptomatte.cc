@@ -80,9 +80,13 @@ static blender::bke::cryptomatte::CryptomatteSessionPtr cryptomatte_init_from_no
   }
   BLI_assert(GS(image->id.name) == ID_IM);
 
-  NodeCryptomatte *node_cryptomatte = static_cast<NodeCryptomatte *>(node.storage);
-  ImageUser *iuser = &node_cryptomatte->iuser;
-  ImBuf *ibuf = BKE_image_acquire_ibuf(image, iuser, nullptr);
+  /* Construct an image user to retrieve the first image in the sequence, since the frame number
+   * might correspond to a non-existing image. We explicitly do not support the case where the
+   * image sequence has a changing structure. */
+  ImageUser image_user = {};
+  image_user.framenr = BKE_image_sequence_guess_offset(image);
+
+  ImBuf *ibuf = BKE_image_acquire_ibuf(image, &image_user, nullptr);
   RenderResult *render_result = image->rr;
   if (render_result) {
     session = blender::bke::cryptomatte::CryptomatteSessionPtr(
@@ -227,7 +231,7 @@ namespace blender::nodes::node_composite_base_cryptomatte_cc {
 
 NODE_STORAGE_FUNCS(NodeCryptomatte)
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class BaseCryptoMatteOperation : public NodeOperation {
  public:
@@ -658,7 +662,7 @@ static void node_update_cryptomatte(bNodeTree *ntree, bNode *node)
   ntreeCompositCryptomatteUpdateLayerNames(node);
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 using namespace blender::nodes::node_composite_base_cryptomatte_cc;
 
 class CryptoMatteOperation : public BaseCryptoMatteOperation {
@@ -908,6 +912,7 @@ void register_node_type_cmp_cryptomatte()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_CRYPTOMATTE, "Cryptomatte", NODE_CLASS_MATTE);
+  ntype.enum_name_legacy = "CRYPTOMATTE";
   ntype.declare = file_ns::cmp_node_cryptomatte_declare;
   blender::bke::node_type_size(&ntype, 240, 100, 700);
   ntype.initfunc = file_ns::node_init_cryptomatte;
@@ -967,7 +972,7 @@ static void node_init_cryptomatte_legacy(bNodeTree *ntree, bNode *node)
   ntreeCompositCryptomatteAddSocket(ntree, node);
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 using namespace blender::nodes::node_composite_base_cryptomatte_cc;
 
 class LegacyCryptoMatteOperation : public BaseCryptoMatteOperation {
@@ -1006,6 +1011,7 @@ void register_node_type_cmp_cryptomatte_legacy()
 
   cmp_node_type_base(
       &ntype, CMP_NODE_CRYPTOMATTE_LEGACY, "Cryptomatte (Legacy)", NODE_CLASS_MATTE);
+  ntype.enum_name_legacy = "CRYPTOMATTE";
   blender::bke::node_type_socket_templates(&ntype, nullptr, file_ns::cmp_node_cryptomatte_out);
   ntype.initfunc = legacy_file_ns::node_init_cryptomatte_legacy;
   blender::bke::node_type_storage(
