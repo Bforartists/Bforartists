@@ -45,7 +45,7 @@ static void cmp_node_displace_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Color>("Image");
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class DisplaceOperation : public NodeOperation {
  public:
@@ -133,10 +133,10 @@ class DisplaceOperation : public NodeOperation {
 
         /* Note that the input displacement is in pixel space, so divide by the input size to
          * transform it into the normalized sampler space. */
-        float2 scale = float2(x_scale.load_pixel_extended<float>(texel),
-                              y_scale.load_pixel_extended<float>(texel));
-        float2 displacement = input_displacement.load_pixel_extended<float4>(texel).xy() * scale /
-                              float2(size);
+        float2 scale = float2(x_scale.load_pixel_extended<float, true>(texel),
+                              y_scale.load_pixel_extended<float, true>(texel));
+        float2 displacement = input_displacement.load_pixel_extended<float4, true>(texel).xy() *
+                              scale / float2(size);
         return coordinates - displacement;
       };
 
@@ -220,6 +220,7 @@ void register_node_type_cmp_displace()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_DISPLACE, "Displace", NODE_CLASS_DISTORT);
+  ntype.enum_name_legacy = "DISPLACE";
   ntype.declare = file_ns::cmp_node_displace_declare;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
