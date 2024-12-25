@@ -50,6 +50,7 @@
 #include "BLI_string.h"
 #include "BLI_string_ref.hh"
 #include "BLI_string_utf8.h"
+#include "BLI_string_utils.hh"
 
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
@@ -76,7 +77,7 @@
 #include "BKE_screen.hh"
 #include "BKE_tracking.h"
 
-#include "IMB_imbuf_enums.h"
+#include "MOV_enums.hh"
 
 #include "SEQ_iterator.hh"
 #include "SEQ_retiming.hh"
@@ -1037,6 +1038,12 @@ static bool versioning_convert_strip_speed_factor(Sequence *seq, void *user_data
     SEQ_time_right_handle_frame_set(scene, seq, left_handle + prev_length);
   }
 
+  return true;
+}
+
+static bool versioning_clear_strip_unused_flag(Sequence *seq, void * /*user_data*/)
+{
+  seq->flag &= ~(1 << 6);
   return true;
 }
 
@@ -2967,7 +2974,7 @@ static void fix_geometry_nodes_object_info_scale(bNodeTree &ntree)
 
 static bool seq_filter_bilinear_to_auto(Sequence *seq, void * /*user_data*/)
 {
-  StripTransform *transform = seq->strip->transform;
+  StripTransform *transform = seq->data->transform;
   if (transform != nullptr && transform->filter == SEQ_TRANSFORM_FILTER_BILINEAR) {
     transform->filter = SEQ_TRANSFORM_FILTER_AUTO;
   }
@@ -3061,10 +3068,10 @@ static void versioning_update_timecode(short int *tc)
 
 static bool seq_proxies_timecode_update(Sequence *seq, void * /*user_data*/)
 {
-  if (seq->strip == nullptr || seq->strip->proxy == nullptr) {
+  if (seq->data == nullptr || seq->data->proxy == nullptr) {
     return true;
   }
-  StripProxy *proxy = seq->strip->proxy;
+  StripProxy *proxy = seq->data->proxy;
   versioning_update_timecode(&proxy->tc);
   return true;
 }
@@ -3317,6 +3324,88 @@ static void version_node_locations_to_global(bNodeTree &ntree)
     node->location[1] += node->offsety_legacy;
     node->offsetx_legacy = 0.0f;
     node->offsety_legacy = 0.0f;
+  }
+}
+
+static CustomDataLayer *find_old_seam_layer(CustomData &custom_data, const blender::StringRef name)
+{
+  for (CustomDataLayer &layer : blender::MutableSpan(custom_data.layers, custom_data.totlayer)) {
+    if (layer.name == name) {
+      return &layer;
+    }
+  }
+  return nullptr;
+}
+
+static void rename_mesh_uv_seam_attribute(Mesh &mesh)
+{
+  using namespace blender;
+  CustomDataLayer *old_seam_layer = find_old_seam_layer(mesh.edge_data, ".uv_seam");
+  if (!old_seam_layer) {
+    return;
+  }
+  Set<StringRef> names;
+  for (const CustomDataLayer &layer : Span(mesh.vert_data.layers, mesh.vert_data.totlayer)) {
+    if (layer.type & CD_MASK_PROP_ALL) {
+      names.add(layer.name);
+    }
+  }
+  for (const CustomDataLayer &layer : Span(mesh.edge_data.layers, mesh.edge_data.totlayer)) {
+    if (layer.type & CD_MASK_PROP_ALL) {
+      names.add(layer.name);
+    }
+  }
+  for (const CustomDataLayer &layer : Span(mesh.face_data.layers, mesh.face_data.totlayer)) {
+    if (layer.type & CD_MASK_PROP_ALL) {
+      names.add(layer.name);
+    }
+  }
+  for (const CustomDataLayer &layer : Span(mesh.corner_data.layers, mesh.corner_data.totlayer)) {
+    if (layer.type & CD_MASK_PROP_ALL) {
+      names.add(layer.name);
+    }
+  }
+  LISTBASE_FOREACH (const bDeformGroup *, vertex_group, &mesh.vertex_group_names) {
+    names.add(vertex_group->name);
+  }
+
+  /* If the new UV name is already taken, still rename the attribute so it becomes visible in the
+   * list. Then the user can deal with the name conflict themselves. */
+  const std::string new_name = BLI_uniquename_cb(
+      [&](const StringRef name) { return names.contains(name); }, '.', "uv_seam");
+  STRNCPY(old_seam_layer->name, new_name.c_str());
+}
+
+/**
+ * Clear unnecessary pointers to data blocks on output sockets group input nodes.
+ * These values should never have been set in the first place. They are not harmful on their own,
+ * but can pull in additional data-blocks when the node group is linked/appended.
+ */
+static void version_group_input_socket_data_block_reference(bNodeTree &ntree)
+{
+  LISTBASE_FOREACH (bNode *, node, &ntree.nodes) {
+    if (node->type != NODE_GROUP_INPUT) {
+      continue;
+    }
+    LISTBASE_FOREACH (bNodeSocket *, socket, &node->outputs) {
+      switch (socket->type) {
+        case SOCK_OBJECT:
+          socket->default_value_typed<bNodeSocketValueObject>()->value = nullptr;
+          break;
+        case SOCK_IMAGE:
+          socket->default_value_typed<bNodeSocketValueImage>()->value = nullptr;
+          break;
+        case SOCK_COLLECTION:
+          socket->default_value_typed<bNodeSocketValueCollection>()->value = nullptr;
+          break;
+        case SOCK_TEXTURE:
+          socket->default_value_typed<bNodeSocketValueTexture>()->value = nullptr;
+          break;
+        case SOCK_MATERIAL:
+          socket->default_value_typed<bNodeSocketValueMaterial>()->value = nullptr;
+          break;
+      }
+    }
   }
 }
 
@@ -5301,12 +5390,46 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     }
   }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 14)) {
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      version_group_input_socket_data_block_reference(*ntree);
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 15)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      Editing *ed = SEQ_editing_get(scene);
+      if (ed != nullptr) {
+        SEQ_for_each_callback(&ed->seqbase, versioning_clear_strip_unused_flag, scene);
+      }
+    }
+  }
+
+  /* Fix incorrect identifier in the shader mix node. */
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 16)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_SHADER) {
+        LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+          if (node->type == SH_NODE_MIX_SHADER) {
+            LISTBASE_FOREACH (bNodeSocket *, socket, &node->inputs) {
+              if (STREQ(socket->identifier, "Shader.001")) {
+                STRNCPY(socket->identifier, "Shader_001");
+              }
+            }
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
   /* Always run this versioning; meshes are written with the legacy format which always needs to
    * be converted to the new format on file load. Can be moved to a subversion check in a larger
    * breaking release. */
   LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
     blender::bke::mesh_sculpt_mask_to_generic(*mesh);
     blender::bke::mesh_custom_normals_to_generic(*mesh);
+    rename_mesh_uv_seam_attribute(*mesh);
   }
 
   /**

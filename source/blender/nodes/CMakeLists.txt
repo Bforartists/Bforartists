@@ -55,19 +55,15 @@ set(INC
   texture
   ../animrig
   ../editors/include
-  ../blenkernel
   ../blenloader
   ../blentranslation
-  ../bmesh
   ../depsgraph
   ../functions
   ../geometry
-  ../gpu
   ../imbuf
   ../makesrna
   ../modifiers
   ../render
-  ../windowmanager
 
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -141,11 +137,13 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
-  bf_bmesh
+  PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   bf_functions
+  PRIVATE bf::gpu
   PRIVATE bf::intern::guardedalloc
   bf_nodes_composite
   bf_nodes_function
@@ -154,6 +152,7 @@ set(LIB
   bf_nodes_texture
   PRIVATE bf::extern::fmtlib
   PRIVATE bf::extern::xxhash
+  PRIVATE bf::windowmanager
 )
 
 if(WITH_BULLET)
