@@ -13,6 +13,7 @@
 
 #include "GPU_shader.hh"
 
+#include "COM_algorithm_symmetric_separable_blur.hh"
 #include "COM_node_operation.hh"
 #include "COM_utilities.hh"
 
@@ -54,7 +55,7 @@ static void node_composit_buts_bilateralblur(uiLayout *layout, bContext * /*C*/,
   uiItemR(col, ptr, "sigma_space", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class BilateralBlurOperation : public NodeOperation {
  public:
@@ -65,6 +66,18 @@ class BilateralBlurOperation : public NodeOperation {
     const Result &input_image = get_input("Image");
     if (input_image.is_single_value()) {
       get_input("Image").pass_through(get_result("Image"));
+      return;
+    }
+
+    /* If the determinator is a single value, then the node essentially becomes a box blur. */
+    const Result &determinator_image = get_input("Determinator");
+    if (determinator_image.is_single_value()) {
+      Result &output_image = get_result("Image");
+      symmetric_separable_blur(this->context(),
+                               input_image,
+                               output_image,
+                               float2(this->get_blur_radius()),
+                               R_FILTER_BOX);
       return;
     }
 
@@ -170,6 +183,7 @@ void register_node_type_cmp_bilateralblur()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_BILATERALBLUR, "Bilateral Blur", NODE_CLASS_OP_FILTER);
+  ntype.enum_name_legacy = "BILATERALBLUR";
   ntype.declare = file_ns::cmp_node_bilateralblur_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_bilateralblur;
   ntype.initfunc = file_ns::node_composit_init_bilateralblur;
