@@ -94,7 +94,7 @@ static void node_composit_buts_defocus(uiLayout *layout, bContext *C, PointerRNA
   uiItemR(sub, ptr, "z_scale", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class DefocusOperation : public NodeOperation {
  public:
@@ -217,7 +217,7 @@ class DefocusOperation : public NodeOperation {
     };
 
     parallel_for(domain.size, [&](const int2 texel) {
-      float center_radius = math::max(0.0f, radius.load_pixel<float>(texel));
+      float center_radius = math::max(0.0f, radius.load_pixel<float, true>(texel));
 
       /* Go over the window of the given search radius and accumulate the colors multiplied by
        * their respective weights as well as the weights themselves, but only if both the radius of
@@ -228,7 +228,7 @@ class DefocusOperation : public NodeOperation {
       for (int y = -search_radius; y <= search_radius; y++) {
         for (int x = -search_radius; x <= search_radius; x++) {
           float candidate_radius = math::max(
-              0.0f, radius.load_pixel_extended<float>(texel + int2(x, y)));
+              0.0f, radius.load_pixel_extended<float, true>(texel + int2(x, y)));
 
           /* Skip accumulation if either the x or y distances of the candidate pixel are larger
            * than either the center or candidate pixel radius. Note that the max and min functions
@@ -561,6 +561,7 @@ void register_node_type_cmp_defocus()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_DEFOCUS, "Defocus", NODE_CLASS_OP_FILTER);
+  ntype.enum_name_legacy = "DEFOCUS";
   ntype.declare = file_ns::cmp_node_defocus_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_defocus;
   ntype.initfunc = file_ns::node_composit_init_defocus;

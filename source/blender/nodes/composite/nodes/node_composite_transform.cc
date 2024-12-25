@@ -57,7 +57,7 @@ static void node_composit_buts_transform(uiLayout *layout, bContext * /*C*/, Poi
   uiItemR(layout, ptr, "filter_type", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class TransformOperation : public NodeOperation {
  public:
@@ -111,6 +111,7 @@ void register_node_type_cmp_transform()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_TRANSFORM, "Transform", NODE_CLASS_DISTORT);
+  ntype.enum_name_legacy = "TRANSFORM";
   ntype.declare = file_ns::cmp_node_transform_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_transform;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
