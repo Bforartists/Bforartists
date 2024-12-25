@@ -102,7 +102,7 @@ static void node_composit_buts_color_spill(uiLayout *layout, bContext * /*C*/, P
   }
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 /* Get the index of the channel used for spilling. */
 static int get_spill_channel(const bNode &node)
@@ -226,6 +226,7 @@ void register_node_type_cmp_color_spill()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_COLOR_SPILL, "Color Spill", NODE_CLASS_MATTE);
+  ntype.enum_name_legacy = "COLOR_SPILL";
   ntype.declare = file_ns::cmp_node_color_spill_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_color_spill;
   ntype.initfunc = file_ns::node_composit_init_color_spill;

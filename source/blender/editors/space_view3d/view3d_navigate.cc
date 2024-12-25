@@ -354,8 +354,7 @@ void ViewOpsData::init_navigation(bContext *C,
     ED_view3d_win_to_vector(region, mval, this->init.mousevec);
 
     {
-      int event_xy_offset[2];
-      add_v2_v2v2_int(event_xy_offset, event->xy, this->init.event_xy_offset);
+      int2 event_xy_offset = int2(event->xy) - this->init.event_xy_offset;
 
       /* For rotation with trackball rotation. */
       calctrackballvec(&region->winrct, event_xy_offset, this->init.trackvec);
@@ -798,6 +797,10 @@ bool view3d_orbit_calc_center(bContext *C, float r_dyn_ofs[3])
       /* with weight-paint + pose-mode, fall through to using calculateTransformCenter */
       ((ob_act->mode & OB_MODE_WEIGHT_PAINT) && BKE_object_pose_armature_get(ob_act)) == 0)
   {
+    BKE_paint_stroke_get_average(scene, ob_act_eval, lastofs);
+    is_set = true;
+  }
+  else if (ob_act && (ob_act->mode & OB_MODE_SCULPT_CURVES)) {
     BKE_paint_stroke_get_average(scene, ob_act_eval, lastofs);
     is_set = true;
   }
