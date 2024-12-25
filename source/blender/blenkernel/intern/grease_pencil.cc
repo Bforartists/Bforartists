@@ -1045,7 +1045,7 @@ LayerMask::~LayerMask()
 
 void LayerRuntime::clear()
 {
-  frames_.clear_and_shrink();
+  frames_.clear();
   sorted_keys_cache_.tag_dirty();
   masks_.clear_and_shrink();
   trans_data_ = {};
@@ -2795,6 +2795,10 @@ bool GreasePencil::insert_duplicate_frame(blender::bke::greasepencil::Layer &lay
   using namespace blender::bke::greasepencil;
 
   if (!layer.frames().contains(src_frame_number)) {
+    return false;
+  }
+
+  if (layer.is_locked()) {
     return false;
   }
   const GreasePencilFrame src_frame = layer.frames().lookup(src_frame_number);

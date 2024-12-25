@@ -829,11 +829,15 @@ Run GPU render tests silently (finished tests will pass). \
 Generated report will show failing tests"
   ON
 )
-option(WITH_GPU_DRAW_TESTS "\
-Enable GPU drawing related unit testing (GPU backends and draw manager)"
+option(WITH_GPU_BACKEND_TESTS "\
+Enable GPU backend related unit testing"
   OFF
 )
-option(WITH_COMPOSITOR_REALTIME_TESTS "Enable regression testing for realtime compositor" OFF)
+option(WITH_GPU_DRAW_TESTS "\
+Enable GPU drawing related unit testing (draw manager)"
+  OFF
+)
+option(WITH_GPU_COMPOSITOR_TESTS "Enable regression testing for GPU compositor" OFF)
 if(UNIX AND NOT (APPLE OR HAIKU))
   option(WITH_UI_TESTS "\
 Enable user-interface tests using a headless display server. \
@@ -873,6 +877,24 @@ mark_as_advanced(WITH_TESTS_SINGLE_BINARY)
 # NOTE: All callers of this must add `TEST_PYTHON_EXE_EXTRA_ARGS` before any other arguments.
 set(TEST_PYTHON_EXE "" CACHE PATH "Python executable to run unit tests")
 mark_as_advanced(TEST_PYTHON_EXE)
+
+
+# System python tests.
+option(WITH_SYSTEM_PYTHON_TESTS "\
+Enable tests validating some build-related scripts against the 'system' version of Python \
+(buildbots currently can use significantly older versions of Python than Blender's)"
+  OFF
+)
+mark_as_advanced(WITH_SYSTEM_PYTHON_TESTS)
+# We could use `find_package (Python3 COMPONENTS Interpreter)` to set that value automatically.
+# However, on some buildbots this will give the default python version of the current virtual environment,
+# which may differ from the OS default python version.
+# And it would set that global 'python3 exec path' CMake value for all CMake scripts, which could have
+# unexpected and dangerous side effects.
+# So this has to be set explicitely for all builders.
+set(TEST_SYSTEM_PYTHON_EXE "" CACHE PATH "Python executable used to run 'system python' tests")
+mark_as_advanced(TEST_SYSTEM_PYTHON_EXE)
+
 
 # Documentation
 if(UNIX AND NOT APPLE)

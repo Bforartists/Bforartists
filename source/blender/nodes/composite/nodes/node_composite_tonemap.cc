@@ -89,7 +89,7 @@ static void node_composit_buts_tonemap(uiLayout *layout, bContext * /*C*/, Point
   }
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class ToneMapOperation : public NodeOperation {
  public:
@@ -429,6 +429,7 @@ void register_node_type_cmp_tonemap()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_TONEMAP, "Tonemap", NODE_CLASS_OP_COLOR);
+  ntype.enum_name_legacy = "TONEMAP";
   ntype.declare = file_ns::cmp_node_tonemap_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_tonemap;
   ntype.initfunc = file_ns::node_composit_init_tonemap;
