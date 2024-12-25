@@ -214,14 +214,37 @@ class USDImportTest(AbstractUSDTest):
 
         # Reload the empty file and import back in
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "empty.blend"))
-        res = bpy.ops.wm.usd_import(filepath=testfile)
+        res = bpy.ops.wm.usd_import(filepath=testfile, import_subdiv=True)
         self.assertEqual({'FINISHED'}, res, f"Unable to import USD file {testfile}")
 
         # Validate crease attributes
-
         mesh = bpy.data.objects["crease_verts"].data
-        blender_crease_vert_data = [round(d.value, 5) for d in mesh.attributes["crease_vert"].data]
-        self.assertEqual(blender_crease_vert_data, [0.3, 0.0, 0.2, 0.1, 0.8, 0.7, 1.0, 0.9])
+        blender_crease_data = [round(d.value, 5) for d in mesh.attributes["crease_vert"].data]
+        self.assertEqual(blender_crease_data, [0.3, 0.0, 0.2, 0.1, 0.8, 0.7, 1.0, 0.9])
+
+        mesh = bpy.data.objects["crease_edge"].data
+        blender_crease_data = [round(d.value, 5) for d in mesh.attributes["crease_edge"].data]
+        self.assertEqual(
+            blender_crease_data,
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.9, 0.0, 0.0, 0.8, 0.0, 0.0, 0.7, 0.0,
+             0.0, 0.6, 0.0, 0.0, 0.5, 0.0, 0.0, 0.4, 0.0, 0.0, 0.3, 0.0, 0.0, 0.2, 0.0, 0.0, 0.1, 0.0, 0.0,
+             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+        # Validate SubdivisionSurface modifier settings
+        def check_mod(mesh_name, levels, render_levels, uv_smooth, boundary_smooth):
+            mod = bpy.data.objects[mesh_name].modifiers[0]
+            self.assertEqual(mod.levels, levels)
+            self.assertEqual(mod.render_levels, render_levels)
+            self.assertEqual(mod.uv_smooth, uv_smooth)
+            self.assertEqual(mod.boundary_smooth, boundary_smooth)
+
+        check_mod("mesh1", 1, 2, 'NONE', 'ALL')
+        check_mod("mesh2", 1, 2, 'PRESERVE_CORNERS', 'ALL')
+        check_mod("mesh3", 1, 2, 'PRESERVE_CORNERS_AND_JUNCTIONS', 'ALL')
+        check_mod("mesh4", 1, 2, 'PRESERVE_CORNERS_JUNCTIONS_AND_CONCAVE', 'ALL')
+        check_mod("mesh5", 1, 2, 'PRESERVE_BOUNDARIES', 'ALL')
+        check_mod("mesh6", 1, 2, 'SMOOTH_ALL', 'ALL')
+        check_mod("mesh7", 1, 2, 'PRESERVE_BOUNDARIES', 'PRESERVE_CORNERS')
 
     def test_import_camera_properties(self):
         """Test importing camera to ensure properties set correctly."""
@@ -734,7 +757,7 @@ class USDImportTest(AbstractUSDTest):
         self.assertAlmostEqual(f.evaluate(10), 0.0, 2, "Unexpected value for rotation quaternion Z curve at frame 10")
 
     def check_curve(self, blender_curve, usd_curve):
-        curve_type_map = {"linear": 1, "cubic": 2}
+        curve_type_map = {"linear": 1, "cubic-bezier": 2, "cubic-bspline": 3}
         cyclic_map = {"nonperiodic": False, "periodic": True}
 
         # Check correct spline count.
@@ -744,8 +767,11 @@ class USDImportTest(AbstractUSDTest):
 
         # Check correct type of curve. All splines should have the same type and periodicity.
         usd_curve_type = usd_curve.GetTypeAttr().Get()
+        usd_curve_type_basis = usd_curve_type
+        if usd_curve_type != "linear":
+            usd_curve_type_basis = usd_curve_type + "-" + usd_curve.GetBasisAttr().Get()
         usd_cyclic = usd_curve.GetWrapAttr().Get()
-        expected_curve_type = curve_type_map[usd_curve_type]
+        expected_curve_type = curve_type_map[usd_curve_type_basis]
         expected_cyclic = cyclic_map[usd_cyclic]
 
         for i in range(0, blender_spline_count):
@@ -762,10 +788,10 @@ class USDImportTest(AbstractUSDTest):
         blender_positions = blender_curve.attributes["position"].data
 
         point_count = 0
-        if usd_curve_type == "linear":
+        if usd_curve_type_basis == "linear":
             point_count = len(usd_positions)
             self.assertEqual(len(blender_positions), point_count)
-        elif usd_curve_type == "cubic":
+        elif usd_curve_type_basis == "cubic-bezier":
             control_point_count = 0
             usd_vert_counts = usd_curve.GetCurveVertexCountsAttr().Get()
             for i in range(0, usd_spline_count):
@@ -776,19 +802,25 @@ class USDImportTest(AbstractUSDTest):
 
             point_count = control_point_count
             self.assertEqual(len(blender_positions), point_count)
+        elif usd_curve_type_basis == "cubic-bspline":
+            point_count = len(usd_positions)
+            self.assertEqual(len(blender_positions), point_count)
 
-        # Check radius data.
+        # Check radius data. (note: the currently available bsplines have no radii)
+        if usd_curve_type_basis == "cubic-bspline":
+            return
+
         usd_width_interpolation = usd_curve.GetWidthsInterpolation()
         usd_radius = [w / 2 for w in usd_curve.GetWidthsAttr().Get()]
         blender_radius = [r.value for r in blender_curve.attributes["radius"].data]
-        if usd_curve_type == "linear":
+        if usd_curve_type_basis == "linear":
             if usd_width_interpolation == "constant":
                 usd_radius = usd_radius * point_count
 
             for i in range(0, len(blender_radius)):
                 self.assertAlmostEqual(blender_radius[i], usd_radius[i], 2)
 
-        elif usd_curve_type == "cubic":
+        elif usd_curve_type_basis == "cubic-bezier":
             if usd_width_interpolation == "constant":
                 usd_radius = usd_radius * point_count
 
@@ -909,6 +941,27 @@ class USDImportTest(AbstractUSDTest):
 
         blender_curve = bpy.data.objects["bezier_periodic_multiple_vertex"].data
         usd_prim = stage.GetPrimAtPath("/root/bezier_periodic/multiple/bezier_periodic_multiple_vertex")
+        self.check_curve(blender_curve, UsdGeom.BasisCurves(usd_prim))
+
+    def test_import_curves_bspline(self):
+        """Test importing bspline curve variations."""
+
+        # Use the existing hair test file to create the USD file
+        # for import. It is validated as part of the bl_usd_export test.
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_particle_hair.blend"))
+        testfile = str(self.tempdir / "usd_particle_hair.usda")
+        res = bpy.ops.wm.usd_export(filepath=testfile, export_hair=True, evaluation_mode="RENDER")
+        self.assertEqual({'FINISHED'}, res, f"Unable to export to {testfile}")
+
+        # Reload the empty file and import back in
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "empty.blend"))
+        res = bpy.ops.wm.usd_import(filepath=testfile)
+        self.assertEqual({'FINISHED'}, res, f"Unable to import USD file {testfile}")
+
+        stage = Usd.Stage.Open(testfile)
+
+        blender_curve = bpy.data.objects["ParticleSystem"].data
+        usd_prim = stage.GetPrimAtPath("/root/Sphere/ParticleSystem")
         self.check_curve(blender_curve, UsdGeom.BasisCurves(usd_prim))
 
     def test_import_point_instancer(self):
@@ -1120,7 +1173,7 @@ class USDImportTest(AbstractUSDTest):
         # Verify all attributes on the Mesh
         # Note: USD does not support signed 8-bit types so there is
         #       currently no equivalent to Blender's INT8 data type
-        # TODO: Blender is missing support for reading USD quat/matrix data types
+        # TODO: Blender is missing support for reading USD matrix data types
         mesh = bpy.data.objects["Mesh"].data
 
         self.check_attribute(mesh, "p_bool", 'POINT', 'BOOLEAN', 4)
@@ -1131,7 +1184,7 @@ class USDImportTest(AbstractUSDTest):
         self.check_attribute(mesh, "p_color", 'POINT', 'FLOAT_COLOR', 4)
         self.check_attribute(mesh, "p_vec2", 'CORNER', 'FLOAT2', 4)  # TODO: Bug - wrong domain
         self.check_attribute(mesh, "p_vec3", 'POINT', 'FLOAT_VECTOR', 4)
-        self.check_attribute_missing(mesh, "p_quat")
+        self.check_attribute(mesh, "p_quat", 'POINT', 'QUATERNION', 4)
         self.check_attribute_missing(mesh, "p_mat4x4")
 
         self.check_attribute(mesh, "f_bool", 'FACE', 'BOOLEAN', 1)
@@ -1142,7 +1195,7 @@ class USDImportTest(AbstractUSDTest):
         self.check_attribute(mesh, "f_color", 'FACE', 'FLOAT_COLOR', 1)
         self.check_attribute(mesh, "f_vec2", 'FACE', 'FLOAT2', 1)
         self.check_attribute(mesh, "f_vec3", 'FACE', 'FLOAT_VECTOR', 1)
-        self.check_attribute_missing(mesh, "f_quat")
+        self.check_attribute(mesh, "f_quat", 'FACE', 'QUATERNION', 1)
         self.check_attribute_missing(mesh, "f_mat4x4")
 
         self.check_attribute(mesh, "fc_bool", 'CORNER', 'BOOLEAN', 4)
@@ -1154,7 +1207,7 @@ class USDImportTest(AbstractUSDTest):
         self.check_attribute(mesh, "displayColor", 'CORNER', 'FLOAT_COLOR', 4)
         self.check_attribute(mesh, "fc_vec2", 'CORNER', 'FLOAT2', 4)
         self.check_attribute(mesh, "fc_vec3", 'CORNER', 'FLOAT_VECTOR', 4)
-        self.check_attribute_missing(mesh, "fc_quat")
+        self.check_attribute(mesh, "fc_quat", 'CORNER', 'QUATERNION', 4)
         self.check_attribute_missing(mesh, "fc_mat4x4")
 
         # Find the non "bezier" Curves object -- Has 2 curves (12 vertices each)

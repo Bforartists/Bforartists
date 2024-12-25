@@ -9,7 +9,7 @@
  * Note on terminology
  * - #Sequence: video/effect/audio data you can select and manipulate in the sequencer.
  * - #Sequence.machine: Strange name for the channel.
- * - #Strip: The data referenced by the #Sequence
+ * - #StripData: The data referenced by the #Sequence
  * - Meta Strip (SEQ_TYPE_META): Support for nesting Sequences.
  */
 
@@ -32,12 +32,15 @@ struct bSound;
 namespace blender::seq {
 struct MediaPresence;
 struct ThumbnailCache;
+struct TextVarsRuntime;
 }  // namespace blender::seq
 using MediaPresence = blender::seq::MediaPresence;
 using ThumbnailCache = blender::seq::ThumbnailCache;
+using TextVarsRuntime = blender::seq::TextVarsRuntime;
 #else
 typedef struct MediaPresence MediaPresence;
 typedef struct ThumbnailCache ThumbnailCache;
+typedef struct TextVarsRuntime TextVarsRuntime;
 #endif
 
 /* -------------------------------------------------------------------- */
@@ -48,11 +51,11 @@ typedef struct ThumbnailCache ThumbnailCache;
 
 typedef struct StripAnim {
   struct StripAnim *next, *prev;
-  struct ImBufAnim *anim;
+  struct MovieReader *anim;
 } StripAnim;
 
 typedef struct StripElem {
-  /** File name concatenated onto #Strip::dirpath. */
+  /** File name concatenated onto #StripData::dirpath. */
   char filename[256];
   /** Ignore when zeroed. */
   int orig_width, orig_height;
@@ -96,7 +99,7 @@ typedef struct StripProxy {
   char dirpath[768];
   /** Custom file. */
   char filename[256];
-  struct ImBufAnim *anim; /* custom proxy anim file */
+  struct MovieReader *anim; /* custom proxy anim file */
 
   short tc; /* time code in use */
 
@@ -110,8 +113,8 @@ typedef struct StripProxy {
   char _pad[5];
 } StripProxy;
 
-typedef struct Strip {
-  struct Strip *next, *prev;
+typedef struct StripData {
+  struct StripData *next, *prev;
   int us, done;
   int startstill, endstill;
   /**
@@ -128,7 +131,7 @@ typedef struct Strip {
 
   /* color management */
   ColorManagedColorspaceSettings colorspace_settings;
-} Strip;
+} StripData;
 
 typedef enum eSeqRetimingKeyFlag {
   SEQ_SPEED_TRANSITION_IN = (1 << 0),
@@ -206,7 +209,7 @@ typedef struct Sequence {
   /** MOVIECLIP render flags. */
   int clip_flag;
 
-  Strip *strip;
+  StripData *data;
 
   /** Old animation system, deprecated for 2.5. */
   struct Ipo *ipo DNA_DEPRECATED;
@@ -453,9 +456,17 @@ typedef struct TextVars {
   float outline_width;
   char flag;
   char align;
+  char _pad[2];
+
+  /* Ofssets in bytes relative to #TextVars::text. */
+  int cursor_offset;
+  int selection_start_offset;
+  int selection_end_offset;
+
   char align_y DNA_DEPRECATED /* Only used for versioning. */;
   char anchor_x, anchor_y;
-  char _pad[7];
+  char _pad1;
+  TextVarsRuntime *runtime;
 } TextVars;
 
 /** #TextVars.flag */
@@ -627,7 +638,7 @@ enum {
   SEQ_OVERLAP = (1 << 3),
   SEQ_FILTERY = (1 << 4),
   SEQ_MUTE = (1 << 5),
-  /* SEQ_FLAG_SKIP_THUMBNAILS = (1 << 6), */ /* no longer used */
+  SEQ_FLAG_TEXT_EDITING_ACTIVE = (1 << 6),
   SEQ_REVERSE_FRAMES = (1 << 7),
   SEQ_IPO_FRAME_LOCKED = (1 << 8),
   SEQ_EFFECT_NOT_LOADED = (1 << 9),
