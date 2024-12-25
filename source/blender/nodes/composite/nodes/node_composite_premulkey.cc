@@ -38,7 +38,7 @@ static void node_composit_buts_premulkey(uiLayout *layout, bContext * /*C*/, Poi
   uiItemR(layout, ptr, "mapping", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 static CMPNodeAlphaConvertMode get_mode(const bNode &node)
 {
@@ -104,6 +104,7 @@ void register_node_type_cmp_premulkey()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_PREMULKEY, "Alpha Convert", NODE_CLASS_CONVERTER);
+  ntype.enum_name_legacy = "PREMULKEY";
   ntype.declare = file_ns::cmp_node_premulkey_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_premulkey;
   ntype.get_compositor_shader_node = file_ns::get_compositor_shader_node;
