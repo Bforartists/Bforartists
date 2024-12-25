@@ -279,11 +279,11 @@ static void color_filter_task(const Depsgraph &depsgraph,
         bool copy_alpha = colors[i][3] == average_colors[i][3];
 
         if (factors[i] < 0.0f) {
-          float delta_color[4];
+          float4 delta_color;
 
           /* Unsharp mask. */
           copy_v4_v4(delta_color, ss.filter_cache->pre_smoothed_color[vert]);
-          sub_v4_v4(delta_color, average_colors[i]);
+          delta_color -= average_colors[i];
 
           copy_v4_v4(new_colors[i], colors[i]);
           madd_v4_v4fl(new_colors[i], delta_color, factors[i]);
@@ -478,7 +478,7 @@ static int sculpt_color_filter_init(bContext *C, wmOperator *op)
   }
 
   /* Disable for multires and dyntopo for now */
-  if (!bke::object::pbvh_get(ob) || !color_supported_check(ob, op->reports)) {
+  if (!bke::object::pbvh_get(ob) || !color_supported_check(scene, ob, op->reports)) {
     return OPERATOR_CANCELLED;
   }
 
