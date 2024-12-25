@@ -73,7 +73,7 @@ static void node_composit_buts_kuwahara(uiLayout *layout, bContext * /*C*/, Poin
   }
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class ConvertKuwaharaOperation : public NodeOperation {
  public:
@@ -247,7 +247,7 @@ class ConvertKuwaharaOperation : public NodeOperation {
                        const int2 size)
   {
     parallel_for(size, [&](const int2 texel) {
-      int radius = math::max(0, int(size_input.load_pixel<float>(texel)));
+      int radius = math::max(0, int(size_input.load_pixel<float, true>(texel)));
 
       float4 mean_of_squared_color_of_quadrants[4] = {
           float4(0.0f), float4(0.0f), float4(0.0f), float4(0.0f)};
@@ -434,7 +434,7 @@ class ConvertKuwaharaOperation : public NodeOperation {
       float eigenvalue_difference = first_eigenvalue - second_eigenvalue;
       float anisotropy = eigenvalue_sum > 0.0f ? eigenvalue_difference / eigenvalue_sum : 0.0f;
 
-      float radius = math::max(0.0f, size.load_pixel<float>(texel));
+      float radius = math::max(0.0f, size.load_pixel<float, true>(texel));
       if (radius == 0.0f) {
         output.store_pixel(texel, input.load_pixel<float4>(texel));
         return;
@@ -786,6 +786,7 @@ void register_node_type_cmp_kuwahara()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_KUWAHARA, "Kuwahara", NODE_CLASS_OP_FILTER);
+  ntype.enum_name_legacy = "KUWAHARA";
   ntype.declare = file_ns::cmp_node_kuwahara_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_kuwahara;
   ntype.initfunc = file_ns::node_composit_init_kuwahara;

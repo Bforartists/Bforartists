@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
-  .
-  ../blenkernel
+  PUBLIC .
   ../blentranslation
   ../../../intern/eigen
   ../../../extern/rangetree
@@ -164,7 +163,7 @@ set(SRC
 )
 
 set(LIB
-  bf_blenkernel
+  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
@@ -210,6 +209,7 @@ if(WITH_TBB)
 endif()
 
 blender_add_lib(bf_bmesh "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+add_library(bf::bmesh ALIAS bf_bmesh)
 
 if(MSVC AND NOT MSVC_CLANG)
   target_compile_options(bf_bmesh PRIVATE /WX /wd4101)

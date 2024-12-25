@@ -70,7 +70,7 @@ static void node_composit_buts_crop(uiLayout *layout, bContext * /*C*/, PointerR
   }
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class CropOperation : public NodeOperation {
  public:
@@ -293,6 +293,7 @@ void register_node_type_cmp_crop()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_CROP, "Crop", NODE_CLASS_DISTORT);
+  ntype.enum_name_legacy = "CROP";
   ntype.declare = file_ns::cmp_node_crop_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_crop;
   ntype.initfunc = file_ns::node_composit_init_crop;

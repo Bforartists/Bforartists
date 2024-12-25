@@ -52,7 +52,7 @@ static void cmp_node_cornerpin_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Float>("Plane");
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class CornerPinOperation : public NodeOperation {
  public:
@@ -265,6 +265,7 @@ void register_node_type_cmp_cornerpin()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_CORNERPIN, "Corner Pin", NODE_CLASS_DISTORT);
+  ntype.enum_name_legacy = "CORNERPIN";
   ntype.declare = file_ns::cmp_node_cornerpin_declare;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
