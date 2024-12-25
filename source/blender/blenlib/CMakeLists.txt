@@ -30,7 +30,7 @@ set(SRC
   intern/BLI_ghash_utils.cc
   intern/BLI_heap.c
   intern/BLI_heap_simple.c
-  intern/BLI_kdopbvh.c
+  intern/BLI_kdopbvh.cc
   intern/BLI_linklist.c
   intern/BLI_linklist_lockfree.c
   intern/BLI_memarena.c
@@ -60,7 +60,6 @@ set(SRC
   intern/cpp_types.cc
   intern/delaunay_2d.cc
   intern/dot_export.cc
-  intern/dynlib.cc
   intern/easing.c
   intern/endian_switch.c
   intern/expr_pylike_eval.c
@@ -222,7 +221,6 @@ set(SRC
   BLI_disjoint_set.hh
   BLI_dot_export.hh
   BLI_dot_export_attribute_enums.hh
-  BLI_dynlib.h
   BLI_dynstr.h
   BLI_easing.h
   BLI_endian_defines.h
@@ -269,7 +267,7 @@ set(SRC
   BLI_inplace_priority_queue.hh
   BLI_iterator.h
   BLI_jitter_2d.h
-  BLI_kdopbvh.h
+  BLI_kdopbvh.hh
   BLI_kdtree.h
   BLI_kdtree_impl.h
   BLI_lasso_2d.hh
@@ -350,7 +348,6 @@ set(SRC
   BLI_rand.h
   BLI_rand.hh
   BLI_random_access_iterator_mixin.hh
-  BLI_range.h
   BLI_rect.h
   BLI_resource_scope.hh
   BLI_scanfill.h

@@ -38,7 +38,7 @@ static void node_composit_buts_flip(uiLayout *layout, bContext * /*C*/, PointerR
   uiItemR(layout, ptr, "axis", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class FlipOperation : public NodeOperation {
  public:
@@ -132,6 +132,7 @@ void register_node_type_cmp_flip()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_FLIP, "Flip", NODE_CLASS_DISTORT);
+  ntype.enum_name_legacy = "FLIP";
   ntype.declare = file_ns::cmp_node_flip_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_flip;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;

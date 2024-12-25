@@ -21,15 +21,12 @@ unset(OPENCOLLADA_ANIMATION_CLIP CACHE)
 
 set(INC
   .
-  ../../blenkernel
   ../../blentranslation
   ../../editors/include
   ../../ikplugin
   ../../imbuf
   ../../makesrna
-  ../../windowmanager
   ../../../../intern/iksolver/extern
-  ../../bmesh
 )
 
 set(INC_SYS
@@ -114,10 +111,13 @@ set(LIB
   ${PCRE_LIBRARIES}
   ${XML2_LIBRARIES}
   PRIVATE bf::animrig
+  PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::windowmanager
 )
 
 if(WITH_BUILDINFO)
