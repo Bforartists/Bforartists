@@ -81,7 +81,7 @@ static void node_composit_buts_scale(uiLayout *layout, bContext * /*C*/, Pointer
   }
 }
 
-using namespace blender::realtime_compositor;
+using namespace blender::compositor;
 
 class ScaleOperation : public NodeOperation {
  public:
@@ -166,7 +166,8 @@ class ScaleOperation : public NodeOperation {
       float2 coordinates = (float2(texel) + float2(0.5f)) / float2(size);
       float2 center = float2(0.5f);
 
-      float2 scale = float2(x_scale.load_pixel<float>(texel), y_scale.load_pixel<float>(texel));
+      float2 scale = float2(x_scale.load_pixel<float, true>(texel),
+                            y_scale.load_pixel<float, true>(texel));
       float2 scaled_coordinates = center +
                                   (coordinates - center) / math::max(scale, float2(0.0001f));
 
@@ -317,6 +318,7 @@ void register_node_type_cmp_scale()
   static blender::bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, CMP_NODE_SCALE, "Scale", NODE_CLASS_DISTORT);
+  ntype.enum_name_legacy = "SCALE";
   ntype.declare = file_ns::cmp_node_scale_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_scale;
   ntype.updatefunc = file_ns::node_composite_update_scale;
