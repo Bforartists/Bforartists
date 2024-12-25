@@ -21,6 +21,13 @@ file(MAKE_DIRECTORY ${TEST_OUT_DIR}/blendfile_io)
 #   message(FATAL_ERROR "CMake test directory not found!")
 # endif()
 
+if(WITH_SYSTEM_PYTHON_TESTS)
+  if(NOT EXISTS "${TEST_SYSTEM_PYTHON_EXE}")
+    message(ERROR "'System Python' tests requested but no valid system python path, set TEST_SYSTEM_PYTHON_EXE.")
+    set(WITH_SYSTEM_PYTHON_TESTS OFF)
+  endif()
+endif()
+
 # Run Blender command with parameters.
 function(add_blender_test_impl testname envvars_list exe)
   add_test(
@@ -115,6 +122,29 @@ function(add_render_test testname testscript)
   endif()
   add_python_test(${testname} ${testscript} ${_args})
 endfunction()
+
+# Run Python script outside Blender, using system default Python3 interpreter,
+# NOT the one specified in `TEST_PYTHON_EXE`.
+function(add_system_python_test testname testscript)
+  if(NOT WITH_SYSTEM_PYTHON_TESTS)
+    return()
+  endif()
+
+  add_test(
+    NAME ${testname}
+    COMMAND ${TEST_SYSTEM_PYTHON_EXE} ${testscript} ${ARGN}
+    WORKING_DIRECTORY $<TARGET_FILE_DIR:blender>
+  )
+  blender_test_set_envvars("${testname}" "")
+endfunction()
+
+# ------------------------------------------------------------------------------
+# TESTS USING SYSTEM PYTHON
+add_system_python_test(
+  script_validate_on_system_python
+  ${CMAKE_CURRENT_LIST_DIR}/system_python/load_tool_scripts.py
+  --root-dir ${CMAKE_SOURCE_DIR}
+)
 
 # ------------------------------------------------------------------------------
 # GENERAL PYTHON CORRECTNESS TESTS
@@ -725,7 +755,7 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
           if(WITH_CYCLES_TEST_OSL AND WITH_CYCLES_OSL)
             # OSL is only supported with CPU and OptiX
             # TODO: Enable OptiX support once it's more stable
-            if("${_cycles_device_lower}" STREQUAL "cpu")
+            if(("${_cycles_device_lower}" STREQUAL "cpu") OR ("${_cycles_device_lower}" STREQUAL "optix"))
               add_render_test(
                 ${_cycles_test_name}_osl
                 ${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
@@ -734,7 +764,6 @@ if(WITH_CYCLES OR WITH_GPU_RENDER_TESTS)
                 --device ${_cycles_device}
                 --osl
               )
-              # Doesn't do anything until OptiX is enabled
               if(NOT ("${_cycles_device_lower}" STREQUAL "cpu"))
                 set_tests_properties(${_cycles_test_name}_osl PROPERTIES RUN_SERIAL TRUE)
               endif()
@@ -880,13 +909,13 @@ else()
   )
 
   if(WITH_LIBMV)
-    list(APPEND compositor_tests distort matte)
+    list(APPEND compositor_tests distort matte anisotropic_filtering)
   endif()
 
   foreach(comp_test ${compositor_tests})
     add_render_test(
-      compositor_${comp_test}_cpu
-      ${CMAKE_CURRENT_LIST_DIR}/compositor_cpu_render_tests.py
+      compositor_cpu_${comp_test}
+      ${CMAKE_CURRENT_LIST_DIR}/compositor_render_tests.py
       --testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
       --outdir "${TEST_OUT_DIR}/compositor_cpu"
     )
@@ -894,9 +923,9 @@ else()
 
 endif()
 
-if(WITH_COMPOSITOR_REALTIME_TESTS)
+if(WITH_GPU_COMPOSITOR_TESTS)
   if(NOT OPENIMAGEIO_TOOL)
-    message(WARNING "Disabling realtime compositor tests because OIIO oiiotool does not exist")
+    message(WARNING "Disabling compositor tests because OIIO oiiotool does not exist")
   else()
     set(compositor_tests
         color
@@ -915,10 +944,11 @@ if(WITH_COMPOSITOR_REALTIME_TESTS)
 
     foreach(comp_test ${compositor_tests})
       add_render_test(
-        compositor_${comp_test}_realtime
-        ${CMAKE_CURRENT_LIST_DIR}/compositor_realtime_render_tests.py
+        compositor_gpu_${comp_test}
+        ${CMAKE_CURRENT_LIST_DIR}/compositor_render_tests.py
         --testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
-        --outdir "${TEST_OUT_DIR}/compositor_realtime"
+        --outdir "${TEST_OUT_DIR}/compositor_gpu"
+        --gpu
       )
     endforeach()
   endif()
@@ -989,7 +1019,7 @@ else()
 endif()
 
 
-if(WITH_GPU_DRAW_TESTS)
+if(WITH_GPU_RENDER_TESTS)
   if(NOT OPENIMAGEIO_TOOL)
     message(STATUS "Disabling OpenGL draw tests because OIIO oiiotool does not exist")
   elseif(NOT EXISTS "${TEST_SRC_DIR}/opengl")
