@@ -5,10 +5,8 @@
 set(INC
   .
   intern
-  ../blentranslation
   ../editors/include
   ../makesrna
-  ../render
   ../../../intern/eigen
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -41,10 +39,12 @@ set(LIB
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
 
