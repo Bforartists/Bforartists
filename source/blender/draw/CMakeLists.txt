@@ -3,19 +3,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
-  .
+  PUBLIC .
   intern
 
-  ../blenloader
-  ../blentranslation
   ../editors/include
   ../editors/space_view3d
-  ../functions
   ../gpu/intern
-  ../imbuf
   ../makesrna
-  ../nodes
-  ../render
   ../render/intern
   ../compositor
   ../compositor/algorithms
@@ -303,13 +297,19 @@ set(LIB
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blenloader
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
+  PRIVATE bf::functions
   PRIVATE bf::gpu
+  PRIVATE bf::imbuf
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   bf_compositor
+  PRIVATE bf::nodes
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
   PRIVATE bf::intern::atomic
   PRIVATE bf::extern::fmtlib
@@ -845,6 +845,7 @@ if(WITH_TBB)
 endif()
 
 blender_add_lib(bf_draw "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+add_library(bf::draw ALIAS bf_draw)
 
 
 if(WITH_GTESTS)

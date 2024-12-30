@@ -6,9 +6,7 @@ set(INC
   .
   ..
   ../intern
-  ../../blentranslation
   ../../editors/include
-  ../../functions
   ../../makesrna
 )
 
@@ -69,8 +67,9 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
   PRIVATE bf::dna
-  bf_functions
+  PRIVATE bf::functions
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::windowmanager
 )
