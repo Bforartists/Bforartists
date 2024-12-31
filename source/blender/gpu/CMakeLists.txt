@@ -9,8 +9,6 @@ set(INC
   metal
   opengl
   vulkan
-  ../draw
-  ../imbuf
   ../makesrna
 
   # For theme color access.
@@ -33,8 +31,6 @@ set(INC
   metal/kernels
   shaders/infos
 
-  # For node muting stuff.
-  ../nodes
 
   # For shader includes
   shaders/common
@@ -383,10 +379,13 @@ set(LIB
   PRIVATE bf::blenlib
   PRIVATE bf::bmesh
   PRIVATE bf::dna
+  PRIVATE bf::draw
+  PRIVATE bf::imbuf
   PRIVATE bf::intern::atomic
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::extern::fmtlib
+  PRIVATE bf::nodes
 )
 
 # Select Backend source based on availability

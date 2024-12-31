@@ -4,8 +4,6 @@
 
 set(INC
   ../include
-  ../../blentranslation
-  ../../geometry
   ../../makesrna
   ../../../../intern/eigen
   # RNA_prototypes.hh
@@ -35,9 +33,11 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
+  PRIVATE bf::geometry
   PRIVATE bf::gpu
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::windowmanager

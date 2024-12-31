@@ -3,9 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
-  .
-  ../blentranslation
-  ../functions
+  PUBLIC .
   ../makesrna
   ../../../intern/eigen
 )
@@ -100,8 +98,10 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::dna
+  PRIVATE bf::functions
   PRIVATE bf::intern::atomic
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::extern::fmtlib
@@ -141,6 +141,7 @@ if(WITH_GMP)
 endif()
 
 blender_add_lib(bf_geometry "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+add_library(bf::geometry ALIAS bf_geometry)
 
 if(WITH_GTESTS)
   set(TEST_INC
