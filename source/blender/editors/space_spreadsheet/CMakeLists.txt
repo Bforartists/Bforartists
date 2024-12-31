@@ -4,11 +4,7 @@
 
 set(INC
   ../include
-  ../../blenloader
-  ../../blentranslation
-  ../../functions
   ../../makesrna
-  ../../nodes
 
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -48,12 +44,16 @@ set(LIB
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blenloader
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::extern::fmtlib
+  PRIVATE bf::functions
   PRIVATE bf::gpu
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::nodes
   PRIVATE bf::windowmanager
 )
 

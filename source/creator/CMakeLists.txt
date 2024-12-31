@@ -4,11 +4,8 @@
 
 set(INC
   ../blender/editors/include
-  ../blender/imbuf
-  ../blender/imbuf/movie
   ../blender/io/usd
   ../blender/makesrna
-  ../blender/render
 )
 
 set(LIB
@@ -18,8 +15,11 @@ set(LIB
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::gpu
+  PRIVATE bf::imbuf
+  PRIVATE bf::imbuf::movie
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
 
