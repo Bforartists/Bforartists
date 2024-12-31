@@ -44,10 +44,8 @@ endif()
 set(INC
   ../../../../intern/guardedalloc
   ../../blenlib
-  ../../imbuf
   ../../makesdna
   ../../makesrna
-  ../../nodes
   ../../io/usd
   ../../gpu/intern
   ../../python/intern
@@ -75,8 +73,10 @@ set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::depsgraph
   PRIVATE bf::gpu
+  PRIVATE bf::imbuf
   PRIVATE bf::intern::clog
   bf_io_usd
+  PRIVATE bf::nodes
 )
 
 set(SRC
