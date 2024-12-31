@@ -4,11 +4,8 @@
 
 set(INC
   ../include
-  ../../blentranslation
   ../../ikplugin
   ../../makesrna
-  ../../render
-  ../../sequencer
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
@@ -110,6 +107,7 @@ set(SRC
 set(LIB
   PRIVATE bf::animrig
   PRIVATE bf::blenfont
+  PRIVATE bf::blentranslation
   PRIVATE bf::extern::fmtlib
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
@@ -119,6 +117,8 @@ set(LIB
   bf_editor_mask
   PRIVATE bf::gpu
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::render
+  PRIVATE bf::sequencer
   PRIVATE bf::windowmanager
 )
 

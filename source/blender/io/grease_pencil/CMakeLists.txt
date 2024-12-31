@@ -5,10 +5,7 @@
 set(INC
   .
   ../common
-  ../../blenloader
   ../../editors/include
-  ../../functions
-  ../../geometry
   ../../makesdna
   ../../makesrna
   ../../../../intern/guardedalloc
@@ -30,10 +27,13 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blenloader
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::extern::nanosvg
+  PRIVATE bf::functions
+  PRIVATE bf::geometry
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::windowmanager
