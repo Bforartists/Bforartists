@@ -3637,7 +3637,7 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
   }
 
   if (is_undo) {
-    /* This idmap will store uids of all IDs ending up in the new main, whether they are newly
+    /* This idmap will store UIDs of all IDs ending up in the new main, whether they are newly
      * read, or re-used from the old main. */
     fd->new_idmap_uid = BKE_main_idmap_create(
         static_cast<Main *>(fd->mainlist->first), false, nullptr, MAIN_IDMAP_TYPE_UID);
@@ -4054,7 +4054,7 @@ static BHead *find_bhead_from_idname(FileData *fd, const char *idname)
   }
 #ifdef USE_GHASH_BHEAD
   char id_name_old[MAX_ID_NAME];
-  BLI_strncpy(id_name_old, idname, sizeof(id_name_old));
+  STRNCPY(id_name_old, idname);
   *reinterpret_cast<short *>(id_name_old) = id_code_old;
   return static_cast<BHead *>(BLI_ghash_lookup(fd->bhead_idname_hash, id_name_old));
 #else

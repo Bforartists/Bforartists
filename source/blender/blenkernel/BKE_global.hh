@@ -263,7 +263,7 @@ enum {
   G_DEBUG_SIMDATA = (1 << 15),               /* sim debug data display */
   G_DEBUG_GPU = (1 << 16),                   /* gpu debug */
   G_DEBUG_IO = (1 << 17),                    /* IO Debugging (for Collada, ...). */
-  G_DEBUG_GPU_FORCE_WORKAROUNDS = (1 << 18), /* force gpu workarounds bypassing detections. */
+  G_DEBUG_GPU_FORCE_WORKAROUNDS = (1 << 18), /* Force GPU workarounds bypassing detection. */
   G_DEBUG_GPU_COMPILE_SHADERS = (1 << 19),   /* Compile all statically defined shaders. . */
   G_DEBUG_GPU_RENDERDOC = (1 << 20),         /* Enable RenderDoc integration. */
   G_DEBUG_XR = (1 << 21),                    /* XR/OpenXR messages */
@@ -283,17 +283,17 @@ enum {
   G_FILE_COMPRESS = (1 << 1),
 
   /**
-   * When in background mode, do not automatically build a depsgraph when loading a blendfile.
+   * When in background mode, do not automatically build a depsgraph when loading a blend-file.
    * Typically set by the `--disable-depsgraph-on-file-load` command-line argument.
    *
    * NOTE: This is a temporary option, it is intended to be removed in blender 5.0.
    * The default behavior will then be changed to never automatically generate a depsgraph on
-   * fileload when in background mode.
+   * file-load when in background mode.
    */
   G_BACKGROUND_NO_DEPSGRAPH = 1 << 2,
 
   /**
-   * Do not perform automatic resync of library overrides on blendfile load.
+   * Do not perform automatic resync of library overrides on blend-file load.
    *
    * NOTE: runtime version of #UserDef_Experimental.no_override_auto_resync, both values are OR'ed
    * together.

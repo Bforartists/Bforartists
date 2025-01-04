@@ -1329,7 +1329,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
         if context.mode == 'EDIT_MESH':
             layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon='SHRINK_FATTEN')
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
-        elif context.mode in ['EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES']:
+        elif context.mode in {'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'}:
             layout.operator("transform.transform", text="Radius", icon='SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
         if context.mode != 'EDIT_CURVES' and context.mode != 'EDIT_GREASE_PENCIL':
@@ -3367,7 +3367,7 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = -0.01
                 props.header_text = "Spot Blend: %.2f"
 
-            if light.type in ['SPOT', 'SUN', 'AREA']:
+            if light.type in {'SPOT', 'SUN', 'AREA'}:
                 props = layout.operator(
                     "object.transform_axis_target",
                     text="Interactive Light Track",
@@ -7143,7 +7143,7 @@ class VIEW3D_MT_pivot_pie(Menu):
         pie.prop_enum(tool_settings, "transform_pivot_point", value='ACTIVE_ELEMENT')
         if (obj is None) or (mode in {'OBJECT', 'POSE', 'WEIGHT_PAINT'}):
             pie.prop(tool_settings, "use_transform_pivot_point_align")
-        if mode in ['EDIT_GREASE_PENCIL']:
+        if mode in {'EDIT_GPENCIL', 'EDIT_GREASE_PENCIL'}:
             pie.prop(tool_settings.gpencil_sculpt, "use_scale_thickness")
 
 
