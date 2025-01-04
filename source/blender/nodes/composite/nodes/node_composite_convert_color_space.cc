@@ -156,14 +156,14 @@ class ConvertColorSpaceOperation : public NodeOperation {
                                                                                          target);
 
     Result &input_image = get_input("Image");
-    float4 color = input_image.get_color_value();
+    float4 color = input_image.get_single_value<float4>();
 
     IMB_colormanagement_processor_apply_pixel(color_processor, color, 3);
     IMB_colormanagement_processor_free(color_processor);
 
     Result &output_image = get_result("Image");
     output_image.allocate_single_value();
-    output_image.set_color_value(color);
+    output_image.set_single_value(color);
   }
 
   bool is_identity()
