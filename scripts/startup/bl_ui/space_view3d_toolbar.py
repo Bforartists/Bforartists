@@ -1019,8 +1019,9 @@ class VIEW3D_PT_tools_brush_falloff_frontface(View3DPaintPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        layout.active = brush.use_frontface_falloff
-        layout.prop(brush, "falloff_angle", text="Angle")
+        row = layout.row()
+        row.active = brush.use_frontface_falloff
+        row.prop(brush, "falloff_angle", text="Angle")
 
 
 class VIEW3D_PT_tools_brush_falloff_normal(View3DPaintPanel, Panel):
@@ -1048,8 +1049,9 @@ class VIEW3D_PT_tools_brush_falloff_normal(View3DPaintPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        layout.active = ipaint.use_normal_falloff
-        layout.prop(ipaint, "normal_angle", text="Angle")
+        row = layout.row()
+        row.active = ipaint.use_normal_falloff
+        row.prop(ipaint, "normal_angle", text="Angle")
 
 
 # TODO, move to space_view3d.py
