@@ -80,10 +80,10 @@ class ZCombineOperation : public NodeOperation {
 
   void execute_single_value()
   {
-    const float4 first_color = get_input("Image").get_color_value();
-    const float4 second_color = get_input("Image_001").get_color_value();
-    const float first_z_value = get_input("Z").get_float_value();
-    const float second_z_value = get_input("Z_001").get_float_value();
+    const float4 first_color = get_input("Image").get_single_value<float4>();
+    const float4 second_color = get_input("Image_001").get_single_value<float4>();
+    const float first_z_value = get_input("Z").get_single_value<float>();
+    const float second_z_value = get_input("Z_001").get_single_value<float>();
 
     /* Mix between the first and second images using a mask such that the image with the object
      * closer to the camera is returned. The mask value is then 1, and thus returns the first image
@@ -101,14 +101,14 @@ class ZCombineOperation : public NodeOperation {
       combined_color.w = use_alpha() ? math::max(second_color.w, first_color.w) : combined_color.w;
 
       combined.allocate_single_value();
-      combined.set_color_value(combined_color);
+      combined.set_single_value(combined_color);
     }
 
     Result &combined_z = get_result("Z");
     if (combined_z.should_compute()) {
       const float combined_z_value = math::interpolate(second_z_value, first_z_value, mix_factor);
       combined_z.allocate_single_value();
-      combined_z.set_float_value(combined_z_value);
+      combined_z.set_single_value(combined_z_value);
     }
   }
 
