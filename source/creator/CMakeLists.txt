@@ -1602,13 +1602,13 @@ elseif(APPLE)
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    "./Blender.app/Contents"
+    "./Bforartists.app/Contents"
   )
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
       TARGETS blender-thumbnailer
-      DESTINATION "./Blender.app/Contents/MacOS"
+      DESTINATION "./Bforartists.app/Contents/MacOS"
     )
   endif()
 
@@ -1667,7 +1667,7 @@ elseif(APPLE)
     unset(PYTHON_EXECUTABLE_NAME_ONLY)
     install(
       PROGRAMS ${CMAKE_BINARY_DIR}/release/darwin/scripts/blender-system-info.sh
-      DESTINATION "Blender.app/Contents/Resources"
+      DESTINATION "Bforartists.app/Contents/Resources"
     )
   endif()
 
