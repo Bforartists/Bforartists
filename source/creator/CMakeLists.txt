@@ -1597,18 +1597,18 @@ elseif(APPLE)
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-    DESTINATION "./Bforartists.app/Contents"
+    DESTINATION "Bforartists.app/Contents"
   )
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    "./Bforartists.app/Contents"
+    "Bforartists.app/Contents"
   )
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
       TARGETS blender-thumbnailer
-      DESTINATION "./Bforartists.app/Contents/MacOS"
+      DESTINATION "Bforartists.app/Contents/MacOS"
     )
   endif()
 
@@ -1784,7 +1784,7 @@ endif()
 # Always install USD shared library and `datafiles` regardless if Bforartists
 # itself uses them, the bundled Python module still needs it.
 if((DEFINED LIBDIR) AND TARGETDIR_LIB)
-  # On windows the usd library sits in ./blender.shared copy the files
+  # On windows the usd library sits in ./bforartists.shared copy the files
   # relative to the location of the USD dll, if the dll does not exist
   # assume we are linking against the static 3.5 lib.
   if(WITH_USD)
