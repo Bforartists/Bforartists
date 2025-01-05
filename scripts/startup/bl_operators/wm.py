@@ -3458,7 +3458,7 @@ class WM_MT_splash_about(Menu):
 
         col = split.column(align=True)
         col.scale_y = 0.8
-        col.label(text=iface_("Version: {:s}").format(bpy.app.bfa_version_string), translate=False) # bfa - show our version
+        col.label(text=iface_("Version: {:s}").format(bpy.app.version_string), translate=False)
         col.separator(factor=2.5)
         col.label(text=iface_("Date: {:s} {:s}").format(
             bpy.app.build_commit_date.decode("utf-8", "replace"),
