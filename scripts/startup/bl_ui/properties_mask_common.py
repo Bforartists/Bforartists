@@ -253,7 +253,7 @@ class MASK_PT_display:
             sub.prop(space_data, "mask_overlay_mode", text="")
 
             row = layout.row()
-            row.active = (space_data.mask_overlay_mode in ['COMBINED'] and space_data.show_mask_overlay)
+            row.active = space_data.show_mask_overlay and (space_data.mask_overlay_mode == 'COMBINED')
             row.prop(space_data, "blend_factor", text="Blending Factor")
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')

@@ -83,6 +83,7 @@ if(WITH_GTESTS)
     intern/evaluation_test.cc
     intern/keyframing_test.cc
     intern/nla_test.cc
+    intern/pose_test.cc
   )
   set(TEST_LIB
     PRIVATE bf::animrig

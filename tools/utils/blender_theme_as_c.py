@@ -35,6 +35,10 @@ python3 blender_theme_as_c.py userpref.blend
 You can also define the full path to the updated userpref.blend as mentioned above.
 
 """
+__all__ = (
+    "main",
+)
+
 
 C_SOURCE_HEADER = r'''/* SPDX-FileCopyrightText: 2018 Blender Authors
  *
