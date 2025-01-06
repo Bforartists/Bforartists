@@ -1779,6 +1779,9 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings):
             row.scale_x = 0.33
             row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
             row.prop(brush, "secondary_color", text="")
+            # bfa - move brush_colors_flip and pin_draw_mode to their own row has they get squashed.
+            row = row.row(align=True)
+            row.scale_x = 1.75
             row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="") # BFA
             row.prop(gp_settings, "pin_draw_mode", text="")
 
