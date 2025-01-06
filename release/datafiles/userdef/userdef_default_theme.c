@@ -276,6 +276,7 @@ const bTheme U_theme_default = {
     .icon_modifier = RGBA(0x6e98ccff),
     .icon_shading = RGBA(0xcc6e6eff),
     .icon_folder = RGBA(0xffffffff),
+    .icon_autokey = RGBA(0xab3c48ff),
     .panel_roundness = 0.4f,
   },
   .space_properties = {
@@ -713,13 +714,13 @@ const bTheme U_theme_default = {
     .color_strip = RGBA(0x8f8f8fff),
     .active_strip = RGBA(0xffffffff),
     .selected_strip = RGBA(0xff8f0dff),
+    .text_strip_cursor = RGBA(0x71a8ffff),
+    .selected_text = RGBA(0xffffff4d),
     .gp_vertex_size = 3,
     .gp_vertex_select = RGBA(0xff8500ff),
     .row_alternate = RGBA(0xffffff0d),
     .anim_preview_range = RGBA(0xa14d0066),
     .metadatatext = RGBA(0xffffffff),
-    .text_strip_cursor = RGBA(0x71a8ffff),
-    .selected_text = RGBA(0xffffff4d),
   },
   .space_image = {
     .back = RGBA(0x4d4d4d00),
