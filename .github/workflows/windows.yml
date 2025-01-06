@@ -19,8 +19,8 @@ jobs:
     - name: make
       shell: cmd
       run: |
-        mkdir C:/Users/runneradmin/bforartistsrepo
-        cd C:/Users/runneradmin/bforartistsrepo
+        mkdir bforartistsrepo
+        cd bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
         cd Bforartists
         python ./build_files/utils/make_update.py
@@ -35,6 +35,5 @@ jobs:
       with:
         name: Bforartists-Release-${{ runner.os }}
         path: | 
-          C:/Users/runneradmin/bforartistsrepo/bfa_build_windows_x64_vc17_Release/bin
-          D:/a/Bforartists/Bforartists/bfa_build_windows_x64_vc17_Release/bin
-                
+          bforartistsrepo/bfa_build_windows_x64_vc17_Release/bin
+          bfa_build_windows_x64_vc17_Release/bin
