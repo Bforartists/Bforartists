@@ -1736,8 +1736,8 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
 
         row = sub.row()
         row.use_property_split = False
-        row.prop(clamp, "cast_shadow")
-        row.prop_decorator(clamp, "cast_shadow")
+        row.prop(clamp, "use_shadow")
+        row.prop_decorator(clamp, "use_shadow")
 
         row = sub.row()
         row.use_property_split = False
