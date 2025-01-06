@@ -7,7 +7,9 @@
         icon_alpha="1"
         icon_saturation="0.5"
         widget_emboss="#ffffff05"
-        editor_outline="#1f1f1f"
+        editor_border="#000000"
+        editor_outline="#1f1f1fff"
+        editor_outline_active="#00000000"
         widget_text_cursor="#3399e6"
         panel_roundness="0.4"
         transparent_checker_primary="#333333"
@@ -29,6 +31,7 @@
         icon_modifier="#6e98ccff"
         icon_shading="#cc6e6eff"
         icon_folder="#ffffffff"
+        icon_autokey="#ab3c48ff"
         icon_border_intensity="0"
         >
         <wcol_regular>
@@ -415,13 +418,15 @@
         bone_pose_active="#8cffff"
         bone_solid="#c8c8c8"
         bone_locked_weight="#ff000080"
+        frame_current="#60c040"
+        before_current_frame="#000000"
+        after_current_frame="#000000"
         bundle_solid="#c8c8c8"
         camera_path="#000000"
         camera_passepartout="#000000"
         skin_root="#b44d4d"
         view_overlay="#ffffff"
         transform="#ffffff"
-        frame_current="#60c040"
         paint_curve_handle="#7fff7f7f"
         paint_curve_pivot="#ff7f7f7f"
         outline_width="1"
@@ -854,6 +859,8 @@
         metadatatext="#ffffff"
         preview_range="#a14d0066"
         row_alternate="#ffffff0d"
+        text_strip_cursor="#71a8ffff"
+        selected_text="#ffffff4d"
         >
         <space>
           <ThemeSpaceGeneric
@@ -1013,6 +1020,7 @@
         attribute_node="#3f5980"
         simulation_zone="#66416233"
         repeat_zone="#76512f33"
+        foreach_geometry_element_zone="#33527f33"
         >
         <space>
           <ThemeSpaceGeneric
@@ -1053,6 +1061,13 @@
             >
           </ThemeSpaceListGeneric>
         </space_list>
+        <asset_shelf>
+          <ThemeAssetShelf
+            header_back="#333333ff"
+            back="#464646ff"
+            >
+          </ThemeAssetShelf>
+        </asset_shelf>
       </ThemeNodeEditor>
     </node_editor>
     <outliner>
@@ -1636,18 +1651,6 @@
         >
       </ThemeFontStyle>
     </panel_title>
-    <widget_label>
-      <ThemeFontStyle
-        points="11"
-        character_weight="400"
-        shadow="3"
-        shadow_offset_x="0"
-        shadow_offset_y="-1"
-        shadow_alpha="0.15"
-        shadow_value="1"
-        >
-      </ThemeFontStyle>
-    </widget_label>
     <widget>
       <ThemeFontStyle
         points="11"
@@ -1660,5 +1663,17 @@
         >
       </ThemeFontStyle>
     </widget>
+    <tooltip>
+      <ThemeFontStyle
+        points="11"
+        character_weight="400"
+        shadow="1"
+        shadow_offset_x="0"
+        shadow_offset_y="-1"
+        shadow_alpha="0.5"
+        shadow_value="0"
+        >
+      </ThemeFontStyle>
+    </tooltip>
   </ThemeStyle>
 </bpy>
