@@ -1537,6 +1537,8 @@ if(WITH_BLENDER)
       rec
       recalc_normals
       recalc_normals_inside
+      record_off
+      record_on
       recover_auto
       recover_last
       redo
@@ -1569,7 +1571,7 @@ if(WITH_BLENDER)
       replace_string
       reproject
       reset
-	  
+
 	  # bfa-don't change the order of the icons
 	  restrict_color_on
       restrict_color_off
@@ -2059,14 +2061,14 @@ if(WITH_BLENDER)
       viewcameracenter
       viewport_transform
       viewzoom
-      
+
 	  # bfa - don't change the order of the icons
 	  vis_sel_11
       vis_sel_10
 	  vis_sel_01
 	  vis_sel_00
 	  ####
-      
+
       visual_loc_rot
       visual_loc_rot_scale
       visual_loc_scale
