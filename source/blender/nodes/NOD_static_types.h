@@ -328,7 +328,7 @@ DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_CIRCLE,0, CurvePrimitiveCircle, "
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_LINE, 0, CurvePrimitiveLine, "Curve Line", "Add a Curve Line Geometry node\nGenerate a poly spline line with two points")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_QUADRATIC_BEZIER, 0, CurveQuadraticBezier, "Quadratic Bézier", "Add a Quadratic Bezier Geometry node\nGenerate a poly spline in a parabola shape with control points positions")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL, 0, CurvePrimitiveQuadrilateral, "Quadrilateral", "Add a Curve Quadrilateral node\nGenerate a polygon with four points")
-DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_SPIRAL,0, CurveSpiral, "Curve Spiral", "Add a Curve Spiral Geometry node\nGenerate a poly spline in a spiral shape")
+DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_SPIRAL,0, CurveSpiral, "Spiral", "Add a Spiral Geometry node\nGenerate a poly spline in a spiral shape")
 DefNode(GeometryNode, GEO_NODE_CURVE_PRIMITIVE_STAR, 0, CurveStar, "Star", "Add a Star Geometry node\nGenerate a poly spline in a star pattern by connecting alternating points of two circles")
 DefNode(GeometryNode, GEO_NODE_CURVE_SET_HANDLE_TYPE, def_geo_curve_set_handle_type, CurveSetHandles, "Set Handle Type", "Add a Set Handle Type Geometry node\nSet the handle type for the control points of a Bézier curve")
 DefNode(GeometryNode, GEO_NODE_CURVE_SPLINE_PARAMETER,0, SplineParameter, "Spline Parameter", "Add a Spline Parameter Geometry node\nRetrieve how far along each spline a control point is")
