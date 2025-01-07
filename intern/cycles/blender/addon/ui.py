@@ -1736,15 +1736,19 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
 
         row = sub.row()
         row.use_property_split = False
-        row.prop(clamp, "use_shadow")
-        row.prop_decorator(clamp, "use_shadow")
+        row.prop(light, "use_shadow", text="Cast Shadow")
+        row.prop_decorator(light, "use_shadow")
 
         row = sub.row()
         row.use_property_split = False
         row.prop(clamp, "use_multiple_importance_sampling", text="Multiple Importance")
         row.prop_decorator(clamp, "use_multiple_importance_sampling")
+
         if use_mnee(context):
+            row = sub.row()  # Create new row for shadow caustics
+            row.use_property_split = False
             row.prop(clamp, "is_caustics_light", text="Shadow Caustics")
+            row.prop_decorator(clamp, "is_caustics_light")
 
         if light.type == 'AREA':
             row = col.row()
