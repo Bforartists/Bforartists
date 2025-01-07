@@ -2153,6 +2153,7 @@ class USERPREF_PT_navigation_fly_walk_navigation(NavigationPanel, CenterAlignMix
 
         flow.use_property_split = False
         flow.prop(walk, "use_mouse_reverse")
+        flow.prop(walk, "use_airblock", text="Horizontal Lock") #BFA - Airblock mode
         flow.use_property_split = True
         flow.prop(walk, "mouse_speed")
         flow.prop(walk, "teleport_time")
