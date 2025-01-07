@@ -115,6 +115,7 @@ enum eWalkTeleportState {
 enum eWalkMethod {
   WALK_MODE_FREE = 0,
   WALK_MODE_GRAVITY,
+  WALK_MODE_AIRBLOCK, //BFA - Airblock mode
 };
 
 enum eWalkGravityState {
@@ -400,13 +401,22 @@ static void drawWalkPixel(const bContext * /*C*/, ARegion *region, void *arg)
 
 static void walk_navigation_mode_set(WalkInfo *walk, eWalkMethod mode)
 {
-  if (mode == WALK_MODE_FREE) {
-    walk->navigation_mode = WALK_MODE_FREE;
-    walk->gravity_state = WALK_GRAVITY_STATE_OFF;
-  }
-  else { /* WALK_MODE_GRAVITY */
-    walk->navigation_mode = WALK_MODE_GRAVITY;
-    walk->gravity_state = WALK_GRAVITY_STATE_START;
+  switch (mode) {
+    case WALK_MODE_FREE:
+      walk->navigation_mode = WALK_MODE_FREE;
+      walk->gravity_state = WALK_GRAVITY_STATE_OFF;
+      break;
+    case WALK_MODE_GRAVITY:
+      walk->navigation_mode = WALK_MODE_GRAVITY;
+      walk->gravity_state = WALK_GRAVITY_STATE_START;
+      break;
+    case WALK_MODE_AIRBLOCK: //BFA - Airblock mode
+      walk->navigation_mode = WALK_MODE_AIRBLOCK; //BFA - Airblock mode
+      walk->gravity_state = WALK_GRAVITY_STATE_OFF; //BFA - Airblock mode
+      break; //BFA - Airblock mode
+    default: //BFA - Airblock mode
+      BLI_assert_msg(0, "Invalid walk mode"); //BFA - Airblock mode
+      break; //BFA - Airblock mode
   }
 }
 
@@ -577,6 +587,9 @@ static bool initWalkInfo(bContext *C, WalkInfo *walk, wmOperator *op, const int 
   if (U.walk_navigation.flag & USER_WALK_GRAVITY) {
     walk_navigation_mode_set(walk, WALK_MODE_GRAVITY);
   }
+  else if (U.walk_navigation.flag & USER_WALK_AIRBLOCK) {//BFA - Airblock mode
+    walk_navigation_mode_set(walk, WALK_MODE_AIRBLOCK);//BFA - Airblock mode
+  }//BFA - Airblock mode
   else {
     walk_navigation_mode_set(walk, WALK_MODE_FREE);
   }
@@ -1235,6 +1248,12 @@ static int walkApply(bContext *C, WalkInfo *walk, bool is_confirm)
             dvec_tmp[2] = 0.0f;
           }
 
+          /*BFA - Airblock mode start*/
+          if (walk->navigation_mode == WALK_MODE_AIRBLOCK) {
+            dvec_tmp[2] = 0.0f;
+          }
+          /*BFA - Airblock mode end*/
+
           add_v3_v3(dvec, dvec_tmp);
         }
 
@@ -1259,8 +1278,8 @@ static int walkApply(bContext *C, WalkInfo *walk, bool is_confirm)
           add_v3_v3(dvec, dvec_tmp);
         }
 
-        /* Up and down movement is only available in free mode, not gravity mode. */
-        if (walk->navigation_mode == WALK_MODE_FREE) {
+        /* Up and down movement is available in free mode and airblock mode (BFA), but not gravity mode. */
+        if (walk->navigation_mode == WALK_MODE_FREE || walk->navigation_mode == WALK_MODE_AIRBLOCK) { //BFA - Airblock mode
 
           if (walk->active_directions & (WALK_BIT_GLOBAL_UP | WALK_BIT_GLOBAL_DOWN)) {
 
