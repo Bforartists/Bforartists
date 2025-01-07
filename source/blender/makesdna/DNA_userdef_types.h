@@ -1275,6 +1275,7 @@ typedef enum eUserpref_MiniAxisType {
 typedef enum eWalkNavigation_Flag {
   USER_WALK_GRAVITY = (1 << 0),
   USER_WALK_MOUSE_REVERSE = (1 << 1),
+  USER_WALK_AIRBLOCK = (1 << 2), //BFA - Airblock mode
 } eWalkNavigation_Flag;
 
 /** #UserDef.uiflag */
