@@ -5014,6 +5014,14 @@ static void rna_def_userdef_walk_navigation(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_mouse_reverse", PROP_BOOLEAN, PROP_BOOLEAN);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_WALK_MOUSE_REVERSE);
   RNA_def_property_ui_text(prop, "Reverse Mouse", "Reverse the vertical movement of the mouse");
+
+  /*BFA - Airblock mode start*/
+  prop = RNA_def_property(srna, "use_airblock", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_WALK_AIRBLOCK);
+  RNA_def_property_boolean_default(prop, false);  // Set default to off
+  RNA_def_property_ui_text(prop, "Airblock", "Enable a horizontal lock mode for walk navigation to walk on an airblock");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+  /*BFA - Airblock mode end*/
 }
 
 static void rna_def_userdef_view(BlenderRNA *brna)
