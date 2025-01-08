@@ -869,8 +869,6 @@ class TOPBAR_MT_primitives(Menu):
                 if addon_prefs.topbar_primitives_image:
 
                     row = layout.row(align=True)
-                    row.operator("object.empty_image_add", text="", icon='IMAGE_REFERENCE').background = False
-                    row.operator("object.empty_image_add", text="", icon='IMAGE_BACKGROUND').background = True
                     row.operator("image.import_as_mesh_planes", text="", icon='MESH_PLANE')
 
                 if addon_prefs.topbar_primitives_lightprobe:
@@ -1009,8 +1007,6 @@ class TOPBAR_MT_primitives(Menu):
                     if addon_prefs.topbar_primitives_image:
 
                         row = layout.row(align=True)
-                        row.operator("object.empty_image_add", text="", icon='IMAGE_REFERENCE').background = False
-                        row.operator("object.empty_image_add", text="", icon='IMAGE_BACKGROUND').background = True
                         row.operator("image.import_as_mesh_planes", text="", icon='MESH_PLANE')
 
                     if addon_prefs.topbar_primitives_lightprobe:
