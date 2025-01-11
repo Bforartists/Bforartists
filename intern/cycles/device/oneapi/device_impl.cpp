@@ -392,6 +392,14 @@ void OneapiDevice::mem_alloc(device_memory &mem)
                  << string_human_readable_size(mem.memory_size()) << ")";
     }
     generic_alloc(mem);
+#  ifdef SYCL_EXT_ONEAPI_COPY_OPTIMIZE
+    /* Import host_pointer into USM memory for faster host<->device data transfers. */
+    if (mem.type == MEM_READ_WRITE || mem.type == MEM_READ_ONLY) {
+      sycl::queue *queue = reinterpret_cast<sycl::queue *>(device_queue_);
+      sycl::ext::oneapi::experimental::prepare_for_device_copy(
+          mem.host_pointer, mem.memory_size(), *queue);
+    }
+#  endif
   }
 }
 
@@ -509,6 +517,12 @@ void OneapiDevice::mem_free(device_memory &mem)
     tex_free((device_texture &)mem);
   }
   else {
+#  ifdef SYCL_EXT_ONEAPI_COPY_OPTIMIZE
+    if (mem.type == MEM_READ_WRITE || mem.type == MEM_READ_ONLY) {
+      sycl::queue *queue = reinterpret_cast<sycl::queue *>(device_queue_);
+      sycl::ext::oneapi::experimental::release_from_device_copy(mem.host_pointer, *queue);
+    }
+#  endif
     generic_free(mem);
   }
 }
@@ -550,7 +564,7 @@ void OneapiDevice::const_copy_to(const char *name, void *host, const size_t size
         this, name, MEM_READ_ONLY);
     data_ptr->alloc(size);
     data = data_ptr.get();
-    const_mem_map_.insert(ConstMemMap::value_type(name, std::move(data)));
+    const_mem_map_.insert(ConstMemMap::value_type(name, std::move(data_ptr)));
   }
   else {
     data = i->second.get();

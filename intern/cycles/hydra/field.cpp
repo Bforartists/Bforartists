@@ -4,9 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0 */
 
 #include "hydra/field.h"
-#include "hydra/session.h"
-#include "scene/image_vdb.h"
-#include "scene/scene.h"
+
+#ifdef WITH_OPENVDB
+#  include "hydra/session.h"
+#  include "scene/image_vdb.h"
+#  include "scene/scene.h"
+#endif
 
 #include <pxr/imaging/hd/sceneDelegate.h>
 #include <pxr/usd/sdf/assetPath.h>
@@ -31,7 +34,9 @@ class HdCyclesVolumeLoader : public VDBImageLoader {
     const bool delay_load = false;
     try {
       openvdb::io::File file(filePath);
+#  ifdef OPENVDB_USE_DELAYED_LOADING
       file.setCopyMaxBytes(0);
+#  endif
       if (file.open(delay_load)) {
         grid = file.readGrid(gridName);
       }
@@ -91,6 +96,9 @@ void HdCyclesField::Sync(HdSceneDelegate *sceneDelegate,
       }
     }
   }
+#else
+  (void)sceneDelegate;
+  (void)renderParam;
 #endif
 
   *dirtyBits = DirtyBits::Clean;
