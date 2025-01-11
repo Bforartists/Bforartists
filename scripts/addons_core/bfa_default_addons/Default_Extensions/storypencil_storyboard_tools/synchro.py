@@ -350,7 +350,7 @@ class STORYPENCIL_OT_SyncToggleSecondary(Operator):
 
 def get_sequences_at_frame(
         frame: int,
-        sequences: Sequence[Sequence]) -> Sequence[bpy.types.Sequence]:
+        sequences: Sequence[Sequence]) -> Sequence[bpy.types.Strip]:
     """ Get all sequencer strips at given frame.
 
     :param frame: the frame to consider
@@ -362,9 +362,9 @@ def get_sequences_at_frame(
 
 def get_sequence_at_frame(
         frame: int,
-        sequences: Sequence[bpy.types.Sequence] = None,
+        sequences: Sequence[bpy.types.Strip] = None,
         skip_muted: bool = True,
-) -> Tuple[bpy.types.Sequence, int]:
+) -> Tuple[bpy.types.Strip, int]:
     """
     Get the higher sequence strip in channels stack at current frame.
     Recursively enters scene sequences and returns the original frame in the

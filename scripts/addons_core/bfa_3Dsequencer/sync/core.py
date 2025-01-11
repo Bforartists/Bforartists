@@ -9,7 +9,7 @@ import bpy
 from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
-SequenceType = Type[bpy.types.Sequence]
+SequenceType = Type[bpy.types.Strip]
 
 
 class TimelineSyncSettings(bpy.types.PropertyGroup):
@@ -173,10 +173,10 @@ def remap_frame_value(frame: int, scene_strip: bpy.types.SceneSequence) -> int:
 
 def get_strips_at_frame(
     frame: int,
-    strips: list[bpy.types.Sequence],
+    strips: list[bpy.types.Strip],
     type_filter: Union[SequenceType, tuple[SequenceType, ...]] = None,
     skip_muted: bool = True,
-) -> list[bpy.types.Sequence]:
+) -> list[bpy.types.Strip]:
     """
     Get all strips containing the given `frame` within their final range.
 
