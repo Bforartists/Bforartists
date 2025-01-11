@@ -457,7 +457,7 @@ def delete_scene(scene: bpy.types.Scene, purge_orphan_datablocks: bool) -> int:
     return del_count
 
 
-def reload_strip(strip: bpy.types.Sequence):
+def reload_strip(strip: bpy.types.Strip):
     """Re-evaluate content length and update `strip` display in the sequencer."""
     # For the strip to re-evaluate its internal scene duration, we need
     # to call the sequencer.reload operator, which runs on selected strips.

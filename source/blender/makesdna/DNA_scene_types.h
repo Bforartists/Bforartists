@@ -327,7 +327,7 @@ enum {
   SCE_VIEWS_FORMAT_MULTIVIEW = 1,
 };
 
-/** #ImageFormatData::views_format (also used for #Sequence::views_format). */
+/** #ImageFormatData::views_format (also used for #Strip::views_format). */
 enum {
   R_IMF_VIEWS_INDIVIDUAL = 0,
   R_IMF_VIEWS_STEREO_3D = 1,
@@ -1801,7 +1801,13 @@ typedef struct ToolSettings {
 /** Display/Editing unit options for each scene. */
 typedef struct UnitSettings {
 
-  /** Maybe have other unit conversions? */
+  /* Maybe have other unit conversions? */
+  /**
+   * Spatial scale.
+   * - This must not be used when `system == USER_UNIT_NONE`.
+   * - Typically the scale should be applied using #BKE_unit_value_scale
+   *   which supports different kinds of users and checks a none unit system.
+   */
   float scale_length;
   /** Imperial, metric etc. */
   char system;
