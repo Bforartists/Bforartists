@@ -24,14 +24,14 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
 def get_last_sequence(
-    sequences: list[bpy.types.Sequence],
-) -> Optional[bpy.types.Sequence]:
+    sequences: list[bpy.types.Strip],
+) -> Optional[bpy.types.Strip]:
     """Get the last sequence, i.e. the one with the greatest final frame number."""
     return max(sequences, key=lambda x: x.frame_final_end) if sequences else None
 
 
 def get_last_used_frame(
-    sequences: list[bpy.types.Sequence], scene: bpy.types.Scene
+    sequences: list[bpy.types.Strip], scene: bpy.types.Scene
 ) -> int:
     """
     Get the last used internal frame of `scene` from the given list of `sequences`.
@@ -49,7 +49,7 @@ def get_last_used_frame(
 
 
 def get_selected_scene_sequences(
-    sequences: list[bpy.types.Sequence],
+    sequences: list[bpy.types.Strip],
 ) -> list[bpy.types.SceneSequence]:
     """
     :param sequences: The sequences to consider.
