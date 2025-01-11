@@ -21,6 +21,8 @@
 #include "eevee_raytrace.hh"
 #include "eevee_subsurface.hh"
 
+struct Camera;
+
 namespace blender::eevee {
 
 class Instance;
@@ -44,7 +46,7 @@ class BackgroundPipeline {
 
   void sync(GPUMaterial *gpumat, float background_opacity, float background_blur);
   void clear(View &view);
-  void render(View &view);
+  void render(View &view, Framebuffer &combined_fb);
 };
 
 /** \} */

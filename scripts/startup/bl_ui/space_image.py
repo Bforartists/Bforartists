@@ -204,7 +204,7 @@ class IMAGE_MT_view_zoom(Menu):
             percent = ratio * 100.0
             layout.operator(
                 "image.view_zoom_ratio",
-                text="Zoom {:g}% ({:d}:{:d})".format(percent, a, b), # BFA
+                text=iface_("Zoom {:g}% ({:d}:{:d})").format(percent, a, b), # BFA
                 translate=False,
                 icon="ZOOM_SET", # BFA
             ).ratio = ratio
@@ -358,7 +358,7 @@ class IMAGE_MT_image(Menu):
                 layout.operator("image.reload", text="Reload", icon="FILE_REFRESH")
 
             # bfa TODO: move this to image.external_edit poll
-            # bfa - hide disfunctional tools and settings for render result
+            # bfa - hide dysfunctional tools and settings for render result
             import os
 
             can_edit = True
@@ -611,8 +611,11 @@ class IMAGE_MT_uvs_unwrap(Menu):
 		# BFA - exposed both methods to top level
         layout.operator_enum("uv.unwrap", "method")
 
-        #layout.operator("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-        #layout.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+        # It would be nice to do: `layout.operator_enum("uv.unwrap", "method")`
+        # However the menu items don't have an "Unwrap" prefix, so inline the operators.
+        # layout.operator("uv.unwrap", text="Unwrap Angle Based").method = 'ANGLE_BASED'
+        # layout.operator("uv.unwrap", text="Unwrap Conformal").method = 'CONFORMAL'
+        # layout.operator("uv.unwrap", text="Unwrap Minimum Stretch").method = 'MINIMUM_STRETCH'
 
         layout.separator()
 

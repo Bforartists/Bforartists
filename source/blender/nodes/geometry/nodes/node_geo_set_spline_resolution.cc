@@ -73,8 +73,13 @@ static void node_register()
 {
   static blender::bke::bNodeType ntype;
 
-  geo_node_type_base(
-      &ntype, GEO_NODE_SET_SPLINE_RESOLUTION, "Set Spline Resolution", NODE_CLASS_GEOMETRY);
+  geo_node_type_base(&ntype,
+                     "GeometryNodeSetSplineResolution",
+                     GEO_NODE_SET_SPLINE_RESOLUTION,
+                     NODE_CLASS_GEOMETRY);
+  ntype.ui_name = "Set Spline Resolution";
+  ntype.ui_description =
+      "Control how many evaluated points should be generated on every curve segment";
   ntype.enum_name_legacy = "SET_SPLINE_RESOLUTION";
   ntype.geometry_node_execute = node_geo_exec;
   ntype.declare = node_declare;
