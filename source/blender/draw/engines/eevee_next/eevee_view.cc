@@ -136,7 +136,7 @@ void ShadingView::render()
                                   rt_buffer_opaque_,
                                   rt_buffer_refract_);
 
-  inst_.pipelines.background.render(render_view_);
+  inst_.pipelines.background.render(render_view_, combined_fb_);
 
   inst_.gbuffer.release();
 
@@ -211,8 +211,8 @@ void ShadingView::update_view()
   float4x4 winmat = main_view_.winmat();
 
   if (film.scaling_factor_get() > 1) {
-    /* This whole section ensures that the render target pixel grid will match the film pixel pixel
-     * grid. Otherwise the weight computation inside the film accumulation will be wrong. */
+    /* This whole section ensures that the render target pixel grid will match the film pixel grid.
+     * Otherwise the weight computation inside the film accumulation will be wrong. */
 
     float left, right, bottom, top, near, far;
     projmat_dimensions(winmat.ptr(), &left, &right, &bottom, &top, &near, &far);

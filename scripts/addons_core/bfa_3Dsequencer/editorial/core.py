@@ -11,7 +11,7 @@ import bpy
 
 class StripsGroup(NamedTuple):
     group_id: str
-    strips: list[bpy.types.Sequence]
+    strips: list[bpy.types.Strip]
 
     @property
     def frame_start(self):
@@ -30,7 +30,7 @@ class StripsGroup(NamedTuple):
 
 
 def gather_strips_groups_by_regex(
-    strips: list[bpy.types.Sequence], regex_group_id: str
+    strips: list[bpy.types.Strip], regex_group_id: str
 ) -> list[StripsGroup]:
     """
     Build groups of consecutive strips with similar group id - defined by
