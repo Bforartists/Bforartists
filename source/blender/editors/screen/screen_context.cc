@@ -686,9 +686,9 @@ static eContextResult screen_ctx_active_sequence_strip(const bContext *C,
 {
   Scene *scene = space_sequencer_get_active_scene(C);
   /*############## BFA - 3D Sequencer End ##############*/
-  Sequence *seq = SEQ_select_active_get(scene);
-  if (seq) {
-    CTX_data_pointer_set(result, &scene->id, &RNA_Sequence, seq);
+  Strip *strip = SEQ_select_active_get(scene);
+  if (strip) {
+    CTX_data_pointer_set(result, &scene->id, &RNA_Strip, strip);
     return CTX_RESULT_OK;
   }
   return CTX_RESULT_NO_DATA;
@@ -699,8 +699,8 @@ static eContextResult screen_ctx_sequences(const bContext *C, bContextDataResult
   Scene *scene = WM_window_get_active_scene(win);
   Editing *ed = SEQ_editing_get(scene);
   if (ed) {
-    LISTBASE_FOREACH (Sequence *, seq, ed->seqbasep) {
-      CTX_data_list_add(result, &scene->id, &RNA_Sequence, seq);
+    LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
+      CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
     }
     CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
     return CTX_RESULT_OK;
@@ -712,9 +712,9 @@ static eContextResult screen_ctx_selected_sequences(const bContext *C, bContextD
   Scene *scene = space_sequencer_get_active_scene(C); /*BFA - 3D Sequencer*/
   Editing *ed = SEQ_editing_get(scene);
   if (ed) {
-    LISTBASE_FOREACH (Sequence *, seq, ed->seqbasep) {
-      if (seq->flag & SELECT) {
-        CTX_data_list_add(result, &scene->id, &RNA_Sequence, seq);
+    LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
+      if (strip->flag & SELECT) {
+        CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
       }
     }
     CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
@@ -732,9 +732,9 @@ static eContextResult screen_ctx_selected_editable_sequences(const bContext *C,
   }
 
   ListBase *channels = SEQ_channels_displayed_get(ed);
-  LISTBASE_FOREACH (Sequence *, seq, ed->seqbasep) {
-    if (seq->flag & SELECT && !SEQ_transform_is_locked(channels, seq)) {
-      CTX_data_list_add(result, &scene->id, &RNA_Sequence, seq);
+  LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
+    if (strip->flag & SELECT && !SEQ_transform_is_locked(channels, strip)) {
+      CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
     }
   }
   CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
