@@ -50,7 +50,7 @@
 #include "BKE_lightprobe.h"
 #include "BKE_linestyle.h"
 #include "BKE_main.hh"
-#include "BKE_material.h"
+#include "BKE_material.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.hh"
@@ -1648,7 +1648,7 @@ static int render_view_add_exec(bContext *C, wmOperator * /*op*/)
   WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
   BKE_ntree_update_tag_id_changed(bmain, &scene->id);
-  ED_node_tree_propagate_change(C, bmain, nullptr);
+  ED_node_tree_propagate_change(*bmain);
 
   return OPERATOR_FINISHED;
 }
@@ -1687,7 +1687,7 @@ static int render_view_remove_exec(bContext *C, wmOperator * /*op*/)
   WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
   BKE_ntree_update_tag_id_changed(bmain, &scene->id);
-  ED_node_tree_propagate_change(C, bmain, nullptr);
+  ED_node_tree_propagate_change(*bmain);
 
   return OPERATOR_FINISHED;
 }
@@ -2621,12 +2621,12 @@ static int copy_material_exec(bContext *C, wmOperator *op)
   PartialWriteContext copybuffer{BKE_main_blendfile_path(bmain)};
 
   /* Add the material to the copybuffer (and all of its dependencies). */
-  copybuffer.id_add(&ma->id,
-                    PartialWriteContext::IDAddOptions{PartialWriteContext::IDAddOperations(
-                        PartialWriteContext::IDAddOperations::SET_FAKE_USER |
-                        PartialWriteContext::IDAddOperations::SET_CLIPBOARD_MARK |
-                        PartialWriteContext::IDAddOperations::ADD_DEPENDENCIES)},
-                    nullptr);
+  copybuffer.id_add(
+      &ma->id,
+      PartialWriteContext::IDAddOptions{(PartialWriteContext::IDAddOperations::SET_FAKE_USER |
+                                         PartialWriteContext::IDAddOperations::SET_CLIPBOARD_MARK |
+                                         PartialWriteContext::IDAddOperations::ADD_DEPENDENCIES)},
+      nullptr);
 
   char filepath[FILE_MAX];
   material_copybuffer_filepath_get(filepath, sizeof(filepath));
@@ -2841,7 +2841,7 @@ static int paste_material_exec(bContext *C, wmOperator *op)
 
   /* There are some custom updates to the node tree above, better do a full update pass. */
   BKE_ntree_update_tag_all(ma->nodetree);
-  ED_node_tree_propagate_change(C, bmain, nullptr);
+  ED_node_tree_propagate_change(*bmain);
 
   DEG_id_tag_update(&ma->id, ID_RECALC_SYNC_TO_EVAL);
   WM_event_add_notifier(C, NC_MATERIAL | ND_SHADING_LINKS, ma);
