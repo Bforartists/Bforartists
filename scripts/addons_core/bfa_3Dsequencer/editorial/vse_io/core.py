@@ -78,7 +78,7 @@ def sequencer_add_media_func(
 
 
 def strip_apply_frame_offsets(
-    strip: bpy.types.Sequence,
+    strip: bpy.types.Strip,
     frame_final_start: int,
     frame_final_duration: int,
     frame_start_offset: int,

@@ -2466,17 +2466,18 @@ static void seq_build_proxy(bContext *C, PointerRNA *ptr)
   wmJob *wm_job = ED_seq_proxy_wm_job_get(C);
   ProxyJob *pj = ED_seq_proxy_job_get(C, wm_job);
 
-  LISTBASE_FOREACH (Sequence *, seq, seqbase) {
-    if (seq->type != SEQ_TYPE_MOVIE || seq->data == nullptr || seq->data->proxy == nullptr) {
+  LISTBASE_FOREACH (Strip *, strip, seqbase) {
+    if (strip->type != STRIP_TYPE_MOVIE || strip->data == nullptr || strip->data->proxy == nullptr)
+    {
       continue;
     }
 
     /* Add new proxy size. */
-    seq->data->proxy->build_size_flags |= SEQ_rendersize_to_proxysize(sseq->render_size);
+    strip->data->proxy->build_size_flags |= SEQ_rendersize_to_proxysize(sseq->render_size);
 
     /* Build proxy. */
     SEQ_proxy_rebuild_context(
-        pj->main, pj->depsgraph, pj->scene, seq, &processed_paths, &pj->queue, true);
+        pj->main, pj->depsgraph, pj->scene, strip, &processed_paths, &pj->queue, true);
   }
 
   if (!WM_jobs_is_running(wm_job)) {
@@ -2682,7 +2683,7 @@ static bool rna_SpaceNodeEditor_node_tree_poll(PointerRNA *ptr, const PointerRNA
 
 static void rna_SpaceNodeEditor_node_tree_update(const bContext *C, PointerRNA * /*ptr*/)
 {
-  ED_node_tree_update(C);
+  blender::ed::space_node::tree_update(C);
 }
 
 static void rna_SpaceNodeEditor_geometry_nodes_type_update(Main * /*main*/,
@@ -2758,13 +2759,13 @@ static int rna_SpaceNodeEditor_path_length(PointerRNA *ptr)
 static void rna_SpaceNodeEditor_path_clear(SpaceNode *snode, bContext *C)
 {
   ED_node_tree_start(snode, nullptr, nullptr, nullptr);
-  ED_node_tree_update(C);
+  blender::ed::space_node::tree_update(C);
 }
 
 static void rna_SpaceNodeEditor_path_start(SpaceNode *snode, bContext *C, PointerRNA *node_tree)
 {
   ED_node_tree_start(snode, (bNodeTree *)node_tree->data, nullptr, nullptr);
-  ED_node_tree_update(C);
+  blender::ed::space_node::tree_update(C);
 }
 
 static void rna_SpaceNodeEditor_path_append(SpaceNode *snode,
@@ -2774,13 +2775,13 @@ static void rna_SpaceNodeEditor_path_append(SpaceNode *snode,
 {
   ED_node_tree_push(
       snode, static_cast<bNodeTree *>(node_tree->data), static_cast<bNode *>(node->data));
-  ED_node_tree_update(C);
+  blender::ed::space_node::tree_update(C);
 }
 
 static void rna_SpaceNodeEditor_path_pop(SpaceNode *snode, bContext *C)
 {
   ED_node_tree_pop(snode);
-  ED_node_tree_update(C);
+  blender::ed::space_node::tree_update(C);
 }
 
 static void rna_SpaceNodeEditor_show_backdrop_update(Main * /*bmain*/,
