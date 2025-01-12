@@ -437,7 +437,11 @@ set(LIB
 # `Zstd` compressor for kernels.
 add_executable(zstd_compress ../cmake/zstd_compress.cpp)
 target_include_directories(zstd_compress SYSTEM PRIVATE ${ZSTD_INCLUDE_DIRS})
-target_link_libraries(zstd_compress ${ZSTD_LIBRARIES} ${PTHREADS_LIBRARIES})
+
+target_link_libraries(zstd_compress ${ZSTD_LIBRARIES})
+if(DEFINED PTHREADS_LIBRARIES)
+  target_link_libraries(zstd_compress ${PTHREADS_LIBRARIES})
+endif()
 
 if(NOT WITH_BLENDER)
   # For the Cycles standalone put libraries next to the Cycles application.
@@ -726,7 +730,7 @@ endif()
 # HIP RT module
 
 if(WITH_CYCLES_DEVICE_HIPRT)
-  set(HIPRT_COMPILER_PARALLEL_JOBS 1 CACHE STRING "Number of parallel compiler instances to use for for HIP-RT kernels")
+  set(HIPRT_COMPILER_PARALLEL_JOBS 1 CACHE STRING "Number of parallel compiler instances to use for HIP-RT kernels")
   mark_as_advanced(HIPRT_COMPILER_PARALLEL_JOBS)
 
   set(bvh_file ${CMAKE_CURRENT_BINARY_DIR}/hiprt${HIPRT_VERSION}_${HIP_VERSION_SHORT}_amd.hipfb)
@@ -1340,7 +1344,9 @@ if(WITH_COMPILER_ASAN)
   endif()
 endif()
 
-set_source_files_properties(device/cpu/kernel.cpp PROPERTIES COMPILE_FLAGS "${CYCLES_KERNEL_FLAGS}")
+if(DEFINED CYCLES_KERNEL_FLAGS)
+  set_source_files_properties(device/cpu/kernel.cpp PROPERTIES COMPILE_FLAGS "${CYCLES_KERNEL_FLAGS}")
+endif()
 
 if(CXX_HAS_SSE42)
   set_source_files_properties(device/cpu/kernel_sse42.cpp PROPERTIES COMPILE_FLAGS "${CYCLES_SSE42_FLAGS}")
