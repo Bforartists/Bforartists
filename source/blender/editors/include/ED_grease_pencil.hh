@@ -11,10 +11,10 @@
 #include "BKE_grease_pencil.hh"
 
 #include "BKE_attribute_filter.hh"
-#include "BLI_generic_span.hh"
 #include "BLI_index_mask_fwd.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_set.hh"
+#include "BLI_task.hh"
 
 #include "ED_keyframes_edit.hh"
 #include "ED_select_utils.hh"
@@ -38,6 +38,7 @@ struct View3D;
 struct ViewContext;
 struct BVHTree;
 struct GreasePencilLineartModifierData;
+struct RV3DMatrixStore;
 namespace blender {
 namespace bke {
 enum class AttrDomain : int8_t;
@@ -617,8 +618,9 @@ namespace image_render {
 
 /** Region size to restore after rendering. */
 struct RegionViewData {
-  int2 region_winsize;
-  rcti region_winrct;
+  int2 winsize;
+  rcti winrct;
+  RV3DMatrixStore *rv3d_store;
 };
 
 /**
