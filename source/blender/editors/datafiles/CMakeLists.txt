@@ -11,12 +11,10 @@ set(INC
 )
 
 set(INC_SYS
-
 )
 
 # Part of the `blender` binary (sources for data-files are appended).
 set(SRC
-
 )
 
 set(LIB
@@ -26,6 +24,7 @@ set(LIB
 # This section is maintained by the updating script, keep BEGIN/END comments.
 # See: `make icons_geom` and the script `./release/datafiles/blender_icons_geom_update.py`.
 set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
+
   # BEGIN ICON_GEOM_NAMES
   brush.generic
   brush.gpencil_draw.erase
@@ -172,32 +171,29 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.transform.vert_slide
   ops.transform.vertex_random
   ops.view3d.ruler
+
   # END ICON_GEOM_NAMES
 )
 
 data_to_c_simple(../../../../release/datafiles/bfont.pfb SRC)
 
-
 if(WITH_BLENDER)
   # Blender only (not Cycles stand-alone).
-
   if(NOT WITH_HEADLESS)
     # Blender UI only.
-
     set(SVG_FILENAMES_NOEXT
+
       # ------------------------- icons --------------------------*/
+      none # never change, needs to stay on top of the list!
 
-   	  none    # never change, needs to stay on top of the list!
-
-	  # letter def icon
-
-	  anim
-	  area_dock
+      # letter def icon
+      anim
+      area_dock
       area_join_down
       area_join_left
       area_join_up
       color_tag
-	  decorate_library_override
+      decorate_library_override
       decorate_linked
       fund
       heart
@@ -214,13 +210,11 @@ if(WITH_BLENDER)
       trash
       group_bright
 
-	 # letter numbers
-
+      # letter numbers
       4l_off
       4l_on
 
-	  # letter A
-
+      # letter A
       absolutepath
       accumulate
       action
@@ -281,7 +275,7 @@ if(WITH_BLENDER)
       area
       area_swap
       armature_data
-	  arrow_leftright
+      arrow_leftright
       asset_manager
       assign
       attribute_capture
@@ -317,8 +311,7 @@ if(WITH_BLENDER)
       axis_side
       axis_top
 
-	  # letter B
-
+      # letter B
       back
       background
       bake
@@ -333,7 +326,7 @@ if(WITH_BLENDER)
       between_markers
       bevel
       bisect
-      blank1  # BFA - not actually blank - this is used all over the place
+      blank1 # BFA - not actually blank - this is used all over the place
       blend_offset
       blend_tex
       blend_to_default
@@ -370,8 +363,7 @@ if(WITH_BLENDER)
       buts
       buts_active
 
-	  # letter c
-
+      # letter c
       camera_data
       camera_stereo
       cancel
@@ -518,8 +510,7 @@ if(WITH_BLENDER)
       cycles_modifier
       cylinderproject
 
-	  # letter d
-
+      # letter d
       datablock_clear
       debug
       dec_contrast
@@ -531,8 +522,8 @@ if(WITH_BLENDER)
 
       decorate_override
 
-      decorate_unlocked #bfa- don't change the order
-      decorate_locked #bfa- don't change the order
+      decorate_unlocked # bfa- don't change the order
+      decorate_locked # bfa- don't change the order
 
       decrease_kerning
       deform_curves
@@ -584,8 +575,7 @@ if(WITH_BLENDER)
       duplicate_all
       dutch_florin
 
-	  # letter e
-
+      # letter e
       edge_angle
       edge_collapse
       edge_neighbors
@@ -631,8 +621,7 @@ if(WITH_BLENDER)
       extrudesize
       eyedropper
 
-	  # letter f
-
+      # letter f
       face_corner
       face_maps
       face_maps_active
@@ -720,8 +709,7 @@ if(WITH_BLENDER)
       fullscreen_enter
       fullscreen_exit
 
-	  # letter g
-
+      # letter g
       gabor_noise
       game
       generator_modifier
@@ -764,8 +752,7 @@ if(WITH_BLENDER)
       groupinput
       groupoutput
 
-	  # letter h
-
+      # letter h
       hair_data
       hand
       handle_align_single
@@ -774,10 +761,10 @@ if(WITH_BLENDER)
       handle_autoclamped
       handle_free
       handle_vector
-	  hash
+      hash
       help
 
-	  hide_on # bfa - don't change the order of the icons
+      hide_on # bfa - don't change the order of the icons
       hide_off # bfa - don't change the order of the icons
 
       hide_renderview
@@ -804,8 +791,7 @@ if(WITH_BLENDER)
       huecorrect
       huesatval
 
-	  # letter i
-
+      # letter i
       image
       image_alpha
       image_aspect
@@ -837,7 +823,7 @@ if(WITH_BLENDER)
       instance_transform_get
       instances_to_points
       integer
-	  integer_math
+      integer_math
       internet
       internet_offline
       interpolate
@@ -868,15 +854,13 @@ if(WITH_BLENDER)
       is_spline_cyclic
       italic
 
-	  # letter j
-
+      # letter j
       join
       join_areas
       joincopy
       jump_to_keyframes
 
-	  # letter k
-
+      # letter k
       key_dehlt
       key_hlt
       keyframe
@@ -889,8 +873,7 @@ if(WITH_BLENDER)
       knife_project
       kuwahara
 
-	  # letter L
-
+      # letter L
       lasso_add
       lasso_hide
       lasso_mask
@@ -970,8 +953,7 @@ if(WITH_BLENDER)
       loop_forwards
       loopsel
 
-	  # letter m
-
+      # letter m
       magic_tex
       make_curvesegment
       make_edgeface
@@ -1046,7 +1028,7 @@ if(WITH_BLENDER)
       meta_ellipsoid
       meta_empty
       meta_plane
-	  metallic
+      metallic
       minimizestretch
       mirror_cursorvalue
       mirror_marker
@@ -1121,18 +1103,18 @@ if(WITH_BLENDER)
       motionpaths_update
       motionpaths_update_all
 
-	  # bfa - don't change the order of the icons
+      # bfa - don't change the order of the icons
       mouse_lmb
-	  mouse_mmb
-	  mouse_rmb
-	  mouse_mmb_scroll
+      mouse_mmb
+      mouse_rmb
+      mouse_mmb_scroll
       mouse_lmb_2x
       mouse_move
-	  mouse_lmb_drag
+      mouse_lmb_drag
       mouse_mmb_drag
       mouse_rmb_drag
-	  ###
 
+      # ##
       mouse_position
       move_down
       move_texturespace
@@ -1141,12 +1123,11 @@ if(WITH_BLENDER)
       move_up
       multiplication
       multiply_matrix
-	  musgrave_tex
+      musgrave_tex
       mute_ipo_off
       mute_ipo_on
 
-	  # letter n
-
+      # letter n
       named_attribute
       named_layer_selection
       network_drive
@@ -1222,7 +1203,7 @@ if(WITH_BLENDER)
       node_huesaturation
       node_impaint
 
-	  node_insert_on # bfa - don't change the order of the icons
+      node_insert_on # bfa - don't change the order of the icons
       node_insert_off # bfa - don't change the order of the icons
 
       node_invert
@@ -1317,8 +1298,7 @@ if(WITH_BLENDER)
       normals_vertex
       normals_vertex_face
 
-	  # letter o
-
+      # letter o
       object_contents
       object_data
       object_datamode
@@ -1395,8 +1375,7 @@ if(WITH_BLENDER)
       overlap
       overlay
 
-	  # letter p
-
+      # letter p
       package
       packisland
       paint_add
@@ -1479,7 +1458,7 @@ if(WITH_BLENDER)
       points_to_curves
       points_to_vertices
       pokefaces
-	  pole
+      pole
       polygonsides
       polyline_hide
       polyline_show
@@ -1504,7 +1483,7 @@ if(WITH_BLENDER)
 
       prop_off # bfa - don't change the order of the icons
       prop_on # bfa - don't change the order of the icons
-	  prop_con # bfa - don't change the order of the icons
+      prop_con # bfa - don't change the order of the icons
 
       prop_projected
       propagate
@@ -1517,15 +1496,13 @@ if(WITH_BLENDER)
       push_pose
       push_pull
 
-	  # letter q
-
+      # letter q
       quadview
       quaternion_to_rotation
       question
       quit
 
-	  # letter r
-
+      # letter r
       radio
       radiobut_off
       radiobut_on
@@ -1572,8 +1549,8 @@ if(WITH_BLENDER)
       reproject
       reset
 
-	  # bfa-don't change the order of the icons
-	  restrict_color_on
+      # bfa-don't change the order of the icons
+      restrict_color_on
       restrict_color_off
       restrict_render_on
       restrict_render_off
@@ -1581,8 +1558,8 @@ if(WITH_BLENDER)
       restrict_select_off
       restrict_view_on
       restrict_view_off
-	  ###
 
+      # ##
       retopo
       reverse_colors
       reverse_uvs
@@ -1637,8 +1614,7 @@ if(WITH_BLENDER)
       rotation_to_quaternion
       ruler
 
-	  # letter s
-
+      # letter s
       sample_index
       sample_keyframes
       sample_nearest
@@ -1910,8 +1886,7 @@ if(WITH_BLENDER)
       syntax_on
       system
 
-	  # letter t
-
+      # letter t
       tag
       temp
       template
@@ -1976,8 +1951,7 @@ if(WITH_BLENDER)
       tristoquads
       type
 
-	  # letter u
-
+      # letter u
       uglypackage
       ui
       uncomment
@@ -1988,19 +1962,19 @@ if(WITH_BLENDER)
       unicode
       unindent
 
-	  # bfa - don't change the order of the icons
+      # bfa - don't change the order of the icons
       unlinked
-	  linked
+      linked
       unlocked
-	  locked
+      locked
       unpinned
-	  pinned
-	  ###
+      pinned
 
+      # ##
       unsubdivide
       unwrap_abf
       unwrap_lscm
-	  unwrap_minstretch
+      unwrap_minstretch
       url
       user
       uv
@@ -2011,8 +1985,7 @@ if(WITH_BLENDER)
       uv_sync_select
       uv_vertexsel
 
-	  # letter v
-
+      # letter v
       value_to_selection
       value_to_string
       vector_displace
@@ -2062,13 +2035,13 @@ if(WITH_BLENDER)
       viewport_transform
       viewzoom
 
-	  # bfa - don't change the order of the icons
-	  vis_sel_11
+      # bfa - don't change the order of the icons
+      vis_sel_11
       vis_sel_10
-	  vis_sel_01
-	  vis_sel_00
-	  ####
+      vis_sel_01
+      vis_sel_00
 
+      # ###
       visual_loc_rot
       visual_loc_rot_scale
       visual_loc_scale
@@ -2084,8 +2057,7 @@ if(WITH_BLENDER)
       voroni_tex
       vpaint_hlt
 
-	  # letter w
-
+      # letter w
       walk_navigation
       wall
       warning
@@ -2115,19 +2087,16 @@ if(WITH_BLENDER)
       world
       wpaint_hlt
 
-	  # letter x
-
+      # letter x
       x
       x_icon
       xray
 
-	  # letter y
-
+      # letter y
       y_icon
       yen
 
-	  # letter z
-
+      # letter z
       z_icon
       zoom_all
       zoom_border
@@ -2140,14 +2109,12 @@ if(WITH_BLENDER)
       zoomin
       zoomout
 
-	  # letter unsorted
-
+      # letter unsorted
       mod_instance
       outliner_data_hair
       outliner_data_pointcloud
       texture_data
       world_data
-
 
       # ------------------------- large --------------------------
       cancel_large
@@ -2164,8 +2131,7 @@ if(WITH_BLENDER)
       blender_large
       blender_logo_large
 
-
-      #  The following are used when creating the Event Icons.
+      # The following are used when creating the Event Icons.
       key_backspace
       key_backspace_filled
       key_command
@@ -2192,10 +2158,10 @@ if(WITH_BLENDER)
       key_tab_filled
       key_windows
       key_windows_filled
-
     )
     set(SVG_CONTENTS_H)
     set(SVG_CONTENTS_C)
+
     foreach(svg ${SVG_FILENAMES_NOEXT})
       data_to_c_simple(../../../../release/datafiles/icons_svg/${svg}.svg SRC)
       string(TOUPPER ${svg} svg_name_upper)
@@ -2206,6 +2172,7 @@ if(WITH_BLENDER)
         "case ICON_${svg_name_upper}: return datatoc_${svg}_svg\;\n"
       )
     endforeach()
+
     unset(svg_name_upper)
 
     list(JOIN SVG_CONTENTS_C "" SVG_CONTENTS_C)
@@ -2226,6 +2193,7 @@ if(WITH_BLENDER)
 
     list(APPEND SRC ${CMAKE_CURRENT_BINARY_DIR}/svg_icons.h)
     list(APPEND SRC ${CMAKE_CURRENT_BINARY_DIR}/svg_icons.cc)
+
     # Blend files.
     data_to_c_simple(../../../../release/datafiles/preview.blend SRC)
     data_to_c_simple(../../../../release/datafiles/preview_grease_pencil.blend SRC)
@@ -2236,7 +2204,6 @@ if(WITH_BLENDER)
     unset(SVG_CONTENTS_H)
     unset(SVG_CONTENTS_C)
     unset(SVG_FILENAMES_NOEXT)
-
   endif()
 
   data_to_c_simple(../../../../release/datafiles/startup.blend SRC)
