@@ -1,0 +1,67 @@
+name: Nightly Build
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+
+      c_compiler:
+        required: true
+        type: string
+
+      cpp_compiler:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ${{ inputs.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "build-type=Release" >> "$GITHUB_OUTPUT"
+
+    - name: Install deps and download libraries (Ubuntu)
+      working-directory: ${{ github.workspace }}
+      if: ${{ inputs.os == 'ubuntu-latest' }}
+      run: |
+        ./build_files/build_environment/install_linux_packages.py
+        ./build_files/utils/make_update.py --use-linux-libraries
+    
+    - name: Run make update
+      working-directory: ${{ github.workspace }}
+      run: python ./build_files/utils/make_update.py
+
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: >
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=${{ inputs.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ inputs.c_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ steps.strings.outputs.build-type }}
+        -S ${{ github.workspace }}
+
+    - name: Build
+      # Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ steps.strings.outputs.build-type }}
+
+    # - name: Test
+    #   working-directory: ${{ steps.strings.outputs.build-output-dir }}
+    #   # Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+    #   # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+    #   run: ctest --build-config ${{ steps.strings.outputs.build-type }}
+
+    - name: Upload Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: Bforartists-Nightly-${{ runner.os }}-${{ runner.arch }}
+        path: ${{ steps.strings.outputs.build-output-dir }}/bin/
