@@ -48,7 +48,7 @@ jobs:
 
     - shell: bash
       run: >
-        cd ${{ ${{ github.workspace }} }}
+        cd ${{ github.workspace }}
         if [ ${{ matrix.os }} == "windows-latest" ]; then
           ./make.bat update
         else
