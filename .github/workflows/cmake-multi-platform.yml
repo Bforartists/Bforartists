@@ -46,11 +46,11 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - if: matrix.os == "windows.latest"
-      shell: cmd
-      run: cd ${{ github.workspace }} && make update
-    - if: matrix.os != "windows.latest"
-      run: cd ${{ github.workspace }} && make update
+    # - if: matrix.os == "windows.latest"
+    #   shell: cmd
+    #   run: cd ${{ github.workspace }} && make update
+    # - if: matrix.os != "windows.latest"
+    #   run: cd ${{ github.workspace }} && make update
 
 
     - name: Configure CMake
