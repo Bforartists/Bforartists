@@ -1,0 +1,14 @@
+name: Linux
+on:
+  push:
+      branches: [ "master" ]
+  pull_request:
+      branches: [ "master" ]
+
+jobs:
+  build:
+    uses: ./.github/workflows/nightly-build.yml
+    with:
+      os: "ubuntu-latest"
+      c_compiler: "clang"
+      cpp_compiler: "clang++"
