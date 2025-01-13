@@ -2,7 +2,9 @@
 
 Note that the nightlies produced by Github Actions are not meant for productive work. They miss Cuda and Optix. And will most likely not work. The purpose of the nightlies is to  show that the code compiles. Please have a look at the download section at our page. The devbuilds there are working versions.
 
-[![Nightly Build](https://github.com/Bforartists/Bforartists/actions/workflows/nightly-build.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/nightly-build.yml)
+[![Ubuntu](https://github.com/Bforartists/Bforartists/actions/workflows/linux.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/linux.yml)
+[![macOS](https://github.com/Bforartists/Bforartists/actions/workflows/mac.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/mac.yml)
+[![Windows](https://github.com/Bforartists/Bforartists/actions/workflows/windows.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/windows.yml)
 
 Bforartists is a fork of the popular 3D software Blender, with the goal to improve the graphical UI, and to increase the usability.
 
