@@ -46,6 +46,15 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
+    - name: Run make update (Windows)
+      shell: cmd
+      if: matrix.os == "windows-latest"
+      run: cd ${{ github.workspace }} && make.bat update
+
+    - name: Run make update (non Windows)
+      if: matrix.os != "windows-latest
+      run: cd ${{ github.workspace }} && make update
+
     # - if: matrix.os == "windows.latest"
     #   shell: cmd
     #   run: cd ${{ github.workspace }} && make update
