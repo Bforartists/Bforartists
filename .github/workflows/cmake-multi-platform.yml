@@ -40,20 +40,28 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set reusable strings
-      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Run make update (Windows)
+    - name: Install deps and update repo (Windows)
       shell: cmd
+      working-directory: ${{ github.workspace }}
       if: ${{ matrix.os == 'windows-latest' }}
-      run: cd ${{ github.workspace }} && make.bat update
+      run: python ./build_files/utils/make_update.py
 
-    - name: Run make update (non Windows)
-      if: ${{ matrix.os != 'windows-latest' }}
-      run: cd ${{ github.workspace }} && make update
+    - name: Install deps and update repo (Ubuntu)
+      working-directory: ${{ github.workspace }}
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: >
+        ./build_files/build_environment/install_linux_packages.py
+        ./build_files/utils/make_update.py --use-linux-libraries
+    
+    - name: Install deps and update repo (macOS)
+      working-directory: ${{ github.workspace }}
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: python ./build_files/utils/make_update.py
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
