@@ -1,4 +1,4 @@
-name: CMake on multiple platforms
+name: Nightly Build
 
 on:
   push:
