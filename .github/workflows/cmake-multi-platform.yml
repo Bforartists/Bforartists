@@ -54,7 +54,7 @@ jobs:
     - name: Install deps and update repo (Ubuntu)
       working-directory: ${{ github.workspace }}
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: >
+      run: |
         ./build_files/build_environment/install_linux_packages.py
         ./build_files/utils/make_update.py --use-linux-libraries
     
