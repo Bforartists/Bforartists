@@ -808,8 +808,7 @@ class TOOLBAR_MT_primitives(Menu):
             if addon_prefs.primitives_image:
 
                 row = layout.row(align=True)
-                row.operator("object.load_reference_image", text="", icon='IMAGE_REFERENCE')
-                row.operator("object.load_background_image", text="", icon='IMAGE_BACKGROUND')
+                row.operator("image.import_as_mesh_planes", text="", icon='MESH_PLANE')
 
             if addon_prefs.primitives_lightprobe:
 
@@ -947,8 +946,7 @@ class TOOLBAR_MT_primitives(Menu):
                 if addon_prefs.primitives_image:
 
                     row = layout.row(align=True)
-                    row.operator("object.load_reference_image", text="", icon='IMAGE_REFERENCE')
-                    row.operator("object.load_background_image", text="", icon='IMAGE_BACKGROUND')
+                    row.operator("image.import_as_mesh_planes", text="", icon='MESH_PLANE')
 
                 if addon_prefs.primitives_lightprobe:
 
