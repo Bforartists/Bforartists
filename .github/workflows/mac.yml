@@ -1,0 +1,14 @@
+name: macOS
+on:
+  push:
+      branches: [ "master" ]
+  pull_request:
+      branches: [ "master" ]
+
+jobs:
+  build:
+    uses: ./.github/workflows/nightly-build.yml
+    with:
+      os: "macos-latest"
+      c_compiler: "clang"
+      cpp_compiler: "clang++"
