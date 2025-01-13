@@ -1,0 +1,14 @@
+name: Windows
+on:
+  push:
+      branches: [ "master" ]
+  pull_request:
+      branches: [ "master" ]
+
+jobs:
+  build:
+    uses: ./.github/workflows/nightly-build.yml
+    with:
+      os: "windows-latest"
+      c_compiler: "cl"
+      cpp_compiler: "cl"
