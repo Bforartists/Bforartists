@@ -87,5 +87,5 @@ jobs:
     - name: Upload Build
       uses: actions/upload-artifact@v4
       with:
-        name: Bforartists-Release-${{ runner.os }}-${{ runner.arch }}
+        name: Bforartists-Nightly-${{ runner.os }}-${{ runner.arch }}
         path: ${{ steps.strings.outputs.build-output-dir }}/bin/
