@@ -1,7 +1,7 @@
 # generic files to ignore
 .*
 # BFA: include .github folder
-!.github
+!/.github/
 
 # python temp paths
 __pycache__/
