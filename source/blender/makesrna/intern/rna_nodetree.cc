@@ -12427,7 +12427,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeIndexOfNearest", nullptr, ICON_INDEX_OF_NEAREST, "Add an Index of Nearest node\nFind the nearest element in a group. Similar to the \"Sample Nearest\" node");
   define(brna, "GeometryNode", "GeometryNodeIndexSwitch", def_geo_index_switch, ICON_INDEX_SWITCH, "Add an Index Switch node\nChoose between an arbitrary number of values with an index");
   define(brna, "GeometryNode", "GeometryNodeInputActiveCamera", nullptr, ICON_VIEW_SWITCHTOCAM, "Add an Active Camera node\nRetrieve the scene's active camera");
-  define(brna, "GeometryNode", "GeometryNodeInputCollection", def_geo_input_collection, ICON_NONE, "Add an Input Collection node\nOutput a single collection");
+  define(brna, "GeometryNode", "GeometryNodeInputCollection", def_geo_input_collection, ICON_OUTLINER_COLLECTION, "Add an Input Collection node\nOutput a single collection");
   define(brna, "GeometryNode", "GeometryNodeInputCurveHandlePositions", nullptr, ICON_CURVE_HANDLE_POSITIONS, "Add a Curve Handle Positions node\nRetrieve the position of each Bézier control point's handles");
   define(brna, "GeometryNode", "GeometryNodeInputCurveTilt", nullptr, ICON_CURVE_TILT, "Add a Curve Tilt node\nRetrieve the angle at each control point used to twist the curve's normal around its tangent");
   define(brna, "GeometryNode", "GeometryNodeInputEdgeSmooth", nullptr, ICON_SHADING_EDGE_SMOOTH, "Add a Is Edge Smooth node\nSRetrieve whether each edge is marked for smooth or split normals");
@@ -12449,7 +12449,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeInputNamedAttribute", nullptr, ICON_NAMED_ATTRIBUTE, "Add a Named Attributes node\nRetrieve the data of a specified attribute");
   define(brna, "GeometryNode", "GeometryNodeInputNamedLayerSelection", nullptr, ICON_NAMED_LAYER_SELECTION, "Add a Layere Selection Node\nOutput a selection of a Grease Pencil layer");
   define(brna, "GeometryNode", "GeometryNodeInputNormal", nullptr, ICON_RECALC_NORMALS, "Add a Normal node\nRetrieve a unit length vector indicating the direction pointing away from the geometry at each element");
-  define(brna, "GeometryNode", "GeometryNodeInputObject", def_geo_input_object, ICON_NONE, "Add an Object Input node\nOutput a single object");
+  define(brna, "GeometryNode", "GeometryNodeInputObject", def_geo_input_object, ICON_OBJECT_DATA, "Add an Object Input node\nOutput a single object");
   define(brna, "GeometryNode", "GeometryNodeInputPosition", nullptr, ICON_POSITION, "Add a Position node\nRetrieve a vector indicating the location of each element");
   define(brna, "GeometryNode", "GeometryNodeInputRadius", nullptr, ICON_RADIUS, "Add a Radius node\nRetrieve the radius at each point on curve or point cloud geometry");
   define(brna, "GeometryNode", "GeometryNodeInputSceneTime", nullptr, ICON_TIME, "Add a Scene Time node\nRetrieve the current time in the scene's animation in units of seconds or frames");
