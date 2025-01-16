@@ -4989,6 +4989,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
+            col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
             col.operator("grease_pencil.set_uniform_thickness", text="Normalize Thickness", icon = "MOD_THICKNESS")
             col.operator("grease_pencil.set_uniform_opacity", text="Normalize Opacity", icon = "MOD_OPACITY")
 
@@ -5018,10 +5019,11 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
+                row.operator("grease_pencil.set_start_point", text="", icon="STARTPOINT")
                 row.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
-                row.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
                 row = col.row(align=True)
+                row.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
                 row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
 
 
@@ -5042,6 +5044,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
+                row.operator("grease_pencil.set_start_point", text="", icon="STARTPOINT")
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
@@ -5072,6 +5075,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
                 col.operator("grease_pencil.stroke_switch_direction", text="", icon = "FLIP")
+                col.operator("grease_pencil.set_start_point", text="", icon="STARTPOINT")
                 col.operator("grease_pencil.set_uniform_thickness", text="", icon = "MOD_THICKNESS")
                 col.operator("grease_pencil.set_uniform_opacity", text="", icon = "MOD_OPACITY")
 
