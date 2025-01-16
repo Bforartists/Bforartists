@@ -40,7 +40,7 @@ class VIEW3D_MT_View_Menu(Menu):
         layout.operator("view3d.view_all").center = False
         layout.separator()
 
-        layout.operator("view3d.view_persportho", text="Perspective/Orthographic")
+        layout.operator("view3d.view_persportho", text="Perspective/Orthographic", icon="VIEW_ORTHO")
         layout.menu("VIEW3D_MT_view_local")
         layout.separator()
 
