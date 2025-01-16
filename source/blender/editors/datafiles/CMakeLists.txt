@@ -1714,6 +1714,7 @@ if(WITH_BLENDER)
       seq_multiply
       seq_preview
       seq_remove_gaps
+      seq_remove_gaps_all
       seq_sequencer
       seq_slip_contents
       seq_snap_strip
