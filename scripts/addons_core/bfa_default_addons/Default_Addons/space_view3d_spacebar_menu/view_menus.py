@@ -31,9 +31,12 @@ class VIEW3D_MT_View_Menu(Menu):
         layout.menu("VIEW3D_MT_Shade")
         layout.separator()
 
-        layout.operator("view3d.view_selected", text="Frame Selected").use_all_regions = False
+        if context.mode in ['PAINT_TEXTURE', 'PAINT_VERTEX', 'PAINT_WEIGHT', 'SCULPT']:
+            layout.operator("view3d.view_selected", text="Frame Last Stroke", icon="VIEW_SELECTED").use_all_regions = False
+        else:
+            layout.operator("view3d.view_selected", text="Frame Selected", icon="VIEW_SELECTED").use_all_regions = False
         if view.region_quadviews:
-            layout.operator("view3d.view_selected", text="Frame Selected (Quad View)").use_all_regions = True
+            layout.operator("view3d.view_selected", text="Frame Selected (Quad View)", icon="ALIGNCAMERA_ACTIVE").use_all_regions = True
         layout.operator("view3d.view_all").center = False
         layout.separator()
 
