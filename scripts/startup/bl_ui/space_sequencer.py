@@ -1038,7 +1038,7 @@ class SEQUENCER_MT_strip_transform(Menu):
 
             layout.separator()
             layout.operator("sequencer.gap_remove", icon="SEQ_REMOVE_GAPS").all = False
-            layout.operator("sequencer.gap_remove", text="Remove Gaps (All)", icon="SEQ_REMOVE_GAPS").all = True
+            layout.operator("sequencer.gap_remove", text="Remove Gaps (All)", icon="SEQ_REMOVE_GAPS_ALL").all = True
             layout.operator("sequencer.gap_insert", icon="SEQ_INSERT_GAPS")
 
 

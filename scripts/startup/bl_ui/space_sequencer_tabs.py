@@ -238,8 +238,9 @@ class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
 
             col.separator()
 
-            col.operator("sequencer.gap_remove", icon = "SEQ_REMOVE_GAPS").all = False
-            col.operator("sequencer.gap_insert", icon = "SEQ_INSERT_GAPS")
+            col.operator("sequencer.gap_remove", text="Remove Gap", icon = "SEQ_REMOVE_GAPS").all = False
+            col.operator("sequencer.gap_remove", text="Remove Gap (All)", icon = "SEQ_REMOVE_GAPS_ALL").all = True
+            col.operator("sequencer.gap_insert", text="Inset Gap", icon = "SEQ_INSERT_GAPS")
 
         # icon buttons
         else:
@@ -263,6 +264,9 @@ class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("sequencer.swap", text="", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
                 row.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS").all = False
+                row.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS_ALL").all = True
+
+                row = col.row(align=True)
                 row.operator("sequencer.gap_insert", text="", icon = "SEQ_INSERT_GAPS")
 
             elif column_count == 2:
@@ -284,6 +288,7 @@ class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
                 row.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS").all = False
 
                 row = col.row(align=True)
+                row.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS_ALL").all = True
                 row.operator("sequencer.gap_insert", text="", icon = "SEQ_INSERT_GAPS")
 
             elif column_count == 1:
@@ -305,6 +310,7 @@ class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
                 col.separator()
 
                 col.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS").all = False
+                col.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS_ALL").all = True
                 col.operator("sequencer.gap_insert", text="", icon = "SEQ_INSERT_GAPS")
 
 
