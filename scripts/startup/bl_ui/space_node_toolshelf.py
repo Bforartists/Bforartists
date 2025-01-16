@@ -3591,6 +3591,10 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeInputBool"
 
+            props = col.operator("node.add_node", text = "Collection           ", icon = "OUTLINER_COLLECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputCollection"
+
             props = col.operator("node.add_node", text=" Color                    ", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
@@ -3606,6 +3610,10 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Material               ", icon = "NODE_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterial"
+
+            props = col.operator("node.add_node", text = "Object               ", icon = "OBJECT_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeInputObject"
 
             props = col.operator("node.add_node", text=" Rotation               ", icon = "ROTATION")
             props.use_transform = True
@@ -3636,6 +3644,10 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeInputBool"
 
+            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_COLLECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputCollection"
+
             props = flow.operator("node.add_node", text = "", icon = "COLOR")
             props.use_transform = True
             props.type = "FunctionNodeInputColor"
@@ -3651,6 +3663,10 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeInputMaterial"
+
+            props = flow.operator("node.add_node", text = "", icon = "OBJECT_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeInputObject"
 
             props = flow.operator("node.add_node", text="", icon = "ROTATION")
             props.use_transform = True
