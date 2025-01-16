@@ -12565,10 +12565,10 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeWarning", nullptr, ICON_ERROR, "Add a Warning node\nCreate custom warnings in node groups");
 
   /* Node group types are currently defined for each tree type individually. */
-  define(brna, "ShaderNode", "ShaderNodeGroup", def_group, ICON_NODE_MAKEGROUP, "Create a node group from the selected nodes");
-  define(brna, "CompositorNode", "CompositorNodeGroup", def_group, ICON_NODE_MAKEGROUP, "Create a node group from the selected nodes");
-  define(brna, "TextureNode", "TextureNodeGroup", def_group, ICON_NODE_MAKEGROUP, "Create a node group from the selected nodes");
-  define(brna, "GeometryNode", "GeometryNodeGroup", def_group, ICON_NODE_MAKEGROUP, "Create a node group from the selected nodes");
+  define(brna, "ShaderNode", "ShaderNodeGroup", def_group, ICON_NONE, "Create a node group from the selected nodes"); /* bfa - don't need 2 nodegroups icons */
+  define(brna, "CompositorNode", "CompositorNodeGroup", def_group, ICON_NONE, "Create a node group from the selected nodes"); /* bfa - don't need 2 nodegroups icons */
+  define(brna, "TextureNode", "TextureNodeGroup", def_group, ICON_NONE, "Create a node group from the selected nodes"); /* bfa - don't need 2 nodegroups icons */
+  define(brna, "GeometryNode", "GeometryNodeGroup", def_group, ICON_NONE, "Create a node group from the selected nodes"); /* bfa - don't need 2 nodegroups icons */
 
   /* clang-format on */
 }
