@@ -30,6 +30,7 @@
 #include "ED_asset.hh"
 #include "ED_keyframing.hh"
 #include "ED_screen.hh"
+#include "UI_view2d.hh"
 
 #include "UI_abstract_view.hh"
 #include "UI_interface.hh"
@@ -1399,6 +1400,16 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
     }
   }
 
+  /* Add view2d reset option if view2d is initialized */
+  if (region->v2d.flag & V2D_IS_INIT) {
+    wmOperatorType *ot = WM_operatortype_find("VIEW2D_OT_reset", true);
+    if (ot) {
+      uiItemS(layout);
+      uiItemFullO_ptr(layout, ot, IFACE_("Reset View"), ICON_ZOOM_RESET, nullptr, WM_OP_INVOKE_DEFAULT, eUI_Item_Flag(0), nullptr);
+      uiItemS(layout);
+    }
+  }
+
   MenuType *mt = WM_menutype_find("UI_MT_button_context_menu", true);
   if (mt) {
     UI_menutype_draw(C, mt, uiLayoutColumn(layout, false));
@@ -1421,7 +1432,7 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
 {
   bScreen *screen = CTX_wm_screen(C);
   const bool has_panel_category = UI_panel_category_is_visible(region);
-  const bool any_item_visible = has_panel_category;
+  const bool any_item_visible = has_panel_category || (region->v2d.flag & V2D_IS_INIT);
 
   if (!any_item_visible) {
     return;
@@ -1450,6 +1461,27 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
       but->flag |= UI_BUT_HAS_SEP_CHAR;
     }
   }
+
+  /* View2D reset option if view2d is initialized */
+  if (region->v2d.flag & V2D_IS_INIT) {
+    wmOperatorType *ot = WM_operatortype_find("VIEW2D_OT_reset", true);
+    if (ot) {
+      uiItemS(layout);
+      uiItemFullO_ptr(layout,
+                     ot,
+                     IFACE_("Reset View"),
+                     ICON_ZOOM_RESET,
+                     nullptr,
+                     WM_OP_EXEC_DEFAULT,
+                     eUI_Item_Flag(0),
+                     nullptr);
+      uiItemS(layout);
+      uiBlock *block = uiLayoutGetBlock(layout);
+      uiBut *but = static_cast<uiBut *>(block->buttons.last);
+      but->flag |= UI_BUT_HAS_SEP_CHAR;
+    }
+  }
+
   UI_popup_menu_end(C, pup);
 }
 
