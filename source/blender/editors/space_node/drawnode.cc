@@ -1545,7 +1545,11 @@ static void std_node_socket_interface_draw(ID *id,
       uiItemR(col, &ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), ICON_NONE);
       break;
     }
-    case SOCK_BOOLEAN:
+    case SOCK_BOOLEAN: {
+      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+      uiItemR(col, &ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), 0);
+      break;
+    }
     case SOCK_ROTATION:
     case SOCK_RGBA:
     case SOCK_OBJECT:
