@@ -972,29 +972,29 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
     uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME); /*BFA icon*/
     uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE); /*BFA icon*/
     if (has_children_of_type.mesh || has_children_of_type.gpencil) {
-      uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_ARMATURE_AUTO);
+      uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_AUTO); /*BFA icon*/
     }
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_BONE);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_BONE_RELATIVE);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_BONE); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_BONE_RELATIVE); /*BFA icon*/
   }
   else if (parent->type == OB_CURVES_LEGACY) {
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_CURVE);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_FOLLOW);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_PATH_CONST);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_CURVE); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_FOLLOW); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_PATH_CONST); /*BFA icon*/
   }
   else if (parent->type == OB_LATTICE) {
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_LATTICE);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_LATTICE, "type", PAR_LATTICE); /*BFA icon*/
   }
   else if (parent->type == OB_MESH) {
     if (has_children_of_type.curves) {
-      uiItemO(layout, "Object (Attach Curves to Surface)", ICON_NONE, "CURVES_OT_surface_set");
+      uiItemO(layout, "Object (Attach Curves to Surface)", ICON_PARENT_CURVE, "CURVES_OT_surface_set"); /*BFA icon*/
     }
   }
 
   /* vertex parenting */
   if (OB_TYPE_SUPPORT_PARVERT(parent->type)) {
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_VERTEX);
-    uiItemEnumO_ptr(layout, ot, nullptr, ICON_NONE, "type", PAR_VERTEX_TRI);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_VERTEX);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_VERTEX_TRI);
   }
 
   UI_popup_menu_end(C, pup);
