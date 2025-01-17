@@ -2105,6 +2105,7 @@ if(WITH_BLENDER)
       zoom_in
       zoom_out
       zoom_previous
+      zoom_reset
       zoom_selected
       zoom_set
       zoomin
