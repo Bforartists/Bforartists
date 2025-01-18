@@ -1405,7 +1405,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
     wmOperatorType *ot = WM_operatortype_find("VIEW2D_OT_reset", true);
     if (ot) {
       uiItemS(layout);
-      uiItemFullO_ptr(layout, ot, IFACE_("Reset View"), ICON_ZOOM_RESET, nullptr, WM_OP_INVOKE_DEFAULT, eUI_Item_Flag(0), nullptr);
+      uiItemFullO_ptr(layout, ot, IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, nullptr, WM_OP_INVOKE_DEFAULT, eUI_Item_Flag(0), nullptr);
       uiItemS(layout);
     }
   }
@@ -1469,7 +1469,7 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
       uiItemS(layout);
       uiItemFullO_ptr(layout,
                      ot,
-                     IFACE_("Reset View"),
+                     IFACE_("Reset Panel Zoom"),
                      ICON_ZOOM_RESET,
                      nullptr,
                      WM_OP_EXEC_DEFAULT,
