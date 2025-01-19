@@ -59,6 +59,7 @@ void Instance::init()
     state.xray_enabled = XRAY_ACTIVE(state.v3d);
     state.xray_enabled_and_not_wire = state.xray_enabled && (state.v3d->shading.type > OB_WIRE);
     state.xray_opacity = state.xray_enabled ? XRAY_ALPHA(state.v3d) : 1.0f;
+    state.xray_flag_enabled = SHADING_XRAY_FLAG_ENABLED(state.v3d->shading);
 
     if (!state.hide_overlays) {
       state.overlay = state.v3d->overlay;
@@ -601,7 +602,7 @@ bool Instance::object_is_selected(const ObjectRef &ob_ref)
 
 bool Instance::object_is_paint_mode(const Object *object)
 {
-  if (object->type == OB_GREASE_PENCIL && (state.object_mode & OB_MODE_ALL_PAINT_GPENCIL)) {
+  if (object->type == OB_GREASE_PENCIL && (object->mode & OB_MODE_ALL_PAINT_GPENCIL)) {
     return true;
   }
   return (object == state.object_active) && (state.object_mode & OB_MODE_ALL_PAINT);

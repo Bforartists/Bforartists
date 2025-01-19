@@ -10,7 +10,7 @@
 
 #include "BLT_translation.hh"
 
-#include "WM_api.hh"
+#include "WM_keymap.hh"
 
 #include "UI_interface.hh"
 #include "interface_intern.hh"
@@ -85,6 +85,10 @@ int uiTemplateStatusBarModalItem(uiLayout *layout,
 #endif
       for (int j = 0; j < ARRAY_SIZE(icon_mod) && icon_mod[j]; j++) {
         uiItemL(layout, "", icon_mod[j]);
+        const float offset = ui_event_icon_offset(icon_mod[j]);
+        if (offset != 0.0f) {
+          uiItemS_ex(layout, offset);
+        }
       }
       uiItemL(layout, "", icon);
 
