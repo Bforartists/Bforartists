@@ -56,7 +56,7 @@ def shot_baseline_y_pos(context):
 def draw_shot_strip(
     region: bpy.types.Region,
     drawer: OverlayDrawer,
-    strip: bpy.types.SceneSequence,
+    strip: bpy.types.Strip,
     active: bool = False,
 ):
     """
@@ -145,7 +145,7 @@ def draw_sequence_overlay_cb(drawer: OverlayDrawer):
     scene_strips = [
         s
         for s in sync_settings.master_scene.sequence_editor.sequences
-        if isinstance(s, bpy.types.SceneSequence)
+        if isinstance(s, bpy.types.Strip)
         and s.scene == context.scene
         and s != master_strip
     ]
