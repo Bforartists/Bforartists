@@ -7,7 +7,6 @@
 #include "BKE_curves.hh"
 #include "BKE_deform.hh"
 #include "BKE_grease_pencil.hh"
-#include "BKE_material.hh"
 #include "BKE_paint.hh"
 
 #include "BLI_array_utils.hh"
@@ -1360,15 +1359,16 @@ static void GREASE_PENCIL_OT_interpolate_sequence(wmOperatorType *ot)
       "easing interpolation is applied to");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_GPENCIL);
 
-  RNA_def_float(ot->srna,
-                "back",
-                1.702f,
-                0.0f,
-                FLT_MAX,
-                "Back",
-                "Amount of overshoot for 'back' easing",
-                0.0f,
-                FLT_MAX);
+  prop = RNA_def_float(ot->srna,
+                       "back",
+                       1.702f,
+                       0.0f,
+                       FLT_MAX,
+                       "Back",
+                       "Amount of overshoot for 'back' easing",
+                       0.0f,
+                       FLT_MAX);
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_GPENCIL);
 
   RNA_def_float(ot->srna,
                 "amplitude",
