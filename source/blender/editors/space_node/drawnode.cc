@@ -20,6 +20,7 @@
 #include "BKE_curve.hh"
 #include "BKE_image.hh"
 #include "BKE_main.hh"
+#include "BKE_main_invariants.hh"
 #include "BKE_node.hh"
 #include "BKE_node_enum.hh"
 #include "BKE_node_legacy_types.hh"
@@ -227,7 +228,7 @@ NodeResizeDirection node_get_resize_direction(const SpaceNode &snode,
 {
   const float size = NODE_RESIZE_MARGIN * math::max(snode.runtime->aspect, 1.0f);
 
-  if (node->type_legacy == NODE_FRAME) {
+  if (node->is_frame()) {
     NodeFrame *data = (NodeFrame *)node->storage;
 
     /* shrinking frame size is determined by child nodes */
@@ -1008,7 +1009,7 @@ static void node_property_update_default(Main *bmain, Scene * /*scene*/, Pointer
   bNodeTree *ntree = (bNodeTree *)ptr->owner_id;
   bNode *node = (bNode *)ptr->data;
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(*bmain);
+  BKE_main_ensure_invariants(*bmain);
 }
 
 static void node_socket_template_properties_update(blender::bke::bNodeType *ntype,
@@ -2377,8 +2378,8 @@ static NodeLinkDrawConfig nodelink_get_draw_config(const bContext &C,
                           (field_link ? 0.7f : 1.0f);
   draw_config.has_back_link = gizmo_link;
   draw_config.highlighted = link.flag & NODE_LINK_TEMP_HIGHLIGHT;
-  draw_config.drawarrow = ((link.tonode && (link.tonode->type_legacy == NODE_REROUTE)) &&
-                           (link.fromnode && (link.fromnode->type_legacy == NODE_REROUTE)));
+  draw_config.drawarrow = ((link.tonode && link.tonode->is_reroute()) &&
+                           (link.fromnode && link.fromnode->is_reroute()));
   draw_config.drawmuted = (link.flag & NODE_LINK_MUTED);
 
   UI_GetThemeColor4fv(th_col3, draw_config.outline_color);

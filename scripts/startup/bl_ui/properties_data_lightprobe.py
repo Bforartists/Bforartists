@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 from bpy.types import Panel
+from bpy.app.translations import contexts as i18n_contexts
 from .space_properties import PropertiesAnimationMixin
 
 
@@ -77,13 +78,11 @@ class DATA_PT_lightprobe(DataButtonsPanel, Panel):
             col.prop(probe, "falloff")
 
         sub = col.column(align=True)
-        if probe.type != 'PLANE':
-            sub.prop(probe, "clip_start", text="Clipping Start")
-        else:
+        if probe.type == 'PLANE':
             sub.prop(probe, "clip_start", text="Clipping Offset")
-
-        if probe.type != 'PLANE':
-            sub.prop(probe, "clip_end", text="End")
+        else:
+            sub.prop(probe, "clip_start", text="Clipping Start")
+            sub.prop(probe, "clip_end", text="End", text_ctxt=i18n_contexts.id_camera)
 
 
 class DATA_PT_lightprobe_eevee_next(DataButtonsPanel, Panel):
@@ -181,7 +180,7 @@ class DATA_PT_lightprobe_capture(DataButtonsPanel, Panel):
         if probe.type == 'SPHERE':
             sub = col.column(align=True)
             sub.prop(probe, "clip_start", text="Clipping Start")
-            sub.prop(probe, "clip_end", text="End")
+            sub.prop(probe, "clip_end", text="End", text_ctxt=i18n_contexts.id_camera)
         elif probe.type == 'PLANE':
             col.prop(probe, "clip_start", text="Clipping Offset")
 

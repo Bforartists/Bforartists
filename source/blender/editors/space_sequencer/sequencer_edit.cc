@@ -741,6 +741,7 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
 
     case LEFTMOUSE:
     case EVT_RETKEY:
+    case EVT_PADENTER:
     case EVT_SPACEKEY: {
       MEM_freeN(data->strip_array);
       MEM_freeN(data);
@@ -1199,111 +1200,91 @@ void SEQUENCER_OT_refresh_all(wmOperatorType *ot)
 /** \name Reassign Inputs Operator
  * \{ */
 
-int strip_effect_find_selected(Scene *scene,
-                               Strip *activeseq,
-                               int type,
-                               Strip **r_selseq1,
-                               Strip **r_selseq2,
-                               const char **r_error_str)
+bool strip_effect_get_new_inputs(Scene *scene,
+                                 bool ignore_active,
+                                 int num_inputs,
+                                 Strip **r_seq1,
+                                 Strip **r_seq2,
+                                 const char **r_error_str)
 {
   Editing *ed = SEQ_editing_get(scene);
   Strip *seq1 = nullptr, *seq2 = nullptr;
 
   *r_error_str = nullptr;
 
-  if (!activeseq) {
-    seq2 = SEQ_select_active_get(scene);
+  if (num_inputs == 0) {
+    *r_seq1 = *r_seq2 = nullptr;
+    return true;
   }
 
-  if (SEQ_effect_get_num_inputs(type) == 0) {
-    *r_selseq1 = *r_selseq2 = nullptr;
-    return 1;
+  blender::VectorSet<Strip *> new_inputs = SEQ_query_selected_strips(ed->seqbasep);
+  // Ignore sound strips for now (avoids unnecessary errors when connected strips are
+  // selected together, and the intent to operate on strips with video content is clear).
+  new_inputs.remove_if([&](Strip *strip) { return strip->type == STRIP_TYPE_SOUND_RAM; });
+
+  if (ignore_active) {
+    // If `ignore_active` is true, this function is being called from the reassign inputs
+    // operator, meaning the active strip must be the effect strip to reassign.
+    Strip *active_strip = SEQ_select_active_get(scene);
+    new_inputs.remove_if([&](Strip *strip) { return strip == active_strip; });
   }
 
-  LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
-    if (strip->flag & SELECT) {
-      if (strip->type == STRIP_TYPE_SOUND_RAM) {
-        *r_error_str = N_("Cannot apply effects to audio sequence strips");
-        return 0;
-      }
-      if (!ELEM(strip, activeseq, seq2)) {
-        if (seq2 == nullptr) {
-          seq2 = strip;
-        }
-        else if (seq1 == nullptr) {
-          seq1 = strip;
-        }
-        else {
-          *r_error_str = N_("Cannot apply effect to more than 2 sequence strips");
-          return 0;
-        }
-      }
+  if (new_inputs.size() > 2) {
+    *r_error_str = N_("Cannot apply effect to more than 2 sequence strips with video content");
+    return false;
+  }
+
+  if (num_inputs == 2) {
+    if (new_inputs.size() != 2) {
+      *r_error_str = N_("Exactly 2 selected sequence strips with video content are needed");
+      return false;
     }
+    seq1 = new_inputs[0];
+    seq2 = new_inputs[1];
+  }
+  else if (num_inputs == 1) {
+    if (new_inputs.size() != 1) {
+      *r_error_str = N_("Exactly one selected sequence strip with video content is needed");
+      return false;
+    }
+    seq1 = new_inputs[0];
   }
 
-  switch (SEQ_effect_get_num_inputs(type)) {
-    case 1:
-      if (seq2 == nullptr) {
-        *r_error_str = N_("At least one selected sequence strip is needed");
-        return 0;
-      }
-      if (seq1 == nullptr) {
-        seq1 = seq2;
-      }
-      ATTR_FALLTHROUGH;
-    case 2:
-      if (seq1 == nullptr || seq2 == nullptr) {
-        *r_error_str = N_("2 selected sequence strips are needed");
-        return 0;
-      }
-      break;
-  }
+  *r_seq1 = seq1;
+  *r_seq2 = seq2;
 
-  if (seq1 == nullptr && seq2 == nullptr) {
-    *r_error_str = N_("TODO: in what cases does this happen?");
-    return 0;
-  }
-
-  *r_selseq1 = seq1;
-  *r_selseq2 = seq2;
-
-  /* TODO(Richard): This function needs some refactoring, this is just quick hack for #73828. */
-  if (SEQ_effect_get_num_inputs(type) < 2) {
-    *r_selseq2 = nullptr;
-  }
-
-  return 1;
+  return true;
 }
 
 static int sequencer_reassign_inputs_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
-  Strip *seq1, *seq2, *last_seq = SEQ_select_active_get(scene);
+  Strip *seq1, *seq2;
+  Strip *active_strip = SEQ_select_active_get(scene);
   const char *error_msg;
+  const int num_inputs = SEQ_effect_get_num_inputs(active_strip->type);
 
-  if (SEQ_effect_get_num_inputs(last_seq->type) == 0) {
+  if (num_inputs == 0) {
     BKE_report(op->reports, RPT_ERROR, "Cannot reassign inputs: strip has no inputs");
     return OPERATOR_CANCELLED;
   }
 
-  if (!strip_effect_find_selected(scene, last_seq, last_seq->type, &seq1, &seq2, &error_msg) ||
-      SEQ_effect_get_num_inputs(last_seq->type) == 0)
-  {
+  if (!strip_effect_get_new_inputs(scene, true, num_inputs, &seq1, &seq2, &error_msg)) {
     BKE_report(op->reports, RPT_ERROR, error_msg);
     return OPERATOR_CANCELLED;
   }
   /* Check if reassigning would create recursivity. */
-  if (SEQ_relations_render_loop_check(seq1, last_seq) ||
-      SEQ_relations_render_loop_check(seq2, last_seq))
+  if (SEQ_relations_render_loop_check(seq1, active_strip) ||
+      SEQ_relations_render_loop_check(seq2, active_strip))
   {
     BKE_report(op->reports, RPT_ERROR, "Cannot reassign inputs: recursion detected");
     return OPERATOR_CANCELLED;
   }
 
-  last_seq->seq1 = seq1;
-  last_seq->seq2 = seq2;
+  active_strip->seq1 = seq1;
+  active_strip->seq2 = seq2;
 
-  int old_start = last_seq->start;
+  int old_start = active_strip->start;
 
   /* Force time position update for reassigned effects.
    * TODO(Richard): This is because internally startdisp is still used, due to poor performance of
@@ -1311,8 +1292,8 @@ static int sequencer_reassign_inputs_exec(bContext *C, wmOperator *op)
   SEQ_strip_lookup_invalidate(scene);
   SEQ_time_left_handle_frame_set(scene, seq1, SEQ_time_left_handle_frame_get(scene, seq1));
 
-  SEQ_relations_invalidate_cache_preprocessed(scene, last_seq);
-  SEQ_offset_animdata(scene, last_seq, (last_seq->start - old_start));
+  SEQ_relations_invalidate_cache_preprocessed(scene, active_strip);
+  SEQ_offset_animdata(scene, active_strip, (active_strip->start - old_start));
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
@@ -1325,8 +1306,8 @@ static bool sequencer_effect_poll(bContext *C)
   Editing *ed = SEQ_editing_get(scene);
 
   if (ed) {
-    Strip *last_seq = SEQ_select_active_get(scene);
-    if (last_seq && (last_seq->type & STRIP_TYPE_EFFECT)) {
+    Strip *active_strip = SEQ_select_active_get(scene);
+    if (active_strip && (active_strip->type & STRIP_TYPE_EFFECT)) {
       return true;
     }
   }
@@ -1358,18 +1339,18 @@ void SEQUENCER_OT_reassign_inputs(wmOperatorType *ot)
 static int sequencer_swap_inputs_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
-  Strip *strip, *last_seq = SEQ_select_active_get(scene);
+  Strip *active_strip = SEQ_select_active_get(scene);
 
-  if (last_seq->seq1 == nullptr || last_seq->seq2 == nullptr) {
+  if (active_strip->seq1 == nullptr || active_strip->seq2 == nullptr) {
     BKE_report(op->reports, RPT_ERROR, "No valid inputs to swap");
     return OPERATOR_CANCELLED;
   }
 
-  strip = last_seq->seq1;
-  last_seq->seq1 = last_seq->seq2;
-  last_seq->seq2 = strip;
+  Strip *strip = active_strip->seq1;
+  active_strip->seq1 = active_strip->seq2;
+  active_strip->seq2 = strip;
 
-  SEQ_relations_invalidate_cache_preprocessed(scene, last_seq);
+  SEQ_relations_invalidate_cache_preprocessed(scene, active_strip);
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
@@ -2088,15 +2069,16 @@ void SEQUENCER_OT_meta_toggle(wmOperatorType *ot)
 /** \name Make Meta Strip Operator
  * \{ */
 
-static int sequencer_meta_make_exec(bContext *C, wmOperator *op)
+static int sequencer_meta_make_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = SEQ_editing_get(scene);
   Strip *active_strip = SEQ_select_active_get(scene);
   ListBase *active_seqbase = SEQ_active_seqbase_get(ed);
 
-  if (SEQ_transform_seqbase_isolated_sel_check(active_seqbase) == false) {
-    BKE_report(op->reports, RPT_ERROR, "Please select all related strips");
+  blender::VectorSet<Strip *> selected = SEQ_query_selected_strips(active_seqbase);
+
+  if (selected.is_empty()) {
     return OPERATOR_CANCELLED;
   }
 
@@ -2109,12 +2091,9 @@ static int sequencer_meta_make_exec(bContext *C, wmOperator *op)
   /* Remove all selected from main list, and put in meta.
    * Sequence is moved within the same edit, no need to re-generate the UID. */
   blender::VectorSet<Strip *> strips_to_move;
-  LISTBASE_FOREACH (Strip *, strip, active_seqbase) {
-    if (strip != seqm && strip->flag & SELECT) {
-      strips_to_move.add(strip);
-      strips_to_move.add_multiple(SEQ_get_connected_strips(strip));
-    }
-  }
+  strips_to_move.add_multiple(selected);
+  SEQ_iterator_set_expand(
+      scene, active_seqbase, strips_to_move, SEQ_query_strip_connected_and_effect_chain);
 
   for (Strip *strip : strips_to_move) {
     SEQ_relations_invalidate_cache_preprocessed(scene, strip);
