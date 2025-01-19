@@ -13,7 +13,6 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
-#include <utility>
 
 #include "MEM_guardedalloc.h"
 
@@ -21,7 +20,6 @@
 #  include "BLI_winstuff.h"
 #endif
 
-#include "BLI_blenlib.h"
 #include "BLI_linklist.h"
 #include "BLI_math_base_safe.h"
 #include "BLI_math_bits.h"
@@ -29,6 +27,8 @@
 #include "BLI_math_geom.h"
 #include "BLI_math_vector.hh"
 #include "BLI_memarena.h"
+#include "BLI_string.h"
+#include "BLI_string_utf8.h"
 #include "BLI_task.h"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
@@ -63,6 +63,7 @@
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
+#include "BKE_main_invariants.hh"
 #include "BKE_material.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.hh"
@@ -6777,7 +6778,7 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
       }
     }
 
-    ED_node_tree_propagate_change(*bmain);
+    BKE_main_ensure_invariants(*bmain);
     /* In case we added more than one node, position them too. */
     blender::bke::node_position_propagate(out_node);
 

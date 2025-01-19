@@ -9,6 +9,7 @@
 #include <array>
 #include <cmath>
 #include <complex>
+#include <limits>
 #include <memory>
 
 #include "MEM_guardedalloc.h"
@@ -54,35 +55,74 @@ NODE_STORAGE_FUNCS(NodeGlare)
 
 static void cmp_node_glare_declare(NodeDeclarationBuilder &b)
 {
+  b.use_custom_socket_order();
+
+  b.add_output<decl::Color>("Image").description("The image with the generated glare added");
+  b.add_output<decl::Color>("Glare").description("The generated glare");
+  b.add_output<decl::Color>("Highlights")
+      .description("The extracted highlights from which the glare was generated");
+
+  b.add_layout([](uiLayout *layout, bContext * /*C*/, PointerRNA *ptr) {
+#ifndef WITH_FFTW3
+    const int glare_type = RNA_enum_get(ptr, "glare_type");
+    if (glare_type == CMP_NODE_GLARE_FOG_GLOW) {
+      uiItemL(layout, RPT_("Disabled, built without FFTW"), ICON_ERROR);
+    }
+#endif
+
+    uiItemR(layout, ptr, "glare_type", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+    uiItemR(layout, ptr, "quality", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+  });
+
   b.add_input<decl::Color>("Image")
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .compositor_domain_priority(0);
-  b.add_input<decl::Float>("Threshold")
+
+  PanelDeclarationBuilder &highlights_panel = b.add_panel("Highlights").default_closed(true);
+  highlights_panel.add_input<decl::Float>("Threshold", "Highlights Threshold")
       .default_value(1.0f)
       .min(0.0f)
       .description(
-          "Defines the luminance at which pixels start to be considered part of the highlights "
-          "that will produce a glare")
+          "The brightness level at which pixels are considered part of the highlights that "
+          "produce a glare")
       .compositor_expects_single_value();
-  b.add_input<decl::Float>("Strength")
+  highlights_panel.add_input<decl::Float>("Smoothness", "Highlights Smoothness")
+      .default_value(0.1f)
+      .min(0.0f)
+      .max(1.0f)
+      .subtype(PROP_FACTOR)
+      .description("The smoothness of the extracted highlights")
+      .compositor_expects_single_value();
+  highlights_panel.add_input<decl::Float>("Maximum", "Maximum Highlights")
+      .default_value(0.0f)
+      .min(0.0f)
+      .description(
+          "Suppresses bright highlights such that their brightness are not larger than this "
+          "value. Zero disables suppression and has no effect")
+      .compositor_expects_single_value();
+
+  PanelDeclarationBuilder &mix_panel = b.add_panel("Adjust");
+  mix_panel.add_input<decl::Float>("Strength")
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
-      .description("The strength of the glare that will be added to the image")
+      .description("Adjusts the brightness of the glare")
       .compositor_expects_single_value();
-  b.add_input<decl::Float>("Saturation")
+  mix_panel.add_input<decl::Float>("Saturation")
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
-      .description("Defines how saturated the glare that will be added to the image")
+      .description("Adjusts the saturation of the glare")
       .compositor_expects_single_value();
-  b.add_input<decl::Color>("Tint")
+  mix_panel.add_input<decl::Color>("Tint")
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .description("Tints the glare that will be added to the image")
+      .description("Tints the glare. Consider desaturating the glare to more accurate tinting")
       .compositor_expects_single_value();
-  b.add_input<decl::Float>("Size")
+
+  PanelDeclarationBuilder &glare_panel = b.add_panel("Glare");
+  glare_panel.add_input<decl::Float>("Size")
       .default_value(0.5f)
       .min(0.0f)
       .max(1.0f)
@@ -91,44 +131,45 @@ static void cmp_node_glare_declare(NodeDeclarationBuilder &b)
           "The size of the glare relative to the image. 1 means the glare covers the entire "
           "image, 0.5 means the glare covers half the image, and so on")
       .compositor_expects_single_value();
-  b.add_input<decl::Int>("Streaks")
+  glare_panel.add_input<decl::Int>("Streaks")
       .default_value(4)
       .min(1)
       .max(16)
       .description("The number of streaks")
       .compositor_expects_single_value();
-  b.add_input<decl::Float>("Streaks Angle")
+  glare_panel.add_input<decl::Float>("Streaks Angle")
       .default_value(0.0f)
       .subtype(PROP_ANGLE)
       .description("The angle that the first streak makes with the horizontal axis")
       .compositor_expects_single_value();
-  b.add_input<decl::Int>("Iterations")
+  glare_panel.add_input<decl::Int>("Iterations")
       .default_value(3)
       .min(2)
       .max(5)
       .description(
-          "The number of ghosts for Ghost glare or the spread of Glare for Streaks and Simple "
-          "Star")
+          "The number of ghosts for Ghost glare or the quality and spread of Glare for Streaks "
+          "and Simple Star")
       .compositor_expects_single_value();
-  b.add_input<decl::Float>("Fade")
+  glare_panel.add_input<decl::Float>("Fade")
       .default_value(0.9f)
       .min(0.75f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .description("Streak fade-out factor")
       .compositor_expects_single_value();
-  b.add_input<decl::Float>("Color Modulation")
+  glare_panel.add_input<decl::Float>("Color Modulation")
       .default_value(0.25)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .description("Modulates colors of streaks and ghosts for a spectral dispersion effect")
       .compositor_expects_single_value();
-
-  b.add_output<decl::Color>("Image").description("The image with the generated glare added");
-  b.add_output<decl::Color>("Glare").description("The generated glare");
-  b.add_output<decl::Color>("Highlights")
-      .description("The extracted highlights from which the glare was generated");
+  glare_panel.add_layout([](uiLayout *layout, bContext * /*C*/, PointerRNA *ptr) {
+    const int glare_type = RNA_enum_get(ptr, "glare_type");
+    if (glare_type == CMP_NODE_GLARE_SIMPLE_STAR) {
+      uiItemR(layout, ptr, "use_rotate_45", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+    }
+  });
 }
 
 static void node_composit_init_glare(bNodeTree * /*ntree*/, bNode *node)
@@ -138,23 +179,6 @@ static void node_composit_init_glare(bNodeTree * /*ntree*/, bNode *node)
   ndg->type = CMP_NODE_GLARE_STREAKS;
   ndg->star_45 = true;
   node->storage = ndg;
-}
-
-static void node_composit_buts_glare(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
-{
-  const int glare_type = RNA_enum_get(ptr, "glare_type");
-#ifndef WITH_FFTW3
-  if (glare_type == CMP_NODE_GLARE_FOG_GLOW) {
-    uiItemL(layout, RPT_("Disabled, built without FFTW"), ICON_ERROR);
-  }
-#endif
-
-  uiItemR(layout, ptr, "glare_type", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
-  uiItemR(layout, ptr, "quality", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
-
-  if (glare_type == CMP_NODE_GLARE_SIMPLE_STAR) {
-    uiItemR(layout, ptr, "use_rotate_45", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
-  }
 }
 
 static void node_update(bNodeTree *ntree, bNode *node)
@@ -259,12 +283,14 @@ class GlareOperation : public NodeOperation {
     GPU_shader_bind(shader);
 
     GPU_shader_uniform_1f(shader, "threshold", this->get_threshold());
+    GPU_shader_uniform_1f(shader, "highlights_smoothness", this->get_highlights_smoothness());
+    GPU_shader_uniform_1f(shader, "max_brightness", this->get_maximum_brightness());
 
     const Result &input_image = get_input("Image");
     GPU_texture_filter_mode(input_image, true);
     input_image.bind_as_texture(shader, "input_tx");
 
-    const int2 highlights_size = get_highlights_size();
+    const int2 highlights_size = this->get_glare_image_size();
     Result highlights_result = context().create_result(ResultType::Color);
     highlights_result.allocate_texture(highlights_size);
     highlights_result.bind_as_image(shader, "output_img");
@@ -281,28 +307,35 @@ class GlareOperation : public NodeOperation {
   Result execute_highlights_cpu()
   {
     const float threshold = this->get_threshold();
+    const float highlights_smoothness = this->get_highlights_smoothness();
+    const float max_brightness = this->get_maximum_brightness();
 
     const Result &input = get_input("Image");
 
-    const int2 highlights_size = this->get_highlights_size();
+    const int2 highlights_size = this->get_glare_image_size();
     Result output = context().create_result(ResultType::Color);
     output.allocate_texture(highlights_size);
 
-    /* The dispatch domain covers the output image size, which might be a fraction of the input
-     * image size, so you will notice the glare size used throughout the code instead of the input
-     * one. */
     parallel_for(highlights_size, [&](const int2 texel) {
-      /* Add 0.5 to evaluate the input sampler at the center of the pixel and divide by the image
-       * size to get the coordinates into the sampler's expected [0, 1] range. */
       float2 normalized_coordinates = (float2(texel) + float2(0.5f)) / float2(highlights_size);
 
       float4 hsva;
       rgb_to_hsv_v(input.sample_bilinear_extended(normalized_coordinates), hsva);
 
-      /* The pixel whose luminance value is less than the threshold luminance is not considered
-       * part of the highlights and is given a value of zero. Otherwise, the pixel is considered
-       * part of the highlights, whose luminance value is the difference to the threshold. */
-      hsva.z = math::max(0.0f, hsva.z - threshold);
+      /* Clamp the brightness of the highlights such that pixels whose brightness are less than the
+       * threshold will be equal to the threshold and will become zero once threshold is subtracted
+       * later. We also clamp by the specified max brightness to suppress very bright highlights.
+       *
+       * We use a smooth clamping function such that highlights do not become very sharp but use
+       * the adaptive variant such that we guarantee that zero highlights remain zero even after
+       * smoothing. Notice that when we mention zero, we mean zero after subtracting the threshold,
+       * so we actually mean the minimum bound, the threshold. See the adaptive_smooth_clamp
+       * function for more information. */
+      const float clamped_brightness = this->adaptive_smooth_clamp(
+          hsva.z, threshold, max_brightness, highlights_smoothness);
+
+      /* The final brightness is relative to the threshold. */
+      hsva.z = clamped_brightness - threshold;
 
       float4 rgba;
       hsv_to_rgb_v(hsva, rgba);
@@ -313,12 +346,97 @@ class GlareOperation : public NodeOperation {
     return output;
   }
 
-  /* As a performance optimization, the operation can compute the glare on a fraction of the input
-   * image size, so we extract the highlights to a smaller result, whose size is returned by this
-   * method. */
-  int2 get_highlights_size()
+  float get_maximum_brightness()
   {
-    return this->compute_domain().size / this->get_quality_factor();
+    const float max_highlights = this->get_max_highlights();
+    /* Disabled when zero. Return the maximum possible brightness. */
+    if (max_highlights == 0.0f) {
+      return std::numeric_limits<float>::max();
+    }
+
+    /* Brightness of the highlights are relative to the threshold, see execute_highlights_cpu, so
+     * we add the threshold such that the maximum brightness corresponds to the actual brightness
+     * of the computed highlights. */
+    return this->get_threshold() + max_highlights;
+  }
+
+  /* A Quadratic Polynomial smooth minimum function *without* normalization, based on:
+   *
+   *   https://iquilezles.org/articles/smin/
+   *
+   * This should not be converted into a common utility function in BLI because the glare code is
+   * specifically designed for it as can be seen in the adaptive_smooth_clamp method, and it is
+   * intentionally not normalized. */
+  float smooth_min(const float a, const float b, const float smoothness)
+  {
+    if (smoothness == 0.0f) {
+      return math::min(a, b);
+    }
+    const float h = math::max(smoothness - math::abs(a - b), 0.0f) / smoothness;
+    return math::min(a, b) - h * h * smoothness * (1.0f / 4.0f);
+  }
+
+  float smooth_max(const float a, const float b, const float smoothness)
+  {
+    return -this->smooth_min(-a, -b, smoothness);
+  }
+
+  /* Clamps the input x within min_value and max_value using a quadratic polynomial smooth minimum
+   * and maximum functions, with individual control over their smoothness. */
+  float smooth_clamp(const float x,
+                     const float min_value,
+                     const float max_value,
+                     const float min_smoothness,
+                     const float max_smoothness)
+  {
+    return this->smooth_min(
+        max_value, this->smooth_max(min_value, x, min_smoothness), max_smoothness);
+  }
+
+  /* A variant of smooth_clamp that limits the smoothness such that the function evaluates to the
+   * given min for 0 <= min <= max and x >= 0. The aforementioned guarantee holds for the standard
+   * clamp function by definition, but since the smooth clamp function gradually increases before
+   * the specified min/max, if min/max are sufficiently close together or to zero, they will not
+   * evaluate to min at zero or at min, since zero or min will be at the region of the gradual
+   * increase.
+   *
+   * It can be shown that the width of the gradual increase region is equivalent to the smoothness
+   * parameter, so smoothness can't be larger than the difference between the min/max and zero, or
+   * larger than the difference between min and max themselves. Otherwise, zero or min will lie
+   * inside the gradual increase region of min/max. So we limit the smoothness of min/max by taking
+   * the minimum with the distances to zero and to the distance to the other bound. */
+  float adaptive_smooth_clamp(const float x,
+                              const float min_value,
+                              const float max_value,
+                              const float smoothness)
+  {
+    const float range_distance = math::distance(min_value, max_value);
+    const float distance_from_min_to_zero = math::distance(min_value, 0.0f);
+    const float distance_from_max_to_zero = math::distance(max_value, 0.0f);
+
+    const float max_safe_smoothness_for_min = math::min(distance_from_min_to_zero, range_distance);
+    const float max_safe_smoothness_for_max = math::min(distance_from_max_to_zero, range_distance);
+
+    const float min_smoothness = math::min(smoothness, max_safe_smoothness_for_min);
+    const float max_smoothness = math::min(smoothness, max_safe_smoothness_for_max);
+
+    return this->smooth_clamp(x, min_value, max_value, min_smoothness, max_smoothness);
+  }
+
+  float get_threshold()
+  {
+    return math::max(0.0f, this->get_input("Highlights Threshold").get_single_value_default(1.0f));
+  }
+
+  float get_highlights_smoothness()
+  {
+    return math::max(0.0f,
+                     this->get_input("Highlights Smoothness").get_single_value_default(0.1f));
+  }
+
+  float get_max_highlights()
+  {
+    return math::max(0.0f, this->get_input("Maximum Highlights").get_single_value_default(0.0f));
   }
 
   /* Writes the given input highlights by upsampling it using bilinear interpolation to match the
@@ -1501,15 +1619,7 @@ class GlareOperation : public NodeOperation {
    * achieved when down-sampling happens down to the smallest size of 2. */
   Result execute_bloom(Result &highlights)
   {
-    /* The maximum possible glare size is achieved when we down-sampled down to the smallest size
-     * of 2, which would result in a down-sampling chain length of the binary logarithm of the
-     * smaller dimension of the size of the highlights.
-     *
-     * However, as users might want a smaller glare size, we reduce the chain length by the
-     * size supplied by the user. Also make sure that log2 does not get zero. */
-    const int smaller_dimension = math::reduce_min(highlights.domain().size);
-    const float scaled_dimension = smaller_dimension * this->get_size();
-    const int chain_length = int(std::log2(math::max(1.0f, scaled_dimension)));
+    const int chain_length = this->compute_bloom_chain_length();
 
     /* If the chain length is less than 2, that means no down-sampling will happen, so we just
      * return a copy of the highlights. This is a sanitization of a corner case, so no need to
@@ -1809,6 +1919,20 @@ class GlareOperation : public NodeOperation {
            math::safe_rcp(math::reduce_add(weights));
   }
 
+  /* The maximum possible glare size is achieved when we down-sampled down to the smallest size of
+   * 2, which would result in a down-sampling chain length of the binary logarithm of the smaller
+   * dimension of the size of the highlights.
+   *
+   * However, as users might want a smaller glare size, we reduce the chain length by the size
+   * supplied by the user. Also make sure that log2 does not get zero. */
+  int compute_bloom_chain_length()
+  {
+    const int2 image_size = this->get_glare_image_size();
+    const int smaller_dimension = math::reduce_min(image_size);
+    const float scaled_dimension = smaller_dimension * this->get_size();
+    return int(std::log2(math::max(1.0f, scaled_dimension)));
+  }
+
   /* ---------------
    * Fog Glow Glare.
    * --------------- */
@@ -2026,7 +2150,7 @@ class GlareOperation : public NodeOperation {
     GPU_shader_bind(shader);
 
     GPU_shader_uniform_1f(shader, "saturation", this->get_saturation());
-    GPU_shader_uniform_3fv(shader, "tint", this->get_tint());
+    GPU_shader_uniform_3fv(shader, "tint", this->get_corrected_tint());
 
     const Result &input_image = get_input("Image");
     input_image.bind_as_texture(shader, "input_tx");
@@ -2050,7 +2174,7 @@ class GlareOperation : public NodeOperation {
   void execute_mix_cpu(const Result &glare_result)
   {
     const float saturation = this->get_saturation();
-    const float3 tint = this->get_tint();
+    const float3 tint = this->get_corrected_tint();
 
     const Result &input = get_input("Image");
 
@@ -2097,7 +2221,7 @@ class GlareOperation : public NodeOperation {
     GPU_shader_bind(shader);
 
     GPU_shader_uniform_1f(shader, "saturation", this->get_saturation());
-    GPU_shader_uniform_3fv(shader, "tint", this->get_tint());
+    GPU_shader_uniform_3fv(shader, "tint", this->get_corrected_tint());
 
     GPU_texture_filter_mode(glare, true);
     GPU_texture_extend_mode(glare, GPU_SAMPLER_EXTEND_MODE_EXTEND);
@@ -2118,7 +2242,7 @@ class GlareOperation : public NodeOperation {
   void write_glare_output_cpu(const Result &glare)
   {
     const float saturation = this->get_saturation();
-    const float3 tint = this->get_tint();
+    const float3 tint = this->get_corrected_tint();
 
     const Result &image_input = this->get_input("Image");
     Result &output = this->get_result("Glare");
@@ -2141,14 +2265,39 @@ class GlareOperation : public NodeOperation {
     });
   }
 
+  /* Combine the tint, strength, and normalization scale into a single factor that can be
+   * multiplied to the glare. */
+  float3 get_corrected_tint()
+  {
+    return this->get_tint() * this->get_strength() / this->get_normalization_scale();
+  }
+
+  /* The computed glare might need to be normalized to be energy conserving or be in a reasonable
+   * range, instead of doing that in a separate step as part of the glare computation, we delay the
+   * normalization until the mixing step as an optimization, since we multiply by the tint and
+   * strength anyways. */
+  float get_normalization_scale()
+  {
+    switch (static_cast<CMPNodeGlareType>(node_storage(bnode()).type)) {
+      case CMP_NODE_GLARE_BLOOM:
+        /* Bloom adds a number of passes equal to the chain length, if the input is constant, each
+         * of those passes will hold the same constant, so we need to normalize by the chain
+         * length, see the bloom code for more information. If the chain length is less than 1,
+         * then no bloom will be generated, so we can return 1 in this case to avoid zero division
+         * later on. */
+        return math::max(1, this->compute_bloom_chain_length());
+      case CMP_NODE_GLARE_SIMPLE_STAR:
+      case CMP_NODE_GLARE_FOG_GLOW:
+      case CMP_NODE_GLARE_STREAKS:
+      case CMP_NODE_GLARE_GHOST:
+        return 1.0f;
+    }
+    return 1.0f;
+  }
+
   /* -------
    * Common.
    * ------- */
-
-  float get_threshold()
-  {
-    return math::max(0.0f, this->get_input("Threshold").get_single_value_default(1.0f));
-  }
 
   float get_strength()
   {
@@ -2162,8 +2311,7 @@ class GlareOperation : public NodeOperation {
 
   float3 get_tint()
   {
-    return this->get_input("Tint").get_single_value_default(float4(1.0f)).xyz() *
-           this->get_strength();
+    return this->get_input("Tint").get_single_value_default(float4(1.0f)).xyz();
   }
 
   float get_size()
@@ -2185,6 +2333,14 @@ class GlareOperation : public NodeOperation {
   {
     return math::clamp(
         this->get_input("Color Modulation").get_single_value_default(0.25f), 0.0f, 1.0f);
+  }
+
+  /* As a performance optimization, the operation can compute the glare on a fraction of the input
+   * image size, so the input is downsampled then upsampled at the end, and this method returns the
+   * size after downsampling. */
+  int2 get_glare_image_size()
+  {
+    return this->compute_domain().size / this->get_quality_factor();
   }
 
   /* The glare node can compute the glare on a fraction of the input image size to improve
@@ -2217,13 +2373,13 @@ void register_node_type_cmp_glare()
 
   static blender::bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeGlare", CMP_NODE_GLARE, NODE_CLASS_OP_FILTER);
+  cmp_node_type_base(&ntype, "CompositorNodeGlare", CMP_NODE_GLARE);
   ntype.ui_name = "Glare ";
   ntype.ui_description = "Add lens flares, fog and glows around bright parts of the image";
   ntype.enum_name_legacy = "GLARE";
+  ntype.nclass = NODE_CLASS_OP_FILTER;
   ntype.declare = file_ns::cmp_node_glare_declare;
   ntype.updatefunc = file_ns::node_update;
-  ntype.draw_buttons = file_ns::node_composit_buts_glare;
   ntype.initfunc = file_ns::node_composit_init_glare;
   blender::bke::node_type_storage(
       &ntype, "NodeGlare", node_free_standard_storage, node_copy_standard_storage);
