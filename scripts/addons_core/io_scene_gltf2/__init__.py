@@ -5,7 +5,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (4, 4, 26),
+    "version": (4, 4, 33),
     'blender': (4, 4, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -297,6 +297,12 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
         default=True,
     )
 
+    export_gltfpack_kn: BoolProperty(
+        name='Keep Named Nodes',
+        description='Restrict some optimization to keep named nodes and meshes attached to named nodes so that named nodes can be transformed externally',
+        default=False,
+    )
+
     # TODO: some stuff in Textures
 
     # TODO: Animations
@@ -361,7 +367,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_image_webp_fallback: BoolProperty(
-        name='WebP fallback',
+        name='WebP Fallback',
         description=(
             "For all WebP textures, create a PNG fallback texture"
         ),
@@ -376,7 +382,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
 
     # Keep for back compatibility
     export_jpeg_quality: IntProperty(
-        name='JPEG quality',
+        name='JPEG Quality',
         description='Quality of JPEG export',
         default=75,
         min=0,
@@ -385,7 +391,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
 
     # Keep for back compatibility
     export_image_quality: IntProperty(
-        name='Image quality',
+        name='Image Quality',
         description='Quality of image export',
         default=75,
         min=0,
@@ -393,7 +399,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_keep_originals: BoolProperty(
-        name='Keep original',
+        name='Keep Original',
         description=('Keep original textures files if possible. '
                      'WARNING: if you use more than one texture, '
                      'where pbr standard requires only one, only one texture will be used. '
@@ -421,13 +427,13 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_draco_mesh_compression_enable: BoolProperty(
-        name='Draco mesh compression',
+        name='Draco Mesh Compression',
         description='Compress mesh using Draco',
         default=False
     )
 
     export_draco_mesh_compression_level: IntProperty(
-        name='Compression level',
+        name='Compression Level',
         description='Compression level (0 = most speed, 6 = most compression, higher values currently not supported)',
         default=6,
         min=0,
@@ -435,7 +441,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_draco_position_quantization: IntProperty(
-        name='Position quantization bits',
+        name='Position Quantization Bits',
         description='Quantization bits for position values (0 = no quantization)',
         default=14,
         min=0,
@@ -443,7 +449,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_draco_normal_quantization: IntProperty(
-        name='Normal quantization bits',
+        name='Normal Quantization Bits',
         description='Quantization bits for normal values (0 = no quantization)',
         default=10,
         min=0,
@@ -451,7 +457,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_draco_texcoord_quantization: IntProperty(
-        name='Texcoord quantization bits',
+        name='Texcoord Quantization Bits',
         description='Quantization bits for texture coordinate values (0 = no quantization)',
         default=12,
         min=0,
@@ -459,7 +465,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_draco_color_quantization: IntProperty(
-        name='Color quantization bits',
+        name='Color Quantization Bits',
         description='Quantization bits for color values (0 = no quantization)',
         default=10,
         min=0,
@@ -467,7 +473,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_draco_generic_quantization: IntProperty(
-        name='Generic quantization bits',
+        name='Generic Quantization Bits',
         description='Quantization bits for generic values like weights or joints (0 = no quantization)',
         default=12,
         min=0,
@@ -496,12 +502,12 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
         default='EXPORT')
 
     export_unused_images: BoolProperty(
-        name='Unused images',
+        name='Unused Images',
         description='Export images not assigned to any material',
         default=False)
 
     export_unused_textures: BoolProperty(
-        name='Prepare Unused textures',
+        name='Prepare Unused Textures',
         description=(
             'Export image texture nodes not assigned to any material. '
             'This feature is not standard and needs an external extension to be included in the glTF file'
@@ -522,7 +528,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_all_vertex_colors: BoolProperty(
-        name='Export all vertex colors',
+        name='Export All Vertex Colors',
         description=(
             'Export all vertex colors, even if not used by any material. '
             'If no Vertex Color is used in the mesh materials, a fake COLOR_0 will be created, '
@@ -532,7 +538,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_active_vertex_color_when_no_material: BoolProperty(
-        name='Export active vertex color when no material',
+        name='Export Active Vertex Color When No Material',
         description='When there is no material on object, export active vertex color',
         default=True
     )
@@ -673,7 +679,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_animation_mode: EnumProperty(
-        name='Animation mode',
+        name='Animation Mode',
         items=(('ACTIONS', 'Actions',
                 'Export actions (actives and on NLA tracks) as separate animations'),
                ('ACTIVE_ACTIONS', 'Active actions merged',
@@ -744,7 +750,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_optimize_animation_keep_anim_armature: BoolProperty(
-        name='Force keeping channels for bones',
+        name='Force Keeping Channels for Bones',
         description=(
             "If all keyframes are identical in a rig, "
             "force keeping the minimal animation. "
@@ -756,7 +762,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_optimize_animation_keep_anim_object: BoolProperty(
-        name='Force keeping channel for objects',
+        name='Force Keeping Channel for Objects',
         description=(
             "If all keyframes are identical for object transformations, "
             "force keeping the minimal animation"
@@ -765,7 +771,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_optimize_disable_viewport: BoolProperty(
-        name='Disable viewport for other objects',
+        name='Disable Viewport for Other Objects',
         description=(
             "When exporting animations, disable viewport for other objects, "
             "for performance"
@@ -785,7 +791,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_anim_slide_to_zero: BoolProperty(
-        name='Set all glTF Animation starting at 0',
+        name='Set All glTF Animation Starting at 0',
         description=(
             "Set all glTF animation starting at 0.0s. "
             "Can be useful for looping animations"
@@ -803,6 +809,16 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
         default=False
     )
 
+    export_merge_animation: EnumProperty(
+        name='Merge Animation',
+        items=(('NLA_TRACK', 'NLA Track Names', 'Merge by NLA Track Names'),
+               ('ACTION', 'Actions', 'Merge by Actions'),
+               ('NONE', 'No Merge', 'Do Not Merge Animations'),
+               ),
+        description='Merge Animations',
+        default='ACTION'
+    )
+
     export_anim_single_armature: BoolProperty(
         name='Export all Armature Actions',
         description=(
@@ -813,7 +829,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_reset_pose_bones: BoolProperty(
-        name='Reset pose bones between actions',
+        name='Reset Pose Bones Between Actions',
         description=(
             "Reset pose bones between each action exported. "
             "This is needed when some bones are not keyed on some animations"
@@ -892,7 +908,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_morph_reset_sk_data: BoolProperty(
-        name='Reset shape keys between actions',
+        name='Reset Shape Keys Between Actions',
         description=(
             "Reset shape keys between each action exported. "
             "This is needed when some SK channels are not keyed on some animations"
@@ -908,13 +924,13 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_try_sparse_sk: BoolProperty(
-        name='Use Sparse Accessor if better',
+        name='Use Sparse Accessor if Better',
         description='Try using Sparse Accessor if it saves space',
         default=True
     )
 
     export_try_omit_sparse_sk: BoolProperty(
-        name='Omitting Sparse Accessor if data is empty',
+        name='Omitting Sparse Accessor if Data is Empty',
         description='Omitting Sparse Accessor if data is empty',
         default=False
     )
@@ -935,7 +951,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_convert_animation_pointer: BoolProperty(
-        name='Convert TRS/weights to Animation Pointer',
+        name='Convert TRS/Weights to Animation Pointer',
         description='Export TRS and weights as Animation Pointer. '
                     'Using KHR_animation_pointer extension',
         default=False
@@ -956,7 +972,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
 
     # Keep for back compatibility, but no more used
     export_original_specular: BoolProperty(
-        name='Export original PBR Specular',
+        name='Export Original PBR Specular',
         description=(
             'Export original glTF PBR Specular, instead of Blender Principled Shader Specular'
         ),
@@ -975,7 +991,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
     )
 
     export_extra_animations: BoolProperty(
-        name='Prepare extra animations',
+        name='Prepare Extra Animations',
         description=(
             'Export additional animations.\n'
             'This feature is not standard and needs an external extension to be included in the glTF file'
@@ -1184,6 +1200,11 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
                 export_settings['gltf_trs_w_animation_pointer'] = False
                 export_settings['gltf_export_anim_pointer'] = False
 
+            if export_settings['gltf_animation_mode'] != "ACTIONS":
+                export_settings['gltf_merge_animation'] = "NLA_TRACK"
+            else:
+                export_settings['gltf_merge_animation'] = self.export_merge_animation
+
             export_settings['gltf_nla_strips_merged_animation_name'] = self.export_nla_strips_merged_animation_name
             export_settings['gltf_optimize_animation'] = self.export_optimize_animation_size
             export_settings['gltf_optimize_animation_keep_armature'] = self.export_optimize_animation_keep_anim_armature
@@ -1259,6 +1280,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
             export_settings['gltf_gltfpack_vpi'] = self.export_gltfpack_vpi
 
             export_settings['gltf_gltfpack_noq'] = self.export_gltfpack_noq
+            export_settings['gltf_gltfpack_kn'] = self.export_gltfpack_kn
 
         export_settings['gltf_binary'] = bytearray()
         export_settings['gltf_binaryfilename'] = (
@@ -1478,7 +1500,7 @@ def export_panel_data_material(layout, operator):
         col.active = operator.export_image_format != "WEBP" and not operator.export_materials in ['PLACEHOLDER', 'NONE']
         col.prop(operator, "export_image_add_webp")
         col = body.column()
-        col.active = operator.export_image_format != "WEBP"  and not operator.export_materials in ['PLACEHOLDER', 'NONE']
+        col.active = operator.export_image_format != "WEBP" and not operator.export_materials in ['PLACEHOLDER', 'NONE']
         col.prop(operator, "export_image_webp_fallback")
 
         header, sub_body = body.panel("GLTF_export_data_material_unused", default_closed=True)
@@ -1587,16 +1609,9 @@ def export_panel_animation(layout, operator):
         if operator.export_animation_mode == "ACTIVE_ACTIONS":
             layout.prop(operator, 'export_nla_strips_merged_animation_name')
 
-        row = body.row()
-        row.active = operator.export_force_sampling and operator.export_animation_mode in [
-            'ACTIONS', 'ACTIVE_ACTIONS', 'BROACAST']
-        row.prop(operator, 'export_bake_animation')
-        if operator.export_animation_mode == "SCENE":
-            body.prop(operator, 'export_anim_scene_split_object')
-        row = body.row()
-
         if operator.export_animation_mode in ["NLA_TRACKS", "SCENE"]:
             export_panel_animation_notes(body, operator)
+        export_panel_animation_bake_and_merge(body, operator)
         export_panel_animation_ranges(body, operator)
         export_panel_animation_armature(body, operator)
         export_panel_animation_shapekeys(body, operator)
@@ -1623,6 +1638,28 @@ def export_panel_animation_notes(layout, operator):
             body.label(text="Track mode uses full bake mode:")
             body.label(text="- sampling is active")
             body.label(text="- baking all objects is active")
+
+
+def export_panel_animation_bake_and_merge(layout, operator):
+    header, body = layout.panel("GLTF_export_animation_bake_and_merge", default_closed=False)
+    header.label(text="Bake & Merge")
+    if body:
+        body.active = operator.export_animations
+
+        row = body.row()
+        row.active = operator.export_force_sampling and operator.export_animation_mode in [
+            'ACTIONS', 'ACTIVE_ACTIONS', 'BROACAST']
+        row.prop(operator, 'export_bake_animation')
+
+        if operator.export_animation_mode == "SCENE":
+            row = body.row()
+            row.prop(operator, 'export_anim_scene_split_object')
+
+        row = body.row()
+        row.active = operator.export_force_sampling and operator.export_animation_mode in ['ACTIONS']
+        row.prop(operator, 'export_merge_animation')
+
+        row = body.row()
 
 
 def export_panel_animation_ranges(layout, operator):
@@ -1737,7 +1774,7 @@ def export_panel_gltfpack(layout, operator):
         # col = body.column(heading = "Scene", align = True)
         col = body.column(heading="Miscellaneous", align=True)
         col.prop(operator, 'export_gltfpack_noq')
-
+        col.prop(operator, 'export_gltfpack_kn')
 
 def export_panel_user_extension(context, layout):
     for draw in exporter_extension_layout_draw.values():
@@ -1844,7 +1881,7 @@ class ImportGLTF2(Operator, ConvertGLTF2_Base, ImportHelper):
     )
 
     import_webp_texture: BoolProperty(
-        name='Import WebP textures',
+        name='Import WebP Textures',
         description=(
             "If a texture exists in WebP format, "
             "loads the WebP texture instead of the fallback PNG/JPEG one"
@@ -1853,7 +1890,7 @@ class ImportGLTF2(Operator, ConvertGLTF2_Base, ImportHelper):
     )
 
     import_select_created_objects: BoolProperty(
-        name='Select imported objects',
+        name='Select Imported Objects',
         description='Select created objects at the end of the import',
         default=True,
     )
@@ -1872,12 +1909,10 @@ class ImportGLTF2(Operator, ConvertGLTF2_Base, ImportHelper):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        layout.prop(self, 'import_pack_images')
         layout.prop(self, 'merge_vertices')
         layout.prop(self, 'import_shading')
-        layout.prop(self, 'guess_original_bind_pose')
         layout.prop(self, 'export_import_convert_lighting_mode')
-        layout.prop(self, 'import_webp_texture')
+        import_texture_panel(layout, operator)
         import_bone_panel(layout, operator)
         import_ux_panel(layout, operator)
 
@@ -1969,12 +2004,14 @@ class ImportGLTF2(Operator, ConvertGLTF2_Base, ImportHelper):
 
 def import_bone_panel(layout, operator):
     header, body = layout.panel("GLTF_import_bone", default_closed=False)
-    header.label(text="Bones")
+    header.label(text="Bones & Skin")
     if body:
         body.prop(operator, 'bone_heuristic')
         if operator.bone_heuristic == 'BLENDER':
+            body.prop(operator, 'guess_original_bind_pose')
             body.prop(operator, 'disable_bone_shape')
             body.prop(operator, 'bone_shape_scale_factor')
+
 
 def import_ux_panel(layout, operator):
     header, body = layout.panel("GLTF_import_ux", default_closed=False)
@@ -1982,6 +2019,13 @@ def import_ux_panel(layout, operator):
     if body:
         body.prop(operator, 'import_select_created_objects')
         body.prop(operator, 'import_scene_extras')
+
+def import_texture_panel(layout, operator):
+    header, body = layout.panel("GLTF_import_texture", default_closed=False)
+    header.label(text="Texture")
+    if body:
+        body.prop(operator, 'import_pack_images')
+        body.prop(operator, 'import_webp_texture')
 
 
 def import_panel_user_extension(context, layout):

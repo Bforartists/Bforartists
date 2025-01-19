@@ -392,6 +392,10 @@ typedef struct bNode {
    * Currently, this type is also used in many parts of Blender, but that should slowly be phased
    * out by either relying on idnames, accessor methods like `node.is_reroute()`.
    *
+   * Older node types have a stable legacy-type (defined in `BKE_node_legacy_types.hh`). However,
+   * the legacy type of newer types is generated at runtime and is not guaranteed to be stable over
+   * time.
+   *
    * A main benefit of this integer type over using idnames currently is that integer comparison is
    * much cheaper than string comparison, especially if many idnames have the same prefix (e.g.
    * "GeometryNode"). Eventually, we could introduce cheap-to-compare runtime identifier for node
@@ -2794,8 +2798,7 @@ typedef enum CMPNodeKuwahara {
   CMP_NODE_KUWAHARA_ANISOTROPIC = 1,
 } CMPNodeKuwahara;
 
-/* Stabilize 2D node. Stored in custom1 for Stabilize 2D node and in interpolation for Translate
- * node. */
+/* Shared between nodes with interpolation option. */
 typedef enum CMPNodeInterpolation {
   CMP_NODE_INTERPOLATION_NEAREST = 0,
   CMP_NODE_INTERPOLATION_BILINEAR = 1,
