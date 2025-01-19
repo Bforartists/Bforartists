@@ -18,7 +18,6 @@
 
 #include "BLI_listbase.h"
 #include "BLI_math_color.h"
-#include "BLI_math_geom.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_vector.hh"
@@ -58,7 +57,6 @@
 #include "ED_select_utils.hh"
 #include "ED_view3d.hh"
 
-#include "BLI_sys_types.h"
 #include "ED_mesh.hh" /* for face mask functions */
 
 #include "WM_api.hh"
@@ -206,6 +204,7 @@ void paint_stroke_operator_properties(wmOperatorType *ot)
                       BRUSH_STROKE_NORMAL,
                       "Stroke Mode",
                       "Action taken when a paint stroke is made");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_OPERATOR_DEFAULT);
   RNA_def_property_flag(prop, PropertyFlag(PROP_SKIP_SAVE));
 
   /* TODO: Pen flip logic should likely be combined into the stroke mode logic instead of being
