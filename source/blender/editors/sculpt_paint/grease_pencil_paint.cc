@@ -21,7 +21,6 @@
 #include "BLI_length_parameterize.hh"
 #include "BLI_math_base.hh"
 #include "BLI_math_color.h"
-#include "BLI_math_geom.h"
 #include "BLI_noise.hh"
 #include "BLI_rand.hh"
 #include "BLI_rect.h"
@@ -981,7 +980,7 @@ struct PaintOperationExecutor {
         attributes,
         bke::AttrDomain::Point,
         bke::attribute_filter_from_skip_ref(point_attributes_to_skip),
-        curves.points_range().take_back(1));
+        curves.points_range().take_back(new_points_num));
 
     drawing_->set_texture_matrices({self.texture_space_}, IndexRange::from_single(active_curve));
   }

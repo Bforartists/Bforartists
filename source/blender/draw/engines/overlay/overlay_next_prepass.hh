@@ -72,7 +72,7 @@ class Prepass : Overlay {
  public:
   void begin_sync(Resources &res, const State &state) final
   {
-    enabled_ = state.is_space_v3d();
+    enabled_ = state.is_space_v3d() && (!state.xray_enabled || res.is_selection());
 
     if (!enabled_) {
       /* Not used. But release the data. */
@@ -190,7 +190,11 @@ class Prepass : Overlay {
                    Resources &res,
                    const State &state) final
   {
-    if (!enabled_) {
+    bool is_solid = ob_ref.object->dt >= OB_SOLID ||
+                    (state.v3d->shading.type == OB_RENDER &&
+                     !(ob_ref.object->visibility_flag & OB_HIDE_CAMERA));
+
+    if (!enabled_ || !is_solid) {
       return;
     }
 

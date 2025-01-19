@@ -24,15 +24,19 @@ class SortedNodeCategory(NodeCategory):
 class CompositorNodeCategory(SortedNodeCategory):
     @classmethod
     def poll(cls, context):
-        return (context.space_data.type == 'NODE_EDITOR' and
-                context.space_data.tree_type == 'CompositorNodeTree')
+        return (
+            context.space_data.type == 'NODE_EDITOR' and
+            context.space_data.tree_type == 'CompositorNodeTree'
+        )
 
 
 class ShaderNodeCategory(SortedNodeCategory):
     @classmethod
     def poll(cls, context):
-        return (context.space_data.type == 'NODE_EDITOR' and
-                context.space_data.tree_type == 'ShaderNodeTree')
+        return (
+            context.space_data.type == 'NODE_EDITOR' and
+            context.space_data.tree_type == 'ShaderNodeTree'
+        )
 
 
 # Menu entry for node group tools.

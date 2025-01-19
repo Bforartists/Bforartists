@@ -3942,9 +3942,10 @@ def km_grease_pencil_edit_mode(params):
             params, connected=True, toggle_data_path="tool_settings.use_proportional_edit"),
 
         # Cyclical set
-        ("grease_pencil.cyclical_set", {"type": 'F', "value": 'PRESS'}, {"properties": [("type", "CLOSE")]}),
+        ("grease_pencil.cyclical_set", {"type": 'F', "value": 'PRESS'},
+         {"properties": [("type", "CLOSE"), ("subdivide_cyclic_segment", True)]}),
         ("grease_pencil.cyclical_set", {"type": 'C', "value": 'PRESS',
-         "alt": True}, {"properties": [("type", "TOGGLE")]}),
+         "alt": True}, {"properties": [("type", "TOGGLE"), ("subdivide_cyclic_segment", False)]}),
 
         # Join selection
         ("grease_pencil.join_selection", {"type": 'J', "value": 'PRESS', "ctrl": True},
@@ -5679,7 +5680,7 @@ def km_edit_curve_legacy(params):
         ("curve.handle_type_set", {"type": 'V', "value": 'PRESS'}, None),
         ("curve.vertex_add", {"type": params.action_mouse, "value": 'CLICK', "ctrl": True}, None),
         *_template_items_select_actions(params, "curve.select_all"),
-        ("curve.select_row", {"type": 'R', "value": 'PRESS', "shift": True}, None),
+        ("curve.select_row", {"type": 'R', "value": 'PRESS', "shift": True, "ctrl": True}, None),
         ("curve.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("curve.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("curve.select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
