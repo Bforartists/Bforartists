@@ -432,15 +432,15 @@ typedef struct ScrArea {
    */
   int region_active_win; /* bfa - changed short to int */
 
+  /** eSpace_Type (SPACE_FOO). */
+  char spacetype;
   /**
    * eSpace_Type (SPACE_FOO).
    *
    * Temporarily used while switching area type, otherwise this should be SPACE_EMPTY.
-   * Also, versioning uses it to nicely replace deprecated * editors.
+   * Also, versioning uses it to nicely replace deprecated editors.
    * It's been there for ages, name doesn't fit any more.
    */
-  char spacetype;
-  /** #eSpace_Type (SPACE_FOO). */
   char butspacetype;
   short butspacetype_subtype;
 
@@ -559,29 +559,28 @@ enum {
   AREA_FLAG_STACKED_FULLSCREEN = (1 << 7),
   /** Update action zones (even if the mouse is not intersecting them). */
   AREA_FLAG_ACTIONZONES_UPDATE = (1 << 8),
+  /** For off-screen areas. */
+  AREA_FLAG_OFFSCREEN = (1 << 9),
   // bfa - show hide the editorsmenu
-  HEADER_NO_EDITORTYPEMENU = (1 << 9),
+  HEADER_NO_EDITORTYPEMENU = (1 << 10),
   // bfa - show hide the File toolbars
-  HEADER_TOOLBAR_FILE = (1 << 10),
+  HEADER_TOOLBAR_FILE = (1 << 11),
   // bfa - show hide the View toolbars
-  HEADER_TOOLBAR_MESHEDIT = (1 << 11),
+  HEADER_TOOLBAR_MESHEDIT = (1 << 12),
   // bfa - show hide the Primitives toolbars
-  HEADER_TOOLBAR_PRIMITIVES = (1 << 12),
+  HEADER_TOOLBAR_PRIMITIVES = (1 << 13),
   // bfa - show hide the Image toolbars
-  HEADER_TOOLBAR_IMAGE = (1 << 13),
+  HEADER_TOOLBAR_IMAGE = (1 << 14),
   // bfa - show hide the Tools toolbars
-  HEADER_TOOLBAR_TOOLS = (1 << 14),
+  HEADER_TOOLBAR_TOOLS = (1 << 15),
   // bfa - show hide the Animation toolbars
-  HEADER_TOOLBAR_ANIMATION = (1 << 15),
+  HEADER_TOOLBAR_ANIMATION = (1 << 16),
   /*Other flags see above in the area->flag enum*/
   // bfa - show hide the Edit toolbars
-  HEADER_TOOLBAR_EDIT = (1 << 16),
+  HEADER_TOOLBAR_EDIT = (1 << 17),
   // bfa - show hide the Misc toolbars
-  HEADER_TOOLBAR_MISC = (1 << 17),
-  /** For off-screen areas. */
-  AREA_FLAG_OFFSCREEN = (1 << 18),/*bfa*/
+  HEADER_TOOLBAR_MISC = (1 << 18),
 };
-
 
 #define AREAGRID 4
 #define AREAMINX 29
