@@ -213,7 +213,7 @@ class ShotNaming:
 
     def get_all_shot_strips(
         self, sed: bpy.types.SequenceEditor
-    ) -> list[bpy.types.SceneSequence]:
+    ) -> list[bpy.types.Strip]:
         """
         Get all scene strips in the given sequence editor matching the scene naming
         convention.
@@ -224,7 +224,7 @@ class ShotNaming:
         return [
             s
             for s in sed.sequences
-            if isinstance(s, bpy.types.SceneSequence) and self.match_name(s.name)
+            if isinstance(s, bpy.types.Strip) and self.match_name(s.name)
         ]
 
     def next_shot_name_from_sequences(

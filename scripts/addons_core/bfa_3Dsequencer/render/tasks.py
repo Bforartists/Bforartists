@@ -139,7 +139,7 @@ StripRenderTask callback:
  - returns:
     - path to the new media filepath
 """
-StripRenderTaskCallback = Callable[[bpy.types.SceneSequence, str], str]
+StripRenderTaskCallback = Callable[[bpy.types.Strip, str], str]
 
 
 @dataclass
@@ -147,7 +147,7 @@ class StripRenderTask(BaseRenderTask):
     """Strip render task."""
 
     # The strip to render.
-    strip: Optional[bpy.types.SceneSequence] = None
+    strip: Optional[bpy.types.Strip] = None
     # Viewport area.
     viewport_area: Optional[bpy.types.Area] = None
     # Window containing the viewport area.
@@ -285,7 +285,7 @@ class StripRenderTask(BaseRenderTask):
 
     def create_output_media_strip(
         self,
-        scene_strip: bpy.types.SceneSequence,
+        scene_strip: bpy.types.Strip,
         scene: bpy.types.Scene,
         media_type: str,
         frames_handles: int,
@@ -299,7 +299,7 @@ class StripRenderTask(BaseRenderTask):
         sed = scene.sequence_editor
 
         # List created strips and corresponding source frame start/end in scene
-        strips: list[tuple[bpy.types.SceneSequence, int, int]] = []
+        strips: list[tuple[bpy.types.Strip, int, int]] = []
 
         if media_type == "IMAGES":
             for idx in range(scene_strip.frame_final_duration):
