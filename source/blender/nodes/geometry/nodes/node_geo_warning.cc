@@ -93,19 +93,20 @@ static void node_label(const bNodeTree * /*ntree*/,
   const char *name;
   bool enum_label = RNA_enum_name(rna_enum_node_warning_type_items, node->custom1, &name);
   if (!enum_label) {
-    name = IFACE_("Unknown");
+    name = N_("Unknown");
   }
-  BLI_strncpy_utf8(label, CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, name), label_maxncpy);
+  BLI_strncpy_utf8(label, IFACE_(name), label_maxncpy);
 }
 
 static void node_register()
 {
   static blender::bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeWarning", GEO_NODE_WARNING, NODE_CLASS_INTERFACE);
+  geo_node_type_base(&ntype, "GeometryNodeWarning", GEO_NODE_WARNING);
   ntype.ui_name = "Warning";
   ntype.ui_description = "Create custom warnings in node groups";
   ntype.enum_name_legacy = "WARNING";
+  ntype.nclass = NODE_CLASS_INTERFACE;
   ntype.declare = node_declare;
   ntype.labelfunc = node_label;
   ntype.draw_buttons = node_layout;

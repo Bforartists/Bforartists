@@ -9,16 +9,14 @@
 #include <cctype>
 #include <cfloat>
 #include <cmath>
-#include <cstddef> /* For `offsetof`. */
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_blenlib.h"
-#include "BLI_ghash.h"
 #include "BLI_math_rotation.h"
+#include "BLI_string.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.hh"
@@ -27,7 +25,6 @@
 #include "DNA_asset_types.h"
 #include "DNA_collection_types.h"
 #include "DNA_curve_types.h"
-#include "DNA_gpencil_legacy_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
@@ -35,10 +32,6 @@
 #include "DNA_object_force_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_vfont_types.h"
-#include "DNA_workspace_types.h"
-
-#include "IMB_imbuf_types.hh"
 
 #include "BKE_anim_visualization.h"
 #include "BKE_armature.hh"
@@ -79,6 +72,7 @@
 #include "ED_asset_menu_utils.hh"
 #include "ED_curve.hh"
 #include "ED_gpencil_legacy.hh"
+#include "ED_grease_pencil.hh"
 #include "ED_image.hh"
 #include "ED_keyframes_keylist.hh"
 #include "ED_lattice.hh"
@@ -908,6 +902,7 @@ bool editmode_enter_ex(Main *bmain, Scene *scene, Object *ob, int flag)
   }
   else if (ob->type == OB_GREASE_PENCIL) {
     ok = true;
+    blender::ed::greasepencil::ensure_selection_domain(scene->toolsettings, ob);
     WM_main_add_notifier(NC_SCENE | ND_MODE | NS_EDITMODE_GREASE_PENCIL, scene);
   }
   else if (ob->type == OB_POINTCLOUD) {

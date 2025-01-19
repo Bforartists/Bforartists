@@ -3850,6 +3850,12 @@ def km_grease_pencil_paint_mode(params):
         # Lasso/Box erase
         ("grease_pencil.erase_lasso", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True}, None),
         ("grease_pencil.erase_box", {"type": "B", "value": 'PRESS'}, {"properties": [("wait_for_input", True)]}),
+        # Brush size
+        ("wm.radial_control", {"type": 'F', "value": 'PRESS'},
+         {"properties": [("data_path_primary", "tool_settings.gpencil_paint.brush.size")]}),
+        # Brush strength
+        ("wm.radial_control", {"type": 'F', "value": 'PRESS', "shift": True},
+         {"properties": [("data_path_primary", "tool_settings.gpencil_paint.brush.strength")]}),
 
         *_template_asset_shelf_popup("VIEW3D_AST_brush_gpencil_paint", params.spacebar_action),
 
@@ -3875,12 +3881,6 @@ def km_grease_pencil_brush_stroke(_params):
          {"properties": [("mode", 'SMOOTH')]}),
         ("grease_pencil.brush_stroke", {"type": 'ERASER', "value": 'PRESS'},
          {"properties": [("mode", 'ERASE')]}),
-        # Brush size
-        ("wm.radial_control", {"type": 'F', "value": 'PRESS'},
-         {"properties": [("data_path_primary", "tool_settings.gpencil_paint.brush.size")]}),
-        # Brush strength
-        ("wm.radial_control", {"type": 'F', "value": 'PRESS', "shift": True},
-         {"properties": [("data_path_primary", "tool_settings.gpencil_paint.brush.strength")]}),
         # Increase/Decrease brush size
         ("brush.scale_size", {"type": 'LEFT_BRACKET', "value": 'PRESS', "repeat": True},
          {"properties": [("scalar", 0.9)]}),
@@ -3942,9 +3942,10 @@ def km_grease_pencil_edit_mode(params):
             params, connected=True, toggle_data_path="tool_settings.use_proportional_edit"),
 
         # Cyclical set
-        ("grease_pencil.cyclical_set", {"type": 'F', "value": 'PRESS'}, {"properties": [("type", "CLOSE")]}),
+        ("grease_pencil.cyclical_set", {"type": 'F', "value": 'PRESS'},
+         {"properties": [("type", "CLOSE"), ("subdivide_cyclic_segment", True)]}),
         ("grease_pencil.cyclical_set", {"type": 'C', "value": 'PRESS',
-         "alt": True}, {"properties": [("type", "TOGGLE")]}),
+         "alt": True}, {"properties": [("type", "TOGGLE"), ("subdivide_cyclic_segment", False)]}),
 
         # Join selection
         ("grease_pencil.join_selection", {"type": 'J', "value": 'PRESS', "ctrl": True},
@@ -5679,7 +5680,7 @@ def km_edit_curve_legacy(params):
         ("curve.handle_type_set", {"type": 'V', "value": 'PRESS'}, None),
         ("curve.vertex_add", {"type": params.action_mouse, "value": 'CLICK', "ctrl": True}, None),
         *_template_items_select_actions(params, "curve.select_all"),
-        ("curve.select_row", {"type": 'R', "value": 'PRESS', "shift": True}, None),
+        ("curve.select_row", {"type": 'R', "value": 'PRESS', "shift": True, "ctrl": True}, None),
         ("curve.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("curve.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("curve.select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
