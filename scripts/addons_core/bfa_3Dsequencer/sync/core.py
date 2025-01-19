@@ -161,7 +161,7 @@ def _scene_frame_set_optimized(
 scene_frame_set = _scene_frame_set_optimized
 
 
-def remap_frame_value(frame: int, scene_strip: bpy.types.SceneSequence) -> int:
+def remap_frame_value(frame: int, scene_strip: bpy.types.Strip) -> int:
     """Remap `frame` in `scene_strip`'s underlying scene reference.
 
     :param frame: The frame to remap
@@ -201,7 +201,7 @@ def get_scene_strip_at_frame(
     frame: int,
     sequence_editor: bpy.types.SequenceEditor,
     skip_muted: bool = True,
-) -> tuple[Union[bpy.types.SceneSequence, None], int]:
+) -> tuple[Union[bpy.types.Strip, None], int]:
     """
     Get the scene strip at `frame` in `sequence_editor`'s strips with the highest
     channel number.
@@ -220,7 +220,7 @@ def get_scene_strip_at_frame(
         muted_channels = [idx for idx, channel in enumerate(channels) if channel.mute]
         strips = [strip for strip in strips if not strip.channel in muted_channels]
 
-    strips = get_strips_at_frame(frame, strips, bpy.types.SceneSequence, skip_muted)
+    strips = get_strips_at_frame(frame, strips, bpy.types.Strip, skip_muted)
 
     if not strips:
         return None, frame
@@ -228,7 +228,7 @@ def get_scene_strip_at_frame(
     strip = sorted(strips, key=lambda x: x.channel)[-1]
 
     # Help type checking: strip can only be a SceneSequence here
-    assert isinstance(strip, bpy.types.SceneSequence)
+    assert isinstance(strip, bpy.types.Strip)
 
     # Only consider scene strips with a valid scene
     if not strip.scene:
@@ -344,7 +344,7 @@ def set_gpencil_mode_safe(
 
 def get_sync_master_strip(
     use_cache: bool = False,
-) -> tuple[Union[bpy.types.SceneSequence, None], int]:
+) -> tuple[Union[bpy.types.Strip, None], int]:
     """
     Return the scene strip currently used by the 3D View Sync.
 
@@ -367,7 +367,7 @@ def get_sync_master_strip(
     )
 
 
-def update_preview_range(scene_strip: bpy.types.SceneSequence):
+def update_preview_range(scene_strip: bpy.types.Strip):
     """Update `scene_strip`'s scene preview range to match `scene_strip`'s range.
 
     :param scene_strip: The scene strip to update.
@@ -607,7 +607,7 @@ def on_load_post(*args):
         ):
             seq_editor = area.spaces.active.scene_override.sequence_editor
             if seq_editor and any(
-                isinstance(s, bpy.types.SceneSequence) for s in seq_editor.sequences
+                isinstance(s, bpy.types.Strip) for s in seq_editor.sequences
             ):
                 sync_settings.master_scene = area.spaces.active.scene_override
                 sync_settings.enabled = True
