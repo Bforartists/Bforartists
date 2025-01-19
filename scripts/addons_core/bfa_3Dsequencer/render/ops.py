@@ -88,7 +88,7 @@ class SEQUENCER_OT_batch_render(bpy.types.Operator):
         seqs = [
             seq
             for seq in self.scene.sequence_editor.sequences
-            if isinstance(seq, bpy.types.SceneSequence)
+            if isinstance(seq, bpy.types.Strip)
             and (seq.select or not self.render_options.selection_only)
         ]
 
