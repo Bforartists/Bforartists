@@ -108,7 +108,11 @@ class ScaleOperation : public NodeOperation {
     const float3x3 transformation = math::from_loc_rot_scale<float3x3>(
         translation, rotation, scale);
 
-    transform(context(), input, output, transformation, input.get_realization_options());
+    transform(this->context(),
+              input,
+              output,
+              transformation,
+              input.get_realization_options().interpolation);
   }
 
   void execute_variable_size()
@@ -317,10 +321,11 @@ void register_node_type_cmp_scale()
 
   static blender::bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeScale", CMP_NODE_SCALE, NODE_CLASS_DISTORT);
+  cmp_node_type_base(&ntype, "CompositorNodeScale", CMP_NODE_SCALE);
   ntype.ui_name = "Scale";
   ntype.ui_description = "Change the size of the image";
   ntype.enum_name_legacy = "SCALE";
+  ntype.nclass = NODE_CLASS_DISTORT;
   ntype.declare = file_ns::cmp_node_scale_declare;
   ntype.draw_buttons = file_ns::node_composit_buts_scale;
   ntype.updatefunc = file_ns::node_composite_update_scale;
