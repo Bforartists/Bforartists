@@ -146,8 +146,10 @@ class ConstraintButtonsPanel:
                         case 'ARMATURE':
                             col.prop_search(con, "space_subtarget", con.space_object.data, "bones", text="Bone")
                         case 'MESH', 'LATTICE':
-                            col.prop_search(con, "space_subtarget", con.space_object,
-                                            "vertex_groups", text="Vertex Group")
+                            col.prop_search(
+                                con, "space_subtarget", con.space_object,
+                                "vertex_groups", text="Vertex Group",
+                            )
 
     @staticmethod
     def target_template(layout, con, subtargets=True):
@@ -838,10 +840,17 @@ class ConstraintButtonsPanel:
                 if space_object := con.space_object:
                     match space_object.type:
                         case 'ARMATURE':
-                            col.prop_search(con, "space_subtarget", con.space_object.data, "bones", text="Bone")
+                            col.prop_search(
+                                con, "space_subtarget",
+                                con.space_object.data, "bones",
+                                text="Bone",
+                            )
                         case 'MESH', 'LATTICE':
-                            col.prop_search(con, "space_subtarget", con.space_object,
-                                            "vertex_groups", text="Vertex Group")
+                            col.prop_search(
+                                con, "space_subtarget",
+                                con.space_object, "vertex_groups",
+                                text="Vertex Group",
+                            )
 
             layout.prop(con, "project_limit", text="Distance")
 

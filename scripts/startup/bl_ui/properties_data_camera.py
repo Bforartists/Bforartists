@@ -146,8 +146,8 @@ class DATA_PT_lens(CameraButtonsPanel, Panel):
 
         col.separator()
         sub = col.column(align=True)
-        sub.prop(cam, "clip_start", text="Clip Near")
-        sub.prop(cam, "clip_end", text="Clip Far")
+        sub.prop(cam, "clip_start", text="Clip Near", text_ctxt=i18n_contexts.id_camera)
+        sub.prop(cam, "clip_end", text="Clip Far", text_ctxt=i18n_contexts.id_camera)
 
 
 class DATA_PT_camera_stereoscopy(CameraButtonsPanel, Panel):
@@ -268,7 +268,8 @@ class DATA_PT_camera_dof(CameraButtonsPanel, Panel):
         row.operator(
             "ui.eyedropper_depth",
             icon='EYEDROPPER',
-            text="").prop_data_path = "scene.camera.data.dof.focus_distance"
+            text="",
+        ).prop_data_path = "scene.camera.data.dof.focus_distance"
 
 
 class DATA_PT_camera_dof_aperture(CameraButtonsPanel, Panel):
