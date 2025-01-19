@@ -16,7 +16,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_blenlib.h"
+#include "BLI_string.h"
 #include "BLI_time.h"
 #include "BLI_utildefines.h"
 
@@ -2807,6 +2807,13 @@ static void panel_activate_state(const bContext *C, Panel *panel, const uiHandle
   }
 
   ED_region_tag_redraw(region);
+}
+
+void UI_panel_stop_animation(const bContext *C, Panel *panel)
+{
+  if (panel->activedata) {
+    panel_activate_state(C, panel, PANEL_STATE_EXIT);
+  }
 }
 
 /** \} */
