@@ -6900,7 +6900,7 @@ keyconfig_data = \
       },
      ),
     ("sequencer.text_cursor_move",
-     {"type": 'A', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"type": 'LEFT_ARROW', "value": 'PRESS', "shift": True, "repeat": True},
      {"properties":
       [("type", 'PREVIOUS_CHARACTER'),
        ("select_text", True),
@@ -6915,7 +6915,7 @@ keyconfig_data = \
       },
      ),
     ("sequencer.text_cursor_move",
-     {"type": 'RIGHT_ARROW', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"type": 'RIGHT_ARROW', "value": 'PRESS', "shift": True, "repeat": True},
      {"properties":
       [("type", 'NEXT_CHARACTER'),
        ("select_text", True),
