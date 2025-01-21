@@ -422,6 +422,13 @@ class SEQUENCER_MT_editor_menus(Menu):
         if st.view_type in {"SEQUENCER", "PREVIEW"}:
             layout.menu("SEQUENCER_MT_image")
 
+        # BFA - start
+        strip = context.active_sequence_strip
+
+        if _has_preview:
+            if strip and strip.type == "TEXT":
+                layout.menu("SEQUENCER_MT_strip_text")
+        # BFA - end
 
 class SEQUENCER_MT_view_cache(Menu):
     bl_label = "Cache"
@@ -843,6 +850,66 @@ class SEQUENCER_MT_select(Menu):
 
         # BFA - moved to a sub-menu
 
+        # BFA - start
+        strip = _context.active_sequence_strip
+
+        if has_preview:
+            if strip and strip.type == "TEXT":
+                col.separator()
+
+                col.operator("sequencer.text_select_all", text="Select All Text", icon="SELECT_ALL")
+                col.operator("sequencer.text_deselect_all", text="Deselect All Text", icon="SELECT_NONE")
+
+                col.separator()
+
+                props = col.operator("sequencer.text_cursor_move", text="Line End", icon="HAND", text_ctxt="Select")
+                props.type = "LINE_END"
+                props.select_text = True
+
+                props = col.operator("sequencer.text_cursor_move", text="Line Begin", icon="HAND", text_ctxt="Select")
+                props.type = "LINE_BEGIN"
+                props.select_text = True
+
+                col.separator()
+
+                props = col.operator("sequencer.text_cursor_move", text="Top", icon="HAND", text_ctxt="Select")
+                props.type = "TEXT_BEGIN"
+                props.select_text = True
+
+                props = col.operator("sequencer.text_cursor_move", text="Bottom", icon="HAND", text_ctxt="Select")
+                props.type = "TEXT_END"
+                props.select_text = True
+
+                col.separator()
+
+                props = col.operator("sequencer.text_cursor_move", text="Previous Character", icon="HAND")
+                props.type = "PREVIOUS_CHARACTER"
+                props.select_text = True
+
+                props = col.operator("sequencer.text_cursor_move", text="Next Character", icon="HAND")
+                props.type = "NEXT_CHARACTER"
+                props.select_text = True
+
+                col.separator()
+
+                props = col.operator("sequencer.text_cursor_move", text="Previous Word", icon="HAND")
+                props.type = "PREVIOUS_WORD"
+                props.select_text = True
+
+                props = col.operator("sequencer.text_cursor_move", text="Next Word", icon="HAND")
+                props.type = "NEXT_WORD"
+                props.select_text = True
+
+                col.separator()
+
+                props = layout.operator("sequencer.text_cursor_move", text="Previous Line", icon="HAND")
+                props.type = "PREVIOUS_LINE"
+                props.select_text = True
+
+                props = col.operator("sequencer.text_cursor_move", text="Next Line", icon="HAND")
+                props.type = "NEXT_LINE"
+                props.select_text = True
+        # BFA - end
 
 class SEQUENCER_MT_marker(Menu):
     bl_label = "Marker"
@@ -1292,19 +1359,29 @@ class SEQUENCER_MT_strip_text(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_REGION_PREVIEW"
-        layout.operator("sequencer.text_edit_mode_toggle")
+        layout.operator("sequencer.text_edit_mode_toggle", icon="OUTLINER_OB_FONT")
         layout.separator()
+        layout.operator("sequencer.text_edit_cut", icon="CUT") # BFA - consistent order
         layout.operator("sequencer.text_edit_copy", icon="COPYDOWN")
         layout.operator("sequencer.text_edit_paste", icon="PASTEDOWN")
-        layout.operator("sequencer.text_edit_cut")
-        layout.separator()
-        props = layout.operator("sequencer.text_delete")
-        props.type = "PREVIOUS_OR_SELECTION"
-        layout.operator("sequencer.text_line_break")
-        layout.separator()
-        layout.operator("sequencer.text_select_all")
-        layout.operator("sequencer.text_deselect_all")
 
+        layout.separator()
+        layout.menu("SEQUENCER_MT_strip_text_characters")  # BFA - menu
+
+        layout.separator()
+        props = layout.operator("sequencer.text_delete", icon="DELETE")
+        props.type = "PREVIOUS_OR_SELECTION"
+        layout.operator("sequencer.text_line_break", icon="CARET_NEXT_CHAR")
+
+
+# BFA - Menu
+class SEQUENCER_MT_strip_text_characters(Menu):
+    bl_label = "Move Cursor"
+
+    def draw(self, context):
+            layout = self.layout
+
+            layout.operator_enum("sequencer.text_cursor_move", "type")
 
 class SEQUENCER_MT_strip_input(Menu):
     bl_label = "Inputs"
@@ -1489,8 +1566,9 @@ class SEQUENCER_MT_strip(Menu):
             layout.separator()
             layout.operator("sequencer.preview_duplicate_move", text="Duplicate")
             layout.separator()
-            if strip and strip.type == "TEXT":
-                layout.menu("SEQUENCER_MT_strip_text")
+            # BFA - moved to top header level
+            #if strip and strip.type == "TEXT":
+            #    layout.menu("SEQUENCER_MT_strip_text")
 
         if has_sequencer:
             layout.menu("SEQUENCER_MT_strip_retiming")
@@ -1520,7 +1598,6 @@ class SEQUENCER_MT_strip(Menu):
             ).delete_data = True
             layout.operator("sequencer.scene_frame_range_update", icon="NODE_MAP_RANGE")
 
-        layout.separator()
         # layout.menu("SEQUENCER_MT_change") # BFA - replaced to be a top-level series of conditional operators
 
         # BFA - Changed the Change contextual operator visibility to be based on strip type selection
@@ -1532,11 +1609,13 @@ class SEQUENCER_MT_strip(Menu):
                 bpy_data_scenes_len = len(bpy.data.scenes)
 
                 if bpy_data_scenes_len > 14:
+                    layout.separator()
                     layout.operator_context = "INVOKE_DEFAULT"
                     layout.operator(
                         "sequencer.change_scene", text="Change Scene", icon="SCENE_DATA"
                     )
                 elif bpy_data_scenes_len > 1:
+                    layout.separator()
                     layout.menu(
                         "SEQUENCER_MT_change_scene_with_icons", text="Change Scene"
                     )
@@ -1561,6 +1640,7 @@ class SEQUENCER_MT_strip(Menu):
 
                 if strip_type in data_strips:
                     layout.operator_context = "INVOKE_DEFAULT"
+                    layout.separator()
                     props = layout.operator(
                         "sequencer.change_path",
                         text="Change Path/Files",
@@ -1578,6 +1658,7 @@ class SEQUENCER_MT_strip(Menu):
                             props.filter_sound = True
                 elif strip_type in effect_strips:
                     layout.operator_context = "INVOKE_DEFAULT"
+                    layout.separator()
                     layout.operator_menu_enum("sequencer.change_effect_input", "swap")
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
                 else:
@@ -4225,6 +4306,7 @@ classes = (
     SEQUENCER_PT_sequencer_snapping,
     SEQUENCER_PT_view_options,  # BFA
     SEQUENCER_MT_fades_add,  # BFA
+    SEQUENCER_MT_strip_text_characters, # BFA
 )
 
 if __name__ == "__main__":  # only for live edit.
