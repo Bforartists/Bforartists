@@ -6429,6 +6429,10 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeStringLength"
 
+            props = col.operator("node.add_node", text=" Find in String           ", icon = "STRING_FIND")
+            props.use_transform = True
+            props.type = "FunctionNodeFindInString"
+
             props = col.operator("node.add_node", text=" String to Curves       ", icon = "STRING_TO_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeStringToCurves"
@@ -6464,6 +6468,10 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "STRING_LENGTH")
             props.use_transform = True
             props.type = "FunctionNodeStringLength"
+
+            props = flow.operator("node.add_node", text="", icon = "STRING_FIND")
+            props.use_transform = True
+            props.type = "FunctionNodeFindInString"
 
             props = flow.operator("node.add_node", text = "", icon = "STRING_TO_CURVE")
             props.use_transform = True
