@@ -275,7 +275,7 @@ const bTheme U_theme_default = {
     .icon_object_data = RGBA(0x98cc98ff),
     .icon_modifier = RGBA(0x6e98ccff),
     .icon_shading = RGBA(0xcc6e6eff),
-    .icon_folder = RGBA(0xffffffff),
+    .icon_folder = RGBA(0xedd341ff),
     .icon_autokey = RGBA(0xab3c48ff),
     .panel_roundness = 0.4f,
   },
