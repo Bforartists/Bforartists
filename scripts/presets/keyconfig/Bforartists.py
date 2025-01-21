@@ -2002,6 +2002,7 @@ keyconfig_data = \
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -7050,7 +7051,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sequencer.text_line_break", {"type": 'NUMPAD_ENTER', "value": 'PRESS', "repeat": True}, None),
+    ("sequencer.text_line_break", {"type": 'RET', "value": 'PRESS', "repeat": True}, None),
     ("sequencer.text_select_all", {"type": 'A', "value": 'PRESS', "ctrl": True}, None),
     ("sequencer.text_deselect_all", {"type": 'ESC', "value": 'PRESS'}, None),
     ("sequencer.text_edit_copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
@@ -7239,7 +7240,6 @@ keyconfig_data = \
        ],
       },
      ),
-
     ],
    },
   ),
@@ -7247,6 +7247,14 @@ keyconfig_data = \
   {"space_type": 'TEXT_EDITOR', "region_type": 'WINDOW'},
   {"items":
    [("wm.call_panel",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'BFA_PT_FIND_AND_REPLACE'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("wm.call_panel",
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("name", 'BFA_PT_FIND_AND_REPLACE'),
