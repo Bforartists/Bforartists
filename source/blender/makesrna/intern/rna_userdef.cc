@@ -2114,7 +2114,7 @@ static void rna_def_userdef_theme_ui(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "icon_folder");
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "File Folders", "Color of folders in the file browser");
-  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+  RNA_def_property_update(prop, 0, "rna_userdef_gpu_update"); // bfa - needed for themeable .icon_folder color
 
   prop = RNA_def_property(srna, "icon_autokey", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, nullptr, "icon_autokey");
@@ -5375,7 +5375,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
                            "asset shelf. Stored in the Preferences, which may have to be saved "
                            "manually if Auto-Save Preferences is disabled");
   RNA_def_property_boolean_default(prop, true); /*BFA - default to on*/
-  RNA_def_property_update(prop, 0, "rna_userdef_update"); 
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   static const EnumPropertyItem header_align_items[] = {
       {0, "NONE", 0, "Keep Existing", "Keep existing header alignment"},
@@ -7559,7 +7559,7 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "use_new_point_cloud_type", 1);
   RNA_def_property_ui_text(
       prop, "New Point Cloud Type", "Enable the new point cloud type in the ui");
-  
+
   prop = RNA_def_property(srna, "use_new_curves_tools", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "use_new_curves_tools", 1);
   RNA_def_property_ui_text(
@@ -7770,7 +7770,7 @@ void RNA_def_userdef(BlenderRNA *brna)
       "This can prevent stuttering from opening the material ID menu");
   RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
    /* BFA - GooEngine end */
-  
+
   /* nested structs */
   prop = RNA_def_property(srna, "view", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
