@@ -8420,7 +8420,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sequencer.text_line_break", {"type": 'RETURN', "value": 'PRESS', "repeat": True}, None),
+    ("sequencer.text_line_break", {"type": 'NUMPAD_ENTER', "value": 'PRESS', "repeat": True}, None),
     ("sequencer.text_select_all", {"type": 'A', "value": 'PRESS', "oskey": True}, None),
     ("sequencer.text_deselect_all", {"type": 'ESC', "value": 'PRESS'}, None),
     ("sequencer.text_edit_copy", {"type": 'C', "value": 'PRESS', "oskey": True}, None),
