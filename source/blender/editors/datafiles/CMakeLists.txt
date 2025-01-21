@@ -1854,6 +1854,7 @@ if(WITH_BLENDER)
       straighten_x
       straighten_y
       string
+      string_find
       string_join
       string_length
       string_substring
