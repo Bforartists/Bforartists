@@ -1303,9 +1303,9 @@ static int get_draw_size(enum eIconSizes size)
 }
 
 static void svg_replace_color_attributes(std::string &svg,
-                                         const std::string &name,
-                                         const size_t start,
-                                         const size_t end)
+                                       const std::string &name,
+                                       const size_t start,
+                                       const size_t end)
 {
   bTheme *btheme = UI_GetTheme();
 
@@ -1382,32 +1382,32 @@ static void svg_replace_color_attributes(std::string &svg,
     std::string hexcolor = fmt::format(
         "{:02x}{:02x}{:02x}{:02x}", color[0], color[1], color[2], color[3]);
 
-    size_t att_start = start;
-    while (true) {
-      constexpr static blender::StringRef key = "fill=\"";
-      att_start = svg.find(key, att_start);
-      if (att_start == std::string::npos || att_start > end) {
-        break;
+      size_t att_start = start;
+      while (true) {
+        constexpr static blender::StringRef key = "fill=\"";
+        att_start = svg.find(key, att_start);
+        if (att_start == std::string::npos || att_start > end) {
+          break;
+        }
+        const size_t att_end = svg.find("\"", att_start + key.size());
+        if (att_end != std::string::npos && att_end < end) {
+          svg.replace(att_start, att_end - att_start, key + "#" + hexcolor);
+        }
+        att_start += blender::StringRef(key + "#rrggbbaa\"").size();
       }
-      const size_t att_end = svg.find("\"", att_start + key.size());
-      if (att_end != std::string::npos && att_end < end) {
-        svg.replace(att_start, att_end - att_start, key + "#" + hexcolor);
-      }
-      att_start += blender::StringRef(key + "#rrggbbaa\"").size();
-    }
 
-    att_start = start;
-    while (true) {
-      constexpr static blender::StringRef key = "fill:";
-      att_start = svg.find(key, att_start);
-      if (att_start == std::string::npos || att_start > end) {
-        break;
-      }
-      const size_t att_end = svg.find(";", att_start + key.size());
-      if (att_end != std::string::npos && att_end - att_start < end) {
-        svg.replace(att_start, att_end - att_start, key + "#" + hexcolor);
-      }
-      att_start += blender::StringRef(key + "#rrggbbaa").size();
+      att_start = start;
+      while (true) {
+        constexpr static blender::StringRef key = "fill:";
+        att_start = svg.find(key, att_start);
+        if (att_start == std::string::npos || att_start > end) {
+          break;
+        }
+        const size_t att_end = svg.find(";", att_start + key.size());
+        if (att_end != std::string::npos && att_end - att_start < end) {
+          svg.replace(att_start, att_end - att_start, key + "#" + hexcolor);
+        }
+        att_start += blender::StringRef(key + "#rrggbbaa").size();
     }
   }
 }
@@ -1444,7 +1444,22 @@ static void icon_source_edit_cb(std::string &svg)
     const size_t id_end = svg.find("\"", id_start + key.size());
     if (id_end != std::string::npos) {
       std::string id_name = svg.substr(id_start + key.size(), id_end - id_start - key.size());
-      /* Replace this group's colors. */
+      /* bfa - Since Inkscape cant have 2 group ID's of the same name,
+      this allows group ID's in a svg to have a number suffix to (blender_folder_01, _02 etc),
+      be still be treated has if it was blender_folder, allows for more complex icon themeing */
+      size_t last_underscore = id_name.rfind('_');
+      if (last_underscore != std::string::npos) {
+        bool is_number = true;
+        for (size_t i = last_underscore + 1; i < id_name.length(); i++) {
+          if (!std::isdigit(id_name[i])) {
+            is_number = false;
+            break;
+          }
+        }
+        if (is_number) {
+          id_name = id_name.substr(0, last_underscore);
+        }
+      }
       svg_replace_color_attributes(svg, id_name, g_start, g_end);
     }
 
