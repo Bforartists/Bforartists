@@ -4092,6 +4092,13 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.input_scale = -0.01
                 props.header_text = rpt_("Spot Blend: %.2f")
 
+            # BFA - added for consistency and accessibility from context menu
+            if light.type in {"SPOT", "SUN", "AREA"}:
+                props = layout.operator(
+                    "object.transform_axis_target",
+                    text="Interactive Light Track",
+                    icon="NODE_LIGHTPATH",
+                )
             layout.separator()
 
         # Shared among some object types.
