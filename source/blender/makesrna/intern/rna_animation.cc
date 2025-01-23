@@ -1694,8 +1694,8 @@ static void rna_def_animdata(BlenderRNA *brna)
       prop,
       "Last Action Slot Identifier",
       "The identifier of the most recently assigned action slot. The slot identifies which "
-      "sub-set of the Action is considered to be for this data-block, and its identifier is used "
-      "to find the right slot when assigning an Action.");
+      "data is included in the Action clip, and its identifier name is used "
+      "to find the right slot when assigning an Action."); /*BFA - more explicit*/
 
   prop = RNA_def_property(srna, "action_slot", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "ActionSlot");
@@ -1704,8 +1704,9 @@ static void rna_def_animdata(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Action Slot",
-      "The slot identifies which sub-set of the Action is considered to be for this "
-      "data-block, and its name is used to find the right slot when assigning an Action");
+      "The slot identifies which data is included in the Action clip, useful to animate "
+      "multiple elements together. You can assign in the Animation Panel or Dopesheet"
+      "Its identifier name is used to find the right slot when assigning an Action"); /*BFA - more explicit*/
   RNA_def_property_pointer_funcs(
       prop, "rna_AnimData_action_slot_get", "rna_AnimData_action_slot_set", nullptr, nullptr);
   RNA_def_property_update(
