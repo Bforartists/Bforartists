@@ -721,7 +721,7 @@ static void file_draw_special_image(const FileDirEntry *file,
 
   if (file_type_icon) {
     /* Small icon in the middle of large image, scaled to fit container and UI scale */
-    float icon_opacity = 0.4f;
+    float icon_opacity = 1.0f; /* bfa - keep small icons on large image fully opaque (icon in center of file_folder_large etc) */
     uchar icon_color[4] = {0, 0, 0, 255};
     if (rgb_to_grayscale(document_img_col) < 0.5f) {
       icon_color[0] = 255;
