@@ -424,13 +424,13 @@
      inkscape:deskcolor="#767676"
      showgrid="true"
      inkscape:zoom="0.35355339"
-     inkscape:cx="852.77078"
-     inkscape:cy="485.07525"
-     inkscape:window-width="1278"
-     inkscape:window-height="1016"
-     inkscape:window-x="1273"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
+     inkscape:cx="452.54834"
+     inkscape:cy="746.70476"
+     inkscape:window-width="2560"
+     inkscape:window-height="1025"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      inkscape:current-layer="layer7">
     <inkscape:grid
        id="grid1"
@@ -477,40 +477,40 @@
          transform="matrix(0.83623694,0,0,0.96767328,131.01046,21.159801)">
         <path
            style="display:inline;fill:#fecb00;fill-opacity:1;stroke:none;stroke-width:16.6749;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-           d="M 82.732259,81.336866 C 202.23295,81.241149 321.74894,81.626343 441.24997,81.626343 L 572.79164,133.29668 H 1577.899 a 59.184294,59.184294 45 0 1 59.1843,59.18429 v 909.08443 a 116.8083,116.8083 135 0 1 -116.8083,116.8083 l -1440.55003,0 A 116.8083,116.8083 45 0 1 -37.08333,1101.5654 V 201.44234 c 0,-66.17255 53.643094,-120.052472 119.815589,-120.105474 z"
+           d="m 82.732259,81.336866 c 119.500691,-0.09572 239.016681,0.289477 358.517711,0.289477 l 59.79167,51.670337 H 1577.899 a 59.184294,59.184294 45 0 1 59.1843,59.18429 v 909.08443 a 116.8083,116.8083 135 0 1 -116.8083,116.8083 l -1440.55003,0 A 116.8083,116.8083 45 0 1 -37.08333,1101.5654 V 201.44234 c 0,-66.17255 53.643094,-120.052472 119.815589,-120.105474 z"
            id="path9"
            inkscape:label="back"
            sodipodi:nodetypes="ccccccc"
            inkscape:path-effect="#path-effect11-4"
-           inkscape:original-d="m -37.08333,81.626344 c 159.42315,-0.685711 318.89154,-10e-7 478.3333,-10e-7 L 572.79164,133.29668 H 1637.0833 V 1218.3737 H -37.08333 Z" />
+           inkscape:original-d="m -37.08333,81.626344 c 159.42315,-0.685711 318.89154,-10e-7 478.3333,-10e-7 l 59.79167,51.670337 H 1637.0833 V 1218.3737 H -37.08333 Z" />
       </g>
       <path
          style="display:inline;fill:#000000;fill-opacity:0.2;stroke:#4c380c;stroke-width:16.6749;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-         d="M 82.732259,81.336866 C 202.23295,81.241149 321.74894,81.626343 441.24997,81.626343 L 572.79164,133.29668 H 1577.899 a 59.1843,59.1843 45 0 1 59.1843,59.1843 l 0,909.08442 a 116.8083,116.8083 135 0 1 -116.8083,116.8083 l -1440.55006,0 A 116.80827,116.80827 45 0 1 -37.08333,1101.5654 V 201.44234 c 0,-66.17255 53.643094,-120.052472 119.815589,-120.105474 z"
+         d="m 82.732259,81.336866 c 119.500691,-0.09572 239.016681,0.289477 358.517711,0.289477 l 59.79167,51.670337 H 1577.899 a 59.1843,59.1843 45 0 1 59.1843,59.1843 l 0,909.08442 a 116.8083,116.8083 135 0 1 -116.8083,116.8083 l -1440.55006,0 A 116.80827,116.80827 45 0 1 -37.08333,1101.5654 V 201.44234 c 0,-66.17255 53.643094,-120.052472 119.815589,-120.105474 z"
          id="path1"
          inkscape:label="back dim layer"
          sodipodi:nodetypes="ccccccc"
          inkscape:path-effect="#path-effect8-5"
-         inkscape:original-d="m -37.08333,81.626344 c 159.42315,-0.685711 318.89154,-10e-7 478.3333,-10e-7 L 572.79164,133.29668 H 1637.0833 V 1218.3737 H -37.08333 Z"
+         inkscape:original-d="m -37.08333,81.626344 c 159.42315,-0.685711 318.89154,-10e-7 478.3333,-10e-7 l 59.79167,51.670337 H 1637.0833 V 1218.3737 H -37.08333 Z"
          transform="matrix(0.83623694,0,0,0.96767328,131.01046,21.159801)" />
       <g
          id="blender_folder"
          inkscape:label="blender_folder"
          transform="translate(1.0543554e-5,0.14743111)"
-         style="stroke:#4c380c;stroke-opacity:1">
+         style="display:inline;stroke:#4c380c;stroke-opacity:1">
         <path
            style="display:inline;fill:#edd238;fill-opacity:1;stroke:#4c380c;stroke-width:16.6749;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-           d="m 80.89285,290.37449 h 360.35712 l 131.54169,-93.0066 H 1582.1785 a 54.904752,54.904752 45 0 1 54.9048,54.90475 v 849.29276 a 116.8083,116.8083 135 0 1 -116.8083,116.8083 l -1440.55003,0 A 116.8083,116.8083 45 0 1 -37.08333,1101.5654 V 408.35067 A 117.97618,117.97618 135 0 1 80.89285,290.37449 Z"
+           d="m 80.89285,238.70416 h 360.35712 l 59.79169,-41.33627 H 1582.1785 a 54.904752,54.904752 45 0 1 54.9048,54.90475 v 849.29276 a 116.8083,116.8083 135 0 1 -116.8083,116.8083 l -1440.55003,0 A 116.8083,116.8083 45 0 1 -37.08333,1101.5654 V 356.68034 A 117.97618,117.97618 135 0 1 80.89285,238.70416 Z"
            id="path13"
            inkscape:label="front"
            sodipodi:nodetypes="ccccccc"
            transform="matrix(0.83623694,0,0,0.96767328,131.01045,21.012368)"
            inkscape:path-effect="#path-effect17-5"
-           inkscape:original-d="m -37.08333,290.37449 h 478.3333 l 131.54169,-93.0066 H 1637.0833 V 1218.3737 H -37.08333 Z" />
+           inkscape:original-d="m -37.08333,238.70416 h 478.3333 l 59.79169,-41.33627 H 1637.0833 V 1218.3737 H -37.08333 Z" />
       </g>
       <path
          style="display:inline;fill:#cba200;fill-opacity:1;stroke:none;stroke-width:16.7746;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-         d="M -22.629034,1166.7033 H 436.47712 568.01881 1607.4966 a 0.22179017,0.22179017 67.759923 0 1 0.1554,0.38 l -3.3974,3.3363 a 152.94724,152.94724 157.75992 0 1 -107.1644,43.8205 H 72.075553 a 124.35247,124.35247 25.541497 0 1 -99.477437,-47.5368 z"
+         d="M -22.629035,1166.7033 H 436.47712 568.01881 1607.4966 a 0.22179025,0.22179025 67.759915 0 1 0.1554,0.38 l -3.3974,3.3364 a 152.94718,152.94718 157.75991 0 1 -107.1643,43.8204 H 72.075553 a 124.35245,124.35245 25.54151 0 1 -99.477437,-47.5368 z"
          id="path16"
          inkscape:label="front highlighting"
          sodipodi:nodetypes="ccccccc"
