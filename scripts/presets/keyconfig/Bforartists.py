@@ -606,6 +606,21 @@ keyconfig_data = \
     ],
    },
   ),
+ ("3D View Tool: Edit Text, Select Text",
+  {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
+  {"items":
+   [("font.selection_set", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+    ("font.select_word", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("object.mode_set",
+     {"type": 'ESC', "value": 'PRESS'},
+     {"properties":
+      [("mode", 'OBJECT'),
+       ],
+      },
+     ),
+    ],
+   },
+  ),
  ("3D View Tool: Measure",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
   {"items":
@@ -2001,8 +2016,6 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -7240,6 +7253,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("sequencer.text_edit_mode_toggle", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ],
    },
   ),
