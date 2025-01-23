@@ -23,8 +23,8 @@ import bpy
 bl_info = {
 "name": "Smart Delete",
 "description": "Auto detect a delete elements",
-"author": "Reiner 'Tiles' Prokein",
-"version": (0,2.1),
+"author": "Reiner 'Tiles' Prokein, Draise (Trinumedia)",
+"version": (0,2.2),
 "blender": (2, 80, 0),
 "doc_url": "https://github.com/Bforartists/Manual",
 "tracker_url": "https://github.com/Bforartists/Bforartists",
@@ -61,7 +61,7 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
         if bpy.context.mode == 'EDIT_MESH':
             select_mode = context.tool_settings.mesh_select_mode
             me = context.object.data
-            # Vertices select
+            ## Vertices select
             if select_mode[0]:
                 mymode = 0
 
@@ -73,13 +73,56 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
                     try:
                         bpy.ops.mesh.dissolve_verts()
 
+                        #self.report({'INFO'}, "Selected vertices were dissolved.")
+
+                        # Check if there is only one vertex left and delete it if true
+                        bpy.ops.object.mode_set(mode='OBJECT')
+                        remaining_verts = [v for v in me.vertices if v.select]
+                        if len(remaining_verts) == 1:
+                            me.vertices[remaining_verts[0].index].select = True
+                            bpy.ops.object.mode_set(mode='EDIT')
+                            bpy.ops.mesh.delete(type='VERT')
+                            #self.report({'INFO'}, "Single floating vertices was removed.")
+                        else:
+                            bpy.ops.object.mode_set(mode='EDIT')
+
+                        # Check if all vertices are selected and delete them if true
+                        bpy.ops.object.mode_set(mode='OBJECT')
+                        all_verts = [v for v in me.vertices]
+                        if len(remaining_verts) == len(all_verts):
+                            bpy.ops.object.mode_set(mode='EDIT')
+                            bpy.ops.mesh.delete(type='VERT')
+                            #self.report({'INFO'}, "All selected vertices were removed.")
+                        else:
+                            bpy.ops.object.mode_set(mode='EDIT')
+
+                        # Check if there are exactly two selected vertices with no connected edges and delete them
+                        selected_verts = [v for v in me.vertices if v.select]
+                        if len(selected_verts) == 2:
+                            connected_edges = [e for e in me.edges if any(v.index in e.vertices for v in remaining_verts)]
+                            if not connected_edges:
+                                bpy.ops.object.mode_set(mode='EDIT')
+                                bpy.ops.mesh.delete(type='VERT')
+                                #self.report({'INFO'}, "Two disconnected vertices as an edge were removed.")
+                            else:
+                                bpy.ops.object.mode_set(mode='EDIT')
+
+                        # Check if there are exactly two vertices selected and delete them
+                        if len(remaining_verts) == 2:
+                            bpy.ops.object.mode_set(mode='EDIT')
+                            bpy.ops.mesh.delete(type='VERT')
+                            #self.report({'INFO'}, "Two last selected vertices as an edge were removed.")
+                        else:
+                            bpy.ops.object.mode_set(mode='EDIT')
+
+
                     except RuntimeError as exception:
                         error = " ".join(exception.args)
                         print("Invalid boundary region to join faces\nYou cannot delete this geometry that way.\nTry another delete method or another selection")
                         self.report({'ERROR'}, error)
 
 
-            # Edge select
+            ## Edge select
             elif select_mode[1] and not select_mode[2]:
                 mymode = 1
 
@@ -89,32 +132,81 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
                 if bpy.ops.mesh.dissolve_edges.poll():
 
                     try:
-                        bpy.ops.mesh.dissolve_edges(use_verts=self.use_verts)
+                        # Check if all selected edges are all the edges that exist
+                        bpy.ops.object.mode_set(mode='OBJECT')
+                        selected_edges = [e for e in me.edges if e.select]
+                        all_edges = [e for e in me.edges]
 
-                        bpy.ops.mesh.select_mode(type='VERT')
-                        bpy.ops.object.mode_set(mode='OBJECT')
-                        bpy.ops.object.mode_set(mode='EDIT')
-                        vs = [v.index for v in me.vertices if v.select]
-                        bpy.ops.mesh.select_all(action='DESELECT')
-                        bpy.ops.object.mode_set(mode='OBJECT')
-               
-                        for v in vs:
-                            vv = find_connected_verts(me, v)
-                            if vv==2:
-                                me.vertices[v].select = True
-                        bpy.ops.object.mode_set(mode='EDIT')
-                        bpy.ops.mesh.dissolve_verts()
-                        bpy.ops.mesh.select_all(action='DESELECT')
-               
-                        for v in vs:
-                            me.vertices[v].select = True
+                        # Check if all selected edges are an island
+                        island_edges = set()
+                        edges_to_check = set(selected_edges)
+
+                        while edges_to_check:
+                            edge = edges_to_check.pop()
+                            if edge not in island_edges:
+                                island_edges.add(edge)
+                                connected_edges = [e for e in me.edges if any(v in edge.vertices for v in e.vertices) and e not in island_edges]
+                                edges_to_check.update(connected_edges)
+
+                        #### For troubleshooting: ####
+                        #if len(selected_edges) == len(island_edges):
+                            #self.report({'INFO'}, "Selected edges are all of the edges of that island.")
+                        #else:
+                            #self.report({'INFO'}, "Selected edges are not all of the edges of that island.")
+
+                        if len(selected_edges) == len(all_edges):
+                            bpy.ops.object.mode_set(mode='EDIT')
+                            bpy.ops.mesh.delete(type='EDGE')
+                            #self.report({'INFO'}, "All selected edges were removed.")
+                        elif len(selected_edges) == len(island_edges):
+                            bpy.ops.object.mode_set(mode='EDIT')
+                            bpy.ops.mesh.delete(type='EDGE')
+                            #self.report({'INFO'}, "All connected island edges were removed.")
+                        else:
+                            # Check if the selected edge has no connecting edges
+                            no_connecting_edges = all(find_connected_verts(me, v) == 1 for e in selected_edges for v in e.vertices)
+                            if no_connecting_edges:
+                                bpy.ops.object.mode_set(mode='EDIT')
+                                bpy.ops.mesh.delete(type='EDGE')
+                                #self.report({'INFO'}, "Selected edge with no connecting edges was removed.")
+                            else:
+                                # Check if there are 3 or 4 edges left and remove the selected edge only, breaking face
+                                bpy.ops.object.mode_set(mode='OBJECT')
+                                if len(all_edges) in [3, 4, 5] or len(island_edges) in [3, 4, 5]:
+                                    bpy.ops.object.mode_set(mode='EDIT')
+                                    bpy.ops.mesh.delete(type='EDGE_FACE')
+                                    #self.report({'INFO'}, "3 or 4 selected edges, only edge was removed.")
+                                else:
+                                    # Proceed with dissolve
+                                    bpy.ops.object.mode_set(mode='EDIT')
+                                    bpy.ops.mesh.dissolve_edges(use_verts=self.use_verts)
+
+                                    bpy.ops.mesh.select_mode(type='VERT')
+                                    bpy.ops.object.mode_set(mode='OBJECT')
+                                    bpy.ops.object.mode_set(mode='EDIT')
+                                    vs = [v.index for v in me.vertices if v.select]
+                                    bpy.ops.mesh.select_all(action='DESELECT')
+                                    bpy.ops.object.mode_set(mode='OBJECT')
+
+                                    for v in vs:
+                                        vv = find_connected_verts(me, v)
+                                        if vv == 2:
+                                            me.vertices[v].select = True
+                                    bpy.ops.object.mode_set(mode='EDIT')
+                                    bpy.ops.mesh.dissolve_verts()
+                                    bpy.ops.mesh.select_all(action='DESELECT')
+
+                                    for v in vs:
+                                        me.vertices[v].select = True
+                                    #self.report({'INFO'}, "Selected edges were removed.")
 
                     except RuntimeError as exception:
                         error = " ".join(exception.args)
                         print("Invalid boundary region to join faces\nYou cannot delete this geometry that way. \nTry another delete method or another selection")
                         self.report({'ERROR'}, error)
-                
-            # Face Select        
+
+
+            ## Face Select
             elif select_mode[2] and not select_mode[1]:
                 mymode = 2 
                 bpy.ops.mesh.delete(type='FACE')
