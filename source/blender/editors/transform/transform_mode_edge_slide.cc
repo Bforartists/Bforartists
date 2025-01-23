@@ -828,7 +828,7 @@ static void applyEdgeSlide(TransInfo *t)
     status.opmodal(IFACE_("Resize"), op->type, TFM_MODAL_RESIZE);
     status.opmodal(IFACE_("Precision Mode"), op->type, TFM_MODAL_PRECISION, is_precision);
     status.item_bool(IFACE_("Clamp"), is_clamp, ICON_EVENT_C, ICON_EVENT_ALT);
-    status.item_bool(IFACE_("Even"), use_even, ICON_EVENT_E);
+    status.item_bool(IFACE_("Even"), use_even, ICON_EVENT_E, ICON_EVENT_ALT); /*BFA - removes hotkey conflict*/
     if (use_even) {
       status.item_bool(IFACE_("Flipped"), flipped, ICON_EVENT_F);
     }
