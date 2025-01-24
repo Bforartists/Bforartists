@@ -21,7 +21,7 @@
 #include "BLO_userdef_default.h" /* own include */
 
 /* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
-/*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI and USER_FILENOUI to the .flag*/
+/*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI, USER_OUTLINER_COL_COLLECTION_ROWS, USER_ANIM_SHOW_CHANNEL_GROUP_COLORS and USER_FILENOUI to the .flag*/
 const UserDef U_default = {
     .versionfile = BLENDER_FILE_VERSION,
     .subversionfile = BLENDER_FILE_SUBVERSION,
