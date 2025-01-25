@@ -351,10 +351,6 @@ class DOPESHEET_HT_editor_buttons:
             row.operator("action.push_down", text="Push Down", icon='NLA_PUSHDOWN')
             row.operator("action.stash", text="Stash", icon='FREEZE')
 
-            if context.object:
-                layout.separator_spacer()
-                cls._draw_action_selector(context, layout)
-
         # Layer management
         if st.mode == 'GPENCIL':
             ob = context.active_object
