@@ -1589,8 +1589,8 @@ elseif(APPLE)
   )
 
   if(WITH_BLENDER_THUMBNAILER)
-    set(OSX_THUMBNAILER_SOURCEDIR ${OSX_APP_SOURCEDIR}/Contents/PlugIns/blender-thumbnailer.appex)
-    set_target_properties(blender-thumbnailer PROPERTIES
+    set(OSX_THUMBNAILER_SOURCEDIR ${OSX_APP_SOURCEDIR}/Contents/PlugIns/bforartists-thumbnailer.appex)
+    set_target_properties(bforartists-thumbnailer PROPERTIES
       BUNDLE_EXTENSION appex
       MACOSX_BUNDLE_INFO_PLIST ${OSX_THUMBNAILER_SOURCEDIR}/Contents/Info.plist
       MACOSX_BUNDLE_SHORT_VERSION_STRING "${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}"
@@ -1633,7 +1633,7 @@ elseif(APPLE)
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
-      TARGETS blender-thumbnailer
+      TARGETS bforartists-thumbnailer
       DESTINATION "./Bforartists.app/Contents/PlugIns"
     )
   endif()
