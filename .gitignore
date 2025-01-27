@@ -57,7 +57,7 @@ waveletNoiseTile.bin
 /locale/user-config.py
 
 # External repositories.
-# BFA: We do not use external repositories for addons
+# BFA: commented out addons and addons_contrib
 #/scripts/addons/
 #/scripts/addons_contrib/
 /tests/benchmarks/
