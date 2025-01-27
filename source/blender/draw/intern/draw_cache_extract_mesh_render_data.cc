@@ -8,13 +8,9 @@
  * \brief Extraction of Mesh data into VBO to feed to GPU.
  */
 
-#include "MEM_guardedalloc.h"
-
 #include "BLI_array.hh"
 #include "BLI_array_utils.hh"
 #include "BLI_enumerable_thread_specific.hh"
-#include "BLI_index_mask.hh"
-#include "BLI_math_matrix.h"
 #include "BLI_task.hh"
 #include "BLI_virtual_array.hh"
 
@@ -23,10 +19,7 @@
 #include "BKE_editmesh_cache.hh"
 #include "BKE_material.hh"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_runtime.hh"
 #include "BKE_object.hh"
-
-#include "GPU_batch.hh"
 
 #include "ED_mesh.hh"
 
@@ -540,7 +533,7 @@ std::unique_ptr<MeshRenderData> mesh_render_data_create(Object &object,
 {
   std::unique_ptr<MeshRenderData> mr = std::make_unique<MeshRenderData>();
   mr->toolsettings = ts;
-  mr->materials_num = BKE_object_material_count_with_fallback_eval(&object);
+  mr->materials_num = BKE_object_material_used_with_fallback_eval(object);
 
   mr->object_to_world = object_to_world;
 

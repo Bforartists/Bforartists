@@ -995,11 +995,6 @@ static eOLDrawState tree_element_posechannel_state_get(const Object *ob_pose,
 static eOLDrawState tree_element_viewlayer_state_get(const ViewLayer *view_layer,
                                                      const TreeElement *te)
 {
-  /* paranoia check */
-  if (te->idcode != ID_SCE) {
-    return OL_DRAWSEL_NONE;
-  }
-
   const ViewLayer *te_view_layer = static_cast<ViewLayer *>(te->directdata);
 
   if (view_layer == te_view_layer) {
@@ -1302,7 +1297,7 @@ static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreE
         bPoseChannel *pchan = outliner_find_parent_bone(te, &bone_te);
 
         if (pchan) {
-          ptr = RNA_pointer_create(TREESTORE(bone_te)->id, &RNA_PoseBone, pchan);
+          ptr = RNA_pointer_create_discrete(TREESTORE(bone_te)->id, &RNA_PoseBone, pchan);
           context = BCONTEXT_BONE_CONSTRAINT;
         }
         else {
@@ -1360,7 +1355,7 @@ static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreE
         bArmature *arm = (bArmature *)tselem->id;
         Bone *bone = static_cast<Bone *>(te->directdata);
 
-        ptr = RNA_pointer_create(&arm->id, &RNA_Bone, bone);
+        ptr = RNA_pointer_create_discrete(&arm->id, &RNA_Bone, bone);
         context = BCONTEXT_BONE;
         break;
       }
@@ -1368,7 +1363,7 @@ static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreE
         bArmature *arm = (bArmature *)tselem->id;
         EditBone *ebone = static_cast<EditBone *>(te->directdata);
 
-        ptr = RNA_pointer_create(&arm->id, &RNA_EditBone, ebone);
+        ptr = RNA_pointer_create_discrete(&arm->id, &RNA_EditBone, ebone);
         context = BCONTEXT_BONE;
         break;
       }
@@ -1377,7 +1372,7 @@ static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreE
         bArmature *arm = static_cast<bArmature *>(ob->data);
         bPoseChannel *pchan = static_cast<bPoseChannel *>(te->directdata);
 
-        ptr = RNA_pointer_create(&arm->id, &RNA_PoseBone, pchan);
+        ptr = RNA_pointer_create_discrete(&arm->id, &RNA_PoseBone, pchan);
         context = BCONTEXT_BONE;
         break;
       }
@@ -1385,14 +1380,14 @@ static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreE
         Object *ob = (Object *)tselem->id;
         bArmature *arm = static_cast<bArmature *>(ob->data);
 
-        ptr = RNA_pointer_create(&arm->id, &RNA_Armature, arm);
+        ptr = RNA_pointer_create_discrete(&arm->id, &RNA_Armature, arm);
         context = BCONTEXT_DATA;
         break;
       }
       case TSE_R_LAYER: {
         ViewLayer *view_layer = static_cast<ViewLayer *>(te->directdata);
 
-        ptr = RNA_pointer_create(tselem->id, &RNA_ViewLayer, view_layer);
+        ptr = RNA_pointer_create_discrete(tselem->id, &RNA_ViewLayer, view_layer);
         context = BCONTEXT_VIEW_LAYER;
         break;
       }
@@ -1400,7 +1395,7 @@ static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreE
         Object *ob = (Object *)tselem->id;
         ParticleSystem *psys = psys_get_current(ob);
 
-        ptr = RNA_pointer_create(&ob->id, &RNA_ParticleSystem, psys);
+        ptr = RNA_pointer_create_discrete(&ob->id, &RNA_ParticleSystem, psys);
         context = BCONTEXT_PARTICLE;
         break;
       }
@@ -1410,15 +1405,15 @@ static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreE
         context = BCONTEXT_DATA;
         break;
       case TSE_BONE_COLLECTION_BASE:
-        ptr = RNA_pointer_create(tselem->id, &RNA_Armature, tselem->id);
+        ptr = RNA_pointer_create_discrete(tselem->id, &RNA_Armature, tselem->id);
         context = BCONTEXT_DATA;
         break;
       case TSE_BONE_COLLECTION:
-        ptr = RNA_pointer_create(tselem->id, &RNA_BoneCollection, te->directdata);
+        ptr = RNA_pointer_create_discrete(tselem->id, &RNA_BoneCollection, te->directdata);
         context = BCONTEXT_DATA;
         break;
       case TSE_LAYER_COLLECTION:
-        ptr = RNA_pointer_create(tselem->id, &RNA_Collection, te->directdata);
+        ptr = RNA_pointer_create_discrete(tselem->id, &RNA_Collection, te->directdata);
         context = BCONTEXT_COLLECTION;
         break;
     }
