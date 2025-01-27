@@ -257,6 +257,11 @@ add_blender_test(
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_rna_paths.py
 )
 
+add_blender_test(
+  bl_rna_accessors
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_rna_accessors.py
+)
+
 # ------------------------------------------------------------------------------
 # BLEND IO & LINKING
 
@@ -1119,10 +1124,18 @@ add_subdirectory(collada)
 
 if(WITH_LINUX_OFFICIAL_RELEASE_TESTS)
   get_filename_component(release_root_folder ${TEST_BLENDER_EXE} DIRECTORY)
+  set(extra_args "")
+  if(WITH_COMPILER_ASAN)
+    set(extra_args
+      ${extra_args}
+      --sanitizer-build
+    )
+  endif()
   add_python_test(
     linux_release_sanity_checks
     ${CMAKE_SOURCE_DIR}/tools/check_blender_release/check_release.py
-    -- ${release_root_folder}
+    -- --directory "${release_root_folder}" ${extra_args}
   )
+  unset(extra_args)
   unset(release_root_folder)
 endif()

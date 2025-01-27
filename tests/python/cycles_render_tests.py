@@ -50,8 +50,6 @@ BLOCKLIST_OSL = [
     'image_alpha_ignore.blend',
     'image_log.blend',
     'image_non_color.blend',
-    # Along with differences in image sampling, UDIM in OSL doesn't respect extrapolation settings
-    # This has been reported in 124847 for further investigation
     'image_mapping_udim.blend',
     # OSL handles bump + displacement differently from SVM. There are OSL variants of these tests
     'both_displacement.blend',
@@ -61,8 +59,6 @@ BLOCKLIST_OSL = [
     # TODO: Tests that need investigating into why they're failing, and how to fix that.
     # Noise differences due to Principled BSDF mixing/layering used in some of these scenes
     'render_passes_.*.blend',
-    # Noise differences in Principled BSDF mixing/layering
-    'principled_bsdf_.*.blend',
 ]
 
 BLOCKLIST_OPTIX = [
@@ -86,8 +82,6 @@ BLOCKLIST_OPTIX_OSL = [
     'texture_coordinate_generated.blend',
     'principled_absorption.blend',
     'denoise_volume.blend',
-    # The Window texture coordinate is blank on the World shader in OptiX OSL. See 132516
-    'texture_coordinate_window.blend',
     # The 3D texture doesn't have the right mappings
     'point_density_.*_object.blend',
     # Dicing tests use wireframe node which doesn't appear to be supported with OptiX OSL
@@ -266,6 +260,11 @@ def main():
         report.set_fail_threshold(0.032)
     if test_dir_name == "denoise":
         report.set_fail_threshold(0.25)
+
+    # Layer mixing is different between SVM and OSL, so a few tests have
+    # noticably different noise causing OSL Principled BSDF tests to fail.
+    if ((args.osl) and (test_dir_name == 'principled_bsdf')):
+        report.set_fail_threshold(0.06)
 
     ok = report.run(args.testdir, args.blender, get_arguments, batch=args.batch)
 

@@ -113,7 +113,7 @@ bool ED_space_sequencer_check_show_strip(SpaceSeq *sseq)
 
 static bool sequencer_fcurves_targets_color_strip(const FCurve *fcurve)
 {
-  if (!BLI_str_startswith(fcurve->rna_path, "sequence_editor.sequences_all[\"")) {
+  if (!BLI_str_startswith(fcurve->rna_path, "sequence_editor.strips_all[\"")) {
     return false;
   }
 
@@ -2886,7 +2886,7 @@ static int sequencer_change_path_exec(bContext *C, wmOperator *op)
     PropertyRNA *prop;
     char filepath[FILE_MAX];
 
-    PointerRNA strip_ptr = RNA_pointer_create(&scene->id, &RNA_Strip, strip);
+    PointerRNA strip_ptr = RNA_pointer_create_discrete(&scene->id, &RNA_Strip, strip);
 
     RNA_string_get(op->ptr, "filepath", filepath);
     prop = RNA_struct_find_property(&strip_ptr, "filepath");
