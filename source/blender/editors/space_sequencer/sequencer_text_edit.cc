@@ -391,13 +391,15 @@ void SEQUENCER_OT_text_cursor_move(wmOperatorType *ot)
 static bool text_insert(TextVars *data, const char *buf)
 {
   const TextVarsRuntime *text = data->runtime;
+
+  const bool selection_was_deleted = text_has_selection(data);
   delete_selected_text(data);
 
   const size_t in_str_len = BLI_strnlen(buf, sizeof(buf));
   const size_t text_str_len = BLI_strnlen(data->text, sizeof(data->text));
 
   if (text_str_len + in_str_len + 1 > sizeof(data->text)) {
-    return false;
+    return selection_was_deleted;
   }
 
   const seq::CharInfo cur_char = character_at_cursor_offset_get(text, data->cursor_offset);
@@ -816,7 +818,6 @@ static int sequencer_text_edit_paste_exec(bContext *C, wmOperator * /*op*/)
   const Strip *strip = SEQ_select_active_get(CTX_data_scene(C));
   TextVars *data = static_cast<TextVars *>(strip->effectdata);
   const TextVarsRuntime *text = data->runtime;
-  delete_selected_text(data);
 
   int clipboard_len;
   char *clipboard_buf = WM_clipboard_text_get(false, true, &clipboard_len);
@@ -825,17 +826,25 @@ static int sequencer_text_edit_paste_exec(bContext *C, wmOperator * /*op*/)
     return OPERATOR_CANCELLED;
   }
 
+  delete_selected_text(data);
   const int max_str_len = sizeof(data->text) - (BLI_strnlen(data->text, sizeof(data->text)) + 1);
-  clipboard_len = std::min(clipboard_len, max_str_len);
+
+  /* Maximum bytes that can be filled into `data->text`. */
+  const int fillable_len = std::min(clipboard_len, max_str_len);
+
+  /* Truncated string could contain invalid utf-8 sequence, thus ensure the length inserted is
+   * always valid. */
+  size_t valid_str_len;
+  const int extra_offset = BLI_strnlen_utf8_ex(clipboard_buf, fillable_len, &valid_str_len);
 
   const seq::CharInfo cur_char = character_at_cursor_offset_get(text, data->cursor_offset);
   char *cursor_addr = const_cast<char *>(cur_char.str_ptr);
   const size_t move_str_len = BLI_strnlen(cursor_addr, sizeof(data->text)) + 1;
 
-  std::memmove(cursor_addr + clipboard_len, cursor_addr, move_str_len);
-  std::memcpy(cursor_addr, clipboard_buf, clipboard_len);
+  std::memmove(cursor_addr + valid_str_len, cursor_addr, move_str_len);
+  std::memcpy(cursor_addr, clipboard_buf, valid_str_len);
 
-  data->cursor_offset += BLI_strlen_utf8(clipboard_buf);
+  data->cursor_offset += extra_offset;
 
   MEM_freeN(clipboard_buf);
   text_editing_update(C);

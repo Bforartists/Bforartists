@@ -1006,12 +1006,14 @@ static void icon_create_rect(PreviewImage *prv_img, enum eIconSizes size)
     }
   }
   else if (!prv_img->rect[size]) {
-    prv_img->w[size] = render_size;
-    prv_img->h[size] = render_size;
     prv_img->flag[size] |= PRV_CHANGED;
     prv_img->changed_timestamp[size] = 0;
-    prv_img->rect[size] = static_cast<uint *>(
-        MEM_callocN(render_size * render_size * sizeof(uint), "prv_rect"));
+    if (!ED_preview_use_image_size(prv_img, size)) {
+      prv_img->w[size] = render_size;
+      prv_img->h[size] = render_size;
+      prv_img->rect[size] = static_cast<uint *>(
+          MEM_callocN(render_size * render_size * sizeof(uint), "prv_rect"));
+    }
   }
 }
 
@@ -1535,7 +1537,7 @@ static void icon_draw_size(float x,
 #endif
 
     /* If the theme is light, we will adjust the icon colors. */
-    const bool invert = (rgb_to_grayscale_byte(btheme->tui.wcol_toolbar_item.inner) > 128);
+    const bool invert = (srgb_to_grayscale_byte(btheme->tui.wcol_toolbar_item.inner) > 128);
     const bool geom_inverted = di->data.geom.inverted;
 
     /* This could re-generate often if rendered at different sizes in the one interface.
@@ -1605,7 +1607,7 @@ static void icon_draw_size(float x,
       else {
         UI_GetThemeColor4ubv(TH_TEXT, text_color);
       }
-      const bool is_light = rgb_to_grayscale_byte(text_color) > 96;
+      const bool is_light = srgb_to_grayscale_byte(text_color) > 96;
       const float zoom_factor = w / UI_ICON_SIZE;
       uiFontStyle fstyle_small = *UI_FSTYLE_WIDGET;
       fstyle_small.points *= zoom_factor * 0.8f;
