@@ -5,11 +5,11 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>en</string>
 		<key>CFBundleName</key>
-		<string>blender-thumbnailer</string>
+		<string>bforartists-thumbnailer</string>
 		<key>CFBundleDisplayName</key>
 		<string>Blender Thumbnailer</string>
 		<key>CFBundleExecutable</key>
-		<string>blender-thumbnailer</string>
+		<string>bforartists-thumbnailer</string>
 		<key>CFBundleIdentifier</key>
 		<string>org.blenderfoundation.blender.thumbnailer</string>
 		<key>CFBundleInfoDictionaryVersion</key>
