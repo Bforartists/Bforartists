@@ -218,13 +218,13 @@ thumbnails from `.blend` files."
   )
 elseif(UNIX AND NOT APPLE)
   option(WITH_BLENDER_THUMBNAILER "\
-Build stand-alone \"blender-thumbnailer\" command-line thumbnail extraction utility, \
+Build stand-alone \"bforartists-thumbnailer\" command-line thumbnail extraction utility, \
 intended for use by file-managers to extract PNG images from `.blend` files."
     ON
   )
 elseif(APPLE)
   option(WITH_BLENDER_THUMBNAILER "\
-Build \"blender-thumbnailer.appex\" extension for macOS Finder/ QuickLook to support viewing \
+Build \"bforartists-thumbnailer.appex\" extension for macOS Finder/ QuickLook to support viewing \
 thumbnails from `.blend` files."
     ON
   )
@@ -1112,13 +1112,13 @@ if(WIN32)
   option(WITH_WINDOWS_FIND_MODULES "Use find_package to locate libraries" OFF)
   mark_as_advanced(WITH_WINDOWS_FIND_MODULES)
 
-# The python debugger in Visual Studio for has been broken for years 
-# but the upstream project over at https://github.com/microsoft/PTVS 
-# show hopeful signs of life once in a while, so there is hope that 
+# The python debugger in Visual Studio for has been broken for years
+# but the upstream project over at https://github.com/microsoft/PTVS
+# show hopeful signs of life once in a while, so there is hope that
 # at one point this will start working again. That being said people
-# do keep turning this option on and end up disappointed it isn't 
-# working and they spend a whole bunch of time on trying to get it to 
-# work. So for now rather than removing this functionality 
+# do keep turning this option on and end up disappointed it isn't
+# working and they spend a whole bunch of time on trying to get it to
+# work. So for now rather than removing this functionality
 # completely, just disable it.
 
   if(WINDOWS_PYTHON_DEBUG)
