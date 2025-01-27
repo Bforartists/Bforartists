@@ -8,12 +8,13 @@
 
 #pragma once
 
-#include <functional>
-
+#include "BKE_context.hh"
 #include "BKE_movieclip.h"
 #include "BKE_object.hh"
 
 #include "BLI_function_ref.hh"
+
+#include "DNA_world_types.h"
 
 #include "GPU_matrix.hh"
 
@@ -22,6 +23,7 @@
 #include "UI_resources.hh"
 #include "draw_manager.hh"
 #include "draw_pass.hh"
+#include "draw_view_data.hh"
 #include "gpu_shader_create_info.hh"
 
 #include "../select/select_instance.hh"
@@ -55,8 +57,10 @@ struct BoneInstanceData {
 
   BoneInstanceData() = default;
 
-  /* Constructor used by metaball overlays and expected to be used for drawing
-   * metaball edit circles with armature wire shader that produces wide-lines. */
+  /**
+   * Constructor used by meta-ball overlays and expected to be used for drawing
+   * meta-ball edit circles with armature wire shader that produces wide-lines.
+   */
   BoneInstanceData(const float4x4 &ob_mat,
                    const float3 &pos,
                    const float radius,
@@ -145,11 +149,11 @@ struct State {
   bool hide_overlays = false;
   bool xray_enabled = false;
   bool xray_enabled_and_not_wire = false;
-  /* Can be true even if Xray Alpha is 1.0. */
+  /** Can be true even if X-ray Alpha is 1.0. */
   bool xray_flag_enabled = false;
-  /* Brings the active pose armature in front of all objects. */
+  /** Brings the active pose armature in front of all objects. */
   bool do_pose_xray = false;
-  /* Add a veil on top of all surfaces to make the active pose armature pop out. */
+  /** Add a veil on top of all surfaces to make the active pose armature pop out. */
   bool do_pose_fade_geom = false;
   float xray_opacity = 0.0f;
   short v3d_flag = 0;     /* TODO: move to #View3DOverlay. */
@@ -159,7 +163,7 @@ struct State {
   float3 camera_forward = float3(0.0f);
   int clipping_plane_count = 0;
 
-  /* Active Image properties. Only valid image space only. */
+  /** Active Image properties. Only valid image space only. */
   bool is_image_valid = false;
   int2 image_size = int2(0);
   float2 image_uv_aspect = float2(0.0f);
@@ -173,19 +177,24 @@ struct State {
     return View::OffsetData(*rv3d);
   }
 
+  /* Factor to use for wireframe offset.
+   * Result of GPU_polygon_offset_calc for the current view.
+   * Only valid at draw time, so use push constant reference instead of copy. */
+  float ndc_offset_factor = 0.0f;
+
   /** Convenience functions. */
 
-  /* Scene geometry is solid. Occlude overlays behind scene geometry. */
+  /** Scene geometry is solid. Occlude overlays behind scene geometry. */
   bool is_solid() const
   {
     return xray_opacity == 1.0f;
   }
-  /* Scene geometry is semi-transparent. Fade overlays behind scene geometry (see #XrayFade). */
+  /** Scene geometry is semi-transparent. Fade overlays behind scene geometry (see #XrayFade). */
   bool is_xray() const
   {
     return (xray_opacity < 1.0f) && (xray_opacity > 0.0f);
   }
-  /* Scene geometry is fully transparent. Scene geometry does not occlude overlays. */
+  /** Scene geometry is fully transparent. Scene geometry does not occlude overlays. */
   bool is_wire() const
   {
     return xray_opacity == 0.0f;
@@ -389,15 +398,15 @@ class ShaderModule {
   ShaderPtr lattice_points = shader_clippable("overlay_edit_lattice_point");
   ShaderPtr lattice_wire = shader_clippable("overlay_edit_lattice_wire");
   ShaderPtr legacy_curve_edit_handles = shader_clippable("overlay_edit_curve_handle");
-  ShaderPtr legacy_curve_edit_normals = shader("overlay_edit_curve_normals");
+  ShaderPtr legacy_curve_edit_normals = shader_clippable("overlay_edit_curve_normals");
   ShaderPtr legacy_curve_edit_points = shader_clippable("overlay_edit_curve_point");
   ShaderPtr legacy_curve_edit_wires = shader_clippable("overlay_edit_curve_wire");
   ShaderPtr light_spot_cone = shader_clippable("overlay_extra_spot_cone");
   ShaderPtr mesh_analysis = shader_clippable("overlay_edit_mesh_analysis");
   ShaderPtr mesh_edit_depth = shader_clippable("overlay_edit_mesh_depth");
-  ShaderPtr mesh_edit_edge = shader("overlay_edit_mesh_edge");
+  ShaderPtr mesh_edit_edge = shader_clippable("overlay_edit_mesh_edge");
   ShaderPtr mesh_edit_face = shader_clippable("overlay_edit_mesh_face");
-  ShaderPtr mesh_edit_facedot = shader("overlay_edit_mesh_facedot");
+  ShaderPtr mesh_edit_facedot = shader_clippable("overlay_edit_mesh_facedot");
   ShaderPtr mesh_edit_vert = shader_clippable("overlay_edit_mesh_vert");
   ShaderPtr mesh_edit_skin_root = shader_clippable("overlay_edit_mesh_skin_root");
   ShaderPtr mesh_face_normal = shader_clippable("overlay_mesh_face_normal");

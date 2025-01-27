@@ -11,7 +11,6 @@
 #include "DNA_grease_pencil_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_mesh_types.h"
-#include "DNA_meta_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
 #include "DNA_particle_types.h"
@@ -21,16 +20,17 @@
 
 #include "UI_resources.hh"
 
+#include "BLI_ghash.h"
+#include "BLI_string.h"
 #include "BLI_utildefines.h"
 
+#include "BKE_context.hh"
+#include "BKE_material.hh"
 #include "BKE_object.hh"
-#include "BKE_paint.hh"
 
 #include "GPU_batch.hh"
 #include "GPU_batch_utils.hh"
 #include "GPU_capabilities.hh"
-
-#include "MEM_guardedalloc.h"
 
 #include "draw_cache.hh"
 #include "draw_cache_impl.hh"
@@ -933,11 +933,6 @@ blender::gpu::VertBuf *DRW_cache_object_pos_vertbuf_get(Object *ob)
     default:
       return nullptr;
   }
-}
-
-int DRW_cache_object_material_count_get(const Object *ob)
-{
-  return BKE_object_material_count_with_fallback_eval(ob);
 }
 
 Span<blender::gpu::Batch *> DRW_cache_object_surface_material_get(
@@ -3293,7 +3288,7 @@ void drw_batch_cache_validate(Object *ob)
   using namespace blender::draw;
   switch (ob->type) {
     case OB_MESH:
-      DRW_mesh_batch_cache_validate(*ob, *(Mesh *)ob->data);
+      DRW_mesh_batch_cache_validate(*(Mesh *)ob->data);
       break;
     case OB_CURVES_LEGACY:
     case OB_FONT:
@@ -3307,7 +3302,7 @@ void drw_batch_cache_validate(Object *ob)
       DRW_curves_batch_cache_validate((Curves *)ob->data);
       break;
     case OB_POINTCLOUD:
-      DRW_pointcloud_batch_cache_validate(*ob, (PointCloud *)ob->data);
+      DRW_pointcloud_batch_cache_validate((PointCloud *)ob->data);
       break;
     case OB_VOLUME:
       DRW_volume_batch_cache_validate((Volume *)ob->data);
