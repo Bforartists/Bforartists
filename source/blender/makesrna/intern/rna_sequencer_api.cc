@@ -761,12 +761,9 @@ void RNA_api_strip_elements(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 }
 
-void RNA_api_strip_retiming_keys(BlenderRNA *brna, PropertyRNA *cprop)
+void RNA_api_strip_retiming_keys(BlenderRNA *brna)
 {
-  StructRNA *srna;
-
-  RNA_def_property_srna(cprop, "RetimingKeys");
-  srna = RNA_def_struct(brna, "RetimingKeys", nullptr);
+  StructRNA *srna = RNA_def_struct(brna, "RetimingKeys", nullptr);
   RNA_def_struct_sdna(srna, "Strip");
   RNA_def_struct_ui_text(srna, "RetimingKeys", "Collection of RetimingKey");
 
@@ -784,9 +781,8 @@ void RNA_api_strip_retiming_keys(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_function_ui_description(func, "Remove all retiming keys");
 }
 
-void RNA_api_strips(BlenderRNA *brna, PropertyRNA *cprop, const bool metastrip)
+void RNA_api_strips(StructRNA *srna, const bool metastrip)
 {
-  StructRNA *srna;
   PropertyRNA *parm;
   FunctionRNA *func;
 
@@ -843,10 +839,6 @@ void RNA_api_strips(BlenderRNA *brna, PropertyRNA *cprop, const bool metastrip)
   const char *remove_func_name = "rna_Strips_editing_remove";
 
   if (metastrip) {
-    RNA_def_property_srna(cprop, "StripsMeta");
-    srna = RNA_def_struct(brna, "StripsMeta", nullptr);
-    RNA_def_struct_sdna(srna, "Strip");
-
     new_clip_func_name = "rna_Strips_meta_new_clip";
     new_mask_func_name = "rna_Strips_meta_new_mask";
     new_scene_func_name = "rna_Strips_meta_new_scene";
@@ -857,13 +849,6 @@ void RNA_api_strips(BlenderRNA *brna, PropertyRNA *cprop, const bool metastrip)
     new_effect_func_name = "rna_Strips_meta_new_effect";
     remove_func_name = "rna_Strips_meta_remove";
   }
-  else {
-    RNA_def_property_srna(cprop, "StripsTopLevel");
-    srna = RNA_def_struct(brna, "StripsTopLevel", nullptr);
-    RNA_def_struct_sdna(srna, "Editing");
-  }
-
-  RNA_def_struct_ui_text(srna, "Strips", "Collection of Strips");
 
   func = RNA_def_function(srna, "new_clip", new_clip_func_name);
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);

@@ -6,6 +6,10 @@
  * \ingroup edinterface
  */
 
+#include "AS_asset_representation.hh"
+
+#include "ED_asset.hh"
+
 #include "UI_interface.hh"
 
 #include "WM_api.hh"
@@ -29,17 +33,19 @@ void UI_but_drag_attach_image(uiBut *but, const ImBuf *imb, const float scale)
   UI_but_dragflag_enable(but, UI_BUT_DRAG_FULL_BUT);
 }
 
-void UI_but_drag_set_asset(uiBut *but,
-                           const blender::asset_system::AssetRepresentation *asset,
-                           int import_method,
-                           int icon,
-                           const ImBuf *imb,
-                           float scale,
-                           bool drop_collections_as_instances, /* BFA - needed for setting #use_instance from UI before executing the drop operator */
-                           bool drop_collection_instances_at_origin) /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
+void UI_but_drag_set_asset(
+    uiBut *but,
+    const blender::asset_system::AssetRepresentation *asset,
+    int import_method,
+    BIFIconID icon,
+    BIFIconID preview_icon,
+    bool drop_collections_as_instances, /* BFA - needed for setting #use_instance from UI before
+                                           executing the drop operator */
+    bool drop_collection_instances_at_origin) /* BFA - needed for dropping collection at origin
+                                                 instead of cursor when #use_instance is enabled */
 {
   wmDragAsset *asset_drag = WM_drag_create_asset_data(asset, import_method);
-  asset_drag->drop_collections_as_instances = drop_collections_as_instances; /*BFA*/
+  asset_drag->drop_collections_as_instances = drop_collections_as_instances;    /*BFA*/
   asset_drag->drop_collections_at_origin = drop_collection_instances_at_origin; /*BFA*/
 
   but->dragtype = WM_DRAG_ASSET;
@@ -49,7 +55,7 @@ void UI_but_drag_set_asset(uiBut *but,
   }
   but->dragpoin = asset_drag;
   but->dragflag |= UI_BUT_DRAGPOIN_FREE;
-  UI_but_drag_attach_image(but, imb, scale);
+  but->drag_preview_icon_id = preview_icon;
 }
 
 void UI_but_drag_set_rna(uiBut *but, PointerRNA *ptr)
@@ -114,6 +120,9 @@ void ui_but_drag_start(bContext *C, uiBut *but)
 
   if (but->imb) {
     WM_event_drag_image(drag, but->imb, but->imb_scale);
+  }
+  else if (but->drag_preview_icon_id) {
+    WM_event_drag_preview_icon(drag, but->drag_preview_icon_id);
   }
 
   WM_event_start_prepared_drag(C, drag);

@@ -12,8 +12,6 @@
 
 #include "BKE_paint.hh"
 
-#include "draw_debug.hh"
-
 #include "overlay_next_instance.hh"
 
 namespace blender::draw::overlay {
@@ -56,10 +54,11 @@ void Instance::init()
     state.use_in_front = true;
     state.is_wireframe_mode = (state.v3d->shading.type == OB_WIRE);
     state.hide_overlays = (state.v3d->flag2 & V3D_HIDE_OVERLAYS) != 0;
-    state.xray_enabled = XRAY_ACTIVE(state.v3d);
+    state.xray_enabled = XRAY_ACTIVE(state.v3d) && !state.is_depth_only_drawing;
     state.xray_enabled_and_not_wire = state.xray_enabled && (state.v3d->shading.type > OB_WIRE);
     state.xray_opacity = state.xray_enabled ? XRAY_ALPHA(state.v3d) : 1.0f;
-    state.xray_flag_enabled = SHADING_XRAY_FLAG_ENABLED(state.v3d->shading);
+    state.xray_flag_enabled = SHADING_XRAY_FLAG_ENABLED(state.v3d->shading) &&
+                              !state.is_depth_only_drawing;
 
     if (!state.hide_overlays) {
       state.overlay = state.v3d->overlay;
@@ -379,6 +378,9 @@ void Instance::draw(Manager &manager)
     draw_scope.begin_capture();
   }
 
+  /* TODO(fclem): To be moved to overlay UBO. */
+  state.ndc_offset_factor = state.offset_data_get().polygon_offset_factor(view.winmat());
+
   resources.pre_draw();
 
   outline.flat_objects_pass_sync(manager, view, resources, state);
@@ -602,10 +604,8 @@ bool Instance::object_is_selected(const ObjectRef &ob_ref)
 
 bool Instance::object_is_paint_mode(const Object *object)
 {
-  if (object->type == OB_GREASE_PENCIL && (object->mode & OB_MODE_ALL_PAINT_GPENCIL)) {
-    return true;
-  }
-  return (object == state.object_active) && (state.object_mode & OB_MODE_ALL_PAINT);
+  return (object == state.object_active) &&
+         (state.object_mode & (OB_MODE_ALL_PAINT | OB_MODE_ALL_PAINT_GPENCIL));
 }
 
 bool Instance::object_is_sculpt_mode(const ObjectRef &ob_ref)
@@ -758,7 +758,7 @@ bool Instance::object_is_rendered_transparent(const Object *object, const State 
 
   if (shading.color_type == V3D_SHADING_MATERIAL_COLOR) {
     if (object->type == OB_MESH) {
-      const int materials_num = BKE_object_material_count_eval(object);
+      const int materials_num = BKE_object_material_used_with_fallback_eval(*object);
       for (int i = 0; i < materials_num; i++) {
         Material *mat = BKE_object_material_get_eval(const_cast<Object *>(object), i + 1);
         if (mat && mat->a < 1.0f) {

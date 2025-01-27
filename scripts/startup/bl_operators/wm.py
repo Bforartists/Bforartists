@@ -2750,31 +2750,31 @@ class WM_OT_batch_rename(Operator):
     data_type: EnumProperty(
         name="Type",
         items=(
-            ('OBJECT', "Objects", "Rename selected objects in the scene", 'OBJECT_DATA', 1),
-            ('COLLECTION', "Collections", "Rename selected collections in the outliner editor", 'OUTLINER_COLLECTION', 2),
-            ('MATERIAL', "Materials", "Rename selected materials in the outliner editor ", 'MATERIAL', 3),
+            ('OBJECT', "Objects", "Rename selected objects in the scene", 'OBJECT_DATA', 0),
+            ('COLLECTION', "Collections", "Rename selected collections in the outliner editor", 'OUTLINER_COLLECTION', 1),
+            ('MATERIAL', "Materials", "Rename selected materials in the outliner editor ", 'MATERIAL', 2),
             None,
             # Enum identifiers are compared with `object.type`.
             # Follow order in "Add" menu.
-            ('MESH', "Meshes", "Rename selected mesh data in the scene", 'MESH_DATA', 4),
-            ('CURVE', "Curves", "Rename selected curve data in the scene", 'CURVE_DATA', 5),
-            ('META', "Metaballs", "Rename selected metaball data in the scene", 'META_BALL', 6),
-            ('VOLUME', "Volumes", "Rename selected volume data in the scene", 'VOLUME_DATA', 7),
-            ('GPENCIL', "Grease Pencils", "Rename selected grease pencil data in the scene", 'OUTLINER_OB_GREASEPENCIL', 8),
-            ('ARMATURE', "Armatures", "Rename selected armature data in the scene", 'ARMATURE_DATA', 9),
-            ('LATTICE', "Lattices", "Rename selected lattice data in the scene", 'LATTICE_DATA', 10),
-            ('LIGHT', "Light", "Rename selected light data in the scene", 'LIGHT', 11),
-            ('LIGHT_PROBE', "Light Probes", "Rename selected light probe data in the scene", 'LIGHTPROBE_SPHERE', 12),
-            ('CAMERA', "Cameras", "Rename selected camera data in the scene", 'CAMERA_DATA', 13),
-            ('SPEAKER', "Speakers", "Rename selected speaker data in the scene", 'SPEAKER', 14),
+            ('MESH', "Meshes", "Rename selected mesh data in the scene", 'MESH_DATA', 3),
+            ('CURVE', "Curves", "Rename selected curve data in the scene", 'CURVE_DATA', 4),
+            ('META', "Metaballs", "Rename selected metaball data in the scene", 'META_BALL', 5),
+            ('VOLUME', "Volumes", "Rename selected volume data in the scene", 'VOLUME_DATA', 6),
+            ('GPENCIL', "Grease Pencils", "Rename selected grease pencil data in the scene", 'OUTLINER_OB_GREASEPENCIL', 7),
+            ('ARMATURE', "Armatures", "Rename selected armature data in the scene", 'ARMATURE_DATA', 8),
+            ('LATTICE', "Lattices", "Rename selected lattice data in the scene", 'LATTICE_DATA', 9),
+            ('LIGHT', "Lights", "Rename selected light data in the scene", 'LIGHT', 10),
+            ('LIGHT_PROBE', "Light Probes", "Rename selected light probe data in the scene", 'LIGHTPROBE_SPHERE', 11),
+            ('CAMERA', "Cameras", "Rename selected camera data in the scene", 'CAMERA_DATA', 12),
+            ('SPEAKER', "Speakers", "Rename selected speaker data in the scene", 'SPEAKER', 13),
             None,
-            ('BONE', "Bones", "Rename selected bones in the scene", 'BONE_DATA', 15),
-            ('NODE', "Nodes", "Rename selected nodes in the scene", 'NODETREE', 16),
-            ('SEQUENCE_STRIP', "Sequence Strips", "Rename selected sequence strips in the scene", 'SEQUENCE', 17),
-            ('ACTION_CLIP', "Action Clips", "Rename selected action clips in the outliner editor", 'ACTION', 18),
+            ('BONE', "Bones", "Rename selected bones in the scene", 'BONE_DATA', 14),
+            ('NODE', "Nodes", "Rename selected nodes in the scene", 'NODETREE', 15),
+            ('SEQUENCE_STRIP', "Sequence Strips", "Rename selected sequence strips in the scene", 'SEQUENCE', 16),
+            ('ACTION_CLIP', "Action Clips", "Rename selected action clips in the outliner editor", 'ACTION', 17),
             None,
-            ('SCENE', "Scenes", "Rename selected scenes in the outliner editor", 'SCENE_DATA', 19),
-            ('BRUSH', "Brushes", "Rename selected brushes in the outliner editor", 'BRUSH_DATA', 20),
+            ('SCENE', "Scenes", "Rename selected scenes in the outliner editor", 'SCENE_DATA', 18),
+            ('BRUSH', "Brushes", "Rename selected brushes in the outliner editor", 'BRUSH_DATA', 19),
         ),
         translation_context=i18n_contexts.id_id,
         description="Type of data to rename",
@@ -2845,9 +2845,9 @@ class WM_OT_batch_rename(Operator):
                 return data_type_test
             if data_type == data_type_test:
                 data = (
-                    context.selected_sequences
+                    context.selected_strips
                     if only_selected else
-                    scene.sequence_editor.sequences_all,
+                    scene.sequence_editor.strips_all,
                     "name",
                     iface_("Strip(s)"),
                 )
