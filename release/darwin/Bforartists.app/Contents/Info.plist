@@ -32,7 +32,7 @@
 	<key>CFBundleIconFile</key>
 	<string>blender icon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.blenderfoundation.blender</string>
+	<string>de.bforartists.bforartists</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
