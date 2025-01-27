@@ -532,4 +532,4 @@ if(PLATFORM_BUNDLED_LIBRARIES)
 endif()
 
 # Same as `CFBundleIdentifier` in Info.plist.
-set(CMAKE_XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.blenderfoundation.blender")
+set(CMAKE_XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "de.bforartists.bforartists")
