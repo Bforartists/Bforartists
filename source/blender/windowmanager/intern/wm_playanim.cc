@@ -134,7 +134,6 @@ static bool buffer_from_filepath(const char *filepath,
         size_read);
   }
   else {
-    close(file);
     *r_size = size;
     if (r_mem) {
       *r_mem = mem;
@@ -1668,7 +1667,8 @@ static void playanim_window_zoom(PlayState &ps, const float zoom_offset)
 
 static bool playanim_window_font_scale_from_dpi(PlayState &ps)
 {
-  const float scale = (GHOST_GetDPIHint(ps.ghost_data.window) / 96.0f);
+  const float scale = (GHOST_GetDPIHint(ps.ghost_data.window) *
+                       GHOST_GetNativePixelSize(ps.ghost_data.window) / 96.0f);
   const float font_size_base = 11.0f; /* Font size un-scaled. */
   const int font_size = int((font_size_base * scale) + 0.5f);
   bool changed = false;
