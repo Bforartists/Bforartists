@@ -15,6 +15,8 @@
 #include <cstring>
 #include <thread>
 
+#include <fmt/format.h>
+
 #include "CLG_log.h"
 
 #include "DNA_listBase.h"
@@ -506,38 +508,42 @@ void WM_window_title(wmWindowManager *wm, wmWindow *win, const char *title)
   const bool native_filepath_display = GHOST_SetPath(handle, filepath) == GHOST_kSuccess;
   const bool include_filepath = has_filepath && (filepath != filename) && !native_filepath_display;
 
-  std::string str;
-  if (!wm->file_saved) {
-    str += "* ";
-  }
+  /* File saved state. */
+  std::string win_title = wm->file_saved ? "" : "* ";
 
-  if (has_filepath) {
+  /* File name. Show the file extension if the full file path is not included in the title. */
+  if (include_filepath) {
     const size_t filename_no_ext_len = BLI_path_extension_or_end(filename) - filename;
-    str.append(filename, filename_no_ext_len);
+    win_title.append(filename, filename_no_ext_len);
   }
+  else if (has_filepath) {
+    win_title.append(BLI_path_basename(filename));
+  }
+  /* New / Unsaved file default title. Shows "Untitled" on macOS following the Apple HIGs.*/
   else {
-    str += IFACE_("(Unsaved)");
+#ifdef __APPLE__
+    win_title.append(IFACE_("Untitled"));
+#else
+    win_title.append(IFACE_("(Unsaved)"));
+#endif
   }
 
   if (G_MAIN->recovered) {
-    str += IFACE_(" (Recovered)");
+    win_title.append(IFACE_(" (Recovered)"));
   }
 
   if (include_filepath) {
-    str += " [";
-    str += filepath;
-    str += "]";
+    win_title.append(fmt::format(" [{}]", filepath));
   }
 
-  str += " - Bforartists "; // BFA
-  str += BKE_bforartists_version_string(); // BFA
+  win_title.append(fmt::format(" - Bforartists {}", BKE_bforartists_version_string())); // BFA
 
-  GHOST_SetTitle(handle, str.c_str());
+  GHOST_SetTitle(handle, win_title.c_str());
 
   /* Informs GHOST of unsaved changes to set the window modified visual indicator (macOS)
    * and to give a hint of unsaved changes for a user warning mechanism in case of OS application
    * terminate request (e.g., OS Shortcut Alt+F4, Command+Q, (...) or session end). */
-  GHOST_SetWindowModifiedState(handle, bool(!wm->file_saved));
+  GHOST_SetWindowModifiedState(handle, !wm->file_saved);
 }
 
 void WM_window_set_dpi(const wmWindow *win)
@@ -2501,25 +2507,16 @@ ImBuf *WM_clipboard_image_get()
   return ibuf;
 }
 
-bool WM_clipboard_image_set(ImBuf *ibuf)
+bool WM_clipboard_image_set_byte_buffer(ImBuf *ibuf)
 {
   if (G.background) {
     return false;
   }
-
-  bool free_byte_buffer = false;
   if (ibuf->byte_buffer.data == nullptr) {
-    /* Add a byte buffer if it does not have one. */
-    IMB_rect_from_float(ibuf);
-    free_byte_buffer = true;
+    return false;
   }
 
   bool success = bool(GHOST_putClipboardImage((uint *)ibuf->byte_buffer.data, ibuf->x, ibuf->y));
-
-  if (free_byte_buffer) {
-    /* Remove the byte buffer if we added it. */
-    imb_freerectImBuf(ibuf);
-  }
 
   return success;
 }

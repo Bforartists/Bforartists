@@ -97,6 +97,7 @@
 #include "NOD_geometry_nodes_gizmos.hh"
 #include "NOD_geometry_nodes_lazy_function.hh"
 #include "NOD_node_declaration.hh"
+#include "NOD_socket_usage_inference.hh"
 
 #include "FN_field.hh"
 #include "FN_lazy_function_execute.hh"
@@ -275,7 +276,7 @@ static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void 
 
 static void foreach_tex_link(ModifierData *md, Object *ob, TexWalkFunc walk, void *user_data)
 {
-  PointerRNA ptr = RNA_pointer_create(&ob->id, &RNA_Modifier, md);
+  PointerRNA ptr = RNA_pointer_create_discrete(&ob->id, &RNA_Modifier, md);
   PropertyRNA *prop = RNA_struct_find_property(&ptr, "texture");
   walk(user_data, ob, md, &ptr, prop);
 }
@@ -837,7 +838,7 @@ static void find_socket_log_contexts(const NodesModifierData &nmd,
       const SpaceLink *sl = static_cast<SpaceLink *>(area->spacedata.first);
       if (sl->spacetype == SPACE_NODE) {
         const SpaceNode &snode = *reinterpret_cast<const SpaceNode *>(sl);
-        if (snode.edittree == nullptr) {
+        if (snode.edittree == nullptr || snode.edittree->type != NTREE_GEOMETRY) {
           continue;
         }
         const Map<const bke::bNodeTreeZone *, ComputeContextHash> hash_by_zone =
@@ -2013,6 +2014,7 @@ struct DrawGroupInputsContext {
   NodesModifierData &nmd;
   PointerRNA *md_ptr;
   PointerRNA *bmain_ptr;
+  Array<bool> input_usages;
 };
 
 static void add_attribute_search_button(DrawGroupInputsContext &ctx,
@@ -2158,10 +2160,11 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
   char rna_path[sizeof(socket_id_esc) + 4];
   SNPRINTF(rna_path, "[\"%s\"]", socket_id_esc);
 
+  const int input_index = ctx.nmd.node_group->interface_input_index(socket);
+
   uiLayout *row = uiLayoutRow(layout, true);
   uiLayoutSetPropDecorate(row, true);
-
-  const int input_index = ctx.nmd.node_group->interface_input_index(socket);
+  uiLayoutSetActive(row, ctx.input_usages[input_index]);
 
   /* Use #uiItemPointerR to draw pointer properties because #uiItemR would not have enough
    * information about what type of ID to select for editing the values. This is because
@@ -2262,6 +2265,27 @@ static bool interface_panel_has_socket(const bNodeTreeInterfacePanel &interface_
   return false;
 }
 
+static bool interface_panel_affects_output(DrawGroupInputsContext &ctx,
+                                           const bNodeTreeInterfacePanel &panel)
+{
+  for (const bNodeTreeInterfaceItem *item : panel.items()) {
+    if (item->item_type == NODE_INTERFACE_SOCKET) {
+      const auto &socket = *reinterpret_cast<const bNodeTreeInterfaceSocket *>(item);
+      const int input_index = ctx.nmd.node_group->interface_input_index(socket);
+      if (ctx.input_usages[input_index]) {
+        return true;
+      }
+    }
+    else if (item->item_type == NODE_INTERFACE_PANEL) {
+      const auto &sub_interface_panel = *reinterpret_cast<const bNodeTreeInterfacePanel *>(item);
+      if (interface_panel_affects_output(ctx, sub_interface_panel)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 static void draw_interface_panel_content(DrawGroupInputsContext &ctx,
                                          uiLayout *layout,
                                          const bNodeTreeInterfacePanel &interface_panel)
@@ -2273,10 +2297,13 @@ static void draw_interface_panel_content(DrawGroupInputsContext &ctx,
         continue;
       }
       NodesModifierPanel *panel = find_panel_by_id(ctx.nmd, sub_interface_panel.identifier);
-      PointerRNA panel_ptr = RNA_pointer_create(
+      PointerRNA panel_ptr = RNA_pointer_create_discrete(
           ctx.md_ptr->owner_id, &RNA_NodesModifierPanel, panel);
       PanelLayout panel_layout = uiLayoutPanelProp(&ctx.C, layout, &panel_ptr, "is_open");
       uiItemL(panel_layout.header, IFACE_(sub_interface_panel.name), ICON_NONE);
+      if (!interface_panel_affects_output(ctx, sub_interface_panel)) {
+        uiLayoutSetActive(panel_layout.header, false);
+      }
       uiLayoutSetTooltipFunc(
           panel_layout.header,
           [](bContext * /*C*/, void *panel_arg, const char * /*tip*/) -> std::string {
@@ -2499,6 +2526,9 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   if (nmd->node_group != nullptr && nmd->settings.properties != nullptr) {
     nmd->node_group->ensure_interface_cache();
+    ctx.input_usages.reinitialize(nmd->node_group->interface_inputs().size());
+    nodes::socket_usage_inference::infer_group_interface_inputs_usage(
+        *nmd->node_group, nmd->settings.properties, ctx.input_usages);
     draw_interface_panel_content(ctx, layout, nmd->node_group->tree_interface.root_panel);
   }
 

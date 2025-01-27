@@ -75,8 +75,6 @@ static void modify_stroke_color(const GreasePencilOpacityModifierData &omd,
 {
   const bool use_uniform_opacity = (omd.flag & MOD_GREASE_PENCIL_OPACITY_USE_UNIFORM_OPACITY);
   const bool use_weight_as_factor = (omd.flag & MOD_GREASE_PENCIL_OPACITY_USE_WEIGHT_AS_FACTOR);
-  const bool invert_vertex_group = (omd.influence.flag &
-                                    GREASE_PENCIL_INFLUENCE_INVERT_VERTEX_GROUP);
   const bool use_curve = (omd.influence.flag & GREASE_PENCIL_INFLUENCE_USE_CUSTOM_CURVE);
   const OffsetIndices<int> points_by_curve = curves.points_by_curve();
 
@@ -110,9 +108,8 @@ static void modify_stroke_color(const GreasePencilOpacityModifierData &omd,
       }
       else {
         /* Use vertex group weights as influence factors. */
-        const float vgroup_influence = invert_vertex_group ? 1.0f - vgroup_weight : vgroup_weight;
         opacities.span[point_i] = std::clamp(
-            opacities.span[point_i] + (omd.color_factor * curve_factor - 1.0f) * vgroup_influence,
+            opacities.span[point_i] + (omd.color_factor * curve_factor - 1.0f) * vgroup_weight,
             0.0f,
             1.0f);
       }
@@ -127,8 +124,6 @@ static void modify_fill_color(const GreasePencilOpacityModifierData &omd,
                               const IndexMask &curves_mask)
 {
   const bool use_vgroup_opacity = (omd.flag & MOD_GREASE_PENCIL_OPACITY_USE_WEIGHT_AS_FACTOR);
-  const bool invert_vertex_group = (omd.influence.flag &
-                                    GREASE_PENCIL_INFLUENCE_INVERT_VERTEX_GROUP);
   const OffsetIndices<int> points_by_curve = curves.points_by_curve();
 
   bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
@@ -141,20 +136,20 @@ static void modify_fill_color(const GreasePencilOpacityModifierData &omd,
       curves, omd.influence);
 
   curves_mask.foreach_index(GrainSize(512), [&](int64_t curve_i) {
+    /* Use the first stroke point as vertex weight. */
+    const IndexRange points = points_by_curve[curve_i];
+    const float vgroup_weight_first = vgroup_weights[points.first()];
+    float stroke_weight = vgroup_weight_first;
     if (use_vgroup_opacity) {
-      /* Use the first stroke point as vertex weight. */
-      const IndexRange points = points_by_curve[curve_i];
-      const float vgroup_weight_first = vgroup_weights[points.first()];
-      float stroke_weight = vgroup_weight_first;
-      if (points.is_empty() || (vgroup_weight_first <= 0.0f)) {
+      if (points.is_empty() || (stroke_weight <= 0.0f)) {
         stroke_weight = 1.0f;
       }
-      const float stroke_influence = invert_vertex_group ? 1.0f - stroke_weight : stroke_weight;
-
-      fill_opacities.span[curve_i] = std::clamp(stroke_influence, 0.0f, 1.0f);
+      fill_opacities.span[curve_i] = std::clamp(stroke_weight, 0.0f, 1.0f);
     }
     else {
-      fill_opacities.span[curve_i] = std::clamp(omd.color_factor, 0.0f, 1.0f);
+      if (!points.is_empty() && (stroke_weight > 0.0f)) {
+        fill_opacities.span[curve_i] = std::clamp(omd.color_factor * stroke_weight, 0.0f, 1.0f);
+      }
     }
   });
 

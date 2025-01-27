@@ -658,9 +658,11 @@ class IMAGE_MT_uvs(Menu):
         layout.operator("uv.select_split", text="Split Selection", icon='SPLIT')
 
         layout.separator()
-		# BFA order of these group of ops changed. They are listed below.
-        layout.operator_context = 'INVOKE_DEFAULT'
+
+		# BFA: changed order of items in menu
+        layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("uv.pack_islands", icon="PACKISLAND")
+
         layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("uv.average_islands_scale", icon="AVERAGEISLANDSCALE")
         layout.operator("uv.minimize_stretch", icon="MINIMIZESTRETCH")
@@ -1223,6 +1225,7 @@ from bl_ui.properties_mask_common import (
     MASK_PT_layers,
     MASK_PT_spline,
     MASK_PT_point,
+    MASK_PT_animation,
     MASK_PT_display,
 )
 
@@ -1246,6 +1249,12 @@ class IMAGE_PT_active_mask_spline(MASK_PT_spline, Panel):
 
 
 class IMAGE_PT_active_mask_point(MASK_PT_point, Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Mask"
+
+
+class IMAGE_PT_mask_animation(MASK_PT_animation, Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Mask"
@@ -1650,9 +1659,13 @@ class IMAGE_PT_uv_sculpt_curve(Panel):
     def draw(self, context):
         layout = self.layout
         props = context.scene.tool_settings.uv_sculpt
-        layout.prop(props, "curve_preset", text="")
+
+        col = layout.column()
+        col.prop(props, "curve_preset", expand=True)
+
         if props.curve_preset == 'CUSTOM':
-            layout.template_curve_mapping(props, "strength_curve")
+            col = layout.column()
+            col.template_curve_mapping(props, "strength_curve")
 
 
 # Only a popover.
@@ -2090,7 +2103,7 @@ class IMAGE_OT_switch_editors_to_image(bpy.types.Operator):
 
 
 class ImageAssetShelf(BrushAssetShelf):
-    bl_space_type = "IMAGE_EDITOR"
+    bl_space_type = 'IMAGE_EDITOR'
 
 
 class IMAGE_AST_brush_paint(ImageAssetShelf, AssetShelf):
@@ -2140,6 +2153,7 @@ classes = (
     IMAGE_PT_mask_display,
     IMAGE_PT_active_mask_spline,
     IMAGE_PT_active_mask_point,
+    IMAGE_PT_mask_animation,
     IMAGE_PT_snapping,
     IMAGE_PT_proportional_edit,
     IMAGE_PT_image_options, # BFA menu
@@ -2179,7 +2193,7 @@ classes = (
     IMAGE_PT_overlay_texture_paint,
     IMAGE_PT_overlay_image,
     IMAGE_AST_brush_paint,
-    
+
     IMAGE_OT_switch_editors_to_uv, # BFA menu
     IMAGE_OT_switch_editors_to_image, # BFA menu
 )

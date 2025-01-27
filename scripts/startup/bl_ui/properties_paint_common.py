@@ -324,9 +324,9 @@ class BrushPanel(UnifiedPaintPanel):
 class BrushSelectPanel(BrushPanel):
     bl_label = "Brush Asset"
 
-    # Use header preset function to right align the layout.
+    # Use header preset function to set the title.
     def draw_header_preset(self, context):
-        layout = self.layout
+        # layout = self.layout  # UNUSED.
 
         settings = self.paint_settings(context)
         if settings is None:
@@ -718,8 +718,11 @@ class FalloffPanel(BrushPanel):
             return
 
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(brush, "curve_preset", text="")
+        if context.region.type == 'TOOL_HEADER':
+            col.prop(brush, "curve_preset", expand=True)
+        else:
+            row = col.row(align=True)
+            col.prop(brush, "curve_preset", text="")
 
         if brush.curve_preset == "CUSTOM":
             layout.template_curve_mapping(brush, "curve", brush=True)
