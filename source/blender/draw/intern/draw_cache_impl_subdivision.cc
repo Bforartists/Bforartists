@@ -12,9 +12,7 @@
 #include "BKE_editmesh.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.hh"
-#include "BKE_modifier.hh"
 #include "BKE_object.hh"
-#include "BKE_scene.hh"
 #include "BKE_subdiv.hh"
 #include "BKE_subdiv_eval.hh"
 #include "BKE_subdiv_foreach.hh"
@@ -22,9 +20,7 @@
 #include "BKE_subdiv_modifier.hh"
 
 #include "BLI_linklist.h"
-#include "BLI_string.h"
-#include "BLI_string_utils.hh"
-#include "BLI_time.h"
+#include "BLI_threads.h"
 #include "BLI_virtual_array.hh"
 
 #include "DRW_engine.hh"
@@ -2327,6 +2323,12 @@ void DRW_subdiv_free()
 {
   for (int i = 0; i < NUM_SHADERS; ++i) {
     GPU_shader_free(g_subdiv_shaders[i]);
+  }
+
+  for (auto &comp_variants : g_subdiv_custom_data_shaders) {
+    for (GPUShader *shader : comp_variants) {
+      GPU_SHADER_FREE_SAFE(shader);
+    }
   }
 
   DRW_cache_free_old_subdiv();
