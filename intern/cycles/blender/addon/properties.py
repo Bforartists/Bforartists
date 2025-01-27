@@ -1845,7 +1845,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
 
         if has_peer_memory > 1:
             row = layout.row()
-            row.use_property_split = True
+            row.use_property_split = False # bfa - align left
             row.prop(self, "peer_memory")
 
         if compute_device_type == 'METAL':
