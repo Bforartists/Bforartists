@@ -11,7 +11,7 @@
 		<key>CFBundleExecutable</key>
 		<string>bforartists-thumbnailer</string>
 		<key>CFBundleIdentifier</key>
-		<string>org.blenderfoundation.blender.thumbnailer</string>
+		<string>de.bforartists.bforartists.thumbnailer</string>
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundlePackageType</key>
@@ -35,7 +35,7 @@
 				<key>QLSupportedContentTypes</key>
 				<array>
 					<!-- The supported file UTIs. Not inherited from parent bundle. -->
-					<string>org.blenderfoundation.blender.file</string>
+					<string>de.bforartists.bforartists.file</string>
 				</array>
 				<key>QLThumbnailMinimumDimension</key>
 				<integer>0</integer>
