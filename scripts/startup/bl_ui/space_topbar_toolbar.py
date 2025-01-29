@@ -432,16 +432,19 @@ class TOPBAR_MT_file(Menu):
 
                 if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
-
-                row.operator("wm.obj_import", text="", icon='LOAD_OBJ')
-                row.operator("wm.alembic_import", text="", icon = "LOAD_ABC" )
+                if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true
+                    row.operator("wm.obj_import", text="", icon='LOAD_OBJ')
+                if bpy.app.build_options.alembic: # bfa - only show if built option is true
+                    row.operator("wm.alembic_import", text="", icon = "LOAD_ABC" )
 
             if addon_prefs.topbar_file_import_common2:
 
                 row = layout.row(align=True)
-                row.operator("wm.collada_import", text="", icon='LOAD_DAE')
+                if bpy.app.build_options.collada: # bfa - only show if built option is true
+                    row.operator("wm.collada_import", text="", icon='LOAD_DAE')
                 row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
-
+                if bpy.app.build_options.usd: # bfa - only show if built option is true
+                    row.operator("wm.usd_import", text="", icon='LOAD_USD')
                 if "io_scene_gltf2" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_scene.gltf", text="", icon='LOAD_GLTF')
 
@@ -453,12 +456,10 @@ class TOPBAR_MT_file(Menu):
 
                 if "io_mesh_stl" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_mesh.stl", text="", icon='LOAD_STL')
-
-                row.operator("wm.ply_import", text="", icon='LOAD_PLY')
-
+                if bpy.app.build_options.io_ply: # bfa - only show if built option is true
+                    row.operator("wm.ply_import", text="", icon='LOAD_PLY')
                 if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_scene.x3d", text="", icon='LOAD_X3D')
-
                 if "io_curve_svg" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_curve.svg", text="", icon='LOAD_SVG')
 
@@ -469,17 +470,19 @@ class TOPBAR_MT_file(Menu):
                 row = layout.row(align=True)
                 if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("export_scene.fbx", text="", icon='SAVE_FBX')
-
-                row.operator("wm.obj_export", text="", icon='SAVE_OBJ')
-                row.operator("wm.alembic_export", text="", icon = "SAVE_ABC" )
+                if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true
+                    row.operator("wm.obj_export", text="", icon='SAVE_OBJ')
+                if bpy.app.build_options.alembic: # bfa - only show if built option is true
+                    row.operator("wm.alembic_export", text="", icon = "SAVE_ABC" )
 
             if addon_prefs.topbar_file_export_common2:
 
                 row = layout.row(align=True)
-                row.operator("wm.collada_export", text="", icon='SAVE_DAE')
+                if bpy.app.build_options.collada: # bfa - only show if built option is true
+                    row.operator("wm.collada_export", text="", icon='SAVE_DAE')
                 row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
-                row.operator("wm.usd_export", text="", icon='SAVE_USD')
-
+                if bpy.app.build_options.usd: # bfa - only show if built option is true
+                    row.operator("wm.usd_export", text="", icon='SAVE_USD')
                 if "io_scene_gltf2" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("export_scene.gltf", text="", icon='SAVE_GLTF')
 
@@ -488,12 +491,10 @@ class TOPBAR_MT_file(Menu):
             if addon_prefs.topbar_file_export_uncommon:
 
                 row = layout.row(align=True)
-
                 if "io_mesh_stl" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("export_mesh.stl", text="", icon='SAVE_STL')
-
-                row.operator("wm.ply_export", text="", icon='SAVE_PLY')
-
+                if bpy.app.build_options.io_ply: # bfa - only show if built option is true
+                    row.operator("wm.ply_export", text="", icon='SAVE_PLY')
                 if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("export_scene.x3d", text="", icon='SAVE_X3D')
 
