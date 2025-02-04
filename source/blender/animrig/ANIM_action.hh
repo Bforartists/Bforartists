@@ -325,7 +325,7 @@ class Action : public ::bAction {
    * `slot` must belong to this action, and `to_slot_index` must be a
    * valid index in the slot array.
    */
-  void slot_move(Slot &slot, int to_slot_index);
+  void slot_move_to_index(Slot &slot, int to_slot_index);
 
   /**
    * Set the active Slot, ensuring only one Slot is flagged as the Active one.
@@ -965,11 +965,13 @@ class StripKeyframeData : public ::ActionStripKeyframeData {
    * Should only be called when there is no `Channelbag` for this slot yet.
    */
   Channelbag &channelbag_for_slot_add(const Slot &slot);
+  Channelbag &channelbag_for_slot_add(slot_handle_t slot_handle);
 
   /**
    * Find the channelbag for the given slot, or if none exists, create it.
    */
   Channelbag &channelbag_for_slot_ensure(const Slot &slot);
+  Channelbag &channelbag_for_slot_ensure(slot_handle_t slot_handle);
 
   /**
    * Remove the given channelbag from this strip data.
@@ -1095,7 +1097,7 @@ class Channelbag : public ::ActionChannelbag {
    *
    * \see fcurve_remove
    */
-  void fcurve_remove_by_index(int64_t fcurve_array_index);
+  void fcurve_remove_by_index(int64_t fcurve_index);
 
   /**
    * Detach an F-Curve from the Channelbag.
@@ -1131,7 +1133,7 @@ class Channelbag : public ::ActionChannelbag {
    * `fcurve` must belong to this channel bag, and `to_fcurve_index` must be a
    * valid index in the fcurve array.
    */
-  void fcurve_move(FCurve &fcurve, int to_fcurve_index);
+  void fcurve_move_to_index(FCurve &fcurve, int to_fcurve_index);
 
   /**
    * Remove all F-Curves from this Channelbag.
@@ -1211,7 +1213,7 @@ class Channelbag : public ::ActionChannelbag {
    * `group` must belong to this channel bag, and `to_group_index` must be a
    * valid index in the channel group array.
    */
-  void channel_group_move(bActionGroup &group, int to_group_index);
+  void channel_group_move_to_index(bActionGroup &group, int to_group_index);
 
   /**
    * Assigns the given FCurve to the given channel group.

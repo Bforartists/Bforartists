@@ -54,7 +54,6 @@ static CLG_LogRef LOG = {"io.usd"};
 namespace usdtokens {
 /* Materials */
 static const pxr::TfToken st("st", pxr::TfToken::Immortal);
-static const pxr::TfToken UVMap("UVMap", pxr::TfToken::Immortal);
 static const pxr::TfToken normalsPrimvar("normals", pxr::TfToken::Immortal);
 }  // namespace usdtokens
 
@@ -954,13 +953,12 @@ std::optional<XformResult> USDMeshReader::get_local_usd_xform(const float time) 
          * is constant over time. */
         return XformResult(pxr::GfMatrix4f(bind_xf), true);
       }
-      else {
-        BKE_reportf(reports(),
-                    RPT_WARNING,
-                    "%s: Couldn't compute geom bind transform for %s",
-                    __func__,
-                    prim_.GetPath().GetAsString().c_str());
-      }
+
+      BKE_reportf(reports(),
+                  RPT_WARNING,
+                  "%s: Couldn't compute geom bind transform for %s",
+                  __func__,
+                  prim_.GetPath().GetAsString().c_str());
     }
   }
 
