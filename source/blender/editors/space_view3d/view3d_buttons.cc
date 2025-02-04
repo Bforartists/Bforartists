@@ -7,8 +7,6 @@
  */
 /*BFORARTISTS NOTE - on merge, there are chunks that has expanded GUI a lot here, beware*/
 #include <cfloat>
-#include <cmath>
-#include <cstdio>
 #include <cstring>
 
 #include "DNA_armature_types.h"

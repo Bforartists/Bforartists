@@ -23,6 +23,7 @@
 #include "BLI_vector.hh"
 
 #include "DNA_brush_enums.h"
+#include "DNA_brush_types.h"
 
 #include "ED_view3d.hh"
 
@@ -449,7 +450,7 @@ bool SCULPT_stroke_get_location_ex(bContext *C,
 
 bool SCULPT_stroke_get_location(bContext *C,
                                 float out[3],
-                                const float mouse[2],
+                                const float mval[2],
                                 bool force_original);
 /**
  * Gets the normal, location and active vertex location of the geometry under the cursor. This also
@@ -457,7 +458,7 @@ bool SCULPT_stroke_get_location(bContext *C,
  */
 bool SCULPT_cursor_geometry_info_update(bContext *C,
                                         SculptCursorGeometryInfo *out,
-                                        const float mouse[2],
+                                        const float mval[2],
                                         bool use_sampled_normal);
 
 namespace blender::ed::sculpt_paint {
@@ -658,7 +659,7 @@ bool node_in_sphere(const bke::pbvh::Node &node,
                     const float3 &location,
                     float radius_sq,
                     bool original);
-bool node_in_cylinder(const DistRayAABB_Precalc &dist_ray_precalc,
+bool node_in_cylinder(const DistRayAABB_Precalc &ray_dist_precalc,
                       const bke::pbvh::Node &node,
                       float radius_sq,
                       bool original);
@@ -942,23 +943,30 @@ float clay_thumb_get_stabilized_pressure(const blender::ed::sculpt_paint::Stroke
 
 void SCULPT_OT_brush_stroke(wmOperatorType *ot);
 
-}  // namespace blender::ed::sculpt_paint
-
-inline bool SCULPT_brush_type_is_paint(int tool)
+inline bool brush_type_is_paint(const int tool)
 {
   return ELEM(tool, SCULPT_BRUSH_TYPE_PAINT, SCULPT_BRUSH_TYPE_SMEAR);
 }
 
-inline bool SCULPT_brush_type_is_mask(int tool)
+inline bool brush_type_is_mask(const int tool)
 {
   return ELEM(tool, SCULPT_BRUSH_TYPE_MASK);
 }
 
-BLI_INLINE bool SCULPT_brush_type_is_attribute_only(int tool)
+BLI_INLINE bool brush_type_is_attribute_only(const int tool)
 {
-  return SCULPT_brush_type_is_paint(tool) || SCULPT_brush_type_is_mask(tool) ||
+  return brush_type_is_paint(tool) || brush_type_is_mask(tool) ||
          ELEM(tool, SCULPT_BRUSH_TYPE_DRAW_FACE_SETS);
 }
+
+inline bool brush_uses_vector_displacement(const Brush &brush)
+{
+  return brush.sculpt_brush_type == SCULPT_BRUSH_TYPE_DRAW &&
+         brush.flag2 & BRUSH_USE_COLOR_AS_DISPLACEMENT &&
+         brush.mtex.brush_map_mode == MTEX_MAP_MODE_AREA;
+}
+
+}  // namespace blender::ed::sculpt_paint
 
 namespace blender::ed::sculpt_paint {
 void ensure_valid_pivot(const Object &ob, Scene &scene);

@@ -223,6 +223,7 @@ def addon_draw_item_expanded(
         item_warnings,  # `list[str]`
         item_doc_url,  # `str`
         item_tracker_url,  # `str`
+        show_developer_ui,  # `bool`
         # BFA - Necessary info for uninstalling extensions
         repo_index=-1, # `int`
 ):
@@ -251,7 +252,7 @@ def addon_draw_item_expanded(
     elif addon_type == ADDON_TYPE_EXTENSION:
         # BFA - Add ability to uninstall extension
         repo_module, pkg_id = mod.__name__.split(".")[1:]
-        props = rowsub.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') 
+        props = rowsub.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL')
         props.repo_index = repo_index
         props.pkg_id = pkg_id
         del props
@@ -305,7 +306,13 @@ def addon_draw_item_expanded(
 
     if addon_type != ADDON_TYPE_LEGACY_CORE:
         col_a.label(text="File")
-        col_b.label(text=mod.__file__, translate=False)
+        row = col_b.row()
+        row.label(text=mod.__file__, translate=False)
+
+        # Add a button to quickly open the add-on's folder for accessing its files and assets.
+        if show_developer_ui:
+            import os
+            row.operator("wm.path_open", text="", icon='FILE_FOLDER').filepath = os.path.dirname(mod.__file__)
 
 
 # NOTE: this can be removed once upgrading from 4.1 is no longer relevant.
@@ -456,6 +463,7 @@ def addons_panel_draw_items(
         addon_extension_block_map,  # `dict[str, PkgBlock_Normalized]`
 
         show_development,  # `bool`
+        show_developer_ui,  # `bool`
         # BFA - Mapping of repo indices for extensions to look up
         extension_repo_index_map, # `Dict[str, int]`
 ):  # `-> Set[str]`
@@ -633,6 +641,7 @@ def addons_panel_draw_items(
                 item_doc_url=item_doc_url,
                 # pylint: disable-next=used-before-assignment
                 item_tracker_url=item_tracker_url,
+                show_developer_ui=show_developer_ui,
                 repo_index=repo_index # BFA - Necessary info for uninstalling extensions
             )
 
@@ -645,6 +654,8 @@ def addons_panel_draw_items(
 
 def addons_panel_draw_error_duplicates(layout):
     import addon_utils
+    import os
+
     box = layout.box()
     row = box.row()
     row.label(text="Multiple add-ons with the same name found!")
@@ -654,8 +665,15 @@ def addons_panel_draw_error_duplicates(layout):
         box.separator()
         sub_col = box.column(align=True)
         sub_col.label(text=addon_name + ":")
-        sub_col.label(text="    " + addon_file)
-        sub_col.label(text="    " + addon_path)
+
+        sub_row = sub_col.row()
+        sub_row.label(text="    " + addon_file)
+        sub_row.operator("wm.path_open", text="", icon='FILE_FOLDER').filepath = os.path.dirname(addon_file)
+
+        sub_row = sub_col.row()
+        sub_row.label(text="    " + addon_path)
+        sub_row.operator("wm.path_open", text="", icon='FILE_FOLDER').filepath = os.path.dirname(addon_path)
+
 
 
 def addons_panel_draw_error_generic(layout, lines):
@@ -675,6 +693,7 @@ def addons_panel_draw_impl(
         enabled_only,  # `bool`
         *,
         show_development,  # `bool`
+        show_developer_ui,  # `bool`
 ):
     """
     Show all the items... we may want to paginate at some point.
@@ -767,6 +786,7 @@ def addons_panel_draw_impl(
         addon_extension_manifest_map=addon_extension_manifest_map,
         addon_extension_block_map=addon_extension_block_map,
         show_development=show_development,
+        show_developer_ui=show_developer_ui,
         # BFA - Pass mapping of repo indices, which is needed to allow for uninstalling extensions
         extension_repo_index_map=extension_repo_index_map
     )
@@ -855,6 +875,7 @@ def addons_panel_draw(panel, context):
         addon_tags_exclude,
         view.show_addons_enabled_only,
         show_development=prefs.experimental.use_extensions_debug,
+        show_developer_ui=prefs.view.show_developer_ui,
     )
 
 
@@ -1335,6 +1356,7 @@ def extension_draw_item(
         repo_item,  # `RepoItem`
         operation_in_progress,  # `bool`
         extensions_warnings,  # `dict[str, list[str]]`
+        show_developer_ui,  # `bool`
 ):
     item = item_local or item_remote
     is_installed = item_local is not None
@@ -1387,8 +1409,8 @@ def extension_draw_item(
                 "preferences.addon_disable" if is_enabled else "preferences.addon_enable",
                 icon='CHECKBOX_HLT' if is_enabled else 'CHECKBOX_DEHLT', text="",
                 emboss=False,
-            ).module = module_name 
-        
+            ).module = module_name
+
         sub.label(text=item.name, icon=icon, translate=False) # BFA - Add visual indicators to listings
     del sub
 
@@ -1544,7 +1566,13 @@ def extension_draw_item(
 
         if is_installed:
             col_a.label(text="Path")
-            col_b.label(text=os.path.join(repo_item.directory, pkg_id), translate=False)
+            row = col_b.row()
+            dirpath = os.path.join(repo_item.directory, pkg_id)
+            row.label(text=dirpath, translate=False)
+
+            if show_developer_ui:
+                    row.operator("wm.path_open", text="", icon='FILE_FOLDER').filepath = dirpath
+
 
 
 def extensions_panel_draw_impl(
@@ -1825,6 +1853,7 @@ def extensions_panel_draw_impl(
                 repo_item=params.repos_all[ext_ui.repo_index],
                 operation_in_progress=operation_in_progress,
                 extensions_warnings=extensions_warnings,
+                show_developer_ui=prefs.view.show_developer_ui,
             )
 
     # Finally show any errors in a single panel which can be dismissed.
