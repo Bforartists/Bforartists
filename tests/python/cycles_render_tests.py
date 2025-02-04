@@ -63,8 +63,8 @@ BLOCKLIST_OSL = [
 
 BLOCKLIST_OPTIX = [
     # Ray intersection precision issues
-    'T50164.blend',
-    'T43865.blend',
+    'big_triangles_50164.blend',
+    'big_plane_43865.blend',
 ]
 
 BLOCKLIST_OPTIX_OSL = [
@@ -109,8 +109,8 @@ if platform.system() == "Darwin":
 BLOCKLIST_GPU = [
     # Uninvestigated differences with GPU.
     'image_log.blend',
-    'T40964.blend',
-    'T45609.blend',
+    'glass_mix_40964.blend',
+    'filter_glossy_refraction_45609.blend',
     'smoke_color.blend',
     'bevel_mblur.blend',
     # Inconsistency between Embree and Hair primitive on GPU.
@@ -124,7 +124,7 @@ BLOCKLIST_GPU = [
     'transparent_shadow_hair.*.blend',
     "microfacet_hair_orientation.blend",
     # Inconsistent handling of overlapping objects.
-    "T41143.blend",
+    "sobol_uniform_41143.blend",
     "visibility_particles.blend",
     # No path guiding on GPU.
     "guiding*.blend",
@@ -135,10 +135,10 @@ class CyclesReport(render_report.Report):
     def __init__(self, title, output_dir, oiiotool, device=None, blocklist=[], osl=False):
         # Split device name in format "<device_type>[-<RT>]" into individual
         # tokens, setting the RT suffix to an empty string if its not specified.
-        device, suffix = (device.split("-") + [""])[:2]
+        self.device, suffix = (device.split("-") + [""])[:2]
         self.use_hwrt = (suffix == "RT")
 
-        super().__init__(title, output_dir, oiiotool, device, blocklist)
+        super().__init__(title, output_dir, oiiotool, self.device, blocklist)
 
         if self.use_hwrt:
             self.title = self.title + " RT"
@@ -150,6 +150,9 @@ class CyclesReport(render_report.Report):
 
     def _get_render_arguments(self, arguments_cb, filepath, base_output_filepath):
         return arguments_cb(filepath, base_output_filepath, self.use_hwrt, self.osl)
+
+    def _get_arguments_suffix(self):
+        return ['--', '--cycles-device', self.device] if self.device else []
 
 
 def get_arguments(filepath, output_filepath, use_hwrt=False, osl=False):

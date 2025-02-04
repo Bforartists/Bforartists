@@ -6,8 +6,6 @@
  * \ingroup modifiers
  */
 
-#include <cstdio>
-
 #include "BLI_utildefines.h"
 
 #include "BLI_array.hh"
@@ -690,7 +688,7 @@ ModifierTypeInfo modifierType_Boolean = {
     /*srna*/ &RNA_BooleanModifier,
     /*type*/ ModifierTypeType::Nonconstructive,
     /*flags*/
-    (ModifierTypeFlag)(eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_SupportsEditmode),
+    (eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_SupportsEditmode),
     /*icon*/ ICON_MOD_BOOLEAN,
 
     /*copy_data*/ BKE_modifier_copydata_generic,
