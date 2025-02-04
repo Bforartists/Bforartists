@@ -3161,13 +3161,10 @@ void uiItemLDrag(uiLayout *layout, PointerRNA *ptr, blender::StringRef name, int
 /**
  * Menu.
  */
-void uiItemM_ptr(uiLayout *layout,
-                 MenuType *mt,
-                 std::optional<blender::StringRefNull> name,
-                 int icon);
+void uiItemM_ptr(uiLayout *layout, MenuType *mt, std::optional<blender::StringRef> name, int icon);
 void uiItemM(uiLayout *layout,
              blender::StringRefNull menuname,
-             std::optional<blender::StringRefNull> name,
+             std::optional<blender::StringRef> name,
              int icon);
 /**
  * Menu contents.
@@ -3283,8 +3280,9 @@ uiLayout *uiItemsAlertBox(uiBlock *block, const int size, const eAlertIcon icon)
 
 /* UI Operators */
 struct uiDragColorHandle {
-  float color[3];
+  float color[4];
   bool gamma_corrected;
+  bool has_alpha;
 };
 
 void ED_operatortypes_ui();
