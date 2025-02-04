@@ -94,10 +94,8 @@ static bool eyedropper_init(bContext *C, wmOperator *op)
 {
   Eyedropper *eye = MEM_new<Eyedropper>(__func__);
 
-  PropertyRNA *prop;
-  if ((prop = RNA_struct_find_property(op->ptr, "prop_data_path")) &&
-      RNA_property_is_set(op->ptr, prop))
-  {
+  PropertyRNA *prop = RNA_struct_find_property(op->ptr, "prop_data_path");
+  if (prop && RNA_property_is_set(op->ptr, prop)) {
     char *prop_data_path = RNA_string_get_alloc(op->ptr, "prop_data_path", nullptr, 0, nullptr);
     BLI_SCOPED_DEFER([&] { MEM_SAFE_FREE(prop_data_path); });
     if (!prop_data_path || prop_data_path[0] == '\0') {
@@ -636,8 +634,8 @@ static int eyedropper_modal(bContext *C, wmOperator *op, const wmEvent *event)
     }
     else {
       WorkspaceStatus status(C);
-      status.opmodal(IFACE_("Cancel"), op->type, EYE_MODAL_CANCEL);
       status.opmodal(IFACE_("Confirm"), op->type, EYE_MODAL_SAMPLE_CONFIRM);
+      status.opmodal(IFACE_("Cancel"), op->type, EYE_MODAL_CANCEL);
 #ifdef __APPLE__
       status.item(TIP_("Press 'Enter' to sample outside of a Blender window"), ICON_INFO);
 #endif

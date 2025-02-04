@@ -43,11 +43,10 @@ void ED_spacetype_clip();
 void ED_spacetype_statusbar();
 void ED_spacetype_topbar();
 void ED_spacetype_toolbar(); /*bfa - toolbar*/
-namespace blender::ed {
-namespace spreadsheet {
+
+namespace blender::ed::spreadsheet {
 void register_spacetype();
 }
-}  // namespace blender::ed
 
 /** \} */
 

@@ -7,7 +7,6 @@
  */
 
 #include <algorithm>
-#include <climits>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -3014,7 +3013,7 @@ void ui_item_paneltype_func(bContext *C, uiLayout *layout, void *arg_pt)
 }
 
 static uiBut *ui_item_menu(uiLayout *layout,
-                           const StringRefNull name,
+                           const StringRef name,
                            int icon,
                            uiMenuCreateFunc func,
                            void *arg,
@@ -3089,10 +3088,7 @@ static uiBut *ui_item_menu(uiLayout *layout,
   return but;
 }
 
-void uiItemM_ptr(uiLayout *layout,
-                 MenuType *mt,
-                 const std::optional<StringRefNull> name_opt,
-                 int icon)
+void uiItemM_ptr(uiLayout *layout, MenuType *mt, const std::optional<StringRef> name_opt, int icon)
 {
   uiBlock *block = layout->root->block;
   bContext *C = static_cast<bContext *>(block->evil_C);
@@ -3100,7 +3096,7 @@ void uiItemM_ptr(uiLayout *layout,
     return;
   }
 
-  const StringRefNull name = name_opt.value_or(CTX_IFACE_(mt->translation_context, mt->label));
+  const StringRef name = name_opt.value_or(CTX_IFACE_(mt->translation_context, mt->label));
 
   if (layout->root->type == UI_LAYOUT_MENU && !icon) {
     icon = ICON_BLANK1;
@@ -3118,7 +3114,7 @@ void uiItemM_ptr(uiLayout *layout,
 
 void uiItemM(uiLayout *layout,
              const StringRefNull menuname,
-             const std::optional<StringRefNull> name,
+             const std::optional<StringRef> name,
              int icon)
 {
   MenuType *mt = WM_menutype_find(menuname.c_str(), false);
@@ -4012,7 +4008,7 @@ static void ui_litem_estimate_column(uiLayout *litem, bool is_box)
   litem->w = 0;
   litem->h = 0;
 
-  for (auto iter = litem->items.begin(); iter != litem->items.end(); iter++) {
+  for (auto *iter = litem->items.begin(); iter != litem->items.end(); iter++) {
     uiItem *item = *iter;
     ui_item_size(item, &itemw, &itemh);
 
@@ -4036,7 +4032,7 @@ static void ui_litem_layout_column(uiLayout *litem, bool is_box, bool is_menu)
   const int x = litem->x;
   int y = litem->y;
 
-  for (auto iter = litem->items.begin(); iter != litem->items.end(); iter++) {
+  for (auto *iter = litem->items.begin(); iter != litem->items.end(); iter++) {
     uiItem *item = *iter;
     int itemw, itemh;
     ui_item_size(item, &itemw, &itemh);
@@ -4986,7 +4982,7 @@ static void ui_litem_init_from_parent(uiLayout *litem, uiLayout *layout, int ali
 
 static void ui_layout_heading_set(uiLayout *layout, const StringRef heading)
 {
-  heading.copy(layout->heading);
+  heading.copy_utf8_truncated(layout->heading);
 }
 
 uiLayout *uiLayoutRow(uiLayout *layout, bool align)

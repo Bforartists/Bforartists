@@ -209,16 +209,16 @@ bool operator==(const ObjectIdentifier &obj_ident_a, const ObjectIdentifier &obj
 class AbstractHierarchyIterator {
  public:
   /* Mapping from export path to writer. */
-  typedef std::map<std::string, AbstractHierarchyWriter *> WriterMap;
+  using WriterMap = std::map<std::string, AbstractHierarchyWriter *>;
   /* All the children of some object, as per the export hierarchy. */
-  typedef std::set<HierarchyContext *> ExportChildren;
+  using ExportChildren = std::set<HierarchyContext *>;
   /* Mapping from an object and its duplicator to the object's export-children. */
-  typedef std::map<ObjectIdentifier, ExportChildren> ExportGraph;
+  using ExportGraph = std::map<ObjectIdentifier, ExportChildren>;
   /* Mapping from ID to its export path. This is used for instancing; given an
    * instanced datablock, the export path of the original can be looked up. */
-  typedef std::map<ID *, std::string> ExportPathMap;
+  using ExportPathMap = std::map<ID *, std::string>;
   /* IDs of all duplisource objects, used to identify instance prototypes. */
-  typedef std::set<ID *> DupliSources;
+  using DupliSources = std::set<ID *>;
 
  protected:
   ExportGraph export_graph_;
@@ -281,7 +281,7 @@ class AbstractHierarchyIterator {
                                       const ExportGraph::key_type &graph_index) const;
 
   void determine_export_paths(const HierarchyContext *parent_context);
-  void determine_duplication_references(const HierarchyContext *parent_context,
+  bool determine_duplication_references(const HierarchyContext *parent_context,
                                         const std::string &indent);
 
   /* These three functions create writers and call their write() method. */
@@ -297,8 +297,8 @@ class AbstractHierarchyIterator {
   std::string get_object_name(const Object *object) const;
   std::string get_object_data_name(const Object *object) const;
 
-  typedef AbstractHierarchyWriter *(AbstractHierarchyIterator::*create_writer_func)(
-      const HierarchyContext *);
+  using create_writer_func =
+      AbstractHierarchyWriter *(AbstractHierarchyIterator::*)(const HierarchyContext *);
   /* Ensure that a writer exists; if it doesn't, call create_func(context).
    *
    * The create_func function should be one of the create_XXXX_writer(context) functions declared
@@ -365,14 +365,6 @@ class AbstractHierarchyIterator {
 
   AbstractHierarchyWriter *get_writer(const std::string &export_path) const;
   ExportChildren &graph_children(const HierarchyContext *context);
-
-  /* Return true if duplication references should be resolved for the children of the given
-   * context. */
-  virtual bool should_determine_duplication_references(
-      const HierarchyContext *parent_context) const
-  {
-    return parent_context != nullptr;
-  }
 };
 
 }  // namespace blender::io
