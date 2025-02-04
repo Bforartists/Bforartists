@@ -6,9 +6,9 @@
  * \ingroup edinterface
  */
 
+#include <algorithm>
 #include <cctype>
 #include <cfloat>
-#include <climits>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -2177,20 +2177,23 @@ static bool ui_but_drag_init(bContext *C,
       bool valid = false;
       uiDragColorHandle *drag_info = MEM_cnew<uiDragColorHandle>(__func__);
 
+      drag_info->has_alpha = ui_but_color_has_alpha(but);
+
       /* TODO: support more button pointer types. */
       if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA) {
-        ui_but_v3_get(but, drag_info->color);
+        ui_but_v4_get(but, drag_info->color);
         drag_info->gamma_corrected = true;
         valid = true;
       }
       else if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR) {
-        ui_but_v3_get(but, drag_info->color);
+        ui_but_v4_get(but, drag_info->color);
         drag_info->gamma_corrected = false;
         valid = true;
       }
       else if (ELEM(but->pointype, UI_BUT_POIN_FLOAT, UI_BUT_POIN_CHAR)) {
-        ui_but_v3_get(but, drag_info->color);
-        copy_v3_v3(drag_info->color, (float *)but->poin);
+        ui_but_v4_get(but, drag_info->color);
+        copy_v4_v4(drag_info->color, (float *)but->poin);
+        drag_info->gamma_corrected = false;
         valid = true;
       }
 
@@ -3448,9 +3451,7 @@ const wmIMEData *ui_but_ime_data_get(uiBut *but)
   if (data && data->window) {
     return data->window->ime_data;
   }
-  else {
-    return nullptr;
-  }
+  return nullptr;
 }
 #endif /* WITH_INPUT_IME */
 
@@ -6620,15 +6621,9 @@ static void clamp_axis_max_v3(float v[3], const float max)
   const float v_max = max_fff(v[0], v[1], v[2]);
   if (v_max > max) {
     mul_v3_fl(v, max / v_max);
-    if (v[0] > max) {
-      v[0] = max;
-    }
-    if (v[1] > max) {
-      v[1] = max;
-    }
-    if (v[2] > max) {
-      v[2] = max;
-    }
+    v[0] = std::min(v[0], max);
+    v[1] = std::min(v[1], max);
+    v[2] = std::min(v[2], max);
   }
 }
 
@@ -6722,8 +6717,8 @@ static bool ui_numedit_but_HSVCUBE(uiBut *but,
   }
 
   /* relative position within box */
-  x = (float(mx_fl) - but->rect.xmin) / BLI_rctf_size_x(&but->rect);
-  y = (float(my_fl) - but->rect.ymin) / BLI_rctf_size_y(&but->rect);
+  x = (mx_fl - but->rect.xmin) / BLI_rctf_size_x(&but->rect);
+  y = (my_fl - but->rect.ymin) / BLI_rctf_size_y(&but->rect);
   CLAMP(x, 0.0f, 1.0f);
   CLAMP(y, 0.0f, 1.0f);
 
@@ -7003,9 +6998,7 @@ static bool ui_numedit_but_HSVCIRCLE(uiBut *but,
       if (hsv[2] == 0.0f) {
         hsv[2] = 0.0001f;
       }
-      if (hsv[2] >= 0.9999f) {
-        hsv[2] = 0.9999f;
-      }
+      hsv[2] = std::min(hsv[2], 0.9999f);
     }
   }
 
@@ -9337,7 +9330,7 @@ void ui_but_execute_end(bContext *C, ARegion * /*region*/, uiBut *but, void *act
     ui_apply_but_autokey(C, but);
   }
   /* use onfree event so undo is handled by caller and apply is already done above */
-  button_activate_exit((bContext *)C, but, but->active, false, true);
+  button_activate_exit(C, but, but->active, false, true);
   but->active = static_cast<uiHandleButtonData *>(active_back);
 }
 
@@ -11395,7 +11388,7 @@ static int ui_but_pie_menu_apply(bContext *C,
       menu->menuretval = UI_RETURN_CANCEL;
     }
     else {
-      button_activate_exit((bContext *)C, but, but->active, false, false);
+      button_activate_exit(C, but, but->active, false, false);
 
       menu->menuretval = UI_RETURN_OK;
     }

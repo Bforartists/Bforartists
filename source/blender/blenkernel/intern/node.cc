@@ -6,12 +6,10 @@
  * \ingroup bke
  */
 
-#include "BLI_assert.h"
 #include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
-#include <climits>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -411,7 +409,7 @@ static void node_foreach_cache(ID *id,
     for (bNode *node : nodetree->all_nodes()) {
       if (node->type_legacy == CMP_NODE_MOVIEDISTORTION) {
         key.identifier = size_t(BLI_ghashutil_strhash_p(node->name));
-        function_callback(id, &key, static_cast<void **>(&node->storage), 0, user_data);
+        function_callback(id, &key, (&node->storage), 0, user_data);
       }
     }
   }
@@ -486,15 +484,15 @@ static bNodeSocket *make_socket(bNodeTree *ntree,
 
   bNodeSocket *sock = MEM_cnew<bNodeSocket>(__func__);
   sock->runtime = MEM_new<bNodeSocketRuntime>(__func__);
-  StringRef(stype->idname).copy(sock->idname);
+  StringRef(stype->idname).copy_utf8_truncated(sock->idname);
   sock->in_out = int(in_out);
   sock->type = int(SOCK_CUSTOM); /* int type undefined by default */
   node_socket_set_typeinfo(ntree, sock, stype);
 
   sock->limit = (in_out == SOCK_IN ? 1 : 0xFFF);
 
-  identifier.copy(sock->identifier);
-  name.copy(sock->name);
+  identifier.copy_utf8_truncated(sock->identifier);
+  name.copy_utf8_truncated(sock->name);
   sock->storage = nullptr;
   sock->flag |= SOCK_COLLAPSED;
 
@@ -1317,13 +1315,13 @@ void node_update_asset_metadata(bNodeTree &node_tree)
   auto outputs = idprop::create_group("outputs");
   node_tree.ensure_interface_cache();
   for (const bNodeTreeInterfaceSocket *socket : node_tree.interface_inputs()) {
-    auto prop = idprop::create(socket->name ? socket->name : "", socket->socket_type).release();
+    auto *prop = idprop::create(socket->name ? socket->name : "", socket->socket_type).release();
     if (!IDP_AddToGroup(inputs.get(), prop)) {
       IDP_FreeProperty(prop);
     }
   }
   for (const bNodeTreeInterfaceSocket *socket : node_tree.interface_outputs()) {
-    auto prop = idprop::create(socket->name ? socket->name : "", socket->socket_type).release();
+    auto *prop = idprop::create(socket->name ? socket->name : "", socket->socket_type).release();
     if (!IDP_AddToGroup(outputs.get(), prop)) {
       IDP_FreeProperty(prop);
     }
@@ -1620,45 +1618,22 @@ void node_tree_set_type(const bContext *C, bNodeTree *ntree)
   }
 }
 
-template<typename T> struct StructPointerIDNameHash {
-  uint64_t operator()(const T *value) const
+template<typename T> struct NodeStructIDNameGetter {
+  StringRef operator()(const T *value) const
   {
-    return get_default_hash(value->idname);
-  }
-  uint64_t operator()(const StringRef name) const
-  {
-    return get_default_hash(name);
-  }
-};
-
-template<typename T> struct StructPointerNameEqual {
-  bool operator()(const T *a, const T *b) const
-  {
-    return a->idname == b->idname;
-  }
-  bool operator()(const StringRef idname, const T *a) const
-  {
-    return a->idname == idname;
+    return StringRef(value->idname);
   }
 };
 
 static auto &get_node_tree_type_map()
 {
-  static VectorSet<bNodeTreeType *,
-                   DefaultProbingStrategy,
-                   StructPointerIDNameHash<bNodeTreeType>,
-                   StructPointerNameEqual<bNodeTreeType>>
-      map;
+  static CustomIDVectorSet<bNodeTreeType *, NodeStructIDNameGetter<bNodeTreeType>> map;
   return map;
 }
 
 static auto &get_node_type_map()
 {
-  static VectorSet<bNodeType *,
-                   DefaultProbingStrategy,
-                   StructPointerIDNameHash<bNodeType>,
-                   StructPointerNameEqual<bNodeType>>
-      map;
+  static CustomIDVectorSet<bNodeType *, NodeStructIDNameGetter<bNodeType>> map;
   return map;
 }
 
@@ -1670,11 +1645,7 @@ static auto &get_node_type_alias_map()
 
 static auto &get_socket_type_map()
 {
-  static VectorSet<bNodeSocketType *,
-                   DefaultProbingStrategy,
-                   StructPointerIDNameHash<bNodeSocketType>,
-                   StructPointerNameEqual<bNodeSocketType>>
-      map;
+  static CustomIDVectorSet<bNodeSocketType *, NodeStructIDNameGetter<bNodeSocketType>> map;
   return map;
 }
 
@@ -1950,11 +1921,11 @@ static bNodeSocket *make_socket(bNodeTree *ntree,
 
   if (identifier[0] != '\0') {
     /* use explicit identifier */
-    identifier.copy(auto_identifier);
+    identifier.copy_utf8_truncated(auto_identifier);
   }
   else {
     /* if no explicit identifier is given, assign a unique identifier based on the name */
-    name.copy(auto_identifier);
+    name.copy_utf8_truncated(auto_identifier);
   }
   /* Make the identifier unique. */
   BLI_uniquename_cb(
@@ -1967,12 +1938,12 @@ static bNodeSocket *make_socket(bNodeTree *ntree,
   STRNCPY(sock->identifier, auto_identifier);
   sock->limit = (in_out == SOCK_IN ? 1 : 0xFFF);
 
-  name.copy(sock->name);
+  name.copy_utf8_truncated(sock->name);
   sock->storage = nullptr;
   sock->flag |= SOCK_COLLAPSED;
   sock->type = SOCK_CUSTOM; /* int type undefined by default */
 
-  idname.copy(sock->idname);
+  idname.copy_utf8_truncated(sock->idname);
   node_socket_set_typeinfo(ntree, sock, node_socket_type_find(idname));
 
   return sock;
@@ -2132,7 +2103,7 @@ void node_modify_socket_type(bNodeTree *ntree,
     }
   }
 
-  idname.copy(sock->idname);
+  idname.copy_utf8_truncated(sock->idname);
   node_socket_set_typeinfo(ntree, sock, socktype);
 }
 
@@ -2681,7 +2652,7 @@ bNode *node_add_node(const bContext *C, bNodeTree *ntree, const StringRef idname
   node_unique_id(ntree, node);
   node->ui_order = ntree->all_nodes().size();
 
-  idname.copy(node->idname);
+  idname.copy_utf8_truncated(node->idname);
   node_set_typeinfo(C, ntree, node, node_type_find(idname));
 
   BKE_ntree_update_tag_node_new(ntree, node);
@@ -3237,7 +3208,7 @@ static bNodeTree *node_tree_add_tree_do(Main *bmain,
     BLI_assert(owner_id == nullptr);
   }
 
-  idname.copy(ntree->idname);
+  idname.copy_utf8_truncated(ntree->idname);
   ntree_set_typeinfo(ntree, node_tree_type_find(idname));
 
   return ntree;
@@ -3674,6 +3645,9 @@ void node_tree_set_output(bNodeTree *ntree)
         /* same type, exception for viewer */
         const bool tnode_is_output = tnode->type_legacy == CMP_NODE_VIEWER;
         const bool compositor_case = is_compositor && tnode_is_output && node_is_output;
+        const bool has_same_shortcut = compositor_case && node != tnode &&
+                                       tnode->custom1 == node->custom1 &&
+                                       tnode->custom1 != NODE_VIEWER_SHORTCUT_NONE;
         if (tnode->type_legacy == node->type_legacy || compositor_case) {
           if (tnode->flag & NODE_DO_OUTPUT) {
             output++;
@@ -3681,6 +3655,9 @@ void node_tree_set_output(bNodeTree *ntree)
               tnode->flag &= ~NODE_DO_OUTPUT;
             }
           }
+        }
+        if (has_same_shortcut) {
+          tnode->custom1 = NODE_VIEWER_SHORTCUT_NONE;
         }
       }
 
@@ -4705,7 +4682,7 @@ void node_tree_iterator_init(NodeTreeIterStore *ntreeiter, Main *bmain)
 bool node_tree_iterator_step(NodeTreeIterStore *ntreeiter, bNodeTree **r_nodetree, ID **r_id)
 {
   if (ntreeiter->ngroup) {
-    bNodeTree &node_tree = *reinterpret_cast<bNodeTree *>(ntreeiter->ngroup);
+    bNodeTree &node_tree = *ntreeiter->ngroup;
     *r_nodetree = &node_tree;
     *r_id = &node_tree.id;
     ntreeiter->ngroup = reinterpret_cast<bNodeTree *>(node_tree.id.next);

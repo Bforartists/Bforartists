@@ -6,8 +6,6 @@
  * \ingroup RNA
  */
 
-#include "BLI_math_vector.h"
-
 #include "DNA_node_types.h"
 
 #include "RNA_define.hh"
@@ -45,6 +43,7 @@ const EnumPropertyItem rna_enum_node_socket_type_items[] = {
 
 #  include "DNA_material_types.h"
 
+#  include "BLI_math_vector.h"
 #  include "BLI_string_ref.hh"
 
 #  include "BKE_main_invariants.hh"
@@ -278,7 +277,7 @@ static void rna_NodeSocket_bl_idname_get(PointerRNA *ptr, char *value)
 {
   const bNodeSocket *node = static_cast<const bNodeSocket *>(ptr->data);
   const blender::bke::bNodeSocketType *ntype = node->typeinfo;
-  blender::StringRef(ntype->idname).unsafe_copy(value);
+  blender::StringRef(ntype->idname).copy_unsafe(value);
 }
 
 static int rna_NodeSocket_bl_idname_length(PointerRNA *ptr)
@@ -299,7 +298,7 @@ static void rna_NodeSocket_bl_label_get(PointerRNA *ptr, char *value)
 {
   const bNodeSocket *node = static_cast<const bNodeSocket *>(ptr->data);
   const blender::bke::bNodeSocketType *ntype = node->typeinfo;
-  blender::StringRef(ntype->label).unsafe_copy(value);
+  blender::StringRef(ntype->label).copy_unsafe(value);
 }
 
 static int rna_NodeSocket_bl_label_length(PointerRNA *ptr)
@@ -320,7 +319,7 @@ static void rna_NodeSocket_bl_subtype_label_get(PointerRNA *ptr, char *value)
 {
   const bNodeSocket *node = static_cast<const bNodeSocket *>(ptr->data);
   const blender::bke::bNodeSocketType *ntype = node->typeinfo;
-  blender::StringRef(ntype->subtype_label).unsafe_copy(value);
+  blender::StringRef(ntype->subtype_label).copy_unsafe(value);
 }
 
 static int rna_NodeSocket_bl_subtype_label_length(PointerRNA *ptr)
