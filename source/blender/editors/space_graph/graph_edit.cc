@@ -19,7 +19,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_blenlib.h"
+#include "BLI_fileops.h"
 #include "BLI_math_rotation.h"
 #include "BLI_utildefines.h"
 
@@ -459,13 +459,10 @@ void GRAPH_OT_click_insert(wmOperatorType *ot)
  * \note the back-end code for this is shared with the dope-sheet editor.
  * \{ */
 
-static short copy_graph_keys(bAnimContext *ac)
+static bool copy_graph_keys(bAnimContext *ac)
 {
   ListBase anim_data = {nullptr, nullptr};
-  int filter, ok = 0;
-
-  /* Clear buffer first. */
-  ANIM_fcurves_copybuf_free();
+  int filter;
 
   /* Filter data
    * - First time we try to filter more strictly, allowing only selected channels
@@ -485,7 +482,7 @@ static short copy_graph_keys(bAnimContext *ac)
   }
 
   /* Copy keyframes. */
-  ok = copy_animedit_keys(ac, &anim_data);
+  const bool ok = copy_animedit_keys(ac, &anim_data);
 
   /* Clean up. */
   ANIM_animdata_freelist(&anim_data);
@@ -543,7 +540,7 @@ static int graphkeys_copy_exec(bContext *C, wmOperator *op)
   }
 
   /* Copy keyframes. */
-  if (copy_graph_keys(&ac)) {
+  if (!copy_graph_keys(&ac)) {
     BKE_report(op->reports, RPT_ERROR, "No keyframes copied to the internal clipboard");
     return OPERATOR_CANCELLED;
   }

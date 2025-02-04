@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-FileCopyrightText: 2025 Blender Authors
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #import <AppKit/NSImage.h>
 
@@ -17,7 +19,7 @@
  * 1. If an app is launched, or is registered with lsregister, its plugins also get registered.
  * 2. When a file thumbnail in Finder or QuickLook is requested, the system looks for a plugin
  *    that supports the file type UTI.
- * 3. The plugin is launched in a sandboxed environment and should call the handler with a reply.
+ * 3. The plugin is launched in a sand-boxed environment and should call the handler with a reply.
  *
  * # Plugin Info.plist
  * The Info.plist file should be properly configured with supported content type.
