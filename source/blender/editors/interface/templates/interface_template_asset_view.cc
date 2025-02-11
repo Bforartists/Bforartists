@@ -58,15 +58,15 @@ static void asset_view_item_but_drag_set(uiBut *but, AssetHandle *asset_handle)
   UI_but_drag_set_asset(but,
                         asset,
                         import_method,
-                        asset::handle_get_preview_or_type_icon_id(asset_handle),
-                        asset::handle_get_preview_icon_id(asset_handle),
+                        asset::asset_preview_or_icon(*asset),
+                        asset::asset_preview_icon_id(*asset),
                         false,
                         false); /* BFA - "false, false" is needed for setting #use_instance and
                                    location from UI before executing the drop operator */
 }
 
 static void asset_view_draw_item(uiList *ui_list,
-                                 const bContext *C,
+                                 const bContext * /*C*/,
                                  uiLayout *layout,
                                  PointerRNA * /*dataptr*/,
                                  PointerRNA * /*itemptr*/,
@@ -80,6 +80,7 @@ static void asset_view_draw_item(uiList *ui_list,
 
   AssetHandle asset_handle = asset::list::asset_handle_get_by_index(&list_data->asset_library_ref,
                                                                     index);
+  asset_system::AssetRepresentation *asset = asset::handle_get_representation(&asset_handle);
 
   PointerRNA file_ptr = RNA_pointer_create_discrete(
       &list_data->screen->id,
@@ -87,28 +88,27 @@ static void asset_view_draw_item(uiList *ui_list,
       const_cast<FileDirEntry *>(asset_handle.file_data));
   uiLayoutSetContextPointer(layout, "active_file", &file_ptr);
 
-  asset::list::asset_preview_ensure_requested(*C, &list_data->asset_library_ref, &asset_handle);
+  asset->ensure_previewable();
 
   uiBlock *block = uiLayoutGetBlock(layout);
   const bool show_names = list_data->show_names;
   const float size_x = UI_preview_tile_size_x();
   const float size_y = show_names ? UI_preview_tile_size_y() : UI_preview_tile_size_y_no_label();
-  uiBut *but = uiDefIconTextBut(
-      block,
-      UI_BTYPE_PREVIEW_TILE,
-      0,
-      asset::handle_get_preview_icon_id(&asset_handle),
-      show_names ? asset::handle_get_representation(&asset_handle)->get_name().c_str() : "",
-      0,
-      0,
-      size_x,
-      size_y,
-      nullptr,
-      0,
-      0,
-      "");
+  uiBut *but = uiDefIconTextBut(block,
+                                UI_BTYPE_PREVIEW_TILE,
+                                0,
+                                asset::asset_preview_icon_id(*asset),
+                                show_names ? asset->get_name().c_str() : "",
+                                0,
+                                0,
+                                size_x,
+                                size_y,
+                                nullptr,
+                                0,
+                                0,
+                                "");
   ui_def_but_icon(but,
-                  asset::handle_get_preview_icon_id(&asset_handle),
+                  asset::asset_preview_icon_id(*asset),
                   /* NOLINTNEXTLINE: bugprone-suspicious-enum-usage */
                   UI_HAS_ICON | UI_BUT_ICON_PREVIEW);
   but->emboss = UI_EMBOSS_NONE;
@@ -259,7 +259,6 @@ void uiTemplateAssetView(uiLayout *layout,
   }
 
   asset::list::storage_fetch(&asset_library_ref, C);
-  asset::list::previews_fetch(&asset_library_ref, C);
   const int tot_items = asset::list::size(&asset_library_ref);
 
   populate_asset_collection(asset_library_ref, *assets_dataptr, assets_propname);

@@ -808,7 +808,7 @@ static void loose_data_instantiate_obdata_process(LooseDataInstantiateContext *i
     Object *ob = BKE_object_add_only_object(bmain, type, id->name + 2);
     ob->data = id;
     id_us_plus(id);
-    BKE_object_materials_test(bmain, ob, static_cast<ID *>(ob->data));
+    BKE_object_materials_sync_length(bmain, ob, static_cast<ID *>(ob->data));
 
     loose_data_instantiate_object_base_instance_init(bmain,
                                                      active_collection,
@@ -1719,11 +1719,11 @@ static void blendfile_library_relocate_remap(Main *bmain,
               new_id->us);
 
     /* In some cases, new_id might become direct link, remove parent of library in this case. */
-    if (new_id->lib->runtime.parent && (new_id->tag & ID_TAG_INDIRECT) == 0) {
+    if (new_id->lib->runtime->parent && (new_id->tag & ID_TAG_INDIRECT) == 0) {
       if (do_reload) {
         BLI_assert_unreachable(); /* Should not happen in 'pure' reload case... */
       }
-      new_id->lib->runtime.parent = nullptr;
+      new_id->lib->runtime->parent = nullptr;
     }
   }
 

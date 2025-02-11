@@ -21,6 +21,7 @@
 #include "BKE_global.hh"
 #include "BKE_image.hh"
 #include "BKE_lib_id.hh"
+#include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_packedFile.hh"
 #include "BKE_report.hh"
@@ -345,6 +346,11 @@ static int unpack_item_exec(bContext *C, wmOperator *op)
 
   if (id == nullptr) {
     BKE_report(op->reports, RPT_WARNING, "No packed file");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!ID_IS_EDITABLE(id)) {
+    BKE_report(op->reports, RPT_WARNING, "Data-block using this packed file is not editable");
     return OPERATOR_CANCELLED;
   }
 
