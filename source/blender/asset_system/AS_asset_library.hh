@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <mutex>
+#include <optional>
 
 #include "AS_asset_catalog.hh"
 
@@ -120,6 +121,13 @@ class AssetLibrary {
    */
   static void foreach_loaded(FunctionRef<void(AssetLibrary &)> fn, bool include_all_library);
 
+  /**
+   * Get the #AssetLibraryReference referencing this library. This can fail for custom libraries,
+   * which have too look up their #bUserAssetLibrary. It will not return a value for values that
+   * were loaded directly through a path.
+   */
+  virtual std::optional<AssetLibraryReference> library_reference() const = 0;
+
   void load_catalogs();
 
   AssetCatalogService &catalog_service() const;
@@ -189,6 +197,7 @@ class AssetLibrary {
 Vector<AssetLibraryReference> all_valid_asset_library_refs();
 
 AssetLibraryReference all_library_reference();
+AssetLibraryReference current_file_library_reference();
 void all_library_reload_catalogs_if_dirty();
 
 }  // namespace blender::asset_system

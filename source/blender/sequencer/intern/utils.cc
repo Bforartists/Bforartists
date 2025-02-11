@@ -25,6 +25,7 @@
 
 #include "BKE_animsys.h"
 #include "BKE_image.hh"
+#include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_scene.hh"
 
@@ -136,8 +137,6 @@ static const char *give_seqname_by_type(int type)
       return CTX_DATA_(BLT_I18NCONTEXT_ID_SEQUENCE, "Alpha Over");
     case STRIP_TYPE_ALPHAUNDER:
       return CTX_DATA_(BLT_I18NCONTEXT_ID_SEQUENCE, "Alpha Under");
-    case STRIP_TYPE_OVERDROP:
-      return CTX_DATA_(BLT_I18NCONTEXT_ID_SEQUENCE, "Over Drop");
     case STRIP_TYPE_COLORMIX:
       return CTX_DATA_(BLT_I18NCONTEXT_ID_SEQUENCE, "Color Mix");
     case STRIP_TYPE_WIPE:

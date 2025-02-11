@@ -274,7 +274,7 @@ static void rna_SequenceEditor_strips_all_next(CollectionPropertyIterator *iter)
 static PointerRNA rna_SequenceEditor_strips_all_get(CollectionPropertyIterator *iter)
 {
   Strip *strip = static_cast<Strip *>(((BLI_Iterator *)iter->internal.custom)->current);
-  return rna_pointer_inherit_refine(&iter->parent, &RNA_Strip, strip);
+  return RNA_pointer_create_with_parent(iter->parent, &RNA_Strip, strip);
 }
 
 static void rna_SequenceEditor_strips_all_end(CollectionPropertyIterator *iter)
@@ -295,7 +295,7 @@ static bool rna_SequenceEditor_strips_all_lookup_string(PointerRNA *ptr,
 
   Strip *strip = SEQ_lookup_strip_by_name(scene, key);
   if (strip) {
-    *r_ptr = RNA_pointer_create_discrete(ptr->owner_id, &RNA_Strip, strip);
+    rna_pointer_create_with_ancestors(*ptr, &RNA_Strip, strip, *r_ptr);
     return true;
   }
   return false;
@@ -326,6 +326,7 @@ static void rna_Strip_elements_begin(CollectionPropertyIterator *iter, PointerRN
 {
   Strip *strip = (Strip *)ptr->data;
   rna_iterator_array_begin(iter,
+                           ptr,
                            (void *)strip->data->stripdata,
                            sizeof(StripElem),
                            rna_Strip_elements_length(ptr),
@@ -342,6 +343,7 @@ static void rna_Strip_retiming_keys_begin(CollectionPropertyIterator *iter, Poin
 {
   Strip *strip = (Strip *)ptr->data;
   rna_iterator_array_begin(iter,
+                           ptr,
                            (void *)strip->retiming_keys,
                            sizeof(SeqRetimingKey),
                            SEQ_retiming_keys_count(strip),
@@ -799,8 +801,6 @@ static StructRNA *rna_Strip_refine(PointerRNA *ptr)
       return &RNA_GammaCrossStrip;
     case STRIP_TYPE_MUL:
       return &RNA_MultiplyStrip;
-    case STRIP_TYPE_OVERDROP:
-      return &RNA_OverDropStrip;
     case STRIP_TYPE_MULTICAM:
       return &RNA_MulticamStrip;
     case STRIP_TYPE_ADJUSTMENT:
@@ -889,7 +889,7 @@ static PointerRNA rna_SequenceEditor_meta_stack_get(CollectionPropertyIterator *
   ListBaseIterator *internal = &iter->internal.listbase;
   MetaStack *ms = (MetaStack *)internal->link;
 
-  return rna_pointer_inherit_refine(&iter->parent, &RNA_Strip, ms->parseq);
+  return RNA_pointer_create_with_parent(iter->parent, &RNA_Strip, ms->parseq);
 }
 
 /* TODO: expose strip path setting as a higher level sequencer BKE function. */
@@ -2016,7 +2016,6 @@ static const EnumPropertyItem blend_mode_items[] = {
     {STRIP_TYPE_ALPHAOVER, "ALPHA_OVER", 0, "Alpha Over", ""},
     {STRIP_TYPE_ALPHAUNDER, "ALPHA_UNDER", 0, "Alpha Under", ""},
     {STRIP_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Cross", ""},
-    {STRIP_TYPE_OVERDROP, "OVER_DROP", 0, "Over Drop", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2085,7 +2084,6 @@ static void rna_def_strip(BlenderRNA *brna)
       {STRIP_TYPE_ALPHAUNDER, "ALPHA_UNDER", 0, "Alpha Under", ""},
       {STRIP_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Cross", ""},
       {STRIP_TYPE_MUL, "MULTIPLY", 0, "Multiply", ""},
-      {STRIP_TYPE_OVERDROP, "OVER_DROP", 0, "Over Drop", ""},
       {STRIP_TYPE_WIPE, "WIPE", 0, "Wipe", ""},
       {STRIP_TYPE_GLOW, "GLOW", 0, "Glow", ""},
       {STRIP_TYPE_TRANSFORM, "TRANSFORM", 0, "Transform", ""},
@@ -3621,7 +3619,6 @@ static EffectInfo def_effects[] = {
      rna_def_multicam,
      0},
     {"MultiplyStrip", "Multiply Strip", "Multiply Strip", nullptr, 2},
-    {"OverDropStrip", "Over Drop Strip", "Over Drop Strip", nullptr, 2},
     {"SpeedControlStrip",
      "SpeedControl Strip",
      "Sequence strip to control the speed of other strips",

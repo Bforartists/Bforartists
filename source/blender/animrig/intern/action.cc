@@ -24,6 +24,7 @@
 #include "BKE_anim_data.hh"
 #include "BKE_fcurve.hh"
 #include "BKE_lib_id.hh"
+#include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_nla.hh"
 #include "BKE_report.hh"
@@ -399,6 +400,12 @@ static void slot_identifier_ensure_unique(Action &action, Slot &slot)
 
 void Action::slot_display_name_set(Main &bmain, Slot &slot, StringRefNull new_display_name)
 {
+  this->slot_display_name_define(slot, new_display_name);
+  this->slot_identifier_propagate(bmain, slot);
+}
+
+void Action::slot_display_name_define(Slot &slot, StringRefNull new_display_name)
+{
   BLI_assert_msg(StringRef(new_display_name).size() >= 1,
                  "Action Slot display names must not be empty");
   BLI_assert_msg(StringRef(slot.identifier).size() >= 2,
@@ -407,7 +414,13 @@ void Action::slot_display_name_set(Main &bmain, Slot &slot, StringRefNull new_di
 
   BLI_strncpy_utf8(slot.identifier + 2, new_display_name.c_str(), ARRAY_SIZE(slot.identifier) - 2);
   slot_identifier_ensure_unique(*this, slot);
-  this->slot_identifier_propagate(bmain, slot);
+}
+
+void Action::slot_idtype_define(Slot &slot, ID_Type idtype)
+{
+  slot.idtype = idtype;
+  slot.identifier_ensure_prefix();
+  slot_identifier_ensure_unique(*this, slot);
 }
 
 void Action::slot_identifier_set(Main &bmain, Slot &slot, const StringRefNull new_identifier)
@@ -1128,7 +1141,7 @@ void Slot::users_invalidate(Main &bmain)
   bmain.is_action_slot_to_id_map_dirty = true;
 }
 
-std::string Slot::identifier_prefix_for_idtype() const
+std::string Slot::idtype_string() const
 {
   if (!this->has_idtype()) {
     return slot_untyped_prefix;
@@ -1137,6 +1150,14 @@ std::string Slot::identifier_prefix_for_idtype() const
   char name[3] = {0};
   *reinterpret_cast<short *>(name) = this->idtype;
   return name;
+}
+
+StringRef Slot::identifier_prefix() const
+{
+  StringRef identifier(this->identifier);
+  BLI_assert(identifier.size() >= 2);
+
+  return identifier.substr(0, 2);
 }
 
 StringRefNull Slot::identifier_without_prefix() const

@@ -141,13 +141,13 @@ int sequencer_draw_get_transform_preview_frame(Scene *scene);
 
 void sequencer_special_update_set(Strip *strip);
 /* Get handle width in 2d-View space. */
-float sequence_handle_size_get_clamped(const Scene *scene, Strip *strip, float pixelx);
+float strip_handle_draw_size_get(const Scene *scene, Strip *strip, float pixelx);
 
 /* UNUSED */
 /* void seq_reset_imageofs(SpaceSeq *sseq); */
 
 /**
- * Rendering using opengl will change the current viewport/context.
+ * Rendering using the GPU will change the current viewport/context.
  * This is why we need the \a region, to set back the render area.
  *
  * TODO: do not rely on such hack and just update the \a ibuf outside of
