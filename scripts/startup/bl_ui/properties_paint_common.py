@@ -952,19 +952,28 @@ def brush_settings(layout, context, brush, popover=False):
 
             layout.separator()
 
-            split = layout.split(factor=0.36)
-            col = split.column()
-            col.use_property_split = False
-            col.prop(brush, "use_plane_trim", text="Plane Trim")
-            col = split.column()
-            if brush.use_plane_trim:
-                col.prop(brush, "plane_trim", slider=True, text="")
+            if sculpt_tool != "PLANE":
+                split = layout.split(factor=0.36)
+                col = split.column()
+                col.use_property_split = False
+                col.prop(brush, "use_plane_trim", text="Plane Trim")
+                col = split.column()
+                if brush.use_plane_trim:
+                    col.prop(brush, "plane_trim", slider=True, text="")
+                else:
+                    col.label(icon="DISCLOSURE_TRI_RIGHT")
             else:
-                col.label(icon="DISCLOSURE_TRI_RIGHT")
+                layout.label(text="Plane trim option not available with Plane sculpt tool", icon="ERROR")
 
         # height
         if capabilities.has_height:
             layout.prop(brush, "height", slider=True, text="Height")
+
+        if capabilities.has_plane_height:
+            layout.prop(brush, "plane_height", slider=True, text="Height")
+
+        if capabilities.has_plane_depth:
+            layout.prop(brush, "plane_depth", slider=True, text="Depth")
 
         # use_persistent, set_persistent_base
         if capabilities.has_persistence:
@@ -1074,6 +1083,16 @@ def brush_settings(layout, context, brush, popover=False):
             row = layout.row()
             row.use_property_split = False
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Scrape")
+
+        elif sculpt_tool == 'PLANE':
+            row = layout.row(align=True)
+            row.prop(brush, "area_radius_factor")
+            row.prop(brush, "use_pressure_area_radius", text="")
+            layout.separator()
+            layout.prop(brush, "plane_inversion_mode")
+            layout.separator()
+            layout.prop(brush, "stabilize_normal")
+            layout.prop(brush, "stabilize_plane")
 
         elif sculpt_tool == "GRAB":
             layout.use_property_split = False
@@ -1565,15 +1584,18 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             col.prop(brush, "sculpt_plane")
             col.use_property_split = False
 
-            col = layout.column()
-            col.label(text="Use Original")
-            col.use_property_split = False
-            row = col.row()
-            row.separator()
-            row.prop(brush, "use_original_normal", text="Normal")
-            row = col.row()
-            row.separator()
-            row.prop(brush, "use_original_plane", text="Plane")
+            if brush.sculpt_tool != 'PLANE':
+                col = layout.column()
+                col.label(text="Use Original")
+                col.use_property_split = False
+                row = col.row()
+                row.separator()
+                row.prop(brush, "use_original_normal", text="Normal")
+                row = col.row()
+                row.separator()
+                row.prop(brush, "use_original_plane", text="Plane")
+            else:
+                layout.label(text="Using original plane and normals is not available with the plane sculpt tool", icon="ERROR")
 
             layout.separator()
 

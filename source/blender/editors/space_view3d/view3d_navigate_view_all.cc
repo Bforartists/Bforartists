@@ -10,12 +10,14 @@
 #include "BKE_context.hh"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_layer.hh"
+#include "BKE_library.hh"
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
-#include "BLI_bounds_types.hh"
+#include "BLI_bounds.hh"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_vector.h"
 
 #include "DEG_depsgraph_query.hh"
@@ -187,7 +189,7 @@ static void view3d_from_minmax_multi(bContext *C,
  * Move & Zoom the view to fit all of its contents.
  * \{ */
 
-std::optional<blender::Bounds<float3>> view3d_calc_minmax_visible(bContext *C,
+std::optional<blender::Bounds<float3>> view3d_calc_minmax_visible(Depsgraph *depsgraph,
                                                                   ScrArea *area,
                                                                   ARegion *region,
                                                                   const bool use_all_regions,
@@ -198,8 +200,7 @@ std::optional<blender::Bounds<float3>> view3d_calc_minmax_visible(bContext *C,
 
   const View3D *v3d = static_cast<View3D *>(area->spacedata.first);
   const RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-  Scene *scene = CTX_data_scene(C);
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  Scene *scene = DEG_get_input_scene(depsgraph);
   Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
 
@@ -238,7 +239,7 @@ std::optional<blender::Bounds<float3>> view3d_calc_minmax_visible(bContext *C,
   return blender::Bounds<float3>(min, max);
 }
 
-std::optional<blender::Bounds<float3>> view3d_calc_minmax_selected(bContext *C,
+std::optional<blender::Bounds<float3>> view3d_calc_minmax_selected(Depsgraph *depsgraph,
                                                                    ScrArea *area,
                                                                    ARegion *region,
                                                                    const bool use_all_regions,
@@ -251,14 +252,15 @@ std::optional<blender::Bounds<float3>> view3d_calc_minmax_selected(bContext *C,
   const View3D *v3d = static_cast<View3D *>(area->spacedata.first);
   const RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
 
-  Scene *scene = CTX_data_scene(C);
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  Scene *scene = DEG_get_input_scene(depsgraph);
+  ViewLayer *view_layer = DEG_get_input_view_layer(depsgraph);
+
   const Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
 
   BKE_view_layer_synced_ensure(scene_eval, view_layer_eval);
   Object *ob_eval = BKE_view_layer_active_object_get(view_layer_eval);
-  Object *obedit = CTX_data_edit_object(C);
+  Object *obedit = OBEDIT_FROM_OBACT(ob_eval);
   const bool is_face_map = (region->runtime->gizmo_map &&
                             WM_gizmomap_is_any_selected(region->runtime->gizmo_map));
   const bool skip_camera = (ED_view3d_camera_lock_check(v3d, rv3d) ||
@@ -325,7 +327,7 @@ std::optional<blender::Bounds<float3>> view3d_calc_minmax_selected(bContext *C,
     changed = paintface_minmax(ob_eval, min, max);
   }
   else if (ob_eval && (ob_eval->mode & OB_MODE_PARTICLE_EDIT)) {
-    changed = PE_minmax(depsgraph, scene, CTX_data_view_layer(C), min, max);
+    changed = PE_minmax(depsgraph, scene, view_layer, min, max);
   }
   else if (ob_eval && (ob_eval->mode & OB_MODE_SCULPT_CURVES)) {
     FOREACH_OBJECT_IN_MODE_BEGIN (
@@ -370,6 +372,40 @@ std::optional<blender::Bounds<float3>> view3d_calc_minmax_selected(bContext *C,
   return blender::Bounds<float3>(min, max);
 }
 
+bool view3d_calc_point_in_selected_bounds(Depsgraph *depsgraph,
+                                          ViewLayer *view_layer,
+                                          const View3D *v3d,
+                                          const blender::float3 &point,
+                                          const float scale_margin)
+{
+  Scene *scene = DEG_get_input_scene(depsgraph);
+
+  LISTBASE_FOREACH (const Base *, base, BKE_view_layer_object_bases_get(view_layer)) {
+    if (!BASE_SELECTED(v3d, base)) {
+      continue;
+    }
+    Object *ob = base->object;
+    BLI_assert(!DEG_is_original_id(&ob->id));
+
+    float3 min, max;
+    view3d_object_calc_minmax(depsgraph, scene, ob, false, min, max);
+
+    blender::Bounds<float3> bounds{min, max};
+
+    bounds.scale_from_center(float3(scale_margin));
+
+    float3 local_min = blender::math::transform_point(ob->object_to_world(), bounds.min);
+    float3 local_max = blender::math::transform_point(ob->object_to_world(), bounds.max);
+
+    if (point[0] >= local_min[0] && point[1] >= local_min[1] && point[2] >= local_min[2] &&
+        point[0] <= local_max[0] && point[1] <= local_max[1] && point[2] <= local_max[2])
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -389,8 +425,9 @@ static int view3d_all_exec(bContext *C, wmOperator *op)
   const bool center = RNA_boolean_get(op->ptr, "center");
   const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
 
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   std::optional<blender::Bounds<float3>> bounds = view3d_calc_minmax_visible(
-      C, area, region, use_all_regions, true);
+      depsgraph, area, region, use_all_regions, true);
   if (center) {
     /* in 2.4x this also move the cursor to (0, 0, 0) (with shift+c). */
     View3DCursor *cursor = &scene->cursor;
@@ -471,8 +508,9 @@ static int viewselected_exec(bContext *C, wmOperator *op)
   const bool use_all_regions = RNA_boolean_get(op->ptr, "use_all_regions");
   const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
 
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   const std::optional<blender::Bounds<float3>> bounds = view3d_calc_minmax_selected(
-      C, area, region, use_all_regions, true, &do_zoom);
+      depsgraph, area, region, use_all_regions, true, &do_zoom);
 
   if (!bounds.has_value()) {
     return OPERATOR_FINISHED;

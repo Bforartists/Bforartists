@@ -478,9 +478,9 @@ IDTypeInfo IDType_ID_ME = {
     /*lib_override_apply_post*/ nullptr,
 };
 
-bool BKE_mesh_attribute_required(const char *name)
+bool BKE_mesh_attribute_required(const StringRef name)
 {
-  return ELEM(StringRef(name), "position", ".corner_vert", ".corner_edge", ".edge_verts");
+  return ELEM(name, "position", ".corner_vert", ".corner_edge", ".edge_verts");
 }
 
 void BKE_mesh_ensure_skin_customdata(Mesh *mesh)
@@ -1163,7 +1163,7 @@ void BKE_mesh_assign_object(Main *bmain, Object *ob, Mesh *mesh)
     id_us_plus((ID *)mesh);
   }
 
-  BKE_object_materials_test(bmain, ob, (ID *)mesh);
+  BKE_object_materials_sync_length(bmain, ob, (ID *)mesh);
 
   BKE_modifiers_test_object(ob);
 }
