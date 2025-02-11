@@ -96,6 +96,7 @@
 #include "BKE_lib_id.hh"
 #include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
+#include "BKE_library.hh"
 #include "BKE_light.h"
 #include "BKE_lightprobe.h"
 #include "BKE_linestyle.h"
@@ -943,7 +944,7 @@ static void object_blend_read_after_liblink(BlendLibReader *reader, ID *id)
   /* When the object is local and the data is library its possible
    * the material list size gets out of sync. #22663. */
   if (ob->data && ob->id.lib != static_cast<ID *>(ob->data)->lib) {
-    BKE_object_materials_test(bmain, ob, static_cast<ID *>(ob->data));
+    BKE_object_materials_sync_length(bmain, ob, static_cast<ID *>(ob->data));
   }
 
   /* Performs quite extensive rebuilding & validation of object-level Pose data from the Armature

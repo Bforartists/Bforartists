@@ -25,6 +25,7 @@
 #include "BKE_ipo.h"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
+#include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_main_namemap.hh"
 #include "BKE_mesh_legacy_convert.hh"
@@ -213,7 +214,7 @@ bNode &version_node_add_empty(bNodeTree &ntree, const char *idname)
   blender::bke::node_unique_id(&ntree, node);
 
   STRNCPY(node->idname, idname);
-  STRNCPY_UTF8(node->name, DATA_(ntype->ui_name.c_str()));
+  DATA_(ntype->ui_name).copy_utf8_truncated(node->name);
   blender::bke::node_unique_name(&ntree, node);
 
   node->flag = NODE_SELECT | NODE_OPTIONS | NODE_INIT;

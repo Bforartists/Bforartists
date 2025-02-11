@@ -45,8 +45,8 @@ elseif(APPLE)
   # -----------------------------------------------------------------------------
   # Build `bforartists-thumbnailer.appex` app extension.
   set(SRC_APPEX
-    src/thumbnail_provider.mm
     src/thumbnail_provider.h
+    src/thumbnail_provider.mm
   )
 
   add_executable(bforartists-thumbnailer MACOSX_BUNDLE ${SRC} ${SRC_APPEX})

@@ -43,6 +43,7 @@
 #include "BKE_global.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
+#include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_main_invariants.hh"
 #include "BKE_node.hh"
@@ -1647,8 +1648,8 @@ static void create_inspection_string_for_field_info(const bNodeSocket &socket,
     fmt::format_to(fmt::appender(buf), "\n");
 
     for (const int i : input_tooltips.index_range()) {
-      const blender::StringRefNull tooltip = input_tooltips[i];
-      fmt::format_to(fmt::appender(buf), fmt::runtime(TIP_("\u2022 {}")), TIP_(tooltip.c_str()));
+      const blender::StringRef tooltip = input_tooltips[i];
+      fmt::format_to(fmt::appender(buf), fmt::runtime(TIP_("\u2022 {}")), TIP_(tooltip));
       if (i < input_tooltips.size() - 1) {
         fmt::format_to(fmt::appender(buf), ".\n");
       }
@@ -1849,7 +1850,7 @@ static std::optional<std::string> create_description_inspection_string(const bNo
     return std::nullopt;
   }
 
-  return TIP_(description.c_str());
+  return TIP_(description);
 }
 
 static std::optional<std::string> create_log_inspection_string(geo_log::GeoTreeLog *geo_tree_log,
@@ -2516,7 +2517,7 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, uiBlock &block
         &block,
         UI_BTYPE_LABEL,
         0,
-        IFACE_(panel_decl.name.c_str()),
+        IFACE_(panel_decl.name),
         int(draw_bounds.xmin + NODE_MARGIN_X + 0.4f),
         int(*panel_runtime.header_center_y - NODE_DYS),
         short(draw_bounds.xmax - draw_bounds.xmin - (30.0f * UI_SCALE_FAC)),
@@ -4851,10 +4852,6 @@ static bool compositor_is_in_use(const bContext &context)
 
   if (!scene->nodetree) {
     return false;
-  }
-
-  if (scene->r.compositor_device == SCE_COMPOSITOR_DEVICE_GPU) {
-    return true;
   }
 
   wmWindowManager *wm = CTX_wm_manager(&context);

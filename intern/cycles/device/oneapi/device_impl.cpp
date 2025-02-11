@@ -658,7 +658,12 @@ void OneapiDevice::tex_alloc(device_texture &mem)
 
 void OneapiDevice::tex_copy_to(device_texture &mem)
 {
-  generic_copy_to(mem);
+  if (!mem.device_pointer) {
+    tex_alloc(mem);
+  }
+  else {
+    generic_copy_to(mem);
+  }
 }
 
 void OneapiDevice::tex_free(device_texture &mem)
@@ -1062,7 +1067,7 @@ static const int lowest_supported_driver_version_win = 1015730;
  * This information is returned by `ocloc query OCL_DRIVER_VERSION`.*/
 static const int lowest_supported_driver_version_neo = 29550;
 #  else
-static const int lowest_supported_driver_version_neo = 29735;
+static const int lowest_supported_driver_version_neo = 31740;
 #  endif
 
 int parse_driver_build_version(const sycl::device &device)

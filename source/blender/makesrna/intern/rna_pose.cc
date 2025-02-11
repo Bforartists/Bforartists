@@ -278,7 +278,7 @@ static PointerRNA rna_PoseChannel_bone_get(PointerRNA *ptr)
   /* Replace the id_data pointer with the Armature ID. */
   tmp_ptr.owner_id = static_cast<ID *>(ob->data);
 
-  return rna_pointer_inherit_refine(&tmp_ptr, &RNA_Bone, pchan->bone);
+  return RNA_pointer_create_with_parent(tmp_ptr, &RNA_Bone, pchan->bone);
 }
 
 static bool rna_PoseChannel_has_ik_get(PointerRNA *ptr)
@@ -304,7 +304,7 @@ static StructRNA *rna_IKParam_refine(PointerRNA *ptr)
 static PointerRNA rna_Pose_ikparam_get(PointerRNA *ptr)
 {
   bPose *pose = (bPose *)ptr->data;
-  return rna_pointer_inherit_refine(ptr, &RNA_IKParam, pose->ikparam);
+  return RNA_pointer_create_with_parent(*ptr, &RNA_IKParam, pose->ikparam);
 }
 
 static StructRNA *rna_Pose_ikparam_typef(PointerRNA *ptr)
@@ -350,7 +350,7 @@ static PointerRNA rna_PoseChannel_active_constraint_get(PointerRNA *ptr)
 {
   bPoseChannel *pchan = (bPoseChannel *)ptr->data;
   bConstraint *con = BKE_constraints_active_get(&pchan->constraints);
-  return rna_pointer_inherit_refine(ptr, &RNA_Constraint, con);
+  return RNA_pointer_create_with_parent(*ptr, &RNA_Constraint, con);
 }
 
 static void rna_PoseChannel_active_constraint_set(PointerRNA *ptr,
@@ -582,7 +582,7 @@ static bool rna_PoseBones_lookup_string(PointerRNA *ptr, const char *key, Pointe
   bPose *pose = (bPose *)ptr->data;
   bPoseChannel *pchan = BKE_pose_channel_find_name(pose, key);
   if (pchan) {
-    *r_ptr = RNA_pointer_create_discrete(ptr->owner_id, &RNA_PoseBone, pchan);
+    rna_pointer_create_with_ancestors(*ptr, &RNA_PoseBone, pchan, *r_ptr);
     return true;
   }
   return false;
@@ -1167,6 +1167,7 @@ static void rna_def_pose_channel(BlenderRNA *brna)
   RNA_def_property_boolean_bitset_array_sdna(prop, nullptr, "protectflag", OB_LOCK_LOCX, 3);
   RNA_def_property_ui_text(prop, "Lock Location", "Lock editing of location when transforming");
   RNA_def_property_ui_icon(prop, ICON_UNLOCKED, 1);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_editable_func(prop, "rna_PoseChannel_proxy_editable");
   RNA_def_property_update(prop, NC_OBJECT | ND_POSE, "rna_Pose_update");
 
@@ -1174,6 +1175,7 @@ static void rna_def_pose_channel(BlenderRNA *brna)
   RNA_def_property_boolean_bitset_array_sdna(prop, nullptr, "protectflag", OB_LOCK_ROTX, 3);
   RNA_def_property_ui_text(prop, "Lock Rotation", "Lock editing of rotation when transforming");
   RNA_def_property_ui_icon(prop, ICON_UNLOCKED, 1);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_editable_func(prop, "rna_PoseChannel_proxy_editable");
   RNA_def_property_update(prop, NC_OBJECT | ND_POSE, "rna_Pose_update");
 
@@ -1186,6 +1188,7 @@ static void rna_def_pose_channel(BlenderRNA *brna)
       "Lock Rotation (4D Angle)",
       "Lock editing of 'angle' component of four-component rotations when transforming");
   RNA_def_property_ui_icon(prop, ICON_UNLOCKED, 1);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_editable_func(prop, "rna_PoseChannel_proxy_editable");
   RNA_def_property_update(prop, NC_OBJECT | ND_POSE, "rna_Pose_update");
 
@@ -1196,6 +1199,7 @@ static void rna_def_pose_channel(BlenderRNA *brna)
       prop,
       "Lock Rotations (4D)",
       "Lock editing of four component rotations by components (instead of as Eulers)");
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_editable_func(prop, "rna_PoseChannel_proxy_editable");
   RNA_def_property_update(prop, NC_OBJECT | ND_POSE, "rna_Pose_update");
 
@@ -1203,6 +1207,7 @@ static void rna_def_pose_channel(BlenderRNA *brna)
   RNA_def_property_boolean_bitset_array_sdna(prop, nullptr, "protectflag", OB_LOCK_SCALEX, 3);
   RNA_def_property_ui_text(prop, "Lock Scale", "Lock editing of scale when transforming");
   RNA_def_property_ui_icon(prop, ICON_UNLOCKED, 1);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_editable_func(prop, "rna_PoseChannel_proxy_editable");
   RNA_def_property_update(prop, NC_OBJECT | ND_POSE, "rna_Pose_update");
 

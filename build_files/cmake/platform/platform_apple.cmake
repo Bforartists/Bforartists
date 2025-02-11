@@ -216,9 +216,7 @@ endif()
 
 if(WITH_OPENCOLLADA)
   find_package(OpenCOLLADA)
-  find_library(PCRE_LIBRARIES NAMES pcre HINTS ${LIBDIR}/opencollada/lib)
   find_library(XML2_LIBRARIES NAMES xml2 HINTS ${LIBDIR}/opencollada/lib)
-  print_found_status("PCRE" "${PCRE_LIBRARIES}")
   print_found_status("XML2" "${XML2_LIBRARIES}")
 endif()
 
@@ -249,6 +247,17 @@ find_package(TIFF REQUIRED)
 if(WITH_IMAGE_WEBP)
   set(WEBP_ROOT_DIR ${LIBDIR}/webp)
   find_package(WebP REQUIRED)
+endif()
+
+# With Blender 4.4 libraries there is no more Boost. This code is only
+# here until we can reasonably assume everyone has upgraded to them.
+if(WITH_BOOST)
+  if(DEFINED LIBDIR AND NOT EXISTS "${LIBDIR}/boost")
+    set(WITH_BOOST OFF)
+    set(BOOST_LIBRARIES)
+    set(BOOST_PYTHON_LIBRARIES)
+    set(BOOST_INCLUDE_DIR)
+  endif()
 endif()
 
 if(WITH_BOOST)

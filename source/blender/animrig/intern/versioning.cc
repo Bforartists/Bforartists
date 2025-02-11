@@ -12,6 +12,7 @@
 
 #include "ANIM_action.hh"
 #include "ANIM_action_iterators.hh"
+#include "ANIM_action_legacy.hh"
 #include "ANIM_versioning.hh"
 
 #include "DNA_action_defaults.h"
@@ -29,9 +30,6 @@
 #include "BLO_readfile.hh"
 
 namespace blender::animrig::versioning {
-
-constexpr const char *DEFAULT_VERSIONED_SLOT_NAME = "Legacy Slot";
-constexpr const char *DEFAULT_VERSIONED_LAYER_NAME = "Legacy Layer";
 
 bool action_is_layered(const bAction &dna_action)
 {
@@ -104,11 +102,11 @@ void convert_legacy_animato_action(bAction &dna_action)
   Slot &slot = action.slot_add();
   slot.idtype = idtype;
 
-  const std::string slot_identifier{slot.identifier_prefix_for_idtype() +
-                                    DATA_(DEFAULT_VERSIONED_SLOT_NAME)};
+  const std::string slot_identifier{slot.idtype_string() +
+                                    DATA_(legacy::DEFAULT_LEGACY_SLOT_NAME)};
   action.slot_identifier_define(slot, slot_identifier);
 
-  Layer &layer = action.layer_add(DATA_(DEFAULT_VERSIONED_LAYER_NAME));
+  Layer &layer = action.layer_add(DATA_(legacy::DEFAULT_LEGACY_LAYER_NAME));
   blender::animrig::Strip &strip = layer.strip_add(action,
                                                    blender::animrig::Strip::Type::Keyframe);
   Channelbag &bag = strip.data<StripKeyframeData>(action).channelbag_for_slot_ensure(slot);
@@ -223,7 +221,7 @@ void convert_legacy_action_assignments(Main &bmain, ReportList *reports)
 
     static_assert(Slot::identifier_length_max > 2); /* Because of the -2 below. */
     BLI_strncpy_utf8(last_used_slot_identifier + 2,
-                     DATA_(DEFAULT_VERSIONED_SLOT_NAME),
+                     DATA_(legacy::DEFAULT_LEGACY_SLOT_NAME),
                      Slot::identifier_length_max - 2);
 
     Slot *slot_to_assign = generic_slot_for_autoassign(
@@ -273,9 +271,9 @@ void convert_legacy_action_assignments(Main &bmain, ReportList *reports)
             "this type mismatch. This likely indicates something odd about the blend file.\n",
             action.id.name + 2,
             animated_id.name,
-            slot_to_assign->identifier_prefix_for_idtype().c_str(),
+            slot_to_assign->idtype_string().c_str(),
             slot_to_assign->identifier_without_prefix().c_str(),
-            slot_to_assign->identifier_prefix_for_idtype().c_str(),
+            slot_to_assign->idtype_string().c_str(),
             animated_id.name);
         break;
       case ActionSlotAssignmentResult::SlotNotFromAction:
