@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.4.0 Alpha (b'efff379ea583')\n"
+"Project-Id-Version: Blender 4.4.0 Beta (b'aad0bd21487d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-27 10:58+0000\n"
+"POT-Creation-Date: 2025-02-10 15:22+0000\n"
 "PO-Revision-Date: 2024-04-29 13:44+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Greek <https://translate.blender.org/projects/blender-ui/ui/el/>\n"
@@ -35,14 +35,6 @@ msgid "Select"
 msgstr "Επιλογή"
 
 
-msgid "Add"
-msgstr "Προσθήκη"
-
-
-msgid "Subtract"
-msgstr "Αφαίρεση"
-
-
 msgid "On"
 msgstr "Ενεργό"
 
@@ -57,6 +49,14 @@ msgstr "Κεντράρισμα"
 
 msgid "Action"
 msgstr "Δράση"
+
+
+msgid "Add"
+msgstr "Προσθήκη"
+
+
+msgid "Subtract"
+msgstr "Αφαίρεση"
 
 
 msgid "Hold"
@@ -519,6 +519,14 @@ msgid "Keyboard"
 msgstr "Πληκτρολόγιο"
 
 
+msgid "Text"
+msgstr "Κείμενο"
+
+
+msgid "Metaball"
+msgstr "Μετα-σφαίρα"
+
+
 msgid "Snap"
 msgstr "Προσκόλληση"
 
@@ -529,10 +537,6 @@ msgstr "Καθρέφτισμα"
 
 msgid "Select Linked"
 msgstr "Επιλογή Συνδεδεμένων"
-
-
-msgid "Metaball"
-msgstr "Μετα-σφαίρα"
 
 
 msgid "Light"
@@ -557,10 +561,6 @@ msgstr "Ορισμός Ενός Χρήστη"
 
 msgid "Merge"
 msgstr "Συγχώνευση"
-
-
-msgid "Text"
-msgstr "Κείμενο"
 
 
 msgid "Key"

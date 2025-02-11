@@ -209,7 +209,7 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(tui.editor_outline);
     FROM_DEFAULT_V4_UCHAR(tui.editor_outline_active);
   }
-  
+
   /* start bfa asset shelf versioning */
   if (!USER_VERSION_ATLEAST(403, 0)) {
     FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.back);
@@ -1454,7 +1454,9 @@ void blo_do_versions_userdef(UserDef *userdef)
   }
   /* end bfa asset shelf default catalogs versioning */
 
-
+  if (!USER_VERSION_ATLEAST(404, 28)) {
+      userdef->ndof_flag |= NDOF_SHOW_GUIDE_ORBIT_CENTER | NDOF_ORBIT_CENTER_AUTO;
+  }
 
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning

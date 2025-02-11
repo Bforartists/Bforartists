@@ -1141,12 +1141,6 @@ class SEQUENCER_MT_add_effect(Menu):
         ).type = "MULTIPLY"
         col.operator(
             "sequencer.effect_strip_add",
-            text="Over Drop",
-            text_ctxt=i18n_contexts.id_sequence,
-            icon="SEQ_ALPHA_OVER",
-        ).type = "OVER_DROP"
-        col.operator(
-            "sequencer.effect_strip_add",
             text="Alpha Over",
             text_ctxt=i18n_contexts.id_sequence,
             icon="IMAGE_ALPHA",
@@ -1543,7 +1537,6 @@ class SEQUENCER_MT_strip(Menu):
                     "ALPHA_UNDER",
                     "GAMMA_CROSS",
                     "MULTIPLY",
-                    "OVER_DROP",
                     "WIPE",
                     "GLOW",
                     "TRANSFORM",
@@ -1825,7 +1818,6 @@ class SEQUENCER_MT_context_menu(Menu):
                 "ALPHA_UNDER",
                 "GAMMA_CROSS",
                 "MULTIPLY",
-                "OVER_DROP",
                 "WIPE",
                 "GLOW",
                 "TRANSFORM",
@@ -2035,7 +2027,6 @@ class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
             "ALPHA_OVER",
             "ALPHA_UNDER",
             "MULTIPLY",
-            "OVER_DROP",
             "GLOW",
             "TRANSFORM",
             "SPEED",
@@ -2140,7 +2131,6 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             "CROSS",
             "GAMMA_CROSS",
             "MULTIPLY",
-            "OVER_DROP",
             "WIPE",
             "GLOW",
             "TRANSFORM",
@@ -2300,7 +2290,6 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             "WIPE",
             "ALPHA_OVER",
             "ALPHA_UNDER",
-            "OVER_DROP",
         }:
             col.use_property_split = False
             col.prop(strip, "use_default_fade", text="Default Fade")
@@ -3154,7 +3143,6 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
             "CROSS",
             "GAMMA_CROSS",
             "MULTIPLY",
-            "OVER_DROP",
             "WIPE",
             "GLOW",
             "TRANSFORM",
@@ -3208,7 +3196,6 @@ class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
             "CROSS",
             "GAMMA_CROSS",
             "MULTIPLY",
-            "OVER_DROP",
             "WIPE",
             "GLOW",
             "TRANSFORM",

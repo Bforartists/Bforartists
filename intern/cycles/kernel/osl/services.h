@@ -270,10 +270,12 @@ class OSLRenderServices : public OSL::RendererServices {
   static ustring u_object_alpha;
   static ustring u_object_index;
   static ustring u_object_is_light;
+  static ustring u_bump_map_normal;
   static ustring u_geom_dupli_generated;
   static ustring u_geom_dupli_uv;
   static ustring u_material_index;
   static ustring u_object_random;
+  static ustring u_light_random;
   static ustring u_particle_index;
   static ustring u_particle_random;
   static ustring u_particle_age;

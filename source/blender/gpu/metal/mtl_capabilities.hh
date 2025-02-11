@@ -20,9 +20,8 @@ namespace blender::gpu {
 /* Total maximum buffers which can be bound to an encoder, for use within a shader.
  * Uniform buffers and storage buffers share the set of available bind buffers.
  * The total number of buffer bindings must be <= MTL_MAX_BUFFER_BINDINGS
- * We also require an additional 3 core buffers for:
+ * We also require an additional 2 core buffers for:
  * - Argument buffer for bindless resources (e.g. samplers)
- * - Transform feedback buffer
  * - Default push constant block
  * Along with up to 6+1 buffers for vertex data, and index data. */
 #define MTL_MAX_BUFFER_BINDINGS 31
@@ -49,6 +48,7 @@ struct MTLCapabilities {
   bool supports_argument_buffers_tier2 = false;
   bool supports_texture_gather = false;
   bool supports_texture_atomics = false;
+  bool supports_native_tile_inputs = false;
 
   /* GPU Family */
   bool supports_family_mac1 = false;
