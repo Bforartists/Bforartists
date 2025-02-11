@@ -23,6 +23,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
+#include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
 #include "BKE_sound.h"
@@ -2727,7 +2728,6 @@ const EnumPropertyItem sequencer_prop_effect_types[] = {
     {STRIP_TYPE_ALPHAUNDER, "ALPHA_UNDER", ICON_NODE_HOLDOUTSHADER, "Alpha Under", "Alpha Under effect strip type"},
     {STRIP_TYPE_GAMCROSS, "GAMMA_CROSS", ICON_NODE_VECTOR, "Gamma Cross", "Gamma Cross effect strip type"},
     {STRIP_TYPE_MUL, "MULTIPLY", ICON_SEQ_MULTIPLY, "Multiply", "Multiply effect strip type"},
-    {STRIP_TYPE_OVERDROP, "OVER_DROP", ICON_SEQ_ALPHA_OVER, "Alpha Over Drop", "Alpha Over Drop effect strip type"},
     {STRIP_TYPE_WIPE, "WIPE", ICON_NODE_VECTOR_TRANSFORM, "Wipe", "Wipe effect strip type"},
     {STRIP_TYPE_GLOW, "GLOW", ICON_LIGHT_SUN, "Glow", "Glow effect strip type"},
     {STRIP_TYPE_TRANSFORM, "TRANSFORM", ICON_TRANSFORM_MOVE, "Transform", "Transform effect strip type"},

@@ -846,7 +846,8 @@ template<typename T> struct Interval {
 
   ccl_device_inline_method bool is_empty() const
   {
-    return min >= max;
+    /* NaN-safe comparison. */
+    return !(min < max);
   }
 
   ccl_device_inline_method bool contains(T value) const
@@ -859,6 +860,14 @@ template<typename T> struct Interval {
     return max - min;
   }
 };
+
+template<typename T1, typename T2>
+ccl_device_inline Interval<T1> operator/=(ccl_private Interval<T1> &interval, const T2 f)
+{
+  interval.min /= f;
+  interval.max /= f;
+  return interval;
+}
 
 /* Computes the intersection of two intervals. */
 template<typename T>

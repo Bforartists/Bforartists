@@ -18,8 +18,10 @@
 
 #  include "DNA_brush_types.h"
 
+#  include "BKE_library.hh"
 #  include "BKE_paint.hh"
 #  include "BKE_report.hh"
+
 static PaletteColor *rna_Palette_color_new(Palette *palette)
 {
   if (!ID_IS_EDITABLE(palette) || ID_IS_OVERRIDE_LIBRARY(palette)) {
@@ -66,7 +68,7 @@ static PointerRNA rna_Palette_active_color_get(PointerRNA *ptr)
   color = static_cast<PaletteColor *>(BLI_findlink(&palette->colors, palette->active_color));
 
   if (color) {
-    return rna_pointer_inherit_refine(ptr, &RNA_PaletteColor, color);
+    return RNA_pointer_create_with_parent(*ptr, &RNA_PaletteColor, color);
   }
 
   return PointerRNA_NULL;
