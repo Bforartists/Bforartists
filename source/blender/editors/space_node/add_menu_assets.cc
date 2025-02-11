@@ -187,7 +187,7 @@ static void node_add_catalog_assets_draw(const bContext *C, Menu *menu)
     PointerRNA op_ptr;
     uiItemFullO(layout,
                 "NODE_OT_add_group_asset",
-                IFACE_(asset->get_name().c_str()),
+                IFACE_(asset->get_name()),
                 ICON_NODETREE, /*BFA - Icon*/
                 nullptr,
                 WM_OP_INVOKE_REGION_WIN,
@@ -227,7 +227,7 @@ static void node_add_unassigned_assets_draw(const bContext *C, Menu *menu)
     PointerRNA op_ptr;
     uiItemFullO(menu->layout,
                 "NODE_OT_add_group_asset",
-                IFACE_(asset->get_name().c_str()),
+                IFACE_(asset->get_name()),
                 ICON_NODETREE, /*BFA - Icon*/
                 nullptr,
                 WM_OP_INVOKE_REGION_WIN,
@@ -259,7 +259,9 @@ static void add_root_catalogs_draw(const bContext *C, Menu *menu)
   uiItemS(layout);
 
   if (!loading_finished) {
-    uiItemL(layout, IFACE_("Loading Asset Libraries"), ICON_INFO); /*BFA - preserved from Blender, they removed this*/
+    uiItemL(layout,
+            IFACE_("Loading Asset Libraries"),
+            ICON_INFO); /*BFA - preserved from Blender, they removed this*/
   }
 
   const Set<StringRef> all_builtin_menus = get_builtin_menus(edit_tree->type);
@@ -272,7 +274,9 @@ static void add_root_catalogs_draw(const bContext *C, Menu *menu)
 
   if (!tree.unassigned_assets.is_empty()) {
     uiItemS(layout);
-    uiItemM(layout, "NODE_MT_node_add_unassigned_assets", IFACE_("Unassigned (Catalogue)"), ICON_NONE);
+    /* BFA - changed "Unassigned" to "Unassigned (Catalouge)" and changed icon to ICON_NONE */
+    uiItemM(
+        layout, "NODE_MT_node_add_unassigned_assets", IFACE_("Unassigned (Catalogue)"), ICON_NONE);
   }
 }
 

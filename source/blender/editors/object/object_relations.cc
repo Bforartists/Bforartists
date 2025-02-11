@@ -715,6 +715,12 @@ bool parent_set(ReportList *reports,
 
     copy_v3_v3(ob->loc, vec);
   }
+  else if (is_armature_parent && (ob->type == OB_LATTICE) && (par->type == OB_ARMATURE) &&
+           (partype == PAR_ARMATURE_NAME))
+  {
+    ED_object_vgroup_calc_from_armature(
+        reports, depsgraph, scene, ob, par, ARM_GROUPS_NAME, false);
+  }
   else if (is_armature_parent && (ob->type == OB_MESH) && (par->type == OB_ARMATURE)) {
     if (partype == PAR_ARMATURE_NAME) {
       ED_object_vgroup_calc_from_armature(
@@ -916,8 +922,14 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 #if 0
   uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_OBJECT);
 #else
-  uiItemFullO_ptr(
-      layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, nullptr, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE, &opptr);
+  uiItemFullO_ptr(layout,
+                  ot,
+                  IFACE_("Object"),
+                  ICON_PARENT_OBJECT,
+                  nullptr,
+                  WM_OP_EXEC_DEFAULT,
+                  UI_ITEM_NONE,
+                  &opptr);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", false);
 
@@ -948,46 +960,76 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
                  1);
 
   struct {
-    bool mesh, gpencil, curves;
-  } has_children_of_type = {false};
+    bool armature_deform, empty_groups, envelope_weights, automatic_weights, attach_surface;
+  } can_support = {false};
 
   CTX_DATA_BEGIN (C, Object *, child, selected_editable_objects) {
     if (child == parent) {
       continue;
     }
-    if (child->type == OB_MESH) {
-      has_children_of_type.mesh = true;
+    if (ELEM(child->type,
+             OB_MESH,
+             OB_CURVES_LEGACY,
+             OB_SURF,
+             OB_FONT,
+             OB_GREASE_PENCIL,
+             OB_LATTICE))
+    {
+      can_support.armature_deform = true;
+      can_support.envelope_weights = true;
     }
-    if (ELEM(child->type, OB_GREASE_PENCIL)) {
-      has_children_of_type.gpencil = true;
+    if (ELEM(child->type, OB_MESH, OB_GREASE_PENCIL, OB_LATTICE)) {
+      can_support.empty_groups = true;
+    }
+    if (ELEM(child->type, OB_MESH, OB_GREASE_PENCIL)) {
+      can_support.automatic_weights = true;
     }
     if (child->type == OB_CURVES) {
-      has_children_of_type.curves = true;
+      can_support.attach_surface = true;
     }
   }
   CTX_DATA_END;
 
   if (parent->type == OB_ARMATURE) {
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE); /*BFA icon*/
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME); /*BFA icon*/
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE); /*BFA icon*/
-    if (has_children_of_type.mesh || has_children_of_type.gpencil) {
-      uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_AUTO); /*BFA icon*/
+    if (can_support.armature_deform) {
+
+      uiItemEnumO_ptr(
+          layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE); /*BFA icon*/
+    }
+    if (can_support.empty_groups) {
+
+      uiItemEnumO_ptr(
+          layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME); /*BFA icon*/
+    }
+    if (can_support.envelope_weights) {
+
+      uiItemEnumO_ptr(
+          layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE); /*BFA icon*/
+    }
+    if (can_support.automatic_weights) {
+      uiItemEnumO_ptr(
+          layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_AUTO); /*BFA icon*/
     }
     uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_BONE); /*BFA icon*/
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_BONE_RELATIVE); /*BFA icon*/
+    uiItemEnumO_ptr(
+        layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_BONE_RELATIVE); /*BFA icon*/
   }
   else if (parent->type == OB_CURVES_LEGACY) {
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_CURVE); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_CURVE);  /*BFA icon*/
     uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_FOLLOW); /*BFA icon*/
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_PATH_CONST); /*BFA icon*/
+    uiItemEnumO_ptr(
+        layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_PATH_CONST); /*BFA icon*/
   }
   else if (parent->type == OB_LATTICE) {
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_LATTICE, "type", PAR_LATTICE); /*BFA icon*/
+    uiItemEnumO_ptr(
+        layout, ot, std::nullopt, ICON_PARENT_LATTICE, "type", PAR_LATTICE); /*BFA icon*/
   }
   else if (parent->type == OB_MESH) {
-    if (has_children_of_type.curves) {
-      uiItemO(layout, "Object (Attach Curves to Surface)", ICON_PARENT_CURVE, "CURVES_OT_surface_set"); /*BFA icon*/
+    if (can_support.attach_surface) {
+      uiItemO(layout,
+              "Object (Attach Curves to Surface)",
+              ICON_PARENT_CURVE,
+              "CURVES_OT_surface_set"); /*BFA icon*/
     }
   }
 
@@ -1496,7 +1538,7 @@ static int make_links_data_exec(bContext *C, wmOperator *op)
             ob_dst->data = obdata_id;
 
             /* if amount of material indices changed: */
-            BKE_object_materials_test(bmain, ob_dst, static_cast<ID *>(ob_dst->data));
+            BKE_object_materials_sync_length(bmain, ob_dst, static_cast<ID *>(ob_dst->data));
 
             if (ob_dst->type == OB_ARMATURE) {
               BKE_pose_rebuild(bmain, ob_dst, static_cast<bArmature *>(ob_dst->data), true);
@@ -2911,8 +2953,7 @@ void OBJECT_OT_make_single_user(wmOperatorType *ot)
 
   RNA_def_boolean(ot->srna, "object", false, "Object", "Make single user objects");
   RNA_def_boolean(ot->srna, "obdata", false, "Object Data", "Make single user object data");
-  RNA_def_boolean(
-      ot->srna, "material", false, "Materials", "Make materials local to each data");
+  RNA_def_boolean(ot->srna, "material", false, "Materials", "Make materials local to each data");
   RNA_def_boolean(ot->srna,
                   "animation",
                   false,

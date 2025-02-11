@@ -52,6 +52,7 @@ BLI_STATIC_ASSERT(ARRAY_SIZE(rna_enum_collection_color_items) - 2 == COLLECTION_
 #  include "BKE_global.hh"
 #  include "BKE_layer.hh"
 #  include "BKE_lib_id.hh"
+#  include "BKE_library.hh"
 #  include "BKE_report.hh"
 
 #  include "BLT_translation.hh"
@@ -64,7 +65,7 @@ static void rna_Collection_all_objects_begin(CollectionPropertyIterator *iter, P
 {
   Collection *collection = (Collection *)ptr->data;
   ListBase collection_objects = BKE_collection_object_cache_get(collection);
-  rna_iterator_listbase_begin(iter, &collection_objects, nullptr);
+  rna_iterator_listbase_begin(iter, ptr, &collection_objects, nullptr);
 }
 
 static PointerRNA rna_Collection_all_objects_get(CollectionPropertyIterator *iter)
@@ -79,7 +80,7 @@ static PointerRNA rna_Collection_all_objects_get(CollectionPropertyIterator *ite
 static void rna_Collection_objects_begin(CollectionPropertyIterator *iter, PointerRNA *ptr)
 {
   Collection *collection = (Collection *)ptr->data;
-  rna_iterator_listbase_begin(iter, &collection->gobject, nullptr);
+  rna_iterator_listbase_begin(iter, ptr, &collection->gobject, nullptr);
 }
 
 static PointerRNA rna_Collection_objects_get(CollectionPropertyIterator *iter)
@@ -207,7 +208,7 @@ static bool rna_Collection_objects_override_apply(Main *bmain,
 static void rna_Collection_children_begin(CollectionPropertyIterator *iter, PointerRNA *ptr)
 {
   Collection *collection = (Collection *)ptr->data;
-  rna_iterator_listbase_begin(iter, &collection->children, nullptr);
+  rna_iterator_listbase_begin(iter, ptr, &collection->children, nullptr);
 }
 
 static PointerRNA rna_Collection_children_get(CollectionPropertyIterator *iter)
