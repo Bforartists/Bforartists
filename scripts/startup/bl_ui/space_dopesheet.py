@@ -751,6 +751,7 @@ class DOPESHEET_MT_key(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        ob = _context.active_object
 
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
         layout.menu("DOPESHEET_MT_key_snap")
@@ -774,6 +775,8 @@ class DOPESHEET_MT_key(Menu):
 
         layout.operator("action.duplicate_move", icon="DUPLICATE")
         layout.operator("action.delete", icon="DELETE")
+        if ob and ob.type == 'GREASEPENCIL':
+            layout.operator("grease_pencil.delete_breakdown")
 
         layout.separator()
 
@@ -1062,6 +1065,7 @@ class DOPESHEET_MT_context_menu(Menu):
 
         if st.mode == 'GPENCIL':
             layout.separator()
+            layout.operator("grease_pencil.delete_breakdown")
 
         layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("action.delete", icon='DELETE')

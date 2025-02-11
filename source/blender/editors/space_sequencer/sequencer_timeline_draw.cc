@@ -234,7 +234,7 @@ static StripDrawContext strip_draw_context_get(TimelineDrawContext *ctx, Strip *
                                   !strip_ctx.can_draw_strip_content);
   strip_ctx.is_active_strip = strip == SEQ_select_active_get(scene);
   strip_ctx.is_single_image = SEQ_transform_single_image_check(strip);
-  strip_ctx.handle_width = sequence_handle_size_get_clamped(ctx->scene, strip, ctx->pixelx);
+  strip_ctx.handle_width = strip_handle_draw_size_get(ctx->scene, strip, ctx->pixelx);
   strip_ctx.show_strip_color_tag = (ctx->sseq->timeline_overlay.flag &
                                     SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG);
 
@@ -363,7 +363,6 @@ static void color3ubv_from_seq(const Scene *curscene,
     case STRIP_TYPE_MUL:
     case STRIP_TYPE_ALPHAOVER:
     case STRIP_TYPE_ALPHAUNDER:
-    case STRIP_TYPE_OVERDROP:
     case STRIP_TYPE_GLOW:
     case STRIP_TYPE_MULTICAM:
     case STRIP_TYPE_ADJUSTMENT:
@@ -386,9 +385,6 @@ static void color3ubv_from_seq(const Scene *curscene,
       }
       else if (strip->type == STRIP_TYPE_ALPHAUNDER) {
         rgb_byte_set_hue_float_offset(r_col, 0.19);
-      }
-      else if (strip->type == STRIP_TYPE_OVERDROP) {
-        rgb_byte_set_hue_float_offset(r_col, 0.22);
       }
       else if (strip->type == STRIP_TYPE_COLORMIX) {
         rgb_byte_set_hue_float_offset(r_col, 0.25);
@@ -772,7 +768,7 @@ static void draw_handle_transform_text(const TimelineDrawContext *timeline_ctx,
   UI_view2d_text_cache_add(timeline_ctx->v2d, text_x, text_y, numstr, numstr_len, col);
 }
 
-float sequence_handle_size_get_clamped(const Scene *scene, Strip *strip, const float pixelx)
+float strip_handle_draw_size_get(const Scene *scene, Strip *strip, const float pixelx)
 {
   const bool use_thin_handle = (U.sequencer_editor_flag & USER_SEQ_ED_SIMPLE_TWEAKING) != 0;
   const float handle_size = use_thin_handle ? 5.0f : 8.0f;

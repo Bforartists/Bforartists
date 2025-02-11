@@ -11,6 +11,7 @@
 
 #include "kernel/geom/attribute.h"
 #include "kernel/geom/curve.h"
+#include "kernel/geom/motion_triangle.h"
 #include "kernel/geom/object.h"
 #include "kernel/geom/point.h"
 #include "kernel/geom/primitive.h"
@@ -27,6 +28,7 @@
 #include "util/transform.h"
 
 #include "kernel/osl/osl.h"
+#include "kernel/osl/services_shared.h"
 
 namespace DeviceStrings {
 
@@ -68,6 +70,8 @@ ccl_device_constant DeviceString u_object_alpha = 11165053919428293151ull;
 ccl_device_constant DeviceString u_object_index = 6588325838217472556ull;
 /* "object:is_light" */
 ccl_device_constant DeviceString u_object_is_light = 13979755312845091842ull;
+/* "geom:bump_map_normal" */
+ccl_device_constant DeviceString u_bump_map_normal = 9592102745179132106ull;
 /* "geom:dupli_generated" */
 ccl_device_constant DeviceString u_geom_dupli_generated = 6715607178003388908ull;
 /* "geom:dupli_uv" */
@@ -76,6 +80,8 @@ ccl_device_constant DeviceString u_geom_dupli_uv = 1294253317490155849ull;
 ccl_device_constant DeviceString u_material_index = 741770758159634623ull;
 /* "object:random" */
 ccl_device_constant DeviceString u_object_random = 15789063994977955884ull;
+/* "light:random" */
+ccl_device_constant DeviceString u_light_random = 1743557801140685447ull;
 /* "particle:index" */
 ccl_device_constant DeviceString u_particle_index = 9489711748229903784ull;
 /* "particle:random" */
@@ -1232,7 +1238,13 @@ ccl_device_inline bool get_object_standard_attribute(KernelGlobals kg,
     return set_attribute_float(f, type, derivatives, val);
   }
   else if (name == DeviceStrings::u_object_random) {
-    float f = object_random_number(kg, sd->object);
+    const float f = object_random_number(kg, sd->object);
+
+    return set_attribute_float(f, type, derivatives, val);
+  }
+  else if (name == DeviceStrings::u_light_random) {
+    const float f = lamp_random_number(kg, sd->lamp);
+
     return set_attribute_float(f, type, derivatives, val);
   }
 
@@ -1352,6 +1364,13 @@ ccl_device_inline bool get_object_standard_attribute(KernelGlobals kg,
     else {
       return false;
     }
+  }
+  if (name == DeviceStrings::u_bump_map_normal) {
+    float3 f[3];
+    if (!attribute_bump_map_normal(kg, sd, f)) {
+      return false;
+    }
+    return set_attribute_float3(f, type, derivatives, val);
   }
 
   return get_background_attribute(kg, sg, sd, name, type, derivatives, val);
@@ -1651,6 +1670,8 @@ OSL_NOISE_IMPL(osl_noise, noise)
 OSL_NOISE_IMPL(osl_snoise, snoise)
 
 /* Texturing */
+
+ccl_device_extern void osl_init_texture_options(ccl_private ShaderGlobals *sg, void *opt) {}
 
 ccl_device_extern ccl_private OSLTextureOptions *osl_get_texture_options(
     ccl_private ShaderGlobals *sg)

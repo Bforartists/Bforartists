@@ -160,12 +160,22 @@ enum {
    * Register operators in stack after finishing (needed for redo).
    *
    * \note Typically this flag should be enabled along with #OPTYPE_UNDO.
-   * There is an exception to this, some operators can perform an undo push indirectly.
-   * (`UI_OT_reset_default_button` for example).
+   * There are some exceptions to this:
    *
-   * In this case, register needs to be enabled so as not to clear the "Redo" panel, see #133761.
-   * Unless otherwise stated, any operators that register without the undo flag
-   * can be assumed to be creating undo steps indirectly (potentially at least).
+   * - Operators can conditionally perform an undo push,
+   *   Examples include operators that may modify "screen" data
+   *   (which the undo system doesn't track), or data-blocks such as objects, meshes etc.
+   *   In this case the undo push depends on the operators internal logic.
+   *
+   *   We could support this as part of the operator return flag,
+   *   currently it requires explicit calls to undo push.
+   *
+   * - Operators can perform an undo push indirectly.
+   *   (`UI_OT_reset_default_button` for example).
+   *
+   *   In this case, register needs to be enabled so as not to clear the "Redo" panel, see #133761.
+   *   Unless otherwise stated, any operators that register without the undo flag
+   *   can be assumed to be creating undo steps indirectly (potentially at least).
    */
   OPTYPE_REGISTER = (1 << 0),
   /** Do an undo push after the operator runs. */
@@ -820,9 +830,12 @@ struct wmEvent {
  */
 #define WM_EVENT_CURSOR_MOTION_THRESHOLD ((float)U.move_threshold * UI_SCALE_FAC)
 
-/** Motion progress, for modal handlers. */
+/**
+ * Motion progress, for modal handlers,
+ * a copy of #GHOST_TProgress (keep in sync).
+ */
 enum wmProgress {
-  P_NOT_STARTED,
+  P_NOT_STARTED = 0,
   P_STARTING,    /* <-- */
   P_IN_PROGRESS, /* <-- only these are sent for NDOF motion. */
   P_FINISHING,   /* <-- */

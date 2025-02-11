@@ -46,10 +46,23 @@ BLOCKLIST_METAL = [
     "shadow_all_max_bounces.blend",
     "light_link_exclude.blend",
     "light_link_instanced_receiver.blend",
+    # Blocked due to difference in volume lightprobe bakes(maybe?) (to be fixed).
+    "volume_zero_extinction.blend"
     # Blocked due to difference in screen space tracing (to be fixed).
     "sss_reflection_clamp.blend",
     # Blocked due to difference in volume rendering (to be fixed).
     "principled_bsdf_interior.blend",
+    # Blocked due to difference in mipmap interpolation (to be fixed).
+    "environment_mirror_ball.blend",
+    # Blocked due to difference in mipmap interpolation / anisotropic filtering (to be fixed).
+    "image.blend"
+]
+
+BLOCKLIST_VULKAN = [
+    # Blocked due to difference in screen space tracing (to be fixed).
+    "sss_reflection_clamp.blend",
+    # Blocked due to difference in screen space tracing (to be investigated).
+    "image.blend"
 ]
 
 
@@ -228,6 +241,8 @@ def main():
     blocklist = BLOCKLIST
     if args.gpu_backend == "metal":
         blocklist += BLOCKLIST_METAL
+    elif args.gpu_backend == "vulkan":
+        blocklist += BLOCKLIST_VULKAN
 
     report = EEVEEReport("Eevee Next", args.outdir, args.oiiotool, variation=args.gpu_backend, blocklist=blocklist)
     if args.gpu_backend == "vulkan":

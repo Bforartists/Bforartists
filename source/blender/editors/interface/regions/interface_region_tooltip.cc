@@ -41,6 +41,7 @@
 #include "BKE_context.hh"
 #include "BKE_idtype.hh"
 #include "BKE_image.hh"
+#include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_paint.hh"
 #include "BKE_screen.hh"
@@ -801,27 +802,26 @@ static std::string ui_tooltip_color_string(const blender::float4 &color,
     rgba_float_to_uchar(hex, color);
     if (show_alpha) {
       return fmt::format("{}: #{:02X}{:02X}{:02X}{:02X}",
-                         TIP_(title.c_str()),
+                         TIP_(title),
                          int(hex[0]),
                          int(hex[1]),
                          int(hex[2]),
                          int(hex[3]));
     }
     return fmt::format(
-        "{}: #{:02X}{:02X}{:02X}", TIP_(title.c_str()), int(hex[0]), int(hex[1]), int(hex[2]));
+        "{}: #{:02X}{:02X}{:02X}", TIP_(title), int(hex[0]), int(hex[1]), int(hex[2]));
   }
 
   if (show_alpha) {
     return fmt::format("{}:  {:.3f}  {:.3f}  {:.3f}  {:.3f}",
-                       TIP_(title.c_str()),
+                       TIP_(title),
                        color[0],
                        color[1],
                        color[2],
                        color[3]);
   }
 
-  return fmt::format(
-      "{}:  {:.3f}  {:.3f}  {:.3f}", TIP_(title.c_str()), color[0], color[1], color[2]);
+  return fmt::format("{}:  {:.3f}  {:.3f}  {:.3f}", TIP_(title), color[0], color[1], color[2]);
 };
 
 static std::unique_ptr<uiTooltipData> ui_tooltip_data_from_button_or_extra_icon(
