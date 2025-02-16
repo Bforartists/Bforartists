@@ -151,8 +151,8 @@ def dna_rename_defs(blend):
         if len(members) > 1:
             # Order renames that are themselves destinations to go first, so that the item is not removed.
             # Needed for e.g.
-            # `DNA_STRUCT_RENAME_MEMBER(Light, energy_new, energy);`
-            # `DNA_STRUCT_RENAME_MEMBER(Light, energy, energy_deprecated)`
+            # `DNA_STRUCT_RENAME_ELEM(Light, energy_new, energy);`
+            # `DNA_STRUCT_RENAME_ELEM(Light, energy, energy_deprecated)`
             # ... in this case the order matters.
             member_runtime_set = set(member_runtime for (_member_storage, member_runtime) in members)
             members_ordered = ([], [])
