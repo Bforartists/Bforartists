@@ -26,6 +26,7 @@
 #include "BLI_bounds.hh"
 #include "BLI_convexhull_2d.h"
 #include "BLI_function_ref.hh"
+#include "BLI_listbase.h"
 #include "BLI_map.hh"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_quaternion.hh"
@@ -1418,10 +1419,10 @@ static void node_socket_tooltip_set(uiBlock &block,
                             nullptr,
                             0,
                             0,
-                            nullptr);
+                            std::nullopt);
   UI_but_func_tooltip_set(
       but,
-      [](bContext *C, void *argN, const char * /*tip*/) {
+      [](bContext *C, void *argN, const StringRef /*tip*/) {
         const SpaceNode &snode = *CTX_wm_space_node(C);
         const bNodeTree &ntree = *snode.edittree;
         const int index_in_tree = POINTER_AS_INT(argN);
@@ -2135,7 +2136,7 @@ static void node_socket_add_tooltip_in_node_editor(const bNodeSocket &sock, uiLa
 {
   uiLayoutSetTooltipFunc(
       &layout,
-      [](bContext *C, void *argN, const char * /*tip*/) {
+      [](bContext *C, void *argN, const StringRef /*tip*/) {
         const SpaceNode &snode = *CTX_wm_space_node(C);
         const bNodeTree &ntree = *snode.edittree;
         const int index_in_tree = POINTER_AS_INT(argN);
@@ -2160,7 +2161,7 @@ void node_socket_add_tooltip(const bNodeTree &ntree, const bNodeSocket &sock, ui
 
   uiLayoutSetTooltipFunc(
       &layout,
-      [](bContext *C, void *argN, const char * /*tip*/) {
+      [](bContext *C, void *argN, const StringRef /*tip*/) {
         SocketTooltipData *data = static_cast<SocketTooltipData *>(argN);
         const SpaceNode *snode = CTX_wm_space_node(C);
         return node_socket_get_tooltip(snode, *data->ntree, *data->socket);
@@ -2576,7 +2577,7 @@ struct NodeErrorsTooltipData {
   Span<geo_log::NodeWarning> warnings;
 };
 
-static std::string node_errors_tooltip_fn(bContext * /*C*/, void *argN, const char * /*tip*/)
+static std::string node_errors_tooltip_fn(bContext * /*C*/, void *argN, const StringRef /*tip*/)
 {
   NodeErrorsTooltipData &data = *(NodeErrorsTooltipData *)argN;
 
@@ -2850,7 +2851,7 @@ struct NamedAttributeTooltipArg {
   Map<StringRefNull, geo_log::NamedAttributeUsage> usage_by_attribute;
 };
 
-static std::string named_attribute_tooltip(bContext * /*C*/, void *argN, const char * /*tip*/)
+static std::string named_attribute_tooltip(bContext * /*C*/, void *argN, const StringRef /*tip*/)
 {
   NamedAttributeTooltipArg &arg = *static_cast<NamedAttributeTooltipArg *>(argN);
 
@@ -2999,7 +3000,7 @@ static void node_get_invalid_links_extra_info(const SpaceNode &snode,
   NodeExtraInfoRow row;
   row.text = IFACE_("Invalid Link");
 
-  row.tooltip_fn = [](bContext *C, void *arg, const char * /*tip*/) {
+  row.tooltip_fn = [](bContext *C, void *arg, const StringRef /*tip*/) {
     const bNodeTree &tree = *CTX_wm_space_node(C)->edittree;
     const bNode &node = *static_cast<const bNode *>(arg);
     const Span<bke::NodeLinkError> link_errors = tree.runtime->link_errors_by_target_node.lookup(
@@ -3584,12 +3585,12 @@ static void node_draw_basis(const bContext &C,
                         TIP_(node.typeinfo->ui_description.c_str()));
   UI_but_func_tooltip_set(
       but,
-      [](bContext * /*C*/, void *arg, const char *tip) -> std::string {
+      [](bContext * /*C*/, void *arg, const StringRef tip) -> std::string {
         const bNode &node = *static_cast<const bNode *>(arg);
         if (node.typeinfo->ui_description_fn) {
           return node.typeinfo->ui_description_fn(node);
         }
-        return StringRef(tip);
+        return tip;
       },
       const_cast<bNode *>(&node),
       nullptr);
@@ -4437,7 +4438,7 @@ static void reroute_node_draw_label(TreeDrawContext &tree_draw_ctx,
   const int y = node.runtime->draw_bounds.ymax;
 
   uiBut *label_but = uiDefBut(
-      &block, UI_BTYPE_LABEL, 0, text, x, y, width, NODE_DY, nullptr, 0, 0, nullptr);
+      &block, UI_BTYPE_LABEL, 0, text, x, y, width, NODE_DY, nullptr, 0, 0, std::nullopt);
 
   UI_but_drawflag_disable(label_but, UI_BUT_TEXT_LEFT);
 
