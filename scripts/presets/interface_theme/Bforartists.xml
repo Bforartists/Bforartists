@@ -321,6 +321,10 @@
         </wcol_list_item>
         <wcol_state>
           <ThemeWidgetStateColors
+            error="#dc000000"
+            warning="#f5bc41ff"
+            info="#00aa0000"
+            success="#188625ff"
             inner_anim="#73be4c"
             inner_anim_sel="#5aa633"
             inner_key="#f0eb64"
@@ -1116,11 +1120,8 @@
       <ThemeInfo
         info_selected="#6080ff"
         info_selected_text="#ffffff"
-        info_error="#dc000000"
         info_error_text="#000000"
-        info_warning="#f5bc41ff"
         info_warning_text="#000000"
-        info_info="#00aa0000"
         info_info_text="#000000"
         info_debug="#c4c4c4ff"
         info_debug_text="#000000"
