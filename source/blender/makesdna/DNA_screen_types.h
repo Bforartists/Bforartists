@@ -428,15 +428,6 @@ typedef struct ScrArea {
   /** Rect bound by v1 v2 v3 v4. */
   rcti totrct;
 
-  /* bfa - keep this at the current place */
-  /* bfa - short to int, we need int for our flags */
-  int flag;
-  /**
-   * Index of last used region of 'RGN_TYPE_WINDOW'
-   * runtime variable, updated by executing operators.
-   */
-  int region_active_win; /* bfa - changed short to int */
-
   /** eSpace_Type (SPACE_FOO). */
   char spacetype;
   /**
@@ -448,6 +439,7 @@ typedef struct ScrArea {
    */
   char butspacetype;
   short butspacetype_subtype;
+  short butspacetype_subtype_prev;
 
   /** Size. */
   short winx, winy;
@@ -456,8 +448,13 @@ typedef struct ScrArea {
   char headertype DNA_DEPRECATED;
   /** Private, for spacetype refresh callback. */
   char do_refresh;
-
-  char temp, _pad[5]; /* bfa - changed to allow int*/
+  int flag;
+  /**
+   * Index of last used region of 'RGN_TYPE_WINDOW'
+   * runtime variable, updated by executing operators.
+   */
+  int region_active_win;
+  char _pad[4];
 
   /** Callbacks for this space type. */
   struct SpaceType *type;

@@ -79,7 +79,6 @@
 #include "draw_color_management.hh"
 #include "draw_common_c.hh"
 #include "draw_manager_c.hh"
-#include "draw_manager_profiling.hh"
 #ifdef WITH_GPU_DRAW_TESTS
 #  include "draw_manager_testing.hh"
 #endif
@@ -353,6 +352,7 @@ static void drw_viewport_data_reset(DRWData *drw_data)
   DRW_instance_data_list_resize(drw_data->idatalist);
   DRW_instance_data_list_reset(drw_data->idatalist);
   DRW_texture_pool_reset(drw_data->texture_pool);
+  blender::gpu::TexturePool::get().reset();
 }
 
 void DRW_viewport_data_free(DRWData *drw_data)
@@ -610,16 +610,6 @@ static void drw_duplidata_free()
     BLI_ghash_free(DST.dupli_ghash, duplidata_key_free, duplidata_value_free);
     DST.dupli_ghash = nullptr;
   }
-}
-
-void **DRW_duplidata_get(void *vedata)
-{
-  if (DST.dupli_source == nullptr) {
-    return nullptr;
-  }
-  ViewportEngineData *ved = (ViewportEngineData *)vedata;
-  DRWRegisteredDrawEngine *engine_type = ved->engine_type;
-  return &DST.dupli_datas[engine_type->index];
 }
 
 /** \} */
@@ -961,13 +951,13 @@ static void drw_engines_draw_scene()
   DRW_ENABLED_ENGINE_ITER (DST.view_data_active, engine, data) {
     PROFILE_START(stime);
     if (engine->draw_scene) {
-      DRW_stats_group_start(engine->idname);
+      GPU_debug_group_begin(engine->idname);
       engine->draw_scene(data);
       /* Restore for next engine */
       if (DRW_state_is_fbo()) {
         GPU_framebuffer_bind(DST.default_framebuffer);
       }
-      DRW_stats_group_end();
+      GPU_debug_group_end();
     }
     PROFILE_END_UPDATE(data->render_time, stime);
   }
@@ -1379,13 +1369,6 @@ void DRW_draw_callbacks_post_scene()
       DRW_draw_gizmo_2d();
     }
 
-    if (G.debug_value > 20 && G.debug_value < 30) {
-      GPU_depth_test(GPU_DEPTH_NONE);
-      /* local coordinate visible rect inside region, to accommodate overlapping ui */
-      const rcti *rect = ED_region_visible_rect(DST.draw_ctx.region);
-      DRW_stats_draw(rect);
-    }
-
     GPU_depth_test(GPU_DEPTH_LESS_EQUAL);
   }
   else {
@@ -1583,8 +1566,6 @@ void DRW_draw_render_loop_ex(Depsgraph *depsgraph,
 #endif
   }
 
-  DRW_stats_begin();
-
   GPU_framebuffer_bind(DST.default_framebuffer);
 
   /* Start Drawing */
@@ -1605,8 +1586,6 @@ void DRW_draw_render_loop_ex(Depsgraph *depsgraph,
   }
 
   DRW_smoke_exit(DST.vmempool);
-
-  DRW_stats_reset();
 
   DRW_draw_callbacks_post_scene();
 
@@ -1793,6 +1772,7 @@ void DRW_render_gpencil(RenderEngine *engine, Depsgraph *depsgraph)
 
   GPU_depth_test(GPU_DEPTH_NONE);
 
+  blender::gpu::TexturePool::get().reset(true);
   drw_manager_exit(&DST);
 
   /* Restore Drawing area. */
@@ -1880,6 +1860,8 @@ void DRW_render_to_image(RenderEngine *engine, Depsgraph *depsgraph)
 
   DRW_smoke_exit(DST.vmempool);
 
+  blender::gpu::TexturePool::get().reset(true);
+
   drw_manager_exit(&DST);
   DRW_cache_free_old_subdiv();
 
@@ -1966,7 +1948,6 @@ void DRW_custom_pipeline_begin(DrawEngineType *draw_engine_type, Depsgraph *deps
 
 void DRW_custom_pipeline_end()
 {
-
   DRW_smoke_exit(DST.vmempool);
 
   GPU_framebuffer_restore();
@@ -1980,6 +1961,7 @@ void DRW_custom_pipeline_end()
     GPU_finish();
   }
 
+  blender::gpu::TexturePool::get().reset(true);
   drw_manager_exit(&DST);
 }
 
@@ -2084,8 +2066,6 @@ void DRW_draw_render_loop_2d_ex(Depsgraph *depsgraph,
   }
   drw_task_graph_deinit();
 
-  DRW_stats_begin();
-
   GPU_framebuffer_bind(DST.default_framebuffer);
 
   /* Start Drawing */
@@ -2137,15 +2117,6 @@ void DRW_draw_render_loop_2d_ex(Depsgraph *depsgraph,
   if (do_draw_gizmos) {
     GPU_depth_test(GPU_DEPTH_NONE);
     DRW_draw_gizmo_2d();
-  }
-
-  DRW_stats_reset();
-
-  if (G.debug_value > 20 && G.debug_value < 30) {
-    GPU_depth_test(GPU_DEPTH_NONE);
-    /* local coordinate visible rect inside region, to accommodate overlapping ui */
-    const rcti *rect = ED_region_visible_rect(DST.draw_ctx.region);
-    DRW_stats_draw(rect);
   }
 
   GPU_depth_test(GPU_DEPTH_LESS_EQUAL);
@@ -2926,7 +2897,6 @@ void DRW_engines_free()
   DRW_curves_free();
   DRW_volume_free();
   DRW_shape_cache_free();
-  DRW_stats_free();
   DRW_globals_free();
 
   drw_debug_module_free(DST.debug);

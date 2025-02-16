@@ -2,6 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#include "BLI_listbase.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_virtual_array.hh"
 
@@ -516,7 +517,7 @@ IndexMask GeometryDataSource::apply_selection_filter(IndexMaskMemory &memory) co
       BLI_assert(object_orig_->type == OB_POINTCLOUD);
       const bke::AttributeAccessor attributes = *component_->attributes();
       const VArray<bool> selection = *attributes.lookup_or_default(
-          ".selection", bke::AttrDomain::Point, false);
+          ".selection", bke::AttrDomain::Point, true);
       return IndexMask::from_bools(selection, memory);
     }
     default:
