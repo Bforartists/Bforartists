@@ -24,6 +24,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "BLI_listbase.h"
 #include "BLI_multi_value_map.hh"
 
 #include "UI_tree_view.hh"
@@ -239,11 +240,11 @@ void AbstractTreeView::get_hierarchy_lines(const ARegion &region,
 
 static uiButViewItem *find_first_view_item_but(const uiBlock &block, const AbstractTreeView &view)
 {
-  LISTBASE_FOREACH (uiBut *, but, &block.buttons) {
+  for (const std::unique_ptr<uiBut> &but : block.buttons) {
     if (but->type != UI_BTYPE_VIEW_ITEM) {
       continue;
     }
-    uiButViewItem *view_item_but = static_cast<uiButViewItem *>(but);
+    uiButViewItem *view_item_but = static_cast<uiButViewItem *>(but.get());
     if (&view_item_but->view_item->get_view() == &view) {
       return view_item_but;
     }
@@ -659,6 +660,13 @@ bool AbstractTreeViewItem::toggle_collapsed()
   return this->set_collapsed(is_open_);
 }
 
+void AbstractTreeViewItem::toggle_collapsed_from_view(bContext &C)
+{
+  if (this->toggle_collapsed()) {
+    this->on_collapse_change(C, this->is_collapsed());
+  }
+}
+
 bool AbstractTreeViewItem::set_collapsed(const bool collapsed)
 {
   if (!this->is_collapsible()) {
@@ -670,6 +678,16 @@ bool AbstractTreeViewItem::set_collapsed(const bool collapsed)
 
   is_open_ = !collapsed;
   return true;
+}
+
+void AbstractTreeViewItem::on_collapse_change(bContext & /*C*/, const bool /*is_collapsed*/)
+{
+  /* Do nothing by default. */
+}
+
+std::optional<bool> AbstractTreeViewItem::should_be_collapsed() const
+{
+  return std::nullopt;
 }
 
 void AbstractTreeViewItem::uncollapse_by_default()
@@ -689,23 +707,6 @@ bool AbstractTreeViewItem::is_collapsible() const
     return false;
   }
   return this->supports_collapsing();
-}
-
-void AbstractTreeViewItem::on_collapse_change(bContext & /*C*/, const bool /*is_collapsed*/)
-{
-  /* Do nothing by default. */
-}
-
-std::optional<bool> AbstractTreeViewItem::should_be_collapsed() const
-{
-  return std::nullopt;
-}
-
-void AbstractTreeViewItem::toggle_collapsed_from_view(bContext &C)
-{
-  if (this->toggle_collapsed()) {
-    this->on_collapse_change(C, this->is_collapsed());
-  }
 }
 
 void AbstractTreeViewItem::change_state_delayed()

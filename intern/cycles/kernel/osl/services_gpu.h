@@ -827,8 +827,8 @@ ccl_device_inline bool set_attribute_float(ccl_private float fval[3],
                                            bool derivatives,
                                            ccl_private void *val)
 {
-  const unsigned char type_basetype = type & 0xF;
-  const unsigned char type_aggregate = (type >> 8) & 0xF;
+  const unsigned char type_basetype = type & 0xFF;
+  const unsigned char type_aggregate = (type >> 8) & 0xFF;
   const int type_arraylen = type >> 32;
 
   if (type_basetype == 11 /* TypeDesc::FLOAT */) {
@@ -887,8 +887,8 @@ ccl_device_inline bool set_attribute_float2(ccl_private float2 fval[3],
                                             bool derivatives,
                                             ccl_private void *val)
 {
-  const unsigned char type_basetype = type & 0xF;
-  const unsigned char type_aggregate = (type >> 8) & 0xF;
+  const unsigned char type_basetype = type & 0xFF;
+  const unsigned char type_aggregate = (type >> 8) & 0xFF;
   const int type_arraylen = type >> 32;
 
   if (type_basetype == 11 /* TypeDesc::FLOAT */) {
@@ -934,8 +934,8 @@ ccl_device_inline bool set_attribute_float3(ccl_private float3 fval[3],
                                             bool derivatives,
                                             ccl_private void *val)
 {
-  const unsigned char type_basetype = type & 0xF;
-  const unsigned char type_aggregate = (type >> 8) & 0xF;
+  const unsigned char type_basetype = type & 0xFF;
+  const unsigned char type_aggregate = (type >> 8) & 0xFF;
   const int type_arraylen = type >> 32;
 
   if (type_basetype == 11 /* TypeDesc::FLOAT */) {
@@ -986,8 +986,8 @@ ccl_device_inline bool set_attribute_float4(ccl_private float4 fval[3],
                                             bool derivatives,
                                             ccl_private void *val)
 {
-  const unsigned char type_basetype = type & 0xF;
-  const unsigned char type_aggregate = (type >> 8) & 0xF;
+  const unsigned char type_basetype = type & 0xFF;
+  const unsigned char type_aggregate = (type >> 8) & 0xFF;
   const int type_arraylen = type >> 32;
 
   if (type_basetype == 11 /* TypeDesc::FLOAT */) {
@@ -1024,8 +1024,8 @@ ccl_device_inline bool set_attribute_matrix(const ccl_private Transform &tfm,
                                             const TypeDesc type,
                                             ccl_private void *val)
 {
-  const unsigned char type_basetype = type & 0xF;
-  const unsigned char type_aggregate = (type >> 8) & 0xF;
+  const unsigned char type_basetype = type & 0xFF;
+  const unsigned char type_aggregate = (type >> 8) & 0xFF;
 
   if (type_basetype == 11 /* TypeDesc::FLOAT */ && type_aggregate == 16 /* TypeDesc::MATRIX44 */) {
     copy_matrix(static_cast<ccl_private float *>(val), tfm);
@@ -1039,8 +1039,8 @@ ccl_device_inline bool set_attribute_int(const int i,
                                          bool derivatives,
                                          void *val)
 {
-  const unsigned char type_basetype = type & 0xF;
-  const unsigned char type_aggregate = (type >> 8) & 0xF;
+  const unsigned char type_basetype = type & 0xFF;
+  const unsigned char type_aggregate = (type >> 8) & 0xFF;
   const int type_arraylen = type >> 32;
 
   if ((type_basetype == 7 /* TypeDesc::INT */) && (type_aggregate == 1 /* TypeDesc::SCALAR */) &&
@@ -1082,7 +1082,15 @@ ccl_device_inline bool get_background_attribute(KernelGlobals kg,
 
   if (name == DeviceStrings::u_path_ray_depth) {
     /* Ray Depth */
-    const int f = READ_PATH_STATE(bounce);
+    int f = READ_PATH_STATE(bounce);
+
+    /* Read bounce from different locations depending on if this is a shadow path. For background,
+     * light emission and shadow evaluation from a surface or volume we are effectively one bounce
+     * further. */
+    if (sg->raytype & (PATH_RAY_SHADOW | PATH_RAY_EMISSION)) {
+      f += 1;
+    }
+
     return set_attribute_int(f, type, derivatives, val);
   }
   if (name == DeviceStrings::u_path_diffuse_depth) {

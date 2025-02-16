@@ -15,6 +15,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_listbase.h"
 #include "BLI_math_vector.h"
 #include "BLI_string.h"
 #include "BLI_string_utils.hh"
@@ -1600,7 +1601,7 @@ enum class SlotMatchMethod {
  */
 static SlotMatchMethod get_slot_match_method(const bool from_single,
                                              const bool to_single,
-                                             const KeyframePasteContext paste_context)
+                                             const KeyframePasteContext &paste_context)
 {
   BLI_assert_msg(!(from_single && to_single),
                  "The from-single-to-single case is expected to be implemented as a special case "
@@ -1669,7 +1670,7 @@ static const FCurve *pastebuf_find_matching_copybuf_item(const pastebuf_match_fu
                                                          const bAnimListElem &ale_to_paste_into,
                                                          const bool from_single,
                                                          const bool to_single,
-                                                         const KeyframePasteContext paste_context)
+                                                         const KeyframePasteContext &paste_context)
 {
   using namespace blender::animrig;
 
@@ -2100,7 +2101,7 @@ static float paste_get_y_offset(const bAnimContext *ac,
 
 eKeyPasteError paste_animedit_keys(bAnimContext *ac,
                                    ListBase *anim_data,
-                                   const KeyframePasteContext paste_context)
+                                   const KeyframePasteContext &paste_context)
 {
   using namespace blender::ed::animation;
 
