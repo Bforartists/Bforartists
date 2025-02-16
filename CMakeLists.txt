@@ -219,8 +219,8 @@ intended for use by file-managers to extract PNG images from `.blend` files."
   )
 elseif(APPLE)
   option(WITH_BLENDER_THUMBNAILER "\
-Build \"bforartists-thumbnailer.appex\" extension for macOS Finder/ QuickLook to support viewing \
-thumbnails from `.blend` files."
+Build \"bforartists-thumbnailer.appex\" extension for Finder/ QuickLook thumbnail \
+support for blend files."
     ON
   )
 endif()
@@ -711,7 +711,7 @@ if(NOT APPLE AND NOT (WIN32 AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
   set(CYCLES_HIP_BINARIES_ARCH
     gfx1010 gfx1011 gfx1012
     gfx1030 gfx1031 gfx1032 gfx1034 gfx1035 gfx1036
-    gfx1100 gfx1101 gfx1102 gfx1103 #gfx1150 gfx1151 #BFA - temporarily removed from the \\CMakeList.txt list, as they are not included in AMD HIP ROCm 5.5.1.
+    gfx1100 gfx1101 gfx1102 gfx1103 gfx1150 gfx1151
     CACHE STRING "AMD HIP architectures to build binaries for"
   )
   mark_as_advanced(WITH_CYCLES_DEVICE_HIP)

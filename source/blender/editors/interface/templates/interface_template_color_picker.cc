@@ -6,6 +6,7 @@
  * \ingroup edinterface
  */
 
+#include "BLI_listbase.h"
 #include "BLI_math_vector.h"
 #include "BLI_string_ref.hh"
 
@@ -266,7 +267,7 @@ void uiTemplatePalette(uiLayout *layout,
                 0,
                 UI_UNIT_X,
                 UI_UNIT_Y,
-                nullptr);
+                std::nullopt);
   uiDefIconButO(block,
                 UI_BTYPE_BUT,
                 "PALETTE_OT_color_delete",
@@ -276,7 +277,7 @@ void uiTemplatePalette(uiLayout *layout,
                 0,
                 UI_UNIT_X,
                 UI_UNIT_Y,
-                nullptr);
+                std::nullopt);
   if (palette->colors.first != nullptr) {
     but = uiDefIconButO(block,
                         UI_BTYPE_BUT,
@@ -287,7 +288,7 @@ void uiTemplatePalette(uiLayout *layout,
                         0,
                         UI_UNIT_X,
                         UI_UNIT_Y,
-                        nullptr);
+                        std::nullopt);
     UI_but_operator_ptr_ensure(but);
     RNA_enum_set(but->opptr, "type", -1);
 
@@ -300,7 +301,7 @@ void uiTemplatePalette(uiLayout *layout,
                         0,
                         UI_UNIT_X,
                         UI_UNIT_Y,
-                        nullptr);
+                        std::nullopt);
     UI_but_operator_ptr_ensure(but);
     RNA_enum_set(but->opptr, "type", 1);
 

@@ -5797,6 +5797,22 @@ def km_edit_curves(params):
     return keymap
 
 
+# Point cloud edit mode.
+def km_edit_point_cloud(params):
+    items = []
+    keymap = (
+        "Point Cloud",
+        {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+        {"items": items},
+    )
+
+    items.extend([
+        *_template_items_select_actions(params, "point_cloud.select_all"),
+    ])
+
+    return keymap
+
+
 # ------------------------------------------------------------------------------
 # Modal Maps and Gizmos
 
@@ -7931,7 +7947,7 @@ def km_3d_view_tool_paint_grease_pencil_primitive_line(params):
         "3D View Tool: Paint Grease Pencil, Line",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            ("grease_pencil.primitive_line", params.tool_maybe_tweak_event,
+            ("grease_pencil.primitive_line", {"type": 'LEFTMOUSE', "value": 'PRESS'},
                 {"properties": []}),
             ("grease_pencil.primitive_line", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
                 {"properties": []}),
@@ -7965,7 +7981,7 @@ def km_3d_view_tool_paint_grease_pencil_primitive_box(params):
         "3D View Tool: Paint Grease Pencil, Box",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            ("grease_pencil.primitive_box", params.tool_maybe_tweak_event,
+            ("grease_pencil.primitive_box", {"type": 'LEFTMOUSE', "value": 'PRESS'},
              {"properties": []}),
             ("grease_pencil.primitive_box", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
              {"properties": []}),
@@ -7983,7 +7999,7 @@ def km_3d_view_tool_paint_grease_pencil_primitive_circle(params):
         "3D View Tool: Paint Grease Pencil, Circle",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            ("grease_pencil.primitive_circle", params.tool_maybe_tweak_event,
+            ("grease_pencil.primitive_circle", {"type": 'LEFTMOUSE', "value": 'PRESS'},
              {"properties": []}),
             ("grease_pencil.primitive_circle", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
              {"properties": []}),
@@ -8001,7 +8017,7 @@ def km_3d_view_tool_paint_grease_pencil_primitive_arc(params):
         "3D View Tool: Paint Grease Pencil, Arc",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            ("grease_pencil.primitive_arc", params.tool_maybe_tweak_event,
+            ("grease_pencil.primitive_arc", {"type": 'LEFTMOUSE', "value": 'PRESS'},
              {"properties": []}),
             ("grease_pencil.primitive_arc", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
              {"properties": []}),
@@ -8019,7 +8035,7 @@ def km_3d_view_tool_paint_grease_pencil_primitive_curve(params):
         "3D View Tool: Paint Grease Pencil, Curve",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            ("grease_pencil.primitive_curve", params.tool_maybe_tweak_event,
+            ("grease_pencil.primitive_curve", {"type": 'LEFTMOUSE', "value": 'PRESS'},
              {"properties": []}),
             # Lasso select
             ("grease_pencil.select_lasso",
@@ -8352,6 +8368,7 @@ def generate_keymaps(params=None):
         km_edit_font(params),
         km_edit_curve_legacy(params),
         km_edit_curves(params),
+        km_edit_point_cloud(params),
 
         # Modal maps.
         km_eyedropper_modal_map(params),
