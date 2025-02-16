@@ -14,6 +14,7 @@
 #include "BLI_bounds.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_length_parameterize.hh"
+#include "BLI_listbase.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_rotation_legacy.hh"
 #include "BLI_memory_counter.hh"
@@ -364,7 +365,7 @@ VArray<float> CurvesGeometry::radius() const
 }
 MutableSpan<float> CurvesGeometry::radius_for_write()
 {
-  return get_mutable_attribute<float>(*this, AttrDomain::Point, ATTR_RADIUS);
+  return get_mutable_attribute<float>(*this, AttrDomain::Point, ATTR_RADIUS, 0.01f);
 }
 
 Span<int> CurvesGeometry::offsets() const
