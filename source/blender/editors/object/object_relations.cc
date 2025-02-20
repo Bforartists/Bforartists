@@ -1035,8 +1035,8 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 
   /* vertex parenting */
   if (OB_TYPE_SUPPORT_PARVERT(parent->type)) {
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_VERTEX);
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_VERTEX_TRI);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_VERTEX_PARENT, "type", PAR_VERTEX); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_VERTEX_PARENT, "type", PAR_VERTEX_TRI); /*BFA icon*/
   }
 
   UI_popup_menu_end(C, pup);
