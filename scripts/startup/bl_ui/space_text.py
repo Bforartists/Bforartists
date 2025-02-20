@@ -195,7 +195,7 @@ class TEXT_PT_find(Panel):
         row.operator("text.replace", text="Replace All").all = True
 
         # settings
-        layout.use_property_split = True
+        layout.use_property_split = False # bfa - align left
         col = layout.column(heading="Search")
         if not st.text:
             col.active = False
