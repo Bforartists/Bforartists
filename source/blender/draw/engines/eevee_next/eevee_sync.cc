@@ -256,7 +256,7 @@ bool SyncModule::sync_sculpt(Object *ob, ObjectHandle &ob_handle, const ObjectRe
 /** \name Point Cloud
  * \{ */
 
-void SyncModule::sync_point_cloud(Object *ob, ObjectHandle &ob_handle, const ObjectRef &ob_ref)
+void SyncModule::sync_pointcloud(Object *ob, ObjectHandle &ob_handle, const ObjectRef &ob_ref)
 {
   const int material_slot = POINTCLOUD_MATERIAL_NR;
 
@@ -266,14 +266,14 @@ void SyncModule::sync_point_cloud(Object *ob, ObjectHandle &ob_handle, const Obj
       ob_handle.object_key, ob_ref, ob_handle.recalc, res_handle);
 
   Material &material = inst_.materials.material_get(
-      ob, has_motion, material_slot - 1, MAT_GEOM_POINT_CLOUD);
+      ob, has_motion, material_slot - 1, MAT_GEOM_POINTCLOUD);
 
   auto drawcall_add = [&](MaterialPass &matpass) {
     if (matpass.sub_pass == nullptr) {
       return;
     }
     PassMain::Sub &object_pass = matpass.sub_pass->sub("Point Cloud Sub Pass");
-    gpu::Batch *geometry = point_cloud_sub_pass_setup(object_pass, ob, matpass.gpumat);
+    gpu::Batch *geometry = pointcloud_sub_pass_setup(object_pass, ob, matpass.gpumat);
     object_pass.draw(geometry, res_handle);
   };
 
@@ -366,7 +366,7 @@ void SyncModule::sync_volume(Object *ob, ObjectHandle &ob_handle, const ObjectRe
   };
 
   /* Use bounding box tag empty spaces. */
-  gpu::Batch *geom = DRW_cache_cube_get();
+  gpu::Batch *geom = inst_.volume.unit_cube_batch_get();
 
   bool is_rendered = false;
   is_rendered |= drawcall_add(material.volume_occupancy, geom, res_handle);

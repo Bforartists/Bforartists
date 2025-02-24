@@ -1832,19 +1832,19 @@ void StripKeyframeData::slot_data_remove(const slot_handle_t slot_handle)
   this->channelbag_remove(*channelbag);
 }
 
-const FCurve *Channelbag::fcurve_find(const FCurveDescriptor fcurve_descriptor) const
+const FCurve *Channelbag::fcurve_find(const FCurveDescriptor &fcurve_descriptor) const
 {
   return animrig::fcurve_find(this->fcurves(), fcurve_descriptor);
 }
 
-FCurve *Channelbag::fcurve_find(const FCurveDescriptor fcurve_descriptor)
+FCurve *Channelbag::fcurve_find(const FCurveDescriptor &fcurve_descriptor)
 {
   /* Intermediate variable needed to disambiguate const/non-const overloads. */
   Span<FCurve *> fcurves = this->fcurves();
   return animrig::fcurve_find(fcurves, fcurve_descriptor);
 }
 
-FCurve &Channelbag::fcurve_ensure(Main *bmain, const FCurveDescriptor fcurve_descriptor)
+FCurve &Channelbag::fcurve_ensure(Main *bmain, const FCurveDescriptor &fcurve_descriptor)
 {
   if (FCurve *existing_fcurve = this->fcurve_find(fcurve_descriptor)) {
     return *existing_fcurve;
@@ -1852,7 +1852,7 @@ FCurve &Channelbag::fcurve_ensure(Main *bmain, const FCurveDescriptor fcurve_des
   return this->fcurve_create(bmain, fcurve_descriptor);
 }
 
-FCurve *Channelbag::fcurve_create_unique(Main *bmain, FCurveDescriptor fcurve_descriptor)
+FCurve *Channelbag::fcurve_create_unique(Main *bmain, const FCurveDescriptor &fcurve_descriptor)
 {
   if (this->fcurve_find(fcurve_descriptor)) {
     return nullptr;
@@ -1860,7 +1860,7 @@ FCurve *Channelbag::fcurve_create_unique(Main *bmain, FCurveDescriptor fcurve_de
   return &this->fcurve_create(bmain, fcurve_descriptor);
 }
 
-FCurve &Channelbag::fcurve_create(Main *bmain, FCurveDescriptor fcurve_descriptor)
+FCurve &Channelbag::fcurve_create(Main *bmain, const FCurveDescriptor &fcurve_descriptor)
 {
   FCurve *new_fcurve = create_fcurve_for_channel(fcurve_descriptor);
 
@@ -2049,7 +2049,7 @@ static void cyclic_keying_ensure_cycle_range_exists(FCurve &fcurve, const float2
 
 SingleKeyingResult StripKeyframeData::keyframe_insert(Main *bmain,
                                                       const Slot &slot,
-                                                      const FCurveDescriptor fcurve_descriptor,
+                                                      const FCurveDescriptor &fcurve_descriptor,
                                                       const float2 time_value,
                                                       const KeyframeSettings &settings,
                                                       const eInsertKeyFlags insert_key_flags,
@@ -2466,7 +2466,7 @@ Span<const FCurve *> fcurves_for_action_slot(const Action &action, const slot_ha
   return bag->fcurves();
 }
 
-FCurve *fcurve_find_in_action(bAction *act, FCurveDescriptor fcurve_descriptor)
+FCurve *fcurve_find_in_action(bAction *act, const FCurveDescriptor &fcurve_descriptor)
 {
   if (act == nullptr) {
     return nullptr;
@@ -2500,14 +2500,14 @@ FCurve *fcurve_find_in_action(bAction *act, FCurveDescriptor fcurve_descriptor)
   return nullptr;
 }
 
-FCurve *fcurve_find_in_assigned_slot(AnimData &adt, FCurveDescriptor fcurve_descriptor)
+FCurve *fcurve_find_in_assigned_slot(AnimData &adt, const FCurveDescriptor &fcurve_descriptor)
 {
   return fcurve_find_in_action_slot(adt.action, adt.slot_handle, fcurve_descriptor);
 }
 
 FCurve *fcurve_find_in_action_slot(bAction *act,
                                    const slot_handle_t slot_handle,
-                                   FCurveDescriptor fcurve_descriptor)
+                                   const FCurveDescriptor &fcurve_descriptor)
 {
   if (act == nullptr) {
     return nullptr;
@@ -2596,11 +2596,11 @@ Vector<FCurve *> fcurves_in_listbase_filtered(ListBase /* FCurve * */ fcurves,
   return found;
 }
 
-FCurve *action_fcurve_ensure(Main *bmain,
-                             bAction *act,
-                             const char group[],
-                             PointerRNA *ptr,
-                             FCurveDescriptor fcurve_descriptor)
+FCurve *action_fcurve_ensure_ex(Main *bmain,
+                                bAction *act,
+                                const char group[],
+                                PointerRNA *ptr,
+                                const FCurveDescriptor &fcurve_descriptor)
 {
   if (act == nullptr) {
     return nullptr;
@@ -2626,38 +2626,47 @@ FCurve *action_fcurve_ensure(Main *bmain,
    * hold, or if this is even the best place to handle the layered action
    * cases at all, was leading to discussion of larger changes than made sense
    * to tackle at that point. */
-  Action &action = act->wrap();
-
   BLI_assert(ptr != nullptr);
   if (ptr == nullptr || ptr->owner_id == nullptr) {
     return nullptr;
   }
-  ID &animated_id = *ptr->owner_id;
+
+  return &action_fcurve_ensure(bmain, *act, *ptr->owner_id, fcurve_descriptor);
+}
+
+Channelbag &action_channelbag_ensure(bAction &dna_action, ID &animated_id)
+{
+  Action &action = dna_action.wrap();
   BLI_assert(get_action(animated_id) == &action);
-  if (get_action(animated_id) != &action) {
-    return nullptr;
-  }
 
   /* Ensure the id has an assigned slot. */
   Slot *slot = assign_action_ensure_slot_for_keying(action, animated_id);
-  if (!slot) {
-    /* This means the ID type is not animatable. */
-    return nullptr;
-  }
+  /* A nullptr here means the ID type is not animatable. But since the Action is already assigned,
+   * it is certain that the ID is actually animatable. */
+  BLI_assert(slot);
 
   action.layer_keystrip_ensure();
 
   assert_baklava_phase_1_invariants(action);
   StripKeyframeData &strip_data = action.layer(0)->strip(0)->data<StripKeyframeData>(action);
 
-  return &strip_data.channelbag_for_slot_ensure(*slot).fcurve_ensure(bmain, fcurve_descriptor);
+  return strip_data.channelbag_for_slot_ensure(*slot);
+}
+
+FCurve &action_fcurve_ensure(Main *bmain,
+                             bAction &dna_action,
+                             ID &animated_id,
+                             const FCurveDescriptor &fcurve_descriptor)
+{
+  Channelbag &channelbag = action_channelbag_ensure(dna_action, animated_id);
+  return channelbag.fcurve_ensure(bmain, fcurve_descriptor);
 }
 
 FCurve *action_fcurve_ensure_legacy(Main *bmain,
                                     bAction *act,
                                     const char group[],
                                     PointerRNA *ptr,
-                                    FCurveDescriptor fcurve_descriptor)
+                                    const FCurveDescriptor &fcurve_descriptor)
 {
   if (!act) {
     return nullptr;

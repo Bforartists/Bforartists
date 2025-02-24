@@ -33,20 +33,17 @@ class DerivedResources;
 /* Make sure to update the format related static methods in the Result class. */
 enum class ResultType : uint8_t {
   /* The following types are user facing and can be used as inputs and outputs of operations. They
-   * either represent the base type of the result's image or a single value result. The color type
-   * represents an RGBA color. And the vector type represents a generic 4-component vector, which
-   * can encode two 2D vectors, one 3D vector with the last component ignored, or other dimensional
-   * data. */
+   * either represent the base type of the result's image or a single value result. */
   Float,
   Int,
-  Vector,
   Color,
+  Float3,
+  Float4,
 
   /* The following types are for internal use only, not user facing, and can't be used as inputs
    * and outputs of operations. It follows that they needn't be handled in implicit operations like
    * type conversion, shader, or single value reduction operations. */
   Float2,
-  Float3,
   Int2,
 };
 
@@ -181,7 +178,10 @@ class Result {
    * within the given context. */
   Result(Context &context, eGPUTextureFormat format);
 
-  /* Returns the appropriate GPU texture format based on the given result type and precision. */
+  /* Returns the appropriate GPU texture format based on the given result type and precision. A
+   * special case is given to ResultType::Float3, because 3-component textures can't be used as
+   * write targets in shaders, so we need to allocate 4-component textures for them, and ignore the
+   * fourth channel during processing. */
   static eGPUTextureFormat gpu_texture_format(ResultType type, ResultPrecision precision);
 
   /* Returns the GPU texture format that corresponds to the give one, but whose precision is the
@@ -197,12 +197,20 @@ class Result {
   /* Returns the float type of the result given the channels count. */
   static ResultType float_type(const int channels_count);
 
+  /* Returns the CPP type corresponding to the given result type. */
+  static const CPPType &cpp_type(const ResultType type);
+
   /* Implicit conversion to the internal GPU texture. */
   operator GPUTexture *() const;
 
+  /* Returns the CPP type of the result. */
   const CPPType &get_cpp_type() const;
 
-  /* Returns the appropriate texture format based on the result's type and precision. */
+  /* Returns the appropriate texture format based on the result's type and precision. This is
+   * identical to the gpu_texture_format static method. This will match the format of the allocated
+   * texture, with one exception. Results of type ResultType::Float3 that wrap external textures
+   * might hold a 3-component texture as opposed to a 4-component one, which would have been
+   * created by uploading data from CPU. */
   eGPUTextureFormat get_gpu_texture_format() const;
 
   /* Declare the result to be a texture result, allocate a texture of an appropriate type with
@@ -318,10 +326,13 @@ class Result {
    * result, the reference count of the master result is incremented instead. */
   void increment_reference_count(int count = 1);
 
-  /* Decrement the reference count of the result by the given count and free its data if it reaches
-   * zero. The given count should not be more than the current reference count. If this result have
-   * a master result, the master result is released instead. */
-  void release(const int count = 1);
+  /* Decrement the reference count of the result by the given count. If this result have a master
+   * result, the reference count of the master result is decremented instead. */
+  void decrement_reference_count(int count = 1);
+
+  /* Decrement the reference count of the result and free its data if it reaches zero. If this
+   * result have a master result, the master result is released instead. */
+  void release();
 
   /* Frees the result data. If the result is not allocated or wraps external data, then this does
    * nothing. If this result have a master result, the master result is freed instead. */
@@ -461,12 +472,12 @@ class Result {
 /* Inline Methods.
  */
 
-inline const Domain &Result::domain() const
+BLI_INLINE_METHOD const Domain &Result::domain() const
 {
   return domain_;
 }
 
-inline int64_t Result::channels_count() const
+BLI_INLINE_METHOD int64_t Result::channels_count() const
 {
   switch (type_) {
     case ResultType::Float:
@@ -477,38 +488,39 @@ inline int64_t Result::channels_count() const
       return 2;
     case ResultType::Float3:
       return 3;
-    case ResultType::Vector:
     case ResultType::Color:
+    case ResultType::Float4:
       return 4;
   }
   return 4;
 }
 
-inline GPUTexture *Result::gpu_texture() const
+BLI_INLINE_METHOD GPUTexture *Result::gpu_texture() const
 {
   BLI_assert(storage_type_ == ResultStorageType::GPU);
   return gpu_texture_;
 }
 
-inline GMutableSpan Result::cpu_data() const
+BLI_INLINE_METHOD GMutableSpan Result::cpu_data() const
 {
   BLI_assert(storage_type_ == ResultStorageType::CPU);
   return cpu_data_;
 }
 
-template<typename T> inline const T &Result::get_single_value() const
+template<typename T> BLI_INLINE_METHOD const T &Result::get_single_value() const
 {
   BLI_assert(this->is_single_value());
 
   return std::get<T>(single_value_);
 }
 
-template<typename T> inline T &Result::get_single_value()
+template<typename T> BLI_INLINE_METHOD T &Result::get_single_value()
 {
   return const_cast<T &>(std::as_const(*this).get_single_value<T>());
 }
 
-template<typename T> inline T Result::get_single_value_default(const T &default_value) const
+template<typename T>
+BLI_INLINE_METHOD T Result::get_single_value_default(const T &default_value) const
 {
   if (this->is_single_value()) {
     return this->get_single_value<T>();
@@ -516,7 +528,7 @@ template<typename T> inline T Result::get_single_value_default(const T &default_
   return default_value;
 }
 
-template<typename T> inline void Result::set_single_value(const T &value)
+template<typename T> BLI_INLINE_METHOD void Result::set_single_value(const T &value)
 {
   BLI_assert(this->is_allocated());
   BLI_assert(this->is_single_value());
@@ -538,7 +550,15 @@ template<typename T> inline void Result::set_single_value(const T &value)
           GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, &value);
         }
         else {
-          GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, value);
+          if constexpr (std::is_same_v<T, float3>) {
+            /* Float3 results are stored in 4-component textures due to hardware limitations. So
+             * pad the value with a zero before updating. */
+            const float4 vector_value = float4(value, 0.0f);
+            GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, vector_value);
+          }
+          else {
+            GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, value);
+          }
         }
       }
       break;
@@ -548,7 +568,8 @@ template<typename T> inline void Result::set_single_value(const T &value)
   }
 }
 
-template<typename T, bool CouldBeSingleValue> inline T Result::load_pixel(const int2 &texel) const
+template<typename T, bool CouldBeSingleValue>
+BLI_INLINE_METHOD T Result::load_pixel(const int2 &texel) const
 {
   if constexpr (CouldBeSingleValue) {
     if (is_single_value_) {
@@ -563,7 +584,7 @@ template<typename T, bool CouldBeSingleValue> inline T Result::load_pixel(const 
 }
 
 template<typename T, bool CouldBeSingleValue>
-inline T Result::load_pixel_extended(const int2 &texel) const
+BLI_INLINE_METHOD T Result::load_pixel_extended(const int2 &texel) const
 {
   if constexpr (CouldBeSingleValue) {
     if (is_single_value_) {
@@ -579,7 +600,7 @@ inline T Result::load_pixel_extended(const int2 &texel) const
 }
 
 template<typename T, bool CouldBeSingleValue>
-inline T Result::load_pixel_fallback(const int2 &texel, const T &fallback) const
+BLI_INLINE_METHOD T Result::load_pixel_fallback(const int2 &texel, const T &fallback) const
 {
   if constexpr (CouldBeSingleValue) {
     if (is_single_value_) {
@@ -598,12 +619,12 @@ inline T Result::load_pixel_fallback(const int2 &texel, const T &fallback) const
 }
 
 template<typename T, bool CouldBeSingleValue>
-inline T Result::load_pixel_zero(const int2 &texel) const
+BLI_INLINE_METHOD T Result::load_pixel_zero(const int2 &texel) const
 {
   return this->load_pixel_fallback<T, CouldBeSingleValue>(texel, T(0));
 }
 
-inline float4 Result::load_pixel_generic_type(const int2 &texel) const
+BLI_INLINE_METHOD float4 Result::load_pixel_generic_type(const int2 &texel) const
 {
   float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
   if (is_single_value_) {
@@ -615,17 +636,19 @@ inline float4 Result::load_pixel_generic_type(const int2 &texel) const
   return pixel_value;
 }
 
-template<typename T> inline void Result::store_pixel(const int2 &texel, const T &pixel_value)
+template<typename T>
+BLI_INLINE_METHOD void Result::store_pixel(const int2 &texel, const T &pixel_value)
 {
   this->cpu_data().typed<T>()[this->get_pixel_index(texel)] = pixel_value;
 }
 
-inline void Result::store_pixel_generic_type(const int2 &texel, const float4 &pixel_value)
+BLI_INLINE_METHOD void Result::store_pixel_generic_type(const int2 &texel,
+                                                        const float4 &pixel_value)
 {
   this->get_cpp_type().copy_assign(pixel_value, this->cpu_data()[this->get_pixel_index(texel)]);
 }
 
-inline float4 Result::sample_nearest_zero(const float2 &coordinates) const
+BLI_INLINE_METHOD float4 Result::sample_nearest_zero(const float2 &coordinates) const
 {
   float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
   if (is_single_value_) {
@@ -647,9 +670,9 @@ inline float4 Result::sample_nearest_zero(const float2 &coordinates) const
   return pixel_value;
 }
 
-inline float4 Result::sample_nearest_wrap(const float2 &coordinates,
-                                          bool wrap_x,
-                                          bool wrap_y) const
+BLI_INLINE_METHOD float4 Result::sample_nearest_wrap(const float2 &coordinates,
+                                                     bool wrap_x,
+                                                     bool wrap_y) const
 {
   float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
   if (is_single_value_) {
@@ -674,9 +697,9 @@ inline float4 Result::sample_nearest_wrap(const float2 &coordinates,
   return pixel_value;
 }
 
-inline float4 Result::sample_bilinear_wrap(const float2 &coordinates,
-                                           bool wrap_x,
-                                           bool wrap_y) const
+BLI_INLINE_METHOD float4 Result::sample_bilinear_wrap(const float2 &coordinates,
+                                                      bool wrap_x,
+                                                      bool wrap_y) const
 {
   float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
   if (is_single_value_) {
@@ -701,7 +724,9 @@ inline float4 Result::sample_bilinear_wrap(const float2 &coordinates,
   return pixel_value;
 }
 
-inline float4 Result::sample_cubic_wrap(const float2 &coordinates, bool wrap_x, bool wrap_y) const
+BLI_INLINE_METHOD float4 Result::sample_cubic_wrap(const float2 &coordinates,
+                                                   bool wrap_x,
+                                                   bool wrap_y) const
 {
   float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
   if (is_single_value_) {
@@ -726,7 +751,7 @@ inline float4 Result::sample_cubic_wrap(const float2 &coordinates, bool wrap_x, 
   return pixel_value;
 }
 
-inline float4 Result::sample_bilinear_zero(const float2 &coordinates) const
+BLI_INLINE_METHOD float4 Result::sample_bilinear_zero(const float2 &coordinates) const
 {
   float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
   if (is_single_value_) {
@@ -748,7 +773,7 @@ inline float4 Result::sample_bilinear_zero(const float2 &coordinates) const
   return pixel_value;
 }
 
-inline float4 Result::sample_nearest_extended(const float2 &coordinates) const
+BLI_INLINE_METHOD float4 Result::sample_nearest_extended(const float2 &coordinates) const
 {
   float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
   if (is_single_value_) {
@@ -770,7 +795,7 @@ inline float4 Result::sample_nearest_extended(const float2 &coordinates) const
   return pixel_value;
 }
 
-inline float4 Result::sample_bilinear_extended(const float2 &coordinates) const
+BLI_INLINE_METHOD float4 Result::sample_bilinear_extended(const float2 &coordinates) const
 {
   float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
   if (is_single_value_) {
@@ -803,9 +828,9 @@ static void sample_ewa_extended_read_callback(void *userdata, int x, int y, floa
   copy_v4_v4(result, sampled_result);
 }
 
-inline float4 Result::sample_ewa_extended(const float2 &coordinates,
-                                          const float2 &x_gradient,
-                                          const float2 &y_gradient) const
+BLI_INLINE_METHOD float4 Result::sample_ewa_extended(const float2 &coordinates,
+                                                     const float2 &x_gradient,
+                                                     const float2 &y_gradient) const
 {
   BLI_assert(type_ == ResultType::Color);
 
@@ -840,9 +865,9 @@ static void sample_ewa_zero_read_callback(void *userdata, int x, int y, float re
   copy_v4_v4(result, sampled_result);
 }
 
-inline float4 Result::sample_ewa_zero(const float2 &coordinates,
-                                      const float2 &x_gradient,
-                                      const float2 &y_gradient) const
+BLI_INLINE_METHOD float4 Result::sample_ewa_zero(const float2 &coordinates,
+                                                 const float2 &x_gradient,
+                                                 const float2 &y_gradient) const
 {
   BLI_assert(type_ == ResultType::Color);
 
@@ -866,7 +891,7 @@ inline float4 Result::sample_ewa_zero(const float2 &coordinates,
   return pixel_value;
 }
 
-inline int64_t Result::get_pixel_index(const int2 &texel) const
+BLI_INLINE_METHOD int64_t Result::get_pixel_index(const int2 &texel) const
 {
   BLI_assert(!is_single_value_);
   BLI_assert(this->is_allocated());
