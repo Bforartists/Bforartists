@@ -439,7 +439,7 @@ typedef struct ScrArea {
    */
   char butspacetype;
   short butspacetype_subtype;
-  short butspacetype_subtype_prev;
+  char _pad2[2];
 
   /** Size. */
   short winx, winy;
@@ -448,7 +448,7 @@ typedef struct ScrArea {
   char headertype DNA_DEPRECATED;
   /** Private, for spacetype refresh callback. */
   char do_refresh;
-  int flag;
+  int flag; // BFA short to int
   /**
    * Index of last used region of 'RGN_TYPE_WINDOW'
    * runtime variable, updated by executing operators.

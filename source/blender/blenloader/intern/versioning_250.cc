@@ -1027,7 +1027,7 @@ void blo_do_versions_250(FileData *fd, Library * /*lib*/, Main *bmain)
         bNode *node = static_cast<bNode *>(ntree->nodes.first);
 
         while (node) {
-          blender::bke::node_unique_name(ntree, node);
+          blender::bke::node_unique_name(*ntree, *node);
           node = node->next;
         }
 
@@ -1111,7 +1111,7 @@ void blo_do_versions_250(FileData *fd, Library * /*lib*/, Main *bmain)
 
     if (bmain->versionfile == 250 && bmain->subversionfile > 1) {
       LISTBASE_FOREACH (Mesh *, me, &bmain->meshes) {
-        CustomData_free_layer_active(&me->fdata_legacy, CD_MDISPS, me->totface_legacy);
+        CustomData_free_layer_active(&me->fdata_legacy, CD_MDISPS);
       }
 
       LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
@@ -1859,7 +1859,7 @@ void blo_do_versions_250(FileData *fd, Library * /*lib*/, Main *bmain)
           }
         }
         LISTBASE_FOREACH (bNodeSocket *, sock, &node->outputs) {
-          if (blender::bke::node_count_socket_links(ntree, sock) == 0 &&
+          if (blender::bke::node_count_socket_links(*ntree, *sock) == 0 &&
               !((sock->flag & (SOCK_HIDDEN | SOCK_UNAVAIL)) != 0))
           {
             bNodeSocket *gsock = do_versions_node_group_add_socket_2_56_2(

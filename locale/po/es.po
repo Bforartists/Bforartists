@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.4.0 Beta (b'aad0bd21487d')\n"
+"Project-Id-Version: Blender 4.4.0 Beta (b'63c460d93d55')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-10 15:22+0000\n"
-"PO-Revision-Date: 2025-02-04 16:56+0000\n"
+"POT-Creation-Date: 2025-02-24 09:56+0000\n"
+"PO-Revision-Date: 2025-02-21 01:56+0000\n"
 "Last-Translator: Gabriel Gazzán <gabcorreo@gmail.com>\n"
 "Language-Team: Spanish <https://translate.blender.org/projects/blender-ui/ui/es/>\n"
 "Language: es\n"
@@ -87,6 +87,10 @@ msgid "Slot"
 msgstr "Contenedor"
 
 
+msgid "The Slot that the Channelbag's animation data is for"
+msgstr "El contenedor al cual está destinada la animación de la bolsa de canales"
+
+
 msgid "Collection of F-Curves for a specific action slot, on a specific strip"
 msgstr "Colección de curvas-f para un contenedor específico de una acción, en un clip específico"
 
@@ -105,10 +109,6 @@ msgstr "Para cada contenedor de una acción, una lista de los canales de animaci
 
 msgid "Action F-Curves"
 msgstr "Curvas-f de la acción"
-
-
-msgid "Collection of action F-Curves"
-msgstr "Colección con las curvas-f de la acción"
 
 
 msgid "Action Group"
@@ -4778,6 +4778,14 @@ msgstr "Tiene persistencia"
 
 msgid "Has Pinch Factor"
 msgstr "Tiene factor de pellizcado"
+
+
+msgid "Has Plane Depth"
+msgstr "Tiene profundidad desde el plano"
+
+
+msgid "Has Plane Height"
+msgstr "Tiene altura desde el plano"
 
 
 msgid "Has Plane Offset"
@@ -11655,7 +11663,7 @@ msgstr "Ruta de salida"
 
 
 msgid "Directory to save the textures"
-msgstr "Directorio donde guardar las texturas"
+msgstr "Carpeta donde guardar las texturas"
 
 
 msgid "Resolution"
@@ -13999,7 +14007,7 @@ msgstr "Ruta relativa"
 
 
 msgid "Path relative to the directory currently displayed in the File Browser (includes the file name)"
-msgstr "Ruta relativa al directorio actualmente mostrado en el Explorador de archivos (incluye el nombre del archivo)"
+msgstr "Ruta relativa a la carpeta actualmente mostrada en el Explorador de archivos (incluye el nombre del archivo)"
 
 
 msgid "File Select ID Filter"
@@ -14063,11 +14071,11 @@ msgstr "Muestra materiales, árboles de nodos, texturas y estilos de línea de F
 
 
 msgid "Directory"
-msgstr "Directorio"
+msgstr "Carpeta"
 
 
 msgid "Directory displayed in the file browser"
-msgstr "Directorio mostrado en el explorador de archivos"
+msgstr "Carpeta mostrada en el explorador de archivos"
 
 
 msgid "Display Size"
@@ -14167,11 +14175,11 @@ msgstr "Recursión"
 
 
 msgid "Numbers of dirtree levels to show simultaneously"
-msgstr "Cantidad de niveles del árbol de directorios a mostrar en forma simultanea"
+msgstr "Cantidad de niveles del árbol de carpetas a mostrar en forma simultanea"
 
 
 msgid "Only list current directory's content, with no recursion"
-msgstr "Listar sólo el contenido del directorio actual, sin recursividad"
+msgstr "Listar sólo el contenido de la carpeta actual, sin recursividad"
 
 
 msgid "Blend File"
@@ -14187,7 +14195,7 @@ msgstr "Un nivel"
 
 
 msgid "List all sub-directories' content, one level of recursion"
-msgstr "Listar el contenido de todos los subdirectorios, con 1 nivel de recursividad"
+msgstr "Listar el contenido de todas las sub carpetas, con 1 nivel de recursividad"
 
 
 msgid "Two Levels"
@@ -14195,7 +14203,7 @@ msgstr "Dos niveles"
 
 
 msgid "List all sub-directories' content, two levels of recursion"
-msgstr "Listar el contenido de todos los subdirectorios, con 2 niveles de recursividad"
+msgstr "Listar el contenido de todas las sub carpetas, con 2 niveles de recursividad"
 
 
 msgid "Three Levels"
@@ -14203,7 +14211,7 @@ msgstr "Tres niveles"
 
 
 msgid "List all sub-directories' content, three levels of recursion"
-msgstr "Listar el contenido de todos los subdirectorios, con 3 niveles de recursividad"
+msgstr "Listar el contenido de todas las sub carpetas, con 3 niveles de recursividad"
 
 
 msgid "File Modification Date"
@@ -14571,11 +14579,11 @@ msgstr "Formato de archivo Raw (.raw)"
 
 
 msgid "Cache directory"
-msgstr "Directorio del caché"
+msgstr "Carpeta del caché"
 
 
 msgid "Directory that contains fluid cache files"
-msgstr "Directorio que contendrá los archivos de caché de fluidos"
+msgstr "Carpeta que contendrá los archivos de caché de fluidos"
 
 
 msgid "End"
@@ -18099,10 +18107,6 @@ msgid "The combined frame range of all F-Curves within this action"
 msgstr "El rango combinado de fotogramas de todas las curvas-f en esta acción"
 
 
-msgid "The individual F-Curves that make up the action"
-msgstr "Las curvas-f individuales que conforman la acción"
-
-
 msgid "The end frame of the manually set intended playback range"
 msgstr "El fotograma final del rango de fotogramas de reproducción deseado, fijado manualmente"
 
@@ -18123,17 +18127,9 @@ msgid "Groups"
 msgstr "Grupos"
 
 
-msgid "Convenient groupings of F-Curves"
-msgstr "Agrupaciones convenientes de curvas-f"
-
-
 msgctxt "ID"
 msgid "ID Root Type"
 msgstr "Tipo de ID base"
-
-
-msgid "Type of ID block that action can be used on - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING"
-msgstr "Tipo de bloque de ID en que puede ser usada la acción - NO CAMBIAR A MENOS QUE SE SEPA LO QUE SE ESTÁ HACIENDO"
 
 
 msgid "Is Layered Action"
@@ -18146,10 +18142,6 @@ msgstr "Indica si esta es una acción con capas. Una acción vacía será consid
 
 msgid "Is Legacy Action"
 msgstr "Es acción antigua"
-
-
-msgid "Return whether this is a legacy Action. Legacy Actions have no layers or slots. An empty Action considered as both a 'legacy' and a 'layered' Action."
-msgstr "Indica si esta es una acción antigua. Las acciones antiguas no contienen capas ni contenedores. Una acción vacía será considerada tanto 'con capas' como 'sin capas'."
 
 
 msgid "Is Empty"
@@ -18808,26 +18800,6 @@ msgstr "Desplazamiento del origen del área limítrofe, en relación al radio de
 
 msgid "Brush's capabilities"
 msgstr "Capacidades del pincel"
-
-
-msgid "Clone Alpha"
-msgstr "Alfa de clonado"
-
-
-msgid "Opacity of clone image display"
-msgstr "Opacidad de visualización de imagen de clonado"
-
-
-msgid "Clone Image"
-msgstr "Imagen de clonado"
-
-
-msgid "Image for clone brushes"
-msgstr "Imagen para los pinceles de clonado"
-
-
-msgid "Clone Offset"
-msgstr "Desplazamiento de clonado"
 
 
 msgid "Soft Body Plasticity"
@@ -19618,6 +19590,34 @@ msgid "Active paint curve"
 msgstr "Curva de pintura activa"
 
 
+msgid "The maximum distance below the plane for affected vertices. Increasing the depth affects vertices farther below the plane."
+msgstr "La distancia máxima para afectar vértices, por debajo del plano. Aumentar la profundidad permitirá afectar vértices que se encuentren a mayor profundidad con respecto al plano."
+
+
+msgid "The maximum distance above the plane for affected vertices. Increasing the height affects vertices farther above the plane."
+msgstr "La distancia máxima para afectar vértices, por encima del plano. Aumentar la altura permitirá afectar vértices que se encuentren a mayor altura con respecto al plano."
+
+
+msgid "Inversion Mode"
+msgstr "Modo de inversión"
+
+
+msgid "Invert Displacement"
+msgstr "Invertir desplazamiento"
+
+
+msgid "Displace the vertices away from the plane."
+msgstr "Desplazará los vértices que se encuentren alejados del plano."
+
+
+msgid "Swap Height and Depth"
+msgstr "Intercambiar altura y profundidad"
+
+
+msgid "Swap the roles of Height and Depth."
+msgstr "Intercambiar los roles de las opciones Altura y Profundidad."
+
+
 msgid "Plane Offset"
 msgstr "Desplazar plano"
 
@@ -19792,6 +19792,11 @@ msgstr "Raspar"
 
 
 msgctxt "Brush"
+msgid "Plane"
+msgstr "Plano"
+
+
+msgctxt "Brush"
 msgid "Multi-plane Scrape"
 msgstr "Raspar (multiplano)"
 
@@ -19936,6 +19941,22 @@ msgstr "Modifica la malla completa usando una deformación elástica"
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
 msgstr "Espaciado entre las marcas del pincel, como porcentaje de su diámetro"
+
+
+msgid "Stabilize Normal"
+msgstr "Estabilizar normal"
+
+
+msgid "Stabilize the orientation of the brush plane."
+msgstr "Estabiliza la orientación del plano del pincel."
+
+
+msgid "Stabilize Plane"
+msgstr "Estabilizar plano"
+
+
+msgid "Stabilize the center of the brush plane."
+msgstr "Estabiliza el centro del plano del pincel."
 
 
 msgid "Stencil Dimensions"
@@ -24920,11 +24941,11 @@ msgstr "Usar un reemplazo de previsualización y/o un identificador de código d
 
 
 msgid "Proxy Custom Directory"
-msgstr "Directorio personalizado de reemplazos"
+msgstr "Carpeta personalizada de reemplazos"
 
 
 msgid "Create proxy images in a custom directory (default is movie location)"
-msgstr "Crea las imágenes de reemplazo en un directorio personalizado (el directorio predefinido es el de películas)"
+msgstr "Crea las imágenes de reemplazo en una carpeta personalizada (la carpeta predefinida es la de películas)"
 
 
 msgid "Node tree consisting of linked nodes used for shading, textures and compositing"
@@ -30306,7 +30327,7 @@ msgstr "Guarda canales de luminancia-crominancia-crominancia en vez de colores R
 
 
 msgid "When rendering animations, save JPG preview images in same directory"
-msgstr "Al procesar animaciones, guardar imágenes de previsualización JPEG en el mismo directorio"
+msgstr "Al procesar animaciones, guardar imágenes de previsualización JPEG en la misma carpeta"
 
 
 msgid "Format of multiview media"
@@ -34281,68 +34302,12 @@ msgid "Editor menu containing buttons"
 msgstr "Menú del editor que contiene botones"
 
 
-msgid "Show/Hide"
-msgstr "Mostrar / Ocultar"
-
-
-msgid "Clean Up"
-msgstr "Limpiar"
-
-
-msgid "Special Characters"
-msgstr "Caracteres especiales"
-
-
-msgid "Kerning"
-msgstr "Espaciado"
-
-
-msgid "Text"
-msgstr "Texto"
-
-
-msgid "Metaball"
-msgstr "Metabola"
-
-
-msgid "Names"
-msgstr "Nombres"
-
-
-msgid "Bone Roll"
-msgstr "Giro de huesos"
-
-
-msgid "Pivot Point"
-msgstr "Punto de pivote"
+msgid "Mirror"
+msgstr "Simetrizar"
 
 
 msgid "Snap"
 msgstr "Adherir"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Decaimiento de edición proporcional"
-
-
-msgid "Mask Edit"
-msgstr "Edición de máscara"
-
-
-msgid "Automasking"
-msgstr "Autoenmascarar"
-
-
-msgid "Face Sets Edit"
-msgstr "Edición de conjuntos de caras"
-
-
-msgid "Vertex Group Locks"
-msgstr "Bloqueos de grupo de vértices"
-
-
-msgid "Mirror"
-msgstr "Simetrizar"
 
 
 msgid "UV Mapping"
@@ -34397,6 +34362,10 @@ msgid "Assign Material"
 msgstr "Asignar material"
 
 
+msgid "Metaball"
+msgstr "Metabola"
+
+
 msgid "Light"
 msgstr "Luz"
 
@@ -34429,6 +34398,14 @@ msgid "Quick Effects"
 msgstr "Efectos rápidos"
 
 
+msgid "Show/Hide"
+msgstr "Mostrar / Ocultar"
+
+
+msgid "Clean Up"
+msgstr "Limpiar"
+
+
 msgid "Asset"
 msgstr "Recurso"
 
@@ -34447,6 +34424,10 @@ msgstr "Vincular / Transferir datos"
 
 msgid "Hooks"
 msgstr "Asignar gancho"
+
+
+msgid "Vertex Group Locks"
+msgstr "Bloqueos de grupo de vértices"
 
 
 msgid "Trim/Add"
@@ -34481,6 +34462,10 @@ msgid "Bone Collections"
 msgstr "Colecciones de huesos"
 
 
+msgid "Names"
+msgstr "Nombres"
+
+
 msgid "Toggle Bone Options"
 msgstr "Alternar opciones de huesos"
 
@@ -34511,6 +34496,42 @@ msgstr "Definir intensidad de caras"
 
 msgid "Merge"
 msgstr "Fusionar"
+
+
+msgid "Special Characters"
+msgstr "Caracteres especiales"
+
+
+msgid "Kerning"
+msgstr "Espaciado"
+
+
+msgid "Text"
+msgstr "Texto"
+
+
+msgid "Bone Roll"
+msgstr "Giro de huesos"
+
+
+msgid "Pivot Point"
+msgstr "Punto de pivote"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Decaimiento de edición proporcional"
+
+
+msgid "Mask Edit"
+msgstr "Edición de máscara"
+
+
+msgid "Automasking"
+msgstr "Autoenmascarar"
+
+
+msgid "Face Sets Edit"
+msgstr "Edición de conjuntos de caras"
 
 
 msgid "Keyframe Insert Pie"
@@ -35135,6 +35156,10 @@ msgstr "Vacío"
 msgctxt "Constraint"
 msgid "Track"
 msgstr "Rastreo"
+
+
+msgid "Modify Pose Asset"
+msgstr "Modificar recurso de pose"
 
 
 msgid "Rigify"
@@ -37546,7 +37571,7 @@ msgstr "'Ancho' de los rayos (especialmente útil al trazar rayos en búsqueda d
 
 
 msgid "Edge Data"
-msgstr "Bordes"
+msgstr "Datos de bordes"
 
 
 msgid "Enable edge data transfer"
@@ -37554,7 +37579,7 @@ msgstr "Habilita la transferencia de datos de bordes"
 
 
 msgid "Face Corner Data"
-msgstr "Esquinas de caras"
+msgstr "Datos de esquinas de caras"
 
 
 msgid "Enable face corner data transfer"
@@ -37582,7 +37607,7 @@ msgstr "Habilita la transferencia de datos de caras"
 
 
 msgid "Vertex Data"
-msgstr "Vértices"
+msgstr "Datos de vértices"
 
 
 msgid "Enable vertex data transfer"
@@ -40462,7 +40487,7 @@ msgstr "Modificador Nodos"
 
 
 msgid "Simulation Bake Directory"
-msgstr "Directorio de capturas de simulación"
+msgstr "Carpeta de capturas de simulación"
 
 
 msgid "Location on disk where the bake data is stored"
@@ -40486,7 +40511,7 @@ msgstr "Empaca los datos capturados, incorporándolos al archivo .blend"
 
 
 msgid "Store the baked data in a directory on disk"
-msgstr "Almacena los datos capturados en un directorio en el disco"
+msgstr "Almacena los datos capturados en una carpeta en el disco"
 
 
 msgid "Node Group"
@@ -45623,7 +45648,7 @@ msgstr "Sombra"
 
 
 msgid "Flip an image along a defined axis"
-msgstr "Permite invertir una imagen en un eje específico"
+msgstr "Permite voltear una imagen en un eje específico"
 
 
 msgid "Flip X"
@@ -49188,6 +49213,14 @@ msgstr "Remuestrear curva"
 
 msgid "Generate a poly spline for each input spline"
 msgstr "Genera una curva poligonal por cada curva de entrada"
+
+
+msgid "Keep Last Segment"
+msgstr "Mantener último segmento"
+
+
+msgid "Don't collapse a curves to single points if they are shorter than the given length. The collapsing behavior exists for compatibility reasons."
+msgstr "No colapsar las curvas en un único punto individual, cuando sean más cortas que la longitud indicada. El comportamiento de colapso aún existe únicamente por razones de compatibilidad."
 
 
 msgid "How to specify the amount of samples"
@@ -54809,7 +54842,7 @@ msgstr "Instalar complemento"
 
 
 msgid "Scan add-on directories for new modules"
-msgstr "Permite comprobar si hay nuevos módulos en los directorios de complementos"
+msgstr "Permite comprobar si hay nuevos módulos en las carpetas de complementos"
 
 
 msgctxt "Operator"
@@ -54927,12 +54960,12 @@ msgstr "Restablecer mapa de teclado"
 
 msgctxt "Operator"
 msgid "Add Python Script Directory"
-msgstr "Agregar directorio de scripts Python"
+msgstr "Agregar carpeta de scripts Python"
 
 
 msgctxt "Operator"
 msgid "Remove Python Script Directory"
-msgstr "Eliminar directorio de scripts Python"
+msgstr "Eliminar carpeta de scripts Python"
 
 
 msgid "Copy Studio Light settings to the Studio Light editor"
@@ -58032,7 +58065,7 @@ msgstr "de +X a -X"
 
 
 msgid "Set this pose Action as active Action on the active Object"
-msgstr "Define a esta acción de pose como la activa para el objeto activo"
+msgstr "Establecer esta acción de la pose como la activa para el objeto activo"
 
 
 msgctxt "Operator"
@@ -58572,11 +58605,11 @@ msgstr "Aceptar"
 
 
 msgid "Open a directory browser, hold Shift to open the file, Alt to browse containing directory"
-msgstr "Abre un explorador de directorios, mantener Mayúsculas presionada para abrir el archivo, Alt para explorar el directorio contenedor"
+msgstr "Abre un explorador de carpetas, mantener Mayúsculas presionada para abrir el archivo, Alt para explorar la carpeta contenedora"
 
 
 msgid "Directory of the file"
-msgstr "Directorio del archivo"
+msgstr "Carpeta del archivo"
 
 
 msgid "Select the file relative to the blend file"
@@ -58584,7 +58617,7 @@ msgstr "Seleccionar el archivo, en relación al archivo .blend"
 
 
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
-msgstr "Abre un explorador de archivos, mantener Mayúsculas presionada para abrir el archivo, Alt para explorar el directorio contenedor"
+msgstr "Abre un explorador de archivos, mantener Mayúsculas presionada para abrir el archivo, Alt para explorar la carpeta contenedora"
 
 
 msgctxt "Operator"
@@ -61697,7 +61730,7 @@ msgstr "Método usado para referenciar las rutas de acceso"
 
 
 msgid "Use relative paths with subdirectories only"
-msgstr "Usar rutas relativas sólo con subdirectorios"
+msgstr "Usar rutas relativas sólo con sub carpetas"
 
 
 msgid "Always write absolute paths"
@@ -61725,7 +61758,7 @@ msgstr "Dejar sólo el nombre del archivo"
 
 
 msgid "Copy the file to the destination path (or subdirectory)"
-msgstr "Copiar el archivo a la ruta (o subdirectorio) destino"
+msgstr "Copiar el archivo a la ruta de destino (o una sub carpeta)"
 
 
 msgid "Primary Bone Axis"
@@ -61769,11 +61802,11 @@ msgstr "Sólo guardar huesos deformantes (y no deformantes que tengan subordinad
 
 
 msgid "Batch Own Dir"
-msgstr "Directorio propio"
+msgstr "Carpeta propia"
 
 
 msgid "Create a dir for each exported file"
-msgstr "Crear un directorio para cada archivo exportado"
+msgstr "Crear una carpeta para cada archivo exportado"
 
 
 msgid "Custom Properties"
@@ -62765,7 +62798,7 @@ msgstr "ID de paquete"
 
 
 msgid "Repo Directory"
-msgstr "Directorio del repositorio"
+msgstr "Carpeta del repositorio"
 
 
 msgid "Repo Index"
@@ -62823,7 +62856,7 @@ msgstr "Agregar marcador"
 
 
 msgid "Add a bookmark for the selected/active directory"
-msgstr "Agrega un marcador para el directorio seleccionado o activo"
+msgstr "Agrega un marcador para la carpeta seleccionada o activa"
 
 
 msgctxt "Operator"
@@ -62885,15 +62918,15 @@ msgstr "Mueve los archivos seleccionados a la papelera"
 
 msgctxt "Operator"
 msgid "Create New Directory"
-msgstr "Crear nuevo directorio"
+msgstr "Crear nueva carpeta"
 
 
 msgid "Create a new directory"
-msgstr "Crear un nuevo directorio"
+msgstr "Crea una nueva carpeta"
 
 
 msgid "Name of new directory"
-msgstr "Nombre del nuevo directorio"
+msgstr "Nombre de la nueva carpeta"
 
 
 msgid "Open"
@@ -62901,16 +62934,16 @@ msgstr "Abrir"
 
 
 msgid "Open new directory"
-msgstr "Abrir un nuevo directorio"
+msgstr "Abre una nueva carpeta"
 
 
 msgctxt "Operator"
 msgid "Edit Directory Path"
-msgstr "Editar ruta de directorio"
+msgstr "Editar ruta de carpeta"
 
 
 msgid "Start editing directory field"
-msgstr "Editar el campo del directorio"
+msgstr "Editar el campo de la carpeta"
 
 
 msgctxt "Operator"
@@ -63222,7 +63255,7 @@ msgstr "No cambiar la selección si el elemento bajo el puntero ya se encuentra 
 
 
 msgid "Open a directory when selecting it"
-msgstr "Abrir un directorio al seleccionarlo"
+msgstr "Abrir una carpeta al seleccionarlo"
 
 
 msgid "Pass Through"
@@ -63244,11 +63277,11 @@ msgstr "Selecciona o deselecciona todos los archivos"
 
 msgctxt "Operator"
 msgid "Select Directory"
-msgstr "Seleccionar directorio"
+msgstr "Seleccionar carpeta"
 
 
 msgid "Select a bookmarked directory"
-msgstr "Seleccionar un directorio marcado"
+msgstr "Seleccionar una carpeta marcada"
 
 
 msgid "Activate/select the file(s) contained in the border"
@@ -63312,11 +63345,11 @@ msgstr "Cómo desempacar"
 
 
 msgid "Use files in current directory (create when necessary)"
-msgstr "Usar archivos en el directorio actual (crear cuando sea necesario)"
+msgstr "Usar archivos en la carpeta actual (crear cuando sea necesario)"
 
 
 msgid "Write files to current directory (overwrite existing files)"
-msgstr "Guardar archivos en el directorio actual (sobrescribir existentes)"
+msgstr "Guardar archivos en la carpeta actual (sobrescribir existentes)"
 
 
 msgid "Use files in original location (create when necessary)"
@@ -63353,11 +63386,11 @@ msgstr "Tipo de identificador del bloque de ID"
 
 
 msgid "Use file from current directory (create when necessary)"
-msgstr "Usa el archivo del directorio actual (lo crea cuando sea necesario)"
+msgstr "Usa el archivo de la carpeta actual (lo crea cuando sea necesario)"
 
 
 msgid "Write file to current directory (overwrite existing file)"
-msgstr "Guarda el archivo en el directorio actual (sobrescribiendo archivos existentes)"
+msgstr "Guarda el archivo en la carpeta actual (sobrescribiendo archivos existentes)"
 
 
 msgid "Use file in original location (create when necessary)"
@@ -65126,6 +65159,15 @@ msgstr "Borra los trazos o puntos seleccionados"
 
 
 msgctxt "Operator"
+msgid "Delete Breakdown Frames"
+msgstr "Borrar fotogramas intermedios"
+
+
+msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
+msgstr "Borra los fotogramas intermedios generados al interpolar entre dos fotogramas de Grease Pencil"
+
+
+msgctxt "Operator"
 msgid "Delete Frame"
 msgstr "Borrar fotograma"
 
@@ -65869,6 +65911,14 @@ msgstr "Pegar detrás"
 
 msgid "Add pasted strokes behind all strokes"
 msgstr "Coloca los trazos pegados detrás de los ya existentes"
+
+
+msgid "Paste to Active"
+msgstr "Pegar a activo"
+
+
+msgid "Paste by Layer"
+msgstr "Pegar por capa"
 
 
 msgctxt "Operator"
@@ -66759,7 +66809,7 @@ msgstr "Explorar imagen"
 
 
 msgid "Open an image file browser, hold Shift to open the file, Alt to browse containing directory"
-msgstr "Abre un explorador de archivos de imagen, mantener Mayúsculas presionada para abrir el archivo, Alt para explorar el directorio contenedor"
+msgstr "Abre un explorador de archivos de imagen, mantener Mayúsculas presionada para abrir el archivo, Alt para explorar la carpeta contenedora"
 
 
 msgctxt "Operator"
@@ -67549,7 +67599,7 @@ msgstr "Buscar imágenes"
 
 
 msgid "Search subdirs for any associated images (WARNING: may be slow)"
-msgstr "Buscar cualquier imagen asociada en los subdirectorios (Advertencia, puede ser lento)"
+msgstr "Buscar cualquier imagen asociada en las sub carpetas (Advertencia, puede ser lento)"
 
 
 msgid "Manual Orientation"
@@ -73391,6 +73441,10 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Curva a partir de mallas o textos"
 
 
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "Malla a partir de curvas, superficies, metabolas o textos"
+
+
 msgid "Curves from evaluated curve data"
 msgstr "Curvas a partir de datos evaluados de curva"
 
@@ -73720,11 +73774,11 @@ msgstr "Desempaca los datos capturados, desde el archivo .blend hacia el disco"
 
 
 msgid "Use bake from current directory (create when necessary)"
-msgstr "Usar captura desde el directorio actual (la creará cuando fuera necesario)"
+msgstr "Usar captura desde la carpeta actual (la creará cuando fuera necesario)"
 
 
 msgid "Write bake to current directory (overwrite existing bake)"
-msgstr "Guarda la captura en el directorio actual (sobrescribiendo capturas existentes)"
+msgstr "Guarda la captura en la carpeta actual (sobrescribiendo capturas existentes)"
 
 
 msgid "Use bake in original location (create when necessary)"
@@ -78496,6 +78550,60 @@ msgstr "Al estar activado, aplica la pose invertida en el eje X"
 
 
 msgctxt "Operator"
+msgid "Delete Pose Asset"
+msgstr "Borrar recurso de pose"
+
+
+msgid "Delete the selected Pose Asset"
+msgstr "Borra el recurso de pose seleccionado"
+
+
+msgctxt "Operator"
+msgid "Modify Pose Asset"
+msgstr "Modificar recurso de pose"
+
+
+msgid "Update the selected pose asset in the asset library from the currently selected bones. The mode defines how the asset is updated"
+msgstr "Actualizar el recurso de pose seleccionado en la biblioteca de poses a partir de los huesos actualmente seleccionados. El modo definirá la forma en que será actualizado el recurso"
+
+
+msgid "Overwrite Mode"
+msgstr "Modo de sobrescritura"
+
+
+msgid "Specify which parts of the pose asset are overwritten"
+msgstr "Especifica qué partes del recurso de pose serán sobrescritas"
+
+
+msgid "Update existing channels in the pose asset but don't remove or add any channels"
+msgstr "Actualiza los canales existentes del recurso de pose, pero no eliminará o agregará ningún canal"
+
+
+msgid "Replace with Selection"
+msgstr "Reemplazar con selección"
+
+
+msgid "Completely replace all channels in the pose asset with the current selection"
+msgstr "Reemplaza completamente todos los canales del recurso de pose con la selección actual"
+
+
+msgid "Add Selected Bones"
+msgstr "Agregar huesos seleccionados"
+
+
+msgid "Add channels of the selection to the pose asset. Existing channels will be updated"
+msgstr "Agrega los canales de la selección al recurso de pose. Los canales ya existentes serán actualizados"
+
+
+msgid "Remove Selected Bones"
+msgstr "Quitar huesos seleccionados"
+
+
+msgid "Remove channels of the selection from the pose asset"
+msgstr "Elimina los canales de la selección del recurso de pose"
+
+
+msgctxt "Operator"
 msgid "Blend Pose Asset"
 msgstr "Fundir recurso de pose"
 
@@ -78516,12 +78624,33 @@ msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Brow
 msgstr "Crea un nuevo recurso de pose en el portapapeles, para ser pegado en el Explorador de recursos"
 
 
+msgctxt "Operator"
+msgid "Create Pose Asset..."
+msgstr "Crear recurso de pose..."
+
+
+msgid "Create a new asset from the selected bones in the scene"
+msgstr "Crea un nuevo recurso a partir de los huesos seleccionados"
+
+
 msgid "Activate New Action"
 msgstr "Activar nueva acción"
 
 
+msgid "This property is deprecated and will be removed in the future"
+msgstr "Esta propiedad es obsoleta y será eliminada en el futuro"
+
+
+msgid "Asset library used to store the new pose"
+msgstr "Biblioteca de recursos usada para almacenar la nueva pose"
+
+
 msgid "Pose Name"
 msgstr "Nombre de pose"
+
+
+msgid "Name for the new pose asset"
+msgstr "Nombre del nuevo recurso de pose"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
@@ -79154,7 +79283,7 @@ msgstr "Agregar biblioteca de recursos"
 
 
 msgid "Add a directory to be used by the Asset Browser as source of assets"
-msgstr "Agrega un directorio a ser usado por el Explorador de recursos como una fuente de recursos"
+msgstr "Agrega una carpeta a ser usada por el Explorador de recursos como una fuente de recursos"
 
 
 msgctxt "Operator"
@@ -79215,7 +79344,7 @@ msgstr "Carpeta personalizada"
 
 
 msgid "The local directory containing extensions"
-msgstr "El directorio local que contiene las extensiones"
+msgstr "La carpeta local que contiene las extensiones"
 
 
 msgid "Unique repository name"
@@ -79255,7 +79384,7 @@ msgstr "El repositorio requiere una ficha (token) de acceso"
 
 
 msgid "Manually set the path for extensions to be stored. When disabled a user's extensions directory is created."
-msgstr "Establece manualmente la ruta donde almacenar las extensiones. Cuando se encuentre deshabilitada, se creará un directorio de extensiones del usuario."
+msgstr "Establece manualmente la ruta donde almacenar las extensiones. Cuando se encuentre deshabilitada, se creará una carpeta de extensiones del usuario."
 
 
 msgid "Check for Updates on Startup"
@@ -79338,7 +79467,7 @@ msgstr "Filtrar carpetas"
 
 
 msgid "Index of the script directory to remove"
-msgstr "Identificador del directorio de scripts a ser eliminado"
+msgstr "Identificador de la carpeta de scripts a ser eliminada"
 
 
 msgid "MatCap"
@@ -88335,7 +88464,7 @@ msgstr "Ruta raíz para todos los archivos listados en la colección ``archivos`
 
 
 msgid "Collection of file paths with common ``directory`` root"
-msgstr "Colección de rutas de archivo con un ``directorio`` raíz en común"
+msgstr "Colección de rutas de archivo con una ``carpeta`` raíz en común"
 
 
 msgid "Show Blender files in the File Browser"
@@ -88829,7 +88958,7 @@ msgstr "Remapear a relativas"
 
 
 msgid "Remap relative paths when saving to a different directory"
-msgstr "Hace que las rutas sean relativas al guardar en un directorio diferente"
+msgstr "Hace que las rutas sean relativas al guardar en una carpeta diferente"
 
 
 msgctxt "Operator"
@@ -89309,7 +89438,7 @@ msgstr "Exportar texturas"
 
 
 msgid "If exporting materials, export textures referenced by material nodes to a 'textures' directory in the same directory as the USD file"
-msgstr "Al exportar materiales, exportar las texturas referenciadas por los nodos de sombreado a una carpeta 'textures' en el mismo directorio que el archivo USD"
+msgstr "Al exportar materiales, exportar las texturas referenciadas por los nodos de sombreado a una carpeta 'textures' en la misma carpeta que el archivo USD"
 
 
 msgid "Texture export method"
@@ -89606,11 +89735,11 @@ msgstr "Crea modificadores de subdivisión de superficies basándose en el atrib
 
 
 msgid "Textures Directory"
-msgstr "Directorio de texturas"
+msgstr "Carpeta de texturas"
 
 
 msgid "Path to the directory where imported textures will be copied"
-msgstr "Ruta al directorio donde serán copiadas las texturas importadas"
+msgstr "Ruta a la carpeta donde serán copiadas las texturas importadas"
 
 
 msgid "Import Textures"
@@ -89630,7 +89759,7 @@ msgstr "Importar texturas como datos empacados"
 
 
 msgid "Copy files to textures directory"
-msgstr "Copiar archivos al directorio de texturas"
+msgstr "Copiar archivos a la carpeta de texturas"
 
 
 msgid "Import USD Preview"
@@ -90368,8 +90497,24 @@ msgid "Image used as canvas"
 msgstr "Imagen usada como lienzo"
 
 
+msgid "Clone Alpha"
+msgstr "Alfa de clonado"
+
+
+msgid "Opacity of clone image display"
+msgstr "Opacidad de visualización de imagen de clonado"
+
+
+msgid "Clone Image"
+msgstr "Imagen de clonado"
+
+
 msgid "Image used as clone source"
 msgstr "Imagen usada como origen de la clonación"
+
+
+msgid "Clone Offset"
+msgstr "Desplazamiento de clonado"
 
 
 msgid "Dither"
@@ -90780,14 +90925,6 @@ msgid "Transform Orientations"
 msgstr "Orientación de transformación"
 
 
-msgid "glTF Variants"
-msgstr "Variantes glTF"
-
-
-msgid "glTF Material Variants"
-msgstr "Variantes de material glTF"
-
-
 msgid "Stroke Placement"
 msgstr "Ubicación del trazo"
 
@@ -90816,12 +90953,12 @@ msgid "Multi Frame"
 msgstr "Multifotograma"
 
 
-msgid "glTF"
-msgstr "glTF"
+msgid "glTF Variants"
+msgstr "Variantes glTF"
 
 
-msgid "glTF Animations"
-msgstr "Animaciones glTF"
+msgid "glTF Material Variants"
+msgstr "Variantes de material glTF"
 
 
 msgid "Auto-Masking"
@@ -90842,6 +90979,14 @@ msgstr "Escala expandir/contraer curvas"
 
 msgid "Viewport Debug"
 msgstr "Depurar Vista 3D"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "Animaciones glTF"
 
 
 msgid "VR"
@@ -91221,7 +91366,7 @@ msgstr "Volúmenes"
 
 
 msgid "Directory Path"
-msgstr "Ruta de directorio"
+msgstr "Ruta de carpeta"
 
 
 msgid "Filter Settings"
@@ -91878,7 +92023,7 @@ msgstr "Desarrollo"
 
 
 msgid "Script Directories"
-msgstr "Directorios de scripts"
+msgstr "Carpetas de scripts"
 
 
 msgid "Tablet"
@@ -94560,19 +94705,19 @@ msgstr "Procesamiento de la escena usando Workbench"
 
 
 msgid "Fonts Directory"
-msgstr "Directorio de tipografías"
+msgstr "Carpeta de tipografías"
 
 
 msgid "The default directory to search for loading fonts"
-msgstr "El directorio predefinido de donde cargar tipografías"
+msgstr "La carpeta predefinida de donde cargar tipografías"
 
 
 msgid "Translation Branches Directory"
-msgstr "Directorio de la rama de traducción"
+msgstr "Carpeta de la rama de traducción"
 
 
 msgid "The path to the '/branches' directory of your local svn-translation copy, to allow translating from the UI"
-msgstr "Ruta hasta el directorio '/branches' de la copia local SVN de la traducción, para permitir traducir desde la interfaz de usuario"
+msgstr "Ruta hasta la carpeta '/branches' de la copia local SVN de la traducción, para permitir traducir desde la interfaz de usuario"
 
 
 msgid "Image Editor"
@@ -94600,11 +94745,11 @@ msgstr "Dónde será guardado el resultado crudo del procesamiento"
 
 
 msgid "Render Output Directory"
-msgstr "Directorio de salida de procesamiento"
+msgstr "Carpeta de salida de procesamiento"
 
 
 msgid "The default directory for rendering output, for new scenes"
-msgstr "El directorio predefinido de salida de imágenes procesadas, para nuevas escenas"
+msgstr "La carpeta predefinida de salida de imágenes procesadas, para nuevas escenas"
 
 
 msgid "Save Versions"
@@ -94612,11 +94757,11 @@ msgstr "Versiones a guardar"
 
 
 msgid "The number of old versions to maintain in the current directory, when manually saving"
-msgstr "La cantidad de versiones previas a mantener en el directorio actual, al guardar manualmente"
+msgstr "La cantidad de versiones previas a mantener en la carpeta actual, al guardar manualmente"
 
 
 msgid "Python Scripts Directory"
-msgstr "Directorio de scripts Python"
+msgstr "Carpeta de scripts Python"
 
 
 msgid "Show Hidden Files/Data-Blocks"
@@ -94644,19 +94789,19 @@ msgstr "Muestra una lista de las ubicaciones comunes del sistema operativo en el
 
 
 msgid "Sounds Directory"
-msgstr "Directorio de sonidos"
+msgstr "Carpeta de sonidos"
 
 
 msgid "The default directory to search for sounds"
-msgstr "Directorio predefinido donde buscar sonidos"
+msgstr "Carpeta predefinida donde buscar sonidos"
 
 
 msgid "Temporary Directory"
-msgstr "Directorio temporal"
+msgstr "Carpeta temporal"
 
 
 msgid "The directory for storing temporary save files. The path must reference an existing directory or it will be ignored"
-msgstr "Directorio para almacenar archivos temporales. La ruta deberá referenciar a un directorio existente, de lo contrario será ignorado"
+msgstr "Carpeta para almacenar archivos temporales. La ruta deberá referenciar a una carpeta existente, de lo contrario será ignorada"
 
 
 msgid ""
@@ -94690,7 +94835,7 @@ msgstr ""
 
 
 msgid "The default directory to search for textures"
-msgstr "El directorio predefinido donde buscar texturas"
+msgstr "La carpeta predefinida donde buscar texturas"
 
 
 msgid "Auto Save Temporary Files"
@@ -94701,7 +94846,7 @@ msgid ""
 "Automatic saving of temporary files in temp directory, uses process ID.\n"
 "Warning: Sculpt and edit mode data won't be saved"
 msgstr ""
-"Guardado automático de archivos temporales en el directorio temp, usa el ID del proceso.\n"
+"Guardado automático de archivos temporales en la carpeta temp, usa el ID del proceso.\n"
 "Advertencia: No se guardarán datos de los modos Esculpido y Edición"
 
 
@@ -94857,6 +95002,18 @@ msgid "Keep horizon level while flying with 3D Mouse"
 msgstr "Mantiene el nivel del horizonte al volar con el ratón 3D"
 
 
+msgid "Auto sets the orbit center dynamically. When the complete model is in view, the center of volume of the whole model is used as the rotation point. When you move closer, the orbit center will be set on an object close to your center of the view."
+msgstr "Auto definirá el centro de órbita de manera dinámica. Cuando se encuentre el modelo completo visible en la vista, se usará el centro del volumen delimitador de todo el modelo como pivote de rotación. Al acercar la vista, el pivote se establecerá en algún objeto cercano al centro de la vista."
+
+
+msgid "Use Selected Items"
+msgstr "Usar elementos seleccionados"
+
+
+msgid "Use selected item forces the orbit center to only take the currently selected objects into account."
+msgstr "Forzará a que sólo se tomen en cuenta los elementos seleccionados al determinar el centro de órbita."
+
+
 msgid "Orbit Sensitivity"
 msgstr "Sensibilidad orbitar"
 
@@ -94901,8 +95058,20 @@ msgid "Overall sensitivity of the 3D Mouse for panning"
 msgstr "Sensibilidad global del ratón 3D para desplazamientos"
 
 
+msgid "Show Orbit Axis Guide"
+msgstr "Mostrar guía para eje de órbita"
+
+
 msgid "Display the center and axis during rotation"
 msgstr "Muestra centro y eje durante una rotación"
+
+
+msgid "Show Orbit Center Guide"
+msgstr "Mostrar guía para centro de órbita"
+
+
+msgid "Display the orbit center during rotation"
+msgstr "Muestra el centro de órbita durante una rotación"
 
 
 msgid "NDOF View Navigate"
@@ -95562,11 +95731,11 @@ msgstr "Funciona en dispositivos de almacenamiento lentos, pero usa recursos de 
 
 
 msgid "Disk Cache Directory"
-msgstr "Directorio del caché en disco"
+msgstr "Carpeta del caché en disco"
 
 
 msgid "Override default directory"
-msgstr "Redefine el directorio predefinido"
+msgstr "Redefine la carpeta predefinida"
 
 
 msgid "Disk Cache Limit"
@@ -96546,7 +96715,7 @@ msgstr "Saluda de ruta"
 
 
 msgid "Property is a filename, filepath or directory output"
-msgstr "La propiedad es una salida de nombre de archivo, ruta de archivo o directorio"
+msgstr "La propiedad es una salida de nombre de archivo, ruta de archivo o carpeta"
 
 
 msgid "Read Only"
@@ -96629,7 +96798,7 @@ msgstr "Ruta del archivo"
 
 msgctxt "Unit"
 msgid "Directory Path"
-msgstr "Ruta de directorio"
+msgstr "Ruta de carpeta"
 
 
 msgctxt "Unit"
@@ -98689,7 +98858,7 @@ msgstr "Elemento lista archivos operador"
 
 
 msgid "Name of a file or directory within a file list"
-msgstr "Nombre de un archivo o directorio dentro de una lista de archivos"
+msgstr "Nombre de un archivo o carpeta dentro de una lista de archivos"
 
 
 msgid "Operator Mouse Path"
@@ -100234,7 +100403,7 @@ msgstr "La extensión de archivo usada al guardar imágenes procesadas"
 
 
 msgid "Directory/name to save animations, # characters define the position and padding of frame numbers"
-msgstr "Directorio y nombre dónde guardar las animaciones, usar caracteres # para definir la posición y cantidad de dígitos de fotograma dentro del nombre de archivo"
+msgstr "Carpeta y nombre dónde guardar las animaciones, usar caracteres # para definir la posición y cantidad de dígitos de fotograma dentro del nombre de archivo"
 
 
 msgid "World background is transparent, for compositing the render over another background"
@@ -102357,15 +102526,15 @@ msgstr "YCbCr (JPEG)"
 
 
 msgid "Alternate script path, matching the default layout with sub-directories: startup, add-ons, modules, and presets (requires restart)"
-msgstr "Ruta alternativa para scripts, debe coincidir con la estructura predefinida con subdirectorios: startup, add-ons, modules y presets. (requiere reiniciar)"
+msgstr "Ruta alternativa para scripts, debe coincidir con la estructura predefinida con sub carpetas: startup, add-ons, modules y presets. (requiere reiniciar)"
 
 
 msgid "Identifier for the Python scripts directory"
-msgstr "Identificador del directorio de scripts Python"
+msgstr "Identificador de la carpeta de scripts Python"
 
 
 msgid "Python Scripts Directories"
-msgstr "Directorios de scripts Python"
+msgstr "Carpetas de scripts Python"
 
 
 msgid "Sequence editing data for a Scene data-block"
@@ -102397,7 +102566,7 @@ msgstr "Cantidad de fotogramas a desplazar"
 
 
 msgid "Proxy Directory"
-msgstr "Directorio de reemplazos"
+msgstr "Carpeta de reemplazos"
 
 
 msgctxt "Sequence"
@@ -102424,7 +102593,7 @@ msgstr "Proyecto"
 
 
 msgid "Store proxies using project directory"
-msgstr "Almacenar reemplazos usando el directorio del proyecto"
+msgstr "Almacenar reemplazos usando la carpeta del proyecto"
 
 
 msgid "Retiming Key Selection Status"
@@ -104165,7 +104334,7 @@ msgstr "Carpetas del sistema"
 
 
 msgid "System's folders (usually root, available hard drives, etc)"
-msgstr "Carpetas del sistema (usualmente el directorio raíz, los discos duros disponibles, etc.)"
+msgstr "Carpetas del sistema (usualmente la carpeta raíz, los discos duros disponibles, etc.)"
 
 
 msgid "Active System Folder"
@@ -106668,11 +106837,11 @@ msgstr "Eliminar campos de las películas en video"
 
 
 msgid "Flip on the X axis"
-msgstr "Invertir en el eje X"
+msgstr "Voltear en el eje X"
 
 
 msgid "Flip on the Y axis"
-msgstr "Invertir en el eje Y"
+msgstr "Voltear en el eje Y"
 
 
 msgid "Convert Float"
@@ -107634,7 +107803,7 @@ msgstr "Sobrescribir los archivos de reemplazo existentes durante la construcci�
 
 
 msgid "Use a custom directory to store data"
-msgstr "Usa un directorio personalizado para almacenar los datos"
+msgstr "Usa una carpeta personalizada para almacenar los datos"
 
 
 msgid "Proxy Custom File"
@@ -111261,7 +111430,7 @@ msgstr "Identificador (no necesariamente único) para la biblioteca de recursos"
 
 
 msgid "Path to a directory with .blend files to use as an asset library"
-msgstr "Ruta hasta un directorio que contenga archivos .blend para ser usados como bibliotecas de recursos"
+msgstr "Ruta hasta una carpeta que contenga archivos .blend para ser usados como bibliotecas de recursos"
 
 
 msgid "Use relative path when linking assets from this asset library"
@@ -111283,7 +111452,7 @@ msgstr "Carpeta personalizada"
 
 msgctxt "File browser"
 msgid "Directory"
-msgstr "Directorio"
+msgstr "Carpeta"
 
 
 msgid "Enable the repository"
@@ -111300,11 +111469,11 @@ msgstr "URL"
 
 
 msgid "Select if the repository is in a user managed or system provided directory"
-msgstr "Selecciona si el repositorio se trata de un directorio administrado por el usuario o uno provisto por el sistema"
+msgstr "Selecciona si el repositorio se trata de una carpeta administrada por el usuario o una provista por el sistema"
 
 
 msgid "Repository managed by the user, stored in user directories"
-msgstr "Repositorio administrado por el usuario, ubicado en directorios del usuario"
+msgstr "Repositorio administrado por el usuario, ubicado en carpetas del usuario"
 
 
 msgid "Read-only repository provided by the system"
@@ -116937,7 +117106,7 @@ msgstr "No es posible instalar desde una ruta relativa"
 
 
 msgid "Unable to install a directory"
-msgstr "No es posible instalar un directorio"
+msgstr "No es posible instalar una carpeta"
 
 
 msgid "Age: {:s}"
@@ -118164,6 +118333,16 @@ msgstr "Aplicar pose invertida"
 
 
 msgctxt "Operator"
+msgid "Adjust Pose Asset"
+msgstr "Actualizar recurso de pose"
+
+
+msgctxt "Operator"
+msgid "Add Selected Bones"
+msgstr "Agregar huesos seleccionados"
+
+
+msgctxt "Operator"
 msgid "Remove Selected Bones"
 msgstr "Eliminar huesos seleccionados"
 
@@ -118318,7 +118497,7 @@ msgstr "Este conjunto de características necesita Blender {:s} o posterior para
 
 
 msgid "The feature set archive must contain one base directory"
-msgstr "El archivo del conjunto de características debe contener un directorio base"
+msgstr "El archivo del conjunto de características debe contener una carpeta base"
 
 
 msgid "The feature set archive has no rigs or metarigs, or is missing __init__.py"
@@ -118326,7 +118505,7 @@ msgstr "El archivo del conjunto de características no contiene sistemas de cont
 
 
 msgid "The feature set archive base directory name is not a valid identifier: '{:s}'"
-msgstr "El nombre del directorio base del archivo del conjunto de características no es un identificador válido: '{:s}'"
+msgstr "El nombre de la carpeta base del archivo del conjunto de características no es un identificador válido: '{:s}'"
 
 
 msgid "The name '{:s}' is not allowed for feature sets"
@@ -118334,7 +118513,7 @@ msgstr "El nombre '{:s}' no es permitido para conjuntos de características"
 
 
 msgid "Feature set directory already exists: '{:s}'"
-msgstr "El directorio del conjunto de características ya existe: '{:s}'"
+msgstr "La carpeta del conjunto de características ya existe: '{:s}'"
 
 
 msgid "Status:"
@@ -119557,7 +119736,7 @@ msgstr "El archivo fuente se encuentra en la ruta de búsqueda de complementos: 
 
 
 msgid "ZIP packaged incorrectly; __init__.py should be in a directory, not at top-level"
-msgstr "ZIP empacado de forma incorrecta; el archivo __init__.py debe encontrarse en un directorio, no en el nivel superior"
+msgstr "ZIP empacado de forma incorrecta; el archivo __init__.py debe encontrarse en una carpeta, no en el nivel superior"
 
 
 msgid "Modules Installed ({:s}) from {!r} into {!r}"
@@ -120659,7 +120838,7 @@ msgstr "Buscar..."
 
 
 msgid "Distance Reference"
-msgstr "Referencia de distancia"
+msgstr "Distancia de referencia"
 
 
 msgid "Angle Outer"
@@ -124958,6 +125137,18 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "Invertir dirección de ampliación con rueda del ratón"
 
 
+msgid "Show Guides"
+msgstr "Mostrar guías"
+
+
+msgid "Orbit Axis"
+msgstr "Eje de órbita"
+
+
+msgid "Orbit Center"
+msgstr "Centro de órbita"
+
+
 msgid "Fly/Walk"
 msgstr "Volar/Transitar"
 
@@ -126774,6 +126965,11 @@ msgstr "Ocultar capas inactivas"
 
 
 msgctxt "Operator"
+msgid "Paste by Layer"
+msgstr "Pegar por capa"
+
+
+msgctxt "Operator"
 msgid "Close"
 msgstr "Cerrar"
 
@@ -127477,10 +127673,6 @@ msgid "\"%s\" is using Action \"%s\", which does not have a slot with identifier
 msgstr "\"%s\" está usando la acción \"%s\", que no contiene un contenedor con el identificador \"%s\" o \"%s\". Asignar manualmente el contenedor de acción correcto a \"%s\"."
 
 
-msgid "Legacy action \"%s\" is assigned to \"%s\", which does not match the action's id_root \"%s\". The action has been upgraded to a slotted action with slot \"%s\" with an id_type \"%s\", which has also been assigned to \"%s\" despite this type mismatch. This likely indicates something odd about the blend file."
-msgstr "La acción antigua \"%s\" se encuentra asignada a \"%s\", que no coincide con el id principal de la acción \"%s\". La acción ha sido actualizada a una acción con contenedores, con el contenedor \"%s\" con un tipo de id \"%s\", que también ha sido asignado a \"%s\" a pesar de su tipo no coincidente. Esto probablemente indique algo extraño con respecto al archivo .blend."
-
-
 msgid "Named Layer node"
 msgstr "Nodo Seleccionar capa por nombre"
 
@@ -127522,7 +127714,7 @@ msgstr "esqueletos"
 
 
 msgid "Failed to create asset library directory to save asset"
-msgstr "No fue posible crear directorio para la biblioteca de recursos en donde guardar el recurso"
+msgstr "No fue posible crear una carpeta para la biblioteca de recursos en donde guardar el recurso"
 
 
 msgid "Failed to write to asset library"
@@ -127582,11 +127774,11 @@ msgstr "Sólo es posible desempacar una captura cuando el archivo .blend esté g
 
 
 msgid "%s is not a directory"
-msgstr "%s no es un directorio"
+msgstr "%s no es una carpeta"
 
 
 msgid "Cannot ensure directory: %s"
-msgstr "No es posible asegurar el directorio: %s"
+msgstr "No es posible asegurar la carpeta: %s"
 
 
 msgid "Cannot write file: %s"
@@ -127674,7 +127866,7 @@ msgstr "No hay archivos faltantes"
 
 
 msgid "Could not open the directory '%s'"
-msgstr "No fue posible abrir el directorio '%s'"
+msgstr "No fue posible abrir la carpeta '%s'"
 
 
 msgid "Could not find '%s' in '%s'"
@@ -129117,8 +129309,36 @@ msgid "Create"
 msgstr "Crear"
 
 
+msgid "Delete Pose Asset"
+msgstr "Borrar recurso de pose"
+
+
+msgid "Permanently delete pose asset blend file? This cannot be undone."
+msgstr "¿Borrar permanentemente el archivo .blend del recurso de pose? Esto no podrá ser deshecho."
+
+
+msgid "The asset is local to the file. Deleting it will just clear the asset status."
+msgstr "Este es un recurso local del archivo. Borrarlo simplemente eliminará su categorización como un recurso."
+
+
 msgid "Failed to load asset library"
 msgstr "No fue posible cargar biblioteca de recursos"
+
+
+msgid "No name set"
+msgstr "No se estableció un nombre"
+
+
+msgid "Unexpected library type. Failed to create pose asset"
+msgstr "Tipo de biblioteca inesperado. Error al crear el recurso de pose"
+
+
+msgid "Pose assets can only be modified from Pose Mode"
+msgstr "Los recursos de pose sólo pueden ser modificados dentro del modo Pose"
+
+
+msgid "Action is not editable"
+msgstr "La acción no es editable"
 
 
 msgid "Asset blend file is not editable"
@@ -130296,8 +130516,20 @@ msgid "The object has only one layer"
 msgstr "El objeto contiene sólo una capa"
 
 
+msgid "No active Grease Pencil layer to paste into"
+msgstr "No hay ninguna capa de Grease Pencil activa en donde pegar"
+
+
+msgid "Active layer is not editable"
+msgstr "La capa activa no es editable"
+
+
 msgid "No Grease Pencil frame to draw on"
 msgstr "No hay ningún fotograma de Grease Pencil sobre el cual dibujar"
+
+
+msgid "Couldn't find matching layer, pasting into active layer"
+msgstr "No fue posible encontrar una capa coincidente, se pegará en la activa"
 
 
 msgid "Active object is not a selected Grease Pencil"
@@ -131749,6 +131981,10 @@ msgid "PBR Extensions"
 msgstr "Extensiones PBR"
 
 
+msgid "File exported successfully"
+msgstr "Archivo exportado exitosamente"
+
+
 msgid "ASCII"
 msgstr "ASCII"
 
@@ -132588,15 +132824,15 @@ msgstr "No fue posible determinar la ubicación de la captura en el disco. Se vo
 
 
 msgid "Failed to remove metadata directory %s"
-msgstr "No fue posible eliminar el directorio de metadatos %s"
+msgstr "No fue posible eliminar la carpeta de metadatos %s"
 
 
 msgid "Failed to remove blobs directory %s"
-msgstr "No fue posible eliminar el directorio de captura %s"
+msgstr "No fue posible eliminar la carpeta de captura %s"
 
 
 msgid "Bake directory of object %s, modifier %s is empty, setting default path"
-msgstr "El directorio de captura del objeto %s, modificador %s, se encuentra vacío, se usará la ruta predefinida"
+msgstr "La carpeta de captura del objeto %s, modificador %s, se encuentra vacío, se usará la ruta predefinida"
 
 
 msgid "Path conflict: %d caches set to path %s"
@@ -133560,11 +133796,11 @@ msgstr "Fluido: ruta de caché vacía, restableciéndola a la predefinida: '%s'"
 
 
 msgid "Fluid: Could not create cache directory '%s', reset to default '%s'"
-msgstr "Fluido: no fue posible crear directorio de caché '%s', restableciéndolo al predefinido: '%s'"
+msgstr "Fluido: no fue posible crear carpeta de caché '%s', restableciéndola a la predefinida: '%s'"
 
 
 msgid "Fluid: Could not use default cache directory '%s', please define a valid cache path manually"
-msgstr "Fluido: no fue posible usar directorio de caché predefinido '%s', por favor definir manualmente una ruta de caché válida"
+msgstr "Fluido: no fue posible usar carpeta de caché predefinida '%s', por favor definir manualmente una ruta de caché válida"
 
 
 msgid "Fluid: %s complete (%.2f)"
@@ -134206,7 +134442,7 @@ msgstr "Borrará permanentemente el archivo .blend del recurso de pincel. Esto n
 
 
 msgid "Permanently delete brush. This cannot be undone."
-msgstr "Borrar permanentemente el pincel. Esto no podrá ser deshecho."
+msgstr "Borrará permanentemente el pincel. Esto no podrá ser deshecho."
 
 
 msgid "Unable to activate brush, wrong object mode"
@@ -134956,7 +135192,7 @@ msgid ""
 "Asset Libraries are local directories that can contain .blend files with assets inside.\n"
 "Manage Asset Libraries from the File Paths section in Preferences"
 msgstr ""
-"Las bibliotecas de recursos son directorios locales que contienen archivos .blend con recursos dentro.\n"
+"Las bibliotecas de recursos son carpetas locales que contienen archivos .blend con recursos dentro.\n"
 "Administrar las bibliotecas de recursos desde la sección Rutas de archivo en las Preferencias"
 
 
@@ -134993,7 +135229,7 @@ msgstr "No fue posible renombrar: '%s'"
 
 
 msgid "Create new directory?"
-msgstr "¿Crear un nuevo directorio?"
+msgstr "¿Crear una nueva carpeta?"
 
 
 msgid "Delete selected files?"
@@ -135001,7 +135237,7 @@ msgstr "¿Borrar los archivos seleccionados?"
 
 
 msgid "Unable to create configuration directory to write bookmarks"
-msgstr "No es posible crear directorio de configuración para guardar los marcadores"
+msgstr "No es posible crear carpeta de configuración para guardar los marcadores"
 
 
 msgid "File does not exist"
@@ -135009,7 +135245,7 @@ msgstr "El archivo no existe"
 
 
 msgid "No parent directory given"
-msgstr "No se indicó un directorio superior"
+msgstr "No se indicó una carpeta superior"
 
 
 msgid "Could not create new folder name"
@@ -135578,7 +135814,7 @@ msgstr "Restablecer bloques de datos vinculados empacados a sus ubicaciones orig
 
 
 msgid "Will create directories so that all paths are valid."
-msgstr "Creará directorios para que todas las rutas sean válidas."
+msgstr "Creará carpetas para que todas las rutas sean válidas."
 
 
 msgid "Pack all used external files into this .blend file"
@@ -135599,6 +135835,10 @@ msgstr "No hay archivos a desempacar"
 
 msgid "No packed file"
 msgstr "Ningún archivo empacado"
+
+
+msgid "Data-block using this packed file is not editable"
+msgstr "El bloque de datos que utiliza este archivo empacado no es editable"
 
 
 msgid "Cannot set relative paths with an unsaved blend file"
@@ -136933,6 +137173,26 @@ msgid "This strip type cannot be retimed"
 msgstr "No es posible retemporizar este tipo de clip"
 
 
+msgctxt "Operator"
+msgid "Select (Unconnected)"
+msgstr "Seleccionar (no conectado)"
+
+
+msgctxt "Operator"
+msgid "Select (Linked Time)"
+msgstr "Seleccionar (tiempo vinculado)"
+
+
+msgctxt "Operator"
+msgid "Select (Linked Handle)"
+msgstr "Seleccionar (asa vinculada)"
+
+
+msgctxt "Operator"
+msgid "Select (Side of Frame)"
+msgstr "Seleccionar (lado del fotograma)"
+
+
 msgid "No active sequence!"
 msgstr "No hay secuencia activa!"
 
@@ -137154,7 +137414,7 @@ msgstr "Se agregaron %s \"%s\""
 
 
 msgid "Unable to remove directory: %s"
-msgstr "No fue posible eliminar directorio: %s"
+msgstr "No fue posible eliminar carpeta: %s"
 
 
 msgid "Extension operator not found \"%s\""
@@ -138428,15 +138688,15 @@ msgstr "%s: No fue posible cerrar el recurso de destino %s"
 
 
 msgid "%s: Texture import directory path empty, couldn't import %s"
-msgstr "%s: Ruta del directorio de importación de texturas vacía, no fue posible importar %s"
+msgstr "%s: Ruta de la carpeta de importación de texturas vacía, no fue posible importar %s"
 
 
 msgid "%s: import directory is relative but the blend file path is empty. Please save the blend file before importing the USD or provide an absolute import directory path. Can't import %s"
-msgstr "%s: El directorio de importación es relativo, pero la ruta del archivo .blend se encuentra vacía. Por favor guardar el archivo .blend antes de importar el archivo USD o proporcionar una ruta absoluta para el directorio de importación. No es posible importar %s"
+msgstr "%s: La carpeta de importación es relativa, pero la ruta del archivo .blend se encuentra vacía. Por favor guardar el archivo .blend antes de importar el archivo USD o proporcionar una ruta absoluta para la carpeta de importación. No es posible importar %s"
 
 
 msgid "%s: Couldn't create texture import directory %s"
-msgstr "%s: No fue posible crear directorio de importación de texturas %s"
+msgstr "%s: No fue posible crear carpeta de importación de texturas %s"
 
 
 msgid "Can't resolve path %s for writing"
@@ -138460,7 +138720,7 @@ msgstr "No fue posible cerrar el recurso de destino %s"
 
 
 msgid "%s: Can't generate a textures directory path for anonymous stage"
-msgstr "%s: No es posible generar la ruta a un directorio de texturas en fase anónima"
+msgstr "%s: No es posible generar la ruta a una carpeta de texturas en fase anónima"
 
 
 msgid "%s: Can't get resolved path for stage"
@@ -138921,6 +139181,10 @@ msgstr "Los nombres públicos de contenedores de acción no pueden estar vacíos
 
 msgid "Action slot identifiers should be at least three characters"
 msgstr "Los nombres públicos de contenedores de acción deben contener al menos tres caracteres"
+
+
+msgid "Attempted to set slot identifier to \"%s\", but the type prefix doesn't match the slot's 'target_id_type' \"%s\". Setting to \"%s\" instead."
+msgstr "Se intentó definir el identificador del contenedor como \"%s\", pero el prefijo que indicaba su tipo no coincidía con el 'tipo_id_objetivo' \"%s\" del contenedor. En su lugar, fue definido como \"%s\"."
 
 
 msgid "Only armature objects are supported"
@@ -140131,7 +140395,7 @@ msgstr "template_popup_confirm usada fuera de un panel emergente"
 
 
 msgid "Script directory not found"
-msgstr "No fue posible encontrar el directorio de scripts"
+msgstr "No fue posible encontrar la carpeta de scripts"
 
 
 msgid "Asset Library not found"
@@ -144264,6 +144528,14 @@ msgid "Blend between diffuse surface and subsurface scattering. Typically should
 msgstr "Mezcla entre una superficie difusa o transluminiscente. Típicamente debería ser cero o uno (o completamente difusa o completamente transluminiscente)"
 
 
+msgid "Scattering radius per color channel (RGB), multiplied with Scale"
+msgstr "Radio de dispersión por canal de color (RVA), multiplicado por la Escala"
+
+
+msgid "Scale factor of the subsurface scattering radius"
+msgstr "Factor de escala del radio de dispersión subsuperficial"
+
+
 msgid "Index of Refraction (IOR) used for rays that enter the subsurface component"
 msgstr "Índice de refracción (IR) usado para los rayos que penetran al componente de transluminiscencia"
 
@@ -145453,6 +145725,10 @@ msgid "Cannot save blend file, path \"%s\" is not writable"
 msgstr "No es posible guardar el archivo blend, no es posible escribir en la ruta \"%s\""
 
 
+msgid "Cannot save blend file, path \"%s\" is a directory"
+msgstr "No es posible guardar el archivo .blend, la ruta \"%s\" es una carpeta"
+
+
 msgid "Can't read alternative start-up file: \"%s\""
 msgstr "No es posible leer el archivo de inicio alternativo: \"%s\""
 
@@ -146375,6 +146651,10 @@ msgstr "Inspección de escena con RV"
 
 msgid "View the viewport with virtual reality glasses (head-mounted displays)"
 msgstr "Permite ver la vista usando un casco de realidad virtual"
+
+
+msgid "All Add-ons"
+msgstr "Todos los complementos"
 
 
 msgid "All Add-ons Installed by User"
