@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.4.0 Beta (b'aad0bd21487d')\n"
+"Project-Id-Version: Blender 4.4.0 Beta (b'63c460d93d55')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-10 15:22+0000\n"
-"PO-Revision-Date: 2025-02-04 07:26+0000\n"
+"POT-Creation-Date: 2025-02-24 09:56+0000\n"
+"PO-Revision-Date: 2025-02-18 08:38+0000\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Slovak <https://translate.blender.org/projects/blender-ui/ui/sk/>\n"
 "Language: sk\n"
@@ -87,6 +87,10 @@ msgid "Slot"
 msgstr "Zásuvka"
 
 
+msgid "The Slot that the Channelbag's animation data is for"
+msgstr "Zásuvka, pre ktorú sú určené animačné údaje balíka Channelbag"
+
+
 msgid "Collection of F-Curves for a specific action slot, on a specific strip"
 msgstr "Kolekcia F-kriviek pre konkrétnu zásuvku akcií na konkrétnom páse"
 
@@ -105,10 +109,6 @@ msgstr "Pre každú zásuvku akcie zoznam kanálov animácie, ktoré sú určen�
 
 msgid "Action F-Curves"
 msgstr "Akčné F-krivky"
-
-
-msgid "Collection of action F-Curves"
-msgstr "Kolekcia akčných F-kriviek"
 
 
 msgid "Action Group"
@@ -1722,7 +1722,7 @@ msgstr "Ďalšie informácie o aktívach"
 
 
 msgid "Asset Shelf"
-msgstr "Polica na aktíva"
+msgstr "Polica aktív"
 
 
 msgid "Regions for quick access to assets"
@@ -1798,7 +1798,7 @@ msgstr "Možnosti"
 
 
 msgid "Options for this asset shelf type"
-msgstr "Možnosti pre tento typ police s aktívami"
+msgstr "Možnosti pre tento typ police aktív"
 
 
 msgid "No Asset Dragging"
@@ -1814,7 +1814,7 @@ msgstr "Predvolene viditeľné"
 
 
 msgid "Unhide the asset shelf when it's available for the first time, otherwise it will be hidden"
-msgstr "Skryje police s aktívami, keď sú prvýkrát k dispozícii, inak budú skryté"
+msgstr "Skryje policu aktív, keď sú prvýkrát k dispozícii, inak budú skryté"
 
 
 msgid "Store Enabled Catalogs in Preferences"
@@ -1822,7 +1822,7 @@ msgstr "Uložiť povolené katalógy v predvoľbách"
 
 
 msgid "Store the shelf's enabled catalogs in the preferences rather than the local asset shelf settings"
-msgstr "Uloží povolené katalógy police v predvoľbách namiesto lokálnych nastavení police s aktívami"
+msgstr "Uloží povolené katalógy police v predvoľbách namiesto lokálnych nastavení police aktív"
 
 
 msgid "Space Type"
@@ -1830,7 +1830,7 @@ msgstr "Typ priestoru"
 
 
 msgid "The space where the asset shelf is going to be used in"
-msgstr "Priestor, v ktorom sa bude používať polica na aktíva"
+msgstr "Priestor, v ktorom sa bude používať polica aktív"
 
 
 msgid "Preview Size"
@@ -4778,6 +4778,14 @@ msgstr "Má stálosť"
 
 msgid "Has Pinch Factor"
 msgstr "Má faktor prištipnutia"
+
+
+msgid "Has Plane Depth"
+msgstr "Má hĺbku roviny"
+
+
+msgid "Has Plane Height"
+msgstr "Má výšku roviny"
 
 
 msgid "Has Plane Offset"
@@ -17237,7 +17245,7 @@ msgstr "Vlastnosti nástroja"
 
 
 msgid "Asset Shelf Header"
-msgstr "Záhlavie police s aktívami"
+msgstr "Záhlavie police aktív"
 
 
 msgid "Floating Region"
@@ -18099,10 +18107,6 @@ msgid "The combined frame range of all F-Curves within this action"
 msgstr "Kombinovaný rozsah všetkých F-kriviek v rámci tejto akcie"
 
 
-msgid "The individual F-Curves that make up the action"
-msgstr "Jednotlivé F-krivky tvoriace akciu"
-
-
 msgid "The end frame of the manually set intended playback range"
 msgstr "Koncová snímka ručne nastaveného zamýšľaného rozsahu prehrávania"
 
@@ -18123,17 +18127,9 @@ msgid "Groups"
 msgstr "Skupiny"
 
 
-msgid "Convenient groupings of F-Curves"
-msgstr "Výhodné zoskupenia F-kriviek"
-
-
 msgctxt "ID"
 msgid "ID Root Type"
 msgstr "ID typu koreňa"
-
-
-msgid "Type of ID block that action can be used on - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING"
-msgstr "Typ ID bloku možnosti použitia akcie na Bez zmien, ak neviete, čo robíte"
 
 
 msgid "Is Layered Action"
@@ -18146,10 +18142,6 @@ msgstr "Vráti, či sa jedná o vrstvenú akciu. Prázdna Akcia sa považuje za 
 
 msgid "Is Legacy Action"
 msgstr "Je akcia zdedená"
-
-
-msgid "Return whether this is a legacy Action. Legacy Actions have no layers or slots. An empty Action considered as both a 'legacy' and a 'layered' Action."
-msgstr "Vráti, či sa jedná o zdedenú akciu. Zdedené akcie nemajú žiadne vrstvy ani zásuvky. Prázdna akcia sa považuje za „zdedenú\" aj \"vrstvenú\" akciu."
 
 
 msgid "Is Empty"
@@ -18808,26 +18800,6 @@ msgstr "Posuv počiatku okraja vo vzťahu k polomeru štetca"
 
 msgid "Brush's capabilities"
 msgstr "Schopnosti štetca"
-
-
-msgid "Clone Alpha"
-msgstr "Klony alfa"
-
-
-msgid "Opacity of clone image display"
-msgstr "Nepriehľadnosť zobrazenia klonov obrázkov"
-
-
-msgid "Clone Image"
-msgstr "Klony obrázka"
-
-
-msgid "Image for clone brushes"
-msgstr "Obrázok pre klonovacie štetce"
-
-
-msgid "Clone Offset"
-msgstr "Posuv klonu"
 
 
 msgid "Soft Body Plasticity"
@@ -19618,6 +19590,34 @@ msgid "Active paint curve"
 msgstr "Aktívna krivka maľovania"
 
 
+msgid "The maximum distance below the plane for affected vertices. Increasing the depth affects vertices farther below the plane."
+msgstr "Maximálna vzdialenosť pod rovinou pre dotknuté vrcholy. Zväčšenie hĺbky ovplyvňuje vrcholy ďalej pod rovinou."
+
+
+msgid "The maximum distance above the plane for affected vertices. Increasing the height affects vertices farther above the plane."
+msgstr "Maximálna vzdialenosť nad rovinou pre dotknuté vrcholy. Zväčšenie výšky ovplyvňuje vrcholy ďalej nad rovinou."
+
+
+msgid "Inversion Mode"
+msgstr "Režim inverzie"
+
+
+msgid "Invert Displacement"
+msgstr "Inverzné premiestnenie"
+
+
+msgid "Displace the vertices away from the plane."
+msgstr "Premiestniť vrcholy z roviny."
+
+
+msgid "Swap Height and Depth"
+msgstr "Prehodiť výšku a hĺbku"
+
+
+msgid "Swap the roles of Height and Depth."
+msgstr "Prehodí úlohy Výška a Hĺbka."
+
+
 msgid "Plane Offset"
 msgstr "Posuv plochy"
 
@@ -19792,6 +19792,11 @@ msgstr "Zoškrabať"
 
 
 msgctxt "Brush"
+msgid "Plane"
+msgstr "Rovina"
+
+
+msgctxt "Brush"
 msgid "Multi-plane Scrape"
 msgstr "Viacrovinné zoškrabanie"
 
@@ -19936,6 +19941,22 @@ msgstr "Upraví celú sieť použitím elastickej deformácie"
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
 msgstr "Rozostup medzi ťahmi štetca ako percento priemeru štetca"
+
+
+msgid "Stabilize Normal"
+msgstr "Stabilizovať normálu"
+
+
+msgid "Stabilize the orientation of the brush plane."
+msgstr "Stabilizuje orientáciu roviny štetca."
+
+
+msgid "Stabilize Plane"
+msgstr "Stabilizovať rovinu"
+
+
+msgid "Stabilize the center of the brush plane."
+msgstr "Stabilizuje stred roviny štetca."
 
 
 msgid "Stencil Dimensions"
@@ -34281,68 +34302,12 @@ msgid "Editor menu containing buttons"
 msgstr "Ponuka editora obsahujúca tlačidlá"
 
 
-msgid "Show/Hide"
-msgstr "Ukázať/skryť"
-
-
-msgid "Clean Up"
-msgstr "Prečistiť"
-
-
-msgid "Special Characters"
-msgstr "Špeciálne znaky"
-
-
-msgid "Kerning"
-msgstr "Zhustenie znakov"
-
-
-msgid "Text"
-msgstr "Text"
-
-
-msgid "Metaball"
-msgstr "Meta guľa"
-
-
-msgid "Names"
-msgstr "Názvy"
-
-
-msgid "Bone Roll"
-msgstr "Kývanie kosti"
-
-
-msgid "Pivot Point"
-msgstr "Otočný bod"
+msgid "Mirror"
+msgstr "Zrkadlo"
 
 
 msgid "Snap"
 msgstr "Prichytiť"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Dopad proporcionálnej úpravy"
-
-
-msgid "Mask Edit"
-msgstr "Úprava masky"
-
-
-msgid "Automasking"
-msgstr "Automatické maskovanie"
-
-
-msgid "Face Sets Edit"
-msgstr "Úprava nastavenia plôšok"
-
-
-msgid "Vertex Group Locks"
-msgstr "Zámky skupiny vrcholov"
-
-
-msgid "Mirror"
-msgstr "Zrkadlo"
 
 
 msgid "UV Mapping"
@@ -34397,6 +34362,10 @@ msgid "Assign Material"
 msgstr "Priradiť materiál"
 
 
+msgid "Metaball"
+msgstr "Meta guľa"
+
+
 msgid "Light"
 msgstr "Svetlo"
 
@@ -34429,6 +34398,14 @@ msgid "Quick Effects"
 msgstr "Rýchle efekty"
 
 
+msgid "Show/Hide"
+msgstr "Ukázať/skryť"
+
+
+msgid "Clean Up"
+msgstr "Prečistiť"
+
+
 msgid "Asset"
 msgstr "Aktívum"
 
@@ -34447,6 +34424,10 @@ msgstr "Prepojiť/preniesť údaje"
 
 msgid "Hooks"
 msgstr "Háky"
+
+
+msgid "Vertex Group Locks"
+msgstr "Zámky skupiny vrcholov"
 
 
 msgid "Trim/Add"
@@ -34481,6 +34462,10 @@ msgid "Bone Collections"
 msgstr "Kolekcie kostí"
 
 
+msgid "Names"
+msgstr "Názvy"
+
+
 msgid "Toggle Bone Options"
 msgstr "Prepínač možnosti kostí"
 
@@ -34511,6 +34496,42 @@ msgstr "Nastaviť vplyv plôšky"
 
 msgid "Merge"
 msgstr "Zlúčiť"
+
+
+msgid "Special Characters"
+msgstr "Špeciálne znaky"
+
+
+msgid "Kerning"
+msgstr "Zhustenie znakov"
+
+
+msgid "Text"
+msgstr "Text"
+
+
+msgid "Bone Roll"
+msgstr "Kývanie kosti"
+
+
+msgid "Pivot Point"
+msgstr "Otočný bod"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Dopad proporcionálnej úpravy"
+
+
+msgid "Mask Edit"
+msgstr "Úprava masky"
+
+
+msgid "Automasking"
+msgstr "Automatické maskovanie"
+
+
+msgid "Face Sets Edit"
+msgstr "Úprava nastavenia plôšok"
 
 
 msgid "Keyframe Insert Pie"
@@ -34877,7 +34898,7 @@ msgstr "Zlúči vybrané uzly použitím Tieňovačov"
 
 
 msgid "Node Wrangler"
-msgstr "Uzol Wrangler"
+msgstr "Node Wrangler"
 
 
 msgid "Switch Type to..."
@@ -35135,6 +35156,10 @@ msgstr "Prázdne"
 msgctxt "Constraint"
 msgid "Track"
 msgstr "Stopa"
+
+
+msgid "Modify Pose Asset"
+msgstr "Upraviť aktívum pózy"
 
 
 msgid "Rigify"
@@ -49188,6 +49213,14 @@ msgstr "Znovu nasnímať krivku"
 
 msgid "Generate a poly spline for each input spline"
 msgstr "Vygeneruje polygónovú drážku pre každú vstupnú drážku"
+
+
+msgid "Keep Last Segment"
+msgstr "Ponechať posledný segment"
+
+
+msgid "Don't collapse a curves to single points if they are shorter than the given length. The collapsing behavior exists for compatibility reasons."
+msgstr "Krivky sa nezhŕňajú do jednotlivých bodov, ak sú kratšie ako zadaná dĺžka. Správanie pri kolapse existuje z dôvodu kompatibility."
 
 
 msgid "How to specify the amount of samples"
@@ -65126,6 +65159,15 @@ msgstr "Odstráni vybrané ťahy alebo body"
 
 
 msgctxt "Operator"
+msgid "Delete Breakdown Frames"
+msgstr "Odstrániť snímky rozkladu"
+
+
+msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
+msgstr "Odstráni rozklad snímok generovaných interpoláciou medzi dvoma snímkami Grease Pencil"
+
+
+msgctxt "Operator"
 msgid "Delete Frame"
 msgstr "Odstrániť snímku"
 
@@ -65869,6 +65911,14 @@ msgstr "Prilepiť dozadu"
 
 msgid "Add pasted strokes behind all strokes"
 msgstr "Pridá prilepované ťahy poza všetky ťahy"
+
+
+msgid "Paste to Active"
+msgstr "Prilepiť do aktívnej"
+
+
+msgid "Paste by Layer"
+msgstr "Prilepiť podľa vrstvy"
 
 
 msgctxt "Operator"
@@ -73391,6 +73441,10 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Krivka podľa objektov povrchovej siete alebo textu"
 
 
+msgid "Mesh from Curve, Surface, Metaball, or Text objects"
+msgstr "Povrchová sieť z objektov Krivka, Povrch, Meta-guľa alebo Text"
+
+
 msgid "Curves from evaluated curve data"
 msgstr "Krivky z vyhodnotených údajov krivky"
 
@@ -78496,6 +78550,60 @@ msgstr "Ak je povolené, použije pózu preklopenú cez os X"
 
 
 msgctxt "Operator"
+msgid "Delete Pose Asset"
+msgstr "Odstrániť aktívum pózy"
+
+
+msgid "Delete the selected Pose Asset"
+msgstr "Odstráni vybrané aktívum pózy"
+
+
+msgctxt "Operator"
+msgid "Modify Pose Asset"
+msgstr "Upraviť aktívum pózy"
+
+
+msgid "Update the selected pose asset in the asset library from the currently selected bones. The mode defines how the asset is updated"
+msgstr "Aktualizácia vybraného aktíva pózy v knižnici aktív z aktuálne vybraných kostí. Režim definuje spôsob aktualizácie aktíva"
+
+
+msgid "Overwrite Mode"
+msgstr "Režim prepisu"
+
+
+msgid "Specify which parts of the pose asset are overwritten"
+msgstr "Určuje, ktoré časti aktíva pózy sa prepíšu"
+
+
+msgid "Update existing channels in the pose asset but don't remove or add any channels"
+msgstr "Aktualizuje existujúce kanály v aktíve pózy, ale neodstraňuje ani nepridáva žiadne kanály"
+
+
+msgid "Replace with Selection"
+msgstr "Nahradiť výberom"
+
+
+msgid "Completely replace all channels in the pose asset with the current selection"
+msgstr "Úplne nahradí všetky kanály v aktíve pózy aktuálnym výberom"
+
+
+msgid "Add Selected Bones"
+msgstr "Pridať vybrané kosti"
+
+
+msgid "Add channels of the selection to the pose asset. Existing channels will be updated"
+msgstr "Pridanie kanálov výberu do aktíva pózy. Existujúce kanály sa aktualizujú"
+
+
+msgid "Remove Selected Bones"
+msgstr "Odstrániť vybrané kosti"
+
+
+msgid "Remove channels of the selection from the pose asset"
+msgstr "Odstráni kanály výberu z aktíva pózy"
+
+
+msgctxt "Operator"
 msgid "Blend Pose Asset"
 msgstr "Zmiešať aktívum pózy"
 
@@ -78516,12 +78624,33 @@ msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Brow
 msgstr "Vytvorí nové aktívum pózy v schránke, ktoré sa vloží do prehľadávača aktív"
 
 
+msgctxt "Operator"
+msgid "Create Pose Asset..."
+msgstr "Vytvoriť aktívum pózy..."
+
+
+msgid "Create a new asset from the selected bones in the scene"
+msgstr "Vytvorí nové aktívum z vybraných kostí v scéne"
+
+
 msgid "Activate New Action"
 msgstr "Aktivácia novej akcie"
 
 
+msgid "This property is deprecated and will be removed in the future"
+msgstr "Táto vlastnosť je zastaraná a v budúcnosti bude odstránená"
+
+
+msgid "Asset library used to store the new pose"
+msgstr "Knižnica aktív použitá na uloženie novej pózy"
+
+
 msgid "Pose Name"
 msgstr "Názov pózy"
+
+
+msgid "Name for the new pose asset"
+msgstr "Názov nového aktíva pózy"
 
 
 msgid "Paste the Asset that was previously copied using Copy As Asset"
@@ -87233,7 +87362,7 @@ msgstr "Štetce"
 
 msgctxt "Operator"
 msgid "Call Asset Shelf Popover"
-msgstr "Vyvolať vysúvaciu polica aktív"
+msgstr "Vyvolať vysúvaciu policu aktív"
 
 
 msgid "Open a predefined asset shelf in a popup"
@@ -90368,8 +90497,24 @@ msgid "Image used as canvas"
 msgstr "Obrázok použitý ako plátno"
 
 
+msgid "Clone Alpha"
+msgstr "Klony alfa"
+
+
+msgid "Opacity of clone image display"
+msgstr "Nepriehľadnosť zobrazenia klonov obrázkov"
+
+
+msgid "Clone Image"
+msgstr "Klony obrázka"
+
+
 msgid "Image used as clone source"
 msgstr "Obrázok použitý ako zdrojový klon"
+
+
+msgid "Clone Offset"
+msgstr "Posuv klonu"
 
 
 msgid "Dither"
@@ -90780,14 +90925,6 @@ msgid "Transform Orientations"
 msgstr "Orientácia transformácie"
 
 
-msgid "glTF Variants"
-msgstr "glTF varianty"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF varianty materiálu"
-
-
 msgid "Stroke Placement"
 msgstr "Umiestnenie ťahu"
 
@@ -90816,12 +90953,12 @@ msgid "Multi Frame"
 msgstr "Viacsnímkové"
 
 
-msgid "glTF"
-msgstr "glTF"
+msgid "glTF Variants"
+msgstr "glTF varianty"
 
 
-msgid "glTF Animations"
-msgstr "glTF animácie"
+msgid "glTF Material Variants"
+msgstr "glTF varianty materiálu"
 
 
 msgid "Auto-Masking"
@@ -90842,6 +90979,14 @@ msgstr "Zmena mierky Zúžiť/Rozšíriť krivku"
 
 msgid "Viewport Debug"
 msgstr "Ladenie záberu"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF animácie"
 
 
 msgid "VR"
@@ -94857,6 +95002,18 @@ msgid "Keep horizon level while flying with 3D Mouse"
 msgstr "Zachováva úroveň horizontu počas lietania s 3D myšou"
 
 
+msgid "Auto sets the orbit center dynamically. When the complete model is in view, the center of volume of the whole model is used as the rotation point. When you move closer, the orbit center will be set on an object close to your center of the view."
+msgstr "Automaticky dynamicky nastaví stred obehu. Keď je v zobrazení celý model, ako bod otáčania sa použije stred objemu celého modelu. Keď sa priblížite, stred obehu sa nastaví na objekt blízko stredu pohľadu."
+
+
+msgid "Use Selected Items"
+msgstr "Použiť vybrané položky"
+
+
+msgid "Use selected item forces the orbit center to only take the currently selected objects into account."
+msgstr "Použije vybranú položku, aby centrum obehu bralo do úvahy len aktuálne vybrané objekty."
+
+
 msgid "Orbit Sensitivity"
 msgstr "Citlivosť obiehania"
 
@@ -94901,8 +95058,20 @@ msgid "Overall sensitivity of the 3D Mouse for panning"
 msgstr "Celková citlivosť 3D myši na posúvanie"
 
 
+msgid "Show Orbit Axis Guide"
+msgstr "Zobraziť sprievodcu osou obehu"
+
+
 msgid "Display the center and axis during rotation"
 msgstr "Zobrazí stred a osi počas otáčania"
+
+
+msgid "Show Orbit Center Guide"
+msgstr "Zobraziť sprievodcu stredom obehu"
+
+
+msgid "Display the orbit center during rotation"
+msgstr "Zobrazí stred obehu počas otáčania"
 
 
 msgid "NDOF View Navigate"
@@ -108273,7 +108442,7 @@ msgstr "Oblasť aktívneho motívu"
 
 
 msgid "Theme Asset Shelf Color"
-msgstr "Téma police farby aktíva"
+msgstr "Farba motívu police aktív"
 
 
 msgid "Theme settings for asset shelves"
@@ -118164,6 +118333,16 @@ msgstr "Použiť prevrátenú pózu"
 
 
 msgctxt "Operator"
+msgid "Adjust Pose Asset"
+msgstr "Upraviť aktívum pózy"
+
+
+msgctxt "Operator"
+msgid "Add Selected Bones"
+msgstr "Pridať vybrané kosti"
+
+
+msgctxt "Operator"
 msgid "Remove Selected Bones"
 msgstr "Odstrániť vybrané kosti"
 
@@ -124958,6 +125137,18 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "Obrátený smer kolieska priblíženia"
 
 
+msgid "Show Guides"
+msgstr "Zobraziť vodenie"
+
+
+msgid "Orbit Axis"
+msgstr "Os obehu"
+
+
+msgid "Orbit Center"
+msgstr "Stred obehu"
+
+
 msgid "Fly/Walk"
 msgstr "Lietanie/Chôdza"
 
@@ -126774,6 +126965,11 @@ msgstr "Skryť neaktívne vrstvy"
 
 
 msgctxt "Operator"
+msgid "Paste by Layer"
+msgstr "Prilepiť podľa vrstvy"
+
+
+msgctxt "Operator"
 msgid "Close"
 msgstr "Zavrieť"
 
@@ -127475,10 +127671,6 @@ msgstr "Preskočenie cesty v sústave kľúčovania, pretože nemá žiadny ID (
 
 msgid "\"%s\" is using Action \"%s\", which does not have a slot with identifier \"%s\" or \"%s\". Manually assign the right action slot to \"%s\"."
 msgstr "\"%s\" používa akciu \"%s\", ktorá nemá zásuvku s identifikátorom \"%s\" alebo \"%s\". Ručne priraďte správnu zásuvku akcie k \"%s\"."
-
-
-msgid "Legacy action \"%s\" is assigned to \"%s\", which does not match the action's id_root \"%s\". The action has been upgraded to a slotted action with slot \"%s\" with an id_type \"%s\", which has also been assigned to \"%s\" despite this type mismatch. This likely indicates something odd about the blend file."
-msgstr "Zdedená akcia \"%s\" je priradená k \"%s\", čo nezodpovedá id_root akcie \"%s\". Akcia bola aktualizovaná na zásuvku akcie so zásuvkou \"%s\" s id_type \"%s\", ktorá bola tiež priradená k \"%s\" napriek tejto typovej nezhode. To pravdepodobne naznačuje niečo zvláštne v blend súbore."
 
 
 msgid "Named Layer node"
@@ -129117,8 +129309,36 @@ msgid "Create"
 msgstr "Vytvoriť"
 
 
+msgid "Delete Pose Asset"
+msgstr "Odstrániť aktívum pózy"
+
+
+msgid "Permanently delete pose asset blend file? This cannot be undone."
+msgstr "Natrvalo odstrániť aktívum pózy blend súboru? Toto sa nedá vrátiť späť."
+
+
+msgid "The asset is local to the file. Deleting it will just clear the asset status."
+msgstr "Aktívum je lokálne v súbore. Jeho odstránením sa len vymaže stav aktíva."
+
+
 msgid "Failed to load asset library"
 msgstr "Zlyhalo načítanie knižnice aktív"
+
+
+msgid "No name set"
+msgstr "Žiaden nastavený názov"
+
+
+msgid "Unexpected library type. Failed to create pose asset"
+msgstr "Neočakávaný typ knižnice. Nepodarilo sa vytvoriť aktívum pózy"
+
+
+msgid "Pose assets can only be modified from Pose Mode"
+msgstr "Aktíva pózy je možné upravovať len v režime pózy"
+
+
+msgid "Action is not editable"
+msgstr "Akciu nemožno upravovať"
 
 
 msgid "Asset blend file is not editable"
@@ -129908,7 +130128,7 @@ msgstr "Žiadne zmeny na uloženie"
 
 
 msgid "Enable catalog, making contained assets visible in the asset shelf"
-msgstr "Povolí katalóg, čím sa obsiahnuté aktíva zviditeľnia v polici s aktívami"
+msgstr "Povolí katalóg, čím sa obsiahnuté aktíva zviditeľnia v polici aktív"
 
 
 msgid "Toggle catalog visibility in the asset shelf"
@@ -129924,7 +130144,7 @@ msgstr "Volič katalógu"
 
 
 msgid "Select the asset library and the contained catalogs to display in the asset shelf"
-msgstr "Vyberie knižnicu aktív a obsiahnuté katalógy, ktoré sa majú zobraziť v polici s aktívami"
+msgstr "Vyberie knižnicu aktív a obsiahnuté katalógy, ktoré sa majú zobraziť v polici aktív"
 
 
 msgid "Asset Shelf Panel"
@@ -130296,8 +130516,20 @@ msgid "The object has only one layer"
 msgstr "Objekt má len jednu vrstvu"
 
 
+msgid "No active Grease Pencil layer to paste into"
+msgstr "Žiadna aktívna vrstva Grease Pencil, do ktorej by sa dala vložiť"
+
+
+msgid "Active layer is not editable"
+msgstr "Aktívna vrstva sa nedá upravovať"
+
+
 msgid "No Grease Pencil frame to draw on"
 msgstr "Žiadna snímka na kreslenie Grease Pencil"
+
+
+msgid "Couldn't find matching layer, pasting into active layer"
+msgstr "Nepodarilo sa nájsť zodpovedajúcu vrstvu, vkladanie do aktívnej vrstvy"
 
 
 msgid "Active object is not a selected Grease Pencil"
@@ -131747,6 +131979,10 @@ msgstr "Príznaky bitov vyhladenej skupiny"
 
 msgid "PBR Extensions"
 msgstr "Rozšírenia PBR"
+
+
+msgid "File exported successfully"
+msgstr "Súbor bol úspešne exportovaný"
 
 
 msgid "ASCII"
@@ -135601,6 +135837,10 @@ msgid "No packed file"
 msgstr "Žiadny zbalený súbor"
 
 
+msgid "Data-block using this packed file is not editable"
+msgstr "Blok údajov, ktorý používa tento zbalený súbor, nie je možné upravovať"
+
+
 msgid "Cannot set relative paths with an unsaved blend file"
 msgstr "Nemožno nastaviť relatívne cesty neuloženého blend súboru"
 
@@ -136931,6 +137171,26 @@ msgstr "Nie sú vybraté žiadne kľúče alebo pásy"
 
 msgid "This strip type cannot be retimed"
 msgstr "Tento typ pásu nemožno opätovne časovať"
+
+
+msgctxt "Operator"
+msgid "Select (Unconnected)"
+msgstr "Vybrať (nepripojené)"
+
+
+msgctxt "Operator"
+msgid "Select (Linked Time)"
+msgstr "Vybrať (prepojený čas)"
+
+
+msgctxt "Operator"
+msgid "Select (Linked Handle)"
+msgstr "Vybrať (prepojený manipulátor)"
+
+
+msgctxt "Operator"
+msgid "Select (Side of Frame)"
+msgstr "Vybrať (strana snímky)"
 
 
 msgid "No active sequence!"
@@ -138923,6 +139183,10 @@ msgid "Action slot identifiers should be at least three characters"
 msgstr "Identifikátory zásuviek akcií by mali mať aspoň tri znaky"
 
 
+msgid "Attempted to set slot identifier to \"%s\", but the type prefix doesn't match the slot's 'target_id_type' \"%s\". Setting to \"%s\" instead."
+msgstr "Pokus o nastavenie identifikátora zásuvky na „%s“, ale prefix typu sa nezhoduje s ‚target_id_type‘ zásuvky \"%s\". Namiesto toho nastavte \"%s\"."
+
+
 msgid "Only armature objects are supported"
 msgstr "Podporované sú len objekty armatúry"
 
@@ -140111,7 +140375,7 @@ msgstr "%s rodič '%s' pre '%s' sa nenašiel"
 
 
 msgid "Registering asset shelf class: '%s' is too long, maximum length is %d"
-msgstr "Registrácia triedy police s aktívami: %s' je príliš dlhá, maximálna dĺžka je %d"
+msgstr "Registrácia triedy police aktív: %s' je príliš dlhá, maximálna dĺžka je %d"
 
 
 msgid "Registering asset shelf class: '%s' has been registered before, unregistering previous"
@@ -144264,6 +144528,14 @@ msgid "Blend between diffuse surface and subsurface scattering. Typically should
 msgstr "Prelínanie povrchového a podpovrchového rozptylu. Zvyčajne by mala byť nula alebo jedna (buď úplný rozptyl, alebo podpovrchový rozptyl)"
 
 
+msgid "Scattering radius per color channel (RGB), multiplied with Scale"
+msgstr "Polomer rozptylu na farebný kanál (RGB) vynásobený mierkou"
+
+
+msgid "Scale factor of the subsurface scattering radius"
+msgstr "Faktor mierky polomeru podpovrchového rozptylu"
+
+
 msgid "Index of Refraction (IOR) used for rays that enter the subsurface component"
 msgstr "Index lomu (IOR - index of refraction) použitý pre lúče, ktoré vstupujú do podpovrchovej zložky"
 
@@ -145453,6 +145725,10 @@ msgid "Cannot save blend file, path \"%s\" is not writable"
 msgstr "Nemožno uložiť blend súbor, cesta \"%s\" nie je zapisovateľná"
 
 
+msgid "Cannot save blend file, path \"%s\" is a directory"
+msgstr "Nemožno uložiť blend súbor, cesta \"%s\" je priečinok"
+
+
 msgid "Can't read alternative start-up file: \"%s\""
 msgstr "Nemožno načítať alternatívny spúšťací súbor: \"%s\""
 
@@ -146375,6 +146651,10 @@ msgstr "Inšpekcia scény Virtuálnej reality"
 
 msgid "View the viewport with virtual reality glasses (head-mounted displays)"
 msgstr "Prezrite si záber s okuliarmi pre virtuálnu realitu (hlavovými displejmi)"
+
+
+msgid "All Add-ons"
+msgstr "Všetky doplnky"
 
 
 msgid "All Add-ons Installed by User"

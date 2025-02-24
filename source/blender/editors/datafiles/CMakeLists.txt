@@ -375,6 +375,8 @@ if(WITH_BLENDER)
       caret_prev_word
       center
       center_only
+      char_notdef
+      char_replacement
       centertocursor
       centertomouse
       checkbox_dehlt
@@ -743,6 +745,7 @@ if(WITH_BLENDER)
       grid
       gridfill
       grip
+      grip_v
       groundgrid
       group
       group_bone
@@ -1297,6 +1300,7 @@ if(WITH_BLENDER)
       normals_face
       normals_vertex
       normals_vertex_face
+      not_found
 
       # letter o
       object_contents

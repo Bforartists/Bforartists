@@ -171,10 +171,8 @@ void DRW_cache_free_old_batches(Main *bmain);
 
 namespace blender::draw {
 
+/* Free garbage collected subdivision data. */
 void DRW_cache_free_old_subdiv();
-
-/* For the OpenGL evaluators and garbage collected subdivision data. */
-void DRW_subdiv_free();
 
 }  // namespace blender::draw
 
@@ -205,12 +203,6 @@ void DRW_viewport_data_free(DRWData *drw_data);
 
 bool DRW_gpu_context_release();
 void DRW_gpu_context_activate(bool drw_state);
-
-/**
- * We may want to move this into a more general location.
- * \note This doesn't require the draw context to be in use.
- */
-void DRW_draw_cursor_2d_ex(const ARegion *region, const float cursor[2]);
 
 void DRW_cdlayer_attr_aliases_add(GPUVertFormat *format,
                                   const char *base_name,
