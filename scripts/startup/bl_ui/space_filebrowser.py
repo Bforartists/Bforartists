@@ -554,7 +554,7 @@ class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
 
         layout.operator("file.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("file.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
-        layout.operator("file.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
+        layout.operator("file.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 

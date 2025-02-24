@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.4.0 Beta (b'aad0bd21487d')\n"
+"Project-Id-Version: Blender 4.4.0 Beta (b'63c460d93d55')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-10 15:22+0000\n"
+"POT-Creation-Date: 2025-02-24 09:56+0000\n"
 "PO-Revision-Date: 2024-10-16 00:56+0000\n"
 "Last-Translator: Leevi Oksanen <laavi.oksanen@gmail.com>\n"
 "Language-Team: Finnish <https://translate.blender.org/projects/blender-ui/ui/fi/>\n"
@@ -65,10 +65,6 @@ msgstr "F-Käyrät"
 
 msgid "Action F-Curves"
 msgstr "Toiminta F-käyrät"
-
-
-msgid "Collection of action F-Curves"
-msgstr "Toiminta F-käyrä -kokoelma"
 
 
 msgid "Action Group"
@@ -7340,22 +7336,6 @@ msgid "Mask"
 msgstr "Maski"
 
 
-msgid "Show/Hide"
-msgstr "Näytä/Piilota"
-
-
-msgid "Text"
-msgstr "Teksti"
-
-
-msgid "Metaball"
-msgstr "Metapallo"
-
-
-msgid "Names"
-msgstr "Nimet"
-
-
 msgid "UV Mapping"
 msgstr "UV-kartoittaminen"
 
@@ -7376,6 +7356,10 @@ msgid "Select Loops"
 msgstr "Valitse silmukat"
 
 
+msgid "Metaball"
+msgstr "Metapallo"
+
+
 msgid "Light"
 msgstr "Valo"
 
@@ -7392,6 +7376,10 @@ msgid "Track"
 msgstr "Raide"
 
 
+msgid "Show/Hide"
+msgstr "Näytä/Piilota"
+
+
 msgid "Hooks"
 msgstr "Koukut"
 
@@ -7400,8 +7388,16 @@ msgid "Random Mask"
 msgstr "Satunnainen maski"
 
 
+msgid "Names"
+msgstr "Nimet"
+
+
 msgid "Mesh Select Mode"
 msgstr "Muodon valintatila"
+
+
+msgid "Text"
+msgstr "Teksti"
 
 
 msgid "Basic"
