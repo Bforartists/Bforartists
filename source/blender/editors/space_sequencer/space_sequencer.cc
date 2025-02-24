@@ -14,6 +14,8 @@
 #include "DNA_mask_types.h"
 #include "DNA_scene_types.h"
 
+#include "GPU_immediate.hh"
+#include "GPU_matrix.hh"
 #include "MEM_guardedalloc.h"
 
 #include "BLI_listbase.h"
@@ -370,7 +372,7 @@ static void SEQUENCER_GGT_gizmo2d(wmGizmoGroupType *gzgt)
   gzgt->gzmap_params.spaceid = SPACE_SEQ;
   gzgt->gzmap_params.regionid = RGN_TYPE_PREVIEW;
 
-  ED_widgetgroup_gizmo2d_xform_callbacks_set(gzgt);
+  blender::ed::transform::ED_widgetgroup_gizmo2d_xform_callbacks_set(gzgt);
 }
 
 static void SEQUENCER_GGT_gizmo2d_translate(wmGizmoGroupType *gzgt)
@@ -384,7 +386,7 @@ static void SEQUENCER_GGT_gizmo2d_translate(wmGizmoGroupType *gzgt)
   gzgt->gzmap_params.spaceid = SPACE_SEQ;
   gzgt->gzmap_params.regionid = RGN_TYPE_PREVIEW;
 
-  ED_widgetgroup_gizmo2d_xform_no_cage_callbacks_set(gzgt);
+  blender::ed::transform::ED_widgetgroup_gizmo2d_xform_no_cage_callbacks_set(gzgt);
 }
 
 static void SEQUENCER_GGT_gizmo2d_resize(wmGizmoGroupType *gzgt)
@@ -398,7 +400,7 @@ static void SEQUENCER_GGT_gizmo2d_resize(wmGizmoGroupType *gzgt)
   gzgt->gzmap_params.spaceid = SPACE_SEQ;
   gzgt->gzmap_params.regionid = RGN_TYPE_PREVIEW;
 
-  ED_widgetgroup_gizmo2d_resize_callbacks_set(gzgt);
+  blender::ed::transform::ED_widgetgroup_gizmo2d_resize_callbacks_set(gzgt);
 }
 
 static void SEQUENCER_GGT_gizmo2d_rotate(wmGizmoGroupType *gzgt)
@@ -412,7 +414,7 @@ static void SEQUENCER_GGT_gizmo2d_rotate(wmGizmoGroupType *gzgt)
   gzgt->gzmap_params.spaceid = SPACE_SEQ;
   gzgt->gzmap_params.regionid = RGN_TYPE_PREVIEW;
 
-  ED_widgetgroup_gizmo2d_rotate_callbacks_set(gzgt);
+  blender::ed::transform::ED_widgetgroup_gizmo2d_rotate_callbacks_set(gzgt);
 }
 
 static void sequencer_gizmos()
@@ -849,6 +851,90 @@ static bool is_cursor_visible(const SpaceSeq *sseq)
   return false;
 }
 
+/**
+ * We may want to move this into a more general location.
+ */
+static void draw_cursor_2d(const ARegion *region, const blender::float2 &cursor)
+{
+  int co[2];
+  UI_view2d_view_to_region(&region->v2d, cursor[0], cursor[1], &co[0], &co[1]);
+
+  /* Draw nice Anti Aliased cursor. */
+  GPU_blend(GPU_BLEND_ALPHA);
+
+  /* Draw lines */
+  float original_proj[4][4];
+  GPU_matrix_projection_get(original_proj);
+  GPU_matrix_push();
+  ED_region_pixelspace(region);
+  GPU_matrix_translate_2f(co[0] + 0.5f, co[1] + 0.5f);
+  GPU_matrix_scale_2f(U.widget_unit, U.widget_unit);
+
+  float viewport[4];
+  GPU_viewport_size_get_f(viewport);
+
+  GPUVertFormat *format = immVertexFormat();
+  struct {
+    uint pos, col;
+  } attr_id{};
+  attr_id.pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  attr_id.col = GPU_vertformat_attr_add(format, "color", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+  immBindBuiltinProgram(GPU_SHADER_3D_POLYLINE_FLAT_COLOR);
+  immUniform2fv("viewportSize", &viewport[2]);
+  immUniform1f("lineWidth", U.pixelsize);
+
+  const float f5 = 0.25f;
+  const float f10 = 0.5f;
+  const float f20 = 1.0f;
+
+  const float red[3] = {1.0f, 0.0f, 0.0f};
+  const float white[3] = {1.0f, 1.0f, 1.0f};
+
+  const int segments = 16;
+  immBegin(GPU_PRIM_LINE_STRIP, segments + 1);
+  for (int i = 0; i < segments + 1; i++) {
+    float angle = float(2 * M_PI) * (float(i) / float(segments));
+    float x = f10 * cosf(angle);
+    float y = f10 * sinf(angle);
+
+    immAttr3fv(attr_id.col, (i % 2 == 0) ? red : white);
+    immVertex2f(attr_id.pos, x, y);
+  }
+  immEnd();
+
+  float crosshair_color[3];
+  UI_GetThemeColor3fv(TH_VIEW_OVERLAY, crosshair_color);
+
+  immBegin(GPU_PRIM_LINES, 8);
+  immAttr3fv(attr_id.col, crosshair_color);
+  immVertex2f(attr_id.pos, -f20, 0);
+  immAttr3fv(attr_id.col, crosshair_color);
+  immVertex2f(attr_id.pos, -f5, 0);
+
+  immAttr3fv(attr_id.col, crosshair_color);
+  immVertex2f(attr_id.pos, +f20, 0);
+  immAttr3fv(attr_id.col, crosshair_color);
+  immVertex2f(attr_id.pos, +f5, 0);
+
+  immAttr3fv(attr_id.col, crosshair_color);
+  immVertex2f(attr_id.pos, 0, -f20);
+  immAttr3fv(attr_id.col, crosshair_color);
+  immVertex2f(attr_id.pos, 0, -f5);
+
+  immAttr3fv(attr_id.col, crosshair_color);
+  immVertex2f(attr_id.pos, 0, +f20);
+  immAttr3fv(attr_id.col, crosshair_color);
+  immVertex2f(attr_id.pos, 0, +f5);
+  immEnd();
+
+  immUnbindProgram();
+
+  GPU_blend(GPU_BLEND_NONE);
+
+  GPU_matrix_pop();
+  GPU_matrix_projection_set(original_proj);
+}
+
 static void sequencer_preview_region_draw(const bContext *C, ARegion *region)
 {
   ScrArea *area = CTX_wm_area(C);
@@ -888,10 +974,8 @@ static void sequencer_preview_region_draw(const bContext *C, ARegion *region)
     GPU_depth_mask(false);
     GPU_depth_test(GPU_DEPTH_NONE);
 
-    float cursor_pixel[2];
-    SEQ_image_preview_unit_to_px(scene, sseq->cursor, cursor_pixel);
-
-    DRW_draw_cursor_2d_ex(region, cursor_pixel);
+    const blender::float2 cursor_pixel = SEQ_image_preview_unit_to_px(scene, sseq->cursor);
+    draw_cursor_2d(region, cursor_pixel);
   }
 
   if ((is_playing == false) && (sseq->gizmo_flag & SEQ_GIZMO_HIDE) == 0) {

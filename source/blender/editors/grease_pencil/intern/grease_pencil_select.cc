@@ -13,6 +13,7 @@
 #include "BKE_object.hh"
 
 #include "BLI_enumerable_thread_specific.hh"
+#include "BLI_index_mask.hh"
 #include "BLI_offset_indices.hh"
 #include "BLI_task.hh"
 
@@ -503,12 +504,11 @@ static int select_random_exec(bContext *C, wmOperator *op)
         if (selectable_elements.is_empty()) {
           return {};
         }
-        return ed::curves::random_mask(info.drawing.strokes(),
-                                       selectable_elements,
-                                       selection_domain,
-                                       blender::get_default_hash<int>(seed, info.layer_index),
-                                       ratio,
-                                       memory);
+        return random_mask(selectable_elements,
+                           info.drawing.strokes().points_num(),
+                           blender::get_default_hash<int>(seed, info.layer_index),
+                           ratio,
+                           memory);
       });
 
   /* Use #ID_RECALC_GEOMETRY instead of #ID_RECALC_SELECT because it is handled as a generic
@@ -718,8 +718,6 @@ static int select_similar_exec(bContext *C, wmOperator *op)
   bke::AttrDomain selection_domain = ED_grease_pencil_selection_domain_get(scene->toolsettings,
                                                                            object);
 
-  const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(*scene, grease_pencil);
-
   switch (mode) {
     case SelectSimilarMode::LAYER:
       select_similar_by_layer(scene, object, grease_pencil, selection_domain);
@@ -782,7 +780,7 @@ static void GREASE_PENCIL_OT_select_similar(wmOperatorType *ot)
 
   ot->invoke = WM_menu_invoke;
   ot->exec = select_similar_exec;
-  ot->poll = editable_grease_pencil_point_selection_poll;
+  ot->poll = editable_grease_pencil_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
