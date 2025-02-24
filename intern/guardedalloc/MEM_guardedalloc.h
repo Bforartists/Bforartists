@@ -137,6 +137,16 @@ void *MEM_mallocN_aligned(size_t len,
     ATTR_ALLOC_SIZE(1) ATTR_NONNULL(3);
 
 /**
+ * Allocate an aligned block of memory that remains uninitialized.
+ */
+extern void *(*MEM_malloc_arrayN_aligned)(
+    size_t len,
+    size_t size,
+    size_t alignment,
+    const char *str) /* ATTR_MALLOC */ ATTR_WARN_UNUSED_RESULT ATTR_ALLOC_SIZE(1, 2)
+    ATTR_NONNULL(4);
+
+/**
  * Allocate an aligned block of memory that is initialized with zeros.
  */
 extern void *(*MEM_calloc_arrayN_aligned)(
@@ -190,11 +200,9 @@ extern size_t (*MEM_get_peak_memory)(void) ATTR_WARN_UNUSED_RESULT;
 #ifdef __cplusplus
 #  define MEM_SAFE_FREE(v) \
     do { \
-      static_assert(std::is_pointer_v<std::decay_t<decltype(v)>>); \
-      void **_v = (void **)&(v); \
-      if (*_v) { \
-        MEM_freeN(*_v); \
-        *_v = NULL; \
+      if (v) { \
+        MEM_freeN(v); \
+        (v) = nullptr; \
       } \
     } while (0)
 #else
@@ -293,11 +301,15 @@ void MEM_use_guarded_allocator(void);
  * Allocate new memory for an object of type #T, and construct it.
  * #MEM_delete must be used to delete the object. Calling #MEM_freeN on it is illegal.
  *
- * Note that when no arguments are passed, C++ will do recursive member-wise value initialization.
- * That is because C++ differentiates between creating an object with `T` (default initialization)
- * and `T()` (value initialization), whereby this function does the latter. Value initialization
- * rules are complex, but for C-style structs, memory will be zero-initialized. So this doesn't
- * match a `malloc()`, but a `calloc()` call in this case. See https://stackoverflow.com/a/4982720.
+ * Do not assume that this ever zero-initializes memory (even when it does), explicitly initialize.
+ *
+ * Although calling this without arguments will cause zero-initialization for many types, simple
+ * changes to the type can break this. Basic explanation:
+ * With no arguments, this will initialize using `T()` (value initialization) not `T` (default
+ * initialization). Details are involved, but for "C-style" structs ("Plain old Data" structs or
+ * structs with a compiler generated constructor) memory will be zero-initialized. A change like
+ * simply adding a custom default constructor would change initialization behavior.
+ * See: https://stackoverflow.com/a/4982720, https://stackoverflow.com/a/620402
  */
 template<typename T, typename... Args>
 inline T *MEM_new(const char *allocation_name, Args &&...args)
@@ -329,6 +341,18 @@ template<typename T> inline void MEM_delete(const T *ptr)
   mem_guarded::internal::mem_freeN_ex(const_cast<T *>(ptr),
                                       mem_guarded::internal::AllocationType::NEW_DELETE);
 }
+
+/**
+ * Helper shortcut to #MEM_delete, that also ensures that the target pointer is set to nullptr
+ * after deleting it.
+ */
+#  define MEM_SAFE_DELETE(v) \
+    do { \
+      if (v) { \
+        MEM_delete(v); \
+        (v) = nullptr; \
+      } \
+    } while (0)
 
 /**
  * Allocate zero-initialized memory for an object of type #T. The constructor of #T is not called,
@@ -371,6 +395,24 @@ template<typename T> inline T *MEM_cnew(const char *allocation_name, const T &ot
     memcpy(new_object, &other, sizeof(T));
   }
   return new_object;
+}
+
+template<typename T> inline void MEM_freeN(T *ptr)
+{
+#  ifdef _MSC_VER
+  /* MSVC considers C-style types using the DNA_DEFINE_CXX_METHODS as non-trivial (more
+   * specifically, non-trivially copyable, likely because the default copy constructors are
+   * deleted). GCC and clang (both on linux, OSX, and clang-cl on Windows on Arm) do not.
+   *
+   * So for now, use a more restricted check on MSVC, should still catch most of actual invalid
+   * cases. */
+  static_assert(std::is_trivially_destructible_v<T>,
+                "For non-trivial types, MEM_delete must be used.");
+#  else
+  static_assert(std::is_trivial_v<T>, "For non-trivial types, MEM_delete must be used.");
+#  endif
+  mem_guarded::internal::mem_freeN_ex(const_cast<void *>(static_cast<const void *>(ptr)),
+                                      mem_guarded::internal::AllocationType::ALLOC_FREE);
 }
 
 /** Allocation functions (for C++ only). */

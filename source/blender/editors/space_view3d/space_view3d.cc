@@ -50,6 +50,7 @@
 
 #include "ED_asset_shelf.hh"
 #include "ED_geometry.hh"
+#include "ED_info.hh"
 #include "ED_object.hh"
 #include "ED_outliner.hh"
 #include "ED_render.hh"
@@ -277,7 +278,7 @@ static void view3d_free(SpaceLink *sl)
     MEM_freeN(vd->localvd);
   }
 
-  MEM_SAFE_FREE(vd->runtime.local_stats);
+  ED_view3d_local_stats_free(vd);
 
   if (vd->runtime.properties_storage_free) {
     vd->runtime.properties_storage_free(vd->runtime.properties_storage);
@@ -299,7 +300,7 @@ static void view3d_exit(wmWindowManager * /*wm*/, ScrArea *area)
 {
   BLI_assert(area->spacetype == SPACE_VIEW3D);
   View3D *v3d = static_cast<View3D *>(area->spacedata.first);
-  MEM_SAFE_FREE(v3d->runtime.local_stats);
+  ED_view3d_local_stats_free(v3d);
 }
 
 static SpaceLink *view3d_duplicate(SpaceLink *sl)
@@ -393,6 +394,9 @@ static void view3d_main_region_init(wmWindowManager *wm, ARegion *region)
   WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
 
   keymap = WM_keymap_ensure(wm->defaultconf, "Particle", SPACE_EMPTY, RGN_TYPE_WINDOW);
+  WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
+
+  keymap = WM_keymap_ensure(wm->defaultconf, "Point Cloud", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
 
   keymap = WM_keymap_ensure(wm->defaultconf, "Sculpt Curves", SPACE_EMPTY, RGN_TYPE_WINDOW);
@@ -1003,7 +1007,8 @@ static void view3d_widgets()
   wmGizmoMapType_Params params{SPACE_VIEW3D, RGN_TYPE_WINDOW};
   wmGizmoMapType *gzmap_type = WM_gizmomaptype_ensure(&params);
 
-  WM_gizmogrouptype_append_and_link(gzmap_type, VIEW3D_GGT_xform_gizmo_context);
+  WM_gizmogrouptype_append_and_link(gzmap_type,
+                                    blender::ed::transform::VIEW3D_GGT_xform_gizmo_context);
   WM_gizmogrouptype_append_and_link(gzmap_type, VIEW3D_GGT_light_spot);
   WM_gizmogrouptype_append_and_link(gzmap_type, VIEW3D_GGT_light_point);
   WM_gizmogrouptype_append_and_link(gzmap_type, VIEW3D_GGT_light_area);
@@ -1018,10 +1023,10 @@ static void view3d_widgets()
   WM_gizmogrouptype_append_and_link(gzmap_type, VIEW3D_GGT_armature_spline);
 #endif
 
-  WM_gizmogrouptype_append(VIEW3D_GGT_xform_gizmo);
-  WM_gizmogrouptype_append(VIEW3D_GGT_xform_cage);
-  WM_gizmogrouptype_append(VIEW3D_GGT_xform_shear);
-  WM_gizmogrouptype_append(VIEW3D_GGT_xform_extrude);
+  WM_gizmogrouptype_append(blender::ed::transform::VIEW3D_GGT_xform_gizmo);
+  WM_gizmogrouptype_append(blender::ed::transform::VIEW3D_GGT_xform_cage);
+  WM_gizmogrouptype_append(blender::ed::transform::VIEW3D_GGT_xform_shear);
+  WM_gizmogrouptype_append(blender::ed::transform::VIEW3D_GGT_xform_extrude);
   WM_gizmogrouptype_append(VIEW3D_GGT_mesh_preselect_elem);
   WM_gizmogrouptype_append(VIEW3D_GGT_mesh_preselect_edgering);
   WM_gizmogrouptype_append(VIEW3D_GGT_tool_generic_handle_normal);
@@ -1054,7 +1059,7 @@ static void view3d_main_region_free(ARegion *region)
     }
 
     if (rv3d->sms) {
-      MEM_freeN(rv3d->sms);
+      MEM_freeN(static_cast<void *>(rv3d->sms));
     }
 
     MEM_freeN(rv3d);
@@ -1740,8 +1745,8 @@ void ED_view3d_buttons_region_layout_ex(const bContext *C,
     case CTX_MODE_VERTEX_GREASE_PENCIL:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
       break;
-    case CTX_MODE_EDIT_POINT_CLOUD:
-      ARRAY_SET_ITEMS(contexts, ".point_cloud_edit");
+    case CTX_MODE_EDIT_POINTCLOUD:
+      ARRAY_SET_ITEMS(contexts, ".pointcloud_edit");
       break;
     case CTX_MODE_POSE:
       ARRAY_SET_ITEMS(contexts, ".posemode");
@@ -2012,7 +2017,7 @@ static void space_view3d_listener(const wmSpaceTypeListenerParams *params)
 static void space_view3d_refresh(const bContext *C, ScrArea *area)
 {
   View3D *v3d = (View3D *)area->spacedata.first;
-  MEM_SAFE_FREE(v3d->runtime.local_stats);
+  ED_view3d_local_stats_free(v3d);
 
   if (v3d->localvd && v3d->localvd->runtime.flag & V3D_RUNTIME_LOCAL_MAYBE_EMPTY) {
     ED_localview_exit_if_empty(CTX_data_ensure_evaluated_depsgraph(C),

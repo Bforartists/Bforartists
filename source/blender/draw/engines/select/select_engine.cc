@@ -23,6 +23,8 @@
 #include "draw_common_c.hh"
 #include "draw_manager_c.hh"
 
+#include "../overlay/overlay_next_private.hh"
+
 #include "select_engine.hh"
 #include "select_private.hh"
 
@@ -187,10 +189,11 @@ static void select_cache_init(void *vedata)
     inst.select_id_vert_ps.init();
     inst.select_vert = nullptr;
     if (e_data.context.select_mode & SCE_SELECT_VERTEX) {
+      const float vertex_size = blender::draw::overlay::Resources::vertex_size_get();
       auto &sub = inst.select_id_vert_ps.sub("Sub");
       sub.state_set(state, clipping_plane_count);
       sub.shader_set(sh->select_id_flat);
-      sub.push_constant("vertex_size", float(2 * G_draw.block.size_vertex));
+      sub.push_constant("vertex_size", float(2 * vertex_size));
       sub.push_constant("retopologyOffset", retopology_offset);
       inst.select_vert = &sub;
     }
@@ -202,14 +205,12 @@ static void select_cache_init(void *vedata)
     DrawData *data = DRW_drawdata_ensure(
         &obj_eval->id, &draw_engine_select_type, sizeof(SELECTID_ObjectData), nullptr, nullptr);
     SELECTID_ObjectData *sel_data = reinterpret_cast<SELECTID_ObjectData *>(data);
-
-    data->recalc = 0;
     sel_data->drawn_index = sel_id;
     sel_data->in_pass = false;
     sel_data->is_drawn = false;
   }
 
-  copy_m4_m4(e_data.context.persmat, draw_ctx->rv3d->persmat);
+  e_data.context.persmat = float4x4(draw_ctx->rv3d->persmat);
   e_data.context.index_drawn_len = 1;
   select_engine_framebuffer_setup();
   GPU_framebuffer_bind(e_data.framebuffer_select_id);
