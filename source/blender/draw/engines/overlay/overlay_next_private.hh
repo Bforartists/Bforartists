@@ -273,6 +273,30 @@ struct State {
   }
 };
 
+/* Matches Vertex Format. */
+struct Vertex {
+  float3 pos;
+  int vclass;
+};
+
+struct VertexWithColor {
+  float3 pos;
+  float3 color;
+};
+
+struct VertShaded {
+  float3 pos;
+  int v_class;
+  float3 nor;
+};
+
+/* TODO(fclem): Might be good to remove for simplicity. */
+struct VertexTriple {
+  float2 pos0;
+  float2 pos1;
+  float2 pos2;
+};
+
 /**
  * Contains all overlay generic geometry batches.
  */
@@ -301,6 +325,10 @@ class ShapeCache {
   BatchPtr bone_degrees_of_freedom_wire;
 
   BatchPtr grid;
+  BatchPtr cube_solid;
+
+  BatchPtr cursor_circle;
+  BatchPtr cursor_lines;
 
   BatchPtr quad_wire;
   BatchPtr quad_solid;
@@ -356,6 +384,67 @@ class ShapeCache {
   BatchPtr lightprobe_grid;
 
   ShapeCache();
+
+ private:
+  GPUVertFormat format_vert = {0};
+  GPUVertFormat format_vert_with_color = {0};
+  GPUVertFormat format_vert_shaded = {0};
+  GPUVertFormat format_vert_triple = {0};
+
+  const GPUVertFormat &get_format(Vertex /*unused*/)
+  {
+    GPUVertFormat &format = format_vert;
+    if (format.attr_len != 0) {
+      return format;
+    }
+    GPU_vertformat_attr_add(&format, "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+    GPU_vertformat_attr_add(&format, "vclass", GPU_COMP_I32, 1, GPU_FETCH_INT);
+    return format;
+  }
+
+  const GPUVertFormat &get_format(VertexWithColor /*unused*/)
+  {
+    GPUVertFormat &format = format_vert_with_color;
+    if (format.attr_len != 0) {
+      return format;
+    }
+    GPU_vertformat_attr_add(&format, "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+    GPU_vertformat_attr_add(&format, "color", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+    return format;
+  }
+
+  const GPUVertFormat &get_format(VertShaded /*unused*/)
+  {
+    GPUVertFormat &format = format_vert_shaded;
+    if (format.attr_len != 0) {
+      return format;
+    }
+    GPU_vertformat_attr_add(&format, "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+    GPU_vertformat_attr_add(&format, "vclass", GPU_COMP_I32, 1, GPU_FETCH_INT);
+    GPU_vertformat_attr_add(&format, "nor", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+    return format;
+  }
+
+  const GPUVertFormat &get_format(VertexTriple /*unused*/)
+  {
+    GPUVertFormat &format = format_vert_triple;
+    if (format.attr_len != 0) {
+      return format;
+    }
+    GPU_vertformat_attr_add(&format, "pos0", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    GPU_vertformat_attr_add(&format, "pos1", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    GPU_vertformat_attr_add(&format, "pos2", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    return format;
+  }
+
+  /* Caller gets ownership of the #gpu::VertBuf. */
+  template<typename T> gpu::VertBuf *vbo_from_vector(const Vector<T> &vector)
+  {
+    gpu::VertBuf *vbo = GPU_vertbuf_create_with_format(get_format(T()));
+    GPU_vertbuf_data_alloc(*vbo, vector.size());
+    vbo->data<T>().copy_from(vector);
+    return vbo;
+  }
 };
 
 /**
@@ -465,7 +554,7 @@ class ShaderModule {
   ShaderPtr depth_grease_pencil = shader_selectable("overlay_depth_gpencil");
   ShaderPtr depth_mesh = shader_selectable("overlay_depth_mesh");
   ShaderPtr depth_mesh_conservative = shader_selectable("overlay_depth_mesh_conservative");
-  ShaderPtr depth_point_cloud = shader_selectable("overlay_depth_pointcloud");
+  ShaderPtr depth_pointcloud = shader_selectable("overlay_depth_pointcloud");
   ShaderPtr extra_shape = shader_selectable("overlay_extra");
   ShaderPtr extra_point = shader_selectable("overlay_extra_point");
   ShaderPtr extra_wire = shader_selectable("overlay_extra_wire");
@@ -571,12 +660,9 @@ struct Resources : public select::SelectMap {
   detail::SubPassVector<GreasePencilDepthPlane, 16> depth_planes;
   int64_t depth_planes_count = 0;
 
-  /** TODO(fclem): Copy of G_data.block that should become theme colors only and managed by the
-   * engine. */
-  GlobalsUboStorage theme_settings;
-  /* References, not owned. */
-  GPUUniformBuf *globals_buf;
-  TextureRef weight_ramp_tx;
+  draw::UniformBuffer<GlobalsUboStorage> globals_buf;
+  GlobalsUboStorage &theme_settings = globals_buf;
+  draw::UniformArrayBuffer<float4, 6> clip_planes_buf;
   /* Wrappers around #DefaultTextureList members. */
   TextureRef depth_in_front_tx;
   TextureRef color_overlay_tx;
@@ -597,6 +683,12 @@ struct Resources : public select::SelectMap {
   TextureRef depth_target_tx;
   TextureRef depth_target_in_front_tx;
 
+  /** Copy of the settings the current texture was generated with. Used to detect updates. */
+  bool weight_ramp_custom = false;
+  ColorBand weight_ramp_copy = {};
+  /** Baked color ramp texture from theme and user settings. Maps weight [0..1] to color. */
+  Texture weight_ramp_tx = {"weight_ramp"};
+
   Vector<MovieClip *> bg_movie_clips;
 
   const ShapeCache &shapes;
@@ -610,6 +702,9 @@ struct Resources : public select::SelectMap {
   {
     free_movieclips_textures();
   }
+
+  void update_theme_settings(const State &state);
+  void update_clip_planes(const State &state);
 
   void begin_sync()
   {
@@ -810,6 +905,12 @@ struct Resources : public select::SelectMap {
     for (MovieClip *clip : bg_movie_clips) {
       BKE_movieclip_free_gputexture(clip);
     }
+  }
+
+  static float vertex_size_get()
+  {
+    /* M_SQRT2 to be at least the same size of the old square */
+    return U.pixelsize * max_ff(1.0f, UI_GetThemeValuef(TH_VERTEX_SIZE) * float(M_SQRT2) / 2.0f);
   }
 
   /** Convenience functions. */

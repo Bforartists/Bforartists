@@ -573,7 +573,7 @@ class NodeTreeMainUpdater {
   void update_individual_nodes(bNodeTree &ntree)
   {
     for (bNode *node : ntree.all_nodes()) {
-      bke::node_declaration_ensure(&ntree, node);
+      bke::node_declaration_ensure(ntree, *node);
       if (this->should_update_individual_node(ntree, *node)) {
         bke::bNodeType &ntype = *node->typeinfo;
         if (ntype.group_update_func) {
@@ -591,6 +591,12 @@ class NodeTreeMainUpdater {
            * not have a declaration anymore. */
           delete node->runtime->declaration;
           node->runtime->declaration = nullptr;
+          LISTBASE_FOREACH (bNodeSocket *, socket, &node->inputs) {
+            socket->runtime->declaration = nullptr;
+          }
+          LISTBASE_FOREACH (bNodeSocket *, socket, &node->outputs) {
+            socket->runtime->declaration = nullptr;
+          }
         }
         if (ntype.updatefunc) {
           ntype.updatefunc(&ntree, node);
