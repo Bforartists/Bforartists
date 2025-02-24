@@ -275,7 +275,7 @@ static void store_result_geometry(const wmOperator &op,
       PointCloud *new_points =
           geometry.get_component_for_write<bke::PointCloudComponent>().release();
       if (!new_points) {
-        CustomData_free(&points.pdata, points.totpoint);
+        CustomData_free(&points.pdata);
         points.totpoint = 0;
         break;
       }
@@ -1037,9 +1037,9 @@ static GeometryNodeAssetTraitFlag asset_flag_for_context(const ObjectType type,
     case OB_POINTCLOUD: {
       switch (mode) {
         case OB_MODE_OBJECT:
-          return (GEO_NODE_ASSET_TOOL | GEO_NODE_ASSET_OBJECT | GEO_NODE_ASSET_POINT_CLOUD);
+          return (GEO_NODE_ASSET_TOOL | GEO_NODE_ASSET_OBJECT | GEO_NODE_ASSET_POINTCLOUD);
         case OB_MODE_EDIT:
-          return (GEO_NODE_ASSET_TOOL | GEO_NODE_ASSET_EDIT | GEO_NODE_ASSET_POINT_CLOUD);
+          return (GEO_NODE_ASSET_TOOL | GEO_NODE_ASSET_EDIT | GEO_NODE_ASSET_POINTCLOUD);
         default:
           break;
       }

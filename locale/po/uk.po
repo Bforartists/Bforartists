@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.4.0 Beta (b'aad0bd21487d')\n"
+"Project-Id-Version: Blender 4.4.0 Beta (b'63c460d93d55')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-10 15:22+0000\n"
+"POT-Creation-Date: 2025-02-24 09:56+0000\n"
 "PO-Revision-Date: 2024-03-13 11:04+0000\n"
 "Last-Translator: Bartosz <gang65@poczta.onet.pl>\n"
 "Language-Team: Ukrainian <https://translate.blender.org/projects/blender-ui/ui/uk/>\n"
@@ -69,10 +69,6 @@ msgstr "Гніздо"
 
 msgid "Action F-Curves"
 msgstr "Ф-криві дій"
-
-
-msgid "Collection of action F-Curves"
-msgstr "Колекція Ф-кривих дій"
 
 
 msgid "Action Group"
@@ -14365,10 +14361,6 @@ msgid "A collection of F-Curves for animation"
 msgstr "Колекція Ф-Кривих для анімації"
 
 
-msgid "The individual F-Curves that make up the action"
-msgstr "Окремі Ф-Криві, які створюють дію"
-
-
 msgid "Frame Range"
 msgstr "Діапазон кадрів"
 
@@ -14377,17 +14369,9 @@ msgid "Groups"
 msgstr "Групи"
 
 
-msgid "Convenient groupings of F-Curves"
-msgstr "Зручне групування Ф-Кривих"
-
-
 msgctxt "ID"
 msgid "ID Root Type"
 msgstr "Тип кореневого ID"
-
-
-msgid "Type of ID block that action can be used on - DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING"
-msgstr "Тип ID-блока, до якого може бути застосована дія. НЕ ЗМІНЮЙТЕ, ЯКЩО НЕ РОЗУМІЄТЕ, ЩО РОБИТЕ"
 
 
 msgid "Layers"
@@ -14756,22 +14740,6 @@ msgstr "Зсув початку рубежу відносно радіуса п�
 
 msgid "Brush's capabilities"
 msgstr "Можливості пензля"
-
-
-msgid "Clone Alpha"
-msgstr "Клонувати прозорість"
-
-
-msgid "Opacity of clone image display"
-msgstr "Непрозорість при показі клону зображення"
-
-
-msgid "Clone Image"
-msgstr "Клонувати зображення"
-
-
-msgid "Clone Offset"
-msgstr "Клонувати зсув"
 
 
 msgid "Soft Body Plasticity"
@@ -26664,68 +26632,12 @@ msgid "Material slot name"
 msgstr "Назва гнізда матеріалу"
 
 
-msgid "Show/Hide"
-msgstr "Показати/приховати"
-
-
-msgid "Clean Up"
-msgstr "Вичищення"
-
-
-msgid "Special Characters"
-msgstr "Спеціальні символи"
-
-
-msgid "Kerning"
-msgstr "Кернінг"
-
-
-msgid "Text"
-msgstr "Текст"
-
-
-msgid "Metaball"
-msgstr "Метакуля"
-
-
-msgid "Names"
-msgstr "Назви"
-
-
-msgid "Bone Roll"
-msgstr "Прокручення Кістки"
-
-
-msgid "Pivot Point"
-msgstr "Точка Опертя"
+msgid "Mirror"
+msgstr "Дзеркалення"
 
 
 msgid "Snap"
 msgstr "Підхоп"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Спад Пропорційного Редагування"
-
-
-msgid "Mask Edit"
-msgstr "Редагування Маски"
-
-
-msgid "Automasking"
-msgstr "Автомаскування"
-
-
-msgid "Face Sets Edit"
-msgstr "Редагування Наборів Граней"
-
-
-msgid "Vertex Group Locks"
-msgstr "Блокування Груп Вершин"
-
-
-msgid "Mirror"
-msgstr "Дзеркалення"
 
 
 msgid "UV Mapping"
@@ -26780,6 +26692,10 @@ msgid "Assign Material"
 msgstr "Призначити Матеріал"
 
 
+msgid "Metaball"
+msgstr "Метакуля"
+
+
 msgid "Light"
 msgstr "Слабко"
 
@@ -26812,6 +26728,14 @@ msgid "Quick Effects"
 msgstr "Швидкі ефекти"
 
 
+msgid "Show/Hide"
+msgstr "Показати/приховати"
+
+
+msgid "Clean Up"
+msgstr "Вичищення"
+
+
 msgid "Asset"
 msgstr "Актив"
 
@@ -26832,6 +26756,10 @@ msgid "Hooks"
 msgstr "Гачки"
 
 
+msgid "Vertex Group Locks"
+msgstr "Блокування Груп Вершин"
+
+
 msgid "Sculpt Set Pivot"
 msgstr "Ліплення Задати Опертя"
 
@@ -26850,6 +26778,10 @@ msgstr "У проміжках"
 
 msgid "Propagate"
 msgstr "Поширити"
+
+
+msgid "Names"
+msgstr "Назви"
 
 
 msgid "Toggle Bone Options"
@@ -26882,6 +26814,42 @@ msgstr "Задати Силу Грані"
 
 msgid "Merge"
 msgstr "Об'єднання"
+
+
+msgid "Special Characters"
+msgstr "Спеціальні символи"
+
+
+msgid "Kerning"
+msgstr "Кернінг"
+
+
+msgid "Text"
+msgstr "Текст"
+
+
+msgid "Bone Roll"
+msgstr "Прокручення Кістки"
+
+
+msgid "Pivot Point"
+msgstr "Точка Опертя"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Спад Пропорційного Редагування"
+
+
+msgid "Mask Edit"
+msgstr "Редагування Маски"
+
+
+msgid "Automasking"
+msgstr "Автомаскування"
+
+
+msgid "Face Sets Edit"
+msgstr "Редагування Наборів Граней"
 
 
 msgid "Basic"
@@ -63189,8 +63157,24 @@ msgid "Image used as canvas"
 msgstr "Зображення, використане як канва"
 
 
+msgid "Clone Alpha"
+msgstr "Клонувати прозорість"
+
+
+msgid "Opacity of clone image display"
+msgstr "Непрозорість при показі клону зображення"
+
+
+msgid "Clone Image"
+msgstr "Клонувати зображення"
+
+
 msgid "Image used as clone source"
 msgstr "Зображення, що використовується як джерело клонування"
+
+
+msgid "Clone Offset"
+msgstr "Клонувати зсув"
 
 
 msgid "Dither"

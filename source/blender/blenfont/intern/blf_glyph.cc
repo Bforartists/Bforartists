@@ -787,8 +787,8 @@ static FT_UInt blf_glyph_index_from_charcode(FontBLF **font, const uint charcode
     return glyph_index;
   }
 
-  /* Only fonts managed by the cache can fallback. */
-  if (!((*font)->flags & BLF_CACHED)) {
+  /* Fonts managed by the cache can fallback. Unless specifically forbidden. */
+  if (!((*font)->flags & BLF_CACHED) || ((*font)->flags & BLF_NO_FALLBACK)) {
     return 0;
   }
 
@@ -1351,6 +1351,11 @@ static FT_GlyphSlot blf_glyph_render(FontBLF *settings_font,
 
 GlyphBLF *blf_glyph_ensure(FontBLF *font, GlyphCacheBLF *gc, const uint charcode, uint8_t subpixel)
 {
+  if (charcode < 32) {
+    /* Do not render C0 controls (U+0000 - U+001F) characters. #134972 */
+    return nullptr;
+  }
+
   GlyphBLF *g = blf_glyph_cache_find_glyph(gc, charcode, subpixel);
   if (g) {
     return g;

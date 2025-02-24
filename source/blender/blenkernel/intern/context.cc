@@ -1252,7 +1252,7 @@ enum eContextObjectMode CTX_data_mode_enum_ex(const Object *obedit,
       case OB_GREASE_PENCIL:
         return CTX_MODE_EDIT_GREASE_PENCIL;
       case OB_POINTCLOUD:
-        return CTX_MODE_EDIT_POINT_CLOUD;
+        return CTX_MODE_EDIT_POINTCLOUD;
     }
   }
   else {
@@ -1330,7 +1330,7 @@ static const char *data_mode_strings[] = {
     "lattice_edit",
     "curves_edit",
     "grease_pencil_edit", /*BFA - New*/
-    "point_cloud_edit",
+    "pointcloud_edit",
     "posemode",
     "sculpt_mode",
     "weightpaint",
