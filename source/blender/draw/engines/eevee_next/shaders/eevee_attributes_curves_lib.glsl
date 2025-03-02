@@ -11,9 +11,9 @@
 #  define DRW_HAIR_INFO
 #endif
 
-SHADER_LIBRARY_CREATE_INFO(draw_modelmat_new)
+SHADER_LIBRARY_CREATE_INFO(draw_modelmat)
 SHADER_LIBRARY_CREATE_INFO(draw_resource_handle_new)
-SHADER_LIBRARY_CREATE_INFO(draw_hair_new)
+SHADER_LIBRARY_CREATE_INFO(draw_hair)
 
 #include "common_hair_lib.glsl" /* TODO rename to curve. */
 #include "draw_model_lib.glsl"
