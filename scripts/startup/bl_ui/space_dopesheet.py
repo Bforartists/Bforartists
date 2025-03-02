@@ -749,9 +749,9 @@ class DOPESHEET_MT_action(Menu):
 class DOPESHEET_MT_key(Menu):
     bl_label = "Key"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
-        ob = _context.active_object
+        ob = context.active_object
 
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
         layout.menu("DOPESHEET_MT_key_snap")

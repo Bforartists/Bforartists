@@ -23,7 +23,7 @@ VERTEX_OUT(select_id_iface)
 FRAGMENT_OUT(0, UINT, fragColor)
 VERTEX_SOURCE("select_id_vert.glsl")
 FRAGMENT_SOURCE("select_id_frag.glsl")
-ADDITIONAL_INFO(draw_modelmat_new)
+ADDITIONAL_INFO(draw_modelmat)
 ADDITIONAL_INFO(draw_view)
 DO_STATIC_COMPILATION()
 GPU_SHADER_CREATE_END()
@@ -37,7 +37,7 @@ VERTEX_IN(0, VEC3, pos)
 FRAGMENT_OUT(0, UINT, fragColor)
 VERTEX_SOURCE("select_id_vert.glsl")
 FRAGMENT_SOURCE("select_id_frag.glsl")
-ADDITIONAL_INFO(draw_modelmat_new)
+ADDITIONAL_INFO(draw_modelmat)
 ADDITIONAL_INFO(draw_view)
 DO_STATIC_COMPILATION()
 GPU_SHADER_CREATE_END()
@@ -56,19 +56,6 @@ ADDITIONAL_INFO(draw_globals)
 ADDITIONAL_INFO(drw_clipped)
 DEFINE("USE_WORLD_CLIP_PLANES")
 DO_STATIC_COMPILATION()
-GPU_SHADER_CREATE_END()
-
-/* Used to patch overlay shaders. */
-GPU_SHADER_CREATE_INFO(select_id_patch)
-TYPEDEF_SOURCE("select_shader_shared.hh")
-VERTEX_OUT(select_id_iface)
-/* Need to make sure the depth & stencil comparison runs before the fragment shader. */
-EARLY_FRAGMENT_TEST(true)
-UNIFORM_BUF(SELECT_DATA, SelectInfoData, select_info_buf)
-/* Select IDs for instanced draw-calls not using #PassMain. */
-STORAGE_BUF(SELECT_ID_IN, READ, int, in_select_buf[])
-/* Stores the result of the whole selection drawing. Content depends on selection mode. */
-STORAGE_BUF(SELECT_ID_OUT, READ_WRITE, uint, out_select_buf[])
 GPU_SHADER_CREATE_END()
 
 /** \} */

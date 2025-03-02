@@ -391,7 +391,8 @@ void IMB_buffer_byte_from_float(unsigned char *rect_to,
                                 int width,
                                 int height,
                                 int stride_to,
-                                int stride_from);
+                                int stride_from,
+                                int start_y = 0);
 /**
  * Float to byte pixels, output 4-channel RGBA.
  */
@@ -573,21 +574,6 @@ void imb_freerectImbuf_all(ImBuf *ibuf);
 /* Free the GPU textures of the given image buffer, leaving the CPU buffers unchanged.
  * The ibuf can be nullptr, in which case the function does nothing. */
 void IMB_free_gpu_textures(ImBuf *ibuf);
-
-/**
- * Threaded processors.
- */
-void IMB_processor_apply_threaded(
-    int buffer_lines,
-    int handle_size,
-    void *init_customdata,
-    void(init_handle)(void *handle, int start_line, int tot_line, void *customdata),
-    void(do_thread)(void *));
-
-using ScanlineThreadFunc = void (*)(void *custom_data, int scanline);
-void IMB_processor_apply_threaded_scanlines(int total_scanlines,
-                                            ScanlineThreadFunc do_thread,
-                                            void *custom_data);
 
 /**
  * \brief Transform modes to use for IMB_transform function.
