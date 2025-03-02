@@ -7,7 +7,6 @@
 #include "draw_model_lib.glsl"
 #include "draw_view_lib.glsl"
 
-/* NOTE: To be used with UNIFORM_RESOURCE_ID and INSTANCED_ATTR as define. */
 #ifdef POINTCLOUD_SHADER
 #  define COMMON_POINTCLOUD_LIB
 
@@ -77,8 +76,6 @@ void pointcloud_get_pos_nor_radius(out vec3 outpos, out vec3 outnor, out float o
       break;
   }
 
-  /* TODO(fclem): remove multiplication here. Here only for keeping the size correct for now. */
-  radius *= 0.01;
   outnor = facing_mat * pos_inst;
   outpos = p + outnor * radius;
   outradius = radius;
