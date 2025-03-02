@@ -2,6 +2,19 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#ifdef GPU_SHADER
+#  pragma once
+#  include "gpu_glsl_cpp_stubs.hh"
+
+#  include "draw_common_shader_shared.hh"
+#  include "draw_object_infos_info.hh"
+#  include "draw_view_info.hh"
+
+#  include "gpu_index_load_info.hh"
+
+#  include "overlay_shader_shared.h"
+#endif
+
 #include "overlay_common_info.hh"
 
 /* -------------------------------------------------------------------- */
@@ -290,6 +303,7 @@ FRAGMENT_OUT(1, VEC4, lineOutput)
 VERTEX_SOURCE("overlay_edit_gpencil_canvas_vert.glsl")
 FRAGMENT_SOURCE("overlay_extra_frag.glsl")
 ADDITIONAL_INFO(draw_mesh)
+ADDITIONAL_INFO(draw_view)
 ADDITIONAL_INFO(draw_globals)
 GPU_SHADER_CREATE_END()
 
@@ -355,7 +369,7 @@ FRAGMENT_OUT(1, VEC4, lineOutput)
 VERTEX_SOURCE("overlay_particle_hair_vert.glsl")
 FRAGMENT_SOURCE("overlay_particle_shape_frag.glsl")
 ADDITIONAL_INFO(draw_view)
-ADDITIONAL_INFO(draw_object_infos_new)
+ADDITIONAL_INFO(draw_object_infos)
 ADDITIONAL_INFO(draw_resource_handle_new)
 ADDITIONAL_INFO(draw_globals)
 GPU_SHADER_CREATE_END()
