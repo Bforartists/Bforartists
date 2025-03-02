@@ -785,7 +785,7 @@ class VIEW3D_HT_header(Header):
         mode_string = context.mode
         object_mode = "OBJECT" if obj is None else obj.mode
         has_pose_mode = (object_mode == "POSE") or (
-            object_mode == "WEIGHT_PAINT" and context.pose_object is not None
+                object_mode == "WEIGHT_PAINT" and context.pose_object is not None
         )
 
         tool_settings = context.tool_settings
@@ -822,18 +822,18 @@ class VIEW3D_HT_header(Header):
             show_snap = True
         else:
             if has_pose_mode or (
-                object_mode
-                not in {
-                    "SCULPT",
-                    "SCULPT_CURVES",
-                    "VERTEX_PAINT",
-                    "WEIGHT_PAINT",
-                    "TEXTURE_PAINT",
-                    "PAINT_GREASE_PENCIL",
-                    "SCULPT_GREASE_PENCIL",
-                    "WEIGHT_GREASE_PENCIL",
-                    "VERTEX_GREASE_PENCIL",
-                }
+                    object_mode
+                    not in {
+                        "SCULPT",
+                        "SCULPT_CURVES",
+                        "VERTEX_PAINT",
+                        "WEIGHT_PAINT",
+                        "TEXTURE_PAINT",
+                        "PAINT_GREASE_PENCIL",
+                        "SCULPT_GREASE_PENCIL",
+                        "WEIGHT_GREASE_PENCIL",
+                        "VERTEX_GREASE_PENCIL",
+                    }
             ):
                 show_snap = True
             else:
@@ -842,9 +842,9 @@ class VIEW3D_HT_header(Header):
                 if paint_settings:
                     brush = paint_settings.brush
                     if (
-                        brush
-                        and hasattr(brush, "stroke_method")
-                        and brush.stroke_method == "CURVE"
+                            brush
+                            and hasattr(brush, "stroke_method")
+                            and brush.stroke_method == "CURVE"
                     ):
                         show_snap = True
 
@@ -876,15 +876,15 @@ class VIEW3D_HT_header(Header):
 
         # Proportional editing
         if (
-            object_mode
-            in {
-                "EDIT",
-                "PARTICLE_EDIT",
-                "SCULPT_GREASE_PENCIL",
-                "EDIT_GREASE_PENCIL",
-                "OBJECT",
-            }
-            and context.mode != "EDIT_ARMATURE"
+                object_mode
+                in {
+            "EDIT",
+            "PARTICLE_EDIT",
+            "SCULPT_GREASE_PENCIL",
+            "EDIT_GREASE_PENCIL",
+            "OBJECT",
+        }
+                and context.mode != "EDIT_ARMATURE"
         ):
             row = layout.row(align=True)
             kw = {}
@@ -939,7 +939,7 @@ class VIEW3D_HT_header(Header):
         mode_string = context.mode
         object_mode = "OBJECT" if obj is None else obj.mode
         has_pose_mode = (object_mode == "POSE") or (
-            object_mode == "WEIGHT_PAINT" and context.pose_object is not None
+                object_mode == "WEIGHT_PAINT" and context.pose_object is not None
         )
 
         # Note: This is actually deadly in case enum_items have to be dynamically generated
@@ -1247,8 +1247,8 @@ class VIEW3D_HT_header(Header):
 
         # Separate from `elif` chain because it may coexist with weight-paint.
         if has_pose_mode or (
-            object_mode in {"EDIT_ARMATURE", "OBJECT"}
-            and VIEW3D_PT_overlay_bones.is_using_wireframe(context)
+                object_mode in {"EDIT_ARMATURE", "OBJECT"}
+                and VIEW3D_PT_overlay_bones.is_using_wireframe(context)
         ):
             sub.popover(panel="VIEW3D_PT_overlay_bones", text="", icon="POSE_HLT")
 
@@ -1289,14 +1289,14 @@ class VIEW3D_HT_header(Header):
     @staticmethod
     def _sculpt_automasking_icon(sculpt):
         automask_enabled = (
-            sculpt.use_automasking_topology
-            or sculpt.use_automasking_face_sets
-            or sculpt.use_automasking_boundary_edges
-            or sculpt.use_automasking_boundary_face_sets
-            or sculpt.use_automasking_cavity
-            or sculpt.use_automasking_cavity_inverted
-            or sculpt.use_automasking_start_normal
-            or sculpt.use_automasking_view_normal
+                sculpt.use_automasking_topology
+                or sculpt.use_automasking_face_sets
+                or sculpt.use_automasking_boundary_edges
+                or sculpt.use_automasking_boundary_face_sets
+                or sculpt.use_automasking_cavity
+                or sculpt.use_automasking_cavity_inverted
+                or sculpt.use_automasking_start_normal
+                or sculpt.use_automasking_view_normal
         )
 
         return "MOD_MASK" if automask_enabled else "MOD_MASK_OFF"  # BFA - mask icon
@@ -1304,11 +1304,11 @@ class VIEW3D_HT_header(Header):
     @staticmethod
     def _grease_pencil_sculpt_automasking_icon(gpencil_sculpt):
         automask_enabled = (
-            gpencil_sculpt.use_automasking_stroke
-            or gpencil_sculpt.use_automasking_layer_stroke
-            or gpencil_sculpt.use_automasking_material_stroke
-            or gpencil_sculpt.use_automasking_material_active
-            or gpencil_sculpt.use_automasking_layer_active
+                gpencil_sculpt.use_automasking_stroke
+                or gpencil_sculpt.use_automasking_layer_stroke
+                or gpencil_sculpt.use_automasking_material_stroke
+                or gpencil_sculpt.use_automasking_material_active
+                or gpencil_sculpt.use_automasking_layer_active
         )
 
         return "MOD_MASK" if automask_enabled else "MOD_MASK_OFF"  # BFA - mask icon
@@ -1458,9 +1458,9 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.template_node_operator_asset_root_items()
             elif mode_string == "SCULPT_GREASE_PENCIL":
                 is_selection_mask = (
-                    tool_settings.use_gpencil_select_mask_point
-                    or tool_settings.use_gpencil_select_mask_stroke
-                    or tool_settings.use_gpencil_select_mask_segment
+                        tool_settings.use_gpencil_select_mask_point
+                        or tool_settings.use_gpencil_select_mask_stroke
+                        or tool_settings.use_gpencil_select_mask_segment
                 )
                 if is_selection_mask:
                     layout.menu("VIEW3D_MT_select_edit_grease_pencil")
@@ -1736,7 +1736,7 @@ class VIEW3D_MT_uv_map_clear_seam(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}  # enable undo for the operator.
 
     def execute(
-        self, context
+            self, context
     ):  # execute() is called by blender when running the operator.
         bpy.ops.mesh.mark_seam(clear=True)
         return {"FINISHED"}
@@ -1926,11 +1926,11 @@ class VIEW3D_MT_view(Menu):
         if context.mode in ["PAINT_TEXTURE", "PAINT_VERTEX", "PAINT_WEIGHT", "SCULPT"]:
             layout.operator(
                 "view3d.view_selected", text="Frame Last Stroke", icon="VIEW_SELECTED"
-            ).use_all_regions = False
+            )
         else:
             layout.operator(
                 "view3d.view_selected", text="Frame Selected", icon="VIEW_SELECTED"
-            ).use_all_regions = False
+            )
 
         if view.region_quadviews:
             layout.operator(
@@ -3883,7 +3883,7 @@ class VIEW3D_MT_add(Menu):
         layout.menu("VIEW3D_MT_surface_add", icon="OUTLINER_OB_SURFACE")
         layout.menu("VIEW3D_MT_metaball_add", text="Metaball", icon="OUTLINER_OB_META")
         layout.operator("object.text_add", text="Text", icon="OUTLINER_OB_FONT")
-        if context.preferences.experimental.use_new_point_cloud_type:
+        if context.preferences.experimental.use_new_pointcloud_type:
             layout.operator(
                 "object.pointcloud_add",
                 text="Point Cloud",
@@ -4171,9 +4171,9 @@ class VIEW3D_MT_object(Menu):
 
             if not ob.data.dof.focus_object:
                 if (
-                    view
-                    and view.camera == ob
-                    and view.region_3d.view_perspective == "CAMERA"
+                        view
+                        and view.camera == ob
+                        and view.region_3d.view_perspective == "CAMERA"
                 ):
                     props = layout.operator(
                         "ui.eyedropper_depth", text="DOF Distance (Pick)", icon="DOF"
@@ -4501,9 +4501,9 @@ class VIEW3D_MT_object_context_menu(Menu):
 
             if not obj.data.dof.focus_object:
                 if (
-                    view
-                    and view.camera == obj
-                    and view.region_3d.view_perspective == "CAMERA"
+                        view
+                        and view.camera == obj
+                        and view.region_3d.view_perspective == "CAMERA"
                 ):
                     props = layout.operator(
                         "ui.eyedropper_depth", text="DOF Distance (Pick)", icon="DOF"
@@ -4686,6 +4686,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                 "POINTCLOUD",
                 "META",
                 "FONT",
+                "GREASEPENCIL",
             }:
                 layout.operator_menu_enum("object.convert", "target")
 
@@ -4876,6 +4877,7 @@ class VIEW3D_MT_object_apply(Menu):
             text_ctxt=i18n_contexts.default,
             icon="APPLY_PARENT_INVERSE",
         )
+        layout.operator("object.visual_geometry_to_objects")
         # layout.operator("object.duplicates_make_real") # BFA - redundant
         # layout.operator("object.parent_inverse_apply", text="Parent Inverse",
         # text_ctxt=i18n_contexts.default)  # BFA - redundant
@@ -5430,9 +5432,9 @@ class VIEW3D_MT_vertex_group(Menu):
 
         ob = context.active_object
         if ob.mode == "EDIT" or (
-            ob.mode == "WEIGHT_PAINT"
-            and ob.type == "MESH"
-            and ob.data.use_paint_mask_vertex
+                ob.mode == "WEIGHT_PAINT"
+                and ob.type == "MESH"
+                and ob.data.use_paint_mask_vertex
         ):
             if ob.vertex_groups.active:
                 layout.separator()
@@ -7105,7 +7107,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()  # BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
 
             if (
-                selected_edges_len >= 1
+                    selected_edges_len >= 1
             ):  # BFA-Draise - Changed order of Make Edge before Bridge Edge Loop for consistency with Vertex Context
                 col.operator(
                     "mesh.edge_face_add", text="Make Edge/Face", icon="MAKE_EDGEFACE"
@@ -7268,7 +7270,7 @@ class VIEW3D_MT_edit_mesh_extrude_dupli(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}  # enable undo for the operator.
 
     def execute(
-        self, context
+            self, context
     ):  # execute() is called by blender when running the operator.
         bpy.ops.mesh.dupli_extrude_cursor("INVOKE_DEFAULT", rotate_source=False)
         return {"FINISHED"}
@@ -7285,7 +7287,7 @@ class VIEW3D_MT_edit_mesh_extrude_dupli_rotate(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}  # enable undo for the operator.
 
     def execute(
-        self, context
+            self, context
     ):  # execute() is called by blender when running the operator.
         bpy.ops.mesh.dupli_extrude_cursor("INVOKE_DEFAULT", rotate_source=True)
         return {"FINISHED"}
@@ -9196,7 +9198,7 @@ class VIEW3D_MT_shading_ex_pie(Menu):
             pie.prop(view.overlay, "show_xray_bone", icon="XRAY")
         else:
             xray_active = (context.mode == "EDIT_MESH") or (
-                view.shading.type in {"SOLID", "WIREFRAME"}
+                    view.shading.type in {"SOLID", "WIREFRAME"}
             )
             if xray_active:
                 sub = pie
@@ -9480,6 +9482,7 @@ class VIEW3D_PT_active_tool(Panel, ToolActivePanelHelper):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Tool"
+
     # See comment below.
     # bl_options = {'HIDE_HEADER'}
 
@@ -9657,7 +9660,7 @@ class VIEW3D_PT_collections(Panel):
     bl_options = {"DEFAULT_CLOSED"}
 
     def _draw_collection(
-        self, layout, view_layer, use_local_collections, collection, index
+            self, layout, view_layer, use_local_collections, collection, index
     ):
         need_separator = index
         for child in collection.children:
@@ -10163,7 +10166,7 @@ class VIEW3D_PT_shading_options(Panel):
             if shading.light in {"STUDIO", "MATCAP"}:
                 studio_light = shading.selected_studio_light
                 if (
-                    studio_light is not None
+                        studio_light is not None
                 ) and studio_light.has_specular_highlight_pass:
                     row = col.row()
                     row.separator()
@@ -10286,8 +10289,8 @@ class VIEW3D_PT_shading_render_pass(Panel):
     @classmethod
     def poll(cls, context):
         return (context.space_data.shading.type == "MATERIAL") or (
-            context.engine in cls.COMPAT_ENGINES
-            and context.space_data.shading.type == "RENDERED"
+                context.engine in cls.COMPAT_ENGINES
+                and context.space_data.shading.type == "RENDERED"
         )
 
     def draw(self, context):
@@ -10964,9 +10967,9 @@ class VIEW3D_PT_overlay_edit_mesh_normals(Panel):
 
         sub = split.row(align=True)
         if (
-            overlay.show_vertex_normals
-            or overlay.show_face_normals
-            or overlay.show_split_normals
+                overlay.show_vertex_normals
+                or overlay.show_face_normals
+                or overlay.show_split_normals
         ):
             sub.use_property_split = True
             if overlay.use_normals_constant_screen_size:
@@ -11180,12 +11183,12 @@ class VIEW3D_PT_overlay_bones(Panel):
     def poll(cls, context):
         mode = context.mode
         return (
-            (mode == "POSE")
-            or (mode == "PAINT_WEIGHT" and context.pose_object)
-            or (
-                mode == "EDIT_ARMATURE"
-                and VIEW3D_PT_overlay_bones.is_using_wireframe(context)
-            )
+                (mode == "POSE")
+                or (mode == "PAINT_WEIGHT" and context.pose_object)
+                or (
+                        mode == "EDIT_ARMATURE"
+                        and VIEW3D_PT_overlay_bones.is_using_wireframe(context)
+                )
         )
 
     def draw(self, context):
@@ -12144,9 +12147,9 @@ class VIEW3D_PT_greasepencil_draw_context_menu(Panel):
 
         is_pin_vertex = gp_settings.brush_draw_mode == "VERTEXCOLOR"
         is_vertex = (
-            settings.color_mode == "VERTEXCOLOR"
-            or brush.gpencil_tool == "TINT"
-            or is_pin_vertex
+                settings.color_mode == "VERTEXCOLOR"
+                or brush.gpencil_tool == "TINT"
+                or is_pin_vertex
         )
 
         if brush.gpencil_tool not in {"ERASE", "CUTTER", "EYEDROPPER"} and is_vertex:
@@ -12475,8 +12478,8 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         row.prop(sculpt, "use_automasking_boundary_edges", text="Mesh Boundary")
 
         if (
-            sculpt.use_automasking_boundary_edges
-            or sculpt.use_automasking_boundary_face_sets
+                sculpt.use_automasking_boundary_edges
+                or sculpt.use_automasking_boundary_face_sets
         ):
             split.label(icon="DISCLOSURE_TRI_DOWN")
         else:
@@ -12492,16 +12495,16 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         )
 
         if (
-            sculpt.use_automasking_boundary_edges
-            or sculpt.use_automasking_boundary_face_sets
+                sculpt.use_automasking_boundary_edges
+                or sculpt.use_automasking_boundary_face_sets
         ):
             split.label(icon="DISCLOSURE_TRI_DOWN")
         else:
             split.label(icon="DISCLOSURE_TRI_RIGHT")
 
         if (
-            sculpt.use_automasking_boundary_edges
-            or sculpt.use_automasking_boundary_face_sets
+                sculpt.use_automasking_boundary_edges
+                or sculpt.use_automasking_boundary_face_sets
         ):
             col = layout.column()
             col.use_property_split = True
@@ -12519,7 +12522,7 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         row.prop(sculpt, "use_automasking_cavity", text="Cavity")
 
         is_cavity_active = (
-            sculpt.use_automasking_cavity or sculpt.use_automasking_cavity_inverted
+                sculpt.use_automasking_cavity or sculpt.use_automasking_cavity_inverted
         )
 
         if is_cavity_active:
@@ -12536,7 +12539,7 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         row.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (inverted)")
 
         is_cavity_active = (
-            sculpt.use_automasking_cavity or sculpt.use_automasking_cavity_inverted
+                sculpt.use_automasking_cavity or sculpt.use_automasking_cavity_inverted
         )
 
         if is_cavity_active:
@@ -12972,9 +12975,9 @@ class VIEW3D_AST_object(bpy.types.AssetShelf):
     @classmethod
     def asset_poll(cls, asset):
         if (
-            asset.id_type == "NODETREE"
-            and "Geometry Nodes" in asset.metadata.tags
-            and "3D View" in asset.metadata.tags
+                asset.id_type == "NODETREE"
+                and "Geometry Nodes" in asset.metadata.tags
+                and "3D View" in asset.metadata.tags
         ):
             return True
         return asset.id_type in {"MATERIAL", "OBJECT", "COLLECTION", "WORLD"}
@@ -13294,7 +13297,6 @@ classes = (
     VIEW3D_PT_greasepencil_vertex_paint_context_menu,
     VIEW3D_PT_greasepencil_weight_context_menu,
 )
-
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class

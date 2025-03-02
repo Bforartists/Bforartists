@@ -2418,6 +2418,13 @@ PanelLayout uiLayoutPanelProp(const bContext *C,
                               uiLayout *layout,
                               PointerRNA *open_prop_owner,
                               const char *open_prop_name);
+PanelLayout uiLayoutPanelPropWithBoolHeader(const bContext *C,
+                                            uiLayout *layout,
+                                            PointerRNA *open_prop_owner,
+                                            const blender::StringRefNull open_prop_name,
+                                            PointerRNA *bool_prop_owner,
+                                            const blender::StringRefNull bool_prop_name,
+                                            const std::optional<blender::StringRefNull> label);
 
 /**
  * Variant of #uiLayoutPanelProp that automatically creates the header row with the
@@ -2433,13 +2440,6 @@ uiLayout *uiLayoutPanelProp(const bContext *C,
                             PointerRNA *open_prop_owner,
                             const char *open_prop_name,
                             const char *label);
-
-uiLayout *uiLayoutPanelPropWithBoolHeader(const bContext *C,
-                                          uiLayout *layout,
-                                          PointerRNA *open_prop_owner,
-                                          blender::StringRefNull open_prop_name,
-                                          blender::StringRefNull bool_prop_name,
-                                          const std::optional<blender::StringRefNull> label);
 
 /**
  * Variant of #uiLayoutPanelProp that automatically stores the open-close-state in the root
@@ -3544,7 +3544,20 @@ ARegion *UI_tooltip_create_from_search_item_generic(bContext *C,
 #define UI_TOOLTIP_DELAY_LABEL 0.2
 
 /* Float precision helpers */
+
+/* Maximum number of digits of precision (not number of decimal places)
+ * to display for float values. Note that the UI_FLOAT_VALUE_DISPLAY_*
+ * defines that follow depend on this. */
 #define UI_PRECISION_FLOAT_MAX 6
+
+/* Values exceeding this range are displayed as "inf" / "-inf".
+ * This range is almost FLT_MAX to -FLT_MAX, but each is truncated
+ * to our display precision, set by UI_PRECISION_FLOAT_MAX. Each
+ * is approximately `FLT_MAX / 1.000001` but that calculation does
+ * not give us the explicit zeros needed for this exact range. */
+#define UI_FLOAT_VALUE_DISPLAY_MAX 3.402820000e+38F
+#define UI_FLOAT_VALUE_DISPLAY_MIN -3.402820000e+38F
+
 /* For float buttons the 'step', is scaled */
 #define UI_PRECISION_FLOAT_SCALE 0.01f
 

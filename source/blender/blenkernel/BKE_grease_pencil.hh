@@ -424,6 +424,10 @@ class LayerRuntime {
   /* Runtime data used for frame transformations. */
   LayerTransformData trans_data_;
 
+  /* Whether this layer's visibility is animated (via the ".hide" RNA property). This is only set
+   * when creating a copy of of the owning GreasePencil ID for the depsgraph evaluation. */
+  bool is_visisbility_animated_;
+
  public:
   /* Reset all runtime data. */
   void clear();
@@ -1083,7 +1087,8 @@ void BKE_grease_pencil_nomain_to_grease_pencil(GreasePencil *grease_pencil_src,
 
 void BKE_grease_pencil_vgroup_name_update(Object *ob, const char *old_name, const char *new_name);
 
-void BKE_grease_pencil_data_update(Depsgraph *depsgraph, Scene *scene, Object *object);
+void BKE_grease_pencil_eval_geometry(Depsgraph *depsgraph, GreasePencil *grease_pencil);
+void BKE_object_eval_grease_pencil(Depsgraph *depsgraph, Scene *scene, Object *object);
 void BKE_grease_pencil_duplicate_drawing_array(const GreasePencil *grease_pencil_src,
                                                GreasePencil *grease_pencil_dst);
 
