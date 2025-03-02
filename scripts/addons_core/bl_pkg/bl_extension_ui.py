@@ -1281,14 +1281,19 @@ def extensions_panel_draw_online_extensions_request_impl(
     row.alignment = 'LEFT'
     row.label(text="While offline, use \"Install from Disk\" to install third-party Extensions.") # BFA - made it explicit
     ## BFA - this link is not useful and leads to Blender
-    # TODO: the URL must be updated before release,
-    # this could be constructed using a function to account for Blender version & locale.
-    #row.operator(
+    # row.operator(
     #    "wm.url_open",
     #    text="",
     #    icon='URL',
     #    emboss=False,
-    #).url = "https://docs.blender.org/manual/en/dev/editors/preferences/extensions.html#install"
+    # ).url = (
+    #     "https://docs.blender.org/manual/"
+    #     "{:s}/{:d}.{:d}/editors/preferences/extensions.html#installing-extensions"
+    # ).format(
+    #     bpy.utils.manual_language_code(),
+    #     *bpy.app.version[:2],
+    # )
+
 
     row = box.row(align=True) # BFA - warning about legacy addons we ship
     row.alignment = 'LEFT' # BFA - warning about legacy addons we ship
