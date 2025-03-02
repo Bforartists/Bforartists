@@ -99,7 +99,6 @@ void Scene::free_memory(bool final)
   procedurals.clear();
   objects.clear();
   geometry.clear();
-  lights.clear();
   particle_systems.clear();
   passes.clear();
 
@@ -494,7 +493,7 @@ void Scene::update_kernel_features()
         kernel_features |= KERNEL_FEATURE_OBJECT_MOTION;
       }
     }
-    if (object->get_is_shadow_catcher()) {
+    if (object->get_is_shadow_catcher() && !geom->is_light()) {
       kernel_features |= KERNEL_FEATURE_SHADOW_CATCHER;
     }
     if (geom->is_mesh()) {
@@ -511,23 +510,16 @@ void Scene::update_kernel_features()
     else if (geom->is_pointcloud()) {
       kernel_features |= KERNEL_FEATURE_POINTCLOUD;
     }
+    else if (geom->is_light()) {
+      const Light *light = static_cast<const Light *>(object->get_geometry());
+      if (light->get_use_caustics()) {
+        has_caustics_light = true;
+      }
+    }
     if (object->has_light_linking()) {
       kernel_features |= KERNEL_FEATURE_LIGHT_LINKING;
     }
     if (object->has_shadow_linking()) {
-      kernel_features |= KERNEL_FEATURE_SHADOW_LINKING;
-    }
-  }
-
-  for (Light *light : lights) {
-    if (light->get_use_caustics()) {
-      has_caustics_light = true;
-    }
-
-    if (light->has_light_linking()) {
-      kernel_features |= KERNEL_FEATURE_LIGHT_LINKING;
-    }
-    if (light->has_shadow_linking()) {
       kernel_features |= KERNEL_FEATURE_SHADOW_LINKING;
     }
   }
@@ -719,7 +711,10 @@ bool Scene::has_shadow_catcher()
   if (shadow_catcher_modified_) {
     has_shadow_catcher_ = false;
     for (Object *object : objects) {
-      if (object->get_is_shadow_catcher()) {
+      /* Shadow catcher flags on lights only controls effect on other objects, it's
+       * not catching shadows itself. This is on by default, so ignore to avoid
+       * performance impact when there is no actual shadow catcher. */
+      if (object->get_is_shadow_catcher() && !object->get_geometry()->is_light()) {
         has_shadow_catcher_ = true;
         break;
       }
@@ -741,7 +736,7 @@ template<> Light *Scene::create_node<Light>()
   unique_ptr<Light> node = make_unique<Light>();
   Light *node_ptr = node.get();
   node->set_owner(this);
-  lights.push_back(std::move(node));
+  geometry.push_back(std::move(node));
   light_manager->tag_update(this, LightManager::LIGHT_ADDED);
   return node_ptr;
 }
@@ -879,7 +874,7 @@ template<> Film *Scene::create_node<Film>()
 template<> void Scene::delete_node(Light *node)
 {
   assert(node->get_owner() == this);
-  lights.erase_by_swap(node);
+  geometry.erase_by_swap(node);
   light_manager->tag_update(this, LightManager::LIGHT_REMOVED);
 }
 
@@ -983,18 +978,12 @@ template<typename T> static void assert_same_owner(const set<T *> &nodes, const 
 #endif
 }
 
-template<> void Scene::delete_nodes(const set<Light *> &nodes, const NodeOwner *owner)
-{
-  assert_same_owner(nodes, owner);
-  lights.erase_in_set(nodes);
-  light_manager->tag_update(this, LightManager::LIGHT_REMOVED);
-}
-
 template<> void Scene::delete_nodes(const set<Geometry *> &nodes, const NodeOwner *owner)
 {
   assert_same_owner(nodes, owner);
   geometry.erase_in_set(nodes);
   geometry_manager->tag_update(this, GeometryManager::GEOMETRY_REMOVED);
+  light_manager->tag_update(this, LightManager::LIGHT_REMOVED);
 }
 
 template<> void Scene::delete_nodes(const set<Object *> &nodes, const NodeOwner *owner)

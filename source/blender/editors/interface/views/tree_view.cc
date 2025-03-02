@@ -25,6 +25,7 @@
 #include "WM_types.hh"
 
 #include "BLI_listbase.h"
+#include "BLI_math_base.h"
 #include "BLI_multi_value_map.hh"
 
 #include "UI_tree_view.hh"
@@ -197,6 +198,10 @@ void AbstractTreeView::get_hierarchy_lines(const ARegion &region,
     visible_item_index++;
 
     if (!item->is_collapsible() || item->is_collapsed()) {
+      continue;
+    }
+    if (item->children_.is_empty()) {
+      BLI_assert(item->is_always_collapsible_);
       continue;
     }
 
@@ -703,6 +708,9 @@ bool AbstractTreeViewItem::is_collapsible() const
 {
   BLI_assert_msg(get_tree_view().is_reconstructed(),
                  "State can't be queried until reconstruction is completed");
+  if (is_always_collapsible_) {
+    return true;
+  }
   if (children_.is_empty()) {
     return false;
   }
