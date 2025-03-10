@@ -1335,7 +1335,7 @@ class NODES_PT_comp_add_keying(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeChannelMatte"
 
-            rops = flow.operator("node.add_node", text = "", icon = "NODE_CHROMA")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_CHROMA")
             props.use_transform = True
             props.type = "CompositorNodeChromaMatte"
 
