@@ -1341,6 +1341,7 @@ if(WITH_BLENDER)
       outliner
       outliner_collection
       outliner_data_armature
+      outliner_data_camera
       outliner_data_curve
       outliner_data_empty
       outliner_data_font
@@ -2013,7 +2014,6 @@ if(WITH_BLENDER)
       view_back
       view_bottom
       view_camera
-      view_camera_unselected
       view_fill
       view_fit
       view_frame
