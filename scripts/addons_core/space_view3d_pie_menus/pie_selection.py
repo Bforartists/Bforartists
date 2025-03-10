@@ -79,7 +79,7 @@ class VIEW3D_MT_select_any_camera(Menu):
         all_cams = [obj for obj in sorted(context.scene.objects, key=lambda o: o.name) if obj.type == 'CAMERA']
 
         for cam in all_cams:
-            icon = 'VIEW_CAMERA_UNSELECTED'
+            icon = 'OUTLINER_DATA_CAMERA'
             if cam == active_cam:
                 icon = 'OUTLINER_OB_CAMERA'
             layout.operator('object.select_object_by_name', text=cam.name, icon=icon).obj_name=cam.name

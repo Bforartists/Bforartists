@@ -1233,7 +1233,7 @@ class VIEW3D_PT_properties_stored_views(Panel):
                         if list[i].camera_type != 'CAMERA':
                             icon_string = 'OBJECT_DATAMODE'
                         else:
-                            icon_string = "VIEW_CAMERA_UNSELECTED"
+                            icon_string = "OUTLINER_DATA_CAMERA"
                 if mode == 'LAYERS':
                     if list[i].lock_camera_and_layers is True:
                         icon_string = 'SCENE_DATA'
@@ -1277,7 +1277,7 @@ class VIEW3D_PT_properties_stored_views(Panel):
                 row = layout.row(align=True)
                 row.context_pointer_set("active_object", camera)
                 row.operator("cameraselector.set_scene_camera",
-                                   text=camera.name, icon='VIEW_CAMERA_UNSELECTED')
+                                   text=camera.name, icon='OUTLINER_DATA_CAMERA')
                 row.operator("cameraselector.preview_scene_camera",
                                    text='', icon='RESTRICT_VIEW_OFF')
                 row.operator("cameraselector.add_camera_marker",
