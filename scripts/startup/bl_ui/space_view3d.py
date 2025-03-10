@@ -10142,6 +10142,7 @@ class VIEW3D_PT_shading_options(Panel):
             else:
                 col.label(icon="DISCLOSURE_TRI_RIGHT")
 
+            col = layout.column()
             row = col.row()
             if not xray_active:
                 row.separator()
