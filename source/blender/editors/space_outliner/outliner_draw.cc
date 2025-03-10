@@ -2517,7 +2517,7 @@ static BIFIconID tree_element_get_icon_from_id(const ID *id)
     case ID_AR:
       return ICON_OUTLINER_DATA_ARMATURE;
     case ID_CA:
-      return ICON_OUTLINER_DATA_CAMERA;
+      return ICON_VIEW_CAMERA_UNSELECTED;
     case ID_KE:
       return ICON_SHAPEKEY_DATA;
     case ID_WO:

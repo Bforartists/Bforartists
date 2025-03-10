@@ -196,7 +196,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
 
 
         row = col.row(align=True, heading="")
-        row.label(text="Camera", icon="OUTLINER_DATA_CAMERA")
+        row.label(text="Camera", icon="VIEW_CAMERA_UNSELECTED")
 
         row.menu(
             SEQUENCE_MT_active_shot_camera_select.bl_idname,
