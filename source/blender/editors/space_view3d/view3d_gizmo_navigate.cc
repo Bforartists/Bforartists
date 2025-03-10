@@ -107,7 +107,7 @@ static NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
     {
         "VIEW3D_OT_view_camera",
         "GIZMO_GT_button_2d",
-        ICON_VIEW_CAMERA_UNSELECTED,
+        ICON_OUTLINER_DATA_CAMERA,
         nullptr,
     },
     {

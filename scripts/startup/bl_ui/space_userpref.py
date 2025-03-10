@@ -451,7 +451,7 @@ class USERPREF_PT_edit_objects_duplicate_data(EditingPanel, CenterAlignMixIn, Pa
         datablock_types = (
             ("use_duplicate_action", "Action", 'ACTION', ""),
             ("use_duplicate_armature", "Armature", 'OUTLINER_DATA_ARMATURE', ""),
-            ("use_duplicate_camera", "Camera", 'VIEW_CAMERA_UNSELECTED', ""),
+            ("use_duplicate_camera", "Camera", 'OUTLINER_DATA_CAMERA', ""),
             ("use_duplicate_curve", "Curve", 'OUTLINER_DATA_CURVE', ""),
             ("use_duplicate_curves", "Curves", 'OUTLINER_OB_CURVES', ""),
             ("use_duplicate_grease_pencil", "Grease Pencil", 'OUTLINER_OB_GREASEPENCIL', ""),

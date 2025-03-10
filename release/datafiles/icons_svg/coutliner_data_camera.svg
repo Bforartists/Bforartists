@@ -7,7 +7,7 @@
    width="1600"
    height="1600"
    viewBox="0 0 1600 1600"
-   sodipodi:docname="view_camera_unselected.svg"
+   sodipodi:docname="coutliner_data_camera.svg"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -42,18 +42,18 @@
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
-     inkscape:zoom="0.23046875"
-     inkscape:cx="596.61017"
-     inkscape:cy="620.47457"
+     inkscape:zoom="0.5"
+     inkscape:cx="-17"
+     inkscape:cy="8"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="VIEW_CAMERA_UNSELECTED"
+     inkscape:current-layer="OUTLINER_DATA_CAMERA"
      inkscape:showpageshadow="0"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#d1d1d1" />
   <g
-     id="VIEW_CAMERA_UNSELECTED"
+     id="OUTLINER_DATA_CAMERA"
      transform="matrix(100,0,0,100,0,4.9999997e-5)"
      style="stroke-width:0.0114286">
     <path
