@@ -74,13 +74,10 @@ enum class ResultStorageType : uint8_t {
  * module, see the allocation method for more information.
  *
  * Results are reference counted and their data are released once their reference count reaches
- * zero. After constructing a result, the set_initial_reference_count method is called to declare
- * the number of operations that needs this result. Once each operation that needs the result no
- * longer needs it, the release method is called and the reference count is decremented, until it
- * reaches zero, where the result's data is then released. Since results are eventually
- * decremented to zero by the end of every evaluation, the reference count is restored before every
- * evaluation to its initial reference count by calling the reset method, which is why a separate
- * member initial_reference_count_ is stored to keep track of the initial value.
+ * zero. After constructing a result, the set_reference_count method is called to declare the
+ * number of operations that needs this result. Once each operation that needs the result no longer
+ * needs it, the release method is called and the reference count is decremented, until it reaches
+ * zero, where the result's data is then released.
  *
  * A result not only represents an image, but also the area it occupies in the virtual compositing
  * space. This area is called the Domain of the result, see the discussion in COM_domain.hh for
@@ -125,19 +122,13 @@ class Result {
     GPUTexture *gpu_texture_ = nullptr;
     GMutableSpan cpu_data_;
   };
-  /* The number of operations that currently needs this result. At the time when the result is
-   * computed, this member will have a value that matches initial_reference_count_. Once each
-   * operation that needs the result no longer needs it, the release method is called and the
-   * reference count is decremented, until it reaches zero, where the result's data is then
-   * released. If this result have a master result, then this reference count is irrelevant and
-   * shadowed by the reference count of the master result. */
+  /* The number of users that currently needs this result. Operations initializes this by calling
+   * the set_reference_count method before evaluation. Once each operation that needs the result no
+   * longer needs it, the release method is called and the reference count is decremented, until it
+   * reaches zero, where the result's data is then released. If this result have a master result,
+   * then this reference count is irrelevant and shadowed by the reference count of the master
+   * result. */
   int reference_count_ = 1;
-  /* The number of operations that reference and use this result at the time when it was initially
-   * computed. Since reference_count_ is decremented and always becomes zero at the end of the
-   * evaluation, this member is used to reset the reference count of the results for later
-   * evaluations by calling the reset method. This member is also used to determine if this result
-   * should be computed by calling the should_compute method. */
-  int initial_reference_count_ = 1;
   /* If the result is a single value, this member stores the value of the result, the value of
    * which will be identical to that stored in the data_ member. The active variant member depends
    * on the type of the result. This member is uninitialized and should not be used if the result
@@ -224,18 +215,7 @@ class Result {
    * same evaluation.
    *
    * If the context of the result uses GPU, then GPU allocation will be done, otherwise, CPU
-   * allocation will be done.
-   *
-   * If the result should not be computed, that is, should_compute() returns false, yet this method
-   * is called, that means the result is only being allocated because the shader that computes it
-   * also computes another result that is actually needed, and shaders needs to have a texture
-   * bound to all their images units for a correct invocation, even if some of those textures are
-   * not needed and will eventually be discarded. In that case, since allocating the full texture
-   * is not needed, allocate_single_value() is called instead and the reference count is set to 1.
-   * This essentially allocates a dummy 1x1 texture, which works because out of bound shader writes
-   * to images are safe. Since this result is not referenced by any other operation, it should be
-   * manually released after the operation is evaluated, which is implemented by calling the
-   * Operation::release_unneeded_results() method. */
+   * allocation will be done. */
   void allocate_texture(Domain domain, bool from_pool = true);
 
   /* Declare the result to be a single value result, allocate a texture of an appropriate type with
@@ -312,16 +292,9 @@ class Result {
    * for more information. */
   RealizationOptions &get_realization_options();
 
-  /* Set the value of initial_reference_count_, see that member for more details. This should be
-   * called after constructing the result to declare the number of operations that needs it. */
-  void set_initial_reference_count(int count);
-
-  /* Reset the result to prepare it for a new evaluation. This should be called before evaluating
-   * the operation that computes this result. Keep the type, precision, context, and initial
-   * reference count, and rest all other members to their default value. Finally, set the value of
-   * reference_count_ to the value of initial_reference_count_ since reference_count_ may have
-   * already been decremented to zero in a previous evaluation. */
-  void reset();
+  /* Set the value of reference_count_, see that member for more details. This should be called
+   * after constructing the result to declare the number of operations that needs it. */
+  void set_reference_count(int count);
 
   /* Increment the reference count of the result by the given count. If this result have a master
    * result, the reference count of the master result is incremented instead. */
