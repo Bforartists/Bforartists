@@ -310,7 +310,7 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
 
         active_item = interface.active
         # Panels have the extra option to add a toggle.
-        if active_item and active_item.item_type == 'PANEL' and tree.type in ('GEOMETRY', 'SHADER'):
+        if active_item and active_item.item_type == 'PANEL' and tree.type in {'GEOMETRY', 'SHADER'}:
             items.append(('PANEL_TOGGLE', "Panel Toggle", ""))
 
         return items
@@ -564,7 +564,7 @@ class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator
             return {'CANCELLED'}
 
         first_item = active_item.interface_items[0]
-        if not type(first_item) is bpy.types.NodeTreeInterfaceSocketBool or not first_item.is_panel_toggle:
+        if type(first_item) is not bpy.types.NodeTreeInterfaceSocketBool or not first_item.is_panel_toggle:
             return {'CANCELLED'}
 
         first_item.is_panel_toggle = False
@@ -694,6 +694,7 @@ class NODE_OT_viewer_shortcut_set(Operator):
         del cls
         space = context.space_data
         return (
+                (space is not None) and
                 space.type == 'NODE_EDITOR' and
                 space.node_tree is not None and
                 space.tree_type == 'CompositorNodeTree'
@@ -757,6 +758,7 @@ class NODE_OT_viewer_shortcut_get(Operator):
         del cls
         space = context.space_data
         return (
+                (space is not None) and
                 space.type == 'NODE_EDITOR' and
                 space.node_tree is not None and
                 space.tree_type == 'CompositorNodeTree'
