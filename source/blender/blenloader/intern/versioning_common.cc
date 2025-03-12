@@ -208,7 +208,7 @@ bNode &version_node_add_empty(bNodeTree &ntree, const char *idname)
 {
   blender::bke::bNodeType *ntype = blender::bke::node_type_find(idname);
 
-  bNode *node = MEM_cnew<bNode>(__func__);
+  bNode *node = MEM_callocN<bNode>(__func__);
   node->runtime = MEM_new<blender::bke::bNodeRuntime>(__func__);
   BLI_addtail(&ntree.nodes, node);
   blender::bke::node_unique_id(ntree, *node);
@@ -236,7 +236,7 @@ bNodeSocket &version_node_add_socket(bNodeTree &ntree,
 {
   blender::bke::bNodeSocketType *stype = blender::bke::node_socket_type_find(idname);
 
-  bNodeSocket *socket = MEM_cnew<bNodeSocket>(__func__);
+  bNodeSocket *socket = MEM_callocN<bNodeSocket>(__func__);
   socket->runtime = MEM_new<blender::bke::bNodeSocketRuntime>(__func__);
   socket->in_out = in_out;
   socket->limit = (in_out == SOCK_IN ? 1 : 0xFFF);
@@ -272,7 +272,7 @@ bNodeLink &version_node_add_link(
   bNode &node_to = node_b;
   bNodeSocket &socket_to = socket_b;
 
-  bNodeLink *link = MEM_cnew<bNodeLink>(__func__);
+  bNodeLink *link = MEM_callocN<bNodeLink>(__func__);
   link->fromnode = &node_from;
   link->fromsock = &socket_from;
   link->tonode = &node_to;
@@ -655,7 +655,7 @@ void do_versions_after_setup(Main *new_bmain,
   if (!blendfile_or_libraries_versions_atleast(new_bmain, 250, 0)) {
     LISTBASE_FOREACH (Scene *, scene, &new_bmain->scenes) {
       if (scene->ed) {
-        SEQ_doversion_250_sound_proxy_update(new_bmain, scene->ed);
+        blender::seq::doversion_250_sound_proxy_update(new_bmain, scene->ed);
       }
     }
   }
@@ -679,13 +679,14 @@ void do_versions_after_setup(Main *new_bmain,
     BKE_main_mesh_legacy_convert_auto_smooth(*new_bmain);
   }
 
+  if (!blendfile_or_libraries_versions_atleast(new_bmain, 404, 2)) {
+    /* Version all the action assignments of just-versioned datablocks. This MUST happen before the
+     * GreasePencil conversion, as that assumes the Action Slots have already been assigned. */
+    blender::animrig::versioning::convert_legacy_action_assignments(*new_bmain, reports->reports);
+  }
+
   if (!blendfile_or_libraries_versions_atleast(new_bmain, 403, 3)) {
     /* Convert all the legacy grease pencil objects. This does not touch annotations. */
     blender::bke::greasepencil::convert::legacy_main(*new_bmain, lapp_context, *reports);
-  }
-
-  if (!blendfile_or_libraries_versions_atleast(new_bmain, 404, 2)) {
-    /* Version all the action assignments of just-versioned datablocks. */
-    blender::animrig::versioning::convert_legacy_action_assignments(*new_bmain, reports->reports);
   }
 }

@@ -48,7 +48,7 @@ static void colorfn(float *out, TexParams *p, bNode *node, bNodeStack ** /*in*/,
       if (!ibuf->float_buffer.data) {
         BLI_thread_lock(LOCK_IMAGE);
         if (!ibuf->float_buffer.data) {
-          IMB_float_from_rect(ibuf);
+          IMB_float_from_byte(ibuf);
         }
         BLI_thread_unlock(LOCK_IMAGE);
       }
@@ -86,7 +86,7 @@ static void exec(void *data,
 
 static void init(bNodeTree * /*ntree*/, bNode *node)
 {
-  ImageUser *iuser = MEM_cnew<ImageUser>("node image user");
+  ImageUser *iuser = MEM_callocN<ImageUser>("node image user");
   node->storage = iuser;
   iuser->sfra = 1;
   iuser->flag |= IMA_ANIM_ALWAYS;

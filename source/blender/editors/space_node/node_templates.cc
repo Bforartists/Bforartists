@@ -10,6 +10,8 @@
 #include <cstring>
 #include <optional>
 
+#include <fmt/format.h>
+
 #include "MEM_guardedalloc.h"
 
 #include "DNA_node_types.h"
@@ -429,16 +431,17 @@ static void ui_node_sock_name(const bNodeTree *ntree,
 {
   if (sock->link && sock->link->fromnode) {
     bNode *node = sock->link->fromnode;
-    char node_name[UI_MAX_NAME_STR];
-
-    bke::nodeLabel(*ntree, *node, node_name, sizeof(node_name));
+    const std::string node_name = bke::node_label(*ntree, *node);
 
     if (BLI_listbase_is_empty(&node->inputs) && node->outputs.first != node->outputs.last) {
-      BLI_snprintf(
-          name, UI_MAX_NAME_STR, "%s | %s", IFACE_(node_name), IFACE_(sock->link->fromsock->name));
+      BLI_snprintf(name,
+                   UI_MAX_NAME_STR,
+                   "%s | %s",
+                   IFACE_(node_name.c_str()),
+                   IFACE_(sock->link->fromsock->name));
     }
     else {
-      BLI_strncpy_utf8(name, IFACE_(node_name), UI_MAX_NAME_STR);
+      BLI_strncpy_utf8(name, IFACE_(node_name.c_str()), UI_MAX_NAME_STR);
     }
   }
   else if (sock->type == SOCK_SHADER) {
@@ -676,7 +679,7 @@ void uiTemplateNodeLink(
   uiBut *but;
   float socket_col[4];
 
-  arg = MEM_cnew<NodeLinkArg>("NodeLinkArg");
+  arg = MEM_callocN<NodeLinkArg>("NodeLinkArg");
   arg->ntree = ntree;
   arg->node = node;
   arg->sock = input;
@@ -734,8 +737,10 @@ static void ui_node_draw_recursive(uiLayout &layout,
                                    const int depth)
 {
   const nodes::SocketDeclaration *panel_toggle_decl = panel_decl.panel_input_decl();
+  const std::string panel_id = fmt::format(
+      "{}_{}_{}", ntree.id.name, node.identifier, panel_decl.identifier);
   PanelLayout panel_layout = uiLayoutPanel(
-      &C, &layout, panel_decl.name.c_str(), panel_decl.default_collapsed);
+      &C, &layout, panel_id.c_str(), panel_decl.default_collapsed);
   if (panel_toggle_decl) {
     uiLayoutSetPropSep(panel_layout.header, false);
     uiLayoutSetPropDecorate(panel_layout.header, false);
