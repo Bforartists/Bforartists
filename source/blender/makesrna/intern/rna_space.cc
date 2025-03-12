@@ -137,7 +137,7 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
 
     /* Data. */
     RNA_ENUM_ITEM_HEADING(N_("Data"), nullptr),
-	/*bfa - toolbar*/
+    /*bfa - toolbar*/
     {SPACE_TOOLBAR,
      "TOOLBAR",
      ICON_TOOLBAR,
@@ -195,36 +195,31 @@ const EnumPropertyItem rna_enum_space_file_browse_mode_items[] = {
 };
 
 #define SACT_ITEM_DOPESHEET \
-  { \
-    SACTCONT_DOPESHEET, "DOPESHEET", ICON_ACTION, "Dope Sheet", "Edit all keyframes in scene" \
-  }
+  {SACTCONT_DOPESHEET, "DOPESHEET", ICON_ACTION, "Dope Sheet", "Edit all keyframes in scene"}
 #define SACT_ITEM_TIMELINE \
-  { \
-    SACTCONT_TIMELINE, "TIMELINE", ICON_TIME, "Timeline", "Timeline and playback controls" \
-  }
+  {SACTCONT_TIMELINE, "TIMELINE", ICON_TIME, "Timeline", "Timeline and playback controls"}
 #define SACT_ITEM_ACTION \
-  { \
-    SACTCONT_ACTION, "ACTION", ICON_OBJECT_DATA, "Action Editor", \
-        "Edit keyframes in active object's Object-level action" \
-  }
+  {SACTCONT_ACTION, \
+   "ACTION", \
+   ICON_OBJECT_DATA, \
+   "Action Editor", \
+   "Edit keyframes in active object's Object-level action"}
 #define SACT_ITEM_SHAPEKEY \
-  { \
-    SACTCONT_SHAPEKEY, "SHAPEKEY", ICON_SHAPEKEY_DATA, "Shape Key Editor", \
-        "Edit keyframes in active object's Shape Keys action" \
-  }
+  {SACTCONT_SHAPEKEY, \
+   "SHAPEKEY", \
+   ICON_SHAPEKEY_DATA, \
+   "Shape Key Editor", \
+   "Edit keyframes in active object's Shape Keys action"}
 #define SACT_ITEM_GPENCIL \
-  { \
-    SACTCONT_GPENCIL, "GPENCIL", ICON_OUTLINER_OB_GREASEPENCIL, "Grease Pencil", \
-        "Edit timings for all Grease Pencil sketches in file" \
-  }
+  {SACTCONT_GPENCIL, \
+   "GPENCIL", \
+   ICON_OUTLINER_OB_GREASEPENCIL, \
+   "Grease Pencil", \
+   "Edit timings for all Grease Pencil sketches in file"}
 #define SACT_ITEM_MASK \
-  { \
-    SACTCONT_MASK, "MASK", ICON_MOD_MASK, "Mask", "Edit timings for Mask Editor splines" \
-  }
+  {SACTCONT_MASK, "MASK", ICON_MOD_MASK, "Mask", "Edit timings for Mask Editor splines"}
 #define SACT_ITEM_CACHEFILE \
-  { \
-    SACTCONT_CACHEFILE, "CACHEFILE", ICON_FILE, "Cache File", "Edit timings for Cache File data" \
-  }
+  {SACTCONT_CACHEFILE, "CACHEFILE", ICON_FILE, "Cache File", "Edit timings for Cache File data"}
 
 #ifndef RNA_RUNTIME
 /* XXX: action-editor is currently for object-level only actions,
@@ -268,21 +263,10 @@ const EnumPropertyItem rna_enum_space_action_mode_items[] = {
 #undef SACT_ITEM_CACHEFILE
 
 #define SI_ITEM_VIEW(identifier, name, icon) \
-  { \
-    SI_MODE_VIEW, identifier, icon, name, "View the image" \
-  }
-#define SI_ITEM_UV \
-  { \
-    SI_MODE_UV, "UV", ICON_UV, "UV Editor", "UV edit in mesh editmode" \
-  }
-#define SI_ITEM_PAINT \
-  { \
-    SI_MODE_PAINT, "PAINT", ICON_TPAINT_HLT, "Paint", "2D image painting mode" \
-  }
-#define SI_ITEM_MASK \
-  { \
-    SI_MODE_MASK, "MASK", ICON_MOD_MASK, "Mask", "Mask editing" \
-  }
+  {SI_MODE_VIEW, identifier, icon, name, "View the image"}
+#define SI_ITEM_UV {SI_MODE_UV, "UV", ICON_UV, "UV Editor", "UV edit in mesh editmode"}
+#define SI_ITEM_PAINT {SI_MODE_PAINT, "PAINT", ICON_TPAINT_HLT, "Paint", "2D image painting mode"}
+#define SI_ITEM_MASK {SI_MODE_MASK, "MASK", ICON_MOD_MASK, "Mask", "Mask editing"}
 
 const EnumPropertyItem rna_enum_space_image_mode_all_items[] = {
     SI_ITEM_VIEW("VIEW", "View", ICON_FILE_IMAGE),
@@ -413,7 +397,11 @@ static const EnumPropertyItem rna_enum_viewport_lighting_items[] = {
 };
 
 static const EnumPropertyItem rna_enum_shading_color_type_items[] = {
-    {V3D_SHADING_MATERIAL_COLOR, "MATERIAL", 0, "Material", "Show material color\nJust Eevee and Cycles, not Workspace"},
+    {V3D_SHADING_MATERIAL_COLOR,
+     "MATERIAL",
+     0,
+     "Material",
+     "Show material color\nJust Eevee and Cycles, not Workspace"},
     {V3D_SHADING_SINGLE_COLOR, "SINGLE", 0, "Single", "Show scene in a single color"},
     {V3D_SHADING_OBJECT_COLOR, "OBJECT", 0, "Object", "Show object color"},
     {V3D_SHADING_RANDOM_COLOR, "RANDOM", 0, "Random", "Show random object color"},
@@ -1153,7 +1141,7 @@ static void rna_RegionView3D_view_matrix_set(PointerRNA *ptr, const float *value
 {
   RegionView3D *rv3d = (RegionView3D *)(ptr->data);
   float mat[4][4];
-  invert_m4_m4(mat, (float(*)[4])values);
+  invert_m4_m4(mat, (float (*)[4])values);
   ED_view3d_from_m4(mat, rv3d->ofs, rv3d->viewquat, &rv3d->dist);
   rna_RegionView3D_view_rotation_set_validate_view_axis(rv3d);
 }
@@ -2449,7 +2437,7 @@ static void rna_SpaceConsole_rect_update(Main * /*bmain*/, Scene * /*scene*/, Po
 
 static void rna_SequenceEditor_update_cache(Main * /*bmain*/, Scene *scene, PointerRNA * /*ptr*/)
 {
-  SEQ_cache_cleanup(scene);
+  blender::seq::cache_cleanup(scene);
 }
 
 static void seq_build_proxy(bContext *C, PointerRNA *ptr)
@@ -2460,11 +2448,11 @@ static void seq_build_proxy(bContext *C, PointerRNA *ptr)
 
   SpaceSeq *sseq = static_cast<SpaceSeq *>(ptr->data);
   Scene *scene = CTX_data_scene(C);
-  ListBase *seqbase = SEQ_active_seqbase_get(SEQ_editing_get(scene));
+  ListBase *seqbase = blender::seq::active_seqbase_get(blender::seq::editing_get(scene));
 
   blender::Set<std::string> processed_paths;
-  wmJob *wm_job = ED_seq_proxy_wm_job_get(C);
-  ProxyJob *pj = ED_seq_proxy_job_get(C, wm_job);
+  wmJob *wm_job = blender::seq::ED_seq_proxy_wm_job_get(C);
+  blender::seq::ProxyJob *pj = blender::seq::ED_seq_proxy_job_get(C, wm_job);
 
   LISTBASE_FOREACH (Strip *, strip, seqbase) {
     if (strip->type != STRIP_TYPE_MOVIE || strip->data == nullptr || strip->data->proxy == nullptr)
@@ -2473,10 +2461,11 @@ static void seq_build_proxy(bContext *C, PointerRNA *ptr)
     }
 
     /* Add new proxy size. */
-    strip->data->proxy->build_size_flags |= SEQ_rendersize_to_proxysize(sseq->render_size);
+    strip->data->proxy->build_size_flags |= blender::seq::rendersize_to_proxysize(
+        sseq->render_size);
 
     /* Build proxy. */
-    SEQ_proxy_rebuild_context(
+    blender::seq::proxy_rebuild_context(
         pj->main, pj->depsgraph, pj->scene, strip, &processed_paths, &pj->queue, true);
   }
 
@@ -2524,7 +2513,9 @@ static void rna_SequenceEditor_clamp_view_set(PointerRNA *ptr, bool value)
   }
 }
 
-static void rna_Sequencer_view_type_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr) /*BFA - 3D Sequencer*/
+static void rna_Sequencer_view_type_update(Main * /*bmain*/,
+                                           Scene * /*scene*/,
+                                           PointerRNA *ptr) /*BFA - 3D Sequencer*/
 {
   ScrArea *area = rna_area_from_space(ptr);
   ED_area_tag_refresh(area);
@@ -3786,8 +3777,16 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
        ICON_SNAPTOPIXEL_OFF,
        "Disabled",
        "Don't round to pixels"},
-      {SI_PIXEL_ROUND_CORNER, "CORNER", ICON_SNAPTOPIXEL_CORNER, "Corner", "Round to pixel corners"},
-      {SI_PIXEL_ROUND_CENTER, "CENTER", ICON_SNAPTOPIXEL_CENTER, "Center", "Round to pixel centers"},
+      {SI_PIXEL_ROUND_CORNER,
+       "CORNER",
+       ICON_SNAPTOPIXEL_CORNER,
+       "Corner",
+       "Round to pixel corners"},
+      {SI_PIXEL_ROUND_CENTER,
+       "CENTER",
+       ICON_SNAPTOPIXEL_CENTER,
+       "Center",
+       "Round to pixel centers"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -3868,7 +3867,10 @@ bpy.ops.wm.save_as_mainfile()
 
   prop = RNA_def_property(srna, "show_faces", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SI_NO_DRAWFACES);
-  RNA_def_property_ui_text(prop, "Display Faces", "Display faces over the image\nDoes not work when Display Stretch is active");
+  RNA_def_property_ui_text(
+      prop,
+      "Display Faces",
+      "Display faces over the image\nDoes not work when Display Stretch is active");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, nullptr);
 
   prop = RNA_def_property(srna, "tile_grid_shape", PROP_INT, PROP_XYZ);
@@ -3884,7 +3886,10 @@ bpy.ops.wm.save_as_mainfile()
   prop = RNA_def_property(srna, "show_grid_over_image", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SI_GRID_OVER_IMAGE);
   RNA_def_property_boolean_default(prop, true);
-  RNA_def_property_ui_text(prop, "Grid Over Image", "Show the grid over the image\nRequires an image to be active and loaded");
+  RNA_def_property_ui_text(
+      prop,
+      "Grid Over Image",
+      "Show the grid over the image\nRequires an image to be active and loaded");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, nullptr);
 
   prop = RNA_def_property(srna, "grid_shape_source", PROP_ENUM, PROP_NONE);
@@ -4586,23 +4591,20 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_axis_x", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_X);
-  RNA_def_property_ui_text(prop,
-                           "Display X Axis",
-                           "Show the X axis line in perspective / orthographic views");
+  RNA_def_property_ui_text(
+      prop, "Display X Axis", "Show the X axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_axis_y", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_Y);
-  RNA_def_property_ui_text(prop,
-                           "Display Y Axis",
-                           "Show the Y axis line in perspective / orthographic views");
+  RNA_def_property_ui_text(
+      prop, "Display Y Axis", "Show the Y axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_axis_z", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gridflag", V3D_SHOW_Z);
-  RNA_def_property_ui_text(prop,
-                           "Display Z Axis",
-                           "Show the Z axis line in perspective / orthographic views");
+  RNA_def_property_ui_text(
+      prop, "Display Z Axis", "Show the Z axis line in perspective / orthographic views");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "grid_scale", PROP_FLOAT, PROP_NONE);
@@ -6281,7 +6283,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
       prop,
       "Display Channel",
       "The channel number shown in the image preview. 0 is the result of all strips combined");
-  RNA_def_property_range(prop, -5, SEQ_MAX_CHANNELS);
+  RNA_def_property_range(prop, -5, blender::seq::MAX_CHANNELS);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SequenceEditor_update_cache");
 
   prop = RNA_def_property(srna, "preview_channels", PROP_ENUM, PROP_NONE);
@@ -6424,7 +6426,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_ui_range(prop, 25, 400, 100, 0);
   RNA_def_property_ui_text(prop, "Zoom", "Zoom percentage");
 
-/*############## BFA - 3D Sequencer ##############*/
+  /*############## BFA - 3D Sequencer ##############*/
   prop = RNA_def_property(srna, "scene_override", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "scene_override");
   RNA_def_property_struct_type(prop, "Scene");
@@ -6432,7 +6434,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_PTR_NO_OWNERSHIP);
   RNA_def_property_ui_text(prop, "Scene Override", "Scene to use in this region");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_Sequencer_view_type_update");
-/*############## BFA - 3D Sequencer END ##############*/
+  /*############## BFA - 3D Sequencer END ##############*/
 }
 
 static void rna_def_space_text(BlenderRNA *brna)
@@ -7362,7 +7364,11 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
        "Follow Preferences",
        "Use the import method set in the Preferences for this asset library, don't override it "
        "for this Asset Browser"},
-      {FILE_ASSET_IMPORT_LINK, "LINK", ICON_LINK_BLEND, "Link", "Import the assets as linked data-block"},
+      {FILE_ASSET_IMPORT_LINK,
+       "LINK",
+       ICON_LINK_BLEND,
+       "Link",
+       "Import the assets as linked data-block"},
       {FILE_ASSET_IMPORT_APPEND,
        "APPEND",
        ICON_APPEND_BLEND,
@@ -7410,9 +7416,12 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, asset_import_method_items);
   RNA_def_property_ui_text(prop, "Import Method", "Determine how the asset will be imported");
   /* BFA - needed for setting #use_instance from UI before executing drop operator */
-  RNA_def_boolean(srna, "drop_collections_as_instances", false, "Drop Collections as Instances", "");
-  /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
-  RNA_def_boolean(srna, "drop_collections_at_origin", true, "Drop instance collections at origin", "");
+  RNA_def_boolean(
+      srna, "drop_collections_as_instances", false, "Drop Collections as Instances", "");
+  /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled
+   */
+  RNA_def_boolean(
+      srna, "drop_collections_at_origin", true, "Drop instance collections at origin", "");
   /* Asset drag info saved by buttons stores the import method, so the space must redraw when
    * import method changes. */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_LIST, nullptr);
@@ -7907,8 +7916,9 @@ static void rna_def_space_node(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "SpaceNode");
   RNA_def_struct_ui_text(srna, "Space Node Editor", "Node editor space data");
 
-  rna_def_space_generic_show_region_toggles(srna, (1 << RGN_TYPE_TOOLS) | (1 << RGN_TYPE_UI) |
-                                             (1 << RGN_TYPE_ASSET_SHELF)); // bfa assetshelf
+  rna_def_space_generic_show_region_toggles(srna,
+                                            (1 << RGN_TYPE_TOOLS) | (1 << RGN_TYPE_UI) |
+                                                (1 << RGN_TYPE_ASSET_SHELF));  // bfa assetshelf
 
   prop = RNA_def_property(srna, "tree_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, dummy_items);

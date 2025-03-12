@@ -63,6 +63,9 @@ class Instance {
    * They never get actually used. */
   Vector<GPUMaterial *> dummy_gpu_materials_ = {1, nullptr, {}};
 
+  /* Used to detect any scene data update. */
+  uint64_t depsgraph_last_update_ = 0;
+
  public:
   Span<const GPUMaterial *> get_dummy_gpu_materials(int material_count)
   {
@@ -72,9 +75,12 @@ class Instance {
     return dummy_gpu_materials_.as_span().slice(IndexRange(material_count));
   };
 
-  void init(Object *camera_ob = nullptr)
+  void init(Depsgraph *depsgraph, Object *camera_ob = nullptr)
   {
-    scene_state_.init(camera_ob);
+    bool scene_updated = assign_if_different(depsgraph_last_update_,
+                                             DEG_get_update_count(depsgraph));
+
+    scene_state_.init(scene_updated, camera_ob);
     shadow_ps_.init(scene_state_, resources_);
     resources_.init(scene_state_);
 
@@ -397,7 +403,7 @@ class Instance {
       PassMain::Sub &pass =
           mesh_pass.get_subpass(eGeometryType::CURVES, &texture).sub("Hair SubPass");
       pass.push_constant("emitter_object_id", int(emitter_handle.raw));
-      gpu::Batch *batch = hair_sub_pass_setup(pass, scene_state_.scene, ob_ref.object, psys, md);
+      gpu::Batch *batch = hair_sub_pass_setup(pass, scene_state_.scene, ob_ref, psys, md);
       pass.draw(batch, handle, material_index);
     });
   }
@@ -515,11 +521,6 @@ class Instance {
       GPU_render_step();
     }
   }
-
-  void reset_taa_sample()
-  {
-    scene_state_.reset_taa_next_sample = true;
-  }
 };
 
 }  // namespace blender::workbench
@@ -544,7 +545,7 @@ static void workbench_engine_init(void *vedata)
     ved->instance = new workbench::Instance();
   }
 
-  ved->instance->init();
+  ved->instance->init(DRW_context_state_get()->depsgraph);
 }
 
 static void workbench_cache_init(void *vedata)
@@ -552,17 +553,11 @@ static void workbench_cache_init(void *vedata)
   reinterpret_cast<WORKBENCH_Data *>(vedata)->instance->begin_sync();
 }
 
-static void workbench_cache_populate(void *vedata, Object *object)
+static void workbench_cache_populate(void *vedata, blender::draw::ObjectRef &ob_ref)
 {
   draw::Manager *manager = DRW_manager_get();
 
-  draw::ObjectRef ref;
-  ref.object = object;
-  ref.dupli_object = DRW_object_get_dupli(object);
-  ref.dupli_parent = DRW_object_get_dupli_parent(object);
-  ref.handle = draw::ResourceHandle(0);
-
-  reinterpret_cast<WORKBENCH_Data *>(vedata)->instance->object_sync(*manager, ref);
+  reinterpret_cast<WORKBENCH_Data *>(vedata)->instance->object_sync(*manager, ob_ref);
 }
 
 static void workbench_cache_finish(void *vedata)
@@ -591,19 +586,6 @@ static void workbench_instance_free(void *instance)
 static void workbench_engine_free()
 {
   workbench::ShaderCache::release();
-}
-
-static void workbench_view_update(void *vedata)
-{
-  WORKBENCH_Data *ved = reinterpret_cast<WORKBENCH_Data *>(vedata);
-  if (ved->instance) {
-    ved->instance->reset_taa_sample();
-  }
-}
-
-static void workbench_id_update(void *vedata, ID *id)
-{
-  UNUSED_VARS(vedata, id);
 }
 
 /* RENDER */
@@ -754,16 +736,18 @@ static void workbench_render_to_image(void *vedata,
   DRW_cache_restart();
   blender::draw::View::default_set(float4x4(viewmat), float4x4(winmat));
 
-  ved->instance->init(camera_ob);
+  ved->instance->init(depsgraph, camera_ob);
 
   draw::Manager &manager = *DRW_manager_get();
   manager.begin_sync();
 
   workbench_cache_init(vedata);
-  auto workbench_render_cache =
-      [](void *vedata, Object *ob, RenderEngine * /*engine*/, Depsgraph * /*depsgraph*/) {
-        workbench_cache_populate(vedata, ob);
-      };
+  auto workbench_render_cache = [](void *vedata,
+                                   blender::draw::ObjectRef &ob_ref,
+                                   RenderEngine * /*engine*/,
+                                   Depsgraph * /*depsgraph*/) {
+    workbench_cache_populate(vedata, ob_ref);
+  };
   DRW_render_object_iter(vedata, engine, depsgraph, workbench_render_cache);
   workbench_cache_finish(vedata);
 
@@ -804,8 +788,8 @@ DrawEngineType draw_engine_workbench = {
     /*cache_populate*/ &workbench_cache_populate,
     /*cache_finish*/ &workbench_cache_finish,
     /*draw_scene*/ &workbench_draw_scene,
-    /*view_update*/ &workbench_view_update,
-    /*id_update*/ &workbench_id_update,
+    /*view_update*/ nullptr,
+    /*id_update*/ nullptr,
     /*render_to_image*/ &workbench_render_to_image,
     /*store_metadata*/ nullptr,
 };

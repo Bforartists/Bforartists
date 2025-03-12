@@ -848,7 +848,13 @@ void ED_screen_refresh(bContext *C, wmWindowManager *wm, wmWindow *win)
 
 void ED_screens_init(bContext *C, Main *bmain, wmWindowManager *wm)
 {
+  wmWindow *prev_ctx_win = CTX_wm_window(C);
+  BLI_SCOPED_DEFER([&]() { CTX_wm_window_set(C, prev_ctx_win); });
+
   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+    /* Region polls may need window/screen context. */
+    CTX_wm_window_set(C, win);
+
     if (BKE_workspace_active_get(win->workspace_hook) == nullptr) {
       BKE_workspace_active_set(win->workspace_hook,
                                static_cast<WorkSpace *>(bmain->workspaces.first));
@@ -1270,7 +1276,7 @@ static int screen_global_header_size()
   return int(ceilf(ED_area_headersize() / UI_SCALE_FAC));
 }
 
-//BFA Top Toolbar */
+// BFA Top Toolbar */
 static void screen_global_topbar_area_refresh(wmWindow *win, bScreen *screen)
 {
   const short size_min = screen_global_header_size();
@@ -1839,29 +1845,19 @@ void ED_screen_animation_timer(bContext *C, int redraws, int sync, int enable)
     screen->animtimer = WM_event_timer_add(wm, win, TIMER0, (1.0 / FPS));
 
     sad->region = CTX_wm_region(C);
-    sad->scene = scene; /*BFA - 3D Sequencer*/
-    sad->view_layer = CTX_data_view_layer(C);  /*BFA - 3D Sequencer*/
+    sad->scene = scene;                       /*BFA - 3D Sequencer*/
+    sad->view_layer = CTX_data_view_layer(C); /*BFA - 3D Sequencer*/
+    sad->sfra = scene->r.cfra;
+    /* Make sure that were are inside the scene or preview frame range. */
+    CLAMP(scene->r.cfra, PSFRA, PEFRA);
+    if (scene->r.cfra != sad->sfra) {
+      sad->flag |= ANIMPLAY_FLAG_JUMPED;
+    }
 
-    /* If start-frame is larger than current frame, we put current-frame on start-frame.
-     * NOTE(ton): first frame then is not drawn! */
-    if (PRVRANGEON) {
-      if (scene->r.psfra > scene->r.cfra) {
-        sad->sfra = scene->r.cfra;
-        scene->r.cfra = scene->r.psfra;
-      }
-      else {
-        sad->sfra = scene->r.cfra;
-      }
+    if (sad->flag & ANIMPLAY_FLAG_JUMPED) {
+      DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
     }
-    else {
-      if (scene->r.sfra > scene->r.cfra) {
-        sad->sfra = scene->r.cfra;
-        scene->r.cfra = scene->r.sfra;
-      }
-      else {
-        sad->sfra = scene->r.cfra;
-      }
-    }
+
     sad->redraws = redraws;
     sad->flag |= (enable < 0) ? ANIMPLAY_FLAG_REVERSE : 0;
     sad->flag |= (sync == 0) ? ANIMPLAY_FLAG_NO_SYNC : (sync == 1) ? ANIMPLAY_FLAG_SYNC : 0;

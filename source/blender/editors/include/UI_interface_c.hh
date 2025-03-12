@@ -2417,14 +2417,14 @@ struct PanelLayout {
 PanelLayout uiLayoutPanelProp(const bContext *C,
                               uiLayout *layout,
                               PointerRNA *open_prop_owner,
-                              const char *open_prop_name);
+                              blender::StringRefNull open_prop_name);
 PanelLayout uiLayoutPanelPropWithBoolHeader(const bContext *C,
                                             uiLayout *layout,
                                             PointerRNA *open_prop_owner,
-                                            const blender::StringRefNull open_prop_name,
+                                            blender::StringRefNull open_prop_name,
                                             PointerRNA *bool_prop_owner,
-                                            const blender::StringRefNull bool_prop_name,
-                                            const std::optional<blender::StringRefNull> label);
+                                            blender::StringRefNull bool_prop_name,
+                                            std::optional<blender::StringRefNull> label);
 
 /**
  * Variant of #uiLayoutPanelProp that automatically creates the header row with the
@@ -2438,8 +2438,8 @@ PanelLayout uiLayoutPanelPropWithBoolHeader(const bContext *C,
 uiLayout *uiLayoutPanelProp(const bContext *C,
                             uiLayout *layout,
                             PointerRNA *open_prop_owner,
-                            const char *open_prop_name,
-                            const char *label);
+                            blender::StringRefNull open_prop_name,
+                            blender::StringRef label);
 
 /**
  * Variant of #uiLayoutPanelProp that automatically stores the open-close-state in the root
@@ -2450,7 +2450,7 @@ uiLayout *uiLayoutPanelProp(const bContext *C,
  */
 PanelLayout uiLayoutPanel(const bContext *C,
                           uiLayout *layout,
-                          const char *idname,
+                          blender::StringRef idname,
                           bool default_closed);
 
 /**
@@ -2464,9 +2464,9 @@ PanelLayout uiLayoutPanel(const bContext *C,
  */
 uiLayout *uiLayoutPanel(const bContext *C,
                         uiLayout *layout,
-                        const char *idname,
+                        blender::StringRef idname,
                         bool default_closed,
-                        const char *label);
+                        blender::StringRef label);
 
 bool uiLayoutEndsWithPanelHeader(const uiLayout &layout);
 

@@ -35,20 +35,8 @@ void DRW_engines_register();
 void DRW_engines_free();
 
 bool DRW_engine_render_support(DrawEngineType *draw_engine_type);
-void DRW_engine_register(DrawEngineType *draw_engine_type);
 
 void DRW_engine_external_free(RegionView3D *rv3d);
-
-struct DRWUpdateContext {
-  Main *bmain;
-  Depsgraph *depsgraph;
-  Scene *scene;
-  ViewLayer *view_layer;
-  ARegion *region;
-  View3D *v3d;
-  RenderEngineType *engine_type;
-};
-void DRW_notify_view_update(const DRWUpdateContext *update_ctx);
 
 enum eDRWSelectStage {
   DRW_SELECT_PASS_PRE = 1,
@@ -69,20 +57,6 @@ void DRW_draw_view(const bContext *C);
 void DRW_draw_region_engine_info(int xoffset, int *yoffset, int line_height);
 
 /**
- * Used for both regular and off-screen drawing.
- * Need to reset DST before calling this function
- */
-void DRW_draw_render_loop_ex(Depsgraph *depsgraph,
-                             RenderEngineType *engine_type,
-                             ARegion *region,
-                             View3D *v3d,
-                             GPUViewport *viewport,
-                             const bContext *evil_C);
-void DRW_draw_render_loop(Depsgraph *depsgraph,
-                          ARegion *region,
-                          View3D *v3d,
-                          GPUViewport *viewport);
-/**
  * \param viewport: can be NULL, in this case we create one.
  */
 void DRW_draw_render_loop_offscreen(Depsgraph *depsgraph,
@@ -94,10 +68,6 @@ void DRW_draw_render_loop_offscreen(Depsgraph *depsgraph,
                                     bool do_color_management,
                                     GPUOffScreen *ofs,
                                     GPUViewport *viewport);
-void DRW_draw_render_loop_2d_ex(Depsgraph *depsgraph,
-                                ARegion *region,
-                                GPUViewport *viewport,
-                                const bContext *evil_C);
 /**
  * Object mode select-loop.
  */
@@ -114,19 +84,16 @@ void DRW_draw_select_loop(Depsgraph *depsgraph,
                           DRW_ObjectFilterFn object_filter_fn,
                           void *object_filter_user_data);
 /**
- * Object mode select-loop.
+ * Used by auto-depth and other depth queries feature.
  */
 void DRW_draw_depth_loop(Depsgraph *depsgraph,
                          ARegion *region,
                          View3D *v3d,
                          GPUViewport *viewport,
                          const bool use_gpencil,
-                         const bool use_only_selected);
-/**
- * Clears the Depth Buffer and draws only the specified object.
- */
-void DRW_draw_depth_object(
-    Scene *scene, ARegion *region, View3D *v3d, GPUViewport *viewport, Object *object);
+                         const bool use_only_selected,
+                         const bool use_only_active_object);
+
 void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d);
 
 /**
@@ -140,6 +107,12 @@ bool DRW_draw_in_progress();
  * Helper to check if exit object type to render.
  */
 bool DRW_render_check_grease_pencil(Depsgraph *depsgraph);
+/**
+ * Render grease pencil on top of other render engine output (but only for non-draw-engine).
+ * This function creates a DRWContext.
+ * `DRW_render_to_image()` applies grease pencil using `DRW_render_gpencil_to_image` as it
+ * already has a DRWContext setup.
+ */
 void DRW_render_gpencil(RenderEngine *engine, Depsgraph *depsgraph);
 
 void DRW_render_context_enable(Render *render);
