@@ -81,9 +81,6 @@ void RE_engines_exit()
 
 void RE_engines_register(RenderEngineType *render_type)
 {
-  if (render_type->draw_engine) {
-    DRW_engine_register(render_type->draw_engine);
-  }
   BLI_addtail(&R_engines, render_type);
 }
 
@@ -121,7 +118,7 @@ bool RE_engine_supports_alembic_procedural(const RenderEngineType *render_type, 
 
 RenderEngine *RE_engine_create(RenderEngineType *type)
 {
-  RenderEngine *engine = MEM_cnew<RenderEngine>("RenderEngine");
+  RenderEngine *engine = MEM_callocN<RenderEngine>("RenderEngine");
   engine->type = type;
 
   BLI_mutex_init(&engine->update_render_passes_mutex);
@@ -192,7 +189,7 @@ static RenderResult *render_result_from_bake(
   }
 
   /* Create render result with specified size. */
-  RenderResult *rr = MEM_cnew<RenderResult>(__func__);
+  RenderResult *rr = MEM_callocN<RenderResult>(__func__);
 
   rr->rectx = w;
   rr->recty = h;
@@ -202,7 +199,7 @@ static RenderResult *render_result_from_bake(
   rr->tilerect.ymax = y + h;
 
   /* Add single baking render layer. */
-  RenderLayer *rl = MEM_cnew<RenderLayer>("bake render layer");
+  RenderLayer *rl = MEM_callocN<RenderLayer>("bake render layer");
   STRNCPY(rl->name, layername);
   rl->rectx = w;
   rl->recty = h;
