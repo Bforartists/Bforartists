@@ -1,3 +1,11 @@
+# SPDX-FileCopyrightText: 2025 Blender Authors
+#
+# SPDX-License-Identifier: GPL-2.0-or-later */
+
+__all__ = (
+    "main",
+)
+
 import unittest
 import sys
 import pathlib
@@ -42,6 +50,8 @@ class MaskByColorTest(unittest.TestCase):
         bpy.ops.ed.undo_push()
 
     def test_off_grid_returns_cancelled(self):
+        """Test that operator does not run when the cursor is not on the mesh."""
+
         with bpy.context.temp_override(**self.context_override):
             location = (0, 0)
             ret_val = bpy.ops.sculpt.mask_by_color(location=location)
@@ -52,6 +62,8 @@ class MaskByColorTest(unittest.TestCase):
         self.assertFalse('.sculpt_mask' in mesh.attributes.keys(), "Mesh should not have the .sculpt_mask attribute!")
 
     def test_on_circle_masks_red_vertices(self):
+        """Test that the operator only masks red vertices on the mesh."""
+
         with bpy.context.temp_override(**self.context_override):
             location = (int(self.context_override['area'].width / 2), int(self.context_override['area'].height / 2))
             ret_val = bpy.ops.sculpt.mask_by_color(location=location)
@@ -86,6 +98,8 @@ class MaskFromCavityTest(unittest.TestCase):
         bpy.ops.ed.undo_push()
 
     def test_operator_masks_low_vertices(self):
+        """Test that the operator applies a full mask value to any elements that are part of the cavity."""
+
         ret_val = bpy.ops.sculpt.mask_from_cavity()
 
         self.assertEqual({'FINISHED'}, ret_val)

@@ -203,6 +203,7 @@ if(WITH_BLENDER)
       node_texture
       play_sound
       preset_new
+      preview_loading
       restrict_instanced_off
       restrict_instanced_on
       rna_add
@@ -2014,6 +2015,7 @@ if(WITH_BLENDER)
       view_back
       view_bottom
       view_camera
+      view_camera_unselected
       view_fill
       view_fit
       view_frame

@@ -324,7 +324,6 @@ void ANIM_set_active_channel(bAnimContext *ac,
       case ANIMTYPE_FILLDRIVERS:
       case ANIMTYPE_DSNTREE:
       case ANIMTYPE_SHAPEKEY:
-      case ANIMTYPE_GPDATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_DATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_LAYER_GROUP:
       case ANIMTYPE_GREASE_PENCIL_LAYER:
@@ -474,7 +473,6 @@ bool ANIM_is_active_channel(bAnimListElem *ale)
     case ANIMTYPE_NLACONTROLS:
     case ANIMTYPE_FILLDRIVERS:
     case ANIMTYPE_SHAPEKEY:
-    case ANIMTYPE_GPDATABLOCK:
     case ANIMTYPE_GREASE_PENCIL_DATABLOCK:
     case ANIMTYPE_GREASE_PENCIL_LAYER_GROUP:
     case ANIMTYPE_MASKDATABLOCK:
@@ -623,7 +621,6 @@ static eAnimChannels_SetFlag anim_channels_selection_flag_for_toggle(const ListB
       case ANIMTYPE_SUMMARY:
       case ANIMTYPE_NLACONTROLS:
       case ANIMTYPE_FILLDRIVERS:
-      case ANIMTYPE_GPDATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_DATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_LAYER_GROUP:
       case ANIMTYPE_GREASE_PENCIL_LAYER:
@@ -808,7 +805,6 @@ static void anim_channels_select_set(bAnimContext *ac,
       case ANIMTYPE_SUMMARY:
       case ANIMTYPE_NLACONTROLS:
       case ANIMTYPE_FILLDRIVERS:
-      case ANIMTYPE_GPDATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_DATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_LAYER_GROUP:
       case ANIMTYPE_MASKDATABLOCK:
@@ -2246,7 +2242,7 @@ static void rearrange_gpencil_channels(bAnimContext *ac, eRearrangeAnimChan_Mode
 
   LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     /* only consider grease pencil container channels */
-    if (!ELEM(ale->type, ANIMTYPE_GPDATABLOCK, ANIMTYPE_DSGPENCIL)) {
+    if (ale->type != ANIMTYPE_DSGPENCIL) {
       continue;
     }
 
@@ -2849,7 +2845,6 @@ static bool animchannels_delete_containers(const bContext *C, bAnimContext *ac)
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
       case ANIMTYPE_SHAPEKEY:
-      case ANIMTYPE_GPDATABLOCK:
       case ANIMTYPE_GPLAYER:
       case ANIMTYPE_GREASE_PENCIL_DATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_LAYER_GROUP:
@@ -3010,7 +3005,6 @@ static int animchannels_delete_exec(bContext *C, wmOperator * /*op*/)
       case ANIMTYPE_DSPOINTCLOUD:
       case ANIMTYPE_DSVOLUME:
       case ANIMTYPE_SHAPEKEY:
-      case ANIMTYPE_GPDATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_DATABLOCK:
       case ANIMTYPE_GREASE_PENCIL_LAYER_GROUP:
       case ANIMTYPE_MASKDATABLOCK:
@@ -3764,11 +3758,6 @@ static void box_select_anim_channels(bAnimContext *ac, const rcti &rect, short s
   LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
     float ymin;
 
-    if (ale->type == ANIMTYPE_GPDATABLOCK) {
-      ymax -= ANIM_UI_get_channel_step();
-      continue;
-    }
-
     if (ac->datatype == ANIMCONT_NLA) {
       ymin = ymax - NLATRACK_STEP(snla);
     }
@@ -3840,7 +3829,6 @@ static void box_select_anim_channels(bAnimContext *ac, const rcti &rect, short s
         case ANIMTYPE_DSPOINTCLOUD:
         case ANIMTYPE_DSVOLUME:
         case ANIMTYPE_SHAPEKEY:
-        case ANIMTYPE_GPDATABLOCK:
         case ANIMTYPE_GPLAYER:
         case ANIMTYPE_GREASE_PENCIL_DATABLOCK:
         case ANIMTYPE_GREASE_PENCIL_LAYER_GROUP:
@@ -4485,19 +4473,6 @@ static int click_select_channel_nlacontrols(bAnimListElem *ale)
   return (ND_ANIMCHAN | NA_EDITED);
 }
 
-static int click_select_channel_gpdatablock(bAnimListElem *ale)
-{
-  bGPdata *gpd = (bGPdata *)ale->data;
-
-  /* Toggle expand:
-   * - Although the triangle widget already allows this,
-   *   the whole channel can also be used for this purpose.
-   */
-  gpd->flag ^= GP_DATA_EXPAND;
-
-  return (ND_ANIMCHAN | NA_EDITED);
-}
-
 static int click_select_channel_gplayer(bContext *C,
                                         bAnimContext *ac,
                                         bAnimListElem *ale,
@@ -4735,9 +4710,6 @@ static int mouse_anim_channels(bContext *C,
       break;
     case ANIMTYPE_NLACONTROLS:
       notifierFlags |= click_select_channel_nlacontrols(ale);
-      break;
-    case ANIMTYPE_GPDATABLOCK:
-      notifierFlags |= click_select_channel_gpdatablock(ale);
       break;
     case ANIMTYPE_GPLAYER:
       notifierFlags |= click_select_channel_gplayer(C, ac, ale, selectmode, filter);

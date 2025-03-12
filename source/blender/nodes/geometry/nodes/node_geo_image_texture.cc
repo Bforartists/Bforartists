@@ -39,7 +39,7 @@ static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
-  NodeGeometryImageTexture *tex = MEM_cnew<NodeGeometryImageTexture>(__func__);
+  NodeGeometryImageTexture *tex = MEM_callocN<NodeGeometryImageTexture>(__func__);
   tex->interpolation = SHD_INTERP_LINEAR;
   tex->extension = SHD_IMAGE_EXTENSION_REPEAT;
   node->storage = tex;
@@ -82,7 +82,7 @@ class ImageFieldsFunction : public mf::MultiFunction {
     if (image_buffer_->float_buffer.data == nullptr) {
       BLI_thread_lock(LOCK_IMAGE);
       if (!image_buffer_->float_buffer.data) {
-        IMB_float_from_rect(image_buffer_);
+        IMB_float_from_byte(image_buffer_);
       }
       BLI_thread_unlock(LOCK_IMAGE);
     }

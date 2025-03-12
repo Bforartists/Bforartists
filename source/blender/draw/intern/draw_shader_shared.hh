@@ -85,7 +85,7 @@ uint drw_view_id = 0;
      (DRW_VIEW_LEN > 2)  ? 2 : \
                            1)
 #  define DRW_VIEW_MASK ~(0xFFFFFFFFu << DRW_VIEW_SHIFT)
-#  define DRW_VIEW_FROM_RESOURCE_ID drw_view_id = (uint(drw_ResourceID) & DRW_VIEW_MASK)
+#  define DRW_VIEW_FROM_RESOURCE_ID drw_view_id = (drw_resource_id_raw() & DRW_VIEW_MASK)
 #endif
 
 struct FrustumCorners {
@@ -121,15 +121,6 @@ struct ViewMatrices {
 };
 BLI_STATIC_ASSERT_ALIGN(ViewMatrices, 16)
 
-/* Do not override old definitions if the shader uses this header but not shader info. */
-#ifdef USE_GPU_SHADER_CREATE_INFO
-/* TODO(@fclem): Mass rename. */
-#  define ViewMatrix drw_view.viewmat
-#  define ViewMatrixInverse drw_view.viewinv
-#  define ProjectionMatrix drw_view.winmat
-#  define ProjectionMatrixInverse drw_view.wininv
-#endif
-
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -159,12 +150,6 @@ enum eObjectInfoFlag : uint32_t {
 };
 
 struct ObjectInfos {
-#if defined(GPU_SHADER) && !defined(DRAW_FINALIZE_SHADER)
-  /* TODO Rename to struct member for GLSL too. */
-  float4 orco_mul_bias[2];
-  float4 ob_color;
-  float4 infos;
-#else
   /** Uploaded as center + size. Converted to mul+bias to local coord. */
   packed_float3 orco_add;
   uint object_attrs_offset;
@@ -177,7 +162,6 @@ struct ObjectInfos {
   uint light_and_shadow_set_membership;
   float random;
   eObjectInfoFlag flag;
-#endif
 
 #if !defined(GPU_SHADER) && defined(__cplusplus)
   void sync();
@@ -188,20 +172,12 @@ BLI_STATIC_ASSERT_ALIGN(ObjectInfos, 16)
 
 inline uint receiver_light_set_get(ObjectInfos object_infos)
 {
-#if defined(GPU_SHADER) && !defined(DRAW_FINALIZE_SHADER)
-  return floatBitsToUint(object_infos.infos.y) & 0xFFu;
-#else
   return object_infos.light_and_shadow_set_membership & 0xFFu;
-#endif
 }
 
 inline uint blocker_shadow_set_get(ObjectInfos object_infos)
 {
-#if defined(GPU_SHADER) && !defined(DRAW_FINALIZE_SHADER)
-  return (floatBitsToUint(object_infos.infos.y) >> 8u) & 0xFFu;
-#else
   return (object_infos.light_and_shadow_set_membership >> 8u) & 0xFFu;
-#endif
 }
 
 struct ObjectBounds {

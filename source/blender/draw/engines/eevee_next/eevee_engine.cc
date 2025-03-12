@@ -115,22 +115,14 @@ static void eevee_cache_init(void *vedata)
   reinterpret_cast<EEVEE_Data *>(vedata)->instance->begin_sync();
 }
 
-static void eevee_cache_populate(void *vedata, Object *object)
+static void eevee_cache_populate(void *vedata, draw::ObjectRef &ob_ref)
 {
-  draw::ObjectRef ob_ref = DRW_object_ref_get(object);
   reinterpret_cast<EEVEE_Data *>(vedata)->instance->object_sync(ob_ref);
 }
 
 static void eevee_cache_finish(void *vedata)
 {
   reinterpret_cast<EEVEE_Data *>(vedata)->instance->end_sync();
-}
-
-static void eevee_view_update(void *vedata)
-{
-  if (eevee::Instance *instance = reinterpret_cast<EEVEE_Data *>(vedata)->instance) {
-    instance->view_update();
-  }
 }
 
 static void eevee_engine_free()
@@ -194,7 +186,7 @@ DrawEngineType draw_engine_eevee_next_type = {
     /*cache_populate*/ &eevee_cache_populate,
     /*cache_finish*/ &eevee_cache_finish,
     /*draw_scene*/ &eevee_draw_scene,
-    /*view_update*/ &eevee_view_update,
+    /*view_update*/ nullptr,
     /*id_update*/ nullptr,
     /*render_to_image*/ &eevee_render_to_image,
     /*store_metadata*/ &eevee_store_metadata,

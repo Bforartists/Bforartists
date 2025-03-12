@@ -97,10 +97,10 @@ static void copy_materials_to_new_geometry_object(const Object &src_ob_eval,
   *BKE_id_material_len_p(&dst_data_orig) = materials_num;
   dst_ob_orig.totcol = materials_num;
 
-  dst_ob_orig.matbits = MEM_cnew_array<char>(materials_num, __func__);
-  dst_ob_orig.mat = MEM_cnew_array<Material *>(materials_num, __func__);
+  dst_ob_orig.matbits = MEM_calloc_arrayN<char>(materials_num, __func__);
+  dst_ob_orig.mat = MEM_calloc_arrayN<Material *>(materials_num, __func__);
   Material ***dst_materials = BKE_id_material_array_p(&dst_data_orig);
-  *dst_materials = MEM_cnew_array<Material *>(materials_num, __func__);
+  *dst_materials = MEM_calloc_arrayN<Material *>(materials_num, __func__);
 
   for (int i = 0; i < materials_num; i++) {
     const Material *material_eval = BKE_object_material_get_eval(
@@ -136,14 +136,16 @@ class GeometryToObjectsBuilder {
                                             const bke::GeometrySet &geometry)
   {
     ComponentObjects component_objects = this->get_objects_for_geometry(src_ob_eval, geometry);
-    return this->collection_from_component_objects(
-        component_objects, geometry.name.empty() ? BKE_id_name(src_ob_eval.id) : geometry.name);
+    const StringRefNull name = geometry.name.empty() ? StringRefNull(BKE_id_name(src_ob_eval.id)) :
+                                                       StringRefNull(geometry.name);
+    return this->collection_from_component_objects(component_objects, name);
   }
 
   ComponentObjects get_objects_for_geometry(const Object &src_ob_eval,
                                             const bke::GeometrySet &geometry)
   {
-    const StringRefNull name = geometry.name.empty() ? BKE_id_name(src_ob_eval.id) : geometry.name;
+    const StringRefNull name = geometry.name.empty() ? StringRefNull(BKE_id_name(src_ob_eval.id)) :
+                                                       StringRefNull(geometry.name);
     ComponentObjects objects;
     if (const Mesh *mesh = geometry.get_mesh()) {
       if (mesh->verts_num > 0) {
