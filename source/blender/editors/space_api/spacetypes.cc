@@ -77,7 +77,7 @@ void ED_spacetypes_init()
   ED_spacetype_nla();
   ED_spacetype_script();
   ED_spacetype_text();
-  ED_spacetype_sequencer();
+  vse::ED_spacetype_sequencer();
   ED_spacetype_console();
   ED_spacetype_userpref();
   ED_spacetype_clip();
@@ -99,7 +99,7 @@ void ED_spacetypes_init()
   object::operatortypes_object();
   ED_operatortypes_lattice();
   ED_operatortypes_mesh();
-  ED_operatortypes_geometry();
+  geometry::operatortypes_geometry();
   sculpt_paint::operatortypes_sculpt();
   ED_operatortypes_sculpt_curves();
   ED_operatortypes_uvedit();
@@ -167,7 +167,7 @@ void ED_spacemacros_init()
   curves::operatormacros_curves();
   pointcloud::operatormacros_pointcloud();
   ED_operatormacros_mask();
-  ED_operatormacros_sequencer();
+  vse::ED_operatormacros_sequencer();
   ED_operatormacros_paint();
   ED_operatormacros_grease_pencil();
   ED_operatormacros_nla();
@@ -237,7 +237,7 @@ void *ED_region_draw_cb_activate(ARegionType *art,
                                  void *customdata,
                                  int type)
 {
-  RegionDrawCB *rdc = MEM_cnew<RegionDrawCB>(__func__);
+  RegionDrawCB *rdc = MEM_callocN<RegionDrawCB>(__func__);
 
   BLI_addtail(&art->drawcalls, rdc);
   rdc->draw = draw;
