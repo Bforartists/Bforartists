@@ -2015,6 +2015,7 @@ if(WITH_BLENDER)
       view_back
       view_bottom
       view_camera
+      view_camera_unselected
       view_fill
       view_fit
       view_frame
