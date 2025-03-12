@@ -412,6 +412,12 @@ static bool ed_object_hidden(const Object *ob)
   return ((ob->visibility_flag & OB_HIDE_VIEWPORT) && !(ob->mode & OB_MODE_EDIT));
 }
 
+bool ED_operator_object_active_only(bContext *C)
+{
+  Object *ob = blender::ed::object::context_active_object(C);
+  return (ob != nullptr);
+}
+
 bool ED_operator_object_active(bContext *C)
 {
   Object *ob = blender::ed::object::context_active_object(C);
@@ -3068,7 +3074,10 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
           }
 
           ED_area_tag_redraw(rmd->area);
-          WM_event_add_notifier(C, NC_SCENE | ND_FRAME, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+          WM_event_add_notifier(
+              C,
+              NC_SCENE | ND_FRAME,
+              blender::seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
         }
 
         region_scale_exit(op);
@@ -3186,7 +3195,8 @@ static int frame_offset_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_FRAME, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_FRAME, blender::seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -4486,7 +4496,8 @@ static int screen_area_options_invoke(bContext *C, wmOperator *op, const wmEvent
       uiItemFullO(layout,
                   "SCREEN_OT_area_join",
                   ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Up") : IFACE_("Join Right"),
-                  ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP : ICON_JOIN_AREAS,/*BFA icon*/
+                  ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP :
+                                                          ICON_JOIN_AREAS, /*BFA icon*/
                   nullptr,
                   WM_OP_EXEC_DEFAULT,
                   UI_ITEM_NONE,
@@ -5629,9 +5640,7 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void * 
           "SCREEN_OT_header_toolbar_misc");
 }
 /*bfa toolbar*/
-static int toolbar_toolbox_invoke(bContext *C,
-                                  wmOperator *,
-                                  const wmEvent *)
+static int toolbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
 {
   uiPopupMenu *pup;
   uiLayout *layout;
@@ -5715,9 +5724,7 @@ void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void * /
           "SCREEN_OT_header_topbar_misc");
 }
 /*bfa topbar*/
-static int topbar_toolbox_invoke(bContext *C,
-                                  wmOperator *,
-                                  const wmEvent *)
+static int topbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
 {
   uiPopupMenu *pup;
   uiLayout *layout;
@@ -5795,8 +5802,12 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
           UI_ITEM_NONE,
           IFACE_("Extensions Updates"),
           ICON_NONE);
-  uiItemR(
-      layout, &ptr, "show_statusbar_version", UI_ITEM_NONE, IFACE_("Bforartists Version"), ICON_NONE); /*bfa - bforartists version, not blender version*/
+  uiItemR(layout,
+          &ptr,
+          "show_statusbar_version",
+          UI_ITEM_NONE,
+          IFACE_("Bforartists Version"),
+          ICON_NONE); /*bfa - bforartists version, not blender version*/
 }
 
 static int screen_context_menu_invoke(bContext *C, wmOperator * /*op*/, const wmEvent * /*event*/)
@@ -6016,7 +6027,7 @@ static void screen_animation_region_tag_redraw(
 
     if (area->spacetype == SPACE_SEQ) {
       const SpaceSeq *sseq = static_cast<const SpaceSeq *>(area->spacedata.first);
-      if (!ED_space_sequencer_has_playback_animation(sseq, scene)) {
+      if (!blender::ed::vse::has_playback_animation(sseq, scene)) {
         return;
       }
     }
@@ -6041,9 +6052,9 @@ static int screen_animation_step_invoke(bContext *C, wmOperator * /*op*/, const 
 #endif
 
   Main *bmain = CTX_data_main(C);
-  ScreenAnimData *sad = static_cast<ScreenAnimData *>(wt->customdata);  /*BFA - 3D Sequencer*/
-  Scene *scene = sad->scene;  /*BFA - 3D Sequencer*/
-  ViewLayer *view_layer = sad->view_layer;  /*BFA - 3D Sequencer*/
+  ScreenAnimData *sad = static_cast<ScreenAnimData *>(wt->customdata); /*BFA - 3D Sequencer*/
+  Scene *scene = sad->scene;                                           /*BFA - 3D Sequencer*/
+  ViewLayer *view_layer = sad->view_layer;                             /*BFA - 3D Sequencer*/
   Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer);
   Scene *scene_eval = (depsgraph != nullptr) ? DEG_get_evaluated_scene(depsgraph) : nullptr;
   wmWindowManager *wm = CTX_wm_manager(C);
@@ -6324,7 +6335,7 @@ int ED_screen_animation_play(bContext *C, int sync, int mode)
     ED_screen_animation_timer(C, 0, 0, 0);
     ED_scene_fps_average_clear(scene);
     BKE_sound_stop_scene(scene_eval);
-/*############## BFA - 3D Sequencer ##############*/
+    /*############## BFA - 3D Sequencer ##############*/
     /* Stop sound in sequencer scene overrides. */
     wmWindow *win = CTX_wm_window(C);
     ED_screen_areas_iter (win, screen, area) {
@@ -6343,7 +6354,7 @@ int ED_screen_animation_play(bContext *C, int sync, int mode)
         }
       }
     }
-/*############## BFA - 3D Sequencer End ##############*/
+    /*############## BFA - 3D Sequencer End ##############*/
     BKE_callback_exec_id_depsgraph(
         bmain, &scene->id, depsgraph, BKE_CB_EVT_ANIMATION_PLAYBACK_POST);
 
@@ -7042,6 +7053,8 @@ static int space_type_set_or_cycle_exec(bContext *C, wmOperator *op)
   if (area->spacetype != space_type) {
     /* Set the type. */
     RNA_property_enum_set(&ptr, prop_type, space_type);
+    /* Specify that we want last-used if there are subtypes. */
+    area->butspacetype_subtype = -1;
     RNA_property_update(C, &ptr, prop_type);
   }
   else {
@@ -7277,17 +7290,14 @@ void ED_operatortypes_screen()
   WM_operatortype_append(SCREEN_OT_header_toolbar_misc);  // bfa - show hide the primitives toolbar
   WM_operatortype_append(
       SCREEN_OT_toolbar_toolbox);  // bfa - toolbar types menu in the toolbar editor
-  WM_operatortype_append(SCREEN_OT_header_topbar_file);  // bfa - show hide the file topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_file);      // bfa - show hide the file topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_meshedit);  // bfa - show hide the meshedit topbar
   WM_operatortype_append(
-      SCREEN_OT_header_topbar_meshedit);  // bfa - show hide the meshedit topbar
-  WM_operatortype_append(
-      SCREEN_OT_header_topbar_primitives);  // bfa - show hide the primitives topbar
-  WM_operatortype_append(
-      SCREEN_OT_header_topbar_image);  // bfa - show hide the primitives topbar
-  WM_operatortype_append(
-      SCREEN_OT_header_topbar_tools);  // bfa - show hide the primitives topbar
+      SCREEN_OT_header_topbar_primitives);                // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_image);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_tools);  // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_animation);  // bfa - show hide the primitives
-                                                               // topbarfSCREEN_OT_header_toolbox
+                                                              // topbarfSCREEN_OT_header_toolbox
   WM_operatortype_append(SCREEN_OT_header_topbar_edit);  // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_misc);  // bfa - show hide the primitives topbar
   WM_operatortype_append(
