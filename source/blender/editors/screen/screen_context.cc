@@ -687,7 +687,7 @@ static eContextResult screen_ctx_active_sequence_strip(const bContext *C,
 {
   Scene *scene = space_sequencer_get_active_scene(C);
   /*############## BFA - 3D Sequencer End ##############*/
-  Strip *strip = SEQ_select_active_get(scene);
+  Strip *strip = blender::seq::select_active_get(scene);
   if (strip) {
     CTX_data_pointer_set(result, &scene->id, &RNA_Strip, strip);
     return CTX_RESULT_OK;
@@ -698,7 +698,7 @@ static eContextResult screen_ctx_sequences(const bContext *C, bContextDataResult
 {
   wmWindow *win = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(win);
-  Editing *ed = SEQ_editing_get(scene);
+  Editing *ed = blender::seq::editing_get(scene);
   if (ed) {
     LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
       CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
@@ -711,7 +711,7 @@ static eContextResult screen_ctx_sequences(const bContext *C, bContextDataResult
 static eContextResult screen_ctx_selected_sequences(const bContext *C, bContextDataResult *result)
 {
   Scene *scene = space_sequencer_get_active_scene(C); /*BFA - 3D Sequencer*/
-  Editing *ed = SEQ_editing_get(scene);
+  Editing *ed = blender::seq::editing_get(scene);
   if (ed) {
     LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
       if (strip->flag & SELECT) {
@@ -727,14 +727,14 @@ static eContextResult screen_ctx_selected_editable_sequences(const bContext *C,
                                                              bContextDataResult *result)
 {
   Scene *scene = space_sequencer_get_active_scene(C); /*BFA - 3D Sequencer*/
-  Editing *ed = SEQ_editing_get(scene);
+  Editing *ed = blender::seq::editing_get(scene);
   if (ed == nullptr) {
     return CTX_RESULT_NO_DATA;
   }
 
-  ListBase *channels = SEQ_channels_displayed_get(ed);
+  ListBase *channels = blender::seq::channels_displayed_get(ed);
   LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
-    if (strip->flag & SELECT && !SEQ_transform_is_locked(channels, strip)) {
+    if (strip->flag & SELECT && !blender::seq::transform_is_locked(channels, strip)) {
       CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
     }
   }
@@ -1150,7 +1150,7 @@ static eContextResult screen_ctx_active_strip(const bContext *C, bContextDataRes
 {
   wmWindow *win = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(win);
-  Strip *strip = SEQ_select_active_get(scene);
+  Strip *strip = blender::seq::select_active_get(scene);
   if (strip) {
     CTX_data_pointer_set(result, &scene->id, &RNA_Strip, strip);
     return CTX_RESULT_OK;
@@ -1161,7 +1161,7 @@ static eContextResult screen_ctx_strips(const bContext *C, bContextDataResult *r
 {
   wmWindow *win = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(win);
-  Editing *ed = SEQ_editing_get(scene);
+  Editing *ed = blender::seq::editing_get(scene);
   if (ed) {
     LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
       CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
@@ -1175,7 +1175,7 @@ static eContextResult screen_ctx_selected_strips(const bContext *C, bContextData
 {
   wmWindow *win = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(win);
-  Editing *ed = SEQ_editing_get(scene);
+  Editing *ed = blender::seq::editing_get(scene);
   if (ed) {
     LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
       if (strip->flag & SELECT) {
@@ -1192,14 +1192,14 @@ static eContextResult screen_ctx_selected_editable_strips(const bContext *C,
 {
   wmWindow *win = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(win);
-  Editing *ed = SEQ_editing_get(scene);
+  Editing *ed = blender::seq::editing_get(scene);
   if (ed == nullptr) {
     return CTX_RESULT_NO_DATA;
   }
 
-  ListBase *channels = SEQ_channels_displayed_get(ed);
+  ListBase *channels = blender::seq::channels_displayed_get(ed);
   LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
-    if (strip->flag & SELECT && !SEQ_transform_is_locked(channels, strip)) {
+    if (strip->flag & SELECT && !blender::seq::transform_is_locked(channels, strip)) {
       CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
     }
   }
