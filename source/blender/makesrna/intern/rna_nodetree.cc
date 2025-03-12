@@ -2126,7 +2126,7 @@ static void geometry_node_asset_trait_flag_set(PointerRNA *ptr,
 {
   bNodeTree *ntree = static_cast<bNodeTree *>(ptr->data);
   if (!ntree->geometry_node_asset_traits) {
-    ntree->geometry_node_asset_traits = MEM_cnew<GeometryNodeAssetTraits>(__func__);
+    ntree->geometry_node_asset_traits = MEM_callocN<GeometryNodeAssetTraits>(__func__);
   }
   SET_FLAG_FROM_TEST(ntree->geometry_node_asset_traits->flag, value, flag);
 }
@@ -12502,6 +12502,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeImportPLY", nullptr, ICON_NONE, "Add an Import PLY node\nImport a point cloud from a PLY file");
   define(brna, "GeometryNode", "GeometryNodeImportSTL", nullptr, ICON_NONE, "Add an Import STL node\nImport a mesh from an STL file");
   define(brna, "GeometryNode", "GeometryNodeImportCSV", nullptr, ICON_NONE, "Add an Import CSV node\nImport a mesh from a CSV file");
+  define(brna, "GeometryNode", "GeometryNodeImportText", nullptr, ICON_NONE, "Add an Import TXT node\nImport text from a .txt file");
   define(brna, "GeometryNode", "GeometryNodeIndexOfNearest", nullptr, ICON_INDEX_OF_NEAREST, "Add an Index of Nearest node\nFind the nearest element in a group. Similar to the \"Sample Nearest\" node");
   define(brna, "GeometryNode", "GeometryNodeIndexSwitch", def_geo_index_switch, ICON_INDEX_SWITCH, "Add an Index Switch node\nChoose between an arbitrary number of values with an index");
   define(brna, "GeometryNode", "GeometryNodeInputActiveCamera", nullptr, ICON_VIEW_SWITCHTOCAM, "Add an Active Camera node\nRetrieve the scene's active camera");

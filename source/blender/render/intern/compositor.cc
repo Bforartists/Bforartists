@@ -184,7 +184,7 @@ class Context : public compositor::Context {
       /* Otherwise, the size changed, so release its data and reset it, then we reallocate it on
        * the new render size below. */
       output_result_.release();
-      output_result_.reset();
+      output_result_ = this->create_result(compositor::ResultType::Color);
     }
 
     output_result_.allocate_texture(render_size, false);
@@ -208,7 +208,7 @@ class Context : public compositor::Context {
       /* Otherwise, the size or precision changed, so release its data and reset it, then we
        * reallocate it on the new domain below. */
       viewer_output_result_.release();
-      viewer_output_result_.reset();
+      viewer_output_result_ = this->create_result(compositor::ResultType::Color);
     }
 
     viewer_output_result_.set_precision(precision);
@@ -491,11 +491,11 @@ class Context : public compositor::Context {
 
     const int2 size = viewer_output_result_.domain().size;
     if (image_buffer->x != size.x || image_buffer->y != size.y) {
-      imb_freerectImBuf(image_buffer);
-      imb_freerectfloatImBuf(image_buffer);
+      IMB_free_byte_pixels(image_buffer);
+      IMB_free_float_pixels(image_buffer);
       image_buffer->x = size.x;
       image_buffer->y = size.y;
-      imb_addrectfloatImBuf(image_buffer, 4);
+      IMB_alloc_float_pixels(image_buffer, 4);
       image_buffer->userflags |= IB_DISPLAY_BUFFER_INVALID;
     }
 
@@ -629,8 +629,6 @@ class Compositor {
       }
     }
 
-    /* Always recreate the evaluator, as this only runs on compositing node changes and
-     * there is no reason to cache this. Unlike the viewport where it helps for navigation. */
     {
       compositor::Evaluator evaluator(*context_);
       evaluator.evaluate();
