@@ -12,11 +12,11 @@
 #endif
 
 SHADER_LIBRARY_CREATE_INFO(draw_modelmat)
-SHADER_LIBRARY_CREATE_INFO(draw_resource_handle_new)
 SHADER_LIBRARY_CREATE_INFO(draw_hair)
 
 #include "common_hair_lib.glsl" /* TODO rename to curve. */
 #include "draw_model_lib.glsl"
+#include "draw_object_infos_lib.glsl"
 #include "gpu_shader_codegen_lib.glsl"
 #include "gpu_shader_math_matrix_lib.glsl"
 #include "gpu_shader_math_vector_lib.glsl"
@@ -34,8 +34,8 @@ SHADER_LIBRARY_CREATE_INFO(draw_hair)
 vec3 attr_load_orco(vec4 orco)
 {
   vec3 P = hair_get_strand_pos();
-  vec3 lP = transform_point(ModelMatrixInverse, P);
-  return OrcoTexCoFactors[0].xyz + lP * OrcoTexCoFactors[1].xyz;
+  vec3 lP = transform_point(drw_modelinv(), P);
+  return drw_object_orco(lP);
 }
 #  endif
 

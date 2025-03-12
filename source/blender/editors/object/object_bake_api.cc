@@ -333,7 +333,7 @@ static bool write_internal_bake_pixels(Image *image,
   /* force mipmap recalc */
   if (ibuf->mipmap[0]) {
     ibuf->userflags |= IB_MIPMAP_INVALID;
-    imb_freemipmapImBuf(ibuf);
+    IMB_free_mipmaps(ibuf);
   }
 
   BKE_image_release_ibuf(image, ibuf, nullptr);
@@ -380,7 +380,8 @@ static bool write_external_bake_pixels(const char *filepath,
   is_float = im_format->depth > 8;
 
   /* create a new ImBuf */
-  ibuf = IMB_allocImBuf(width, height, im_format->planes, (is_float ? IB_rectfloat : IB_rect));
+  ibuf = IMB_allocImBuf(
+      width, height, im_format->planes, (is_float ? IB_float_data : IB_byte_data));
 
   if (!ibuf) {
     return false;
@@ -1008,7 +1009,7 @@ static bool bake_targets_init_vertex_colors(Main *bmain,
   /* Ensure mesh and editmesh topology are in sync. */
   editmode_load(bmain, ob);
 
-  targets->images = MEM_cnew<BakeImage>(__func__);
+  targets->images = MEM_callocN<BakeImage>(__func__);
   targets->images_num = 1;
 
   targets->material_to_image = static_cast<Image **>(
@@ -1518,6 +1519,13 @@ static int bake(const BakeAPIRender *bkr,
   pixel_array_low = static_cast<BakePixel *>(
       MEM_mallocN(sizeof(BakePixel) * targets.pixels_num, "bake pixels low poly"));
   if ((bkr->is_selected_to_active && (ob_cage == nullptr) && bkr->is_cage) == false) {
+    if (!CustomData_has_layer(&me_low_eval->corner_data, CD_PROP_FLOAT2)) {
+      BKE_reportf(reports,
+                  RPT_ERROR,
+                  "No UV map found in the evaluated object \"%s\"",
+                  ob_low->id.name + 2);
+      goto cleanup;
+    }
     bake_targets_populate_pixels(bkr, &targets, ob_low, me_low_eval, pixel_array_low);
   }
 
@@ -1570,6 +1578,13 @@ static int bake(const BakeAPIRender *bkr,
       }
 
       me_cage_eval = BKE_mesh_new_from_object(nullptr, ob_low_eval, false, preserve_origindex);
+      if (!CustomData_has_layer(&me_cage_eval->corner_data, CD_PROP_FLOAT2)) {
+        BKE_reportf(reports,
+                    RPT_ERROR,
+                    "No UV map found in the evaluated object \"%s\"",
+                    ob_low->id.name + 2);
+        goto cleanup;
+      }
       bake_targets_populate_pixels(bkr, &targets, ob_low, me_cage_eval, pixel_array_low);
     }
 
@@ -1752,6 +1767,14 @@ static int bake(const BakeAPIRender *bkr,
 
             /* Evaluate modifiers again. */
             me_nores = BKE_mesh_new_from_object(nullptr, ob_low_eval, false, false);
+            if (!CustomData_has_layer(&me_nores->corner_data, CD_PROP_FLOAT2)) {
+              BKE_reportf(reports,
+                          RPT_ERROR,
+                          "No UV map found in the evaluated object \"%s\"",
+                          ob_low->id.name + 2);
+              BKE_id_free(nullptr, &me_nores->id);
+              goto cleanup;
+            }
             bake_targets_populate_pixels(bkr, &targets, ob_low, me_nores, pixel_array_low);
           }
 

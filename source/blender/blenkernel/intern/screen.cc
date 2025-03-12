@@ -57,6 +57,7 @@
 #include "WM_types.hh"
 
 using blender::Span;
+using blender::StringRef;
 using blender::Vector;
 
 /* -------------------------------------------------------------------- */
@@ -328,8 +329,9 @@ static void panel_list_copy(ListBase *newlb, const ListBase *lb)
     new_panel->drawname = nullptr;
 
     BLI_listbase_clear(&new_panel->layout_panel_states);
+    new_panel->layout_panel_states_clock = old_panel->layout_panel_states_clock;
     LISTBASE_FOREACH (LayoutPanelState *, src_state, &old_panel->layout_panel_states) {
-      LayoutPanelState *new_state = MEM_cnew<LayoutPanelState>(__func__, *src_state);
+      LayoutPanelState *new_state = MEM_dupallocN<LayoutPanelState>(__func__, *src_state);
       new_state->idname = BLI_strdup(src_state->idname);
       BLI_addtail(&new_panel->layout_panel_states, new_state);
     }
@@ -378,7 +380,7 @@ ARegion *BKE_area_region_copy(const SpaceType *st, const ARegion *region)
 
 ARegion *BKE_area_region_new()
 {
-  ARegion *region = MEM_cnew<ARegion>(__func__);
+  ARegion *region = MEM_callocN<ARegion>(__func__);
   region->runtime = MEM_new<blender::bke::ARegionRuntime>(__func__);
   return region;
 }
@@ -510,24 +512,34 @@ void BKE_region_callback_free_gizmomap_set(void (*callback)(wmGizmoMap *))
 }
 
 LayoutPanelState *BKE_panel_layout_panel_state_ensure(Panel *panel,
-                                                      const char *idname,
+                                                      const StringRef idname,
                                                       const bool default_closed)
 {
+  const uint32_t logical_time = ++panel->layout_panel_states_clock;
+  /* Overflow happened, reset all last used times. Not sure if this will ever happen in practice,
+   * but better handle the overflow explicitly. */
+  if (logical_time == 0) {
+    LISTBASE_FOREACH (LayoutPanelState *, state, &panel->layout_panel_states) {
+      state->last_used = 0;
+    }
+  }
   LISTBASE_FOREACH (LayoutPanelState *, state, &panel->layout_panel_states) {
-    if (STREQ(state->idname, idname)) {
+    if (state->idname == idname) {
+      state->last_used = logical_time;
       return state;
     }
   }
-  LayoutPanelState *state = MEM_cnew<LayoutPanelState>(__func__);
-  state->idname = BLI_strdup(idname);
+  LayoutPanelState *state = MEM_callocN<LayoutPanelState>(__func__);
+  state->idname = BLI_strdupn(idname.data(), idname.size());
   SET_FLAG_FROM_TEST(state->flag, !default_closed, LAYOUT_PANEL_STATE_FLAG_OPEN);
+  state->last_used = logical_time;
   BLI_addtail(&panel->layout_panel_states, state);
   return state;
 }
 
 Panel *BKE_panel_new(PanelType *panel_type)
 {
-  Panel *panel = MEM_cnew<Panel>(__func__);
+  Panel *panel = MEM_callocN<Panel>(__func__);
   panel->runtime = MEM_new<Panel_Runtime>(__func__);
   panel->type = panel_type;
   if (panel_type) {
@@ -536,15 +548,21 @@ Panel *BKE_panel_new(PanelType *panel_type)
   return panel;
 }
 
+static void layout_panel_state_delete(LayoutPanelState *state)
+{
+  MEM_freeN(state->idname);
+  MEM_freeN(state);
+}
+
 void BKE_panel_free(Panel *panel)
 {
   MEM_SAFE_FREE(panel->activedata);
   MEM_SAFE_FREE(panel->drawname);
 
-  LISTBASE_FOREACH (LayoutPanelState *, state, &panel->layout_panel_states) {
-    MEM_freeN(state->idname);
+  LISTBASE_FOREACH_MUTABLE (LayoutPanelState *, state, &panel->layout_panel_states) {
+    BLI_remlink(&panel->layout_panel_states, state);
+    layout_panel_state_delete(state);
   }
-  BLI_freelistN(&panel->layout_panel_states);
 
   MEM_delete(panel->runtime);
   MEM_freeN(panel);
@@ -1177,6 +1195,26 @@ void BKE_screen_area_map_blend_write(BlendWriter *writer, ScrAreaMap *area_map)
   }
 }
 
+static void remove_least_recently_used_panel_states(Panel &panel, const int64_t max_kept)
+{
+  Vector<LayoutPanelState *, 1024> all_states;
+  LISTBASE_FOREACH (LayoutPanelState *, state, &panel.layout_panel_states) {
+    all_states.append(state);
+  }
+  if (all_states.size() <= max_kept) {
+    return;
+  }
+  std::sort(all_states.begin(),
+            all_states.end(),
+            [](const LayoutPanelState *a, const LayoutPanelState *b) {
+              return a->last_used < b->last_used;
+            });
+  for (LayoutPanelState *state : all_states.as_span().drop_back(max_kept)) {
+    BLI_remlink(&panel.layout_panel_states, state);
+    layout_panel_state_delete(state);
+  }
+}
+
 static void direct_link_panel_list(BlendDataReader *reader, ListBase *lb)
 {
   BLO_read_struct_list(reader, Panel, lb);
@@ -1191,6 +1229,11 @@ static void direct_link_panel_list(BlendDataReader *reader, ListBase *lb)
     LISTBASE_FOREACH (LayoutPanelState *, state, &panel->layout_panel_states) {
       BLO_read_string(reader, &state->idname);
     }
+    /* Reduce the number of panel states to a reasonable number. This avoids the list getting
+     * arbitrarily large over time. Ideally this could be done more eagerly and not only when
+     * loading the file. However, it's hard to make sure that no other code is currently
+     * referencing the panel states in other cases. */
+    remove_least_recently_used_panel_states(*panel, 200);
     direct_link_panel_list(reader, &panel->children);
   }
 }
@@ -1236,7 +1279,7 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
 
         if (region->regiondata == nullptr) {
           /* To avoid crashing on some old files. */
-          region->regiondata = MEM_cnew<RegionView3D>("region view3d");
+          region->regiondata = MEM_callocN<RegionView3D>("region view3d");
         }
 
         RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
