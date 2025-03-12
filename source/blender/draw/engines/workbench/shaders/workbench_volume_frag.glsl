@@ -11,6 +11,7 @@ FRAGMENT_SHADER_CREATE_INFO(workbench_volume_cubic)
 FRAGMENT_SHADER_CREATE_INFO(workbench_volume_smoke)
 
 #include "draw_model_lib.glsl"
+#include "draw_object_infos_lib.glsl"
 #include "draw_view_lib.glsl"
 #include "gpu_shader_math_vector_lib.glsl"
 #include "workbench_common_lib.glsl"
@@ -265,9 +266,9 @@ void main()
   fragColor = vec4(Lscat, Tr);
 #else
   vec2 screen_uv = gl_FragCoord.xy / vec2(textureSize(depthBuffer, 0).xy);
-  bool is_persp = drw_view.winmat[3][3] == 0.0;
+  bool is_persp = drw_view().winmat[3][3] == 0.0;
 
-  vec3 volume_center = ModelMatrix[3].xyz;
+  vec3 volume_center = drw_modelmat()[3].xyz;
 
   float depth = do_depth_test ? texelFetch(depthBuffer, ivec2(gl_FragCoord.xy), 0).r : 1.0;
   float depth_end = min(depth, gl_FragCoord.z);
@@ -281,9 +282,9 @@ void main()
   vec3 ls_ray_end = drw_point_view_to_object(vs_ray_end);
 
 #  ifdef VOLUME_SMOKE
-  ls_ray_dir = (OrcoTexCoFactors[0].xyz + ls_ray_dir * OrcoTexCoFactors[1].xyz) * 2.0 - 1.0;
-  ls_ray_ori = (OrcoTexCoFactors[0].xyz + ls_ray_ori * OrcoTexCoFactors[1].xyz) * 2.0 - 1.0;
-  ls_ray_end = (OrcoTexCoFactors[0].xyz + ls_ray_end * OrcoTexCoFactors[1].xyz) * 2.0 - 1.0;
+  ls_ray_dir = (drw_object_orco(ls_ray_dir)) * 2.0 - 1.0;
+  ls_ray_ori = (drw_object_orco(ls_ray_ori)) * 2.0 - 1.0;
+  ls_ray_end = (drw_object_orco(ls_ray_end)) * 2.0 - 1.0;
 #  else
   ls_ray_dir = (volumeObjectToTexture * vec4(ls_ray_dir, 1.0)).xyz * 2.0f - 1.0;
   ls_ray_ori = (volumeObjectToTexture * vec4(ls_ray_ori, 1.0)).xyz * 2.0f - 1.0;

@@ -947,7 +947,7 @@ static void node_resize_init(
     bContext *C, wmOperator *op, const float2 &cursor, const bNode *node, NodeResizeDirection dir)
 {
   Scene *scene = CTX_data_scene(C);
-  NodeSizeWidget *nsw = MEM_cnew<NodeSizeWidget>(__func__);
+  NodeSizeWidget *nsw = MEM_callocN<NodeSizeWidget>(__func__);
 
   op->customdata = nsw;
 
@@ -1476,7 +1476,7 @@ static int node_duplicate_exec(bContext *C, wmOperator *op)
     if (link->tonode && (link->tonode->flag & NODE_SELECT) &&
         (keep_inputs || (link->fromnode && (link->fromnode->flag & NODE_SELECT))))
     {
-      bNodeLink *newlink = MEM_cnew<bNodeLink>("bNodeLink");
+      bNodeLink *newlink = MEM_callocN<bNodeLink>("bNodeLink");
       newlink->flag = link->flag;
       newlink->tonode = node_map.lookup(link->tonode);
       newlink->tosock = socket_map.lookup(link->tosock);
@@ -1801,6 +1801,62 @@ void NODE_OT_preview_toggle(wmOperatorType *ot)
   ot->poll = node_previewable;
 
   /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+static int node_activate_viewer_exec(bContext *C, wmOperator * /*op*/)
+{
+  SpaceNode *snode = CTX_wm_space_node(C);
+  PointerRNA ptr = CTX_data_pointer_get(C, "node");
+  Main *bmain = CTX_data_main(C);
+  bNodeTree *ntree = nullptr;
+  bNode *node = nullptr;
+
+  if (ptr.data) {
+    node = static_cast<bNode *>(ptr.data);
+    ntree = reinterpret_cast<bNodeTree *>(ptr.owner_id);
+  }
+  else if (snode && snode->edittree) {
+    ntree = snode->edittree;
+    node = bke::node_get_active(*ntree);
+  }
+
+  if (!node) {
+    return OPERATOR_CANCELLED;
+  }
+
+  if (node->is_type("CompositorNodeViewer")) {
+    for (bNode *other_node : ntree->all_nodes()) {
+      if (other_node->type_legacy == node->type_legacy) {
+        other_node->flag &= ~NODE_DO_OUTPUT;
+      }
+      node->flag |= NODE_DO_OUTPUT;
+
+      WM_main_add_notifier(NC_NODE | NA_EDITED, &ntree->id);
+      WM_main_add_notifier(NC_SCENE | ND_NODES, &ntree->id);
+    }
+  }
+  else if (node->is_type("GeometryNodeViewer")) {
+    /* Geometry nodes viewers don't rely on NODE_DO_OUTPUT flag alone. */
+    viewer_path::activate_geometry_node(*bmain, *snode, *node);
+  }
+  else {
+    return OPERATOR_CANCELLED;
+  }
+
+  BKE_main_ensure_invariants(*bmain, snode->edittree->id);
+  return OPERATOR_FINISHED;
+}
+
+void NODE_OT_activate_viewer(wmOperatorType *ot)
+{
+  ot->name = "Activate Viewer Node";
+  ot->description = "Activate selected viewer node in compositor and geometry nodes";
+  ot->idname = "NODE_OT_activate_viewer";
+
+  ot->exec = node_activate_viewer_exec;
+  ot->poll = ED_operator_node_active;
+
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
