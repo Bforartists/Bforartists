@@ -152,10 +152,10 @@ static void strip_convert_transform_crop(const Scene *scene,
                                          const eSpaceSeq_Proxy_RenderSize render_size)
 {
   if (strip->data->transform == nullptr) {
-    strip->data->transform = MEM_cnew<StripTransform>(__func__);
+    strip->data->transform = MEM_callocN<StripTransform>(__func__);
   }
   if (strip->data->crop == nullptr) {
-    strip->data->crop = MEM_cnew<StripCrop>(__func__);
+    strip->data->crop = MEM_callocN<StripCrop>(__func__);
   }
 
   StripCrop *c = strip->data->crop;
@@ -174,9 +174,9 @@ static void strip_convert_transform_crop(const Scene *scene,
     image_size_x = s_elem->orig_width;
     image_size_y = s_elem->orig_height;
 
-    if (can_use_proxy(strip, SEQ_rendersize_to_proxysize(render_size))) {
-      image_size_x /= SEQ_rendersize_to_scale_factor(render_size);
-      image_size_y /= SEQ_rendersize_to_scale_factor(render_size);
+    if (can_use_proxy(strip, blender::seq::rendersize_to_proxysize(render_size))) {
+      image_size_x /= blender::seq::rendersize_to_scale_factor(render_size);
+      image_size_y /= blender::seq::rendersize_to_scale_factor(render_size);
     }
   }
 
@@ -304,9 +304,9 @@ static void strip_convert_transform_crop_2(const Scene *scene,
   int image_size_x = s_elem->orig_width;
   int image_size_y = s_elem->orig_height;
 
-  if (can_use_proxy(strip, SEQ_rendersize_to_proxysize(render_size))) {
-    image_size_x /= SEQ_rendersize_to_scale_factor(render_size);
-    image_size_y /= SEQ_rendersize_to_scale_factor(render_size);
+  if (can_use_proxy(strip, blender::seq::rendersize_to_proxysize(render_size))) {
+    image_size_x /= blender::seq::rendersize_to_scale_factor(render_size);
+    image_size_y /= blender::seq::rendersize_to_scale_factor(render_size);
   }
 
   /* Calculate scale factor, so image fits in preview area with original aspect ratio. */
@@ -358,7 +358,7 @@ static void strip_convert_transform_crop_lb_2(const Scene *scene,
 
 static void seq_update_meta_disp_range(Scene *scene)
 {
-  Editing *ed = SEQ_editing_get(scene);
+  Editing *ed = blender::seq::editing_get(scene);
 
   if (ed == nullptr) {
     return;
@@ -367,13 +367,13 @@ static void seq_update_meta_disp_range(Scene *scene)
   LISTBASE_FOREACH_BACKWARD (MetaStack *, ms, &ed->metastack) {
     /* Update ms->disp_range from meta. */
     if (ms->disp_range[0] == ms->disp_range[1]) {
-      ms->disp_range[0] = SEQ_time_left_handle_frame_get(scene, ms->parseq);
-      ms->disp_range[1] = SEQ_time_right_handle_frame_get(scene, ms->parseq);
+      ms->disp_range[0] = blender::seq::time_left_handle_frame_get(scene, ms->parseq);
+      ms->disp_range[1] = blender::seq::time_right_handle_frame_get(scene, ms->parseq);
     }
 
     /* Update meta strip endpoints. */
-    SEQ_time_left_handle_frame_set(scene, ms->parseq, ms->disp_range[0]);
-    SEQ_time_right_handle_frame_set(scene, ms->parseq, ms->disp_range[1]);
+    blender::seq::time_left_handle_frame_set(scene, ms->parseq, ms->disp_range[0]);
+    blender::seq::time_right_handle_frame_set(scene, ms->parseq, ms->disp_range[1]);
 
     /* Recalculate effects using meta strip. */
     LISTBASE_FOREACH (Strip *, seq, ms->oldbasep) {
@@ -384,8 +384,8 @@ static void seq_update_meta_disp_range(Scene *scene)
     }
 
     /* Ensure that active seqbase points to active meta strip seqbase. */
-    MetaStack *active_ms = SEQ_meta_stack_active_get(ed);
-    SEQ_seqbase_active_set(ed, &active_ms->parseq->seqbase);
+    MetaStack *active_ms = blender::seq::meta_stack_active_get(ed);
+    blender::seq::seqbase_active_set(ed, &active_ms->parseq->seqbase);
   }
 }
 
@@ -1592,7 +1592,7 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
 
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->toolsettings->sequencer_tool_settings == nullptr) {
-        scene->toolsettings->sequencer_tool_settings = SEQ_tool_settings_init();
+        scene->toolsettings->sequencer_tool_settings = blender::seq::tool_settings_init();
       }
     }
   }
@@ -1635,7 +1635,7 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
           if (node->type_legacy != CMP_NODE_SETALPHA) {
             continue;
           }
-          NodeSetAlpha *storage = MEM_cnew<NodeSetAlpha>("NodeSetAlpha");
+          NodeSetAlpha *storage = MEM_callocN<NodeSetAlpha>("NodeSetAlpha");
           storage->mode = CMP_NODE_SETALPHA_MODE_REPLACE_ALPHA;
           node->storage = storage;
         }
@@ -1644,7 +1644,7 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
     }
 
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-      Editing *ed = SEQ_editing_get(scene);
+      Editing *ed = blender::seq::editing_get(scene);
       if (ed == nullptr) {
         continue;
       }

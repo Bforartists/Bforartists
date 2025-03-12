@@ -694,7 +694,7 @@ static eSnapMode snap_mode_from_spacetype(TransInfo *t)
   }
 
   if (t->spacetype == SPACE_SEQ) {
-    return eSnapMode(SEQ_tool_settings_snap_mode_get(t->scene));
+    return eSnapMode(seq::tool_settings_snap_mode_get(t->scene));
   }
 
   if (t->spacetype == SPACE_VIEW3D) {
@@ -1078,7 +1078,7 @@ void addSnapPoint(TransInfo *t)
 {
   /* Currently only 3D viewport works for snapping points. */
   if (t->tsnap.status & SNAP_TARGET_FOUND && t->spacetype == SPACE_VIEW3D) {
-    TransSnapPoint *p = MEM_cnew<TransSnapPoint>("SnapPoint");
+    TransSnapPoint *p = MEM_callocN<TransSnapPoint>("SnapPoint");
 
     t->tsnap.selectedPoint = p;
 
