@@ -203,6 +203,7 @@ if(WITH_BLENDER)
       node_texture
       play_sound
       preset_new
+      preview_loading
       restrict_instanced_off
       restrict_instanced_on
       rna_add

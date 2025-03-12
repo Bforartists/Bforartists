@@ -163,7 +163,7 @@ static void createTransGreasePencilVerts(bContext *C, TransInfo *t)
     }
 
     if (tc.data_len > 0) {
-      tc.data = MEM_cnew_array<TransData>(tc.data_len, __func__);
+      tc.data = MEM_calloc_arrayN<TransData>(tc.data_len, __func__);
       curves_transform_data->positions.reinitialize(tc.data_len);
     }
     else {
@@ -248,10 +248,10 @@ static void recalcData_grease_pencil(TransInfo *t)
       bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
 
       if (t->mode == TFM_CURVE_SHRINKFATTEN) {
-        /* No cache to update currently. */
+        curves.tag_radii_changed();
       }
       else if (t->mode == TFM_TILT) {
-        /* No cache to update currently. */
+        curves.tag_normals_changed();
       }
       else {
         const Vector<MutableSpan<float3>> positions_per_selection_attr =
