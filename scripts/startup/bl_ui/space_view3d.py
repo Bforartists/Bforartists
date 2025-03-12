@@ -10170,6 +10170,63 @@ class VIEW3D_PT_shading_options(Panel):
             else:
                 col.label(icon="DISCLOSURE_TRI_RIGHT")
 
+            split = layout.split()
+            col = split.column()
+            col.use_property_split = False
+            row = col.row()
+            if not xray_active:
+                row.separator()
+                row.prop(shading, "show_cavity")
+                col = split.column()
+                if shading.show_cavity:
+                    col.prop(shading, "cavity_type", text="Type")
+                else:
+                    col.label(icon="DISCLOSURE_TRI_RIGHT")
+
+            col = layout.column()
+
+            if shading.show_cavity and not xray_active:
+                if shading.cavity_type in {"WORLD", "BOTH"}:
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.label(text="World Space")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.separator()
+                    row.use_property_split = True
+                    row.prop(shading, "cavity_ridge_factor", text="Ridge")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.separator()
+                    row.use_property_split = True
+                    row.prop(shading, "cavity_valley_factor", text="Valley")
+                    row.popover(
+                        panel="VIEW3D_PT_shading_options_ssao",
+                        icon="PREFERENCES",
+                        text="",
+                    )
+
+                if shading.cavity_type in {"SCREEN", "BOTH"}:
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.label(text="Screen Space")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.separator()
+                    row.use_property_split = True
+                    row.prop(shading, "curvature_ridge_factor", text="Ridge")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.separator()
+                    row.use_property_split = True
+                    row.prop(shading, "curvature_valley_factor", text="Valley")
+
             row = col.row()
             if not xray_active:
                 row.separator()
@@ -10233,78 +10290,6 @@ class VIEW3D_PT_shading_options_ssao(Panel):
         col.prop(scene.display, "matcap_ssao_samples")
         col.prop(scene.display, "matcap_ssao_distance")
         col.prop(scene.display, "matcap_ssao_attenuation")
-
-
-class VIEW3D_PT_shading_cavity(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_label = "Cavity"
-    bl_parent_id = "VIEW3D_PT_shading"
-
-    @classmethod
-    def poll(cls, context):
-        shading = VIEW3D_PT_shading.get_shading(context)
-        return shading.type in {'SOLID'}
-
-    def draw_header(self, context):
-        layout = self.layout
-        shading = VIEW3D_PT_shading.get_shading(context)
-        xray_active = shading.show_xray and shading.xray_alpha != 1
-
-        row = layout.row()
-        row.active = not xray_active
-        row.prop(shading, "show_cavity")
-        if shading.show_cavity:
-            row.prop(shading, "cavity_type", text="Type")
-
-    def draw(self, context):
-        layout = self.layout
-        shading = VIEW3D_PT_shading.get_shading(context)
-        xray_active = shading.show_xray and shading.xray_alpha != 1
-
-        col = layout.column()
-
-        if shading.show_cavity and not xray_active:
-            if shading.cavity_type in {"WORLD", "BOTH"}:
-                row = col.row()
-                row.separator()
-                row.separator()
-                row.label(text="World Space")
-                row = col.row()
-                row.separator()
-                row.separator()
-                row.separator()
-                row.use_property_split = True
-                row.prop(shading, "cavity_ridge_factor", text="Ridge")
-                row = col.row()
-                row.separator()
-                row.separator()
-                row.separator()
-                row.use_property_split = True
-                row.prop(shading, "cavity_valley_factor", text="Valley")
-                row.popover(
-                    panel="VIEW3D_PT_shading_options_ssao",
-                    icon="PREFERENCES",
-                    text="",
-                )
-
-            if shading.cavity_type in {"SCREEN", "BOTH"}:
-                row = col.row()
-                row.separator()
-                row.separator()
-                row.label(text="Screen Space")
-                row = col.row()
-                row.separator()
-                row.separator()
-                row.separator()
-                row.use_property_split = True
-                row.prop(shading, "curvature_ridge_factor", text="Ridge")
-                row = col.row()
-                row.separator()
-                row.separator()
-                row.separator()
-                row.use_property_split = True
-                row.prop(shading, "curvature_valley_factor", text="Valley")
 
 
 class VIEW3D_PT_shading_render_pass(Panel):
@@ -13264,7 +13249,6 @@ classes = (
     VIEW3D_PT_shading_options,
     VIEW3D_PT_shading_options_shadow,
     VIEW3D_PT_shading_options_ssao,
-    VIEW3D_PT_shading_cavity,
     VIEW3D_PT_shading_render_pass,
     VIEW3D_PT_shading_compositor,
     VIEW3D_PT_gizmo_display,
