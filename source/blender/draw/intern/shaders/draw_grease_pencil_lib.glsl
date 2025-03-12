@@ -9,6 +9,7 @@
 SHADER_LIBRARY_CREATE_INFO(draw_gpencil)
 
 #include "draw_model_lib.glsl"
+#include "draw_object_infos_lib.glsl"
 #include "draw_view_lib.glsl"
 #include "gpu_shader_math_matrix_lib.glsl"
 #include "gpu_shader_utildefines_lib.glsl"
@@ -74,18 +75,20 @@ vec2 gpencil_project_to_screenspace(vec4 v, vec4 viewport_size)
 
 float gpencil_stroke_thickness_modulate(float thickness, vec4 ndc_pos, vec4 viewport_size)
 {
-  /* Modify stroke thickness by object and layer factors. */
-  thickness = max(1.0, thickness * gpThicknessScale + gpThicknessOffset);
+  /* Modify stroke thickness by object scale. */
+  thickness = length(to_float3x3(drw_modelmat()) * vec3(thickness * M_SQRT1_3));
 
-  if (gpThicknessIsScreenSpace) {
-    /* Multiply offset by view Z so that offset is constant in screen-space.
-     * (e.i: does not change with the distance to camera) */
-    thickness *= ndc_pos.w;
-  }
-  else {
-    /* World space point size. */
-    thickness *= gpThicknessWorldScale * drw_view.winmat[1][1] * viewport_size.y;
-  }
+  /* For compatibility, thickness has to be clamped after being multiplied by this factor.
+   * This clamping was introduced to reduce aliasing issue by instead fading the lines alpha at
+   * smaller radii. This can be removed in major release if compatibility is not a concern. */
+  const float legacy_radius_conversion_factor = 2000.0;
+  thickness *= legacy_radius_conversion_factor;
+  thickness = max(1.0, thickness);
+  thickness /= legacy_radius_conversion_factor;
+
+  /* World space point size. */
+  thickness *= drw_view().winmat[1][1] * viewport_size.y;
+
   return thickness;
 }
 
@@ -211,14 +214,14 @@ vec4 gpencil_vertex(vec4 viewport_size,
 
     bool use_curr = is_dot || (x == -1.0);
 
-    vec3 wpos_adj = transform_point(ModelMatrix, (use_curr) ? pos.xyz : pos3.xyz);
-    vec3 wpos1 = transform_point(ModelMatrix, pos1.xyz);
-    vec3 wpos2 = transform_point(ModelMatrix, pos2.xyz);
+    vec3 wpos_adj = transform_point(drw_modelmat(), (use_curr) ? pos.xyz : pos3.xyz);
+    vec3 wpos1 = transform_point(drw_modelmat(), pos1.xyz);
+    vec3 wpos2 = transform_point(drw_modelmat(), pos2.xyz);
 
     vec3 T;
     if (is_dot) {
       /* Shade as facing billboards. */
-      T = drw_view.viewinv[0].xyz;
+      T = drw_view().viewinv[0].xyz;
     }
     else if (use_curr && ma.x != -1) {
       T = wpos1 - wpos_adj;
@@ -228,7 +231,7 @@ vec4 gpencil_vertex(vec4 viewport_size,
     }
     T = safe_normalize(T);
 
-    vec3 B = cross(T, drw_view.viewinv[2].xyz);
+    vec3 B = cross(T, drw_view().viewinv[2].xyz);
     out_N = normalize(cross(B, T));
 
     vec4 ndc_adj = drw_point_world_to_homogenous(wpos_adj);
@@ -271,7 +274,7 @@ vec4 gpencil_vertex(vec4 viewport_size,
         x_axis = vec2(1.0, 0.0);
       }
       else { /* GP_STROKE_ALIGNMENT_OBJECT */
-        vec4 ndc_x = drw_point_world_to_homogenous(wpos1 + ModelMatrix[0].xyz);
+        vec4 ndc_x = drw_point_world_to_homogenous(wpos1 + drw_modelmat()[0].xyz);
         vec2 ss_x = gpencil_project_to_screenspace(ndc_x, viewport_size);
         x_axis = safe_normalize(ss_x - ss1);
       }
@@ -340,7 +343,7 @@ vec4 gpencil_vertex(vec4 viewport_size,
     out_color = (use_curr) ? col1 : col2;
   }
   else {
-    out_P = transform_point(ModelMatrix, pos1.xyz);
+    out_P = transform_point(drw_modelmat(), pos1.xyz);
     out_ndc = drw_point_world_to_homogenous(out_P);
     out_uv = uv1.xy;
     out_thickness.x = 1e18;
@@ -350,9 +353,9 @@ vec4 gpencil_vertex(vec4 viewport_size,
     out_sspos = vec4(0.0);
 
     /* Flat normal following camera and object bounds. */
-    vec3 V = drw_world_incident_vector(ModelMatrix[3].xyz);
+    vec3 V = drw_world_incident_vector(drw_modelmat()[3].xyz);
     vec3 N = drw_normal_world_to_object(V);
-    N *= OrcoTexCoFactors[1].xyz;
+    N *= drw_object_infos().orco_mul;
     N = drw_normal_world_to_object(N);
     out_N = safe_normalize(N);
 

@@ -22,6 +22,8 @@
 /* Own include. */
 #include "sequencer_intern.hh"
 
+namespace blender::ed::vse {
+
 static int sequencer_rename_channel_invoke(bContext *C, wmOperator * /*op*/, const wmEvent *event)
 {
   SeqChannelDrawContext context;
@@ -30,7 +32,8 @@ static int sequencer_rename_channel_invoke(bContext *C, wmOperator * /*op*/, con
   float mouse_y = UI_view2d_region_to_view_y(context.timeline_region_v2d, event->mval[1]);
 
   sseq->runtime->rename_channel_index = mouse_y;
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, SEQ_get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
   return OPERATOR_FINISHED;
 }
 
@@ -47,3 +50,5 @@ void SEQUENCER_OT_rename_channel(wmOperatorType *ot)
   /* Flags. */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 }
+
+}  // namespace blender::ed::vse

@@ -353,12 +353,31 @@ static bool reuse_bmain_move_id(ReuseOldBMainData *reuse_data,
 
   /* Move from one list to another, and ensure name is valid. */
   BLI_remlink_safe(old_lb, id);
-  BKE_main_namemap_remove_id(*old_bmain, *id);
+
+  /* In case the ID is linked and its library ID is re-used from the old Main, it is not possible
+   * to handle name_map (and ensure name uniqueness).
+   * This is because IDs are moved one by one from old Main's lists to new ones, while the re-used
+   * library's name_map would be built only from IDs in the new list, leading to incomplete/invalid
+   * states.
+   * Currently, such name uniqueness checks should not be needed, as no new name would be expected
+   * in the re-used library. Should this prove to be wrong at some point, the name check will have
+   * to happen at the end of #reuse_editable_asset_bmain_data_for_blendfile, in a separate loop
+   * over Main IDs.
+   */
+  const bool handle_name_map_updates = !ID_IS_LINKED(id) || id->lib != lib;
+  if (handle_name_map_updates) {
+    BKE_main_namemap_remove_id(*old_bmain, *id);
+  }
 
   id->lib = lib;
   BLI_addtail(new_lb, id);
-  BKE_id_new_name_validate(
-      *new_bmain, *new_lb, *id, nullptr, IDNewNameMode::RenameExistingNever, true);
+  if (handle_name_map_updates) {
+    BKE_id_new_name_validate(
+        *new_bmain, *new_lb, *id, nullptr, IDNewNameMode::RenameExistingNever, true);
+  }
+  else {
+    id_sort_by_name(new_lb, id, nullptr);
+  }
   BKE_lib_libblock_session_uid_renew(id);
 
   /* Remap to itself, to avoid re-processing this ID again. */
@@ -380,6 +399,10 @@ static Library *reuse_bmain_data_dependencies_new_library_get(ReuseOldBMainData 
        * There should be no filepath conflicts, as #reuse_bmain_data_remapper_ensure has
        * already remapped existing libraries with matching filepath. */
       reuse_bmain_move_id(reuse_data, &old_lib->id, nullptr, false);
+      /* Clear the name_map of the library, as not all of its IDs are guaranteed reused. The name
+       * map cannot be used/kept in valid state while some IDs are moved from old to new main. See
+       * also #reuse_bmain_move_id code. */
+      BKE_main_namemap_destroy(&old_lib->runtime->name_map);
       return old_lib;
     }
     case ID_REMAP_RESULT_SOURCE_NOT_MAPPABLE: {
@@ -930,9 +953,11 @@ static void setup_app_data(bContext *C,
     mode = LOAD_UI;
   }
 
-  /* Free all render results, without this stale data gets displayed after loading files */
+  /* Free all render results and interactive compositor renders, without this stale data gets
+   * displayed after loading files */
   if (mode != LOAD_UNDO) {
     RE_FreeAllRenderResults();
+    RE_FreeInteractiveCompositorRenders();
   }
 
   /* Only make file-paths compatible when loading for real (not undo). */
@@ -1499,7 +1524,7 @@ UserDef *BKE_blendfile_userdef_from_defaults()
 
   /* Theme. */
   {
-    bTheme *btheme = static_cast<bTheme *>(MEM_mallocN(sizeof(*btheme), __func__));
+    bTheme *btheme = MEM_mallocN<bTheme>(__func__);
     memcpy(btheme, &U_theme_default, sizeof(*btheme));
 
     BLI_addtail(&userdef->themes, btheme);
@@ -1613,7 +1638,7 @@ UserDef *BKE_blendfile_userdef_from_defaults()
 
 bool BKE_blendfile_userdef_write(const char *filepath, ReportList *reports)
 {
-  Main *mainb = MEM_cnew<Main>("empty main");
+  Main *mainb = MEM_callocN<Main>("empty main");
   bool ok = false;
 
   BlendFileWriteParams params{};
@@ -1744,7 +1769,7 @@ WorkspaceConfigFileData *BKE_blendfile_workspace_config_read(const char *filepat
   }
 
   if (bfd) {
-    workspace_config = MEM_cnew<WorkspaceConfigFileData>(__func__);
+    workspace_config = MEM_callocN<WorkspaceConfigFileData>(__func__);
     workspace_config->main = bfd->main;
 
     /* Only 2.80+ files have actual workspaces, don't try to use screens

@@ -10,9 +10,14 @@
 
 #include "BLI_span.hh"
 
+#include "DNA_sequence_types.h"
+
 struct Scene;
 struct Strip;
 struct StripProxy;
+
+namespace blender::seq {
+
 /**
  * Cache must be freed before calling this function
  * since it leaves the #Editing::seqbase in an invalid state.
@@ -28,7 +33,7 @@ StripProxy *seq_strip_proxy_alloc();
  *
  * \return pointer to meta strip
  */
-Strip *SEQ_lookup_meta_by_strip(Editing *ed, const Strip *key);
+Strip *lookup_meta_by_strip(Editing *ed, const Strip *key);
 /**
  * Find effect strips, that use strip `strip` as one of inputs.
  * If lookup hash doesn't exist, it will be created. If hash is tagged as invalid, it will be
@@ -38,4 +43,6 @@ Strip *SEQ_lookup_meta_by_strip(Editing *ed, const Strip *key);
  *
  * \return collection of effect strips
  */
-blender::Span<Strip *> SEQ_lookup_effects_by_strip(Editing *ed, const Strip *key);
+blender::Span<Strip *> lookup_effects_by_strip(Editing *ed, const Strip *key);
+
+}  // namespace blender::seq
