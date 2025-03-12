@@ -10253,7 +10253,7 @@ class VIEW3D_PT_shading_options(Panel):
                 if (
                         studio_light is not None
                 ) and studio_light.has_specular_highlight_pass:
-                    row = col.row()
+                    row = layout.row()
                     row.separator()
                     row.prop(
                         shading, "show_specular_highlight", text="Specular Lighting"
