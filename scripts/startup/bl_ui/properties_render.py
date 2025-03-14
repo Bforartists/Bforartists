@@ -8,7 +8,7 @@ from bl_ui.space_view3d import (
     VIEW3D_PT_shading_lighting,
     VIEW3D_PT_shading_color,
     VIEW3D_PT_shading_options,
-    VIEW3D_PT_shading_cavity,
+    # bfa - moved VIEW3D_PT_shading_cavity back into VIEW3D_PT_shading_options.
 )
 from bl_ui.utils import PresetPanel
 
@@ -1381,8 +1381,7 @@ class RENDER_PT_opengl_options(RenderButtonsPanel, Panel):
         VIEW3D_PT_shading_options.draw(self, context)
 
         # Cavity properties.
-        VIEW3D_PT_shading_cavity.draw_header(self, context)
-        VIEW3D_PT_shading_cavity.draw(self, context)
+        # bfa - moved VIEW3D_PT_shading_cavity back into VIEW3D_PT_shading_options.
 
 
 class RENDER_PT_simplify(RenderButtonsPanel, Panel):
