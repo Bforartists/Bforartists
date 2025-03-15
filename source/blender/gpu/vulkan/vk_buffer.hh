@@ -22,6 +22,7 @@ class VKDevice;
  */
 class VKBuffer : public NonCopyable {
   size_t size_in_bytes_ = 0;
+  size_t alloc_size_in_bytes_ = 0;
   VkBuffer vk_buffer_ = VK_NULL_HANDLE;
   VmaAllocation allocation_ = VK_NULL_HANDLE;
   VkMemoryPropertyFlags vk_memory_property_flags_;
@@ -47,6 +48,7 @@ class VKBuffer : public NonCopyable {
               VmaAllocationCreateFlags vma_allocation_flags);
   void clear(VKContext &context, uint32_t clear_value);
   void update_immediately(const void *data) const;
+  void update_sub_immediately(size_t start_offset, size_t data_size, const void *data) const;
 
   /**
    * Update the buffer as part of the render graph evaluation. The ownership of data will be

@@ -834,7 +834,8 @@ typedef struct FileSelectParams {
   int sel_first;
   int sel_last;
   unsigned short thumbnail_size;
-  char _pad1[2];
+  unsigned short list_thumbnail_size;
+  unsigned short list_column_size;
 
   /* short */
   /** XXX: for now store type here, should be moved to the operator. */
@@ -847,7 +848,7 @@ typedef struct FileSelectParams {
   short display;
   /** Details toggles (file size, creation date, etc.) */
   char details_flags;
-  char _pad2[3];
+  char _pad1;
 
   /** Filter when (flags & FILE_FILTER) is true. */
   int filter;
@@ -855,7 +856,7 @@ typedef struct FileSelectParams {
   /** Max number of levels in directory tree to show at once, 0 to disable recursion. */
   short recursion_level;
 
-  char _pad4[2];
+  char _pad2[2];
 } FileSelectParams;
 
 /**
