@@ -69,19 +69,18 @@ class GPENCIL_UL_matslots(UIList):
         slot = item
         ma = slot.material
 
-        if ma is None:
-            return
-
-        if (gpcolor := ma.grease_pencil) is None:
-            return
-
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row(align=True)
             row.label(text="", icon_value=icon)
+            if ma is None:
+                return
+
+            if (gpcolor := ma.grease_pencil) is None:
+                return
 
             row = layout.row(align=True)
             row.enabled = not gpcolor.lock
-            row.prop(ma, "name", text="", emboss=False, icon='NONE')
+            row.prop(ma, "name", text="", emboss=False, icon="NONE")
 
             row = layout.row(align=True)
 
@@ -268,7 +267,7 @@ class MATERIAL_PT_gpencil_animation(
 
 class MATERIAL_PT_gpencil_preview(GPMaterialButtonsPanel, Panel):
     bl_label = "Preview"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         ma = context.material
