@@ -1526,6 +1526,7 @@ void do_versions_after_linking_400(FileData *fd, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 2)) {
     blender::animrig::versioning::convert_legacy_animato_actions(*bmain);
     blender::animrig::versioning::tag_action_users_for_slotted_actions_conversion(*bmain);
+    blender::animrig::versioning::convert_legacy_action_assignments(*bmain, fd->reports->reports);
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 7)) {
@@ -3796,6 +3797,83 @@ static void version_geometry_normal_input_node(bNodeTree &ntree)
   }
 }
 
+static void do_version_node_curve_to_mesh_scale_input(bNodeTree *tree)
+{
+  using namespace blender;
+  Set<bNode *> curve_to_mesh_nodes;
+  LISTBASE_FOREACH (bNode *, node, &tree->nodes) {
+    if (STREQ(node->idname, "GeometryNodeCurveToMesh")) {
+      curve_to_mesh_nodes.add(node);
+    }
+  }
+
+  for (bNode *curve_to_mesh : curve_to_mesh_nodes) {
+    if (bke::node_find_socket(*curve_to_mesh, SOCK_IN, "Scale")) {
+      /* Make versioning idempotent. */
+      continue;
+    }
+    version_node_add_socket_if_not_exist(
+        tree, curve_to_mesh, SOCK_IN, SOCK_FLOAT, PROP_NONE, "Scale", "Scale");
+
+    bNode &named_attribute = version_node_add_empty(*tree, "GeometryNodeInputNamedAttribute");
+    NodeGeometryInputNamedAttribute *named_attribute_storage =
+        MEM_callocN<NodeGeometryInputNamedAttribute>(__func__);
+    named_attribute_storage->data_type = CD_PROP_FLOAT;
+    named_attribute.storage = named_attribute_storage;
+    named_attribute.parent = curve_to_mesh->parent;
+    named_attribute.location[0] = curve_to_mesh->location[0] - 25;
+    named_attribute.location[1] = curve_to_mesh->location[1];
+    named_attribute.flag &= ~NODE_SELECT;
+
+    bNodeSocket *name_input = version_node_add_socket_if_not_exist(
+        tree, &named_attribute, SOCK_IN, SOCK_STRING, PROP_NONE, "Name", "Name");
+    STRNCPY(name_input->default_value_typed<bNodeSocketValueString>()->value, "radius");
+
+    version_node_add_socket_if_not_exist(
+        tree, &named_attribute, SOCK_OUT, SOCK_BOOLEAN, PROP_NONE, "Exists", "Exists");
+    version_node_add_socket_if_not_exist(
+        tree, &named_attribute, SOCK_OUT, SOCK_FLOAT, PROP_NONE, "Attribute", "Attribute");
+
+    bNode &switch_node = version_node_add_empty(*tree, "GeometryNodeSwitch");
+    NodeSwitch *switch_storage = MEM_callocN<NodeSwitch>(__func__);
+    switch_storage->input_type = SOCK_FLOAT;
+    switch_node.storage = switch_storage;
+    switch_node.parent = curve_to_mesh->parent;
+    switch_node.location[0] = curve_to_mesh->location[0] - 25;
+    switch_node.location[1] = curve_to_mesh->location[1];
+    switch_node.flag &= ~NODE_SELECT;
+
+    version_node_add_socket_if_not_exist(
+        tree, &switch_node, SOCK_IN, SOCK_BOOLEAN, PROP_NONE, "Switch", "Switch");
+    bNodeSocket *false_input = version_node_add_socket_if_not_exist(
+        tree, &switch_node, SOCK_IN, SOCK_FLOAT, PROP_NONE, "False", "False");
+    false_input->default_value_typed<bNodeSocketValueFloat>()->value = 1.0f;
+
+    version_node_add_socket_if_not_exist(
+        tree, &switch_node, SOCK_IN, SOCK_FLOAT, PROP_NONE, "True", "True");
+
+    version_node_add_link(*tree,
+                          named_attribute,
+                          *bke::node_find_socket(named_attribute, SOCK_OUT, "Exists"),
+                          switch_node,
+                          *bke::node_find_socket(switch_node, SOCK_IN, "Switch"));
+    version_node_add_link(*tree,
+                          named_attribute,
+                          *bke::node_find_socket(named_attribute, SOCK_OUT, "Attribute"),
+                          switch_node,
+                          *bke::node_find_socket(switch_node, SOCK_IN, "True"));
+
+    version_node_add_socket_if_not_exist(
+        tree, &switch_node, SOCK_OUT, SOCK_FLOAT, PROP_NONE, "Output", "Output");
+
+    version_node_add_link(*tree,
+                          switch_node,
+                          *bke::node_find_socket(switch_node, SOCK_OUT, "Output"),
+                          *curve_to_mesh,
+                          *bke::node_find_socket(*curve_to_mesh, SOCK_IN, "Scale"));
+  }
+}
+
 static bool strip_effect_overdrop_to_alphaover(Strip *strip, void * /*user_data*/)
 {
   if (strip->type == STRIP_TYPE_OVERDROP_REMOVED) {
@@ -3813,6 +3891,37 @@ static void version_sequencer_update_overdrop(Main *bmain)
     if (scene->ed != nullptr) {
       blender::seq::for_each_callback(
           &scene->ed->seqbase, strip_effect_overdrop_to_alphaover, nullptr);
+    }
+  }
+}
+
+static void asset_browser_add_list_view(Main *bmain)
+{
+  LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+        if (sl->spacetype != SPACE_FILE) {
+          continue;
+        }
+        SpaceFile *sfile = reinterpret_cast<SpaceFile *>(sl);
+        if (sfile->params) {
+          if (sfile->params->list_thumbnail_size == 0) {
+            sfile->params->list_thumbnail_size = 16;
+          }
+          if (sfile->params->list_column_size == 0) {
+            sfile->params->list_column_size = 500;
+          }
+        }
+        if (sfile->asset_params) {
+          if (sfile->asset_params->base_params.list_thumbnail_size == 0) {
+            sfile->asset_params->base_params.list_thumbnail_size = 32;
+          }
+          if (sfile->asset_params->base_params.list_column_size == 0) {
+            sfile->asset_params->base_params.list_column_size = 220;
+          }
+          sfile->asset_params->base_params.details_flags = 0;
+        }
+      }
     }
   }
 }
@@ -5913,8 +6022,72 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     }
   }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 30)) {
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (ELEM(sl->spacetype, SPACE_ACTION, SPACE_INFO, SPACE_CONSOLE)) {
+            ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                   &sl->regionbase;
+            LISTBASE_FOREACH (ARegion *, region, regionbase) {
+              if (region->regiontype == RGN_TYPE_WINDOW) {
+                region->v2d.scroll |= V2D_SCROLL_RIGHT | V2D_SCROLL_VERTICAL_HIDE;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 405, 2)) {
     version_sequencer_update_overdrop(bmain);
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 405, 4)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_GEOMETRY) {
+        do_version_node_curve_to_mesh_scale_input(ntree);
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 405, 5)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      ToolSettings *tool_settings = scene->toolsettings;
+      tool_settings->snap_flag_seq |= SCE_SNAP;
+
+      SequencerToolSettings *sequencer_tool_settings = blender::seq::tool_settings_ensure(scene);
+      sequencer_tool_settings->snap_mode |= SEQ_SNAP_TO_FRAME_RANGE;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 405, 6)) {
+    asset_browser_add_list_view(bmain);
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 405, 7)) {
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      if (ntree->type == NTREE_GEOMETRY) {
+        LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+          if (STREQ(node->idname, "GeometryNodeStoreNamedGrid")) {
+            switch (node->custom1) {
+              case CD_PROP_FLOAT:
+                node->custom1 = VOLUME_GRID_FLOAT;
+                break;
+              case CD_PROP_FLOAT2:
+              case CD_PROP_FLOAT3:
+                node->custom1 = VOLUME_GRID_VECTOR_FLOAT;
+                break;
+              default:
+                node->custom1 = VOLUME_GRID_FLOAT;
+                break;
+            }
+          }
+        }
+      }
+    }
   }
 
   /* Always run this versioning; meshes are written with the legacy format which always needs to
