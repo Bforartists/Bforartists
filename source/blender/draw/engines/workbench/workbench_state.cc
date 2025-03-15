@@ -24,12 +24,79 @@
 
 namespace blender::workbench {
 
+/* Used for update detection on the render settings. */
+static bool operator!=(const View3DShading &a, const View3DShading &b)
+{
+  /* Only checks the properties that are actually used by workbench. */
+  if (a.type != b.type) {
+    return true;
+  }
+  if (a.color_type != b.color_type) {
+    return true;
+  }
+  if (a.flag != b.flag) {
+    return true;
+  }
+  if (a.light != b.light) {
+    return true;
+  }
+  if (a.background_type != b.background_type) {
+    return true;
+  }
+  if (a.cavity_type != b.cavity_type) {
+    return true;
+  }
+  if (a.wire_color_type != b.wire_color_type) {
+    return true;
+  }
+  if (StringRefNull(a.studio_light) != StringRefNull(b.studio_light)) {
+    return true;
+  }
+  if (StringRefNull(a.matcap) != StringRefNull(b.matcap)) {
+    return true;
+  }
+  if (a.shadow_intensity != b.shadow_intensity) {
+    return true;
+  }
+  if (float3(a.single_color) != float3(b.single_color)) {
+    return true;
+  }
+  if (a.studiolight_rot_z != b.studiolight_rot_z) {
+    return true;
+  }
+  if (float3(a.object_outline_color) != float3(b.object_outline_color)) {
+    return true;
+  }
+  if (a.xray_alpha != b.xray_alpha) {
+    return true;
+  }
+  if (a.xray_alpha_wire != b.xray_alpha_wire) {
+    return true;
+  }
+  if (a.cavity_valley_factor != b.cavity_valley_factor) {
+    return true;
+  }
+  if (a.cavity_ridge_factor != b.cavity_ridge_factor) {
+    return true;
+  }
+  if (float3(a.background_color) != float3(b.background_color)) {
+    return true;
+  }
+  if (a.curvature_ridge_factor != b.curvature_ridge_factor) {
+    return true;
+  }
+  if (a.curvature_valley_factor != b.curvature_valley_factor) {
+    return true;
+  }
+  return false;
+}
+
 void SceneState::init(bool scene_updated, Object *camera_ob /*=nullptr*/)
 {
   bool reset_taa = reset_taa_next_sample || scene_updated;
   reset_taa_next_sample = false;
 
-  const DRWContextState *context = DRW_context_state_get();
+  const DRWContext *context = DRW_context_get();
   View3D *v3d = context->v3d;
   RegionView3D *rv3d = context->rv3d;
 
@@ -95,9 +162,8 @@ void SceneState::init(bool scene_updated, Object *camera_ob /*=nullptr*/)
     /* Disable shading options that aren't supported in transparency mode. */
     shading.flag &= ~(V3D_SHADING_SHADOW | V3D_SHADING_CAVITY | V3D_SHADING_DEPTH_OF_FIELD);
   }
-  if (SHADING_XRAY_ENABLED(shading) != SHADING_XRAY_ENABLED(previous_shading) ||
-      shading.flag != previous_shading.flag)
-  {
+
+  if (shading != previous_shading) {
     reset_taa = true;
   }
 
@@ -214,7 +280,7 @@ ObjectState::ObjectState(const SceneState &scene_state,
                          const SceneResources &resources,
                          Object *ob)
 {
-  const DRWContextState *draw_ctx = DRW_context_state_get();
+  const DRWContext *draw_ctx = DRW_context_get();
   const bool is_active = (ob == draw_ctx->obact);
 
   sculpt_pbvh = BKE_sculptsession_use_pbvh_draw(ob, draw_ctx->rv3d) &&
@@ -257,7 +323,7 @@ ObjectState::ObjectState(const SceneState &scene_state,
 
     /* Bad call C is required to access the tool system that is context aware. Cast to non-const
      * due to current API. */
-    bContext *C = (bContext *)DRW_context_state_get()->evil_C;
+    bContext *C = (bContext *)DRW_context_get()->evil_C;
     if (C != nullptr) {
       color_type = ED_paint_shading_color_override(
           C, &scene_state.scene->toolsettings->paint_mode, *ob, color_type);

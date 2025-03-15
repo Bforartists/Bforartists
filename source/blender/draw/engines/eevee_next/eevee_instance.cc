@@ -33,7 +33,7 @@
 #include "DNA_particle_types.h"
 
 #include "draw_common.hh"
-#include "draw_manager_c.hh"
+#include "draw_context_private.hh"
 #include "draw_view_data.hh"
 
 namespace blender::eevee {
@@ -276,7 +276,7 @@ void Instance::object_sync(ObjectRef &ob_ref)
 
   ObjectHandle &ob_handle = sync.sync_object(ob_ref);
 
-  if (partsys_is_visible && ob != DRW_context_state_get()->object_edit) {
+  if (partsys_is_visible && ob != DRW_context_get()->object_edit) {
     auto sync_hair =
         [&](ObjectHandle hair_handle, ModifierData &md, ParticleSystem &particle_sys) {
           ResourceHandle _res_handle = manager->resource_handle_for_psys(ob_ref,
@@ -350,27 +350,17 @@ void Instance::end_sync()
 
 void Instance::render_sync()
 {
-  /* TODO: Remove old draw manager calls. */
-  DRW_cache_restart();
-
   manager->begin_sync();
-
-  DRW_curves_init();
 
   begin_sync();
 
   DRW_render_object_iter(this, render, depsgraph, object_sync_render);
-
-  DRW_curves_update(*manager);
 
   velocity.geometry_steps_fill();
 
   end_sync();
 
   manager->end_sync();
-
-  /* TODO: Remove old draw manager calls. */
-  DRW_curves_update(*manager);
 }
 
 bool Instance::needs_lightprobe_sphere_passes() const
@@ -402,8 +392,10 @@ bool Instance::do_planar_probe_sync() const
 void Instance::render_sample()
 {
   if (sampling.finished_viewport()) {
+    DRW_submission_start();
     film.display();
     lookdev.display();
+    DRW_submission_end();
     return;
   }
 
@@ -420,15 +412,21 @@ void Instance::render_sample()
 
   DebugScope debug_scope(debug_scope_render_sample, "EEVEE.render_sample");
 
-  sampling.step();
+  {
+    /* Critical section. Potential GPUShader concurrent usage. */
+    DRW_submission_start();
 
-  capture_view.render_world();
-  capture_view.render_probes();
+    sampling.step();
 
-  main_view.render();
+    capture_view.render_world();
+    capture_view.render_probes();
 
-  lookdev_view.render();
+    main_view.render();
 
+    lookdev_view.render();
+
+    DRW_submission_end();
+  }
   motion_blur.step();
 }
 
@@ -708,7 +706,7 @@ void Instance::light_bake_irradiance(
 {
   BLI_assert(is_baking());
 
-  DRWContext draw_ctx;
+  DRWContext draw_ctx(DRWContext::CUSTOM, depsgraph);
 
   auto custom_pipeline_wrapper = [&](FunctionRef<void()> callback) {
     context_enable();
@@ -738,20 +736,28 @@ void Instance::light_bake_irradiance(
     sampling.init(probe);
     sampling.step();
 
-    DebugScope debug_scope(debug_scope_irradiance_setup, "EEVEE.irradiance_setup");
+    {
+      /* Critical section. Potential GPUShader concurrent usage. */
+      DRW_submission_start();
 
-    capture_view.render_world();
+      DebugScope debug_scope(debug_scope_irradiance_setup, "EEVEE.irradiance_setup");
 
-    volume_probes.bake.surfels_create(probe);
+      capture_view.render_world();
 
-    if (volume_probes.bake.should_break()) {
-      return;
+      volume_probes.bake.surfels_create(probe);
+
+      if (volume_probes.bake.should_break()) {
+        DRW_submission_end();
+        return;
+      }
+
+      volume_probes.bake.surfels_lights_eval();
+
+      volume_probes.bake.clusters_build();
+      volume_probes.bake.irradiance_offset();
+
+      DRW_submission_end();
     }
-
-    volume_probes.bake.surfels_lights_eval();
-
-    volume_probes.bake.clusters_build();
-    volume_probes.bake.irradiance_offset();
   });
 
   if (volume_probes.bake.should_break()) {
@@ -768,10 +774,16 @@ void Instance::light_bake_irradiance(
       /* TODO(fclem): Could make the number of iteration depend on the computation time. */
       for (int i = 0; i < 16 && !sampling.finished(); i++) {
         sampling.step();
+        {
+          /* Critical section. Potential GPUShader concurrent usage. */
+          DRW_submission_start();
 
-        volume_probes.bake.raylists_build();
-        volume_probes.bake.propagate_light();
-        volume_probes.bake.irradiance_capture();
+          volume_probes.bake.raylists_build();
+          volume_probes.bake.propagate_light();
+          volume_probes.bake.irradiance_capture();
+
+          DRW_submission_end();
+        }
       }
 
       LightProbeGridCacheFrame *cache_frame;
