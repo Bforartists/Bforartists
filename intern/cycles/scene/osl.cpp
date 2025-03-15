@@ -233,7 +233,9 @@ void OSLManager::texture_system_init()
 #  if OIIO_VERSION_MAJOR >= 3
     ts_shared = OSL::TextureSystem::create(false);
 #  else
-    ts_shared = shared_ptr(OSL::TextureSystem::create(false), OSL::TextureSystem::destroy);
+    ts_shared = std::shared_ptr<OSL::TextureSystem>(
+        OSL::TextureSystem::create(false),
+        [](OSL::TextureSystem *ts) { OSL::TextureSystem::destroy(ts); });
 #  endif
 
     ts_shared->attribute("automip", 1);
@@ -1514,15 +1516,19 @@ void OSLCompiler::parameter_texture_ies(const char *name, const int svm_slot)
 
 #else
 
-OSLManager::OSLManager(Device *device) {}
+OSLManager::OSLManager(Device * /*device*/) {}
 OSLManager::~OSLManager() {}
 
 void OSLManager::free_memory() {}
-void OSLManager::reset(Scene *scene) {}
+void OSLManager::reset(Scene * /*scene*/) {}
 
-void OSLManager::device_update_pre(Device *device, Scene *scene) {}
-void OSLManager::device_update_post(Device *device, Scene *scene, Progress &progress) {}
-void OSLManager::device_free(Device *device, DeviceScene *dscene, Scene *scene) {}
+void OSLManager::device_update_pre(Device * /*device*/, Scene * /*scene*/) {}
+void OSLManager::device_update_post(Device * /*device*/,
+                                    Scene * /*scene*/,
+                                    Progress & /*progress*/)
+{
+}
+void OSLManager::device_free(Device * /*device*/, DeviceScene * /*dscene*/, Scene * /*scene*/) {}
 
 void OSLManager::tag_update() {}
 bool OSLManager::need_update() const
