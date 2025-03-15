@@ -25,6 +25,8 @@
 
 #include <fmt/format.h>
 
+#include "AS_essentials_library.hh"
+
 #include "MEM_guardedalloc.h"
 
 #include "DNA_userdef_types.h"
@@ -1011,12 +1013,14 @@ static std::unique_ptr<uiTooltipData> ui_tooltip_data_from_button_or_extra_icon(
     if (but->rnapoin.owner_id) {
       const ID *id = but->rnapoin.owner_id;
       if (ID_IS_LINKED(id)) {
+        blender::StringRefNull assets_path = blender::asset_system::essentials_directory_path();
+        const bool is_builtin = BLI_path_contains(assets_path.c_str(), id->lib->filepath);
+        const blender::StringRef title = is_builtin ? TIP_("Built-in Asset") : TIP_("Library");
+        const blender::StringRef lib_path = id->lib->filepath;
+        const blender::StringRef path = is_builtin ? lib_path.substr(assets_path.size()) :
+                                                     id->lib->filepath;
         UI_tooltip_text_field_add(
-            *data,
-            fmt::format(fmt::runtime(TIP_("Library: {}")), id->lib->filepath),
-            {},
-            UI_TIP_STYLE_NORMAL,
-            UI_TIP_LC_NORMAL);
+            *data, fmt::format("{}: {}", title, path), {}, UI_TIP_STYLE_NORMAL, UI_TIP_LC_NORMAL);
       }
     }
   }
@@ -1524,7 +1528,7 @@ ARegion *UI_tooltip_create_from_button_or_extra_icon(
   }
   std::unique_ptr<uiTooltipData> data = nullptr;
 
-  if (but->tip_custom_func) {
+  if (!is_label && but->tip_custom_func) {
     data = ui_tooltip_data_from_custom_func(C, but);
   }
 

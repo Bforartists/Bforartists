@@ -50,8 +50,6 @@ void get_closest_in_bvhtree(bke::BVHTreeFromMesh &tree_data,
                             MutableSpan<float> r_distances_sq,
                             MutableSpan<float3> r_positions);
 
-int apply_offset_in_cyclic_range(IndexRange range, int start_index, int offset);
-
 void mix_baked_data_item(eNodeSocketDatatype socket_type,
                          void *prev,
                          const void *next,
@@ -68,8 +66,7 @@ bool generic_attribute_type_supported(const EnumPropertyItem &item);
 
 }  // namespace enums
 
-bool custom_data_type_supports_grids(eCustomDataType data_type);
-const EnumPropertyItem *grid_custom_data_type_items_filter_fn(bContext *C,
+const EnumPropertyItem *grid_data_type_socket_items_filter_fn(bContext *C,
                                                               PointerRNA *ptr,
                                                               PropertyRNA *prop,
                                                               bool *r_free);

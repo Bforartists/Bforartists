@@ -248,12 +248,10 @@ set(SRC_KERNEL_GEOM_HEADERS
   geom/motion_triangle_intersect.h
   geom/motion_triangle_shader.h
   geom/object.h
-  geom/patch.h
   geom/point.h
   geom/point_intersect.h
   geom/primitive.h
   geom/shader_data.h
-  geom/subd_triangle.h
   geom/triangle.h
   geom/triangle_intersect.h
   geom/volume.h
@@ -967,7 +965,7 @@ if(WITH_CYCLES_DEVICE_ONEAPI)
 
   # Set defaults for spir64 and spir64_gen options
   if(NOT DEFINED CYCLES_ONEAPI_SYCL_OPTIONS_spir64)
-    set(CYCLES_ONEAPI_SYCL_OPTIONS_spir64 "-options '-cl-fast-relaxed-math -ze-intel-enable-auto-large-GRF-mode -ze-opt-regular-grf-kernel integrator_intersect -ze-opt-no-local-to-generic'")
+    set(CYCLES_ONEAPI_SYCL_OPTIONS_spir64 "-options '-cl-fast-relaxed-math -ze-intel-enable-auto-large-GRF-mode -ze-opt-regular-grf-kernel integrator_intersect -ze-opt-large-grf-kernel shade_surface -ze-opt-no-local-to-generic'")
   endif()
   if(NOT DEFINED CYCLES_ONEAPI_SYCL_OPTIONS_spir64_gen)
     set(CYCLES_ONEAPI_SYCL_OPTIONS_spir64_gen "${CYCLES_ONEAPI_SYCL_OPTIONS_spir64}" CACHE STRING "Extra build options for spir64_gen target")

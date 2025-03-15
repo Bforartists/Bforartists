@@ -220,14 +220,14 @@ class GlareOperation : public NodeOperation {
 
   void execute() override
   {
-    Result &image_input = this->get_input("Image");
-    Result &image_output = this->get_result("Image");
+    const Result &image_input = this->get_input("Image");
     Result &glare_output = this->get_result("Glare");
     Result &highlights_output = this->get_result("Highlights");
 
     if (image_input.is_single_value()) {
+      Result &image_output = this->get_result("Image");
       if (image_output.should_compute()) {
-        image_input.pass_through(image_output);
+        image_output.share_data(image_input);
       }
       if (glare_output.should_compute()) {
         glare_output.allocate_invalid();
@@ -1976,13 +1976,14 @@ class GlareOperation : public NodeOperation {
         reinterpret_cast<fftwf_complex *>(image_frequency_domain),
         FFTW_ESTIMATE);
 
-    float *highlights_buffer = nullptr;
+    const float *highlights_buffer = nullptr;
     if (this->context().use_gpu()) {
       GPU_memory_barrier(GPU_BARRIER_TEXTURE_UPDATE);
-      highlights_buffer = static_cast<float *>(GPU_texture_read(highlights, GPU_DATA_FLOAT, 0));
+      highlights_buffer = static_cast<const float *>(
+          GPU_texture_read(highlights, GPU_DATA_FLOAT, 0));
     }
     else {
-      highlights_buffer = static_cast<float *>(highlights.cpu_data().data());
+      highlights_buffer = static_cast<const float *>(highlights.cpu_data().data());
     }
 
     /* Zero pad the image to the required spatial domain size, storing each channel in planar
@@ -2061,7 +2062,7 @@ class GlareOperation : public NodeOperation {
     /* For GPU, write the output to the exist highlights_buffer then upload to the result after,
      * while for CPU, write to the result directly. */
     float *output = this->context().use_gpu() ?
-                        highlights_buffer :
+                        const_cast<float *>(highlights_buffer) :
                         static_cast<float *>(fog_glow_result.cpu_data().data());
 
     /* Copy the result to the output. */
