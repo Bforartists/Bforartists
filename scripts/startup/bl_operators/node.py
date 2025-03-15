@@ -31,8 +31,7 @@ from bpy.app.translations import (
 class NodeSetting(PropertyGroup):
     value: StringProperty(
         name="Value",
-        description="Python expression to be evaluated "
-                    "as the initial node setting",
+        description="Python expression to be evaluated as the initial node setting",
         default="",
     )
 
@@ -48,7 +47,7 @@ class NodeAddOperator:
         name="Settings",
         description="Settings to be applied on the newly created node",
         type=NodeSetting,
-        options={'SKIP_SAVE'},
+        options={"SKIP_SAVE"},
     )
 
     @staticmethod
@@ -57,9 +56,11 @@ class NodeAddOperator:
         tree = space.edit_tree
 
         # convert mouse position to the View2D for later node placement
-        if context.region.type == 'WINDOW':
+        if context.region.type == "WINDOW":
             # convert mouse position to the View2D for later node placement
-            space.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+            space.cursor_location_from_region(
+                event.mouse_region_x, event.mouse_region_y
+            )
         else:
             space.cursor_location = tree.view_center
 
@@ -78,7 +79,7 @@ class NodeAddOperator:
         try:
             node = tree.nodes.new(type=node_type)
         except RuntimeError as ex:
-            self.report({'ERROR'}, str(ex))
+            self.report({"ERROR"}, str(ex))
             return None
 
         for setting in self.settings:
@@ -88,7 +89,7 @@ class NodeAddOperator:
             node_attr_name = setting.name
 
             # Support path to nested data.
-            if '.' in node_attr_name:
+            if "." in node_attr_name:
                 node_data_path, node_attr_name = node_attr_name.rsplit(".", 1)
                 node_data = node.path_resolve(node_data_path)
 
@@ -96,8 +97,9 @@ class NodeAddOperator:
                 setattr(node_data, node_attr_name, value)
             except AttributeError as ex:
                 self.report(
-                    {'ERROR_INVALID_INPUT'},
-                    rpt_("Node has no attribute {:s}").format(setting.name))
+                    {"ERROR_INVALID_INPUT"},
+                    rpt_("Node has no attribute {:s}").format(setting.name),
+                )
                 print(str(ex))
                 # Continue despite invalid attribute
 
@@ -110,8 +112,12 @@ class NodeAddOperator:
     def poll(cls, context):
         space = context.space_data
         # needs active node editor and a tree to add nodes to
-        return (space and (space.type == 'NODE_EDITOR') and
-                space.edit_tree and space.edit_tree.is_editable)
+        return (
+            space
+            and (space.type == "NODE_EDITOR")
+            and space.edit_tree
+            and space.edit_tree.is_editable
+        )
 
     # Default invoke stores the mouse position to place the node correctly
     # and optionally invokes the transform operator
@@ -119,9 +125,9 @@ class NodeAddOperator:
         self.store_mouse_cursor(context, event)
         result = self.execute(context)
 
-        if self.use_transform and ('FINISHED' in result):
+        if self.use_transform and ("FINISHED" in result):
             # removes the node again if transform is canceled
-            bpy.ops.node.translate_attach_remove_on_cancel('INVOKE_DEFAULT')
+            bpy.ops.node.translate_attach_remove_on_cancel("INVOKE_DEFAULT")
 
         return result
 
@@ -129,9 +135,10 @@ class NodeAddOperator:
 # Simple basic operator for adding a node.
 class NODE_OT_add_node(NodeAddOperator, Operator):
     """Add a node to the active tree"""
+
     bl_idname = "node.add_node"
     bl_label = "Add Node"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     type: StringProperty(
         name="Node Type",
@@ -143,9 +150,9 @@ class NODE_OT_add_node(NodeAddOperator, Operator):
         if self.properties.is_property_set("type"):
             self.deselect_nodes(context)
             self.create_node(context, self.type)
-            return {'FINISHED'}
+            return {"FINISHED"}
         else:
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
     @classmethod
     def description(cls, _context, properties):
@@ -183,7 +190,7 @@ class NodeAddZoneOperator(NodeAddOperator):
         input_node = self.create_node(context, self.input_node_type)
         output_node = self.create_node(context, self.output_node_type)
         if input_node is None or output_node is None:
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
         # Simulation input must be paired with the output.
         input_node.pair_with_output(output_node)
@@ -194,18 +201,19 @@ class NodeAddZoneOperator(NodeAddOperator):
         if self.add_default_geometry_link:
             # Connect geometry sockets by default if available.
             # Get the sockets by their types, because the name is not guaranteed due to i18n.
-            from_socket = next(s for s in input_node.outputs if s.type == 'GEOMETRY')
-            to_socket = next(s for s in output_node.inputs if s.type == 'GEOMETRY')
+            from_socket = next(s for s in input_node.outputs if s.type == "GEOMETRY")
+            to_socket = next(s for s in output_node.inputs if s.type == "GEOMETRY")
             tree.links.new(to_socket, from_socket)
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class NODE_OT_add_simulation_zone(NodeAddZoneOperator, Operator):
     """Add simulation zone input and output nodes to the active tree"""
+
     bl_idname = "node.add_simulation_zone"
     bl_label = "Add Simulation Zone"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     input_node_type = "GeometryNodeSimulationInput"
     output_node_type = "GeometryNodeSimulationOutput"
@@ -213,9 +221,10 @@ class NODE_OT_add_simulation_zone(NodeAddZoneOperator, Operator):
 
 class NODE_OT_add_repeat_zone(NodeAddZoneOperator, Operator):
     """Add a repeat zone that allows executing nodes a dynamic number of times"""
+
     bl_idname = "node.add_repeat_zone"
     bl_label = "Add Repeat Zone"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     input_node_type = "GeometryNodeRepeatInput"
     output_node_type = "GeometryNodeRepeatOutput"
@@ -223,9 +232,10 @@ class NODE_OT_add_repeat_zone(NodeAddZoneOperator, Operator):
 
 class NODE_OT_add_foreach_geometry_element_zone(NodeAddZoneOperator, Operator):
     """Add a For Each Geometry Element zone that allows executing nodes e.g. for each vertex separately"""
+
     bl_idname = "node.add_foreach_geometry_element_zone"
     bl_label = "Add For Each Geometry Element Zone"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     input_node_type = "GeometryNodeForeachGeometryElementInput"
     output_node_type = "GeometryNodeForeachGeometryElementOutput"
@@ -234,16 +244,20 @@ class NODE_OT_add_foreach_geometry_element_zone(NodeAddZoneOperator, Operator):
 
 class NODE_OT_collapse_hide_unused_toggle(Operator):
     """Toggle collapsed nodes and hide unused sockets"""
+
     bl_idname = "node.collapse_hide_unused_toggle"
     bl_label = "Collapse and Hide Unused Sockets"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
         space = context.space_data
         # needs active node editor and a tree
-        return (space and (space.type == 'NODE_EDITOR') and
-                (space.edit_tree and space.edit_tree.is_editable))
+        return (
+            space
+            and (space.type == "NODE_EDITOR")
+            and (space.edit_tree and space.edit_tree.is_editable)
+        )
 
     def execute(self, context):
         space = context.space_data
@@ -251,7 +265,7 @@ class NODE_OT_collapse_hide_unused_toggle(Operator):
 
         for node in tree.nodes:
             if node.select:
-                hide = (not node.hide)
+                hide = not node.hide
 
                 node.hide = hide
                 # Note: connected sockets are ignored internally
@@ -260,34 +274,35 @@ class NODE_OT_collapse_hide_unused_toggle(Operator):
                 for socket in node.outputs:
                     socket.hide = hide
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class NODE_OT_tree_path_parent(Operator):
     """Go to parent node tree"""
+
     bl_idname = "node.tree_path_parent"
     bl_label = "Parent Node Tree"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
         space = context.space_data
         # needs active node editor and a tree
-        return (space and (space.type == 'NODE_EDITOR') and len(space.path) > 1)
+        return space and (space.type == "NODE_EDITOR") and len(space.path) > 1
 
     def execute(self, context):
         space = context.space_data
 
         space.path.pop()
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
-class NodeInterfaceOperator():
+class NodeInterfaceOperator:
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        if not space or space.type != 'NODE_EDITOR' or not space.edit_tree:
+        if not space or space.type != "NODE_EDITOR" or not space.edit_tree:
             return False
         if space.edit_tree.is_embedded_data:
             return False
@@ -303,15 +318,19 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
         interface = tree.interface
 
         items = [
-            ('INPUT', "Input", ""),
-            ('OUTPUT', "Output", ""),
-            ('PANEL', "Panel", ""),
+            ("INPUT", "Input", ""),
+            ("OUTPUT", "Output", ""),
+            ("PANEL", "Panel", ""),
         ]
 
         active_item = interface.active
         # Panels have the extra option to add a toggle.
-        if active_item and active_item.item_type == 'PANEL' and tree.type in {'GEOMETRY', 'SHADER'}:
-            items.append(('PANEL_TOGGLE', "Panel Toggle", ""))
+        if (
+            active_item
+            and active_item.item_type == "PANEL"
+            and tree.type in {"GEOMETRY", "SHADER"}
+        ):
+            items.append(("PANEL_TOGGLE", "Panel Toggle", ""))
 
         return items
 
@@ -324,11 +343,13 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
 
     @staticmethod
     def find_valid_socket_type(tree):
-        socket_type = 'NodeSocketFloat'
+        socket_type = "NodeSocketFloat"
         # Socket type validation function is only available for custom
         # node trees. Assume that 'NodeSocketFloat' is valid for
         # built-in node tree types.
-        if not hasattr(tree, "valid_socket_type") or tree.valid_socket_type(socket_type):
+        if not hasattr(tree, "valid_socket_type") or tree.valid_socket_type(
+            socket_type
+        ):
             return socket_type
         # Custom nodes may not support float sockets, search all
         # registered socket subclasses.
@@ -350,85 +371,97 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
         active_item = interface.active
         active_pos = active_item.position if active_item else -1
 
-        if self.item_type == 'INPUT':
-            item = interface.new_socket("Socket", socket_type=self.find_valid_socket_type(tree), in_out='INPUT')
-        elif self.item_type == 'OUTPUT':
-            item = interface.new_socket("Socket", socket_type=self.find_valid_socket_type(tree), in_out='OUTPUT')
-        elif self.item_type == 'PANEL':
+        if self.item_type == "INPUT":
+            item = interface.new_socket(
+                "Socket", socket_type=self.find_valid_socket_type(tree), in_out="INPUT"
+            )
+        elif self.item_type == "OUTPUT":
+            item = interface.new_socket(
+                "Socket", socket_type=self.find_valid_socket_type(tree), in_out="OUTPUT"
+            )
+        elif self.item_type == "PANEL":
             item = interface.new_panel("Panel")
-        elif self.item_type == 'PANEL_TOGGLE':
+        elif self.item_type == "PANEL_TOGGLE":
             active_panel = active_item
             if len(active_panel.interface_items) > 0:
                 first_item = active_panel.interface_items[0]
-                if type(first_item) is bpy.types.NodeTreeInterfaceSocketBool and first_item.is_panel_toggle:
-                    self.report({'INFO'}, "Panel already has a toggle")
-                    return {'CANCELLED'}
-            item = interface.new_socket(active_panel.name, socket_type='NodeSocketBool', in_out='INPUT')
+                if (
+                    type(first_item) is bpy.types.NodeTreeInterfaceSocketBool
+                    and first_item.is_panel_toggle
+                ):
+                    self.report({"INFO"}, "Panel already has a toggle")
+                    return {"CANCELLED"}
+            item = interface.new_socket(
+                active_panel.name, socket_type="NodeSocketBool", in_out="INPUT"
+            )
             item.is_panel_toggle = True
             interface.move_to_parent(item, active_panel, 0)
             # Return in this case because we don't want to move the item.
-            return {'FINISHED'}
+            return {"FINISHED"}
         else:
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
         if active_item:
             # Insert into active panel if possible, otherwise insert after active item.
-            if active_item.item_type == 'PANEL' and item.item_type != 'PANEL':
-                interface.move_to_parent(item, active_item, len(active_item.interface_items))
+            if active_item.item_type == "PANEL" and item.item_type != "PANEL":
+                interface.move_to_parent(
+                    item, active_item, len(active_item.interface_items)
+                )
             else:
                 interface.move_to_parent(item, active_item.parent, active_pos + 1)
         interface.active = item
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class NODE_OT_interface_item_new_input(
-    NODE_OT_interface_item_new):  # -bfa separated add input operator with own description.
+    NODE_OT_interface_item_new
+):  # -bfa separated add input operator with own description.
     """Add a new input socket"""
+
     bl_idname = "node.interface_item_new_input"
     bl_label = "New Input Socket"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     item_type: EnumProperty(
-        name="Item Type",
-        items=(('INPUT', "Input", ""),),
-        default='INPUT'
+        name="Item Type", items=(("INPUT", "Input", ""),), default="INPUT"
     )
 
 
 class NODE_OT_interface_item_new_panel(
-    NODE_OT_interface_item_new):  # -bfa separated add output operator with own description.
+    NODE_OT_interface_item_new
+):  # -bfa separated add output operator with own description.
     """Add a new panel interface"""
+
     bl_idname = "node.interface_item_new_panel"
     bl_label = "New Panel Interface"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     item_type: EnumProperty(
-        name="Item Type",
-        items=(('PANEL', "Panel", ""),),
-        default='PANEL'
+        name="Item Type", items=(("PANEL", "Panel", ""),), default="PANEL"
     )
 
 
 class NODE_OT_interface_item_new_output(
-    NODE_OT_interface_item_new):  # -bfa separated add panel operator with own description.
+    NODE_OT_interface_item_new
+):  # -bfa separated add panel operator with own description.
     """Add a new output socket"""
+
     bl_idname = "node.interface_item_new_output"
     bl_label = "New Output Socket"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     item_type: EnumProperty(
-        name="Item Type",
-        items=(('OUTPUT', "Output", ""),),
-        default='OUTPUT'
+        name="Item Type", items=(("OUTPUT", "Output", ""),), default="OUTPUT"
     )
 
 
 class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
     """Add a copy of the active item to the interface"""
+
     bl_idname = "node.interface_item_duplicate"
     bl_label = "Duplicate Item"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -450,14 +483,15 @@ class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
             item_copy = interface.copy(item)
             interface.active = item_copy
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class NODE_OT_interface_item_remove(NodeInterfaceOperator, Operator):
     """Remove active item from the interface"""
+
     bl_idname = "node.interface_item_remove"
     bl_label = "Remove Item"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         snode = context.space_data
@@ -467,16 +501,19 @@ class NODE_OT_interface_item_remove(NodeInterfaceOperator, Operator):
 
         if item:
             interface.remove(item)
-            interface.active_index = min(interface.active_index, len(interface.items_tree) - 1)
+            interface.active_index = min(
+                interface.active_index, len(interface.items_tree) - 1
+            )
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class NODE_OT_interface_item_make_panel_toggle(NodeInterfaceOperator, Operator):
     """Make the active boolean socket a toggle for its parent panel"""
+
     bl_idname = "node.interface_item_make_panel_toggle"
     bl_label = "Make Panel Toggle"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -511,10 +548,10 @@ class NODE_OT_interface_item_make_panel_toggle(NodeInterfaceOperator, Operator):
 
         parent_panel = active_item.parent
         if not parent_panel:
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
         if not type(active_item) is bpy.types.NodeTreeInterfaceSocketBool:
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
         active_item.is_panel_toggle = True
         # Use the same name as the panel in the UI for clarity.
@@ -525,14 +562,15 @@ class NODE_OT_interface_item_make_panel_toggle(NodeInterfaceOperator, Operator):
         # Make the panel active.
         interface.active = parent_panel
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator):
     """Make the panel toggle a stand-alone socket"""
+
     bl_idname = "node.interface_item_unlink_panel_toggle"
     bl_label = "Unlink Panel Toggle"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -543,7 +581,7 @@ class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator
         tree = snode.edit_tree
         interface = tree.interface
         active_item = interface.active
-        if not active_item or active_item.item_type != 'PANEL':
+        if not active_item or active_item.item_type != "PANEL":
             return False
         if len(active_item.interface_items) == 0:
             return False
@@ -557,15 +595,18 @@ class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator
         interface = tree.interface
         active_item = interface.active
 
-        if not active_item or active_item.item_type != 'PANEL':
-            return {'CANCELLED'}
+        if not active_item or active_item.item_type != "PANEL":
+            return {"CANCELLED"}
 
         if len(active_item.interface_items) == 0:
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
         first_item = active_item.interface_items[0]
-        if type(first_item) is not bpy.types.NodeTreeInterfaceSocketBool or not first_item.is_panel_toggle:
-            return {'CANCELLED'}
+        if (
+            type(first_item) is not bpy.types.NodeTreeInterfaceSocketBool
+            or not first_item.is_panel_toggle
+        ):
+            return {"CANCELLED"}
 
         first_item.is_panel_toggle = False
         first_item.name = active_item.name
@@ -573,23 +614,21 @@ class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator
         # Make the socket active.
         interface.active = first_item
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 ## BFA - BFA operator for GUI buttons to re-order items - Start
 class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
     """Move the active item to the specified direction\nYou can also alternatively drag and drop the active item to reorder"""
+
     bl_idname = "node.interface_item_move"
     bl_label = "Move Item"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     direction: EnumProperty(
         name="Direction",
         description="Specifies which direction the active item is moved towards",
-        items=(
-            ('UP', "Move Up", ""),
-            ('DOWN', "Move Down", "")
-        ),
+        items=(("UP", "Move Up", ""), ("DOWN", "Move Down", "")),
     )
 
     @classmethod
@@ -612,7 +651,7 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
 
         # Retrieve all other panels
         for item in interface.items_tree:
-            if item.item_type == 'PANEL':
+            if item.item_type == "PANEL":
                 yield item
 
     @staticmethod
@@ -645,15 +684,15 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
         interface = context.space_data.edit_tree.interface
         active_item = interface.active
 
-        offset = -1 if self.direction == 'UP' else 2
+        offset = -1 if self.direction == "UP" else 2
 
         old_position = active_item.position
         interface.move(active_item, active_item.position + offset)
 
-        if active_item.position == old_position and active_item.item_type == 'SOCKET':
+        if active_item.position == old_position and active_item.item_type == "SOCKET":
             parents = tuple(self.fetch_all_parents(interface))
 
-            if self.direction == 'UP':
+            if self.direction == "UP":
                 new_parent = self.get_prev_parent(parents, active_item.parent)
                 new_position = len(new_parent.interface_items)
             else:
@@ -663,29 +702,32 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
             if new_parent != active_item.parent:
                 interface.move_to_parent(active_item, new_parent, new_position)
             else:
-                return {'CANCELLED'}
+                return {"CANCELLED"}
 
         interface.active_index = active_item.index
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 ## BFA - BFA operator for GUI buttons to re-order items - End
 
+
 class NODE_OT_viewer_shortcut_set(Operator):
     """Create a compositor viewer shortcut for the selected node by pressing ctrl+1,2,..9"""
+
     bl_idname = "node.viewer_shortcut_set"
     bl_label = "Fast Preview"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     viewer_index: IntProperty(
         name="Viewer Index",
-        description="Index corresponding to the shortcut, e.g. number key 1 corresponds to index 1 etc..")
+        description="Index corresponding to the shortcut, e.g. number key 1 corresponds to index 1 etc..",
+    )
 
     def get_connected_viewer(self, node):
         for out in node.outputs:
             for link in out.links:
                 nv = link.to_node
-                if nv.type == 'VIEWER':
+                if nv.type == "VIEWER":
                     return nv
         return None
 
@@ -694,10 +736,10 @@ class NODE_OT_viewer_shortcut_set(Operator):
         del cls
         space = context.space_data
         return (
-                (space is not None) and
-                space.type == 'NODE_EDITOR' and
-                space.node_tree is not None and
-                space.tree_type == 'CompositorNodeTree'
+            (space is not None)
+            and space.type == "NODE_EDITOR"
+            and space.node_tree is not None
+            and space.tree_type in {"CompositorNodeTree", "GeometryNodeTree"}
         )
 
     def execute(self, context):
@@ -705,15 +747,14 @@ class NODE_OT_viewer_shortcut_set(Operator):
         selected_nodes = context.selected_nodes
 
         if len(selected_nodes) == 0:
-            self.report({'ERROR'}, "Select a node to assign a shortcut")
-            return {'CANCELLED'}
+            self.report({"ERROR"}, "Select a node to assign a shortcut")
+            return {"CANCELLED"}
 
         fav_node = selected_nodes[0]
 
         # Only viewer nodes can be set to favorites. However, the user can
         # create a new favorite viewer by selecting any node and pressing ctrl+1.
-        old_active = nodes.active
-        if fav_node.type == 'VIEWER':
+        if fav_node.type == "VIEWER":
             viewer_node = fav_node
         else:
             viewer_node = self.get_connected_viewer(fav_node)
@@ -727,41 +768,45 @@ class NODE_OT_viewer_shortcut_set(Operator):
 
         if not viewer_node:
             self.report(
-                {'ERROR'},
+                {"ERROR"},
                 "Unable to set shortcut, selected node is not a viewer node or does not support viewing",
             )
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
-        # Use the node active status to enable this viewer node and disable others.
-        nodes.active = viewer_node
-        if old_active.type != 'VIEWER':
-            nodes.active = old_active
-
+        with bpy.context.temp_override(node=viewer_node):
+            bpy.ops.node.activate_viewer()
         viewer_node.ui_shortcut = self.viewer_index
-        self.report({'INFO'}, "Assigned shortcut {:d} to {:s}".format(self.viewer_index, viewer_node.name))
+        self.report(
+            {"INFO"},
+            "Assigned shortcut {:d} to {:s}".format(
+                self.viewer_index, viewer_node.name
+            ),
+        )
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class NODE_OT_viewer_shortcut_get(Operator):
     """Activate a specific compositor viewer node using 1,2,..,9 keys"""
+
     bl_idname = "node.viewer_shortcut_get"
     bl_label = "Fast Preview"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     viewer_index: IntProperty(
         name="Viewer Index",
-        description="Index corresponding to the shortcut, e.g. number key 1 corresponds to index 1 etc..")
+        description="Index corresponding to the shortcut, e.g. number key 1 corresponds to index 1 etc..",
+    )
 
     @classmethod
     def poll(cls, context):
         del cls
         space = context.space_data
         return (
-                (space is not None) and
-                space.type == 'NODE_EDITOR' and
-                space.node_tree is not None and
-                space.tree_type == 'CompositorNodeTree'
+            (space is not None)
+            and space.type == "NODE_EDITOR"
+            and space.node_tree is not None
+            and space.tree_type in {"CompositorNodeTree", "GeometryNodeTree"}
         )
 
     def execute(self, context):
@@ -770,43 +815,44 @@ class NODE_OT_viewer_shortcut_get(Operator):
         # Get viewer node with existing shortcut.
         viewer_node = None
         for n in nodes:
-            if n.type == 'VIEWER' and n.ui_shortcut == self.viewer_index:
+            if n.type == "VIEWER" and n.ui_shortcut == self.viewer_index:
                 viewer_node = n
 
         if not viewer_node:
-            self.report({'INFO'}, "Shortcut {:d} is not assigned to a Viewer node yet".format(self.viewer_index))
-            return {'CANCELLED'}
+            self.report(
+                {"INFO"},
+                "Shortcut {:d} is not assigned to a Viewer node yet".format(
+                    self.viewer_index
+                ),
+            )
+            return {"CANCELLED"}
 
-        # Use the node active status to enable this viewer node and disable others.
-        old_active = nodes.active
-        nodes.active = viewer_node
-        if old_active.type != "VIEWER":
-            nodes.active = old_active
-
-        return {'FINISHED'}
+        with bpy.context.temp_override(node=viewer_node):
+            bpy.ops.node.activate_viewer()
+        return {"FINISHED"}
 
 
 class NODE_FH_image_node(FileHandler):
     bl_idname = "NODE_FH_image_node"
     bl_label = "Image node"
     bl_import_operator = "node.add_file"
-    bl_file_extensions = ";".join((*bpy.path.extensions_image, *bpy.path.extensions_movie))
+    bl_file_extensions = ";".join(
+        (*bpy.path.extensions_image, *bpy.path.extensions_movie)
+    )
 
     @classmethod
     def poll_drop(cls, context):
         return (
-                (context.area is not None) and
-                (context.area.type == 'NODE_EDITOR') and
-                (context.region is not None) and
-                (context.region.type == 'WINDOW')
+            (context.area is not None)
+            and (context.area.type == "NODE_EDITOR")
+            and (context.region is not None)
+            and (context.region.type == "WINDOW")
         )
 
 
 classes = (
     NodeSetting,
-
     NODE_FH_image_node,
-
     NODE_OT_add_node,
     NODE_OT_add_simulation_zone,
     NODE_OT_add_repeat_zone,

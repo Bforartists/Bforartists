@@ -12,8 +12,6 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "DNA_ID.h"
-
 #include "BKE_cryptomatte.hh"
 #include "BKE_global.hh"
 #include "BKE_image.hh"
@@ -338,15 +336,6 @@ class Context : public compositor::Context {
      * incomplete support, and leave more specific message to individual nodes? */
   }
 
-  IDRecalcFlag query_id_recalc_flag(ID *id) const override
-  {
-    DrawEngineType *owner = (DrawEngineType *)this;
-    DrawData *draw_data = DRW_drawdata_ensure(id, owner, sizeof(DrawData), nullptr, nullptr);
-    IDRecalcFlag recalc_flag = IDRecalcFlag(draw_data->recalc);
-    draw_data->recalc = IDRecalcFlag(0);
-    return recalc_flag;
-  }
-
   void populate_meta_data_for_pass(const Scene *scene,
                                    int view_layer_id,
                                    const char *pass_name,
@@ -436,8 +425,8 @@ class Context : public compositor::Context {
         IMB_assign_float_buffer(ibuf, output_buffer, IB_TAKE_OWNERSHIP);
       }
       else {
-        float *data = static_cast<float *>(
-            MEM_malloc_arrayN(rr->rectx * rr->recty, 4 * sizeof(float), __func__));
+        float *data = MEM_malloc_arrayN<float>(4 * size_t(rr->rectx) * size_t(rr->recty),
+                                               __func__);
         IMB_assign_float_buffer(ibuf, data, IB_TAKE_OWNERSHIP);
         std::memcpy(
             data, output_result_.cpu_data().data(), rr->rectx * rr->recty * 4 * sizeof(float));

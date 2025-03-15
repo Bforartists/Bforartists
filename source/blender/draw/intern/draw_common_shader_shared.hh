@@ -143,7 +143,10 @@ struct GlobalsUboStorage {
   float size_viewport_line; /* BFA - GooEngine */
   float _gpad0, _gpad1, _gpad2; /* BFA - GooEngine */
   float fresnel_mix_edit;
-  float _pad1, _pad2, _pad3;
+
+  bool32_t backface_culling;
+
+  float _pad1, _pad2;
 };
 BLI_STATIC_ASSERT_ALIGN(GlobalsUboStorage, 16)
 
