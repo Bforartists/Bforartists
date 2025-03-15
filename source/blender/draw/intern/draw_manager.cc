@@ -14,9 +14,9 @@
 #include "BLI_math_base.h"
 #include "GPU_compute.hh"
 
+#include "draw_context_private.hh"
 #include "draw_defines.hh"
 #include "draw_manager.hh"
-#include "draw_manager_c.hh"
 #include "draw_pass.hh"
 #include "draw_shader.hh"
 
@@ -74,7 +74,7 @@ void Manager::begin_sync()
   attribute_len_ = 0;
   /* TODO(fclem): Resize buffers if too big, but with an hysteresis threshold. */
 
-  object_active = drw_get().draw_ctx.obact;
+  object_active = drw_get().obact;
 
   /* Init the 0 resource. */
   resource_handle(float4x4::identity());
@@ -98,7 +98,7 @@ void Manager::sync_layer_attributes()
 
   for (uint32_t id : id_list) {
     if (layer_attributes_buf[count].sync(
-            drw_get().draw_ctx.scene, drw_get().draw_ctx.view_layer, layer_attributes.lookup(id)))
+            drw_get().scene, drw_get().view_layer, layer_attributes.lookup(id)))
     {
       /* Check if the buffer is full. */
       if (++count == size) {
@@ -126,6 +126,8 @@ void Manager::end_sync()
    * debug draw/print buffers for every frame. Not nice for performance. */
   // debug_bind();
 
+  DRW_submission_start();
+
   /* Dispatch compute to finalize the resources on GPU. Save a bit of CPU time. */
   uint thread_groups = divide_ceil_u(resource_len_, DRW_FINALIZE_GROUP_SIZE);
   GPUShader *shader = DRW_shader_draw_resource_finalize_get();
@@ -136,6 +138,8 @@ void Manager::end_sync()
   GPU_storagebuf_bind(infos_buf.current(), GPU_shader_get_ssbo_binding(shader, "infos_buf"));
   GPU_compute_dispatch(shader, thread_groups, 1, 1);
   GPU_memory_barrier(GPU_BARRIER_SHADER_STORAGE);
+
+  DRW_submission_end();
 
   GPU_debug_group_end();
 }
@@ -180,9 +184,8 @@ ResourceHandleRange Manager::resource_handle_for_sculpt(const ObjectRef &ref)
 
 void Manager::compute_visibility(View &view)
 {
-  bool freeze_culling = (USER_EXPERIMENTAL_TEST(&U, use_viewport_debug) &&
-                         drw_get().draw_ctx.v3d &&
-                         (drw_get().draw_ctx.v3d->debug_flag & V3D_DEBUG_FREEZE_CULLING) != 0);
+  bool freeze_culling = (USER_EXPERIMENTAL_TEST(&U, use_viewport_debug) && drw_get().v3d &&
+                         (drw_get().v3d->debug_flag & V3D_DEBUG_FREEZE_CULLING) != 0);
 
   BLI_assert_msg(view.manager_fingerprint_ != this->fingerprint_get(),
                  "Resources did not changed, no need to update");

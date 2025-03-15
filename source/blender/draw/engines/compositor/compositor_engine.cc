@@ -49,12 +49,12 @@ class Context : public compositor::Context {
 
   const Scene &get_scene() const override
   {
-    return *DRW_context_state_get()->scene;
+    return *DRW_context_get()->scene;
   }
 
   const bNodeTree &get_node_tree() const override
   {
-    return *DRW_context_state_get()->scene->nodetree;
+    return *DRW_context_get()->scene->nodetree;
   }
 
   bool use_gpu() const override
@@ -82,7 +82,7 @@ class Context : public compositor::Context {
 
   const RenderData &get_render_data() const override
   {
-    return DRW_context_state_get()->scene->r;
+    return DRW_context_get()->scene->r;
   }
 
   int2 get_render_size() const override
@@ -98,17 +98,16 @@ class Context : public compositor::Context {
     const int2 viewport_size = int2(DRW_viewport_size_get());
     const rcti render_region = rcti{0, viewport_size.x, 0, viewport_size.y};
 
-    if (DRW_context_state_get()->rv3d->persp != RV3D_CAMOB || DRW_state_is_viewport_image_render())
-    {
+    if (DRW_context_get()->rv3d->persp != RV3D_CAMOB || DRW_state_is_viewport_image_render()) {
       return render_region;
     }
 
     rctf camera_border;
-    ED_view3d_calc_camera_border(DRW_context_state_get()->scene,
-                                 DRW_context_state_get()->depsgraph,
-                                 DRW_context_state_get()->region,
-                                 DRW_context_state_get()->v3d,
-                                 DRW_context_state_get()->rv3d,
+    ED_view3d_calc_camera_border(DRW_context_get()->scene,
+                                 DRW_context_get()->depsgraph,
+                                 DRW_context_get()->region,
+                                 DRW_context_get()->v3d,
+                                 DRW_context_get()->rv3d,
                                  false,
                                  &camera_border);
 
@@ -142,7 +141,7 @@ class Context : public compositor::Context {
   compositor::Result get_pass(const Scene *scene, int view_layer, const char *pass_name) override
   {
     if (DEG_get_original_id(const_cast<ID *>(&scene->id)) !=
-        DEG_get_original_id(&DRW_context_state_get()->scene->id))
+        DEG_get_original_id(&DRW_context_get()->scene->id))
     {
       return compositor::Result(*this);
     }
@@ -174,7 +173,7 @@ class Context : public compositor::Context {
   StringRef get_view_name() const override
   {
     const SceneRenderView *view = static_cast<SceneRenderView *>(
-        BLI_findlink(&get_render_data().views, DRW_context_state_get()->v3d->multiview_eye));
+        BLI_findlink(&get_render_data().views, DRW_context_get()->v3d->multiview_eye));
     return view->name;
   }
 
@@ -194,15 +193,6 @@ class Context : public compositor::Context {
   void set_info_message(StringRef message) const override
   {
     message.copy_utf8_truncated(info_message_, GPU_INFO_SIZE);
-  }
-
-  IDRecalcFlag query_id_recalc_flag(ID *id) const override
-  {
-    DrawEngineType *owner = &draw_engine_compositor_type;
-    DrawData *draw_data = DRW_drawdata_ensure(id, owner, sizeof(DrawData), nullptr, nullptr);
-    IDRecalcFlag recalc_flag = IDRecalcFlag(draw_data->recalc);
-    draw_data->recalc = IDRecalcFlag(0);
-    return recalc_flag;
   }
 };
 
@@ -249,6 +239,8 @@ static void compositor_engine_draw(void *data)
 {
   COMPOSITOR_Data *compositor_data = static_cast<COMPOSITOR_Data *>(data);
 
+  DRW_submission_start();
+
 #if defined(__APPLE__)
   if (GPU_backend_get_type() == GPU_BACKEND_METAL) {
     /* NOTE(Metal): Isolate Compositor compute work in individual command buffer to improve
@@ -274,6 +266,7 @@ static void compositor_engine_draw(void *data)
     GPU_finish();
   }
 #endif
+  DRW_submission_end();
 }
 
 DrawEngineType draw_engine_compositor_type = {
@@ -287,8 +280,6 @@ DrawEngineType draw_engine_compositor_type = {
     /*cache_populate*/ nullptr,
     /*cache_finish*/ nullptr,
     /*draw_scene*/ &compositor_engine_draw,
-    /*view_update*/ nullptr,
-    /*id_update*/ nullptr,
     /*render_to_image*/ nullptr,
     /*store_metadata*/ nullptr,
 };
