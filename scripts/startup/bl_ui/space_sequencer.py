@@ -1592,7 +1592,7 @@ class SEQUENCER_MT_strip(Menu):
 
         if has_preview:
             layout.separator()
-            layout.operator("sequencer.preview_duplicate_move", text="Duplicate")
+            layout.operator("sequencer.preview_duplicate_move", text="Duplicate", icon = "DUPLICATE")
             layout.separator()
             # BFA - moved to top header level
             # if strip and strip.type == "TEXT":
