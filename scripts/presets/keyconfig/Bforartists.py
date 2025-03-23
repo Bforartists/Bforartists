@@ -1,4 +1,4 @@
-keyconfig_version = (4, 5, 3)
+keyconfig_version = (4, 5, 7)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -3893,6 +3893,27 @@ keyconfig_data = \
      {"type": 'D', "value": 'CLICK'},
      {"properties":
       [("name", 'builtin.select'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'W', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.move'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'E', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.rotate'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
+     {"type": 'R', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.scale'),
        ],
       },
      ),
