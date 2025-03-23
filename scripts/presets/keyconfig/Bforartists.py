@@ -1,4 +1,4 @@
-keyconfig_version = (4, 4, 23)
+keyconfig_version = (4, 5, 3)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -7254,6 +7254,8 @@ keyconfig_data = \
       },
      ),
     ("sequencer.text_edit_mode_toggle", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
+    ("sequencer.preview_duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
     ],
    },
   ),
