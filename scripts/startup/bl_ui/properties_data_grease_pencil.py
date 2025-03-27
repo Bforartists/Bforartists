@@ -239,8 +239,8 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.operator("grease_pencil.layer_merge", text="Merge All", icon = 'MERGE').mode = 'ALL'
 
         layout.separator()
-        layout.operator("grease_pencil.relative_layer_mask_add", text="Mask with Layer Above").mode = 'ABOVE'
-        layout.operator("grease_pencil.relative_layer_mask_add", text="Mask with Layer Below").mode = 'BELOW'
+        layout.operator("grease_pencil.relative_layer_mask_add", icon = 'MASK_ABOVE', text="Mask with Layer Above").mode = 'ABOVE'
+        layout.operator("grease_pencil.relative_layer_mask_add", icon = 'MASK_BELOW', text="Mask with Layer Below").mode = 'BELOW'
 
         layout.separator()
         layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
