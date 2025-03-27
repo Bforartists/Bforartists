@@ -986,6 +986,8 @@ if(WITH_BLENDER)
       marksharpangle
       marksharpedges
       marksharpverts
+      mask_above
+      mask_below
       mask_slice
       mask_slice_fill
       mask_slice_new
