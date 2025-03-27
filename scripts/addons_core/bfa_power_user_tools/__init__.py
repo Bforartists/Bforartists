@@ -32,14 +32,26 @@ bl_info = {
 
 
 import sys
+import os
+import importlib
 
-from bpy.utils import register_submodule_factory
+# Get the directory of the current file
+module_dir = os.path.dirname(__file__)
 
-from . import prefs
-from . import properties
-from . import toolshelf
-from . import ui
-from . import ops
+# Add the module directory to Python path
+if module_dir not in sys.path:
+    sys.path.append(module_dir)
+
+# Import submodules
+try:
+    from . import prefs
+    from . import properties
+    #from . import toolshelf
+    from . import ui
+    from . import ops
+except ImportError as e:
+    print(f"Error importing submodules: {e}")
+    raise
 
 submodule_names = [
     "prefs",
@@ -49,4 +61,25 @@ submodule_names = [
     "ops",
 ]
 
-register, unregister = register_submodule_factory(__name__, submodule_names)
+def register():
+    try:
+        for submodule_name in submodule_names:
+            # Dynamically import the submodule
+            submodule = importlib.import_module(f".{submodule_name}", package=__name__)
+            #print(f"Registering submodule: {submodule_name}")
+            if hasattr(submodule, "register"):
+                submodule.register()
+    except Exception as e:
+        print(f"Error during registration: {e}")
+        raise
+
+def unregister():
+    try:
+        for submodule_name in reversed(submodule_names):
+            submodule = importlib.import_module(f".{submodule_name}", package=__name__)
+            #print(f"Unregistering submodule: {submodule_name}")
+            if hasattr(submodule, "unregister"):
+                submodule.unregister()
+    except Exception as e:
+        print(f"Error during unregistration: {e}")
+        raise
