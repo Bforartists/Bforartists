@@ -20,23 +20,23 @@ class GPENCIL_MT_material_context_menu(Menu):
         layout = self.layout
 
         layout.operator(
-            "gpencil.material_reveal", icon="RESTRICT_VIEW_OFF", text="Show All"
+            "grease_pencil.material_reveal", icon="RESTRICT_VIEW_OFF", text="Show All"
         )
         layout.operator(
-            "gpencil.material_hide", icon="RESTRICT_VIEW_ON", text="Hide Others"
+            "grease_pencil.material_hide", icon="RESTRICT_VIEW_ON", text="Hide Others"
         ).unselected = True
 
         layout.separator()
 
-        layout.operator("gpencil.material_lock_all", icon="LOCKED", text="Lock All")
+        layout.operator("grease_pencil.material_lock_all", icon="LOCKED", text="Lock All")
         layout.operator(
-            "gpencil.material_unlock_all", icon="UNLOCKED", text="Unlock All"
+            "grease_pencil.material_unlock_all", icon="UNLOCKED", text="Unlock All"
         )
 
         layout.operator(
-            "gpencil.material_lock_unused", text="Lock Unselected", icon="LOCKED"
+            "grease_pencil.material_lock_unused", text="Lock Unselected", icon="LOCKED"
         )
-        layout.operator("gpencil.lock_layer", text="Lock Unused", icon="LOCKED")
+        layout.operator("grease_pencil.lock_layer", text="Lock Unused", icon="LOCKED")
 
         layout.separator()
 
