@@ -102502,7 +102502,7 @@ msgid "Show only selectable objects"
 msgstr "Duy hiển thị các đối tượng có thể chọn mà thôi"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "Chuỗi ký tự để thanh lọc khi tìm kiếm trực tiếp"
 
 
