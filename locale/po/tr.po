@@ -91343,7 +91343,7 @@ msgid "Show only selectable objects"
 msgstr "Yalnızca seçilebilir nesneleri göster"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "Canlı arama filtreleme dizesi"
 
 

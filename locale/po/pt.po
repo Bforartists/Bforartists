@@ -84217,7 +84217,7 @@ msgid "Display data of current file and linked libraries"
 msgstr "Mostra os dados do ficheiro actual e bibliotecas vinculadas."
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "Texto para filtro activo de pesquisa."
 
 

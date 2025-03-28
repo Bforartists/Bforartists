@@ -88832,7 +88832,7 @@ msgid "Show only selectable objects"
 msgstr "Показывать только выделяемые объекты"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "Строка фильтрации"
 
 
