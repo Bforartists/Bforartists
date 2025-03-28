@@ -20,8 +20,8 @@ bl_info = {
         "name": "Power User Tools",
         "description": "Additional set of user experience tools and operators to assist with every day use for the power user.",
         "author": "Draise (@trinumedia)",
-        "version": (0, 2, 2),
-        "blender": (4, 00, 0),
+        "version": (0, 2, 3),
+        "blender": (4, 4, 0),
         "location": "Varios consistent locations for the power user - customize as you need! ",
         "warning": "This is a Bforartists exclusive addon for the time being", # used for warning icon and text in add-ons panel
         "doc_url": "https://www.bforartists.de/data/manualbfa4/35.4_Addon_-_Power_User_Tools.pdf",
@@ -46,7 +46,7 @@ if module_dir not in sys.path:
 try:
     from . import prefs
     from . import properties
-    #from . import toolshelf
+    from . import toolshelf
     from . import ui
     from . import ops
 except ImportError as e:
