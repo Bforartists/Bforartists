@@ -15,6 +15,7 @@
 import bpy
 
 from . import ops
+from . import properties
 
 # Declaratives
 context = bpy.context
@@ -43,6 +44,8 @@ class BFA_MT_timeline_key(bpy.types.Menu):
 def BFA_HT_timeline_skipframes(self, context):
     if context.space_data.mode == 'TIMELINE':
         layout = self.layout
+
+        wm = context.window_manager
 
         row = layout.row(align=True)
         row.enabled = True
