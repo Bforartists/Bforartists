@@ -53971,7 +53971,7 @@ msgid "Display data of current file and linked libraries"
 msgstr "Mostra dati del file corrente e delle librerie collegate"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "Stringa di filtraggio ricerca"
 
 

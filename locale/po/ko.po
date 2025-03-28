@@ -64114,7 +64114,7 @@ msgid "Show only the active object"
 msgstr "활성 오브젝트 만 표시"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "실시간 검색 필터링 문자열"
 
 
