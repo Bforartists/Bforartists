@@ -106461,7 +106461,7 @@ msgid "Show only selectable objects"
 msgstr "選択可能なオブジェクトのみ表示します"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "ライブ検索文字列"
 
 

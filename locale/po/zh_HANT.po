@@ -57211,7 +57211,7 @@ msgid "Show all objects in the view layer"
 msgstr "顯示檢視層裡的所有物體"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "即時搜尋過濾字串"
 
 

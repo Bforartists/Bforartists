@@ -105005,7 +105005,7 @@ msgid "Show only selectable objects"
 msgstr "仅显示可选的物体"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "实时查找过滤字符串"
 
 
