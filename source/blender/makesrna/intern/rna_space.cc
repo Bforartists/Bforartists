@@ -4068,7 +4068,7 @@ static void rna_def_space_outliner(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "filter_text", PROP_STRING, PROP_NONE);
   RNA_def_property_string_sdna(prop, nullptr, "search_string");
-  RNA_def_property_ui_text(prop, "Display Filter", "Live search filtering string");
+  RNA_def_property_ui_text(prop, "Display Filter", "Live search by filtering entries by string. Press CTRL+F to quick search"); /*BFA - tooltip*/
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
@@ -5794,7 +5794,7 @@ static void rna_def_space_properties(BlenderRNA *brna)
                                 "rna_SpaceProperties_search_filter_get",
                                 "rna_SpaceProperties_search_filter_length",
                                 "rna_SpaceProperties_search_filter_set");
-  RNA_def_property_ui_text(prop, "Display Filter", "Live search filtering string");
+  RNA_def_property_ui_text(prop, "Display Filter", "Live search by filtering entries by string. Press CTRL+F to quick search"); /*BFA - Tooltip update*/
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(
       prop, NC_SPACE | ND_SPACE_PROPERTIES, "rna_SpaceProperties_search_filter_update");
