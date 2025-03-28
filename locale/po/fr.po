@@ -105001,7 +105001,7 @@ msgid "Show only selectable objects"
 msgstr "Afficher seulement les objets sélectionnables"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "Texte utilisé pour filtrer la recherche en temps réel"
 
 
