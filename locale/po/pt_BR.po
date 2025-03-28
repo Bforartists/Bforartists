@@ -57544,7 +57544,7 @@ msgid "Filter by Type"
 msgstr "Filtrar por Tipo"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "Texto para filtro ativo de pesquisa."
 
 
