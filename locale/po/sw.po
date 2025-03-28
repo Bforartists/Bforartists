@@ -86154,7 +86154,7 @@ msgid "Show only selectable objects"
 msgstr "Onyesha vitu vinavyoweza kuchaguliwa pekee"
 
 
-msgid "Live search filtering string"
+msgid "Live search by filtering entries by string. Press CTRL+F to quick search"
 msgstr "Mfuatano wa kuchuja utafutaji wa moja kwa moja"
 
 
