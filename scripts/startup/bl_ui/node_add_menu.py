@@ -90,6 +90,7 @@ def add_repeat_zone(layout, label):
 def add_foreach_geometry_element_zone(layout, label):
     props = layout.operator(
         "node.add_foreach_geometry_element_zone",
+        icon = "FOR_EACH", #BFA - added icon to Add Menu
         text=label,
         text_ctxt=i18n_contexts.default,
     )
