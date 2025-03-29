@@ -3181,7 +3181,7 @@ class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
             props.type = 'ENHANCE_DETAILS'
 
             props = col.operator("sculpt.mesh_filter", text=" Erase Multires Displacement", icon = 'DELETE')
-            props.type = 'ERASE_DISCPLACEMENT'
+            props.type = 'ERASE_DISPLACEMENT'
 
             props = col.operator("sculpt.mesh_filter", text=" Randomize          ", icon = 'RANDOMIZE')
             props.type = 'RANDOM'
@@ -3220,7 +3220,7 @@ class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
                 props.type = 'ENHANCE_DETAILS'
 
                 props = row.operator("sculpt.mesh_filter", text="", icon = 'DELETE')
-                props.type = 'ERASE_DISCPLACEMENT'
+                props.type = 'ERASE_DISPLACEMENT'
 
                 props = row.operator("sculpt.mesh_filter", text="", icon = 'RANDOMIZE')
                 props.type = 'RANDOM'
@@ -3253,7 +3253,7 @@ class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
                 props.type = 'ENHANCE_DETAILS'
 
                 props = row.operator("sculpt.mesh_filter", text="", icon = 'DELETE')
-                props.type = 'ERASE_DISCPLACEMENT'
+                props.type = 'ERASE_DISPLACEMENT'
 
                 row = col.row(align=True)
                 props = row.operator("sculpt.mesh_filter", text="", icon = 'RANDOMIZE')
@@ -3283,7 +3283,7 @@ class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
                 props.type = 'ENHANCE_DETAILS'
 
                 props = col.operator("sculpt.mesh_filter", text="", icon = 'DELETE')
-                props.type = 'ERASE_DISCPLACEMENT'
+                props.type = 'ERASE_DISPLACEMENT'
 
                 props = col.operator("sculpt.mesh_filter", text="", icon = 'RANDOMIZE')
                 props.type = 'RANDOM'
