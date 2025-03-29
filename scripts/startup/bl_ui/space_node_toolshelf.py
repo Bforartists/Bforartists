@@ -6245,6 +6245,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_foreach_geometry_element_zone", text=" For Each Element    ", icon = "FOR_EACH")
+            props.use_transform = True
+            #props.type = ""
+
             props = col.operator("node.add_node", text=" Index Switch    ", icon = "INDEX_SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeIndexSwitch"
