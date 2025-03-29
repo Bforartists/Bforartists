@@ -1560,7 +1560,8 @@ class _defs_sculpt:
     @staticmethod
     def draw_lasso_stroke_settings(layout, props, draw_inline, draw_popover):
         if draw_inline:
-            layout.prop(props, "use_smooth_stroke", text="Stabilize Stroke")
+            layout.use_property_split = False
+            layout.prop(props, "use_smooth_stroke", text="Stabilize Stroke", expand=False)
 
             layout.use_property_split = True
             layout.use_property_decorate = False
@@ -1596,6 +1597,7 @@ class _defs_sculpt:
             props = tool.operator_properties("paint.mask_lasso_gesture")
 
             if not extra:
+                layout.use_property_split = False
                 layout.prop(props, "use_front_faces_only", expand=False)
                 region_is_header = bpy.context.region.type == 'TOOL_HEADER'
                 if region_is_header:
@@ -1618,8 +1620,8 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mask_line():
         def draw_settings(_context, layout, tool):
-            layout.use_property_split = False
             props = tool.operator_properties("paint.mask_line_gesture")
+            layout.use_property_split = False
             layout.prop(props, "use_front_faces_only", expand=False)
             layout.prop(props, "use_limit_to_segment", expand=False)
 
@@ -1696,6 +1698,7 @@ class _defs_sculpt:
     def hide_line():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("paint.hide_show_line_gesture")
+            layout.use_property_split = False
             layout.prop(props, "use_limit_to_segment", expand=False)
 
         return dict(
@@ -1748,6 +1751,7 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.face_set_lasso_gesture")
 
             if not extra:
+                layout.use_property_split = False
                 layout.prop(props, "use_front_faces_only", expand=False)
                 region_is_header = bpy.context.region.type == 'TOOL_HEADER'
                 if region_is_header:
@@ -1771,6 +1775,7 @@ class _defs_sculpt:
     def face_set_line():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.face_set_line_gesture")
+            layout.use_property_split = False
             layout.prop(props, "use_front_faces_only", expand=False)
             layout.prop(props, "use_limit_to_segment", expand=False)
 
@@ -1787,6 +1792,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def face_set_polyline():
         def draw_settings(_context, layout, tool):
+            layout.use_property_split = False
             props = tool.operator_properties("sculpt.face_set_polyline_gesture")
             layout.prop(props, "use_front_faces_only", expand=False)
 
@@ -1803,6 +1809,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def trim_box():
         def draw_settings(_context, layout, tool):
+            layout.use_property_split = False
             props = tool.operator_properties("sculpt.trim_box_gesture")
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_mode", expand=False)
@@ -1826,6 +1833,7 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.trim_lasso_gesture")
 
             if not extra:
+                layout.use_property_split = False
                 layout.prop(props, "trim_solver", expand=False)
                 layout.prop(props, "trim_mode", expand=False)
                 layout.prop(props, "trim_orientation", expand=False)
@@ -1853,6 +1861,7 @@ class _defs_sculpt:
     def trim_line():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_line_gesture")
+            layout.use_property_split = False
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
             layout.prop(props, "trim_extrude_mode", expand=False)
@@ -1871,6 +1880,7 @@ class _defs_sculpt:
     def trim_polyline():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_polyline_gesture")
+            layout.use_property_split = False
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_mode", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
@@ -1906,6 +1916,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mesh_filter():
         def draw_settings(_context, layout, tool):
+            layout.use_property_split = False
             props = tool.operator_properties("sculpt.mesh_filter")
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
@@ -1933,6 +1944,7 @@ class _defs_sculpt:
     def cloth_filter():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.cloth_filter")
+            layout.use_property_split = False
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
             row = layout.row(align=True)
@@ -1957,6 +1969,7 @@ class _defs_sculpt:
     def color_filter():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.color_filter")
+            layout.use_property_split = False
             layout.prop(props, "type", expand=False)
             if props.type == 'FILL':
                 layout.prop(props, "fill_color", expand=False)
@@ -1975,6 +1988,7 @@ class _defs_sculpt:
     def mask_by_color():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.mask_by_color")
+            layout.use_property_split = False
             layout.prop(props, "threshold")
             layout.use_property_split = False
             layout.prop(props, "contiguous")
@@ -1995,6 +2009,7 @@ class _defs_sculpt:
     def face_set_edit():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.face_set_edit")
+            layout.use_property_split = False
             layout.prop(props, "mode", expand=False)
             layout.use_property_split = False
             layout.prop(props, "modify_hidden")
