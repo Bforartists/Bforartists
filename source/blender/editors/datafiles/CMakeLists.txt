@@ -702,6 +702,7 @@ if(WITH_BLENDER)
       force_turbulence
       force_vortex
       force_wind
+      for_each
       forward
       frame_next
       frame_prev
