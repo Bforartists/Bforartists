@@ -1030,6 +1030,16 @@ class ASSETBROWSER_PT_metadata_tags(asset_utils.AssetMetaDataPanel, Panel):
         active_asset = context.asset
         asset_metadata = active_asset.metadata
 
+        # BFA - Custom tags assignment for the shelves
+        if context.asset and context.asset.id_type == 'NODETREE':
+            row = layout.row(align=True)
+            row.label(text="Asset Shelf:")
+            row.operator("asset.tag_add_shelf", icon="NODE_COMPOSITING", text="").tag_type = 'COMPOSITOR'
+            row.operator("asset.tag_add_shelf", icon="GEOMETRY_NODES", text="").tag_type = 'GEOMETRY_NODES'
+            if "Geometry Nodes" in context.asset.metadata.tags:
+                row.operator("asset.tag_add_shelf", icon="VIEW3D", text="").tag_type = '3D_VIEW'
+            row.operator("asset.tag_add_shelf", icon="NODE_MATERIAL", text="").tag_type = 'SHADER'
+
         row = layout.row()
         row.template_list(
             "ASSETBROWSER_UL_metadata_tags",
@@ -1044,6 +1054,8 @@ class ASSETBROWSER_PT_metadata_tags(asset_utils.AssetMetaDataPanel, Panel):
         col = row.column(align=True)
         col.operator("asset.tag_add", icon="ADD", text="")
         col.operator("asset.tag_remove", icon="REMOVE", text="")
+
+
 
 
 class ASSETBROWSER_UL_metadata_tags(UIList):
