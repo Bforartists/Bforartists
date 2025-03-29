@@ -6808,6 +6808,10 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeCombineTransform"
 
+            props = col.operator("node.add_node", text=" Matrix Determinant     ", icon = "MATRIX_DETERMINANT")
+            props.use_transform = True
+            props.type = "FunctionNodeMatrixDeterminant"
+
             props = col.operator("node.add_node", text=" Invert Matrix", icon = "INVERT_MATRIX")
             props.use_transform = True
             props.type = "FunctionNodeInvertMatrix"
@@ -6855,6 +6859,10 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "COMBINE_TRANSFORM")
             props.use_transform = True
             props.type = "FunctionNodeCombineTransform"
+
+            props = flow.operator("node.add_node", text="", icon = "MATRIX_DETERMINANT")
+            props.use_transform = True
+            props.type = "FunctionNodeMatrixDeterminant"
 
             props = flow.operator("node.add_node", text="", icon = "INVERT_MATRIX")
             props.use_transform = True
