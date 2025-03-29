@@ -12438,7 +12438,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeIntegerMath", nullptr, ICON_INTEGER_MATH, "Add a Integer Math node\nCreates a math node that works with integers");
   define(brna, "FunctionNode", "FunctionNodeInvertMatrix", nullptr, ICON_INVERT_MATRIX, "Add a Invert Matrix node\nInverts the matrix");
   define(brna, "FunctionNode", "FunctionNodeInvertRotation", nullptr, ICON_INVERT_ROTATION, "Add a Invert Rotation Function node\nInverts a rotation verctor");
-  define(brna, "FunctionNode", "FunctionNodeMatrixDeterminant", nullptr, ICON_NONE, "Add a Matrix Determinant node");
+  define(brna, "FunctionNode", "FunctionNodeMatrixDeterminant", nullptr, ICON_MATRIX_DETERMINANT, "Add a Matrix Determinant node\nCalculates the determinant of the given matrix, useful for determining invertibility or solving linear equations");
   define(brna, "FunctionNode", "FunctionNodeMatrixMultiply", nullptr, ICON_MULTIPLY_MATRIX, "Add a Multiply Matrices Function node\nMultiplies the matrices");
   define(brna, "FunctionNode", "FunctionNodeProjectPoint", nullptr, ICON_PROJECT_POINT, "Add a Project Point Function node\nProject a point using a matrix, using location, rotation, scale, and perspective divide");
   define(brna, "FunctionNode", "FunctionNodeQuaternionToRotation", nullptr, ICON_QUATERNION_TO_ROTATION, "Add a Quaternion to Rotation Function node\nConverts a axis angle to a rotation vector");
