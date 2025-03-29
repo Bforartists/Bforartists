@@ -1037,7 +1037,7 @@ class ASSETBROWSER_PT_metadata_tags(asset_utils.AssetMetaDataPanel, Panel):
             row.operator("asset.tag_add_shelf", icon="NODE_COMPOSITING", text="").tag_type = 'COMPOSITOR'
             row.operator("asset.tag_add_shelf", icon="GEOMETRY_NODES", text="").tag_type = 'GEOMETRY_NODES'
             if "Geometry Nodes" in context.asset.metadata.tags:
-                row.operator("asset.tag_add_shelf", icon="VIEW3D", text="").tag_type = '3D_VIEW'
+                row.operator("asset.tag_add_shelf", icon="OBJECT_DATA", text="").tag_type = '3D_VIEW'
             row.operator("asset.tag_add_shelf", icon="NODE_MATERIAL", text="").tag_type = 'SHADER'
 
         row = layout.row()
