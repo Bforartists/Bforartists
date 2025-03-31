@@ -210,10 +210,10 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         grease_pencil = context.grease_pencil
         layer = grease_pencil.layers.active
         space = context.space_data
+        is_group_active = grease_pencil.layer_groups.active is not None
 
-        if space.type == 'PROPERTIES':
-            layout.operator("grease_pencil.layer_group_add", text="Add Group", icon = "GROUP")
-
+        if is_group_active: # BFA - exposed to 3D View
+            #layout.operator("grease_pencil.layer_group_add", text="Add Group", icon = "COLLECTION_NEW") # BFA - exposed to top level
             layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
             layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
 
@@ -222,8 +222,8 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.operator("grease_pencil.layer_move_bottom", text="Move to Bottom", icon='TRIA_DOWN_BAR') # bfa - added move up/down operators
 
         layout.separator()
-        layout.operator("grease_pencil.layer_duplicate", text="Duplicate", icon='DUPLICATE').empty_keyframes = False
-        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Keyframes", icon='DUPLICATE' ).empty_keyframes = True
+        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Layer", icon='DUPLICATE').empty_keyframes = False # BFA - made more explicit
+        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Layer", icon='DUPLICATE' ).empty_keyframes = True # BFA - made more explicit
 
         layout.separator()
         layout.operator("grease_pencil.layer_reveal", icon='RESTRICT_VIEW_OFF', text="Show All")
@@ -277,14 +277,14 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         sub = col.column(align=True)
         sub.operator_context = 'EXEC_DEFAULT'
         sub.operator("grease_pencil.layer_add", icon='ADD', text="")
-        sub.operator("grease_pencil.layer_group_add", icon='COLLECTION_NEW', text="")
-
-        sub.separator()
-
         if is_layer_active:
             sub.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
         if is_group_active:
             sub.operator("grease_pencil.layer_group_remove", icon='REMOVE', text="").keep_children = True
+
+        sub.separator()
+
+        sub.operator("grease_pencil.layer_group_add", icon='COLLECTION_NEW', text="")
 
         col.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="") # BFA - moved below per standards
 
