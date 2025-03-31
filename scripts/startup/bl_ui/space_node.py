@@ -518,19 +518,23 @@ class NODE_MT_viewer(Menu):
 
         layout.separator()
 
+        layout.operator("node.viewer_shortcut_get", text="Viewer 1", icon='EVENT_NDOF_BUTTON_1').viewer_index = 1
+        layout.operator("node.viewer_shortcut_get", text="Viewer 2", icon='EVENT_NDOF_BUTTON_2').viewer_index = 2
+        layout.operator("node.viewer_shortcut_get", text="Viewer 3", icon='EVENT_NDOF_BUTTON_3').viewer_index = 3
+        layout.operator("node.viewer_shortcut_get", text="Viewer 4", icon='EVENT_NDOF_BUTTON_4').viewer_index = 4
+        layout.operator("node.viewer_shortcut_get", text="Viewer 5", icon='EVENT_NDOF_BUTTON_5').viewer_index = 5
+        layout.operator("node.viewer_shortcut_get", text="Viewer 6", icon='EVENT_NDOF_BUTTON_6').viewer_index = 6
+
+        layout.separator()
+
         layout.operator("node.viewer_shortcut_set", text="Set Viewer 1", icon='EVENT_NDOF_BUTTON_1').viewer_index = 1
         layout.operator("node.viewer_shortcut_set", text="Set Viewer 2", icon='EVENT_NDOF_BUTTON_2').viewer_index = 2
         layout.operator("node.viewer_shortcut_set", text="Set Viewer 3", icon='EVENT_NDOF_BUTTON_3').viewer_index = 3
         layout.operator("node.viewer_shortcut_set", text="Set Viewer 4", icon='EVENT_NDOF_BUTTON_4').viewer_index = 4
         layout.operator("node.viewer_shortcut_set", text="Set Viewer 5", icon='EVENT_NDOF_BUTTON_5').viewer_index = 5
+        layout.operator("node.viewer_shortcut_set", text="Set Viewer 6", icon='EVENT_NDOF_BUTTON_6').viewer_index = 6
 
-        layout.separator()
 
-        layout.operator("node.viewer_shortcut_get", text="Viewer 1", icon='EVENT_NDOF_BUTTON_2').viewer_index = 1
-        layout.operator("node.viewer_shortcut_get", text="Viewer 2", icon='EVENT_NDOF_BUTTON_3').viewer_index = 2
-        layout.operator("node.viewer_shortcut_get", text="Viewer 3", icon='EVENT_NDOF_BUTTON_4').viewer_index = 3
-        layout.operator("node.viewer_shortcut_get", text="Viewer 4", icon='EVENT_NDOF_BUTTON_5').viewer_index = 4
-        layout.operator("node.viewer_shortcut_get", text="Viewer 5", icon='EVENT_NDOF_BUTTON_6').viewer_index = 5
 
 class NODE_MT_select(Menu):
     bl_label = "Select"
