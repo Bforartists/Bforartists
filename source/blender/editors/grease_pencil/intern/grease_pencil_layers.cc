@@ -702,6 +702,22 @@ static int grease_pencil_layer_duplicate_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+
+/*bfa - descriptions*/
+static std::string GREASE_PENCIL_OT_layer_duplicate_description(struct bContext * /*C*/,
+                                                              struct wmOperatorType * /*op*/,
+                                                              struct PointerRNA *ptr)
+{
+  const bool visibility = RNA_boolean_get(ptr, "empty_keyframes");
+  if (!visibility) {
+    return BLI_strdup("Make a copy of the active Grease Pencil layer as a new layer");
+  }
+  else {
+    return BLI_strdup("Add an empty copy of the active Grease Pencil layer");
+  }
+  return NULL;
+}
+
 static void GREASE_PENCIL_OT_layer_duplicate(wmOperatorType *ot)
 {
   /* identifiers */
@@ -711,6 +727,7 @@ static void GREASE_PENCIL_OT_layer_duplicate(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = grease_pencil_layer_duplicate_exec;
+  ot->get_description = GREASE_PENCIL_OT_layer_duplicate_description; /*bfa - descriptions*/
   ot->poll = active_grease_pencil_layer_poll;
 
   /* flags */
