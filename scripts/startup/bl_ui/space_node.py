@@ -467,6 +467,17 @@ class NODE_MT_view(Menu):
 
         layout.separator()
 
+        # BFA - Expose hotkey only operator
+        if context.space_data.tree_type == 'CompositorNodeTree':
+            layout.menu("NODE_MT_viewer")
+        elif context.space_data.tree_type == 'ShaderNodeTree':
+            layout.operator("node.connect_to_output", text="Link to Output", icon='MATERIAL').run_in_geometry_nodes = False
+        else: # Geometry Nodes
+            layout.operator("node.connect_to_output", text="Link to Output", icon='GROUPOUTPUT').run_in_geometry_nodes = True
+            layout.operator("node.select_link_viewer", text="Link to Viewer", icon='RESTRICT_RENDER_OFF')
+
+        layout.separator()
+
         sub = layout.column()
         sub.operator_context = 'EXEC_REGION_WIN'
         sub.operator("view2d.zoom_in", icon = "ZOOM_IN")
@@ -493,6 +504,33 @@ class NODE_MT_view(Menu):
         layout.menu("NODE_MT_pie_menus")
         layout.menu("INFO_MT_area")
 
+# BFA - Menu
+class NODE_MT_viewer(Menu):
+    bl_label = "Viewer"
+
+    def draw(self, context):
+        layout = self.layout
+
+
+        layout.operator("node.select_link_viewer", text="Link to Viewer", icon='RESTRICT_RENDER_OFF')
+
+        layout.operator("node.viewer_shortcut_set", text="Unassign Viewer", icon='AVOID').viewer_index = 0
+
+        layout.separator()
+
+        layout.operator("node.viewer_shortcut_set", text="Set Viewer 1", icon='EVENT_NDOF_BUTTON_1').viewer_index = 1
+        layout.operator("node.viewer_shortcut_set", text="Set Viewer 2", icon='EVENT_NDOF_BUTTON_2').viewer_index = 2
+        layout.operator("node.viewer_shortcut_set", text="Set Viewer 3", icon='EVENT_NDOF_BUTTON_3').viewer_index = 3
+        layout.operator("node.viewer_shortcut_set", text="Set Viewer 4", icon='EVENT_NDOF_BUTTON_4').viewer_index = 4
+        layout.operator("node.viewer_shortcut_set", text="Set Viewer 5", icon='EVENT_NDOF_BUTTON_5').viewer_index = 5
+
+        layout.separator()
+
+        layout.operator("node.viewer_shortcut_get", text="Viewer 1", icon='EVENT_NDOF_BUTTON_2').viewer_index = 1
+        layout.operator("node.viewer_shortcut_get", text="Viewer 2", icon='EVENT_NDOF_BUTTON_3').viewer_index = 2
+        layout.operator("node.viewer_shortcut_get", text="Viewer 3", icon='EVENT_NDOF_BUTTON_4').viewer_index = 3
+        layout.operator("node.viewer_shortcut_get", text="Viewer 4", icon='EVENT_NDOF_BUTTON_5').viewer_index = 4
+        layout.operator("node.viewer_shortcut_get", text="Viewer 5", icon='EVENT_NDOF_BUTTON_6').viewer_index = 5
 
 class NODE_MT_select(Menu):
     bl_label = "Select"
@@ -1462,6 +1500,7 @@ classes = (
     NODE_MT_add,
     NODE_MT_pie_menus,
     NODE_MT_view,
+    NODE_MT_viewer, # BFA - Menu
     NODE_MT_select,
     NODE_MT_select_legacy,
     NODE_MT_node_group_separate,
