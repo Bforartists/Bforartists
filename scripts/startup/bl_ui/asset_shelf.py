@@ -35,14 +35,27 @@ class ASSETSHELF_OT_change_thumbnail_size(Operator):
     )
 
     def execute(self, context):
-        shelf = context.asset_shelf
-        shelf.preview_size = thumbnail_sizes[self.size]
+        try:
+            if not hasattr(context, 'asset_shelf'):
+                self.report({'ERROR'}, "No asset shelf in current context")
+                return {'CANCELLED'}
 
-        return {'FINISHED'}
+            shelf = context.asset_shelf
+            if shelf is None:
+                self.report({'ERROR'}, "No active asset shelf")
+                return {'CANCELLED'}
+
+            shelf.preview_size = thumbnail_sizes[self.size]
+            return {'FINISHED'}
+
+        except Exception as e:
+            self.report({'ERROR'}, f"Error changing thumbnail size: {str(e)}")
+            return {'CANCELLED'}
 
     @classmethod
     def poll(cls, context):
-        return context.asset_shelf is not None
+        return hasattr(context, 'asset_shelf') and context.asset_shelf is not None
+
 
 
 class ASSETSHELF_PT_display(Panel):
