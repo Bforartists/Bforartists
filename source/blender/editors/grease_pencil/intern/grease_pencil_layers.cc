@@ -581,6 +581,20 @@ static int grease_pencil_layer_isolate_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
+/*bfa - descriptions*/
+static std::string GREASE_PENCIL_OT_layer_isolate_description(struct bContext * /*C*/,
+                                                              struct wmOperatorType * /*op*/,
+                                                              struct PointerRNA *ptr)
+{
+  const bool visibility = RNA_boolean_get(ptr, "affect_visibility");
+  if (!visibility) {
+    return BLI_strdup("Make only active layer editable");
+  }
+  else {
+    return BLI_strdup("Make only active layer visible");
+  }
+  return NULL;
+}
 
 static void GREASE_PENCIL_OT_layer_isolate(wmOperatorType *ot)
 {
@@ -591,6 +605,7 @@ static void GREASE_PENCIL_OT_layer_isolate(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = grease_pencil_layer_isolate_exec;
+  ot->get_description = GREASE_PENCIL_OT_layer_isolate_description; /*bfa - descriptions*/
   ot->poll = active_grease_pencil_layer_poll;
 
   /* flags */
