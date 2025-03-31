@@ -888,6 +888,7 @@ if(WITH_BLENDER)
       lattice_data
       layer
       layer_active
+      layer_add
       layer_used
       lens_angle
       lens_scale
