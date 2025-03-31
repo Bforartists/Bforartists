@@ -138,7 +138,7 @@ void ED_operatormacros_node()
 
   ot = WM_operatortype_append_macro("NODE_OT_select_link_viewer",
                                     "Link Viewer",
-                                    "Link Viewer\nSelect node and link it to a viewer node",
+                                    "Select node and link it to a viewer node. \nOnly works under mouse cursor",
                                     OPTYPE_UNDO);
   mot = WM_operatortype_macro_define(ot, "NODE_OT_select");
   RNA_boolean_set(mot->ptr, "extend", false);
