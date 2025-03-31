@@ -1442,7 +1442,7 @@ class VIEW3D_MT_editor_menus(Menu):
                 "VERTEX_GREASE_PENCIL",
             }:
                 layout.menu("VIEW3D_MT_" + mode_string.lower())
-            if mode_string in {"SCULPT", "PAINT_VERTEX", "PAINT_TEXTURE"}:  # BFA
+            if mode_string in {"PAINT_VERTEX", "PAINT_TEXTURE"}:  # BFA - sculpt has brushes but no operators yet.
                 layout.menu("VIEW3D_MT_brush")  # BFA
             if mode_string == "SCULPT":
                 layout.menu("VIEW3D_MT_mask")
@@ -5261,10 +5261,6 @@ class VIEW3D_MT_brush(Menu):
 
         tex_slot = brush.texture_slot
         mask_tex_slot = brush.mask_texture_slot
-
-        # brush tool
-        if context.sculpt_object:
-            layout.operator("brush.reset", icon="BRUSH_RESET")
 
         if tex_slot.map_mode == "STENCIL":
             layout.separator()
