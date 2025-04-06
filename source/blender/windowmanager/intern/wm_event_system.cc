@@ -125,13 +125,13 @@ ENUM_OPERATORS(eHandlerActionFlag, WM_HANDLER_MODAL);
 static void wm_notifier_clear(wmNotifier *note);
 static bool wm_notifier_is_clear(const wmNotifier *note);
 
-static int wm_operator_call_internal(bContext *C,
-                                     wmOperatorType *ot,
-                                     PointerRNA *properties,
-                                     ReportList *reports,
-                                     const wmOperatorCallContext context,
-                                     const bool poll_only,
-                                     const wmEvent *event);
+static wmOperatorStatus wm_operator_call_internal(bContext *C,
+                                                  wmOperatorType *ot,
+                                                  PointerRNA *properties,
+                                                  ReportList *reports,
+                                                  const wmOperatorCallContext context,
+                                                  const bool poll_only,
+                                                  const wmEvent *event);
 
 static bool wm_operator_check_locked_interface(bContext *C, wmOperatorType *ot);
 static wmEvent *wm_event_add_mousemove_to_head(wmWindow *win);
@@ -1176,7 +1176,7 @@ void WM_operator_region_active_win_set(bContext *C)
  */
 static void wm_operator_reports(bContext *C,
                                 wmOperator *op,
-                                const int retval,
+                                const wmOperatorStatus retval,
                                 const bool caller_owns_reports)
 {
   if (G.background == 0 && caller_owns_reports == false) { /* Popup. */
@@ -1335,10 +1335,13 @@ static void wm_operator_finished(bContext *C,
 /**
  * \param repeat: When true, it doesn't register again, nor does it free.
  */
-static int wm_operator_exec(bContext *C, wmOperator *op, const bool repeat, const bool store)
+static wmOperatorStatus wm_operator_exec(bContext *C,
+                                         wmOperator *op,
+                                         const bool repeat,
+                                         const bool store)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
-  int retval = OPERATOR_CANCELLED;
+  wmOperatorStatus retval = OPERATOR_CANCELLED;
 
   CTX_wm_operator_poll_msg_clear(C);
 
@@ -1393,9 +1396,9 @@ static int wm_operator_exec(bContext *C, wmOperator *op, const bool repeat, cons
 /**
  * Simply calls exec with basic checks.
  */
-static int wm_operator_exec_notest(bContext *C, wmOperator *op)
+static wmOperatorStatus wm_operator_exec_notest(bContext *C, wmOperator *op)
 {
-  int retval = OPERATOR_CANCELLED;
+  wmOperatorStatus retval = OPERATOR_CANCELLED;
 
   if (op == nullptr || op->type == nullptr || op->type->exec == nullptr) {
     return retval;
@@ -1407,34 +1410,34 @@ static int wm_operator_exec_notest(bContext *C, wmOperator *op)
   return retval;
 }
 
-int WM_operator_call_ex(bContext *C, wmOperator *op, const bool store)
+wmOperatorStatus WM_operator_call_ex(bContext *C, wmOperator *op, const bool store)
 {
   return wm_operator_exec(C, op, false, store);
 }
 
-int WM_operator_call(bContext *C, wmOperator *op)
+wmOperatorStatus WM_operator_call(bContext *C, wmOperator *op)
 {
   return WM_operator_call_ex(C, op, false);
 }
 
-int WM_operator_call_notest(bContext *C, wmOperator *op)
+wmOperatorStatus WM_operator_call_notest(bContext *C, wmOperator *op)
 {
   return wm_operator_exec_notest(C, op);
 }
 
-int WM_operator_repeat(bContext *C, wmOperator *op)
+wmOperatorStatus WM_operator_repeat(bContext *C, wmOperator *op)
 {
   const int op_flag = OP_IS_REPEAT;
   op->flag |= op_flag;
-  const int ret = wm_operator_exec(C, op, true, true);
+  const wmOperatorStatus ret = wm_operator_exec(C, op, true, true);
   op->flag &= ~op_flag;
   return ret;
 }
-int WM_operator_repeat_last(bContext *C, wmOperator *op)
+wmOperatorStatus WM_operator_repeat_last(bContext *C, wmOperator *op)
 {
   const int op_flag = OP_IS_REPEAT_LAST;
   op->flag |= op_flag;
-  const int ret = wm_operator_exec(C, op, true, true);
+  const wmOperatorStatus ret = wm_operator_exec(C, op, true, true);
   op->flag &= ~op_flag;
   return ret;
 }
@@ -1601,20 +1604,20 @@ static void wm_region_mouse_co(bContext *C, wmEvent *event)
 /**
  * Also used for exec when 'event' is nullptr.
  */
-static int wm_operator_invoke(bContext *C,
-                              wmOperatorType *ot,
-                              const wmEvent *event,
-                              PointerRNA *properties,
-                              ReportList *reports,
-                              const bool poll_only,
-                              bool use_last_properties)
+static wmOperatorStatus wm_operator_invoke(bContext *C,
+                                           wmOperatorType *ot,
+                                           const wmEvent *event,
+                                           PointerRNA *properties,
+                                           ReportList *reports,
+                                           const bool poll_only,
+                                           bool use_last_properties)
 {
-  int retval = OPERATOR_PASS_THROUGH;
+  wmOperatorStatus retval = OPERATOR_PASS_THROUGH;
 
   /* This is done because complicated setup is done to call this function
    * that is better not duplicated. */
   if (poll_only) {
-    return WM_operator_poll(C, ot);
+    return wmOperatorStatus(WM_operator_poll(C, ot));
   }
 
   if (WM_operator_poll(C, ot)) {
@@ -1760,15 +1763,15 @@ static int wm_operator_invoke(bContext *C,
  * This is for python to access since its done the operator lookup
  * invokes operator in context.
  */
-static int wm_operator_call_internal(bContext *C,
-                                     wmOperatorType *ot,
-                                     PointerRNA *properties,
-                                     ReportList *reports,
-                                     const wmOperatorCallContext context,
-                                     const bool poll_only,
-                                     const wmEvent *event)
+static wmOperatorStatus wm_operator_call_internal(bContext *C,
+                                                  wmOperatorType *ot,
+                                                  PointerRNA *properties,
+                                                  ReportList *reports,
+                                                  const wmOperatorCallContext context,
+                                                  const bool poll_only,
+                                                  const wmEvent *event)
 {
-  int retval;
+  wmOperatorStatus retval;
 
   CTX_wm_operator_poll_msg_clear(C);
 
@@ -1789,7 +1792,7 @@ static int wm_operator_call_internal(bContext *C,
             if (poll_only) {
               CTX_wm_operator_poll_msg_set(C, "Missing 'window' in context");
             }
-            return 0;
+            return wmOperatorStatus(0);
           }
           else {
             event = window->eventstate;
@@ -1893,30 +1896,30 @@ static int wm_operator_call_internal(bContext *C,
     }
   }
 
-  return 0;
+  return wmOperatorStatus(0);
 }
 
-int WM_operator_name_call_ptr(bContext *C,
-                              wmOperatorType *ot,
-                              wmOperatorCallContext context,
-                              PointerRNA *properties,
-                              const wmEvent *event)
+wmOperatorStatus WM_operator_name_call_ptr(bContext *C,
+                                           wmOperatorType *ot,
+                                           wmOperatorCallContext context,
+                                           PointerRNA *properties,
+                                           const wmEvent *event)
 {
   BLI_assert(ot == WM_operatortype_find(ot->idname, true));
   return wm_operator_call_internal(C, ot, properties, nullptr, context, false, event);
 }
-int WM_operator_name_call(bContext *C,
-                          const char *opstring,
-                          wmOperatorCallContext context,
-                          PointerRNA *properties,
-                          const wmEvent *event)
+wmOperatorStatus WM_operator_name_call(bContext *C,
+                                       const char *opstring,
+                                       wmOperatorCallContext context,
+                                       PointerRNA *properties,
+                                       const wmEvent *event)
 {
   wmOperatorType *ot = WM_operatortype_find(opstring, false);
   if (ot) {
     return WM_operator_name_call_ptr(C, ot, context, properties, event);
   }
 
-  return 0;
+  return wmOperatorStatus(0);
 }
 
 bool WM_operator_name_poll(bContext *C, const char *opstring)
@@ -1929,11 +1932,11 @@ bool WM_operator_name_poll(bContext *C, const char *opstring)
   return WM_operator_poll(C, ot);
 }
 
-int WM_operator_name_call_with_properties(bContext *C,
-                                          const char *opstring,
-                                          wmOperatorCallContext context,
-                                          IDProperty *properties,
-                                          const wmEvent *event)
+wmOperatorStatus WM_operator_name_call_with_properties(bContext *C,
+                                                       const char *opstring,
+                                                       wmOperatorCallContext context,
+                                                       IDProperty *properties,
+                                                       const wmEvent *event)
 {
   wmOperatorType *ot = WM_operatortype_find(opstring, false);
   PointerRNA props_ptr = RNA_pointer_create_discrete(
@@ -1951,14 +1954,14 @@ void WM_menu_name_call(bContext *C, const char *menu_name, short context)
   WM_operator_properties_free(&ptr);
 }
 
-int WM_operator_call_py(bContext *C,
-                        wmOperatorType *ot,
-                        wmOperatorCallContext context,
-                        PointerRNA *properties,
-                        ReportList *reports,
-                        const bool is_undo)
+wmOperatorStatus WM_operator_call_py(bContext *C,
+                                     wmOperatorType *ot,
+                                     wmOperatorCallContext context,
+                                     PointerRNA *properties,
+                                     ReportList *reports,
+                                     const bool is_undo)
 {
-  int retval = OPERATOR_CANCELLED;
+  wmOperatorStatus retval = OPERATOR_CANCELLED;
   /* Not especially nice using undo depth here. It's used so Python never
    * triggers undo or stores an operator's last used state. */
   wmWindowManager *wm = CTX_wm_manager(C);
@@ -2043,6 +2046,9 @@ static int ui_handler_wait_for_input(bContext *C, const wmEvent *event, void *us
       if (event->val == KM_PRESS) {
         state = CANCEL;
       }
+      break;
+    }
+    default: {
       break;
     }
   }
@@ -2395,27 +2401,32 @@ BLI_INLINE bool wm_eventmatch(const wmEvent *winevent, const wmKeyMapItem *kmi)
 
   /* Account for rare case of when these keys are used as the 'type' not as modifiers. */
   if (kmi->shift != KM_ANY) {
-    const bool shift = (winevent->modifier & KM_SHIFT) != 0;
-    if ((shift != bool(kmi->shift)) && !ELEM(winevent->type, EVT_LEFTSHIFTKEY, EVT_RIGHTSHIFTKEY))
-    {
+    const int8_t shift = (winevent->modifier & KM_SHIFT) ? KM_MOD_HELD : KM_NOTHING;
+    if ((shift != kmi->shift) && !ELEM(winevent->type, EVT_LEFTSHIFTKEY, EVT_RIGHTSHIFTKEY)) {
       return false;
     }
   }
   if (kmi->ctrl != KM_ANY) {
-    const bool ctrl = (winevent->modifier & KM_CTRL) != 0;
-    if (ctrl != bool(kmi->ctrl) && !ELEM(winevent->type, EVT_LEFTCTRLKEY, EVT_RIGHTCTRLKEY)) {
+    const int8_t ctrl = (winevent->modifier & KM_CTRL) ? KM_MOD_HELD : KM_NOTHING;
+    if ((ctrl != kmi->ctrl) && !ELEM(winevent->type, EVT_LEFTCTRLKEY, EVT_RIGHTCTRLKEY)) {
       return false;
     }
   }
   if (kmi->alt != KM_ANY) {
-    const bool alt = (winevent->modifier & KM_ALT) != 0;
-    if (alt != bool(kmi->alt) && !ELEM(winevent->type, EVT_LEFTALTKEY, EVT_RIGHTALTKEY)) {
+    const int8_t alt = (winevent->modifier & KM_ALT) ? KM_MOD_HELD : KM_NOTHING;
+    if ((alt != kmi->alt) && !ELEM(winevent->type, EVT_LEFTALTKEY, EVT_RIGHTALTKEY)) {
       return false;
     }
   }
   if (kmi->oskey != KM_ANY) {
-    const bool oskey = (winevent->modifier & KM_OSKEY) != 0;
-    if ((oskey != bool(kmi->oskey)) && (winevent->type != EVT_OSKEY)) {
+    const int8_t oskey = (winevent->modifier & KM_OSKEY) ? KM_MOD_HELD : KM_NOTHING;
+    if ((oskey != kmi->oskey) && (winevent->type != EVT_OSKEY)) {
+      return false;
+    }
+  }
+  if (kmi->hyper != KM_ANY) {
+    const int8_t hyper = (winevent->modifier & KM_HYPER) ? KM_MOD_HELD : KM_NOTHING;
+    if ((hyper != kmi->hyper) && (winevent->type != EVT_HYPER)) {
       return false;
     }
   }
@@ -2449,7 +2460,7 @@ static wmKeyMapItem *wm_eventmatch_modal_keymap_items(const wmKeyMap *keymap,
 }
 
 struct wmEvent_ModalMapStore {
-  short prev_type;
+  wmEventType prev_type;
   short prev_val;
 
   bool dbl_click_disabled;
@@ -2583,7 +2594,7 @@ static eHandlerActionFlag wm_handler_operator_call(bContext *C,
                                                    PointerRNA *properties,
                                                    const char *kmi_idname)
 {
-  int retval = OPERATOR_PASS_THROUGH;
+  wmOperatorStatus retval = OPERATOR_PASS_THROUGH;
 
   /* Derived, modal or blocking operator. */
   if ((handler_base->type == WM_HANDLER_TYPE_OP) &&
@@ -2935,13 +2946,12 @@ static eHandlerActionFlag wm_handler_fileselect_do(bContext *C,
       /* Needed for #UI_popup_menu_reports. */
 
       if (val == EVT_FILESELECT_EXEC) {
-        int retval;
-
         if (handler->op->type->flag & OPTYPE_UNDO) {
           wm->op_undo_depth++;
         }
 
-        retval = handler->op->type->exec(C, handler->op);
+        const wmOperatorStatus retval = handler->op->type->exec(C, handler->op);
+        OPERATOR_RETVAL_CHECK(retval);
 
         /* XXX check this carefully, `CTX_wm_manager(C) == wm` is a bit hackish. */
         if (handler->op->type->flag & OPTYPE_UNDO && CTX_wm_manager(C) == wm) {
@@ -3492,7 +3502,7 @@ static eHandlerActionFlag wm_handlers_do_intern(bContext *C,
                   event->customdata = &single_lb;
 
                   const wmOperatorCallContext opcontext = wm_drop_operator_context_get(drop);
-                  int op_retval =
+                  const wmOperatorStatus op_retval =
                       drop->ot ? wm_operator_call_internal(
                                      C, drop->ot, drop->ptr, nullptr, opcontext, false, event) :
                                  OPERATOR_CANCELLED;
@@ -3617,9 +3627,9 @@ static eHandlerActionFlag wm_handlers_do(bContext *C, wmEvent *event, ListBase *
           /* Intentionally leave `event->xy` as-is, event users are expected to use
            * `event->prev_press_xy` if they need to access the drag start location. */
           const short prev_val = event->val;
-          const short prev_type = event->type;
-          const uint8_t prev_modifier = event->modifier;
-          const short prev_keymodifier = event->keymodifier;
+          const wmEventType prev_type = event->type;
+          const wmEventModifierFlag prev_modifier = event->modifier;
+          const wmEventType prev_keymodifier = event->keymodifier;
 
           event->val = KM_CLICK_DRAG;
           event->type = event->prev_press_type;
@@ -5069,7 +5079,7 @@ void WM_event_add_mousemove(wmWindow *win)
 /**
  * \return The WM enum for NDOF button or #EVENT_NONE (which should be ignored)
  */
-static int wm_event_type_from_ndof_button(GHOST_NDOF_ButtonT button)
+static wmEventType wm_event_type_from_ndof_button(GHOST_NDOF_ButtonT button)
 {
 #  define CASE_NDOF_BUTTON(button) \
     case GHOST_NDOF_BUTTON_##button: \
@@ -5168,19 +5178,19 @@ static int wm_event_type_from_ndof_button(GHOST_NDOF_ButtonT button)
 /**
  * \return The WM enum for key or #EVENT_NONE (which should be ignored).
  */
-static int wm_event_type_from_ghost_key(GHOST_TKey key)
+static wmEventType wm_event_type_from_ghost_key(GHOST_TKey key)
 {
   if (key >= GHOST_kKeyA && key <= GHOST_kKeyZ) {
-    return (EVT_AKEY + (int(key) - GHOST_kKeyA));
+    return wmEventType(EVT_AKEY + (int(key) - GHOST_kKeyA));
   }
   if (key >= GHOST_kKey0 && key <= GHOST_kKey9) {
-    return (EVT_ZEROKEY + (int(key) - GHOST_kKey0));
+    return wmEventType(EVT_ZEROKEY + (int(key) - GHOST_kKey0));
   }
   if (key >= GHOST_kKeyNumpad0 && key <= GHOST_kKeyNumpad9) {
-    return (EVT_PAD0 + (int(key) - GHOST_kKeyNumpad0));
+    return wmEventType(EVT_PAD0 + (int(key) - GHOST_kKeyNumpad0));
   }
   if (key >= GHOST_kKeyF1 && key <= GHOST_kKeyF24) {
-    return (EVT_F1KEY + (int(key) - GHOST_kKeyF1));
+    return wmEventType(EVT_F1KEY + (int(key) - GHOST_kKeyF1));
   }
 
   switch (key) {
@@ -5237,6 +5247,9 @@ static int wm_event_type_from_ghost_key(GHOST_TKey key)
     case GHOST_kKeyLeftOS:
     case GHOST_kKeyRightOS:
       return EVT_OSKEY;
+    case GHOST_kKeyLeftHyper:
+    case GHOST_kKeyRightHyper:
+      return EVT_HYPER;
     case GHOST_kKeyLeftAlt:
       return EVT_LEFTALTKEY;
     case GHOST_kKeyRightAlt:
@@ -5330,7 +5343,8 @@ static int wm_event_type_from_ghost_key(GHOST_TKey key)
 /**
  * \return The WM enum for button or `fallback`.
  */
-static int wm_event_type_from_ghost_button(const GHOST_TButton button, const int fallback)
+static wmEventType wm_event_type_from_ghost_button(const GHOST_TButton button,
+                                                   const wmEventType fallback)
 {
 #define CASE_BUTTON(ghost_button, type) \
   case ghost_button: \
@@ -5366,7 +5380,7 @@ static void wm_eventemulation(wmEvent *event, bool test_only)
   if (U.flag & USER_TWOBUTTONMOUSE) {
 
     if (event->type == LEFTMOUSE) {
-      const uint8_t mod_test = (
+      const wmEventModifierFlag mod_test = (
 #if !defined(WIN32)
           (U.mouse_emulate_3_button_modifier == USER_EMU_MMB_MOD_OSKEY) ? KM_OSKEY : KM_ALT
 #else
@@ -5441,6 +5455,9 @@ static void wm_eventemulation(wmEvent *event, bool test_only)
       case EVT_BACKSLASHKEY:
         event->type = EVT_PADSLASHKEY;
         break;
+      default: {
+        break;
+      }
     }
   }
 }
@@ -5637,7 +5654,6 @@ static wmEvent *wm_event_add_mousemove_to_head(wmWindow *win)
   BLI_remlink(&win->runtime->event_queue, event_new);
   BLI_addhead(&win->runtime->event_queue, event_new);
 
-  copy_v2_v2_int(event_new->prev_xy, event_last->xy);
   return event_new;
 }
 
@@ -6098,6 +6114,10 @@ void wm_event_add_ghostevent(wmWindowManager *wm,
           SET_FLAG_FROM_TEST(event.modifier, (event.val == KM_PRESS), KM_OSKEY);
           break;
         }
+        case EVT_HYPER: {
+          SET_FLAG_FROM_TEST(event.modifier, (event.val == KM_PRESS), KM_HYPER);
+          break;
+        }
         default: {
           if (event.val == KM_PRESS) {
             if (event.keymodifier == 0) {
@@ -6108,21 +6128,21 @@ void wm_event_add_ghostevent(wmWindowManager *wm,
           else {
             BLI_assert(event.val == KM_RELEASE);
             if (event.keymodifier == event.type) {
-              event.keymodifier = event_state->keymodifier = 0;
+              event.keymodifier = event_state->keymodifier = EVENT_NONE;
             }
           }
 
           /* This case happens on holding a key pressed,
            * it should not generate press events with the same key as modifier. */
           if (event.keymodifier == event.type) {
-            event.keymodifier = 0;
+            event.keymodifier = EVENT_NONE;
           }
           else if (event.keymodifier == EVT_UNKNOWNKEY) {
             /* This case happens with an external number-pad, and also when using 'dead keys'
              * (to compose complex Latin characters e.g.), it's not really clear why.
              * Since it's impossible to map a key modifier to an unknown key,
              * it shouldn't harm to clear it. */
-            event_state->keymodifier = event.keymodifier = 0;
+            event_state->keymodifier = event.keymodifier = EVENT_NONE;
           }
           break;
         }
@@ -6566,7 +6586,7 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
   const struct {
     int button_index;
     int type_index; /* 0: press or click, 1: drag. */
-    int event_type;
+    wmEventType event_type;
     int event_value;
   } event_data[] = {
       {0, 0, LEFTMOUSE, KM_PRESS},

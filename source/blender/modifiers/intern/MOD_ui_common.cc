@@ -25,6 +25,7 @@
 #include "BLT_translation.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_c.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -233,7 +234,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
     RNA_boolean_set(&op_ptr, "all_keyframes", true);
   }
   // BFA - Moved apply button to top level
-  //else {
+  // else {
   //  uiItemO(layout,
   //          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply (Active Keyframe)"),
   //          ICON_CHECKMARK,
@@ -339,7 +340,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   /* Modifier Icon. */
   sub = uiLayoutRow(layout, true);
-  uiLayoutSetEmboss(sub, UI_EMBOSS_NONE);
+  uiLayoutSetEmboss(sub, blender::ui::EmbossType::None);
   if (mti->is_disabled && mti->is_disabled(scene, md, false)) {
     uiLayoutSetRedAlert(sub, true);
   }
@@ -445,28 +446,40 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   /* bfa - modifier pin to last toggle button */
   // op_row = uiLayoutRow(layout, true);
   bool is_pinned = RNA_boolean_get(ptr, "use_pin_to_last");
-  uiItemR(op_row, ptr, "use_pin_to_last", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "",
+  uiItemR(op_row,
+          ptr,
+          "use_pin_to_last",
+          UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+          "",
           is_pinned ? ICON_PINNED : ICON_UNPINNED);
   buttons_number++;
 
   /* Extra operators menu. */
-  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);/*bfa*/
+  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md); /*bfa*/
 
   /* Delete button. */
   if (modifier_can_delete(md) && !modifier_is_simulation(md)) {
-    uiItemO(op_row, "", ICON_X, "OBJECT_OT_modifier_remove");/*bfa*/
+    uiItemO(op_row, "", ICON_X, "OBJECT_OT_modifier_remove"); /*bfa*/
     buttons_number++;
   }
 
   /* Switch context buttons. */
   if (modifier_is_simulation(md) == 1) {
-    uiItemStringO(
-        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PHYSICS");/*bfa*/
+    uiItemStringO(op_row,
+                  "",
+                  ICON_PROPERTIES,
+                  "WM_OT_properties_context_change",
+                  "context",
+                  "PHYSICS"); /*bfa*/
     buttons_number++;
   }
   else if (modifier_is_simulation(md) == 2) {
-    uiItemStringO(
-        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES");/*bfa*/
+    uiItemStringO(op_row,
+                  "",
+                  ICON_PROPERTIES,
+                  "WM_OT_properties_context_change",
+                  "context",
+                  "PARTICLES"); /*bfa*/
     buttons_number++;
   }
 

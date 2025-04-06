@@ -1604,8 +1604,8 @@ static bool weight_paint_poll_ex(bContext *C, bool check_tool)
       (BKE_paint_brush(&CTX_data_tool_settings(C)->wpaint->paint) != nullptr) &&
       (area = CTX_wm_area(C)) && (area->spacetype == SPACE_VIEW3D))
   {
-    ARegion *region = CTX_wm_region(C);
-    if (ELEM(region->regiontype, RGN_TYPE_WINDOW, RGN_TYPE_HUD)) {
+    const ARegion *region = CTX_wm_region(C);
+    if (region && ELEM(region->regiontype, RGN_TYPE_WINDOW, RGN_TYPE_HUD)) {
       if (!check_tool || WM_toolsystem_active_tool_is_brush(C)) {
         return true;
       }
@@ -1627,7 +1627,7 @@ bool weight_paint_poll_ignore_tool(bContext *C)
 /**
  * \note Keep in sync with #vpaint_mode_toggle_exec
  */
-static int wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
 {
   Main &bmain = *CTX_data_main(C);
   wmMsgBus *mbus = CTX_wm_message_bus(C);
@@ -1759,10 +1759,8 @@ static void wpaint_do_symmetrical_brush_actions(
     return;
   }
 
-  /* symm is a bit combination of XYZ - 1 is mirror
-   * X; 2 is Y; 3 is XY; 4 is Z; 5 is XZ; 6 is YZ; 7 is XYZ */
   for (i = 1; i <= symm; i++) {
-    if (symm & i && (symm != 5 || i != 3) && (symm != 6 || !ELEM(i, 3, 5))) {
+    if (is_symmetry_iteration_valid(i, symm)) {
       const ePaintSymmetryFlags symm = ePaintSymmetryFlags(i);
       cache.mirror_symmetry_pass = symm;
       cache.radial_symmetry_pass = 0;
@@ -1871,18 +1869,6 @@ static void wpaint_stroke_update_step(bContext *C,
 
   rcti r;
   if (SCULPT_get_redraw_rect(*vc->region, *CTX_wm_region_view3d(C), *ob, r)) {
-    if (ss.cache) {
-      ss.cache->current_r = r;
-    }
-
-    /* previous is not set in the current cache else
-     * the partial rect will always grow */
-    if (ss.cache) {
-      if (!BLI_rcti_is_empty(&ss.cache->previous_r)) {
-        BLI_rcti_union(&r, &ss.cache->previous_r);
-      }
-    }
-
     r.xmin += vc->region->winrct.xmin - 2;
     r.xmax += vc->region->winrct.xmin + 2;
     r.ymin += vc->region->winrct.ymin - 2;
@@ -1922,10 +1908,8 @@ static void wpaint_stroke_done(const bContext *C, PaintStroke * /*stroke*/)
   ob.sculpt->cache = nullptr;
 }
 
-static int wpaint_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus wpaint_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  int retval;
-
   op->customdata = paint_stroke_new(C,
                                     op,
                                     SCULPT_stroke_get_location,
@@ -1935,19 +1919,21 @@ static int wpaint_invoke(bContext *C, wmOperator *op, const wmEvent *event)
                                     wpaint_stroke_done,
                                     event->type);
 
-  if ((retval = op->type->modal(C, op, event)) == OPERATOR_FINISHED) {
+  const wmOperatorStatus retval = op->type->modal(C, op, event);
+  OPERATOR_RETVAL_CHECK(retval);
+
+  if (retval == OPERATOR_FINISHED) {
     paint_stroke_free(C, op, (PaintStroke *)op->customdata);
     return OPERATOR_FINISHED;
   }
   WM_event_add_modal_handler(C, op);
 
-  OPERATOR_RETVAL_CHECK(retval);
   BLI_assert(retval == OPERATOR_RUNNING_MODAL);
 
   return OPERATOR_RUNNING_MODAL;
 }
 
-static int wpaint_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus wpaint_exec(bContext *C, wmOperator *op)
 {
   op->customdata = paint_stroke_new(C,
                                     op,
@@ -1972,7 +1958,7 @@ static void wpaint_cancel(bContext *C, wmOperator *op)
   paint_stroke_cancel(C, op, (PaintStroke *)op->customdata);
 }
 
-static int wpaint_modal(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus wpaint_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
   return paint_stroke_modal(C, op, event, (PaintStroke **)&op->customdata);
 }

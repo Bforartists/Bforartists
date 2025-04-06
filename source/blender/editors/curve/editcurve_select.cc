@@ -487,7 +487,7 @@ static void selectend_nurb(Object *obedit, eEndPoint_Types selfirst, bool doswap
   }
 }
 
-static int de_select_first_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus de_select_first_exec(bContext *C, wmOperator * /*op*/)
 {
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -518,7 +518,7 @@ void CURVE_OT_de_select_first(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-static int de_select_last_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus de_select_last_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -556,7 +556,7 @@ void CURVE_OT_de_select_last(wmOperatorType *ot)
 /** \name Select All Operator
  * \{ */
 
-static int de_select_all_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus de_select_all_exec(bContext *C, wmOperator *op)
 {
   int action = RNA_enum_get(op->ptr, "action");
 
@@ -649,7 +649,7 @@ void CURVE_OT_select_all(wmOperatorType *ot)
 /** \name Select Linked Operator
  * \{ */
 
-static int select_linked_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_linked_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -678,7 +678,9 @@ static int select_linked_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-static int select_linked_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+static wmOperatorStatus select_linked_invoke(bContext *C,
+                                             wmOperator *op,
+                                             const wmEvent * /*event*/)
 {
   return select_linked_exec(C, op);
 }
@@ -707,7 +709,9 @@ void CURVE_OT_select_linked(wmOperatorType *ot)
 /** \name Select Linked Pick Operator
  * \{ */
 
-static int select_linked_pick_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus select_linked_pick_invoke(bContext *C,
+                                                  wmOperator *op,
+                                                  const wmEvent *event)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Nurb *nu;
@@ -782,7 +786,7 @@ void CURVE_OT_select_linked_pick(wmOperatorType *ot)
 /** \name Select Row Operator
  * \{ */
 
-static int select_row_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_row_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *obedit = CTX_data_edit_object(C);
   Curve *cu = static_cast<Curve *>(obedit->data);
@@ -850,7 +854,7 @@ void CURVE_OT_select_row(wmOperatorType *ot)
 /** \name Select Next Operator
  * \{ */
 
-static int select_next_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_next_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -889,7 +893,7 @@ void CURVE_OT_select_next(wmOperatorType *ot)
 /** \name Select Previous Operator
  * \{ */
 
-static int select_previous_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_previous_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -1003,7 +1007,7 @@ static void curve_select_more(Object *obedit)
   }
 }
 
-static int curve_select_more_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus curve_select_more_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -1220,7 +1224,7 @@ static void curve_select_less(Object *obedit)
   }
 }
 
-static int curve_select_less_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus curve_select_less_exec(bContext *C, wmOperator * /*op*/)
 {
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -1255,7 +1259,7 @@ void CURVE_OT_select_less(wmOperatorType *ot)
 /** \name Select Random Operator
  * \{ */
 
-static int curve_select_random_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus curve_select_random_exec(bContext *C, wmOperator *op)
 {
   const bool select = (RNA_enum_get(op->ptr, "action") == SEL_SELECT);
   const float randfac = RNA_float_get(op->ptr, "ratio");
@@ -1438,7 +1442,7 @@ static bool ed_curve_select_nth(Curve *cu, const CheckerIntervalParams *params)
   return true;
 }
 
-static int select_nth_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_nth_exec(bContext *C, wmOperator *op)
 {
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -1729,7 +1733,7 @@ static bool curve_nurb_select_similar_type(Object *ob,
   return changed;
 }
 
-static int curve_select_similar_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus curve_select_similar_exec(bContext *C, wmOperator *op)
 {
   /* Get props. */
   const int optype = RNA_enum_get(op->ptr, "type");
@@ -2016,7 +2020,9 @@ static void curve_select_shortest_path_surf(Nurb *nu, int vert_src, int vert_dst
   MEM_freeN(data);
 }
 
-static int edcu_shortest_path_pick_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus edcu_shortest_path_pick_invoke(bContext *C,
+                                                       wmOperator *op,
+                                                       const wmEvent *event)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Nurb *nu_dst;
