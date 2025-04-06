@@ -305,7 +305,7 @@ IDProperty *RNA_struct_idprops(PointerRNA *ptr, bool create)
   return *property_ptr;
 }
 
-bool RNA_struct_idprops_check(StructRNA *srna)
+bool RNA_struct_idprops_check(const StructRNA *srna)
 {
   return (srna && srna->idproperties);
 }
@@ -1217,6 +1217,10 @@ bool RNA_property_builtin(PropertyRNA *prop)
 
 void *RNA_property_py_data_get(PropertyRNA *prop)
 {
+  /* This is only called in isolated situations (mainly by the Python API),
+   * so skip check for ID properties. Callers must use #RNA_property_is_idprop
+   * when it's not known if the property might be an ID Property. */
+  BLI_assert(prop->magic == RNA_MAGIC);
   return prop->py_data;
 }
 
@@ -1241,13 +1245,13 @@ int RNA_property_array_dimension(const PointerRNA *ptr, PropertyRNA *prop, int l
   return rprop->arraydimension;
 }
 
-int RNA_property_multi_array_length(PointerRNA *ptr, PropertyRNA *prop, int dim)
+int RNA_property_multi_array_length(PointerRNA *ptr, PropertyRNA *prop, int dimension)
 {
   int len[RNA_MAX_ARRAY_DIMENSION];
 
   rna_ensure_property_multi_array_length(ptr, prop, len);
 
-  return len[dim];
+  return len[dimension];
 }
 
 char RNA_property_array_item_char(PropertyRNA *prop, int index)

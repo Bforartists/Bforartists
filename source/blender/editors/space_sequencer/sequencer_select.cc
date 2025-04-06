@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "DNA_windowmanager_enums.h"
 #include "MEM_guardedalloc.h"
 
 #include "BLI_ghash.h"
@@ -387,10 +388,7 @@ bool strip_point_image_isect(const Scene *scene, const Strip *strip, float point
                              strip_image_quad[3]);
 }
 
-/*static void sequencer_select_do_updates(bContext *C, Scene *scene)*/ /*BFA - warning, 'scene':
-                                                                          unreferenced formal
-                                                                          parameter*/
-static void sequencer_select_do_updates(bContext *C, Scene *)
+void sequencer_select_do_updates(const bContext *C, Scene * /*scene*/)
 {
   ED_outliner_select_sync_from_sequence_tag(C);
   WM_event_add_notifier(C,
@@ -404,7 +402,7 @@ static void sequencer_select_do_updates(bContext *C, Scene *)
 /** \name (De)select All Operator
  * \{ */
 
-static int sequencer_de_select_all_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_de_select_all_exec(bContext *C, wmOperator *op)
 {
   int action = RNA_enum_get(op->ptr, "action");
   /*Scene *scene = CTX_data_scene(C);*/ /*BFA - warning, 'scene': local variable is initialized but
@@ -502,7 +500,7 @@ void SEQUENCER_OT_select_all(wmOperatorType *ot)
 /** \name Select Inverse Operator
  * \{ */
 
-static int sequencer_select_inverse_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus sequencer_select_inverse_exec(bContext *C, wmOperator * /*op*/)
 {
   /*Scene *scene = CTX_data_scene(C);*/ /*BFA - warning, 'scene': local variable is initialized but
                                            not referenced*/
@@ -1141,7 +1139,7 @@ StripSelection pick_strip_and_handle(const Scene *scene, const View2D *v2d, floa
   return selection;
 }
 
-int sequencer_select_exec(bContext *C, wmOperator *op)
+wmOperatorStatus sequencer_select_exec(bContext *C, wmOperator *op)
 {
   const View2D *v2d = UI_view2d_fromcontext(C);
   Scene *scene = CTX_data_scene(C);
@@ -1183,6 +1181,7 @@ int sequencer_select_exec(bContext *C, wmOperator *op)
   if (key != nullptr) {
     if (!was_retiming) {
       deselect_all_strips(scene);
+      sequencer_select_do_updates(C, scene);
     }
     /* Attempt to realize any other connected strips' fake keys. */
     if (seq::is_strip_connected(strip_key_owner)) {
@@ -1305,9 +1304,9 @@ int sequencer_select_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int sequencer_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus sequencer_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  const int retval = WM_generic_select_invoke(C, op, event);
+  const wmOperatorStatus retval = WM_generic_select_invoke(C, op, event);
   ARegion *region = CTX_wm_region(C);
   if (region && (region->regiontype == RGN_TYPE_PREVIEW)) {
     return WM_operator_flag_only_pass_through_on_press(retval, event);
@@ -1402,7 +1401,7 @@ void SEQUENCER_OT_select(wmOperatorType *ot)
 /** \name Select Handle Operator
  * \{ */
 
-static int sequencer_select_handle_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_select_handle_exec(bContext *C, wmOperator *op)
 {
   /* This operator is only used in the RCS keymap by default and is not exposed in any menus. */
   const View2D *v2d = UI_view2d_fromcontext(C);
@@ -1459,7 +1458,9 @@ static int sequencer_select_handle_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED | OPERATOR_PASS_THROUGH;
 }
 
-static int sequencer_select_handle_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus sequencer_select_handle_invoke(bContext *C,
+                                                       wmOperator *op,
+                                                       const wmEvent *event)
 {
   ARegion *region = CTX_wm_region(C);
 
@@ -1587,7 +1588,7 @@ static bool select_more_less_seq__internal(Scene *scene, bool select_more)
   return changed;
 }
 
-static int sequencer_select_more_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus sequencer_select_more_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
 
@@ -1624,7 +1625,7 @@ void SEQUENCER_OT_select_more(wmOperatorType *ot)
 /** \name Select Less Operator
  * \{ */
 
-static int sequencer_select_less_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus sequencer_select_less_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
 
@@ -1661,7 +1662,9 @@ void SEQUENCER_OT_select_less(wmOperatorType *ot)
 /** \name Select Pick Linked Operator
  * \{ */
 
-static int sequencer_select_linked_pick_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus sequencer_select_linked_pick_invoke(bContext *C,
+                                                            wmOperator *op,
+                                                            const wmEvent *event)
 {
   Scene *scene = CTX_data_scene(C);
   const View2D *v2d = UI_view2d_fromcontext(C);
@@ -1723,7 +1726,7 @@ void SEQUENCER_OT_select_linked_pick(wmOperatorType *ot)
 /** \name Select Linked Operator
  * \{ */
 
-static int sequencer_select_linked_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus sequencer_select_linked_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   bool selected;
@@ -1781,7 +1784,7 @@ static const EnumPropertyItem prop_select_handles_side_types[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static int sequencer_select_handles_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_select_handles_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = seq::editing_get(scene);
@@ -1879,7 +1882,7 @@ void SEQUENCER_OT_select_handles(wmOperatorType *ot)
 /** \name Select Side of Frame Operator
  * \{ */
 
-static int sequencer_select_side_of_frame_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_select_side_of_frame_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = seq::editing_get(scene);
@@ -1959,7 +1962,7 @@ void SEQUENCER_OT_select_side_of_frame(wmOperatorType *ot)
 /** \name Select Side Operator
  * \{ */
 
-static int sequencer_select_side_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_select_side_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = seq::editing_get(scene);
@@ -2082,7 +2085,7 @@ static void seq_box_select_seq_from_preview(const bContext *C,
   }
 }
 
-static int sequencer_box_select_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_box_select_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   View2D *v2d = UI_view2d_fromcontext(C);
@@ -2187,7 +2190,9 @@ static int sequencer_box_select_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int sequencer_box_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus sequencer_box_select_invoke(bContext *C,
+                                                    wmOperator *op,
+                                                    const wmEvent *event)
 {
   Scene *scene = CTX_data_scene(C);
   const View2D *v2d = UI_view2d_fromcontext(C);
@@ -2534,7 +2539,7 @@ static bool select_grouped_effect_link(const Scene *scene,
 #undef STRIP_IS_EFFECT
 #undef STRIP_USE_DATA
 
-static int sequencer_select_grouped_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_select_grouped_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   ListBase *seqbase = seq::active_seqbase_get(seq::editing_get(scene));

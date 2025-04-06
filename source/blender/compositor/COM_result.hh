@@ -34,19 +34,14 @@ class DerivedResources;
 
 /* Make sure to update the format related static methods in the Result class. */
 enum class ResultType : uint8_t {
-  /* The following types are user facing and can be used as inputs and outputs of operations. They
-   * either represent the base type of the result's image or a single value result. */
   Float,
-  Int,
-  Color,
+  Float2,
   Float3,
   Float4,
-
-  /* The following types are for internal use only, not user facing, and can't be used as inputs
-   * and outputs of operations. It follows that they needn't be handled in implicit operations like
-   * type conversion, shader, or single value reduction operations. */
-  Float2,
+  Int,
   Int2,
+  Color,
+  Bool,
 };
 
 /* The precision of the data. CPU data is always stored using full precision at the moment. */
@@ -135,7 +130,7 @@ class Result {
    * which will be identical to that stored in the data_ member. The active variant member depends
    * on the type of the result. This member is uninitialized and should not be used if the result
    * is not a single value. */
-  std::variant<float, float2, float3, float4, int32_t, int2> single_value_ = 0.0f;
+  std::variant<float, float2, float3, float4, int32_t, int2, bool> single_value_ = 0.0f;
   /* The domain of the result. This only matters if the result was not a single value. See the
    * discussion in COM_domain.hh for more information. */
   Domain domain_ = Domain::identity();
@@ -342,6 +337,8 @@ class Result {
   GSpan cpu_data() const;
   GMutableSpan cpu_data();
 
+  /* It is important to call update_single_value_data after adjusting the single value. See that
+   * method for more information. */
   GPointer single_value() const;
   GMutablePointer single_value();
 
@@ -358,6 +355,12 @@ class Result {
    * pixel in the image to that value. See the class description for more information. Assumes
    * the result stores a value of the given template type. */
   template<typename T> void set_single_value(const T &value);
+
+  /* Updates the single pixel in the image to the current single value in the result. This is
+   * called implicitly in the set_single_value method, but calling this explicitly is useful when
+   * the single value was adjusted through its data pointer returned by the single_value method.
+   * See the class description for more information. */
+  void update_single_value_data();
 
   /* Loads the pixel at the given texel coordinates. Assumes the result stores a value of the given
    * template type. If the CouldBeSingleValue template argument is true and the result is a single
@@ -447,6 +450,7 @@ BLI_INLINE_METHOD int64_t Result::channels_count() const
   switch (type_) {
     case ResultType::Float:
     case ResultType::Int:
+    case ResultType::Bool:
       return 1;
     case ResultType::Float2:
     case ResultType::Int2:
@@ -500,38 +504,7 @@ template<typename T> BLI_INLINE_METHOD void Result::set_single_value(const T &va
   BLI_assert(this->is_single_value());
 
   single_value_ = value;
-
-  switch (storage_type_) {
-    case ResultStorageType::GPU:
-      if constexpr (is_same_any_v<T, int32_t, int2>) {
-        if constexpr (std::is_scalar_v<T>) {
-          GPU_texture_update(this->gpu_texture(), GPU_DATA_INT, &value);
-        }
-        else {
-          GPU_texture_update(this->gpu_texture(), GPU_DATA_INT, value);
-        }
-      }
-      else {
-        if constexpr (std::is_scalar_v<T>) {
-          GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, &value);
-        }
-        else {
-          if constexpr (std::is_same_v<T, float3>) {
-            /* Float3 results are stored in 4-component textures due to hardware limitations. So
-             * pad the value with a zero before updating. */
-            const float4 vector_value = float4(value, 0.0f);
-            GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, vector_value);
-          }
-          else {
-            GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, value);
-          }
-        }
-      }
-      break;
-    case ResultStorageType::CPU:
-      this->cpu_data().typed<T>()[0] = value;
-      break;
-  }
+  this->update_single_value_data();
 }
 
 template<typename T, bool CouldBeSingleValue>

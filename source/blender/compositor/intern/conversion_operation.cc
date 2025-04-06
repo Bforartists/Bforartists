@@ -12,6 +12,8 @@
 
 #include "GPU_shader.hh"
 
+#include "IMB_colormanagement.hh"
+
 #include "BKE_type_conversions.hh"
 
 #include "COM_context.hh"
@@ -19,7 +21,6 @@
 #include "COM_input_descriptor.hh"
 #include "COM_result.hh"
 #include "COM_utilities.hh"
-#include "COM_utilities_type_conversion.hh"
 
 namespace blender::compositor {
 
@@ -52,7 +53,7 @@ void ConversionOperation::execute()
     GPU_shader_bind(shader);
 
     if (this->get_input().type() == ResultType::Color &&
-        ELEM(this->get_result().type(), ResultType::Float, ResultType::Int))
+        ELEM(this->get_result().type(), ResultType::Float, ResultType::Int, ResultType::Bool))
     {
       float luminance_coefficients[3];
       IMB_colormanagement_get_luminance_coefficients(luminance_coefficients);

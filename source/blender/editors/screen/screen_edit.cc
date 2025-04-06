@@ -1044,9 +1044,9 @@ static void screen_cursor_set(wmWindow *win, const int xy[2])
 
   LISTBASE_FOREACH (ScrArea *, area_iter, &screen->areabase) {
     az = ED_area_actionzone_find_xy(area_iter, xy);
-    /* Scrollers use default cursor and their zones extend outside of their
-     * areas. Ignore here so we can always detect screen edges - #110085. */
-    if (az && az->type != AZONE_REGION_SCROLL) {
+    /* We used to exclude AZONE_REGION_SCROLL as those used
+     * to overlap screen edges, but they no longer do so. */
+    if (az) {
       area = area_iter;
       break;
     }
@@ -1055,6 +1055,9 @@ static void screen_cursor_set(wmWindow *win, const int xy[2])
   if (area) {
     if (az->type == AZONE_AREA) {
       WM_cursor_set(win, WM_CURSOR_EDIT);
+    }
+    else if (az->type == AZONE_REGION_SCROLL) {
+      WM_cursor_set(win, WM_CURSOR_DEFAULT);
     }
     else if (az->type == AZONE_REGION) {
       if (ELEM(az->edge, AE_LEFT_TO_TOPRIGHT, AE_RIGHT_TO_TOPLEFT)) {

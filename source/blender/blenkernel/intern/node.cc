@@ -218,8 +218,8 @@ static void ntree_copy_data(Main * /*bmain*/,
   }
 
   if (ntree_src->nested_node_refs) {
-    ntree_dst->nested_node_refs = static_cast<bNestedNodeRef *>(
-        MEM_malloc_arrayN(ntree_src->nested_node_refs_num, sizeof(bNestedNodeRef), __func__));
+    ntree_dst->nested_node_refs = MEM_malloc_arrayN<bNestedNodeRef>(
+        size_t(ntree_src->nested_node_refs_num), __func__);
     uninitialized_copy_n(
         ntree_src->nested_node_refs, ntree_src->nested_node_refs_num, ntree_dst->nested_node_refs);
   }
@@ -404,11 +404,15 @@ static void node_foreach_path(ID *id, BPathForeachPathData *bpath_data)
       for (bNode *node : ntree->all_nodes()) {
         if (node->type_legacy == SH_NODE_SCRIPT) {
           NodeShaderScript *nss = static_cast<NodeShaderScript *>(node->storage);
-          BKE_bpath_foreach_path_fixed_process(bpath_data, nss->filepath, sizeof(nss->filepath));
+          if (nss->mode == NODE_SCRIPT_EXTERNAL && nss->filepath[0]) {
+            BKE_bpath_foreach_path_fixed_process(bpath_data, nss->filepath, sizeof(nss->filepath));
+          }
         }
         else if (node->type_legacy == SH_NODE_TEX_IES) {
           NodeShaderTexIES *ies = static_cast<NodeShaderTexIES *>(node->storage);
-          BKE_bpath_foreach_path_fixed_process(bpath_data, ies->filepath, sizeof(ies->filepath));
+          if (ies->mode == NODE_IES_EXTERNAL && ies->filepath[0]) {
+            BKE_bpath_foreach_path_fixed_process(bpath_data, ies->filepath, sizeof(ies->filepath));
+          }
         }
       }
       break;
@@ -761,7 +765,7 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree)
         writer, bNodePanelState, node->num_panel_states, node->panel_states_array);
 
     if (node->storage) {
-      if (ELEM(ntree->type, NTREE_SHADER, NTREE_GEOMETRY) &&
+      if (ELEM(ntree->type, NTREE_SHADER, NTREE_GEOMETRY, NTREE_COMPOSIT) &&
           ELEM(node->type_legacy, SH_NODE_CURVE_VEC, SH_NODE_CURVE_RGB, SH_NODE_CURVE_FLOAT))
       {
         BKE_curvemapping_blend_write(writer, static_cast<const CurveMapping *>(node->storage));
@@ -1781,28 +1785,6 @@ void node_register_alias(bNodeType &nt, const StringRef alias)
   get_node_type_alias_map().add_new(alias, nt.idname);
 }
 
-bool node_type_is_undefined(const bNode &node)
-{
-  if (node.typeinfo == &NodeTypeUndefined) {
-    return true;
-  }
-
-  if (node.is_group()) {
-    const ID *group_tree = node.id;
-    if (group_tree == nullptr) {
-      return false;
-    }
-    if (!ID_IS_LINKED(group_tree)) {
-      return false;
-    }
-    if ((group_tree->tag & ID_TAG_MISSING) == 0) {
-      return false;
-    }
-    return true;
-  }
-  return false;
-}
-
 Span<bNodeSocketType *> node_socket_types_get()
 {
   return get_socket_type_map().as_span();
@@ -2743,7 +2725,7 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
                               const bool use_unique,
                               Map<const bNodeSocket *, bNodeSocket *> &socket_map)
 {
-  bNode *node_dst = static_cast<bNode *>(MEM_mallocN(sizeof(bNode), __func__));
+  bNode *node_dst = MEM_mallocN<bNode>(__func__);
   *node_dst = node_src;
 
   node_dst->runtime = MEM_new<bNodeRuntime>(__func__);
@@ -4024,22 +4006,25 @@ static Set<int> get_known_node_types_set()
   return result;
 }
 
-static bool can_read_node_type(const int type)
+static bool can_read_node_type(const bNode &node)
 {
   /* Can always read custom node types. */
-  if (ELEM(type, NODE_CUSTOM, NODE_CUSTOM_GROUP)) {
+  if (ELEM(node.type_legacy, NODE_CUSTOM, NODE_CUSTOM_GROUP)) {
     return true;
   }
-
-  /* Check known built-in types. */
-  static Set<int> known_types = get_known_node_types_set();
-  return known_types.contains(type);
+  if (node.type_legacy < NODE_LEGACY_TYPE_GENERATION_START) {
+    /* Check known built-in types. */
+    static Set<int> known_types = get_known_node_types_set();
+    return known_types.contains(node.type_legacy);
+  }
+  /* Nodes with larger legacy_type are only identified by their idname. */
+  return node_type_find(node.idname) != nullptr;
 }
 
 static void node_replace_undefined_types(bNode *node)
 {
-  /* If the integer type is unknown then this node cannot be read. */
-  if (!can_read_node_type(node->type_legacy)) {
+  /* If the node type is built-in but unknown, the node cannot be read. */
+  if (!can_read_node_type(*node)) {
     node->type_legacy = NODE_CUSTOM;
     /* This type name is arbitrary, it just has to be unique enough to not match a future node
      * idname. Includes the old type identifier for debugging purposes. */
