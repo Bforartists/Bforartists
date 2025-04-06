@@ -351,10 +351,14 @@ std::optional<int> PointCloud::material_index_max() const
   if (this->totpoint == 0) {
     return std::nullopt;
   }
-  return blender::bounds::max<int>(
+  std::optional<int> max_material_index = blender::bounds::max<int>(
       this->attributes()
           .lookup_or_default<int>("material_index", blender::bke::AttrDomain::Point, 0)
           .varray);
+  if (max_material_index.has_value()) {
+    max_material_index = std::clamp(*max_material_index, 0, MAXMAT);
+  }
+  return max_material_index;
 }
 
 void PointCloud::count_memory(blender::MemoryCounter &memory) const
@@ -384,7 +388,7 @@ void pointcloud_copy_parameters(const PointCloud &src, PointCloud &dst)
 {
   dst.flag = src.flag;
   MEM_SAFE_FREE(dst.mat);
-  dst.mat = static_cast<Material **>(MEM_malloc_arrayN(src.totcol, sizeof(Material *), __func__));
+  dst.mat = MEM_malloc_arrayN<Material *>(size_t(src.totcol), __func__);
   dst.totcol = src.totcol;
   MutableSpan(dst.mat, dst.totcol).copy_from(Span(src.mat, src.totcol));
 }

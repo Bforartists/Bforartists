@@ -1773,7 +1773,7 @@ static bool select_action_apply(PTCacheEditPoint *point, PTCacheEditKey *key, in
   return changed;
 }
 
-static int pe_select_all_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus pe_select_all_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
@@ -1992,7 +1992,7 @@ static void select_root(PEData *data, int point_index)
   }
 }
 
-static int select_roots_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_roots_exec(bContext *C, wmOperator *op)
 {
   PEData data;
   int action = RNA_enum_get(op->ptr, "action");
@@ -2065,7 +2065,7 @@ static void select_tip(PEData *data, int point_index)
   }
 }
 
-static int select_tips_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_tips_exec(bContext *C, wmOperator *op)
 {
   PEData data;
   int action = RNA_enum_get(op->ptr, "action");
@@ -2125,7 +2125,7 @@ static const EnumPropertyItem select_random_type_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static int select_random_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_random_exec(bContext *C, wmOperator *op)
 {
   PEData data;
   int type;
@@ -2208,7 +2208,7 @@ void PARTICLE_OT_select_random(wmOperatorType *ot)
 /** \name Select Linked operator
  * \{ */
 
-static int select_linked_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_linked_exec(bContext *C, wmOperator * /*op*/)
 {
   PEData data;
   PE_set_data(C, &data);
@@ -2239,7 +2239,7 @@ void PARTICLE_OT_select_linked(wmOperatorType *ot)
   /* properties */
 }
 
-static int select_linked_pick_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_linked_pick_exec(bContext *C, wmOperator *op)
 {
   PEData data;
   int mval[2];
@@ -2262,7 +2262,9 @@ static int select_linked_pick_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int select_linked_pick_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus select_linked_pick_invoke(bContext *C,
+                                                  wmOperator *op,
+                                                  const wmEvent *event)
 {
   RNA_int_set_array(op->ptr, "location", event->mval);
   return select_linked_pick_exec(C, op);
@@ -2525,7 +2527,7 @@ int PE_lasso_select(bContext *C, const int mcoords[][2], const int mcoords_len, 
 /** \name Hide Operator
  * \{ */
 
-static int hide_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus hide_exec(bContext *C, wmOperator *op)
 {
   Object *ob = CTX_data_active_object(C);
   Scene *scene = CTX_data_scene(C);
@@ -2599,7 +2601,7 @@ void PARTICLE_OT_hide(wmOperatorType *ot)
 /** \name Reveal Operator
  * \{ */
 
-static int reveal_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus reveal_exec(bContext *C, wmOperator *op)
 {
   Object *ob = CTX_data_active_object(C);
   Scene *scene = CTX_data_scene(C);
@@ -2683,7 +2685,7 @@ static void select_less_keys(PEData *data, int point_index)
   }
 }
 
-static int select_less_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_less_exec(bContext *C, wmOperator * /*op*/)
 {
   PEData data;
 
@@ -2755,7 +2757,7 @@ static void select_more_keys(PEData *data, int point_index)
   }
 }
 
-static int select_more_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_more_exec(bContext *C, wmOperator * /*op*/)
 {
   PEData data;
 
@@ -2830,9 +2832,7 @@ static void rekey_particle(PEData *data, int pa_index)
   }
 
   /* replace keys */
-  if (pa->hair) {
-    MEM_freeN(pa->hair);
-  }
+  MEM_freeN(pa->hair);
   pa->hair = new_keys;
 
   point->totkey = pa->totkey = data->totrekey;
@@ -2856,7 +2856,7 @@ static void rekey_particle(PEData *data, int pa_index)
   point->flag |= PEP_EDIT_RECALC;
 }
 
-static int rekey_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus rekey_exec(bContext *C, wmOperator *op)
 {
   PEData data;
 
@@ -3215,9 +3215,7 @@ static void subdivide_particle(PEData *data, int pa_index)
   nekey->co = nkey->co;
   nekey->time = &nkey->time;
 
-  if (pa->hair) {
-    MEM_freeN(pa->hair);
-  }
+  MEM_freeN(pa->hair);
   pa->hair = new_keys;
 
   if (point->keys) {
@@ -3230,7 +3228,7 @@ static void subdivide_particle(PEData *data, int pa_index)
   pa->flag &= ~PARS_REKEY;
 }
 
-static int subdivide_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus subdivide_exec(bContext *C, wmOperator * /*op*/)
 {
   PEData data;
 
@@ -3267,7 +3265,7 @@ void PARTICLE_OT_subdivide(wmOperatorType *ot)
 /** \name Remove Doubles Operator
  * \{ */
 
-static int remove_doubles_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus remove_doubles_exec(bContext *C, wmOperator *op)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
@@ -3370,7 +3368,7 @@ void PARTICLE_OT_remove_doubles(wmOperatorType *ot)
                 0.1f);
 }
 
-static int weight_set_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus weight_set_exec(bContext *C, wmOperator *op)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
@@ -3506,7 +3504,7 @@ static void set_delete_particle_key(PEData *data, int pa_index, int key_index, b
   edit->points[pa_index].keys[key_index].flag |= PEK_TAG;
 }
 
-static int delete_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus delete_exec(bContext *C, wmOperator *op)
 {
   PEData data;
   int type = RNA_enum_get(op->ptr, "type");
@@ -3725,7 +3723,7 @@ static void PE_mirror_x(Depsgraph *depsgraph, Scene *scene, Object *ob, int tagg
   MEM_freeN(mirrorfaces);
 }
 
-static int mirror_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus mirror_exec(bContext *C, wmOperator * /*op*/)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
@@ -5027,7 +5025,7 @@ static void brush_edit_exit(wmOperator *op)
   MEM_freeN(bedit);
 }
 
-static int brush_edit_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus brush_edit_exec(bContext *C, wmOperator *op)
 {
   if (!brush_edit_init(C, op)) {
     return OPERATOR_CANCELLED;
@@ -5059,7 +5057,7 @@ static void brush_edit_apply_event(bContext *C, wmOperator *op, const wmEvent *e
   brush_edit_apply(C, op, &itemptr);
 }
 
-static int brush_edit_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus brush_edit_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   if (!brush_edit_init(C, op)) {
     return OPERATOR_CANCELLED;
@@ -5074,7 +5072,7 @@ static int brush_edit_invoke(bContext *C, wmOperator *op, const wmEvent *event)
   return OPERATOR_RUNNING_MODAL;
 }
 
-static int brush_edit_modal(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus brush_edit_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
   switch (event->type) {
     case LEFTMOUSE:
@@ -5088,6 +5086,9 @@ static int brush_edit_modal(bContext *C, wmOperator *op, const wmEvent *event)
     case MOUSEMOVE:
       brush_edit_apply_event(C, op, event);
       break;
+    default: {
+      break;
+    }
   }
 
   return OPERATOR_RUNNING_MODAL;
@@ -5257,7 +5258,7 @@ static void shape_cut(PEData *data, int pa_index)
   }
 }
 
-static int shape_cut_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus shape_cut_exec(bContext *C, wmOperator * /*op*/)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene = CTX_data_scene(C);
@@ -5565,7 +5566,7 @@ void ED_object_particle_edit_mode_exit(bContext *C)
   ED_object_particle_edit_mode_exit_ex(scene, ob);
 }
 
-static int particle_edit_toggle_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus particle_edit_toggle_exec(bContext *C, wmOperator *op)
 {
   wmMsgBus *mbus = CTX_wm_message_bus(C);
   Scene *scene = CTX_data_scene(C);
@@ -5615,7 +5616,7 @@ void PARTICLE_OT_particle_edit_toggle(wmOperatorType *ot)
 /** \name Set Editable Operator
  * \{ */
 
-static int clear_edited_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus clear_edited_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *ob = CTX_data_active_object(C);
   ParticleSystem *psys = psys_get_current(ob);
@@ -5739,7 +5740,7 @@ static void scale_points_to_length(PTCacheEdit *edit, float length)
   recalc_lengths(edit);
 }
 
-static int unify_length_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus unify_length_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *ob = CTX_data_active_object(C);
   Scene *scene = CTX_data_scene(C);

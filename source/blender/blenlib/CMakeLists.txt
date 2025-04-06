@@ -159,7 +159,6 @@ set(SRC
   intern/timecode.cc
   intern/timeit.cc
   intern/uuid.cc
-  intern/uvproject.cc
   intern/vector.cc
   intern/virtual_array.cc
   intern/voxel.cc
@@ -398,7 +397,6 @@ set(SRC
   BLI_utildefines_variadic.h
   BLI_utility_mixins.hh
   BLI_uuid.h
-  BLI_uvproject.h
   BLI_vector.hh
   BLI_vector_list.hh
   BLI_vector_set.hh
@@ -460,9 +458,6 @@ if(WITH_FFTW3)
     ${FFTW3_LIBRARIES}
   )
   add_definitions(-DWITH_FFTW3)
-  if(WITH_FFTW3_THREADS_F_SUPPORT)
-    add_definitions(-DWITH_FFTW3_THREADS_F_SUPPORT)
-  endif()
 endif()
 
 if(WIN32)

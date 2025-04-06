@@ -34,7 +34,9 @@
 #  include "io_stl_ops.hh"
 #  include "io_utils.hh"
 
-static int wm_stl_export_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+static wmOperatorStatus wm_stl_export_invoke(bContext *C,
+                                             wmOperator *op,
+                                             const wmEvent * /*event*/)
 {
   ED_fileselect_ensure_default_filepath(C, op, ".stl");
 
@@ -42,7 +44,7 @@ static int wm_stl_export_invoke(bContext *C, wmOperator *op, const wmEvent * /*e
   return OPERATOR_RUNNING_MODAL;
 }
 
-static int wm_stl_export_execute(bContext *C, wmOperator *op)
+static wmOperatorStatus wm_stl_export_exec(bContext *C, wmOperator *op)
 {
   if (!RNA_struct_property_is_set_ex(op->ptr, "filepath", false)) {
     BKE_report(op->reports, RPT_ERROR, "No filename given");
@@ -138,7 +140,7 @@ void WM_OT_stl_export(wmOperatorType *ot)
   ot->idname = "WM_OT_stl_export";
 
   ot->invoke = wm_stl_export_invoke;
-  ot->exec = wm_stl_export_execute;
+  ot->exec = wm_stl_export_exec;
   ot->poll = WM_operator_winactive;
   ot->ui = wm_stl_export_draw;
   ot->check = wm_stl_export_check;
@@ -195,7 +197,7 @@ void WM_OT_stl_export(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_HIDDEN);
 }
 
-static int wm_stl_import_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus wm_stl_import_exec(bContext *C, wmOperator *op)
 {
   STLImportParams params;
   params.forward_axis = eIOAxis(RNA_enum_get(op->ptr, "forward_axis"));
