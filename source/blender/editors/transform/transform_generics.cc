@@ -826,8 +826,8 @@ void applyTransObjects(TransInfo *t)
     if (td->ext->rot) {
       copy_v3_v3(td->ext->irot, td->ext->rot);
     }
-    if (td->ext->size) {
-      copy_v3_v3(td->ext->isize, td->ext->size);
+    if (td->ext->scale) {
+      copy_v3_v3(td->ext->iscale, td->ext->scale);
     }
   }
   recalc_data(t);
@@ -862,8 +862,8 @@ static void restoreElement(TransData *td)
       copy_v3_v3(td->ext->rotAxis, td->ext->irotAxis);
     }
     /* XXX, `drotAngle` & `drotAxis` not used yet. */
-    if (td->ext->size) {
-      copy_v3_v3(td->ext->size, td->ext->isize);
+    if (td->ext->scale) {
+      copy_v3_v3(td->ext->scale, td->ext->iscale);
     }
     if (td->ext->quat) {
       copy_qt_qt(td->ext->quat, td->ext->iquat);
@@ -1184,8 +1184,8 @@ static void calculateZfac(TransInfo *t)
   }
   else if (t->region) {
     View2D *v2d = &t->region->v2d;
-    /* Get zoom fac the same way as in
-     * `ui_view2d_curRect_validate_resize` - better keep in sync! */
+    /* Get zoom factor the same way as in
+     * #ui_view2d_curRect_validate_resize - better keep in sync! */
     const float zoomx = float(BLI_rcti_size_x(&v2d->mask) + 1) / BLI_rctf_size_x(&v2d->cur);
     t->zfac = 1.0f / zoomx;
   }

@@ -1167,7 +1167,7 @@ bool paint_supports_dynamic_tex_coords(const Brush &br, const PaintMode mode)
 
 wmKeyMap *paint_stroke_modal_keymap(wmKeyConfig *keyconf)
 {
-  static EnumPropertyItem modal_items[] = {
+  static const EnumPropertyItem modal_items[] = {
       {PAINT_STROKE_MODAL_CANCEL, "CANCEL", 0, "Cancel", "Cancel and undo a stroke in progress"},
       {0}};
 
@@ -1454,7 +1454,10 @@ static void paint_stroke_line_constrain(PaintStroke *stroke, float2 &mouse)
   }
 }
 
-int paint_stroke_modal(bContext *C, wmOperator *op, const wmEvent *event, PaintStroke **stroke_p)
+wmOperatorStatus paint_stroke_modal(bContext *C,
+                                    wmOperator *op,
+                                    const wmEvent *event,
+                                    PaintStroke **stroke_p)
 {
   const Scene *scene = CTX_data_scene(C);
   Paint *paint = BKE_paint_get_active_from_context(C);
@@ -1680,7 +1683,7 @@ int paint_stroke_modal(bContext *C, wmOperator *op, const wmEvent *event, PaintS
   return OPERATOR_RUNNING_MODAL;
 }
 
-int paint_stroke_exec(bContext *C, wmOperator *op, PaintStroke *stroke)
+wmOperatorStatus paint_stroke_exec(bContext *C, wmOperator *op, PaintStroke *stroke)
 {
   /* only when executed for the first time */
   if (!stroke->stroke_started) {

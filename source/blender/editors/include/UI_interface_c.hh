@@ -125,24 +125,28 @@ struct uiTooltipData;
 /** Use for clamping popups within the screen. */
 #define UI_SCREEN_MARGIN 10
 
+namespace blender::ui {
+
 /** #uiBlock.emboss and #uiBut.emboss */
-enum eUIEmbossType {
+enum class EmbossType : uint8_t {
   /** Use widget style for drawing. */
-  UI_EMBOSS = 0,
+  Emboss = 0,
   /** Nothing, only icon and/or text */
-  UI_EMBOSS_NONE = 1,
+  None = 1,
   /** Pull-down menu style */
-  UI_EMBOSS_PULLDOWN = 2,
+  Pulldown = 2,
   /** Pie Menu */
-  UI_EMBOSS_PIE_MENU = 3,
+  PieMenu = 3,
   /**
-   * The same as #UI_EMBOSS_NONE, unless the button has
+   * The same as #EmbossType::None, unless the button has
    * a coloring status like an animation state or red alert.
    */
-  UI_EMBOSS_NONE_OR_STATUS = 4,
+  NoneOrStatus = 4,
   /** For layout engine, use emboss from block. */
-  UI_EMBOSS_UNDEFINED = 255,
+  Undefined = 255,
 };
+
+}  // namespace blender::ui
 
 /** #uiBlock::direction */
 enum {
@@ -740,7 +744,8 @@ bool UI_popup_menu_end_or_cancel(bContext *C, uiPopupMenu *pup);
 uiLayout *UI_popup_menu_layout(uiPopupMenu *pup);
 
 void UI_popup_menu_reports(bContext *C, ReportList *reports) ATTR_NONNULL();
-int UI_popup_menu_invoke(bContext *C, const char *idname, ReportList *reports) ATTR_NONNULL(1, 2);
+wmOperatorStatus UI_popup_menu_invoke(bContext *C, const char *idname, ReportList *reports)
+    ATTR_NONNULL(1, 2);
 
 /**
  * If \a block is displayed in a popup menu, tag it for closing.
@@ -773,7 +778,10 @@ void UI_popup_menu_but_set(uiPopupMenu *pup, ARegion *butregion, uiBut *but);
 
 struct uiPopover;
 
-int UI_popover_panel_invoke(bContext *C, const char *idname, bool keep_open, ReportList *reports);
+wmOperatorStatus UI_popover_panel_invoke(bContext *C,
+                                         const char *idname,
+                                         bool keep_open,
+                                         ReportList *reports);
 
 /**
  * Only return handler, and set optional title.
@@ -795,16 +803,16 @@ void UI_popover_once_clear(uiPopover *pup);
 /* Pie menus */
 struct uiPieMenu;
 
-int UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event);
-int UI_pie_menu_invoke_from_operator_enum(bContext *C,
-                                          blender::StringRefNull title,
-                                          blender::StringRefNull opname,
-                                          blender::StringRefNull propname,
-                                          const wmEvent *event);
-int UI_pie_menu_invoke_from_rna_enum(bContext *C,
-                                     const char *title,
-                                     const char *path,
-                                     const wmEvent *event);
+wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event);
+wmOperatorStatus UI_pie_menu_invoke_from_operator_enum(bContext *C,
+                                                       blender::StringRefNull title,
+                                                       blender::StringRefNull opname,
+                                                       blender::StringRefNull propname,
+                                                       const wmEvent *event);
+wmOperatorStatus UI_pie_menu_invoke_from_rna_enum(bContext *C,
+                                                  const char *title,
+                                                  const char *path,
+                                                  const wmEvent *event);
 
 uiPieMenu *UI_pie_menu_begin(bContext *C, const char *title, int icon, const wmEvent *event)
     ATTR_NONNULL();
@@ -885,13 +893,13 @@ bool UI_popup_block_name_exists(const bScreen *screen, blender::StringRef name);
 uiBlock *UI_block_begin(const bContext *C,
                         ARegion *region,
                         std::string name,
-                        eUIEmbossType emboss);
+                        blender::ui::EmbossType emboss);
 uiBlock *UI_block_begin(const bContext *C,
                         Scene *scene,
                         wmWindow *window,
                         ARegion *region,
                         std::string name,
-                        eUIEmbossType emboss);
+                        blender::ui::EmbossType emboss);
 void UI_block_end_ex(const bContext *C,
                      Main *bmain,
                      wmWindow *window,
@@ -916,8 +924,8 @@ enum {
   UI_BLOCK_THEME_STYLE_POPUP = 1,
 };
 void UI_block_theme_style_set(uiBlock *block, char theme_style);
-eUIEmbossType UI_block_emboss_get(uiBlock *block);
-void UI_block_emboss_set(uiBlock *block, eUIEmbossType emboss);
+blender::ui::EmbossType UI_block_emboss_get(uiBlock *block);
+void UI_block_emboss_set(uiBlock *block, blender::ui::EmbossType emboss);
 bool UI_block_is_search_only(const uiBlock *block);
 /**
  * Use when a block must be searched to give accurate results
@@ -1575,7 +1583,7 @@ int UI_icon_colorid_from_report_type(int type);
 int UI_text_colorid_from_report_type(int type);
 
 int UI_icon_from_event_type(short event_type, short event_value);
-int UI_icon_from_keymap_item(const wmKeyMapItem *kmi, int r_icon_mod[4]);
+int UI_icon_from_keymap_item(const wmKeyMapItem *kmi, int r_icon_mod[KM_MOD_NUM]);
 
 uiBut *uiDefMenuBut(uiBlock *block,
                     uiMenuCreateFunc func,
@@ -1999,16 +2007,11 @@ void UI_but_drag_attach_image(uiBut *but, const ImBuf *imb, float scale);
  * \param preview_icon: Bigger preview size icon that will be drawn while dragging instead of \a
  * icon.
  */
-void UI_but_drag_set_asset(
-    uiBut *but,
-    const blender::asset_system::AssetRepresentation *asset,
-    int import_method,
-    int icon,
-    int preview_icon,
-    bool drop_collections_as_instances, /* BFA - needed for setting #use_instance from UI before
-                                           executing the drop operator */
-    bool drop_collection_instances_at_origin); /* BFA - needed for dropping collection at origin
-                                                 instead of cursor when #use_instance is enabled */
+void UI_but_drag_set_asset(uiBut *but,
+                           const blender::asset_system::AssetRepresentation *asset,
+                           const AssetImportSettings &import_settings,
+                           int icon,
+                           int preview_icon);
 
 void UI_but_drag_set_rna(uiBut *but, PointerRNA *ptr);
 /**
@@ -2376,7 +2379,7 @@ void uiLayoutSetScaleX(uiLayout *layout, float scale);
 void uiLayoutSetScaleY(uiLayout *layout, float scale);
 void uiLayoutSetUnitsX(uiLayout *layout, float unit);
 void uiLayoutSetUnitsY(uiLayout *layout, float unit);
-void uiLayoutSetEmboss(uiLayout *layout, eUIEmbossType emboss);
+void uiLayoutSetEmboss(uiLayout *layout, blender::ui::EmbossType emboss);
 void uiLayoutSetPropSep(uiLayout *layout, bool is_sep);
 void uiLayoutSetPropDecorate(uiLayout *layout, bool is_sep);
 int uiLayoutGetLocalDir(const uiLayout *layout);
@@ -2396,7 +2399,7 @@ float uiLayoutGetScaleX(uiLayout *layout);
 float uiLayoutGetScaleY(uiLayout *layout);
 float uiLayoutGetUnitsX(uiLayout *layout);
 float uiLayoutGetUnitsY(uiLayout *layout);
-eUIEmbossType uiLayoutGetEmboss(uiLayout *layout);
+blender::ui::EmbossType uiLayoutGetEmboss(uiLayout *layout);
 bool uiLayoutGetPropSep(uiLayout *layout);
 bool uiLayoutGetPropDecorate(uiLayout *layout);
 Panel *uiLayoutGetRootPanel(uiLayout *layout);
