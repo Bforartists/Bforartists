@@ -143,9 +143,16 @@ void VKContext::end_frame()
   device.orphaned_data.destroy_discarded_resources(device);
 }
 
-void VKContext::flush() {}
+void VKContext::flush()
+{
+  flush_render_graph(RenderGraphFlushFlags::RENEW_RENDER_GRAPH);
+}
 
-TimelineValue VKContext::flush_render_graph(RenderGraphFlushFlags flags)
+TimelineValue VKContext::flush_render_graph(RenderGraphFlushFlags flags,
+                                            VkPipelineStageFlags wait_dst_stage_mask,
+                                            VkSemaphore wait_semaphore,
+                                            VkSemaphore signal_semaphore,
+                                            VkFence signal_fence)
 {
   if (has_active_framebuffer()) {
     VKFrameBuffer &framebuffer = *active_framebuffer_get();
@@ -159,7 +166,11 @@ TimelineValue VKContext::flush_render_graph(RenderGraphFlushFlags flags)
       &render_graph_.value().get(),
       discard_pool,
       bool(flags & RenderGraphFlushFlags::SUBMIT),
-      bool(flags & RenderGraphFlushFlags::WAIT_FOR_COMPLETION));
+      bool(flags & RenderGraphFlushFlags::WAIT_FOR_COMPLETION),
+      wait_dst_stage_mask,
+      wait_semaphore,
+      signal_semaphore,
+      signal_fence);
   render_graph_.reset();
   if (bool(flags & RenderGraphFlushFlags::RENEW_RENDER_GRAPH)) {
     render_graph_ = std::reference_wrapper<render_graph::VKRenderGraph>(
@@ -335,7 +346,7 @@ void VKContext::swap_buffers_pre_handler(const GHOST_VulkanSwapChainData &swap_c
 {
   GPU_debug_group_begin("BackBuffer.Blit");
 
-  VKFrameBuffer &framebuffer = *unwrap(back_left);
+  VKFrameBuffer &framebuffer = *unwrap(active_fb);
   VKTexture *color_attachment = unwrap(unwrap(framebuffer.color_tex(0)));
 
   render_graph::VKBlitImageNode::CreateInfo blit_image = {};
@@ -366,6 +377,8 @@ void VKContext::swap_buffers_pre_handler(const GHOST_VulkanSwapChainData &swap_c
   device.resources.add_image(swap_chain_data.image, 1, "SwapchainImage");
 
   framebuffer.rendering_end(*this);
+  flush_render_graph(RenderGraphFlushFlags::RENEW_RENDER_GRAPH);
+
   render_graph::VKRenderGraph &render_graph = this->render_graph();
   render_graph.add_node(blit_image);
   GPU_debug_group_end();
@@ -375,8 +388,11 @@ void VKContext::swap_buffers_pre_handler(const GHOST_VulkanSwapChainData &swap_c
   synchronization.vk_image_layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
   synchronization.vk_image_aspect = VK_IMAGE_ASPECT_COLOR_BIT;
   render_graph.add_node(synchronization);
-  flush_render_graph(RenderGraphFlushFlags::SUBMIT | RenderGraphFlushFlags::WAIT_FOR_COMPLETION |
-                     RenderGraphFlushFlags::RENEW_RENDER_GRAPH);
+  flush_render_graph(RenderGraphFlushFlags::SUBMIT | RenderGraphFlushFlags::RENEW_RENDER_GRAPH,
+                     VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT,
+                     swap_chain_data.acquire_semaphore,
+                     swap_chain_data.present_semaphore,
+                     swap_chain_data.submission_fence);
 
   device.resources.remove_image(swap_chain_data.image);
 #if 0
@@ -387,6 +403,41 @@ void VKContext::swap_buffers_pre_handler(const GHOST_VulkanSwapChainData &swap_c
 void VKContext::swap_buffers_post_handler()
 {
   sync_backbuffer(true);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name OpenXR
+ * \{ */
+
+void VKContext::openxr_acquire_framebuffer_image_callback(GHOST_VulkanOpenXRData *openxr_data)
+{
+  VKContext *context = VKContext::get();
+  BLI_assert(context);
+  context->openxr_acquire_framebuffer_image_handler(*openxr_data);
+}
+
+void VKContext::openxr_release_framebuffer_image_callback(GHOST_VulkanOpenXRData *openxr_data)
+{
+  VKContext *context = VKContext::get();
+  BLI_assert(context);
+  context->openxr_release_framebuffer_image_handler(*openxr_data);
+}
+
+void VKContext::openxr_acquire_framebuffer_image_handler(GHOST_VulkanOpenXRData &openxr_data)
+{
+  VKFrameBuffer &framebuffer = *unwrap(active_fb);
+  VKTexture *color_attachment = unwrap(unwrap(framebuffer.color_tex(0)));
+  openxr_data.image_data = color_attachment->read(0, GPU_DATA_HALF_FLOAT);
+  openxr_data.extent.width = color_attachment->width_get();
+  openxr_data.extent.height = color_attachment->height_get();
+}
+
+void VKContext::openxr_release_framebuffer_image_handler(GHOST_VulkanOpenXRData &openxr_data)
+{
+  MEM_freeN(openxr_data.image_data);
+  openxr_data.image_data = nullptr;
 }
 
 /** \} */

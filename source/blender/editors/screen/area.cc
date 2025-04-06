@@ -282,10 +282,11 @@ static void region_draw_azone_tab_arrow(ScrArea *area, ARegion *region, AZone *a
   float alpha = WM_region_use_viewport(area, region) ? 0.6f : 0.4f;
   const float color[4] = {0.05f, 0.05f, 0.05f, alpha};
   rctf rect{};
-  rect.xmin = float(az->x1);
-  rect.xmax = float(az->x2);
-  rect.ymin = float(az->y1);
-  rect.ymax = float(az->y2);
+  /* Hit size is a bit larger than visible background. */
+  rect.xmin = float(az->x1) + U.pixelsize;
+  rect.xmax = float(az->x2) - U.pixelsize;
+  rect.ymin = float(az->y1) + U.pixelsize;
+  rect.ymax = float(az->y2) - U.pixelsize;
   UI_draw_roundbox_aa(&rect, true, 4.0f, color);
 
   draw_azone_arrow(float(az->x1), float(az->y1), float(az->x2), float(az->y2), az->edge);
@@ -952,17 +953,20 @@ void WorkspaceStatus::opmodal(std::string text,
 #else
       int icon = UI_icon_from_event_type(kmi->type, kmi->val);
 #endif
-      if (!ELEM(kmi->shift, KM_NOTHING, KM_ANY)) {
+      if (kmi->shift == KM_MOD_HELD) {
         ed_workspace_status_item(workspace_, {}, ICON_EVENT_SHIFT, 0.0f, inverted);
       }
-      if (!ELEM(kmi->ctrl, KM_NOTHING, KM_ANY)) {
+      if (kmi->ctrl == KM_MOD_HELD) {
         ed_workspace_status_item(workspace_, {}, ICON_EVENT_CTRL, 0.0f, inverted);
       }
-      if (!ELEM(kmi->alt, KM_NOTHING, KM_ANY)) {
+      if (kmi->alt == KM_MOD_HELD) {
         ed_workspace_status_item(workspace_, {}, ICON_EVENT_ALT, 0.0f, inverted);
       }
-      if (!ELEM(kmi->oskey, KM_NOTHING, KM_ANY)) {
+      if (kmi->oskey == KM_MOD_HELD) {
         ed_workspace_status_item(workspace_, {}, ICON_EVENT_OS, 0.0f, inverted);
+      }
+      if (!ELEM(kmi->hyper, KM_NOTHING, KM_ANY)) {
+        ed_workspace_status_item(workspace_, {}, ICON_EVENT_HYPER, 0.0f, inverted);
       }
       ed_workspace_status_icon_item(workspace_, icon, inverted);
       ed_workspace_status_text_item(workspace_, std::move(text));
@@ -1001,12 +1005,17 @@ static void area_azone_init(const wmWindow *win, const bScreen *screen, ScrArea 
     return;
   }
 
+  /* Use a taller zone on the left side, the height of
+   * the header, to make them easier to hit. The others
+   * on the right are shorter to not interfere with
+   * scroll bars. */
+
   const float coords[4][4] = {
       /* Bottom-left. */
       {area->totrct.xmin - U.pixelsize,
        area->totrct.ymin - U.pixelsize,
        area->totrct.xmin + UI_AZONESPOTW,
-       area->totrct.ymin + UI_AZONESPOTH},
+       float(area->totrct.ymin + ED_area_headersize())},
       /* Bottom-right. */
       {area->totrct.xmax - UI_AZONESPOTW,
        area->totrct.ymin - U.pixelsize,
@@ -1014,7 +1023,7 @@ static void area_azone_init(const wmWindow *win, const bScreen *screen, ScrArea 
        area->totrct.ymin + UI_AZONESPOTH},
       /* Top-left. */
       {area->totrct.xmin - U.pixelsize,
-       area->totrct.ymax - UI_AZONESPOTH,
+       float(area->totrct.ymax - ED_area_headersize()),
        area->totrct.xmin + UI_AZONESPOTW,
        area->totrct.ymax + U.pixelsize},
       /* Top-right. */
@@ -1146,14 +1155,14 @@ static void region_azone_edge(const ScrArea *area, AZone *az, const ARegion *reg
 static void region_azone_tab_plus(ScrArea *area, AZone *az, ARegion *region)
 {
   float edge_offset = 1.0f;
-  const float tab_size_x = 0.7f * U.widget_unit;
-  const float tab_size_y = 0.4f * U.widget_unit;
+  const float tab_size_x = 1.0f * U.widget_unit;
+  const float tab_size_y = 0.5f * U.widget_unit;
 
   switch (az->edge) {
     case AE_TOP_TO_BOTTOMRIGHT: {
       int add = (region->winrct.ymax == area->totrct.ymin) ? 1 : 0;
       az->x1 = region->winrct.xmax - ((edge_offset + 1.0f) * tab_size_x);
-      az->y1 = region->winrct.ymax - add;
+      az->y1 = region->winrct.ymax - U.pixelsize;
       az->x2 = region->winrct.xmax - (edge_offset * tab_size_x);
       az->y2 = region->winrct.ymax - add + tab_size_y;
       break;
@@ -1162,16 +1171,16 @@ static void region_azone_tab_plus(ScrArea *area, AZone *az, ARegion *region)
       az->x1 = region->winrct.xmax - ((edge_offset + 1.0f) * tab_size_x);
       az->y1 = region->winrct.ymin - tab_size_y;
       az->x2 = region->winrct.xmax - (edge_offset * tab_size_x);
-      az->y2 = region->winrct.ymin;
+      az->y2 = region->winrct.ymin + U.pixelsize;
       break;
     case AE_LEFT_TO_TOPRIGHT:
       az->x1 = region->winrct.xmin - tab_size_y;
       az->y1 = region->winrct.ymax - ((edge_offset + 1.0f) * tab_size_x);
-      az->x2 = region->winrct.xmin;
+      az->x2 = region->winrct.xmin + U.pixelsize;
       az->y2 = region->winrct.ymax - (edge_offset * tab_size_x);
       break;
     case AE_RIGHT_TO_TOPLEFT:
-      az->x1 = region->winrct.xmax;
+      az->x1 = region->winrct.xmax - U.pixelsize;
       az->y1 = region->winrct.ymax - ((edge_offset + 1.0f) * tab_size_x);
       az->x2 = region->winrct.xmax + tab_size_y;
       az->y2 = region->winrct.ymax - (edge_offset * tab_size_x);
@@ -2905,7 +2914,7 @@ static void ed_panel_draw(const bContext *C,
   else {
     STRNCPY(block_name, pt->idname);
   }
-  uiBlock *block = UI_block_begin(C, region, block_name, UI_EMBOSS);
+  uiBlock *block = UI_block_begin(C, region, block_name, blender::ui::EmbossType::Emboss);
 
   bool open;
   panel = UI_panel_begin(region, lb, block, pt, panel, &open);
@@ -3165,7 +3174,15 @@ void ED_region_panels_layout_ex(const bContext *C,
   v2d->keepofs |= V2D_LOCKOFS_X | V2D_KEEPOFS_Y;
   v2d->keepofs &= ~(V2D_LOCKOFS_Y | V2D_KEEPOFS_X);
   v2d->scroll &= ~V2D_SCROLL_BOTTOM;
-  v2d->scroll |= V2D_SCROLL_RIGHT;
+
+  if (region->alignment & RGN_ALIGN_LEFT) {
+    region->v2d.scroll &= ~V2D_SCROLL_RIGHT;
+    region->v2d.scroll |= V2D_SCROLL_LEFT;
+  }
+  else {
+    region->v2d.scroll &= ~V2D_SCROLL_LEFT;
+    region->v2d.scroll |= V2D_SCROLL_RIGHT;
+  }
 
   /* collect categories */
   if (use_category_tabs) {
@@ -3382,6 +3399,16 @@ void ED_region_panels_init(wmWindowManager *wm, ARegion *region)
 {
   UI_view2d_region_reinit(&region->v2d, V2D_COMMONVIEW_PANELS_UI, region->winx, region->winy);
 
+  /* Place scroll bars to the left if left-aligned, right if right-aligned. */
+  if (region->alignment & RGN_ALIGN_LEFT) {
+    region->v2d.scroll &= ~V2D_SCROLL_RIGHT;
+    region->v2d.scroll |= V2D_SCROLL_LEFT;
+  }
+  else if (region->alignment & RGN_ALIGN_RIGHT) {
+    region->v2d.scroll &= ~V2D_SCROLL_LEFT;
+    region->v2d.scroll |= V2D_SCROLL_RIGHT;
+  }
+
   wmKeyMap *keymap = WM_keymap_ensure(
       wm->defaultconf, "View2D Buttons List", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
@@ -3400,7 +3427,7 @@ static bool panel_property_search(const bContext *C,
                                   PanelType *panel_type,
                                   const char *search_filter)
 {
-  uiBlock *block = UI_block_begin(C, region, panel_type->idname, UI_EMBOSS);
+  uiBlock *block = UI_block_begin(C, region, panel_type->idname, blender::ui::EmbossType::Emboss);
   UI_block_set_search_only(block, true);
 
   /* Skip panels that give meaningless search results. */
@@ -3583,7 +3610,7 @@ void ED_region_header_layout(const bContext *C, ARegion *region)
       continue;
     }
 
-    uiBlock *block = UI_block_begin(C, region, ht->idname, UI_EMBOSS);
+    uiBlock *block = UI_block_begin(C, region, ht->idname, blender::ui::EmbossType::Emboss);
     uiLayout *layout = UI_block_layout(
         block, UI_LAYOUT_HORIZONTAL, UI_LAYOUT_HEADER, xco, yco, buttony, 1, 0, style);
 

@@ -268,22 +268,30 @@ enum eOperatorPropTags {
 
 /**
  * Modifier keys, not actually used for #wmKeyMapItem (never stored in DNA), used for:
- * - #wmEvent.modifier without the `KM_*_ANY` flags.
+ * - #wmEvent.modifier.
  * - #WM_keymap_add_item & #WM_modalkeymap_add_item
  */
-enum {
+enum wmEventModifierFlag : uint8_t {
   KM_SHIFT = (1 << 0),
   KM_CTRL = (1 << 1),
   KM_ALT = (1 << 2),
   /** Use for Windows-Key on MS-Windows, Command-key on macOS and Super on Linux. */
   KM_OSKEY = (1 << 3),
-
-  /* Used for key-map item creation function arguments. */
-  KM_SHIFT_ANY = (1 << 4),
-  KM_CTRL_ANY = (1 << 5),
-  KM_ALT_ANY = (1 << 6),
-  KM_OSKEY_ANY = (1 << 7),
+  /**
+   * An additional modifier available on Unix systems (in addition to "Super").
+   * Even though standard keyboards don't have a "Hyper" key it is a valid modifier
+   * on Wayland and X11, where it is possible to map a key (typically CapsLock)
+   * to be a Hyper modifier, see !136340.
+   *
+   * Note that this is currently only supported on Wayland & X11
+   * but could be supported on other platforms if desired.
+   */
+  KM_HYPER = (1 << 4),
 };
+ENUM_OPERATORS(wmEventModifierFlag, KM_HYPER);
+
+/** The number of modifiers #wmKeyMapItem & #wmEvent can use. */
+#define KM_MOD_NUM 5
 
 /* `KM_MOD_*` flags for #wmKeyMapItem and `wmEvent.alt/shift/oskey/ctrl`. */
 /* Note that #KM_ANY and #KM_NOTHING are used with these defines too. */
@@ -741,7 +749,7 @@ struct wmEvent {
   wmEvent *next, *prev;
 
   /** Event code itself (short, is also in key-map). */
-  short type;
+  wmEventType type;
   /** Press, release, scroll-value. */
   short val;
   /** Mouse pointer position, screen coord. */
@@ -757,8 +765,8 @@ struct wmEvent {
    */
   char utf8_buf[6];
 
-  /** Modifier states: #KM_SHIFT, #KM_CTRL, #KM_ALT & #KM_OSKEY. */
-  uint8_t modifier;
+  /** Modifier states: #KM_SHIFT, #KM_CTRL, #KM_ALT, #KM_OSKEY & #KM_HYPER. */
+  wmEventModifierFlag modifier;
 
   /** The direction (for #KM_CLICK_DRAG events only). */
   int8_t direction;
@@ -767,7 +775,7 @@ struct wmEvent {
    * Raw-key modifier (allow using any key as a modifier).
    * Compatible with values in `type`.
    */
-  short keymodifier;
+  wmEventType keymodifier;
 
   /** Tablet info, available for mouse move and button events. */
   wmTabletData tablet;
@@ -796,7 +804,7 @@ struct wmEvent {
   /* Previous State. */
 
   /** The previous value of `type`. */
-  short prev_type;
+  wmEventType prev_type;
   /** The previous value of `val`. */
   short prev_val;
   /**
@@ -809,16 +817,16 @@ struct wmEvent {
   /* Previous Press State (when `val == KM_PRESS`). */
 
   /** The `type` at the point of the press action. */
-  short prev_press_type;
+  wmEventType prev_press_type;
   /**
    * The location when the key is pressed.
    * used to enforce drag threshold & calculate the `direction`.
    */
   int prev_press_xy[2];
   /** The `modifier` at the point of the press action. */
-  uint8_t prev_press_modifier;
+  wmEventModifierFlag prev_press_modifier;
   /** The `keymodifier` at the point of the press action. */
-  short prev_press_keymodifier;
+  wmEventType prev_press_keymodifier;
 };
 
 /**
@@ -859,7 +867,12 @@ struct wmNDOFMotionData {
    * </pre>
    */
   float rvec[3];
-  /** Time since previous NDOF Motion event. */
+  /**
+   * Time since previous NDOF Motion event (in seconds).
+   *
+   * This is reset when motion begins: when progress changes from #P_NOT_STARTED to #P_STARTING.
+   * In this case a dummy value is used, see #GHOST_NDOF_TIME_DELTA_STARTING.
+   */
   float dt;
   /** Is this the first event, the last, or one of many in between? */
   wmProgress progress;
@@ -940,7 +953,7 @@ struct wmTimer {
   /** Set by timer user. */
   double time_step;
   /** Set by timer user, goes to event system. */
-  int event_type;
+  wmEventType event_type;
   /** Various flags controlling timer options, see below. */
   wmTimerFlags flags;
   /** Set by timer user, to allow custom values. */
@@ -1028,7 +1041,7 @@ struct wmOperatorType {
    * any interface code or input device state.
    * See defines below for return values.
    */
-  int (*exec)(bContext *C, wmOperator *op) ATTR_WARN_UNUSED_RESULT;
+  wmOperatorStatus (*exec)(bContext *C, wmOperator *op) ATTR_WARN_UNUSED_RESULT;
 
   /**
    * This callback executes on a running operator whenever as property
@@ -1044,7 +1057,9 @@ struct wmOperatorType {
    * canceled due to some external reason, cancel is called
    * See defines below for return values.
    */
-  int (*invoke)(bContext *C, wmOperator *op, const wmEvent *event) ATTR_WARN_UNUSED_RESULT;
+  wmOperatorStatus (*invoke)(bContext *C,
+                             wmOperator *op,
+                             const wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 
   /**
    * Called when a modal operator is canceled (not used often).
@@ -1058,7 +1073,9 @@ struct wmOperatorType {
    * or execute other operators. They keep running until they don't return
    * `OPERATOR_RUNNING_MODAL`.
    */
-  int (*modal)(bContext *C, wmOperator *op, const wmEvent *event) ATTR_WARN_UNUSED_RESULT;
+  wmOperatorStatus (*modal)(bContext *C,
+                            wmOperator *op,
+                            const wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 
   /**
    * Verify if the operator can be executed in the current context. Note
@@ -1216,10 +1233,8 @@ struct wmDragID {
 };
 
 struct wmDragAsset {
-  int import_method; /* #eAssetImportMethod. */
   const AssetRepresentationHandle *asset;
-  bool drop_collections_as_instances; /* BFA - needed for setting #use_instance from UI before executing the drop operator */
-  bool drop_collections_at_origin; /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled */
+  AssetImportSettings import_settings;
 };
 
 struct wmDragAssetCatalog {

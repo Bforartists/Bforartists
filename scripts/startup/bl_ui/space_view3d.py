@@ -132,10 +132,10 @@ class VIEW3D_HT_tool_header(Header):
                             "VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover"
                         )
                     layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
-        elif tool_mode == "WEIGHT_GPENCIL" or tool_mode == "WEIGHT_GREASE_PENCIL":
+        elif tool_mode in {"WEIGHT_GPENCIL", "WEIGHT_GREASE_PENCIL"}:
             if is_valid_context:
                 layout.popover("VIEW3D_PT_tools_grease_pencil_weight_appearance")
-        elif tool_mode == "VERTEX_GPENCIL" or tool_mode == "VERTEX_GREASE_PENCIL":
+        elif tool_mode in {"VERTEX_GPENCIL", "VERTEX_GREASE_PENCIL"}:
             if is_valid_context:
                 layout.popover("VIEW3D_PT_tools_grease_pencil_vertex_appearance")
 
@@ -1442,7 +1442,10 @@ class VIEW3D_MT_editor_menus(Menu):
                 "VERTEX_GREASE_PENCIL",
             }:
                 layout.menu("VIEW3D_MT_" + mode_string.lower())
-            if mode_string in {"PAINT_VERTEX", "PAINT_TEXTURE"}:  # BFA - sculpt has brushes but no operators yet.
+            if mode_string in {
+                "PAINT_VERTEX",
+                "PAINT_TEXTURE",
+            }:  # BFA - sculpt has brushes but no operators yet.
                 layout.menu("VIEW3D_MT_brush")  # BFA
             if mode_string == "SCULPT":
                 layout.menu("VIEW3D_MT_mask")
@@ -4354,7 +4357,7 @@ class VIEW3D_MT_object_animation(Menu):
         layout.separator()
 
         layout.operator("nla.bake", text="Bake Action", icon="BAKE_ACTION")
-        #layout.operator("gpencil.bake_mesh_animation", text="Bake Mesh to Grease Pencil", icon="BAKE_ACTION",) # BFA - legacy
+        # layout.operator("gpencil.bake_mesh_animation", text="Bake Mesh to Grease Pencil", icon="BAKE_ACTION",) # BFA - legacy
 
 
 class VIEW3D_MT_object_rigid_body(Menu):

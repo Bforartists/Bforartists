@@ -38,15 +38,14 @@
 
 #include <pxr/base/tf/stringUtils.h>
 
-#include "CLG_log.h"
-static CLG_LogRef LOG = {"io.usd"};
-
 #ifdef WITH_MATERIALX
 #  include "shader/materialx/material.h"
 #  include <pxr/usd/sdf/copyUtils.h>
 #  include <pxr/usd/usdMtlx/reader.h>
-#  include <pxr/usd/usdMtlx/utils.h>
 #endif
+
+#include "CLG_log.h"
+static CLG_LogRef LOG = {"io.usd"};
 
 /* `TfToken` objects are not cheap to construct, so we do it once. */
 namespace usdtokens {
@@ -860,7 +859,7 @@ static void export_packed_texture(Image *ima,
        * a file extension based on the file magic. */
 
       enum eImbFileType ftype = eImbFileType(
-          IMB_ispic_type_from_memory(static_cast<const uchar *>(pf->data), pf->size));
+          IMB_test_image_type_from_memory(static_cast<const uchar *>(pf->data), pf->size));
       if (ima->source == IMA_SRC_TILED) {
         char tile_number[6];
         SNPRINTF(tile_number, ".%d", imapf->tile_number);

@@ -873,9 +873,8 @@ typedef struct FileAssetSelectParams {
   bUUID catalog_id;
 
   short import_method; /* eFileAssetImportMethod */
-  char drop_collections_as_instances; /* BFA - boolean, needed for setting #use_instance from UI before executing the drop operator*/
-  char drop_collections_at_origin; /* BFA - boolean, needed for dropping collection at origin instead of cursor when #use_instance is enabled */
-  char _pad2[4]; /* BFA - modified padding */
+  short import_flags;  /* eFileImportFlags */
+  char _pad2[4];
 } FileAssetSelectParams;
 
 typedef enum eFileAssetImportMethod {
@@ -890,6 +889,11 @@ typedef enum eFileAssetImportMethod {
   /** Default: Follow the preference setting for this asset library. */
   FILE_ASSET_IMPORT_FOLLOW_PREFS = 3,
 } eFileAssetImportMethod;
+
+typedef enum eFileAssetImportFlags {
+  FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK = (1 << 0),
+  FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND = (1 << 1),
+} eFileAssetImportFlags;
 
 /**
  * A wrapper to store previous and next folder lists (#FolderList) for a specific browse mode

@@ -5,6 +5,7 @@
 #ifdef WITH_HIPRT
 
 #  include "device/hiprt/device_impl.h"
+#  include "device/hip/util.h"
 #  include "kernel/device/hiprt/globals.h"
 
 #  include "util/log.h"
@@ -225,6 +226,11 @@ string HIPRTDevice::compile_kernel(const uint kernel_features, const char *name,
   options.append(
       "-Wno-parentheses-equality -Wno-unused-value -ffast-math -O3 -std=c++17 -D __HIPRT__");
   options.append(" --offload-arch=").append(arch.c_str());
+  if (hipNeedPreciseMath(arch)) {
+    options.append(
+        " -fhip-fp32-correctly-rounded-divide-sqrt -fno-gpu-approx-transcendentals "
+        "-fgpu-flush-denormals-to-zero -ffp-contract=off");
+  }
 #  ifdef WITH_NANOVDB
   options.append(" -D WITH_NANOVDB");
 #  endif
@@ -278,7 +284,7 @@ bool HIPRTDevice::load_kernels(const uint kernel_features)
    * This is necessary since objects may be reported to have motion if the Vector pass is
    * active, but may still need to be rendered without motion blur if that isn't active as well.
    */
-  use_motion_blur |= kernel_features & KERNEL_FEATURE_OBJECT_MOTION;
+  use_motion_blur = use_motion_blur || (kernel_features & KERNEL_FEATURE_OBJECT_MOTION);
 
   /* get kernel */
   const char *kernel_name = "kernel";

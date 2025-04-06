@@ -54,34 +54,6 @@ MultiFunctionProcedureOperation::MultiFunctionProcedureOperation(Context &contex
   procedure_executor_ = std::make_unique<mf::ProcedureExecutor>(procedure_);
 }
 
-/* Upload the single value output value to the GPU. The set_single_value method already does that,
- * so we can call it on its own value. */
-static void upload_single_value_output_to_gpu(Result &output)
-{
-  switch (output.type()) {
-    case ResultType::Float:
-      output.set_single_value(output.get_single_value<float>());
-      return;
-    case ResultType::Int:
-      output.set_single_value(output.get_single_value<int32_t>());
-      return;
-    case ResultType::Color:
-      output.set_single_value(output.get_single_value<float4>());
-      return;
-    case ResultType::Float3:
-      output.set_single_value(output.get_single_value<float3>());
-      return;
-    case ResultType::Float4:
-      output.set_single_value(output.get_single_value<float4>());
-      return;
-    case ResultType::Float2:
-    case ResultType::Int2:
-      /* Those types are internal and needn't be handled by operations. */
-      BLI_assert_unreachable();
-      break;
-  }
-}
-
 void MultiFunctionProcedureOperation::execute()
 {
   const Domain domain = compute_domain();
@@ -120,12 +92,12 @@ void MultiFunctionProcedureOperation::execute()
   mf::ContextBuilder context_builder;
   procedure_executor_->call_auto(mask, parameter_builder, context_builder);
 
-  /* In case of single value GPU execution, the single values need to be uploaded to the GPU. */
-  if (is_single_value && this->context().use_gpu()) {
+  /* In case of single value execution, update single value data. */
+  if (is_single_value) {
     for (int i = 0; i < procedure_.params().size(); i++) {
       if (procedure_.params()[i].type == mf::ParamType::InterfaceType::Output) {
         Result &output = get_result(parameter_identifiers_[i]);
-        upload_single_value_output_to_gpu(output);
+        output.update_single_value_data();
       }
     }
   }
@@ -168,6 +140,9 @@ void MultiFunctionProcedureOperation::build_procedure()
       procedure_builder_.add_destruct(*variable);
     }
   }
+  for (mf::Variable *variable : implicit_input_to_variable_map_.values()) {
+    procedure_builder_.add_destruct(*variable);
+  }
 
   mf::ReturnInstruction &return_instruction = procedure_builder_.add_return();
   mf::procedure_optimization::move_destructs_up(procedure_, return_instruction);
@@ -186,11 +161,19 @@ Vector<mf::Variable *> MultiFunctionProcedureOperation::get_input_variables(
       continue;
     }
 
-    /* The origin socket is an input, that means the input is unlinked and we generate a constant
-     * variable for it. */
+    /* The origin socket is an input, that means the input is unlinked. */
     const DSocket origin = get_input_origin_socket(input);
     if (origin->is_input()) {
-      input_variables.append(this->get_constant_input_variable(DInputSocket(origin)));
+      const InputDescriptor origin_descriptor = input_descriptor_from_input_socket(
+          origin.bsocket());
+
+      if (origin_descriptor.implicit_input == ImplicitInput::None) {
+        /* No implicit input, so get a constant variable that holds the socket value. */
+        input_variables.append(this->get_constant_input_variable(DInputSocket(origin)));
+      }
+      else {
+        input_variables.append(this->get_implicit_input_variable(input, DInputSocket(origin)));
+      }
     }
     else {
       /* Otherwise, the origin socket is an output, which means it is linked. */
@@ -247,6 +230,11 @@ mf::Variable *MultiFunctionProcedureOperation::get_constant_input_variable(DInpu
       constant_function = &procedure_.construct_function<mf::CustomMF_Constant<int32_t>>(value);
       break;
     }
+    case SOCK_BOOLEAN: {
+      const bool value = input->default_value_typed<bNodeSocketValueBoolean>()->value;
+      constant_function = &procedure_.construct_function<mf::CustomMF_Constant<bool>>(value);
+      break;
+    }
     case SOCK_VECTOR: {
       const float3 value = float3(input->default_value_typed<bNodeSocketValueVector>()->value);
       constant_function = &procedure_.construct_function<mf::CustomMF_Constant<float3>>(value);
@@ -265,6 +253,50 @@ mf::Variable *MultiFunctionProcedureOperation::get_constant_input_variable(DInpu
   mf::Variable *constant_variable = procedure_builder_.add_call<1>(*constant_function)[0];
   implicit_variables_.append(constant_variable);
   return constant_variable;
+}
+
+mf::Variable *MultiFunctionProcedureOperation::get_implicit_input_variable(
+    const DInputSocket input, const DInputSocket origin)
+{
+  const InputDescriptor origin_descriptor = input_descriptor_from_input_socket(origin.bsocket());
+  const ImplicitInput implicit_input = origin_descriptor.implicit_input;
+
+  /* Inherit the type and implicit input of the origin input since doing implicit conversion inside
+   * the multi-function operation is much cheaper. */
+  InputDescriptor input_descriptor = input_descriptor_from_input_socket(input.bsocket());
+  input_descriptor.type = origin_descriptor.type;
+  input_descriptor.implicit_input = implicit_input;
+
+  /* An input was already declared for that implicit input, so no need to declare it again and we
+   * just return its variable.  */
+  if (implicit_input_to_variable_map_.contains(implicit_input)) {
+    /* But first we update the domain priority of the input descriptor to be the higher priority of
+     * the existing descriptor and the descriptor of the new input socket. That's because the same
+     * implicit input might be used in inputs inside the multi-function procedure operation which
+     * have different priorities. */
+    InputDescriptor &existing_input_descriptor = this->get_input_descriptor(
+        implicit_inputs_to_input_identifiers_map_.lookup(implicit_input));
+    existing_input_descriptor.domain_priority = math::min(
+        existing_input_descriptor.domain_priority, input_descriptor.domain_priority);
+
+    return implicit_input_to_variable_map_.lookup(implicit_input);
+  }
+
+  const int implicit_input_index = implicit_inputs_to_input_identifiers_map_.size();
+  const std::string input_identifier = "implicit_input" + std::to_string(implicit_input_index);
+  declare_input_descriptor(input_identifier, input_descriptor);
+
+  /* Map the implicit input to the identifier of the operation input that was declared for it. */
+  implicit_inputs_to_input_identifiers_map_.add_new(implicit_input, input_identifier);
+
+  mf::Variable &variable = procedure_builder_.add_input_parameter(
+      mf::DataType::ForSingle(Result::cpp_type(input_descriptor.type)), input_identifier);
+  parameter_identifiers_.append(input_identifier);
+
+  /* Map the implicit input to the variable that was created for it. */
+  implicit_input_to_variable_map_.add(implicit_input, &variable);
+
+  return &variable;
 }
 
 mf::Variable *MultiFunctionProcedureOperation::get_multi_function_input_variable(
