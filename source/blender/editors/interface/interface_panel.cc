@@ -2157,6 +2157,9 @@ static int ui_panel_drag_collapse_handler(bContext *C, const wmEvent *event, voi
       /* Don't let any left-mouse event fall through! */
       retval = WM_UI_HANDLER_BREAK;
       break;
+    default: {
+      break;
+    }
   }
 
   return retval;
@@ -2577,9 +2580,7 @@ int ui_handler_panel_region(bContext *C,
 
       /* The panel collapse / expand key "A" is special as it takes priority over
        * active button handling. */
-      if (event->type == EVT_AKEY &&
-          ((event->modifier & (KM_SHIFT | KM_CTRL | KM_ALT | KM_OSKEY)) == 0))
-      {
+      if ((event->type == EVT_AKEY) && (event->modifier == 0)) {
         retval = WM_UI_HANDLER_BREAK;
         ui_handle_panel_header(
             C, block, mx, event->type, event->modifier & KM_CTRL, event->modifier & KM_SHIFT);

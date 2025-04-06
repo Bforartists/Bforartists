@@ -42,21 +42,21 @@ const EnumPropertyItem rna_enum_node_socket_in_out_items[] = {{SOCK_IN, "IN", 0,
                                                               {0, nullptr, 0, nullptr, nullptr}};
 
 const EnumPropertyItem rna_enum_node_socket_data_type_items[] = {
-    {SOCK_FLOAT, "FLOAT", 0, "Float", ""},
-    {SOCK_INT, "INT", 0, "Integer", ""},
-    {SOCK_BOOLEAN, "BOOLEAN", 0, "Boolean", ""},
-    {SOCK_VECTOR, "VECTOR", 0, "Vector", ""},
-    {SOCK_ROTATION, "ROTATION", 0, "Rotation", ""},
-    {SOCK_MATRIX, "MATRIX", 0, "Matrix", ""},
-    {SOCK_STRING, "STRING", 0, "String", ""},
-    {SOCK_MENU, "MENU", 0, "Menu", ""},
-    {SOCK_RGBA, "RGBA", 0, "Color", ""},
-    {SOCK_OBJECT, "OBJECT", 0, "Object", ""},
-    {SOCK_IMAGE, "IMAGE", 0, "Image", ""},
-    {SOCK_GEOMETRY, "GEOMETRY", 0, "Geometry", ""},
-    {SOCK_COLLECTION, "COLLECTION", 0, "Collection", ""},
-    {SOCK_TEXTURE, "TEXTURE", 0, "Texture", ""},
-    {SOCK_MATERIAL, "MATERIAL", 0, "Material", ""},
+    {SOCK_FLOAT, "FLOAT", ICON_NODE_SOCKET_FLOAT, "Float", ""},
+    {SOCK_INT, "INT", ICON_NODE_SOCKET_INT, "Integer", ""},
+    {SOCK_BOOLEAN, "BOOLEAN", ICON_NODE_SOCKET_BOOLEAN, "Boolean", ""},
+    {SOCK_VECTOR, "VECTOR", ICON_NODE_SOCKET_VECTOR, "Vector", ""},
+    {SOCK_ROTATION, "ROTATION", ICON_NODE_SOCKET_ROTATION, "Rotation", ""},
+    {SOCK_MATRIX, "MATRIX", ICON_NODE_SOCKET_MATRIX, "Matrix", ""},
+    {SOCK_STRING, "STRING", ICON_NODE_SOCKET_STRING, "String", ""},
+    {SOCK_MENU, "MENU", ICON_NODE_SOCKET_MENU, "Menu", ""},
+    {SOCK_RGBA, "RGBA", ICON_NODE_SOCKET_RGBA, "Color", ""},
+    {SOCK_OBJECT, "OBJECT", ICON_NODE_SOCKET_OBJECT, "Object", ""},
+    {SOCK_IMAGE, "IMAGE", ICON_NODE_SOCKET_IMAGE, "Image", ""},
+    {SOCK_GEOMETRY, "GEOMETRY", ICON_NODE_SOCKET_GEOMETRY, "Geometry", ""},
+    {SOCK_COLLECTION, "COLLECTION", ICON_NODE_SOCKET_COLLECTION, "Collection", ""},
+    {SOCK_TEXTURE, "TEXTURE", ICON_NODE_SOCKET_TEXTURE, "Texture", ""},
+    {SOCK_MATERIAL, "MATERIAL", ICON_NODE_SOCKET_MATERIAL, "Material", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1011,7 +1011,7 @@ static bool rna_NodeTree_valid_socket_type(blender::bke::bNodeTreeType *ntreetyp
   func = &rna_NodeTree_valid_socket_type_func;
 
   RNA_parameter_list_create(&list, &ptr, func);
-  RNA_parameter_set_lookup(&list, "idname", &socket_type->idname);
+  RNA_parameter_set_lookup(&list, "idname", socket_type->idname.c_str());
   ntreetype->rna_ext.call(nullptr, &ptr, func, &list);
 
   RNA_parameter_get_lookup(&list, "valid", &ret);
@@ -8073,56 +8073,56 @@ static void def_cmp_crop(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_int_sdna(prop, nullptr, "x1");
   RNA_def_property_int_funcs(prop, nullptr, "rna_NodeCrop_min_x_set", nullptr);
   RNA_def_property_range(prop, 0, 10000);
-  RNA_def_property_ui_text(prop, "X1", "");
+  RNA_def_property_ui_text(prop, "X1", "Left edge of the cropping rectangle");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "max_x", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, nullptr, "x2");
   RNA_def_property_int_funcs(prop, nullptr, "rna_NodeCrop_max_x_set", nullptr);
   RNA_def_property_range(prop, 0, 10000);
-  RNA_def_property_ui_text(prop, "X2", "");
+  RNA_def_property_ui_text(prop, "X2", "Right edge of the cropping rectangle");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "min_y", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, nullptr, "y1");
   RNA_def_property_int_funcs(prop, nullptr, "rna_NodeCrop_min_y_set", nullptr);
   RNA_def_property_range(prop, 0, 10000);
-  RNA_def_property_ui_text(prop, "Y1", "");
+  RNA_def_property_ui_text(prop, "Y1", "Top edge of the cropping rectangle");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "max_y", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, nullptr, "y2");
   RNA_def_property_int_funcs(prop, nullptr, "rna_NodeCrop_max_y_set", nullptr);
   RNA_def_property_range(prop, 0, 10000);
-  RNA_def_property_ui_text(prop, "Y2", "");
+  RNA_def_property_ui_text(prop, "Y2", "Bottom edge of the cropping rectangle");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "rel_min_x", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "fac_x1");
   RNA_def_property_float_funcs(prop, nullptr, "rna_NodeCrop_rel_min_x_set", nullptr);
   RNA_def_property_range(prop, 0.0, 1.0);
-  RNA_def_property_ui_text(prop, "X1", "");
+  RNA_def_property_ui_text(prop, "X1", "Left edge of the cropping rectangle");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "rel_max_x", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "fac_x2");
   RNA_def_property_float_funcs(prop, nullptr, "rna_NodeCrop_rel_max_x_set", nullptr);
   RNA_def_property_range(prop, 0.0, 1.0);
-  RNA_def_property_ui_text(prop, "X2", "");
+  RNA_def_property_ui_text(prop, "X2", "Right edge of the cropping rectangle");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "rel_min_y", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "fac_y1");
   RNA_def_property_float_funcs(prop, nullptr, "rna_NodeCrop_rel_min_y_set", nullptr);
   RNA_def_property_range(prop, 0.0, 1.0);
-  RNA_def_property_ui_text(prop, "Y1", "");
+  RNA_def_property_ui_text(prop, "Y1", "Top edge of the cropping rectangle");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "rel_max_y", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "fac_y2");
   RNA_def_property_float_funcs(prop, nullptr, "rna_NodeCrop_rel_max_y_set", nullptr);
   RNA_def_property_range(prop, 0.0, 1.0);
-  RNA_def_property_ui_text(prop, "Y2", "");
+  RNA_def_property_ui_text(prop, "Y2", "Bottom edge of the cropping rectangle");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -8311,7 +8311,8 @@ static void def_cmp_glare(BlenderRNA * /*brna*/, StructRNA *srna)
 
   prop = RNA_def_property(srna, "use_rotate_45", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "star_45", 0);
-  RNA_def_property_ui_text(prop, "Rotate 45", "Simple star filter: add 45 degree rotation offset");
+  RNA_def_property_ui_text(
+      prop, "Rotate 45°", "Simple star filter: add 45 degree rotation offset");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "size", PROP_INT, PROP_NONE);
@@ -12332,6 +12333,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeKeyingScreen", def_cmp_keyingscreen, ICON_NODE_KEYINGSCREEN, "Add a Keying Screen Compositor node\nCreates plates for use as a color reference for keying nodes");
   define(brna, "CompositorNode", "CompositorNodeKuwahara", def_cmp_kuwahara, ICON_KUWAHARA, "Add a Kuwahara Compositor node\nKuwahara is a stylize filter");
   define(brna, "CompositorNode", "CompositorNodeLensdist", def_cmp_lensdist, ICON_NODE_LENSDISTORT, "Add a Lens Distortion Compositor node\nSimulate distortions from real camera lenses");
+  define(brna, "CompositorNode", "CompositorNodeImageInfo", nullptr, ICON_NONE, "Add an Image Info Compositor node\nGets information from image and animation. This can be useful to generate parameters in the geometry node for arbitrary images. Image information can be either general or frame-specific");
   define(brna, "CompositorNode", "CompositorNodeLevels", def_cmp_levels, ICON_LEVELS, "Add a Levels Compositor node\nReads the inputs color channels and outputs analytical values");
   define(brna, "CompositorNode", "CompositorNodeLumaMatte", def_cmp_luma_matte, ICON_NODE_LUMINANCE, "Add a Luminance Key Compositor node\nDetermines background objects from foreground objects by the difference in the brightness level");
   define(brna, "CompositorNode", "CompositorNodeMapRange", def_cmp_map_range, ICON_NODE_MAP_RANGE, "Add a Map Range Compositor node\nRemaps a value from a source range to a target range");
@@ -12466,6 +12468,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeBake", rna_def_geo_bake, ICON_BAKE, "Add a Bake Geometry node\nCache the incoming data so that it can be used without recomputation");
   define(brna, "GeometryNode", "GeometryNodeBlurAttribute", nullptr, ICON_BLUR_ATTRIBUTE, "Add a Blur Attribute Geometry node\nMix attribute values of neighboring elements");
   define(brna, "GeometryNode", "GeometryNodeBoundBox", nullptr, ICON_PIVOT_BOUNDBOX, "Add a Bounding Box Geometry node\nCalculate the limits of a geometry's positions and generate a box mesh with those dimensions");
+  define(brna, "GeometryNode", "GeometryNodeCameraInfo", nullptr, ICON_NONE, "Add a Camera Info Geometry node\nAccess camera information like the projection matrix and focal length");
   define(brna, "GeometryNode", "GeometryNodeCaptureAttribute", rna_def_geo_capture_attribute, ICON_ATTRIBUTE_CAPTURE, "Add a Capture Attribute Geometry node\nStore the result of a field on a geometry and output the data as a node socket. Allows remembering or interpolating data as the geometry changes, such as positions before deformation");
   define(brna, "GeometryNode", "GeometryNodeCollectionInfo", nullptr, ICON_COLLECTION_INFO, "Add a Collection Info Geometry node\nRetrieve geometry instances from a collection");
   define(brna, "GeometryNode", "GeometryNodeConvexHull", nullptr, ICON_CONVEXHULL, "Add a Convex Hull Geometry node\nCreate a mesh that encloses all points in the input geometry with the smallest number of points");

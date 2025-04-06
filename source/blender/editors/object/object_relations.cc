@@ -107,7 +107,7 @@ static bool vertex_parent_set_poll(bContext *C)
   return ED_operator_editmesh(C) || ED_operator_editsurfcurve(C) || ED_operator_editlattice(C);
 }
 
-static int vertex_parent_set_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus vertex_parent_set_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -414,7 +414,7 @@ void parent_clear(Object *ob, const int type)
 }
 
 /* NOTE: poll should check for editable scene. */
-static int parent_clear_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus parent_clear_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   /* Dependency graph must be evaluated for access to object's evaluated transform matrices. */
@@ -881,7 +881,7 @@ static bool parent_set_vertex_parent(bContext *C, ParentingContext *parenting_co
   return ok;
 }
 
-static int parent_set_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus parent_set_exec(bContext *C, wmOperator *op)
 {
   const int partype = RNA_enum_get(op->ptr, "type");
   ParentingContext parenting_context{};
@@ -912,7 +912,7 @@ static int parent_set_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
+static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 {
   Object *parent = context_active_object(C);
   uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Set Parent To"), ICON_NONE);
@@ -1044,7 +1044,7 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
   return OPERATOR_INTERFACE;
 }
 
-static int parent_set_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+static wmOperatorStatus parent_set_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   if (RNA_property_is_set(op->ptr, op->type->prop)) {
     return parent_set_exec(C, op);
@@ -1106,7 +1106,7 @@ void OBJECT_OT_parent_set(wmOperatorType *ot)
 /** \name Make Parent Without Inverse Operator
  * \{ */
 
-static int parent_noinv_set_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus parent_noinv_set_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Object *par = context_active_object(C);
@@ -1192,7 +1192,7 @@ static const EnumPropertyItem prop_clear_track_types[] = {
 };
 
 /* NOTE: poll should check for editable scene. */
-static int object_track_clear_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus object_track_clear_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   const int type = RNA_enum_get(op->ptr, "type");
@@ -1270,7 +1270,7 @@ static const EnumPropertyItem prop_make_track_types[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static int track_set_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus track_set_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Object *obact = context_active_object(C);
@@ -1404,7 +1404,7 @@ static void link_to_scene(Main * /*bmain*/, ushort /*nr*/)
 }
 #endif
 
-static int make_links_scene_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus make_links_scene_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene_to = static_cast<Scene *>(
@@ -1501,7 +1501,7 @@ static bool allow_make_links_data(const int type, Object *ob_src, Object *ob_dst
   return false;
 }
 
-static int make_links_data_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus make_links_data_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   Main *bmain = CTX_data_main(C);
@@ -2246,7 +2246,7 @@ static void make_local_material_tag(Material *ma)
   }
 }
 
-static int make_local_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus make_local_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Material *ma, ***matarar;
@@ -2380,7 +2380,7 @@ static bool make_override_library_object_overridable_check(Main *bmain, Object *
   return false;
 }
 
-static int make_override_library_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus make_override_library_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -2579,7 +2579,9 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
 }
 
 /* Set the object to override. */
-static int make_override_library_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+static wmOperatorStatus make_override_library_invoke(bContext *C,
+                                                     wmOperator *op,
+                                                     const wmEvent * /*event*/)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -2743,7 +2745,7 @@ static bool reset_clear_override_library_poll(bContext *C)
           ID_IS_OVERRIDE_LIBRARY(obact));
 }
 
-static int reset_override_library_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus reset_override_library_exec(bContext *C, wmOperator * /*op*/)
 {
   Main *bmain = CTX_data_main(C);
 
@@ -2783,7 +2785,7 @@ void OBJECT_OT_reset_override_library(wmOperatorType *ot)
 /** \name Clear Library Override Operator
  * \{ */
 
-static int clear_override_library_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus clear_override_library_exec(bContext *C, wmOperator * /*op*/)
 {
   Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -2865,7 +2867,7 @@ enum {
   MAKE_SINGLE_USER_SELECTED = 2,
 };
 
-static int make_single_user_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus make_single_user_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -2918,7 +2920,7 @@ static int make_single_user_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int make_single_user_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus make_single_user_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   return WM_operator_props_popup_confirm_ex(
       C, op, event, IFACE_("Make Selected Objects Single-User"), IFACE_("Make Single"));
@@ -2994,7 +2996,9 @@ std::string drop_named_material_tooltip(bContext *C, const char *name, const int
       fmt::runtime(TIP_("Drop {} on {} (slot {})")), name, ob->id.name + 2, mat_slot);
 }
 
-static int drop_named_material_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus drop_named_material_invoke(bContext *C,
+                                                   wmOperator *op,
+                                                   const wmEvent *event)
 {
   Main *bmain = CTX_data_main(C);
   int mat_slot = 0;
@@ -3079,7 +3083,9 @@ static bool check_geometry_node_group_sockets(wmOperator *op, const bNodeTree *t
   return true;
 }
 
-static int drop_geometry_nodes_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus drop_geometry_nodes_invoke(bContext *C,
+                                                   wmOperator *op,
+                                                   const wmEvent *event)
 {
   Object *ob = ED_view3d_give_object_under_cursor(C, event->mval);
   if (!ob) {
@@ -3157,7 +3163,7 @@ void OBJECT_OT_drop_geometry_nodes(wmOperatorType *ot)
 /** \name Unlink Object Operator
  * \{ */
 
-static int object_unlink_data_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus object_unlink_data_exec(bContext *C, wmOperator *op)
 {
   ID *id;
   PropertyPointerRNA pprop;
