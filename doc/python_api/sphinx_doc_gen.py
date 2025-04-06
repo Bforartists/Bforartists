@@ -9,8 +9,8 @@ API dump in RST files
 
     blender --background --factory-startup --python doc/python_api/sphinx_doc_gen.py
 
-  This will generate python files in doc/python_api/sphinx-in/
-  providing ./blender is or links to the blender executable
+  This will generate Python files in doc/python_api/sphinx-in/
+  providing ./blender is or links to the Blender executable
 
   To choose sphinx-in directory:
     blender --background --factory-startup --python doc/python_api/sphinx_doc_gen.py -- --output=../python_api
@@ -377,7 +377,7 @@ EXTRA_SOURCE_FILES = (
     "../../../scripts/templates_py/bmesh_simple.py",
     "../../../scripts/templates_py/gizmo_operator.py",
     "../../../scripts/templates_py/gizmo_operator_target.py",
-    "../../../scripts/templates_py/gizmo_simple.py",
+    "../../../scripts/templates_py/gizmo_simple_3d.py",
     "../../../scripts/templates_py/operator_simple.py",
     "../../../scripts/templates_py/ui_panel_simple.py",
     "../../../scripts/templates_py/ui_previews_custom_icon.py",
@@ -450,7 +450,7 @@ RNA_BLACKLIST = {
 RST_NOINDEX_ATTR = {
     # Render is both a method and an attribute, from looking into this
     # having both doesn't cause problems in practice since the `render` method
-    # is registered and called from C code where the attribute is accessed from the instance.
+    # is registered and called from C++ code where the attribute is accessed from the instance.
     ("bpy.types", "RenderEngine", "render"),
 }
 
@@ -585,7 +585,8 @@ def generate_changelog():
 
 # --------------------------------API DUMP--------------------------------------
 
-# Lame, python won't give some access.
+# Unfortunately Python doesn't expose direct access to these types.
+# Access them indirectly.
 ClassMethodDescriptorType = type(dict.__dict__["fromkeys"])
 MethodDescriptorType = type(dict.get)
 GetSetDescriptorType = type(int.real)
@@ -865,7 +866,7 @@ def py_descr2sphinx(ident, fw, descr, module_name, type_name, identifier):
 
 def py_c_func2sphinx(ident, fw, module_name, type_name, identifier, py_func, is_class=True):
     """
-    C defined function to sphinx.
+    C/C++ defined function to Sphinx.
     """
 
     # Dump the doc-string, assume its formatted correctly.
@@ -1122,47 +1123,51 @@ def pymodule2sphinx(basepath, module_name, module, title, module_all_extra):
             if heading:
                 fw(title_string(heading, heading_char))
 
-        # May need to be its own function.
-        if value.__doc__:
-            if value.__doc__.startswith(".. class::"):
-                fw(value.__doc__)
-            else:
-                fw(".. class:: {:s}\n\n".format(type_name))
-                write_indented_lines("   ", fw, value.__doc__, True)
-        else:
-            fw(".. class:: {:s}\n\n".format(type_name))
-        fw("\n")
-
-        write_example_ref("   ", fw, module_name + "." + type_name)
-
-        descr_items = [(key, descr) for key, descr in sorted(value.__dict__.items()) if not key.startswith("_")]
-
-        for key, descr in descr_items:
-            if type(descr) == ClassMethodDescriptorType:
-                py_descr2sphinx("   ", fw, descr, module_name, type_name, key)
-
-        # Needed for pure Python classes.
-        for key, descr in descr_items:
-            if type(descr) == FunctionType:
-                pyfunc2sphinx("   ", fw, module_name, type_name, key, descr, is_class=True)
-
-        for key, descr in descr_items:
-            if type(descr) == MethodDescriptorType:
-                py_descr2sphinx("   ", fw, descr, module_name, type_name, key)
-
-        for key, descr in descr_items:
-            if type(descr) == GetSetDescriptorType:
-                py_descr2sphinx("   ", fw, descr, module_name, type_name, key)
-
-        for key, descr in descr_items:
-            if type(descr) == StaticMethodType:
-                descr = getattr(value, key)
-                write_indented_lines("   ", fw, descr.__doc__ or "Undocumented", False)
-                fw("\n")
-
-        fw("\n\n")
+        pyclass2sphinx(fw, module_name, type_name, value, True)
 
     file.close()
+
+
+def pyclass2sphinx(fw, module_name, type_name, value, write_class_examples):
+    if value.__doc__:
+        if value.__doc__.startswith(".. class::"):
+            fw(value.__doc__)
+        else:
+            fw(".. class:: {:s}.{:s}\n\n".format(module_name, type_name))
+            write_indented_lines("   ", fw, value.__doc__, True)
+    else:
+        fw(".. class:: {:s}.{:s}\n\n".format(module_name, type_name))
+    fw("\n")
+
+    if write_class_examples:
+        write_example_ref("   ", fw, module_name + "." + type_name)
+
+    descr_items = [(key, descr) for key, descr in sorted(value.__dict__.items()) if not key.startswith("_")]
+
+    for key, descr in descr_items:
+        if type(descr) == ClassMethodDescriptorType:
+            py_descr2sphinx("   ", fw, descr, module_name, type_name, key)
+
+    # Needed for pure Python classes.
+    for key, descr in descr_items:
+        if type(descr) == FunctionType:
+            pyfunc2sphinx("   ", fw, module_name, type_name, key, descr, is_class=True)
+
+    for key, descr in descr_items:
+        if type(descr) == MethodDescriptorType:
+            py_descr2sphinx("   ", fw, descr, module_name, type_name, key)
+
+    for key, descr in descr_items:
+        if type(descr) == GetSetDescriptorType:
+            py_descr2sphinx("   ", fw, descr, module_name, type_name, key)
+
+    for key, descr in descr_items:
+        if type(descr) == StaticMethodType:
+            descr = getattr(value, key)
+            write_indented_lines("   ", fw, descr.__doc__ or "Undocumented", False)
+            fw("\n")
+
+    fw("\n\n")
 
 
 # Changes In Blender will force errors here.
@@ -1886,7 +1891,6 @@ def pyrna2sphinx(basepath):
     # Operators.
     def write_ops():
         API_BASEURL = "https://projects.blender.org/blender/blender/src/branch/main/scripts"
-        API_BASEURL_ADDON = "https://projects.blender.org/blender/blender-addons"
 
         op_modules = {}
         op = None
@@ -1925,13 +1929,8 @@ def pyrna2sphinx(basepath):
 
                 location = op.get_location()
                 if location != (None, None):
-                    if location[0].startswith("addons_core" + os.sep):
-                        url_base = API_BASEURL_ADDON
-                    else:
-                        url_base = API_BASEURL
-
                     fw("   :File: `{:s}\\:{:d} <{:s}/{:s}#L{:d}>`__\n\n".format(
-                        location[0], location[1], url_base, location[0], location[1]
+                        location[0], location[1], API_BASEURL, location[0], location[1]
                     ))
 
                 if op.args:
@@ -1996,7 +1995,7 @@ def write_rst_index(basepath):
         "bpy.path",
         "bpy.app",
 
-        # C modules.
+        # Python C-API modules.
         "bpy.props",
     )
 
@@ -2034,7 +2033,7 @@ def write_rst_index(basepath):
     fw("* :ref:`genindex`\n")
     fw("* :ref:`modindex`\n\n")
 
-    # Special case, this `bmesh.ops.rst` is extracted from C source.
+    # Special case, this `bmesh.ops.rst` is extracted from C++ source.
     if "bmesh.ops" not in EXCLUDE_MODULES:
         execfile(os.path.join(SCRIPT_DIR, "rst_from_bmesh_opdefines.py"))
 
@@ -2104,6 +2103,24 @@ def write_rst_ops_index(basepath):
         fw("   :glob:\n\n")
         fw("   bpy.ops.*\n\n")
         file.close()
+
+
+def write_rst_geometry_set(basepath):
+    """
+    Write the RST file for ``bpy.types.GeometrySet``.
+    """
+    if 'bpy.types.GeometrySet' in EXCLUDE_MODULES:
+        return
+
+    # Write the index.
+    filepath = os.path.join(basepath, "bpy.types.GeometrySet.rst")
+    file = open(filepath, "w", encoding="utf-8")
+    fw = file.write
+    fw(title_string("GeometrySet", "="))
+    write_example_ref("", fw, "bpy.types.GeometrySet")
+    pyclass2sphinx(fw, "bpy.types", "GeometrySet", bpy.types.GeometrySet, False)
+
+    EXAMPLE_SET_USED.add("bpy.types.GeometrySet")
 
 
 def write_rst_msgbus(basepath):
@@ -2415,6 +2432,7 @@ def rna2sphinx(basepath):
     write_rst_types_index(basepath)         # `bpy.types`.
     write_rst_ops_index(basepath)           # `bpy.ops`.
     write_rst_msgbus(basepath)              # `bpy.msgbus`.
+    write_rst_geometry_set(basepath)        # `bpy.types.GeometrySet`.
     pyrna2sphinx(basepath)                  # `bpy.types.*` & `bpy.ops.*`.
     write_rst_data(basepath)                # `bpy.data`.
     write_rst_importable_modules(basepath)

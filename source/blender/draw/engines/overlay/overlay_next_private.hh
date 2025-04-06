@@ -705,7 +705,7 @@ struct Resources : public select::SelectMap {
     free_movieclips_textures();
   }
 
-  void update_theme_settings(const State &state);
+  void update_theme_settings(const DRWContext *ctx, const State &state);
   void update_clip_planes(const State &state);
 
   void init(bool clipping_enabled)
@@ -713,21 +713,23 @@ struct Resources : public select::SelectMap {
     shaders = &overlay::ShaderModule::module_get(selection_type, clipping_enabled);
   }
 
-  void begin_sync()
+  void begin_sync(int clipping_plane_count)
   {
-    SelectMap::begin_sync();
+    SelectMap::begin_sync(clipping_plane_count);
     free_movieclips_textures();
   }
 
-  void acquire(const State &state, DefaultTextureList &viewport_textures)
+  void acquire(const DRWContext *draw_ctx, const State &state)
   {
+    DefaultTextureList &viewport_textures = *draw_ctx->viewport_texture_list_get();
+    DefaultFramebufferList &viewport_framebuffers = *draw_ctx->viewport_framebuffer_list_get();
     this->depth_tx.wrap(viewport_textures.depth);
     this->depth_in_front_tx.wrap(viewport_textures.depth_in_front);
     this->color_overlay_tx.wrap(viewport_textures.color_overlay);
     this->color_render_tx.wrap(viewport_textures.color);
 
-    this->render_fb = DRW_viewport_framebuffer_list_get()->default_fb;
-    this->render_in_front_fb = DRW_viewport_framebuffer_list_get()->in_front_fb;
+    this->render_fb = viewport_framebuffers.default_fb;
+    this->render_in_front_fb = viewport_framebuffers.in_front_fb;
 
     int2 render_size = int2(this->depth_tx.size());
 

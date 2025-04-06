@@ -1499,12 +1499,12 @@ static void rna_UILayout_units_y_set(PointerRNA *ptr, float value)
 
 static int rna_UILayout_emboss_get(PointerRNA *ptr)
 {
-  return uiLayoutGetEmboss(static_cast<uiLayout *>(ptr->data));
+  return int(uiLayoutGetEmboss(static_cast<uiLayout *>(ptr->data)));
 }
 
 static void rna_UILayout_emboss_set(PointerRNA *ptr, int value)
 {
-  uiLayoutSetEmboss(static_cast<uiLayout *>(ptr->data), eUIEmbossType(value));
+  uiLayoutSetEmboss(static_cast<uiLayout *>(ptr->data), blender::ui::EmbossType(value));
 }
 
 static bool rna_UILayout_property_split_get(PointerRNA *ptr)
@@ -1667,11 +1667,23 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem emboss_items[] = {
-      {UI_EMBOSS, "NORMAL", 0, "Regular", "Draw standard button emboss style"},
-      {UI_EMBOSS_NONE, "NONE", 0, "None", "Draw only text and icons"},
-      {UI_EMBOSS_PULLDOWN, "PULLDOWN_MENU", 0, "Pulldown Menu", "Draw pulldown menu style"},
-      {UI_EMBOSS_PIE_MENU, "RADIAL_MENU", 0, "Pie Menu", "Draw radial menu style"},
-      {UI_EMBOSS_NONE_OR_STATUS,
+      {int(blender::ui::EmbossType::Emboss),
+       "NORMAL",
+       0,
+       "Regular",
+       "Draw standard button emboss style"},
+      {int(blender::ui::EmbossType::None), "NONE", 0, "None", "Draw only text and icons"},
+      {int(blender::ui::EmbossType::Pulldown),
+       "PULLDOWN_MENU",
+       0,
+       "Pulldown Menu",
+       "Draw pulldown menu style"},
+      {int(blender::ui::EmbossType::PieMenu),
+       "RADIAL_MENU",
+       0,
+       "Pie Menu",
+       "Draw radial menu style"},
+      {int(blender::ui::EmbossType::NoneOrStatus),
        "NONE_OR_STATUS",
        0,
        "None or Status",
@@ -1710,6 +1722,10 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, rna_enum_operator_context_items);
   RNA_def_property_enum_funcs(
       prop, "rna_UILayout_op_context_get", "rna_UILayout_op_context_set", nullptr);
+  RNA_def_property_ui_text(prop,
+                           "Operator Context",
+                           "Typically set to 'INVOKE_REGION_WIN', except some cases "
+                           "in :class:`bpy.types.Menu` when it's set to 'EXEC_REGION_WIN'.");
 
   prop = RNA_def_property(srna, "enabled", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(prop, "rna_UILayout_enabled_get", "rna_UILayout_enabled_set");

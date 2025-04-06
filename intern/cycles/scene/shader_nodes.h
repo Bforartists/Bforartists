@@ -1480,6 +1480,7 @@ class BumpNode : public ShaderNode {
   NODE_SOCKET_API(bool, invert)
   NODE_SOCKET_API(bool, use_object_space)
   NODE_SOCKET_API(float, height)
+  NODE_SOCKET_API(float, filter_width)
   NODE_SOCKET_API(float, sample_center)
   NODE_SOCKET_API(float, sample_x)
   NODE_SOCKET_API(float, sample_y)
@@ -1572,6 +1573,8 @@ class OSLNode final : public ShaderNode {
   }
 
   ShaderNode *clone(ShaderGraph *graph) const override;
+
+  void attributes(Shader *shader, AttributeRequestSet *attributes) override;
 
   char *input_default_value();
   void add_input(ustring name, SocketType::Type type, const int flags = 0);

@@ -25,6 +25,7 @@
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
+#include "UI_interface_c.hh"
 
 #ifdef WIN32
 #  include "BLI_winstuff.h"
@@ -377,10 +378,17 @@ static void file_but_enable_drag(uiBut *but,
     BLI_assert(import_method > -1);
 
     BLI_assert(ED_fileselect_is_asset_browser(sfile) && file->asset);
-    const FileAssetSelectParams *params = ED_fileselect_get_asset_params(sfile); /*BFA*/
-    bool drop_collections_as_instances = params->drop_collections_as_instances; /*BFA*/
-    bool drop_collections_at_origin = params->drop_collections_at_origin; /*BFA*/
-    UI_but_drag_set_asset(but, file->asset, import_method, icon, file->preview_icon_id, drop_collections_as_instances, drop_collections_at_origin); /*BFA*/
+    if (import_method > -1) {
+      AssetImportSettings import_settings{};
+      import_settings.method = eAssetImportMethod(import_method);
+      import_settings.use_instance_collections =
+          (sfile->asset_params->import_flags &
+           (import_method == ASSET_IMPORT_LINK ?
+                FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK :
+                FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND)) != 0;
+
+      UI_but_drag_set_asset(but, file->asset, import_settings, icon, file->preview_icon_id);
+    }
   }
   else if (preview_image) {
     UI_but_drag_set_image(but, path, icon, preview_image, scale);
@@ -769,7 +777,8 @@ static void file_draw_special_image(const FileDirEntry *file,
 
   if (file_type_icon) {
     /* Small icon in the middle of large image, scaled to fit container and UI scale */
-    float icon_opacity = 1.0f; /* bfa - keep small icons on large image fully opaque (icon in center of file_folder_large etc) */
+    float icon_opacity = 1.0f; /* bfa - keep small icons on large image fully opaque (icon in
+                                  center of file_folder_large etc) */
     uchar icon_color[4] = {0, 0, 0, 255};
     if (srgb_to_grayscale(document_img_col) < 0.5f) {
       icon_color[0] = 255;
@@ -1222,7 +1231,7 @@ void file_draw_list(const bContext *C, ARegion *region)
   View2D *v2d = &region->v2d;
   FileList *files = sfile->files;
   FileDirEntry *file;
-  uiBlock *block = UI_block_begin(C, region, __func__, UI_EMBOSS);
+  uiBlock *block = UI_block_begin(C, region, __func__, blender::ui::EmbossType::Emboss);
   int numfiles;
   int numfiles_layout;
   int offset;
@@ -1569,7 +1578,7 @@ static void file_draw_invalid_asset_library_hint(const bContext *C,
     file_draw_string_multiline(
         sx + UI_UNIT_X, sy, suggestion, width - UI_UNIT_X, line_height, text_col, nullptr, &sy);
 
-    uiBlock *block = UI_block_begin(C, region, __func__, UI_EMBOSS);
+    uiBlock *block = UI_block_begin(C, region, __func__, blender::ui::EmbossType::Emboss);
     wmOperatorType *ot = WM_operatortype_find("SCREEN_OT_userpref_show", false);
     uiBut *but = uiDefIconTextButO_ptr(block,
                                        UI_BTYPE_BUT,
