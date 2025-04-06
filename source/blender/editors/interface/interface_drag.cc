@@ -33,20 +33,13 @@ void UI_but_drag_attach_image(uiBut *but, const ImBuf *imb, const float scale)
   UI_but_dragflag_enable(but, UI_BUT_DRAG_FULL_BUT);
 }
 
-void UI_but_drag_set_asset(
-    uiBut *but,
-    const blender::asset_system::AssetRepresentation *asset,
-    int import_method,
-    BIFIconID icon,
-    BIFIconID preview_icon,
-    bool drop_collections_as_instances, /* BFA - needed for setting #use_instance from UI before
-                                           executing the drop operator */
-    bool drop_collection_instances_at_origin) /* BFA - needed for dropping collection at origin
-                                                 instead of cursor when #use_instance is enabled */
+void UI_but_drag_set_asset(uiBut *but,
+                           const blender::asset_system::AssetRepresentation *asset,
+                           const AssetImportSettings &import_settings,
+                           BIFIconID icon,
+                           BIFIconID preview_icon)
 {
-  wmDragAsset *asset_drag = WM_drag_create_asset_data(asset, import_method);
-  asset_drag->drop_collections_as_instances = drop_collections_as_instances;    /*BFA*/
-  asset_drag->drop_collections_at_origin = drop_collection_instances_at_origin; /*BFA*/
+  wmDragAsset *asset_drag = WM_drag_create_asset_data(asset, import_settings);
 
   but->dragtype = WM_DRAG_ASSET;
   ui_def_but_icon(but, icon, 0); /* no flag UI_HAS_ICON, so icon doesn't draw in button */

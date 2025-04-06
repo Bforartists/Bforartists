@@ -38,12 +38,12 @@ void Instance::init()
   state.object_active = BKE_view_layer_active_object_get(ctx->view_layer);
   state.object_mode = ctx->object_mode;
   state.cfra = DEG_get_ctime(state.depsgraph);
-  state.is_viewport_image_render = DRW_state_is_viewport_image_render();
-  state.is_image_render = DRW_state_is_image_render();
-  state.is_depth_only_drawing = DRW_state_is_depth();
-  state.is_material_select = DRW_state_is_material_select();
-  state.draw_background = DRW_state_draw_background();
-  state.show_text = DRW_state_show_text();
+  state.is_viewport_image_render = ctx->is_viewport_image_render();
+  state.is_image_render = ctx->is_image_render();
+  state.is_depth_only_drawing = ctx->is_depth();
+  state.is_material_select = ctx->is_material_select();
+  state.draw_background = ctx->options.draw_background;
+  state.show_text = ctx->options.draw_text;
 
   /* Note there might be less than 6 planes, but we always compute the 6 of them for simplicity. */
   state.clipping_plane_count = clipping_enabled_ ? 6 : 0;
@@ -115,7 +115,7 @@ void Instance::init()
     ED_space_image_get_aspect(space_image, &state.image_aspect.x, &state.image_aspect.y);
   }
 
-  resources.update_theme_settings(state);
+  resources.update_theme_settings(ctx, state);
   resources.update_clip_planes(state);
 
   ensure_weight_ramp_texture();
@@ -225,7 +225,7 @@ void Resources::update_clip_planes(const State &state)
   clip_planes_buf.push_update();
 }
 
-void Resources::update_theme_settings(const State &state)
+void Resources::update_theme_settings(const DRWContext *ctx, const State &state)
 {
   using namespace math;
   GlobalsUboStorage *gb = &theme_settings;
@@ -377,7 +377,7 @@ void Resources::update_theme_settings(const State &state)
 
   gb->pixel_fac = (state.rv3d) ? state.rv3d->pixsize : 1.0f;
 
-  gb->size_viewport = float4(DRW_viewport_size_get(), 1.0f / DRW_viewport_size_get());
+  gb->size_viewport = float4(ctx->viewport_size_get(), 1.0f / ctx->viewport_size_get());
 
   /* Color management. */
   {
@@ -393,6 +393,13 @@ void Resources::update_theme_settings(const State &state)
     const View3DShading &shading = state.v3d->shading;
     gb->backface_culling = (shading.type == OB_SOLID) &&
                            (shading.flag & V3D_SHADING_BACKFACE_CULLING);
+
+    if (is_selection() || state.is_depth_only_drawing) {
+      /* This is bad as this makes a solid mode setting affect material preview / render mode
+       * selection and auto-depth. But users are relying on this to work in scene using backface
+       * culling in shading (see #136335 and #136418). */
+      gb->backface_culling = (shading.flag & V3D_SHADING_BACKFACE_CULLING);
+    }
   }
   else {
     gb->backface_culling = false;
@@ -409,7 +416,7 @@ void Instance::begin_sync()
   state.camera_position = view.viewinv().location();
   state.camera_forward = view.viewinv().z_axis();
 
-  resources.begin_sync();
+  resources.begin_sync(state.clipping_plane_count);
 
   background.begin_sync(resources, state);
   cursor.begin_sync(resources, state);
@@ -636,12 +643,13 @@ void Instance::end_sync()
   /* WORKAROUND: This prevents bad frame-buffer config inside workbench when xray is enabled.
    * Better find a solution to this chicken-egg problem. */
   {
+    const DRWContext *draw_ctx = DRW_context_get();
     /* HACK we allocate the in front depth here to avoid the overhead when if is not needed. */
-    DefaultFramebufferList *dfbl = DRW_viewport_framebuffer_list_get();
-    DefaultTextureList *dtxl = DRW_viewport_texture_list_get();
+    DefaultFramebufferList *dfbl = draw_ctx->viewport_framebuffer_list_get();
+    DefaultTextureList *dtxl = draw_ctx->viewport_texture_list_get();
 
     if (dtxl->depth_in_front == nullptr) {
-      int2 size = int2(DRW_viewport_size_get());
+      int2 size = int2(draw_ctx->viewport_size_get());
 
       dtxl->depth_in_front = GPU_texture_create_2d("txl.depth_in_front",
                                                    size.x,
@@ -710,7 +718,7 @@ void Instance::draw(Manager &manager)
     outline.pre_draw(manager, view);
   }
 
-  resources.acquire(this->state, *DRW_viewport_texture_list_get());
+  resources.acquire(DRW_context_get(), this->state);
 
   /* TODO(fclem): Would be better to have a v2d overlay class instead of these conditions. */
   switch (state.space_type) {
@@ -798,7 +806,8 @@ void Instance::draw_v3d(Manager &manager, View &view)
     layer.armatures.draw_line(framebuffer, manager, view);
     layer.sculpts.draw_line(framebuffer, manager, view);
     layer.grease_pencil.draw_line(framebuffer, manager, view);
-    layer.meshes.draw_line(framebuffer, manager, view);
+    /* NOTE: Temporarily moved after grid drawing (See #136764). */
+    // layer.meshes.draw_line(framebuffer, manager, view);
     layer.curves.draw_line(framebuffer, manager, view);
   };
 
@@ -836,11 +845,11 @@ void Instance::draw_v3d(Manager &manager, View &view)
       }
     }
 
+    regular.prepass.draw_line(resources.overlay_line_fb, manager, view);
+
     /* TODO(fclem): Split overlay and rename draw functions. */
     /* TODO(fclem): Draw on line framebuffer. */
     regular.empties.draw_images(resources.overlay_fb, manager, view);
-
-    regular.prepass.draw_line(resources.overlay_line_fb, manager, view);
 
     if (state.xray_enabled || (state.v3d && state.v3d->shading.type > OB_SOLID)) {
       /* If workbench is not enabled, the infront buffer might contain garbage. */
@@ -882,6 +891,9 @@ void Instance::draw_v3d(Manager &manager, View &view)
     motion_paths.draw_color_only(resources.overlay_color_only_fb, manager, view);
     xray_fade.draw_color_only(resources.overlay_color_only_fb, manager, view);
     grid.draw_color_only(resources.overlay_color_only_fb, manager, view);
+
+    regular.meshes.draw_line(resources.overlay_line_fb, manager, view);
+    infront.meshes.draw_line(resources.overlay_line_in_front_fb, manager, view);
 
     draw_color_only(regular, resources.overlay_color_only_fb);
     draw_color_only(infront, resources.overlay_color_only_fb);

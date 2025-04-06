@@ -54,15 +54,15 @@ static void asset_view_item_but_drag_set(uiBut *but, AssetHandle *asset_handle)
 
   const eAssetImportMethod import_method = asset->get_import_method().value_or(
       ASSET_IMPORT_APPEND_REUSE);
+  AssetImportSettings import_settings{};
+  import_settings.method = import_method;
+  import_settings.use_instance_collections = false;
 
   UI_but_drag_set_asset(but,
                         asset,
-                        import_method,
+                        import_settings,
                         asset::asset_preview_or_icon(*asset),
-                        asset::asset_preview_icon_id(*asset),
-                        false,
-                        false); /* BFA - "false, false" is needed for setting #use_instance and
-                                   location from UI before executing the drop operator */
+                        asset::asset_preview_icon_id(*asset));
 }
 
 static void asset_view_draw_item(uiList *ui_list,
@@ -111,7 +111,7 @@ static void asset_view_draw_item(uiList *ui_list,
                   asset::asset_preview_icon_id(*asset),
                   /* NOLINTNEXTLINE: bugprone-suspicious-enum-usage */
                   UI_HAS_ICON | UI_BUT_ICON_PREVIEW);
-  but->emboss = UI_EMBOSS_NONE;
+  but->emboss = blender::ui::EmbossType::None;
   if (!ui_list->dyn_data->custom_drag_optype) {
     asset_view_item_but_drag_set(but, &asset_handle);
   }
