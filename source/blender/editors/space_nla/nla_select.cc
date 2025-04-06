@@ -130,7 +130,7 @@ static void deselect_nla_strips(bAnimContext *ac, short test, short sel)
 
 /* ------------------- */
 
-static int nlaedit_deselectall_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus nlaedit_deselectall_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
 
@@ -350,7 +350,9 @@ static bool nlaedit_mouse_is_over_strip(bAnimContext *ac, const int mval[2])
   return false;
 }
 
-static int nlaedit_box_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus nlaedit_box_select_invoke(bContext *C,
+                                                  wmOperator *op,
+                                                  const wmEvent *event)
 {
   bAnimContext ac;
   if (ANIM_animdata_get_context(C, &ac) == 0) {
@@ -364,7 +366,7 @@ static int nlaedit_box_select_invoke(bContext *C, wmOperator *op, const wmEvent 
   return WM_gesture_box_invoke(C, op, event);
 }
 
-static int nlaedit_box_select_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus nlaedit_box_select_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   rcti rect;
@@ -515,7 +517,7 @@ static void nlaedit_select_leftright(bContext *C,
 
 /* ------------------- */
 
-static int nlaedit_select_leftright_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus nlaedit_select_leftright_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   short leftright = RNA_enum_get(op->ptr, "mode");
@@ -549,7 +551,9 @@ static int nlaedit_select_leftright_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int nlaedit_select_leftright_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus nlaedit_select_leftright_invoke(bContext *C,
+                                                        wmOperator *op,
+                                                        const wmEvent *event)
 {
   bAnimContext ac;
   short leftright = RNA_enum_get(op->ptr, "mode");
@@ -609,18 +613,18 @@ void NLA_OT_select_leftright(wmOperatorType *ot)
 /* ******************** Mouse-Click Select Operator *********************** */
 
 /* select strip directly under mouse */
-static int mouse_nla_strips(bContext *C,
-                            bAnimContext *ac,
-                            const int mval[2],
-                            short select_mode,
-                            const bool deselect_all,
-                            bool wait_to_deselect_others)
+static wmOperatorStatus mouse_nla_strips(bContext *C,
+                                         bAnimContext *ac,
+                                         const int mval[2],
+                                         short select_mode,
+                                         const bool deselect_all,
+                                         bool wait_to_deselect_others)
 {
   Scene *scene = ac->scene;
 
   bAnimListElem *ale = nullptr;
   NlaStrip *strip = nullptr;
-  int ret_value = OPERATOR_FINISHED;
+  wmOperatorStatus ret_value = OPERATOR_FINISHED;
 
   nlaedit_strip_at_region_position(ac, mval[0], mval[1], &ale, &strip);
 
@@ -693,10 +697,10 @@ static int mouse_nla_strips(bContext *C,
 /* ------------------- */
 
 /* handle clicking */
-static int nlaedit_clickselect_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus nlaedit_clickselect_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
-  int ret_value;
+  wmOperatorStatus ret_value;
 
   /* get editor data */
   if (ANIM_animdata_get_context(C, &ac) == 0) {

@@ -346,6 +346,17 @@ set(OSL_HOMEPAGE https://github.com/AcademySoftwareFoundation/OpenShadingLanguag
 set(OSL_LICENSE SPDX:BSD-3-Clause)
 set(OSL_COPYRIGHT "Copyright Contributors to the Open Shading Language project.")
 
+set(MANIFOLD_VERSION 3.0.1)
+set(MANIFOLD_COMMIT "4edd442297e25bb1dc293559efc548bb0a89b053")
+set(MANIFOLD_NAME "Manifold")
+set(MANIFOLD_URI https://github.com/elalish/manifold/archive/${MANIFOLD_COMMIT}.tar.gz)
+set(MANIFOLD_HASH 4c2187839f30844be5dbfc394166e613)
+set(MANIFOLD_HASH_TYPE MD5)
+set(MANIFOLD_FILE Manifold-${MANIFOLD_VERSION}-${MANIFOLD_COMMIT}.tar.gz)
+set(MANIFOLD_HOMEPAGE https://github.com/elalish/manifold)
+set(MANIFOLD_LICENSE SPDX:Apache-2.0)
+set(MANIFOLD_COPYRIGHT "Copyright 2021 The Manifold Authors.")
+
 # NOTE: When updating the python version, it's required to check the versions of
 # it wants to use in PCbuild/get_externals.bat for the following dependencies:
 # BZIP2, FFI, SQLITE and change the versions in this file as well. For compliance
@@ -435,6 +446,8 @@ set(PYCODESTYLE_VERSION 2.12.1)
 # Build system for other packages (not used by Blender at run-time).
 set(MESON_VERSION 0.63.0)
 
+# When this numpy version is bumped, please also change the limit value set for variable `install_requires`
+# in build_files/utils/make_bpy_wheel.py
 set(NUMPY_VERSION 1.26.4)
 set(NUMPY_SHORT_VERSION 1.26)
 set(NUMPY_URI https://github.com/numpy/numpy/releases/download/v${NUMPY_VERSION}/numpy-${NUMPY_VERSION}.tar.gz)

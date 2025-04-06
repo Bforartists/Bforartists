@@ -113,7 +113,7 @@ uint coarse_face_index_from_subdiv_quad_index(uint subdiv_quad_index, uint coars
     }
   }
 
-  if (subdiv_face_offset[first] == subdiv_quad_index) {
+  if (first < coarse_face_count && subdiv_face_offset[first] == subdiv_quad_index) {
     return first;
   }
 

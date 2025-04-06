@@ -878,9 +878,6 @@ static bool node_color_drop_poll(bContext *C, wmDrag *drag, const wmEvent * /*ev
 
 static bool node_import_file_drop_poll(bContext * /*C*/, wmDrag *drag, const wmEvent * /*event*/)
 {
-  if (!U.experimental.use_new_file_import_nodes) {
-    return false;
-  }
   if (drag->type != WM_DRAG_PATH) {
     return false;
   }
@@ -950,7 +947,7 @@ static void node_dropboxes()
                  WM_drag_free_imported_drag_ID,
                  nullptr);
   WM_dropbox_add(lb,
-                 "NODE_OT_add_file",
+                 "NODE_OT_add_image",
                  node_id_im_drop_poll,
                  node_id_im_drop_copy,
                  WM_drag_free_imported_drag_ID,

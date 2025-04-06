@@ -1304,6 +1304,10 @@ std::optional<std::string> rna_ColorManagedDisplaySettings_path(const PointerRNA
   if (path) {
     return *path + ".display_settings";
   }
+  if (GS(ptr->owner_id->name) == ID_SCE) {
+    return "display_settings";
+  }
+
   return std::nullopt;
 }
 
@@ -1314,6 +1318,9 @@ std::optional<std::string> rna_ColorManagedViewSettings_path(const PointerRNA *p
       ptr, [&](ImageFormatData *imf) { return &imf->view_settings == data; });
   if (path) {
     return *path + ".view_settings";
+  }
+  if (GS(ptr->owner_id->name) == ID_SCE) {
+    return "view_settings";
   }
   return std::nullopt;
 }
@@ -3096,7 +3103,11 @@ static void rna_def_view3d_cursor(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, nullptr, "rotation_mode");
   RNA_def_property_enum_items(prop, rna_enum_object_rotation_mode_items);
   RNA_def_property_enum_funcs(prop, nullptr, "rna_View3DCursor_rotation_mode_set", nullptr);
-  RNA_def_property_ui_text(prop, "Rotation Mode", "");
+  RNA_def_property_ui_text(
+      prop,
+      "Rotation Mode",
+      /* This description is shared by other "rotation_mode" properties. */
+      "The kind of rotation to apply, values from other rotation modes aren't used");
   RNA_def_property_update(prop, NC_WINDOW, nullptr);
 
   /* Matrix access to avoid having to check current rotation mode. */
