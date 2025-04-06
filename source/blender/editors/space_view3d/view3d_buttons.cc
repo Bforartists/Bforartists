@@ -49,6 +49,7 @@
 
 #include "DEG_depsgraph.hh"
 
+#include "UI_interface_c.hh"
 #include "WM_api.hh"
 #include "WM_types.hh"
 
@@ -954,7 +955,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         uiDefButR(block,
                   UI_BTYPE_NUM,
                   0,
-                  IFACE_(""),/* -bfa remove text from slider */
+                  IFACE_(""), /* -bfa remove text from slider */
                   0,
                   yi -= buth + but_margin,
                   butw,
@@ -1588,17 +1589,18 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
             "location",
             UI_ITEM_NONE,
             std::nullopt,
-            ICON_NONE);                     /* bfa - row.prop(ob, "location") */
-    uiLayoutSetPropDecorate(row, false);    /* bfa - row.use_property_decorate = False */
-    uiLayoutSetEmboss(row, UI_EMBOSS_NONE); /* bfa - emboss=False */
+            ICON_NONE);                  /* bfa - row.prop(ob, "location") */
+    uiLayoutSetPropDecorate(row, false); /* bfa - row.use_property_decorate = False */
+    uiLayoutSetEmboss(row, blender::ui::EmbossType::None); /* bfa - emboss=False */
     uiItemR(row,
             ptr,
             "lock_location",
             UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
             "",
             ICON_DECORATE_UNLOCKED);
-    uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED); /* bfa - restore emboss to default?*/
-    uiItemS_ex(layout, .25f);                    /* bfa - separator*/
+    uiLayoutSetEmboss(row,
+                      blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
+    uiItemS_ex(layout, .25f);                              /* bfa - separator*/
   }
 
   switch (RNA_enum_get(ptr, "rotation_mode")) {
@@ -1611,7 +1613,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       sub = uiLayoutColumn(row, true);
       uiLayoutSetPropDecorate(sub, false);
 
-      uiLayoutSetEmboss(sub, UI_EMBOSS_NONE_OR_STATUS);
+      uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
       draw4L = true; /* bfa - show 4L button if quaternion */
 
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
@@ -1633,7 +1635,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
               UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
               "",
               ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(sub, UI_EMBOSS_UNDEFINED);
+      uiLayoutSetEmboss(sub, blender::ui::EmbossType::Undefined);
       break;
     case ROT_MODE_AXISANGLE: /* axis angle */
                              /* bfa */
@@ -1644,7 +1646,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       sub = uiLayoutColumn(row, true);
       uiLayoutSetPropDecorate(sub, false);
 
-      uiLayoutSetEmboss(sub, UI_EMBOSS_NONE_OR_STATUS);
+      uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
       draw4L = true; /* bfa - show 4L button if axis-angle */
 
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
@@ -1665,7 +1667,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
               UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
               "",
               ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(sub, UI_EMBOSS_UNDEFINED); /* bfa */
+      uiLayoutSetEmboss(sub, blender::ui::EmbossType::Undefined); /* bfa */
       break;
     default: /* euler rotations */
              /* bfa */
@@ -1674,14 +1676,14 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       row = uiLayoutRow(col, true);
       uiItemR(row, ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
       uiLayoutSetPropDecorate(row, false);
-      uiLayoutSetEmboss(row, UI_EMBOSS_NONE_OR_STATUS);
+      uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
       uiItemR(row,
               ptr,
               "lock_rotation",
               UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
               "",
               ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED); /* bfa */
+      uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa */
       break;
   }
 
@@ -1692,7 +1694,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   uiItemR(row, ptr, "rotation_mode", UI_ITEM_NONE, IFACE_("Mode"), ICON_NONE);
   row = uiLayoutRow(row, false);
   uiLayoutSetUnitsX(row, 1.f);
-  uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+  uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
 
   /* bfa - display 4L button */
   if (draw4L) {
@@ -1707,7 +1709,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   else {
     uiItemL(row, "", ICON_BLANK1);
   }
-  uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED);
+  uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
 
   uiItemS_ex(layout, .25f);
 
@@ -1720,10 +1722,10 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
           IFACE_("Scale"),
           ICON_NONE); /* bfa - row.prop(ob, "scale") */
   uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetEmboss(row, UI_EMBOSS_NONE_OR_STATUS);
+  uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
   uiItemR(
       row, ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-  uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED);
+  uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
   /* end bfa */
 }
 
@@ -1784,7 +1786,12 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
   uiItemR(col, &eboneptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemR(col, &eboneptr, "envelope_distance", UI_ITEM_NONE, IFACE_("Envelope"), ICON_NONE);
   uiLayoutSetPropSep(col, false); /* bfa - no split */
-  uiItemR(col, &eboneptr, "lock", UI_ITEM_NONE, IFACE_("Lock"), ICON_NONE); /* bfa - lock from properties editor*/
+  uiItemR(col,
+          &eboneptr,
+          "lock",
+          UI_ITEM_NONE,
+          IFACE_("Lock"),
+          ICON_NONE); /* bfa - lock from properties editor*/
 }
 
 static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
@@ -1956,7 +1963,7 @@ void view3d_buttons_register(ARegionType *art)
   WM_menutype_add(mt);
 }
 
-static int view3d_object_mode_menu_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus view3d_object_mode_menu_exec(bContext *C, wmOperator *op)
 {
   Object *ob = CTX_data_active_object(C);
   if (ob == nullptr) {

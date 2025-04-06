@@ -59,6 +59,9 @@ eGPUTextureFormat Result::gpu_texture_format(ResultType type, ResultPrecision pr
           return GPU_R16I;
         case ResultType::Int2:
           return GPU_RG16I;
+        case ResultType::Bool:
+          /* No bool texture formats, so we store in an 8-bit integer. Precision doesn't matter. */
+          return GPU_R8I;
       }
       break;
     case ResultPrecision::Full:
@@ -78,6 +81,9 @@ eGPUTextureFormat Result::gpu_texture_format(ResultType type, ResultPrecision pr
           return GPU_R32I;
         case ResultType::Int2:
           return GPU_RG32I;
+        case ResultType::Bool:
+          /* No bool texture formats, so we store in an 8-bit integer. Precision doesn't matter. */
+          return GPU_R8I;
       }
       break;
   }
@@ -98,6 +104,10 @@ eGPUTextureFormat Result::gpu_texture_format(eGPUTextureFormat format, ResultPre
         case GPU_RGBA16F:
         case GPU_R16I:
         case GPU_RG16I:
+          return format;
+
+        /* Used to store booleans where precision doesn't matter. */
+        case GPU_R8I:
           return format;
 
         case GPU_R32F:
@@ -125,6 +135,10 @@ eGPUTextureFormat Result::gpu_texture_format(eGPUTextureFormat format, ResultPre
         case GPU_RGBA32F:
         case GPU_R32I:
         case GPU_RG32I:
+          return format;
+
+        /* Used to store booleans where precision doesn't matter. */
+        case GPU_R8I:
           return format;
 
         case GPU_R16F:
@@ -166,6 +180,9 @@ ResultPrecision Result::precision(eGPUTextureFormat format)
     case GPU_R32I:
     case GPU_RG32I:
       return ResultPrecision::Full;
+    /* Used to store booleans where precision doesn't matter. */
+    case GPU_R8I:
+      return ResultPrecision::Full;
     default:
       break;
   }
@@ -195,6 +212,8 @@ ResultType Result::type(eGPUTextureFormat format)
     case GPU_RG16I:
     case GPU_RG32I:
       return ResultType::Int2;
+    case GPU_R8I:
+      return ResultType::Bool;
     default:
       break;
   }
@@ -239,6 +258,8 @@ const CPPType &Result::cpp_type(const ResultType type)
       return CPPType::get<float3>();
     case ResultType::Int2:
       return CPPType::get<int2>();
+    case ResultType::Bool:
+      return CPPType::get<bool>();
   }
 
   BLI_assert_unreachable();
@@ -262,6 +283,8 @@ const char *Result::type_name(const ResultType type)
       return "int2";
     case ResultType::Int:
       return "int";
+    case ResultType::Bool:
+      return "bool";
   }
 
   BLI_assert_unreachable();
@@ -328,6 +351,9 @@ void Result::allocate_single_value()
     case ResultType::Int2:
       this->set_single_value(int2(0));
       break;
+    case ResultType::Bool:
+      this->set_single_value(false);
+      break;
   }
 }
 
@@ -375,7 +401,6 @@ void Result::unbind_as_image() const
 void Result::share_data(const Result &source)
 {
   BLI_assert(type_ == source.type_);
-  BLI_assert(precision_ == source.precision_);
   BLI_assert(!this->is_allocated() && source.is_allocated());
 
   /* Overwrite everything except reference count. */
@@ -513,11 +538,24 @@ void Result::free()
     return;
   }
 
-  /* Data is still shared with some other result, so decrement data reference count and do not free
-   * anything. */
+  /* Data is still shared with some other result, so decrement data reference count and reset data
+   * members without actually freeing the data itself. */
   BLI_assert(*data_reference_count_ >= 1);
   if (*data_reference_count_ != 1) {
     (*data_reference_count_)--;
+
+    switch (storage_type_) {
+      case ResultStorageType::GPU:
+        gpu_texture_ = nullptr;
+        break;
+      case ResultStorageType::CPU:
+        cpu_data_ = GMutableSpan();
+        break;
+    }
+
+    data_reference_count_ = nullptr;
+    derived_resources_ = nullptr;
+
     return;
   }
 
@@ -611,6 +649,40 @@ GPointer Result::single_value() const
 GMutablePointer Result::single_value()
 {
   return std::visit([](auto &value) { return GMutablePointer(&value); }, single_value_);
+}
+
+void Result::update_single_value_data()
+{
+  BLI_assert(this->is_single_value());
+  BLI_assert(this->is_allocated());
+
+  switch (storage_type_) {
+    case ResultStorageType::GPU:
+      switch (type_) {
+        case ResultType::Float:
+        case ResultType::Float2:
+        case ResultType::Float4:
+        case ResultType::Color:
+          GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, this->single_value().get());
+          break;
+        case ResultType::Float3: {
+          /* Float3 results are stored in 4-component textures due to hardware limitations. So
+           * pad the value with a zero before updating. */
+          const float4 vector_value = float4(this->get_single_value<float3>(), 0.0f);
+          GPU_texture_update(this->gpu_texture(), GPU_DATA_FLOAT, vector_value);
+          break;
+        }
+        case ResultType::Int:
+        case ResultType::Int2:
+        case ResultType::Bool:
+          GPU_texture_update(this->gpu_texture(), GPU_DATA_INT, this->single_value().get());
+          break;
+      }
+      break;
+    case ResultStorageType::CPU:
+      this->get_cpp_type().copy_assign(this->single_value().get(), this->cpu_data().data());
+      break;
+  }
 }
 
 void Result::allocate_data(int2 size, bool from_pool)

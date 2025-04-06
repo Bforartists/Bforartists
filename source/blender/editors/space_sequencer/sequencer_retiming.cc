@@ -17,6 +17,8 @@
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 
+#include "DNA_windowmanager_enums.h"
+#include "DNA_windowmanager_types.h"
 #include "ED_select_utils.hh"
 #include "ED_sequencer.hh"
 
@@ -86,7 +88,7 @@ static void sequencer_retiming_data_hide_all(ListBase *seqbase)
   }
 }
 
-static int sequencer_retiming_data_show_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus sequencer_retiming_data_show_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = seq::editing_get(scene);
@@ -148,7 +150,7 @@ static bool retiming_poll(bContext *C)
 /** \name Retiming Reset
  * \{ */
 
-static int sequencer_retiming_reset_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus sequencer_retiming_reset_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   const Editing *ed = seq::editing_get(scene);
@@ -216,10 +218,10 @@ static bool retiming_key_add_new_for_seq(bContext *C,
   return true;
 }
 
-static int retiming_key_add_from_selection(bContext *C,
-                                           wmOperator *op,
-                                           blender::Span<Strip *> strips,
-                                           const int timeline_frame)
+static wmOperatorStatus retiming_key_add_from_selection(bContext *C,
+                                                        wmOperator *op,
+                                                        blender::Span<Strip *> strips,
+                                                        const int timeline_frame)
 {
   bool inserted = false;
 
@@ -233,9 +235,9 @@ static int retiming_key_add_from_selection(bContext *C,
   return inserted ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
-static int retiming_key_add_to_editable_strips(bContext *C,
-                                               wmOperator *op,
-                                               const int timeline_frame)
+static wmOperatorStatus retiming_key_add_to_editable_strips(bContext *C,
+                                                            wmOperator *op,
+                                                            const int timeline_frame)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = seq::editing_get(scene);
@@ -253,7 +255,7 @@ static int retiming_key_add_to_editable_strips(bContext *C,
   return inserted ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
-static int sequencer_retiming_key_add_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_retiming_key_add_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
 
@@ -265,7 +267,7 @@ static int sequencer_retiming_key_add_exec(bContext *C, wmOperator *op)
     timeline_frame = BKE_scene_frame_get(scene);
   }
 
-  int ret_val;
+  wmOperatorStatus ret_val;
   blender::VectorSet<Strip *> strips = selected_strips_from_context(C);
   if (!strips.is_empty()) {
     ret_val = retiming_key_add_from_selection(C, op, strips, timeline_frame);
@@ -339,6 +341,8 @@ static bool freeze_frame_add_new_for_seq(const bContext *C,
   }
 
   deselect_all_strips(scene);
+  sequencer_select_do_updates(C, scene);
+
   seq::retiming_selection_append(freeze);
 
   seq::relations_invalidate_cache_raw(scene, strip);
@@ -379,7 +383,7 @@ static bool freeze_frame_add_from_retiming_selection(const bContext *C,
   return success;
 }
 
-static int sequencer_retiming_freeze_frame_add_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_retiming_freeze_frame_add_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   bool success = false;
@@ -463,6 +467,8 @@ static bool transition_add_new_for_seq(const bContext *C,
   }
 
   deselect_all_strips(scene);
+  sequencer_select_do_updates(C, scene);
+
   seq::retiming_selection_append(transition);
 
   seq::relations_invalidate_cache_raw(scene, strip);
@@ -485,7 +491,7 @@ static bool transition_add_from_retiming_selection(const bContext *C,
   return success;
 }
 
-static int sequencer_retiming_transition_add_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_retiming_transition_add_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   bool success = false;
@@ -501,7 +507,7 @@ static int sequencer_retiming_transition_add_exec(bContext *C, wmOperator *op)
   }
   else {
     BKE_report(op->reports, RPT_WARNING, "Retiming key must be selected");
-    return false;
+    return OPERATOR_CANCELLED;
   }
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
@@ -541,7 +547,7 @@ void SEQUENCER_OT_retiming_transition_add(wmOperatorType *ot)
 /** \name Retiming Delete Key
  * \{ */
 
-static int sequencer_retiming_key_delete_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus sequencer_retiming_key_delete_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
 
@@ -576,7 +582,9 @@ static int sequencer_retiming_key_delete_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-static int sequencer_retiming_key_delete_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus sequencer_retiming_key_delete_invoke(bContext *C,
+                                                             wmOperator *op,
+                                                             const wmEvent *event)
 {
   Scene *scene = CTX_data_scene(C);
   ListBase *markers = &scene->markers;
@@ -696,7 +704,7 @@ static int segment_speed_set_exec(const bContext *C,
   return OPERATOR_FINISHED;
 }
 
-static int sequencer_retiming_segment_speed_set_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sequencer_retiming_segment_speed_set_exec(bContext *C, wmOperator *op)
 {
   const Scene *scene = CTX_data_scene(C);
 
@@ -716,9 +724,9 @@ static int sequencer_retiming_segment_speed_set_exec(bContext *C, wmOperator *op
   return OPERATOR_CANCELLED;
 }
 
-static int sequencer_retiming_segment_speed_set_invoke(bContext *C,
-                                                       wmOperator *op,
-                                                       const wmEvent *event)
+static wmOperatorStatus sequencer_retiming_segment_speed_set_invoke(bContext *C,
+                                                                    wmOperator *op,
+                                                                    const wmEvent *event)
 {
   if (!RNA_struct_property_is_set(op->ptr, "speed")) {
     RNA_float_set(op->ptr, "speed", strip_speed_get(C, op) * 100.0f);
@@ -810,10 +818,10 @@ static bool select_connected_keys(const Scene *scene,
   return changed;
 }
 
-int sequencer_retiming_select_linked_time(bContext *C,
-                                          wmOperator *op,
-                                          SeqRetimingKey *key,
-                                          const Strip *key_owner)
+wmOperatorStatus sequencer_retiming_select_linked_time(bContext *C,
+                                                       wmOperator *op,
+                                                       SeqRetimingKey *key,
+                                                       const Strip *key_owner)
 {
   Scene *scene = CTX_data_scene(C);
   Editing *ed = seq::editing_get(scene);
@@ -829,10 +837,10 @@ int sequencer_retiming_select_linked_time(bContext *C,
   return OPERATOR_FINISHED;
 }
 
-int sequencer_retiming_key_select_exec(bContext *C,
-                                       wmOperator *op,
-                                       SeqRetimingKey *key,
-                                       const Strip *key_owner)
+wmwmOperatorStatusratorStatus sequencer_retiming_key_select_exec(bContext *C,
+                                                                 wmOperator *op,
+                                                                 SeqRetimingKey *key,
+                                                                 const Strip *key_owner)
 {
   if (RNA_boolean_get(op->ptr, "linked_time")) {
     return sequencer_retiming_select_linked_time(C, op, key, key_owner);
@@ -886,7 +894,7 @@ static void realize_fake_keys_in_rect(bContext *C, Strip *strip, const rctf &rec
   }
 }
 
-int sequencer_retiming_box_select_exec(bContext *C, wmOperator *op)
+wmwmOperatorStatusratorStatus sequencer_retiming_box_select_exec(bContext *C, wmOperator *op)
 {
   const Scene *scene = CTX_data_scene(C);
   const View2D *v2d = UI_view2d_fromcontext(C);
@@ -969,7 +977,7 @@ int sequencer_retiming_box_select_exec(bContext *C, wmOperator *op)
   return changed ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
-int sequencer_retiming_select_all_exec(bContext *C, wmOperator *op)
+wmwmOperatorStatusratorStatus sequencer_retiming_select_all_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   int action = RNA_enum_get(op->ptr, "action");
