@@ -30,6 +30,7 @@ class MetalDevice : public Device {
   id<MTLCommandQueue> mtlGeneralCommandQueue = nil;
   id<MTLArgumentEncoder> mtlAncillaryArgEncoder =
       nil; /* encoder used for fetching device pointers from MTLBuffers */
+  id<MTLCounterSampleBuffer> mtlCounterSampleBuffer = nil;
   string source[PSO_NUM];
   string kernels_md5[PSO_NUM];
   string global_defines_md5[PSO_NUM];
@@ -56,7 +57,6 @@ class MetalDevice : public Device {
 
   uint kernel_features = 0;
   bool using_nanovdb = false;
-  MTLResourceOptions default_storage_mode;
   int max_threads_per_threadgroup;
 
   int mtlDevId = 0;
@@ -70,7 +70,6 @@ class MetalDevice : public Device {
     uint64_t offset = 0;
     uint64_t size = 0;
     void *hostPtr = nullptr;
-    bool use_UMA = false; /* If true, UMA memory in shared_pointer is being used. */
   };
   using MetalMemMap = map<device_memory *, unique_ptr<MetalMem>>;
   MetalMemMap metal_mem_map;

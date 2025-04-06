@@ -51,29 +51,10 @@ static void do_vert_pair(blender::gpu::VertBuf *vbo, uint pos, uint *vidx, int c
     copy_v2_v2(inter, exter);
   }
 
-  /* Line width is 20% of the entire corner size. */
-  const float line_width = 0.2f; /* Keep in sync with shader */
-  mul_v2_fl(inter, 1.0f - line_width);
-  mul_v2_fl(exter, 1.0f + line_width);
-
-  switch (corner) {
-    case 0:
-      add_v2_v2(inter, blender::float2{-1.0f, -1.0f});
-      add_v2_v2(exter, blender::float2{-1.0f, -1.0f});
-      break;
-    case 1:
-      add_v2_v2(inter, blender::float2{1.0f, -1.0f});
-      add_v2_v2(exter, blender::float2{1.0f, -1.0f});
-      break;
-    case 2:
-      add_v2_v2(inter, blender::float2{1.0f, 1.0f});
-      add_v2_v2(exter, blender::float2{1.0f, 1.0f});
-      break;
-    case 3:
-      add_v2_v2(inter, blender::float2{-1.0f, 1.0f});
-      add_v2_v2(exter, blender::float2{-1.0f, 1.0f});
-      break;
-  }
+  /* Small offset to be able to tell inner and outer vertex apart inside the shader.
+   * Edge width is specified in the shader. */
+  mul_v2_fl(inter, 1.0f - 0.0001f);
+  mul_v2_fl(exter, 1.0f);
 
   GPU_vertbuf_attr_set(vbo, pos, (*vidx)++, inter);
   GPU_vertbuf_attr_set(vbo, pos, (*vidx)++, exter);
@@ -241,6 +222,7 @@ void ED_screen_draw_edges(wmWindow *win)
   GPU_batch_program_set_builtin(batch, GPU_SHADER_2D_AREA_BORDERS);
   GPU_batch_uniform_1i(batch, "cornerLen", verts_per_corner);
   GPU_batch_uniform_1f(batch, "scale", corner_scale);
+  GPU_batch_uniform_1f(batch, "width", 0.2f);
   GPU_batch_uniform_4fv(batch, "color", col);
 
   LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
@@ -296,17 +278,19 @@ void screen_draw_move_highlight(bScreen *screen, eScreenAxis dir_axis)
   }
 
   if (dir_axis == SCREEN_AXIS_H) {
-    BLI_rctf_pad(&rect, 0.0f, 2.5f * U.pixelsize);
+    BLI_rctf_pad(&rect, 0.0f, 5.0f * U.pixelsize);
   }
   else {
-    BLI_rctf_pad(&rect, 2.5f * U.pixelsize, 0.0f);
+    BLI_rctf_pad(&rect, 5.0f * U.pixelsize, 0.0f);
   }
 
-  float inner[4] = {1.0f, 1.0f, 1.0f, 0.7f};
-  float outline[4] = {0.0f, 0.0f, 0.0f, 0.8f};
+  float inner[4] = {1.0f, 1.0f, 1.0f, 0.4f};
+  float outline[4];
+  UI_GetThemeColor4fv(TH_EDITOR_BORDER, outline);
+
   UI_draw_roundbox_corner_set(UI_CNR_ALL);
   UI_draw_roundbox_4fv_ex(
-      &rect, inner, nullptr, 1.0f, outline, 2.0f * U.pixelsize, 2.5f * UI_SCALE_FAC);
+      &rect, inner, nullptr, 1.0f, outline, 4.0f * U.pixelsize, 2.5f * UI_SCALE_FAC);
 }
 
 static void screen_draw_area_drag_tip(

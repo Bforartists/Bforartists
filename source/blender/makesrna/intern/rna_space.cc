@@ -371,9 +371,9 @@ static const EnumPropertyItem display_channels_items[] = {
      ICON_IMAGE_ZDEPTH,
      "Z-Buffer",
      "Display Z-buffer associated with image (mapped from camera clip start to end)"},
-    {SI_SHOW_R, "RED", ICON_COLOR_RED, "Red", ""},
-    {SI_SHOW_G, "GREEN", ICON_COLOR_GREEN, "Green", ""},
-    {SI_SHOW_B, "BLUE", ICON_COLOR_BLUE, "Blue", ""},
+    {SI_SHOW_R, "RED", ICON_RGB_RED, "Red", ""},
+    {SI_SHOW_G, "GREEN", ICON_RGB_GREEN, "Green", ""},
+    {SI_SHOW_B, "BLUE", ICON_RGB_BLUE, "Blue", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1463,7 +1463,7 @@ static const EnumPropertyItem *rna_3DViewShading_render_pass_itemf(bContext *C,
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   const bool aov_available = BKE_view_layer_has_valid_aov(view_layer);
-  const bool eevee_next_active = STREQ(scene->r.engine, "BLENDER_EEVEE_NEXT");
+  const bool eevee_active = STREQ(scene->r.engine, "BLENDER_EEVEE_NEXT");
 
   int totitem = 0;
   EnumPropertyItem *result = nullptr;
@@ -1488,7 +1488,7 @@ static const EnumPropertyItem *rna_3DViewShading_render_pass_itemf(bContext *C,
                   EEVEE_RENDER_PASS_CRYPTOMATTE_OBJECT,
                   EEVEE_RENDER_PASS_CRYPTOMATTE_ASSET,
                   EEVEE_RENDER_PASS_CRYPTOMATTE_MATERIAL) &&
-             !eevee_next_active)
+             !eevee_active)
     {
     }
     else if (!aov_available && STREQ(item->name, "Shader AOV")) {
@@ -2223,7 +2223,7 @@ static void rna_ConsoleLine_current_character_set(PointerRNA *ptr, const int ind
   ci->cursor = BLI_str_utf8_offset_from_index(ci->line, ci->len, index);
 }
 
-/* Space Dopesheet */
+/* Space Dope-sheet */
 
 static void rna_SpaceDopeSheetEditor_action_set(PointerRNA *ptr,
                                                 PointerRNA value,
@@ -4068,7 +4068,11 @@ static void rna_def_space_outliner(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "filter_text", PROP_STRING, PROP_NONE);
   RNA_def_property_string_sdna(prop, nullptr, "search_string");
-  RNA_def_property_ui_text(prop, "Display Filter", "Live search by filtering entries by string. Press CTRL+F to quick search"); /*BFA - tooltip*/
+  RNA_def_property_ui_text(
+      prop,
+      "Display Filter",
+      "Live search by filtering entries by string. Press CTRL+F to quick search"); /*BFA -
+                                                                                      tooltip*/
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
@@ -5794,7 +5798,11 @@ static void rna_def_space_properties(BlenderRNA *brna)
                                 "rna_SpaceProperties_search_filter_get",
                                 "rna_SpaceProperties_search_filter_length",
                                 "rna_SpaceProperties_search_filter_set");
-  RNA_def_property_ui_text(prop, "Display Filter", "Live search by filtering entries by string. Press CTRL+F to quick search"); /*BFA - Tooltip update*/
+  RNA_def_property_ui_text(
+      prop,
+      "Display Filter",
+      "Live search by filtering entries by string. Press CTRL+F to quick search"); /*BFA - Tooltip
+                                                                                      update*/
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(
       prop, NC_SPACE | ND_SPACE_PROPERTIES, "rna_SpaceProperties_search_filter_update");
@@ -7457,16 +7465,27 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, asset_import_method_items);
   RNA_def_property_ui_text(prop, "Import Method", "Determine how the asset will be imported");
-  /* BFA - needed for setting #use_instance from UI before executing drop operator */
-  RNA_def_boolean(
-      srna, "drop_collections_as_instances", false, "Drop Collections as Instances", "");
-  /* BFA - needed for dropping collection at origin instead of cursor when #use_instance is enabled
-   */
-  RNA_def_boolean(
-      srna, "drop_collections_at_origin", true, "Drop instance collections at origin", "");
   /* Asset drag info saved by buttons stores the import method, so the space must redraw when
    * import method changes. */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_LIST, nullptr);
+
+  prop = RNA_def_property(srna, "instance_collections_on_link", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "import_flags", FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK);
+  RNA_def_property_ui_text(prop,
+                           "Instance Collections on Linking",
+                           "Create instances for collections when linking, rather than adding "
+                           "them directly to the scene");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
+
+  prop = RNA_def_property(srna, "instance_collections_on_append", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "import_flags", FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND);
+  RNA_def_property_ui_text(prop,
+                           "Instance Collections on Appending",
+                           "Create instances for collections when appending, rather than adding "
+                           "them directly to the scene");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
 }
 
 static void rna_def_filemenu_entry(BlenderRNA *brna)
@@ -7937,9 +7956,9 @@ static void rna_def_space_node(BlenderRNA *brna)
        "Display image with RGB colors and alpha transparency"},
       {0, "COLOR", ICON_IMAGE_RGB, "Color", "Display image with RGB colors"},
       {SNODE_SHOW_ALPHA, "ALPHA", ICON_IMAGE_ALPHA, "Alpha", "Display alpha transparency channel"},
-      {SNODE_SHOW_R, "RED", ICON_COLOR_RED, "Red", ""},
-      {SNODE_SHOW_G, "GREEN", ICON_COLOR_GREEN, "Green", ""},
-      {SNODE_SHOW_B, "BLUE", ICON_COLOR_BLUE, "Blue", ""},
+      {SNODE_SHOW_R, "RED", ICON_RGB_RED, "Red", ""},
+      {SNODE_SHOW_G, "GREEN", ICON_RGB_GREEN, "Green", ""},
+      {SNODE_SHOW_B, "BLUE", ICON_RGB_BLUE, "Blue", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 

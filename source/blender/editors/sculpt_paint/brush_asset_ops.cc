@@ -48,7 +48,7 @@
 
 namespace blender::ed::sculpt_paint {
 
-static int brush_asset_activate_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus brush_asset_activate_exec(bContext *C, wmOperator *op)
 {
   /* This operator currently covers both cases: the file/asset browser file list and the asset list
    * used for the asset-view template. Once the asset list design is used by the Asset Browser,
@@ -113,7 +113,7 @@ static bool brush_asset_save_as_poll(bContext *C)
   return true;
 }
 
-static int brush_asset_save_as_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus brush_asset_save_as_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Paint *paint = BKE_paint_get_active_from_context(C);
@@ -149,11 +149,12 @@ static int brush_asset_save_as_exec(bContext *C, wmOperator *op)
   BLI_assert(ID_IS_ASSET(&brush->id));
 
   /* Add asset to catalog. */
-  char catalog_path[MAX_NAME];
-  RNA_string_get(op->ptr, "catalog_path", catalog_path);
+  char catalog_path_c[MAX_NAME];
+  RNA_string_get(op->ptr, "catalog_path", catalog_path_c);
 
   AssetMetaData &meta_data = *brush->id.asset_data;
-  if (catalog_path[0]) {
+  if (catalog_path_c[0]) {
+    const asset_system::AssetCatalogPath catalog_path(catalog_path_c);
     const asset_system::AssetCatalog &catalog = asset::library_ensure_catalogs_in_path(
         *library, catalog_path);
     BKE_asset_metadata_catalog_id_set(&meta_data, catalog.catalog_id, catalog.simple_name.c_str());
@@ -167,7 +168,7 @@ static int brush_asset_save_as_exec(bContext *C, wmOperator *op)
   }
 
   library->catalog_service().write_to_disk(*final_full_asset_filepath);
-  asset::shelf::show_catalog_in_visible_shelves(*C, catalog_path);
+  asset::shelf::show_catalog_in_visible_shelves(*C, catalog_path_c);
 
   brush = reinterpret_cast<Brush *>(
       bke::asset_edit_id_from_weak_reference(*bmain, ID_BR, brush_asset_reference));
@@ -193,7 +194,9 @@ static bool library_is_editable(const AssetLibraryReference &library)
   return true;
 }
 
-static int brush_asset_save_as_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+static wmOperatorStatus brush_asset_save_as_invoke(bContext *C,
+                                                   wmOperator *op,
+                                                   const wmEvent * /*event*/)
 {
   Paint *paint = BKE_paint_get_active_from_context(C);
   const AssetWeakReference &brush_weak_ref = *paint->brush_asset_reference;
@@ -295,7 +298,7 @@ void BRUSH_OT_asset_save_as(wmOperatorType *ot)
       prop, visit_library_prop_catalogs_catalog_for_search_fn, PROP_STRING_SEARCH_SUGGESTION);
 }
 
-static int brush_asset_edit_metadata_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus brush_asset_edit_metadata_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Paint *paint = BKE_paint_get_active_from_context(C);
@@ -309,8 +312,8 @@ static int brush_asset_edit_metadata_exec(bContext *C, wmOperator *op)
   }
   asset_system::AssetLibrary &library = asset->owner_asset_library();
 
-  char catalog_path[MAX_NAME];
-  RNA_string_get(op->ptr, "catalog_path", catalog_path);
+  char catalog_path_c[MAX_NAME];
+  RNA_string_get(op->ptr, "catalog_path", catalog_path_c);
 
   AssetMetaData &meta_data = *brush->id.asset_data;
   MEM_SAFE_FREE(meta_data.author);
@@ -318,7 +321,8 @@ static int brush_asset_edit_metadata_exec(bContext *C, wmOperator *op)
   MEM_SAFE_FREE(meta_data.description);
   meta_data.description = RNA_string_get_alloc(op->ptr, "description", nullptr, 0, nullptr);
 
-  if (catalog_path[0]) {
+  if (catalog_path_c[0]) {
+    const asset_system::AssetCatalogPath catalog_path(catalog_path_c);
     const asset_system::AssetCatalog &catalog = asset::library_ensure_catalogs_in_path(
         library, catalog_path);
     BKE_asset_metadata_catalog_id_set(&meta_data, catalog.catalog_id, catalog.simple_name.c_str());
@@ -336,7 +340,9 @@ static int brush_asset_edit_metadata_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int brush_asset_edit_metadata_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+static wmOperatorStatus brush_asset_edit_metadata_invoke(bContext *C,
+                                                         wmOperator *op,
+                                                         const wmEvent * /*event*/)
 {
   const Paint *paint = BKE_paint_get_active_from_context(C);
   const AssetWeakReference &brush_weak_ref = *paint->brush_asset_reference;
@@ -443,7 +449,7 @@ void BRUSH_OT_asset_edit_metadata(wmOperatorType *ot)
   RNA_def_string(ot->srna, "description", nullptr, MAX_NAME, "Description", "");
 }
 
-static int brush_asset_load_preview_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus brush_asset_load_preview_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Paint *paint = BKE_paint_get_active_from_context(C);
@@ -475,7 +481,9 @@ static int brush_asset_load_preview_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int brush_asset_load_preview_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus brush_asset_load_preview_invoke(bContext *C,
+                                                        wmOperator *op,
+                                                        const wmEvent *event)
 {
   if (RNA_struct_property_is_set(op->ptr, "filepath")) {
     return brush_asset_load_preview_exec(C, op);
@@ -521,7 +529,7 @@ static bool brush_asset_delete_poll(bContext *C)
   return true;
 }
 
-static int brush_asset_delete_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus brush_asset_delete_exec(bContext *C, wmOperator *op)
 {
   Paint *paint = BKE_paint_get_active_from_context(C);
   Brush *brush = BKE_paint_brush(paint);
@@ -546,7 +554,9 @@ static int brush_asset_delete_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int brush_asset_delete_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+static wmOperatorStatus brush_asset_delete_invoke(bContext *C,
+                                                  wmOperator *op,
+                                                  const wmEvent * /*event*/)
 {
   Paint *paint = BKE_paint_get_active_from_context(C);
   Brush *brush = BKE_paint_brush(paint);
@@ -598,7 +608,7 @@ static bool brush_asset_save_poll(bContext *C)
   return true;
 }
 
-static int brush_asset_save_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus brush_asset_save_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Paint *paint = BKE_paint_get_active_from_context(C);
@@ -644,7 +654,7 @@ static bool brush_asset_revert_poll(bContext *C)
   return paint->brush_asset_reference && bke::asset_edit_id_is_editable(brush->id);
 }
 
-static int brush_asset_revert_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus brush_asset_revert_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Paint *paint = BKE_paint_get_active_from_context(C);
