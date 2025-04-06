@@ -1537,8 +1537,6 @@ class SEQUENCER_MT_strip_retiming(Menu):
 
                 layout.separator()
 
-                # layout.operator("sequencer.delete", text="Delete Retiming Keys",
-                # icon='DELETE') #BFA - Redundant operator, tooltip was updated
                 col = layout.column()
 
                 col.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
@@ -1592,7 +1590,9 @@ class SEQUENCER_MT_strip(Menu):
 
         if has_preview:
             layout.separator()
-            layout.operator("sequencer.preview_duplicate_move", text="Duplicate", icon = "DUPLICATE")
+            layout.operator(
+                "sequencer.preview_duplicate_move", text="Duplicate", icon="DUPLICATE"
+            )
             layout.separator()
             # BFA - moved to top header level
             # if strip and strip.type == "TEXT":
@@ -3117,7 +3117,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
                 layout.label(
                     text="To retime, select a movie or sound strip", icon="QUESTION"
                 )  # BFA
-        except:
+        except Exception:
             layout.label(
                 text="To retime, select a movie or sound strip", icon="QUESTION"
             )  # BFA
@@ -3191,6 +3191,12 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
                 "animation_offset_end",
                 text=smpte_from_frame(strip.animation_offset_end),
             )
+            if strip.type == "SOUND":
+                sub2 = layout.column(align=True)
+                split = sub2.split(factor=factor + max_factor, align=True)
+                split.alignment = "RIGHT"
+                split.label(text="Sound Offset", text_ctxt=i18n_contexts.id_sound)
+                split.prop(strip, "sound_offset", text="")
 
         col = layout.column(align=True)
         col = col.box()
@@ -3259,11 +3265,6 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             split.alignment = "RIGHT"
             split.label(text="Volume", text_ctxt=i18n_contexts.id_sound)
             split.prop(strip, "volume", text="")
-
-            split = col.split(factor=0.4)
-            split.alignment = "RIGHT"
-            split.label(text="Offset", text_ctxt=i18n_contexts.id_sound)
-            split.prop(strip, "sound_offset", text="")
 
             layout.use_property_split = False
             col = layout.column()

@@ -173,8 +173,8 @@ static void image_buffer_rect_update(RenderJob *rj,
   Scene *scene = rj->scene;
   const float *rectf = nullptr;
   int linear_stride, linear_offset_x, linear_offset_y;
-  ColorManagedViewSettings *view_settings;
-  ColorManagedDisplaySettings *display_settings;
+  const ColorManagedViewSettings *view_settings;
+  const ColorManagedDisplaySettings *display_settings;
 
   if (ibuf->userflags & IB_DISPLAY_BUFFER_INVALID) {
     /* The whole image buffer is to be color managed again anyway. */
@@ -295,7 +295,7 @@ static void screen_render_single_layer_set(
 }
 
 /* executes blocking render */
-static int screen_render_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus screen_render_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   RenderEngineType *re_type = RE_engines_find(scene->r.engine);
@@ -890,7 +890,7 @@ static void render_drawlock(void *rjv, bool lock)
 }
 
 /** Catch escape key to cancel. */
-static int screen_render_modal(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus screen_render_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
   Scene *scene = (Scene *)op->customdata;
 
@@ -958,7 +958,7 @@ static void clean_viewport_memory(Main *bmain, Scene *scene)
 }
 
 /* using context, starts job */
-static int screen_render_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus screen_render_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   /* new render clears all callbacks */
   Main *bmain = CTX_data_main(C);
@@ -1224,7 +1224,7 @@ Scene *ED_render_job_get_current_scene(const bContext *C)
 
 /* Motion blur curve preset */
 
-static int render_shutter_curve_preset_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus render_shutter_curve_preset_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   CurveMapping *mblur_shutter_curve = &scene->r.mblur_shutter_curve;

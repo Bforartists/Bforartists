@@ -845,7 +845,8 @@ void wm_gizmomaps_handled_modal_update(bContext *C, wmEvent *event, wmEventHandl
     if (gz && gzop && (gzop->type != nullptr) && (gzop->type == handler->op->type)) {
       wmGizmoFnModal modal_fn = gz->custom_modal ? gz->custom_modal : gz->type->modal;
       if (modal_fn != nullptr) {
-        int retval = modal_fn(C, gz, event, eWM_GizmoFlagTweak(0));
+        const wmOperatorStatus retval = modal_fn(C, gz, event, eWM_GizmoFlagTweak(0));
+        OPERATOR_RETVAL_CHECK(retval);
         /* The gizmo is tried to the operator, we can't choose when to exit. */
         BLI_assert(retval & OPERATOR_RUNNING_MODAL);
         UNUSED_VARS_NDEBUG(retval);
@@ -1067,7 +1068,9 @@ void wm_gizmomap_modal_set(
     }
 
     if (gz->type->invoke && (gz->type->modal || gz->custom_modal)) {
-      const int retval = gz->type->invoke(C, gz, event);
+      const wmOperatorStatus retval = gz->type->invoke(C, gz, event);
+      OPERATOR_RETVAL_CHECK(retval);
+
       if ((retval & OPERATOR_RUNNING_MODAL) == 0) {
         return;
       }
@@ -1090,7 +1093,9 @@ void wm_gizmomap_modal_set(
 
     wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, gz->highlight_part);
     if (gzop && gzop->type) {
-      const int retval = WM_gizmo_operator_invoke(C, gz, gzop, event);
+      const wmOperatorStatus retval = WM_gizmo_operator_invoke(C, gz, gzop, event);
+      OPERATOR_RETVAL_CHECK(retval);
+
       if ((retval & OPERATOR_RUNNING_MODAL) == 0) {
         wm_gizmomap_modal_set(gzmap, C, gz, event, false);
       }

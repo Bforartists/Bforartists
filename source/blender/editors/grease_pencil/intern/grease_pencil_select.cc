@@ -317,7 +317,7 @@ bool selection_update(const ViewContext *vc,
 
 /** \} */
 
-static int select_all_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_all_exec(bContext *C, wmOperator *op)
 {
   int action = RNA_enum_get(op->ptr, "action");
   Scene *scene = CTX_data_scene(C);
@@ -366,7 +366,7 @@ static void GREASE_PENCIL_OT_select_all(wmOperatorType *ot)
   WM_operator_properties_select_all(ot);
 }
 
-static int select_more_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_more_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
@@ -402,7 +402,7 @@ static void GREASE_PENCIL_OT_select_more(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-static int select_less_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_less_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
@@ -438,7 +438,7 @@ static void GREASE_PENCIL_OT_select_less(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-static int select_linked_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_linked_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *scene = CTX_data_scene(C);
   Object *object = CTX_data_active_object(C);
@@ -475,7 +475,7 @@ static void GREASE_PENCIL_OT_select_linked(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-static int select_random_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_random_exec(bContext *C, wmOperator *op)
 {
   using namespace blender;
   const float ratio = RNA_float_get(op->ptr, "ratio");
@@ -534,7 +534,7 @@ static void GREASE_PENCIL_OT_select_random(wmOperatorType *ot)
   WM_operator_properties_select_random(ot);
 }
 
-static int select_alternate_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_alternate_exec(bContext *C, wmOperator *op)
 {
   const bool deselect_ends = RNA_boolean_get(op->ptr, "deselect_ends");
   Scene *scene = CTX_data_scene(C);
@@ -709,7 +709,7 @@ static void select_similar_by_layer(Scene *scene,
   });
 }
 
-static int select_similar_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_similar_exec(bContext *C, wmOperator *op)
 {
   const SelectSimilarMode mode = SelectSimilarMode(RNA_enum_get(op->ptr, "mode"));
   const float threshold = RNA_float_get(op->ptr, "threshold");
@@ -791,7 +791,7 @@ static void GREASE_PENCIL_OT_select_similar(wmOperatorType *ot)
   RNA_def_float(ot->srna, "threshold", 0.1f, 0.0f, FLT_MAX, "Threshold", "", 0.0f, 10.0f);
 }
 
-static int select_ends_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_ends_exec(bContext *C, wmOperator *op)
 {
   const int amount_start = RNA_int_get(op->ptr, "amount_start");
   const int amount_end = RNA_int_get(op->ptr, "amount_end");
@@ -912,7 +912,7 @@ bool ensure_selection_domain(ToolSettings *ts, Object *object)
   return changed;
 }
 
-static int select_set_mode_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus select_set_mode_exec(bContext *C, wmOperator *op)
 {
   using namespace blender::bke::greasepencil;
 
@@ -968,7 +968,7 @@ static void GREASE_PENCIL_OT_set_selection_mode(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
-static int grease_pencil_material_select_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus grease_pencil_material_select_exec(bContext *C, wmOperator *op)
 {
   const Scene *scene = CTX_data_scene(C);
   Object *object = CTX_data_active_object(C);
