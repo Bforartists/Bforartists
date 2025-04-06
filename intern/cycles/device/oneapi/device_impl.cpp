@@ -388,7 +388,11 @@ void *OneapiDevice::host_alloc(const MemoryType type, const size_t size)
     /* Import host_pointer into USM memory for faster host<->device data transfers. */
     if (type == MEM_READ_WRITE || type == MEM_READ_ONLY) {
       sycl::queue *queue = reinterpret_cast<sycl::queue *>(device_queue_);
-      sycl::ext::oneapi::experimental::prepare_for_device_copy(host_pointer, size, *queue);
+      /* This API is properly implemented only in Level-Zero backend at the moment and we don't
+       * want it to fail at runtime, so we conservatively use it only for L0. */
+      if (queue->get_backend() == sycl::backend::ext_oneapi_level_zero) {
+        sycl::ext::oneapi::experimental::prepare_for_device_copy(host_pointer, size, *queue);
+      }
     }
   }
 #  endif
@@ -401,7 +405,11 @@ void OneapiDevice::host_free(const MemoryType type, void *host_pointer, const si
 #  ifdef SYCL_EXT_ONEAPI_COPY_OPTIMIZE
   if (type == MEM_READ_WRITE || type == MEM_READ_ONLY) {
     sycl::queue *queue = reinterpret_cast<sycl::queue *>(device_queue_);
-    sycl::ext::oneapi::experimental::release_from_device_copy(host_pointer, *queue);
+    /* This API is properly implemented only in Level-Zero backend at the moment and we don't
+     * want it to fail at runtime, so we conservatively use it only for L0. */
+    if (queue->get_backend() == sycl::backend::ext_oneapi_level_zero) {
+      sycl::ext::oneapi::experimental::release_from_device_copy(host_pointer, *queue);
+    }
   }
 #  endif
 
@@ -1591,7 +1599,7 @@ int OneapiDevice::get_num_multiprocessors()
   if (device.has(sycl::aspect::ext_intel_gpu_eu_count)) {
     return device.get_info<sycl::ext::intel::info::device::gpu_eu_count>();
   }
-  return 0;
+  return device.get_info<sycl::info::device::max_compute_units>();
 }
 
 int OneapiDevice::get_max_num_threads_per_multiprocessor()
@@ -1603,7 +1611,9 @@ int OneapiDevice::get_max_num_threads_per_multiprocessor()
     return device.get_info<sycl::ext::intel::info::device::gpu_eu_simd_width>() *
            device.get_info<sycl::ext::intel::info::device::gpu_hw_threads_per_eu>();
   }
-  return 0;
+  /* We'd want sycl::info::device::max_threads_per_compute_unit which doesn't exist yet.
+   * max_work_group_size is the closest approximation but it can still be several times off. */
+  return device.get_info<sycl::info::device::max_work_group_size>();
 }
 
 CCL_NAMESPACE_END
