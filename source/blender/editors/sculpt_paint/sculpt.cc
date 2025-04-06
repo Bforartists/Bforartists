@@ -382,7 +382,7 @@ bool vert_has_unique_face_set(const int /*face_set_offset*/, const BMVert & /*ve
 
 }  // namespace face_set
 
-Span<BMVert *> vert_neighbors_get_bmesh(BMVert &vert, Vector<BMVert *, 64> &r_neighbors)
+Span<BMVert *> vert_neighbors_get_bmesh(BMVert &vert, BMeshNeighborVerts &r_neighbors)
 {
   r_neighbors.clear();
   BMIter liter;
@@ -397,7 +397,7 @@ Span<BMVert *> vert_neighbors_get_bmesh(BMVert &vert, Vector<BMVert *, 64> &r_ne
   return r_neighbors;
 }
 
-Span<BMVert *> vert_neighbors_get_interior_bmesh(BMVert &vert, Vector<BMVert *, 64> &r_neighbors)
+Span<BMVert *> vert_neighbors_get_interior_bmesh(BMVert &vert, BMeshNeighborVerts &r_neighbors)
 {
   r_neighbors.clear();
   BMIter liter;
@@ -737,18 +737,13 @@ std::optional<BMVert *> nearest_vert_calc_bmesh(const bke::pbvh::Tree &pbvh,
 
 }  // namespace blender::ed::sculpt_paint
 
-bool SCULPT_is_symmetry_iteration_valid(char i, char symm)
-{
-  return i == 0 || (symm & i && (symm != 5 || i != 3) && (symm != 6 || !ELEM(i, 3, 5)));
-}
-
 bool SCULPT_is_vertex_inside_brush_radius_symm(const float vertex[3],
                                                const float br_co[3],
                                                float radius,
                                                char symm)
 {
   for (char i = 0; i <= symm; ++i) {
-    if (!SCULPT_is_symmetry_iteration_valid(i, symm)) {
+    if (!blender::ed::sculpt_paint::is_symmetry_iteration_valid(i, symm)) {
       continue;
     }
     float3 location = blender::ed::sculpt_paint::symmetry_flip(br_co, ePaintSymmetryFlags(i));
@@ -1189,27 +1184,6 @@ static void restore_from_undo_step(const Depsgraph &depsgraph, const Sculpt &sd,
 
 /*** BVH Tree ***/
 
-static void extend_redraw_rect_previous(Object &ob, rcti &rect)
-{
-  /* Expand redraw \a rect with redraw \a rect from previous step to
-   * prevent partial-redraw issues caused by fast strokes. This is
-   * needed here (not in sculpt_flush_update) as it was before
-   * because redraw rectangle should be the same in both of
-   * optimized bke::pbvh::Tree draw function and 3d view redraw, if not -- some
-   * mesh parts could disappear from screen (sergey). */
-  SculptSession &ss = *ob.sculpt;
-
-  if (!ss.cache) {
-    return;
-  }
-
-  if (BLI_rcti_is_empty(&ss.cache->previous_r)) {
-    return;
-  }
-
-  BLI_rcti_union(&rect, &ss.cache->previous_r);
-}
-
 bool SCULPT_get_redraw_rect(const ARegion &region,
                             const RegionView3D &rv3d,
                             const Object &ob,
@@ -1291,7 +1265,7 @@ static float calc_symmetry_feather(const Sculpt &sd,
 
   overlap = 0.0f;
   for (int i = 0; i <= symm; i++) {
-    if (!SCULPT_is_symmetry_iteration_valid(i, symm)) {
+    if (!blender::ed::sculpt_paint::is_symmetry_iteration_valid(i, symm)) {
       continue;
     }
 
@@ -2315,10 +2289,14 @@ static float brush_strength(const Sculpt &sd,
       return alpha * flip * pressure * overlap * feather;
 
     case SCULPT_BRUSH_TYPE_PLANE:
-      if (flip > 0.0f) {
+      if (flip > 0.0f || brush.plane_inversion_mode == BRUSH_PLANE_SWAP_HEIGHT_AND_DEPTH) {
         overlap = (1.0f + overlap) / 2.0f;
         return alpha * pressure * overlap * feather;
       }
+      /* When the brush is inverted with the Invert Displacement mode (i.e. when the brush adds
+       * contrast), use a different formula that results in a lower strength. This is done because,
+       * from an artistic point of view, the contrast would otherwise generally be too strong. Note
+       * that this behavior is coherent with the way Fill, Scrape and Flatten work. See #136211. */
       else {
         return 0.5f * alpha * pressure * overlap * feather;
       }
@@ -3041,6 +3019,7 @@ static IndexMask calc_plane_for_plane_brush(const Depsgraph &depsgraph,
                                             const StrokeCache &cache,
                                             const Brush &brush,
                                             Object &object,
+                                            IndexMaskMemory &memory,
                                             float3 &r_plane_normal,
                                             float3 &r_plane_center)
 {
@@ -3059,7 +3038,6 @@ static IndexMask calc_plane_for_plane_brush(const Depsgraph &depsgraph,
    * location. However, for the Plane brush, its effective center often deviates from the cursor
    * location. Calculating the affected nodes using the cursor location as the center can lead to
    * issues (see, for example, #123768). */
-  IndexMaskMemory memory;
   return bke::pbvh::search_nodes(pbvh, memory, [&](const bke::pbvh::Node &node) {
     if (node_fully_masked_or_hidden(node)) {
       return false;
@@ -3247,7 +3225,7 @@ static void do_brush_action(const Depsgraph &depsgraph,
   }
   else if (brush.sculpt_brush_type == SCULPT_BRUSH_TYPE_PLANE) {
     node_mask = calc_plane_for_plane_brush(
-        depsgraph, *ss.cache, brush, ob, plane_normal, plane_center);
+        depsgraph, *ss.cache, brush, ob, memory, plane_normal, plane_center);
   }
   else if (brush.sculpt_brush_type == SCULPT_BRUSH_TYPE_CLOTH) {
     node_mask = cloth::brush_affected_nodes_gather(ob, brush, memory);
@@ -3734,7 +3712,7 @@ static void do_symmetrical_brush_actions(const Depsgraph &depsgraph,
   /* `symm` is a bit combination of XYZ -
    * 1 is mirror X; 2 is Y; 3 is XY; 4 is Z; 5 is XZ; 6 is YZ; 7 is XYZ */
   for (int i = 0; i <= symm; i++) {
-    if (!SCULPT_is_symmetry_iteration_valid(i, symm)) {
+    if (!is_symmetry_iteration_valid(i, symm)) {
       continue;
     }
     const ePaintSymmetryFlags symm = ePaintSymmetryFlags(i);
@@ -5249,14 +5227,6 @@ void flush_update_step(const bContext *C, const UpdateType update_type)
     rcti r;
 
     if (rv3d && SCULPT_get_redraw_rect(region, *rv3d, ob, r)) {
-      if (ss.cache) {
-        ss.cache->current_r = r;
-      }
-
-      /* previous is not set in the current cache else
-       * the partial rect will always grow */
-      extend_redraw_rect_previous(ob, r);
-
       r.xmin += region.winrct.xmin - 2;
       r.xmax += region.winrct.xmin + 2;
       r.ymin += region.winrct.ymin - 2;
@@ -5737,11 +5707,12 @@ static void stroke_done(const bContext *C, PaintStroke * /*stroke*/)
   brush_exit_tex(sd);
 }
 
-static int sculpt_brush_stroke_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
+                                                   wmOperator *op,
+                                                   const wmEvent *event)
 {
   PaintStroke *stroke;
   int ignore_background_click;
-  int retval;
   Object &ob = *CTX_data_active_object(C);
   Scene &scene = *CTX_data_scene(C);
   const View3D *v3d = CTX_wm_view3d(C);
@@ -5803,7 +5774,9 @@ static int sculpt_brush_stroke_invoke(bContext *C, wmOperator *op, const wmEvent
     return OPERATOR_PASS_THROUGH;
   }
 
-  retval = op->type->modal(C, op, event);
+  const wmOperatorStatus retval = op->type->modal(C, op, event);
+  OPERATOR_RETVAL_CHECK(retval);
+
   if (ELEM(retval, OPERATOR_FINISHED, OPERATOR_CANCELLED)) {
     paint_stroke_free(C, op, static_cast<PaintStroke *>(op->customdata));
     return retval;
@@ -5811,13 +5784,12 @@ static int sculpt_brush_stroke_invoke(bContext *C, wmOperator *op, const wmEvent
   /* Add modal handler. */
   WM_event_add_modal_handler(C, op);
 
-  OPERATOR_RETVAL_CHECK(retval);
   BLI_assert(retval == OPERATOR_RUNNING_MODAL);
 
   return OPERATOR_RUNNING_MODAL;
 }
 
-static int sculpt_brush_stroke_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus sculpt_brush_stroke_exec(bContext *C, wmOperator *op)
 {
   brush_stroke_init(C);
 
@@ -5859,7 +5831,7 @@ static void sculpt_brush_stroke_cancel(bContext *C, wmOperator *op)
   brush_exit_tex(sd);
 }
 
-static int brush_stroke_modal(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus brush_stroke_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
   return paint_stroke_modal(C, op, event, (PaintStroke **)&op->customdata);
 }
@@ -6620,21 +6592,41 @@ void calc_factors_common_mesh_indexed(const Depsgraph &depsgraph,
                                       Vector<float> &r_factors,
                                       Vector<float> &r_distances)
 {
+  const Span<int> verts = node.verts();
+  r_factors.resize(verts.size());
+  r_distances.resize(verts.size());
+
+  calc_factors_common_mesh_indexed(depsgraph,
+                                   brush,
+                                   object,
+                                   attribute_data,
+                                   vert_positions,
+                                   vert_normals,
+                                   node,
+                                   r_factors.as_mutable_span(),
+                                   r_distances.as_mutable_span());
+}
+void calc_factors_common_mesh_indexed(const Depsgraph &depsgraph,
+                                      const Brush &brush,
+                                      const Object &object,
+                                      const MeshAttributeData &attribute_data,
+                                      const Span<float3> vert_positions,
+                                      const Span<float3> vert_normals,
+                                      const bke::pbvh::MeshNode &node,
+                                      const MutableSpan<float> factors,
+                                      const MutableSpan<float> distances)
+{
   const SculptSession &ss = *object.sculpt;
   const StrokeCache &cache = *ss.cache;
 
   const Span<int> verts = node.verts();
 
-  r_factors.resize(verts.size());
-  const MutableSpan<float> factors = r_factors;
   fill_factor_from_hide_and_mask(attribute_data.hide_vert, attribute_data.mask, verts, factors);
   filter_region_clip_factors(ss, vert_positions, verts, factors);
   if (brush.flag & BRUSH_FRONTFACE) {
     calc_front_face(cache.view_normal_symm, vert_normals, verts, factors);
   }
 
-  r_distances.resize(verts.size());
-  const MutableSpan<float> distances = r_distances;
   calc_brush_distances(
       ss, vert_positions, verts, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -7777,7 +7769,7 @@ GroupedSpan<BMVert *> calc_vert_neighbors(Set<BMVert *, 0> verts,
   r_offset_data.resize(verts.size() + 1);
   r_data.clear();
 
-  Vector<BMVert *, 64> neighbor_data;
+  BMeshNeighborVerts neighbor_data;
   int i = 0;
   for (BMVert *vert : verts) {
     r_offset_data[i] = r_data.size();
@@ -7788,16 +7780,21 @@ GroupedSpan<BMVert *> calc_vert_neighbors(Set<BMVert *, 0> verts,
   return GroupedSpan<BMVert *>(r_offset_data.as_span(), r_data.as_span());
 }
 
-GroupedSpan<int> calc_vert_neighbors_interior(const OffsetIndices<int> faces,
-                                              const Span<int> corner_verts,
-                                              const GroupedSpan<int> vert_to_face,
-                                              const BitSpan boundary_verts,
-                                              const Span<bool> hide_poly,
-                                              const Span<int> verts,
-                                              Vector<int> &r_offset_data,
-                                              Vector<int> &r_data)
+template<bool use_factors>
+static GroupedSpan<int> calc_vert_neighbors_interior_impl(const OffsetIndices<int> faces,
+                                                          const Span<int> corner_verts,
+                                                          const GroupedSpan<int> vert_to_face,
+                                                          const BitSpan boundary_verts,
+                                                          const Span<bool> hide_poly,
+                                                          const Span<int> verts,
+                                                          const Span<float> factors,
+                                                          Vector<int> &r_offset_data,
+                                                          Vector<int> &r_data)
 {
   BLI_assert(corner_verts.size() == faces.total_size());
+  if constexpr (use_factors) {
+    BLI_assert(verts.size() == factors.size());
+  }
 
   r_offset_data.resize(verts.size() + 1);
   r_data.clear();
@@ -7806,6 +7803,11 @@ GroupedSpan<int> calc_vert_neighbors_interior(const OffsetIndices<int> faces,
     const int vert = verts[i];
     const int vert_start = r_data.size();
     r_offset_data[i] = vert_start;
+    if constexpr (use_factors) {
+      if (factors[i] == 0.0f) {
+        continue;
+      }
+    }
     append_neighbors_to_vector(faces, corner_verts, vert_to_face, hide_poly, vert, r_data);
 
     if (boundary_verts[vert]) {
@@ -7825,6 +7827,47 @@ GroupedSpan<int> calc_vert_neighbors_interior(const OffsetIndices<int> faces,
   }
   r_offset_data.last() = r_data.size();
   return GroupedSpan<int>(r_offset_data.as_span(), r_data.as_span());
+}
+
+GroupedSpan<int> calc_vert_neighbors_interior(const OffsetIndices<int> faces,
+                                              const Span<int> corner_verts,
+                                              const GroupedSpan<int> vert_to_face,
+                                              const BitSpan boundary_verts,
+                                              const Span<bool> hide_poly,
+                                              const Span<int> verts,
+                                              const Span<float> factors,
+                                              Vector<int> &r_offset_data,
+                                              Vector<int> &r_data)
+{
+  return calc_vert_neighbors_interior_impl<true>(faces,
+                                                 corner_verts,
+                                                 vert_to_face,
+                                                 boundary_verts,
+                                                 hide_poly,
+                                                 verts,
+                                                 factors,
+                                                 r_offset_data,
+                                                 r_data);
+}
+
+GroupedSpan<int> calc_vert_neighbors_interior(const OffsetIndices<int> faces,
+                                              const Span<int> corner_verts,
+                                              const GroupedSpan<int> vert_to_face,
+                                              const BitSpan boundary_verts,
+                                              const Span<bool> hide_poly,
+                                              const Span<int> verts,
+                                              Vector<int> &r_offset_data,
+                                              Vector<int> &r_data)
+{
+  return calc_vert_neighbors_interior_impl<false>(faces,
+                                                  corner_verts,
+                                                  vert_to_face,
+                                                  boundary_verts,
+                                                  hide_poly,
+                                                  verts,
+                                                  {},
+                                                  r_offset_data,
+                                                  r_data);
 }
 
 void calc_vert_neighbors_interior(const OffsetIndices<int> faces,
@@ -7882,7 +7925,7 @@ void calc_vert_neighbors_interior(const Set<BMVert *, 0> &verts,
                                   MutableSpan<Vector<BMVert *>> result)
 {
   BLI_assert(verts.size() == result.size());
-  Vector<BMVert *, 64> neighbor_data;
+  BMeshNeighborVerts neighbor_data;
 
   int i = 0;
   for (BMVert *vert : verts) {

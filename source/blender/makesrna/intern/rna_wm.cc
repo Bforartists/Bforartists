@@ -283,6 +283,7 @@ const EnumPropertyItem rna_enum_event_type_items[] = {
     {EVT_RIGHTSHIFTKEY, "RIGHT_SHIFT", 0, "Right Shift", "ShiftR"},
     RNA_ENUM_ITEM_SEPR,
     {EVT_OSKEY, "OSKEY", 0, "OS Key", "Cmd"},
+    {EVT_HYPER, "HYPER", 0, "Hyper", "Hyp"},
     {EVT_APPKEY, "APP", 0, "Application", "App"},
     {EVT_GRLESSKEY, "GRLESS", 0, "Grless", ""},
     {EVT_ESCKEY, "ESC", 0, "Esc", ""},
@@ -1136,11 +1137,13 @@ static bool rna_KeyMapItem_any_get(PointerRNA *ptr)
 {
   wmKeyMapItem *kmi = (wmKeyMapItem *)ptr->data;
 
-  if (kmi->shift == KM_ANY && kmi->ctrl == KM_ANY && kmi->alt == KM_ANY && kmi->oskey == KM_ANY) {
-    return 1;
+  if (kmi->shift == KM_ANY && kmi->ctrl == KM_ANY && kmi->alt == KM_ANY && kmi->oskey == KM_ANY &&
+      kmi->hyper == KM_ANY)
+  {
+    return true;
   }
   else {
-    return 0;
+    return false;
   }
 }
 
@@ -1149,35 +1152,41 @@ static void rna_KeyMapItem_any_set(PointerRNA *ptr, bool value)
   wmKeyMapItem *kmi = (wmKeyMapItem *)ptr->data;
 
   if (value) {
-    kmi->shift = kmi->ctrl = kmi->alt = kmi->oskey = KM_ANY;
+    kmi->shift = kmi->ctrl = kmi->alt = kmi->oskey = kmi->hyper = KM_ANY;
   }
   else {
-    kmi->shift = kmi->ctrl = kmi->alt = kmi->oskey = 0;
+    kmi->shift = kmi->ctrl = kmi->alt = kmi->oskey = kmi->hyper = KM_NOTHING;
   }
 }
 
 static bool rna_KeyMapItem_shift_get(PointerRNA *ptr)
 {
   wmKeyMapItem *kmi = (wmKeyMapItem *)ptr->data;
-  return kmi->shift != 0;
+  return kmi->shift != KM_NOTHING;
 }
 
 static bool rna_KeyMapItem_ctrl_get(PointerRNA *ptr)
 {
   wmKeyMapItem *kmi = (wmKeyMapItem *)ptr->data;
-  return kmi->ctrl != 0;
+  return kmi->ctrl != KM_NOTHING;
 }
 
 static bool rna_KeyMapItem_alt_get(PointerRNA *ptr)
 {
   wmKeyMapItem *kmi = (wmKeyMapItem *)ptr->data;
-  return kmi->alt != 0;
+  return kmi->alt != KM_NOTHING;
 }
 
 static bool rna_KeyMapItem_oskey_get(PointerRNA *ptr)
 {
   wmKeyMapItem *kmi = (wmKeyMapItem *)ptr->data;
-  return kmi->oskey != 0;
+  return kmi->oskey != KM_NOTHING;
+}
+
+static bool rna_KeyMapItem_hyper_get(PointerRNA *ptr)
+{
+  wmKeyMapItem *kmi = (wmKeyMapItem *)ptr->data;
+  return kmi->hyper != KM_NOTHING;
 }
 
 static PointerRNA rna_WindowManager_active_keyconfig_get(PointerRNA *ptr)
@@ -1437,14 +1446,13 @@ static bool rna_operator_poll_cb(bContext *C, wmOperatorType *ot)
   return visible;
 }
 
-static int rna_operator_exec_cb(bContext *C, wmOperator *op)
+static wmOperatorStatus rna_operator_exec_cb(bContext *C, wmOperator *op)
 {
   extern FunctionRNA rna_Operator_execute_func;
 
   ParameterList list;
   FunctionRNA *func;
   void *ret;
-  int result;
 
   ID *owner_id = (op->ptr) ? op->ptr->owner_id : nullptr;
   PointerRNA opr = RNA_pointer_create_discrete(owner_id, op->type->rna_ext.srna, op);
@@ -1455,7 +1463,7 @@ static int rna_operator_exec_cb(bContext *C, wmOperator *op)
   const bool has_error = op->type->rna_ext.call(C, &opr, func, &list) == -1;
 
   RNA_parameter_get_lookup(&list, "result", &ret);
-  result = *(int *)ret;
+  const wmOperatorStatus result = wmOperatorStatus(*(int *)ret);
 
   RNA_parameter_list_free(&list);
 
@@ -1464,6 +1472,7 @@ static int rna_operator_exec_cb(bContext *C, wmOperator *op)
     WM_event_remove_modal_handler_all(op, false);
   }
 
+  OPERATOR_RETVAL_CHECK(result);
   return result;
 }
 
@@ -1493,14 +1502,13 @@ static bool rna_operator_check_cb(bContext *C, wmOperator *op)
   return result;
 }
 
-static int rna_operator_invoke_cb(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus rna_operator_invoke_cb(bContext *C, wmOperator *op, const wmEvent *event)
 {
   extern FunctionRNA rna_Operator_invoke_func;
 
   ParameterList list;
   FunctionRNA *func;
   void *ret;
-  int result;
 
   ID *owner_id = (op->ptr) ? op->ptr->owner_id : nullptr;
   PointerRNA opr = RNA_pointer_create_discrete(owner_id, op->type->rna_ext.srna, op);
@@ -1512,7 +1520,7 @@ static int rna_operator_invoke_cb(bContext *C, wmOperator *op, const wmEvent *ev
   const bool has_error = op->type->rna_ext.call(C, &opr, func, &list) == -1;
 
   RNA_parameter_get_lookup(&list, "result", &ret);
-  result = *(int *)ret;
+  wmOperatorStatus retval = wmOperatorStatus(*(int *)ret);
 
   RNA_parameter_list_free(&list);
 
@@ -1521,18 +1529,18 @@ static int rna_operator_invoke_cb(bContext *C, wmOperator *op, const wmEvent *ev
     WM_event_remove_modal_handler_all(op, false);
   }
 
-  return result;
+  OPERATOR_RETVAL_CHECK(retval);
+  return retval;
 }
 
 /* same as invoke */
-static int rna_operator_modal_cb(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus rna_operator_modal_cb(bContext *C, wmOperator *op, const wmEvent *event)
 {
   extern FunctionRNA rna_Operator_modal_func;
 
   ParameterList list;
   FunctionRNA *func;
   void *ret;
-  int result;
 
   ID *owner_id = (op->ptr) ? op->ptr->owner_id : nullptr;
   PointerRNA opr = RNA_pointer_create_discrete(owner_id, op->type->rna_ext.srna, op);
@@ -1544,11 +1552,12 @@ static int rna_operator_modal_cb(bContext *C, wmOperator *op, const wmEvent *eve
   op->type->rna_ext.call(C, &opr, func, &list);
 
   RNA_parameter_get_lookup(&list, "result", &ret);
-  result = *(int *)ret;
+  wmOperatorStatus retval = wmOperatorStatus(*(int *)ret);
 
   RNA_parameter_list_free(&list);
 
-  return result;
+  OPERATOR_RETVAL_CHECK(retval);
+  return retval;
 }
 
 static void rna_operator_draw_cb(bContext *C, wmOperator *op)
@@ -2435,6 +2444,11 @@ static void rna_def_event(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(prop, "OS Key", "True when the Cmd key is held");
 
+  prop = RNA_def_property(srna, "hyper", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "modifier", KM_HYPER);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop, "Hyper", "True when the Hyper key is held");
+
   RNA_define_verify_sdna(true); /* not in sdna */
 }
 
@@ -2991,6 +3005,12 @@ static void rna_def_keyconfig(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "OS Key", "Operating system key pressed, -1 for any state");
   RNA_def_property_update(prop, 0, "rna_KeyMapItem_update");
 
+  prop = RNA_def_property(srna, "hyper", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "hyper");
+  RNA_def_property_range(prop, KM_ANY, KM_MOD_HELD);
+  RNA_def_property_ui_text(prop, "Hyper", "Hyper key pressed, -1 for any state");
+  RNA_def_property_update(prop, 0, "rna_KeyMapItem_update");
+
   /* XXX(@ideasman42): the `*_ui` suffix is only for the UI, may be removed,
    * since this is only exposed so the UI can show these settings as toggle-buttons. */
   prop = RNA_def_property(srna, "shift_ui", PROP_BOOLEAN, PROP_NONE);
@@ -3020,6 +3040,18 @@ static void rna_def_keyconfig(BlenderRNA *brna)
   RNA_def_property_boolean_funcs(prop, "rna_KeyMapItem_oskey_get", nullptr);
   // RNA_def_property_enum_items(prop, keymap_modifiers_items);
   RNA_def_property_ui_text(prop, "OS Key", "Operating system key pressed");
+  RNA_def_property_update(prop, 0, "rna_KeyMapItem_update");
+
+  prop = RNA_def_property(srna, "hyper_ui", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "hyper", 0);
+  RNA_def_property_boolean_funcs(prop, "rna_KeyMapItem_hyper_get", nullptr);
+  // RNA_def_property_enum_items(prop, keymap_modifiers_items);
+  RNA_def_property_ui_text(
+      prop,
+      "Hyper",
+      "Hyper key pressed. "
+      /* Additional info since this is not so widely known. */
+      "An additional modifier which can be configured on Linux, typically replacing CapsLock");
   RNA_def_property_update(prop, 0, "rna_KeyMapItem_update");
   /* End `_ui` modifiers. */
 

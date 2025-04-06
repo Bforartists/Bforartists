@@ -389,12 +389,8 @@ static void grease_pencil_weight_batch_ensure(Object &object,
     drawing_start_offset += curves.points_num();
   }
 
-  cache->edit_line_indices = GPU_indexbuf_calloc();
-  GPU_indexbuf_build_in_place_ex(
-      &lines_builder, 0, total_points_num, true, cache->edit_line_indices);
-  cache->edit_points_indices = GPU_indexbuf_calloc();
-  GPU_indexbuf_build_in_place_ex(
-      &points_builder, 0, total_points_num, false, cache->edit_points_indices);
+  cache->edit_line_indices = GPU_indexbuf_build_ex(&lines_builder, 0, total_points_num, true);
+  cache->edit_points_indices = GPU_indexbuf_build_ex(&points_builder, 0, total_points_num, false);
 
   /* Create the batches. */
   cache->edit_points = GPU_batch_create(
@@ -1022,7 +1018,7 @@ static void grease_pencil_edit_batch_ensure(Object &object,
                                  info.layer_index,
                                  memory,
                                  lines_data,
-                                 &points_ibo_index,
+                                 &lines_ibo_index,
                                  &drawing_line_start_offset);
       index_buf_add_points(object,
                            info.drawing,
@@ -1041,12 +1037,8 @@ static void grease_pencil_edit_batch_ensure(Object &object,
     }
   }
 
-  cache->edit_line_indices = GPU_indexbuf_calloc();
-  GPU_indexbuf_build_in_place_ex(
-      &lines_builder, 0, total_points_num, true, cache->edit_line_indices);
-  cache->edit_points_indices = GPU_indexbuf_calloc();
-  GPU_indexbuf_build_in_place_ex(
-      &points_builder, 0, total_points_num, false, cache->edit_points_indices);
+  cache->edit_line_indices = GPU_indexbuf_build_ex(&lines_builder, 0, total_points_num, true);
+  cache->edit_points_indices = GPU_indexbuf_build_ex(&points_builder, 0, total_points_num, false);
 
   /* Create the batches */
   cache->edit_points = GPU_batch_create(
@@ -1438,8 +1430,7 @@ static void grease_pencil_wire_batch_ensure(Object &object,
     }
   });
 
-  gpu::IndexBuf *ibo = GPU_indexbuf_calloc();
-  GPU_indexbuf_build_in_place_ex(&elb, 0, max_index, true, ibo);
+  gpu::IndexBuf *ibo = GPU_indexbuf_build_ex(&elb, 0, max_index, true);
 
   cache->lines_batch = GPU_batch_create_ex(
       GPU_PRIM_LINE_STRIP, cache->vbo, ibo, GPU_BATCH_OWNS_INDEX);
@@ -1484,7 +1475,7 @@ void DRW_grease_pencil_batch_cache_free(GreasePencil *grease_pencil)
 
 gpu::Batch *DRW_cache_grease_pencil_get(const Scene *scene, Object *ob)
 {
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(ob->data);
+  GreasePencil &grease_pencil = DRW_object_get_data_for_drawing<GreasePencil>(*ob);
   GreasePencilBatchCache *cache = grease_pencil_batch_cache_get(grease_pencil);
   grease_pencil_geom_batch_ensure(*ob, grease_pencil, *scene);
 
@@ -1493,7 +1484,7 @@ gpu::Batch *DRW_cache_grease_pencil_get(const Scene *scene, Object *ob)
 
 gpu::Batch *DRW_cache_grease_pencil_edit_points_get(const Scene *scene, Object *ob)
 {
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(ob->data);
+  GreasePencil &grease_pencil = DRW_object_get_data_for_drawing<GreasePencil>(*ob);
   GreasePencilBatchCache *cache = grease_pencil_batch_cache_get(grease_pencil);
   grease_pencil_edit_batch_ensure(*ob, grease_pencil, *scene);
 
@@ -1503,7 +1494,7 @@ gpu::Batch *DRW_cache_grease_pencil_edit_points_get(const Scene *scene, Object *
 
 gpu::Batch *DRW_cache_grease_pencil_edit_lines_get(const Scene *scene, Object *ob)
 {
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(ob->data);
+  GreasePencil &grease_pencil = DRW_object_get_data_for_drawing<GreasePencil>(*ob);
   GreasePencilBatchCache *cache = grease_pencil_batch_cache_get(grease_pencil);
   grease_pencil_edit_batch_ensure(*ob, grease_pencil, *scene);
 
@@ -1513,7 +1504,7 @@ gpu::Batch *DRW_cache_grease_pencil_edit_lines_get(const Scene *scene, Object *o
 
 gpu::VertBuf *DRW_cache_grease_pencil_position_buffer_get(const Scene *scene, Object *ob)
 {
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(ob->data);
+  GreasePencil &grease_pencil = DRW_object_get_data_for_drawing<GreasePencil>(*ob);
   GreasePencilBatchCache *cache = grease_pencil_batch_cache_get(grease_pencil);
   grease_pencil_geom_batch_ensure(*ob, grease_pencil, *scene);
 
@@ -1522,7 +1513,7 @@ gpu::VertBuf *DRW_cache_grease_pencil_position_buffer_get(const Scene *scene, Ob
 
 gpu::VertBuf *DRW_cache_grease_pencil_color_buffer_get(const Scene *scene, Object *ob)
 {
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(ob->data);
+  GreasePencil &grease_pencil = DRW_object_get_data_for_drawing<GreasePencil>(*ob);
   GreasePencilBatchCache *cache = grease_pencil_batch_cache_get(grease_pencil);
   grease_pencil_geom_batch_ensure(*ob, grease_pencil, *scene);
 
@@ -1531,7 +1522,7 @@ gpu::VertBuf *DRW_cache_grease_pencil_color_buffer_get(const Scene *scene, Objec
 
 gpu::Batch *DRW_cache_grease_pencil_weight_points_get(const Scene *scene, Object *ob)
 {
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(ob->data);
+  GreasePencil &grease_pencil = DRW_object_get_data_for_drawing<GreasePencil>(*ob);
   GreasePencilBatchCache *cache = grease_pencil_batch_cache_get(grease_pencil);
   grease_pencil_weight_batch_ensure(*ob, grease_pencil, *scene);
 
@@ -1541,7 +1532,7 @@ gpu::Batch *DRW_cache_grease_pencil_weight_points_get(const Scene *scene, Object
 
 gpu::Batch *DRW_cache_grease_pencil_weight_lines_get(const Scene *scene, Object *ob)
 {
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(ob->data);
+  GreasePencil &grease_pencil = DRW_object_get_data_for_drawing<GreasePencil>(*ob);
   GreasePencilBatchCache *cache = grease_pencil_batch_cache_get(grease_pencil);
   grease_pencil_weight_batch_ensure(*ob, grease_pencil, *scene);
 
@@ -1551,7 +1542,7 @@ gpu::Batch *DRW_cache_grease_pencil_weight_lines_get(const Scene *scene, Object 
 
 gpu::Batch *DRW_cache_grease_pencil_face_wireframe_get(const Scene *scene, Object *ob)
 {
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(ob->data);
+  GreasePencil &grease_pencil = DRW_object_get_data_for_drawing<GreasePencil>(*ob);
   GreasePencilBatchCache *cache = grease_pencil_batch_cache_get(grease_pencil);
   grease_pencil_wire_batch_ensure(*ob, grease_pencil, *scene);
 

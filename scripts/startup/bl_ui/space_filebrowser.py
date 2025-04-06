@@ -25,23 +25,7 @@ class FILEBROWSER_HT_header(Header):
         layout.separator_spacer()
 
         if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
-            layout.row().prop(
-                params, "drop_collections_at_origin", icon_only=True, icon="CENTER"
-            )  # BFA - drop collections at origin
-            layout.row().prop(
-                params,
-                "drop_collections_as_instances",
-                icon_only=True,
-                icon="OUTLINER_OB_GROUP_INSTANCE",
-            )  # BFA - set collection to instance toggle
-            row = layout.row(align=True)  # BFA - change to make row of buttons
-            row.prop(
-                params,
-                "import_method",
-                text="",
-                expand=True,
-                icon_only=True,
-            )  # BFA - change to make row of buttons
+            layout.popover("ASSETBROWSER_PT_import_settings", text="Import Settings")
 
         # layout.separator_spacer() #BFA
 
@@ -865,6 +849,27 @@ class ASSETBROWSER_MT_catalog(AssetBrowserMenu, Menu):
         layout.operator("asset.catalog_new", icon="ADD").parent_path = ""
 
 
+class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
+    bl_idname = "ASSETBROWSER_PT_import_settings"
+    bl_region_type = "HEADER"
+    bl_label = "Import Settings"
+    bl_options = {"HIDE_HEADER"}
+    bl_ui_units_x = 15
+
+    def draw(self, context):
+        layout = self.layout
+        params = context.space_data.params
+
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        layout.prop(params, "import_method", text="Import Method")
+
+        col = layout.column(heading="Instance Collections")
+        col.prop(params, "instance_collections_on_link", text="Link")
+        col.prop(params, "instance_collections_on_append", text="Append")
+
+
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
     bl_region_type = "TOOL_PROPS"
     bl_label = "Asset Metadata"
@@ -1031,14 +1036,22 @@ class ASSETBROWSER_PT_metadata_tags(asset_utils.AssetMetaDataPanel, Panel):
         asset_metadata = active_asset.metadata
 
         # BFA - Custom tags assignment for the shelves
-        if context.asset and context.asset.id_type == 'NODETREE':
+        if context.asset and context.asset.id_type == "NODETREE":
             row = layout.row(align=True)
             row.label(text="Asset Shelf:")
-            row.operator("asset.tag_add_shelf", icon="NODE_COMPOSITING", text="").tag_type = 'COMPOSITOR'
-            row.operator("asset.tag_add_shelf", icon="GEOMETRY_NODES", text="").tag_type = 'GEOMETRY_NODES'
+            row.operator(
+                "asset.tag_add_shelf", icon="NODE_COMPOSITING", text=""
+            ).tag_type = "COMPOSITOR"
+            row.operator(
+                "asset.tag_add_shelf", icon="GEOMETRY_NODES", text=""
+            ).tag_type = "GEOMETRY_NODES"
             if "Geometry Nodes" in context.asset.metadata.tags:
-                row.operator("asset.tag_add_shelf", icon="OBJECT_DATA", text="").tag_type = '3D_VIEW'
-            row.operator("asset.tag_add_shelf", icon="NODE_MATERIAL", text="").tag_type = 'SHADER'
+                row.operator(
+                    "asset.tag_add_shelf", icon="OBJECT_DATA", text=""
+                ).tag_type = "3D_VIEW"
+            row.operator(
+                "asset.tag_add_shelf", icon="NODE_MATERIAL", text=""
+            ).tag_type = "SHADER"
 
         row = layout.row()
         row.template_list(
@@ -1054,8 +1067,6 @@ class ASSETBROWSER_PT_metadata_tags(asset_utils.AssetMetaDataPanel, Panel):
         col = row.column(align=True)
         col.operator("asset.tag_add", icon="ADD", text="")
         col.operator("asset.tag_remove", icon="REMOVE", text="")
-
-
 
 
 class ASSETBROWSER_UL_metadata_tags(UIList):
@@ -1138,6 +1149,7 @@ classes = (
     ASSETBROWSER_MT_view,
     ASSETBROWSER_MT_select,
     ASSETBROWSER_MT_catalog,
+    ASSETBROWSER_PT_import_settings,
     ASSETBROWSER_MT_metadata_preview_menu,
     ASSETBROWSER_PT_metadata,
     ASSETBROWSER_PT_metadata_info,  # BFA
