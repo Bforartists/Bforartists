@@ -455,7 +455,7 @@ void BKE_object_eval_transform_final(Depsgraph *depsgraph, Object *ob);
 void BKE_object_eval_uber_transform(Depsgraph *depsgraph, Object *object);
 void BKE_object_eval_uber_data(Depsgraph *depsgraph, Scene *scene, Object *ob);
 
-void BKE_object_eval_shading(Depsgraph *depsgraph, Object *ob);
+void BKE_object_eval_shading(Depsgraph *depsgraph, Object *object);
 
 void BKE_object_eval_light_linking(Depsgraph *depsgraph, Object *object);
 
@@ -673,7 +673,7 @@ bool BKE_object_empty_image_data_is_visible_in_view3d(const Object *ob, const Re
  * The mesh will be freed when object is re-evaluated or is destroyed. It is possible to force to
  * clear memory used by this mesh by calling BKE_object_to_mesh_clear().
  *
- * If preserve_all_data_layers is truth then the modifier stack is re-evaluated to ensure it
+ * If preserve_all_data_layers is true then the modifier stack is re-evaluated to ensure it
  * preserves all possible custom data layers.
  *
  * NOTE: Dependency graph argument is required when preserve_all_data_layers is truth, and is
@@ -712,3 +712,14 @@ void BKE_object_replace_data_on_shallow_copy(Object *ob, ID *new_data);
 PartEff *BKE_object_do_version_give_parteff_245(Object *ob);
 
 bool BKE_object_supports_material_slots(Object *ob);
+
+/** Sets the location of the object, respecting #Object::protectflag. */
+void BKE_object_protected_location_set(Object *ob, const float location[3]);
+/** Sets the scale of the object, respecting #Object::protectflag. */
+void BKE_object_protected_scale_set(Object *ob, const float scale[3]);
+/** Sets the quaternion rotation of the object, respecting #Object::protectflag. */
+void BKE_object_protected_rotation_quaternion_set(Object *ob, const float quat[4]);
+/** Sets the euler rotation of the object, respecting #Object::protectflag. */
+void BKE_object_protected_rotation_euler_set(Object *ob, const float euler[3]);
+/** Sets the quaternion rotation of the object, respecting #Object::protectflag. */
+void BKE_object_protected_rotation_axisangle_set(Object *ob, const float axis[3], float angle);

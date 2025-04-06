@@ -96,7 +96,7 @@ static bool act_markers_make_local_poll(bContext *C)
   return ED_markers_get_first_selected(ED_context_get_markers(C)) != nullptr;
 }
 
-static int act_markers_make_local_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus act_markers_make_local_exec(bContext *C, wmOperator * /*op*/)
 {
   ListBase *markers = ED_context_get_markers(C);
 
@@ -160,7 +160,7 @@ static bool get_keyframe_extents(bAnimContext *ac, float *min, float *max, const
   eAnimFilter_Flags filter;
   bool found = false;
 
-  /* get data to filter, from Action or Dopesheet */
+  /* Get data to filter, from Action or Dope-sheet. */
   /* XXX: what is sel doing here?!
    *      Commented it, was breaking things (eg. the "auto preview range" tool). */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE /*| ANIMFILTER_SEL */ |
@@ -258,7 +258,7 @@ static bool get_keyframe_extents(bAnimContext *ac, float *min, float *max, const
 /** \name View: Automatic Preview-Range Operator
  * \{ */
 
-static int actkeys_previewrange_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus actkeys_previewrange_exec(bContext *C, wmOperator * /*op*/)
 {
   bAnimContext ac;
   Scene *scene;
@@ -367,7 +367,7 @@ static bool actkeys_channels_get_selected_extents(bAnimContext *ac, float *r_min
   return (found != 0);
 }
 
-static int actkeys_viewall(bContext *C, const bool only_sel)
+static wmOperatorStatus actkeys_viewall(bContext *C, const bool only_sel)
 {
   bAnimContext ac;
   View2D *v2d;
@@ -435,13 +435,13 @@ static int actkeys_viewall(bContext *C, const bool only_sel)
 
 /* ......... */
 
-static int actkeys_viewall_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus actkeys_viewall_exec(bContext *C, wmOperator * /*op*/)
 {
   /* whole range */
   return actkeys_viewall(C, false);
 }
 
-static int actkeys_viewsel_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus actkeys_viewsel_exec(bContext *C, wmOperator * /*op*/)
 {
   /* only selected */
   return actkeys_viewall(C, true);
@@ -485,7 +485,7 @@ void ACTION_OT_view_selected(wmOperatorType *ot)
 /** \name View: Frame Operator
  * \{ */
 
-static int actkeys_view_frame_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_view_frame_exec(bContext *C, wmOperator *op)
 {
   const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
   ANIM_center_frame(C, smooth_viewtx);
@@ -601,7 +601,7 @@ static blender::ed::greasepencil::KeyframeClipboard &get_grease_pencil_keyframe_
   return clipboard;
 }
 
-static int actkeys_copy_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_copy_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
 
@@ -657,7 +657,7 @@ void ACTION_OT_copy(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-static int actkeys_paste_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_paste_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
 
@@ -973,7 +973,7 @@ static void insert_action_keys(bAnimContext *ac, short mode)
 
 /* ------------------- */
 
-static int actkeys_insertkey_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_insertkey_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   short mode;
@@ -1073,7 +1073,7 @@ static bool duplicate_action_keys(bAnimContext *ac)
 
 /* ------------------- */
 
-static int actkeys_duplicate_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus actkeys_duplicate_exec(bContext *C, wmOperator * /*op*/)
 {
   bAnimContext ac;
 
@@ -1172,7 +1172,7 @@ static bool delete_action_keys(bAnimContext *ac)
 
 /* ------------------- */
 
-static int actkeys_delete_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus actkeys_delete_exec(bContext *C, wmOperator * /*op*/)
 {
   bAnimContext ac;
 
@@ -1192,7 +1192,9 @@ static int actkeys_delete_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-static int actkeys_delete_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
+static wmOperatorStatus actkeys_delete_invoke(bContext *C,
+                                              wmOperator *op,
+                                              const wmEvent * /*event*/)
 {
   if (RNA_boolean_get(op->ptr, "confirm")) {
     return WM_operator_confirm_ex(C,
@@ -1258,7 +1260,7 @@ static void clean_action_keys(bAnimContext *ac, float thresh, bool clean_chan)
 
 /* ------------------- */
 
-static int actkeys_clean_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_clean_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   float thresh;
@@ -1349,7 +1351,7 @@ static void bake_action_keys(bAnimContext *ac)
 
 /* ------------------- */
 
-static int actkeys_bake_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_bake_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
 
@@ -1476,7 +1478,7 @@ static void setexpo_action_keys(bAnimContext *ac, short mode)
 
 /* ------------------- */
 
-static int actkeys_expo_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_expo_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   short mode;
@@ -1528,7 +1530,7 @@ void ACTION_OT_extrapolation_type(wmOperatorType *ot)
 /** \name Settings: Set Interpolation-Type Operator
  * \{ */
 
-static int actkeys_ipo_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_ipo_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   short mode;
@@ -1588,7 +1590,7 @@ void ACTION_OT_interpolation_type(wmOperatorType *ot)
 /** \name Settings: Set Easing Operator
  * \{ */
 
-static int actkeys_easing_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_easing_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   short mode;
@@ -1677,7 +1679,7 @@ static void sethandles_action_keys(bAnimContext *ac, short mode)
 
 /* ------------------- */
 
-static int actkeys_handletype_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_handletype_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   short mode;
@@ -1775,7 +1777,7 @@ static void setkeytype_action_keys(bAnimContext *ac, eBezTriple_KeyframeType mod
 
 /* ------------------- */
 
-static int actkeys_keytype_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_keytype_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
 
@@ -1834,7 +1836,7 @@ static bool actkeys_framejump_poll(bContext *C)
 }
 
 /* snap current-frame indicator to 'average time' of selected keyframe */
-static int actkeys_framejump_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus actkeys_framejump_exec(bContext *C, wmOperator * /*op*/)
 {
   bAnimContext ac;
   ListBase anim_data = {nullptr, nullptr};
@@ -2023,7 +2025,7 @@ static void snap_action_keys(bAnimContext *ac, short mode)
 
 /* ------------------- */
 
-static int actkeys_snap_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_snap_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   short mode;
@@ -2157,7 +2159,7 @@ static void mirror_action_keys(bAnimContext *ac, short mode)
 
 /* ------------------- */
 
-static int actkeys_mirror_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus actkeys_mirror_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
   short mode;

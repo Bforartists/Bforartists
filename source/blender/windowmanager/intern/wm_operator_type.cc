@@ -50,36 +50,16 @@ static void wm_operatortype_free_macro(wmOperatorType *ot);
 
 using blender::StringRef;
 
-struct OperatorTypePointerHash {
-  uint64_t operator()(const wmOperatorType *value) const
-  {
-    return get_default_hash(StringRef(value->idname));
-  }
-  uint64_t operator()(const StringRef name) const
-  {
-    return get_default_hash(name);
-  }
-};
-
-struct OperatorTypePointerNameEqual {
-  bool operator()(const wmOperatorType *a, const wmOperatorType *b) const
-  {
-    return STREQ(a->idname, b->idname);
-  }
-  bool operator()(const StringRef idname, const wmOperatorType *a) const
-  {
-    return a->idname == idname;
-  }
-};
-
 static auto &get_operators_map()
 {
+  struct OperatorNameGetter {
+    StringRef operator()(const wmOperatorType *value) const
+    {
+      return StringRef(value->idname);
+    }
+  };
   static auto map = []() {
-    blender::VectorSet<wmOperatorType *,
-                       blender::DefaultProbingStrategy,
-                       OperatorTypePointerHash,
-                       OperatorTypePointerNameEqual>
-        map;
+    blender::CustomIDVectorSet<wmOperatorType *, OperatorNameGetter> map;
     /* Reserve size is set based on blender default setup. */
     map.reserve(2048);
     return map;
@@ -310,7 +290,7 @@ void WM_operatortype_idname_visit_for_search(
  * \{ */
 
 struct MacroData {
-  int retval;
+  wmOperatorStatus retval;
 };
 
 static void wm_macro_start(wmOperator *op)
@@ -320,7 +300,7 @@ static void wm_macro_start(wmOperator *op)
   }
 }
 
-static int wm_macro_end(wmOperator *op, int retval)
+static wmOperatorStatus wm_macro_end(wmOperator *op, wmOperatorStatus retval)
 {
   if (retval & OPERATOR_CANCELLED) {
     MacroData *md = static_cast<MacroData *>(op->customdata);
@@ -343,9 +323,9 @@ static int wm_macro_end(wmOperator *op, int retval)
 }
 
 /* Macro exec only runs exec calls. */
-static int wm_macro_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus wm_macro_exec(bContext *C, wmOperator *op)
 {
-  int retval = OPERATOR_FINISHED;
+  wmOperatorStatus retval = OPERATOR_FINISHED;
   const int op_inherited_flag = op->flag & (OP_IS_REPEAT | OP_IS_REPEAT_LAST);
 
   wm_macro_start(op);
@@ -374,12 +354,12 @@ static int wm_macro_exec(bContext *C, wmOperator *op)
   return wm_macro_end(op, retval);
 }
 
-static int wm_macro_invoke_internal(bContext *C,
-                                    wmOperator *op,
-                                    const wmEvent *event,
-                                    wmOperator *opm)
+static wmOperatorStatus wm_macro_invoke_internal(bContext *C,
+                                                 wmOperator *op,
+                                                 const wmEvent *event,
+                                                 wmOperator *opm)
 {
-  int retval = OPERATOR_FINISHED;
+  wmOperatorStatus retval = OPERATOR_FINISHED;
   const int op_inherited_flag = op->flag & (OP_IS_REPEAT | OP_IS_REPEAT_LAST);
 
   /* Start from operator received as argument. */
@@ -410,16 +390,16 @@ static int wm_macro_invoke_internal(bContext *C,
   return wm_macro_end(op, retval);
 }
 
-static int wm_macro_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus wm_macro_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   wm_macro_start(op);
   return wm_macro_invoke_internal(C, op, event, static_cast<wmOperator *>(op->macro.first));
 }
 
-static int wm_macro_modal(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus wm_macro_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
   wmOperator *opm = op->opm;
-  int retval = OPERATOR_FINISHED;
+  wmOperatorStatus retval = OPERATOR_FINISHED;
 
   if (opm == nullptr) {
     CLOG_ERROR(WM_LOG_OPERATORS, "macro error, calling nullptr modal()");

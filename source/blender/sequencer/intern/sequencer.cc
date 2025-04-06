@@ -8,12 +8,14 @@
  * \ingroup bke
  */
 
+#define DNA_DEPRECATED_ALLOW
+
 #include "BKE_duplilist.hh"
 #include "BLI_assert.h"
 #include "BLI_map.hh"
 #include "DNA_listBase.h"
+#include "SEQ_transform.hh"
 #include <cstddef>
-#define DNA_DEPRECATED_ALLOW
 
 #include "MEM_guardedalloc.h"
 
@@ -137,7 +139,7 @@ Strip *sequence_alloc(ListBase *lb, int timeline_frame, int machine, int type)
 
   strip->flag = SELECT;
   strip->start = timeline_frame;
-  strip->machine = machine;
+  strip_channel_set(strip, machine);
   strip->sat = 1.0;
   strip->mul = 1.0;
   strip->blend_opacity = 100.0;
