@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.4.0 Beta (b'eceb81b21fa3')\n"
+"Project-Id-Version: Blender 4.5.0 Alpha (b'409ce2b976cf')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-10 09:31+0000\n"
+"POT-Creation-Date: 2025-03-24 09:38+0000\n"
 "PO-Revision-Date: 2024-05-03 12:13+0000\n"
 "Last-Translator: Nooby Noober <iamanoobynoober@gmail.com>\n"
 "Language-Team: Persian <https://translate.blender.org/projects/blender-ui/ui/fa/>\n"
@@ -373,10 +373,6 @@ msgstr "ﺎﻫ‌ﻩﺎﮕﺘﺳﺩ ﻦﯿﺑ ﻪﻈﻓﺎﺣ ﻊﯾﺯﻮﺗ"
 
 msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
 msgstr "ﺪﯿﻨﮐ ﺩﺎﺠﯾﺍ ﮒﺭﺰﺑ ﯼﺎﻫ ﻪﻨﺤﺻ ﻥﺩﺍﺩ ﺎﺟ ﯼﺍﺮﺑ ﯼﺮﺘﺸﯿﺑ ﯼﺎﻀﻓ ،ﻥﺁ ﻥﺩﺮﮐ ﯽﭙﮐ ﯼﺎﺟ ﻪﺑ (NVLink ﻖﯾﺮﻃ ﺯﺍ ﻼً﻿ﺜﻣ) ﻢﻫ ﻪﺑ ﻞﺼﺘﻣ ﯼﺎﻫ ﻩﺎﮕﺘﺳﺩ ﺭﺩ ﻪﻈﻓﺎﺣ ﻊﯾﺯﻮﺗ ﺎﺑ"
-
-
-msgid "HIP RT (Experimental)"
-msgstr "HIP RT (ﯽﺸﯾﺎﻣﺯﺁ)"
 
 
 msgid "Embree on GPU"
@@ -2276,16 +2272,16 @@ msgid "Tools"
 msgstr "ﺭﺍﺰﺑﺍ"
 
 
+msgid "Ping Pong"
+msgstr "ﮓﻨﭘ ﮓﻨﯿﭘ"
+
+
 msgid "Local Matrix"
 msgstr "ﯽﻠﺤﻣ ﺲﮑﯾﺮﺗﺎﻣ"
 
 
 msgid "Parent Bone"
 msgstr "ﺪﻟﺍﻭ ﻥﺍﻮﺨﺘﺳﺍ"
-
-
-msgid "Ping Pong"
-msgstr "ﮓﻨﭘ ﮓﻨﯿﭘ"
 
 
 msgid "Red"
@@ -2941,14 +2937,6 @@ msgid "Mix"
 msgstr "ﻁﻮﻠﺨﻣ"
 
 
-msgid "Pivot Point"
-msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
-
-
-msgid "Mirror"
-msgstr "ﻪﻨﯾﺁ"
-
-
 msgid "Add Image"
 msgstr "ﺮﯾﻮﺼﺗ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -2967,6 +2955,14 @@ msgstr "ﻞﯾﺪﺒﺗ"
 
 msgid "Text"
 msgstr "ﻦﺘﻣ"
+
+
+msgid "Pivot Point"
+msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
+
+
+msgid "Mirror"
+msgstr "ﻪﻨﯾﺁ"
 
 
 msgid "Key"
@@ -3803,13 +3799,13 @@ msgid "Constraint"
 msgstr "ﺖﯾﺩﻭﺪﺤﻣ"
 
 
-msgid "Less"
-msgstr "ﺮﺘﻤﮐ"
-
-
 msgctxt "Operator"
 msgid "Separate"
 msgstr "ﺍﺪﺟ"
+
+
+msgid "Less"
+msgstr "ﺮﺘﻤﮐ"
 
 
 msgid "Select shortest path between two selections"

@@ -69,8 +69,6 @@ static void mask_copy_data(Main * /*bmain*/,
   /* TODO: add unused flag to those as well. */
   BKE_mask_layer_copy_list(&mask_dst->masklayers, &mask_src->masklayers);
 
-  BLI_listbase_clear((ListBase *)&mask_dst->drawdata);
-
   /* enable fake user by default */
   id_fake_user_set(&mask_dst->id);
 }
@@ -81,8 +79,6 @@ static void mask_free_data(ID *id)
 
   /* free mask data */
   BKE_mask_layer_free_list(&mask->masklayers);
-
-  DRW_drawdata_free(id);
 }
 
 static void mask_foreach_id(ID *id, LibraryForeachIDData *data)
@@ -1990,7 +1986,7 @@ void BKE_mask_clipboard_copy_from_layer(MaskLayer *mask_layer)
         if (point->parent.id) {
           if (!BLI_ghash_lookup(mask_clipboard.id_hash, point->parent.id)) {
             int len = strlen(point->parent.id->name);
-            char *name_copy = static_cast<char *>(MEM_mallocN(len + 1, "mask clipboard ID name"));
+            char *name_copy = MEM_malloc_arrayN<char>(size_t(len) + 1, "mask clipboard ID name");
             memcpy(name_copy, point->parent.id->name, len + 1);
             BLI_ghash_insert(mask_clipboard.id_hash, point->parent.id, name_copy);
           }

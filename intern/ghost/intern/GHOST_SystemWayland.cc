@@ -319,6 +319,11 @@ enum {
 #endif
 };
 
+/* Only defined in XKB 1.8x and newer, it seems XKB doesn't provide a version define. */
+#ifndef XKB_VMOD_NAME_HYPER
+#  define XKB_VMOD_NAME_HYPER "Hyper"
+#endif
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -332,8 +337,9 @@ enum {
   MOD_INDEX_ALT = 1,
   MOD_INDEX_CTRL = 2,
   MOD_INDEX_OS = 3,
+  MOD_INDEX_HYPER = 4,
 };
-#define MOD_INDEX_NUM (MOD_INDEX_OS + 1)
+#define MOD_INDEX_NUM (MOD_INDEX_HYPER + 1)
 
 struct GWL_ModifierInfo {
   /** Only for printing messages. */
@@ -379,6 +385,15 @@ static const GWL_ModifierInfo g_modifier_info_table[MOD_INDEX_NUM] = {
         /*key_r*/ GHOST_kKeyRightOS,
         /*mod_l*/ GHOST_kModifierKeyLeftOS,
         /*mod_r*/ GHOST_kModifierKeyRightOS,
+    },
+    /*MOD_INDEX_HYPER*/
+    {
+        /*display_name*/ "Hyper",
+        /*xkb_id*/ XKB_VMOD_NAME_HYPER,
+        /*key_l*/ GHOST_kKeyLeftHyper,
+        /*key_r*/ GHOST_kKeyRightHyper,
+        /*mod_l*/ GHOST_kModifierKeyLeftHyper,
+        /*mod_r*/ GHOST_kModifierKeyRightHyper,
     },
 };
 
@@ -2107,6 +2122,8 @@ static GHOST_TKey xkb_map_gkey(const xkb_keysym_t sym)
       GXMAP(gkey, XKB_KEY_Alt_R, GHOST_kKeyRightAlt);
       GXMAP(gkey, XKB_KEY_Super_L, GHOST_kKeyLeftOS);
       GXMAP(gkey, XKB_KEY_Super_R, GHOST_kKeyRightOS);
+      GXMAP(gkey, XKB_KEY_Hyper_L, GHOST_kKeyLeftHyper);
+      GXMAP(gkey, XKB_KEY_Hyper_R, GHOST_kKeyRightHyper);
       GXMAP(gkey, XKB_KEY_Menu, GHOST_kKeyApp);
 
       GXMAP(gkey, XKB_KEY_Caps_Lock, GHOST_kKeyCapsLock);
@@ -8018,7 +8035,7 @@ GHOST_TSuccess GHOST_SystemWayland::hasClipboardImage() const
         if (!uris.empty()) {
           const std::string_view &uri = uris.front();
           char *filepath = GHOST_URL_decode_alloc(uri.data(), uri.size());
-          if (IMB_ispic(filepath)) {
+          if (IMB_test_image(filepath)) {
             result = GHOST_kSuccess;
           }
           free(filepath);
@@ -8059,8 +8076,8 @@ uint *GHOST_SystemWayland::getClipboardImage(int *r_width, int *r_height) const
 
       if (data) {
         /* Generate the image buffer with the received data. */
-        ibuf = IMB_ibImageFromMemory(
-            (const uint8_t *)data, data_len, IB_byte_data, nullptr, "<clipboard>");
+        ibuf = IMB_load_image_from_memory(
+            (const uint8_t *)data, data_len, IB_byte_data, "<clipboard>");
         free(data);
       }
     }
@@ -8075,7 +8092,7 @@ uint *GHOST_SystemWayland::getClipboardImage(int *r_width, int *r_height) const
         if (!uris.empty()) {
           const std::string_view &uri = uris.front();
           char *filepath = GHOST_URL_decode_alloc(uri.data(), uri.size());
-          ibuf = IMB_loadiffname(filepath, IB_byte_data, nullptr);
+          ibuf = IMB_load_image_from_filepath(filepath, IB_byte_data);
           free(filepath);
         }
         free(data);
@@ -8114,7 +8131,7 @@ GHOST_TSuccess GHOST_SystemWayland::putClipboardImage(uint *rgba, int width, int
   ImBuf *ibuf = IMB_allocFromBuffer(reinterpret_cast<uint8_t *>(rgba), nullptr, width, height, 32);
   ibuf->ftype = IMB_FTYPE_PNG;
   ibuf->foptions.quality = 15;
-  if (!IMB_saveiff(ibuf, "<memory>", IB_byte_data | IB_mem)) {
+  if (!IMB_save_image(ibuf, "<memory>", IB_byte_data | IB_mem)) {
     IMB_freeImBuf(ibuf);
     return GHOST_kFailure;
   }
