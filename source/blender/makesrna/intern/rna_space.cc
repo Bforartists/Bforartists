@@ -7486,6 +7486,14 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
                            "Create instances for collections when appending, rather than adding "
                            "them directly to the scene");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
+
+  prop = RNA_def_property(srna, "drop_instances_to_origin", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "import_flags", FILE_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
+  RNA_def_property_ui_text(prop,
+                           "Drop Instances to Origin",
+                           "Drop collection instances to scene origin instead of cursor location");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
 }
 
 static void rna_def_filemenu_entry(BlenderRNA *brna)
