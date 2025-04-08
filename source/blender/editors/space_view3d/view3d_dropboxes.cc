@@ -493,7 +493,12 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   ED_outliner_select_sync_from_object_tag(C);
 
   V3DSnapCursorState *snap_state = static_cast<V3DSnapCursorState *>(drop->draw_data);
-  if (snap_state) {
+  if (use_instance_collections && asset_drag->import_settings.drop_instances_to_origin) {
+    float zeros[3] = {0.0f, 0.0f, 0.0f};
+    RNA_float_set_array(drop->ptr, "location", zeros);
+    RNA_float_set_array(drop->ptr, "rotation", zeros);
+  }
+  else if (snap_state && false) {
     float loc[3], rot[3];
     view3d_collection_drop_matrix_from_snap(snap_state, loc, rot);
     RNA_float_set_array(drop->ptr, "location", loc);
