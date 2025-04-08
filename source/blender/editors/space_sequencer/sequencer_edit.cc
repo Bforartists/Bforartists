@@ -783,7 +783,8 @@ static wmOperatorStatus sequencer_slip_modal(bContext *C, wmOperator *op, const 
     case RIGHTMOUSE: {
       int offset = data->previous_offset;
       float subframe_delta = data->subframe_restore;
-      sequencer_slip_strips(scene, data, -offset, -subframe_delta);
+      bool slip_keyframes = RNA_boolean_get(op->ptr, "slip_keyframes");
+      sequencer_slip_strips(scene, data, -offset, -subframe_delta, slip_keyframes);
 
       MEM_freeN(data->strip_array);
       MEM_freeN(data);
@@ -1413,7 +1414,7 @@ const EnumPropertyItem prop_side_types[] = {
 };
 
 /* Get the splitting side for the Split Strips's operator exec() callback. */
-static wmOperatorStatus sequence_split_side_for_exec_get(wmOperator *op)
+static int sequence_split_side_for_exec_get(wmOperator *op)
 {
   const int split_side = RNA_enum_get(op->ptr, "side");
 
