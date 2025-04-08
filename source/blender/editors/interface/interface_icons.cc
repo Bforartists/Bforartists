@@ -2163,7 +2163,7 @@ void UI_icon_draw(float x, float y, int icon_id)
       x, y, icon_id, UI_INV_SCALE_FAC, 1.0f, 0.0f, nullptr, false, UI_NO_ICON_OVERLAY_TEXT);
 }
 
-void UI_icon_draw_alpha(float x, float y, int icon_id, float alpha, const uchar * /*mono_rgba[4]*/)
+void UI_icon_draw_alpha(float x, float y, int icon_id, float alpha)
 {
   UI_icon_draw_ex(
       x, y, icon_id, UI_INV_SCALE_FAC, alpha, 0.0f, nullptr, false, UI_NO_ICON_OVERLAY_TEXT);
