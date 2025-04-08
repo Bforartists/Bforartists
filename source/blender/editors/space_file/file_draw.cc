@@ -13,6 +13,7 @@
 
 #include <fmt/format.h>
 
+#include "DNA_space_types.h"
 #include "MEM_guardedalloc.h"
 
 #include "AS_asset_representation.hh"
@@ -386,7 +387,8 @@ static void file_but_enable_drag(uiBut *but,
            (import_method == ASSET_IMPORT_LINK ?
                 FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK :
                 FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND)) != 0;
-
+      import_settings.drop_instances_to_origin = (sfile->asset_params->import_flags &
+                                                  FILE_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
       UI_but_drag_set_asset(but, file->asset, import_settings, icon, file->preview_icon_id);
     }
   }
