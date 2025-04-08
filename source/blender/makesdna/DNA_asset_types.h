@@ -125,6 +125,7 @@ typedef enum eAssetImportMethod {
 typedef struct AssetImportSettings {
   eAssetImportMethod method;
   bool use_instance_collections;
+  bool drop_instances_to_origin;
 } AssetImportSettings;
 
 typedef enum eAssetLibrary_Flag {
