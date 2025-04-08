@@ -10,6 +10,7 @@
 #include <cstring>
 #include <fmt/format.h>
 
+#include "DNA_windowmanager_enums.h"
 #include "MEM_guardedalloc.h"
 
 #include "BLI_build_config.h"
@@ -5165,7 +5166,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 }
 
 // bfa - show hide the meshedit toolbar menus
-static int header_toolbar_meshedit_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toolbar_meshedit_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5190,7 +5191,7 @@ static void SCREEN_OT_header_toolbar_meshedit(wmOperatorType *ot)
 }
 
 // bfa - show hide the primitives toolbar menus
-static int header_toolbar_primitives_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toolbar_primitives_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5215,7 +5216,7 @@ static void SCREEN_OT_header_toolbar_primitives(wmOperatorType *ot)
 }
 
 // bfa - show hide the image toolbar menus
-static int header_toolbar_image_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toolbar_image_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5240,7 +5241,7 @@ static void SCREEN_OT_header_toolbar_image(wmOperatorType *ot)
 }
 
 // bfa - show hide the tools toolbar menus
-static int header_toolbar_tools_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toolbar_tools_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5265,7 +5266,7 @@ static void SCREEN_OT_header_toolbar_tools(wmOperatorType *ot)
 }
 
 // bfa - show hide the animation toolbar menus
-static int header_toolbar_animation_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toolbar_animation_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5290,7 +5291,7 @@ static void SCREEN_OT_header_toolbar_animation(wmOperatorType *ot)
 }
 
 // bfa - show hide the edit toolbar menus
-static int header_toolbar_edit_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toolbar_edit_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5315,7 +5316,7 @@ static void SCREEN_OT_header_toolbar_edit(wmOperatorType *ot)
 }
 
 // bfa - show hide the misc toolbar menus
-static int header_toolbar_misc_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toolbar_misc_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5340,7 +5341,7 @@ static void SCREEN_OT_header_toolbar_misc(wmOperatorType *ot)
 }
 
 // bfa - show hide the editorsmenu
-static int header_toggle_editortypemenu_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toggle_editortypemenu_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5365,7 +5366,7 @@ static void SCREEN_OT_header_toggle_editortypemenu(wmOperatorType *ot)
 }
 
 // bfa - show hide the file toolbar menus
-static int header_toolbar_file_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_toolbar_file_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5390,7 +5391,7 @@ static void SCREEN_OT_header_toolbar_file(wmOperatorType *ot)
 }
 
 // bfa - show hide the file toolbar menus
-static int header_topbar_file_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_topbar_file_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5415,7 +5416,7 @@ static void SCREEN_OT_header_topbar_file(wmOperatorType *ot)
 }
 
 // bfa - show hide the meshedit topbar menus
-static int header_topbar_meshedit_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_topbar_meshedit_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5440,7 +5441,7 @@ static void SCREEN_OT_header_topbar_meshedit(wmOperatorType *ot)
 }
 
 // bfa - show hide the primitives topbar menus
-static int header_topbar_primitives_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_topbar_primitives_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5465,7 +5466,7 @@ static void SCREEN_OT_header_topbar_primitives(wmOperatorType *ot)
 }
 
 // bfa - show hide the image topbar menus
-static int header_topbar_image_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_topbar_image_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5490,7 +5491,7 @@ static void SCREEN_OT_header_topbar_image(wmOperatorType *ot)
 }
 
 // bfa - show hide the tools topbar menus
-static int header_topbar_tools_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_topbar_tools_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5515,7 +5516,7 @@ static void SCREEN_OT_header_topbar_tools(wmOperatorType *ot)
 }
 
 // bfa - show hide the animation topbar menus
-static int header_topbar_animation_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_topbar_animation_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5540,7 +5541,7 @@ static void SCREEN_OT_header_topbar_animation(wmOperatorType *ot)
 }
 
 // bfa - show hide the edit topbar menus
-static int header_topbar_edit_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_topbar_edit_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5565,7 +5566,7 @@ static void SCREEN_OT_header_topbar_edit(wmOperatorType *ot)
 }
 
 // bfa - show hide the misc topbar menus
-static int header_topbar_misc_exec(bContext *C, wmOperator *)
+static wmOperatorStatus header_topbar_misc_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -5690,7 +5691,7 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void * 
           "SCREEN_OT_header_toolbar_misc");
 }
 /*bfa toolbar*/
-static int toolbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
+static wmOperatorStatus toolbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
 {
   uiPopupMenu *pup;
   uiLayout *layout;
@@ -5774,7 +5775,7 @@ void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void * /
           "SCREEN_OT_header_topbar_misc");
 }
 /*bfa topbar*/
-static int topbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
+static wmOperatorStatus topbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
 {
   uiPopupMenu *pup;
   uiLayout *layout;
