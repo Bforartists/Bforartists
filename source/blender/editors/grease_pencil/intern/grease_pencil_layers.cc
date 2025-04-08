@@ -708,11 +708,10 @@ static wmOperatorStatus grease_pencil_layer_duplicate_exec(bContext *C, wmOperat
   return OPERATOR_FINISHED;
 }
 
-
 /*bfa - descriptions*/
 static std::string GREASE_PENCIL_OT_layer_duplicate_description(struct bContext * /*C*/,
-                                                              struct wmOperatorType * /*op*/,
-                                                              struct PointerRNA *ptr)
+                                                                struct wmOperatorType * /*op*/,
+                                                                struct PointerRNA *ptr)
 {
   const bool visibility = RNA_boolean_get(ptr, "empty_keyframes");
   if (!visibility) {
@@ -1279,7 +1278,7 @@ static void GREASE_PENCIL_OT_layer_duplicate_object(wmOperatorType *ot)
 }
 
 /* bfa - added move up/down operators */
-static int grease_pencil_layer_move_top_exec(bContext *C, wmOperator *)
+static wmOperatorStatus grease_pencil_layer_move_top_exec(bContext *C, wmOperator *)
 {
   using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
@@ -1315,7 +1314,7 @@ static void GREASE_PENCIL_OT_layer_move_top(wmOperatorType *ot)
 }
 
 /* bfa - added move up/down operators */
-static int grease_pencil_layer_move_bottom_exec(bContext *C, wmOperator *)
+static wmOperatorStatus grease_pencil_layer_move_bottom_exec(bContext *C, wmOperator *)
 {
   using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
@@ -1376,5 +1375,6 @@ void ED_operatortypes_grease_pencil_layers()
   WM_operatortype_append(GREASE_PENCIL_OT_layer_duplicate_object);
 
   WM_operatortype_append(GREASE_PENCIL_OT_layer_move_top); /* bfa - added move up/down operators */
-  WM_operatortype_append(GREASE_PENCIL_OT_layer_move_bottom); /* bfa - added move up/down operators */
+  WM_operatortype_append(
+      GREASE_PENCIL_OT_layer_move_bottom); /* bfa - added move up/down operators */
 }
