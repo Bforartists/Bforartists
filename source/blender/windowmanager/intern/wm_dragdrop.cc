@@ -842,6 +842,7 @@ void WM_drag_add_asset_list_item(wmDrag *drag,
     AssetImportSettings import_settings{};
     import_settings.method = ASSET_IMPORT_APPEND;
     import_settings.use_instance_collections = false;
+    import_settings.drop_instances_to_origin = false;
 
     drag_asset->asset_data.external_info = WM_drag_create_asset_data(asset, import_settings);
   }
