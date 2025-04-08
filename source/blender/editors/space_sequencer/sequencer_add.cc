@@ -1346,10 +1346,10 @@ void sequencer_image_seq_reserve_frames(
   }
 }
 
-static wmOperatorStatus sequencer_add_image_strip_calculate_length(wmOperator *op,
-                                                                   const int start_frame,
-                                                                   int *minframe,
-                                                                   int *numdigits)
+static int sequencer_add_image_strip_calculate_length(wmOperator *op,
+                                                      const int start_frame,
+                                                      int *minframe,
+                                                      int *numdigits)
 {
   const bool use_placeholders = RNA_boolean_get(op->ptr, "use_placeholders");
 
