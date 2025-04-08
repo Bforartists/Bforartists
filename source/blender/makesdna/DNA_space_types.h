@@ -893,6 +893,7 @@ typedef enum eFileAssetImportMethod {
 typedef enum eFileAssetImportFlags {
   FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK = (1 << 0),
   FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND = (1 << 1),
+  FILE_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN = (1 << 2),
 } eFileAssetImportFlags;
 
 /**
