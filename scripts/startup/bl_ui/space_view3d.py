@@ -3308,33 +3308,38 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
 
         layout.separator()
 
-        layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
+
+        if context.scene.tool_settings.gpencil_selectmode_edit != 'STROKE':
+            layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
         layout.operator_menu_enum("grease_pencil.select_similar", "mode")
 
         layout.separator()
 
-        layout.operator(
-            "grease_pencil.select_alternate", text="Alternated", icon="ALTERNATED"
-        )
+        if context.scene.tool_settings.gpencil_selectmode_edit != 'STROKE':
+            layout.operator(
+                "grease_pencil.select_alternate", text="Alternated", icon="ALTERNATED"
+            )
         layout.operator("grease_pencil.select_random", text="Random", icon="RANDOMIZE")
 
-        layout.separator()
+        if context.scene.tool_settings.gpencil_selectmode_edit != 'STROKE':
+            layout.separator()
 
-        props = layout.operator(
-            "grease_pencil.select_ends", text="First", icon="SELECT_TIP"
-        )
-        props.amount_start = 1
-        props.amount_end = 0
-        props = layout.operator(
-            "grease_pencil.select_ends", text="Last", icon="SELECT_ROOT"
-        )
-        props.amount_start = 0
-        props.amount_end = 1
+            props = layout.operator(
+                "grease_pencil.select_ends", text="First", icon="SELECT_TIP"
+            )
+            props.amount_start = 1
+            props.amount_end = 0
+            props = layout.operator(
+                "grease_pencil.select_ends", text="Last", icon="SELECT_ROOT"
+            )
+            props.amount_start = 0
+            props.amount_end = 1
 
-        layout.separator()
         # BFA - moved below
-        layout.operator("grease_pencil.select_more", text="More", icon="SELECTMORE")
-        layout.operator("grease_pencil.select_less", text="Less", icon="SELECTLESS")
+        if context.scene.tool_settings.gpencil_selectmode_edit != 'STROKE':
+            layout.separator()
+            layout.operator("grease_pencil.select_more", text="More", icon="SELECTMORE")
+            layout.operator("grease_pencil.select_less", text="Less", icon="SELECTLESS")
 
 
 class VIEW3D_MT_paint_grease_pencil(Menu):
@@ -8990,9 +8995,12 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator(
-            "grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION"
-        )
+        context = bpy.context
+
+        if context.scene.tool_settings.gpencil_selectmode_edit != 'STROKE':
+            layout.operator(
+                "grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION"
+            )
 
         layout.separator()
 
