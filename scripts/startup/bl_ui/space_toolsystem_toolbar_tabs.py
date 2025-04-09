@@ -4848,6 +4848,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
             col.separator(factor = 0.5)
 
             col.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon = "REMOVE_DOUBLES")
+            col.operator("grease_pencil.reproject", text="Reproject Strokes", icon = "REPROJECT")
 
         # icon buttons
         else:
@@ -4862,6 +4863,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
                 row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
                 row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
+                col.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
 
             elif column_count == 2:
 
@@ -4871,6 +4873,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
+                col.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
 
             elif column_count == 1:
 
@@ -4880,6 +4883,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
 
                 col.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
+                col.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
 
 
 
@@ -4913,6 +4917,10 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
             col.operator("grease_pencil.separate", text="Separate Selected Strokes", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
             col.operator("grease_pencil.separate", text="Separate Active Layer", icon = "SEPARATE_GP_STROKES").mode = 'LAYER'
 
+            col.separator(factor = 0.5)
+
+            col.operator("grease_pencil.stroke_split", text="Stroke Split", icon = "SPLIT")
+
         # icon buttons
         else:
 
@@ -4927,6 +4935,9 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
                 row.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
+                row = col.row(align=True)
+                row.operator("grease_pencil.stroke_split", text="", icon = "SPLIT")
+
             elif column_count == 2:
 
                 row = col.row(align=True)
@@ -4936,11 +4947,17 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
+                row = col.row(align=True)
+                row.operator("grease_pencil.stroke_split", text="", icon = "SPLIT")
+
             elif column_count == 1:
 
                 col.operator("grease_pencil.separate", text="", icon = "SEPARATE").mode = 'SELECTED'
                 col.operator("grease_pencil.separate", text="", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
                 col.operator("grease_pencil.separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+
+                col.separator(factor = 0.5)
+                col.operator("grease_pencil.stroke_split", text="", icon = "SPLIT")
 
 
 class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
@@ -5428,6 +5445,9 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
             col.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframe (Active Layer)", icon = "DELETE").all = False
             col.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframes (All Layers)", icon = "DELETE_ALL").all = True
 
+            col.separator(factor = 0.5)
+            col.operator("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon = "SEQUENCE").use_selection = True
+
         # icon buttons
         else:
 
@@ -5449,6 +5469,9 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE").all = False
                 row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE_ALL").all = True
 
+                row = col.row(align=True)
+                row.operator("grease_pencil.interpolate_sequence", text="", icon = "SEQUENCE").use_selection = True
+
             elif column_count == 2:
 
                 row = col.row(align=True)
@@ -5463,6 +5486,9 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE").all = False
                 row.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE_ALL").all = True
 
+                row = col.row(align=True)
+                row.operator("grease_pencil.interpolate_sequence", text="", icon = "SEQUENCE").use_selection = True
+
             elif column_count == 1:
 
                 col.operator("grease_pencil.insert_blank_frame", text="", icon = "ADD")
@@ -5474,6 +5500,8 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE").all = False
                 col.operator("grease_pencil.active_frame_delete", text="", icon = "DELETE_ALL").all = True
 
+                col.separator(factor = 0.5)
+                col.operator("grease_pencil.interpolate_sequence", text="", icon = "SEQUENCE").use_selection = True
 
 class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
     bl_label = "Clean Up"
