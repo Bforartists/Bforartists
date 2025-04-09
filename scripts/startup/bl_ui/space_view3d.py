@@ -10243,15 +10243,13 @@ class VIEW3D_PT_shading_options(Panel):
                 row.prop(shading, "use_dof", text="Depth of Field")
 
         if shading.type in {"WIREFRAME", "SOLID"}:
-            split = col.split()
+            split = layout.split()
             col = split.column()
-            col.use_property_split = False
             row = col.row()
             row.separator()
             row.prop(shading, "show_object_outline")
             col = split.column()
             if shading.show_object_outline:
-                col.use_property_split = False
                 col.prop(shading, "object_outline_color", text="")
             else:
                 col.label(icon="DISCLOSURE_TRI_RIGHT")
