@@ -8888,6 +8888,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.separator()
         layout.operator("grease_pencil.stroke_split", text="Split", icon="SPLIT")
+        layout.separator()
         layout.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
         layout.operator(
             "grease_pencil.paste", text="Paste", icon="PASTEDOWN"
@@ -12093,7 +12094,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
                 text="Smooth Points",
                 icon="SMOOTH_VERTEX",
             )
-            col.operator("grease_pencil.set_start_point", text="Set Start Point")
+            col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
 
             col.separator()
 
