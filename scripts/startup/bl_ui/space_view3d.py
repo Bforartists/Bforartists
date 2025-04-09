@@ -8887,12 +8887,12 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         )
 
         layout.separator()
-        layout.operator("grease_pencil.stroke_split", text="Split")
+        layout.operator("grease_pencil.stroke_split", text="Split", icon="SPLIT")
         layout.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
         layout.operator(
             "grease_pencil.paste", text="Paste", icon="PASTEDOWN"
         ).type = "ACTIVE"
-        layout.operator("grease_pencil.paste", text="Paste by Layer").type = "LAYER"
+        layout.operator("grease_pencil.paste", text="Paste by Layer", icon="PASTEDOWN").type = "LAYER"
 
         layout.operator_menu_enum("grease_pencil.dissolve", "type")
         layout.menu("VIEW3D_MT_edit_greasepencil_delete")
@@ -8932,13 +8932,13 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
                 "grease_pencil.stroke_simplify", text="Fixed", icon="MOD_SIMPLIFY"
             ).mode = "FIXED"
             layout.operator(
-                "grease_pencil.stroke_simplify", text="Adaptive"
+                "grease_pencil.stroke_simplify", text="Adaptive", icon="SIMPLIFY_ADAPTIVE"
             ).mode = "ADAPTIVE"
             layout.operator(
-                "grease_pencil.stroke_simplify", text="Sample"
+                "grease_pencil.stroke_simplify", text="Sample", icon="SIMPLIFY_SAMPLE"
             ).mode = "SAMPLE"
             layout.operator(
-                "grease_pencil.stroke_simplify", text="Merge"
+                "grease_pencil.stroke_simplify", text="Merge", icon="MERGE"
             ).mode = "MERGE"
         layout.separator()
         layout.operator_menu_enum("grease_pencil.join_selection", "type", text="Join")
@@ -8962,9 +8962,10 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
             "grease_pencil.caps_set", text="Set Caps", property="type"
         )
         layout.operator("grease_pencil.stroke_switch_direction", icon="FLIP")
-        layout.operator(
-            "grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT"
-        )
+        if mode != "STROKE":
+            layout.operator(
+                "grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT"
+            )
 
         layout.separator()
 
@@ -12044,7 +12045,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.operator(
                 "grease_pencil.paste", text="Paste", icon="PASTEDOWN"
             ).type = "ACTIVE"
-            col.operator("grease_pencil.paste", text="Paste by Layer").type = "LAYER"
+            col.operator("grease_pencil.paste", text="Paste by Layer", icon="PASTEDOWN").type = "LAYER"
 
             col.separator()
 
@@ -12057,7 +12058,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
                 )
 
                 col.separator()
-            col.operator("grease_pencil.stroke_split", text="Split")
+            col.operator("grease_pencil.stroke_split", text="Split", icon="SPLIT")
             col.operator(
                 "grease_pencil.separate", text="Separate", icon="SEPARATE"
             ).mode = "SELECTED"
