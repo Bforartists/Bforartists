@@ -216,14 +216,16 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
             #layout.operator("grease_pencil.layer_group_add", text="Add Group", icon = "COLLECTION_NEW") # BFA - exposed to top level
             layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
             layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
+            layout.operator("grease_pencil.layer_merge", text="Merge Group", icon = 'MERGE').mode = 'GROUP'
 
-        layout.separator()
-        layout.operator("grease_pencil.layer_move_top", text="Move to Top", icon='TRIA_UP_BAR') # bfa - added move up/down operators
-        layout.operator("grease_pencil.layer_move_bottom", text="Move to Bottom", icon='TRIA_DOWN_BAR') # bfa - added move up/down operators
+        if not is_group_active:
+            layout.separator()
+            layout.operator("grease_pencil.layer_move_top", text="Move to Top", icon='TRIA_UP_BAR') # bfa - added move up/down operators
+            layout.operator("grease_pencil.layer_move_bottom", text="Move to Bottom", icon='TRIA_DOWN_BAR') # bfa - added move up/down operators
 
-        layout.separator()
-        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Layer", icon='DUPLICATE').empty_keyframes = False # BFA - made more explicit
-        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Layer", icon='DUPLICATE' ).empty_keyframes = True # BFA - made more explicit
+            layout.separator()
+            layout.operator("grease_pencil.layer_duplicate", text="Duplicate Layer", icon='DUPLICATE').empty_keyframes = False # BFA - made more explicit
+            layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Layer", icon='DUPLICATE' ).empty_keyframes = True # BFA - made more explicit
 
         layout.separator()
         layout.operator("grease_pencil.layer_reveal", icon='RESTRICT_VIEW_OFF', text="Show All")
@@ -233,18 +235,19 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.operator("grease_pencil.layer_lock_all", icon='LOCKED', text="Lock All").lock = True
         layout.operator("grease_pencil.layer_lock_all", icon='UNLOCKED', text="Unlock All").lock = False
 
-        layout.separator()
-        layout.operator("grease_pencil.layer_merge", text="Merge Down", icon = 'MERGE').mode = 'ACTIVE'
-        layout.operator("grease_pencil.layer_merge", text="Merge Group", icon = 'MERGE').mode = 'GROUP'
-        layout.operator("grease_pencil.layer_merge", text="Merge All", icon = 'MERGE').mode = 'ALL'
+        if not is_group_active:
+            layout.separator()
+            layout.operator("grease_pencil.layer_merge", text="Merge Down", icon = 'MERGE').mode = 'ACTIVE'
+            layout.operator("grease_pencil.layer_merge", text="Merge Group", icon = 'MERGE').mode = 'GROUP'
+            layout.operator("grease_pencil.layer_merge", text="Merge All", icon = 'MERGE').mode = 'ALL'
 
-        layout.separator()
-        layout.operator("grease_pencil.relative_layer_mask_add", icon = 'MASK_ABOVE', text="Mask with Layer Above").mode = 'ABOVE'
-        layout.operator("grease_pencil.relative_layer_mask_add", icon = 'MASK_BELOW', text="Mask with Layer Below").mode = 'BELOW'
+            layout.separator()
+            layout.operator("grease_pencil.relative_layer_mask_add", icon = 'MASK_ABOVE', text="Mask with Layer Above").mode = 'ABOVE'
+            layout.operator("grease_pencil.relative_layer_mask_add", icon = 'MASK_BELOW', text="Mask with Layer Below").mode = 'BELOW'
 
-        layout.separator()
-        layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
-        layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected", icon = 'PASTEDOWN').only_active = False
+            layout.separator()
+            layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
+            layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected", icon = 'PASTEDOWN').only_active = False
 
 
 class GREASE_PENCIL_MT_group_context_menu(Menu):
@@ -254,7 +257,7 @@ class GREASE_PENCIL_MT_group_context_menu(Menu):
         layout = self.layout
         layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
         layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
-        layout.operator("grease_pencil.layer_merge", text="Merge Group").mode = 'GROUP'
+        layout.operator("grease_pencil.layer_merge", text="Merge Group", icon = 'MERGE').mode = 'GROUP'
 
         layout.separator()
         row = layout.row(align=True)
