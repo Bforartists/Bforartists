@@ -12,7 +12,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-
+import os
 from . import properties
 
 op = bpy.types.Operator
@@ -404,6 +404,44 @@ class BFA_OT_viewport_silhuette_toggle(op):
             self.layout.operator(BFA_PROP_toggle_viewport.bl_idname, icon=BFA_PROP_toggle_viewport.bl_icon)
 
 
+################## File Operators ##################
+class BFA_OT_open_blend_file_window(bpy.types.Operator):
+    """Open the file explorer to show the current blend file"""
+    bl_idname = "bfa.open_blend_file_window"
+    bl_label = "Open Blend File Folder"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # Get the current blend file path
+        blend_file_path = bpy.data.filepath
+
+        # Check if the file is saved
+        if not blend_file_path:
+            self.report({'WARNING'}, "Please save the file first")
+            return {'CANCELLED'}
+
+        # Open the file explorer/finder to show the file
+        if bpy.app.version >= (3, 0, 0):
+            # For Blender 3.0+ use the new system operator
+            bpy.ops.wm.path_open(filepath=os.path.dirname(blend_file_path))
+        else:
+            # For older versions use platform-specific methods
+            import platform
+            import subprocess
+
+            if platform.system() == "Windows":
+                subprocess.Popen(f'explorer /select,"{blend_file_path}"')
+            elif platform.system() == "Darwin":  # macOS
+                subprocess.Popen(['open', '-R', blend_file_path])
+            else:  # Linux
+                subprocess.Popen(['xdg-open', os.path.dirname(blend_file_path)])
+
+        return {'FINISHED'}
+
+    def menu_func(self):
+        wm = bpy.context.window_manager
+        if wm.BFA_UI_addon_props.BFA_PROP_toggle_file:
+            self.layout.operator(BFA_PROP_toggle_file.bl_idname, icon=BFA_PROP_toggle_file.bl_icon)
 
 
 operator_list = [
@@ -415,7 +453,9 @@ operator_list = [
     BFA_OT_jump_forward,
     BFA_OT_jump_back,
     # Viewport Operators
-    BFA_OT_viewport_silhuette_toggle
+    BFA_OT_viewport_silhuette_toggle,
+    # File Operators
+    BFA_OT_open_blend_file_window,
     # Add more operators as needed
 ]
 
