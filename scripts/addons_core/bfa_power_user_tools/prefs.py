@@ -23,7 +23,7 @@ class BFA_UI_preferences(bpy.types.AddonPreferences):
     bfa_toggle_render_levels: BoolProperty(
         name='Combine Viewport/Render Subdivision Levels',
         description='When applying modifier levels using hotkeys in the 3D View to adjust the Subdivision Modifier levels\nthis will set the render levels to match the viewport',
-        default=False
+        default=True
     )
 
     def draw(self, context):
@@ -50,6 +50,11 @@ class BFA_UI_preferences(bpy.types.AddonPreferences):
         col = row.column(align=True)
         col.label(text="Viewport Operators:", icon="VIEW3D")
         layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_viewport")
+
+        row = layout.row()
+        col = row.column(align=True)
+        col.label(text="File Operators:", icon="FILE_FOLDER")
+        layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_file")
 
 preferences_classes = [
     BFA_UI_preferences,
