@@ -577,7 +577,7 @@ class TOPBAR_MT_file_external_data(Menu):
 
         layout.separator()
 
-        # Check if BFA Power User Tools addon is enabled
+        # BFA - Open Blend File Folder Operator
         wm = bpy.context.window_manager
         if hasattr(wm, 'BFA_UI_addon_props') and wm.BFA_UI_addon_props.BFA_PROP_toggle_file:
             layout.operator("bfa.open_blend_file_window", icon="FOLDER_REDIRECT")
