@@ -141,7 +141,9 @@ static void mesh_copy_data(Main *bmain,
    * Caches will be "un-shared" as necessary later on. */
   mesh_dst->runtime->bounds_cache = mesh_src->runtime->bounds_cache;
   mesh_dst->runtime->vert_normals_cache = mesh_src->runtime->vert_normals_cache;
+  mesh_dst->runtime->vert_normals_true_cache = mesh_src->runtime->vert_normals_true_cache;
   mesh_dst->runtime->face_normals_cache = mesh_src->runtime->face_normals_cache;
+  mesh_dst->runtime->face_normals_true_cache = mesh_src->runtime->face_normals_true_cache;
   mesh_dst->runtime->corner_normals_cache = mesh_src->runtime->corner_normals_cache;
   mesh_dst->runtime->loose_verts_cache = mesh_src->runtime->loose_verts_cache;
   mesh_dst->runtime->verts_no_face_cache = mesh_src->runtime->verts_no_face_cache;
@@ -231,9 +233,20 @@ static void mesh_free_data(ID *id)
 {
   Mesh *mesh = reinterpret_cast<Mesh *>(id);
 
-  BKE_mesh_clear_geometry_and_metadata(mesh);
+  CustomData_free(&mesh->vert_data);
+  CustomData_free(&mesh->edge_data);
+  CustomData_free(&mesh->fdata_legacy);
+  CustomData_free(&mesh->corner_data);
+  CustomData_free(&mesh->face_data);
+  BLI_freelistN(&mesh->vertex_group_names);
+  MEM_SAFE_FREE(mesh->active_color_attribute);
+  MEM_SAFE_FREE(mesh->default_color_attribute);
+  if (mesh->face_offset_indices) {
+    blender::implicit_sharing::free_shared_data(&mesh->face_offset_indices,
+                                                &mesh->runtime->face_offsets_sharing_info);
+  }
+  MEM_SAFE_FREE(mesh->mselect);
   MEM_SAFE_FREE(mesh->mat);
-
   delete mesh->runtime;
 }
 
@@ -325,21 +338,21 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
   /* Cache only - don't write. */
   mesh->mface = nullptr;
   mesh->totface_legacy = 0;
-  memset(&mesh->fdata_legacy, 0, sizeof(mesh->fdata_legacy));
+  mesh->fdata_legacy = CustomData{};
 
   /* Do not store actual geometry data in case this is a library override ID. */
   if (ID_IS_OVERRIDE_LIBRARY(mesh) && !is_undo) {
     mesh->verts_num = 0;
-    memset(&mesh->vert_data, 0, sizeof(mesh->vert_data));
+    mesh->vert_data = CustomData{};
 
     mesh->edges_num = 0;
-    memset(&mesh->edge_data, 0, sizeof(mesh->edge_data));
+    mesh->edge_data = CustomData{};
 
     mesh->corners_num = 0;
-    memset(&mesh->corner_data, 0, sizeof(mesh->corner_data));
+    mesh->corner_data = CustomData{};
 
     mesh->faces_num = 0;
-    memset(&mesh->face_data, 0, sizeof(mesh->face_data));
+    mesh->face_data = CustomData{};
     mesh->face_offset_indices = nullptr;
   }
   else {
@@ -596,11 +609,6 @@ void mesh_remove_invalid_attribute_strings(Mesh &mesh)
 }
 
 }  // namespace blender::bke
-
-void BKE_mesh_free_data_for_undo(Mesh *mesh)
-{
-  mesh_free_data(&mesh->id);
-}
 
 /**
  * \note on data that this function intentionally doesn't free:
@@ -1418,6 +1426,16 @@ static void translate_positions(MutableSpan<float3> positions, const float3 &tra
   });
 }
 
+static void transform_normals(MutableSpan<float3> normals, const float4x4 &matrix)
+{
+  const float3x3 normal_transform = math::transpose(math::invert(float3x3(matrix)));
+  threading::parallel_for(normals.index_range(), 1024, [&](const IndexRange range) {
+    for (float3 &normal : normals.slice(range)) {
+      normal = normal_transform * normal;
+    }
+  });
+}
+
 void mesh_translate(Mesh &mesh, const float3 &translation, const bool do_shape_keys)
 {
   if (math::is_zero(translation)) {
@@ -1453,6 +1471,16 @@ void mesh_transform(Mesh &mesh, const float4x4 &transform, bool do_shape_keys)
   if (do_shape_keys && mesh.key) {
     LISTBASE_FOREACH (KeyBlock *, kb, &mesh.key->block) {
       transform_positions(MutableSpan(static_cast<float3 *>(kb->data), kb->totelem), transform);
+    }
+  }
+  MutableAttributeAccessor attributes = mesh.attributes_for_write();
+  if (const std::optional<AttributeMetaData> meta_data = attributes.lookup_meta_data(
+          "custom_normal"))
+  {
+    if (meta_data->data_type == CD_PROP_FLOAT3) {
+      bke::SpanAttributeWriter normals = attributes.lookup_for_write_span<float3>("custom_normal");
+      transform_normals(normals.span, transform);
+      normals.finish();
     }
   }
 
@@ -1614,7 +1642,7 @@ void BKE_mesh_eval_geometry(Depsgraph *depsgraph, Mesh *mesh)
     mesh->runtime->mesh_eval = nullptr;
   }
   if (DEG_is_active(depsgraph)) {
-    Mesh *mesh_orig = reinterpret_cast<Mesh *>(DEG_get_original_id(&mesh->id));
+    Mesh *mesh_orig = DEG_get_original(mesh);
     if (mesh->texspace_flag & ME_TEXSPACE_FLAG_AUTO_EVALUATED) {
       mesh_orig->texspace_flag |= ME_TEXSPACE_FLAG_AUTO_EVALUATED;
       copy_v3_v3(mesh_orig->texspace_location, mesh->texspace_location);

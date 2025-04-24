@@ -701,12 +701,8 @@ class CryptoMatteOperation : public BaseCryptoMatteOperation {
 
     int view_layer_index = 0;
     LISTBASE_FOREACH_INDEX (ViewLayer *, view_layer, &scene->view_layers, view_layer_index) {
-      /* Not the viewer layer used by the node. */
-      if (!StringRef(type_name).startswith(view_layer->name)) {
-        continue;
-      }
-
-      /* Find out which type of Cryptomatte layer the node uses.  */
+      /* Find out which type of Cryptomatte layer the node uses, if non matched, then this is not
+       * the view layer used by the node and we check other view layers. */
       const char *cryptomatte_type = nullptr;
       const std::string layer_prefix = std::string(view_layer->name) + ".";
       if (type_name == layer_prefix + RE_PASSNAME_CRYPTOMATTE_OBJECT) {
@@ -719,8 +715,9 @@ class CryptoMatteOperation : public BaseCryptoMatteOperation {
         cryptomatte_type = RE_PASSNAME_CRYPTOMATTE_MATERIAL;
       }
 
+      /* Not the view layer used by the node. */
       if (!cryptomatte_type) {
-        return layers;
+        continue;
       }
 
       /* Each layer stores two ranks/levels, so do ceiling division by two. */
@@ -923,7 +920,7 @@ void register_node_type_cmp_cryptomatte()
   ntype.ui_name = "Cryptomatte";
   ntype.ui_description =
       "Generate matte for individual objects and materials using Cryptomatte render passes";
-  ntype.enum_name_legacy = "CRYPTOMATTE";
+  ntype.enum_name_legacy = "CRYPTOMATTE_V2";
   ntype.nclass = NODE_CLASS_MATTE;
   ntype.declare = file_ns::cmp_node_cryptomatte_declare;
   blender::bke::node_type_size(ntype, 240, 100, 700);
