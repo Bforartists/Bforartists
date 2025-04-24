@@ -587,7 +587,7 @@ ImBuf *IMB_allocImBuf(uint x, uint y, uchar planes, uint flags)
 
 bool IMB_initImBuf(ImBuf *ibuf, uint x, uint y, uchar planes, uint flags)
 {
-  memset(ibuf, 0, sizeof(ImBuf));
+  *ibuf = ImBuf{};
 
   ibuf->x = x;
   ibuf->y = y;
@@ -723,7 +723,7 @@ size_t IMB_get_size_in_memory(const ImBuf *ibuf)
     channel_size += sizeof(float);
   }
 
-  size += channel_size * ibuf->x * ibuf->y * ibuf->channels;
+  size += channel_size * IMB_get_pixel_count(ibuf) * size_t(ibuf->channels);
 
   if (ibuf->miptot) {
     for (a = 0; a < ibuf->miptot; a++) {

@@ -516,6 +516,9 @@ class TOPBAR_MT_file_import(Menu):
         if bpy.app.build_options.io_stl:
             self.layout.operator("wm.stl_import", text="STL (.stl)", icon="LOAD_STL")
 
+        if bpy.app.build_options.io_fbx:
+            self.layout.operator("wm.fbx_import", text="FBX (.fbx) (experimental)")
+
 
 class TOPBAR_MT_file_export(Menu):
     bl_idname = "TOPBAR_MT_file_export"

@@ -58,8 +58,8 @@ static void wm_block_splash_close(bContext *C, void *arg_block, void * /*arg*/)
   UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
 }
 
-/* BFA - [[maybe_unused]] */
-[[maybe_unused]] static void wm_block_splash_add_label(uiBlock *block, const char *label, int x, int y)
+/* BFA - TO DO - unused? */
+static void wm_block_splash_add_label(uiBlock *block, const char *label, int x, int y)
 {
   if (!(label && label[0])) {
     return;
@@ -230,7 +230,7 @@ static ImBuf *wm_block_splash_banner_image(int *r_width,
   IMB_premultiply_alpha(ibuf);
 
 #else
-  UNUSED_VARS(width);
+  UNUSED_VARS(max_height);
 #endif
   *r_height = height;
   *r_width = width;
@@ -309,6 +309,11 @@ static uiBlock *wm_block_splash_create(bContext *C, ARegion *region, void * /*ar
         block, ibuf, 0, 0.5f * U.widget_unit, splash_width, splash_height, nullptr);
 
     UI_but_func_set(but, wm_block_splash_close, block, nullptr);
+
+    wm_block_splash_add_label(block,
+                              BKE_blender_version_string(),
+                              splash_width - 8.0 * UI_SCALE_FAC,
+                              splash_height - 13.0 * UI_SCALE_FAC);
   }
 
   /* Banner image passed through the environment, to overlay on the splash and
@@ -430,7 +435,6 @@ void WM_OT_splash(wmOperatorType *ot)
 
 static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg*/)
 {
-  constexpr bool show_color = true; /* BFA - about logo in color */
   const uiStyle *style = UI_style_get_dpi();
   const int dialog_width = style->widget.points * 42 * UI_SCALE_FAC;
 
@@ -444,8 +448,8 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
 
 /* BFA - Our logo. */
 #ifndef WITH_HEADLESS
-
-  float size = 0.2f * dialog_width;
+  constexpr bool show_color = true; /* BFA - about logo in color */
+  const float size = 0.2f * dialog_width;
 
   ImBuf *ibuf = UI_svg_icon_bitmap(ICON_BLENDER_LOGO_LARGE, size, show_color);
 
