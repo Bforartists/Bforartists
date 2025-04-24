@@ -30,7 +30,7 @@
 #include "draw_pass.hh"
 #include "draw_view_data.hh"
 
-#include "../overlay/overlay_next_private.hh"
+#include "../overlay/overlay_private.hh"
 
 #include "select_engine.hh"
 
@@ -436,7 +436,7 @@ struct Instance : public DrawEngine {
        * Note this is not working correctly for vertex-paint (yet), but has been discussed
        * in #66645 and there is a solution by @mano-wii in P1032.
        * So OB_MODE_VERTEX_PAINT is already included here [required for P1032 I guess]. */
-      Mesh *me_orig = static_cast<Mesh *>(DEG_get_original_object(ob)->data);
+      Mesh *me_orig = static_cast<Mesh *>(DEG_get_original(ob)->data);
       if (me_orig->editflag & ME_EDIT_PAINT_VERT_SEL) {
         r_select_mode = SCE_SELECT_VERTEX;
       }

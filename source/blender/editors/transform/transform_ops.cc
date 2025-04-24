@@ -341,9 +341,9 @@ static void TRANSFORM_OT_create_orientation(wmOperatorType *ot)
 
 #ifdef USE_LOOPSLIDE_HACK
 /**
- * Special hack for MESH_OT_loopcut_slide so we get back to the selection mode
- * Do this for all meshes in multi-object editmode so their selectmode is in sync for following
- * operators
+ * Special hack for #MESH_OT_loopcut_slide so we get back to the selection mode
+ * Do this for all meshes in multi-object edit-mode so their select-mode is in sync
+ * for following operators
  */
 static void transformops_loopsel_hack(bContext *C, wmOperator *op)
 {
@@ -383,8 +383,9 @@ static void transformops_exit(bContext *C, wmOperator *op)
   transformops_loopsel_hack(C, op);
 #endif
 
-  saveTransform(C, static_cast<TransInfo *>(op->customdata), op);
-  MEM_freeN(op->customdata);
+  TransInfo *t = static_cast<TransInfo *>(op->customdata);
+  saveTransform(C, t, op);
+  MEM_freeN(t);
   op->customdata = nullptr;
   G.moving = 0;
 }
@@ -404,7 +405,7 @@ static int transformops_data(bContext *C, wmOperator *op, const wmEvent *event)
 {
   int retval = 1;
   if (op->customdata == nullptr) {
-    TransInfo *t = static_cast<TransInfo *>(MEM_callocN(sizeof(TransInfo), "TransInfo data2"));
+    TransInfo *t = MEM_callocN<TransInfo>("TransInfo data2");
 
     t->undo_name = op->type->name;
 

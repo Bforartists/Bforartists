@@ -471,8 +471,7 @@ static void lineart_occlusion_worker(TaskPool *__restrict /*pool*/, LineartRende
 void lineart_main_occlusion_begin(LineartData *ld)
 {
   int thread_count = ld->thread_count;
-  LineartRenderTaskInfo *rti = MEM_calloc_arrayN<LineartRenderTaskInfo>(size_t(thread_count),
-                                                                        __func__);
+  LineartRenderTaskInfo *rti = MEM_calloc_arrayN<LineartRenderTaskInfo>(thread_count, __func__);
   int i;
 
   TaskPool *tp = BLI_task_pool_create(nullptr, TASK_PRIORITY_HIGH);
@@ -2430,9 +2429,12 @@ static bool lineart_geometry_check_visible(double model_view_proj[4][4],
   if (!use_mesh) {
     return false;
   }
-  const Bounds<float3> bounds = *use_mesh->bounds_min_max();
+  const std::optional<Bounds<float3>> bounds = use_mesh->bounds_min_max();
+  if (!bounds.has_value()) {
+    return false;
+  }
   BoundBox bb;
-  BKE_boundbox_init_from_minmax(&bb, bounds.min, bounds.max);
+  BKE_boundbox_init_from_minmax(&bb, bounds.value().min, bounds.value().max);
 
   double co[8][4];
   double tmp[3];
@@ -3384,7 +3386,7 @@ static bool lineart_schedule_new_triangle_task(LineartIsecThread *th)
  */
 static void lineart_init_isec_thread(LineartIsecData *d, LineartData *ld, int thread_count)
 {
-  d->threads = MEM_calloc_arrayN<LineartIsecThread>(size_t(thread_count), "LineartIsecThread arr");
+  d->threads = MEM_calloc_arrayN<LineartIsecThread>(thread_count, "LineartIsecThread arr");
   d->ld = ld;
   d->thread_count = thread_count;
 
@@ -4384,7 +4386,7 @@ static void lineart_main_remove_unused_lines_recursive(LineartBoundingArea *ba,
     return;
   }
 
-  LineartEdge **new_array = MEM_calloc_arrayN<LineartEdge *>(size_t(usable_count),
+  LineartEdge **new_array = MEM_calloc_arrayN<LineartEdge *>(usable_count,
                                                              "cleaned lineart edge array");
 
   int new_i = 0;
@@ -5437,10 +5439,10 @@ void MOD_lineart_gpencil_generate_v3(const LineartCache *cache,
       }
 
       if (src_deform_group >= 0) {
-        int vindex;
-        vindex = eci->index;
-        if (vindex >= src_mesh->verts_num) {
-          break;
+        const int64_t vindex = eci->index - cwi.chain->index_offset;
+        if (UNLIKELY(vindex >= src_mesh->verts_num)) {
+          vgroup_weights.span[point_i] = 0;
+          continue;
         }
         MDeformWeight *mdw = BKE_defvert_ensure_index(&src_dvert[vindex], src_deform_group);
 
@@ -5451,6 +5453,8 @@ void MOD_lineart_gpencil_generate_v3(const LineartCache *cache,
     stroke_materials.span[chain_i] = max_ii(mat_nr, 0);
     up_to_point += cwi.point_count;
   }
+  vgroup_weights.finish();
+
   offsets[writer.index_range().last() + 1] = up_to_point;
 
   SpanAttributeWriter<bool> stroke_cyclic = attributes.lookup_or_add_for_write_span<bool>(

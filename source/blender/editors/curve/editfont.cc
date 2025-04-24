@@ -513,10 +513,10 @@ static bool font_paste_wchar(Object *obedit,
               ef->textbufinfo + ef->pos,
               (ef->len - ef->pos + 1) * sizeof(CharInfo));
       if (str_info) {
-        memcpy(ef->textbufinfo + ef->pos, str_info, str_len * sizeof(CharInfo));
+        std::copy_n(str_info, str_len, ef->textbufinfo + ef->pos);
       }
       else {
-        memset(ef->textbufinfo + ef->pos, '\0', str_len * sizeof(CharInfo));
+        std::fill_n(ef->textbufinfo + ef->pos, str_len, CharInfo{});
       }
 
       ef->len += str_len;
@@ -2451,7 +2451,7 @@ static wmOperatorStatus font_open_exec(bContext *C, wmOperator *op)
 
   if (!font) {
     if (op->customdata) {
-      MEM_freeN(op->customdata);
+      MEM_delete(static_cast<PropertyPointerRNA *>(op->customdata));
     }
     return OPERATOR_CANCELLED;
   }
@@ -2508,6 +2508,7 @@ static wmOperatorStatus open_invoke(bContext *C, wmOperator *op, const wmEvent *
   else {
     STRNCPY(filepath, U.fontdir);
     BLI_path_slash_ensure(filepath, sizeof(filepath));
+    /* The file selector will expand the blend-file relative prefix. */
   }
   RNA_property_string_set(op->ptr, prop_filepath, filepath);
 
