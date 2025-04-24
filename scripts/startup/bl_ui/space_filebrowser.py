@@ -54,7 +54,7 @@ class FILEBROWSER_HT_header(Header):
 
         # Check if we have a valid asset context first
         if hasattr(context, 'asset') and context.asset is not None:
-            if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"} and context.asset.id_type == "COLLECTION":
+            if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
                 layout.row().prop(
                     params, "drop_instances_to_origin", icon_only=True, icon="CENTER"
                 )  # BFA - drop collections instance at origin
@@ -939,8 +939,8 @@ class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
         layout.prop(params, "import_method", text="Import Method")
 
         col = layout.column(heading="Instance Collections")
-        col.prop(params, "instance_collections_on_link", text="Link")
-        col.prop(params, "instance_collections_on_append", text="Append")
+        col.prop(params, "instance_collections_on_link", text="When Linking")
+        col.prop(params, "instance_collections_on_append", text="When Appending")
         col.prop(params, "drop_instances_to_origin", text="Drop Instances To Origin")
 
 

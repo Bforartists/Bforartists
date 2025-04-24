@@ -1,11 +1,11 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Alpha (b'409ce2b976cf')\n"
+"Project-Id-Version: Blender 4.5.0 Alpha (b'b6372b3af3f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-24 09:38+0000\n"
-"PO-Revision-Date: 2025-03-03 11:29+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"POT-Creation-Date: 2025-04-21 07:54+0000\n"
+"PO-Revision-Date: 2025-04-14 08:14+0000\n"
+"Last-Translator: Thomas Radeke <rahdick@gmx.de>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -6675,38 +6675,6 @@ msgstr "Verwendet den Drehpunkt im positiven Rotationsbereich um die Z-Achse her
 
 msgid "Use Relative Offset"
 msgstr "Verwende realativen Versatz"
-
-
-msgid "Python Constraint"
-msgstr "Python Beschränkung"
-
-
-msgid "Use Python script for constraint evaluation"
-msgstr "Python-Skript verwenden, um die Beschränkung auzuwerten"
-
-
-msgid "Script Error"
-msgstr "Skriptfehler"
-
-
-msgid "Number of Targets"
-msgstr "Anzahl der Ziele"
-
-
-msgid "Usually only 1 to 3 are needed"
-msgstr "Normal wird 1 bis 3 benötigt"
-
-
-msgid "Target Objects"
-msgstr "Zielobjekte"
-
-
-msgid "Script"
-msgstr "Skript"
-
-
-msgid "Use Targets"
-msgstr "Ziele verwenden"
 
 
 msgid "Shrinkwrap Constraint"
@@ -14117,6 +14085,10 @@ msgid "Matte"
 msgstr "Maske"
 
 
+msgid "Script"
+msgstr "Skript"
+
+
 msgid "Shader"
 msgstr "Shader"
 
@@ -15013,10 +14985,6 @@ msgstr "Materialsteckplatz"
 
 msgid "Material slot used for rendering particles"
 msgstr "Materialsteckplatz wird verwendet zum rendern von Partikeln"
-
-
-msgid "Dummy"
-msgstr "Dummy"
 
 
 msgid "Object Aligned"
@@ -18863,6 +18831,62 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
+msgid "Mirror"
+msgstr "Spiegeln"
+
+
+msgid "Snap"
+msgstr "Einrasten"
+
+
+msgid "Local View"
+msgstr "Lokale Ansicht"
+
+
+msgid "Viewpoint"
+msgstr "Ansicht"
+
+
+msgid "Navigation"
+msgstr "Navigation"
+
+
+msgid "Align View"
+msgstr "Ansicht ausrichten"
+
+
+msgid "Align View to Active"
+msgstr "Ansicht auf Aktiv ausrichten"
+
+
+msgid "View Regions"
+msgstr "Vierfenster Ansicht"
+
+
+msgid "Select More/Less"
+msgstr "Mehr/weniger anzeigen"
+
+
+msgid "Select Similar"
+msgstr "Ähnliche auswählen"
+
+
+msgid "Select All by Trait"
+msgstr "Alles nach Merkmal auswählen"
+
+
+msgid "Select Linked"
+msgstr "Verknüpfte auswählen"
+
+
+msgid "Select Loops"
+msgstr "Schleifen auswählen"
+
+
+msgid "Assign Material"
+msgstr "Material zuweisen"
+
+
 msgid "Metaball"
 msgstr "Metaball"
 
@@ -18983,68 +19007,12 @@ msgid "Pivot Point"
 msgstr "Drehpunkt"
 
 
-msgid "Snap"
-msgstr "Einrasten"
-
-
 msgid "Proportional Editing Falloff"
 msgstr "Proportionaler Bearbeitungsabfall"
 
 
 msgid "Mask Edit"
 msgstr "Maskenbearbeitung"
-
-
-msgid "Mirror"
-msgstr "Spiegeln"
-
-
-msgid "Local View"
-msgstr "Lokale Ansicht"
-
-
-msgid "Viewpoint"
-msgstr "Ansicht"
-
-
-msgid "Navigation"
-msgstr "Navigation"
-
-
-msgid "Align View"
-msgstr "Ansicht ausrichten"
-
-
-msgid "Align View to Active"
-msgstr "Ansicht auf Aktiv ausrichten"
-
-
-msgid "View Regions"
-msgstr "Vierfenster Ansicht"
-
-
-msgid "Select More/Less"
-msgstr "Mehr/weniger anzeigen"
-
-
-msgid "Select Similar"
-msgstr "Ähnliche auswählen"
-
-
-msgid "Select All by Trait"
-msgstr "Alles nach Merkmal auswählen"
-
-
-msgid "Select Linked"
-msgstr "Verknüpfte auswählen"
-
-
-msgid "Select Loops"
-msgstr "Schleifen auswählen"
-
-
-msgid "Assign Material"
-msgstr "Material zuweisen"
 
 
 msgid "Assets"
@@ -23124,28 +23092,12 @@ msgid "Bokeh Image"
 msgstr "Dateityp"
 
 
-msgid "Angle of the bokeh"
-msgstr "Seed des Rauschens"
-
-
-msgid "Level of catadioptric of the bokeh"
-msgstr "Position des Objekts"
-
-
-msgid "Number of flaps"
-msgstr "Vertikal"
-
-
 msgid "Rounding"
 msgstr "Abrundung"
 
 
 msgid "Lens Shift"
 msgstr "Linsenveränderung"
-
-
-msgid "Shift of the lens components"
-msgstr "Opazität der Punkte"
 
 
 msgid "Box Mask"
@@ -23560,6 +23512,14 @@ msgid "To"
 msgstr "Nach"
 
 
+msgid "Interpolation method"
+msgstr "Interpolationsmodus"
+
+
+msgid "Anisotropic"
+msgstr "Anisotropisch"
+
+
 msgid "X2"
 msgstr "X2"
 
@@ -23720,10 +23680,6 @@ msgid "Despeckle"
 msgstr "Perspektive"
 
 
-msgid "Threshold for detecting pixels to despeckle"
-msgstr "Schwellwert für das Zeichnen von Rändern auf Geometrie-Kanten"
-
-
 msgid "Neighbor"
 msgstr "Nachbar"
 
@@ -23742,14 +23698,6 @@ msgstr "Farbabstände unterhalb des Schwellenwertes wird erfasst"
 
 msgid "Dilate/Erode"
 msgstr "Erweitern/Verkleinern"
-
-
-msgid "Distance to grow/shrink (number of iterations)"
-msgstr "Abstand zum Erweitern/Verkleinern (Anzahl von Schritten)"
-
-
-msgid "Edge to inset"
-msgstr "Kante bis einsetzen"
 
 
 msgid "Feather"
@@ -23904,10 +23852,6 @@ msgid "Inpaint"
 msgstr "Malen"
 
 
-msgid "Distance to inpaint (number of iterations)"
-msgstr "Abstand zu Inpaint (Anzahl der Wiederholungen)"
-
-
 msgid "Post Blur"
 msgstr "Anschließend weichzeichnen"
 
@@ -23963,10 +23907,6 @@ msgstr "Bildschirm Keying"
 
 msgid "Tracking Object"
 msgstr "Verfolgerobjekt"
-
-
-msgid "Anisotropic"
-msgstr "Anisotropisch"
 
 
 msgid "Lens Distortion"
@@ -24025,10 +23965,6 @@ msgid "Use Minimum"
 msgstr "Minimum verwenden"
 
 
-msgid "Number of motion blur samples"
-msgstr "Vertikal"
-
-
 msgid "Shutter"
 msgstr "Verschluss"
 
@@ -24047,10 +23983,6 @@ msgstr "Pixel als Einheit für Brennweite verwenden"
 
 msgid "Fixed/Scene"
 msgstr "Szene"
-
-
-msgid "Use feather information from the mask"
-msgstr "Benutze Feder Informationen von der Maske"
 
 
 msgid "Motion Blur"
@@ -24253,6 +24185,10 @@ msgid "Pixel Size"
 msgstr "Pixelgröße"
 
 
+msgid "Number of motion blur samples"
+msgstr "Vertikal"
+
+
 msgid "Alpha Convert"
 msgstr "Umwandeln"
 
@@ -24321,10 +24257,6 @@ msgid "Switch"
 msgstr "Schalter"
 
 
-msgid "Off: first socket, On: second socket"
-msgstr "Aus: erste Buchse, An: zweite Buchse"
-
-
 msgid "Node Output"
 msgstr "Knotenausgabe"
 
@@ -24335,14 +24267,6 @@ msgstr "Zeitkurve"
 
 msgid "Adaptation"
 msgstr "Anpassung"
-
-
-msgid "If 0, global; if 1, based on pixel intensity"
-msgstr "Wenn 0, global; wenn 1, auf Pixelintensität basierend"
-
-
-msgid "If not used, set to 1"
-msgstr "Wenn nicht benutzt auf 1 setzen"
 
 
 msgid "Rh Simple"
@@ -24794,6 +24718,10 @@ msgid "Set Material Index"
 msgstr "Materialindex setzen"
 
 
+msgid "Tangent Space"
+msgstr "Zielraum"
+
+
 msgid "Set Position"
 msgstr "Setzte Position"
 
@@ -25073,10 +25001,6 @@ msgstr "Shader mischen"
 
 msgid "Space of the input normal"
 msgstr "Projektion vom Eingangsbild"
-
-
-msgid "Tangent Space"
-msgstr "Zielraum"
 
 
 msgid "Object space normal mapping"
@@ -28996,6 +28920,10 @@ msgid "Init"
 msgstr "Initialisieren"
 
 
+msgid "Dummy"
+msgstr "Dummy"
+
+
 msgid "Resize"
 msgstr "Skalieren"
 
@@ -31862,10 +31790,6 @@ msgid "Blending factor"
 msgstr "Überblendungsfaktor"
 
 
-msgid "Interpolation method"
-msgstr "Interpolationsmodus"
-
-
 msgid "Blend Surface"
 msgstr "Oberfläche überblenden"
 
@@ -33935,11 +33859,6 @@ msgid "Add Segment"
 msgstr "Segment hinzufügen"
 
 
-msgctxt "Operator"
-msgid "Hide Collection"
-msgstr "Sammlung verstecken"
-
-
 msgid "Toggle visibility"
 msgstr "Sichtbarkeit umschalten"
 
@@ -35098,6 +35017,11 @@ msgstr "Verlinkte Sammlung duplizieren"
 msgctxt "Operator"
 msgid "Enable Collection"
 msgstr "Sammlung aktivieren"
+
+
+msgctxt "Operator"
+msgid "Hide Collection"
+msgstr "Sammlung verstecken"
 
 
 msgctxt "Operator"
@@ -37909,11 +37833,6 @@ msgstr "Überschreiben"
 
 
 msgctxt "Operator"
-msgid "Refresh PyConstraints"
-msgstr "Beschränkungen"
-
-
-msgctxt "Operator"
 msgid "Reload"
 msgstr "Neu laden"
 
@@ -40216,8 +40135,52 @@ msgid "Active Palette Color"
 msgstr "Aktive Farbpalette"
 
 
+msgid "Mesh Edit Mode"
+msgstr "Maschenbearbeitungsmodus"
+
+
+msgid "Measurement"
+msgstr "Messung"
+
+
+msgid "Curve Edit Mode"
+msgstr "Kurven-Bearbeitungsmodus"
+
+
+msgid "Snapping"
+msgstr "Einrasten"
+
+
+msgid "Transform Orientations"
+msgstr "Transformationsausrichtung"
+
+
+msgid "Drawing Plane"
+msgstr "Malfläche"
+
+
+msgid "Guides"
+msgstr "Hilfslinien"
+
+
+msgid "Quad View"
+msgstr "Vierfenster-Ansicht"
+
+
+msgid "Onion Skin"
+msgstr "Zwiebelhaut"
+
+
+msgid "Stereoscopy"
+msgstr "Stereoskopie"
+
+
 msgid "Auto-Masking"
 msgstr "Automatisches Maskieren"
+
+
+msgid "Motion Tracking"
+msgstr "Bewegungsverfolgung"
 
 
 msgid "VR"
@@ -40258,50 +40221,6 @@ msgstr "Setzer"
 
 msgid "Overlays"
 msgstr "Überlagerungen"
-
-
-msgid "Guides"
-msgstr "Hilfslinien"
-
-
-msgid "Motion Tracking"
-msgstr "Bewegungsverfolgung"
-
-
-msgid "Mesh Edit Mode"
-msgstr "Maschenbearbeitungsmodus"
-
-
-msgid "Measurement"
-msgstr "Messung"
-
-
-msgid "Curve Edit Mode"
-msgstr "Kurven-Bearbeitungsmodus"
-
-
-msgid "Snapping"
-msgstr "Einrasten"
-
-
-msgid "Transform Orientations"
-msgstr "Transformationsausrichtung"
-
-
-msgid "Drawing Plane"
-msgstr "Malfläche"
-
-
-msgid "Quad View"
-msgstr "Vierfenster-Ansicht"
-
-
-msgid "Onion Skin"
-msgstr "Zwiebelhaut"
-
-
-msgid "Stereoscopy"
-msgstr "Stereoskopie"
 
 
 msgid "Chain Scaling"
@@ -46502,6 +46421,14 @@ msgid "Node tree type to display and edit"
 msgstr "Knotenbaumtyp, zum Anzeigen und Bearbeiten"
 
 
+msgid "Shader Editor"
+msgstr "Shader Editor"
+
+
+msgid "Texture Node Editor"
+msgstr "Textur-Knoten-Editor"
+
+
 msgid "Type of information to display"
 msgstr "Darzustellender Informationstyp"
 
@@ -47446,6 +47373,14 @@ msgstr "RGB-Kurven-Modifikator für Sequenzstreifen"
 
 msgid "Hue correction modifier for sequence strip"
 msgstr "Farbkorrektur-Modifikator für Sequenzstreifen"
+
+
+msgid "If 0, global; if 1, based on pixel intensity"
+msgstr "Wenn 0, global; wenn 1, auf Pixelintensität basierend"
+
+
+msgid "If not used, set to 1"
+msgstr "Wenn nicht benutzt auf 1 setzen"
 
 
 msgid "White balance modifier for sequence strip"
@@ -50132,11 +50067,6 @@ msgstr "Knoten allgemein"
 
 
 msgctxt "WindowManager"
-msgid "SequencerCommon"
-msgstr "Sequenzer normal"
-
-
-msgctxt "WindowManager"
 msgid "Sequencer"
 msgstr "Sequenzer"
 
@@ -50149,61 +50079,6 @@ msgstr "Sequenzer Werkzeug: Messer"
 msgctxt "WindowManager"
 msgid "Sequencer Tool: Blade (fallback)"
 msgstr "Sequenzer Werkzeug: Messer (Plan B)"
-
-
-msgctxt "WindowManager"
-msgid "SequencerPreview"
-msgstr "Sequencervorschau"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Cursor"
-msgstr "Sequenzer Werkzeug: Mauszeiger"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Cursor (fallback)"
-msgstr "Sequencer Werkzeug: Cursor (Plan B)"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Move"
-msgstr "Sequenzer Werkzeug: Bewegen"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Move (fallback)"
-msgstr "Sequencer Werkzeug: Verschieben (Plan B)"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Rotate"
-msgstr "Sequenzer Werkzeug: Rotieren"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Rotate (fallback)"
-msgstr "Sequencer Werkzeug: Kommentar (Plan B)"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Scale"
-msgstr "Sequenzer Werkzeug: Skalierung"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Scale (fallback)"
-msgstr "Sequencer Werkzeug: Skalieren (Plan B)"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Sample"
-msgstr "Sequenzer Werkzeug: Beispiel"
-
-
-msgctxt "WindowManager"
-msgid "Sequencer Tool: Sample (fallback)"
-msgstr "Sequencer Werkzeug: Beispiel (Plan B)"
 
 
 msgctxt "WindowManager"
@@ -51199,14 +51074,6 @@ msgid "Offset X"
 msgstr "X-Versatz"
 
 
-msgid "Endpoint"
-msgstr "Endpunkt"
-
-
-msgid "Interpolation Tilt"
-msgstr "Interpolation Neigung"
-
-
 msgctxt "Operator"
 msgid "Custom..."
 msgstr "Benutzerdefiniert..."
@@ -51718,6 +51585,10 @@ msgstr "Strand-Schritte"
 
 msgid "Randomize Size"
 msgstr "Zufällige Größe"
+
+
+msgid "Endpoint"
+msgstr "Endpunkt"
 
 
 msgid "Randomize Axis"
@@ -53134,11 +53005,6 @@ msgstr "Instanz zu Szene"
 
 
 msgctxt "Operator"
-msgid "ID Data"
-msgstr "ID Data"
-
-
-msgctxt "Operator"
 msgid "Paste Data-Blocks"
 msgstr "Einfügen Datenblöcke"
 
@@ -54334,6 +54200,11 @@ msgstr "Leer"
 
 
 msgctxt "Operator"
+msgid "Point Cloud"
+msgstr "Punkt Wolke"
+
+
+msgctxt "Operator"
 msgid "Speaker"
 msgstr "Lautsprecher"
 
@@ -54933,11 +54804,6 @@ msgstr "Nächster Bereich"
 
 
 msgctxt "Operator"
-msgid "Point Cloud"
-msgstr "Punkt Wolke"
-
-
-msgctxt "Operator"
 msgid "Lattice"
 msgstr "Gitter"
 
@@ -55298,6 +55164,10 @@ msgid "Custom Location"
 msgstr "Cursorposition"
 
 
+msgid "Interpolation Tilt"
+msgstr "Interpolation Neigung"
+
+
 msgid "Scaling"
 msgstr "Skalierung"
 
@@ -55600,6 +55470,10 @@ msgstr "var"
 
 msgid "ID / Index"
 msgstr "ID / Index"
+
+
+msgid "True Normal"
+msgstr "Echte Normale"
 
 
 msgid "GP_Layer"
@@ -59417,6 +59291,10 @@ msgid "To Max"
 msgstr "Bis Maximum"
 
 
+msgid "Use feather information from the mask"
+msgstr "Benutze Feder Informationen von der Maske"
+
+
 msgid "Offset Y"
 msgstr "Y-Versatz"
 
@@ -59669,10 +59547,6 @@ msgid "Edge Crease"
 msgstr "Kantenfalte"
 
 
-msgid "Shader Editor"
-msgstr "Shader Editor"
-
-
 msgid "AO"
 msgstr "AO"
 
@@ -59755,10 +59629,6 @@ msgstr "Klarlack-Rauheit"
 
 msgid "Clear Coat Normal"
 msgstr "Klarlack-Normale"
-
-
-msgid "True Normal"
-msgstr "Echte Normale"
 
 
 msgid "Incoming"
@@ -59911,10 +59781,6 @@ msgstr "Temperatureigenschaften"
 
 msgid "Patterns"
 msgstr "Muster"
-
-
-msgid "Texture Node Editor"
-msgstr "Textur-Knoten-Editor"
 
 
 msgid "Bricks 1"
@@ -60293,10 +60159,6 @@ msgstr "Alle durch den Benutzer installierten Add-Ons"
 
 msgid "Import-Export"
 msgstr "Importieren/Expotieren"
-
-
-msgid "English (English)"
-msgstr "Englisch (English)"
 
 
 msgid "Japanese (日本語)"

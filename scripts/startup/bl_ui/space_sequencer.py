@@ -180,11 +180,17 @@ class SEQUENCER_HT_header(Header):
 
         st = context.space_data
 
+        layout.template_header()
+        
         # bfa - show hide the editormenu, editor suffix is needed.
         ALL_MT_editormenu_sequencer.draw_hidden(context, layout)
 
         layout.prop(st, "view_type", text="")
+
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
+
+        layout.separator_spacer()
+
         tool_settings = context.tool_settings
         sequencer_tool_settings = tool_settings.sequencer_tool_settings
 
@@ -201,7 +207,7 @@ class SEQUENCER_HT_header(Header):
                 sequencer_tool_settings, "pivot_point", text="", icon_only=True
             )  # BFA
 
-        if st.view_type in {"SEQUENCER", "SEQUENCER_PREVIEW"}:
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
             row.prop(sequencer_tool_settings, "overlap_mode", text="")
 
@@ -833,7 +839,7 @@ class SEQUENCER_MT_select(Menu):
 
         if has_sequencer:
             col.operator_menu_enum(
-                "sequencer.select_side_of_frame", "side", text="Side of Frame..."
+                "sequencer.select_side_of_frame", "side", text="Side of Frame"
             )
             col.menu("SEQUENCER_MT_select_handle", text="Handle")
             col.menu("SEQUENCER_MT_select_channel", text="Channel")
@@ -960,7 +966,7 @@ class SEQUENCER_MT_marker(Menu):
 
         # BFA - no longer used
         # if is_sequencer_view:
-        # layout.prop(st, "use_marker_sync")
+        # 	layout.prop(st, "use_marker_sync")
 
 
 class SEQUENCER_MT_change(Menu):
@@ -1023,11 +1029,13 @@ class SEQUENCER_MT_change(Menu):
                             props.filter_sound = True
                 elif strip_type in effect_strips:
                     layout.operator_context = "INVOKE_DEFAULT"
-                    layout.operator_menu_enum("sequencer.change_effect_input", "swap")
+                    layout.operator("sequencer.change_effect_input")
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
+                    layout.operator("sequencer.reassign_inputs")
+                    layout.operator("sequencer.swap_inputs")
                 else:
                     layout.label(
-                        text="Please select a changeable strip", icon="QUESTION"
+                        text="Please select an effects strip", icon="QUESTION"
                     )
                     pass
         except:
@@ -1252,7 +1260,24 @@ class SEQUENCER_MT_add_effect(Menu):
         total, nonsound = selected_strips_count(context)
 
         layout = self.layout
-        layout.operator_context = "INVOKE_REGION_WIN"
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        _, nonsound = selected_strips_count(context)
+
+        layout.operator("sequencer.effect_strip_add", text="Multicam Selector", icon="SEQ_MULTICAM").type = 'MULTICAM'
+
+        layout.separator()
+
+        col = layout.column()
+        col.operator("sequencer.effect_strip_add", text="Transform", icon="TRANSFORM_MOVE").type = 'TRANSFORM'
+        col.operator("sequencer.effect_strip_add", text="Speed Control", icon="NODE_CURVE_TIME").type = 'SPEED'
+
+        col.separator()
+
+        col.operator("sequencer.effect_strip_add", text="Glow", icon="LIGHT_SUN",).type = 'GLOW'
+        col.operator("sequencer.effect_strip_add", text="Gaussian Blur", icon="NODE_BLUR",).type = 'GAUSSIAN_BLUR'
+        col.enabled = nonsound == 1
+
+        layout.separator()
 
         col = layout.column()
         col.operator(
@@ -1292,38 +1317,6 @@ class SEQUENCER_MT_add_effect(Menu):
             icon="NODE_MIXRGB",
         ).type = "COLORMIX"
         col.enabled = total >= 2
-
-        layout.separator()
-
-        layout.operator(
-            "sequencer.effect_strip_add", text="Multicam Selector", icon="SEQ_MULTICAM"
-        ).type = "MULTICAM"
-
-        layout.separator()
-
-        col = layout.column()
-        col.operator(
-            "sequencer.effect_strip_add", text="Transform", icon="TRANSFORM_MOVE"
-        ).type = "TRANSFORM"
-        col.operator(
-            "sequencer.effect_strip_add", text="Speed Control", icon="NODE_CURVE_TIME"
-        ).type = "SPEED"
-
-        col.separator()
-
-        col.operator(
-            "sequencer.effect_strip_add",
-            text="Glow",
-            text_ctxt=i18n_contexts.id_sequence,
-            icon="LIGHT_SUN",
-        ).type = "GLOW"
-        col.operator(
-            "sequencer.effect_strip_add",
-            text="Gaussian Blur",
-            text_ctxt=i18n_contexts.id_sequence,
-            icon="NODE_BLUR",
-        ).type = "GAUSSIAN_BLUR"
-        col.enabled = nonsound == 1
 
 
 class SEQUENCER_MT_strip_transform(Menu):
@@ -1525,10 +1518,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
 
                 layout.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
                 layout.operator("sequencer.retiming_key_delete", icon="DELETE")
-                layout.operator(
-                    "sequencer.retiming_add_freeze_frame_slide",
-                    icon="KEYTYPE_MOVING_HOLD_VEC",
-                )
+                layout.operator("sequencer.retiming_add_freeze_frame_slide", icon="KEYTYPE_MOVING_HOLD_VEC",)
                 col = layout.column()
                 col.operator(
                     "sequencer.retiming_add_transition_slide", icon="NODE_CURVE_TIME"
@@ -1687,7 +1677,7 @@ class SEQUENCER_MT_strip(Menu):
                 elif strip_type in effect_strips:
                     layout.operator_context = "INVOKE_DEFAULT"
                     layout.separator()
-                    layout.operator_menu_enum("sequencer.change_effect_input", "swap")
+                    layout.operator("sequencer.change_effect_input")
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
                 else:
                     # layout.label(text="Please select a changeable strip", icon="QUESTION")
@@ -1952,7 +1942,8 @@ class SEQUENCER_MT_context_menu(Menu):
                             props.filter_sound = True
                 elif strip_type in effect_strips:
                     layout.operator_context = "INVOKE_DEFAULT"
-                    layout.operator_menu_enum("sequencer.change_effect_input", "swap")
+                    # BFA - Minimized a bit
+                    layout.operator("sequencer.change_effect_input")
                     layout.operator_menu_enum("sequencer.change_effect_type", "type")
                 else:
                     # layout.label(text="Please select a changeable strip", icon="QUESTION")

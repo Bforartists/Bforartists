@@ -269,7 +269,7 @@ static ID **collection_owner_pointer_get(ID *id, const bool debug_relationship_a
 
 void BKE_collection_blend_write_prepare_nolib(BlendWriter * /*writer*/, Collection *collection)
 {
-  memset(&collection->runtime, 0, sizeof(collection->runtime));
+  collection->runtime = Collection_Runtime{};
   /* Clean up, important in undo case to reduce false detection of changed data-blocks. */
   collection->flag &= ~COLLECTION_FLAG_ALL_RUNTIME;
 }
@@ -337,7 +337,7 @@ void BKE_collection_blend_read_data(BlendDataReader *reader, Collection *collect
     collection->id.flag |= ID_FLAG_EMBEDDED_DATA;
   }
 
-  memset(&collection->runtime, 0, sizeof(collection->runtime));
+  collection->runtime = Collection_Runtime{};
   collection->flag &= ~COLLECTION_FLAG_ALL_RUNTIME;
 
   collection->owner_id = owner_id;
@@ -805,7 +805,7 @@ void BKE_collection_new_name_get(Collection *collection_parent, char *rname)
   else {
     const int number = BLI_listbase_count(&collection_parent->children) + 1;
     const int digits = integer_digits_i(number);
-    const int max_len = sizeof(collection_parent->id.name) - 1 /* nullptr terminator */ -
+    const int max_len = sizeof(collection_parent->id.name) - 1 /* Null terminator. */ -
                         (1 + digits) /* " %d" */ - 2 /* ID */;
     name = BLI_sprintfN("%.*s %d", max_len, collection_parent->id.name + 2, number);
   }
@@ -1086,10 +1086,10 @@ bool BKE_collection_has_object_recursive_instanced_orig_id(Collection *collectio
                                                            Object *object_eval)
 {
   BLI_assert(collection_eval->id.tag & ID_TAG_COPIED_ON_EVAL);
-  const ID *ob_orig = DEG_get_original_id(&object_eval->id);
+  const Object *ob_orig = DEG_get_original(object_eval);
   const ListBase objects = BKE_collection_object_cache_instanced_get(collection_eval);
   LISTBASE_FOREACH (Base *, base, &objects) {
-    if (DEG_get_original_id(&base->object->id) == ob_orig) {
+    if (DEG_get_original(base->object) == ob_orig) {
       return true;
     }
   }

@@ -304,111 +304,6 @@ class DATA_PT_pathanim(CurveButtonsPanelCurve, Panel):
         row.prop_decorator(curve, "use_path_follow")
 
 
-class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
-    bl_label = "Active Spline"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        curve = context.curve
-        act_spline = curve.splines.active
-        is_surf = type(curve) is SurfaceCurve
-        is_poly = (act_spline.type == 'POLY')
-
-        col = layout.column(align = True)
-
-        if is_poly:
-            # These settings are below but its easier to have
-            # polys set aside since they use so few settings
-
-            col.use_property_split = False
-
-            col.prop(act_spline, "use_cyclic_u")
-            row = col.row()
-            row.prop(act_spline, "use_smooth")
-            row.prop_decorator(act_spline, "use_smooth")
-        else:
-
-            sub = col.column(align = True)
-            sub.label(text = "Cyclic")
-            sub.use_property_split = False
-            row = sub.row()
-            row.separator()
-            row.prop(act_spline, "use_cyclic_u", text="U")
-
-            if is_surf:
-                row = sub.row()
-                row.separator()
-                row.prop(act_spline, "use_cyclic_v", text="V")
-
-            if act_spline.type == 'NURBS':
-                sub = col.column(align = True)
-                sub.label(text = "Bézier")
-                sub.use_property_split = False
-                row = sub.row()
-                row.separator()
-                row.prop(act_spline, "use_bezier_u", text="U")
-
-                if is_surf:
-                    subsub = sub.column()
-                    row = subsub.row()
-                    row.separator()
-                    row.prop(act_spline, "use_bezier_v", text="V")
-
-                sub = col.column(align = True)
-                sub.label(text = "Endpoint")
-                sub.use_property_split = False
-                row = sub.row()
-                row.separator()
-                row.prop(act_spline, "use_endpoint_u", text="U")
-
-                if is_surf:
-                    subsub = sub.column()
-                    row = subsub.row()
-                    row.separator()
-                    row.prop(act_spline, "use_endpoint_v", text="V")
-
-                sub = col.column(align=True)
-                sub.prop(act_spline, "order_u", text="Order U")
-
-                if is_surf:
-                    sub.prop(act_spline, "order_v", text="V")
-
-            sub = col.column(align=True)
-            sub.prop(act_spline, "resolution_u", text="Resolution U")
-            if is_surf:
-                sub.prop(act_spline, "resolution_v", text="V")
-
-            if act_spline.type == 'BEZIER':
-
-                col.separator()
-
-                sub = col.column()
-                sub.active = (curve.dimensions == '3D')
-                sub.prop(act_spline, "tilt_interpolation", text="Interpolation Tilt")
-
-                col.prop(act_spline, "radius_interpolation", text="Radius")
-
-            row = layout.row()
-            row.use_property_split = False
-            row.prop(act_spline, "use_smooth")
-            row.prop_decorator(act_spline, "use_smooth")
-
-            if act_spline.type == 'NURBS':
-                col = None
-                for direction in range(2):
-                    message = act_spline.valid_message(direction)
-                    if not message:
-                        continue
-                    if col is None:
-                        layout.separator()
-                        col = layout.column(align=True)
-                    col.label(text=message, icon='INFO')
-                del col
-
-
 class DATA_PT_font(CurveButtonsPanelText, Panel):
     bl_label = "Font"
     bl_options = {'DEFAULT_CLOSED'}
@@ -580,7 +475,6 @@ classes = (
     DATA_PT_geometry_curve_bevel,
     DATA_PT_geometry_curve_start_end,
     DATA_PT_pathanim,
-    DATA_PT_active_spline,
     DATA_PT_font,
     DATA_PT_font_transform,
     DATA_PT_paragraph,

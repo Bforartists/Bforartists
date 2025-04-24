@@ -1906,8 +1906,8 @@ static void widget_draw_text(const uiFontStyle *fstyle,
   }
   else {
     if (but->editstr) {
-      /* max length isn't used in this case,
-       * we rely on string being nullptr terminated. */
+      /* The maximum length isn't used in this case,
+       * we rely on string being null terminated. */
       drawstr_left_len = INT_MAX;
 
 #ifdef WITH_INPUT_IME
@@ -3637,16 +3637,19 @@ void UI_draw_widget_scroll(uiWidgetColors *wcol, const rcti *rect, const rcti *s
     round_box_edges(&wtb, UI_CNR_ALL, slider, rad);
 
     if (state & UI_SCROLL_ARROWS) {
-      if (wcol->item[0] > 48) {
-        wcol->item[0] -= 48;
+      const uchar lightness = srgb_to_grayscale_byte(wcol->item);
+      if (lightness > 70) {
+        wcol->item[0] = 0;
+        wcol->item[1] = 0;
+        wcol->item[2] = 0;
+        wcol->item[3] = 128;
       }
-      if (wcol->item[1] > 48) {
-        wcol->item[1] -= 48;
+      else {
+        wcol->item[0] = 255;
+        wcol->item[1] = 255;
+        wcol->item[2] = 255;
+        wcol->item[3] = 128;
       }
-      if (wcol->item[2] > 48) {
-        wcol->item[2] -= 48;
-      }
-      wcol->item[3] = 255;
 
       if (horizontal) {
         rcti slider_inset = *slider;

@@ -2258,8 +2258,10 @@ static const GWL_Cursor_ShapeInfo ghost_wl_cursors = []() -> GWL_Cursor_ShapeInf
   GWL_Cursor_ShapeInfo info{};
 
 #define CASE_CURSOR(shape_id, shape_name_in_theme) \
-  case shape_id: \
-    info.names[int(shape_id)] = shape_name_in_theme;
+  case shape_id: { \
+    info.names[int(shape_id)] = shape_name_in_theme; \
+  } \
+    ((void)0)
 
   /* Use a switch to ensure missing values show a compiler warning. */
   switch (GHOST_kStandardCursorDefault) {
@@ -2307,6 +2309,7 @@ static const GWL_Cursor_ShapeInfo ghost_wl_cursors = []() -> GWL_Cursor_ShapeInf
     CASE_CURSOR(GHOST_kStandardCursorLeftHandle, "");
     CASE_CURSOR(GHOST_kStandardCursorRightHandle, "");
     CASE_CURSOR(GHOST_kStandardCursorBothHandles, "");
+    CASE_CURSOR(GHOST_kStandardCursorBlade, "");
     CASE_CURSOR(GHOST_kStandardCursorCustom, "");
   }
 #undef CASE_CURSOR
@@ -2427,13 +2430,6 @@ static int memfd_create_sealed(const char *name)
   return fd;
 #endif /* !HAVE_MEMFD_CREATE */
 }
-
-#if defined(WITH_GHOST_WAYLAND_LIBDECOR) && defined(WITH_VULKAN_BACKEND)
-int memfd_create_sealed_for_vulkan_hack(const char *name)
-{
-  return memfd_create_sealed(name);
-}
-#endif
 
 enum {
   GWL_IOR_READ = 1 << 0,
@@ -3788,9 +3784,7 @@ static bool update_cursor_scale(GWL_Cursor &cursor,
       output_scale_floor = std::max(1, output->scale_fractional / FRACTIONAL_DENOMINATOR);
     }
 
-    if (output_scale_floor > scale) {
-      scale = output_scale_floor;
-    }
+    scale = std::max(output_scale_floor, scale);
   }
 
   if (scale > 0 && seat_state_pointer->theme_scale != scale) {
@@ -4797,10 +4791,11 @@ static void tablet_tool_handle_tilt(void *data,
                                     const wl_fixed_t tilt_x,
                                     const wl_fixed_t tilt_y)
 {
-  /* Map degrees to `-1.0..1.0`. */
+  /* Map X tilt to `-1.0 (left)..1.0 (right)`.
+   * Map Y tilt to `-1.0 (away from user)..1.0 (toward user)`. */
   const float tilt_unit[2] = {
-      float(wl_fixed_to_double(tilt_x) / 90.0),
-      float(wl_fixed_to_double(tilt_y) / 90.0),
+      float(wl_fixed_to_double(tilt_x) / 90.0f),
+      float(wl_fixed_to_double(tilt_y) / 90.0f),
   };
   CLOG_INFO(LOG, 2, "tilt (x=%.4f, y=%.4f)", UNPACK2(tilt_unit));
   GWL_TabletTool *tablet_tool = static_cast<GWL_TabletTool *>(data);
@@ -6806,6 +6801,12 @@ static void gwl_registry_wl_seat_remove(GWL_Display *display, void *user_data, c
     zwp_primary_selection_device_v1_destroy(seat->wp.primary_selection_device);
   }
 
+#ifdef WITH_INPUT_IME
+  if (seat->wp.text_input) {
+    zwp_text_input_v3_destroy(seat->wp.text_input);
+  }
+#endif
+
   if (seat->wl.data_device) {
     wl_data_device_release(seat->wl.data_device);
   }
@@ -8191,7 +8192,7 @@ static GHOST_TSuccess getCursorPositionClientRelative_impl(
     if (win->getCursorGrabBounds(wrap_bounds) == GHOST_kFailure) {
       win->getClientBounds(wrap_bounds);
     }
-    int xy_wrap[2] = {
+    wl_fixed_t xy_wrap[2] = {
         seat_state_pointer->xy[0],
         seat_state_pointer->xy[1],
     };
@@ -9405,14 +9406,14 @@ bool GHOST_SystemWayland::window_cursor_grab_set(const GHOST_TGrabCursorMode mod
     }
     if (seat->wp.locked_pointer) {
       /* Potentially add a motion event so the application has updated X/Y coordinates. */
-      int32_t xy_motion[2] = {0, 0};
+      wl_fixed_t xy_motion[2] = {0, 0};
       bool xy_motion_create_event = false;
 
       /* Request location to restore to. */
       if (mode_current == GHOST_kGrabWrap) {
         /* Since this call is initiated by Blender, we can be sure the window wasn't closed
          * by logic outside this function - as the window was needed to make this call. */
-        int32_t xy_next[2] = {UNPACK2(seat->pointer.xy)};
+        wl_fixed_t xy_next[2] = {UNPACK2(seat->pointer.xy)};
 
         GHOST_Rect bounds_scale;
 
@@ -9440,13 +9441,14 @@ bool GHOST_SystemWayland::window_cursor_grab_set(const GHOST_TGrabCursorMode mod
         wl_surface_commit(wl_surface);
       }
       else if (mode_current == GHOST_kGrabHide) {
+        const wl_fixed_t xy_next[2] = {
+            gwl_window_scale_wl_fixed_from(scale_params, wl_fixed_from_int(init_grab_xy[0])),
+            gwl_window_scale_wl_fixed_from(scale_params, wl_fixed_from_int(init_grab_xy[1])),
+        };
+
         if ((init_grab_xy[0] != seat->grab_lock_xy[0]) ||
             (init_grab_xy[1] != seat->grab_lock_xy[1]))
         {
-          const wl_fixed_t xy_next[2] = {
-              gwl_window_scale_wl_fixed_from(scale_params, wl_fixed_from_int(init_grab_xy[0])),
-              gwl_window_scale_wl_fixed_from(scale_params, wl_fixed_from_int(init_grab_xy[1])),
-          };
           zwp_locked_pointer_v1_set_cursor_position_hint(seat->wp.locked_pointer,
                                                          UNPACK2(xy_next));
           wl_surface_commit(wl_surface);
@@ -9454,6 +9456,14 @@ bool GHOST_SystemWayland::window_cursor_grab_set(const GHOST_TGrabCursorMode mod
           /* NOTE(@ideasman42): The new cursor position is a hint,
            * it's possible the hint is ignored. It doesn't seem like there is a good way to
            * know if the hint will be used or not, at least not immediately. */
+          xy_motion[0] = xy_next[0];
+          xy_motion[1] = xy_next[1];
+          xy_motion_create_event = true;
+        }
+        else if (grab_state_prev.use_lock) {
+          /* NOTE(@ideasman42): From WAYLAND's perspective the cursor did not move.
+           * The application will have received "hidden" events to warped locations.
+           * So generate event without setting the cursor position hint. */
           xy_motion[0] = xy_next[0];
           xy_motion[1] = xy_next[1];
           xy_motion_create_event = true;
