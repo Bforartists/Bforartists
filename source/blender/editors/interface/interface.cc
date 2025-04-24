@@ -774,6 +774,10 @@ bool ui_but_rna_equals_ex(const uiBut *but,
 /* NOTE: if `but->poin` is allocated memory for every `uiDefBut*`, things fail. */
 static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
 {
+  if (but->type != oldbut->type) {
+    return false;
+  }
+
   if (but->identity_cmp_func) {
     /* If the buttons have their own identity comparator callbacks (and they match), use this to
      * determine equality. */
@@ -829,7 +833,7 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
     return false;
   }
 
-  if ((but->type == UI_BTYPE_VIEW_ITEM) && (oldbut->type == UI_BTYPE_VIEW_ITEM)) {
+  if (but->type == UI_BTYPE_VIEW_ITEM) {
     uiButViewItem *but_item = (uiButViewItem *)but;
     uiButViewItem *oldbut_item = (uiButViewItem *)oldbut;
     if (!but_item->view_item || !oldbut_item->view_item ||
@@ -1587,7 +1591,7 @@ static std::optional<std::string> ui_but_event_property_operator_string(const bC
           opnames_len = 0; /* Do nothing. */
         }
         if (free) {
-          MEM_freeN((void *)item);
+          MEM_freeN(item);
         }
       }
 
@@ -3062,7 +3066,7 @@ void ui_but_string_get_ex(uiBut *but,
       else {
         BLI_strncpy(str, buf, str_maxncpy);
       }
-      MEM_freeN((void *)buf);
+      MEM_freeN(buf);
     }
   }
   else if (ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
@@ -3701,7 +3705,7 @@ void UI_block_free(const bContext *C, uiBlock *block)
   block->buttons.clear();
 
   if (block->unit) {
-    MEM_freeN((void *)block->unit);
+    MEM_freeN(block->unit);
   }
 
   if (block->func_argN) {
@@ -4703,7 +4707,7 @@ static void ui_def_but_rna__menu(bContext *C, uiLayout *layout, void *but_p)
   UI_block_layout_set_current(block, layout);
 
   if (free) {
-    MEM_freeN((void *)item_array);
+    MEM_freeN(item_array);
   }
 }
 
@@ -4845,7 +4849,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     }
 
     if (free) {
-      MEM_freeN((void *)item);
+      MEM_freeN(item);
     }
   }
   else {
@@ -5133,7 +5137,7 @@ AutoComplete *UI_autocomplete_begin(const char *startname, size_t maxncpy)
   autocpl = MEM_callocN<AutoComplete>(__func__);
   autocpl->maxncpy = maxncpy;
   autocpl->matches = 0;
-  autocpl->truncate = static_cast<char *>(MEM_callocN(sizeof(char) * maxncpy, __func__));
+  autocpl->truncate = MEM_calloc_arrayN<char>(maxncpy, __func__);
   autocpl->startname = startname;
 
   return autocpl;
@@ -6581,7 +6585,7 @@ static void operator_enum_search_update_fn(
     }
 
     if (do_free) {
-      MEM_freeN((void *)all_items);
+      MEM_freeN(all_items);
     }
   }
 }
