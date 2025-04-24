@@ -40,7 +40,7 @@ int template_search_textbut_width(PointerRNA *ptr, PropertyRNA *name_prop)
   const int estimated_width = UI_fontstyle_string_width(fstyle, name) + margin;
 
   if (name != str) {
-    MEM_freeN((void *)name);
+    MEM_freeN(name);
   }
 
   /* Clamp to some min/max width. */
@@ -53,9 +53,6 @@ int template_search_textbut_height()
   return TEMPLATE_SEARCH_TEXTBUT_HEIGHT;
 }
 
-/**
- * Add a block button for the search menu for templateID and templateSearch.
- */
 void template_add_button_search_menu(const bContext *C,
                                      uiLayout *layout,
                                      uiBlock *block,

@@ -759,10 +759,9 @@ class NODE_PT_geometry_node_tool_object_types(Panel):
 
         types = [
             ("is_type_mesh", "Mesh", 'MESH_DATA'),
-            ("is_type_curve", "Hair Curves", 'CURVES'),
+            ("is_type_curve", "Hair Curves", 'CURVES_DATA'),
+            ("is_type_pointcloud", "Point Cloud", 'POINTCLOUD_DATA'),
         ]
-        if context.preferences.experimental.use_new_pointcloud_type:
-            types.append(("is_type_pointcloud", "Point Cloud", 'POINTCLOUD_DATA'))
 
         col = layout.column()
         col.active = group.is_tool
@@ -1329,7 +1328,7 @@ class NODE_PT_node_tree_interface_panel_toggle(Panel):
         if not active_item.interface_items:
             return False
         first_item = active_item.interface_items[0]
-        return first_item.is_panel_toggle
+        return getattr(first_item, "is_panel_toggle", False)
 
     def draw(self, context):
         layout = self.layout
