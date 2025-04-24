@@ -348,14 +348,14 @@ static bool rna_ID_is_evaluated_get(PointerRNA *ptr)
 {
   ID *id = (ID *)ptr->data;
 
-  return (DEG_get_original_id(id) != id);
+  return DEG_get_original(id) != id;
 }
 
 static PointerRNA rna_ID_original_get(PointerRNA *ptr)
 {
   ID *id = (ID *)ptr->data;
 
-  return RNA_id_pointer_create(DEG_get_original_id(id));
+  return RNA_id_pointer_create(DEG_get_original(id));
 }
 
 short RNA_type_to_ID_code(const StructRNA *type)
@@ -704,7 +704,7 @@ StructRNA *rna_PropertyGroup_refine(PointerRNA *ptr)
 
 static ID *rna_ID_evaluated_get(ID *id, Depsgraph *depsgraph)
 {
-  return DEG_get_evaluated_id(depsgraph, id);
+  return DEG_get_evaluated(depsgraph, id);
 }
 
 static ID *rna_ID_copy(ID *id, Main *bmain)
@@ -2611,6 +2611,7 @@ static void rna_def_library(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);
   RNA_def_property_string_sdna(prop, nullptr, "filepath");
+  RNA_def_property_flag(prop, PROP_PATH_SUPPORTS_BLEND_RELATIVE);
   RNA_def_property_ui_text(prop, "File Path", "Path to the library .blend file");
   RNA_def_property_string_funcs(prop, nullptr, nullptr, "rna_Library_filepath_set");
 
@@ -2672,6 +2673,7 @@ static void rna_def_library_weak_reference(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);
   RNA_def_property_string_sdna(prop, nullptr, "library_filepath");
+  RNA_def_property_flag(prop, PROP_PATH_SUPPORTS_BLEND_RELATIVE);
   RNA_def_property_ui_text(prop, "File Path", "Path to the library .blend file");
 
   prop = RNA_def_property(srna, "id_name", PROP_STRING, PROP_FILEPATH);

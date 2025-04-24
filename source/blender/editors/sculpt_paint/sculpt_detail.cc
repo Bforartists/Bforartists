@@ -148,7 +148,7 @@ static wmOperatorStatus sculpt_detail_flood_fill_exec(bContext *C, wmOperator *o
                                           min_edge_len,
                                           max_edge_len,
                                           center,
-                                          nullptr,
+                                          std::nullopt,
                                           size,
                                           false,
                                           false))
@@ -605,7 +605,8 @@ static void dyntopo_detail_size_edit_cancel(bContext *C, wmOperator *op)
       op->customdata);
   ED_region_draw_cb_exit(region->runtime->type, cd->draw_handle);
   ss.draw_faded_cursor = false;
-  MEM_freeN(op->customdata);
+  MEM_freeN(cd);
+  op->customdata = nullptr;
   ED_workspace_status_text(C, nullptr);
 
   ScrArea *area = CTX_wm_area(C);
@@ -767,7 +768,7 @@ static wmOperatorStatus dyntopo_detail_size_edit_modal(bContext *C,
     }
 
     ss.draw_faded_cursor = false;
-    MEM_freeN(op->customdata);
+    MEM_freeN(cd);
     ED_region_tag_redraw(region);
     ED_workspace_status_text(C, nullptr);
 
