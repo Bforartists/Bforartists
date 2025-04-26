@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Alpha (b'409ce2b976cf')\n"
+"Project-Id-Version: Blender 4.5.0 Alpha (b'b6372b3af3f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-24 09:38+0000\n"
-"PO-Revision-Date: 2025-03-03 11:30+0000\n"
+"POT-Creation-Date: 2025-04-21 07:54+0000\n"
+"PO-Revision-Date: 2025-04-14 08:23+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Hindi <https://translate.blender.org/projects/blender-ui/ui/hi/>\n"
 "Language: hi\n"
@@ -2167,10 +2167,6 @@ msgid "Mass"
 msgstr "द्रव्यमान"
 
 
-msgid "Dummy"
-msgstr "प्रतिरूपी"
-
-
 msgid "Random Phase"
 msgstr "यादृच्छिक चरण"
 
@@ -2588,6 +2584,14 @@ msgid "Mask"
 msgstr "आवरण"
 
 
+msgid "Mirror"
+msgstr "दर्पण"
+
+
+msgid "Snap"
+msgstr "स्नैप"
+
+
 msgid "Light"
 msgstr "प्रकाश"
 
@@ -2642,14 +2646,6 @@ msgstr "पाठ"
 
 msgid "Bone Roll"
 msgstr "हड्डी पंजी"
-
-
-msgid "Snap"
-msgstr "स्नैप"
-
-
-msgid "Mirror"
-msgstr "दर्पण"
 
 
 msgid "Basic"
@@ -3597,6 +3593,10 @@ msgid "Duplicate Curve"
 msgstr "अनुकृति वक्र"
 
 
+msgid "Dummy"
+msgstr "प्रतिरूपी"
+
+
 msgid "Bend"
 msgstr "मोड"
 
@@ -4542,12 +4542,12 @@ msgid "Lock Y"
 msgstr "तालाबंदी y"
 
 
-msgid "Motion Tracking"
-msgstr "गति मार्गन"
-
-
 msgid "Transform Orientations"
 msgstr "दिक् विन्यास संरचनांतरण"
+
+
+msgid "Motion Tracking"
+msgstr "गति मार्गन"
 
 
 msgid "Predefined tracking camera intrinsics"
@@ -5323,10 +5323,6 @@ msgid "Bold & Italic"
 msgstr "मोटा एवं तिर्यगक्षर"
 
 
-msgid "Endpoint"
-msgstr "समापन बिंदु"
-
-
 msgid "Priority"
 msgstr "प्राथमिकता"
 
@@ -5360,6 +5356,10 @@ msgstr "दिनांक"
 
 msgid "Roughness End"
 msgstr "खुरदरापन समाप्त"
+
+
+msgid "Endpoint"
+msgstr "समापन बिंदु"
 
 
 msgid "Use Timing"
@@ -6693,10 +6693,6 @@ msgstr "बंद/बुझ प्रणाली कंसोल"
 
 msgid "Import-Export"
 msgstr "आयात-निर्यात"
-
-
-msgid "English (English)"
-msgstr "अंग्रेजी (English)"
 
 
 msgid "Japanese (日本語)"

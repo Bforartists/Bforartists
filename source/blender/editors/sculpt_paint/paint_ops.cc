@@ -319,7 +319,7 @@ static void PALETTE_OT_extract_from_image(wmOperatorType *ot)
 
   /* properties */
   prop = RNA_def_int(ot->srna, "threshold", 1, 1, 1, "Threshold", "", 1, 1);
-  RNA_def_property_flag(prop, PropertyFlag(PROP_HIDDEN | PROP_SKIP_SAVE));
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /* Sort Palette color by Hue and Saturation. */
@@ -712,7 +712,7 @@ static wmOperatorStatus stencil_control_modal(bContext *C, wmOperator *op, const
   StencilControlData *scd = static_cast<StencilControlData *>(op->customdata);
 
   if (event->type == scd->launch_event && event->val == KM_RELEASE) {
-    MEM_freeN(op->customdata);
+    MEM_freeN(scd);
     WM_event_add_notifier(C, NC_WINDOW, nullptr);
     return OPERATOR_FINISHED;
   }
@@ -811,9 +811,9 @@ static void BRUSH_OT_stencil_control(wmOperatorType *ot)
 
   PropertyRNA *prop;
   prop = RNA_def_enum(ot->srna, "mode", stencil_control_items, STENCIL_TRANSLATE, "Tool", "");
-  RNA_def_property_flag(prop, PropertyFlag(PROP_HIDDEN | PROP_SKIP_SAVE));
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
   prop = RNA_def_enum(ot->srna, "texmode", stencil_texture_items, STENCIL_PRIMARY, "Tool", "");
-  RNA_def_property_flag(prop, PropertyFlag(PROP_HIDDEN | PROP_SKIP_SAVE));
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 static wmOperatorStatus stencil_fit_image_aspect_exec(bContext *C, wmOperator *op)
