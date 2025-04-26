@@ -883,7 +883,7 @@ static void make_duplis_font(const DupliContext *ctx)
   }
 
   if (text_free) {
-    MEM_freeN((void *)text);
+    MEM_freeN(text);
   }
 
   BLI_ghash_free(family_gh, nullptr, nullptr);
@@ -1495,7 +1495,7 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
         FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
       }
 
-      oblist = MEM_calloc_arrayN<Object *>(size_t(totcollection), "dupcollection object list");
+      oblist = MEM_calloc_arrayN<Object *>(totcollection, "dupcollection object list");
 
       if (use_collection_count) {
         a = 0;
@@ -1813,7 +1813,7 @@ ListBase *object_duplilist_preview(Depsgraph *depsgraph,
   init_context(&ctx, depsgraph, sce, ob_eval, nullptr, instance_stack, dupli_gen_type_stack);
   ctx.duplilist = duplilist;
 
-  Object *ob_orig = DEG_get_original_object(ob_eval);
+  Object *ob_orig = DEG_get_original(ob_eval);
 
   LISTBASE_FOREACH (ModifierData *, md_orig, &ob_orig->modifiers) {
     if (md_orig->type != eModifierType_Nodes) {

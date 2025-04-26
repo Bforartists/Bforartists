@@ -1415,7 +1415,7 @@ void blo_filedata_free(FileData *fd)
     DNA_sdna_free(fd->filesdna);
   }
   if (fd->compflags) {
-    MEM_freeN((void *)fd->compflags);
+    MEM_freeN(fd->compflags);
   }
   if (fd->reconstruct_info) {
     DNA_reconstruct_info_free(fd->reconstruct_info);
@@ -2217,7 +2217,7 @@ static void direct_link_id_common(BlendDataReader *reader,
   if (!BLO_read_data_is_undo(reader)) {
     /* Reset the runtime data, as there were versions of Blender that did not do
      * this before writing to disk. */
-    memset(&id->runtime, 0, sizeof(id->runtime));
+    id->runtime = ID_Runtime{};
   }
   readfile_id_runtime_data_ensure(*id);
   id->runtime.readfile_data->tags = id_read_tags;
@@ -4560,7 +4560,9 @@ static void library_link_end(Main *mainl, FileData **fd, const int flag)
   /* FIXME Temporary 'fix' to a problem in how temp ID are copied in
    * `BKE_lib_override_library_main_update`, see #103062.
    * Proper fix involves first addressing #90610. */
-  BKE_main_collections_parent_relations_rebuild(mainvar);
+  if ((flag & BLO_LIBLINK_COLLECTION_NO_HIERARCHY_REBUILD) == 0) {
+    BKE_main_collections_parent_relations_rebuild(mainvar);
+  }
 
   /* Make all relative paths, relative to the open blend file. */
   fix_relpaths_library(BKE_main_blendfile_path(mainvar), mainvar);
