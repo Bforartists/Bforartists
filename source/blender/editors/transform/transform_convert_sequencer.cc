@@ -40,6 +40,8 @@ namespace blender::ed::transform {
 #define STRIP_EDGE_PAN_DELAY 1.0f
 #define STRIP_EDGE_PAN_ZOOM_INFLUENCE 0.5f
 
+namespace {
+
 /** Used for sequencer transform. */
 struct TransDataSeq {
   Strip *strip;
@@ -67,6 +69,8 @@ struct TransSeq {
   /* Strips that aren't selected, but their position entirely depends on transformed strips. */
   VectorSet<Strip *> time_dependent_strips;
 };
+
+}  // namespace
 
 /* -------------------------------------------------------------------- */
 /** \name Sequencer Transform Creation
@@ -273,7 +277,7 @@ static void seq_transform_cancel(TransInfo *t, Span<Strip *> transformed_strips)
 
   for (Strip *strip : transformed_strips) {
     /* Handle pre-existing overlapping strips even when operator is canceled.
-     * This is necessary for SEQUENCER_OT_duplicate_move macro for example. */
+     * This is necessary for #SEQUENCER_OT_duplicate_move macro for example. */
     if (seq::transform_test_overlap(t->scene, seqbase, strip)) {
       seq::transform_seqbase_shuffle(seqbase, strip, t->scene);
     }
@@ -484,12 +488,9 @@ static void createTransSeqData(bContext * /*C*/, TransInfo *t)
 
   tc->custom.type.data = ts = MEM_new<TransSeq>(__func__);
   tc->custom.type.use_free = true;
-  td = tc->data = static_cast<TransData *>(
-      MEM_callocN(tc->data_len * sizeof(TransData), "TransSeq TransData"));
-  td2d = tc->data_2d = static_cast<TransData2D *>(
-      MEM_callocN(tc->data_len * sizeof(TransData2D), "TransSeq TransData2D"));
-  ts->tdseq = tdsq = static_cast<TransDataSeq *>(
-      MEM_callocN(tc->data_len * sizeof(TransDataSeq), "TransSeq TransDataSeq"));
+  td = tc->data = MEM_calloc_arrayN<TransData>(tc->data_len, "TransSeq TransData");
+  td2d = tc->data_2d = MEM_calloc_arrayN<TransData2D>(tc->data_len, "TransSeq TransData2D");
+  ts->tdseq = tdsq = MEM_calloc_arrayN<TransDataSeq>(tc->data_len, "TransSeq TransDataSeq");
 
   /* Custom data to enable edge panning during transformation. */
   UI_view2d_edge_pan_init(t->context,

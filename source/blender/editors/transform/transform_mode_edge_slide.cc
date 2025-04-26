@@ -253,7 +253,7 @@ static void calcEdgeSlide_mval_range(TransInfo *t,
   BMBVHTree *bmbvh = nullptr;
   Array<float3> bmbvh_coord_storage;
   if (use_occlude_geometry) {
-    Scene *scene_eval = (Scene *)DEG_get_evaluated_id(t->depsgraph, &t->scene->id);
+    Scene *scene_eval = DEG_get_evaluated(t->depsgraph, t->scene);
     Object *obedit_eval = DEG_get_evaluated_object(t->depsgraph, tc->obedit);
     BMEditMesh *em = BKE_editmesh_from_object(tc->obedit);
 
@@ -277,7 +277,7 @@ static void calcEdgeSlide_mval_range(TransInfo *t,
   float *loop_maxdist = nullptr;
 
   if (use_calc_direction) {
-    loop_dir = static_cast<float2 *>(MEM_callocN(sizeof(float2) * loop_nr, "sv loop_dir"));
+    loop_dir = MEM_calloc_arrayN<float2>(loop_nr, "sv loop_dir");
     loop_maxdist = static_cast<float *>(MEM_mallocN(sizeof(float) * loop_nr, "sv loop_maxdist"));
     copy_vn_fl(loop_maxdist, loop_nr, FLT_MAX);
   }

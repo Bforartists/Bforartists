@@ -1335,8 +1335,8 @@ void transform_convert_mesh_crazyspace_detect(TransInfo *t,
       BKE_scene_graph_evaluated_ensure(t->depsgraph, CTX_data_main(t->context));
 
       /* Use evaluated state because we need b-bone cache. */
-      Scene *scene_eval = (Scene *)DEG_get_evaluated_id(t->depsgraph, &t->scene->id);
-      Object *obedit_eval = (Object *)DEG_get_evaluated_id(t->depsgraph, &tc->obedit->id);
+      Scene *scene_eval = DEG_get_evaluated(t->depsgraph, t->scene);
+      Object *obedit_eval = DEG_get_evaluated(t->depsgraph, tc->obedit);
       BMEditMesh *em_eval = BKE_editmesh_from_object(obedit_eval);
       /* Check if we can use deform matrices for modifier from the
        * start up to stack, they are more accurate than quats. */
@@ -1604,15 +1604,13 @@ static void createTransEditVerts(bContext * /*C*/, TransInfo *t)
     /* Create TransData. */
     BLI_assert(data_len >= 1);
     tc->data_len = data_len;
-    tc->data = static_cast<TransData *>(
-        MEM_callocN(data_len * sizeof(TransData), "TransObData(Mesh EditMode)"));
+    tc->data = MEM_calloc_arrayN<TransData>(data_len, "TransObData(Mesh EditMode)");
     if (t->mode == TFM_SHRINKFATTEN) {
       /* Warning: this is overkill, we only need 2 extra floats,
        * but this stores loads of extra stuff, for TFM_SHRINKFATTEN its even more overkill
        * since we may not use the 'alt' transform mode to maintain shell thickness,
        * but with generic transform code its hard to lazy init variables. */
-      tx = tc->data_ext = static_cast<TransDataExtension *>(
-          MEM_callocN(tc->data_len * sizeof(TransDataExtension), "TransObData ext"));
+      tx = tc->data_ext = MEM_calloc_arrayN<TransDataExtension>(tc->data_len, "TransObData ext");
     }
 
     TransData *tob = tc->data;

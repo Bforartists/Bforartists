@@ -289,7 +289,7 @@ static void add_marker_to_cfra_elem(ListBase *lb, TimeMarker *marker, const bool
     }
   }
 
-  cen = static_cast<CfraElem *>(MEM_callocN(sizeof(CfraElem), "add_to_cfra_elem"));
+  cen = MEM_callocN<CfraElem>("add_to_cfra_elem");
   if (ce) {
     BLI_insertlinkbefore(lb, ce, cen);
   }
@@ -733,6 +733,22 @@ static bool ed_markers_poll_markers_exist(bContext *C)
   return (markers && markers->first);
 }
 
+static bool ed_markers_poll_markers_exist_visible(bContext *C)
+{
+  ScrArea *area = CTX_wm_area(C);
+  if (area == nullptr) {
+    return false;
+  }
+
+  /* Minimum vertical size to select markers, while still scrubbing frames. */
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  if (region && region->winy < UI_MARKERS_MINY) {
+    return false;
+  }
+
+  return ed_markers_poll_markers_exist(C);
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -915,10 +931,10 @@ static bool ed_marker_move_init(bContext *C, wmOperator *op)
     return false;
   }
 
-  op->customdata = mm = static_cast<MarkerMove *>(MEM_callocN(sizeof(MarkerMove), "Markermove"));
+  op->customdata = mm = MEM_callocN<MarkerMove>("Markermove");
   mm->slink = CTX_wm_space_data(C);
   mm->markers = markers;
-  mm->oldframe = static_cast<int *>(MEM_callocN(totmark * sizeof(int), "MarkerMove oldframe"));
+  mm->oldframe = MEM_calloc_arrayN<int>(totmark, "MarkerMove oldframe");
 
   initNumInput(&mm->num);
   mm->num.idx_max = 0; /* one axis */
@@ -944,7 +960,7 @@ static void ed_marker_move_exit(bContext *C, wmOperator *op)
 
   /* free data */
   MEM_freeN(mm->oldframe);
-  MEM_freeN(op->customdata);
+  MEM_freeN(mm);
   op->customdata = nullptr;
 
   /* clear custom header prints */
@@ -1440,7 +1456,7 @@ static void MARKER_OT_select(wmOperatorType *ot)
   ot->idname = "MARKER_OT_select";
 
   /* api callbacks */
-  ot->poll = ed_markers_poll_markers_exist;
+  ot->poll = ed_markers_poll_markers_exist_visible;
   ot->exec = ed_marker_select_exec;
   ot->invoke = WM_generic_select_invoke;
   ot->modal = WM_generic_select_modal;
