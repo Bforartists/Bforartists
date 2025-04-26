@@ -1,18 +1,18 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Alpha (b'409ce2b976cf')\n"
+"Project-Id-Version: Blender 4.5.0 Alpha (b'b6372b3af3f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-24 09:38+0000\n"
-"PO-Revision-Date: 2025-01-31 04:04+0000\n"
-"Last-Translator: \"Adriel Y.\" <mixnblend@users.noreply.translate.blender.org>\n"
+"POT-Creation-Date: 2025-04-21 07:54+0000\n"
+"PO-Revision-Date: 2025-04-14 08:25+0000\n"
+"Last-Translator: Muhammad Jayadi Anwar <muhajayaanwar@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.blender.org/projects/blender-ui/ui/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.10.1\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Bookmarks: -1,-1,-1,-1,-1,-1,-1,-1,-1,4"
 
@@ -7446,42 +7446,6 @@ msgid "Use Relative Offset"
 msgstr "Gunakan Offset Relatif"
 
 
-msgid "Python Constraint"
-msgstr "Batasan Python"
-
-
-msgid "Use Python script for constraint evaluation"
-msgstr "Gunakan skrip Python untuk evaluasi pembatas"
-
-
-msgid "Script Error"
-msgstr "Skrip Error"
-
-
-msgid "The linked Python script has thrown an error"
-msgstr "Skrip Python yang terkoneksi telah melempar error"
-
-
-msgid "Number of Targets"
-msgstr "Jumlah Target"
-
-
-msgid "Usually only 1 to 3 are needed"
-msgstr "Biasanya hanya 1 sampai 3 yang diperlukan"
-
-
-msgid "Target Objects"
-msgstr "Sunting Objek"
-
-
-msgid "Script"
-msgstr "Script"
-
-
-msgid "The text object that contains the Python script"
-msgstr "Objek teks yang mengandung script Python"
-
-
 msgid "Stop vertices from projecting to a face on the target when facing towards/away"
 msgstr "Hentikan sudut dari proyeksi ke muka di target saat menghadap ke depan/luar"
 
@@ -9398,6 +9362,10 @@ msgid "Realtime"
 msgstr "Waktu nyata"
 
 
+msgid "Profile"
+msgstr "Profil"
+
+
 msgid "Container"
 msgstr "Wadah"
 
@@ -10602,6 +10570,10 @@ msgstr "Menu"
 
 msgid "Collection"
 msgstr "Koleksi"
+
+
+msgid "Bundle"
+msgstr "Bundel"
 
 
 msgid "A collection of objects based on which feature edges are selected"
@@ -12055,10 +12027,6 @@ msgid "Round"
 msgstr "Bulat"
 
 
-msgid "Profile"
-msgstr "Profil"
-
-
 msgid "Bevel Object"
 msgstr "Objek"
 
@@ -12671,6 +12639,10 @@ msgstr "Filter"
 
 msgid "Matte"
 msgstr "Matte"
+
+
+msgid "Script"
+msgstr "Script"
 
 
 msgid "Pattern"
@@ -15110,6 +15082,26 @@ msgid "Mask"
 msgstr "Masker"
 
 
+msgid "Mirror"
+msgstr "Cermin"
+
+
+msgid "Snap"
+msgstr "Jepret"
+
+
+msgid "Navigation"
+msgstr "Navigasi"
+
+
+msgid "Select Linked"
+msgstr "Seleksi yang Terhubung"
+
+
+msgid "Assign Material"
+msgstr "Tugaskan Bahan"
+
+
 msgid "Metaball"
 msgstr "Metabola"
 
@@ -15152,26 +15144,6 @@ msgstr "Menggabungkan"
 
 msgid "Text"
 msgstr "Teks"
-
-
-msgid "Snap"
-msgstr "Jepret"
-
-
-msgid "Mirror"
-msgstr "Cermin"
-
-
-msgid "Navigation"
-msgstr "Navigasi"
-
-
-msgid "Select Linked"
-msgstr "Seleksi yang Terhubung"
-
-
-msgid "Assign Material"
-msgstr "Tugaskan Bahan"
 
 
 msgctxt "MovieClip"
@@ -17119,10 +17091,6 @@ msgid "Movie tracking track data"
 msgstr "Data lintasan pelacakan film"
 
 
-msgid "Bundle"
-msgstr "Bundel"
-
-
 msgid "Has Bundle"
 msgstr "Punya Bundel"
 
@@ -17336,20 +17304,8 @@ msgid "Contrast Limit"
 msgstr "Batas Kontras"
 
 
-msgid "How much to eliminate spurious edges to avoid artifacts (the larger value makes less active; the value 2.0, for example, means discard a detected edge if there is a neighboring edge that has 2.0 times bigger contrast than the current one)"
-msgstr "Seberapa banyak untuk menghilangkan tepi palsu untuk menghindari artefak (nilai yang lebih besar membuat kurang aktif; nilai 2.0, misalnya, berarti membuang tepi yang terdeteksi jika ada tepi tetangga yang memiliki kontras 2.0 kali lebih besar dari yang sekarang)"
-
-
 msgid "Corner Rounding"
 msgstr "Pembulatan Pojok"
-
-
-msgid "How much sharp corners will be rounded"
-msgstr "Seberapa besar pojok tajam akan dibulatkan"
-
-
-msgid "Threshold to detect edges (smaller threshold makes more sensitive detection)"
-msgstr "Ambang batas untuk mendeteksi tepi (ambang batas yang lebih kecil membuat deteksi lebih sensitif)"
 
 
 msgid "Bilateral Blur"
@@ -17814,6 +17770,10 @@ msgid "To"
 msgstr "Ke"
 
 
+msgid "Interpolation method"
+msgstr "Metode Interpolasi"
+
+
 msgid "Cryptomatte (Legacy)"
 msgstr "Cryptomatte (Warisan)"
 
@@ -18054,14 +18014,6 @@ msgid "Neighbor"
 msgstr "Tetangga"
 
 
-msgid "Threshold for the number of neighbor pixels that must match"
-msgstr "Batas untuk jumlah pixel tetangga yang harus cocok"
-
-
-msgid "Edge to inset"
-msgstr "Tepi ke inset"
-
-
 msgid "Feather"
 msgstr "Bulu"
 
@@ -18116,10 +18068,6 @@ msgstr "Tipe Kesilauan"
 
 msgid "Ghosts"
 msgstr "Hantu"
-
-
-msgid "Simple star filter: add 45 degree rotation offset"
-msgstr "Filter bintang sederhana: tambah offset rotasi 45 derajat"
 
 
 msgid "ID Mask"
@@ -18223,16 +18171,8 @@ msgid "Use Minimum"
 msgstr "Gunakan Minimum"
 
 
-msgid "Number of motion blur samples"
-msgstr "Jumlah sampel buram gerakan"
-
-
 msgid "Shutter"
 msgstr "Shutter"
-
-
-msgid "Exposure for motion blur as a factor of FPS"
-msgstr "Pencahayaan untuk buram gerakan sebagai faktor FPS"
 
 
 msgid "Size Source"
@@ -18247,16 +18187,8 @@ msgid "Fixed/Scene"
 msgstr "Tetap/Adegan"
 
 
-msgid "Use feather information from the mask"
-msgstr "Gunakan informasi bulu dari masker"
-
-
 msgid "Motion Blur"
 msgstr "Buram Gerakan"
-
-
-msgid "Use multi-sampled motion blur of the mask"
-msgstr "Menggunakan buram gerakan multi-sampel pada masker"
 
 
 msgid "A + B"
@@ -18392,6 +18324,18 @@ msgid "EXR Layer Slots"
 msgstr "Slot Layer EXR"
 
 
+msgid "Number of motion blur samples"
+msgstr "Jumlah sampel buram gerakan"
+
+
+msgid "Exposure for motion blur as a factor of FPS"
+msgstr "Pencahayaan untuk buram gerakan sebagai faktor FPS"
+
+
+msgid "Use multi-sampled motion blur of the mask"
+msgstr "Menggunakan buram gerakan multi-sampel pada masker"
+
+
 msgid "To Straight"
 msgstr "Ke Lurus"
 
@@ -18484,16 +18428,8 @@ msgid "Max Speed"
 msgstr "Kecepatan Maks"
 
 
-msgid "Maximum speed, or zero for none"
-msgstr "Kecepatan maksimum, atau nol untuk kosong"
-
-
 msgid "Min Speed"
 msgstr "Kecepatan Min"
-
-
-msgid "Minimum speed for a pixel to be blurred (used to separate background from foreground)"
-msgstr "Kecepatan minimum untuk sebuah pixel diburamkan (digunakan untuk memisahkan latar belakang dari latar depan)"
 
 
 msgid "Viewer"
@@ -18713,6 +18649,10 @@ msgid "Set Instance Transform"
 msgstr "Set Transformasi Contoh"
 
 
+msgid "Tangent Space"
+msgstr "Tekstur"
+
+
 msgid "Sort Elements"
 msgstr "Sortir Elemen"
 
@@ -18807,10 +18747,6 @@ msgstr "Tipe Interpolasi"
 
 msgid "Space of the input normal"
 msgstr "Tidak dapat membuka dokumen"
-
-
-msgid "Tangent Space"
-msgstr "Tekstur"
 
 
 msgid "Object space normal mapping"
@@ -21142,10 +21078,6 @@ msgstr "Bebaskan bagian dalam"
 
 msgid "Plane Normal"
 msgstr "Bidang Normal"
-
-
-msgid "Interpolation method"
-msgstr "Metode Interpolasi"
 
 
 msgid "Blend Surface"
@@ -25394,12 +25326,12 @@ msgid "Restrict painting to vertices in the group"
 msgstr "Membatasi lukisan ke simpul di kelompok"
 
 
-msgid "Wire Color"
-msgstr "Warna Kabel"
-
-
 msgid "Snapping"
 msgstr "Gertakan"
+
+
+msgid "Wire Color"
+msgstr "Warna Kabel"
 
 
 msgid "Custom Shape"
@@ -26614,6 +26546,10 @@ msgstr "Edit node shader dari Dunia"
 
 msgid "Edit shader nodes from Line Style"
 msgstr "Edit node shader dari Gaya Garis"
+
+
+msgid "Texture Node Editor"
+msgstr "Editor Simpul Tekstur"
 
 
 msgid "Blender File"
@@ -27997,10 +27933,6 @@ msgid "Bold & Italic"
 msgstr "Tebal & Miring"
 
 
-msgid "Interpolation Tilt"
-msgstr "Kemiringan Interpolasi"
-
-
 msgctxt "Operator"
 msgid "Custom..."
 msgstr "Kustom..."
@@ -29317,11 +29249,6 @@ msgstr "Contoh ke Adegan"
 
 
 msgctxt "Operator"
-msgid "ID Data"
-msgstr "Data ID"
-
-
-msgctxt "Operator"
 msgid "Paste Data-Blocks"
 msgstr "Tempel Data-Blok"
 
@@ -30117,6 +30044,10 @@ msgid "Delete Vertices"
 msgstr "Menghapus Simpul"
 
 
+msgid "Interpolation Tilt"
+msgstr "Kemiringan Interpolasi"
+
+
 msgctxt "Operator"
 msgid "Remove from Active Group"
 msgstr "Hapus dari Kelompok Aktif"
@@ -30167,6 +30098,10 @@ msgstr "Permukaan"
 
 msgid "Untitled"
 msgstr "Untitled"
+
+
+msgid "True Normal"
+msgstr "Normal Sesungguhnya"
 
 
 msgid "materials"
@@ -31862,6 +31797,10 @@ msgid "Glare"
 msgstr "Kesilauan"
 
 
+msgid "Use feather information from the mask"
+msgstr "Gunakan informasi bulu dari masker"
+
+
 msgid "Dot"
 msgstr "Titik"
 
@@ -32073,10 +32012,6 @@ msgid "Transparency"
 msgstr "Transparansi"
 
 
-msgid "True Normal"
-msgstr "Normal Sesungguhnya"
-
-
 msgid "Tangent Normal"
 msgstr "Nama"
 
@@ -32147,10 +32082,6 @@ msgstr "Atribut Temperatur"
 
 msgid "Patterns"
 msgstr "Adegan"
-
-
-msgid "Texture Node Editor"
-msgstr "Editor Simpul Tekstur"
 
 
 msgid "Bricks 1"
@@ -32450,10 +32381,6 @@ msgstr "Pemahatan"
 
 msgid "Import-Export"
 msgstr "Impor-Ekspor"
-
-
-msgid "English (English)"
-msgstr "Inggris (English)"
 
 
 msgid "Japanese (日本語)"
