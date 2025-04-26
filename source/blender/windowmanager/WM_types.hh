@@ -293,10 +293,6 @@ ENUM_OPERATORS(wmEventModifierFlag, KM_HYPER);
 /** The number of modifiers #wmKeyMapItem & #wmEvent can use. */
 #define KM_MOD_NUM 5
 
-/* `KM_MOD_*` flags for #wmKeyMapItem and `wmEvent.alt/shift/oskey/ctrl`. */
-/* Note that #KM_ANY and #KM_NOTHING are used with these defines too. */
-#define KM_MOD_HELD 1
-
 /**
  * #wmKeyMapItem.type
  * NOTE: most types are defined in `wm_event_types.hh`.
@@ -319,6 +315,12 @@ enum {
    */
   KM_CLICK_DRAG = 5,
 };
+/**
+ * Alternate define for #wmKeyMapItem::shift and other modifiers.
+ * While this matches the value of #KM_PRESS, modifiers should only be compared with:
+ * (#KM_ANY, #KM_NOTHING, #KM_MOD_HELD).
+ */
+#define KM_MOD_HELD 1
 
 /**
  * #wmKeyMapItem.direction
@@ -699,9 +701,9 @@ struct wmTabletData {
   int active;
   /** Range 0.0 (not touching) to 1.0 (full pressure). */
   float pressure;
-  /** Range 0.0 (upright) to 1.0 (tilted fully against the tablet surface). */
+  /** range -1.0 (left) to +1.0 (right). */
   float x_tilt;
-  /** As above. */
+  /** range -1.0 (away from user) to +1.0 (toward user). */
   float y_tilt;
   /** Interpret mouse motion as absolute as typical for tablets. */
   char is_motion_absolute;
@@ -1187,7 +1189,8 @@ struct wmIMEData {
 
 /* **************** Paint Cursor ******************* */
 
-using wmPaintCursorDraw = void (*)(bContext *C, int, int, void *customdata);
+using wmPaintCursorDraw =
+    void (*)(bContext *C, int x, int y, float x_tilt, float y_tilt, void *customdata);
 
 /* *************** Drag and drop *************** */
 

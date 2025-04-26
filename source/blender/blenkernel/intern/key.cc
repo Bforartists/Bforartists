@@ -245,11 +245,6 @@ struct WeightsArrayCache {
   float **defgroup_weights;
 };
 
-void BKE_key_free_data(Key *key)
-{
-  shapekey_free_data(&key->id);
-}
-
 void BKE_key_free_nolib(Key *key)
 {
   while (KeyBlock *kb = static_cast<KeyBlock *>(BLI_pophead(&key->block))) {
@@ -1309,7 +1304,7 @@ static float *get_weights_array(Object *ob, const char *vgroup, WeightsArrayCach
     if (cache) {
       if (cache->defgroup_weights == nullptr) {
         int num_defgroup = BKE_object_defgroup_count(ob);
-        cache->defgroup_weights = MEM_calloc_arrayN<float *>(size_t(num_defgroup),
+        cache->defgroup_weights = MEM_calloc_arrayN<float *>(num_defgroup,
                                                              "cached defgroup weights");
         cache->num_defgroup_weights = num_defgroup;
       }

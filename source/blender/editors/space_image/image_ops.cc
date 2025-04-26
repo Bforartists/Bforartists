@@ -339,7 +339,7 @@ bool space_image_main_region_poll(bContext *C)
   return false;
 }
 
-/* For IMAGE_OT_curves_point_set to avoid sampling when in uv smooth mode or editmode */
+/** For #IMAGE_OT_curves_point_set to avoid sampling when in uv smooth mode or edit-mode. */
 static bool space_image_main_area_not_uv_brush_poll(bContext *C)
 {
   SpaceImage *sima = CTX_wm_space_image(C);
@@ -357,6 +357,8 @@ static bool space_image_main_area_not_uv_brush_poll(bContext *C)
 /** \name View Pan Operator
  * \{ */
 
+namespace {
+
 struct ViewPanData {
   float x, y;
   float xof, yof;
@@ -364,14 +366,15 @@ struct ViewPanData {
   bool own_cursor;
 };
 
+}  // namespace
+
 static void image_view_pan_init(bContext *C, wmOperator *op, const wmEvent *event)
 {
   wmWindow *win = CTX_wm_window(C);
   SpaceImage *sima = CTX_wm_space_image(C);
   ViewPanData *vpd;
 
-  op->customdata = vpd = static_cast<ViewPanData *>(
-      MEM_callocN(sizeof(ViewPanData), "ImageViewPanData"));
+  op->customdata = vpd = MEM_callocN<ViewPanData>("ImageViewPanData");
 
   /* Grab will be set when running from gizmo. */
   vpd->own_cursor = (win->grabcursor == 0);
@@ -402,7 +405,7 @@ static void image_view_pan_exit(bContext *C, wmOperator *op, bool cancel)
   if (vpd->own_cursor) {
     WM_cursor_modal_restore(CTX_wm_window(C));
   }
-  MEM_freeN(op->customdata);
+  MEM_freeN(vpd);
 }
 
 static wmOperatorStatus image_view_pan_exec(bContext *C, wmOperator *op)
@@ -504,6 +507,8 @@ void IMAGE_OT_view_pan(wmOperatorType *ot)
 /** \name View Zoom Operator
  * \{ */
 
+namespace {
+
 struct ViewZoomData {
   float origx, origy;
   float zoom;
@@ -520,6 +525,8 @@ struct ViewZoomData {
   ARegion *region;
 };
 
+}  // namespace
+
 static void image_view_zoom_init(bContext *C, wmOperator *op, const wmEvent *event)
 {
   wmWindow *win = CTX_wm_window(C);
@@ -527,8 +534,7 @@ static void image_view_zoom_init(bContext *C, wmOperator *op, const wmEvent *eve
   ARegion *region = CTX_wm_region(C);
   ViewZoomData *vpd;
 
-  op->customdata = vpd = static_cast<ViewZoomData *>(
-      MEM_callocN(sizeof(ViewZoomData), "ImageViewZoomData"));
+  op->customdata = vpd = MEM_callocN<ViewZoomData>("ImageViewZoomData");
 
   /* Grab will be set when running from gizmo. */
   vpd->own_cursor = (win->grabcursor == 0);
@@ -573,7 +579,7 @@ static void image_view_zoom_exit(bContext *C, wmOperator *op, bool cancel)
   if (vpd->own_cursor) {
     WM_cursor_modal_restore(CTX_wm_window(C));
   }
-  MEM_freeN(op->customdata);
+  MEM_freeN(vpd);
 }
 
 static wmOperatorStatus image_view_zoom_exec(bContext *C, wmOperator *op)
@@ -1964,7 +1970,7 @@ static void image_save_as_free(wmOperator *op)
     ImageSaveData *isd = static_cast<ImageSaveData *>(op->customdata);
     BKE_image_save_options_free(&isd->opts);
 
-    MEM_freeN(op->customdata);
+    MEM_freeN(isd);
     op->customdata = nullptr;
   }
 }
