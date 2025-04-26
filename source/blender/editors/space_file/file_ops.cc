@@ -1886,6 +1886,7 @@ void FILE_OT_external_operation(wmOperatorType *ot)
 
   /* properties */
   prop = RNA_def_string(ot->srna, "filepath", nullptr, FILE_MAX, "File or folder path", "");
+  RNA_def_property_subtype(prop, PROP_FILEPATH);
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
   RNA_def_enum(ot->srna,
@@ -2046,8 +2047,7 @@ void file_external_operations_menu_register()
 {
   MenuType *mt;
 
-  mt = static_cast<MenuType *>(
-      MEM_callocN(sizeof(MenuType), "spacetype file menu file operations"));
+  mt = MEM_callocN<MenuType>("spacetype file menu file operations");
   STRNCPY(mt->idname, "FILEBROWSER_MT_operations_menu");
   STRNCPY(mt->label, N_("External"));
   STRNCPY(mt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
@@ -2147,7 +2147,7 @@ static std::string file_execute_get_description(bContext *C,
   SpaceFile *sfile = CTX_wm_space_file(C);
   if (sfile->op && sfile->op->type && sfile->op->type->description) {
     /* Return the description of the executed operator. Don't use get_description
-     * as that will return file details for WM_OT_open_mainfile. */
+     * as that will return file details for #WM_OT_open_mainfile. */
     return TIP_(sfile->op->type->description);
   }
   return {};
@@ -2896,14 +2896,6 @@ static bool can_create_dir_from_user_input(const char dir[FILE_MAX_LIBEXTRA])
   return true;
 }
 
-/**
- * This callback runs when the user has entered a new path in the file selectors directory field.
- *
- * Expand & normalize the path then:
- * - Change the path when it exists.
- * - Prompt the user to create the path if it doesn't
- *   (providing it passes basic sanity checks).
- */
 void file_directory_enter_handle(bContext *C, void * /*arg_unused*/, void * /*arg_but*/)
 {
   SpaceFile *sfile = CTX_wm_space_file(C);

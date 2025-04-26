@@ -238,6 +238,18 @@ class GRAPH_PT_snapping(Panel):
             col.prop(tool_settings, "use_snap_time_absolute")
 
 
+class GRAPH_PT_driver_snapping(Panel):
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Snapping"
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+        tool_settings = context.tool_settings
+        col.prop(tool_settings, "use_snap_driver_absolute")
+
+
 class GRAPH_MT_editor_menus(Menu):
     bl_idname = "GRAPH_MT_editor_menus"
     bl_label = ""
@@ -922,6 +934,7 @@ classes = (
     GRAPH_MT_view_pie,
     GRAPH_PT_filters,
     GRAPH_PT_snapping,
+    GRAPH_PT_driver_snapping,
 )
 
 if __name__ == "__main__":  # only for live edit.

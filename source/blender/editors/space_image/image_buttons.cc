@@ -698,7 +698,6 @@ static void uiblock_layer_pass_buttons(uiLayout *layout,
   }
 }
 
-/* Prevent naming collision. */
 namespace {
 
 struct RNAUpdateCb {
@@ -1311,7 +1310,7 @@ void image_buttons_register(ARegionType *art)
 {
   PanelType *pt;
 
-  pt = static_cast<PanelType *>(MEM_callocN(sizeof(PanelType), "spacetype image panel metadata"));
+  pt = MEM_callocN<PanelType>("spacetype image panel metadata");
   STRNCPY(pt->idname, "IMAGE_PT_metadata");
   STRNCPY(pt->label, N_("Metadata"));
   STRNCPY(pt->category, "Image");

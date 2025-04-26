@@ -2471,139 +2471,6 @@ static bConstraintTypeInfo CTI_SAMEVOL = {
     /*evaluate_constraint*/ samevolume_evaluate,
 };
 
-/* ----------- Python Constraint -------------- */
-
-static void pycon_free(bConstraint *con)
-{
-  bPythonConstraint *data = static_cast<bPythonConstraint *>(con->data);
-
-  /* id-properties */
-  IDP_FreeProperty(data->prop);
-
-  /* multiple targets */
-  BLI_freelistN(&data->targets);
-}
-
-static void pycon_copy(bConstraint *con, bConstraint *srccon)
-{
-  bPythonConstraint *pycon = (bPythonConstraint *)con->data;
-  bPythonConstraint *opycon = (bPythonConstraint *)srccon->data;
-
-  pycon->prop = IDP_CopyProperty(opycon->prop);
-  BLI_duplicatelist(&pycon->targets, &opycon->targets);
-}
-
-static void pycon_new_data(void *cdata)
-{
-  bPythonConstraint *data = (bPythonConstraint *)cdata;
-
-  /* Everything should be set correctly by calloc, except for the prop->type constant. */
-  data->prop = MEM_callocN<IDProperty>("PyConstraintProps");
-  data->prop->type = IDP_GROUP;
-}
-
-static int pycon_get_tars(bConstraint *con, ListBase *list)
-{
-  if (con && list) {
-    bPythonConstraint *data = static_cast<bPythonConstraint *>(con->data);
-
-    list->first = data->targets.first;
-    list->last = data->targets.last;
-
-    return data->tarnum;
-  }
-
-  return 0;
-}
-
-static void pycon_id_looper(bConstraint *con, ConstraintIDFunc func, void *userdata)
-{
-  bPythonConstraint *data = static_cast<bPythonConstraint *>(con->data);
-
-  /* targets */
-  LISTBASE_FOREACH (bConstraintTarget *, ct, &data->targets) {
-    func(con, (ID **)&ct->tar, false, userdata);
-  }
-
-  /* script */
-  func(con, (ID **)&data->text, true, userdata);
-}
-
-/* Whether this approach is maintained remains to be seen (aligorith) */
-static bool pycon_get_tarmat(Depsgraph * /*depsgraph*/,
-                             bConstraint *con,
-                             bConstraintOb *cob,
-                             bConstraintTarget *ct,
-                             float /*ctime*/)
-{
-#ifdef WITH_PYTHON
-  bPythonConstraint *data = static_cast<bPythonConstraint *>(con->data);
-#endif
-
-  if (!VALID_CONS_TARGET(ct)) {
-    unit_ct_matrix_nullsafe(ct);
-    return false;
-  }
-
-  if (ct->tar->type == OB_CURVES_LEGACY && ct->tar->runtime->curve_cache == nullptr) {
-    unit_m4(ct->matrix);
-    return false;
-  }
-
-  /* firstly calculate the matrix the normal way, then let the py-function override
-   * this matrix if it needs to do so
-   */
-  constraint_target_to_mat4(ct->tar,
-                            ct->subtarget,
-                            cob,
-                            ct->matrix,
-                            CONSTRAINT_SPACE_WORLD,
-                            ct->space,
-                            con->flag,
-                            con->headtail);
-
-/* only execute target calculation if allowed */
-#ifdef WITH_PYTHON
-  if (G.f & G_FLAG_SCRIPT_AUTOEXEC) {
-    BPY_pyconstraint_target(data, ct);
-  }
-#endif
-  return true;
-}
-
-static void pycon_evaluate(bConstraint *con, bConstraintOb *cob, ListBase *targets)
-{
-#ifndef WITH_PYTHON
-  UNUSED_VARS(con, cob, targets);
-  return;
-#else
-  bPythonConstraint *data = static_cast<bPythonConstraint *>(con->data);
-
-  /* only evaluate in python if we're allowed to do so */
-  if ((G.f & G_FLAG_SCRIPT_AUTOEXEC) == 0) {
-    return;
-  }
-
-  /* Now, run the actual 'constraint' function, which should only access the matrices */
-  BPY_pyconstraint_exec(data, cob, targets);
-#endif /* WITH_PYTHON */
-}
-
-static bConstraintTypeInfo CTI_PYTHON = {
-    /*type*/ CONSTRAINT_TYPE_PYTHON,
-    /*size*/ sizeof(bPythonConstraint),
-    /*name*/ N_("Script"),
-    /*struct_name*/ "bPythonConstraint",
-    /*free_data*/ pycon_free,
-    /*id_looper*/ pycon_id_looper,
-    /*copy_data*/ pycon_copy,
-    /*new_data*/ pycon_new_data,
-    /*get_constraint_targets*/ pycon_get_tars,
-    /*flush_constraint_targets*/ nullptr,
-    /*get_target_matrix*/ pycon_get_tarmat,
-    /*evaluate_constraint*/ pycon_evaluate,
-};
-
 /* ----------- Armature Constraint -------------- */
 
 static void armdef_free(bConstraint *con)
@@ -2783,17 +2650,15 @@ static void armdef_evaluate(bConstraint *con, bConstraintOb *cob, ListBase *targ
 {
   bArmatureConstraint *data = static_cast<bArmatureConstraint *>(con->data);
 
-  float sum_mat[4][4], input_co[3];
-  DualQuat sum_dq;
-  float weight = 0.0f;
-
   /* Prepare for blending. */
-  zero_m4(sum_mat);
-  memset(&sum_dq, 0, sizeof(sum_dq));
+  float sum_mat[4][4] = {};
+  DualQuat sum_dq = {};
+  float weight = 0.0f;
 
   DualQuat *pdq = (data->flag & CONSTRAINT_ARMATURE_QUATERNION) ? &sum_dq : nullptr;
   bool use_envelopes = (data->flag & CONSTRAINT_ARMATURE_ENVELOPE) != 0;
 
+  float input_co[3];
   if (cob->pchan && cob->pchan->bone && !(data->flag & CONSTRAINT_ARMATURE_CUR_LOCATION)) {
     /* For constraints on bones, use the rest position to bind b-bone segments
      * and envelopes, to allow safely changing the bone location as if parented. */
@@ -5602,7 +5467,7 @@ static void constraints_init_typeinfo()
   constraintsTypeInfo[8] = &CTI_ROTLIKE;          /* Copy Rotation Constraint */
   constraintsTypeInfo[9] = &CTI_LOCLIKE;          /* Copy Location Constraint */
   constraintsTypeInfo[10] = &CTI_SIZELIKE;        /* Copy Scale Constraint */
-  constraintsTypeInfo[11] = &CTI_PYTHON;          /* Python/Script Constraint */
+  constraintsTypeInfo[11] = nullptr;              /* Python/Script Constraint: DEPRECATED. */
   constraintsTypeInfo[12] = &CTI_ACTION;          /* Action Constraint */
   constraintsTypeInfo[13] = &CTI_LOCKTRACK;       /* Locked-Track Constraint */
   constraintsTypeInfo[14] = &CTI_DISTLIMIT;       /* Limit Distance Constraint */
@@ -6186,10 +6051,7 @@ static bConstraint *constraint_list_find_from_target(ListBase *constraints, bCon
   LISTBASE_FOREACH (bConstraint *, con, constraints) {
     ListBase *targets = nullptr;
 
-    if (con->type == CONSTRAINT_TYPE_PYTHON) {
-      targets = &((bPythonConstraint *)con->data)->targets;
-    }
-    else if (con->type == CONSTRAINT_TYPE_ARMATURE) {
+    if (con->type == CONSTRAINT_TYPE_ARMATURE) {
       targets = &((bArmatureConstraint *)con->data)->targets;
     }
 
@@ -6238,7 +6100,7 @@ static bConstraint *constraint_find_original(Object *ob,
                                              bConstraint *con,
                                              Object **r_orig_ob)
 {
-  Object *orig_ob = (Object *)DEG_get_original_id(&ob->id);
+  Object *orig_ob = DEG_get_original(ob);
 
   if (ELEM(orig_ob, nullptr, ob)) {
     return nullptr;
@@ -6592,20 +6454,6 @@ void BKE_constraint_blend_write(BlendWriter *writer, ListBase *conlist)
 
       /* do any constraint specific stuff */
       switch (con->type) {
-        case CONSTRAINT_TYPE_PYTHON: {
-          bPythonConstraint *data = static_cast<bPythonConstraint *>(con->data);
-
-          /* write targets */
-          LISTBASE_FOREACH (bConstraintTarget *, ct, &data->targets) {
-            BLO_write_struct(writer, bConstraintTarget, ct);
-          }
-
-          /* Write ID Properties -- and copy this comment EXACTLY for easy finding
-           * of library blocks that implement this. */
-          IDP_BlendWrite(writer, data->prop);
-
-          break;
-        }
         case CONSTRAINT_TYPE_ARMATURE: {
           bArmatureConstraint *data = static_cast<bArmatureConstraint *>(con->data);
 
@@ -6648,9 +6496,6 @@ void BKE_constraint_blend_read_data(BlendDataReader *reader, ID *id_owner, ListB
 
     /* Patch for error introduced by changing constraints (don't know how). */
     /* NOTE(@ton): If `con->data` type changes, DNA cannot resolve the pointer!. */
-    /* FIXME This is likely dead code actually, since it used to be in
-     * constraint 'read_lib', so it would have crashed on null pointer access in any of
-     * the code below? But does not hurt to keep it around as a safety measure. */
     if (con->data == nullptr) {
       con->type = CONSTRAINT_TYPE_NULL;
     }
@@ -6661,15 +6506,6 @@ void BKE_constraint_blend_read_data(BlendDataReader *reader, ID *id_owner, ListB
     }
 
     switch (con->type) {
-      case CONSTRAINT_TYPE_PYTHON: {
-        bPythonConstraint *data = static_cast<bPythonConstraint *>(con->data);
-
-        BLO_read_struct_list(reader, bConstraintTarget, &data->targets);
-
-        BLO_read_struct(reader, IDProperty, &data->prop);
-        IDP_BlendDataRead(reader, &data->prop);
-        break;
-      }
       case CONSTRAINT_TYPE_ARMATURE: {
         bArmatureConstraint *data = static_cast<bArmatureConstraint *>(con->data);
 
