@@ -340,7 +340,7 @@ static SeqRetimingKey *strip_retiming_add_key(Strip *strip, float frame_index)
   float value = strip_retiming_evaluate(strip, frame_index);
 
   SeqRetimingKey *keys = strip->retiming_keys;
-  size_t keys_count = retiming_keys_count(strip);
+  const int keys_count = retiming_keys_count(strip);
   const int new_key_index = start_key - keys + 1;
   BLI_assert(new_key_index >= 0);
   BLI_assert(new_key_index < keys_count);
@@ -692,22 +692,21 @@ static void strip_retiming_fix_transition(const Scene *scene, Strip *strip, SeqR
 
 static void strip_retiming_fix_transitions(const Scene *scene, Strip *strip, SeqRetimingKey *key)
 {
+  /* Store value, since handles array will be reallocated. */
   const int key_index = retiming_key_index_get(strip, key);
 
-  if (!retiming_is_last_key(strip, key)) {
-    SeqRetimingKey *next_key = key + 1;
-    if (retiming_key_is_transition_start(next_key)) {
-      strip_retiming_fix_transition(scene, strip, next_key);
+  if (key_index > 1) {
+    SeqRetimingKey *prev_key = key - 2;
+    if (retiming_key_is_transition_start(prev_key)) {
+      strip_retiming_fix_transition(scene, strip, prev_key);
     }
   }
 
-  if (key_index <= 1) {
-    return;
-  }
-
-  SeqRetimingKey *next_key = &retiming_keys_get(strip)[key_index + 1];
-  if (retiming_key_is_transition_start(next_key)) {
-    strip_retiming_fix_transition(scene, strip, next_key);
+  if (!retiming_is_last_key(strip, key)) {
+    SeqRetimingKey *next_key = &retiming_keys_get(strip)[key_index + 1];
+    if (retiming_key_is_transition_start(next_key)) {
+      strip_retiming_fix_transition(scene, strip, next_key);
+    }
   }
 }
 

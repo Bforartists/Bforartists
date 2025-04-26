@@ -290,7 +290,8 @@ Use pre-compiled headers to speed up compilation."
   if(WITH_CLANG_TIDY AND (CMAKE_COMPILER_IS_GNUCC OR APPLE))
     if(WITH_COMPILER_PRECOMPILED_HEADERS)
       message(STATUS
-        "Clang-Tidy and the current compiler's precompiled headers are incompatible, disabling precompiled headers."
+        "Clang-Tidy and the current compiler's precompiled headers are incompatible, "
+        "disabling precompiled headers."
       )
       set(WITH_COMPILER_PRECOMPILED_HEADERS OFF)
     endif()
@@ -407,26 +408,8 @@ mark_as_advanced(WITH_SYSTEM_AUDASPACE)
 
 set_and_warn_dependency(WITH_AUDASPACE WITH_SYSTEM_AUDASPACE OFF)
 
-option(WITH_OPENMP "Enable OpenMP (has to be supported by the compiler)" ON)
-if(UNIX AND NOT APPLE)
-  option(WITH_OPENMP_STATIC "Link OpenMP statically (only used by the release environment)" OFF)
-  mark_as_advanced(WITH_OPENMP_STATIC)
-elseif(WIN32 AND CMAKE_C_COMPILER_ID MATCHES "Clang" AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.1)
-  # Prior to LLVM 19.1, OpenMP was not included in public LLVM builds for Windows ARM64
-  if(WITH_OPENMP)
-    if(WITH_STRICT_BUILD_OPTIONS)
-      message(SEND_ERROR "OpenMP enabled, but LLVM ${CMAKE_CXX_COMPILER_VERSION} detected, minimum of 19.1 required for OpenMP functionality")
-    else()
-      message(STATUS "Disabling OpenMP, LLVM ${CMAKE_CXX_COMPILER_VERSION} detected, minimum of 19.1 required for OpenMP functionality")
-    endif()
-    set(WITH_OPENMP OFF)
-    set(WITH_OPENMP_STATIC OFF)
-  endif()
-endif()
-
 if(WITH_GHOST_X11)
   option(WITH_X11_XINPUT "Enable X11 Xinput (tablet support and unicode input)" ON)
-  option(WITH_X11_XF86VMODE "Enable X11 video mode switching" ON)
   option(WITH_X11_XFIXES "Enable X11 XWayland cursor warping workaround" ON)
 endif()
 
@@ -491,6 +474,7 @@ option(WITH_OPENCOLLADA "Enable OpenCollada Support (http://www.opencollada.org)
 option(WITH_IO_WAVEFRONT_OBJ "Enable Wavefront-OBJ 3D file format support (*.obj)" ON)
 option(WITH_IO_PLY "Enable PLY 3D file format support (*.ply)" ON)
 option(WITH_IO_STL "Enable STL 3D file format support (*.stl)" ON)
+option(WITH_IO_FBX "Enable FBX 3D file format support (*.fbx)" ON)
 option(WITH_IO_GREASE_PENCIL "Enable grease-pencil file format IO (*.svg, *.pdf)" ON)
 
 # Csv support
@@ -661,7 +645,8 @@ Build Cycles kernels with address sanitizer when WITH_COMPILER_ASAN is on, even 
   OFF
 )
 set(CYCLES_TEST_DEVICES CPU CACHE STRING "\
-Run regression tests on the specified device types (CPU CUDA OPTIX HIP HIP-RT METAL METAL-RT ONEAPI ONEAPI-RT)"
+Run regression tests on the specified device types \
+(CPU CUDA OPTIX HIP HIP-RT METAL METAL-RT ONEAPI ONEAPI-RT)"
 )
 option(WITH_CYCLES_TEST_OSL "\
 Run additional Cycles test with OSL enabled"
@@ -714,12 +699,13 @@ endif()
 if(NOT APPLE AND NOT (WIN32 AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
   option(WITH_CYCLES_DEVICE_HIP "Enable Cycles AMD HIP support" ON)
   option(WITH_CYCLES_HIP_BINARIES "Build Cycles AMD HIP binaries" OFF)
-  # We only support RDNA1 (gfx101X) and newer. Vega and older generations have rendering artifacts and crashing issues.
+  # We only support RDNA1 (gfx101X) and newer.
+  # Vega and older generations have rendering artifacts and crashing issues.
   set(CYCLES_HIP_BINARIES_ARCH
     gfx1010 gfx1011 gfx1012
     gfx1030 gfx1031 gfx1032 gfx1034 gfx1035 gfx1036
     gfx1100 gfx1101 gfx1102 gfx1103 gfx1150 gfx1151 #gfx1152
-    #gfx1200 gfx1201
+    gfx1200 gfx1201
     CACHE STRING "AMD HIP architectures to build binaries for"
   )
   mark_as_advanced(WITH_CYCLES_DEVICE_HIP)
@@ -772,7 +758,6 @@ option(LLVM_STATIC "Link with LLVM static libraries" OFF)
 mark_as_advanced(LLVM_STATIC)
 option(WITH_CLANG "Use Clang" OFF)
 
-# disable for now, but plan to support on all platforms eventually
 option(WITH_MEM_JEMALLOC "Enable malloc replacement (http://www.canonware.com/jemalloc)" ON)
 mark_as_advanced(WITH_MEM_JEMALLOC)
 
@@ -826,11 +811,6 @@ Enable GPU render related unit testing using Vulkan"
   OFF
 )
 mark_as_advanced(WITH_GPU_RENDER_TESTS_VULKAN)
-option(WITH_GPU_RENDER_TESTS_SILENT "\
-Run GPU render tests silently (finished tests will pass). \
-Generated report will show failing tests"
-  ON
-)
 option(WITH_GPU_RENDER_TESTS_HEADED "\
 Enable GPU render related unit testing that doesn't work in background mode. \
 These tests require an environment with a display server to run. \
@@ -847,27 +827,39 @@ Enable GPU drawing related unit testing (draw manager)"
   OFF
 )
 option(WITH_GPU_COMPOSITOR_TESTS "Enable regression testing for GPU compositor" OFF)
-option(WITH_GPU_MESH_PAINT_TESTS "Enable visual render-based regression testing for mesh painting" OFF)
+option(WITH_GPU_MESH_PAINT_TESTS "\
+Enable visual render-based regression testing for mesh painting"
+  OFF
+)
 option(WITH_UI_TESTS "\
 Enable user-interface tests (Experimental)"
   OFF
 )
 if(UNIX AND NOT (APPLE OR HAIKU))
+  # Headless is preferable as opening windows on the developers computer
+  # prevents the system being used while tests run. It's also unreliable,
+  # where tiling compositors ignore the window size causing some tests to fail.
+  set(_option_default OFF)
+  if(WITH_GHOST_WAYLAND)
+    set(_option_default ON)
+  endif()
   option(WITH_UI_TESTS_HEADLESS "\
 Enable user-interface tests using a headless display server. \
 Currently this depends on WITH_GHOST_WAYLAND and the weston compositor \
 (Experimental)"
-    OFF
+    ${_option_default}
   )
+  unset(_option_default)
+
   option(WITH_LINUX_OFFICIAL_RELEASE_TESTS "\
 Enable sanity check tests for the linux official release. \
-These test are only relevant for checking that our offical Linux releases are portable and \
+These test are only relevant for checking that our official Linux releases are portable and \
 packaged properly. For example that we don't link to any unexpected system libraries."
     OFF
   )
 else()
   set(WITH_UI_TESTS_HEADLESS OFF)
-  # TODO: We should probaby add more sanity checks for Windows and Mac as well
+  # TODO: We should probably add more sanity checks for Windows and Mac as well
   set(WITH_LINUX_OFFICIAL_RELEASE_TESTS OFF)
 endif()
 
@@ -900,10 +892,10 @@ Enable tests validating some build-related scripts against the 'system' version 
 )
 mark_as_advanced(WITH_SYSTEM_PYTHON_TESTS)
 # We could use `find_package (Python3 COMPONENTS Interpreter)` to set that value automatically.
-# However, on some buildbots this will give the default python version of the current virtual environment,
-# which may differ from the OS default python version.
-# And it would set that global 'python3 exec path' CMake value for all CMake scripts, which could have
-# unexpected and dangerous side effects.
+# However, on some buildbots this will give the default Python version of the current virtual
+# environment, which may differ from the OS default Python version.
+# And it would set that global 'python3 exec path' CMake value for all CMake scripts,
+# which could have unexpected and dangerous side effects.
 # So this has to be set explicitly for all builders.
 set(TEST_SYSTEM_PYTHON_EXE "" CACHE PATH "Python executable used to run 'system python' tests")
 mark_as_advanced(TEST_SYSTEM_PYTHON_EXE)
@@ -1027,16 +1019,22 @@ mark_as_advanced(WITH_COMPILER_CODE_COVERAGE)
 
 if(WITH_COMPILER_CODE_COVERAGE)
   if(NOT CMAKE_COMPILER_IS_GNUCC)
-    message("WITH_COMPILER_CODE_COVERAGE only works with GCC currently.")
+    message(WARNING "WITH_COMPILER_CODE_COVERAGE only works with GCC currently.")
     set(WITH_COMPILER_CODE_COVERAGE OFF)
   endif()
 endif()
 
 if(WITH_COMPILER_CODE_COVERAGE)
   set(_code_coverage_defaults "--coverage")
-  set(COMPILER_CODE_COVERAGE_CFLAGS ${_code_coverage_defaults} CACHE STRING "C flags for code coverage")
+  set(COMPILER_CODE_COVERAGE_CFLAGS
+    ${_code_coverage_defaults} CACHE STRING
+    "C flags for code coverage"
+  )
   mark_as_advanced(COMPILER_CODE_COVERAGE_CFLAGS)
-  set(COMPILER_CODE_COVERAGE_CXXFLAGS ${_code_coverage_defaults} CACHE STRING "C++ flags for code coverage")
+  set(COMPILER_CODE_COVERAGE_
+    CXXFLAGS ${_code_coverage_defaults} CACHE STRING
+    "C++ flags for code coverage"
+  )
   mark_as_advanced(COMPILER_CODE_COVERAGE_CXXFLAGS)
   unset(_code_coverage_defaults)
 endif()
@@ -1261,6 +1259,10 @@ if(APPLE)
   include(platform_apple_xcode)
 endif()
 
+if(APPLE)
+  option(WITH_LEGACY_MACOS_X64_LINKER "Use legacy macOS linker. Only on x64 platform. Minutes slower, but emits fewer warnings." OFF)
+  mark_as_advanced(WITH_LEGACY_MACOS_X64_LINKER)
+endif()
 
 # -----------------------------------------------------------------------------
 # Check for Conflicting/Unsupported Configurations
@@ -1587,7 +1589,7 @@ endif()
 
 # set the endian define
 if(MSVC)
-  # for some reason this fails on msvc
+  # For some reason this fails on MSVC.
   add_definitions(-D__LITTLE_ENDIAN__)
 
   # OSX-Note: as we do cross-compiling with specific set architecture,
@@ -1654,45 +1656,6 @@ if(WITH_METAL_BACKEND)
   # No need to add frameworks here, all the ones we need for Metal and
   # Metal-OpenGL Interop are already being added by
   # build_files/cmake/platform/platform_apple.cmake
-endif()
-
-
-# -----------------------------------------------------------------------------
-# Configure OpenMP
-
-if(WITH_OPENMP)
-  if(NOT OPENMP_CUSTOM)
-    find_package(OpenMP)
-  endif()
-
-  set_and_warn_library_found("OpenMP" OPENMP_FOUND WITH_OPENMP)
-
-  if(OPENMP_FOUND)
-    if(NOT WITH_OPENMP_STATIC)
-      string(APPEND CMAKE_C_FLAGS " ${OpenMP_C_FLAGS}")
-      string(APPEND CMAKE_CXX_FLAGS " ${OpenMP_CXX_FLAGS}")
-      if(DEFINED OpenMP_LINKER_FLAGS)
-        string(APPEND CMAKE_EXE_LINKER_FLAGS " ${OpenMP_LINKER_FLAGS}")
-        string(APPEND CMAKE_MODULE_LINKER_FLAGS " ${OpenMP_LINKER_FLAGS}")
-      endif()
-    else()
-      # Typically avoid adding flags as defines but we can't
-      # pass OpenMP flags to the linker for static builds, meaning
-      # we can't add any OpenMP related flags to CFLAGS variables
-      # since they're passed to the linker as well.
-      add_definitions("${OpenMP_C_FLAGS}")
-
-      find_library_static(OpenMP_LIBRARIES gomp ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES})
-      mark_as_advanced(
-        OpenMP_LIBRARIES
-      )
-    endif()
-  endif()
-
-  mark_as_advanced(
-    OpenMP_C_FLAGS
-    OpenMP_CXX_FLAGS
-  )
 endif()
 
 
@@ -2028,7 +1991,8 @@ if(CMAKE_COMPILER_IS_GNUCC)
     CXX_WARN_NO_COMMENT -Wno-comment
     CXX_WARN_NO_UNUSED_TYPEDEFS -Wno-unused-local-typedefs
     CXX_WARN_NO_UNUSED_VARIABLE -Wno-unused-variable
-    CXX_WARN_NO_UNUSED_VARIABLE -Wno-uninitialized
+    CXX_WARN_NO_UNINITIALIZED -Wno-uninitialized
+    CXX_WARN_NO_REORDER -Wno-reorder
   )
 
 
@@ -2440,6 +2404,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     CXX_WARN_NO_IMPLICIT_CONST_INT_FLOAT_CONVERSION -Wno-implicit-const-int-float-conversion
     CXX_WARN_NO_UNDEF -Wno-undef
     CXX_WARN_NO_UNDEF_PREFIX -Wno-undef-prefix
+    CXX_WARN_NO_INCONSISTENT_MISSING_OVERRIDE -Wno-inconsistent-missing-override
   )
 
 elseif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
@@ -2464,7 +2429,7 @@ elseif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
   string(APPEND C_WARNINGS " -wd188,186,144,913,556,858,597,177,1292,167,279,592,94,2722,3199")
   string(APPEND CXX_WARNINGS " -wd188,186,144,913,556,858,597,177,1292,167,279,592,94,2722,3199")
 elseif(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-  # most msvc warnings are C & C++
+  # Most MSVC warnings are C & C++.
   set(_WARNINGS
     # warning level:
     "/W3"
@@ -2526,7 +2491,12 @@ if(WITH_PYTHON)
     # Always use numpy bundled in precompiled libs.
   elseif((WITH_PYTHON_INSTALL AND WITH_PYTHON_INSTALL_NUMPY) OR WITH_PYTHON_NUMPY)
     if(("${PYTHON_NUMPY_PATH}" STREQUAL "") OR (${PYTHON_NUMPY_PATH} MATCHES NOTFOUND))
-      find_python_package(numpy "core/include")
+      set(_numpy_include "_core/include")
+      if(PYTHON_VERSION VERSION_LESS "3.13")
+        set(_numpy_include "core/include")
+      endif()
+      find_python_package(numpy "${_numpy_include}")
+      unset(_numpy_include)
     endif()
   endif()
 
@@ -2718,14 +2688,6 @@ include(build_files/cmake/packaging.cmake)
 
 
 # -----------------------------------------------------------------------------
-# Use Dynamic Loading for OpenMP
-
-if(WITH_BLENDER)
-  openmp_delayload(bforartists)
-endif()
-
-
-# -----------------------------------------------------------------------------
 # Print Final Configuration
 
 if(FIRST_RUN)
@@ -2785,7 +2747,6 @@ if(FIRST_RUN)
 
   info_cfg_text("Compiler Options:")
   info_cfg_option(WITH_BUILDINFO)
-  info_cfg_option(WITH_OPENMP)
 
   info_cfg_text("System Options:")
   info_cfg_option(WITH_INSTALL_PORTABLE)
@@ -2800,7 +2761,6 @@ if(FIRST_RUN)
     info_cfg_option(WITH_GHOST_WAYLAND)
     if(WITH_GHOST_X11)
       info_cfg_option(WITH_GHOST_XDND)
-      info_cfg_option(WITH_X11_XF86VMODE)
       info_cfg_option(WITH_X11_XFIXES)
       info_cfg_option(WITH_X11_XINPUT)
     endif()
@@ -2868,7 +2828,7 @@ if(FIRST_RUN)
 
   info_cfg_text("")
 
-  message("${_config_msg}")
+  message(STATUS "${_config_msg}")
 endif()
 
 if(0)

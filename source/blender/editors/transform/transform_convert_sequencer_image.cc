@@ -31,6 +31,8 @@
 
 namespace blender::ed::transform {
 
+namespace {
+
 /** Used for sequencer transform. */
 struct TransDataSeq {
   Strip *strip;
@@ -39,6 +41,8 @@ struct TransDataSeq {
   float orig_scale[2];
   float orig_rotation;
 };
+
+}  // namespace
 
 static TransData *SeqToTransData(const Scene *scene,
                                  Strip *strip,
@@ -49,6 +53,7 @@ static TransData *SeqToTransData(const Scene *scene,
 {
   const StripTransform *transform = strip->data->transform;
   const float2 origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
+  const float2 mirror = seq::image_transform_mirror_factor_get(strip);
   float vertex[2] = {origin[0], origin[1]};
 
   /* Add control vertex, so rotation and scale can be calculated.
@@ -75,7 +80,7 @@ static TransData *SeqToTransData(const Scene *scene,
   unit_m3(td->mtx);
   unit_m3(td->smtx);
 
-  axis_angle_to_mat3_single(td->axismtx, 'Z', transform->rotation);
+  axis_angle_to_mat3_single(td->axismtx, 'Z', transform->rotation * mirror[0] * mirror[1]);
   normalize_m3(td->axismtx);
 
   tdseq->strip = strip;
@@ -131,12 +136,10 @@ static void createTransSeqImageData(bContext * /*C*/, TransInfo *t)
   tc->custom.type.free_cb = freeSeqData;
 
   tc->data_len = strips.size() * 3; /* 3 vertices per sequence are needed. */
-  TransData *td = tc->data = static_cast<TransData *>(
-      MEM_callocN(tc->data_len * sizeof(TransData), "TransSeq TransData"));
-  TransData2D *td2d = tc->data_2d = static_cast<TransData2D *>(
-      MEM_callocN(tc->data_len * sizeof(TransData2D), "TransSeq TransData2D"));
-  TransDataSeq *tdseq = static_cast<TransDataSeq *>(
-      MEM_callocN(tc->data_len * sizeof(TransDataSeq), "TransSeq TransDataSeq"));
+  TransData *td = tc->data = MEM_calloc_arrayN<TransData>(tc->data_len, "TransSeq TransData");
+  TransData2D *td2d = tc->data_2d = MEM_calloc_arrayN<TransData2D>(tc->data_len,
+                                                                   "TransSeq TransData2D");
+  TransDataSeq *tdseq = MEM_calloc_arrayN<TransDataSeq>(tc->data_len, "TransSeq TransDataSeq");
 
   for (Strip *strip : strips) {
     /* One `Sequence` needs 3 `TransData` entries - center point placed in image origin, then 2

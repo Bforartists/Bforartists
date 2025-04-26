@@ -202,13 +202,13 @@ static void realloc_particles(ParticleSimulationData *sim, int new_totpart)
     }
 
     if (totpart) {
-      newpars = MEM_calloc_arrayN<ParticleData>(size_t(totpart), "particles");
+      newpars = MEM_calloc_arrayN<ParticleData>(totpart, "particles");
       if (newpars == nullptr) {
         return;
       }
 
       if (psys->part->phystype == PART_PHYS_BOIDS) {
-        newboids = MEM_calloc_arrayN<BoidParticle>(size_t(totpart), "boid particles");
+        newboids = MEM_calloc_arrayN<BoidParticle>(totpart, "boid particles");
 
         if (newboids == nullptr) {
           /* allocation error! */
@@ -355,8 +355,8 @@ void psys_calc_dmcache(Object *ob, Mesh *mesh_final, Mesh *mesh_original, Partic
       }
     }
 
-    nodedmelem = MEM_calloc_arrayN<LinkNode>(size_t(totdmelem), "psys node elems");
-    nodearray = MEM_calloc_arrayN<LinkNode *>(size_t(totelem), "psys node array");
+    nodedmelem = MEM_calloc_arrayN<LinkNode>(totdmelem, "psys node elems");
+    nodearray = MEM_calloc_arrayN<LinkNode *>(totelem, "psys node array");
 
     for (i = 0, node = nodedmelem; i < totdmelem; i++, node++) {
       int origindex_final;
@@ -442,20 +442,15 @@ void psys_thread_context_init(ParticleThreadContext *ctx, ParticleSimulationData
   ctx->ma = BKE_object_material_get(sim->ob, sim->psys->part->omat);
 }
 
-void psys_tasks_create(ParticleThreadContext *ctx,
-                       int startpart,
-                       int endpart,
-                       ParticleTask **r_tasks,
-                       int *r_numtasks)
+blender::Vector<ParticleTask> psys_tasks_create(ParticleThreadContext *ctx,
+                                                int startpart,
+                                                int endpart)
 {
-  ParticleTask *tasks;
   int numtasks = min_ii(BLI_system_thread_count() * 4, endpart - startpart);
   int particles_per_task = numtasks > 0 ? (endpart - startpart) / numtasks : 0;
   int remainder = numtasks > 0 ? (endpart - startpart) - particles_per_task * numtasks : 0;
 
-  tasks = MEM_calloc_arrayN<ParticleTask>(size_t(numtasks), "ParticleThread");
-  *r_numtasks = numtasks;
-  *r_tasks = tasks;
+  blender::Vector<ParticleTask> tasks(numtasks);
 
   int p = startpart;
   for (int i = 0; i < numtasks; i++) {
@@ -469,23 +464,23 @@ void psys_tasks_create(ParticleThreadContext *ctx,
   if (numtasks > 0) {
     BLI_assert(tasks[numtasks - 1].end == endpart);
   }
+
+  return tasks;
 }
 
-void psys_tasks_free(ParticleTask *tasks, int numtasks)
+void psys_tasks_free(blender::Vector<ParticleTask> &tasks)
 {
-  int i;
-
   /* threads */
-  for (i = 0; i < numtasks; i++) {
-    if (tasks[i].rng) {
-      BLI_rng_free(tasks[i].rng);
+  for (ParticleTask &task : tasks) {
+    if (task.rng) {
+      BLI_rng_free(task.rng);
     }
-    if (tasks[i].rng_path) {
-      BLI_rng_free(tasks[i].rng_path);
+    if (task.rng_path) {
+      BLI_rng_free(task.rng_path);
     }
   }
 
-  MEM_freeN(tasks);
+  tasks.clear();
 }
 
 void psys_thread_context_free(ParticleThreadContext *ctx)
@@ -636,7 +631,7 @@ static void free_unexisting_particles(ParticleSimulationData *sim)
     int newtotpart = psys->totpart - psys->totunexist;
     ParticleData *npa, *newpars;
 
-    npa = newpars = MEM_calloc_arrayN<ParticleData>(size_t(newtotpart), "particles");
+    npa = newpars = MEM_calloc_arrayN<ParticleData>(newtotpart, "particles");
 
     for (p = 0, pa = psys->particles; p < newtotpart; p++, pa++, npa++) {
       while (pa->flag & PARS_UNEXIST) {
@@ -654,8 +649,7 @@ static void free_unexisting_particles(ParticleSimulationData *sim)
     psys->totpart -= psys->totunexist;
 
     if (psys->particles->boid) {
-      BoidParticle *newboids = MEM_calloc_arrayN<BoidParticle>(size_t(psys->totpart),
-                                                               "boid particles");
+      BoidParticle *newboids = MEM_calloc_arrayN<BoidParticle>(psys->totpart, "boid particles");
 
       LOOP_PARTICLES
       {
@@ -1567,7 +1561,7 @@ static ParticleSpring *sph_spring_add(ParticleSystem *psys, ParticleSpring *spri
   /* Are more refs required? */
   if (psys->alloc_fluidsprings == 0 || psys->fluid_springs == nullptr) {
     psys->alloc_fluidsprings = PSYS_FLUID_SPRINGS_INITIAL_SIZE;
-    psys->fluid_springs = MEM_calloc_arrayN<ParticleSpring>(size_t(psys->alloc_fluidsprings),
+    psys->fluid_springs = MEM_calloc_arrayN<ParticleSpring>(psys->alloc_fluidsprings,
                                                             "Particle Fluid Springs");
   }
   else if (psys->tot_fluidsprings == psys->alloc_fluidsprings) {
@@ -4687,7 +4681,7 @@ void psys_check_boid_data(ParticleSystem *psys)
 
   if (psys->part && psys->part->phystype == PART_PHYS_BOIDS) {
     if (!pa->boid) {
-      bpa = MEM_calloc_arrayN<BoidParticle>(size_t(psys->totpart), "Boid Data");
+      bpa = MEM_calloc_arrayN<BoidParticle>(psys->totpart, "Boid Data");
 
       LOOP_PARTICLES
       {

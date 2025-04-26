@@ -353,9 +353,9 @@ bool dynamicPaint_outputLayerExists(DynamicPaintSurface *surface, Object *ob, in
   return false;
 }
 
-static bool surface_duplicateOutputExists(void *arg, const char *name)
+static bool surface_duplicateOutputExists(DynamicPaintSurface *t_surface,
+                                          const blender::StringRefNull name)
 {
-  DynamicPaintSurface *t_surface = static_cast<DynamicPaintSurface *>(arg);
   DynamicPaintSurface *surface = static_cast<DynamicPaintSurface *>(
       t_surface->canvas->surfaces.first);
 
@@ -363,8 +363,8 @@ static bool surface_duplicateOutputExists(void *arg, const char *name)
     if (surface != t_surface && surface->type == t_surface->type &&
         surface->format == t_surface->format)
     {
-      if ((surface->output_name[0] != '\0' && !BLI_path_cmp(name, surface->output_name)) ||
-          (surface->output_name2[0] != '\0' && !BLI_path_cmp(name, surface->output_name2)))
+      if ((surface->output_name[0] != '\0' && !BLI_path_cmp(name.c_str(), surface->output_name)) ||
+          (surface->output_name2[0] != '\0' && !BLI_path_cmp(name.c_str(), surface->output_name2)))
       {
         return true;
       }
@@ -375,34 +375,29 @@ static bool surface_duplicateOutputExists(void *arg, const char *name)
 
 static void surface_setUniqueOutputName(DynamicPaintSurface *surface, char *basename, int output)
 {
+  auto is_unique_fn = [&](const blender::StringRefNull check_name) {
+    return surface_duplicateOutputExists(surface, check_name);
+  };
+
   char name[64];
   STRNCPY(name, basename); /* in case basename is surface->name use a copy */
   if (output == 0) {
-    BLI_uniquename_cb(surface_duplicateOutputExists,
-                      surface,
-                      name,
-                      '.',
-                      surface->output_name,
-                      sizeof(surface->output_name));
+    BLI_uniquename_cb(is_unique_fn, name, '.', surface->output_name, sizeof(surface->output_name));
   }
   else if (output == 1) {
-    BLI_uniquename_cb(surface_duplicateOutputExists,
-                      surface,
-                      name,
-                      '.',
-                      surface->output_name2,
-                      sizeof(surface->output_name2));
+    BLI_uniquename_cb(
+        is_unique_fn, name, '.', surface->output_name2, sizeof(surface->output_name2));
   }
 }
 
-static bool surface_duplicateNameExists(void *arg, const char *name)
+static bool surface_duplicateNameExists(DynamicPaintSurface *t_surface,
+                                        const blender::StringRefNull name)
 {
-  DynamicPaintSurface *t_surface = static_cast<DynamicPaintSurface *>(arg);
   DynamicPaintSurface *surface = static_cast<DynamicPaintSurface *>(
       t_surface->canvas->surfaces.first);
 
   for (; surface; surface = surface->next) {
-    if (surface != t_surface && STREQ(name, surface->name)) {
+    if (surface != t_surface && STREQ(name.c_str(), surface->name)) {
       return true;
     }
   }
@@ -414,7 +409,13 @@ void dynamicPaintSurface_setUniqueName(DynamicPaintSurface *surface, const char 
   char name[64];
   STRNCPY_UTF8(name, basename); /* in case basename is surface->name use a copy */
   BLI_uniquename_cb(
-      surface_duplicateNameExists, surface, name, '.', surface->name, sizeof(surface->name));
+      [&](const blender::StringRefNull check_name) {
+        return surface_duplicateNameExists(surface, check_name);
+      },
+      name,
+      '.',
+      surface->name,
+      sizeof(surface->name));
 }
 
 void dynamicPaintSurface_updateType(DynamicPaintSurface *surface)
@@ -798,13 +799,13 @@ static void surfaceGenerateGrid(DynamicPaintSurface *surface)
     grid_cells = grid->dim[0] * grid->dim[1] * grid->dim[2];
 
     /* allocate memory for grids */
-    grid->bounds = MEM_calloc_arrayN<Bounds3D>(size_t(grid_cells), "Surface Grid Bounds");
-    grid->s_pos = MEM_calloc_arrayN<int>(size_t(grid_cells), "Surface Grid Position");
+    grid->bounds = MEM_calloc_arrayN<Bounds3D>(grid_cells, "Surface Grid Bounds");
+    grid->s_pos = MEM_calloc_arrayN<int>(grid_cells, "Surface Grid Position");
 
-    grid->s_num = MEM_calloc_arrayN<int>(size_t(grid_cells), "Surface Grid Points");
-    temp_s_num = MEM_calloc_arrayN<int>(size_t(grid_cells), "Temp Surface Grid Points");
-    grid->t_index = MEM_calloc_arrayN<int>(size_t(sData->total_points), "Surface Grid Target Ids");
-    grid->temp_t_index = temp_t_index = MEM_calloc_arrayN<int>(size_t(sData->total_points),
+    grid->s_num = MEM_calloc_arrayN<int>(grid_cells, "Surface Grid Points");
+    temp_s_num = MEM_calloc_arrayN<int>(grid_cells, "Temp Surface Grid Points");
+    grid->t_index = MEM_calloc_arrayN<int>(sData->total_points, "Surface Grid Target Ids");
+    grid->temp_t_index = temp_t_index = MEM_calloc_arrayN<int>(sData->total_points,
                                                                "Temp Surface Grid Target Ids");
 
     /* in case of an allocation failure abort here */
@@ -1338,19 +1339,19 @@ static void dynamicPaint_allocateSurfaceType(DynamicPaintSurface *surface)
 
   switch (surface->type) {
     case MOD_DPAINT_SURFACE_T_PAINT:
-      sData->type_data = MEM_calloc_arrayN<PaintPoint>(size_t(sData->total_points),
+      sData->type_data = MEM_calloc_arrayN<PaintPoint>(sData->total_points,
                                                        "DynamicPaintSurface Data");
       break;
     case MOD_DPAINT_SURFACE_T_DISPLACE:
-      sData->type_data = MEM_calloc_arrayN<float>(size_t(sData->total_points),
+      sData->type_data = MEM_calloc_arrayN<float>(sData->total_points,
                                                   "DynamicPaintSurface DepthData");
       break;
     case MOD_DPAINT_SURFACE_T_WEIGHT:
-      sData->type_data = MEM_calloc_arrayN<float>(size_t(sData->total_points),
+      sData->type_data = MEM_calloc_arrayN<float>(sData->total_points,
                                                   "DynamicPaintSurface WeightData");
       break;
     case MOD_DPAINT_SURFACE_T_WAVE:
-      sData->type_data = MEM_calloc_arrayN<PaintWavePoint>(size_t(sData->total_points),
+      sData->type_data = MEM_calloc_arrayN<PaintWavePoint>(sData->total_points,
                                                            "DynamicPaintSurface WaveData");
       break;
   }
@@ -1402,11 +1403,11 @@ static void dynamicPaint_initAdjacencyData(DynamicPaintSurface *surface, const b
   if (!ad) {
     return;
   }
-  ad->n_index = MEM_calloc_arrayN<int>(size_t(sData->total_points), "Surface Adj Index");
-  ad->n_num = MEM_calloc_arrayN<int>(size_t(sData->total_points), "Surface Adj Counts");
-  temp_data = MEM_calloc_arrayN<int>(size_t(sData->total_points), "Temp Adj Data");
-  ad->n_target = MEM_calloc_arrayN<int>(size_t(neigh_points), "Surface Adj Targets");
-  ad->flags = MEM_calloc_arrayN<int>(size_t(sData->total_points), "Surface Adj Flags");
+  ad->n_index = MEM_calloc_arrayN<int>(sData->total_points, "Surface Adj Index");
+  ad->n_num = MEM_calloc_arrayN<int>(sData->total_points, "Surface Adj Counts");
+  temp_data = MEM_calloc_arrayN<int>(sData->total_points, "Temp Adj Data");
+  ad->n_target = MEM_calloc_arrayN<int>(neigh_points, "Surface Adj Targets");
+  ad->flags = MEM_calloc_arrayN<int>(sData->total_points, "Surface Adj Flags");
   ad->total_targets = neigh_points;
   ad->border = nullptr;
   ad->total_border = 0;
@@ -1935,7 +1936,7 @@ static Mesh *dynamicPaint_Modifier_apply(DynamicPaintModifierData *pmd, Object *
             const blender::Span<int> corner_verts = result->corner_verts();
 
             /* paint is stored on dry and wet layers, so mix final color first */
-            float(*fcolor)[4] = MEM_calloc_arrayN<float[4]>(size_t(sData->total_points),
+            float(*fcolor)[4] = MEM_calloc_arrayN<float[4]>(sData->total_points,
                                                             "Temp paint color");
 
             DynamicPaintModifierApplyData data{};
@@ -2714,8 +2715,8 @@ static bool dynamicPaint_pointHasNeighbor(PaintAdjData *ed, int index, int neigh
  * I.e. if A is neighbor of B, B is neighbor of A. */
 static bool dynamicPaint_symmetrizeAdjData(PaintAdjData *ed, int active_points)
 {
-  int *new_n_index = MEM_calloc_arrayN<int>(size_t(active_points), "Surface Adj Index");
-  int *new_n_num = MEM_calloc_arrayN<int>(size_t(active_points), "Surface Adj Counts");
+  int *new_n_index = MEM_calloc_arrayN<int>(active_points, "Surface Adj Index");
+  int *new_n_num = MEM_calloc_arrayN<int>(active_points, "Surface Adj Counts");
 
   if (new_n_num && new_n_index) {
     /* Count symmetrized neighbors */
@@ -2744,7 +2745,7 @@ static bool dynamicPaint_symmetrizeAdjData(PaintAdjData *ed, int active_points)
     }
 
     /* Allocate a new target map */
-    int *new_n_target = MEM_calloc_arrayN<int>(size_t(total_targets), "Surface Adj Targets");
+    int *new_n_target = MEM_calloc_arrayN<int>(total_targets, "Surface Adj Targets");
 
     if (new_n_target) {
       /* Copy existing neighbors to the new map */
@@ -3031,7 +3032,7 @@ int dynamicPaint_createUVSurface(Scene *scene,
         }
 
         /* Create a list of border pixels */
-        ed->border = MEM_calloc_arrayN<int>(size_t(total_border), "Border Pixel Index");
+        ed->border = MEM_calloc_arrayN<int>(total_border, "Border Pixel Index");
 
         if (ed->border) {
           ed->total_border = total_border;
@@ -3308,7 +3309,7 @@ void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
     return;
   }
   /* if selected format is openexr, but current build doesn't support one */
-#ifndef WITH_OPENEXR
+#ifndef WITH_IMAGE_OPENEXR
   if (format == R_IMF_IMTYPE_OPENEXR) {
     format = R_IMF_IMTYPE_PNG;
   }
@@ -3407,7 +3408,7 @@ void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
   }
 
     /* Set output format, PNG in case EXR isn't supported. */
-#ifdef WITH_OPENEXR
+#ifdef WITH_IMAGE_OPENEXR
   if (format == R_IMF_IMTYPE_OPENEXR) { /* OpenEXR 32-bit float */
     ibuf->ftype = IMB_FTYPE_OPENEXR;
     ibuf->foptions.flag = R_IMF_EXR_CODEC_ZIP;
@@ -6138,8 +6139,7 @@ static bool dynamicPaint_generateBakeData(DynamicPaintSurface *surface,
   }
 
   if (do_velocity_data && !bData->velocity) {
-    bData->velocity = MEM_calloc_arrayN<Vec3f>(size_t(sData->total_points),
-                                               "Dynamic Paint velocity");
+    bData->velocity = MEM_calloc_arrayN<Vec3f>(sData->total_points, "Dynamic Paint velocity");
   }
   if (do_accel_data && !bData->prev_velocity) {
     bData->prev_velocity = MEM_malloc_arrayN<Vec3f>(size_t(sData->total_points),
