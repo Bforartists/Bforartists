@@ -814,7 +814,7 @@ static int foreach_assign_id_to_orig_callback(LibraryIDLinkCallbackData *cb_data
 
   if (*id_p) {
     ID *id = *id_p;
-    *id_p = DEG_get_original_id(id);
+    *id_p = DEG_get_original(id);
 
     /* If the ID changes increase the user count.
      *
@@ -1677,7 +1677,7 @@ ID *BKE_libblock_find_name(Main *bmain,
   ID *id = static_cast<ID *>(BLI_findstring(lb, name, offsetof(ID, name) + 2));
   if (lib) {
     while (id && id->lib != *lib) {
-      id = static_cast<ID *>(BLI_listbase_findafter_string_ptr(
+      id = static_cast<ID *>(BLI_listbase_findafter_string(
           reinterpret_cast<Link *>(id), name, offsetof(ID, name) + 2));
     }
   }
@@ -2630,3 +2630,15 @@ void BKE_id_blend_write(BlendWriter *writer, ID *id)
     }
   }
 }
+
+struct SomeTypeWithIDMember {
+  int id;
+};
+
+static_assert(blender::dna::is_ID_v<ID>);
+static_assert(blender::dna::is_ID_v<Object>);
+static_assert(!blender::dna::is_ID_v<int>);
+static_assert(!blender::dna::is_ID_v<ID *>);
+static_assert(!blender::dna::is_ID_v<const ID>);
+static_assert(!blender::dna::is_ID_v<ListBase>);
+static_assert(!blender::dna::is_ID_v<SomeTypeWithIDMember>);

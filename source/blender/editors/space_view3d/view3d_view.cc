@@ -127,8 +127,10 @@ void VIEW3D_OT_camera_to_view(wmOperatorType *ot)
 /** \name Camera Fit Frame to Selected Operator
  * \{ */
 
-/* unlike VIEW3D_OT_view_selected this is for framing a render and not
- * meant to take into account vertex/bone selection for eg. */
+/**
+ * Unlike #VIEW3D_OT_view_selected this is for framing a render and not
+ * meant to take into account vertex/bone selection for eg.
+ */
 static wmOperatorStatus view3d_camera_to_view_selected_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
@@ -542,7 +544,7 @@ static bool drw_select_filter_object_mode_lock(Object *ob, void *user_data)
 static bool drw_select_filter_object_mode_lock_for_weight_paint(Object *ob, void *user_data)
 {
   LinkNode *ob_pose_list = static_cast<LinkNode *>(user_data);
-  return ob_pose_list && (BLI_linklist_index(ob_pose_list, DEG_get_original_object(ob)) != -1);
+  return ob_pose_list && (BLI_linklist_index(ob_pose_list, DEG_get_original(ob)) != -1);
 }
 
 int view3d_gpu_select_ex(const ViewContext *vc,

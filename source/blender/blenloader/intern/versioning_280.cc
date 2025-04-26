@@ -2482,7 +2482,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
         }
 
         block->totelem = new_count;
-        block->data = MEM_calloc_arrayN<float[3]>(size_t(new_count), __func__);
+        block->data = MEM_calloc_arrayN<float[3]>(new_count, __func__);
 
         float *oldptr = static_cast<float *>(old_data);
         float(*newptr)[3] = static_cast<float(*)[3]>(block->data);
@@ -3251,19 +3251,6 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     if (!DNA_struct_member_exists(fd->filesdna, "LightProbe", "float", "intensity")) {
       LISTBASE_FOREACH (LightProbe *, probe, &bmain->lightprobes) {
         probe->intensity = 1.0f;
-      }
-    }
-
-    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
-      bConstraint *con = static_cast<bConstraint *>(ob->constraints.first);
-      while (con) {
-        bConstraint *con_next = static_cast<bConstraint *>(con->next);
-        if (con->type == 17) { /* CONSTRAINT_TYPE_RIGIDBODYJOINT */
-          BLI_remlink(&ob->constraints, con);
-          BKE_constraint_free_data(con);
-          MEM_freeN(con);
-        }
-        con = con_next;
       }
     }
 

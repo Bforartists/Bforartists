@@ -384,7 +384,7 @@ static void node_register()
   geo_node_type_base(&ntype, "GeometryNodeAttributeStatistic", GEO_NODE_ATTRIBUTE_STATISTIC);
   ntype.ui_name = "Attribute Statistic";
   ntype.ui_description =
-      "Calculate statistics about a data set from a field evaluated on a geometry";
+      "Add a Attribute Statistic Geometry node\nCalculate statistics about a data set from a field evaluated on a geometry";
   ntype.enum_name_legacy = "ATTRIBUTE_STATISTIC";
   ntype.nclass = NODE_CLASS_ATTRIBUTE;
   ntype.initfunc = node_init;

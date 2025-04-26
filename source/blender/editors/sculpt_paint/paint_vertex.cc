@@ -74,7 +74,6 @@
 #include "sculpt_cloth.hh"
 #include "sculpt_intern.hh"
 #include "sculpt_pose.hh"
-#include "sculpt_undo.hh"
 
 using blender::IndexRange;
 using blender::bke::AttrDomain;
@@ -251,8 +250,7 @@ void init_session_data(const ToolSettings &ts, Object &ob)
     SculptSession &ss = *ob.sculpt;
     if (!vwpaint::brush_use_accumulate(*ts.wpaint)) {
       if (ss.mode.wpaint.alpha_weight == nullptr) {
-        ss.mode.wpaint.alpha_weight = (float *)MEM_callocN(mesh->verts_num * sizeof(float),
-                                                           __func__);
+        ss.mode.wpaint.alpha_weight = MEM_calloc_arrayN<float>(mesh->verts_num, __func__);
       }
       if (ss.mode.wpaint.dvert_prev.is_empty()) {
         MDeformVert initial_value{};
@@ -1843,9 +1841,6 @@ static void vpaint_paint_leaves(bContext *C,
                                 const Span<bke::pbvh::MeshNode> nodes,
                                 const IndexMask &node_mask)
 {
-  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
-  undo::push_nodes(depsgraph, ob, node_mask, undo::Type::Color);
-
   const Brush &brush = *ob.sculpt->cache->brush;
 
   switch ((eBrushVertexPaintType)brush.vertex_brush_type) {
@@ -2026,8 +2021,6 @@ static void vpaint_stroke_done(const bContext *C, PaintStroke *stroke)
 
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, &ob);
 
-  undo::push_end(ob);
-
   MEM_delete(ob.sculpt->cache);
   ob.sculpt->cache = nullptr;
 }
@@ -2042,11 +2035,6 @@ static wmOperatorStatus vpaint_invoke(bContext *C, wmOperator *op, const wmEvent
                                     nullptr,
                                     vpaint_stroke_done,
                                     event->type);
-
-  const Scene &scene = *CTX_data_scene(C);
-  Object &ob = *CTX_data_active_object(C);
-
-  undo::push_begin_ex(scene, ob, "Vertex Paint");
 
   const wmOperatorStatus retval = op->type->modal(C, op, event);
   OPERATOR_RETVAL_CHECK(retval);
@@ -2115,7 +2103,7 @@ void PAINT_OT_vertex_paint(wmOperatorType *ot)
       "Override Location",
       "Override the given `location` array by recalculating object space positions from the "
       "provided `mouse_event` positions");
-  RNA_def_property_flag(prop, PropertyFlag(PROP_HIDDEN | PROP_SKIP_SAVE));
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /** \} */
@@ -2277,7 +2265,6 @@ static wmOperatorStatus vertex_color_set_exec(bContext *C, wmOperator *op)
   using namespace blender::ed::sculpt_paint;
   Scene &scene = *CTX_data_scene(C);
   Object &obact = *CTX_data_active_object(C);
-  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
   if (!BKE_mesh_from_object(&obact)) {
     return OPERATOR_CANCELLED;
   }
@@ -2290,18 +2277,14 @@ static wmOperatorStatus vertex_color_set_exec(bContext *C, wmOperator *op)
 
   bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(obact);
 
-  undo::push_begin(scene, obact, op);
   IndexMaskMemory memory;
   const IndexMask node_mask = bke::pbvh::all_leaf_nodes(pbvh, memory);
-
-  undo::push_nodes(depsgraph, obact, node_mask, undo::Type::Color);
 
   Mesh &mesh = *static_cast<Mesh *>(obact.data);
 
   fill_active_color(obact, paintcol, true, affect_alpha);
 
   pbvh.tag_attribute_changed(node_mask, mesh.active_color_attribute);
-  undo::push_end(obact);
 
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, &obact);
   return OPERATOR_FINISHED;

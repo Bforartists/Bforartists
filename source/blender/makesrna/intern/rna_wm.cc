@@ -1715,7 +1715,7 @@ static StructRNA *rna_Operator_register(Main *bmain,
     STRNCPY(temp_buffers.translation_context, BLT_I18NCONTEXT_OPERATOR_DEFAULT);
   }
 
-  /* Convert foo.bar to FOO_OT_bar
+  /* Convert foo.bar to `FOO_OT_bar`
    * allocate all strings at once. */
   {
     const char *strings[] = {
@@ -1796,7 +1796,7 @@ static bool rna_Operator_unregister(Main *bmain, StructRNA *type)
    * they are 2 different srna's. */
   RNA_struct_free(&BLENDER_RNA, type);
 
-  MEM_freeN((void *)idname);
+  MEM_freeN(idname);
   return true;
 }
 
@@ -1889,7 +1889,7 @@ static StructRNA *rna_MacroOperator_register(Main *bmain,
     STRNCPY(temp_buffers.translation_context, BLT_I18NCONTEXT_OPERATOR_DEFAULT);
   }
 
-  /* Convert foo.bar to FOO_OT_bar
+  /* Convert `foo.bar` to `FOO_OT_bar`
    * allocate all strings at once. */
   {
     const char *strings[] = {

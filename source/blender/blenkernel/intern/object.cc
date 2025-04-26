@@ -321,7 +321,7 @@ static void object_free_data(ID *id)
   if (ob->runtime->curve_cache) {
     BKE_curve_bevelList_free(&ob->runtime->curve_cache->bev);
     if (ob->runtime->curve_cache->anim_path_accum_length) {
-      MEM_freeN((void *)ob->runtime->curve_cache->anim_path_accum_length);
+      MEM_freeN(ob->runtime->curve_cache->anim_path_accum_length);
     }
     MEM_freeN(ob->runtime->curve_cache);
     ob->runtime->curve_cache = nullptr;
@@ -1119,7 +1119,7 @@ void BKE_object_free_curve_cache(Object *ob)
     BKE_displist_free(&ob->runtime->curve_cache->disp);
     BKE_curve_bevelList_free(&ob->runtime->curve_cache->bev);
     if (ob->runtime->curve_cache->anim_path_accum_length) {
-      MEM_freeN((void *)ob->runtime->curve_cache->anim_path_accum_length);
+      MEM_freeN(ob->runtime->curve_cache->anim_path_accum_length);
     }
     BKE_nurbList_free(&ob->runtime->curve_cache->deformed_nurbs);
     MEM_freeN(ob->runtime->curve_cache);
@@ -1532,7 +1532,7 @@ static void object_update_from_subsurf_ccg(Object *object)
     return;
   }
   const int tot_level = mesh_eval->runtime->subdiv_ccg_tot_level;
-  Object *object_orig = DEG_get_original_object(object);
+  Object *object_orig = DEG_get_original(object);
   Mesh *mesh_orig = (Mesh *)object_orig->data;
   multiresModifier_reshapeFromCCG(tot_level, mesh_orig, subdiv_ccg);
   /* NOTE: we need to reshape into an original mesh from main database,
@@ -4647,7 +4647,7 @@ int BKE_object_is_modified(Scene *scene, Object *ob)
 {
   /* Always test on original object since evaluated object may no longer
    * have shape keys or modifiers that were used to evaluate it. */
-  ob = DEG_get_original_object(ob);
+  ob = DEG_get_original(ob);
 
   int flag = 0;
 
@@ -4778,7 +4778,7 @@ int BKE_object_is_deform_modified(Scene *scene, Object *ob)
 {
   /* Always test on original object since evaluated object may no longer
    * have shape keys or modifiers that were used to evaluate it. */
-  ob = DEG_get_original_object(ob);
+  ob = DEG_get_original(ob);
 
   ModifierData *md;
   VirtualModifierData virtual_modifier_data;
