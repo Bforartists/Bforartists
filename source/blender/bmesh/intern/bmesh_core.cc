@@ -1361,7 +1361,7 @@ BMFace *BM_faces_join(BMesh *bm, BMFace **faces, int totface, const bool do_del,
   }
   else {
     /* Otherwise, delete only the faces that were merged
-     * (do not leave the mesh with both both the old and new faces). */
+     * (do not leave the mesh with both the old and new faces). */
     for (i = 0; i < totface; i++) {
       BM_face_kill(bm, faces[i]);
     }
@@ -2245,7 +2245,7 @@ void bmesh_kernel_vert_separate(
   if (r_vout != nullptr) {
     BMVert **verts;
 
-    verts = static_cast<BMVert **>(MEM_mallocN(sizeof(BMVert *) * verts_num, __func__));
+    verts = MEM_malloc_arrayN<BMVert *>(verts_num, __func__);
     *r_vout = verts;
 
     verts[0] = v;

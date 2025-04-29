@@ -2108,7 +2108,8 @@ static void rna_def_userdef_theme_ui(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "icon_folder");
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "File Folders", "Color of folders in the file browser");
-  RNA_def_property_update(prop, 0, "rna_userdef_gpu_update"); // bfa - needed for themeable .icon_folder color
+  //RNA_def_property_update(prop, 0, "rna_userdef_gpu_update"); // bfa - needed for themeable .icon_folder color
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "icon_autokey", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, nullptr, "icon_autokey");
@@ -5146,7 +5147,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "border_width", PROP_INT, PROP_NONE);
   RNA_def_property_ui_text(prop, "Border Width", "Size of the padding around each editor.");
-  RNA_def_property_range(prop, 1.0f, 10.f);
+  RNA_def_property_range(prop, 1.0f, 10.0f);
   RNA_def_property_update(prop, 0, "rna_userdef_gpu_update");
 
   prop = RNA_def_property(srna, "ui_line_width", PROP_ENUM, PROP_NONE);
