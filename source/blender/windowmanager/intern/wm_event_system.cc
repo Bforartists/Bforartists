@@ -2576,8 +2576,10 @@ static void wm_handler_operator_insert(wmWindow *win, wmEventHandler_Op *handler
     LISTBASE_FOREACH (wmEventHandler *, handler_iter, &win->modalhandlers) {
       if (handler_iter->type == WM_HANDLER_TYPE_OP) {
         wmEventHandler_Op *handler_iter_op = (wmEventHandler_Op *)handler_iter;
-        if (handler_iter_op->op->type->flag & OPTYPE_MODAL_PRIORITY) {
-          last_priority_handler = handler_iter;
+        if (handler_iter_op->op != nullptr) {
+          if (handler_iter_op->op->type->flag & OPTYPE_MODAL_PRIORITY) {
+            last_priority_handler = handler_iter;
+          }
         }
       }
     }
@@ -4127,13 +4129,13 @@ void wm_event_do_handlers(bContext *C)
 
       {
         const bool is_consecutive = WM_event_consecutive_gesture_test(event);
-        if (win->event_queue_consecutive_gesture_type != 0) {
+        if (win->event_queue_consecutive_gesture_type != EVENT_NONE) {
           if (event->type == win->event_queue_consecutive_gesture_type) {
             event->flag |= WM_EVENT_IS_CONSECUTIVE;
           }
           else if (is_consecutive || WM_event_consecutive_gesture_test_break(win, event)) {
             CLOG_INFO(WM_LOG_HANDLERS, 1, "consecutive gesture break (%d)", event->type);
-            win->event_queue_consecutive_gesture_type = 0;
+            win->event_queue_consecutive_gesture_type = EVENT_NONE;
             WM_event_consecutive_data_free(win);
           }
         }
@@ -4421,6 +4423,53 @@ void WM_event_add_fileselect(bContext *C, wmOperator *op)
   /* Determined later. */
   ScrArea *root_area = nullptr;
   ARegion *root_region = nullptr;
+
+  if (!G.quiet) {
+    /* Perform some sanity checks.
+     *
+     * - Using the file-path sub-types is important because it's possible paths don't use
+     *   UTF8 compatible strings, the Python API only accounts for this for "path" sub-types.
+     *
+     * - The sub-types in the messages match the Python ID's
+     *   since this it's most likely Python developers will be encountering these messages.
+     *
+     * - These could be made into errors however that would break existing scripts.
+     */
+    const char *prefix = "fileselect_add";
+    PropertyRNA *prop;
+    const char *prop_id;
+
+    prop_id = "filepath";
+    prop = RNA_struct_find_property(op->ptr, prop_id);
+    if (prop) {
+      if (!((RNA_property_type(prop) == PROP_STRING) &&
+            (RNA_property_subtype(prop) == PROP_FILEPATH)))
+      {
+        printf("%s: \"%s\" expected a string with a 'FILE_PATH' subtype.\n", prefix, prop_id);
+      }
+    }
+    prop_id = "directory";
+    prop = RNA_struct_find_property(op->ptr, prop_id);
+    if (prop) {
+      if (!((RNA_property_type(prop) == PROP_STRING) &&
+            (RNA_property_subtype(prop) == PROP_DIRPATH)))
+      {
+        printf("%s: \"%s\" expected a string with a 'DIR_PATH' subtype.\n", prefix, prop_id);
+      }
+    }
+
+    prop_id = "filename";
+    prop = RNA_struct_find_property(op->ptr, prop_id);
+    if (prop) {
+      if (!((RNA_property_type(prop) == PROP_STRING) &&
+            (RNA_property_subtype(prop) == PROP_FILENAME)))
+      {
+        printf("%s: \"%s\" expected a string with a 'FILE_NAME' subtype.\n", prefix, prop_id);
+      }
+    }
+
+    /* Other methods could be checked too `files`, `check_existing`, `filter_glob`... etc. */
+  }
 
   /* Setting the context window unsets the context area & screen. Avoid doing that, so operators
    * calling the file browser can operate in the context the browser was opened in. */
@@ -4875,11 +4924,50 @@ bool WM_event_handler_region_v2d_mask_poll(const wmWindow * /*win*/,
   return event_or_prev_in_rect(event, &rect);
 }
 
-bool WM_event_handler_region_marker_poll(const wmWindow * /*win*/,
-                                         const ScrArea * /*area*/,
+bool WM_event_handler_region_marker_poll(const wmWindow *win,
+                                         const ScrArea *area,
                                          const ARegion *region,
                                          const wmEvent *event)
 {
+  switch (area->spacetype) {
+    case SPACE_ACTION: {
+      const SpaceAction *saction = static_cast<SpaceAction *>(area->spacedata.first);
+      if ((saction->flag & SACTION_SHOW_MARKERS) == 0) {
+        return false;
+      }
+      break;
+    }
+    case SPACE_GRAPH: {
+      const SpaceGraph *sgraph = static_cast<SpaceGraph *>(area->spacedata.first);
+      if ((sgraph->flag & SIPO_SHOW_MARKERS) == 0) {
+        return false;
+      }
+      break;
+    }
+    case SPACE_NLA: {
+      const SpaceNla *snla = static_cast<SpaceNla *>(area->spacedata.first);
+      if ((snla->flag & SNLA_SHOW_MARKERS) == 0) {
+        return false;
+      }
+      break;
+    }
+    case SPACE_SEQ: {
+      const SpaceSeq *seq = static_cast<SpaceSeq *>(area->spacedata.first);
+      if ((seq->flag & SEQ_SHOW_MARKERS) == 0) {
+        return false;
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  const ListBase *markers = ED_scene_markers_get(WM_window_get_active_scene(win),
+                                                 const_cast<ScrArea *>(area));
+  if (BLI_listbase_is_empty(markers)) {
+    return false;
+  }
+
   rcti rect = region->winrct;
   rect.ymax = rect.ymin + UI_MARKER_MARGIN_Y;
   /* TODO: investigate returning `event_or_prev_in_rect(event, &rect)` here.
@@ -6661,7 +6749,7 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
       if (kmi->type == RIGHTMOUSE && kmi->val == KM_PRESS &&
           STR_ELEM(kmi->idname, "WM_OT_call_menu", "WM_OT_call_menu_pie", "WM_OT_call_panel"))
       {
-        name = TIP_("Options");
+        name = IFACE_("Options");
       }
       else if (ot) {
         /* Skip internal operators. */
