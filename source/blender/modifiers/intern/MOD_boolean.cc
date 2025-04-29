@@ -648,7 +648,7 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayout *col = uiLayoutColumn(layout, true);
+  uiLayout *col = &layout->column(true);
   if (use_exact) {
     uiItemR(col, ptr, "material_mode", UI_ITEM_NONE, IFACE_("Materials"), ICON_NONE);
     /* When operand is collection, we always use_self. */
@@ -658,8 +658,8 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
       // uiItemR(col, ptr, "use_self", UI_ITEM_NONE, nullptr, ICON_NONE);
 
       uiLayout *row;
-      col = uiLayoutColumn(layout, true);
-      row = uiLayoutRow(col, true);
+      col = &layout->column(true);
+      row = col->row(true);
       uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
       uiItemR(row, ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       uiItemDecoratorR(row, ptr, "use_self", 0); /*bfa - decorator*/
@@ -669,8 +669,8 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
     // uiItemR(col, ptr, "use_hole_tolerant", UI_ITEM_NONE, nullptr, ICON_NONE);
 
     uiLayout *row;
-    col = uiLayoutColumn(layout, true);
-    row = uiLayoutRow(col, true);
+    col = &layout->column(true);
+    row = col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_hole_tolerant", 0); /*bfa - decorator*/

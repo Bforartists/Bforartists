@@ -527,7 +527,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemR(layout, ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Axis"));
+  row = &layout->row(true, IFACE_("Axis"));
   uiItemR(row, ptr, "use_x", toggles_flag, std::nullopt, ICON_NONE);
   uiItemR(row, ptr, "use_y", toggles_flag, std::nullopt, ICON_NONE);
   uiItemR(row, ptr, "use_z", toggles_flag, std::nullopt, ICON_NONE);
@@ -539,13 +539,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(layout, ptr, "use_volume_preserve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   // uiItemR(layout, ptr, "use_normalized", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_volume_preserve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_volume_preserve", 0); /*bfa - decorator*/
 
-  row = uiLayoutRow(col, true);
+  row = col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_normalized", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_normalized", 0); /*bfa - decorator*/

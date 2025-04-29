@@ -770,9 +770,9 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   if (mode == MOD_MASK_MODE_ARM) {
-    row = uiLayoutRow(layout, true);
+    row = &layout->row(true);
     uiItemR(row, ptr, "armature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    sub = uiLayoutRow(row, true);
+    sub = &row->row(true);
     uiLayoutSetPropDecorate(sub, false);
     uiItemR(sub, ptr, "invert_vertex_group", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
   }
@@ -782,8 +782,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     /*------------------- bfa - original props */
     // uiItemR(layout, ptr, "use_smooth", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-    col = uiLayoutColumn(layout, true);
-    row = uiLayoutRow(col, true);
+    col = &layout->column(true);
+    row = col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_smooth", 0); /*bfa - decorator*/
