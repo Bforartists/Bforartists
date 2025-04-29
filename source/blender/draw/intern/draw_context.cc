@@ -390,7 +390,7 @@ template<> Mesh &DRW_object_get_data_for_drawing(const Object &object)
 
 DRWData *DRW_viewport_data_create()
 {
-  DRWData *drw_data = static_cast<DRWData *>(MEM_callocN(sizeof(DRWData), "DRWData"));
+  DRWData *drw_data = MEM_callocN<DRWData>("DRWData");
 
   drw_data->default_view = new blender::draw::View("DrawDefaultView");
 
@@ -1336,6 +1336,8 @@ void DRW_draw_render_loop_offscreen(Depsgraph *depsgraph,
   DRWContext draw_ctx(mode, depsgraph, render_viewport, nullptr, region, v3d);
   draw_ctx.acquire_data();
   draw_ctx.options.draw_background = draw_background;
+  /* Init modules ahead of time because the begin_sync happens before DRW_render_object_iter. */
+  draw_ctx.data->modules_init();
 
   drw_draw_render_loop_3d(draw_ctx, engine_type);
 
