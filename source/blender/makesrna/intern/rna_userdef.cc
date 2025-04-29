@@ -155,7 +155,7 @@ static const EnumPropertyItem rna_enum_key_insert_channels[] = {
 static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
     {GPU_BACKEND_OPENGL, "OPENGL", 0, "OpenGL", "Use OpenGL backend"},
     {GPU_BACKEND_METAL, "METAL", 0, "Metal", "Use Metal backend"},
-    {GPU_BACKEND_VULKAN, "VULKAN", 0, "Vulkan (experimental)", "Use Vulkan backend"},
+    {GPU_BACKEND_VULKAN, "VULKAN", 0, "Vulkan", "Use Vulkan backend"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 static const EnumPropertyItem rna_enum_preference_gpu_preferred_device_items[] = {
@@ -7623,6 +7623,14 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
                            "Enable viewport debugging options for developers in the overlays "
                            "pop-over");
   RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
+
+  prop = RNA_def_property(srna, "write_large_blend_file_blocks", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "write_large_blend_file_blocks", 1);
+  RNA_def_property_ui_text(
+      prop,
+      "Write Large Blend File Blocks",
+      "Enables support for writing .blend files that contain buffers larger than 2 GB. If "
+      "enabled, any saved files can not be opened by older Blender versions");
 
   prop = RNA_def_property(srna, "use_all_linked_data_direct", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
