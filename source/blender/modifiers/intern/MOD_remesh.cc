@@ -231,7 +231,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   if (mode == MOD_REMESH_VOXEL) {
     uiItemR(col, ptr, "voxel_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemR(col, ptr, "adaptivity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -247,14 +247,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     /*------------------- bfa - original props */
     // uiItemR(layout, ptr, "use_remove_disconnected", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-    col = uiLayoutColumn(layout, true);
-    row = uiLayoutRow(col, true);
+    col = &layout->column(true);
+    row = col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
     /* ------------ end bfa */
 
-    row = uiLayoutRow(layout, false);
+    row = &layout->row(false);
     uiLayoutSetActive(row, RNA_boolean_get(ptr, "use_remove_disconnected"));
     uiItemR(layout, ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
@@ -262,8 +262,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "use_smooth_shade", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/

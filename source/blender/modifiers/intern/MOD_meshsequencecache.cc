@@ -390,8 +390,8 @@ static void panel_draw(const bContext *C, Panel *panel)
     /*------------------- bfa - original props */
     // uiItemR(layout, ptr, "use_vertex_interpolation", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-    col = uiLayoutColumn(layout, true);
-    row = uiLayoutRow(col, true);
+    col = &layout->column(true);
+    row = col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_vertex_interpolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_vertex_interpolation", 0); /*bfa - decorator*/

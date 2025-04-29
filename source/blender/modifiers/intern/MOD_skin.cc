@@ -2023,7 +2023,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemR(layout, ptr, "branch_smoothing", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Symmetry"));
+  row = &layout->row(true, IFACE_("Symmetry"));
   uiItemR(row, ptr, "use_x_symmetry", toggles_flag, std::nullopt, ICON_NONE);
   uiItemR(row, ptr, "use_y_symmetry", toggles_flag, std::nullopt, ICON_NONE);
   uiItemR(row, ptr, "use_z_symmetry", toggles_flag, std::nullopt, ICON_NONE);
@@ -2031,18 +2031,18 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  row = uiLayoutRow(layout, false);
+  row = &layout->row(false);
   uiItemO(row, IFACE_("Create Armature"), ICON_NONE, "OBJECT_OT_skin_armature_create");
   uiItemO(row, std::nullopt, ICON_NONE, "MESH_OT_customdata_skin_add");
 
-  row = uiLayoutRow(layout, false);
+  row = &layout->row(false);
   uiItemFullO(row,
               "OBJECT_OT_skin_loose_mark_clear",
               IFACE_("Mark Loose"),
