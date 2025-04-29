@@ -433,7 +433,6 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
         return context.bone
 
     def draw(self, context):
-        import platform
         layout = self.layout
         layout.use_property_split = True
 
@@ -457,7 +456,7 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
                 sub.prop(pchan, "custom_shape_translation", text="Translation")
                 sub.prop(pchan, "custom_shape_rotation_euler", text="Rotation")
                 sub.prop(pchan, "custom_shape_scale_xyz", text="Scale")
-
+                
                 sub.prop_search(pchan, "custom_shape_transform", ob.pose, "bones", text="Override Transform")
                 sub.separator()
 
