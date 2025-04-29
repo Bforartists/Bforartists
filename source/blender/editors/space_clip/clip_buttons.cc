@@ -126,18 +126,18 @@ void uiTemplateMovieClip(uiLayout *layout,
   }
 
   if (clip) {
-    uiLayout *row = uiLayoutRow(layout, false);
+    uiLayout *row = &layout->row(false);
     uiBlock *block = uiLayoutGetBlock(row);
     uiDefBut(block, UI_BTYPE_LABEL, 0, IFACE_("File Path:"), 0, 19, 145, 19, nullptr, 0, 0, "");
 
-    row = uiLayoutRow(layout, false);
+    row = &layout->row(false);
     uiLayout *split = uiLayoutSplit(row, 0.0f, false);
-    row = uiLayoutRow(split, true);
+    row = &split->row(true);
 
     uiItemR(row, &clipptr, "filepath", UI_ITEM_NONE, "", ICON_NONE);
     uiItemO(row, "", ICON_FILE_REFRESH, "clip.reload");
 
-    uiLayout *col = uiLayoutColumn(layout, false);
+    uiLayout *col = &layout->column(false);
     uiTemplateColorspaceSettings(col, &clipptr, "colorspace_settings");
   }
 }
@@ -177,7 +177,7 @@ void uiTemplateTrack(uiLayout *layout, PointerRNA *ptr, const StringRefNull prop
     scopes->track_preview_height = UI_UNIT_Y * 20;
   }
 
-  uiLayout *col = uiLayoutColumn(layout, true);
+  uiLayout *col = &layout->column(true);
   uiBlock *block = uiLayoutGetBlock(col);
 
   uiDefBut(block,
@@ -520,25 +520,25 @@ void uiTemplateMarker(uiLayout *layout,
     /* bfa - new expanded prop UI style */
     uiLayout *col, *row, *lcol, *vcol;  // label column, values column
 
-    col = uiLayoutColumn(layout, true);
+    col = &layout->column(true);
     uiLayoutSetActive(col, (cb->marker_flag & MARKER_DISABLED) == 0);
 
     uiItemL(col, IFACE_("Position"), ICON_NONE); 	/*bfa */
 
 	/*bfa */
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
     uiItemS(row);
 
-    lcol = uiLayoutColumn(row, true);
+    lcol = &col->row(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("X"), ICON_NONE);
     uiItemL(lcol, IFACE_("Y"), ICON_NONE);
 
-    vcol = uiLayoutColumn(row, true);
+    vcol = &col->row(true);
     block = uiLayoutGetBlock(vcol);
 	/*end bfa */
     UI_block_align_begin(block);
@@ -577,19 +577,19 @@ void uiTemplateMarker(uiLayout *layout,
 	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Offset"), ICON_NONE);
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
     uiItemS(row);
 
-    lcol = uiLayoutColumn(row, true);
+    lcol = &col->row(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("X"), ICON_NONE);
     uiItemL(lcol, IFACE_("Y"), ICON_NONE);
 
-    vcol = uiLayoutColumn(row, true);
+    vcol = &col->row(true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
 	/*end bfa */
@@ -627,19 +627,19 @@ void uiTemplateMarker(uiLayout *layout,
 	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Pattern Area"), ICON_NONE);
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
     uiItemS(row);
 
-    lcol = uiLayoutColumn(row, true);
+    lcol = &col->row(true);
     uiLayoutSetUnitsX(lcol, 2.);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("Width"), ICON_NONE);
     uiItemL(lcol, IFACE_("Height"), ICON_NONE);
 
-    vcol = uiLayoutColumn(row, true);
+    vcol = &col->row(true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
 	/*end bfa */
@@ -678,19 +678,19 @@ void uiTemplateMarker(uiLayout *layout,
 	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Search Area"), ICON_NONE);
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
     uiItemS(row);
 
-    lcol = uiLayoutColumn(row, true);
+    lcol = &col->row(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("X"), ICON_NONE);
     uiItemL(lcol, IFACE_("Y"), ICON_NONE);
 
-    vcol = uiLayoutColumn(row, true);
+    vcol = &col->row(true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
 	/*end bfa */
@@ -728,19 +728,19 @@ void uiTemplateMarker(uiLayout *layout,
 
     /*bfa -  left aligned*/
     uiItemS(col);
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
     uiItemS(row);
 
-    lcol = uiLayoutColumn(row, true);
+    lcol = &col->row(true);
     uiLayoutSetUnitsX(lcol, 2.);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("Width"), ICON_NONE);
     uiItemL(lcol, IFACE_("Height"), ICON_NONE);
 
-    vcol = uiLayoutColumn(row, true);
+    vcol = &col->row(true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
     /*bfa end*/
@@ -812,7 +812,7 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
   MovieClip *clip = static_cast<MovieClip *>(clipptr.data);
   MovieClipUser *user = static_cast<MovieClipUser *>(userptr->data);
 
-  uiLayout *col = uiLayoutColumn(layout, false);
+  uiLayout *col = &layout->column(false);
   uiLayoutSetAlignment(col, UI_LAYOUT_ALIGN_RIGHT);
 
   /* NOTE: Put the frame to cache. If the panel is drawn, the display will also be shown, as well

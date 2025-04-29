@@ -299,7 +299,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  col = uiLayoutColumn(layout, true);
+  col = &layout->column(true);
   uiItemR(col, ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
   uiItemR(col, ptr, "sculpt_levels", UI_ITEM_NONE, IFACE_("Sculpt"), ICON_NONE);
   uiItemR(col, ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
@@ -311,8 +311,8 @@ static void panel_draw(const bContext *C, Panel *panel)
   // uiItemR(col, ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"),
   // ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
@@ -322,8 +322,8 @@ static void panel_draw(const bContext *C, Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "show_only_control_edges", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
@@ -368,7 +368,7 @@ static void subdivisions_panel_draw(const bContext * /*C*/, Panel *panel)
   RNA_enum_set(&op_ptr, "mode", int8_t(MultiresSubdivideModeType::CatmullClark));
   RNA_string_set(&op_ptr, "modifier", ((ModifierData *)mmd)->name);
 
-  row = uiLayoutRow(layout, false);
+  row = &layout->row(false);
   uiItemFullO(row,
               "OBJECT_OT_multires_subdivide",
               IFACE_("Simple"),
@@ -406,7 +406,7 @@ static void shape_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetEnabled(layout, RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
 
-  row = uiLayoutRow(layout, false);
+  row = &layout->row(false);
   uiItemO(row, IFACE_("Reshape"), ICON_NONE, "OBJECT_OT_multires_reshape");
   uiItemO(row, IFACE_("Apply Base"), ICON_NONE, "OBJECT_OT_multires_base_apply");
 }
@@ -426,12 +426,12 @@ static void generate_panel_draw(const bContext * /*C*/, Panel *panel)
         layout, IFACE_("Rebuild Subdivisions"), ICON_NONE, "OBJECT_OT_multires_rebuild_subdiv");
   }
 
-  col = uiLayoutColumn(layout, false);
-  row = uiLayoutRow(col, false);
+  col = &layout->column(false);
+  row = &col->row(false);
   if (is_external) {
     uiItemO(row, IFACE_("Pack External"), ICON_NONE, "OBJECT_OT_multires_external_pack");
     uiLayoutSetPropSep(col, true);
-    row = uiLayoutRow(col, false);
+    row = &col->row(false);
     uiItemR(row, ptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else {
@@ -454,7 +454,7 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemR(layout, ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   uiLayoutSetActive(col, true);
   uiItemR(col, ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemR(col, ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -463,13 +463,13 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(layout, ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   // uiItemR(layout, ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
 
-  row = uiLayoutRow(col, true);
+  row = col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/
