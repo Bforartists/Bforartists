@@ -210,15 +210,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  row = uiLayoutRow(layout, true);
+  row = &layout->row(true);
   uiItemR(row, ptr, "object", UI_ITEM_NONE, IFACE_("Source"), ICON_NONE);
-  sub = uiLayoutRow(row, true);
+  sub = &row->row(true);
   uiLayoutSetPropDecorate(sub, false);
   uiItemR(sub, ptr, "use_object_transform", UI_ITEM_NONE, "", ICON_ORIENTATION_GLOBAL);
 
   uiItemR(layout, ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  row = uiLayoutRow(layout, false);
+  row = &layout->row(false);
   uiLayoutSetActive(row,
                     !ELEM(RNA_enum_get(ptr, "mix_mode"),
                           CDT_MIX_NOMIX,
@@ -423,26 +423,25 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   /*------------------- bfa - original props */
-  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Max Distance"));
-  // uiItemR(row, ptr, "use_max_distance", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = uiLayoutRow(row, true);
-  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
-  // uiItemR(sub, ptr, "max_distance", UI_ITEM_NONE, "", ICON_NONE);
-
+  //row = &layout->row(true, IFACE_("Max Distance"));
+  //uiItemR(row, ptr, "use_max_distance", UI_ITEM_NONE, "", ICON_NONE);
+  //sub = &row->row(true);
+  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
+  //uiItemR(sub, ptr, "max_distance", UI_ITEM_NONE, "", ICON_NONE);
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+  uiLayout *split = &layout->split(0.385f, true);
 
   /* FIRST PART ................................................ */
-  row = uiLayoutRow(split, false);
+  row = &split->row(false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_max_distance", UI_ITEM_NONE, "Max Distance", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_max_distance", 0); /*bfa - decorator*/
 
   /* SECOND PART ................................................ */
-  row = uiLayoutRow(split, false);
+  row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_max_distance")) {
     uiItemR(row, ptr, "max_distance", UI_ITEM_NONE, "", ICON_NONE);
   }
