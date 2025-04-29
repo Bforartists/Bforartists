@@ -1895,7 +1895,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
   uiLayoutSetPropDecorate(layout, false);
   uiItemR(layout, op->ptr, "shape_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = uiLayoutColumn(layout, false); /*bfa -  added col*/
+  col = &layout->column(false); /*bfa -  added col*/
   uiLayoutSetPropSep(col, false);      /* bfa - use_property_split = False */
   uiItemR(col, op->ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   {
@@ -1907,13 +1907,13 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
     /* FIRST PART ................................................ */
-    row = uiLayoutRow(split, false);
+    row = &split->column(false);
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, op->ptr, "rotate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* SECOND PART ................................................ */
-    row = uiLayoutRow(split, false);
+    row = &split->column(false);
     if (RNA_boolean_get(op->ptr, "rotate")) {
       uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
     }
@@ -1923,7 +1923,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 
     // ------------------------------- end bfa
 
-    uiLayout *sub = uiLayoutRow(layout, true);
+    uiLayout *sub = &layout->row(true);
     // uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "rotate"));
     if (RNA_boolean_get(op->ptr, "rotate")) {
       uiItemS(sub); /*bfa - separator*/
@@ -1935,7 +1935,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
   }
   uiItemR(layout, op->ptr, "margin_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemR(layout, op->ptr, "margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayout *sub = uiLayoutRow(layout, true);
+  uiLayout *sub = &layout->row(true);
   uiItemS(sub); /*bfa - separator*/
   uiItemS(sub); /*bfa - separator*/
   uiItemS(sub); /*bfa - separator*/
@@ -1950,13 +1950,13 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
     /* FIRST PART ................................................ */
-    row = uiLayoutRow(split, false);
+    row = &split->column(false);
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, op->ptr, "pin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* SECOND PART ................................................ */
-    row = uiLayoutRow(split, false);
+    row = &split->column(false);
     if (RNA_boolean_get(op->ptr, "pin")) {
       uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
     }
@@ -1966,7 +1966,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 
     // ------------------------------- end bfa
 
-    uiLayout *sub = uiLayoutRow(layout, true);
+    uiLayout *sub = &layout->row(true);
     // uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "pin"));
     if (RNA_boolean_get(op->ptr, "pin")) {
       uiItemS(sub); /*bfa - separator*/
@@ -2959,7 +2959,7 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
 
   uiLayout *col;
 
-  col = uiLayoutColumn(layout, true);
+  col = &layout->column(true);
   uiItemR(col, &ptr, "method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   bool is_slim = RNA_enum_get(op->ptr, "method") == UVCALC_UNWRAP_METHOD_MINIMUM_STRETCH;
 
@@ -2972,7 +2972,7 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
     uiLayoutSetPropSep(col, false); /* bfa - float left */
     uiItemR(col, &ptr, "use_weights", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     if (RNA_boolean_get(op->ptr, "use_weights")) {
-      col = uiLayoutColumn(layout, true);
+      col = &layout->column(true);
       uiItemR(col, &ptr, "weight_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       uiItemR(col, &ptr, "weight_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
@@ -3029,8 +3029,9 @@ void UV_OT_unwrap(wmOperatorType *ot)
       method_items,
       tool_settings_default->unwrapper,
       "Method",
-      "The method to unwrap the mesh");
-  RNA_def_boolean(ot->srna,
+      "The method to unwrap the mesh (Angle Based usually gives better results than Conformal, while "
+      "being somewhat slower)");
+      RNA_def_boolean(ot->srna,
                   "fill_holes",
                   tool_settings_default->uvcalc_flag & UVCALC_FILLHOLES,
                   "Fill Holes",
