@@ -111,36 +111,36 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemR(layout, ptr, "thickness", UI_ITEM_NONE, IFACE_("Thickness"), ICON_NONE);
   uiItemR(layout, ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
+  col = &layout->column(true);
   /*------------------- bfa - original props */
   // uiItemR(col, ptr, "use_boundary", UI_ITEM_NONE, IFACE_("Boundary"), ICON_NONE);
   // uiItemR(col, ptr, "use_replace", UI_ITEM_NONE, IFACE_("Replace Original"), ICON_NONE);
 
-  row = uiLayoutRow(col, true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_boundary", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_boundary", 0); /*bfa - decorator*/
 
-  row = uiLayoutRow(col, true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_replace", UI_ITEM_NONE, IFACE_("Replace Original"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_replace", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  // col = uiLayoutColumnWithHeading(layout, true, IFACE_("Thickness"));
+  // col = &layout->column(true, IFACE_("Thickness"));
   // uiItemR(col, ptr, "use_even_offset", UI_ITEM_NONE, IFACE_("Even"), ICON_NONE);
   // uiItemR(col, ptr, "use_relative_offset", UI_ITEM_NONE, IFACE_("Relative"), ICON_NONE);
 
   uiItemL(col, TIP_("Thickness"), ICON_NONE);
 
-  row = uiLayoutRow(col, true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
   uiItemR(row, ptr, "use_even_offset", UI_ITEM_NONE, IFACE_("Even"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
 
-  row = uiLayoutRow(col, true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
   uiItemR(row, ptr, "use_relative_offset", UI_ITEM_NONE, IFACE_("Relative"), ICON_NONE);
@@ -148,9 +148,9 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Crease Edges"));
+  // row = &layout->row(true, IFACE_("Crease Edges"));
   // uiItemR(row, ptr, "use_crease", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = uiLayoutRow(row, true);
+  // sub = &row->row(true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_crease"));
   // uiItemR(sub, ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
 
@@ -160,14 +160,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
   /* FIRST PART ................................................ */
-  row = uiLayoutRow(split, false);
+  row = &split->row(false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_crease", UI_ITEM_NONE, "Crease Edges", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_crease", 0); /*bfa - decorator*/
 
   /* SECOND PART ................................................ */
-  row = uiLayoutRow(split, false);
+  row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_crease")) {
     uiItemR(row, ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
   }
@@ -195,7 +195,7 @@ static void vertex_group_panel_draw(const bContext * /*C*/, Panel *panel)
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  row = uiLayoutRow(layout, true);
+  row = &layout->row(true);
   uiLayoutSetActive(row, has_vertex_group);
   uiItemR(row, ptr, "thickness_vertex_group", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
 }

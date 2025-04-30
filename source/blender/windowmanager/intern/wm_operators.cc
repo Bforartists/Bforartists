@@ -1455,7 +1455,7 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *region, void *arg_op)
   uiItemS_ex(layout, 0.2f, LayoutSeparatorType::Line);
   uiItemS_ex(layout, 0.5f);
 
-  uiLayout *col = uiLayoutColumn(layout, false);
+  uiLayout *col = &layout->column(false);
   /* BFA - align operator properties to left in redo panel (UI_BUT_LABEL_ALIGN_SPLIT_COLUMN) */
   uiTemplateOperatorPropertyButs(C, col, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
 
@@ -1589,7 +1589,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
 
   /* Message lines. */
   if (message_lines.size() > 0) {
-    uiLayout *lines = uiLayoutColumn(layout, false);
+    uiLayout *lines = &layout->column(false);
     uiLayoutSetScaleY(lines, 0.65f);
     uiItemS_ex(lines, 0.1f);
     for (auto &st : message_lines) {
@@ -1617,7 +1617,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
    * confirmation buttons which are shown instead of these, see: #124098. */
   if (!UI_block_has_active_default_button(uiLayoutGetBlock(layout))) {
     /* New column so as not to interfere with custom layouts, see: #26436. */
-    uiLayout *col = uiLayoutColumn(layout, false);
+    uiLayout *col = &layout->column(false);
     uiBlock *col_block = uiLayoutGetBlock(col);
     uiBut *confirm_but;
     uiBut *cancel_but;
@@ -1638,14 +1638,14 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
                              0,
                              0,
                              "");
-      uiLayoutColumn(col, false);
+      col->column(false);
     }
 
     cancel_but = uiDefBut(
         col_block, UI_BTYPE_BUT, 0, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, "");
 
     if (!windows_layout) {
-      uiLayoutColumn(col, false);
+      col->column(false);
       confirm_but = uiDefBut(col_block,
                              UI_BTYPE_BUT,
                              0,
