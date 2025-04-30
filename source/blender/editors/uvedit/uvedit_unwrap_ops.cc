@@ -1907,7 +1907,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
     /* FIRST PART ................................................ */
-    row = split->row(false);
+    row = &split->row(false);
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, op->ptr, "rotate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -1950,13 +1950,13 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
     /* FIRST PART ................................................ */
-    row = split->row(false);
+    row = &split->row(false);
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, op->ptr, "pin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* SECOND PART ................................................ */
-    row = split->row(false);
+    row = &split->row(false);
     if (RNA_boolean_get(op->ptr, "pin")) {
       uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
     }

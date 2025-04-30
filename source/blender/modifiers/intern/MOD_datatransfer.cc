@@ -435,14 +435,14 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
   /* FIRST PART ................................................ */
-  row = split->row(false);
+  row = &split->row(false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_max_distance", UI_ITEM_NONE, "Max Distance", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_max_distance", 0); /*bfa - decorator*/
 
   /* SECOND PART ................................................ */
-  row = split->row(false);
+  row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_max_distance")) {
     uiItemR(row, ptr, "max_distance", UI_ITEM_NONE, "", ICON_NONE);
   }
