@@ -141,9 +141,9 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   /*------------------- bfa - original props */
-  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Edge Angle"));
+  // row = &layout->row(true, IFACE_("Edge Angle"));
   // uiItemR(row, ptr, "use_edge_angle", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = uiLayoutRow(row, true);
+  // sub = &row->row(true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_edge_angle"));
   // uiItemR(sub, ptr, "split_angle", UI_ITEM_NONE, "", ICON_NONE);
 
@@ -153,14 +153,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
   /* FIRST PART ................................................ */
-  row = uiLayoutRow(split, false);
+  row = &split->row(false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_edge_angle", UI_ITEM_NONE, "Edge Angle", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_angle", 0); /*bfa - decorator*/
 
   /* SECOND PART ................................................ */
-  row = uiLayoutRow(split, false);
+  row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_edge_angle")) {
     uiItemR(row, ptr, "split_angle", UI_ITEM_NONE, "", ICON_NONE);
   }
@@ -173,8 +173,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_sharp", 0); /*bfa - decorator*/
