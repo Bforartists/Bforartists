@@ -108,7 +108,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     // uiItemR(col, ptr, "use_smooth_shade", UI_ITEM_NONE, nullptr, ICON_NONE);
 
     col = &layout->column(false);;
-    row = &col-row(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/

@@ -2282,27 +2282,32 @@ void uiItemFullR(uiLayout *layout,
         /* bfa - keep other props the same */
         layout_split = uiLayoutSplit(
             layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
-        layout_sub = uiLayoutColumn(layout_split, true);
+        layout_sub = &layout_split->column(true);
         layout_sub->space_ = 0;
       }
       else if (ui_item_rna_is_expand(prop, index, flag)) {
       // char name_with_suffix[UI_MAX_DRAW_STR + 2];
         /* bfa - create a column so label could be added before */
-        uiLayout *col = uiLayoutColumn(layout_row ? layout_row : layout, true);
+        uiLayout *col;
+        if (layout_row != nullptr) {
+          col = &layout_row->column(true);
+        } else {
+          col = &layout->column(true);
+        }
 
         /* bfa - property label */
         uiItemL(col, name, ICON_NONE);
         expand_label_added = true;
 
         /* bfa - replace split with row */
-        layout_split = uiLayoutRow(col, true);
+        layout_split = &col->row(true);
 
         /* bfa - indent */
         uiItemS(layout_split);
         uiItemS(layout_split);
 
         /* bfa - XYZW column */
-        layout_sub = uiLayoutColumn(layout_split, true);
+        layout_sub = &layout_split->column(true);
         /* bfa - set fixed size, otherwise space is wasted */
         uiLayoutSetFixedSize(layout_sub, true);
 
@@ -2343,7 +2348,7 @@ void uiItemFullR(uiLayout *layout,
         /* bfa - keep other props the same */
         layout_split = uiLayoutSplit(
             layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
-        layout_sub = uiLayoutColumn(layout_split, true);
+        layout_sub = &layout_split->column(true);
         layout_sub->space_ = 0;
 
         but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
