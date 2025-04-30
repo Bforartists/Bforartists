@@ -299,7 +299,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Motion"));
+  row = &layout->row(true, IFACE_("Motion"));
   uiItemR(row,
           ptr,
           "use_x",
@@ -316,17 +316,17 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(layout, ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_cyclic", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  // row = uiLayoutRowWithHeading(layout, true, IFACE_("Along Normals"));
+  // row = &layout->row(true, IFACE_("Along Normals"));
   // uiItemR(row, ptr, "use_normal", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = uiLayoutRow(row, true);
+  // sub = &row->row(true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_normal"));
   // uiItemR(sub, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
   // uiItemR(sub, ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
@@ -338,13 +338,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
   /* FIRST PART ................................................ */
-  row = uiLayoutRow(split, false);
+  row = &split->row(false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_normal", UI_ITEM_NONE, "Along Normals", ICON_NONE);
 
   /* SECOND PART ................................................ */
-  row = uiLayoutRow(split, true);
+  row = &split->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   if (RNA_boolean_get(ptr, "use_normal")) {
     uiItemR(row, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
@@ -359,7 +359,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
   // ------------------------------- end bfa
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   uiItemR(col, ptr, "falloff_radius", UI_ITEM_NONE, IFACE_("Falloff"), ICON_NONE);
   uiItemR(col, ptr, "height", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
   uiItemR(col, ptr, "width", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
@@ -381,7 +381,7 @@ static void position_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemR(layout, ptr, "start_position_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
+  col = &layout->column(true);
   uiItemR(col, ptr, "start_position_x", UI_ITEM_NONE, IFACE_("Start Position X"), ICON_NONE);
   uiItemR(col, ptr, "start_position_y", UI_ITEM_NONE, "Y", ICON_NONE);
 }
@@ -395,7 +395,7 @@ static void time_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   uiItemR(col, ptr, "time_offset", UI_ITEM_NONE, IFACE_("Offset"), ICON_NONE);
   uiItemR(col, ptr, "lifetime", UI_ITEM_NONE, IFACE_("Life"), ICON_NONE);
   uiItemR(col, ptr, "damping_time", UI_ITEM_NONE, IFACE_("Damping"), ICON_NONE);
@@ -416,7 +416,7 @@ static void texture_panel_draw(const bContext *C, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   uiItemR(col, ptr, "texture_coords", UI_ITEM_NONE, IFACE_("Coordinates"), ICON_NONE);
   if (texture_coords == MOD_DISP_MAP_OBJECT) {
     uiItemR(col, ptr, "texture_coords_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);

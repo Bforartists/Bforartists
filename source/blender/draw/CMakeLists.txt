@@ -513,7 +513,6 @@ set(GLSL_SRC
   engines/workbench/shaders/workbench_effect_smaa_frag.glsl
   engines/workbench/shaders/workbench_effect_smaa_vert.glsl
   engines/workbench/shaders/workbench_effect_taa_frag.glsl
-  engines/workbench/shaders/workbench_extract_stencil.glsl
   engines/workbench/shaders/workbench_image_lib.glsl
   engines/workbench/shaders/workbench_matcap_lib.glsl
   engines/workbench/shaders/workbench_material_lib.glsl
@@ -743,16 +742,20 @@ list(APPEND LIB
 )
 
 set(GLSL_SOURCE_CONTENT "")
-
+set(GLSL_METADATA_CONTENT "")
 foreach(GLSL_FILE ${GLSL_SRC})
   get_filename_component(GLSL_FILE_NAME ${GLSL_FILE} NAME)
   string(REPLACE "." "_" GLSL_FILE_NAME_UNDERSCORES ${GLSL_FILE_NAME})
-  string(APPEND GLSL_SOURCE_CONTENT "SHADER_SOURCE\(datatoc_${GLSL_FILE_NAME_UNDERSCORES}, \"${GLSL_FILE_NAME}\", \"${GLSL_FILE}\"\)\n")
+  string(APPEND GLSL_SOURCE_CONTENT "SHADER_SOURCE\(${GLSL_FILE_NAME_UNDERSCORES}, \"${GLSL_FILE_NAME}\", \"${GLSL_FILE}\"\)\n")
+  string(APPEND GLSL_METADATA_CONTENT "#include \"${GLSL_FILE}.hh\"\n")
 endforeach()
 
 set(glsl_source_list_file "${CMAKE_CURRENT_BINARY_DIR}/glsl_draw_source_list.h")
 file(GENERATE OUTPUT ${glsl_source_list_file} CONTENT "${GLSL_SOURCE_CONTENT}")
 list(APPEND SRC ${glsl_source_list_file})
+set(glsl_metadata_list_file "${CMAKE_CURRENT_BINARY_DIR}/glsl_draw_metadata_list.hh")
+file(GENERATE OUTPUT ${glsl_metadata_list_file} CONTENT "${GLSL_METADATA_CONTENT}")
+list(APPEND SRC ${glsl_metadata_list_file})
 list(APPEND INC ${CMAKE_CURRENT_BINARY_DIR})
 
 target_include_directories(bf_draw_shaders PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

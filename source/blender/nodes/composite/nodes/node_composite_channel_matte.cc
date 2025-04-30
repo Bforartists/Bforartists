@@ -54,11 +54,6 @@ static void node_composit_init_channel_matte(bNodeTree * /*ntree*/, bNode *node)
 {
   NodeChroma *c = MEM_callocN<NodeChroma>(__func__);
   node->storage = c;
-  c->t1 = 1.0f;
-  c->t2 = 0.0f;
-  c->t3 = 0.0f;
-  c->fsize = 0.0f;
-  c->fstrength = 0.0f;
   c->algorithm = 1;  /* Max channel limiting. */
   c->channel = 1;    /* Limit by red. */
   node->custom1 = 1; /* RGB channel. */
@@ -70,7 +65,7 @@ static void node_composit_buts_channel_matte(uiLayout *layout, bContext * /*C*/,
   uiLayout *col, *row;
 
   uiItemL(layout, IFACE_("Color Space:"), ICON_NONE);
-  row = uiLayoutRow(layout, false);
+  row = &layout->row(false);
   uiItemR(row,
           ptr,
           "color_space",
@@ -78,9 +73,9 @@ static void node_composit_buts_channel_matte(uiLayout *layout, bContext * /*C*/,
           std::nullopt,
           ICON_NONE);
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   uiItemL(col, IFACE_("Key Channel:"), ICON_NONE);
-  row = uiLayoutRow(col, false);
+  row = &col->row(false);
   uiItemR(row,
           ptr,
           "matte_channel",
@@ -88,12 +83,12 @@ static void node_composit_buts_channel_matte(uiLayout *layout, bContext * /*C*/,
           std::nullopt,
           ICON_NONE);
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
 
   uiItemR(col, ptr, "limit_method", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
   if (RNA_enum_get(ptr, "limit_method") == 0) {
     uiItemL(col, IFACE_("Limiting Channel:"), ICON_NONE);
-    row = uiLayoutRow(col, false);
+    row = &col->row(false);
     uiItemR(row,
             ptr,
             "limit_channel",
