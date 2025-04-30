@@ -499,8 +499,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(col, ptr, "use_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   /* ------------ end bfa */
@@ -602,7 +602,7 @@ static void spray_panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(col, ptr, "invert_spray", UI_ITEM_NONE, IFACE_("Invert"), ICON_NONE);
 
-  row = uiLayoutRow(col, true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "invert_spray", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   /* ------------ end bfa */

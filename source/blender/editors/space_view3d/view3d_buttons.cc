@@ -595,7 +595,7 @@ static void v3d_editvertex_buts(
     memcpy(&tfp->ve_median, &median_basis, sizeof(tfp->ve_median));
 
     /* bfa - new expand prop UI style*/
-    col = uiLayoutColumn(layout, true);
+    col = &layout->column(true);
 
     if (tot == 1) {
       if (totcurvedata) {
@@ -617,12 +617,12 @@ static void v3d_editvertex_buts(
 
     /* bfa */
 
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     uiItemS(row);
     uiItemS(row);
 
-    col = uiLayoutColumn(row, true);
+    col = &row->column(true);
     uiLayoutSetUnitsX(col, .75);
     uiLayoutSetFixedSize(col, true);
 
@@ -634,7 +634,7 @@ static void v3d_editvertex_buts(
       uiItemL(col, IFACE_("W"), ICON_NONE);
     }
 
-    col = uiLayoutColumn(row, true);
+    col = &row->column(true);
     subblock = uiLayoutGetBlock(col);
     UI_block_layout_set_current(subblock, col);
 
@@ -708,7 +708,7 @@ static void v3d_editvertex_buts(
     UI_block_layout_set_current(block, layout); /* bfa */
 
     /* bfa */
-    row = uiLayoutRow(layout, true); /* bfa - use high level UI when possible */
+    row = &layout->row(true); /* bfa - use high level UI when possible */
     subblock = uiLayoutGetBlock(row);
     UI_block_layout_set_current(subblock, row);
 
@@ -751,14 +751,14 @@ static void v3d_editvertex_buts(
                 tot == 1 ? IFACE_("Vertex Data Mean") : IFACE_("Vertices Data Mean"),
                 ICON_NONE); /* bfa - put the term "mean" into the label */
 
-        row = uiLayoutRow(layout, false);
+        row = &layout->row(false);
         uiItemS(row); /* bfa - separator indent */
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
 
         uiItemL(col, IFACE_("Bevel Weight"), ICON_NONE);
         uiItemL(col, IFACE_("Crease"), ICON_NONE); /* -bfa move text to left of slider */
 
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
         subblock = uiLayoutGetBlock(col);
         UI_block_layout_set_current(subblock, col);
 
@@ -796,14 +796,14 @@ static void v3d_editvertex_buts(
       }
       if (has_skinradius) {
         /* bfa */
-        row = uiLayoutRow(layout, false);
+        row = &layout->row(false);
         uiItemS(row); /* bfa - separator indent */
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
 
         uiItemL(col, IFACE_("Radius X"), ICON_NONE);
         uiItemL(col, IFACE_("Radius Y"), ICON_NONE);
 
-        col = uiLayoutColumn(row, true);
+        col = &row->column(true);
         subblock = uiLayoutGetBlock(col);
 
         /* bfa */
@@ -845,14 +845,14 @@ static void v3d_editvertex_buts(
                 totedgedata == 1 ? IFACE_("Edge Data Mean") : IFACE_("Edges Data Mean"),
                 ICON_NONE);
 
-        row = uiLayoutRow(layout, false);
+        row = &layout->row(false);
         uiItemS(row); /* bfa - separator indent */
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
 
         uiItemL(col, IFACE_("Bevel Weight"), ICON_NONE);
         uiItemL(col, IFACE_("Crease"), ICON_NONE);
 
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
         subblock = uiLayoutGetBlock(col);
         UI_block_layout_set_current(subblock, col);
 
@@ -896,13 +896,13 @@ static void v3d_editvertex_buts(
       TransformMedian_Curve *ve_median = &tfp->ve_median.curve;
       /* bfa */
       row = &layout->row(false);
-      col = uiLayoutColumn(row, false);
+      col = &row->column(false);
 
       uiItemL(col, totcurvedata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
       uiItemL(col, totcurvedata == 1 ? IFACE_("Radius") : IFACE_("Mean Radius"), ICON_NONE);
       uiItemL(col, totcurvedata == 1 ? IFACE_("Tilt") : IFACE_("Mean Tilt"), ICON_NONE);
 
-      col = uiLayoutColumn(row, false);
+      col = &row->column(false);
       subblock = uiLayoutGetBlock(col);
       UI_block_layout_set_current(subblock, col);
 
@@ -1016,11 +1016,11 @@ static void v3d_editvertex_buts(
 
       /*bfa*/
       row = &layout->row(false);
-      col = uiLayoutColumn(row, false);
+      col = &row->column(false);
 
       uiItemL(col, totlattdata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
 
-      col = uiLayoutColumn(row, true);
+      col = &row->column(false);
       subblock = uiLayoutGetBlock(col);
       UI_block_layout_set_current(subblock, col);
 
@@ -1744,7 +1744,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       row = &col->row(true);
       uiItemR(row, ptr, "rotation_quaternion", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
 
-      sub = row->column(true);
+      sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
 
       uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);

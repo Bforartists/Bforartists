@@ -485,7 +485,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  row = uiLayoutRow(layout, true);
+  row = &layout->row(true);
   uiItemS(row);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_radius_as_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
