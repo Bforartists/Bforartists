@@ -4730,7 +4730,7 @@ void ANIM_channel_debug_print_info(bAnimContext &ac, bAnimListElem *ale, short i
       }
       case sizeof(short): {
         const short as_short = *static_cast<const short *>(setting_ptr);
-        setting_value = bool(as_short & static_cast<short>(setting_flag)) != is_neg;
+        setting_value = bool(as_short & short(setting_flag)) != is_neg;
         break;
       }
       default:
@@ -5809,10 +5809,10 @@ static void draw_setting_widget(bAnimContext *ac,
     uiButHandleNFunc button_callback;
     switch (setting) {
       /* Settings needing flushing up/down hierarchy. */
-      case ACHANNEL_SETTING_VISIBLE: /* Graph Editor - 'visibility' toggles */
-      case ACHANNEL_SETTING_PROTECT: /* General - protection flags */
-      case ACHANNEL_SETTING_MUTE:    /* General - muting flags */
-      case ACHANNEL_SETTING_PINNED:  /* NLA Actions - 'map/nomap' */
+      case ACHANNEL_SETTING_VISIBLE: /* Graph Editor - "visibility" toggles. */
+      case ACHANNEL_SETTING_PROTECT: /* General - protection flags. */
+      case ACHANNEL_SETTING_MUTE:    /* General - muting flags. */
+      case ACHANNEL_SETTING_PINNED:  /* NLA Actions - "map/no-map". */
       case ACHANNEL_SETTING_MOD_OFF:
       case ACHANNEL_SETTING_ALWAYS_VISIBLE:
         button_callback = achannel_setting_flush_widget_cb;

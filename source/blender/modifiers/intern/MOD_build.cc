@@ -263,7 +263,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(layout, ptr, "use_reverse", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   uiLayout *row;
-  row = uiLayoutRow(layout, true);
+  row = &layout->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_reverse", 0); /*bfa - decorator*/
