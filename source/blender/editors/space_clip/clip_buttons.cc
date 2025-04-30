@@ -526,7 +526,7 @@ void uiTemplateMarker(uiLayout *layout,
     uiItemL(col, IFACE_("Position"), ICON_NONE); 	/*bfa */
 
 	/*bfa */
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
@@ -577,7 +577,7 @@ void uiTemplateMarker(uiLayout *layout,
 	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Offset"), ICON_NONE);
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
@@ -627,7 +627,7 @@ void uiTemplateMarker(uiLayout *layout,
 	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Pattern Area"), ICON_NONE);
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
@@ -678,7 +678,7 @@ void uiTemplateMarker(uiLayout *layout,
 	/*bfa */
     uiItemS(col);
     uiItemL(col, IFACE_("Search Area"), ICON_NONE);
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
@@ -728,7 +728,7 @@ void uiTemplateMarker(uiLayout *layout,
 
     /*bfa -  left aligned*/
     uiItemS(col);
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     /* indent */
     uiItemS(row);
