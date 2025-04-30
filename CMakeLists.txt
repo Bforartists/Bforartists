@@ -333,6 +333,7 @@ endif()
 unset(_option_default)
 
 option(WITH_GMP "Enable features depending on GMP (Exact Boolean)" ON)
+option(WITH_MANIFOLD "Enable features depending on Manifold (Fast Robust Boolean)" ON)
 
 option(WITH_OPENIMAGEDENOISE "Enable the OpenImageDenoise compositing node" ON)
 
@@ -863,6 +864,14 @@ else()
   set(WITH_LINUX_OFFICIAL_RELEASE_TESTS OFF)
 endif()
 
+option(WITH_TESTS_EXPERIMENTAL "\
+Run tests marked as experimental. \
+These tests are labeled as such due to long runtime, flakey results, or other issues that make them unsuitable \
+for blocking a build on."
+  OFF
+)
+mark_as_advanced(WITH_TESTS_EXPERIMENTAL)
+
 # Enabled by default for typical use cases to speed up development cycles. However, when looking
 # into threading or memory related issues (in dependency graph, out-of-bounds, etc) forcing single
 # test per Blender instance could give much better clues about the root of the problem.
@@ -1254,13 +1263,13 @@ endif()
 
 
 # Apple
-
 if(APPLE)
   include(platform_apple_xcode)
-endif()
 
-if(APPLE)
-  option(WITH_LEGACY_MACOS_X64_LINKER "Use legacy macOS linker. Only on x64 platform. Minutes slower, but emits fewer warnings." OFF)
+  option(WITH_LEGACY_MACOS_X64_LINKER "\
+Use legacy macOS linker on x64 platform. Minutes slower, but emits fewer warnings."
+    OFF
+  )
   mark_as_advanced(WITH_LEGACY_MACOS_X64_LINKER)
 endif()
 
@@ -2732,6 +2741,7 @@ if(FIRST_RUN)
   info_cfg_option(WITH_INPUT_NDOF)
   info_cfg_option(WITH_INPUT_IME)
   info_cfg_option(WITH_INTERNATIONAL)
+  info_cfg_option(WITH_MANIFOLD)
   info_cfg_option(WITH_OPENCOLLADA)
   info_cfg_option(WITH_OPENCOLORIO)
   info_cfg_option(WITH_OPENIMAGEDENOISE)

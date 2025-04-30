@@ -1296,12 +1296,7 @@ static float area_normal_and_center_get_position_radius(const SculptSession &ss,
   float test_radius = ss.cache ? ss.cache->radius : ss.cursor_radius;
   if (brush.ob_mode == OB_MODE_SCULPT) {
     /* Layer brush produces artifacts with normal and area radius */
-    if (ELEM(brush.sculpt_brush_type,
-             SCULPT_BRUSH_TYPE_PLANE,
-             SCULPT_BRUSH_TYPE_SCRAPE,
-             SCULPT_BRUSH_TYPE_FILL) &&
-        brush.area_radius_factor > 0.0f)
-    {
+    if (brush.sculpt_brush_type == SCULPT_BRUSH_TYPE_PLANE && brush.area_radius_factor > 0.0f) {
       test_radius *= brush.area_radius_factor;
       if (ss.cache && brush.flag2 & BRUSH_AREA_RADIUS_PRESSURE) {
         test_radius *= ss.cache->pressure;
@@ -2150,14 +2145,6 @@ void calc_area_normal_and_center(const Depsgraph &depsgraph,
  */
 static float brush_flip(const Brush &brush, const blender::ed::sculpt_paint::StrokeCache &cache)
 {
-  /* The Fill and Scrape brushes do not invert direction when this flag is set. The behavior of
-   * the brush completely changes. */
-  if (ELEM(brush.sculpt_brush_type, SCULPT_BRUSH_TYPE_FILL, SCULPT_BRUSH_TYPE_SCRAPE) &&
-      brush.flag & BRUSH_INVERT_TO_SCRAPE_FILL)
-  {
-    return 1.0f;
-  }
-
   const float dir = (brush.flag & BRUSH_DIR_IN) ? -1.0f : 1.0f;
   const float pen_flip = cache.pen_flip ? -1.0f : 1.0f;
   const float invert = cache.invert ? -1.0f : 1.0f;
@@ -2276,18 +2263,6 @@ static float brush_strength(const Sculpt &sd,
       else {
         return 0.5f * alpha * pressure * overlap * feather;
       }
-    case SCULPT_BRUSH_TYPE_FILL:
-    case SCULPT_BRUSH_TYPE_SCRAPE:
-    case SCULPT_BRUSH_TYPE_FLATTEN:
-      if (flip > 0.0f) {
-        overlap = (1.0f + overlap) / 2.0f;
-        return alpha * flip * pressure * overlap * feather;
-      }
-      else {
-        /* Reduce strength for DEEPEN, PEAKS, and CONTRAST. */
-        return 0.5f * alpha * flip * pressure * overlap * feather;
-      }
-
     case SCULPT_BRUSH_TYPE_SMOOTH:
       return flip * alpha * pressure * feather;
 
@@ -3381,9 +3356,6 @@ static void do_brush_action(const Depsgraph &depsgraph,
     case SCULPT_BRUSH_TYPE_LAYER:
       brushes::do_layer_brush(depsgraph, sd, ob, node_mask);
       break;
-    case SCULPT_BRUSH_TYPE_FLATTEN:
-      brushes::do_flatten_brush(depsgraph, sd, ob, node_mask);
-      break;
     case SCULPT_BRUSH_TYPE_CLAY:
       brushes::do_clay_brush(depsgraph, sd, ob, node_mask);
       break;
@@ -3401,22 +3373,6 @@ static void do_brush_action(const Depsgraph &depsgraph,
       break;
     case SCULPT_BRUSH_TYPE_CLAY_THUMB:
       brushes::do_clay_thumb_brush(depsgraph, sd, ob, node_mask);
-      break;
-    case SCULPT_BRUSH_TYPE_FILL:
-      if (invert && brush.flag & BRUSH_INVERT_TO_SCRAPE_FILL) {
-        brushes::do_scrape_brush(depsgraph, sd, ob, node_mask);
-      }
-      else {
-        brushes::do_fill_brush(depsgraph, sd, ob, node_mask);
-      }
-      break;
-    case SCULPT_BRUSH_TYPE_SCRAPE:
-      if (invert && brush.flag & BRUSH_INVERT_TO_SCRAPE_FILL) {
-        brushes::do_fill_brush(depsgraph, sd, ob, node_mask);
-      }
-      else {
-        brushes::do_scrape_brush(depsgraph, sd, ob, node_mask);
-      }
       break;
     case SCULPT_BRUSH_TYPE_MASK:
       switch ((BrushMaskTool)brush.mask_tool) {
@@ -3825,18 +3781,12 @@ static const char *sculpt_brush_type_name(const Sculpt &sd)
       return "Thumb Brush";
     case SCULPT_BRUSH_TYPE_LAYER:
       return "Layer Brush";
-    case SCULPT_BRUSH_TYPE_FLATTEN:
-      return "Flatten Brush";
     case SCULPT_BRUSH_TYPE_CLAY:
       return "Clay Brush";
     case SCULPT_BRUSH_TYPE_CLAY_STRIPS:
       return "Clay Strips Brush";
     case SCULPT_BRUSH_TYPE_CLAY_THUMB:
       return "Clay Thumb Brush";
-    case SCULPT_BRUSH_TYPE_FILL:
-      return "Fill Brush";
-    case SCULPT_BRUSH_TYPE_SCRAPE:
-      return "Scrape Brush";
     case SCULPT_BRUSH_TYPE_SNAKE_HOOK:
       return "Snake Hook Brush";
     case SCULPT_BRUSH_TYPE_ROTATE:
@@ -4090,7 +4040,7 @@ static void sculpt_update_cache_invariants(
   const float3 z_axis = {0.0f, 0.0f, 1.0f};
   ob.runtime->world_to_object = math::invert(ob.object_to_world());
   cache->view_normal = math::normalize(math::transform_direction(
-      float4x4(cache->vc->rv3d->viewinv) * ob.world_to_object(), z_axis));
+      ob.world_to_object() * float4x4(cache->vc->rv3d->viewinv), z_axis));
 
   cache->supports_gravity = bke::brush::supports_gravity(*brush) && sd.gravity_factor > 0.0f;
   /* Get gravity vector in world space. */
@@ -7165,77 +7115,32 @@ void filter_distances_with_radius(const float radius,
   }
 }
 
+template<typename T>
 void calc_brush_cube_distances(const Brush &brush,
-                               const float4x4 &mat,
-                               const Span<float3> positions,
-                               const Span<int> verts,
-                               const MutableSpan<float> r_distances,
-                               const MutableSpan<float> factors)
+                               const Span<T> positions,
+                               const MutableSpan<float> r_distances)
 {
-  BLI_assert(verts.size() == factors.size());
-  BLI_assert(verts.size() == r_distances.size());
+  BLI_assert(r_distances.size() == positions.size());
 
   const float roundness = brush.tip_roundness;
+  const float roundness_rcp = math::safe_rcp(roundness);
   const float hardness = 1.0f - roundness;
-  for (const int i : verts.index_range()) {
-    if (factors[i] == 0.0f) {
-      r_distances[i] = std::numeric_limits<float>::max();
-      continue;
-    }
-    const float3 local = math::abs(math::transform_point(mat, positions[verts[i]]));
 
-    if (!(local.x <= 1.0f && local.y <= 1.0f && local.z <= 1.0f)) {
-      factors[i] = 0.0f;
-      r_distances[i] = std::numeric_limits<float>::max();
-      continue;
-    }
-    if (std::min(local.x, local.y) > hardness) {
-      /* Corner, distance to the center of the corner circle. */
-      r_distances[i] = math::distance(float2(hardness), float2(local)) / roundness;
-      continue;
-    }
-    if (std::max(local.x, local.y) > hardness) {
-      /* Side, distance to the square XY axis. */
-      r_distances[i] = (std::max(local.x, local.y) - hardness) / roundness;
-      continue;
-    }
-
-    /* Inside the square, constant distance. */
-    r_distances[i] = 0.0f;
-  }
-}
-
-void calc_brush_cube_distances(const Brush &brush,
-                               const float4x4 &mat,
-                               const Span<float3> positions,
-                               const MutableSpan<float> r_distances,
-                               const MutableSpan<float> factors)
-{
-  BLI_assert(positions.size() == factors.size());
-  BLI_assert(positions.size() == r_distances.size());
-
-  const float roundness = brush.tip_roundness;
-  const float hardness = 1.0f - roundness;
   for (const int i : positions.index_range()) {
-    if (factors[i] == 0.0f) {
-      r_distances[i] = std::numeric_limits<float>::max();
-      continue;
-    }
-    const float3 local = math::abs(math::transform_point(mat, positions[i]));
+    const T local = math::abs(positions[i]);
 
-    if (!(local.x <= 1.0f && local.y <= 1.0f && local.z <= 1.0f)) {
-      factors[i] = 0.0f;
+    if (math::reduce_max(local) > 1.0f) {
       r_distances[i] = std::numeric_limits<float>::max();
       continue;
     }
     if (std::min(local.x, local.y) > hardness) {
       /* Corner, distance to the center of the corner circle. */
-      r_distances[i] = math::distance(float2(hardness), float2(local)) / roundness;
+      r_distances[i] = math::distance(float2(hardness), float2(local)) * roundness_rcp;
       continue;
     }
     if (std::max(local.x, local.y) > hardness) {
       /* Side, distance to the square XY axis. */
-      r_distances[i] = (std::max(local.x, local.y) - hardness) / roundness;
+      r_distances[i] = (std::max(local.x, local.y) - hardness) * roundness_rcp;
       continue;
     }
 
@@ -7243,6 +7148,12 @@ void calc_brush_cube_distances(const Brush &brush,
     r_distances[i] = 0.0f;
   }
 }
+template void calc_brush_cube_distances<float2>(const Brush &brush,
+                                                const Span<float2> positions,
+                                                MutableSpan<float> r_distances);
+template void calc_brush_cube_distances<float3>(const Brush &brush,
+                                                const Span<float3> positions,
+                                                MutableSpan<float> r_distances);
 
 void apply_hardness_to_distances(const float radius,
                                  const float hardness,
