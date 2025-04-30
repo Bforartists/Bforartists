@@ -329,6 +329,11 @@ static void cmp_node_rlayer_create_outputs(bNodeTree *ntree,
               ntree, node, scene, view_layer, RE_PASSNAME_FREESTYLE, SOCK_RGBA);
         }
 
+        if (view_layer->grease_pencil_flags & GREASE_PENCIL_AS_SEPARATE_PASS) {
+          node_cmp_rlayers_register_pass(
+              ntree, node, scene, view_layer, RE_PASSNAME_GREASE_PENCIL, SOCK_RGBA);
+        }
+
         MEM_freeN(data);
         node->storage = nullptr;
 
@@ -660,8 +665,8 @@ static void node_composit_buts_viewlayers(uiLayout *layout, bContext *C, Pointer
     return;
   }
 
-  col = uiLayoutColumn(layout, false);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(false);
+  row = &col->row(true);
   uiItemR(row, ptr, "layer", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
 
   PropertyRNA *prop = RNA_struct_find_property(ptr, "layer");
