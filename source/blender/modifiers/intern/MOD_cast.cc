@@ -474,7 +474,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemR(layout, ptr, "cast_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  row = uiLayoutRowWithHeading(layout, true, IFACE_("Axis"));
+  row = &layout->row(true, IFACE_("Axis"));
   uiItemR(row, ptr, "use_x", toggles_flag, std::nullopt, ICON_NONE);
   uiItemR(row, ptr, "use_y", toggles_flag, std::nullopt, ICON_NONE);
   uiItemR(row, ptr, "use_z", toggles_flag, std::nullopt, ICON_NONE);
@@ -485,7 +485,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  row = uiLayoutRow(layout, true);
+  row = &layout->row(true);
   uiItemS(row);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_radius_as_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);

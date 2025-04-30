@@ -153,7 +153,7 @@ bool ED_armature_pose_select_pick_bone(const Scene *scene,
     }
     else if (found || params->deselect_all) {
       /* Deselect everything. */
-      /* Don't use 'BKE_object_pose_base_array_get_unique'
+      /* Don't use #BKE_object_pose_base_array_get_unique
        * because we may be selecting from object mode. */
       FOREACH_VISIBLE_BASE_BEGIN (scene, view_layer, v3d, base_iter) {
         Object *ob_iter = base_iter->object;
@@ -842,11 +842,11 @@ void POSE_OT_select_hierarchy(wmOperatorType *ot)
 
 /* -------------------------------------- */
 
-/* modes for select same */
-enum ePose_SelectSame_Mode {
-  POSE_SEL_SAME_COLLECTION = 0,
-  POSE_SEL_SAME_COLOR = 1,
-  POSE_SEL_SAME_KEYINGSET = 2,
+/* Modes for the `select_grouped` operator. */
+enum class SelectRelatedMode {
+  SAME_COLLECTION = 0,
+  SAME_COLOR,
+  SAME_KEYINGSET,
 };
 
 static bool pose_select_same_color(bContext *C, const bool extend)
@@ -1049,7 +1049,7 @@ static bool pose_select_same_keyingset(bContext *C, ReportList *reports, bool ex
 static wmOperatorStatus pose_select_grouped_exec(bContext *C, wmOperator *op)
 {
   Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
-  const ePose_SelectSame_Mode type = ePose_SelectSame_Mode(RNA_enum_get(op->ptr, "type"));
+  const SelectRelatedMode mode = SelectRelatedMode(RNA_enum_get(op->ptr, "type"));
   const bool extend = RNA_boolean_get(op->ptr, "extend");
   bool changed = false;
 
@@ -1059,21 +1059,21 @@ static wmOperatorStatus pose_select_grouped_exec(bContext *C, wmOperator *op)
   }
 
   /* selection types */
-  switch (type) {
-    case POSE_SEL_SAME_COLLECTION:
+  switch (mode) {
+    case SelectRelatedMode::SAME_COLLECTION:
       changed = pose_select_same_collection(C, extend);
       break;
 
-    case POSE_SEL_SAME_COLOR:
+    case SelectRelatedMode::SAME_COLOR:
       changed = pose_select_same_color(C, extend);
       break;
 
-    case POSE_SEL_SAME_KEYINGSET: /* Keying Set */
+    case SelectRelatedMode::SAME_KEYINGSET:
       changed = pose_select_same_keyingset(C, op->reports, extend);
       break;
 
     default:
-      printf("pose_select_grouped() - Unknown selection type %d\n", type);
+      printf("pose_select_grouped() - Unknown selection type %d\n", int(mode));
       break;
   }
 
@@ -1090,9 +1090,9 @@ void POSE_OT_select_grouped(wmOperatorType *ot)
 {
   /*bfa - added icons. see header, includes. UI_interface.h and UI_resources.h*/
   static const EnumPropertyItem prop_select_grouped_types[] = {
-      {POSE_SEL_SAME_COLLECTION, "COLLECTION", ICON_OUTLINER_COLLECTION, "Collection", "Same collections as the active bone"},
-      {POSE_SEL_SAME_COLOR, "COLOR", ICON_COLOR, "Color", "Same color as the active bone"},
-      {POSE_SEL_SAME_KEYINGSET, "KEYINGSET", ICON_KEYINGSET, "Keying Set",  "All bones affected by the active Keying Set"},
+      {int(SelectRelatedMode::SAME_COLLECTION), "COLLECTION", ICON_OUTLINER_COLLECTION, "Collection", "Same collections as the active bone"},
+      {int(SelectRelatedMode::SAME_COLOR), "COLOR", ICON_COLOR, "Color", "Same color as the active bone"},
+      {int(SelectRelatedMode::SAME_KEYINGSET), "KEYINGSET", ICON_KEYINGSET, "Keying Set", "All bones affected by active Keying Set"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 

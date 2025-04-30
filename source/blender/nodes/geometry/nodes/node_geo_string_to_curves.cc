@@ -132,10 +132,10 @@ struct TextLayout {
   /* The text that fit into the text box, with newline character sequences replaced. */
   std::string text;
 
-  /* The text that didn't fit into the text box in 'Truncate' mode. May be empty. */
+  /* The text that didn't fit into the text box in "Truncate" mode. May be empty. */
   std::string truncated_text;
 
-  /* Font size could be modified if in 'Scale to fit'-mode. */
+  /* Font size could be modified if in "Scale to fit"-mode. */
   float final_font_size;
 };
 
@@ -195,7 +195,7 @@ static std::optional<TextLayout> get_text_layout(GeoNodeExecParams &params)
   cu.len = len_bytes;
   cu.pos = len_chars;
   /* The reason for the additional character here is unknown, but reflects other code elsewhere. */
-  cu.str = static_cast<char *>(MEM_mallocN(len_bytes + sizeof(char32_t), __func__));
+  cu.str = MEM_malloc_arrayN<char>(len_bytes + sizeof(char32_t), __func__);
   memcpy(cu.str, layout.text.c_str(), len_bytes + 1);
   cu.strinfo = MEM_calloc_arrayN<CharInfo>(len_chars + 1, __func__);
 

@@ -170,7 +170,7 @@ static void ui_imageuser_layer_menu(bContext * /*C*/, uiLayout *layout, void *rn
   }
 
   UI_block_layout_set_current(block, layout);
-  uiLayoutColumn(layout, false);
+  layout->column(false);
 
   const char *fake_name = ui_imageuser_layer_fake_name(rr);
   if (fake_name) {
@@ -245,7 +245,7 @@ static void ui_imageuser_pass_menu(bContext * /*C*/, uiLayout *layout, void *rnd
   rl = static_cast<RenderLayer *>(BLI_findlink(&rr->layers, rpass_index));
 
   UI_block_layout_set_current(block, layout);
-  uiLayoutColumn(layout, false);
+  layout->column(false);
 
   nr = (rl == nullptr) ? 1 : 0;
 
@@ -316,7 +316,7 @@ static void ui_imageuser_view_menu_rr(bContext * /*C*/, uiLayout *layout, void *
   }
 
   UI_block_layout_set_current(block, layout);
-  uiLayoutColumn(layout, false);
+  layout->column(false);
 
   uiDefBut(block,
            UI_BTYPE_LABEL,
@@ -364,7 +364,7 @@ static void ui_imageuser_view_menu_multiview(bContext * /*C*/, uiLayout *layout,
   ImageView *iv;
 
   UI_block_layout_set_current(block, layout);
-  uiLayoutColumn(layout, false);
+  layout->column(false);
 
   uiDefBut(block,
            UI_BTYPE_LABEL,
@@ -564,7 +564,7 @@ static void uiblock_layer_pass_buttons(uiLayout *layout,
     return;
   }
 
-  uiLayoutRow(layout, true);
+  layout->row(true);
 
   /* layer menu is 1/3 larger than pass */
   wmenu1 = (2 * w) / 5;
@@ -809,19 +809,19 @@ void uiTemplateImage(uiLayout *layout,
   /* Disable editing if image was modified, to avoid losing changes. */
   const bool is_dirty = BKE_image_is_dirty(ima);
   if (is_dirty) {
-    uiLayout *row = uiLayoutRow(layout, true);
+    uiLayout *row = &layout->row(true);
     uiItemO(row, IFACE_("Save"), ICON_NONE, "image.save");
     uiItemO(row, IFACE_("Discard"), ICON_NONE, "image.reload");
     uiItemS(layout);
   }
 
-  layout = uiLayoutColumn(layout, false);
+  layout = &layout->column(false);
   uiLayoutSetEnabled(layout, !is_dirty);
   uiLayoutSetPropDecorate(layout, false);
 
   /* Image source */
   {
-    uiLayout *col = uiLayoutColumn(layout, false);
+    uiLayout *col = &layout->column(false);
     uiLayoutSetPropSep(col, true);
     uiItemR(col, &imaptr, "source", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
@@ -833,7 +833,7 @@ void uiTemplateImage(uiLayout *layout,
   if ((ima->source != IMA_SRC_GENERATED) && !no_filepath) {
     uiItemS(layout);
 
-    uiLayout *row = uiLayoutRow(layout, true);
+    uiLayout *row = &layout->row(true);
     if (is_packed) {
       uiItemO(row, "", ICON_PACKAGE, "image.unpack");
     }
@@ -841,7 +841,7 @@ void uiTemplateImage(uiLayout *layout,
       uiItemO(row, "", ICON_UGLYPACKAGE, "image.pack");
     }
 
-    row = uiLayoutRow(row, true);
+    row = &row->row(true);
     uiLayoutSetEnabled(row, is_packed == false);
 
     prop = RNA_struct_find_property(&imaptr, "filepath");
@@ -855,10 +855,10 @@ void uiTemplateImage(uiLayout *layout,
     uiItemS(layout);
 
     /* Generated */
-    uiLayout *col = uiLayoutColumn(layout, false);
+    uiLayout *col = &layout->column(false);
     uiLayoutSetPropSep(col, true);
 
-    uiLayout *sub = uiLayoutColumn(col, true);
+    uiLayout *sub = &col->column(true);
     uiItemR(sub, &imaptr, "generated_width", UI_ITEM_NONE, "X", ICON_NONE);
     uiItemR(sub, &imaptr, "generated_height", UI_ITEM_NONE, "Y", ICON_NONE);
 
@@ -888,11 +888,11 @@ void uiTemplateImage(uiLayout *layout,
     /* Animation */
     uiItemS(layout);
 
-    uiLayout *col = uiLayoutColumn(layout, true);
+    uiLayout *col = &layout->column(true);
     uiLayoutSetPropSep(col, true);
 
-    uiLayout *sub = uiLayoutColumn(col, true);
-    uiLayout *row = uiLayoutRow(sub, true);
+    uiLayout *sub = &col->column(true);
+    uiLayout *row = &sub->row(true);
     uiItemR(row, userptr, "frame_duration", UI_ITEM_NONE, IFACE_("Frames"), ICON_NONE);
     uiItemO(row, "", ICON_FILE_REFRESH, "IMAGE_OT_match_movie_length");
 
@@ -916,7 +916,7 @@ void uiTemplateImage(uiLayout *layout,
     if ((scene->r.scemode & R_MULTIVIEW) != 0) {
       uiItemS(layout);
 
-      uiLayout *col = uiLayoutColumn(layout, false);
+      uiLayout *col = &layout->column(false);
       uiLayoutSetPropSep(col, true);
       uiItemR(col, &imaptr, "use_multiview", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -930,14 +930,14 @@ void uiTemplateImage(uiLayout *layout,
   {
     uiItemS(layout);
 
-    uiLayout *col = uiLayoutColumn(layout, false);
+    uiLayout *col = &layout->column(false);
     uiLayoutSetPropSep(col, true);
     uiTemplateColorspaceSettings(col, &imaptr, "colorspace_settings");
 
     if (compact == 0) {
       if (ima->source != IMA_SRC_GENERATED) {
         if (BKE_image_has_alpha(ima)) {
-          uiLayout *sub = uiLayoutColumn(col, false);
+          uiLayout *sub = &col->column(false);
           uiItemR(sub, &imaptr, "alpha_mode", UI_ITEM_NONE, IFACE_("Alpha"), ICON_NONE);
 
           bool is_data = IMB_colormanagement_space_name_is_data(ima->colorspace_settings.name);
@@ -979,7 +979,7 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
 
   uiLayout *col;
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
 
   uiLayoutSetPropSep(col, true);
   uiLayoutSetPropDecorate(col, false);
@@ -988,12 +988,7 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
 
   /* Multi-layer always saves raw unmodified channels. */
   if (imf->imtype != R_IMF_IMTYPE_MULTILAYER) {
-    uiItemR(uiLayoutRow(col, true),
-            imfptr,
-            "color_mode",
-            UI_ITEM_R_EXPAND,
-            IFACE_("Color"),
-            ICON_NONE);
+    uiItemR(&col->row(true), imfptr, "color_mode", UI_ITEM_R_EXPAND, IFACE_("Color"), ICON_NONE);
   }
 
   /* only display depth setting if multiple depths can be used */
@@ -1006,8 +1001,7 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
            R_IMF_CHAN_DEPTH_24,
            R_IMF_CHAN_DEPTH_32) == 0)
   {
-    uiItemR(
-        uiLayoutRow(col, true), imfptr, "color_depth", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+    uiItemR(&col->row(true), imfptr, "color_depth", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
   }
 
   if (BKE_imtype_supports_quality(imf->imtype)) {
@@ -1088,7 +1082,7 @@ void uiTemplateImageStereo3d(uiLayout *layout, PointerRNA *stereo3d_format_ptr)
   Stereo3dFormat *stereo3d_format = static_cast<Stereo3dFormat *>(stereo3d_format_ptr->data);
   uiLayout *col;
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   uiItemR(col, stereo3d_format_ptr, "display_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   switch (stereo3d_format->display_mode) {
@@ -1125,7 +1119,7 @@ static void uiTemplateViewsFormat(uiLayout *layout,
 {
   uiLayout *col;
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
 
   uiLayoutSetPropSep(col, true);
   uiLayoutSetPropDecorate(col, false);
@@ -1209,7 +1203,7 @@ void uiTemplateImageInfo(uiLayout *layout, bContext *C, Image *ima, ImageUser *i
   void *lock;
   ImBuf *ibuf = BKE_image_acquire_ibuf(ima, iuser, &lock);
 
-  uiLayout *col = uiLayoutColumn(layout, true);
+  uiLayout *col = &layout->column(true);
   uiLayoutSetAlignment(col, UI_LAYOUT_ALIGN_RIGHT);
 
   if (ibuf == nullptr) {

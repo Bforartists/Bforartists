@@ -294,8 +294,7 @@ static void apply_scale_factor_clamp(float *val,
 static TransformProperties *v3d_transform_props_ensure(View3D *v3d)
 {
   if (v3d->runtime.properties_storage == nullptr) {
-    TransformProperties *tfp = static_cast<TransformProperties *>(
-        MEM_callocN(sizeof(TransformProperties), "TransformProperties"));
+    TransformProperties *tfp = MEM_new<TransformProperties>("TransformProperties");
     /* Construct C++ structures in otherwise zero initialized struct. */
     new (tfp) TransformProperties();
 
@@ -596,7 +595,7 @@ static void v3d_editvertex_buts(
     memcpy(&tfp->ve_median, &median_basis, sizeof(tfp->ve_median));
 
     /* bfa - new expand prop UI style*/
-    col = uiLayoutColumn(layout, true);
+    col = &layout->column(true);
 
     if (tot == 1) {
       if (totcurvedata) {
@@ -618,12 +617,12 @@ static void v3d_editvertex_buts(
 
     /* bfa */
 
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
 
     uiItemS(row);
     uiItemS(row);
 
-    col = uiLayoutColumn(row, true);
+    col = &row->column(true);
     uiLayoutSetUnitsX(col, .75);
     uiLayoutSetFixedSize(col, true);
 
@@ -635,7 +634,7 @@ static void v3d_editvertex_buts(
       uiItemL(col, IFACE_("W"), ICON_NONE);
     }
 
-    col = uiLayoutColumn(row, true);
+    col = &row->column(true);
     subblock = uiLayoutGetBlock(col);
     UI_block_layout_set_current(subblock, col);
 
@@ -709,7 +708,7 @@ static void v3d_editvertex_buts(
     UI_block_layout_set_current(block, layout); /* bfa */
 
     /* bfa */
-    row = uiLayoutRow(layout, true); /* bfa - use high level UI when possible */
+    row = &layout->row(true); /* bfa - use high level UI when possible */
     subblock = uiLayoutGetBlock(row);
     UI_block_layout_set_current(subblock, row);
 
@@ -752,14 +751,14 @@ static void v3d_editvertex_buts(
                 tot == 1 ? IFACE_("Vertex Data Mean") : IFACE_("Vertices Data Mean"),
                 ICON_NONE); /* bfa - put the term "mean" into the label */
 
-        row = uiLayoutRow(layout, false);
+        row = &layout->row(false);
         uiItemS(row); /* bfa - separator indent */
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
 
         uiItemL(col, IFACE_("Bevel Weight"), ICON_NONE);
         uiItemL(col, IFACE_("Crease"), ICON_NONE); /* -bfa move text to left of slider */
 
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
         subblock = uiLayoutGetBlock(col);
         UI_block_layout_set_current(subblock, col);
 
@@ -797,14 +796,14 @@ static void v3d_editvertex_buts(
       }
       if (has_skinradius) {
         /* bfa */
-        row = uiLayoutRow(layout, false);
+        row = &layout->row(false);
         uiItemS(row); /* bfa - separator indent */
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
 
         uiItemL(col, IFACE_("Radius X"), ICON_NONE);
         uiItemL(col, IFACE_("Radius Y"), ICON_NONE);
 
-        col = uiLayoutColumn(row, true);
+        col = &row->column(true);
         subblock = uiLayoutGetBlock(col);
 
         /* bfa */
@@ -846,14 +845,14 @@ static void v3d_editvertex_buts(
                 totedgedata == 1 ? IFACE_("Edge Data Mean") : IFACE_("Edges Data Mean"),
                 ICON_NONE);
 
-        row = uiLayoutRow(layout, false);
+        row = &layout->row(false);
         uiItemS(row); /* bfa - separator indent */
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
 
         uiItemL(col, IFACE_("Bevel Weight"), ICON_NONE);
         uiItemL(col, IFACE_("Crease"), ICON_NONE);
 
-        col = uiLayoutColumn(row, false);
+        col = &row->column(false);
         subblock = uiLayoutGetBlock(col);
         UI_block_layout_set_current(subblock, col);
 
@@ -896,14 +895,14 @@ static void v3d_editvertex_buts(
     else if (totcurvedata) {
       TransformMedian_Curve *ve_median = &tfp->ve_median.curve;
       /* bfa */
-      row = uiLayoutRow(layout, false);
-      col = uiLayoutColumn(row, false);
+      row = &layout->row(false);
+      col = &row->column(false);
 
       uiItemL(col, totcurvedata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
       uiItemL(col, totcurvedata == 1 ? IFACE_("Radius") : IFACE_("Mean Radius"), ICON_NONE);
       uiItemL(col, totcurvedata == 1 ? IFACE_("Tilt") : IFACE_("Mean Tilt"), ICON_NONE);
 
-      col = uiLayoutColumn(row, false);
+      col = &row->column(false);
       subblock = uiLayoutGetBlock(col);
       UI_block_layout_set_current(subblock, col);
 
@@ -1016,12 +1015,12 @@ static void v3d_editvertex_buts(
       TransformMedian_Lattice *ve_median = &tfp->ve_median.lattice;
 
       /*bfa*/
-      row = uiLayoutRow(layout, false);
-      col = uiLayoutColumn(row, false);
+      row = &layout->row(false);
+      col = &row->column(false);
 
       uiItemL(col, totlattdata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
 
-      col = uiLayoutColumn(row, true);
+      col = &row->column(false);
       subblock = uiLayoutGetBlock(col);
       UI_block_layout_set_current(subblock, col);
 
@@ -1555,13 +1554,13 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 
     UI_block_func_handle_set(block, do_view3d_vgroup_buttons, nullptr);
 
-    bcol = uiLayoutColumn(panel->layout, true);
-    row = uiLayoutRow(bcol, true); /* The filter button row */
+    bcol = &panel->layout->column(true);
+    row = &bcol->row(true); /* The filter button row */
 
     PointerRNA tools_ptr = RNA_pointer_create_discrete(nullptr, &RNA_ToolSettings, ts);
     uiItemR(row, &tools_ptr, "vertex_group_subset", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-    col = uiLayoutColumn(bcol, true);
+    col = &bcol->column(true);
 
     vgroup_validmap = BKE_object_defgroup_subset_from_select_type(
         ob, subset_type, &vgroup_tot, &subset_count);
@@ -1577,7 +1576,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
           int x, xco = 0;
           int icon;
           uiLayout *split = uiLayoutSplit(col, 0.45, true);
-          row = uiLayoutRow(split, true);
+          row = &split->row(true);
 
           /* The Weight Group Name */
 
@@ -1601,7 +1600,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
           }
           xco += x;
 
-          row = uiLayoutRow(split, true);
+          row = &split->row(true);
           uiLayoutSetEnabled(row, !locked);
 
           /* The weight group value */
@@ -1661,8 +1660,8 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 
     yco -= 2;
 
-    col = uiLayoutColumn(panel->layout, true);
-    row = uiLayoutRow(col, true);
+    col = &panel->layout->column(true);
+    row = &col->row(true);
 
     ot = WM_operatortype_find("OBJECT_OT_vertex_weight_normalize_active_vertex", true);
     but = uiDefButO_ptr(
@@ -1717,8 +1716,8 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   }
 
   if (drawLocation) {
-    col = uiLayoutColumn(layout, false); /* bfa - col = layout.column() */
-    row = uiLayoutRow(col, true);        /* bfa - row = col.row(align=True) */
+    col = &layout->column(false); /* bfa - col = layout.column() */
+    row = &col->row(true);        /* bfa - row = col.row(align=True) */
     uiItemR(row,
             ptr,
             "location",
@@ -1741,11 +1740,11 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   switch (RNA_enum_get(ptr, "rotation_mode")) {
     case ROT_MODE_QUAT: /* quaternion */
       /* bfa */
-      col = uiLayoutColumn(layout, false);
-      row = uiLayoutRow(col, true);
+      col = &layout->column(false);
+      row = &col->row(true);
       uiItemR(row, ptr, "rotation_quaternion", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
 
-      sub = uiLayoutColumn(row, true);
+      sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
 
       uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
@@ -1774,11 +1773,11 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       break;
     case ROT_MODE_AXISANGLE: /* axis angle */
                              /* bfa */
-      col = uiLayoutColumn(layout, false);
-      row = uiLayoutRow(col, true);
+      col = &layout->row(false);
+      row = &col->row(true);
       uiItemR(row, ptr, "rotation_axis_angle", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
 
-      sub = uiLayoutColumn(row, true);
+      sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
 
       uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
@@ -1806,9 +1805,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       break;
     default: /* euler rotations */
              /* bfa */
-      col = uiLayoutColumn(layout, false);
+      col = &layout->column(false);
 
-      row = uiLayoutRow(col, true);
+      row = &col->row(true);
       uiItemR(row, ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
       uiLayoutSetPropDecorate(row, false);
       uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
@@ -1825,9 +1824,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   /* bfa */
   uiItemS_ex(layout, .25f);
 
-  row = uiLayoutRow(layout, false);
+  row = &layout->row(false);
   uiItemR(row, ptr, "rotation_mode", UI_ITEM_NONE, IFACE_("Mode"), ICON_NONE);
-  row = uiLayoutRow(row, false);
+  row = &row->row(false);
   uiLayoutSetUnitsX(row, 1.f);
   uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
 
@@ -1848,8 +1847,8 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
   uiItemS_ex(layout, .25f);
 
-  col = uiLayoutColumn(layout, false);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(false);
+  row = &col->row(true);
   uiItemR(row,
           ptr,
           "scale",
@@ -1878,7 +1877,7 @@ static void v3d_posearmature_buts(uiLayout *layout, Object *ob)
 
   PointerRNA pchanptr = RNA_pointer_create_discrete(&ob->id, &RNA_PoseBone, pchan);
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
 
   /* XXX: RNA buts show data in native types (i.e. quaternion, 4-component axis/angle, etc.)
    * but old-school UI shows in eulers always. Do we want to be able to still display in Eulers?
@@ -1904,7 +1903,7 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
   uiLayoutSetPropSep(layout, true);       /* bfa */
   uiLayoutSetPropDecorate(layout, false); /* bfa */
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   uiItemR(col, &eboneptr, "head", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (ebone->parent && ebone->flag & BONE_CONNECTED) {
     PointerRNA parptr = RNA_pointer_get(&eboneptr, "parent");
@@ -1944,7 +1943,7 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
   uiLayoutSetPropSep(layout, true);       /* bfa */
   uiLayoutSetPropDecorate(layout, false); /* bfa */
 
-  col = uiLayoutColumn(layout, false);
+  col = &layout->column(false);
   uiItemR(col, &ptr, "co", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiItemS_ex(col, .25f); /* bfa - separator*/
@@ -1955,7 +1954,7 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
   uiItemR(col, &ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiItemS_ex(col, .25f); /* bfa - separator*/
-  col = uiLayoutColumn(layout, true);
+  col = &layout->column(true);
   switch (RNA_enum_get(&ptr, "type")) {
     case MB_BALL:
       break;
@@ -2031,7 +2030,7 @@ static void view3d_panel_transform(const bContext *C, Panel *panel)
   block = uiLayoutGetBlock(panel->layout);
   UI_block_func_handle_set(block, do_view3d_region_buttons, nullptr);
 
-  col = uiLayoutColumn(panel->layout, false);
+  col = &panel->layout->column(false);
 
   if (ob == obedit) {
     if (ob->type == OB_ARMATURE) {
