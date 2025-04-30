@@ -2638,7 +2638,7 @@ static void draw_named_attributes_panel(uiLayout *layout, NodesModifierData &nmd
     const StringRef attribute_name = attribute.name;
     const geo_log::NamedAttributeUsage usage = attribute.usage;
 
-    /* #uiLayoutRowWithHeading doesn't seem to work in this case. */
+    /* #uiLayoutRowWithHeading doesn't seem to work in this case. Note: uiLayoutRowWithHeading refactored 8e499caded*/
     uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
 
     std::stringstream ss;

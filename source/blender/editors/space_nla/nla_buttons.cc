@@ -467,11 +467,11 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
                       !(RNA_boolean_get(&strip_ptr, "use_animated_influence") ||
                         RNA_boolean_get(&strip_ptr, "use_animated_time")));
     /* bfa */
-    row = uiLayoutRow(column, false);
+    row = &column->row(false);
     uiItemS(row);
     uiItemR(row, &strip_ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    row = uiLayoutRow(column, false);
+    row = &column->row(false);
     uiItemS(row);
     uiItemR(row, &strip_ptr, "use_animated_time_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
