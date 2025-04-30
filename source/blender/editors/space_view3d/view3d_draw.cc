@@ -1261,9 +1261,12 @@ static const char *view3d_get_name(View3D *v3d, RegionView3D *rv3d)
           else if (cam->type == CAM_ORTHO) {
             name = IFACE_("Camera Orthographic");
           }
-          else {
-            BLI_assert(cam->type == CAM_PANO);
+          else if (cam->type == CAM_PANO) {
             name = IFACE_("Camera Panoramic");
+          }
+          else {
+            BLI_assert(cam->type == CAM_CUSTOM);
+            name = IFACE_("Camera Custom");
           }
         }
         else {
@@ -2409,7 +2412,7 @@ void view3d_depths_rect_create(ARegion *region, rcti *rect, ViewDepths *r_d)
   r_d->w = w;
   r_d->h = h;
 
-  r_d->depths = static_cast<float *>(MEM_mallocN(sizeof(float) * w * h, "View depths Subset"));
+  r_d->depths = MEM_malloc_arrayN<float>(w * h, "View depths Subset");
 
   {
     GPUViewport *viewport = WM_draw_region_get_viewport(region);

@@ -680,6 +680,11 @@ static void write_compositor_legacy_properties(bNodeTree &node_tree)
       property = input->default_value_typed<bNodeSocketValueBoolean>()->value;
     };
 
+    auto write_input_to_property_bool_short = [&](const char *identifier, short &property) {
+      const bNodeSocket *input = blender::bke::node_find_socket(*node, SOCK_IN, identifier);
+      property = input->default_value_typed<bNodeSocketValueBoolean>()->value;
+    };
+
     auto write_input_to_property_bool_int16_flag = [&](const char *identifier,
                                                        int16_t &property,
                                                        const int flag,
@@ -703,6 +708,11 @@ static void write_compositor_legacy_properties(bNodeTree &node_tree)
       property = input->default_value_typed<bNodeSocketValueInt>()->value;
     };
 
+    auto write_input_to_property_char = [&](const char *identifier, char &property) {
+      const bNodeSocket *input = blender::bke::node_find_socket(*node, SOCK_IN, identifier);
+      property = input->default_value_typed<bNodeSocketValueInt>()->value;
+    };
+
     auto write_input_to_property_int16 = [&](const char *identifier, int16_t &property) {
       const bNodeSocket *input = blender::bke::node_find_socket(*node, SOCK_IN, identifier);
       property = int16_t(input->default_value_typed<bNodeSocketValueInt>()->value);
@@ -712,6 +722,18 @@ static void write_compositor_legacy_properties(bNodeTree &node_tree)
       const bNodeSocket *input = blender::bke::node_find_socket(*node, SOCK_IN, identifier);
       property = input->default_value_typed<bNodeSocketValueFloat>()->value;
     };
+
+    auto write_input_to_property_float_vector =
+        [&](const char *identifier, const int index, float &property) {
+          const bNodeSocket *input = blender::bke::node_find_socket(*node, SOCK_IN, identifier);
+          property = input->default_value_typed<bNodeSocketValueVector>()->value[index];
+        };
+
+    auto write_input_to_property_float_color =
+        [&](const char *identifier, const int index, float &property) {
+          const bNodeSocket *input = blender::bke::node_find_socket(*node, SOCK_IN, identifier);
+          property = input->default_value_typed<bNodeSocketValueRGBA>()->value[index];
+        };
 
     if (node->type_legacy == CMP_NODE_GLARE) {
       NodeGlare *storage = static_cast<NodeGlare *>(node->storage);
@@ -854,6 +876,111 @@ static void write_compositor_legacy_properties(bNodeTree &node_tree)
       NodeChroma *storage = static_cast<NodeChroma *>(node->storage);
       write_input_to_property_float("Tolerance", storage->t1);
       write_input_to_property_float("Falloff", storage->t2);
+    }
+
+    if (node->type_legacy == CMP_NODE_LUMA_MATTE) {
+      NodeChroma *storage = static_cast<NodeChroma *>(node->storage);
+      write_input_to_property_float("Minimum", storage->t2);
+      write_input_to_property_float("Maximum", storage->t1);
+    }
+
+    if (node->type_legacy == CMP_NODE_COLOR_SPILL) {
+      NodeColorspill *storage = static_cast<NodeColorspill *>(node->storage);
+      write_input_to_property_float("Limit Strength", storage->limscale);
+      write_input_to_property_bool_short("Use Spill Strength", storage->unspill);
+      write_input_to_property_float_color("Spill Strength", 0, storage->uspillr);
+      write_input_to_property_float_color("Spill Strength", 1, storage->uspillg);
+      write_input_to_property_float_color("Spill Strength", 2, storage->uspillb);
+    }
+
+    if (node->type_legacy == CMP_NODE_KEYINGSCREEN) {
+      NodeKeyingScreenData *storage = static_cast<NodeKeyingScreenData *>(node->storage);
+      write_input_to_property_float("Smoothness", storage->smoothness);
+    }
+
+    if (node->type_legacy == CMP_NODE_KEYING) {
+      NodeKeyingData *storage = static_cast<NodeKeyingData *>(node->storage);
+      write_input_to_property_int("Preprocess Blur Size", storage->blur_pre);
+      write_input_to_property_float("Key Balance", storage->screen_balance);
+      write_input_to_property_int("Edge Search Size", storage->edge_kernel_radius);
+      write_input_to_property_float("Edge Tolerance", storage->edge_kernel_tolerance);
+      write_input_to_property_float("Black Level", storage->clip_black);
+      write_input_to_property_float("White Level", storage->clip_white);
+      write_input_to_property_int("Postprocess Blur Size", storage->blur_post);
+      write_input_to_property_int("Postprocess Dilate Size", storage->dilate_distance);
+      write_input_to_property_int("Postprocess Feather Size", storage->feather_distance);
+      write_input_to_property_float("Despill Strength", storage->despill_factor);
+      write_input_to_property_float("Despill Balance", storage->despill_balance);
+    }
+
+    if (node->type_legacy == CMP_NODE_ID_MASK) {
+      write_input_to_property_short("Index", node->custom1);
+      write_input_to_property_bool_short("Anti-Alias", node->custom2);
+    }
+
+    if (node->type_legacy == CMP_NODE_STABILIZE2D) {
+      write_input_to_property_bool_short("Invert", node->custom2);
+    }
+
+    if (node->type_legacy == CMP_NODE_PLANETRACKDEFORM) {
+      NodePlaneTrackDeformData *storage = static_cast<NodePlaneTrackDeformData *>(node->storage);
+      write_input_to_property_bool_char("Motion Blur", storage->flag);
+      write_input_to_property_char("Motion Blur Samples", storage->motion_blur_samples);
+      write_input_to_property_float("Motion Blur Shutter", storage->motion_blur_shutter);
+    }
+
+    if (node->type_legacy == CMP_NODE_COLORCORRECTION) {
+      NodeColorCorrection *storage = static_cast<NodeColorCorrection *>(node->storage);
+      write_input_to_property_float("Master Saturation", storage->master.saturation);
+      write_input_to_property_float("Master Contrast", storage->master.contrast);
+      write_input_to_property_float("Master Gamma", storage->master.gamma);
+      write_input_to_property_float("Master Gain", storage->master.gain);
+      write_input_to_property_float("Master Lift", storage->master.lift);
+      write_input_to_property_float("Shadows Saturation", storage->shadows.saturation);
+      write_input_to_property_float("Shadows Contrast", storage->shadows.contrast);
+      write_input_to_property_float("Shadows Gamma", storage->shadows.gamma);
+      write_input_to_property_float("Shadows Gain", storage->shadows.gain);
+      write_input_to_property_float("Shadows Lift", storage->shadows.lift);
+      write_input_to_property_float("Midtones Saturation", storage->midtones.saturation);
+      write_input_to_property_float("Midtones Contrast", storage->midtones.contrast);
+      write_input_to_property_float("Midtones Gamma", storage->midtones.gamma);
+      write_input_to_property_float("Midtones Gain", storage->midtones.gain);
+      write_input_to_property_float("Midtones Lift", storage->midtones.lift);
+      write_input_to_property_float("Highlights Saturation", storage->highlights.saturation);
+      write_input_to_property_float("Highlights Contrast", storage->highlights.contrast);
+      write_input_to_property_float("Highlights Gamma", storage->highlights.gamma);
+      write_input_to_property_float("Highlights Gain", storage->highlights.gain);
+      write_input_to_property_float("Highlights Lift", storage->highlights.lift);
+      write_input_to_property_float("Midtones Start", storage->startmidtones);
+      write_input_to_property_float("Midtones End", storage->endmidtones);
+      write_input_to_property_bool_int16_flag("Apply On Red", node->custom1, 1 << 0);
+      write_input_to_property_bool_int16_flag("Apply On Green", node->custom1, 1 << 1);
+      write_input_to_property_bool_int16_flag("Apply On Blue", node->custom1, 1 << 2);
+    }
+
+    if (node->type_legacy == CMP_NODE_LENSDIST) {
+      NodeLensDist *storage = static_cast<NodeLensDist *>(node->storage);
+      write_input_to_property_bool_short("Jitter", storage->jit);
+      write_input_to_property_bool_short("Fit", storage->fit);
+      storage->proj = storage->distortion_type == CMP_NODE_LENS_DISTORTION_HORIZONTAL;
+    }
+
+    if (node->type_legacy == CMP_NODE_MASK_BOX) {
+      NodeBoxMask *storage = static_cast<NodeBoxMask *>(node->storage);
+      write_input_to_property_float_vector("Position", 0, storage->x);
+      write_input_to_property_float_vector("Position", 1, storage->y);
+      write_input_to_property_float_vector("Size", 0, storage->width);
+      write_input_to_property_float_vector("Size", 1, storage->height);
+      write_input_to_property_float("Rotation", storage->rotation);
+    }
+
+    if (node->type_legacy == CMP_NODE_MASK_ELLIPSE) {
+      NodeEllipseMask *storage = static_cast<NodeEllipseMask *>(node->storage);
+      write_input_to_property_float_vector("Position", 0, storage->x);
+      write_input_to_property_float_vector("Position", 1, storage->y);
+      write_input_to_property_float_vector("Size", 0, storage->width);
+      write_input_to_property_float_vector("Size", 1, storage->height);
+      write_input_to_property_float("Rotation", storage->rotation);
     }
   }
 }

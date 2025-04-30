@@ -3037,7 +3037,7 @@ static void rna_def_modifier_decimate(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
-  /* NOTE: keep in sync with operator 'MESH_OT_decimate'. */
+  /* NOTE: keep in sync with operator `MESH_OT_decimate`. */
 
   StructRNA *srna;
   PropertyRNA *prop;
@@ -3524,13 +3524,18 @@ static void rna_def_modifier_boolean(BlenderRNA *brna)
       {eBooleanModifierSolver_Float,
        "FAST",
        0,
-       "Fast",
-       "Simple solver for the best performance, without support for overlapping geometry"},
+       "Float",
+       "Simple solver with good performance, without support for overlapping geometry"},
       {eBooleanModifierSolver_Mesh_Arr,
        "EXACT",
        0,
        "Exact",
-       "Advanced solver for the best result"},
+       "Slower solver with the best results for coplanar faces"},
+      {eBooleanModifierSolver_Manifold,
+       "MANIFOLD",
+       0,
+       "Manifold",
+       "Fastest solver that works only on manifold meshes but gives better results"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -6976,6 +6981,7 @@ static void rna_def_modifier_meshseqcache(BlenderRNA *brna)
       {MOD_MESHSEQ_READ_POLY, "POLY", 0, "Faces", ""},
       {MOD_MESHSEQ_READ_UV, "UV", 0, "UV", ""},
       {MOD_MESHSEQ_READ_COLOR, "COLOR", 0, "Color", ""},
+      {MOD_MESHSEQ_READ_ATTRIBUTES, "ATTRIBUTES", 0, "Attributes", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
