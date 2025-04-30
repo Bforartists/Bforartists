@@ -79,7 +79,7 @@ static void file_panel_operator(const bContext *C, Panel *panel)
   }
 
   /* bfa - append - sidebar - make the options more compact */
-  /* uiLayout *col = uiLayoutColumn(panel->layout, true); */ /* bfa - not sure if this is needed now? */
+  /* uiLayout *col = uiLayoutColumn(panel->layout, true); */ /* bfa - not sure if this is needed now? NOTE: uiLayoutColumn to &layout->column */
   uiTemplateOperatorPropertyButs(
       C, panel->layout, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_EMPTY); /* bfa - use the uiLayout based panels instead */
 
