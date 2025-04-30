@@ -38,7 +38,7 @@ class TEXT_HT_header(Header):
 
             row = layout.row()
             if is_osl:
-                row.operator("node.shader_script_update", text="", icon='FILE_REFRESH')
+                row.operator("text.update_shader", text="", icon='FILE_REFRESH')
             else:
 
                 row = layout.row()
