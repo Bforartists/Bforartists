@@ -13,6 +13,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_camera_types.h"
 #include "DNA_text_types.h"
 
 #include "BLI_fileops.h"
@@ -25,12 +26,16 @@
 #include "BLI_string_cursor_utf8.h"
 #include "BLI_string_utf8.h"
 #include "BLI_time.h"
+#include "BLI_vector_set.hh"
 
 #include "BLT_translation.hh"
 
 #include "BKE_context.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
+#include "BKE_node.hh"
+#include "BKE_node_legacy_types.hh"
+#include "BKE_node_runtime.hh"
 #include "BKE_report.hh"
 #include "BKE_text.h"
 
@@ -43,6 +48,8 @@
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
+#include "RE_engine.h"
+
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
@@ -53,6 +60,8 @@
 
 #include "text_format.hh"
 #include "text_intern.hh"
+
+using blender::VectorSet;
 
 static void space_text_screen_clamp(SpaceText *st, const ARegion *region);
 
@@ -170,7 +179,7 @@ static char *buf_tabs_to_spaces(const char *in_buf, const int tab_size, int *r_o
 
   /* Allocate output before with extra space for expanded tabs. */
   const int out_size = strlen(in_buf) + num_tabs * (tab_size - 1) + 1;
-  char *out_buf = static_cast<char *>(MEM_mallocN(out_size * sizeof(char), __func__));
+  char *out_buf = MEM_malloc_arrayN<char>(out_size, __func__);
 
   /* Fill output buffer. */
   int spaces_until_tab = 0;
@@ -411,18 +420,19 @@ static wmOperatorStatus text_open_exec(bContext *C, wmOperator *op)
 
   text = BKE_text_load_ex(bmain, filepath, BKE_main_blendfile_path(bmain), internal);
 
-  PropertyPointerRNA *pprop = static_cast<PropertyPointerRNA *>(op->customdata);
   if (!text) {
+    PropertyPointerRNA *pprop = static_cast<PropertyPointerRNA *>(op->customdata);
     MEM_delete(pprop);
     op->customdata = nullptr;
     return OPERATOR_CANCELLED;
   }
 
-  if (!pprop) {
+  if (!op->customdata) {
     text_open_init(C, op);
   }
 
   /* hook into UI */
+  PropertyPointerRNA *pprop = static_cast<PropertyPointerRNA *>(op->customdata);
   if (pprop->prop) {
     PointerRNA idptr = RNA_id_pointer_create(&text->id);
     RNA_property_pointer_set(&pprop->ptr, pprop->prop, idptr, nullptr);
@@ -1421,7 +1431,7 @@ static wmOperatorStatus text_convert_whitespace_exec(bContext *C, wmOperator *op
   }
 
   if (type == TO_TABS) {
-    char *tmp_line = static_cast<char *>(MEM_mallocN(sizeof(*tmp_line) * (max_len + 1), __func__));
+    char *tmp_line = MEM_malloc_arrayN<char>(max_len + 1, __func__);
 
     LISTBASE_FOREACH (TextLine *, tmp, &text->lines) {
       const char *text_check_line = tmp->line;
@@ -4278,6 +4288,119 @@ void TEXT_OT_to_3d_object(wmOperatorType *ot)
   /* properties */
   RNA_def_boolean(
       ot->srna, "split_lines", false, "Split Lines", "Create one object per line in the text");
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Shader Update
+ * \{ */
+
+static bool text_update_shader_poll(bContext *C)
+{
+  RenderEngineType *type = CTX_data_engine_type(C);
+  const Text *text = CTX_data_edit_text(C);
+
+  /* See if we have a text datablock in context. */
+  if (text == nullptr) {
+    return false;
+  }
+
+  /* Test if we have a render engine that supports shaders scripts. */
+  if (!(type && (type->update_script_node || type->update_custom_camera))) {
+    return false;
+  }
+
+  /* We don't check if text datablock is actually in use, too slow for poll. */
+  return true;
+}
+
+/* recursively check for script nodes in groups using this text and update */
+static bool text_update_shader_text_recursive(RenderEngine *engine,
+                                              RenderEngineType *type,
+                                              bNodeTree *ntree,
+                                              Text *text,
+                                              VectorSet<bNodeTree *> &done_trees)
+{
+  bool found = false;
+
+  done_trees.add_new(ntree);
+
+  /* Update each script that is using this text datablock. */
+  for (bNode *node : ntree->all_nodes()) {
+    if (node->type_legacy == NODE_GROUP) {
+      bNodeTree *ngroup = (bNodeTree *)node->id;
+      if (ngroup && !done_trees.contains(ngroup)) {
+        found |= text_update_shader_text_recursive(engine, type, ngroup, text, done_trees);
+      }
+    }
+    else if (node->type_legacy == SH_NODE_SCRIPT && node->id == &text->id) {
+      type->update_script_node(engine, ntree, node);
+      found = true;
+    }
+  }
+
+  return found;
+}
+
+static wmOperatorStatus text_update_shader_exec(bContext *C, wmOperator *op)
+{
+  Main *bmain = CTX_data_main(C);
+  RenderEngineType *type = CTX_data_engine_type(C);
+  Text *text = CTX_data_edit_text(C);
+  bool found = false;
+
+  /* setup render engine */
+  RenderEngine *engine = RE_engine_create(type);
+  engine->reports = op->reports;
+
+  /* Update all nodes using text datablock. */
+  if (type->update_script_node != nullptr) {
+    VectorSet<bNodeTree *> done_trees;
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_SHADER) {
+        if (!done_trees.contains(ntree)) {
+          found |= text_update_shader_text_recursive(engine, type, ntree, text, done_trees);
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
+  /* Update all cameras using text datablock. */
+  if (type->update_custom_camera != nullptr) {
+    LISTBASE_FOREACH (Camera *, cam, &bmain->cameras) {
+      if (cam->custom_shader == text) {
+        type->update_custom_camera(engine, cam);
+        found = true;
+      }
+    }
+  }
+
+  if (!found) {
+    BKE_report(op->reports, RPT_INFO, "Text not used by any node, no update done");
+  }
+
+  RE_engine_free(engine);
+
+  return (found) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+
+void TEXT_OT_update_shader(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Shader Update";
+  ot->description =
+      "Update users of this shader, such as custom cameras and script nodes, with its new sockets "
+      "and options";
+  ot->idname = "TEXT_OT_update_shader";
+
+  /* api callbacks */
+  ot->exec = text_update_shader_exec;
+  ot->poll = text_update_shader_poll;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
 /** \} */

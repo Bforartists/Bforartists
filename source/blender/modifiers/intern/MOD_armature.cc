@@ -219,38 +219,38 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   /*------------------- bfa - original props */
-  // col = uiLayoutColumn(layout, true);
+  // col = &layout->column(true);
   // uiItemR(col, ptr, "use_deform_preserve_volume", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   // uiItemR(col, ptr, "use_multi_modifier", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiLayout *row;
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_deform_preserve_volume", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_deform_preserve_volume", 0); /*bfa - decorator*/
 
-  row = uiLayoutRow(col, true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_multi_modifier", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_multi_modifier", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  // col = uiLayoutColumnWithHeading(layout, true, IFACE_("Bind To"));
+  // col = &layout->column(true, IFACE_("Bind To"));
   // uiItemR(col, ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
   // uiItemR(col, ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE);
 
-  col = uiLayoutColumn(layout, true);
+  col = &layout->column(true);
   uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
 
   uiItemL(col, TIP_("Bind To"), ICON_NONE);
 
-  row = uiLayoutRow(col, true);
+  row = &col->row(true);
   uiItemS(row);
   uiItemR(row, ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
 
-  row = uiLayoutRow(col, true);
+  row = &col->row(true);
   uiItemS(row);
   uiItemR(row, ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE);
   /* ------------ end bfa */

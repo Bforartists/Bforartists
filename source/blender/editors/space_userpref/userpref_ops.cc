@@ -83,8 +83,7 @@ static void PREFERENCES_OT_reset_default_theme(wmOperatorType *ot)
 
 static wmOperatorStatus preferences_autoexec_add_exec(bContext * /*C*/, wmOperator * /*op*/)
 {
-  bPathCompare *path_cmp = static_cast<bPathCompare *>(
-      MEM_callocN(sizeof(bPathCompare), "bPathCompare"));
+  bPathCompare *path_cmp = MEM_callocN<bPathCompare>("bPathCompare");
   BLI_addtail(&U.autoexec_paths, path_cmp);
   U.runtime.is_dirty = true;
   return OPERATOR_FINISHED;
@@ -445,16 +444,16 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
                                  ICON_LOCKED :
                                  ICON_UNLOCKED;
       
-      //uiLayout *row = uiLayoutRowWithHeading(layout, true, IFACE_("Authentication")); -/*bfa, old code*/
-      uiLayout *row = uiLayoutRow(layout, true);/*bfa*/
+      //uiLayout *row = &layout->row(true, IFACE_("Authentication")); -/*bfa, old code*/
+      uiLayout *row = &layout->row(true);/*bfa*/
       uiItemL(layout, IFACE_("Authentication"), ICON_NONE); /*BFA - separate label*/
-      row = uiLayoutRow(layout, false);                     /*bfa*/
+      row = &layout->row(false);                            /*bfa*/
       uiItemS(row);                                         /*bfa -indent*/
       uiItemR(row, op->ptr, "use_access_token", UI_ITEM_NONE, std::nullopt, ICON_NONE); /*bfa*/
-      uiLayout *col = uiLayoutRow(layout, false);
+      uiLayout *col = &layout->row(false);
       uiLayoutSetActive(col, use_access_token);
       /* Use "immediate" flag to refresh the icon. */
-      row = uiLayoutRow(layout, false); /*bfa*/
+      row = &layout->row(false); /*bfa*/
       uiItemS(row);/*bfa -indent*/    
       uiItemR(row, op->ptr, "access_token", UI_ITEM_R_IMMEDIATE, std::nullopt, token_icon);
 
@@ -471,7 +470,7 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
   uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
   uiItemR(layout, op->ptr, "use_custom_directory", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = False */
-  uiLayout *col = uiLayoutRow(layout, false);
+  uiLayout *col = &layout->row(false);
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_custom_directory"));
   uiItemR(col, op->ptr, "custom_directory", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
