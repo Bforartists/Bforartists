@@ -83,13 +83,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   {
-    col = uiLayoutColumn(layout, false); /*bfa*/
+    col = &layout->column(false); /*bfa*/ 
     uiItemR(col, ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemR(col, ptr, "grid_name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   {
-    col = uiLayoutColumn(layout, false); /*bfa*/
+    col = &layout->column(false); /*bfa*/
     uiItemR(col, ptr, "resolution_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     if (vmmd->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT) {
       uiItemR(col, ptr, "voxel_amount", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -100,15 +100,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
 
   {
-    col = uiLayoutColumn(layout, false); /*bfa*/
+    col = &layout->column(false); /*bfa*/
     uiItemR(col, ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemR(col, ptr, "adaptivity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /*------------------- bfa - original props */
     // uiItemR(col, ptr, "use_smooth_shade", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-    col = uiLayoutColumn(layout, true);
-    row = uiLayoutRow(col, true);
+    col = &layout->column(false);;
+    row = &col-row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
