@@ -148,8 +148,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     uiItemR(layout, ptr, "project_limit", UI_ITEM_NONE, IFACE_("Limit"), ICON_NONE);
     uiItemR(layout, ptr, "subsurf_levels", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    col = uiLayoutColumn(layout, false);
-    row = uiLayoutRowWithHeading(col, true, IFACE_("Axis"));
+    col = &layout->column(false);
+    row = &col->row(true, IFACE_("Axis"));
     uiItemR(row, ptr, "use_project_x", toggles_flag, std::nullopt, ICON_NONE);
     uiItemR(row, ptr, "use_project_y", toggles_flag, std::nullopt, ICON_NONE);
     uiItemR(row, ptr, "use_project_z", toggles_flag, std::nullopt, ICON_NONE);
@@ -158,12 +158,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     // uiItemR(col, ptr, "use_negative_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     // uiItemR(col, ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_negative_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_negative_direction", 0); /*bfa - decorator*/
 
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_positive_direction", 0); /*bfa - decorator*/
@@ -173,7 +173,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     uiItemR(col, ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     uiItemR(layout, ptr, "cull_face", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-    col = uiLayoutColumn(layout, false);
+    col = &layout->column(false);
     uiLayoutSetActive(col,
                       RNA_boolean_get(ptr, "use_negative_direction") &&
                           RNA_enum_get(ptr, "cull_face") != 0);
@@ -181,7 +181,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     /*------------------- bfa - original props */
     // uiItemR(col, ptr, "use_invert_cull", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemS(row);
     uiItemR(row, ptr, "use_invert_cull", UI_ITEM_NONE, std::nullopt, ICON_NONE);

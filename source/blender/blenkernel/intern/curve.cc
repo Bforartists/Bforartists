@@ -365,7 +365,8 @@ void BKE_curve_init(Curve *cu, const short curve_type)
     size_t len_char32 = BLI_strlen_utf8_ex(str, &len_bytes);
 
     cu->str = MEM_malloc_arrayN<char>(len_bytes + 1, "str");
-    BLI_strncpy(cu->str, str, len_bytes + 1);
+    memcpy(cu->str, str, len_bytes + 1);
+    BLI_assert(cu->str[len_bytes] == '\0');
 
     cu->len = len_bytes;
     cu->len_char32 = cu->pos = len_char32;
@@ -1185,7 +1186,7 @@ static void makeknots(Nurb *nu, short uv)
 
 void BKE_nurb_knot_alloc_u(Nurb *nu)
 {
-  nu->knotsu = static_cast<float *>(MEM_calloc_arrayN(KNOTSU(nu) + 1, sizeof(float), __func__));
+  nu->knotsu = MEM_calloc_arrayN<float>(KNOTSU(nu) + 1, __func__);
 }
 
 void BKE_nurb_knot_calc_u(Nurb *nu)

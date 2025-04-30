@@ -96,7 +96,7 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
 
     UI_block_set_active_operator(block, op, false);
 
-    row = uiLayoutRow(layout, true);
+    row = &layout->row(true);
     uiItemM(row, "WM_MT_operator_presets", std::nullopt, ICON_NONE);
 
     wmOperatorType *ot = WM_operatortype_find("WM_OT_operator_preset_add", false);
@@ -155,7 +155,7 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
     uiBut *but;
     uiLayout *col; /* needed to avoid alignment errors with previous buttons */
 
-    col = uiLayoutColumn(layout, false);
+    col = &layout->column(false);
     block = uiLayoutGetBlock(col);
     but = uiDefIconTextBut(block,
                            UI_BTYPE_BUT,
@@ -182,7 +182,9 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
 
   for (const std::unique_ptr<uiBut> &but : block->buttons) {
     /* no undo for buttons for operator redo panels */
-    UI_but_flag_disable(but.get(), UI_BUT_UNDO);
+    if (!(layout_flags & UI_TEMPLATE_OP_PROPS_ALLOW_UNDO_PUSH)) {
+      UI_but_flag_disable(but.get(), UI_BUT_UNDO);
+    }
 
     /* Only do this if we're not refreshing an existing UI. */
     if (block->oldblock == nullptr) {
@@ -352,7 +354,7 @@ static void draw_export_controls(
 {
   uiItemL(layout, label, ICON_NONE);
   if (valid) {
-    uiLayout *row = uiLayoutRow(layout, false);
+    uiLayout *row = &layout->row(false);
     uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
     uiItemPopoverPanel(row, C, "WM_PT_operator_presets", "", ICON_PRESET);
     uiItemIntO(row, "", ICON_EXPORT, "COLLECTION_OT_exporter_export", "index", index);
@@ -364,7 +366,7 @@ static void draw_export_properties(bContext *C,
                                    wmOperator *op,
                                    const std::string &filename)
 {
-  uiLayout *col = uiLayoutColumn(layout, false);
+  uiLayout *col = &layout->column(false);
 
   uiLayoutSetPropSep(col, true);
   uiLayoutSetPropDecorate(col, false);
@@ -388,8 +390,12 @@ static void draw_export_properties(bContext *C,
               ICON_NONE,
               placeholder.c_str());
 
-  template_operator_property_buts_draw_single(
-      C, op, layout, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_HIDE_PRESETS);
+  template_operator_property_buts_draw_single(C,
+                                              op,
+                                              layout,
+                                              UI_BUT_LABEL_ALIGN_NONE,
+                                              UI_TEMPLATE_OP_PROPS_HIDE_PRESETS |
+                                                  UI_TEMPLATE_OP_PROPS_ALLOW_UNDO_PUSH);
 
   uiLayoutSuppressFlagClear(layout, LayoutSuppressFlag::PathSupportsBlendFileRelative);
 }
@@ -405,7 +411,7 @@ static void draw_exporter_item(uiList * /*ui_list*/,
                                int /*index*/,
                                int /*flt_flag*/)
 {
-  uiLayout *row = uiLayoutRow(layout, false);
+  uiLayout *row = &layout->row(false);
   uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
   uiItemR(row, itemptr, "name", UI_ITEM_NONE, "", ICON_NONE);
 }
@@ -427,7 +433,7 @@ void uiTemplateCollectionExporters(uiLayout *layout, bContext *C)
 
   /* Draw exporter list and controls. */
   PointerRNA collection_ptr = RNA_id_pointer_create(&collection->id);
-  uiLayout *row = uiLayoutRow(layout, false);
+  uiLayout *row = &layout->row(false);
   uiTemplateList(row,
                  C,
                  exporter_item_list->idname,
@@ -443,11 +449,11 @@ void uiTemplateCollectionExporters(uiLayout *layout, bContext *C)
                  1,
                  UI_TEMPLATE_LIST_FLAG_NONE);
 
-  uiLayout *col = uiLayoutColumn(row, true);
+  uiLayout *col = &row->column(true);
   uiItemM(col, "COLLECTION_MT_exporter_add", "", ICON_ADD);
   uiItemIntO(col, "", ICON_REMOVE, "COLLECTION_OT_exporter_remove", "index", index);
 
-  col = uiLayoutColumn(layout, true);
+  col = &layout->column(true);
   uiItemO(col, std::nullopt, ICON_EXPORT, "COLLECTION_OT_export_all");
   uiLayoutSetEnabled(col, !BLI_listbase_is_empty(exporters));
 

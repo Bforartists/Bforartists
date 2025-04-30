@@ -142,8 +142,8 @@ LinkNode *BM_mesh_calc_path_vert(BMesh *bm,
 
   /* Allocate. */
   totvert = bm->totvert;
-  verts_prev = static_cast<BMVert **>(MEM_callocN(sizeof(*verts_prev) * totvert, __func__));
-  cost = static_cast<float *>(MEM_mallocN(sizeof(*cost) * totvert, __func__));
+  verts_prev = MEM_calloc_arrayN<BMVert *>(totvert, __func__);
+  cost = MEM_malloc_arrayN<float>(totvert, __func__);
 
   copy_vn_fl(cost, totvert, COST_INIT_MAX);
 
@@ -239,7 +239,10 @@ static void edgetag_add_adjacent(HeapSimple *heap,
       }
 
       BM_ITER_ELEM (e_b, &eiter, v, BM_EDGES_OF_VERT) {
-        if (!BM_elem_flag_test(e_b, BM_ELEM_TAG)) {
+        if (!BM_elem_flag_test(e_b, BM_ELEM_TAG) &&
+            /* Prevent the path overlapping itself in rare cases, see: #137456. */
+            !BM_elem_flag_test(BM_edge_other_vert(e_b, v), BM_ELEM_TAG))
+        {
           /* We know 'e_b' is not visited, check it out! */
           const int e_b_index = BM_elem_index_get(e_b);
           const float cost_cut = params->use_topology_distance ?
@@ -304,26 +307,34 @@ LinkNode *BM_mesh_calc_path_edge(BMesh *bm,
 {
   LinkNode *path = nullptr;
   /* #BM_ELEM_TAG flag is used to store visited edges. */
-  BMEdge *e;
-  BMIter eiter;
+  BMIter iter;
   HeapSimple *heap;
   float *cost;
   BMEdge **edges_prev;
   int i, totedge;
 
-  /* NOTE: would pass #BM_EDGE except we are looping over all edges anyway. */
-  BM_mesh_elem_index_ensure(bm, BM_VERT /* | BM_EDGE */);
-
-  BM_ITER_MESH_INDEX (e, &eiter, bm, BM_EDGES_OF_MESH, i) {
-    BM_elem_flag_set(e, BM_ELEM_TAG, !filter_fn(e, user_data));
-    BM_elem_index_set(e, i); /* set_inline */
+  {
+    BMVert *v;
+    BM_ITER_MESH_INDEX (v, &iter, bm, BM_VERTS_OF_MESH, i) {
+      BM_elem_flag_disable(v, BM_ELEM_TAG);
+      BM_elem_index_set(v, i); /* set_inline */
+    }
+    bm->elem_index_dirty &= ~BM_VERT;
   }
-  bm->elem_index_dirty &= ~BM_EDGE;
+
+  {
+    BMEdge *e;
+    BM_ITER_MESH_INDEX (e, &iter, bm, BM_EDGES_OF_MESH, i) {
+      BM_elem_flag_set(e, BM_ELEM_TAG, !filter_fn(e, user_data));
+      BM_elem_index_set(e, i); /* set_inline */
+    }
+    bm->elem_index_dirty &= ~BM_EDGE;
+  }
 
   /* Allocate. */
   totedge = bm->totedge;
-  edges_prev = static_cast<BMEdge **>(MEM_callocN(sizeof(*edges_prev) * totedge, __func__));
-  cost = static_cast<float *>(MEM_mallocN(sizeof(*cost) * totedge, __func__));
+  edges_prev = MEM_calloc_arrayN<BMEdge *>(totedge, __func__);
+  cost = MEM_malloc_arrayN<float>(totedge, __func__);
 
   copy_vn_fl(cost, totedge, COST_INIT_MAX);
 
@@ -343,6 +354,7 @@ LinkNode *BM_mesh_calc_path_edge(BMesh *bm,
   BLI_heapsimple_insert(heap, 0.0f, e_src);
   cost[BM_elem_index_get(e_src)] = 0.0f;
 
+  BMEdge *e = nullptr;
   while (!BLI_heapsimple_is_empty(heap)) {
     e = static_cast<BMEdge *>(BLI_heapsimple_pop_min(heap));
 
@@ -352,6 +364,11 @@ LinkNode *BM_mesh_calc_path_edge(BMesh *bm,
 
     if (!BM_elem_flag_test(e, BM_ELEM_TAG)) {
       BM_elem_flag_enable(e, BM_ELEM_TAG);
+
+      /* Prevent the path overlapping itself in rare cases, see: #137456. */
+      BM_elem_flag_enable(e->v1, BM_ELEM_TAG);
+      BM_elem_flag_enable(e->v2, BM_ELEM_TAG);
+
       edgetag_add_adjacent(heap, e, edges_prev, cost, params);
     }
   }
@@ -523,8 +540,8 @@ LinkNode *BM_mesh_calc_path_face(BMesh *bm,
 
   /* Allocate. */
   totface = bm->totface;
-  faces_prev = static_cast<BMFace **>(MEM_callocN(sizeof(*faces_prev) * totface, __func__));
-  cost = static_cast<float *>(MEM_mallocN(sizeof(*cost) * totface, __func__));
+  faces_prev = MEM_calloc_arrayN<BMFace *>(totface, __func__);
+  cost = MEM_malloc_arrayN<float>(totface, __func__);
 
   copy_vn_fl(cost, totface, COST_INIT_MAX);
 
