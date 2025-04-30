@@ -272,12 +272,9 @@ Object *BlenderSync::sync_object(BL::ViewLayer &b_view_layer,
 
   object->set_is_shadow_catcher(b_ob.is_shadow_catcher() || b_parent.is_shadow_catcher());
 
-  const float shadow_terminator_shading_offset = get_float(cobject, "shadow_terminator_offset");
-  object->set_shadow_terminator_shading_offset(shadow_terminator_shading_offset);
+  object->set_shadow_terminator_shading_offset(b_ob.shadow_terminator_shading_offset());
 
-  const float shadow_terminator_geometry_offset = get_float(cobject,
-                                                            "shadow_terminator_geometry_offset");
-  object->set_shadow_terminator_geometry_offset(shadow_terminator_geometry_offset);
+  object->set_shadow_terminator_geometry_offset(b_ob.shadow_terminator_geometry_offset());
 
   float ao_distance = get_float(cobject, "ao_distance");
   if (ao_distance == 0.0f && b_parent.ptr.data != b_ob.ptr.data) {
@@ -311,9 +308,9 @@ Object *BlenderSync::sync_object(BL::ViewLayer &b_view_layer,
   /* object sync
    * transform comparison should not be needed, but duplis don't work perfect
    * in the depsgraph and may not signal changes, so this is a workaround */
-  if (object->is_modified() || object_updated ||
-      (object->get_geometry() && object->get_geometry()->is_modified()))
-  {
+  const bool do_sync = object->is_modified() || object_updated ||
+                       (object->get_geometry() && object->get_geometry()->is_modified());
+  if (do_sync) {
     object->name = b_ob.name().c_str();
     object->set_pass_id(b_ob.pass_index());
     const BL::Array<float, 4> object_color = b_ob.color();
@@ -345,11 +342,13 @@ Object *BlenderSync::sync_object(BL::ViewLayer &b_view_layer,
     object->set_receiver_light_set(BlenderLightLink::get_receiver_light_set(b_parent, b_ob));
     object->set_shadow_set_membership(BlenderLightLink::get_shadow_set_membership(b_parent, b_ob));
     object->set_blocker_shadow_set(BlenderLightLink::get_blocker_shadow_set(b_parent, b_ob));
-
-    object->tag_update(scene);
   }
 
   sync_object_motion_init(b_parent, b_ob, object);
+
+  if (do_sync || object->motion_is_modified()) {
+    object->tag_update(scene);
+  }
 
   if (is_instance) {
     /* Sync possible particle data. */

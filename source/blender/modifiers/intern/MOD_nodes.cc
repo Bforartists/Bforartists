@@ -2144,7 +2144,7 @@ static void add_attribute_search_or_value_buttons(DrawGroupInputsContext &ctx,
   uiLayoutSetPropDecorate(layout, false);
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
-  uiLayout *name_row = uiLayoutRow(split, false);
+  uiLayout *name_row = &split->row(false);
   //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);// bfa - turned off, we align our labels left
 
   uiLayout *prop_row = nullptr;
@@ -2153,10 +2153,10 @@ static void add_attribute_search_or_value_buttons(DrawGroupInputsContext &ctx,
                                                                                   socket);
   if (type == SOCK_BOOLEAN && !attribute_name) {
     uiItemL(name_row, "", ICON_NONE);
-    prop_row = uiLayoutRow(split, true);
+    prop_row = &split->row(true);
   }
   else {
-    prop_row = uiLayoutRow(layout, true);
+    prop_row = &layout->row(true);
   }
 
   if (type == SOCK_BOOLEAN) {
@@ -2166,7 +2166,7 @@ static void add_attribute_search_or_value_buttons(DrawGroupInputsContext &ctx,
 
   if (attribute_name) {
     uiItemL(name_row, socket.name ? IFACE_(socket.name) : "", ICON_NONE);
-    prop_row = uiLayoutRow(split, true);
+    prop_row = &split->row(true);
     add_attribute_search_button(ctx, prop_row, rna_path_attribute_name, socket, false);
     uiItemL(layout, "", ICON_BLANK1);
   }
@@ -2272,11 +2272,11 @@ static void add_layer_name_search_button(DrawGroupInputsContext &ctx,
   uiLayoutSetPropDecorate(layout, false);
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
-  uiLayout *name_row = uiLayoutRow(split, false);
+  uiLayout *name_row = &split->row(false);
   uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);
 
   uiItemL(name_row, socket.name ? IFACE_(socket.name) : "", ICON_NONE);
-  uiLayout *prop_row = uiLayoutRow(split, true);
+  uiLayout *prop_row = &split->row(true);
 
   uiBlock *block = uiLayoutGetBlock(prop_row);
   uiBut *but = uiDefIconTextButR(block,
@@ -2345,7 +2345,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
 
   const int input_index = ctx.nmd.node_group->interface_input_index(socket);
 
-  uiLayout *row = uiLayoutRow(layout, true);
+  uiLayout *row = &layout->row(true);
   uiLayoutSetPropDecorate(row, true);
   uiLayoutSetActive(row, ctx.input_usages[input_index]);
 
@@ -2420,11 +2420,11 @@ static void draw_property_for_output_socket(DrawGroupInputsContext &ctx,
       "[\"{}{}\"]", socket_id_esc, nodes::input_attribute_name_suffix);
 
   uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
-  uiLayout *name_row = uiLayoutRow(split, false);
+  uiLayout *name_row = &split->row(false);
   //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);// bfa - turned off, we align our labels left
   uiItemL(name_row, socket.name ? socket.name : "", ICON_NONE);
 
-  uiLayout *row = uiLayoutRow(split, true);
+  uiLayout *row = &split->row(true);
   add_attribute_search_button(ctx, row, rna_path_attribute_name, socket, true);
 }
 
@@ -2592,7 +2592,7 @@ static void draw_output_attributes_panel(DrawGroupInputsContext &ctx, uiLayout *
 
 static void draw_bake_panel(uiLayout *layout, PointerRNA *modifier_ptr)
 {
-  uiLayout *col = uiLayoutColumn(layout, false);
+  uiLayout *col = &layout->column(false);
   uiLayoutSetPropSep(col, true);
   uiLayoutSetPropDecorate(col, false);
   uiItemR(col, modifier_ptr, "bake_target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -2638,7 +2638,7 @@ static void draw_named_attributes_panel(uiLayout *layout, NodesModifierData &nmd
     const StringRef attribute_name = attribute.name;
     const geo_log::NamedAttributeUsage usage = attribute.usage;
 
-    /* #uiLayoutRowWithHeading doesn't seem to work in this case. */
+    /* #uiLayoutRowWithHeading doesn't seem to work in this case. Note: uiLayoutRowWithHeading refactored 8e499caded*/
     uiLayout *split = uiLayoutSplit(layout, 0.4f, false);
 
     std::stringstream ss;
@@ -2659,12 +2659,12 @@ static void draw_named_attributes_panel(uiLayout *layout, NodesModifierData &nmd
       }
     }
 
-    uiLayout *row = uiLayoutRow(split, false);
+    uiLayout *row = &split->row(false);
     //uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_RIGHT);// bfa - turned off, we align our labels left
     uiLayoutSetActive(row, false);
     uiItemL(row, ss.str(), ICON_NONE);
 
-    row = uiLayoutRow(split, false);
+    row = &split->row(false);
     uiItemL(row, attribute_name, ICON_NONE);
   }
 }
@@ -2728,7 +2728,7 @@ static void draw_warnings(const bContext *C,
     return BLI_strcasecmp_natural(a->message.c_str(), b->message.c_str()) < 0;
   });
 
-  uiLayout *col = uiLayoutColumn(panel.body, false);
+  uiLayout *col = &panel.body->column(false);
   for (const NodeWarning *warning : warnings) {
     const int icon = node_warning_type_icon(warning->type);
     uiItemL(col, warning->message, icon);

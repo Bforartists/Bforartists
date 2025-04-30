@@ -11,12 +11,12 @@
 #include "BKE_material.hh"
 #include "BKE_pointcache.h"
 #include "DEG_depsgraph_query.hh"
-#include "DNA_collection_types.h"
 #include "DNA_material_types.h"
 #include "DNA_particle_types.h"
 #include "ED_particle.hh"
 
 #include "draw_cache.hh"
+#include "draw_cache_impl.hh"
 #include "overlay_base.hh"
 
 namespace blender::draw::overlay {
@@ -69,20 +69,20 @@ class Particles : Overlay {
       {
         auto &sub = pass.sub("Dots");
         sub.shader_set(res.shaders->particle_dot.get());
-        sub.bind_texture("weightTex", res.weight_ramp_tx);
+        sub.bind_texture("weight_tx", res.weight_ramp_tx);
         dot_ps_ = &sub;
       }
       {
         auto &sub = pass.sub("Shapes");
         sub.shader_set(res.shaders->particle_shape.get());
-        sub.bind_texture("weightTex", res.weight_ramp_tx);
+        sub.bind_texture("weight_tx", res.weight_ramp_tx);
         shape_ps_ = &sub;
       }
       {
         auto &sub = pass.sub("Hair");
         sub.shader_set(res.shaders->particle_hair.get());
-        sub.push_constant("colorType", state.v3d->shading.wire_color_type);
-        sub.push_constant("isTransform", is_transform);
+        sub.push_constant("color_type", state.v3d->shading.wire_color_type);
+        sub.push_constant("is_transform", is_transform);
         hair_ps_ = &sub;
       }
     }
@@ -98,42 +98,20 @@ class Particles : Overlay {
       {
         auto &sub = pass.sub("Dots");
         sub.shader_set(res.shaders->particle_edit_vert.get());
-        sub.bind_texture("weightTex", res.weight_ramp_tx);
-        sub.push_constant("useWeight", show_weight_);
-        sub.push_constant("useGreasePencil", false);
+        sub.bind_texture("weight_tx", res.weight_ramp_tx);
+        sub.push_constant("use_weight", show_weight_);
+        sub.push_constant("use_grease_pencil", false);
         edit_vert_ps_ = &sub;
       }
       {
         auto &sub = pass.sub("Edges");
         sub.shader_set(res.shaders->particle_edit_edge.get());
-        sub.bind_texture("weightTex", res.weight_ramp_tx);
-        sub.push_constant("useWeight", false);
-        sub.push_constant("useGreasePencil", false);
+        sub.bind_texture("weight_tx", res.weight_ramp_tx);
+        sub.push_constant("use_weight", false);
+        sub.push_constant("use_grease_pencil", false);
         edit_edge_ps_ = &sub;
       }
     }
-  }
-
-  /* Particle data are stored in world space. If an object is instanced, the associated particle
-   * systems need to be offset appropriately. */
-  static float4x4 dupli_matrix_get(const ObjectRef &ob_ref)
-  {
-    float4x4 dupli_mat = float4x4::identity();
-
-    if ((ob_ref.dupli_parent != nullptr) && (ob_ref.dupli_object != nullptr)) {
-      if (ob_ref.dupli_object->type & OB_DUPLICOLLECTION) {
-        Collection *collection = ob_ref.dupli_parent->instance_collection;
-        if (collection != nullptr) {
-          dupli_mat[3] -= float4(float3(collection->instance_offset), 0.0f);
-        }
-        dupli_mat = ob_ref.dupli_parent->object_to_world() * dupli_mat;
-      }
-      else {
-        dupli_mat = ob_ref.object->object_to_world() *
-                    math::invert(ob_ref.dupli_object->ob->object_to_world());
-      }
-    }
-    return dupli_mat;
   }
 
   void edit_object_sync(Manager &manager,
@@ -185,7 +163,8 @@ class Particles : Overlay {
 
     Object *ob = ob_ref.object;
 
-    ResourceHandle handle = manager.resource_handle_for_psys(ob_ref, dupli_matrix_get(ob_ref));
+    ResourceHandle handle = manager.resource_handle_for_psys(
+        ob_ref, DRW_particles_dupli_matrix_get(ob_ref));
 
     {
       gpu::Batch *geom = DRW_cache_particles_get_edit_strands(ob, psys, edit, show_weight_);
@@ -220,7 +199,7 @@ class Particles : Overlay {
       }
 
       if (handle.raw == 0u) {
-        handle = manager.resource_handle_for_psys(ob_ref, dupli_matrix_get(ob_ref));
+        handle = manager.resource_handle_for_psys(ob_ref, DRW_particles_dupli_matrix_get(ob_ref));
       }
 
       const ParticleSettings *part = psys->part;
@@ -240,7 +219,7 @@ class Particles : Overlay {
             break;
           }
           geom = DRW_cache_particles_get_hair(ob, psys, nullptr);
-          hair_ps_->push_constant("useColoring", true); /* TODO */
+          hair_ps_->push_constant("use_coloring", true); /* TODO */
           hair_ps_->draw(geom, handle, res.select_id(ob_ref).get());
           break;
         case PART_DRAW_NOT:
@@ -262,13 +241,13 @@ class Particles : Overlay {
         case PART_DRAW_AXIS:
           geom = DRW_cache_particles_get_dots(ob, psys);
           set_color(*shape_ps_);
-          shape_ps_->push_constant("shape_type", PART_SHAPE_AXIS);
+          shape_ps_->push_constant("shape_type", int(PART_SHAPE_AXIS));
           shape_ps_->draw_expand(geom, GPU_PRIM_LINES, 3, 1, handle, res.select_id(ob_ref).get());
           break;
         case PART_DRAW_CIRC:
           geom = DRW_cache_particles_get_dots(ob, psys);
           set_color(*shape_ps_);
-          shape_ps_->push_constant("shape_type", PART_SHAPE_CIRCLE);
+          shape_ps_->push_constant("shape_type", int(PART_SHAPE_CIRCLE));
           shape_ps_->draw_expand(geom,
                                  GPU_PRIM_LINES,
                                  PARTICLE_SHAPE_CIRCLE_RESOLUTION,
@@ -279,7 +258,7 @@ class Particles : Overlay {
         case PART_DRAW_CROSS:
           geom = DRW_cache_particles_get_dots(ob, psys);
           set_color(*shape_ps_);
-          shape_ps_->push_constant("shape_type", PART_SHAPE_CROSS);
+          shape_ps_->push_constant("shape_type", int(PART_SHAPE_CROSS));
           shape_ps_->draw_expand(geom, GPU_PRIM_LINES, 3, 1, handle, res.select_id(ob_ref).get());
           break;
       }

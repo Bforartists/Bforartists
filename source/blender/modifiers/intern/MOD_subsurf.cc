@@ -395,7 +395,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayout *col = uiLayoutColumn(layout, true);
+  uiLayout *col = &layout->column(true);
   uiItemR(col, ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
   uiItemR(col, ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
@@ -404,8 +404,8 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   uiLayout *row;
 
-  col = uiLayoutColumn(layout, true);
-  row = uiLayoutRow(col, true);
+  col = &layout->column(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
@@ -460,8 +460,8 @@ static void panel_draw(const bContext *C, Panel *panel)
                                0.1f);
 
       uiLayout *split = uiLayoutSplit(adaptive_panel.body, 0.4f, false);
-      uiItemL(uiLayoutColumn(split, true), "", ICON_NONE);
-      uiLayout *col = uiLayoutColumn(split, true);
+      uiItemL(&split->column(true), "", ICON_NONE);
+      uiLayout *col = &split->column(true);
       uiItemL(col, fmt::format(RPT_("Viewport {:.2f} px"), preview), ICON_NONE);
       uiItemL(col, fmt::format(RPT_("Render {:.2f} px"), render), ICON_NONE);
     }
@@ -475,18 +475,18 @@ static void panel_draw(const bContext *C, Panel *panel)
     /*------------------- bfa - original props */
     // uiItemR(advanced_layout, ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    col = uiLayoutColumn(advanced_layout, true);
-    row = uiLayoutRow(col, true);
+    col = &advanced_layout->column(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_limit_surface", 0); /*bfa - decorator*/
     /* ------------ end bfa */
 
-    // uiLayout *col = uiLayoutColumn(advanced_layout, true); /*bfa - layout defined at the top*/
+    // uiLayout *col = &advanced_layout->column(true); /*bfa - layout defined at the top*/
     /* bfa - hide UI based on condition instead of deactivating */
     if (ob_use_adaptive_subdivision || RNA_boolean_get(ptr, "use_limit_surface")) {
-      col = uiLayoutColumn(advanced_layout, true);
-      row = uiLayoutRow(col, true);
+      col = &advanced_layout->column(true);
+      row = &col->row(true);
       uiItemS(row); /*bfa - indent*/
       uiItemR(row, ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
@@ -498,13 +498,13 @@ static void panel_draw(const bContext *C, Panel *panel)
     // uiItemR(advanced_layout, ptr, "use_creases", UI_ITEM_NONE, nullptr, ICON_NONE);
     // uiItemR(advanced_layout, ptr, "use_custom_normals", UI_ITEM_NONE, nullptr, ICON_NONE);
 
-    col = uiLayoutColumn(advanced_layout, true);
-    row = uiLayoutRow(col, true);
+    col = &advanced_layout->column(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
 
-    row = uiLayoutRow(col, true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/

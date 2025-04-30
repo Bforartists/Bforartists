@@ -106,7 +106,7 @@ static void assign_materials(Main *bmain,
     return;
   }
 
-  USDMaterialReader mat_reader(params, bmain);
+  USDMaterialReader mat_reader(params, *bmain);
 
   for (const auto item : mat_index_map.items()) {
     Material *assigned_mat = find_existing_material(
@@ -467,6 +467,7 @@ void USDMeshReader::read_edge_creases(Mesh *mesh, const double motionSampleTime)
 
   /* Build mapping from vert pairs to edge index. */
   using EdgeMap = VectorSet<OrderedEdge,
+                            16,
                             DefaultProbingStrategy,
                             DefaultHash<OrderedEdge>,
                             DefaultEquality<OrderedEdge>,
