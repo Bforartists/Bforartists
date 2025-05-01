@@ -1817,6 +1817,11 @@ class USERPREF_PT_file_paths_asset_libraries(FilePathsPanel, Panel):
         props = col.operator("preferences.asset_library_remove", text="", icon='REMOVE')
         props.index = active_library_index
 
+        # BFA - custom operators to move libraries up and down
+        col.separator()
+        col.operator("preferences.asset_library_move", text="", icon='TRIA_UP').direction = 'UP'
+        col.operator("preferences.asset_library_move", text="", icon='TRIA_DOWN').direction = 'DOWN'
+
         try:
             active_library = None if active_library_index < 0 else paths.asset_libraries[active_library_index]
         except IndexError:
