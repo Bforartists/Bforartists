@@ -362,13 +362,14 @@ class OBJECT_PT_SmartPrimitiveModifierPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        # Only show panel if a Smart Primitive modifier is selected
+        # Show panel if any Smart Primitive modifier exists in the stack
         if context.object and context.object.modifiers:
-            active_mod = context.object.modifiers.active
-            return (active_mod and 
-                    active_mod.type == 'NODES' and 
-                    active_mod.node_group and 
-                    active_mod.node_group.name in OBJECT_PT_GeometryNodesPanel.smart_primitive_names)
+            # Check all modifiers in the stack
+            for mod in context.object.modifiers:
+                if (mod.type == 'NODES' and
+                    mod.node_group and
+                    mod.node_group.name in OBJECT_PT_GeometryNodesPanel.smart_primitive_names):
+                    return True
         return False
 
     def draw(self, context):
@@ -422,7 +423,7 @@ def register():
         default=False
     )
     
-        # Register the bool property first
+    # Register the bool property first
     bpy.types.Scene.boolean_apply = bpy.props.BoolProperty(
         name="Boolean",
         description="Apply boolean to the final mesh",
@@ -433,15 +434,21 @@ def register():
     bpy.utils.register_class(OBJECT_PT_GeometryNodesPanel)
     bpy.utils.register_class(OBJECT_OT_ApplySmartPrimitives)
     bpy.utils.register_class(OBJECT_PT_SmartPrimitiveModifierPanel)
-    bpy.app.handlers.depsgraph_update_post.append(object_added_handler)
+
+    # Add handler only if it's not already there
+    if object_added_handler not in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.append(object_added_handler)
 
 def unregister():
     # Unregister in reverse order
     bpy.utils.unregister_class(OBJECT_PT_GeometryNodesPanel)
     bpy.utils.unregister_class(OBJECT_OT_ApplySmartPrimitives)
     bpy.utils.unregister_class(OBJECT_PT_SmartPrimitiveModifierPanel)
-    bpy.app.handlers.depsgraph_update_post.remove(object_added_handler)
     
+    # Remove handler if it exists
+    if object_added_handler in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.remove(object_added_handler)
+
     # Finally, remove the property
     del bpy.types.Scene.join_apply
     del bpy.types.Scene.boolean_apply
