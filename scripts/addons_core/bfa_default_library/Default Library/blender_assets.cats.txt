@@ -38,10 +38,6 @@ fe2efd2a-b482-4543-b917-8222f6f1cabf:Collections/Lights:Collections-Lights
 2047f9d0-6fd3-4fb8-9227-8e7b125895bf:Collections/Static Meshes:Collections-Static Meshes
 7330e2d1-25b0-4fa6-8ab4-1f7f6d41d5e1:Collections/Static Meshes/Backgrounds:Collections-Static Meshes-Backgrounds
 4bb18048-62ea-4868-951c-31e08f6e9dd9:Collections/Static Meshes/Utility:Collections-Static Meshes-Utility
-c19d5a02-5874-4a4a-8e65-e1710c15a9c6:Curve:Curve
-fae56923-cd12-49fb-8396-1b87a93e60ba:Curve/Grease Pencil:Curve-Grease Pencil
-6ff6c13c-f193-48d8-8e43-fcdf0a403640:Material:Material
-95c38dad-af82-4c27-a7d3-ed8670ffb1f1:Primitives:Primitives
 058c0130-cb9f-4251-8afa-2a0291534297:Shader Nodegroups:Shader Nodegroups
 3def5fe5-e74e-4d41-bdd9-9b0610f08934:Shader Nodegroups/Color:Shader Nodegroups-Color
 809501d2-9f4a-43f5-a26e-f3c85c7b43aa:Shader Nodegroups/Mapping:Shader Nodegroups-Mapping

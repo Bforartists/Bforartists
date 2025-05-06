@@ -1439,13 +1439,13 @@ void blo_do_versions_userdef(UserDef *userdef)
   if (!USER_VERSION_ATLEAST(404, 0)) {
     /* 3D Viewport*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Collections/Lights");
+        userdef, "VIEW3D_AST_object", "Primitives");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Collections/Static Meshes");
+        userdef, "VIEW3D_AST_object", "Collections/Lights");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Materials");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Curve/Grease Pencil");
+        userdef, "VIEW3D_AST_object", "Grease Pencil Tools");
     /* Node editors*/
 
     /*Shader*/
@@ -1467,7 +1467,7 @@ void blo_do_versions_userdef(UserDef *userdef)
 
     /*Geometry Nodes*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Curve/Grease Pencil");
+        userdef, "NODE_AST_geometry_node_groups", "Grease Pencil Tools");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_geometry_node_groups", "Hair");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
