@@ -25,6 +25,10 @@
 import bpy
 import os
 
+from . import ops
+
+from bpy.utils import register_submodule_factory
+
 from bpy.types import (
     AddonPreferences,
     Context,
@@ -36,10 +40,10 @@ from pathlib import Path
 from os import path as p
 
 bl_info = {
-    "name": "Default Asset Library",
-    "author": "Draise (@trinumedia)",
-    "version": (1, 0, 2),
-    "blender": (3, 6, 0),
+    "name": "BFA - Default Asset Library",
+    "author": "Draise",
+    "version": (1, 0, 3),
+    "blender": (4, 4, 0),
     "location": "Asset Browser>Default Library",
     "description": "Adds a default library with complementary assets that you can use from the Asset Browser Editor",
     "warning": "This is the second iteration of the default asset library. Expect changes. Use at own risk.",
@@ -47,8 +51,7 @@ bl_info = {
     "tracker_url": "https://github.com/Bforartists/Bforartists",
     # Please go to https://github.com/BlenderDefender/implement_addon_updater to implement support for automatic library updates:
     "endpoint_url": "",
-    "support": "OFFICIAL",
-    "category": "Bforartists",
+    "category": "Import-Export"
 }
 
 # Configure the display name and sub-folder of your Library here:
@@ -127,14 +130,28 @@ classes = (
     LIBADDON_APT_preferences,
 )
 
-#Registers the library when you load the addon.
+submodule_names = [
+#    "prefs",
+#    "properties",
+#    "toolshelf",
+#    "ui",
+    "ops",
+]
+
+# Get the register/unregister functions from the factory
+register_submodules, unregister_submodules = register_submodule_factory(__name__, submodule_names)
+
+# Registers the library when you load the addon.
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    # Register submodules
+    register_submodules()
+
     bpy.app.timers.register(register_library, first_interval=0.1)
 
-#Unregisters the library when you unload the addon.
+# Unregisters the library when you unload the addon.
 def unregister():
     unregister_library()
 
@@ -145,3 +162,6 @@ def unregister():
         bpy.app.timers.unregister(register_library)
     except Exception:
         pass
+
+    # Unregister submodules
+    unregister_submodules()
