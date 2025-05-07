@@ -26,7 +26,13 @@ import bpy
 
 
 def get_geometry_nodes_inputs(modifier):
-    """Returns socket names and types for Geometry Nodes modifier inputs, excluding 'Geometry'."""
+    """Returns socket names and types for Geometry Nodes modifier inputs, excluding 'Geometry'.
+    Only works with Geometry Nodes modifiers - returns empty list for other modifier types."""
+    # First check if this is actually a Geometry Nodes modifier
+    if not hasattr(modifier, 'node_group') or modifier.type != 'NODES':
+        return []
+
+    # Then check if it has a node group
     if not modifier.node_group:
         return []
     
@@ -260,7 +266,6 @@ class OBJECT_PT_GeometryNodesPanel(bpy.types.Panel):
         "Smart Cube Rounded",
         "Smart Curve Lofted",
         "Smart Cylinder",
-        "Smart Cylinder Revolved",
         "Smart Cylinder Rounded Revolved",
         "Smart Grid",
         "Smart Icosphere",
@@ -268,6 +273,7 @@ class OBJECT_PT_GeometryNodesPanel(bpy.types.Panel):
         "Smart Sphere Revolved",
         "Smart Spiral",
         "Smart Torus",
+        "Smart Tube Revolved",
         "Smart Tube Rounded Revolved"
     ]
     
