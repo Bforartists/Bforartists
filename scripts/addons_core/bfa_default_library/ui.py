@@ -27,8 +27,8 @@ ASSETS = [
     ("Torus Revolved", "MESH_TORUS"),
     ("Tube", "MESH_CYLINDER"),
     ("Tube Revolved", "MESH_CYLINDER"),
-    ("Tube Rounded", "MESH_CYLINDER")
-    ("Tube Rounded Revolved", "MESH_CYLINDER")
+    ("Tube Rounded", "MESH_CYLINDER"),
+    ("Tube Rounded Revolved", "MESH_CYLINDER"),
 ]
 
 def append_asset_as_object(filepath, object_name):
