@@ -16,6 +16,7 @@ ASSETS = [
     ("Curve Lofted", "CURVE_PATH"),
     ("Cylinder", "MESH_CYLINDER"),
     ("Cylinder Revolved", "MESH_CYLINDER"),
+    ("Cylinder Rounded", "MESH_CYLINDER"),
     ("Cylinder Rounded Revolved", "MESH_CYLINDER"),
     ("Grid", "MESH_GRID"),
     ("Icosphere", "MESH_ICOSPHERE"),
@@ -23,7 +24,11 @@ ASSETS = [
     ("Sphere Revolved", "MESH_UVSPHERE"),
     ("Spiral", "FORCE_VORTEX"),
     ("Torus", "MESH_TORUS"),
-    ("Tube Rounded Revolved", "MESH_TORUS")
+    ("Torus Revolved", "MESH_TORUS"),
+    ("Tube", "MESH_CYLINDER"),
+    ("Tube Revolved", "MESH_CYLINDER"),
+    ("Tube Rounded", "MESH_CYLINDER")
+    ("Tube Rounded Revolved", "MESH_CYLINDER")
 ]
 
 def append_asset_as_object(filepath, object_name):
