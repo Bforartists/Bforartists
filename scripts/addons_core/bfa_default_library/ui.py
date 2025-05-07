@@ -1,30 +1,29 @@
 import bpy
 import os
 from bpy.types import Menu, Operator, Panel
-
-# Define the path to the asset library and asset names
-ASSET_LIB_PATH = os.path.join(os.path.dirname(__file__), "Geometry Nodes Library")
-ASSET_NAMES = [
-    "Smart Capsule",
-    "Smart Capsule Revolved",
-    "Smart Circle",
-    "Smart Circle Revolved",
-    "Smart Cone",
-    "Smart Cone Rounded",
-    "Smart Cone Rounded Revolved",
-    "Smart Cube",
-    "Smart Cube Rounded",
-    "Smart Curve Lofted",
-    "Smart Cylinder",
-    "Smart Cylinder Revolved",
-    "Smart Cylinder Rounded Revolved",
-    "Smart Grid",
-    "Smart Icosphere",
-    "Smart Sphere",
-    "Smart Sphere Revolved",
-    "Smart Spiral",
-    "Smart Torus",
-    "Smart Tube Rounded Revolved"
+# Define the path to the asset library and asset names with icons
+ASSET_LIB_PATH = os.path.join(os.path.dirname(__file__), "Geometry Nodes Library", "G_Primitives.blend")
+ASSETS = [
+    ("Capsule", "MESH_CAPSULE"),
+    ("Capsule Revolved", "MESH_CAPSULE"),
+    ("Circle", "MESH_CIRCLE"),
+    ("Circle Revolved", "MESH_CIRCLE"),
+    ("Cone", "MESH_CONE"),
+    ("Cone Rounded", "MESH_CONE"),
+    ("Cone Rounded Revolved", "MESH_CONE"),
+    ("Cube", "MESH_CUBE"),
+    ("Cube Rounded", "MESH_CUBE"),
+    ("Curve Lofted", "CURVE_PATH"),
+    ("Cylinder", "MESH_CYLINDER"),
+    ("Cylinder Revolved", "MESH_CYLINDER"),
+    ("Cylinder Rounded Revolved", "MESH_CYLINDER"),
+    ("Grid", "MESH_GRID"),
+    ("Icosphere", "MESH_ICOSPHERE"),
+    ("Sphere", "MESH_UVSPHERE"),
+    ("Sphere Revolved", "MESH_UVSPHERE"),
+    ("Spiral", "FORCE_VORTEX"),
+    ("Torus", "MESH_TORUS"),
+    ("Tube Rounded Revolved", "MESH_TORUS")
 ]
 
 def append_asset_as_object(filepath, object_name):
@@ -59,41 +58,36 @@ class OT_InsertMeshAsset(Operator):
         return {'CANCELLED'}
 
 class ASSET_MT_mesh_add(Menu):
-    bl_label = "Default Library Assets"
+    bl_label = "Smart Primitives"
     bl_idname = "ASSET_MT_mesh_add"
+    bl_icon = 'ORIGIN_TO_GEOMETRY'
 
     def draw(self, context):
         layout = self.layout
-        for asset_name in ASSET_NAMES:
-            op = layout.operator("wm.insert_mesh_asset", text=f"{asset_name} Asset")
+        for asset_name, icon in ASSETS:
+            op = layout.operator("wm.insert_mesh_asset", text=asset_name, icon=icon)
             op.asset_name = asset_name
 
-class VIEW3D_PT_asset_panel(Panel):
-    bl_label = "Default Library"
-    bl_idname = "VIEW3D_PT_asset_panel"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Assets"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.menu("ASSET_MT_mesh_add")
-
 def menu_func(self, context):
-    self.layout.menu("ASSET_MT_mesh_add")
+    # Add the sub-menu to the Add menu with an icon
+    layout = self.layout
+    layout.separator()
+    layout.menu("ASSET_MT_mesh_add", icon='ORIGIN_TO_GEOMETRY')
+
 
 classes = (
     OT_InsertMeshAsset,
     ASSET_MT_mesh_add,
-    VIEW3D_PT_asset_panel,
 )
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
+    # Add the sub-menu to the main Add menu
+    bpy.types.VIEW3D_MT_add.append(menu_func)
 
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
+    # Remove the sub-menu from the Add menu
+    bpy.types.VIEW3D_MT_add.remove(menu_func)
