@@ -62,6 +62,16 @@ ID *asset_local_id_ensure_imported(Main &bmain, const asset_system::AssetReprese
                                           BLO_LIBLINK_APPEND_ASSET_DATA_CLEAR |
                                           BLO_LIBLINK_APPEND_LOCAL_ID_REUSE |
                                           (asset.get_use_relative_path() ? FILE_RELPATH : 0));
+    // bfa asset override
+    case ASSET_IMPORT_LINK_OVERRIDE:
+      return WM_file_link_override_datablock(&bmain,
+                                             nullptr,
+                                             nullptr,
+                                             nullptr,
+                                             blend_path.c_str(),
+                                             asset.get_id_type(),
+                                             asset.get_name().c_str(),
+                                             (asset.get_use_relative_path() ? FILE_RELPATH : 0));                                      
   }
   BLI_assert_unreachable();
   return nullptr;

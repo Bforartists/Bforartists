@@ -463,6 +463,17 @@ ID *WM_file_append_datablock(Main *bmain,
                              short id_code,
                              const char *id_name,
                              int flag);
+/**
+ * BFA link override data-block
+*/
+ID *WM_file_link_override_datablock(Main *bmain,
+                           Scene *scene,
+                           ViewLayer *view_layer,
+                           View3D *v3d,
+                           const char *filepath,
+                           short id_code,
+                           const char *id_name,
+                           int flag);    
 void WM_lib_reload(Library *lib, bContext *C, ReportList *reports);
 
 /* Mouse cursors. */
