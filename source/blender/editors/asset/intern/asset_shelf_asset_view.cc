@@ -391,8 +391,10 @@ void *AssetDragController::create_drag_data() const
       ASSET_IMPORT_APPEND_REUSE);
   AssetImportSettings import_settings{};
   import_settings.method = import_method;
-  import_settings.use_instance_collections = true;  // BFA: changed to true
-  import_settings.drop_instances_to_origin = true;
+  import_settings.use_instance_collections = true;  // BFA
+  import_settings.drop_instances_to_origin = false;
+  import_settings.use_override = false;
+  import_settings.is_from_browser = false;
 
   return WM_drag_create_asset_data(&asset_, import_settings);
 }

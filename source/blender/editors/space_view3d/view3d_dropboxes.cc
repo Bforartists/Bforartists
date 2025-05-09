@@ -34,10 +34,12 @@
 #include "ED_screen.hh"
 #include "ED_undo.hh"
 #include "ED_view3d.hh"
+#include "../asset/ED_asset_shelf.hh" // bfa asset shelf include
 
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
+#include "RNA_prototypes.hh" // bfa
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -476,6 +478,36 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   /* Temporarily disable instancing for the import, the drop operator handles that. */
   asset_drag->import_settings.use_instance_collections = false;
 
+  /* start bfa asset shelf props*/
+  bool use_instance = asset_drag->import_settings.use_instance_collections;
+  bool use_override = asset_drag->import_settings.use_override;
+  bool drop_instances_to_origin = asset_drag->import_settings.drop_instances_to_origin;
+
+  if (!asset_drag->import_settings.is_from_browser) {
+    AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
+    if (active_shelf) {
+      printf("asset shelf \n");
+      eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
+      printf("Import method %i \n", import_method_prop);
+      asset_drag->import_settings.method = import_method_prop;
+
+      use_instance = (active_shelf->settings.import_flags &
+            (import_method_prop == ASSET_IMPORT_LINK ?
+                  SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK :
+                  SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND)) != 0;
+
+      drop_instances_to_origin = (active_shelf->settings.import_flags & SHELF_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
+
+      use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
+    }
+  } else {
+    drop_instances_to_origin = asset_drag->import_settings.drop_instances_to_origin;
+  }
+  printf("out of if\n");
+  printf("instance %ir\n", use_instance);
+  printf("origin %ir\n", drop_instances_to_origin);
+  printf("override %ir\n", use_override);
+  /* end bfa */
   ID *id = WM_drag_asset_id_import(C, asset_drag, FILE_AUTOSELECT);
   Collection *collection = (Collection *)id;
 
@@ -487,7 +519,8 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   WM_event_add_notifier(C, NC_SCENE | ND_LAYER_CONTENT, scene);
 
   RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
-  RNA_boolean_set(drop->ptr, "use_instance", asset_drag->import_settings.use_instance_collections);
+  RNA_boolean_set(drop->ptr, "use_instance", use_instance);
+  RNA_boolean_set(drop->ptr, "use_override", use_override);
 
   /* Make an object active, just use the first one in the collection. */
   CollectionObject *cobject = static_cast<CollectionObject *>(collection->gobject.first);
@@ -502,7 +535,7 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   ED_outliner_select_sync_from_object_tag(C);
 
   V3DSnapCursorState *snap_state = static_cast<V3DSnapCursorState *>(drop->draw_data);
-  if (use_instance_collections && asset_drag->import_settings.drop_instances_to_origin) {
+  if (use_instance_collections && drop_instances_to_origin) {
     float zeros[3] = {0.0f, 0.0f, 0.0f};
     RNA_float_set_array(drop->ptr, "location", zeros);
     RNA_float_set_array(drop->ptr, "rotation", zeros);

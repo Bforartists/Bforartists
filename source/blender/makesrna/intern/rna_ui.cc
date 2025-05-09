@@ -2452,6 +2452,67 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Display Filter", "Filter assets by name");
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
+  // bfa start asset shelf
+  // jưst gonna put the enum here then
+  static const EnumPropertyItem asset_shelf_import_method_items[] = {
+      {SHELF_ASSET_IMPORT_LINK,
+       "LINK",
+       ICON_LINK_BLEND,
+       "Link",
+       "Import the assets as linked data-block"},
+      {SHELF_ASSET_IMPORT_APPEND,
+       "APPEND",
+       ICON_APPEND_BLEND,
+       "Append",
+       "Import the assets as copied data-block, with no link to the original asset data-block"},
+      {SHELF_ASSET_IMPORT_APPEND_REUSE,
+       "APPEND_REUSE",
+       ICON_FILE_BLEND,
+       "Append (Reuse Data)",
+       "Import the assets as copied data-block while avoiding multiple copies of nested, "
+       "typically heavy data. For example the textures of a material asset, or the mesh of an "
+       "object asset, don't have to be copied every time this asset is imported. The instances of "
+       "the asset share the data instead"},
+      {SHELF_ASSET_IMPORT_LINK_OVERRIDE,
+       "LINK_OVERRIDE",
+       ICON_DECORATE_LIBRARY_OVERRIDE,
+       "Link (Override)",
+       "Import the assets as linked library overrided data-block"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, asset_shelf_import_method_items);
+
+  RNA_def_property_enum_sdna(prop, nullptr, "settings.import_method");
+  RNA_def_property_ui_text(prop, "Display Filter", "Filter assets by name");
+  RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
+
+  prop = RNA_def_property(srna, "instance_collections_on_link", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "settings.import_flags", SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK);
+  RNA_def_property_ui_text(prop,
+                           "Instance Collections on Linking",
+                           "Create instances for collections when linking, rather than adding "
+                           "them directly to the scene");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
+
+  prop = RNA_def_property(srna, "instance_collections_on_append", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "settings.import_flags", SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND);
+  RNA_def_property_ui_text(prop,
+                           "Instance Collections on Appending",
+                           "Create instances for collections when appending, rather than adding "
+                           "them directly to the scene");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
+
+  prop = RNA_def_property(srna, "drop_instances_to_origin", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "settings.import_flags", SHELF_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
+  RNA_def_property_ui_text(prop,
+                           "Drop Instances to Origin",
+                           "Drop collection instances to scene origin instead of cursor location");
+  // bfa end 
 }
 
 static void rna_def_file_handler(BlenderRNA *brna)

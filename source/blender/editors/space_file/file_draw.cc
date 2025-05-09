@@ -389,6 +389,8 @@ static void file_but_enable_drag(uiBut *but,
                 FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND)) != 0;
       import_settings.drop_instances_to_origin = (sfile->asset_params->import_flags &
                                                   FILE_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
+      import_settings.use_override = import_method == ASSET_IMPORT_LINK_OVERRIDE; // bfa asset override
+      import_settings.is_from_browser = true; 
       UI_but_drag_set_asset(but, file->asset, import_settings, icon, file->preview_icon_id);
     }
   }

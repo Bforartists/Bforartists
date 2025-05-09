@@ -57,6 +57,8 @@ static void asset_view_item_but_drag_set(uiBut *but, AssetHandle *asset_handle)
   AssetImportSettings import_settings{};
   import_settings.method = import_method;
   import_settings.use_instance_collections = false;
+  import_settings.use_override = false;
+  import_settings.is_from_browser = true;
 
   UI_but_drag_set_asset(but,
                         asset,

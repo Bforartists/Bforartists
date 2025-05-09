@@ -753,6 +753,16 @@ ID *WM_drag_asset_id_import(const bContext *C, wmDragAsset *asset_drag, const in
           name,
           flag | BLO_LIBLINK_APPEND_RECURSIVE | BLO_LIBLINK_APPEND_ASSET_DATA_CLEAR |
               BLO_LIBLINK_APPEND_LOCAL_ID_REUSE | (use_relative_path ? FILE_RELPATH : 0));
+    // bfa asset link override
+    case ASSET_IMPORT_LINK_OVERRIDE:
+      return WM_file_link_override_datablock(bmain,
+                                    scene,
+                                    view_layer,
+                                    view3d,
+                                    blend_path.c_str(),
+                                    idtype,
+                                    name,
+                                    flag | (use_relative_path ? FILE_RELPATH : 0));
   }
 
   BLI_assert_unreachable();
@@ -843,6 +853,8 @@ void WM_drag_add_asset_list_item(wmDrag *drag,
     import_settings.method = ASSET_IMPORT_APPEND;
     import_settings.use_instance_collections = false;
     import_settings.drop_instances_to_origin = false;
+    import_settings.use_override = false;
+    import_settings.is_from_browser = false;
 
     drag_asset->asset_data.external_info = WM_drag_create_asset_data(asset, import_settings);
   }
