@@ -1907,13 +1907,13 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
     /* FIRST PART ................................................ */
-    row = &split->column(false);
+    row = &split->row(false);
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, op->ptr, "rotate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* SECOND PART ................................................ */
-    row = &split->column(false);
+    row = &split->row(true);
     if (RNA_boolean_get(op->ptr, "rotate")) {
       uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
     }
@@ -1950,13 +1950,13 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
     /* FIRST PART ................................................ */
-    row = &split->column(false);
+    row = &split->row(false);
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, op->ptr, "pin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* SECOND PART ................................................ */
-    row = &split->column(false);
+    row = &split->row(false);
     if (RNA_boolean_get(op->ptr, "pin")) {
       uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
     }
@@ -3029,9 +3029,8 @@ void UV_OT_unwrap(wmOperatorType *ot)
       method_items,
       tool_settings_default->unwrapper,
       "Method",
-      "The method to unwrap the mesh (Angle Based usually gives better results than Conformal, while "
-      "being somewhat slower)");
-      RNA_def_boolean(ot->srna,
+      "The method to unwrap the mesh");
+  RNA_def_boolean(ot->srna,
                   "fill_holes",
                   tool_settings_default->uvcalc_flag & UVCALC_FILLHOLES,
                   "Fill Holes",

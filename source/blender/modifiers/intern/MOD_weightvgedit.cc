@@ -301,11 +301,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /*------------------- bfa - original props */
   // col = &layout->column(false, IFACE_("Group Add"));
-  // row = col->row(true);
+  // row = &col->row(true);
   // uiLayoutSetPropDecorate(row, false);
   // sub = &row->row(true);
   // uiItemR(sub, ptr, "use_add", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = &sub->row(, true);
+  // sub = &sub->row(true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_add"));
   // uiLayoutSetPropSep(sub, false);
   // uiItemR(sub, ptr, "add_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
@@ -334,11 +334,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /*------------------- bfa - original props */
   // col = &layout->column(false, IFACE_("Group Remove"));
-  // row = col->row(true);
+  // row = &col->row(true);
   // uiLayoutSetPropDecorate(row, false);
   // sub = &row->row(true);
   // uiItemR(sub, ptr, "use_remove", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = &sub->row(, true);
+  // sub = &sub->row(true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_remove"));
   // uiLayoutSetPropSep(sub, false);
   // uiItemR(sub, ptr, "remove_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
@@ -367,7 +367,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(layout, ptr, "normalize", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = &layout->column(true);
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/

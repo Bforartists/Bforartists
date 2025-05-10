@@ -502,7 +502,7 @@ static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(layout, ptr, "use_falloff_uniform", UI_ITEM_NONE, nullptr, ICON_NONE);
 
   col = &layout->column(true);
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_falloff_uniform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_falloff_uniform", 0); /*bfa - decorator*/

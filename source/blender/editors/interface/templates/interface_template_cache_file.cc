@@ -113,15 +113,15 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   /* Ensure that the context has a CacheFile as this may not be set inside of modifiers panels. */
   uiLayoutSetContextPointer(layout, "edit_cachefile", fileptr);
 
-  uiLayout *row, *col, *sub, *subsub; /* BFA - WIP -  added *col, removed *sub, *subsub */
+  uiLayout *row, *col; /* BFA , added *col, removed *sub, *subsub */
 
   row = &layout->row(false);
 
   /*------------------- bfa - original props */
-  // uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, nullptr, ICON_NONE);
+  // uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true);
-  row = &col->row(true);
+  row = &layout->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
@@ -147,14 +147,7 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
     uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
 
-  row = &layout->row(true, IFACE_("Override Frame"));
-  sub = &row->row(false);
-  uiLayoutSetPropDecorate(sub, false);
-  uiItemR(sub, fileptr, "override_frame", UI_ITEM_NONE, "", ICON_NONE);
-  subsub = &sub->row(true);
-  uiLayoutSetActive(subsub, RNA_boolean_get(fileptr, "override_frame"));
-  uiItemR(subsub, fileptr, "frame", UI_ITEM_NONE, "", ICON_NONE);
-  uiItemDecoratorR(row, fileptr, "frame", 0);
+  // ------------------------------- end bfa
 
   row = &layout->row(false);
   uiItemR(row, fileptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);

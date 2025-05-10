@@ -1304,6 +1304,58 @@ class PREFERENCES_OT_filepaths_show(Operator):
         bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
         return {'FINISHED'}
 
+# BFA
+class PREFERENCES_OT_asset_library_move(Operator):
+    '''Move the currently selected library to the specified direction'''
+    bl_idname = "preferences.asset_library_move"
+    bl_label = "Move Asset Library"
+
+    direction: EnumProperty(
+        name="Direction",
+        description="Specifies which location the active item is moved to",
+        items=(
+            ('UP', "Move Up", ""),
+            ('DOWN', "Move Down", "")
+        ),
+    )
+
+    props_to_copy = (
+        "name",
+        "path",
+        "import_method",
+        "use_relative_path"
+    )
+
+    def execute(self, context):
+        filepaths = context.preferences.filepaths
+
+        active_library_index = filepaths.active_asset_library
+        active_library = filepaths.asset_libraries[active_library_index]
+
+        if self.direction == 'UP':
+            new_index = active_library_index - 1
+        else:
+            new_index = active_library_index + 1
+            
+        if (new_index < 0) or (new_index > len(filepaths.asset_libraries) - 1):
+            self.report({'INFO'}, "Library is already at the end of the list.")
+            return {'CANCELLED'}
+
+        neighbor = filepaths.asset_libraries[new_index]
+        filepaths.active_asset_library = new_index
+
+        for prop_name in self.props_to_copy:
+            active_prop = getattr(active_library, prop_name)
+            neighbor_prop = getattr(neighbor, prop_name)
+
+            setattr(neighbor, prop_name, active_prop)
+            setattr(active_library, prop_name, neighbor_prop)
+            # Initially, the neighbor library name will end in 001 due to deduplication
+            # Set the name again to fix this
+            setattr(neighbor, prop_name, active_prop)
+            
+        return {'FINISHED'}
+
 
 classes = (
     PREFERENCES_OT_addon_disable,
@@ -1333,4 +1385,5 @@ classes = (
     PREFERENCES_OT_filepaths_show, # BFA
     PREFERENCES_OT_script_directory_new,
     PREFERENCES_OT_script_directory_remove,
+    PREFERENCES_OT_asset_library_move, # BFA
 )

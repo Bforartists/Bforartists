@@ -1015,7 +1015,7 @@ static void symmetry_panel_draw(const bContext * /*C*/, Panel *panel)
   //         ICON_NONE);
 
   uiLayout *row;
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row,
           ptr,

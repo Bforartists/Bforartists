@@ -926,12 +926,11 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
 
   uiLayoutSetPropSep(layout, false); /*bfa - checkboxes, don't split*/
   col = &layout->column(true);
-
   uiItemR(col, op->ptr, "harden_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemR(col, op->ptr, "clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemR(col, op->ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(true, IFACE_("Mark"));
+  col = &layout->column(true);
   uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
   uiItemR(col, op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Mark Seams"), ICON_NONE);
   uiItemR(col, op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Mark Sharp"), ICON_NONE);

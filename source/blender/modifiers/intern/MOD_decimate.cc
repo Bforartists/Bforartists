@@ -237,14 +237,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
     /*------------------- bfa - original props */
 
-    //row = &layout->row(true, IFACE_("Symmetry"));
-    //uiLayoutSetPropDecorate(row, false);
-    //sub = &row->row(true);
-    //uiItemR(sub, ptr, "use_symmetry", UI_ITEM_NONE, "", ICON_NONE);
-    //sub = &sub->row(true);
-    //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_symmetry"));
-    //uiItemR(sub, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-    //uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
+    // row = &layout->row(true, IFACE_("Symmetry"));
+    // uiLayoutSetPropDecorate(row, false);
+    // sub = &row->row(true);
+    // uiItemR(sub, ptr, "use_symmetry", UI_ITEM_NONE, "", ICON_NONE);
+    // sub = &sub->row(true);
+    // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_symmetry"));
+    // uiItemR(sub, ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+    // uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
 
     // ------------------ bfa new left aligned prop with triangle button to hide the inactive
     // content
@@ -278,7 +278,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     // uiItemR(layout, ptr, "use_collapse_triangulate", UI_ITEM_NONE, nullptr, ICON_NONE);
 
     col = &layout->column(true);
-    row = col->row(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_collapse_triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/

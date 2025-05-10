@@ -116,12 +116,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(col, ptr, "use_boundary", UI_ITEM_NONE, IFACE_("Boundary"), ICON_NONE);
   // uiItemR(col, ptr, "use_replace", UI_ITEM_NONE, IFACE_("Replace Original"), ICON_NONE);
 
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_boundary", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_boundary", 0); /*bfa - decorator*/
 
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_replace", UI_ITEM_NONE, IFACE_("Replace Original"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_replace", 0); /*bfa - decorator*/
@@ -134,13 +134,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemL(col, TIP_("Thickness"), ICON_NONE);
 
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
   uiItemR(row, ptr, "use_even_offset", UI_ITEM_NONE, IFACE_("Even"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
 
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
   uiItemR(row, ptr, "use_relative_offset", UI_ITEM_NONE, IFACE_("Relative"), ICON_NONE);
