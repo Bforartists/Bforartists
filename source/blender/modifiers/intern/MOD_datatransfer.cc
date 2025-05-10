@@ -423,15 +423,16 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   /*------------------- bfa - original props */
-  //row = &layout->row(true, IFACE_("Max Distance"));
-  //uiItemR(row, ptr, "use_max_distance", UI_ITEM_NONE, "", ICON_NONE);
-  //sub = &row->row(true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
-  //uiItemR(sub, ptr, "max_distance", UI_ITEM_NONE, "", ICON_NONE);
+  // row = &layout->row(true, IFACE_("Max Distance"));
+  // uiItemR(row, ptr, "use_max_distance", UI_ITEM_NONE, "", ICON_NONE);
+  // sub = &row->row(true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
+  // uiItemR(sub, ptr, "max_distance", UI_ITEM_NONE, "", ICON_NONE);
+
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = &layout->split(0.385f, true);
+  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
 
   /* FIRST PART ................................................ */
   row = &split->row(false);
