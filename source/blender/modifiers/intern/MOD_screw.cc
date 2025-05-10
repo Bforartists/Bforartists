@@ -1084,12 +1084,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemR(col, ptr, "object", UI_ITEM_NONE, IFACE_("Axis Object"), ICON_NONE);
 
   /*------------------- bfa - original props */
-  // sub = uiLayoutColumn(col, false);
+  // sub = &col->column(false);
   // uiLayoutSetActive(sub, !RNA_pointer_is_null(&screw_obj_ptr));
-  // uiItemR(sub, ptr, "use_object_screw_offset", UI_ITEM_NONE, nullptr, ICON_NONE);
+  // uiItemR(sub, ptr, "use_object_screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true);
-  row = col->row(true);
+  row = &layout->row(true);
   uiLayoutSetActive(row, !RNA_pointer_is_null(&screw_obj_ptr));
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemS(row);
@@ -1159,16 +1159,16 @@ static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(col, ptr, "use_normal_flip", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true);
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
-  row = col->row(true);
+  row = &col->row(true);
 
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_normal_calculate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_normal_calculate", 0); /*bfa - decorator*/
-  row = col->row(true);
+  row = &col->row(true);
 
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_normal_flip", UI_ITEM_NONE, std::nullopt, ICON_NONE);

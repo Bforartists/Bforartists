@@ -33,6 +33,7 @@ class TEXT_HT_header(Header):
         row.template_ID(st, "text", new="text.new", unlink="text.unlink", open="text.open")
 
         if text:
+            text_name = text.name
             is_osl = text_name.endswith((".osl", ".oso"))
 
             row = layout.row()

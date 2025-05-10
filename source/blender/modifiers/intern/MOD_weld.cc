@@ -168,7 +168,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
     uiLayout *row, *col; /*bfa*/
     col = &layout->column(true);
-    row = col->row(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "loose_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "loose_edges", 0); /*bfa - decorator*/

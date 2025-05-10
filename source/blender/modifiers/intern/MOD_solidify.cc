@@ -105,7 +105,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     // uiItemR(layout, ptr, "use_even_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     col = &layout->column(true);
-    row = col->row(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_even_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
@@ -115,14 +115,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // col = &layout->column(false, CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Rim"));
   // uiItemR(
-  //     col, ptr, "use_rim", UI_ITEM_NONE, CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Fill"),
+  //     col, ptr, "use_rim", UI_ITEM_NONE, CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Fill"), 
   //     ICON_NONE);
-  // sub = uiLayoutColumn(col, false);
+  // sub = &col->column(false);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_rim"));
   // uiItemR(sub, ptr, "use_rim_only", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true);
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row,
           ptr,
@@ -133,7 +133,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemDecoratorR(row, ptr, "use_rim", 0); /*bfa - decorator*/
 
   if (RNA_boolean_get(ptr, "use_rim")) {
-    row = col->row(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemS(row);
     uiItemR(row, ptr, "use_rim_only", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -183,7 +183,7 @@ static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // uiItemR(col, ptr, "use_flip_normals", UI_ITEM_NONE, IFACE_("Flip"), ICON_NONE);
 
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_flip_normals", UI_ITEM_NONE, IFACE_("Flip"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_flip_normals", 0); /*bfa - decorator*/
@@ -193,7 +193,7 @@ static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
     /*------------------- bfa - original props */
     // uiItemR(col, ptr, "use_quality_normals", UI_ITEM_NONE, IFACE_("High Quality"), ICON_NONE);
 
-    row = col->row(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_quality_normals", UI_ITEM_NONE, IFACE_("High Quality"), ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_quality_normals", 0); /*bfa - decorator*/

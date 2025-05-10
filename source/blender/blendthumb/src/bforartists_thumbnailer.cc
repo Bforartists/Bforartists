@@ -16,7 +16,7 @@
  * [Thumbnailer Entry]
  * TryExec=bforartists-thumbnailer
  * Exec=bforartists-thumbnailer %u %o
- * MimeType=application/x-blender;
+ * MimeType=application/x-bforartists;
  * \endcode
  */
 
