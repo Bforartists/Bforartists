@@ -3885,7 +3885,7 @@ struct MetadataPanelDrawContext {
 static void metadata_panel_draw_field(const char *field, const char *value, void *ctx_v)
 {
   MetadataPanelDrawContext *ctx = (MetadataPanelDrawContext *)ctx_v;
-  uiLayout *row = uiLayoutRow(ctx->layout, false);
+  uiLayout *row = &ctx->layout->row(false);
   uiItemL(row, field, ICON_NONE);
   uiItemL(row, value, ICON_NONE);
 }
