@@ -402,12 +402,12 @@ static void geometry_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayout *col;
   col = &layout->column(true);
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_clamp_overlap", 0); /*bfa - decorator*/
 
-  row = &layout->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
@@ -445,12 +445,12 @@ static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemL(col, TIP_("Mark"), ICON_NONE);
 
-  row = col->row(true);
+  row = &col->row(true);
   uiItemS(row);
   uiItemR(row, ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seam"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "mark_seam", 0); /*bfa - decorator*/
 
-  row = col->row(true);
+  row = &col->row(true);
   uiItemS(row);
   uiItemR(row, ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "mark_sharp", 0); /*bfa - decorator*/

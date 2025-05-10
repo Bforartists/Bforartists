@@ -142,12 +142,12 @@ struct uiButtonItem : uiItem {
   uiBut *but;
 };
 
-struct uiLayoutItemFlow : uiLayout {
+struct uiLayoutItemFlow : public uiLayout {
   int number;
   int totcol;
 };
 
-struct uiLayoutItemGridFlow : uiLayout {
+struct uiLayoutItemGridFlow : public uiLayout {
   /* Extra parameters */
   bool row_major;    /* Fill first row first, instead of filling first column first. */
   bool even_columns; /* Same width for all columns. */
@@ -164,22 +164,22 @@ struct uiLayoutItemGridFlow : uiLayout {
   int tot_items, tot_columns, tot_rows;
 };
 
-struct uiLayoutItemBx : uiLayout {
+struct uiLayoutItemBx : public uiLayout {
   uiBut *roundbox;
 };
 
-struct uiLayoutItemPanelHeader : uiLayout {
+struct uiLayoutItemPanelHeader : public uiLayout {
   PointerRNA open_prop_owner;
   char open_prop_name[64];
 };
 
-struct uiLayoutItemPanelBody : uiLayout {};
+struct uiLayoutItemPanelBody : public uiLayout {};
 
-struct uiLayoutItemSplit : uiLayout {
+struct uiLayoutItemSplit : public uiLayout {
   float percentage;
 };
 
-struct uiLayoutItemRoot : uiLayout {};
+struct uiLayoutItemRoot : public uiLayout {};
 
 /** \} */
 
@@ -2270,21 +2270,30 @@ void uiItemFullR(uiLayout *layout,
       /* bfa - new expanded prop style */
       uiLayout *layout_split;
       uiLayout *layout_sub;
-
+      // bfa - old blender code
+      // uiLayout *layout_split = uiLayoutSplit(
+      //    layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
       bool label_added = false;
+      // bfa - old blender prop
+      //uiLayout *layout_sub = &layout_split->column(true);
+      //layout_sub->space_ = 0;
 
       if (!use_prop_sep_split_label) {
-        /* Pass */
         /* bfa - keep other props the same */
-        uiLayout *layout_split = uiLayoutSplit(layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
-        bool label_added = false;
-        uiLayout *layout_sub = &layout_split->column(true);
+        layout_split = uiLayoutSplit(
+            layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
+        layout_sub = &layout_split->column(true);
         layout_sub->space_ = 0;
       }
       else if (ui_item_rna_is_expand(prop, index, flag)) {
       // char name_with_suffix[UI_MAX_DRAW_STR + 2];
         /* bfa - create a column so label could be added before */
-        uiLayout *col = &(layout_row ? layout_row : layout)->column(true);
+        uiLayout *col;
+        if (layout_row != nullptr) {
+          col = &layout_row->column(true);
+        } else {
+          col = &layout->column(true);
+        }
 
         /* bfa - property label */
         uiItemL(col, name, ICON_NONE);
@@ -2298,13 +2307,14 @@ void uiItemFullR(uiLayout *layout,
         uiItemS(layout_split);
 
         /* bfa - XYZW column */
-        uiLayout *layout_sub = &layout_split->column(true);
+        layout_sub = &layout_split->column(true);
         /* bfa - set fixed size, otherwise space is wasted */
         uiLayoutSetFixedSize(layout_sub, true);
 
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
           str[0] = RNA_property_array_item_char(prop, a);
+          /*bfa -turned off code*/
           //const bool use_prefix = (a == 0 && !name.is_empty());
           //if (use_prefix) {
           //  char *s = name_with_suffix;
@@ -2317,7 +2327,7 @@ void uiItemFullR(uiLayout *layout,
                          UI_BTYPE_LABEL,
                          0,
                          /* bfa - don't prefix X with prop name */
-                         //use_prefix ? name_with_suffix : str,
+                         // use_prefix ? name_with_suffix : str,
                          str,
                          0,
                          0,
@@ -2335,6 +2345,12 @@ void uiItemFullR(uiLayout *layout,
         }
       }
       else {
+        /* bfa - keep other props the same */
+        layout_split = uiLayoutSplit(
+            layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
+        layout_sub = &layout_split->column(true);
+        layout_sub->space_ = 0;
+
         but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
         but->drawflag |= UI_BUT_TEXT_RIGHT;
         but->drawflag &= ~UI_BUT_TEXT_LEFT;
@@ -2539,9 +2555,14 @@ void uiItemFullR(uiLayout *layout,
       tmp.append(block->buttons.pop_last());
     }
     const bool use_blank_decorator = (flag & UI_ITEM_R_FORCE_BLANK_DECORATE);
-    uiLayout *layout_col = &layout->column(ui_decorate.layout, false);
+    uiLayout *layout_col = &ui_decorate.layout->column(false);
     layout_col->space_ = 0;
     layout_col->emboss_ = blender::ui::EmbossType::None;
+
+    /* bfa - move decorators down to account for label */
+    if (expand_label_added) {
+      uiItemL(layout_col, "", ICON_BLANK1);
+    }
 
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {
@@ -3382,7 +3403,7 @@ uiPropertySplitWrapper uiItemPropertySplitWrapperCreate(uiLayout *parent_layout)
 {
   uiPropertySplitWrapper split_wrapper = {nullptr};
 
-  uiLayout *layout_row = &layout->row(parent_layout, true);
+  uiLayout *layout_row = &parent_layout->row(true);
   uiLayout *layout_split = uiLayoutSplit(layout_row, UI_ITEM_PROP_SEP_DIVIDE, true);
 
   split_wrapper.label_column = &layout_split->column(true);
@@ -5000,17 +5021,17 @@ static void ui_layout_heading_set(uiLayout *layout, const StringRef heading)
   heading.copy_utf8_truncated(layout->heading_);
 }
 
-uiLayout *uiLayoutRow(uiLayout *layout, bool align)
+uiLayout &uiLayout::row(bool align)
 {
   uiLayout *litem = MEM_new<uiLayout>(__func__);
-  ui_litem_init_from_parent(litem, layout, align);
+  ui_litem_init_from_parent(litem, this, align);
 
   litem->type_ = uiItemType::LayoutRow;
-  litem->space_ = (align) ? 0 : layout->root_->style->buttonspacex;
+  litem->space_ = (align) ? 0 : this->root_->style->buttonspacex;
 
-  UI_block_layout_set_current(layout->root_->block, litem);
+  UI_block_layout_set_current(this->root_->block, litem);
 
-  return litem;
+  return *litem;
 }
 
 PanelLayout uiLayoutPanelProp(const bContext *C,
@@ -5033,7 +5054,7 @@ PanelLayout uiLayoutPanelProp(const bContext *C,
     header_litem->open_prop_owner = *open_prop_owner;
     STRNCPY(header_litem->open_prop_name, open_prop_name.c_str());
 
-    uiLayout *row = uiLayoutRow(header_litem, true);
+    uiLayout *row = &header_litem->row(true);
     uiLayoutSetUnitsY(row, 1.2f);
 
     uiBlock *block = uiLayoutGetBlock(row);
@@ -5124,67 +5145,63 @@ bool uiLayoutEndsWithPanelHeader(const uiLayout &layout)
   return item->type_ == uiItemType::LayoutPanelHeader;
 }
 
-uiLayout *uiLayoutRowWithHeading(uiLayout *layout, bool align, const StringRef heading)
+uiLayout &uiLayout::row(bool align, const StringRef heading)
 {
-  uiLayout *litem = &layout->row(align);
-  ui_layout_heading_set(litem, heading);
+  uiLayout &litem = row(align);
+  ui_layout_heading_set(&litem, heading);
   return litem;
 }
 
-uiLayout *uiLayoutColumn(uiLayout *layout, bool align)
+uiLayout &uiLayout::column(bool align)
 {
   uiLayout *litem = MEM_new<uiLayout>(__func__);
-  ui_litem_init_from_parent(litem, layout, align);
+  ui_litem_init_from_parent(litem, this, align);
 
   litem->type_ = uiItemType::LayoutColumn;
-  litem->space_ = (align) ? 0 : layout->root_->style->buttonspacey;
+  litem->space_ = (align) ? 0 : this->root_->style->buttonspacey;
 
-  UI_block_layout_set_current(layout->root_->block, litem);
+  UI_block_layout_set_current(this->root_->block, litem);
 
-  return litem;
+  return *litem;
 }
 
-uiLayout *uiLayoutColumnWithHeading(uiLayout *layout, bool align, const StringRef heading)
+uiLayout &uiLayout::column(bool align, const StringRef heading)
 {
-  uiLayout *litem = &layout->column(align);
-  ui_layout_heading_set(litem, heading);
+  uiLayout &litem = column(align);
+  ui_layout_heading_set(&litem, heading);
   return litem;
 }
 
-uiLayout *uiLayoutColumnFlow(uiLayout *layout, int number, bool align)
+uiLayout &uiLayout::column_flow(int number, bool align)
 {
   uiLayoutItemFlow *flow = MEM_new<uiLayoutItemFlow>(__func__);
-  ui_litem_init_from_parent(flow, layout, align);
+  ui_litem_init_from_parent(flow, this, align);
 
   flow->type_ = uiItemType::LayoutColumnFlow;
-  flow->space_ = (flow->align_) ? 0 : layout->root_->style->columnspace;
+  flow->space_ = (flow->align_) ? 0 : this->root_->style->columnspace;
   flow->number = number;
 
-  UI_block_layout_set_current(layout->root_->block, flow);
+  UI_block_layout_set_current(this->root_->block, flow);
 
-  return flow;
+  return *flow;
 }
 
-uiLayout *uiLayoutGridFlow(uiLayout *layout,
-                           bool row_major,
-                           int columns_len,
-                           bool even_columns,
-                           bool even_rows,
-                           bool align)
+uiLayout &uiLayout::grid_flow(
+    bool row_major, int columns_len, bool even_columns, bool even_rows, bool align)
 {
   uiLayoutItemGridFlow *flow = MEM_new<uiLayoutItemGridFlow>(__func__);
   flow->type_ = uiItemType::LayoutGridFlow;
-  ui_litem_init_from_parent(flow, layout, align);
+  ui_litem_init_from_parent(flow, this, align);
 
-  flow->space_ = (flow->align_) ? 0 : layout->root_->style->columnspace;
+  flow->space_ = (flow->align_) ? 0 : this->root_->style->columnspace;
   flow->row_major = row_major;
   flow->columns_len = columns_len;
   flow->even_columns = even_columns;
   flow->even_rows = even_rows;
 
-  UI_block_layout_set_current(layout->root_->block, flow);
+  UI_block_layout_set_current(this->root_->block, flow);
 
-  return flow;
+  return *flow;
 }
 
 static uiLayoutItemBx *ui_layout_box(uiLayout *layout, int type)
@@ -6287,7 +6304,8 @@ void UI_menutype_draw(bContext *C, MenuType *mt, uiLayout *layout)
   }
 
   uiBlock *block = uiLayoutGetBlock(layout);
-  if (bool(mt->flag & MenuTypeFlag::SearchOnKeyPress)) {
+  // bfa - gooengine disable_search_on_keypress
+  if (bool(mt->flag & MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
     UI_block_flag_enable(block, UI_BLOCK_NO_ACCELERATOR_KEYS);
   }
   if (mt->listener) {
@@ -6547,13 +6565,13 @@ uiLayout *uiItemsAlertBox(uiBlock *block,
   uiLayout *split_block = uiLayoutSplit(block_layout, split_factor, false);
 
   /* Alert icon on the left. */
-  uiLayout *layout = uiLayoutRow(split_block, false);
+  uiLayout *layout = &split_block->row(false);
   /* Using 'align_left' with 'row' avoids stretching the icon along the width of column. */
   uiLayoutSetAlignment(layout, UI_LAYOUT_ALIGN_LEFT);
   uiDefButAlert(block, icon, 0, 0, icon_size, icon_size);
 
   /* The rest of the content on the right. */
-  layout = uiLayoutColumn(split_block, false);
+  layout = &split_block->column(false);
 
   return layout;
 }

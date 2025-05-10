@@ -255,6 +255,7 @@ const bTheme U_theme_default = {
       .blend = 0.5f,
     },
     .widget_emboss = RGBA(0xffffff05),
+    .editor_border = RGBA(0x161616ff),
     .menu_shadow_fac = 0.5f,
     .menu_shadow_width = 12,
     .editor_outline = RGBA(0x1f1f1fff),
