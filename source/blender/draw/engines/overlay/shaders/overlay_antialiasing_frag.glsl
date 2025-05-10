@@ -79,7 +79,7 @@ void neighbor_blend(float line_coverage,
 
 void main()
 {
-  ivec2 center_texel = ivec2(gl_FragCoord.xy);
+  int2 center_texel = int2(gl_FragCoord.xy);
   float line_kernel = sizeLine * 0.5f - 0.5f; /* BFA - GooEngine */
 
   frag_color = texelFetch(color_tx, center_texel, 0);

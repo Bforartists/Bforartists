@@ -617,7 +617,7 @@ static void v3d_editvertex_buts(
 
     /* bfa */
 
-    row = col->row(true);
+    row = &col->row(true);
 
     uiItemS(row);
     uiItemS(row);
@@ -1020,7 +1020,7 @@ static void v3d_editvertex_buts(
 
       uiItemL(col, totlattdata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
 
-      col = &row->column(true);
+      col = &row->column(false);
       subblock = uiLayoutGetBlock(col);
       UI_block_layout_set_current(subblock, col);
 
@@ -1716,8 +1716,8 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   }
 
   if (drawLocation) {
-    col = &layout->column(false); /* bfa */
-    row = col->row(true);        /* bfa */
+    col = &layout->column(false); /* bfa - col = layout.column() */
+    row = &col->row(true);        /* bfa - row = col.row(align=True) */
     uiItemR(row,
             ptr,
             "location",
@@ -1741,10 +1741,10 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
     case ROT_MODE_QUAT: /* quaternion */
       /* bfa */
       col = &layout->column(false);
-      row = &layout->row(true);
+      row = &col->row(true);
       uiItemR(row, ptr, "rotation_quaternion", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
 
-      sub = &layout->row(true);
+      sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
 
       uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
@@ -1773,8 +1773,8 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       break;
     case ROT_MODE_AXISANGLE: /* axis angle */
                              /* bfa */
-      col = &layout->column(false);
-      row = &layout->row(true);
+      col = &layout->row(false);
+      row = &col->row(true);
       uiItemR(row, ptr, "rotation_axis_angle", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
 
       sub = &row->column(true);
@@ -1807,7 +1807,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
              /* bfa */
       col = &layout->column(false);
 
-      row = &layout->row(true);
+      row = &col->row(true);
       uiItemR(row, ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
       uiLayoutSetPropDecorate(row, false);
       uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
@@ -1826,7 +1826,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
   row = &layout->row(false);
   uiItemR(row, ptr, "rotation_mode", UI_ITEM_NONE, IFACE_("Mode"), ICON_NONE);
-  row = &layout->row(false);
+  row = &row->row(false);
   uiLayoutSetUnitsX(row, 1.f);
   uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
 
@@ -1848,7 +1848,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   uiItemS_ex(layout, .25f);
 
   col = &layout->column(false);
-  row = &layout->row(true);
+  row = &col->row(true);
   uiItemR(row,
           ptr,
           "scale",
@@ -1954,7 +1954,7 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
   uiItemR(col, &ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiItemS_ex(col, .25f); /* bfa - separator*/
-  col = &layout->column(layout, true);
+  col = &layout->column(true);
   switch (RNA_enum_get(&ptr, "type")) {
     case MB_BALL:
       break;

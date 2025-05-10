@@ -444,9 +444,10 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
                                  ICON_LOCKED :
                                  ICON_UNLOCKED;
       
+      //uiLayout *row = &layout->row(true, IFACE_("Authentication")); -/*bfa, old code*/
       uiLayout *row = &layout->row(true);/*bfa*/
       uiItemL(layout, IFACE_("Authentication"), ICON_NONE); /*BFA - separate label*/
-      row = &layout->row(false);                     /*bfa*/
+      row = &layout->row(false);                            /*bfa*/
       uiItemS(row);                                         /*bfa -indent*/
       uiItemR(row, op->ptr, "use_access_token", UI_ITEM_NONE, std::nullopt, ICON_NONE); /*bfa*/
       uiLayout *col = &layout->row(false);

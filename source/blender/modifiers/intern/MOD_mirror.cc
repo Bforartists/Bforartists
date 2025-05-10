@@ -179,7 +179,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   //         ICON_NONE);
 
   col = &layout->column(true);
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_clip", UI_ITEM_NONE, IFACE_("Clipping"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_clip", 0); /*bfa - decorator*/
@@ -187,7 +187,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  // row = uiLayoutRowWithHeading(col, true, IFACE_("Merge"));
+  // row = &col->row(true, IFACE_("Merge"));
   // uiItemR(row, ptr, "use_mirror_merge", UI_ITEM_NONE, "", ICON_NONE);
   // sub = &row->row(true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_merge"));
@@ -238,11 +238,11 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout->column(true);
 
   /*------------------- bfa - original props */
-  // row = uiLayoutRowWithHeading(col, true, IFACE_("Mirror U"));
+  // row = &col->row(true, IFACE_("Mirror U"));
   // uiLayoutSetPropDecorate(row, false);
   // sub = &row->row(true);
   // uiItemR(sub, ptr, "use_mirror_u", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = &sub->row(, true);
+  // sub = &sub->row(true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_u"));
   // uiItemR(sub, ptr, "mirror_offset_u", UI_ITEM_R_SLIDER, "", ICON_NONE);
   // uiItemDecoratorR(row, ptr, "mirror_offset_u", 0);
@@ -272,7 +272,7 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
   // sub = &row->row(true);
   // uiItemR(sub, ptr, "use_mirror_v", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = &sub->row(, true);
+  // sub = &sub->row(true);
   // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_mirror_v"));
   // uiItemR(sub, ptr, "mirror_offset_v", UI_ITEM_R_SLIDER, "", ICON_NONE);
   // uiItemDecoratorR(row, ptr, "mirror_offset_v", 0);
@@ -310,12 +310,12 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(layout, ptr, "use_mirror_udim", UI_ITEM_NONE, IFACE_("Flip UDIM"), ICON_NONE);
 
   col = &layout->column(true);
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_mirror_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_mirror_vertex_groups", 0); /*bfa - decorator*/
 
-  row = col->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_mirror_udim", UI_ITEM_NONE, IFACE_("Flip UDIM"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_mirror_udim", 0); /*bfa - decorator*/
