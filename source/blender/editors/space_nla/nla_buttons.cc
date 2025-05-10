@@ -401,7 +401,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
 {
   PointerRNA strip_ptr;
   uiLayout *layout = panel->layout;
-  uiLayout *col, *row;
+  uiLayout *column, *row;
   uiBlock *block;
   short showEvalProps = 1;
 
@@ -419,9 +419,9 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
   uiLayoutSetPropDecorate(layout, false);
 
   /* strip extents */
-  col = &layout->column(true);
-  uiItemR(col, &strip_ptr, "frame_start_ui", UI_ITEM_NONE, IFACE_("Frame Start"), ICON_NONE);
-  uiItemR(col, &strip_ptr, "frame_end_ui", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
+  column = &layout->column(true);
+  uiItemR(column, &strip_ptr, "frame_start_ui", UI_ITEM_NONE, IFACE_("Frame Start"), ICON_NONE);
+  uiItemR(column, &strip_ptr, "frame_end_ui", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
 
   /* Evaluation-Related Strip Properties ------------------ */
 
@@ -433,9 +433,9 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
   /* only show if allowed to... */
   if (showEvalProps) {
     /* extrapolation */
-    col = &layout->column(false);
-    uiItemR(col, &strip_ptr, "extrapolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemR(col, &strip_ptr, "blend_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    column = &layout->column(false);
+    uiItemR(column, &strip_ptr, "extrapolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemR(column, &strip_ptr, "blend_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* Blend in/out + auto-blending:
      * - blend in/out can only be set when auto-blending is off.
@@ -443,10 +443,10 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
 
     uiItemS(layout);
 
-    col = &layout->column(true);
-    uiLayoutSetActive(col, RNA_boolean_get(&strip_ptr, "use_auto_blend") == false);
-    uiItemR(col, &strip_ptr, "blend_in", UI_ITEM_NONE, IFACE_("Blend In"), ICON_NONE);
-    uiItemR(col, &strip_ptr, "blend_out", UI_ITEM_NONE, IFACE_("Out"), ICON_NONE);
+    column = &layout->column(true);
+    uiLayoutSetActive(column, RNA_boolean_get(&strip_ptr, "use_auto_blend") == false);
+    uiItemR(column, &strip_ptr, "blend_in", UI_ITEM_NONE, IFACE_("Blend In"), ICON_NONE);
+    uiItemR(column, &strip_ptr, "blend_out", UI_ITEM_NONE, IFACE_("Out"), ICON_NONE);
 
     row = &column->row(true);
     uiLayoutSetActive(row, RNA_boolean_get(&strip_ptr, "use_animated_influence") == false);
@@ -458,20 +458,20 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     uiLayoutSetPropSep(layout, false);
     uiLayoutSetPropDecorate(layout, false);
 
-    col = &layout->column(true);          /* bfa - align props left */
-    uiItemL(col, IFACE_("Playback"), ICON_NONE); /* bfa - use label instead of heading */
+    column = &layout->column(true);          /* bfa - align probs left */
+    uiItemL(column, IFACE_("Playback"), ICON_NONE); /* bfa - use label instead of heading */
 
-    row = &col->row(false);
+    row = &column->row(true);
     uiItemS(row); /* bfa - separator */
     uiLayoutSetActive(row,
                       !(RNA_boolean_get(&strip_ptr, "use_animated_influence") ||
                         RNA_boolean_get(&strip_ptr, "use_animated_time")));
     /* bfa */
-    row = &col->row(false);
+    row = &column->row(false);
     uiItemS(row);
     uiItemR(row, &strip_ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    row = &col->row(false);
+    row = &column->row(false);
     uiItemS(row);
     uiItemR(row, &strip_ptr, "use_animated_time_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -532,8 +532,9 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
       column, &strip_ptr, "action_frame_start", UI_ITEM_NONE, IFACE_("Frame Start"), ICON_NONE);
   uiItemR(column, &strip_ptr, "action_frame_end", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
 
-  row = &layout->row(false, IFACE_("Sync Length"));
-  uiItemR(row, &strip_ptr, "use_sync_length", UI_ITEM_NONE, "", ICON_NONE);
+  row = &layout->row(false); /* bfa - align probs left nla action panel */
+  uiLayoutSetPropSep(row, false);   /* bfa - use_property_split = False */
+  uiItemR(row, &strip_ptr, "use_sync_length", UI_ITEM_NONE, IFACE_("Sync Length"), ICON_NONE);
   uiItemO(row, IFACE_("Now"), ICON_FILE_REFRESH, "NLA_OT_action_sync_length");
   uiLayoutSetPropSep(row, true); /* bfa - use_property_split = True */
 
