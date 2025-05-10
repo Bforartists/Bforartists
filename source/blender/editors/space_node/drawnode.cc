@@ -1526,7 +1526,7 @@ static void std_node_socket_interface_draw(ID *id,
   }
 
   {
-    uiLayout *sub = &layout->column(false);
+    uiLayout *sub = &col->column(false);
     uiLayoutSetPropSep(sub, false); /* bfa - use_property_split = False */
     uiLayoutSetActive(sub, interface_socket->default_input == NODE_INPUT_DEFAULT_VALUE);
     uiItemR(sub, &ptr, "hide_value", DEFAULT_FLAGS, std::nullopt, ICON_NONE);

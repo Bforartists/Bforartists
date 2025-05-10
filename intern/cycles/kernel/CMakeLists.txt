@@ -682,7 +682,7 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYCLES_DEVICE_HIP)
       set(hip_command ${CMAKE_COMMAND})
       set(hip_flags
         -E env "HIP_PATH=${HIP_ROOT_DIR}"
-        ${HIP_HIPCC_EXECUTABLE}.bin.exe)
+        ${HIP_HIPCC_EXECUTABLE})
     else()
       set(hip_command ${HIP_HIPCC_EXECUTABLE})
       set(hip_flags)
@@ -761,7 +761,7 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYCLES_DEVICE_HIPRT)
     set(hiprt_compile_command ${CMAKE_COMMAND})
     set(hiprt_compile_flags
       -E env "HIP_PATH=${HIP_ROOT_DIR}"
-      ${HIP_HIPCC_EXECUTABLE}.bin.exe)
+      ${HIP_HIPCC_EXECUTABLE})
   else()
     set(hiprt_compile_command ${HIP_HIPCC_EXECUTABLE})
     set(hiprt_compile_flags)

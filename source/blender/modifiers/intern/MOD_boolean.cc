@@ -659,7 +659,7 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
 
       uiLayout *row;
       col = &layout->column(true);
-      row = col->row(true);
+      row = &col->row(true);
       uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
       uiItemR(row, ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       uiItemDecoratorR(row, ptr, "use_self", 0); /*bfa - decorator*/
@@ -670,7 +670,7 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
 
     uiLayout *row;
     col = &layout->column(true);
-    row = col->row(true);
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     uiItemR(row, ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_hole_tolerant", 0); /*bfa - decorator*/

@@ -532,13 +532,13 @@ void uiTemplateMarker(uiLayout *layout,
     uiItemS(row);
     uiItemS(row);
 
-    lcol = &col->row(true);
+    lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("X"), ICON_NONE);
     uiItemL(lcol, IFACE_("Y"), ICON_NONE);
 
-    vcol = &col->row(true);
+    vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
 	/*end bfa */
     UI_block_align_begin(block);
@@ -583,13 +583,13 @@ void uiTemplateMarker(uiLayout *layout,
     uiItemS(row);
     uiItemS(row);
 
-    lcol = &col->row(true);
+    lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("X"), ICON_NONE);
     uiItemL(lcol, IFACE_("Y"), ICON_NONE);
 
-    vcol = &col->row(true);
+    vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
 	/*end bfa */
@@ -633,13 +633,13 @@ void uiTemplateMarker(uiLayout *layout,
     uiItemS(row);
     uiItemS(row);
 
-    lcol = &col->row(true);
+    lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, 2.);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("Width"), ICON_NONE);
     uiItemL(lcol, IFACE_("Height"), ICON_NONE);
 
-    vcol = &col->row(true);
+    vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
 	/*end bfa */
@@ -684,13 +684,13 @@ void uiTemplateMarker(uiLayout *layout,
     uiItemS(row);
     uiItemS(row);
 
-    lcol = &col->row(true);
+    lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("X"), ICON_NONE);
     uiItemL(lcol, IFACE_("Y"), ICON_NONE);
 
-    vcol = &col->row(true);
+    vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
 	/*end bfa */
@@ -734,13 +734,13 @@ void uiTemplateMarker(uiLayout *layout,
     uiItemS(row);
     uiItemS(row);
 
-    lcol = &col->row(true);
+    lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, 2.);
     uiLayoutSetFixedSize(lcol, true);
     uiItemL(lcol, IFACE_("Width"), ICON_NONE);
     uiItemL(lcol, IFACE_("Height"), ICON_NONE);
 
-    vcol = &col->row(true);
+    vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
     UI_block_align_begin(block);
     /*bfa end*/

@@ -141,11 +141,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   /*------------------- bfa - original props */
-  //row = &layout->row(true, IFACE_("Edge Angle"));
-  //uiItemR(row, ptr, "use_edge_angle", UI_ITEM_NONE, "", ICON_NONE);
-  //sub = &row->row(true);
-  //uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_edge_angle"));
-  //uiItemR(sub, ptr, "split_angle", UI_ITEM_NONE, "", ICON_NONE);
+  // row = &layout->row(true, IFACE_("Edge Angle"));
+  // uiItemR(row, ptr, "use_edge_angle", UI_ITEM_NONE, "", ICON_NONE);
+  // sub = &row->row(true);
+  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_edge_angle"));
+  // uiItemR(sub, ptr, "split_angle", UI_ITEM_NONE, "", ICON_NONE);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
@@ -174,7 +174,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   // uiItemR(layout, ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
 
   col = &layout->column(true);
-  row = &layout->row(true);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   uiItemR(row, ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_sharp", 0); /*bfa - decorator*/
