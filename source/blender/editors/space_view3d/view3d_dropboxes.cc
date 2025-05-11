@@ -487,9 +487,7 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   if (!asset_drag->import_settings.is_from_browser) {
     AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
     if (active_shelf) {
-      printf("asset shelf \n");
       eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
-      printf("Import method %i \n", import_method_prop);
       asset_drag->import_settings.method = import_method_prop;
 
       use_instance = (active_shelf->settings.import_flags &
@@ -504,10 +502,6 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   } else {
     drop_instances_to_origin = asset_drag->import_settings.drop_instances_to_origin;
   }
-  printf("out of if\n");
-  printf("instance %ir\n", use_instance);
-  printf("origin %ir\n", drop_instances_to_origin);
-  printf("override %ir\n", use_override);
   /* end bfa */
   ID *id = WM_drag_asset_id_import(C, asset_drag, FILE_AUTOSELECT);
   Collection *collection = (Collection *)id;

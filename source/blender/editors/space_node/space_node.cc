@@ -1150,14 +1150,11 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
   if (!asset_drag->import_settings.is_from_browser) {
     AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
     if (active_shelf) {
-      printf("asset shelf node editor\n");
       eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
       asset_drag->import_settings.method = import_method_prop;
       asset_drag->import_settings.use_instance_collections = false;
       use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
       asset_drag->import_settings.use_override = use_override;
-      printf("import method %i\n", import_method_prop);
-      printf("override %i\n", use_override);
     }
   }
   ID *id = WM_drag_asset_id_import(C, asset_drag, 0);
