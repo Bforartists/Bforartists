@@ -755,7 +755,9 @@ ID *WM_drag_asset_id_import(const bContext *C, wmDragAsset *asset_drag, const in
               BLO_LIBLINK_APPEND_LOCAL_ID_REUSE | (use_relative_path ? FILE_RELPATH : 0));
     // bfa asset link override
     case ASSET_IMPORT_LINK_OVERRIDE:
-      return WM_file_link_override_datablock(bmain,
+      // Since node group is handled override differently, required to be import as linked
+      if (idtype == ID_NT) {
+        return WM_file_link_datablock(bmain,
                                     scene,
                                     view_layer,
                                     view3d,
@@ -763,6 +765,16 @@ ID *WM_drag_asset_id_import(const bContext *C, wmDragAsset *asset_drag, const in
                                     idtype,
                                     name,
                                     flag | (use_relative_path ? FILE_RELPATH : 0));
+      } else {
+        return WM_file_link_override_datablock(bmain,
+                                    scene,
+                                    view_layer,
+                                    view3d,
+                                    blend_path.c_str(),
+                                    idtype,
+                                    name,
+                                    flag | (use_relative_path ? FILE_RELPATH : 0));
+      }
   }
 
   BLI_assert_unreachable();

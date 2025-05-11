@@ -483,6 +483,7 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   bool use_override = asset_drag->import_settings.use_override;
   bool drop_instances_to_origin = asset_drag->import_settings.drop_instances_to_origin;
 
+  // use is_from_browser to differentiate between asset browser and asset shelf drag.
   if (!asset_drag->import_settings.is_from_browser) {
     AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
     if (active_shelf) {

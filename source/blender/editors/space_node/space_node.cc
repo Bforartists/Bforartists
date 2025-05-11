@@ -47,6 +47,7 @@
 #include "ED_node_preview.hh"
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
+#include "../asset/ED_asset_shelf.hh" /* bfa assetshelf */ 
 
 #include "UI_view2d.hh"
 
@@ -67,6 +68,7 @@
 #include "NOD_socket_interface_key.hh"
 
 #include "io_utils.hh"
+#include "../interface/interface_intern.hh" /* bfa asset nodegroup override*/
 
 #include "node_intern.hh" /* own include */
 
@@ -1141,11 +1143,42 @@ static bool node_import_file_drop_poll(bContext * /*C*/, wmDrag *drag, const wmE
 
 static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
-  ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
+  
+  /* start bfa asset shelf props*/
+  wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
+  bool use_override = false;
+  if (!asset_drag->import_settings.is_from_browser) {
+    AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
+    if (active_shelf) {
+      printf("asset shelf node editor\n");
+      eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
+      asset_drag->import_settings.method = import_method_prop;
+      asset_drag->import_settings.use_instance_collections = false;
+      use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
+      asset_drag->import_settings.use_override = use_override;
+      printf("import method %i\n", import_method_prop);
+      printf("override %i\n", use_override);
+    }
+  }
+  ID *id = WM_drag_asset_id_import(C, asset_drag, 0);
+  if (use_override) {  
+    ID *owner_id = id; 
+    ID *id_or = id;
+    PointerRNA owner_ptr;
+    PropertyRNA *prop;
+    if (!ELEM(nullptr, owner_id, id_or)) {
+      id = ui_template_id_liboverride_hierarchy_make(
+      C, CTX_data_main(C), owner_id, id_or, nullptr);
+    }
+  }
+  /* end bfa */
+  // ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
 
   RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
 
-  RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET));
+  RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET || 
+    (asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK))
+  );
 }
 
 static void node_id_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
