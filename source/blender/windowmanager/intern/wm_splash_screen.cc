@@ -58,26 +58,7 @@ static void wm_block_splash_close(bContext *C, void *arg_block, void * /*arg*/)
   UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
 }
 
-/* BFA - TO DO - unused? */
-static void wm_block_splash_add_label(uiBlock *block, const char *label, int x, int y)
-{
-  if (!(label && label[0])) {
-    return;
-  }
-
-  UI_block_emboss_set(block, blender::ui::EmbossType::None);
-
-  uiBut *but = uiDefBut(
-      block, UI_BTYPE_LABEL, 0, label, 0, y, x, UI_UNIT_Y, nullptr, 0, 0, std::nullopt);
-  UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
-  UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);
-
-  /* Regardless of theme, this text should always be bright white. */
-  uchar color[4] = {255, 255, 255, 255};
-  UI_but_color_set(but, color);
-
-  UI_block_emboss_set(block, blender::ui::EmbossType::Emboss);
-}
+/* BFA - wm_block_splash_add_label - removed! */
 
 #ifndef WITH_HEADLESS
 static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
@@ -310,10 +291,7 @@ static uiBlock *wm_block_splash_create(bContext *C, ARegion *region, void * /*ar
 
     UI_but_func_set(but, wm_block_splash_close, block, nullptr);
 
-    wm_block_splash_add_label(block,
-                              BKE_blender_version_string(),
-                              splash_width - 8.0 * UI_SCALE_FAC,
-                              splash_height - 13.0 * UI_SCALE_FAC);
+    /* BFA - wm_block_splash_add_label - removed! */
   }
 
   /* Banner image passed through the environment, to overlay on the splash and
