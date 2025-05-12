@@ -26,7 +26,6 @@ struct AnimationEvalContext;
 struct ARegion;
 struct bContext;
 struct bContextStore;
-struct ColorManagedDisplay;
 struct CurveMapping;
 struct CurveProfile;
 namespace blender::gpu {
@@ -49,6 +48,11 @@ struct wmEvent;
 struct wmKeyConfig;
 struct wmOperatorType;
 struct wmTimer;
+
+namespace blender::ocio {
+class Display;
+}  // namespace blender::ocio
+using ColorManagedDisplay = blender::ocio::Display;
 
 /* ****************** general defines ************** */
 
@@ -239,7 +243,7 @@ struct uiBut {
   void *tip_arg = nullptr;
   uiFreeArgFunc tip_arg_free = nullptr;
   /** Function to override the label to be displayed in the tooltip. */
-  std::function<std::string(const uiBut *)> tip_label_func;
+  std::function<std::string(const uiBut *)> tip_quick_func;
 
   uiButToolTipCustomFunc tip_custom_func = nullptr;
 
@@ -865,7 +869,7 @@ void ui_but_override_flag(Main *bmain, uiBut *but);
 
 void ui_block_bounds_calc(uiBlock *block);
 
-ColorManagedDisplay *ui_block_cm_display_get(uiBlock *block);
+const ColorManagedDisplay *ui_block_cm_display_get(uiBlock *block);
 void ui_block_cm_to_display_space_v3(uiBlock *block, float pixel[3]);
 
 /* `interface_regions.cc` */
@@ -1305,6 +1309,8 @@ enum uiMenuItemSeparatorType {
 /**
  * Helper call to draw a menu item without a button.
  *
+ * \param back_rect: Used to draw/leave out the backdrop of the menu item. Useful when layering
+ *                   multiple items with different formatting like in search menus.
  * \param but_flag: Button flags (#uiBut.flag) indicating the state of the item, typically
  *                  #UI_HOVER, #UI_BUT_DISABLED, #UI_BUT_INACTIVE.
  * \param separator_type: The kind of separator which controls if and how the string is clipped.
@@ -1313,6 +1319,9 @@ enum uiMenuItemSeparatorType {
  */
 void ui_draw_menu_item(const uiFontStyle *fstyle,
                        rcti *rect,
+                       rcti *back_rect,
+                       float zoom,
+                       bool use_unpadded,
                        const char *name,
                        int iconid,
                        int but_flag,
@@ -1320,6 +1329,7 @@ void ui_draw_menu_item(const uiFontStyle *fstyle,
                        int *r_xmax);
 void ui_draw_preview_item(const uiFontStyle *fstyle,
                           rcti *rect,
+                          float zoom,
                           const char *name,
                           int iconid,
                           int but_flag,

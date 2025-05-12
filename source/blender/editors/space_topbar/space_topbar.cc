@@ -193,7 +193,7 @@ static void recent_files_menu_draw(const bContext * /*C*/, Menu *menu)
     uiItemO(layout, IFACE_("Clear Recent Files List"), ICON_TRASH, "WM_OT_clear_recent_files"); /*BFA - icon added*/
   }
   else {
-    uiItemL(layout, IFACE_("No Recent Files"), ICON_NONE);
+    layout->label(IFACE_("No Recent Files"), ICON_NONE);
   }
 }
 
@@ -226,7 +226,7 @@ static void undo_history_draw_menu(const bContext *C, Menu *menu)
     undo_step_count += 1;
   }
 
-  uiLayout *split = uiLayoutSplit(menu->layout, 0.0f, false);
+  uiLayout *split = &menu->layout->split(0.0f, false);
   uiLayout *column = nullptr;
 
   const int col_size = 20 + (undo_step_count / 12);
