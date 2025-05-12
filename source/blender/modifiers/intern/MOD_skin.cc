@@ -2021,20 +2021,18 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "branch_smoothing", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "branch_smoothing", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   row = &layout->row(true, IFACE_("Symmetry"));
-  uiItemR(row, ptr, "use_x_symmetry", toggles_flag, std::nullopt, ICON_NONE);
-  uiItemR(row, ptr, "use_y_symmetry", toggles_flag, std::nullopt, ICON_NONE);
-  uiItemR(row, ptr, "use_z_symmetry", toggles_flag, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_x_symmetry", toggles_flag, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_y_symmetry", toggles_flag, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_z_symmetry", toggles_flag, std::nullopt, ICON_NONE);
 
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
