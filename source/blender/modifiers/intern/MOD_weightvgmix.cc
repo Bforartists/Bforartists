@@ -456,21 +456,21 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiItemS(layout);
 
-  uiItemR(layout, ptr, "default_weight_a", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemR(layout, ptr, "default_weight_b", UI_ITEM_NONE, IFACE_("B"), ICON_NONE);
+  layout->prop(ptr, "default_weight_a", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "default_weight_b", UI_ITEM_NONE, IFACE_("B"), ICON_NONE);
 
   uiItemS(layout);
 
-  uiItemR(layout, ptr, "mix_set", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemR(layout, ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "mix_set", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  // layout->prop(ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
