@@ -98,7 +98,3 @@
 *.usdc filter=lfs diff=lfs merge=lfs -text
 *.pdf filter=lfs diff=lfs merge=lfs -text
 *.dat filter=lfs diff=lfs merge=lfs -text
-tests/files/render/integrator/cycles_renders/light_path_transparent_depth.png filter=lfs diff=lfs merge=lfs -text
-tests/files/render/integrator/cycles_renders/light_path_ray_length.png filter=lfs diff=lfs merge=lfs -text
-tests/files/render/integrator/cycles_renders/light_path_ray_depth.png filter=lfs diff=lfs merge=lfs -text
-tests/files/render/integrator/cycles_renders/shadow_all_max_bounces.png filter=lfs diff=lfs merge=lfs -text
