@@ -194,7 +194,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             if scene.use_gravity:
                 sub = col.column()
                 sub.enabled = False
-                sub.prop(domain, "gravity", text="Using Scene Gravity", icon='SCENE_DATA')
+                sub.prop(domain, "gravity", text="Scene Gravity", icon='SCENE_DATA')
             else:
                 col.prop(domain, "gravity", text="Gravity")
 
@@ -1340,12 +1340,10 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
         layout = self.layout
 
         ob = context.object
-        md = context.fluid
         domain = context.fluid.domain_settings
 
         is_baking_any = domain.is_cache_baking_any
         has_baked_data = domain.has_cache_baked_data
-        has_baked_mesh = domain.has_cache_baked_mesh
 
         col = layout.column()
         col.prop(domain, "cache_directory", text="")
@@ -1374,15 +1372,6 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
         row.use_property_split = False
         row.prop(domain, "cache_resumable", text="Is Resumable")
 
-        row = col.row()
-        row.enabled = not is_baking_any and not has_baked_data
-        row.prop(domain, "cache_data_format", text="Format Volumes")
-
-        if md.domain_settings.domain_type == 'LIQUID' and domain.use_mesh:
-            row = col.row()
-            row.enabled = not is_baking_any and not has_baked_mesh
-            row.prop(domain, "cache_mesh_format", text="Meshes")
-
         if domain.cache_type == 'ALL':
             col.separator()
             split = layout.split()
@@ -1409,7 +1398,7 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
 
 
 class PHYSICS_PT_export(PhysicButtonsPanel, Panel):
-    bl_label = "Advanced"
+    bl_label = "Volumetric Data"
     bl_parent_id = "PHYSICS_PT_cache"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
@@ -1420,11 +1409,7 @@ class PHYSICS_PT_export(PhysicButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        domain = context.fluid.domain_settings
-        if (
-                not PhysicButtonsPanel.poll_fluid_domain(context) or
-                (domain.cache_data_format != 'OPENVDB' and bpy.app.debug_value != 3001)
-        ):
+        if not PhysicButtonsPanel.poll_fluid_domain(context):
             return False
 
         return (context.engine in cls.COMPAT_ENGINES)
@@ -1434,22 +1419,33 @@ class PHYSICS_PT_export(PhysicButtonsPanel, Panel):
         layout.use_property_split = True
 
         domain = context.fluid.domain_settings
+        md = context.fluid
 
         is_baking_any = domain.is_cache_baking_any
         has_baked_any = domain.has_cache_baked_any
         has_baked_data = domain.has_cache_baked_data
+        has_baked_mesh = domain.has_cache_baked_mesh
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
         flow.enabled = not is_baking_any and not has_baked_any
 
         col = flow.column()
 
+        row = col.row()
+        row.enabled = not is_baking_any and not has_baked_data
+        row.prop(domain, "cache_data_format", text="Format")
+
         if domain.cache_data_format == 'OPENVDB':
             col.enabled = not is_baking_any and not has_baked_data
-            col.prop(domain, "openvdb_cache_compress_type", text="Compression Volumes")
+            col.prop(domain, "openvdb_cache_compress_type", text="Compression")
 
             col = flow.column()
-            col.prop(domain, "openvdb_data_depth", text="Precision Volumes")
+            col.prop(domain, "openvdb_data_depth", text="Precision")
+
+        if md.domain_settings.domain_type == 'LIQUID' and domain.use_mesh:
+            row = col.row()
+            row.enabled = not is_baking_any and not has_baked_mesh
+            row.prop(domain, "cache_mesh_format", text="Meshes")
 
         # Only show the advanced panel to advanced users who know Mantaflow's birthday :)
         if bpy.app.debug_value == 3001:

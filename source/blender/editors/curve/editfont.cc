@@ -419,7 +419,7 @@ static void text_update_edited(bContext *C, Object *obedit, const eEditFontMode 
     /* depsgraph runs above, but since we're not tagging for update, call direct */
     /* We need evaluated data here. */
     Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-    BKE_vfont_to_curve(DEG_get_evaluated_object(depsgraph, obedit), mode);
+    BKE_vfont_to_curve(DEG_get_evaluated(depsgraph, obedit), mode);
   }
 
   cu->curinfo = ef->textbufinfo[ef->pos ? ef->pos - 1 : 0];
@@ -705,7 +705,7 @@ static uiBlock *wm_block_insert_unicode_create(bContext *C, ARegion *region, voi
       block, UI_LAYOUT_VERTICAL, UI_LAYOUT_PANEL, 0, 0, 200 * UI_SCALE_FAC, UI_UNIT_Y, 0, style);
 
   uiItemL_ex(layout, IFACE_("Insert Unicode Character"), ICON_NONE, true, false);
-  uiItemL(layout, RPT_("Enter a Unicode codepoint hex value"), ICON_NONE);
+  layout->label(RPT_("Enter a Unicode codepoint hex value"), ICON_NONE);
 
   uiBut *text_but = uiDefBut(block,
                              UI_BTYPE_TEXT,
@@ -735,7 +735,7 @@ static uiBlock *wm_block_insert_unicode_create(bContext *C, ARegion *region, voi
 
   uiBut *confirm = nullptr;
   uiBut *cancel = nullptr;
-  uiLayout *split = uiLayoutSplit(layout, 0.0f, true);
+  uiLayout *split = &layout->split(0.0f, true);
   split->column(false);
 
   if (windows_layout) {
@@ -1463,14 +1463,14 @@ static wmOperatorStatus move_cursor(bContext *C, int type, const bool select)
   /* apply vertical cursor motion to position immediately
    * otherwise the selection will lag behind */
   if (FO_CURS_IS_MOTION(cursmove)) {
-    BKE_vfont_to_curve(DEG_get_evaluated_object(depsgraph, obedit), eEditFontMode(cursmove));
+    BKE_vfont_to_curve(DEG_get_evaluated(depsgraph, obedit), eEditFontMode(cursmove));
     cursmove = FO_CURS;
   }
 
   if (select == 0) {
     if (ef->selstart) {
       ef->selstart = ef->selend = 0;
-      BKE_vfont_to_curve(DEG_get_evaluated_object(depsgraph, obedit), FO_SELCHANGE);
+      BKE_vfont_to_curve(DEG_get_evaluated(depsgraph, obedit), FO_SELCHANGE);
     }
   }
 
@@ -2032,7 +2032,7 @@ static int font_cursor_text_index_from_event(bContext *C, Object *obedit, const 
 static void font_cursor_set_apply(bContext *C, const wmEvent *event)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-  Object *ob = DEG_get_evaluated_object(depsgraph, CTX_data_active_object(C));
+  Object *ob = DEG_get_evaluated(depsgraph, CTX_data_active_object(C));
   Curve *cu = static_cast<Curve *>(ob->data);
   EditFont *ef = cu->editfont;
   BLI_assert(ef->len >= 0);
@@ -2583,7 +2583,7 @@ bool ED_curve_editfont_select_pick(
     bContext *C,
     const int mval[2],
     /* NOTE: `params->deselect_all` is ignored as only one text-box is active at once. */
-    const SelectPick_Params *params)
+    const SelectPick_Params &params)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Object *obedit = CTX_data_edit_object(C);
