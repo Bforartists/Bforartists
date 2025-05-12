@@ -300,32 +300,27 @@ static void panel_draw(const bContext *C, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = &layout->column(true);
-  uiItemR(col, ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
-  uiItemR(col, ptr, "sculpt_levels", UI_ITEM_NONE, IFACE_("Sculpt"), ICON_NONE);
-  uiItemR(col, ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
+  col->prop(ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
+  col->prop(ptr, "sculpt_levels", UI_ITEM_NONE, IFACE_("Sculpt"), ICON_NONE);
+  col->prop(ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
   const bool is_sculpt_mode = CTX_data_active_object(C)->mode & OB_MODE_SCULPT;
   uiBlock *block = uiLayoutGetBlock(panel->layout);
   UI_block_lock_set(block, !is_sculpt_mode, N_("Sculpt Base Mesh"));
   /*------------------- bfa - original props */
-  // uiItemR(col, ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"),
-  // ICON_NONE);
-
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
+  row->prop(ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
   /* ------------ end bfa */
   UI_block_lock_clear(block);
 
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "show_only_control_edges", UI_ITEM_NONE, nullptr, ICON_NONE);
-
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
 
   /* ------------ end bfa */
@@ -432,7 +427,7 @@ static void generate_panel_draw(const bContext * /*C*/, Panel *panel)
     uiItemO(row, IFACE_("Pack External"), ICON_NONE, "OBJECT_OT_multires_external_pack");
     uiLayoutSetPropSep(col, true);
     row = &col->row(false);
-    uiItemR(row, ptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row->prop(ptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else {
     uiItemO(col, IFACE_("Save External..."), ICON_NONE, "OBJECT_OT_multires_external_save");
@@ -452,26 +447,22 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetActive(layout, !has_displacement);
 
-  uiItemR(layout, ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(false);
   uiLayoutSetActive(col, true);
-  uiItemR(col, ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemR(col, ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
+  col->prop(ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col->prop(ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  // uiItemR(layout, ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
 
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 }

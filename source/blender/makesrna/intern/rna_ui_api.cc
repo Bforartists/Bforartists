@@ -150,7 +150,7 @@ static void rna_uiItemR(uiLayout *layout,
     flag |= UI_ITEM_R_CHECKBOX_INVERT;
   }
 
-  uiItemFullR(layout, ptr, prop, index, 0, flag, text, icon, placeholder_str);
+  layout->prop(ptr, prop, index, 0, flag, text, icon, placeholder_str);
 }
 
 static void rna_uiItemR_with_popover(uiLayout *layout,
@@ -470,7 +470,7 @@ static void rna_uiItemL(uiLayout *layout,
     icon = icon_value;
   }
 
-  uiItemL(layout, text.value_or(""), icon);
+  layout->label(text.value_or(""), icon);
 }
 
 static void rna_uiItemM(uiLayout *layout,
@@ -867,6 +867,16 @@ static const EnumPropertyItem *rna_uiTemplateAssetView_filter_id_types_itemf(
   return items;
 }
 
+static uiLayout *rna_uiLayoutBox(uiLayout *layout)
+{
+  return &layout->box();
+}
+
+static uiLayout *rna_uiLayoutSplit(uiLayout *layout, float factor, bool align)
+{
+  return &layout->split(factor, align);
+}
+
 static uiLayout *rna_uiLayoutRowWithHeading(
     uiLayout *layout, bool align, const char *heading, const char *heading_ctxt, bool translate)
 {
@@ -900,6 +910,11 @@ static uiLayout *rna_uiLayoutGridFlow(uiLayout *layout,
   return &layout->grid_flow(row_major, columns_len, even_columns, even_rows, align);
 }
 
+static uiLayout *rna_uiLayoutMenuPie(uiLayout *layout)
+{
+  return &layout->menu_pie();
+}
+
 void rna_uiLayoutPanelProp(uiLayout *layout,
                            bContext *C,
                            ReportList *reports,
@@ -916,7 +931,7 @@ void rna_uiLayoutPanelProp(uiLayout *layout,
     return;
   }
 
-  PanelLayout panel_layout = uiLayoutPanelProp(C, layout, data, property);
+  PanelLayout panel_layout = layout->panel_prop(C, data, property);
   *r_layout_header = panel_layout.header;
   *r_layout_body = panel_layout.body;
 }
@@ -936,7 +951,7 @@ void rna_uiLayoutPanel(uiLayout *layout,
     *r_layout_body = nullptr;
     return;
   }
-  PanelLayout panel_layout = uiLayoutPanel(C, layout, idname, default_closed);
+  PanelLayout panel_layout = layout->panel(C, idname, default_closed);
   *r_layout_header = panel_layout.header;
   *r_layout_body = panel_layout.body;
 }
@@ -1368,7 +1383,7 @@ void RNA_api_ui_layout(StructRNA *srna)
   RNA_def_function_return(func, parm);
 
   /* box layout */
-  func = RNA_def_function(srna, "box", "uiLayoutBox");
+  func = RNA_def_function(srna, "box", "rna_uiLayoutBox");
   parm = RNA_def_pointer(func, "layout", "UILayout", "", "Sub-layout to put items in");
   RNA_def_function_return(func, parm);
   RNA_def_function_ui_description(func,
@@ -1376,7 +1391,7 @@ void RNA_api_ui_layout(StructRNA *srna)
                                   "under each other in a column and are surrounded by a box)");
 
   /* split layout */
-  func = RNA_def_function(srna, "split", "uiLayoutSplit");
+  func = RNA_def_function(srna, "split", "rna_uiLayoutSplit");
   parm = RNA_def_pointer(func, "layout", "UILayout", "", "Sub-layout to put items in");
   RNA_def_function_return(func, parm);
   RNA_def_float(func,
@@ -1391,7 +1406,7 @@ void RNA_api_ui_layout(StructRNA *srna)
   RNA_def_boolean(func, "align", false, "", "Align buttons to each other");
 
   /* radial/pie layout */
-  func = RNA_def_function(srna, "menu_pie", "uiLayoutRadial");
+  func = RNA_def_function(srna, "menu_pie", "rna_uiLayoutMenuPie");
   parm = RNA_def_pointer(func, "layout", "UILayout", "", "Sub-layout to put items in");
   RNA_def_function_return(func, parm);
   RNA_def_function_ui_description(func,

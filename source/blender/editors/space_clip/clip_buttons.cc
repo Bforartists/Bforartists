@@ -131,10 +131,10 @@ void uiTemplateMovieClip(uiLayout *layout,
     uiDefBut(block, UI_BTYPE_LABEL, 0, IFACE_("File Path:"), 0, 19, 145, 19, nullptr, 0, 0, "");
 
     row = &layout->row(false);
-    uiLayout *split = uiLayoutSplit(row, 0.0f, false);
+    uiLayout *split = &row->split(0.0f, false);
     row = &split->row(true);
 
-    uiItemR(row, &clipptr, "filepath", UI_ITEM_NONE, "", ICON_NONE);
+    row->prop(&clipptr, "filepath", UI_ITEM_NONE, "", ICON_NONE);
     uiItemO(row, "", ICON_FILE_REFRESH, "clip.reload");
 
     uiLayout *col = &layout->column(false);
@@ -452,7 +452,7 @@ void uiTemplateMarker(uiLayout *layout,
 
     if (track->flag & TRACK_LOCKED) {
       uiLayoutSetActive(layout, false);
-      uiBlock *block = uiLayoutAbsoluteBlock(layout);
+      uiBlock *block = layout->absolute_block();
       uiDefBut(block,
                UI_BTYPE_LABEL,
                0,
@@ -488,7 +488,7 @@ void uiTemplateMarker(uiLayout *layout,
 
     cb->marker_flag = marker->flag;
 
-    uiBlock *block = uiLayoutAbsoluteBlock(layout);
+    uiBlock *block = layout->absolute_block();
     UI_block_func_handle_set(block, marker_block_handler, cb);
     UI_block_funcN_set(block, marker_update_cb, cb, nullptr);
 
@@ -523,7 +523,7 @@ void uiTemplateMarker(uiLayout *layout,
     col = &layout->column(true);
     uiLayoutSetActive(col, (cb->marker_flag & MARKER_DISABLED) == 0);
 
-    uiItemL(col, IFACE_("Position"), ICON_NONE); 	/*bfa */
+    col->label(IFACE_("Position"), ICON_NONE); 	/*bfa */
 
 	/*bfa */
     row = &col->row(true);
@@ -535,8 +535,8 @@ void uiTemplateMarker(uiLayout *layout,
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
-    uiItemL(lcol, IFACE_("X"), ICON_NONE);
-    uiItemL(lcol, IFACE_("Y"), ICON_NONE);
+    row->label(IFACE_("X"), ICON_NONE);
+    row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
@@ -576,7 +576,7 @@ void uiTemplateMarker(uiLayout *layout,
 
 	/*bfa */
     uiItemS(col);
-    uiItemL(col, IFACE_("Offset"), ICON_NONE);
+    col->label(IFACE_("Offset"), ICON_NONE);
     row = &col->row(true);
 
     /* indent */
@@ -586,8 +586,8 @@ void uiTemplateMarker(uiLayout *layout,
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
-    uiItemL(lcol, IFACE_("X"), ICON_NONE);
-    uiItemL(lcol, IFACE_("Y"), ICON_NONE);
+    row->label(IFACE_("X"), ICON_NONE);
+    row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
@@ -626,7 +626,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 	/*bfa */
     uiItemS(col);
-    uiItemL(col, IFACE_("Pattern Area"), ICON_NONE);
+    col->label(IFACE_("Pattern Area"), ICON_NONE);
     row = &col->row(true);
 
     /* indent */
@@ -636,8 +636,8 @@ void uiTemplateMarker(uiLayout *layout,
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, 2.);
     uiLayoutSetFixedSize(lcol, true);
-    uiItemL(lcol, IFACE_("Width"), ICON_NONE);
-    uiItemL(lcol, IFACE_("Height"), ICON_NONE);
+    row->label(IFACE_("Width"), ICON_NONE);
+    row->label(IFACE_("Height"), ICON_NONE);
 
     vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
@@ -677,7 +677,7 @@ void uiTemplateMarker(uiLayout *layout,
 
 	/*bfa */
     uiItemS(col);
-    uiItemL(col, IFACE_("Search Area"), ICON_NONE);
+    col->label(IFACE_("Search Area"), ICON_NONE);
     row = &col->row(true);
 
     /* indent */
@@ -687,8 +687,8 @@ void uiTemplateMarker(uiLayout *layout,
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
     uiLayoutSetFixedSize(lcol, true);
-    uiItemL(lcol, IFACE_("X"), ICON_NONE);
-    uiItemL(lcol, IFACE_("Y"), ICON_NONE);
+    row->label(IFACE_("X"), ICON_NONE);
+    row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
@@ -737,8 +737,8 @@ void uiTemplateMarker(uiLayout *layout,
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, 2.);
     uiLayoutSetFixedSize(lcol, true);
-    uiItemL(lcol, IFACE_("Width"), ICON_NONE);
-    uiItemL(lcol, IFACE_("Height"), ICON_NONE);
+    row->label(IFACE_("Width"), ICON_NONE);
+    row->label(IFACE_("Height"), ICON_NONE);
 
     vcol = &row->column(true);
     block = uiLayoutGetBlock(vcol);
@@ -864,7 +864,7 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
   }
   UNUSED_VARS(ofs);
 
-  uiItemL(col, str, ICON_NONE);
+  col->label(str, ICON_NONE);
 
   /* Display current frame number. */
   int framenr = BKE_movieclip_remap_scene_to_clip_frame(clip, user->framenr);
@@ -874,7 +874,7 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
   else {
     SNPRINTF(str, RPT_("Frame: - / %d"), clip->len);
   }
-  uiItemL(col, str, ICON_NONE);
+  col->label(str, ICON_NONE);
 
   /* Display current file name if it's a sequence clip. */
   if (clip->source == MCLIP_SRC_SEQUENCE) {
@@ -891,7 +891,7 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
 
     SNPRINTF(str, RPT_("File: %s"), file);
 
-    uiItemL(col, str, ICON_NONE);
+    col->label(str, ICON_NONE);
   }
 
   IMB_freeImBuf(ibuf);
