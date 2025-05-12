@@ -859,7 +859,7 @@ bool stroke_is_dyntopo(const Object &object, const Brush &brush)
            * dynamic-topology. */
           !(brush.flag & BRUSH_ANCHORED) && !(brush.flag & BRUSH_DRAG_DOT) &&
 
-          SCULPT_BRUSH_TYPE_HAS_DYNTOPO(brush.sculpt_brush_type));
+          bke::brush::supports_dyntopo(brush));
 }
 
 }  // namespace dyntopo
@@ -2682,6 +2682,8 @@ float3 tilt_apply_to_normal(const Object &object,
   }
   const float3 world_space = math::transform_direction(object.object_to_world(), normal);
 
+  /* Tweaked based on initial user feedback, with a value of 1.0, higher brush tilt strength
+   * lead to the stroke surface direction becoming inverted due to extreme rotations. */
   constexpr float tilt_sensitivity = 0.7f;
   const float rot_max = M_PI_2 * tilt_strength * tilt_sensitivity;
   const float3 normal_tilt_y = math::rotate_direction_around_axis(
