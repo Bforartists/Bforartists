@@ -795,7 +795,10 @@ class SEQUENCER_MT_select(Menu):
 
         st = context.space_data
         has_sequencer, has_preview = _space_view_types(st)
-
+        if has_preview:
+            layout.operator_context = 'INVOKE_REGION_PREVIEW'
+        else:
+            layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator(
             "sequencer.select_all", text="All", icon="SELECT_ALL"
         ).action = 'SELECT'
@@ -1791,6 +1794,8 @@ class SEQUENCER_MT_image_transform(Menu):
         layout.operator("transform.translate", icon="TRANSFORM_MOVE")
         layout.operator("transform.rotate", icon="TRANSFORM_ROTATE")
         layout.operator("transform.resize", text="Scale", icon="TRANSFORM_SCALE")
+        layout.separator()
+        layout.operator("transform.translate", text="Move Origin").translate_origin = True
 
 
 # BFA - Was used in the image menu. But not used in the UI anymore, remains for compatibility
@@ -2175,7 +2180,7 @@ class SequencerButtonsPanel_Output:
     @staticmethod
     def has_preview(context):
         st = context.space_data
-        return (st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}) or st.show_backdrop
+        return (st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'})
 
     @classmethod
     def poll(cls, context):

@@ -94,7 +94,6 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "BLO_blend_defs.hh"
 #include "BLO_blend_validate.hh"
 #include "BLO_read_write.hh"
 #include "BLO_readfile.hh"
@@ -544,8 +543,7 @@ static Main *blo_find_main(FileData *fd, const char *filepath, const char *relab
 
   /* Add library data-block itself to 'main' Main, since libraries are **never** linked data.
    * Fixes bug where you could end with all ID_LI data-blocks having the same name... */
-  lib = static_cast<Library *>(
-      BKE_id_new(static_cast<Main *>(mainlist->first), ID_LI, BLI_path_basename(filepath)));
+  lib = BKE_id_new<Library>(static_cast<Main *>(mainlist->first), BLI_path_basename(filepath));
 
   /* Important, consistency with main ID reading code from read_libblock(). */
   lib->id.us = ID_FAKE_USERS(lib);
@@ -602,153 +600,6 @@ struct BlendLibReader {
   FileData *fd;
   Main *main;
 };
-
-static void switch_endian_bh4(BHead4 *bhead)
-{
-  /* the ID_.. codes */
-  if ((bhead->code & 0xFFFF) == 0) {
-    bhead->code >>= 16;
-  }
-
-  if (bhead->code != BLO_CODE_ENDB) {
-    BLI_endian_switch_int32(&bhead->len);
-    BLI_endian_switch_int32(&bhead->SDNAnr);
-    BLI_endian_switch_int32(&bhead->nr);
-  }
-}
-
-static void switch_endian_small_bh8(SmallBHead8 *bhead)
-{
-  /* The ID_* codes. */
-  if ((bhead->code & 0xFFFF) == 0) {
-    bhead->code >>= 16;
-  }
-
-  if (bhead->code != BLO_CODE_ENDB) {
-    BLI_endian_switch_int32(&bhead->len);
-    BLI_endian_switch_int32(&bhead->SDNAnr);
-    BLI_endian_switch_int32(&bhead->nr);
-  }
-}
-
-static void switch_endian_large_bh8(LargeBHead8 *bhead)
-{
-  /* The ID_* codes. */
-  if ((bhead->code & 0xFFFF) == 0) {
-    bhead->code >>= 16;
-  }
-
-  if (bhead->code != BLO_CODE_ENDB) {
-    BLI_endian_switch_int64(&bhead->len);
-    BLI_endian_switch_int32(&bhead->SDNAnr);
-    BLI_endian_switch_int64(&bhead->nr);
-  }
-}
-
-static BHead bhead_from_bhead4(const BHead4 &bhead4)
-{
-  BHead bhead;
-  bhead.code = bhead4.code;
-  bhead.len = bhead4.len;
-  bhead.old = reinterpret_cast<const void *>(bhead4.old);
-  bhead.SDNAnr = bhead4.SDNAnr;
-  bhead.nr = bhead4.nr;
-  return bhead;
-}
-
-/**
- * Converts a BHead.old pointer from 64 to 32 bit. This can't work in the general case, but only
- * when the lower 32 bits of all relevant 64 bit pointers are different. Otherwise two different
- * pointers will map to the same, which will break things later on. There is no way to check for
- * that here unfortunately.
- */
-static uint32_t uint32_from_uint64_ptr(uint64_t ptr, const bool use_endian_swap)
-{
-  if (use_endian_swap) {
-    /* Do endian switch so that the resulting pointer is not all 0. */
-    BLI_endian_switch_uint64(&ptr);
-  }
-  /* Behavior has to match #cast_pointer_64_to_32. */
-  ptr >>= 3;
-  return uint32_t(ptr);
-}
-
-static const void *old_ptr_from_uint64_ptr(const uint64_t ptr, const bool use_endian_swap)
-{
-  if constexpr (sizeof(void *) == 8) {
-    return reinterpret_cast<const void *>(ptr);
-  }
-  else {
-    return reinterpret_cast<const void *>(uint32_from_uint64_ptr(ptr, use_endian_swap));
-  }
-}
-
-static BHead bhead_from_small_bhead8(const SmallBHead8 &small_bhead8, const bool use_endian_swap)
-{
-  BHead bhead;
-  bhead.code = small_bhead8.code;
-  bhead.len = small_bhead8.len;
-  bhead.old = old_ptr_from_uint64_ptr(small_bhead8.old, use_endian_swap);
-  bhead.SDNAnr = small_bhead8.SDNAnr;
-  bhead.nr = small_bhead8.nr;
-  return bhead;
-}
-
-static BHead bhead_from_large_bhead8(const LargeBHead8 &large_bhead8, const bool use_endian_swap)
-{
-  BHead bhead;
-  bhead.code = large_bhead8.code;
-  bhead.len = large_bhead8.len;
-  bhead.old = old_ptr_from_uint64_ptr(large_bhead8.old, use_endian_swap);
-  bhead.SDNAnr = large_bhead8.SDNAnr;
-  bhead.nr = large_bhead8.nr;
-  return bhead;
-}
-
-std::optional<BHead> BLO_readfile_read_bhead(FileReader *file,
-                                             const BHeadType type,
-                                             const bool do_endian_swap)
-{
-  switch (type) {
-    case BHeadType::BHead4: {
-      BHead4 bhead4{};
-      bhead4.code = BLO_CODE_DATA;
-      const int64_t readsize = file->read(file, &bhead4, sizeof(bhead4));
-      if (readsize == sizeof(bhead4) || bhead4.code == BLO_CODE_ENDB) {
-        if (do_endian_swap) {
-          switch_endian_bh4(&bhead4);
-        }
-        return bhead_from_bhead4(bhead4);
-      }
-      break;
-    }
-    case BHeadType::SmallBHead8: {
-      SmallBHead8 small_bhead8{};
-      small_bhead8.code = BLO_CODE_DATA;
-      const int64_t readsize = file->read(file, &small_bhead8, sizeof(small_bhead8));
-      if (readsize == sizeof(small_bhead8) || small_bhead8.code == BLO_CODE_ENDB) {
-        if (do_endian_swap) {
-          switch_endian_small_bh8(&small_bhead8);
-        }
-        return bhead_from_small_bhead8(small_bhead8, do_endian_swap);
-      }
-      break;
-    }
-    case BHeadType::LargeBHead8: {
-      LargeBHead8 large_bhead8{};
-      large_bhead8.code = BLO_CODE_DATA;
-      const int64_t readsize = file->read(file, &large_bhead8, sizeof(large_bhead8));
-      if (readsize == sizeof(large_bhead8) || large_bhead8.code == BLO_CODE_ENDB) {
-        if (do_endian_swap) {
-          switch_endian_large_bh8(&large_bhead8);
-        }
-        return bhead_from_large_bhead8(large_bhead8, do_endian_swap);
-      }
-      break;
-    }
-  }
-  return std::nullopt;
-}
 
 static BHeadN *get_bhead(FileData *fd)
 {
@@ -816,14 +667,15 @@ static BHeadN *get_bhead(FileData *fd)
 
           const int64_t readsize = fd->file->read(fd->file, new_bhead + 1, size_t(bhead->len));
 
-          if (readsize != bhead->len) {
+          if (UNLIKELY(readsize != bhead->len)) {
             fd->is_eof = true;
             MEM_freeN(new_bhead);
             new_bhead = nullptr;
           }
-
-          if (fd->flags & FD_FLAGS_IS_MEMFILE) {
-            new_bhead->is_memchunk_identical = ((UndoReader *)fd->file)->memchunk_identical;
+          else {
+            if (fd->flags & FD_FLAGS_IS_MEMFILE) {
+              new_bhead->is_memchunk_identical = ((UndoReader *)fd->file)->memchunk_identical;
+            }
           }
         }
         else {
@@ -908,11 +760,15 @@ static bool blo_bhead_read_data(FileData *fd, BHead *thisblock, void *buf)
     success = false;
   }
   else {
-    if (fd->file->read(fd->file, buf, size_t(new_bhead->bhead.len)) != new_bhead->bhead.len) {
+    if (UNLIKELY(fd->file->read(fd->file, buf, size_t(new_bhead->bhead.len)) !=
+                 new_bhead->bhead.len))
+    {
       success = false;
     }
-    if (fd->flags & FD_FLAGS_IS_MEMFILE) {
-      new_bhead->is_memchunk_identical = ((UndoReader *)fd->file)->memchunk_identical;
+    else {
+      if (fd->flags & FD_FLAGS_IS_MEMFILE) {
+        new_bhead->is_memchunk_identical = ((UndoReader *)fd->file)->memchunk_identical;
+      }
     }
   }
   if (fd->file->seek(fd->file, offset_backup, SEEK_SET) == -1) {
@@ -949,118 +805,6 @@ AssetMetaData *blo_bhead_id_asset_data_address(const FileData *fd, const BHead *
   return (fd->id_asset_data_offset >= 0) ?
              *(AssetMetaData **)POINTER_OFFSET(bhead, sizeof(*bhead) + fd->id_asset_data_offset) :
              nullptr;
-}
-
-BHeadType BlenderHeader::bhead_type() const
-{
-  if (this->pointer_size == 4) {
-    return BHeadType::BHead4;
-  }
-  if (this->file_format_version == BLEND_FILE_FORMAT_VERSION_0) {
-    return BHeadType::SmallBHead8;
-  }
-  BLI_assert(this->file_format_version == BLEND_FILE_FORMAT_VERSION_1);
-  return BHeadType::LargeBHead8;
-}
-
-BlenderHeaderVariant BLO_readfile_blender_header_decode(FileReader *file)
-{
-  char header_bytes[MAX_SIZEOFBLENDERHEADER];
-  /* We read the minimal number of header bytes first. If necessary, the remaining bytes are read
-   * below. */
-  int64_t readsize = file->read(file, header_bytes, MIN_SIZEOFBLENDERHEADER);
-  if (readsize != MIN_SIZEOFBLENDERHEADER) {
-    return BlenderHeaderInvalid{};
-  }
-  if (!STREQLEN(header_bytes, "BLENDER", 7)) {
-    return BlenderHeaderInvalid{};
-  }
-  /* If the first 7 bytes are BLENDER, it is very likely that this is a newer version of the
-   * blendfile format. If the rest of the decode fails, we can still report that this was a Blender
-   * file of a potentially future version. */
-
-  BlenderHeader header;
-  /* In the old header format, the next bytes indicate the pointer size. In the new format a
-   * version number comes next. */
-  const bool is_legacy_header = ELEM(header_bytes[7], '_', '-');
-
-  if (is_legacy_header) {
-    header.file_format_version = 0;
-    switch (header_bytes[7]) {
-      case '_':
-        header.pointer_size = 4;
-        break;
-      case '-':
-        header.pointer_size = 8;
-        break;
-      default:
-        return BlenderHeaderUnknown{};
-    }
-    switch (header_bytes[8]) {
-      case 'v':
-        header.endian = L_ENDIAN;
-        break;
-      case 'V':
-        header.endian = B_ENDIAN;
-        break;
-      default:
-        return BlenderHeaderUnknown{};
-    }
-    if (!isdigit(header_bytes[9]) || !isdigit(header_bytes[10]) || !isdigit(header_bytes[11])) {
-      return BlenderHeaderUnknown{};
-    }
-    char version_str[4];
-    memcpy(version_str, header_bytes + 9, 3);
-    version_str[3] = '\0';
-    header.file_version = atoi(version_str);
-    return header;
-  }
-
-  if (!isdigit(header_bytes[7]) || !isdigit(header_bytes[8])) {
-    return BlenderHeaderUnknown{};
-  }
-  char header_size_str[3];
-  memcpy(header_size_str, header_bytes + 7, 2);
-  header_size_str[2] = '\0';
-  const int header_size = atoi(header_size_str);
-  if (header_size != MAX_SIZEOFBLENDERHEADER) {
-    return BlenderHeaderUnknown{};
-  }
-
-  /* Read remaining header bytes. */
-  const int64_t remaining_bytes_to_read = header_size - MIN_SIZEOFBLENDERHEADER;
-  readsize = file->read(file, header_bytes + MIN_SIZEOFBLENDERHEADER, remaining_bytes_to_read);
-  if (readsize != remaining_bytes_to_read) {
-    return BlenderHeaderUnknown{};
-  }
-  if (header_bytes[9] != '-') {
-    return BlenderHeaderUnknown{};
-  }
-  header.pointer_size = 8;
-  if (!isdigit(header_bytes[10]) || !isdigit(header_bytes[11])) {
-    return BlenderHeaderUnknown{};
-  }
-  char blend_file_version_format_str[3];
-  memcpy(blend_file_version_format_str, header_bytes + 10, 2);
-  blend_file_version_format_str[2] = '\0';
-  header.file_format_version = atoi(blend_file_version_format_str);
-  if (header.file_format_version != 1) {
-    return BlenderHeaderUnknown{};
-  }
-  if (header_bytes[12] != 'v') {
-    return BlenderHeaderUnknown{};
-  }
-  header.endian = L_ENDIAN;
-  if (!isdigit(header_bytes[13]) || !isdigit(header_bytes[14]) || !isdigit(header_bytes[15]) ||
-      !isdigit(header_bytes[16]))
-  {
-    return BlenderHeaderUnknown{};
-  }
-  char version_str[5];
-  memcpy(version_str, header_bytes + 13, 4);
-  version_str[4] = '\0';
-  header.file_version = std::atoi(version_str);
-  return header;
 }
 
 static void read_blender_header(FileData *fd)
@@ -3350,6 +3094,21 @@ static void do_versions(FileData *fd, Library *lib, Main *main)
   if (!main->is_read_invalid) {
     blo_do_versions_400(fd, lib, main);
   }
+  if (!main->is_read_invalid) {
+    blo_do_versions_410(fd, lib, main);
+  }
+  if (!main->is_read_invalid) {
+    blo_do_versions_420(fd, lib, main);
+  }
+  if (!main->is_read_invalid) {
+    blo_do_versions_430(fd, lib, main);
+  }
+  if (!main->is_read_invalid) {
+    blo_do_versions_440(fd, lib, main);
+  }
+  if (!main->is_read_invalid) {
+    blo_do_versions_450(fd, lib, main);
+  }
 
   /* WATCH IT!!!: pointers from libdata have not been converted yet here! */
   /* WATCH IT 2!: #UserDef struct init see #do_versions_userdef() above! */
@@ -3394,6 +3153,21 @@ static void do_versions_after_linking(FileData *fd, Main *main)
   }
   if (!main->is_read_invalid) {
     do_versions_after_linking_400(fd, main);
+  }
+  if (!main->is_read_invalid) {
+    do_versions_after_linking_410(fd, main);
+  }
+  if (!main->is_read_invalid) {
+    do_versions_after_linking_420(fd, main);
+  }
+  if (!main->is_read_invalid) {
+    do_versions_after_linking_430(fd, main);
+  }
+  if (!main->is_read_invalid) {
+    do_versions_after_linking_440(fd, main);
+  }
+  if (!main->is_read_invalid) {
+    do_versions_after_linking_450(fd, main);
   }
 
   main->is_locked_for_linking = false;
@@ -5027,16 +4801,25 @@ static void read_libraries(FileData *basefd, ListBase *mainlist)
   BKE_main_free(main_newid);
 }
 
-static void *blo_verify_data_address(void *new_address,
+static void *blo_verify_data_address(FileData *fd,
+                                     void *new_address,
                                      const void * /*old_address*/,
                                      const size_t expected_size)
 {
   if (new_address != nullptr) {
     /* Not testing equality, since size might have been aligned up,
      * or might be passed the size of a base struct with inheritance. */
-    BLI_assert_msg(MEM_allocN_len(new_address) >= expected_size,
-                   "Corrupt .blend file, unexpected data size.");
-    UNUSED_VARS_NDEBUG(expected_size);
+    if (MEM_allocN_len(new_address) < expected_size) {
+      blo_readfile_invalidate(fd,
+                              static_cast<Main *>(fd->mainlist->last),
+                              "Corrupt .blend file, unexpected data size.");
+      /* Return null to trigger a hard-crash rather than allowing readfile code to further access
+       * this invalid block of memory.
+       *
+       * It could also potentially allow the calling code to do its own error checking and abort
+       * reading process, but that is not implemented currently. */
+      return nullptr;
+    }
   }
 
   return new_address;
@@ -5052,7 +4835,7 @@ void *BLO_read_get_new_data_address_no_us(BlendDataReader *reader,
                                           const size_t expected_size)
 {
   void *new_address = newdataadr_no_us(reader->fd, old_address);
-  return blo_verify_data_address(new_address, old_address, expected_size);
+  return blo_verify_data_address(reader->fd, new_address, old_address, expected_size);
 }
 
 void *BLO_read_struct_array_with_size(BlendDataReader *reader,
@@ -5060,7 +4843,7 @@ void *BLO_read_struct_array_with_size(BlendDataReader *reader,
                                       const size_t expected_size)
 {
   void *new_address = newdataadr(reader->fd, old_address);
-  return blo_verify_data_address(new_address, old_address, expected_size);
+  return blo_verify_data_address(reader->fd, new_address, old_address, expected_size);
 }
 
 void *BLO_read_struct_by_name_array(BlendDataReader *reader,

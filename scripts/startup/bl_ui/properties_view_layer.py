@@ -558,6 +558,9 @@ class VIEWLAYER_PT_filter(ViewLayerButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_volumes", text="Volumes")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_grease_pencil", text="Grease Pencil")
 
         col = layout.column()
         col.label(text="Use")
