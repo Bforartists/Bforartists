@@ -517,23 +517,20 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout->column(true);
   uiLayoutSetEnabled(col, !is_bound);
-  uiItemR(col, ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   col = &layout->column(false);
   uiLayoutSetEnabled(col, !is_bound);
-  uiItemR(col, ptr, "precision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col->prop(ptr, "precision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   /*------------------- bfa - original props */
-  // uiItemR(col, ptr, "use_dynamic_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_dynamic_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_dynamic_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_dynamic_bind", 0); /*bfa - decorator*/
-
   /* ------------ end bfa */
 
   uiItemO(layout,

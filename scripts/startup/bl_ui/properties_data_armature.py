@@ -5,7 +5,7 @@
 import bpy
 from bpy.types import Panel, Menu, UIList
 from rna_prop_ui import PropertyPanel
-from .space_properties import PropertiesAnimationMixin
+from bl_ui.space_properties import PropertiesAnimationMixin
 
 from bl_ui.properties_animviz import (
     MotionPathButtonsPanel,
@@ -148,15 +148,16 @@ class DATA_PT_bone_collections(ArmatureButtonsPanel, Panel):
             col.operator("armature.collection_move", icon='TRIA_UP', text="").direction = 'UP'
             col.operator("armature.collection_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
 
-        row = layout.row()
-
-        sub = row.row(align=True)
-        sub.operator("armature.collection_assign", icon='COLLECTION_BONE_ADD', text="Assign")
-        sub.operator("armature.collection_unassign", icon='COLLECTION_BONE_REMOVE', text="Remove")
-
-        sub = row.row(align=True)
-        sub.operator("armature.collection_select", icon='RESTRICT_SELECT_OFF', text="Select")
-        sub.operator("armature.collection_deselect", icon='SELECT_NONE', text="Deselect")
+        if context.mode in {'POSE', 'EDIT_ARMATURE', 'PAINT_WEIGHT'}:
+	        row = layout.row()
+	
+	        sub = row.row(align=True)
+	        sub.operator("armature.collection_assign", icon='COLLECTION_BONE_ADD', text="Assign")
+	        sub.operator("armature.collection_unassign", icon='COLLECTION_BONE_REMOVE', text="Remove")
+	
+	        sub = row.row(align=True)
+	        sub.operator("armature.collection_select", icon='RESTRICT_SELECT_OFF', text="Select")
+	        sub.operator("armature.collection_deselect", icon='SELECT_NONE', text="Deselect")
 
 
 class ARMATURE_MT_collection_context_menu(Menu):
