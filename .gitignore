@@ -3,6 +3,9 @@
 # BFA: include .github folder
 !/.github/
 
+# BFA: excludes the test folder, which is large with LFS and not necessary for the build
+/tests/
+
 # python temp paths
 __pycache__/
 *.py[cod]
