@@ -349,7 +349,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = &layout->column(true);
-  uiItemR(col, ptr, "object_from", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col->prop(ptr, "object_from", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   PointerRNA from_obj_ptr = RNA_pointer_get(ptr, "object_from");
   if (!RNA_pointer_is_null(&from_obj_ptr) && RNA_enum_get(&from_obj_ptr, "type") == OB_ARMATURE) {
 
@@ -359,7 +359,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
 
   col = &layout->column(true);
-  uiItemR(col, ptr, "object_to", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col->prop(ptr, "object_to", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   PointerRNA to_obj_ptr = RNA_pointer_get(ptr, "object_to");
   if (!RNA_pointer_is_null(&to_obj_ptr) && RNA_enum_get(&to_obj_ptr, "type") == OB_ARMATURE) {
     PointerRNA to_obj_data_ptr = RNA_pointer_get(&to_obj_ptr, "data");
@@ -367,16 +367,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
 
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "use_volume_preserve", UI_ITEM_NONE, nullptr, ICON_NONE);
-
+  
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_volume_preserve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_volume_preserve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_volume_preserve", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  uiItemR(layout, ptr, "strength", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "strength", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
@@ -393,10 +392,10 @@ static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "falloff_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "falloff_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   if (use_falloff) {
-    uiItemR(layout, ptr, "falloff_radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout->prop(ptr, "falloff_radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   if (use_falloff && RNA_enum_get(ptr, "falloff_type") == eWarp_Falloff_Curve) {
@@ -419,9 +418,9 @@ static void texture_panel_draw(const bContext *C, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = &layout->column(false);
-  uiItemR(col, ptr, "texture_coords", UI_ITEM_NONE, IFACE_("Coordinates"), ICON_NONE);
+  col->prop(ptr, "texture_coords", UI_ITEM_NONE, IFACE_("Coordinates"), ICON_NONE);
   if (texture_coords == MOD_DISP_MAP_OBJECT) {
-    uiItemR(col, ptr, "texture_coords_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
+    col->prop(ptr, "texture_coords_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
     PointerRNA texture_coords_obj_ptr = RNA_pointer_get(ptr, "texture_coords_object");
     if (!RNA_pointer_is_null(&texture_coords_obj_ptr) &&
         (RNA_enum_get(&texture_coords_obj_ptr, "type") == OB_ARMATURE))

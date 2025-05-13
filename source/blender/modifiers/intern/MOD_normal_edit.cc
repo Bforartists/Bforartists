@@ -628,24 +628,21 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   int mode = RNA_enum_get(ptr, "mode");
 
-  uiItemR(layout, ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(false);
   uiLayoutSetActive(col, mode == MOD_NORMALEDIT_MODE_DIRECTIONAL);
 
   /*------------------- bfa - original props */
-  // uiItemR(col, ptr, "use_direction_parallel", UI_ITEM_NONE, nullptr, ICON_NONE);
-
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_direction_parallel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_direction_parallel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_direction_parallel", 0); /*bfa - decorator*/
-
   /* ------------ end bfa */
 
   modifier_panel_end(layout, ptr);
@@ -662,19 +659,18 @@ static void mix_mode_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemR(layout, ptr, "mix_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "mix_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   row = &layout->row(true);
-  uiItemR(row, ptr, "mix_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemR(row,
-          ptr,
-          "no_polynors_fix",
-          UI_ITEM_NONE,
-          "",
-          (RNA_boolean_get(ptr, "no_polynors_fix") ? ICON_LOCKED : ICON_UNLOCKED));
+  row->prop(ptr, "mix_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr,
+            "no_polynors_fix",
+            UI_ITEM_NONE,
+            "",
+            (RNA_boolean_get(ptr, "no_polynors_fix") ? ICON_LOCKED : ICON_UNLOCKED));
 }
 
 static void offset_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -693,7 +689,7 @@ static void offset_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   uiLayoutSetActive(layout, needs_object_offset);
-  uiItemR(layout, ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

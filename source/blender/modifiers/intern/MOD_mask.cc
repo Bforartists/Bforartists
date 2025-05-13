@@ -765,33 +765,30 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   int mode = RNA_enum_get(ptr, "mode");
 
-  uiItemR(layout, ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   uiLayoutSetPropSep(layout, true);
 
   if (mode == MOD_MASK_MODE_ARM) {
     row = &layout->row(true);
-    uiItemR(row, ptr, "armature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row->prop(ptr, "armature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     sub = &row->row(true);
     uiLayoutSetPropDecorate(sub, false);
-    uiItemR(sub, ptr, "invert_vertex_group", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
+    sub->prop(ptr, "invert_vertex_group", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
   }
   else if (mode == MOD_MASK_MODE_VGROUP) {
     modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
     /*------------------- bfa - original props */
-    // uiItemR(layout, ptr, "use_smooth", UI_ITEM_NONE, nullptr, ICON_NONE);
-
     col = &layout->column(true);
     row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    uiItemR(row, ptr, "use_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row->prop(ptr, "use_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_smooth", 0); /*bfa - decorator*/
-
     /* ------------ end bfa */
   }
 
-  uiItemR(layout, ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   modifier_panel_end(layout, ptr);
 }
