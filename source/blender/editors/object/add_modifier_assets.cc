@@ -170,7 +170,7 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
       add_separator = false;
     }
     if (first) {
-      uiItemL(layout, IFACE_("Unmarked Assets:"), ICON_NONE); /*BFA - changed label*/
+      layout->label(IFACE_("Unmarked Assets"), ICON_NONE); /*BFA - changed label*/
       first = false;
     }
 
@@ -206,7 +206,7 @@ static void root_catalogs_draw(const bContext *C, Menu *menu)
   uiItemS(layout);
 
   if (!loading_finished) {
-    uiItemL(layout, IFACE_("Loading Asset Libraries"), ICON_INFO);
+    layout->label(IFACE_("Loading Asset Libraries"), ICON_INFO);
   }
 
   Set<std::string> all_builtin_menus = [&]() {
@@ -350,7 +350,7 @@ static std::string modifier_add_asset_get_description(bContext *C,
 static void OBJECT_OT_modifier_add_node_group(wmOperatorType *ot)
 {
   ot->name = "Add Modifier";
-  ot->description = "Add a procedural operation/effect to all selected objects"; /*BFA - defaults to all*/
+  ot->description = "Add a procedural operation/effect to all selected objectsn/Hold ALT to add to only selected."; /*BFA - defaults to all*/
   ot->idname = "OBJECT_OT_modifier_add_node_group";
 
   ot->invoke = modifier_add_asset_invoke;
