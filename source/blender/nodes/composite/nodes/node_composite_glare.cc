@@ -64,12 +64,12 @@ static void cmp_node_glare_declare(NodeDeclarationBuilder &b)
 #ifndef WITH_FFTW3
     const int glare_type = RNA_enum_get(ptr, "glare_type");
     if (glare_type == CMP_NODE_GLARE_FOG_GLOW) {
-      uiItemL(layout, RPT_("Disabled, built without FFTW"), ICON_ERROR);
+      layout->label(RPT_("Disabled, built without FFTW"), ICON_ERROR);
     }
 #endif
 
-    uiItemR(layout, ptr, "glare_type", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
-    uiItemR(layout, ptr, "quality", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+    layout->prop(ptr, "glare_type", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+    layout->prop(ptr, "quality", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
   });
 
   b.add_input<decl::Color>("Image")
@@ -2224,7 +2224,8 @@ class GlareOperation : public NodeOperation {
     output.allocate_texture(domain);
 
     parallel_for(domain.size, [&](const int2 texel) {
-      /* Make sure the input is not negative to avoid a subtractive effect when adding the glare.*/
+      /* Make sure the input is not negative
+       * to avoid a subtractive effect when adding the glare. */
       float4 input_color = math::max(float4(0.0f), input.load_pixel<float4>(texel));
 
       float2 normalized_coordinates = (float2(texel) + float2(0.5f)) / float2(input.domain().size);
