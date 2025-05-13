@@ -4,7 +4,7 @@
 import bpy
 from bpy.types import Panel, Menu, UIList, Operator # BFA - needed for move layer up and down operators
 from rna_prop_ui import PropertyPanel
-from .space_properties import PropertiesAnimationMixin
+from bl_ui.space_properties import PropertiesAnimationMixin
 
 # BFA - needed for move layer up and down operators
 from bpy.props import (
