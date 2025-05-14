@@ -1031,6 +1031,9 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_volumes", text="Volumes")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_grease_pencil", text="Grease Pencil")
 
         col = layout.column(align=True)
         col.label(text="Use")
@@ -1111,6 +1114,9 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_pass_uv")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_grease_pencil", text="Grease Pencil")
         row = col.row()
         row.separator()
         row.prop(cycles_view_layer, "denoising_store_passes", text="Denoising Data")
@@ -1481,12 +1487,7 @@ class CYCLES_OBJECT_PT_motion_blur(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.prop(cob, "motion_steps", text="Steps")
         if ob.type != 'CAMERA':
-            row = col.row()
-            row.use_property_split = False
-            row.prop(cob, "use_deform_motion", text="Deformation")
-            row.prop_decorator(cob, "use_deform_motion")
-
-
+            col.prop(cob, "use_deform_motion", text="Deformation")
 
 
 class CYCLES_OBJECT_PT_shading_gi_approximation(CyclesButtonsPanel, Panel):

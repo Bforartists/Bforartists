@@ -69,7 +69,7 @@ class Grid : Overlay {
       auto &sub = grid_ps_.sub("grid_background");
       sub.shader_set(res.shaders->grid_background.get());
       const float4 color_back = math::interpolate(
-          res.theme_settings.color_background, res.theme_settings.color_grid, 0.5);
+          res.theme.colors.background, res.theme.colors.grid, 0.5);
       sub.push_constant("ucolor", color_back);
       sub.push_constant("tile_scale", float3(data_.size));
       sub.bind_texture("depth_buffer", depth_tx);
@@ -290,7 +290,7 @@ class Grid : Overlay {
     }
 
     if (rv3d->persp == RV3D_CAMOB && v3d->camera && v3d->camera->type == OB_CAMERA) {
-      Object *camera_object = DEG_get_evaluated_object(state.depsgraph, v3d->camera);
+      Object *camera_object = DEG_get_evaluated(state.depsgraph, v3d->camera);
       v3d_clip_end_ = ((Camera *)(camera_object->data))->clip_end;
       grid_flag_ |= GRID_CAMERA;
       zneg_flag_ |= GRID_CAMERA;

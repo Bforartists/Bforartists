@@ -259,9 +259,7 @@ static void add_root_catalogs_draw(const bContext *C, Menu *menu)
   uiItemS(layout);
 
   if (!loading_finished) {
-    uiItemL(layout,
-            IFACE_("Loading Asset Libraries"),
-            ICON_INFO); /*BFA - preserved from Blender, they removed this*/
+    layout->label(IFACE_("Loading Asset Libraries"), ICON_INFO); /*BFA - preserved from Blender, they removed this*/
   }
 
   const Set<StringRef> all_builtin_menus = get_builtin_menus(edit_tree->type);
@@ -275,8 +273,7 @@ static void add_root_catalogs_draw(const bContext *C, Menu *menu)
   if (!tree.unassigned_assets.is_empty()) {
     uiItemS(layout);
     /* BFA - changed "Unassigned" to "Unassigned (Catalouge)" and changed icon to ICON_NONE */
-    uiItemM(
-        layout, "NODE_MT_node_add_unassigned_assets", IFACE_("Unassigned (Catalogue)"), ICON_NONE);
+    uiItemM(layout, "NODE_MT_node_add_unassigned_assets", IFACE_("Unassigned (Catalogue)"), ICON_NONE);
   }
 }
 
