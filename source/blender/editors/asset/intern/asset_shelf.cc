@@ -868,8 +868,8 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
             uiItemR(layout, &shelf_ptr, "instance_collections_on_append", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);
           break;
     }
+    uiItemR(layout, &shelf_ptr, "import_method", UI_ITEM_R_EXPAND, "", ICON_NONE);
   }
-  uiItemR(layout, &shelf_ptr, "import_method", UI_ITEM_R_EXPAND, "", ICON_NONE);
   // end bfa
   uiItemPopoverPanel(layout, C, "ASSETSHELF_PT_display", "", ICON_IMGDISPLAY);
   uiLayout *sub = &layout->row(false);
