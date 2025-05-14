@@ -11905,7 +11905,7 @@ class VIEW3D_PT_active_spline(Panel):
         layout = self.layout
         layout.use_property_split = True
 
-        curve = context.curve
+        curve = context.object.data
         act_spline = curve.splines.active
         is_surf = type(curve) is SurfaceCurve
         is_poly = (act_spline.type == 'POLY')
