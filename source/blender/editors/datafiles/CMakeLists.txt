@@ -725,6 +725,9 @@ if(WITH_BLENDER)
       geometry_set
       geometry_to_origin
       german_s
+      gesture_pan
+      gesture_rotate
+      gesture_zoom
       get_id
       ghost
       ghost_disabled
