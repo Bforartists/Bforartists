@@ -300,70 +300,60 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   row = &layout->row(true, IFACE_("Motion"));
-  uiItemR(row,
-          ptr,
+  row->prop(ptr,
           "use_x",
           UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE,
           std::nullopt,
           ICON_NONE);
-  uiItemR(row,
-          ptr,
+  row->prop(ptr,
           "use_y",
           UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE,
           std::nullopt,
           ICON_NONE);
 
   /*------------------- bfa - original props */
-  // uiItemR(layout, ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  // layout->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_cyclic", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  /*------------------- bfa - original props */
-  // row = &layout->row(true, IFACE_("Along Normals"));
-  // uiItemR(row, ptr, "use_normal", UI_ITEM_NONE, "", ICON_NONE);
-  // sub = &row->row(true);
-  // uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_normal"));
-  // uiItemR(sub, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
-  // uiItemR(sub, ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
-  // uiItemR(sub, ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+  uiLayout *split = &layout->split(0.385f, true);
 
   /* FIRST PART ................................................ */
   row = &split->row(false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, ptr, "use_normal", UI_ITEM_NONE, "Along Normals", ICON_NONE);
+  row->prop(ptr, "use_normal", UI_ITEM_NONE, "Along Normals", ICON_NONE);
 
   /* SECOND PART ................................................ */
   row = &split->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   if (RNA_boolean_get(ptr, "use_normal")) {
-    uiItemR(row, ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
-    uiItemR(row, ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
-    uiItemR(row, ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+    row->prop(ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
+    row->prop(ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
+    row->prop(ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
   else {
-    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
-    uiItemL(row, TIP_(""), ICON_NONE);           /* bfa - aligns the decorator right...*/
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    row->label(TIP_(""), ICON_NONE);           /* bfa - aligns the decorator right...*/
     uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
   // ------------------------------- end bfa
 
   col = &layout->column(false);
-  uiItemR(col, ptr, "falloff_radius", UI_ITEM_NONE, IFACE_("Falloff"), ICON_NONE);
-  uiItemR(col, ptr, "height", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
-  uiItemR(col, ptr, "width", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
-  uiItemR(col, ptr, "narrowness", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
+  col->prop(ptr, "falloff_radius", UI_ITEM_NONE, IFACE_("Falloff"), ICON_NONE);
+  col->prop(ptr, "height", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
+  col->prop(ptr, "width", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
+  col->prop(ptr, "narrowness", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
@@ -379,11 +369,11 @@ static void position_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemR(layout, ptr, "start_position_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
+  layout->prop(ptr, "start_position_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
 
   col = &layout->column(true);
-  uiItemR(col, ptr, "start_position_x", UI_ITEM_NONE, IFACE_("Start Position X"), ICON_NONE);
-  uiItemR(col, ptr, "start_position_y", UI_ITEM_NONE, "Y", ICON_NONE);
+  col->prop(ptr, "start_position_x", UI_ITEM_NONE, IFACE_("Start Position X"), ICON_NONE);
+  col->prop(ptr, "start_position_y", UI_ITEM_NONE, "Y", ICON_NONE);
 }
 
 static void time_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -396,10 +386,10 @@ static void time_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = &layout->column(false);
-  uiItemR(col, ptr, "time_offset", UI_ITEM_NONE, IFACE_("Offset"), ICON_NONE);
-  uiItemR(col, ptr, "lifetime", UI_ITEM_NONE, IFACE_("Life"), ICON_NONE);
-  uiItemR(col, ptr, "damping_time", UI_ITEM_NONE, IFACE_("Damping"), ICON_NONE);
-  uiItemR(col, ptr, "speed", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
+  col->prop(ptr, "time_offset", UI_ITEM_NONE, IFACE_("Offset"), ICON_NONE);
+  col->prop(ptr, "lifetime", UI_ITEM_NONE, IFACE_("Life"), ICON_NONE);
+  col->prop(ptr, "damping_time", UI_ITEM_NONE, IFACE_("Damping"), ICON_NONE);
+  col->prop(ptr, "speed", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 }
 
 static void texture_panel_draw(const bContext *C, Panel *panel)
@@ -417,9 +407,9 @@ static void texture_panel_draw(const bContext *C, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = &layout->column(false);
-  uiItemR(col, ptr, "texture_coords", UI_ITEM_NONE, IFACE_("Coordinates"), ICON_NONE);
+  col->prop(ptr, "texture_coords", UI_ITEM_NONE, IFACE_("Coordinates"), ICON_NONE);
   if (texture_coords == MOD_DISP_MAP_OBJECT) {
-    uiItemR(col, ptr, "texture_coords_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
+    col->prop(ptr, "texture_coords_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
     PointerRNA texture_coords_obj_ptr = RNA_pointer_get(ptr, "texture_coords_object");
     if (!RNA_pointer_is_null(&texture_coords_obj_ptr) &&
         (RNA_enum_get(&texture_coords_obj_ptr, "type") == OB_ARMATURE))
