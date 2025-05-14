@@ -725,10 +725,10 @@ def register():
     )
     WindowManager.extension_type = EnumProperty(
         items=(
-            ('ALL', "All", "Show all extension types"),
+            ('ALL', "All", "Show all extension types", "EXTENSIONS_ALL", 0), #BFA - Added Icon
             None,
-            ('ADDON', "Add-ons", "Only show add-ons", "PLUGIN", 0), #BFA - Added Plugin Icon
-            ('THEME', "Themes", "Only show themes", "COLOR", 1), #BFA - Added Color Icon
+            ('ADDON', "Add-ons", "Only show add-ons", "PLUGIN", 1), #BFA - Added Plugin Icon
+            ('THEME', "Themes", "Only show themes", "COLOR", 2), #BFA - Added Color Icon
         ),
         name="Filter by Type",
         description="Show extensions by type",
