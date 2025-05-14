@@ -616,6 +616,7 @@ if(WITH_BLENDER)
       extend_vertices
       external_data
       external_drive
+      extensions_all
       extrapolation_constant
       extrapolation_cyclic
       extrapolation_cyclic_clear
