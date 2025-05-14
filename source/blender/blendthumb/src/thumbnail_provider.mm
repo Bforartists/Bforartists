@@ -32,13 +32,13 @@
  * # Registering the plugin
  * The plugin should be registered with lsregister. Either by calling lsregister or by launching
  * the parent app.
- * /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
-   -dump | grep bforartists-thumbnailer
+ * /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+ * \ -dump | grep blender-thumbnailer
  *
  * # Debugging
  * Since read-only entitlement is there, creating files to log is not possible. So NSLog and
  * viewing it in Console.app (after triggering a thumbnail) is the way to go. Interesting processes
- * are: qlmanage, quicklookd, kernel, bforartists-thumbnailer, secinitd,
+ * are: qlmanage, quicklookd, kernel, blender-thumbnailer, secinitd,
  * com.apple.quicklook.ThumbnailsAgent
  *
  * LLDB/ Xcode etc., debuggers can be used to get extra logs than CLI invocation but breakpoints
@@ -47,17 +47,17 @@
  *
  * # Troubleshooting
  * - The appex shouldn't have any quarantine flag.
-     xattr -rl bin/Blender.app/Contents/Plugins/bforartists-thumbnailer.appex
+ *   xattr -rl bin/Blender.app/Contents/Plugins/blender-thumbnailer.appex
  * - Is it registered with lsregister and there isn't a conflict with another plugin taking
- *   precedence? lsregister -dump | grep bforartists-thumbnailer.appex
+ *   precedence? lsregister -dump | grep blender-thumbnailer.appex
  * - For RBSLaunchRequest error: is the executable flag set? chmod u+x
-  bin/Blender.app/Contents/PlugIns/bforartists-thumbnailer.appex/Contents/MacOS/bforartists-thumbnailer
+ * bin/Blender.app/Contents/PlugIns/blender-thumbnailer.appex/Contents/MacOS/blender-thumbnailer
  * - Is it codesigned and sandboxed?
  *   codesign --display --verbose --entitlements - --xml \
-  bin/Blender.app/Contents/Plugins/bforartists-thumbnailer.appex codesign --deep --force --sign - \
-  --entitlements ../blender/release/darwin/thumbnailer_entitlements.plist --timestamp=none \
-  bin/Blender.app/Contents/Plugins/bforartists-thumbnailer.appex
- * - Sometimes bforartists-thumbnailer running in background can be killed.
+ * bin/Blender.app/Contents/Plugins/blender-thumbnailer.appex codesign --deep --force --sign - \
+ * --entitlements ../blender/release/darwin/thumbnailer_entitlements.plist --timestamp=none \
+ * bin/Blender.app/Contents/Plugins/blender-thumbnailer.appex
+ * - Sometimes blender-thumbnailer running in background can be killed.
  * - qlmanage -r && killall Finder
  * - The code cannot attempt to do anything outside sandbox like writing to blend.
  *
@@ -102,7 +102,7 @@ class FileDescriptorRAII : blender::NonCopyable, blender::NonMovable {
 static NSError *create_nserror_from_string(NSString *errorStr)
 {
   NSLog(@"Blender Thumbnailer Error: %@", errorStr);
-  return [NSError errorWithDomain:@"de.bforartists.bforartists.thumbnailer"
+  return [NSError errorWithDomain:@"org.blenderfoundation.blender.thumbnailer"
                              code:-1
                          userInfo:@{NSLocalizedDescriptionKey : errorStr}];
 }
