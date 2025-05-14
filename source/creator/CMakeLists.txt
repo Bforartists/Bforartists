@@ -21,6 +21,7 @@ set(LIB
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::render
   PRIVATE bf::windowmanager
+  PRIVATE bf::dependencies::optional::opencolorio
 )
 
 if(HAVE_FEENABLEEXCEPT)
@@ -133,10 +134,6 @@ endif()
 if(WITH_GMP)
   list(APPEND INC ${GMP_INCLUDE_DIRS})
   add_definitions(-DWITH_GMP)
-endif()
-
-if(WITH_OPENCOLORIO)
-  add_definitions(-DWITH_OCIO)
 endif()
 
 # Setup the EXE sources and `buildinfo`.
@@ -321,7 +318,7 @@ if(WITH_PYTHON_MODULE)
   if(APPLE)
     set_target_properties(bforartists PROPERTIES MACOSX_BUNDLE TRUE)
     if(WITH_BLENDER_THUMBNAILER)
-      set_target_properties(bforartists-thumbnailer PROPERTIES MACOSX_BUNDLE TRUE)
+      set_target_properties(blender-thumbnailer PROPERTIES MACOSX_BUNDLE TRUE)
     endif()
   endif()
 
@@ -437,7 +434,7 @@ elseif(APPLE)
   # Skip re-linking on CPACK / install.
   set_target_properties(bforartists PROPERTIES BUILD_WITH_INSTALL_RPATH true)
   if(WITH_BLENDER_THUMBNAILER)
-    set_target_properties(bforartists-thumbnailer PROPERTIES BUILD_WITH_INSTALL_RPATH true)
+    set_target_properties(blender-thumbnailer PROPERTIES BUILD_WITH_INSTALL_RPATH true)
   endif()
 endif()
 
@@ -743,7 +740,7 @@ if(UNIX AND NOT APPLE)
 
     if(WITH_BLENDER_THUMBNAILER)
       install(
-        TARGETS bforartists-thumbnailer
+        TARGETS blender-thumbnailer
         DESTINATION "."
       )
     endif()
@@ -807,7 +804,7 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/libglapi.so.0.0.0)\n
     )
     if(WITH_BLENDER_THUMBNAILER)
       install(
-        TARGETS bforartists-thumbnailer
+        TARGETS blender-thumbnailer
         DESTINATION "./bin"
       )
     endif()
@@ -1502,12 +1499,7 @@ elseif(WIN32)
 
   windows_install_shared_manifest(
     FILES ${LIBDIR}/shaderc/bin/shaderc_shared.dll
-    RELEASE
-  )
-
-  windows_install_shared_manifest(
-    FILES ${LIBDIR}/shaderc/bin/shaderc_shared_d.dll
-    DEBUG
+    ALL
   )
 
   windows_install_shared_manifest(
@@ -1612,8 +1604,8 @@ elseif(APPLE)
   )
 
   if(WITH_BLENDER_THUMBNAILER)
-    set(OSX_THUMBNAILER_SOURCEDIR ${OSX_APP_SOURCEDIR}/Contents/PlugIns/bforartists-thumbnailer.appex)
-    set_target_properties(bforartists-thumbnailer PROPERTIES
+    set(OSX_THUMBNAILER_SOURCEDIR ${OSX_APP_SOURCEDIR}/Contents/PlugIns/blender-thumbnailer.appex)
+    set_target_properties(blender-thumbnailer PROPERTIES
       BUNDLE_EXTENSION appex
       MACOSX_BUNDLE_INFO_PLIST ${OSX_THUMBNAILER_SOURCEDIR}/Contents/Info.plist
       MACOSX_BUNDLE_SHORT_VERSION_STRING "${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}"
@@ -1656,7 +1648,7 @@ elseif(APPLE)
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
-      TARGETS bforartists-thumbnailer
+      TARGETS blender-thumbnailer
       DESTINATION "./Bforartists.app/Contents/PlugIns"
     )
   endif()
@@ -1833,7 +1825,7 @@ install(
 # -----------------------------------------------------------------------------
 # Bundle assets
 
-set(ASSET_BUNDLE_DIR ${CMAKE_SOURCE_DIR}/release/datafiles/assets/publish/)
+set(ASSET_BUNDLE_DIR ${CMAKE_SOURCE_DIR}/assets/)
 
 if(EXISTS "${ASSET_BUNDLE_DIR}")
   install(

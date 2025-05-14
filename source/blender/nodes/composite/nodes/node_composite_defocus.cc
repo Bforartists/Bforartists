@@ -50,12 +50,10 @@ static void node_composit_init_defocus(bNodeTree * /*ntree*/, bNode *node)
   NodeDefocus *nbd = MEM_callocN<NodeDefocus>(__func__);
   nbd->bktype = 0;
   nbd->rotation = 0.0f;
-  nbd->preview = 1;
   nbd->gamco = 0;
   nbd->samples = 16;
   nbd->fstop = 128.0f;
   nbd->maxblur = 16;
-  nbd->bthresh = 1.0f;
   nbd->scale = 1.0f;
   nbd->no_zbuf = 1;
   node->storage = nbd;
@@ -66,30 +64,25 @@ static void node_composit_buts_defocus(uiLayout *layout, bContext *C, PointerRNA
   uiLayout *sub, *col;
 
   col = &layout->column(false);
-  uiItemL(col, IFACE_("Bokeh Type:"), ICON_NONE);
-  uiItemR(col, ptr, "bokeh", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
-  uiItemR(col, ptr, "angle", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+  col->label(IFACE_("Bokeh Type:"), ICON_NONE);
+  col->prop(ptr, "bokeh", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+  col->prop(ptr, "angle", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 
-  uiItemR(
-      layout, ptr, "use_gamma_correction", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "use_gamma_correction", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 
   col = &layout->column(false);
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_zbuffer") == true);
-  uiItemR(col, ptr, "f_stop", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+  col->prop(ptr, "f_stop", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 
-  uiItemR(layout, ptr, "blur_max", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
-  uiItemR(layout, ptr, "threshold", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
-
-  col = &layout->column(false);
-  uiItemR(col, ptr, "use_preview", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "blur_max", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 
   uiTemplateID(layout, C, ptr, "scene", nullptr, nullptr, nullptr);
 
   col = &layout->column(false);
-  uiItemR(col, ptr, "use_zbuffer", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+  col->prop(ptr, "use_zbuffer", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
   sub = &col->column(false);
   uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_zbuffer") == false);
-  uiItemR(sub, ptr, "z_scale", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+  sub->prop(ptr, "z_scale", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 }
 
 using namespace blender::compositor;
