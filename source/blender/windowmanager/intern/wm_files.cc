@@ -3334,7 +3334,7 @@ static void wm_open_mainfile_ui(bContext * /*C*/, wmOperator *op)
   uiLayout *layout = op->layout;
   const char *autoexec_text;
 
-  uiItemR(layout, op->ptr, "load_ui", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(op->ptr, "load_ui", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiLayout *col = &layout->column(false);
   if (file_info->is_untrusted) {
@@ -3346,7 +3346,7 @@ static void wm_open_mainfile_ui(bContext * /*C*/, wmOperator *op)
     autoexec_text = IFACE_("Trusted Source");
   }
 
-  uiItemR(col, op->ptr, "use_scripts", UI_ITEM_NONE, autoexec_text, ICON_NONE);
+  col->prop(op->ptr, "use_scripts", UI_ITEM_NONE, autoexec_text, ICON_NONE);
 }
 
 static void wm_open_mainfile_def_property_use_scripts(wmOperatorType *ot)
@@ -4025,7 +4025,7 @@ static void wm_clear_recent_files_ui(bContext * /*C*/, wmOperator *op)
   uiLayoutSetPropDecorate(layout, false);
 
   uiItemS(layout);
-  uiItemR(layout, op->ptr, "remove", UI_ITEM_R_TOGGLE, std::nullopt, ICON_NONE);
+  layout->prop(op->ptr, "remove", UI_ITEM_R_TOGGLE, std::nullopt, ICON_NONE);
   uiItemS(layout);
 }
 
@@ -4136,18 +4136,18 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
   uiLayout *col = &layout->column(true);
   uiItemL_ex(col, title, ICON_NONE, true, false);
   uiItemL_ex(col, G.autoexec_fail, ICON_NONE, false, true);
-  uiItemL(col, message, ICON_NONE);
+  col->label(message, ICON_NONE);
 
   uiItemS(layout);
 
   PointerRNA pref_ptr = RNA_pointer_create_discrete(nullptr, &RNA_PreferencesFilePaths, &U);
-  uiItemR(layout, &pref_ptr, "use_scripts_auto_execute", UI_ITEM_NONE, checkbox_text, ICON_NONE);
+  layout->prop(&pref_ptr, "use_scripts_auto_execute", UI_ITEM_NONE, checkbox_text, ICON_NONE);
 
   uiItemS_ex(layout, 2.0f);
 
   /* Buttons. */
   uiBut *but;
-  uiLayout *split = uiLayoutSplit(layout, 0.0f, true);
+  uiLayout *split = &layout->split(0.0f, true);
   uiLayoutSetScaleY(split, 1.2f);
 
   /* Empty space. */
@@ -4338,13 +4338,13 @@ static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bma
     char message_line1[256];
     char message_line2[256];
     SNPRINTF(message_line1,
-             RPT_("This file was saved by a newer version of Blender (%s)"),
+             RPT_("This file was saved by a newer version of Blender (%s)."),
              writer_ver_str);
     SNPRINTF(message_line2,
-             RPT_("Saving it with this Blender (%s) may cause loss of data"),
+             RPT_("Saving it with this Blender (%s) may cause loss of data."),
              current_ver_str);
-    uiItemL(layout, message_line1, ICON_NONE);
-    uiItemL(layout, message_line2, ICON_NONE);
+    layout->label(message_line1, ICON_NONE);
+    layout->label(message_line2, ICON_NONE);
   }
 
   if (bmain->is_asset_edit_file) {
@@ -4352,10 +4352,9 @@ static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bma
       uiItemS_ex(layout, 1.4f);
     }
 
-    uiItemL(layout,
-            RPT_("This file is managed by the Blender asset system. It can only be"),
-            ICON_NONE);
-    uiItemL(layout, RPT_("saved as a new, regular file."), ICON_NONE);
+    layout->label(RPT_("This file is managed by the Blender asset system. It can only be"),
+                  ICON_NONE);
+    layout->label(RPT_("saved as a new, regular file."), ICON_NONE);
   }
 }
 
@@ -4495,7 +4494,7 @@ static uiBlock *block_create_save_file_overwrite_dialog(bContext *C, ARegion *re
      * should never be empty. */
     BLI_assert_unreachable();
   }
-  uiItemL(layout, filename, ICON_NONE);
+  layout->label(filename, ICON_NONE);
 
   /* Detailed message info. */
   file_overwrite_detailed_info_show(layout, bmain);
@@ -4504,7 +4503,7 @@ static uiBlock *block_create_save_file_overwrite_dialog(bContext *C, ARegion *re
 
   /* Buttons. */
 
-  uiLayout *split = uiLayoutSplit(layout, 0.3f, true);
+  uiLayout *split = &layout->split(0.3f, true);
   uiLayoutSetScaleY(split, 1.2f);
 
   split->column(false);
@@ -4514,7 +4513,7 @@ static uiBlock *block_create_save_file_overwrite_dialog(bContext *C, ARegion *re
     save_file_overwrite_confirm_button(block, post_action);
   }
 
-  uiLayout *split_right = uiLayoutSplit(split, 0.1f, true);
+  uiLayout *split_right = &split->split(0.1f, true);
 
   split_right->column(false);
   /* Empty space. */
@@ -4732,7 +4731,7 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
   else {
     SNPRINTF(filename, "%s.blend", DATA_("Untitled"));
   }
-  uiItemL(layout, filename, ICON_NONE);
+  layout->label(filename, ICON_NONE);
 
   /* Potential forward compatibility issues message. */
   if (needs_overwrite_confirm) {
@@ -4837,7 +4836,7 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
   if (windows_layout) {
     /* Windows standard layout. */
 
-    uiLayout *split = uiLayoutSplit(layout, 0.0f, true);
+    uiLayout *split = &layout->split(0.0f, true);
     uiLayoutSetScaleY(split, 1.2f);
 
     split->column(false);
@@ -4852,13 +4851,13 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
   else {
     /* Non-Windows layout (macOS and Linux). */
 
-    uiLayout *split = uiLayoutSplit(layout, 0.3f, true);
+    uiLayout *split = &layout->split(0.3f, true);
     uiLayoutSetScaleY(split, 1.2f);
 
     split->column(false);
     wm_block_file_close_discard_button(block, post_action);
 
-    uiLayout *split_right = uiLayoutSplit(split, 0.1f, true);
+    uiLayout *split_right = &split->split(0.1f, true);
 
     split_right->column(false);
     /* Empty space. */

@@ -656,6 +656,7 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
+        layout.prop(uv, "use_live_unwrap")
         layout.menu("IMAGE_MT_uvs_unwrap")
         layout.menu("IMAGE_MT_uvs_merge")
         layout.operator("uv.select_split", text="Split Selection", icon='SPLIT')
@@ -1086,9 +1087,9 @@ class IMAGE_HT_header(Header):
             if tool_settings.use_uv_select_sync:
                 layout.template_edit_mode_selection()
 
-                # Currently this only works for face-select mode.
+                # Currently this only works for edge-select & face-select modes.
                 row = layout.row()
-                if tool_settings.mesh_select_mode[:] != (False, False, True):
+                if tool_settings.mesh_select_mode[0]:
                     row.active = False
                 row.prop(tool_settings, "uv_sticky_select_mode", icon_only=True)
             else:

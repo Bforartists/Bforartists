@@ -39,8 +39,8 @@ void uiTemplateCacheFileVelocity(uiLayout *layout, PointerRNA *fileptr)
   /* Ensure that the context has a CacheFile as this may not be set inside of modifiers panels. */
   uiLayoutSetContextPointer(layout, "edit_cachefile", fileptr);
 
-  uiItemR(layout, fileptr, "velocity_name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemR(layout, fileptr, "velocity_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(fileptr, "velocity_name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(fileptr, "velocity_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerRNA *fileptr)
@@ -66,28 +66,26 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
 
   if (!is_alembic) {
     row = &layout->row(false);
-    uiItemL(row, RPT_("Only Alembic Procedurals supported"), ICON_INFO);
+    row->label(RPT_("Only Alembic Procedurals supported"), ICON_INFO);
   }
   else if (!engine_supports_procedural) {
     row = &layout->row(false);
     /* For Cycles, verify that experimental features are enabled. */
     if (BKE_scene_uses_cycles(scene) && !BKE_scene_uses_cycles_experimental_features(scene)) {
-      uiItemL(
-          row,
+      row->label(
           RPT_(
               "The Cycles Alembic Procedural is only available with the experimental feature set"),
           ICON_INFO);
     }
     else {
-      uiItemL(
-          row, RPT_("The active render engine does not have an Alembic Procedural"), ICON_INFO);
+      row->label(RPT_("The active render engine does not have an Alembic Procedural"), ICON_INFO);
     }
   }
 
   row = &layout->row(false);
   uiLayoutSetActive(row, is_alembic && engine_supports_procedural);
   uiLayoutSetPropSep(row, false); /* BFA - use_property_split = False */
-  uiItemR(row, fileptr, "use_render_procedural", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(fileptr, "use_render_procedural", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "use_render_procedural", 0); /* BFA - decorator */
 
   const bool use_render_procedural = RNA_boolean_get(fileptr, "use_render_procedural");
@@ -96,12 +94,12 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   row = &layout->row(false);
   uiLayoutSetEnabled(row, use_render_procedural);
   uiLayoutSetPropSep(row, false); /* BFA - use_property_split = False */
-  uiItemR(row, fileptr, "use_prefetch", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(fileptr, "use_prefetch", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "use_prefetch", 0); /* BFA - decorator */
 
   sub = &layout->row(false);
   uiLayoutSetEnabled(sub, use_prefetch && use_render_procedural);
-  uiItemR(sub, fileptr, "prefetch_cache_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  sub->prop(fileptr, "prefetch_cache_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
@@ -118,39 +116,37 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   row = &layout->row(false);
 
   /*------------------- bfa - original props */
-  // uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
-  col = &layout->column(true);
+    col = &layout->column(true);
   row = &layout->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = uiLayoutSplit(layout, 0.385f, true);
+  uiLayout *split = &layout->split(0.385f, true);
 
   /* FIRST PART ................................................ */
   row = &split->row(false);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemR(row, fileptr, "override_frame", UI_ITEM_NONE, "Override Frame", ICON_NONE);
+  row->prop(fileptr, "override_frame", UI_ITEM_NONE, "Override Frame", ICON_NONE);
 
   /* SECOND PART ................................................ */
   row = &split->row(false);
   if (RNA_boolean_get(fileptr, "override_frame")) {
-    uiItemR(row, fileptr, "frame", UI_ITEM_NONE, "", ICON_NONE);
+    row->prop(fileptr, "frame", UI_ITEM_NONE, "", ICON_NONE);
   }
   else {
-    uiItemL(row, TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
 
   // ------------------------------- end bfa
 
   row = &layout->row(false);
-  uiItemR(row, fileptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(fileptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiLayoutSetActive(row, !RNA_boolean_get(fileptr, "is_sequence"));
 }
 
@@ -166,8 +162,8 @@ static void cache_file_layer_item(uiList * /*ui_list*/,
                                   int /*flt_flag*/)
 {
   uiLayout *row = &layout->row(true);
-  uiItemR(row, itemptr, "hide_layer", UI_ITEM_R_NO_BG, "", ICON_NONE);
-  uiItemR(row, itemptr, "filepath", UI_ITEM_R_NO_BG, "", ICON_NONE);
+  row->prop(itemptr, "hide_layer", UI_ITEM_R_NO_BG, "", ICON_NONE);
+  row->prop(itemptr, "filepath", UI_ITEM_R_NO_BG, "", ICON_NONE);
 }
 
 uiListType *UI_UL_cache_file_layers()
@@ -276,21 +272,21 @@ void uiTemplateCacheFile(uiLayout *layout,
   uiLayoutSetPropSep(layout, true);
 
   row = &layout->row(true);
-  uiItemR(row, &fileptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(&fileptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   sub = &row->row(true);
   uiItemO(sub, "", ICON_FILE_REFRESH, "cachefile.reload");
 
   if (sbuts->mainb == BCONTEXT_CONSTRAINT) {
     row = &layout->row(false);
-    uiItemR(row, &fileptr, "scale", UI_ITEM_NONE, IFACE_("Manual Scale"), ICON_NONE);
+    row->prop(&fileptr, "scale", UI_ITEM_NONE, IFACE_("Manual Scale"), ICON_NONE);
   }
 
   /* TODO: unused for now, so no need to expose. */
 #if 0
   row = &layout->row(false);
-  uiItemR(row, &fileptr, "forward_axis", UI_ITEM_NONE, IFACE_("Forward Axis"), ICON_NONE);
+  row->prop(&fileptr, "forward_axis", UI_ITEM_NONE, IFACE_("Forward Axis"), ICON_NONE);
 
   row = &layout->row(false);
-  uiItemR(row, &fileptr, "up_axis", UI_ITEM_NONE, IFACE_("Up Axis"), ICON_NONE);
+  row->prop(&fileptr, "up_axis", UI_ITEM_NONE, IFACE_("Up Axis"), ICON_NONE);
 #endif
 }
