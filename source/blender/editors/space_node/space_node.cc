@@ -1154,7 +1154,6 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
       asset_drag->import_settings.method = import_method_prop;
       asset_drag->import_settings.use_instance_collections = false;
       use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
-      asset_drag->import_settings.use_override = use_override;
     }
   }
   ID *id = WM_drag_asset_id_import(C, asset_drag, 0);

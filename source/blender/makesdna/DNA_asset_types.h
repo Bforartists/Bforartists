@@ -128,7 +128,6 @@ typedef struct AssetImportSettings {
   eAssetImportMethod method;
   bool use_instance_collections;
   bool drop_instances_to_origin;
-  bool use_override;
   bool is_from_browser;
 } AssetImportSettings;
 
