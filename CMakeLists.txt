@@ -213,13 +213,13 @@ thumbnails from `.blend` files."
   )
 elseif(UNIX AND NOT APPLE)
   option(WITH_BLENDER_THUMBNAILER "\
-Build stand-alone \"bforartists-thumbnailer\" command-line thumbnail extraction utility, \
+Build stand-alone \"blender-thumbnailer\" command-line thumbnail extraction utility, \
 intended for use by file-managers to extract PNG images from `.blend` files."
     ON
   )
 elseif(APPLE)
   option(WITH_BLENDER_THUMBNAILER "\
-Build \"bforartists-thumbnailer.appex\" extension for Finder/ QuickLook thumbnail \
+Build \"blender-thumbnailer.appex\" extension for Finder/ QuickLook thumbnail \
 support for blend files."
     ON
   )
@@ -301,6 +301,12 @@ Use pre-compiled headers to speed up compilation."
     set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON)
   endif()
 endif()
+
+option(WITH_OPTIMIZED_BUILD_TOOLS "\
+Enable optimizations even on Debug builds for executables used for the build process"
+  ON
+)
+mark_as_advanced(WITH_OPTIMIZED_BUILD_TOOLS)
 
 option(WITH_IK_ITASC "\
 Enable ITASC IK solver (only disable for development & for incompatible C++ compilers)"
@@ -705,7 +711,7 @@ if(NOT APPLE AND NOT (WIN32 AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
   set(CYCLES_HIP_BINARIES_ARCH
     gfx1010 gfx1011 gfx1012
     gfx1030 gfx1031 gfx1032 gfx1034 gfx1035 gfx1036
-    gfx1100 gfx1101 gfx1102 gfx1103 gfx1150 gfx1151 #gfx1152
+    gfx1100 gfx1101 gfx1102 gfx1103 gfx1150 gfx1151 gfx1152
     gfx1200 gfx1201
     CACHE STRING "AMD HIP architectures to build binaries for"
   )
@@ -1040,8 +1046,8 @@ if(WITH_COMPILER_CODE_COVERAGE)
     "C flags for code coverage"
   )
   mark_as_advanced(COMPILER_CODE_COVERAGE_CFLAGS)
-  set(COMPILER_CODE_COVERAGE_
-    CXXFLAGS ${_code_coverage_defaults} CACHE STRING
+  set(COMPILER_CODE_COVERAGE_CXXFLAGS
+    ${_code_coverage_defaults} CACHE STRING
     "C++ flags for code coverage"
   )
   mark_as_advanced(COMPILER_CODE_COVERAGE_CXXFLAGS)
@@ -2757,6 +2763,7 @@ if(FIRST_RUN)
 
   info_cfg_text("Compiler Options:")
   info_cfg_option(WITH_BUILDINFO)
+  info_cfg_option(WITH_OPTIMIZED_BUILD_TOOLS)
 
   info_cfg_text("System Options:")
   info_cfg_option(WITH_INSTALL_PORTABLE)
