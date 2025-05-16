@@ -166,9 +166,8 @@ class SEQUENCER_HT_header(Header):
 
         st = context.space_data
 
-        layout.template_header()
-        
         # bfa - show hide the editormenu, editor suffix is needed.
+        # layout.template_header()
         ALL_MT_editormenu_sequencer.draw_hidden(context, layout)
 
         layout.prop(st, "view_type", text="")
@@ -3517,7 +3516,7 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         cache_settings = context.space_data.cache_overlay
@@ -3526,9 +3525,9 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
         col = layout.column(align=True)
         col.use_property_split = False
 
-        split = layout.split(factor=0.1)
+        split = layout.split(factor=0.15)
         col = split.column()
-        col.label(text="")
+        #col.label(text="")
 
         col = split.column()
 
