@@ -44,6 +44,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "../interface/interface_intern.hh" /* bfa asset nodegroup override*/
 #include "view3d_intern.hh" /* own include */
 
 static bool view3d_drop_in_main_region_poll(bContext *C, const wmEvent *event)
@@ -389,8 +390,29 @@ static void view3d_ob_drop_copy_external_asset(bContext *C, wmDrag *drag, wmDrop
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   BKE_view_layer_base_deselect_all(scene, view_layer);
-
+  /* start bfa asset shelf props*/
+  bool use_override = false;
+  if (!asset_drag->import_settings.is_from_browser) {
+    AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
+    if (active_shelf) {
+      eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
+      asset_drag->import_settings.method = import_method_prop;
+      use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
+    }
+  }
   ID *id = WM_drag_asset_id_import(C, asset_drag, FILE_AUTOSELECT);
+  if (use_override) {  
+    ID *owner_id = id; 
+    ID *id_or = id;
+    PointerRNA owner_ptr;
+    PropertyRNA *prop;
+    if (!ELEM(nullptr, owner_id, id_or)) {
+      id = ui_template_id_liboverride_hierarchy_make(
+      C, CTX_data_main(C), owner_id, id_or, nullptr);
+    }
+  }
+  /* end bfa asset shelf props*/
+  // ID *id = WM_drag_asset_id_import(C, asset_drag, FILE_AUTOSELECT);
 
   /* TODO(sergey): Only update relations for the current scene. */
   DEG_relations_tag_update(CTX_data_main(C));
