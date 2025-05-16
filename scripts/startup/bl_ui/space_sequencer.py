@@ -3527,7 +3527,7 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
 
         split = layout.split(factor=0.15)
         col = split.column()
-        #col.label(text="")
+        col.label(text="")
 
         col = split.column()
 
