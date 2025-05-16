@@ -575,10 +575,7 @@ class SEQUENCER_MT_view(Menu):
 
         layout.menu("SEQUENCER_MT_view_annotations")  # BFA
         # BFA - properties in properties menu
-        # if is_sequencer_only
-        #    layout.prop(st, "show_backdrop", text="Preview as Backdrop")
-        # if is_preview or st.show_backdrop:
-        #    layout.prop(st, "show_transform_preview", text="Preview During Transform")
+
         layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -4164,14 +4161,9 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 split = layout.split(factor=0.6)
                 col = split.column()
                 col.use_property_split = False
-                col.prop(st, "show_backdrop", text="Preview as Backdrop")
                 col = split.column()
-                if st.show_backdrop:
-                    col.label(icon="DISCLOSURE_TRI_DOWN")
-                else:
-                    col.label(icon="DISCLOSURE_TRI_RIGHT")
 
-                if is_preview or st.show_backdrop:
+                if is_preview:
                     row = layout.row()
                     row.separator()
                     row.prop(
