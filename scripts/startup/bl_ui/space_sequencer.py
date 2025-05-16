@@ -422,7 +422,7 @@ class SEQUENCER_MT_editor_menus(Menu):
                 layout.menu("SEQUENCER_MT_strip_text")
         # BFA - end
 
-
+#BFA - Submenu
 class SEQUENCER_MT_view_cache(Menu):
     bl_label = "Cache"
 
@@ -433,13 +433,17 @@ class SEQUENCER_MT_view_cache(Menu):
         layout.prop(ed, "show_cache")
         layout.separator()
 
-        col = layout.column()
-        col.enabled = ed.show_cache
+        cache_settings = context.space_data.cache_overlay
 
-        col.prop(ed, "show_cache_final_out")
-        col.prop(ed, "show_cache_raw")
-        col.prop(ed, "show_cache_preprocessed")
-        col.prop(ed, "show_cache_composite")
+        col = layout.column()
+
+        show_developer_ui = context.preferences.view.show_developer_ui
+        col.prop(cache_settings, "show_cache_final_out", text="Final")
+        if show_developer_ui:
+            col.prop(cache_settings, "show_cache_raw", text="Raw")
+            col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
+            col.prop(cache_settings, "show_cache_composite", text="Composite")
+
 
 
 class SEQUENCER_MT_range(Menu):
@@ -3493,14 +3497,12 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
 
         col = layout.column()
 
-        col.prop(ed, "use_cache_raw", text="Raw")
-        col.prop(ed, "use_cache_preprocessed", text="Preprocessed")
-        col.prop(ed, "use_cache_composite", text="Composite")
-        col.prop(ed, "use_cache_final", text="Final")
+        # BFA - double entries
+
 
 
 class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
-    bl_label = "Display"
+    bl_label = "Display Cache"
     bl_category = "Cache"
     bl_parent_id = "SEQUENCER_PT_cache_settings"
 
@@ -3521,14 +3523,22 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
         cache_settings = context.space_data.cache_overlay
         layout.active = cache_settings.show_cache
 
-        col = layout.column(heading="Cache", align=True)
+        col = layout.column(align=True)
+        col.use_property_split = False
+
+        split = layout.split(factor=0.1)
+        col = split.column()
+        col.label(text="")
+
+        col = split.column()
 
         show_developer_ui = context.preferences.view.show_developer_ui
+        col.prop(cache_settings, "show_cache_final_out", text="Final")
         if show_developer_ui:
             col.prop(cache_settings, "show_cache_raw", text="Raw")
             col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
             col.prop(cache_settings, "show_cache_composite", text="Composite")
-        col.prop(cache_settings, "show_cache_final_out", text="Final")
+
 
 
 class SEQUENCER_PT_proxy_settings(SequencerButtonsPanel, Panel):
@@ -4155,6 +4165,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
         tool_settings = context.tool_settings
 
+        cache_settings = context.space_data.cache_overlay #BFA
+
         if is_sequencer_view:
             col = layout.column(align=True)
             if st.view_type == "SEQUENCER":
@@ -4177,7 +4189,27 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col.prop(st, "show_seconds")
             col.prop(st, "show_locked_time")
 
-            layout.menu("SEQUENCER_MT_view_cache")
+            # BFA - Cache settings
+            row = layout.row()
+            row.prop(cache_settings, "show_cache", text="Display Cache")
+            if cache_settings.show_cache:
+                row.label(icon="DISCLOSURE_TRI_DOWN")
+            else:
+                row.label(icon="DISCLOSURE_TRI_RIGHT")
+
+            if cache_settings.show_cache:
+                split = layout.split(factor=0.05)
+                col = split.column()
+                col.label(text="")
+
+                col = split.column()
+                show_developer_ui = context.preferences.view.show_developer_ui
+                col.prop(cache_settings, "show_cache_final_out", text="Final")
+                if show_developer_ui:
+                    col.prop(cache_settings, "show_cache_raw", text="Raw")
+                    col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
+                    col.prop(cache_settings, "show_cache_composite", text="Composite")
+
 
             layout.use_property_split = False
             layout.prop(st, "show_markers")
