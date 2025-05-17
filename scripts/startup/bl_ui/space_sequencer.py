@@ -1757,6 +1757,10 @@ class SEQUENCER_MT_strip(Menu):
             layout.operator("sequencer.connect", icon="LINKED").toggle = True
             layout.operator("sequencer.disconnect", icon="UNLINKED")
 
+        # bfa - preview mode only
+        if has_preview:
+            layout.separator()
+            layout.menu("SEQUENCER_MT_strip_lock_mute")
 
 class SEQUENCER_MT_image(Menu):
     bl_label = "Image"
