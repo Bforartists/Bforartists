@@ -10521,24 +10521,36 @@ class VIEW3D_PT_overlay_guides(Panel):
         layout.separator()
 
         layout.label(text="Options")
-
-        split = layout.split()
-        split.active = display_all
-        sub = split.column()
-        sub.prop(overlay, "show_text", text="Text Info")
-        sub.prop(overlay, "show_stats", text="Statistics")
-        if view.region_3d.view_perspective == "CAMERA":
-            sub.prop(overlay, "show_camera_guides", text="Camera Guides")
-
-        sub = split.column()
-        sub.prop(overlay, "show_cursor", text="3D Cursor")
-        sub.prop(overlay, "show_annotation", text="Annotations")
-
-        if shading.type == "MATERIAL":
-            row = col.row()
-            row.active = shading.render_pass == "COMBINED"
+        
+        # bfa - indent the Options group, matching other panels.
+        col = layout.column(align=True)
+        col.active = display_all
+        split = col.split()
+        sub = split.column(align=True)
+        
+        row = sub.row()
+        row.separator()
+        row.prop(overlay, "show_cursor", text="3D Cursor")
+        row.prop(overlay, "show_annotation", text="Annotations")
+        
+        row = sub.row()
+        row.separator()
+        row.prop(overlay, "show_stats", text="Statistics")
+        row.prop(overlay, "show_text", text="Text Info")
+        
+        # bfa - Camera and HDRi Preview options placed at the bottom,
+        # since they're only relevant in specific view modes.
+        if view.region_3d.view_perspective == "CAMERA" or shading.type == "MATERIAL":
+            row = sub.row()
             row.separator()
-            row.prop(overlay, "show_look_dev")
+        
+        if view.region_3d.view_perspective == "CAMERA":
+            row.prop(overlay, "show_camera_guides", text="Camera Guides")
+        
+        if shading.type == "MATERIAL":
+                row = row if view.region_3d.view_perspective != "CAMERA" else row.row()
+                row.active = shading.render_pass == "COMBINED"
+                row.prop(overlay, "show_look_dev")
 
 
 class VIEW3D_PT_overlay_object(Panel):
