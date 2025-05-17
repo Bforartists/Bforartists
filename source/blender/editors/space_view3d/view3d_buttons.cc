@@ -1714,23 +1714,12 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   if (drawLocation) {
     col = &layout->column(false); /* bfa - col = layout.column() */
     row = &col->row(true);        /* bfa - row = col.row(align=True) */
-    row->prop(
-            ptr,
-            "location",
-            UI_ITEM_NONE,
-            std::nullopt,
-            ICON_NONE);                  /* bfa - row.prop(ob, "location") */
+    row->prop(ptr, "location", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* bfa - row.prop(ob, "location") */
     uiLayoutSetPropDecorate(row, false); /* bfa - row.use_property_decorate = False */
     uiLayoutSetEmboss(row, blender::ui::EmbossType::None); /* bfa - emboss=False */
-    row->prop(
-            ptr,
-            "lock_location",
-            UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-            "",
-            ICON_DECORATE_UNLOCKED);
-    uiLayoutSetEmboss(row,
-                      blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
-    uiItemS_ex(layout, .25f);                              /* bfa - separator*/
+    row->prop(ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
+    uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
+    uiItemS_ex(layout, .25f); /* bfa - separator*/
   }
 
   switch (RNA_enum_get(ptr, "rotation_mode")) {
@@ -1742,28 +1731,20 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
       sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
-
       uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
+
       draw4L = true; /* bfa - show 4L button if quaternion */
 
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
         /* bfa */
-        sub->prop(
-                ptr,
-                "lock_rotation_w",
-                UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-                "",
-                ICON_DECORATE_UNLOCKED);
+        sub->prop(ptr, "lock_rotation_w", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
       }
       else {
-        sub->label("", ICON_NONE);
+        sub->label("", ICON_BLANK1);
       }
-      sub->prop(ptr,
-                   "lock_rotation",
-                   UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-                   "",
-                   ICON_DECORATE_UNLOCKED);
+      sub->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
       break;
+
     case ROT_MODE_AXISANGLE: /* axis angle */
                              /* bfa */
       col = &layout->row(false);
@@ -1781,16 +1762,12 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
         sub->prop(ptr, "lock_rotation_w", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
       }
       else {
-        sub->label("", ICON_NONE);
+        sub->label("", ICON_BLANK1);
       }
-      sub->prop(
-              ptr,
-              "lock_rotation",
-              UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-              "",
-              ICON_DECORATE_UNLOCKED);
+      sub->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
       uiLayoutSetEmboss(sub, blender::ui::EmbossType::Undefined); /* bfa */
       break;
+
     default: /* euler rotations */
              /* bfa */
       col = &layout->column(false);
@@ -1799,35 +1776,20 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       row->prop(ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
       uiLayoutSetPropDecorate(row, false);
       uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
-      row->prop(
-              ptr,
-              "lock_rotation",
-              UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-              "",
-              ICON_DECORATE_UNLOCKED);
+      row->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
       uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa */
       break;
   }
-  layout->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
 
-  /* bfa */
-  uiItemS_ex(layout, .25f);
-
-  row = &layout->row(false);
-  row->prop(ptr, "rotation_mode", UI_ITEM_NONE, IFACE_("Mode"), ICON_NONE);
-  row = &row->row(false);
-  uiLayoutSetUnitsX(row, 1.f);
+  row = &layout->row(true);
+  row->label(IFACE_("Mode"), ICON_NONE);
+  row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
   uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
 
   /* bfa - display 4L button */
   if (draw4L) {
     uiLayoutSetPropDecorate(row, false);
-    row->prop(
-            ptr,
-            "lock_rotations_4d",
-            UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-            "",
-            RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
+    row->prop(ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
   }
   else {
     row->label("", ICON_BLANK1);
