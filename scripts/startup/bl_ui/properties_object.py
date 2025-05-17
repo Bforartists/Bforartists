@@ -83,7 +83,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
             row.use_property_decorate = False
             row.prop(ob, "lock_rotation", text="", emboss=False, icon='DECORATE_UNLOCKED')
 
-        row = layout.row(align=False)
+        row = layout.row(align=True)
         row.prop(ob, "rotation_mode", text="Mode")
         row = row.row(align=False)
         row.ui_units_x = 1.0
