@@ -453,7 +453,10 @@ class PREFERENCES_OT_keyconfig_remove(Operator):
 # Add-on Operators
 
 class PREFERENCES_OT_addon_enable(Operator):
-    """Turn on this add-on"""
+    """Turn on the legacy add-ons
+No action required. The legacy addons comes with Bforartists, and are enabled by default
+Only if you accidentally deactivated it will you need to reactivate it
+Since Bforartists requires some of the legacy addons to work"""
     bl_idname = "preferences.addon_enable"
     bl_label = "Enable Add-on"
 
@@ -1222,7 +1225,7 @@ class PREFERENCES_OT_studiolight_copy_settings(Operator):
         return {'CANCELLED'}
 
 # BFA
-class PREFERENCES_OT_studiolight_show(Operator): 
+class PREFERENCES_OT_studiolight_show(Operator):
     """Show light preferences"""
     bl_idname = "preferences.studiolight_show"
     bl_label = ""
@@ -1336,7 +1339,7 @@ class PREFERENCES_OT_asset_library_move(Operator):
             new_index = active_library_index - 1
         else:
             new_index = active_library_index + 1
-            
+
         if (new_index < 0) or (new_index > len(filepaths.asset_libraries) - 1):
             self.report({'INFO'}, "Library is already at the end of the list.")
             return {'CANCELLED'}
@@ -1353,7 +1356,7 @@ class PREFERENCES_OT_asset_library_move(Operator):
             # Initially, the neighbor library name will end in 001 due to deduplication
             # Set the name again to fix this
             setattr(neighbor, prop_name, active_prop)
-            
+
         return {'FINISHED'}
 
 
