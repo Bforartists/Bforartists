@@ -85,10 +85,6 @@ class INFO_MT_area(Menu):
     def draw(self, context):
         layout = self.layout
 
-        if context.space_data.type == 'VIEW_3D':
-            layout.operator("screen.region_quadview")
-            layout.separator()
-            
         layout.operator("screen.area_split", icon="SPLIT_HORIZONTAL", text="Horizontal Split").direction = 'HORIZONTAL'
         layout.operator("screen.area_split", icon="SPLIT_VERTICAL", text="Vertical Split").direction = 'VERTICAL'
 
