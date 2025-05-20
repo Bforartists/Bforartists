@@ -35,11 +35,11 @@ def dopesheet_filter(layout, context):
         row.prop(dopesheet, "show_only_slot_of_active_object", text="")
     row.prop(dopesheet, "show_only_selected", text="")
     row.prop(dopesheet, "show_hidden", text="")
+    #bfa -blender shows this prop in all modes in the panel
+    row.prop(dopesheet, "show_only_errors", text="")
 
     if is_nla:
         row.prop(dopesheet, "show_missing_nla", text="")
-    else:  # graph and dopesheet editors - F-Curves and drivers only
-        row.prop(dopesheet, "show_only_errors", text="")
 
 
 #######################################
@@ -336,6 +336,7 @@ class DOPESHEET_HT_editor_buttons:
     def draw_header(cls, context, layout):
         st = context.space_data
         tool_settings = context.tool_settings
+        ds_mode = context.space_data.mode
 
         dopesheet = context.space_data.dopesheet
         st = context.space_data
@@ -376,20 +377,11 @@ class DOPESHEET_HT_editor_buttons:
         layout.separator_spacer()
 
         layout.prop(dopesheet, "show_summary", text="")
+	#bfa - single props and the filter panel. Panel is just needed in dopesheet mode.
+        dopesheet_filter(layout, context)
 
-        if st.mode == 'DOPESHEET':
-            dopesheet_filter(layout, context)
-        elif st.mode == 'ACTION':
-            dopesheet_filter(layout, context)
-        elif st.mode == 'GPENCIL':
-            row = layout.row(align=True)
-            row.prop(st.dopesheet, "show_only_selected", text="")
-            row.prop(st.dopesheet, "show_hidden", text="")
-
-        layout.popover(
-            panel="DOPESHEET_PT_filters",
-            text="",
-            icon='FILTER',
+        if ds_mode in {'DOPESHEET'}:
+            layout.popover( panel="DOPESHEET_PT_filters", text="", icon='FILTER',
         )
 
         # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
