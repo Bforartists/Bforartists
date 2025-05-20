@@ -99,7 +99,4 @@
 *.pdf filter=lfs diff=lfs merge=lfs -text
 *.dat filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
-
-# BFA - removed the tests folder, no-longer needed
-/tests/** filter=lfs diff=lfs merge=lfs -text
 tests/files/modeling/geometry_nodes/import/*.blend filter=lfs diff=lfs merge=lfs -text
