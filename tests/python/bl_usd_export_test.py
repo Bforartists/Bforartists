@@ -461,6 +461,32 @@ class USDExportTest(AbstractUSDTest):
         input_displacement = shader_surface.GetInput('displacement')
         self.assertTrue(input_displacement.Get() is None)
 
+    def test_export_material_attributes(self):
+        """Validate correct export of Attribute information to UsdPrimvarReaders"""
+
+        # Use the common materials .blend file
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_materials_attributes.blend"))
+        export_path = self.tempdir / "usd_materials_attributes.usda"
+        self.export_and_validate(filepath=str(export_path), export_materials=True)
+
+        stage = Usd.Stage.Open(str(export_path))
+
+        shader_attr = UsdShade.Shader(stage.GetPrimAtPath("/root/_materials/Material/Attribute"))
+        shader_attr1 = UsdShade.Shader(stage.GetPrimAtPath("/root/_materials/Material/Attribute_001"))
+        shader_attr2 = UsdShade.Shader(stage.GetPrimAtPath("/root/_materials/Material/Attribute_002"))
+
+        self.assertEqual(shader_attr.GetIdAttr().Get(), "UsdPrimvarReader_float3")
+        self.assertEqual(shader_attr1.GetIdAttr().Get(), "UsdPrimvarReader_float")
+        self.assertEqual(shader_attr2.GetIdAttr().Get(), "UsdPrimvarReader_vector")
+
+        self.assertEqual(shader_attr.GetInput("varname").Get(), "displayColor")
+        self.assertEqual(shader_attr1.GetInput("varname").Get(), "f_float")
+        self.assertEqual(shader_attr2.GetInput("varname").Get(), "f_vec")
+
+        self.assertEqual(shader_attr.GetOutput("result").GetTypeName().type.typeName, "GfVec3f")
+        self.assertEqual(shader_attr1.GetOutput("result").GetTypeName().type.typeName, "float")
+        self.assertEqual(shader_attr2.GetOutput("result").GetTypeName().type.typeName, "GfVec3f")
+
     def test_export_metaballs(self):
         """Validate correct export of Metaball objects. These are written out as Meshes."""
 
@@ -975,6 +1001,66 @@ class USDExportTest(AbstractUSDTest):
         weight_samples = anim.GetBlendShapeWeightsAttr().GetTimeSamples()
         self.assertEqual(weight_samples, [1.0, 2.0, 3.0, 4.0, 5.0])
 
+    def test_export_text(self):
+        """Test various forms of Text/Font export."""
+
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_text_test.blend"))
+
+        export_path = str(self.tempdir / "usd_text_test.usda")
+        self.export_and_validate(filepath=export_path, export_animation=True, evaluation_mode="RENDER")
+
+        stats = UsdUtils.ComputeUsdStageStats(export_path)
+        stage = Usd.Stage.Open(export_path)
+
+        # There should be 4 meshes in the output
+        self.assertEqual(stats['primary']['primCountsByType']['Mesh'], 4)
+
+        bboxcache_frame1 = UsdGeom.BBoxCache(1.0, [UsdGeom.Tokens.default_])
+        bboxcache_frame5 = UsdGeom.BBoxCache(5.0, [UsdGeom.Tokens.default_])
+
+        # Static, flat, text
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/static/static"))
+        bounds1 = bboxcache_frame1.ComputeWorldBound(mesh.GetPrim())
+        bbox1 = bounds1.GetRange().GetMax() - bounds1.GetRange().GetMin()
+        self.assertEqual(mesh.GetPointsAttr().GetTimeSamples(), [])
+        self.assertEqual(mesh.GetExtentAttr().GetTimeSamples(), [])
+        self.assertTrue(bbox1[0] > 0.0)
+        self.assertTrue(bbox1[1] > 0.0)
+        self.assertAlmostEqual(bbox1[2], 0.0, 5)
+
+        # Dynamic, flat, text
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/dynamic/dynamic"))
+        bounds1 = bboxcache_frame1.ComputeWorldBound(mesh.GetPrim())
+        bounds5 = bboxcache_frame5.ComputeWorldBound(mesh.GetPrim())
+        bbox1 = bounds1.GetRange().GetMax() - bounds1.GetRange().GetMin()
+        bbox5 = bounds5.GetRange().GetMax() - bounds5.GetRange().GetMin()
+        self.assertEqual(mesh.GetPointsAttr().GetTimeSamples(), [1.0, 2.0, 3.0, 4.0, 5.0])
+        self.assertEqual(mesh.GetExtentAttr().GetTimeSamples(), [1.0, 2.0, 3.0, 4.0, 5.0])
+        self.assertEqual(bbox1[2], 0.0)
+        self.assertTrue(bbox1[0] < bbox5[0])    # Text grows on x-axis
+        self.assertAlmostEqual(bbox1[1], bbox5[1], 5)
+        self.assertAlmostEqual(bbox1[2], bbox5[2], 5)
+
+        # Static, extruded on Z, text
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/extruded/extruded"))
+        bounds1 = bboxcache_frame1.ComputeWorldBound(mesh.GetPrim())
+        bbox1 = bounds1.GetRange().GetMax() - bounds1.GetRange().GetMin()
+        self.assertEqual(mesh.GetPointsAttr().GetTimeSamples(), [])
+        self.assertEqual(mesh.GetExtentAttr().GetTimeSamples(), [])
+        self.assertTrue(bbox1[0] > 0.0)
+        self.assertTrue(bbox1[1] > 0.0)
+        self.assertAlmostEqual(bbox1[2], 0.1, 5)
+
+        # Static, uses depth, text
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/has_depth/has_depth"))
+        bounds1 = bboxcache_frame1.ComputeWorldBound(mesh.GetPrim())
+        bbox1 = bounds1.GetRange().GetMax() - bounds1.GetRange().GetMin()
+        self.assertEqual(mesh.GetPointsAttr().GetTimeSamples(), [])
+        self.assertEqual(mesh.GetExtentAttr().GetTimeSamples(), [])
+        self.assertTrue(bbox1[0] > 0.0)
+        self.assertTrue(bbox1[1] > 0.0)
+        self.assertAlmostEqual(bbox1[2], 0.1, 5)
+
     def test_export_volumes(self):
         """Test various combinations of volume export including with all supported volume modifiers."""
 
@@ -1150,7 +1236,7 @@ class USDExportTest(AbstractUSDTest):
         self.assertTrue(shader, "Connected prim is not a shader")
 
         shader_id = shader.GetIdAttr().Get()
-        self.assertEqual(shader_id, "ND_standard_surface_surfaceshader", "Shader is not a Standard Surface")
+        self.assertEqual(shader_id, "ND_open_pbr_surface_surfaceshader", "Shader is not an OpenPBR Surface")
 
     def test_hooks(self):
         """Validate USD Hook integration for both import and export"""

@@ -46,7 +46,7 @@
 #include "ED_screen.hh"
 #include "ED_view3d.hh"
 
-#include "ANIM_bone_collections.hh"
+#include "ANIM_armature.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -316,7 +316,7 @@ static wmOperatorStatus armature_calc_roll_exec(bContext *C, wmOperator *op)
 
       /* cursor */
       LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-        if (EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) {
+        if (blender::animrig::bone_is_visible_editbone(arm, ebone) && EBONE_EDITABLE(ebone)) {
           float cursor_rel[3];
           sub_v3_v3v3(cursor_rel, cursor_local, ebone->head);
           if (axis_flip) {
@@ -332,8 +332,9 @@ static wmOperatorStatus armature_calc_roll_exec(bContext *C, wmOperator *op)
     else if (ELEM(type, CALC_ROLL_TAN_POS_X, CALC_ROLL_TAN_POS_Z)) {
       LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
         if (ebone->parent) {
-          bool is_edit = (EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone));
-          bool is_edit_parent = (EBONE_VISIBLE(arm, ebone->parent) &&
+          bool is_edit = (blender::animrig::bone_is_visible_editbone(arm, ebone) &&
+                          EBONE_EDITABLE(ebone));
+          bool is_edit_parent = (blender::animrig::bone_is_visible_editbone(arm, ebone->parent) &&
                                  EBONE_EDITABLE(ebone->parent));
 
           if (is_edit || is_edit_parent) {
@@ -428,7 +429,7 @@ static wmOperatorStatus armature_calc_roll_exec(bContext *C, wmOperator *op)
       }
 
       LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-        if (EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) {
+        if (blender::animrig::bone_is_visible_editbone(arm, ebone) && EBONE_EDITABLE(ebone)) {
           /* roll func is a callback which assumes that all is well */
           ebone->roll = ED_armature_ebone_roll_to_vector(ebone, vec, axis_only);
           changed = true;
@@ -438,9 +439,12 @@ static wmOperatorStatus armature_calc_roll_exec(bContext *C, wmOperator *op)
 
     if (arm->flag & ARM_MIRROR_EDIT) {
       LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-        if ((EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) == 0) {
+        if ((blender::animrig::bone_is_visible_editbone(arm, ebone) && EBONE_EDITABLE(ebone)) == 0)
+        {
           EditBone *ebone_mirr = ED_armature_ebone_get_mirrored(arm->edbo, ebone);
-          if (ebone_mirr && (EBONE_VISIBLE(arm, ebone_mirr) && EBONE_EDITABLE(ebone_mirr))) {
+          if (ebone_mirr && (blender::animrig::bone_is_visible_editbone(arm, ebone_mirr) &&
+                             EBONE_EDITABLE(ebone_mirr)))
+          {
             ebone->roll = -ebone_mirr->roll;
           }
         }
@@ -464,7 +468,7 @@ void ARMATURE_OT_calculate_roll(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_calculate_roll";
   ot->description = "Automatically fix alignment of select bones' axes";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_menu_invoke;
   ot->exec = armature_calc_roll_exec;
   ot->poll = ED_operator_editarmature;
@@ -495,7 +499,7 @@ static wmOperatorStatus armature_roll_clear_exec(bContext *C, wmOperator *op)
     bool changed = false;
 
     LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-      if (EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) {
+      if (blender::animrig::bone_is_visible_editbone(arm, ebone) && EBONE_EDITABLE(ebone)) {
         /* Roll func is a callback which assumes that all is well. */
         ebone->roll = roll;
         changed = true;
@@ -504,9 +508,12 @@ static wmOperatorStatus armature_roll_clear_exec(bContext *C, wmOperator *op)
 
     if (arm->flag & ARM_MIRROR_EDIT) {
       LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-        if ((EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) == 0) {
+        if ((blender::animrig::bone_is_visible_editbone(arm, ebone) && EBONE_EDITABLE(ebone)) == 0)
+        {
           EditBone *ebone_mirr = ED_armature_ebone_get_mirrored(arm->edbo, ebone);
-          if (ebone_mirr && (EBONE_VISIBLE(arm, ebone_mirr) && EBONE_EDITABLE(ebone_mirr))) {
+          if (ebone_mirr && (blender::animrig::bone_is_visible_editbone(arm, ebone_mirr) &&
+                             EBONE_EDITABLE(ebone_mirr)))
+          {
             ebone->roll = -ebone_mirr->roll;
             changed = true;
           }
@@ -531,7 +538,7 @@ void ARMATURE_OT_roll_clear(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_roll_clear";
   ot->description = "Clear roll for selected bones";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_roll_clear_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -941,7 +948,7 @@ static wmOperatorStatus armature_switch_direction_exec(bContext *C, wmOperator *
         /* skip bone if already handled, see #34123. */
         if ((ebo->flag & BONE_TRANSFORM) == 0) {
           /* only if selected and editable */
-          if (EBONE_VISIBLE(arm, ebo) && EBONE_EDITABLE(ebo)) {
+          if (blender::animrig::bone_is_visible_editbone(arm, ebo) && EBONE_EDITABLE(ebo)) {
             /* swap head and tail coordinates */
             swap_v3_v3(ebo->head, ebo->tail);
 
@@ -966,7 +973,9 @@ static wmOperatorStatus armature_switch_direction_exec(bContext *C, wmOperator *
             /* not swapping this bone, however, if its 'parent' got swapped, unparent us from it
              * as it will be facing in opposite direction
              */
-            if ((parent) && (EBONE_VISIBLE(arm, parent) && EBONE_EDITABLE(parent))) {
+            if ((parent) && (blender::animrig::bone_is_visible_editbone(arm, parent) &&
+                             EBONE_EDITABLE(parent)))
+            {
               ebo->parent = nullptr;
               ebo->flag &= ~BONE_CONNECTED;
             }
@@ -1006,7 +1015,7 @@ void ARMATURE_OT_switch_direction(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_switch_direction";
   ot->description = "Change the direction that a chain of bones points in (head and tail swap)";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_switch_direction_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -1154,7 +1163,7 @@ void ARMATURE_OT_align(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_align";
   ot->description = "Align selected bones to the active bone (or to their parent)";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_align_bones_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -1202,7 +1211,7 @@ void ARMATURE_OT_split(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_split";
   ot->description = "Split off selected bones from connected unselected bones";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_split_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -1222,7 +1231,8 @@ static bool armature_delete_ebone_cb(const char *bone_name, void *arm_p)
   EditBone *ebone;
 
   ebone = ED_armature_ebone_find_name(arm->edbo, bone_name);
-  return (ebone && (ebone->flag & BONE_SELECTED) && ANIM_bonecoll_is_visible_editbone(arm, ebone));
+  return (ebone && (ebone->flag & BONE_SELECTED) &&
+          blender::animrig::bone_is_visible_editbone(arm, ebone));
 }
 
 /* previously delete_armature */
@@ -1251,7 +1261,7 @@ static wmOperatorStatus armature_delete_selected_exec(bContext *C, wmOperator * 
 
     for (curBone = static_cast<EditBone *>(arm->edbo->first); curBone; curBone = ebone_next) {
       ebone_next = curBone->next;
-      if (EBONE_VISIBLE(arm, curBone)) {
+      if (blender::animrig::bone_is_visible_editbone(arm, curBone)) {
         if (curBone->flag & BONE_SELECTED) {
           if (curBone == arm->act_edbone) {
             arm->act_edbone = nullptr;
@@ -1303,7 +1313,7 @@ void ARMATURE_OT_delete(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_delete";
   ot->description = "Remove selected bones from the armature";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = armature_delete_selected_invoke;
   ot->exec = armature_delete_selected_exec;
   ot->poll = ED_operator_editarmature;
@@ -1395,13 +1405,13 @@ static wmOperatorStatus armature_dissolve_selected_exec(bContext *C, wmOperator 
 
     LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
       /* break connections for unseen bones */
-      if ((EBONE_VISIBLE(arm, ebone) &&
+      if ((blender::animrig::bone_is_visible_editbone(arm, ebone) &&
            (ED_armature_ebone_selectflag_get(ebone) & (BONE_TIPSEL | BONE_SELECTED))) == 0)
       {
         ebone->temp.ebone = nullptr;
       }
 
-      if ((EBONE_VISIBLE(arm, ebone) &&
+      if ((blender::animrig::bone_is_visible_editbone(arm, ebone) &&
            (ED_armature_ebone_selectflag_get(ebone) & (BONE_ROOTSEL | BONE_SELECTED))) == 0)
       {
         if (ebone->parent && (ebone->flag & BONE_CONNECTED)) {
@@ -1479,7 +1489,7 @@ void ARMATURE_OT_dissolve(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_dissolve";
   ot->description = "Dissolve selected bones from the armature";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_dissolve_selected_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -1511,7 +1521,7 @@ static wmOperatorStatus armature_hide_exec(bContext *C, wmOperator *op)
     bool changed = false;
 
     LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-      if (EBONE_VISIBLE(arm, ebone)) {
+      if (blender::animrig::bone_is_visible_editbone(arm, ebone)) {
         if ((ebone->flag & BONE_SELECTED) != invert) {
           ebone->flag &= ~(BONE_TIPSEL | BONE_SELECTED | BONE_ROOTSEL);
           ebone->flag |= BONE_HIDDEN_A;
@@ -1549,7 +1559,7 @@ void ARMATURE_OT_hide(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_hide";
   ot->description = "Hide selected bones in Edit Mode";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_hide_exec;
   ot->get_description = armature_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editarmature;
@@ -1608,7 +1618,7 @@ void ARMATURE_OT_reveal(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_reveal";
   ot->description = "Reveal all bones hidden in Edit Mode";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_reveal_exec;
   ot->poll = ED_operator_editarmature;
 

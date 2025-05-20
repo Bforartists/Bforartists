@@ -377,9 +377,10 @@ static void seq_update_meta_disp_range(Scene *scene)
 
     /* Recalculate effects using meta strip. */
     LISTBASE_FOREACH (Strip *, strip, ms->oldbasep) {
-      if (strip->seq2) {
-        strip->start = strip->startdisp = max_ii(strip->seq1->startdisp, strip->seq2->startdisp);
-        strip->enddisp = min_ii(strip->seq1->enddisp, strip->seq2->enddisp);
+      if (strip->input2) {
+        strip->start = strip->startdisp = max_ii(strip->input1->startdisp,
+                                                 strip->input2->startdisp);
+        strip->enddisp = min_ii(strip->input1->enddisp, strip->input2->enddisp);
       }
     }
 
@@ -781,16 +782,6 @@ static void do_versions_291_fcurve_handles_limit(FCurve *fcu)
     madd_v2_v2v2fl(bezt->vec[2], v1, delta1, -factor); /* vec[2] = v1 - factor * delta1 */
     /* Next key-frame's left handle: */
     madd_v2_v2v2fl(nextbezt->vec[0], v4, delta2, -factor); /* vec[0] = v4 - factor * delta2 */
-  }
-}
-
-static void do_versions_strip_cache_settings_recursive(const ListBase *seqbase)
-{
-  LISTBASE_FOREACH (Strip *, strip, seqbase) {
-    strip->cache_flag = 0;
-    if (strip->type == STRIP_TYPE_META) {
-      do_versions_strip_cache_settings_recursive(&strip->seqbase);
-    }
   }
 }
 
@@ -1649,7 +1640,6 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
         continue;
       }
       ed->cache_flag = (SEQ_CACHE_STORE_RAW | SEQ_CACHE_STORE_FINAL_OUT);
-      do_versions_strip_cache_settings_recursive(&ed->seqbase);
     }
   }
 

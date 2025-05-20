@@ -98,6 +98,7 @@
 #include "DRW_engine.hh"
 #include "DRW_select_buffer.hh"
 
+#include "ANIM_armature.hh"
 #include "ANIM_bone_collections.hh"
 
 #include "view3d_intern.hh" /* own include */
@@ -1015,7 +1016,7 @@ static void do_lasso_select_armature__doSelectBone(void *user_data,
 {
   LassoSelectUserData *data = static_cast<LassoSelectUserData *>(user_data);
   const bArmature *arm = static_cast<const bArmature *>(data->vc->obedit->data);
-  if (!EBONE_VISIBLE(arm, ebone)) {
+  if (!blender::animrig::bone_is_visible_editbone(arm, ebone)) {
     return;
   }
 
@@ -1062,7 +1063,7 @@ static void do_lasso_select_armature__doSelectBone_clip_content(void *user_data,
 {
   LassoSelectUserData *data = static_cast<LassoSelectUserData *>(user_data);
   bArmature *arm = static_cast<bArmature *>(data->vc->obedit->data);
-  if (!EBONE_VISIBLE(arm, ebone)) {
+  if (!blender::animrig::bone_is_visible_editbone(arm, ebone)) {
     return;
   }
 
@@ -1208,7 +1209,7 @@ static bool do_lasso_select_grease_pencil(const ViewContext *vc,
       });
 }
 
-struct LassoSelectUserData_ForMeshVert {
+struct LassoSelectUserData_ForMeshObjectVert {
   LassoSelectUserData lasso_data;
   blender::MutableSpan<bool> select_vert;
 };
@@ -1217,8 +1218,8 @@ static void do_lasso_select_meshobject__doSelectVert(void *user_data,
                                                      int index)
 {
   using namespace blender;
-  LassoSelectUserData_ForMeshVert *mesh_data = static_cast<LassoSelectUserData_ForMeshVert *>(
-      user_data);
+  LassoSelectUserData_ForMeshObjectVert *mesh_data =
+      static_cast<LassoSelectUserData_ForMeshObjectVert *>(user_data);
   LassoSelectUserData *data = &mesh_data->lasso_data;
   const bool is_select = mesh_data->select_vert[index];
   const bool is_inside = (BLI_rctf_isect_pt_v(data->rect_fl, screen_co) &&
@@ -1273,7 +1274,7 @@ static bool do_lasso_select_paintvert(const ViewContext *vc,
     bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
         ".select_vert", bke::AttrDomain::Point);
 
-    LassoSelectUserData_ForMeshVert data;
+    LassoSelectUserData_ForMeshObjectVert data;
     data.select_vert = select_vert.span;
 
     view3d_userdata_lassoselect_init(&data.lasso_data, vc, &rect, mcoords, sel_op);
@@ -1665,7 +1666,7 @@ void VIEW3D_OT_select_menu(wmOperatorType *ot)
   ot->description = "Menu object selection";
   ot->idname = "VIEW3D_OT_select_menu";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_menu_invoke;
   ot->exec = object_select_menu_exec;
   ot->get_name = object_select_menu_get_name;
@@ -1879,7 +1880,7 @@ void VIEW3D_OT_bone_select_menu(wmOperatorType *ot)
   ot->description = "Menu bone selection";
   ot->idname = "VIEW3D_OT_bone_select_menu";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_menu_invoke;
   ot->exec = bone_select_menu_exec;
 
@@ -3615,7 +3616,7 @@ void VIEW3D_OT_select(wmOperatorType *ot)
   ot->description = "Select and activate item(s)";
   ot->idname = "VIEW3D_OT_select";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = view3d_select_invoke;
   ot->exec = view3d_select_exec;
   ot->poll = ED_operator_view3d_active;
@@ -3705,7 +3706,7 @@ bool edge_inside_circle(const float cent[2],
   return (dist_squared_to_line_segment_v2(cent, screen_co_a, screen_co_b) < radius_squared);
 }
 
-struct BoxSelectUserData_ForMeshVert {
+struct BoxSelectUserData_ForMeshObjectVert {
   BoxSelectUserData box_data;
   blender::MutableSpan<bool> select_vert;
 };
@@ -3713,8 +3714,8 @@ static void do_paintvert_box_select__doSelectVert(void *user_data,
                                                   const float screen_co[2],
                                                   int index)
 {
-  BoxSelectUserData_ForMeshVert *mesh_data = static_cast<BoxSelectUserData_ForMeshVert *>(
-      user_data);
+  BoxSelectUserData_ForMeshObjectVert *mesh_data =
+      static_cast<BoxSelectUserData_ForMeshObjectVert *>(user_data);
   BoxSelectUserData *data = &mesh_data->box_data;
   const bool is_select = mesh_data->select_vert[index];
   const bool is_inside = BLI_rctf_isect_pt_v(data->rect_fl, screen_co);
@@ -3762,7 +3763,7 @@ static bool do_paintvert_box_select(const ViewContext *vc,
     bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
         ".select_vert", bke::AttrDomain::Point);
 
-    BoxSelectUserData_ForMeshVert data;
+    BoxSelectUserData_ForMeshObjectVert data;
     data.select_vert = select_vert.span;
 
     view3d_userdata_boxselect_init(&data.box_data, vc, rect, sel_op);
@@ -4598,7 +4599,7 @@ void VIEW3D_OT_select_box(wmOperatorType *ot)
   ot->description = "Select items using box selection";
   ot->idname = "VIEW3D_OT_select_box";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_gesture_box_invoke;
   ot->exec = view3d_box_select_exec;
   ot->modal = WM_gesture_box_modal;
@@ -4820,7 +4821,7 @@ static bool paint_facesel_circle_select(const ViewContext *vc,
   return changed;
 }
 
-struct CircleSelectUserData_ForMeshVert {
+struct CircleSelectUserData_ForMeshObjectVert {
   CircleSelectUserData circle_data;
   blender::MutableSpan<bool> select_vert;
 };
@@ -4828,8 +4829,8 @@ static void paint_vertsel_circle_select_doSelectVert(void *user_data,
                                                      const float screen_co[2],
                                                      int index)
 {
-  CircleSelectUserData_ForMeshVert *mesh_data = static_cast<CircleSelectUserData_ForMeshVert *>(
-      user_data);
+  CircleSelectUserData_ForMeshObjectVert *mesh_data =
+      static_cast<CircleSelectUserData_ForMeshObjectVert *>(user_data);
   CircleSelectUserData *data = &mesh_data->circle_data;
 
   if (len_squared_v2v2(data->mval_fl, screen_co) <= data->radius_squared) {
@@ -4879,7 +4880,7 @@ static bool paint_vertsel_circle_select(const ViewContext *vc,
     bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
         ".select_vert", bke::AttrDomain::Point);
 
-    CircleSelectUserData_ForMeshVert data;
+    CircleSelectUserData_ForMeshObjectVert data;
     data.select_vert = select_vert.span;
 
     ED_view3d_init_mats_rv3d(vc->obact, vc->rv3d); /* for foreach's screen/vert projection */
@@ -5129,7 +5130,9 @@ static void do_circle_select_armature__doSelectBone(void *user_data,
 {
   CircleSelectUserData *data = static_cast<CircleSelectUserData *>(user_data);
   const bArmature *arm = static_cast<const bArmature *>(data->vc->obedit->data);
-  if (!(data->select ? EBONE_SELECTABLE(arm, ebone) : EBONE_VISIBLE(arm, ebone))) {
+  if (!(data->select ? EBONE_SELECTABLE(arm, ebone) :
+                       blender::animrig::bone_is_visible_editbone(arm, ebone)))
+  {
     return;
   }
 
@@ -5185,7 +5188,9 @@ static void do_circle_select_armature__doSelectBone_clip_content(void *user_data
   CircleSelectUserData *data = static_cast<CircleSelectUserData *>(user_data);
   bArmature *arm = static_cast<bArmature *>(data->vc->obedit->data);
 
-  if (!(data->select ? EBONE_SELECTABLE(arm, ebone) : EBONE_VISIBLE(arm, ebone))) {
+  if (!(data->select ? EBONE_SELECTABLE(arm, ebone) :
+                       blender::animrig::bone_is_visible_editbone(arm, ebone)))
+  {
     return;
   }
 

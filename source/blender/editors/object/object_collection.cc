@@ -195,14 +195,14 @@ void COLLECTION_OT_objects_add_active(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Add Selected to Active Objects Collection";
+  ot->name = "Add Selected to Active Object's Collection";
   ot->description =
       "Add selected objects to one of the collections the active-object is part of. "
       "Optionally add to \"All Collections\" to ensure selected objects are included in "
       "the same collections as the active object";
   ot->idname = "COLLECTION_OT_objects_add_active";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = objects_add_active_exec;
   ot->invoke = WM_menu_invoke;
   ot->poll = ED_operator_objectmode;
@@ -281,7 +281,7 @@ void COLLECTION_OT_objects_remove_active(wmOperatorType *ot)
   ot->description = "Remove the object from an object collection that contains the active object";
   ot->idname = "COLLECTION_OT_objects_remove_active";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = objects_remove_active_exec;
   ot->invoke = WM_menu_invoke;
   ot->poll = ED_operator_objectmode;
@@ -324,7 +324,7 @@ void COLLECTION_OT_objects_remove_all(wmOperatorType *ot)
   ot->description = "Remove selected objects from all collections";
   ot->idname = "COLLECTION_OT_objects_remove_all";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_objects_remove_all_exec;
   ot->poll = ED_operator_objectmode;
 
@@ -388,7 +388,7 @@ void COLLECTION_OT_objects_remove(wmOperatorType *ot)
   ot->description = "Remove selected objects from a collection";
   ot->idname = "COLLECTION_OT_objects_remove";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_objects_remove_exec;
   ot->invoke = WM_menu_invoke;
   ot->poll = ED_operator_objectmode;
@@ -442,7 +442,7 @@ void COLLECTION_OT_create(wmOperatorType *ot)
   ot->description = "Create an object collection from selected objects";
   ot->idname = "COLLECTION_OT_create";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_create_exec;
   ot->poll = ED_operator_objectmode;
 
@@ -528,7 +528,7 @@ static void COLLECTION_OT_exporter_add(wmOperatorType *ot)
   ot->description = "Add Exporter";
   ot->idname = "COLLECTION_OT_exporter_add";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_exporter_add_exec;
   ot->poll = collection_exporter_poll;
 
@@ -582,7 +582,7 @@ static void COLLECTION_OT_exporter_remove(wmOperatorType *ot)
   ot->description = "Remove Exporter";
   ot->idname = "COLLECTION_OT_exporter_remove";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = collection_exporter_remove_invoke;
   ot->exec = collection_exporter_remove_exec;
   ot->poll = collection_exporter_remove_poll;
@@ -687,7 +687,7 @@ static void COLLECTION_OT_exporter_export(wmOperatorType *ot)
   ot->description = "Invoke the export operation";
   ot->idname = "COLLECTION_OT_exporter_export";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_exporter_export_exec;
   ot->poll = collection_exporter_poll;
 
@@ -751,7 +751,7 @@ static void COLLECTION_OT_export_all(wmOperatorType *ot)
   ot->description = "Invoke all configured exporters on this collection";
   ot->idname = "COLLECTION_OT_export_all";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_io_export_all_exec;
   ot->poll = collection_exporter_poll;
 
@@ -817,7 +817,7 @@ static void WM_OT_collection_export_all(wmOperatorType *ot)
   ot->description = "Invoke all configured exporters for all collections";
   ot->idname = "WM_OT_collection_export_all";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = wm_collection_export_all_exec;
   ot->poll = collection_export_all_poll;
 
@@ -911,7 +911,7 @@ void OBJECT_OT_collection_add(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_collection_add";
   ot->description = "Add an object to a new collection";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_add_exec;
   ot->poll = ED_operator_objectmode;
 
@@ -981,7 +981,7 @@ void OBJECT_OT_collection_link(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_collection_link";
   ot->description = "Add an object to an existing collection";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_link_exec;
   ot->invoke = WM_enum_search_invoke;
   ot->poll = ED_operator_objectmode;
@@ -1030,7 +1030,7 @@ void OBJECT_OT_collection_remove(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_collection_remove";
   ot->description = "Remove the active object from this collection";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_remove_exec;
   ot->poll = ED_operator_objectmode;
 
@@ -1096,7 +1096,7 @@ void OBJECT_OT_collection_unlink(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_collection_unlink";
   ot->description = "Unlink the collection from all objects";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = collection_unlink_exec;
   ot->poll = collection_unlink_poll;
 
@@ -1137,7 +1137,7 @@ void OBJECT_OT_collection_objects_select(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_collection_objects_select";
   ot->description = "Select all objects in collection";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = select_grouped_exec;
   ot->poll = ED_operator_objectmode;
 

@@ -486,7 +486,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   row = &layout->row(true);
-  uiItemS(row);
+  layout->separator();;
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_radius_as_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_radius_as_size", 0); /*bfa - decorator*/
@@ -499,7 +499,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     layout->prop(ptr, "use_transform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void panel_register(ARegionType *region_type)

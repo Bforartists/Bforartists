@@ -852,7 +852,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     film_exposure: FloatProperty(
         name="Exposure",
         description="Image brightness scale",
-        min=0.0, max=10.0,
+        min=0.0, soft_max=2**10, max=2**32,
         default=1.0,
     )
     film_transparent_glass: BoolProperty(
@@ -1118,7 +1118,7 @@ class CyclesCustomCameraSettings(bpy.types.PropertyGroup):
     def register(cls):
         bpy.types.Camera.cycles_custom = PointerProperty(
             name="Cycles Custom Camera Settings",
-            description="Parameters for custom (OSL-based) Cameras",
+            description="Parameters for custom (OSL-based) cameras",
             type=cls,
         )
 

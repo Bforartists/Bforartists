@@ -605,7 +605,8 @@ static void ui_searchbox_draw_clip_tri_down(rcti *rect, const float zoom)
                   zoom * UI_ICON_SIZE;
   const float aspect = U.inv_scale_factor / zoom;
   GPU_blend(GPU_BLEND_ALPHA);
-  UI_icon_draw_ex(x, y, ICON_TRIA_DOWN, aspect, 1.0f, 0.0f, NULL, false, UI_NO_ICON_OVERLAY_TEXT);
+  UI_icon_draw_ex(
+      x, y, ICON_TRIA_DOWN, aspect, 1.0f, 0.0f, nullptr, false, UI_NO_ICON_OVERLAY_TEXT);
   GPU_blend(GPU_BLEND_NONE);
 }
 
@@ -620,7 +621,7 @@ static void ui_searchbox_draw_clip_tri_up(rcti *rect, const float zoom)
   const float y = rect->ymax + (0.5f * zoom * (UI_SEARCHBOX_TRIA_H - UI_ICON_SIZE) - U.pixelsize);
   const float aspect = U.inv_scale_factor / zoom;
   GPU_blend(GPU_BLEND_ALPHA);
-  UI_icon_draw_ex(x, y, ICON_TRIA_UP, aspect, 1.0f, 0.0f, NULL, false, UI_NO_ICON_OVERLAY_TEXT);
+  UI_icon_draw_ex(x, y, ICON_TRIA_UP, aspect, 1.0f, 0.0f, nullptr, false, UI_NO_ICON_OVERLAY_TEXT);
   GPU_blend(GPU_BLEND_NONE);
 }
 
@@ -1049,8 +1050,8 @@ ARegion *ui_searchbox_create_generic(bContext *C, ARegion *butregion, uiButSearc
 /**
  * Similar to Python's `str.title` except...
  *
- * - we know words are upper case and ascii only.
- * - '_' are replaces by spaces.
+ * - we know words are upper case and ASCII only.
+ * - `_` are replaced by spaces.
  */
 static void str_tolower_titlecaps_ascii(char *str, const size_t len)
 {

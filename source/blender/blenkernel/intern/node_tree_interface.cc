@@ -23,6 +23,8 @@
 #include "DNA_node_tree_interface_types.h"
 #include "DNA_node_types.h"
 
+#include "NOD_node_declaration.hh"
+
 using blender::StringRef;
 
 /**
@@ -468,7 +470,7 @@ static void item_copy(bNodeTreeInterfaceItem &dst,
                       const int flag,
                       UidGeneratorFn generate_uid)
 {
-  switch (dst.item_type) {
+  switch (NodeTreeInterfaceItemType(dst.item_type)) {
     case NODE_INTERFACE_SOCKET: {
       bNodeTreeInterfaceSocket &dst_socket = reinterpret_cast<bNodeTreeInterfaceSocket &>(dst);
       const bNodeTreeInterfaceSocket &src_socket =
@@ -506,7 +508,7 @@ static void item_copy(bNodeTreeInterfaceItem &dst,
 
 static void item_free(bNodeTreeInterfaceItem &item, const bool do_id_user)
 {
-  switch (item.item_type) {
+  switch (NodeTreeInterfaceItemType(item.item_type)) {
     case NODE_INTERFACE_SOCKET: {
       bNodeTreeInterfaceSocket &socket = reinterpret_cast<bNodeTreeInterfaceSocket &>(item);
 
@@ -543,7 +545,7 @@ void item_write_struct(BlendWriter *writer, bNodeTreeInterfaceItem &item);
 
 static void item_write_data(BlendWriter *writer, bNodeTreeInterfaceItem &item)
 {
-  switch (item.item_type) {
+  switch (NodeTreeInterfaceItemType(item.item_type)) {
     case NODE_INTERFACE_SOCKET: {
       bNodeTreeInterfaceSocket &socket = reinterpret_cast<bNodeTreeInterfaceSocket &>(item);
       BLO_write_string(writer, socket.name);
@@ -573,7 +575,7 @@ static void item_write_data(BlendWriter *writer, bNodeTreeInterfaceItem &item)
 
 void item_write_struct(BlendWriter *writer, bNodeTreeInterfaceItem &item)
 {
-  switch (item.item_type) {
+  switch (NodeTreeInterfaceItemType(item.item_type)) {
     case NODE_INTERFACE_SOCKET: {
       BLO_write_struct(writer, bNodeTreeInterfaceSocket, &item);
       break;
@@ -589,7 +591,7 @@ void item_write_struct(BlendWriter *writer, bNodeTreeInterfaceItem &item)
 
 static void item_read_data(BlendDataReader *reader, bNodeTreeInterfaceItem &item)
 {
-  switch (item.item_type) {
+  switch (NodeTreeInterfaceItemType(item.item_type)) {
     case NODE_INTERFACE_SOCKET: {
       bNodeTreeInterfaceSocket &socket = reinterpret_cast<bNodeTreeInterfaceSocket &>(item);
       BLO_read_string(reader, &socket.name);
@@ -600,6 +602,14 @@ static void item_read_data(BlendDataReader *reader, bNodeTreeInterfaceItem &item
       BLO_read_struct(reader, IDProperty, &socket.properties);
       IDP_BlendDataRead(reader, &socket.properties);
 
+      /* Improve forward compatibility for unknown default input types. */
+      const bNodeSocketType *stype = socket.socket_typeinfo();
+      if (!nodes::socket_type_supports_default_input_type(
+              *stype, NodeDefaultInputType(socket.default_input)))
+      {
+        socket.default_input = NODE_DEFAULT_INPUT_VALUE;
+      }
+
       socket_types::socket_data_read_data(reader, socket);
       break;
     }
@@ -609,8 +619,21 @@ static void item_read_data(BlendDataReader *reader, bNodeTreeInterfaceItem &item
       BLO_read_string(reader, &panel.description);
       BLO_read_pointer_array(
           reader, panel.items_num, reinterpret_cast<void **>(&panel.items_array));
+
+      /* Read the direct-data for each interface item if possible. The pointer becomes null if the
+       * struct type is not known. */
       for (const int i : blender::IndexRange(panel.items_num)) {
-        BLO_read_struct(reader, NodeEnumItem, &panel.items_array[i]);
+        BLO_read_struct(reader, bNodeTreeInterfaceItem, &panel.items_array[i]);
+      }
+      /* Forward compatibility: Discard unknown tree interface item types that may be introduced in
+       * the future. Their pointer is set to null above. */
+      panel.items_num = std::remove_if(
+                            panel.items_array,
+                            panel.items_array + panel.items_num,
+                            [&](const bNodeTreeInterfaceItem *item) { return item == nullptr; }) -
+                        panel.items_array;
+      /* Now read the actual data if the known interface items. */
+      for (const int i : blender::IndexRange(panel.items_num)) {
         item_read_data(reader, *panel.items_array[i]);
       }
       break;
@@ -620,7 +643,7 @@ static void item_read_data(BlendDataReader *reader, bNodeTreeInterfaceItem &item
 
 static void item_foreach_id(LibraryForeachIDData *data, bNodeTreeInterfaceItem &item)
 {
-  switch (item.item_type) {
+  switch (NodeTreeInterfaceItemType(item.item_type)) {
     case NODE_INTERFACE_SOCKET: {
       bNodeTreeInterfaceSocket &socket = reinterpret_cast<bNodeTreeInterfaceSocket &>(item);
 
@@ -645,7 +668,7 @@ static void item_foreach_id(LibraryForeachIDData *data, bNodeTreeInterfaceItem &
 /* Move all child items to the new parent. */
 static Span<bNodeTreeInterfaceItem *> item_children(bNodeTreeInterfaceItem &item)
 {
-  switch (item.item_type) {
+  switch (NodeTreeInterfaceItemType(item.item_type)) {
     case NODE_INTERFACE_SOCKET: {
       return {};
     }
@@ -695,6 +718,13 @@ bool bNodeTreeInterfaceSocket::set_socket_type(const StringRef new_socket_type)
 
   this->socket_type = BLI_strdupn(new_socket_type.data(), new_socket_type.size());
   this->socket_data = socket_types::make_socket_data(new_socket_type);
+
+  blender::bke::bNodeSocketType *stype = this->socket_typeinfo();
+  if (!blender::nodes::socket_type_supports_default_input_type(
+          *stype, NodeDefaultInputType(this->default_input)))
+  {
+    this->default_input = NODE_DEFAULT_INPUT_VALUE;
+  }
 
   return true;
 }
@@ -831,46 +861,42 @@ int bNodeTreeInterfacePanel::find_valid_insert_position_for_item(
   const blender::Span<const bNodeTreeInterfaceItem *> items = this->items();
 
   /* True if item a should be above item b. */
-  auto item_compare = [sockets_above_panels](const bNodeTreeInterfaceItem &a,
-                                             const bNodeTreeInterfaceItem &b) -> bool {
-    if (a.item_type != b.item_type) {
-      /* Keep sockets above panels. */
-      if (sockets_above_panels) {
-        return a.item_type == NODE_INTERFACE_SOCKET;
+  auto must_be_before = [sockets_above_panels](const bNodeTreeInterfaceItem &a,
+                                               const bNodeTreeInterfaceItem &b) -> bool {
+    /* Keep sockets above panels. */
+    if (sockets_above_panels) {
+      if (a.item_type == NODE_INTERFACE_SOCKET && b.item_type == NODE_INTERFACE_PANEL) {
+        return true;
       }
     }
-    else {
-      /* Keep outputs above inputs. */
-      if (a.item_type == NODE_INTERFACE_SOCKET) {
-        const bNodeTreeInterfaceSocket &sa = reinterpret_cast<const bNodeTreeInterfaceSocket &>(a);
-        const bNodeTreeInterfaceSocket &sb = reinterpret_cast<const bNodeTreeInterfaceSocket &>(b);
-        const bool is_output_a = sa.flag & NODE_INTERFACE_SOCKET_OUTPUT;
-        const bool is_output_b = sb.flag & NODE_INTERFACE_SOCKET_OUTPUT;
-        if (is_output_a != is_output_b) {
-          return is_output_a;
-        }
+    /* Keep outputs above inputs. */
+    if (a.item_type == NODE_INTERFACE_SOCKET && b.item_type == NODE_INTERFACE_SOCKET) {
+      const auto &sa = reinterpret_cast<const bNodeTreeInterfaceSocket &>(a);
+      const auto &sb = reinterpret_cast<const bNodeTreeInterfaceSocket &>(b);
+      const bool is_output_a = sa.flag & NODE_INTERFACE_SOCKET_OUTPUT;
+      const bool is_output_b = sb.flag & NODE_INTERFACE_SOCKET_OUTPUT;
+      if (is_output_a && !is_output_b) {
+        return true;
       }
     }
     return false;
   };
 
-  if (items.is_empty()) {
-    return initial_pos;
+  int min_pos = 0;
+  for (const int i : items.index_range()) {
+    if (must_be_before(*items[i], item)) {
+      min_pos = i + 1;
+    }
   }
-
-  /* Insertion sort for a single item.
-   * items.size() is a valid position for appending. */
-  int test_pos = clamp_i(initial_pos, 0, items.size());
-  /* Move upward until valid position found. */
-  while (test_pos > 0 && item_compare(item, *items[test_pos - 1])) {
-    --test_pos;
+  int max_pos = items.size();
+  for (const int i : items.index_range()) {
+    if (must_be_before(item, *items[i])) {
+      max_pos = i;
+      break;
+    }
   }
-  /* Move downward until valid position found.
-   * Result can be out of range, this is valid, items get appended. */
-  while (test_pos < items.size() && item_compare(*items[test_pos], item)) {
-    ++test_pos;
-  }
-  return test_pos;
+  BLI_assert(min_pos <= max_pos);
+  return std::clamp(initial_pos, min_pos, max_pos);
 }
 
 void bNodeTreeInterfacePanel::add_item(bNodeTreeInterfaceItem &item)
@@ -1122,6 +1148,10 @@ bNodeTreeInterfaceSocket *add_interface_socket_from_node(bNodeTree &ntree,
 
     iosock = ntree.tree_interface.add_socket(
         name, from_sock.description, socket_type, flag, nullptr);
+
+    if (const nodes::SocketDeclaration *decl = from_sock.runtime->declaration) {
+      iosock->default_input = decl->default_input_type;
+    }
   }
   if (iosock == nullptr) {
     return nullptr;

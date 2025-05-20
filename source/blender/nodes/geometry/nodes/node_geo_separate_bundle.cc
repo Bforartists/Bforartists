@@ -5,6 +5,7 @@
 #include "node_geometry_util.hh"
 
 #include "NOD_geo_bundle.hh"
+#include "NOD_socket_items_blend.hh"
 #include "NOD_socket_items_ops.hh"
 #include "NOD_socket_items_ui.hh"
 
@@ -132,6 +133,16 @@ static void node_geo_exec(GeoNodeExecParams params)
   params.set_default_remaining_outputs();
 }
 
+static void node_blend_write(const bNodeTree & /*tree*/, const bNode &node, BlendWriter &writer)
+{
+  socket_items::blend_write<SeparateBundleItemsAccessor>(&writer, node);
+}
+
+static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &reader)
+{
+  socket_items::blend_read_data<SeparateBundleItemsAccessor>(&reader, node);
+}
+
 static void node_register()
 {
   static blender::bke::bNodeType ntype;
@@ -146,6 +157,8 @@ static void node_register()
   ntype.geometry_node_execute = node_geo_exec;
   ntype.draw_buttons_ex = node_layout_ex;
   ntype.register_operators = node_operators;
+  ntype.blend_write_storage_content = node_blend_write;
+  ntype.blend_data_read_storage_content = node_blend_read;
   bke::node_type_storage(
       ntype, "NodeGeometrySeparateBundle", node_free_storage, node_copy_storage);
   blender::bke::node_register_type(ntype);
@@ -157,9 +170,6 @@ NOD_REGISTER_NODE(node_register)
 namespace blender::nodes {
 
 StructRNA *SeparateBundleItemsAccessor::item_srna = &RNA_NodeGeometrySeparateBundleItem;
-int SeparateBundleItemsAccessor::node_type = GEO_NODE_SEPARATE_BUNDLE;
-int SeparateBundleItemsAccessor::item_dna_type = SDNA_TYPE_FROM_STRUCT(
-    NodeGeometrySeparateBundleItem);
 
 void SeparateBundleItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {
