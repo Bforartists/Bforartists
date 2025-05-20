@@ -266,7 +266,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 
 #else  /* WITH_MOD_REMESH */
   layout->label(RPT_("Built without Remesh modifier"), ICON_NONE);

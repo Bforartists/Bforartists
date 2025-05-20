@@ -84,6 +84,8 @@ class VIEW3D_MT_brush_context_menu(Menu):
     def poll(cls, context):
         return True if context.region.type == 'UI' and context.space_data.type == 'VIEW_3D' else context.region.type == 'ASSET_SHELF'
     # BFA - end of changes
+
+
 class VIEW3D_MT_brush_gpencil_context_menu(Menu):
     bl_label = "Brush Specials"
 
@@ -1104,7 +1106,7 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
 
         sub = col.column()
-        sub.active = (brush and brush.sculpt_tool != 'MASK')
+        sub.active = (brush and brush.sculpt_capabilities.has_dyntopo) or sculpt.detail_type_method == 'MANUAL'
 
         #BFA - moved to top, this defines the "modes" then options of the detail_type_method, then you tune the details (top down hirarchal UX)
         sub.prop(sculpt, "detail_type_method", text="Detailing")

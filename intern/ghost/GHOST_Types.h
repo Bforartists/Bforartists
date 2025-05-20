@@ -9,6 +9,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
 
 #ifdef WITH_VULKAN_BACKEND
 #  ifdef __APPLE__
@@ -260,7 +261,7 @@ typedef enum {
   /** Mouse button up event. */
   GHOST_kEventButtonUp,
   /**
-   * Mouse wheel event.
+   * Vertical/Horizontal mouse wheel event.
    *
    * \note #GHOST_GetEventData returns #GHOST_TEventWheelData.
    */
@@ -577,9 +578,16 @@ typedef struct {
   GHOST_TabletData tablet;
 } GHOST_TEventButtonData;
 
+typedef enum {
+  GHOST_kEventWheelAxisVertical = 0,
+  GHOST_kEventWheelAxisHorizontal = 1,
+} GHOST_TEventWheelAxis;
+
 typedef struct {
+  /** Which mouse wheel is used. */
+  GHOST_TEventWheelAxis axis;
   /** Displacement of a mouse wheel. */
-  int32_t z;
+  int32_t value;
 } GHOST_TEventWheelData;
 
 typedef enum {
@@ -609,7 +617,7 @@ typedef struct {
 typedef enum {
   GHOST_kDragnDropTypeUnknown = 0,
   GHOST_kDragnDropTypeFilenames, /* Array of strings representing file names (full path). */
-  GHOST_kDragnDropTypeString,    /* Unformatted text UTF-8 string. */
+  GHOST_kDragnDropTypeString,    /* Unformatted text UTF8 string. */
   GHOST_kDragnDropTypeBitmap     /* Bitmap image data. */
 } GHOST_TDragnDropTypes;
 
@@ -631,10 +639,8 @@ typedef struct {
  * All members must remain aligned and the struct size match!
  */
 typedef struct {
-  /** size_t */
-  GHOST_TUserDataPtr result_len, composite_len;
-  /** char * utf8 encoding */
-  GHOST_TUserDataPtr result, composite;
+  /** UTF8 encoded strings. */
+  std::string result, composite;
   /** Cursor position in the IME composition. */
   int cursor_position;
   /** Represents the position of the beginning of the selection */
@@ -802,6 +808,18 @@ typedef struct {
       void *image_data;
     } cpu;
     struct {
+      /**
+       * Vulkan handle of the image. When this is the same as last time the imported memory can be
+       * reused.
+       */
+      VkImage vk_image_blender;
+
+      /**
+       * Did the memory address change and do we need to reimport the memory or can we still reuse
+       * the previous imported memory.
+       */
+      bool new_handle;
+
       /**
        * Handle of the exported GPU memory. Depending on the data_transfer_mode the actual handle
        * type can be different (void-pointer/int/..).

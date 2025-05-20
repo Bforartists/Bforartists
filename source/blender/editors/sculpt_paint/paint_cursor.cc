@@ -1412,14 +1412,14 @@ static void paint_cursor_sculpt_session_update_and_init(PaintCursorContext &pcon
   Scene &scene = *pcontext.scene;
   UnifiedPaintSettings &ups = *pcontext.ups;
   ViewContext &vc = pcontext.vc;
-  SculptCursorGeometryInfo gi;
+  CursorGeometryInfo gi;
 
   const float2 mval_fl = {
       float(pcontext.mval.x - pcontext.region->winrct.xmin),
       float(pcontext.mval.y - pcontext.region->winrct.ymin),
   };
 
-  /* Ensure that the PBVH is generated before we call #SCULPT_cursor_geometry_info_update because
+  /* Ensure that the PBVH is generated before we call #cursor_geometry_info_update because
    * the PBVH is needed to do a ray-cast to find the active vertex. */
   bke::object::pbvh_ensure(*pcontext.depsgraph, *pcontext.vc.obact);
 
@@ -1427,7 +1427,7 @@ static void paint_cursor_sculpt_session_update_and_init(PaintCursorContext &pcon
    * work correctly */
   pcontext.prev_active_vert_index = ss.active_vert_index();
   if (!ups.stroke_active) {
-    pcontext.is_cursor_over_mesh = SCULPT_cursor_geometry_info_update(
+    pcontext.is_cursor_over_mesh = cursor_geometry_info_update(
         C, &gi, mval_fl, (pcontext.brush->falloff_shape == PAINT_FALLOFF_SHAPE_SPHERE));
     pcontext.location = gi.location;
     pcontext.normal = gi.normal;
@@ -1677,13 +1677,8 @@ static void paint_draw_3D_view_inactive_brush_cursor(PaintCursorContext &pcontex
 
 static void paint_cursor_update_object_space_radius(PaintCursorContext &pcontext)
 {
-  if (!BKE_brush_use_locked_size(pcontext.scene, pcontext.brush)) {
-    pcontext.radius = paint_calc_object_space_radius(
-        pcontext.vc, pcontext.location, BKE_brush_size_get(pcontext.scene, pcontext.brush));
-  }
-  else {
-    pcontext.radius = BKE_brush_unprojected_radius_get(pcontext.scene, pcontext.brush);
-  }
+  pcontext.radius = object_space_radius_get(
+      pcontext.vc, *pcontext.scene, *pcontext.brush, pcontext.location);
 }
 
 static void paint_cursor_drawing_setup_cursor_space(const PaintCursorContext &pcontext)

@@ -636,7 +636,7 @@ void FONT_OT_text_paste_from_file(wmOperatorType *ot)
   ot->description = "Paste contents from file";
   ot->idname = "FONT_OT_text_paste_from_file";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = paste_from_file_exec;
   ot->invoke = paste_from_file_invoke;
   ot->poll = ED_operator_editfont;
@@ -723,7 +723,7 @@ static uiBlock *wm_block_insert_unicode_create(bContext *C, ARegion *region, voi
   /* Hitting Enter in the text input is treated the same as clicking the Confirm button. */
   UI_but_func_set(text_but, text_insert_unicode_confirm, block, edit_string);
 
-  uiItemS(layout);
+  layout->separator();
 
   /* Buttons. */
 
@@ -785,7 +785,7 @@ void FONT_OT_text_insert_unicode(wmOperatorType *ot)
   ot->description = "Insert Unicode Character";
   ot->idname = "FONT_OT_text_insert_unicode";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = text_insert_unicode_invoke;
   ot->poll = ED_operator_editfont;
 
@@ -980,7 +980,7 @@ void FONT_OT_style_set(wmOperatorType *ot)
   ot->description = "Set font style";
   ot->idname = "FONT_OT_style_set";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = set_style_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1021,7 +1021,7 @@ void FONT_OT_style_toggle(wmOperatorType *ot)
   ot->description = "Toggle font style";
   ot->idname = "FONT_OT_style_toggle";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = toggle_style_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1065,7 +1065,7 @@ void FONT_OT_select_all(wmOperatorType *ot)
   ot->description = "Select all text";
   ot->idname = "FONT_OT_select_all";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = font_select_all_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1121,7 +1121,7 @@ void FONT_OT_text_copy(wmOperatorType *ot)
   ot->description = "Copy selected text to clipboard";
   ot->idname = "FONT_OT_text_copy";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = copy_text_exec;
   ot->poll = ED_operator_editfont;
 }
@@ -1156,7 +1156,7 @@ void FONT_OT_text_cut(wmOperatorType *ot)
   ot->description = "Cut selected text to clipboard";
   ot->idname = "FONT_OT_text_cut";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = cut_text_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1194,8 +1194,8 @@ static wmOperatorStatus paste_text_exec(bContext *C, wmOperator *op)
   size_t len_utf8;
   char32_t *text_buf;
 
-  /* Store both clipboards as utf8 for comparison,
-   * Give priority to the internal 'vfont' clipboard with its 'CharInfo' text styles
+  /* Store both clipboards as UTF8 for comparison,
+   * Give priority to the internal `vfont` clipboard with its #CharInfo text styles
    * as long as its synchronized with the systems clipboard. */
   struct {
     char *buf;
@@ -1262,7 +1262,7 @@ void FONT_OT_text_paste(wmOperatorType *ot)
   ot->description = "Paste text from clipboard";
   ot->idname = "FONT_OT_text_paste";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = paste_text_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1498,7 +1498,7 @@ void FONT_OT_move(wmOperatorType *ot)
   ot->description = "Move cursor to position type";
   ot->idname = "FONT_OT_move";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = move_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1529,7 +1529,7 @@ void FONT_OT_move_select(wmOperatorType *ot)
   ot->description = "Move the cursor while selecting";
   ot->idname = "FONT_OT_move_select";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = move_select_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1593,7 +1593,7 @@ void FONT_OT_change_spacing(wmOperatorType *ot)
   ot->description = "Change font spacing";
   ot->idname = "FONT_OT_change_spacing";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = change_spacing_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1651,7 +1651,7 @@ void FONT_OT_change_character(wmOperatorType *ot)
   ot->description = "Change font character code";
   ot->idname = "FONT_OT_change_character";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = change_character_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1698,7 +1698,7 @@ void FONT_OT_line_break(wmOperatorType *ot)
   ot->description = "Insert line break at cursor position";
   ot->idname = "FONT_OT_line_break";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = line_break_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1844,7 +1844,7 @@ void FONT_OT_delete(wmOperatorType *ot)
   ot->description = "Delete text by cursor position";
   ot->idname = "FONT_OT_delete";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = delete_exec;
   ot->poll = ED_operator_editfont;
 
@@ -1969,7 +1969,7 @@ static wmOperatorStatus insert_text_invoke(bContext *C, wmOperator *op, const wm
   }
 
   if (inserted_text[0]) {
-    /* store as utf8 in RNA string */
+    /* Store as UTF8 in RNA string. */
     char inserted_utf8[8] = {0};
 
     BLI_str_utf32_as_utf8(inserted_utf8, inserted_text, sizeof(inserted_utf8));
@@ -1986,7 +1986,7 @@ void FONT_OT_text_insert(wmOperatorType *ot)
   ot->description = "Insert text at cursor position";
   ot->idname = "FONT_OT_text_insert";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = insert_text_exec;
   ot->invoke = insert_text_invoke;
   ot->poll = ED_operator_editfont;
@@ -2112,7 +2112,7 @@ void FONT_OT_selection_set(wmOperatorType *ot)
   ot->idname = "FONT_OT_selection_set";
   ot->description = "Set cursor selection";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = font_selection_set_invoke;
   ot->modal = font_selection_set_modal;
   ot->poll = ED_operator_editfont;
@@ -2149,7 +2149,7 @@ void FONT_OT_select_word(wmOperatorType *ot)
   ot->idname = "FONT_OT_select_word";
   ot->description = "Select word under cursor";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = font_select_word_exec;
   ot->poll = ED_operator_editfont;
 }
@@ -2187,7 +2187,7 @@ void FONT_OT_textbox_add(wmOperatorType *ot)
   ot->description = "Add a new text box";
   ot->idname = "FONT_OT_textbox_add";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = textbox_add_exec;
   ot->poll = ED_operator_object_active_editable_font;
 
@@ -2231,7 +2231,7 @@ void FONT_OT_textbox_remove(wmOperatorType *ot)
   ot->description = "Remove the text box";
   ot->idname = "FONT_OT_textbox_remove";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = textbox_remove_exec;
   ot->poll = ED_operator_object_active_editable_font;
 
@@ -2251,7 +2251,6 @@ void ED_curve_editfont_make(Object *obedit)
 {
   Curve *cu = static_cast<Curve *>(obedit->data);
   EditFont *ef = cu->editfont;
-  int len_char32;
 
   if (ef == nullptr) {
     ef = cu->editfont = MEM_callocN<EditFont>("editfont");
@@ -2262,10 +2261,12 @@ void ED_curve_editfont_make(Object *obedit)
   }
 
   /* Convert the original text to chat32_t. */
-  len_char32 = BLI_str_utf8_as_utf32(ef->textbuf, cu->str, MAXTEXT + 4);
-  BLI_assert(len_char32 == cu->len_char32);
-  ef->len = len_char32;
-  BLI_assert(ef->len >= 0);
+  if (cu->str) {
+    int len_char32 = BLI_str_utf8_as_utf32(ef->textbuf, cu->str, MAXTEXT + 4);
+    BLI_assert(len_char32 == cu->len_char32);
+    ef->len = len_char32;
+    BLI_assert(ef->len >= 0);
+  }
 
   /* Old files may not have this initialized (v2.34). Leaving zeroed is OK. */
   if (cu->strinfo) {
@@ -2291,16 +2292,18 @@ void ED_curve_editfont_load(Object *obedit)
   EditFont *ef = cu->editfont;
 
   /* Free the old curve string */
-  MEM_freeN(cu->str);
+  if (cu->str) {
+    MEM_freeN(cu->str);
+  }
 
-  /* Calculate the actual string length in UTF-8 variable characters */
+  /* Calculate the actual string length in UTF8 variable characters. */
   cu->len_char32 = ef->len;
   cu->len = BLI_str_utf32_as_utf8_len(ef->textbuf);
 
-  /* Alloc memory for UTF-8 variable char length string */
+  /* Alloc memory for UTF8 variable char length string. */
   cu->str = MEM_malloc_arrayN<char>(cu->len + sizeof(char32_t), "str");
 
-  /* Copy the wchar to UTF-8 */
+  /* Copy the wchar to UTF8. */
   BLI_str_utf32_as_utf8(cu->str, ef->textbuf, cu->len + 1);
 
   if (cu->strinfo) {
@@ -2367,7 +2370,7 @@ void FONT_OT_case_set(wmOperatorType *ot)
   ot->description = "Set font case";
   ot->idname = "FONT_OT_case_set";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = set_case_exec;
   ot->poll = ED_operator_editfont;
 
@@ -2412,7 +2415,7 @@ void FONT_OT_case_toggle(wmOperatorType *ot)
   ot->description = "Toggle font case";
   ot->idname = "FONT_OT_case_toggle";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = toggle_case_exec;
   ot->poll = ED_operator_editfont;
 
@@ -2521,7 +2524,7 @@ void FONT_OT_open(wmOperatorType *ot)
   ot->idname = "FONT_OT_open";
   ot->description = "Load a new font from a file";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = font_open_exec;
   ot->invoke = open_invoke;
   ot->cancel = font_open_cancel;
@@ -2575,7 +2578,7 @@ void FONT_OT_unlink(wmOperatorType *ot)
   ot->idname = "FONT_OT_unlink";
   ot->description = "Remove active font";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = font_unlink_exec;
 }
 

@@ -36,25 +36,21 @@
 namespace blender::ed::greasepencil {
 
 /* This utility function is modified from `BKE_object_get_parent_matrix()`. */
-static void get_bone_mat(const Object *parent, const char *parsubstr, float4x4 &r_mat)
+static float4x4 get_bone_mat(const Object *parent, const char *parsubstr)
 {
   if (parent->type != OB_ARMATURE) {
-    r_mat = float4x4::identity();
-    return;
+    return float4x4::identity();
   }
 
   const bPoseChannel *pchan = BKE_pose_channel_find_name(parent->pose, parsubstr);
   if (!pchan || !pchan->bone) {
-    r_mat = float4x4::identity();
-    return;
+    return float4x4::identity();
   }
 
   if (pchan->bone->flag & BONE_RELATIVE_PARENTING) {
-    r_mat = float4x4(pchan->chan_mat);
+    return float4x4(pchan->chan_mat);
   }
-  else {
-    r_mat = float4x4(pchan->pose_mat);
-  }
+  return float4x4(pchan->pose_mat);
 }
 
 bool grease_pencil_layer_parent_set(bke::greasepencil::Layer &layer,
@@ -70,13 +66,12 @@ bool grease_pencil_layer_parent_set(bke::greasepencil::Layer &layer,
   layer.parsubstr = BLI_strdup_null(bone.c_str());
   /* Calculate inverse parent matrix. */
   if (parent) {
-    copy_m4_m4(layer.parentinv, parent->world_to_object().ptr());
+    float4x4 inverse = parent->world_to_object();
     if (layer.parsubstr) {
-      float4x4 bone_mat;
-      get_bone_mat(parent, layer.parsubstr, bone_mat);
-      float4x4 bone_inverse = math::invert(bone_mat) * float4x4(layer.parentinv);
-      copy_m4_m4(layer.parentinv, bone_inverse.ptr());
+      const float4x4 bone_mat = get_bone_mat(parent, layer.parsubstr);
+      inverse = math::invert(bone_mat) * inverse;
     }
+    copy_m4_m4(layer.parentinv, inverse.ptr());
   }
   else {
     unit_m4(layer.parentinv);
@@ -1085,7 +1080,7 @@ static void GREASE_PENCIL_OT_layer_mask_reorder(wmOperatorType *ot)
   ot->idname = "GREASE_PENCIL_OT_layer_mask_reorder";
   ot->description = "Reorder the active Grease Pencil mask layer up/down in the list";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = grease_pencil_layer_mask_reorder_exec;
   ot->poll = grease_pencil_layer_mask_reorder_poll;
 
@@ -1255,7 +1250,7 @@ static void GREASE_PENCIL_OT_layer_duplicate_object(wmOperatorType *ot)
   ot->idname = "GREASE_PENCIL_OT_layer_duplicate_object";
   ot->description = "Make a copy of the active Grease Pencil layer to selected object";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = active_grease_pencil_layer_poll;
   ot->exec = grease_pencil_layer_duplicate_object_exec;
 

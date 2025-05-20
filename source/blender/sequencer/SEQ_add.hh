@@ -31,7 +31,7 @@ enum eLoadFlags {
 };
 ENUM_OPERATORS(eLoadFlags, SEQ_LOAD_SET_VIEW_TRANSFORM)
 
-/* Api for adding new sequence strips. */
+/** API for adding new sequence strips. */
 struct LoadData {
   int start_frame;
   int channel;
@@ -48,8 +48,8 @@ struct LoadData {
   struct {
     int type;
     int end_frame;
-    Strip *seq1;
-    Strip *seq2;
+    Strip *input1;
+    Strip *input2;
   } effect; /* Only for effect strips. */
   eLoadFlags flags;
   eSeqImageFitMethod fit_method;

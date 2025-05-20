@@ -314,7 +314,7 @@ static void WORKSPACE_OT_duplicate(wmOperatorType *ot)
   ot->description = "Add a new workspace";
   ot->idname = "WORKSPACE_OT_duplicate";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = workspace_context_poll;
   ot->exec = workspace_new_exec;
 }
@@ -335,7 +335,7 @@ static void WORKSPACE_OT_delete(wmOperatorType *ot)
   ot->description = "Delete the active workspace";
   ot->idname = "WORKSPACE_OT_delete";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = workspace_context_poll;
   ot->exec = workspace_delete_exec;
 }
@@ -392,7 +392,7 @@ static void WORKSPACE_OT_append_activate(wmOperatorType *ot)
   ot->description = "Append a workspace and make it the active one in the current window";
   ot->idname = "WORKSPACE_OT_append_activate";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = workspace_append_activate_exec;
 
   PropertyRNA *prop;
@@ -500,7 +500,7 @@ static void workspace_add_menu(bContext * /*C*/, uiLayout *layout, void *templat
 
       if (!has_title) {
         if (has_startup_items) {
-          uiItemS(layout);
+          layout->separator();
         }
         has_title = true;
       }
@@ -526,7 +526,7 @@ static wmOperatorStatus workspace_add_invoke(bContext *C,
       C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, op->type->name), ICON_ADD);
   uiLayout *layout = UI_popup_menu_layout(pup);
 
-  uiItemMenuF(layout, IFACE_("General"), ICON_NONE, workspace_add_menu, nullptr);
+  layout->menu_fn(IFACE_("General"), ICON_NONE, workspace_add_menu, nullptr);
 
   ListBase templates;
   BKE_appdir_app_templates(&templates);
@@ -538,16 +538,15 @@ static wmOperatorStatus workspace_add_invoke(bContext *C,
     BLI_path_to_display_name(display_name, sizeof(display_name), IFACE_(app_template));
 
     /* Steals ownership of link data string. */
-    uiItemMenuFN(layout, display_name, ICON_NONE, workspace_add_menu, app_template);
+    layout->menu_fn_argN_free(display_name, ICON_NONE, workspace_add_menu, app_template);
   }
 
   BLI_freelistN(&templates);
 
-  uiItemS(layout);
-  uiItemO(layout,
-          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Duplicate Current"),
-          ICON_DUPLICATE,
-          "WORKSPACE_OT_duplicate");
+  layout->separator();
+  layout->op("WORKSPACE_OT_duplicate",
+             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Duplicate Current"),
+             ICON_DUPLICATE);
 
   UI_popup_menu_end(C, pup);
 
@@ -563,7 +562,7 @@ static void WORKSPACE_OT_add(wmOperatorType *ot)
       "from the user configuration";
   ot->idname = "WORKSPACE_OT_add";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = workspace_add_invoke;
 }
 
@@ -585,7 +584,7 @@ static void WORKSPACE_OT_reorder_to_back(wmOperatorType *ot)
   ot->description = "Reorder workspace to be last in the list";
   ot->idname = "WORKSPACE_OT_reorder_to_back";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = workspace_context_poll;
   ot->exec = workspace_reorder_to_back_exec;
 }
@@ -608,7 +607,7 @@ static void WORKSPACE_OT_reorder_to_front(wmOperatorType *ot)
   ot->description = "Reorder workspace to be first in the list";
   ot->idname = "WORKSPACE_OT_reorder_to_front";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = workspace_context_poll;
   ot->exec = workspace_reorder_to_front_exec;
 }
@@ -635,7 +634,7 @@ static void WORKSPACE_OT_scene_pin_toggle(wmOperatorType *ot)
       "workspace is activated again";
   ot->idname = "WORKSPACE_OT_scene_pin_toggle";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = workspace_context_poll;
   ot->exec = workspace_scene_pin_toggle_exec;
 

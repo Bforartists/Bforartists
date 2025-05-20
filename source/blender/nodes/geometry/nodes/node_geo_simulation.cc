@@ -24,6 +24,7 @@
 #include "NOD_geo_simulation.hh"
 #include "NOD_node_extra_info.hh"
 #include "NOD_socket.hh"
+#include "NOD_socket_items_blend.hh"
 #include "NOD_socket_items_ops.hh"
 #include "NOD_socket_items_ui.hh"
 #include "NOD_socket_search_link.hh"
@@ -215,10 +216,10 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *current_no
   if (!zone) {
     return;
   }
-  if (!zone->output_node) {
+  if (!zone->output_node_id) {
     return;
   }
-  bNode &output_node = const_cast<bNode &>(*zone->output_node);
+  bNode &output_node = const_cast<bNode &>(*zone->output_node());
 
   BakeDrawContext ctx;
   if (!get_bake_draw_context(C, output_node, ctx)) {
@@ -286,8 +287,7 @@ class LazyFunctionForSimulationInputNode final : public LazyFunction {
 
   void execute_impl(lf::Params &params, const lf::Context &context) const final
   {
-    const GeoNodesLFUserData &user_data = *static_cast<const GeoNodesLFUserData *>(
-        context.user_data);
+    const GeoNodesUserData &user_data = *static_cast<const GeoNodesUserData *>(context.user_data);
     if (!user_data.call_data->simulation_params) {
       this->set_default_outputs(params);
       return;
@@ -342,7 +342,7 @@ class LazyFunctionForSimulationInputNode final : public LazyFunction {
   }
 
   void output_simulation_state_copy(lf::Params &params,
-                                    const GeoNodesLFUserData &user_data,
+                                    const GeoNodesUserData &user_data,
                                     bke::bake::BakeDataBlockMap *data_block_map,
                                     const bke::bake::BakeStateRef &zone_state) const
   {
@@ -363,7 +363,7 @@ class LazyFunctionForSimulationInputNode final : public LazyFunction {
   }
 
   void output_simulation_state_move(lf::Params &params,
-                                    const GeoNodesLFUserData &user_data,
+                                    const GeoNodesUserData &user_data,
                                     bke::bake::BakeDataBlockMap *data_block_map,
                                     bke::bake::BakeState zone_state) const
   {
@@ -384,7 +384,7 @@ class LazyFunctionForSimulationInputNode final : public LazyFunction {
   }
 
   void pass_through(lf::Params &params,
-                    const GeoNodesLFUserData &user_data,
+                    const GeoNodesUserData &user_data,
                     bke::bake::BakeDataBlockMap *data_block_map) const
   {
     Array<void *> input_values(inputs_.size());
@@ -559,7 +559,7 @@ class LazyFunctionForSimulationOutputNode final : public LazyFunction {
 
   void execute_impl(lf::Params &params, const lf::Context &context) const final
   {
-    GeoNodesLFUserData &user_data = *static_cast<GeoNodesLFUserData *>(context.user_data);
+    GeoNodesUserData &user_data = *static_cast<GeoNodesUserData *>(context.user_data);
     if (!user_data.call_data->self_object()) {
       /* The self object is currently required for generating anonymous attribute names. */
       this->set_default_outputs(params);
@@ -614,7 +614,7 @@ class LazyFunctionForSimulationOutputNode final : public LazyFunction {
   }
 
   void output_cached_state(lf::Params &params,
-                           GeoNodesLFUserData &user_data,
+                           GeoNodesUserData &user_data,
                            bke::bake::BakeDataBlockMap *data_block_map,
                            const bke::bake::BakeStateRef &state) const
   {
@@ -686,7 +686,7 @@ class LazyFunctionForSimulationOutputNode final : public LazyFunction {
   }
 
   void pass_through(lf::Params &params,
-                    GeoNodesLFUserData &user_data,
+                    GeoNodesUserData &user_data,
                     bke::bake::BakeDataBlockMap *data_block_map) const
   {
     std::optional<bke::bake::BakeState> bake_state = this->get_bake_state_from_inputs(
@@ -713,7 +713,7 @@ class LazyFunctionForSimulationOutputNode final : public LazyFunction {
   }
 
   void store_new_state(lf::Params &params,
-                       GeoNodesLFUserData &user_data,
+                       GeoNodesUserData &user_data,
                        bke::bake::BakeDataBlockMap *data_block_map,
                        const sim_output::StoreNewState &info) const
   {
@@ -881,6 +881,16 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   });
 }
 
+static void node_blend_write(const bNodeTree & /*tree*/, const bNode &node, BlendWriter &writer)
+{
+  socket_items::blend_write<SimulationItemsAccessor>(&writer, node);
+}
+
+static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &reader)
+{
+  socket_items::blend_read_data<SimulationItemsAccessor>(&reader, node);
+}
+
 static void node_register()
 {
   static blender::bke::bNodeType ntype;
@@ -899,6 +909,8 @@ static void node_register()
   ntype.no_muting = true;
   ntype.register_operators = node_operators;
   ntype.get_extra_info = node_extra_info;
+  ntype.blend_write_storage_content = node_blend_write;
+  ntype.blend_data_read_storage_content = node_blend_read;
   blender::bke::node_type_storage(
       ntype, "NodeGeometrySimulationOutput", node_free_storage, node_copy_storage);
   blender::bke::node_register_type(ntype);
@@ -979,8 +991,6 @@ void mix_baked_data_item(const eNodeSocketDatatype socket_type,
 }
 
 StructRNA *SimulationItemsAccessor::item_srna = &RNA_SimulationStateItem;
-int SimulationItemsAccessor::node_type = GEO_NODE_SIMULATION_OUTPUT;
-int SimulationItemsAccessor::item_dna_type = SDNA_TYPE_FROM_STRUCT(NodeSimulationItem);
 
 void SimulationItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {
