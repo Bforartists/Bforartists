@@ -1077,7 +1077,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->prop(ptr, "screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  uiItemS(layout);
+  layout->separator();
   col = &layout->column(false);
   row = &col->row(false);
   row->prop(ptr, "axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
@@ -1088,19 +1088,19 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &layout->row(true);
   uiLayoutSetActive(row, !RNA_pointer_is_null(&screw_obj_ptr));
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemS(row);
+  layout->separator();;
   row->prop(ptr, "use_object_screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_object_screw_offset", 0); /*bfa - decorator*/
 
   /* ------------ end bfa */
 
-  uiItemS(layout);
+  layout->separator();
 
   col = &layout->column(true);
   col->prop(ptr, "steps", UI_ITEM_NONE, IFACE_("Steps Viewport"), ICON_NONE);
   col->prop(ptr, "render_steps", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
-  uiItemS(layout);
+  layout->separator();
 
   /*------------------- bfa - original props */
   // ------------------ bfa new left aligned prop with triangle button to hide the slider
@@ -1125,13 +1125,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   // ------------------------------- end bfa
 
-  uiItemS(layout);
+  layout->separator();
 
   row = &layout->row(true, IFACE_("Stretch UVs"));
   row->prop(ptr, "use_stretch_u", toggles_flag, IFACE_("U"), ICON_NONE);
   row->prop(ptr, "use_stretch_v", toggles_flag, IFACE_("V"), ICON_NONE);
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void normals_panel_draw(const bContext * /*C*/, Panel *panel)

@@ -2228,13 +2228,13 @@ static void sequence_fn(int event, TreeElement *te, TreeStoreElem * /*tselem*/, 
     else if (event == OL_DOP_HIDE) {
       if (!(strip->flag & SEQ_MUTE)) {
         strip->flag |= SEQ_MUTE;
-        seq::relations_invalidate_dependent(scene, strip);
+        seq::relations_invalidate_cache(scene, strip);
       }
     }
     else if (event == OL_DOP_UNHIDE) {
       if (strip->flag & SEQ_MUTE) {
         strip->flag &= ~SEQ_MUTE;
-        seq::relations_invalidate_dependent(scene, strip);
+        seq::relations_invalidate_cache(scene, strip);
       }
     }
   }
@@ -3309,7 +3309,7 @@ void OUTLINER_OT_action_set(wmOperatorType *ot)
   ot->idname = "OUTLINER_OT_action_set";
   ot->description = "Change the active action used";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_enum_search_invoke;
   ot->exec = outliner_action_set_exec;
   ot->poll = outliner_operation_tree_element_poll;
@@ -3703,7 +3703,7 @@ static wmOperatorStatus outliner_operator_menu(bContext *C, const char *opname)
   if (WM_operator_poll(C, ot)) {
     uiItemsEnumO(layout, ot->idname, RNA_property_identifier(ot->prop));
 
-    uiItemS(layout);
+    layout->separator();
   }
   /* BFA - only asset menu not whole context menu */
   uiItemMContents(layout, "OUTLINER_MT_asset");

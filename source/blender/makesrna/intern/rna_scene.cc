@@ -1997,11 +1997,11 @@ static void rna_Physics_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *
 static void rna_Scene_editmesh_select_mode_set(PointerRNA *ptr, const bool *value)
 {
   ToolSettings *ts = (ToolSettings *)ptr->data;
-  int flag = (value[0] ? SCE_SELECT_VERTEX : 0) | (value[1] ? SCE_SELECT_EDGE : 0) |
-             (value[2] ? SCE_SELECT_FACE : 0);
+  const int selectmode = (value[0] ? SCE_SELECT_VERTEX : 0) | (value[1] ? SCE_SELECT_EDGE : 0) |
+                         (value[2] ? SCE_SELECT_FACE : 0);
 
-  if (flag) {
-    ts->selectmode = flag;
+  if (selectmode) {
+    ts->selectmode = selectmode;
 
     /* Update select mode in all the workspaces in mesh edit mode. */
     wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
@@ -2011,11 +2011,11 @@ static void rna_Scene_editmesh_select_mode_set(PointerRNA *ptr, const bool *valu
       if (view_layer) {
         BKE_view_layer_synced_ensure(scene, view_layer);
         Object *object = BKE_view_layer_active_object_get(view_layer);
-        if (object) {
-          Mesh *mesh = BKE_mesh_from_object(object);
-          if (mesh && mesh->runtime->edit_mesh && mesh->runtime->edit_mesh->selectmode != flag) {
-            mesh->runtime->edit_mesh->selectmode = flag;
-            EDBM_selectmode_set(mesh->runtime->edit_mesh.get());
+        if (object && object->type == OB_MESH) {
+          if (BMEditMesh *em = BKE_editmesh_from_object(object)) {
+            if (em->selectmode != selectmode) {
+              EDBM_selectmode_set(em, selectmode);
+            }
           }
         }
       }
@@ -6995,7 +6995,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_range(prop, 1e-5f, 1e6f);
   /* Important to show at least 3 decimal points because multiple presets set this to 1.001. */
   RNA_def_property_ui_range(prop, 0.0001f, 10000.0f, 2, 4);
-  RNA_def_property_ui_text(prop, "PPM Base", "The unit multiplier for pixels per meter");
+  RNA_def_property_ui_text(prop, "PPM Base", "The base unit for pixels per meter.");
 
   prop = RNA_def_property(srna, "ffmpeg", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "FFmpegSettings");

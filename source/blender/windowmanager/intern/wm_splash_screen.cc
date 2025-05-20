@@ -348,7 +348,7 @@ static uiBlock *wm_block_splash_create(bContext *C, ARegion *region, void * /*ar
   if (proc_id && strncmp(proc_id, "ARM", 3) == 0)
 #  endif
   {
-    uiItemS_ex(layout, 2.0f, LayoutSeparatorType::Line);
+    layout->separator(2.0f, LayoutSeparatorType::Line);
 
     uiLayout *split = &layout->split(0.725, true);
     uiLayout *row1 = &split->row(true);
@@ -356,15 +356,11 @@ static uiBlock *wm_block_splash_create(bContext *C, ARegion *region, void * /*ar
 
     row1->label(RPT_("Intel binary detected. Expect reduced performance."), ICON_ERROR);
 
-    PointerRNA op_ptr;
-    uiItemFullO(row2,
-                "WM_OT_url_open",
-                CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Learn More"),
-                ICON_URL,
-                nullptr,
-                WM_OP_INVOKE_DEFAULT,
-                UI_ITEM_NONE,
-                &op_ptr);
+    PointerRNA op_ptr = row2->op("WM_OT_url_open",
+                                 CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Learn More"),
+                                 ICON_URL,
+                                 WM_OP_INVOKE_DEFAULT,
+                                 UI_ITEM_NONE);
 #  if defined(__APPLE__)
     RNA_string_set(
         &op_ptr,
@@ -377,7 +373,7 @@ static uiBlock *wm_block_splash_create(bContext *C, ARegion *region, void * /*ar
         "https://docs.blender.org/manual/en/latest/getting_started/installing/windows.html");
 #  endif
 
-    uiItemS(layout);
+    layout->separator();
   }
 #endif
 
@@ -437,7 +433,7 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
 
     /* The top margin. */
     uiLayout *row = &layout->row(false);
-    uiItemS_ex(row, 0.2f);
+    row->separator(0.2f);
 
     /* The logo image. */
     row = &layout->row(false);
@@ -446,7 +442,7 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
 
     /* Padding below the logo. */
     row = &layout->row(false);
-    uiItemS_ex(row, 2.7f);
+    row->separator(2.7f);
   }
 #endif /* !WITH_HEADLESS */
 

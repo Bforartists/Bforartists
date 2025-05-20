@@ -267,7 +267,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemDecoratorR(row, ptr, "use_reverse", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void random_panel_header_draw(const bContext * /*C*/, Panel *panel)

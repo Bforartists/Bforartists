@@ -130,13 +130,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemS(row);
+  layout->separator();;
   row->prop(ptr, "use_even_offset", UI_ITEM_NONE, IFACE_("Even"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
 
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  uiItemS(row);
+  layout->separator();;
   row->prop(ptr, "use_relative_offset", UI_ITEM_NONE, IFACE_("Relative"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_relative_offset", 0); /*bfa - decorator*/
   /* ------------ end bfa */
@@ -175,7 +175,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "material_offset", UI_ITEM_NONE, IFACE_("Material Offset"), ICON_NONE);
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void vertex_group_panel_draw(const bContext * /*C*/, Panel *panel)

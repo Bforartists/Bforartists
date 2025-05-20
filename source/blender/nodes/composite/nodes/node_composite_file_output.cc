@@ -352,9 +352,9 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
     uiTemplateImageFormatViews(layout, &imfptr, nullptr);
   }
 
-  uiItemS(layout);
+  layout->separator();
 
-  uiItemO(layout, IFACE_("Add Input"), ICON_ADD, "NODE_OT_output_file_add_socket");
+  layout->op("NODE_OT_output_file_add_socket", IFACE_("Add Input"), ICON_ADD);
 
   row = &layout->row(false);
   col = &row->column(true);
@@ -416,14 +416,11 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
       col->label(IFACE_("Layer:"), ICON_NONE);
       row = &col->row(false);
       row->prop(&active_input_ptr, "name", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
-      uiItemFullO(row,
-                  "NODE_OT_output_file_remove_active_socket",
-                  "",
-                  ICON_X,
-                  nullptr,
-                  WM_OP_EXEC_DEFAULT,
-                  UI_ITEM_R_ICON_ONLY,
-                  nullptr);
+      row->op("NODE_OT_output_file_remove_active_socket",
+              "",
+              ICON_X,
+              WM_OP_EXEC_DEFAULT,
+              UI_ITEM_R_ICON_ONLY);
     }
     else {
       col = &layout->column(true);
@@ -431,14 +428,11 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
       col->label(IFACE_("File Subpath:"), ICON_NONE);
       row = &col->row(false);
       row->prop(&active_input_ptr, "path", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
-      uiItemFullO(row,
-                  "NODE_OT_output_file_remove_active_socket",
-                  "",
-                  ICON_X,
-                  nullptr,
-                  WM_OP_EXEC_DEFAULT,
-                  UI_ITEM_R_ICON_ONLY,
-                  nullptr);
+      row->op("NODE_OT_output_file_remove_active_socket",
+              "",
+              ICON_X,
+              WM_OP_EXEC_DEFAULT,
+              UI_ITEM_R_ICON_ONLY);
 
       /* format details for individual files */
       imfptr = RNA_pointer_get(&active_input_ptr, "format");
@@ -882,7 +876,7 @@ class FileOutputOperation : public NodeOperation {
 
     /* Do template expansion on the node's base path. */
     char node_base_path[FILE_MAX] = "";
-    BLI_strncpy(node_base_path, get_base_path(), FILE_MAX);
+    STRNCPY(node_base_path, get_base_path());
     {
       blender::Vector<path_templates::Error> errors = BKE_path_apply_template(
           node_base_path, FILE_MAX, template_variables);
@@ -895,7 +889,7 @@ class FileOutputOperation : public NodeOperation {
     if (base_name[0]) {
       /* Do template expansion on the socket's sub path ("base name"). */
       char sub_path[FILE_MAX] = "";
-      BLI_strncpy(sub_path, base_name, FILE_MAX);
+      STRNCPY(sub_path, base_name);
       {
         blender::Vector<path_templates::Error> errors = BKE_path_apply_template(
             sub_path, FILE_MAX, template_variables);
@@ -1019,7 +1013,7 @@ static NodeOperation *get_compositor_operation(Context &context, DNode node)
 
 }  // namespace blender::nodes::node_composite_file_output_cc
 
-void register_node_type_cmp_output_file()
+static void register_node_type_cmp_output_file()
 {
   namespace file_ns = blender::nodes::node_composite_file_output_cc;
 
@@ -1041,3 +1035,4 @@ void register_node_type_cmp_output_file()
 
   blender::bke::node_register_type(ntype);
 }
+NOD_REGISTER_NODE(register_node_type_cmp_output_file)

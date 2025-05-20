@@ -114,7 +114,8 @@ project(Bforartists)
 
 blender_project_hack_post()
 
-enable_testing()
+# BFA - disable testing to not use the /tests/ folder
+# enable_testing()
 
 
 # -----------------------------------------------------------------------------
@@ -483,9 +484,6 @@ option(WITH_IO_PLY "Enable PLY 3D file format support (*.ply)" ON)
 option(WITH_IO_STL "Enable STL 3D file format support (*.stl)" ON)
 option(WITH_IO_FBX "Enable FBX 3D file format support (*.fbx)" ON)
 option(WITH_IO_GREASE_PENCIL "Enable grease-pencil file format IO (*.svg, *.pdf)" ON)
-
-# Csv support
-option(WITH_IO_CSV "Enable CSV file format support (*.csv)" ON)
 
 # Sound output
 option(WITH_SDL "Enable SDL for sound" OFF)
@@ -872,8 +870,8 @@ endif()
 
 option(WITH_TESTS_EXPERIMENTAL "\
 Run tests marked as experimental. \
-These tests are labeled as such due to long runtime, flakey results, or other issues that make them unsuitable \
-for blocking a build on."
+These tests are labeled as such due to long runtime, flakey results,
+or other issues that make them unsuitable for blocking a build on."
   OFF
 )
 mark_as_advanced(WITH_TESTS_EXPERIMENTAL)
@@ -1033,25 +1031,50 @@ Build and link with code coverage support (only for Debug targets)."
 mark_as_advanced(WITH_COMPILER_CODE_COVERAGE)
 
 if(WITH_COMPILER_CODE_COVERAGE)
-  if(NOT CMAKE_COMPILER_IS_GNUCC)
-    message(WARNING "WITH_COMPILER_CODE_COVERAGE only works with GCC currently.")
+  if(CMAKE_COMPILER_IS_GNUCC)
+    set(_code_coverage_defaults "--coverage")
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
+    get_filename_component(COMPILER_DIRECTORY ${CMAKE_CXX_COMPILER} DIRECTORY)
+    find_program(LLVM_COV "llvm-cov" ${COMPILER_DIRECTORY} NO_DEFAULT_PATH)
+    find_program(LLVM_PROFDATA "llvm-profdata" ${COMPILER_DIRECTORY} NO_DEFAULT_PATH)
+    if(NOT LLVM_COV OR NOT LLVM_PROFDATA)
+      message(WARNING
+        "Could not find code coverage tools, disabling code coverage. "
+        "You may explicitly specify LLVM_COV and LLVM_PROFDATA to work around this warning."
+      )
+      set(WITH_COMPILER_CODE_COVERAGE OFF)
+    else()
+      set(_code_coverage_defaults "-fprofile-instr-generate -fcoverage-mapping")
+    endif()
+  else()
+    message(WARNING
+      "Unsupported compiler ${CMAKE_C_COMPILER_ID} for WITH_COMPILER_CODE_COVERAGE, disabling."
+    )
     set(WITH_COMPILER_CODE_COVERAGE OFF)
   endif()
-endif()
 
-if(WITH_COMPILER_CODE_COVERAGE)
-  set(_code_coverage_defaults "--coverage")
-  set(COMPILER_CODE_COVERAGE_CFLAGS
-    ${_code_coverage_defaults} CACHE STRING
-    "C flags for code coverage"
-  )
-  mark_as_advanced(COMPILER_CODE_COVERAGE_CFLAGS)
-  set(COMPILER_CODE_COVERAGE_CXXFLAGS
-    ${_code_coverage_defaults} CACHE STRING
-    "C++ flags for code coverage"
-  )
-  mark_as_advanced(COMPILER_CODE_COVERAGE_CXXFLAGS)
-  unset(_code_coverage_defaults)
+  # The code above could have disabled the feature, so check again.
+  if(WITH_COMPILER_CODE_COVERAGE)
+    set(COMPILER_CODE_COVERAGE_CFLAGS
+      ${_code_coverage_defaults} CACHE STRING
+      "C flags for code coverage"
+    )
+    mark_as_advanced(COMPILER_CODE_COVERAGE_CFLAGS)
+    set(COMPILER_CODE_COVERAGE_CXXFLAGS
+      ${_code_coverage_defaults} CACHE STRING
+      "C++ flags for code coverage"
+    )
+    mark_as_advanced(COMPILER_CODE_COVERAGE_CXXFLAGS)
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+      set(_code_coverage_dir_default "${CMAKE_BINARY_DIR}/coverage")
+      set(COMPILER_CODE_COVERAGE_DATA_DIR ${_code_coverage_dir_default} CACHE STRING
+        "Directory for code coverage data"
+      )
+      mark_as_advanced(COMPILER_CODE_COVERAGE_DATA_DIR)
+      unset(_code_coverage_dir_default)
+    endif()
+    unset(_code_coverage_defaults)
+  endif()
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
@@ -1463,8 +1486,15 @@ set(PLATFORM_LINKFLAGS_RELEASE "")
 set(PLATFORM_LINKFLAGS_EXECUTABLE "")
 
 if(WITH_COMPILER_CODE_COVERAGE)
-  string(APPEND CMAKE_C_FLAGS_DEBUG " ${COMPILER_CODE_COVERAGE_CFLAGS}")
-  string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${COMPILER_CODE_COVERAGE_CXXFLAGS}")
+  if(CMAKE_COMPILER_IS_GNUCC)
+    # GCC only supports this on debug builds.
+    string(APPEND CMAKE_C_FLAGS_DEBUG " ${COMPILER_CODE_COVERAGE_CFLAGS}")
+    string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${COMPILER_CODE_COVERAGE_CXXFLAGS}")
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
+    # Clang will allow it on all builds.
+    string(APPEND CMAKE_C_FLAGS " ${COMPILER_CODE_COVERAGE_CFLAGS}")
+    string(APPEND CMAKE_CXX_FLAGS " ${COMPILER_CODE_COVERAGE_CXXFLAGS}")
+  endif()
 endif()
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "Release")
