@@ -1603,22 +1603,22 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /*------------------- bfa - original props */
 
   row = &col->row(true);
-  uiItemS(row);
+  layout->separator();;
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_sparse_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   /* ------------ end bfa */
 
-  uiItemS(layout);
+  layout->separator();
 
   col = &layout->column(false);
   if (is_bound) {
-    uiItemO(col, IFACE_("Unbind"), ICON_NONE, "OBJECT_OT_surfacedeform_bind");
+    col->op("OBJECT_OT_surfacedeform_bind", IFACE_("Unbind"), ICON_NONE);
   }
   else {
     uiLayoutSetActive(col, !RNA_pointer_is_null(&target_ptr));
-    uiItemO(col, IFACE_("Bind"), ICON_NONE, "OBJECT_OT_surfacedeform_bind");
+    col->op("OBJECT_OT_surfacedeform_bind", IFACE_("Bind"), ICON_NONE);
   }
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void panel_register(ARegionType *region_type)

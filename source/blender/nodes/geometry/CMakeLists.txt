@@ -89,6 +89,7 @@ set(SRC
   nodes/node_geo_gizmo_linear.cc
   nodes/node_geo_gizmo_transform.cc
   nodes/node_geo_grease_pencil_to_curves.cc
+  nodes/node_geo_grid_info.cc
   nodes/node_geo_grid_to_mesh.cc
   nodes/node_geo_image.cc
   nodes/node_geo_image_info.cc
@@ -267,20 +268,14 @@ set(LIB
   PRIVATE bf::imbuf::movie
   PRIVATE bf::intern::guardedalloc
   bf_nodes
+  bf_io_common
+  bf_io_csv
   PRIVATE bf::intern::atomic
   PRIVATE bf::extern::fmtlib
   PRIVATE bf::extern::xxhash
   PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
-
-if(WITH_IO_CSV)
-  list(APPEND LIB
-    PRIVATE bf_io_common
-    PRIVATE bf_io_csv
-  )
-  add_definitions(-DWITH_IO_CSV)
-endif()
 
 if(WITH_IO_STL)
   list(APPEND LIB

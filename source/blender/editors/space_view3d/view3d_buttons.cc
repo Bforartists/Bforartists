@@ -619,8 +619,8 @@ static void v3d_editvertex_buts(
 
     row = &col->row(true);
 
-    uiItemS(row);
-    uiItemS(row);
+    layout->separator();
+    layout->separator();
 
     col = &row->column(true);
     uiLayoutSetUnitsX(col, .75);
@@ -750,7 +750,7 @@ static void v3d_editvertex_buts(
         col->label(tot == 1 ? IFACE_("Vertex Data Mean") : IFACE_("Vertices Data Mean"), ICON_NONE); /* bfa - put the term "mean" into the label */
 
         row = &layout->row(false);
-        uiItemS(row); /* bfa - separator indent */
+        layout->separator(); /* bfa - separator indent */
         col = &row->column(false);
 
         col->label(IFACE_("Bevel Weight"), ICON_NONE);
@@ -795,7 +795,7 @@ static void v3d_editvertex_buts(
       if (has_skinradius) {
         /* bfa */
         row = &layout->row(false);
-        uiItemS(row); /* bfa - separator indent */
+        layout->separator(); /* bfa - separator indent */
         col = &row->column(false);
 
         col->label(IFACE_("Radius X"), ICON_NONE);
@@ -842,7 +842,7 @@ static void v3d_editvertex_buts(
         col->label(totedgedata == 1 ? IFACE_("Edge Data Mean") : IFACE_("Edges Data Mean"), ICON_NONE);
 
         row = &layout->row(false);
-        uiItemS(row); /* bfa - separator indent */
+        layout->separator(); /* bfa - separator indent */
         col = &row->column(false);
 
         col->label(IFACE_("Bevel Weight"), ICON_NONE);
@@ -1626,26 +1626,14 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 
           /* The weight group paste function */
           icon = (locked) ? ICON_BLANK1 : ICON_PASTEDOWN;
-          uiItemFullO(row,
-                      "OBJECT_OT_vertex_weight_paste",
-                      "",
-                      icon,
-                      nullptr,
-                      WM_OP_INVOKE_DEFAULT,
-                      UI_ITEM_NONE,
-                      &op_ptr);
+          op_ptr = row->op(
+              "OBJECT_OT_vertex_weight_paste", "", icon, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
           RNA_int_set(&op_ptr, "weight_group", i);
 
           /* The weight entry delete function */
           icon = (locked) ? ICON_LOCKED : ICON_X;
-          uiItemFullO(row,
-                      "OBJECT_OT_vertex_weight_delete",
-                      "",
-                      icon,
-                      nullptr,
-                      WM_OP_INVOKE_DEFAULT,
-                      UI_ITEM_NONE,
-                      &op_ptr);
+          op_ptr = row->op(
+              "OBJECT_OT_vertex_weight_delete", "", icon, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
           RNA_int_set(&op_ptr, "weight_group", i);
 
           yco -= UI_UNIT_Y;
@@ -1719,7 +1707,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
     uiLayoutSetEmboss(row, blender::ui::EmbossType::None); /* bfa - emboss=False */
     row->prop(ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
     uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
-    uiItemS_ex(layout, .25f); /* bfa - separator*/
+    layout->separator(.25f);
   }
 
   switch (RNA_enum_get(ptr, "rotation_mode")) {
@@ -1796,7 +1784,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   }
   uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
 
-  uiItemS_ex(layout, .25f);
+  layout->separator(.25f);
 
   col = &layout->column(false);
   row = &col->row(true);
@@ -1896,14 +1884,14 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
   col = &layout->column(false);
   col->prop(&ptr, "co", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  uiItemS_ex(col, .25f); /* bfa - separator*/
+  layout->separator(.25f); /* bfa - separator*/
   col->prop(&ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&ptr, "stiffness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  uiItemS_ex(col, .25f); /* bfa - separator*/
+  layout->separator(.25f); /* bfa - separator*/
   col->prop(&ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  uiItemS_ex(col, .25f); /* bfa - separator*/
+  layout->separator(.25f); /* bfa - separator*/
   col = &layout->column(true);
   switch (RNA_enum_get(&ptr, "type")) {
     case MB_BALL:

@@ -42,6 +42,7 @@
 
 #include "GPU_select.hh"
 
+#include "ANIM_armature.hh"
 #include "ANIM_bone_collections.hh"
 #include "ANIM_bonecolor.hh"
 
@@ -507,7 +508,7 @@ static wmOperatorStatus armature_select_linked_exec(bContext *C, wmOperator *op)
 
     bool found = false;
     LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-      if (EBONE_VISIBLE(arm, ebone) &&
+      if (blender::animrig::bone_is_visible_editbone(arm, ebone) &&
           (ebone->flag & (BONE_SELECTED | BONE_ROOTSEL | BONE_TIPSEL)))
       {
         ebone->flag |= BONE_DONE;
@@ -538,7 +539,7 @@ void ARMATURE_OT_select_linked(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_select_linked";
   ot->description = "Select all bones linked by parent/child connections to the current selection";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_select_linked_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -602,7 +603,7 @@ void ARMATURE_OT_select_linked_pick(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_select_linked_pick";
   ot->description = "(De)select bones linked by parent/child connections under the mouse cursor";
 
-  /* api callbacks */
+  /* API callbacks. */
   /* leave 'exec' unset */
   ot->invoke = armature_select_linked_pick_invoke;
   ot->poll = armature_select_linked_pick_poll;
@@ -910,7 +911,7 @@ bool ED_armature_edit_deselect_all_visible(Object *obedit)
   bool changed = false;
   LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
     /* first and foremost, bone must be visible and selected */
-    if (EBONE_VISIBLE(arm, ebone)) {
+    if (blender::animrig::bone_is_visible_editbone(arm, ebone)) {
       if (ebone->flag & (BONE_SELECTED | BONE_TIPSEL | BONE_ROOTSEL)) {
         ebone->flag &= ~(BONE_SELECTED | BONE_TIPSEL | BONE_ROOTSEL);
         changed = true;
@@ -1163,7 +1164,7 @@ static bool armature_edit_select_op_apply(bArmature *arm,
 {
   BLI_assert(!(is_ignore_flag & ~(BONESEL_ROOT | BONESEL_TIP)));
   BLI_assert(!(is_inside_flag & ~(BONESEL_ROOT | BONESEL_TIP | BONESEL_BONE)));
-  BLI_assert(EBONE_VISIBLE(arm, ebone));
+  BLI_assert(blender::animrig::bone_is_visible_editbone(arm, ebone));
   bool changed = false;
   bool is_point_done = false;
   int points_proj_tot = 0;
@@ -1413,7 +1414,7 @@ void ARMATURE_OT_select_all(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_select_all";
   ot->description = "Toggle selection status of all bones";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_de_select_all_exec;
   ot->get_description = armature_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editarmature;
@@ -1490,7 +1491,7 @@ static void armature_select_more_less(Object *ob, bool more)
 
   /* do selection */
   LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-    if (EBONE_VISIBLE(arm, ebone)) {
+    if (blender::animrig::bone_is_visible_editbone(arm, ebone)) {
       if (more) {
         armature_select_more(arm, ebone);
       }
@@ -1501,7 +1502,7 @@ static void armature_select_more_less(Object *ob, bool more)
   }
 
   LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
-    if (EBONE_VISIBLE(arm, ebone)) {
+    if (blender::animrig::bone_is_visible_editbone(arm, ebone)) {
       if (more == false) {
         if (ebone->flag & BONE_SELECTED) {
           ED_armature_ebone_select_set(ebone, true);
@@ -1543,7 +1544,7 @@ void ARMATURE_OT_select_more(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_select_more";
   ot->description = "Select those bones connected to the initial selection";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_de_select_more_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -1580,7 +1581,7 @@ void ARMATURE_OT_select_less(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_select_less";
   ot->description = "Deselect those bones at the boundary of each selection region";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_de_select_less_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -2145,7 +2146,7 @@ void ARMATURE_OT_select_hierarchy(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_select_hierarchy";
   ot->description = "Select immediate parent/children of selected bones";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_select_hierarchy_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -2191,7 +2192,7 @@ static wmOperatorStatus armature_select_mirror_exec(bContext *C, wmOperator *op)
         int flag_new = extend ? EBONE_PREV_FLAG_GET(ebone) : 0;
 
         if ((ebone_mirror = ED_armature_ebone_get_mirrored(arm->edbo, ebone)) &&
-            EBONE_VISIBLE(arm, ebone_mirror))
+            blender::animrig::bone_is_visible_editbone(arm, ebone_mirror))
         {
           const int flag_mirror = EBONE_PREV_FLAG_GET(ebone_mirror);
           flag_new |= flag_mirror;
@@ -2232,7 +2233,7 @@ void ARMATURE_OT_select_mirror(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_select_mirror";
   ot->description = "Mirror the bone selection";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = armature_select_mirror_exec;
   ot->poll = ED_operator_editarmature;
 
@@ -2370,7 +2371,7 @@ void ARMATURE_OT_shortest_path_pick(wmOperatorType *ot)
   ot->idname = "ARMATURE_OT_shortest_path_pick";
   ot->description = "Select shortest path between two bones";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = armature_shortest_path_pick_invoke;
   ot->poll = ED_operator_editarmature;
 

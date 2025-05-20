@@ -52,7 +52,6 @@ static void node_composit_buts_translate(uiLayout *layout, bContext * /*C*/, Poi
 {
   layout->prop(ptr, "interpolation", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
   layout->prop(ptr, "wrap_axis", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "use_relative", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
 }
 
 using namespace blender::compositor;
@@ -67,11 +66,6 @@ class TranslateOperation : public NodeOperation {
 
     float x = this->get_input("X").get_single_value_default(0.0f);
     float y = this->get_input("Y").get_single_value_default(0.0f);
-    if (this->get_use_relative()) {
-      x *= input.domain().size.x;
-      y *= input.domain().size.y;
-    }
-
     const float2 translation = float2(x, y);
 
     Result &output = this->get_result("Image");
@@ -97,11 +91,6 @@ class TranslateOperation : public NodeOperation {
     return Interpolation::Nearest;
   }
 
-  bool get_use_relative()
-  {
-    return node_storage(bnode()).relative;
-  }
-
   bool get_repeat_x()
   {
     return ELEM(node_storage(bnode()).wrap_axis,
@@ -124,7 +113,7 @@ static NodeOperation *get_compositor_operation(Context &context, DNode node)
 
 }  // namespace blender::nodes::node_composite_translate_cc
 
-void register_node_type_cmp_translate()
+static void register_node_type_cmp_translate()
 {
   namespace file_ns = blender::nodes::node_composite_translate_cc;
 
@@ -144,3 +133,4 @@ void register_node_type_cmp_translate()
 
   blender::bke::node_register_type(ntype);
 }
+NOD_REGISTER_NODE(register_node_type_cmp_translate)

@@ -134,7 +134,7 @@ static void discard_attributes(CurvesEvalCache &eval_cache)
     GPU_VERTBUF_DISCARD_SAFE(eval_cache.final.attributes_buf[j]);
   }
 
-  drw_attributes_clear(&eval_cache.final.attr_used);
+  eval_cache.final.attr_used.clear();
 }
 
 static void clear_edit_data(CurvesBatchCache *cache)
@@ -579,61 +579,60 @@ static void alloc_final_attribute_vbo(CurvesEvalCache &cache,
                          cache.final.resolution * cache.curves_num);
 }
 
-static void ensure_control_point_attribute(const Curves &curves,
-                                           CurvesEvalCache &cache,
-                                           const DRW_AttributeRequest &request,
-                                           const int index,
-                                           const GPUVertFormat &format)
+static gpu::VertBufPtr ensure_control_point_attribute(const Curves &curves_id,
+                                                      const StringRef name,
+                                                      const GPUVertFormat &format,
+                                                      bool &r_is_point_domain)
 {
-  if (cache.proc_attributes_buf[index] != nullptr) {
-    return;
-  }
+  gpu::VertBufPtr vbo = gpu::VertBufPtr(GPU_vertbuf_create_with_format_ex(
+      format, GPU_USAGE_STATIC | GPU_USAGE_FLAG_BUFFER_TEXTURE_ONLY));
 
-  GPU_VERTBUF_DISCARD_SAFE(cache.proc_attributes_buf[index]);
-
-  cache.proc_attributes_buf[index] = GPU_vertbuf_create_with_format_ex(
-      format, GPU_USAGE_STATIC | GPU_USAGE_FLAG_BUFFER_TEXTURE_ONLY);
-  gpu::VertBuf &attr_vbo = *cache.proc_attributes_buf[index];
-
-  GPU_vertbuf_data_alloc(attr_vbo,
-                         request.domain == bke::AttrDomain::Point ? curves.geometry.point_num :
-                                                                    curves.geometry.curve_num);
-
-  const bke::AttributeAccessor attributes = curves.geometry.wrap().attributes();
+  const bke::CurvesGeometry &curves = curves_id.geometry.wrap();
+  const bke::AttributeAccessor attributes = curves.wrap().attributes();
 
   /* TODO(@kevindietrich): float4 is used for scalar attributes as the implicit conversion done
    * by OpenGL to float4 for a scalar `s` will produce a `float4(s, 0, 0, 1)`. However, following
    * the Blender convention, it should be `float4(s, s, s, 1)`. This could be resolved using a
    * similar texture state swizzle to map the attribute correctly as for volume attributes, so we
    * can control the conversion ourselves. */
-  bke::AttributeReader<ColorGeometry4f> attribute = attributes.lookup_or_default<ColorGeometry4f>(
-      request.attribute_name, request.domain, {0.0f, 0.0f, 0.0f, 1.0f});
+  const bke::AttributeReader<ColorGeometry4f> attribute = attributes.lookup<ColorGeometry4f>(name);
+  if (!attribute) {
+    GPU_vertbuf_data_alloc(*vbo, curves.curves_num());
+    vbo->data<ColorGeometry4f>().fill({0.0f, 0.0f, 0.0f, 1.0f});
+    r_is_point_domain = false;
+    return vbo;
+  }
 
-  MutableSpan<ColorGeometry4f> vbo_span = attr_vbo.data<ColorGeometry4f>();
-
-  attribute.varray.materialize(vbo_span);
+  r_is_point_domain = attribute.domain == bke::AttrDomain::Point;
+  GPU_vertbuf_data_alloc(*vbo, r_is_point_domain ? curves.points_num() : curves.curves_num());
+  attribute.varray.materialize(vbo->data<ColorGeometry4f>());
+  return vbo;
 }
 
 static void ensure_final_attribute(const Curves &curves,
-                                   CurvesEvalCache &cache,
-                                   const DRW_AttributeRequest &request,
-                                   const int index)
+                                   const StringRef name,
+                                   const int index,
+                                   CurvesEvalCache &cache)
 {
   char sampler_name[32];
-  drw_curves_get_attribute_sampler_name(request.attribute_name, sampler_name);
+  drw_curves_get_attribute_sampler_name(name, sampler_name);
 
   GPUVertFormat format = {0};
   /* All attributes use float4, see comment below. */
   GPU_vertformat_attr_add(&format, sampler_name, GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
 
-  ensure_control_point_attribute(curves, cache, request, index, format);
+  if (!cache.proc_attributes_buf[index]) {
+    gpu::VertBufPtr vbo = ensure_control_point_attribute(
+        curves, name, format, cache.proc_attributes_point_domain[index]);
+    cache.proc_attributes_buf[index] = vbo.release();
+  }
 
   /* Existing final data may have been for a different attribute (with a different name or domain),
    * free the data. */
   GPU_VERTBUF_DISCARD_SAFE(cache.final.attributes_buf[index]);
 
   /* Ensure final data for points. */
-  if (request.domain == bke::AttrDomain::Point) {
+  if (cache.proc_attributes_point_domain[index]) {
     alloc_final_attribute_vbo(cache, format, index, sampler_name);
   }
 }
@@ -646,7 +645,7 @@ static void fill_curve_offsets_vbos(const OffsetIndices<int> points_by_curve,
     const IndexRange points = points_by_curve[i];
 
     *(uint *)GPU_vertbuf_raw_step(&data_step) = points.start();
-    *(ushort *)GPU_vertbuf_raw_step(&seg_step) = points.size() - 1;
+    *(uint *)GPU_vertbuf_raw_step(&seg_step) = points.size() - 1;
   }
 }
 
@@ -659,7 +658,7 @@ static void create_curve_offsets_vbos(const OffsetIndices<int> points_by_curve,
   uint data_id = GPU_vertformat_attr_add(&format_data, "data", GPU_COMP_U32, 1, GPU_FETCH_INT);
 
   GPUVertFormat format_seg = {0};
-  uint seg_id = GPU_vertformat_attr_add(&format_seg, "data", GPU_COMP_U16, 1, GPU_FETCH_INT);
+  uint seg_id = GPU_vertformat_attr_add(&format_seg, "data", GPU_COMP_U32, 1, GPU_FETCH_INT);
 
   /* Curve Data. */
   cache.proc_strand_buf = GPU_vertbuf_create_with_format_ex(
@@ -718,7 +717,7 @@ static void calc_final_indices(const bke::CurvesGeometry &curves,
   }
 
   static const GPUVertFormat format = GPU_vertformat_from_attribute(
-      "dummy", GPU_COMP_U32, 1, GPU_FETCH_INT_TO_FLOAT_UNIT);
+      "dummy", GPU_COMP_U32, 1, GPU_FETCH_INT);
 
   gpu::VertBuf *vbo = GPU_vertbuf_create_with_format(format);
   GPU_vertbuf_data_alloc(*vbo, 1);
@@ -742,11 +741,10 @@ static bool ensure_attributes(const Curves &curves,
 
   if (gpu_material) {
     /* The following code should be kept in sync with `mesh_cd_calc_used_gpu_layers`. */
-    DRW_Attributes attrs_needed;
-    drw_attributes_clear(&attrs_needed);
+    VectorSet<std::string> attrs_needed;
     ListBase gpu_attrs = GPU_material_attributes(gpu_material);
     LISTBASE_FOREACH (const GPUMaterialAttribute *, gpu_attr, &gpu_attrs) {
-      const char *name = gpu_attr->name;
+      StringRef name = gpu_attr->name;
       eCustomDataType type = static_cast<eCustomDataType>(gpu_attr->type);
       int layer = -1;
       std::optional<bke::AttrDomain> domain;
@@ -756,7 +754,7 @@ static bool ensure_attributes(const Curves &curves,
          *
          * We do it based on the specified name.
          */
-        if (name[0] != '\0') {
+        if (!name.is_empty()) {
           layer = CustomData_get_named_layer(&cd_curve, CD_PROP_FLOAT2, name);
           type = CD_MTFACE;
           domain = bke::AttrDomain::Curve;
@@ -797,7 +795,7 @@ static bool ensure_attributes(const Curves &curves,
       switch (type) {
         case CD_MTFACE: {
           if (layer == -1) {
-            layer = (name[0] != '\0') ?
+            layer = !name.is_empty() ?
                         CustomData_get_named_layer(&cd_curve, CD_PROP_FLOAT2, name) :
                         CustomData_get_render_layer(&cd_curve, CD_PROP_FLOAT2);
             if (layer != -1) {
@@ -805,7 +803,7 @@ static bool ensure_attributes(const Curves &curves,
             }
           }
           if (layer == -1) {
-            layer = (name[0] != '\0') ?
+            layer = !name.is_empty() ?
                         CustomData_get_named_layer(&cd_point, CD_PROP_FLOAT2, name) :
                         CustomData_get_render_layer(&cd_point, CD_PROP_FLOAT2);
             if (layer != -1) {
@@ -813,13 +811,13 @@ static bool ensure_attributes(const Curves &curves,
             }
           }
 
-          if (layer != -1 && name[0] == '\0' && domain.has_value()) {
+          if (layer != -1 && !name.is_empty() && domain.has_value()) {
             name = CustomData_get_layer_name(
                 domain == bke::AttrDomain::Curve ? &cd_curve : &cd_point, CD_PROP_FLOAT2, layer);
           }
 
           if (layer != -1 && domain.has_value()) {
-            drw_attributes_add_request(&attrs_needed, name, CD_PROP_FLOAT2, *domain);
+            drw_attributes_add_request(&attrs_needed, name);
           }
           break;
         }
@@ -840,7 +838,7 @@ static bool ensure_attributes(const Curves &curves,
         case CD_PROP_FLOAT:
         case CD_PROP_FLOAT2: {
           if (layer != -1 && domain.has_value()) {
-            drw_attributes_add_request(&attrs_needed, name, type, *domain);
+            drw_attributes_add_request(&attrs_needed, name);
           }
           break;
         }
@@ -862,45 +860,37 @@ static bool ensure_attributes(const Curves &curves,
 
   bool need_tf_update = false;
 
-  for (const int i : IndexRange(final_cache.attr_used.num_requests)) {
-    const DRW_AttributeRequest &request = final_cache.attr_used.requests[i];
-
+  for (const int i : final_cache.attr_used.index_range()) {
     if (cache.eval_cache.final.attributes_buf[i] != nullptr) {
       continue;
     }
 
-    if (request.domain == bke::AttrDomain::Point) {
+    ensure_final_attribute(curves, final_cache.attr_used[i], i, cache.eval_cache);
+    if (cache.eval_cache.proc_attributes_point_domain[i]) {
       need_tf_update = true;
     }
-
-    ensure_final_attribute(curves, cache.eval_cache, request, i);
   }
 
   return need_tf_update;
 }
 
-static void request_attribute(Curves &curves, const char *name)
+static void request_attribute(Curves &curves, const StringRef name)
 {
   CurvesBatchCache &cache = get_batch_cache(curves);
   CurvesEvalFinalCache &final_cache = cache.eval_cache.final;
 
-  DRW_Attributes attributes{};
+  VectorSet<std::string> attributes{};
 
   bke::CurvesGeometry &curves_geometry = curves.geometry.wrap();
-  std::optional<bke::AttributeMetaData> meta_data = curves_geometry.attributes().lookup_meta_data(
-      name);
-  if (!meta_data) {
+  if (!curves_geometry.attributes().contains(name)) {
     return;
   }
-  const bke::AttrDomain domain = meta_data->domain;
-  const eCustomDataType type = meta_data->data_type;
-
-  drw_attributes_add_request(&attributes, name, type, domain);
+  drw_attributes_add_request(&attributes, name);
 
   drw_attributes_merge(&final_cache.attr_used, &attributes, cache.render_mutex);
 }
 
-void drw_curves_get_attribute_sampler_name(const char *layer_name, char r_sampler_name[32])
+void drw_curves_get_attribute_sampler_name(const StringRef layer_name, char r_sampler_name[32])
 {
   char attr_safe_name[GPU_MAX_SAFE_ATTR_NAME];
   GPU_vertformat_safe_attr_name(layer_name, attr_safe_name, GPU_MAX_SAFE_ATTR_NAME);
@@ -1011,7 +1001,7 @@ void DRW_curves_batch_cache_free_old(Curves *curves, int ctime)
     do_discard = true;
   }
 
-  drw_attributes_clear(&final_cache.attr_used_over_time);
+  final_cache.attr_used_over_time.clear();
 
   if (do_discard) {
     discard_attributes(cache->eval_cache);
@@ -1043,7 +1033,7 @@ gpu::Batch *DRW_curves_batch_cache_get_edit_curves_lines(Curves *curves)
 }
 
 gpu::VertBuf **DRW_curves_texture_for_evaluated_attribute(Curves *curves,
-                                                          const char *name,
+                                                          const StringRef name,
                                                           bool *r_is_point_domain)
 {
   CurvesBatchCache &cache = get_batch_cache(*curves);
@@ -1052,8 +1042,8 @@ gpu::VertBuf **DRW_curves_texture_for_evaluated_attribute(Curves *curves,
   request_attribute(*curves, name);
 
   int request_i = -1;
-  for (const int i : IndexRange(final_cache.attr_used.num_requests)) {
-    if (STREQ(final_cache.attr_used.requests[i].attribute_name, name)) {
+  for (const int i : final_cache.attr_used.index_range()) {
+    if (final_cache.attr_used[i] == name) {
       request_i = i;
       break;
     }
@@ -1062,17 +1052,12 @@ gpu::VertBuf **DRW_curves_texture_for_evaluated_attribute(Curves *curves,
     *r_is_point_domain = false;
     return nullptr;
   }
-  switch (final_cache.attr_used.requests[request_i].domain) {
-    case bke::AttrDomain::Point:
-      *r_is_point_domain = true;
-      return &final_cache.attributes_buf[request_i];
-    case bke::AttrDomain::Curve:
-      *r_is_point_domain = false;
-      return &cache.eval_cache.proc_attributes_buf[request_i];
-    default:
-      BLI_assert_unreachable();
-      return nullptr;
+  if (cache.eval_cache.proc_attributes_point_domain[request_i]) {
+    *r_is_point_domain = true;
+    return &final_cache.attributes_buf[request_i];
   }
+  *r_is_point_domain = false;
+  return &cache.eval_cache.proc_attributes_buf[request_i];
 }
 
 static void create_edit_points_position_vbo(

@@ -276,13 +276,7 @@ static void calculate_depth(gesture::GestureData &gesture_data,
       Brush *brush = BKE_paint_brush(&sd->paint);
       Scene *scene = CTX_data_scene(vc.C);
 
-      if (!BKE_brush_use_locked_size(scene, brush)) {
-        depth_radius = paint_calc_object_space_radius(
-            vc, trim_operation->initial_location, BKE_brush_size_get(scene, brush));
-      }
-      else {
-        depth_radius = BKE_brush_unprojected_radius_get(scene, brush);
-      }
+      depth_radius = object_space_radius_get(vc, *scene, *brush, trim_operation->initial_location);
     }
 
     depth_front = mid_point_depth - depth_radius;
@@ -764,14 +758,14 @@ static void initialize_cursor_info(bContext &C,
   int mval[2];
   RNA_int_get_array(op.ptr, "location", mval);
 
-  SculptCursorGeometryInfo sgi;
+  CursorGeometryInfo cgi;
   const float mval_fl[2] = {float(mval[0]), float(mval[1])};
 
   TrimOperation *trim_operation = (TrimOperation *)gesture_data.operation;
-  trim_operation->initial_hit = SCULPT_cursor_geometry_info_update(&C, &sgi, mval_fl, false);
+  trim_operation->initial_hit = cursor_geometry_info_update(&C, &cgi, mval_fl, false);
   if (trim_operation->initial_hit) {
-    copy_v3_v3(trim_operation->initial_location, sgi.location);
-    copy_v3_v3(trim_operation->initial_normal, sgi.normal);
+    copy_v3_v3(trim_operation->initial_location, cgi.location);
+    copy_v3_v3(trim_operation->initial_normal, cgi.normal);
   }
 }
 

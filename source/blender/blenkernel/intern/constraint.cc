@@ -2920,6 +2920,11 @@ static void actcon_evaluate(bConstraint *con, bConstraintOb *cob, ListBase *targ
 
   if (VALID_CONS_TARGET(ct) || data->flag & ACTCON_USE_EVAL_TIME) {
     switch (data->mix_mode) {
+      /* Replace the input transformation. */
+      case ACTCON_MIX_REPLACE:
+        copy_m4_m4(cob->matrix, ct->matrix);
+        break;
+
       /* Simple matrix multiplication. */
       case ACTCON_MIX_BEFORE_FULL:
         mul_m4_m4m4(cob->matrix, ct->matrix, cob->matrix);
@@ -5446,7 +5451,7 @@ static bConstraintTypeInfo CTI_TRANSFORM_CACHE = {
 };
 
 /* ************************* Constraints Type-Info *************************** */
-/* All of the constraints api functions use bConstraintTypeInfo structs to carry out
+/* All of the constraints API functions use #bConstraintTypeInfo structs to carry out
  * and operations that involve constraint specific code.
  */
 

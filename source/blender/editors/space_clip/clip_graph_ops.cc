@@ -325,7 +325,7 @@ void CLIP_OT_graph_select(wmOperatorType *ot)
   ot->description = "Select graph curves";
   ot->idname = "CLIP_OT_graph_select";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = select_exec;
   ot->invoke = select_invoke;
   ot->poll = clip_graph_knots_poll;
@@ -436,7 +436,7 @@ void CLIP_OT_graph_select_box(wmOperatorType *ot)
   ot->description = "Select curve points using box selection";
   ot->idname = "CLIP_OT_graph_select_box";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_gesture_box_invoke;
   ot->exec = box_select_graph_exec;
   ot->modal = WM_gesture_box_modal;
@@ -524,7 +524,7 @@ void CLIP_OT_graph_select_all_markers(wmOperatorType *ot)
   ot->description = "Change selection of all markers of active track";
   ot->idname = "CLIP_OT_graph_select_all_markers";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = graph_select_all_markers_exec;
   ot->get_description = clip_ot_graph_select_all_markers_get_description; /*bfa - descriptions*/
   ot->poll = clip_graph_knots_poll;
@@ -574,7 +574,7 @@ void CLIP_OT_graph_delete_curve(wmOperatorType *ot)
   ot->description = "Delete track corresponding to the selected curve";
   ot->idname = "CLIP_OT_graph_delete_curve";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = delete_curve_invoke;
   ot->exec = delete_curve_exec;
   ot->poll = clip_graph_knots_poll;
@@ -618,7 +618,7 @@ void CLIP_OT_graph_delete_knot(wmOperatorType *ot)
   ot->description = "Delete curve knots";
   ot->idname = "CLIP_OT_graph_delete_knot";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = delete_knot_exec;
   ot->poll = clip_graph_knots_poll;
 
@@ -699,7 +699,7 @@ void CLIP_OT_graph_view_all(wmOperatorType *ot)
   ot->description = "View all curves in editor";
   ot->idname = "CLIP_OT_graph_view_all";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = view_all_exec;
   ot->poll = space_clip_graph_poll;
 }
@@ -735,7 +735,7 @@ void CLIP_OT_graph_center_current_frame(wmOperatorType *ot)
   ot->description = "Scroll view so current frame would be centered";
   ot->idname = "CLIP_OT_graph_center_current_frame";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = center_current_frame_exec;
   ot->poll = space_clip_graph_poll;
 }
@@ -791,7 +791,7 @@ void CLIP_OT_graph_disable_markers(wmOperatorType *ot)
   ot->description = "Disable/enable selected markers";
   ot->idname = "CLIP_OT_graph_disable_markers";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = graph_disable_markers_exec;
   ot->poll = space_clip_graph_poll;
 

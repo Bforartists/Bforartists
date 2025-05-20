@@ -250,14 +250,14 @@ static void edbm_intersect_ui(bContext * /*C*/, wmOperator *op)
   uiLayoutSetPropDecorate(layout, false);
   row = &layout->row(false);
   row->prop(op->ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-  uiItemS(layout);
+  layout->separator();
   row = &layout->row(false);
   row->prop(op->ptr, "separate_mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-  uiItemS(layout);
+  layout->separator();
 
   row = &layout->row(false);
   row->prop(op->ptr, "solver", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-  uiItemS(layout);
+  layout->separator();
 
   if (!use_exact) {
     layout->prop(op->ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -306,7 +306,7 @@ void MESH_OT_intersect(wmOperatorType *ot)
   ot->description = "Cut an intersection into faces";
   ot->idname = "MESH_OT_intersect";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = edbm_intersect_exec;
   ot->poll = ED_operator_editmesh;
   ot->ui = edbm_intersect_ui;
@@ -411,11 +411,11 @@ static void edbm_intersect_boolean_ui(bContext * /*C*/, wmOperator *op)
 
   row = &layout->row(false);
   row->prop(op->ptr, "operation", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-  uiItemS(layout);
+  layout->separator();
 
   row = &layout->row(false);
   row->prop(op->ptr, "solver", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-  uiItemS(layout);
+  layout->separator();
 
   layout->prop(op->ptr, "use_swap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(op->ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -444,7 +444,7 @@ void MESH_OT_intersect_boolean(wmOperatorType *ot)
   ot->description = "Cut solid geometry from selected to unselected";
   ot->idname = "MESH_OT_intersect_boolean";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = edbm_intersect_boolean_exec;
   ot->poll = ED_operator_editmesh;
   ot->ui = edbm_intersect_boolean_ui;
@@ -1075,7 +1075,7 @@ void MESH_OT_face_split_by_edges(wmOperatorType *ot)
   ot->description = "Weld loose edges into faces (splitting them into new faces)";
   ot->idname = "MESH_OT_face_split_by_edges";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = edbm_face_split_by_edges_exec;
   ot->poll = ED_operator_editmesh;
 

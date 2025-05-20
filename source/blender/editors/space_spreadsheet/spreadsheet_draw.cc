@@ -2,6 +2,8 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#include "BKE_context.hh"
+
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
@@ -10,11 +12,14 @@
 #include "GPU_state.hh"
 
 #include "DNA_screen_types.h"
+#include "DNA_space_types.h"
 #include "DNA_userdef_types.h"
 
 #include "BLI_rect.h"
 
+#include "spreadsheet_column.hh"
 #include "spreadsheet_draw.hh"
+#include "spreadsheet_intern.hh"
 
 #define CELL_RIGHT_PADDING (2.0f * UI_SCALE_FAC)
 
@@ -55,7 +60,7 @@ static void draw_index_column_background(const uint pos,
                                          const SpreadsheetDrawer &drawer)
 {
   immUniformThemeColorShade(TH_BACK, 11);
-  immRecti(pos, 0, region->winy - drawer.top_row_height, drawer.left_column_width, 0);
+  immRectf(pos, 0, region->winy - drawer.top_row_height, drawer.left_column_width, 0);
 }
 
 static void draw_alternating_row_overlay(const uint pos,
@@ -75,7 +80,7 @@ static void draw_alternating_row_overlay(const uint pos,
     int y_bottom = y_top - drawer.row_height;
     y_top = std::min(y_top, region->winy - drawer.top_row_height);
     y_bottom = std::min(y_bottom, region->winy - drawer.top_row_height);
-    immRecti(pos, x_left, y_top, x_right, y_bottom);
+    immRectf(pos, x_left, y_top, x_right, y_bottom);
   }
   GPU_blend(GPU_BLEND_NONE);
 }
@@ -85,7 +90,7 @@ static void draw_top_row_background(const uint pos,
                                     const SpreadsheetDrawer &drawer)
 {
   immUniformThemeColorShade(TH_BACK, 11);
-  immRecti(pos, 0, region->winy, region->winx, region->winy - drawer.top_row_height);
+  immRectf(pos, 0, region->winy, region->winx, region->winy - drawer.top_row_height);
 }
 
 static void draw_separator_lines(const uint pos,
@@ -98,12 +103,12 @@ static void draw_separator_lines(const uint pos,
   immBeginAtMost(GPU_PRIM_LINES, drawer.tot_columns * 2 + 4);
 
   /* Left column line. */
-  immVertex2i(pos, drawer.left_column_width, region->winy);
-  immVertex2i(pos, drawer.left_column_width, 0);
+  immVertex2f(pos, drawer.left_column_width, region->winy);
+  immVertex2f(pos, drawer.left_column_width, 0);
 
   /* Top row line. */
-  immVertex2i(pos, 0, region->winy - drawer.top_row_height);
-  immVertex2i(pos, region->winx, region->winy - drawer.top_row_height);
+  immVertex2f(pos, 0, region->winy - drawer.top_row_height);
+  immVertex2f(pos, region->winx, region->winy - drawer.top_row_height);
 
   /* Column separator lines. */
   int line_x = drawer.left_column_width - scroll_offset_x;
@@ -111,8 +116,8 @@ static void draw_separator_lines(const uint pos,
     const int column_width = drawer.column_width(column_index);
     line_x += column_width;
     if (line_x >= drawer.left_column_width) {
-      immVertex2i(pos, line_x, region->winy);
-      immVertex2i(pos, line_x, 0);
+      immVertex2f(pos, line_x, region->winy);
+      immVertex2f(pos, line_x, 0);
     }
   }
   immEnd();
@@ -256,16 +261,88 @@ static void update_view2d_tot_rect(const SpreadsheetDrawer &drawer,
   for (const int column_index : IndexRange(drawer.tot_columns)) {
     column_width_sum += drawer.column_width(column_index);
   }
+  /* Adding some padding avoids issues where the right most column overlaps with other region
+   * elements like its border or the icon to open the sidebar. */
+  const int right_padding = UI_UNIT_X * 0.5f;
 
   UI_view2d_totRect_set(&region->v2d,
-                        column_width_sum + drawer.left_column_width,
+                        column_width_sum + drawer.left_column_width + right_padding,
                         row_amount * drawer.row_height + drawer.top_row_height);
+}
+
+static void draw_column_reorder_source(const uint pos,
+                                       const ARegion &region,
+                                       const SpaceSpreadsheet &sspreadsheet,
+                                       const int scroll_offset_x)
+{
+  const ReorderColumnVisualizationData &data =
+      *sspreadsheet.runtime->reorder_column_visualization_data;
+
+  rctf rect;
+  rect.xmin = data.column_to_move->runtime->left_x - scroll_offset_x;
+  rect.xmax = data.column_to_move->runtime->right_x - scroll_offset_x;
+  rect.ymin = 0;
+  rect.ymax = region.winy;
+
+  immUniformThemeColorShadeAlpha(TH_BACK, -20, -128);
+  GPU_blend(GPU_BLEND_ALPHA);
+  immRectf(pos, rect.xmin, rect.ymin, rect.xmax, rect.ymax);
+  GPU_blend(GPU_BLEND_NONE);
+}
+
+static void draw_column_reorder_destination(const ARegion &region,
+                                            const SpaceSpreadsheet &sspreadsheet,
+                                            const SpreadsheetDrawer &drawer,
+                                            const int scroll_offset_x)
+{
+  const ReorderColumnVisualizationData &data =
+      *sspreadsheet.runtime->reorder_column_visualization_data;
+
+  {
+    /* Draw column that is moved. */
+    ColorTheme4f color;
+    UI_GetThemeColorShade4fv(TH_BACK, -20, color);
+    color.a = 0.3f;
+    rctf offset_column_rect;
+    offset_column_rect.xmin = data.column_to_move->runtime->left_x + data.current_offset_x_px -
+                              scroll_offset_x;
+    offset_column_rect.xmax = offset_column_rect.xmin +
+                              data.column_to_move->width * SPREADSHEET_WIDTH_UNIT;
+    offset_column_rect.ymin = 0;
+    offset_column_rect.ymax = region.winy;
+    UI_draw_roundbox_4fv(&offset_column_rect, true, 0, color);
+  }
+  {
+    /* Draw indicator where the column is inserted. */
+    ColorTheme4f color;
+    UI_GetThemeColorShade4fv(TH_TEXT, 20, color);
+    color.a = 0.6f;
+    const SpreadsheetColumn *first_column = static_cast<const SpreadsheetColumn *>(
+        sspreadsheet.columns.first);
+    const int insert_column_x = data.new_prev_column ? data.new_prev_column->runtime->right_x :
+                                                       first_column->runtime->left_x;
+    const int width = UI_UNIT_X * 0.1f;
+    rctf insert_rect;
+    insert_rect.xmin = insert_column_x - width / 2 - scroll_offset_x;
+    insert_rect.xmax = insert_rect.xmin + width;
+    insert_rect.ymin = 0;
+    insert_rect.ymax = region.winy;
+
+    /* Don't draw on top of index column. */
+    const int left_bound = drawer.left_column_width - width / 2;
+    insert_rect.xmin = std::max<float>(insert_rect.xmin, left_bound);
+    insert_rect.xmax = std::max<float>(insert_rect.xmax, left_bound);
+
+    UI_draw_roundbox_4fv(&insert_rect, true, 0, color);
+  }
 }
 
 void draw_spreadsheet_in_region(const bContext *C,
                                 ARegion *region,
                                 const SpreadsheetDrawer &drawer)
 {
+  SpaceSpreadsheet &sspreadsheet = *CTX_wm_space_spreadsheet(C);
+
   update_view2d_tot_rect(drawer, region, drawer.tot_rows);
 
   UI_ThemeClearColor(TH_BACK);
@@ -273,14 +350,18 @@ void draw_spreadsheet_in_region(const bContext *C,
   View2D *v2d = &region->v2d;
   const int scroll_offset_y = v2d->cur.ymax;
   const int scroll_offset_x = v2d->cur.xmin;
+  bool is_reordering_columns = sspreadsheet.runtime->reorder_column_visualization_data.has_value();
 
   GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_I32, 2, GPU_FETCH_INT_TO_FLOAT);
+  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
   draw_index_column_background(pos, region, drawer);
   draw_alternating_row_overlay(pos, scroll_offset_y, region, drawer);
   draw_top_row_background(pos, region, drawer);
+  if (is_reordering_columns) {
+    draw_column_reorder_source(pos, *region, sspreadsheet, scroll_offset_x);
+  }
   draw_separator_lines(pos, scroll_offset_x, region, drawer);
 
   immUnbindProgram();
@@ -288,6 +369,10 @@ void draw_spreadsheet_in_region(const bContext *C,
   draw_left_column_content(scroll_offset_y, C, region, drawer);
   draw_top_row_content(C, region, drawer, scroll_offset_x);
   draw_cell_contents(C, region, drawer, scroll_offset_x, scroll_offset_y);
+
+  if (is_reordering_columns) {
+    draw_column_reorder_destination(*region, sspreadsheet, drawer, scroll_offset_x);
+  }
 
   rcti scroller_mask;
   BLI_rcti_init(&scroller_mask,
