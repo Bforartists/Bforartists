@@ -57,7 +57,9 @@
 
 #include "BLO_read_write.hh"
 
-#include "image_cache.hh"
+#include "cache/final_image_cache.hh"
+#include "cache/intra_frame_cache.hh"
+#include "cache/source_image_cache.hh"
 #include "prefetch.hh"
 #include "sequencer.hh"
 #include "utils.hh"
@@ -277,7 +279,6 @@ Editing *editing_ensure(Scene *scene)
 
     ed = scene->ed = MEM_callocN<Editing>("addseq");
     ed->seqbasep = &ed->seqbase;
-    ed->cache = nullptr;
     ed->cache_flag = (SEQ_CACHE_STORE_FINAL_OUT | SEQ_CACHE_STORE_RAW);
     ed->show_missing_media_flag = SEQ_EDIT_SHOW_MISSING_MEDIA;
     ed->displayed_channels = &ed->channels;
@@ -296,7 +297,6 @@ void editing_free(Scene *scene, const bool do_id_user)
   }
 
   seq_prefetch_free(scene);
-  seq_cache_destruct(scene);
 
   /* handle cache freeing above */
   LISTBASE_FOREACH_MUTABLE (Strip *, strip, &ed->seqbase) {
@@ -307,6 +307,9 @@ void editing_free(Scene *scene, const bool do_id_user)
   strip_lookup_free(ed);
   blender::seq::media_presence_free(scene);
   blender::seq::thumbnail_cache_destroy(scene);
+  blender::seq::intra_frame_cache_destroy(scene);
+  blender::seq::source_image_cache_destroy(scene);
+  blender::seq::final_image_cache_destroy(scene);
   channels_free(&ed->channels);
 
   MEM_freeN(ed);
@@ -317,8 +320,8 @@ void editing_free(Scene *scene, const bool do_id_user)
 static void seq_new_fix_links_recursive(Strip *strip, blender::Map<Strip *, Strip *> strip_map)
 {
   if (strip->type & STRIP_TYPE_EFFECT) {
-    strip->seq1 = strip_map.lookup_default(strip->seq1, strip->seq1);
-    strip->seq2 = strip_map.lookup_default(strip->seq2, strip->seq2);
+    strip->input1 = strip_map.lookup_default(strip->input1, strip->input1);
+    strip->input2 = strip_map.lookup_default(strip->input2, strip->input2);
   }
 
   LISTBASE_FOREACH (StripModifierData *, smd, &strip->modifiers) {
@@ -828,8 +831,8 @@ static bool strip_read_data_cb(Strip *strip, void *user_data)
   /* Do as early as possible, so that other parts of reading can rely on valid session UID. */
   relations_session_uid_generate(strip);
 
-  BLO_read_struct(reader, Strip, &strip->seq1);
-  BLO_read_struct(reader, Strip, &strip->seq2);
+  BLO_read_struct(reader, Strip, &strip->input1);
+  BLO_read_struct(reader, Strip, &strip->input2);
 
   if (strip->effectdata) {
     switch (strip->type) {

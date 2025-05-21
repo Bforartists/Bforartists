@@ -3524,6 +3524,7 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
         layout.use_property_decorate = False
 
         cache_settings = context.space_data.cache_overlay
+        ed = context.scene.sequence_editor
         layout.active = cache_settings.show_cache
 
         col = layout.column(align=True)
@@ -3542,6 +3543,31 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
             col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
             col.prop(cache_settings, "show_cache_composite", text="Composite")
 
+        show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
+        if show_cache_size:
+            cache_raw_size = ed.cache_raw_size
+            cache_final_size = ed.cache_final_size
+
+            col = layout.box()
+            col = col.column(align=True)
+
+            split = col.split(factor=0.4, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="Current Cache Size")
+            split.alignment = 'LEFT'
+            split.label(text="{:d} MB".format(cache_raw_size + cache_final_size), translate=False)
+
+            split = col.split(factor=0.4, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="Raw")
+            split.alignment = 'LEFT'
+            split.label(text="{:d} MB".format(cache_raw_size), translate=False)
+
+            split = col.split(factor=0.4, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="Final")
+            split.alignment = 'LEFT'
+            split.label(text="{:d} MB".format(cache_final_size), translate=False)
 
 
 class SEQUENCER_PT_proxy_settings(SequencerButtonsPanel, Panel):
@@ -3668,6 +3694,31 @@ class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
         col.prop(strip, "use_cache_preprocessed", text="Preprocessed")
         col.prop(strip, "use_cache_composite")
 
+        show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
+        if show_cache_size:
+            cache_raw_size = ed.cache_raw_size
+            cache_final_size = ed.cache_final_size
+
+            col = layout.box()
+            col = col.column(align=True)
+
+            split = col.split(factor=0.4, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="Current Cache Size")
+            split.alignment = 'LEFT'
+            split.label(text="{:d} MB".format(cache_raw_size + cache_final_size), translate=False)
+
+            split = col.split(factor=0.4, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="Raw")
+            split.alignment = 'LEFT'
+            split.label(text="{:d} MB".format(cache_raw_size), translate=False)
+
+            split = col.split(factor=0.4, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="Final")
+            split.alignment = 'LEFT'
+            split.label(text="{:d} MB".format(cache_final_size), translate=False)
 
 class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
     bl_label = "Scene Strip Display"
@@ -4334,7 +4385,6 @@ classes = (
     SEQUENCER_PT_modifiers,
     SEQUENCER_PT_cache_settings,
     SEQUENCER_PT_cache_view_settings,
-    SEQUENCER_PT_strip_cache,
     SEQUENCER_PT_proxy_settings,
     SEQUENCER_PT_strip_proxy,
     SEQUENCER_PT_custom_props,

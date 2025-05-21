@@ -146,7 +146,7 @@ void LATTICE_OT_select_random(wmOperatorType *ot)
   ot->description = "Randomly select UVW control points";
   ot->idname = "LATTICE_OT_select_random";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = lattice_select_random_exec;
   ot->poll = ED_operator_editlattice;
 
@@ -232,7 +232,7 @@ void LATTICE_OT_select_mirror(wmOperatorType *ot)
   ot->description = "Select mirrored lattice points";
   ot->idname = "LATTICE_OT_select_mirror";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = lattice_select_mirror_exec;
   ot->poll = ED_operator_editlattice;
 
@@ -332,7 +332,7 @@ void LATTICE_OT_select_more(wmOperatorType *ot)
   ot->description = "Select vertex directly linked to already selected ones";
   ot->idname = "LATTICE_OT_select_more";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = lattice_select_more_exec;
   ot->poll = ED_operator_editlattice;
 
@@ -347,7 +347,7 @@ void LATTICE_OT_select_less(wmOperatorType *ot)
   ot->description = "Deselect vertices at the boundary of each selection region";
   ot->idname = "LATTICE_OT_select_less";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = lattice_select_less_exec;
   ot->poll = ED_operator_editlattice;
 
@@ -478,7 +478,7 @@ void LATTICE_OT_select_all(wmOperatorType *ot)
   ot->description = "Change selection of all UVW control points";
   ot->idname = "LATTICE_OT_select_all";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = lattice_select_all_exec;
   ot->get_description = lattice_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editlattice;
@@ -548,7 +548,7 @@ void LATTICE_OT_select_ungrouped(wmOperatorType *ot)
   ot->idname = "LATTICE_OT_select_ungrouped";
   ot->description = "Select vertices without a group";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = lattice_select_ungrouped_exec;
   ot->poll = ED_operator_editlattice;
 

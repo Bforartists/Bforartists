@@ -7,6 +7,7 @@
 #include "BLI_string_utf8.h"
 
 #include "NOD_geo_closure.hh"
+#include "NOD_socket_items_blend.hh"
 #include "NOD_socket_items_ops.hh"
 #include "NOD_socket_items_ui.hh"
 #include "NOD_socket_search_link.hh"
@@ -31,10 +32,10 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *current_no
   if (!zone) {
     return;
   }
-  if (!zone->output_node) {
+  if (!zone->output_node_id) {
     return;
   }
-  bNode &output_node = const_cast<bNode &>(*zone->output_node);
+  bNode &output_node = const_cast<bNode &>(*zone->output_node());
 
   if (current_node->type_legacy == GEO_NODE_CLOSURE_INPUT) {
     if (uiLayout *panel = layout->panel(C, "input_items", false, TIP_("Input Items"))) {
@@ -274,6 +275,18 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   });
 }
 
+static void node_blend_write(const bNodeTree & /*tree*/, const bNode &node, BlendWriter &writer)
+{
+  socket_items::blend_write<ClosureInputItemsAccessor>(&writer, node);
+  socket_items::blend_write<ClosureOutputItemsAccessor>(&writer, node);
+}
+
+static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &reader)
+{
+  socket_items::blend_read_data<ClosureInputItemsAccessor>(&reader, node);
+  socket_items::blend_read_data<ClosureOutputItemsAccessor>(&reader, node);
+}
+
 static void node_register()
 {
   static blender::bke::bNodeType ntype;
@@ -288,6 +301,8 @@ static void node_register()
   ntype.gather_link_search_ops = node_gather_link_searches;
   ntype.insert_link = node_insert_link;
   ntype.draw_buttons_ex = node_layout_ex;
+  ntype.blend_write_storage_content = node_blend_write;
+  ntype.blend_data_read_storage_content = node_blend_read;
   bke::node_type_storage(ntype, "NodeGeometryClosureOutput", node_free_storage, node_copy_storage);
   blender::bke::node_register_type(ntype);
 }
@@ -300,8 +315,6 @@ NOD_REGISTER_NODE(node_register)
 namespace blender::nodes {
 
 StructRNA *ClosureInputItemsAccessor::item_srna = &RNA_NodeGeometryClosureInputItem;
-int ClosureInputItemsAccessor::node_type = GEO_NODE_CLOSURE_OUTPUT;
-int ClosureInputItemsAccessor::item_dna_type = SDNA_TYPE_FROM_STRUCT(NodeGeometryClosureInputItem);
 
 void ClosureInputItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {
@@ -314,9 +327,6 @@ void ClosureInputItemsAccessor::blend_read_data_item(BlendDataReader *reader, It
 }
 
 StructRNA *ClosureOutputItemsAccessor::item_srna = &RNA_NodeGeometryClosureOutputItem;
-int ClosureOutputItemsAccessor::node_type = GEO_NODE_CLOSURE_OUTPUT;
-int ClosureOutputItemsAccessor::item_dna_type = SDNA_TYPE_FROM_STRUCT(
-    NodeGeometryClosureOutputItem);
 
 void ClosureOutputItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {

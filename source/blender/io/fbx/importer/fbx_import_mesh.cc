@@ -7,6 +7,7 @@
  */
 
 #include "BKE_attribute.hh"
+#include "BKE_deform.hh"
 #include "BKE_key.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_material.hh"
@@ -14,13 +15,13 @@
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
 #include "BKE_object_deform.h"
-#include "BKE_object_types.hh"
 
 #include "BLI_color.hh"
 #include "BLI_listbase.h"
 #include "BLI_ordered_edge.hh"
 #include "BLI_string.h"
 #include "BLI_task.hh"
+#include "BLI_vector_set.hh"
 
 #include "BLT_translation.hh"
 
@@ -34,15 +35,12 @@
 
 namespace blender::io::fbx {
 
-static const ufbx_skin_deformer *get_skin_from_mesh(const ufbx_mesh *mesh)
+static constexpr const char *temp_custom_normals_name = "fbx_temp_custom_normals";
+
+static bool is_skin_deformer_usable(const ufbx_mesh *mesh, const ufbx_skin_deformer *skin)
 {
-  if (mesh->skin_deformers.count > 0) {
-    const ufbx_skin_deformer *skin = mesh->skin_deformers[0];
-    if (skin != nullptr && mesh->num_vertices > 0 && skin->vertices.count == mesh->num_vertices) {
-      return skin;
-    }
-  }
-  return nullptr;
+  return mesh != nullptr && skin != nullptr && skin->clusters.count > 0 &&
+         mesh->num_vertices > 0 && skin->vertices.count == mesh->num_vertices;
 }
 
 static void import_vertex_positions(const ufbx_mesh *fmesh, Mesh *mesh)
@@ -253,48 +251,85 @@ static void import_colors(const ufbx_mesh *fmesh,
   }
 }
 
-static void import_normals(const ufbx_mesh *fmesh, Mesh *mesh)
+static bool import_normals_into_temp_attribute(const ufbx_mesh *fmesh,
+                                               Mesh *mesh,
+                                               bke::MutableAttributeAccessor &attributes)
 {
-  if (fmesh->vertex_normal.exists) {
-    BLI_assert(fmesh->vertex_normal.indices.count == mesh->corners_num);
-    Array<float3> normals(mesh->corners_num);
-    for (int i = 0; i < mesh->corners_num; i++) {
-      int val_idx = fmesh->vertex_normal.indices[i];
-      const ufbx_vec3 &normal = fmesh->vertex_normal.values[val_idx];
-      normals[i] = float3(normal.x, normal.y, normal.z);
-    }
-    bke::mesh_set_custom_normals(*mesh, normals);
+  if (!fmesh->vertex_normal.exists) {
+    return false;
   }
+  bke::SpanAttributeWriter<float3> normals = attributes.lookup_or_add_for_write_only_span<float3>(
+      temp_custom_normals_name, bke::AttrDomain::Corner);
+  BLI_assert(fmesh->vertex_normal.indices.count == mesh->corners_num);
+  BLI_assert(fmesh->vertex_normal.indices.count == normals.span.size());
+  for (int i = 0; i < mesh->corners_num; i++) {
+    int val_idx = fmesh->vertex_normal.indices[i];
+    const ufbx_vec3 &normal = fmesh->vertex_normal.values[val_idx];
+    normals.span[i] = float3(normal.x, normal.y, normal.z);
+  }
+  normals.finish();
+  return true;
 }
 
-static void import_skin_vertex_groups(const ufbx_mesh *fmesh,
-                                      const ufbx_skin_deformer *skin,
+static VectorSet<std::string> get_skin_bone_name_set(const FbxElementMapping &mapping,
+                                                     const ufbx_mesh *fmesh)
+{
+  VectorSet<std::string> name_set;
+  for (const ufbx_skin_deformer *skin : fmesh->skin_deformers) {
+    if (!is_skin_deformer_usable(fmesh, skin)) {
+      continue;
+    }
+
+    for (const ufbx_skin_cluster *cluster : skin->clusters) {
+      if (cluster->num_weights == 0) {
+        continue;
+      }
+
+      std::string bone_name = mapping.node_to_name.lookup_default(cluster->bone_node, "");
+      name_set.add(bone_name);
+    }
+  }
+  return name_set;
+}
+
+static void import_skin_vertex_groups(const FbxElementMapping &mapping,
+                                      const ufbx_mesh *fmesh,
                                       Mesh *mesh)
 {
-  /* We need to build mapping from cluster indices to non-empty
-   * cluster indices. */
-  Vector<int> skin_cluster_to_nonempty_cluster_index(skin->clusters.count, -1);
-  int cluster_counter = 0;
-  for (int i = 0; i < skin->clusters.count; i++) {
-    if (skin->clusters[i]->num_weights != 0) {
-      skin_cluster_to_nonempty_cluster_index[i] = cluster_counter;
-      cluster_counter++;
-    }
+  if (fmesh->skin_deformers.count == 0) {
+    return;
+  }
+
+  /* A single mesh can be skinned by several armatures, so we need to build bone (vertex group)
+   * name set, taking all skin deformers into account. */
+  VectorSet<std::string> bone_set = get_skin_bone_name_set(mapping, fmesh);
+  if (bone_set.is_empty()) {
+    return;
   }
 
   MutableSpan<MDeformVert> dverts = mesh->deform_verts_for_write();
-  for (int i = 0; i < fmesh->num_vertices; i++) {
-    const ufbx_skin_vertex &fvertex = skin->vertices[i];
-    int num_weights = fvertex.num_weights;
-    if (num_weights > 0) {
-      dverts[i].dw = MEM_malloc_arrayN<MDeformWeight>(num_weights, __func__);
-      dverts[i].totweight = num_weights;
-      for (int j = 0; j < num_weights; j++) {
-        const ufbx_skin_weight &fweight = skin->weights[fvertex.weight_begin + j];
-        const int bone_index = skin_cluster_to_nonempty_cluster_index[fweight.cluster_index];
-        const bool valid = bone_index >= 0;
-        dverts[i].dw[j].def_nr = valid ? bone_index : 0;
-        dverts[i].dw[j].weight = valid ? fweight.weight : 0.0f;
+
+  for (const ufbx_skin_deformer *skin : fmesh->skin_deformers) {
+    if (!is_skin_deformer_usable(fmesh, skin)) {
+      continue;
+    }
+
+    for (const ufbx_skin_cluster *cluster : skin->clusters) {
+      if (cluster->num_weights == 0) {
+        continue;
+      }
+      std::string bone_name = mapping.node_to_name.lookup_default(cluster->bone_node, "");
+      const int group_index = bone_set.index_of_try(bone_name);
+      if (group_index < 0) {
+        continue;
+      }
+
+      for (int i = 0; i < cluster->num_weights; i++) {
+        const int vertex = cluster->vertices[i];
+        if (vertex < dverts.size()) {
+          MDeformWeight *dw = BKE_defvert_ensure_index(&dverts[vertex], group_index);
+          dw->weight = cluster->weights[i];
+        }
       }
     }
   }
@@ -332,11 +367,73 @@ static bool import_blend_shapes(Main &bmain,
         const ufbx_vec3 &delta = fchan->target_shape->position_offsets[i];
         kb_data[idx] += float3(delta.x, delta.y, delta.z);
       }
-
       mapping.el_to_shape_key.add(&fchan->element, mesh_key);
     }
   }
   return mesh_key != nullptr;
+}
+
+/* Handle Blender-specific "FullWeights" that for each blend shape also create
+ * a weighted vertex group for itself. */
+static void import_blend_shape_full_weights(const FbxElementMapping &mapping,
+                                            const ufbx_mesh *fmesh,
+                                            Mesh *mesh,
+                                            Object *obj)
+{
+  for (const ufbx_blend_deformer *fdeformer : fmesh->blend_deformers) {
+    for (const ufbx_blend_channel *fchan : fdeformer->channels) {
+      Key *key = mapping.el_to_shape_key.lookup_default(&fchan->element, nullptr);
+      if (fchan->target_shape == nullptr || key == nullptr) {
+        continue;
+      }
+      if (fchan->target_shape->offset_weights.count != fchan->target_shape->num_offsets) {
+        continue;
+      }
+
+      KeyBlock *kb = BKE_keyblock_find_name(key, fchan->target_shape->name.data);
+      if (kb == nullptr) {
+        continue;
+      }
+
+      /* Ignore cases where all weights are 1.0 (group has no effect),
+       * and cases where any weights are outside of 0..1 range (apparently some files have
+       * invalid negative weights and should be ignored). */
+      bool all_one = true;
+      bool all_unorm = true;
+      for (ufbx_real w : fchan->target_shape->offset_weights) {
+        if (w != 1.0) {
+          all_one = false;
+        }
+        if (w < 0.0 || w > 1.0) {
+          all_unorm = false;
+        }
+      }
+      if (all_one || !all_unorm) {
+        continue;
+      }
+
+      int group_index = BKE_defgroup_name_index(&mesh->vertex_group_names, kb->name);
+      if (group_index < 0) {
+        BKE_object_defgroup_add_name(obj, kb->name);
+        group_index = BKE_defgroup_name_index(&mesh->vertex_group_names, kb->name);
+        if (group_index < 0) {
+          continue;
+        }
+      }
+
+      MutableSpan<MDeformVert> dverts = mesh->deform_verts_for_write();
+      for (int i = 0; i < fchan->target_shape->num_offsets; i++) {
+        const int idx = fchan->target_shape->offset_vertices[i];
+        if (idx >= 0 && idx < dverts.size()) {
+          const float w = fchan->target_shape->offset_weights[i];
+          MDeformWeight *dw = BKE_defvert_ensure_index(&dverts[idx], group_index);
+          dw->weight = w;
+        }
+      }
+
+      STRNCPY(kb->vgroup, kb->name);
+    }
+  }
 }
 
 void import_meshes(Main &bmain,
@@ -368,13 +465,14 @@ void import_meshes(Main &bmain,
     if (params.vertex_colors != eFBXVertexColorMode::None) {
       import_colors(fmesh, mesh, attributes, attr_owner, params.vertex_colors);
     }
+    bool has_custom_normals = false;
     if (params.use_custom_normals) {
-      import_normals(fmesh, mesh);
+      /* Mesh validation below can alter the mesh, so we first write custom normals
+       * into a temporary custom corner domain attribute, and then re-apply that
+       * data as custom normals after the validation. */
+      has_custom_normals = import_normals_into_temp_attribute(fmesh, mesh, attributes);
     }
-    const ufbx_skin_deformer *skin = get_skin_from_mesh(fmesh);
-    if (skin != nullptr) {
-      import_skin_vertex_groups(fmesh, skin, mesh);
-    }
+    import_skin_vertex_groups(mapping, fmesh, mesh);
 
     /* Validate if needed. */
     if (params.validate_meshes) {
@@ -384,6 +482,17 @@ void import_meshes(Main &bmain,
 #endif
       BKE_mesh_validate(mesh, verbose_validate, false);
     }
+
+    if (has_custom_normals) {
+      /* Actually set custom normals after the validation. */
+      bke::SpanAttributeWriter<float3> normals =
+          attributes.lookup_or_add_for_write_only_span<float3>(temp_custom_normals_name,
+                                                               bke::AttrDomain::Corner);
+      bke::mesh_set_custom_normals(*mesh, normals.span);
+      normals.finish();
+      attributes.remove(temp_custom_normals_name);
+    }
+
     meshes[index] = mesh;
   });
 
@@ -396,7 +505,6 @@ void import_meshes(Main &bmain,
     }
     const ufbx_mesh *fmesh = fbx.meshes[index];
     BLI_assert(fmesh != nullptr);
-    const ufbx_skin_deformer *skin = get_skin_from_mesh(fmesh);
 
     Mesh *mesh_main = static_cast<Mesh *>(
         BKE_object_obdata_add_from_type(&bmain, OB_MESH, get_fbx_name(fmesh->name, "Mesh")));
@@ -424,40 +532,66 @@ void import_meshes(Main &bmain,
       bool matrix_already_set = false;
 
       /* Skinned mesh. */
-      if (skin != nullptr && skin->clusters.count > 0) {
-        Object *parent_to_arm = nullptr;
+      if (fmesh->skin_deformers.count > 0) {
         /* Add vertex groups to the object. */
-        for (const ufbx_skin_cluster *fcluster : skin->clusters) {
-          if (fcluster->num_weights == 0) { /* Do not add groups for empty clusters. */
+        VectorSet<std::string> bone_set = get_skin_bone_name_set(mapping, fmesh);
+        for (const std::string &name : bone_set) {
+          BKE_object_defgroup_add_name(obj, name.c_str());
+        }
+
+        /* Add armature modifiers for each skin deformer. */
+        for (const ufbx_skin_deformer *skin : fmesh->skin_deformers) {
+          if (!is_skin_deformer_usable(fmesh, skin)) {
             continue;
           }
-          if (parent_to_arm == nullptr) {
-            parent_to_arm = mapping.bone_to_armature.lookup_default(fcluster->bone_node, nullptr);
+          Object *arm_obj = nullptr;
+          for (const ufbx_skin_cluster *cluster : skin->clusters) {
+            if (cluster->num_weights == 0) {
+              continue;
+            }
+            arm_obj = mapping.bone_to_armature.lookup_default(cluster->bone_node, nullptr);
+            if (arm_obj != nullptr) {
+              break;
+            }
           }
-          std::string bone_name = mapping.node_to_name.lookup_default(fcluster->bone_node, "");
-          BKE_object_defgroup_add_name(obj, bone_name.c_str());
-        }
+          /* Add armature modifier. */
+          if (arm_obj != nullptr) {
+            ModifierData *md = BKE_modifier_new(eModifierType_Armature);
+            STRNCPY(md->name, BKE_id_name(arm_obj->id));
+            BLI_addtail(&obj->modifiers, md);
+            BKE_modifiers_persistent_uid_init(*obj, *md);
+            ArmatureModifierData *ad = reinterpret_cast<ArmatureModifierData *>(md);
+            ad->object = arm_obj;
 
-        /* Add armature modifier. */
-        if (parent_to_arm) {
-          ModifierData *md = BKE_modifier_new(eModifierType_Armature);
-          STRNCPY(md->name, BKE_id_name(parent_to_arm->id));
-          BLI_addtail(&obj->modifiers, md);
-          BKE_modifiers_persistent_uid_init(*obj, *md);
-          ArmatureModifierData *ad = reinterpret_cast<ArmatureModifierData *>(md);
-          ad->object = parent_to_arm;
-          obj->parent = parent_to_arm;
+            if (!matrix_already_set) {
+              matrix_already_set = true;
+              obj->parent = arm_obj;
 
-          /* We are setting mesh parent to the armature, so set the matrix that is
-           * armature-local. */
-          ufbx_matrix arm_to_world;
-          m44_to_matrix(parent_to_arm->runtime->object_to_world.ptr(), arm_to_world);
-          ufbx_matrix world_to_arm = ufbx_matrix_invert(&arm_to_world);
-          ufbx_matrix mtx = ufbx_matrix_mul(&node->node_to_world, &node->geometry_to_node);
-          mtx = ufbx_matrix_mul(&world_to_arm, &mtx);
-          ufbx_matrix_to_obj(mtx, obj);
-          matrix_already_set = true;
+              /* We are setting mesh parent to the armature, so set the matrix that is
+               * armature-local. Note that the matrix needs to be relative to the FBX
+               * node matrix (not the root bone pose matrix). */
+              ufbx_matrix world_to_arm = mapping.armature_world_to_arm_node_matrix.lookup_default(
+                  arm_obj, ufbx_identity_matrix);
+              ufbx_matrix world_to_arm_pose = mapping.armature_world_to_arm_pose_matrix
+                                                  .lookup_default(arm_obj, ufbx_identity_matrix);
+
+              ufbx_matrix mtx = ufbx_matrix_mul(&world_to_arm, &node->geometry_to_world);
+              ufbx_matrix_to_obj(mtx, obj);
+
+              /* Setup parent inverse matrix of the mesh, to account for the mesh possibly being in
+               * different bind pose than what the node is at. */
+              ufbx_matrix mtx_inv = ufbx_matrix_invert(&mtx);
+              ufbx_matrix mtx_world = mapping.get_node_bind_matrix(node);
+              ufbx_matrix mtx_parent_inverse = ufbx_matrix_mul(&mtx_world, &mtx_inv);
+              mtx_parent_inverse = ufbx_matrix_mul(&world_to_arm_pose, &mtx_parent_inverse);
+              matrix_to_m44(mtx_parent_inverse, obj->parentinv);
+            }
+          }
         }
+      }
+
+      if (any_shapes) {
+        import_blend_shape_full_weights(mapping, fmesh, mesh, obj);
       }
 
       /* Assign materials. */
@@ -510,6 +644,7 @@ void import_meshes(Main &bmain,
         node_matrix_to_obj(node, obj, mapping);
       }
       mapping.el_to_object.add(&node->element, obj);
+      mapping.imported_objects.add(obj);
     }
   }
 }

@@ -531,7 +531,7 @@ void OBJECT_OT_transfer_mode(wmOperatorType *ot)
       "menu operator calls an object picker\nThe hotkey switches directly to the object under the "
       "mouse";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = object_transfer_mode_invoke;
   ot->poll = object_transfer_mode_poll;
 

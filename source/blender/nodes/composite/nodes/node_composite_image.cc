@@ -533,7 +533,7 @@ static NodeOperation *get_compositor_operation(Context &context, DNode node)
 
 }  // namespace blender::nodes::node_composite_image_cc
 
-void register_node_type_cmp_image()
+static void register_node_type_cmp_image()
 {
   namespace file_ns = blender::nodes::node_composite_image_cc;
 
@@ -554,6 +554,7 @@ void register_node_type_cmp_image()
 
   blender::bke::node_register_type(ntype);
 }
+NOD_REGISTER_NODE(register_node_type_cmp_image)
 
 /* **************** RENDER RESULT ******************** */
 
@@ -680,15 +681,8 @@ static void node_composit_buts_viewlayers(uiLayout *layout, bContext *C, Pointer
   scn_ptr = RNA_pointer_get(ptr, "scene");
   RNA_string_get(&scn_ptr, "name", scene_name);
 
-  PointerRNA op_ptr;
-  uiItemFullO(row,
-              "RENDER_OT_render",
-              "",
-              ICON_RENDER_STILL,
-              nullptr,
-              WM_OP_INVOKE_DEFAULT,
-              UI_ITEM_NONE,
-              &op_ptr);
+  PointerRNA op_ptr = row->op(
+      "RENDER_OT_render", "", ICON_RENDER_STILL, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
   RNA_string_set(&op_ptr, "layer", layer_name);
   RNA_string_set(&op_ptr, "scene", scene_name);
 }
@@ -856,7 +850,7 @@ static NodeOperation *get_compositor_operation(Context &context, DNode node)
 
 }  // namespace blender::nodes::node_composite_render_layer_cc
 
-void register_node_type_cmp_rlayers()
+static void register_node_type_cmp_rlayers()
 {
   namespace file_ns = blender::nodes::node_composite_render_layer_cc;
 
@@ -885,3 +879,4 @@ void register_node_type_cmp_rlayers()
 
   blender::bke::node_register_type(ntype);
 }
+NOD_REGISTER_NODE(register_node_type_cmp_rlayers)

@@ -71,7 +71,9 @@ static Set<StringRef> get_builtin_menus(const int tree_type)
       return {"Attribute",
               "Input",
               "Input/Constant",
+              "Input/Gizmo",
               "Input/Group",
+              "Input/Import",
               "Input/Scene",
               "Output",
               "Geometry",
@@ -86,6 +88,10 @@ static Set<StringRef> get_builtin_menus(const int tree_type)
               "Curve/Operations",
               "Curve/Primitives",
               "Curve/Topology",
+              "Grease Pencil",
+              "Grease Pencil/Read",
+              "Grease Pencil/Operations",
+              "Grease Pencil/Write",
               "Instances",
               "Mesh",
               "Mesh/Read",
@@ -112,8 +118,7 @@ static Set<StringRef> get_builtin_menus(const int tree_type)
               "Utilities/Rotation",
               "Utilities/Deprecated",
               "Group",
-              "Layout",
-              "Unassigned"};
+              "Layout"};
     case NTREE_COMPOSIT:
       return {"Input",
               "Input/Constant",
@@ -128,6 +133,7 @@ static Set<StringRef> get_builtin_menus(const int tree_type)
               "Mask",
               "Tracking",
               "Transform",
+              "Texture",
               "Utilities",
               "Vector",
               "Group",
@@ -181,18 +187,14 @@ static void node_add_catalog_assets_draw(const bContext *C, Menu *menu)
 
   for (const asset_system::AssetRepresentation *asset : assets) {
     if (add_separator) {
-      uiItemS(layout);
+      layout->separator();
       add_separator = false;
     }
-    PointerRNA op_ptr;
-    uiItemFullO(layout,
-                "NODE_OT_add_group_asset",
-                IFACE_(asset->get_name()),
-                ICON_NODETREE, /*BFA - Icon*/
-                nullptr,
-                WM_OP_INVOKE_REGION_WIN,
-                UI_ITEM_NONE,
-                &op_ptr);
+    PointerRNA op_ptr = layout->op("NODE_OT_add_group_asset",
+                                   IFACE_(asset->get_name()),
+                                   ICON_NODETREE, /*BFA - Icon*/
+                                   WM_OP_INVOKE_REGION_WIN,
+                                   UI_ITEM_NONE);
     asset::operator_asset_reference_props_set(*asset, op_ptr);
   }
 
@@ -203,7 +205,7 @@ static void node_add_catalog_assets_draw(const bContext *C, Menu *menu)
       return;
     }
     if (add_separator) {
-      uiItemS(layout);
+      layout->separator();
       add_separator = false;
     }
     asset::draw_menu_for_catalog(item, "NODE_MT_node_add_catalog_assets", *layout);
@@ -224,15 +226,11 @@ static void node_add_unassigned_assets_draw(const bContext *C, Menu *menu)
   }
   asset::AssetItemTree &tree = *snode.runtime->assets_for_menu;
   for (const asset_system::AssetRepresentation *asset : tree.unassigned_assets) {
-    PointerRNA op_ptr;
-    uiItemFullO(menu->layout,
-                "NODE_OT_add_group_asset",
-                IFACE_(asset->get_name()),
-                ICON_NODETREE, /*BFA - Icon*/
-                nullptr,
-                WM_OP_INVOKE_REGION_WIN,
-                UI_ITEM_NONE,
-                &op_ptr);
+    PointerRNA op_ptr = menu->layout->op("NODE_OT_add_group_asset",
+                                         IFACE_(asset->get_name()),
+                                         ICON_NODETREE, /*BFA - Icon*/
+                                         WM_OP_INVOKE_REGION_WIN,
+                                         UI_ITEM_NONE);
     asset::operator_asset_reference_props_set(*asset, op_ptr);
   }
 }
@@ -256,7 +254,7 @@ static void add_root_catalogs_draw(const bContext *C, Menu *menu)
     return;
   }
 
-  uiItemS(layout);
+  layout->separator();
 
   if (!loading_finished) {
     layout->label(IFACE_("Loading Asset Libraries"), ICON_INFO); /*BFA - preserved from Blender, they removed this*/
@@ -271,9 +269,9 @@ static void add_root_catalogs_draw(const bContext *C, Menu *menu)
   });
 
   if (!tree.unassigned_assets.is_empty()) {
-    uiItemS(layout);
+    layout->separator();
     /* BFA - changed "Unassigned" to "Unassigned (Catalouge)" and changed icon to ICON_NONE */
-    uiItemM(layout, "NODE_MT_node_add_unassigned_assets", IFACE_("Unassigned (Catalogue)"), ICON_NONE);
+    layout->menu("NODE_MT_node_add_unassigned_assets", IFACE_("Unassigned (Catalogue)"), ICON_FILE_HIDDEN);
   }
 }
 
