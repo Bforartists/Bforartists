@@ -896,30 +896,8 @@ class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
     def draw_centered(self, context, layout):
         prefs = context.preferences
         system = prefs.system
-        # edit = prefs.edit
 
         layout.prop(system, "memory_cache_limit")
-
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-
-        split = flow.split()
-        col = split.column()
-        col.use_property_split = False
-        col.prop(system, "use_sequencer_disk_cache", text="Disk Cache")
-        col = split.column()
-        if system.use_sequencer_disk_cache:
-            col.label(icon='DISCLOSURE_TRI_DOWN')
-            row = flow.row()
-            row.separator()
-            row.prop(system, "sequencer_disk_cache_dir")
-            row = flow.row()
-            row.separator()
-            row.prop(system, "sequencer_disk_cache_size_limit")
-            row = flow.row()
-            row.separator()
-            row.prop(system, "sequencer_disk_cache_compression")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         layout.separator()
 
@@ -3015,7 +2993,6 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
     def draw(self, context):
         self._draw_items(
             context, (
-                ({"property": "use_sculpt_tools_tilt"}, ("blender/blender/issues/82877", "#82877")),
                 ({"property": "use_extended_asset_browser"},
                  ("blender/blender/projects/10", "Pipeline, Assets & IO Project Page")),
                 ({"property": "use_new_volume_nodes"}, ("blender/blender/issues/103248", "#103248")),

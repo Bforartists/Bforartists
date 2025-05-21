@@ -502,6 +502,7 @@ Context *VKBackend::context_alloc(void *ghost_window, void *ghost_context)
   BLI_assert(ghost_context != nullptr);
   if (!device.is_initialized()) {
     device.init(ghost_context);
+    device.extensions_get().log();
   }
 
   VKContext *context = new VKContext(ghost_window, ghost_context);
@@ -592,9 +593,23 @@ void VKBackend::render_end()
       device.orphaned_data.destroy_discarded_resources(device);
     }
   }
+
+  /* When performing animation render we want to release any discarded resources during rendering
+   * after each frame.
+   */
+  if (G.is_rendering && thread_data.rendering_depth == 0 && !BLI_thread_is_main()) {
+    device.orphaned_data.move_data(device.orphaned_data_render,
+                                   device.orphaned_data.timeline_ + 1);
+  }
 }
 
-void VKBackend::render_step(bool /*force_resource_release*/) {}
+void VKBackend::render_step(bool force_resource_release)
+{
+  if (force_resource_release) {
+    device.orphaned_data.move_data(device.orphaned_data_render,
+                                   device.orphaned_data.timeline_ + 1);
+  }
+}
 
 void VKBackend::capabilities_init(VKDevice &device)
 {
@@ -604,6 +619,7 @@ void VKBackend::capabilities_init(VKDevice &device)
   /* Reset all capabilities from previous context. */
   GCaps = {};
   GCaps.geometry_shader_support = true;
+  GCaps.clip_control_support = true;
   GCaps.stencil_export_support = device.supports_extension(
       VK_EXT_SHADER_STENCIL_EXPORT_EXTENSION_NAME);
   GCaps.shader_draw_parameters_support =

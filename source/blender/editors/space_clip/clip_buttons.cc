@@ -135,7 +135,7 @@ void uiTemplateMovieClip(uiLayout *layout,
     row = &split->row(true);
 
     row->prop(&clipptr, "filepath", UI_ITEM_NONE, "", ICON_NONE);
-    uiItemO(row, "", ICON_FILE_REFRESH, "clip.reload");
+    row->op("clip.reload", "", ICON_FILE_REFRESH);
 
     uiLayout *col = &layout->column(false);
     uiTemplateColorspaceSettings(col, &clipptr, "colorspace_settings");
@@ -529,8 +529,8 @@ void uiTemplateMarker(uiLayout *layout,
     row = &col->row(true);
 
     /* indent */
-    uiItemS(row);
-    uiItemS(row);
+    layout->separator();
+    layout->separator();
 
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
@@ -575,13 +575,13 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 
 	/*bfa */
-    uiItemS(col);
+    layout->separator();
     col->label(IFACE_("Offset"), ICON_NONE);
     row = &col->row(true);
 
     /* indent */
-    uiItemS(row);
-    uiItemS(row);
+    layout->separator();
+    layout->separator();
 
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
@@ -625,13 +625,13 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
 	/*bfa */
-    uiItemS(col);
+    layout->separator();
     col->label(IFACE_("Pattern Area"), ICON_NONE);
     row = &col->row(true);
 
     /* indent */
-    uiItemS(row);
-    uiItemS(row);
+    layout->separator();
+    layout->separator();
 
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, 2.);
@@ -676,13 +676,13 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 
 	/*bfa */
-    uiItemS(col);
+    layout->separator();
     col->label(IFACE_("Search Area"), ICON_NONE);
     row = &col->row(true);
 
     /* indent */
-    uiItemS(row);
-    uiItemS(row);
+    layout->separator();
+    layout->separator();
 
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, .75);
@@ -727,12 +727,12 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 
     /*bfa -  left aligned*/
-    uiItemS(col);
+    layout->separator();
     row = &col->row(true);
 
     /* indent */
-    uiItemS(row);
-    uiItemS(row);
+    layout->separator();
+    layout->separator();
 
     lcol = &row->column(true);
     uiLayoutSetUnitsX(lcol, 2.);

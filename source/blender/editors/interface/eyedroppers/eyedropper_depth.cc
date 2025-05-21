@@ -481,7 +481,7 @@ void UI_OT_eyedropper_depth(wmOperatorType *ot)
       "clickable!\nYou need to be with the mouse over the Focus Distance slider\nThen press the "
       "hotkey";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = depthdropper_invoke;
   ot->modal = depthdropper_modal;
   ot->cancel = depthdropper_cancel;

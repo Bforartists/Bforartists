@@ -328,7 +328,7 @@ static void nla_panel_animdata(const bContext *C, Panel *panel)
     row->label("", ICON_RIGHTARROW);                           /* expander */
     row->label(IFACE_("Animation Data"), ICON_ANIM_DATA);      /* animdata */
 
-    uiItemS(layout);
+    layout->separator();
   }
 
   /* Active Action Properties ------------------------------------- */
@@ -441,7 +441,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
      * - blend in/out can only be set when auto-blending is off.
      */
 
-    uiItemS(layout);
+    layout->separator();
 
     column = &layout->column(true);
     uiLayoutSetActive(column, RNA_boolean_get(&strip_ptr, "use_auto_blend") == false);
@@ -461,17 +461,17 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     column->label(IFACE_("Playback"), ICON_NONE); /* bfa - use label instead of heading */
 
     row = &column->row(true);
-    uiItemS(row); /* bfa - separator */
+    layout->separator();; /* bfa - separator */
     uiLayoutSetActive(row,
                       !(RNA_boolean_get(&strip_ptr, "use_animated_influence") ||
                         RNA_boolean_get(&strip_ptr, "use_animated_time")));
     /* bfa */
     row = &column->row(false);
-    uiItemS(row);
+    layout->separator();;
     row->prop(&strip_ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     row = &column->row(false);
-    uiItemS(row);
+    layout->separator();;
     row->prop(&strip_ptr, "use_animated_time_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     uiLayoutSetPropSep(layout, true);
@@ -533,7 +533,7 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
   row = &layout->row(false); /* bfa - align probs left nla action panel */
   uiLayoutSetPropSep(row, false);   /* bfa - use_property_split = False */
   row->prop(&strip_ptr, "use_sync_length", UI_ITEM_NONE, IFACE_("Sync Length"), ICON_NONE);
-  uiItemO(row, IFACE_("Now"), ICON_FILE_REFRESH, "NLA_OT_action_sync_length");
+  row->op("NLA_OT_action_sync_length", "Now", ICON_FILE_REFRESH, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE); /*BFA*/
   uiLayoutSetPropSep(row, true); /* bfa - use_property_split = True */
 
   /* action usage */
@@ -658,8 +658,8 @@ static void nla_panel_modifiers(const bContext *C, Panel *panel)
 
     /* copy/paste (as sub-row) */
     row = &row->row(true);
-    uiItemO(row, "", ICON_COPYDOWN, "NLA_OT_fmodifier_copy");
-    uiItemO(row, "", ICON_PASTEDOWN, "NLA_OT_fmodifier_paste");
+    row->op("NLA_OT_fmodifier_copy", "", ICON_COPYDOWN);
+    row->op("NLA_OT_fmodifier_paste", "", ICON_PASTEDOWN);
   }
 
   ANIM_fmodifier_panels(C, strip_ptr.owner_id, &strip->modifiers, nla_fmodifier_panel_id);

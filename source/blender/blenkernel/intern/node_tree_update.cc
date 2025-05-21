@@ -48,8 +48,8 @@ using namespace blender::nodes;
 
 /**
  * These flags are used by the `changed_flag` field in #bNodeTree, #bNode and #bNodeSocket.
- * This enum is not part of the public api. It should be used through the `BKE_ntree_update_tag_*`
- * api.
+ * This enum is not part of the public API. It should be used through the `BKE_ntree_update_tag_*`
+ * API.
  */
 enum eNodeTreeChangedFlag {
   NTREE_CHANGED_NOTHING = 0,
@@ -489,6 +489,7 @@ class NodeTreeMainUpdater {
     TreeUpdateResult result;
 
     ntree.runtime->link_errors.clear();
+    ntree.runtime->invalid_zone_output_node_ids.clear();
 
     if (this->update_panel_toggle_names(ntree)) {
       result.interface_changed = true;
@@ -670,13 +671,10 @@ class NodeTreeMainUpdater {
         if (!output_socket->is_available()) {
           continue;
         }
-        if (!output_socket->is_directly_linked()) {
-          continue;
-        }
         if (output_socket->flag & SOCK_NO_INTERNAL_LINK) {
           continue;
         }
-        const bNodeSocket *input_socket = this->find_internally_linked_input(output_socket);
+        const bNodeSocket *input_socket = this->find_internally_linked_input(ntree, output_socket);
         if (input_socket == nullptr) {
           continue;
         }
@@ -713,22 +711,17 @@ class NodeTreeMainUpdater {
     }
   }
 
-  const bNodeSocket *find_internally_linked_input(const bNodeSocket *output_socket)
+  const bNodeSocket *find_internally_linked_input(const bNodeTree &ntree,
+                                                  const bNodeSocket *output_socket)
   {
+    const bNode &node = output_socket->owner_node();
+    if (node.typeinfo->internally_linked_input) {
+      return node.typeinfo->internally_linked_input(ntree, node, *output_socket);
+    }
+
     const bNodeSocket *selected_socket = nullptr;
     int selected_priority = -1;
     bool selected_is_linked = false;
-    const bNode &node = output_socket->owner_node();
-    if (node.is_type("GeometryNodeBake")) {
-      /* Internal links should always map corresponding input and output sockets. */
-      return &node.input_by_identifier(output_socket->identifier);
-    }
-    if (node.is_type("GeometryNodeCaptureAttribute")) {
-      return &node.input_socket(output_socket->index());
-    }
-    if (node.is_type("GeometryNodeEvaluateClosure")) {
-      return nodes::evaluate_closure_node_internally_linked_input(*output_socket);
-    }
     for (const bNodeSocket *input_socket : node.input_sockets()) {
       if (!input_socket->is_available()) {
         continue;
@@ -911,25 +904,28 @@ class NodeTreeMainUpdater {
     for (bNode *node : ntree.toposort_right_to_left()) {
       const bool node_updated = this->should_update_individual_node(ntree, *node);
 
+      Vector<bNodeSocket *> locally_defined_enums;
       if (node->is_type("GeometryNodeMenuSwitch")) {
+        bNodeSocket &enum_input = node->input_socket(0);
+        BLI_assert(enum_input.is_available() && enum_input.type == SOCK_MENU);
         /* Generate new enum items when the node has changed, otherwise keep existing items. */
         if (node_updated) {
           const NodeMenuSwitch &storage = *static_cast<NodeMenuSwitch *>(node->storage);
           const RuntimeNodeEnumItems *enum_items = this->create_runtime_enum_items(
               storage.enum_definition);
 
-          bNodeSocket &input = *node->input_sockets()[0];
-          BLI_assert(input.is_available() && input.type == SOCK_MENU);
-          this->set_enum_ptr(*input.default_value_typed<bNodeSocketValueMenu>(), enum_items);
+          this->set_enum_ptr(*enum_input.default_value_typed<bNodeSocketValueMenu>(), enum_items);
           /* Remove initial user. */
           enum_items->remove_user_and_delete_if_last();
         }
-        continue;
+        locally_defined_enums.append(&enum_input);
       }
 
       /* Clear current enum references. */
       for (bNodeSocket *socket : node->input_sockets()) {
-        if (socket->is_available() && socket->type == SOCK_MENU) {
+        if (socket->is_available() && socket->type == SOCK_MENU &&
+            !locally_defined_enums.contains(socket))
+        {
           clear_enum_reference(*socket);
         }
       }
@@ -1194,6 +1190,11 @@ class NodeTreeMainUpdater {
       return false;
     };
 
+    const bNodeTreeZones *fallback_zones = nullptr;
+    if (ntree.type == NTREE_GEOMETRY && !ntree.zones() && ntree.runtime->last_valid_zones) {
+      fallback_zones = ntree.runtime->last_valid_zones.get();
+    }
+
     LISTBASE_FOREACH (bNodeLink *, link, &ntree.links) {
       link->flag |= NODE_LINK_VALID;
       if (!link->fromsock->is_available() || !link->tosock->is_available()) {
@@ -1241,6 +1242,20 @@ class NodeTreeMainUpdater {
                                         TIP_("Conversion is not supported"),
                                         TIP_(link->fromsock->typeinfo->label),
                                         TIP_(link->tosock->typeinfo->label))});
+          continue;
+        }
+      }
+      if (fallback_zones) {
+        if (!fallback_zones->link_between_sockets_is_allowed(*link->fromsock, *link->tosock)) {
+          if (const bNodeTreeZone *from_zone = fallback_zones->get_zone_by_socket(*link->fromsock))
+          {
+            ntree.runtime->invalid_zone_output_node_ids.add(*from_zone->output_node_id);
+          }
+
+          link->flag &= ~NODE_LINK_VALID;
+          ntree.runtime->link_errors.add(
+              NodeLinkKey{*link},
+              NodeLinkError{TIP_("Links can only go into a zone but not out")});
           continue;
         }
       }
@@ -1519,7 +1534,10 @@ class NodeTreeMainUpdater {
         const bool only_unused_internal_link_changed = !node.is_muted() &&
                                                        node.runtime->changed_flag ==
                                                            NTREE_CHANGED_INTERNAL_LINK;
-        if (!only_unused_internal_link_changed) {
+        const bool only_parent_changed = node.runtime->changed_flag == NTREE_CHANGED_PARENT;
+        const bool change_affects_output = !(only_unused_internal_link_changed ||
+                                             only_parent_changed);
+        if (change_affects_output) {
           return true;
         }
       }
@@ -1553,10 +1571,10 @@ class NodeTreeMainUpdater {
               break;
             }
             const bNodeTreeZone *zone = zones->get_zone_by_node(node.identifier);
-            if (!zone->input_node) {
+            if (!zone->input_node()) {
               break;
             }
-            for (const bNodeSocket *input_socket : zone->input_node->input_sockets()) {
+            for (const bNodeSocket *input_socket : zone->input_node()->input_sockets()) {
               if (input_socket->is_available()) {
                 bool &pushed = pushed_by_socket_id[input_socket->index_in_tree()];
                 if (!pushed) {

@@ -9884,7 +9884,7 @@ class VIEW3D_PT_shading_lighting(Panel):
         shading = VIEW3D_PT_shading.get_shading(context)
 
         col = layout.column()
-        split = col.split(factor=0.9)
+        split = col.split(factor=0.95)
 
         if shading.type == 'SOLID':
             row = split.row()
@@ -9892,7 +9892,7 @@ class VIEW3D_PT_shading_lighting(Panel):
             row.prop(shading, "light", expand=True)
             col = split.column()
 
-            split = layout.split(factor=0.9)
+            split = layout.split(factor=0.95)
             col = split.column()
             sub = col.row()
 
@@ -9921,7 +9921,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                     "screen.userpref_show", emboss=False, text="", icon="PREFERENCES"
                 ).section = "LIGHTS"
 
-                split = layout.split(factor=0.9)
+                split = layout.split(factor=0.95)
                 col = split.column()
 
                 row = col.row()
@@ -9963,7 +9963,7 @@ class VIEW3D_PT_shading_lighting(Panel):
             row.separator()
             row.prop(shading, "use_scene_world")
             col = layout.column()
-            split = col.split(factor=0.9)
+            split = col.split(factor=0.95)
 
             if not shading.use_scene_world:
                 col = split.column()
@@ -9978,7 +9978,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                     "screen.userpref_show", emboss=False, text="", icon="PREFERENCES"
                 ).section = "LIGHTS"
 
-                split = layout.split(factor=0.9)
+                split = layout.split(factor=0.95)
                 col = split.column()
 
                 engine = context.scene.render.engine
@@ -10016,7 +10016,7 @@ class VIEW3D_PT_shading_lighting(Panel):
 
             if not shading.use_scene_world_render:
                 col = layout.column()
-                split = col.split(factor=0.9)
+                split = col.split(factor=0.95)
 
                 col = split.column()
                 sub = col.row()
@@ -10030,7 +10030,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                     "screen.userpref_show", emboss=False, text="", icon="PREFERENCES"
                 ).section = "LIGHTS"
 
-                split = layout.split(factor=0.9)
+                split = layout.split(factor=0.95)
                 col = split.column()
                 row = col.row()
                 row.separator()
@@ -10041,7 +10041,6 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row = col.row()
                 row.separator()
                 row.prop(shading, "studiolight_background_alpha")
-                engine = context.scene.render.engine
                 row = col.row()
                 row.separator()
                 row.prop(shading, "studiolight_background_blur")
@@ -10055,7 +10054,7 @@ class VIEW3D_PT_shading_lighting(Panel):
 class VIEW3D_PT_shading_color(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
-    bl_label = "Wire Color"
+    bl_label = "Wireframe Color"
     bl_parent_id = "VIEW3D_PT_shading"
 
     def _draw_color_type(self, context):
@@ -10063,7 +10062,7 @@ class VIEW3D_PT_shading_color(Panel):
         shading = VIEW3D_PT_shading.get_shading(context)
 
         layout.grid_flow(columns=3, align=True).prop(shading, "color_type", expand=True)
-        if shading.color_type == "SINGLE":
+        if shading.color_type == 'SINGLE':
             layout.row().prop(shading, "single_color", text="")
 
     def _draw_background_color(self, context):
@@ -10072,7 +10071,7 @@ class VIEW3D_PT_shading_color(Panel):
 
         layout.row().label(text="Background")
         layout.row().prop(shading, "background_type", expand=True)
-        if shading.background_type == "VIEWPORT":
+        if shading.background_type == 'VIEWPORT':
             layout.row().prop(shading, "background_color", text="")
 
     def draw(self, context):
@@ -10083,11 +10082,11 @@ class VIEW3D_PT_shading_color(Panel):
         self.layout.separator()
 
         if shading.type == 'SOLID':
-            layout.row().label(text="Color")
+            layout.row().label(text="Object Color")
             self._draw_color_type(context)
             self.layout.separator()
             self._draw_background_color(context)
-        elif shading.type == "WIREFRAME":
+        elif shading.type == 'WIREFRAME':
             self._draw_background_color(context)
 
 
@@ -10100,7 +10099,7 @@ class VIEW3D_PT_shading_options(Panel):
     @classmethod
     def poll(cls, context):
         shading = VIEW3D_PT_shading.get_shading(context)
-        return shading.type in {"WIREFRAME", 'SOLID'}
+        return shading.type in {'WIREFRAME', 'SOLID'}
 
     def draw(self, context):
         layout = self.layout
@@ -10116,7 +10115,7 @@ class VIEW3D_PT_shading_options(Panel):
 
         row = col.row()
 
-        if shading.type == "WIREFRAME":
+        if shading.type == 'WIREFRAME':
             split = layout.split()
             col = split.column()
             row = col.row()
@@ -10179,7 +10178,7 @@ class VIEW3D_PT_shading_options(Panel):
             col = layout.column()
 
             if shading.show_cavity and not xray_active:
-                if shading.cavity_type in {"WORLD", "BOTH"}:
+                if shading.cavity_type in {'WORLD', 'BOTH'}:
                     row = col.row()
                     row.separator()
                     row.separator()
@@ -10202,7 +10201,7 @@ class VIEW3D_PT_shading_options(Panel):
                         text="",
                     )
 
-                if shading.cavity_type in {"SCREEN", "BOTH"}:
+                if shading.cavity_type in {'SCREEN', 'BOTH'}:
                     row = col.row()
                     row.separator()
                     row.separator()
@@ -10225,7 +10224,7 @@ class VIEW3D_PT_shading_options(Panel):
                 row.separator()
                 row.prop(shading, "use_dof", text="Depth of Field")
 
-        if shading.type in {"WIREFRAME", 'SOLID'}:
+        if shading.type in {'WIREFRAME', 'SOLID'}:
             split = layout.split()
             col = split.column()
             row = col.row()
@@ -10255,6 +10254,7 @@ class VIEW3D_PT_shading_options_shadow(Panel):
     bl_label = "Shadow Settings"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
+    bl_ui_units_x = 12
 
     def draw(self, context):
         layout = self.layout
@@ -10262,9 +10262,9 @@ class VIEW3D_PT_shading_options_shadow(Panel):
         scene = context.scene
 
         col = layout.column()
-        col.prop(scene.display, "light_direction")
-        col.prop(scene.display, "shadow_shift")
-        col.prop(scene.display, "shadow_focus")
+        col.prop(scene.display, "light_direction", text="Direction")
+        col.prop(scene.display, "shadow_shift", text="Offset")
+        col.prop(scene.display, "shadow_focus", text="Focus")
 
 
 class VIEW3D_PT_shading_options_ssao(Panel):

@@ -7270,7 +7270,7 @@ static void def_sh_script(BlenderRNA * /*brna*/, StructRNA *srna)
 
   /* API functions */
 
-#  if 0 /* XXX TODO: use general node api for this. */
+#  if 0 /* XXX TODO: use general node API for this. */
   func = RNA_def_function(srna, "find_socket", "rna_ShaderNodeScript_find_socket");
   RNA_def_function_ui_description(func, "Find a socket by name");
   parm = RNA_def_string(func, "name", nullptr, 0, "Socket name", "");
@@ -7418,7 +7418,10 @@ static void def_cmp_blur(BlenderRNA * /*brna*/, StructRNA *srna)
 
   prop = RNA_def_property(srna, "use_gamma_correction", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gamma", 1);
-  RNA_def_property_ui_text(prop, "Gamma", "Apply filter on gamma corrected values");
+  RNA_def_property_ui_text(
+      prop,
+      "Gamma",
+      "Apply filter on gamma corrected values. (Deprecated: Unused. Use Gamma node instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -7808,6 +7811,9 @@ static void rna_def_cmp_output_file_slots_api(BlenderRNA *brna,
 static void def_cmp_output_file(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_cmp_output_file_slot_file(brna);
+  rna_def_cmp_output_file_slot_layer(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeImageMultiFile", "storage");
 
@@ -8601,8 +8607,10 @@ static void def_cmp_defocus(BlenderRNA * /*brna*/, StructRNA *srna)
 
   prop = RNA_def_property(srna, "use_gamma_correction", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gamco", 1);
-  RNA_def_property_ui_text(
-      prop, "Gamma Correction", "Enable gamma correction before and after main process");
+  RNA_def_property_ui_text(prop,
+                           "Gamma Correction",
+                           "Enable gamma correction before and after main process. (Deprecated: "
+                           "Unused. Use Gamma node instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   /* TODO */
@@ -9890,9 +9898,10 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
       nullptr);
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
-  RNA_def_property_ui_text(prop,
-                           "Master Saturation",
-                           "Master saturation. (Deprecated: Use Master Saturation input instead.");
+  RNA_def_property_ui_text(
+      prop,
+      "Master Saturation",
+      "Master saturation. (Deprecated: Use Master Saturation input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "master_contrast", PROP_FLOAT, PROP_NONE);
@@ -9903,8 +9912,9 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
       nullptr);
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
-  RNA_def_property_ui_text(
-      prop, "Master Contrast", "Master contrast. (Deprecated: Use Master Contrast input instead.");
+  RNA_def_property_ui_text(prop,
+                           "Master Contrast",
+                           "Master contrast. (Deprecated: Use Master Contrast input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "master_gamma", PROP_FLOAT, PROP_NONE);
@@ -9915,7 +9925,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
   RNA_def_property_ui_text(
-      prop, "Master Gamma", "Master gamma. (Deprecated: Use Master Gamma input instead.");
+      prop, "Master Gamma", "Master gamma. (Deprecated: Use Master Gamma input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "master_gain", PROP_FLOAT, PROP_NONE);
@@ -9926,7 +9936,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
   RNA_def_property_ui_text(
-      prop, "Master Gain", "Master gain. (Deprecated: Use Master Gain input instead.");
+      prop, "Master Gain", "Master gain. (Deprecated: Use Master Gain input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "master_lift", PROP_FLOAT, PROP_NONE);
@@ -9937,7 +9947,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 0.0f);
   RNA_def_property_range(prop, -1, 1);
   RNA_def_property_ui_text(
-      prop, "Master Lift", "Master lift. (Deprecated: Use Master Lift input instead.");
+      prop, "Master Lift", "Master lift. (Deprecated: Use Master Lift input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   //
@@ -9952,7 +9962,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_ui_text(
       prop,
       "Shadows Saturation",
-      "Shadows saturation. (Deprecated: Use Shadows Saturation input instead.");
+      "Shadows saturation. (Deprecated: Use Shadows Saturation input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "shadows_contrast", PROP_FLOAT, PROP_NONE);
@@ -9965,7 +9975,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_range(prop, 0, 4);
   RNA_def_property_ui_text(prop,
                            "Shadows Contrast",
-                           "Shadows contrast. (Deprecated: Use Shadows Contrast input instead.");
+                           "Shadows contrast. (Deprecated: Use Shadows Contrast input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "shadows_gamma", PROP_FLOAT, PROP_NONE);
@@ -9977,7 +9987,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
   RNA_def_property_ui_text(
-      prop, "Shadows Gamma", "Shadows gamma. (Deprecated: Use Shadows Gamma input instead.");
+      prop, "Shadows Gamma", "Shadows gamma. (Deprecated: Use Shadows Gamma input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "shadows_gain", PROP_FLOAT, PROP_NONE);
@@ -9988,7 +9998,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
   RNA_def_property_ui_text(
-      prop, "Shadows Gain", "Shadows gain. (Deprecated: Use Shadows Gain input instead.");
+      prop, "Shadows Gain", "Shadows gain. (Deprecated: Use Shadows Gain input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "shadows_lift", PROP_FLOAT, PROP_NONE);
@@ -9999,7 +10009,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 0.0f);
   RNA_def_property_range(prop, -1, 1);
   RNA_def_property_ui_text(
-      prop, "Shadows Lift", "Shadows lift. (Deprecated: Use Shadows Lift input instead.");
+      prop, "Shadows Lift", "Shadows lift. (Deprecated: Use Shadows Lift input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
   //
   prop = RNA_def_property(srna, "midtones_saturation", PROP_FLOAT, PROP_NONE);
@@ -10013,7 +10023,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_ui_text(
       prop,
       "Midtones Saturation",
-      "Midtones saturation. (Deprecated: Use Midtones Saturation input instead.");
+      "Midtones saturation. (Deprecated: Use Midtones Saturation input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "midtones_contrast", PROP_FLOAT, PROP_NONE);
@@ -10024,9 +10034,10 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
       nullptr);
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
-  RNA_def_property_ui_text(prop,
-                           "Midtones Contrast",
-                           "Midtones contrast. (Deprecated: Use Midtones Contrast input instead.");
+  RNA_def_property_ui_text(
+      prop,
+      "Midtones Contrast",
+      "Midtones contrast. (Deprecated: Use Midtones Contrast input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "midtones_gamma", PROP_FLOAT, PROP_NONE);
@@ -10038,7 +10049,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
   RNA_def_property_ui_text(
-      prop, "Midtones Gamma", "Midtones gamma. (Deprecated: Use Midtones Gamma input instead.");
+      prop, "Midtones Gamma", "Midtones gamma. (Deprecated: Use Midtones Gamma input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "midtones_gain", PROP_FLOAT, PROP_NONE);
@@ -10050,7 +10061,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
   RNA_def_property_ui_text(
-      prop, "Midtones Gain", "Midtones gain. (Deprecated: Use Midtones Gain input instead.");
+      prop, "Midtones Gain", "Midtones gain. (Deprecated: Use Midtones Gain input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "midtones_lift", PROP_FLOAT, PROP_NONE);
@@ -10062,7 +10073,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_float_default(prop, 0.0f);
   RNA_def_property_range(prop, -1, 1);
   RNA_def_property_ui_text(
-      prop, "Midtones Lift", "Midtones lift. (Deprecated: Use Midtones Lift input instead.");
+      prop, "Midtones Lift", "Midtones lift. (Deprecated: Use Midtones Lift input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
   //
   prop = RNA_def_property(srna, "highlights_saturation", PROP_FLOAT, PROP_NONE);
@@ -10076,7 +10087,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_ui_text(
       prop,
       "Highlights Saturation",
-      "Highlights saturation. (Deprecated: Use Highlights Saturation input instead.");
+      "Highlights saturation. (Deprecated: Use Highlights Saturation input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "highlights_contrast", PROP_FLOAT, PROP_NONE);
@@ -10090,7 +10101,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_ui_text(
       prop,
       "Highlights Contrast",
-      "Highlights contrast. (Deprecated: Use Highlights Contrast input instead.");
+      "Highlights contrast. (Deprecated: Use Highlights Contrast input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "highlights_gamma", PROP_FLOAT, PROP_NONE);
@@ -10103,7 +10114,7 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_range(prop, 0, 4);
   RNA_def_property_ui_text(prop,
                            "Highlights Gamma",
-                           "Highlights gamma. (Deprecated: Use Highlights Gamma input instead.");
+                           "Highlights gamma. (Deprecated: Use Highlights Gamma input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "highlights_gain", PROP_FLOAT, PROP_NONE);
@@ -10114,8 +10125,9 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
       nullptr);
   RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_range(prop, 0, 4);
-  RNA_def_property_ui_text(
-      prop, "Highlights Gain", "Highlights gain. (Deprecated: Use Highlights Gain input instead.");
+  RNA_def_property_ui_text(prop,
+                           "Highlights Gain",
+                           "Highlights gain. (Deprecated: Use Highlights Gain input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "highlights_lift", PROP_FLOAT, PROP_NONE);
@@ -10126,8 +10138,9 @@ static void def_cmp_colorcorrection(BlenderRNA * /*brna*/, StructRNA *srna)
       nullptr);
   RNA_def_property_float_default(prop, 0.0f);
   RNA_def_property_range(prop, -1, 1);
-  RNA_def_property_ui_text(
-      prop, "Highlights Lift", "Highlights lift. (Deprecated: Use Highlights Lift input instead.");
+  RNA_def_property_ui_text(prop,
+                           "Highlights Lift",
+                           "Highlights lift. (Deprecated: Use Highlights Lift input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -10486,10 +10499,10 @@ static void def_cmp_translate(BlenderRNA * /*brna*/, StructRNA *srna)
 
   prop = RNA_def_property(srna, "use_relative", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "relative", 1);
-  RNA_def_property_ui_text(
-      prop,
-      "Relative",
-      "Use relative (fraction of input image size) values to define translation");
+  RNA_def_property_ui_text(prop,
+                           "Relative",
+                           "Use relative (fraction of input image size) values to define "
+                           "translation. (Deprecated: Unused.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "wrap_axis", PROP_ENUM, PROP_NONE);
@@ -11254,7 +11267,7 @@ static void rna_def_node_item_array_new_with_socket_and_name(StructRNA *srna,
   RNA_def_function_return(func, parm);
 }
 
-static void rna_def_simulation_state_item(BlenderRNA *brna)
+static void rna_def_geo_simulation_state_item(BlenderRNA *brna)
 {
   PropertyRNA *prop;
 
@@ -11277,7 +11290,7 @@ static void rna_def_simulation_state_item(BlenderRNA *brna)
       prop, NC_NODE | NA_EDITED, "rna_Node_ItemArray_item_update<SimulationItemsAccessor>");
 }
 
-static void rna_def_geo_simulation_output_items(BlenderRNA *brna)
+static void rna_def_geo_simulation_state_items(BlenderRNA *brna)
 {
   StructRNA *srna;
 
@@ -11290,9 +11303,12 @@ static void rna_def_geo_simulation_output_items(BlenderRNA *brna)
   rna_def_node_item_array_common_functions(srna, "SimulationStateItem", "SimulationItemsAccessor");
 }
 
-static void def_geo_simulation_output(BlenderRNA * /*brna*/, StructRNA *srna)
+static void def_geo_simulation_output(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_simulation_state_item(brna);
+  rna_def_geo_simulation_state_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometrySimulationOutput", "storage");
 
@@ -11321,7 +11337,7 @@ static void def_geo_simulation_output(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE, nullptr);
 }
 
-static void rna_def_repeat_item(BlenderRNA *brna)
+static void rna_def_geo_repeat_item(BlenderRNA *brna)
 {
   StructRNA *srna = RNA_def_struct(brna, "RepeatItem", nullptr);
   RNA_def_struct_ui_text(srna, "Repeat Item", "");
@@ -11330,7 +11346,7 @@ static void rna_def_repeat_item(BlenderRNA *brna)
   rna_def_node_item_array_socket_item_common(srna, "RepeatItemsAccessor", true);
 }
 
-static void rna_def_geo_repeat_output_items(BlenderRNA *brna)
+static void rna_def_geo_repeat_items(BlenderRNA *brna)
 {
   StructRNA *srna;
 
@@ -11342,9 +11358,12 @@ static void rna_def_geo_repeat_output_items(BlenderRNA *brna)
   rna_def_node_item_array_common_functions(srna, "RepeatItem", "RepeatItemsAccessor");
 }
 
-static void def_geo_repeat_output(BlenderRNA * /*brna*/, StructRNA *srna)
+static void def_geo_repeat_output(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_repeat_item(brna);
+  rna_def_geo_repeat_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometryRepeatOutput", "storage");
 
@@ -11469,9 +11488,18 @@ static void rna_def_geo_foreach_geometry_element_generation_items(BlenderRNA *br
                                            "ForeachGeometryElementGenerationItemsAccessor");
 }
 
-static void def_geo_foreach_geometry_element_output(BlenderRNA * /*brna*/, StructRNA *srna)
+static void def_geo_foreach_geometry_element_output(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_foreach_geometry_element_input_item(brna);
+  rna_def_geo_foreach_geometry_element_input_items(brna);
+
+  rna_def_geo_foreach_geometry_element_main_item(brna);
+  rna_def_geo_foreach_geometry_element_main_items(brna);
+
+  rna_def_geo_foreach_geometry_element_generation_items(brna);
+  rna_def_geo_foreach_geometry_element_generation_item(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometryForeachGeometryElementOutput", "storage");
 
@@ -11568,9 +11596,15 @@ static void rna_def_geo_closure_output_items(BlenderRNA *brna)
       srna, "NodeGeometryClosureOutputItem", "ClosureOutputItemsAccessor");
 }
 
-static void def_geo_closure_output(BlenderRNA * /*brna*/, StructRNA *srna)
+static void def_geo_closure_output(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_closure_input_item(brna);
+  rna_def_geo_closure_input_items(brna);
+
+  rna_def_geo_closure_output_item(brna);
+  rna_def_geo_closure_output_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometryClosureOutput", "storage");
 
@@ -11628,9 +11662,12 @@ static void rna_def_geo_capture_attribute_items(BlenderRNA *brna)
       srna, "NodeGeometryCaptureAttributeItem", "CaptureAttributeItemsAccessor");
 }
 
-static void rna_def_geo_capture_attribute(BlenderRNA * /*brna*/, StructRNA *srna)
+static void rna_def_geo_capture_attribute(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_capture_attribute_item(brna);
+  rna_def_geo_capture_attribute_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometryAttributeCapture", "storage");
 
@@ -11714,9 +11751,15 @@ static void rna_def_geo_evaluate_closure_output_items(BlenderRNA *brna)
       srna, "NodeGeometryEvaluateClosureOutputItem", "EvaluateClosureOutputItemsAccessor");
 }
 
-static void def_geo_evaluate_closure(BlenderRNA * /*brna*/, StructRNA *srna)
+static void def_geo_evaluate_closure(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_evaluate_closure_input_item(brna);
+  rna_def_geo_evaluate_closure_input_items(brna);
+
+  rna_def_geo_evaluate_closure_output_item(brna);
+  rna_def_geo_evaluate_closure_output_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometryEvaluateClosure", "storage");
 
@@ -11774,7 +11817,7 @@ static void rna_def_geo_bake_item(BlenderRNA *brna)
       prop, NC_NODE | NA_EDITED, "rna_Node_ItemArray_item_update<BakeItemsAccessor>");
 }
 
-static void rna_def_bake_items(BlenderRNA *brna)
+static void rna_def_geo_bake_items(BlenderRNA *brna)
 {
   StructRNA *srna;
 
@@ -11787,9 +11830,12 @@ static void rna_def_bake_items(BlenderRNA *brna)
   rna_def_node_item_array_common_functions(srna, "NodeGeometryBakeItem", "BakeItemsAccessor");
 }
 
-static void rna_def_geo_bake(BlenderRNA * /*brna*/, StructRNA *srna)
+static void rna_def_geo_bake(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_bake_item(brna);
+  rna_def_geo_bake_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometryBake", "storage");
 
@@ -11839,9 +11885,12 @@ static void rna_def_geo_combine_bundle_items(BlenderRNA *brna)
       srna, "NodeGeometryCombineBundleItem", "CombineBundleItemsAccessor");
 }
 
-static void rna_def_geo_combine_bundle(BlenderRNA * /*brna*/, StructRNA *srna)
+static void rna_def_geo_combine_bundle(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_combine_bundle_item(brna);
+  rna_def_geo_combine_bundle_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometryCombineBundle", "storage");
 
@@ -11879,9 +11928,12 @@ static void rna_def_geo_separate_bundle_items(BlenderRNA *brna)
       srna, "NodeGeometrySeparateBundleItem", "SeparateBundleItemsAccessor");
 }
 
-static void rna_def_geo_separate_bundle(BlenderRNA * /*brna*/, StructRNA *srna)
+static void rna_def_geo_separate_bundle(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_separate_bundle_item(brna);
+  rna_def_geo_separate_bundle_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeGeometrySeparateBundle", "storage");
 
@@ -11934,9 +11986,12 @@ static void rna_def_geo_index_switch_items(BlenderRNA *brna)
   rna_def_node_item_array_common_functions(srna, "IndexSwitchItem", "IndexSwitchItemsAccessor");
 }
 
-static void def_geo_index_switch(BlenderRNA * /*brna*/, StructRNA *srna)
+static void def_geo_index_switch(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_index_switch_item(brna);
+  rna_def_geo_index_switch_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeIndexSwitch", "storage");
 
@@ -12258,7 +12313,7 @@ static void def_geo_string_to_curves(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
-static void rna_def_menu_switch_item(BlenderRNA *brna)
+static void rna_def_geo_menu_switch_item(BlenderRNA *brna)
 {
   PropertyRNA *prop;
 
@@ -12303,9 +12358,12 @@ static void rna_def_geo_menu_switch_items(BlenderRNA *brna)
   rna_def_node_item_array_common_functions(srna, "NodeEnumItem", "MenuSwitchItemsAccessor");
 }
 
-static void def_geo_menu_switch(BlenderRNA * /*brna*/, StructRNA *srna)
+static void def_geo_menu_switch(BlenderRNA *brna, StructRNA *srna)
 {
   PropertyRNA *prop;
+
+  rna_def_geo_menu_switch_item(brna);
+  rna_def_geo_menu_switch_items(brna);
 
   RNA_def_struct_sdna_from(srna, "NodeMenuSwitch", "storage");
 
@@ -13725,6 +13783,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodePlaneTrackDeform", def_cmp_planetrackdeform, ICON_NODE_PLANETRACKDEFORM, "Add a Plan track Deform node\nReplace flat planes in footage by another image, detected by plane tracks from motion tracking");
   define(brna, "CompositorNode", "CompositorNodePosterize", nullptr, ICON_POSTERIZE, "Add a Posterize Node\nPosterize reduces the number of colors");
   define(brna, "CompositorNode", "CompositorNodePremulKey", def_cmp_premul_key, ICON_NODE_ALPHACONVERT, "Add a Alpha Convert Compositor node\nConverts the alpha channel interpretation of an image from pre-multiplied to straight or vice versa");
+  define(brna, "CompositorNode", "CompositorNodeRelativeToPixel", nullptr, ICON_NONE, "Add a Relative To Pixel Compositor node\nWIP");
   define(brna, "CompositorNode", "CompositorNodeRGB", nullptr, ICON_NODE_RGB, "Add a RGB Compositor node\nSets a color");
   define(brna, "CompositorNode", "CompositorNodeRGBToBW", nullptr, ICON_NODE_RGBTOBW, "Add a RGB to BW Compositor node\nConverts an RGB color image to a gray-scale image based at its luminance");
   define(brna, "CompositorNode", "CompositorNodeRLayers", def_cmp_render_layers, ICON_RENDERLAYERS, "Add a Render Layers Compositor node\nInputs the available render layers");
@@ -13795,6 +13854,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeAlignRotationToVector", nullptr, ICON_ALIGN_ROTATION_TO_VECTOR, "Add a Axes to Rotation Function node\nAligns a rotation to a vector");
   define(brna, "FunctionNode", "FunctionNodeAxesToRotation", nullptr, ICON_AXES_TO_ROTATION, "Add a Rotation to Vector Function node\nCreate a rotation from a primary and (ideally orthogonal) secondary axis");
   define(brna, "FunctionNode", "FunctionNodeAxisAngleToRotation", nullptr, ICON_AXIS_ANGLE_TO_ROTATION, "Add a Axis Angle to Rotation Function node\nConverts a axis angle to a rotation vector");
+  define(brna, "FunctionNode", "FunctionNodeBitMath", nullptr, ICON_NONE, "Add a Bit Math Function node\nWIP");
   define(brna, "FunctionNode", "FunctionNodeBooleanMath", nullptr, ICON_BOOLEAN_MATH, "Add a Boolean Math Function node\nPerforms a basic logical operation between its inputs");
   define(brna, "FunctionNode", "FunctionNodeCombineColor", nullptr, ICON_COMBINE_COLOR, "Add a Combine Color Function node\nCombines single colors to a rgb, hsv or hsl color value");
   define(brna, "FunctionNode", "FunctionNodeCombineMatrix", nullptr, ICON_COMBINE_MATRIX, "Add a Combine Matrix Function node\nConstruct a 4x4 matrix from its individual values");
@@ -13897,6 +13957,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO, "Add a Linear Gizmo node\nShow a linear gizmo in the viewport for a value");
   define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO, "Add a Transform Gizmo node\nShow a transform gizmo in the viewport");
   define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES, "Add Grease Pencil to Curves node\nConvert Grease Pencil layers into curve instances");
+  define(brna, "GeometryNode", "GeometryNodeGridInfo", nullptr, ICON_NONE, "Add Grid Info node\nWIP");
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NONE, "Add a Grid to Mesh node\nGenerate a mesh on the \"surface\" of a volume grid");
   define(brna, "GeometryNode", "GeometryNodeImageInfo", nullptr, ICON_IMAGE_INFO, "Add an Image Info Geometry node\nRetrieve information about an image");
   define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA, "Add an Image Texture node\nSample values from an image texture");
@@ -13996,6 +14057,11 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeScaleInstances", nullptr, ICON_SCALE_INSTANCE, "Add a Scale Instances Geometry node\nScale geometry instances in local or global space");
   define(brna, "GeometryNode", "GeometryNodeSDFGridBoolean", nullptr, ICON_NONE, "Add a SDF Grid Boolean node\nCut, subtract, or join multiple SDF volume grid inputs");
   define(brna, "GeometryNode", "GeometryNodeSelfObject", nullptr, ICON_SELF_OBJECT, "Add a Self Object Geometry node\nRetrieve the object that contains the geometry nodes modifier currently being executed");
+  define(brna, "GeometryNode", "GeometryNodeSeparateBundle", rna_def_geo_separate_bundle, ICON_NONE, "Add a Separate Bundle Node\nNeeds more info");
+  define(brna, "GeometryNode", "GeometryNodeCombineBundle", rna_def_geo_combine_bundle, ICON_NONE, "Add a Combine Bundle Node\nNeeds more info");
+  define(brna, "GeometryNode", "GeometryNodeClosureInput", def_geo_closure_input, ICON_NONE, "Add a Closure Input Node\nNeeds more info");
+  define(brna, "GeometryNode", "GeometryNodeClosureOutput", def_geo_closure_output, ICON_NONE, "Add a Closure Output Node\nNeeds more info");
+  define(brna, "GeometryNode", "GeometryNodeEvaluateClosure", def_geo_evaluate_closure, ICON_NONE, "Add a Evaluate Closure Node\nNeeds more info");
   define(brna, "GeometryNode", "GeometryNodeSeparateComponents", nullptr, ICON_SEPARATE, "Add a Separate Components Geometry node\nSplit a geometry into a separate output for each type of data in the geometry");
   define(brna, "GeometryNode", "GeometryNodeSeparateGeometry", nullptr, ICON_SEPARATE_GEOMETRY, "Add a Separate Geometry Geometry node\nSplit a geometry into two geometry outputs based on a selection");
   define(brna, "GeometryNode", "GeometryNodeSetCurveHandlePositions", nullptr, ICON_SET_CURVE_HANDLE_POSITIONS, "Add a Set Handle Positions Geometry node\nSet the positions for the handles of Bézier curves");
@@ -14049,11 +14115,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeVolumeCube", nullptr, ICON_VOLUME_CUBE, "Add a Volume Cube Geometry node\nGenerate a dense volume with a field that controls the density at each grid voxel based on its position");
   define(brna, "GeometryNode", "GeometryNodeVolumeToMesh", nullptr, ICON_VOLUME_TO_MESH, "Add a Volume to Mesh Geometry node\nGenerate a mesh on the \"surface\" of a volume");
   define(brna, "GeometryNode", "GeometryNodeWarning", nullptr, ICON_ERROR, "Add a Warning node\nCreate custom warnings in node groups");
-  define(brna, "GeometryNode", "GeometryNodeSeparateBundle", rna_def_geo_separate_bundle, ICON_NONE, "Add a Separate Bundle Node\nNeeds more info");
-  define(brna, "GeometryNode", "GeometryNodeCombineBundle", rna_def_geo_combine_bundle, ICON_NONE, "Add a Combine Bundle Node\nNeeds more info");
-  define(brna, "GeometryNode", "GeometryNodeClosureInput", def_geo_closure_input, ICON_NONE, "Add a Closure Input Node\nNeeds more info");
-  define(brna, "GeometryNode", "GeometryNodeClosureOutput", def_geo_closure_output, ICON_NONE, "Add a Closure Output Node\nNeeds more info");
-  define(brna, "GeometryNode", "GeometryNodeEvaluateClosure", def_geo_evaluate_closure, ICON_NONE, "Add a Evaluate Closure Node\nNeeds more info");
 
   /* Node group types are currently defined for each tree type individually. */
   define(brna, "ShaderNode", "ShaderNodeGroup", def_group, ICON_NONE, "Create a node group from the selected nodes"); /* bfa - don't need 2 nodegroups icons */
@@ -14083,22 +14144,6 @@ void RNA_def_nodetree(BlenderRNA *brna)
   rna_def_texture_nodetree(brna);
   rna_def_geometry_nodetree(brna);
 
-  rna_def_simulation_state_item(brna);
-  rna_def_repeat_item(brna);
-  rna_def_geo_foreach_geometry_element_input_item(brna);
-  rna_def_geo_foreach_geometry_element_main_item(brna);
-  rna_def_geo_foreach_geometry_element_generation_item(brna);
-  rna_def_index_switch_item(brna);
-  rna_def_menu_switch_item(brna);
-  rna_def_geo_bake_item(brna);
-  rna_def_geo_combine_bundle_item(brna);
-  rna_def_geo_separate_bundle_item(brna);
-  rna_def_geo_closure_input_item(brna);
-  rna_def_geo_closure_output_item(brna);
-  rna_def_geo_evaluate_closure_input_item(brna);
-  rna_def_geo_evaluate_closure_output_item(brna);
-  rna_def_geo_capture_attribute_item(brna);
-
   rna_def_nodes(brna);
 
   def_custom_group(brna,
@@ -14125,25 +14170,6 @@ void RNA_def_nodetree(BlenderRNA *brna)
                    "Geometry Custom Group",
                    "Custom Geometry Group Node for Python nodes",
                    "rna_GeometryNodeCustomGroup_register");
-
-  /* special socket types */
-  rna_def_cmp_output_file_slot_file(brna);
-  rna_def_cmp_output_file_slot_layer(brna);
-  rna_def_geo_simulation_output_items(brna);
-  rna_def_geo_repeat_output_items(brna);
-  rna_def_geo_foreach_geometry_element_input_items(brna);
-  rna_def_geo_foreach_geometry_element_main_items(brna);
-  rna_def_geo_foreach_geometry_element_generation_items(brna);
-  rna_def_geo_index_switch_items(brna);
-  rna_def_geo_menu_switch_items(brna);
-  rna_def_bake_items(brna);
-  rna_def_geo_combine_bundle_items(brna);
-  rna_def_geo_separate_bundle_items(brna);
-  rna_def_geo_closure_input_items(brna);
-  rna_def_geo_closure_output_items(brna);
-  rna_def_geo_evaluate_closure_input_items(brna);
-  rna_def_geo_evaluate_closure_output_items(brna);
-  rna_def_geo_capture_attribute_items(brna);
 
   rna_def_node_instance_hash(brna);
 }
