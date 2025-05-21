@@ -209,7 +209,7 @@ void NLA_OT_tweakmode_enter(wmOperatorType *ot)
       "Sheet editor to edit the keyframes\nWhen done switch back to NLA editor and leave tweak "
       "mode";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_enable_tweakmode_exec;
   ot->get_description = nla_ot_tweakmode_enter_get_description;/*bfa - description*/
   ot->poll = nlaop_poll_tweakmode_off;
@@ -319,7 +319,7 @@ void NLA_OT_tweakmode_exit(wmOperatorType *ot)
   ot->idname = "NLA_OT_tweakmode_exit";
   ot->description = "Exit tweaking mode for the action referenced by the active strip";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_disable_tweakmode_exec;
   ot->poll = nlaop_poll_tweakmode_on;
 
@@ -437,7 +437,7 @@ void NLA_OT_previewrange_set(wmOperatorType *ot)
   ot->idname = "NLA_OT_previewrange_set";
   ot->description = "Set Preview Range based on extends of selected strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_previewrange_exec;
   ot->poll = ED_operator_nla_active;
 
@@ -576,7 +576,7 @@ void NLA_OT_view_all(wmOperatorType *ot)
   ot->idname = "NLA_OT_view_all";
   ot->description = "Zooms in or out to fit the display to show full strips range";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_viewall_exec;
   ot->poll = ED_operator_nla_active;
 
@@ -591,7 +591,7 @@ void NLA_OT_view_selected(wmOperatorType *ot)
   ot->idname = "NLA_OT_view_selected";
   ot->description = "Zooms in or out to fit the display to show selected strips range";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_viewsel_exec;
   ot->poll = ED_operator_nla_active;
 
@@ -619,7 +619,7 @@ void NLA_OT_view_frame(wmOperatorType *ot)
   ot->idname = "NLA_OT_view_frame";
   ot->description = "Move the view to the current frame";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_viewframe_exec;
   ot->poll = ED_operator_nla_active;
 
@@ -785,7 +785,7 @@ void NLA_OT_actionclip_add(wmOperatorType *ot)
   ot->description =
       "Add an Action-Clip strip (i.e. an NLA Strip referencing an Action) to the active track";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = nlaedit_add_actionclip_invoke;
   ot->exec = nlaedit_add_actionclip_exec;
   ot->poll = nlaop_poll_tweakmode_off;
@@ -922,7 +922,7 @@ void NLA_OT_transition_add(wmOperatorType *ot)
   ot->idname = "NLA_OT_transition_add";
   ot->description = "Add a transition strip between two adjacent selected strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_add_transition_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1012,7 +1012,7 @@ void NLA_OT_soundclip_add(wmOperatorType *ot)
   ot->idname = "NLA_OT_soundclip_add";
   ot->description = "Add a strip for controlling when speaker plays its sound clip";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_add_sound_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1087,7 +1087,7 @@ void NLA_OT_meta_add(wmOperatorType *ot)
   ot->idname = "NLA_OT_meta_add";
   ot->description = "Add new meta-strips incorporating the selected strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_add_meta_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1152,7 +1152,7 @@ void NLA_OT_meta_remove(wmOperatorType *ot)
   ot->idname = "NLA_OT_meta_remove";
   ot->description = "Separate out the strips held by the selected meta-strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_remove_meta_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1266,7 +1266,7 @@ void NLA_OT_duplicate(wmOperatorType *ot)
   ot->idname = "NLA_OT_duplicate";
   ot->description = "Duplicate selected NLA-Strips, adding the new strips to new track(s)";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = nlaedit_duplicate_invoke;
   ot->exec = nlaedit_duplicate_exec;
   ot->poll = nlaop_poll_tweakmode_off;
@@ -1364,7 +1364,7 @@ void NLA_OT_delete(wmOperatorType *ot)
   ot->idname = "NLA_OT_delete";
   ot->description = "Delete selected strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_delete_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1527,7 +1527,7 @@ void NLA_OT_split(wmOperatorType *ot)
   ot->idname = "NLA_OT_split";
   ot->description = "Split selected strips at their midpoints";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_split_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1596,7 +1596,7 @@ void NLA_OT_mute_toggle(wmOperatorType *ot)
   ot->idname = "NLA_OT_mute_toggle";
   ot->description = "Mute or un-mute selected strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_toggle_mute_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1785,7 +1785,7 @@ void NLA_OT_swap(wmOperatorType *ot)
   ot->idname = "NLA_OT_swap";
   ot->description = "Swap order of selected strips within tracks";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_swap_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1876,7 +1876,7 @@ void NLA_OT_move_up(wmOperatorType *ot)
   ot->idname = "NLA_OT_move_up";
   ot->description = "Move selected strips up a track if there's room";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_move_up_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -1967,7 +1967,7 @@ void NLA_OT_move_down(wmOperatorType *ot)
   ot->idname = "NLA_OT_move_down";
   ot->description = "Move selected strips down a track if there's room";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_move_down_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -2052,7 +2052,7 @@ void NLA_OT_action_sync_length(wmOperatorType *ot)
   ot->description =
       "Synchronize the length of the referenced Action with the length used in the strip";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_sync_actlen_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -2164,7 +2164,7 @@ void NLA_OT_make_single_user(wmOperatorType *ot)
   ot->idname = "NLA_OT_make_single_user";
   ot->description = "Make linked action local to each strip";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = nlaedit_make_single_user_invoke;
   ot->exec = nlaedit_make_single_user_exec;
   ot->poll = nlaop_poll_tweakmode_off;
@@ -2300,7 +2300,7 @@ void NLA_OT_apply_scale(wmOperatorType *ot)
   ot->idname = "NLA_OT_apply_scale";
   ot->description = "Apply scaling of selected strips to their referenced Actions";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_apply_scale_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -2366,7 +2366,7 @@ void NLA_OT_clear_scale(wmOperatorType *ot)
   ot->idname = "NLA_OT_clear_scale";
   ot->description = "Reset scaling of selected strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_clear_scale_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -2541,7 +2541,7 @@ void NLA_OT_snap(wmOperatorType *ot)
   ot->idname = "NLA_OT_snap";
   ot->description = "Move start of strips to specified time";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_menu_invoke;
   ot->exec = nlaedit_snap_exec;
   ot->poll = nlaop_poll_tweakmode_off;
@@ -2685,7 +2685,7 @@ void NLA_OT_fmodifier_add(wmOperatorType *ot)
   ot->idname = "NLA_OT_fmodifier_add";
   ot->description = "Add F-Modifier to the active/selected NLA-Strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_menu_invoke;
   ot->exec = nla_fmodifier_add_exec;
   ot->poll = nlaop_poll_tweakmode_off;
@@ -2766,7 +2766,7 @@ void NLA_OT_fmodifier_copy(wmOperatorType *ot)
   ot->idname = "NLA_OT_fmodifier_copy";
   ot->description = "Copy the F-Modifier(s) of the active NLA-Strip";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nla_fmodifier_copy_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 
@@ -2859,7 +2859,7 @@ void NLA_OT_fmodifier_paste(wmOperatorType *ot)
   ot->idname = "NLA_OT_fmodifier_paste";
   ot->description = "Add copied F-Modifiers to the selected NLA-Strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nla_fmodifier_paste_exec;
   ot->poll = nlaop_poll_tweakmode_off;
 

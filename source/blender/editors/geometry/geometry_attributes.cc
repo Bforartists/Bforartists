@@ -206,11 +206,13 @@ void rna_property_for_attribute_type_set_value(PointerRNA &ptr,
 bool attribute_set_poll(bContext &C, const ID &object_data)
 {
   AttributeOwner owner = AttributeOwner::from_id(&const_cast<ID &>(object_data));
-  const CustomDataLayer *layer = BKE_attributes_active_get(owner);
-  if (!layer) {
+  const std::optional<StringRef> name = BKE_attributes_active_name_get(owner);
+  if (!name) {
     CTX_wm_operator_poll_msg_set(&C, "No active attribute");
     return false;
   }
+  const CustomDataLayer *layer = BKE_attribute_search(
+      owner, *name, CD_MASK_PROP_ALL, ATTR_DOMAIN_MASK_ALL);
   if (ELEM(layer->type, CD_PROP_STRING, CD_PROP_FLOAT4X4, CD_PROP_QUATERNION)) {
     CTX_wm_operator_poll_msg_set(&C, "The active attribute has an unsupported type");
     return false;
@@ -244,7 +246,7 @@ static bool geometry_attributes_remove_poll(bContext *C)
   Object *ob = object::context_object(C);
   ID *data = (ob) ? static_cast<ID *>(ob->data) : nullptr;
   AttributeOwner owner = AttributeOwner::from_id(data);
-  if (BKE_attributes_active_get(owner) != nullptr) {
+  if (BKE_attributes_active_name_get(owner) != nullptr) {
     return true;
   }
 
@@ -328,7 +330,7 @@ void GEOMETRY_OT_attribute_add(wmOperatorType *ot)
   ot->description = "Add attribute to geometry";
   ot->idname = "GEOMETRY_OT_attribute_add";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = geometry_attributes_poll;
   ot->exec = geometry_attribute_add_exec;
   ot->invoke = geometry_attribute_add_invoke;
@@ -368,9 +370,9 @@ static wmOperatorStatus geometry_attribute_remove_exec(bContext *C, wmOperator *
   Object *ob = object::context_object(C);
   ID *id = static_cast<ID *>(ob->data);
   AttributeOwner owner = AttributeOwner::from_id(id);
-  CustomDataLayer *layer = BKE_attributes_active_get(owner);
+  const StringRef name = *BKE_attributes_active_name_get(owner);
 
-  if (!BKE_attribute_remove(owner, layer->name, op->reports)) {
+  if (!BKE_attribute_remove(owner, name, op->reports)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -392,7 +394,7 @@ void GEOMETRY_OT_attribute_remove(wmOperatorType *ot)
   ot->description = "Remove attribute from geometry";
   ot->idname = "GEOMETRY_OT_attribute_remove";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = geometry_attribute_remove_exec;
   ot->poll = geometry_attributes_remove_poll;
 
@@ -469,7 +471,7 @@ static bool geometry_attribute_convert_poll(bContext *C)
       return false;
     }
   }
-  if (BKE_attributes_active_get(owner) == nullptr) {
+  if (BKE_attributes_active_name_get(owner) == nullptr) {
     return false;
   }
   return true;
@@ -490,8 +492,7 @@ bool convert_attribute(AttributeOwner &owner,
     return false;
   }
 
-  const CustomDataLayer *active_attribute = BKE_attributes_active_get(owner);
-  const bool was_active = active_attribute && active_attribute->name == name;
+  const bool was_active = BKE_attributes_active_name_get(owner) == name;
 
   const std::string name_copy = name;
   const GVArray varray = *attributes.lookup_or_default(name_copy, dst_domain, dst_type);
@@ -519,8 +520,7 @@ static wmOperatorStatus geometry_attribute_convert_exec(bContext *C, wmOperator 
   Object *ob = object::context_object(C);
   ID *ob_data = static_cast<ID *>(ob->data);
   AttributeOwner owner = AttributeOwner::from_id(ob_data);
-  CustomDataLayer *layer = BKE_attributes_active_get(owner);
-  const std::string name = layer->name;
+  const std::string name = *BKE_attributes_active_name_get(owner);
 
   if (ob->type == OB_MESH) {
     const ConvertAttributeMode mode = ConvertAttributeMode(RNA_enum_get(op->ptr, "mode"));
@@ -622,7 +622,7 @@ void GEOMETRY_OT_color_attribute_add(wmOperatorType *ot)
   ot->description = "Add color attribute to geometry";
   ot->idname = "GEOMETRY_OT_color_attribute_add";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = geometry_attributes_poll;
   ot->exec = geometry_color_attribute_add_exec;
   ot->invoke = geometry_color_attribute_add_invoke;
@@ -690,7 +690,7 @@ void GEOMETRY_OT_color_attribute_render_set(wmOperatorType *ot)
   ot->description = "Set default color attribute used for rendering";
   ot->idname = "GEOMETRY_OT_color_attribute_render_set";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->poll = geometry_attributes_poll;
   ot->exec = geometry_color_attribute_set_render_exec;
 
@@ -746,7 +746,7 @@ void GEOMETRY_OT_color_attribute_remove(wmOperatorType *ot)
   ot->description = "Remove color attribute from geometry";
   ot->idname = "GEOMETRY_OT_color_attribute_remove";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = geometry_color_attribute_remove_exec;
   ot->poll = geometry_color_attributes_remove_poll;
 
@@ -804,7 +804,7 @@ void GEOMETRY_OT_color_attribute_duplicate(wmOperatorType *ot)
   ot->description = "Duplicate color attribute";
   ot->idname = "GEOMETRY_OT_color_attribute_duplicate";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = geometry_color_attribute_duplicate_exec;
   ot->poll = geometry_color_attributes_duplicate_poll;
 
@@ -821,7 +821,7 @@ static wmOperatorStatus geometry_attribute_convert_invoke(bContext *C,
   AttributeOwner owner = AttributeOwner::from_id(id);
   const bke::AttributeAccessor accessor = *bke::AttributeAccessor::from_id(*id);
   const bke::AttributeMetaData meta_data = *accessor.lookup_meta_data(
-      BKE_attributes_active_get(owner)->name);
+      *BKE_attributes_active_name_get(owner));
 
   PropertyRNA *prop = RNA_struct_find_property(op->ptr, "domain");
   if (!RNA_property_is_set(op->ptr, prop)) {

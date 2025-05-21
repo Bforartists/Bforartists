@@ -237,15 +237,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col->label(TIP_("Bind To"), ICON_NONE);
 
   row = &col->row(true);
-  uiItemS(row);
+  layout->separator();;
   row->prop(ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
 
   row = &col->row(true);
-  uiItemS(row);
+  layout->separator();;
   row->prop(ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE);
   /* ------------ end bfa */
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void panel_register(ARegionType *region_type)
