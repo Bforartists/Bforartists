@@ -1330,26 +1330,26 @@ static void draw_strips_background(TimelineDrawContext *timeline_ctx,
     {
       data.flags |= GPU_SEQ_FLAG_TRANSITION;
 
-      const Strip *seq1 = strip.strip->seq1;
-      const Strip *seq2 = strip.strip->seq2;
+      const Strip *input1 = strip.strip->input1;
+      const Strip *input2 = strip.strip->input2;
 
       /* Left side. */
-      if (seq1->type == STRIP_TYPE_COLOR) {
-        rgb_float_to_uchar(col, ((const SolidColorVars *)seq1->effectdata)->col);
+      if (input1->type == STRIP_TYPE_COLOR) {
+        rgb_float_to_uchar(col, ((const SolidColorVars *)input1->effectdata)->col);
       }
       else {
-        color3ubv_from_seq(scene, seq1, strip.show_strip_color_tag, strip.is_muted, col);
+        color3ubv_from_seq(scene, input1, strip.show_strip_color_tag, strip.is_muted, col);
       }
       data.col_transition_in = color_pack(col);
 
       /* Right side. */
-      if (seq2->type == STRIP_TYPE_COLOR) {
-        rgb_float_to_uchar(col, ((const SolidColorVars *)seq2->effectdata)->col);
+      if (input2->type == STRIP_TYPE_COLOR) {
+        rgb_float_to_uchar(col, ((const SolidColorVars *)input2->effectdata)->col);
       }
       else {
-        color3ubv_from_seq(scene, seq2, strip.show_strip_color_tag, strip.is_muted, col);
+        color3ubv_from_seq(scene, input2, strip.show_strip_color_tag, strip.is_muted, col);
         /* If the transition inputs are of the same type, draw the right side slightly darker. */
-        if (seq1->type == seq2->type) {
+        if (input1->type == input2->type) {
           UI_GetColorPtrShade3ubv(col, -15, col);
         }
       }
@@ -1440,7 +1440,7 @@ static void strip_data_highlight_flags_set(const StripDrawContext &strip,
   const Strip *special_preview = special_preview_get();
   /* Highlight if strip is an input of an active strip, or if the strip is solo preview. */
   if (act_strip != nullptr && (act_strip->flag & SELECT) != 0) {
-    if (act_strip->seq1 == strip.strip || act_strip->seq2 == strip.strip) {
+    if (act_strip->input1 == strip.strip || act_strip->input2 == strip.strip) {
       data.flags |= GPU_SEQ_FLAG_HIGHLIGHT;
     }
   }
@@ -1673,77 +1673,32 @@ struct CacheDrawData {
   const View2D *v2d;
   float stripe_ofs_y;
   float stripe_ht;
-  int cache_flag;
   SeqQuadsBatch *quads;
 };
 
-/* Called as a callback. */
-static bool draw_cache_view_init_fn(void * /*userdata*/, size_t item_count)
-{
-  return item_count == 0;
-}
-
-/* Called as a callback */
-static bool draw_cache_view_iter_fn(void *userdata,
-                                    Strip *strip,
-                                    int timeline_frame,
-                                    int cache_type)
+/* Draw final cache entries on top of the timeline. */
+static void draw_cache_final_iter_fn(void *userdata, int timeline_frame)
 {
   CacheDrawData *drawdata = static_cast<CacheDrawData *>(userdata);
+
+  /* Same as movie clip cache color, see ED_region_cache_draw_cached_segments. */
+  const uchar4 col{108, 108, 210, 255};
+
   const View2D *v2d = drawdata->v2d;
-  float stripe_top, stripe_bot;
-
-  /* NOTE: Final color is the same as the movie clip cache color.
-   * See ED_region_cache_draw_cached_segments.
-   */
-  const uchar4 col_final{108, 108, 210, 255};
-  const uchar4 col_raw{255, 25, 5, 100};
-  const uchar4 col_preproc{25, 25, 191, 100};
-  const uchar4 col_composite{255, 153, 0, 100};
-
-  uchar4 col{0, 0, 0, 0};
-
-  bool dev_ui = (U.flag & USER_DEVELOPER_UI);
-
-  if ((cache_type & SEQ_CACHE_STORE_FINAL_OUT) &&
-      (drawdata->cache_flag & SEQ_CACHE_SHOW_FINAL_OUT))
-  {
-    /* Draw the final cache on top of the timeline */
-    stripe_top = v2d->cur.ymax - (UI_TIME_SCRUB_MARGIN_Y / UI_view2d_scale_get_y(v2d));
-    stripe_bot = stripe_top - (UI_TIME_CACHE_MARGIN_Y / UI_view2d_scale_get_y(v2d));
-    col = col_final;
-  }
-  else {
-    if (!dev_ui) {
-      /* Don't show these cache types below unless developer extras is on. */
-      return false;
-    }
-    if ((cache_type & SEQ_CACHE_STORE_RAW) && (drawdata->cache_flag & SEQ_CACHE_SHOW_RAW)) {
-      stripe_bot = strip->machine + STRIP_OFSBOTTOM + drawdata->stripe_ofs_y;
-      col = col_raw;
-    }
-    else if ((cache_type & SEQ_CACHE_STORE_PREPROCESSED) &&
-             (drawdata->cache_flag & SEQ_CACHE_SHOW_PREPROCESSED))
-    {
-      stripe_bot = strip->machine + STRIP_OFSBOTTOM + drawdata->stripe_ht +
-                   drawdata->stripe_ofs_y * 2;
-      col = col_preproc;
-    }
-    else if ((cache_type & SEQ_CACHE_STORE_COMPOSITE) &&
-             (drawdata->cache_flag & SEQ_CACHE_SHOW_COMPOSITE))
-    {
-      stripe_bot = strip->machine + STRIP_OFSTOP - drawdata->stripe_ofs_y - drawdata->stripe_ht;
-      col = col_composite;
-    }
-    else {
-      return false;
-    }
-    stripe_top = stripe_bot + drawdata->stripe_ht;
-  }
-
+  float stripe_top = v2d->cur.ymax - (UI_TIME_SCRUB_MARGIN_Y / UI_view2d_scale_get_y(v2d));
+  float stripe_bot = stripe_top - (UI_TIME_CACHE_MARGIN_Y / UI_view2d_scale_get_y(v2d));
   drawdata->quads->add_quad(timeline_frame, stripe_bot, timeline_frame + 1, stripe_top, col);
+}
 
-  return false;
+/* Draw source cache entries at bottom of the strips. */
+static void draw_cache_source_iter_fn(void *userdata, const Strip *strip, int timeline_frame)
+{
+  CacheDrawData *drawdata = static_cast<CacheDrawData *>(userdata);
+
+  const uchar4 col{255, 25, 5, 100};
+  float stripe_bot = strip->machine + STRIP_OFSBOTTOM + drawdata->stripe_ofs_y;
+  float stripe_top = stripe_bot + drawdata->stripe_ht;
+  drawdata->quads->add_quad(timeline_frame, stripe_bot, timeline_frame + 1, stripe_top, col);
 }
 
 static void draw_cache_stripe(const Scene *scene,
@@ -1771,8 +1726,6 @@ static void draw_cache_background(const bContext *C, CacheDrawData *draw_data)
    */
   const uchar4 bg_final{78, 78, 145, 255};
   const uchar4 bg_raw{255, 25, 5, 25};
-  const uchar4 bg_preproc{25, 25, 191, 25};
-  const uchar4 bg_composite{255, 153, 0, 25};
 
   float stripe_bot;
   bool dev_ui = (U.flag & USER_DEVELOPER_UI);
@@ -1797,18 +1750,6 @@ static void draw_cache_background(const bContext *C, CacheDrawData *draw_data)
     stripe_bot = strip->machine + STRIP_OFSBOTTOM + draw_data->stripe_ofs_y;
     if (sseq->cache_overlay.flag & SEQ_CACHE_SHOW_RAW) {
       draw_cache_stripe(scene, strip, *draw_data->quads, stripe_bot, draw_data->stripe_ht, bg_raw);
-    }
-
-    if (sseq->cache_overlay.flag & SEQ_CACHE_SHOW_PREPROCESSED) {
-      stripe_bot += draw_data->stripe_ht + draw_data->stripe_ofs_y;
-      draw_cache_stripe(
-          scene, strip, *draw_data->quads, stripe_bot, draw_data->stripe_ht, bg_preproc);
-    }
-
-    if (sseq->cache_overlay.flag & SEQ_CACHE_SHOW_COMPOSITE) {
-      stripe_bot = strip->machine + STRIP_OFSTOP - draw_data->stripe_ofs_y - draw_data->stripe_ht;
-      draw_cache_stripe(
-          scene, strip, *draw_data->quads, stripe_bot, draw_data->stripe_ht, bg_composite);
     }
   }
 }
@@ -1835,13 +1776,17 @@ static void draw_cache_view(const bContext *C)
   userdata.v2d = v2d;
   userdata.stripe_ofs_y = stripe_ofs_y;
   userdata.stripe_ht = stripe_ht;
-  userdata.cache_flag = sseq->cache_overlay.flag;
   userdata.quads = &quads;
 
   GPU_blend(GPU_BLEND_ALPHA);
 
   draw_cache_background(C, &userdata);
-  seq::cache_iterate(scene, &userdata, draw_cache_view_init_fn, draw_cache_view_iter_fn);
+  if (sseq->cache_overlay.flag & SEQ_CACHE_SHOW_FINAL_OUT) {
+    seq::final_image_cache_iterate(scene, &userdata, draw_cache_final_iter_fn);
+  }
+  if ((U.flag & USER_DEVELOPER_UI) && (sseq->cache_overlay.flag & SEQ_CACHE_SHOW_RAW)) {
+    seq::source_image_cache_iterate(scene, &userdata, draw_cache_source_iter_fn);
+  }
 
   quads.draw();
   GPU_blend(GPU_BLEND_NONE);

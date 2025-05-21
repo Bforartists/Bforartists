@@ -8,8 +8,6 @@
 
 #include "BLI_string_ref.hh"
 #include "BLI_vector.hh"
-#include "DNA_windowmanager_enums.h"
-#include "DNA_windowmanager_types.h"
 #include "MEM_guardedalloc.h"
 
 #include "BLI_fileops.h"
@@ -293,7 +291,7 @@ void SEQUENCER_OT_gap_remove(wmOperatorType *ot)
       "Remove gap at current frame to first strip at the right, independent of selection or "
       "locked state of strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   //  ot->invoke = sequencer_snap_invoke;
   ot->exec = sequencer_gap_remove_exec;
   ot->poll = sequencer_edit_poll;
@@ -332,7 +330,7 @@ void SEQUENCER_OT_gap_insert(wmOperatorType *ot)
       "Insert gap at current frame to first strips at the right, independent of selection or "
       "locked state of strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   //  ot->invoke = sequencer_snap_invoke;
   ot->exec = sequencer_gap_insert_exec;
   ot->poll = sequencer_edit_poll;
@@ -385,7 +383,7 @@ static wmOperatorStatus sequencer_snap_exec(bContext *C, wmOperator *op)
         }
       }
 
-      seq::relations_invalidate_cache_composite(scene, strip);
+      seq::relations_invalidate_cache(scene, strip);
     }
   }
 
@@ -404,13 +402,13 @@ static wmOperatorStatus sequencer_snap_exec(bContext *C, wmOperator *op)
     if (strip->type & STRIP_TYPE_EFFECT) {
       const bool either_handle_selected = (strip->flag & (SEQ_LEFTSEL | SEQ_RIGHTSEL)) != 0;
 
-      if (strip->seq1 && (strip->seq1->flag & SELECT)) {
+      if (strip->input1 && (strip->input1->flag & SELECT)) {
         if (!either_handle_selected) {
           seq::offset_animdata(
               scene, strip, (snap_frame - seq::time_left_handle_frame_get(scene, strip)));
         }
       }
-      else if (strip->seq2 && (strip->seq2->flag & SELECT)) {
+      else if (strip->input2 && (strip->input2->flag & SELECT)) {
         if (!either_handle_selected) {
           seq::offset_animdata(
               scene, strip, (snap_frame - seq::time_left_handle_frame_get(scene, strip)));
@@ -447,7 +445,7 @@ void SEQUENCER_OT_snap(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_snap";
   ot->description = "Frame where selected strips will be snapped";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->invoke = sequencer_snap_invoke;
   ot->exec = sequencer_snap_exec;
   ot->poll = sequencer_edit_poll;
@@ -679,7 +677,7 @@ static void slip_strips_delta(wmOperator *op, Scene *scene, SlipData *data, cons
   bool slip_keyframes = RNA_boolean_get(op->ptr, "slip_keyframes");
   for (Strip *strip : data->strips) {
     seq::time_slip_strip(scene, strip, frame_delta, subframe_delta, slip_keyframes);
-    seq::relations_invalidate_cache_preprocessed(scene, strip);
+    seq::relations_invalidate_cache(scene, strip);
   }
 
   RNA_float_set(op->ptr, "offset", new_offset);
@@ -880,7 +878,7 @@ void SEQUENCER_OT_slip(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_slip";
   ot->description = "Slip the contents of selected strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->invoke = sequencer_slip_invoke;
   ot->modal = sequencer_slip_modal;
   ot->exec = sequencer_slip_exec;
@@ -924,13 +922,13 @@ static wmOperatorStatus sequencer_mute_exec(bContext *C, wmOperator *op)
     if (!RNA_boolean_get(op->ptr, "unselected")) {
       if (strip->flag & SELECT) {
         strip->flag |= SEQ_MUTE;
-        seq::relations_invalidate_dependent(scene, strip);
+        seq::relations_invalidate_cache(scene, strip);
       }
     }
     else {
       if ((strip->flag & SELECT) == 0) {
         strip->flag |= SEQ_MUTE;
-        seq::relations_invalidate_dependent(scene, strip);
+        seq::relations_invalidate_cache(scene, strip);
       }
     }
   }
@@ -949,7 +947,7 @@ void SEQUENCER_OT_mute(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_mute";
   ot->description = "Mute (un)selected strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_mute_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -979,19 +977,19 @@ static wmOperatorStatus sequencer_unmute_exec(bContext *C, wmOperator *op)
           strip->type != STRIP_TYPE_SOUND_RAM)
       {
         strip->flag &= ~SEQ_MUTE;
-        seq::relations_invalidate_dependent(scene, strip);
+        seq::relations_invalidate_cache(scene, strip);
       }
     }
     else if (!RNA_boolean_get(op->ptr, "unselected")) {
       if (strip->flag & SELECT) {
         strip->flag &= ~SEQ_MUTE;
-        seq::relations_invalidate_dependent(scene, strip);
+        seq::relations_invalidate_cache(scene, strip);
       }
     }
     else {
       if ((strip->flag & SELECT) == 0) {
         strip->flag &= ~SEQ_MUTE;
-        seq::relations_invalidate_dependent(scene, strip);
+        seq::relations_invalidate_cache(scene, strip);
       }
     }
   }
@@ -1010,7 +1008,7 @@ void SEQUENCER_OT_unmute(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_unmute";
   ot->description = "Unmute (un)selected strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_unmute_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -1054,7 +1052,7 @@ void SEQUENCER_OT_lock(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_lock";
   ot->description = "Lock strips so they can't be transformed";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_lock_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -1092,7 +1090,7 @@ void SEQUENCER_OT_unlock(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_unlock";
   ot->description = "Unlock strips so they can be transformed";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_unlock_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -1218,7 +1216,7 @@ void SEQUENCER_OT_reload(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_reload";
   ot->description = "Reload strips in the sequencer";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_reload_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -1254,7 +1252,7 @@ static wmOperatorStatus sequencer_refresh_all_exec(bContext *C, wmOperator * /*o
 
   seq::relations_free_imbuf(scene, &ed->seqbase, false);
   blender::seq::media_presence_free(scene);
-  blender::seq::thumbnail_cache_clear(scene);
+  seq::cache_cleanup(scene);
 
   WM_event_add_notifier(
       C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
@@ -1269,7 +1267,7 @@ void SEQUENCER_OT_refresh_all(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_refresh_all";
   ot->description = "Refresh the sequencer editor";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_refresh_all_exec;
   ot->poll = sequencer_refresh_all_poll;
 }
@@ -1345,19 +1343,19 @@ static wmOperatorStatus sequencer_reassign_inputs_exec(bContext *C, wmOperator *
     return OPERATOR_CANCELLED;
   }
 
-  Strip *seq1 = inputs[0];
-  Strip *seq2 = inputs.size() == 2 ? inputs[1] : nullptr;
+  Strip *input1 = inputs[0];
+  Strip *input2 = inputs.size() == 2 ? inputs[1] : nullptr;
 
   /* Check if reassigning would create recursivity. */
-  if (seq::relations_render_loop_check(seq1, active_strip) ||
-      seq::relations_render_loop_check(seq2, active_strip))
+  if (seq::relations_render_loop_check(input1, active_strip) ||
+      seq::relations_render_loop_check(input2, active_strip))
   {
     BKE_report(op->reports, RPT_ERROR, "Cannot reassign inputs: recursion detected");
     return OPERATOR_CANCELLED;
   }
 
-  active_strip->seq1 = seq1;
-  active_strip->seq2 = seq2;
+  active_strip->input1 = input1;
+  active_strip->input2 = input2;
 
   int old_start = active_strip->start;
 
@@ -1365,9 +1363,9 @@ static wmOperatorStatus sequencer_reassign_inputs_exec(bContext *C, wmOperator *
    * TODO(Richard): This is because internally startdisp is still used, due to poor performance
    * of mapping effect range to inputs. This mapping could be cached though. */
   seq::strip_lookup_invalidate(scene->ed);
-  seq::time_left_handle_frame_set(scene, seq1, seq::time_left_handle_frame_get(scene, seq1));
+  seq::time_left_handle_frame_set(scene, input1, seq::time_left_handle_frame_get(scene, input1));
 
-  seq::relations_invalidate_cache_preprocessed(scene, active_strip);
+  seq::relations_invalidate_cache(scene, active_strip);
   seq::offset_animdata(scene, active_strip, (active_strip->start - old_start));
 
   WM_event_add_notifier(
@@ -1398,7 +1396,7 @@ void SEQUENCER_OT_reassign_inputs(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_reassign_inputs";
   ot->description = "Reassign the inputs for the effect strip";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_reassign_inputs_exec;
   ot->poll = sequencer_effect_poll;
 
@@ -1417,16 +1415,16 @@ static wmOperatorStatus sequencer_swap_inputs_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   Strip *active_strip = seq::select_active_get(scene);
 
-  if (active_strip->seq1 == nullptr || active_strip->seq2 == nullptr) {
+  if (active_strip->input1 == nullptr || active_strip->input2 == nullptr) {
     BKE_report(op->reports, RPT_ERROR, "No valid inputs to swap");
     return OPERATOR_CANCELLED;
   }
 
-  Strip *strip = active_strip->seq1;
-  active_strip->seq1 = active_strip->seq2;
-  active_strip->seq2 = strip;
+  Strip *strip = active_strip->input1;
+  active_strip->input1 = active_strip->input2;
+  active_strip->input2 = strip;
 
-  seq::relations_invalidate_cache_preprocessed(scene, active_strip);
+  seq::relations_invalidate_cache(scene, active_strip);
 
   WM_event_add_notifier(
       C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
@@ -1440,7 +1438,7 @@ void SEQUENCER_OT_swap_inputs(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_swap_inputs";
   ot->description = "Swap the two inputs of the effect strip";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_swap_inputs_exec;
   ot->poll = sequencer_effect_poll;
 
@@ -1629,7 +1627,7 @@ static void sequencer_split_ui(bContext * /*C*/, wmOperator *op)
   layout->prop(op->ptr, "frame", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(op->ptr, "side", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  uiItemS(layout);
+  layout->separator();
 
   layout->prop(op->ptr, "use_cursor_position", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (RNA_boolean_get(op->ptr, "use_cursor_position")) {
@@ -1667,7 +1665,7 @@ void SEQUENCER_OT_split(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_split";
   ot->description = "Split the selected strips in two";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->invoke = sequencer_split_invoke;
   ot->exec = sequencer_split_exec;
   ot->get_name = SEQUENCER_OT_split_get_name;               /*bfa - tool name*/
@@ -1767,7 +1765,7 @@ static wmOperatorStatus sequencer_add_duplicate_exec(bContext *C, wmOperator * /
   Strip *strip_last = static_cast<Strip *>(seqbase->last);
 
   /* Rely on the `duplicated_strips` list being added at the end.
-   * Their UIDs has been re-generated by the #seq::sequence_base_dupli_recursive(). */
+   * Their UIDs has been re-generated by the #SEQ_sequence_base_dupli_recursive(). */
   BLI_movelisttolist(ed->seqbasep, &duplicated_strips);
 
   /* Handle duplicated strips: set active, select, ensure unique name and duplicate animation
@@ -1816,7 +1814,7 @@ void SEQUENCER_OT_duplicate(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_duplicate";
   ot->description = "Duplicate the selected strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_add_duplicate_exec;
   ot->poll = ED_operator_sequencer_active;
 
@@ -1898,13 +1896,12 @@ static wmOperatorStatus sequencer_delete_invoke(bContext *C, wmOperator *op, con
 
 void SEQUENCER_OT_delete(wmOperatorType *ot)
 {
-
   /* Identifiers. */
   ot->name = "Delete Strips";
   ot->idname = "SEQUENCER_OT_delete";
   ot->description = "Delete selected strips from the sequencer"; /*BFA - updated tooltip*/
 
-  /* Api callbacks. */
+  /* API callbacks. */
   /*ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
   ot->exec = sequencer_delete_exec;
   ot->poll = sequencer_edit_poll;
@@ -1950,7 +1947,7 @@ static wmOperatorStatus sequencer_offset_clear_exec(bContext *C, wmOperator * /*
   /* Update lengths, etc. */
   strip = static_cast<Strip *>(ed->seqbasep->first);
   while (strip) {
-    seq::relations_invalidate_cache_preprocessed(scene, strip);
+    seq::relations_invalidate_cache(scene, strip);
     strip = strip->next;
   }
 
@@ -1972,13 +1969,12 @@ static wmOperatorStatus sequencer_offset_clear_exec(bContext *C, wmOperator * /*
 
 void SEQUENCER_OT_offset_clear(wmOperatorType *ot)
 {
-
   /* Identifiers. */
   ot->name = "Clear Strip Offset";
   ot->idname = "SEQUENCER_OT_offset_clear";
   ot->description = "Clear strip offsets from the start and end frames";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_offset_clear_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -2086,7 +2082,7 @@ void SEQUENCER_OT_images_separate(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_images_separate";
   ot->description = "On image sequence strips, it returns a strip for each image";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_separate_images_exec;
   ot->invoke = sequencer_separate_images_invoke;
   ot->poll = sequencer_edit_poll;
@@ -2141,7 +2137,7 @@ void SEQUENCER_OT_meta_toggle(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_meta_toggle";
   ot->description = "Toggle a meta-strip (to edit enclosed strips)";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_meta_toggle_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -2182,7 +2178,7 @@ static wmOperatorStatus sequencer_meta_make_exec(bContext *C, wmOperator * /*op*
       scene, active_seqbase, strips_to_move, seq::query_strip_connected_and_effect_chain);
 
   for (Strip *strip : strips_to_move) {
-    seq::relations_invalidate_cache_preprocessed(scene, strip);
+    seq::relations_invalidate_cache(scene, strip);
     BLI_remlink(active_seqbase, strip);
     BLI_addtail(&strip_meta->seqbase, strip);
     channel_max = max_ii(strip->machine, channel_max);
@@ -2226,7 +2222,7 @@ void SEQUENCER_OT_meta_make(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_meta_make";
   ot->description = "Group selected strips into a meta-strip";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_meta_make_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -2253,7 +2249,7 @@ static wmOperatorStatus sequencer_meta_separate_exec(bContext *C, wmOperator * /
   seq::prefetch_stop(scene);
 
   LISTBASE_FOREACH (Strip *, strip, &active_strip->seqbase) {
-    seq::relations_invalidate_cache_preprocessed(scene, strip);
+    seq::relations_invalidate_cache(scene, strip);
   }
 
   /* Remove all selected from meta, and put in main list.
@@ -2289,7 +2285,7 @@ void SEQUENCER_OT_meta_separate(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_meta_separate";
   ot->description = "Put the contents of a meta-strip back in the sequencer";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_meta_separate_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -2355,7 +2351,7 @@ void SEQUENCER_OT_strip_jump(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_strip_jump";
   ot->description = "Move frame to previous edit point";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_strip_jump_exec;
   ot->poll = sequencer_strip_jump_poll;
 
@@ -2389,12 +2385,12 @@ static void swap_strips(Scene *scene, Strip *strip_a, Strip *strip_b)
   strip_b_start = (strip_b->start - seq::time_left_handle_frame_get(scene, strip_b)) +
                   seq::time_left_handle_frame_get(scene, strip_a);
   seq::transform_translate_strip(scene, strip_b, strip_b_start - strip_b->start);
-  seq::relations_invalidate_cache_preprocessed(scene, strip_b);
+  seq::relations_invalidate_cache(scene, strip_b);
 
   strip_a_start = (strip_a->start - seq::time_left_handle_frame_get(scene, strip_a)) +
                   seq::time_right_handle_frame_get(scene, strip_b) + gap;
   seq::transform_translate_strip(scene, strip_a, strip_a_start - strip_a->start);
-  seq::relations_invalidate_cache_preprocessed(scene, strip_a);
+  seq::relations_invalidate_cache(scene, strip_a);
 }
 
 static Strip *find_next_prev_strip(Scene *scene, Strip *test, int lr, int sel)
@@ -2452,7 +2448,7 @@ static Strip *find_next_prev_strip(Scene *scene, Strip *test, int lr, int sel)
 
 static bool strip_is_parent(const Strip *par, const Strip *strip)
 {
-  return ((par->seq1 == strip) || (par->seq2 == strip));
+  return ((par->input1 == strip) || (par->input2 == strip));
 }
 
 static wmOperatorStatus sequencer_swap_exec(bContext *C, wmOperator *op)
@@ -2474,12 +2470,12 @@ static wmOperatorStatus sequencer_swap_exec(bContext *C, wmOperator *op)
 
     /* Disallow effect strips. */
     if (seq::effect_get_num_inputs(strip->type) >= 1 &&
-        (strip->effectdata || strip->seq1 || strip->seq2))
+        (strip->effectdata || strip->input1 || strip->input2))
     {
       return OPERATOR_CANCELLED;
     }
     if ((seq::effect_get_num_inputs(active_strip->type) >= 1) &&
-        (active_strip->effectdata || active_strip->seq1 || active_strip->seq2))
+        (active_strip->effectdata || active_strip->input1 || active_strip->input2))
     {
       return OPERATOR_CANCELLED;
     }
@@ -2555,7 +2551,7 @@ void SEQUENCER_OT_swap(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_swap";
   ot->description = "Swap active strip with strip to the right or left";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_swap_exec;
   ot->get_name = SEQUENCER_OT_swap_get_name;               /*bfa - tool name*/
   ot->get_description = SEQUENCER_OT_swap_get_description; /*bfa - descriptions*/
@@ -2611,7 +2607,7 @@ static wmOperatorStatus sequencer_rendersize_exec(bContext *C, wmOperator * /*op
   active_strip->data->transform->scale_x = active_strip->data->transform->scale_y = 1.0f;
   active_strip->data->transform->xofs = active_strip->data->transform->yofs = 0.0f;
 
-  seq::relations_invalidate_cache_preprocessed(scene, active_strip);
+  seq::relations_invalidate_cache(scene, active_strip);
   WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
@@ -2625,7 +2621,7 @@ void SEQUENCER_OT_rendersize(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_rendersize";
   ot->description = "Set render size and aspect from active strip";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_rendersize_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -2646,7 +2642,7 @@ void SEQUENCER_OT_copy(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_copy";
   ot->description = "Copy the selected strips to the internal clipboard";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_clipboard_copy_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -2685,7 +2681,7 @@ void SEQUENCER_OT_paste(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_paste";
   ot->description = "Paste strips from the internal clipboard";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_clipboard_paste_exec;
   ot->poll = ED_operator_sequencer_active;
 
@@ -2759,7 +2755,7 @@ void SEQUENCER_OT_swap_data(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_swap_data";
   ot->description = "Swap 2 sequencer strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_swap_data_exec;
   ot->poll = ED_operator_sequencer_active;
 
@@ -2778,7 +2774,7 @@ static wmOperatorStatus sequencer_change_effect_input_exec(bContext *C, wmOperat
   Scene *scene = CTX_data_scene(C);
   Strip *strip = seq::select_active_get(scene);
 
-  Strip **strip_1 = &strip->seq1, **strip_2 = &strip->seq2;
+  Strip **strip_1 = &strip->input1, **strip_2 = &strip->input2;
 
   if (*strip_1 == nullptr || *strip_2 == nullptr) {
     BKE_report(op->reports, RPT_ERROR, "One of the effect inputs is unset, cannot swap");
@@ -2787,7 +2783,7 @@ static wmOperatorStatus sequencer_change_effect_input_exec(bContext *C, wmOperat
 
   std::swap(*strip_1, *strip_2);
 
-  seq::relations_invalidate_cache_preprocessed(scene, strip);
+  seq::relations_invalidate_cache(scene, strip);
   WM_event_add_notifier(
       C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
@@ -2800,7 +2796,7 @@ void SEQUENCER_OT_change_effect_input(wmOperatorType *ot)
   ot->name = "Change Effect Input";
   ot->idname = "SEQUENCER_OT_change_effect_input";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_change_effect_input_exec;
   ot->poll = sequencer_effect_poll;
 
@@ -2863,7 +2859,7 @@ static wmOperatorStatus sequencer_change_effect_type_exec(bContext *C, wmOperato
   sh = seq::effect_handle_get(strip);
   sh.init(strip);
 
-  seq::relations_invalidate_cache_preprocessed(scene, strip);
+  seq::relations_invalidate_cache(scene, strip);
   WM_event_add_notifier(
       C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
@@ -2876,7 +2872,7 @@ void SEQUENCER_OT_change_effect_type(wmOperatorType *ot)
   ot->name = "Change Effect Type";
   ot->idname = "SEQUENCER_OT_change_effect_type";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_change_effect_type_exec;
   ot->poll = sequencer_effect_poll;
 
@@ -3028,7 +3024,7 @@ void SEQUENCER_OT_change_path(wmOperatorType *ot)
   ot->name = "Change Data/Files";
   ot->idname = "SEQUENCER_OT_change_path";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_change_path_exec;
   ot->invoke = sequencer_change_path_invoke;
   ot->poll = sequencer_strip_has_path_poll;
@@ -3115,7 +3111,7 @@ void SEQUENCER_OT_change_scene(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_change_scene";
   ot->description = "Change Scene assigned to Strip";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_change_scene_exec;
   ot->invoke = sequencer_change_scene_invoke;
   ot->poll = sequencer_strip_change_scene_poll;
@@ -3278,7 +3274,7 @@ void SEQUENCER_OT_export_subtitles(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_export_subtitles";
   ot->description = "Export .srt file containing text strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_export_subtitles_exec;
   ot->invoke = sequencer_export_subtitles_invoke;
   ot->poll = sequencer_strip_is_text_poll;
@@ -3356,7 +3352,7 @@ void SEQUENCER_OT_set_range_to_strips(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_set_range_to_strips";
   ot->description = "Set the frame range to the selected strips start and end";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_set_range_to_strips_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -3461,7 +3457,7 @@ static wmOperatorStatus sequencer_strip_transform_clear_exec(bContext *C, wmOper
           }
           break;
       }
-      seq::relations_invalidate_cache_preprocessed(scene, strip);
+      seq::relations_invalidate_cache(scene, strip);
     }
   }
 
@@ -3477,7 +3473,7 @@ void SEQUENCER_OT_strip_transform_clear(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_strip_transform_clear";
   ot->description = "Reset image transformation to default value";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_strip_transform_clear_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -3534,7 +3530,7 @@ static wmOperatorStatus sequencer_strip_transform_fit_exec(bContext *C, wmOperat
                             scene->r.xsch,
                             scene->r.ysch,
                             fit_method);
-      seq::relations_invalidate_cache_preprocessed(scene, strip);
+      seq::relations_invalidate_cache(scene, strip);
     }
   }
 
@@ -3549,7 +3545,7 @@ void SEQUENCER_OT_strip_transform_fit(wmOperatorType *ot)
   ot->name = "Strip Transform Set Fit";
   ot->idname = "SEQUENCER_OT_strip_transform_fit";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_strip_transform_fit_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -3604,7 +3600,7 @@ void SEQUENCER_OT_strip_color_tag_set(wmOperatorType *ot)
   ot->idname = "SEQUENCER_OT_strip_color_tag_set";
   ot->description = "Set a color tag for the selected strips";
 
-  /* Api callbacks. */
+  /* API callbacks. */
   ot->exec = sequencer_strip_color_tag_set_exec;
   ot->poll = sequencer_strip_color_tag_set_poll;
 
@@ -3658,7 +3654,7 @@ void SEQUENCER_OT_cursor_set(wmOperatorType *ot)
   ot->description = "Set 2D cursor location";
   ot->idname = "SEQUENCER_OT_cursor_set";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = sequencer_set_2d_cursor_exec;
   ot->invoke = sequencer_set_2d_cursor_invoke;
   ot->poll = sequencer_view_has_preview_poll;
@@ -3764,7 +3760,7 @@ void SEQUENCER_OT_scene_frame_range_update(wmOperatorType *ot)
   ot->description = "Update frame range of scene strip";
   ot->idname = "SEQUENCER_OT_scene_frame_range_update";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = sequencer_scene_frame_range_update_exec;
   ot->poll = sequencer_scene_frame_range_update_poll;
 

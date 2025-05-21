@@ -2037,33 +2037,27 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* ------------ end bfa */
 
   row = &layout->row(false);
-  uiItemO(row, IFACE_("Create Armature"), ICON_NONE, "OBJECT_OT_skin_armature_create");
-  uiItemO(row, std::nullopt, ICON_NONE, "MESH_OT_customdata_skin_add");
+  row->op("OBJECT_OT_skin_armature_create", IFACE_("Create Armature"), ICON_NONE);
+  row->op("MESH_OT_customdata_skin_add", std::nullopt, ICON_NONE);
 
   row = &layout->row(false);
-  uiItemFullO(row,
-              "OBJECT_OT_skin_loose_mark_clear",
-              IFACE_("Mark Loose"),
-              ICON_NONE,
-              nullptr,
-              WM_OP_EXEC_DEFAULT,
-              UI_ITEM_NONE,
-              &op_ptr);
+  op_ptr = row->op("OBJECT_OT_skin_loose_mark_clear",
+                   IFACE_("Mark Loose"),
+                   ICON_NONE,
+                   WM_OP_EXEC_DEFAULT,
+                   UI_ITEM_NONE);
   RNA_enum_set(&op_ptr, "action", 0); /* SKIN_LOOSE_MARK */
-  uiItemFullO(row,
-              "OBJECT_OT_skin_loose_mark_clear",
-              IFACE_("Clear Loose"),
-              ICON_NONE,
-              nullptr,
-              WM_OP_EXEC_DEFAULT,
-              UI_ITEM_NONE,
-              &op_ptr);
+  op_ptr = row->op("OBJECT_OT_skin_loose_mark_clear",
+                   IFACE_("Clear Loose"),
+                   ICON_NONE,
+                   WM_OP_EXEC_DEFAULT,
+                   UI_ITEM_NONE);
   RNA_enum_set(&op_ptr, "action", 1); /* SKIN_LOOSE_CLEAR */
 
-  uiItemO(layout, IFACE_("Mark Root"), ICON_NONE, "OBJECT_OT_skin_root_mark");
-  uiItemO(layout, IFACE_("Equalize Radii"), ICON_NONE, "OBJECT_OT_skin_radii_equalize");
+  layout->op("OBJECT_OT_skin_root_mark", IFACE_("Mark Root"), ICON_NONE);
+  layout->op("OBJECT_OT_skin_radii_equalize", IFACE_("Equalize Radii"), ICON_NONE);
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void panel_register(ARegionType *region_type)

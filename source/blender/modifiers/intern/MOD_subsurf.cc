@@ -477,7 +477,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     if (ob_use_adaptive_subdivision || RNA_boolean_get(ptr, "use_limit_surface")) {
       uiLayout *col = &advanced_layout->column(true);
       uiLayout *row = &col->row(true);
-      uiItemS(row); /*bfa - indent*/
+      layout->separator();; /*bfa - indent*/
       row->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
 
@@ -496,7 +496,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     /* ------------ end bfa */
   }
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void panel_register(ARegionType *region_type)

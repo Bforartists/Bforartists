@@ -498,7 +498,7 @@ static void try_add_side_effect_node(const ModifierEvalContext &ctx,
   if (modifier_compute_context == nullptr) {
     return;
   }
-  if (modifier_compute_context->modifier_name() != nmd.modifier.name) {
+  if (modifier_compute_context->modifier_uid() != nmd.modifier.persistent_uid) {
     return;
   }
 
@@ -539,7 +539,7 @@ static void try_add_side_effect_node(const ModifierEvalContext &ctx,
       }
       const lf::FunctionNode *lf_simulation_output_node =
           lf_graph_info->mapping.possible_side_effect_node_map.lookup_default(
-              simulation_zone->output_node, nullptr);
+              simulation_zone->output_node(), nullptr);
       if (lf_simulation_output_node == nullptr) {
         return;
       }
@@ -713,7 +713,7 @@ static void find_side_effect_nodes_for_viewer_path(
   if (parsed_path->object != DEG_get_original(ctx.object)) {
     return;
   }
-  if (parsed_path->modifier_name != nmd.modifier.name) {
+  if (parsed_path->modifier_uid != nmd.modifier.persistent_uid) {
     return;
   }
 
@@ -2176,15 +2176,11 @@ static void add_attribute_search_or_value_buttons(DrawGroupInputsContext &ctx,
     uiItemDecoratorR(layout, ctx.md_ptr, rna_path.c_str(), -1);
   }
 
-  PointerRNA props;
-  uiItemFullO(prop_row,
-              "object.geometry_nodes_input_attribute_toggle",
-              "",
-              ICON_SPREADSHEET,
-              nullptr,
-              WM_OP_INVOKE_DEFAULT,
-              UI_ITEM_NONE,
-              &props);
+  PointerRNA props = prop_row->op("object.geometry_nodes_input_attribute_toggle",
+                                  "",
+                                  ICON_SPREADSHEET,
+                                  WM_OP_INVOKE_DEFAULT,
+                                  UI_ITEM_NONE);
   RNA_string_set(&props, "modifier_name", ctx.nmd.modifier.name);
   RNA_string_set(&props, "input_name", socket.identifier);
 }
@@ -2337,11 +2333,8 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
     return;
   }
 
-  char socket_id_esc[MAX_NAME * 2];
-  BLI_str_escape(socket_id_esc, identifier.c_str(), sizeof(socket_id_esc));
-
-  char rna_path[sizeof(socket_id_esc) + 4];
-  SNPRINTF(rna_path, "[\"%s\"]", socket_id_esc);
+  const std::string socket_id_esc = BLI_str_escape(identifier.c_str());
+  const std::string rna_path = fmt::format("[\"{}\"]", socket_id_esc);
 
   const int input_index = ctx.nmd.node_group->interface_input_index(socket);
 
@@ -2388,7 +2381,13 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
     }
     case SOCK_MENU: {
       if (socket.flag & NODE_INTERFACE_SOCKET_MENU_EXPANDED) {
-        row->prop(ctx.md_ptr, rna_path, UI_ITEM_R_EXPAND, name, ICON_NONE);
+        /* Use a single space when the name is empty to work around a bug with expanded enums. Also
+         * see #ui_item_enum_expand_exec. */
+        row->prop(ctx.md_ptr,
+                  rna_path,
+                  UI_ITEM_R_EXPAND,
+                  StringRef(name).is_empty() ? " " : name,
+                  ICON_NONE);
       }
       else {
         row->prop(ctx.md_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
@@ -2502,64 +2501,72 @@ static void draw_interface_panel_content(DrawGroupInputsContext &ctx,
 {
   for (const bNodeTreeInterfaceItem *item : interface_panel.items().drop_front(skip_first ? 1 : 0))
   {
-    if (item->item_type == NODE_INTERFACE_PANEL) {
-      const auto &sub_interface_panel = *reinterpret_cast<const bNodeTreeInterfacePanel *>(item);
-      if (!interface_panel_has_socket(sub_interface_panel)) {
-        continue;
-      }
-      NodesModifierPanel *panel = find_panel_by_id(ctx.nmd, sub_interface_panel.identifier);
-      PointerRNA panel_ptr = RNA_pointer_create_discrete(
-          ctx.md_ptr->owner_id, &RNA_NodesModifierPanel, panel);
-      PanelLayout panel_layout;
-      bool skip_first = false;
-      /* Check if the panel should have a toggle in the header. */
-      const bNodeTreeInterfaceSocket *toggle_socket = sub_interface_panel.header_toggle_socket();
-      if (toggle_socket && !(toggle_socket->flag & NODE_INTERFACE_SOCKET_HIDE_IN_MODIFIER)) {
-        const StringRefNull identifier = toggle_socket->identifier;
-        IDProperty *property = ctx.properties.lookup_key_default_as(identifier, nullptr);
-        /* IDProperties can be removed with python, so there could be a situation where
-         * there isn't a property for a socket or it doesn't have the correct type. */
-        if (property == nullptr ||
-            !nodes::id_property_type_matches_socket(*toggle_socket, *property))
-        {
+    switch (NodeTreeInterfaceItemType(item->item_type)) {
+      case NODE_INTERFACE_PANEL: {
+        const auto &sub_interface_panel = *reinterpret_cast<const bNodeTreeInterfacePanel *>(item);
+        if (!interface_panel_has_socket(sub_interface_panel)) {
           continue;
         }
-        char socket_id_esc[MAX_NAME * 2];
-        BLI_str_escape(socket_id_esc, identifier.c_str(), sizeof(socket_id_esc));
+        NodesModifierPanel *panel = find_panel_by_id(ctx.nmd, sub_interface_panel.identifier);
+        PointerRNA panel_ptr = RNA_pointer_create_discrete(
+            ctx.md_ptr->owner_id, &RNA_NodesModifierPanel, panel);
+        PanelLayout panel_layout;
+        bool skip_first = false;
+        /* Check if the panel should have a toggle in the header. */
+        const bNodeTreeInterfaceSocket *toggle_socket = sub_interface_panel.header_toggle_socket();
+        if (toggle_socket && !(toggle_socket->flag & NODE_INTERFACE_SOCKET_HIDE_IN_MODIFIER)) {
+          const StringRefNull identifier = toggle_socket->identifier;
+          IDProperty *property = ctx.properties.lookup_key_default_as(identifier, nullptr);
+          /* IDProperties can be removed with python, so there could be a situation where
+           * there isn't a property for a socket or it doesn't have the correct type. */
+          if (property == nullptr ||
+              !nodes::id_property_type_matches_socket(*toggle_socket, *property))
+          {
+            continue;
+          }
+          char socket_id_esc[MAX_NAME * 2];
+          BLI_str_escape(socket_id_esc, identifier.c_str(), sizeof(socket_id_esc));
 
-        char rna_path[sizeof(socket_id_esc) + 4];
-        SNPRINTF(rna_path, "[\"%s\"]", socket_id_esc);
+          char rna_path[sizeof(socket_id_esc) + 4];
+          SNPRINTF(rna_path, "[\"%s\"]", socket_id_esc);
 
-        panel_layout = layout->panel_prop_with_bool_header(
-            &ctx.C, &panel_ptr, "is_open", ctx.md_ptr, rna_path, IFACE_(sub_interface_panel.name));
-        skip_first = true;
-      }
-      else {
-        panel_layout = layout->panel_prop(&ctx.C, &panel_ptr, "is_open");
-        panel_layout.header->label(IFACE_(sub_interface_panel.name), ICON_NONE);
-      }
-      if (!interface_panel_affects_output(ctx, sub_interface_panel)) {
-        uiLayoutSetActive(panel_layout.header, false);
-      }
-      uiLayoutSetTooltipFunc(
-          panel_layout.header,
-          [](bContext * /*C*/, void *panel_arg, const StringRef /*tip*/) -> std::string {
-            const auto *panel = static_cast<bNodeTreeInterfacePanel *>(panel_arg);
-            return StringRef(panel->description);
-          },
-          const_cast<bNodeTreeInterfacePanel *>(&sub_interface_panel),
-          nullptr,
-          nullptr);
-      if (panel_layout.body) {
-        draw_interface_panel_content(ctx, panel_layout.body, sub_interface_panel, skip_first);
-      }
-    }
-    else {
-      const auto &interface_socket = *reinterpret_cast<const bNodeTreeInterfaceSocket *>(item);
-      if (interface_socket.flag & NODE_INTERFACE_SOCKET_INPUT) {
-        if (!(interface_socket.flag & NODE_INTERFACE_SOCKET_HIDE_IN_MODIFIER)) {
-          draw_property_for_socket(ctx, layout, interface_socket);
+          panel_layout = layout->panel_prop_with_bool_header(&ctx.C,
+                                                             &panel_ptr,
+                                                             "is_open",
+                                                             ctx.md_ptr,
+                                                             rna_path,
+                                                             IFACE_(sub_interface_panel.name));
+          skip_first = true;
         }
+        else {
+          panel_layout = layout->panel_prop(&ctx.C, &panel_ptr, "is_open");
+          panel_layout.header->label(IFACE_(sub_interface_panel.name), ICON_NONE);
+        }
+        if (!interface_panel_affects_output(ctx, sub_interface_panel)) {
+          uiLayoutSetActive(panel_layout.header, false);
+        }
+        uiLayoutSetTooltipFunc(
+            panel_layout.header,
+            [](bContext * /*C*/, void *panel_arg, const StringRef /*tip*/) -> std::string {
+              const auto *panel = static_cast<bNodeTreeInterfacePanel *>(panel_arg);
+              return StringRef(panel->description);
+            },
+            const_cast<bNodeTreeInterfacePanel *>(&sub_interface_panel),
+            nullptr,
+            nullptr);
+        if (panel_layout.body) {
+          draw_interface_panel_content(ctx, panel_layout.body, sub_interface_panel, skip_first);
+        }
+        break;
+      }
+      case NODE_INTERFACE_SOCKET: {
+        const auto &interface_socket = *reinterpret_cast<const bNodeTreeInterfaceSocket *>(item);
+        if (interface_socket.flag & NODE_INTERFACE_SOCKET_INPUT) {
+          if (!(interface_socket.flag & NODE_INTERFACE_SOCKET_HIDE_IN_MODIFIER)) {
+            draw_property_for_socket(ctx, layout, interface_socket);
+          }
+        }
+        break;
       }
     }
   }
@@ -2769,7 +2776,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     draw_interface_panel_content(ctx, layout, nmd->node_group->tree_interface.root_panel);
   }
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 
   draw_warnings(C, *nmd, layout, ptr);
 
