@@ -935,6 +935,7 @@ if(WITH_BLENDER)
       link_replace
       load_3ds
       load_abc
+      load_csv
       load_bvh
       load_dae
       load_factory

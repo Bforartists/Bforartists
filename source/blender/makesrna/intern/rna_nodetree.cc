@@ -13960,12 +13960,12 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeImageInfo", nullptr, ICON_IMAGE_INFO);
   define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA);
-  define(brna, "GeometryNode", "GeometryNodeImportOBJ", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeImportPLY", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeImportSTL", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeImportCSV", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeImportText", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeImportVDB", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeImportOBJ", nullptr, ICON_LOAD_OBJ);
+  define(brna, "GeometryNode", "GeometryNodeImportPLY", nullptr, ICON_LOAD_PLY);
+  define(brna, "GeometryNode", "GeometryNodeImportSTL", nullptr, ICON_LOAD_STL);
+  define(brna, "GeometryNode", "GeometryNodeImportCSV", nullptr, ICON_LOAD_CSV);
+  define(brna, "GeometryNode", "GeometryNodeImportText", nullptr, ICON_FILE_TEXT);
+  define(brna, "GeometryNode", "GeometryNodeImportVDB", nullptr, ICON_FILE_VOLUME);
 
   define(brna, "GeometryNode", "GeometryNodeIndexOfNearest", nullptr, ICON_INDEX_OF_NEAREST);
   define(brna, "GeometryNode", "GeometryNodeIndexSwitch", def_geo_index_switch, ICON_INDEX_SWITCH);
