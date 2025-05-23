@@ -1754,6 +1754,7 @@ if(WITH_BLENDER)
       set_roll
       set_selection
       set_shade_smooth
+      set_smooth
       set_spline_resolution
       set_time
       set_uppercase
