@@ -5468,7 +5468,7 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Set Mesh Normal   ", icon = "SET_SMOOTH")
             props.use_transform = True
-            props.type = "GeometryNodeSetSmooth"
+            props.type = "GeometryNodeSetMeshNormal"
 
             props = col.operator("node.add_node", text=" Set Shade Smooth   ", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
@@ -5489,7 +5489,7 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text = "", icon = "SET_SMOOTH")
             props.use_transform = True
-            props.type = "GeometryNodeSetSmooth"
+            props.type = "GeometryNodeSetMeshNormal"
 
             props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
