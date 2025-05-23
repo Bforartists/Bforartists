@@ -3867,6 +3867,10 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeInputActiveCamera"
 
+            props = col.operator("node.add_node", text=" Camera Info     ", icon = "CAMERA_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCameraInfo"
+
             props = col.operator("node.add_node", text=" Collection Info     ", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
@@ -3922,6 +3926,10 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "VIEW_SWITCHTOCAM")
             props.use_transform = True
             props.type = "GeometryNodeInputActiveCamera"
+
+            props = flow.operator("node.add_node", text="", icon = "CAMERA_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCameraInfo"
 
             props = flow.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
             props.use_transform = True
