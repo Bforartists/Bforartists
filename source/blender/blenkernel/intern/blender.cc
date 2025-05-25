@@ -301,7 +301,7 @@ void BKE_blender_globals_crash_path_get(char filepath[FILE_MAX])
    * de-referencing. */
 
   if (!(G_MAIN && G_MAIN->filepath[0])) {
-    BLI_path_join(filepath, FILE_MAX, BKE_tempdir_base(), "blender.crash.txt");
+    BLI_path_join(filepath, FILE_MAX, BKE_tempdir_base(), "bforartists.crash.txt"); /* bfa - our name */
   }
   else {
     BLI_path_join(filepath, FILE_MAX, BKE_tempdir_base(), BLI_path_basename(G_MAIN->filepath));
