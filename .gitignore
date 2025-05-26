@@ -3,10 +3,6 @@
 # BFA: include .github folder
 !/.github/
 
-# BFA: exclude all contents of the tests folder except CMakeLists.txt
-/tests/*
-!/tests/CMakeLists.txt
-
 # python temp paths
 __pycache__/
 *.py[cod]
