@@ -7,6 +7,8 @@
 
 #include <fmt/format.h>
 
+#include "BLF_api.hh"
+
 #include "BLI_math_matrix.hh"
 #include "BLI_math_quaternion_types.hh"
 #include "BLI_math_vector_types.hh"
@@ -55,6 +57,13 @@ class SpreadsheetLayoutDrawer : public SpreadsheetDrawer {
                                   0,
                                   0,
                                   std::nullopt);
+    UI_but_func_tooltip_set(
+        but,
+        [](bContext * /*C*/, void *arg, blender::StringRef /*tip*/) {
+          return *static_cast<std::string *>(arg);
+        },
+        MEM_new<std::string>(__func__, name),
+        [](void *arg) { MEM_delete(static_cast<std::string *>(arg)); });
     /* Center-align column headers. */
     UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
     UI_but_drawflag_disable(but, UI_BUT_TEXT_RIGHT);
@@ -431,6 +440,180 @@ class SpreadsheetLayoutDrawer : public SpreadsheetDrawer {
     return spreadsheet_layout_.columns[column_index].width;
   }
 };
+
+template<typename T>
+static float estimate_max_column_width(const float min_width,
+                                       const int fontid,
+                                       const std::optional<int64_t> max_sample_size,
+                                       const VArray<T> &data,
+                                       FunctionRef<std::string(const T &)> to_string)
+{
+  if (const std::optional<T> value = data.get_if_single()) {
+    const std::string str = to_string(*value);
+    return std::max(min_width, BLF_width(fontid, str.c_str(), str.size()));
+  }
+  const int sample_size = max_sample_size.value_or(data.size());
+  float width = min_width;
+  for (const int i : data.index_range().take_front(sample_size)) {
+    const std::string str = to_string(data[i]);
+    const float value_width = BLF_width(fontid, str.c_str(), str.size());
+    width = std::max(width, value_width);
+  }
+  return width;
+}
+
+float ColumnValues::fit_column_values_width_px(const std::optional<int64_t> &max_sample_size) const
+{
+  const int fontid = BLF_default();
+  BLF_size(fontid, UI_DEFAULT_TEXT_POINTS * UI_SCALE_FAC);
+
+  auto get_min_width = [&](const float min_width) {
+    return max_sample_size.has_value() ? min_width : 0.0f;
+  };
+
+  const eSpreadsheetColumnValueType column_type = this->type();
+  switch (column_type) {
+    case SPREADSHEET_VALUE_TYPE_BOOL: {
+      return 2.0f * SPREADSHEET_WIDTH_UNIT;
+    }
+    case SPREADSHEET_VALUE_TYPE_FLOAT4X4: {
+      return 2.0f * SPREADSHEET_WIDTH_UNIT;
+    }
+    case SPREADSHEET_VALUE_TYPE_INT8: {
+      return estimate_max_column_width<int8_t>(
+          get_min_width(3 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<int8_t>(),
+          [](const int value) { return fmt::format("{}", value); });
+    }
+    case SPREADSHEET_VALUE_TYPE_INT32: {
+      return estimate_max_column_width<int>(
+          get_min_width(3 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<int>(),
+          [](const int value) { return fmt::format("{}", value); });
+    }
+    case SPREADSHEET_VALUE_TYPE_FLOAT: {
+      return estimate_max_column_width<float>(
+          get_min_width(3 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<float>(),
+          [](const float value) { return fmt::format("{:.3f}", value); });
+    }
+    case SPREADSHEET_VALUE_TYPE_INT32_2D: {
+      return estimate_max_column_width<int2>(
+          get_min_width(3 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<int2>(),
+          [](const int2 value) { return fmt::format("{}  {}", value.x, value.y); });
+    }
+    case SPREADSHEET_VALUE_TYPE_FLOAT2: {
+      return estimate_max_column_width<float2>(
+          get_min_width(6 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<float2>(),
+          [](const float2 value) { return fmt::format("{:.3f}  {:.3f}", value.x, value.y); });
+    }
+    case SPREADSHEET_VALUE_TYPE_FLOAT3: {
+      return estimate_max_column_width<float3>(
+          get_min_width(9 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<float3>(),
+          [](const float3 value) {
+            return fmt::format("{:.3f}  {:.3f}  {:.3f}", value.x, value.y, value.z);
+          });
+    }
+    case SPREADSHEET_VALUE_TYPE_COLOR: {
+      return estimate_max_column_width<ColorGeometry4f>(
+          get_min_width(12 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<ColorGeometry4f>(),
+          [](const ColorGeometry4f value) {
+            return fmt::format(
+                "{:.3f}  {:.3f}  {:.3f}  {:.3f}", value.r, value.g, value.b, value.a);
+          });
+    }
+    case SPREADSHEET_VALUE_TYPE_BYTE_COLOR: {
+      return estimate_max_column_width<ColorGeometry4b>(
+          get_min_width(12 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<ColorGeometry4b>(),
+          [](const ColorGeometry4b value) {
+            return fmt::format("{}  {}  {}  {}", value.r, value.g, value.b, value.a);
+          });
+    }
+    case SPREADSHEET_VALUE_TYPE_QUATERNION: {
+      return estimate_max_column_width<math::Quaternion>(
+          get_min_width(12 * SPREADSHEET_WIDTH_UNIT),
+          fontid,
+          max_sample_size,
+          data_.typed<math::Quaternion>(),
+          [](const math::Quaternion value) {
+            return fmt::format(
+                "{:.3f}  {:.3f}  {:.3f}  {:.3f}", value.x, value.y, value.z, value.w);
+          });
+    }
+    case SPREADSHEET_VALUE_TYPE_INSTANCES: {
+      return UI_ICON_SIZE + 0.5f * UI_UNIT_X +
+             estimate_max_column_width<bke::InstanceReference>(
+                 get_min_width(8 * SPREADSHEET_WIDTH_UNIT),
+                 fontid,
+                 max_sample_size,
+                 data_.typed<bke::InstanceReference>(),
+                 [](const bke::InstanceReference &value) {
+                   const StringRef name = value.name().is_empty() ? IFACE_("(Geometry)") :
+                                                                    value.name();
+                   return name;
+                 });
+    }
+    case SPREADSHEET_VALUE_TYPE_STRING: {
+      if (data_.type().is<std::string>()) {
+        return estimate_max_column_width<std::string>(get_min_width(SPREADSHEET_WIDTH_UNIT),
+                                                      fontid,
+                                                      max_sample_size,
+                                                      data_.typed<std::string>(),
+                                                      [](const StringRef value) { return value; });
+      }
+      if (data_.type().is<MStringProperty>()) {
+        return estimate_max_column_width<MStringProperty>(
+            get_min_width(SPREADSHEET_WIDTH_UNIT),
+            fontid,
+            max_sample_size,
+            data_.typed<MStringProperty>(),
+            [](const MStringProperty &value) { return StringRef(value.s, value.s_len); });
+      }
+      break;
+    }
+    case SPREADSHEET_VALUE_TYPE_UNKNOWN: {
+      break;
+    }
+  }
+  return 2.0f * SPREADSHEET_WIDTH_UNIT;
+}
+
+float ColumnValues::fit_column_width_px(const std::optional<int64_t> &max_sample_size) const
+{
+  const float padding_px = 0.5 * SPREADSHEET_WIDTH_UNIT;
+  const float min_width_px = SPREADSHEET_WIDTH_UNIT;
+
+  const float data_width_px = this->fit_column_values_width_px(max_sample_size);
+
+  const int fontid = BLF_default();
+  BLF_size(fontid, UI_DEFAULT_TEXT_POINTS * UI_SCALE_FAC);
+  const float name_width_px = BLF_width(fontid, name_.data(), name_.size());
+
+  const float width_px = std::max(min_width_px,
+                                  padding_px + std::max(data_width_px, name_width_px));
+  return width_px;
+}
 
 std::unique_ptr<SpreadsheetDrawer> spreadsheet_drawer_from_layout(
     const SpreadsheetLayout &spreadsheet_layout)

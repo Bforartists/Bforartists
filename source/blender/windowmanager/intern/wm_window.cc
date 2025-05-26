@@ -260,7 +260,7 @@ void wm_window_free(bContext *C, wmWindowManager *wm, wmWindow *win)
     }
   }
 
-  /* Timer removing, need to call this api function. */
+  /* Timer removing, need to call this API function. */
   LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->timers) {
     if (wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
       continue;
@@ -1059,8 +1059,11 @@ wmWindow *WM_window_open(bContext *C,
   ViewLayer *view_layer = CTX_data_view_layer(C);
   int x = rect_unscaled->xmin;
   int y = rect_unscaled->ymin;
-  int sizex = BLI_rcti_size_x(rect_unscaled);
-  int sizey = BLI_rcti_size_y(rect_unscaled);
+  /* Duplicated windows are created at Area size, so duplicated
+   * minimized areas can init at 2 pixels high before being
+   * resized at the end of window creation. Therefore minimums. */
+  int sizex = std::max(BLI_rcti_size_x(rect_unscaled), 200);
+  int sizey = std::max(BLI_rcti_size_y(rect_unscaled), 150);
   rcti rect;
 
   const float native_pixel_size = GHOST_GetNativePixelSize(
@@ -2123,7 +2126,7 @@ static uiBlock *block_create_opengl_usage_warning(bContext *C, ARegion *region, 
 
   /* Title and explanation text. */
   uiItemL_ex(col, title, ICON_NONE, true, false);
-  uiItemS_ex(col, 0.8f, LayoutSeparatorType::Space);
+  col->separator(0.8f, LayoutSeparatorType::Space);
 
   uiLayout *messages = &col->column(false);
   uiLayoutSetScaleY(messages, 0.8f);
@@ -2139,7 +2142,7 @@ static uiBlock *block_create_opengl_usage_warning(bContext *C, ARegion *region, 
   }
   messages->label(message4, ICON_NONE);
 
-  uiItemS_ex(col, 0.5f, LayoutSeparatorType::Space);
+  col->separator(0.5f, LayoutSeparatorType::Space);
 
   UI_block_bounds_set_centered(block, 14 * UI_SCALE_FAC);
 
@@ -2198,7 +2201,7 @@ static uiBlock *block_create_gpu_backend_fallback(bContext *C, ARegion *region, 
   uiLayoutSetScaleY(col, 0.8f);
   uiItemL_ex(
       col, RPT_("Failed to load using Vulkan, using OpenGL instead."), ICON_NONE, true, false);
-  uiItemS_ex(col, 1.3f, LayoutSeparatorType::Space);
+  col->separator(1.3f, LayoutSeparatorType::Space);
 
   col->label(RPT_("Updating GPU drivers may solve this issue."), ICON_NONE);
   col->label(RPT_("The graphics backend can be changed in the System section of the Preferences."),
@@ -3150,11 +3153,12 @@ void wm_window_IME_end(wmWindow *win)
    * Even if no IME events were generated (which assigned `ime_data`).
    * TODO: check if #GHOST_EndIME can run on WIN32 & APPLE without causing problems. */
 #  if defined(WIN32) || defined(__APPLE__)
-  BLI_assert(win->ime_data);
+  BLI_assert(win->runtime->ime_data);
 #  endif
   GHOST_EndIME(static_cast<GHOST_WindowHandle>(win->ghostwin));
-  win->ime_data = nullptr;
-  win->ime_data_is_composing = false;
+  MEM_delete(win->runtime->ime_data);
+  win->runtime->ime_data = nullptr;
+  win->runtime->ime_data_is_composing = false;
 }
 #endif /* WITH_INPUT_IME */
 

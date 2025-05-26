@@ -53,10 +53,10 @@ class NODE_MT_category_compositor_input_scene(Menu):
     bl_idname = "NODE_MT_category_compositor_input_scene"
     bl_label = "Scene"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
         node_add_menu.add_node_type(layout, "CompositorNodeRLayers")
-        node_add_menu.add_node_type(layout, "CompositorNodeSceneTime")
+        node_add_menu.add_node_type_with_subnames(context, layout, "CompositorNodeSceneTime", ["Frame", "Seconds"])
         node_add_menu.add_node_type(layout, "CompositorNodeTime")
 
         node_add_menu.draw_assets_for_catalog(layout, "Input/Scene")
@@ -144,7 +144,7 @@ class NODE_MT_category_compositor_filter(Menu):
     bl_idname = "NODE_MT_category_compositor_filter"
     bl_label = "Filter"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
         layout.menu("NODE_MT_category_compositor_filter_blur")
         layout.separator()
@@ -155,8 +155,8 @@ class NODE_MT_category_compositor_filter(Menu):
         node_add_menu.add_node_type(layout, "CompositorNodeDilateErode")
         node_add_menu.add_node_type(layout, "CompositorNodeInpaint")
         layout.separator()
-        node_add_menu.add_node_type(layout, "CompositorNodeFilter")
-        node_add_menu.add_node_type(layout, "CompositorNodeGlare")
+        node_add_menu.add_node_type_with_searchable_enum(context, layout, "CompositorNodeFilter", "filter_type")
+        node_add_menu.add_node_type_with_searchable_enum(context, layout, "CompositorNodeGlare", "glare_type")
         node_add_menu.add_node_type(layout, "CompositorNodeKuwahara")
         node_add_menu.add_node_type(layout, "CompositorNodePixelate")
         node_add_menu.add_node_type(layout, "CompositorNodePosterize")
@@ -306,6 +306,8 @@ class NODE_MT_category_compositor_utilities(Menu):
         node_add_menu.add_node_type(
             layout, "CompositorNodeSwitchView",
             label=iface_("Switch Stereo View"))
+        layout.separator()
+        node_add_menu.add_node_type(layout, "CompositorNodeRelativeToPixel")
 
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 

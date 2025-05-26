@@ -2413,7 +2413,7 @@ static void ANIM_OT_channels_move(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_move";
   ot->description = "Rearrange selected animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = animchannels_rearrange_exec;
   ot->poll = animedit_poll_channels_nla_tweakmode_off;
 
@@ -3069,7 +3069,7 @@ static void ANIM_OT_channels_delete(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_delete";
   ot->description = "Delete all selected animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = animchannels_delete_exec;
   ot->poll = animedit_poll_channels_active;
 
@@ -3234,7 +3234,7 @@ static void ANIM_OT_channels_setting_enable(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_setting_enable";
   ot->description = "Enable specified setting on all selected animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_menu_invoke;
   ot->exec = animchannels_setflag_exec;
   ot->poll = animedit_poll_channels_active;
@@ -3260,7 +3260,7 @@ static void ANIM_OT_channels_setting_disable(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_setting_disable";
   ot->description = "Disable specified setting on all selected animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_menu_invoke;
   ot->exec = animchannels_setflag_exec;
   ot->poll = animedit_poll_channels_active;
@@ -3286,7 +3286,7 @@ static void ANIM_OT_channels_setting_toggle(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_setting_toggle";
   ot->description = "Toggle specified setting on all selected animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_menu_invoke;
   ot->exec = animchannels_setflag_exec;
   ot->poll = animedit_poll_channels_active;
@@ -3312,7 +3312,7 @@ static void ANIM_OT_channels_editable_toggle(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_editable_toggle";
   ot->description = "Toggle editability of selected channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = animchannels_setflag_exec;
   ot->poll = animedit_poll_channels_active;
 
@@ -3366,7 +3366,7 @@ static void ANIM_OT_channels_expand(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_expand";
   ot->description = "Expand (open) all selected expandable animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = animchannels_expand_exec;
   ot->poll = animedit_poll_channels_active;
 
@@ -3415,7 +3415,7 @@ static void ANIM_OT_channels_collapse(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_collapse";
   ot->description = "Collapse (close) all selected expandable animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = animchannels_collapse_exec;
   ot->poll = animedit_poll_channels_active;
 
@@ -3536,7 +3536,7 @@ static void ANIM_OT_channels_clean_empty(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_clean_empty";
   ot->description = "Delete all empty animation data containers from visible data";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = animchannels_clean_empty_exec;
   ot->poll = animedit_poll_channels_nla_tweakmode_off;
 
@@ -3617,7 +3617,7 @@ static void ANIM_OT_channels_fcurves_enable(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_fcurves_enable";
   ot->description = "Clear 'disabled' tag from all F-Curves to get broken F-Curves working again";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = animchannels_enable_exec;
   ot->poll = animchannels_enable_poll;
 
@@ -3750,7 +3750,7 @@ static void ANIM_OT_channels_select_all(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_select_all";
   ot->description = "Toggle selection of all animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = animchannels_selectall_exec;
   ot->poll = animedit_poll_channels_nla_tweakmode_off;
 
@@ -3933,7 +3933,7 @@ static void ANIM_OT_channels_select_box(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_select_box";
   ot->description = "Select all animation channels within the specified region";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = WM_gesture_box_invoke;
   ot->exec = animchannels_box_select_exec;
   ot->modal = WM_gesture_box_modal;
@@ -4113,7 +4113,7 @@ static void ANIM_OT_channels_rename(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_rename";
   ot->description = "Rename animation channel under mouse";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = animchannels_rename_invoke;
   ot->poll = animedit_poll_channels_active;
 }
@@ -4859,7 +4859,7 @@ static void ANIM_OT_channels_click(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channels_click";
   ot->description = "Handle mouse clicks over animation channels";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = animchannels_mouseclick_invoke;
   ot->poll = animedit_poll_channels_active;
 
@@ -4990,7 +4990,7 @@ static void ANIM_OT_channel_select_keys(wmOperatorType *ot)
   ot->idname = "ANIM_OT_channel_select_keys";
   ot->description = "Select all keyframes of channel under mouse";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = animchannels_channel_select_keys_invoke;
   ot->poll = animedit_poll_channels_active;
 

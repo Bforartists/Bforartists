@@ -204,7 +204,7 @@ void NODE_OT_group_edit(wmOperatorType *ot)
   ot->description = "Edit node group";
   ot->idname = "NODE_OT_group_edit";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = node_group_edit_exec;
   ot->poll = node_group_operator_active_poll;
 
@@ -492,7 +492,7 @@ void NODE_OT_group_ungroup(wmOperatorType *ot)
   ot->description = "Ungroup selected nodes";
   ot->idname = "NODE_OT_group_ungroup";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = node_group_ungroup_exec;
   ot->poll = node_group_operator_editable;
 
@@ -673,22 +673,22 @@ static wmOperatorStatus node_group_separate_exec(bContext *C, wmOperator *op)
 }
 
 /* Not used by BFA */
-// static wmOperatorStatus node_group_separate_invoke(bContext *C,
-//                                       wmOperator * /*op*/),
-//                                       const wmEvent * /*event*/)
-// {
-//   uiPopupMenu *pup = UI_popup_menu_begin(
-//       C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Separate"), ICON_NONE);
-//   uiLayout *layout = UI_popup_menu_layout(pup);
+//static wmOperatorStatus node_group_separate_invoke(bContext *C,
+//                                                   wmOperator * /*op*/,
+//                                                   const wmEvent * /*event*/)
+//{
+//  uiPopupMenu *pup = UI_popup_menu_begin(
+//      C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Separate"), ICON_NONE);
+//  uiLayout *layout = UI_popup_menu_layout(pup);
 
-//   uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
-//   uiItemEnumO(layout, "NODE_OT_group_separate", std::nullopt, ICON_NONE, "type", NODE_GS_COPY);
-//   uiItemEnumO(layout, "NODE_OT_group_separate", std::nullopt, ICON_NONE, "type", NODE_GS_MOVE);
+//  uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
+//  uiItemEnumO(layout, "NODE_OT_group_separate", std::nullopt, ICON_NONE, "type", NODE_GS_COPY);
+//  uiItemEnumO(layout, "NODE_OT_group_separate", std::nullopt, ICON_NONE, "type", NODE_GS_MOVE);
 
-//   UI_popup_menu_end(C, pup);
-
-//   return OPERATOR_INTERFACE;
-// }
+//  UI_popup_menu_end(C, pup);
+//
+//  return OPERATOR_INTERFACE;
+//}
 
 /*bfa - tool name*/
 static std::string NODE_OT_group_separate_get_name(wmOperatorType *ot, PointerRNA *ptr)
@@ -726,8 +726,8 @@ void NODE_OT_group_separate(wmOperatorType *ot)
   ot->description = "Separate selected nodes from the node group";
   ot->idname = "NODE_OT_group_separate";
 
-  /* api callbacks */
-  // ot->invoke = node_group_separate_invoke; // BFA turned off the separate popup menu
+  /* API callbacks. */
+  //ot->invoke = node_group_separate_invoke; /*BFA turned off the separate popup menu*/
   ot->exec = node_group_separate_exec;
   ot->get_name = NODE_OT_group_separate_get_name;               /*bfa - tool name*/
   ot->get_description = NODE_OT_group_separate_get_description; /*bfa - descriptions*/
@@ -1308,7 +1308,7 @@ void NODE_OT_group_make(wmOperatorType *ot)
   ot->description = "Make group from selected nodes";
   ot->idname = "NODE_OT_group_make";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = node_group_make_exec;
   ot->poll = node_group_operator_editable;
 
@@ -1370,7 +1370,7 @@ void NODE_OT_group_insert(wmOperatorType *ot)
   ot->description = "Insert selected nodes into a node group";
   ot->idname = "NODE_OT_group_insert";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = node_group_insert_exec;
   ot->poll = node_group_operator_editable;
 
@@ -1436,7 +1436,7 @@ void NODE_OT_default_group_width_set(wmOperatorType *ot)
   ot->description = "Set the width based on the parent group node in the current context";
   ot->idname = "NODE_OT_default_group_width_set";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = node_default_group_width_set_exec;
   ot->poll = node_default_group_width_set_poll;
 

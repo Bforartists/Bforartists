@@ -78,7 +78,7 @@ void add_load_data_init(LoadData *load_data,
 static void strip_add_generic_update(Scene *scene, Strip *strip)
 {
   strip_unique_name_set(scene, &scene->ed->seqbase, strip);
-  relations_invalidate_cache_composite(scene, strip);
+  relations_invalidate_cache(scene, strip);
   strip_lookup_invalidate(scene->ed);
   strip_time_effect_range_set(scene, strip);
   time_update_meta_strip_range(scene, lookup_meta_by_strip(scene->ed, strip));
@@ -171,16 +171,16 @@ Strip *add_effect_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
   sh.init(strip);
 
   if (seq::effect_get_num_inputs(strip->type) != 0) {
-    strip->seq1 = load_data->effect.seq1;
-    strip->seq2 = load_data->effect.seq2;
+    strip->input1 = load_data->effect.input1;
+    strip->input2 = load_data->effect.input2;
   }
 
   if (effect_get_num_inputs(strip->type) == 1) {
-    strip->blend_mode = strip->seq1->blend_mode;
-    strip->blend_opacity = strip->seq1->blend_opacity;
+    strip->blend_mode = strip->input1->blend_mode;
+    strip->blend_opacity = strip->input1->blend_opacity;
   }
 
-  if (strip->seq1 == nullptr) {
+  if (strip->input1 == nullptr) {
     strip->len = 1; /* Effect is generator, set non zero length. */
     strip->flag |= SEQ_SINGLE_FRAME_CONTENT;
     time_right_handle_frame_set(scene, strip, load_data->effect.end_frame);

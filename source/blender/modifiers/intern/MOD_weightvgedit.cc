@@ -346,7 +346,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)

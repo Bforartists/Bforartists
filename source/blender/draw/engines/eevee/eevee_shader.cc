@@ -72,18 +72,18 @@ ShaderModule::ShaderModule()
 
 ShaderModule::~ShaderModule()
 {
-  /* Finish compilation to avoid asserts on exit at GLShaderCompiler destructor. */
+  /* Cancel compilation to avoid asserts on exit at ShaderCompiler destructor. */
 
-  if (compilation_handle_) {
-    static_shaders_are_ready(true);
-  }
-
+  /* Specializations first, to avoid releasing the base shader while the specialization compilation
+   * is still in flight. */
   for (SpecializationBatchHandle &handle : specialization_handles_.values()) {
     if (handle) {
-      while (!GPU_shader_batch_specializations_is_ready(handle)) {
-        /* Block until ready. */
-      }
+      GPU_shader_batch_specializations_cancel(handle);
     }
+  }
+
+  if (compilation_handle_) {
+    GPU_shader_batch_cancel(compilation_handle_);
   }
 }
 
@@ -117,7 +117,9 @@ bool ShaderModule::static_shaders_are_ready(bool block_until_ready)
 bool ShaderModule::request_specializations(bool block_until_ready,
                                            int render_buffers_shadow_id,
                                            int shadow_ray_count,
-                                           int shadow_ray_step_count)
+                                           int shadow_ray_step_count,
+                                           bool use_split_indirect,
+                                           bool use_lightprobe_eval)
 {
   if (!GPU_use_parallel_compilation()) {
     return true;
@@ -128,22 +130,33 @@ bool ShaderModule::request_specializations(bool block_until_ready,
   std::lock_guard lock(mutex_);
 
   SpecializationBatchHandle &specialization_handle = specialization_handles_.lookup_or_add_cb(
-      {render_buffers_shadow_id, shadow_ray_count, shadow_ray_step_count}, [&]() {
+      {render_buffers_shadow_id,
+       shadow_ray_count,
+       shadow_ray_step_count,
+       use_split_indirect,
+       use_lightprobe_eval},
+      [&]() {
         Vector<ShaderSpecialization> specializations;
         for (int i = 0; i < 3; i++) {
           GPUShader *sh = static_shader_get(eShaderType(DEFERRED_LIGHT_SINGLE + i));
-          for (bool use_split_indirect : {false, true}) {
-            for (bool use_lightprobe_eval : {false, true}) {
-              for (bool use_transmission : {false, true}) {
-                specializations.append({sh,
-                                        {{"render_pass_shadow_id", render_buffers_shadow_id},
-                                         {"use_split_indirect", use_split_indirect},
-                                         {"use_lightprobe_eval", use_lightprobe_eval},
-                                         {"use_transmission", use_transmission},
-                                         {"shadow_ray_count", shadow_ray_count},
-                                         {"shadow_ray_step_count", shadow_ray_step_count}}});
-              }
-            }
+          int render_pass_shadow_id_index = GPU_shader_get_constant(sh, "render_pass_shadow_id");
+          int use_split_indirect_index = GPU_shader_get_constant(sh, "use_split_indirect");
+          int use_lightprobe_eval_index = GPU_shader_get_constant(sh, "use_lightprobe_eval");
+          int use_transmission_index = GPU_shader_get_constant(sh, "use_transmission");
+          int shadow_ray_count_index = GPU_shader_get_constant(sh, "shadow_ray_count");
+          int shadow_ray_step_count_index = GPU_shader_get_constant(sh, "shadow_ray_step_count");
+
+          gpu::shader::SpecializationConstants sp = GPU_shader_get_default_constant_state(sh);
+
+          for (bool use_transmission : {false, true}) {
+            sp.set_value(render_pass_shadow_id_index, render_buffers_shadow_id);
+            sp.set_value(use_split_indirect_index, use_split_indirect);
+            sp.set_value(use_lightprobe_eval_index, use_lightprobe_eval);
+            sp.set_value(use_transmission_index, use_transmission);
+            sp.set_value(shadow_ray_count_index, shadow_ray_count);
+            sp.set_value(shadow_ray_step_count_index, shadow_ray_step_count);
+
+            specializations.append({sh, sp});
           }
         }
 
@@ -635,6 +648,9 @@ void ShaderModule::material_create_info_amend(GPUMaterial *gpumat, GPUCodegenOut
         break;
     }
   }
+
+  /* Allow to use Reverse-Z on OpenGL. Does nothing in other backend. */
+  info.builtins(BuiltinBits::CLIP_CONTROL);
 
   std::stringstream global_vars;
   switch (geometry_type) {

@@ -35,6 +35,8 @@ void RayTraceModule::init()
   fast_gi_step_count_ = sce_eevee.fast_gi_step_count;
   fast_gi_ao_only_ = (sce_eevee.fast_gi_method == FAST_GI_AO_ONLY);
 
+  use_raytracing_ = (sce_eevee.flag & SCE_EEVEE_SSR_ENABLED) != 0;
+
   float4 data(0.0f);
   radiance_dummy_black_tx_.ensure_2d(
       RAYTRACE_RADIANCE_FORMAT, int2(1), GPU_TEXTURE_USAGE_SHADER_READ, data);
@@ -327,6 +329,23 @@ void RayTraceModule::sync()
     pass.bind_resources(inst_.sphere_probes);
     pass.dispatch(horizon_denoise_dispatch_buf_);
     pass.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
+  }
+  for (int i : IndexRange(3)) {
+    data_.closure_index = i;
+    inst_.manager->warm_shader_specialization(tile_classify_ps_);
+    inst_.manager->warm_shader_specialization(tile_compact_ps_);
+    inst_.manager->warm_shader_specialization(generate_ps_);
+    inst_.manager->warm_shader_specialization(trace_planar_ps_);
+    inst_.manager->warm_shader_specialization(trace_screen_ps_);
+    inst_.manager->warm_shader_specialization(trace_fallback_ps_);
+    inst_.manager->warm_shader_specialization(denoise_spatial_ps_);
+    inst_.manager->warm_shader_specialization(denoise_temporal_ps_);
+    inst_.manager->warm_shader_specialization(denoise_bilateral_ps_);
+    inst_.manager->warm_shader_specialization(horizon_schedule_ps_);
+    inst_.manager->warm_shader_specialization(horizon_setup_ps_);
+    inst_.manager->warm_shader_specialization(horizon_scan_ps_);
+    inst_.manager->warm_shader_specialization(horizon_denoise_ps_);
+    inst_.manager->warm_shader_specialization(horizon_resolve_ps_);
   }
 }
 
