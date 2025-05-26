@@ -475,7 +475,7 @@ static std::string get_os_info()
 }
 
 /**
- * Retrieve the path to "blender-launcher.exe" if it exists; otherwise, return the current
+ * Retrieve the path to "bforartists-launcher.exe" if it exists; otherwise, return the current
  * executable path.
  */
 static bool bli_executable_path_get(LPWSTR path, DWORD size)
@@ -495,20 +495,20 @@ static bool bli_executable_path_get(LPWSTR path, DWORD size)
     return false;
   }
 
-  /* Replace the filename "blender.exe" with "blender-launcher.exe". */
+  /* Replace the filename "bforartists.exe" with "bforartists-launcher.exe". */
   if (!PathRemoveFileSpecW(executable_path)) {
     /* Failed to remove the file spec. Use the original path. */
     return true;
   }
-  if (!PathAppendW(executable_path, L"blender-launcher.exe")) {
+  if (!PathAppendW(executable_path, L"bforartists-launcher.exe")) {
     /* Failed to append the new filename. Use the original path. */
     return true;
   }
 
-  /* Check if "blender-launcher.exe" exists at this path. */
+  /* Check if "bforartists-launcher.exe" exists at this path. */
   DWORD attributes = GetFileAttributesW(executable_path);
   if (attributes == INVALID_FILE_ATTRIBUTES || (attributes & FILE_ATTRIBUTE_DIRECTORY)) {
-    /* "blender-launcher.exe" does not exist. Use the original executable path. */
+    /* "bforartists-launcher.exe" does not exist. Use the original executable path. */
     return true;
   }
 
@@ -581,8 +581,8 @@ static void bli_show_crash_report_dialog(const char *filepath_crashlog,
   config.hInstance = 0;
   config.dwCommonButtons = 0;
   config.pszMainIcon = TD_ERROR_ICON;
-  config.pszWindowTitle = L"Blender";
-  config.pszMainInstruction = L"Blender has stopped working";
+  config.pszWindowTitle = L"Bforartists"; /* bfa - our name. */
+  config.pszMainInstruction = L"Bforartists has stopped working"; /* bfa - our name. */
   config.pszContent = full_message_16.c_str();
   config.pButtons = buttons;
   config.cButtons = ARRAY_SIZE(buttons);
@@ -634,16 +634,22 @@ static void bli_show_crash_report_dialog(const char *filepath_crashlog,
             nullptr, L"open", data_ptr->filepath_crashlog_utf16, nullptr, nullptr, SW_SHOWNORMAL);
         return S_FALSE;
       case IDOK: {
-        /* Open the bug report form with pre-filled data. */
-        /* clang-format off */
+        /* bfa - prefill info to our github issue page. */
+        std::wstring body =
+            L"**System Information**%0A"
+            L"- Bforartists version: " + url_encode_wstring(data_ptr->build_version) + L"%0A"
+            L"- Operating system: " + url_encode_wstring(get_os_info()) + L"%0A"
+            L"- Graphics card: " + url_encode_wstring(data_ptr->gpu_name) + L"%0A%0A"
+            L"**Describe the bug**%0A"
+            L"A clear and concise description of what the bug is.%0A%0A"
+            L"**Exact steps for others to reproduce the error**%0A"
+            L"1. %0A2. %0A3. %0A";
+
         std::wstring link =
-            L"https://redirect.blender.org/"
-            L"?type=bug_report"
-            L"&project=blender"
-            L"&os=" + url_encode_wstring(get_os_info()) +
-            L"&gpu=" + url_encode_wstring(data_ptr->gpu_name) +
-            L"&broken_version=" + url_encode_wstring(data_ptr->build_version);
-        /* clang-format on */
+            L"https://github.com/Bforartists/Bforartists/issues/new?"
+            L"template=bug_report.md"
+            L"&title="
+            L"&body=" + body;
         ShellExecuteW(nullptr, L"open", link.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
         return S_FALSE;
       }
