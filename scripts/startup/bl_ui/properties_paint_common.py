@@ -891,10 +891,7 @@ def brush_settings(layout, context, brush, popover=False):
         # normal_radius_factor
         layout.prop(brush, "normal_radius_factor", slider=True)
 
-        if (
-            context.preferences.experimental.use_sculpt_tools_tilt
-            and capabilities.has_tilt
-        ):
+        if capabilities.has_tilt:
             layout.prop(brush, "tilt_strength_factor", slider=True)
 
         row = layout.row(align=True)
@@ -1230,21 +1227,32 @@ def brush_settings(layout, context, brush, popover=False):
             col.prop(brush.curves_sculpt_settings, "points_per_curve", text="Points")
 
         if brush.curves_sculpt_tool == "DENSITY":
-            col = layout.column()
+            
+            
+            col = layout.column(align=True)
             col.prop(
                 brush.curves_sculpt_settings, "density_add_attempts", text="Count Max"
             )
-            col = layout.column(heading="Interpolate", align=True)
-            col.prop(
+            col.use_property_split = False
+            col.label(text="Interpolate")
+            row = col.row()
+            row.separator()
+            row.prop(
                 brush.curves_sculpt_settings, "use_length_interpolate", text="Length"
             )
-            col.prop(
+            row = col.row()
+            row.separator()
+            row.prop(
                 brush.curves_sculpt_settings, "use_radius_interpolate", text="Radius"
             )
-            col.prop(
+            row = col.row()
+            row.separator()
+            row.prop(
                 brush.curves_sculpt_settings, "use_shape_interpolate", text="Shape"
             )
-            col.prop(
+            row = col.row()
+            row.separator()
+            row.prop(
                 brush.curves_sculpt_settings,
                 "use_point_count_interpolate",
                 text="Point Count",

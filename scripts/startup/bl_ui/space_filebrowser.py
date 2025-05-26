@@ -938,10 +938,10 @@ class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
 
         layout.prop(params, "import_method", text="Import Method")
 
-        col = layout.column(heading="Instance Collections")
-        col.prop(params, "instance_collections_on_link", text="When Linking")
-        col.prop(params, "instance_collections_on_append", text="When Appending")
-        col.prop(params, "drop_instances_to_origin", text="Drop Instances To Origin")
+        col = layout.column(heading="Collection Instances")
+        col.prop(params, "instance_collections_on_link", text="Link")
+        col.prop(params, "instance_collections_on_append", text="Append")
+        col.prop(params, "drop_instances_to_origin", text="Drop To Origin")
 
 
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
@@ -1099,6 +1099,7 @@ class ASSETBROWSER_MT_metadata_preview_menu(Menu):
         )
         layout.separator()
         layout.operator("ed.lib_id_remove_preview")
+        layout.operator("asset.screenshot_preview")
 
 
 class ASSETBROWSER_PT_metadata_tags(asset_utils.AssetMetaDataPanel, Panel):

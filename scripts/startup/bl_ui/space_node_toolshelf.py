@@ -3746,6 +3746,91 @@ class NODES_PT_geom_add_input_gizmo(bpy.types.Panel):
             props.type = "GeometryNodeGizmoTransform"
 
 
+#add input panel, file supbanel
+class NODES_PT_geom_add_input_file(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Import"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_input"
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Import OBJ           ", icon = "LOAD_OBJ")
+            props.use_transform = True
+            props.type = "GeometryNodeImportOBJ"
+
+            props = col.operator("node.add_node", text=" Import PLY           ", icon = "LOAD_PLY")
+            props.use_transform = True
+            props.type = "GeometryNodeImportPLY"
+
+            props = col.operator("node.add_node", text=" Import STL           ", icon = "LOAD_STL")
+            props.use_transform = True
+            props.type = "GeometryNodeImportSTL"
+
+            props = col.operator("node.add_node", text=" Import CSV           ", icon = "LOAD_CSV")
+            props.use_transform = True
+            props.type = "GeometryNodeImportCSV"
+
+            props = col.operator("node.add_node", text=" Import Text           ", icon = "FILE_TEXT")
+            props.use_transform = True
+            props.type = "GeometryNodeImportText"
+
+            props = col.operator("node.add_node", text=" Import OpenVDB   ", icon = "FILE_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodeImportVDB"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "LOAD_OBJ")
+            props.use_transform = True
+            props.type = "GeometryNodeImportOBJ"
+
+            props = flow.operator("node.add_node", text = "", icon = "LOAD_PLY")
+            props.use_transform = True
+            props.type = "GeometryNodeImportPLY"
+
+            props = flow.operator("node.add_node", text = "", icon = "LOAD_STL")
+            props.use_transform = True
+            props.type = "GeometryNodeImportSTL"
+
+            props = flow.operator("node.add_node", text = "", icon = "LOAD_CSV")
+            props.use_transform = True
+            props.type = "GeometryNodeImportCSV"
+
+            props = flow.operator("node.add_node", text = "", icon = "FILE_TEXT")
+            props.use_transform = True
+            props.type = "GeometryNodeImportText"
+
+            props = flow.operator("node.add_node", text = "", icon = "FILE_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodeImportVDB"
+
+
+
 #add input panel, scene subpanel
 class NODES_PT_geom_add_input_scene(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -3781,6 +3866,10 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Active Camera     ", icon = "VIEW_SWITCHTOCAM")
             props.use_transform = True
             props.type = "GeometryNodeInputActiveCamera"
+
+            props = col.operator("node.add_node", text=" Camera Info     ", icon = "CAMERA_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCameraInfo"
 
             props = col.operator("node.add_node", text=" Collection Info     ", icon = "COLLECTION_INFO")
             props.use_transform = True
@@ -3837,6 +3926,10 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "VIEW_SWITCHTOCAM")
             props.use_transform = True
             props.type = "GeometryNodeInputActiveCamera"
+
+            props = flow.operator("node.add_node", text="", icon = "CAMERA_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCameraInfo"
 
             props = flow.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
             props.use_transform = True
@@ -5373,6 +5466,10 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "GeometryNodeToolFaceSet"
 
+            props = col.operator("node.add_node", text=" Set Mesh Normal   ", icon = "SET_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSetMeshNormal"
+
             props = col.operator("node.add_node", text=" Set Shade Smooth   ", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
             props.type = "GeometryNodeSetShadeSmooth"
@@ -5389,6 +5486,10 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel):
                 props = flow.operator("node.add_node", text="", icon = "SET_FACE_SET")
                 props.use_transform = True
                 props.type = "GeometryNodeToolSetFaceSet"
+
+            props = flow.operator("node.add_node", text = "", icon = "SET_SMOOTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSetMeshNormal"
 
             props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
             props.use_transform = True
@@ -7860,6 +7961,7 @@ classes = (
     NODES_PT_geom_add_input,
     NODES_PT_geom_add_input_constant,
     NODES_PT_geom_add_input_gizmo,
+    NODES_PT_geom_add_input_file,
     NODES_PT_geom_add_input_scene,
 
     NODES_PT_geom_add_output,

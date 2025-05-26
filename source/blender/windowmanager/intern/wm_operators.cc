@@ -135,7 +135,7 @@ size_t WM_operator_py_idname(char *dst, const char *src)
   if (sep) {
     const size_t sep_offset = size_t(sep - src);
 
-    /* NOTE: we use ascii `tolower` instead of system `tolower`, because the
+    /* NOTE: we use ASCII `tolower` instead of system `tolower`, because the
      * latter depends on the locale, and can lead to `idname` mismatch. */
     memcpy(dst, src, sep_offset);
     BLI_str_tolower_ascii(dst, sep_offset);
@@ -1441,8 +1441,8 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *region, void *arg_op)
   }
 
   uiItemL_ex(layout, WM_operatortype_name(op->type, op->ptr), ICON_NONE, true, false);
-  uiItemS_ex(layout, 0.2f, LayoutSeparatorType::Line);
-  uiItemS_ex(layout, 0.5f);
+  layout->separator(0.2f, LayoutSeparatorType::Line);
+  layout->separator(0.5f);
 
   uiLayout *col = &layout->column(false);
   /* BFA - align operator properties to left in redo panel (UI_BUT_LABEL_ALIGN_SPLIT_COLUMN) */
@@ -1572,7 +1572,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
 
     /* Line under the title if there are properties but no message body. */
     if (data->include_properties && message_lines.size() == 0) {
-      uiItemS_ex(layout, 0.2f, LayoutSeparatorType::Line);
+      layout->separator(0.2f, LayoutSeparatorType::Line);
     };
   }
 
@@ -1580,18 +1580,18 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
   if (message_lines.size() > 0) {
     uiLayout *lines = &layout->column(false);
     uiLayoutSetScaleY(lines, 0.65f);
-    uiItemS_ex(lines, 0.1f);
+    lines->separator(0.1f);
     for (auto &st : message_lines) {
       lines->label(st, ICON_NONE);
     }
   }
 
   if (data->include_properties) {
-    uiItemS_ex(layout, 0.5f);
+    layout->separator(0.5f);
     uiTemplateOperatorPropertyButs(C, layout, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, 0);
   }
 
-  uiItemS_ex(layout, small ? 0.1f : 1.8f);
+  layout->separator(small ? 0.1f : 1.8f);
 
   /* Clear so the OK button is left alone. */
   UI_block_func_set(block, nullptr, nullptr, nullptr);
@@ -2301,7 +2301,7 @@ static void WM_OT_call_asset_shelf_popover(wmOperatorType *ot)
   ot->idname = "WM_OT_call_asset_shelf_popover";
   ot->description = "Open a predefined asset shelf in a popup";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = asset_shelf_popover_invoke;
 
   ot->flag = OPTYPE_INTERNAL;

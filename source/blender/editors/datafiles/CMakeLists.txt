@@ -935,6 +935,7 @@ if(WITH_BLENDER)
       link_replace
       load_3ds
       load_abc
+      load_csv
       load_bvh
       load_dae
       load_factory
@@ -1753,6 +1754,7 @@ if(WITH_BLENDER)
       set_roll
       set_selection
       set_shade_smooth
+      set_smooth
       set_spline_resolution
       set_time
       set_uppercase

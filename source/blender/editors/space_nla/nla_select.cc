@@ -192,7 +192,7 @@ void NLA_OT_select_all(wmOperatorType *ot)
   ot->idname = "NLA_OT_select_all";
   ot->description = "Select or deselect all NLA-Strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->exec = nlaedit_deselectall_exec;
   ot->get_description = nla_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = nlaop_poll_tweakmode_off;
@@ -422,7 +422,7 @@ void NLA_OT_select_box(wmOperatorType *ot)
   ot->idname = "NLA_OT_select_box";
   ot->description = "Use box selection to grab NLA-Strips";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = nlaedit_box_select_invoke;
   ot->exec = nlaedit_box_select_exec;
   ot->modal = WM_gesture_box_modal;
@@ -593,7 +593,7 @@ void NLA_OT_select_leftright(wmOperatorType *ot)
   ot->idname = "NLA_OT_select_leftright";
   ot->description = "Select strips to the left or the right of the current frame";
 
-  /* api callbacks */
+  /* API callbacks. */
   ot->invoke = nlaedit_select_leftright_invoke;
   ot->exec = nlaedit_select_leftright_exec;
   ot->poll = ED_operator_nla_active;

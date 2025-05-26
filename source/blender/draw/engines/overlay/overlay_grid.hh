@@ -235,44 +235,20 @@ class Grid : Overlay {
       }
     }
     else {
-      if (show_ortho_grid && (rv3d->view == RV3D_VIEW_RIGHT || rv3d->view == RV3D_VIEW_LEFT)) {
-        grid_flag_ = PLANE_YZ;
-        if (show_floor) {
-          grid_flag_ |= SHOW_GRID | GRID_BACK;
-        }
-        /*bfa - toggles axis y/z in ortho left/right views*/
-        if (show_axis_y) {
-          grid_flag_ |= SHOW_AXIS_Y;
-        }
-        if (show_axis_z) {
-          grid_flag_ |= SHOW_AXIS_Z;
-        }
+      if (ELEM(rv3d->view, RV3D_VIEW_RIGHT, RV3D_VIEW_LEFT)) {
+        grid_flag_ = PLANE_YZ | (show_axis_y ? SHOW_AXIS_Y : OVERLAY_GridBits(0)) |
+                     (show_axis_z ? SHOW_AXIS_Z : OVERLAY_GridBits(0));
       }
-      else if (show_ortho_grid && (rv3d->view == RV3D_VIEW_TOP || rv3d->view == RV3D_VIEW_BOTTOM)) {
-        grid_flag_ = PLANE_XY;
-        if (show_floor) {
-          grid_flag_ |= SHOW_GRID | GRID_BACK;
-        }
-        /*bfa - toggles axis x/y in ortho top/bottom views*/
-        if (show_axis_x) {
-          grid_flag_ |= SHOW_AXIS_X;
-        }
-        if (show_axis_y) {
-          grid_flag_ |= SHOW_AXIS_Y;
-        }
+      else if (ELEM(rv3d->view, RV3D_VIEW_TOP, RV3D_VIEW_BOTTOM)) {
+        grid_flag_ = PLANE_XY | (show_axis_x ? SHOW_AXIS_X : OVERLAY_GridBits(0)) |
+                     (show_axis_y ? SHOW_AXIS_Y : OVERLAY_GridBits(0));
       }
-      else if (show_ortho_grid && (rv3d->view == RV3D_VIEW_FRONT || rv3d->view == RV3D_VIEW_BACK)) {
-        grid_flag_ = PLANE_XZ;
-        if (show_floor) {
-          grid_flag_ |= SHOW_GRID | GRID_BACK;
-        }
-        /*bfa - toggles axis x/z in ortho front/back views*/
-        if (show_axis_x) {
-          grid_flag_ |= SHOW_AXIS_X;
-        }
-        if (show_axis_z) {
-          grid_flag_ |= SHOW_AXIS_Z;
-        }
+      else if (ELEM(rv3d->view, RV3D_VIEW_FRONT, RV3D_VIEW_BACK)) {
+        grid_flag_ = PLANE_XZ | (show_axis_x ? SHOW_AXIS_X : OVERLAY_GridBits(0)) |
+                     (show_axis_z ? SHOW_AXIS_Z : OVERLAY_GridBits(0));
+      }
+      if (show_ortho_grid) {
+        grid_flag_ |= SHOW_GRID | GRID_BACK;
       }
     }
 

@@ -454,12 +454,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
       layout, ptr, &ob_ptr, "vertex_group_a", "invert_vertex_group_a", std::nullopt);
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group_b", "invert_vertex_group_b", IFACE_("B"));
 
-  uiItemS(layout);
+  layout->separator();
 
   layout->prop(ptr, "default_weight_a", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "default_weight_b", UI_ITEM_NONE, IFACE_("B"), ICON_NONE);
 
-  uiItemS(layout);
+  layout->separator();
 
   layout->prop(ptr, "mix_set", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -474,7 +474,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 }
 
 static void influence_panel_draw(const bContext *C, Panel *panel)

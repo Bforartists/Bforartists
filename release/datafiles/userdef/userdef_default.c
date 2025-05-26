@@ -7,10 +7,9 @@
 /* For constants. */
 #include "BLI_math_constants.h"
 
-#include "DNA_anim_types.h"
-#include "DNA_curve_types.h"
-#include "DNA_space_types.h"
-#include "DNA_userdef_types.h"
+#include "DNA_anim_enums.h"
+#include "DNA_curve_enums.h"
+#include "DNA_space_enums.h"
 
 #include "BKE_blender_version.h"
 
@@ -235,10 +234,6 @@ const UserDef U_default = {
             .temp_win_sizey = 600,
         },
 
-    .sequencer_disk_cache_dir = "",
-    .sequencer_disk_cache_compression = 0,
-    .sequencer_disk_cache_size_limit = 100,
-    .sequencer_disk_cache_flag = 0,
     .sequencer_proxy_setup = USER_SEQ_PROXY_SETUP_AUTOMATIC,
 
     .collection_instance_empty_size = 1.0f,

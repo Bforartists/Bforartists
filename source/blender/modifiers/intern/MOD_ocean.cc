@@ -503,7 +503,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->prop(ptr, "use_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   /* ------------ end bfa */
 
-  modifier_panel_end(layout, ptr);
+  modifier_error_message_draw(layout, ptr);
 
 #else  /* WITH_OCEANSIM */
   layout->label(RPT_("Built without Ocean modifier"), ICON_NONE);
@@ -526,7 +526,7 @@ static void waves_panel_draw(const bContext * /*C*/, Panel *panel)
   col->prop(ptr, "choppiness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "wind_velocity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  uiItemS(layout);
+  layout->separator();
 
   col = &layout->column(false);
   col->prop(ptr, "wave_alignment", UI_ITEM_R_SLIDER, IFACE_("Alignment"), ICON_NONE);
@@ -632,27 +632,16 @@ static void bake_panel_draw(const bContext * /*C*/, Panel *panel)
   bool use_foam = RNA_boolean_get(ptr, "use_foam");
 
   if (is_cached) {
-    PointerRNA op_ptr;
-    uiItemFullO(layout,
-                "OBJECT_OT_ocean_bake",
-                IFACE_("Delete Bake"),
-                ICON_NONE,
-                nullptr,
-                WM_OP_INVOKE_DEFAULT,
-                UI_ITEM_NONE,
-                &op_ptr);
+    PointerRNA op_ptr = layout->op("OBJECT_OT_ocean_bake",
+                                   IFACE_("Delete Bake"),
+                                   ICON_NONE,
+                                   WM_OP_INVOKE_DEFAULT,
+                                   UI_ITEM_NONE);
     RNA_boolean_set(&op_ptr, "free", true);
   }
   else {
-    PointerRNA op_ptr;
-    uiItemFullO(layout,
-                "OBJECT_OT_ocean_bake",
-                IFACE_("Bake"),
-                ICON_NONE,
-                nullptr,
-                WM_OP_INVOKE_DEFAULT,
-                UI_ITEM_NONE,
-                &op_ptr);
+    PointerRNA op_ptr = layout->op(
+        "OBJECT_OT_ocean_bake", IFACE_("Bake"), ICON_NONE, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
     RNA_boolean_set(&op_ptr, "free", false);
   }
 

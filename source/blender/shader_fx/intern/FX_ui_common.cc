@@ -121,23 +121,19 @@ static void gpencil_shaderfx_ops_extra_draw(bContext *C, uiLayout *layout, void 
   uiLayoutSetUnitsX(layout, 4.0f);
 
   /* Duplicate. */
-  uiItemO(layout,
-          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Duplicate"),
-          ICON_DUPLICATE,
-          "OBJECT_OT_shaderfx_copy");
+  layout->op("OBJECT_OT_shaderfx_copy",
+             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Duplicate"),
+             ICON_DUPLICATE);
 
-  uiItemS(layout);
+  layout->separator();
 
   /* Move to first. */
   row = &layout->column(false);
-  uiItemFullO(row,
-              "OBJECT_OT_shaderfx_move_to_index",
-              IFACE_("Move to First"),
-              ICON_TRIA_UP,
-              nullptr,
-              WM_OP_INVOKE_DEFAULT,
-              UI_ITEM_NONE,
-              &op_ptr);
+  op_ptr = row->op("OBJECT_OT_shaderfx_move_to_index",
+                   IFACE_("Move to First"),
+                   ICON_TRIA_UP,
+                   WM_OP_INVOKE_DEFAULT,
+                   UI_ITEM_NONE);
   RNA_int_set(&op_ptr, "index", 0);
   if (!fx->prev) {
     uiLayoutSetEnabled(row, false);
@@ -145,14 +141,11 @@ static void gpencil_shaderfx_ops_extra_draw(bContext *C, uiLayout *layout, void 
 
   /* Move to last. */
   row = &layout->column(false);
-  uiItemFullO(row,
-              "OBJECT_OT_shaderfx_move_to_index",
-              IFACE_("Move to Last"),
-              ICON_TRIA_DOWN,
-              nullptr,
-              WM_OP_INVOKE_DEFAULT,
-              UI_ITEM_NONE,
-              &op_ptr);
+  op_ptr = row->op("OBJECT_OT_shaderfx_move_to_index",
+                   IFACE_("Move to Last"),
+                   ICON_TRIA_DOWN,
+                   WM_OP_INVOKE_DEFAULT,
+                   UI_ITEM_NONE);
   RNA_int_set(&op_ptr, "index", BLI_listbase_count(&ob->shader_fx) - 1);
   if (!fx->next) {
     uiLayoutSetEnabled(row, false);
@@ -195,14 +188,14 @@ static void shaderfx_panel_header(const bContext * /*C*/, Panel *panel)
   row->prop(ptr, "show_render", UI_ITEM_NONE, "", ICON_NONE);
 
   /* Extra operators. */
-  uiItemMenuF(row, "", ICON_DOWNARROW_HLT, gpencil_shaderfx_ops_extra_draw, fx);
+  row->menu_fn("", ICON_DOWNARROW_HLT, gpencil_shaderfx_ops_extra_draw, fx);
 
   row = &row->row(false);
   uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
-  uiItemO(row, "", ICON_X, "OBJECT_OT_shaderfx_remove");
+  row->op("OBJECT_OT_shaderfx_remove", "", ICON_X);
 
   /* Some padding so the X isn't too close to the drag icon. */
-  uiItemS(layout);
+  layout->separator();
 }
 
 /** \} */

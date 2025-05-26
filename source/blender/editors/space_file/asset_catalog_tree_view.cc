@@ -296,26 +296,20 @@ void AssetCatalogTreeViewItem::build_context_menu(bContext &C, uiLayout &column)
 {
   PointerRNA props;
 
-  uiItemFullO(&column,
-              "ASSET_OT_catalog_new",
-              IFACE_("New Catalog"),
-              ICON_ADD,
-              nullptr,
-              WM_OP_INVOKE_DEFAULT,
-              UI_ITEM_NONE,
-              &props);
+  props = column.op("ASSET_OT_catalog_new",
+                    IFACE_("New Catalog"),
+                    ICON_ADD, /*BFA - icon added*/
+                    WM_OP_INVOKE_DEFAULT,
+                    UI_ITEM_NONE);
   RNA_string_set(&props, "parent_path", catalog_item_.catalog_path().c_str());
 
-  uiItemFullO(&column,
-              "ASSET_OT_catalog_delete",
-              IFACE_("Delete Catalog"),
-              ICON_DELETE,
-              nullptr,
-              WM_OP_INVOKE_DEFAULT,
-              UI_ITEM_NONE,
-              &props);
+  props = column.op("ASSET_OT_catalog_delete",
+                    IFACE_("Delete Catalog"),
+                    ICON_DELETE, /*BFA - icon added*/
+                    WM_OP_INVOKE_DEFAULT,
+                    UI_ITEM_NONE);
   RNA_string_set(&props, "catalog_id", catalog_item_.get_catalog_id().str().c_str());
-  uiItemO(&column, IFACE_("Rename"), ICON_RENAME, "UI_OT_view_item_rename");
+  column.op("UI_OT_view_item_rename", IFACE_("Rename"), ICON_RENAME); /*BFA - icon added*/
 
   /* Doesn't actually exist right now, but could be defined in Python. Reason that this isn't done
    * in Python yet is that catalogs are not exposed in BPY, and we'd somehow pass the clicked on

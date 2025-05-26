@@ -312,6 +312,7 @@ set(SRC
   intern/viewer_path.cc
   intern/volume.cc
   intern/volume_grid.cc
+  intern/volume_grid_fields.cc
   intern/volume_grid_file_cache.cc
   intern/volume_render.cc
   intern/volume_to_mesh.cc
@@ -530,6 +531,7 @@ set(SRC
   BKE_volume.hh
   BKE_volume_enums.hh
   BKE_volume_grid.hh
+  BKE_volume_grid_fields.hh
   BKE_volume_grid_file_cache.hh
   BKE_volume_grid_fwd.hh
   BKE_volume_grid_type_traits.hh
@@ -806,6 +808,10 @@ endif()
 
 if(WITH_XR_OPENXR)
   add_definitions(-DWITH_XR_OPENXR)
+endif()
+
+if(WITH_INPUT_IME)
+  add_definitions(-DWITH_INPUT_IME)
 endif()
 
 # # Warnings as errors, this is too strict!
