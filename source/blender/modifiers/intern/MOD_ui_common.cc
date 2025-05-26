@@ -243,19 +243,16 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 
   /* Apply as shapekey. */
   if (BKE_modifier_is_same_topology(md) && !BKE_modifier_is_non_geometrical(md)) {
-    uiItemBooleanO(layout,
-                   CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply as Shape Key"),
-                   ICON_SHAPEKEY_DATA,
-                   "OBJECT_OT_modifier_apply_as_shapekey",
-                   "keep_modifier",
-                   false);
+    PointerRNA op_ptr = layout->op(
+        "OBJECT_OT_modifier_apply_as_shapekey",
+        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply as Shape Key"),
+        ICON_SHAPEKEY_DATA);
+    RNA_boolean_set(&op_ptr, "keep_modifier", false);
 
-    uiItemBooleanO(layout,
-                   CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Save as Shape Key"),
-                   ICON_SHAPEKEY_DATA,
-                   "OBJECT_OT_modifier_apply_as_shapekey",
-                   "keep_modifier",
-                   true);
+    op_ptr = layout->op("OBJECT_OT_modifier_apply_as_shapekey",
+                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Save as Shape Key"),
+                        ICON_SHAPEKEY_DATA); /*BFA*/
+    RNA_boolean_set(&op_ptr, "keep_modifier", true);
     layout->separator();
   }
 
@@ -274,7 +271,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 
   layout->op("OBJECT_OT_modifier_copy_to_selected",
              CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy to Selected"),
-             ICON_COPYDOWN);
+             ICON_COPYDOWN); /*BFA*/
 
   layout->separator();
 
@@ -303,7 +300,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
     layout->separator();
     op_ptr = layout->op("OBJECT_OT_geometry_nodes_move_to_nodes",
                         std::nullopt,
-                        ICON_GEOMETRY_NODES,
+                        ICON_GEOMETRY_NODES, /*BFA*/
                         WM_OP_INVOKE_DEFAULT,
                         UI_ITEM_NONE);
     layout->prop(&ptr, "show_group_selector", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -454,21 +451,13 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   /* Switch context buttons. */
   if (modifier_is_simulation(md) == 1) {
-    uiItemStringO(op_row,
-                  "",
-                  ICON_PROPERTIES,
-                  "WM_OT_properties_context_change",
-                  "context",
-                  "PHYSICS"); /*bfa*/
+    uiItemStringO(
+        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PHYSICS"); /*BFA - op_row*/
     buttons_number++;
   }
   else if (modifier_is_simulation(md) == 2) {
-    uiItemStringO(op_row,
-                  "",
-                  ICON_PROPERTIES,
-                  "WM_OT_properties_context_change",
-                  "context",
-                  "PARTICLES"); /*bfa*/
+    uiItemStringO(
+        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES"); /*BFA - op_row*/
     buttons_number++;
   }
 
