@@ -969,7 +969,7 @@ static wmOperatorStatus sequencer_unmute_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   Editing *ed = seq::editing_get(scene);
   ARegion *region = CTX_wm_region(C);
-  const bool is_preview = (region->regiontype == RGN_TYPE_PREVIEW) &&
+  const bool is_preview = region && (region->regiontype == RGN_TYPE_PREVIEW) &&
                           sequencer_view_preview_only_poll(C);
   LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
     if (is_preview) {
@@ -1520,7 +1520,7 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
   seq::prefetch_stop(scene);
 
   LISTBASE_FOREACH_BACKWARD (Strip *, strip, ed->seqbasep) {
-    if (use_cursor_position && strip->machine != split_channel) {
+    if (use_cursor_position && strip->channel != split_channel) {
       continue;
     }
 
@@ -1542,7 +1542,7 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
       if (use_cursor_position) {
         LISTBASE_FOREACH (Strip *, strip, seq::active_seqbase_get(ed)) {
           if (seq::time_right_handle_frame_get(scene, strip) == split_frame &&
-              strip->machine == split_channel)
+              strip->channel == split_channel)
           {
             strip_selected = strip->flag & STRIP_ALLSEL;
           }
@@ -1550,7 +1550,7 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
         if (!strip_selected) {
           LISTBASE_FOREACH (Strip *, strip, seq::active_seqbase_get(ed)) {
             if (seq::time_left_handle_frame_get(scene, strip) == split_frame &&
-                strip->machine == split_channel)
+                strip->channel == split_channel)
             {
               strip->flag &= ~STRIP_ALLSEL;
             }
@@ -1746,6 +1746,18 @@ static wmOperatorStatus sequencer_add_duplicate_exec(bContext *C, wmOperator * /
   Strip *active_strip = seq::select_active_get(scene);
   ListBase duplicated_strips = {nullptr, nullptr};
 
+  /* Special case for duplicating strips in preview: Do not duplicate sound strips,muted
+   * strips and strips that do not intersect the current frame */
+  if (region->regiontype == RGN_TYPE_PREVIEW && sequencer_view_preview_only_poll(C)) {
+    LISTBASE_FOREACH (Strip *, strip, ed->seqbasep) {
+      if (strip->type == STRIP_TYPE_SOUND_RAM || strip->flag & SEQ_MUTE ||
+          !(seq::time_strip_intersects_frame(scene, strip, scene->r.cfra)))
+      {
+        strip->flag &= ~STRIP_ALLSEL;
+      }
+    }
+  }
+
   seq::seqbase_duplicate_recursive(scene, scene, &duplicated_strips, ed->seqbasep, 0, 0);
   deselect_all_strips(scene);
 
@@ -1781,16 +1793,9 @@ static wmOperatorStatus sequencer_add_duplicate_exec(bContext *C, wmOperator * /
     seq::ensure_unique_name(strip, scene);
   }
 
-  /* Special case for duplicating strips in preview: Do not duplicate sound strips and handle
-   * overlap, because strips won't be translated. */
+  /* Special case for duplicating strips in preview: handle overlap, because strips won't be
+   * translated. */
   if (region->regiontype == RGN_TYPE_PREVIEW && sequencer_view_preview_only_poll(C)) {
-    for (Strip *strip = strip_last->next; strip; strip = strip->next) {
-      if (strip->type == STRIP_TYPE_SOUND_RAM) {
-        seq::edit_flag_for_removal(scene, ed->seqbasep, strip);
-      }
-    }
-    seq::edit_remove_flagged_strips(scene, ed->seqbasep);
-
     for (Strip *strip = strip_last->next; strip; strip = strip->next) {
       if (seq::transform_test_overlap(scene, ed->seqbasep, strip)) {
         seq::transform_seqbase_shuffle(ed->seqbasep, strip, scene);
@@ -2181,8 +2186,8 @@ static wmOperatorStatus sequencer_meta_make_exec(bContext *C, wmOperator * /*op*
     seq::relations_invalidate_cache(scene, strip);
     BLI_remlink(active_seqbase, strip);
     BLI_addtail(&strip_meta->seqbase, strip);
-    channel_max = max_ii(strip->machine, channel_max);
-    channel_min = min_ii(strip->machine, channel_min);
+    channel_max = max_ii(strip->channel, channel_max);
+    channel_min = min_ii(strip->channel, channel_min);
     meta_start_frame = min_ii(seq::time_left_handle_frame_get(scene, strip), meta_start_frame);
     meta_end_frame = max_ii(seq::time_right_handle_frame_get(scene, strip), meta_end_frame);
   }
@@ -2196,7 +2201,7 @@ static wmOperatorStatus sequencer_meta_make_exec(bContext *C, wmOperator * /*op*
     channel_meta->flag = channel_cur->flag;
   }
 
-  const int channel = active_strip ? active_strip->machine : channel_max;
+  const int channel = active_strip ? active_strip->channel : channel_max;
   seq::strip_channel_set(strip_meta, channel);
   BLI_strncpy(strip_meta->name + 2, DATA_("MetaStrip"), sizeof(strip_meta->name) - 2);
   seq::strip_unique_name_set(scene, &ed->seqbase, strip_meta);
@@ -2408,7 +2413,7 @@ static Strip *find_next_prev_strip(Scene *scene, Strip *test, int lr, int sel)
 
   strip = static_cast<Strip *>(ed->seqbasep->first);
   while (strip) {
-    if ((strip != test) && (test->machine == strip->machine) &&
+    if ((strip != test) && (test->channel == strip->channel) &&
         ((sel == -1) || (sel == (strip->flag & SELECT))))
     {
       dist = MAXFRAME * 2;
@@ -2655,24 +2660,6 @@ void SEQUENCER_OT_copy(wmOperatorType *ot)
 /* -------------------------------------------------------------------- */
 /** \name Paste Operator
  * \{ */
-
-bool deselect_all_strips(Scene *scene)
-{
-  Editing *ed = seq::editing_get(scene);
-  bool changed = false;
-
-  if (ed == nullptr) {
-    return changed;
-  }
-
-  LISTBASE_FOREACH (Strip *, strip, seq::active_seqbase_get(ed)) {
-    if (strip->flag & STRIP_ALLSEL) {
-      strip->flag &= ~STRIP_ALLSEL;
-      changed = true;
-    }
-  }
-  return changed;
-}
 
 void SEQUENCER_OT_paste(wmOperatorType *ot)
 {
@@ -3144,7 +3131,7 @@ static int strip_cmp_time_startdisp_channel(void *thunk, const void *a, const vo
 
   /* If strips have the same start frame favor the one with a higher channel. */
   if (strip_a_start == strip_b_start) {
-    return strip_a->machine > strip_b->machine;
+    return strip_a->channel > strip_b->channel;
   }
 
   return (strip_a_start > strip_b_start);

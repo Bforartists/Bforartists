@@ -3419,10 +3419,10 @@ static wmOperatorStatus keyframe_jump_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  ScrArea *area = CTX_wm_area(C);
   AnimKeylist *keylist = ED_keylist_create();
 
-  switch (area->spacetype) {
+  ScrArea *area = CTX_wm_area(C);
+  switch (area ? eSpace_Type(area->spacetype) : SPACE_EMPTY) {
     case SPACE_ACTION: {
       keylist_from_dopesheet(*C, *keylist);
       break;
@@ -4610,9 +4610,9 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
       ptr = layout->op("SCREEN_OT_area_join",
                        ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Up") :
                                                                IFACE_("Join Right"),
-                       ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP : ICON_JOIN_AREAS, /*BFA icon*/
+                       ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP : ICON_JOIN_AREAS,  /*BFA icon*/
                        WM_OP_EXEC_DEFAULT,
-                       UI_ITEM_NONE); 
+                       UI_ITEM_NONE);
       RNA_int_set_array(&ptr, "source_xy", blender::int2{sa2->totrct.xmin, sa2->totrct.ymin});
       RNA_int_set_array(&ptr, "target_xy", blender::int2{sa1->totrct.xmin, sa1->totrct.ymin});
 
@@ -4776,12 +4776,9 @@ static wmOperatorStatus repeat_history_invoke(bContext *C,
        lastop = lastop->prev, i--)
   {
     if ((lastop->type->flag & OPTYPE_REGISTER) && WM_operator_repeat_check(C, lastop)) {
-      uiItemIntO(layout,
-                 WM_operatortype_name(lastop->type, lastop->ptr).c_str(),
-                 ICON_NONE,
-                 op->type->idname,
-                 "index",
-                 i);
+      PointerRNA op_ptr = layout->op(
+          op->type, WM_operatortype_name(lastop->type, lastop->ptr), ICON_NONE);
+      RNA_int_set(&op_ptr, "index", i);
     }
   }
 
@@ -5211,9 +5208,9 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
     RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
 
-  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW); /*BFA icon*/
+  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW);
   layout->separator();
-  layout->op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE); /*BFA icon*/
+  layout->op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE);
 }
 
 // bfa - show hide the meshedit toolbar menus

@@ -71,6 +71,8 @@ class Shader {
 
   /* TODO: Remove `is_batch_compilation`. */
   virtual void init(const shader::ShaderCreateInfo &info, bool is_batch_compilation) = 0;
+  /* Variant for legacy python shaders. To be removed, not supported in Vulkan or Metal. */
+  virtual void init() = 0;
 
   virtual void vertex_shader_from_glsl(MutableSpan<StringRefNull> sources) = 0;
   virtual void geometry_shader_from_glsl(MutableSpan<StringRefNull> sources) = 0;
@@ -223,6 +225,8 @@ class ShaderCompiler {
   SpecializationBatchHandle precompile_specializations(Span<ShaderSpecialization> specializations);
 
   bool specialization_batch_is_ready(SpecializationBatchHandle &handle);
+
+  void wait_for_all();
 };
 
 enum class Severity {
