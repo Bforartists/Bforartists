@@ -613,7 +613,7 @@ def lfs_fallback_setup(args: argparse.Namespace) -> None:
         print_stage("Adding Git LFS fallback remote")
         print("Used to fetch files from projects.blender.org if missing.")
 
-        url = "https://projects.blender.org/blender/blender.git"
+        url = "https://github.com/Bforartists/Bforartists.git"
         push_url = "no_push"
         make_utils.git_add_remote(args.git_command, fallback_remote, url, push_url)
 
