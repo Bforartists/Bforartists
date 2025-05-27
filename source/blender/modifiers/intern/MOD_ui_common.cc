@@ -235,11 +235,6 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
                         UI_ITEM_NONE);
     RNA_boolean_set(&op_ptr, "all_keyframes", true);
   }
-  else {
-    layout->op("OBJECT_OT_modifier_apply",
-               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
-               ICON_CHECKMARK);
-  }
 
   /* Apply as shapekey. */
   if (BKE_modifier_is_same_topology(md) && !BKE_modifier_is_non_geometrical(md)) {
@@ -428,21 +423,23 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   }
 
   /* bfa - modifer apply button */
-  op_row = &layout->row(true);
-  op_row->op("OBJECT_OT_modifier_apply", "", ICON_CHECKMARK);
+  op_row = &row->row(false);
+
+  row->op("OBJECT_OT_modifier_apply", "", ICON_CHECKMARK);
   buttons_number++;
+
+  /* Extra operators menu. */
+  row->menu_fn("", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
 
   /* bfa - modifier pin to last toggle button */
   bool is_pinned = RNA_boolean_get(ptr, "use_pin_to_last");
+  uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
   row->prop(ptr,
           "use_pin_to_last",
           UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
           "",
           is_pinned ? ICON_PINNED : ICON_UNPINNED);
   buttons_number++;
-
-  /* Extra operators menu. */
-  row->menu_fn("", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
 
   /* Delete button. */
   if (modifier_can_delete(md) && !modifier_is_simulation(md)) {
