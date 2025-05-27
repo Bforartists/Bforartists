@@ -403,6 +403,7 @@ static void geometry_panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "loop_slide", 0); /*bfa - decorator*/
 }
 
 static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -425,23 +426,33 @@ static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
   /* ------------ end bfa */
 
   /*------------------- bfa - original props */
-  col = &layout->column(true);
+  col = &layout->column(false);  /* changed from true to false: no 50/50 property split */
+
   uiLayoutSetActive(col, edge_bevel);
-  row->prop(ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seam"), ICON_NONE);
-  row->prop(ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
 
   col->label(TIP_("Mark"), ICON_NONE);
+  
+  // Mark Seam row
+  {
+    uiLayout *split = &col->split(0.05f, false);
+    split->label("", ICON_NONE);
+    uiLayout *right = &split->row(true);
+    uiLayoutSetPropSep(right, false);
+    right->prop(ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seam"), ICON_NONE);
+    uiItemDecoratorR(right, ptr, "mark_seam", 0); /*bfa - decorator*/
+  }
 
-  row = &col->row(true);
-  layout->separator();;
-  row->prop(ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seam"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "mark_seam", 0); /*bfa - decorator*/
+  // Mark Sharp row
+  {
+    uiLayout *split = &col->split(0.05f, false);
+    split->label("", ICON_NONE);
+    uiLayout *right = &split->row(true);
+    uiLayoutSetPropSep(right, false);
+    right->prop(ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
+    uiItemDecoratorR(right, ptr, "mark_sharp", 0); /*bfa - decorator*/
+  }
 
-  row = &col->row(true);
-  layout->separator();;
-  row->prop(ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "mark_sharp", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
+/* ------------ end bfa */
 
   layout->prop(ptr, "material", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "face_strength_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
