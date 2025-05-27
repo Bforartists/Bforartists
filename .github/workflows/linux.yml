@@ -12,3 +12,8 @@ jobs:
       os: "ubuntu-latest"
       c_compiler: "clang"
       cpp_compiler: "clang++"
+    steps:
+      - name: Set executable permissions
+        run: |
+          chmod +x ./build_files/build_environment/install_linux_packages.py
+          chmod +x ./build_files/utils/make_update.py
