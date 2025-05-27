@@ -1,0 +1,40 @@
+[submodule "lib/linux_x64"]
+	update = none
+	path = lib/linux_x64
+	url = https://projects.blender.org/blender/lib-linux_x64.git
+	branch = main
+[submodule "lib/macos_arm64"]
+	update = none
+	path = lib/macos_arm64
+	url = https://projects.blender.org/blender/lib-macos_arm64.git
+	branch = main
+[submodule "lib/macos_x64"]
+	update = none
+	path = lib/macos_x64
+	url = https://projects.blender.org/blender/lib-macos_x64.git
+	branch = main
+[submodule "lib/windows_x64"]
+	update = none
+	path = lib/windows_x64
+	url = https://projects.blender.org/blender/lib-windows_x64.git
+	branch = main
+[submodule "lib/windows_arm64"]
+    update = none
+	path = lib/windows_arm64
+	url = https://projects.blender.org/blender/lib-windows_arm64.git
+	branch = main
+[submodule "scripts/addons_contrib/space_view3d_pie_menus"]
+	path = scripts/addons_contrib/space_view3d_pie_menus
+	url = https://projects.blender.org/extensions/space_view3d_pie_menus.git
+[submodule "scripts/addons_contrib/space_view3d_3d_navigation"]
+	path = scripts/addons_contrib/space_view3d_3d_navigation
+	url = https://projects.blender.org/extensions/space_view3d_3d_navigation.git
+[submodule "scripts/addons_contrib/space_view3d_copy_attributes"]
+	path = scripts/addons_contrib/space_view3d_copy_attributes
+	url = https://projects.blender.org/extensions/space_view3d_copy_attributes.git
+[submodule "scripts/addons_contrib/io_mesh_stl"]
+	path = scripts/addons_contrib/io_mesh_stl
+	url = https://projects.blender.org/extensions/io_mesh_stl.git
+[submodule "scripts/addons_contrib/io_scene_3ds"]
+	path = scripts/addons_contrib/io_scene_3ds
+	url = https://projects.blender.org/extensions/io_scene_3ds.git
