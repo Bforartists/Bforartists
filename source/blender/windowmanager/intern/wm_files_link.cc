@@ -704,7 +704,8 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
                                             const char *filepath,
                                             const short id_code,
                                             const char *id_name,
-                                            const int flag)
+                                            const int flag,
+                                            const bool do_override = false /* bfa do override*/)
 {
   const bool do_append = (flag & FILE_LINK) == 0;
   /* Tag everything so we can make local only the new datablock. */
@@ -730,6 +731,8 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
 
   if (do_append) {
     BKE_blendfile_append(lapp_context, nullptr);
+  } else if (do_override) { // bfa asset shelf - probably do nothing... I think - zNight. 
+    BKE_blendfile_override(lapp_context, BKE_LIBLINK_OVERRIDE_INIT, nullptr);
   }
 
   BKE_blendfile_link_append_instantiate_loose(lapp_context, nullptr);
@@ -758,6 +761,20 @@ ID *WM_file_link_datablock(Main *bmain,
   flag |= FILE_LINK;
   return wm_file_link_append_datablock_ex(
       bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag);
+}
+
+ID *WM_file_link_override_datablock(Main *bmain,
+                                    Scene *scene,
+                                    ViewLayer *view_layer,
+                                    View3D *v3d,
+                                    const char *filepath,
+                                    const short id_code,
+                                    const char *id_name,
+                                    int flag)
+{
+  flag |= FILE_LINK;
+  return wm_file_link_append_datablock_ex(
+      bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag, true);
 }
 
 ID *WM_file_append_datablock(Main *bmain,

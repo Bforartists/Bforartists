@@ -865,7 +865,9 @@ typedef struct AssetShelfSettings {
 
   short preview_size;
   short display_flag; /* #AssetShelfSettings_DisplayFlag */
-  char _pad1[4];
+  short import_method; /* #AssetShelfImportMethod */ // bfa
+  short import_flags;  /* AssetShelfImportFlags */ // bfa
+  // char _pad1[4]; // uses all 4
 
 #ifdef __cplusplus
   /* Zero initializes. */
@@ -876,6 +878,29 @@ typedef struct AssetShelfSettings {
   ~AssetShelfSettings();
 #endif
 } AssetShelfSettings;
+
+// bfa start asset shelf
+// See eAssetImportMethod
+typedef enum AssetShelfImportMethod {
+  /** Regular data-block linking. */
+  SHELF_ASSET_IMPORT_LINK = 0,
+  /** Regular data-block appending (basically linking + "Make Local"). */
+  SHELF_ASSET_IMPORT_APPEND = 1,
+  /** Append data-block with the #BLO_LIBLINK_APPEND_LOCAL_ID_REUSE flag enabled. Some typically
+   * heavy data dependencies (e.g. the image data-blocks of a material, the mesh of an object) may
+   * be reused from an earlier append. */
+  SHELF_ASSET_IMPORT_APPEND_REUSE = 2,
+  /** Default: Follow the preference setting for this asset library. */
+  SHELF_ASSET_IMPORT_LINK_OVERRIDE = 3,
+} AssetShelfImportMethod;
+
+// See eFileAssetImportFlags
+typedef enum AssetShelfImportFlags {
+  SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK = (1 << 0),
+  SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND = (1 << 1),
+  SHELF_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN = (1 << 2),
+} AssetShelfImportFlags;
+// bfa end
 
 typedef struct AssetShelf {
   DNA_DEFINE_CXX_METHODS(AssetShelf)
