@@ -1133,12 +1133,14 @@ static uiBut *ui_item_with_label(uiLayout *layout,
     UI_but_flag_enable(but, UI_BUT_ACTIVATE_ON_INIT);
   }
 
+
 #ifdef UI_PROP_DECORATE
   /* Only for alignment. */
   if (use_prop_decorate) { /* Note that sep flag may have been unset meanwhile. */
     (layout_prop_decorate ? layout_prop_decorate : sub)->label(nullptr, ICON_BLANK1);
   }
 #endif /* UI_PROP_DECORATE */
+
 
   UI_block_layout_set_current(block, layout);
   return but;
@@ -2282,7 +2284,6 @@ void uiLayout::prop(PointerRNA *ptr,
         layout_split->separator();
         layout_split->separator();
 
-
         /* bfa - XYZW column */
         layout_sub = &layout_split->column(true);
         /* bfa - set fixed size, otherwise space is wasted */
@@ -2318,11 +2319,6 @@ void uiLayout::prop(PointerRNA *ptr,
         }
       }
       else {
-        /* bfa - keep other props the same */
-        layout_split = &layout->split(UI_ITEM_PROP_SEP_DIVIDE, true);
-        layout_sub = &layout_split->column(true);
-        layout_sub->space_ = 0;
-
         but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
         but->drawflag |= UI_BUT_TEXT_RIGHT;
         but->drawflag &= ~UI_BUT_TEXT_LEFT;
