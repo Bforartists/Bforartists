@@ -18,12 +18,12 @@ from bpy.app.translations import (
 
 
 class TOPBAR_HT_upper_bar(Header):
-    bl_space_type = "TOPBAR"
+    bl_space_type = 'TOPBAR'
 
     def draw(self, context):
         region = context.region
 
-        if region.alignment == "RIGHT":
+        if region.alignment == 'RIGHT':
             self.draw_right(context)
         else:
             self.draw_left(context)
@@ -484,7 +484,7 @@ class TOPBAR_MT_file_import(Menu):
     def draw(self, _context):
         if bpy.app.build_options.collada:
             self.layout.operator(
-                "wm.collada_import", text="Collada (.dae)", icon="LOAD_DAE"
+                "wm.collada_import", text="Collada (.dae) (legacy)", icon="LOAD_DAE"
             )
         if bpy.app.build_options.alembic:
             self.layout.operator(
@@ -518,6 +518,8 @@ class TOPBAR_MT_file_import(Menu):
 
         if bpy.app.build_options.io_fbx:
             self.layout.operator("wm.fbx_import", text="FBX (.fbx) (experimental)")
+        if bpy.app.build_options.collada:
+            self.layout.operator("wm.collada_import", text="Collada (.dae) (Legacy)")
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -528,7 +530,7 @@ class TOPBAR_MT_file_export(Menu):
     def draw(self, _context):
         if bpy.app.build_options.collada:
             self.layout.operator(
-                "wm.collada_export", text="Collada (.dae)", icon="SAVE_DAE"
+                "wm.collada_export", text="Collada (.dae) (legacy)", icon="SAVE_DAE"
             )
         if bpy.app.build_options.alembic:
             self.layout.operator(

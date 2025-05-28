@@ -313,7 +313,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* SECOND PART ................................................ */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_add")) {
-    row->prop( ptr, "add_threshold", UI_ITEM_R_SLIDER, "", ICON_NONE);
+    row->prop( ptr, "add_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
@@ -332,7 +332,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* SECOND PART ................................................ */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_remove")) {
-    row->prop( ptr, "remove_threshold", UI_ITEM_R_SLIDER, "", ICON_NONE);
+    row->prop( ptr, "remove_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);

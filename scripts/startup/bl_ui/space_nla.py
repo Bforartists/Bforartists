@@ -11,6 +11,11 @@ from bl_ui.space_dopesheet import (
     dopesheet_filter,
 )
 
+from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
+
+class NLA_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
+    bl_space_type = 'NLA_EDITOR'
+
 ################################ Switch between the editors ##########################################
 
 # The blank button, we don't want to switch to the editor in which we are already.
@@ -102,6 +107,7 @@ class NLA_HT_header(Header):
             panel="NLA_PT_snapping",
             text="",
         )
+        layout.popover(panel="NLA_PT_playhead_snapping")
 
 
 class NLA_PT_snapping(Panel):
@@ -617,6 +623,7 @@ classes = (
     NLA_PT_filters,
     NLA_PT_action,
     NLA_PT_snapping,
+    NLA_PT_playhead_snapping,
 )
 
 if __name__ == "__main__":  # only for live edit.

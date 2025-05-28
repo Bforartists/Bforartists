@@ -6,7 +6,7 @@
 
 #include "BKE_geometry_set.hh"
 
-#include "spreadsheet_cache.hh"
+#include "DNA_space_types.h"
 
 struct ARegionType;
 struct Depsgraph;
@@ -23,8 +23,8 @@ namespace blender::ed::spreadsheet {
 class DataSource;
 
 struct ReorderColumnVisualizationData {
-  SpreadsheetColumn *column_to_move = nullptr;
-  SpreadsheetColumn *new_prev_column = nullptr;
+  int old_index = 0;
+  int new_index = 0;
   int current_offset_x_px = 0;
 };
 
@@ -38,11 +38,8 @@ struct SpaceSpreadsheet_Runtime {
 
   std::optional<ReorderColumnVisualizationData> reorder_column_visualization_data;
 
-  SpreadsheetCache cache;
-
   SpaceSpreadsheet_Runtime() = default;
 
-  /* The cache is not copied currently. */
   SpaceSpreadsheet_Runtime(const SpaceSpreadsheet_Runtime &other)
       : visible_rows(other.visible_rows), tot_rows(other.tot_rows), tot_columns(other.tot_columns)
   {
@@ -82,5 +79,11 @@ SpreadsheetColumn *find_hovered_column(SpaceSpreadsheet &sspreadsheet,
  * Get the data that is currently displayed in the spreadsheet.
  */
 std::unique_ptr<DataSource> get_data_source(const bContext &C);
+
+/**
+ * Get the ID of the table that should be displayed. This is used to look up the table from
+ * #SpaceSpreadsheet::tables.
+ */
+const SpreadsheetTableID *get_active_table_id(const SpaceSpreadsheet &sspreadsheet);
 
 }  // namespace blender::ed::spreadsheet
