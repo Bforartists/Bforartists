@@ -2485,7 +2485,7 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
        "the asset share the data instead"},
       {SHELF_ASSET_IMPORT_LINK_OVERRIDE,
        "LINK_OVERRIDE",
-       ICON_DECORATE_LIBRARY_OVERRIDE,
+       ICON_LIBRARY_DATA_OVERRIDE,
        "Link (Override)",
        "Import the assets as linked library overrided data-block"},
       {0, nullptr, 0, nullptr, nullptr},
