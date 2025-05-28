@@ -19,6 +19,7 @@
 #include BLI_SYSTEM_PID_H
 
 #include "GPU_capabilities.hh"
+#include "GPU_debug.hh"
 #include "GPU_platform.hh"
 #include "gpu_capabilities_private.hh"
 #include "gpu_shader_dependency_private.hh"
@@ -74,6 +75,15 @@ void GLShader::init(const shader::ShaderCreateInfo &info, bool is_batch_compilat
 
   /* NOTE: This is not threadsafe with regards to the specialization constants state access.
    * The shader creation must be externally synchronized. */
+  main_program_ = &program_cache_.lookup_or_add_default(constants->values);
+  if (!main_program_->program_id) {
+    main_program_->program_id = glCreateProgram();
+    debug::object_label(GL_PROGRAM, main_program_->program_id, name);
+  }
+}
+
+void GLShader::init()
+{
   main_program_ = &program_cache_.lookup_or_add_default(constants->values);
   if (!main_program_->program_id) {
     main_program_->program_id = glCreateProgram();
@@ -1617,7 +1627,13 @@ GLShader::GLProgram &GLShader::program_get(const shader::SpecializationConstants
     return program;
   }
 
+  GPU_debug_group_begin(GPU_DEBUG_SHADER_SPECIALIZATION_GROUP);
+  GPU_debug_group_begin(this->name);
+
   program.program_link(name);
+
+  GPU_debug_group_end();
+  GPU_debug_group_end();
 
   return program;
 }

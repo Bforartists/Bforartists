@@ -1721,7 +1721,6 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
         layout = self.layout
 
         light = context.light
-        clamp = light.cycles
 
         if self.bl_space_type == 'PROPERTIES':
             layout.row().prop(light, "type", expand=True)
@@ -1731,16 +1730,43 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
             layout.row().prop(light, "type")
 
         col = layout.column()
+        heading = col.column(align=True, heading="Temperature")
+        row = heading.column(align=True).row(align=True)
+        row.prop(light, "use_temperature", text="")
+        # Don't show color preview for now, it is grayed out so the color
+        # is not accurate. Would not a change in the UI code to allow
+        # non-editable colors to be displayed as is.
+        if False:  # light.use_temperature:
+            sub = row.split(factor=0.7, align=True)
+            sub.active = light.use_temperature
+            sub.prop(light, "temperature", text="")
+            sub.prop(light, "temperature_color", text="")
+        else:
+            sub = row.row()
+            sub.active = light.use_temperature
+            sub.prop(light, "temperature", text="")
 
-        col.prop(light, "color")
+        if light.use_temperature:
+            col.prop(light, "color", text="Tint")
+        else:
+            col.prop(light, "color", text="Color")
+
+        layout.separator()
+
+        col = layout.column()
         col.prop(light, "energy")
-        col.separator()
+        col.prop(light, "exposure")
+        col.prop(light, "normalize")
 
+        layout.separator()
+
+        col = layout.column()
         if light.type in {'POINT', 'SPOT'}:
             col.use_property_split = False
             col.prop(light, "use_soft_falloff")
             col.use_property_split = True
             col.prop(light, "shadow_soft_size", text="Radius")
+            col.prop(light, "use_soft_falloff")
         elif light.type == 'SUN':
             col.prop(light, "angle")
         elif light.type == 'AREA':
@@ -1752,6 +1778,25 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
             elif light.shape in {'RECTANGLE', 'ELLIPSE'}:
                 sub.prop(light, "size", text="Size X")
                 sub.prop(light, "size_y", text="Y")
+
+
+class CYCLES_LIGHT_PT_settings(CyclesButtonsPanel, Panel):
+    bl_label = "Settings"
+    bl_context = "data"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.light and CyclesButtonsPanel.poll(context)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        light = context.light
+        clamp = light.cycles
+
+        col = layout.column()
 
         if not (light.type == 'AREA' and clamp.is_portal):
             col.separator()
@@ -1797,7 +1842,7 @@ class CYCLES_LIGHT_PT_nodes(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-		#layout.use_property_split = True #BFA
+	#layout.use_property_split = True #BFA
         light = context.light
         panel_node_draw(layout, light, 'OUTPUT_LIGHT', 'Surface')
 
@@ -2071,7 +2116,7 @@ class CYCLES_MATERIAL_PT_surface(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-		#layout.use_property_split = True #BFA
+	#layout.use_property_split = True #BFA
         mat = context.material
         if not panel_node_draw(layout, mat, 'OUTPUT_MATERIAL', 'Surface'):
             layout.prop(mat, "diffuse_color")
@@ -2091,7 +2136,7 @@ class CYCLES_MATERIAL_PT_volume(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-		#layout.use_property_split = True #BFA
+	#layout.use_property_split = True #BFA
         mat = context.material
         # cmat = mat.cycles
 
@@ -2110,7 +2155,7 @@ class CYCLES_MATERIAL_PT_displacement(CyclesButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-		#layout.use_property_split = True #BFA
+	#layout.use_property_split = True #BFA
         mat = context.material
         panel_node_draw(layout, mat, 'OUTPUT_MATERIAL', 'Displacement')
 
@@ -2788,6 +2833,7 @@ classes = (
     CYCLES_OBJECT_PT_visibility_culling,
     CYCLES_LIGHT_PT_preview,
     CYCLES_LIGHT_PT_light,
+    CYCLES_LIGHT_PT_settings,
     CYCLES_LIGHT_PT_nodes,
     CYCLES_LIGHT_PT_beam_shape,
     CYCLES_WORLD_PT_preview,
@@ -2820,6 +2866,7 @@ classes = (
     node_panel(CYCLES_WORLD_PT_settings_surface),
     node_panel(CYCLES_WORLD_PT_settings_volume),
     node_panel(CYCLES_LIGHT_PT_light),
+    node_panel(CYCLES_LIGHT_PT_settings),
     node_panel(CYCLES_LIGHT_PT_beam_shape)
 )
 

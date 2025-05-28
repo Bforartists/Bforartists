@@ -477,7 +477,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     uiLayoutSetPropSep(layout, true);
     uiLayoutSetPropDecorate(layout, true);
   }
-	  /* end bfa */
+  /* end bfa */
 }
 
 /* action-clip only settings for active NLA-Strip */
@@ -532,8 +532,8 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
 
   row = &layout->row(false); /* bfa - align probs left nla action panel */
   uiLayoutSetPropSep(row, false);   /* bfa - use_property_split = False */
-  row->prop(&strip_ptr, "use_sync_length", UI_ITEM_NONE, IFACE_("Sync Length"), ICON_NONE);
-  row->op("NLA_OT_action_sync_length", "Now", ICON_FILE_REFRESH, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE); /*BFA*/
+  row->prop(&strip_ptr, "use_sync_length", UI_ITEM_NONE, "", ICON_NONE);
+  row->op("NLA_OT_action_sync_length", IFACE_("Now"), ICON_FILE_REFRESH); /*BFA*/
   uiLayoutSetPropSep(row, true); /* bfa - use_property_split = True */
 
   /* action usage */
