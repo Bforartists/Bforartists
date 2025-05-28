@@ -18,6 +18,7 @@ from bl_ui.properties_grease_pencil_common import (
 )
 from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
+    PlayheadSnappingPanel,
 )
 from rna_prop_ui import PropertyPanel
 
@@ -201,6 +202,7 @@ class SEQUENCER_HT_header(Header):
         row.prop(tool_settings, "use_snap_sequencer", text="")
         sub = row.row(align=True)
         sub.popover(panel="SEQUENCER_PT_snapping", text="")  # BFA - removed text
+        layout.popover(panel="SEQUENCER_PT_playhead_snapping")
         # layout.separator_spacer() #BFA
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
@@ -3540,8 +3542,6 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
         col.prop(cache_settings, "show_cache_final_out", text="Final")
         if show_developer_ui:
             col.prop(cache_settings, "show_cache_raw", text="Raw")
-            col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
-            col.prop(cache_settings, "show_cache_composite", text="Composite")
 
         show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
         if show_cache_size:
@@ -3691,8 +3691,6 @@ class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(strip, "use_cache_raw")
-        col.prop(strip, "use_cache_preprocessed", text="Preprocessed")
-        col.prop(strip, "use_cache_composite")
 
         show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
         if show_cache_size:
@@ -4102,6 +4100,9 @@ class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
     bl_category = "Strip"
 
 
+class SEQUENCER_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+
 # BFA - contains format changes
 class SEQUENCER_PT_snapping(Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
@@ -4399,6 +4400,7 @@ classes = (
     SEQUENCER_PT_snapping,
     SEQUENCER_PT_preview_snapping,
     SEQUENCER_PT_sequencer_snapping,
+    SEQUENCER_PT_playhead_snapping,
     SEQUENCER_PT_view_options,  # BFA
     SEQUENCER_MT_fades_add,  # BFA
     SEQUENCER_MT_strip_text_characters,  # BFA

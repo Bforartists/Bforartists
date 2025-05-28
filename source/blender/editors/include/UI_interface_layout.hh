@@ -274,13 +274,35 @@ struct uiLayout : uiItem {
    * freed with the menu button.
    */
   void menu_fn_argN_free(blender::StringRefNull name, int icon, uiMenuCreateFunc func, void *argN);
+  /**
+   * Adds a operator item, places a button in the layout to call the operator.
+   * \param ot: Operator to add.
+   * \param name: Text to show in the layout.
+   * \param context: Operator call context for #WM_operator_name_call.
+   * \returns Operator pointer to write properties.
+   */
+  PointerRNA op(wmOperatorType *ot,
+                std::optional<blender::StringRef> name,
+                int icon,
+                wmOperatorCallContext context,
+                eUI_Item_Flag flag);
+
+  /**
+   * Adds a operator item, places a button in the layout to call the operator.
+   * \param ot: Operator to add.
+   * \param name: Text to show in the layout.
+   * \returns Operator pointer to write properties.
+   */
+  PointerRNA op(wmOperatorType *ot, std::optional<blender::StringRef> name, int icon);
 
   /**
    * Adds a operator item, places a button in the layout to call the operator.
    * \param opname: Operator id name.
    * \param name: Text to show in the layout.
+   * \returns Operator pointer to write properties, might be #PointerRNA_NULL if operator does not
+   * exists.
    */
-  void op(blender::StringRefNull opname, std::optional<blender::StringRef> name, int icon);
+  PointerRNA op(blender::StringRefNull opname, std::optional<blender::StringRef> name, int icon);
 
   /**
    * Adds a operator item, places a button in the layout to call the operator.
@@ -521,24 +543,6 @@ void uiItemEnumO_string(uiLayout *layout,
 void uiItemsEnumO(uiLayout *layout,
                   blender::StringRefNull opname,
                   blender::StringRefNull propname);
-void uiItemBooleanO(uiLayout *layout,
-                    std::optional<blender::StringRef> name,
-                    int icon,
-                    blender::StringRefNull opname,
-                    blender::StringRefNull propname,
-                    int value);
-void uiItemIntO(uiLayout *layout,
-                std::optional<blender::StringRef> name,
-                int icon,
-                blender::StringRefNull opname,
-                blender::StringRefNull propname,
-                int value);
-void uiItemFloatO(uiLayout *layout,
-                  std::optional<blender::StringRef> name,
-                  int icon,
-                  blender::StringRefNull opname,
-                  blender::StringRefNull propname,
-                  float value);
 void uiItemStringO(uiLayout *layout,
                    std::optional<blender::StringRef> name,
                    int icon,
@@ -546,19 +550,10 @@ void uiItemStringO(uiLayout *layout,
                    blender::StringRefNull propname,
                    const char *value);
 
-void uiItemFullO_ptr(uiLayout *layout,
-                     wmOperatorType *ot,
-                     std::optional<blender::StringRef> name,
-                     int icon,
-                     IDProperty *properties,
-                     wmOperatorCallContext context,
-                     eUI_Item_Flag flag,
-                     PointerRNA *r_opptr);
 void uiItemFullOMenuHold_ptr(uiLayout *layout,
                              wmOperatorType *ot,
                              std::optional<blender::StringRef> name,
                              int icon,
-                             IDProperty *properties,
                              wmOperatorCallContext context,
                              eUI_Item_Flag flag,
                              const char *menu_id, /* extra menu arg. */
