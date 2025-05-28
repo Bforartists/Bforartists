@@ -70,6 +70,7 @@ set(INC_SYS
 set(SRC
   intern/derived_node_tree.cc
   intern/geometry_nodes_bundle.cc
+  intern/geometry_nodes_caller_ui.cc
   intern/geometry_nodes_closure.cc
   intern/geometry_nodes_closure_zone.cc
   intern/geometry_nodes_dependencies.cc
@@ -104,6 +105,7 @@ set(SRC
   NOD_geometry_exec.hh
   NOD_geometry_nodes_bundle.hh
   NOD_geometry_nodes_bundle_fwd.hh
+  NOD_geometry_nodes_caller_ui.hh
   NOD_geometry_nodes_closure.hh
   NOD_geometry_nodes_closure_eval.hh
   NOD_geometry_nodes_closure_fwd.hh
@@ -134,6 +136,7 @@ set(SRC
   NOD_socket_items_ui.hh
   NOD_socket_search_link.hh
   NOD_socket_usage_inference.hh
+  NOD_socket_usage_inference_fwd.hh
   NOD_texture.h
   NOD_value_elem.hh
   NOD_value_elem_eval.hh

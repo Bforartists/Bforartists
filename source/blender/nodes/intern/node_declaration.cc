@@ -757,6 +757,12 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::make_available(
   return *this;
 }
 
+BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::custom_draw(CustomSocketDrawFn fn)
+{
+  decl_base_->custom_draw_fn = std::make_unique<CustomSocketDrawFn>(std::move(fn));
+  return *this;
+}
+
 BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::align_with_previous(const bool value)
 {
   decl_base_->align_with_previous_socket = value;
@@ -864,6 +870,13 @@ void SocketDeclaration::make_available(bNode &node) const
 PanelDeclarationBuilder &PanelDeclarationBuilder::description(std::string value)
 {
   decl_->description = std::move(value);
+  return *this;
+}
+
+PanelDeclarationBuilder &PanelDeclarationBuilder::translation_context(
+    std::optional<std::string> value)
+{
+  decl_->translation_context = value;
   return *this;
 }
 
