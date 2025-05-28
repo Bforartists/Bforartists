@@ -1255,7 +1255,7 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 
   RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET || 
     (asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK))
-  );
+  ); // bfa addded for displaying the linked data-block 
 }
 
 static void node_id_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)

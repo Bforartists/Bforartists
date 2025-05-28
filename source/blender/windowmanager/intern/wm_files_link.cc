@@ -731,7 +731,7 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
 
   if (do_append) {
     BKE_blendfile_append(lapp_context, nullptr);
-  } else if (do_override) { // bfa asset shelf - probably do nothing... I think - zNight. 
+  } else if (do_override) { // bfa asset shelf - do single override
     BKE_blendfile_override(lapp_context, BKE_LIBLINK_OVERRIDE_INIT, nullptr);
   }
 
