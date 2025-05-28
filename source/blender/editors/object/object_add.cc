@@ -70,7 +70,7 @@
 #include "BKE_grease_pencil_legacy_convert.hh"
 #include "BKE_key.hh"
 #include "BKE_lattice.hh"
-#include "BKE_idtype.hh"
+#include "BKE_idtype.hh" // bfa override asset
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
@@ -132,7 +132,7 @@
 #include "ED_select_utils.hh"
 #include "ED_transform.hh"
 #include "ED_view3d.hh"
-#include "ED_undo.hh"
+#include "ED_undo.hh" // bfa override asset
 
 #include "ANIM_bone_collections.hh"
 

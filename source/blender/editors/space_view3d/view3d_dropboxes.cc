@@ -39,7 +39,7 @@
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
-#include "RNA_prototypes.hh" // bfa
+#include "RNA_prototypes.hh" // bfa override
 
 #include "WM_api.hh"
 #include "WM_types.hh"
