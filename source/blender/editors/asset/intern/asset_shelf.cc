@@ -855,19 +855,27 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
   uiItemSpacer(layout);
   // start bfa - asset shelf ui props
   if ((CTX_data_mode_enum(C) == CTX_MODE_OBJECT && CTX_wm_view3d(C) != nullptr) || CTX_wm_space_node(C) != nullptr) {
-    layout->prop(&shelf_ptr, "drop_instances_to_origin", UI_ITEM_NONE, "", ICON_CENTER);
     PropertyRNA *prop = RNA_struct_find_property(&shelf_ptr, "import_method");
     const int import_method_prop = RNA_property_enum_get(&shelf_ptr, prop);
 
-    switch (AssetShelfImportMethod(import_method_prop)) {
-      case SHELF_ASSET_IMPORT_LINK:
-        layout->prop(&shelf_ptr, "instance_collections_on_link", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);
-        break;
-      case FILE_ASSET_IMPORT_APPEND:
-      case FILE_ASSET_IMPORT_APPEND_REUSE:
+    if ((CTX_data_mode_enum(C) == CTX_MODE_OBJECT && CTX_wm_view3d(C) != nullptr)) {
+      switch (AssetShelfImportMethod(import_method_prop)) {
+        case SHELF_ASSET_IMPORT_LINK:
+          layout->prop(&shelf_ptr, "drop_instances_to_origin", UI_ITEM_NONE, "", ICON_CENTER);
+          layout->prop(&shelf_ptr, "instance_collections_on_link", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);
+          break;
+        case FILE_ASSET_IMPORT_APPEND:
+          layout->prop(&shelf_ptr, "drop_instances_to_origin", UI_ITEM_NONE, "", ICON_CENTER);
           layout->prop(&shelf_ptr, "instance_collections_on_append", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);
-        break;
+        case FILE_ASSET_IMPORT_APPEND_REUSE:
+          layout->prop(&shelf_ptr, "drop_instances_to_origin", UI_ITEM_NONE, "", ICON_CENTER);
+          layout->prop(&shelf_ptr, "instance_collections_on_append", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);
+          break;
+        case SHELF_ASSET_IMPORT_LINK_OVERRIDE:
+          break;
+      }
     }
+
     layout->prop(&shelf_ptr, "import_method", UI_ITEM_R_EXPAND, "", ICON_NONE);
   }
   // end bfa

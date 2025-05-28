@@ -55,35 +55,21 @@ class FILEBROWSER_HT_header(Header):
         # Check if we have a valid asset context first
         if hasattr(context, 'asset') and context.asset is not None:
             if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
-                layout.row().prop(
-                    params, "drop_instances_to_origin", icon_only=True, icon="CENTER"
-                )  # BFA - drop collections instance at origin
-
                 if params.import_method == 'LINK':
-                    layout.row().prop(
-                        params,
-                        "instance_collections_on_link",
-                        icon_only=True,
-                        icon="OUTLINER_OB_GROUP_INSTANCE",
-                    )
+                    layout.row().prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")  # BFA - drop collections instance at origin
+                    layout.row().prop(params, "instance_collections_on_link", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
                 elif params.import_method in {'APPEND', 'APPEND_REUSE'}:
-                    layout.row().prop(
-                        params,
-                        "instance_collections_on_append",
-                        icon_only=True,
-                        icon="OUTLINER_OB_GROUP_INSTANCE",
-                    )
+                    layout.row().prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")  # BFA - drop collections instance at origin
+                    layout.row().prop(params, "instance_collections_on_append", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
+                elif params.import_method in {'LINK_OVERRIDE'}:
+                    pass
                 else:
+                    layout.row().prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")  # BFA - drop collections instance at origin
                     layout.label(icon="OUTLINER_OB_GROUP_INSTANCE")
                     # Add button for the operator with dynamic icon
                     current_state = params.instance_collections_on_append
                     icon = 'CHECKBOX_HLT' if current_state else 'CHECKBOX_DEHLT'
-                    layout.row().operator(
-                        "file.toggle_instance_collections",
-                        icon=icon,
-                        text="",
-                        emboss=True,
-                    )
+                    layout.row().operator("file.toggle_instance_collections", icon=icon, text="", emboss=True)
 
         if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
             row = layout.row(align=True)  # BFA - change to make row of buttons
