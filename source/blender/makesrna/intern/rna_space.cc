@@ -7500,6 +7500,12 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
        "typically heavy data. For example the textures of a material asset, or the mesh of an "
        "object asset, don't have to be copied every time this asset is imported. The instances of "
        "the asset share the data instead"},
+       // BFA only file asset browser link override
+      {FILE_ASSET_IMPORT_LINK_OVERRIDE,
+       "LINK_OVERRIDE",
+       ICON_DECORATE_LIBRARY_OVERRIDE,
+       "Link (Override)",
+       "Import the assets as linked library overrided data-block"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
