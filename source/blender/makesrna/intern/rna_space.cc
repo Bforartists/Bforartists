@@ -7503,7 +7503,7 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
        // BFA only file asset browser link override
       {FILE_ASSET_IMPORT_LINK_OVERRIDE,
        "LINK_OVERRIDE",
-       ICON_DECORATE_LIBRARY_OVERRIDE,
+       ICON_LIBRARY_DATA_OVERRIDE,
        "Link (Override)",
        "Import the assets as linked library overrided data-block"},
       {0, nullptr, 0, nullptr, nullptr},
