@@ -523,6 +523,8 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
     }
   } else {
     drop_instances_to_origin = asset_drag->import_settings.drop_instances_to_origin;
+
+    use_override = asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE;
   }
   /* end bfa */
   ID *id = WM_drag_asset_id_import(C, asset_drag, FILE_AUTOSELECT);
