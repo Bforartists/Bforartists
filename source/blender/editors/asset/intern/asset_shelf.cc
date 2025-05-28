@@ -865,8 +865,6 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
           layout->prop(&shelf_ptr, "instance_collections_on_link", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);
           break;
         case FILE_ASSET_IMPORT_APPEND:
-          layout->prop(&shelf_ptr, "drop_instances_to_origin", UI_ITEM_NONE, "", ICON_CENTER);
-          layout->prop(&shelf_ptr, "instance_collections_on_append", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);
         case FILE_ASSET_IMPORT_APPEND_REUSE:
           layout->prop(&shelf_ptr, "drop_instances_to_origin", UI_ITEM_NONE, "", ICON_CENTER);
           layout->prop(&shelf_ptr, "instance_collections_on_append", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);
