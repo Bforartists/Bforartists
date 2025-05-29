@@ -64,36 +64,27 @@ class FILEBROWSER_HT_header(Header):
                     if id_type == 'COLLECTION':
                         is_collection = True
 
-                row = layout.row(align=True)
                 if params.import_method == 'LINK':
-                    row_drop = layout.row()
-                    row_drop.enabled = is_collection
-                    row_drop.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
-                    row_instance = layout.row()
-                    row_instance.enabled = is_collection
-                    row_instance.prop(params, "instance_collections_on_link", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
+                    row = layout.row(align=True)
+                    row.enabled = is_collection
+                    row.prop(params, "instance_collections_on_link", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
+                    row.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
                 elif params.import_method in {'APPEND', 'APPEND_REUSE'}:
-                    row_drop = layout.row()
-                    row_drop.enabled = is_collection
-                    row_drop.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
-                    row_instance = layout.row()
-                    row_instance.enabled = is_collection
-                    row_instance.prop(params, "instance_collections_on_append", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
+                    row = layout.row(align=True)
+                    row.enabled = is_collection
+                    row.prop(params, "instance_collections_on_append", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
+                    row.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
                 elif params.import_method in {'LINK_OVERRIDE'}:
                     pass
                 else:
-                    row_drop = layout.row()
-                    row_drop.enabled = is_collection
-                    row_drop.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
-                    lay = layout.row()
-                    lay.enabled = is_collection
-                    lay.label(icon="OUTLINER_OB_GROUP_INSTANCE")
+                    row = layout.row(align=True)
+                    row.enabled = is_collection
+                    row.label(icon="OUTLINER_OB_GROUP_INSTANCE")
                     # Add button for the operator with dynamic icon
                     current_state = params.instance_collections_on_append
                     icon = 'CHECKBOX_HLT' if current_state else 'CHECKBOX_DEHLT'
-                    op_row = layout.row()
-                    op_row.enabled = is_collection
-                    op_row.operator("file.toggle_instance_collections", icon=icon, text="", emboss=True)
+                    row.operator("file.toggle_instance_collections", icon=icon, text="", emboss=True)
+                    row.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
 
         if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
             row = layout.row(align=True)  # BFA - change to make row of buttons
