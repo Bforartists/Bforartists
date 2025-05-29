@@ -1999,7 +1999,7 @@ static wmOperatorStatus collection_drop_override(bContext *C, wmOperator *op)
      * collection too). */
     scene->id.tag |= ID_TAG_DOIT;
   }
-  ID *id_root_override;
+  ID *id_root_override = nullptr;
   bool success = false;
   success = create_override(bmain, scene, view_layer, id_root, id_root_override, obact, user_overrides_objects_uids, is_override_instancing_object, do_fully_editable);
 
@@ -2082,7 +2082,7 @@ static wmOperatorStatus collection_drop_exec(bContext *C, wmOperator *op)
   // bfa asset override, default fall back for adding override
   wmOperatorStatus r = OPERATOR_FINISHED;
   if (use_override){
-      ViewLayer *view_layer = CTX_data_view_layer(C);
+      //ViewLayer *view_layer = CTX_data_view_layer(C);
       r = collection_drop_override(C, op);
   }
   return r; // bfa end return OPERATOR_FINISHED;
