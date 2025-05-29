@@ -7601,7 +7601,7 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
        "LINK_OVERRIDE",
        ICON_LIBRARY_DATA_OVERRIDE,
        "Link (Override)",
-       "Import the assets as linked library overrided data-block"},
+       "Import the assets as linked library overrided data.\nThis will only override the active hierarchy.\nTo override all selected contents, use the Outliner Editor"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
