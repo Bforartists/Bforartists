@@ -118,6 +118,8 @@ typedef enum eAssetImportMethod {
    * heavy data dependencies (e.g. the image data-blocks of a material, the mesh of an object) may
    * be reused from an earlier append. */
   ASSET_IMPORT_APPEND_REUSE = 2,
+  /* BFA import asset as override */
+  ASSET_IMPORT_LINK_OVERRIDE = 3,
 } eAssetImportMethod;
 
 #
@@ -126,6 +128,7 @@ typedef struct AssetImportSettings {
   eAssetImportMethod method;
   bool use_instance_collections;
   bool drop_instances_to_origin;
+  bool is_from_browser; // bfa asset shelf
 } AssetImportSettings;
 
 typedef enum eAssetLibrary_Flag {
