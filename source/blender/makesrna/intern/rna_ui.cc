@@ -2462,6 +2462,8 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Display Filter", "Filter assets by name");
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
+
+  prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   // bfa start asset shelf
   // jưst gonna put the enum here then
   static const EnumPropertyItem asset_shelf_import_method_items[] = {
@@ -2487,15 +2489,12 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
        "LINK_OVERRIDE",
        ICON_LIBRARY_DATA_OVERRIDE,
        "Link (Override)",
-       "Import the assets as linked library overrided data-block"},
+       "Import the assets as linked library overrided data.\nThis will only override the active hierarchy.\nTo override all selected contents, use the Outliner Editor"},
       {0, nullptr, 0, nullptr, nullptr},
   };
-
-  prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, asset_shelf_import_method_items);
-
   RNA_def_property_enum_sdna(prop, nullptr, "settings.import_method");
-  RNA_def_property_ui_text(prop, "Display Filter", "Filter assets by name");
+  RNA_def_property_ui_text(prop, "Import Method", "Determines how the asset will be imported");
   RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
 
   prop = RNA_def_property(srna, "instance_collections_on_link", PROP_BOOLEAN, PROP_NONE);
@@ -2522,7 +2521,7 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Drop Instances to Origin",
                            "Drop collection instances to scene origin instead of cursor location");
-  // bfa end 
+  // bfa end
 }
 
 static void rna_def_file_handler(BlenderRNA *brna)
