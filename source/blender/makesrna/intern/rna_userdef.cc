@@ -6936,7 +6936,7 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
   RNA_def_property_update(prop, 0, "rna_userdef_asset_library_path_update");
 
   static const EnumPropertyItem import_method_items[] = {
-      {ASSET_IMPORT_LINK, "LINK", 0, "Link", "Import the assets as linked data-block"},
+      {ASSET_IMPORT_LINK, "LINK", 0, "Link", "Import the assets as linked data"},
       {ASSET_IMPORT_APPEND,
        "APPEND",
        0,
