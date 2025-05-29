@@ -550,7 +550,7 @@ class NODE_OT_interface_item_remove(NodeInterfaceOperator, Operator):
 
 
 class NODE_OT_interface_item_make_panel_toggle(NodeInterfaceOperator, Operator):
-    """Make the active boolean socket a toggle for its parent panel"""
+    """Make the selected active boolean input socket a top-level toggle located in its parent panel""" # BFA
 
     bl_idname = "node.interface_item_make_panel_toggle"
     bl_label = "Make Panel Toggle"
