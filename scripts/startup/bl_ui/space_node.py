@@ -1345,12 +1345,16 @@ class NODE_PT_node_tree_interface_panel_toggle(Panel):
         active_item = tree.interface.active
         panel_toggle_item = active_item.interface_items[0]
 
-        layout.use_property_split = True
+        layout.use_property_split = False # BFA - float left
         layout.use_property_decorate = False
 
-        layout.prop(panel_toggle_item, "default_value", text="Default")
-        layout.prop(panel_toggle_item, "hide_in_modifier")
-        layout.prop(panel_toggle_item, "force_non_field")
+        # BFA - float left
+        row = layout.row(align=False)
+        row.prop(panel_toggle_item, "default_value", text="Default")
+        row = layout.row(align=False)
+        row.prop(panel_toggle_item, "hide_in_modifier")
+        row = layout.row(align=False)
+        row.prop(panel_toggle_item, "force_non_field")
 
         layout.use_property_split = False
 
