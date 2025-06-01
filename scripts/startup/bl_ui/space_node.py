@@ -739,10 +739,10 @@ class NODE_PT_material_slots(Panel):
             col.operator("object.material_slot_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
 
         if ob.mode == 'EDIT':
-            row = layout.row(align=True)
-            row.operator("object.material_slot_assign", text="Assign")
-            row.operator("object.material_slot_select", text="Select")
-            row.operator("object.material_slot_deselect", text="Deselect")
+            row = layout.row(align=True) # BFA - align
+            row.operator("object.material_slot_assign", text="Assign", icon='CHECKMARK') # BFA - icon
+            row.operator("object.material_slot_select", text="Select", icon='RESTRICT_SELECT_OFF') # BFA - icon
+            row.operator("object.material_slot_deselect", text="Deselect", icon='RESTRICT_SELECT_ON') # BFA - icon
 
 
 class NODE_PT_geometry_node_tool_object_types(Panel):
