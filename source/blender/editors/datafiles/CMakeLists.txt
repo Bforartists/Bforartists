@@ -536,6 +536,7 @@ if(WITH_BLENDER)
       delete_all
       delete_duplicate
       delete_loose
+	  depth
       desktop
       detach_links
       detach_links_move
@@ -638,6 +639,7 @@ if(WITH_BLENDER)
       facesel_hlt
       fake_user_off
       fake_user_on
+	  falloffstroke
       fcurve
       fcurve_snapshot
       ff

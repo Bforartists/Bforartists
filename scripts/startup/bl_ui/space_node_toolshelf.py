@@ -4797,7 +4797,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Curves to Grease Pencil", icon = "OUTLINER_OB_GREASEPENCIL")
             props.use_transform = True
             props.type = "GeometryNodeCurvesToGreasePencil"
-            
+
             props = col.operator("node.add_node", text=" Curve to Mesh            ", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
@@ -4817,7 +4817,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Fillet Curve                ", icon = "CURVE_FILLET")
             props.use_transform = True
             props.type = "GeometryNodeFilletCurve"
-            
+
             props = col.operator("node.add_node", text=" Grease Pencil to Curves", icon = "OUTLINER_OB_CURVES")
             props.use_transform = True
             props.type = "GeometryNodeGreasePencilToCurves"
@@ -4825,7 +4825,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Interpolate Curve    ", icon = "INTERPOLATE_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeInterpolateCurves"
-            
+
             props = col.operator("node.add_node", text=" Merge Layers            ", icon = "MERGE")
             props.use_transform = True
             props.type = "GeometryNodeInterpolateCurves"
@@ -4852,7 +4852,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            
+
             props = flow.operator("node.add_node", text="", icon = "OUTLINER_OB_GREASEPENCIL")
             props.use_transform = True
             props.type = "GeometryNodeCurvesToGreasePencil"
@@ -4876,7 +4876,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_FILLET")
             props.use_transform = True
             props.type = "GeometryNodeFilletCurve"
-            
+
             props = flow.operator("node.add_node", text="", icon = "OUTLINER_OB_CURVES")
             props.use_transform = True
             props.type = "GeometryNodeGreasePencilToCurves"
@@ -4884,7 +4884,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "INTERPOLATE_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeInterpolateCurves"
-            
+
             props = flow.operator("node.add_node", text="", icon = "MERGE")
             props.use_transform = True
             props.type = "GeometryNodeInterpolateCurves"
@@ -5072,6 +5072,192 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "POINT_OF_CURVE")
             props.use_transform = True
             props.type = "GeometryNodePointsOfCurve"
+
+
+#add Grease Pencil panel
+class NODES_PT_geom_add_grease_pencil(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Grease Pencil"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+
+
+#add Grease Pencil panel, Read subpanel
+class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Read"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_grease_pencil"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Named Layer Selection              ", icon = "NAMED_LAYER_SELECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedLayerSelection"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NAMED_LAYER_SELECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeInputNamedLayerSelection"
+
+
+#add Grease Pencil panel, Read subpanel
+class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Write"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_grease_pencil"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Set Grease Pencil Color              ", icon = "COLOR")
+            props.use_transform = True
+            props.type = "GeometryNodeSetGreasePencilColor"
+
+            props = col.operator("node.add_node", text=" Set Grease Pencil Depth             ", icon = "DEPTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSetGreasePencilDepth"
+
+            props = col.operator("node.add_node", text=" Set Grease Pencil Softness             ", icon = "FALLOFFSTROKE")
+            props.use_transform = True
+            props.type = "GeometryNodeSetGreasePencilSoftness"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "COLOR")
+            props.use_transform = True
+            props.type = "GeometryNodeSetGreasePencilColor"
+
+            props = flow.operator("node.add_node", text = "", icon = "DEPTH")
+            props.use_transform = True
+            props.type = "GeometryNodeSetGreasePencilDepth"
+
+            props = flow.operator("node.add_node", text = "", icon = "FALLOFFSTROKE")
+            props.use_transform = True
+            props.type = "GeometryNodeSetGreasePencilSoftness"
+
+
+#add Grease Pencil panel, Read subpanel
+class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Operations"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_geom_add_grease_pencil"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Set Grease Pencil to Curves              ", icon = "OUTLINER_OB_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeGreasePencilToCurves"
+
+            props = col.operator("node.add_node", text=" Merge Layers                  ", icon = "MERGE")
+            props.use_transform = True
+            props.type = "GeometryNodeMergeLayers"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_CURVES")
+            props.use_transform = True
+            props.type = "GeometryNodeGreasePencilToCurves"
+
+            props = flow.operator("node.add_node", text = "", icon = "MERGE")
+            props.use_transform = True
+            props.type = "GeometryNodeMergeLayers"
 
 
 #add mesh panel
@@ -7979,6 +8165,11 @@ classes = (
     NODES_PT_geom_add_curve_operations,
     NODES_PT_geom_add_curve_primitives,
     NODES_PT_geom_add_curve_topology,
+
+    NODES_PT_geom_add_grease_pencil,
+    NODES_PT_geom_add_grease_pencil_read,
+    NODES_PT_geom_add_grease_pencil_write,
+    NODES_PT_geom_add_grease_pencil_operations,
 
     NODES_PT_geom_add_instances,
 
