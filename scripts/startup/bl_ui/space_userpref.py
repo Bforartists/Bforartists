@@ -311,6 +311,7 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(view, "border_width")
 
         flow.use_property_split = True
+        flow.prop(view, "border_width")
         flow.prop(view, "color_picker_type")
         flow.row().prop(view, "header_align")
         flow.prop(view, "factor_display_type")
