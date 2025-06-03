@@ -1310,7 +1310,8 @@ class RENDER_PT_gpencil(RenderButtonsPanel, Panel):
 
 
 class RENDER_PT_grease_pencil_viewport(RenderButtonsPanel, Panel):
-    bl_label = "Viewport"
+    # BFA - Clarify that the properties under this are anti-aliasing related
+    bl_label = "Viewport Anti-Aliasing" 
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "RENDER_PT_gpencil"
     COMPAT_ENGINES = {
@@ -1328,13 +1329,12 @@ class RENDER_PT_grease_pencil_viewport(RenderButtonsPanel, Panel):
         props = scene.grease_pencil_settings
 
         col = layout.column()
-        # BFA - Make clearer labels & descriptions for AA properties
-        col.label(text="Anti-Aliasing")
         col.prop(props, "antialias_threshold", text="Edge Threshold")
 
 
 class RENDER_PT_grease_pencil_render(RenderButtonsPanel, Panel):
-    bl_label = "Render"
+    # BFA - Clarify that the properties under this are anti-aliasing related
+    bl_label = "Render Anti-Aliasing"
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "RENDER_PT_gpencil"
     COMPAT_ENGINES = {
@@ -1352,8 +1352,6 @@ class RENDER_PT_grease_pencil_render(RenderButtonsPanel, Panel):
         props = scene.grease_pencil_settings
 
         col = layout.column()
-        # BFA - Make clearer labels & descriptions for AA properties
-        col.label(text="Anti-Aliasing")
         col.prop(props, "antialias_threshold_render", text="Edge Threshold")
         col.prop(props, "aa_samples", text="Supersampling")
 
