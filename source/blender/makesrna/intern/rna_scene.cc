@@ -8663,7 +8663,7 @@ static void rna_def_scene_gpencil(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Anti-Aliasing Samples",
-      "Number of supersamples done per pixel in final render");
+      "Number of anti-aliasing supersamples done per pixel in final render");
   RNA_def_property_range(prop, 1, INT_MAX);
   RNA_def_property_ui_range(prop, 1, 256, 1, 3);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
