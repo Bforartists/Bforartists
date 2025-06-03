@@ -14231,9 +14231,9 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetShadeSmooth", nullptr, ICON_SET_SHADE_SMOOTH);
   define(brna, "GeometryNode", "GeometryNodeSetSplineCyclic", nullptr, ICON_TOGGLE_CYCLIC);
   define(brna, "GeometryNode", "GeometryNodeSetSplineResolution", nullptr, ICON_SET_SPLINE_RESOLUTION);
-  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilColor", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilDepth", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilSoftness", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilColor", nullptr, ICON_COLOR);
+  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilDepth", nullptr, ICON_DEPTH);
+  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilSoftness", nullptr, ICON_FALLOFFSTROKE);
   define(brna, "GeometryNode", "GeometryNodeSimulationInput", def_geo_simulation_input, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSimulationOutput", def_geo_simulation_output, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSortElements", nullptr, ICON_SORTSIZE);
