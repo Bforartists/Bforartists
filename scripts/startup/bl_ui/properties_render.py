@@ -1328,7 +1328,9 @@ class RENDER_PT_grease_pencil_viewport(RenderButtonsPanel, Panel):
         props = scene.grease_pencil_settings
 
         col = layout.column()
-        col.prop(props, "antialias_threshold", text="SMAA Threshold")
+        # BFA - Make clearer labels & descriptions for AA properties
+        col.label(text="Anti-Aliasing")
+        col.prop(props, "antialias_threshold", text="Edge Threshold")
 
 
 class RENDER_PT_grease_pencil_render(RenderButtonsPanel, Panel):
@@ -1350,8 +1352,10 @@ class RENDER_PT_grease_pencil_render(RenderButtonsPanel, Panel):
         props = scene.grease_pencil_settings
 
         col = layout.column()
-        col.prop(props, "antialias_threshold_render", text="SMAA Threshold")
-        col.prop(props, "aa_samples", text="SSAA Samples")
+        # BFA - Make clearer labels & descriptions for AA properties
+        col.label(text="Anti-Aliasing")
+        col.prop(props, "antialias_threshold_render", text="Edge Threshold")
+        col.prop(props, "aa_samples", text="Supersampling")
 
 
 class RENDER_PT_opengl_sampling(RenderButtonsPanel, Panel):
