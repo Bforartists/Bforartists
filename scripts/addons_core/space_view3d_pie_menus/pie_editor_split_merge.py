@@ -6,6 +6,7 @@ import bpy
 from bpy.types import Menu, Operator
 from bpy.props import StringProperty
 from .hotkeys import register_hotkey
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class PIE_MT_area_split_join(Menu):
@@ -17,20 +18,13 @@ class PIE_MT_area_split_join(Menu):
         pie.scale_y = 1.2
 
         # 4 - LEFT
-        if 'cursor' in bpy.ops.screen.area_join.get_rna_type().properties:
-            # Pre-4.3
-            pie.operator('wm.area_join_from_pie', text="Join Left", icon='TRIA_LEFT').direction='LEFT'
-            # 6 - RIGHT
-            pie.operator('wm.area_join_from_pie', text="Join Right", icon='TRIA_RIGHT').direction='RIGHT'
-            # 2 - BOTTOM
-            pie.operator('wm.area_join_from_pie', text="Join Down", icon='TRIA_DOWN').direction='DOWN'
-            # 8 - TOP
-            pie.operator('wm.area_join_from_pie', text="Join Up", icon='TRIA_UP').direction='UP'
-        else:
-            pie.separator()
-            pie.separator()
-            pie.separator()
-            pie.separator()
+        pie.operator('wm.area_join_from_pie', text="Join Left", icon='TRIA_LEFT').direction='LEFT'
+        # 6 - RIGHT
+        pie.operator('wm.area_join_from_pie', text="Join Right", icon='TRIA_RIGHT').direction='RIGHT'
+        # 2 - BOTTOM
+        pie.operator('wm.area_join_from_pie', text="Join Down", icon='TRIA_DOWN').direction='DOWN'
+        # 8 - TOP
+        pie.operator('wm.area_join_from_pie', text="Join Up", icon='TRIA_UP').direction='UP'
 
         # 7 - TOP - LEFT
         pie.separator()
@@ -90,9 +84,18 @@ registry = [
 
 
 def register():
-    register_hotkey(
-        'wm.call_menu_pie',
-        op_kwargs={'name': 'PIE_MT_area_split_join'},
-        hotkey_kwargs={'type': "ACCENT_GRAVE", 'value': "PRESS", 'alt': True},
-        key_cat="Window",
-    )
+    if 'cursor' in bpy.ops.screen.area_join.get_rna_type().properties:
+        # Pre-4.3
+        WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+            keymap_name="Window",
+            pie_name=PIE_MT_area_split_join.bl_idname,
+            hotkey_kwargs={'type': "ACCENT_GRAVE", 'value': "PRESS", 'alt': True},
+            on_drag=False,
+        )
+    else:
+        # 4.3 and beyond: Just call the new UI Docking operator
+        register_hotkey(
+            'screen.area_join',
+            hotkey_kwargs={'type': "ACCENT_GRAVE", 'value': "PRESS", 'alt': True},
+            keymap_name="Window",
+        )

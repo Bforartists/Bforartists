@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from bpy.types import Menu
-from .hotkeys import register_hotkey
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class PIE_MT_animation(Menu):
@@ -46,9 +46,10 @@ registry = [
 
 
 def register():
-    register_hotkey(
-        'wm.call_menu_pie_drag_only',
-        op_kwargs={'name': 'PIE_MT_animation', 'fallback_operator': 'screen.animation_play'},
+    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+        keymap_name="Object Non-modal",
+        pie_name=PIE_MT_animation.bl_idname,
         hotkey_kwargs={'type': "SPACE", 'value': "PRESS", 'shift': True},
-        key_cat='Object Non-modal',
+        default_fallback_op='screen.animation_play',
+        on_drag=True,
     )

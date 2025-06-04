@@ -4,6 +4,7 @@
 
 import bpy
 from .hotkeys import register_hotkey
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 def register():
@@ -25,7 +26,7 @@ def register():
     register_hotkey(
         'view3d.object_mode_pie_or_toggle',
         hotkey_kwargs={'type': 'TAB', 'value': 'PRESS', 'ctrl': True},
-        key_cat='Object Non-modal',
+        keymap_name='Object Non-modal',
     )
 
     # Shading Pie with "Extra Shading Pie Menu Items" enabled but "Pie Menu on Drag" disabled.
@@ -33,7 +34,7 @@ def register():
         'wm.call_menu_pie',
         op_kwargs={'name': 'VIEW3D_MT_shading_ex_pie'},
         hotkey_kwargs={'type': 'Z', 'value': 'PRESS'},
-        key_cat='3D View',
+        keymap_name='3D View',
     )
 
     # View Pie with "Pie Menu on Drag" replicated.
@@ -43,12 +44,12 @@ def register():
             'name': 'VIEW3D_MT_view_pie',
         },
         hotkey_kwargs={'type': 'ACCENT_GRAVE', 'value': 'CLICK_DRAG'},
-        key_cat='3D View',
+        keymap_name='3D View',
     )
     register_hotkey(
         'view3d.navigate',
         hotkey_kwargs={'type': 'ACCENT_GRAVE', 'value': 'CLICK'},
-        key_cat='3D View',
+        keymap_name='3D View',
     )
 
     # Region Toggle Pie with "Pie Menu on Drag"-type functionality,
@@ -56,13 +57,11 @@ def register():
     # summons this pie menu.
     # Note that in 4.2, this is actually only a built-in pie with Developer Extras,
     # for some reason.
-    register_hotkey(
-        'wm.call_menu_pie_drag_only',
-        op_kwargs={
-            'name': 'WM_MT_region_toggle_pie',
-            'fallback_operator': 'wm.context_toggle',
-            'op_kwargs': '{"data_path":"space_data.show_region_ui"}',
-        },
+    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+        keymap_name="3D View Generic",
+        pie_name='WM_MT_region_toggle_pie',
         hotkey_kwargs={'type': 'N', 'value': 'PRESS'},
-        key_cat='3D View Generic',
+        default_fallback_op='wm.context_toggle',
+        default_fallback_kwargs={"data_path":"space_data.show_region_ui"},
+        on_drag=True,
     )

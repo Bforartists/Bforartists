@@ -2,13 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import bpy, os
+import os
 from typing import Any
+
+import bpy
 from bpy.types import Object, Collection, Operator, Menu, ID
 from bpy.props import StringProperty, CollectionProperty
 from bpy_extras import id_map_utils
 
-from .hotkeys import register_hotkey
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class OUTLINER_MT_relationship_pie(Menu):
@@ -45,10 +47,14 @@ class OUTLINER_MT_relationship_pie(Menu):
             op = pie.operator('object.delete', icon='X', text="Delete From File")
             op.use_global = True
             op.confirm = False
+        elif any([type(id) in (bpy.types.Object, bpy.types.Collection) for id in context.selected_ids]):
+            # NOTE: Objects and other types of IDs cannot be deleted with the same operator, strangely enough.
+            # If we wanted to support that, we could implement a wrapper operator, but it's a very rare case, so this feels fine.
+            pie.operator('outliner.delete', icon='X', text='Delete From File')
         else:
-            pie.operator('outliner.delete', icon='X', text="Delete From File")
+            pie.operator('outliner.id_operation', icon='X', text="Delete IDs From File").type='DELETE'
         # 2 - BOTTOM
-        pie.operator('outliner.better_purge', icon='ORPHAN_DATA')
+        pie.operator('outliner.pie_purge_orphans', icon='ORPHAN_DATA')
         # 8 - TOP
         id = get_active_id(context)
         if id:
@@ -87,6 +93,37 @@ class OUTLINER_MT_relationship_pie(Menu):
             )
 
 
+class OUTLINER_OT_pie_purge_orphans(Operator):
+    """Clear all orphaned data-blocks without any users from the file"""
+
+    bl_idname = "outliner.pie_purge_orphans"
+    bl_label = "Purge Unused Data"
+
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        """Call Blender's purge function, but in a way that works from any editor, not only the 3D View."""
+
+        orig_ui = None
+        for area in context.screen.areas:
+            if area.type == 'VIEW_3D':
+                break
+        else:
+            orig_ui = context.area.ui_type
+            context.area.ui_type = 'VIEW_3D'
+            area = context.area
+
+        with context.temp_override(area=area):
+            ret = bpy.ops.outliner.orphans_purge(
+                do_local_ids=True, do_linked_ids=True, do_recursive=True
+            )
+
+        if orig_ui:
+            context.area.ui_type = orig_ui
+
+        return ret
+
+
 class OBJECT_OT_unlink_from_scene(Operator):
     """Unlink selected objects or collections from the current scene"""
 
@@ -102,6 +139,8 @@ class OBJECT_OT_unlink_from_scene(Operator):
             )
         elif context.area.type == 'VIEW_3D':
             any_selected = bool(get_objects_to_unlink(context))
+        else:
+            any_selected = False
 
         if not any_selected:
             cls.poll_message_set("Nothing is selected.")
@@ -112,53 +151,6 @@ class OBJECT_OT_unlink_from_scene(Operator):
         unlink_objects_from_scene(get_objects_to_unlink(context), context.scene)
 
         return {'FINISHED'}
-
-
-class OUTLINER_OT_better_purge(Operator):
-    """Remove fake user flags from linked IDs and collections, then purge all unused datablocks"""
-
-    bl_idname = "outliner.better_purge"
-    bl_label = "Purge Orphans"
-
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        return self.better_purge(context)
-
-    @staticmethod
-    def better_purge(context, clear_coll_fake_users=True):
-        """Call Blender's purge function, but first Python-override all library IDs'
-        use_fake_user to False.
-        Otherwise, linked IDs essentially do not get purged properly.
-        """
-
-        orig_ui = None
-        for area in context.screen.areas:
-            if area.type == 'VIEW_3D':
-                break
-        else:
-            orig_ui = context.area.ui_type
-            context.area.ui_type = 'VIEW_3D'
-            area = context.area
-
-        if clear_coll_fake_users:
-            for coll in bpy.data.collections:
-                coll.use_fake_user = False
-
-        id_list = list(bpy.data.user_map().keys())
-        for id in id_list:
-            if id.library:
-                id.use_fake_user = False
-
-        with context.temp_override(area=area):
-            ret = bpy.ops.outliner.orphans_purge(
-                do_local_ids=True, do_linked_ids=True, do_recursive=True
-            )
-
-        if orig_ui:
-            context.area.ui_type = orig_ui
-
-        return ret
 
 
 class RelationshipOperatorMixin:
@@ -512,7 +504,10 @@ def get_id_info() -> list[tuple[type, str, str]]:
                 # We can't get full info about the ID type if there isn't at least one entry of it.
                 # But we shouldn't need it, since we don't have any entries of it!
                 continue
-            id_info.append((type(prop[0]), prop[0].id_type, prop_name))
+            typ = type(prop[0])
+            if issubclass(typ, bpy.types.NodeTree):
+                typ = bpy.types.NodeTree
+            id_info.append((typ, prop[0].id_type, prop_name))
     return id_info
 
 
@@ -597,8 +592,8 @@ def get_library_icon(lib_path: str) -> str:
 
 registry = [
     OUTLINER_MT_relationship_pie,
+    OUTLINER_OT_pie_purge_orphans,
     OBJECT_OT_unlink_from_scene,
-    OUTLINER_OT_better_purge,
     OUTLINER_OT_list_users_of_datablock,
     OUTLINER_OT_list_dependencies_of_datablock,
     RemapTarget,
@@ -607,29 +602,23 @@ registry = [
 ]
 
 
-def draw_purge_ui(self, context):
-    layout = self.layout
-    layout.separator()
-    layout.operator(OUTLINER_OT_better_purge.bl_idname)
-
-
 def register():
-    bpy.types.TOPBAR_MT_file_cleanup.append(draw_purge_ui)
-
     bpy.types.Scene.remap_targets = CollectionProperty(type=RemapTarget)
     bpy.types.Scene.remap_target_libraries = CollectionProperty(type=RemapTarget)
 
-    for keymap in ("Object Mode", "Outliner"):
-        register_hotkey(
-            'wm.call_menu_pie',
-            op_kwargs={'name': 'OUTLINER_MT_relationship_pie'},
+    for keymap_name in ("Object Mode", "Outliner"):
+        WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+            keymap_name=keymap_name,
+            pie_name=OUTLINER_MT_relationship_pie.bl_idname,
             hotkey_kwargs={'type': "X", 'value': "PRESS"},
-            key_cat=keymap,
+            on_drag=False,
         )
 
 
 def unregister():
-    bpy.types.TOPBAR_MT_file_cleanup.append(draw_purge_ui)
-
-    del bpy.types.Scene.remap_targets
-    del bpy.types.Scene.remap_target_libraries
+    try:
+        del bpy.types.Scene.remap_targets
+        del bpy.types.Scene.remap_target_libraries
+    except AttributeError:
+        # Blender Log also implements these same things, which can result in errors.
+        pass

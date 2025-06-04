@@ -1750,6 +1750,8 @@ static void icon_draw_size(float x,
                                                  btheme->tui.icon_border_intensity :
                                                  0.3f) :
                                             0.0f;
+    outline_intensity *= alpha;
+
     float color[4];
     if (icon_id == ICON_NOT_FOUND) {
       UI_GetThemeColor4fv(TH_ERROR, color);

@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from bpy.types import Menu
-from .hotkeys import register_hotkey
+
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class PIE_MT_mesh_delete(Menu):
@@ -53,9 +54,9 @@ registry = [
 
 
 def register():
-    register_hotkey(
-        'wm.call_menu_pie',
-        op_kwargs={'name': 'PIE_MT_mesh_delete'},
+    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+        keymap_name="Mesh",
+        pie_name=PIE_MT_mesh_delete.bl_idname,
         hotkey_kwargs={'type': "X", 'value': "PRESS"},
-        key_cat="Mesh",
+        on_drag=False,
     )

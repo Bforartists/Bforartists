@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from bpy.types import Menu
-from .hotkeys import register_hotkey
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class PIE_MT_preferences(Menu):
@@ -47,9 +47,9 @@ registry = [
 
 
 def register():
-    register_hotkey(
-        'wm.call_menu_pie',
-        op_kwargs={'name': 'PIE_MT_preferences'},
+    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+        keymap_name="Window",
+        pie_name=PIE_MT_preferences.bl_idname,
         hotkey_kwargs={'type': "U", 'value': "PRESS", 'ctrl': True},
-        key_cat="Window",
+        on_drag=False,
     )

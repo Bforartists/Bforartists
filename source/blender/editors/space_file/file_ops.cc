@@ -1920,13 +1920,9 @@ static void file_os_operations_menu_item(uiLayout *layout,
   if (operation) {
     RNA_enum_icon_from_value(file_external_operation, operation, &icon);
   }
+  PointerRNA props_ptr = layout->op(
+      ot, IFACE_(title), icon, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
   /*end bfa*/
-  PointerRNA props_ptr = layout->op(    
-                        ot, 
-                        IFACE_(title), 
-                        icon, /*bfa*/
-                        WM_OP_INVOKE_DEFAULT, 
-                        UI_ITEM_NONE);
   RNA_string_set(&props_ptr, "filepath", path);
   if (operation) {
     RNA_enum_set(&props_ptr, "operation", operation);
@@ -2846,7 +2842,7 @@ static bool can_create_dir_from_user_input(const char dir[FILE_MAX_LIBEXTRA])
    * in the would immediately be created (if possible) which isn't good, see: #128567.
    *
    * The reason to treat user input differently here is the user could input anything,
-   * Values such as a single space for e.g. this resolves to the current-working-directory:
+   * e.g. values such as a single space. This resolves to the current-working-directory:
    * `$PWD/ ` which is a valid path name and could be created
    * (this was in fact the behavior until v4.4).
    *

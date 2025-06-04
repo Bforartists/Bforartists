@@ -2,10 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from sys import platform
+
 import bpy
 from bpy.types import Menu, Operator
-from .hotkeys import register_hotkey
-from sys import platform
+
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class PIE_MT_window(Menu):
@@ -20,7 +22,7 @@ class PIE_MT_window(Menu):
         # 6 - RIGHT
         if not context.screen.show_fullscreen:
             pie.operator(
-                "screen.screen_full_area", text="Fullscreen Area", icon='PIVOT_BOUNDBOX'
+                "screen.screen_full_area", text="Maximize Area", icon='PIVOT_BOUNDBOX'
             )
         else:
             pie.operator("wm.exit_area_fullscreen", icon='SCREEN_BACK')
@@ -37,7 +39,7 @@ class PIE_MT_window(Menu):
         # 9 - TOP - RIGHT
         if not context.screen.show_fullscreen:
             pie.operator(
-                "screen.screen_full_area", text="Maximize Area", icon='PIVOT_BOUNDBOX'
+                "screen.screen_full_area", text="Fullscreen Area", icon='PIVOT_BOUNDBOX'
             ).use_hide_panels = True
         else:
             pie.separator()
@@ -47,6 +49,7 @@ class PIE_MT_window(Menu):
         else:
             pie.separator()
         # 3 - BOTTOM - RIGHT
+        pie.operator('screen.area_join', text="Move/Split Area", icon='AREA_DOCK')
 
 
 class WM_OT_exit_area_fullscreen(Operator):
@@ -73,12 +76,9 @@ registry = [
 
 def register():
     # NOTE: This sadly results in a console warning from wm_gizmo_map.c, but it seems harmless.
-    register_hotkey(
-        'wm.call_menu_pie_drag_only',
-        op_kwargs={
-            'name': 'PIE_MT_window',
-            'fallback_operator': 'screen.screen_full_area',
-        },
+    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+        keymap_name="Window",
+        pie_name='PIE_MT_window',
         hotkey_kwargs={'type': "SPACE", 'value': "PRESS", 'ctrl': True},
-        key_cat="Window",
+        default_fallback_op='screen.screen_full_area',
     )

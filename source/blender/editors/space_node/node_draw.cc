@@ -116,6 +116,7 @@ namespace blender::ed::space_node {
 
 #define NODE_ZONE_PADDING UI_UNIT_X
 #define ZONE_ZONE_PADDING 0.3f * UI_UNIT_X
+#define EXTRA_INFO_ROW_HEIGHT (20.0f * UI_SCALE_FAC)
 
 /**
  * This is passed to many functions which draw the node editor.
@@ -153,6 +154,12 @@ struct TreeDrawContext {
    * Label for reroute nodes that is derived from upstream reroute nodes.
    */
   Map<const bNode *, StringRef> reroute_auto_labels;
+
+  /**
+   * Precomputed extra info rows for each node. This avoids having to compute them multiple times
+   * during drawing. The array is indexed by `bNode::index()`.
+   */
+  Array<Vector<NodeExtraInfoRow>> extra_info_rows_per_node;
 };
 
 float grid_size_get()
@@ -1488,7 +1495,7 @@ void node_socket_color_get(const bContext &C,
                            float r_color[4])
 {
   if (!sock.typeinfo->draw_color) {
-    /* Fallback to the simple variant. If not defined either, fallback to a magenta color. */
+    /* Fall back to the simple variant. If not defined either, fall back to a magenta color. */
     if (sock.typeinfo->draw_color_simple) {
       sock.typeinfo->draw_color_simple(sock.typeinfo, r_color);
     }
@@ -2173,6 +2180,24 @@ static std::string node_socket_get_tooltip(const SpaceNode *snode,
   if (std::optional<std::string> info = create_declaration_inspection_string(socket)) {
     inspection_strings.append(std::move(*info));
   }
+  if (U.experimental.use_socket_structure_type) {
+    if (socket.runtime->declaration) {
+      switch (socket.runtime->declaration->structure_type) {
+        case nodes::StructureType::Single:
+          inspection_strings.append("(Single Value)");
+          break;
+        case nodes::StructureType::Dynamic:
+          inspection_strings.append("(Dynamic Structure Type)");
+          break;
+        case nodes::StructureType::Field:
+          inspection_strings.append("(Field)");
+          break;
+        case nodes::StructureType::Grid:
+          inspection_strings.append("(Volume Grid)");
+          break;
+      }
+    }
+  }
 
   std::stringstream output;
   for (const std::string &info : inspection_strings) {
@@ -2663,10 +2688,10 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, uiBlock &block
   }
 }
 
-static geo_log::NodeWarningType node_error_highest_priority(Span<geo_log::NodeWarning> warnings)
+static nodes::NodeWarningType node_error_highest_priority(Span<geo_log::NodeWarning> warnings)
 {
   int highest_priority = 0;
-  geo_log::NodeWarningType highest_priority_type = geo_log::NodeWarningType::Info;
+  nodes::NodeWarningType highest_priority_type = nodes::NodeWarningType::Info;
   for (const geo_log::NodeWarning &warning : warnings) {
     const int priority = node_warning_type_severity(warning.type);
     if (priority > highest_priority) {
@@ -2753,14 +2778,14 @@ static void node_add_error_message_button(const TreeDrawContext &tree_draw_ctx,
     return;
   }
 
-  const geo_log::NodeWarningType display_type = node_error_highest_priority(warnings);
+  const nodes::NodeWarningType display_type = node_error_highest_priority(warnings);
 
   icon_offset -= NODE_HEADER_ICON_SIZE;
   UI_block_emboss_set(&block, blender::ui::EmbossType::None);
   uiBut *but = uiDefIconBut(&block,
                             UI_BTYPE_BUT,
                             0,
-                            geo_log::node_warning_type_icon(display_type),
+                            nodes::node_warning_type_icon(display_type),
                             icon_offset,
                             rect.ymax - NODE_DY,
                             NODE_HEADER_ICON_SIZE,
@@ -3165,7 +3190,7 @@ static void node_draw_extra_info_row(const bNode &node,
                                  0,
                                  extra_info_row.icon,
                                  int(but_icon_left),
-                                 int(rect.ymin + row * (20.0f * UI_SCALE_FAC)),
+                                 int(rect.ymin + row * EXTRA_INFO_ROW_HEIGHT),
                                  but_icon_width,
                                  UI_UNIT_Y,
                                  nullptr,
@@ -3189,7 +3214,7 @@ static void node_draw_extra_info_row(const bNode &node,
                              0,
                              extra_info_row.text.c_str(),
                              int(but_text_left),
-                             int(rect.ymin + row * (20.0f * UI_SCALE_FAC)),
+                             int(rect.ymin + row * EXTRA_INFO_ROW_HEIGHT),
                              short(but_text_width),
                              NODE_DY,
                              nullptr,
@@ -3253,7 +3278,8 @@ static void node_draw_extra_info_panel(const bContext &C,
     /* If the preview has an non-drawable size, just don't draw it. */
     preview = nullptr;
   }
-  Vector<NodeExtraInfoRow> extra_info_rows = node_get_extra_info(C, tree_draw_ctx, snode, node);
+  const Span<NodeExtraInfoRow> extra_info_rows =
+      tree_draw_ctx.extra_info_rows_per_node[node.index()];
   if (extra_info_rows.is_empty() && !preview) {
     return;
   }
@@ -3273,7 +3299,7 @@ static void node_draw_extra_info_panel(const bContext &C,
     extra_info_rect.xmin = rct.xmin + padding;
     extra_info_rect.xmax = rct.xmax - padding;
     extra_info_rect.ymin = rct.ymax;
-    extra_info_rect.ymax = rct.ymax + extra_info_rows.size() * (20.0f * UI_SCALE_FAC);
+    extra_info_rect.ymax = rct.ymax + extra_info_rows.size() * EXTRA_INFO_ROW_HEIGHT;
 
     float preview_height = 0.0f;
     rctf preview_rect;
@@ -4147,14 +4173,33 @@ static FrameNodeLayout frame_node_layout(const bNode &frame_node)
  * since the frame node automatic size depends on the size of each node which is only calculated
  * while drawing.
  */
-static rctf calc_node_frame_dimensions(bNode &node)
+static rctf calc_node_frame_dimensions(const bContext &C,
+                                       TreeDrawContext &tree_draw_ctx,
+                                       const SpaceNode &snode,
+                                       bNode &node)
 {
   if (!node.is_frame()) {
     rctf node_bounds = node.runtime->draw_bounds;
+
+    float zone_padding = 0;
+    float extra_row_padding = 0;
+
+    /* Pad if the node type is a zone input or output. */
     if (bke::zone_type_by_node_type(node.type_legacy) != nullptr) {
-      node_bounds.ymax += NODE_ZONE_PADDING;
-      node_bounds.ymin -= NODE_ZONE_PADDING;
+      zone_padding = NODE_ZONE_PADDING;
     }
+
+    /* Compute the height of the info row for each node, which may vary per child node.
+     * This has to get the full extra_rows information (including all the text strings), even
+     * though all that's actually needed is the count of how many info_rows there are. */
+    if (snode.overlay.flag & SN_OVERLAY_SHOW_OVERLAYS) {
+      extra_row_padding = tree_draw_ctx.extra_info_rows_per_node[node.index()].size() *
+                          EXTRA_INFO_ROW_HEIGHT;
+    }
+
+    node_bounds.ymax += std::max(zone_padding, extra_row_padding);
+    node_bounds.ymin -= zone_padding;
+
     return node_bounds;
   }
 
@@ -4173,7 +4218,7 @@ static rctf calc_node_frame_dimensions(bNode &node)
   /* Fit bounding box to all children. */
   for (bNode *child : node.direct_children_in_frame()) {
     /* Add margin to node rect. */
-    rctf noderect = calc_node_frame_dimensions(*child);
+    rctf noderect = calc_node_frame_dimensions(C, tree_draw_ctx, snode, *child);
     noderect.xmin -= frame_layout.margin;
     noderect.xmax += frame_layout.margin;
     noderect.ymin -= frame_layout.margin;
@@ -4252,7 +4297,7 @@ static void node_update_nodetree(const bContext &C,
 
   /* Now calculate the size of frame nodes, which can depend on the size of other nodes. */
   for (bNode *frame : ntree.root_frames()) {
-    calc_node_frame_dimensions(*frame);
+    calc_node_frame_dimensions(C, tree_draw_ctx, *snode, *frame);
   }
 }
 
@@ -4756,7 +4801,7 @@ static void find_bounds_by_zone_recursive(const SpaceNode &snode,
 
   Vector<int> convex_indices(possible_bounds.size());
   const int convex_positions_num = BLI_convexhull_2d(
-      reinterpret_cast<float (*)[2]>(possible_bounds.data()),
+      reinterpret_cast<float(*)[2]>(possible_bounds.data()),
       possible_bounds.size(),
       convex_indices.data());
   convex_indices.resize(convex_positions_num);
@@ -5270,6 +5315,7 @@ static void draw_nodetree(const bContext &C,
   tree_draw_ctx.scene = CTX_data_scene(&C);
   tree_draw_ctx.region = CTX_wm_region(&C);
   tree_draw_ctx.depsgraph = CTX_data_depsgraph_pointer(&C);
+  tree_draw_ctx.extra_info_rows_per_node.reinitialize(nodes.size());
 
   BLI_SCOPED_DEFER([&]() { ntree.runtime->sockets_on_active_gizmo_paths.clear(); });
   if (ntree.type == NTREE_GEOMETRY) {
@@ -5298,6 +5344,12 @@ static void draw_nodetree(const bContext &C,
            snode->overlay.flag & SN_OVERLAY_SHOW_PREVIEWS)
   {
     tree_draw_ctx.nested_group_infos = get_nested_previews(C, *snode);
+  }
+
+  for (const int i : nodes.index_range()) {
+    const bNode &node = *nodes[i];
+    tree_draw_ctx.extra_info_rows_per_node[node.index()] = node_get_extra_info(
+        C, tree_draw_ctx, *snode, node);
   }
 
   node_update_nodetree(C, tree_draw_ctx, ntree, nodes, blocks);

@@ -1,12 +1,12 @@
 schema_version = "1.0.0"
 id = "viewport_pie_menus"
 name = "3D Viewport Pie Menus"
-version = "1.6.2"
+version = "1.6.15"
 tagline = "Various pie menus to speed up your workflow"
 maintainer = "Community"
 type = "add-on"
 tags = ["User Interface"]
-blender_version_min = "4.2.0"
+blender_version_min = "4.3.1"
 license = ["SPDX:GPL-3.0-or-later"]
 website = "https://projects.blender.org/extensions/space_view3d_pie_menus"
 copyright = [

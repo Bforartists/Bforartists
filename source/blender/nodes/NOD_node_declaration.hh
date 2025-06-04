@@ -88,6 +88,20 @@ struct FieldInferencingInterface {
   BLI_STRUCT_EQUALITY_OPERATORS_2(FieldInferencingInterface, inputs, outputs)
 };
 
+struct StructureTypeInterface {
+  struct OutputDependency {
+    StructureType type;
+    Array<int> linked_inputs;
+
+    BLI_STRUCT_EQUALITY_OPERATORS_2(OutputDependency, type, linked_inputs)
+  };
+
+  Array<StructureType> inputs;
+  Array<OutputDependency> outputs;
+
+  BLI_STRUCT_EQUALITY_OPERATORS_2(StructureTypeInterface, inputs, outputs)
+};
+
 namespace anonymous_attribute_lifetime {
 
 /**
@@ -211,6 +225,8 @@ class SocketDeclaration : public ItemDeclaration {
 
   InputSocketFieldType input_field_type = InputSocketFieldType::None;
   OutputFieldDependency output_field_dependency;
+
+  StructureType structure_type = StructureType::Single;
 
  private:
   CompositorInputRealizationMode compositor_realization_mode_ =
@@ -422,6 +438,8 @@ class BaseSocketDeclarationBuilder {
    */
   BaseSocketDeclarationBuilder &panel_toggle(bool value = true);
 
+  BaseSocketDeclarationBuilder &structure_type(StructureType structure_type);
+
   BaseSocketDeclarationBuilder &is_layer_name(bool value = true);
 
   /** Index in the list of inputs or outputs. */
@@ -564,11 +582,11 @@ using PanelDeclarationPtr = std::unique_ptr<PanelDeclaration>;
 
 class NodeDeclaration {
  public:
-  /* Contains all items including recursive children. */
+  /** Contains all items including recursive children. */
   Vector<ItemDeclarationPtr> all_items;
-  /* Contains only the items in the root. */
+  /** Contains only the items in the root. */
   Vector<ItemDeclaration *> root_items;
-  /* All input and output socket declarations. */
+  /** All input and output socket declarations. */
   Vector<SocketDeclaration *> inputs;
   Vector<SocketDeclaration *> outputs;
   Vector<PanelDeclaration *> panels;

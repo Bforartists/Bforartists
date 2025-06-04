@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import bpy, json, hashlib
-from . import __package__ as base_package
+import bpy
 
-PIE_ADDON_KEYMAPS = {}
+PIE_ADDON_KEYMAPS = []
 
 KEYMAP_ICONS = {
     'Object Mode': 'OBJECT_DATAMODE',
@@ -25,111 +24,132 @@ KEYMAP_UI_NAMES = {
 
 DEBUG = False
 
-def register_hotkey(bl_idname, hotkey_kwargs, *, key_cat='Window', op_kwargs={}):
-    """This function inserts a 'hash' into the created KeyMapItems' properties,
-    so they can be compared to each other, and duplicates can be avoided."""
+
+def register_hotkey(
+        bl_idname, 
+        *, 
+        op_kwargs={}, 
+        hotkey_kwargs={'type': "SPACE", 'value': "PRESS"}, 
+        keymap_name='Window'
+    ):
 
     global PIE_ADDON_KEYMAPS
     wm = bpy.context.window_manager
 
-    space_type = wm.keyconfigs.default.keymaps[key_cat].space_type
+    space_type = wm.keyconfigs.default.keymaps[keymap_name].space_type
 
     addon_keyconfig = wm.keyconfigs.addon
     if not addon_keyconfig:
         # This happens when running Blender in background mode.
         return
 
-    # We limit the hash to a few digits, otherwise it errors when trying to store it.
-    kmi_string = json.dumps(
-        [bl_idname, hotkey_kwargs, key_cat, space_type, op_kwargs], sort_keys=True
-    ).encode("utf-8")
-    kmi_hash = hashlib.md5(kmi_string).hexdigest()
-
-    # If it already exists, don't create it again.
-    for existing_kmi_hash, existing_kmi_tup in PIE_ADDON_KEYMAPS.items():
-        existing_addon_kc, existing_addon_km, existing_kmi = existing_kmi_tup
-        if kmi_hash == existing_kmi_hash:
-            # The hash we just calculated matches one that is in storage.
-            user_kc = wm.keyconfigs.user
-            user_km = user_kc.keymaps.get(existing_addon_km.name)
-            # NOTE: It's possible on Reload Scripts that some KeyMapItems remain in storage,
-            # but are unregistered by Blender for no reason.
-            # I noticed this particularly in the Weight Paint keymap.
-            # So it's not enough to check if a KMI with a hash is in storage, we also need to check if a corresponding user KMI exists.
-            user_kmi = find_kmi_in_km_by_hash(user_km, kmi_hash)
-            if user_kmi:
-                print(
-                    base_package + ": Hotkey already exists, skipping: ",
-                    existing_kmi.name,
-                    existing_kmi.to_string(),
-                    kmi_hash,
-                )
-                return
-
     addon_keymaps = addon_keyconfig.keymaps
-    addon_km = addon_keymaps.get(key_cat)
+    addon_km = addon_keymaps.get(keymap_name)
     if not addon_km:
-        addon_km = addon_keymaps.new(name=key_cat, space_type=space_type)
+        addon_km = addon_keymaps.new(name=keymap_name, space_type=space_type)
 
     addon_kmi = addon_km.keymap_items.new(bl_idname, **hotkey_kwargs)
     for key in op_kwargs:
         value = op_kwargs[key]
         setattr(addon_kmi.properties, key, value)
 
-    addon_kmi.properties['hash'] = kmi_hash
+    PIE_ADDON_KEYMAPS.append((addon_km, addon_kmi))
 
-    PIE_ADDON_KEYMAPS[kmi_hash] = (
-        addon_keyconfig,
-        addon_km,
-        addon_kmi,
+
+def get_sidebar(context):
+    if not context.area.type == 'VIEW_3D':
+        return None
+    for region in context.area.regions:
+        if region.type == 'UI':
+            return region
+
+
+def get_user_kmis_of_addon(context) -> list[tuple[bpy.types.KeyMap, bpy.types.KeyMapItem]]:
+    """This would ideally work by getting the AddonKMIs that we are already storing,
+    but there's no PyAPI call for that.
+    So for now, we just get the list of add-on related keymaps by hard-coding some operator names,
+    which were presumably hotkeyed by this add-on."""
+
+    ret = []
+
+    if bpy.app.version >= (4, 5, 0):
+        context.window_manager.keyconfigs.update()
+        for addon_km, addon_kmi in PIE_ADDON_KEYMAPS:
+            user_km = context.window_manager.keyconfigs.user.keymaps.get(addon_km.name)
+            if not user_km:
+                # This should never happen.
+                print("Failed to find User KeyMap: ", addon_km.name)
+                continue
+            user_kmi = user_km.keymap_items.find_match(addon_km, addon_kmi)
+            if not user_kmi:
+                # This shouldn't really happen, but maybe it can, eg. if user changes idname.
+                print("Failed to find User KeyMapItem: ", addon_km.name, addon_kmi.idname)
+                continue
+            ret.append((user_km, user_kmi))
+    else:
+        # Pre-Blender 4.5: We have to guess which user KMIs correspond to our addon KMIs, 
+        # in this case based on operator idnames.
+        keymap_names = set([addon_km.name for addon_km, addon_kmi in PIE_ADDON_KEYMAPS])
+        user_kc = context.window_manager.keyconfigs.user
+
+        for keymap_name in keymap_names:
+            user_km = user_kc.keymaps.get(keymap_name)
+            if not user_km:
+                # This really shouldn't happen.
+                continue
+
+            for user_kmi in user_km.keymap_items:
+                if user_kmi.idname in ('wm.call_menu_pie_drag_only', 'screen.area_join'):
+                    if (user_km, user_kmi) not in ret:
+                        ret.append((user_km, user_kmi))
+
+    # Sort hotkeys by what's drawn in UI: keymap and pie name.
+    ret.sort(
+        key=lambda tup: "".join(get_kmi_ui_info(tup[0], tup[1])[1:])
     )
+
+    return ret
+
+
+def get_user_kmi_of_addon(context, keymap_name, op_idname, op_kwargs) -> tuple[bpy.types.KeyMap, bpy.types.KeyMapItem]:
+    all_kmis = get_user_kmis_of_addon(context)
+    for user_km, user_kmi in all_kmis:
+        try:
+            if (
+                user_km.name == keymap_name and
+                user_kmi.idname == op_idname and
+                user_kmi.properties and 
+                all([user_kmi.properties[key] == value for key, value in op_kwargs.items()])
+            ):
+                return user_km, user_kmi
+        except KeyError:
+            continue
+
+    return None, None
 
 
 def draw_hotkey_list(layout, context, compact=False):
-    user_kc = context.window_manager.keyconfigs.user
+    save_row = layout.row()
+    save_row.operator('window.extra_pies_prefs_save', icon='FILE_TICK')
+    save_row.operator('window.extra_pies_prefs_load', icon='IMPORT')
 
-    keymap_data = list(PIE_ADDON_KEYMAPS.items())
-    keymap_data = sorted(keymap_data, key=lambda tup: "".join(get_kmi_ui_info(tup[1][1], tup[1][2])))
+    sidebar = get_sidebar(context)
+    if sidebar:
+        compact = sidebar.width < 600
 
     if not compact:
         split = layout.row().split(factor=0.6)
         row = split.row()
-        row.label(text="Operator", icon='BLANK1')
-        row.label(text="Keymap Category", icon='BLANK1')
+        row.label(text="Pie Menu", icon='BLANK1')
+        row.label(text="Keymap Name", icon='BLANK1')
         split.row().label(text="Key Combo")
         layout.separator()
 
-    prev_kmi = None
-    for kmi_hash, kmi_tup in keymap_data:
-        addon_kc, addon_km, addon_kmi = kmi_tup
+    col = layout.column()
 
-        user_km = user_kc.keymaps.get(addon_km.name)
-        if not user_km:
-            # This really shouldn't happen.
-            continue
-        user_kmi = find_kmi_in_km_by_hash(user_km, kmi_hash)
-
-        col = layout.column()
+    for user_km, user_kmi in get_user_kmis_of_addon(context):
         col.context_pointer_set("keymap", user_km)
-        user_row = col.row()
-
-        if DEBUG and False:
-            # Debug code: Draw add-on and user KeyMapItems side-by-side.
-            split = user_row.split(factor=0.5)
-            addon_row = split.row()
-            user_row = split.row()
-            draw_kmi(addon_km, addon_kmi, addon_row)
-        if not user_kmi:
-            # This should only happen for one frame during Reload Scripts.
-            print(
-                base_package + ": Can't find this hotkey to draw: ",
-                addon_kmi.name,
-                addon_kmi.to_string(),
-            )
-            continue
-
-        draw_kmi(user_km, user_kmi, user_row, compact=compact)
-        prev_kmi = user_kmi
+        draw_kmi(user_km, user_kmi, col.row(), compact)
 
 
 def draw_kmi(km, kmi, layout, compact=False):
@@ -138,34 +158,48 @@ def draw_kmi(km, kmi, layout, compact=False):
     if DEBUG:
         layout = layout.box()
 
-    main_split = layout.split(factor=0.6)
+    first_split = layout.split(factor=0.6)
 
-    info_row = main_split.row(align=True)
+    info_row = first_split.row(align=True)
     if DEBUG:
         info_row.prop(kmi, "show_expanded", text="", emboss=False)
     info_row.prop(kmi, "active", text="", emboss=False)
     km_icon, km_name, kmi_name = get_kmi_ui_info(km, kmi)
     if compact:
-        kmi_name = kmi_name.replace(" Pie", "")
         km_name = ""
     info_row.label(text=kmi_name)
     info_row.label(text=km_name, icon=km_icon)
 
-    keycombo_row = main_split.row(align=True)
-    sub = keycombo_row.row(align=True)
+    second_split = first_split.split(align=True, factor=0.6)
+    sub = second_split.row(align=True)
     sub.enabled = kmi.active
-    if kmi.idname == 'wm.call_menu_pie_drag_only':
-        op_row = sub.row(align=True)
-        if not compact:
-            op_row.scale_x = 0.75
-        text = "" if compact else "Drag"
-        op = op_row.operator('wm.toggle_keymap_item_property', text=text, icon='MOUSE_MOVE', depress=kmi.properties.on_drag)
-        op.prop_name = 'on_drag'
-        op.addon_kmi_hash = kmi.properties['hash']
     sub.prop(kmi, "type", text="", full_event=True)
 
+    op_ui = second_split
     if kmi.is_user_modified:
-        keycombo_row.operator(
+        op_ui = third_split = second_split.split(align=True, factor=0.65)
+
+    if kmi.idname == 'wm.call_menu_pie_drag_only':
+        if not kmi.properties:
+            sub.label(text="Missing properties. This should never happen!")
+            return
+        text = "" if compact else "Drag"
+        
+        sub = op_ui.row(align=True)
+        sub.enabled = kmi.active
+        op = sub.operator(
+            'wm.toggle_keymap_item_property',
+            text=text,
+            icon='MOUSE_MOVE',
+            depress=kmi.properties.on_drag,
+        )
+        op.km_name = km.name
+        op.kmi_idname = kmi.idname
+        op.pie_name = kmi.properties.name
+        op.prop_name = 'on_drag'
+
+    if kmi.is_user_modified:
+        op_ui.operator(
             "preferences.keyitem_restore", text="", icon='BACK'
         ).item_id = kmi.id
 
@@ -177,14 +211,27 @@ def get_kmi_ui_info(km, kmi) -> tuple[str, str, str]:
     km_name = km.name
     km_icon = KEYMAP_ICONS.get(km_name, 'BLANK1')
     km_name = KEYMAP_UI_NAMES.get(km_name, km_name)
-    if kmi.idname.startswith('wm.call_menu_pie'):
-        bpy_type = getattr(bpy.types, kmi.properties.name)
-        kmi_name = bpy_type.bl_label + " Pie"
+    if kmi.properties and kmi.idname.startswith('wm.call_menu_pie'):
+        if not hasattr(kmi.properties, 'name'):
+            # Apparently this can happen when spamming the Reload Scripts operator...
+            return "", "", ""
+        name = kmi.properties.name
+        if name:
+            try:
+                bpy_type = getattr(bpy.types, kmi.properties.name)
+                kmi_name = bpy_type.bl_label
+            except:
+                kmi_name = "Missing (code 1). Try restarting."
+        else:
+            kmi_name = "Missing (code 2). Try restarting."
     else:
-        parts = kmi.idname.split(".")
-        bpy_type = getattr(bpy.ops, parts[0])
-        bpy_type = getattr(bpy_type, parts[1])
-        kmi_name = bpy_type.get_rna_type().name
+        try:
+            parts = kmi.idname.split(".")
+            bpy_type = getattr(bpy.ops, parts[0])
+            bpy_type = getattr(bpy_type, parts[1])
+            kmi_name = bpy_type.get_rna_type().name
+        except:
+            kmi_name = "Missing (code 3). Try restarting."
 
     return km_icon, km_name, kmi_name
 
@@ -196,40 +243,15 @@ def print_kmi(kmi):
     print(idname, props, keys)
 
 
-def find_kmi_in_km_by_hash(keymap, kmi_hash):
-    """There's no solid way to match modified user keymap items to their
-    add-on equivalent, which is necessary to draw them in the UI reliably.
-
-    To remedy this, we store a hash in the KeyMapItem's properties.
-
-    This function lets us find a KeyMapItem with a stored hash in a KeyMap.
-    Eg., we can pass a User KeyMap and an Addon KeyMapItem's hash, to find the
-    corresponding user keymap, even if it was modified.
-
-    The hash value is unfortunately exposed to the users, so we just hope they don't touch that.
-    """
-
-    for kmi in keymap.keymap_items:
-        if not kmi.properties:
-            continue
-        try:
-            if 'hash' not in kmi.properties:
-                continue
-        except TypeError:
-            # Happens sometimes on file load...?
-            continue
-
-        if kmi.properties['hash'] == kmi_hash:
-            return kmi
-
-
 class WM_OT_toggle_keymap_item_on_drag(bpy.types.Operator):
-    "Toggle whether this pie menu should only appear after mouse drag"
+    "When Drag is enabled, this pie menu will only appear when the mouse is dragged while the assigned key combo is held down"
     bl_idname = "wm.toggle_keymap_item_property"
     bl_label = "Toggle On Drag"
     bl_options = {'REGISTER', 'INTERNAL'}
 
-    addon_kmi_hash: bpy.props.StringProperty(options={'SKIP_SAVE'})
+    km_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
+    kmi_idname: bpy.props.StringProperty(options={'SKIP_SAVE'})
+    pie_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
     prop_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
 
     def execute(self, context):
@@ -240,38 +262,43 @@ class WM_OT_toggle_keymap_item_on_drag(bpy.types.Operator):
         # and fails to refresh caches, which has disasterous results.
         # This operator fires a refreshing of internal keymap data via
         # `user_kmi.type = user_kmi.type`
-        addon_tup = PIE_ADDON_KEYMAPS.get(self.addon_kmi_hash)
-        if not addon_tup:
-            self.report({'ERROR'}, "Failed to find add-on KeymapItem with the given hash.")
-            return {'CANCELLED'}
-        
-        addon_kc, addon_km, addon_kmi = addon_tup
-        user_kc = context.window_manager.keyconfigs.user
-        user_km = user_kc.keymaps.get(addon_km.name)
 
-        user_kmi = find_kmi_in_km_by_hash(user_km, self.addon_kmi_hash)
-        if not user_kmi:
-            self.report({'ERROR'}, "Failed to find user KeymapItem corresponding to stored hash.")
+        user_kc = context.window_manager.keyconfigs.user
+        user_km = user_kc.keymaps.get(self.km_name)
+        if not user_km:
+            # This really shouldn't happen.
+            self.report({'ERROR'}, f"Couldn't find KeyMap: {self.km_name}")
             return {'CANCELLED'}
-        
-        if user_kmi.properties and hasattr(user_kmi.properties, self.prop_name):
-            setattr(user_kmi.properties, self.prop_name, not getattr(user_kmi.properties, self.prop_name))
-            # This is the magic line that causes internal keymap data to be kept up to date and not break.
-            user_kmi.type = user_kmi.type
-        else:
-            self.report({'ERROR'}, "Property not in keymap: " + self.prop_name)
-            return {'CANCELLED'}
+
+        for user_kmi in user_km.keymap_items:
+            if user_kmi.idname == self.kmi_idname and user_kmi.properties and user_kmi.properties.name == self.pie_name:
+                if hasattr(user_kmi.properties, self.prop_name):
+                    setattr(
+                        user_kmi.properties,
+                        self.prop_name,
+                        not getattr(user_kmi.properties, self.prop_name),
+                    )
+                    # This is the magic line that causes internal keymap data to be kept up to date and not break.
+                    user_kmi.type = user_kmi.type
+                else:
+                    self.report({'ERROR'}, "Property not in keymap: " + self.prop_name)
+                    return {'CANCELLED'}
 
         return {'FINISHED'}
+
+def refresh_all_kmis():
+    context = bpy.context
+    user_kc = context.window_manager.keyconfigs.user
+    for km in user_kc.keymaps:
+        for kmi in km.keymap_items:
+            kmi.type = kmi.type
 
 registry = [
     WM_OT_toggle_keymap_item_on_drag,
 ]
 
+
 def unregister():
     global PIE_ADDON_KEYMAPS
-    for kmi_hash, km_tuple in PIE_ADDON_KEYMAPS.items():
-        kc, km, kmi = km_tuple
-        km.keymap_items.remove(kmi)
-
-    PIE_ADDON_KEYMAPS = {}
+    for addon_km, addon_kmi in PIE_ADDON_KEYMAPS:
+        addon_km.keymap_items.remove(addon_kmi)

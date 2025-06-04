@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from bpy.types import Menu, Operator
-from .hotkeys import register_hotkey
 from bpy.props import EnumProperty, BoolProperty
+
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class PIE_MT_manipulator(Menu):
@@ -26,11 +27,26 @@ class PIE_MT_manipulator(Menu):
             'view3d.set_manipulator', text="Scale", icon='CON_SIZELIKE', depress=space.show_gizmo_object_scale
         ).manipulator = 'SCALE'
         # 2 - BOTTOM
-        pie.prop(space, 'show_gizmo', text="Toggle Manipulator", icon='GIZMO')
+        pie.operator(
+            'view3d.set_manipulator', text="None", icon='X'
+        ).manipulator='NONE'
         # 8 - TOP
         pie.operator(
             'view3d.set_manipulator', text="Location", icon='CON_LOCLIKE', depress=space.show_gizmo_object_translate
         ).manipulator = 'LOC'
+        
+        # 7 - TOP-LEFT
+        pie.operator(
+            'view3d.set_manipulator', text="Loc/Rot", icon='CON_LOCLIKE', depress=space.show_gizmo_object_translate and space.show_gizmo_object_rotate
+        ).manipulator='LOCROT'
+        # 9 - TOP-RIGHT
+        pie.operator(
+            'view3d.set_manipulator', text="Loc/Scale", icon='CON_SIZELIKE', depress=space.show_gizmo_object_translate and space.show_gizmo_object_scale
+        ).manipulator='LOCSCALE'
+        # 1 - BOT-LEFT
+        pie.operator(
+            'view3d.set_manipulator', text="Loc/Rot/Scale", icon='CON_LOCLIKE', depress=space.show_gizmo_object_translate and space.show_gizmo_object_rotate and space.show_gizmo_object_scale
+        ).manipulator = 'LOCROTSCALE'
 
 
 class VIEW3D_OT_set_manipulator(Operator):
@@ -48,6 +64,7 @@ class VIEW3D_OT_set_manipulator(Operator):
             ('ROT', "Rotate", "Rotate"),
             ('SCALE', "Scale", "Scale"),
             ('LOCROT', "Translate & Rotate", "Translate & Rotate"),
+            ('LOCSCALE', "Translate & Scale", "Translate & Scale"),
             ('LOCROTSCALE', "All", "All"),
         ),
         description="Set manipulator type",
@@ -97,9 +114,9 @@ registry = [
 
 
 def register():
-    register_hotkey(
-        'wm.call_menu_pie',
-        op_kwargs={'name': 'PIE_MT_manipulator'},
+    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+        keymap_name="3D View",
+        pie_name=PIE_MT_manipulator.bl_idname,
         hotkey_kwargs={'type': "SPACE", 'value': "PRESS", 'alt': True},
-        key_cat="3D View",
+        on_drag=False,
     )

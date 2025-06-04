@@ -4,7 +4,7 @@
 
 import bpy
 from bpy.types import Menu, Operator
-from .hotkeys import register_hotkey
+from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class PIE_MT_apply_transforms(Menu):
@@ -15,22 +15,15 @@ class PIE_MT_apply_transforms(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator(
-            "object.apply_transforms_of_constraints",
-            text="Soft-Apply Constraints",
-            icon='CONSTRAINT',
-        )
+        props = pie.operator("object.transform_apply", text="Rot/Scale", icon='CON_SIZELIKE')
+        props.location, props.rotation, props.scale = (False, True, True)
         # 6 - RIGHT
         props = pie.operator(
             "object.transform_apply", text="Loc/Rot/Scale", icon='APPLYALL' #BFA - Icon Added
         )
         props.location, props.rotation, props.scale = (True, True, True)
         # 2 - BOTTOM
-        pie.operator(
-            "object.duplicates_make_real",
-            text="Make Instances Real",
-            icon='MAKEDUPLIREAL',
-        )
+        pie.operator("object.apply_transforms_of_constraints", text="Soft-Apply Constraints", icon='CONSTRAINT')
 
         # 8 - TOP
         props = pie.operator(
@@ -108,21 +101,8 @@ class OBJECT_OT_make_meshes_single_user(Operator):
         return bpy.ops.object.duplicates_make_real()
 
 
-class PIE_MT_clear_transforms(Menu):
-    bl_idname = "PIE_MT_clear_transforms"
-    bl_label = "Clear Transforms"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("object.clear_all_transforms", text="Clear All", icon='CLEAR') #BFA - Icon Added
-        layout.operator("object.location_clear", text="Clear Location", icon='CLEARMOVE') #BFA - Icon Added
-        layout.operator("object.rotation_clear", text="Clear Rotation", icon='CLEARROTATE') #BFA - Icon Added
-        layout.operator("object.scale_clear", text="Clear Scale", icon='CLEARORIGIN') #BFA - Icon Added
-        layout.operator("object.origin_clear", text="Clear Origin", icon='CLEARSCALE') #BFA - Icon Added
-
-
 class OBJECT_OT_clear_all_transforms(Operator):
-    bl_idname = "object.clear_all_transforms"
+    bl_idname = "clear.all"
     bl_label = "Clear All Transforms"
     bl_description = "Clear All Transforms"
     bl_options = {'REGISTER', 'UNDO'}
@@ -134,19 +114,33 @@ class OBJECT_OT_clear_all_transforms(Operator):
         return {'FINISHED'}
 
 
-registry = [
+class PIE_MT_clear_transforms(Menu):
+    bl_idname = "PIE_MT_clear_menu"
+    bl_label = "Clear Transforms"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("object.clear_all_transforms", text="Clear All", icon='CLEAR') #BFA - Icon Added
+        layout.operator("object.location_clear", text="Clear Location", icon='CLEARMOVE') #BFA - Icon Added
+        layout.operator("object.rotation_clear", text="Clear Rotation", icon='CLEARROTATE') #BFA - Icon Added
+        layout.operator("object.scale_clear", text="Clear Scale", icon='CLEARORIGIN') #BFA - Icon Added
+        layout.operator("object.origin_clear", text="Clear Origin", icon='CLEARSCALE') #BFA - Icon Added
+
+
+
+registry = (
     PIE_MT_apply_transforms,
     OBJECT_OT_apply_transforms_of_constraints,
     OBJECT_OT_make_meshes_single_user,
-    PIE_MT_clear_transforms,
     OBJECT_OT_clear_all_transforms,
-]
+    PIE_MT_clear_transforms,
+)
 
 
 def register():
-    register_hotkey(
-        'wm.call_menu_pie',
-        op_kwargs={'name': 'PIE_MT_apply_transforms'},
+    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
+        keymap_name="Object Mode",
+        pie_name=PIE_MT_apply_transforms.bl_idname,
         hotkey_kwargs={'type': "A", 'value': "PRESS", 'ctrl': True},
-        key_cat="Object Mode",
+        on_drag=False,
     )
