@@ -6,8 +6,7 @@ import bpy
 from bpy.types import Menu, Operator
 from bpy.props import BoolProperty, EnumProperty
 from mathutils import Matrix
-
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
+from .hotkeys import register_hotkey
 
 
 class OBJECT_MT_parenting_pie(Menu):
@@ -93,7 +92,7 @@ class OBJECT_OT_clear_parent(Operator):
             cls.poll_message_set("No selected objects have parents.")
             return False
 
-        return set_parent_poll_check_linked(cls, context)
+        return True
 
     def execute(self, context):
         objs = selected_objs_with_parents(context)
@@ -128,7 +127,7 @@ class OBJECT_OT_clear_parent_inverse_matrix(Operator):
             cls.poll_message_set("No selected objects have a parenting offset set.")
             return False
 
-        return set_parent_poll_check_linked(cls, context)
+        return True
 
     def execute(self, context):
         objs = selected_objs_with_parents(context)
@@ -154,8 +153,7 @@ class OBJECT_OT_parent_set_simple(Operator):
                 "Only one object is selected. You can't parent an object to itself."
             )
             return False
-
-        return set_parent_poll_check_linked(cls, context)
+        return True
 
     def execute(self, context):
         parent_ob = context.active_object
@@ -191,8 +189,7 @@ class OBJECT_OT_parent_set_advanced(Operator):
                 "Only one object is selected. You can't parent an object to itself."
             )
             return False
-
-        return set_parent_poll_check_linked(cls, context)
+        return True
 
     def get_parent_method_items(self, context):
         parent_ob = context.active_object
@@ -219,15 +216,14 @@ class OBJECT_OT_parent_set_advanced(Operator):
                     'MODIFIER',
                 )
             )
-            if parent_ob.data.bones.active:
-                items.append(
-                    (
-                        'BONE_RELATIVE',
-                        "Bone: " + parent_ob.data.bones.active.name,
-                        """Parent to the armature's active bone. This option is deprecated, please set the "Parent Method" to "Constraint", and choose the Armature Constraint""",
-                        'BONE_DATA',
-                    )
+            items.append(
+                (
+                    'BONE_RELATIVE',
+                    "Bone: " + parent_ob.data.bones.active.name,
+                    """Parent to the armature's active bone. This option is deprecated, please set the "Parent Method" to "Constraint", and choose the Armature Constraint""",
+                    'BONE_DATA',
                 )
+            )
         elif parent_ob.type == 'CURVE':
             items.append(
                 (
@@ -585,19 +581,6 @@ class OBJECT_OT_parent_set_advanced(Operator):
         return {'FINISHED'}
 
 
-def set_parent_poll_check_linked(cls, context):
-    if any([ob.library for ob in context.selected_objects]):
-        cls.poll_message_set(
-            "An object is linked. You need to override it to change the parenting."
-        )
-        return False
-    if any([ob.override_library and ob.override_library.is_system_override for ob in context.selected_objects]):
-        cls.poll_message_set(
-            "An object is overridden but not editable. You need to make it an editable override to change the parenting."
-        )
-        return False
-    return True
-
 ### Header Menu UI
 def draw_new_header_menu(self, context):
     layout = self.layout
@@ -642,11 +625,11 @@ registry = [
 
 
 def register():
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name="Object Mode",
-        pie_name=OBJECT_MT_parenting_pie.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie',
+        op_kwargs={'name': OBJECT_MT_parenting_pie.bl_idname},
         hotkey_kwargs={'type': "P", 'value': "PRESS"},
-        on_drag=False,
+        key_cat='Object Mode',
     )
 
     bpy.types.VIEW3D_MT_object_parent.draw_old = bpy.types.VIEW3D_MT_object_parent.draw

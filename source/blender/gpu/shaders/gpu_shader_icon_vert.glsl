@@ -42,5 +42,4 @@ void main()
 
   gl_Position = ModelViewProjectionMatrix * float4(co, 0.0f, 1.0f);
   texCoord_interp = uv;
-  final_color = finalColor;
 }

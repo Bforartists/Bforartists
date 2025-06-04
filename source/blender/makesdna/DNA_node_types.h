@@ -236,7 +236,7 @@ typedef struct bNodeSocket {
   bool affects_node_output() const;
   /**
    * This becomes false when it is detected that the input socket is currently not used and its
-   * usage depends on a menu (as opposed to e.g. a boolean input). By convention, sockets whose
+   * usage depends on a menu (as opposed to e.g. a boolean input). By convention, sockets whoose
    * visibility is controlled by a menu should be hidden.
    */
   bool inferred_input_socket_visibility() const;
@@ -321,8 +321,6 @@ typedef enum eNodeSocketDisplayShape {
   SOCK_DISPLAY_SHAPE_CIRCLE_DOT = 3,
   SOCK_DISPLAY_SHAPE_SQUARE_DOT = 4,
   SOCK_DISPLAY_SHAPE_DIAMOND_DOT = 5,
-  SOCK_DISPLAY_SHAPE_LINE = 6,
-  SOCK_DISPLAY_SHAPE_VOLUME_GRID = 7,
 } eNodeSocketDisplayShape;
 
 /** Socket side (input/output). */
@@ -2397,21 +2395,6 @@ typedef struct NodeGeometrySeparateBundle {
   char _pad[4];
 } NodeGeometrySeparateBundle;
 
-typedef struct NodeFunctionFormatStringItem {
-  char *name;
-  int identifier;
-  int16_t socket_type;
-  char _pad[2];
-} NodeFunctionFormatStringItem;
-
-typedef struct NodeFunctionFormatString {
-  NodeFunctionFormatStringItem *items;
-  int items_num;
-  int next_identifier;
-  int active_index;
-  char _pad[4];
-} NodeFunctionFormatString;
-
 /* script node mode */
 enum {
   NODE_SCRIPT_INTERNAL = 0,
@@ -2764,8 +2747,6 @@ typedef enum NodeVectorMathOperation {
   NODE_VECTOR_MATH_REFRACT = 24,
   NODE_VECTOR_MATH_FACEFORWARD = 25,
   NODE_VECTOR_MATH_MULTIPLY_ADD = 26,
-  NODE_VECTOR_MATH_POWER = 27,
-  NODE_VECTOR_MATH_SIGN = 28,
 } NodeVectorMathOperation;
 
 typedef enum NodeBooleanMathOperation {

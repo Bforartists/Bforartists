@@ -8,7 +8,7 @@ void node_bsdf_toon(
   color = max(color, float4(0.0f));
   N = safe_normalize(N);
 
-  /* Fall back to diffuse. */
+  /* Fallback to diffuse. */
   ClosureDiffuse diffuse_data;
   diffuse_data.weight = weight;
   diffuse_data.color = color.rgb;

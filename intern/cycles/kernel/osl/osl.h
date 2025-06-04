@@ -12,10 +12,8 @@
  * Holds all variables to execute and use OSL shaders from the kernel.
  */
 
-#ifdef __KERNEL_OPTIX__
-#  include "kernel/geom/attribute.h"
-#  include "kernel/geom/primitive.h"
-#endif
+#include "kernel/geom/attribute.h"
+#include "kernel/geom/primitive.h"
 
 #include "kernel/osl/closures_setup.h"
 #include "kernel/osl/types.h"
@@ -24,7 +22,8 @@
 
 CCL_NAMESPACE_BEGIN
 
-ccl_device_inline void shaderdata_to_shaderglobals(ccl_private ShaderData *sd,
+ccl_device_inline void shaderdata_to_shaderglobals(KernelGlobals kg,
+                                                   ccl_private ShaderData *sd,
                                                    const uint32_t path_flag,
                                                    ccl_private ShaderGlobals *globals)
 {
@@ -188,7 +187,7 @@ ccl_device_inline void osl_eval_nodes(KernelGlobals kg,
                                       const uint32_t path_flag)
 {
   ShaderGlobals globals;
-  shaderdata_to_shaderglobals(sd, path_flag, &globals);
+  shaderdata_to_shaderglobals(kg, sd, path_flag, &globals);
 
   const int shader = sd->shader & SHADER_MASK;
 
@@ -251,7 +250,7 @@ ccl_device_inline void osl_eval_nodes(KernelGlobals kg,
       sd->P = P;
       sd->dP = dP;
 
-      /* Apply bump output to sd->N since it's used for shadow terminator logic, for example. */
+      /* Apply bump output to sd->N since it's used for e.g. shadow terminator logic. */
       sd->N = globals.N;
 
       globals.P = P;

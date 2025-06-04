@@ -482,7 +482,7 @@ class TOPBAR_MT_file_import(Menu):
     bl_owner_use_filter = False
 
     def draw(self, _context):
-        if bpy.app.build_options.collada: # BFA - moved up
+        if bpy.app.build_options.collada:
             self.layout.operator(
                 "wm.collada_import", text="Collada (.dae) (legacy)", icon="LOAD_DAE"
             )
@@ -528,7 +528,7 @@ class TOPBAR_MT_file_export(Menu):
     bl_owner_use_filter = False
 
     def draw(self, _context):
-        if bpy.app.build_options.collada:  # BFA - moved up
+        if bpy.app.build_options.collada:
             self.layout.operator(
                 "wm.collada_export", text="Collada (.dae) (legacy)", icon="SAVE_DAE"
             )

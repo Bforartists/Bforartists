@@ -9,12 +9,11 @@
 CCL_NAMESPACE_BEGIN
 
 ccl_device ccl_private ShaderClosure *closure_alloc(ccl_private ShaderData *sd,
-                                                    const uint size,
+                                                    const int size,
                                                     ClosureType type,
                                                     Spectrum weight)
 {
   kernel_assert(size <= sizeof(ShaderClosure));
-  (void)size;
 
   if (sd->num_closure_left == 0) {
     return nullptr;

@@ -94,14 +94,6 @@ void NodeDeclarationBuilder::build_remaining_anonymous_attribute_relations()
 void NodeDeclarationBuilder::finalize()
 {
   this->build_remaining_anonymous_attribute_relations();
-  if (is_function_node_) {
-    for (SocketDeclaration *socket_decl : declaration_.inputs) {
-      socket_decl->structure_type = StructureType::Dynamic;
-    }
-    for (SocketDeclaration *socket_decl : declaration_.outputs) {
-      socket_decl->structure_type = StructureType::Dynamic;
-    }
-  }
 #ifndef NDEBUG
   declaration_.assert_valid();
 #endif
@@ -530,7 +522,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::supports_field()
 {
   BLI_assert(this->is_input());
   decl_base_->input_field_type = InputSocketFieldType::IsSupported;
-  this->structure_type(StructureType::Field);
   return *this;
 }
 
@@ -541,7 +532,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::dependent_field(
   this->reference_pass(input_dependencies);
   decl_base_->output_field_dependency = OutputFieldDependency::ForPartiallyDependentField(
       std::move(input_dependencies));
-  this->structure_type(StructureType::Dynamic);
   return *this;
 }
 
@@ -605,7 +595,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::field_on(const Span<
       relations.available_relations.append(relation);
     }
   }
-  this->structure_type(StructureType::Field);
   return *this;
 }
 
@@ -668,7 +657,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::field_on_all()
     this->field_source();
   }
   field_on_all_ = true;
-  this->structure_type(StructureType::Field);
   return *this;
 }
 
@@ -676,7 +664,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::field_source()
 {
   BLI_assert(this->is_output());
   decl_base_->output_field_dependency = OutputFieldDependency::ForFieldSource();
-  this->structure_type(StructureType::Field);
   return *this;
 }
 
@@ -685,7 +672,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::implicit_field(
 {
   BLI_assert(this->is_input());
   this->hide_value();
-  this->structure_type(StructureType::Dynamic);
   decl_base_->input_field_type = InputSocketFieldType::Implicit;
   decl_base_->default_input_type = default_input_type;
   return *this;
@@ -696,7 +682,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::implicit_field_on_al
 {
   this->implicit_field(default_input_type);
   field_on_all_ = true;
-  this->structure_type(StructureType::Field);
   return *this;
 }
 
@@ -705,7 +690,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::implicit_field_on(
 {
   this->field_on(input_indices);
   this->implicit_field(default_input_type);
-  this->structure_type(StructureType::Field);
   return *this;
 }
 
@@ -713,7 +697,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::dependent_field()
 {
   BLI_assert(this->is_output());
   decl_base_->output_field_dependency = OutputFieldDependency::ForDependentField();
-  this->structure_type(StructureType::Dynamic);
   this->reference_pass_all();
   return *this;
 }
@@ -783,13 +766,6 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::custom_draw(CustomSo
 BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::align_with_previous(const bool value)
 {
   decl_base_->align_with_previous_socket = value;
-  return *this;
-}
-
-BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::structure_type(
-    const StructureType structure_type)
-{
-  decl_base_->structure_type = structure_type;
   return *this;
 }
 
@@ -978,7 +954,7 @@ std::optional<ImplicitInputValueFn> get_implicit_input_value_fn(const NodeDefaul
 bool socket_type_supports_default_input_type(const bke::bNodeSocketType &socket_type,
                                              const NodeDefaultInputType input_type)
 {
-  const eNodeSocketDatatype stype = socket_type.type;
+  const eNodeSocketDatatype stype = eNodeSocketDatatype(socket_type.type);
   switch (input_type) {
     case NODE_DEFAULT_INPUT_VALUE:
       return true;

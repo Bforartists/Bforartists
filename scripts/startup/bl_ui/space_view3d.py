@@ -57,8 +57,10 @@ class VIEW3D_HT_tool_header(Header):
         # Active Tool
         # -----------
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+
         tool = ToolSelectPanelHelper.draw_active_tool_header(
-            context, layout,
+            context,
+            layout,
             tool_key=('VIEW_3D', tool_mode),
         )
         # Object Mode Options
@@ -112,11 +114,12 @@ class VIEW3D_HT_tool_header(Header):
             if is_valid_context:
                 brush = context.tool_settings.gpencil_paint.brush
                 if brush:
-                    if brush.gpencil_tool not in {'FILL', 'TINT', 'ERASE'}:
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_advanced")
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_stroke")
-                    if brush.gpencil_tool == 'FILL':
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced")
+                    if brush.gpencil_tool != 'ERASE':
+                        if brush.gpencil_tool != 'TINT':
+                            layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_advanced")
+
+                        if brush.gpencil_tool not in {'FILL', 'TINT'}:
+                            layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_stroke")
                     layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
         elif tool_mode == 'SCULPT_GREASE_PENCIL':
             if is_valid_context:
@@ -8839,7 +8842,7 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
                 icon="REMOVE_DOUBLES",
             )
             layout.operator("grease_pencil.reproject", icon="REPROJECT")
-            layout.operator("grease_pencil.remove_fill_guides")
+
 
 class VIEW3D_MT_edit_greasepencil(Menu):
     bl_label = "Grease Pencil"
@@ -8880,9 +8883,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout.menu("VIEW3D_MT_edit_greasepencil_delete")
 
         layout.separator()
-        layout.operator("grease_pencil.outline", text="Outline")
 
-        layout.separator()
         layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
 
@@ -8926,9 +8927,6 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
             layout.operator(
                 "grease_pencil.stroke_simplify", text="Merge", icon="MERGE"
             ).mode = "MERGE"
-        layout.separator()
-        layout.operator("grease_pencil.outline", text="Outline")
-
         layout.separator()
         layout.operator_menu_enum("grease_pencil.join_selection", "type", text="Join")
 
@@ -9928,7 +9926,13 @@ class VIEW3D_PT_shading_lighting(Panel):
 
                 row = col.row()
                 row.separator()
-                row.prop(shading, "use_world_space_lighting", text="", icon='WORLD', toggle=True)
+                row.prop(
+                    shading,
+                    "use_world_space_lighting",
+                    text="",
+                    icon="WORLD",
+                    toggle=True,
+                )
                 row = row.row()
                 if shading.use_world_space_lighting:
                     row.prop(shading, "studiolight_rotate_z", text="Rotation")
@@ -12113,11 +12117,6 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
                 text="Subdivide and Smooth",
                 icon="SUBDIVIDE_EDGES",
             )
-
-            col.separator()
-            col.operator("grease_pencil.outline", text="Outline")
-
-            col.separator()
 
             # Deform Operators
             col.operator(

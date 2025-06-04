@@ -5165,7 +5165,7 @@ static void SCREEN_OT_header_toggle_menus(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Expand/Collapse Header Menus";
   ot->idname = "SCREEN_OT_header_toggle_menus";
-  ot->description = "Expand or collapse the header pull-down menus";
+  ot->description = "Expand or collapse the header pulldown menus";
 
   /* API callbacks. */
   ot->exec = header_toggle_menus_exec;
@@ -6723,7 +6723,7 @@ static std::string userpref_show_get_description(bContext *C,
       return fmt::format(fmt::runtime(TIP_("Show {} preferences")), section_name);
     }
   }
-  /* Fall back to default. */
+  /* Fallback to default. */
   return "";
 }
 

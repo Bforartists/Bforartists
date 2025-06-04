@@ -862,7 +862,7 @@ ARegion *BKE_area_find_region_active_win(const ScrArea *area)
     return region;
   }
 
-  /* fall back to any */
+  /* fallback to any */
   return BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
 }
 

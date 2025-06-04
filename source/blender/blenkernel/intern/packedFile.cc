@@ -585,7 +585,7 @@ static void unpack_generate_paths(const char *filepath,
   }
 
   if (temp_dirname[0] == '\0') {
-    /* Fall back to relative dir. */
+    /* Fallback to relative dir. */
     STRNCPY(temp_dirname, "//");
   }
 

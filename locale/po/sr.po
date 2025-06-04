@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Alpha (b'e91e8eef41aa')\n"
+"Project-Id-Version: Blender 4.5.0 Alpha (b'ba454989554a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-03 09:10+0000\n"
+"POT-Creation-Date: 2025-05-26 07:36+0000\n"
 "PO-Revision-Date: 2025-04-14 08:40+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian <https://translate.blender.org/projects/blender-ui/ui/sr/>\n"
@@ -8585,32 +8585,12 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
-msgid "Special Characters"
-msgstr "Специјални знаци"
-
-
-msgid "Metaball"
-msgstr "Мета лопта"
-
-
-msgid "Show/Hide"
-msgstr "Прикажи/сакриј"
-
-
-msgid "Names"
-msgstr "Имена"
-
-
-msgid "Bone Roll"
-msgstr "Ролна костију"
+msgid "Mirror"
+msgstr "Огледало"
 
 
 msgid "Snap"
 msgstr "Лепљење"
-
-
-msgid "Mirror"
-msgstr "Огледало"
 
 
 msgid "UV Mapping"
@@ -8631,6 +8611,10 @@ msgstr "Поравнај поглед"
 
 msgid "Select Linked"
 msgstr "Изабери повезано"
+
+
+msgid "Metaball"
+msgstr "Мета лопта"
 
 
 msgid "Light"
@@ -8657,6 +8641,10 @@ msgid "Quick Effects"
 msgstr "Брзи ефекти"
 
 
+msgid "Show/Hide"
+msgstr "Прикажи/сакриј"
+
+
 msgid "Hooks"
 msgstr "Удице"
 
@@ -8671,6 +8659,10 @@ msgstr "У међувремену"
 
 msgid "Propagate"
 msgstr "Пренеси"
+
+
+msgid "Names"
+msgstr "Имена"
 
 
 msgid "Toggle Bone Options"
@@ -8691,6 +8683,14 @@ msgstr "Мод избора мреже"
 
 msgid "Merge"
 msgstr "Сједини"
+
+
+msgid "Special Characters"
+msgstr "Специјални знаци"
+
+
+msgid "Bone Roll"
+msgstr "Ролна костију"
 
 
 msgid "Basic"
@@ -10549,10 +10549,6 @@ msgstr "Изабери мустру"
 
 msgid "Custom Color"
 msgstr "Прилагођена боја"
-
-
-msgid "Starting"
-msgstr "Започињем"
 
 
 msgid "Action End Frame"
@@ -17899,6 +17895,11 @@ msgstr "Користи Лапласов метод за опуштање"
 
 
 msgctxt "Operator"
+msgid "Change Effect Input"
+msgstr "Измени улаз ефекта"
+
+
+msgctxt "Operator"
 msgid "Change Effect Type"
 msgstr "Измени врсту ефеката"
 
@@ -17908,9 +17909,21 @@ msgid "Type"
 msgstr "Врста"
 
 
+msgid "Sequencer effect type"
+msgstr "Тип секвенцер ефекта"
+
+
+msgid "Crossfade effect strip type"
+msgstr "Ефекат претапања тип траке"
+
+
 msgctxt "Sequence"
 msgid "Add"
 msgstr "Додај"
+
+
+msgid "Add effect strip type"
+msgstr "Ефекат додавања тип траке"
 
 
 msgctxt "Sequence"
@@ -17918,9 +17931,17 @@ msgid "Subtract"
 msgstr "Одузимање"
 
 
+msgid "Subtract effect strip type"
+msgstr "Ефекат одузимања тип траке"
+
+
 msgctxt "Sequence"
 msgid "Alpha Over"
 msgstr "Провидност преко"
+
+
+msgid "Alpha Over effect strip type"
+msgstr "Ефекат провидно изнад тип траке"
 
 
 msgctxt "Sequence"
@@ -17928,9 +17949,22 @@ msgid "Alpha Under"
 msgstr "Провидност испод"
 
 
+msgid "Alpha Under effect strip type"
+msgstr "Ефекат провидно испод тип траке"
+
+
+msgctxt "Sequence"
+msgid "Gamma Cross"
+msgstr "Укрштање гаме"
+
+
 msgctxt "Sequence"
 msgid "Multiply"
 msgstr "Умножено"
+
+
+msgid "Multiply effect strip type"
+msgstr "Ефекат множења тип траке"
 
 
 msgctxt "Sequence"
@@ -17938,9 +17972,17 @@ msgid "Wipe"
 msgstr "Брисање"
 
 
+msgid "Wipe effect strip type"
+msgstr "Ефекат брисање тип траке"
+
+
 msgctxt "Sequence"
 msgid "Glow"
 msgstr "Исијавање"
+
+
+msgid "Glow effect strip type"
+msgstr "Ефекат исијавања тип траке"
 
 
 msgctxt "Sequence"
@@ -17948,9 +17990,17 @@ msgid "Transform"
 msgstr "Трансформација"
 
 
+msgid "Transform effect strip type"
+msgstr "Ефекат трансформације тип траке"
+
+
 msgctxt "Sequence"
 msgid "Color"
 msgstr "Боја"
+
+
+msgid "Color effect strip type"
+msgstr "Ефекат бојења тип траке"
 
 
 msgctxt "Sequence"
@@ -18007,10 +18057,6 @@ msgstr "Не исправљај преклапање за нове траке с
 
 msgid "Replace Selection"
 msgstr "Замени избор"
-
-
-msgid "Sequencer effect type"
-msgstr "Тип секвенцер ефекта"
 
 
 msgid "All Gaps"
@@ -22059,6 +22105,11 @@ msgid "Sound"
 msgstr "Звук"
 
 
+msgctxt "Sequence"
+msgid "Cross"
+msgstr "Укрштење"
+
+
 msgid "Use Linear Modifiers"
 msgstr "Користи линеарни модификатор"
 
@@ -23991,6 +24042,16 @@ msgstr "Боја"
 msgctxt "Operator"
 msgid "Scene..."
 msgstr "Сцена..."
+
+
+msgctxt "Operator"
+msgid "Cross"
+msgstr "Укрштење"
+
+
+msgctxt "Operator"
+msgid "Gamma Cross"
+msgstr "Укрштање гаме"
 
 
 msgctxt "Operator"
@@ -26323,4 +26384,8 @@ msgstr "Завршено"
 
 msgid "In Progress"
 msgstr "У току"
+
+
+msgid "Starting"
+msgstr "Започињем"
 

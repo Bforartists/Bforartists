@@ -41,8 +41,6 @@ struct KernelParamsOptiX {
 
   /* Integrator state */
   IntegratorStateGPU integrator_state;
-
-  void *osl_colorsystem;
 };
 
 #ifdef __NVCC__

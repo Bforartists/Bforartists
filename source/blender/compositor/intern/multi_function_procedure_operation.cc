@@ -157,7 +157,7 @@ Vector<mf::Variable *> MultiFunctionProcedureOperation::get_input_variables(
   for (int i = 0; i < node->input_sockets().size(); i++) {
     const DInputSocket input{node.context(), node->input_sockets()[i]};
 
-    if (!is_socket_available(input.bsocket())) {
+    if (!input->is_available()) {
       continue;
     }
 
@@ -360,7 +360,7 @@ void MultiFunctionProcedureOperation::assign_output_variables(DNode node,
   for (int i = 0; i < node->output_sockets().size(); i++) {
     const DOutputSocket output{node.context(), node->output_sockets()[i]};
 
-    if (!is_socket_available(output.bsocket())) {
+    if (!output->is_available()) {
       continue;
     }
 

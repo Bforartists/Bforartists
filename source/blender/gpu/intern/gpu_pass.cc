@@ -70,7 +70,7 @@ struct GPUPass {
 
     if (deferred_compilation) {
       compilation_handle = GPU_shader_batch_create_from_infos(
-          Span<GPUShaderCreateInfo *>(&base_info, 1), compilation_priority());
+          Span<GPUShaderCreateInfo *>(&base_info, 1));
     }
     else {
       shader = GPU_shader_create_from_info(base_info);
@@ -88,11 +88,6 @@ struct GPUPass {
     }
     MEM_delete(create_info);
     GPU_SHADER_FREE_SAFE(shader);
-  }
-
-  CompilationPriority compilation_priority()
-  {
-    return is_optimization_pass ? CompilationPriority::Low : CompilationPriority::Medium;
   }
 
   void finalize_compilation()
@@ -132,7 +127,7 @@ struct GPUPass {
       BLI_assert(is_optimization_pass);
       GPUShaderCreateInfo *base_info = reinterpret_cast<GPUShaderCreateInfo *>(create_info);
       compilation_handle = GPU_shader_batch_create_from_infos(
-          Span<GPUShaderCreateInfo *>(&base_info, 1), compilation_priority());
+          Span<GPUShaderCreateInfo *>(&base_info, 1));
     }
   }
 

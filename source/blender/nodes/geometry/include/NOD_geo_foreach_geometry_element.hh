@@ -10,14 +10,14 @@
 
 namespace blender::nodes {
 
-struct ForeachGeometryElementInputItemsAccessor
-    : public socket_items::SocketItemsAccessorDefaults {
+struct ForeachGeometryElementInputItemsAccessor {
   using ItemT = NodeForeachGeometryElementInputItem;
   static StructRNA *item_srna;
   static int node_type;
   static constexpr StringRefNull node_idname = "GeometryNodeForeachGeometryElementOutput";
   static constexpr bool has_type = true;
   static constexpr bool has_name = true;
+  static constexpr bool has_single_identifier_str = true;
   struct operator_idnames {
     static constexpr StringRefNull add_item =
         "NODE_OT_foreach_geometry_element_zone_input_item_add";
@@ -97,13 +97,14 @@ struct ForeachGeometryElementInputItemsAccessor
   }
 };
 
-struct ForeachGeometryElementMainItemsAccessor : public socket_items::SocketItemsAccessorDefaults {
+struct ForeachGeometryElementMainItemsAccessor {
   using ItemT = NodeForeachGeometryElementMainItem;
   static StructRNA *item_srna;
   static int node_type;
   static constexpr StringRefNull node_idname = "GeometryNodeForeachGeometryElementOutput";
   static constexpr bool has_type = true;
   static constexpr bool has_name = true;
+  static constexpr bool has_single_identifier_str = true;
   struct operator_idnames {
     static constexpr StringRefNull add_item =
         "NODE_OT_foreach_geometry_element_zone_main_item_add";
@@ -182,14 +183,14 @@ struct ForeachGeometryElementMainItemsAccessor : public socket_items::SocketItem
   }
 };
 
-struct ForeachGeometryElementGenerationItemsAccessor
-    : public socket_items::SocketItemsAccessorDefaults {
+struct ForeachGeometryElementGenerationItemsAccessor {
   using ItemT = NodeForeachGeometryElementGenerationItem;
   static StructRNA *item_srna;
   static int node_type;
   static constexpr StringRefNull node_idname = "GeometryNodeForeachGeometryElementOutput";
   static constexpr bool has_type = true;
   static constexpr bool has_name = true;
+  static constexpr bool has_single_identifier_str = true;
   struct operator_idnames {
     static constexpr StringRefNull add_item =
         "NODE_OT_foreach_geometry_element_zone_generation_item_add";

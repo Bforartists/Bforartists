@@ -190,7 +190,7 @@ void VKDescriptorSetTracker::bind_input_attachment_resource(
                                  VK_REMAINING_ARRAY_LAYERS});
     }
     else {
-      /* Fall back to render-passes / sub-passes. */
+      /* Fallback to render-passes / sub-passes. */
       bind_image(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
                  VK_NULL_HANDLE,
                  texture->image_view_get(resource_binding.arrayed, VKImageViewFlags::NO_SWIZZLING)

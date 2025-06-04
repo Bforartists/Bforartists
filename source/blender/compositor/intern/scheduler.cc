@@ -232,7 +232,7 @@ static NeededBuffers compute_number_of_needed_buffers(Stack<DNode> &output_nodes
     for (const bNodeSocket *input : node->input_sockets()) {
       const DInputSocket dinput{node.context(), input};
 
-      if (!is_socket_available(input)) {
+      if (!input->is_available()) {
         continue;
       }
 
@@ -270,7 +270,7 @@ static NeededBuffers compute_number_of_needed_buffers(Stack<DNode> &output_nodes
     for (const bNodeSocket *input : node->input_sockets()) {
       const DInputSocket dinput{node.context(), input};
 
-      if (!is_socket_available(input)) {
+      if (!input->is_available()) {
         continue;
       }
 
@@ -300,7 +300,7 @@ static NeededBuffers compute_number_of_needed_buffers(Stack<DNode> &output_nodes
     for (const bNodeSocket *output : node->output_sockets()) {
       const DOutputSocket doutput{node.context(), output};
 
-      if (!is_socket_available(output)) {
+      if (!output->is_available()) {
         continue;
       }
 
@@ -378,7 +378,7 @@ Schedule compute_schedule(const Context &context, const DerivedNodeTree &tree)
     for (const bNodeSocket *input : node->input_sockets()) {
       const DInputSocket dinput{node.context(), input};
 
-      if (!is_socket_available(input)) {
+      if (!input->is_available()) {
         continue;
       }
 

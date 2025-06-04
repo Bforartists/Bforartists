@@ -45,7 +45,8 @@ static std::unique_ptr<BakeItem> move_common_socket_value_to_bake_item(
     std::optional<StringRef> name,
     Vector<GeometryBakeItem *> &r_geometry_bake_items)
 {
-  switch (stype.type) {
+  const eNodeSocketDatatype socket_type = eNodeSocketDatatype(stype.type);
+  switch (socket_type) {
     case SOCK_GEOMETRY: {
       GeometrySet &geometry = *static_cast<GeometrySet *>(socket_value);
       auto item = std::make_unique<GeometryBakeItem>(std::move(geometry));
@@ -280,7 +281,7 @@ Array<std::unique_ptr<BakeItem>> move_socket_values_to_bake_items(const Span<voi
           }
           BUFFER_FOR_CPP_TYPE_VALUE(*stype->geometry_nodes_cpp_type, buffer);
           if (!copy_bake_item_to_socket_value(
-                  *item.value, stype->type, {}, r_attribute_map, buffer))
+                  *item.value, eNodeSocketDatatype(stype->type), {}, r_attribute_map, buffer))
           {
             return false;
           }

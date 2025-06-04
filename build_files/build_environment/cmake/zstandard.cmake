@@ -28,10 +28,7 @@ ExternalProject_Add(external_zstandard
 
   BUILD_COMMAND
     ${PYTHON_BINARY} setup.py
-      --system-zstd
-      build_ext ${ZSTANDARD_BUILD_OPTION} -j${PYTHON_MAKE_THREADS}
-      --include-dirs=${LIBDIR}/zstd/include
-      --library-dirs=${LIBDIR}/zstd/lib
+      build ${ZSTANDARD_BUILD_OPTION} -j${PYTHON_MAKE_THREADS}
       install
       --old-and-unmanageable
 

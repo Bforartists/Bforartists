@@ -179,34 +179,7 @@ int UI_searchbox_size_x()
   return 12 * UI_UNIT_X;
 }
 
-static int ui_searchbox_size_x_from_items(const uiSearchItems &items)
-{
-  using namespace blender;
-
-  /* Compute the width of each item. */
-  Array<int> item_widths(items.totitem);
-  threading::parallel_for(item_widths.index_range(), 256, [&](const IndexRange range) {
-    for (const int i : range) {
-      const blender::StringRefNull name = items.names[i];
-      const int icon = items.icons ? items.icons[i] : ICON_NONE;
-      const float text_width = BLF_width(BLF_default(), name.c_str(), name.size(), nullptr);
-      const float icon_with_padding = icon == ICON_NONE ? 0.0f : UI_ICON_SIZE + UI_UNIT_X;
-      const float padding = UI_UNIT_X;
-      item_widths[i] = int(text_width + padding + icon_with_padding);
-    }
-  });
-
-  /* Compute the final width of the search box. */
-  int box_width = UI_searchbox_size_x();
-  for (const int width : item_widths) {
-    box_width = std::max(box_width, width);
-  }
-  /* Avoid extremely wide boxes. */
-  box_width = std::min(box_width, UI_searchbox_size_x() * 5);
-  return box_width;
-}
-
-int UI_searchbox_size_x_guess(const bContext *C, const uiButSearchUpdateFn update_fn, void *arg)
+int UI_searchbox_size_x_guess(const bContext *C, const uiButSearchUpdateFn update_fn)
 {
   using namespace blender;
 
@@ -218,20 +191,33 @@ int UI_searchbox_size_x_guess(const bContext *C, const uiButSearchUpdateFn updat
   /* Prepare name buffers. */
   Array<char> names_buffer(items.maxitem * items.maxstrlen);
   Array<char *> names(items.maxitem);
-  Array<int> icons(items.maxitem);
   items.names = names.data();
-  items.icons = icons.data();
   for (int i : IndexRange(items.maxitem)) {
     names[i] = names_buffer.data() + i * items.maxstrlen;
   }
 
-  /* Gather the items shown in the search box. */
-  update_fn(C, arg, "", &items, true);
+  /* Gather the names shown in the search box. */
+  update_fn(C, nullptr, "", &items, true);
 
-  /* This is lazy-initialized in #UI_search_item_add. */
-  MEM_SAFE_FREE(items.name_prefix_offsets);
+  /* Compute the width of each item. */
+  Array<int> item_widths(items.totitem);
+  threading::parallel_for(item_widths.index_range(), 256, [&](const IndexRange range) {
+    for (const int i : range) {
+      const blender::StringRefNull name = items.names[i];
+      const float text_width = BLF_width(BLF_default(), name.c_str(), name.size(), nullptr);
+      const float padding = UI_UNIT_X;
+      item_widths[i] = int(text_width + padding);
+    }
+  });
 
-  return ui_searchbox_size_x_from_items(items);
+  /* Compute the final width of the search box. */
+  int box_width = UI_searchbox_size_x();
+  for (const int width : item_widths) {
+    box_width = std::max(box_width, width);
+  }
+  /* Avoid extremely wide boxes. */
+  box_width = std::min(box_width, UI_searchbox_size_x() * 5);
+  return box_width;
 }
 
 int UI_search_items_find_index(const uiSearchItems *items, const char *name)
@@ -837,6 +823,22 @@ static void ui_searchbox_region_listen_fn(const wmRegionListenerParams *params)
   }
 }
 
+static uiMenuItemSeparatorType ui_searchbox_item_separator(uiSearchboxData *data)
+{
+  uiMenuItemSeparatorType separator_type = data->use_shortcut_sep ?
+                                               UI_MENU_ITEM_SEPARATOR_SHORTCUT :
+                                               UI_MENU_ITEM_SEPARATOR_NONE;
+  if (separator_type == UI_MENU_ITEM_SEPARATOR_NONE && !data->preview) {
+    for (int a = 0; a < data->items.totitem; a++) {
+      if (data->items.but_flags[a] & UI_BUT_HAS_SEP_CHAR) {
+        separator_type = UI_MENU_ITEM_SEPARATOR_HINT;
+        break;
+      }
+    }
+  }
+  return separator_type;
+}
+
 static void ui_searchbox_region_layout_fn(const bContext *C, ARegion *region)
 {
   uiSearchboxData *data = (uiSearchboxData *)region->regiondata;
@@ -878,7 +880,12 @@ static void ui_searchbox_region_layout_fn(const bContext *C, ARegion *region)
     }
   }
   else {
-    const int searchbox_width = ui_searchbox_size_x_from_items(data->items);
+    int searchbox_width = int(float(UI_searchbox_size_x()) * 1.4f);
+
+    /* We should make this wider if there is a path or hint on the right. */
+    if (ui_searchbox_item_separator(data) != UI_MENU_ITEM_SEPARATOR_NONE) {
+      searchbox_width += 12 * data->fstyle.points * UI_SCALE_FAC;
+    }
 
     rctf rect_fl;
     rect_fl.xmin = but->rect.xmin;

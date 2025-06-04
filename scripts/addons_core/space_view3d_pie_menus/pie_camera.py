@@ -4,7 +4,7 @@
 
 import bpy
 from bpy.types import Menu, Operator
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
+from .hotkeys import register_hotkey
 
 # Some magic numbers that are either hard-coded into Blender,
 # or are the indirect product of Blender's viewport implementation.
@@ -120,8 +120,6 @@ class VIEW3D_OT_camera_fit_view(Operator):
 
     @classmethod
     def poll(cls, context):
-        if not context.space_data or not hasattr(context.space_data, 'region_3d'):
-            return False
         if context.space_data.region_3d.view_perspective == 'CAMERA':
             cls.poll_message_set("Already in a camera view.")
             return False
@@ -131,7 +129,7 @@ class VIEW3D_OT_camera_fit_view(Operator):
         ):
             cls.poll_message_set("No active camera.")
             return False
-        if camera and (any(camera.lock_location) or any(camera.lock_rotation)):
+        if any(camera.lock_location) or any(camera.lock_rotation):
             cls.poll_message_set("Active camera's transforms are locked.")
             return False
         return True
@@ -207,7 +205,7 @@ class VIEW3D_OT_set_active_camera(Operator):
 
     def execute(self, context):
         context.scene.camera = context.active_object
-        self.report({'INFO'}, f"Set active camera: {context.active_object.name}")
+        self.report({'INFO'}, "Set active camera: {context.active_object.name}")
         return {'FINISHED'}
 
 
@@ -247,9 +245,9 @@ registry = [
 
 
 def register():
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name="3D View",
-        pie_name=PIE_MT_camera.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie_wrapper',
+        op_kwargs={'name': 'PIE_MT_camera'},
         hotkey_kwargs={'type': "C", 'value': "PRESS", 'alt': True},
-        on_drag=False,
+        key_cat="3D View",
     )

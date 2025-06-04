@@ -12,7 +12,7 @@
 
 namespace blender::nodes {
 
-struct CaptureAttributeItemsAccessor : public socket_items::SocketItemsAccessorDefaults {
+struct CaptureAttributeItemsAccessor {
   using ItemT = NodeGeometryAttributeCaptureItem;
   static StructRNA *item_srna;
   static int node_type;

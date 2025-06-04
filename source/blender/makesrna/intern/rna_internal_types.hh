@@ -102,8 +102,7 @@ using PropCollectionAssignIntFunc = bool (*)(PointerRNA *ptr,
                                              int key,
                                              const PointerRNA *assign_ptr);
 
-/* Extended versions with #PropertyRNA argument. */
-
+/* extended versions with PropertyRNA argument */
 using PropBooleanGetFuncEx = bool (*)(PointerRNA *ptr, PropertyRNA *prop);
 using PropBooleanSetFuncEx = void (*)(PointerRNA *ptr, PropertyRNA *prop, bool value);
 using PropBooleanArrayGetFuncEx = void (*)(PointerRNA *ptr, PropertyRNA *prop, bool *values);
@@ -198,14 +197,12 @@ struct PropertyRNAOrID {
 struct RNAPropertyOverrideDiffContext {
   /** General diffing parameters. */
 
-  /**
-   * Using #PropertyRNAOrID for properties info here allows to cover all three cases
-   * (*real* RNA properties, *runtime* RNA properties created from Python and stored in
-   * ID-properties, and *pure* ID-properties).
+  /* Using #PropertyRNAOrID for properties info here allows to cover all three cases ('real' RNA
+   * properties, 'runtime' RNA properties created from python and stored in IDPropertoies, and
+   * 'pure' IDProperties).
    *
    * This is necessary, because we cannot perform 'set/unset' checks on resolved properties
-   * (unset ID-properties would merely be nullptr then).
-   */
+   * (unset IDProperties would merely be nullptr then). */
   PropertyRNAOrID *prop_a = nullptr;
   PropertyRNAOrID *prop_b = nullptr;
 
@@ -219,16 +216,12 @@ struct RNAPropertyOverrideDiffContext {
 
   /** Results. */
 
-  /**
-   * `0` is matching, `-1` if `prop_a < prop_b`, `1` if `prop_a > prop_b`. Note that for
+  /** `0` is matching, `-1` if `prop_a < prop_b`, `1` if `prop_a > prop_b`. Note that for
    * unquantifiable properties (e.g. pointers or collections), return value should be interpreted
-   * as a boolean (false == matching, true == not matching).
-   */
+   * as a boolean (false == matching, true == not matching). */
   int comparison = 0;
-  /**
-   * Additional flags reporting potential actions taken by the function (e.g. resetting forbidden
-   * overrides to their reference value).
-   */
+  /** Additional flags reporting potential actions taken by the function (e.g. resetting forbidden
+   * overrides to their reference value). */
   eRNAOverrideMatchResult report_flag = eRNAOverrideMatchResult(0);
 };
 using RNAPropOverrideDiff = void (*)(Main *bmain, RNAPropertyOverrideDiffContext &rnadiff_ctx);
@@ -300,7 +293,7 @@ struct PropertyRNAIdentifierGetter {
   blender::StringRef operator()(const PropertyRNA *prop) const;
 };
 
-/** Container - generic abstracted container of RNA properties */
+/* Container - generic abstracted container of RNA properties */
 struct ContainerRNA {
   void *next, *prev;
 
@@ -309,113 +302,92 @@ struct ContainerRNA {
 };
 
 struct FunctionRNA {
-  /** Structs are containers of properties. */
+  /* structs are containers of properties */
   ContainerRNA cont;
-  /** Unique identifier, keep after `cont`. */
-  const char *identifier;
 
-  /** Various options */
+  /* unique identifier, keep after 'cont' */
+  const char *identifier;
+  /* various options */
   int flag;
 
-  /** Single line description, displayed in the tool-tip for example. */
+  /* single line description, displayed in the tooltip for example */
   const char *description;
 
-  /** Callback to execute the function. */
+  /* callback to execute the function */
   CallFunc call;
 
-  /**
-   * Parameter for the return value.
-   *
-   * \note this is only the C return value, rna functions can have multiple return values.
-   */
+  /* parameter for the return value
+   * NOTE: this is only the C return value, rna functions can have multiple return values. */
   PropertyRNA *c_ret;
 };
 
 struct PropertyRNA {
   PropertyRNA *next, *prev;
 
-  /** Magic bytes to distinguish with #IDProperty. */
+  /* magic bytes to distinguish with IDProperty */
   int magic;
 
-  /** Unique identifier. */
+  /* unique identifier */
   const char *identifier;
-  /** Various options. */
+  /* various options */
   int flag;
-  /** Various override options. */
+  /* various override options */
   int flag_override;
-  /** Function parameters flags. */
+  /* Function parameters flags. */
   short flag_parameter;
-  /** Internal ("private") flags. */
+  /* Internal ("private") flags. */
   short flag_internal;
-  /** The subset of #StructRNA::prop_tag_defines values that applies to this property. */
+  /* The subset of StructRNA.prop_tag_defines values that applies to this property. */
   short tags;
 
-  /**
-   * Indicates which set of template variables this property supports.
-   *
-   * Must be set for path properties that are marked as supporting path
-   * templates (`PROP_PATH_SUPPORTS_TEMPLATES` in `flag`). Is ignored for other
-   * properties.
-   */
-  PropertyPathTemplateType path_template_type;
-
-  /** User readable name. */
+  /* user readable name */
   const char *name;
-  /** Single line description, displayed in the tool-tip for example. */
+  /* single line description, displayed in the tooltip for example */
   const char *description;
-  /** Icon ID. */
+  /* icon ID */
   int icon;
-  /** Context for translation. */
+  /* context for translation */
   const char *translation_context;
 
-  /** Property type as it appears to the outside. */
+  /* property type as it appears to the outside */
   PropertyType type;
-  /** Subtype, 'interpretation' of the property. */
+  /* subtype, 'interpretation' of the property */
   PropertySubType subtype;
-  /** If non-NULL, overrides arraylength. Must not return 0? */
+  /* if non-NULL, overrides arraylength. Must not return 0? */
   PropArrayLengthGetFunc getlength;
-  /** Dimension of array. */
+  /* dimension of array */
   unsigned int arraydimension;
-  /** Array lengths for all dimensions (when `arraydimension > 0`). */
+  /* Array lengths for all dimensions (when `arraydimension > 0`). */
   unsigned int arraylength[RNA_MAX_ARRAY_DIMENSION];
   unsigned int totarraylength;
 
-  /** Callback for updates on change. */
+  /* callback for updates on change */
   UpdateFunc update;
   int noteflag;
 
-  /**
-   * Callback for testing if editable. Its r_info parameter can be used to
-   * return info on editable state that might be shown to user. E.g. tool-tips
-   * of disabled buttons can show reason why button is disabled using this.
-   */
+  /* Callback for testing if editable. Its r_info parameter can be used to
+   * return info on editable state that might be shown to user. E.g. tooltips
+   * of disabled buttons can show reason why button is disabled using this. */
   EditableFunc editable;
-  /** Callback for testing if array-item editable (if applicable). */
+  /* callback for testing if array-item editable (if applicable) */
   ItemEditableFunc itemeditable;
 
-  /** Override handling callbacks (diff is also used for comparison). */
+  /* Override handling callbacks (diff is also used for comparison). */
   RNAPropOverrideDiff override_diff;
   RNAPropOverrideStore override_store;
   RNAPropOverrideApply override_apply;
 
-  /* Raw access. */
-
+  /* raw access */
   int rawoffset;
   RawPropertyType rawtype;
 
-  /**
-   * Attributes attached directly to this collection.
-   *
-   * This is used for accessing props/functions of this property
+  /* This is used for accessing props/functions of this property
    * any property can have this but should only be used for collections and arrays
-   * since python will convert int/bool/pointer's.
-   */
-  StructRNA *srna;
+   * since python will convert int/bool/pointer's */
+  StructRNA *srna; /* attributes attached directly to this collection */
 
-  /**
-   * Python handle to hold all callbacks
-   * (in a pointer array at the moment, may later be a tuple).
-   */
+  /* python handle to hold all callbacks
+   * (in a pointer array at the moment, may later be a tuple) */
   void *py_data;
 };
 
@@ -424,21 +396,19 @@ inline blender::StringRef PropertyRNAIdentifierGetter::operator()(const Property
   return prop->identifier;
 }
 
-/** Internal flags WARNING! 16bits only! */
+/* internal flags WARNING! 16bits only! */
 enum PropertyFlagIntern {
   PROP_INTERN_BUILTIN = (1 << 0),
   PROP_INTERN_RUNTIME = (1 << 1),
   PROP_INTERN_RAW_ACCESS = (1 << 2),
   PROP_INTERN_RAW_ARRAY = (1 << 3),
   PROP_INTERN_FREE_POINTERS = (1 << 4),
-  /**
-   * Negative mirror of #PROP_PTR_NO_OWNERSHIP,
-   * used to prevent automatically setting that one in `makesrna` when pointer is an ID.
-   */
+  /* Negative mirror of PROP_PTR_NO_OWNERSHIP, used to prevent automatically setting that one in
+   * makesrna when pointer is an ID... */
   PROP_INTERN_PTR_OWNERSHIP_FORCED = (1 << 5),
 };
 
-/* Property Types. */
+/* Property Types */
 
 struct BoolPropertyRNA {
   PropertyRNA property;
@@ -539,8 +509,7 @@ struct StringPropertyRNA {
    */
   StringPropertyPathFilterFunc path_filter;
 
-  /** Maximum length including the string terminator! */
-  int maxlength;
+  int maxlength; /* includes string terminator! */
 
   const char *defaultvalue;
 };
@@ -586,17 +555,15 @@ struct CollectionPropertyRNA {
   PropCollectionLookupStringFunc lookupstring; /* optional */
   PropCollectionAssignIntFunc assignint;       /* optional */
 
-  /** The type of this item. */
-  StructRNA *item_type;
+  StructRNA *item_type; /* the type of this item */
 };
 
-/**
- * \note Changes to this struct require updating `rna_generate_struct` in `makesrna.cc`.
- */
+/* changes to this struct require updating rna_generate_struct in makesrna.cc */
 struct StructRNA {
-  /** Structs are containers of properties. */
+  /* structs are containers of properties */
   ContainerRNA cont;
-  /** Unique identifier, keep after `cont`. */
+
+  /* unique identifier, keep after 'cont' */
   const char *identifier;
 
   /**
@@ -608,49 +575,44 @@ struct StructRNA {
   void *py_type;
   void *blender_type;
 
-  /** Various options. */
+  /* various options */
   int flag;
-  /**
-   * Each StructRNA type can define its own tags which properties can set
-   * (PropertyRNA.tags) for changed behavior based on struct-type.
-   */
+  /* Each StructRNA type can define its own tags which properties can set
+   * (PropertyRNA.tags) for changed behavior based on struct-type. */
   const EnumPropertyItem *prop_tag_defines;
 
-  /** User readable name. */
+  /* user readable name */
   const char *name;
-  /** Single line description, displayed in the tool-tip for example. */
+  /* single line description, displayed in the tooltip for example */
   const char *description;
-  /** Context for translation. */
+  /* context for translation */
   const char *translation_context;
-  /** Icon ID. */
+  /* icon ID */
   int icon;
 
-  /** Property that defines the name. */
+  /* property that defines the name */
   PropertyRNA *nameproperty;
 
-  /** Property to iterate over properties. */
+  /* property to iterate over properties */
   PropertyRNA *iteratorproperty;
 
   /** Struct this is derived from. */
   StructRNA *base;
 
-  /**
-   * Only use for nested structs, where both the parent and child access
+  /* only use for nested structs, where both the parent and child access
    * the same C Struct but nesting is used for grouping properties.
    * The parent property is used so we know NULL checks are not needed,
-   * and that this struct will never exist without its parent.
-   */
+   * and that this struct will never exist without its parent */
   StructRNA *nested;
 
-  /** Function to give the more specific type. */
+  /* function to give the more specific type */
   StructRefineFunc refine;
 
-  /** Function to find path to this struct in an ID. */
+  /* function to find path to this struct in an ID */
   StructPathFunc path;
 
-  /** Function to register/unregister sub-classes. */
+  /* function to register/unregister subclasses */
   StructRegisterFunc reg;
-  /** Function to unregister sub-classes. */
   StructUnregisterFunc unreg;
   /**
    * Optionally support reusing Python instances for this type.
@@ -668,23 +630,20 @@ struct StructRNA {
   /** Return the location of the struct's pointer to the root group IDProperty. */
   IDPropertiesFunc idproperties;
 
-  /** Functions of this struct. */
+  /* functions of this struct */
   ListBase functions;
 };
 
-/**
- * Blender RNA
+/* Blender RNA
  *
- * Root RNA data structure that lists all struct types.
- */
+ * Root RNA data structure that lists all struct types. */
+
 struct BlenderRNA {
   ListBase structs;
-  /**
-   * A map of structs: `{StructRNA.identifier -> StructRNA}`
-   * These are ensured to have unique names (with #STRUCT_PUBLIC_NAMESPACE enabled).
-   */
+  /* A map of structs: {StructRNA.identifier -> StructRNA}
+   * These are ensured to have unique names (with STRUCT_PUBLIC_NAMESPACE enabled). */
   GHash *structs_map;
-  /** Needed because types with an empty identifier aren't included in `structs_map`. */
+  /* Needed because types with an empty identifier aren't included in 'structs_map'. */
   unsigned int structs_len;
 };
 

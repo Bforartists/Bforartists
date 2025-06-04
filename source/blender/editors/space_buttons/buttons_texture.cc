@@ -266,7 +266,7 @@ static void buttons_texture_users_from_context(ListBase *users,
       ob = (Object *)pinid;
     }
     else if (GS(pinid->name) == ID_BR) {
-      brush = reinterpret_cast<Brush *>(pinid);
+      brush = (Brush *)pinid;
     }
     else if (GS(pinid->name) == ID_LS) {
       linestyle = (FreestyleLineStyle *)pinid;

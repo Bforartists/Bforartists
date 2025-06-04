@@ -32,7 +32,6 @@
 #include "BLI_math_color.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_vector.h"
-#include "BLI_noise.hh"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
@@ -634,7 +633,7 @@ static bool paint_brush_update_from_asset_reference(Main *bmain, Paint *paint)
 
 Brush *BKE_paint_brush(Paint *paint)
 {
-  return paint ? paint->brush : nullptr;
+  return (Brush *)BKE_paint_brush_for_read((const Paint *)paint);
 }
 
 const Brush *BKE_paint_brush_for_read(const Paint *paint)
@@ -1154,7 +1153,7 @@ static bool paint_eraser_brush_set_from_asset_reference(Main *bmain, Paint *pain
 
 Brush *BKE_paint_eraser_brush(Paint *paint)
 {
-  return paint ? paint->eraser_brush : nullptr;
+  return (Brush *)BKE_paint_eraser_brush_for_read((const Paint *)paint);
 }
 
 const Brush *BKE_paint_eraser_brush_for_read(const Paint *paint)
@@ -1245,7 +1244,6 @@ static void paint_runtime_init(const ToolSettings *ts, Paint *paint)
   }
 
   paint->runtime.initialized = true;
-  paint->runtime.previous_active_brush_reference = nullptr;
 }
 
 uint BKE_paint_get_brush_type_offset_from_paintmode(const PaintMode mode)
@@ -1847,62 +1845,6 @@ void BKE_paint_stroke_get_average(const Scene *scene, const Object *ob, float st
   else {
     copy_v3_v3(stroke, ob->object_to_world().location());
   }
-}
-
-blender::float3 BKE_paint_randomize_color(const BrushColorJitterSettings &color_jitter,
-                                          const blender::float3 &initial_hsv_jitter,
-                                          const float distance,
-                                          const float pressure,
-                                          const blender::float3 &color)
-{
-  constexpr float noise_scale = 1 / 20.0f;
-
-  const float random_hue = (color_jitter.flag & BRUSH_COLOR_JITTER_USE_HUE_AT_STROKE) ?
-                               initial_hsv_jitter[0] :
-                               blender::noise::perlin(blender::float2(
-                                   distance * noise_scale, initial_hsv_jitter[0] * 100));
-
-  const float random_sat = (color_jitter.flag & BRUSH_COLOR_JITTER_USE_SAT_AT_STROKE) ?
-                               initial_hsv_jitter[1] :
-                               blender::noise::perlin(blender::float2(
-                                   distance * noise_scale, initial_hsv_jitter[1] * 100));
-
-  const float random_val = (color_jitter.flag & BRUSH_COLOR_JITTER_USE_VAL_AT_STROKE) ?
-                               initial_hsv_jitter[2] :
-                               blender::noise::perlin(blender::float2(
-                                   distance * noise_scale, initial_hsv_jitter[2] * 100));
-
-  float hue_jitter_scale = color_jitter.hue;
-  if ((color_jitter.flag & BRUSH_COLOR_JITTER_USE_HUE_RAND_PRESS)) {
-    hue_jitter_scale *= BKE_curvemapping_evaluateF(color_jitter.curve_hue_jitter, 0, pressure);
-  }
-  float sat_jitter_scale = color_jitter.saturation;
-  if ((color_jitter.flag & BRUSH_COLOR_JITTER_USE_SAT_RAND_PRESS)) {
-    sat_jitter_scale *= BKE_curvemapping_evaluateF(color_jitter.curve_sat_jitter, 0, pressure);
-  }
-  float val_jitter_scale = color_jitter.value;
-  if ((color_jitter.flag & BRUSH_COLOR_JITTER_USE_VAL_RAND_PRESS)) {
-    val_jitter_scale *= BKE_curvemapping_evaluateF(color_jitter.curve_val_jitter, 0, pressure);
-  }
-
-  blender::float3 hsv;
-  rgb_to_hsv_v(color, hsv);
-
-  hsv[0] += blender::math::interpolate(0.5f, random_hue, hue_jitter_scale) - 0.5f;
-  /* Wrap hue. */
-  if (hsv[0] > 1.0f) {
-    hsv[0] -= 1.0f;
-  }
-  else if (hsv[0] < 0.0f) {
-    hsv[0] += 1.0f;
-  }
-
-  hsv[1] *= blender::math::interpolate(1.0f, random_sat * 2.0f, sat_jitter_scale);
-  hsv[2] *= blender::math::interpolate(1.0f, random_val * 2.0f, val_jitter_scale);
-
-  blender::float3 random_color;
-  hsv_to_rgb_v(hsv, random_color);
-  return random_color;
 }
 
 void BKE_paint_blend_write(BlendWriter *writer, Paint *paint)

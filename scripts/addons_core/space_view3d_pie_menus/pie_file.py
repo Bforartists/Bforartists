@@ -6,7 +6,7 @@
 import bpy
 from bpy.types import Menu, Operator
 from bpy.props import BoolProperty
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
+from .hotkeys import register_hotkey
 
 
 class PIE_MT_file(Menu):
@@ -108,12 +108,11 @@ def draw_revert(self, context):
 
 
 def register():
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name="Window",
-        pie_name=PIE_MT_file.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie_drag_only',
+        op_kwargs={'name': 'PIE_MT_file', 'fallback_operator': 'wm.save_mainfile'},
         hotkey_kwargs={'type': "S", 'value': "PRESS", 'ctrl': True},
-        default_fallback_op='wm.save_mainfile',
-        on_drag=True,
+        key_cat="Window",
     )
 
     bpy.types.TOPBAR_MT_file_recover.prepend(draw_revert)

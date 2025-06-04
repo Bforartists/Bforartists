@@ -1557,12 +1557,6 @@ void RNA_def_parameter_clear_flags(PropertyRNA *prop,
   prop->flag_parameter &= ~flag_parameter;
 }
 
-void RNA_def_property_path_template_type(PropertyRNA *prop,
-                                         PropertyPathTemplateType path_template_type)
-{
-  prop->path_template_type = path_template_type;
-}
-
 void RNA_def_property_subtype(PropertyRNA *prop, PropertySubType subtype)
 {
   prop->subtype = subtype;
@@ -1932,7 +1926,7 @@ void RNA_def_property_enum_items(PropertyRNA *prop, const EnumPropertyItem *item
         /* If this is larger, this is likely a string which can sometimes store enums. */
         if (PropertyDefRNA *dp = rna_find_struct_property_def(srna, prop)) {
           if (dp->dnatype == nullptr || dp->dnatype[0] == '\0') {
-            /* Unfortunately this happens when #PropertyDefRNA::dnastructname is for example
+            /* Unfortunately this happens when #PropertyDefRNA::dnastructname is for e.g.
              * `type->region_type` there isn't a convenient way to access the int size. */
           }
           else if (dp->dnaarraylength > 1) {

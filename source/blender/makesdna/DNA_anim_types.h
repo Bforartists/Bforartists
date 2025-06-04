@@ -230,7 +230,7 @@ typedef struct DriverTarget {
    * This is a value of enumerator #eDriverTarget_ContextProperty. */
   int context_property;
 
-  /* Fall back value to use with DTAR_OPTION_USE_FALLBACK. */
+  /* Fallback value to use with DTAR_OPTION_USE_FALLBACK. */
   float fallback_value;
 } DriverTarget;
 

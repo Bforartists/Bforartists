@@ -32,9 +32,7 @@ static void node_declare(NodeDeclarationBuilder &b)
     return;
   }
 
-  b.add_input(*bke::grid_type_to_socket_type(VolumeGridType(node->custom1)), "Grid")
-      .hide_value()
-      .structure_type(StructureType::Grid);
+  b.add_input(*bke::grid_type_to_socket_type(VolumeGridType(node->custom1)), "Grid").hide_value();
 }
 
 static void search_link_ops(GatherLinkSearchOpParams &params)

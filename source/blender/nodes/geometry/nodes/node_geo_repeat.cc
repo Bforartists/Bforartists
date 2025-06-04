@@ -78,7 +78,8 @@ static void node_declare(NodeDeclarationBuilder &b)
   const bNodeTree *tree = b.tree_or_null();
   if (node && tree) {
     const NodeGeometryRepeatInput &storage = node_storage(*node);
-    if (const bNode *output_node = tree->node_by_id(storage.output_node_id)) {
+    const bNode *output_node = tree->node_by_id(storage.output_node_id);
+    if (output_node) {
       const auto &output_storage = *static_cast<const NodeGeometryRepeatOutput *>(
           output_node->storage);
       for (const int i : IndexRange(output_storage.items_num)) {
@@ -97,10 +98,8 @@ static void node_declare(NodeDeclarationBuilder &b)
       }
     }
   }
-  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Extend>("", "__extend__")
-      .structure_type(StructureType::Dynamic)
-      .align_with_previous();
+  b.add_input<decl::Extend>("", "__extend__");
+  b.add_output<decl::Extend>("", "__extend__").align_with_previous();
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -178,10 +177,8 @@ static void node_declare(NodeDeclarationBuilder &b)
       }
     }
   }
-  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Extend>("", "__extend__")
-      .structure_type(StructureType::Dynamic)
-      .align_with_previous();
+  b.add_input<decl::Extend>("", "__extend__");
+  b.add_output<decl::Extend>("", "__extend__").align_with_previous();
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)

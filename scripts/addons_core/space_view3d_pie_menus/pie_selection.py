@@ -2,14 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import re
-
-import bpy
+import bpy, re
 from bpy.types import Menu, Operator, Constraint, UILayout, Object
+from .hotkeys import register_hotkey
 from bpy.props import BoolProperty, StringProperty
 from bpy.utils import flip_name
-
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 from .pie_camera import get_current_camera
 
 
@@ -273,10 +270,6 @@ class PIE_MT_select_object_name_relation(Menu):
     bl_idname = 'PIE_MT_select_object_name_relation'
     bl_label = "Select by Name"
 
-    @classmethod
-    def poll(cls, context):
-        return context.active_object
-
     def draw(self, context):
         layout = self.layout
         active_obj = context.active_object
@@ -339,9 +332,6 @@ class OBJECT_OT_select_symmetry_object(Operator, ObjectSelectOperatorMixin):
         scene_obs = context.scene.objects
         sel_obs = context.selected_objects[:]
         active_obj = context.active_object
-        if not active_obj:
-            cls.poll_message_set("No active object.")
-            return False
         flipped_objs = [scene_obs.get(flip_name(ob.name)) for ob in sel_obs]
         flipped_active = scene_obs.get(flip_name(active_obj.name))
         if not (flipped_active or any(flipped_objs)):
@@ -652,23 +642,23 @@ def register():
     # Weird that this built-in operator is not included in this built-in menu.
     bpy.types.VIEW3D_MT_edit_mesh_select_by_trait.prepend(draw_edge_sharpness_in_traits_menu)
 
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name='Object Mode',
-        pie_name=PIE_MT_object_selection.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie',
+        op_kwargs={'name': 'PIE_MT_object_selection'},
         hotkey_kwargs={'type': "A", 'value': "PRESS"},
-        on_drag=False,
+        key_cat="Object Mode",
     )
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name='Object Mode',
-        pie_name=PIE_MT_select_object_name_relation.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie',
+        op_kwargs={'name': 'PIE_MT_select_object_name_relation'},
         hotkey_kwargs={'type': "F", 'value': "PRESS", 'ctrl': True},
-        on_drag=False,
+        key_cat="Object Mode",
     )
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name='Mesh',
-        pie_name=PIE_MT_mesh_selection.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie',
+        op_kwargs={'name': 'PIE_MT_mesh_selection'},
         hotkey_kwargs={'type': "A", 'value': "PRESS"},
-        on_drag=False,
+        key_cat="Mesh",
     )
 
 

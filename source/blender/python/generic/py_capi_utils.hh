@@ -39,7 +39,7 @@ PyObject *PyC_ExceptionBuffer() ATTR_WARN_UNUSED_RESULT ATTR_RETURNS_NONNULL;
 /**
  * A version of #PyC_ExceptionBuffer that returns the last exception only.
  *
- * Useful for error messages from evaluating numeric expressions for example
+ * Useful for error messages from evaluating numeric expressions for e.g.
  * where a full multi-line stack-trace isn't needed and doesn't format well in the status-bar.
  */
 PyObject *PyC_ExceptionBuffer_Simple() ATTR_WARN_UNUSED_RESULT ATTR_RETURNS_NONNULL;

@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from bpy.types import Menu
-
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
+from .hotkeys import register_hotkey
 
 
 class PIE_MT_view_pie(Menu):
@@ -41,11 +40,9 @@ registry = [
 
 
 def register():
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name="3D View",
-        pie_name='PIE_MT_view_pie',
+    register_hotkey(
+        'wm.call_menu_pie_drag_only',
+        op_kwargs={'name': 'PIE_MT_view_pie', 'fallback_operator': 'view3d.view_all', 'op_kwargs': '{"center":true}'},
         hotkey_kwargs={'type': "C", 'value': "PRESS", 'shift': True},
-        default_fallback_op='view3d.view_all',
-        default_fallback_kwargs='{"center":true}',
-        on_drag=True,
+        key_cat="3D View",
     )

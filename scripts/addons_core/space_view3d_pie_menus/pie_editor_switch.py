@@ -5,7 +5,7 @@
 import bpy, sys, json
 from bpy.types import Menu, Operator
 from bpy.props import StringProperty
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
+from .hotkeys import register_hotkey
 
 
 AVAILABLE_PROPERTIES_EDITORS = []
@@ -561,9 +561,9 @@ registry = [
 
 
 def register():
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name="Window",
-        pie_name=PIE_MT_editor_switch.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie',
+        op_kwargs={'name': 'PIE_MT_editor_switch'},
         hotkey_kwargs={'type': "S", 'value': "PRESS", 'ctrl': True, 'alt': True},
-        on_drag=False,
+        key_cat="Window",
     )

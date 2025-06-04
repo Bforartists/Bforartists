@@ -61,6 +61,10 @@ static void statvis_calc_overhang(const MeshRenderData &mr,
   const float min = statvis->overhang_min / float(M_PI);
   const float max = statvis->overhang_max / float(M_PI);
   const char axis = statvis->overhang_axis;
+  BMEditMesh *em = mr.edit_bmesh;
+  BMIter iter;
+  BMesh *bm = em->bm;
+  BMFace *f;
   float dir[3];
   const float minmax_irange = 1.0f / (max - min);
 
@@ -73,10 +77,6 @@ static void statvis_calc_overhang(const MeshRenderData &mr,
   normalize_v3(dir);
 
   if (mr.extract_type == MeshExtractType::BMesh) {
-    BMEditMesh *em = mr.edit_bmesh;
-    BMIter iter;
-    BMesh *bm = em->bm;
-    BMFace *f;
     int l_index = 0;
     BM_ITER_MESH (f, &iter, bm, BM_FACES_OF_MESH) {
       float fac = angle_normalized_v3v3(bm_face_no_get(mr, f), dir) / float(M_PI);
@@ -133,6 +133,7 @@ static void statvis_calc_thickness(const MeshRenderData &mr,
   const float eps_offset = 0.00002f; /* values <= 0.00001 give errors */
   /* cheating to avoid another allocation */
   float *face_dists = r_thickness.data() + (mr.corners_num - mr.faces_num);
+  BMEditMesh *em = mr.edit_bmesh;
   const float scale = 1.0f / mat4_to_scale(object_to_world.ptr());
   const MeshStatVis *statvis = &mr.toolsettings->statvis;
   const float min = statvis->thickness_min * scale;
@@ -151,7 +152,6 @@ static void statvis_calc_thickness(const MeshRenderData &mr,
   }
 
   if (mr.extract_type == MeshExtractType::BMesh) {
-    BMEditMesh *em = mr.edit_bmesh;
     BMesh *bm = em->bm;
     BM_mesh_elem_index_ensure(bm, BM_FACE);
 
@@ -293,12 +293,13 @@ static bool bvh_overlap_cb(void *userdata, int index_a, int index_b, int /*threa
 
 static void statvis_calc_intersect(const MeshRenderData &mr, MutableSpan<float> r_intersect)
 {
+  BMEditMesh *em = mr.edit_bmesh;
+
   for (int l_index = 0; l_index < mr.corners_num; l_index++) {
     r_intersect[l_index] = -1.0f;
   }
 
   if (mr.extract_type == MeshExtractType::BMesh) {
-    BMEditMesh *em = mr.edit_bmesh;
     uint overlap_len;
     BMesh *bm = em->bm;
 
@@ -375,13 +376,13 @@ BLI_INLINE float distort_remap(float fac, float min, float /*max*/, float minmax
 
 static void statvis_calc_distort(const MeshRenderData &mr, MutableSpan<float> r_distort)
 {
+  BMEditMesh *em = mr.edit_bmesh;
   const MeshStatVis *statvis = &mr.toolsettings->statvis;
   const float min = statvis->distort_min;
   const float max = statvis->distort_max;
   const float minmax_irange = 1.0f / (max - min);
 
   if (mr.extract_type == MeshExtractType::BMesh) {
-    BMEditMesh *em = mr.edit_bmesh;
     BMIter iter;
     BMesh *bm = em->bm;
     BMFace *f;
@@ -478,6 +479,7 @@ BLI_INLINE float sharp_remap(float fac, float min, float /*max*/, float minmax_i
 
 static void statvis_calc_sharp(const MeshRenderData &mr, MutableSpan<float> r_sharp)
 {
+  BMEditMesh *em = mr.edit_bmesh;
   const MeshStatVis *statvis = &mr.toolsettings->statvis;
   const float min = statvis->sharp_min;
   const float max = statvis->sharp_max;
@@ -488,7 +490,6 @@ static void statvis_calc_sharp(const MeshRenderData &mr, MutableSpan<float> r_sh
   copy_vn_fl(vert_angles, mr.verts_num, -M_PI);
 
   if (mr.extract_type == MeshExtractType::BMesh) {
-    BMEditMesh *em = mr.edit_bmesh;
     BMIter iter;
     BMesh *bm = em->bm;
     BMFace *efa;
@@ -572,6 +573,8 @@ static void statvis_calc_sharp(const MeshRenderData &mr, MutableSpan<float> r_sh
 
 gpu::VertBufPtr extract_mesh_analysis(const MeshRenderData &mr, const float4x4 &object_to_world)
 {
+  BLI_assert(mr.edit_bmesh);
+
   static const GPUVertFormat format = GPU_vertformat_from_attribute(
       "weight", GPU_COMP_F32, 1, GPU_FETCH_FLOAT);
 

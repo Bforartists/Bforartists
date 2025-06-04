@@ -4,7 +4,7 @@
 
 import bpy
 from bpy.types import Menu, Operator
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
+from .hotkeys import register_hotkey
 
 
 class PIE_MT_object_display(Menu):
@@ -38,6 +38,7 @@ class PIE_MT_object_display(Menu):
             row = box.row(align=True)
             row.prop(obj, 'color', text="")
             row.operator('view3d.copy_property_to_selected', text="", icon='LOOP_FORWARDS').rna_path='color'
+            box.prop(self, 'color')
         else:
             pie.separator()
 
@@ -48,12 +49,7 @@ class PIE_MT_object_display(Menu):
             pie.prop(obj, 'show_name', text="Object Name", icon='FILE_TEXT')
 
         # 9 - TOP - RIGHT
-        col = pie.box().column(align=True)
-        col.label(text="Visible:")
-        icon = 'RESTRICT_VIEW_ON' if obj.hide_viewport else 'RESTRICT_VIEW_OFF'
-        col.prop(obj, 'hide_viewport', text="Viewport", icon=icon, invert_checkbox=obj.hide_viewport)
-        icon = 'RESTRICT_RENDER_ON' if obj.hide_render else 'RESTRICT_RENDER_OFF'
-        col.prop(obj, 'hide_render', text="Render", icon=icon, invert_checkbox=obj.hide_render)
+        pie.separator()
 
         # 1 - BOTTOM - LEFT
         if obj.type == 'ARMATURE':
@@ -82,28 +78,11 @@ class OBJECT_MT_set_object_shading(Menu):
         layout.operator('object.shade_flat', icon='MESH_UVSPHERE')
         layout.operator('object.shade_smooth', icon='NODE_MATERIAL')
         if context.active_object.type == 'MESH':
-            layout.operator('object.add_weighted_normals', icon='MOD_NORMALEDIT')
             layout.operator('object.shade_auto_smooth', icon='MODIFIER')
+
+        if context.active_object.type == 'MESH':
             layout.separator()
             layout.operator('OBJECT_OT_reset_normals', icon='LOOP_BACK')
-
-
-class OBJECT_OT_add_weighted_normals(Operator):
-    """Add a Weighted Normal modifier to all selected meshes that don't already have one"""
-
-    bl_idname = "object.add_weighted_normals"
-    bl_label = "Weighted Normals"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        for obj in context.selected_objects:
-            if obj.type != 'MESH':
-                continue
-            if any([m.type == 'WEIGHTED_NORMAL' for m in obj.modifiers]):
-                continue
-            obj.modifiers.new(name="WeightedNormal", type='WEIGHTED_NORMAL')
-
-        return {'FINISHED'}
 
 
 class OBJECT_OT_reset_normals(Operator):
@@ -137,15 +116,14 @@ class OBJECT_OT_reset_normals(Operator):
 registry = [
     PIE_MT_object_display,
     OBJECT_MT_set_object_shading,
-    OBJECT_OT_add_weighted_normals,
     OBJECT_OT_reset_normals,
 ]
 
 
 def register():
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name="3D View",
-        pie_name=PIE_MT_object_display.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie',
+        op_kwargs={'name': 'PIE_MT_object_display'},
         hotkey_kwargs={'type': "W", 'value': "PRESS", 'shift': True},
-        on_drag=False,
+        key_cat="3D View",
     )

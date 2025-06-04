@@ -342,7 +342,7 @@ class LazyFunctionForForeachGeometryElementZone : public LazyFunction {
             tree_logger->node_warnings.append(
                 *tree_logger->allocator,
                 {zone_.input_node()->identifier,
-                 {NodeWarningType::Info,
+                 {geo_eval_log::NodeWarningType::Info,
                   N_("Input geometry has no elements in the iteration domain.")}});
           }
         }

@@ -4,7 +4,6 @@
 
 #include "bvh/bvh.h"
 #include "bvh/bvh2.h"
-#include "bvh/params.h"
 
 #include "device/device.h"
 
@@ -61,7 +60,7 @@ void Geometry::compute_bvh(Device *device,
     vector<Object *> objects;
     objects.push_back(&object);
 
-    if (bvh && !need_update_rebuild && params->bvh_type == BVH_TYPE_DYNAMIC) {
+    if (bvh && !need_update_rebuild) {
       progress->set_status(msg, "Refitting BVH");
 
       bvh->replace_geometry(geometry, objects);
@@ -115,7 +114,7 @@ void GeometryManager::device_update_bvh(Device *device,
 
   VLOG_INFO << "Using " << bvh_layout_name(bparams.bvh_layout) << " layout.";
 
-  const bool can_refit = scene->bvh != nullptr && scene->params.bvh_type == BVH_TYPE_DYNAMIC &&
+  const bool can_refit = scene->bvh != nullptr &&
                          (bparams.bvh_layout == BVHLayout::BVH_LAYOUT_OPTIX ||
                           bparams.bvh_layout == BVHLayout::BVH_LAYOUT_METAL);
 

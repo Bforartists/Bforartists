@@ -5,8 +5,7 @@
 import bpy
 from bpy.types import Menu, Operator
 from bpy.props import StringProperty
-
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
+from .hotkeys import register_hotkey
 
 
 class PIE_MT_set_origin(Menu):
@@ -81,7 +80,7 @@ class OBJECT_OT_set_origin_to_selection(Operator):
 class OBJECT_OT_set_origin_to_bottom(Operator):
     bl_idname = "object.origin_set_to_bottom"
     bl_label = "Origin To Bottom"
-    bl_description = "Apply transforms and set the Object Origin to the centered lowest point of each selected object"
+    bl_description = "Set the Object Origin to the lowest point of each selected object"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -95,13 +94,6 @@ class OBJECT_OT_set_origin_to_bottom(Operator):
 
     def execute(self, context):
         org_active_obj = context.active_object
-
-        for obj in context.selected_objects:
-            if obj.type not in ('MESH', 'ARMATURE'):
-                obj.select_set(False)
-
-        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-        bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
 
         counter = 0
         for obj in context.selected_objects:
@@ -194,9 +186,9 @@ registry = [
 
 
 def register():
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name='3D View',
-        pie_name=PIE_MT_set_origin.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie',
+        op_kwargs={'name': 'PIE_MT_set_origin'},
         hotkey_kwargs={'type': "X", 'value': "PRESS", 'ctrl': True, 'alt': True},
-        on_drag=False,
+        key_cat="3D View",
     )

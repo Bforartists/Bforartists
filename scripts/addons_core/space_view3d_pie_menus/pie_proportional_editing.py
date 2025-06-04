@@ -4,7 +4,7 @@
 
 from bpy.types import Menu, Operator
 from bpy.props import StringProperty
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
+from .hotkeys import register_hotkey
 
 
 class PIE_MT_proportional_edit(Menu):
@@ -145,11 +145,23 @@ registry = (
 
 
 def register():
-    for km_name, proportional_name in [('Object Mode', 'use_proportional_edit_objects'), ('Mesh', 'use_proportional_edit')]:
-        WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-            keymap_name=km_name,
-            pie_name=PIE_MT_proportional_edit.bl_idname,
-            hotkey_kwargs={'type': "O", 'value': "PRESS"},
-            default_fallback_op='wm.context_toggle',
-            default_fallback_kwargs={"data_path": f"scene.tool_settings.{proportional_name}"},
-        )
+    register_hotkey(
+        'wm.call_menu_pie_drag_only',
+        op_kwargs={
+            'name': 'PIE_MT_proportional_edit',
+            'fallback_operator': 'wm.context_toggle',
+            'op_kwargs': '{"data_path": "scene.tool_settings.use_proportional_edit_objects"}',
+        },
+        hotkey_kwargs={'type': "O", 'value': "PRESS"},
+        key_cat="Object Mode",
+    )
+    register_hotkey(
+        'wm.call_menu_pie_drag_only',
+        op_kwargs={
+            'name': 'PIE_MT_proportional_edit',
+            'fallback_operator': 'wm.context_toggle',
+            'op_kwargs': '{"data_path": "scene.tool_settings.use_proportional_edit"}',
+        },
+        hotkey_kwargs={'type': "O", 'value': "PRESS"},
+        key_cat="Mesh",
+    )

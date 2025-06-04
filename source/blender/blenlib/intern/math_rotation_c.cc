@@ -881,7 +881,7 @@ void interp_dot_slerp(const float t, const float cosom, float r_w[2])
     r_w[1] = sinf(t * omega) / sinom;
   }
   else {
-    /* fall back to lerp */
+    /* fallback to lerp */
     r_w[0] = 1.0f - t;
     r_w[1] = t;
   }

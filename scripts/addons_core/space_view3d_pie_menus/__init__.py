@@ -6,19 +6,18 @@ bl_info = {
     "name":"Extra Pie Menus",
     "description": "A set of handy pie menus to enhance various workflows",
     "author": "pitiwazou, meta-androcto, Demeter Dzadik",
-    "version": (1, 6, 12),
+    "version": (1, 6, 0),
     "blender": (4, 2, 0),
-    "description": "See Add-on Preferences for shortcut list",
+    "description": "Pie Menu Activation",
     "location": "Addons Preferences",
     "warning": "Bforartists version: Disable first if you wish to use the online Extension version", #BFA - warning added
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/viewport_pies.html",
     'tracker_url': "https://projects.blender.org/extensions/space_view3d_pie_menus",
     'support': 'COMMUNITY',
-    "category": "Interface",
+    "category": "Interface"
 }
 bl_info_copy = bl_info.copy()
 
-import bpy
 from bpy.utils import register_class, unregister_class
 import importlib
 
@@ -41,7 +40,6 @@ module_names = (
     "pie_mesh_delete",
     "pie_mesh_flatten",
     "pie_mesh_merge",
-    "pie_object_add",
     "pie_object_display",
     "pie_object_parenting",
     "pie_proportional_editing",
@@ -90,28 +88,14 @@ def register_unregister_modules(modules: list, register: bool):
             m.unregister()
 
 
-def delayed_register(_scene=None):
-    # Register whole add-on with a slight delay,
-    # to make sure Keymap data we need already exists on Blender launch.
-    # Otherwise, keyconfigs.user.keymaps is an empty list, we can't find fallback ops.
+def register():
     register_unregister_modules(modules, True)
 
-
-def register():
-    if bpy.app.version >= (4, 5, 0):
-        register_unregister_modules(modules, True)
-    else:
-        # NOTE: persistent=True must be set, otherwise this doesn't work when opening a .blend file directly from a file browser.
-        bpy.app.timers.register(delayed_register, first_interval=0.5, persistent=True)
 
 def unregister():
     # We need to save add-on prefs to file before unregistering anything, 
     # otherwise things can fail in various ways, like hard errors or just
     # data getting saved as integers instead of bools or enums.
     from . import prefs
-    addon_prefs = prefs.get_addon_prefs()
-    if addon_prefs:
-        # Disabled auto-saving for now, since sometimes hotkeys fail to load properly, 
-        # and then they get overwritten with that incomplete data.
-        # prefs.update_prefs_on_file()
-        register_unregister_modules(reversed(modules), False)
+    prefs.update_prefs_on_file()
+    register_unregister_modules(reversed(modules), False)

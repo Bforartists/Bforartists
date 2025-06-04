@@ -312,7 +312,6 @@ class CopySelectedPoseConstraints(Operator):
     """Copy Chosen constraints from active to selected"""
     bl_idname = "pose.copy_selected_constraints"
     bl_label = "Copy Selected Constraints"
-    bl_options = {'REGISTER', 'UNDO'}
 
     selection: BoolVectorProperty(
         size=32,
@@ -606,7 +605,6 @@ class CopySelectedObjectConstraints(Operator):
     """Copy Chosen constraints from active to selected"""
     bl_idname = "object.copy_selected_constraints"
     bl_label = "Copy Selected Constraints"
-    bl_options = {'REGISTER', 'UNDO'}
 
     selection: BoolVectorProperty(
         size=32,
@@ -637,7 +635,6 @@ class CopySelectedObjectModifiers(Operator):
     """Copy Chosen modifiers from active to selected"""
     bl_idname = "object.copy_selected_modifiers"
     bl_label = "Copy Selected Modifiers"
-    bl_options = {'REGISTER', 'UNDO'}
 
     selection: BoolVectorProperty(
         size=32,
@@ -710,10 +707,6 @@ class VIEW3D_MT_copypopup(Menu):
         layout.operator("object.copy_selected_constraints", icon="CONSTRAINT_DATA") #BFA - icon added
         layout.operator("object.copy_selected_modifiers", icon="MODIFIER") #BFA - icon added
         layout.operator("object.copy_selected_custom_props", icon="NODE_ATTRIBUTE") #BFA - icon added
-
-        layout.separator()
-        layout.operator("object.copy_light_linking", icons="NODE_LIGHTPATH") #BFA - icon added
-        layout.operator("object.copy_shadow_linking" icon="NODE_LIGHTFALLOFF") #BFA - icon added
 
 
 # Begin Mesh copy settings:
@@ -880,90 +873,6 @@ class MESH_OT_CopyFaceSettings(Operator):
         return(retval)
 
 
-class OBJECT_OT_copy_light_linking(Operator):
-    bl_idname = 'object.copy_light_linking'
-    bl_label = "Copy Light Linking Collection"
-    bl_description = "Copy light linking collection from active object to all selected objects"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        if context.mode == 'OBJECT':
-            if context.active_object:
-                if len(context.selected_objects) >= 2:
-                    obj = context.active_object
-                    if obj.type not in ('GREASEPENCIL', 'ARMATURE', 'LATTICE', 'EMPTY', 'LIGHT_PROBE', 'CAMERA', 'SPEAKER'):
-                        if context.active_object.light_linking.receiver_collection:
-                            return True
-                        else:
-                            cls.poll_message_set("Active object doesn't have light linking collection")
-                            return False
-                    else:
-                        cls.poll_message_set("Active object type doesn't support light linking")
-                        return False
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
-
-    def execute(self, context):
-        source = context.active_object
-        to = context.selected_objects
-
-        for obj in to:
-            if obj.type in ('GREASEPENCIL', 'ARMATURE', 'LATTICE', 'EMPTY', 'LIGHT_PROBE', 'CAMERA', 'SPEAKER'):
-                continue
-            obj.light_linking.receiver_collection = source.light_linking.receiver_collection
-
-        return {'FINISHED'}
-
-
-
-class OBJECT_OT_copy_shadow_linking(Operator):
-    bl_idname = 'object.copy_shadow_linking'
-    bl_label = "Copy Shadow Linking Collection"
-    bl_description = "Copy shadow linking collection from active object to all selected objects"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        if context.mode == 'OBJECT':
-            if context.active_object:
-                if len(context.selected_objects) >= 2:
-                    obj = context.active_object
-                    if obj.type not in ('GREASEPENCIL', 'ARMATURE', 'LATTICE', 'EMPTY', 'LIGHT_PROBE', 'CAMERA', 'SPEAKER'):
-                        if context.active_object.light_linking.blocker_collection:
-                            return True
-                        else:
-                            cls.poll_message_set("Active object doesn't have shadow linking collection")
-                            return False
-                    else:
-                        cls.poll_message_set("Active object type doesn't support shadow linking")
-                        return False
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
-
-    def execute(self, context):
-        source = context.active_object
-        to = context.selected_objects
-
-        for obj in to:
-            if obj.type in ('GREASEPENCIL', 'ARMATURE', 'LATTICE', 'EMPTY', 'LIGHT_PROBE', 'CAMERA', 'SPEAKER'):
-                continue
-            obj.light_linking.blocker_collection = source.light_linking.blocker_collection
-
-        return {'FINISHED'}
-
-
-
-
-
 classes = (
     CopySelectedPoseConstraints,
     CopySelectedBoneCustomProperties,
@@ -976,8 +885,6 @@ classes = (
     MESH_MT_CopyUVCoordsFromLayer,
     MESH_MT_CopyVertexColorsFromLayer,
     MESH_OT_CopyFaceSettings,
-    OBJECT_OT_copy_light_linking,
-    OBJECT_OT_copy_shadow_linking,
     *pose_ops,
     *object_ops,
 )

@@ -443,7 +443,7 @@ Mesh *BKE_subdiv_to_ccg_mesh(Subdiv &subdiv,
   if (!subdiv_ccg) {
     return nullptr;
   }
-  Mesh *result = BKE_mesh_copy_for_eval(coarse_mesh);
+  Mesh *result = BKE_mesh_new_nomain_from_template(&coarse_mesh, 0, 0, 0, 0);
   result->runtime->subdiv_ccg = std::move(subdiv_ccg);
   return result;
 }

@@ -3,13 +3,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-from pathlib import Path
-
 import bpy
 from bpy.types import Menu
+from pathlib import Path
+from .hotkeys import register_hotkey
 from bl_ui.properties_paint_common import BrushAssetShelf
-
-from .op_pie_wrappers import WM_OT_call_menu_pie_drag_only
 
 
 class PIE_MT_sculpt_brush_select(Menu):
@@ -103,7 +101,7 @@ class PIE_MT_sculpt_brush_select_transform(Menu):
         pie = self.layout.menu_pie()
 
         # 4 - LEFT
-        draw_brush_operator(pie, 'Elastic Grab', 'elastic_deform')
+        draw_brush_operator(pie, 'Elastic Deform', 'elastic_deform')
         # 6 - RIGHT
         draw_brush_operator(pie, 'Nudge', 'nudge')
         # 2 - BOTTOM
@@ -137,7 +135,7 @@ class PIE_MT_sculpt_brush_select_volume(Menu):
         # 7 - TOP - LEFT
         draw_brush_operator(pie, 'Clay Strips', 'clay_strips')
         # 9 - TOP - RIGHT
-        draw_brush_operator(pie, 'Crease Polish', 'crease')
+        draw_brush_operator(pie, 'Crease', 'crease')
         # 1 - BOTTOM - LEFT
         draw_brush_operator(pie, 'Clay Thumb', 'clay_thumb')
         # 3 - BOTTOM - RIGHT
@@ -151,13 +149,13 @@ class PIE_MT_sculpt_brush_select_special(Menu):
     def draw(self, context):
         pie = self.layout.menu_pie()
         # 4 - LEFT
-        draw_brush_operator(pie, 'Grab Cloth', 'cloth')
+        draw_brush_operator(pie, 'Cloth', 'cloth')
         # 6 - RIGHT
         draw_brush_operator(pie, 'Erase Multires Displacement', 'displacement_eraser')
         # 2 - BOTTOM
         draw_brush_operator(pie, 'Density', 'simplify')
         # 8 - TOP
-        draw_brush_operator(pie, 'Paint Soft', 'paint')
+        draw_brush_operator(pie, 'Paint', 'paint')
         # 7 - TOP - LEFT
         draw_brush_operator(pie, 'Smear', 'smear')
         # 9 - TOP - RIGHT
@@ -186,7 +184,7 @@ def draw_brush_operator(layout, brush_name: str, brush_icon: str = ""):
         )
         op.asset_library_type = 'ESSENTIALS'
         op.relative_asset_identifier = os.path.join(
-            "brushes", "essentials_brushes-mesh_sculpt.blend", "Brush", brush_name
+            "brushes", "essentials_brushes.blend", "Brush", brush_name
         )
     else:
         # Pre-4.3
@@ -232,11 +230,11 @@ registry = (
 def register():
     create_icons()
 
-    WM_OT_call_menu_pie_drag_only.register_drag_hotkey(
-        keymap_name='Sculpt',
-        pie_name=PIE_MT_sculpt_brush_select.bl_idname,
+    register_hotkey(
+        'wm.call_menu_pie',
+        op_kwargs={'name': 'PIE_MT_sculpt_brush_select'},
         hotkey_kwargs={'type': "W", 'value': "PRESS"},
-        on_drag=False,
+        key_cat="Sculpt",
     )
 
 

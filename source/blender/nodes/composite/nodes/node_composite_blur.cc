@@ -36,7 +36,7 @@ NODE_STORAGE_FUNCS(NodeBlurData)
 static void cmp_node_blur_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Vector>("Size").dimensions(2).default_value({0.0f, 0.0f}).min(0.0f);
+  b.add_input<decl::Vector>("Size").default_value({0.0f, 0.0f, 0.0f}).min(0.0f);
   b.add_input<decl::Bool>("Extend Bounds").default_value(false).compositor_expects_single_value();
   b.add_input<decl::Bool>("Separable")
       .default_value(true)
@@ -344,7 +344,7 @@ class BlurOperation : public NodeOperation {
   /* Loads the input color of the pixel at the given texel. If bounds are extended, then the input
    * is treated as padded by a blur size amount of pixels of zero color, and the given texel is
    * assumed to be in the space of the image after padding. So we offset the texel by the blur
-   * radius amount and fall back to a zero color if it is out of bounds. For instance, if the input
+   * radius amount and fallback to a zero color if it is out of bounds. For instance, if the input
    * is padded by 5 pixels to the left of the image, the first 5 pixels should be out of bounds and
    * thus zero, hence the introduced offset. */
   float4 load_input(const Result &input,

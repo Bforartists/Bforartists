@@ -196,15 +196,24 @@ Camera::~Camera() = default;
 void Camera::compute_auto_viewplane()
 {
   if (camera_type == CAMERA_PANORAMA || camera_type == CAMERA_CUSTOM) {
-    viewplane = BoundBox2D();
+    viewplane.left = 0.0f;
+    viewplane.right = 1.0f;
+    viewplane.bottom = 0.0f;
+    viewplane.top = 1.0f;
   }
   else {
     const float aspect = (float)full_width / (float)full_height;
     if (full_width >= full_height) {
-      viewplane = BoundBox2D(make_float2(aspect, 1.0f));
+      viewplane.left = -aspect;
+      viewplane.right = aspect;
+      viewplane.bottom = -1.0f;
+      viewplane.top = 1.0f;
     }
     else {
-      viewplane = BoundBox2D(make_float2(1.0f, 1.0f / aspect));
+      viewplane.left = -1.0f;
+      viewplane.right = 1.0f;
+      viewplane.bottom = -1.0f / aspect;
+      viewplane.top = 1.0f / aspect;
     }
   }
 }

@@ -16,8 +16,6 @@
 
 #include "BLI_listbase.h"
 #include "BLI_math_vector.hh"
-#include "BLI_noise.hh"
-#include "BLI_rand.hh"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
@@ -35,7 +33,6 @@
 
 #include "BKE_brush.hh"
 #include "BKE_colorband.hh"
-#include "BKE_colortools.hh"
 #include "BKE_context.hh"
 #include "BKE_curves.hh"
 #include "BKE_grease_pencil.hh"
@@ -352,7 +349,7 @@ static bool image_paint_2d_clone_poll(bContext *C)
 /** \name Paint Operator
  * \{ */
 
-bool paint_use_opacity_masking(const Scene *scene, const Paint *paint, const Brush *brush)
+bool paint_use_opacity_masking(Brush *brush)
 {
   return ((brush->flag & BRUSH_AIRBRUSH) || (brush->flag & BRUSH_DRAG_DOT) ||
                   (brush->flag & BRUSH_ANCHORED) ||
@@ -361,7 +358,6 @@ bool paint_use_opacity_masking(const Scene *scene, const Paint *paint, const Bru
                        IMAGE_PAINT_BRUSH_TYPE_SOFTEN) ||
                   (brush->image_brush_type == IMAGE_PAINT_BRUSH_TYPE_FILL) ||
                   (brush->flag & BRUSH_USE_GRADIENT) ||
-                  (BKE_brush_color_jitter_get_settings(scene, paint, brush)) ||
                   (brush->mtex.tex && !ELEM(brush->mtex.brush_map_mode,
                                             MTEX_MAP_MODE_TILED,
                                             MTEX_MAP_MODE_STENCIL,
@@ -373,7 +369,6 @@ bool paint_use_opacity_masking(const Scene *scene, const Paint *paint, const Bru
 void paint_brush_color_get(Scene *scene,
                            const Paint *paint,
                            Brush *br,
-                           blender::float3 &initial_hsv_jitter,
                            bool color_correction,
                            bool invert,
                            float distance,
@@ -385,8 +380,6 @@ void paint_brush_color_get(Scene *scene,
     copy_v3_v3(r_color, BKE_brush_secondary_color_get(scene, paint, br));
   }
   else {
-    const std::optional<BrushColorJitterSettings> color_jitter_settings =
-        BKE_brush_color_jitter_get_settings(scene, paint, br);
     if (br->flag & BRUSH_USE_GRADIENT) {
       float color_gr[4];
       switch (br->gradient_stroke_mode) {
@@ -406,14 +399,6 @@ void paint_brush_color_get(Scene *scene,
       /* Gradient / Color-band colors are not considered #PROP_COLOR_GAMMA.
        * Brush colors are expected to be in sRGB though. */
       IMB_colormanagement_scene_linear_to_srgb_v3(r_color, color_gr);
-    }
-    else if (color_jitter_settings) {
-      copy_v3_v3(r_color,
-                 BKE_paint_randomize_color(*color_jitter_settings,
-                                           initial_hsv_jitter,
-                                           distance,
-                                           pressure,
-                                           BKE_brush_color_get(scene, paint, br)));
     }
     else {
       copy_v3_v3(r_color, BKE_brush_color_get(scene, paint, br));
@@ -784,7 +769,7 @@ static wmOperatorStatus sample_color_modal(bContext *C, wmOperator *op, const wm
         if (!data->sample_palette) {
           data->sample_palette = true;
           sample_color_update_header(data, C);
-          BKE_report(op->reports, RPT_INFO, "Sampling color for palette");
+          BKE_report(op->reports, RPT_INFO, "Sampling color for pallette");
         }
         WM_event_add_notifier(C, NC_BRUSH | NA_EDITED, brush);
       }
@@ -1155,12 +1140,6 @@ static bool texture_paint_poll(bContext *C)
   }
 
   return false;
-}
-
-blender::float3 seed_hsv_jitter()
-{
-  blender::RandomNumberGenerator rng = blender::RandomNumberGenerator::from_random_seed();
-  return blender::float3{rng.get_float(), rng.get_float(), rng.get_float()};
 }
 
 bool image_texture_paint_poll(bContext *C)
