@@ -251,8 +251,17 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   col = &layout->column(false);
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_edit_position"));
-  col->prop(ptr, "use_keep_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  col->prop(ptr, "use_smooth_ends", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row = &col->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_keep_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_keep_shape", 0); /*bfa - decorator*/
+  
+  row = &col->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_smooth_ends", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_smooth_ends", 0); /*bfa - decorator*/
 
   if (uiLayout *influence_panel = layout->panel_prop(
           C, ptr, "open_influence_panel", IFACE_("Influence")))

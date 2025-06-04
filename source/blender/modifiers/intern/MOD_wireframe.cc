@@ -112,48 +112,52 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true);
-  /*------------------- bfa - original props */
+
+  /* bfa - our layout */
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator();  
   row->prop(ptr, "use_boundary", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_boundary", 0); /*bfa - decorator*/
 
+  /* bfa - our layout */
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator();
   row->prop(ptr, "use_replace", UI_ITEM_NONE, IFACE_("Replace Original"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_replace", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
-  /*------------------- bfa - original props */
-
+  /* bfa - our layout */
+  col->separator();
   col->label(TIP_("Thickness"), ICON_NONE);
 
+  /* bfa - our layout */
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  layout->separator();;
+  row->separator();
   row->prop(ptr, "use_even_offset", UI_ITEM_NONE, IFACE_("Even"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
 
+  /* bfa - our layout */
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  layout->separator();;
+  row->separator();
   row->prop(ptr, "use_relative_offset", UI_ITEM_NONE, IFACE_("Relative"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_relative_offset", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
-  // ------------------ bfa new left aligned prop with triangle button to hide the slider
-
+  /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = &layout->split(0.385f, true);
 
-  /* FIRST PART ................................................ */
-  row = &split->row(false);
+  /* bfa - our layout */
+  row = &split->row(true);
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator();
   row->prop(ptr, "use_crease", UI_ITEM_NONE, "Crease Edges", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_crease", 0); /*bfa - decorator*/
 
-  /* SECOND PART ................................................ */
+  /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_crease")) {
     row->prop(ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
@@ -161,19 +165,6 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
-  // ------------------------------- end bfa
-
-  col = &layout->column(true, IFACE_("Thickness"));
-  col->prop(ptr, "use_even_offset", UI_ITEM_NONE, IFACE_("Even"), ICON_NONE);
-  col->prop(ptr, "use_relative_offset", UI_ITEM_NONE, IFACE_("Relative"), ICON_NONE);
-
-  row = &layout->row(true, IFACE_("Crease Edges"));
-  row->prop(ptr, "use_crease", UI_ITEM_NONE, "", ICON_NONE);
-  uiLayout *sub = &row->row(true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_crease"));
-  sub->prop(ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
-
-  layout->prop(ptr, "material_offset", UI_ITEM_NONE, IFACE_("Material Offset"), ICON_NONE);
 
   modifier_error_message_draw(layout, ptr);
 }

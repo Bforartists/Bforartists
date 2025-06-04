@@ -1058,7 +1058,7 @@ static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /*bfa - removed *sub*/
+  uiLayout *row, *col; /* bfa - removed *sub */
   uiLayout *layout = panel->layout;
   const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
@@ -1077,44 +1077,40 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->prop(ptr, "screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  layout->separator();
-  col = &layout->column(false);
+  col->separator(); /* bfa - our layout */
+
   row = &col->row(false);
   row->prop(ptr, "axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
   col->prop(ptr, "object", UI_ITEM_NONE, IFACE_("Axis Object"), ICON_NONE);
 
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &layout->row(true);
+  /* bfa - our layout */
+  col->separator();
+  row = &col->row(true);
   uiLayoutSetActive(row, !RNA_pointer_is_null(&screw_obj_ptr));
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  layout->separator();;
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_object_screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_object_screw_offset", 0); /*bfa - decorator*/
 
-  /* ------------ end bfa */
+  col->separator();
 
-  layout->separator();
-
-  col = &layout->column(true);
-  col->prop(ptr, "steps", UI_ITEM_NONE, IFACE_("Steps Viewport"), ICON_NONE);
+  /* bfa - our layout */
+  row = &col->row(true);
+  row->prop(ptr, "steps", UI_ITEM_NONE, IFACE_("Steps Viewport"), ICON_NONE);
   col->prop(ptr, "render_steps", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
-  layout->separator();
-
-  /*------------------- bfa - original props */
-  // ------------------ bfa new left aligned prop with triangle button to hide the slider
-
+  /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = &layout->split(0.385f, true);
 
-  /* FIRST PART ................................................ */
-  row = &split->row(false);
+  /* bfa - our layout */
+  row = &split->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_merge_vertices", UI_ITEM_NONE, "Merge", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_merge_vertices", 0); /*bfa - decorator*/
 
-  /* SECOND PART ................................................ */
+  /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_merge_vertices")) {
     row->prop(ptr, "merge_threshold", UI_ITEM_NONE, "", ICON_NONE);
@@ -1123,9 +1119,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
 
-  // ------------------------------- end bfa
-
-  layout->separator();
+  col->separator();
 
   row = &layout->row(true, IFACE_("Stretch UVs"));
   row->prop(ptr, "use_stretch_u", toggles_flag, IFACE_("U"), ICON_NONE);
@@ -1136,30 +1130,33 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa, added *row*/
-
+  uiLayout *col, *row; /*bfa - added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  /*------------------- bfa - original props */
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  col->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
-  row = &col->row(true);
 
+  /* bfa - our layout */
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  col->prop(ptr, "use_normal_calculate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_normal_calculate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_normal_calculate", 0); /*bfa - decorator*/
+
+  /* bfa - our layout */
   row = &col->row(true);
-
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  col->prop(ptr, "use_normal_flip", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_normal_flip", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_normal_flip", 0); /*bfa - decorator*/
-
-  /* ------------ end bfa */}
+}
 
 static void panel_register(ARegionType *region_type)
 {
