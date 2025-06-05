@@ -5,8 +5,40 @@
    width="1800"
    version="1.1"
    id="svg1"
+   sodipodi:docname="key_control_filled.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"><sodipodi:namedview pagecolor="#303030" showgrid="true"><inkscape:grid id="grid5" units="px" spacingx="100" spacingy="100" color="#4772b3" opacity="0.2" visible="true" /></sodipodi:namedview>
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     pagecolor="#303030"
+     showgrid="true"
+     id="namedview14544"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#303030"
+     inkscape:zoom="0.42111111"
+     inkscape:cx="901.18734"
+     inkscape:cy="900"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1">
+    <inkscape:grid
+       id="grid5"
+       units="px"
+       spacingx="100"
+       spacingy="100"
+       color="#4772b3"
+       opacity="0.2"
+       visible="true" />
+  </sodipodi:namedview>
   <defs
      id="defs1" />
   <g
@@ -18,7 +50,7 @@
        style="fill:#ffffff" />
     <path
        id="path1-8"
-       style="fill:#ffffff;stroke-width:1.00126;fill-opacity:0.80000001"
+       style="fill:#80ff80;stroke-width:1.00126;fill-opacity:1"
        d="M 446.56445 199.33398 C 308.49367 199.33398 199.34766 309.18287 199.34766 447.81055 L 199.34766 1352.6172 C 199.34766 1491.2448 308.49367 1601.0996 446.56445 1601.0996 L 1353.6152 1601.0996 C 1491.6859 1601.0996 1601.1172 1491.2448 1601.1172 1352.6172 L 1601.1172 447.81055 C 1601.1172 309.18287 1491.6859 199.33398 1353.6152 199.33398 L 446.56445 199.33398 z M 899.84766 600.17188 A 78.941779 81.883008 0 0 1 955.66406 624.14648 L 1376.6465 1060.8145 A 78.933886 81.874821 0 0 1 1376.6465 1176.6035 A 78.933886 81.874821 0 0 1 1265.0176 1176.6035 L 899.84961 797.83008 L 534.6875 1176.6016 A 78.933886 81.874821 0 0 1 423.05859 1176.6016 A 78.933886 81.874821 0 0 1 423.05859 1060.8125 L 844.0332 624.14648 A 78.941779 81.883008 0 0 1 879.41797 602.96094 A 78.941779 81.883008 0 0 1 899.84766 600.17188 z " />
   </g>
 </svg>

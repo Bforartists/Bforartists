@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="1600"
+   height="1600"
+   viewBox="0 0 1600 1600"
+   sodipodi:docname="instance_transform.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#808080"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.5"
+     inkscape:cx="597"
+     inkscape:cy="512"
+     inkscape:window-width="1993"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <g
+     id="INSTANCE_TRANSFORM"
+     style="stroke-width:0.0114286"
+     transform="matrix(100,0,0,100,0,4.9999997e-5)">
+    <path
+       style="fill:none;stroke-width:0.000357143"
+       d="M 10.5,16 H 5 V 15.125 14.25 H 6 7 V 13.5 12.75 H 6 5 V 11.875 11 H 4.125 3.25 V 8 5 H 4.125 5 V 4.125 3.25 h 3 3 V 4.125 5 h 0.875 0.875 v 1 1 h 0.75 0.75 V 6 5 H 15.125 16 v 5.5 5.5 z m -2,-1 H 9 V 12 9 h 3 3 V 8.5 8 H 11.5 8 v 3.5 3.5 z m 2,0 H 11 v -2 -2 h 2 2 V 10.5 10 H 12.5 10 v 2.5 2.5 z m 2,0 H 13 v -1 -1 h 1 1 V 12.5 12 H 13.5 12 V 13.5 15 Z M 0.875,11 H 0 V 8 5 H 0.875 1.75 v 3 3 z M 8,1.75 H 5 V 0.875 0 h 3 3 V 0.875 1.75 Z"
+       id="path855" />
+    <path
+       style="fill:#fefefe;stroke-width:0.000357143"
+       d="M 8.5,15 H 8 V 11.5 8 H 11.5 15 V 8.5 9 H 12 9 v 3 3 z m 2,0 H 10 V 12.5 10 h 2.5 2.5 v 0.5 0.5 h -2 -2 v 2 2 z m 2,0 H 12 V 13.5 12 h 1.5 1.5 v 0.5 0.5 h -1 -1 v 1 1 z"
+       id="path853" />
+    <path
+       style="fill:#c9fcfc;stroke-width:0.000357143"
+       d="M 2.5,15 H 1 V 13.5 12 H 2.5 4 V 13.5 15 Z M 6,14 H 5 V 13.5 13 H 6 7 V 13.5 14 Z M 2.5,11 H 2 V 8 5 H 2.5 3 v 3 3 z m 11,-4 H 13 V 6 5 H 13.5 14 V 6 7 Z M 2.5,4 H 1 V 2.5 1 H 2.5 4 V 2.5 4 Z m 11,0 H 12 V 2.5 1 H 13.5 15 V 2.5 4 Z M 8,3 H 5 V 2.5 2 h 3 3 V 2.5 3 Z"
+       id="path851" />
+    <path
+       style="fill:#323232;stroke-width:0.000357143"
+       d="M 2.5,16 H 0 V 13.5 11 H 0.875 1.75 V 8 5 H 0.875 0 V 2.5 0 H 2.5 5 V 0.875 1.75 h 3 3 V 0.875 0 H 13.5 16 V 2.5 5 H 15.125 14.25 V 6 7 H 14.125 14 V 6 5 H 13.5 13 V 6 7 H 12.875 12.75 V 6 5 H 11.875 11 V 4.125 3.25 H 8 5 V 4.125 5 H 4.125 3.25 v 3 3 H 4.125 5 v 0.875 0.875 H 6 7 V 12.875 13 H 6 5 v 0.5 0.5 h 1 1 v 0.125 0.125 H 6 5 V 15.125 16 Z m 0,-1 H 4 V 13.5 12 H 2.5 1 v 1.5 1.5 z m 0,-4 H 3 V 8 5 H 2.5 2 v 3 3 z m 0,-7 H 4 V 2.5 1 H 2.5 1 V 2.5 4 Z m 11,0 H 15 V 2.5 1 H 13.5 12 V 2.5 4 Z M 8,3 h 3 V 2.5 2 H 8 5 V 2.5 3 Z"
+       id="path849" />
+  </g>
+</svg>
