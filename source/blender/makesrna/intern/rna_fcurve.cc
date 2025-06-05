@@ -40,7 +40,7 @@ const EnumPropertyItem rna_enum_fmodifier_type_items[] = {
      "Generate a curve using standard math functions such as sin and cos"},
     {FMODIFIER_TYPE_ENVELOPE,
      "ENVELOPE",
-     ICON_ENVELOPE_MODIFIER,
+     ICON_MOD_ENVELOPE,
      "Envelope",
      "Reshape F-Curve values, e.g. change amplitude of movements"},
     {FMODIFIER_TYPE_CYCLES,

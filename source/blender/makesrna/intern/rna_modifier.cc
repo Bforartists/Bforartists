@@ -263,12 +263,12 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
      "Grease Pencil subdivide modifier"},
     {eModifierType_GreasePencilEnvelope,
      "GREASE_PENCIL_ENVELOPE",
-     ICON_ENVELOPE_MODIFIER,
+     ICON_MOD_ENVELOPE,
      "Envelope",
      "Create an envelope shape"},
     {eModifierType_GreasePencilOutline,
      "GREASE_PENCIL_OUTLINE",
-     ICON_OUTLINE,
+     ICON_MOD_OUTLINE,
      "Outline",
      "Convert stroke to outline"},
 
@@ -10633,7 +10633,7 @@ static void rna_def_modifier_grease_pencil_envelope(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna, "Grease Pencil Envelope Modifier", "Envelope stroke effect modifier");
   RNA_def_struct_sdna(srna, "GreasePencilEnvelopeModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_NONE);
+  RNA_def_struct_ui_icon(srna, ICON_MOD_ENVELOPE);
 
   rna_def_modifier_grease_pencil_layer_filter(srna);
   rna_def_modifier_grease_pencil_material_filter(
@@ -10697,7 +10697,7 @@ static void rna_def_modifier_grease_pencil_outline(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "GreasePencilOutlineModifier", "Modifier");
   RNA_def_struct_ui_text(srna, "Outline Modifier", "Outline of Strokes modifier from camera view");
   RNA_def_struct_sdna(srna, "GreasePencilOutlineModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_NONE);
+  RNA_def_struct_ui_icon(srna, ICON_MOD_OUTLINE);
 
   rna_def_modifier_grease_pencil_layer_filter(srna);
   rna_def_modifier_grease_pencil_material_filter(

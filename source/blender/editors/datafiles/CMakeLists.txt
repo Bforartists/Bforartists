@@ -603,7 +603,6 @@ if(WITH_BLENDER)
       empty_sphere
       enable
       enhance
-      envelope_modifier
       equalize_handler
       erase
       error
@@ -1068,6 +1067,7 @@ if(WITH_BLENDER)
       mod_displace
       mod_dynamicpaint
       mod_edgesplit
+      mod_envelope
       mod_equalizer
       mod_explode
       mod_fluid
@@ -1086,6 +1086,7 @@ if(WITH_BLENDER)
       mod_ocean
       mod_offset
       mod_opacity
+      mod_outline
       mod_particle_instance
       mod_particles
       mod_physics
@@ -1350,7 +1351,6 @@ if(WITH_BLENDER)
       origin_to_volume
       orphan_data
       ortho
-      outline
       outliner
       outliner_collection
       outliner_data_armature
