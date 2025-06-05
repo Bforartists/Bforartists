@@ -649,6 +649,11 @@ static void position_viewer_node(const bContext &C,
                                  bNode &viewer_node,
                                  const bNode &node_to_view)
 {
+  /*BFA - Skip auto-positioning of Viewer Node if disabled in preferences*/
+  if (!(U.uiflag & USER_NODE_AUTOPOSITION_VIEWER)) {
+    return;
+  }
+
   ScrArea &area = *CTX_wm_area(&C);
   ARegion &region = *CTX_wm_region(&C);
   ARegion &sidebar = *BKE_area_find_region_type(&area, RGN_TYPE_UI);
