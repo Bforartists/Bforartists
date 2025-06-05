@@ -1137,6 +1137,20 @@ static void draw_node_socket_without_value(uiLayout *layout,
   draw_node_socket_name_editable(layout, sock, text);
 }
 
+/* Menu sockets hide the socket name by default to save space. Some nodes have multiple menu
+ * sockets which requires showing the name anyway to avoid ambiguity. */
+static bool show_menu_socket_name(const bNode *node, const bNodeSocket *sock)
+{
+  BLI_assert(sock->type == SOCK_MENU);
+  if (node->is_type("GeometryNodeMenuSwitch") && sock->index() > 0) {
+    return true;
+  }
+  if (node->is_type("GeometryNodeSwitch")) {
+    return true;
+  }
+  return false;
+}
+
 static void std_node_socket_draw(
     bContext *C, uiLayout *layout, PointerRNA *ptr, PointerRNA *node_ptr, StringRefNull text)
 {
@@ -1313,10 +1327,7 @@ static void std_node_socket_draw(
               break;
             }
           }
-          const char *name = "";
-          if (node->is_type("GeometryNodeMenuSwitch") && sock->index() > 0) {
-            name = sock->name;
-          }
+          const char *name = show_menu_socket_name(node, sock) ? sock->name : "";
           layout->prop(ptr, "default_value", DEFAULT_FLAGS, name, ICON_NONE);
         }
       }
@@ -1422,16 +1433,11 @@ static void std_node_socket_interface_draw(ID *id,
       break;
     }
     case SOCK_STRING: {
-      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
       col->prop(&ptr, "subtype", DEFAULT_FLAGS, IFACE_("Subtype"), ICON_NONE);
       col->prop(&ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), ICON_NONE);
       break;
     }
-    case SOCK_BOOLEAN: {
-      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
-      col->prop(&ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), 0);
-      break;
-    }
+    case SOCK_BOOLEAN:
     case SOCK_ROTATION:
     case SOCK_RGBA:
     case SOCK_OBJECT:
@@ -1463,7 +1469,6 @@ static void std_node_socket_interface_draw(ID *id,
 
   const bNodeTree *node_tree = reinterpret_cast<const bNodeTree *>(id);
   if (interface_socket->flag & NODE_INTERFACE_SOCKET_INPUT && node_tree->type == NTREE_GEOMETRY) {
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     if (ELEM(type, SOCK_INT, SOCK_VECTOR, SOCK_MATRIX)) {
       col->prop(&ptr, "default_input", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
     }
@@ -1471,7 +1476,6 @@ static void std_node_socket_interface_draw(ID *id,
 
   {
     uiLayout *sub = &col->column(false);
-    uiLayoutSetPropSep(sub, false); /* bfa - use_property_split = False */
     uiLayoutSetActive(sub, interface_socket->default_input == NODE_DEFAULT_INPUT_VALUE);
     sub->prop(&ptr, "hide_value", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
   }
@@ -1483,12 +1487,8 @@ static void std_node_socket_interface_draw(ID *id,
     uiLayout *sub = &col->column(false);
     uiLayoutSetActive(sub, !is_layer_selection_field(*interface_socket));
     sub->prop(&ptr, "hide_in_modifier", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
-    if (nodes::socket_type_supports_fields(type)) {
-      uiLayout *sub_sub = &col->column(false);
-      uiLayoutSetActive(sub_sub,
-                        (interface_socket->default_input == NODE_DEFAULT_INPUT_VALUE) &&
-                            !is_layer_selection_field(*interface_socket));
-      sub_sub->prop(&ptr, "force_non_field", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
+    if (nodes::socket_type_supports_fields(type) || nodes::socket_type_supports_grids(type)) {
+      sub->prop(&ptr, "structure_type", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
     }
   }
 }

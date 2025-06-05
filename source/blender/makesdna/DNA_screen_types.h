@@ -453,7 +453,6 @@ typedef struct ScrArea {
    */
   char butspacetype;
   short butspacetype_subtype;
-  char _pad2[2];
 
   /** Size. */
   short winx, winy;
@@ -462,13 +461,13 @@ typedef struct ScrArea {
   char headertype DNA_DEPRECATED;
   /** Private, for spacetype refresh callback. */
   char do_refresh;
-  int flag; // BFA short to int
+  short flag;
   /**
    * Index of last used region of 'RGN_TYPE_WINDOW'
    * runtime variable, updated by executing operators.
    */
-  int region_active_win;
-  char _pad[4];
+  short region_active_win;
+  char _pad[2];
 
   /** Callbacks for this space type. */
   struct SpaceType *type;
@@ -577,25 +576,6 @@ enum {
   AREA_FLAG_ACTIONZONES_UPDATE = (1 << 8),
   /** For off-screen areas. */
   AREA_FLAG_OFFSCREEN = (1 << 9),
-  // bfa - show hide the editorsmenu
-  HEADER_NO_EDITORTYPEMENU = (1 << 10),
-  // bfa - show hide the File toolbars
-  HEADER_TOOLBAR_FILE = (1 << 11),
-  // bfa - show hide the View toolbars
-  HEADER_TOOLBAR_MESHEDIT = (1 << 12),
-  // bfa - show hide the Primitives toolbars
-  HEADER_TOOLBAR_PRIMITIVES = (1 << 13),
-  // bfa - show hide the Image toolbars
-  HEADER_TOOLBAR_IMAGE = (1 << 14),
-  // bfa - show hide the Tools toolbars
-  HEADER_TOOLBAR_TOOLS = (1 << 15),
-  // bfa - show hide the Animation toolbars
-  HEADER_TOOLBAR_ANIMATION = (1 << 16),
-  /*Other flags see above in the area->flag enum*/
-  // bfa - show hide the Edit toolbars
-  HEADER_TOOLBAR_EDIT = (1 << 17),
-  // bfa - show hide the Misc toolbars
-  HEADER_TOOLBAR_MISC = (1 << 18),
 };
 
 #define AREAGRID 1
@@ -607,23 +587,6 @@ enum {
 enum {
   SCREEN_DEPRECATED = 1,
   SCREEN_COLLAPSE_STATUSBAR = 2,
-  SCREEN_BFA_TOP_BAR = 4, /* BFA Top Toolbar */
-  // bfa - show hide the File topbar
-  HEADER_TOPBAR_FILE = (1 << 5),
-  // bfa - show hide the View topbar
-  HEADER_TOPBAR_MESHEDIT = (1 << 6),
-  // bfa - show hide the Primitives topbar
-  HEADER_TOPBAR_PRIMITIVES = (1 << 7),
-  // bfa - show hide the Image topbar
-  HEADER_TOPBAR_IMAGE = (1 << 8),
-  // bfa - show hide the Tools topbar
-  HEADER_TOPBAR_TOOLS = (1 << 9),
-  // bfa - show hide the Animation topbar
-  HEADER_TOPBAR_ANIMATION = (1 << 10),
-  // bfa - show hide the Edit topbar
-  HEADER_TOPBAR_EDIT = (1 << 11),
-  // bfa - show hide the Misc topbar
-  HEADER_TOPBAR_MISC = (1 << 12),
 };
 
 /** #bScreen.state */
@@ -755,8 +718,7 @@ typedef enum eRegion_Type {
 #define RGN_TYPE_ANY -1
 
 /** Region supports panel tabs (categories). */
-/* bfa - readd tabs to tools area */
-#define RGN_TYPE_HAS_CATEGORY_MASK ((1 << RGN_TYPE_UI) | (1 << RGN_TYPE_TOOLS))
+#define RGN_TYPE_HAS_CATEGORY_MASK (1 << RGN_TYPE_UI)
 
 /** Check for any kind of header region. */
 #define RGN_TYPE_IS_HEADER_ANY(regiontype) \
@@ -861,9 +823,7 @@ typedef struct AssetShelfSettings {
 
   short preview_size;
   short display_flag; /* #AssetShelfSettings_DisplayFlag */
-  short import_method; /* #AssetShelfImportMethod */ // bfa
-  short import_flags;  /* AssetShelfImportFlags */ // bfa
-  // char _pad1[4]; // uses all 4
+  char _pad1[4];
 
 #ifdef __cplusplus
   /* Zero initializes. */
@@ -874,29 +834,6 @@ typedef struct AssetShelfSettings {
   ~AssetShelfSettings();
 #endif
 } AssetShelfSettings;
-
-// bfa start asset shelf
-// See eAssetImportMethod
-typedef enum AssetShelfImportMethod {
-  /** Regular data-block linking. */
-  SHELF_ASSET_IMPORT_LINK = 0,
-  /** Regular data-block appending (basically linking + "Make Local"). */
-  SHELF_ASSET_IMPORT_APPEND = 1,
-  /** Append data-block with the #BLO_LIBLINK_APPEND_LOCAL_ID_REUSE flag enabled. Some typically
-   * heavy data dependencies (e.g. the image data-blocks of a material, the mesh of an object) may
-   * be reused from an earlier append. */
-  SHELF_ASSET_IMPORT_APPEND_REUSE = 2,
-  /** Default: Follow the preference setting for this asset library. */
-  SHELF_ASSET_IMPORT_LINK_OVERRIDE = 3,
-} AssetShelfImportMethod;
-
-// See eFileAssetImportFlags
-typedef enum AssetShelfImportFlags {
-  SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK = (1 << 0),
-  SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND = (1 << 1),
-  SHELF_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN = (1 << 2),
-} AssetShelfImportFlags;
-// bfa end
 
 typedef struct AssetShelf {
   DNA_DEFINE_CXX_METHODS(AssetShelf)

@@ -121,7 +121,7 @@ class DATA_PT_EEVEE_light(DataButtonsPanel, Panel):
 
         col = layout.column()
         if light.type in {'POINT', 'SPOT'}:
-            col.use_property_split = False
+            col.prop(light, "shadow_soft_size", text="Radius")
             col.prop(light, "use_soft_falloff")
         elif light.type == 'SUN':
             col.prop(light, "angle")
@@ -233,7 +233,6 @@ class DATA_PT_EEVEE_light_influence(DataButtonsPanel, Panel):
 class DATA_PT_spot(DataButtonsPanel, Panel):
     bl_label = "Beam Shape"
     bl_parent_id = "DATA_PT_EEVEE_light"
-    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
         'BLENDER_EEVEE_NEXT',
@@ -257,11 +256,7 @@ class DATA_PT_spot(DataButtonsPanel, Panel):
         col.prop(light, "spot_size", text="Size")
         col.prop(light, "spot_blend", text="Blend", slider=True)
 
-        col = layout.column(align = True)
-        row = col.row()
-        row.use_property_split = False
-        row.prop(light, "show_cone")
-        row.prop_decorator(light, "show_cone")
+        col.prop(light, "show_cone")
 
 
 class DATA_PT_light_animation(DataButtonsPanel, PropertiesAnimationMixin, PropertyPanel, Panel):

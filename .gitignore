@@ -1,11 +1,5 @@
 # generic files to ignore
 .*
-# BFA: include .github folder
-!/.github/
-
-# BFA: exclude all contents of the tests folder except CMakeLists.txt
-/tests/*
-!/tests/CMakeLists.txt
 
 # python temp paths
 __pycache__/
@@ -62,9 +56,8 @@ waveletNoiseTile.bin
 /locale/user-config.py
 
 # External repositories.
-# BFA: commented out addons and addons_contrib
-#/scripts/addons/
-#/scripts/addons_contrib/
+/scripts/addons/
+/scripts/addons_contrib/
 /tests/benchmarks/
 
 # Ignore old submodules directories.

@@ -51,9 +51,6 @@
 using blender::Span;
 using blender::Vector;
 
-#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-
 /* utility macros for storing a temp int in the bone (selection flag) */
 #define EBONE_PREV_FLAG_GET(ebone) ((void)0, (ebone)->temp.i)
 #define EBONE_PREV_FLAG_SET(ebone, val) ((ebone)->temp.i = val)
@@ -1387,26 +1384,6 @@ static wmOperatorStatus armature_de_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*bfa - descriptions*/
-static std::string armature_ot_select_all_get_description(bContext * /*C*/,
-                                                          wmOperatorType * /*ot*/,
-                                                          PointerRNA *ptr)
-{
-  /*Select*/
-  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return "Select all bones";
-  }
-  /*Deselect*/
-  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return "Deselect all bones";
-  }
-  /*Invert*/
-  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return "Inverts the current selection";
-  }
-  return "";
-}
-
 void ARMATURE_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1416,7 +1393,6 @@ void ARMATURE_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = armature_de_select_all_exec;
-  ot->get_description = armature_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editarmature;
 
   /* flags */
@@ -1608,18 +1584,17 @@ enum {
   SIMEDBONE_SHAPE,
 };
 
-/*bfa - added icons. see header, includes. UI_interface.h and UI_resources.h*/
 static const EnumPropertyItem prop_similar_types[] = {
-    {SIMEDBONE_CHILDREN, "CHILDREN", ICON_CHILD, "Children", ""},
-    {SIMEDBONE_CHILDREN_IMMEDIATE, "CHILDREN_IMMEDIATE", ICON_CHILD, "Immediate Children", ""},
-    {SIMEDBONE_SIBLINGS, "SIBLINGS", ICON_SIBLINGS, "Siblings", ""},
-    {SIMEDBONE_LENGTH, "LENGTH", ICON_RULER, "Length", ""},
-    {SIMEDBONE_DIRECTION, "DIRECTION", ICON_SWITCH_DIRECTION, "Direction (Y Axis)", ""},
-    {SIMEDBONE_PREFIX, "PREFIX", ICON_PREFIX, "Prefix", ""},
-    {SIMEDBONE_SUFFIX, "SUFFIX", ICON_SUFFIX, "Suffix", ""},
-    {SIMEDBONE_COLLECTION, "BONE_COLLECTION", ICON_BONE_LAYER, "Bone Collection", ""},
-    {SIMEDBONE_COLOR, "COLOR", ICON_COLOR, "Color", ""},
-    {SIMEDBONE_SHAPE, "SHAPE", ICON_SHAPE, "Shape", ""},
+    {SIMEDBONE_CHILDREN, "CHILDREN", 0, "Children", ""},
+    {SIMEDBONE_CHILDREN_IMMEDIATE, "CHILDREN_IMMEDIATE", 0, "Immediate Children", ""},
+    {SIMEDBONE_SIBLINGS, "SIBLINGS", 0, "Siblings", ""},
+    {SIMEDBONE_LENGTH, "LENGTH", 0, "Length", ""},
+    {SIMEDBONE_DIRECTION, "DIRECTION", 0, "Direction (Y Axis)", ""},
+    {SIMEDBONE_PREFIX, "PREFIX", 0, "Prefix", ""},
+    {SIMEDBONE_SUFFIX, "SUFFIX", 0, "Suffix", ""},
+    {SIMEDBONE_COLLECTION, "BONE_COLLECTION", 0, "Bone Collection", ""},
+    {SIMEDBONE_COLOR, "COLOR", 0, "Color", ""},
+    {SIMEDBONE_SHAPE, "SHAPE", 0, "Shape", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2298,7 +2273,7 @@ static wmOperatorStatus armature_shortest_path_pick_invoke(bContext *C,
   ebone_src = arm->act_edbone;
   ebone_dst = ED_armature_pick_ebone(C, event->mval, false, &base_dst);
 
-  /* fallback to object selection */
+  /* fall back to object selection */
   if (ELEM(nullptr, ebone_src, ebone_dst) || (ebone_src == ebone_dst)) {
     return OPERATOR_PASS_THROUGH;
   }

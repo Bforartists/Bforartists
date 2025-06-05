@@ -10,10 +10,6 @@
 #include <cstddef>
 #include <cstring>
 
-// BFA - include <string> and <unordered_map>
-#include <string>
-#include <unordered_map>
-
 #include "MEM_guardedalloc.h"
 
 #include "DNA_anim_types.h"
@@ -457,34 +453,6 @@ static wmOperatorStatus keyingset_active_menu_exec(bContext *C, wmOperator *op)
 }
 
 /* Build the enum for all keyingsets except the active keyingset. */
-
-/* bfa - set builtin keyingset enum items icons */
-std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
-    {"Available", ICON_DECORATE_KEYFRAME},
-    {"Location", ICON_TRANSFORM_MOVE},
-    {"Rotation", ICON_TRANSFORM_ROTATE},
-    {"Scaling", ICON_TRANSFORM_SCALE},
-    {"BUILTIN_KSI_LocRot", ICON_LOC_ROT},
-    {"LocRotScale", ICON_LOC_ROT_SCALE},
-    {"LocRotScaleCProp", ICON_LOC_ROT_SCALE_CUSTOM},
-    {"BUILTIN_KSI_LocScale", ICON_LOC_SCALE},
-    {"BUILTIN_KSI_RotScale", ICON_ROT_SCALE},
-    {"BUILTIN_KSI_DeltaLocation", ICON_APPLYMOVEDELTA},
-    {"BUILTIN_KSI_DeltaRotation", ICON_APPLYROTATEDELTA},
-    {"BUILTIN_KSI_DeltaScale", ICON_APPLYSCALEDELTA},
-    {"BUILTIN_KSI_VisualLoc", ICON_VISUAL_MOVE},
-    {"BUILTIN_KSI_VisualRot", ICON_VISUAL_ROTATE},
-    {"BUILTIN_KSI_VisualScaling", ICON_VISUAL_SCALE},
-    {"BUILTIN_KSI_VisualLocRot", ICON_VISUAL_LOC_ROT},
-    {"BUILTIN_KSI_VisualLocRotScale", ICON_VISUAL_LOC_ROT_SCALE},
-    {"BUILTIN_KSI_VisualLocScale", ICON_VISUAL_LOC_SCALE},
-    {"BUILTIN_KSI_VisualRotScale", ICON_VISUAL_ROT_SCALE},
-    {"BUILTIN_KSI_BendyBones", ICON_BONE_DATA},
-    {"WholeCharacter", ICON_ARMATURE_DATA},
-    {"WholeCharacterSelected", ICON_MOD_ARMATURE_SELECTED},
-};
-/* endbfa */
-
 static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *totitem, bool *r_free)
 {
   /* user-defined Keying Sets
@@ -504,7 +472,6 @@ static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *toti
         item_tmp.name = keyingset->name;
         item_tmp.description = keyingset->description;
         item_tmp.value = enum_index;
-        item_tmp.icon = ICON_KEYINGSET;
         RNA_enum_item_add(item, totitem, &item_tmp);
       }
     }
@@ -523,14 +490,6 @@ static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *toti
       item_tmp.name = keyingset->name;
       item_tmp.description = keyingset->description;
       item_tmp.value = enum_index;
-      /* bfa start */
-      if (auto it = ks_icons_map.find(keyingset->idname); it != ks_icons_map.end()) {
-        item_tmp.icon = it->second;
-      }
-      else {
-        item_tmp.icon = ICON_NONE;
-      }
-      /* bfa end */
       RNA_enum_item_add(item, totitem, &item_tmp);
     }
   }
@@ -559,7 +518,6 @@ static const EnumPropertyItem *keyingset_set_active_enum_itemf(bContext *C,
     item_tmp.identifier = "__ACTIVE__";
     item_tmp.name = "Clear Active Keying Set";
     item_tmp.value = 0;
-    item_tmp.icon = ICON_CLEAN_CHANNELS;
     RNA_enum_item_add(&item, &totitem, &item_tmp);
 
     RNA_enum_item_add_separator(&item, &totitem);

@@ -57,7 +57,6 @@ struct SpaceNode;
 struct SpaceOutliner;
 struct SpaceProperties;
 struct SpaceSeq;
-struct SpaceToolbar;
 struct SpaceSpreadsheet;
 struct SpaceText;
 struct SpaceTopBar;
@@ -222,7 +221,6 @@ SpaceInfo *CTX_wm_space_info(const bContext *C);
 SpaceUserPref *CTX_wm_space_userpref(const bContext *C);
 SpaceClip *CTX_wm_space_clip(const bContext *C);
 SpaceTopBar *CTX_wm_space_topbar(const bContext *C);
-SpaceToolbar *CTX_wm_space_toolbar(const bContext *C);  // bfa - toolbar editor
 SpaceSpreadsheet *CTX_wm_space_spreadsheet(const bContext *C);
 
 void CTX_wm_manager_set(bContext *C, wmWindowManager *wm);
@@ -371,7 +369,7 @@ Scene *CTX_data_scene(const bContext *C);
  * but not the scene_collection. In this case what to do?
  *
  * If the scene_collection is linked to the #ViewLayer we use it.
- * Otherwise we fallback to the active one of the #ViewLayer.
+ * Otherwise we fall back to the active one of the #ViewLayer.
  */
 LayerCollection *CTX_data_layer_collection(const bContext *C);
 Collection *CTX_data_collection(const bContext *C);

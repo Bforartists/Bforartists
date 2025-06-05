@@ -15,6 +15,7 @@
 #include "BKE_movieclip.h"
 #include "BKE_tracking.h"
 
+#include "ED_anim_api.hh"
 #include "ED_clip.hh"
 
 #include "GPU_immediate.hh"
@@ -208,8 +209,7 @@ static void draw_frame_curves(SpaceClip *sc, uint pos)
   /* Indicates whether immBegin() was called. */
   bool is_lines_segment_open = false;
 
-  /*bfa - motion tracking. changed the show frames color from dark blue to turquise*/
-  immUniformColor3f(0.0f, 1.0f, 1.0f);
+  immUniformColor3f(0.0f, 0.0f, 1.0f);
 
   for (int i = 0; i < reconstruction->camnr; i++) {
     MovieReconstructedCamera *camera = &reconstruction->cameras[i];
@@ -271,6 +271,8 @@ void clip_draw_graph(SpaceClip *sc, ARegion *region, Scene *scene)
     immUnbindProgram();
   }
 
-  /* frame range */
-  clip_draw_sfra_efra(v2d, scene);
+  /* Frame and preview range. */
+  UI_view2d_view_ortho(v2d);
+  ANIM_draw_framerange(scene, v2d);
+  ANIM_draw_previewrange(scene, v2d, 0);
 }

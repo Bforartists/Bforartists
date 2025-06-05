@@ -1,75 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
-   version="1.1"
    id="svg2"
-   width="1600"
-   height="1600"
-   viewBox="0 0 1600 1600"
-   sodipodi:docname="collapsemenu.svg"
-   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   height="1100"
+   viewBox="0 0 1400 1100"
+   width="1400"
+   version="1.1"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <metadata
-     id="metadata8">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
+   xmlns:svg="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"><sodipodi:namedview pagecolor="#303030" showgrid="true"><inkscape:grid id="grid5" units="px" spacingx="100" spacingy="100" color="#4772b3" opacity="0.2" visible="true" /></sodipodi:namedview>
   <defs
-     id="defs6" />
-  <sodipodi:namedview
-     pagecolor="#808080"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1993"
-     inkscape:window-height="1009"
-     id="namedview4"
-     showgrid="false"
-     inkscape:zoom="0.25"
-     inkscape:cx="718"
-     inkscape:cy="808"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="COLLAPSEMENU"
-     inkscape:showpageshadow="0"
-     inkscape:pagecheckerboard="true"
-     inkscape:deskcolor="#d1d1d1" />
+     id="defs1" />
   <g
-     id="COLLAPSEMENU"
-     transform="matrix(100,0,0,100,0,4.9999997e-5)"
-     style="stroke-width:0.0114286">
+     id="g1">
     <path
-       style="fill:none;stroke-width:0.000357143"
-       d="M 0,8 V 0 h 8 8 v 8 8 H 8 0 Z m 14,4.5 V 11 H 8 2 v 1.5 1.5 h 6 6 z m 0,-4 V 7 H 8 2 V 8.5 10 h 6 6 z m 0,-4 V 3 H 8 2 V 4.5 6 h 6 6 z"
-       id="path823"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#fefefe;stroke-width:0.000357143"
-       d="m 2.5,12.5 v -1 H 8 13.5 v 1 1 H 8 2.5 Z m 0,-4 v -1 H 8 13.5 v 1 1 H 8 2.5 Z m 0,-4 v -1 H 8 13.5 v 1 1 H 8 2.5 Z"
-       id="path821"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#000000;stroke-width:0.000357143"
-       d="M 2,12.5 V 11 h 6 6 V 12.5 14 H 8 2 Z m 11.5,0 v -1 H 8 2.5 v 1 1 H 8 13.5 Z M 2,8.5 V 7 h 6 6 V 8.5 10 H 8 2 Z m 11.5,0 v -1 H 8 2.5 v 1 1 H 8 13.5 Z M 2,4.5 V 3 h 6 6 V 4.5 6 H 8 2 Z m 11.5,0 v -1 H 8 2.5 v 1 1 H 8 13.5 Z"
-       id="path819"
-       inkscape:connector-curvature="0" />
+       id="path2"
+       d="m-280.46073 1453.9904c-.6573.01-.6573.9907 0 1h10.95009c.6573-.01.6573-.9907 0-1zm0 4.0102c-.6573.01-.6573.9907 0 1h10.95009c.6573-.01.6573-.9907 0-1zm0 3.979c-.6573.01-.6573.99 0 1h10.95009c.6573-.01.6573-.99 0-1z"
+       fill="#fff"
+       opacity=".7"
+       transform="matrix(100 0 0 100 28200.723 -145300.13)" />
   </g>
 </svg>

@@ -865,13 +865,16 @@ int calculate_evaluated_num(
 int knots_num(int points_num, int8_t order, bool cyclic);
 
 /**
- * Copies custom knots into given `MutableSpan`.
+ * Depending on KnotsMode calculates knots or copies custom knots into given `MutableSpan`.
  * Adds `order - 1` length tail for cyclic curves.
  */
-void copy_custom_knots(const int8_t order,
-                       const bool cyclic,
-                       Span<float> custom_knots,
-                       MutableSpan<float> knots);
+void load_curve_knots(KnotsMode mode,
+                      int points_num,
+                      int8_t order,
+                      bool cyclic,
+                      IndexRange curve_knots,
+                      Span<float> custom_knots,
+                      MutableSpan<float> knots);
 
 /**
  * Calculate the knots for a curve given its properties, based on built-in standards defined by
@@ -883,6 +886,16 @@ void copy_custom_knots(const int8_t order,
  */
 void calculate_knots(
     int points_num, KnotsMode mode, int8_t order, bool cyclic, MutableSpan<float> knots);
+
+/**
+ * Compute the number of occurrences of each unique knot value (so knot multiplicity),
+ * forming a sequence for which: `sum(multiplicity) == knots.size()`.
+ *
+ * Example:
+ * Knots: [0, 0, 0, 0.1, 0.3, 0.4, 0.4, 0.4]
+ * Result: [3, 1, 1, 3]
+ */
+Vector<int> calculate_multiplicity_sequence(Span<float> knots);
 
 /**
  * Based on the knots, the order, and other properties of a NURBS curve, calculate a cache that can

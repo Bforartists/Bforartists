@@ -59,7 +59,6 @@ void sequencer_operatortypes()
 
   WM_operatortype_append(SEQUENCER_OT_rebuild_proxy);
   WM_operatortype_append(SEQUENCER_OT_enable_proxies);
-  WM_operatortype_append(SEQUENCER_OT_change_effect_input);
   WM_operatortype_append(SEQUENCER_OT_change_effect_type);
   WM_operatortype_append(SEQUENCER_OT_change_path);
   WM_operatortype_append(SEQUENCER_OT_change_scene);
@@ -72,8 +71,6 @@ void sequencer_operatortypes()
   WM_operatortype_append(SEQUENCER_OT_cursor_set);
   WM_operatortype_append(SEQUENCER_OT_scene_frame_range_update);
 
-  WM_operatortype_append(SEQUENCER_OT_remove_scene_override); /*BFA - 3D Sequencer*/
-  
   /* `sequencer_retiming.cc` */
   WM_operatortype_append(SEQUENCER_OT_retiming_reset);
   WM_operatortype_append(SEQUENCER_OT_retiming_show);

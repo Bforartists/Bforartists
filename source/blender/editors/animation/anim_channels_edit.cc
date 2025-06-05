@@ -54,7 +54,6 @@
 
 #include "UI_interface.hh"
 #include "UI_view2d.hh"
-#include "UI_resources.hh" /* BFA - needed for icons in the grouped enum */
 
 #include "ED_armature.hh"
 #include "ED_keyframes_edit.hh" /* XXX move the select modes out of there! */
@@ -1115,10 +1114,10 @@ enum eRearrangeAnimChan_Mode {
 
 /* defines for rearranging channels */
 static const EnumPropertyItem prop_animchannel_rearrange_types[] = {
-    {REARRANGE_ANIMCHAN_TOP, "TOP", ICON_MOVE_TO_TOP, "To Top", ""},
-    {REARRANGE_ANIMCHAN_UP, "UP", ICON_MOVE_UP, "Up", ""},
-    {REARRANGE_ANIMCHAN_DOWN, "DOWN", ICON_MOVE_DOWN, "Down", ""},
-    {REARRANGE_ANIMCHAN_BOTTOM, "BOTTOM", ICON_MOVE_TO_BOTTOM, "To Bottom", ""},
+    {REARRANGE_ANIMCHAN_TOP, "TOP", 0, "To Top", ""},
+    {REARRANGE_ANIMCHAN_UP, "UP", 0, "Up", ""},
+    {REARRANGE_ANIMCHAN_DOWN, "DOWN", 0, "Down", ""},
+    {REARRANGE_ANIMCHAN_BOTTOM, "BOTTOM", 0, "To Bottom", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -3534,7 +3533,7 @@ static void ANIM_OT_channels_clean_empty(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove Empty Animation Data";
   ot->idname = "ANIM_OT_channels_clean_empty";
-  ot->description = "Delete all empty animation data containers from visible data";
+  ot->description = "Delete all empty animation data containers from visible data-blocks";
 
   /* API callbacks. */
   ot->exec = animchannels_clean_empty_exec;
@@ -4613,7 +4612,7 @@ static int click_select_channel_grease_pencil_layer(bContext *C,
   if (layer->is_selected() && (selectmode != SELECT_EXTEND_RANGE)) {
     grease_pencil->set_active_layer(layer);
     WM_msg_publish_rna_prop(
-        CTX_wm_message_bus(C), &grease_pencil->id, &grease_pencil, GreasePencilv3Layers, active);
+        CTX_wm_message_bus(C), &grease_pencil->id, grease_pencil, GreasePencilv3Layers, active);
     DEG_id_tag_update(&grease_pencil->id, ID_RECALC_GEOMETRY);
   }
 
@@ -5097,7 +5096,7 @@ static void ANIM_OT_channels_view_selected(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Frame Selected Channels";
   ot->idname = "ANIM_OT_channels_view_selected";
-  ot->description = "Zooms in or out to fit the display of the selected channels";
+  ot->description = "Reset viewable area to show the selected channels";
 
   /* API callbacks */
   ot->exec = graphkeys_view_selected_channels_exec;
@@ -5183,7 +5182,7 @@ static void ANIM_OT_channel_view_pick(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Frame Channel Under Cursor";
   ot->idname = "ANIM_OT_channel_view_pick";
-  ot->description = "Zooms in or out to fit the display to show the channel under the cursor";
+  ot->description = "Reset viewable area to show the channel under the cursor";
 
   /* API callbacks */
   ot->invoke = graphkeys_channel_view_pick_invoke;

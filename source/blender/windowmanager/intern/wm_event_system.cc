@@ -509,30 +509,6 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
     Scene *scene = WM_window_get_active_scene(win);
     ViewLayer *view_layer = WM_window_get_active_view_layer(win);
     Main *bmain = CTX_data_main(C);
-/*############## BFA - 3D Sequencer ##############*/
-    bScreen *screen = WM_window_get_active_screen(win);
-    /* Find overridden scenes in this window and ensure they have a depsgraph. */
-    ED_screen_areas_iter (win, screen, area) {
-      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
-        if (space->spacetype == SPACE_SEQ) {
-          SpaceSeq *seq = (SpaceSeq *)space;
-          if (seq->scene_override) {
-            Scene *scene_override = seq->scene_override;
-            /* For now we will always use the first (default) view_layer in the overridden scene */
-            ViewLayer *view_layer_override = static_cast<ViewLayer *>(
-                scene_override->view_layers.first);
-            Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
-                bmain, scene_override, view_layer_override);
-            if (is_after_open_file) {
-              DEG_graph_relations_update(depsgraph);
-              DEG_tag_on_visible_update(bmain, depsgraph);
-            }
-            BKE_scene_graph_update_tagged(depsgraph, bmain);
-          }
-        }
-      }
-    }
-/*############## BFA - 3D Sequencer END##############*/
     /* Copied to set's in #scene_update_tagged_recursive(). */
     scene->customdata_mask = win_combine_v3d_datamask;
     /* XXX, hack so operators can enforce data-masks #26482, GPU render. */
@@ -2832,7 +2808,7 @@ static eHandlerActionFlag wm_handler_fileselect_do(bContext *C,
       };
 
       if (ScrArea *area = ED_screen_temp_space_open(C,
-                                                    IFACE_("Bforartists File View"),
+                                                    IFACE_("Blender File View"),
                                                     &window_rect,
                                                     SPACE_FILE,
                                                     U.filebrowser_display_type,
@@ -3223,9 +3199,31 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
                                                        wmWindowManager *wm,
                                                        wmEventHandler_Gizmo *handler,
                                                        wmEvent *event,
+                                                       const bool always_pass,
                                                        ListBase *handlers,
                                                        const bool do_debug_handler)
 {
+  eHandlerActionFlag action = WM_HANDLER_CONTINUE;
+
+  /* NOTE(@ideasman42): early exit for always-pass events (typically timers)
+   * which pass through from running modal operators which may have started them.
+   * In the case of blocking modal operators, it's not expected that gizmos would
+   * be used at the same time as navigating or painting for example.
+   *
+   * In principle these could be handled, however in practice:
+   * `handle_highlight` & `handle_keymap` would be set to false for timers,
+   * making this function do practically nothing.
+   *
+   * Early exit to avoid complicating checks below.
+   * The early return can be replaced with checks that only run
+   * necessary logic if these events need to be handled in the future.
+   *
+   * Without this, gizmos can become highlighted and the cursor changed
+   * while navigating in the 3D viewport, see: #139681. */
+  if (always_pass) {
+    return action;
+  }
+
   /* Drag events use the previous click location to highlight the gizmos,
    * Get the highlight again in case the user dragged off the gizmo. */
   const bool is_event_drag = (event->val == KM_CLICK_DRAG);
@@ -3235,7 +3233,6 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
    * was initiated over a gizmo. */
   const bool restore_highlight_unless_activated = is_event_drag;
 
-  eHandlerActionFlag action = WM_HANDLER_CONTINUE;
   ScrArea *area = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
   wmGizmoMap *gzmap = handler->gizmo_map;
@@ -3374,7 +3371,7 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
     /* Don't use from now on. */
     gz = nullptr;
 
-    /* Fallback to selected gizmo (when un-handled). */
+    /* Fall back to selected gizmo (when un-handled). */
     if ((action & WM_HANDLER_BREAK) == 0) {
       if (WM_gizmomap_is_any_selected(gzmap)) {
         const ListBase *groups = WM_gizmomap_group_list(gzmap);
@@ -3556,7 +3553,8 @@ static eHandlerActionFlag wm_handlers_do_intern(bContext *C,
       }
       else if (handler_base->type == WM_HANDLER_TYPE_GIZMO) {
         wmEventHandler_Gizmo *handler = (wmEventHandler_Gizmo *)handler_base;
-        action |= wm_handlers_do_gizmo_handler(C, wm, handler, event, handlers, do_debug_handler);
+        action |= wm_handlers_do_gizmo_handler(
+            C, wm, handler, event, always_pass, handlers, do_debug_handler);
       }
       else if (handler_base->type == WM_HANDLER_TYPE_OP) {
         wmEventHandler_Op *handler = (wmEventHandler_Op *)handler_base;
@@ -4412,7 +4410,7 @@ static wmWindow *wm_event_find_fileselect_root_window_from_context(const bContex
     }
   }
 
-  /* Fallback to the first window. */
+  /* Fall back to the first window. */
   const wmWindowManager *wm = CTX_wm_manager(C);
   BLI_assert(!ED_fileselect_handler_area_find_any_with_op(
       static_cast<const wmWindow *>(wm->windows.first)));
@@ -6402,6 +6400,12 @@ void wm_event_add_ghostevent(wmWindowManager *wm,
     case GHOST_kEventImeComposition: {
       event.val = KM_PRESS;
       event.type = WM_IME_COMPOSITE_EVENT;
+
+      /* Update our copy of the ghost custom data. */
+      MEM_delete(win->runtime->ime_data);
+      const wmIMEData *ghost_event_data = static_cast<const wmIMEData *>(customdata);
+      win->runtime->ime_data = MEM_new<wmIMEData>(__func__, *ghost_event_data);
+
       wm_event_add_intern(win, &event);
       break;
     }
@@ -6690,7 +6694,7 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
   {
     return;
   }
-  /* Fallback to window. */
+  /* Fall back to window. */
   if (ELEM(region->regiontype, RGN_TYPE_TOOLS, RGN_TYPE_TOOL_PROPS)) {
     region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
   }

@@ -24,7 +24,7 @@ Blender Convenience Targets
    * ccache:        Use ccache for faster rebuilds.
 
    Note: when passing in multiple targets their order is not important.
-   So for a fast build you can for e.g. run 'make lite ccache ninja'.
+   For example, fo a fast build you can run 'make lite ccache ninja'.
    Note: passing the argument 'BUILD_DIR=path' when calling make will override the default build dir.
    Note: passing the argument 'BUILD_CMAKE_ARGS=args' lets you add cmake arguments.
 
@@ -198,7 +198,7 @@ BLENDER_IS_PYTHON_MODULE:=
 CMAKE_CONFIG_ARGS := $(BUILD_CMAKE_ARGS)
 
 ifndef BUILD_DIR
-	BUILD_DIR:=$(shell dirname "$(BLENDER_DIR)")/bfa_build_$(OS_NCASE)
+	BUILD_DIR:=$(shell dirname "$(BLENDER_DIR)")/build_$(OS_NCASE)
 endif
 
 # Dependencies DIR's
@@ -342,10 +342,10 @@ endif
 # Allow passing in own BLENDER_BIN so developers who don't
 # use the default build path can still use utility helpers.
 ifeq ($(OS), Darwin)
-	BLENDER_BIN?="$(BUILD_DIR)/bin/Bforartists.app/Contents/MacOS/Bforartists"
-	BLENDER_BIN_DIR?="$(BUILD_DIR)/bin/Bforartists.app/Contents/MacOS/Bforartists"
+	BLENDER_BIN?="$(BUILD_DIR)/bin/Blender.app/Contents/MacOS/Blender"
+	BLENDER_BIN_DIR?="$(BUILD_DIR)/bin/Blender.app/Contents/MacOS/Blender"
 else
-	BLENDER_BIN?="$(BUILD_DIR)/bin/bforartists"
+	BLENDER_BIN?="$(BUILD_DIR)/bin/blender"
 	BLENDER_BIN_DIR?="$(BUILD_DIR)/bin"
 endif
 
@@ -390,7 +390,7 @@ endif
 # Build Blender
 all: .FORCE
 	@echo
-	@echo Configuring Bforartists in \"$(BUILD_DIR)\" ...
+	@echo Configuring Blender in \"$(BUILD_DIR)\" ...
 
 #	# if test ! -f $(BUILD_DIR)/CMakeCache.txt ; then \
 #	# 	$(CMAKE_CONFIG); \
@@ -400,14 +400,14 @@ all: .FORCE
 	@$(CMAKE_CONFIG)
 
 	@echo
-	@echo Building Bforartists ...
+	@echo Building Blender ...
 	$(BUILD_COMMAND) -C "$(BUILD_DIR)" -j $(NPROCS) install
 	@echo
 	@echo Edit build configuration with: \"$(BUILD_DIR)/CMakeCache.txt\" run make again to rebuild.
 	@if test -z "$(BLENDER_IS_PYTHON_MODULE)"; then \
-		echo Bforartists successfully built, run from: $(BLENDER_BIN); \
+		echo Blender successfully built, run from: $(BLENDER_BIN); \
 	else \
-		echo Bforartists successfully built as a Python module, \"bpy\" can be imported from: $(BLENDER_BIN_DIR); \
+		echo Blender successfully built as a Python module, \"bpy\" can be imported from: $(BLENDER_BIN_DIR); \
 	fi
 	@echo
 

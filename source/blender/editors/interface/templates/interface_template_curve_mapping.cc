@@ -199,7 +199,7 @@ static uiBlock *curvemap_tools_func(
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_VIEW_RESET, /* BFA - icon */
+                                  ICON_BLANK1,
                                   IFACE_("Reset View"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -220,7 +220,7 @@ static uiBlock *curvemap_tools_func(
       uiBut *but = uiDefIconTextBut(block,
                                     UI_BTYPE_BUT_MENU,
                                     1,
-                                    ICON_EXTRAPOLATION_CONSTANT, /* BFA - icon */
+                                    ICON_BLANK1,
                                     IFACE_("Extend Horizontal"),
                                     0,
                                     yco -= UI_UNIT_Y,
@@ -242,7 +242,7 @@ static uiBlock *curvemap_tools_func(
       uiBut *but = uiDefIconTextBut(block,
                                     UI_BTYPE_BUT_MENU,
                                     1,
-                                    ICON_EXTRAPOLATION_LINEAR, /* BFA - icon */
+                                    ICON_BLANK1,
                                     IFACE_("Extend Extrapolated"),
                                     0,
                                     yco -= UI_UNIT_Y,
@@ -266,7 +266,7 @@ static uiBlock *curvemap_tools_func(
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_RESET, /* BFA - icon */
+                                  ICON_BLANK1,
                                   IFACE_("Reset Curve"),
                                   0,
                                   yco -= UI_UNIT_Y,

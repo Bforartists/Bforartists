@@ -11,7 +11,7 @@
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   if(NOT DEFINED WITH_IN_SOURCE_BUILD)
     message(FATAL_ERROR
-      "CMake generation for Bforartists is not allowed within the source directory!"
+      "CMake generation for blender is not allowed within the source directory!"
       "\n Remove \"${CMAKE_SOURCE_DIR}/CMakeCache.txt\""
       "\n then try again from another directory, e.g.:"
       "\n "
@@ -19,7 +19,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
       "\n cd .."
       "\n mkdir cmake-make"
       "\n cd cmake-make"
-      "\n cmake ../Bforartists"
+      "\n cmake ../blender"
       "\n "
       "\n Alternately define WITH_IN_SOURCE_BUILD to force this option (not recommended!)"
     )
@@ -110,12 +110,11 @@ include(build_files/cmake/macros.cmake)
 
 blender_project_hack_pre()
 
-project(Bforartists)
+project(Blender)
 
 blender_project_hack_post()
 
-# BFA - disable testing to not use the /tests/ folder
-# enable_testing()
+enable_testing()
 
 
 # -----------------------------------------------------------------------------
@@ -186,9 +185,9 @@ if(WIN32)
   add_definitions(
     # This is the app ID used for file registration, given it's used from several modules
     # there really is no nice way to get this information consistent without a global define.
-    -DBLENDER_WIN_APPID="bforartists.${BFORARTISTS_VERSION_MAJOR}.${BFORARTISTS_VERSION_MINOR}"
+    -DBLENDER_WIN_APPID="blender.${BLENDER_VERSION_MAJOR}.${BLENDER_VERSION_MINOR}"
     # This is the name that will be shown in the taskbar and OpenWith windows UI
-    -DBLENDER_WIN_APPID_FRIENDLY_NAME="Bforartists ${BFORARTISTS_VERSION_MAJOR}.${BFORARTISTS_VERSION_MINOR}"
+    -DBLENDER_WIN_APPID_FRIENDLY_NAME="Blender ${BLENDER_VERSION_MAJOR}.${BLENDER_VERSION_MINOR}"
   )
 endif()
 
@@ -203,7 +202,7 @@ endif()
 # Declare Options
 
 # Blender internal features
-option(WITH_BLENDER "Build bforartists (disable to build only Cycles stand-alone)." ON)
+option(WITH_BLENDER "Build blender (disable to build only Cycles stand-alone)." ON)
 mark_as_advanced(WITH_BLENDER)
 
 if(WIN32)
@@ -365,7 +364,7 @@ option(WITH_GHOST_DEBUG "Enable debugging output for the GHOST library" OFF)
 mark_as_advanced(WITH_GHOST_DEBUG)
 
 option(WITH_GHOST_SDL "\
-Enable building Bforartists against SDL for windowing rather than the native APIs"
+Enable building Blender against SDL for windowing rather than the native APIs"
   OFF
 )
 mark_as_advanced(WITH_GHOST_SDL)
@@ -403,7 +402,7 @@ mark_as_advanced(WITH_HEADLESS)
 option(WITH_QUADRIFLOW "Build with quadriflow remesher support" ON)
 
 option(WITH_AUDASPACE "\
-Build with Bforartists's audio library (only disable if you know what you're doing!)"
+Build with blenders audio library (only disable if you know what you're doing!)"
   ON
 )
 option(WITH_SYSTEM_AUDASPACE "\
@@ -577,10 +576,10 @@ Install redistributable runtime, otherwise install into CMAKE_INSTALL_PREFIX"
   )
 endif()
 
-option(WITH_PYTHON_INSTALL "Copy system python into the Bforartists install directory" ON)
+option(WITH_PYTHON_INSTALL "Copy system python into the blender install directory" ON)
 
 option(WITH_INSTALL_COPYRIGHT "\
-Copy the official Bforartists Authors's copyright.txt into the Bforartists install directory"
+Copy the official Blender Authors's copyright.txt into the Blender install directory"
   OFF
 )
 mark_as_advanced(WITH_INSTALL_COPYRIGHT)
@@ -600,11 +599,11 @@ Path to python site-packages or dist-packages containing 'numpy' module"
   mark_as_advanced(PYTHON_NUMPY_INCLUDE_DIRS)
 endif()
 if(WITH_PYTHON_INSTALL)
-  option(WITH_PYTHON_INSTALL_NUMPY "Copy system NumPy into the Bforartists install directory" ON)
+  option(WITH_PYTHON_INSTALL_NUMPY "Copy system NumPy into the blender install directory" ON)
 
   if(UNIX AND NOT APPLE)
     option(WITH_PYTHON_INSTALL_REQUESTS "\
-Copy system requests into the Bforartists install directory"
+Copy system requests into the blender install directory"
       ON
     )
     set(PYTHON_REQUESTS_PATH "" CACHE PATH "\
@@ -613,7 +612,7 @@ Path to python site-packages or dist-packages containing 'requests' module"
     mark_as_advanced(PYTHON_REQUESTS_PATH)
   endif()
 
-  option(WITH_PYTHON_INSTALL_ZSTANDARD "Copy zstandard into the Bforartists install directory" ON)
+  option(WITH_PYTHON_INSTALL_ZSTANDARD "Copy zstandard into the blender install directory" ON)
   set(PYTHON_ZSTANDARD_PATH "" CACHE PATH "\
 Path to python site-packages or dist-packages containing 'zstandard' module"
   )
@@ -741,6 +740,8 @@ This option is only for debugging purposes."
   # https://www.intel.com/content/www/us/en/develop/documentation/oneapi-dpcpp-cpp-compiler-dev-guide-and-reference/top/compilation/ahead-of-time-compilation.html
   # The supported devices can be retrieved from `ocloc` output when running
   # `ocloc compile --help`.
+  # If you have completed optimization work and now want to enable AoT for new Intel devices,
+  # update the optimization status in OneapiDevice::architecture_information.
   set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH dg2 mtl lnl bmg CACHE STRING "\
 oneAPI Intel GPU architectures to build binaries for"
   )
@@ -990,7 +991,7 @@ endif()
 
 option(WITH_STRSIZE_DEBUG "\
 Ensure string operations on fixed size buffers \
-(works well with with \"WITH_COMPILER_ASAN\" & valgrind to detect incorrect buffer size arguments)"
+(works well with \"WITH_COMPILER_ASAN\" & valgrind to detect incorrect buffer size arguments)"
   OFF)
 mark_as_advanced(WITH_STRSIZE_DEBUG)
 
@@ -2737,7 +2738,7 @@ include(build_files/cmake/packaging.cmake)
 
 if(FIRST_RUN)
 
-  set(_config_msg "\nBforartists Configuration\n=====================")
+  set(_config_msg "\nBlender Configuration\n=====================")
 
   function(info_cfg_option
     _setting

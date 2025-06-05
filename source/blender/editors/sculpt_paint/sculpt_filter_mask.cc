@@ -1044,15 +1044,6 @@ void SCULPT_OT_mask_filter(wmOperatorType *ot)
       true,
       "Auto Iteration Count",
       "Use an automatic number of iterations based on the number of vertices of the sculpt");
-
-  /* BFA - use filter_type enum property as label and tooltip source when the operator is expanded
-   * or searched */
-  ot->prop = RNA_def_enum(ot->srna,
-                          "filter_type",
-                          type_items,
-                          int(FilterType::Smooth),
-                          "Filter",
-                          "Filter that is going to be applied to the mask");
 }
 
 }  // namespace blender::ed::sculpt_paint::mask

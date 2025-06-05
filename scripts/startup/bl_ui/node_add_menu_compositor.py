@@ -57,7 +57,7 @@ class NODE_MT_category_compositor_input_scene(Menu):
     def draw(self, context):
         layout = self.layout
         node_add_menu.add_node_type(layout, "CompositorNodeRLayers")
-        node_add_menu.add_node_type_with_subnames(context, layout, "CompositorNodeSceneTime", ["Frame", "Seconds"])
+        node_add_menu.add_node_type_with_outputs(context, layout, "CompositorNodeSceneTime", ["Frame", "Seconds"])
         node_add_menu.add_node_type(layout, "CompositorNodeTime")
 
         node_add_menu.draw_assets_for_catalog(layout, "Input/Scene")
@@ -330,18 +330,6 @@ class NODE_MT_category_compositor_vector(Menu):
         ops.value = "'VECTOR'"
         node_add_menu.add_node_type(layout, "CompositorNodeNormal")
         node_add_menu.add_node_type(layout, "ShaderNodeVectorCurve")
-
-        node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
-
-
-class NODE_MT_category_compositor_LAYOUT(Menu):
-    bl_idname = "NODE_MT_category_compositor_LAYOUT"
-    bl_label = "Layout"
-
-    def draw(self, _context):
-        layout = self.layout
-        node_add_menu.add_node_type(layout, "NodeFrame")
-        node_add_menu.add_node_type(layout, "NodeReroute")
 
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 

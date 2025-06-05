@@ -34,92 +34,6 @@ from bl_ui.properties_data_light import (
 )
 
 
-################################ BFA - Switch between the editors ##########################################
-
-class NODE_OT_switch_editors_to_compositor(bpy.types.Operator):
-    """Switch to the Comppositor Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_compositor"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "Switch to Compositor Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.wm.context_set_enum(
-            data_path="area.ui_type", value="CompositorNodeTree")
-        return {'FINISHED'}
-
-
-class NODE_OT_switch_editors_to_geometry(bpy.types.Operator):
-    """Switch to the Geometry Node Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_geometry"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "Switch to Geometry Node Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.wm.context_set_enum(
-            data_path="area.ui_type", value="GeometryNodeTree")
-        return {'FINISHED'}
-
-
-class NODE_OT_switch_editors_to_shadereditor(bpy.types.Operator):
-    """Switch to the Shader Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_shadereditor"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "Switch to Shader Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.wm.context_set_enum(
-            data_path="area.ui_type", value="ShaderNodeTree")
-        return {'FINISHED'}
-
-
-# The blank buttons, we don't want to switch to the editor in which we are already.
-
-
-class NODE_OT_switch_editors_in_compositor(bpy.types.Operator):
-    """Compositor Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_in_compositor"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "You are in Compositor Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        return {'FINISHED'}
-
-
-class NODE_OT_switch_editors_in_geometry(bpy.types.Operator):
-    """Geometry Node Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_in_geometry"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "You are in Geometry Node Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        return {'FINISHED'}
-
-
-class NODE_OT_switch_editors_in_shadereditor(bpy.types.Operator):
-    """Shader Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_in_shadereditor"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "You are in Shader Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        return {'FINISHED'}
-
-
-############################# END ##################################
-
-
 class NODE_HT_header(Header):
     bl_space_type = 'NODE_EDITOR'
 
@@ -133,20 +47,14 @@ class NODE_HT_header(Header):
         id_from = snode.id_from
         tool_settings = context.tool_settings
         is_compositor = snode.tree_type == 'CompositorNodeTree'
-        not_group = (len(snode.path) > 1) # BFA - don't show up arrow if at top level.
 
-        ALL_MT_editormenu_node.draw_hidden(context, layout) # BFA - show hide the editormenu, editor suffix is needed.
+        layout.template_header()
 
         # Now expanded via the `ui_type`.
         # layout.prop(snode, "tree_type", text="")
 
         display_pin = True
         if snode.tree_type == 'ShaderNodeTree':
-            row = layout.row(align = True)
-            row.operator("wm.switch_editor_to_compositor", text="", icon='NODE_COMPOSITING')
-            row.operator("wm.switch_editor_to_geometry", text="", icon='GEOMETRY_NODES')
-            row.operator("wm.switch_editor_in_shadereditor", text="", icon='SHADER_ACTIVE')
-
             layout.prop(snode, "shader_type", text="")
 
             ob = context.object
@@ -154,13 +62,12 @@ class NODE_HT_header(Header):
                 ob_type = ob.type
 
                 NODE_MT_editor_menus.draw_collapsible(context, layout)
-                ## BFA - moved below to a different solution
-                # # No shader nodes for EEVEE lights.
-                # if snode_id and not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
-                #     row = layout.row()
-                #     row.prop(snode_id, "use_nodes")
 
-                # layout.separator_spacer()
+                if snode_id:
+                    row = layout.row()
+                    row.prop(snode_id, "use_nodes")
+
+                layout.separator_spacer()
 
                 types_that_support_material = {
                     'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD',
@@ -190,9 +97,8 @@ class NODE_HT_header(Header):
                 world = scene.world
 
                 if snode_id:
-                    # BFA
-                    # row = layout.row()
-                    # row.prop(snode_id, "use_nodes")
+                    row = layout.row()
+                    row.prop(snode_id, "use_nodes")
 
                     if world and world.use_eevee_finite_volume:
                         row.operator("world.convert_volume_to_mesh", emboss=False, icon='WORLD', text="Convert Volume")
@@ -209,12 +115,12 @@ class NODE_HT_header(Header):
 
                 if lineset is not None:
                     NODE_MT_editor_menus.draw_collapsible(context, layout)
-					## BFA - moved below to a different solution
-                    #if snode_id:
-                    #    row = layout.row()
-                    #    row.prop(snode_id, "use_nodes")
-					#
-                    #layout.separator_spacer()
+
+                    if snode_id:
+                        row = layout.row()
+                        row.prop(snode_id, "use_nodes")
+
+                    layout.separator_spacer()
 
                     row = layout.row()
                     row.enabled = not snode.pin
@@ -224,11 +130,12 @@ class NODE_HT_header(Header):
             layout.prop(snode, "texture_type", text="")
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
-			## BFA - moved below to a different solution
-            #if snode_id:
-            #    layout.prop(snode_id, "use_nodes")
-			#
-            #layout.separator_spacer()
+
+            if snode_id:
+                layout.prop(snode_id, "use_nodes")
+
+            layout.separator_spacer()
+
             if id_from:
                 if snode.texture_type == 'BRUSH':
                     layout.template_ID(id_from, "texture", new="texture.new")
@@ -236,21 +143,13 @@ class NODE_HT_header(Header):
                     layout.template_ID(id_from, "active_texture", new="texture.new")
 
         elif snode.tree_type == 'CompositorNodeTree':
-			#BFA - Editor Switchers
-            row = layout.row(align = True)
-            row.operator("wm.switch_editor_in_compositor", text="", icon='NODE_COMPOSITING_ACTIVE')
-            row.operator("wm.switch_editor_to_geometry", text="", icon='GEOMETRY_NODES')
-            row.operator("wm.switch_editor_to_shadereditor", text="", icon='NODE_MATERIAL')
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-        elif snode.tree_type == 'GeometryNodeTree':
-			#BFA - Editor Switchers
-            row = layout.row(align = True)
-            row.operator("wm.switch_editor_to_compositor", text="", icon='NODE_COMPOSITING')
-            row.operator("wm.switch_editor_in_geometry", text="", icon='GEOMETRY_NODES_ACTIVE')
-            row.operator("wm.switch_editor_to_shadereditor", text="", icon='NODE_MATERIAL')
+            if snode_id:
+                layout.prop(snode_id, "use_nodes")
 
+        elif snode.tree_type == 'GeometryNodeTree':
             layout.prop(snode, "geometry_nodes_type", text="")
             NODE_MT_editor_menus.draw_collapsible(context, layout)
             layout.separator_spacer()
@@ -282,12 +181,13 @@ class NODE_HT_header(Header):
             # Custom node tree is edited as independent ID block
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-			#layout.separator_spacer() #BFA - removed
+            layout.separator_spacer()
 
             layout.template_ID(snode, "node_tree", new="node.new_node_tree")
 
-        #################### BFA - options at the right ###################################
-
+        # Put pin next to ID block
+        if not is_compositor and display_pin:
+            layout.prop(snode, "pin", text="", emboss=False)
 
         layout.separator_spacer()
 
@@ -295,93 +195,63 @@ class NODE_HT_header(Header):
         if is_compositor:
             layout.prop(snode, "pin", text="", emboss=False)
 
-        # -------------------- BFA - use nodes ---------------------------
-
-        if snode.tree_type == 'ShaderNodeTree':
-
-            if snode.shader_type == 'OBJECT' and ob:
-
-                # No shader nodes for Eevee lights
-                if snode_id and not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
-                    row = layout.row()
-                    row.prop(snode_id, "use_nodes")
-
-            if snode.shader_type == 'WORLD':
-
-                if snode_id:
-                    row = layout.row()
-                    row.prop(snode_id, "use_nodes")
-
-            if snode.shader_type == 'LINESTYLE':
-
-                if lineset is not None:
-
-                    if snode_id:
-                        row = layout.row()
-                        row.prop(snode_id, "use_nodes")
-
-
-        elif snode.tree_type == 'TextureNodeTree':
-
-            if snode_id:
-                layout.prop(snode_id, "use_nodes")
-
-
-        elif snode.tree_type == 'CompositorNodeTree':
-
-            if snode_id:
-                layout.prop(snode_id, "use_nodes")
-
-
-        # ----------------- rest of the options
-
-
-        # Put pin next to ID block
-        if not is_compositor and display_pin:
-            layout.prop(snode, "pin", text="", emboss=False)
-
-        # bfa - don't show up arrow if at top level.
-        if not_group:
+        if len(snode.path) > 1:
             layout.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
-        else:
-            pass
 
         # Backdrop
         if is_compositor:
             row = layout.row(align=True)
             row.prop(snode, "show_backdrop", toggle=True)
+            row.active = snode.node_tree is not None
             sub = row.row(align=True)
-            if snode.show_backdrop:
-                sub.operator("node.backimage_move", text="", icon ='TRANSFORM_MOVE')
-                sub.operator("node.backimage_zoom", text="", icon = "ZOOM_IN").factor = 1.2
-                sub.operator("node.backimage_zoom", text="", icon = "ZOOM_OUT").factor = 1.0 / 1.2
-                sub.operator("node.backimage_fit", text="", icon = "VIEW_FIT")
-                sub.separator()
-                sub.prop(snode, "backdrop_channels", icon_only=True, text="", expand=True)
+            sub.active = snode.show_backdrop
+            sub.prop(snode, "backdrop_channels", icon_only=True, text="")
+
+            # Gizmo toggle and popover.
+            row = layout.row(align=True)
+            row.prop(snode, "show_gizmo", icon='GIZMO', text="")
+            row.active = snode.node_tree is not None
+            sub = row.row(align=True)
+            sub.active = snode.show_gizmo and row.active
+            sub.popover(panel="NODE_PT_gizmo_display", text="")
 
         # Snap
         row = layout.row(align=True)
         row.prop(tool_settings, "use_snap_node", text="")
+        row.active = snode.node_tree is not None
 
         # Overlay toggle & popover
         row = layout.row(align=True)
         row.prop(overlay, "show_overlays", icon='OVERLAY', text="")
         sub = row.row(align=True)
-        sub.active = overlay.show_overlays
+        row.active = snode.node_tree is not None
+        sub.active = overlay.show_overlays and row.active
         sub.popover(panel="NODE_PT_overlay", text="")
 
-# BFA - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_node(Menu):
-    bl_label = ""
+
+class NODE_PT_gizmo_display(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = 'Gizmos'
+    bl_ui_units_x = 8
 
     def draw(self, context):
-        self.draw_menus(self.layout, context)
+        layout = self.layout
+        snode = context.space_data
+        is_compositor = snode.tree_type == 'CompositorNodeTree'
 
-    @staticmethod
-    def draw_menus(layout, context):
+        if not is_compositor:
+            return
 
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
+        col = layout.column()
+        col.label(text="Viewport Gizmos")
+        col.separator()
+
+        col.active = snode.show_gizmo
+        colsub = col.column()
+        colsub.active = snode.node_tree is not None and col.active
+        colsub.prop(snode, "show_gizmo_active_node", text="Active Node")
+
 
 class NODE_MT_editor_menus(Menu):
     bl_idname = "NODE_MT_editor_menus"
@@ -389,8 +259,6 @@ class NODE_MT_editor_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
-
-        layout.menu("SCREEN_MT_user_menu", text = "Quick") #BFA - Quick favourites menu
         layout.menu("NODE_MT_view")
         layout.menu("NODE_MT_select")
         layout.menu("NODE_MT_add")
@@ -408,41 +276,25 @@ class NODE_MT_add(Menu):
 
         layout = self.layout
 
-        #BFA - changed to show in all add menus for discoverability, instead of being conditional to the invoked region by hotkey only.
+        if layout.operator_context == 'EXEC_REGION_WIN':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_add"
+            layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         snode = context.space_data
         if snode.tree_type == 'GeometryNodeTree':
-            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_geometry_node_add_all"
-            layout.separator()
             layout.menu_contents("NODE_MT_geometry_node_add_all")
         elif snode.tree_type == 'CompositorNodeTree':
-            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_compositor_node_add_all"
-            layout.separator()
             layout.menu_contents("NODE_MT_compositor_node_add_all")
         elif snode.tree_type == 'ShaderNodeTree':
-            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_shader_node_add_all"
-            layout.separator()
             layout.menu_contents("NODE_MT_shader_node_add_all")
         elif snode.tree_type == 'TextureNodeTree':
-            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_texture_node_add_all"
-            layout.separator()
             layout.menu_contents("NODE_MT_texture_node_add_all")
         elif nodeitems_utils.has_node_categories(context):
             # Actual node sub-menus are defined by draw functions from node categories.
             nodeitems_utils.draw_node_categories_menu(self, context)
-
-#BFA - expose the pie menus to header
-class NODE_MT_pie_menus(Menu):
-    bl_label = "Pie Menus"
-
-    def draw(self, context):
-        layout = self.layout
-
-        space = context.space_data
-
-        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'NODE_MT_view_pie'
 
 
 class NODE_MT_view(Menu):
@@ -453,87 +305,33 @@ class NODE_MT_view(Menu):
 
         snode = context.space_data
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
-        layout.prop(addon_prefs, "node_show_toolshelf_tabs")
-        layout.prop(snode, "show_region_asset_shelf")
-
-        layout.separator()
-
-        layout.menu("NODE_MT_view_annotations")
-
-        layout.separator()
-
-        # BFA - Expose hotkey only operator
-        if context.space_data.tree_type == 'CompositorNodeTree':
-            layout.menu("NODE_MT_viewer")
-        elif context.space_data.tree_type == 'ShaderNodeTree':
-            layout.operator("node.connect_to_output", text="Link to Output", icon='MATERIAL').run_in_geometry_nodes = False
-        else: # Geometry Nodes
-            layout.operator("node.connect_to_output", text="Link to Output", icon='GROUPOUTPUT').run_in_geometry_nodes = True
-            layout.operator("node.select_link_viewer", text="Link to Viewer", icon='RESTRICT_RENDER_OFF')
 
         layout.separator()
 
         sub = layout.column()
         sub.operator_context = 'EXEC_REGION_WIN'
-        sub.operator("view2d.zoom_in", icon = "ZOOM_IN")
-        sub.operator("view2d.zoom_out", icon = "ZOOM_OUT")
-
-        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
+        sub.operator("view2d.zoom_in")
+        sub.operator("view2d.zoom_out")
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("node.view_selected", icon='VIEW_SELECTED')
-        layout.operator("node.view_all", icon = "VIEWALL" )
+        layout.operator("node.view_selected")
+        layout.operator("node.view_all")
 
         if context.space_data.show_backdrop:
-
             layout.separator()
 
-            layout.operator("node.viewer_border", text = "Set Viewer Region", icon = "RENDERBORDER")
-            layout.operator("node.clear_viewer_border", text = "Clear Viewer Region", icon = "RENDERBORDER_CLEAR")
-			# BFA - these are exposed to header, so these are now redundant
+            layout.operator("node.backimage_move", text="Backdrop Move")
+            layout.operator("node.backimage_zoom", text="Backdrop Zoom In").factor = 1.2
+            layout.operator("node.backimage_zoom", text="Backdrop Zoom Out").factor = 1.0 / 1.2
+            layout.operator("node.backimage_fit", text="Fit Backdrop to Available Space")
 
         layout.separator()
 
-        layout.menu("NODE_MT_pie_menus")
         layout.menu("INFO_MT_area")
-
-# BFA - Menu
-class NODE_MT_viewer(Menu):
-    bl_label = "Viewer"
-
-    def draw(self, context):
-        layout = self.layout
-
-
-        layout.operator("node.select_link_viewer", text="Link to Viewer", icon='RESTRICT_RENDER_OFF')
-
-        layout.operator("node.viewer_shortcut_set", text="Unassign Viewer", icon='AVOID').viewer_index = 0
-
-        layout.separator()
-
-        layout.operator("node.viewer_shortcut_get", text="Viewer 1", icon='EVENT_NDOF_BUTTON_1').viewer_index = 1
-        layout.operator("node.viewer_shortcut_get", text="Viewer 2", icon='EVENT_NDOF_BUTTON_2').viewer_index = 2
-        layout.operator("node.viewer_shortcut_get", text="Viewer 3", icon='EVENT_NDOF_BUTTON_3').viewer_index = 3
-        layout.operator("node.viewer_shortcut_get", text="Viewer 4", icon='EVENT_NDOF_BUTTON_4').viewer_index = 4
-        layout.operator("node.viewer_shortcut_get", text="Viewer 5", icon='EVENT_NDOF_BUTTON_5').viewer_index = 5
-        layout.operator("node.viewer_shortcut_get", text="Viewer 6", icon='EVENT_NDOF_BUTTON_6').viewer_index = 6
-
-        layout.separator()
-
-        layout.operator("node.viewer_shortcut_set", text="Set Viewer 1", icon='EVENT_NDOF_BUTTON_1').viewer_index = 1
-        layout.operator("node.viewer_shortcut_set", text="Set Viewer 2", icon='EVENT_NDOF_BUTTON_2').viewer_index = 2
-        layout.operator("node.viewer_shortcut_set", text="Set Viewer 3", icon='EVENT_NDOF_BUTTON_3').viewer_index = 3
-        layout.operator("node.viewer_shortcut_set", text="Set Viewer 4", icon='EVENT_NDOF_BUTTON_4').viewer_index = 4
-        layout.operator("node.viewer_shortcut_set", text="Set Viewer 5", icon='EVENT_NDOF_BUTTON_5').viewer_index = 5
-        layout.operator("node.viewer_shortcut_set", text="Set Viewer 6", icon='EVENT_NDOF_BUTTON_6').viewer_index = 6
-
 
 
 class NODE_MT_select(Menu):
@@ -542,49 +340,29 @@ class NODE_MT_select(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("NODE_MT_select_legacy")
+        layout.operator("node.select_all", text="All").action = 'SELECT'
+        layout.operator("node.select_all", text="None").action = 'DESELECT'
+        layout.operator("node.select_all", text="Invert").action = 'INVERT'
+
+        layout.separator()
+
+        layout.operator("node.select_box").tweak = False
+        layout.operator("node.select_circle")
         layout.operator_menu_enum("node.select_lasso", "mode")
 
         layout.separator()
-
-        layout.operator("node.select_all",text = "All", icon = 'SELECT_ALL').action = 'SELECT'
-        layout.operator("node.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
-        layout.operator("node.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("node.select_linked_from", text="Linked from")
+        layout.operator("node.select_linked_to", text="Linked to")
 
         layout.separator()
 
-        layout.operator("node.select_linked_from", text = "Linked From", icon = "LINKED")
-        layout.operator("node.select_linked_to", text = "Linked To", icon = "LINKED")
+        layout.operator_menu_enum("node.select_grouped", "type", text="Select Grouped")
+        layout.operator("node.select_same_type_step", text="Activate Same Type Previous").prev = True
+        layout.operator("node.select_same_type_step", text="Activate Same Type Next").prev = False
 
         layout.separator()
 
-        layout.operator("node.select_grouped", text = "Grouped Extend", icon = "GROUP").extend = True
-        layout.operator("node.select_grouped", text = "Grouped", icon = "GROUP").extend = False
-        layout.operator("node.select_same_type_step", text="Activate Same Type Previous", icon = "PREVIOUSACTIVE").prev = True
-        layout.operator("node.select_same_type_step", text="Activate Same Type Next", icon = "NEXTACTIVE").prev = False
-
-        layout.separator()
-
-        layout.operator("node.find_node", icon='VIEWZOOM')
-
-
-class NODE_MT_select_legacy(Menu):
-    bl_label = "Legacy"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("node.select_box", icon = "BORDER_RECT").tweak = False
-        layout.operator("node.select_circle", icon = "CIRCLE_SELECT")
-
-class NODE_MT_node_group_separate(Menu):
-    bl_label = "Separate"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("node.group_separate", text = "Copy", icon = "SEPARATE_COPY").type = 'COPY'
-        layout.operator("node.group_separate", text = "Move", icon = "SEPARATE").type = 'MOVE'
+        layout.operator("node.find_node", text="Find Node...")
 
 
 class NODE_MT_node(Menu):
@@ -596,94 +374,54 @@ class NODE_MT_node(Menu):
         group = snode.edit_tree
         is_compositor = snode.tree_type == 'CompositorNodeTree'
 
-        myvar = layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
-        myvar.release_confirm = True
-        myvar.view2d_edge_pan = True # BFA - wip
-        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
-        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
+        layout.operator("transform.translate").view2d_edge_pan = True
+        layout.operator("transform.rotate")
+        layout.operator("transform.resize")
 
         layout.separator()
         layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
-        row = layout.row()
-        row.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
-
-        layout.separator()
-
         layout.operator_context = 'INVOKE_REGION_WIN'
-        props = layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input", icon = "DUPLICATE")
+        props = layout.operator("node.duplicate_move", icon='DUPLICATE')
         props.NODE_OT_translate_attach.TRANSFORM_OT_translate.view2d_edge_pan = True
-        props = layout.operator("node.duplicate_move", icon = "DUPLICATE")
+        props = layout.operator("node.duplicate_move_linked")
         props.NODE_OT_translate_attach.TRANSFORM_OT_translate.view2d_edge_pan = True
-        props = layout.operator("node.duplicate_move_linked", icon = "DUPLICATE")
-        props.NODE_OT_translate_attach.TRANSFORM_OT_translate.view2d_edge_pan = True
-        
-        layout.separator()
-        layout.operator("node.delete", icon = "DELETE")
-        layout.operator("node.delete_reconnect", icon = "DELETE")
 
         layout.separator()
+        layout.operator("node.delete", icon='X')
+        layout.operator("node.delete_reconnect")
 
-        layout.operator("node.join", text="Join in New Frame", icon = "JOIN")
-        layout.operator("node.detach", text="Remove from Frame", icon = "DELETE")
-        layout.operator("node.parent_set", text = "Frame Make Parent", icon = "PARENT_SET")
+        layout.separator()
+        layout.operator("node.join", text="Join in New Frame")
+        layout.operator("node.detach", text="Remove from Frame")
 
-        layout.separator() #BFA - exposed context menu operator to header
-
-        props = layout.operator("wm.call_panel", text="Rename...", icon = "RENAME")
+        layout.separator()
+        props = layout.operator("wm.call_panel", text="Rename...")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
         layout.separator()
-		## BFA - set to sub-menu
-        layout.menu("NODE_MT_node_links")
+        layout.operator("node.link_make").replace = False
+        layout.operator("node.link_make", text="Make and Replace Links").replace = True
+        layout.operator("node.links_cut")
+        layout.operator("node.links_detach")
+        layout.operator("node.links_mute")
+
+        if not group or group.bl_use_group_interface:
+            layout.separator()
+            layout.operator("node.group_make", icon='NODETREE')
+            layout.operator("node.group_insert", text="Insert Into Group")
+            layout.operator("node.group_edit").exit = False
+            layout.operator("node.group_ungroup")
 
         layout.separator()
-		## BFA - set to sub-menu
-        layout.menu("NODE_MT_node_group_separate")
-
-        layout.separator()
-		## BFA - set majority to sub-menu
         layout.menu("NODE_MT_context_menu_show_hide_menu")
 
         if is_compositor:
-
             layout.separator()
-
             layout.operator("node.read_viewlayers", icon='RENDERLAYERS')
-            layout.operator("node.render_changed", icon='RENDERLAYERS')
 
-
-class NODE_MT_node_links(Menu):
-    bl_label = "Links"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("node.link_make", icon = "LINK_DATA").replace = False
-        layout.operator("node.link_make", text="Make and Replace Links", icon = "LINK_REPLACE").replace = True
-        layout.operator("node.links_cut", text="Cut Links", icon = "CUT_LINKS")
-        layout.operator("node.links_detach", icon = "DETACH_LINKS")
-        layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS_MOVE")
-        layout.operator("node.links_mute", icon = "MUTE_IPO_ON")
-
-
-# BFA - Hidden legacy operators exposed to GUI
-class NODE_MT_view_annotations(Menu):
-    bl_label = "Annotations (Legacy)"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("gpencil.annotate", text="Draw Annotation", icon='PAINT_DRAW',).mode = 'DRAW'
-        layout.operator("gpencil.annotate", text="Draw Line Annotation", icon='PAINT_DRAW').mode = 'DRAW_STRAIGHT'
-        layout.operator("gpencil.annotate", text="Draw Polyline Annotation", icon='PAINT_DRAW').mode = 'DRAW_POLY'
-        layout.operator("gpencil.annotate", text="Erase Annotation", icon='ERASE').mode = 'ERASER'
-
-        layout.separator()
-
-        layout.operator("gpencil.annotation_add", text="Add Annotation Layer", icon='ADD')
-        layout.operator("gpencil.annotation_active_frame_delete", text="Erase Annotation Active Keyframe", icon='DELETE')
 
 class NODE_MT_view_pie(Menu):
     bl_label = "View"
@@ -832,47 +570,50 @@ class NODE_MT_node_color_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        # BFA - Remove "Copy Color" Operator from this context menu 
-        #layout.operator("node.node_copy_color", icon='COPY_ID')
+        layout.operator("node.node_copy_color", icon='COPY_ID')
 
 
 class NODE_MT_context_menu_show_hide_menu(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, context):
-        layout = self.layout
         snode = context.space_data
         is_compositor = snode.tree_type == 'CompositorNodeTree'
 
-        layout.operator("node.hide_toggle", icon = "HIDE_ON")
-        layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
+        layout = self.layout
+
+        layout.operator("node.mute_toggle", text="Mute")
 
         # Node previews are only available in the Compositor.
         if is_compositor:
-            layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
+            layout.operator("node.preview_toggle", text="Node Preview")
+
+        layout.operator("node.options_toggle", text="Node Options")
 
         layout.separator()
 
-        layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
-        layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
-        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
+        layout.operator("node.hide_socket_toggle", text="Unconnected Sockets")
+        layout.operator("node.hide_toggle", text="Collapse")
+        layout.operator("node.collapse_hide_unused_toggle")
+
+
 class NODE_MT_context_menu_select_menu(Menu):
     bl_label = "Select"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("node.select_grouped", text = "Grouped", icon = "GROUP").extend = False
+        layout.operator("node.select_grouped", text="Select Grouped...").extend = False
 
         layout.separator()
 
-        layout.operator("node.select_linked_from", text = "Linked from", icon = "LINKED")
-        layout.operator("node.select_linked_to", text = "Linked to", icon = "LINKED")
+        layout.operator("node.select_linked_from")
+        layout.operator("node.select_linked_to")
 
         layout.separator()
 
-        layout.operator("node.select_same_type_step", text="Activate Same Type Previous", icon = "PREVIOUSACTIVE").prev = True
-        layout.operator("node.select_same_type_step", text="Activate Same Type Next", icon = "NEXTACTIVE").prev = False
+        layout.operator("node.select_same_type_step", text="Activate Same Type Previous").prev = True
+        layout.operator("node.select_same_type_step", text="Activate Same Type Next").prev = False
 
 
 class NODE_MT_context_menu(Menu):
@@ -892,21 +633,21 @@ class NODE_MT_context_menu(Menu):
         # If no nodes are selected.
         if selected_nodes_len == 0:
             layout.operator_context = 'INVOKE_DEFAULT'
-            layout.menu("NODE_MT_add", icon="ADD")
-            layout.operator("node.clipboard_paste", text="Paste", icon="PASTEDOWN")
+            layout.menu("NODE_MT_add", icon='ADD')
+            layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
 
             layout.separator()
 
-            layout.operator("node.find_node", text="Find...", icon="VIEWZOOM")
+            layout.operator("node.find_node", text="Find...", icon='VIEWZOOM')
 
             layout.separator()
 
             if is_geometrynodes:
                 layout.operator_context = 'INVOKE_DEFAULT'
-                layout.operator("node.select", text="Clear Viewer", icon="HIDE_ON").clear_viewer = True
+                layout.operator("node.select", text="Clear Viewer", icon='HIDE_ON').clear_viewer = True
 
-            layout.operator("node.links_cut", icon = 'CUT_LINKS')
-            layout.operator("node.links_mute", icon = 'MUTE_IPO_ON')
+            layout.operator("node.links_cut")
+            layout.operator("node.links_mute")
 
             if is_nested:
                 layout.separator()
@@ -917,50 +658,50 @@ class NODE_MT_context_menu(Menu):
 
         if is_geometrynodes:
             layout.operator_context = 'INVOKE_DEFAULT'
-            layout.operator("node.link_viewer", text="Link to Viewer", icon="HIDE_OFF")
+            layout.operator("node.link_viewer", text="Link to Viewer", icon='HIDE_OFF')
 
             layout.separator()
 
-        layout.operator("node.clipboard_copy", text="Copy", icon="COPYDOWN")
-        layout.operator("node.clipboard_paste", text="Paste", icon="PASTEDOWN")
+        layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("node.duplicate_move", icon = "DUPLICATE")
+        layout.operator("node.duplicate_move", icon='DUPLICATE')
 
         layout.separator()
 
-        layout.operator("node.delete", icon='DELETE')
+        layout.operator("node.delete", icon='X')
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("node.delete_reconnect", icon='DELETE')
+        layout.operator("node.delete_reconnect", text="Dissolve")
 
         if selected_nodes_len > 1:
             layout.separator()
 
-            layout.operator("node.link_make", icon = "LINK_DATA").replace = False
-            layout.operator("node.link_make", text="Make and Replace Links", icon = "LINK_DATA").replace = True
-            layout.operator("node.links_detach", icon = "DETACH_LINKS")
+            layout.operator("node.link_make").replace = False
+            layout.operator("node.link_make", text="Make and Replace Links").replace = True
+            layout.operator("node.links_detach")
 
         layout.separator()
 
         if group and group.bl_use_group_interface:
-	        layout.operator("node.group_make", text="Make Group", icon="NODE_MAKEGROUP")
-	        layout.operator("node.group_insert", text="Insert Into Group", icon = 'NODE_GROUPINSERT')
-	
-	        if active_node and active_node.type == 'GROUP':
-	            layout.operator("node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP").exit = False
-	            layout.operator("node.group_ungroup", text="Ungroup", icon="NODE_UNGROUP")
-	
-	            if is_nested:
-	                layout.operator("node.tree_path_parent", text="Exit Group", icon='FILE_PARENT')
-	
-	            layout.separator()
+            layout.operator("node.group_make", text="Make Group", icon='NODETREE')
+            layout.operator("node.group_insert", text="Insert Into Group")
 
-        layout.operator("node.join", text="Join in New Frame", icon = 'JOIN')
-        layout.operator("node.detach", text="Remove from Frame", icon = 'DELETE')
+            if active_node and active_node.type == 'GROUP':
+                layout.operator("node.group_edit").exit = False
+                layout.operator("node.group_ungroup", text="Ungroup")
+
+            if is_nested:
+                layout.operator("node.tree_path_parent", text="Exit Group", icon='FILE_PARENT')
+
+            layout.separator()
+
+        layout.operator("node.join", text="Join in New Frame")
+        layout.operator("node.detach", text="Remove from Frame")
 
         layout.separator()
 
-        props = layout.operator("wm.call_panel", text="Rename", icon = "RENAME")
+        props = layout.operator("wm.call_panel", text="Rename...")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
@@ -1031,13 +772,8 @@ class NODE_PT_active_node_color(Panel):
         layout.enabled = node.use_custom_color
 
         row = layout.row()
-        
-        subrow = row.row(align=True)
-        subrow.prop(node, "color", text="")
-        subrow.operator("node.node_copy_color", icon='COPY_ID', text="")
-        
-        # BFA - Temporarily disable this menu for as long as it doesn't have operators
-        #row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
+        row.prop(node, "color", text="")
+        row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
 
 
 class NODE_PT_active_node_properties(Panel):
@@ -1121,16 +857,17 @@ class NODE_PT_backdrop(Panel):
         layout.active = snode.show_backdrop
 
         col = layout.column()
-		##BFA - removed as double entry
-		#col.prop(snode, "backdrop_channels", text="Channels")
+
+        col.prop(snode, "backdrop_channels", text="Channels")
         col.prop(snode, "backdrop_zoom", text="Zoom")
 
         col.prop(snode, "backdrop_offset", text="Offset")
-		##BFA - removed as double entry
-        #col.separator()
-		#
-        #col.operator("node.backimage_move", text="Move")
-        #col.operator("node.backimage_fit", text="Fit")
+
+        col.separator()
+
+        col.operator("node.backimage_move", text="Move")
+        col.operator("node.backimage_fit", text="Fit")
+
 
 class NODE_PT_quality(Panel):
     bl_space_type = 'NODE_EDITOR'
@@ -1160,7 +897,6 @@ class NODE_PT_quality(Panel):
             col.prop(rd, "compositor_precision", text="Precision")
 
         col = layout.column()
-        col.use_property_split = False
         col.prop(tree, "use_viewer_border")
 
 
@@ -1222,23 +958,6 @@ class NODE_MT_node_tree_interface_context_menu(Menu):
             layout.operator("node.interface_item_unlink_panel_toggle")
 
 
-class NODE_PT_node_tree_interface_new_input(Panel):
-    '''Add a new Item to the interface list'''
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'HEADER'
-    bl_label = "New Item"
-    bl_ui_units_x = 7
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text="Add new Item")
-
-        layout.operator('node.interface_item_new_input', text='Input ', icon='GROUPINPUT').item_type='INPUT'
-        layout.operator('node.interface_item_new_output', text='Output', icon='GROUPOUTPUT').item_type='OUTPUT'
-        layout.operator('node.interface_item_new_panel', text='Panel', icon='MENU_PANEL').item_type='PANEL'
-        layout.operator('node.interface_item_make_panel_toggle', text='Panel Boolean', icon='CHECKBOX_DEHLT')
-
-
 class NODE_PT_node_tree_interface(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -1265,21 +984,17 @@ class NODE_PT_node_tree_interface(Panel):
         tree = snode.edit_tree
 
         split = layout.row()
+
         split.template_node_tree_interface(tree.interface)
 
         ops_col = split.column(align=True)
-        ops_col.alignment = 'RIGHT'
-        #ops_col.operator_menu_enum("node.interface_item_new", "item_type", icon='ADD', text="") # bfa - keep as reminder. Blender might add more content!
-        ops_col.popover(panel="NODE_PT_node_tree_interface_new_input", text="")
-
-        ops_col.separator()
-        ops_col.operator("node.interface_item_duplicate", text='', icon='DUPLICATE')
+        ops_col.enabled = tree.library is None
+        ops_col.operator_menu_enum("node.interface_item_new", "item_type", icon='ADD', text="")
         ops_col.operator("node.interface_item_remove", icon='REMOVE', text="")
+        ops_col.separator()
+        ops_col.menu("NODE_MT_node_tree_interface_context_menu", icon='DOWNARROW_HLT', text="")
 
         ops_col.separator()
-
-        ops_col.operator("node.interface_item_move", icon='TRIA_UP', text="").direction = "UP" # BFA operator for GUI buttons to re-order
-        ops_col.operator("node.interface_item_move", icon='TRIA_DOWN', text="").direction = "DOWN" # BFA operator for GUI buttons to re-order
 
         active_item = tree.interface.active
         if active_item is not None:
@@ -1303,15 +1018,13 @@ class NODE_PT_node_tree_interface(Panel):
                             layout.prop(active_item, "attribute_domain")
                         layout.prop(active_item, "default_attribute_name")
                 if hasattr(active_item, "draw"):
-                    active_item_col = layout.column()
-                    active_item_col.use_property_split = True
-                    active_item.draw(context, active_item_col)
+                    active_item.draw(context, layout)
 
             if active_item.item_type == 'PANEL':
                 layout.prop(active_item, "description")
-
-                layout.use_property_split = False
                 layout.prop(active_item, "default_closed", text="Closed by Default")
+
+            layout.use_property_split = False
 
 
 class NODE_PT_node_tree_interface_panel_toggle(Panel):
@@ -1345,16 +1058,14 @@ class NODE_PT_node_tree_interface_panel_toggle(Panel):
         active_item = tree.interface.active
         panel_toggle_item = active_item.interface_items[0]
 
-        layout.use_property_split = False # BFA - float left
+        layout.use_property_split = True
         layout.use_property_decorate = False
 
-        # BFA - float left
-        row = layout.row(align=False)
-        row.prop(panel_toggle_item, "default_value", text="Default")
-        row = layout.row(align=False)
-        row.prop(panel_toggle_item, "hide_in_modifier")
-        row = layout.row(align=False)
-        row.prop(panel_toggle_item, "force_non_field")
+        layout.prop(panel_toggle_item, "default_value", text="Default")
+
+        col = layout.column()
+        col.prop(panel_toggle_item, "hide_in_modifier")
+        col.prop(panel_toggle_item, "force_non_field")
 
         layout.use_property_split = False
 
@@ -1363,7 +1074,7 @@ class NODE_PT_node_tree_properties(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Group"
-    bl_label = "Group Properties" # BFA
+    bl_label = "Group"
 
     @classmethod
     def poll(cls, context):
@@ -1381,7 +1092,7 @@ class NODE_PT_node_tree_properties(Panel):
         layout = self.layout
         snode = context.space_data
         group = snode.edit_tree
-        layout.use_property_split = False
+        layout.use_property_split = True
         layout.use_property_decorate = False
 
         layout.prop(group, "name", text="Name")
@@ -1441,90 +1152,19 @@ def node_panel(cls):
 
     return node_cls
 
-## BFA - new view menu for consistency
-class NODE_PT_view(bpy.types.Panel):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Node"
-    bl_label = "View"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        snode = context.space_data
-        return snode.tree_type in ('CompositorNodeTree', 'TextureNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        snode = context.space_data
-
-        # Auto-offset nodes (called "insert_offset" in code)
-        layout.prop(snode, "use_insert_offset")
-
-
-# BFA - asset shelf
-# TODO: Finalize the node asset shelf poll, for now use the current "S_" Shader asset name 
-class NodeAssetShelf:
-    bl_space_type = 'NODE_EDITOR'
-    bl_options = {'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
-
-
-class NODE_AST_composite_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'CompositorNodeTree'
-    
-    @classmethod
-    def asset_poll(cls, asset):
-        if asset.id_type == 'NODETREE' and "Compositor" in asset.metadata.tags:
-            return True
-
-
-class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'GeometryNodeTree'
-        
-    @classmethod
-    def asset_poll(cls, asset):
-        if asset.id_type == 'NODETREE' and "Geometry Nodes" in asset.metadata.tags:
-            return True
-
-
-class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'ShaderNodeTree'
-
-    @classmethod
-    def asset_poll(cls, asset):
-        if asset.id_type == 'NODETREE' and "Shader" in asset.metadata.tags:
-            return True
-
 
 classes = (
-    ALL_MT_editormenu_node,
     NODE_HT_header,
     NODE_MT_editor_menus,
     NODE_MT_add,
-    NODE_MT_pie_menus,
     NODE_MT_view,
-    NODE_MT_viewer, # BFA - Menu
     NODE_MT_select,
-    NODE_MT_select_legacy,
-    NODE_MT_node_group_separate,
     NODE_MT_node,
-    NODE_MT_node_links,
     NODE_MT_node_color_context_menu,
     NODE_MT_context_menu_show_hide_menu,
     NODE_MT_context_menu_select_menu,
     NODE_MT_context_menu,
     NODE_MT_view_pie,
-    NODE_MT_view_annotations,
     NODE_PT_material_slots,
     NODE_PT_geometry_node_tool_object_types,
     NODE_PT_geometry_node_tool_mode,
@@ -1532,7 +1172,6 @@ classes = (
     NODE_PT_node_color_presets,
     NODE_PT_node_tree_properties,
     NODE_MT_node_tree_interface_context_menu,
-    NODE_PT_node_tree_interface_new_input,
     NODE_PT_node_tree_interface,
     NODE_PT_node_tree_interface_panel_toggle,
     NODE_PT_active_node_generic,
@@ -1544,6 +1183,7 @@ classes = (
     NODE_PT_annotation,
     NODE_PT_overlay,
     NODE_PT_active_node_properties,
+    NODE_PT_gizmo_display,
 
     node_panel(EEVEE_NEXT_MATERIAL_PT_settings),
     node_panel(EEVEE_NEXT_MATERIAL_PT_settings_surface),
@@ -1552,19 +1192,6 @@ classes = (
     node_panel(WORLD_PT_viewport_display),
     node_panel(DATA_PT_light),
     node_panel(DATA_PT_EEVEE_light),
-    NODE_PT_view,
-
-    #bfa - toggles
-    NODE_OT_switch_editors_to_compositor,
-    NODE_OT_switch_editors_to_geometry,
-    NODE_OT_switch_editors_to_shadereditor,
-    NODE_OT_switch_editors_in_compositor,
-    NODE_OT_switch_editors_in_geometry,
-    NODE_OT_switch_editors_in_shadereditor,
-    #bfa - assetshelf
-    NODE_AST_composite_node_groups,
-    NODE_AST_geometry_node_groups,
-    NODE_AST_shader_node_groups
 )
 
 

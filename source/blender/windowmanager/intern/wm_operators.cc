@@ -402,7 +402,7 @@ static const char *wm_context_member_from_ptr(bContext *C, const PointerRNA *ptr
         break;
       }
       if (is_id) {
-        /* Found a reference to this ID, so fallback to it if there is no direct reference. */
+        /* Found a reference to this ID, so fall back to it if there is no direct reference. */
         member_id = identifier;
       }
     }
@@ -713,7 +713,7 @@ std::optional<std::string> WM_prop_pystring_assign(bContext *C,
                                        std::nullopt;
 
   if (!lhs.has_value()) {
-    /* Fallback to `bpy.data.foo[id]` if we don't find in the context. */
+    /* Fall back to `bpy.data.foo[id]` if we don't find in the context. */
     if (std::optional<std::string> lhs_str = RNA_path_full_property_py(ptr, prop, index)) {
       lhs = lhs_str;
     }
@@ -1445,8 +1445,7 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *region, void *arg_op)
   layout->separator(0.5f);
 
   uiLayout *col = &layout->column(false);
-  /* BFA - align operator properties to left in redo panel (UI_BUT_LABEL_ALIGN_SPLIT_COLUMN) */
-  uiTemplateOperatorPropertyButs(C, col, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
+  uiTemplateOperatorPropertyButs(C, col, op, UI_BUT_LABEL_ALIGN_NONE, 0);
 
   UI_block_bounds_set_popup(block, 7 * UI_SCALE_FAC, nullptr);
 
@@ -1602,7 +1601,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
   const bool windows_layout = false;
 #endif
 
-  /* Check there are no active default buttons, allowing a dialog to define it's own
+  /* Check there are no active default buttons, allowing a dialog to define its own
    * confirmation buttons which are shown instead of these, see: #124098. */
   if (!UI_block_has_active_default_button(uiLayoutGetBlock(layout))) {
     /* New column so as not to interfere with custom layouts, see: #26436. */
@@ -2117,9 +2116,7 @@ static void WM_OT_search_menu(wmOperatorType *ot)
 {
   ot->name = "Search Menu";
   ot->idname = "WM_OT_search_menu";
-  ot->description =
-      "Search for menu items in current context, means in general or in a specific menu\nIn Add menus, expand the menu and start to type to start the "
-      "search\nIn other menus, expand the menu and press spacebar to start the search";
+  ot->description = "Pop-up a search over all menus in the current context";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -2130,7 +2127,7 @@ static void WM_OT_search_operator(wmOperatorType *ot)
 {
   ot->name = "Search Operator";
   ot->idname = "WM_OT_search_operator";
-  ot->description = "Pop-up Search for all available operators in current context";
+  ot->description = "Pop-up a search over all available operators in current context";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -2141,9 +2138,7 @@ static void WM_OT_search_single_menu(wmOperatorType *ot)
 {
   ot->name = "Search Single Menu";
   ot->idname = "WM_OT_search_single_menu";
-  ot->description =
-      "Search for menu items in this menu\nAlternatively, expand the add menu and start to type to start the "
-      "search";
+  ot->description = "Pop-up a search for a menu in current context";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -2422,9 +2417,9 @@ static wmOperatorStatus wm_exit_blender_invoke(bContext *C,
 
 static void WM_OT_quit_blender(wmOperatorType *ot)
 {
-  ot->name = "Quit Bforartists";
+  ot->name = "Quit Blender";
   ot->idname = "WM_OT_quit_blender";
-  ot->description = "Quit Bforartists";
+  ot->description = "Quit Blender";
 
   ot->invoke = wm_exit_blender_invoke;
   ot->exec = wm_exit_blender_exec;
@@ -3911,10 +3906,10 @@ static wmOperatorStatus previews_ensure_exec(bContext *C, wmOperator * /*op*/)
 
 static void WM_OT_previews_ensure(wmOperatorType *ot)
 {
-  ot->name = "Refresh Data Previews";
+  ot->name = "Refresh Data-Block Previews";
   ot->idname = "WM_OT_previews_ensure";
   ot->description =
-      "Ensure data previews are available and up-to-date "
+      "Ensure data-block previews are available and up-to-date "
       "(to be saved in .blend file, only for some types like materials, textures, etc.)";
 
   ot->exec = previews_ensure_exec;
@@ -4046,10 +4041,10 @@ static wmOperatorStatus previews_clear_exec(bContext *C, wmOperator *op)
 
 static void WM_OT_previews_clear(wmOperatorType *ot)
 {
-  ot->name = "Clear Data Previews";
+  ot->name = "Clear Data-Block Previews";
   ot->idname = "WM_OT_previews_clear";
   ot->description =
-      "Clear data previews (only for some types like objects, materials, textures, etc.)";
+      "Clear data-block previews (only for some types like objects, materials, textures, etc.)";
 
   ot->exec = previews_clear_exec;
   ot->invoke = WM_menu_invoke;
@@ -4058,8 +4053,8 @@ static void WM_OT_previews_clear(wmOperatorType *ot)
                                "id_type",
                                preview_id_type_items,
                                PREVIEW_FILTER_ALL,
-                               "Data Type",
-                               "Which data previews to clear");
+                               "Data-Block Type",
+                               "Which data-block previews to clear");
 }
 
 /** \} */
@@ -4585,33 +4580,6 @@ const EnumPropertyItem *RNA_scene_without_active_itemf(bContext *C,
                       rna_id_enum_filter_single,
                       scene_active);
 }
-/*############## BFA - 3D Sequencer ##############*/
-const EnumPropertyItem *RNA_seq_scene_without_active_itemf(bContext *C,
-                                                           PointerRNA * /*ptr*/,
-                                                           PropertyRNA * /*prop*/,
-                                                           bool *r_free)
-{
-  Scene *scene_active;
-  if (C != nullptr) {
-    SpaceSeq *seq = CTX_wm_space_seq(C);
-    if (seq != nullptr
- && seq->scene_override != nullptr) {
-      scene_active = seq->scene_override;
-    }
-    else {
-      scene_active = CTX_data_scene(C);
-    }
-  }
-  else {
-    scene_active = nullptr;
-  }
-  return rna_id_itemf(r_free,
-                      C ? (ID *)CTX_data_main(C)->scenes.first : nullptr,
-                      false,
-                      rna_id_enum_filter_single,
-                      scene_active);
-}
-/*############## BFA - 3D Sequencer END ##############*/
 const EnumPropertyItem *RNA_movieclip_itemf(bContext *C,
                                             PointerRNA * /*ptr*/,
                                             PropertyRNA * /*prop*/,

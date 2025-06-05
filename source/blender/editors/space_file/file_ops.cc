@@ -1794,31 +1794,31 @@ bool file_draw_check_exists(SpaceFile *sfile)
  * \{ */
 
 static const EnumPropertyItem file_external_operation[] = {
-    {FILE_EXTERNAL_OPERATION_OPEN, "OPEN", ICON_FILE, "Open", "Open the file"},
-    {FILE_EXTERNAL_OPERATION_FOLDER_OPEN, "FOLDER_OPEN", ICON_FILE_FOLDER, "Open Folder", "Open the folder"},
-    {FILE_EXTERNAL_OPERATION_EDIT, "EDIT", ICON_FILE, "Edit", "Edit the file"},
-    {FILE_EXTERNAL_OPERATION_NEW, "NEW", ICON_FILE_NEW, "New", "Create a new file of this type"},
-    {FILE_EXTERNAL_OPERATION_FIND, "FIND", ICON_VIEW_ZOOM, "Find File", "Search for files of this type"},
-    {FILE_EXTERNAL_OPERATION_SHOW, "SHOW", ICON_RESTRICT_VIEW_ON, "Show", "Show this file"},
-    {FILE_EXTERNAL_OPERATION_PLAY, "PLAY", ICON_PLAY, "Play", "Play this file"},
-    {FILE_EXTERNAL_OPERATION_BROWSE, "BROWSE", ICON_FILE_FOLDER, "Browse", "Browse this file"},
-    {FILE_EXTERNAL_OPERATION_PREVIEW, "PREVIEW", ICON_RESTRICT_VIEW_ON, "Preview", "Preview this file"},
-    {FILE_EXTERNAL_OPERATION_PRINT, "PRINT", ICON_OUTPUT, "Print", "Print this file"},
-    {FILE_EXTERNAL_OPERATION_INSTALL, "INSTALL", ICON_IMPORT, "Install", "Install this file"},
-    {FILE_EXTERNAL_OPERATION_RUNAS, "RUNAS", ICON_PLAY, "Run As User", "Run as specific user"},
+    {FILE_EXTERNAL_OPERATION_OPEN, "OPEN", 0, "Open", "Open the file"},
+    {FILE_EXTERNAL_OPERATION_FOLDER_OPEN, "FOLDER_OPEN", 0, "Open Folder", "Open the folder"},
+    {FILE_EXTERNAL_OPERATION_EDIT, "EDIT", 0, "Edit", "Edit the file"},
+    {FILE_EXTERNAL_OPERATION_NEW, "NEW", 0, "New", "Create a new file of this type"},
+    {FILE_EXTERNAL_OPERATION_FIND, "FIND", 0, "Find File", "Search for files of this type"},
+    {FILE_EXTERNAL_OPERATION_SHOW, "SHOW", 0, "Show", "Show this file"},
+    {FILE_EXTERNAL_OPERATION_PLAY, "PLAY", 0, "Play", "Play this file"},
+    {FILE_EXTERNAL_OPERATION_BROWSE, "BROWSE", 0, "Browse", "Browse this file"},
+    {FILE_EXTERNAL_OPERATION_PREVIEW, "PREVIEW", 0, "Preview", "Preview this file"},
+    {FILE_EXTERNAL_OPERATION_PRINT, "PRINT", 0, "Print", "Print this file"},
+    {FILE_EXTERNAL_OPERATION_INSTALL, "INSTALL", 0, "Install", "Install this file"},
+    {FILE_EXTERNAL_OPERATION_RUNAS, "RUNAS", 0, "Run As User", "Run as specific user"},
     {FILE_EXTERNAL_OPERATION_PROPERTIES,
      "PROPERTIES",
-     ICON_PREFERENCES,
+     0,
      "Properties",
      "Show OS Properties for this item"},
     {FILE_EXTERNAL_OPERATION_FOLDER_FIND,
      "FOLDER_FIND",
-     ICON_VIEWZOOM,
+     0,
      "Find in Folder",
      "Search for items in this folder"},
     {FILE_EXTERNAL_OPERATION_FOLDER_CMD,
      "CMD",
-     ICON_CONSOLE,
+     0,
      "Command Prompt Here",
      "Open a command prompt here"},
     {0, nullptr, 0, nullptr, nullptr}};
@@ -1915,18 +1915,8 @@ static void file_os_operations_menu_item(uiLayout *layout,
   const char *title = "";
   RNA_enum_name(file_external_operation, operation, &title);
 
-  /* bfa - draw icons in static const EnumPropertyItem file_external_operation*/
-  int icon = ICON_NONE;
-  if (operation) {
-    RNA_enum_icon_from_value(file_external_operation, operation, &icon);
-  }
-  /*end bfa*/
-  PointerRNA props_ptr = layout->op(    
-                        ot, 
-                        IFACE_(title), 
-                        icon, /*bfa*/
-                        WM_OP_INVOKE_DEFAULT, 
-                        UI_ITEM_NONE);
+  PointerRNA props_ptr = layout->op(
+      ot, IFACE_(title), ICON_NONE, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
   RNA_string_set(&props_ptr, "filepath", path);
   if (operation) {
     RNA_enum_set(&props_ptr, "operation", operation);
@@ -2846,7 +2836,7 @@ static bool can_create_dir_from_user_input(const char dir[FILE_MAX_LIBEXTRA])
    * in the would immediately be created (if possible) which isn't good, see: #128567.
    *
    * The reason to treat user input differently here is the user could input anything,
-   * Values such as a single space for e.g. this resolves to the current-working-directory:
+   * e.g. values such as a single space. This resolves to the current-working-directory:
    * `$PWD/ ` which is a valid path name and could be created
    * (this was in fact the behavior until v4.4).
    *

@@ -59,8 +59,6 @@
 
 #include "view3d_intern.hh"
 
-#include "BLT_translation.hh" /* BFA - needed for CTX_IFACE_ */
-
 using blender::Vector;
 
 static bool snap_curs_to_sel_ex(bContext *C, const int pivot_point, float r_cursor[3]);
@@ -722,26 +720,6 @@ static wmOperatorStatus snap_selected_to_cursor_exec(bContext *C, wmOperator *op
   }
   return OPERATOR_CANCELLED;
 }
-/*bfa - tool name*/
-static std::string view3d_ot_snap_selected_to_cursor_get_name(wmOperatorType *ot, PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "use_offset")) {
-    return CTX_IFACE_(ot->translation_context, "Snap Selection to Cursor(Keep Offset)");
-  }
-  return "";
-}
-
-/*bfa - descriptions*/
-static std::string view3d_ot_snap_selected_to_cursor_get_description(bContext * /*C*/,
-                                                                     wmOperatorType * /*ot*/,
-                                                                     PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "use_offset")) {
-    return "Snap selected item(s) to the 3D cursor\nBut keep the offset of the selected items to "
-           "each other";
-  }
-  return "";
-}
 
 void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)
 {
@@ -752,8 +730,6 @@ void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = snap_selected_to_cursor_exec;
-  ot->get_name = view3d_ot_snap_selected_to_cursor_get_name;               /*bfa - tool name*/
-  ot->get_description = view3d_ot_snap_selected_to_cursor_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_view3d_active;
 
   /* flags */

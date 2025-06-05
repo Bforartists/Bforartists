@@ -52,10 +52,10 @@ int knots_num(const int points_num, const int8_t order, const bool cyclic)
   return points_num + order;
 }
 
-void copy_custom_knots(const int8_t order,
-                       const bool cyclic,
-                       const Span<float> custom_knots,
-                       MutableSpan<float> knots)
+static void copy_custom_knots(const int8_t order,
+                              const bool cyclic,
+                              const Span<float> custom_knots,
+                              MutableSpan<float> knots)
 {
   knots.slice(0, custom_knots.size()).copy_from(custom_knots);
   if (cyclic) {
@@ -110,6 +110,44 @@ void calculate_knots(const int points_num,
   for (const int i : IndexRange(tail)) {
     knots[tail_index + i] = current + (knots[i] - knots[0]);
   }
+}
+
+void load_curve_knots(const KnotsMode mode,
+                      const int points_num,
+                      const int8_t order,
+                      const bool cyclic,
+                      const IndexRange curve_knots,
+                      const Span<float> custom_knots,
+                      MutableSpan<float> knots)
+{
+  if (mode == NURBS_KNOT_MODE_CUSTOM) {
+    BLI_assert(!custom_knots.is_empty());
+    BLI_assert(!curve_knots.is_empty());
+    copy_custom_knots(order, cyclic, custom_knots.slice(curve_knots), knots);
+  }
+  else {
+    calculate_knots(points_num, mode, order, cyclic, knots);
+  }
+}
+
+Vector<int> calculate_multiplicity_sequence(const Span<float> knots)
+{
+  Vector<int> multiplicity;
+  multiplicity.reserve(knots.size());
+
+  int m = 1;
+  for (const int64_t i : knots.index_range().drop_front(1)) {
+    /* Only consider multiplicity for exact matching values. */
+    if (knots[i - 1] == knots[i]) {
+      m++;
+    }
+    else {
+      multiplicity.append(m);
+      m = 1;
+    }
+  }
+  multiplicity.append(m);
+  return multiplicity;
 }
 
 static void calculate_basis_for_point(const float parameter,

@@ -33,7 +33,7 @@ class COLLECTION_PT_collection_flags(CollectionButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = True
         layout.use_property_decorate = False
 
         collection = context.collection
@@ -108,38 +108,21 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
         row = layout.row()
         row.prop(collection, "lineart_usage")
 
-        split = layout.split()
-        col = split.column()
-        col.use_property_split = False
-        col.prop(collection, "lineart_use_intersection_mask", text="Collection Mask")
-        col = split.column()
-        if collection.lineart_use_intersection_mask:
-            col.label(icon='DISCLOSURE_TRI_DOWN')
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        layout.prop(collection, "lineart_use_intersection_mask", text="Collection Mask")
 
-        if collection.lineart_use_intersection_mask:
-            split = layout.split(factor=0.2)
-            split.use_property_split = False
-            col = split.column()
-            row = col.row()
-            row.separator()
-            row.label(text="Masks")
+        col = layout.column(align=True)
+        col.active = collection.lineart_use_intersection_mask
+        row = col.row(align=True, heading="Masks")
+        for i in range(8):
+            row.prop(collection, "lineart_intersection_mask", index=i, text=" ", toggle=True)
+            if i == 3:
+                row = col.row(align=True)
 
-            col = split.column()
-            row = col.row(align=True)
-            for i in range(8):
-                row.prop(collection, "lineart_intersection_mask", index=i, text="", toggle=True)
-        
-        split = layout.split()
-        col = split.column()
-        col.use_property_split = False
-        col.prop(collection, "use_lineart_intersection_priority", text="Intersection Priority")
-        col = split.column()
-        if collection.use_lineart_intersection_priority:
-            col.prop(collection, "lineart_intersection_priority", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        row = layout.row(heading="Intersection Priority")
+        row.prop(collection, "use_lineart_intersection_priority", text="")
+        subrow = row.row()
+        subrow.active = collection.use_lineart_intersection_priority
+        subrow.prop(collection, "lineart_intersection_priority", text="")
 
 
 class COLLECTION_PT_collection_custom_props(CollectionButtonsPanel, PropertyPanel, Panel):

@@ -888,7 +888,6 @@ static void pose_slide_reset(tPoseSlideOp *pso)
 static void pose_slide_draw_status(bContext *C, tPoseSlideOp *pso)
 {
   const char *mode_st;
-
   switch (pso->mode) {
     case POSESLIDE_PUSH:
       mode_st = IFACE_("Push Pose");
@@ -902,7 +901,6 @@ static void pose_slide_draw_status(bContext *C, tPoseSlideOp *pso)
     case POSESLIDE_BLEND:
       mode_st = IFACE_("Blend to Neighbor");
       break;
-
     default:
       /* Unknown. */
       mode_st = IFACE_("Sliding-Tool");
@@ -1203,19 +1201,19 @@ static wmOperatorStatus pose_slide_modal(bContext *C, wmOperator *op, const wmEv
         switch (event->type) {
           /* Transform Channel Limits. */
           /* XXX: Replace these hard-coded hotkeys with a modal-map that can be customized. */
-          case EVT_WKEY: /* Location */ /*bfa - changed keys from grs to wer*/
+          case EVT_GKEY: /* Location */
           {
             pose_slide_toggle_channels_mode(op, pso, PS_TFM_LOC);
             do_pose_update = true;
             break;
           }
-          case EVT_EKEY: /* Rotation */ /*bfa - changed keys from grs to wer*/
+          case EVT_RKEY: /* Rotation */
           {
             pose_slide_toggle_channels_mode(op, pso, PS_TFM_ROT);
             do_pose_update = true;
             break;
           }
-          case EVT_RKEY: /* Scale */ /*bfa - changed keys from grs to wer*/
+          case EVT_SKEY: /* Scale */
           {
             pose_slide_toggle_channels_mode(op, pso, PS_TFM_SCALE);
             do_pose_update = true;

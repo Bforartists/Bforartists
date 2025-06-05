@@ -67,11 +67,11 @@ static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id
   style->paneltitle.uifont_id = uifont_id;
   style->paneltitle.points = UI_DEFAULT_TITLE_POINTS;
   style->paneltitle.character_weight = 400;
-  style->paneltitle.shadow = 1; /* bfa changed to 1 */
+  style->paneltitle.shadow = 3;
   style->paneltitle.shadx = 0;
   style->paneltitle.shady = -1;
-  style->paneltitle.shadowalpha = 0.15f; /* bfa 0.5f*/
-  style->paneltitle.shadowcolor = 1.0f;  /* bfa 0.0f*/
+  style->paneltitle.shadowalpha = 0.5f;
+  style->paneltitle.shadowcolor = 0.0f;
 
   style->grouplabel.uifont_id = uifont_id;
   style->grouplabel.points = UI_DEFAULT_TITLE_POINTS;
@@ -85,9 +85,9 @@ static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id
   style->widget.uifont_id = uifont_id;
   style->widget.points = UI_DEFAULT_TEXT_POINTS;
   style->widget.character_weight = 400;
-  style->widget.shadow = 0;          /* bfa 1*/
-  style->widget.shady = 0;           /* bfa -1*/
-  style->widget.shadowalpha = 0.25f; /* bfa 0.5f*/
+  style->widget.shadow = 1;
+  style->widget.shady = -1;
+  style->widget.shadowalpha = 0.5f;
   style->widget.shadowcolor = 0.0f;
 
   style->tooltip.uifont_id = uifont_id;

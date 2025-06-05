@@ -909,10 +909,12 @@ static void check_property_socket_sync(const Object *ob,
   int geometry_socket_count = 0;
 
   nmd->node_group->ensure_interface_cache();
+  const Span<nodes::StructureType> input_structure_types =
+      nmd->node_group->runtime->structure_type_interface->inputs;
   for (const int i : nmd->node_group->interface_inputs().index_range()) {
     const bNodeTreeInterfaceSocket *socket = nmd->node_group->interface_inputs()[i];
     const bke::bNodeSocketType *typeinfo = socket->socket_typeinfo();
-    const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) : SOCK_CUSTOM;
+    const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
     if (type == SOCK_GEOMETRY) {
       geometry_socket_count++;
     }
@@ -920,11 +922,15 @@ static void check_property_socket_sync(const Object *ob,
     if (i == 0 && type == SOCK_GEOMETRY) {
       continue;
     }
+    if (input_structure_types[i] == nodes::StructureType::Grid) {
+      continue;
+    }
 
     IDProperty *property = properties.lookup_key_default_as(socket->identifier, nullptr);
     if (property == nullptr) {
       if (!ELEM(type, SOCK_GEOMETRY, SOCK_MATRIX, SOCK_BUNDLE, SOCK_CLOSURE)) {
-        BKE_modifier_set_error(ob, md, "Missing property for input socket \"%s\"", socket->name);
+        BKE_modifier_set_error(
+            ob, md, "Missing property for input socket \"%s\"", socket->name ? socket->name : "");
       }
       continue;
     }
@@ -941,7 +947,7 @@ static void check_property_socket_sync(const Object *ob,
   if (geometry_socket_count == 1) {
     const bNodeTreeInterfaceSocket *first_socket = nmd->node_group->interface_inputs()[0];
     const bke::bNodeSocketType *typeinfo = first_socket->socket_typeinfo();
-    const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) : SOCK_CUSTOM;
+    const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
     if (type != SOCK_GEOMETRY) {
       BKE_modifier_set_error(ob, md, "Node group's geometry input must be the first");
     }

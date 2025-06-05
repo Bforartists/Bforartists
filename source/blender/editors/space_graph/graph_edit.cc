@@ -47,7 +47,6 @@
 
 #include "UI_interface_icons.hh"
 #include "UI_view2d.hh"
-#include "UI_resources.hh" /* BFA - needed for icons */
 
 #include "ANIM_animdata.hh"
 #include "ANIM_fcurve.hh"
@@ -80,27 +79,27 @@ enum eGraphKeys_InsertKey_Types {
 static const EnumPropertyItem prop_graphkeys_insertkey_types[] = {
     {GRAPHKEYS_INSERTKEY_ALL,
      "ALL",
-     ICON_KEYFRAMES_INSERT,
+     0,
      "All Channels",
      "Insert a keyframe on all visible and editable F-Curves using each curve's current value"},
     {GRAPHKEYS_INSERTKEY_SEL,
      "SEL",
-     ICON_KEYFRAMES_INSERT,
+     0,
      "Only Selected Channels",
      "Insert a keyframe on selected F-Curves using each curve's current value"},
     {GRAPHKEYS_INSERTKEY_ACTIVE,
      "ACTIVE",
-     ICON_KEYFRAMES_INSERT,
+     0,
      "Only Active F-Curve",
      "Insert a keyframe on the active F-Curve using the curve's current value"},
     {GRAPHKEYS_INSERTKEY_ACTIVE | GRAPHKEYS_INSERTKEY_CURSOR,
      "CURSOR_ACTIVE",
-     ICON_KEYFRAMES_INSERT,
+     0,
      "Active Channels at Cursor",
      "Insert a keyframe for the active F-Curve at the cursor point"},
     {GRAPHKEYS_INSERTKEY_SEL | GRAPHKEYS_INSERTKEY_CURSOR,
      "CURSOR_SEL",
-     ICON_KEYFRAMES_INSERT,
+     0,
      "Selected Channels at Cursor",
      "Insert a keyframe for selected F-Curves at the cursor point"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -628,12 +627,12 @@ void GRAPH_OT_paste(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* Identifiers */
-  ot->name = "Paste Keyframes / Flipped";
+  ot->name = "Paste Keyframes";
   ot->idname = "GRAPH_OT_paste";
   ot->description =
-      "Paste Keyframes pastes keyframes into the selected channels, "
-      "starting on the current frame\nPaste Flipped pastes keyframes flipped into the selected "
-      "channels, starting on the current frame";
+      "Paste keyframes from the internal clipboard for the selected channels, starting on the "
+      "current "
+      "frame";
 
   /* API callbacks */
 
@@ -1411,23 +1410,23 @@ void GRAPH_OT_bake_keys(wmOperatorType *ot)
 static const EnumPropertyItem prop_graphkeys_expo_types[] = {
     {FCURVE_EXTRAPOLATE_CONSTANT,
      "CONSTANT",
-     ICON_EXTRAPOLATION_CONSTANT,
+     0,
      "Constant Extrapolation",
      "Values on endpoint keyframes are held"},
     {FCURVE_EXTRAPOLATE_LINEAR,
      "LINEAR",
-     ICON_EXTRAPOLATION_LINEAR,
+     0,
      "Linear Extrapolation",
      "Straight-line slope of end segments are extended past the endpoint keyframes"},
 
     {MAKE_CYCLIC_EXPO,
      "MAKE_CYCLIC",
-     ICON_EXTRAPOLATION_CYCLIC,
+     0,
      "Make Cyclic (F-Modifier)",
      "Add Cycles F-Modifier if one doesn't exist already"},
     {CLEAR_CYCLIC_EXPO,
      "CLEAR_CYCLIC",
-     ICON_EXTRAPOLATION_CYCLIC_CLEAR,
+     0,
      "Clear Cyclic (F-Modifier)",
      "Remove Cycles F-Modifier if not needed anymore"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -1595,8 +1594,7 @@ void GRAPH_OT_interpolation_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Interpolation";
   ot->idname = "GRAPH_OT_interpolation_type";
   ot->description =
-      "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the "
-      "selected keyframes";
+      "Set interpolation mode for the F-Curve segments starting from the selected keyframes";
 
   /* API callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1673,7 +1671,7 @@ void GRAPH_OT_easing_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Easing Type";
   ot->idname = "GRAPH_OT_easing_type";
   ot->description =
-      "Easing Mode\nSet easing type for the F-Curve segments starting from the selected keyframes";
+      "Set easing type for the F-Curve segments starting from the selected keyframes";
 
   /* API callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1757,7 +1755,7 @@ void GRAPH_OT_handle_type(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Set Keyframe Handle Type";
   ot->idname = "GRAPH_OT_handle_type";
-  ot->description = "Keyframe Handle Type\nSet type of handle for selected keyframes";
+  ot->description = "Set type of handle for selected keyframes";
 
   /* API callbacks */
   ot->invoke = WM_menu_invoke;
@@ -2309,33 +2307,33 @@ void GRAPH_OT_snap_cursor_value(wmOperatorType *ot)
 static const EnumPropertyItem prop_graphkeys_snap_types[] = {
     {GRAPHKEYS_SNAP_CFRA,
      "CFRA",
-     ICON_SNAP_CURRENTFRAME,
-     "Current Frame",
+     0,
+     "Selection to Current Frame",
      "Snap selected keyframes to the current frame"},
     {GRAPHKEYS_SNAP_VALUE,
      "VALUE",
-     ICON_SNAP_CURSORVALUE,
-     "Cursor Value",
+     0,
+     "Selection to Cursor Value",
      "Set values of selected keyframes to the cursor value (Y/Horizontal component)"},
     {GRAPHKEYS_SNAP_NEAREST_FRAME,
      "NEAREST_FRAME",
-     ICON_SNAP_NEARESTFRAME,
-     "Nearest Frame",
-     "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame "
+     0,
+     "Selection to Nearest Frame",
+     "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe "
      "offsets)"},
     {GRAPHKEYS_SNAP_NEAREST_SECOND,
      "NEAREST_SECOND",
-     ICON_SNAP_NEARESTSECOND,
-     "Nearest Second",
+     0,
+     "Selection to Nearest Second",
      "Snap selected keyframes to the nearest second"},
     {GRAPHKEYS_SNAP_NEAREST_MARKER,
      "NEAREST_MARKER",
-     ICON_SNAP_NEARESTMARKER,
-     "Nearest Marker",
+     0,
+     "Selection to Nearest Marker",
      "Snap selected keyframes to the nearest marker"},
     {GRAPHKEYS_SNAP_HORIZONTAL,
      "HORIZONTAL",
-     ICON_FLATTEN_HANDLER,
+     0,
      "Flatten Handles",
      "Flatten handles for a smoother transition"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -2608,28 +2606,28 @@ void GRAPH_OT_equalize_handles(wmOperatorType *ot)
 static const EnumPropertyItem prop_graphkeys_mirror_types[] = {
     {GRAPHKEYS_MIRROR_CFRA,
      "CFRA",
-     ICON_MIRROR_TIME,
+     0,
      "By Times Over Current Frame",
      "Flip times of selected keyframes using the current frame as the mirror line"},
     {GRAPHKEYS_MIRROR_VALUE,
      "VALUE",
-     ICON_MIRROR_CURSORVALUE,
+     0,
      "By Values Over Cursor Value",
      "Flip values of selected keyframes using the cursor value (Y/Horizontal component) as the "
      "mirror line"},
     {GRAPHKEYS_MIRROR_YAXIS,
      "YAXIS",
-     ICON_MIRROR_TIME,
+     0,
      "By Times Over Zero Time",
      "Flip times of selected keyframes, effectively reversing the order they appear in"},
     {GRAPHKEYS_MIRROR_XAXIS,
      "XAXIS",
-     ICON_MIRROR_CURSORVALUE,
+     0,
      "By Values Over Zero Value",
      "Flip values of selected keyframes (i.e. negative values become positive, and vice versa)"},
     {GRAPHKEYS_MIRROR_MARKER,
      "MARKER",
-     ICON_MIRROR_MARKER,
+     0,
      "By Times Over First Selected Marker",
      "Flip times of selected keyframes using the first selected marker as the reference point"},
     {0, nullptr, 0, nullptr, nullptr},

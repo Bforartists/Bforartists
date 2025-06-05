@@ -125,25 +125,25 @@ static NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
     {
         "VIEW3D_OT_view_camera",
         "GIZMO_GT_button_2d",
-        ICON_OUTLINER_DATA_CAMERA,
+        ICON_VIEW_CAMERA_UNSELECTED,
         nullptr,
     },
     {
         "VIEW3D_OT_view_camera",
         "GIZMO_GT_button_2d",
-        ICON_OUTLINER_OB_CAMERA,
+        ICON_VIEW_CAMERA,
         nullptr,
     },
     {
         "WM_OT_context_toggle",
         "GIZMO_GT_button_2d",
-        ICON_LOCK_TO_CAMVIEW_ON,
+        ICON_VIEW_LOCKED,
         navigate_context_toggle_camera_lock_init,
     },
     {
         "WM_OT_context_toggle",
         "GIZMO_GT_button_2d",
-        ICON_LOCK_TO_CAMVIEW,
+        ICON_VIEW_UNLOCKED,
         navigate_context_toggle_camera_lock_init,
     },
 };
@@ -333,9 +333,8 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   }
 
   const float co[2] = {
-      /* bfa- changed back navigation buttons to horizontal*/
-      roundf(rect_visible->xmax - icon_offset_from_axis),
-      roundf(rect_visible->ymax - icon_offset_mini * 0.75f),
+      roundf(rect_visible->xmax - icon_offset_mini * 0.75f),
+      roundf(rect_visible->ymax - icon_offset_from_axis),
   };
 
   wmGizmo *gz;
@@ -356,33 +355,29 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     int icon_mini_slot = 0;
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ZOOM_AND_DOLLY) == 0) {
       gz = navgroup->gz_array[GZ_INDEX_ZOOM];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      gz->matrix_basis[3][0] = roundf(co[0]);
+      gz->matrix_basis[3][1] = roundf(co[1] - (icon_offset_mini * icon_mini_slot++));
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
 
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_LOCATION) == 0) {
       gz = navgroup->gz_array[GZ_INDEX_MOVE];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      gz->matrix_basis[3][0] = roundf(co[0]);
+      gz->matrix_basis[3][1] = roundf(co[1] - (icon_offset_mini * icon_mini_slot++));
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
 
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) {
       gz = navgroup
                ->gz_array[(rv3d->persp == RV3D_CAMOB) ? GZ_INDEX_CAMERA_ON : GZ_INDEX_CAMERA_OFF];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      gz->matrix_basis[3][0] = roundf(co[0]);
+      gz->matrix_basis[3][1] = roundf(co[1] - (icon_offset_mini * icon_mini_slot++));
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
       if (navgroup->state.rv3d.is_camera == false) {
         gz = navgroup->gz_array[rv3d->is_persp ? GZ_INDEX_PERSP : GZ_INDEX_ORTHO];
-        /* bfa- changed back navigation buttons to horizontal*/
-        gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-        gz->matrix_basis[3][1] = roundf(co[1]);
+        gz->matrix_basis[3][0] = roundf(co[0]);
+        gz->matrix_basis[3][1] = roundf(co[1] - (icon_offset_mini * icon_mini_slot++));
         WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
       }
     }
@@ -390,9 +385,8 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     if (navgroup->state.rv3d.is_camera == true) {
       gz = navgroup->gz_array[(v3d->flag2 & V3D_LOCK_CAMERA) ? GZ_INDEX_CAMERA_LOCK :
                                                                GZ_INDEX_CAMERA_UNLOCK];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      gz->matrix_basis[3][0] = roundf(co[0]);
+      gz->matrix_basis[3][1] = roundf(co[1] - (icon_offset_mini * icon_mini_slot++));
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
   }

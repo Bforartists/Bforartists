@@ -36,8 +36,7 @@ const EnumPropertyItem rna_enum_nla_mode_blend_items[] = {
      0,
      "Combine",
      "The strip values are combined with accumulated results by appropriately using addition, "
-     "multiplication, or quaternion math, based on channel type. "
-     "Recommended method for layered animation."}, /*BFA - Clarify the use*/
+     "multiplication, or quaternion math, based on channel type"},
     RNA_ENUM_ITEM_SEPR,
     {NLASTRIP_MODE_ADD,
      "ADD",
@@ -801,11 +800,6 @@ static void rna_def_nlastrip(BlenderRNA *brna)
   prop = RNA_def_property(srna, "blend_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "blendmode");
   RNA_def_property_enum_items(prop, rna_enum_nla_mode_blend_items);
-  /* BFA - Change default to combine
-   * NOTE: to actually change default blend type when creating an NLA strip,
-   * you have to set the animation data blendmode in "BKE_animdata_ensure_id" function
-   */
-  RNA_def_property_enum_default(prop, NLASTRIP_MODE_COMBINE);
   RNA_def_property_ui_text(
       prop, "Blending", "Method used for combining strip's result with accumulated result");
   RNA_def_property_update(prop, NC_ANIMATION | ND_NLA | NA_EDITED, "rna_NlaStrip_update");

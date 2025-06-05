@@ -506,8 +506,7 @@ static bool ui_imageuser_pass_menu_step(bContext *C, int direction, void *rnd_pt
     return false;
   }
 
-  /* NOTE: this looks reversed, but matches menu direction. */
-  if (direction == -1) {
+  if (direction == 1) {
     RenderPass *rp;
     int rp_index = iuser->pass + 1;
 
@@ -519,7 +518,7 @@ static bool ui_imageuser_pass_menu_step(bContext *C, int direction, void *rnd_pt
       }
     }
   }
-  else if (direction == 1) {
+  else if (direction == -1) {
     RenderPass *rp;
     int rp_index = 0;
 
@@ -879,9 +878,7 @@ void uiTemplateImage(uiLayout *layout,
     sub->prop(&imaptr, "generated_width", UI_ITEM_NONE, "X", ICON_NONE);
     sub->prop(&imaptr, "generated_height", UI_ITEM_NONE, "Y", ICON_NONE);
 
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     col->prop(&imaptr, "use_generated_float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
 
     col->separator();
 
@@ -916,15 +913,11 @@ void uiTemplateImage(uiLayout *layout,
     sub->prop(userptr, "frame_start", UI_ITEM_NONE, IFACE_("Start"), ICON_NONE);
     sub->prop(userptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     col->prop(userptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(userptr, "use_auto_refresh", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
 
     if (ima->source == IMA_SRC_MOVIE && compact == 0) {
-      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
       col->prop(&imaptr, "use_deinterlace", UI_ITEM_NONE, IFACE_("Deinterlace"), ICON_NONE);
-      uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
     }
   }
 
@@ -966,17 +959,14 @@ void uiTemplateImage(uiLayout *layout,
           ImBuf *ibuf = BKE_image_acquire_ibuf(ima, iuser, &lock);
 
           if (ibuf && ibuf->float_buffer.data && (ibuf->foptions.flag & OPENEXR_HALF) == 0) {
-            uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
             col->prop(&imaptr, "use_half_precision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-            uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
           }
           BKE_image_release_ibuf(ima, ibuf, lock);
         }
       }
-      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+
       col->prop(&imaptr, "use_view_as_render", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       col->prop(&imaptr, "seam_margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
     }
   }
 
@@ -1037,26 +1027,20 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
   }
 
   if (is_render_out && ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     col->prop(imfptr, "use_preview", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_JP2) {
     col->prop(imfptr, "jpeg2k_codec", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     col->prop(imfptr, "use_jpeg2k_cinema_preset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(imfptr, "use_jpeg2k_cinema_48", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     col->prop(imfptr, "use_jpeg2k_ycc", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_DPX) {
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     col->prop(imfptr, "use_cineon_log", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_CINEON) {

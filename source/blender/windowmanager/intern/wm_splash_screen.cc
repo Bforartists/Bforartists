@@ -58,7 +58,25 @@ static void wm_block_splash_close(bContext *C, void *arg_block, void * /*arg*/)
   UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
 }
 
-/* BFA - wm_block_splash_add_label - removed! */
+static void wm_block_splash_add_label(uiBlock *block, const char *label, int x, int y)
+{
+  if (!(label && label[0])) {
+    return;
+  }
+
+  UI_block_emboss_set(block, blender::ui::EmbossType::None);
+
+  uiBut *but = uiDefBut(
+      block, UI_BTYPE_LABEL, 0, label, 0, y, x, UI_UNIT_Y, nullptr, 0, 0, std::nullopt);
+  UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
+  UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);
+
+  /* Regardless of theme, this text should always be bright white. */
+  uchar color[4] = {255, 255, 255, 255};
+  UI_but_color_set(but, color);
+
+  UI_block_emboss_set(block, blender::ui::EmbossType::Emboss);
+}
 
 #ifndef WITH_HEADLESS
 static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
@@ -291,7 +309,10 @@ static uiBlock *wm_block_splash_create(bContext *C, ARegion *region, void * /*ar
 
     UI_but_func_set(but, wm_block_splash_close, block, nullptr);
 
-    /* BFA - wm_block_splash_add_label - removed! */
+    wm_block_splash_add_label(block,
+                              BKE_blender_version_string(),
+                              splash_width - 8.0 * UI_SCALE_FAC,
+                              splash_height - 13.0 * UI_SCALE_FAC);
   }
 
   /* Banner image passed through the environment, to overlay on the splash and
@@ -420,9 +441,9 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
   uiLayout *layout = UI_block_layout(
       block, UI_LAYOUT_VERTICAL, UI_LAYOUT_PANEL, 0, 0, dialog_width, 0, 0, style);
 
-/* BFA - Our logo. */
+/* Blender logo. */
 #ifndef WITH_HEADLESS
-  constexpr bool show_color = true; /* BFA - about logo in color */
+  constexpr bool show_color = false;
   const float size = 0.2f * dialog_width;
 
   ImBuf *ibuf = UI_svg_icon_bitmap(ICON_BLENDER_LOGO_LARGE, size, show_color);
@@ -448,7 +469,7 @@ static uiBlock *wm_block_about_create(bContext *C, ARegion *region, void * /*arg
 
   uiLayout *col = &layout->column(true);
 
-  uiItemL_ex(col, IFACE_("Bforartists"), ICON_NONE, true, false); /* BFA - our name */
+  uiItemL_ex(col, IFACE_("Blender"), ICON_NONE, true, false);
 
   MenuType *mt = WM_menutype_find("WM_MT_splash_about", true);
   if (mt) {
@@ -471,9 +492,9 @@ static wmOperatorStatus wm_splash_about_invoke(bContext *C,
 
 void WM_OT_splash_about(wmOperatorType *ot)
 {
-  ot->name = "About Bforartists"; /* BFA - our name */
+  ot->name = "About Blender";
   ot->idname = "WM_OT_splash_about";
-  ot->description = "Open a window with information about Bforartists"; /* BFA - our name */
+  ot->description = "Open a window with information about Blender";
 
   ot->invoke = wm_splash_about_invoke;
   ot->poll = WM_operator_winactive;

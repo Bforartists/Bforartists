@@ -200,8 +200,6 @@ class NODE_MT_geometry_node_grease_pencil(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-
-
 class NODE_MT_geometry_node_GEO_GEOMETRY(Menu):
     bl_idname = "NODE_MT_geometry_node_GEO_GEOMETRY"
     bl_label = "Geometry"
@@ -295,7 +293,7 @@ class NODE_MT_geometry_node_GEO_INPUT(Menu):
         layout.menu("NODE_MT_geometry_node_GEO_INPUT_CONSTANT")
         if context.space_data.geometry_nodes_type != 'TOOL':
             layout.menu("NODE_MT_geometry_node_GEO_INPUT_GIZMO")
-        #layout.menu("NODE_MT_geometry_node_GEO_INPUT_GROUP") # bfa - double menu entry
+        layout.menu("NODE_MT_geometry_node_GEO_INPUT_GROUP")
         layout.menu("NODE_MT_category_import")
         layout.menu("NODE_MT_geometry_node_GEO_INPUT_SCENE")
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
@@ -321,15 +319,15 @@ class NODE_MT_geometry_node_GEO_INPUT_CONSTANT(Menu):
         node_add_menu.add_node_type(layout, "FunctionNodeInputVector")
         node_add_menu.draw_assets_for_catalog(layout, "Input/Constant")
 
-# bfa - double menu entry
-# class NODE_MT_geometry_node_GEO_INPUT_GROUP(Menu):
-#     bl_idname = "NODE_MT_geometry_node_GEO_INPUT_GROUP"
-#     bl_label = "Group"
 
-#     def draw(self, _context):
-#         layout = self.layout
-#         node_add_menu.add_node_type(layout, "NodeGroupInput")
-#         node_add_menu.draw_assets_for_catalog(layout, "Input/Group")
+class NODE_MT_geometry_node_GEO_INPUT_GROUP(Menu):
+    bl_idname = "NODE_MT_geometry_node_GEO_INPUT_GROUP"
+    bl_label = "Group"
+
+    def draw(self, _context):
+        layout = self.layout
+        node_add_menu.add_node_type(layout, "NodeGroupInput")
+        node_add_menu.draw_assets_for_catalog(layout, "Input/Group")
 
 
 class NODE_MT_geometry_node_GEO_INPUT_SCENE(Menu):
@@ -341,17 +339,32 @@ class NODE_MT_geometry_node_GEO_INPUT_SCENE(Menu):
         if context.space_data.geometry_nodes_type == 'TOOL':
             node_add_menu.add_node_type(layout, "GeometryNodeTool3DCursor")
         node_add_menu.add_node_type(layout, "GeometryNodeInputActiveCamera")
-        node_add_menu.add_node_type(layout, "GeometryNodeCameraInfo")
+        node_add_menu.add_node_type_with_outputs(context,
+                                                 layout,
+                                                 "GeometryNodeCameraInfo",
+                                                 ["Projection Matrix",
+                                                  "Focal Length",
+                                                  "Sensor",
+                                                  "Shift",
+                                                  "Clip Start",
+                                                  "Clip End",
+                                                  "Focus Distance",
+                                                  "Is Orthographic",
+                                                  "Orthographic Scale"])
         node_add_menu.add_node_type(layout, "GeometryNodeCollectionInfo")
         node_add_menu.add_node_type(layout, "GeometryNodeImageInfo")
         node_add_menu.add_node_type(layout, "GeometryNodeIsViewport")
         if context.space_data.geometry_nodes_type == 'TOOL':
-            node_add_menu.add_node_type(layout, "GeometryNodeToolMousePosition")
+            node_add_menu.add_node_type_with_outputs(
+                context, layout, "GeometryNodeToolMousePosition", [
+                    "Mouse X", "Mouse Y", "Region Width", "Region Height"])
         node_add_menu.add_node_type(layout, "GeometryNodeObjectInfo")
-        node_add_menu.add_node_type_with_subnames(context, layout, "GeometryNodeInputSceneTime", ["Frame", "Seconds"])
+        node_add_menu.add_node_type_with_outputs(context, layout, "GeometryNodeInputSceneTime", ["Frame", "Seconds"])
         node_add_menu.add_node_type(layout, "GeometryNodeSelfObject")
         if context.space_data.geometry_nodes_type == 'TOOL':
-            node_add_menu.add_node_type(layout, "GeometryNodeViewportTransform")
+            node_add_menu.add_node_type_with_outputs(
+                context, layout, "GeometryNodeViewportTransform", [
+                    "Projection", "View", "Is Orthographic"])
         node_add_menu.draw_assets_for_catalog(layout, "Input/Scene")
 
 
@@ -550,11 +563,11 @@ class NODE_MT_category_GEO_OUTPUT(Menu):
     bl_idname = "NODE_MT_category_GEO_OUTPUT"
     bl_label = "Output"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
-        #node_add_menu.add_node_type(layout, "NodeGroupOutput")# BFA - double menu entry
+        node_add_menu.add_node_type(layout, "NodeGroupOutput")
         node_add_menu.add_node_type(layout, "GeometryNodeViewer")
-        node_add_menu.add_node_type(layout, "GeometryNodeWarning")
+        node_add_menu.add_node_type_with_searchable_enum(context, layout, "GeometryNodeWarning", "warning_type")
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
@@ -596,6 +609,7 @@ class NODE_MT_category_GEO_TEXT(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        node_add_menu.add_node_type(layout, "FunctionNodeFormatString")
         node_add_menu.add_node_type(layout, "GeometryNodeStringJoin")
         node_add_menu.add_node_type(layout, "FunctionNodeMatchString")
         node_add_menu.add_node_type(layout, "FunctionNodeReplaceString")
@@ -894,7 +908,7 @@ classes = (
     NODE_MT_geometry_node_GEO_ATTRIBUTE,
     NODE_MT_geometry_node_GEO_INPUT,
     NODE_MT_geometry_node_GEO_INPUT_CONSTANT,
-    #NODE_MT_geometry_node_GEO_INPUT_GROUP,# bfa - double menu entry
+    NODE_MT_geometry_node_GEO_INPUT_GROUP,
     NODE_MT_geometry_node_GEO_INPUT_SCENE,
     NODE_MT_category_GEO_OUTPUT,
     NODE_MT_geometry_node_GEO_CURVE,

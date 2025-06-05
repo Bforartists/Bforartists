@@ -141,7 +141,7 @@ void MESH_OT_primitive_plane_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Plane";
-  ot->description = "Add a filled planar mesh with 4 vertices";
+  ot->description = "Construct a filled planar mesh with 4 vertices";
   ot->idname = "MESH_OT_primitive_plane_add";
 
   /* API callbacks. */
@@ -205,7 +205,7 @@ void MESH_OT_primitive_cube_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Cube";
-  ot->description = "Add a cube mesh that consists of six square faces";
+  ot->description = "Construct a cube mesh that consists of six square faces";
   ot->idname = "MESH_OT_primitive_cube_add";
 
   /* API callbacks. */
@@ -283,7 +283,7 @@ void MESH_OT_primitive_circle_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Circle";
-  ot->description = "Add a circle mesh";
+  ot->description = "Construct a circle mesh";
   ot->idname = "MESH_OT_primitive_circle_add";
 
   /* API callbacks. */
@@ -358,7 +358,7 @@ void MESH_OT_primitive_cylinder_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Cylinder";
-  ot->description = "Add a cylinder mesh";
+  ot->description = "Construct a cylinder mesh";
   ot->idname = "MESH_OT_primitive_cylinder_add";
 
   /* API callbacks. */
@@ -435,7 +435,7 @@ void MESH_OT_primitive_cone_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Cone";
-  ot->description = "Add a conic mesh";
+  ot->description = "Construct a conic mesh";
   ot->idname = "MESH_OT_primitive_cone_add";
 
   /* API callbacks. */
@@ -509,7 +509,7 @@ void MESH_OT_primitive_grid_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Grid";
-  ot->description = "Add a subdivided plane mesh";
+  ot->description = "Construct a subdivided plane mesh";
   ot->idname = "MESH_OT_primitive_grid_add";
 
   /* API callbacks. */
@@ -583,7 +583,7 @@ void MESH_OT_primitive_monkey_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Monkey";
-  ot->description = "Add a Suzanne mesh";
+  ot->description = "Construct a Suzanne mesh";
   ot->idname = "MESH_OT_primitive_monkey_add";
 
   /* API callbacks. */
@@ -650,7 +650,7 @@ void MESH_OT_primitive_uv_sphere_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add UV Sphere";
   ot->description =
-      "Add a spherical mesh with quad faces, except for triangle faces at the top and "
+      "Construct a spherical mesh with quad faces, except for triangle faces at the top and "
       "bottom";
   ot->idname = "MESH_OT_primitive_uv_sphere_add";
 
@@ -719,7 +719,7 @@ void MESH_OT_primitive_ico_sphere_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Ico Sphere";
-  ot->description = "Add a spherical mesh that consists of equally sized triangles";
+  ot->description = "Construct a spherical mesh that consists of equally sized triangles";
   ot->idname = "MESH_OT_primitive_ico_sphere_add";
 
   /* API callbacks. */

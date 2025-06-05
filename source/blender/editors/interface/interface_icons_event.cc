@@ -481,13 +481,13 @@ void icon_draw_rect_input(const float x,
   else if (icon_id == ICON_EVENT_RIGHTBRACKET) {
     icon_draw_rect_input_text(&rect, "]", aspect, alpha, inverted);
   }
-  else if (icon_id == ICON_GESTURE_PAN) {
+  else if (icon_id == ICON_EVENT_PAD_PAN) {
     icon_draw_rect_input_icon(&rect, ICON_GESTURE_PAN, aspect, alpha, inverted);
   }
-  else if (icon_id == ICON_GESTURE_ROTATE) {
+  else if (icon_id == ICON_EVENT_PAD_ROTATE) {
     icon_draw_rect_input_icon(&rect, ICON_GESTURE_ROTATE, aspect, alpha, inverted);
   }
-  else if (icon_id == ICON_GESTURE_ZOOM) {
+  else if (icon_id == ICON_EVENT_PAD_ZOOM) {
     icon_draw_rect_input_icon(&rect, ICON_GESTURE_ZOOM, aspect, alpha, inverted);
   }
   else if (icon_id >= ICON_EVENT_NDOF_BUTTON_V1 && icon_id <= ICON_EVENT_NDOF_BUTTON_MINUS) {

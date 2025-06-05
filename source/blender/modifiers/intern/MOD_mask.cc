@@ -757,7 +757,7 @@ static bool is_disabled(const Scene * /*scene*/, ModifierData *md, bool /*use_re
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *sub, *row, *col; /*bfa, added *col*/
+  uiLayout *sub, *row;
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -778,14 +778,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
   else if (mode == MOD_MASK_MODE_VGROUP) {
     modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
-
-    /*------------------- bfa - original props */
-    col = &layout->column(true);
-    row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    row->prop(ptr, "use_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_smooth", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
+    layout->prop(ptr, "use_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   layout->prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);

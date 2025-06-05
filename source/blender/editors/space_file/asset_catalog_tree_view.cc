@@ -239,7 +239,7 @@ void AssetCatalogTreeView::add_unassigned_item()
   FileAssetSelectParams *params = params_;
 
   AssetCatalogTreeViewUnassignedItem &item = add_tree_item<AssetCatalogTreeViewUnassignedItem>(
-      IFACE_("Unassigned (Catalogue)"), ICON_FILE_HIDDEN); /*bfa*/
+      IFACE_("Unassigned"), ICON_FILE_HIDDEN);
 
   item.set_on_activate_fn([params](bContext & /*C*/, ui::BasicTreeViewItem & /*item*/) {
     params->asset_catalog_visibility = FILE_SHOW_ASSETS_WITHOUT_CATALOG;
@@ -298,18 +298,18 @@ void AssetCatalogTreeViewItem::build_context_menu(bContext &C, uiLayout &column)
 
   props = column.op("ASSET_OT_catalog_new",
                     IFACE_("New Catalog"),
-                    ICON_ADD, /*BFA - icon added*/
+                    ICON_NONE,
                     WM_OP_INVOKE_DEFAULT,
                     UI_ITEM_NONE);
   RNA_string_set(&props, "parent_path", catalog_item_.catalog_path().c_str());
 
   props = column.op("ASSET_OT_catalog_delete",
                     IFACE_("Delete Catalog"),
-                    ICON_DELETE, /*BFA - icon added*/
+                    ICON_NONE,
                     WM_OP_INVOKE_DEFAULT,
                     UI_ITEM_NONE);
   RNA_string_set(&props, "catalog_id", catalog_item_.get_catalog_id().str().c_str());
-  column.op("UI_OT_view_item_rename", IFACE_("Rename"), ICON_RENAME); /*BFA - icon added*/
+  column.op("UI_OT_view_item_rename", IFACE_("Rename"), ICON_NONE);
 
   /* Doesn't actually exist right now, but could be defined in Python. Reason that this isn't done
    * in Python yet is that catalogs are not exposed in BPY, and we'd somehow pass the clicked on

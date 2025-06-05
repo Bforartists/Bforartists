@@ -313,17 +313,6 @@ static wmOperatorStatus graphview_curves_hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*bfa - descriptions*/
-static std::string graph_ot_hide_get_description(bContext * /*C*/,
-                                                 wmOperatorType * /*ot*/,
-                                                 PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "unselected")) {
-    return "Hide unselected curves from Graph Editor view";
-  }
-  return "";
-}
-
 static void GRAPH_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
@@ -333,7 +322,6 @@ static void GRAPH_OT_hide(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = graphview_curves_hide_exec;
-  ot->get_description = graph_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_graphedit_active;
 
   /* flags */
@@ -341,7 +329,7 @@ static void GRAPH_OT_hide(wmOperatorType *ot)
 
   /* props */
   RNA_def_boolean(
-      ot->srna, "unselected", false, "Unselected", "Unselected\nHide unselected rather than selected curves");
+      ot->srna, "unselected", false, "Unselected", "Hide unselected rather than selected curves");
 }
 
 /* ........ */
@@ -520,11 +508,10 @@ void ED_operatormacros_graph()
   wmOperatorType *ot;
   wmOperatorTypeMacro *otmacro;
 
-  ot = WM_operatortype_append_macro(
-      "GRAPH_OT_duplicate_move",
-      "Duplicate",
-      "Duplicate\nMake a copy of all selected keyframes and move them",
-      OPTYPE_UNDO | OPTYPE_REGISTER);
+  ot = WM_operatortype_append_macro("GRAPH_OT_duplicate_move",
+                                    "Duplicate",
+                                    "Make a copy of all selected keyframes and move them",
+                                    OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "GRAPH_OT_duplicate");
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
   RNA_boolean_set(otmacro->ptr, "use_duplicated_keyframes", true);

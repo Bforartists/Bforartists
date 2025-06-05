@@ -233,6 +233,8 @@ const EnumPropertyItem rna_enum_node_vec_math_items[] = {
     {NODE_VECTOR_MATH_NORMALIZE, "NORMALIZE", 0, "Normalize", "Normalize A"},
     RNA_ENUM_ITEM_SEPR,
     {NODE_VECTOR_MATH_ABSOLUTE, "ABSOLUTE", 0, "Absolute", "Entry-wise absolute"},
+    {NODE_VECTOR_MATH_POWER, "POWER", 0, "Power", "Entry-wise power"},
+    {NODE_VECTOR_MATH_SIGN, "SIGN", 0, "Sign", "Entry-wise sign"},
     {NODE_VECTOR_MATH_MINIMUM, "MINIMUM", 0, "Minimum", "Entry-wise minimum"},
     {NODE_VECTOR_MATH_MAXIMUM, "MAXIMUM", 0, "Maximum", "Entry-wise maximum"},
     {NODE_VECTOR_MATH_FLOOR, "FLOOR", 0, "Floor", "Entry-wise floor"},
@@ -629,6 +631,7 @@ static const EnumPropertyItem node_cryptomatte_layer_name_items[] = {
 
 #  include "NOD_common.hh"
 #  include "NOD_composite.hh"
+#  include "NOD_fn_format_string.hh"
 #  include "NOD_geo_bake.hh"
 #  include "NOD_geo_bundle.hh"
 #  include "NOD_geo_capture_attribute.hh"
@@ -667,6 +670,7 @@ using blender::nodes::EvaluateClosureOutputItemsAccessor;
 using blender::nodes::ForeachGeometryElementGenerationItemsAccessor;
 using blender::nodes::ForeachGeometryElementInputItemsAccessor;
 using blender::nodes::ForeachGeometryElementMainItemsAccessor;
+using blender::nodes::FormatStringItemsAccessor;
 using blender::nodes::IndexSwitchItemsAccessor;
 using blender::nodes::MenuSwitchItemsAccessor;
 using blender::nodes::RepeatItemsAccessor;
@@ -3981,6 +3985,33 @@ static void rna_NodeCrop_size_y_set(PointerRNA *ptr, const int value)
   input->default_value_typed<bNodeSocketValueVector>()->value[1] = float(value);
 }
 
+static int rna_NodeFlip_axis_get(PointerRNA *ptr)
+{
+  bNode *node = ptr->data_as<bNode>();
+  const bNodeSocket *x_input = blender::bke::node_find_socket(*node, SOCK_IN, "Flip X");
+  const bNodeSocket *y_input = blender::bke::node_find_socket(*node, SOCK_IN, "Flip Y");
+  const bool flip_x = x_input->default_value_typed<bNodeSocketValueBoolean>()->value;
+  const bool flip_y = y_input->default_value_typed<bNodeSocketValueBoolean>()->value;
+  if (flip_x && flip_y) {
+    return 2;
+  }
+
+  if (flip_y) {
+    return 1;
+  }
+
+  return 0;
+}
+
+static void rna_NodeFlip_axis_set(PointerRNA *ptr, const int value)
+{
+  bNode *node = ptr->data_as<bNode>();
+  bNodeSocket *x_input = blender::bke::node_find_socket(*node, SOCK_IN, "Flip X");
+  bNodeSocket *y_input = blender::bke::node_find_socket(*node, SOCK_IN, "Flip Y");
+  x_input->default_value_typed<bNodeSocketValueBoolean>()->value = value != 1;
+  y_input->default_value_typed<bNodeSocketValueBoolean>()->value = value != 0;
+}
+
 /* A getter that returns the value of the input socket with the given template identifier and type.
  * The RNA pointer is assumed to represent a node. */
 template<typename T, const char *identifier>
@@ -5372,13 +5403,13 @@ static const EnumPropertyItem node_principled_hair_parametrization_items[] = {
 };
 
 static const EnumPropertyItem node_script_mode_items[] = {
-    {NODE_SCRIPT_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data"}, /*BFA - no block*/
+    {NODE_SCRIPT_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data-block"},
     {NODE_SCRIPT_EXTERNAL, "EXTERNAL", 0, "External", "Use external .osl or .oso file"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 static EnumPropertyItem node_ies_mode_items[] = {
-    {NODE_IES_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data"}, /*BFA - no block*/
+    {NODE_IES_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data-block"},
     {NODE_IES_EXTERNAL, "EXTERNAL", 0, "External", "Use external .ies file"},
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -5924,7 +5955,7 @@ static void def_sh_attribute(BlenderRNA * /*brna*/, StructRNA *srna)
        "OBJECT",
        0,
        "Object",
-       "The attribute is associated with the object or mesh data itself, " /*BFA - no block*/
+       "The attribute is associated with the object or mesh data-block itself, "
        "and its value is uniform"},
       {SHD_ATTRIBUTE_INSTANCER,
        "INSTANCER",
@@ -7241,9 +7272,7 @@ static void def_sh_tex_ies(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_enum_funcs(prop, nullptr, "rna_ShaderNodeTexIES_mode_set", nullptr);
   RNA_def_property_enum_items(prop, node_ies_mode_items);
   RNA_def_property_ui_text(
-      prop,
-      "Source",
-      "Whether the IES file is loaded from disk or from a text data"); /*BFA - no block*/
+      prop, "Source", "Whether the IES file is loaded from disk or from a text data-block");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   RNA_def_struct_sdna_from(srna, "bNode", nullptr);
@@ -7827,6 +7856,7 @@ static void rna_def_cmp_output_file_slot_file(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Path", "Subpath used for this slot");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
   RNA_def_property_flag(prop, PROP_PATH_OUTPUT | PROP_PATH_SUPPORTS_TEMPLATES);
+  RNA_def_property_path_template_type(prop, PROP_VARIABLES_RENDER_OUTPUT);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, nullptr);
 }
 static void rna_def_cmp_output_file_slot_layer(BlenderRNA *brna)
@@ -7905,6 +7935,7 @@ static void def_cmp_output_file(BlenderRNA *brna, StructRNA *srna)
   RNA_def_property_ui_text(prop, "Base Path", "Base output path for the image");
   RNA_def_property_flag(
       prop, PROP_PATH_OUTPUT | PROP_PATH_SUPPORTS_BLEND_RELATIVE | PROP_PATH_SUPPORTS_TEMPLATES);
+  RNA_def_property_path_template_type(prop, PROP_VARIABLES_RENDER_OUTPUT);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "active_input_index", PROP_INT, PROP_NONE);
@@ -8336,8 +8367,8 @@ static void def_cmp_color_spill(BlenderRNA * /*brna*/, StructRNA *srna)
       "rna_node_property_to_input_setter<bool, node_input_use_spill_strength>");
   RNA_def_property_ui_text(prop,
                            "Unspill",
-                           "Compensate all channels (differently) by hand. (Deprecated: Use Use "
-                           "Spill Strength input instead.)");
+                           "Compensate all channels (differently) by hand. "
+                           "(Deprecated: Use \"Use Spill Strength\" input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "unspill_red", PROP_FLOAT, PROP_NONE);
@@ -8540,9 +8571,9 @@ static void def_cmp_flip(BlenderRNA * /*brna*/, StructRNA *srna)
   PropertyRNA *prop;
 
   prop = RNA_def_property(srna, "axis", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, nullptr, "custom1");
+  RNA_def_property_enum_funcs(prop, "rna_NodeFlip_axis_get", "rna_NodeFlip_axis_set", nullptr);
   RNA_def_property_enum_items(prop, node_flip_items);
-  RNA_def_property_ui_text(prop, "Axis", "");
+  RNA_def_property_ui_text(prop, "Axis", "(Deprecated: Use Flip X and Flip Y inputs instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -8756,7 +8787,7 @@ static void def_cmp_invert(BlenderRNA * /*brna*/, StructRNA *srna)
       prop,
       "rna_node_property_to_input_getter<bool, node_input_invert_color>",
       "rna_node_property_to_input_setter<bool, node_input_invert_color>");
-  RNA_def_property_ui_text(prop, "RGB", "(Deprecated: Use Invert Color node instead.)");
+  RNA_def_property_ui_text(prop, "RGB", "(Deprecated: Use Invert Color input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "invert_alpha", PROP_BOOLEAN, PROP_NONE);
@@ -8764,7 +8795,7 @@ static void def_cmp_invert(BlenderRNA * /*brna*/, StructRNA *srna)
       prop,
       "rna_node_property_to_input_getter<bool, node_input_invert_alpha>",
       "rna_node_property_to_input_setter<bool, node_input_invert_alpha>");
-  RNA_def_property_ui_text(prop, "Alpha", "(Deprecated: Use Invert Alpha node instead.)");
+  RNA_def_property_ui_text(prop, "Alpha", "(Deprecated: Use Invert Alpha input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -9472,7 +9503,7 @@ static void def_cmp_zcombine(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_ui_text(prop,
                            "Use Alpha",
                            "Take alpha channel into account when doing the Z operation. "
-                           "(Deprecated: Use Use Alpha input instead.)");
+                           "(Deprecated: Use \"Use Alpha\" input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "use_antialias_z", PROP_BOOLEAN, PROP_NONE);
@@ -9481,8 +9512,8 @@ static void def_cmp_zcombine(BlenderRNA * /*brna*/, StructRNA *srna)
                                  "rna_node_property_to_input_setter<bool, node_input_anti_alias>");
   RNA_def_property_ui_text(prop,
                            "Anti-Alias Z",
-                           "Anti-alias the z-buffer to try to avoid artifacts"
-                           "(Deprecated: Use Anti-Alias input instead.)");
+                           "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for "
+                           "Blender renders. (Deprecated: Use Anti-Alias input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -12152,6 +12183,53 @@ static void def_geo_index_switch(BlenderRNA *brna, StructRNA *srna)
   RNA_def_property_srna(prop, "NodeIndexSwitchItems");
 }
 
+static void rna_def_fn_format_string_item(BlenderRNA *brna)
+{
+  StructRNA *srna;
+
+  srna = RNA_def_struct(brna, "NodeFunctionFormatStringItem", nullptr);
+  RNA_def_struct_ui_text(srna, "Format String Item", "");
+
+  rna_def_node_item_array_socket_item_common(srna, "FormatStringItemsAccessor", true);
+}
+
+static void rna_def_fn_format_string_items(BlenderRNA *brna)
+{
+  StructRNA *srna;
+
+  srna = RNA_def_struct(brna, "NodeFunctionFormatStringItems", nullptr);
+  RNA_def_struct_sdna(srna, "bNode");
+  RNA_def_struct_ui_text(srna, "Items", "Collection of format string items");
+
+  rna_def_node_item_array_new_with_socket_and_name(
+      srna, "NodeFunctionFormatStringItem", "FormatStringItemsAccessor");
+  rna_def_node_item_array_common_functions(
+      srna, "NodeFunctionFormatStringItem", "FormatStringItemsAccessor");
+}
+
+static void def_fn_format_string(BlenderRNA *brna, StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  rna_def_fn_format_string_item(brna);
+  rna_def_fn_format_string_items(brna);
+
+  RNA_def_struct_sdna_from(srna, "NodeFunctionFormatString", "storage");
+
+  prop = RNA_def_property(srna, "format_items", PROP_COLLECTION, PROP_NONE);
+  RNA_def_property_collection_sdna(prop, nullptr, "items", "items_num");
+  RNA_def_property_struct_type(prop, "NodeFunctionFormatStringItem");
+  RNA_def_property_ui_text(prop, "Items", "");
+  RNA_def_property_srna(prop, "NodeFunctionFormatStringItems");
+
+  prop = RNA_def_property(srna, "active_index", PROP_INT, PROP_UNSIGNED);
+  RNA_def_property_int_sdna(prop, nullptr, "active_index");
+  RNA_def_property_ui_text(prop, "Active Item Index", "Index of the active item");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
+  RNA_def_property_update(prop, NC_NODE, nullptr);
+}
+
 static void def_geo_curve_handle_type_selection(BlenderRNA * /*brna*/, StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -13384,7 +13462,7 @@ static void rna_def_nodetree(BlenderRNA *brna)
       prop, nullptr, nullptr, nullptr, "rna_GPencil_datablocks_annotations_poll");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-  RNA_def_property_ui_text(prop, "Grease Pencil Data", "Grease Pencil data"); /*BFA - no block*/
+  RNA_def_property_ui_text(prop, "Grease Pencil Data", "Grease Pencil data-block");
   RNA_def_property_update(prop, NC_NODE, nullptr);
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
@@ -13478,13 +13556,10 @@ static void rna_def_nodetree(BlenderRNA *brna)
       func, "result_1", "NodeTree", "Node Tree", "Active node tree from context");
   RNA_def_function_output(func, parm);
   parm = RNA_def_pointer(
-      func, "result_2", "ID", "Owner ID", "ID data that owns the node tree"); /*BFA - no block*/
+      func, "result_2", "ID", "Owner ID", "ID data-block that owns the node tree");
   RNA_def_function_output(func, parm);
-  parm = RNA_def_pointer(func,
-                         "result_3",
-                         "ID",
-                         "From ID",
-                         "Original ID data selected from the context"); /*BFA - no block*/
+  parm = RNA_def_pointer(
+      func, "result_3", "ID", "From ID", "Original ID data-block selected from the context");
   RNA_def_function_output(func, parm);
 
   /* Check for support of a socket type with a type identifier. */
@@ -13531,10 +13606,10 @@ static void rna_def_shader_nodetree(BlenderRNA *brna)
   PropertyRNA *parm;
 
   srna = RNA_def_struct(brna, "ShaderNodeTree", "NodeTree");
-  RNA_def_struct_ui_text(srna,
-                         "Shader Node Tree",
-                         "Node tree consisting of linked nodes used for materials (and other "
-                         "shading data)"); /*BFA - no block*/
+  RNA_def_struct_ui_text(
+      srna,
+      "Shader Node Tree",
+      "Node tree consisting of linked nodes used for materials (and other shading data-blocks)");
   RNA_def_struct_sdna(srna, "bNodeTree");
   RNA_def_struct_ui_icon(srna, ICON_MATERIAL);
 
@@ -13573,10 +13648,7 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
   prop = RNA_def_property(srna, "is_tool", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GEO_NODE_ASSET_TOOL);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(
-      prop,
-      "Tool",
-      "The node group is used as a tool\nOnly relevant for marked nodegroups as assets"); /*BFA*/
+  RNA_def_property_ui_text(prop, "Tool", "The node group is used as a tool");
   RNA_def_property_boolean_funcs(
       prop, "rna_GeometryNodeTree_is_tool_get", "rna_GeometryNodeTree_is_tool_set");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
@@ -13584,10 +13656,7 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
   prop = RNA_def_property(srna, "is_modifier", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GEO_NODE_ASSET_MODIFIER);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop,
-                           "Modifier",
-                           "The node group is used as a geometry modifier\nOnly relevant for "
-                           "marked nodegroups as assets"); /*BFA*/
+  RNA_def_property_ui_text(prop, "Modifier", "The node group is used as a geometry modifier");
   RNA_def_property_boolean_funcs(
       prop, "rna_GeometryNodeTree_is_modifier_get", "rna_GeometryNodeTree_is_modifier_set");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
@@ -13728,23 +13797,17 @@ static void rna_def_node_instance_hash(BlenderRNA *brna)
    */
 }
 
-/* BFA - start */
-static void define(BlenderRNA *brna,
-                   const char *base_name,
-                   const char *struct_name,
-                   void (*func)(BlenderRNA *, StructRNA *) = nullptr,
-                   int ui_icon = ICON_NONE)
-{
-  StructRNA *srna = define_specific_node(brna, struct_name, base_name);
-  if (func) {
-    func(brna, srna);
-  }
-  RNA_def_struct_ui_icon(srna, ui_icon); /* BFA - override icon */
-}
-/* BFA - end */
-
 static void rna_def_nodes(BlenderRNA *brna)
 {
+  const auto define = [&](const char *base_name,
+                          const char *struct_name,
+                          void (*func)(BlenderRNA *, StructRNA *) = nullptr) {
+    StructRNA *srna = define_specific_node(brna, struct_name, base_name);
+    if (func) {
+      func(brna, srna);
+    }
+  };
+
   /* Disabling clang-format because:
    * - It's more readable when the lines are aligned.
    * - It's easier to sort the lines alphabetically with automated tools. Keeping the lines sorted
@@ -13752,528 +13815,527 @@ static void rna_def_nodes(BlenderRNA *brna)
    */
   /* clang-format off */
 
-  define(brna, "NodeInternal", "NodeFrame", def_frame, ICON_NODE_FRAME);
-  define(brna, "NodeInternal", "NodeGroup", def_group, ICON_NODE_MAKEGROUP);
-  define(brna, "NodeInternal", "NodeGroupInput", def_group_input, ICON_GROUPINPUT);
-  define(brna, "NodeInternal", "NodeGroupOutput", def_group_output, ICON_GROUPOUTPUT);
-  define(brna, "NodeInternal", "NodeReroute", def_reroute, ICON_NODE_REROUTE);
+  define("NodeInternal", "NodeFrame", def_frame);
+  define("NodeInternal", "NodeGroup", def_group);
+  define("NodeInternal", "NodeGroupInput", def_group_input);
+  define("NodeInternal", "NodeGroupOutput", def_group_output);
+  define("NodeInternal", "NodeReroute", def_reroute);
 
+  define("ShaderNode", "ShaderNodeAddShader");
+  define("ShaderNode", "ShaderNodeAmbientOcclusion", def_sh_ambient_occlusion);
+  define("ShaderNode", "ShaderNodeAttribute", def_sh_attribute);
+  define("ShaderNode", "ShaderNodeBackground");
+  define("ShaderNode", "ShaderNodeBevel", def_sh_bevel);
+  define("ShaderNode", "ShaderNodeBlackbody");
+  define("ShaderNode", "ShaderNodeBrightContrast");
+  define("ShaderNode", "ShaderNodeBsdfAnisotropic", def_glossy);
+  define("ShaderNode", "ShaderNodeBsdfDiffuse");
+  define("ShaderNode", "ShaderNodeBsdfGlass", def_glass);
+  define("ShaderNode", "ShaderNodeBsdfHair", def_hair);
+  define("ShaderNode", "ShaderNodeBsdfHairPrincipled", def_hair_principled);
+  define("ShaderNode", "ShaderNodeBsdfMetallic", def_metallic);
+  define("ShaderNode", "ShaderNodeBsdfPrincipled", def_principled);
+  define("ShaderNode", "ShaderNodeBsdfRayPortal");
+  define("ShaderNode", "ShaderNodeBsdfRefraction", def_refraction);
+  define("ShaderNode", "ShaderNodeBsdfSheen", def_sheen);
+  define("ShaderNode", "ShaderNodeBsdfToon", def_toon);
+  define("ShaderNode", "ShaderNodeBsdfTranslucent");
+  define("ShaderNode", "ShaderNodeBsdfTransparent");
+  define("ShaderNode", "ShaderNodeBump", def_sh_bump);
+  define("ShaderNode", "ShaderNodeCameraData");
+  define("ShaderNode", "ShaderNodeClamp", def_clamp);
+  define("ShaderNode", "ShaderNodeCombineColor", def_sh_combsep_color);
+  define("ShaderNode", "ShaderNodeCombineHSV");
+  define("ShaderNode", "ShaderNodeCombineRGB");
+  define("ShaderNode", "ShaderNodeCombineXYZ");
+  define("ShaderNode", "ShaderNodeDisplacement", def_sh_displacement);
+  define("ShaderNode", "ShaderNodeEeveeSpecular");
+  define("ShaderNode", "ShaderNodeEmission");
+  define("ShaderNode", "ShaderNodeFloatCurve", def_float_curve);
+  define("ShaderNode", "ShaderNodeFresnel");
+  define("ShaderNode", "ShaderNodeGamma");
+  define("ShaderNode", "ShaderNodeHairInfo");
+  define("ShaderNode", "ShaderNodeHoldout");
+  define("ShaderNode", "ShaderNodeHueSaturation");
+  define("ShaderNode", "ShaderNodeInvert");
+  define("ShaderNode", "ShaderNodeLayerWeight");
+  define("ShaderNode", "ShaderNodeLightFalloff");
+  define("ShaderNode", "ShaderNodeLightPath");
+  define("ShaderNode", "ShaderNodeMapping", def_sh_mapping);
+  define("ShaderNode", "ShaderNodeMapRange", def_map_range);
+  define("ShaderNode", "ShaderNodeMath", def_math);
+  define("ShaderNode", "ShaderNodeMix", def_sh_mix);
+  define("ShaderNode", "ShaderNodeMixRGB", def_mix_rgb);
+  define("ShaderNode", "ShaderNodeMixShader");
+  define("ShaderNode", "ShaderNodeNewGeometry");
+  define("ShaderNode", "ShaderNodeNormal");
+  define("ShaderNode", "ShaderNodeNormalMap", def_sh_normal_map);
+  define("ShaderNode", "ShaderNodeObjectInfo");
+  define("ShaderNode", "ShaderNodeOutputAOV", def_sh_output_aov);
+  define("ShaderNode", "ShaderNodeOutputLight", def_sh_output);
+  define("ShaderNode", "ShaderNodeOutputLineStyle", def_sh_output_linestyle);
+  define("ShaderNode", "ShaderNodeOutputMaterial", def_sh_output);
+  define("ShaderNode", "ShaderNodeOutputWorld", def_sh_output);
+  define("ShaderNode", "ShaderNodeParticleInfo");
+  define("ShaderNode", "ShaderNodePointInfo");
+  define("ShaderNode", "ShaderNodeRGB");
+  define("ShaderNode", "ShaderNodeRGBCurve", def_rgb_curve);
+  define("ShaderNode", "ShaderNodeRGBToBW");
+  define("ShaderNode", "ShaderNodeScript", def_sh_script);
+  define("ShaderNode", "ShaderNodeSeparateColor", def_sh_combsep_color);
+  define("ShaderNode", "ShaderNodeSeparateHSV");
+  define("ShaderNode", "ShaderNodeSeparateRGB");
+  define("ShaderNode", "ShaderNodeSeparateXYZ");
+  define("ShaderNode", "ShaderNodeShaderToRGB");
+  define("ShaderNode", "ShaderNodeSqueeze");
+  define("ShaderNode", "ShaderNodeSubsurfaceScattering", def_sh_subsurface);
+  define("ShaderNode", "ShaderNodeTangent", def_sh_tangent);
+  define("ShaderNode", "ShaderNodeTexBrick", def_sh_tex_brick);
+  define("ShaderNode", "ShaderNodeTexChecker", def_sh_tex_checker);
+  define("ShaderNode", "ShaderNodeTexCoord", def_sh_tex_coord);
+  define("ShaderNode", "ShaderNodeTexEnvironment", def_sh_tex_environment);
+  define("ShaderNode", "ShaderNodeTexGabor", def_sh_tex_gabor);
+  define("ShaderNode", "ShaderNodeTexGradient", def_sh_tex_gradient);
+  define("ShaderNode", "ShaderNodeTexIES", def_sh_tex_ies);
+  define("ShaderNode", "ShaderNodeTexImage", def_sh_tex_image);
+  define("ShaderNode", "ShaderNodeTexMagic", def_sh_tex_magic);
+  define("ShaderNode", "ShaderNodeTexNoise", def_sh_tex_noise);
+  define("ShaderNode", "ShaderNodeTexPointDensity", def_sh_tex_pointdensity);
+  define("ShaderNode", "ShaderNodeTexSky", def_sh_tex_sky);
+  define("ShaderNode", "ShaderNodeTexVoronoi", def_sh_tex_voronoi);
+  define("ShaderNode", "ShaderNodeTexWave", def_sh_tex_wave);
+  define("ShaderNode", "ShaderNodeTexWhiteNoise", def_sh_tex_white_noise);
+  define("ShaderNode", "ShaderNodeUVAlongStroke", def_sh_uvalongstroke);
+  define("ShaderNode", "ShaderNodeUVMap", def_sh_uvmap);
+  define("ShaderNode", "ShaderNodeValToRGB", def_colorramp);
+  define("ShaderNode", "ShaderNodeValue");
+  define("ShaderNode", "ShaderNodeVectorCurve", def_vector_curve);
+  define("ShaderNode", "ShaderNodeVectorDisplacement", def_sh_vector_displacement);
+  define("ShaderNode", "ShaderNodeVectorMath", def_vector_math);
+  define("ShaderNode", "ShaderNodeVectorRotate", def_sh_vector_rotate);
+  define("ShaderNode", "ShaderNodeVectorTransform", def_sh_vect_transform);
+  define("ShaderNode", "ShaderNodeVertexColor", def_sh_vertex_color);
+  define("ShaderNode", "ShaderNodeVolumeAbsorption");
+  define("ShaderNode", "ShaderNodeVolumeInfo");
+  define("ShaderNode", "ShaderNodeVolumePrincipled");
+  define("ShaderNode", "ShaderNodeVolumeScatter", def_scatter);
+  define("ShaderNode", "ShaderNodeVolumeCoefficients", def_volume_coefficients);
+  define("ShaderNode", "ShaderNodeWavelength");
+  define("ShaderNode", "ShaderNodeWireframe", def_sh_tex_wireframe);
 
-  define(brna, "ShaderNode", "ShaderNodeAddShader", nullptr, ICON_NODE_ADD_SHADER);
-  define(brna, "ShaderNode", "ShaderNodeAmbientOcclusion", def_sh_ambient_occlusion, ICON_NODE_AMBIENT_OCCLUSION);
-  define(brna, "ShaderNode", "ShaderNodeAttribute", def_sh_attribute, ICON_NODE_ATTRIBUTE);
-  define(brna, "ShaderNode", "ShaderNodeBackground", nullptr, ICON_NODE_BACKGROUNDSHADER);
-  define(brna, "ShaderNode", "ShaderNodeBevel", def_sh_bevel, ICON_BEVEL);
-  define(brna, "ShaderNode", "ShaderNodeBlackbody", nullptr, ICON_NODE_BLACKBODY);
-  define(brna, "ShaderNode", "ShaderNodeBrightContrast", nullptr, ICON_BRIGHTNESS_CONTRAST);
-  define(brna, "ShaderNode", "ShaderNodeBsdfAnisotropic", def_glossy, ICON_NODE_GLOSSYSHADER);
-  define(brna, "ShaderNode", "ShaderNodeBsdfDiffuse", nullptr, ICON_NODE_DIFFUSESHADER);
-  define(brna, "ShaderNode", "ShaderNodeBsdfGlass", def_glass, ICON_NODE_GLASSHADER);
-  define(brna, "ShaderNode", "ShaderNodeBsdfHair", def_hair, ICON_CURVES);
-  define(brna, "ShaderNode", "ShaderNodeBsdfHairPrincipled", def_hair_principled, ICON_CURVES);
-  define(brna, "ShaderNode", "ShaderNodeBsdfMetallic", def_metallic, ICON_METALLIC);
-  define(brna, "ShaderNode", "ShaderNodeBsdfPrincipled", def_principled, ICON_NODE_PRINCIPLED);
-  define(brna, "ShaderNode", "ShaderNodeBsdfRayPortal", nullptr, ICON_NONE);
-  define(brna, "ShaderNode", "ShaderNodeBsdfRefraction", def_refraction, ICON_NODE_REFRACTIONSHADER);
-  define(brna, "ShaderNode", "ShaderNodeBsdfSheen", def_sheen, ICON_NODE_VELVET);
-  define(brna, "ShaderNode", "ShaderNodeBsdfToon", def_toon, ICON_NODE_TOONSHADER);
-  define(brna, "ShaderNode", "ShaderNodeBsdfTranslucent", nullptr, ICON_NODE_TRANSLUCENT);
-  define(brna, "ShaderNode", "ShaderNodeBsdfTransparent", nullptr, ICON_NODE_TRANSPARENT);
-  define(brna, "ShaderNode", "ShaderNodeBump", def_sh_bump, ICON_NODE_BUMP);
-  define(brna, "ShaderNode", "ShaderNodeCameraData", nullptr, ICON_CAMERA_DATA);
-  define(brna, "ShaderNode", "ShaderNodeClamp", def_clamp, ICON_NODE_CLAMP);
-  define(brna, "ShaderNode", "ShaderNodeCombineColor", def_sh_combsep_color, ICON_COMBINE_COLOR);
-  define(brna, "ShaderNode", "ShaderNodeCombineHSV", nullptr, ICON_NODE_COMBINEHSV);
-  define(brna, "ShaderNode", "ShaderNodeCombineRGB", nullptr, ICON_NODE_COMBINERGB);
-  define(brna, "ShaderNode", "ShaderNodeCombineXYZ", nullptr, ICON_NODE_COMBINEXYZ);
-  define(brna, "ShaderNode", "ShaderNodeDisplacement", def_sh_displacement, ICON_MOD_DISPLACE);
-  define(brna, "ShaderNode", "ShaderNodeEeveeSpecular", nullptr, ICON_NODE_GLOSSYSHADER);
-  define(brna, "ShaderNode", "ShaderNodeEmission", nullptr, ICON_NODE_EMISSION);
-  define(brna, "ShaderNode", "ShaderNodeFloatCurve", def_float_curve, ICON_FLOAT_CURVE);
-  define(brna, "ShaderNode", "ShaderNodeFresnel", nullptr, ICON_NODE_FRESNEL);
-  define(brna, "ShaderNode", "ShaderNodeGamma", nullptr, ICON_NODE_GAMMA);
-  define(brna, "ShaderNode", "ShaderNodeHairInfo", nullptr, ICON_NODE_HAIRINFO);
-  define(brna, "ShaderNode", "ShaderNodeHoldout", nullptr, ICON_NODE_HOLDOUTSHADER);
-  define(brna, "ShaderNode", "ShaderNodeHueSaturation", nullptr, ICON_NODE_HUESATURATION);
-  define(brna, "ShaderNode", "ShaderNodeInvert", nullptr, ICON_NODE_INVERT);
-  define(brna, "ShaderNode", "ShaderNodeLayerWeight", nullptr, ICON_NODE_LAYERWEIGHT);
-  define(brna, "ShaderNode", "ShaderNodeLightFalloff", nullptr, ICON_NODE_LIGHTFALLOFF);
-  define(brna, "ShaderNode", "ShaderNodeLightPath", nullptr, ICON_NODE_LIGHTPATH);
-  define(brna, "ShaderNode", "ShaderNodeMapping", def_sh_mapping, ICON_NODE_MAPPING);
-  define(brna, "ShaderNode", "ShaderNodeMapRange", def_map_range, ICON_NODE_MAP_RANGE);
-  define(brna, "ShaderNode", "ShaderNodeMath", def_math, ICON_NODE_MATH);
-  define(brna, "ShaderNode", "ShaderNodeMix", def_sh_mix, ICON_NODE_MIX);
-  define(brna, "ShaderNode", "ShaderNodeMixRGB", def_mix_rgb, ICON_NODE_MIXRGB);
-  define(brna, "ShaderNode", "ShaderNodeMixShader", nullptr, ICON_NODE_MIXSHADER);
-  define(brna, "ShaderNode", "ShaderNodeNewGeometry", nullptr, ICON_NODE_GEOMETRY);
-  define(brna, "ShaderNode", "ShaderNodeNormal", nullptr, ICON_RECALC_NORMALS);
-  define(brna, "ShaderNode", "ShaderNodeNormalMap", def_sh_normal_map, ICON_NODE_NORMALMAP);
-  define(brna, "ShaderNode", "ShaderNodeObjectInfo", nullptr, ICON_NODE_OBJECTINFO);
-  define(brna, "ShaderNode", "ShaderNodeOutputAOV", def_sh_output_aov, ICON_NODE_VALUE);
-  define(brna, "ShaderNode", "ShaderNodeOutputLight", def_sh_output, ICON_LIGHT);
-  define(brna, "ShaderNode", "ShaderNodeOutputLineStyle", def_sh_output_linestyle, ICON_NODE_LINESTYLE_OUTPUT);
-  define(brna, "ShaderNode", "ShaderNodeOutputMaterial", def_sh_output, ICON_MATERIAL);
-  define(brna, "ShaderNode", "ShaderNodeOutputWorld", def_sh_output, ICON_WORLD);
-  define(brna, "ShaderNode", "ShaderNodeParticleInfo", nullptr, ICON_NODE_PARTICLEINFO);
-  define(brna, "ShaderNode", "ShaderNodePointInfo", nullptr, ICON_POINT_INFO);
-  define(brna, "ShaderNode", "ShaderNodeRGB", nullptr, ICON_NODE_RGB);
-  define(brna, "ShaderNode", "ShaderNodeRGBCurve", def_rgb_curve, ICON_NODE_RGBCURVE);
-  define(brna, "ShaderNode", "ShaderNodeRGBToBW", nullptr, ICON_NODE_RGBTOBW);
-  define(brna, "ShaderNode", "ShaderNodeScript", def_sh_script, ICON_FILE_SCRIPT);
-  define(brna, "ShaderNode", "ShaderNodeSeparateColor", def_sh_combsep_color, ICON_SEPARATE_COLOR);
-  define(brna, "ShaderNode", "ShaderNodeSeparateHSV", nullptr, ICON_NODE_SEPARATEHSV);
-  define(brna, "ShaderNode", "ShaderNodeSeparateRGB", nullptr, ICON_NODE_SEPARATERGB);
-  define(brna, "ShaderNode", "ShaderNodeSeparateXYZ", nullptr, ICON_NODE_SEPARATEXYZ);
-  define(brna, "ShaderNode", "ShaderNodeShaderToRGB", nullptr, ICON_NODE_RGB);
-  define(brna, "ShaderNode", "ShaderNodeSqueeze", nullptr, ICON_NONE);
-  define(brna, "ShaderNode", "ShaderNodeSubsurfaceScattering", def_sh_subsurface, ICON_NODE_SSS);
-  define(brna, "ShaderNode", "ShaderNodeTangent", def_sh_tangent, ICON_NODE_TANGENT);
-  define(brna, "ShaderNode", "ShaderNodeTexBrick", def_sh_tex_brick, ICON_NODE_BRICK);
-  define(brna, "ShaderNode", "ShaderNodeTexChecker", def_sh_tex_checker, ICON_NODE_CHECKER);
-  define(brna, "ShaderNode", "ShaderNodeTexCoord", def_sh_tex_coord, ICON_NODE_TEXCOORDINATE);
-  define(brna, "ShaderNode", "ShaderNodeTexEnvironment", def_sh_tex_environment, ICON_NODE_ENVIRONMENT);
-  define(brna, "ShaderNode", "ShaderNodeTexGabor", def_sh_tex_gabor, ICON_GABOR_NOISE);
-  define(brna, "ShaderNode", "ShaderNodeTexGradient", def_sh_tex_gradient, ICON_NODE_GRADIENT);
-  define(brna, "ShaderNode", "ShaderNodeTexIES", def_sh_tex_ies, ICON_LIGHT);
-  define(brna, "ShaderNode", "ShaderNodeTexImage", def_sh_tex_image, ICON_FILE_IMAGE);
-  define(brna, "ShaderNode", "ShaderNodeTexMagic", def_sh_tex_magic, ICON_MAGIC_TEX);
-  define(brna, "ShaderNode", "ShaderNodeTexNoise", def_sh_tex_noise, ICON_NOISE_TEX);
-  define(brna, "ShaderNode", "ShaderNodeTexPointDensity", def_sh_tex_pointdensity, ICON_NODE_POINTCLOUD);
-  define(brna, "ShaderNode", "ShaderNodeTexSky", def_sh_tex_sky, ICON_NODE_SKY);
-  define(brna, "ShaderNode", "ShaderNodeTexVoronoi", def_sh_tex_voronoi, ICON_VORONI_TEX);
-  define(brna, "ShaderNode", "ShaderNodeTexWave", def_sh_tex_wave, ICON_NODE_WAVES);
-  define(brna, "ShaderNode", "ShaderNodeTexWhiteNoise", def_sh_tex_white_noise, ICON_NODE_WHITE_NOISE);
-  define(brna, "ShaderNode", "ShaderNodeUVAlongStroke", def_sh_uvalongstroke, ICON_NODE_UVALONGSTROKE);
-  define(brna, "ShaderNode", "ShaderNodeUVMap", def_sh_uvmap, ICON_GROUP_UVS);
-  define(brna, "ShaderNode", "ShaderNodeValToRGB", def_colorramp, ICON_NODE_COLORRAMP);
-  define(brna, "ShaderNode", "ShaderNodeValue", nullptr, ICON_NODE_VALUE);
-  define(brna, "ShaderNode", "ShaderNodeVectorCurve", def_vector_curve, ICON_NODE_VECTOR);
-  define(brna, "ShaderNode", "ShaderNodeVectorDisplacement", def_sh_vector_displacement, ICON_VECTOR_DISPLACE);
-  define(brna, "ShaderNode", "ShaderNodeVectorMath", def_vector_math, ICON_NODE_VECTORMATH);
-  define(brna, "ShaderNode", "ShaderNodeVectorRotate", def_sh_vector_rotate, ICON_NODE_VECTORROTATE);
-  define(brna, "ShaderNode", "ShaderNodeVectorTransform", def_sh_vect_transform, ICON_NODE_VECTOR_TRANSFORM);
-  define(brna, "ShaderNode", "ShaderNodeVertexColor", def_sh_vertex_color, ICON_NODE_VERTEX_COLOR);
-  define(brna, "ShaderNode", "ShaderNodeVolumeAbsorption", nullptr, ICON_NODE_VOLUMEABSORPTION);
-  define(brna, "ShaderNode", "ShaderNodeVolumeInfo", nullptr, ICON_NODE_VOLUME_INFO);
-  define(brna, "ShaderNode", "ShaderNodeVolumePrincipled", nullptr, ICON_NODE_VOLUMEPRINCIPLED);
-  define(brna, "ShaderNode", "ShaderNodeVolumeScatter", def_scatter, ICON_NODE_VOLUMESCATTER);
-  define(brna, "ShaderNode", "ShaderNodeVolumeCoefficients", def_volume_coefficients, ICON_NONE);
-  define(brna, "ShaderNode", "ShaderNodeWavelength", nullptr, ICON_NODE_WAVELENGTH);
-  define(brna, "ShaderNode", "ShaderNodeWireframe", def_sh_tex_wireframe, ICON_NODE_WIREFRAME);
+  define("CompositorNode", "CompositorNodeAlphaOver", def_cmp_alpha_over);
+  define("CompositorNode", "CompositorNodeAntiAliasing", def_cmp_antialiasing);
+  define("CompositorNode", "CompositorNodeBilateralblur", def_cmp_bilateral_blur);
+  define("CompositorNode", "CompositorNodeBlur", def_cmp_blur);
+  define("CompositorNode", "CompositorNodeBokehBlur", def_cmp_bokehblur);
+  define("CompositorNode", "CompositorNodeBokehImage", def_cmp_bokehimage);
+  define("CompositorNode", "CompositorNodeBoxMask", def_cmp_boxmask);
+  define("CompositorNode", "CompositorNodeBrightContrast", def_cmp_brightcontrast);
+  define("CompositorNode", "CompositorNodeChannelMatte", def_cmp_channel_matte);
+  define("CompositorNode", "CompositorNodeChromaMatte", def_cmp_chroma_matte);
+  define("CompositorNode", "CompositorNodeColorBalance", def_cmp_colorbalance);
+  define("CompositorNode", "CompositorNodeColorCorrection", def_cmp_colorcorrection);
+  define("CompositorNode", "CompositorNodeColorMatte", def_cmp_color_matte);
+  define("CompositorNode", "CompositorNodeColorSpill", def_cmp_color_spill);
+  define("CompositorNode", "CompositorNodeCombHSVA");
+  define("CompositorNode", "CompositorNodeCombineColor", def_cmp_combsep_color);
+  define("CompositorNode", "CompositorNodeCombineXYZ");
+  define("CompositorNode", "CompositorNodeCombRGBA");
+  define("CompositorNode", "CompositorNodeCombYCCA", def_cmp_ycc);
+  define("CompositorNode", "CompositorNodeCombYUVA");
+  define("CompositorNode", "CompositorNodeComposite", def_cmp_composite);
+  define("CompositorNode", "CompositorNodeConvertColorSpace", def_cmp_convert_color_space);
+  define("CompositorNode", "CompositorNodeCornerPin", def_cmp_cornerpin);
+  define("CompositorNode", "CompositorNodeCrop", def_cmp_crop);
+  define("CompositorNode", "CompositorNodeCryptomatte", def_cmp_cryptomatte_legacy);
+  define("CompositorNode", "CompositorNodeCryptomatteV2", def_cmp_cryptomatte);
+  define("CompositorNode", "CompositorNodeCurveRGB", def_rgb_curve);
+  define("CompositorNode", "CompositorNodeCurveVec", def_vector_curve);
+  define("CompositorNode", "CompositorNodeDBlur", def_cmp_dblur);
+  define("CompositorNode", "CompositorNodeDefocus", def_cmp_defocus);
+  define("CompositorNode", "CompositorNodeDenoise", def_cmp_denoise);
+  define("CompositorNode", "CompositorNodeDespeckle", def_cmp_despeckle);
+  define("CompositorNode", "CompositorNodeDiffMatte", def_cmp_diff_matte);
+  define("CompositorNode", "CompositorNodeDilateErode", def_cmp_dilate_erode);
+  define("CompositorNode", "CompositorNodeDisplace");
+  define("CompositorNode", "CompositorNodeDistanceMatte", def_cmp_distance_matte);
+  define("CompositorNode", "CompositorNodeDoubleEdgeMask", def_cmp_double_edge_mask);
+  define("CompositorNode", "CompositorNodeEllipseMask", def_cmp_ellipsemask);
+  define("CompositorNode", "CompositorNodeExposure");
+  define("CompositorNode", "CompositorNodeFilter", def_cmp_filter);
+  define("CompositorNode", "CompositorNodeFlip", def_cmp_flip);
+  define("CompositorNode", "CompositorNodeGamma");
+  define("CompositorNode", "CompositorNodeGlare", def_cmp_glare);
+  define("CompositorNode", "CompositorNodeHueCorrect", def_cmp_huecorrect);
+  define("CompositorNode", "CompositorNodeHueSat");
+  define("CompositorNode", "CompositorNodeIDMask", def_cmp_id_mask);
+  define("CompositorNode", "CompositorNodeImage", def_cmp_image);
+  define("CompositorNode", "CompositorNodeImageCoordinates");
+  define("CompositorNode", "CompositorNodeImageInfo");
+  define("CompositorNode", "CompositorNodeInpaint", def_cmp_inpaint);
+  define("CompositorNode", "CompositorNodeInvert", def_cmp_invert);
+  define("CompositorNode", "CompositorNodeKeying", def_cmp_keying);
+  define("CompositorNode", "CompositorNodeKeyingScreen", def_cmp_keyingscreen);
+  define("CompositorNode", "CompositorNodeKuwahara", def_cmp_kuwahara);
+  define("CompositorNode", "CompositorNodeLensdist", def_cmp_lensdist);
+  define("CompositorNode", "CompositorNodeLevels", def_cmp_levels);
+  define("CompositorNode", "CompositorNodeLumaMatte", def_cmp_luma_matte);
+  define("CompositorNode", "CompositorNodeMapRange", def_cmp_map_range);
+  define("CompositorNode", "CompositorNodeMapUV", def_cmp_map_uv);
+  define("CompositorNode", "CompositorNodeMapValue", def_cmp_map_value);
+  define("CompositorNode", "CompositorNodeMask", def_cmp_mask);
+  define("CompositorNode", "CompositorNodeMath", def_math);
+  define("CompositorNode", "CompositorNodeMixRGB", def_mix_rgb);
+  define("CompositorNode", "CompositorNodeMovieClip", def_cmp_movieclip);
+  define("CompositorNode", "CompositorNodeMovieDistortion", def_cmp_moviedistortion);
+  define("CompositorNode", "CompositorNodeNormal");
+  define("CompositorNode", "CompositorNodeNormalize");
+  define("CompositorNode", "CompositorNodeOutputFile", def_cmp_output_file);
+  define("CompositorNode", "CompositorNodePixelate", def_cmp_pixelate);
+  define("CompositorNode", "CompositorNodePlaneTrackDeform", def_cmp_planetrackdeform);
+  define("CompositorNode", "CompositorNodePosterize");
+  define("CompositorNode", "CompositorNodePremulKey", def_cmp_premul_key);
+  define("CompositorNode", "CompositorNodeRelativeToPixel");
+  define("CompositorNode", "CompositorNodeRGB");
+  define("CompositorNode", "CompositorNodeRGBToBW");
+  define("CompositorNode", "CompositorNodeRLayers", def_cmp_render_layers);
+  define("CompositorNode", "CompositorNodeRotate", def_cmp_rotate);
+  define("CompositorNode", "CompositorNodeScale", def_cmp_scale);
+  define("CompositorNode", "CompositorNodeSceneTime");
+  define("CompositorNode", "CompositorNodeSeparateColor", def_cmp_combsep_color);
+  define("CompositorNode", "CompositorNodeSeparateXYZ");
+  define("CompositorNode", "CompositorNodeSepHSVA");
+  define("CompositorNode", "CompositorNodeSepRGBA");
+  define("CompositorNode", "CompositorNodeSepYCCA", def_cmp_ycc);
+  define("CompositorNode", "CompositorNodeSepYUVA");
+  define("CompositorNode", "CompositorNodeSetAlpha", def_cmp_set_alpha);
+  define("CompositorNode", "CompositorNodeSplit", def_cmp_split);
+  define("CompositorNode", "CompositorNodeStabilize", def_cmp_stabilize2d);
+  define("CompositorNode", "CompositorNodeSunBeams", def_cmp_sunbeams);
+  define("CompositorNode", "CompositorNodeSwitch", def_cmp_switch);
+  define("CompositorNode", "CompositorNodeSwitchView", def_cmp_switch_view);
+  define("CompositorNode", "CompositorNodeTexture", def_texture);
+  define("CompositorNode", "CompositorNodeTime", def_time);
+  define("CompositorNode", "CompositorNodeTonemap", def_cmp_tonemap);
+  define("CompositorNode", "CompositorNodeTrackPos", def_cmp_trackpos);
+  define("CompositorNode", "CompositorNodeTransform", dev_cmd_transform);
+  define("CompositorNode", "CompositorNodeTranslate", def_cmp_translate);
+  define("CompositorNode", "CompositorNodeValToRGB", def_colorramp);
+  define("CompositorNode", "CompositorNodeValue");
+  define("CompositorNode", "CompositorNodeVecBlur", def_cmp_vector_blur);
+  define("CompositorNode", "CompositorNodeViewer", def_cmp_viewer);
+  define("CompositorNode", "CompositorNodeZcombine", def_cmp_zcombine);
 
-  define(brna, "CompositorNode", "CompositorNodeAlphaOver", def_cmp_alpha_over, ICON_IMAGE_ALPHA);
-  define(brna, "CompositorNode", "CompositorNodeAntiAliasing", def_cmp_antialiasing, ICON_ANTIALIASED);
-  define(brna, "CompositorNode", "CompositorNodeBilateralblur", def_cmp_bilateral_blur, ICON_NODE_BILATERAL_BLUR);
-  define(brna, "CompositorNode", "CompositorNodeBlur", def_cmp_blur, ICON_NODE_BLUR);
-  define(brna, "CompositorNode", "CompositorNodeBokehBlur", def_cmp_bokehblur, ICON_NODE_BOKEH_BLUR);
-  define(brna, "CompositorNode", "CompositorNodeBokehImage", def_cmp_bokehimage, ICON_NODE_BOKEH_IMAGE);
-  define(brna, "CompositorNode", "CompositorNodeBoxMask", def_cmp_boxmask, ICON_NODE_BOXMASK);
-  define(brna, "CompositorNode", "CompositorNodeBrightContrast", def_cmp_brightcontrast, ICON_BRIGHTNESS_CONTRAST);
-  define(brna, "CompositorNode", "CompositorNodeChannelMatte", def_cmp_channel_matte, ICON_NODE_CHANNEL);
-  define(brna, "CompositorNode", "CompositorNodeChromaMatte", def_cmp_chroma_matte, ICON_NODE_CHROMA);
-  define(brna, "CompositorNode", "CompositorNodeColorBalance", def_cmp_colorbalance, ICON_NODE_COLORBALANCE);
-  define(brna, "CompositorNode", "CompositorNodeColorCorrection", def_cmp_colorcorrection, ICON_NODE_COLORCORRECTION);
-  define(brna, "CompositorNode", "CompositorNodeColorMatte", def_cmp_color_matte, ICON_COLOR);
-  define(brna, "CompositorNode", "CompositorNodeColorSpill", def_cmp_color_spill, ICON_NODE_SPILL);
-  define(brna, "CompositorNode", "CompositorNodeCombHSVA", nullptr, ICON_NODE_COMBINEHSV);
-  define(brna, "CompositorNode", "CompositorNodeCombineColor", def_cmp_combsep_color, ICON_COMBINE_COLOR);
-  define(brna, "CompositorNode", "CompositorNodeCombineXYZ", nullptr, ICON_NODE_COMBINEXYZ);
-  define(brna, "CompositorNode", "CompositorNodeCombRGBA", nullptr, ICON_NODE_COMBINERGB);
-  define(brna, "CompositorNode", "CompositorNodeCombYCCA", def_cmp_ycc, ICON_NODE_COMBINEYCBCRA);
-  define(brna, "CompositorNode", "CompositorNodeCombYUVA", nullptr, ICON_NODE_COMBINEYUVA);
-  define(brna, "CompositorNode", "CompositorNodeComposite", def_cmp_composite, ICON_NODE_COMPOSITING);
-  define(brna, "CompositorNode", "CompositorNodeConvertColorSpace", def_cmp_convert_color_space, ICON_COLOR_SPACE);
-  define(brna, "CompositorNode", "CompositorNodeCornerPin", nullptr, ICON_NODE_CORNERPIN);
-  define(brna, "CompositorNode", "CompositorNodeCrop", def_cmp_crop, ICON_NODE_CROP);
-  define(brna, "CompositorNode", "CompositorNodeCryptomatte", def_cmp_cryptomatte_legacy, ICON_CRYPTOMATTE);
-  define(brna, "CompositorNode", "CompositorNodeCryptomatteV2", def_cmp_cryptomatte, ICON_CRYPTOMATTE);
-  define(brna, "CompositorNode", "CompositorNodeCurveRGB", def_rgb_curve, ICON_NODE_RGBCURVE);
-  define(brna, "CompositorNode", "CompositorNodeCurveVec", def_vector_curve, ICON_NODE_VECTOR);
-  define(brna, "CompositorNode", "CompositorNodeDBlur", def_cmp_dblur, ICON_NODE_DIRECITONALBLUR);
-  define(brna, "CompositorNode", "CompositorNodeDefocus", def_cmp_defocus, ICON_NODE_DEFOCUS);
-  define(brna, "CompositorNode", "CompositorNodeDenoise", def_cmp_denoise, ICON_NODE_DENOISE);
-  define(brna, "CompositorNode", "CompositorNodeDespeckle", def_cmp_despeckle, ICON_NODE_DESPECKLE);
-  define(brna, "CompositorNode", "CompositorNodeDiffMatte", def_cmp_diff_matte, ICON_SELECT_DIFFERENCE);
-  define(brna, "CompositorNode", "CompositorNodeDilateErode", def_cmp_dilate_erode, ICON_NODE_ERODE);
-  define(brna, "CompositorNode", "CompositorNodeDisplace", nullptr, ICON_MOD_DISPLACE);
-  define(brna, "CompositorNode", "CompositorNodeDistanceMatte", def_cmp_distance_matte, ICON_DRIVER_DISTANCE);
-  define(brna, "CompositorNode", "CompositorNodeDoubleEdgeMask", def_cmp_double_edge_mask, ICON_NODE_DOUBLEEDGEMASK);
-  define(brna, "CompositorNode", "CompositorNodeEllipseMask", def_cmp_ellipsemask, ICON_NODE_ELLIPSEMASK);
-  define(brna, "CompositorNode", "CompositorNodeExposure", nullptr, ICON_EXPOSURE);
-  define(brna, "CompositorNode", "CompositorNodeFilter", def_cmp_filter, ICON_FILTER);
-  define(brna, "CompositorNode", "CompositorNodeFlip", def_cmp_flip, ICON_FLIP);
-  define(brna, "CompositorNode", "CompositorNodeGamma", nullptr, ICON_NODE_GAMMA);
-  define(brna, "CompositorNode", "CompositorNodeGlare", def_cmp_glare, ICON_NODE_GLARE);
-  define(brna, "CompositorNode", "CompositorNodeHueCorrect", def_cmp_huecorrect, ICON_NODE_HUESATURATION);
-  define(brna, "CompositorNode", "CompositorNodeHueSat", nullptr, ICON_NODE_HUESATURATION);
-  define(brna, "CompositorNode", "CompositorNodeIDMask", def_cmp_id_mask, ICON_MOD_MASK);
-  define(brna, "CompositorNode", "CompositorNodeImage", def_cmp_image, ICON_FILE_IMAGE);
-  define(brna, "CompositorNode", "CompositorNodeImageCoordinates", nullptr, ICON_NONE);
-  define(brna, "CompositorNode", "CompositorNodeInpaint", def_cmp_inpaint, ICON_NODE_IMPAINT);
-  define(brna, "CompositorNode", "CompositorNodeInvert", def_cmp_invert, ICON_NODE_INVERT);
-  define(brna, "CompositorNode", "CompositorNodeKeying", def_cmp_keying, ICON_NODE_KEYING);
-  define(brna, "CompositorNode", "CompositorNodeKeyingScreen", def_cmp_keyingscreen, ICON_NODE_KEYINGSCREEN);
-  define(brna, "CompositorNode", "CompositorNodeKuwahara", def_cmp_kuwahara, ICON_KUWAHARA);
-  define(brna, "CompositorNode", "CompositorNodeLensdist", def_cmp_lensdist, ICON_NODE_LENSDISTORT);
-  define(brna, "CompositorNode", "CompositorNodeImageInfo", nullptr, ICON_NONE);
-  define(brna, "CompositorNode", "CompositorNodeLevels", def_cmp_levels, ICON_LEVELS);
-  define(brna, "CompositorNode", "CompositorNodeLumaMatte", def_cmp_luma_matte, ICON_NODE_LUMINANCE);
-  define(brna, "CompositorNode", "CompositorNodeMapRange", def_cmp_map_range, ICON_NODE_MAP_RANGE);
-  define(brna, "CompositorNode", "CompositorNodeMapUV", def_cmp_map_uv, ICON_GROUP_UVS);
-  define(brna, "CompositorNode", "CompositorNodeMapValue", def_cmp_map_value, ICON_NODE_VALUE);
-  define(brna, "CompositorNode", "CompositorNodeMask", def_cmp_mask, ICON_MOD_MASK);
-  define(brna, "CompositorNode", "CompositorNodeMath", def_math, ICON_NODE_MATH);
-  define(brna, "CompositorNode", "CompositorNodeMixRGB", def_mix_rgb, ICON_NODE_MIXRGB);
-  define(brna, "CompositorNode", "CompositorNodeMovieClip", def_cmp_movieclip, ICON_FILE_MOVIE);
-  define(brna, "CompositorNode", "CompositorNodeMovieDistortion", def_cmp_moviedistortion, ICON_NODE_MOVIEDISTORT);
-  define(brna, "CompositorNode", "CompositorNodeNormal", nullptr, ICON_RECALC_NORMALS);
-  define(brna, "CompositorNode", "CompositorNodeNormalize", nullptr, ICON_NODE_NORMALIZE);
-  define(brna, "CompositorNode", "CompositorNodeOutputFile", def_cmp_output_file, ICON_NODE_FILEOUTPUT);
-  define(brna, "CompositorNode", "CompositorNodePixelate", def_cmp_pixelate, ICON_NODE_PIXELATED);
-  define(brna, "CompositorNode", "CompositorNodePlaneTrackDeform", def_cmp_planetrackdeform, ICON_NODE_PLANETRACKDEFORM);
-  define(brna, "CompositorNode", "CompositorNodePosterize", nullptr, ICON_POSTERIZE);
-  define(brna, "CompositorNode", "CompositorNodePremulKey", def_cmp_premul_key, ICON_NODE_ALPHACONVERT);
-  define(brna, "CompositorNode", "CompositorNodeRelativeToPixel", nullptr, ICON_NONE);
-  define(brna, "CompositorNode", "CompositorNodeRGB", nullptr, ICON_NODE_RGB);
-  define(brna, "CompositorNode", "CompositorNodeRGBToBW", nullptr, ICON_NODE_RGBTOBW);
-  define(brna, "CompositorNode", "CompositorNodeRLayers", def_cmp_render_layers, ICON_RENDERLAYERS);
-  define(brna, "CompositorNode", "CompositorNodeRotate", def_cmp_rotate, ICON_TRANSFORM_ROTATE);
-  define(brna, "CompositorNode", "CompositorNodeScale", def_cmp_scale, ICON_TRANSFORM_SCALE);
-  define(brna, "CompositorNode", "CompositorNodeSceneTime", nullptr, ICON_TIME);
-  define(brna, "CompositorNode", "CompositorNodeSeparateColor", def_cmp_combsep_color, ICON_SEPARATE_COLOR);
-  define(brna, "CompositorNode", "CompositorNodeSeparateXYZ", nullptr, ICON_NODE_SEPARATEXYZ);
-  define(brna, "CompositorNode", "CompositorNodeSepHSVA", nullptr, ICON_NODE_SEPARATEHSV);
-  define(brna, "CompositorNode", "CompositorNodeSepRGBA", nullptr, ICON_NODE_SEPARATERGB);
-  define(brna, "CompositorNode", "CompositorNodeSepYCCA", def_cmp_ycc, ICON_NODE_SEPARATE_YCBCRA);
-  define(brna, "CompositorNode", "CompositorNodeSepYUVA", nullptr, ICON_NODE_SEPARATE_YUVA);
-  define(brna, "CompositorNode", "CompositorNodeSetAlpha", def_cmp_set_alpha, ICON_IMAGE_ALPHA);
-  define(brna, "CompositorNode", "CompositorNodeSplit", def_cmp_split, ICON_NODE_VIWERSPLIT);
-  define(brna, "CompositorNode", "CompositorNodeStabilize", def_cmp_stabilize2d, ICON_NODE_STABILIZE2D);
-  define(brna, "CompositorNode", "CompositorNodeSunBeams", def_cmp_sunbeams, ICON_NODE_SUNBEAMS);
-  define(brna, "CompositorNode", "CompositorNodeSwitch", def_cmp_switch, ICON_SWITCH_DIRECTION);
-  define(brna, "CompositorNode", "CompositorNodeSwitchView", def_cmp_switch_view, ICON_VIEW_SWITCHACTIVECAM);
-  define(brna, "CompositorNode", "CompositorNodeTexture", def_texture, ICON_TEXTURE);
-  define(brna, "CompositorNode", "CompositorNodeTime", def_time, ICON_NODE_CURVE_TIME);
-  define(brna, "CompositorNode", "CompositorNodeTonemap", def_cmp_tonemap, ICON_NODE_TONEMAP);
-  define(brna, "CompositorNode", "CompositorNodeTrackPos", def_cmp_trackpos, ICON_NODE_TRACKPOSITION);
-  define(brna, "CompositorNode", "CompositorNodeTransform", dev_cmd_transform, ICON_NODE_TRANSFORM);
-  define(brna, "CompositorNode", "CompositorNodeTranslate", def_cmp_translate, ICON_TRANSFORM_MOVE);
-  define(brna, "CompositorNode", "CompositorNodeValToRGB", def_colorramp, ICON_NODE_COLORRAMP);
-  define(brna, "CompositorNode", "CompositorNodeValue", nullptr, ICON_NODE_VALUE);
-  define(brna, "CompositorNode", "CompositorNodeVecBlur", def_cmp_vector_blur, ICON_NODE_VECTOR_BLUR);
-  define(brna, "CompositorNode", "CompositorNodeViewer", def_cmp_viewer, ICON_NODE_VIEWER);
-  define(brna, "CompositorNode", "CompositorNodeZcombine", def_cmp_zcombine, ICON_NODE_ZCOMBINE);
+  define("TextureNode", "TextureNodeAt");
+  define("TextureNode", "TextureNodeBricks", def_tex_bricks);
+  define("TextureNode", "TextureNodeChecker");
+  define("TextureNode", "TextureNodeCombineColor", def_tex_combsep_color);
+  define("TextureNode", "TextureNodeCompose");
+  define("TextureNode", "TextureNodeCoordinates");
+  define("TextureNode", "TextureNodeCurveRGB", def_rgb_curve);
+  define("TextureNode", "TextureNodeCurveTime", def_time);
+  define("TextureNode", "TextureNodeDecompose");
+  define("TextureNode", "TextureNodeDistance");
+  define("TextureNode", "TextureNodeHueSaturation");
+  define("TextureNode", "TextureNodeImage", def_tex_image);
+  define("TextureNode", "TextureNodeInvert");
+  define("TextureNode", "TextureNodeMath", def_math);
+  define("TextureNode", "TextureNodeMixRGB", def_mix_rgb);
+  define("TextureNode", "TextureNodeOutput", def_tex_output);
+  define("TextureNode", "TextureNodeRGBToBW");
+  define("TextureNode", "TextureNodeRotate");
+  define("TextureNode", "TextureNodeScale");
+  define("TextureNode", "TextureNodeSeparateColor", def_tex_combsep_color);
+  define("TextureNode", "TextureNodeTexBlend");
+  define("TextureNode", "TextureNodeTexClouds");
+  define("TextureNode", "TextureNodeTexDistNoise");
+  define("TextureNode", "TextureNodeTexMagic");
+  define("TextureNode", "TextureNodeTexMarble");
+  define("TextureNode", "TextureNodeTexMusgrave");
+  define("TextureNode", "TextureNodeTexNoise");
+  define("TextureNode", "TextureNodeTexStucci");
+  define("TextureNode", "TextureNodeTexture", def_texture);
+  define("TextureNode", "TextureNodeTexVoronoi");
+  define("TextureNode", "TextureNodeTexWood");
+  define("TextureNode", "TextureNodeTranslate");
+  define("TextureNode", "TextureNodeValToNor");
+  define("TextureNode", "TextureNodeValToRGB", def_colorramp);
+  define("TextureNode", "TextureNodeViewer");
 
-  define(brna, "TextureNode", "TextureNodeAt", nullptr, ICON_NODE_TEXCOORDINATE);
-  define(brna, "TextureNode", "TextureNodeBricks", def_tex_bricks, ICON_NODE_BRICK);
-  define(brna, "TextureNode", "TextureNodeChecker", nullptr, ICON_NODE_CHECKER);
-  define(brna, "TextureNode", "TextureNodeCombineColor", def_tex_combsep_color, ICON_COMBINE_COLOR);
-  define(brna, "TextureNode", "TextureNodeCompose", nullptr, ICON_NODE_COMBINERGB);
-  define(brna, "TextureNode", "TextureNodeCoordinates", nullptr, ICON_NODE_TEXCOORDINATE);
-  define(brna, "TextureNode", "TextureNodeCurveRGB", def_rgb_curve, ICON_NODE_RGBCURVE);
-  define(brna, "TextureNode", "TextureNodeCurveTime", def_time, ICON_NODE_CURVE_TIME);
-  define(brna, "TextureNode", "TextureNodeDecompose", nullptr, ICON_NODE_SEPARATERGB);
-  define(brna, "TextureNode", "TextureNodeDistance", nullptr, ICON_DRIVER_DISTANCE);
-  define(brna, "TextureNode", "TextureNodeHueSaturation", nullptr, ICON_NODE_HUESATURATION);
-  define(brna, "TextureNode", "TextureNodeImage", def_tex_image, ICON_FILE_IMAGE);
-  define(brna, "TextureNode", "TextureNodeInvert", nullptr, ICON_NODE_INVERT);
-  define(brna, "TextureNode", "TextureNodeMath", def_math, ICON_NODE_MATH);
-  define(brna, "TextureNode", "TextureNodeMixRGB", def_mix_rgb, ICON_NODE_MIXRGB);
-  define(brna, "TextureNode", "TextureNodeOutput", def_tex_output, ICON_NODE_OUTPUT);
-  define(brna, "TextureNode", "TextureNodeRGBToBW", nullptr, ICON_NODE_RGBTOBW);
-  define(brna, "TextureNode", "TextureNodeRotate", nullptr, ICON_TRANSFORM_ROTATE);
-  define(brna, "TextureNode", "TextureNodeScale", nullptr, ICON_TRANSFORM_SCALE);
-  define(brna, "TextureNode", "TextureNodeSeparateColor", def_tex_combsep_color, ICON_SEPARATE_COLOR);
-  define(brna, "TextureNode", "TextureNodeTexBlend", nullptr, ICON_NODE_MIXSHADER);
-  define(brna, "TextureNode", "TextureNodeTexClouds", nullptr, ICON_NOISE_TEX);
-  define(brna, "TextureNode", "TextureNodeTexDistNoise", nullptr, ICON_NODE_WHITE_NOISE);
-  define(brna, "TextureNode", "TextureNodeTexMagic", nullptr, ICON_MAGIC_TEX);
-  define(brna, "TextureNode", "TextureNodeTexMarble", nullptr, ICON_NONE);
-  define(brna, "TextureNode", "TextureNodeTexMusgrave", nullptr, ICON_NONE);
-  define(brna, "TextureNode", "TextureNodeTexNoise", nullptr, ICON_NOISE_TEX);
-  define(brna, "TextureNode", "TextureNodeTexStucci", nullptr, ICON_NONE);
-  define(brna, "TextureNode", "TextureNodeTexture", def_texture, ICON_TEXTURE);
-  define(brna, "TextureNode", "TextureNodeTexVoronoi", nullptr, ICON_VORONI_TEX);
-  define(brna, "TextureNode", "TextureNodeTexWood", nullptr, ICON_NONE);
-  define(brna, "TextureNode", "TextureNodeTranslate", nullptr, ICON_TRANSFORM_MOVE);
-  define(brna, "TextureNode", "TextureNodeValToNor", nullptr, ICON_NODE_NORMALMAP);
-  define(brna, "TextureNode", "TextureNodeValToRGB", def_colorramp, ICON_NODE_COLORRAMP);
-  define(brna, "TextureNode", "TextureNodeViewer", nullptr, ICON_NODE_VIEWER);
+  define("FunctionNode", "FunctionNodeAlignEulerToVector");
+  define("FunctionNode", "FunctionNodeAlignRotationToVector");
+  define("FunctionNode", "FunctionNodeAxesToRotation");
+  define("FunctionNode", "FunctionNodeAxisAngleToRotation");
+  define("FunctionNode", "FunctionNodeBitMath");
+  define("FunctionNode", "FunctionNodeBooleanMath");
+  define("FunctionNode", "FunctionNodeCombineColor");
+  define("FunctionNode", "FunctionNodeCombineMatrix");
+  define("FunctionNode", "FunctionNodeCombineTransform");
+  define("FunctionNode", "FunctionNodeCompare");
+  define("FunctionNode", "FunctionNodeEulerToRotation");
+  define("FunctionNode", "FunctionNodeFindInString");
+  define("FunctionNode", "FunctionNodeFloatToInt", def_float_to_int);
+  define("FunctionNode", "FunctionNodeFormatString", def_fn_format_string);
+  define("FunctionNode", "FunctionNodeHashValue");
+  define("FunctionNode", "FunctionNodeInputBool", def_fn_input_bool);
+  define("FunctionNode", "FunctionNodeInputColor", def_fn_input_color);
+  define("FunctionNode", "FunctionNodeInputInt", def_fn_input_int);
+  define("FunctionNode", "FunctionNodeInputRotation", def_fn_input_rotation);
+  define("FunctionNode", "FunctionNodeInputSpecialCharacters");
+  define("FunctionNode", "FunctionNodeInputString", def_fn_input_string);
+  define("FunctionNode", "FunctionNodeInputVector", def_fn_input_vector);
+  define("FunctionNode", "FunctionNodeIntegerMath");
+  define("FunctionNode", "FunctionNodeInvertMatrix");
+  define("FunctionNode", "FunctionNodeInvertRotation");
+  define("FunctionNode", "FunctionNodeMatchString");
+  define("FunctionNode", "FunctionNodeMatrixDeterminant");
+  define("FunctionNode", "FunctionNodeMatrixMultiply");
+  define("FunctionNode", "FunctionNodeProjectPoint");
+  define("FunctionNode", "FunctionNodeQuaternionToRotation");
+  define("FunctionNode", "FunctionNodeRandomValue", def_fn_random_value);
+  define("FunctionNode", "FunctionNodeReplaceString");
+  define("FunctionNode", "FunctionNodeRotateEuler", def_fn_rotate_euler);
+  define("FunctionNode", "FunctionNodeRotateRotation");
+  define("FunctionNode", "FunctionNodeRotateVector");
+  define("FunctionNode", "FunctionNodeRotationToAxisAngle");
+  define("FunctionNode", "FunctionNodeRotationToEuler");
+  define("FunctionNode", "FunctionNodeRotationToQuaternion");
+  define("FunctionNode", "FunctionNodeSeparateColor");
+  define("FunctionNode", "FunctionNodeSeparateMatrix");
+  define("FunctionNode", "FunctionNodeSeparateTransform");
+  define("FunctionNode", "FunctionNodeSliceString");
+  define("FunctionNode", "FunctionNodeStringLength");
+  define("FunctionNode", "FunctionNodeTransformDirection");
+  define("FunctionNode", "FunctionNodeTransformPoint");
+  define("FunctionNode", "FunctionNodeTransposeMatrix");
+  define("FunctionNode", "FunctionNodeValueToString");
 
-  define(brna, "FunctionNode", "FunctionNodeAlignEulerToVector", nullptr, ICON_ALIGN_EULER_TO_VECTOR);
-  define(brna, "FunctionNode", "FunctionNodeAlignRotationToVector", nullptr, ICON_ALIGN_ROTATION_TO_VECTOR);
-  define(brna, "FunctionNode", "FunctionNodeAxesToRotation", nullptr, ICON_AXES_TO_ROTATION);
-  define(brna, "FunctionNode", "FunctionNodeAxisAngleToRotation", nullptr, ICON_AXIS_ANGLE_TO_ROTATION);
-  define(brna, "FunctionNode", "FunctionNodeBitMath", nullptr, ICON_NONE);
-  define(brna, "FunctionNode", "FunctionNodeBooleanMath", nullptr, ICON_BOOLEAN_MATH);
-  define(brna, "FunctionNode", "FunctionNodeCombineColor", nullptr, ICON_COMBINE_COLOR);
-  define(brna, "FunctionNode", "FunctionNodeCombineMatrix", nullptr, ICON_COMBINE_MATRIX);
-  define(brna, "FunctionNode", "FunctionNodeCombineTransform", nullptr, ICON_COMBINE_TRANSFORM);
-  define(brna, "FunctionNode", "FunctionNodeCompare", nullptr, ICON_FLOAT_COMPARE);
-  define(brna, "FunctionNode", "FunctionNodeEulerToRotation", nullptr, ICON_EULER_TO_ROTATION);
-  define(brna, "FunctionNode", "FunctionNodeFindInString", nullptr, ICON_STRING_FIND);
-  define(brna, "FunctionNode", "FunctionNodeFloatToInt", def_float_to_int, ICON_FLOAT_TO_INT);
-  define(brna, "FunctionNode", "FunctionNodeHashValue", nullptr, ICON_HASH);
-  define(brna, "FunctionNode", "FunctionNodeInputBool", def_fn_input_bool, ICON_INPUT_BOOL);
-  define(brna, "FunctionNode", "FunctionNodeInputColor", def_fn_input_color, ICON_COLOR);
-  define(brna, "FunctionNode", "FunctionNodeInputInt", def_fn_input_int, ICON_INTEGER);
-  define(brna, "FunctionNode", "FunctionNodeInputRotation", def_fn_input_rotation, ICON_ROTATION);
-  define(brna, "FunctionNode", "FunctionNodeInputSpecialCharacters", nullptr, ICON_SPECIAL);
-  define(brna, "FunctionNode", "FunctionNodeInputString", def_fn_input_string, ICON_STRING);
-  define(brna, "FunctionNode", "FunctionNodeInputVector", def_fn_input_vector, ICON_NODE_VECTOR);
-  define(brna, "FunctionNode", "FunctionNodeIntegerMath", nullptr, ICON_INTEGER_MATH);
-  define(brna, "FunctionNode", "FunctionNodeInvertMatrix", nullptr, ICON_INVERT_MATRIX);
-  define(brna, "FunctionNode", "FunctionNodeInvertRotation", nullptr, ICON_INVERT_ROTATION);
-  define(brna, "FunctionNode", "FunctionNodeMatchString", nullptr, ICON_NONE);
-  define(brna, "FunctionNode", "FunctionNodeMatrixDeterminant", nullptr, ICON_MATRIX_DETERMINANT);
-  define(brna, "FunctionNode", "FunctionNodeMatrixMultiply", nullptr, ICON_MULTIPLY_MATRIX);
-  define(brna, "FunctionNode", "FunctionNodeProjectPoint", nullptr, ICON_PROJECT_POINT);
-  define(brna, "FunctionNode", "FunctionNodeQuaternionToRotation", nullptr, ICON_QUATERNION_TO_ROTATION);
-  define(brna, "FunctionNode", "FunctionNodeRandomValue", def_fn_random_value, ICON_RANDOM_FLOAT);
-  define(brna, "FunctionNode", "FunctionNodeReplaceString", nullptr, ICON_REPLACE_STRING);
-  define(brna, "FunctionNode", "FunctionNodeRotateEuler", def_fn_rotate_euler, ICON_ROTATE_EULER);
-  define(brna, "FunctionNode", "FunctionNodeRotateRotation", nullptr, ICON_ROTATE_EULER);
-  define(brna, "FunctionNode", "FunctionNodeRotateVector", nullptr, ICON_NODE_VECTORROTATE);
-  define(brna, "FunctionNode", "FunctionNodeRotationToAxisAngle", nullptr, ICON_ROTATION_TO_AXIS_ANGLE);
-  define(brna, "FunctionNode", "FunctionNodeRotationToEuler", nullptr, ICON_ROTATION_TO_EULER);
-  define(brna, "FunctionNode", "FunctionNodeRotationToQuaternion", nullptr, ICON_ROTATION_TO_QUATERNION);
-  define(brna, "FunctionNode", "FunctionNodeSeparateColor", nullptr, ICON_SEPARATE_COLOR);
-  define(brna, "FunctionNode", "FunctionNodeSeparateMatrix", nullptr, ICON_SEPARATE_MATRIX);
-  define(brna, "FunctionNode", "FunctionNodeSeparateTransform", nullptr, ICON_SEPARATE_TRANSFORM);
-  define(brna, "FunctionNode", "FunctionNodeSliceString", nullptr, ICON_STRING_SUBSTRING);
-  define(brna, "FunctionNode", "FunctionNodeStringLength", nullptr, ICON_STRING_LENGTH);
-  define(brna, "FunctionNode", "FunctionNodeTransformDirection", nullptr, ICON_TRANSFORM_DIRECTION);
-  define(brna, "FunctionNode", "FunctionNodeTransformPoint", nullptr, ICON_TRANSFORM_POINT);
-  define(brna, "FunctionNode", "FunctionNodeTransposeMatrix", nullptr, ICON_TRANSPOSE_MATRIX);
-  define(brna, "FunctionNode", "FunctionNodeValueToString", nullptr, ICON_VALUE_TO_STRING);
+  define("GeometryNode", "GeometryNodeAccumulateField");
+  define("GeometryNode", "GeometryNodeAttributeDomainSize");
+  define("GeometryNode", "GeometryNodeAttributeStatistic");
+  define("GeometryNode", "GeometryNodeBake", rna_def_geo_bake);
+  define("GeometryNode", "GeometryNodeBlurAttribute");
+  define("GeometryNode", "GeometryNodeBoundBox");
+  define("GeometryNode", "GeometryNodeCameraInfo");
+  define("GeometryNode", "GeometryNodeCaptureAttribute", rna_def_geo_capture_attribute);
+  define("GeometryNode", "GeometryNodeClosureInput", def_geo_closure_input);
+  define("GeometryNode", "GeometryNodeClosureOutput", def_geo_closure_output);
+  define("GeometryNode", "GeometryNodeCollectionInfo");
+  define("GeometryNode", "GeometryNodeCombineBundle", rna_def_geo_combine_bundle);
+  define("GeometryNode", "GeometryNodeConvexHull");
+  define("GeometryNode", "GeometryNodeCornersOfEdge");
+  define("GeometryNode", "GeometryNodeCornersOfFace");
+  define("GeometryNode", "GeometryNodeCornersOfVertex");
+  define("GeometryNode", "GeometryNodeCurveArc");
+  define("GeometryNode", "GeometryNodeCurveEndpointSelection");
+  define("GeometryNode", "GeometryNodeCurveHandleTypeSelection", def_geo_curve_handle_type_selection);
+  define("GeometryNode", "GeometryNodeCurveLength");
+  define("GeometryNode", "GeometryNodeCurveOfPoint");
+  define("GeometryNode", "GeometryNodeCurvePrimitiveBezierSegment");
+  define("GeometryNode", "GeometryNodeCurvePrimitiveCircle");
+  define("GeometryNode", "GeometryNodeCurvePrimitiveLine");
+  define("GeometryNode", "GeometryNodeCurvePrimitiveQuadrilateral");
+  define("GeometryNode", "GeometryNodeCurveQuadraticBezier");
+  define("GeometryNode", "GeometryNodeCurveSetHandles", def_geo_curve_set_handle_type);
+  define("GeometryNode", "GeometryNodeCurveSpiral");
+  define("GeometryNode", "GeometryNodeCurveSplineType");
+  define("GeometryNode", "GeometryNodeCurveStar");
+  define("GeometryNode", "GeometryNodeCurvesToGreasePencil");
+  define("GeometryNode", "GeometryNodeCurveToMesh");
+  define("GeometryNode", "GeometryNodeCurveToPoints");
+  define("GeometryNode", "GeometryNodeDeformCurvesOnSurface");
+  define("GeometryNode", "GeometryNodeDeleteGeometry");
+  define("GeometryNode", "GeometryNodeDistributePointsInGrid");
+  define("GeometryNode", "GeometryNodeDistributePointsInVolume");
+  define("GeometryNode", "GeometryNodeDistributePointsOnFaces", def_geo_distribute_points_on_faces);
+  define("GeometryNode", "GeometryNodeDualMesh");
+  define("GeometryNode", "GeometryNodeDuplicateElements");
+  define("GeometryNode", "GeometryNodeEdgePathsToCurves");
+  define("GeometryNode", "GeometryNodeEdgePathsToSelection");
+  define("GeometryNode", "GeometryNodeEdgesOfCorner");
+  define("GeometryNode", "GeometryNodeEdgesOfVertex");
+  define("GeometryNode", "GeometryNodeEdgesToFaceGroups");
+  define("GeometryNode", "GeometryNodeEvaluateClosure", def_geo_evaluate_closure);
+  define("GeometryNode", "GeometryNodeExtrudeMesh");
+  define("GeometryNode", "GeometryNodeFaceOfCorner");
+  define("GeometryNode", "GeometryNodeFieldAtIndex");
+  define("GeometryNode", "GeometryNodeFieldAverage");
+  define("GeometryNode", "GeometryNodeFieldMinAndMax");
+  define("GeometryNode", "GeometryNodeFieldOnDomain");
+  define("GeometryNode", "GeometryNodeFieldVariance");
+  define("GeometryNode", "GeometryNodeFillCurve");
+  define("GeometryNode", "GeometryNodeFilletCurve");
+  define("GeometryNode", "GeometryNodeFlipFaces");
+  define("GeometryNode", "GeometryNodeForeachGeometryElementInput", def_geo_foreach_geometry_element_input);
+  define("GeometryNode", "GeometryNodeForeachGeometryElementOutput", def_geo_foreach_geometry_element_output);
+  define("GeometryNode", "GeometryNodeGeometryToInstance");
+  define("GeometryNode", "GeometryNodeGetNamedGrid");
+  define("GeometryNode", "GeometryNodeGizmoDial");
+  define("GeometryNode", "GeometryNodeGizmoLinear");
+  define("GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform);
+  define("GeometryNode", "GeometryNodeGreasePencilToCurves");
+  define("GeometryNode", "GeometryNodeGridInfo");
+  define("GeometryNode", "GeometryNodeGridToMesh");
+  define("GeometryNode", "GeometryNodeImageInfo");
+  define("GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture);
+  define("GeometryNode", "GeometryNodeImportCSV");
+  define("GeometryNode", "GeometryNodeImportOBJ");
+  define("GeometryNode", "GeometryNodeImportPLY");
+  define("GeometryNode", "GeometryNodeImportSTL");
+  define("GeometryNode", "GeometryNodeImportText");
+  define("GeometryNode", "GeometryNodeImportVDB");
+  define("GeometryNode", "GeometryNodeIndexOfNearest");
+  define("GeometryNode", "GeometryNodeIndexSwitch", def_geo_index_switch);
+  define("GeometryNode", "GeometryNodeInputActiveCamera");
+  define("GeometryNode", "GeometryNodeInputCollection", def_geo_input_collection);
+  define("GeometryNode", "GeometryNodeInputCurveHandlePositions");
+  define("GeometryNode", "GeometryNodeInputCurveTilt");
+  define("GeometryNode", "GeometryNodeInputEdgeSmooth");
+  define("GeometryNode", "GeometryNodeInputID");
+  define("GeometryNode", "GeometryNodeInputImage", def_geo_image);
+  define("GeometryNode", "GeometryNodeInputIndex");
+  define("GeometryNode", "GeometryNodeInputInstanceBounds");
+  define("GeometryNode", "GeometryNodeInputInstanceRotation");
+  define("GeometryNode", "GeometryNodeInputInstanceScale");
+  define("GeometryNode", "GeometryNodeInputMaterial", def_geo_input_material);
+  define("GeometryNode", "GeometryNodeInputMaterialIndex");
+  define("GeometryNode", "GeometryNodeInputMeshEdgeAngle");
+  define("GeometryNode", "GeometryNodeInputMeshEdgeNeighbors");
+  define("GeometryNode", "GeometryNodeInputMeshEdgeVertices");
+  define("GeometryNode", "GeometryNodeInputMeshFaceArea");
+  define("GeometryNode", "GeometryNodeInputMeshFaceIsPlanar");
+  define("GeometryNode", "GeometryNodeInputMeshFaceNeighbors");
+  define("GeometryNode", "GeometryNodeInputMeshIsland");
+  define("GeometryNode", "GeometryNodeInputMeshVertexNeighbors");
+  define("GeometryNode", "GeometryNodeInputNamedAttribute");
+  define("GeometryNode", "GeometryNodeInputNamedLayerSelection");
+  define("GeometryNode", "GeometryNodeInputNormal", def_geo_input_normal);
+  define("GeometryNode", "GeometryNodeInputObject", def_geo_input_object);
+  define("GeometryNode", "GeometryNodeInputPosition");
+  define("GeometryNode", "GeometryNodeInputRadius");
+  define("GeometryNode", "GeometryNodeInputSceneTime");
+  define("GeometryNode", "GeometryNodeInputShadeSmooth");
+  define("GeometryNode", "GeometryNodeInputShortestEdgePaths");
+  define("GeometryNode", "GeometryNodeInputSplineCyclic");
+  define("GeometryNode", "GeometryNodeInputSplineResolution");
+  define("GeometryNode", "GeometryNodeInputTangent");
+  define("GeometryNode", "GeometryNodeInstanceOnPoints");
+  define("GeometryNode", "GeometryNodeInstancesToPoints");
+  define("GeometryNode", "GeometryNodeInstanceTransform");
+  define("GeometryNode", "GeometryNodeInterpolateCurves");
+  define("GeometryNode", "GeometryNodeIsViewport");
+  define("GeometryNode", "GeometryNodeJoinGeometry");
+  define("GeometryNode", "GeometryNodeMaterialSelection");
+  define("GeometryNode", "GeometryNodeMenuSwitch", def_geo_menu_switch);
+  define("GeometryNode", "GeometryNodeMergeByDistance");
+  define("GeometryNode", "GeometryNodeMergeLayers");
+  define("GeometryNode", "GeometryNodeMeshBoolean");
+  define("GeometryNode", "GeometryNodeMeshCircle");
+  define("GeometryNode", "GeometryNodeMeshCone");
+  define("GeometryNode", "GeometryNodeMeshCube");
+  define("GeometryNode", "GeometryNodeMeshCylinder");
+  define("GeometryNode", "GeometryNodeMeshFaceSetBoundaries");
+  define("GeometryNode", "GeometryNodeMeshGrid");
+  define("GeometryNode", "GeometryNodeMeshIcoSphere");
+  define("GeometryNode", "GeometryNodeMeshLine");
+  define("GeometryNode", "GeometryNodeMeshToCurve");
+  define("GeometryNode", "GeometryNodeMeshToDensityGrid");
+  define("GeometryNode", "GeometryNodeMeshToPoints");
+  define("GeometryNode", "GeometryNodeMeshToSDFGrid");
+  define("GeometryNode", "GeometryNodeMeshToVolume");
+  define("GeometryNode", "GeometryNodeMeshUVSphere");
+  define("GeometryNode", "GeometryNodeObjectInfo");
+  define("GeometryNode", "GeometryNodeOffsetCornerInFace");
+  define("GeometryNode", "GeometryNodeOffsetPointInCurve");
+  define("GeometryNode", "GeometryNodePoints");
+  define("GeometryNode", "GeometryNodePointsOfCurve");
+  define("GeometryNode", "GeometryNodePointsToCurves");
+  define("GeometryNode", "GeometryNodePointsToSDFGrid");
+  define("GeometryNode", "GeometryNodePointsToVertices");
+  define("GeometryNode", "GeometryNodePointsToVolume");
+  define("GeometryNode", "GeometryNodeProximity");
+  define("GeometryNode", "GeometryNodeRaycast");
+  define("GeometryNode", "GeometryNodeRealizeInstances");
+  define("GeometryNode", "GeometryNodeRemoveAttribute");
+  define("GeometryNode", "GeometryNodeRepeatInput", def_geo_repeat_input);
+  define("GeometryNode", "GeometryNodeRepeatOutput", def_geo_repeat_output);
+  define("GeometryNode", "GeometryNodeReplaceMaterial");
+  define("GeometryNode", "GeometryNodeResampleCurve");
+  define("GeometryNode", "GeometryNodeReverseCurve");
+  define("GeometryNode", "GeometryNodeRotateInstances");
+  define("GeometryNode", "GeometryNodeSampleCurve", def_geo_curve_sample);
+  define("GeometryNode", "GeometryNodeSampleGrid");
+  define("GeometryNode", "GeometryNodeSampleGridIndex");
+  define("GeometryNode", "GeometryNodeSampleIndex", def_geo_sample_index);
+  define("GeometryNode", "GeometryNodeSampleNearest");
+  define("GeometryNode", "GeometryNodeSampleNearestSurface");
+  define("GeometryNode", "GeometryNodeSampleUVSurface");
+  define("GeometryNode", "GeometryNodeScaleElements");
+  define("GeometryNode", "GeometryNodeScaleInstances");
+  define("GeometryNode", "GeometryNodeSDFGridBoolean");
+  define("GeometryNode", "GeometryNodeSelfObject");
+  define("GeometryNode", "GeometryNodeSeparateBundle", rna_def_geo_separate_bundle);
+  define("GeometryNode", "GeometryNodeSeparateComponents");
+  define("GeometryNode", "GeometryNodeSeparateGeometry");
+  define("GeometryNode", "GeometryNodeSetCurveHandlePositions");
+  define("GeometryNode", "GeometryNodeSetCurveNormal");
+  define("GeometryNode", "GeometryNodeSetCurveRadius");
+  define("GeometryNode", "GeometryNodeSetCurveTilt");
+  define("GeometryNode", "GeometryNodeSetGeometryName");
+  define("GeometryNode", "GeometryNodeSetGreasePencilColor");
+  define("GeometryNode", "GeometryNodeSetGreasePencilDepth");
+  define("GeometryNode", "GeometryNodeSetGreasePencilSoftness");
+  define("GeometryNode", "GeometryNodeSetID");
+  define("GeometryNode", "GeometryNodeSetInstanceTransform");
+  define("GeometryNode", "GeometryNodeSetMaterial");
+  define("GeometryNode", "GeometryNodeSetMaterialIndex");
+  define("GeometryNode", "GeometryNodeSetMeshNormal");
+  define("GeometryNode", "GeometryNodeSetPointRadius");
+  define("GeometryNode", "GeometryNodeSetPosition");
+  define("GeometryNode", "GeometryNodeSetShadeSmooth");
+  define("GeometryNode", "GeometryNodeSetSplineCyclic");
+  define("GeometryNode", "GeometryNodeSetSplineResolution");
+  define("GeometryNode", "GeometryNodeSimulationInput", def_geo_simulation_input);
+  define("GeometryNode", "GeometryNodeSimulationOutput", def_geo_simulation_output);
+  define("GeometryNode", "GeometryNodeSortElements");
+  define("GeometryNode", "GeometryNodeSplineLength");
+  define("GeometryNode", "GeometryNodeSplineParameter");
+  define("GeometryNode", "GeometryNodeSplitEdges");
+  define("GeometryNode", "GeometryNodeSplitToInstances");
+  define("GeometryNode", "GeometryNodeStoreNamedAttribute");
+  define("GeometryNode", "GeometryNodeStoreNamedGrid");
+  define("GeometryNode", "GeometryNodeStringJoin");
+  define("GeometryNode", "GeometryNodeStringToCurves", def_geo_string_to_curves);
+  define("GeometryNode", "GeometryNodeSubdivideCurve");
+  define("GeometryNode", "GeometryNodeSubdivideMesh");
+  define("GeometryNode", "GeometryNodeSubdivisionSurface");
+  define("GeometryNode", "GeometryNodeSwitch");
+  define("GeometryNode", "GeometryNodeTool3DCursor");
+  define("GeometryNode", "GeometryNodeToolActiveElement");
+  define("GeometryNode", "GeometryNodeToolFaceSet");
+  define("GeometryNode", "GeometryNodeToolMousePosition");
+  define("GeometryNode", "GeometryNodeToolSelection");
+  define("GeometryNode", "GeometryNodeToolSetFaceSet");
+  define("GeometryNode", "GeometryNodeToolSetSelection");
+  define("GeometryNode", "GeometryNodeTransform");
+  define("GeometryNode", "GeometryNodeTranslateInstances");
+  define("GeometryNode", "GeometryNodeTriangulate");
+  define("GeometryNode", "GeometryNodeTrimCurve");
+  define("GeometryNode", "GeometryNodeUVPackIslands");
+  define("GeometryNode", "GeometryNodeUVUnwrap");
+  define("GeometryNode", "GeometryNodeVertexOfCorner");
+  define("GeometryNode", "GeometryNodeViewer");
+  define("GeometryNode", "GeometryNodeViewportTransform");
+  define("GeometryNode", "GeometryNodeVolumeCube");
+  define("GeometryNode", "GeometryNodeVolumeToMesh");
+  define("GeometryNode", "GeometryNodeWarning");
 
-  define(brna, "GeometryNode", "GeometryNodeAccumulateField", nullptr, ICON_ACCUMULATE);
-  define(brna, "GeometryNode", "GeometryNodeAttributeDomainSize", nullptr, ICON_DOMAIN_SIZE);
-  define(brna, "GeometryNode", "GeometryNodeAttributeStatistic", nullptr, ICON_ATTRIBUTE_STATISTIC);
-  define(brna, "GeometryNode", "GeometryNodeBake", rna_def_geo_bake, ICON_BAKE);
-  define(brna, "GeometryNode", "GeometryNodeBlurAttribute", nullptr, ICON_BLUR_ATTRIBUTE);
-  define(brna, "GeometryNode", "GeometryNodeBoundBox", nullptr, ICON_PIVOT_BOUNDBOX);
-  define(brna, "GeometryNode", "GeometryNodeCameraInfo", nullptr, ICON_CAMERA_DATA);
-  define(brna, "GeometryNode", "GeometryNodeCaptureAttribute", rna_def_geo_capture_attribute, ICON_ATTRIBUTE_CAPTURE);
-  define(brna, "GeometryNode", "GeometryNodeCollectionInfo", nullptr, ICON_COLLECTION_INFO);
-  define(brna, "GeometryNode", "GeometryNodeConvexHull", nullptr, ICON_CONVEXHULL);
-  define(brna, "GeometryNode", "GeometryNodeCornersOfEdge", nullptr, ICON_CORNERS_OF_EDGE);
-  define(brna, "GeometryNode", "GeometryNodeCornersOfFace", nullptr, ICON_CORNERS_OF_FACE);
-  define(brna, "GeometryNode", "GeometryNodeCornersOfVertex", nullptr, ICON_CORNERS_OF_VERTEX);
-  define(brna, "GeometryNode", "GeometryNodeCurveArc", nullptr, ICON_CURVE_ARC);
-  define(brna, "GeometryNode", "GeometryNodeCurveEndpointSelection", nullptr, ICON_SELECT_LAST);
-  define(brna, "GeometryNode", "GeometryNodeCurveHandleTypeSelection", def_geo_curve_handle_type_selection, ICON_SELECT_HANDLETYPE);
-  define(brna, "GeometryNode", "GeometryNodeCurveLength", nullptr, ICON_PARTICLEBRUSH_LENGTH);
-  define(brna, "GeometryNode", "GeometryNodeCurveOfPoint", nullptr, ICON_CURVE_OF_POINT);
-  define(brna, "GeometryNode", "GeometryNodeCurvePrimitiveBezierSegment", nullptr, ICON_CURVE_BEZCURVE);
-  define(brna, "GeometryNode", "GeometryNodeCurvePrimitiveCircle", nullptr, ICON_CURVE_BEZCIRCLE);
-  define(brna, "GeometryNode", "GeometryNodeCurvePrimitiveLine", nullptr, ICON_CURVE_LINE);
-  define(brna, "GeometryNode", "GeometryNodeCurvePrimitiveQuadrilateral", nullptr, ICON_CURVE_QUADRILATERAL);
-  define(brna, "GeometryNode", "GeometryNodeCurveQuadraticBezier", nullptr, ICON_CURVE_NCURVE);
-  define(brna, "GeometryNode", "GeometryNodeCurveSetHandles", def_geo_curve_set_handle_type, ICON_HANDLE_AUTO);
-  define(brna, "GeometryNode", "GeometryNodeCurveSpiral", nullptr, ICON_CURVE_SPIRAL);
-  define(brna, "GeometryNode", "GeometryNodeCurveSplineType", nullptr, ICON_SPLINE_TYPE);
-  define(brna, "GeometryNode", "GeometryNodeCurveStar", nullptr, ICON_CURVE_STAR);
-  define(brna, "GeometryNode", "GeometryNodeCurvesToGreasePencil", nullptr, ICON_OUTLINER_OB_GREASEPENCIL);
-  define(brna, "GeometryNode", "GeometryNodeCurveToMesh", nullptr, ICON_OUTLINER_OB_MESH);
-  define(brna, "GeometryNode", "GeometryNodeCurveToPoints", nullptr, ICON_POINTCLOUD_DATA);
-  define(brna, "GeometryNode", "GeometryNodeDeformCurvesOnSurface", nullptr, ICON_DEFORM_CURVES);
-  define(brna, "GeometryNode", "GeometryNodeDeleteGeometry", nullptr, ICON_DELETE);
-  define(brna, "GeometryNode", "GeometryNodeDistributePointsInGrid", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeDistributePointsInVolume", nullptr, ICON_VOLUME_DISTRIBUTE);
-  define(brna, "GeometryNode", "GeometryNodeDistributePointsOnFaces", def_geo_distribute_points_on_faces, ICON_POINT_DISTRIBUTE);
-  define(brna, "GeometryNode", "GeometryNodeDualMesh", nullptr, ICON_DUAL_MESH);
-  define(brna, "GeometryNode", "GeometryNodeDuplicateElements", nullptr, ICON_DUPLICATE);
-  define(brna, "GeometryNode", "GeometryNodeEdgePathsToCurves", nullptr, ICON_EDGE_PATHS_TO_CURVES);
-  define(brna, "GeometryNode", "GeometryNodeEdgePathsToSelection", nullptr, ICON_EDGE_PATH_TO_SELECTION);
-  define(brna, "GeometryNode", "GeometryNodeEdgesOfCorner", nullptr, ICON_EDGES_OF_CORNER);
-  define(brna, "GeometryNode", "GeometryNodeEdgesOfVertex", nullptr, ICON_EDGES_OF_VERTEX);
-  define(brna, "GeometryNode", "GeometryNodeEdgesToFaceGroups", nullptr, ICON_FACEGROUP);
-  define(brna, "GeometryNode", "GeometryNodeExtrudeMesh", nullptr, ICON_EXTRUDE_REGION);
-  define(brna, "GeometryNode", "GeometryNodeFaceOfCorner", nullptr, ICON_FACE_OF_CORNER);
-  define(brna, "GeometryNode", "GeometryNodeFieldAtIndex", nullptr, ICON_FIELD_AT_INDEX);
-  define(brna, "GeometryNode", "GeometryNodeFieldAverage", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeFieldMinAndMax", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeFieldOnDomain", nullptr, ICON_FIELD_DOMAIN);
-  define(brna, "GeometryNode", "GeometryNodeFieldVariance", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeFillCurve", nullptr, ICON_CURVE_FILL);
-  define(brna, "GeometryNode", "GeometryNodeFilletCurve", nullptr, ICON_CURVE_FILLET);
-  define(brna, "GeometryNode", "GeometryNodeFlipFaces", nullptr, ICON_FLIP_NORMALS);
-  define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementInput", def_geo_foreach_geometry_element_input, ICON_FOR_EACH);
-  define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementOutput", def_geo_foreach_geometry_element_output, ICON_FOR_EACH);
-  define(brna, "GeometryNode", "GeometryNodeGeometryToInstance", nullptr, ICON_GEOMETRY_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeGetNamedGrid", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
-  define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
-  define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO);
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
-  define(brna, "GeometryNode", "GeometryNodeGridInfo", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeImageInfo", nullptr, ICON_IMAGE_INFO);
-  define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA);
-  define(brna, "GeometryNode", "GeometryNodeImportOBJ", nullptr, ICON_LOAD_OBJ);
-  define(brna, "GeometryNode", "GeometryNodeImportPLY", nullptr, ICON_LOAD_PLY);
-  define(brna, "GeometryNode", "GeometryNodeImportSTL", nullptr, ICON_LOAD_STL);
-  define(brna, "GeometryNode", "GeometryNodeImportCSV", nullptr, ICON_LOAD_CSV);
-  define(brna, "GeometryNode", "GeometryNodeImportText", nullptr, ICON_FILE_TEXT);
-  define(brna, "GeometryNode", "GeometryNodeImportVDB", nullptr, ICON_FILE_VOLUME);
-
-  define(brna, "GeometryNode", "GeometryNodeIndexOfNearest", nullptr, ICON_INDEX_OF_NEAREST);
-  define(brna, "GeometryNode", "GeometryNodeIndexSwitch", def_geo_index_switch, ICON_INDEX_SWITCH);
-  define(brna, "GeometryNode", "GeometryNodeInputActiveCamera", nullptr, ICON_VIEW_SWITCHTOCAM);
-  define(brna, "GeometryNode", "GeometryNodeInputCollection", def_geo_input_collection, ICON_OUTLINER_COLLECTION);
-  define(brna, "GeometryNode", "GeometryNodeInputCurveHandlePositions", nullptr, ICON_CURVE_HANDLE_POSITIONS);
-  define(brna, "GeometryNode", "GeometryNodeInputCurveTilt", nullptr, ICON_CURVE_TILT);
-  define(brna, "GeometryNode", "GeometryNodeInputEdgeSmooth", nullptr, ICON_SHADING_EDGE_SMOOTH);
-  define(brna, "GeometryNode", "GeometryNodeInputID", nullptr, ICON_GET_ID);
-  define(brna, "GeometryNode", "GeometryNodeInputImage", def_geo_image, ICON_FILE_IMAGE);
-  define(brna, "GeometryNode", "GeometryNodeInputIndex", nullptr, ICON_INDEX);
-  define(brna, "GeometryNode", "GeometryNodeInputInstanceBounds", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeInputInstanceRotation", nullptr, ICON_INSTANCE_ROTATE);
-  define(brna, "GeometryNode", "GeometryNodeInputInstanceScale", nullptr, ICON_INSTANCE_SCALE);
-  define(brna, "GeometryNode", "GeometryNodeInputMaterial", def_geo_input_material, ICON_NODE_MATERIAL);
-  define(brna, "GeometryNode", "GeometryNodeInputMaterialIndex", nullptr, ICON_MATERIAL_INDEX);
-  define(brna, "GeometryNode", "GeometryNodeInputMeshEdgeAngle", nullptr, ICON_EDGE_ANGLE);
-  define(brna, "GeometryNode", "GeometryNodeInputMeshEdgeNeighbors", nullptr, ICON_EDGE_NEIGHBORS);
-  define(brna, "GeometryNode", "GeometryNodeInputMeshEdgeVertices", nullptr, ICON_EDGE_VERTICES);
-  define(brna, "GeometryNode", "GeometryNodeInputMeshFaceArea", nullptr, ICON_FACEREGIONS);
-  define(brna, "GeometryNode", "GeometryNodeInputMeshFaceIsPlanar", nullptr, ICON_PLANAR);
-  define(brna, "GeometryNode", "GeometryNodeInputMeshFaceNeighbors", nullptr, ICON_FACE_NEIGHBORS);
-  define(brna, "GeometryNode", "GeometryNodeInputMeshIsland", nullptr, ICON_UV_ISLANDSEL);
-  define(brna, "GeometryNode", "GeometryNodeInputMeshVertexNeighbors", nullptr, ICON_VERTEX_NEIGHBORS);
-  define(brna, "GeometryNode", "GeometryNodeInputNamedAttribute", nullptr, ICON_NAMED_ATTRIBUTE);
-  define(brna, "GeometryNode", "GeometryNodeInputNamedLayerSelection", nullptr, ICON_NAMED_LAYER_SELECTION);
-  define(brna, "GeometryNode", "GeometryNodeInputNormal", def_geo_input_normal, ICON_RECALC_NORMALS);
-  define(brna, "GeometryNode", "GeometryNodeInputObject", def_geo_input_object, ICON_OBJECT_DATA);
-  define(brna, "GeometryNode", "GeometryNodeInputPosition", nullptr, ICON_POSITION);
-  define(brna, "GeometryNode", "GeometryNodeInputRadius", nullptr, ICON_RADIUS);
-  define(brna, "GeometryNode", "GeometryNodeInputSceneTime", nullptr, ICON_TIME);
-  define(brna, "GeometryNode", "GeometryNodeInputShadeSmooth", nullptr, ICON_SHADING_SMOOTH);
-  define(brna, "GeometryNode", "GeometryNodeInputShortestEdgePaths", nullptr, ICON_SELECT_SHORTESTPATH);
-  define(brna, "GeometryNode", "GeometryNodeInputSplineCyclic", nullptr, ICON_IS_SPLINE_CYCLIC);
-  define(brna, "GeometryNode", "GeometryNodeInputSplineResolution", nullptr, ICON_SPLINE_RESOLUTION);
-  define(brna, "GeometryNode", "GeometryNodeInputTangent", nullptr, ICON_CURVE_TANGENT);
-  define(brna, "GeometryNode", "GeometryNodeInstanceOnPoints", nullptr, ICON_POINT_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeInstancesToPoints", nullptr, ICON_INSTANCES_TO_POINTS);
-  define(brna, "GeometryNode", "GeometryNodeInstanceTransform", nullptr, ICON_INSTANCE_TRANSFORM_GET);
-  define(brna, "GeometryNode", "GeometryNodeInterpolateCurves", nullptr, ICON_INTERPOLATE_CURVE);
-  define(brna, "GeometryNode", "GeometryNodeIsViewport", nullptr, ICON_VIEW);
-  define(brna, "GeometryNode", "GeometryNodeJoinGeometry", nullptr, ICON_JOIN);
-  define(brna, "GeometryNode", "GeometryNodeMaterialSelection", nullptr, ICON_SELECT_BY_MATERIAL);
-  define(brna, "GeometryNode", "GeometryNodeMenuSwitch", def_geo_menu_switch, ICON_MENU_SWITCH);
-  define(brna, "GeometryNode", "GeometryNodeMergeByDistance", nullptr, ICON_REMOVE_DOUBLES);
-  define(brna, "GeometryNode", "GeometryNodeMergeLayers", nullptr, ICON_MERGE);
-  define(brna, "GeometryNode", "GeometryNodeMeshBoolean", nullptr, ICON_MOD_BOOLEAN);
-  define(brna, "GeometryNode", "GeometryNodeMeshCircle", nullptr, ICON_MESH_CIRCLE);
-  define(brna, "GeometryNode", "GeometryNodeMeshCone", nullptr, ICON_MESH_CONE);
-  define(brna, "GeometryNode", "GeometryNodeMeshCube", nullptr, ICON_MESH_CUBE);
-  define(brna, "GeometryNode", "GeometryNodeMeshCylinder", nullptr, ICON_MESH_CYLINDER);
-  define(brna, "GeometryNode", "GeometryNodeMeshFaceSetBoundaries", nullptr, ICON_SELECT_BOUNDARY);
-  define(brna, "GeometryNode", "GeometryNodeMeshGrid", nullptr, ICON_MESH_GRID);
-  define(brna, "GeometryNode", "GeometryNodeMeshIcoSphere", nullptr, ICON_MESH_ICOSPHERE);
-  define(brna, "GeometryNode", "GeometryNodeMeshLine", nullptr, ICON_MESH_LINE);
-  define(brna, "GeometryNode", "GeometryNodeMeshToCurve", nullptr, ICON_OUTLINER_OB_CURVE);
-  define(brna, "GeometryNode", "GeometryNodeMeshToDensityGrid", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeMeshToPoints", nullptr, ICON_MESH_TO_POINTS);
-  define(brna, "GeometryNode", "GeometryNodeMeshToSDFGrid", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeMeshToVolume", nullptr, ICON_MESH_TO_VOLUME);
-  define(brna, "GeometryNode", "GeometryNodeMeshUVSphere", nullptr, ICON_MESH_UVSPHERE);
-  define(brna, "GeometryNode", "GeometryNodeObjectInfo", nullptr, ICON_NODE_OBJECTINFO);
-  define(brna, "GeometryNode", "GeometryNodeOffsetCornerInFace", nullptr, ICON_OFFSET_CORNER_IN_FACE);
-  define(brna, "GeometryNode", "GeometryNodeOffsetPointInCurve", nullptr, ICON_OFFSET_POINT_IN_CURVE);
-  define(brna, "GeometryNode", "GeometryNodePoints", nullptr, ICON_DECORATE);
-  define(brna, "GeometryNode", "GeometryNodePointsOfCurve", nullptr, ICON_POINT_OF_CURVE);
-  define(brna, "GeometryNode", "GeometryNodePointsToCurves", nullptr, ICON_POINTS_TO_CURVES);
-  define(brna, "GeometryNode", "GeometryNodePointsToSDFGrid", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodePointsToVertices", nullptr, ICON_POINTS_TO_VERTICES);
-  define(brna, "GeometryNode", "GeometryNodePointsToVolume", nullptr, ICON_POINT_TO_VOLUME);
-  define(brna, "GeometryNode", "GeometryNodeProximity", nullptr, ICON_GEOMETRY_PROXIMITY);
-  define(brna, "GeometryNode", "GeometryNodeRaycast", nullptr, ICON_RAYCAST);
-  define(brna, "GeometryNode", "GeometryNodeRealizeInstances", nullptr, ICON_MOD_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeRemoveAttribute", nullptr, ICON_ATTRIBUTE_REMOVE);
-  define(brna, "GeometryNode", "GeometryNodeRepeatInput", def_geo_repeat_input, ICON_REPEAT);
-  define(brna, "GeometryNode", "GeometryNodeRepeatOutput", def_geo_repeat_output, ICON_REPEAT);
-  define(brna, "GeometryNode", "GeometryNodeReplaceMaterial", nullptr, ICON_MATERIAL_REPLACE);
-  define(brna, "GeometryNode", "GeometryNodeResampleCurve", nullptr, ICON_CURVE_RESAMPLE);
-  define(brna, "GeometryNode", "GeometryNodeReverseCurve", nullptr, ICON_SWITCH_DIRECTION);
-  define(brna, "GeometryNode", "GeometryNodeRotateInstances", nullptr, ICON_ROTATE_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeSampleCurve", def_geo_curve_sample, ICON_CURVE_SAMPLE);
-  define(brna, "GeometryNode", "GeometryNodeSampleGrid", nullptr, ICON_NONE);
-
-  define(brna, "GeometryNode", "GeometryNodeSampleGridIndex", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeSampleIndex", def_geo_sample_index, ICON_SAMPLE_INDEX);
-  define(brna, "GeometryNode", "GeometryNodeSampleNearest", nullptr, ICON_SAMPLE_NEAREST);
-  define(brna, "GeometryNode", "GeometryNodeSampleNearestSurface", nullptr, ICON_SAMPLE_NEAREST_SURFACE);
-  define(brna, "GeometryNode", "GeometryNodeSampleUVSurface", nullptr, ICON_SAMPLE_UV_SURFACE);
-  define(brna, "GeometryNode", "GeometryNodeScaleElements", nullptr, ICON_TRANSFORM_SCALE);
-  define(brna, "GeometryNode", "GeometryNodeScaleInstances", nullptr, ICON_SCALE_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeSDFGridBoolean", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeSelfObject", nullptr, ICON_SELF_OBJECT);
-  define(brna, "GeometryNode", "GeometryNodeSeparateBundle", rna_def_geo_separate_bundle, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeCombineBundle", rna_def_geo_combine_bundle, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeClosureInput", def_geo_closure_input, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeClosureOutput", def_geo_closure_output, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeEvaluateClosure", def_geo_evaluate_closure, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeSeparateComponents", nullptr, ICON_SEPARATE);
-  define(brna, "GeometryNode", "GeometryNodeSeparateGeometry", nullptr, ICON_SEPARATE_GEOMETRY);
-  define(brna, "GeometryNode", "GeometryNodeSetCurveHandlePositions", nullptr, ICON_SET_CURVE_HANDLE_POSITIONS);
-  define(brna, "GeometryNode", "GeometryNodeSetCurveNormal", nullptr, ICON_CURVE_NORMAL);
-  define(brna, "GeometryNode", "GeometryNodeSetCurveRadius", nullptr, ICON_SET_CURVE_RADIUS);
-  define(brna, "GeometryNode", "GeometryNodeSetCurveTilt", nullptr, ICON_SET_CURVE_TILT);
-  define(brna, "GeometryNode", "GeometryNodeSetGeometryName", nullptr, ICON_GEOMETRY_NAME);
-  define(brna, "GeometryNode", "GeometryNodeSetID", nullptr, ICON_SET_ID);
-  define(brna, "GeometryNode", "GeometryNodeSetInstanceTransform", nullptr, ICON_INSTANCE_TRANSFORM);
-  define(brna, "GeometryNode", "GeometryNodeSetMaterial", nullptr, ICON_MATERIAL_ADD);
-  define(brna, "GeometryNode", "GeometryNodeSetMaterialIndex", nullptr, ICON_SET_MATERIAL_INDEX);
-  define(brna, "GeometryNode", "GeometryNodeSetMeshNormal", nullptr, ICON_SET_SMOOTH);
-  define(brna, "GeometryNode", "GeometryNodeSetPointRadius", nullptr, ICON_SET_CURVE_RADIUS);
-  define(brna, "GeometryNode", "GeometryNodeSetPosition", nullptr, ICON_SET_POSITION);
-  define(brna, "GeometryNode", "GeometryNodeSetShadeSmooth", nullptr, ICON_SET_SHADE_SMOOTH);
-  define(brna, "GeometryNode", "GeometryNodeSetSplineCyclic", nullptr, ICON_TOGGLE_CYCLIC);
-  define(brna, "GeometryNode", "GeometryNodeSetSplineResolution", nullptr, ICON_SET_SPLINE_RESOLUTION);
-  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilColor", nullptr, ICON_COLOR);
-  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilDepth", nullptr, ICON_DEPTH);
-  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilSoftness", nullptr, ICON_FALLOFFSTROKE);
-  define(brna, "GeometryNode", "GeometryNodeSimulationInput", def_geo_simulation_input, ICON_TIME);
-  define(brna, "GeometryNode", "GeometryNodeSimulationOutput", def_geo_simulation_output, ICON_TIME);
-  define(brna, "GeometryNode", "GeometryNodeSortElements", nullptr, ICON_SORTSIZE);
-  define(brna, "GeometryNode", "GeometryNodeSplineLength", nullptr, ICON_SPLINE_LENGTH);
-  define(brna, "GeometryNode", "GeometryNodeSplineParameter", nullptr, ICON_CURVE_PARAMETER);
-  define(brna, "GeometryNode", "GeometryNodeSplitEdges", nullptr, ICON_SPLITEDGE);
-  define(brna, "GeometryNode", "GeometryNodeSplitToInstances", nullptr, ICON_SPLIT_TO_INSTANCES);
-  define(brna, "GeometryNode", "GeometryNodeStoreNamedAttribute", nullptr, ICON_ATTRIBUTE_STORE);
-  define(brna, "GeometryNode", "GeometryNodeStoreNamedGrid", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeStringJoin", nullptr, ICON_STRING_JOIN);
-  define(brna, "GeometryNode", "GeometryNodeStringToCurves", def_geo_string_to_curves, ICON_STRING_TO_CURVE);
-  define(brna, "GeometryNode", "GeometryNodeSubdivideCurve", nullptr, ICON_SUBDIVIDE_EDGES);
-  define(brna, "GeometryNode", "GeometryNodeSubdivideMesh", nullptr, ICON_SUBDIVIDE_MESH);
-  define(brna, "GeometryNode", "GeometryNodeSubdivisionSurface", nullptr, ICON_SUBDIVIDE_EDGES);
-  define(brna, "GeometryNode", "GeometryNodeSwitch", nullptr, ICON_SWITCH);
-  define(brna, "GeometryNode", "GeometryNodeTool3DCursor", nullptr, ICON_CURSOR);
-  define(brna, "GeometryNode", "GeometryNodeToolActiveElement", nullptr, ICON_ACTIVE_ELEMENT);
-  define(brna, "GeometryNode", "GeometryNodeToolFaceSet", nullptr, ICON_FACE_SET);
-  define(brna, "GeometryNode", "GeometryNodeToolMousePosition", nullptr, ICON_MOUSE_POSITION);
-  define(brna, "GeometryNode", "GeometryNodeToolSelection", nullptr, ICON_RESTRICT_SELECT_OFF);
-  define(brna, "GeometryNode", "GeometryNodeToolSetFaceSet", nullptr, ICON_SET_FACE_SET);
-  define(brna, "GeometryNode", "GeometryNodeToolSetSelection", nullptr, ICON_SET_SELECTION);
-  define(brna, "GeometryNode", "GeometryNodeTransform", nullptr, ICON_NODE_TRANSFORM);
-  define(brna, "GeometryNode", "GeometryNodeTranslateInstances", nullptr, ICON_TRANSLATE_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeTriangulate", nullptr, ICON_MOD_TRIANGULATE);
-  define(brna, "GeometryNode", "GeometryNodeTrimCurve", nullptr, ICON_CURVE_TRIM);
-  define(brna, "GeometryNode", "GeometryNodeUVPackIslands", nullptr, ICON_PACKISLAND);
-  define(brna, "GeometryNode", "GeometryNodeUVUnwrap", nullptr, ICON_UNWRAP_ABF);
-  define(brna, "GeometryNode", "GeometryNodeVertexOfCorner", nullptr, ICON_VERTEX_OF_CORNER);
-  define(brna, "GeometryNode", "GeometryNodeViewer", nullptr, ICON_NODE_VIEWER);
-  define(brna, "GeometryNode", "GeometryNodeViewportTransform", nullptr, ICON_VIEWPORT_TRANSFORM);
-  define(brna, "GeometryNode", "GeometryNodeVolumeCube", nullptr, ICON_VOLUME_CUBE);
-  define(brna, "GeometryNode", "GeometryNodeVolumeToMesh", nullptr, ICON_VOLUME_TO_MESH);
-  define(brna, "GeometryNode", "GeometryNodeWarning", nullptr, ICON_ERROR);
 
   /* Node group types are currently defined for each tree type individually. */
-  define(brna, "ShaderNode", "ShaderNodeGroup", def_group, ICON_NONE); /* bfa - don't need 2 nodegroups icons */
-  define(brna, "CompositorNode", "CompositorNodeGroup", def_group, ICON_NONE); /* bfa - don't need 2 nodegroups icons */
-  define(brna, "TextureNode", "TextureNodeGroup", def_group, ICON_NONE); /* bfa - don't need 2 nodegroups icons */
-  define(brna, "GeometryNode", "GeometryNodeGroup", def_group, ICON_NONE); /* bfa - don't need 2 nodegroups icons */
+  define("ShaderNode", "ShaderNodeGroup", def_group);
+  define("CompositorNode", "CompositorNodeGroup", def_group);
+  define("TextureNode", "TextureNodeGroup", def_group);
+  define("GeometryNode", "GeometryNodeGroup", def_group);
 
   /* clang-format on */
 }

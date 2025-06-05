@@ -8,7 +8,8 @@ import sys
 import os
 
 # Path to Blender shared libraries.
-shared_lib_dirname = "bforartists.shared" if sys.platform == "win32" else "lib"
+shared_lib_dirname = "blender.shared" if sys.platform == "win32" else "lib"
+
 if os.path.basename(__file__) == "bpy_site_customize.py":
     # Blender as Python Module.
     is_python = True

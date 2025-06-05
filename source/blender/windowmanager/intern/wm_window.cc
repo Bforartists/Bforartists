@@ -504,7 +504,7 @@ void WM_window_title(wmWindowManager *wm, wmWindow *win, const char *title)
     bScreen *screen = WM_window_get_active_screen(win);
     const bool is_single = screen && BLI_listbase_is_single(&screen->areabase);
     ScrArea *area = (screen) ? static_cast<ScrArea *>(screen->areabase.first) : nullptr;
-    const char *name = "Bforartists"; /*bfa   we are not Blender*/
+    const char *name = "Blender";
     if (is_single && area && area->spacetype != SPACE_EMPTY) {
       name = IFACE_(ED_area_name(area).c_str());
     }
@@ -547,7 +547,7 @@ void WM_window_title(wmWindowManager *wm, wmWindow *win, const char *title)
     win_title.append(fmt::format(" [{}]", filepath));
   }
 
-  win_title.append(fmt::format(" - Bforartists {}", BKE_bforartists_version_string())); // BFA
+  win_title.append(fmt::format(" - Blender {}", BKE_blender_version_string()));
 
   GHOST_SetTitle(handle, win_title.c_str());
 
@@ -931,7 +931,7 @@ static void wm_window_ghostwindow_ensure(wmWindowManager *wm, wmWindow *win, boo
       win->cursor = WM_CURSOR_DEFAULT;
     }
 
-    wm_window_ghostwindow_add(wm, "Bforartists", win, is_dialog);
+    wm_window_ghostwindow_add(wm, "Blender", win, is_dialog);
   }
 
   if (win->ghostwin != nullptr) {

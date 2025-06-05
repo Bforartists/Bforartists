@@ -62,7 +62,6 @@
 #include "ED_view3d.hh"
 
 #include "UI_interface.hh"
-#include "UI_resources.hh" /* BFA - needed for icons */
 
 #include "curve_intern.hh"
 
@@ -410,13 +409,13 @@ static void text_update_edited(bContext *C, Object *obedit, const eEditFontMode 
 
   BLI_assert(ef->len >= 0);
 
-  /* run update first since it can move the cursor */
+  /* Run update first since it can move the cursor. */
   if (mode == FO_EDIT) {
-    /* re-tesselllate */
+    /* Re-tessellate. */
     DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
   }
   else {
-    /* depsgraph runs above, but since we're not tagging for update, call direct */
+    /* Depsgraph runs above, but since we're not tagging for update, call directly. */
     /* We need evaluated data here. */
     Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
     BKE_vfont_to_curve(DEG_get_evaluated(depsgraph, obedit), mode);
@@ -424,10 +423,7 @@ static void text_update_edited(bContext *C, Object *obedit, const eEditFontMode 
 
   cu->curinfo = ef->textbufinfo[ef->pos ? ef->pos - 1 : 0];
 
-  if (obedit->totcol > 0) {
-    obedit->actcol = cu->curinfo.mat_nr + 1;
-    obedit->actcol = std::max(obedit->actcol, 1);
-  }
+  blender::ed::object::material_active_index_set(obedit, cu->curinfo.mat_nr);
 
   DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SELECT);
   WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
@@ -513,7 +509,14 @@ static bool font_paste_wchar(Object *obedit,
               ef->textbufinfo + ef->pos,
               (ef->len - ef->pos + 1) * sizeof(CharInfo));
       if (str_info) {
-        std::copy_n(str_info, str_len, ef->textbufinfo + ef->pos);
+        const short mat_nr_max = std::max(0, obedit->totcol - 1);
+        const CharInfo *info_src = str_info;
+        CharInfo *info_dst = ef->textbufinfo + ef->pos;
+
+        for (int i = 0; i < str_len; i++, info_src++, info_dst++) {
+          *info_dst = *info_src;
+          CLAMP_MAX(info_dst->mat_nr, mat_nr_max);
+        }
       }
       else {
         std::fill_n(ef->textbufinfo + ef->pos, str_len, CharInfo{});
@@ -1286,18 +1289,18 @@ void FONT_OT_text_paste(wmOperatorType *ot)
  * \{ */
 
 static const EnumPropertyItem move_type_items[] = {
-    {LINE_BEGIN, "LINE_BEGIN", ICON_CARET_NEXT_CHAR, "Line Begin", ""},
-    {LINE_END, "LINE_END", ICON_CARET_NEXT_CHAR, "Line End", ""},
-    {TEXT_BEGIN, "TEXT_BEGIN", ICON_CARET_NEXT_CHAR, "Text Begin", ""},
-    {TEXT_END, "TEXT_END", ICON_CARET_NEXT_CHAR, "Text End", ""},
-    {PREV_CHAR, "PREVIOUS_CHARACTER", ICON_CARET_NEXT_CHAR, "Previous Character", ""},
-    {NEXT_CHAR, "NEXT_CHARACTER", ICON_CARET_NEXT_CHAR, "Next Character", ""},
-    {PREV_WORD, "PREVIOUS_WORD", ICON_CARET_NEXT_CHAR, "Previous Word", ""},
-    {NEXT_WORD, "NEXT_WORD", ICON_CARET_NEXT_CHAR, "Next Word", ""},
-    {PREV_LINE, "PREVIOUS_LINE", ICON_CARET_NEXT_CHAR, "Previous Line", ""},
-    {NEXT_LINE, "NEXT_LINE", ICON_CARET_NEXT_CHAR, "Next Line", ""},
-    {PREV_PAGE, "PREVIOUS_PAGE", ICON_CARET_NEXT_CHAR, "Previous Page", ""},
-    {NEXT_PAGE, "NEXT_PAGE", ICON_CARET_NEXT_CHAR, "Next Page", ""},
+    {LINE_BEGIN, "LINE_BEGIN", 0, "Line Begin", ""},
+    {LINE_END, "LINE_END", 0, "Line End", ""},
+    {TEXT_BEGIN, "TEXT_BEGIN", 0, "Text Begin", ""},
+    {TEXT_END, "TEXT_END", 0, "Text End", ""},
+    {PREV_CHAR, "PREVIOUS_CHARACTER", 0, "Previous Character", ""},
+    {NEXT_CHAR, "NEXT_CHARACTER", 0, "Next Character", ""},
+    {PREV_WORD, "PREVIOUS_WORD", 0, "Previous Word", ""},
+    {NEXT_WORD, "NEXT_WORD", 0, "Next Word", ""},
+    {PREV_LINE, "PREVIOUS_LINE", 0, "Previous Line", ""},
+    {NEXT_LINE, "NEXT_LINE", 0, "Next Line", ""},
+    {PREV_PAGE, "PREVIOUS_PAGE", 0, "Previous Page", ""},
+    {NEXT_PAGE, "NEXT_PAGE", 0, "Next Page", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2045,10 +2048,7 @@ static void font_cursor_set_apply(bContext *C, const wmEvent *event)
 
   cu->curinfo = ef->textbufinfo[ef->pos ? ef->pos - 1 : 0];
 
-  if (ob->totcol > 0) {
-    ob->actcol = cu->curinfo.mat_nr + 1;
-    ob->actcol = std::max(ob->actcol, 1);
-  }
+  blender::ed::object::material_active_index_set(ob, cu->curinfo.mat_nr);
 
   if (!ef->selboxes && (ef->selstart == 0)) {
     if (ef->pos == 0) {
@@ -2573,10 +2573,9 @@ static wmOperatorStatus font_unlink_exec(bContext *C, wmOperator *op)
 void FONT_OT_unlink(wmOperatorType *ot)
 {
   /* identifiers */
-  /*bfa - we call remove remove*/
-  ot->name = "Remove";
+  ot->name = "Unlink";
   ot->idname = "FONT_OT_unlink";
-  ot->description = "Remove active font";
+  ot->description = "Unlink active font data-block";
 
   /* API callbacks. */
   ot->exec = font_unlink_exec;

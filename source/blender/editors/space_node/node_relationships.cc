@@ -1624,26 +1624,6 @@ static wmOperatorStatus node_make_link_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*bfa - tool name*/
-static std::string NODE_OT_link_make_get_name(wmOperatorType *ot, PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "replace")) {
-    return CTX_IFACE_(ot->translation_context, "Make and Replace Links");
-  }
-  return "";
-}
-
-/*bfa - descriptions*/
-static std::string NODE_OT_link_make_get_description(struct bContext * /*C*/,
-                                                     struct wmOperatorType * /*op*/,
-                                                     struct PointerRNA *values)
-{
-  if (RNA_boolean_get(values, "replace")) {
-    return "Makes a link between selected output in input sockets and replaces existing links";
-  }
-  return "";
-}
-
 void NODE_OT_link_make(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1653,8 +1633,6 @@ void NODE_OT_link_make(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = node_make_link_exec;
-  ot->get_name = NODE_OT_link_make_get_name;               /*bfa - tool name*/
-  ot->get_description = NODE_OT_link_make_get_description; /*bfa - descriptions*/
   /* XXX we need a special poll which checks that there are selected input/output sockets. */
   ot->poll = ED_operator_node_editable;
 
@@ -2512,14 +2490,14 @@ void node_insert_on_link_flags(Main &bmain, SpaceNode &snode, bool is_new_node)
   if (!node_to_insert->is_reroute()) {
     /* Ignore main sockets when the types don't match. */
     if (best_input != nullptr && ntree.typeinfo->validate_link != nullptr &&
-        !ntree.typeinfo->validate_link(static_cast<eNodeSocketDatatype>(old_link->fromsock->type),
-                                       static_cast<eNodeSocketDatatype>(best_input->type)))
+        !ntree.typeinfo->validate_link(eNodeSocketDatatype(old_link->fromsock->type),
+                                       eNodeSocketDatatype(best_input->type)))
     {
       best_input = nullptr;
     }
     if (best_output != nullptr && ntree.typeinfo->validate_link != nullptr &&
-        !ntree.typeinfo->validate_link(static_cast<eNodeSocketDatatype>(best_output->type),
-                                       static_cast<eNodeSocketDatatype>(old_link->tosock->type)))
+        !ntree.typeinfo->validate_link(eNodeSocketDatatype(best_output->type),
+                                       eNodeSocketDatatype(old_link->tosock->type)))
     {
       best_output = nullptr;
     }
@@ -2572,7 +2550,7 @@ void node_insert_on_link_flags(Main &bmain, SpaceNode &snode, bool is_new_node)
 
 static int get_main_socket_priority(const bNodeSocket *socket)
 {
-  switch ((eNodeSocketDatatype)socket->type) {
+  switch (eNodeSocketDatatype(socket->type)) {
     case SOCK_CUSTOM:
       return 0;
     case SOCK_BOOLEAN:

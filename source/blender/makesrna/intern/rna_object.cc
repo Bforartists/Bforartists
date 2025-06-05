@@ -109,11 +109,11 @@ const EnumPropertyItem rna_enum_object_empty_drawtype_items[] = {
     {OB_PLAINAXES, "PLAIN_AXES", ICON_EMPTY_AXIS, "Plain Axes", ""},
     {OB_ARROWS, "ARROWS", ICON_EMPTY_ARROWS, "Arrows", ""},
     {OB_SINGLE_ARROW, "SINGLE_ARROW", ICON_EMPTY_SINGLE_ARROW, "Single Arrow", ""},
-    {OB_CIRCLE, "CIRCLE", ICON_EMPTY_CIRCLE, "Circle", ""},
-    {OB_CUBE, "CUBE", ICON_EMPTY_CUBE, "Cube", ""},
-    {OB_EMPTY_SPHERE, "SPHERE", ICON_EMPTY_SPHERE, "Sphere", ""},
-    {OB_EMPTY_CONE, "CONE", ICON_EMPTY_CONE, "Cone", ""},
-    {OB_EMPTY_IMAGE, "IMAGE", ICON_EMPTY_IMAGE, "Image", ""},
+    {OB_CIRCLE, "CIRCLE", ICON_MESH_CIRCLE, "Circle", ""},
+    {OB_CUBE, "CUBE", ICON_CUBE, "Cube", ""},
+    {OB_EMPTY_SPHERE, "SPHERE", ICON_SPHERE, "Sphere", ""},
+    {OB_EMPTY_CONE, "CONE", ICON_CONE, "Cone", ""},
+    {OB_EMPTY_IMAGE, "IMAGE", ICON_FILE_IMAGE, "Image", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -125,37 +125,23 @@ static const EnumPropertyItem rna_enum_object_empty_image_depth_items[] = {
 };
 
 const EnumPropertyItem rna_enum_object_gpencil_type_items[] = {
-    {GP_EMPTY,
-     "EMPTY",
-     ICON_EMPTY_AXIS,
-     "Blank",
-     "Create an empty grease pencil object\nSwitch to Draw mode to draw grease pencil strokes"},
-    {GP_STROKE,
-     "STROKE",
-     ICON_STROKE,
-     "Stroke",
-     "Create a simple stroke with basic colors\nSwitch to Draw mode to draw grease pencil "
-     "strokes"},
-    {GP_MONKEY,
-     "MONKEY",
-     ICON_MONKEY,
-     "Monkey",
-     "Construct a Monkey names Suzanne grease pencil object\nSwitch to Draw mode to draw grease pencil "
-     "strokes"},
+    {GP_EMPTY, "EMPTY", ICON_EMPTY_AXIS, "Blank", "Create an empty Grease Pencil object"},
+    {GP_STROKE, "STROKE", ICON_STROKE, "Stroke", "Create a simple stroke with basic colors"},
+    {GP_MONKEY, "MONKEY", ICON_MONKEY, "Monkey", "Construct a Suzanne Grease Pencil object"},
     RNA_ENUM_ITEM_SEPR,
     {GREASE_PENCIL_LINEART_SCENE,
      "LINEART_SCENE",
-     ICON_LINEART_SCENE,
+     ICON_SCENE_DATA,
      "Scene Line Art",
      "Quickly set up Line Art for the entire scene"},
     {GREASE_PENCIL_LINEART_COLLECTION,
      "LINEART_COLLECTION",
-     ICON_LINEART_COLLECTION,
+     ICON_OUTLINER_COLLECTION,
      "Collection Line Art",
      "Quickly set up Line Art for the active collection"},
     {GREASE_PENCIL_LINEART_OBJECT,
      "LINEART_OBJECT",
-     ICON_LINEART_OBJECT,
+     ICON_OBJECT_DATA,
      "Object Line Art",
      "Quickly set up Line Art for the active object"},
     {0, nullptr, 0, nullptr, nullptr}};
@@ -2343,7 +2329,7 @@ static void rna_def_material_slot(BlenderRNA *brna)
                                  "rna_MaterialSlot_material_set",
                                  nullptr,
                                  "rna_MaterialSlot_material_poll");
-  RNA_def_property_ui_text(prop, "Material", "Material data used by this material slot");
+  RNA_def_property_ui_text(prop, "Material", "Material data-block used by this material slot");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_MaterialSlot_update");
 
   prop = RNA_def_property(srna, "slot_index", PROP_INT, PROP_NONE);
@@ -2896,7 +2882,7 @@ static void rna_def_object(BlenderRNA *brna)
   static int boundbox_dimsize[] = {8, 3};
 
   srna = RNA_def_struct(brna, "Object", "ID");
-  RNA_def_struct_ui_text(srna, "Object", "Object data defining an object in a scene");
+  RNA_def_struct_ui_text(srna, "Object", "Object data-block defining an object in a scene");
   RNA_def_struct_clear_flag(srna, STRUCT_ID_REFCOUNT);
   RNA_def_struct_ui_icon(srna, ICON_OBJECT_DATA);
 
@@ -3396,10 +3382,7 @@ static void rna_def_object(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR);
   RNA_def_property_ui_text(
-      prop,
-      "Color",
-      "The color to display the object in the viewport\nYou need to be in Viewport Shading "
-      "Solid\nAnd the Color type in the viewport shading settings must be Object");
+      prop, "Color", "Object color and alpha, used when the Object Color mode is enabled");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
 
   /* physics */

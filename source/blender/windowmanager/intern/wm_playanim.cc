@@ -1005,7 +1005,7 @@ static void build_pict_list(ListBase &picsbase,
 {
   *loading_p = true;
 
-  /* NOTE(@ideasman42): When loading many files (expanded from shell globing for e.g.)
+  /* NOTE(@ideasman42): When loading many files (e.g. expanded from shell globing)
    * it's important the frame number increases each time. Otherwise playing `*.png`
    * in a directory will expand into many arguments, each calling this function adding
    * a frame that's set to zero. */
@@ -2193,8 +2193,8 @@ void WM_main_playanim(int argc, const char **argv)
 
     AUD_initOnce();
 
-    if (!(g_audaspace.audio_device = AUD_init(nullptr, specs, 1024, "Bforartists"))) {
-      g_audaspace.audio_device = AUD_init("None", specs, 0, "Bforartists");
+    if (!(g_audaspace.audio_device = AUD_init(nullptr, specs, 1024, "Blender"))) {
+      g_audaspace.audio_device = AUD_init("None", specs, 0, "Blender");
     }
   }
 #endif

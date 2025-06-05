@@ -3059,7 +3059,6 @@ static void legacy_gpencil_sanitize_annotations(Main &bmain)
           case SPACE_CLIP:
           case SPACE_TOPBAR:
           case SPACE_STATUSBAR:
-          case SPACE_TOOLBAR: /*bfa - the toolbar editor*/
           case SPACE_SPREADSHEET:
             break;
         }

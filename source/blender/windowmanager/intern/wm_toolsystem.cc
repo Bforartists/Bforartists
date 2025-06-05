@@ -929,7 +929,7 @@ bToolRef *WM_toolsystem_ref_set_by_id_ex(
     return nullptr;
   }
 
-/* Some contexts use the current space type (image editor for e.g.),
+/* Some contexts use the current space type (e.g. image editor),
  * ensure this is set correctly or there is no area. */
 #ifndef NDEBUG
   /* Exclude this check for some space types where the space type isn't used. */
@@ -988,7 +988,7 @@ static void toolsystem_ref_set_by_brush_type(bContext *C, const char *brush_type
     return;
   }
 
-/* Some contexts use the current space type (image editor for e.g.),
+/* Some contexts use the current space type (e.g. image editor),
  * ensure this is set correctly or there is no area. */
 #ifndef NDEBUG
   /* Exclude this check for some space types where the space type isn't used. */
@@ -1113,22 +1113,14 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
       }
       break;
     case SPACE_NODE: {
-      return "builtin.select_box"; /*bfa - reverted to box, needs to be box after tweak fixes*/
+      return "builtin.select_box";
     }
     case SPACE_SEQ: {
-      switch (tkey->mode) {
-        case SEQ_VIEW_SEQUENCE:
-          return "builtin.select";
-        case SEQ_VIEW_PREVIEW:
-          return "builtin.select_box";
-        case SEQ_VIEW_SEQUENCE_PREVIEW:
-          return "builtin.select";
-      }
-      return "builtin.select"; /*bfa - changed default from builtin.select_box to builtin.select*/
+      return "builtin.select_box";
     }
   }
 
-  return "builtin.select"; /*bfa - changed default from builtin.select_box to builtin.select*/
+  return "builtin.select_box";
 }
 
 /**

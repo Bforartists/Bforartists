@@ -64,46 +64,20 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
 
         layout.prop(arm, "display_type", text="Display As")
 
-        col = layout.column(align=True)
-        col.label( text = "Show")
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(arm, "show_names", text="Names")
-        row.prop_decorator(arm, "show_names")
-        row = col.row()
-        row.separator()
-        row.prop(arm, "show_bone_custom_shapes", text="Shapes")
-        row.prop_decorator(arm, "show_bone_custom_shapes")
-        row = col.row()
-        row.separator()
-        row.prop(arm, "show_bone_colors", text="Bone Colors")
-        row.prop_decorator(arm, "show_bone_colors")
+        col = layout.column(heading="Show")
+        col.prop(arm, "show_names", text="Names")
+        col.prop(arm, "show_bone_custom_shapes", text="Shapes")
+        col.prop(arm, "show_bone_colors", text="Bone Colors")
 
         if ob:
-            row = col.row()
-            row.separator()
-            row.prop(ob, "show_in_front", text="In Front")
-            row.prop_decorator(ob, "show_in_front")
+            col.prop(ob, "show_in_front", text="In Front")
 
-        split = col.split(factor = 0.38)
-        col = split.column()
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(arm, "show_axes", text="Axes")
-        col = split.column()
-        if arm.show_axes:
-            row = col.row()
-            row.use_property_split = False
-            row.prop(arm, "axes_position", text="")
-
-        else:
-            row = col.row()
-            row.label(icon='DISCLOSURE_TRI_RIGHT')
-        subrow = row.row()
-        subrow.alignment='RIGHT'
-        subrow.prop_decorator(arm, "show_axes")
+        col = layout.column(align=False, heading="Axes")
+        row = col.row(align=True)
+        row.prop(arm, "show_axes", text="")
+        sub = row.row(align=True)
+        sub.active = arm.show_axes
+        sub.prop(arm, "axes_position", text="Position")
 
         sub = col.row(align=True)
         sub.prop(arm, "relation_line_position", text="Relations", expand=True)
@@ -149,15 +123,15 @@ class DATA_PT_bone_collections(ArmatureButtonsPanel, Panel):
             col.operator("armature.collection_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
 
         if context.mode in {'POSE', 'EDIT_ARMATURE', 'PAINT_WEIGHT'}:
-	        row = layout.row()
-	
-	        sub = row.row(align=True)
-	        sub.operator("armature.collection_assign", icon='COLLECTION_BONE_ADD', text="Assign")
-	        sub.operator("armature.collection_unassign", icon='COLLECTION_BONE_REMOVE', text="Remove")
-	
-	        sub = row.row(align=True)
-	        sub.operator("armature.collection_select", icon='RESTRICT_SELECT_OFF', text="Select")
-	        sub.operator("armature.collection_deselect", icon='SELECT_NONE', text="Deselect")
+            row = layout.row()
+
+            sub = row.row(align=True)
+            sub.operator("armature.collection_assign", text="Assign")
+            sub.operator("armature.collection_unassign", text="Remove")
+
+            sub = row.row(align=True)
+            sub.operator("armature.collection_select", text="Select")
+            sub.operator("armature.collection_deselect", text="Deselect")
 
 
 class ARMATURE_MT_collection_context_menu(Menu):
@@ -166,22 +140,10 @@ class ARMATURE_MT_collection_context_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        arm = context.armature
-        active_bcoll_is_locked = arm.collections.active and not arm.collections.active.is_editable
-        # The poll function doesn't have access to the parent index property, so
-        # it cannot disable this operator depending on whether the parent is
-        # editable or not. That means this menu has to do the disabling for it.
-        sub = layout.column()
-        sub.enabled = not active_bcoll_is_locked
-        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE")
-
+        layout.operator("armature.collection_show_all")
+        layout.operator("armature.collection_unsolo_all")
         layout.separator()
-
-        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
-        layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF")
-
-        layout.separator()
-        layout.operator("UI_OT_view_item_rename", text="Rename", icon="RENAME")
+        layout.operator("armature.collection_remove_unused", text="Remove Unused")
 
 
 class ARMATURE_MT_collection_tree_context_menu(Menu):
@@ -198,14 +160,14 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         # editable or not. That means this menu has to do the disabling for it.
         sub = layout.column()
         sub.enabled = not active_bcoll_is_locked
-        sub.operator("armature.collection_add", text="Add Bone Collection", icon="ADD")
-        sub.operator("armature.collection_remove", icon="REMOVE")
-        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE")
+        sub.operator("armature.collection_add", text="Add Bone Collection")
+        sub.operator("armature.collection_remove")
+        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections")
 
         layout.separator()
 
-        layout.operator("armature.collection_show_all", icon="SHOW_UNSELECTED")
-        layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF")
+        layout.operator("armature.collection_show_all")
+        layout.operator("armature.collection_unsolo_all")
 
         layout.separator()
 
@@ -214,16 +176,16 @@ class ARMATURE_MT_collection_tree_context_menu(Menu):
         # they have the same limitation as described above.
         sub = layout.column()
         sub.enabled = not active_bcoll_is_locked
-        sub.operator("armature.collection_assign", text="Assign Selected Bones", icon="COLLECTION_BONE_ADD")
-        sub.operator("armature.collection_unassign", text="Remove Selected Bones", icon="COLLECTION_BONE_REMOVE")
+        sub.operator("armature.collection_assign", text="Assign Selected Bones")
+        sub.operator("armature.collection_unassign", text="Remove Selected Bones")
 
         layout.separator()
 
-        layout.operator("armature.collection_select", text="Select Bones", icon="RESTRICT_SELECT_OFF")
-        layout.operator("armature.collection_deselect", text="Deselect Bones", icon="SELECT_NONE")
+        layout.operator("armature.collection_select", text="Select Bones")
+        layout.operator("armature.collection_deselect", text="Deselect Bones")
 
         layout.separator()
-        layout.operator("UI_OT_view_item_rename", text="Rename", icon="RENAME")
+        layout.operator("UI_OT_view_item_rename", text="Rename")
 
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
@@ -256,6 +218,15 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
             col.prop(itasc, "precision")
             col.prop(itasc, "iterations")
 
+            if simulation:
+                col.prop(itasc, "use_auto_step")
+                sub = layout.column(align=True)
+                if itasc.use_auto_step:
+                    sub.prop(itasc, "step_min", text="Steps Min")
+                    sub.prop(itasc, "step_max", text="Max")
+                else:
+                    sub.prop(itasc, "step_count", text="Steps")
+
             col.prop(itasc, "solver")
             if simulation:
                 col.prop(itasc, "feedback")
@@ -264,17 +235,6 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
                 col.separator()
                 col.prop(itasc, "damping_max", text="Damping Max", slider=True)
                 col.prop(itasc, "damping_epsilon", text="Damping Epsilon", slider=True)
-
-            if simulation:
-                col.use_property_split = False
-                col.prop(itasc, "use_auto_step")
-                col.use_property_split = True
-                sub = layout.column(align=True)
-                if itasc.use_auto_step:
-                    sub.prop(itasc, "step_min", text="Steps Min")
-                    sub.prop(itasc, "step_max", text="Max")
-                else:
-                    sub.prop(itasc, "step_count", text="Steps")
 
 
 class DATA_PT_motion_paths(MotionPathButtonsPanel, Panel):
@@ -411,12 +371,12 @@ class POSE_PT_selection_sets(Panel):
         row = layout.row()
 
         sub = row.row(align=True)
-        sub.operator("pose.selection_set_assign", text="Assign", icon = 'ADD')
-        sub.operator("pose.selection_set_unassign", text="Remove", icon = 'DELETE')
+        sub.operator("pose.selection_set_assign", text="Assign")
+        sub.operator("pose.selection_set_unassign", text="Remove")
 
         sub = row.row(align=True)
-        sub.operator("pose.selection_set_select", text="Select", icon = 'RESTRICT_SELECT_OFF').selection_set_index = -1
-        sub.operator("pose.selection_set_deselect", text="Deselect", icon = 'SELECT_NONE')
+        sub.operator("pose.selection_set_select", text="Select").selection_set_index = -1
+        sub.operator("pose.selection_set_deselect", text="Deselect")
 
 
 class POSE_UL_selection_set(UIList):

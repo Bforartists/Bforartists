@@ -1870,7 +1870,7 @@ static bAnimChannelType ACF_DSLIGHT = {
 /* TODO: just get this from RNA? */
 static int acf_dstex_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_TEXTURE;
+  return ICON_TEXTURE_DATA;
 }
 
 /* offset for texture expanders */
@@ -2327,7 +2327,7 @@ static bAnimChannelType ACF_DSSKEY = {
 /* TODO: just get this from RNA? */
 static int acf_dswor_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_WORLD;
+  return ICON_WORLD_DATA;
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */
@@ -3087,7 +3087,7 @@ static bAnimChannelType ACF_DSSPK = {
 /* TODO: just get this from RNA? */
 static int acf_dscurves_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_HAIR_DATA;
+  return ICON_CURVES_DATA;
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */
@@ -5637,38 +5637,37 @@ static void draw_setting_widget(bAnimContext *ac,
       icon = ICON_HIDE_ON;
 
       if (ELEM(ale->type, ANIMTYPE_FCURVE, ANIMTYPE_NLACURVE)) {
-        tooltip = TIP_("Visibility\nF-Curve visibility in Graph Editor");
+        tooltip = TIP_("F-Curve visibility in Graph Editor");
       }
       else if (ELEM(ale->type, ANIMTYPE_GPLAYER, ANIMTYPE_GREASE_PENCIL_LAYER)) {
-        tooltip = TIP_("Visibility\nGrease Pencil layer is visible in the viewport");
+        tooltip = TIP_("Grease Pencil layer is visible in the viewport");
       }
       else {
-        tooltip = TIP_("Visibility\nToggle visibility of Channels in Graph Editor for editing");
+        tooltip = TIP_("Toggle visibility of Channels in Graph Editor for editing");
       }
       break;
 
     case ACHANNEL_SETTING_ALWAYS_VISIBLE:
       icon = ICON_UNPINNED;
-      tooltip = TIP_("Pin\nChannels are visible in Graph Editor for editing");
+      tooltip = TIP_("Display channel regardless of object selection");
       break;
 
     case ACHANNEL_SETTING_MOD_OFF: /* modifiers disabled */
       icon = ICON_MODIFIER_OFF;
-      tooltip = TIP_("Enable F-Curve modifiers\nEnables or disables existing F-Curve modifiers");
+      tooltip = TIP_("Enable F-Curve modifiers");
       break;
 
     case ACHANNEL_SETTING_EXPAND: /* expanded triangle */
-      icon = (enabled ? ICON_TRIA_DOWN : ICON_TRIA_RIGHT); /* BFA - use proper icons */
-      usetoggle = false; /* BFA - use proper icons */
-      // icon = ICON_TRIA_RIGHT;
-      tooltip = TIP_("Expand\nMake channels grouped under this channel visible");
+      // icon = (enabled ? ICON_TRIA_DOWN : ICON_TRIA_RIGHT);
+      icon = ICON_RIGHTARROW;
+      tooltip = TIP_("Make channels grouped under this channel visible");
       break;
 
     case ACHANNEL_SETTING_SOLO: /* NLA Tracks only */
       // icon = (enabled ? ICON_SOLO_OFF : ICON_SOLO_ON);
       icon = ICON_SOLO_OFF;
       tooltip = TIP_(
-          "Solo\nNLA Track is the only one evaluated in this animation data, with all others "
+          "NLA Track is the only one evaluated in this animation data-block, with all others "
           "muted");
       break;
 
@@ -5680,10 +5679,10 @@ static void draw_setting_widget(bAnimContext *ac,
       icon = ICON_UNLOCKED;
 
       if (ale->datatype != ALE_NLASTRIP) {
-        tooltip = TIP_("Lock Channel\nEditability of keyframes for this channel");
+        tooltip = TIP_("Editability of keyframes for this channel");
       }
       else {
-        tooltip = TIP_("Lock Channel\nEditability of NLA Strips in this track");
+        tooltip = TIP_("Editability of NLA Strips in this track");
       }
       break;
 
@@ -5692,20 +5691,19 @@ static void draw_setting_widget(bAnimContext *ac,
       usetoggle = false;
 
       if (ELEM(ale->type, ANIMTYPE_FCURVE, ANIMTYPE_NLACURVE)) {
-        tooltip = TIP_("Mute Channel\nDoes F-Curve contribute to result");
+        tooltip = TIP_("Does F-Curve contribute to result");
       }
       else if ((ac) && (ac->spacetype == SPACE_NLA) && (ale->type != ANIMTYPE_NLATRACK)) {
         tooltip = TIP_(
-            "Mute\nTemporarily disable NLA stack evaluation (i.e. only the active action is "
-            "evaluated)");
+            "Temporarily disable NLA stack evaluation (i.e. only the active action is evaluated)");
       }
       else if (ELEM(ale->type, ANIMTYPE_GPLAYER, ANIMTYPE_GREASE_PENCIL_LAYER)) {
         tooltip = TIP_(
-            "Lock Channel\nShow all keyframes during animation playback and enable all frames for editing "
+            "Show all keyframes during animation playback and enable all frames for editing "
             "(uncheck to use only the current keyframe during animation playback and editing)");
       }
       else {
-        tooltip = TIP_("Mute Channel\nDo channels contribute to result (toggle channel muting)");
+        tooltip = TIP_("Do channels contribute to result (toggle channel muting)");
       }
       break;
 
@@ -5714,7 +5712,7 @@ static void draw_setting_widget(bAnimContext *ac,
       icon = ICON_UNPINNED;
 
       if (ale->type == ANIMTYPE_NLAACTION) {
-        tooltip = TIP_("Pin\nDisplay action without any time remapping (when unpinned)");
+        tooltip = TIP_("Display action without any time remapping (when unpinned)");
       }
       else {
         /* TODO: there are no other tools which require the 'pinning' concept yet */

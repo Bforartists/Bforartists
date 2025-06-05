@@ -48,7 +48,7 @@ class GreasePencilSculptAdvancedPanel:
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = True
         layout.use_property_decorate = False
 
         tool_settings = context.scene.tool_settings
@@ -524,7 +524,7 @@ class GPENCIL_UL_layer(UIList):
 
             row = layout.row(align=True)
 
-            icon_mask = 'MOD_MASK' if gpl.use_mask_layer else 'MOD_MASK_OFF'
+            icon_mask = 'CLIPUV_DEHLT' if gpl.use_mask_layer else 'CLIPUV_HLT'
 
             row.prop(gpl, "use_mask_layer", text="", icon=icon_mask, emboss=False)
 
@@ -554,7 +554,7 @@ class GreasePencilSimplifyPanel:
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = True
         layout.use_property_decorate = False
 
         rd = context.scene.render
@@ -658,11 +658,8 @@ class GreasePencilLayerRelationsPanel:
 
         col = layout.row(align=True)
         # Only enable this property when a view layer is selected.
-        if bool(gpl.viewlayer_render):
-            row = col.row()
-            row.use_property_split = False
-            row.separator()
-            row.prop(gpl, "use_viewlayer_masks")
+        col.enabled = bool(gpl.viewlayer_render)
+        col.prop(gpl, "use_viewlayer_masks")
 
 
 class GreasePencilLayerDisplayPanel:
@@ -685,8 +682,7 @@ class GreasePencilLayerDisplayPanel:
         if not use_colors:
             col.label(text="Channel Colors are disabled in Animation preferences")
 
-        row = layout.row()
-        row.use_property_split = False
+        row = layout.row(align=True)
         row.prop(gpl, "use_solo_mode", text="Show Only on Keyframed")
 
 
@@ -740,15 +736,15 @@ class GREASE_PENCIL_MT_snap(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("grease_pencil.snap_to_grid", text="Selection to Grid", icon = "SELECTIONTOGRID")
-        layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
-        layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor (Keep Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+        layout.operator("grease_pencil.snap_to_grid", text="Selection to Grid")
+        layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor").use_offset = False
+        layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor (Keep Offset)").use_offset = True
 
         layout.separator()
 
-        layout.operator("grease_pencil.snap_cursor_to_selected", text="Cursor to Selected", icon = "CURSORTOSELECTION")
-        layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon = "CURSORTOCENTER")
-        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
+        layout.operator("grease_pencil.snap_cursor_to_selected", text="Cursor to Selected")
+        layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin")
+        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
 
 
 class GREASE_PENCIL_MT_snap_pie(Menu):

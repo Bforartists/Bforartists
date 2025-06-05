@@ -15,7 +15,7 @@ def update_factory_startup_screens():
         if area.type == 'PROPERTIES':
             # Set Tool settings as default in properties panel.
             space = area.spaces.active
-            space.context = 'DATA' #BFA - the 'TOOL' tab is hidden in Bforaritists in favor of the Property Shelf. 
+            space.context = 'TOOL'
         elif area.type == 'DOPESHEET_EDITOR':
             # Open sidebar in Dope-sheet.
             space = area.spaces.active

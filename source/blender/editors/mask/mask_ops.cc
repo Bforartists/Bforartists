@@ -43,9 +43,6 @@
 
 #include "mask_intern.hh" /* own include */
 
-// #include "UI_interface.hh" /*bfa - for the icons*/
-#include "UI_resources.hh" /*bfa - for the icons*/
-
 /******************** create new mask *********************/
 
 Mask *ED_mask_new(bContext *C, const char *name)
@@ -1730,11 +1727,11 @@ static wmOperatorStatus set_handle_type_exec(bContext *C, wmOperator *op)
 void MASK_OT_handle_type_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem editcurve_handle_type_items[] = {
-      {HD_AUTO, "AUTO", ICON_HANDLE_AUTO, "Auto", ""},
-      {HD_VECT, "VECTOR", ICON_HANDLE_VECTOR, "Vector", ""},
-      {HD_ALIGN, "ALIGNED", ICON_HANDLE_ALIGN_SINGLE, "Aligned Single", ""},
-      {HD_ALIGN_DOUBLESIDE, "ALIGNED_DOUBLESIDE", ICON_HANDLE_ALIGNED, "Aligned", ""},
-      {HD_FREE, "FREE", ICON_HANDLE_FREE, "Free", ""},
+      {HD_AUTO, "AUTO", 0, "Auto", ""},
+      {HD_VECT, "VECTOR", 0, "Vector", ""},
+      {HD_ALIGN, "ALIGNED", 0, "Aligned Single", ""},
+      {HD_ALIGN_DOUBLESIDE, "ALIGNED_DOUBLESIDE", 0, "Aligned", ""},
+      {HD_FREE, "FREE", 0, "Free", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1784,9 +1781,8 @@ void MASK_OT_hide_view_clear(wmOperatorType *ot)
 {
 
   /* identifiers */
-/*bfa human understandable tool name*/
-  ot->name = "Show Hidden Layer(s)";
-  ot->description = "Reveals the hidden layer(s)";
+  ot->name = "Clear Restrict View";
+  ot->description = "Reveal temporarily hidden mask layers";
   ot->idname = "MASK_OT_hide_view_clear";
 
   /* API callbacks. */
@@ -1845,9 +1841,8 @@ static wmOperatorStatus mask_hide_view_set_exec(bContext *C, wmOperator *op)
 void MASK_OT_hide_view_set(wmOperatorType *ot)
 {
   /* identifiers */
-/*bfa human understandable tool name*/
-  ot->name = "Hide Layer";
-  ot->description = "Hide the layer";
+  ot->name = "Set Restrict View";
+  ot->description = "Temporarily hide mask layers";
   ot->idname = "MASK_OT_hide_view_set";
 
   /* API callbacks. */

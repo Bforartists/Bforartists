@@ -54,17 +54,17 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
 
     @classmethod
     def draw_context_menu(cls, _context: Context, _asset: AssetRepresentation, layout: UILayout):
-        layout.operator("poselib.apply_pose_asset", icon="MOD_ARMATURE_SELECTED", text="Apply Pose").flipped = False  #BFA - icon added
-        layout.operator("poselib.apply_pose_asset", icon="FLIP", text="Apply Pose Flipped").flipped = True  #BFA - icon added
+        layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
+        layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
 
         with operator_context(layout, 'INVOKE_DEFAULT'):
-            layout.operator("poselib.blend_pose_asset", icon="BLEND_TO_DEFAULT", text="Blend Pose") #BFA - icon added
-            layout.operator("poselib.blend_pose_asset", icon="BLEND_TO_DEFAULT", text="Blend Pose Flipped").flipped = True #BFA - icon added
+            layout.operator("poselib.blend_pose_asset", text="Blend Pose").flipped = False
+            layout.operator("poselib.blend_pose_asset", text="Blend Pose Flipped").flipped = True
 
         layout.separator()
-        props = layout.operator("poselib.pose_asset_select_bones", icon="SELECT_ALL", text="Select Pose Bones")  #BFA - icon added
+        props = layout.operator("poselib.pose_asset_select_bones", text="Select Pose Bones")
         props.select = True
-        props = layout.operator("poselib.pose_asset_select_bones", icon="SELECT_NONE", text="Deselect Pose Bones")  #BFA - icon added
+        props = layout.operator("poselib.pose_asset_select_bones", text="Deselect Pose Bones")
         props.select = False
 
         layout.separator()
@@ -73,10 +73,7 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
         layout.operator("poselib.asset_delete")
 
         layout.separator()
-        layout.operator("asset.assign_action", icon="ACTION_TWEAK")  #BFA - icon added
-
-        layout.separator()
-        layout.operator("asset.open_containing_blend_file", icon="FILE_FOLDER")  #BFA - icon added
+        layout.operator("asset.open_containing_blend_file")
 
 
 def pose_library_asset_browser_context_menu(self: UIList, context: Context) -> None:
@@ -96,17 +93,17 @@ def pose_library_asset_browser_context_menu(self: UIList, context: Context) -> N
 
     layout.separator()
 
-    layout.operator("poselib.apply_pose_asset", icon="MOD_ARMATURE_SELECTED", text="Apply Pose").flipped = False  #BFA - icon added
-    layout.operator("poselib.apply_pose_asset", icon="FLIP", text="Apply Pose Flipped").flipped = True  #BFA - icon added
+    layout.operator("poselib.apply_pose_asset", text="Apply Pose").flipped = False
+    layout.operator("poselib.apply_pose_asset", text="Apply Pose Flipped").flipped = True
 
     with operator_context(layout, 'INVOKE_DEFAULT'):
-        layout.operator("poselib.blend_pose_asset", icon="BLEND_TO_DEFAULT", text="Blend Pose")  #BFA - icon added
-        layout.operator("poselib.blend_pose_asset", icon="BLEND_TO_DEFAULT", text="Blend Pose Flipped").flipped = True #BFA - icon added
+        layout.operator("poselib.blend_pose_asset", text="Blend Pose").flipped = False
+        layout.operator("poselib.blend_pose_asset", text="Blend Pose Flipped").flipped = True
 
     layout.separator()
-    props = layout.operator("poselib.pose_asset_select_bones", icon="SELECT_ALL", text="Select Pose Bones")  #BFA - icon added
+    props = layout.operator("poselib.pose_asset_select_bones", text="Select Pose Bones")
     props.select = True
-    props = layout.operator("poselib.pose_asset_select_bones", icon="SELECT_NONE", text="Deselect Pose Bones")  #BFA - icon added
+    props = layout.operator("poselib.pose_asset_select_bones", text="Deselect Pose Bones")
     props.select = False
 
     layout.separator()
@@ -116,11 +113,9 @@ def pose_library_asset_browser_context_menu(self: UIList, context: Context) -> N
         layout.operator("poselib.asset_delete")
 
     layout.separator()
-    layout.operator("asset.assign_action", icon="ACTION_TWEAK")  #BFA - icon added
+    layout.operator("asset.assign_action")
 
     layout.separator()
-
-    layout.operator("asset.open_containing_blend_file", icon="FILE_FOLDER")  #BFA - icon added
 
 
 class DOPESHEET_PT_asset_panel(PoseLibraryPanel, Panel):
@@ -160,7 +155,7 @@ class ASSETBROWSER_MT_asset(Menu):
 
         layout.operator("poselib.paste_asset", icon='PASTEDOWN')
         layout.separator()
-        layout.operator("poselib.create_pose_asset",icon = 'POSE_HLT')  #BFA - icon added
+        layout.operator("poselib.create_pose_asset")
 
 
 # Messagebus subscription to monitor asset library changes.

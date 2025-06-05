@@ -381,15 +381,6 @@ void outliner_item_mode_toggle(bContext *C,
                                TreeElement *te,
                                bool do_extend);
 
-/**
- * Calculates the depth of the hierarchy for a given tree element.
- */ 
-int calculate_hierarchy_depth(const TreeElement *te);
-/**
- * Computes the total height occupied by all child elements of a given tree element.
- */
-int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_outliner);
-
 /* `outliner_edit.cc` */
 using outliner_operation_fn = blender::FunctionRef<void(bContext *C,
                                                         ReportList *reports,

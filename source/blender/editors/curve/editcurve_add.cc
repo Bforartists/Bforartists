@@ -583,7 +583,7 @@ void CURVE_OT_primitive_bezier_curve_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Bézier";
-  ot->description = "Add a Bézier Curve";
+  ot->description = "Construct a Bézier Curve";
   ot->idname = "CURVE_OT_primitive_bezier_curve_add";
 
   /* API callbacks. */
@@ -606,7 +606,7 @@ void CURVE_OT_primitive_bezier_circle_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Bézier Circle";
-  ot->description = "Add a Bézier Circle";
+  ot->description = "Construct a Bézier Circle";
   ot->idname = "CURVE_OT_primitive_bezier_circle_add";
 
   /* API callbacks. */
@@ -629,7 +629,7 @@ void CURVE_OT_primitive_nurbs_curve_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Nurbs Curve";
-  ot->description = "Add a Nurbs Curve";
+  ot->description = "Construct a Nurbs Curve";
   ot->idname = "CURVE_OT_primitive_nurbs_curve_add";
 
   /* API callbacks. */
@@ -652,7 +652,7 @@ void CURVE_OT_primitive_nurbs_circle_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Nurbs Circle";
-  ot->description = "Add a Nurbs Circle";
+  ot->description = "Construct a Nurbs Circle";
   ot->idname = "CURVE_OT_primitive_nurbs_circle_add";
 
   /* API callbacks. */
@@ -675,7 +675,7 @@ void CURVE_OT_primitive_nurbs_path_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Path";
-  ot->description = "Add a Path";
+  ot->description = "Construct a Path";
   ot->idname = "CURVE_OT_primitive_nurbs_path_add";
 
   /* API callbacks. */
@@ -699,7 +699,7 @@ void SURFACE_OT_primitive_nurbs_surface_curve_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Surface Curve";
-  ot->description = "Add a Nurbs surface Curve";
+  ot->description = "Construct a Nurbs surface Curve";
   ot->idname = "SURFACE_OT_primitive_nurbs_surface_curve_add";
 
   /* API callbacks. */
@@ -722,7 +722,7 @@ void SURFACE_OT_primitive_nurbs_surface_circle_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Surface Circle";
-  ot->description = "Add a Nurbs surface Circle";
+  ot->description = "Construct a Nurbs surface Circle";
   ot->idname = "SURFACE_OT_primitive_nurbs_surface_circle_add";
 
   /* API callbacks. */
@@ -745,7 +745,7 @@ void SURFACE_OT_primitive_nurbs_surface_surface_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Surface Patch";
-  ot->description = "Add a Nurbs surface Patch";
+  ot->description = "Construct a Nurbs surface Patch";
   ot->idname = "SURFACE_OT_primitive_nurbs_surface_surface_add";
 
   /* API callbacks. */
@@ -768,7 +768,7 @@ void SURFACE_OT_primitive_nurbs_surface_cylinder_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Surface Cylinder";
-  ot->description = "Add a Nurbs surface Cylinder";
+  ot->description = "Construct a Nurbs surface Cylinder";
   ot->idname = "SURFACE_OT_primitive_nurbs_surface_cylinder_add";
 
   /* API callbacks. */
@@ -791,7 +791,7 @@ void SURFACE_OT_primitive_nurbs_surface_sphere_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Surface Sphere";
-  ot->description = "Add a Nurbs surface Sphere";
+  ot->description = "Construct a Nurbs surface Sphere";
   ot->idname = "SURFACE_OT_primitive_nurbs_surface_sphere_add";
 
   /* API callbacks. */
@@ -814,7 +814,7 @@ void SURFACE_OT_primitive_nurbs_surface_torus_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Surface Torus";
-  ot->description = "Add a Nurbs surface Torus";
+  ot->description = "Construct a Nurbs surface Torus";
   ot->idname = "SURFACE_OT_primitive_nurbs_surface_torus_add";
 
   /* API callbacks. */

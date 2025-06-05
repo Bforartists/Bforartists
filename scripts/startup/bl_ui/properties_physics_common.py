@@ -133,7 +133,6 @@ def point_cache_ui(self, cache, enabled, cachetype):
 
     if cachetype in {'PSYS', 'HAIR'}:
         col = layout.column()
-        col.use_property_split = False # bfa
         col.prop(cache, "use_external")
 
     if cache.use_external:
@@ -183,11 +182,9 @@ def point_cache_ui(self, cache, enabled, cachetype):
             flow.enabled = enabled and is_saved
 
             col = flow.column(align=True)
-            col.use_property_split = False
             col.prop(cache, "use_disk_cache")
 
             subcol = col.column()
-            subcol.use_property_split = False
             subcol.active = cache.use_disk_cache
             subcol.prop(cache, "use_library_path", text="Use Library Path")
 
@@ -302,17 +299,10 @@ def basic_force_field_settings_ui(self, field):
     else:
         col.prop(field, "flow")
 
-    col = col.column(align=True)
-    col.label( text = "Affect")
-    col.use_property_split = False
-    row = col.row()
-    row.separator()
-    row.prop(field, "apply_to_location", text="Location")
-    row.prop_decorator(field, "apply_to_location")
-    row = col.row()
-    row.separator()
-    row.prop(field, "apply_to_rotation", text="Rotation")
-    row.prop_decorator(field, "apply_to_rotation")
+    sub = col.column(heading="Affect")
+
+    sub.prop(field, "apply_to_location", text="Location")
+    sub.prop(field, "apply_to_rotation", text="Rotation")
 
     col = flow.column()
     sub = col.column(align=True)
@@ -320,27 +310,15 @@ def basic_force_field_settings_ui(self, field):
     sub.prop(field, "seed", text="Seed")
 
     if field.type == 'TURBULENCE':
-        row = col.row()
-        row.use_property_split = False
-        row.prop(field, "use_global_coords", text="Global")
-        row.prop_decorator(field, "use_global_coords")
+        col.prop(field, "use_global_coords", text="Global")
 
     elif field.type == 'HARMONIC':
-        row = col.row()
-        row.use_property_split = False
-        row.prop(field, "use_multiple_springs")
-        row.prop_decorator(field, "use_multiple_springs")
+        col.prop(field, "use_multiple_springs")
 
     if field.type == 'FORCE':
-        row = col.row()
-        row.use_property_split = False
-        row.prop(field, "use_gravity_falloff", text="Gravitation")
-        row.prop_decorator(field, "use_gravity_falloff")
+        col.prop(field, "use_gravity_falloff", text="Gravitation")
 
-    row = col.row()
-    row.use_property_split = False
-    row.prop(field, "use_absorption")
-    row.prop_decorator(field, "use_absorption")
+    col.prop(field, "use_absorption")
     col.prop(field, "wind_factor")
 
 
@@ -354,31 +332,25 @@ def basic_force_field_falloff_ui(self, field):
     col.prop(field, "z_direction")
     col.prop(field, "falloff_power", text="Power", text_ctxt=i18n_contexts.id_particlesettings)
 
-    split = layout.split(factor = 0.35)
-    col = split.column()
-    col.use_property_split = False
-    col.prop(field, "use_min_distance", text="Min Distance")
-    col = split.column()
-    if field.use_min_distance:
-        col.use_property_split = False
-        row = col.row(align = True)
-        row.prop(field, "distance_min", text="")
-        row.prop_decorator(field, "distance_min")
-    else:
-        col.label(icon='DISCLOSURE_TRI_RIGHT')
+    col = layout.column(align=False, heading="Min Distance")
+    col.use_property_decorate = False
+    row = col.row(align=True)
+    sub = row.row(align=True)
+    sub.prop(field, "use_min_distance", text="")
+    sub = sub.row(align=True)
+    sub.active = field.use_min_distance
+    sub.prop(field, "distance_min", text="")
+    row.prop_decorator(field, "distance_min")
 
-    split = layout.split(factor = 0.35)
-    col = split.column()
-    col.use_property_split = False
-    col.prop(field, "use_max_distance", text="Max Distance")
-    col = split.column()
-    if field.use_max_distance:
-        col.use_property_split = False
-        row = col.row(align = True)
-        row.prop(field, "distance_max", text="")
-        row.prop_decorator(field, "distance_max")
-    else:
-        col.label(icon='DISCLOSURE_TRI_RIGHT')
+    col = layout.column(align=False, heading="Max Distance")
+    col.use_property_decorate = False
+    row = col.row(align=True)
+    sub = row.row(align=True)
+    sub.prop(field, "use_max_distance", text="")
+    sub = sub.row(align=True)
+    sub.active = field.use_max_distance
+    sub.prop(field, "distance_max", text="")
+    row.prop_decorator(field, "distance_max")
 
 
 classes = (

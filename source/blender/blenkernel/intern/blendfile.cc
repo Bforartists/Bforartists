@@ -1440,7 +1440,7 @@ void BKE_blendfile_read_make_empty(bContext *C)
  *
  *   The preferences are merged by using some from the app-template and other settings from the
  *   regular preferences (add-ons from the app-template for example are used),
- *   undo-memory uses the regular preferences (for e.g.).
+ *   undo-memory uses the regular preferences (for example).
  *
  * - Writing preferences is performed for both the app-template & regular preferences.
  *
@@ -1503,7 +1503,6 @@ UserDef *BKE_blendfile_userdef_from_defaults()
   *userdef = blender::dna::shallow_copy(U_default);
 
   /* Add-ons. */
-  /*bfa - here you define the by default activated addons*/
   {
     const char *addons[] = {
         "io_anim_bvh",
@@ -1514,16 +1513,6 @@ UserDef *BKE_blendfile_userdef_from_defaults()
         "cycles",
         "pose_library",
         "bl_pkg",
-        "bfa_default_library",
-        "bforartists_toolbar_settings",
-        "bfa_find_and_replace",
-        "bfa_3Dsequencer",
-        "createisocam",
-        "edit_dimensions",
-        "reset3dview",
-        "smartdelete_bfa",
-        "align_view_buttons",
-        "important_hotkeys_BFA",
     };
     for (int i = 0; i < ARRAY_SIZE(addons); i++) {
       bAddon *addon = BKE_addon_new();
@@ -1570,15 +1559,8 @@ UserDef *BKE_blendfile_userdef_from_defaults()
   BKE_preferences_extension_repo_add_defaults_all(userdef);
 
   {
-    /*BFA - expose default categories for large amount of brushes on hand3*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Add & Subtract");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Contrast");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Transform");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Utilities");
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/Paint");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
@@ -1598,50 +1580,6 @@ UserDef *BKE_blendfile_userdef_from_defaults()
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_brush_gpencil_sculpt", "Brushes/Grease Pencil Sculpt/Utilities");
   }
-
-  /* start bfa asset shelf default catalogs */
-  {
-    /* 3D Viewport*/
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Primitives");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Collections/Lights");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Materials");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Grease Pencil Tools");
-    /* Node editors*/
-
-    /*Shader*/
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Color");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Mapping");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Masks");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Patterns");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shader");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shapes");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Utility");
-
-
-    /*Geometry Nodes*/
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Grease Pencil Tools");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Hair");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Normals");
-
-    /*Compositor*/
-    /*To Be created*/
-  }
-  /* end bfa asset shelf default catalogs */
-
 
   return userdef;
 }

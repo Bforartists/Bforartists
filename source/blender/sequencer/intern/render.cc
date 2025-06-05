@@ -736,7 +736,7 @@ static ImBuf *seq_render_effect_strip_impl(const RenderData *context,
   Scene *scene = context->scene;
   float fac;
   int i;
-  EffectHandle sh = effect_handle_get(strip);
+  EffectHandle sh = strip_effect_handle_get(strip);
   const FCurve *fcu = nullptr;
   ImBuf *ibuf[2];
   Strip *input[2];
@@ -1240,7 +1240,7 @@ static ImBuf *seq_render_movieclip_strip(const RenderData *context,
   /* Try to get a proxy image. */
   ibuf = seq_get_movieclip_ibuf(strip, user);
 
-  /* If clip doesn't use proxies, it will fallback to full size render of original file. */
+  /* If clip doesn't use proxies, it will fall back to full size render of original file. */
   if (ibuf != nullptr && psize != IMB_PROXY_NONE && BKE_movieclip_proxy_enabled(strip->clip)) {
     *r_is_proxy_image = true;
   }
@@ -1477,10 +1477,11 @@ static ImBuf *seq_render_scene_strip(const RenderData *context,
     depsgraph = BKE_scene_ensure_depsgraph(context->bmain, scene, view_layer);
     BKE_scene_graph_update_for_newframe(depsgraph);
     Object *camera_eval = DEG_get_evaluated(depsgraph, camera);
+    Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
     ibuf = view3d_fn(
         /* set for OpenGL render (nullptr when scrubbing) */
         depsgraph,
-        scene,
+        scene_eval,
         &context->scene->display.shading,
         eDrawType(context->scene->r.seq_prev_type),
         camera_eval,

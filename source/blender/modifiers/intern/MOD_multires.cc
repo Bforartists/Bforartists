@@ -292,7 +292,7 @@ static void deform_matrices(ModifierData *md,
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa, added *row*/
+  uiLayout *col;
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -307,23 +307,10 @@ static void panel_draw(const bContext *C, Panel *panel)
   const bool is_sculpt_mode = CTX_data_active_object(C)->mode & OB_MODE_SCULPT;
   uiBlock *block = uiLayoutGetBlock(panel->layout);
   UI_block_lock_set(block, !is_sculpt_mode, N_("Sculpt Base Mesh"));
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  row->prop(ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
+  col->prop(ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
   UI_block_lock_clear(block);
 
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
-
-  /* ------------ end bfa */
+  layout->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   modifier_error_message_draw(layout, ptr);
 }
@@ -426,7 +413,7 @@ static void generate_panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa - added *row*/
+  uiLayout *col;
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -443,18 +430,9 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetActive(col, true);
   col->prop(ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
 
-  row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
+  layout->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

@@ -348,7 +348,6 @@ bool ANIM_animdata_context_getdata(bAnimContext *ac)
       case SPACE_CLIP:
       case SPACE_TOPBAR:
       case SPACE_STATUSBAR:
-      case SPACE_TOOLBAR: /*bfa - the toolbar editor*/
       case SPACE_SPREADSHEET:
         break;
     }

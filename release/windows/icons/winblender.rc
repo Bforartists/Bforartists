@@ -54,11 +54,11 @@ BEGIN
     BEGIN
       VALUE "FileVersion", BLEN_VER_RC_STR
       VALUE "ProductVersion", BLEN_VER_RC_STR
-      VALUE "CompanyName", "Bforartists"
-      VALUE "FileDescription", "Bforartists4"
-      VALUE "LegalCopyright", "GPLv3 (Bforartists)"
-      VALUE "OriginalFilename", "bforartists.exe"
-      VALUE "ProductName", "Bforartists4"
+      VALUE "CompanyName", "Blender Foundation"
+      VALUE "FileDescription", "Blender"
+      VALUE "LegalCopyright", "GPLv3 (Blender Foundation)"
+      VALUE "OriginalFilename", "blender.exe"
+      VALUE "ProductName", "Blender"
     END
   END
   BLOCK "VarFileInfo"

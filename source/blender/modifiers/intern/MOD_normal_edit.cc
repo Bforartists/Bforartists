@@ -614,7 +614,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /*bfa, added *row*/
+  uiLayout *col;
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -630,14 +630,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout->column(false);
   uiLayoutSetActive(col, mode == MOD_NORMALEDIT_MODE_DIRECTIONAL);
-
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  row->prop(ptr, "use_direction_parallel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_direction_parallel", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
+  col->prop(ptr, "use_direction_parallel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   modifier_error_message_draw(layout, ptr);
 }

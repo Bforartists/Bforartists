@@ -298,7 +298,8 @@ static void template_id_liboverride_hierarchy_collection_root_find_recursive(
       *r_collection_parent_best = collection;
     }
   }
-  for (CollectionParent *iter = static_cast<CollectionParent *>(collection->runtime.parents.first);
+  for (CollectionParent *iter =
+           static_cast<CollectionParent *>(collection->runtime->parents.first);
        iter != nullptr;
        iter = iter->next)
   {
@@ -319,7 +320,7 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
    * linked ones can be replaced by the local overrides in those parents too. */
   if (do_parents) {
     for (CollectionParent *iter =
-             static_cast<CollectionParent *>(root_collection->runtime.parents.first);
+             static_cast<CollectionParent *>(root_collection->runtime->parents.first);
          iter != nullptr;
          iter = iter->next)
     {
@@ -966,8 +967,7 @@ static uiBut *template_id_def_new_but(uiBlock *block,
    * is exceeded. */
 
   const char *button_text = (id) ? "" : CTX_IFACE_(template_id_context(type), "New");
-  /* BFA - always use ICON_ADD */
-  const int icon = ICON_ADD;
+  const int icon = (id && !use_tab_but) ? ICON_DUPLICATE : ICON_ADD;
   const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
 
   int w = id ? UI_UNIT_X : id_open ? UI_UNIT_X * 3 : UI_UNIT_X * 6;
@@ -1382,11 +1382,8 @@ static void template_ID(const bContext *C,
             nullptr,
             0,
             0,
-            /* BFA - explicit description */
-            TIP_("Remove "
-                 "\nShift + Click to set users to zero, data will then not be saved"
-                 "\nTo delete the file completely make sure it has no Fake User assigned"
-                 "\nThen either restart Bforartists, or Purge the file"));
+            TIP_("Unlink data-block "
+                 "(Shift + Click to set users to zero, data will then not be saved)"));
         UI_but_funcN_set(but,
                          template_id_cb,
                          MEM_new<TemplateID>(__func__, template_ui),

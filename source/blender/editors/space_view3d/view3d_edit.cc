@@ -334,11 +334,8 @@ static wmOperatorStatus render_border_exec(bContext *C, wmOperator *op)
 void VIEW3D_OT_render_border(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Render Region"; /*bfa - no set*/
-  ot->description =
-      "Box select a portion of the Viewport to render a part of it\nRequires Viewport shading "
-      "rendered \nViewport and Camera Render Region rectangle are independant\nWorks in Viewport "
-      "just with Cycles";
+  ot->name = "Set Render Region";
+  ot->description = "Set the boundaries of the border render and enable border render";
   ot->idname = "VIEW3D_OT_render_border";
 
   /* API callbacks. */
@@ -401,10 +398,7 @@ void VIEW3D_OT_clear_render_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Render Region";
-  ot->description =
-      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And
-                                                      // UNDERSTANDABLE! That's how a tooltip
-                                                      // should look like.
+  ot->description = "Clear the boundaries of the border render and disable border render";
   ot->idname = "VIEW3D_OT_clear_render_border";
 
   /* API callbacks. */
@@ -1106,7 +1100,7 @@ void VIEW3D_OT_cursor3d(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Set 3D Cursor";
-  ot->description = "Set the location of the 3D cursor\nHotkey Only Tool! Please use the hotkey!";
+  ot->description = "Set the location of the 3D cursor";
   ot->idname = "VIEW3D_OT_cursor3d";
 
   /* API callbacks. */
@@ -1256,7 +1250,7 @@ void VIEW3D_OT_toggle_xray(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Toggle X-Ray";
   ot->idname = "VIEW3D_OT_toggle_xray";
-  ot->description = "Transparent scene display. Allow selecting through items\nAlternative shortcut: Alt Y";
+  ot->description = "Transparent scene display. Allow selecting through items";
 
   /* API callbacks. */
   ot->exec = toggle_xray_exec;

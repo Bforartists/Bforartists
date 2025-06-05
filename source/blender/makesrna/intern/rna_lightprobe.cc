@@ -84,7 +84,7 @@ static void rna_def_lightprobe(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "LightProbe", "ID");
   RNA_def_struct_refine_func(srna, "rna_LightProbe_refine");
   RNA_def_struct_ui_text(
-      srna, "LightProbe", "Light Probe data for lighting capture objects"); /*BFA - not data-block*/
+      srna, "LightProbe", "Light Probe data-block for lighting capture objects");
   RNA_def_struct_ui_icon(srna, ICON_OUTLINER_DATA_LIGHTPROBE);
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
@@ -237,7 +237,7 @@ static void rna_def_lightprobe_sphere(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_parallax", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", LIGHTPROBE_FLAG_SHOW_PARALLAX);
-  RNA_def_property_ui_text(prop, "Parallax", "Show the parallax correction volume in the 3D view\nThe Parallax checkbox turns active when Custom Parallax is activated");
+  RNA_def_property_ui_text(prop, "Parallax", "Show the parallax correction volume in the 3D view");
   RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, nullptr);
 
   prop = RNA_def_property(srna, "parallax_type", PROP_ENUM, PROP_NONE);

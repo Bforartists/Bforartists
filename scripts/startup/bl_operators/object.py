@@ -213,7 +213,7 @@ class SelectHierarchy(Operator):
 
 
 class SubdivisionSet(Operator):
-    """Subdivision Set\nSets a Subdivision Surface Level (1 to 5)"""
+    """Sets a Subdivision Surface level (1 to 5)"""
 
     bl_idname = "object.subdivision_set"
     bl_label = "Subdivision Set"
@@ -246,12 +246,6 @@ class SubdivisionSet(Operator):
         if not relative and level < 0:
             self.level = level = 0
 
-        if bpy.context.preferences.addons.get("bfa_power_user_tools"): # BFA - combine viewport/render levels with power user tool addon
-            preferences = context.preferences.addons["bfa_power_user_tools"].preferences # BFA - combine viewport/render levels with power user tool addon
-            use_render_levels = preferences.bfa_toggle_render_levels # BFA - combine viewport/render levels with power user tool addon
-        else:
-            use_render_levels = False # BFA - combine viewport/render levels with power user tool addon
-
         def set_object_subd(obj):
             for mod in obj.modifiers:
                 if mod.type == 'MULTIRES':
@@ -267,8 +261,6 @@ class SubdivisionSet(Operator):
                         elif obj.mode == 'OBJECT':
                             if mod.levels != level:
                                 mod.levels = level
-                            if use_render_levels: # BFA - combine viewport/render levels with power user tool addon
-                                mod.render_levels = level  # BFA - combine viewport/render levels with power user tool addon
                         return
                     else:
                         if obj.mode == 'SCULPT':
@@ -277,8 +269,6 @@ class SubdivisionSet(Operator):
                         elif obj.mode == 'OBJECT':
                             if mod.levels + level <= mod.total_levels:
                                 mod.levels += level
-                            if use_render_levels:   # BFA - combine viewport/render levels with power user tool addon
-                                mod.render_levels += level  # BFA - combine viewport/render levels with power user tool addon
                         return
 
                 elif mod.type == 'SUBSURF':
@@ -287,8 +277,6 @@ class SubdivisionSet(Operator):
                     else:
                         if mod.levels != level:
                             mod.levels = level
-                    if use_render_levels: # BFA - combine viewport/render levels with power user tool addon
-                        mod.render_levels = level # BFA - combine viewport/render levels with power user tool addon
 
                     return
 
@@ -302,8 +290,6 @@ class SubdivisionSet(Operator):
                 else:
                     mod = obj.modifiers.new("Subdivision", 'SUBSURF')
                     mod.levels = level
-                    if use_render_levels:  # BFA - Set render_levels if toggle is enabled
-                        mod.render_levels = level
             except Exception:
                 self.report({'WARNING'}, "Modifiers cannot be added to object: " + obj.name)
 
@@ -681,7 +667,7 @@ class MakeDupliFace(Operator):
 
 
 class IsolateTypeRender(Operator):
-    """Render just the selected Item, disables rendering for all others.\nBest used in the Outliner editor view columns""" \
+    """Hide unselected render objects of same type as active """ \
         """by setting the hide render flag"""
     bl_idname = "object.isolate_type_render"
     bl_label = "Restrict Render Unselected"
@@ -707,8 +693,7 @@ class IsolateTypeRender(Operator):
 
 
 class ClearAllRestrictRender(Operator):
-    """Render all Objects in the scene\nnBest used in the Outliner editor view columns""" \
-        """by setting the hide render flag"""
+    """Reveal all render objects by setting the hide render flag"""
     bl_idname = "object.hide_render_clear_all"
     bl_label = "Clear All Restrict Render"
     bl_options = {'REGISTER', 'UNDO'}
@@ -742,16 +727,6 @@ class TransformsToDeltas(Operator):
         description=("Clear transform values after transferring to deltas"),
         default=True,
     )
-
-    # bfa - description for the delta transforms
-    arg: bpy.props.StringProperty()
-
-    @classmethod
-    def description(cls, context, properties):
-        #return "arg is: " + properties.arg
-        return properties.arg
-
-    # bfa - description end
 
     @classmethod
     def poll(cls, context):

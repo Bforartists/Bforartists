@@ -41,7 +41,6 @@ void ED_spacetype_userpref();
 void ED_spacetype_clip();
 void ED_spacetype_statusbar();
 void ED_spacetype_topbar();
-void ED_spacetype_toolbar(); /*bfa - toolbar*/
 
 namespace blender::ed::vse {
 void ED_spacetype_sequencer();

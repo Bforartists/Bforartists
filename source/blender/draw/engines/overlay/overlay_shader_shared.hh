@@ -288,8 +288,6 @@ struct ThemeSizes {
   float light_center;
   float light_circle;
   float light_circle_shadow;
-  float size_viewport_line; /* BFA - GooEngine */
-  float _gpad0, _gpad1, _gpad2; /* BFA - GooEngine */
 
   float vert; /* "vertex" is reserved keyword in MSL. */
   float edge;

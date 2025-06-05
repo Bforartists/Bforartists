@@ -31,21 +31,25 @@ class MESH_MT_vertex_group_context_menu(Menu):
         ).sort_type = 'BONE_HIERARCHY'
         layout.separator()
         layout.operator("object.vertex_group_copy", icon='DUPLICATE')
-        layout.operator("object.vertex_group_copy_to_selected", icon='LINK_AREA')
+        layout.operator("object.vertex_group_copy_to_selected")
         layout.separator()
-        layout.operator("object.vertex_group_mirror", icon='TRANSFORM_MIRROR').use_topology = False
-        layout.operator("object.vertex_group_mirror", text="Mirror Vertex Group (Topology)", icon='TRANSFORM_MIRROR').use_topology = True
+        layout.operator("object.vertex_group_mirror", icon='ARROW_LEFTRIGHT').use_topology = False
+        layout.operator("object.vertex_group_mirror", text="Mirror Vertex Group (Topology)").use_topology = True
         layout.separator()
-        layout.operator("object.vertex_group_remove_from", text="Remove from All Groups", icon='REMOVE_FROM_ALL_GROUPS').use_all_groups = True
-        layout.operator("object.vertex_group_remove_from", text="Clear Active Group", icon='CLEAR').use_all_verts = True
-        layout.operator("object.vertex_group_remove", text="Delete All Unlocked Groups", icon='DELETE').all_unlocked = True
-        layout.operator("object.vertex_group_remove", text="Delete All Groups", icon='DELETE').all = True
+        layout.operator(
+            "object.vertex_group_remove_from",
+            icon='X',
+            text="Remove from All Groups",
+        ).use_all_groups = True
+        layout.operator("object.vertex_group_remove_from", text="Clear Active Group").use_all_verts = True
+        layout.operator("object.vertex_group_remove", text="Delete All Unlocked Groups").all_unlocked = True
+        layout.operator("object.vertex_group_remove", text="Delete All Groups").all = True
         layout.separator()
-        props = layout.operator("object.vertex_group_lock", text="Lock All", icon='LOCKED')
+        props = layout.operator("object.vertex_group_lock", icon='LOCKED', text="Lock All")
         props.action, props.mask = 'LOCK', 'ALL'
-        props = layout.operator("object.vertex_group_lock", text="Unlock All", icon='UNLOCKED')
+        props = layout.operator("object.vertex_group_lock", icon='UNLOCKED', text="Unlock All")
         props.action, props.mask = 'UNLOCK', 'ALL'
-        props = layout.operator("object.vertex_group_lock", text="Lock Invert All", icon = "INVERSE")
+        props = layout.operator("object.vertex_group_lock", text="Lock Invert All")
         props.action, props.mask = 'INVERT', 'ALL'
 
 
@@ -58,17 +62,17 @@ class MESH_MT_shape_key_context_menu(Menu):
         layout.operator("object.shape_key_add", icon='ADD', text="New Shape from Mix").from_mix = True
         layout.operator("object.shape_key_copy", icon='DUPLICATE', text="Duplicate Shape Key")
         layout.separator()
-        layout.operator("object.shape_key_mirror", icon='TRANSFORM_MIRROR').use_topology = False
-        layout.operator("object.shape_key_mirror", text="Mirror Shape Key (Topology)", icon = "TRANSFORM_MIRROR").use_topology = True
+        layout.operator("object.shape_key_mirror", icon='ARROW_LEFTRIGHT').use_topology = False
+        layout.operator("object.shape_key_mirror", text="Mirror Shape Key (Topology)").use_topology = True
         layout.separator()
-        layout.operator("object.join_shapes", icon = "JOIN")
+        layout.operator("object.join_shapes")
         layout.operator("object.update_shapes")
-        layout.operator("object.shape_key_transfer", icon = "SHAPEKEY_DATA")
+        layout.operator("object.shape_key_transfer")
         layout.separator()
-        props = layout.operator("object.shape_key_remove", icon='DELETE', text="Delete All Shape Keys")
+        props = layout.operator("object.shape_key_remove", icon='X', text="Delete All Shape Keys")
         props.all = True
         props.apply_mix = False
-        props = layout.operator("object.shape_key_remove", icon="CHECKMARK", text="Apply All Shape Keys")
+        props = layout.operator("object.shape_key_remove", text="Apply All Shape Keys")
         props.all = True
         props.apply_mix = True
         layout.separator()
@@ -85,8 +89,11 @@ class MESH_MT_color_attribute_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("geometry.color_attribute_duplicate", icon='DUPLICATE')
-        layout.operator("geometry.color_attribute_convert", icon='ATTRIBUTE_CONVERT')
+        layout.operator(
+            "geometry.color_attribute_duplicate",
+            icon='DUPLICATE',
+        )
+        layout.operator("geometry.color_attribute_convert")
 
 
 class MESH_MT_attribute_context_menu(Menu):
@@ -95,7 +102,7 @@ class MESH_MT_attribute_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("geometry.attribute_convert", icon = "ATTRIBUTE_CONVERT")
+        layout.operator("geometry.attribute_convert")
 
 
 class MESH_UL_vgroups(UIList):
@@ -183,26 +190,6 @@ class DATA_PT_context_mesh(MeshButtonsPanel, Panel):
             layout.template_ID(space, "pin_id")
 
 
-class DATA_PT_normals_auto_smooth(MeshButtonsPanel, Panel):
-    bl_label = "Auto Smooth"
-    bl_parent_id = "DATA_PT_normals"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
-
-    def draw_header(self, context):
-        mesh = context.mesh
-
-        self.layout.prop(mesh, "use_auto_smooth", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        mesh = context.mesh
-
-        layout.active = mesh.use_auto_smooth and not mesh.has_custom_normals
-        layout.prop(mesh, "auto_smooth_angle", text="Angle")
-
-
 class DATA_PT_texture_space(MeshButtonsPanel, Panel):
     bl_label = "Texture Space"
     bl_options = {'DEFAULT_CLOSED'}
@@ -220,10 +207,9 @@ class DATA_PT_texture_space(MeshButtonsPanel, Panel):
 
         layout.prop(mesh, "texture_mesh")
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(mesh, "use_auto_texspace")
-        row.prop_decorator(mesh, "use_auto_texspace")
+        layout.separator()
+
+        layout.prop(mesh, "use_auto_texspace")
 
         layout.prop(mesh, "texspace_location", text="Location")
         layout.prop(mesh, "texspace_size", text="Size")
@@ -279,12 +265,12 @@ class DATA_PT_vertex_groups(MeshButtonsPanel, Panel):
             row = layout.row()
 
             sub = row.row(align=True)
-            sub.operator("object.vertex_group_assign", text="Assign", icon="NODE_GROUPINSERT")
-            sub.operator("object.vertex_group_remove_from", text="Remove", icon="REMOVE_SELECTED_FROM_ACTIVE_GROUP")
+            sub.operator("object.vertex_group_assign", text="Assign")
+            sub.operator("object.vertex_group_remove_from", text="Remove")
 
             sub = row.row(align=True)
-            sub.operator("object.vertex_group_select", text="Select", icon="RESTRICT_SELECT_OFF")
-            sub.operator("object.vertex_group_deselect", text="Deselect", icon="SELECT_NONE")
+            sub.operator("object.vertex_group_select", text="Select")
+            sub.operator("object.vertex_group_deselect", text="Deselect")
 
             col = layout.column(align=True)
             col.separator()
@@ -392,12 +378,9 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
                 row = layout.column()
                 row.active = enable_edit_value
                 row.prop(key, "eval_time")
-        
+
         if ob.type == 'MESH':
-	        row = layout.row()
-	        row.use_property_split = False
-	        row.prop(ob, "add_rest_position_attribute")
-	        row.prop_decorator(ob, "add_rest_position_attribute")
+            layout.prop(ob, "add_rest_position_attribute")
 
 
 class DATA_PT_uv_texture(MeshButtonsPanel, Panel):
@@ -447,20 +430,13 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
         if mesh.remesh_mode == 'VOXEL':
             col.prop(mesh, "remesh_voxel_size")
             col.prop(mesh, "remesh_voxel_adaptivity")
-            col.use_property_split = False
             col.prop(mesh, "use_remesh_fix_poles")
 
-            col.label(text = "Preserve")
-            row.use_property_split = False
-            row = col.row()
-            row.separator()
-            row.prop(mesh, "use_remesh_preserve_volume", text="Volume")
-            row = col.row()
-            row.separator()
-            row.prop(mesh, "use_remesh_preserve_attributes", text="Attributes")
+            col = layout.column(heading="Preserve")
+            col.prop(mesh, "use_remesh_preserve_volume", text="Volume")
+            col.prop(mesh, "use_remesh_preserve_attributes", text="Attributes")
 
-            row = col.row()
-            row.operator("object.voxel_remesh", text="Voxel Remesh")
+            col.operator("object.voxel_remesh", text="Voxel Remesh")
         else:
             col.operator("object.quadriflow_remesh", text="QuadriFlow Remesh")
 
@@ -484,8 +460,6 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
 
         col.operator("mesh.customdata_mask_clear", icon='X')
         col.operator("mesh.customdata_skin_clear", icon='X')
-
-        layout.separator()
 
         if me.has_custom_normals:
             col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')

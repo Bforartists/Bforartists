@@ -991,16 +991,6 @@ SpaceTopBar *CTX_wm_space_topbar(const bContext *C)
   return nullptr;
 }
 
-// bfa - toolbar editor
-SpaceToolbar *CTX_wm_space_toolbar(const bContext *C)
-{
-  ScrArea *area = CTX_wm_area(C);
-  if (area && area->spacetype == SPACE_TOOLBAR) {
-    return static_cast<SpaceToolbar*>(area->spacedata.first);
-  }
-  return nullptr;
-}
-
 SpaceSpreadsheet *CTX_wm_space_spreadsheet(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
@@ -1329,7 +1319,7 @@ static const char *data_mode_strings[] = {
     "mball_edit",
     "lattice_edit",
     "curves_edit",
-    "grease_pencil_edit", /*BFA - New*/
+    "grease_pencil_edit",
     "pointcloud_edit",
     "posemode",
     "sculpt_mode",
@@ -1338,16 +1328,16 @@ static const char *data_mode_strings[] = {
     "imagepaint",
     "particlemode",
     "objectmode",
-    "greasepencil_paint", /*BFA - legacy*/
-    "greasepencil_edit", /*BFA - legacy*/
-    "greasepencil_sculpt", /*BFA - legacy*/
-    "greasepencil_weight", /*BFA - legacy*/
-    "greasepencil_vertex", /*BFA - legacy*/
+    "greasepencil_paint",
+    "greasepencil_edit",
+    "greasepencil_sculpt",
+    "greasepencil_weight",
+    "greasepencil_vertex",
     "curves_sculpt",
-    "grease_pencil_paint", /*BFA - New*/
-    "grease_pencil_sculpt", /*BFA - New*/
-    "grease_pencil_weight", /*BFA - New*/
-	"grease_pencil_vertex", /*BFA - New*/
+    "grease_pencil_paint",
+    "grease_pencil_sculpt",
+    "grease_pencil_weight",
+    "grease_pencil_vertex",
     nullptr,
 };
 BLI_STATIC_ASSERT(ARRAY_SIZE(data_mode_strings) == CTX_MODE_NUM + 1,

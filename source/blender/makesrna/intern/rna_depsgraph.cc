@@ -53,7 +53,7 @@ struct RNA_DepsgraphIterator {
 #  ifdef WITH_PYTHON
   /**
    * Store the Python instance so the #BPy_StructRNA can be set as invalid iteration is completed.
-   * Otherwise accessing from Python (console auto-complete for e.g.) crashes, see: #100286. */
+   * Otherwise accessing from Python (e.g. console auto-complete) crashes, see: #100286. */
   void *py_instance;
 #  endif
 };
@@ -745,8 +745,8 @@ static void rna_def_depsgraph(BlenderRNA *brna)
   func = RNA_def_function(srna, "update", "rna_Depsgraph_update");
   RNA_def_function_ui_description(
       func,
-      "Re-evaluate any modified data, for example for animation or modifiers. "
-      "This invalidates all references to evaluated data from this dependency graph.");
+      "Re-evaluate any modified data-blocks, for example for animation or modifiers. "
+      "This invalidates all references to evaluated data-blocks from this dependency graph.");
   RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS);
 
   /* Queries for original data-blocks (the ones depsgraph is built for). */

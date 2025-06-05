@@ -909,10 +909,7 @@ void SCULPT_OT_dyntopo_detail_size_edit(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Edit Dyntopo Detail Size";
-  /* BFA - description */
-  ot->description =
-      "Set the mesh detail (either relative or constant one, depending on current dyntopo mode)\n"
-      "Activate the tool, hover with the mouse over the mesh, and left click to apply";
+  ot->description = "Modify the detail size of dyntopo interactively";
   ot->idname = "SCULPT_OT_dyntopo_detail_size_edit";
 
   /* API callbacks. */

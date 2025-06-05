@@ -2,14 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 import bpy
-from bpy.types import Panel, Menu, UIList, Operator # BFA - needed for move layer up and down operators
+from bpy.types import Panel, Menu, UIList
 from rna_prop_ui import PropertyPanel
 from bl_ui.space_properties import PropertiesAnimationMixin
 
-# BFA - needed for move layer up and down operators
-from bpy.props import (
-    EnumProperty,
-)
 
 class DataButtonsPanel:
     bl_space_type = 'PROPERTIES'
@@ -146,9 +142,8 @@ class GreasePencil_LayerRelationsPanel:
 
         col = layout.row(align=True)
         # Only enable this property when a view layer is selected.
-        if  bool(layer.viewlayer_render):
-            col.use_property_split = False
-            col.prop(layer, "use_viewlayer_masks")
+        col.enabled = bool(layer.viewlayer_render)
+        col.prop(layer, "use_viewlayer_masks")
 
 
 class GreasePencil_LayerDisplayPanel:
@@ -178,8 +173,7 @@ class GREASE_PENCIL_MT_layer_mask_add(Menu):
                 continue
 
             found = True
-            props = layout.operator("grease_pencil.layer_mask_add", text=layer.name, icon="GREASEPENCIL")
-            props.name = layer.name
+            layout.operator("grease_pencil.layer_mask_add", text=layer.name).name = layer.name
 
         if not found:
             layout.label(text="No layers to add")
@@ -209,23 +203,10 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout = self.layout
         grease_pencil = context.grease_pencil
         layer = grease_pencil.layers.active
-        space = context.space_data
-        is_group_active = grease_pencil.layer_groups.active is not None
 
-        if is_group_active: # BFA - exposed to 3D View
-            #layout.operator("grease_pencil.layer_group_add", text="Add Group", icon = "COLLECTION_NEW") # BFA - exposed to top level
-            layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
-            layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
-            layout.operator("grease_pencil.layer_merge", text="Merge Group", icon = 'MERGE').mode = 'GROUP'
-
-        if not is_group_active:
-            layout.separator()
-            layout.operator("grease_pencil.layer_move_top", text="Move to Top", icon='TRIA_UP_BAR') # bfa - added move up/down operators
-            layout.operator("grease_pencil.layer_move_bottom", text="Move to Bottom", icon='TRIA_DOWN_BAR') # bfa - added move up/down operators
-
-            layout.separator()
-            layout.operator("grease_pencil.layer_duplicate", text="Duplicate Layer", icon='DUPLICATE').empty_keyframes = False # BFA - made more explicit
-            layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Layer", icon='DUPLICATE' ).empty_keyframes = True # BFA - made more explicit
+        layout.separator()
+        layout.operator("grease_pencil.layer_duplicate", text="Duplicate", icon='DUPLICATE').empty_keyframes = False
+        layout.operator("grease_pencil.layer_duplicate", text="Duplicate Empty Keyframes").empty_keyframes = True
 
         layout.separator()
         layout.operator("grease_pencil.layer_reveal", icon='RESTRICT_VIEW_OFF', text="Show All")
@@ -235,19 +216,24 @@ class GREASE_PENCIL_MT_grease_pencil_add_layer_extra(Menu):
         layout.operator("grease_pencil.layer_lock_all", icon='LOCKED', text="Lock All").lock = True
         layout.operator("grease_pencil.layer_lock_all", icon='UNLOCKED', text="Unlock All").lock = False
 
-        if not is_group_active:
-            layout.separator()
-            layout.operator("grease_pencil.layer_merge", text="Merge Down", icon = 'MERGE').mode = 'ACTIVE'
-            layout.operator("grease_pencil.layer_merge", text="Merge Group", icon = 'MERGE').mode = 'GROUP'
-            layout.operator("grease_pencil.layer_merge", text="Merge All", icon = 'MERGE').mode = 'ALL'
+        layout.separator()
+        layout.prop(grease_pencil, "use_autolock_layers", text="Autolock Inactive Layers")
 
-            layout.separator()
-            layout.operator("grease_pencil.relative_layer_mask_add", icon = 'MASK_ABOVE', text="Mask with Layer Above").mode = 'ABOVE'
-            layout.operator("grease_pencil.relative_layer_mask_add", icon = 'MASK_BELOW', text="Mask with Layer Below").mode = 'BELOW'
+        if layer:
+            layout.prop(layer, "ignore_locked_materials")
 
-            layout.separator()
-            layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected", icon = 'PASTEDOWN').only_active = True
-            layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected", icon = 'PASTEDOWN').only_active = False
+        layout.separator()
+        layout.operator("grease_pencil.layer_merge", text="Merge Down").mode = 'ACTIVE'
+        layout.operator("grease_pencil.layer_merge", text="Merge Group").mode = 'GROUP'
+        layout.operator("grease_pencil.layer_merge", text="Merge All").mode = 'ALL'
+
+        layout.separator()
+        layout.operator("grease_pencil.relative_layer_mask_add", text="Mask with Layer Above").mode = 'ABOVE'
+        layout.operator("grease_pencil.relative_layer_mask_add", text="Mask with Layer Below").mode = 'BELOW'
+
+        layout.separator()
+        layout.operator("grease_pencil.layer_duplicate_object", text="Copy Layer to Selected").only_active = True
+        layout.operator("grease_pencil.layer_duplicate_object", text="Copy All Layers to Selected").only_active = False
 
 
 class GREASE_PENCIL_MT_group_context_menu(Menu):
@@ -255,9 +241,9 @@ class GREASE_PENCIL_MT_group_context_menu(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("grease_pencil.layer_group_remove", text="Delete Group", icon = 'DELETE').keep_children = False
-        layout.operator("grease_pencil.layer_group_remove", text="Ungroup", icon = 'NODE_UNGROUP').keep_children = True
-        layout.operator("grease_pencil.layer_merge", text="Merge Group", icon = 'MERGE').mode = 'GROUP'
+        layout.operator("grease_pencil.layer_group_remove", text="Delete Group").keep_children = False
+        layout.operator("grease_pencil.layer_group_remove", text="Ungroup").keep_children = True
+        layout.operator("grease_pencil.layer_merge", text="Merge Group").mode = 'GROUP'
 
         layout.separator()
         row = layout.row(align=True)
@@ -280,6 +266,9 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         sub = col.column(align=True)
         sub.operator_context = 'EXEC_DEFAULT'
         sub.operator("grease_pencil.layer_add", icon='ADD', text="")
+        sub.operator("grease_pencil.layer_group_add", icon='NEWFOLDER', text="")
+        sub.separator()
+
         if is_layer_active:
             sub.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
         if is_group_active:
@@ -287,40 +276,20 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
 
         sub.separator()
 
-        sub.operator("grease_pencil.layer_group_add", icon='COLLECTION_NEW', text="")
+        sub.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="")
 
-        col.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="") # BFA - moved below per standards
+        col.separator()
 
         sub = col.column(align=True)
         sub.operator("grease_pencil.layer_move", icon='TRIA_UP', text="").direction = 'UP'
         sub.operator("grease_pencil.layer_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
-        #sub.operator_context = 'EXEC_DEFAULT'
-        #sub.operator("grease_pencil.interface_item_move", icon='TRIA_UP', text="").direction = 'UP' # BFA - WIP - operator for GUI buttons to re-order in and out of groups
-        #sub.operator("grease_pencil.interface_item_move", icon='TRIA_DOWN', text="").direction = 'DOWN' # BFA - WIP - operator for GUI buttons to re-order in and out of groups
-
-        col.separator()
-
-        sub = col.column(align=True)
-        sub.operator("grease_pencil.layer_isolate", icon="HIDE_OFF", text="").affect_visibility = True # BFA - added for v2 consistency
-        sub.operator("grease_pencil.layer_isolate", icon="LOCKED", text="").affect_visibility = False # BFA - added for v2 consistency
-
-        col.separator()
 
         if not is_layer_active:
             return
 
         layout.use_property_split = True
         layout.use_property_decorate = True
-		# BFA - expose props to top level
         col = layout.column(align=True)
-        col.use_property_split = False
-
-        col.separator()
-
-        col.prop(grease_pencil, "use_autolock_layers", text="Autolock Inactive Layers")
-
-        if layer:
-            col.prop(layer, "ignore_locked_materials")
 
         # Layer main properties
         row = layout.row(align=True)
@@ -330,9 +299,7 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         row.prop(layer, "opacity", text="Opacity", slider=True)
 
         row = layout.row(align=True)
-        row.use_property_split = False
         row.prop(layer, "use_lights", text="Lights")
-        row.prop_decorator(layer, "use_lights")
 
     def draw(self, context):
         layout = self.layout
@@ -341,7 +308,7 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         self.draw_settings(layout, grease_pencil)
 
 
-class DATA_PT_grease_pencil_layer_masks(LayerDataButtonsPanel, GreasePencil_LayerMaskPanel, Panel):#
+class DATA_PT_grease_pencil_layer_masks(LayerDataButtonsPanel, GreasePencil_LayerMaskPanel, Panel):
     bl_label = "Masks"
     bl_parent_id = "DATA_PT_grease_pencil_layers"
     bl_options = {'DEFAULT_CLOSED'}
@@ -446,7 +413,7 @@ class DATA_PT_grease_pencil_onion_skinning_display(DataButtonsPanel, Panel):
         grease_pencil = context.grease_pencil
 
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = True
         # This was done in GPv2 but it's not entirely clear why. Presumably it was
         # to indicate that the settings will affect the onion skinning of the
         # other users.
@@ -516,6 +483,7 @@ class GREASE_PENCIL_UL_attributes(UIList):
         sub.active = False
         sub.label(text=data_type.name)
 
+
 class DATA_PT_grease_pencil_attributes(DataButtonsPanel, Panel):
     bl_label = "Attributes"
     bl_options = {'DEFAULT_CLOSED'}
@@ -542,53 +510,6 @@ class DATA_PT_grease_pencil_attributes(DataButtonsPanel, Panel):
         col.operator("geometry.attribute_remove", icon='REMOVE', text="")
 
 
-## BFA - WIP - operator for GUI buttons to re-order items through groups - Start
-class GREASE_PENCIL_OT_interface_item_move(DataButtonsPanel, Operator):
-    '''Move the active layer to the specified direction\nYou can also alternatively drag and drop the active layer or group to reorder and change hierarchy'''
-    bl_idname = "grease_pencil.interface_item_move"
-    bl_label = "Move Item"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    direction: EnumProperty(
-        name="Direction",
-        description="Specifies which direction the active item is moved towards",
-        items=(
-            ('UP', "Move Up", ""),
-            ('DOWN', "Move Down", "")
-        ),
-    )
-
-    @classmethod
-    def poll(cls, context):
-        return context.grease_pencil is not None and context.grease_pencil.layers.active is not None
-
-    def execute(self, context):
-        grease_pencil = context.grease_pencil
-        layers = grease_pencil.layers
-
-        # The selected layer
-        active_layer = layers.active
-
-        # BFA - WIP
-        # In theory the layer_groups are shown on a seperate indice, but names are ok.
-        # We can detect the layer_parent by name, and do something like move_to_layer_group either to None (root) or name
-        # We cannot detect if next in index is a layer_group or not yet.
-        # Refer to node.py  NODE_OT_interface_item_move for info on how this could potentially work
-
-        if self.direction == 'DOWN':
-            # Move the active layer down
-            layers.move(active_layer, 'DOWN')  # Move down normally
-            self.report({'INFO'}, 'Layer moved down')
-
-        elif self.direction == 'UP':
-            layers.move(active_layer, 'UP')  # Move up normally
-            self.report({'INFO'}, 'Layer moved up')
-
-        return {'FINISHED'}
-
-## BFA - operator for GUI buttons to re-order items - End
-
-
 classes = (
     GREASE_PENCIL_UL_masks,
     GREASE_PENCIL_MT_layer_mask_add,
@@ -609,7 +530,7 @@ classes = (
     GREASE_PENCIL_MT_group_context_menu,
     DATA_PT_grease_pencil_animation,
     GREASE_PENCIL_UL_attributes,
-    DATA_PT_grease_pencil_attributes
+    DATA_PT_grease_pencil_attributes,
 )
 
 

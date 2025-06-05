@@ -43,9 +43,6 @@
 
 using blender::Vector;
 
-#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-
 /* -------------------------------------------------------------------- */
 /** \name Select Similar (Vert/Edge/Face) Operator - common
  * \{ */
@@ -58,33 +55,33 @@ static const EnumPropertyItem prop_similar_compare_types[] = {
 };
 
 static const EnumPropertyItem prop_similar_types[] = {
-    {SIMVERT_NORMAL, "VERT_NORMAL", ICON_RECALC_NORMALS, "Normal", ""},
-    {SIMVERT_FACE, "VERT_FACES", ICON_FACESEL, "Amount of Adjacent Faces", ""},
-    {SIMVERT_VGROUP, "VERT_GROUPS", ICON_GROUP_VERTEX, "Vertex Groups", ""},
-    {SIMVERT_EDGE, "VERT_EDGES", ICON_EDGESEL, "Amount of Connecting Edges", ""},
-    {SIMVERT_CREASE, "VERT_CREASE", ICON_CREASE, "Vertex Crease", ""},
+    {SIMVERT_NORMAL, "VERT_NORMAL", 0, "Normal", ""},
+    {SIMVERT_FACE, "VERT_FACES", 0, "Amount of Adjacent Faces", ""},
+    {SIMVERT_VGROUP, "VERT_GROUPS", 0, "Vertex Groups", ""},
+    {SIMVERT_EDGE, "VERT_EDGES", 0, "Amount of Connecting Edges", ""},
+    {SIMVERT_CREASE, "VERT_CREASE", 0, "Vertex Crease", ""},
 
-    {SIMEDGE_LENGTH, "EDGE_LENGTH", ICON_RULER, "Length", ""},
-    {SIMEDGE_DIR, "EDGE_DIR", ICON_SWITCH_DIRECTION, "Direction", ""},
-    {SIMEDGE_FACE, "EDGE_FACES", ICON_FACESEL, "Amount of Faces Around an Edge", ""},
-    {SIMEDGE_FACE_ANGLE, "EDGE_FACE_ANGLE", ICON_ANGLE, "Face Angles", ""},
-    {SIMEDGE_CREASE, "EDGE_CREASE", ICON_CREASE, "Crease", ""},
-    {SIMEDGE_BEVEL, "EDGE_BEVEL", ICON_BEVEL, "Bevel", ""},
-    {SIMEDGE_SEAM, "EDGE_SEAM", ICON_MARK_SEAM, "Seam", ""},
-    {SIMEDGE_SHARP, "EDGE_SHARP", ICON_SELECT_SHARPEDGES, "Sharpness", ""},
+    {SIMEDGE_LENGTH, "EDGE_LENGTH", 0, "Length", ""},
+    {SIMEDGE_DIR, "EDGE_DIR", 0, "Direction", ""},
+    {SIMEDGE_FACE, "EDGE_FACES", 0, "Amount of Faces Around an Edge", ""},
+    {SIMEDGE_FACE_ANGLE, "EDGE_FACE_ANGLE", 0, "Face Angles", ""},
+    {SIMEDGE_CREASE, "EDGE_CREASE", 0, "Crease", ""},
+    {SIMEDGE_BEVEL, "EDGE_BEVEL", 0, "Bevel", ""},
+    {SIMEDGE_SEAM, "EDGE_SEAM", 0, "Seam", ""},
+    {SIMEDGE_SHARP, "EDGE_SHARP", 0, "Sharpness", ""},
 #ifdef WITH_FREESTYLE
-    {SIMEDGE_FREESTYLE, "EDGE_FREESTYLE", ICON_MARK_FS_EDGE, "Freestyle Edge Marks", ""},
+    {SIMEDGE_FREESTYLE, "EDGE_FREESTYLE", 0, "Freestyle Edge Marks", ""},
 #endif
 
-    {SIMFACE_MATERIAL, "FACE_MATERIAL", ICON_MATERIAL, "Material", ""},
-    {SIMFACE_AREA, "FACE_AREA", ICON_AREA, "Area", ""},
-    {SIMFACE_SIDES, "FACE_SIDES", ICON_POLYGONSIDES, "Polygon Sides", ""},
-    {SIMFACE_PERIMETER, "FACE_PERIMETER", ICON_PERIMETER, "Perimeter", ""},
-    {SIMFACE_NORMAL, "FACE_NORMAL", ICON_RECALC_NORMALS, "Normal", ""},
-    {SIMFACE_COPLANAR, "FACE_COPLANAR", ICON_MAKE_PLANAR, "Coplanar", ""},
-    {SIMFACE_SMOOTH, "FACE_SMOOTH", ICON_SHADING_SMOOTH, "Flat/Smooth", ""},
+    {SIMFACE_MATERIAL, "FACE_MATERIAL", 0, "Material", ""},
+    {SIMFACE_AREA, "FACE_AREA", 0, "Area", ""},
+    {SIMFACE_SIDES, "FACE_SIDES", 0, "Polygon Sides", ""},
+    {SIMFACE_PERIMETER, "FACE_PERIMETER", 0, "Perimeter", ""},
+    {SIMFACE_NORMAL, "FACE_NORMAL", 0, "Normal", ""},
+    {SIMFACE_COPLANAR, "FACE_COPLANAR", 0, "Coplanar", ""},
+    {SIMFACE_SMOOTH, "FACE_SMOOTH", 0, "Flat/Smooth", ""},
 #ifdef WITH_FREESTYLE
-    {SIMFACE_FREESTYLE, "FACE_FREESTYLE", ICON_MARKFSFACE, "Freestyle Face Marks", ""},
+    {SIMFACE_FREESTYLE, "FACE_FREESTYLE", 0, "Freestyle Face Marks", ""},
 #endif
 
     {0, nullptr, 0, nullptr, nullptr},

@@ -67,9 +67,6 @@ using blender::int2;
 using blender::Span;
 using blender::Vector;
 
-#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-
 static void uv_select_all_perform(const Scene *scene, Object *obedit, int action);
 
 static void uv_select_all_perform_multi_ex(const Scene *scene,
@@ -1241,14 +1238,17 @@ bool uvedit_vert_is_edge_select_any_other(const ToolSettings *ts,
   BLI_assert(offsets.uv >= 0);
   BMEdge *e_iter = l->e;
   do {
-    BMLoop *l_radial_iter = e_iter->l, *l_other;
+    BMLoop *l_radial_iter = e_iter->l;
+    if (!l_radial_iter) {
+      continue; /* Skip wire edges with no loops. */
+    }
     do {
       if (!uvedit_face_visible_test_ex(ts, l_radial_iter->f)) {
         continue;
       }
       /* Use #l_other to check if the uvs are connected (share the same uv coordinates)
        * and #l_radial_iter for the actual edge selection test. */
-      l_other = (l_radial_iter->v != l->v) ? l_radial_iter->next : l_radial_iter;
+      BMLoop *l_other = (l_radial_iter->v != l->v) ? l_radial_iter->next : l_radial_iter;
       if (BM_loop_uv_share_vert_check(l, l_other, offsets.uv) &&
           uvedit_edge_select_test_ex(ts, l_radial_iter, offsets))
       {
@@ -2497,26 +2497,6 @@ static wmOperatorStatus uv_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*bfa - descriptions*/
-static std::string node_ot_select_all_get_description(bContext * /*C*/,
-                                                      wmOperatorType * /*ot*/,
-                                                      PointerRNA *ptr)
-{
-  /*Select*/
-  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return "Select all UV vertices";
-  }
-  /*Deselect*/
-  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return "Deselect all UV vertices";
-  }
-  /*Invert*/
-  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return "Inverts the current selection";
-  }
-  return "";
-}
-
 void UV_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2527,7 +2507,6 @@ void UV_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = uv_select_all_exec;
-  ot->get_description = node_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_uvedit;
 
   WM_operator_properties_select_all(ot);
@@ -3321,8 +3300,8 @@ static wmOperatorStatus uv_select_split_exec(bContext *C, wmOperator *op)
 void UV_OT_select_split(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Split Selection"; /*bfa - Split selection, not Select Split*/
-  ot->description = "Splits the selected UV parts\nOnly entirely selected faces are split";
+  ot->name = "Select Split";
+  ot->description = "Select only entirely selected faces";
   ot->idname = "UV_OT_select_split";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -4892,7 +4871,10 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
   for (Object *ob : objects) {
     BMesh *bm = BKE_editmesh_from_object(ob)->bm;
     if (bm->totvertsel == 0) {
-      continue;
+      /* No selection means no visible UV's unless sync-select is enabled. */
+      if (!(ts->uv_flag & UV_SYNC_SELECTION)) {
+        continue;
+      }
     }
 
     bool changed = false;
@@ -4920,9 +4902,15 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
           changed = true;
         }
       }
-      if (changed) {
-        uv_select_tag_update_for_object(depsgraph, ts, ob);
+    }
+    if (changed) {
+      if (ts->uv_flag & UV_SYNC_SELECTION) {
+        BM_mesh_select_flush(bm);
       }
+      else {
+        uvedit_select_flush(scene, bm);
+      }
+      uv_select_tag_update_for_object(depsgraph, ts, ob);
     }
   }
 
@@ -5000,7 +4988,10 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
   for (Object *ob : objects) {
     BMesh *bm = BKE_editmesh_from_object(ob)->bm;
     if (bm->totvertsel == 0) {
-      continue;
+      /* No selection means no visible UV's unless sync-select is enabled. */
+      if (!(ts->uv_flag & UV_SYNC_SELECTION)) {
+        continue;
+      }
     }
 
     bool changed = false;
@@ -5028,9 +5019,15 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
           changed = true;
         }
       }
-      if (changed) {
-        uv_select_tag_update_for_object(depsgraph, ts, ob);
+    }
+    if (changed) {
+      if (ts->uv_flag & UV_SYNC_SELECTION) {
+        BM_mesh_select_flush(bm);
       }
+      else {
+        uvedit_select_flush(scene, bm);
+      }
+      uv_select_tag_update_for_object(depsgraph, ts, ob);
     }
   }
 
@@ -5065,6 +5062,9 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
   for (const int ob_index : objects.index_range()) {
     Object *ob = objects[ob_index];
     BMesh *bm = BKE_editmesh_from_object(ob)->bm;
+    if (bm->totvertsel == 0) {
+      continue;
+    }
 
     float ob_m3[3][3];
     copy_m3_m4(ob_m3, ob->object_to_world().ptr());
@@ -5096,6 +5096,13 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
   for (const int ob_index : objects.index_range()) {
     Object *ob = objects[ob_index];
     BMesh *bm = BKE_editmesh_from_object(ob)->bm;
+    if (bm->totvertsel == 0) {
+      /* No selection means no visible UV's unless sync-select is enabled. */
+      if (!(ts->uv_flag & UV_SYNC_SELECTION)) {
+        continue;
+      }
+    }
+
     bool changed = false;
     const BMUVOffsets offsets = BM_uv_map_offsets_get(bm);
 
@@ -5121,6 +5128,12 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
       }
     }
     if (changed) {
+      if (ts->uv_flag & UV_SYNC_SELECTION) {
+        BM_mesh_select_flush(bm);
+      }
+      else {
+        uvedit_select_flush(scene, bm);
+      }
       uv_select_tag_update_for_object(depsgraph, ts, ob);
     }
   }
@@ -5158,10 +5171,6 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
     Object *obedit = objects[ob_index];
     BMesh *bm = BKE_editmesh_from_object(obedit)->bm;
     const BMUVOffsets offsets = BM_uv_map_offsets_get(bm);
-    if (offsets.uv == -1) {
-      continue;
-    }
-
     float aspect_y = 1.0f; /* Placeholder value, aspect doesn't change connectivity. */
     island_list_len += bm_mesh_calc_uv_islands(
         scene, bm, &island_list_ptr[ob_index], face_selected, false, false, aspect_y, offsets);
@@ -5175,12 +5184,6 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
 
   for (const int ob_index : objects.index_range()) {
     Object *obedit = objects[ob_index];
-    BMesh *bm = BKE_editmesh_from_object(obedit)->bm;
-    const int cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_PROP_FLOAT2);
-    if (cd_loop_uv_offset == -1) {
-      continue;
-    }
-
     float ob_m3[3][3];
     copy_m3_m4(ob_m3, obedit->object_to_world().ptr());
 
@@ -5206,10 +5209,6 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
   for (const int ob_index : objects.index_range()) {
     Object *obedit = objects[ob_index];
     BMesh *bm = BKE_editmesh_from_object(obedit)->bm;
-    const int cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_PROP_FLOAT2);
-    if (cd_loop_uv_offset == -1) {
-      continue;
-    }
     float ob_m3[3][3];
     copy_m3_m4(ob_m3, obedit->object_to_world().ptr());
 
@@ -5232,6 +5231,12 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
     }
 
     if (changed) {
+      if (ts->uv_flag & UV_SYNC_SELECTION) {
+        BM_mesh_select_flush(bm);
+      }
+      else {
+        uvedit_select_flush(scene, bm);
+      }
       uv_select_tag_update_for_object(depsgraph, ts, obedit);
     }
   }

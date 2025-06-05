@@ -73,7 +73,7 @@ static void sig_handle_blender_esc(int sig)
   if (sig == 2) {
     static int count = 0;
     if (count) {
-      printf("\nBforartists killed\n");
+      printf("\nBlender killed\n");
       exit(2);
     }
     printf("\nSent an internal break event. Press ^C again to kill Blender\n");

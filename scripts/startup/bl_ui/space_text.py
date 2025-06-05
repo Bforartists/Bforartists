@@ -19,34 +19,28 @@ class TEXT_HT_header(Header):
         st = context.space_data
         text = st.text
         is_syntax_highlight_supported = st.is_syntax_highlight_supported()
+        layout.template_header()
 
-        ALL_MT_editormenu_text.draw_hidden(context, layout)  # BFA - show hide the editormenu, editor suffix is needed.
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
-        row = layout.row(align=True)
+        layout.separator_spacer()
+
         if text and text.is_modified:
             row = layout.row(align=True)
             row.alert = True
-            row.operator("text.resolve_conflict", text="", icon='HELP')
+            row.operator("text.resolve_conflict", text="", icon='QUESTION')
 
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new", unlink="text.unlink", open="text.open")
 
         if text:
-            text_name = text.name
-            is_osl = text_name.endswith((".osl", ".oso"))
-
-            row = layout.row()
+            is_osl = text.name.endswith((".osl", ".oso"))
             if is_osl:
                 row.operator("text.update_shader", text="", icon='FILE_REFRESH')
             else:
-
                 row = layout.row()
                 row.active = is_syntax_highlight_supported
                 row.operator("text.run_script", text="", icon='PLAY')
-
-                row = layout.row()
-                row.prop(text, "use_module")
 
         layout.separator_spacer()
 
@@ -90,38 +84,24 @@ class TEXT_HT_footer(Header):
                 )
 
 
-# BFA - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_text(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
-
-
 class TEXT_MT_editor_menus(Menu):
     bl_idname = "TEXT_MT_editor_menus"
     bl_label = ""
 
     def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
+        layout = self.layout
         st = context.space_data
         text = st.text
 
-        layout.menu("TEXT_MT_text")
         layout.menu("TEXT_MT_view")
+        layout.menu("TEXT_MT_text")
 
         if text:
             layout.menu("TEXT_MT_edit")
+            layout.menu("TEXT_MT_select")
             layout.menu("TEXT_MT_format")
+
+        layout.menu("TEXT_MT_templates")
 
 
 class TEXT_PT_properties(Panel):
@@ -136,35 +116,25 @@ class TEXT_PT_properties(Panel):
         layout.use_property_decorate = False
         st = context.space_data
 
-        flow = layout.column_flow()
-        flow.use_property_split = False
-        flow.prop(st, "show_line_highlight")
-        flow.prop(st, "use_live_edit")
-        layout.use_property_split = True
+        if not st.text:
+            layout.active = False
 
-        flow = layout.column_flow()
+        st = context.space_data
 
-        flow.prop(st, "font_size")
-        flow.prop(st, "tab_width")
+        col = layout.column(align=False, heading="Margin")
+        row = col.row(align=True)
+        sub = row.row(align=True)
+        sub.prop(st, "show_margin", text="")
+        sub = sub.row(align=True)
+        sub.active = st.show_margin
+        sub.prop(st, "margin_column", text="")
+
+        layout.prop(st, "font_size")
+        layout.prop(st, "tab_width")
 
         text = st.text
         if text:
             layout.prop(text, "indentation")
-
-        flow = layout.column_flow()
-        split = flow.split(factor=0.66)
-        split.use_property_split = False
-        split.prop(st, "show_margin")
-        if st.show_margin:
-            split.label(icon='DISCLOSURE_TRI_DOWN')
-        else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        if st.show_margin:
-
-            col = flow.column()
-            col.active = st.show_margin
-            col.prop(st, "margin_column")
 
 
 class TEXT_PT_find(Panel):
@@ -178,24 +148,28 @@ class TEXT_PT_find(Panel):
         st = context.space_data
 
         # find
-        col = layout.column(align=True)
+        col = layout.column()
         row = col.row(align=True)
-        row.prop(st, "find_text", text="", icon='VIEWZOOM')
+        row.prop(st, "find_text", icon='VIEWZOOM', text="")
         row.operator("text.find_set_selected", text="", icon='EYEDROPPER')
         col.operator("text.find")
 
+        layout.separator()
+
         # replace
-        col = layout.column(align=True)
+        col = layout.column()
         row = col.row(align=True)
-        row.prop(st, "replace_text", text="", icon='DECORATE_OVERRIDE')
+        row.prop(st, "replace_text", icon='DECORATE_OVERRIDE', text="")
         row.operator("text.replace_set_selected", text="", icon='EYEDROPPER')
 
         row = col.row(align=True)
         row.operator("text.replace")
         row.operator("text.replace", text="Replace All").all = True
 
+        layout.separator()
+
         # settings
-        layout.use_property_split = False # bfa - align left
+        layout.use_property_split = True
         col = layout.column(heading="Search")
         if not st.text:
             col.active = False
@@ -204,7 +178,31 @@ class TEXT_PT_find(Panel):
         col.prop(st, "use_find_all", text="All Data-Blocks")
 
 
-# BFA - not used, exposed to top level
+class TEXT_MT_view_navigation(Menu):
+    bl_label = "Navigation"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("text.move", text="Top").type = 'FILE_TOP'
+        layout.operator("text.move", text="Bottom").type = 'FILE_BOTTOM'
+
+        layout.separator()
+
+        layout.operator("text.move", text="Line Begin").type = 'LINE_BEGIN'
+        layout.operator("text.move", text="Line End").type = 'LINE_END'
+
+        layout.separator()
+
+        layout.operator("text.move", text="Previous Line").type = 'PREVIOUS_LINE'
+        layout.operator("text.move", text="Next Line").type = 'NEXT_LINE'
+
+        layout.separator()
+
+        layout.operator("text.move", text="Previous Word").type = 'PREVIOUS_WORD'
+        layout.operator("text.move", text="Next Word").type = 'NEXT_WORD'
+
+
 class TEXT_MT_view(Menu):
     bl_label = "View"
 
@@ -217,37 +215,34 @@ class TEXT_MT_view(Menu):
 
         layout.separator()
 
-        props = layout.operator("wm.context_cycle_int", text="Zoom In", icon='ZOOM_IN')
+        layout.prop(st, "show_line_numbers")
+        layout.prop(st, "show_word_wrap")
+        syntax = layout.column()
+        syntax.active = st.is_syntax_highlight_supported()
+        syntax.prop(st, "show_syntax_highlight")
+        layout.prop(st, "show_line_highlight")
+
+        layout.separator()
+
+        props = layout.operator("wm.context_cycle_int", text="Zoom In")
         props.data_path = "space_data.font_size"
         props.reverse = False
 
-        props = layout.operator("wm.context_cycle_int", text="Zoom Out", icon='ZOOM_OUT')
+        props = layout.operator("wm.context_cycle_int", text="Zoom Out")
         props.data_path = "space_data.font_size"
         props.reverse = True
+
+        layout.separator()
+
+        layout.menu("TEXT_MT_view_navigation")
 
         layout.separator()
 
         layout.menu("INFO_MT_area")
 
 
-# Redraw timer sub menu - Debug stuff
-class TEXT_MT_redraw_timer(Menu):
-    bl_label = "Redraw Timer"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("wm.redraw_timer", text='Draw Region', icon='TIME').type = 'DRAW'
-        layout.operator("wm.redraw_timer", text='Draw Region Swap', icon='TIME').type = 'DRAW_SWAP'
-        layout.operator("wm.redraw_timer", text='Draw Window', icon='TIME').type = 'DRAW_WIN'
-        layout.operator("wm.redraw_timer", text='Draw Window  Swap', icon='TIME').type = 'DRAW_WIN_SWAP'
-        layout.operator("wm.redraw_timer", text='Anim Step', icon='TIME').type = 'ANIM_STEP'
-        layout.operator("wm.redraw_timer", text='Anim Play', icon='TIME').type = 'ANIM_PLAY'
-        layout.operator("wm.redraw_timer", text='Undo/Redo', icon='TIME').type = 'UNDO'
-
-
 class TEXT_MT_text(Menu):
-    bl_label = "File"
+    bl_label = "Text"
 
     def draw(self, context):
         layout = self.layout
@@ -255,43 +250,34 @@ class TEXT_MT_text(Menu):
         st = context.space_data
         text = st.text
 
-        layout.operator("text.new", text="New", text_ctxt=i18n_contexts.id_text, icon='NEW')
-        layout.operator("text.open", text="Open", icon='FILE_FOLDER')
+        layout.operator("text.new", text="New", text_ctxt=i18n_contexts.id_text, icon='FILE_NEW')
+        layout.operator("text.open", text="Open...", icon='FILE_FOLDER')
 
         if text:
             layout.separator()
             row = layout.row()
-            row.operator("text.reload", icon="FILE_REFRESH")
+            row.operator("text.reload")
             row.enabled = not text.is_in_memory
 
             row = layout.row()
-            row.operator("text.jump_to_file_at_point", text="Edit Externally", icon="FILE")
+            row.operator("text.jump_to_file_at_point", text="Edit Externally")
             row.enabled = (not text.is_in_memory and context.preferences.filepaths.text_editor != "")
 
-            layout.column()
+            layout.separator()
             layout.operator("text.save", icon='FILE_TICK')
-            layout.operator("text.save_as", icon='SAVE_AS')
+            layout.operator("text.save_as", text="Save As...")
 
             if text.filepath:
                 layout.separator()
-                layout.operator("text.make_internal", icon="MAKE_INTERNAL")
+                layout.operator("text.make_internal")
 
-        layout.separator()
+            layout.separator()
+            layout.prop(text, "use_module")
 
-        layout.menu("TEXT_MT_templates")
+            layout.prop(st, "use_live_edit")
 
-        layout.separator()
-
-        layout.menu("TEXT_MT_redraw_timer")  # Redraw timer sub menu - Debug stuff
-        layout.operator("wm.debug_menu", icon='DEBUG')  # debug menu
-        # Reload all python scripts. Mainly meant for the UI scripts.
-        layout.operator("script.reload", icon='FILE_REFRESH')
-
-        layout.separator()
-
-        layout.operator("screen.spacedata_cleanup", icon="APPTEMPLATE")
-        layout.operator("wm.memory_statistics", icon="SYSTEM")
-        layout.operator("wm.operator_presets_cleanup", icon="CLEAN_CHANNELS")
+            layout.separator()
+            layout.operator("text.run_script")
 
 
 class TEXT_MT_templates_py(Menu):
@@ -336,29 +322,63 @@ class TEXT_MT_templates(Menu):
         )
 
 
-# BFA -
+class TEXT_MT_select(Menu):
+    bl_label = "Select"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("text.select_all", text="All")
+        layout.operator("text.select_line", text="Line")
+        layout.operator("text.select_word", text="Word")
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Top").type = 'FILE_TOP'
+        layout.operator("text.move_select", text="Bottom").type = 'FILE_BOTTOM'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Line Begin").type = 'LINE_BEGIN'
+        layout.operator("text.move_select", text="Line End").type = 'LINE_END'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Previous Line").type = 'PREVIOUS_LINE'
+        layout.operator("text.move_select", text="Next Line").type = 'NEXT_LINE'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Previous Word").type = 'PREVIOUS_WORD'
+        layout.operator("text.move_select", text="Next Word").type = 'NEXT_WORD'
+
+
 class TEXT_MT_format(Menu):
     bl_label = "Format"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("text.indent", icon="INDENT")
-        layout.operator("text.unindent", icon="UNINDENT")
+        layout.operator("text.indent")
+        layout.operator("text.unindent")
 
         layout.separator()
 
-        layout.operator("text.comment_toggle", text="Comment", icon="COMMENT").type = 'COMMENT'
-        layout.operator("text.comment_toggle", text="Un-Comment", icon="COMMENT").type = 'UNCOMMENT'
-        layout.operator("text.comment_toggle", icon="COMMENT")
+        layout.operator("text.comment_toggle")
 
         layout.separator()
 
-        layout.operator(
-            "text.convert_whitespace",
-            text="Whitespace to Spaces",
-            icon="WHITESPACE_SPACES").type = 'SPACES'
-        layout.operator("text.convert_whitespace", text="Whitespace to Tabs", icon="WHITESPACE_TABS").type = 'TABS'
+        layout.operator_menu_enum("text.convert_whitespace", "type")
+
+
+class TEXT_MT_edit_to3d(Menu):
+    bl_label = "Text to 3D Object"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("text.to_3d_object", text="One Object").split_lines = False
+        layout.operator("text.to_3d_object", text="One Object Per Line").split_lines = True
 
 
 class TEXT_MT_edit(Menu):
@@ -371,88 +391,34 @@ class TEXT_MT_edit(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("text.cut", icon="CUT")
-        layout.operator("text.copy", icon="COPYDOWN")
-        layout.operator("text.paste", icon="PASTEDOWN")
-        layout.operator("text.duplicate_line", icon="DUPLICATE")
+        layout.operator("ed.undo")
+        layout.operator("ed.redo")
 
         layout.separator()
 
-        layout.operator("text.move_lines", text="Move Line(s) Up", icon="MOVE_UP").direction = 'UP'
-        layout.operator("text.move_lines", text="Move Line(s) Down", icon="MOVE_DOWN").direction = 'DOWN'
+        layout.operator("text.cut")
+        layout.operator("text.copy", icon='COPYDOWN')
+        layout.operator("text.paste", icon='PASTEDOWN')
+        layout.operator("text.duplicate_line")
 
         layout.separator()
 
-        layout.menu("TEXT_MT_edit_move_select")
-        layout.operator_menu_enum("text.move", "type")
+        layout.operator("text.move_lines", text="Move Line(s) Up").direction = 'UP'
+        layout.operator("text.move_lines", text="Move Line(s) Down").direction = 'DOWN'
 
         layout.separator()
 
-        layout.menu("TEXT_MT_edit_delete")
+        layout.operator("text.start_find", text="Find & Replace...")
+        layout.operator("text.find_set_selected")
+        layout.operator("text.jump", text="Jump To...")
 
         layout.separator()
 
-        layout.operator("text.select_all", icon="SELECT_ALL")
-        layout.operator("text.select_line", icon="SELECT_LINE")
-        layout.operator("text.select_word", text="Word", icon="RESTRICT_SELECT_OFF")
-
-        layout.separator()
-
-        layout.operator("text.jump", text="Go to line", icon="GOTO")
-        layout.operator("text.start_find", text="Find", icon="ZOOM_SET")
-        layout.operator("text.find_set_selected", icon="ZOOM_SET")
-
-        layout.separator()
-
-        layout.operator("text.autocomplete", icon="AUTOCOMPLETE")
+        layout.operator("text.autocomplete")
 
         layout.separator()
 
         layout.menu("TEXT_MT_edit_to3d")
-
-
-class TEXT_MT_edit_to3d(Menu):
-    bl_label = "Text to 3D Object"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("text.to_3d_object", text="One Object", icon="OUTLINER_OB_FONT").split_lines = False
-        layout.operator("text.to_3d_object", text="One Object Per Line", icon="OUTLINER_OB_FONT").split_lines = True
-
-# BFA - move_select submenu
-
-
-class TEXT_MT_edit_move_select(Menu):
-    bl_label = "Select Text"
-
-    def draw(self, context):
-        layout = self.layout
-
-        # BFA - located in Select menu
-        # layout.operator("text.select_all", text="All", icon = "HAND")
-        # layout.operator("text.select_line", text="Line", icon = "HAND")
-        # layout.operator("text.select_word", text="Word", icon = "HAND")
-
-        layout.separator()
-
-        layout.operator("text.move_select", text="Top", icon="HAND").type = 'FILE_TOP'
-        layout.operator("text.move_select", text="Bottom", icon="HAND").type = 'FILE_BOTTOM'
-
-        layout.separator()
-
-        layout.operator("text.move_select", text="Line Begin", icon="HAND").type = 'LINE_BEGIN'
-        layout.operator("text.move_select", text="Line End", icon="HAND").type = 'LINE_END'
-
-        layout.separator()
-
-        layout.operator("text.move_select", text="Previous Line", icon="HAND").type = 'PREVIOUS_LINE'
-        layout.operator("text.move_select", text="Next Line", icon="HAND").type = 'NEXT_LINE'
-
-        layout.separator()
-
-        layout.operator("text.move_select", text="Previous Word", icon="HAND").type = 'PREVIOUS_WORD'
-        layout.operator("text.move_select", text="Next Word", icon="HAND").type = 'NEXT_WORD'
 
 
 class TEXT_MT_context_menu(Menu):
@@ -463,61 +429,47 @@ class TEXT_MT_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.operator("text.cut", icon="CUT")
-        layout.operator("text.copy", icon="COPYDOWN")
-        layout.operator("text.paste", icon="PASTEDOWN")
-        layout.operator("text.duplicate_line", icon="DUPLICATE")
+        layout.operator("text.cut")
+        layout.operator("text.copy", icon='COPYDOWN')
+        layout.operator("text.paste", icon='PASTEDOWN')
+        layout.operator("text.duplicate_line")
 
         layout.separator()
 
-        layout.operator("text.move_lines", text="Move Line(s) Up", icon="MOVE_UP").direction = 'UP'
-        layout.operator("text.move_lines", text="Move Line(s) Down", icon="MOVE_DOWN").direction = 'DOWN'
+        layout.operator("text.move_lines", text="Move Line(s) Up").direction = 'UP'
+        layout.operator("text.move_lines", text="Move Line(s) Down").direction = 'DOWN'
 
         layout.separator()
 
-        layout.operator("text.indent", icon="INDENT")
-        layout.operator("text.unindent", icon="UNINDENT")
+        layout.operator("text.indent")
+        layout.operator("text.unindent")
 
         layout.separator()
 
-        layout.operator("text.comment_toggle", icon="COMMENT")
+        layout.operator("text.comment_toggle")
 
         layout.separator()
 
-        layout.operator("text.autocomplete", icon="AUTOCOMPLETE")
-
-
-class TEXT_MT_edit_delete(Menu):
-    bl_label = "Delete"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("text.delete", text="Next Character", icon="DELETE").type = 'NEXT_CHARACTER'
-        layout.operator("text.delete", text="Previous Character", icon="DELETE").type = 'PREVIOUS_CHARACTER'
-        layout.operator("text.delete", text="Next Word", icon="DELETE").type = 'NEXT_WORD'
-        layout.operator("text.delete", text="Previous Word", icon="DELETE").type = 'PREVIOUS_WORD'
+        layout.operator("text.autocomplete")
 
 
 classes = (
-    ALL_MT_editormenu_text,
     TEXT_HT_header,
     TEXT_HT_footer,
+    TEXT_MT_edit,
     TEXT_MT_editor_menus,
-    TEXT_PT_properties,
     TEXT_PT_find,
+    TEXT_PT_properties,
     TEXT_MT_view,
-    TEXT_MT_redraw_timer,
+    TEXT_MT_view_navigation,
     TEXT_MT_text,
     TEXT_MT_templates,
     TEXT_MT_templates_py,
     TEXT_MT_templates_osl,
+    TEXT_MT_select,
     TEXT_MT_format,
-    TEXT_MT_context_menu,
-    TEXT_MT_edit,
     TEXT_MT_edit_to3d,
-    TEXT_MT_edit_move_select,
-    TEXT_MT_edit_delete,
+    TEXT_MT_context_menu,
 )
 
 if __name__ == "__main__":  # only for live edit.

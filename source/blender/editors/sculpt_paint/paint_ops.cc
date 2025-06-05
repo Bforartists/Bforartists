@@ -141,7 +141,7 @@ static void PALETTE_OT_new(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add New Palette";
-  ot->description = "Add a new palette of indexed colors";
+  ot->description = "Add new palette";
   ot->idname = "PALETTE_OT_new";
 
   /* API callbacks. */
@@ -795,9 +795,7 @@ static void BRUSH_OT_stencil_control(wmOperatorType *ot)
   };
   /* identifiers */
   ot->name = "Stencil Brush Control";
-  ot->description =
-      "Control the position, rotation or size of the stencil brush image"
-      "image\nHotkey Tool! You need to be with the mouse in the viewport to see the changes!"; /*BFA - tooltip*/
+  ot->description = "Control the stencil brush";
   ot->idname = "BRUSH_OT_stencil_control";
 
   /* API callbacks. */

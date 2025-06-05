@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-from bpy.types import Header, Panel, Menu #BFA - menu needed
+from bpy.types import Header, Panel
 from rna_prop_ui import PropertyPanel
 from bl_ui import anim
 
@@ -38,11 +38,7 @@ class PROPERTIES_HT_header(Header):
         region = context.region
         ui_scale = context.preferences.system.ui_scale
 
-        ALL_MT_editormenu_properties.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
-
-        # bfa - The tab to switch to outliner
-        row = layout.row(align=True)
-        row.operator("screen.space_type_set_or_cycle", text="", icon='OOPS').space_type = 'OUTLINER'
+        layout.template_header()
 
         layout.separator_spacer()
 
@@ -177,25 +173,10 @@ class PropertiesAnimationMixin:
         anim.draw_action_and_slot_selector_for_id(layout, animated_id)
 
 
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_properties(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
-
-
 classes = (
     PROPERTIES_HT_header,
     PROPERTIES_PT_navigation_bar,
     PROPERTIES_PT_options,
-    ALL_MT_editormenu_properties,
 )
 
 if __name__ == "__main__":  # only for live edit.

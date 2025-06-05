@@ -22,10 +22,6 @@ from typing import (
 
 import bpy
 
-import shutil # BFA - needed to pre-downloaded extensions
-from pathlib import Path # BFA - needed to pre-downloaded extensions
-from os import path as p # BFA - needed to pre-downloaded extensions
-
 from bpy.types import (
     Operator,
 )
@@ -447,7 +443,7 @@ def lock_result_any_failed_with_report(op, lock_result, report_type='ERROR'):
     # Hint for users as this is non-obvious, only show once.
     unlock_hint_text = (
         "\n"
-        "If the lock was held by a Bforartists instance that exited unexpectedly,\n" # BFA - not blender
+        "If the lock was held by a Blender instance that exited unexpectedly,\n"
         "use: \"Force Unlock Repository\" to clear the lock.\n"
         "Access from the \"Repositories\" popover in the extensions preferences."
     )
@@ -1450,7 +1446,7 @@ def _extensions_maybe_online_action_poll_impl(cls, repo, action):
                 case _:
                     assert False, "Unreachable"
             if bpy.app.online_access_override:
-                message += " " + rpt_("Launch Bforaritsts without --offline-mode") # BFA - not blender
+                message += " " + rpt_("Launch Blender without --offline-mode")
             else:
                 message += " " + rpt_("Enable online access in System preferences")
             cls.poll_message_set(message)
@@ -1875,7 +1871,7 @@ class EXTENSIONS_OT_repo_unlock(Operator):
         if lock_is_ours:
             return (
                 "Active repository lock held by this session, "
-                "either wait until the operation is finished or restart Bforaritsts" # BFA - not blender
+                "either wait until the operation is finished or restart Blender"
             ), lock_mtime, lock_error
         return None, lock_mtime, lock_error
 
@@ -1931,7 +1927,7 @@ class EXTENSIONS_OT_repo_unlock(Operator):
 
         layout = self.layout
         col = layout.column()
-        col.label(text="Warning! Before unlocking, ensure another instance of Bforaritsts is not running.") # BFA - not blender
+        col.label(text="Warning! Before unlocking, ensure another instance of Blender is not running.")
         col.label(text="Force unlocking may be necessary in the case of a crash or power failure,")
         col.label(text="otherwise it should be avoided.")
 
@@ -2962,7 +2958,7 @@ class EXTENSIONS_OT_package_install(Operator, _ExtCmdMixIn):
         if not bpy.app.online_access:
             if bpy.app.online_access_override:
                 cls.poll_message_set(
-                    "Online access required to install or update. Launch Bforartists without --offline-mode") #BFA - not blender
+                    "Online access required to install or update. Launch Blender without --offline-mode")
             else:
                 cls.poll_message_set(
                     "Online access required to install or update. Enable online access in System preferences")
@@ -3955,18 +3951,6 @@ class EXTENSIONS_OT_userpref_show_for_update(Operator):
         return {'FINISHED'}
 
 
-# BFA - Operator to switch editing active theme.
-class EXTENSIONS_OT_userpref_theme_show_edit(Operator):
-    """Switch to the Themes section in preferences"""
-    bl_idname = "extensions.userpref_theme_show_edit"
-    bl_label = "Edit Theme"
-    bl_options = {'INTERNAL'}
-
-    def execute(self, context):
-        context.preferences.active_section = 'THEMES'
-        return {'FINISHED'}
-
-
 # NOTE: this is a wrapper for `SCREEN_OT_userpref_show`.
 # It exists *only* to add a poll function which sets a message when offline mode is forced.
 class EXTENSIONS_OT_userpref_show_online(Operator):
@@ -3979,7 +3963,7 @@ class EXTENSIONS_OT_userpref_show_online(Operator):
     def poll(cls, _context):
         if bpy.app.online_access_override:
             if not bpy.app.online_access:
-                cls.poll_message_set("Bforartists was launched in offline-mode which cannot be changed at runtime") #BFA - not blender
+                cls.poll_message_set("Blender was launched in offline mode, which cannot be changed at runtime")
                 return False
         return True
 
@@ -3989,9 +3973,8 @@ class EXTENSIONS_OT_userpref_show_online(Operator):
 
 
 class EXTENSIONS_OT_userpref_allow_online(Operator):
-    """Opt-in to allow internet access to download Extensions. """ \
-        """Bforartists may access configured online extension repositories to download and update. """ \
-        """Installed third party Extensions add-ons may access the internet for their own functionality""" #BFA - not Blender, made explicit
+    """Allow internet access. Blender may access configured online extension repositories. """ \
+        """Installed third party add-ons may access the internet for their own functionality"""
     bl_idname = "extensions.userpref_allow_online"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -4000,24 +3983,20 @@ class EXTENSIONS_OT_userpref_allow_online(Operator):
     def poll(cls, _context):
         if bpy.app.online_access_override:
             if not bpy.app.online_access:
-                cls.poll_message_set("Bforartists was launched in offline-mode which cannot be changed at runtime") #BFA - not Blender
+                cls.poll_message_set("Blender was launched in offline mode, which cannot be changed at runtime")
                 return False
         return True
 
     def execute(self, context):
         context.preferences.system.use_online_access = True
-
-        bpy.ops.extensions.repo_sync_all(use_active_only=False) # BFA - force refresh of extensions
-        print("NOTE: Loading Extensions") # BFA - notice of refresh of extensions
-
         return {'FINISHED'}
 
 
 # NOTE: this is a wrapper for `extensions.userpref_allow_online`.
 # It exists *only* show a dialog.
 class EXTENSIONS_OT_userpref_allow_online_popup(Operator):
-    """Allow internet access. Bforartists may access configured online extension repositories. """ \
-        """Installed third party add-ons may access the internet for their own functionality"""  # BFA - not Blender
+    """Allow internet access. Blender may access configured online extension repositories. """ \
+        """Installed third party add-ons may access the internet for their own functionality"""
     bl_idname = "extensions.userpref_allow_online_popup"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -4050,7 +4029,7 @@ class EXTENSIONS_OT_userpref_allow_online_popup(Operator):
             lines = (
                 rpt_("Online access required to install or update."),
                 "",
-                rpt_("Launch Bforartists without --offline-mode")  # BFA - not Blender
+                rpt_("Launch Blender without --offline-mode"),
             )
         else:
             lines = (
@@ -4060,72 +4039,6 @@ class EXTENSIONS_OT_userpref_allow_online_popup(Operator):
             )
         for line in lines:
             col.label(text=line, translate=False)
-
-
-## BFA - custom operator to install pre-downlaoded extensions - START ##
-class EXTENSIONS_OT_install_downloaded_extensions(Operator):
-    """Copy and prepare pre-downloaded Extensions Addons when opt-in to be online is enabled"""
-    bl_idname = "extensions.install_downloaded_extensions"
-    bl_label = "Install Pre-downloaded Extensions curated by Bforartists"
-
-    def execute(self, context):
-        # ----------
-        # Variables
-
-        current_script_path = p.dirname(__file__)
-
-        # Get the addon path
-        path = os.path.join(os.path.dirname(current_script_path), "bfa_default_addons")
-
-        # Get the USER path
-        user_path = Path(bpy.utils.resource_path('USER')).parent
-
-        # Get the version string
-        version_string = bpy.app.version_string
-
-        # Split the string at the last dot to get 'MAJOR.MINOR'
-        major_minor = '.'.join(version_string.split('.')[:-1])
-
-        # Join with the user_path
-        version_path = Path(user_path, major_minor)
-
-        # Get the source files
-        source_ext = "Default_Extensions"
-        source_ext_folder = os.path.join(path, source_ext)
-
-        # Define the Extensions sub-folder path
-        destination_ext_folder = Path(os.path.join(version_path, 'extensions', 'blender_org'))
-
-        # Define the Extensions sub-folder path
-        user_ext_folder = Path(os.path.join(version_path, 'extensions', 'user_default'))
-
-        # --------------------------
-        # Copy the extension addons
-
-        # Ensure the extensions sub-folder exists
-        if not destination_ext_folder.exists():
-            destination_ext_folder.mkdir(parents=True)
-
-        # Ensure the extensions sub-folder exists
-        if not user_ext_folder.exists():
-            print("NOTE: user_default folder doesn't exist, making")
-            user_ext_folder.mkdir(parents=True)
-
-        # Copy the other extenions that are in sub-directories
-        for item in os.listdir(source_ext_folder):
-            s = os.path.join(source_ext_folder, item)
-            d = os.path.join(destination_ext_folder, item)
-            if os.path.isdir(s):
-                if not os.path.exists(d):
-                    shutil.copytree(s, d, False, None)
-            else:
-                shutil.copy2(s, d)  # copies also metadata
-
-        bpy.ops.extensions.repo_refresh_all()
-        bpy.ops.preferences.addon_refresh()
-
-        return {'FINISHED'}
-## BFA - custom operator to install pre-downlaoded extensions - END ##
 
 
 # -----------------------------------------------------------------------------
@@ -4168,11 +4081,9 @@ classes = (
 
     EXTENSIONS_OT_userpref_tags_set,
     EXTENSIONS_OT_userpref_show_for_update,
-    EXTENSIONS_OT_userpref_theme_show_edit, # BFA - Operator to switch editing active theme.
     EXTENSIONS_OT_userpref_show_online,
     EXTENSIONS_OT_userpref_allow_online,
     EXTENSIONS_OT_userpref_allow_online_popup,
-    EXTENSIONS_OT_install_downloaded_extensions, # BFA - custom operator to install pre-downloaded extensions
 )
 
 
@@ -4180,9 +4091,11 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
+
 
 if __name__ == "__main__":
     register()

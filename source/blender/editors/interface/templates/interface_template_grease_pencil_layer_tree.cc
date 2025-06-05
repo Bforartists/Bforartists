@@ -459,8 +459,7 @@ class LayerGroupViewItem : public AbstractTreeViewItem {
 
   void build_layer_group_name(uiLayout &row)
   {
-    /*short icon = ICON_FILE_FOLDER;*/ 
-    short icon = ICON_GROUP; /*bfa - we use group icon for groups*/
+    short icon = ICON_GREASEPENCIL_LAYER_GROUP;
     if (group_.color_tag != LAYERGROUP_COLOR_NONE) {
       icon = ICON_LAYERGROUP_COLOR_01 + group_.color_tag;
     }

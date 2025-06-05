@@ -477,8 +477,6 @@ bool WM_keymap_poll(bContext *C, wmKeyMap *keymap)
     }
   }
 
-/* bfa - silenced the empty keymap warning */
-#if 0
   if (UNLIKELY(BLI_listbase_is_empty(&keymap->items))) {
     /* Empty key-maps may be missing more there may be a typo in the name.
      * Warn early to avoid losing time investigating each case.
@@ -496,7 +494,6 @@ bool WM_keymap_poll(bContext *C, wmKeyMap *keymap)
       CLOG_WARN(WM_LOG_KEYMAPS, "empty keymap '%s'", keymap->idname);
     }
   }
-#endif
 
   if (keymap->poll != nullptr) {
     return keymap->poll(C);
@@ -1803,7 +1800,7 @@ void WM_keyconfig_update_operatortype()
 
 /* NOTE(@ideasman42): regarding suppressing updates.
  * If this becomes a common operation it would be better use something more general,
- * a key-map flag for e.g. to signify that the key-map is stored outside of a #wmKeyConfig
+ * a key-map flag for example to signify that the key-map is stored outside of a #wmKeyConfig
  * and should not receive updates on modification. At the moment this has the down-side of
  * needing to be supported in quite a few places for something which isn't used much.
  * Since the use case for this is limited, add functions to begin/end suppression.
@@ -1984,7 +1981,7 @@ void WM_keyconfig_update_ex(wmWindowManager *wm, bool keep_properties)
   /* NOTE(@ideasman42): open preferences will contain "stale" #wmKeyMapItem data.
    *
    * The common case this solves is using Blender with the key-map editor open,
-   * an action in the view-port for e.g. may manipulate the key-map causing it to be rebuilt.
+   * an action in the view-port for example may manipulate the key-map causing it to be rebuilt.
    * Later interaction with the key-map editor may then attempt to access freed data.
    *
    * Take care, this is _not_ fool proof because it's possible:

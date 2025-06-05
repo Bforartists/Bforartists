@@ -97,10 +97,7 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
             col.prop(curve, "twist_mode")
             col.prop(curve, "twist_smooth", text="Smooth")
         elif is_text:
-            row = layout.row()
-            row.use_property_split = False
-            row.prop(curve, "use_fast_edit", text="Fast Editing")
-            row.prop_decorator(curve, "use_fast_edit")
+            col.prop(curve, "use_fast_edit", text="Fast Editing")
 
         if is_curve or is_text:
             col = layout.column()
@@ -111,21 +108,13 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
             sub.prop(curve, "fill_mode")
 
         if is_curve:
-            col.label(text = "Curve Deform")
+            col = layout.column()
+            col.separator()
 
-            col.use_property_split = False
-            row = col.row()
-            row.separator()
-            row.prop(curve, "use_radius")
-            row.prop_decorator(curve, "use_radius")
-            row = col.row()
-            row.separator()
-            row.prop(curve, "use_stretch")
-            row.prop_decorator(curve, "use_stretch")
-            row = col.row()
-            row.separator()
-            row.prop(curve, "use_deform_bounds")
-            row.prop_decorator(curve, "use_deform_bounds")
+            sub = col.column(heading="Curve Deform", align=True)
+            sub.prop(curve, "use_radius")
+            sub.prop(curve, "use_stretch")
+            sub.prop(curve, "use_deform_bounds")
 
 
 class DATA_PT_curve_texture_space(CurveButtonsPanel, Panel):
@@ -138,12 +127,8 @@ class DATA_PT_curve_texture_space(CurveButtonsPanel, Panel):
 
         curve = context.curve
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(curve, "use_auto_texspace")
-        row.prop_decorator(curve, "use_auto_texspace")
-
-        layout.use_property_split = True
+        col = layout.column()
+        col.prop(curve, "use_auto_texspace")
 
         col = layout.column()
         col.prop(curve, "texspace_location")
@@ -174,19 +159,13 @@ class DATA_PT_geometry_curve(CurveButtonsPanelCurve, Panel):
         sub.prop(curve, "extrude")
 
         col.prop(curve, "taper_object")
-        if curve.taper_object is not None:
-            row = col.row()
-            row.separator()
-            row.prop(curve, "taper_radius_mode")
+        col.prop(curve, "taper_radius_mode")
 
         if type(curve) is not TextCurve:
             # This setting makes no sense for texts, since we have no control over start/end of the bevel object curve.
-            row = col.row()
-            if curve.taper_object is not None:
-                row.use_property_split = False
-                row.separator()
-                row.prop(curve, "use_map_taper")
-                row.prop_decorator(curve, "use_map_taper")
+            sub = col.column()
+            sub.active = curve.taper_object is not None
+            sub.prop(curve, "use_map_taper")
 
 
 class DATA_PT_geometry_curve_bevel(CurveButtonsPanelCurve, Panel):
@@ -211,11 +190,7 @@ class DATA_PT_geometry_curve_bevel(CurveButtonsPanelCurve, Panel):
         else:
             col.prop(curve, "bevel_depth", text="Depth")
             col.prop(curve, "bevel_resolution", text="Resolution")
-
-        row = col.row()
-        row.use_property_split = False
-        row.prop(curve, "use_fill_caps")
-        row.prop_decorator(curve, "use_fill_caps")
+        col.prop(curve, "use_fill_caps")
 
         if curve.bevel_mode == 'PROFILE':
             col.template_curveprofile(curve, "bevel_profile")
@@ -293,15 +268,10 @@ class DATA_PT_pathanim(CurveButtonsPanelCurve, Panel):
         col.prop(curve, "eval_time")
 
         # these are for paths only
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(curve, "use_path_clamp")
-        row.prop_decorator(curve, "use_path_clamp")
+        col.separator()
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(curve, "use_path_follow")
-        row.prop_decorator(curve, "use_path_follow")
+        col.prop(curve, "use_path_clamp")
+        col.prop(curve, "use_path_follow")
 
 
 class DATA_PT_font(CurveButtonsPanelText, Panel):

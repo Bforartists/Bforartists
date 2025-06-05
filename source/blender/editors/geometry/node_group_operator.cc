@@ -504,7 +504,7 @@ static Map<StringRef, ID *> gather_input_ids(const Main &bmain,
           return;
         }
         const std::optional<ID_Type> id_type = socket_type_to_id_type(
-            eNodeSocketDatatype(input->socket_typeinfo()->type));
+            input->socket_typeinfo()->type);
         if (!id_type) {
           return;
         }
@@ -727,7 +727,7 @@ static wmOperatorStatus run_node_group_exec(bContext *C, wmOperator *op)
   geo_log::GeoTreeLog &tree_log = eval_log.log->get_tree_log(compute_context.hash());
   tree_log.ensure_node_warnings(*bmain);
   for (const geo_log::NodeWarning &warning : tree_log.all_warnings) {
-    if (warning.type == geo_log::NodeWarningType::Info) {
+    if (warning.type == nodes::NodeWarningType::Info) {
       BKE_report(op->reports, RPT_INFO, warning.message.c_str());
     }
     else {
@@ -1307,7 +1307,7 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
       add_separator = false;
     }
     PointerRNA props_ptr = layout->op(
-        ot, IFACE_(asset->get_name()), ICON_TOOL_SETTINGS, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE); /*BFA*/
+        ot, IFACE_(asset->get_name()), ICON_NONE, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE);
     asset::operator_asset_reference_props_set(*asset, props_ptr);
   }
 
@@ -1380,7 +1380,7 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
   wmOperatorType *ot = WM_operatortype_find("GEOMETRY_OT_execute_node_group", true);
   for (const asset_system::AssetRepresentation *asset : tree->unassigned_assets) {
     PointerRNA props_ptr = layout->op(
-        ot, IFACE_(asset->get_name()), ICON_TOOL_SETTINGS, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE); /*BFA*/
+        ot, IFACE_(asset->get_name()), ICON_NONE, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE);
     asset::operator_asset_reference_props_set(*asset, props_ptr);
   }
 
@@ -1405,12 +1405,12 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
       add_separator = false;
     }
     if (first) {
-      layout->label(IFACE_("Unmarked Assets:"), ICON_NONE);  /*BFA - changed label*/
+      layout->label(IFACE_("Non-Assets"), ICON_NONE);
       first = false;
     }
 
     PointerRNA props_ptr = layout->op(
-        ot, group->id.name + 2, ICON_TOOL_SETTINGS, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE); /*BFA*/
+        ot, group->id.name + 2, ICON_NONE, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE);
     WM_operator_properties_id_lookup_set_from_id(&props_ptr, &group->id);
     /* Also set the name so it can be used for #run_node_group_get_name. */
     RNA_string_set(&props_ptr, "name", group->id.name + 2);
@@ -1482,7 +1482,7 @@ void ui_template_node_operator_asset_root_items(uiLayout &layout, const bContext
   });
 
   if (!tree->unassigned_assets.is_empty() || unassigned_local_poll(C)) {
-    layout.menu("GEO_MT_node_operator_unassigned", "", ICON_TOOL_SETTINGS); /*BFA - icon*/
+    layout.menu("GEO_MT_node_operator_unassigned", "", ICON_FILE_HIDDEN);
   }
 }
 

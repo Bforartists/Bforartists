@@ -517,37 +517,28 @@ void uiTemplateMarker(uiLayout *layout,
                  0,
                  tip);
 
-    /* bfa - new expanded prop UI style */
-    uiLayout *col, *row, *lcol, *vcol;  // label column, values column
-
-    col = &layout->column(true);
+    uiLayout *col = &layout->column(true);
     uiLayoutSetActive(col, (cb->marker_flag & MARKER_DISABLED) == 0);
 
-    col->label(IFACE_("Position"), ICON_NONE); 	/*bfa */
-
-	/*bfa */
-    row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, .75);
-    uiLayoutSetFixedSize(lcol, true);
-    row->label(IFACE_("X"), ICON_NONE);
-    row->label(IFACE_("Y"), ICON_NONE);
-
-    vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
-	/*end bfa */
+    block = col->absolute_block();
     UI_block_align_begin(block);
 
-	/*bfa */
+    uiDefBut(block,
+             UI_BTYPE_LABEL,
+             0,
+             IFACE_("Position:"),
+             0,
+             10 * UI_UNIT_Y,
+             15 * UI_UNIT_X,
+             UI_UNIT_Y,
+             nullptr,
+             0,
+             0,
+             "");
     uiBut *bt = uiDefButF(block,
                           UI_BTYPE_NUM,
                           B_MARKER_POS,
-                          "",
+                          IFACE_("X:"),
                           0.5 * UI_UNIT_X,
                           9 * UI_UNIT_Y,
                           7.25 * UI_UNIT_X,
@@ -558,11 +549,10 @@ void uiTemplateMarker(uiLayout *layout,
                           TIP_("X-position of marker at frame in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
-	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_POS,
-                   "",
+                   IFACE_("Y:"),
                    8.25 * UI_UNIT_X,
                    9 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -574,31 +564,22 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
 
-	/*bfa */
-    layout->separator();
-    col->label(IFACE_("Offset"), ICON_NONE);
-    row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, .75);
-    uiLayoutSetFixedSize(lcol, true);
-    row->label(IFACE_("X"), ICON_NONE);
-    row->label(IFACE_("Y"), ICON_NONE);
-
-    vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
-    UI_block_align_begin(block);
-	/*end bfa */
-
-	/*bfa */
+    uiDefBut(block,
+             UI_BTYPE_LABEL,
+             0,
+             IFACE_("Offset:"),
+             0,
+             8 * UI_UNIT_Y,
+             15 * UI_UNIT_X,
+             UI_UNIT_Y,
+             nullptr,
+             0,
+             0,
+             "");
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_OFFSET,
-                   "",
+                   IFACE_("X:"),
                    0.5 * UI_UNIT_X,
                    7 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -609,11 +590,10 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("X-offset to parenting point"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
-	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_OFFSET,
-                   "",
+                   IFACE_("Y:"),
                    8.25 * UI_UNIT_X,
                    7 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -624,31 +604,23 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("Y-offset to parenting point"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
-	/*bfa */
-    layout->separator();
-    col->label(IFACE_("Pattern Area"), ICON_NONE);
-    row = &col->row(true);
 
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, 2.);
-    uiLayoutSetFixedSize(lcol, true);
-    row->label(IFACE_("Width"), ICON_NONE);
-    row->label(IFACE_("Height"), ICON_NONE);
-
-    vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
-    UI_block_align_begin(block);
-	/*end bfa */
-
-	/*bfa */
+    uiDefBut(block,
+             UI_BTYPE_LABEL,
+             0,
+             IFACE_("Pattern Area:"),
+             0,
+             6 * UI_UNIT_Y,
+             15 * UI_UNIT_X,
+             UI_UNIT_Y,
+             nullptr,
+             0,
+             0,
+             "");
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_PAT_DIM,
-                   "",
+                   IFACE_("Width:"),
                    0.5 * UI_UNIT_X,
                    5 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -659,11 +631,10 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("Width of marker's pattern in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
-	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_PAT_DIM,
-                   "",
+                   IFACE_("Height:"),
                    0.5 * UI_UNIT_X,
                    4 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -675,31 +646,22 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
 
-	/*bfa */
-    layout->separator();
-    col->label(IFACE_("Search Area"), ICON_NONE);
-    row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, .75);
-    uiLayoutSetFixedSize(lcol, true);
-    row->label(IFACE_("X"), ICON_NONE);
-    row->label(IFACE_("Y"), ICON_NONE);
-
-    vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
-    UI_block_align_begin(block);
-	/*end bfa */
-
-	/*bfa */
+    uiDefBut(block,
+             UI_BTYPE_LABEL,
+             0,
+             IFACE_("Search Area:"),
+             0,
+             3 * UI_UNIT_Y,
+             15 * UI_UNIT_X,
+             UI_UNIT_Y,
+             nullptr,
+             0,
+             0,
+             "");
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_SEARCH_POS,
-                   "",
+                   IFACE_("X:"),
                    0.5 * UI_UNIT_X,
                    2 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -710,11 +672,10 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("X-position of search at frame relative to marker's position"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
-	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_SEARCH_POS,
-                   "",
+                   IFACE_("Y:"),
                    8.25 * UI_UNIT_X,
                    2 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -725,31 +686,10 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("Y-position of search at frame relative to marker's position"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
-
-    /*bfa -  left aligned*/
-    layout->separator();
-    row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, 2.);
-    uiLayoutSetFixedSize(lcol, true);
-    row->label(IFACE_("Width"), ICON_NONE);
-    row->label(IFACE_("Height"), ICON_NONE);
-
-    vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
-    UI_block_align_begin(block);
-    /*bfa end*/
-
-	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_SEARCH_DIM,
-                   "",
+                   IFACE_("Width:"),
                    0.5 * UI_UNIT_X,
                    1 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -760,11 +700,10 @@ void uiTemplateMarker(uiLayout *layout,
                    TIP_("Width of marker's search in screen coordinates"));
     UI_but_number_step_size_set(bt, step);
     UI_but_number_precision_set(bt, digits);
-	/*bfa */
     bt = uiDefButF(block,
                    UI_BTYPE_NUM,
                    B_MARKER_SEARCH_DIM,
-                   "",
+                   IFACE_("Height:"),
                    0.5 * UI_UNIT_X,
                    0 * UI_UNIT_Y,
                    15 * UI_UNIT_X,

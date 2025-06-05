@@ -5,7 +5,7 @@
 /** \file
  * \ingroup spview3d
  */
-/*BFORARTISTS NOTE - on merge, there are chunks that has expanded GUI a lot here, beware*/
+
 #include <cfloat>
 #include <cstring>
 
@@ -51,7 +51,6 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "UI_interface_c.hh"
 #include "WM_api.hh"
 #include "WM_types.hh"
 
@@ -311,8 +310,6 @@ static void v3d_editvertex_buts(
     const bContext *C, uiLayout *layout, View3D *v3d, Object *ob, float lim)
 {
   using namespace blender;
-  uiLayout *row, *col; /* bfa - use uiLayout when possible */
-  uiBlock *subblock;   /* bfa - helper block for UI */
   uiBlock *block = (layout) ? layout->absolute_block() : nullptr;
   TransformProperties *tfp = v3d_transform_props_ensure(v3d);
   TransformMedian median_basis, ve_median_basis;
@@ -543,8 +540,8 @@ static void v3d_editvertex_buts(
   }
 
   if (tot == 0) {
-      uiLayout *col = &layout->column(false);
-      col->label(IFACE_("Nothing selected"), ICON_NONE); /* bfa - use high level UI when possible */
+    uiDefBut(
+        block, UI_BTYPE_LABEL, 0, IFACE_("Nothing selected"), 0, 130, 200, 20, nullptr, 0, 0, "");
     return;
   }
 
@@ -594,9 +591,7 @@ static void v3d_editvertex_buts(
 
     memcpy(&tfp->ve_median, &median_basis, sizeof(tfp->ve_median));
 
-    /* bfa - new expand prop UI style*/
-    col = &layout->column(true);
-
+    UI_block_align_begin(block);
     if (tot == 1) {
       if (totcurvedata) {
         /* Curve */
@@ -615,35 +610,13 @@ static void v3d_editvertex_buts(
     }
     uiDefBut(block, UI_BTYPE_LABEL, 0, c, 0, yi -= buth, butw, buth, nullptr, 0, 0, "");
 
-    /* bfa */
-
-    row = &col->row(true);
-
-    layout->separator();
-    layout->separator();
-
-    col = &row->column(true);
-    uiLayoutSetUnitsX(col, .75);
-    uiLayoutSetFixedSize(col, true);
-
-    col->label(IFACE_("X"), ICON_NONE);
-    col->label(IFACE_("Y"), ICON_NONE);
-    col->label(IFACE_("Z"), ICON_NONE);
-
-    if (totcurvebweight == tot) {
-      col->label(IFACE_("W"), ICON_NONE);
-    }
-
-    col = &row->column(true);
-    subblock = uiLayoutGetBlock(col);
-    UI_block_layout_set_current(subblock, col);
+    UI_block_align_begin(block);
 
     /* Should be no need to translate these. */
-    /* bfa */
-    but = uiDefButF(subblock,
+    but = uiDefButF(block,
                     UI_BTYPE_NUM,
                     B_TRANSFORM_PANEL_MEDIAN,
-                    "", /* bfa - use high level UI when possible */
+                    IFACE_("X:"),
                     0,
                     yi -= buth,
                     butw,
@@ -655,11 +628,10 @@ static void v3d_editvertex_buts(
     UI_but_number_step_size_set(but, 10);
     UI_but_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
     UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
-    /* bfa */
-    but = uiDefButF(subblock,
+    but = uiDefButF(block,
                     UI_BTYPE_NUM,
                     B_TRANSFORM_PANEL_MEDIAN,
-                    "", /* bfa - use high level UI when possible */
+                    IFACE_("Y:"),
                     0,
                     yi -= buth,
                     butw,
@@ -671,11 +643,10 @@ static void v3d_editvertex_buts(
     UI_but_number_step_size_set(but, 10);
     UI_but_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
     UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
-    /* bfa */
-    but = uiDefButF(subblock,
+    but = uiDefButF(block,
                     UI_BTYPE_NUM,
                     B_TRANSFORM_PANEL_MEDIAN,
-                    "", /* bfa - use high level UI when possible */
+                    IFACE_("Z:"),
                     0,
                     yi -= buth,
                     butw,
@@ -689,11 +660,10 @@ static void v3d_editvertex_buts(
     UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
 
     if (totcurvebweight == tot) {
-      /* bfa */
-      but = uiDefButF(subblock,
+      but = uiDefButF(block,
                       UI_BTYPE_NUM,
                       B_TRANSFORM_PANEL_MEDIAN,
-                      "", /* bfa - use high level UI when possible */
+                      IFACE_("W:"),
                       0,
                       yi -= buth,
                       butw,
@@ -705,14 +675,9 @@ static void v3d_editvertex_buts(
       UI_but_number_step_size_set(but, 1);
       UI_but_number_precision_set(but, 3);
     }
-    UI_block_layout_set_current(block, layout); /* bfa */
 
-    /* bfa */
-    row = &layout->row(true); /* bfa - use high level UI when possible */
-    subblock = uiLayoutGetBlock(row);
-    UI_block_layout_set_current(subblock, row);
-
-    uiDefButBitS(subblock,
+    UI_block_align_begin(block);
+    uiDefButBitS(block,
                  UI_BTYPE_TOGGLE,
                  V3D_GLOBAL_STATS,
                  B_REDR,
@@ -725,7 +690,7 @@ static void v3d_editvertex_buts(
                  0,
                  0,
                  TIP_("Displays global values"));
-    uiDefButBitS(subblock,
+    uiDefButBitS(block,
                  UI_BTYPE_TOGGLE_N,
                  V3D_GLOBAL_STATS,
                  B_REDR,
@@ -738,33 +703,29 @@ static void v3d_editvertex_buts(
                  0,
                  0,
                  TIP_("Displays local values"));
-    UI_block_layout_set_current(
-        block,
-        layout); /* bfa - restore layout, otherwise following UI elements will be messed up */
+    UI_block_align_end(block);
 
     /* Meshes... */
     if (has_meshdata) {
       TransformMedian_Mesh *ve_median = &tfp->ve_median.mesh;
       if (tot) {
-        /* bfa */
-        col->label(tot == 1 ? IFACE_("Vertex Data Mean") : IFACE_("Vertices Data Mean"), ICON_NONE); /* bfa - put the term "mean" into the label */
-
-        row = &layout->row(false);
-        layout->separator(); /* bfa - separator indent */
-        col = &row->column(false);
-
-        col->label(IFACE_("Bevel Weight"), ICON_NONE);
-        col->label(IFACE_("Crease"), ICON_NONE); /* -bfa move text to left of slider */
-
-        col = &row->column(false);
-        subblock = uiLayoutGetBlock(col);
-        UI_block_layout_set_current(subblock, col);
-
-        /* bfa */
+        uiDefBut(block,
+                 UI_BTYPE_LABEL,
+                 0,
+                 tot == 1 ? IFACE_("Vertex Data:") : IFACE_("Vertices Data:"),
+                 0,
+                 yi -= buth + but_margin,
+                 butw,
+                 buth,
+                 nullptr,
+                 0.0,
+                 0.0,
+                 "");
+        /* customdata layer added on demand */
         but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* -bfa remove text from slider */
+                        tot == 1 ? IFACE_("Bevel Weight:") : IFACE_("Mean Bevel Weight:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -776,11 +737,10 @@ static void v3d_editvertex_buts(
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
         /* customdata layer added on demand */
-        /* bfa */
         but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* -bfa remove text from slider */
+                        tot == 1 ? IFACE_("Vertex Crease:") : IFACE_("Mean Vertex Crease:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -793,22 +753,11 @@ static void v3d_editvertex_buts(
         UI_but_number_precision_set(but, 2);
       }
       if (has_skinradius) {
-        /* bfa */
-        row = &layout->row(false);
-        layout->separator(); /* bfa - separator indent */
-        col = &row->column(false);
-
-        col->label(IFACE_("Radius X"), ICON_NONE);
-        col->label(IFACE_("Radius Y"), ICON_NONE);
-
-        col = &row->column(true);
-        subblock = uiLayoutGetBlock(col);
-
-        /* bfa */
-        but = uiDefButF(subblock,
+        UI_block_align_begin(block);
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* bfa - use high level UI when possible */
+                        tot == 1 ? IFACE_("Radius X:") : IFACE_("Mean Radius X:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -819,11 +768,10 @@ static void v3d_editvertex_buts(
                         TIP_("X radius used by Skin modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* bfa - use high level UI when possible */
+                        tot == 1 ? IFACE_("Radius Y:") : IFACE_("Mean Radius Y:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -834,30 +782,26 @@ static void v3d_editvertex_buts(
                         TIP_("Y radius used by Skin modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
-        /* bfa */
-        UI_block_layout_set_current(block, layout);
+        UI_block_align_end(block);
       }
       if (totedgedata) {
-        /* bfa */
-        col->label(totedgedata == 1 ? IFACE_("Edge Data Mean") : IFACE_("Edges Data Mean"), ICON_NONE);
-
-        row = &layout->row(false);
-        layout->separator(); /* bfa - separator indent */
-        col = &row->column(false);
-
-        col->label(IFACE_("Bevel Weight"), ICON_NONE);
-        col->label(IFACE_("Crease"), ICON_NONE);
-
-        col = &row->column(false);
-        subblock = uiLayoutGetBlock(col);
-        UI_block_layout_set_current(subblock, col);
-
+        uiDefBut(block,
+                 UI_BTYPE_LABEL,
+                 0,
+                 totedgedata == 1 ? IFACE_("Edge Data:") : IFACE_("Edges Data:"),
+                 0,
+                 yi -= buth + but_margin,
+                 butw,
+                 buth,
+                 nullptr,
+                 0.0,
+                 0.0,
+                 "");
         /* customdata layer added on demand */
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* -bfa remove text from slider */
+                        totedgedata == 1 ? IFACE_("Bevel Weight:") : IFACE_("Mean Bevel Weight:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -869,11 +813,10 @@ static void v3d_editvertex_buts(
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
         /* customdata layer added on demand */
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* -bfa remove text from slider */
+                        totedgedata == 1 ? IFACE_("Crease:") : IFACE_("Mean Crease:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -884,30 +827,16 @@ static void v3d_editvertex_buts(
                         TIP_("Weight used by the Subdivision Surface modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
-        UI_block_layout_set_current(block, layout); /* bfa */
       }
     }
     /* Curve... */
     else if (totcurvedata) {
       TransformMedian_Curve *ve_median = &tfp->ve_median.curve;
-      /* bfa */
-      row = &layout->row(false);
-      col = &row->column(false);
-
-      col->label(totcurvedata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
-      col->label(totcurvedata == 1 ? IFACE_("Radius") : IFACE_("Mean Radius"), ICON_NONE);
-      col->label(totcurvedata == 1 ? IFACE_("Tilt") : IFACE_("Mean Tilt"), ICON_NONE);
-
-      col = &row->column(false);
-      subblock = uiLayoutGetBlock(col);
-      UI_block_layout_set_current(subblock, col);
-
       if (totcurvedata == 1) {
-        /* bfa */
-        but = uiDefButR(subblock,
+        but = uiDefButR(block,
                         UI_BTYPE_NUM,
                         0,
-                        "", /* -bfa remove text from slider */
+                        IFACE_("Weight:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -917,14 +846,13 @@ static void v3d_editvertex_buts(
                         0,
                         0.0,
                         1.0,
-                        nullptr);
+                        std::nullopt);
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
-        /* bfa */
-        but = uiDefButR(subblock,
+        but = uiDefButR(block,
                         UI_BTYPE_NUM,
                         0,
-                        "",
+                        IFACE_("Radius:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -934,14 +862,13 @@ static void v3d_editvertex_buts(
                         0,
                         0.0,
                         100.0,
-                        nullptr);
+                        std::nullopt);
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
-        /* bfa */
-        but = uiDefButR(subblock,
+        but = uiDefButR(block,
                         UI_BTYPE_NUM,
                         0,
-                        "", /* -bfa remove text from slider */
+                        IFACE_("Tilt:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -951,16 +878,15 @@ static void v3d_editvertex_buts(
                         0,
                         -tilt_limit,
                         tilt_limit,
-                        nullptr);
+                        std::nullopt);
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
       }
       else if (totcurvedata > 1) {
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* -bfa remove text from slider */
+                        IFACE_("Mean Weight:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -971,11 +897,10 @@ static void v3d_editvertex_buts(
                         TIP_("Weight used for Soft Body Goal"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* -bfa remove text from slider */
+                        IFACE_("Mean Radius:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -986,11 +911,10 @@ static void v3d_editvertex_buts(
                         TIP_("Radius of curve control points"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        "", /* -bfa remove text from slider */
+                        IFACE_("Mean Tilt:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -1003,47 +927,33 @@ static void v3d_editvertex_buts(
         UI_but_number_precision_set(but, 3);
         UI_but_unit_type_set(but, PROP_UNIT_ROTATION);
       }
-
-      UI_block_layout_set_current(block, layout); /*bfa*/
     }
     /* Lattice... */
     else if (totlattdata) {
       TransformMedian_Lattice *ve_median = &tfp->ve_median.lattice;
-
-      /*bfa*/
-      row = &layout->row(false);
-      col = &row->column(false);
-
-      col->label(totlattdata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
-
-      col = &row->column(false);
-      subblock = uiLayoutGetBlock(col);
-      UI_block_layout_set_current(subblock, col);
-
       if (totlattdata == 1) {
-        uiDefButR(block,
-                  UI_BTYPE_NUM,
-                  0,
-                  IFACE_(""), /* -bfa remove text from slider */
-                  0,
-                  yi -= buth + but_margin,
-                  butw,
-                  buth,
-                  &data_ptr,
-                  "weight_softbody",
-                  0,
-                  0.0,
-                  1.0,
-                  nullptr);
+        but = uiDefButR(block,
+                        UI_BTYPE_NUM,
+                        0,
+                        IFACE_("Weight:"),
+                        0,
+                        yi -= buth + but_margin,
+                        butw,
+                        buth,
+                        &data_ptr,
+                        "weight_softbody",
+                        0,
+                        0.0,
+                        1.0,
+                        std::nullopt);
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
       }
       else if (totlattdata > 1) {
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
-                        IFACE_(""), /* -bfa remove text from slider */
+                        IFACE_("Mean Weight:"),
                         0,
                         yi -= buth + but_margin,
                         butw,
@@ -1589,8 +1499,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
                               "");
           but_ptr = UI_but_operator_ptr_ensure(but);
           RNA_int_set(but_ptr, "weight_group", i);
-          /* bfa - middle align text */
-          /*UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);*/
+          UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);
           if (BKE_object_defgroup_active_index_get(ob) != i + 1) {
             UI_but_flag_enable(but, UI_BUT_INACTIVE);
           }
@@ -1680,12 +1589,9 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 
 static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 {
-  /* bfa - rewrite transform panel to match the Python one */
-  uiLayout *col, *row, *sub;
-  uiLayoutSetPropSep(layout, true); /* bfa - layout.use_property_split = True */
+  uiLayout *split, *colsub;
 
-  bool drawLocation = true; /* bfa - boolean to decide show location or not */
-  bool draw4L = false;      /* bfa - boolean to decide show 4L button or not*/
+  split = &layout->split(0.8f, false);
 
   if (ptr->type == &RNA_PoseBone) {
     PointerRNA boneptr;
@@ -1693,112 +1599,86 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
     boneptr = RNA_pointer_get(ptr, "bone");
     bone = static_cast<Bone *>(boneptr.data);
-    /* bfa */
-    if (bone->parent && bone->flag & BONE_CONNECTED) {
-      drawLocation = false; /* bfa - hide location for child bones */
-    }
+    uiLayoutSetActive(split, !(bone->parent && bone->flag & BONE_CONNECTED));
   }
+  colsub = &split->column(true);
+  colsub->prop(ptr, "location", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  colsub = &split->column(true);
+  uiLayoutSetEmboss(colsub, blender::ui::EmbossType::NoneOrStatus);
+  colsub->label("", ICON_NONE);
+  colsub->prop(
+      ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 
-  if (drawLocation) {
-    col = &layout->column(false); /* bfa - col = layout.column() */
-    row = &col->row(true);        /* bfa - row = col.row(align=True) */
-    row->prop(ptr, "location", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* bfa - row.prop(ob, "location") */
-    uiLayoutSetPropDecorate(row, false); /* bfa - row.use_property_decorate = False */
-    uiLayoutSetEmboss(row, blender::ui::EmbossType::None); /* bfa - emboss=False */
-    row->prop(ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-    uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
-    layout->separator(.25f);
-  }
+  split = &layout->split(0.8f, false);
 
   switch (RNA_enum_get(ptr, "rotation_mode")) {
     case ROT_MODE_QUAT: /* quaternion */
-      /* bfa */
-      col = &layout->column(false);
-      row = &col->row(true);
-      row->prop(ptr, "rotation_quaternion", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
-
-      sub = &row->column(true);
-      uiLayoutSetPropDecorate(sub, false);
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
-
-      draw4L = true; /* bfa - show 4L button if quaternion */
-
+      colsub = &split->column(true);
+      colsub->prop(ptr, "rotation_quaternion", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
+      colsub = &split->column(true);
+      uiLayoutSetEmboss(colsub, blender::ui::EmbossType::NoneOrStatus);
+      colsub->prop(ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, IFACE_("4L"), ICON_NONE);
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
-        /* bfa */
-        sub->prop(ptr, "lock_rotation_w", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
+        colsub->prop(ptr,
+                     "lock_rotation_w",
+                     UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+                     "",
+                     ICON_DECORATE_UNLOCKED);
       }
       else {
-        sub->label("", ICON_BLANK1);
+        colsub->label("", ICON_NONE);
       }
-      sub->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
+      colsub->prop(ptr,
+                   "lock_rotation",
+                   UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+                   "",
+                   ICON_DECORATE_UNLOCKED);
       break;
-
     case ROT_MODE_AXISANGLE: /* axis angle */
-                             /* bfa */
-      col = &layout->row(false);
-      row = &col->row(true);
-      row->prop(ptr, "rotation_axis_angle", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
-
-      sub = &row->column(true);
-      uiLayoutSetPropDecorate(sub, false);
-
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
-      draw4L = true; /* bfa - show 4L button if axis-angle */
-
+      colsub = &split->column(true);
+      colsub->prop(ptr, "rotation_axis_angle", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
+      colsub = &split->column(true);
+      uiLayoutSetEmboss(colsub, blender::ui::EmbossType::NoneOrStatus);
+      colsub->prop(ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, IFACE_("4L"), ICON_NONE);
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
-        /* bfa */
-        sub->prop(ptr, "lock_rotation_w", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
+        colsub->prop(ptr,
+                     "lock_rotation_w",
+                     UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+                     "",
+                     ICON_DECORATE_UNLOCKED);
       }
       else {
-        sub->label("", ICON_BLANK1);
+        colsub->label("", ICON_NONE);
       }
-      sub->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::Undefined); /* bfa */
+      colsub->prop(ptr,
+                   "lock_rotation",
+                   UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+                   "",
+                   ICON_DECORATE_UNLOCKED);
       break;
-
     default: /* euler rotations */
-             /* bfa */
-      col = &layout->column(false);
-
-      row = &col->row(true);
-      row->prop(ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
-      uiLayoutSetPropDecorate(row, false);
-      uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
-      row->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa */
+      colsub = &split->column(true);
+      colsub->prop(ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
+      colsub = &split->column(true);
+      uiLayoutSetEmboss(colsub, blender::ui::EmbossType::NoneOrStatus);
+      colsub->label("", ICON_NONE);
+      colsub->prop(ptr,
+                   "lock_rotation",
+                   UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+                   "",
+                   ICON_DECORATE_UNLOCKED);
       break;
   }
+  layout->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
 
-  row = &layout->row(true);
-  row->label(IFACE_("Mode"), ICON_NONE);
-  row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
-
-  /* bfa - display 4L button */
-  if (draw4L) {
-    uiLayoutSetPropDecorate(row, false);
-    row->prop(ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
-  }
-  else {
-    row->label("", ICON_BLANK1);
-  }
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
-
-  layout->separator(.25f);
-
-  col = &layout->column(false);
-  row = &col->row(true);
-  row->prop(
-          ptr,
-          "scale",
-          UI_ITEM_NONE,
-          IFACE_("Scale"),
-          ICON_NONE); /* bfa - row.prop(ob, "scale") */
-  uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
-  row->prop(ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
-  /* end bfa */
+  split = &layout->split(0.8f, false);
+  colsub = &split->column(true);
+  colsub->prop(ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  colsub = &split->column(true);
+  uiLayoutSetEmboss(colsub, blender::ui::EmbossType::NoneOrStatus);
+  colsub->label("", ICON_NONE);
+  colsub->prop(
+      ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 }
 
 static void v3d_posearmature_buts(uiLayout *layout, Object *ob)
@@ -1838,9 +1718,6 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
 
   PointerRNA eboneptr = RNA_pointer_create_discrete(&arm->id, &RNA_EditBone, ebone);
 
-  uiLayoutSetPropSep(layout, true);       /* bfa */
-  uiLayoutSetPropDecorate(layout, false); /* bfa */
-
   col = &layout->column(false);
   col->prop(&eboneptr, "head", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (ebone->parent && ebone->flag & BONE_CONNECTED) {
@@ -1857,13 +1734,6 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
   col->prop(&eboneptr, "roll", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&eboneptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&eboneptr, "envelope_distance", UI_ITEM_NONE, IFACE_("Envelope"), ICON_NONE);
-  uiLayoutSetPropSep(col, false); /* bfa - no split */
-  col->prop(
-          &eboneptr,
-          "lock",
-          UI_ITEM_NONE,
-          IFACE_("Lock"),
-          ICON_NONE); /* bfa - lock from properties editor*/
 }
 
 static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
@@ -1878,38 +1748,36 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
 
   PointerRNA ptr = RNA_pointer_create_discrete(&mball->id, &RNA_MetaElement, mball->lastelem);
 
-  uiLayoutSetPropSep(layout, true);       /* bfa */
-  uiLayoutSetPropDecorate(layout, false); /* bfa */
-
   col = &layout->column(false);
   col->prop(&ptr, "co", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  layout->separator(.25f); /* bfa - separator*/
   col->prop(&ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&ptr, "stiffness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  layout->separator(.25f); /* bfa - separator*/
   col->prop(&ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  layout->separator(.25f); /* bfa - separator*/
   col = &layout->column(true);
   switch (RNA_enum_get(&ptr, "type")) {
     case MB_BALL:
       break;
     case MB_CUBE:
-      col->prop(&ptr, "size_x", UI_ITEM_NONE, "Size X", ICON_NONE); /* bfa */
+      col->label(IFACE_("Size:"), ICON_NONE);
+      col->prop(&ptr, "size_x", UI_ITEM_NONE, "X", ICON_NONE);
       col->prop(&ptr, "size_y", UI_ITEM_NONE, "Y", ICON_NONE);
       col->prop(&ptr, "size_z", UI_ITEM_NONE, "Z", ICON_NONE);
       break;
     case MB_TUBE:
-      col->prop(&ptr, "size_x", UI_ITEM_NONE, "Size X", ICON_NONE); /* bfa */
+      col->label(IFACE_("Size:"), ICON_NONE);
+      col->prop(&ptr, "size_x", UI_ITEM_NONE, "X", ICON_NONE);
       break;
     case MB_PLANE:
-      col->prop(&ptr, "size_x", UI_ITEM_NONE, "Size X", ICON_NONE); /* bfa */
+      col->label(IFACE_("Size:"), ICON_NONE);
+      col->prop(&ptr, "size_x", UI_ITEM_NONE, "X", ICON_NONE);
       col->prop(&ptr, "size_y", UI_ITEM_NONE, "Y", ICON_NONE);
       break;
     case MB_ELIPSOID:
-      col->prop(&ptr, "size_x", UI_ITEM_NONE, "Size X", ICON_NONE); /* bfa */
+      col->label(IFACE_("Size:"), ICON_NONE);
+      col->prop(&ptr, "size_x", UI_ITEM_NONE, "X", ICON_NONE);
       col->prop(&ptr, "size_y", UI_ITEM_NONE, "Y", ICON_NONE);
       col->prop(&ptr, "size_z", UI_ITEM_NONE, "Z", ICON_NONE);
       break;

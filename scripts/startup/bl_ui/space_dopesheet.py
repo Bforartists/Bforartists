@@ -16,8 +16,9 @@ from bl_ui.properties_data_grease_pencil import (
     GreasePencil_LayerAdjustmentsPanel,
     GreasePencil_LayerDisplayPanel,
 )
-from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
-
+from bl_ui.utils import (
+    PlayheadSnappingPanel,
+)
 
 from rna_prop_ui import PropertyPanel
 
@@ -37,12 +38,11 @@ def dopesheet_filter(layout, context):
         row.prop(dopesheet, "show_only_slot_of_active_object", text="")
     row.prop(dopesheet, "show_only_selected", text="")
     row.prop(dopesheet, "show_hidden", text="")
-    #bfa -blender shows this prop in all modes in the panel
-    row.prop(dopesheet, "show_only_errors", text="")
 
     if is_nla:
         row.prop(dopesheet, "show_missing_nla", text="")
-
+    else:  # graph and dopesheet editors - F-Curves and drivers only
+        row.prop(dopesheet, "show_only_errors", text="")
 
 #######################################
 # Dope-sheet Filtering Popovers
@@ -78,22 +78,17 @@ class DopesheetFilterPopoverBase:
         dopesheet = context.space_data.dopesheet
         is_nla = context.area.type == 'NLA_EDITOR'
 
-        # bfa - the search is already in the list in the toolshelf
-        # col = layout.column(align=True)
-        # if not is_nla:
-        #     row = col.row(align=True)
-        #     row.prop(dopesheet, "filter_fcurve_name", text="")
-        # else:
-        #     row = col.row(align=True)
-        #     row.prop(dopesheet, "filter_text", text="")
+        col = layout.column(align=True)
+        if not is_nla:
+            row = col.row(align=True)
+            row.prop(dopesheet, "filter_fcurve_name", text="")
+        else:
+            row = col.row(align=True)
+            row.prop(dopesheet, "filter_text", text="")
 
         if (not generic_filters_only) and bpy.data.collections:
             col = layout.column(align=True)
-            col.label(text="Filter by Collection:")
-            # col.separator()
-            row = col.row()
-            row.separator()
-            row.prop(dopesheet, "filter_collection", text="")
+            col.prop(dopesheet, "filter_collection", text="")
 
     # Standard = Present in all panels
     @classmethod
@@ -168,9 +163,7 @@ class DopesheetFilterPopoverBase:
         # performance-related options (users will mostly have these enabled)
         col = layout.column(align=True)
         col.label(text="Options:")
-        row = col.row() #BFA - seperator
-        row.separator()
-        row.prop(dopesheet, "use_datablock_sort", icon='NONE')
+        col.prop(dopesheet, "use_datablock_sort", icon='NONE')
 
 
 # Popover for Dope-sheet Editor(s) - Dope-sheet, Action, Shape-key, GPencil, Mask, etc.
@@ -182,12 +175,12 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
     def draw(self, context):
         layout = self.layout
 
+        dopesheet = context.space_data.dopesheet
         ds_mode = context.space_data.mode
-        st = context.space_data
 
-        #bfa- is in the header already
-        #layout.prop(dopesheet, "show_summary", text="Summary")
-        #DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
+        layout.prop(dopesheet, "show_summary", text="Summary")
+
+        DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
 
         if ds_mode in {'DOPESHEET', 'ACTION', 'GPENCIL'}:
             layout.separator()
@@ -197,80 +190,6 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
         if ds_mode == 'DOPESHEET':
             layout.separator()
             DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
-
-            row = layout.row()
-            row.separator()#BFA - Moved from header to options
-            row.prop(st.dopesheet, "use_multi_word_filter",
-                     text="Multi-Word Match Search")
-
-
-################################ BFA -Switch between the editors ##########################################
-
-class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
-    """Switch to Dope Sheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_dopesheet"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "Switch to Dope Sheet Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.wm.context_set_enum(
-            data_path="area.ui_type", value="DOPESHEET")
-        return {'FINISHED'}
-
-
-class ANIM_OT_switch_editors_to_graph(bpy.types.Operator):
-    """Switch to Graph editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_graph"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "Switch to Graph Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        # area.ui_type, not area.type. Subeditor ...
-        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="FCURVES")
-        return {'FINISHED'}
-
-
-class ANIM_OT_switch_editors_to_driver(bpy.types.Operator):
-    """Switch to Driver editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_driver"        # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "Switch to Driver Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        # area.ui_type, not area.type. Subeditor ...
-        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="DRIVERS")
-        return {'FINISHED'}
-
-
-class ANIM_OT_switch_editors_to_nla(bpy.types.Operator):
-    """Switch to NLA editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_nla"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to NLA Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.wm.context_set_enum(data_path="area.type", value="NLA_EDITOR")
-        return {'FINISHED'}
-
-
-# The blank button, we don't want to switch to the editor in which we are already.
-
-class ANIM_OT_switch_editors_in_dopesheet(bpy.types.Operator):
-    """You are in Dope Sheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_in_dopesheet"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Dope Sheet Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # Blank button, we don't execute anything here.
-    def execute(self, context):
-        return {'FINISHED'}
 
 
 #######################################
@@ -284,8 +203,7 @@ class DOPESHEET_HT_header(Header):
 
         st = context.space_data
 
-        # bfa - show hide the editormenu, editor suffix is needed.
-        ALL_MT_editormenu_dopesheet.draw_hidden(context, layout)
+        layout.template_header()
 
         if st.mode == 'TIMELINE':
             from bl_ui.space_time import (
@@ -295,68 +213,27 @@ class DOPESHEET_HT_header(Header):
             TIME_MT_editor_menus.draw_collapsible(context, layout)
             TIME_HT_editor_buttons.draw_header(context, layout)
         else:
-
-            # Switch between the editors
-
-            # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
-            row = layout.row(align=True)
-
-            row.operator("wm.switch_editor_in_dopesheet",
-                         text="", icon='DOPESHEET_ACTIVE')
-            row.operator("wm.switch_editor_to_graph", text="", icon='GRAPH')
-            row.operator("wm.switch_editor_to_driver", text="", icon='DRIVER')
-            row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
-
-            ###########################
-
             layout.prop(st, "ui_mode", text="")
 
             DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
             DOPESHEET_HT_editor_buttons.draw_header(context, layout)
 
-# bfa - show hide the editormenu, editor suffix is needed.
-
-
-class ALL_MT_editormenu_dopesheet(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
 
 class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
     bl_space_type = 'DOPESHEET_EDITOR'
 
 
 # Header for "normal" dopesheet editor modes (e.g. Dope Sheet, Action, Shape Keys, etc.)
-
-
 class DOPESHEET_HT_editor_buttons:
 
     @classmethod
     def draw_header(cls, context, layout):
         st = context.space_data
         tool_settings = context.tool_settings
-        ds_mode = context.space_data.mode
-
-        dopesheet = context.space_data.dopesheet
-        st = context.space_data
 
         if st.mode in {'ACTION', 'SHAPEKEY'} and context.object:
             layout.separator_spacer()
             cls._draw_action_selector(context, layout)
-            row = layout.row(align=True)
-            row.operator("action.layer_prev", text="", icon='TRIA_DOWN')
-            row.operator("action.layer_next", text="", icon='TRIA_UP')
-
-            row = layout.row(align=True)
-            row.operator("action.push_down", text="Push Down", icon='NLA_PUSHDOWN')
-            row.operator("action.stash", text="Stash", icon='FREEZE')
 
         # Layer management
         if st.mode == 'GPENCIL':
@@ -382,12 +259,19 @@ class DOPESHEET_HT_editor_buttons:
 
         layout.separator_spacer()
 
-        layout.prop(dopesheet, "show_summary", text="")
-	#bfa - single props and the filter panel. Panel is just needed in dopesheet mode.
-        dopesheet_filter(layout, context)
+        if st.mode == 'DOPESHEET':
+            dopesheet_filter(layout, context)
+        elif st.mode == 'ACTION':
+            dopesheet_filter(layout, context)
+        elif st.mode == 'GPENCIL':
+            row = layout.row(align=True)
+            row.prop(st.dopesheet, "show_only_selected", text="")
+            row.prop(st.dopesheet, "show_hidden", text="")
 
-        if ds_mode in {'DOPESHEET'}:
-            layout.popover( panel="DOPESHEET_PT_filters", text="", icon='FILTER',
+        layout.popover(
+            panel="DOPESHEET_PT_filters",
+            text="",
+            icon='FILTER',
         )
 
         # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
@@ -404,24 +288,15 @@ class DOPESHEET_HT_editor_buttons:
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_action", text="", icon_only=True)
-        if tool_settings.use_proportional_action:
-            sub = row.row(align=True)
-            sub.prop_with_popover(
-                tool_settings,
-                "proportional_edit_falloff",
-                text="",
-                icon_only=True,
-                panel="DOPESHEET_PT_proportional_edit",
-            )
-		#BFA - expose common curve operators to header
-        row = layout.row(align = True)
-        row.operator_menu_enum("action.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
-        row.operator_menu_enum("action.handle_type", "type", text="", icon="HANDLE_AUTO")
-        row.operator_menu_enum("action.interpolation_type", "type", text="", icon="INTERPOLATE")
-        row.operator_menu_enum("action.keyframe_type", "type", text="", icon="SPACE2")
-
-        row = layout.row()
-        row.popover(panel = "DOPESHEET_PT_view_view_options", text = "Options")
+        sub = row.row(align=True)
+        sub.active = tool_settings.use_proportional_action
+        sub.prop_with_popover(
+            tool_settings,
+            "proportional_edit_falloff",
+            text="",
+            icon_only=True,
+            panel="DOPESHEET_PT_proportional_edit",
+        )
 
     @classmethod
     def _draw_action_selector(cls, context, layout):
@@ -500,8 +375,7 @@ class DOPESHEET_MT_editor_menus(Menu):
     def draw(self, context):
         layout = self.layout
         st = context.space_data
-        # BFA - Quick favourites menu
-        layout.menu("SCREEN_MT_user_menu", text="Quick")
+
         layout.menu("DOPESHEET_MT_view")
         layout.menu("DOPESHEET_MT_select")
         if st.show_markers:
@@ -526,50 +400,52 @@ class DOPESHEET_MT_view(Menu):
 
         st = context.space_data
 
-        layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
+        layout.prop(st, "show_region_channels")
         layout.separator()
 
-        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
-        layout.operator("anim.previewrange_clear", icon="CLEAR")
-        layout.operator("action.previewrange_set", icon='BORDER_RECT')
-
+        layout.operator("action.view_selected")
+        layout.operator("action.view_all")
         if context.scene.use_preview_range:
-            layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon='FRAME_PREVIEW_RANGE')
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
         else:
-            layout.operator("anim.scene_range_frame", text="Frame Scene Range", icon='FRAME_SCENE_RANGE')
-
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
+        layout.operator("action.view_frame")
         layout.separator()
 
-        layout.operator("view2d.zoom_in", text="Zoom In", icon="ZOOM_IN")
-        layout.operator("view2d.zoom_out", text="Zoom Out", icon="ZOOM_OUT")
-        layout.operator("view2d.zoom_border", icon="ZOOM_BORDER")
-
+        layout.prop(st.dopesheet, "use_multi_word_filter", text="Multi-Word Match Search")
         layout.separator()
 
-        layout.operator("action.view_all", icon="VIEWALL")
-        layout.operator("action.view_selected", icon="VIEW_SELECTED")
-        layout.operator("action.view_frame", icon="VIEW_FRAME")
+        layout.prop(st, "use_realtime_update")
 
+        # Sliders are always shown in the Shape Key Editor regardless of this setting.
+        col = layout.column()
+        col.active = context.space_data.mode != 'SHAPEKEY'
+        col.prop(st, "show_sliders")
+
+        layout.prop(st, "show_interpolation")
+        layout.prop(st, "show_extremes")
+        layout.prop(st, "use_auto_merge_keyframes")
         layout.separator()
 
-        layout.menu("DOPESHEET_MT_view_pie_menus")#BFA - make pies discoverable
-        layout.menu("INFO_MT_area")
+        layout.prop(st, "show_markers")
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+        layout.separator()
+
+        layout.operator("anim.previewrange_set")
+        layout.operator("anim.previewrange_clear")
+        layout.operator("action.previewrange_set")
+        layout.separator()
 
         # Add this to show key-binding (reverse action in dope-sheet).
         props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
         props.data_path = "area.type"
         props.value = 'GRAPH_EDITOR'
+        layout.separator()
 
-class DOPESHEET_MT_view_pie_menus(Menu):
-    bl_label = "Pie menus"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("wm.call_menu_pie", text="Snap", icon="MENU_PANEL").name = 'DOPESHEET_MT_snap_pie'
-        layout.operator("wm.call_menu_pie", text="View", icon="MENU_PANEL").name = 'DOPESHEET_MT_view_pie'
+        layout.menu("INFO_MT_area")
 
 
 class DOPESHEET_MT_view_pie(Menu):
@@ -579,10 +455,9 @@ class DOPESHEET_MT_view_pie(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.operator("action.view_all", icon="VIEWALL")
-        pie.operator("action.view_selected", icon="VIEW_SELECTED")
-        pie.operator("action.view_frame", icon="VIEW_FRAME")
-
+        pie.operator("action.view_all")
+        pie.operator("action.view_selected", icon='ZOOM_SELECTED')
+        pie.operator("action.view_frame")
         if context.scene.use_preview_range:
             pie.operator("anim.scene_range_frame", text="Frame Preview Range")
         else:
@@ -595,44 +470,39 @@ class DOPESHEET_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("action.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("action.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
-        layout.operator("action.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("action.select_all", text="All").action = 'SELECT'
+        layout.operator("action.select_all", text="None").action = 'DESELECT'
+        layout.operator("action.select_all", text="Invert").action = 'INVERT'
 
         layout.separator()
-        layout.operator("action.select_box", icon='BORDER_RECT').axis_range = False
-        layout.operator("action.select_box", text="Box Select (Axis Range)", icon='BORDER_RECT').axis_range = True
-        layout.operator("action.select_circle", icon='CIRCLE_SELECT')
+        layout.operator("action.select_box").axis_range = False
+        layout.operator("action.select_box", text="Box Select (Axis Range)").axis_range = True
+        layout.operator("action.select_circle")
         layout.operator_menu_enum("action.select_lasso", "mode")
-
-		# BFA moved below
-        layout.separator()
-
-        layout.operator("action.select_column", text="Columns on Selected Keys", icon="COLUMNS_KEYS").mode = 'KEYS'
-        layout.operator("action.select_column", text="Column on Current Frame", icon="COLUMN_CURRENT_FRAME").mode = 'CFRA'
-
-        layout.operator("action.select_column", text="Columns on Selected Markers", icon="COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
-        layout.operator("action.select_column", text="Between Selected Markers", icon="BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
-
-        layout.separator()
-
-        if context.space_data.mode != 'GPENCIL':
-            layout.operator("action.select_linked", text="Linked", icon="CONNECTED")
-
-            layout.separator()
-
-        props = layout.operator("action.select_leftright", text="Before Current Frame", icon="BEFORE_CURRENT_FRAME")
-        props.extend = False
-        props.mode = 'LEFT'
-        props = layout.operator("action.select_leftright", text="After Current Frame", icon="AFTER_CURRENT_FRAME")
-        props.extend = False
-        props.mode = 'RIGHT'
 
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
             layout.separator()
-            layout.operator("action.select_more", text="More", icon="SELECTMORE")
-            layout.operator("action.select_less", text="Less", icon="SELECTLESS")
+            layout.operator("action.select_more", text="More")
+            layout.operator("action.select_less", text="Less")
+
+            layout.separator()
+            layout.operator("action.select_linked")
+
+        layout.separator()
+        layout.operator("action.select_column", text="Columns on Selected Keys").mode = 'KEYS'
+        layout.operator("action.select_column", text="Column on Current Frame").mode = 'CFRA'
+
+        layout.operator("action.select_column", text="Columns on Selected Markers").mode = 'MARKERS_COLUMN'
+        layout.operator("action.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
+
+        layout.separator()
+        props = layout.operator("action.select_leftright", text="Before Current Frame")
+        props.extend = False
+        props.mode = 'LEFT'
+        props = layout.operator("action.select_leftright", text="After Current Frame")
+        props.extend = False
+        props.mode = 'RIGHT'
 
 
 class DOPESHEET_MT_marker(Menu):
@@ -653,6 +523,7 @@ class DOPESHEET_MT_marker(Menu):
             if st.show_pose_markers is False:
                 layout.operator("action.markers_make_local")
 
+        layout.prop(st, "use_marker_sync")
 
 #######################################
 # Keyframe Editing
@@ -666,68 +537,37 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_delete", icon="DELETE")
-		#layout.operator("action.clean", text="Clean Channels").channels = True	# BFA - located in the keys channel
+        layout.operator("anim.channels_delete")
+        layout.operator("action.clean", text="Clean Channels").channels = True
 
         layout.separator()
-        layout.operator("anim.channels_group", icon="NEW_GROUP")
-        layout.operator("anim.channels_ungroup", icon="REMOVE_FROM_ALL_GROUPS")
+        layout.operator("anim.channels_group")
+        layout.operator("anim.channels_ungroup")
 
         layout.separator()
-
-        # BFA - menu comes from space_graph
-        layout.menu("GRAPH_MT_channel_settings_toggle")
-
-        # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
-
-        #layout.separator()
-        #layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
-        #layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
-        #layout.operator("anim.channels_editable_toggle", icon="LOCKED")
+        layout.operator_menu_enum("anim.channels_setting_toggle", "type")
+        layout.operator_menu_enum("anim.channels_setting_enable", "type")
+        layout.operator_menu_enum("anim.channels_setting_disable", "type")
 
         layout.separator()
-        layout.menu("DOPESHEET_MT_channel_extrapolation")
+        layout.operator("anim.channels_editable_toggle")
+        layout.operator_menu_enum("action.extrapolation_type", "type", text="Extrapolation Mode")
 
         layout.separator()
-        layout.operator("anim.channels_expand", icon="EXPANDMENU")
-        layout.operator("anim.channels_collapse", icon="COLLAPSEMENU")
+        layout.operator("anim.channels_expand")
+        layout.operator("anim.channels_collapse")
 
         layout.separator()
-
-        # BFA - menu comes from space_graph.py
-        layout.menu("GRAPH_MT_channel_move")
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
-        layout.operator("anim.channels_fcurves_enable", icon="UNLOCKED")
+        layout.operator("anim.channels_fcurves_enable")
 
         layout.separator()
-        layout.operator("anim.channels_bake", icon= 'BAKE_ACTION')
+        layout.operator("anim.channels_bake")
 
         layout.separator()
-        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
-
-        layout.separator()
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
-
-
-class DOPESHEET_MT_channel_extrapolation(Menu):
-    bl_label = "Extrapolation Mode"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("action.extrapolation_type", text="Constant Extrapolation",
-                        icon="EXTRAPOLATION_CONSTANT").type = 'CONSTANT'
-        layout.operator("action.extrapolation_type", text="Linear Extrapolation",
-                        icon="EXTRAPOLATION_LINEAR").type = 'LINEAR'
-        layout.operator("action.extrapolation_type", text="Make Cyclic (F-Modifier)",
-                        icon="EXTRAPOLATION_CYCLIC").type = 'MAKE_CYCLIC'
-        layout.operator("action.extrapolation_type", text="Clear Cyclic (F-Modifier)",
-                        icon="EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR_CYCLIC'
-
-        layout.separator()
-
-        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
+        layout.operator("anim.channels_view_selected")
 
 
 class DOPESHEET_MT_action(Menu):
@@ -735,11 +575,11 @@ class DOPESHEET_MT_action(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("anim.merge_animation", icon = 'MERGE')
-        layout.operator("anim.separate_slots", icon = 'SEPARATE')
+        layout.operator("anim.merge_animation")
+        layout.operator("anim.separate_slots")
 
         layout.separator()
-        layout.operator("anim.slot_channels_move_to_new_action", icon = 'ACTION_SLOT')
+        layout.operator("anim.slot_channels_move_to_new_action")
 
         layout.separator()
         layout.operator("action.push_down", text="Push Down Action", icon='NLA_PUSHDOWN')
@@ -754,88 +594,34 @@ class DOPESHEET_MT_key(Menu):
         ob = context.active_object
 
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
-        layout.menu("DOPESHEET_MT_key_snap")
-        layout.menu("DOPESHEET_MT_key_mirror")
+
+        layout.operator_menu_enum("action.snap", "type", text="Snap")
+        layout.operator_menu_enum("action.mirror", "type", text="Mirror")
 
         layout.separator()
-
-        layout.operator_menu_enum("action.keyframe_insert", "type")
-
-        layout.separator()
-
-        layout.operator("action.frame_jump", icon='JUMP_TO_KEYFRAMES')
+        layout.operator("action.keyframe_insert")
 
         layout.separator()
-
-        layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
-        layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
-        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
+        layout.operator("action.frame_jump")
 
         layout.separator()
-
-        layout.operator("action.duplicate_move", icon="DUPLICATE")
-        layout.operator("action.delete", icon="DELETE")
+        layout.operator("action.copy")
+        layout.operator("action.paste")
+        layout.operator("action.paste", text="Paste Flipped").flipped = True
+        layout.operator("action.duplicate_move")
+        layout.operator("action.delete")
         if ob and ob.type == 'GREASEPENCIL':
             layout.operator("grease_pencil.delete_breakdown")
 
         layout.separator()
-
-        layout.operator("action.clean", icon="CLEAN_KEYS").channels = False
-
-        #BFA - https://projects.blender.org/blender/blender/pulls/113335
-        from bl_ui_utils.layout import operator_context
-        with operator_context(layout, 'INVOKE_REGION_CHANNELS'):
-            layout.operator("action.clean", text = "Clean Channels", icon="CLEAN_CHANNELS").channels = True
+        layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
+        layout.operator_menu_enum("action.handle_type", "type", text="Handle Type")
+        layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
+        layout.operator_menu_enum("action.easing_type", "type", text="Easing Mode")
 
         layout.separator()
-
-        layout.operator("action.bake_keys", icon = 'BAKE_ACTION')
-
-
-class DOPESHEET_PT_view_view_options(bpy.types.Panel):
-    bl_label = "View Options"
-    bl_category = "View"
-    bl_space_type = 'DOPESHEET_EDITOR'
-    bl_region_type = 'HEADER'
-
-    # dopesheet and timeline is a wild mix. We need to separate them by the following two defs
-    @staticmethod
-    def in_dopesheet(context):
-        return context.space_data.mode != 'TIMELINE'  # dopesheet, not timeline
-
-    @classmethod
-    def poll(cls, context):
-        # only for dopesheet editor
-        return cls.in_dopesheet(context)
-
-    def draw(self, context):
-        sc = context.scene
-        layout = self.layout
-        tool_settings = context.tool_settings
-        st = context.space_data
-
-        col = layout.column(align=True)
-        col.prop(st, "use_realtime_update")
-        col.prop(st, "show_seconds")
-        col.prop(st, "show_locked_time")
-
-        col.separator()
-
-       # Sliders are always shown in the Shape Key Editor regardless of this setting.
-        col = col.column(align=True)
-        col.active = context.space_data.mode != 'SHAPEKEY'
-        col.prop(st, "show_sliders")
-
-        if bpy.app.version < (2, 93):
-            col.operator("anim.show_group_colors_deprecated", icon='CHECKBOX_HLT')
-        col.prop(st, "show_interpolation")
-        col.prop(st, "show_extremes")
-        col.prop(st, "use_auto_merge_keyframes")
-
-        col = layout.column(align=True)
-        col.prop(st, "show_markers")
-        col.prop(tool_settings, "lock_markers")
-        col.prop(st, "use_marker_sync")
+        layout.operator("action.clean").channels = False
+        layout.operator("action.bake_keys")
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
@@ -847,44 +633,10 @@ class DOPESHEET_MT_key_transform(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("transform.transform", text="Grab/Move",
-                        icon="TRANSFORM_MOVE").mode = 'TIME_TRANSLATE'
-        layout.operator("transform.transform", text="Extend",
-                        icon="SHRINK_FATTEN").mode = 'TIME_EXTEND'
-        layout.operator("transform.transform", text="Slide",
-                        icon="PUSH_PULL").mode = 'TIME_SLIDE'
-        layout.operator("transform.transform", text="Scale",
-                        icon="TRANSFORM_SCALE").mode = 'TIME_SCALE'
-
-
-class DOPESHEET_MT_key_mirror(Menu):
-    bl_label = "Mirror"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("action.mirror", text="By Times over Current Frame",
-                        icon="MIRROR_TIME").type = 'CFRA'
-        layout.operator("action.mirror", text="By Values over Value=0",
-                        icon="MIRROR_CURSORVALUE").type = 'XAXIS'
-        layout.operator("action.mirror", text="By Times over First Selected Marker",
-                        icon="MIRROR_MARKER").type = 'MARKER'
-
-
-class DOPESHEET_MT_key_snap(Menu):
-    bl_label = "Snap"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("action.snap", text="Current Frame",
-                        icon="SNAP_CURRENTFRAME").type = 'CFRA'
-        layout.operator("action.snap", text="Nearest Frame",
-                        icon="SNAP_NEARESTFRAME").type = 'NEAREST_FRAME'
-        layout.operator("action.snap", text="Nearest Second",
-                        icon="SNAP_NEARESTSECOND").type = 'NEAREST_SECOND'
-        layout.operator("action.snap", text="Nearest Marker",
-                        icon="SNAP_NEARESTMARKER").type = 'NEAREST_MARKER'
+        layout.operator("transform.transform", text="Move").mode = 'TIME_TRANSLATE'
+        layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
+        layout.operator("transform.transform", text="Slide").mode = 'TIME_SLIDE'
+        layout.operator("transform.transform", text="Scale").mode = 'TIME_SCALE'
 
 
 class DopesheetActionPanelBase:
@@ -895,28 +647,16 @@ class DopesheetActionPanelBase:
     def draw_generic_panel(cls, _context, layout, action):
         layout.label(text=action.name, icon='ACTION', translate=False)
 
-        row = layout.row()
-        row.use_property_split = False
-        split = row.split(factor = 0.75)
-        row = split.row()
-        row.prop(action, "use_frame_range")
-        row = split.row()
-        if action.use_frame_range:
-            row.label(icon='DISCLOSURE_TRI_DOWN')
-        else:
-            row.label(icon='DISCLOSURE_TRI_RIGHT')
+        layout.prop(action, "use_frame_range")
 
-        if action.use_frame_range:
-            col = layout.column()
+        col = layout.column()
+        col.active = action.use_frame_range
 
-            row = col.row(align=True)
-            row.separator(factor = 2.0)
-            row.prop(action, "frame_start", text="Start")
-            row.prop(action, "frame_end", text="End")
+        row = col.row(align=True)
+        row.prop(action, "frame_start", text="Start")
+        row.prop(action, "frame_end", text="End")
 
-            row = col.row()
-            row.separator()
-            row.prop(action, "use_cyclic")
+        col.prop(action, "use_cyclic")
 
 
 class DOPESHEET_PT_custom_props_action(PropertyPanel, Panel):
@@ -992,20 +732,15 @@ class DOPESHEET_MT_gpencil_channel(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_delete", icon="DELETE")
+        layout.operator("anim.channels_delete")
 
         layout.separator()
-        #BFA - menu comes from space_graph.py
-        layout.menu("GRAPH_MT_channel_settings_toggle")
+        layout.operator("anim.channels_setting_toggle")
+        layout.operator("anim.channels_setting_enable")
+        layout.operator("anim.channels_setting_disable")
 
-        # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
-
-        #layout.separator()
-
-        #layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
-        #layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
-        #layout.operator("anim.channels_editable_toggle", icon="LOCKED")
-
+        layout.separator()
+        layout.operator("anim.channels_editable_toggle")
 
         # XXX: to be enabled when these are ready for use!
         # layout.separator()
@@ -1013,13 +748,10 @@ class DOPESHEET_MT_gpencil_channel(Menu):
         # layout.operator("anim.channels_collapse")
 
         layout.separator()
-        layout.operator_menu_enum(
-            "anim.channels_move", "direction", text="Move")
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
-
-        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
-
+        layout.operator("anim.channels_view_selected")
 
 
 class DOPESHEET_MT_delete(Menu):
@@ -1060,15 +792,15 @@ class DOPESHEET_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("action.keyframe_insert", icon='COPYDOWN').type = 'SEL'
-        layout.operator("action.duplicate_move", icon='DUPLICATE')
+        layout.operator("action.keyframe_insert").type = 'SEL'
+        layout.operator("action.duplicate_move")
 
         if st.mode == 'GPENCIL':
             layout.separator()
             layout.operator("grease_pencil.delete_breakdown")
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("action.delete", icon='DELETE')
+        layout.operator("action.delete")
 
         layout.separator()
 
@@ -1087,22 +819,22 @@ class DOPESHEET_MT_channel_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
         layout.separator()
-        layout.operator("anim.channels_setting_enable", text="Mute Channels", icon='MUTE_IPO_ON').type = 'MUTE'
-        layout.operator("anim.channels_setting_disable", text="Unmute Channels", icon='MUTE_IPO_OFF').type = 'MUTE'
+        layout.operator("anim.channels_view_selected")
+
+        layout.operator("anim.channels_setting_enable", text="Mute Channels").type = 'MUTE'
+        layout.operator("anim.channels_setting_disable", text="Unmute Channels").type = 'MUTE'
+        layout.separator()
+        layout.operator("anim.channels_setting_enable", text="Protect Channels").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Unprotect Channels").type = 'PROTECT'
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle", text="Toggle Protect", icon='LOCKED') #BFA - changed order to be consistent with GRAPH_MT_channel_settings_toggle in the space_graph.py
-        layout.separator()
-        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
-        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
+        layout.operator("anim.channels_group")
+        layout.operator("anim.channels_ungroup")
 
         layout.separator()
-        layout.operator("anim.channels_group", icon='NEW_GROUP')
-        layout.operator("anim.channels_ungroup", icon='REMOVE_ALL_GROUPS')
+        layout.operator("anim.channels_editable_toggle")
 
-        layout.separator()
         if is_graph_editor:
             operator = "graph.extrapolation_type"
         else:
@@ -1112,23 +844,23 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         if is_graph_editor:
             layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
             layout.separator()
-            layout.operator("graph.reveal", icon="HIDE_OFF")
-            layout.operator("graph.hide", text="Hide Selected Curves", icon="HIDE_ON").unselected = False
-            layout.operator("graph.hide", text="Hide Unselected Curves", icon="HIDE_UNSELECTED").unselected = True
+            layout.operator("graph.hide", text="Hide Selected Curves").unselected = False
+            layout.operator("graph.hide", text="Hide Unselected Curves").unselected = True
+            layout.operator("graph.reveal")
 
         layout.separator()
-        layout.operator("anim.channels_expand", icon='EXPANDMENU')
-        layout.operator("anim.channels_collapse", icon='COLLAPSEMENU')
+        layout.operator("anim.channels_expand")
+        layout.operator("anim.channels_collapse")
 
         layout.separator()
         layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
 
-        layout.operator("anim.channels_delete", icon='DELETE')
+        layout.operator("anim.channels_delete")
 
         if is_graph_editor and context.space_data.mode == 'DRIVERS':
-            layout.operator("graph.driver_delete_invalid", icon='DELETE')
+            layout.operator("graph.driver_delete_invalid")
 
 
 class DOPESHEET_MT_snap_pie(Menu):
@@ -1138,14 +870,10 @@ class DOPESHEET_MT_snap_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        pie.operator(
-            "action.snap", text="Selection to Current Frame").type = 'CFRA'
-        pie.operator(
-            "action.snap", text="Selection to Nearest Frame").type = 'NEAREST_FRAME'
-        pie.operator(
-            "action.snap", text="Selection to Nearest Second").type = 'NEAREST_SECOND'
-        pie.operator(
-            "action.snap", text="Selection to Nearest Marker").type = 'NEAREST_MARKER'
+        pie.operator("action.snap", text="Selection to Current Frame").type = 'CFRA'
+        pie.operator("action.snap", text="Selection to Nearest Frame").type = 'NEAREST_FRAME'
+        pie.operator("action.snap", text="Selection to Nearest Second").type = 'NEAREST_SECOND'
+        pie.operator("action.snap", text="Selection to Nearest Marker").type = 'NEAREST_MARKER'
 
 
 class LayersDopeSheetPanel:
@@ -1208,7 +936,6 @@ class DOPESHEET_PT_grease_pencil_mode(GreasePencilLayersDopeSheetPanel, Panel):
             row.prop(active_layer, "opacity", text="Opacity", slider=True)
 
             row = layout.row(align=True)
-            row.use_property_split = False
             row.prop(active_layer, "use_lights", text="Lights")
 
 
@@ -1259,27 +986,16 @@ class DOPESHEET_PT_grease_pencil_layer_display(
 
 
 classes = (
-    ALL_MT_editormenu_dopesheet, # BFA menu
-    ANIM_OT_switch_editors_to_dopesheet, # BFA menu
-    ANIM_OT_switch_editors_to_graph, # BFA menu
-    ANIM_OT_switch_editors_to_driver, # BFA menu
-    ANIM_OT_switch_editors_to_nla, # BFA menu
-    ANIM_OT_switch_editors_in_dopesheet, # BFA menu
     DOPESHEET_HT_header,
     DOPESHEET_PT_proportional_edit,
     DOPESHEET_MT_editor_menus,
     DOPESHEET_MT_view,
-    DOPESHEET_MT_view_pie_menus, # BFA menu
     DOPESHEET_MT_select,
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
-    DOPESHEET_MT_channel_extrapolation, # BFA menu
     DOPESHEET_MT_action,
     DOPESHEET_MT_key,
-    DOPESHEET_PT_view_view_options, # BFA menu
     DOPESHEET_MT_key_transform,
-    DOPESHEET_MT_key_mirror, # BFA menu
-    DOPESHEET_MT_key_snap, # BFA menu
     DOPESHEET_MT_gpencil_channel,
     DOPESHEET_MT_delete,
     DOPESHEET_MT_context_menu,

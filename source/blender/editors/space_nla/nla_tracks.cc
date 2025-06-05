@@ -381,7 +381,7 @@ static wmOperatorStatus nlatracks_pushdown_exec(bContext *C, wmOperator *op)
       BKE_report(op->reports,
                  RPT_ERROR,
                  "No active AnimData block to use "
-                 "(select a data expander first or set the appropriate flags on an AnimData "
+                 "(select a data-block expander first or set the appropriate flags on an AnimData "
                  "block)");
       return OPERATOR_CANCELLED;
     }
@@ -532,9 +532,9 @@ void NLA_OT_action_unlink(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Remove Action"; /*bfa - we remove, we don't unlink*/
+  ot->name = "Unlink Action";
   ot->idname = "NLA_OT_action_unlink";
-  ot->description = "Remove this action from the active action slot (and/or exit Tweak Mode)";
+  ot->description = "Unlink this action from the active action slot (and/or exit Tweak Mode)";
 
   /* callbacks */
   ot->invoke = nla_action_unlink_invoke;

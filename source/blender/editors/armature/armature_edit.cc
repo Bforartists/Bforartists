@@ -1541,27 +1541,15 @@ static wmOperatorStatus armature_hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*bfa - descriptions*/
-static std::string armature_ot_hide_get_description(bContext * /*C*/,
-                                                    wmOperatorType * /*ot*/,
-                                                    PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "unselected")) {
-    return "Hide unselected bones in Edit Mode";
-  }
-  return "";
-}
-
 void ARMATURE_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
   ot->idname = "ARMATURE_OT_hide";
-  ot->description = "Hide selected bones in Edit Mode";
+  ot->description = "Tag selected bones to not be visible in Edit Mode";
 
   /* API callbacks. */
   ot->exec = armature_hide_exec;
-  ot->get_description = armature_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editarmature;
 
   /* flags */

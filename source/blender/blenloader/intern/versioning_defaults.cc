@@ -122,9 +122,8 @@ static void blo_update_defaults_screen(bScreen *screen,
       BLI_freelistN(&region->panels_category_active);
 
       /* Reset size so it uses consistent defaults from the region types. */
-      /*bfa - NEVER ! - this is the cause for single row tool shelf factory default*/
-      // region->sizex = 0;
-      // region->sizey = 0;
+      region->sizex = 0;
+      region->sizey = 0;
     }
 
     if (area->spacetype == SPACE_IMAGE) {
@@ -215,6 +214,8 @@ static void blo_update_defaults_screen(bScreen *screen,
       /* Disable Curve Normals. */
       v3d->overlay.edit_flag &= ~V3D_OVERLAY_EDIT_CU_NORMALS;
       v3d->overlay.normals_constant_screen_size = 7.0f;
+      /* Always enable Grease Pencil vertex color overlay by default. */
+      v3d->overlay.gpencil_vertex_paint_opacity = 1.0f;
 
       /* Level out the 3D Viewport camera rotation, see: #113751. */
       constexpr float viewports_to_level[][4] = {
@@ -351,14 +352,14 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   STRNCPY(scene->r.engine, RE_engine_id_BLENDER_EEVEE_NEXT);
 
   scene->r.cfra = 1.0f;
-  /* BFA - Turn on the compositor nodes by default, or else they an unnecessary step for compsiting.*/
+
   /* Don't enable compositing nodes. */
-  //if (scene->nodetree) {
-  //  blender::bke::node_tree_free_embedded_tree(scene->nodetree);
-  //  MEM_freeN(scene->nodetree);
-  //  scene->nodetree = nullptr;
-  //  scene->use_nodes = false;
-  //}
+  if (scene->nodetree) {
+    blender::bke::node_tree_free_embedded_tree(scene->nodetree);
+    MEM_freeN(scene->nodetree);
+    scene->nodetree = nullptr;
+    scene->use_nodes = false;
+  }
 
   /* Rename render layers. */
   BKE_view_layer_rename(
@@ -453,6 +454,16 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   ts->unified_paint_settings.flag = default_ups.flag;
   copy_v3_v3(ts->unified_paint_settings.rgb, default_ups.rgb);
   copy_v3_v3(ts->unified_paint_settings.secondary_rgb, default_ups.secondary_rgb);
+
+  if (ts->unified_paint_settings.curve_rand_hue == nullptr) {
+    ts->unified_paint_settings.curve_rand_hue = BKE_paint_default_curve();
+  }
+  if (ts->unified_paint_settings.curve_rand_saturation == nullptr) {
+    ts->unified_paint_settings.curve_rand_saturation = BKE_paint_default_curve();
+  }
+  if (ts->unified_paint_settings.curve_rand_value == nullptr) {
+    ts->unified_paint_settings.curve_rand_value = BKE_paint_default_curve();
+  }
 }
 
 void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)

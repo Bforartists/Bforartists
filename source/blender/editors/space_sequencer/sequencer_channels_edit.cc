@@ -13,8 +13,6 @@
 
 #include "ED_screen.hh"
 
-#include "SEQ_sequencer.hh" /*BFA - 3D Sequencer*/
-
 #include "UI_view2d.hh"
 
 #include "WM_api.hh"
@@ -34,8 +32,7 @@ static wmOperatorStatus sequencer_rename_channel_invoke(bContext *C,
   float mouse_y = UI_view2d_region_to_view_y(context.timeline_region_v2d, event->mval[1]);
 
   sseq->runtime->rename_channel_index = mouse_y;
-  WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, CTX_data_scene(C));
   return OPERATOR_FINISHED;
 }
 

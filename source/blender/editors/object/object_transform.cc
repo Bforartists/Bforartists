@@ -85,8 +85,6 @@
 
 #include "object_intern.hh"
 
-#include "UI_resources.hh" /*bfa - needed for the icons*/
-
 namespace blender::ed::object {
 
 /* -------------------------------------------------------------------- */
@@ -1633,7 +1631,7 @@ static wmOperatorStatus object_origin_set_exec(bContext *C, wmOperator *op)
         continue;
       }
 
-      if (curves.points_num() == 0) {
+      if (curves.is_empty()) {
         continue;
       }
 
@@ -1855,29 +1853,29 @@ void OBJECT_OT_origin_set(wmOperatorType *ot)
   static const EnumPropertyItem prop_set_center_types[] = {
       {GEOMETRY_TO_ORIGIN,
        "GEOMETRY_ORIGIN",
-       ICON_GEOMETRY_TO_ORIGIN,
+       0,
        "Geometry to Origin",
        "Move object geometry to object origin"},
       {ORIGIN_TO_GEOMETRY,
        "ORIGIN_GEOMETRY",
-       ICON_ORIGIN_TO_GEOMETRY,
+       0,
        "Origin to Geometry",
        "Calculate the center of geometry based on the current pivot point (median, otherwise "
        "bounding box)"},
       {ORIGIN_TO_CURSOR,
        "ORIGIN_CURSOR",
-       ICON_ORIGIN_TO_CURSOR,
+       0,
        "Origin to 3D Cursor",
        "Move object origin to position of the 3D cursor"},
       /* Intentional naming mismatch since some scripts refer to this. */
       {ORIGIN_TO_CENTER_OF_MASS_SURFACE,
        "ORIGIN_CENTER_OF_MASS",
-       ICON_ORIGIN_TO_CENTEROFMASS,
+       0,
        "Origin to Center of Mass (Surface)",
        "Calculate the center of mass from the surface area"},
       {ORIGIN_TO_CENTER_OF_MASS_VOLUME,
        "ORIGIN_CENTER_OF_VOLUME",
-       ICON_ORIGIN_TO_VOLUME,
+       0,
        "Origin to Center of Mass (Volume)",
        "Calculate the center of mass from the volume (must be manifold geometry with consistent "
        "normals)"},
@@ -1892,7 +1890,9 @@ void OBJECT_OT_origin_set(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Set Origin";
-  ot->description = "Set the object's origin by the following method";
+  ot->description =
+      "Set the object's origin, by either moving the data, or set to center of data, or use 3D "
+      "cursor";
   ot->idname = "OBJECT_OT_origin_set";
 
   /* API callbacks. */
@@ -2371,12 +2371,7 @@ void OBJECT_OT_transform_axis_target(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Interactive Light Track to Cursor";
-  ot->description =
-      "Interactively point a light towards an object (Ctrl translates and aligns to target "
-      "normal)\n"
-      "Select object and shift select light > "
-      "Perform tool and point to target\nWithout target object the light rotates freely\n"
-      "Hotkey tool !Please use the hotkey !";
+  ot->description = "Interactively point cameras and lights to a location (Ctrl translates)";
   ot->idname = "OBJECT_OT_transform_axis_target";
 
   /* API callbacks. */

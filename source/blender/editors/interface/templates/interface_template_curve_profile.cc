@@ -91,7 +91,7 @@ static uiBlock *curve_profile_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_VIEW_RESET, /* BFA - icon */
+                                  ICON_BLANK1,
                                   IFACE_("Reset View"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -110,7 +110,7 @@ static uiBlock *curve_profile_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_RESET, /* BFA - icon */
+                                  ICON_BLANK1,
                                   IFACE_("Reset Curve"),
                                   0,
                                   yco -= UI_UNIT_Y,

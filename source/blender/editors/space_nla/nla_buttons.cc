@@ -450,34 +450,19 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
 
     row = &column->row(true);
     uiLayoutSetActive(row, RNA_boolean_get(&strip_ptr, "use_animated_influence") == false);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = false*/
-    row->prop(&strip_ptr, "use_auto_blend", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* XXX as toggle? */
+    row->prop(
+        &strip_ptr, "use_auto_blend", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* XXX as toggle? */
 
     /* settings */
-    uiLayoutSetPropSep(layout, false);
-    uiLayoutSetPropDecorate(layout, false);
-
-    column = &layout->column(true);          /* bfa - align probs left */
-    column->label(IFACE_("Playback"), ICON_NONE); /* bfa - use label instead of heading */
-
+    column = &layout->column(true, IFACE_("Playback"));
     row = &column->row(true);
-    layout->separator();; /* bfa - separator */
     uiLayoutSetActive(row,
                       !(RNA_boolean_get(&strip_ptr, "use_animated_influence") ||
                         RNA_boolean_get(&strip_ptr, "use_animated_time")));
-    /* bfa */
-    row = &column->row(false);
-    layout->separator();;
     row->prop(&strip_ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    row = &column->row(false);
-    layout->separator();;
-    row->prop(&strip_ptr, "use_animated_time_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
-    uiLayoutSetPropSep(layout, true);
-    uiLayoutSetPropDecorate(layout, true);
+    column->prop(&strip_ptr, "use_animated_time_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
-  /* end bfa */
 }
 
 /* action-clip only settings for active NLA-Strip */
@@ -530,11 +515,9 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
   column->prop(&strip_ptr, "action_frame_start", UI_ITEM_NONE, IFACE_("Frame Start"), ICON_NONE);
   column->prop(&strip_ptr, "action_frame_end", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
 
-  row = &layout->row(false); /* bfa - align probs left nla action panel */
-  uiLayoutSetPropSep(row, false);   /* bfa - use_property_split = False */
+  row = &layout->row(false, IFACE_("Sync Length"));
   row->prop(&strip_ptr, "use_sync_length", UI_ITEM_NONE, "", ICON_NONE);
-  row->op("NLA_OT_action_sync_length", IFACE_("Now"), ICON_FILE_REFRESH); /*BFA*/
-  uiLayoutSetPropSep(row, true); /* bfa - use_property_split = True */
+  row->op("NLA_OT_action_sync_length", IFACE_("Now"), ICON_FILE_REFRESH);
 
   /* action usage */
   column = &layout->column(true);

@@ -52,10 +52,9 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
   uiLayoutSetUnitsX(layout, 4.0f);
 
   /* Apply. */
-  /* BFA - comment out apply button as we already have the apply button in the header */  
-  /* layout->op("CONSTRAINT_OT_apply",
+  layout->op("CONSTRAINT_OT_apply",
              CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
-             ICON_CHECKMARK);*/
+             ICON_CHECKMARK);
 
   /* Duplicate. */
   layout->op("CONSTRAINT_OT_copy",
@@ -64,7 +63,7 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
 
   layout->op("CONSTRAINT_OT_copy_to_selected",
              CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy to Selected"),
-             ICON_COPYDOWN); /* BFA - icon added */
+             0);
 
   layout->separator();
 
@@ -131,9 +130,6 @@ static void draw_constraint_header(uiLayout *layout, Object *ob, bConstraint *co
 
   /* Extra operators menu. */
   row->menu_fn("", ICON_DOWNARROW_HLT, constraint_ops_extra_draw, con);
-
-  /* BFA - added apply button */
-  row->op("CONSTRAINT_OT_apply", "", ICON_CHECKMARK);
 
   /* Close 'button' - emboss calls here disable drawing of 'button' behind X */
   sub = &row->row(false);

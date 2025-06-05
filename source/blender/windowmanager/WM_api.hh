@@ -463,17 +463,6 @@ ID *WM_file_append_datablock(Main *bmain,
                              short id_code,
                              const char *id_name,
                              int flag);
-/**
- * BFA link override data-block
-*/
-ID *WM_file_link_override_datablock(Main *bmain,
-                           Scene *scene,
-                           ViewLayer *view_layer,
-                           View3D *v3d,
-                           const char *filepath,
-                           short id_code,
-                           const char *id_name,
-                           int flag);    
 void WM_lib_reload(Library *lib, bContext *C, ReportList *reports);
 
 /* Mouse cursors. */
@@ -1905,7 +1894,7 @@ void WM_draw_cb_exit(wmWindow *win, void *handle);
  * because drawing relies on the event system & depsgraph preparing data for display.
  * An explicit call to draw is error prone since it may attempt to show stale data.
  *
- * With some rare exceptions which require a redraw (screen-shot & sample screen color for e.g.)
+ * With some rare exceptions which require a redraw (e.g. screen-shot & sample screen color)
  * explicitly redrawing should be avoided, see: #92704, #93950, #97627 & #98462.
  */
 void WM_redraw_windows(bContext *C);

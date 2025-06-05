@@ -17,17 +17,15 @@
 
 #include "BLO_userdef_default.h" /* own include */
 
-/* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
-/*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI, USER_OUTLINER_COL_COLLECTION_ROWS, USER_ANIM_SHOW_CHANNEL_GROUP_COLORS and USER_FILENOUI to the .flag*/
 const UserDef U_default = {
     .versionfile = BLENDER_FILE_VERSION,
     .subversionfile = BLENDER_FILE_SUBVERSION,
-    .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM | USER_TOOLTIPS_PYTHON | USER_DEVELOPER_UI | USER_FILENOUI |
-    		 USER_SCRIPT_AUTOEXEC_DISABLE),
-    /*BFA - added USER_DUP_NTREE*/
+    .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM |
+             USER_SCRIPT_AUTOEXEC_DISABLE),
     .dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE | USER_DUP_FONT |
                USER_DUP_MBALL | USER_DUP_LAMP | USER_DUP_ARM | USER_DUP_CAMERA | USER_DUP_SPEAKER |
-               USER_DUP_ACT | USER_DUP_LIGHTPROBE | USER_DUP_GPENCIL | USER_DUP_CURVES | USER_DUP_NTREE | USER_DUP_POINTCLOUD,
+               USER_DUP_ACT | USER_DUP_LIGHTPROBE | USER_DUP_GPENCIL | USER_DUP_CURVES |
+               USER_DUP_POINTCLOUD,
     .pref_flag = USER_PREF_FLAG_SAVE,
     .savetime = 2,
     .tempdir = "",
@@ -50,11 +48,10 @@ const UserDef U_default = {
     .versions = 1,
     .dbl_click_time = 350,
     .mini_axis_type = USER_MINI_AXIS_TYPE_GIZMO,
-    /*bfa - added USER_ORBIT_SELECTION */
     .uiflag = (USER_FILTERFILEEXTS | USER_DRAWVIEWINFO | USER_PLAINMENUS |
                USER_LOCK_CURSOR_ADJUST | USER_DEPTH_CURSOR | USER_AUTOPERSP |
                USER_NODE_AUTO_OFFSET | USER_GLOBALUNDO | USER_SHOW_GIZMO_NAVIGATE |
-               USER_SHOW_VIEWPORTNAME | USER_SHOW_FPS | USER_CONTINUOUS_MOUSE | USER_SAVE_PROMPT | USER_ORBIT_SELECTION),
+               USER_SHOW_VIEWPORTNAME | USER_SHOW_FPS | USER_CONTINUOUS_MOUSE | USER_SAVE_PROMPT),
     .uiflag2 = USER_REGION_OVERLAP,
     .gpu_flag = USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE | USER_GPU_FLAG_SUBDIVISION_EVALUATION,
     .app_flag = 0,
@@ -77,8 +74,6 @@ const UserDef U_default = {
     .inv_scale_factor = 0.0, /* run-time. */
     .pixelsize = 1,
     .virtual_pixel = 0,
-
-    .viewport_line_width = 1.0, /* BFA - GooEngine */
 
     .scrollback = 256,
     .node_margin = 40,
@@ -104,7 +99,7 @@ const UserDef U_default = {
     .autoexec_paths = {NULL},
     .user_menus = {NULL},
 
-    .keyconfigstr = "Bforartists", /*bfa - the active keymap*/
+    .keyconfigstr = "Blender",
 
     .network_timeout = 10,
     .network_connection_limit = 5,

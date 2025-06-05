@@ -1811,26 +1811,6 @@ static wmOperatorStatus pe_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*bfa - descriptions*/
-static std::string particle_ot_select_all_get_description(bContext * /*C*/,
-                                                          wmOperatorType * /*ot*/,
-                                                          PointerRNA *ptr)
-{
-  /*Select*/
-  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
-    return "Select all particles keys";
-  }
-  /*Deselect*/
-  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-    return "Deselect all particles keys";
-  }
-  /*Invert*/
-  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-    return "Inverts the current selection";
-  }
-  return "";
-}
-
 void PARTICLE_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1840,7 +1820,6 @@ void PARTICLE_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = pe_select_all_exec;
-  ot->get_description = particle_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = PE_poll;
 
   /* flags */
@@ -2564,17 +2543,6 @@ static wmOperatorStatus hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*bfa - descriptions*/
-static std::string particle_ot_hide_get_description(bContext * /*C*/,
-                                                    wmOperatorType * /*ot*/,
-                                                    PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "unselected")) {
-    return "Hide unselected particles";
-  }
-  return "";
-}
-
 void PARTICLE_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2584,7 +2552,6 @@ void PARTICLE_OT_hide(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = hide_exec;
-  ot->get_description = particle_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = PE_poll;
 
   /* flags */

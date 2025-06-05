@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 bl_info = {
-    "name": "Extensions", #BFA - removed "Blender"
+    "name": "Blender Extensions",
     "author": "Campbell Barton",
     "version": (0, 0, 1),
     "blender": (4, 0, 0),
     "location": "Edit -> Preferences -> Extensions",
-    "description": "Extension repository support for remote repositories - Bforartists Version", #BFA - mentined
-    "warning": "Bforartists Version",
+    "description": "Extension repository support for remote repositories",
+    "warning": "",
     # "doc_url": "",
     "support": 'OFFICIAL',
     "category": "System",
@@ -725,10 +725,10 @@ def register():
     )
     WindowManager.extension_type = EnumProperty(
         items=(
-            ('ALL', "All", "Show all extension types", "EXTENSIONS_ALL", 0), #BFA - Added Icon
+            ('ALL', "All", "Show all extension types"),
             None,
-            ('ADDON', "Add-ons", "Only show add-ons", "PLUGIN", 1), #BFA - Added Plugin Icon
-            ('THEME', "Themes", "Only show themes", "COLOR", 2), #BFA - Added Color Icon
+            ('ADDON', "Add-ons", "Only show add-ons"),
+            ('THEME', "Themes", "Only show themes"),
         ),
         name="Filter by Type",
         description="Show extensions by type",

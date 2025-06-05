@@ -3357,27 +3357,15 @@ static wmOperatorStatus hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/*bfa - descriptions*/
-static std::string curve_ot_hide_get_description(bContext * /*C*/,
-                                                 wmOperatorType * /*ot*/,
-                                                 PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "unselected")) {
-    return "Hide unselected control points";
-  }
-  return "";
-}
-
 void CURVE_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
   ot->idname = "CURVE_OT_hide";
-  ot->description = "Hide selected control points";
+  ot->description = "Hide (un)selected control points";
 
   /* API callbacks. */
   ot->exec = hide_exec;
-  ot->get_description = curve_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editsurfcurve;
 
   /* flags */
@@ -3981,9 +3969,9 @@ static wmOperatorStatus set_spline_type_exec(bContext *C, wmOperator *op)
 void CURVE_OT_spline_type_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem type_items[] = {
-      {CU_POLY, "POLY", ICON_MESH_DATA, "Poly", ""},
-      {CU_BEZIER, "BEZIER", ICON_CURVE_DATA, "Bézier", ""},
-      {CU_NURBS, "NURBS", ICON_CURVE_DATA, "NURBS", ""},
+      {CU_POLY, "POLY", 0, "Poly", ""},
+      {CU_BEZIER, "BEZIER", 0, "Bézier", ""},
+      {CU_NURBS, "NURBS", 0, "NURBS", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -4047,11 +4035,11 @@ void CURVE_OT_handle_type_set(wmOperatorType *ot)
 {
   /* keep in sync with graphkeys_handle_type_items */
   static const EnumPropertyItem editcurve_handle_type_items[] = {
-      {HD_AUTO, "AUTOMATIC", ICON_HANDLE_AUTO, "Automatic", ""},
-      {HD_VECT, "VECTOR", ICON_HANDLE_VECTOR, "Vector", ""},
-      {5, "ALIGNED", ICON_HANDLE_ALIGNED, "Aligned", ""},
-      {6, "FREE_ALIGN", ICON_HANDLE_FREE, "Free", ""},
-      {3, "TOGGLE_FREE_ALIGN", ICON_HANDLE_FREE, "Toggle Free/Align", ""},
+      {HD_AUTO, "AUTOMATIC", 0, "Automatic", ""},
+      {HD_VECT, "VECTOR", 0, "Vector", ""},
+      {5, "ALIGNED", 0, "Aligned", ""},
+      {6, "FREE_ALIGN", 0, "Free", ""},
+      {3, "TOGGLE_FREE_ALIGN", 0, "Toggle Free/Align", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -5019,10 +5007,7 @@ bool ED_curve_editnurb_select_pick(bContext *C,
     }
 
     /* Change active material on object. */
-    if (nu->mat_nr != obedit->actcol - 1) {
-      obedit->actcol = nu->mat_nr + 1;
-      WM_event_add_notifier(C, NC_MATERIAL | ND_SHADING_LINKS, nullptr);
-    }
+    blender::ed::object::material_active_index_set(obedit, nu->mat_nr);
 
     BKE_view_layer_synced_ensure(vc.scene, vc.view_layer);
     if (BKE_view_layer_active_base_get(vc.view_layer) != basact) {

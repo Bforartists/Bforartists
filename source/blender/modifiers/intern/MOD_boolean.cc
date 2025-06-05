@@ -653,24 +653,9 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
     col->prop(ptr, "material_mode", UI_ITEM_NONE, IFACE_("Materials"), ICON_NONE);
     /* When operand is collection, we always use_self. */
     if (RNA_enum_get(ptr, "operand_type") == eBooleanModifierFlag_Object) {
-
-      /*------------------- bfa - original prop */
-      uiLayout *row;
-      col = &layout->column(true);
-      row = &col->row(true);
-      uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-      layout->prop(ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      uiItemDecoratorR(row, ptr, "use_self", 0); /*bfa - decorator*/
-      /* ------------ end bfa */
+      col->prop(ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
-    /*------------------- bfa - original prop */
-    uiLayout *row;
-    col = &layout->column(true);
-    row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    row->prop(ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_hole_tolerant", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
+    col->prop(ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (use_manifold) {
     /* No options as of yet. */

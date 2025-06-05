@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-from bpy.types import Panel, Menu, Operator
+from bpy.types import Panel
 from bpy.app.translations import contexts as i18n_contexts
-from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator
+
 
 class ObjectConstraintPanel:
     bl_context = "constraint"
@@ -30,39 +30,10 @@ class OBJECT_PT_constraints(ObjectConstraintPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("object.add_constraints_menu", icon='ADD')
+
+        layout.operator_menu_enum("object.constraint_add", "type", text="Add Object Constraint")
 
         layout.template_constraints(use_bone_constraints=False)
-
-# BFA menu
-class OBJECT_MT_constraint_add(GenericColumnMenu, Menu):
-    bl_description = "Add a constraint to the active object"
-
-    op_id = "object.constraint_add"
-    OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="Constraint")
-    search_header = "Object Constraint"
-
-    def draw(self, _context):
-        layout = self.layout.row()
-
-        self.draw_operator_column(layout, header="Motion Tracking",
-            types=('CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER'))
-        self.draw_operator_column(layout, header="Transform",
-            types=('COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE'))
-        self.draw_operator_column(layout, header="Tracking",
-            types=('CLAMP_TO', 'DAMPED_TRACK', 'LOCKED_TRACK', 'STRETCH_TO', 'TRACK_TO'))
-        self.draw_operator_column(layout, header="Relationship",
-            types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
-
-# BFA menu
-class OBJECT_OT_add_constraints_menu(InvokeMenuOperator, Operator):
-    bl_idname = "object.add_constraints_menu"
-    bl_label = "Add Object Constraint"
-    bl_description = "Add a constraint to the active object"
-
-    menu_id = "OBJECT_MT_constraint_add"
-    space_type = 'PROPERTIES'
-    space_context = 'CONSTRAINT'
 
 
 class BONE_PT_constraints(BoneConstraintPanel, Panel):
@@ -73,39 +44,10 @@ class BONE_PT_constraints(BoneConstraintPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("bone.add_constraints_menu", icon='ADD')
+
+        layout.operator_menu_enum("pose.constraint_add", "type", text="Add Bone Constraint")
 
         layout.template_constraints(use_bone_constraints=True)
-
-# BFA - menu
-class BONE_MT_constraint_add(GenericColumnMenu, Menu):
-    bl_description = "Add a constraint to the active bone"
-
-    op_id = "pose.constraint_add"
-    OPERATOR_DATA, TRANSLATION_CONTEXT = fetch_op_data(class_name="Constraint")
-    search_header = "Bone Constraint"
-
-    def draw(self, _context):
-        layout = self.layout.row()
-
-        self.draw_operator_column(layout, header="Motion Tracking",
-            types=('CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER'))
-        self.draw_operator_column(layout, header="Transform",
-            types=('COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE'))
-        self.draw_operator_column(layout, header="Tracking",
-            types=('CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK', 'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO'))
-        self.draw_operator_column(layout, header="Relationship",
-            types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
-
-# BFA - menu
-class BONE_OT_add_constraints_menu(InvokeMenuOperator, Operator):
-    bl_idname = "bone.add_constraints_menu"
-    bl_label = "Add Bone Constraint"
-    bl_description = "Add a constraint to the active bone"
-
-    menu_id = "BONE_MT_constraint_add"
-    space_type = 'PROPERTIES'
-    space_context = 'BONE_CONSTRAINT'
 
 
 # Parent class for constraint panels, with templates and drawing methods
@@ -229,11 +171,7 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "track_axis", expand=True)
         layout.prop(con, "up_axis", text="Up", expand=True)
-
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_target_z")
-        row.prop_decorator(con, "use_target_z")
+        layout.prop(con, "use_target_z")
 
         self.space_template(layout, con)
 
@@ -255,17 +193,10 @@ class ConstraintButtonsPanel:
         layout.prop(con, "forward_axis", expand=True)
         layout.prop(con, "up_axis", expand=True)
 
-        col = layout.column(align = True)
-        col.use_property_split = False
-        row = col.row()
-        row.prop(con, "use_fixed_location")
-        row.prop_decorator(con, "use_fixed_location")
-        row = col.row()
-        row.prop(con, "use_curve_radius")
-        row.prop_decorator(con, "use_curve_radius")
-        row = col.row()
-        row.prop(con, "use_curve_follow")
-        row.prop_decorator(con, "use_curve_follow")
+        col = layout.column()
+        col.prop(con, "use_fixed_location")
+        col.prop(con, "use_curve_radius")
+        col.prop(con, "use_curve_follow")
 
         layout.operator("constraint.followpath_path_animate", text="Animate Path", icon='ANIM_DATA')
 
@@ -277,76 +208,37 @@ class ConstraintButtonsPanel:
         layout.use_property_split = True
         layout.use_property_decorate = True
 
-        #########################################
+        # Decorators and property split are really buggy with these properties
+        row = layout.row(heading="Limit X", align=True)
+        row.use_property_decorate = False
+        row.prop(con, "use_limit_x", text="")
+        sub = row.column(align=True)
+        sub.active = con.use_limit_x
+        sub.prop(con, "min_x", text="Min")
+        sub.prop(con, "max_x", text="Max")
+        row.label(icon='BLANK1')
 
-        col = layout.column()
-        split = col.split(factor = 0.38)
-        split.use_property_split = False
+        row = layout.row(heading="Y", align=True)
+        row.use_property_decorate = False
+        row.prop(con, "use_limit_y", text="")
+        sub = row.column(align=True)
+        sub.active = con.use_limit_y
+        sub.prop(con, "min_y", text="Min")
+        sub.prop(con, "max_y", text="Max")
+        row.label(icon='BLANK1')
 
-        col = split.column()
-        col.prop(con, "use_limit_x", text = "Limit X")
-
-        col = split.column(align = True)
-        if con.use_limit_x:
-            col.use_property_decorate = False
-            row = col.row(align = True)
-            sub = row.column(align=True)
-            sub.prop(con, "min_x", text="Min")
-            sub.prop(con, "max_x", text="Max")
-            row.label(icon='BLANK1')
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        #########################################
-
-        col = layout.column()
-        split = col.split(factor = 0.38)
-        split.use_property_split = False
-
-        col = split.column()
-        col.prop(con, "use_limit_y", text = "Y")
-
-        col = split.column(align = True)
-        if con.use_limit_y:
-            col.use_property_decorate = False
-            row = col.row(align = True)
-            sub = row.column(align=True)
-            sub.prop(con, "min_y", text="Min")
-            sub.prop(con, "max_y", text="Max")
-            row.label(icon='BLANK1')
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        #########################################
-
-        col = layout.column()
-        split = col.split(factor = 0.38)
-        split.use_property_split = False
-
-        col = split.column(align = True)
-        col.prop(con, "use_limit_z", text = "Z")
-
-        col = split.column()
-        if con.use_limit_z:
-            col.use_property_decorate = False
-            row = col.row(align = True)
-            sub = row.column(align=True)
-            sub.prop(con, "min_z", text="Min")
-            sub.prop(con, "max_z", text="Max")
-            row.label(icon='BLANK1')
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        ###########################################
+        row = layout.row(heading="Z", align=True)
+        row.use_property_decorate = False
+        row.prop(con, "use_limit_z", text="")
+        sub = row.column(align=True)
+        sub.active = con.use_limit_z
+        sub.prop(con, "min_z", text="Min")
+        sub.prop(con, "max_z", text="Max")
+        row.label(icon='BLANK1')
 
         layout.prop(con, "euler_order", text="Order")
-
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_transform_limit")
-        row.prop_decorator(con, "use_transform_limit")
-        row.prop_decorator(con, "use_legacy_behavior")
-
+        layout.prop(con, "use_transform_limit")
+        layout.prop(con, "use_legacy_behavior")
         self.space_template(layout, con, target=False, owner=True)
 
         self.draw_influence(layout, con)
@@ -357,69 +249,65 @@ class ConstraintButtonsPanel:
         layout.use_property_split = True
         layout.use_property_decorate = True
 
-        #########################################
+        col = layout.column()
 
-        col = layout.column(align = True)
-        split = col.split(factor = 0.38)
+        row = col.row(heading="Minimum X", align=True)
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_min_x", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_min_x
+        subsub.prop(con, "min_x", text="")
+        row.prop_decorator(con, "min_x")
 
-        col = split.column(align = True)
-        col.use_property_split = False
-        col.prop(con, "use_min_x", text = "Minimum X")
-        col.prop(con, "use_min_y", text = "Y")
-        col.prop(con, "use_min_z", text = "Z")
+        row = col.row(heading="Y", align=True)
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_min_y", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_min_y
+        subsub.prop(con, "min_y", text="")
+        row.prop_decorator(con, "min_y")
 
-        col = split.column(align = True)
-        if con.use_min_x:
-            row = col.row(align = True)
-            row.prop(con, "min_x", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-        if con.use_min_y:
-            row = col.row(align = True)
-            row.prop(con, "min_y", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-        if con.use_min_z:
-            row = col.row(align = True)
-            row.prop(con, "min_z", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        row = col.row(heading="Z", align=True)
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_min_z", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_min_z
+        subsub.prop(con, "min_z", text="")
+        row.prop_decorator(con, "min_z")
 
-        ###########################################
+        col.separator()
 
-        col = layout.column(align = True)
-        split = col.split(factor = 0.38)
+        row = col.row(heading="Maximum X", align=True)
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_max_x", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_max_x
+        subsub.prop(con, "max_x", text="")
+        row.prop_decorator(con, "max_x")
 
-        col = split.column(align = True)
-        col.use_property_split = False
-        col.prop(con, "use_max_x", text = "Maximum X")
-        col.prop(con, "use_max_y", text = "Y")
-        col.prop(con, "use_max_z", text = "Z")
+        row = col.row(heading="Y", align=True)
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_max_y", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_max_y
+        subsub.prop(con, "max_y", text="")
+        row.prop_decorator(con, "max_y")
 
-        col = split.column(align = True)
-        if con.use_max_x:
-            row = col.row(align = True)
-            row.prop(con, "max_x", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-        if con.use_max_y:
-            row = col.row(align = True)
-            row.prop(con, "max_y", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-        if con.use_max_z:
-            row = col.row(align = True)
-            row.prop(con, "max_z", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        row = col.row(heading="Z", align=True)
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_max_z", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_max_z
+        subsub.prop(con, "max_z", text="")
+        row.prop_decorator(con, "max_z")
 
-        ###########################################
-
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_transform_limit")
-        row.prop_decorator(con, "use_transform_limit")
-
+        layout.prop(con, "use_transform_limit")
         self.space_template(layout, con, target=False, owner=True)
 
         self.draw_influence(layout, con)
@@ -488,11 +376,7 @@ class ConstraintButtonsPanel:
         subsub.prop(con, "max_z", text="")
         row.prop_decorator(con, "max_z")
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_transform_limit")
-        row.prop_decorator(con, "use_transform_limit")
-
+        layout.prop(con, "use_transform_limit")
         self.space_template(layout, con, target=False, owner=True)
 
         self.draw_influence(layout, con)
@@ -522,13 +406,6 @@ class ConstraintButtonsPanel:
         sub.prop(con, "invert_y", text="Y", toggle=True)
         sub.prop(con, "invert_z", text="Z", toggle=True)
         row.label(icon='BLANK1')
-
-        # bfa - goo engine - copy rotation constraint invert rotation patch
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "invert_all", text="Invert Rotation")
-        row.prop_decorator(con, "invert_all")
-        # end bfa - goo engine
 
         layout.prop(con, "mix_mode", text="Mix", text_ctxt=i18n_contexts.constraint)
 
@@ -560,10 +437,7 @@ class ConstraintButtonsPanel:
         sub.prop(con, "invert_z", text="Z", toggle=True)
         row.label(icon='BLANK1')
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_offset")
-        row.prop_decorator(con, "use_offset")
+        layout.prop(con, "use_offset")
 
         self.space_template(layout, con)
 
@@ -587,21 +461,12 @@ class ConstraintButtonsPanel:
 
         col = layout.column()
         col.prop(con, "power")
+        col.prop(con, "use_make_uniform")
 
-        col = layout.column(align = True)
-        col.use_property_split = False
-        row = col.row()
-        row.prop(con, "use_make_uniform")
-        row.prop_decorator(con, "use_make_uniform")
-
-        row = col.row()
-        row.prop(con, "use_offset")
-        row.prop_decorator(con, "use_offset")
-
+        col.prop(con, "use_offset")
         row = col.row()
         row.active = con.use_offset
         row.prop(con, "use_add")
-        row.prop_decorator(con, "use_add")
 
         self.space_template(layout, con)
 
@@ -632,11 +497,7 @@ class ConstraintButtonsPanel:
 
         self.target_template(layout, con)
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "remove_target_shear")
-        row.prop_decorator(con, "remove_target_shear")
-
+        layout.prop(con, "remove_target_shear")
         layout.prop(con, "mix_mode", text="Mix", text_ctxt=i18n_contexts.constraint)
 
         self.space_template(layout, con)
@@ -653,20 +514,14 @@ class ConstraintButtonsPanel:
         target_row.active = not con.use_eval_time
         self.target_template(target_row, con)
 
-        ###########################################
-
-        split = layout.split(factor = 0.38)
-        col = split.column(align = True)
-        col.use_property_split = False
-        col.prop(con, "use_eval_time", text = "Evaluation Time")
-        col = split.column()
-        if con.use_eval_time:
-            row = col.row()
-            row.prop(con, "eval_time", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        ##########################################
+        row = layout.row(align=True, heading="Evaluation Time")
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_eval_time", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_eval_time
+        subsub.prop(con, "eval_time", text="")
+        row.prop_decorator(con, "eval_time")
 
         layout.prop(con, "mix_mode", text="Mix", text_ctxt=i18n_contexts.constraint)
 
@@ -699,10 +554,7 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "limit_mode", text="Clamp Region")
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_transform_limit")
-        row.prop_decorator(con, "use_transform_limit")
+        layout.prop(con, "use_transform_limit")
 
         self.space_template(layout, con)
 
@@ -725,38 +577,27 @@ class ConstraintButtonsPanel:
         col = layout.column()
         col.prop(con, "bulge", text="Volume Variation")
 
-        ##########################################
+        row = col.row(heading="Volume Min", align=True)
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_bulge_min", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_bulge_min
+        subsub.prop(con, "bulge_min", text="")
+        row.prop_decorator(con, "bulge_min")
 
-        split = layout.split(factor = 0.38)
-        col = split.column(align = True)
-        col.use_property_split = False
-        col.prop(con, "use_bulge_min", text = "Volume Min")
-        col = split.column()
-        if con.use_bulge_min:
-            row = col.row()
-            row.prop(con, "bulge_min", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
+        row = col.row(heading="Max", align=True)
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(con, "use_bulge_max", text="")
+        subsub = sub.row(align=True)
+        subsub.active = con.use_bulge_max
+        subsub.prop(con, "bulge_max", text="")
+        row.prop_decorator(con, "bulge_max")
 
-        split = layout.split(factor = 0.38)
-        col = split.column()
-        col.use_property_split = False
-        col.prop(con, "use_bulge_max", text = "Volume Max")
-        col = split.column()
-        if con.use_bulge_max:
-            row = col.row()
-            row.prop(con, "bulge_max", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        if con.use_bulge_min or con.use_bulge_max:
-            row = layout.row()
-            row.separator()
-            row.prop(con, "bulge_smooth", text="Smooth")
-
-        ##########################################
-
-        layout.separator()
+        row = col.row()
+        row.active = con.use_bulge_min or con.use_bulge_max
+        row.prop(con, "bulge_smooth", text="Smooth")
 
         layout.prop(con, "volume", expand=True)
         layout.prop(con, "keep_axis", text="Rotation", expand=True)
@@ -773,11 +614,7 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "offset")
         layout.prop(con, "floor_location", expand=True, text="Min/Max")
-
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_rotation")
-        row.prop_decorator(con, "use_rotation")
+        layout.prop(con, "use_rotation")
 
         self.space_template(layout, con)
 
@@ -793,10 +630,7 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "main_axis", expand=True)
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_cyclic")
-        row.prop_decorator(con, "use_cyclic")
+        layout.prop(con, "use_cyclic")
 
         self.draw_influence(layout, con)
 
@@ -808,10 +642,7 @@ class ConstraintButtonsPanel:
 
         self.target_template(layout, con)
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_motion_extrapolate", text="Extrapolate")
-        row.prop_decorator(con, "use_motion_extrapolate")
+        layout.prop(con, "use_motion_extrapolate", text="Extrapolate")
 
         self.space_template(layout, con)
 
@@ -853,11 +684,7 @@ class ConstraintButtonsPanel:
                             )
 
             layout.prop(con, "project_limit", text="Distance")
-
-            row = layout.row()
-            row.use_property_split = False
-            row.prop(con, "use_project_opposite")
-            row.prop_decorator(con, "use_project_opposite")
+            layout.prop(con, "use_project_opposite")
 
             layout.separator()
 
@@ -866,32 +693,20 @@ class ConstraintButtonsPanel:
             row.prop(con, "cull_face", expand=True)
             row = col.row()
             row.active = con.use_project_opposite and con.cull_face != 'OFF'
-
-
-            row = col.row()
-            row.use_property_split = False
             row.prop(con, "use_invert_cull")
-            row.prop_decorator(con, "use_invert_cull")
 
             layout.separator()
 
         if con.shrinkwrap_type in {'PROJECT', 'NEAREST_SURFACE', 'TARGET_PROJECT'}:
             layout.prop(con, "wrap_mode", text="Snap Mode")
-
-            ###########################################
-
-            split = layout.split(factor = 0.38)
-            col = split.column(align = True)
-            col.use_property_split = False
-            col.prop(con, "use_track_normal", text = "Align to Normal")
-            col = split.column()
-            if con.use_track_normal:
-                row = col.row()
-                row.prop(con, "track_axis", text="")
-            else:
-                col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-            ##########################################
+            row = layout.row(heading="Align to Normal", align=True)
+            row.use_property_decorate = False
+            sub = row.row(align=True)
+            sub.prop(con, "use_track_normal", text="")
+            subsub = sub.row(align=True)
+            subsub.active = con.use_track_normal
+            subsub.prop(con, "track_axis", text="")
+            row.prop_decorator(con, "track_axis")
 
         self.draw_influence(layout, con)
 
@@ -928,10 +743,7 @@ class ConstraintButtonsPanel:
         if con.target:
             layout.prop(con, "offset", text="Pivot Offset")
         else:
-            row = layout.row()
-            row.use_property_split = False
-            row.prop(con, "use_relative_location")
-            row.prop_decorator(con, "use_relative_location")
+            layout.prop(con, "use_relative_location")
             if con.use_relative_location:
                 layout.prop(con, "offset", text="Pivot Point")
             else:
@@ -954,20 +766,12 @@ class ConstraintButtonsPanel:
         else:
             clip = con.clip
 
-        col = layout.column(align = True)
-        col.use_property_split = False
-        row = col.row()
-        row.prop(con, "use_active_clip")
-        row.prop_decorator(con, "use_active_clip")
+        layout.prop(con, "use_active_clip")
+        layout.prop(con, "use_3d_position")
 
-        row = col.row()
-        row.prop(con, "use_3d_position")
-        row.prop_decorator(con, "use_3d_position")
-
-        row = col.row()
+        row = layout.row()
         row.active = not con.use_3d_position
         row.prop(con, "use_undistorted_position")
-        row.prop_decorator(con, "use_undistorted_position")
 
         if not con.use_active_clip:
             layout.prop(con, "clip")
@@ -996,17 +800,14 @@ class ConstraintButtonsPanel:
     def draw_camera_solver(self, context):
         layout = self.layout
         con = self.get_constraint(context)
-        layout.use_property_split = False
+        layout.use_property_split = True
         layout.use_property_decorate = True
 
-        row = layout.row()
-        row.prop(con, "use_active_clip")
-        row.prop_decorator(con, "use_active_clip")
+        layout.prop(con, "use_active_clip")
 
         if not con.use_active_clip:
             layout.prop(con, "clip")
 
-        layout.use_property_split = True
         layout.operator("clip.constraint_to_fcurve")
 
         self.draw_influence(layout, con)
@@ -1023,10 +824,7 @@ class ConstraintButtonsPanel:
         else:
             clip = con.clip
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_active_clip")
-        row.prop_decorator(con, "use_active_clip")
+        layout.prop(con, "use_active_clip")
 
         if not con.use_active_clip:
             layout.prop(con, "clip")
@@ -1066,16 +864,8 @@ class ConstraintButtonsPanel:
         layout.use_property_decorate = True
 
         col = layout.column()
-
-        row = col.row()
-        row.use_property_split = False
-        row.prop(con, "use_deform_preserve_volume")
-        row.prop_decorator(con, "use_deform_preserve_volume")
-
-        row = col.row()
-        row.use_property_split = False
-        row.prop(con, "use_bone_envelopes")
-        row.prop_decorator(con, "use_bone_envelopes")
+        col.prop(con, "use_deform_preserve_volume")
+        col.prop(con, "use_bone_envelopes")
 
         if context.pose_bone:
             col.prop(con, "use_current_location")
@@ -1169,42 +959,21 @@ class ConstraintButtonsPanel:
                 col.prop(con, "pole_angle")
             col.prop(con, "iterations")
             col.prop(con, "chain_count")
+            col.prop(con, "use_tail")
+            col.prop(con, "use_stretch")
 
-            row = col.row()
-            row.use_property_split = False
-            row.prop(con, "use_tail")
-            row.prop_decorator(con, "use_tail")
+            col = layout.column()
+            row = col.row(align=True, heading="Weight Position")
+            row.prop(con, "use_location", text="")
+            sub = row.row(align=True)
+            sub.active = con.use_location
+            sub.prop(con, "weight", text="", slider=True)
 
-            row = col.row()
-            row.use_property_split = False
-            row.prop(con, "use_stretch")
-            row.prop_decorator(con, "use_stretch")
-
-            split = layout.split(factor = 0.38)
-            col = split.column()
-            col.use_property_split = False
-            row = col.row()
-            row.prop(con, "use_location", text = "Weight Position")
-            row.prop_decorator(con, "use_location")
-            col = split.column()
-            if con.use_location:
-                row = col.row()
-                row.prop(con, "weight", text="")
-            else:
-                col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-            split = layout.split(factor = 0.38)
-            col = split.column()
-            col.use_property_split = False
-            row = col.row()
-            row.prop(con, "use_rotation", text = "Rotation")
-            row.prop_decorator(con, "use_rotation")
-            col = split.column()
-            if con.use_rotation:
-                row = col.row()
-                row.prop(con, "orient_weight", text="")
-            else:
-                col.label(icon='DISCLOSURE_TRI_RIGHT')
+            row = col.row(align=True, heading="Rotation")
+            row.prop(con, "use_rotation", text="")
+            sub = row.row(align=True)
+            sub.active = con.use_rotation
+            sub.prop(con, "orient_weight", text="", slider=True)
 
         self.draw_influence(layout, con)
 
@@ -1319,16 +1088,8 @@ class ConstraintButtonsSubPanel:
 
         col = layout.column()
         col.prop(con, "chain_count")
-
-        row = col.row()
-        row.use_property_split = False
-        row.prop(con, "use_even_divisions")
-        row.prop_decorator(con, "use_even_divisions")
-
-        row = col.row()
-        row.use_property_split = False
-        row.prop(con, "use_chain_offset")
-        row.prop_decorator(con, "use_chain_offset")
+        col.prop(con, "use_even_divisions")
+        col.prop(con, "use_chain_offset")
 
     def draw_spline_ik_chain_scaling(self, context):
         layout = self.layout
@@ -1336,54 +1097,33 @@ class ConstraintButtonsSubPanel:
         layout.use_property_split = True
         layout.use_property_decorate = True
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_curve_radius")
-        row.prop_decorator(con, "use_curve_radius")
+        layout.prop(con, "use_curve_radius")
 
         layout.prop(con, "y_scale_mode")
         layout.prop(con, "xz_scale_mode")
 
         if con.xz_scale_mode in {'INVERSE_PRESERVE', 'VOLUME_PRESERVE'}:
-
-            row = layout.row()
-            row.use_property_split = False
-            row.prop(con, "use_original_scale")
-            row.prop_decorator(con, "use_original_scale")
+            layout.prop(con, "use_original_scale")
 
         if con.xz_scale_mode == 'VOLUME_PRESERVE':
             col = layout.column()
             col.prop(con, "bulge", text="Volume Variation")
 
-            split = layout.split(factor = 0.38)
-            col = split.column()
-            col.use_property_split = False
-            row = col.row()
-            row.prop(con, "use_bulge_min", text = "Volume Min")
-            row.prop_decorator(con, "use_bulge_min")
-            col = split.column()
-            if con.use_bulge_min:
-                row = col.row()
-                row.prop(con, "bulge_min", text="")
-            else:
-                col.label(icon='DISCLOSURE_TRI_RIGHT')
+            row = col.row(heading="Volume Min")
+            row.prop(con, "use_bulge_min", text="")
+            sub = row.row()
+            sub.active = con.use_bulge_min
+            sub.prop(con, "bulge_min", text="")
 
-            split = layout.split(factor = 0.38)
-            col = split.column()
-            col.use_property_split = False
-            row = col.row()
-            row.prop(con, "use_bulge_max", text = "Volume Max")
-            row.prop_decorator(con, "use_bulge_max")
-            col = split.column()
-            if con.use_bulge_max:
-                row = col.row()
-                row.prop(con, "bulge_max", text="")
-            else:
-                col.label(icon='DISCLOSURE_TRI_RIGHT')
+            row = col.row(heading="Max")
+            row.prop(con, "use_bulge_max", text="")
+            sub = row.row()
+            sub.active = con.use_bulge_max
+            sub.prop(con, "bulge_max", text="")
 
-            if con.use_bulge_min or con.use_bulge_max:
-                row = layout.row()
-                row.prop(con, "bulge_smooth", text="Smooth")
+            row = layout.row()
+            row.active = con.use_bulge_min or con.use_bulge_max
+            row.prop(con, "bulge_smooth", text="Smooth")
 
     def draw_action_target(self, context):
         layout = self.layout
@@ -1418,11 +1158,7 @@ class ConstraintButtonsSubPanel:
                 text="Slot",
             )
 
-
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(con, "use_bone_object_action")
-        row.prop_decorator(con, "use_bone_object_action")
+        layout.prop(con, "use_bone_object_action")
 
         col = layout.column(align=True)
         col.prop(con, "frame_start", text="Frame Start")
@@ -1953,11 +1689,7 @@ class BONE_PT_bKinematicConstraint(BoneConstraintPanel, ConstraintButtonsPanel, 
 classes = (
     # Object Panels
     OBJECT_PT_constraints,
-    OBJECT_MT_constraint_add, # BFA menu
-    OBJECT_OT_add_constraints_menu, # BFA menu
     BONE_PT_constraints,
-    BONE_MT_constraint_add, # BFA menu
-    BONE_OT_add_constraints_menu, # BFA menu
     OBJECT_PT_bChildOfConstraint,
     OBJECT_PT_bTrackToConstraint,
     OBJECT_PT_bKinematicConstraint,

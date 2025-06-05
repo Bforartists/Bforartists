@@ -41,13 +41,11 @@
 
 #include "BLT_translation.hh"
 
-#include "ED_asset_shelf.hh" /* bfa assetshelf */
 #include "ED_image.hh"
 #include "ED_node.hh"
 #include "ED_node_preview.hh"
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
-#include "../asset/ED_asset_shelf.hh" /* bfa assetshelf */ 
 
 #include "UI_view2d.hh"
 
@@ -68,7 +66,6 @@
 #include "NOD_socket_interface_key.hh"
 
 #include "io_utils.hh"
-#include "../interface/interface_intern.hh" /* bfa asset nodegroup override*/
 
 #include "node_intern.hh" /* own include */
 
@@ -675,22 +672,6 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
   region->regiontype = RGN_TYPE_HEADER;
   region->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_BOTTOM : RGN_ALIGN_TOP;
 
-  /* start bfa - asset shelf */
-  region = BKE_area_region_new();
-
-  BLI_addtail(&snode->regionbase, region);
-  region->regiontype = RGN_TYPE_ASSET_SHELF;
-  region->alignment = RGN_ALIGN_BOTTOM;
-  region->flag |= RGN_FLAG_HIDDEN;
-
-  /* asset shelf header */
-  region = BKE_area_region_new();
-
-  BLI_addtail(&snode->regionbase, region);
-  region->regiontype = RGN_TYPE_ASSET_SHELF_HEADER;
-  region->alignment = RGN_ALIGN_BOTTOM | RGN_ALIGN_HIDE_WITH_PREV;
-  /* end bfa  */
-
   /* buttons/list view */
   region = BKE_area_region_new();
 
@@ -1234,38 +1215,11 @@ static bool node_panel_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event
 
 static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
-  
-  /* start bfa asset shelf props*/
-  wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
-  bool use_override = false;
-  if (!asset_drag->import_settings.is_from_browser) {
-    AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
-    if (active_shelf) {
-      eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
-      asset_drag->import_settings.method = import_method_prop;
-      asset_drag->import_settings.use_instance_collections = false;
-      use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
-    }
-  }
-  ID *id = WM_drag_asset_id_import(C, asset_drag, 0);
-  if (use_override) {  
-    ID *owner_id = id; 
-    ID *id_or = id;
-    PointerRNA owner_ptr;
-    PropertyRNA *prop;
-    if (!ELEM(nullptr, owner_id, id_or)) {
-      id = ui_template_id_liboverride_hierarchy_make(
-      C, CTX_data_main(C), owner_id, id_or, nullptr);
-    }
-  }
-  /* end bfa */
-  // ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
+  ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
 
   RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
 
-  RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET || 
-    (asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK))
-  ); // bfa addded for displaying the linked data-block 
+  RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET));
 }
 
 static void node_id_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
@@ -1532,18 +1486,6 @@ static void node_region_listener(const wmRegionListenerParams *params)
 }
 
 }  // namespace blender::ed::space_node
-
-/* start bfa - add handlers, stuff you only do once or on area/region changes */
-static void node_asset_shelf_region_init(wmWindowManager *wm, ARegion *region)
-{
-  using namespace blender::ed;
-  wmKeyMap *keymap = WM_keymap_ensure(
-      wm->defaultconf, "Node Generic", SPACE_NODE, RGN_TYPE_WINDOW);
-  WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
-
-  asset::shelf::region_init(wm, region);
-}
-/* end bfa */
 
 /* Outside of blender namespace to avoid Python documentation build error with `ctypes`. */
 extern "C" {
@@ -1839,7 +1781,6 @@ static int node_space_subtype_get(ScrArea *area)
 static void node_space_subtype_set(ScrArea *area, int value)
 {
   SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
   ED_node_set_tree_type(snode, rna_node_tree_type_from_enum(value));
 }
 
@@ -1901,7 +1842,6 @@ static void node_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 
 void ED_spacetype_node()
 {
-  using namespace blender::ed;  // bfa assetshelf
   using namespace blender::ed::space_node;
 
   std::unique_ptr<SpaceType> st = std::make_unique<SpaceType>();
@@ -1982,37 +1922,6 @@ void ED_spacetype_node()
   art->init = node_toolbar_region_init;
   art->draw = node_toolbar_region_draw;
   BLI_addhead(&st->regiontypes, art);
-
-  /* bfa - regions: assetshelf */
-  art = MEM_callocN<ARegionType>("spacetype node asset shelf region");
-  art->regionid = RGN_TYPE_ASSET_SHELF;
-  art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_ASSET_SHELF | ED_KEYMAP_FRAMES;
-  art->duplicate = asset::shelf::region_duplicate;
-  art->free = asset::shelf::region_free;
-  art->on_poll_success = asset::shelf::region_on_poll_success;
-  art->listener = asset::shelf::region_listen;
-  art->message_subscribe = asset::shelf::region_message_subscribe;
-  art->poll = asset::shelf::regions_poll;
-  art->snap_size = asset::shelf::region_snap;
-  art->on_user_resize = asset::shelf::region_on_user_resize;
-  art->context = asset::shelf::context;
-  art->init = node_asset_shelf_region_init;
-  art->layout = asset::shelf::region_layout;
-  art->draw = asset::shelf::region_draw;
-  BLI_addhead(&st->regiontypes, art);
-
-  /* regions: asset shelf header */
-  art = MEM_callocN<ARegionType>("spacetype node asset shelf header region");
-  art->regionid = RGN_TYPE_ASSET_SHELF_HEADER;
-  art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_ASSET_SHELF | ED_KEYMAP_VIEW2D | ED_KEYMAP_FOOTER;
-  art->init = asset::shelf::header_region_init;
-  art->poll = asset::shelf::regions_poll;
-  art->draw = asset::shelf::header_region;
-  art->listener = asset::shelf::header_region_listen;
-  art->context = asset::shelf::context;
-  BLI_addhead(&st->regiontypes, art);
-  asset::shelf::types_register(art, SPACE_NODE);
-  /* end bfa */
 
   WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_catalog_assets_menu_type()));
   WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_unassigned_assets_menu_type()));

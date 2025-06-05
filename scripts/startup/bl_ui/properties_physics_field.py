@@ -90,30 +90,28 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col = flow.column()
             col.prop(field, "guide_free")
             col.prop(field, "falloff_power")
-
-            col = flow.column(align = True)
-            row = col.row()
-            row.use_property_split = False
-            row.prop(field, "use_guide_path_add")
-            row.prop_decorator(field, "use_guide_path_add")
-            row = col.row()
-            row.use_property_split = False
-            row.prop(field, "use_guide_path_weight")
-            row.prop_decorator(field, "use_guide_path_weight")
+            col.prop(field, "use_guide_path_add")
+            col.prop(field, "use_guide_path_weight")
 
             col.separator()
 
             col = flow.column()
             col.prop(field, "guide_clump_amount", text="Clumping Amount")
             col.prop(field, "guide_clump_shape")
-            row = col.row()
-            row.use_property_split = False
-            row.prop(field, "use_max_distance")
-            row.prop_decorator(field, "use_max_distance")
 
-            sub = col.column()
-            if field.use_max_distance:
-                sub.prop(field, "distance_max")
+            col.separator()
+
+            col.prop(field, "guide_minimum", text="Min Distance")
+
+            col = layout.column(align=False, heading="Max Distance")
+            col.use_property_decorate = False
+            row = col.row(align=True)
+            sub = row.row(align=True)
+            sub.prop(field, "use_max_distance", text="")
+            sub = sub.row(align=True)
+            sub.active = field.use_max_distance
+            sub.prop(field, "distance_max", text="")
+            row.prop_decorator(field, "distance_max")
 
         elif field.type == 'TEXTURE':
             col = flow.column()
@@ -123,51 +121,26 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
 
             col.prop(field, "strength")
 
-            col.label( text = "Affect")
-            col.use_property_split = False
-            row = col.row()
-            row.separator()
-            row.prop(field, "apply_to_location", text="Location")
-            row.prop_decorator(field, "apply_to_location")
+            sub = col.column(heading="Affect")
+            sub.prop(field, "apply_to_location", text="Location")
 
             col = flow.column()
             col.prop(field, "texture_nabla")
-
-            col = flow.column(align = True)
-            row = col.row()
-            row.use_property_split = False
-            row.prop(field, "use_object_coords")
-            row.prop_decorator(field, "use_object_coords")
-            row = col.row()
-            row.use_property_split = False
-            row.prop(field, "use_2d_force")
-            row.prop_decorator(field, "use_2d_force")
+            col.prop(field, "use_object_coords")
+            col.prop(field, "use_2d_force")
 
         elif field.type == 'FLUID_FLOW':
             col = flow.column()
             col.prop(field, "strength")
             col.prop(field, "flow")
 
-            col.label( text = "Affect")
-            col.use_property_split = False
-            row = col.row()
-            row.separator()
-            row.prop(field, "apply_to_location", text="Location")
-            row.prop_decorator(field, "apply_to_location")
-            row = col.row()
-            row.separator()
-            row.prop(field, "apply_to_rotation", text="Rotation")
-            row.prop_decorator(field, "apply_to_rotation")
+            sub = col.column(heading="Affect")
+            sub.prop(field, "apply_to_location", text="Location")
+            sub.prop(field, "apply_to_rotation", text="Rotation")
 
             col = flow.column()
             col.prop(field, "source_object")
-
-            col = flow.column(align = True)
-            row = col.row()
-            row.use_property_split = False
-            row.prop(field, "use_smoke_density")
-            row.prop_decorator(field, "use_smoke_density")
-
+            col.prop(field, "use_smoke_density")
         else:
             del flow
             basic_force_field_settings_ui(self, field)
@@ -240,7 +213,6 @@ class PHYSICS_PT_field_settings_texture_select(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_field_falloff(PhysicButtonsPanel, Panel):
     bl_label = "Falloff"
     bl_parent_id = "PHYSICS_PT_field"
-    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
         'BLENDER_EEVEE_NEXT',
@@ -430,9 +402,7 @@ class PHYSICS_PT_collision_particle(PhysicButtonsPanel, Panel):
         col = flow.column()
         col.prop(settings, "permeability", slider=True)
         col.prop(settings, "stickiness")
-        col.use_property_split = False
         col.prop(settings, "use_particle_kill")
-        col.use_property_split = True
 
         col = flow.column()
         sub = col.column(align=True)
@@ -490,16 +460,12 @@ class PHYSICS_PT_collision_softbody(PhysicButtonsPanel, Panel):
         col = flow.column()
         col.prop(settings, "cloth_friction")
 
-        col = flow.column(align = True)
-        row = col.row()
-        row.use_property_split = False
-        row.prop(settings, "use_culling")
-        row.prop_decorator(settings, "use_culling")
+        col = flow.column()
+        col.prop(settings, "use_culling")
 
-        row = col.row()
-        row.use_property_split = False
-        row.prop(settings, "use_normal")
-        row.prop_decorator(settings, "use_normal")
+        col = flow.column()
+        col.prop(settings, "use_normal")
+
 
 classes = (
     PHYSICS_PT_field,

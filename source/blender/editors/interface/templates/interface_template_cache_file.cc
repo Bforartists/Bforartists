@@ -84,18 +84,14 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
 
   row = &layout->row(false);
   uiLayoutSetActive(row, is_alembic && engine_supports_procedural);
-  uiLayoutSetPropSep(row, false); /* BFA - use_property_split = False */
   row->prop(fileptr, "use_render_procedural", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, fileptr, "use_render_procedural", 0); /* BFA - decorator */
 
   const bool use_render_procedural = RNA_boolean_get(fileptr, "use_render_procedural");
   const bool use_prefetch = RNA_boolean_get(fileptr, "use_prefetch");
 
   row = &layout->row(false);
   uiLayoutSetEnabled(row, use_render_procedural);
-  uiLayoutSetPropSep(row, false); /* BFA - use_property_split = False */
   row->prop(fileptr, "use_prefetch", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, fileptr, "use_prefetch", 0); /* BFA - decorator */
 
   sub = &layout->row(false);
   uiLayoutSetEnabled(sub, use_prefetch && use_render_procedural);
@@ -111,39 +107,19 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   /* Ensure that the context has a CacheFile as this may not be set inside of modifiers panels. */
   uiLayoutSetContextPointer(layout, "edit_cachefile", fileptr);
 
-  uiLayout *row, *col; /* BFA , added *col, removed *sub, *subsub */
+  uiLayout *row, *sub, *subsub;
 
   row = &layout->row(false);
-
-  /*------------------- bfa - original props */
-    col = &layout->column(true);
-  row = &layout->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
-  // ------------------ bfa new left aligned prop with triangle button to hide the slider
-
-  /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = &layout->split(0.385f, true);
-
-  /* FIRST PART ................................................ */
-  row = &split->row(false);
-  uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-  row->prop(fileptr, "override_frame", UI_ITEM_NONE, "Override Frame", ICON_NONE);
-
-  /* SECOND PART ................................................ */
-  row = &split->row(false);
-  if (RNA_boolean_get(fileptr, "override_frame")) {
-    row->prop(fileptr, "frame", UI_ITEM_NONE, "", ICON_NONE);
-  }
-  else {
-    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
-  }
-
-  // ------------------------------- end bfa
+  row = &layout->row(true, IFACE_("Override Frame"));
+  sub = &row->row(true);
+  uiLayoutSetPropDecorate(sub, false);
+  sub->prop(fileptr, "override_frame", UI_ITEM_NONE, "", ICON_NONE);
+  subsub = &sub->row(true);
+  uiLayoutSetActive(subsub, RNA_boolean_get(fileptr, "override_frame"));
+  subsub->prop(fileptr, "frame", UI_ITEM_NONE, "", ICON_NONE);
+  uiItemDecoratorR(row, fileptr, "frame", 0);
 
   row = &layout->row(false);
   row->prop(fileptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);

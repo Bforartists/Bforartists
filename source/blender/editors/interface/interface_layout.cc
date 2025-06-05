@@ -1122,8 +1122,15 @@ static uiBut *ui_item_with_label(uiLayout *layout,
     if (ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH, PROP_NONE)) {
       if ((RNA_property_flag(prop) & PROP_PATH_SUPPORTS_TEMPLATES) != 0) {
         const std::string path = RNA_property_string_get(ptr, prop);
-        if (!BKE_validate_template_syntax(path.c_str()).is_empty()) {
-          UI_but_flag_enable(but, UI_BUT_REDALERT);
+        if (BKE_path_contains_template_syntax(path)) {
+          const std::optional<blender::bke::path_templates::VariableMap> variables =
+              BKE_build_template_variables_for_prop(
+                  static_cast<const bContext *>(block->evil_C), ptr, prop);
+          BLI_assert(variables.has_value());
+
+          if (!BKE_path_validate_template(path, *variables).is_empty()) {
+            UI_but_flag_enable(but, UI_BUT_REDALERT);
+          }
         }
       }
     }
@@ -1139,7 +1146,6 @@ static uiBut *ui_item_with_label(uiLayout *layout,
     (layout_prop_decorate ? layout_prop_decorate : sub)->label(nullptr, ICON_BLANK1);
   }
 #endif /* UI_PROP_DECORATE */
-
 
   UI_block_layout_set_current(block, layout);
   return but;
@@ -1734,20 +1740,6 @@ void uiItemEnumO_string(uiLayout *layout,
   RNA_property_enum_set(&ptr, prop, value);
 }
 
-void uiItemStringO(uiLayout *layout,
-                   const std::optional<StringRef> name,
-                   int icon,
-                   const StringRefNull opname,
-                   const StringRefNull propname,
-                   const char *value)
-{
-  PointerRNA ptr = layout->op(opname, name, icon, layout->root_->opcontext, UI_ITEM_NONE);
-  if (RNA_pointer_is_null(&ptr)) {
-    return;
-  }
-  RNA_string_set(&ptr, propname.c_str(), value);
-}
-
 PointerRNA uiLayout::op(wmOperatorType *ot, const std::optional<StringRef> name, int icon)
 {
   return this->op(ot, name, icon, root_->opcontext, UI_ITEM_NONE);
@@ -1878,7 +1870,7 @@ static bool ui_item_rna_is_expand(PropertyRNA *prop, int index, const eUI_Item_F
 /**
  * Find first layout ancestor (or self) with a heading set.
  *
- * \returns the layout to add the heading to as fallback (i.e. if it can't be placed in a split
+ * \returns the layout to add the heading to as a fallback (i.e. if it can't be placed in a split
  *          layout). Its #uiLayout.heading member can be cleared to mark the heading as added (so
  *          it's not added multiple times). Returns a pointer to the heading
  */
@@ -1963,9 +1955,6 @@ void uiLayout::prop(PointerRNA *ptr,
    * we need the ability to have decorators still. */
   bool use_prop_sep_split_label = use_prop_sep;
   bool use_split_empty_name = (flag & UI_ITEM_R_SPLIT_EMPTY_NAME);
-
-  /* bfa - whether label is added before expanded prop */
-  bool expand_label_added = false;
 
 #ifdef UI_PROP_DECORATE
   struct DecorateInfo {
@@ -2132,49 +2121,22 @@ void uiLayout::prop(PointerRNA *ptr,
         /* Pass */
       }
       else if (ui_item_rna_is_expand(prop, index, flag)) {
-      // fmt::memory_buffer name_with_suffix;
-        /* bfa - create a column so label could be added before */
-        uiLayout *col;
-        if (layout_row != nullptr) {
-          col = &layout_row->column(true);
-        } else {
-          col = &layout->column(true);
-        }
-
-        /* bfa - property label */
-        col->label(name, ICON_NONE);
-        expand_label_added = true;
-
-        /* bfa - replace split with row */
-        layout_split = &col->row(true);
-
-        /* bfa - indent */
-        layout_split->separator();
-        layout_split->separator();
-
-        /* bfa - XYZW column */
-        layout_sub = &layout_split->column(true);
-        /* bfa - set fixed size, otherwise space is wasted */
-        uiLayoutSetFixedSize(layout_sub, true);
-
+        fmt::memory_buffer name_with_suffix;
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
           str[0] = RNA_property_array_item_char(prop, a);
-          /*bfa -turned off code*/
-          /*onst bool use_prefix = (a == 0 && !name.is_empty());
+          const bool use_prefix = (a == 0 && !name.is_empty());
           if (use_prefix) {
             fmt::format_to(fmt::appender(name_with_suffix), "{} {}", name, str[0]);
-          }*/
+          }
           but = uiDefBut(block,
                          UI_BTYPE_LABEL,
                          0,
-                         /* bfa - don't prefix X with prop name */
-                         // se_prefix ? StringRef(name_with_suffix.data(), name_with_suffix.size()) :
-                         str,
+                         use_prefix ? StringRef(name_with_suffix.data(), name_with_suffix.size()) :
+                                      str,
                          0,
                          0,
-                         /* bfa - suitable dynamic size for XYZW char */
-                         UI_UNIT_X * 75 / 100,
+                         w,
                          UI_UNIT_Y,
                          nullptr,
                          0.0,
@@ -2236,7 +2198,7 @@ void uiLayout::prop(PointerRNA *ptr,
   }
   /* End split. */
   else if (heading_layout) {
-    /* Could not add heading to split layout, fallback to inserting it to the layout with the
+    /* Could not add heading to split layout, fall back to inserting it to the layout with the
      * heading itself. */
     ui_layout_heading_label_add(heading_layout, heading_layout, false, false);
   }
@@ -2394,11 +2356,6 @@ void uiLayout::prop(PointerRNA *ptr,
     uiLayout *layout_col = &ui_decorate.layout->column(false);
     layout_col->space_ = 0;
     layout_col->emboss_ = blender::ui::EmbossType::None;
-
-    /* bfa - move decorators down to account for label */
-    if (expand_label_added) {
-      layout_col->label("", ICON_BLANK1);
-    }
 
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {

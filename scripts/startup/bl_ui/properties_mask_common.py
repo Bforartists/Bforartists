@@ -13,8 +13,8 @@ from bl_ui import anim
 # Use by both image & clip context menus.
 def draw_mask_context_menu(layout, _context):
     layout.operator_menu_enum("mask.handle_type_set", "type")
-    layout.operator("mask.switch_direction", icon = "SWITCH_DIRECTION")
-    layout.operator("mask.cyclic_toggle", icon = "TOGGLE_CYCLIC")
+    layout.operator("mask.switch_direction")
+    layout.operator("mask.cyclic_toggle")
 
     layout.separator()
     layout.operator("mask.copy_splines", icon='COPYDOWN')
@@ -22,18 +22,18 @@ def draw_mask_context_menu(layout, _context):
 
     layout.separator()
 
-    layout.operator("mask.shape_key_rekey", text="Re-Key Shape Points", icon = "SHAPEKEY_DATA")
-    layout.operator("mask.feather_weight_clear", icon = "KEYFRAMES_CLEAR")
-    layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon = "RESET")
+    layout.operator("mask.shape_key_rekey", text="Re-Key Shape Points")
+    layout.operator("mask.feather_weight_clear")
+    layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation")
 
     layout.separator()
 
-    layout.operator("mask.parent_set", icon = "PARENT_SET")
-    layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
+    layout.operator("mask.parent_set")
+    layout.operator("mask.parent_clear")
 
     layout.separator()
 
-    layout.operator("mask.delete", icon = "DELETE")
+    layout.operator("mask.delete")
 
 
 class MASK_UL_layers(UIList):
@@ -124,7 +124,6 @@ class MASK_PT_layers:
             layout.prop(active_layer, "falloff")
 
             col = layout.column()
-            col.use_property_split = False
             col.prop(active_layer, "use_fill_overlap", text="Overlap")
             col.prop(active_layer, "use_fill_holes", text="Holes")
 
@@ -158,9 +157,9 @@ class MASK_PT_spline:
         col.prop(spline, "offset_mode")
         col.prop(spline, "weight_interpolation", text="Interpolation")
 
-        col.use_property_split = False
         col.prop(spline, "use_cyclic")
         col.prop(spline, "use_fill")
+
         col.prop(spline, "use_self_intersection_check")
 
 
@@ -207,7 +206,7 @@ class MASK_PT_point:
             row = col.row()
             row.prop(parent, "type", expand=True)
 
-            col.prop_search(parent, "parent", tracking, "objects", text = "Object", icon='OBJECT_DATA')
+            col.prop_search(parent, "parent", tracking, "objects", icon='OBJECT_DATA', text="Object")
 
             tracks_list = "tracks" if parent.type == 'POINT_TRACK' else "plane_tracks"
 
@@ -262,31 +261,22 @@ class MASK_PT_display:
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text="Mask Display")
 
         space_data = context.space_data
 
         row = layout.row(align=True)
         row.prop(space_data, "show_mask_spline", text="Spline")
         sub = row.row()
-        if space_data.show_mask_spline:
-            sub.active = space_data.show_mask_spline
-            sub.prop(space_data, "mask_display_type", text="")
-        else:
-            row.label(icon='DISCLOSURE_TRI_RIGHT')
-
+        sub.active = space_data.show_mask_spline
+        sub.prop(space_data, "mask_display_type", text="")
         row = layout.row(align=True)
         row.prop(space_data, "show_mask_overlay", text="Overlay")
-        if space_data.show_mask_overlay:
-            sub = row.row()
-            sub.active = space_data.show_mask_overlay
-            sub.prop(space_data, "mask_overlay_mode", text="")
-
-            row = layout.row()
-            row.active = space_data.show_mask_overlay and (space_data.mask_overlay_mode == 'COMBINED')
-            row.prop(space_data, "blend_factor", text="Blending Factor")
-        else:
-            row.label(icon='DISCLOSURE_TRI_RIGHT')
+        sub = row.row()
+        sub.active = space_data.show_mask_overlay
+        sub.prop(space_data, "mask_overlay_mode", text="")
+        row = layout.row()
+        row.active = space_data.show_mask_overlay and (space_data.mask_overlay_mode == 'COMBINED')
+        row.prop(space_data, "blend_factor", text="Blending Factor")
 
 
 class MASK_PT_transforms:
@@ -311,40 +301,40 @@ class MASK_PT_transforms:
         col.operator("transform.resize", text="Scale")
         col.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
 
-# bfa - former mask tools panel. Keeping code for compatibility reasons
-# class MASK_PT_tools:
-#     bl_label = "Mask Tools"
-#     bl_category = "Mask"
 
-#     @classmethod
-#     def poll(cls, context):
-#         space_data = context.space_data
-#         return space_data.mask and space_data.mode == 'MASK'
+class MASK_PT_tools:
+    bl_label = "Mask Tools"
+    bl_category = "Mask"
 
-#     def draw(self, _context):
-#         layout = self.layout
+    @classmethod
+    def poll(cls, context):
+        space_data = context.space_data
+        return space_data.mask and space_data.mode == 'MASK'
 
-#         col = layout.column(align=True)
-#         col.label(text="Spline:")
-#         col.operator("mask.delete", icon = "DELETE")
-#         col.operator("mask.cyclic_toggle", icon = "TOGGLE_CYCLIC")
-#         col.operator("mask.switch_direction", icon = "SWITCH_DIRECTION")
-#         col.operator("mask.handle_type_set", icon = "HANDLE_VECTOR").type = 'VECTOR'
-#         col.operator("mask.feather_weight_clear", icon = "CLEAR")
+    def draw(self, _context):
+        layout = self.layout
 
-#         col = layout.column(align=True)
-#         col.label(text="Parenting:")
-#         row = col.row(align=True)
-#         row.operator("mask.parent_set", text="Parent", icon = "PARENT_SET")
-#         row.operator("mask.parent_clear", text="Clear", icon = "PARENT_CLEAR")
+        col = layout.column(align=True)
+        col.label(text="Spline:")
+        col.operator("mask.delete")
+        col.operator("mask.cyclic_toggle")
+        col.operator("mask.switch_direction")
+        col.operator("mask.handle_type_set").type = 'VECTOR'
+        col.operator("mask.feather_weight_clear")
 
-#         col = layout.column(align=True)
-#         col.label(text="Animation:")
-#         row = col.row(align=True)
-#         row.operator("mask.shape_key_insert", text="Insert Key", icon = "KEYFRAME")
-#         row.operator("mask.shape_key_clear", text="Clear Key", icon = "KEYFRAMES_CLEAR")
-#         col.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon = "RESET")
-#         col.operator("mask.shape_key_rekey", text="Re-Key Shape Points", icon = "SHAPEKEY_DATA")
+        col = layout.column(align=True)
+        col.label(text="Parenting:")
+        row = col.row(align=True)
+        row.operator("mask.parent_set", text="Parent")
+        row.operator("mask.parent_clear", text="Clear")
+
+        col = layout.column(align=True)
+        col.label(text="Animation:")
+        row = col.row(align=True)
+        row.operator("mask.shape_key_insert", text="Insert Key")
+        row.operator("mask.shape_key_clear", text="Clear Key")
+        col.operator("mask.shape_key_feather_reset", text="Reset Feather Animation")
+        col.operator("mask.shape_key_rekey", text="Re-Key Shape Points")
 
 
 class MASK_MT_mask(Menu):
@@ -353,34 +343,29 @@ class MASK_MT_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("MASK_MT_transform") #BFA - made consistent with other transform panels
+        layout.menu("MASK_MT_transform")
+        layout.operator("mask.feather_weight_clear")
 
         layout.separator()
-
-        layout.operator("mask.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
-        layout.operator("mask.delete", icon = "DELETE")
-
-        layout.separator()
-
-        layout.operator("mask.copy_splines", icon = "COPYDOWN")
-        layout.operator("mask.paste_splines", icon = "PASTEDOWN")
+        layout.operator("mask.cyclic_toggle")
+        layout.operator("mask.handle_type_set")
+        layout.operator("mask.normals_make_consistent")
+        layout.operator("mask.switch_direction")
 
         layout.separator()
-
-        layout.operator("mask.parent_set", icon = "PARENT_SET")
-        layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
-
-        layout.separator()
-
-        layout.operator("mask.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-        layout.operator("mask.switch_direction", icon = 'SWITCH_DIRECTION')
-        layout.operator("mask.normals_make_consistent", icon = "RECALC_NORMALS")
-        layout.operator_menu_enum("mask.handle_type_set", "type")
+        layout.operator("mask.copy_splines")
+        layout.operator("mask.paste_splines")
 
         layout.separator()
+        layout.operator("mask.parent_clear")
+        layout.operator("mask.parent_set")
 
+        layout.separator()
         layout.menu("MASK_MT_animation")
+
+        layout.separator()
         layout.menu("MASK_MT_visibility")
+        layout.operator("mask.delete")
 
 
 class MASK_MT_add(Menu):
@@ -395,10 +380,6 @@ class MASK_MT_add(Menu):
         layout.operator("mask.primitive_circle_add", text="Circle", icon='MESH_CIRCLE')
         layout.operator("mask.primitive_square_add", text="Square", icon='MESH_PLANE')
 
-        layout.separator()
-
-        layout.operator("mask.add_vertex_slide", text="Add Vertex and Slide", icon='SLIDE_VERTEX')
-
 
 class MASK_MT_visibility(Menu):
     bl_label = "Show/Hide"
@@ -406,9 +387,9 @@ class MASK_MT_visibility(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mask.hide_view_clear", text = "Show Hidden", icon = "HIDE_OFF")
-        layout.operator("mask.hide_view_set", text = "Hide Selected", icon = "HIDE_ON").unselected = False
-        layout.operator("mask.hide_view_set", text = "Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
+        layout.operator("mask.hide_view_clear")
+        layout.operator("mask.hide_view_set", text="Hide Selected").unselected = False
+        layout.operator("mask.hide_view_set", text="Hide Unselected").unselected = True
 
 
 class MASK_MT_transform(Menu):
@@ -417,20 +398,17 @@ class MASK_MT_transform(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
-        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
-        layout.operator("transform.resize", text = "Scale",  icon = "TRANSFORM_SCALE")
+        layout.operator("transform.translate")
+        layout.operator("transform.rotate")
+        layout.operator("transform.resize")
 
         layout.separator()
-
-        layout.operator("transform.tosphere", icon = "TOSPHERE")
-        layout.operator("transform.shear", icon = "SHEAR")
-        layout.operator("transform.push_pull", icon = "PUSH_PULL")
+        layout.operator("transform.tosphere")
+        layout.operator("transform.shear")
+        layout.operator("transform.push_pull")
 
         layout.separator()
-
-        layout.operator("transform.transform", text = "Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
-        layout.operator("mask.feather_weight_clear", text = "Clear Feather Weight", icon = "CLEAR")
+        layout.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
 
 
 class MASK_MT_animation(Menu):
@@ -439,10 +417,10 @@ class MASK_MT_animation(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mask.shape_key_insert", icon = "KEYFRAMES_INSERT")
-        layout.operator("mask.shape_key_clear", icon = "CLEAR")
-        layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon='RESET')
-        layout.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
+        layout.operator("mask.shape_key_clear")
+        layout.operator("mask.shape_key_insert")
+        layout.operator("mask.shape_key_feather_reset")
+        layout.operator("mask.shape_key_rekey")
 
 
 class MASK_MT_select(Menu):
@@ -451,24 +429,24 @@ class MASK_MT_select(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mask.select_all", text = "All", icon = 'SELECT_ALL').action = 'SELECT'
-        layout.operator("mask.select_all", text = "None", icon = 'SELECT_NONE').action = 'DESELECT'
-        layout.operator("mask.select_all", text = "Invert", icon = 'INVERSE').action = 'INVERT'
+        layout.operator("mask.select_all", text="All").action = 'SELECT'
+        layout.operator("mask.select_all", text="None").action = 'DESELECT'
+        layout.operator("mask.select_all", text="Invert").action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("mask.select_box", icon = 'BORDER_RECT')
-        layout.operator("mask.select_circle", icon = 'CIRCLE_SELECT')
+        layout.operator("mask.select_box")
+        layout.operator("mask.select_circle")
         layout.operator_menu_enum("mask.select_lasso", "mode")
 
         layout.separator()
 
-        layout.operator("mask.select_linked", text = "Linked", icon = "LINKED")
+        layout.operator("mask.select_more")
+        layout.operator("mask.select_less")
 
         layout.separator()
 
-        layout.operator("mask.select_more", text = "More", icon = "SELECTMORE")
-        layout.operator("mask.select_less", text = "Less", icon = "SELECTLESS")
+        layout.operator("mask.select_linked", text="Select Linked")
 
 
 classes = (

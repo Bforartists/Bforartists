@@ -173,7 +173,7 @@ static constexpr auto PROP_PROPORTIONAL_DESCR = "";
 static constexpr auto PROP_TEXTEDIT_UPDATE_DESCR = "";
 static constexpr auto PROP_PATH_OUTPUT_DESCR = "";
 static constexpr auto PROP_PATH_RELATIVE_DESCR =
-    "This path supports relative prefix \"//\" which is expanded the the directory "
+    "This path supports relative prefix \"//\" which is expanded the directory "
     "where the current \".blend\" file is located.";
 static constexpr auto PROP_PATH_SUPPORTS_TEMPLATES_DESCR =
     "This path supports the \"{variable_name}\" template syntax, which substitutes the "
@@ -304,12 +304,6 @@ static int rna_Struct_description_length(PointerRNA *ptr)
 static void rna_Struct_name_get(PointerRNA *ptr, char *value)
 {
   strcpy(value, ((StructRNA *)ptr->data)->name);
-}
-
-/* bfa - Expose struct icon to Python */
-static int rna_Struct_icon_get(PointerRNA *ptr)
-{
-  return ((StructRNA *)ptr->data)->icon;
 }
 
 static int rna_Struct_name_length(PointerRNA *ptr)
@@ -3067,13 +3061,6 @@ static void rna_def_struct(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "Struct", nullptr);
   RNA_def_struct_ui_text(srna, "Struct Definition", "RNA structure definition");
   RNA_def_struct_ui_icon(srna, ICON_RNA);
-
-  /* bfa - Expose struct icon to Python */
-  prop = RNA_def_property(srna, "icon", PROP_ENUM, PROP_NONE);
-  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_enum_items(prop, rna_enum_icon_items);
-  RNA_def_property_enum_funcs(prop, "rna_Struct_icon_get", nullptr, nullptr);
-  RNA_def_property_ui_text(prop, "Icon", "Icon of the item");
 
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);

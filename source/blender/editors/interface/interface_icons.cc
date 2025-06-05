@@ -52,7 +52,6 @@
 
 #include "WM_api.hh"
 
-#include "WM_types.hh"
 #include "interface_intern.hh"
 
 #include <fmt/format.h>
@@ -480,7 +479,7 @@ static void vicon_collection_color_draw(
 
   UI_icon_draw_ex(x,
                   y,
-                  ICON_GROUP_BRIGHT, /*BFA - collection colors*/
+                  ICON_OUTLINER_COLLECTION,
                   aspect,
                   1.0f,
                   0.0f,
@@ -517,7 +516,7 @@ static void vicon_strip_color_draw(
 
   UI_icon_draw_ex(x,
                   y,
-                  ICON_COLOR_TAG, /*BFA*/
+                  ICON_SNAP_FACE,
                   aspect,
                   1.0f,
                   0.0f,
@@ -547,22 +546,21 @@ DEF_ICON_STRIP_COLOR_DRAW(09, STRIP_COLOR_09);
 
 #  define ICON_INDIRECT_DATA_ALPHA 0.6f
 
-/* bfa - Use our own static icon for indirect libraries */
-// static void vicon_strip_color_draw_library_data_indirect(
-//     int x, int y, int w, int /*h*/, float alpha, const uchar * /*mono_rgba[4]*/)
-// {
-//   const float aspect = float(ICON_DEFAULT_WIDTH) / float(w);
+static void vicon_strip_color_draw_library_data_indirect(
+    float x, float y, float w, float /*h*/, float alpha, const uchar * /*mono_rgba[4]*/)
+{
+  const float aspect = float(ICON_DEFAULT_WIDTH) / w;
 
-//   UI_icon_draw_ex(x,
-//                   y,
-//                   ICON_LIBRARY_DATA_DIRECT,
-//                   aspect,
-//                   ICON_INDIRECT_DATA_ALPHA * alpha,
-//                   0.0f,
-//                   nullptr,
-//                   false,
-//                   UI_NO_ICON_OVERLAY_TEXT);
-// }
+  UI_icon_draw_ex(x,
+                  y,
+                  ICON_LIBRARY_DATA_DIRECT,
+                  aspect,
+                  ICON_INDIRECT_DATA_ALPHA * alpha,
+                  0.0f,
+                  nullptr,
+                  false,
+                  UI_NO_ICON_OVERLAY_TEXT);
+}
 
 static void vicon_strip_color_draw_library_data_override_noneditable(
     float x, float y, float w, float /*h*/, float alpha, const uchar * /*mono_rgba[4]*/)
@@ -590,8 +588,7 @@ static void vicon_layergroup_color_draw(
 
   UI_icon_draw_ex(x,
                   y,
-                  ICON_GROUP_BRIGHT, /*bfa - the icon for the enum for the colored grease pencil
-                                        layers. we use the group icon here*/
+                  ICON_GREASEPENCIL_LAYER_GROUP,
                   aspect,
                   1.0f,
                   0.0f,
@@ -1009,8 +1006,7 @@ static void init_internal_icons()
   def_internal_vicon(ICON_STRIP_COLOR_08, vicon_strip_color_draw_08);
   def_internal_vicon(ICON_STRIP_COLOR_09, vicon_strip_color_draw_09);
 
-  /* bfa - Use our own static icon for indirect libraries */
-  // def_internal_vicon(ICON_LIBRARY_DATA_INDIRECT, vicon_strip_color_draw_library_data_indirect);
+  def_internal_vicon(ICON_LIBRARY_DATA_INDIRECT, vicon_strip_color_draw_library_data_indirect);
   def_internal_vicon(ICON_LIBRARY_DATA_OVERRIDE_NONEDITABLE,
                      vicon_strip_color_draw_library_data_override_noneditable);
 
@@ -1331,10 +1327,6 @@ static void icon_set_image(const bContext *C,
                            enum eIconSizes size,
                            const bool use_job)
 {
-  /* bfa - disable material icons rendering */
-  if (U.flag & USER_DISABLE_MATERIAL_ICON && GS(id->name) == ID_MA) {
-    return;
-  }
   if (!prv_img) {
     if (G.debug & G_DEBUG) {
       printf("%s: no preview image for this ID: %s\n", __func__, id->name);
@@ -1627,22 +1619,7 @@ static void icon_source_edit_cb(std::string &svg)
     const size_t id_end = svg.find("\"", id_start + key.size());
     if (id_end != std::string::npos) {
       std::string id_name = svg.substr(id_start + key.size(), id_end - id_start - key.size());
-      /* bfa - Since Inkscape cant have 2 group ID's of the same name,
-      this allows group ID's in a svg to have a number suffix to (blender_folder_01, _02 etc),
-      be still be treated has if it was blender_folder, allows for more complex icon themeing */
-      size_t last_underscore = id_name.rfind('_');
-      if (last_underscore != std::string::npos) {
-        bool is_number = true;
-        for (size_t i = last_underscore + 1; i < id_name.length(); i++) {
-          if (!std::isdigit(id_name[i])) {
-            is_number = false;
-            break;
-          }
-        }
-        if (is_number) {
-          id_name = id_name.substr(0, last_underscore);
-        }
-      }
+      /* Replace this group's colors. */
       svg_replace_color_attributes(svg, id_name, g_start, g_end);
     }
 
@@ -1750,6 +1727,8 @@ static void icon_draw_size(float x,
                                                  btheme->tui.icon_border_intensity :
                                                  0.3f) :
                                             0.0f;
+    outline_intensity *= alpha;
+
     float color[4];
     if (icon_id == ICON_NOT_FOUND) {
       UI_GetThemeColor4fv(TH_ERROR, color);
@@ -1939,10 +1918,6 @@ int ui_id_icon_get(const bContext *C, ID *id, const bool big)
     case ID_IM: /* fall through */
     case ID_WO: /* fall through */
     case ID_LA: /* fall through */
-      /* bfa - disable material icons rendering, just show Material icon when enabled */
-      if (GS(id->name) == ID_MA && U.flag & USER_DISABLE_MATERIAL_ICON) {
-        return ICON_MATERIAL;
-      }
       iconid = BKE_icon_id_ensure(id);
       /* checks if not exists, or changed */
       UI_icon_render_id(C, nullptr, id, big ? ICON_SIZE_PREVIEW : ICON_SIZE_ICON, true);
@@ -2099,19 +2074,19 @@ int UI_icon_from_idcode(const int idcode)
     case ID_SO:
       return ICON_SOUND;
     case ID_TE:
-      return ICON_TEXTURE; /*BFA - "data" removed from icon*/
+      return ICON_TEXTURE_DATA;
     case ID_TXT:
       return ICON_TEXT;
     case ID_VF:
       return ICON_FONT_DATA;
     case ID_CV:
-      return ICON_HAIR_DATA; /*BFA*/
+      return ICON_CURVES_DATA;
     case ID_PT:
       return ICON_POINTCLOUD_DATA;
     case ID_VO:
       return ICON_VOLUME_DATA;
     case ID_WO:
-      return ICON_WORLD; /*BFA - "data" removed from icon*/
+      return ICON_WORLD_DATA;
     case ID_WS:
       return ICON_WORKSPACE;
     case ID_GP:
@@ -2160,7 +2135,7 @@ int UI_icon_from_object_mode(const int mode)
 
 int UI_icon_color_from_collection(const Collection *collection)
 {
-  int icon = ICON_GROUP_BRIGHT; /*BFA - collection colors*/
+  int icon = ICON_OUTLINER_COLLECTION;
 
   if (collection->color_tag != COLLECTION_COLOR_NONE) {
     icon = ICON_COLLECTION_COLOR_01 + collection->color_tag;
@@ -2296,6 +2271,6 @@ ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon, float size)
     return nullptr;
   }
 
-  return UI_svg_icon_bitmap(icon_id, size, true); /* BFA - color dialog icon */
+  return UI_svg_icon_bitmap(icon_id, size, false);
 #endif
 }
