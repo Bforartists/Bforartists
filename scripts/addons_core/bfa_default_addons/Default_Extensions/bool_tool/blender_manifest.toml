@@ -1,0 +1,38 @@
+schema_version = "1.0.0"
+
+id = "bool_tool"
+name = "Bool Tool"
+version = "1.1.2"
+tagline = "Quick boolean operations and tools for mesh modeling"
+type = "add-on"
+
+maintainer = "Nika Kutsniashvili <nickberckley@gmail.com>"
+website = "https://blenderartists.org/t/bool_tool/1539154"
+tags = ["Modeling", "Object"]
+
+blender_version_min = "4.2.0"
+
+# License conforming to https://spdx.org/licenses/ (use "SPDX: prefix)
+# https://docs.blender.org/manual/en/dev/advanced/extensions/licenses.html
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+copyright = [
+  "2024 Nika Kutsniashvili",
+  "2024 Vitor Balbio",
+  "2024 Mikhail Rachinskiy",
+  "2024 TynkaTopi",
+  "2024 Meta-Androcto",
+  "2024 Simon Appelt",
+  "2024 Pixivore",
+  "2024 Cedric LEPILLER",
+  "2024 Ted Milker",
+  "2024 Clarkx",
+]
+
+[build]
+paths_exclude_pattern = [
+  "/.git/",
+  "__pycache__/",
+  ".*",
+]

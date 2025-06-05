@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "snap_utilities_line"
+name = "Snap_Utilities_Line"
+version = "6.8.0"
+tagline = "Extends Blender Snap controls"
+maintainer = "Community"
+type = "add-on"
+tags = ["Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/mesh_snap_utilities_line"
+copyright = ["2024 Germano Cavalcante"]

@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "tinycad_mesh_tools"
+name = "tinyCAD Mesh tools"
+version = "1.3.2"
+tagline = "tinyCAD Mesh tools Add-on"
+maintainer = "Community"
+type = "add-on"
+tags = ["Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/mesh_tiny_cad"
+copyright = ["2024 zeffii (aka Dealga McArdle)"]

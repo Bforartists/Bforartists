@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "freestyle_svg_exporter"
+name = "Freestyle SVG Exporter"
+version = "1.0.0"
+tagline = "Exports Freestyle's stylized edges in SVG format"
+maintainer = "Community"
+type = "add-on"
+tags = ["Render"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/render_freestyle_svg"
+copyright = ["2024 Folkert de Vries"]

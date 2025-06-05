@@ -170,7 +170,7 @@ addon_type_name = (
 )
 
 addon_type_icon = (
-    'COMMUNITY',  # `ADDON_TYPE_EXTENSION`.
+    'PLUGIN',  # `ADDON_TYPE_EXTENSION`. # BFA - we use PLUGIN icon instead
     'BLENDER',  # `ADDON_TYPE_LEGACY_CORE`.
     'FILE_FOLDER',  # `ADDON_TYPE_LEGACY_USER`.
     'PACKAGE',  # `ADDON_TYPE_LEGACY_OTHER`.
@@ -224,6 +224,8 @@ def addon_draw_item_expanded(
         item_doc_url,  # `str`
         item_tracker_url,  # `str`
         show_developer_ui,  # `bool`
+        # BFA - Necessary info for uninstalling extensions
+        repo_index=-1, # `int`
 ):
     from bpy.app.translations import (
         contexts as i18n_contexts,
@@ -246,7 +248,15 @@ def addon_draw_item_expanded(
         rowsub.label(text="Built-in")
         rowsub.separator()
     elif addon_type == ADDON_TYPE_LEGACY_USER:
-        rowsub.operator("preferences.addon_remove", text="Uninstall").module = mod.__name__
+        rowsub.operator("preferences.addon_remove", text="Uninstall", icon='CANCEL').module = mod.__name__ # BFA - icon added
+    elif addon_type == ADDON_TYPE_EXTENSION:
+        # BFA - Add ability to uninstall extension
+        repo_module, pkg_id = mod.__name__.split(".")[1:]
+        props = rowsub.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL')
+        props.repo_index = repo_index
+        props.pkg_id = pkg_id
+        del props
+
     del rowsub
 
     layout.separator(type='LINE')
@@ -317,8 +327,8 @@ def addons_panel_draw_missing_with_extension_impl(
         layout,  # `bpy.types.UILayout`
         missing_modules  # `set[str]`
 ):
-    layout_header, layout_panel = layout.panel("builtin_addons", default_closed=True)
-    layout_header.label(text="Missing Built-in Add-ons", icon='ERROR')
+    layout_header, layout_panel = layout.panel("Built-in_addons", default_closed=True)
+    layout_header.label(text="Missing Built-in Legacy Add-ons ", icon='ERROR')
 
     if layout_panel is None:
         return
@@ -338,15 +348,26 @@ def addons_panel_draw_missing_with_extension_impl(
             break
 
     box = layout_panel.box()
-    box.label(text="Add-ons previously shipped with Blender are now available from extensions.blender.org.")
+    ## BFA - Changes to opt-into extensions and improve migration here - START
+    box.label(text="Available to install from the Online Extensions repository (extensions.blender.org).") # BFA - not Blender, made explicit
+    box.label(text="If you opt-in to use Extensions, install each addon equivalent individually.") # BFA - talk of how to "replace" the legacy addons
+    box.label(text="Alternatively, activate the Built-In Legacy Addons if you need to remain offline.") # BFA - talk of the addon alternative to remain offline
+
+    row = box.row()
+    if "bfa_default_addons" not in bpy.context.preferences.addons and not context.preferences.system.use_online_access:
+        row.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
+
+    if not context.preferences.system.use_online_access:
+        row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - opt into being online to install missing addons conveniently
+    ## BFA - Changes to opt-into extensions and improve migration here - END
 
     pkg_manifest_remote = {}
 
     if repo is None:
         # Most likely the user manually removed this.
-        box.label(text="Blender's extension repository not found!", icon='ERROR')
+        box.label(text="Online Extensions repository not found!", icon='ERROR') # BFA - Made explicit
     elif not repo.enabled:
-        box.label(text="Blender's extension repository must be enabled to install extensions!", icon='ERROR')
+        box.label(text="Online access to the Extensions repository must be enabled to install extensions!", icon='ERROR') # BFA - Made explicit
         repo_index = -1
     else:
         # Ensure the remote data is available from which to install the extensions.
@@ -356,7 +377,7 @@ def addons_panel_draw_missing_with_extension_impl(
         pkg_manifest_remote = repo_cache_store.refresh_remote_from_directory(directory=repo.directory, error_fn=print)
         if pkg_manifest_remote is None:
             row = box.row()
-            row.label(text="Blender's extension repository must be refreshed!", icon='ERROR')
+            row.label(text="The Extension repository must be refreshed!", icon='ERROR') # BFA - explicit
             # Ideally this would only sync one repository, but there is no operator to do this
             # and this one corner-case doesn't justify adding a new operator.
             rowsub = row.row()
@@ -394,7 +415,7 @@ def addons_panel_draw_missing_with_extension_impl(
             # Worst case, they install and it will re-install an already installed extension.
             rowsub = row_right.row()
             rowsub.alignment = 'RIGHT'
-            props = rowsub.operator("extensions.package_install", text="Install")
+            props = rowsub.operator("extensions.package_install", text="Install and Replace", icon="SWAP") # BFA - icon added, made explicit
             props.repo_index = repo_index
             props.pkg_id = addon_pkg_id
             props.do_legacy_replace = True
@@ -448,7 +469,9 @@ def addons_panel_draw_items(
 
         show_development,  # `bool`
         show_developer_ui,  # `bool`
-):  # `-> set[str]`
+        # BFA - Mapping of repo indices for extensions to look up
+        extension_repo_index_map, # `Dict[str, int]`
+):  # `-> Set[str]`
     # NOTE: this duplicates logic from `USERPREF_PT_addons` eventually this logic should be used instead.
     # Don't de-duplicate the logic as this is a temporary state - as long as extensions remains experimental.
     import addon_utils
@@ -475,6 +498,8 @@ def addons_panel_draw_items(
         is_extension = addon_utils.check_extension(module_name)
         bl_info = addon_utils.module_bl_info(mod)
         show_expanded = bl_info["show_expanded"]
+        # BFA - Look up repo index by module name, return -1 as fallback if addon is not an extension
+        repo_index = extension_repo_index_map.get(module_name, -1)
 
         if is_extension:
             item_warnings = []
@@ -583,10 +608,26 @@ def addons_panel_draw_items(
 
         sub.label(text=" " + item_name, translate=False)
 
+        ## BFA - Expose user type feedback - START ##
+        row_right = row.row()
+        if addon_type == ADDON_TYPE_LEGACY_CORE:
+            pass
+        elif addon_type == ADDON_TYPE_LEGACY_USER:
+            row_right.active = False
+            row_right.alignment = 'RIGHT'
+            row_right.label(text="Legacy")
+        ## BFA - Expose user type feedback - END ##
+
         if item_warnings:
-            sub.label(icon='ERROR')
+            row.active = True # BFA - Float left
+            row_right.alignment = 'RIGHT'# BFA - Float left
+            row_right.label(icon='ERROR')
+            row_right.label(icon=addon_type_icon[addon_type]) # BFA - Added icon type
         elif USE_SHOW_ADDON_TYPE_AS_ICON:
-            sub.label(icon=addon_type_icon[addon_type])
+            row.active = True # BFA - Float left
+            row_right.alignment = 'RIGHT' # BFA - Float left
+            row_right.label(icon=addon_type_icon[addon_type])
+
 
         if show_expanded:
             addon_draw_item_expanded(
@@ -606,6 +647,7 @@ def addons_panel_draw_items(
                 # pylint: disable-next=used-before-assignment
                 item_tracker_url=item_tracker_url,
                 show_developer_ui=show_developer_ui,
+                repo_index=repo_index # BFA - Necessary info for uninstalling extensions
             )
 
             if is_enabled:
@@ -636,6 +678,7 @@ def addons_panel_draw_error_duplicates(layout):
         sub_row = sub_col.row()
         sub_row.label(text="    " + addon_path)
         sub_row.operator("wm.path_open", text="", icon='FILE_FOLDER').filepath = os.path.dirname(addon_path)
+
 
 
 def addons_panel_draw_error_generic(layout, lines):
@@ -707,6 +750,7 @@ def addons_panel_draw_impl(
 
     addon_extension_manifest_map = {}
     addon_extension_block_map = {}
+    extension_repo_index_map = {} # BFA - Initialize mapping of repo indices
 
     # The `pkg_manifest_remote` is only needed for `PkgBlock_Normalized` data.
     for repo_index, (
@@ -726,6 +770,8 @@ def addons_panel_draw_impl(
                 continue
             module_name = repo_module_prefix + pkg_id
             addon_extension_manifest_map[module_name] = item_local
+            # BFA - Map module name to their corresponding repo index
+            extension_repo_index_map[module_name] = repo_index
 
             if pkg_manifest_remote is not None:
                 if (item_remote := pkg_manifest_remote.get(pkg_id)) is not None:
@@ -746,6 +792,8 @@ def addons_panel_draw_impl(
         addon_extension_block_map=addon_extension_block_map,
         show_development=show_development,
         show_developer_ui=show_developer_ui,
+        # BFA - Pass mapping of repo indices, which is needed to allow for uninstalling extensions
+        extension_repo_index_map=extension_repo_index_map
     )
 
     # Append missing scripts.
@@ -797,19 +845,30 @@ def addons_panel_draw(panel, context):
     wm = context.window_manager
     layout = panel.layout
 
-    split = layout.split(factor=0.5)
-    row_a = split.row()
-    row_b = split.row()
+    ###### BFA - Double row - START ######
+    row = layout.split(factor=0.57)
+    row_a = row.row()
     row_a.prop(wm, "addon_search", text="", icon='VIEWZOOM', placeholder="Search Add-ons")
-    row_b.prop(view, "show_addons_enabled_only", text="Enabled Only")
-    rowsub = row_b.row(align=True)
 
-    rowsub.popover("USERPREF_PT_addons_tags", text="", icon='TAG')
+    row_b = row.row(align=True)
+    row_b.operator("extensions.package_install_files", text="Install from Disk", icon='IMPORT') # BFA - name changed
 
-    rowsub.separator()
+    row_b.separator()
+    row_b.popover("USERPREF_PT_addons_tags", text="", icon='TAG')
 
-    rowsub.menu("USERPREF_MT_addons_settings", text="", icon='DOWNARROW_HLT')
-    del split, row_a, row_b, rowsub
+    row_b.separator()
+
+    row_b.operator("extensions.repo_refresh_all", text="", icon='FILE_REFRESH')
+
+
+    layout = panel.layout
+    row = layout.split(factor=0.27)
+    row_a = row.row()
+    row_a.prop(view, "show_addons_enabled_only", text="Enabled Only", icon='NONE', toggle=False)
+    # BFA - add category quick tabs?
+    #rowsub.menu("USERPREF_MT_addons_settings", text="", icon='DOWNARROW_HLT')
+    del row, row_a, row_b,
+    ###### BFA - Double row - END ######
 
     # Create a set of tags marked False to simplify exclusion & avoid it altogether when all tags are enabled.
     addon_tags_exclude = {k for (k, v) in wm.get("addon_tags", {}).items() if v is False}
@@ -1212,26 +1271,34 @@ def extensions_panel_draw_online_extensions_request_impl(
 
     # Text wrapping isn't supported, manually wrap.
     for line in (
-            rpt_("Internet access is required to install and update online extensions. "),
-            rpt_("You can adjust this later from \"System\" preferences."),
+            rpt_("Internet access is required to install and update Extensions."),  # BFA - more explicit
+            rpt_("You can adjust online access from \"System\" preferences."), # BFA - more explicit
+            rpt_("You can alternatively drag and drop an Extension file to install."), # BFA - more info
     ):
         box.label(text=line, translate=False)
 
     row = box.row(align=True)
     row.alignment = 'LEFT'
-    row.label(text="While offline, use \"Install from Disk\" instead.")
-    row.operator(
-        "wm.url_open",
-        text="",
-        icon='URL',
-        emboss=False,
-    ).url = (
-        "https://docs.blender.org/manual/"
-        "{:s}/{:d}.{:d}/editors/preferences/extensions.html#installing-extensions"
-    ).format(
-        bpy.utils.manual_language_code(),
-        *bpy.app.version[:2],
-    )
+    row.label(text="While offline, use \"Install from Disk\" to install third-party Extensions.") # BFA - made it explicit
+    ## BFA - this link is not useful and leads to Blender
+    # row.operator(
+    #    "wm.url_open",
+    #    text="",
+    #    icon='URL',
+    #    emboss=False,
+    # ).url = (
+    #     "https://docs.blender.org/manual/"
+    #     "{:s}/{:d}.{:d}/editors/preferences/extensions.html#installing-extensions"
+    # ).format(
+    #     bpy.utils.manual_language_code(),
+    #     *bpy.app.version[:2],
+    # )
+
+
+    row = box.row(align=True) # BFA - warning about legacy addons we ship
+    row.alignment = 'LEFT' # BFA - warning about legacy addons we ship
+    row.label(text="Online Access will remove Built-in Legacy Addons and settings", icon="WARNING") # BFA - warning about legacy addons we ship and them being removed when opting in
+
 
     row = box.row()
     props = row.operator("wm.context_set_boolean", text="Continue Offline", icon='X')
@@ -1242,6 +1309,17 @@ def extensions_panel_draw_online_extensions_request_impl(
     # is it will be disabled when `--offline-mode` is forced with a useful error for why.
     row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK')
 
+    ## BFA - Indicative Icons for types - START
+    row = box.row() # BFA
+    if "bfa_default_addons" not in bpy.context.preferences.addons and not bpy.context.preferences.system.use_online_access:
+        row.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
+    else:
+        legacy_addons = bpy.context.preferences.addons["bfa_default_addons"].preferences.legacy_addons_installed
+        if not legacy_addons:
+            row.operator("bfa.install_legacy_addons", text="Install Built-in Legacy Add-ons", icon='IMPORT')
+        else:
+            row.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Add-ons", icon='CANCEL')
+    ## BFA - Indicative Icons for types - END
 
 extensions_map_from_legacy_addons = None
 extensions_map_from_legacy_addons_url = None
@@ -1330,11 +1408,20 @@ def extension_draw_item(
     # Without checking `is_enabled` here, there is no way for the user to know if an extension
     # is enabled or not, which is useful to show - when they may be considering removing/updating
     # extensions based on them being used or not.
+    icon = 'PLUGIN' if item.type == 'add-on' else 'COLOR' # BFA - Add visual indicators to listings
     if pkg_block or item_warnings:
         sub.label(text=item.name, icon='ERROR', translate=False)
     else:
-        sub.label(text=item.name, translate=False)
+        # BFA - Add ability to toggle extension from Extension tab
+        if is_installed and item.type == "add-on":
+            module_name = pkg_repo_module_prefix(repo_item) + pkg_id
+            sub.operator(
+                "preferences.addon_disable" if is_enabled else "preferences.addon_enable",
+                icon='CHECKBOX_HLT' if is_enabled else 'CHECKBOX_DEHLT', text="",
+                emboss=False,
+            ).module = module_name
 
+        sub.label(text=item.name, icon=icon, translate=False) # BFA - Add visual indicators to listings
     del sub
 
     # Add a top-level row so `row_right` can have a grayed out button/label
@@ -1348,16 +1435,17 @@ def extension_draw_item(
 
     if has_remote and (item_remote is not None):
         if pkg_block is not None:
-            row_right.label(text="Blocked   ")
+            row_right.label(text="Blocked", icon="ERROR") # BFA - icon added
         elif is_installed:
+        	# Include uninstall below.
             if is_outdated:
-                props = row_right.operator("extensions.package_install", text="Update")
+                props = row_right.operator("extensions.package_install", text="Update", icon="FILE_REFRESH")  # BFA - icon added
                 props.repo_index = repo_index
                 props.pkg_id = pkg_id
                 props.enable_on_install = is_enabled
                 del props
         else:
-            props = row_right.operator("extensions.package_install", text="Install")
+            props = row_right.operator("extensions.package_install", text="Install", icon="IMPORT") # BFA - icon added
             props.repo_index = repo_index
             props.pkg_id = pkg_id
             del props
@@ -1373,6 +1461,22 @@ def extension_draw_item(
     row_right.alignment = 'RIGHT'
     row_right.separator()
 
+    ## BFA - Moved Set and Clear Theme Operator to Top Level - START ##
+    match item.type:
+            case "theme":
+                if is_installed:
+                    icon = 'CANCEL' if is_enabled else 'CHECKMARK' # BFA - Add visual indicators to theme buttonss
+                    props = row_right.operator(
+                        "extensions.package_theme_disable" if is_enabled else "extensions.package_theme_enable",
+                        text="Clear Theme" if is_enabled else "Set Theme", icon=icon # BFA - added icon
+                    )
+                    props.repo_index = repo_index
+                    props.pkg_id = pkg_id
+                    del props
+
+    row_right.separator()
+    ## BFA - Moved Set and Clear Theme Operator to Top Level - END ##
+
     # NOTE: Keep space between any buttons and this menu to prevent stray clicks accidentally running install.
     # The separator is around together with the align to give some space while keeping the button and the menu
     # still close-by. Used `extension_path` so the menu can access "this" extension.
@@ -1385,14 +1489,27 @@ def extension_draw_item(
         import os
         from bpy.app.translations import pgettext_iface as iface_
 
-        col = layout.column()
+        grid = layout.grid_flow(columns=2) # BFA - Make Uninstall always active
 
-        row = col.row()
+        row = grid.row()
         row.active = is_enabled
 
         # The full tagline may be multiple lines (not yet supported by Blender's UI).
         row.label(text=" {:s}.".format(item.tagline), translate=False)
 
+        ## BFA - expose uninstall in a consistent way to the addons - START ##
+        if is_installed:
+            row = grid.row() # BFA - Make Uninstall always active
+            row.active = True # BFA - Make Uninstall always active
+            row.alignment = 'RIGHT'
+
+            props = row.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') # BFA - icon added
+            props.repo_index = repo_index
+            props.pkg_id = pkg_id
+            del props
+        ## BFA - expose uninstall in a consistent way to the addons - END ##
+
+        col = layout.column()
         col.separator(type='LINE')
         del col
 
@@ -1464,7 +1581,8 @@ def extension_draw_item(
             row.label(text=dirpath, translate=False)
 
             if show_developer_ui:
-                row.operator("wm.path_open", text="", icon='FILE_FOLDER').filepath = dirpath
+                    row.operator("wm.path_open", text="", icon='FILE_FOLDER').filepath = dirpath
+
 
 
 def extensions_panel_draw_impl(
@@ -1793,7 +1911,7 @@ class USERPREF_MT_addons_settings(Menu):
 
         layout.separator()
 
-        layout.operator("extensions.package_install_files", text="Install from Disk...")
+        layout.operator("extensions.package_install_files", text="Install from Disk", icon='IMPORT' ) # BFA - name changed
 
 
 class USERPREF_MT_extensions_settings(Menu):
@@ -1804,16 +1922,42 @@ class USERPREF_MT_extensions_settings(Menu):
 
         prefs = context.preferences
 
-        layout.operator("wm.url_open_preset", text="Visit Extensions Platform", icon='URL').type = 'EXTENSIONS'
+        layout.operator("wm.url_open_preset", text="Visit Extensions Website", icon='URL').type = 'EXTENSIONS' # BFA - made explicit
         layout.separator()
 
+        layout.operator("extensions.package_upgrade_all", text="Install Available Updates", icon='IMPORT') # BFA - moved to offline group
         layout.operator("extensions.repo_sync_all", icon='FILE_REFRESH')
-        layout.operator("extensions.repo_refresh_all")
 
         layout.separator()
 
-        layout.operator("extensions.package_upgrade_all", text="Install Available Updates", icon='IMPORT')
-        layout.operator("extensions.package_install_files", text="Install from Disk...")
+        layout.operator("extensions.package_install_files", text="Install from Disk", icon='IMPORT') # BFA - icon added
+        layout.operator("extensions.repo_refresh_all", icon='FILE_REFRESH')  # BFA - icon added, moved to offline group
+
+        ## BFA - legacy addons operators START ##
+        if "bfa_default_addons" in prefs.addons:
+            layout.separator()
+            legacy_addons = bpy.context.preferences.addons["bfa_default_addons"].preferences.legacy_addons_installed
+            if not legacy_addons:
+                self.layout.operator("bfa.install_legacy_addons", text="Install Built-in Legacy Addons", icon='IMPORT')
+            else:
+                self.layout.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Addons", icon='CANCEL')
+
+        if "bfa_default_addons" not in bpy.context.preferences.addons and not context.preferences.system.use_online_access:
+            layout.separator()
+            layout.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
+
+        if not context.preferences.system.use_online_access:
+            layout.separator()
+            layout.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - permenantly make this discoverable in Extensions (if a user continues offline)
+
+        if "bfa_default_addons" in prefs.addons:
+            extensions_installed = bpy.context.preferences.addons["bfa_default_addons"].preferences.extensions_installed
+            if extensions_installed and context.preferences.system.use_online_access:
+                layout.separator()
+                self.layout.operator("bfa.install_downloaded_extensions", text="Install Pre-downloaded Extensions", icon='PLUGIN')
+            else:
+                return
+        ## BFA - legacy addons operators END ##
 
         if prefs.experimental.use_extensions_debug:
 
@@ -1931,7 +2075,7 @@ class USERPREF_MT_extensions_item(Menu):
         match item.type:
             case "add-on":
                 if is_installed:
-                    props = layout.operator("preferences.addon_show", text="View Details")
+                    props = layout.operator("preferences.addon_show", text="View Details", icon='INFO') #BFA - added icon
                     props.module = addon_module_name
                     del props
 
@@ -1943,15 +2087,12 @@ class USERPREF_MT_extensions_item(Menu):
                             text="Add-on Enabled",
                             emboss=False,
                         ).module = addon_module_name
+
+            # BFA - Operator to switch editing active theme.
             case "theme":
-                if is_installed:
-                    props = layout.operator(
-                        "extensions.package_theme_disable" if is_enabled else "extensions.package_theme_enable",
-                        text="Clear Theme" if is_enabled else "Set Theme",
-                    )
-                    props.repo_index = repo_index
-                    props.pkg_id = pkg_id
-                    del props
+                if is_installed and is_enabled:
+                    layout.operator("extensions.userpref_theme_show_edit", icon='COLOR')
+            	# BFA - Moved Set and Clear Theme Operator to Top Level
 
         # Unlike most other value, prioritize the remote website,
         # see code comments in `extensions_panel_draw_impl`.
@@ -1969,17 +2110,20 @@ class USERPREF_MT_extensions_item(Menu):
 
         # Note that we could allow removing extensions from non-remote extension repos
         # although this is destructive, so don't enable this right now.
+
         if is_installed:
-            layout.separator()
+			#layout.separator() # BFA
 
             if is_system_repo:
-                layout.operator("extensions.package_uninstall_system", text="Uninstall")
-            else:
-                props = layout.operator("extensions.package_uninstall", text="Uninstall")
-                props.repo_index = repo_index
-                props.pkg_id = pkg_id
-                del props
-
+                layout.separator() # BFA - moved to conditional
+                layout.operator("extensions.package_uninstall_system", text="Uninstall from System", icon='CANCEL') # BFA - icon added
+        ## BFA - displayed at a top level now like addons - START ##
+        #    else:
+        #        props = layout.operator("extensions.package_uninstall", text="Uninstall", icon='CANCEL') # BFA - icon added
+        #        props.repo_index = repo_index
+        #        props.pkg_id = pkg_id
+        #        del props
+        ## BFA - displayed at a top level now like addons - END ##
 
 def extensions_panel_draw(panel, context):
     from . import (
@@ -2014,18 +2158,28 @@ def extensions_panel_draw(panel, context):
 
     layout = panel.layout
 
-    row = layout.split(factor=0.5)
+    ## BFA - change layout of header - START ##
+    row = layout.split(factor=0.57)
+
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM', placeholder="Search Extensions")
-    row_b = row.row(align=True)
-    row_b.prop(wm, "extension_type", text="")
-    row_b.popover("USERPREF_PT_extensions_tags", text="", icon='TAG')
 
-    row_b.separator()
+    row_b = row.row()
     row_b.popover("USERPREF_PT_extensions_repos", text="Repositories")
 
-    row_b.separator()
+    row_b.popover("USERPREF_PT_extensions_tags", text="", icon='TAG')
+
     row_b.menu("USERPREF_MT_extensions_settings", text="", icon='DOWNARROW_HLT')
+
+    layout = panel.layout
+    row = layout.split(factor=0.56)
+
+    row_a = row.row()
+    row_a.prop(wm, "extension_type", text="text", expand=True)
+
+    row_b = row.row()
+    # BFA - quick category tabs here?
+    ## BFA - change layout of header - END ##
     del row, row_a, row_b
 
     if show_development_reports:

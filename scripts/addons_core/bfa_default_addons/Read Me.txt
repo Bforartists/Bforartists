@@ -1,0 +1,14 @@
+[CHANGES FROM BFORARTISTS]
+io_mesh_stl\ = stl_format_legacy\
+io_scene_3ds\ = autodesk_3ds_format\
+space_view3d_copy_attributes.py = copy_attributes_menu\
+space_view3d_pie_menus\ = viewport_pie_menus\
+
+[REMOVED - unmaintained bugs]
+render_freestyle_svg.py
+
+[REMOVED - no extensions equivalent]
+io_mesh_uv_layout\ 
+mesh_inset\
+meshedgetools.py
+minilightlib\

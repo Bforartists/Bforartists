@@ -1,0 +1,32 @@
+schema_version = "1.0.0"
+
+id = "sun_position"
+version = "4.0.2"
+name = "Sun Position"
+tagline = "Show the position of the Sun with objects or an environment"
+maintainer = "Damien Picard <dam.pic@free.fr>"
+type = "add-on"
+
+# Optional list defined by Blender and server, see:
+# https://docs.blender.org/manual/en/dev/extensions/tags.html
+tags = ["Lighting"]
+
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+copyright = [
+  "2011-2012 Michael Martin",
+  "2019-2024 Damien Picard",
+]
+
+[build]
+paths_exclude_pattern = [
+  "/.git/",
+  "__pycache__/",
+  "docs",
+  "*.pot",
+  "*.po",
+  "*.zip",
+]

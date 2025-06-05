@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "edit_linked_library"
+name = "Edit Linked Library"
+version = "0.9.2"
+tagline = "Allows editing of objects, collections, and node groups lin . . "
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/object_edit_linked"
+copyright = ["2024 Jason van Gumster (Fweeb)", "2024 Bassam Kurdali", "2024 Pablo Vazquez", "2024 Rainer Trummer"]

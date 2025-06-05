@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "cell_fracture"
+name = "Cell Fracture"
+version = "0.2.0"
+tagline = "Fractured Object Creation"
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/object_fracture_cell"
+copyright = ["2024 ideasman42", "2024 phymec", "2024 Sergey Sharybin"]

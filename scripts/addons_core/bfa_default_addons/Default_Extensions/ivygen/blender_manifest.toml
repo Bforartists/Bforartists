@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "ivygen"
+name = "IvyGen"
+version = "0.1.5"
+tagline = "Adds generated ivy to a mesh object starting at the 3D cursor"
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Curve"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/add_curve_ivygen"
+copyright = ["2024 testscreenings", "2024 PKHG", "2024 TrumanBlending"]

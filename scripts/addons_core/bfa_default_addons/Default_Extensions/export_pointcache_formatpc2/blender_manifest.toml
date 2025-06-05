@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+id = "export_pointcache_formatpc2"
+name = "Export Pointcache Format(.pc2)"
+version = "1.1.4"
+tagline = "Export mesh Pointcache data (.pc2)"
+maintainer = "Community"
+type = "add-on"
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_export_pc2"
+copyright = ["2024 Florian Meyer (tstscr)"]
+[permissions]
+files = "Requires access to directory where it exports .pc2 file"

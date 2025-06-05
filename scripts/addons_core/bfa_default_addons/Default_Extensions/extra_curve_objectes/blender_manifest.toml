@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "extra_curve_objectes"
+name = "Extra Curve Objects"
+version = "0.1.8"
+tagline = "Add extra curve object types"
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Curve"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/add_curve_extra_objects"
+copyright = ["2024 Multiple Authors"]

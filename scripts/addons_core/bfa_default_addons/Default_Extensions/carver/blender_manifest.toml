@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "carver"
+name = "Carver"
+version = "1.2.2"
+tagline = "Multiple tools to carve or to create objects"
+maintainer = "Community"
+type = "add-on"
+tags = ["Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/object_carver"
+copyright = ["2024 Pixivore", "2024 Cedric LEPILLER", "2024 Ted Milker", "2024 Clarkx"]

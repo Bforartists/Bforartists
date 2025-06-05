@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+id = "export_camera_animation"
+name = "Export Camera Animation"
+version = "0.1.2"
+tagline = "Export Cameras & Markers to a Python script"
+maintainer = "Community"
+type = "add-on"
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_anim_camera"
+copyright = ["2024 Campbell Barton"]
+[permissions]
+files = "Requires access to directory where it exports .py file"

@@ -1,0 +1,18 @@
+schema_version = "1.0.0"
+id = "autodesk_3ds_format"
+name = "Autodesk 3D Studio (.3ds)"
+version = "2.6.5"
+tagline = "3DS Import/Export meshes, textures, cameras, lamps & animation - Bforartists Version"
+maintainer = "Sebastian Sille"
+type = "add-on"
+tags = ["Import-Export", "Scene", "Object", "Camera", "Lighting", "Animation"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_scene_3ds/wiki"
+copyright = [
+    "2024 Bob Holcomb",
+    "2024 Campbell Barton",
+    "2024 Sebastian Schrand",
+]
+[permissions]
+files = "Import-Export Autodesk 3DS files"

@@ -1,0 +1,17 @@
+schema_version = "1.0.0"
+id = "export_autocad_dxf_format_dxf"
+name = "Export Autocad DXF Format (.dxf)"
+version = "2.2.4"
+tagline = "The script exports Blender geometry to DXF format r12 version"
+maintainer = "Community"
+type = "add-on"
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_export_dxf"
+copyright = [
+    "2024 Remigiusz Fiedler (AKA migius)",
+    "2024 Vaclav Klecanda",
+]
+[permissions]
+files = "Requires access to directory where it exports DXF file"

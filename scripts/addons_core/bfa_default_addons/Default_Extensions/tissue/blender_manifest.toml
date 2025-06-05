@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "tissue"
+name = "Tissue"
+version = "0.3.71"
+tagline = "Tools for Computational Design"
+maintainer = "Community"
+type = "add-on"
+tags = ["Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/mesh_tissue"
+copyright = ["2024 Alessandro Zomparelli"]

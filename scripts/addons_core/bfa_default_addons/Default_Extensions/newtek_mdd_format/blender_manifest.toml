@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+id = "newtek_mdd_format"
+name = "NewTek MDD format"
+version = "1.0.3"
+tagline = "Import-Export MDD as mesh shape keys"
+maintainer = "Community"
+type = "add-on"
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_shape_mdd"
+copyright = ["2024 Bill L.Nieuwendorp"]
+[permissions]
+files = "Requires access to directory with MDD format files"

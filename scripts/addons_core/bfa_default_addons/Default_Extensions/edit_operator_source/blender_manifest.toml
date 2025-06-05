@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "edit_operator_source"
+name = "Edit Operator Source"
+version = "1.2.4"
+tagline = "Opens source file of chosen operator or call locations"
+maintainer = "Community"
+type = "add-on"
+tags = ["Development"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/development_edit_operator"
+copyright = ["2024 scorpion81"]

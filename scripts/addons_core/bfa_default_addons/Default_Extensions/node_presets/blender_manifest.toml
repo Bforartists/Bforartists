@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "node_presets"
+name = "Node Presets"
+version = "1.1.0"
+tagline = "Add node groups directly to the node editors"
+maintainer = "Community"
+type = "add-on"
+tags = ["Node"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/node_presets"
+copyright = ["2024 Campbell Barton"]

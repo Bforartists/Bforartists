@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "precision_drawing_tools_pdt"
+name = "Precision Drawing Tools (PDT)"
+version = "1.5.3"
+tagline = "Precision Drawing Tools for Accurate Modelling"
+maintainer = "Community"
+type = "add-on"
+tags = ["3D View"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/precision_drawing_tools"
+copyright = ["2024 Alan Odom (Clockmender)", "2024 Rune Morling (ermo)"]

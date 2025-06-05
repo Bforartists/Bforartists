@@ -1,0 +1,13 @@
+schema_version = "1.0.0"
+id = "stl_format_legacy"
+name = "STL format (legacy)"
+version = "1.1.4"
+tagline = "Import-Export STL files"
+maintainer = "Community"
+type = "add-on"
+permissions = ["files"]
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_mesh_stl"
+copyright = ["2024 Guillaume Bouchard (Guillaum)"]

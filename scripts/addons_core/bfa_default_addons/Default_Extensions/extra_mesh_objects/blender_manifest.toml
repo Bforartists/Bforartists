@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "extra_mesh_objects"
+name = "Extra Mesh Objects"
+version = "0.3.12"
+tagline = "Add extra mesh object types"
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/add_mesh_extra_objects"
+copyright = ["2024 Multiple Authors"]

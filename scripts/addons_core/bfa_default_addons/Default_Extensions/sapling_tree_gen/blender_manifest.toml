@@ -1,0 +1,16 @@
+schema_version = "1.0.0"
+id = "sapling_tree_gen"
+name = "Sapling Tree Gen"
+version = "0.3.6"
+tagline = "Adds a parametric tree"
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Curve"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/add_curve_sapling"
+copyright = [
+    "2024 Andrew Hale (TrumanBlending)",
+    "2024 Aaron Buchler",
+    "2024 CansecoGPC",
+]

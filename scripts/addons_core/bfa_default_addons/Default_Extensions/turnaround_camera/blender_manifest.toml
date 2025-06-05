@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "turnaround_camera"
+name = "Turnaround Camera"
+version = "0.3.0"
+tagline = "Add a camera rotation around selected object"
+maintainer = "Community"
+type = "add-on"
+tags = ["Animation"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/camera_turnaround"
+copyright = ["2024 Antonio Vazquez (antonioya)"]

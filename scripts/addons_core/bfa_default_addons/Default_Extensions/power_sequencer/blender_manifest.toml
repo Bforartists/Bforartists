@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "power_sequencer"
+name = "Power Sequencer"
+version = "2.0.3"
+tagline = "Video editing tools for content creators"
+maintainer = "Community"
+type = "add-on"
+tags = ["Sequencer"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/power_sequencer"
+copyright = ["2024 Nathan Lovato"]

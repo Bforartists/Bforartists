@@ -1,0 +1,15 @@
+schema_version = "1.0.0"
+id = "grease_pencil_tools"
+name = "Grease Pencil Tools"
+version = "1.8.6"
+tagline = "Extra tools for Grease Pencil"
+maintainer = "Samuel Bernou"
+type = "add-on"
+tags = ["Grease Pencil", "Object"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/greasepencil_tools"
+copyright = ["2024 Samuel Bernou", "2024 Antonio Vazquez", "2024 Daniel Martinez Lara", "2024 Matias Mendiola"]
+
+[permissions]
+network = "For automatic brush pack download and install"

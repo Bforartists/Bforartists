@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "nuke_animation_format_chan"
+name = "Nuke Animation Format (.chan)"
+version = "1.0.0"
+tagline = "Import/Export object's animation with nuke"
+maintainer = "Community"
+type = "add-on"
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_anim_nuke_chan"
+copyright = ["2024 Michael Krupa"]

@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "f2"
+name = "F2"
+version = "1.8.4"
+tagline = "Extends the 'Make Edge/Face' functionality"
+maintainer = "Community"
+type = "add-on"
+tags = ["Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/mesh_f2"
+copyright = ["2024 Bart Crouch", "2024 Alexander Nedovizin", "2024 Paul Kotelevets (concept design)", "2024 Adrian Rutkowski"]

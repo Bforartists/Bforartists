@@ -1,0 +1,15 @@
+schema_version = "1.0.0"
+id = "vdm_brush_baker"
+name = "VDM Brush Baker"
+version = "1.0.4"
+tagline = "Bake vector displacement brushes easily from a plane"
+maintainer = "Robin Hohnsbeen"
+type = "add-on"
+tags = ["Bake", "Sculpt"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/vdm_brush_baker"
+copyright = ["2024 Robin Hohnsbeen"]
+
+[permissions]
+files = "Add-on saves textures to disk"

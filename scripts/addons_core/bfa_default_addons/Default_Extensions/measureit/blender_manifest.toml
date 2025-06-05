@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "measureit"
+name = "MeasureIt"
+version = "1.8.3"
+tagline = "Tools for measuring objects"
+maintainer = "Community"
+type = "add-on"
+tags = ["3D View"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-3.0-or-later"]
+website = "https://projects.blender.org/extensions/measureit"
+copyright = ["2024 Antonio Vazquez (antonioya)"]

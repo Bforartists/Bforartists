@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+id = "import_brushset"
+name = "Import BrushSet"
+version = "1.3.3"
+tagline = "Imports all image files from a folder"
+maintainer = "Community"
+type = "add-on"
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_import_BrushSet"
+copyright = ["2024 Daniel Grauer (kromar)", "2024 CansecoGPC"]
+[permissions]
+files = "Requires access to directory with image textures"

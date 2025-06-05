@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+id = "export_paper_model"
+name = "Export Paper Model"
+version = "1.2.2"
+tagline = "Export printable net of the active mesh"
+maintainer = "Community"
+type = "add-on"
+tags = ["Import-Export"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/io_export_paper_model"
+copyright = ["2024 Addam Dominec"]
+[permissions]
+files = "Requires access to directory where it exports .pdf/.svg file"
