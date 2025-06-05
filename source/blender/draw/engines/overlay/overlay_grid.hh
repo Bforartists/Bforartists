@@ -221,14 +221,17 @@ class Grid : Overlay {
 
     /* If perspective view or non-axis aligned view. */
     if (rv3d->is_persp || rv3d->view == RV3D_VIEW_USER) {
-      if (show_axis_x) {
-        grid_flag_ |= PLANE_XY | SHOW_AXIS_X;
-      }
-      if (show_axis_y) {
-        grid_flag_ |= PLANE_XY | SHOW_AXIS_Y;
-      }
-      if (show_floor) {
-        grid_flag_ |= PLANE_XY | SHOW_GRID;
+      /*bfa - we show or hide the grid in all views with the ortho grid flag*/
+      if (show_ortho_grid) {
+        if (show_axis_x) {
+          grid_flag_ |= PLANE_XY | SHOW_AXIS_X;
+        }
+        if (show_axis_y) {
+          grid_flag_ |= PLANE_XY | SHOW_AXIS_Y;
+        }
+        if (show_floor) {
+          grid_flag_ |= PLANE_XY | SHOW_GRID;
+        }
       }
     }
     else {
@@ -254,7 +257,8 @@ class Grid : Overlay {
     grid_axes_[2] = float((grid_flag_ & (PLANE_YZ | PLANE_XZ)) != 0);
 
     /* Z axis if needed */
-    if (((rv3d->view == RV3D_VIEW_USER) || (rv3d->persp != RV3D_ORTHO)) && show_axis_z) {
+    /*bfa - also hides the Axis Z*/
+    if (show_ortho_grid && ((rv3d->view == RV3D_VIEW_USER) || (rv3d->persp != RV3D_ORTHO)) && show_axis_z) {
       zpos_flag_ = zneg_flag_ = SHOW_AXIS_Z;
     }
     else {

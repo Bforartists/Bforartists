@@ -538,6 +538,7 @@ struct wmNotifier {
 #define ND_SPACE_SPREADSHEET (22 << 16)
 /* Not a space itself, but a part of another space. */
 #define ND_REGIONS_ASSET_SHELF (23 << 16)
+#define ND_SPACE_TOOLBAR (24 << 16)  // bfa - toolbar editor
 
 /* NC_ASSET. */
 /* Denotes that the AssetList is done reading some previews. NOT that the preview generation of

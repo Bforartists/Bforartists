@@ -55,6 +55,10 @@
 using blender::Span;
 using blender::Vector;
 
+#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
+
 /* ***************** Pose Select Utilities ********************* */
 
 /* NOTE: SEL_TOGGLE is assumed to have already been handled! */
@@ -595,6 +599,26 @@ static wmOperatorStatus pose_de_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string pose_ot_select_all_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all bones";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all bones";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 void POSE_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -604,6 +628,7 @@ void POSE_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = pose_de_select_all_exec;
+  ot->get_description = pose_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_posemode;
 
   /* flags */
@@ -1224,36 +1249,37 @@ static wmOperatorStatus pose_select_grouped_exec(bContext *C, wmOperator *op)
 
 void POSE_OT_select_grouped(wmOperatorType *ot)
 {
+  /*bfa - added icons. see header, includes. UI_interface.hh and UI_resources.hh*/
   static const EnumPropertyItem prop_select_grouped_types[] = {
       {int(SelectRelatedMode::SAME_COLLECTION),
        "COLLECTION",
-       0,
+       ICON_GROUP,
        "Collection",
        "Same collections as the active bone"},
-      {int(SelectRelatedMode::SAME_COLOR), "COLOR", 0, "Color", "Same color as the active bone"},
+      {int(SelectRelatedMode::SAME_COLOR), "COLOR", ICON_COLOR, "Color", "Same color as the active bone"},
       {int(SelectRelatedMode::SAME_KEYINGSET),
        "KEYINGSET",
-       0,
+       ICON_KEYINGSET,
        "Keying Set",
        "All bones affected by active Keying Set"},
       {int(SelectRelatedMode::CHILDREN),
        "CHILDREN",
-       0,
+       ICON_CHILD_RECURSIVE,
        "Children",
        "Select all children of currently selected bones"},
       {int(SelectRelatedMode::IMMEDIATE_CHILDREN),
        "CHILDREN_IMMEDIATE",
-       0,
+       ICON_CHILD,
        "Immediate Children",
        "Select direct children of currently selected bones"},
       {int(SelectRelatedMode::PARENT),
        "PARENT",
-       0,
+       ICON_PARENT,
        "Parents",
        "Select the parents of currently selected bones"},
       {int(SelectRelatedMode::SIBLINGS),
        "SIBILINGS",
-       0,
+       ICON_SIBLINGS,
        "Siblings",
        "Select all bones that have the same parent as currently selected bones"},
       {0, nullptr, 0, nullptr, nullptr},

@@ -315,8 +315,9 @@ void uiTemplateOperatorRedoProperties(uiLayout *layout, const bContext *C)
 #endif
 
     UI_block_func_handle_set(block, ED_undo_operator_repeat_cb_evt, op);
+    /* BFA - use UI_BUT_LABEL_ALIGN_SPLIT_COLUMN to align boolean property left */
     template_operator_property_buts_draw_recursive(
-        C, op, layout, UI_BUT_LABEL_ALIGN_NONE, layout_flags, nullptr /* &has_advanced */);
+        C, op, layout, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, layout_flags, nullptr /* &has_advanced */);
     /* Warning! this leaves the handle function for any other users of this block. */
 
 #if 0

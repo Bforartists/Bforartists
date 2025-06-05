@@ -1307,7 +1307,7 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
       add_separator = false;
     }
     PointerRNA props_ptr = layout->op(
-        ot, IFACE_(asset->get_name()), ICON_NONE, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE);
+        ot, IFACE_(asset->get_name()), ICON_TOOL_SETTINGS, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE); /*BFA*/
     asset::operator_asset_reference_props_set(*asset, props_ptr);
   }
 
@@ -1380,7 +1380,7 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
   wmOperatorType *ot = WM_operatortype_find("GEOMETRY_OT_execute_node_group", true);
   for (const asset_system::AssetRepresentation *asset : tree->unassigned_assets) {
     PointerRNA props_ptr = layout->op(
-        ot, IFACE_(asset->get_name()), ICON_NONE, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE);
+        ot, IFACE_(asset->get_name()), ICON_TOOL_SETTINGS, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE); /*BFA*/
     asset::operator_asset_reference_props_set(*asset, props_ptr);
   }
 
@@ -1405,12 +1405,12 @@ static void catalog_assets_draw_unassigned(const bContext *C, Menu *menu)
       add_separator = false;
     }
     if (first) {
-      layout->label(IFACE_("Non-Assets"), ICON_NONE);
+      layout->label(IFACE_("Unmarked Assets:"), ICON_NONE);  /*BFA - changed label*/
       first = false;
     }
 
     PointerRNA props_ptr = layout->op(
-        ot, group->id.name + 2, ICON_NONE, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE);
+        ot, group->id.name + 2, ICON_TOOL_SETTINGS, WM_OP_INVOKE_REGION_WIN, UI_ITEM_NONE); /*BFA*/
     WM_operator_properties_id_lookup_set_from_id(&props_ptr, &group->id);
     /* Also set the name so it can be used for #run_node_group_get_name. */
     RNA_string_set(&props_ptr, "name", group->id.name + 2);
@@ -1482,7 +1482,7 @@ void ui_template_node_operator_asset_root_items(uiLayout &layout, const bContext
   });
 
   if (!tree->unassigned_assets.is_empty() || unassigned_local_poll(C)) {
-    layout.menu("GEO_MT_node_operator_unassigned", "", ICON_FILE_HIDDEN);
+    layout.menu("GEO_MT_node_operator_unassigned", "", ICON_TOOL_SETTINGS); /*BFA - icon*/
   }
 }
 

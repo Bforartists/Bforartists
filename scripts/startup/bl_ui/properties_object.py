@@ -37,6 +37,8 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
     bl_label = "Transform"
 
     def draw(self, context):
+        draw4L = False
+
         layout = self.layout
         layout.use_property_split = True
 
@@ -50,21 +52,29 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
 
         rotation_mode = ob.rotation_mode
         if rotation_mode == 'QUATERNION':
+            draw4L = True
             col = layout.column()
             row = col.row(align=True)
             row.prop(ob, "rotation_quaternion", text="Rotation")
             sub = row.column(align=True)
             sub.use_property_decorate = False
-            sub.prop(ob, "lock_rotation_w", text="", emboss=False, icon='DECORATE_UNLOCKED')
+            if ob.lock_rotations_4d:
+                sub.prop(ob, "lock_rotation_w", text="", emboss=False, icon='DECORATE_UNLOCKED')
+            else:
+                sub.label(text="", icon='BLANK1')
             sub.prop(ob, "lock_rotation", text="", emboss=False, icon='DECORATE_UNLOCKED')
         elif rotation_mode == 'AXIS_ANGLE':
+            draw4L = True
             col = layout.column()
             row = col.row(align=True)
             row.prop(ob, "rotation_axis_angle", text="Rotation")
 
             sub = row.column(align=True)
             sub.use_property_decorate = False
-            sub.prop(ob, "lock_rotation_w", text="", emboss=False, icon='DECORATE_UNLOCKED')
+            if ob.lock_rotations_4d:
+                sub.prop(ob, "lock_rotation_w", text="", emboss=False, icon='DECORATE_UNLOCKED')
+            else:
+                sub.label(text="", icon='BLANK1')
             sub.prop(ob, "lock_rotation", text="", emboss=False, icon='DECORATE_UNLOCKED')
         else:
             col = layout.column()
@@ -72,9 +82,17 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
             row.prop(ob, "rotation_euler", text="Rotation")
             row.use_property_decorate = False
             row.prop(ob, "lock_rotation", text="", emboss=False, icon='DECORATE_UNLOCKED')
+
         row = layout.row(align=True)
         row.prop(ob, "rotation_mode", text="Mode")
-        row.label(text="", icon='BLANK1')
+        row = row.row(align=False)
+        row.ui_units_x = 1.0
+
+        if draw4L:
+            row.use_property_decorate = False
+            row.prop(ob, "lock_rotations_4d", icon_only=True, emboss=False, icon='4L_ON' if ob.lock_rotations_4d else '4L_OFF')
+        else:
+            row.label(text="", icon='BLANK1')
 
         col = layout.column()
         row = col.row(align=True)
@@ -121,19 +139,22 @@ class OBJECT_PT_relations(ObjectButtonsPanel, Panel):
 
         col = flow.column()
         col.prop(ob, "parent")
-        sub = col.column()
-        sub.prop(ob, "parent_type")
         parent = ob.parent
-        if parent and ob.parent_type == 'BONE' and parent.type == 'ARMATURE':
-            sub.prop_search(ob, "parent_bone", parent.data, "bones")
-        elif ob.parent_type == 'VERTEX':
-            col.prop(ob, "parent_vertices", text="Parent Vertex", index=0)
-            sub.prop(ob, "use_parent_final_indices")
-        elif ob.parent_type == 'VERTEX_3':
-            col.prop(ob, "parent_vertices", text="Parent Vertices")
-            sub.prop(ob, "use_parent_final_indices")
-        sub.active = (parent is not None)
-        sub.prop(ob, "use_camera_lock_parent")
+        if parent:
+            row = col.row()
+            row.separator()
+            sub = row.column()
+            sub.prop(ob, "parent_type")
+            if ob.parent_type == 'BONE' and parent.type == 'ARMATURE':
+                sub.prop_search(ob, "parent_bone", parent.data, "bones")
+            elif ob.parent_type == 'VERTEX':
+                col.prop(ob, "parent_vertices", text="Parent Vertex", index=0)
+                sub.prop(ob, "use_parent_final_indices")
+            elif ob.parent_type == 'VERTEX_3':
+                col.prop(ob, "parent_vertices", text="Parent Vertices")
+                sub.prop(ob, "use_parent_final_indices")
+            sub.use_property_split = False
+            sub.prop(ob, "use_camera_lock_parent")
 
         col.separator()
 
@@ -155,9 +176,9 @@ class COLLECTION_MT_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.collection_unlink", icon='X')
-        layout.operator("object.collection_objects_select")
-        layout.operator("object.instance_offset_from_cursor")
+        layout.operator("object.collection_unlink", text = "Delete", icon='DELETE')
+        layout.operator("object.collection_objects_select", icon = "HAND")
+        layout.operator("object.instance_offset_from_cursor", icon = "CURSOR")
 
 
 class OBJECT_PT_collections(ObjectButtonsPanel, Panel):
@@ -171,10 +192,10 @@ class OBJECT_PT_collections(ObjectButtonsPanel, Panel):
 
         row = layout.row(align=True)
         if bpy.data.collections:
-            row.operator("object.collection_link", text="Add to Collection")
+            row.operator("object.collection_link", text="Link to existing Collection", icon="DECORATE_LINKED")
+            row.operator("object.collection_add", text="", icon='ADD')
         else:
-            row.operator("object.collection_add", text="Add to Collection")
-        row.operator("object.collection_add", text="", icon='ADD')
+            row.operator("object.collection_add", text="Add to New Collection", icon='ADD')
 
         for collection in obj.users_collection:
             col = layout.column(align=True)
@@ -208,22 +229,53 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         is_dupli = (obj.instance_type != 'NONE')
         is_gpencil = (obj_type == 'GREASEPENCIL')
 
-        col = layout.column(heading="Show")
-        col.prop(obj, "show_name", text="Name")
-        col.prop(obj, "show_axis", text="Axes")
+        col = layout.column(align = True)
+        col.label(text = "Show")
+
+        row = col.row()
+        row.separator()
+        row.use_property_split = False
+        row.prop(obj, "show_name", text="Name")
+        row.prop_decorator(obj, "show_name")
+        row = col.row()
+        row.separator()
+        row.use_property_split = False
+        row.prop(obj, "show_axis", text="Axis")
+        row.prop_decorator(obj, "show_axis")
 
         # Makes no sense for cameras, armatures, etc.!
         # but these settings do apply to dupli instances
         if is_geometry or is_dupli:
-            col.prop(obj, "show_wire", text="Wireframe")
+            row = col.row()
+            row.separator()
+            row.use_property_split = False
+            row.prop(obj, "show_wire", text="Wireframe")
+            row.prop_decorator(obj, "show_wire")
         if obj_type == 'MESH' or is_dupli:
-            col.prop(obj, "show_all_edges", text="All Edges")
+            row = col.row()
+            row.separator()
+            row.use_property_split = False
+            row.prop(obj, "show_all_edges", text="All Edges")
+            row.prop_decorator(obj, "show_all_edges")
         if is_geometry:
-            col.prop(obj, "show_texture_space", text="Texture Space")
-            col.prop(obj.display, "show_shadows", text="Shadow")
-        col.prop(obj, "show_in_front", text="In Front")
+            row = col.row()
+            row.separator()
+            row.use_property_split = False
+            row.prop(obj, "show_texture_space", text="Texture Space")
+            row.prop_decorator(obj, "show_texture_space")
+            row = col.row()
+            row.separator()
+            row.use_property_split = False
+            row.prop(obj.display, "show_shadows", text="Shadow")
+        row = col.row()
+        row.separator()
+        row.use_property_split = False
+        row.prop(obj, "show_in_front", text="In Front")
+        row.prop_decorator(obj, "show_in_front")
+
         # if obj_type == 'MESH' or is_empty_image:
-        #    col.prop(obj, "show_transparent", text="Transparency")
+        #    col.prop(obj, "show_transparent", text="Transparency") #bfa - we have it in the output
+
         sub = layout.column()
         if is_wire:
             # wire objects only use the max. display type for duplis
@@ -235,15 +287,15 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
             col.prop(obj, "color")
 
         if has_bounds:
-            col = layout.column(align=False, heading="Bounds")
-            col.use_property_decorate = False
-            row = col.row(align=True)
-            sub = row.row(align=True)
-            sub.prop(obj, "show_bounds", text="")
-            sub = sub.row(align=True)
-            sub.active = obj.show_bounds or (obj.display_type == 'BOUNDS')
-            sub.prop(obj, "display_bounds_type", text="")
-            row.prop_decorator(obj, "display_bounds_type")
+            split = layout.split(factor = 0.35)
+            col = split.column()
+            col.use_property_split = False
+            col.prop(obj, "show_bounds", text="Bounds")
+            col = split.column()
+            if obj.show_bounds or (obj.display_type == 'BOUNDS'):
+                col.prop(obj, "display_bounds_type", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
@@ -264,19 +316,34 @@ class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
         row = layout.row()
         row.prop(ob, "instance_type", expand=True)
 
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         if ob.instance_type == 'VERTS':
-            layout.prop(ob, "use_instance_vertices_rotation", text="Align to Vertex Normal")
+            row = layout.row()
+
+            row.prop(ob, "use_instance_vertices_rotation", text="Align to Vertex Normal")
+            row.prop_decorator(ob, "use_instance_vertices_rotation")
 
         elif ob.instance_type == 'COLLECTION':
-            col = layout.column()
-            col.prop(ob, "instance_collection", text="Collection")
+            row = layout.row()
+
+            row.prop(ob, "instance_collection", text="Collection")
+            row.prop_decorator(ob, "instance_collection")
 
         if ob.instance_type != 'NONE' or ob.particle_systems:
-            col = layout.column(heading="Show Instancer", align=True)
-            col.prop(ob, "show_instancer_for_viewport", text="Viewport")
-            col.prop(ob, "show_instancer_for_render", text="Render")
+            layout.label(text = "Show Instancer")
+
+            row = layout.row()
+
+            row.separator()
+            row.prop(ob, "show_instancer_for_viewport", text="Viewport")
+            row.prop_decorator(ob, "show_instancer_for_viewport")
+
+            row = layout.row()
+
+            row.separator()
+            row.prop(ob, "show_instancer_for_render", text="Render")
+            row.prop_decorator(ob, "show_instancer_for_render")
 
 
 class OBJECT_PT_instancing_size(ObjectButtonsPanel, Panel):
@@ -320,13 +387,22 @@ class OBJECT_PT_lineart(ObjectButtonsPanel, Panel):
         layout.use_property_split = True
 
         layout.prop(lineart, "usage")
-        layout.use_property_split = True
 
-        row = layout.row(heading="Override Crease")
-        row.prop(lineart, "use_crease_override", text="")
+        split = layout.split(factor = 0.37)
+        col = split.column()
+        col.use_property_split = False
+        col.prop(lineart, "use_crease_override", text="Override Crease")
+        col = split.column()
+        if lineart.use_crease_override:
+            col.prop(lineart, "crease_threshold", slider=True, text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        row = layout.row(heading="Intersection Priority")
+        row.prop(lineart, "use_intersection_priority_override", text="")
         subrow = row.row()
-        subrow.active = lineart.use_crease_override
-        subrow.prop(lineart, "crease_threshold", slider=True, text="")
+        subrow.active = lineart.use_intersection_priority_override
+        subrow.prop(lineart, "intersection_priority", text="")
 
         row = layout.row(heading="Intersection Priority")
         row.prop(lineart, "use_intersection_priority_override", text="")
@@ -389,16 +465,29 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
 
         layout = self.layout
         ob = context.object
 
-        layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
+# bfa - we turn the selectable on or off in the outliner. Not in a hidden panel.
+#        layout.use_property_split = False
+#        layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
+#        layout.use_property_split = True
 
-        col = layout.column(heading="Show In")
-        col.prop(ob, "hide_viewport", text="Viewports", toggle=False, invert_checkbox=True)
-        col.prop(ob, "hide_render", text="Renders", toggle=False, invert_checkbox=True)
+        col = layout.column(align = True)
+        col.label(text = "Show in")
+
+        row = col.row()
+        row.use_property_split = False
+        row.separator()
+        row.prop(ob, "hide_viewport", text="Viewports", toggle=False, invert_checkbox=True)
+        row.prop_decorator(ob, "hide_viewport")
+
+        row = col.row()
+        row.use_property_split = False
+        row.separator()
+        row.prop(ob, "hide_render", text = "Renders", toggle=False, invert_checkbox=True)
+        row.prop_decorator(ob, "hide_render")
 
         if context.engine == 'BLENDER_EEVEE_NEXT':
             if ob.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'CURVES', 'POINTCLOUD', 'VOLUME'}:
@@ -423,12 +512,22 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
                 col.prop(ob, "hide_probe_plane", text="Plane", toggle=False, invert_checkbox=True)
 
         if ob.type == 'GREASEPENCIL':
-            col = layout.column(heading="Grease Pencil")
-            col.prop(ob, "use_grease_pencil_lights", toggle=False)
 
-        layout.separator()
-        col = layout.column(heading="Mask")
-        col.prop(ob, "is_holdout")
+            col = layout.column(align = True)
+            col.label(text = "Grease Pencil")
+
+            row = col.row()
+            row.separator()
+            row.use_property_split = False
+            row.prop(ob, "use_grease_pencil_lights", toggle=False)
+            row.prop_decorator(ob, "use_grease_pencil_lights")
+
+        col = layout.column()
+        col.label(text = "Mask")
+        row = col.row()
+        row.separator()
+        row.prop(ob, "is_holdout")
+        row.prop_decorator(ob, "is_holdout")
 
 
 def has_geometry_visibility(ob):
@@ -467,6 +566,14 @@ class OBJECT_PT_shading(ObjectButtonsPanel, Panel):
     def draw(self, context):
         pass
 
+class OBJECT_PT_lightoptions(ObjectButtonsPanel, Panel):
+    bl_label = "Light Options"
+    bl_context = "object"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        # bfa - light parent panel
 
 class OBJECT_MT_light_linking_context_menu(Menu):
     bl_label = "Light Linking Specials"
@@ -474,12 +581,12 @@ class OBJECT_MT_light_linking_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.light_linking_receivers_select")
+        layout.operator("object.light_linking_receivers_select", icon = 'HAND')
 
 
 class OBJECT_PT_light_linking(ObjectButtonsPanel, Panel):
     bl_label = "Light Linking"
-    bl_parent_id = "OBJECT_PT_shading"
+    bl_parent_id = "OBJECT_PT_lightoptions"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -519,12 +626,11 @@ class OBJECT_MT_shadow_linking_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.light_linking_blockers_select")
-
+        layout.operator("object.light_linking_blockers_select", icon = 'HAND')
 
 class OBJECT_PT_shadow_linking(ObjectButtonsPanel, Panel):
     bl_label = "Shadow Linking"
-    bl_parent_id = "OBJECT_PT_shading"
+    bl_parent_id = "OBJECT_PT_lightoptions"
     bl_context = "object"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -614,6 +720,7 @@ classes = (
     OBJECT_PT_motion_paths_display,
     OBJECT_PT_display,
     OBJECT_PT_shading,
+    OBJECT_PT_lightoptions, # BFA - move light all panels to own parent panel for easier discovery.
     OBJECT_MT_light_linking_context_menu,
     OBJECT_PT_light_linking,
     OBJECT_MT_shadow_linking_context_menu,

@@ -707,15 +707,27 @@ static wmOperatorStatus pose_hide_exec(bContext *C, wmOperator *op)
   return changed_multi ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static std::string pose_ot_hide_get_description(bContext * /*C*/,
+                                                wmOperatorType * /*ot*/,
+                                                PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return "Hide unselected bones in Pose Mode";
+  }
+  return "";
+}
+
 void POSE_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
   ot->idname = "POSE_OT_hide";
-  ot->description = "Tag selected bones to not be visible in Pose Mode";
+  ot->description = "Hide selected bones in Pose Mode";
 
   /* API callbacks. */
   ot->exec = pose_hide_exec;
+  ot->get_description = pose_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_posemode;
 
   /* flags */

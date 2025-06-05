@@ -41,10 +41,21 @@ class DATA_PT_empty(DataButtonsPanel, Panel):
             depth_row.prop(ob, "empty_image_depth", text="Depth", expand=True)
             col.row().prop(ob, "empty_image_side", text="Side", expand=True)
 
-            col = layout.column(heading="Show In", align=True)
-            col.prop(ob, "show_empty_image_orthographic", text="Orthographic")
-            col.prop(ob, "show_empty_image_perspective", text="Perspective")
-            col.prop(ob, "show_empty_image_only_axis_aligned", text="Only Axis Aligned")
+            col = layout.column(align=True)
+            col.label( text = "Show in")
+            col.use_property_split = False
+            row = col.row()
+            row.separator()
+            row.prop(ob, "show_empty_image_orthographic", text="Orthographic")
+            row.prop_decorator(ob, "show_empty_image_orthographic")
+            row = col.row()
+            row.separator()
+            row.prop(ob, "show_empty_image_perspective", text="Perspective")
+            row.prop_decorator(ob, "show_empty_image_perspective")
+            row = col.row()
+            row.separator()
+            row.prop(ob, "show_empty_image_only_axis_aligned", text="Only Axis Aligned")
+            row.prop_decorator(ob, "show_empty_image_only_axis_aligned")
 
             col = layout.column(align=False, heading="Opacity")
             col.use_property_decorate = False

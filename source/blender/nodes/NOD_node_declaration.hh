@@ -164,7 +164,7 @@ std::ostream &operator<<(std::ostream &stream, const RelationsInNode &relations)
 }  // namespace anonymous_attribute_lifetime
 namespace aal = anonymous_attribute_lifetime;
 
-/** Socket or panel declaration. */
+/* Socket or panel declaration. */
 class ItemDeclaration {
  public:
   const PanelDeclaration *parent = nullptr;
@@ -414,7 +414,7 @@ class BaseSocketDeclarationBuilder {
   BaseSocketDeclarationBuilder &make_available(std::function<void(bNode &)> fn);
 
   /**
-   * Provide a fully custom draw function for the socket that overrides any default behavior.
+   * Provide a fully custom draw function for the socket that overrides any default behaviour.
    */
   BaseSocketDeclarationBuilder &custom_draw(CustomSocketDrawFn fn);
 

@@ -583,7 +583,7 @@ void outliner_collection_isolate_flag(Scene *scene,
   else {
     CollectionParent *parent;
     Collection *child = collection;
-    while ((parent = static_cast<CollectionParent *>(child->runtime->parents.first))) {
+    while ((parent = static_cast<CollectionParent *>(child->runtime.parents.first))) {
       if (parent->collection->flag & COLLECTION_IS_MASTER) {
         break;
       }
@@ -2539,9 +2539,9 @@ static BIFIconID tree_element_get_icon_from_id(const ID *id)
       return ED_file_extension_icon(text->filepath);
     }
     case ID_GR:
-      return ICON_OUTLINER_COLLECTION;
+      return ICON_GROUP_BRIGHT; /*bfa - the color coded collection icon*/
     case ID_CV:
-      return ICON_OUTLINER_DATA_CURVES;
+      return ICON_OUTLINER_OB_CURVE;
     case ID_PT:
       return ICON_OUTLINER_DATA_POINTCLOUD;
     case ID_VO:
@@ -2871,7 +2871,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.drag_parent = (data.drag_id && te->parent) ? TREESTORE(te->parent)->id : nullptr;
         }
 
-        data.icon = ICON_OUTLINER_COLLECTION;
+        data.icon = ICON_GROUP_BRIGHT;
         break;
       }
       case TSE_GP_LAYER: {
@@ -3430,11 +3430,11 @@ static void outliner_draw_tree_element(uiBlock *block,
       /* Icons a bit higher. */
       if (TSELEM_OPEN(tselem, space_outliner)) {
         UI_icon_draw_alpha(
-            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DOWNARROW_HLT, alpha_fac);
+            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_DOWN, alpha_fac);
       }
       else {
         UI_icon_draw_alpha(
-            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_RIGHTARROW, alpha_fac);
+            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_RIGHT, alpha_fac);
       }
     }
     offsx += UI_UNIT_X;
@@ -3726,6 +3726,31 @@ static void outliner_draw_struct_marks(ARegion *region,
   }
 }
 
+/* BFA - Define the calculate_hierarchy_depth function for outliner coloring*/
+int calculate_hierarchy_depth(const TreeElement *te) {
+    int depth = 0;
+    const TreeElement *current_te = te;
+    while (current_te) {
+        depth++;
+        current_te = current_te->parent;
+    }
+    return depth;
+}
+/* BFA - End*/
+
+/* BFA - Define the calculate_children_height function for outiner coloring*/
+int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_outliner) {
+    int total_height = 0;
+    LISTBASE_FOREACH (TreeElement *, child_te, &te->subtree) {
+        total_height += UI_UNIT_Y;  // Add the height of each child row
+        if (TSELEM_OPEN(TREESTORE(child_te), space_outliner)) {
+            total_height += calculate_children_height(child_te, space_outliner);  // Recursively calculate height of children
+        }
+    }
+    return total_height;
+}
+/* BFA - End*/
+
 static void outliner_draw_highlights(uint pos,
                                      const ARegion *region,
                                      const SpaceOutliner *space_outliner,
@@ -3733,6 +3758,7 @@ static void outliner_draw_highlights(uint pos,
                                      const float col_active[4],
                                      const float col_highlight[4],
                                      const float col_searchmatch[4],
+                                     uchar col_collection[4],
                                      int start_x,
                                      int *io_start_y)
 {
@@ -3740,9 +3766,90 @@ static void outliner_draw_highlights(uint pos,
                              (space_outliner->outlinevis == SO_DATA_API &&
                               space_outliner->search_string[0] != 0));
 
+  /*bfa - outliner colored collection rows*/
+  const bool outliner_colored_collection_rows = (U.outliner_editor_flag & USER_OUTLINER_COL_COLLECTION_ROWS) != 0;
+
   tree_iterator::all_open(*space_outliner, [&](const TreeElement *te) {
     const TreeStoreElem *tselem = TREESTORE(te);
     const int start_y = *io_start_y;
+
+    /*BFA - Start*/
+    Collection *collection = nullptr;
+    bTheme *btheme = UI_GetTheme();
+    if (outliner_colored_collection_rows) /*bfa - outliner colored collection rows*/
+      if (outliner_is_collection_tree_element(te)) {
+        collection = outliner_collection_from_tree_element(te);
+        col_collection = (collection && collection->color_tag != COLLECTION_COLOR_NONE) ?
+                                  btheme->collection_color[collection->color_tag].color :
+                                  btheme->space_outliner.back;
+
+        int depth = calculate_hierarchy_depth(te);  // Calculate the hierarchy depth of the tree item
+        int offset_x = depth * UI_UNIT_X;  // Define the offset based on the hierarchy depth
+        int alpha = 20;
+
+        /* Draw the collection icon with the original alpha */
+        immUniformColor4ubv(col_collection);
+
+        /* Draw the background rectangle with the modified alpha */
+        uchar background_color[4];
+        copy_v4_v4_uchar(background_color, col_collection);
+        background_color[3] = alpha;  // Set the alpha channel for the background
+        immUniformColor4ubv(background_color);
+        immRecti(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
+
+        if (collection && TSELEM_OPEN(tselem, space_outliner)) {
+          int child_start_y = start_y;
+          int total_height = 0;
+
+          // Calculate the total height of the collection content and children rows
+          total_height += UI_UNIT_Y;  // Add the height of the current collection row
+          LISTBASE_FOREACH (TreeElement *, child_te, &te->subtree) {
+            total_height += UI_UNIT_Y;  // Add the height of each child row, offset by one row
+            if (TSELEM_OPEN(TREESTORE(child_te), space_outliner)) {
+              total_height += calculate_children_height(child_te, space_outliner);  // Recursively calculate height of children
+            }
+          }
+
+          // Check if the collection is nested once to the Scene Collection
+          bool is_nested_once = false;
+          TreeElement *parent_te = te->parent;
+          if (parent_te && parent_te->parent == nullptr) {
+            is_nested_once = true;
+          }
+
+          /*FOR ROOT*/
+          if (is_nested_once) {
+            /* Draw the background rectangle with the modified alpha */
+            uchar background_color[4];
+            copy_v4_v4_uchar(background_color, col_collection);
+            background_color[3] = alpha;  // Set the alpha channel for the background
+
+            immUniformColor4ubv(background_color);
+            immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
+          }
+          /*FOR CHILDREN*/
+          else {
+            /*HORIZONTAL*/
+            /* Draw the background rectangle with the modified alpha */
+            uchar background_color[4];
+            copy_v4_v4_uchar(background_color, col_collection);
+            background_color[3] = alpha;  // Set the alpha channel for the background
+
+            immUniformColor4ubv(background_color);
+            immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
+
+            /*VERTICAL*/
+            /* Draw the background rectangle with the modified alpha */
+            uchar nested_color[4];
+            copy_v4_v4_uchar(nested_color, col_collection);
+            nested_color[3] = alpha + alpha;  // Set the alpha channel for the background
+
+            immUniformColor4ubv(nested_color);
+            immRecti(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
+          }
+        }
+      }
+    /*BFA - End*/
 
     /* Selection status. */
     if ((tselem->flag & TSE_ACTIVE) && (tselem->flag & TSE_SELECTED)) {
@@ -3806,6 +3913,7 @@ static void outliner_draw_highlights(ARegion *region,
 {
   const float col_highlight[4] = {1.0f, 1.0f, 1.0f, 0.13f};
   float col_selection[4], col_active[4], col_searchmatch[4];
+  uchar col_collection[4];
 
   UI_GetThemeColor3fv(TH_SELECT_HIGHLIGHT, col_selection);
   col_selection[3] = 1.0f; /* No alpha. */
@@ -3825,6 +3933,7 @@ static void outliner_draw_highlights(ARegion *region,
                            col_active,
                            col_highlight,
                            col_searchmatch,
+                           col_collection,
                            startx,
                            starty);
   immUnbindProgram();

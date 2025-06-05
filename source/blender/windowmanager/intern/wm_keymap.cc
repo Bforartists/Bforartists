@@ -477,6 +477,8 @@ bool WM_keymap_poll(bContext *C, wmKeyMap *keymap)
     }
   }
 
+/* bfa - silenced the empty keymap warning */
+#if 0
   if (UNLIKELY(BLI_listbase_is_empty(&keymap->items))) {
     /* Empty key-maps may be missing more there may be a typo in the name.
      * Warn early to avoid losing time investigating each case.
@@ -494,6 +496,7 @@ bool WM_keymap_poll(bContext *C, wmKeyMap *keymap)
       CLOG_WARN(WM_LOG_KEYMAPS, "empty keymap '%s'", keymap->idname);
     }
   }
+#endif
 
   if (keymap->poll != nullptr) {
     return keymap->poll(C);

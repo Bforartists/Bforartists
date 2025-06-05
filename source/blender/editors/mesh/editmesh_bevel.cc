@@ -923,15 +923,17 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   }
   layout->prop(op->ptr, "material", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
+  uiLayoutSetPropSep(layout, false); /*bfa - checkboxes, don't split*/
   col = &layout->column(true);
   col->prop(op->ptr, "harden_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(true, IFACE_("Mark"));
+  col = &layout->column(true);
   uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
-  col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seams"), ICON_NONE);
-  col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
+  col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Mark Seams"), ICON_NONE);
+  col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Mark Sharp"), ICON_NONE);
+  uiLayoutSetPropSep(layout, true); /*bfa - checkboxes end. split again*/
 
   layout->separator();
 
@@ -1042,7 +1044,11 @@ void MESH_OT_bevel(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Bevel";
-  ot->description = "Cut into selected items at an angle to create bevel or chamfer";
+  ot->description =
+      "Cut into selected items at an angle to create bevel or chamfer\nVertex Bevel is a "
+      "separated tool, but has the "
+      "same functionality\nActivate the tool, then drag mouse until the geometry changes\nFiner "
+      "adjustments can be done in the Last operator panel then";
   ot->idname = "MESH_OT_bevel";
 
   /* API callbacks. */
@@ -1085,7 +1091,8 @@ void MESH_OT_bevel(wmOperatorType *ot)
               1,
               SEGMENTS_HARD_MAX,
               "Segments",
-              "Segments for curved edge",
+              "Segments for curved edge determines how many segments the bevel geometry will "
+              "have\nFirst adjust the number of edges, then perform the Bevel operation",
               1,
               100);
 

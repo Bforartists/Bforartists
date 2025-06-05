@@ -8,6 +8,10 @@
 
 #include <cstring>
 
+// BFA - include <string> and <unordered_map>
+#include <string>
+#include <unordered_map>
+
 #include "BLI_listbase.h"
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
@@ -821,6 +825,18 @@ static void WM_OT_collection_export_all(wmOperatorType *ot)
   ot->flag = 0;
 }
 
+/* BFA - set builtin save enum items icons */
+std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
+    {"IO_FH_alembic", ICON_SAVE_ABC},
+    {"IO_FH_usd", ICON_SAVE_USD},
+    {"IO_FH_obj", ICON_SAVE_OBJ},
+    {"IO_FH_ply", ICON_SAVE_PLY},
+    {"IO_FH_stl", ICON_SAVE_STL},
+    {"IO_FH_fbx", ICON_SAVE_FBX},
+    {"IO_FH_gltf2", ICON_SAVE_GLTF},
+};
+/* end BFA */
+
 static void collection_exporter_menu_draw(const bContext * /*C*/, Menu *menu)
 {
   using namespace blender;
@@ -830,7 +846,16 @@ static void collection_exporter_menu_draw(const bContext * /*C*/, Menu *menu)
   bool at_least_one = false;
   for (const auto &fh : bke::file_handlers()) {
     if (WM_operatortype_find(fh->export_operator, true)) {
-      PointerRNA op_ptr = layout->op("COLLECTION_OT_exporter_add", fh->label, ICON_NONE);
+      /* BFA start */
+      int icon ;
+      if (auto it = ks_icons_map.find(fh->idname); it != ks_icons_map.end()) {
+        icon = it->second;
+      }
+      else {
+        icon = ICON_NONE;
+      }
+      PointerRNA op_ptr = layout->op("COLLECTION_OT_exporter_add", fh->label, icon);
+      /* BFA end */
       RNA_string_set(&op_ptr, "name", fh->idname);
       at_least_one = true;
     }
@@ -882,7 +907,7 @@ static wmOperatorStatus collection_add_exec(bContext *C, wmOperator * /*op*/)
 void OBJECT_OT_collection_add(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Add to Collection";
+  ot->name = "Add to New Collection"; /*BFA - tooltip*/
   ot->idname = "OBJECT_OT_collection_add";
   ot->description = "Add an object to a new collection";
 

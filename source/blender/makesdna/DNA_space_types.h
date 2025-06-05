@@ -365,6 +365,8 @@ typedef struct SpaceSeq {
   struct SequencerTimelineOverlay timeline_overlay;
   struct SequencerCacheOverlay cache_overlay;
 
+  struct Scene *scene_override; /*BFA - 3D Sequencer*/
+
   /** Multi-view current eye - for internal use. */
   char multiview_eye;
   char _pad2[7];
@@ -1070,6 +1072,22 @@ typedef struct SpaceStatusBar {
   char _pad0[6];
   /* End 'SpaceLink' header. */
 } SpaceStatusBar;
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Toolbar
+ * \{ */
+
+/* BFA - Toolbar Editor */
+typedef struct SpaceToolbar {
+  SpaceLink *next, *prev;
+  ListBase regionbase;
+  char spacetype;
+  char link_flag;
+  char _pad0[6];
+  /* End 'SpaceLink' header. */
+} SpaceToolbar;
 
 /** \} */
 

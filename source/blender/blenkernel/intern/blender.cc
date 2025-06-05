@@ -150,6 +150,59 @@ const char *BKE_blender_version_string_compact()
   return blender_version_string_compact;
 }
 
+/*--- BFA - the bforartists version string calculation --- */
+/*Note: Bforartists versionins does not include the compact release string nor the version cycle that Blender uses*/
+static char bforartists_version_string[48] = "";
+
+/* Only includes patch if non-zero. */
+static char bforartists_version_string_compact[48] = "";
+
+static void bforartists_version_init()
+{
+  const char *version_cycle = "";
+  if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "alpha")) {
+    version_cycle = " Alpha";
+  }
+  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "beta")) {
+    version_cycle = " Beta";
+  }
+  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "rc")) {
+    version_cycle = " Release Candidate";
+  }
+  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "release")) {
+    version_cycle = "";
+  }
+  else {
+    BLI_assert_msg(0, "Invalid Bforartists version cycle");
+  }
+
+  SNPRINTF(bforartists_version_string,
+           "%d.%01d.%d%s",
+           BFORARTISTS_VERSION / 10,
+           BFORARTISTS_VERSION % 10,
+           BFORARTISTS_VERSION_PATCH,
+           version_cycle);
+
+  SNPRINTF(bforartists_version_string_compact,
+           "%d.%01d%s",
+           BFORARTISTS_VERSION / 10,
+           BFORARTISTS_VERSION % 10,
+           version_cycle);
+}
+
+/*bfa - bforartists version string*/
+const char *BKE_bforartists_version_string()
+{
+  return bforartists_version_string;
+}
+
+const char *BKE_bforartists_version_string_compact()
+{
+ return bforartists_version_string_compact;
+}
+
+/* -------------- bfa - end -----------------*/
+
 void BKE_blender_version_blendfile_string_from_values(char *str_buff,
                                                       const size_t str_buff_maxncpy,
                                                       const short file_version,
@@ -190,6 +243,7 @@ bool BKE_blender_version_is_lts()
 void BKE_blender_globals_init()
 {
   blender_version_init();
+  bforartists_version_init(); /*bfa version string*/
 
   memset(&G, 0, sizeof(Global));
 
@@ -247,7 +301,7 @@ void BKE_blender_globals_crash_path_get(char filepath[FILE_MAX])
    * de-referencing. */
 
   if (!(G_MAIN && G_MAIN->filepath[0])) {
-    BLI_path_join(filepath, FILE_MAX, BKE_tempdir_base(), "blender.crash.txt");
+    BLI_path_join(filepath, FILE_MAX, BKE_tempdir_base(), "bforartists.crash.txt"); /* bfa - our name */
   }
   else {
     BLI_path_join(filepath, FILE_MAX, BKE_tempdir_base(), BLI_path_basename(G_MAIN->filepath));

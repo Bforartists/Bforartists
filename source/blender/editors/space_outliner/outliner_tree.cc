@@ -875,6 +875,12 @@ static bool outliner_element_visible_get(const Scene *scene,
   }
 
   TreeStoreElem *tselem = TREESTORE(te);
+  /* bfa - hide pose bones - start */
+  if ((exclude_filter & SO_FILTER_NO_POSE_BONE) && (tselem->type == TSE_POSE_CHANNEL)) {
+      auto *pchan = (bPoseChannel*)te->directdata;
+      return pchan->drawflag & PCHAN_DRAW_SHOW_OUTLINER;
+  }
+  /* bfa - hide pose bones - end */
   if ((tselem->type == TSE_SOME_ID) && (te->idcode == ID_OB)) {
     if ((exclude_filter & SO_FILTER_OB_TYPE) == SO_FILTER_OB_TYPE) {
       return false;

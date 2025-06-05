@@ -75,6 +75,7 @@
 #include "GPU_state.hh"
 #include "GPU_viewport.hh"
 
+#include "UI_interface_c.hh"
 #include "WM_api.hh"
 #include "WM_types.hh"
 
@@ -1792,7 +1793,12 @@ static void create_inspection_string_for_geometry_socket(fmt::memory_buffer &buf
 
   Span<bke::GeometryComponent::Type> supported_types = socket_decl->supported_types();
   if (supported_types.is_empty()) {
-    fmt::format_to(fmt::appender(buf), "{}", TIP_("Supported: All Types"));
+    fmt::format_to(
+        fmt::appender(buf),
+        "{}",
+        TIP_("Supported: All Types\nHold CTRL and click on the label to rename")); /*BFA - more
+                                                                                      explicit
+                                                                                      tooltip*/
     return;
   }
 
@@ -3532,6 +3538,8 @@ static void node_draw_basis(const bContext &C,
                               UI_BTYPE_BUT_TOGGLE,
                               0,
                               is_active ? ICON_HIDE_OFF : ICON_HIDE_ON,
+                              // ICON_TOGGLE_NODE_PREVIEW, /* BFA - wip, could be a better icon for
+                              // node preview toggle button */*/
                               iconofs,
                               rct.ymax - NODE_DY,
                               iconbutw,
@@ -3565,6 +3573,25 @@ static void node_draw_basis(const bContext &C,
                  "");
     UI_block_emboss_set(&block, blender::ui::EmbossType::Emboss);
   }
+  /* bfa - Add nodes icons to node headers */
+  else if (RNA_struct_ui_icon(node.typeinfo->rna_ext.srna) != ICON_NONE) {
+    iconofs -= iconbutw;
+    UI_block_emboss_set(&block, blender::ui::EmbossType::None);
+    uiDefIconBut(&block,
+                 UI_BTYPE_BUT,
+                 0,
+                 RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
+                 iconofs,
+                 rct.ymax - NODE_DY,
+                 iconbutw,
+                 UI_UNIT_Y,
+                 nullptr,
+                 0,
+                 0,
+                 "");
+    UI_block_emboss_set(&block, blender::ui::EmbossType::Emboss);
+  }
+  /* -------- bfa end ------------------ */
   if (node.type_legacy == GEO_NODE_VIEWER) {
     const bool is_active = &node == tree_draw_ctx.active_geometry_nodes_viewer;
     iconofs -= iconbutw;
@@ -4192,7 +4219,6 @@ static rctf calc_node_frame_dimensions(const bContext &C,
   for (bNode *child : node.direct_children_in_frame()) {
     /* Add margin to node rect. */
     rctf noderect = calc_node_frame_dimensions(C, tree_draw_ctx, snode, *child);
-
     noderect.xmin -= frame_layout.margin;
     noderect.xmax += frame_layout.margin;
     noderect.ymin -= frame_layout.margin;

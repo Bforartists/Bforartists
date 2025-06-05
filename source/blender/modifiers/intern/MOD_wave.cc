@@ -291,7 +291,7 @@ static void deform_verts(ModifierData *md,
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *sub, *row, *col;
+  uiLayout *row, *col; /*bfa - removed *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -300,20 +300,54 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   row = &layout->row(true, IFACE_("Motion"));
-  row->prop(
-      ptr, "use_x", UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE, std::nullopt, ICON_NONE);
-  row->prop(
-      ptr, "use_y", UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE, std::nullopt, ICON_NONE);
+  row->prop(ptr,
+          "use_x",
+          UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE,
+          std::nullopt,
+          ICON_NONE);
+  row->prop(ptr,
+          "use_y",
+          UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE,
+          std::nullopt,
+          ICON_NONE);
 
-  layout->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /*------------------- bfa - original props */
+  // layout->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  row = &layout->row(true, IFACE_("Along Normals"));
-  row->prop(ptr, "use_normal", UI_ITEM_NONE, "", ICON_NONE);
-  sub = &row->row(true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_normal"));
-  sub->prop(ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
-  sub->prop(ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
-  sub->prop(ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+  col = &layout->column(true);
+  row = &col->row(true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_cyclic", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
+
+
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = &layout->split(0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = &split->row(false);
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->prop(ptr, "use_normal", UI_ITEM_NONE, "Along Normals", ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = &split->row(true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  if (RNA_boolean_get(ptr, "use_normal")) {
+    row->prop(ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
+    row->prop(ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
+    row->prop(ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
+  }
+  else {
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    row->label(TIP_(""), ICON_NONE);           /* bfa - aligns the decorator right...*/
+    uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
+  }
+  // ------------------------------- end bfa
 
   col = &layout->column(false);
   col->prop(ptr, "falloff_radius", UI_ITEM_NONE, IFACE_("Falloff"), ICON_NONE);

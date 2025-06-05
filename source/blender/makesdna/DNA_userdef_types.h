@@ -365,6 +365,9 @@ typedef struct UserDef {
   /** Deprecated, for forward compatibility. */
   int virtual_pixel;
 
+  float viewport_line_width; /* BFA - GooEngine */
+  char _pad16[4]; /* BFA - GooEngine, declared below */
+
   /** Console scroll-back limit. */
   int scrollback;
   /** Node insert offset (aka auto-offset) margin, but might be useful for later stuff as well. */
@@ -487,7 +490,7 @@ typedef struct UserDef {
   int gpu_preferred_index;
   uint32_t gpu_preferred_vendor_id;
   uint32_t gpu_preferred_device_id;
-  char _pad16[4];
+  char _pad17[4]; /*BFA - bumped padding to fit with line width padding above from Goo Engine*/
   /** #eGPUBackendType */
   short gpu_backend;
 
@@ -585,6 +588,9 @@ typedef struct UserDef {
   short pie_menu_threshold;
 
   int sequencer_editor_flag; /* eUserpref_SeqEditorFlags */
+
+  int outliner_editor_flag;  /* eUserpref_OutlinerEditorFlags */
+  char _pad[4]; /*bfa - outliner colored collection rows*/
 
   char factor_display_type;
 
@@ -684,6 +690,8 @@ typedef enum eUserPref_Flag {
   USER_TXT_TABSTOSPACES_DISABLE = (1 << 25),
   USER_TOOLTIPS_PYTHON = (1 << 26),
   USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
+  USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS = (1 << 28), /* bfa - gooengine disable_search_on_keypress */
+  USER_DISABLE_MATERIAL_ICON = (1 << 29), /* bfa - gooengine disable material icon rendering */
 } eUserPref_Flag;
 
 /** #UserDef.extension_flag */
@@ -744,6 +752,7 @@ typedef enum eUserpref_MiniAxisType {
 typedef enum eWalkNavigation_Flag {
   USER_WALK_GRAVITY = (1 << 0),
   USER_WALK_MOUSE_REVERSE = (1 << 1),
+  USER_WALK_AIRBLOCK = (1 << 2), //BFA - Airblock mode
 } eWalkNavigation_Flag;
 
 /** #UserDef.uiflag */
@@ -1099,6 +1108,11 @@ typedef enum eUserpref_SeqEditorFlags {
   USER_SEQ_ED_SIMPLE_TWEAKING = (1 << 0),
   USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT = (1 << 1),
 } eUserpref_SeqEditorFlags;
+
+/*bfa - outliner colored collection rows*/
+typedef enum eUserpref_OutlinerEditorFlags {
+  USER_OUTLINER_COL_COLLECTION_ROWS = (1 << 0),
+} eUserpref_OutlinerEditorFlags;
 
 /* Locale Ids. Auto will try to get local from OS. Our default is English though. */
 /** #UserDef.language */

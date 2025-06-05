@@ -919,6 +919,11 @@ static std::unique_ptr<uiTooltipData> ui_tooltip_data_from_button_or_extra_icon(
     }
     UI_tooltip_text_field_add(*data, {}, {}, UI_TIP_STYLE_SPACER, UI_TIP_LC_NORMAL);
   }
+  /*bfa - still no tooltip? Then add it !*/
+  else if (!but_label.empty() && but_tip_label.empty())   {
+    UI_tooltip_text_field_add(*data, but_label, {}, UI_TIP_STYLE_HEADER, UI_TIP_LC_NORMAL);
+  }
+  /*bfa end*/
 
   /* Tip */
   if (!but_tip.empty()) {

@@ -30,29 +30,37 @@ const EnumPropertyItem rna_enum_fmodifier_type_items[] = {
     {FMODIFIER_TYPE_NULL, "NULL", 0, "Invalid", ""},
     {FMODIFIER_TYPE_GENERATOR,
      "GENERATOR",
-     0,
+     ICON_GENERATOR_MODIFIER,
      "Generator",
      "Generate a curve using a factorized or expanded polynomial"},
     {FMODIFIER_TYPE_FN_GENERATOR,
      "FNGENERATOR",
-     0,
+     ICON_BUILTIN_MODIFIER,
      "Built-In Function",
      "Generate a curve using standard math functions such as sin and cos"},
     {FMODIFIER_TYPE_ENVELOPE,
      "ENVELOPE",
-     0,
+     ICON_ENVELOPE_MODIFIER,
      "Envelope",
      "Reshape F-Curve values, e.g. change amplitude of movements"},
-    {FMODIFIER_TYPE_CYCLES, "CYCLES", 0, "Cycles", "Cyclic extend/repeat keyframe sequence"},
-    {FMODIFIER_TYPE_NOISE, "NOISE", 0, "Noise", "Add pseudo-random noise on top of F-Curves"},
+    {FMODIFIER_TYPE_CYCLES,
+     "CYCLES",
+     ICON_CYCLES_MODIFIER,
+     "Cycles",
+     "Cyclic extend/repeat keyframe sequence"},
+    {FMODIFIER_TYPE_NOISE,
+     "NOISE",
+     ICON_NOISE_MODIFIER,
+     "Noise",
+     "Add pseudo-random noise on top of F-Curves"},
     {FMODIFIER_TYPE_LIMITS,
      "LIMITS",
-     0,
+     ICON_LIMIT_MODIFIER,
      "Limits",
      "Restrict maximum and minimum values of F-Curve"},
     {FMODIFIER_TYPE_STEPPED,
      "STEPPED",
-     0,
+     ICON_STEPPED_MODIFIER,
      "Stepped Interpolation",
      "Snap values to nearest grid step, e.g. for a stop-motion look"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -1832,7 +1840,7 @@ static void rna_def_fmodifier(BlenderRNA *brna)
   // RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_boolean_funcs(prop, nullptr, "rna_FModifier_show_expanded_set");
   RNA_def_property_ui_text(prop, "Expanded", "F-Curve Modifier's panel is expanded in UI");
-  RNA_def_property_ui_icon(prop, ICON_RIGHTARROW, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1); /*BFA - icon*/
 
   prop = RNA_def_property(srna, "mute", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", FMODIFIER_FLAG_MUTED);

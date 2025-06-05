@@ -934,7 +934,7 @@ static wmOperatorStatus delete_key_v3d_invoke(bContext *C,
                                               wmOperator *op,
                                               const wmEvent * /*event*/)
 {
-  if (RNA_boolean_get(op->ptr, "confirm")) {
+  /*if (RNA_boolean_get(op->ptr, "confirm")) {
     return WM_operator_confirm_ex(C,
                                   op,
                                   IFACE_("Delete keyframes from selected objects?"),
@@ -942,7 +942,7 @@ static wmOperatorStatus delete_key_v3d_invoke(bContext *C,
                                   IFACE_("Delete"),
                                   ALERT_ICON_NONE,
                                   false);
-  }
+  }*/ /*BFA - Remove confirmation dialog*/
   return delete_key_v3d_exec(C, op);
 }
 
@@ -961,7 +961,51 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  WM_operator_properties_confirm_or_exec(ot);
+  // WM_operator_properties_confirm_or_exec(ot); /*BFA - Remove confirmation dialog*/
+}
+
+static void insert_keyframes_multi(Main *bmain,
+                                   blender::Vector<PointerRNA> &ptrs,
+                                   PropertyRNA *prop,
+                                   const AnimationEvalContext &anim_eval_context,
+                                   eBezTriple_KeyframeType key_type,
+                                   eInsertKeyFlags insert_key_flags,
+                                   ID *exclude_owner_id,
+                                   const RNAPath &exclude_rna_path,
+                                   blender::Set<ID *> &changed_owner_ids)
+{
+  changed_owner_ids.reserve(ptrs.size());
+  using namespace blender::animrig;
+  for (const PointerRNA &p : ptrs) {
+    const std::optional<std::string> path = RNA_path_from_ID_to_property(&p, prop);
+    if (!path) {
+      continue;
+    }
+    /* Avoid inserting keyframe for active object in case it existed in the PointerRNA
+     * blender::Vector
+     */
+    if (p.owner_id == exclude_owner_id && (*path) == exclude_rna_path.path) {
+      continue;
+    }
+
+    RNAPath rna_path = {*path, exclude_rna_path.key, exclude_rna_path.index};
+    const char *identifier = RNA_property_identifier(prop);
+    const std::optional<blender::StringRefNull> group = default_channel_group_for_path(&p,
+                                                                                       identifier);
+    PointerRNA owner_ptr = RNA_id_pointer_create((p.owner_id));
+    CombinedKeyingResult result = insert_keyframes(bmain,
+                                                   &owner_ptr,
+                                                   group,
+                                                   {rna_path},
+                                                   std::nullopt,
+                                                   anim_eval_context,
+                                                   key_type,
+                                                   insert_key_flags);
+    bool changed = result.get_count(SingleKeyingResult::SUCCESS) != 0;
+    if (changed) {
+      changed_owner_ids.add(p.owner_id);
+    }
+  }
 }
 
 /* Insert Key Button Operator ------------------------ */
@@ -969,6 +1013,11 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
 static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
 {
   using namespace blender::animrig;
+  /* BFA - Check if alt key is selected to apply animation to all selected through UI animate
+   * property, NOTE: this can be also done via the operator invoke event
+   */
+  bool is_alt_held = ((CTX_wm_window(C)->eventstate->modifier & KM_ALT) != 0);
+
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ToolSettings *ts = scene->toolsettings;
@@ -989,6 +1038,7 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
     return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
   }
 
+  blender::Set<ID *> changed_owner_ids;
   if ((ptr.owner_id && ptr.data && prop) && RNA_property_anim_editable(&ptr, prop)) {
     if (ptr.type == &RNA_NlaStrip) {
       /* Handle special properties for NLA Strips, whose F-Curves are stored on the
@@ -1051,15 +1101,34 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
         const std::optional<int> array_index = (all || index < 0) ? std::nullopt :
                                                                     std::optional(index);
         PointerRNA owner_ptr = RNA_id_pointer_create(ptr.owner_id);
-        CombinedKeyingResult result = insert_keyframes(bmain,
-                                                       &owner_ptr,
-                                                       group,
-                                                       {{*path, {}, array_index}},
-                                                       std::nullopt,
-                                                       anim_eval_context,
-                                                       eBezTriple_KeyframeType(ts->keyframe_type),
-                                                       flag);
+        /* BFA */
+        eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(ts->keyframe_type);
+        RNAPath rna_path = {*path, {}, array_index};
+        /* BFA END */
+        CombinedKeyingResult result = insert_keyframes(
+            bmain, &owner_ptr, group, {rna_path}, std::nullopt, anim_eval_context, key_type, flag);
         changed = result.get_count(SingleKeyingResult::SUCCESS) != 0;
+
+        /* BFA */
+        if (is_alt_held) {
+          blender::Vector<PointerRNA> selected_ptrs;
+          if (ptr.type == &RNA_Object) {
+            CTX_data_selected_objects(C, &selected_ptrs);
+          }
+          else if (ptr.type == &RNA_PoseBone) {
+            CTX_data_selected_pose_bones(C, &selected_ptrs);
+          }
+          insert_keyframes_multi(bmain,
+                                 selected_ptrs,
+                                 prop,
+                                 anim_eval_context,
+                                 key_type,
+                                 flag,
+                                 owner_ptr.owner_id,
+                                 rna_path,
+                                 changed_owner_ids);
+        }
+        /* BFA END */
       }
       else {
         BKE_report(op->reports,
@@ -1086,13 +1155,17 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
     }
   }
 
-  if (changed) {
-    ID *id = ptr.owner_id;
-    AnimData *adt = BKE_animdata_from_id(id);
-    if (adt->action != nullptr) {
-      DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
+  if (changed || !changed_owner_ids.is_empty()) {
+    if (changed) {
+      changed_owner_ids.add(ptr.owner_id);
     }
-    DEG_id_tag_update(id, ID_RECALC_ANIMATION_NO_FLUSH);
+    for (ID *id : changed_owner_ids) {
+      AnimData *adt = BKE_animdata_from_id(id);
+      if (adt->action != nullptr) {
+        DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
+      }
+      DEG_id_tag_update(id, ID_RECALC_ANIMATION_NO_FLUSH);
+    }
 
     /* send updates */
     UI_context_update_anim_flag(C);
@@ -1104,15 +1177,27 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
   return (changed) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static std::string ANIM_OT_keyframe_insert_button_get_description(struct bContext * /*C*/,
+                                                                  struct wmOperatorType * /*op*/,
+                                                                  struct PointerRNA *values)
+{
+  if (RNA_boolean_get(values, "all")) {
+    return "Insert a keyframe for all UI elements of the property";
+  }
+  return "";
+}
+
 void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Insert Keyframe (Buttons)";
   ot->idname = "ANIM_OT_keyframe_insert_button";
-  ot->description = "Insert a keyframe for current UI-active property";
+  ot->description = "Insert a keyframe for the single property";
 
   /* callbacks */
   ot->exec = insert_key_button_exec;
+  ot->get_description = ANIM_OT_keyframe_insert_button_get_description; /*bfa - descriptions*/
   ot->poll = modify_key_op_poll;
 
   /* flags */
@@ -1122,10 +1207,39 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "all", true, "All", "Insert a keyframe for all element of the array");
 }
 
+static bool delete_key_multi(Main *bmain,
+                             ReportList *reports,
+                             const blender::Vector<PointerRNA> &ptrs,
+                             PropertyRNA *prop,
+                             float cfra,
+                             const RNAPath &exclude_rna_path,
+                             const ID *exclude_owner_id)
+{
+  bool changed = false;
+  for (const PointerRNA &p : ptrs) {
+    const std::optional<std::string> path = RNA_path_from_ID_to_property(&p, prop);
+    if (!path) {
+      continue;
+    }
+    /* Avoid deleting keyframe for active object in case it existed in the PointerRNA
+     * blender::Vector
+     */
+    if (p.owner_id == exclude_owner_id && (*path) == exclude_rna_path.path) {
+      continue;
+    }
+    RNAPath rna_path = {*path, exclude_rna_path.key, exclude_rna_path.index};
+    changed |= (blender::animrig::delete_keyframe(bmain, reports, p.owner_id, rna_path, cfra) > 0);
+  }
+  return changed;
+}
+
 /* Delete Key Button Operator ------------------------ */
 
 static wmOperatorStatus delete_key_button_exec(bContext *C, wmOperator *op)
 {
+  /* bfa - Apply animation to all selected through UI animate property */
+  bool is_alt_held = ((CTX_wm_window(C)->eventstate->modifier & KM_ALT) != 0);
+
   Scene *scene = CTX_data_scene(C);
   PointerRNA ptr = {};
   PropertyRNA *prop = nullptr;
@@ -1190,6 +1304,18 @@ static wmOperatorStatus delete_key_button_exec(bContext *C, wmOperator *op)
 
         changed = blender::animrig::delete_keyframe(
                       bmain, op->reports, ptr.owner_id, rna_path, cfra) != 0;
+        /* bfa - Apply animation to all selected through UI animate property */
+        if (is_alt_held) {
+          blender::Vector<PointerRNA> pointers;
+          if (ptr.type == &RNA_Object) {
+            CTX_data_selected_objects(C, &pointers);
+          }
+          else if (ptr.type == &RNA_PoseBone) {
+            CTX_data_selected_pose_bones(C, &pointers);
+          }
+          changed |= delete_key_multi(
+              bmain, op->reports, pointers, prop, cfra, rna_path, ptr.owner_id);
+        }
       }
       else if (G.debug & G_DEBUG) {
         printf("Button Delete-Key: no path to property\n");

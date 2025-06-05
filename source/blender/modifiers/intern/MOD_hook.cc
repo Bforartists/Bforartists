@@ -483,7 +483,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row;
+  uiLayout *col, *row; /*bfa, added *col*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -498,7 +498,13 @@ static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetActive(row, use_falloff);
   row->prop(ptr, "falloff_radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  layout->prop(ptr, "use_falloff_uniform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /*------------------- bfa - original props */
+  col = &layout->column(true);
+  row = &col->row(true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->prop(ptr, "use_falloff_uniform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_falloff_uniform", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   if (RNA_enum_get(ptr, "falloff_type") == eWarp_Falloff_Curve) {
     uiTemplateCurveMapping(layout, ptr, "falloff_curve", 0, false, false, false, false);

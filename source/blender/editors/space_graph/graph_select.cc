@@ -472,6 +472,26 @@ static wmOperatorStatus graphkeys_deselectall_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string wm_graph_ot_select_all_get_description(bContext * /*C*/,
+                                                          wmOperatorType * /*ot*/,
+                                                          PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Toggle selection of all keyframes";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all keyframes";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Invert selection of the selected keyframes";
+  }
+  return "";
+}
+
 void GRAPH_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -481,6 +501,7 @@ void GRAPH_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = graphkeys_deselectall_exec;
+  ot->get_description = wm_graph_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = graphop_visible_keyframes_poll;
 
   /* flags */
@@ -1621,6 +1642,18 @@ static wmOperatorStatus graphkeys_select_leftright_invoke(bContext *C,
   return graphkeys_select_leftright_exec(C, op);
 }
 
+/*bfa - descriptions*/
+static std::string graph_ot_select_leftright_get_description(bContext * /*C*/,
+                                                             wmOperatorType * /*ot*/,
+                                                             PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "mode") == GRAPHKEYS_LRSEL_LEFT) {
+
+    return "Select keyframes to the left of the current frame";
+  }
+  return "";
+}
+
 void GRAPH_OT_select_leftright(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -1628,11 +1661,12 @@ void GRAPH_OT_select_leftright(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Left/Right";
   ot->idname = "GRAPH_OT_select_leftright";
-  ot->description = "Select keyframes to the left or the right of the current frame";
+  ot->description = "Select keyframes to the right of the current frame";
 
   /* API callbacks. */
   ot->invoke = graphkeys_select_leftright_invoke;
   ot->exec = graphkeys_select_leftright_exec;
+  ot->get_description = graph_ot_select_leftright_get_description; /*bfa - descriptions*/
   ot->poll = graphop_visible_keyframes_poll;
 
   /* flags */
@@ -2137,17 +2171,29 @@ static wmOperatorStatus graphkeys_select_key_handles_exec(bContext *C, wmOperato
   return OPERATOR_FINISHED;
 }
 
+/*BFA - descriptions*/
+static std::string GRAPH_OT_select_key_handles_description(struct bContext * /*C*/,
+                                                    struct wmOperatorType * /*op*/,
+                                                    struct PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "left_handle_action") == SELECT) {
+    return "For selected keyframes, select only the keyframe and deselect the handles";
+  }
+  return "";
+}
+
 void GRAPH_OT_select_key_handles(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Key / Handles";
   ot->idname = "GRAPH_OT_select_key_handles";
   ot->description =
-      "For selected keyframes, select/deselect any combination of the key itself and its handles";
+      "For selected keyframes, also select the handles of the keyframes"; /*BFA - changed tooltip to be unique*/
 
   /* callbacks */
   ot->poll = graphop_visible_keyframes_poll;
   ot->exec = graphkeys_select_key_handles_exec;
+  ot->get_description = GRAPH_OT_select_key_handles_description; /*BFA - descriptions*/
 
   /* flags */
   ot->flag = OPTYPE_UNDO | OPTYPE_REGISTER;

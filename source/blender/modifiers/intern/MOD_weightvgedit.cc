@@ -285,7 +285,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *sub, *col, *row;
+  uiLayout *col, *row; /*bfa - removed *sub*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -299,29 +299,52 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "default_weight", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
-  col = &layout->column(false, IFACE_("Group Add"));
-  row = &col->row(true);
-  uiLayoutSetPropDecorate(row, false);
-  sub = &row->row(true);
-  sub->prop(ptr, "use_add", UI_ITEM_NONE, "", ICON_NONE);
-  sub = &sub->row(true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_add"));
-  uiLayoutSetPropSep(sub, false);
-  sub->prop(ptr, "add_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "add_threshold", 0);
 
-  col = &layout->column(false, IFACE_("Group Remove"));
-  row = &col->row(true);
-  uiLayoutSetPropDecorate(row, false);
-  sub = &row->row(true);
-  sub->prop(ptr, "use_remove", UI_ITEM_NONE, "", ICON_NONE);
-  sub = &sub->row(true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_remove"));
-  uiLayoutSetPropSep(sub, false);
-  sub->prop(ptr, "remove_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "remove_threshold", 0);
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
-  layout->prop(ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = &layout->split(0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = &split->row(false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->prop( ptr, "use_add", UI_ITEM_NONE, IFACE_("Group Add"), ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = &split->row(false);
+  if (RNA_boolean_get(ptr, "use_add")) {
+    row->prop( ptr, "add_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
+  }
+  else {
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  split = &layout->split(0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = &split->row(false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->prop( ptr, "use_remove", UI_ITEM_NONE, IFACE_("Group Remove"), ICON_NONE);
+
+  /* SECOND PART ................................................ */
+  row = &split->row(false);
+  if (RNA_boolean_get(ptr, "use_remove")) {
+    row->prop( ptr, "remove_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
+  }
+  else {
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+
+  /*------------------- bfa - original props */
+  col = &layout->column(true);
+  row = &col->row(true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   modifier_error_message_draw(layout, ptr);
 }

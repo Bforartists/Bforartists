@@ -539,6 +539,9 @@ static Main *blo_find_main(FileData *fd, const char *filepath, const char *relab
     const char *libname = (m->curlib) ? m->curlib->runtime->filepath_abs : m->filepath;
 
     if (BLI_path_cmp(filepath_abs, libname) == 0) {
+      m->has_forward_compatibility_issues = !MAIN_VERSION_FILE_OLDER_OR_EQUAL(
+          m, BLENDER_FILE_VERSION, BLENDER_FILE_SUBVERSION);
+
       if (G.debug & G_DEBUG) {
         CLOG_INFO(&LOG, 3, "Found library %s", libname);
       }
@@ -565,6 +568,9 @@ static Main *blo_find_main(FileData *fd, const char *filepath, const char *relab
   m->curlib = lib;
 
   read_file_version(fd, m);
+
+  m->has_forward_compatibility_issues = !MAIN_VERSION_FILE_OLDER_OR_EQUAL(
+      m, BLENDER_FILE_VERSION, BLENDER_FILE_SUBVERSION);
 
   if (G.debug & G_DEBUG) {
     CLOG_INFO(&LOG, 3, "Added new lib %s", filepath);
@@ -3149,9 +3155,6 @@ static void do_versions(FileData *fd, Library *lib, Main *main)
   if (!main->is_read_invalid) {
     blo_do_versions_450(fd, lib, main);
   }
-  if (!main->is_read_invalid) {
-    blo_do_versions_500(fd, lib, main);
-  }
 
   /* WATCH IT!!!: pointers from libdata have not been converted yet here! */
   /* WATCH IT 2!: #UserDef struct init see #do_versions_userdef() above! */
@@ -3211,9 +3214,6 @@ static void do_versions_after_linking(FileData *fd, Main *main)
   }
   if (!main->is_read_invalid) {
     do_versions_after_linking_450(fd, main);
-  }
-  if (!main->is_read_invalid) {
-    do_versions_after_linking_500(fd, main);
   }
 
   main->is_locked_for_linking = false;

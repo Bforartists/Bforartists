@@ -25,6 +25,7 @@ set(LIB
   bf_editor_space_action
   bf_editor_space_buttons
   bf_editor_space_clip
+  bf_editor_space_toolbar
   bf_editor_space_console
   bf_editor_space_file
   bf_editor_space_graph

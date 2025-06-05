@@ -2193,8 +2193,8 @@ void WM_main_playanim(int argc, const char **argv)
 
     AUD_initOnce();
 
-    if (!(g_audaspace.audio_device = AUD_init(nullptr, specs, 1024, "Blender"))) {
-      g_audaspace.audio_device = AUD_init("None", specs, 0, "Blender");
+    if (!(g_audaspace.audio_device = AUD_init(nullptr, specs, 1024, "Bforartists"))) {
+      g_audaspace.audio_device = AUD_init("None", specs, 0, "Bforartists");
     }
   }
 #endif

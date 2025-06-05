@@ -73,7 +73,7 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
 endif()
 
 if(WITH_BLENDER AND NOT WITH_PYTHON_MODULE)
-  set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT blender)
+  set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT bforartists)
 endif()
 
 macro(warn_hardcoded_paths package_name)
@@ -143,7 +143,7 @@ add_definitions(-D_WIN32_WINNT=0x603)
 
 # First generate the manifest for tests since it will not need the dependency on the CRT.
 configure_file(
-  ${CMAKE_SOURCE_DIR}/release/windows/manifest/blender.exe.manifest.in
+  ${CMAKE_SOURCE_DIR}/release/windows/manifest/bforartists.exe.manifest.in
   ${CMAKE_CURRENT_BINARY_DIR}/tests.exe.manifest
   @ONLY
 )
@@ -163,24 +163,24 @@ if(WITH_WINDOWS_BUNDLE_CRT)
       install(FILES ${lib} DESTINATION . COMPONENT Libraries)
     endif()
   endforeach()
-  # Install the CRT to the blender.crt Sub folder.
-  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION blender.crt COMPONENT Libraries)
+  # Install the CRT to the bforartists.crt Sub folder.
+  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION bforartists.crt COMPONENT Libraries)
 
   windows_generate_manifest(
     FILES "${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}"
-    OUTPUT "${CMAKE_BINARY_DIR}/blender.crt.manifest"
-    NAME "blender.crt"
+    OUTPUT "${CMAKE_BINARY_DIR}/bforartists.crt.manifest"
+    NAME "bforartists.crt"
   )
 
-  install(FILES ${CMAKE_BINARY_DIR}/blender.crt.manifest DESTINATION blender.crt)
-  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"blender.crt\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
+  install(FILES ${CMAKE_BINARY_DIR}/bforartists.crt.manifest DESTINATION bforartists.crt)
+  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"bforartists.crt\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
 endif()
 if(NOT WITH_PYTHON_MODULE)
-  set(BUNDLECRT "${BUNDLECRT}<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"blender.shared\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
+  set(BUNDLECRT "${BUNDLECRT}<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"bforartists.shared\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
 endif()
 configure_file(
-  ${CMAKE_SOURCE_DIR}/release/windows/manifest/blender.exe.manifest.in
-  ${CMAKE_CURRENT_BINARY_DIR}/blender.exe.manifest
+  ${CMAKE_SOURCE_DIR}/release/windows/manifest/bforartists.exe.manifest.in
+  ${CMAKE_CURRENT_BINARY_DIR}/bforartists.exe.manifest
   @ONLY
 )
 
@@ -226,7 +226,7 @@ if(NOT MSVC_CLANG)
   string(APPEND CMAKE_CXX_FLAGS " /permissive- /Zc:__cplusplus /Zc:inline")
   string(APPEND CMAKE_C_FLAGS   " /Zc:inline")
 
-  # For VS2022+ we can enable the new preprocessor
+  # For VS2022+ we can enable the the new preprocessor
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.30.30423)
     string(APPEND CMAKE_CXX_FLAGS " /Zc:preprocessor")
     string(APPEND CMAKE_C_FLAGS " /Zc:preprocessor")
@@ -328,7 +328,7 @@ if(NOT DEFINED LIBDIR)
   else()
     message(FATAL_ERROR
       "32 bit compiler detected, "
-      "blender no longer provides pre-build libraries for 32 bit windows, "
+      "Bforartist no longer provides pre-build libraries for 32 bit windows, "
       "please set the LIBDIR cmake variable to your own library folder"
     )
   endif()
@@ -352,7 +352,7 @@ endif()
 if(NOT EXISTS "${LIBDIR}/.git")
   message(FATAL_ERROR
     "\n\nWindows requires pre-compiled libs at: '${LIBDIR}'. "
-    "Please run `make update` in the blender source folder to obtain them."
+    "Please run `make update` in the Bforartists source folder to obtain them."
   )
 endif()
 
@@ -1231,7 +1231,7 @@ if(WINDOWS_PYTHON_DEBUG)
   set_target_properties(blender_python_user_scripts PROPERTIES FOLDER "scripts")
   # Set the default debugging options for the project, only write this file once so the user
   # is free to override them at their own perril.
-  set(USER_PROPS_FILE "${CMAKE_CURRENT_BINARY_DIR}/source/creator/blender.Cpp.user.props")
+  set(USER_PROPS_FILE "${CMAKE_CURRENT_BINARY_DIR}/source/creator/bforartists.Cpp.user.props")
   if(NOT EXISTS ${USER_PROPS_FILE})
     # Layout below is messy, because otherwise the generated file will look messy.
     file(WRITE ${USER_PROPS_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
@@ -1384,6 +1384,6 @@ set(PLATFORM_ENV_BUILD_DIRS "${_msvc_path}\;${LIBDIR}/epoxy/bin\;${LIBDIR}/tbb/b
 set(PLATFORM_ENV_BUILD "PATH=${PLATFORM_ENV_BUILD_DIRS}")
 # Install needs the additional folders from PLATFORM_ENV_BUILD_DIRS as well, as tools like:
 # `idiff` and `abcls` use the release mode dlls.
-set(PLATFORM_ENV_INSTALL "PATH=${CMAKE_INSTALL_PREFIX_WITH_CONFIG}/blender.shared/\;${PLATFORM_ENV_BUILD_DIRS}\;$ENV{PATH}")
+set(PLATFORM_ENV_INSTALL "PATH=${CMAKE_INSTALL_PREFIX_WITH_CONFIG}/bforartists.shared/\;${PLATFORM_ENV_BUILD_DIRS}\;$ENV{PATH}")
 unset(_library_paths)
 unset(_msvc_path)

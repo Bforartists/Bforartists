@@ -22,8 +22,6 @@
 #include "DNA_vec_types.h"
 #include "DNA_windowmanager_enums.h"
 
-#include <optional>
-
 enum class PaintMode : int8_t;
 
 struct ARegion;
@@ -352,7 +350,7 @@ void paint_proj_stroke_done(void *ps_handle_p);
 void paint_brush_color_get(Scene *scene,
                            const Paint *paint,
                            Brush *br,
-                           std::optional<blender::float3> &initial_hsv_jitter,
+                           blender::float3 &initial_hsv_jitter,
                            bool color_correction,
                            bool invert,
                            float distance,

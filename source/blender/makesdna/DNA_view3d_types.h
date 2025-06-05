@@ -125,7 +125,7 @@ typedef struct RegionView3D {
 
   char ndof_flag;
   /**
-   * Rotation center used for "Auto Orbit" (see #NDOF_ORBIT_CENTER_AUTO).
+   * Rotation center used for for "Auto Orbit" (see #NDOF_ORBIT_CENTER_AUTO).
    * Any modification should be followed by adjusting #RegionView3D::dist
    * to prevent problems zooming in after navigation. See: #134732.
    */
@@ -708,6 +708,7 @@ enum {
   V3D_SHOW_Y = 1 << 2,
   V3D_SHOW_Z = 1 << 3,
   V3D_SHOW_ORTHO_GRID = 1 << 4,
+  V3D_SHOW_TOOLSHELF_TABS = 1 << 5, /* BFA - added our toolshelf tabs toggle here */
 };
 
 /** #TransformOrientationSlot.type */

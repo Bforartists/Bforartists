@@ -672,21 +672,51 @@ static wmOperatorStatus node_group_separate_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static wmOperatorStatus node_group_separate_invoke(bContext *C,
-                                                   wmOperator * /*op*/,
-                                                   const wmEvent * /*event*/)
+/* Not used by BFA */
+//static wmOperatorStatus node_group_separate_invoke(bContext *C,
+//                                                   wmOperator * /*op*/,
+//                                                   const wmEvent * /*event*/)
+//{
+//  uiPopupMenu *pup = UI_popup_menu_begin(
+//      C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Separate"), ICON_NONE);
+//  uiLayout *layout = UI_popup_menu_layout(pup);
+
+//  uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
+//  uiItemEnumO(layout, "NODE_OT_group_separate", std::nullopt, ICON_NONE, "type", NODE_GS_COPY);
+//  uiItemEnumO(layout, "NODE_OT_group_separate", std::nullopt, ICON_NONE, "type", NODE_GS_MOVE);
+
+//  UI_popup_menu_end(C, pup);
+//
+//  return OPERATOR_INTERFACE;
+//}
+
+/*bfa - tool name*/
+static std::string NODE_OT_group_separate_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
-  uiPopupMenu *pup = UI_popup_menu_begin(
-      C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Separate"), ICON_NONE);
-  uiLayout *layout = UI_popup_menu_layout(pup);
+  if (RNA_enum_get(ptr, "type") == NODE_GS_COPY) {
+    return CTX_IFACE_(ot->translation_context, "Separate (Copy)");
+  }
+  else if (RNA_enum_get(ptr, "type") == NODE_GS_MOVE) {
+    return CTX_IFACE_(ot->translation_context, "Separate (Move)");
+  }
+  return "";
+}
 
-  uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
-  uiItemEnumO(layout, "NODE_OT_group_separate", std::nullopt, ICON_NONE, "type", NODE_GS_COPY);
-  uiItemEnumO(layout, "NODE_OT_group_separate", std::nullopt, ICON_NONE, "type", NODE_GS_MOVE);
-
-  UI_popup_menu_end(C, pup);
-
-  return OPERATOR_INTERFACE;
+/*bfa - descriptions*/
+static std::string NODE_OT_group_separate_get_description(struct bContext * /*C*/,
+                                                          struct wmOperatorType * /*op*/,
+                                                          struct PointerRNA *values)
+{
+  /*Select*/
+  if (RNA_enum_get(values, "type") == NODE_GS_COPY) {
+    return "Copies the selected node, and pastes a copy of it outside of the node group\nThe node "
+           "group remains unchanged";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(values, "type") == NODE_GS_MOVE) {
+    return "Separate selected nodes from the node group, and removes it from the node group";
+  }
+  return "";
 }
 
 void NODE_OT_group_separate(wmOperatorType *ot)
@@ -697,8 +727,10 @@ void NODE_OT_group_separate(wmOperatorType *ot)
   ot->idname = "NODE_OT_group_separate";
 
   /* API callbacks. */
-  ot->invoke = node_group_separate_invoke;
+  //ot->invoke = node_group_separate_invoke; /*BFA turned off the separate popup menu*/
   ot->exec = node_group_separate_exec;
+  ot->get_name = NODE_OT_group_separate_get_name;               /*bfa - tool name*/
+  ot->get_description = NODE_OT_group_separate_get_description; /*bfa - descriptions*/
   ot->poll = node_group_operator_editable;
 
   /* flags */
@@ -1383,7 +1415,7 @@ static bNode *node_group_make_from_node_declaration(bContext &C,
   gnode->id = &wrapper_group->id;
   id_us_plus(gnode->id);
 
-  /* Position node exactly where the old node was. */
+  /* Position node node exactly where the old node was. */
   gnode->parent = src_node.parent;
   gnode->width = src_node.width;
   copy_v2_v2(gnode->location, src_node.location);

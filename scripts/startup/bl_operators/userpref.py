@@ -454,7 +454,10 @@ class PREFERENCES_OT_keyconfig_remove(Operator):
 # Add-on Operators
 
 class PREFERENCES_OT_addon_enable(Operator):
-    """Turn on this add-on"""
+    """Turn on the legacy add-ons
+No action required. The legacy addons comes with Bforartists, and are enabled by default
+Only if you accidentally deactivated it will you need to reactivate it
+Since Bforartists requires some of the legacy addons to work"""
     bl_idname = "preferences.addon_enable"
     bl_label = "Enable Add-on"
 
@@ -1222,6 +1225,22 @@ class PREFERENCES_OT_studiolight_copy_settings(Operator):
                 return {'FINISHED'}
         return {'CANCELLED'}
 
+# BFA
+class PREFERENCES_OT_studiolight_show(Operator):
+    """Show light preferences"""
+    bl_idname = "preferences.studiolight_show"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    @classmethod
+    def poll(cls, _context):
+        return bpy.ops.screen.userpref_show.poll()
+
+    def execute(self, context):
+        context.preferences.active_section = 'LIGHTS'
+        bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
+        return {'FINISHED'}
+
 
 class PREFERENCES_OT_script_directory_new(Operator):
     bl_idname = "preferences.script_directory_add"
@@ -1277,6 +1296,70 @@ class PREFERENCES_OT_script_directory_remove(Operator):
 
         return {'FINISHED'}
 
+# BFA
+class PREFERENCES_OT_filepaths_show(Operator):
+    """Show, edit and add file paths to Asset Libraries\nThis button opens the Preferences"""
+    bl_idname = "preferences.filepaths_show"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    def execute(self, context):
+        context.preferences.active_section = 'FILE_PATHS'
+        bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
+        return {'FINISHED'}
+
+# BFA
+class PREFERENCES_OT_asset_library_move(Operator):
+    '''Move the currently selected library to the specified direction'''
+    bl_idname = "preferences.asset_library_move"
+    bl_label = "Move Asset Library"
+
+    direction: EnumProperty(
+        name="Direction",
+        description="Specifies which location the active item is moved to",
+        items=(
+            ('UP', "Move Up", ""),
+            ('DOWN', "Move Down", "")
+        ),
+    )
+
+    props_to_copy = (
+        "name",
+        "path",
+        "import_method",
+        "use_relative_path"
+    )
+
+    def execute(self, context):
+        filepaths = context.preferences.filepaths
+
+        active_library_index = filepaths.active_asset_library
+        active_library = filepaths.asset_libraries[active_library_index]
+
+        if self.direction == 'UP':
+            new_index = active_library_index - 1
+        else:
+            new_index = active_library_index + 1
+
+        if (new_index < 0) or (new_index > len(filepaths.asset_libraries) - 1):
+            self.report({'INFO'}, "Library is already at the end of the list.")
+            return {'CANCELLED'}
+
+        neighbor = filepaths.asset_libraries[new_index]
+        filepaths.active_asset_library = new_index
+
+        for prop_name in self.props_to_copy:
+            active_prop = getattr(active_library, prop_name)
+            neighbor_prop = getattr(neighbor, prop_name)
+
+            setattr(neighbor, prop_name, active_prop)
+            setattr(active_library, prop_name, neighbor_prop)
+            # Initially, the neighbor library name will end in 001 due to deduplication
+            # Set the name again to fix this
+            setattr(neighbor, prop_name, active_prop)
+
+        return {'FINISHED'}
+
 
 classes = (
     PREFERENCES_OT_addon_disable,
@@ -1302,6 +1385,9 @@ classes = (
     PREFERENCES_OT_studiolight_new,
     PREFERENCES_OT_studiolight_uninstall,
     PREFERENCES_OT_studiolight_copy_settings,
+    PREFERENCES_OT_studiolight_show, # BFA
+    PREFERENCES_OT_filepaths_show, # BFA
     PREFERENCES_OT_script_directory_new,
     PREFERENCES_OT_script_directory_remove,
+    PREFERENCES_OT_asset_library_move, # BFA
 )

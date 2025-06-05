@@ -88,9 +88,16 @@ class PHYSICS_PT_rigid_body_settings(PHYSICS_PT_rigidbody_panel, Panel):
 
         if rbo.type == 'ACTIVE':
             col.prop(rbo, "mass")
-            col.prop(rbo, "enabled", text="Dynamic")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(rbo, "enabled", text="Dynamic")
+            row.prop_decorator(rbo, "enabled")
 
-        col.prop(rbo, "kinematic", text="Animated")
+        col = layout.column()
+        row = col.row()
+        row.use_property_split = False
+        row.prop(rbo, "kinematic", text="Animated")
+        row.prop_decorator(rbo, "kinematic")
 
 
 class PHYSICS_PT_rigid_body_collisions(PHYSICS_PT_rigidbody_panel, Panel):
@@ -143,7 +150,10 @@ class PHYSICS_PT_rigid_body_collisions(PHYSICS_PT_rigidbody_panel, Panel):
             layout.prop(rbo, "mesh_source", text="Source")
 
         if rbo.collision_shape == 'MESH' and rbo.mesh_source == 'DEFORM':
-            layout.prop(rbo, "use_deform", text="Deforming")
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(rbo, "use_deform", text="Deforming")
+            row.prop_decorator(rbo, "use_deform")
 
 
 class PHYSICS_PT_rigid_body_collisions_surface(PHYSICS_PT_rigidbody_panel, Panel):
@@ -212,11 +222,20 @@ class PHYSICS_PT_rigid_body_collisions_sensitivity(PHYSICS_PT_rigidbody_panel, P
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
             col = flow.column()
-            col.prop(rbo, "use_margin")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(rbo, "use_margin")
+            if rbo.use_margin:
+                row.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
+            row.prop_decorator(rbo, "use_margin")
 
             col = flow.column()
-            col.active = rbo.use_margin
-            col.prop(rbo, "collision_margin", text="Margin")
+            if rbo.use_margin:
+                row = col.row()
+                row.separator()
+                row.prop(rbo, "collision_margin", text="Margin")
 
 
 class PHYSICS_PT_rigid_body_collisions_collections(PHYSICS_PT_rigidbody_panel, Panel):
@@ -310,7 +329,7 @@ class PHYSICS_PT_rigid_body_dynamics_deactivation(PHYSICS_PT_rigidbody_panel, Pa
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
         ob = context.object
@@ -322,6 +341,7 @@ class PHYSICS_PT_rigid_body_dynamics_deactivation(PHYSICS_PT_rigidbody_panel, Pa
         col.prop(rbo, "use_start_deactivated")
 
         col = flow.column()
+        col.use_property_split = True
         col.prop(rbo, "deactivate_linear_velocity", text="Velocity Linear")
         col.prop(rbo, "deactivate_angular_velocity", text="Angular")
         # TODO: other parameters such as time?

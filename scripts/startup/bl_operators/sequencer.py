@@ -114,7 +114,7 @@ class SequencerSplitMulticam(Operator):
 
 
 class SequencerDeinterlaceSelectedMovies(Operator):
-    """Deinterlace all selected movie sources"""
+    """Deinterlace Movies\nDeinterlace all selected movie sources"""
 
     bl_idname = "sequencer.deinterlace_selected_movies"
     bl_label = "Deinterlace Movies"

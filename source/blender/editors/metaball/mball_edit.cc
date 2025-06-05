@@ -181,6 +181,26 @@ static wmOperatorStatus mball_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string mball_ot_select_all_get_description(bContext * /*C*/,
+                                                       wmOperatorType * /*ot*/,
+                                                       PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all metaball elements";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all metaball elements";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 void MBALL_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -190,6 +210,7 @@ void MBALL_OT_select_all(wmOperatorType *ot)
 
   /* callback functions */
   ot->exec = mball_select_all_exec;
+  ot->get_description = mball_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmball;
 
   /* flags */
@@ -675,15 +696,27 @@ static wmOperatorStatus hide_metaelems_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string mball_ot_hide_metaelems_get_description(bContext * /*C*/,
+                                                           wmOperatorType * /*ot*/,
+                                                           PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return "Hide unselected metaball element(s)";
+  }
+  return "";
+}
+
 void MBALL_OT_hide_metaelems(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
-  ot->description = "Hide (un)selected metaball element(s)";
+  ot->description = "Hide selected metaball element(s)";
   ot->idname = "MBALL_OT_hide_metaelems";
 
   /* callback functions */
   ot->exec = hide_metaelems_exec;
+  ot->get_description = mball_ot_hide_metaelems_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmball;
 
   /* flags */

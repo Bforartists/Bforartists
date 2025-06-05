@@ -104,7 +104,7 @@ void GPENCIL_OT_annotation_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Annotation Add New";
   ot->idname = "GPENCIL_OT_annotation_add";
-  ot->description = "Add new Annotation data-block";
+  ot->description = "Add new Annotation data";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* callbacks */
@@ -154,9 +154,10 @@ static wmOperatorStatus gpencil_data_unlink_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_data_unlink(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Annotation Unlink";
+/*bfa -  we call remove remove*/
+  ot->name = "Remove Annotation";
   ot->idname = "GPENCIL_OT_data_unlink";
-  ot->description = "Unlink active Annotation data-block";
+  ot->description = "Remove the active Annotation";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* callbacks */
@@ -212,7 +213,7 @@ void GPENCIL_OT_layer_annotation_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add New Annotation Layer";
   ot->idname = "GPENCIL_OT_layer_annotation_add";
-  ot->description = "Add new Annotation layer or note for the active data-block";
+  ot->description = "Add new Annotation layer or note for the active data";
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 

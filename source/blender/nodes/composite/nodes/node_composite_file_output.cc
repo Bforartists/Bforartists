@@ -330,7 +330,7 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
 
   {
     uiLayout *column = &layout->column(true);
-    uiLayoutSetPropSep(column, true);
+    uiLayoutSetPropSep(column, false); /* bfa - align left */
     uiLayoutSetPropDecorate(column, false);
     column->prop(ptr, "save_as_render", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
   }

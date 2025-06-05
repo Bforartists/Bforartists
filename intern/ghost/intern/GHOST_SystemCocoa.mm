@@ -592,14 +592,14 @@ GHOST_TSuccess GHOST_SystemCocoa::init()
         NSMenu *appMenu;
 
         /* Create the application menu. */
-        appMenu = [[NSMenu alloc] initWithTitle:@"Blender"];
+        appMenu = [[NSMenu alloc] initWithTitle:@"Bforartists"];
 
-        [appMenu addItemWithTitle:@"About Blender"
+        [appMenu addItemWithTitle:@"About Bforartists"
                            action:@selector(orderFrontStandardAboutPanel:)
                     keyEquivalent:@""];
         [appMenu addItem:[NSMenuItem separatorItem]];
 
-        menuItem = [appMenu addItemWithTitle:@"Hide Blender"
+        menuItem = [appMenu addItemWithTitle:@"Hide Bforartists"
                                       action:@selector(hide:)
                                keyEquivalent:@"h"];
         menuItem.keyEquivalentModifierMask = NSEventModifierFlagCommand;
@@ -614,7 +614,7 @@ GHOST_TSuccess GHOST_SystemCocoa::init()
                            action:@selector(unhideAllApplications:)
                     keyEquivalent:@""];
 
-        menuItem = [appMenu addItemWithTitle:@"Quit Blender"
+        menuItem = [appMenu addItemWithTitle:@"Quit Bforartists"
                                       action:@selector(terminate:)
                                keyEquivalent:@"q"];
         menuItem.keyEquivalentModifierMask = NSEventModifierFlagCommand;

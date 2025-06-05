@@ -391,16 +391,27 @@ static wmOperatorStatus object_hide_view_set_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
+/*bfa - descriptions*/
+static std::string object_ot_hide_view_set_get_description(bContext * /*C*/,
+                                                           wmOperatorType * /*ot*/,
+                                                           PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return "Temporarily hide unselected objects from the viewport";
+  }
+  return "";
+}
 
 void OBJECT_OT_hide_view_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Objects";
-  ot->description = "Temporarily hide objects from the viewport";
+  ot->description = "Temporarily hide selected objects from the viewport";
   ot->idname = "OBJECT_OT_hide_view_set";
 
   /* API callbacks. */
   ot->exec = object_hide_view_set_exec;
+  ot->get_description = object_ot_hide_view_set_get_description; /*bfa - descriptions*/
   ot->poll = object_hide_poll;
 
   /* flags */
@@ -1852,7 +1863,6 @@ static wmOperatorStatus shade_auto_smooth_exec(bContext *C, wmOperator *op)
       }
       node_group = reinterpret_cast<bNodeTree *>(node_group_id);
       node_group->ensure_topology_cache();
-      node_group->ensure_interface_cache();
       if (is_valid_smooth_by_angle_group(*node_group)) {
         break;
       }

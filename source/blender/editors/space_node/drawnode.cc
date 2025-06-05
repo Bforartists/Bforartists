@@ -1433,11 +1433,16 @@ static void std_node_socket_interface_draw(ID *id,
       break;
     }
     case SOCK_STRING: {
+      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
       col->prop(&ptr, "subtype", DEFAULT_FLAGS, IFACE_("Subtype"), ICON_NONE);
       col->prop(&ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), ICON_NONE);
       break;
     }
-    case SOCK_BOOLEAN:
+    case SOCK_BOOLEAN: {
+      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+      col->prop(&ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), 0);
+      break;
+    }
     case SOCK_ROTATION:
     case SOCK_RGBA:
     case SOCK_OBJECT:
@@ -1469,6 +1474,7 @@ static void std_node_socket_interface_draw(ID *id,
 
   const bNodeTree *node_tree = reinterpret_cast<const bNodeTree *>(id);
   if (interface_socket->flag & NODE_INTERFACE_SOCKET_INPUT && node_tree->type == NTREE_GEOMETRY) {
+    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     if (ELEM(type, SOCK_INT, SOCK_VECTOR, SOCK_MATRIX)) {
       col->prop(&ptr, "default_input", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
     }
@@ -1476,6 +1482,7 @@ static void std_node_socket_interface_draw(ID *id,
 
   {
     uiLayout *sub = &col->column(false);
+    uiLayoutSetPropSep(sub, false); /* bfa - use_property_split = False */
     uiLayoutSetActive(sub, interface_socket->default_input == NODE_DEFAULT_INPUT_VALUE);
     sub->prop(&ptr, "hide_value", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
   }

@@ -67,6 +67,9 @@ using blender::int2;
 using blender::Span;
 using blender::Vector;
 
+#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
 static void uv_select_all_perform(const Scene *scene, Object *obedit, int action);
 
 static void uv_select_all_perform_multi_ex(const Scene *scene,
@@ -2497,6 +2500,26 @@ static wmOperatorStatus uv_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string node_ot_select_all_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all UV vertices";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all UV vertices";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 void UV_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2507,6 +2530,7 @@ void UV_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = uv_select_all_exec;
+  ot->get_description = node_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_uvedit;
 
   WM_operator_properties_select_all(ot);
@@ -3300,8 +3324,8 @@ static wmOperatorStatus uv_select_split_exec(bContext *C, wmOperator *op)
 void UV_OT_select_split(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Select Split";
-  ot->description = "Select only entirely selected faces";
+  ot->name = "Split Selection"; /*bfa - Split selection, not Select Split*/
+  ot->description = "Splits the selected UV parts\nOnly entirely selected faces are split";
   ot->idname = "UV_OT_select_split";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 

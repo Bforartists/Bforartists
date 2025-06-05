@@ -524,11 +524,11 @@ static wmOperatorStatus edbm_delete_exec(bContext *C, wmOperator *op)
 void MESH_OT_delete(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_mesh_delete_types[] = {
-      {MESH_DELETE_VERT, "VERT", 0, "Vertices", ""},
-      {MESH_DELETE_EDGE, "EDGE", 0, "Edges", ""},
-      {MESH_DELETE_FACE, "FACE", 0, "Faces", ""},
-      {MESH_DELETE_EDGE_FACE, "EDGE_FACE", 0, "Only Edges & Faces", ""},
-      {MESH_DELETE_ONLY_FACE, "ONLY_FACE", 0, "Only Faces", ""},
+      {MESH_DELETE_VERT, "VERT", ICON_DELETE, "Vertices", ""},
+      {MESH_DELETE_EDGE, "EDGE", ICON_DELETE, "Edges", ""},
+      {MESH_DELETE_FACE, "FACE", ICON_DELETE, "Faces", ""},
+      {MESH_DELETE_EDGE_FACE, "EDGE_FACE", ICON_DELETE, "Only Edges & Faces", ""},
+      {MESH_DELETE_ONLY_FACE, "ONLY_FACE", ICON_DELETE, "Only Faces", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1147,6 +1147,44 @@ static wmOperatorStatus edbm_mark_sharp_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - tool name*/
+static std::string mesh_ot_mark_sharp_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "clear")) {
+    if (RNA_boolean_get(ptr, "use_verts")) {
+      return CTX_IFACE_(ot->translation_context, "Clear Sharp from Vertices");
+    }
+    return CTX_IFACE_(ot->translation_context, "Clear Sharp");
+  }
+  if (RNA_boolean_get(ptr, "use_verts")) {
+    return CTX_IFACE_(ot->translation_context, "Mark Sharp from Vertices");
+  }
+  return "";
+}
+
+/*bfa - descriptions*/
+static std::string mesh_ot_mark_sharp_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "clear")) {
+    if (RNA_boolean_get(ptr, "use_verts")) {
+      return "Clear as Sharp marked selected edges from their Vertices"
+             "\nThe calculation happens from the selected vertices instead of the edges";
+    }
+    else {
+      return "Clear as Sharp marked edges";
+    }
+  }
+  else {
+    if (RNA_boolean_get(ptr, "use_verts")) {
+      return "Mark selected edges as sharp from their Vertices"
+             "\nThe calculation happens from the selected vertices instead of the edges";
+    }
+  }
+  return "";
+}
+
 void MESH_OT_mark_sharp(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -1154,10 +1192,12 @@ void MESH_OT_mark_sharp(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Mark Sharp";
   ot->idname = "MESH_OT_mark_sharp";
-  ot->description = "(Un)mark selected edges as sharp";
+  ot->description = "Mark selected edges as sharp";
 
   /* API callbacks. */
   ot->exec = edbm_mark_sharp_exec;
+  ot->get_name = mesh_ot_mark_sharp_get_name;               /*bfa - tool name*/
+  ot->get_description = mesh_ot_mark_sharp_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
   /* flags */
@@ -1962,10 +2002,10 @@ void MESH_OT_edge_split(wmOperatorType *ot)
 
   /* properties */
   static const EnumPropertyItem merge_type_items[] = {
-      {BM_EDGE, "EDGE", 0, "Faces by Edges", "Split faces along selected edges"},
+      {BM_EDGE, "EDGE", ICON_SPLITEDGE, "Faces by Edges", "Split faces along selected edges"},
       {BM_VERT,
        "VERT",
-       0,
+       ICON_SPLIT_BYVERTICES,
        "Faces & Edges by Vertices",
        "Split faces and edges connected to selected vertices"},
       {0, nullptr, 0, nullptr, nullptr},
@@ -2408,15 +2448,37 @@ static wmOperatorStatus edbm_edge_rotate_selected_exec(bContext *C, wmOperator *
   return OPERATOR_FINISHED;
 }
 
+/*bfa - tool name*/
+static std::string mesh_ot_edge_rotate_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_ccw")) {
+    return CTX_IFACE_(ot->translation_context, "Rotate Edge CCW");
+  }
+  return "";
+}
+
+/*bfa - descriptions*/
+static std::string mesh_ot_edge_rotate_get_description(bContext * /*C*/,
+                                                       wmOperatorType * /*ot*/,
+                                                       PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_ccw")) {
+    return "Rotate selected edge in counter clock wise direction";
+  }
+  return "";
+}
+
 void MESH_OT_edge_rotate(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Rotate Selected Edge";
-  ot->description = "Rotate selected edge or adjoining faces";
+  ot->name = "Rotate Edge CW";
+  ot->description = "Rotate selected edge in clock wise direction";
   ot->idname = "MESH_OT_edge_rotate";
 
   /* API callbacks. */
   ot->exec = edbm_edge_rotate_selected_exec;
+  ot->get_name = mesh_ot_edge_rotate_get_name;               /*bfa - tool name*/
+  ot->get_description = mesh_ot_edge_rotate_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
   /* flags */
@@ -2485,15 +2547,27 @@ static wmOperatorStatus edbm_hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string mesh_ot_hide_get_description(bContext * /*C*/,
+                                                wmOperatorType * /*ot*/,
+                                                PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return "Hide unselected vertices, edges or faces";
+  }
+  return "";
+}
+
 void MESH_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
   ot->idname = "MESH_OT_hide";
-  ot->description = "Hide (un)selected vertices, edges or faces";
+  ot->description = "Hide selected vertices, edges or faces";
 
   /* API callbacks. */
   ot->exec = edbm_hide_exec;
+  ot->get_description = mesh_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
   /* flags */
@@ -2600,15 +2674,28 @@ static wmOperatorStatus edbm_normals_make_consistent_exec(bContext *C, wmOperato
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string mesh_ot_normals_make_consistent_get_description(bContext * /*C*/,
+                                                                   wmOperatorType * /*ot*/,
+                                                                   PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "inside")) {
+    return "Make selected face and vertex normals point inside the mesh";
+  }
+  return "";
+}
+
 void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Recalculate Normals";
-  ot->description = "Make face and vertex normals point either outside or inside the mesh";
+  /* BFA - recalculate inside has its own name and tooltip */
+  ot->name = "Recalculate Normals Outside";
+  ot->description = "Make selected face and vertex normals point outside the mesh";
   ot->idname = "MESH_OT_normals_make_consistent";
 
   /* API callbacks. */
   ot->exec = edbm_normals_make_consistent_exec;
+  ot->get_description = mesh_ot_normals_make_consistent_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
   /* flags */
@@ -3433,11 +3520,11 @@ static wmOperatorStatus edbm_merge_exec(bContext *C, wmOperator *op)
 }
 
 static const EnumPropertyItem merge_type_items[] = {
-    {MESH_MERGE_CENTER, "CENTER", 0, "At Center", ""},
-    {MESH_MERGE_CURSOR, "CURSOR", 0, "At Cursor", ""},
-    {MESH_MERGE_COLLAPSE, "COLLAPSE", 0, "Collapse", ""},
-    {MESH_MERGE_FIRST, "FIRST", 0, "At First", ""},
-    {MESH_MERGE_LAST, "LAST", 0, "At Last", ""},
+    {MESH_MERGE_CENTER, "CENTER", ICON_MERGE_CENTER, "At Center", ""},
+    {MESH_MERGE_CURSOR, "CURSOR", ICON_MERGE_CURSOR, "At Cursor", ""},
+    {MESH_MERGE_COLLAPSE, "COLLAPSE", ICON_MERGE, "Collapse", ""},
+    {MESH_MERGE_FIRST, "FIRST", ICON_MERGE_AT_FIRST, "At First", ""},
+    {MESH_MERGE_LAST, "LAST", ICON_MERGE_AT_LAST, "At Last", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -4481,9 +4568,9 @@ static wmOperatorStatus edbm_separate_exec(bContext *C, wmOperator *op)
 void MESH_OT_separate(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_separate_types[] = {
-      {MESH_SEPARATE_SELECTED, "SELECTED", 0, "Selection", ""},
-      {MESH_SEPARATE_MATERIAL, "MATERIAL", 0, "By Material", ""},
-      {MESH_SEPARATE_LOOSE, "LOOSE", 0, "By Loose Parts", ""},
+      {MESH_SEPARATE_SELECTED, "SELECTED", ICON_SEPARATE, "Selection", ""},
+      {MESH_SEPARATE_MATERIAL, "MATERIAL", ICON_SEPARATE_BYMATERIAL, "By Material", ""},
+      {MESH_SEPARATE_LOOSE, "LOOSE", ICON_SEPARATE_LOOSE, "By Loose Parts", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 

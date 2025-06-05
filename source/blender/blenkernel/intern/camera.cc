@@ -1243,7 +1243,7 @@ CameraBGImage *BKE_camera_background_image_new(Camera *cam)
   CameraBGImage *bgpic = MEM_callocN<CameraBGImage>("Background Image");
 
   bgpic->scale = 1.0f;
-  bgpic->alpha = 0.5f;
+  bgpic->alpha = 1.0f; /*bfa - changed from 0.5 to 1.0. Background should be solid.*/
   bgpic->iuser.flag |= IMA_ANIM_ALWAYS;
   bgpic->flag |= CAM_BGIMG_FLAG_EXPANDED | CAM_BGIMG_FLAG_OVERRIDE_LIBRARY_LOCAL;
 

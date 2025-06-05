@@ -688,7 +688,7 @@ void WM_exit(bContext *C, const int exit_code)
   WM_exit_ex(C, true, do_user_exit_actions);
 
   if (!G.quiet) {
-    printf("\nBlender quit\n");
+    printf("\nBforartists quit\n");
   }
 
   exit(exit_code);

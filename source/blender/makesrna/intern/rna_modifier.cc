@@ -233,7 +233,7 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
      "Grease Pencil build modifier"},
     {eModifierType_GreasePencilLength,
      "GREASE_PENCIL_LENGTH",
-     ICON_MOD_LENGTH,
+     ICON_SPLINE_LENGTH,
      "Length",
      "Grease Pencil length modifier"},
     {eModifierType_GreasePencilLineart,
@@ -263,12 +263,12 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
      "Grease Pencil subdivide modifier"},
     {eModifierType_GreasePencilEnvelope,
      "GREASE_PENCIL_ENVELOPE",
-     ICON_MOD_ENVELOPE,
+     ICON_ENVELOPE_MODIFIER,
      "Envelope",
      "Create an envelope shape"},
     {eModifierType_GreasePencilOutline,
      "GREASE_PENCIL_OUTLINE",
-     ICON_MOD_OUTLINE,
+     ICON_OUTLINE,
      "Outline",
      "Convert stroke to outline"},
 
@@ -562,8 +562,8 @@ const EnumPropertyItem rna_enum_node_warning_type_items[] = {
 #ifndef RNA_RUNTIME
 /* use eWarp_Falloff_*** & eHook_Falloff_***, they're in sync */
 static const EnumPropertyItem modifier_warp_falloff_items[] = {
-    {eWarp_Falloff_None, "NONE", 0, "No Falloff", ""},
-    {eWarp_Falloff_Curve, "CURVE", 0, "Curve", ""},
+    {eWarp_Falloff_None, "NONE", ICON_ZOOMOUT, "No Falloff", ""},
+    {eWarp_Falloff_Curve, "CURVE", ICON_CURVE_DATA, "Curve", ""},
     {eWarp_Falloff_Smooth, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", ""},
     {eWarp_Falloff_Sphere, "SPHERE", ICON_SPHERECURVE, "Sphere", ""},
     {eWarp_Falloff_Root, "ROOT", ICON_ROOTCURVE, "Root", ""},
@@ -9512,7 +9512,7 @@ static void rna_def_modifier_grease_pencil_length(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "GreasePencilLengthModifier", "Modifier");
   RNA_def_struct_ui_text(srna, "Length Modifier", "Stretch or shrink strokes");
   RNA_def_struct_sdna(srna, "GreasePencilLengthModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_MOD_LENGTH);
+  RNA_def_struct_ui_icon(srna, ICON_SPLINE_LENGTH);
 
   rna_def_modifier_grease_pencil_layer_filter(srna);
   rna_def_modifier_grease_pencil_material_filter(
@@ -10629,7 +10629,7 @@ static void rna_def_modifier_grease_pencil_envelope(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna, "Grease Pencil Envelope Modifier", "Envelope stroke effect modifier");
   RNA_def_struct_sdna(srna, "GreasePencilEnvelopeModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_MOD_ENVELOPE);
+  RNA_def_struct_ui_icon(srna, ICON_NONE);
 
   rna_def_modifier_grease_pencil_layer_filter(srna);
   rna_def_modifier_grease_pencil_material_filter(
@@ -10693,7 +10693,7 @@ static void rna_def_modifier_grease_pencil_outline(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "GreasePencilOutlineModifier", "Modifier");
   RNA_def_struct_ui_text(srna, "Outline Modifier", "Outline of Strokes modifier from camera view");
   RNA_def_struct_sdna(srna, "GreasePencilOutlineModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_MOD_OUTLINE);
+  RNA_def_struct_ui_icon(srna, ICON_NONE);
 
   rna_def_modifier_grease_pencil_layer_filter(srna);
   rna_def_modifier_grease_pencil_material_filter(
@@ -11274,7 +11274,7 @@ void RNA_def_modifier(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "ui_expand_flag", 0);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Expanded", "Set modifier expanded in the user interface");
-  RNA_def_property_ui_icon(prop, ICON_RIGHTARROW, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1);
   RNA_def_property_update(prop, NC_OBJECT | ND_MODIFIER, nullptr);
 
   prop = RNA_def_property(srna, "is_active", PROP_BOOLEAN, PROP_NONE);

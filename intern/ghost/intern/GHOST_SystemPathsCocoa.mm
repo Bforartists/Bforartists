@@ -27,7 +27,7 @@ static const char *GetApplicationSupportDir(const char *versionstr,
 
     snprintf(tempPath,
              len_tempPath,
-             "%s/Blender/%s",
+             "%s/Bforartists/%s",
              [basePath cStringUsingEncoding:NSASCIIStringEncoding],
              versionstr);
   }

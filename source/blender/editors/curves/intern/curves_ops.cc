@@ -881,6 +881,26 @@ static wmOperatorStatus select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string curves_ot_select_all_get_description(struct bContext * /*C*/,
+                                                        struct wmOperatorType * /*op*/,
+                                                        struct PointerRNA *values)
+{
+  /*Select*/
+  if (RNA_enum_get(values, "action") == SEL_SELECT) {
+    return "Select all control points";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
+    return "Deselect all control points";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(values, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 static void CURVES_OT_select_all(wmOperatorType *ot)
 {
   ot->name = "(De)select All";
@@ -889,6 +909,7 @@ static void CURVES_OT_select_all(wmOperatorType *ot)
 
   ot->exec = select_all_exec;
   ot->poll = editable_curves_poll;
+  ot->get_description = curves_ot_select_all_get_description; /*bfa - descriptions*/
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 

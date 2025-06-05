@@ -856,8 +856,8 @@ static void bone_connect_to_new_parent(ListBase *edbo,
 }
 
 static const EnumPropertyItem prop_editarm_make_parent_types[] = {
-    {ARM_PAR_CONNECT, "CONNECTED", 0, "Connected", ""},
-    {ARM_PAR_OFFSET, "OFFSET", 0, "Keep Offset", ""},
+    {ARM_PAR_CONNECT, "CONNECTED", ICON_PARENT_SET, "Connected", ""},
+    {ARM_PAR_OFFSET, "OFFSET", ICON_PARENT_BONE, "Keep Offset", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -988,12 +988,12 @@ static wmOperatorStatus armature_parent_set_invoke(bContext *C,
   uiLayout *row_offset = &layout->row(false);
   uiLayoutSetEnabled(row_offset, enable_offset);
   uiItemEnumO(
-      row_offset, "ARMATURE_OT_parent_set", std::nullopt, ICON_NONE, "type", ARM_PAR_OFFSET);
+      row_offset, "ARMATURE_OT_parent_set", std::nullopt, ICON_PARENT_SET, "type", ARM_PAR_OFFSET);
 
   uiLayout *row_connect = &layout->row(false);
   uiLayoutSetEnabled(row_connect, enable_connect);
   uiItemEnumO(
-      row_connect, "ARMATURE_OT_parent_set", std::nullopt, ICON_NONE, "type", ARM_PAR_CONNECT);
+      row_connect, "ARMATURE_OT_parent_set", std::nullopt, ICON_PARENT_BONE, "type", ARM_PAR_CONNECT);
 
   UI_popup_menu_end(C, pup);
 
@@ -1020,8 +1020,8 @@ void ARMATURE_OT_parent_set(wmOperatorType *ot)
 }
 
 static const EnumPropertyItem prop_editarm_clear_parent_types[] = {
-    {ARM_PAR_CLEAR, "CLEAR", 0, "Clear Parent", ""},
-    {ARM_PAR_CLEAR_DISCONNECT, "DISCONNECT", 0, "Disconnect Bone", ""},
+    {ARM_PAR_CLEAR, "CLEAR", ICON_CLEAR, "Clear Parent", ""},
+    {ARM_PAR_CLEAR_DISCONNECT, "DISCONNECT", ICON_PARENT_CLEAR, "Disconnect Bone", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1108,14 +1108,14 @@ static wmOperatorStatus armature_parent_clear_invoke(bContext *C,
   uiLayout *row_clear = &layout->row(false);
   uiLayoutSetEnabled(row_clear, enable_clear);
   uiItemEnumO(
-      row_clear, "ARMATURE_OT_parent_clear", std::nullopt, ICON_NONE, "type", ARM_PAR_CLEAR);
+      row_clear, "ARMATURE_OT_parent_clear", std::nullopt, ICON_CLEAR, "type", ARM_PAR_CLEAR);
 
   uiLayout *row_disconnect = &layout->row(false);
   uiLayoutSetEnabled(row_disconnect, enable_disconnect);
   uiItemEnumO(row_disconnect,
               "ARMATURE_OT_parent_clear",
               std::nullopt,
-              ICON_NONE,
+              ICON_PARENT_CLEAR,
               "type",
               ARM_PAR_CLEAR_DISCONNECT);
 

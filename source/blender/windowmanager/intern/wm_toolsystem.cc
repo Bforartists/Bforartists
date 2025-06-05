@@ -1113,14 +1113,22 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
       }
       break;
     case SPACE_NODE: {
-      return "builtin.select_box";
+      return "builtin.select_box"; /*bfa - reverted to box, needs to be box after tweak fixes*/
     }
     case SPACE_SEQ: {
-      return "builtin.select_box";
+      switch (tkey->mode) {
+        case SEQ_VIEW_SEQUENCE:
+          return "builtin.select";
+        case SEQ_VIEW_PREVIEW:
+          return "builtin.select_box";
+        case SEQ_VIEW_SEQUENCE_PREVIEW:
+          return "builtin.select";
+      }
+      return "builtin.select"; /*bfa - changed default from builtin.select_box to builtin.select*/
     }
   }
 
-  return "builtin.select_box";
+  return "builtin.select"; /*bfa - changed default from builtin.select_box to builtin.select*/
 }
 
 /**

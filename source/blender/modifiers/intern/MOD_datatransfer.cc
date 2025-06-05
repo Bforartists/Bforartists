@@ -397,18 +397,36 @@ static void face_panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *sub;
+  // uiLayout *row, *sub; /* bfa - no sub, see below*/
+  uiLayout *row;
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   uiLayoutSetPropSep(layout, true);
 
-  row = &layout->row(true, IFACE_("Max Distance"));
-  row->prop(ptr, "use_max_distance", UI_ITEM_NONE, "", ICON_NONE);
-  sub = &row->row(true);
-  uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_max_distance"));
-  sub->prop(ptr, "max_distance", UI_ITEM_NONE, "", ICON_NONE);
+  /*------------------- bfa - original props */
+  // ------------------ bfa new left aligned prop with triangle button to hide the slider
+
+  /* NOTE: split amount here needs to be synced with normal labels */
+  uiLayout *split = &layout->split(0.385f, true);
+
+  /* FIRST PART ................................................ */
+  row = &split->row(false);
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->prop(ptr, "use_max_distance", UI_ITEM_NONE, "Max Distance", ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_max_distance", 0); /*bfa - decorator*/
+
+  /* SECOND PART ................................................ */
+  row = &split->row(false);
+  if (RNA_boolean_get(ptr, "use_max_distance")) {
+    row->prop(ptr, "max_distance", UI_ITEM_NONE, "", ICON_NONE);
+  }
+  else {
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+  }
+  // ------------------------------- end bfa
 
   layout->prop(ptr, "ray_radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }

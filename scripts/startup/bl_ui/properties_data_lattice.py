@@ -58,12 +58,12 @@ class DATA_PT_lattice(DataButtonsPanel, Panel):
         sub.prop(lat, "interpolation_type_v", text="V")
         sub.prop(lat, "interpolation_type_w", text="W")
 
-        col.separator()
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(lat, "use_outside")
+        row.prop_decorator(lat, "use_outside")
 
-        col.prop(lat, "use_outside")
-
-        col.separator()
-
+        col = layout.column()
         col.prop_search(lat, "vertex_group", context.object, "vertex_groups")
 
 

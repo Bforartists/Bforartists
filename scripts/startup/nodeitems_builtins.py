@@ -37,6 +37,16 @@ class ShaderNodeCategory(SortedNodeCategory):
         )
 
 
+# Menu entry for node group tools.
+def group_tools_draw(_self, layout, _context):
+    layout.operator("node.group_make", icon = "NODE_MAKEGROUP") # BFA icon
+    layout.operator("node.group_insert", text = " Insert into Group ", icon = "NODE_GROUPINSERT") # BFA icon
+    layout.operator("node.group_ungroup", icon = "NODE_UNGROUP") # BFA icon
+    layout.separator()
+    layout.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False # BFA icon
+    layout.separator()
+
+
 # Maps node tree type to group node type.
 node_tree_group_type = {
     'CompositorNodeTree': 'CompositorNodeGroup',

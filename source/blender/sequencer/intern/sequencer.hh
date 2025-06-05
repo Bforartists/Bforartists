@@ -10,6 +10,8 @@
 
 #include "BLI_span.hh"
 
+#include "DNA_sequence_types.h"
+
 struct Scene;
 struct Strip;
 struct StripProxy;
@@ -31,6 +33,6 @@ StripProxy *seq_strip_proxy_alloc();
  *
  * \return collection of effect strips
  */
-blender::Span<Strip *> SEQ_lookup_effects_by_strip(Editing *ed, const Strip *key);
+blender::Span<Strip *> lookup_effects_by_strip(Editing *ed, const Strip *key);
 
 }  // namespace blender::seq

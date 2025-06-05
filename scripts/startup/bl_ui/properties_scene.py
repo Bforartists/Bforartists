@@ -19,6 +19,30 @@ from bl_ui.properties_physics_common import (
 from bpy.app.translations import pgettext_iface as iface_
 
 
+# bfa -  added the render engine prop
+class SCENE_PT_context(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_options = {'HIDE_HEADER'}
+    bl_label = ""
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+        rd = scene.render
+
+        if rd.has_multiple_engines:
+            layout.prop(rd, "engine", text="Render Engine")
+
+
 class SCENE_UL_keying_set_paths(UIList):
     def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         # assert(isinstance(item, bpy.types.KeyingSetPath)
@@ -46,10 +70,17 @@ class SCENE_PT_scene(SceneButtonsPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        scene = context.scene
+        # Active workspace view-layer is retrieved through window, not through workspace.
+        window = context.window
+        screen = context.screen
+        scene = window.scene
+        layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
 
-        layout.prop(scene, "camera")
-        layout.prop(scene, "background_set")
+        # the following props have another scene definition
+
+        scn = context.scene
+        layout.prop(scn, "camera")
+        layout.prop(scn, "background_set")
         layout.prop(scene, "active_clip", text="Active Clip")
 
 
@@ -68,18 +99,20 @@ class SCENE_PT_unit(SceneButtonsPanel, Panel):
         layout.prop(unit, "system")
 
         col = layout.column()
-        col.enabled = unit.system != 'NONE'
-        col.prop(unit, "scale_length")
-        col.prop(unit, "use_separate")
+        if unit.system != 'NONE':
+            col.prop(unit, "scale_length")
+
+            col.use_property_split = False
+            col.prop(unit, "use_separate")
 
         col = layout.column()
         col.prop(unit, "system_rotation", text="Rotation")
         subcol = col.column()
-        subcol.enabled = unit.system != 'NONE'
-        subcol.prop(unit, "length_unit", text="Length")
-        subcol.prop(unit, "mass_unit", text="Mass")
-        subcol.prop(unit, "time_unit", text="Time")
-        subcol.prop(unit, "temperature_unit", text="Temperature")
+        if unit.system != 'NONE':
+            subcol.prop(unit, "length_unit", text="Length")
+            subcol.prop(unit, "mass_unit", text="Mass")
+            subcol.prop(unit, "time_unit", text="Time")
+            subcol.prop(unit, "temperature_unit", text="Temperature")
 
 
 class SceneKeyingSetsPanel:
@@ -320,11 +353,23 @@ class SCENE_PT_simulation(SceneButtonsPanel, Panel):
         scene = context.scene
 
         col = layout.column()
-        col.prop(scene, "use_custom_simulation_range", text="Simulation Range")
-        subcol = col.column(align=True)
-        subcol.active = scene.use_custom_simulation_range
-        subcol.prop(scene, "simulation_frame_start", text="Start")
-        subcol.prop(scene, "simulation_frame_end", text="End")
+        split = col.split(factor=.4)
+        split.use_property_split=False
+        split.prop(scene, "use_custom_simulation_range", text="Simulation Range")
+
+        split.alignment = 'LEFT'
+        if scene.use_custom_simulation_range:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if scene.use_custom_simulation_range:
+            row = col.row()
+            row.separator()
+            row.prop(scene, "simulation_frame_start", text="Start")
+            row = col.row()
+            row.separator()
+            row.prop(scene, "simulation_frame_end", text="End")
 
 
 class SCENE_PT_rigid_body_world(SceneButtonsPanel, Panel):
@@ -384,7 +429,11 @@ class SCENE_PT_rigid_body_world_settings(RigidBodySubPanel, Panel):
 
             col = flow.column()
             col.active = rbw.enabled
-            col.prop(rbw, "use_split_impulse")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(rbw, "use_split_impulse")
+            row.prop_decorator(rbw, "use_split_impulse")
+            row.use_property_split = True
 
             col = col.column()
             col.prop(rbw, "substeps_per_frame")
@@ -467,6 +516,7 @@ class SCENE_PT_custom_props(SceneButtonsPanel, PropertyPanel, Panel):
 
 
 classes = (
+    SCENE_PT_context, # bfa -  added the render engine prop
     SCENE_UL_keying_set_paths,
     SCENE_PT_scene,
     SCENE_PT_unit,

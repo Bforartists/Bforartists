@@ -313,17 +313,17 @@ void OBJECT_OT_vertex_parent_set(wmOperatorType *ot)
 const EnumPropertyItem prop_clear_parent_types[] = {
     {CLEAR_PARENT_ALL,
      "CLEAR",
-     0,
+     ICON_PARENT_CLEAR,
      "Clear Parent",
      "Completely clear the parenting relationship, including involved modifiers if any"},
     {CLEAR_PARENT_KEEP_TRANSFORM,
      "CLEAR_KEEP_TRANSFORM",
-     0,
+     ICON_PARENT_CLEAR,
      "Clear and Keep Transformation",
      "As 'Clear Parent', but keep the current visual transformations of the object"},
     {CLEAR_PARENT_INVERSE,
      "CLEAR_INVERSE",
-     0,
+     ICON_PARENT_CLEAR,
      "Clear Parent Inverse",
      "Reset the transform corrections applied to the parenting relationship, does not remove "
      "parenting itself"},
@@ -479,19 +479,19 @@ void parent_set(Object *ob, Object *par, const int type, const char *substr)
 }
 
 const EnumPropertyItem prop_make_parent_types[] = {
-    {PAR_OBJECT, "OBJECT", 0, "Object", ""},
-    {PAR_ARMATURE, "ARMATURE", 0, "Armature Deform", ""},
-    {PAR_ARMATURE_NAME, "ARMATURE_NAME", 0, "   With Empty Groups", ""},
-    {PAR_ARMATURE_AUTO, "ARMATURE_AUTO", 0, "   With Automatic Weights", ""},
-    {PAR_ARMATURE_ENVELOPE, "ARMATURE_ENVELOPE", 0, "   With Envelope Weights", ""},
-    {PAR_BONE, "BONE", 0, "Bone", ""},
-    {PAR_BONE_RELATIVE, "BONE_RELATIVE", 0, "Bone Relative", ""},
-    {PAR_CURVE, "CURVE", 0, "Curve Deform", ""},
-    {PAR_FOLLOW, "FOLLOW", 0, "Follow Path", ""},
-    {PAR_PATH_CONST, "PATH_CONST", 0, "Path Constraint", ""},
-    {PAR_LATTICE, "LATTICE", 0, "Lattice Deform", ""},
-    {PAR_VERTEX, "VERTEX", 0, "Vertex", ""},
-    {PAR_VERTEX_TRI, "VERTEX_TRI", 0, "Vertex (Triangle)", ""},
+    {PAR_OBJECT, "OBJECT", ICON_PARENT_OBJECT, "Object", ""},
+    {PAR_ARMATURE, "ARMATURE", ICON_PARENT_BONE, "Armature Deform", ""},
+    {PAR_ARMATURE_NAME, "ARMATURE_NAME", ICON_PARENT_BONE, "   With Empty Groups", ""},
+    {PAR_ARMATURE_AUTO, "ARMATURE_AUTO", ICON_PARENT_BONE, "   With Automatic Weights", ""},
+    {PAR_ARMATURE_ENVELOPE, "ARMATURE_ENVELOPE", ICON_PARENT_BONE, "   With Envelope Weights", ""},
+    {PAR_BONE, "BONE", ICON_PARENT_BONE, "Bone", ""},
+    {PAR_BONE_RELATIVE, "BONE_RELATIVE", ICON_PARENT_BONE, "Bone Relative", ""},
+    {PAR_CURVE, "CURVE", ICON_PARENT_CURVE, "Curve Deform", ""},
+    {PAR_FOLLOW, "FOLLOW", ICON_PARENT_CURVE, "Follow Path", ""},
+    {PAR_PATH_CONST, "PATH_CONST", ICON_PARENT_CURVE, "Path Constraint", ""},
+    {PAR_LATTICE, "LATTICE", ICON_PARENT_LATTICE, "Lattice Deform", ""},
+    {PAR_VERTEX, "VERTEX", ICON_VERTEX_PARENT, "Vertex", ""},
+    {PAR_VERTEX_TRI, "VERTEX_TRI", ICON_VERTEX_PARENT, "Vertex (Triangle)", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -953,23 +953,23 @@ static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 #if 0
   uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_OBJECT);
 #else
-  opptr = layout->op(ot, IFACE_("Object"), ICON_NONE, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE);
+  opptr = layout->op(ot, IFACE_("Object"), ICON_PARENT_OBJECT, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", false);
 
   opptr = layout->op(
-      ot, IFACE_("Object (Keep Transform)"), ICON_NONE, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE);
+      ot, IFACE_("Object (Keep Transform)"), ICON_PARENT_OBJECT, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", true);
 #endif
 
   PointerRNA op_ptr = layout->op(
-      "OBJECT_OT_parent_no_inverse_set", IFACE_("Object (Without Inverse)"), ICON_NONE);
+      "OBJECT_OT_parent_no_inverse_set", IFACE_("Object (Without Inverse)"), ICON_PARENT);
   RNA_boolean_set(&op_ptr, "keep_transform", false);
 
   op_ptr = layout->op("OBJECT_OT_parent_no_inverse_set",
                       IFACE_("Object (Keep Transform Without Inverse)"),
-                      ICON_NONE);
+                      ICON_PARENT);
   RNA_boolean_set(&op_ptr, "keep_transform", true);
 
   struct {
@@ -1004,40 +1004,49 @@ static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
   CTX_DATA_END;
 
   if (parent->type == OB_ARMATURE) {
-
     if (can_support.armature_deform) {
-      uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_ARMATURE);
+
+      uiItemEnumO_ptr(
+          layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE); /*BFA icon*/
     }
     if (can_support.empty_groups) {
-      uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_ARMATURE_NAME);
+
+      uiItemEnumO_ptr(
+          layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME); /*BFA icon*/
     }
     if (can_support.envelope_weights) {
-      uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_ARMATURE_ENVELOPE);
+
+      uiItemEnumO_ptr(
+          layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE); /*BFA icon*/
     }
     if (can_support.automatic_weights) {
-      uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_ARMATURE_AUTO);
+      uiItemEnumO_ptr(
+          layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_ARMATURE_AUTO); /*BFA icon*/
     }
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_BONE);
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_BONE_RELATIVE);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_BONE); /*BFA icon*/
+    uiItemEnumO_ptr(
+        layout, ot, std::nullopt, ICON_PARENT_BONE, "type", PAR_BONE_RELATIVE); /*BFA icon*/
   }
   else if (parent->type == OB_CURVES_LEGACY) {
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_CURVE);
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_FOLLOW);
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_PATH_CONST);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_CURVE);  /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_FOLLOW); /*BFA icon*/
+    uiItemEnumO_ptr(
+        layout, ot, std::nullopt, ICON_PARENT_CURVE, "type", PAR_PATH_CONST); /*BFA icon*/
   }
   else if (parent->type == OB_LATTICE) {
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_LATTICE);
+    uiItemEnumO_ptr(
+        layout, ot, std::nullopt, ICON_PARENT_LATTICE, "type", PAR_LATTICE); /*BFA icon*/
   }
   else if (parent->type == OB_MESH) {
     if (can_support.attach_surface) {
-      layout->op("CURVES_OT_surface_set", IFACE_("Object (Attach Curves to Surface)"), ICON_NONE);
+      layout->op("CURVES_OT_surface_set", IFACE_("Object (Attach Curves to Surface)"), ICON_PARENT_CURVE);  /*BFA icon*/
     }
   }
 
   /* vertex parenting */
   if (OB_TYPE_SUPPORT_PARVERT(parent->type)) {
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_VERTEX);
-    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_VERTEX_TRI);
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_VERTEX_PARENT, "type", PAR_VERTEX); /*BFA icon*/
+    uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_VERTEX_PARENT, "type", PAR_VERTEX_TRI); /*BFA icon*/
   }
 
   UI_popup_menu_end(C, pup);
@@ -1691,25 +1700,41 @@ void OBJECT_OT_make_links_scene(wmOperatorType *ot)
 void OBJECT_OT_make_links_data(wmOperatorType *ot)
 {
   static const EnumPropertyItem make_links_items[] = {
-      {MAKE_LINKS_OBDATA, "OBDATA", 0, "Link Object Data", "Replace assigned Object Data"},
-      {MAKE_LINKS_MATERIALS, "MATERIAL", 0, "Link Materials", "Replace assigned Materials"},
+      {MAKE_LINKS_OBDATA,
+       "OBDATA",
+       ICON_LINK_DATA,
+       "Link Object Data",
+       "Replace assigned Object Data"},
+      {MAKE_LINKS_MATERIALS,
+       "MATERIAL",
+       ICON_LINK_DATA,
+       "Link Materials",
+       "Replace assigned Materials"},
       {MAKE_LINKS_ANIMDATA,
        "ANIMATION",
-       0,
+       ICON_LINK_DATA,
        "Link Animation Data",
        "Replace assigned Animation Data"},
-      {MAKE_LINKS_GROUP, "GROUPS", 0, "Link Collections", "Replace assigned Collections"},
+      {MAKE_LINKS_GROUP,
+       "GROUPS",
+       ICON_LINK_DATA,
+       "Link Collections",
+       "Replace assigned Collections"},
       {MAKE_LINKS_DUPLICOLLECTION,
        "DUPLICOLLECTION",
-       0,
+       ICON_LINK_DATA,
        "Link Instance Collection",
        "Replace assigned Collection Instance"},
-      {MAKE_LINKS_FONTS, "FONTS", 0, "Link Fonts to Text", "Replace Text object Fonts"},
+      {MAKE_LINKS_FONTS,
+       "FONTS",
+       ICON_OUTLINER_OB_FONT,
+       "Link Fonts to Text",
+       "Replace Text object Fonts"},
       RNA_ENUM_ITEM_SEPR,
-      {MAKE_LINKS_MODIFIERS, "MODIFIERS", 0, "Copy Modifiers", "Replace Modifiers"},
+      {MAKE_LINKS_MODIFIERS, "MODIFIERS", ICON_LINK_DATA, "Copy Modifiers", "Replace Modifiers"},
       {MAKE_LINKS_SHADERFX,
        "EFFECTS",
-       0,
+       ICON_SHADERFX,
        "Copy Grease Pencil Effects",
        "Replace Grease Pencil Effects"},
       {0, nullptr, 0, nullptr, nullptr},
@@ -2310,20 +2335,24 @@ static wmOperatorStatus make_local_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_make_local(wmOperatorType *ot)
 {
   static const EnumPropertyItem type_items[] = {
-      {MAKE_LOCAL_SELECT_OB, "SELECT_OBJECT", 0, "Selected Objects", ""},
-      {MAKE_LOCAL_SELECT_OBDATA, "SELECT_OBDATA", 0, "Selected Objects and Data", ""},
+      {MAKE_LOCAL_SELECT_OB, "SELECT_OBJECT", ICON_MAKE_LOCAL, "Selected Objects", ""},
+      {MAKE_LOCAL_SELECT_OBDATA,
+       "SELECT_OBDATA",
+       ICON_MAKE_LOCAL,
+       "Selected Objects and Data",
+       ""},
       {MAKE_LOCAL_SELECT_OBDATA_MATERIAL,
        "SELECT_OBDATA_MATERIAL",
-       0,
+       ICON_MAKE_LOCAL,
        "Selected Objects, Data and Materials",
        ""},
-      {MAKE_LOCAL_ALL, "ALL", 0, "All", ""},
+      {MAKE_LOCAL_ALL, "ALL", ICON_MAKE_LOCAL, "All", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
   /* identifiers */
   ot->name = "Make Local";
-  ot->description = "Make library linked data-blocks local to this file";
+  ot->description = "Make library linked data local to this file";
   ot->idname = "OBJECT_OT_make_local";
 
   /* API callbacks. */
@@ -2529,7 +2558,7 @@ static wmOperatorStatus make_override_library_exec(bContext *C, wmOperator *op)
         case ID_GR: {
           Collection *collection_root = (Collection *)id_root;
           LISTBASE_FOREACH_MUTABLE (
-              CollectionParent *, collection_parent, &collection_root->runtime->parents)
+              CollectionParent *, collection_parent, &collection_root->runtime.parents)
           {
             if (ID_IS_LINKED(collection_parent->collection) ||
                 !BKE_view_layer_has_collection(view_layer, collection_parent->collection))
@@ -2677,8 +2706,8 @@ void OBJECT_OT_make_override_library(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Make Library Override";
   ot->description =
-      "Create a local override of the selected linked objects, and their hierarchy of "
-      "dependencies";
+      "Make a local override of this library linked data\nIterates through the hierarchy of "
+      "objects and collections based on the selection";
   ot->idname = "OBJECT_OT_make_override_library";
 
   /* API callbacks. */
@@ -2936,8 +2965,7 @@ void OBJECT_OT_make_single_user(wmOperatorType *ot)
 
   RNA_def_boolean(ot->srna, "object", false, "Object", "Make single user objects");
   RNA_def_boolean(ot->srna, "obdata", false, "Object Data", "Make single user object data");
-  RNA_def_boolean(
-      ot->srna, "material", false, "Materials", "Make materials local to each data-block");
+  RNA_def_boolean(ot->srna, "material", false, "Materials", "Make materials local to each data");
   RNA_def_boolean(ot->srna,
                   "animation",
                   false,

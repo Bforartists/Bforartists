@@ -53,32 +53,32 @@ class POINTCLOUD_MT_add_attribute(Menu):
     bl_label = "Add Attribute"
 
     @staticmethod
-    def add_standard_attribute(layout, pointcloud, name, data_type, domain):
+    def add_standard_attribute(layout, pointcloud, name, data_type, domain, icon):
         exists = pointcloud.attributes.get(name) is not None
 
         col = layout.column()
         col.enabled = not exists
         col.operator_context = 'EXEC_DEFAULT'
 
-        props = col.operator("geometry.attribute_add", text=name)
+        props = col.operator("geometry.attribute_add", text=name, icon=icon) # bfa -added icon
         props.name = name
         props.data_type = data_type
         props.domain = domain
+        #props.icon = icon
 
     def draw(self, context):
         layout = self.layout
         pointcloud = context.pointcloud
 
-        self.add_standard_attribute(layout, pointcloud, "radius", 'FLOAT', 'POINT')
-        self.add_standard_attribute(layout, pointcloud, "color", 'FLOAT_COLOR', 'POINT')
-        self.add_standard_attribute(layout, pointcloud, "id", 'INT', 'POINT')
-        self.add_standard_attribute(layout, pointcloud, "velocity", 'FLOAT_VECTOR', 'POINT')
+        self.add_standard_attribute(layout, pointcloud, "radius", 'FLOAT', 'POINT', 'RADIUS') # bfa -added icon
+        self.add_standard_attribute(layout, pointcloud, "color", 'FLOAT_COLOR', 'POINT', 'COLOR') # bfa -added icon
+        self.add_standard_attribute(layout, pointcloud, "id", 'INT', 'POINT', 'PARTICLE_DATA') # bfa -added icon
+        self.add_standard_attribute(layout, pointcloud, "velocity", 'FLOAT_VECTOR', 'POINT', 'MOD_FLUIDSIM') # bfa -added icon
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("geometry.attribute_add", text="Custom...")
-
+        layout.operator("geometry.attribute_add", text="Custom", icon = 'ADD')
 
 class POINTCLOUD_UL_attributes(UIList):
     def filter_items(self, _context, data, property):

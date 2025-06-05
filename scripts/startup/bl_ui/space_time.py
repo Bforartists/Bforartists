@@ -15,19 +15,21 @@ class TIME_HT_editor_buttons:
         scene = context.scene
         tool_settings = context.tool_settings
         screen = context.screen
+        anim = bpy.ops.anim #BFA
 
         layout.separator_spacer()
 
         row = layout.row(align=True)
-        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
-        sub = row.row(align=True)
-        sub.active = tool_settings.use_keyframe_insert_auto
-        sub.popover(
-            panel="TIME_PT_auto_keyframing",
-            text="",
-        )
+        #BFA - moved below
+        #row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
+        #sub = row.row(align=True)
+        #sub.active = tool_settings.use_keyframe_insert_auto
+        #sub.popover(
+        #    panel="TIME_PT_auto_keyframing",
+        #    text="",
+        #)
 
-        row = layout.row(align=True)
+
         row.operator("screen.frame_jump", text="", icon='REW').end = False
         row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
         if not screen.is_animation_playing:
@@ -47,8 +49,7 @@ class TIME_HT_editor_buttons:
             row.scale_x = 1
         row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
         row.operator("screen.frame_jump", text="", icon='FF').end = True
-
-        layout.separator_spacer()
+        row.operator("screen.animation_cancel", text = "", icon = 'LOOP_BACK').restore_frame = True
 
         row = layout.row()
         if scene.show_subframe:
@@ -60,14 +61,37 @@ class TIME_HT_editor_buttons:
 
         row = layout.row(align=True)
         row.prop(scene, "use_preview_range", text="", toggle=True)
+        row.operator("anim.start_frame_set", text="", icon = 'SET_POSITION')
         sub = row.row(align=True)
         sub.scale_x = 0.8
         if not scene.use_preview_range:
             sub.prop(scene, "frame_start", text="Start")
             sub.prop(scene, "frame_end", text="End")
+
         else:
             sub.prop(scene, "frame_preview_start", text="Start")
             sub.prop(scene, "frame_preview_end", text="End")
+
+        row.operator("anim.end_frame_set", text="", icon = 'SET_POSITION')
+
+        row.separator()
+
+        row.operator("anim.keyframe_insert", text="", icon='KEYFRAMES_INSERT') # BFA - updated icon
+        row.operator("anim.keyframe_delete_v3d", text="", icon='KEYFRAMES_REMOVE') # BFA - updated to work like it would in the 3D View (as expected)
+
+        layout.separator_spacer()
+
+        row = layout.row(align=True)
+        sub = row.row(align=True)
+        if tool_settings.use_keyframe_insert_auto:
+            sub.popover(panel="TIME_PT_auto_keyframing", text="")
+        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
+        row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
+
+        row.popover(panel="TIME_PT_playback", text="Playback")
+        row.popover(panel="TIME_PT_keyframing_settings", text="Keying")
+
+        row.popover(panel = "TIME_PT_view_view_options", text = "")
 
 
 class TIME_MT_editor_menus(Menu):
@@ -84,25 +108,13 @@ class TIME_MT_editor_menus(Menu):
         else:
             sub = layout
 
-        sub.popover(
-            panel="TIME_PT_playback",
-            text="Playback",
-        )
-        sub.popover(
-            panel="TIME_PT_keyframing_settings",
-            text="Keying",
-            text_ctxt=i18n_contexts.id_windowmanager,
-        )
-
-        # Add a separator to keep the popover button from aligning with the menu button.
-        sub.separator(factor=0.4)
-
         if horizontal:
             sub = row.row(align=True)
 
         sub.menu("TIME_MT_view")
         if st.show_markers:
             sub.menu("TIME_MT_marker")
+            sub.menu("DOPESHEET_MT_select")#BFA
 
 
 class TIME_MT_marker(Menu):
@@ -113,7 +125,6 @@ class TIME_MT_marker(Menu):
 
         marker_menu_generic(layout, context)
 
-
 class TIME_MT_view(Menu):
     bl_label = "View"
 
@@ -123,34 +134,34 @@ class TIME_MT_view(Menu):
         scene = context.scene
         st = context.space_data
 
+        layout.prop(st, "show_region_ui")#BFA
         layout.prop(st, "show_region_hud")
         layout.prop(st, "show_region_channels")
+
+		# BFA - moved below
+        layout.separator()
+		# BFA - these properties were moved to the header options properties
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
+        layout.operator("view2d.zoom_border", text = "Zoom Border", icon = "ZOOM_BORDER")
+
         layout.separator()
 
         # NOTE: "action" now, since timeline is in the dopesheet editor, instead of as own editor
-        layout.operator("action.view_all")
+        layout.operator("action.view_all", icon = "VIEWALL")
+        layout.operator("action.view_frame", icon = "VIEW_FRAME" )
         if context.scene.use_preview_range:
-            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
+            layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon = "FRAME_PREVIEW_RANGE")
         else:
-            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
-        layout.operator("action.view_frame")
-        layout.separator()
+            layout.operator("anim.scene_range_frame", text="Frame Scene Range", icon = "FRAME_SCENE_RANGE")
 
-        layout.prop(st, "show_markers")
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-        layout.separator()
-
-        layout.prop(scene, "show_keys_from_selected_only")
-        layout.prop(st.dopesheet, "show_only_errors")
-        layout.separator()
-
-        layout.menu("TIME_MT_cache")
         layout.separator()
 
         layout.menu("INFO_MT_area")
 
 
+#BFA - not used
 class TIME_MT_cache(Menu):
     bl_label = "Cache"
 
@@ -179,33 +190,8 @@ def marker_menu_generic(layout, context):
     # layout.operator_context = 'EXEC_REGION_WIN'
 
     layout.column()
-
-    tool_settings = context.tool_settings
-    layout.prop(tool_settings, "lock_markers")
-
-    layout.separator()
-
-    layout.operator("screen.marker_jump", text="Jump to Previous Marker").next = False
-    layout.operator("screen.marker_jump", text="Jump to Next Marker").next = True
-
-    layout.separator()
-
-    layout.operator("marker.camera_bind")
-
-    layout.separator()
-
-    layout.menu("NLA_MT_marker_select")
-
-    layout.separator()
-
-    layout.operator("marker.move", text="Move Marker")
-    props = layout.operator("wm.call_panel", text="Rename Marker")
-    props.name = "TOPBAR_PT_name_marker"
-    props.keep_open = False
-
-    layout.separator()
-
-    layout.operator("marker.delete", text="Delete Marker")
+    layout.operator("marker.add", text = "Add Marker", icon = "MARKER")
+    layout.operator("marker.duplicate", text="Duplicate Marker", icon = "DUPLICATE")
 
     if len(bpy.data.scenes) > 10:
         layout.operator_context = 'INVOKE_DEFAULT'
@@ -213,8 +199,27 @@ def marker_menu_generic(layout, context):
     else:
         layout.operator_menu_enum("marker.make_links_scene", "scene", text="Duplicate Marker to Scene")
 
-    layout.operator("marker.duplicate", text="Duplicate Marker")
-    layout.operator("marker.add", text="Add Marker")
+    layout.operator("marker.delete", text="Delete Marker", icon = "DELETE")
+
+    layout.separator()
+
+    layout.operator("marker.camera_bind", text="Bind Camera to Markers", icon = "MARKER_BIND")
+
+    layout.separator()
+
+    props = layout.operator("wm.call_panel", text="Rename Marker", icon = "RENAME")
+    props.name = "TOPBAR_PT_name_marker"
+    props.keep_open = False
+    layout.operator("marker.move", text="Move Marker", icon = "TRANSFORM_MOVE")
+
+    layout.separator()
+
+    layout.menu('NLA_MT_marker_select')
+
+    layout.separator()
+
+    layout.operator("screen.marker_jump", text="Jump to Next Marker", icon = "NEXT_KEYFRAME").next = True
+    layout.operator("screen.marker_jump", text="Jump to Previous Marker", icon = "PREV_KEYFRAME").next = False
 
 
 ###################################
@@ -236,40 +241,66 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         screen = context.screen
         scene = context.scene
 
-        layout.prop(scene, "sync_mode", text="Sync")
-        col = layout.column(heading="Audio")
-        col.prop(scene, "use_audio_scrub", text="Scrubbing")
-        col.prop(scene, "use_audio")
+        col = layout.column(align = True)
+        col.label(text = "Audio")
+        row = col.row()
+        row.separator()
+        row.use_property_split = True
+        row.prop(scene, "sync_mode", text="Sync Mode")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "use_audio_scrub", text="Scrubbing")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "use_audio", text="Play Audio")
 
-        col = layout.column(heading="Playback")
-        col.prop(scene, "lock_frame_selection_to_range", text="Limit to Frame Range")
-        col.prop(screen, "use_follow", text="Follow Current Frame")
+        col = layout.column(align = True)
+        col.label(text = "Playback")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "lock_frame_selection_to_range", text="Limit to Frame Range")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_follow", text="Follow Current Frame")
 
-        col = layout.column(heading="Play In")
-        col.prop(screen, "use_play_top_left_3d_editor", text="Active Editor")
-        col.prop(screen, "use_play_3d_editors", text="3D Viewport")
-        col.prop(screen, "use_play_animation_editors", text="Animation Editors")
-        col.prop(screen, "use_play_image_editors", text="Image Editor")
-        col.prop(screen, "use_play_properties_editors", text="Properties and Sidebars")
-        col.prop(screen, "use_play_clip_editors", text="Movie Clip Editor")
-        col.prop(screen, "use_play_node_editors", text="Node Editors")
-        col.prop(screen, "use_play_sequence_editors", text="Video Sequencer")
-        col.prop(screen, "use_play_spreadsheet_editors", text="Spreadsheet")
+        col = layout.column(align = True)
+        col.label(text = "Play in") #BFA - capitals on prepositions is bad grammar
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_top_left_3d_editor", text="Active Editor")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_3d_editors", text="3D Viewport")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_animation_editors", text="Animation Editors")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_image_editors", text="Image Editor")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_properties_editors", text="Properties Editor and Sidebars") #BFA - changed name, sidebars aren't editors...
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_clip_editors", text="Movie Clip Editor")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_node_editors", text="Node Editors")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_sequence_editors", text="Video Sequencer")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_spreadsheet_editors", text="Spreadsheet")
 
-        col = layout.column(heading="Show")
-        col.prop(scene, "show_subframe", text="Subframes")
-
-        layout.separator()
-
-        row = layout.row(align=True)
-        row.operator("anim.start_frame_set")
-        row.operator("anim.end_frame_set")
+        col = layout.column()
+        col.prop(scene, "show_subframe", text="Show Subframes")
 
 
 class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
@@ -287,19 +318,82 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
 
         scene = context.scene
         tool_settings = context.tool_settings
-
-        col = layout.column(align=True)
-        col.label(text="Active Keying Set")
-        row = col.row(align=True)
-        row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
-        row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
-        row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
+        prefs = context.preferences
 
         col = layout.column(align=True)
         col.label(text="New Keyframe Type")
         col.prop(tool_settings, "keyframe_type", text="")
 
+        col = layout.column(align=True)
+        col.label(text="Auto Keyframing")
+        row = col.row()
+        row.prop(tool_settings, "auto_keying_mode", text="")
+        row.prop(tool_settings, "use_keyframe_insert_keyingset", text="")
+
+        if not prefs.edit.use_keyframe_insert_available:
+            layout.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
+
         layout.prop(tool_settings, "use_keyframe_cycle_aware")
+
+
+############# Panels in sidebar #########################
+
+
+class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
+    bl_label = "View Options"
+    bl_category = "View"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'HEADER'
+
+    @classmethod
+    def poll(cls, context):
+        # only for timeline editor
+        return cls.has_timeline(context)
+
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+
+        st = context.space_data
+        scene = context.scene
+        tool_settings = context.tool_settings
+
+        col = layout.column()
+
+
+        col.prop(st.dopesheet, "show_only_errors")
+
+        col.separator()
+
+        col.prop(scene, "show_keys_from_selected_only", text = "Only show selected")
+        col.prop(st, "show_seconds")
+        col.prop(st, "show_locked_time")
+
+        col.prop(st, "show_markers")
+        col.prop(tool_settings, "lock_markers")
+
+        col.separator()
+
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(st, "show_cache")
+        row.use_property_split = True
+
+        if st.show_cache:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+            row = layout.row()
+
+            row.separator() #indent
+            col = row.column()
+            col.prop(st, "cache_softbody")
+            col.prop(st, "cache_particles")
+            col.prop(st, "cache_cloth")
+            col.prop(st, "cache_simulation_nodes")
+            col.prop(st, "cache_smoke")
+            col.prop(st, "cache_dynamicpaint")
+            col.prop(st, "cache_rigidbody")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class TIME_PT_auto_keyframing(TimelinePanelButtons, Panel):
@@ -328,6 +422,8 @@ class TIME_PT_auto_keyframing(TimelinePanelButtons, Panel):
         if not prefs.edit.use_keyframe_insert_available:
             col.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
 
+        col.prop(tool_settings, "use_keyframe_cycle_aware")
+
 
 ###################################
 
@@ -335,9 +431,10 @@ classes = (
     TIME_MT_editor_menus,
     TIME_MT_marker,
     TIME_MT_view,
-    TIME_MT_cache,
+    TIME_MT_cache, #BFA - not used, replaced by the PT_view_view_options
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
+    TIME_PT_view_view_options,
     TIME_PT_auto_keyframing,
 )
 

@@ -37,6 +37,14 @@ void ED_region_generic_tools_region_message_subscribe(const wmRegionMessageSubsc
 
 int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, int axis)
 {
+  /* bfa - re-add tabs to tool area, take tabs' width into account when snapping */
+  float offset = 0.0;
+  // check if panel has tabs visible
+  if (region->panels_category_active.first &&
+      region->panels_category_active.first != region->panels_category_active.last) {
+    offset = 20;
+  }
+
   if (axis == 0) {
     /* Using Y axis avoids slight feedback loop when adjusting X. */
     const float aspect = BLI_rctf_size_y(&region->v2d.cur) /
@@ -44,9 +52,10 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
     const float column = UI_TOOLBAR_COLUMN / aspect;
     const float margin = UI_TOOLBAR_MARGIN / aspect;
     const float snap_units[] = {
-        column + margin,
-        (2.0f * column) + margin,
-        (2.7f * column) + margin,
+        column + margin + offset, /* need bfa offset for tabs */
+        (2.0f * column) + margin + offset,
+        (2.7f * column) + margin + offset,
+        (3.4f * column) + margin + offset,
     };
     int best_diff = INT_MAX;
     int best_size = size;

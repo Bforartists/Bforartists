@@ -1576,7 +1576,7 @@ static bool is_disabled(const Scene * /*scene*/, ModifierData *md, bool /*use_re
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /*bfa, added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -1600,7 +1600,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout->column(false);
   uiLayoutSetEnabled(col, !is_bound);
   uiLayoutSetActive(col, !is_bound && RNA_string_length(ptr, "vertex_group") != 0);
-  col->prop(ptr, "use_sparse_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /*------------------- bfa - original props */
+
+  row = &col->row(true);
+  layout->separator();;
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->prop(ptr, "use_sparse_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /* ------------ end bfa */
 
   layout->separator();
 

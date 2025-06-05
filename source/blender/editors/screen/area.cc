@@ -1431,7 +1431,18 @@ bool ED_region_is_overlap(int spacetype, int regiontype)
   }
   if (U.uiflag2 & USER_REGION_OVERLAP) {
     if (spacetype == SPACE_NODE) {
-      if (ELEM(regiontype, RGN_TYPE_TOOLS, RGN_TYPE_UI)) {
+      // bfa assetshelf node editor region
+      //if (regiontype == RGN_TYPE_TOOLS) {
+      if (ELEM(regiontype,
+               //RGN_TYPE_TOOLS, //BFA - not necessary
+               //RGN_TYPE_UI, //BFA - not necessary
+               //RGN_TYPE_TOOL_PROPS, //BFA - not necessary
+               RGN_TYPE_FOOTER,
+               RGN_TYPE_TOOL_HEADER,
+               RGN_TYPE_ASSET_SHELF,
+               RGN_TYPE_ASSET_SHELF_HEADER
+               ))
+      { 
         return true;
       }
     }
@@ -3105,12 +3116,10 @@ static bool panel_add_check(const bContext *C,
   return true;
 }
 
-static bool region_uses_category_tabs(const ScrArea *area, const ARegion *region)
+/* bfa - re-add tabs to tools area */
+static bool region_uses_category_tabs(const ScrArea * /*area*/, const ARegion *region)
 {
-  /* XXX, should use some better check? */
-  /* For now also has hardcoded check for clip editor until it supports actual toolbar. */
-  return ((1 << region->regiontype) & RGN_TYPE_HAS_CATEGORY_MASK) ||
-         (region->regiontype == RGN_TYPE_TOOLS && area->spacetype == SPACE_CLIP);
+  return ((1 << region->regiontype) & RGN_TYPE_HAS_CATEGORY_MASK);
 }
 
 static const char *region_panels_collect_categories(ARegion *region,

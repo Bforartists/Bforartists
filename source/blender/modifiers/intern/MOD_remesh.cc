@@ -245,12 +245,26 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
       col->prop(ptr, "sharpness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
 
-    layout->prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    /*------------------- bfa - original props */
+    col = row = &layout->column(true);
+    row = &col->row(true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
+
     row = &layout->row(false);
     uiLayoutSetActive(row, RNA_boolean_get(ptr, "use_remove_disconnected"));
     layout->prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
-  layout->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
+  /*------------------- bfa - original props */
+  col = &layout->column(true);
+  row = &col->row(true);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  col->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
+  /* ------------ end bfa */
 
   modifier_error_message_draw(layout, ptr);
 

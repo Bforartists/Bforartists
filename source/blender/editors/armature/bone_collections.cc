@@ -130,7 +130,7 @@ void ARMATURE_OT_collection_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Bone Collection";
   ot->idname = "ARMATURE_OT_collection_add";
-  ot->description = "Add a new bone collection";
+  ot->description = "Add a new bone collection\nTo create a child collection, click and drag an existing collection onto a parent collection"; /*BFA - tooltip*/
 
   /* API callbacks. */
   ot->exec = bone_collection_add_exec;
@@ -1044,7 +1044,7 @@ static std::pair<int, bool> menu_custom_data_decode(void *menu_custom_data)
 
 static int icon_for_bone_collection(const bool collection_contains_active_bone)
 {
-  return collection_contains_active_bone ? ICON_REMOVE : ICON_ADD;
+  return collection_contains_active_bone ? ICON_COLLECTION_BONE_REMOVE : ICON_COLLECTION_BONE_ADD; /*BFA*/
 }
 
 static void menu_add_item_for_move_assign_unassign(uiLayout *layout,
@@ -1054,7 +1054,7 @@ static void menu_add_item_for_move_assign_unassign(uiLayout *layout,
                                                    const bool is_move_operation)
 {
   if (is_move_operation) {
-    PointerRNA op_ptr = layout->op("ARMATURE_OT_move_to_collection", bcoll->name, ICON_NONE);
+    PointerRNA op_ptr = layout->op("ARMATURE_OT_move_to_collection", bcoll->name, ICON_GROUP_BONE); /*BFA*/
     RNA_int_set(&op_ptr, "collection_index", bcoll_index);
     return;
   }
@@ -1141,7 +1141,7 @@ static void move_to_collection_menu_create(bContext *C, uiLayout *layout, void *
 
     if (blender::animrig::bonecoll_has_children(bcoll)) {
       layout->menu_fn(bcoll->name,
-                      ICON_NONE,
+                      ICON_COLLECTION_BONE_ADD, /*BFA*/
                       move_to_collection_menu_create,
                       menu_custom_data_encode(index, is_move_operation));
     }

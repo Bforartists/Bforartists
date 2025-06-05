@@ -218,7 +218,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *sub, *row;
+  uiLayout *sub, *row, *col; /*bfa, added *col*/
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -235,16 +235,42 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   if (decimate_type == MOD_DECIM_MODE_COLLAPSE) {
     layout->prop(ptr, "ratio", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
-    row = &layout->row(true, IFACE_("Symmetry"));
-    uiLayoutSetPropDecorate(row, false);
-    sub = &row->row(true);
-    sub->prop(ptr, "use_symmetry", UI_ITEM_NONE, "", ICON_NONE);
-    sub = &sub->row(true);
-    uiLayoutSetActive(sub, RNA_boolean_get(ptr, "use_symmetry"));
-    sub->prop(ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
+    /*------------------- bfa - original props */
+    // ------------------ bfa new left aligned prop with triangle button to hide the inactive
+    // content
 
-    layout->prop(ptr, "use_collapse_triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    /* NOTE: split amount here needs to be synced with normal labels */
+    uiLayout *split = &layout->split(0.385f, true);
+
+    /* FIRST PART ................................................ */
+    row = &split->row(false);
+    uiLayoutSetPropDecorate(row, false);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->prop(ptr, "use_symmetry", UI_ITEM_NONE, "Symmetry", ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_symmetry", 0);
+
+    /* SECOND PART ................................................ */
+    row = &split->row(false);
+    if (RNA_boolean_get(ptr, "use_symmetry")) {
+      uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+      row->prop(ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+      uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
+    }
+    else {
+      row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    }
+
+    // ------------------------------- end bfa
+
+    /* ------------ end bfa */
+    /*------------------- bfa - original props */
+    col = &layout->column(true);
+    row = &col->row(true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->prop(ptr, "use_collapse_triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/
+
+    /* ------------ end bfa */
 
     modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
     sub = &layout->row(true);
@@ -259,7 +285,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     layout->prop(ptr, "angle_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayout *col = &layout->column(false);
     col->prop(ptr, "delimit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    layout->prop(ptr, "use_dissolve_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
+    /*------------------- bfa - original prop */
+    row = &layout->row(true);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->prop(ptr, "use_dissolve_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/
+    /* ------------ end bfa */
   }
   layout->label(count_info, ICON_NONE);
 

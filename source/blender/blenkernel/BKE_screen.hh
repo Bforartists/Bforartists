@@ -385,6 +385,8 @@ enum {
   PANEL_TYPE_INSTANCED = (1 << 4),
   /** Don't search panels with this type during property search. */
   PANEL_TYPE_NO_SEARCH = (1 << 7),
+  /** bfa - Make panel background fully transparent **/
+  PANEL_HIDE_BG = (1 << 8),
 };
 
 struct LayoutPanelHeader {

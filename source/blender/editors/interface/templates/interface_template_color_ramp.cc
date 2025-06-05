@@ -93,7 +93,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_ARROW_LEFTRIGHT,
+                                  ICON_FLIP, /* BFA - icon */
                                   IFACE_("Flip Color Ramp"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -113,7 +113,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_BLANK1,
+                                  ICON_ALIGNVERTICAL, /* BFA - icon */
                                   IFACE_("Distribute Stops from Left"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -133,7 +133,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_BLANK1,
+                                  ICON_STRAIGHTEN_X, /* BFA - icon */
                                   IFACE_("Distribute Stops Evenly"),
                                   0,
                                   yco -= UI_UNIT_Y,
@@ -160,7 +160,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
     uiBut *but = uiDefIconTextBut(block,
                                   UI_BTYPE_BUT_MENU,
                                   1,
-                                  ICON_LOOP_BACK,
+                                  ICON_RESET, /* BFA - icon */
                                   IFACE_("Reset Color Ramp"),
                                   0,
                                   yco -= UI_UNIT_Y,

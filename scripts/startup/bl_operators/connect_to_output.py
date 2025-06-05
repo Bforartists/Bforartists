@@ -23,7 +23,7 @@ from .node_editor.node_functions import (
 class NODE_OT_connect_to_output(Operator, NodeEditorBase):
     bl_idname = "node.connect_to_output"
     bl_label = "Connect to Output"
-    bl_description = "Connect active node to the active output node of the node tree"
+    bl_description = "Connect active node to the active output node of the node tree. \nOnly works under mouse cursor"
     bl_options = {'REGISTER', 'UNDO'}
 
     # If false, the operator is not executed if the current node group happens to be a geometry nodes group.

@@ -64,6 +64,8 @@
 
 #include "paint_intern.hh"
 
+#include "ED_select_utils.hh" /*bfa - needed to retreive SEL_SELECT */
+
 bool paint_convert_bb_to_rect(rcti *rect,
                               const float bb_min[3],
                               const float bb_max[3],
@@ -609,6 +611,26 @@ static wmOperatorStatus face_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static std::string paint_ot_face_select_all_get_description(bContext * /*C*/,
+                                                            wmOperatorType * /*ot*/,
+                                                            PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all faces";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all faces";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 void PAINT_OT_face_select_all(wmOperatorType *ot)
 {
   ot->name = "(De)select All";
@@ -616,6 +638,7 @@ void PAINT_OT_face_select_all(wmOperatorType *ot)
   ot->idname = "PAINT_OT_face_select_all";
 
   ot->exec = face_select_all_exec;
+  ot->get_description = paint_ot_face_select_all_get_description; /*bfa - descriptions*/
   ot->poll = facemask_paint_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -700,13 +723,36 @@ static wmOperatorStatus paintface_select_loop_invoke(bContext *C,
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string PAINT_OT_face_select_loop_get_descriptions(struct bContext * /*C*/,
+                                                              struct wmOperatorType * /*op*/,
+                                                              struct PointerRNA *ptr)
+{
+  const bool select = RNA_boolean_get(ptr, "select");
+  const bool extend = RNA_boolean_get(ptr, "extend");
+
+  if (select && !extend) {
+    return "Select face loop under the cursor\nMouse Operator, please use the mouse";
+  }
+  else if (select && extend) {
+    return "Select face loop under the cursor and add it to the current selection\nMouse "
+           "Operator, please use the mouse";
+  }
+  else if (!select && extend) {
+    return "Remove the face loop under the cursor from the selection\nMouse Operator, please use "
+           "the mouse";
+  }
+  return "";
+}
+
 void PAINT_OT_face_select_loop(wmOperatorType *ot)
 {
   ot->name = "Select Loop";
-  ot->description = "Select face loop under the cursor";
+  ot->description = "Select face loop under the cursor\nMouse Operator, please use the mouse";
   ot->idname = "PAINT_OT_face_select_loop";
 
   ot->invoke = paintface_select_loop_invoke;
+  ot->get_description = PAINT_OT_face_select_loop_get_descriptions; /*bfa - descriptions*/
   ot->poll = facemask_paint_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -724,6 +770,26 @@ static wmOperatorStatus vert_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string paint_ot_vert_select_all_get_description(bContext * /*C*/,
+                                                            wmOperatorType * /*ot*/,
+                                                            PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all vertices";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all vertices";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 void PAINT_OT_vert_select_all(wmOperatorType *ot)
 {
   ot->name = "(De)select All";
@@ -731,6 +797,7 @@ void PAINT_OT_vert_select_all(wmOperatorType *ot)
   ot->idname = "PAINT_OT_vert_select_all";
 
   ot->exec = vert_select_all_exec;
+  ot->get_description = paint_ot_vert_select_all_get_description; /*bfa - descriptions*/
   ot->poll = vert_paint_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;

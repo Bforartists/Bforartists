@@ -177,6 +177,7 @@ typedef enum eSpaceOutliner_Filter {
   SO_FILTER_ID_TYPE = (1 << 19),
 
   SO_FILTER_NO_OB_GREASE_PENCIL = (1 << 20),
+  SO_FILTER_NO_POSE_BONE = (1 << 21), /* bfa - hide pose bones */
 } eSpaceOutliner_Filter;
 
 #define SO_FILTER_OB_TYPE \
@@ -477,11 +478,14 @@ typedef enum eFileAssetImportMethod {
   FILE_ASSET_IMPORT_APPEND_REUSE = 2,
   /** Default: Follow the preference setting for this asset library. */
   FILE_ASSET_IMPORT_FOLLOW_PREFS = 3,
+  /** BFA only data-block linking with make override. */
+  FILE_ASSET_IMPORT_LINK_OVERRIDE = 4,
 } eFileAssetImportMethod;
 
 typedef enum eFileAssetImportFlags {
   FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK = (1 << 0),
   FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND = (1 << 1),
+  FILE_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN = (1 << 2), /*BFA - to origin property*/
 } eFileAssetImportFlags;
 
 /** #SpaceFile.browse_mode (File Space Browsing Mode). */
@@ -1097,7 +1101,8 @@ typedef enum eSpace_Type {
   SPACE_CLIP = 20,
   SPACE_TOPBAR = 21,
   SPACE_STATUSBAR = 22,
-  SPACE_SPREADSHEET = 23
+  SPACE_TOOLBAR = 23, /* BFA - toolbar*/
+  SPACE_SPREADSHEET = 24
 
 #define SPACE_TYPE_NUM (SPACE_SPREADSHEET + 1)
 } eSpace_Type;

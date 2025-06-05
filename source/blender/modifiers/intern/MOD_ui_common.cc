@@ -25,6 +25,7 @@
 #include "BLT_translation.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_c.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -221,6 +222,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
   uiLayoutSetUnitsX(layout, 4.0f);
 
   /* Apply. */
+  // BFA - Moved apply button to top level
   if (ob->type == OB_GREASE_PENCIL) {
     layout->op("OBJECT_OT_modifier_apply",
                CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply (Active Keyframe)"),
@@ -249,7 +251,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 
     op_ptr = layout->op("OBJECT_OT_modifier_apply_as_shapekey",
                         CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Save as Shape Key"),
-                        ICON_NONE);
+                        ICON_SHAPEKEY_DATA); /*BFA*/
     RNA_boolean_set(&op_ptr, "keep_modifier", true);
     layout->separator();
   }
@@ -269,7 +271,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 
   layout->op("OBJECT_OT_modifier_copy_to_selected",
              CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy to Selected"),
-             0);
+             ICON_COPYDOWN); /*BFA*/
 
   layout->separator();
 
@@ -291,13 +293,14 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 
   layout->separator();
 
-  layout->prop(&ptr, "use_pin_to_last", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /* bfa - moved to top level header */
+  /* layout->prop(&ptr, "use_pin_to_last", UI_ITEM_NONE, std::nullopt, ICON_NONE);*/
 
   if (md->type == eModifierType_Nodes) {
     layout->separator();
     op_ptr = layout->op("OBJECT_OT_geometry_nodes_move_to_nodes",
                         std::nullopt,
-                        ICON_NONE,
+                        ICON_GEOMETRY_NODES, /*BFA*/
                         WM_OP_INVOKE_DEFAULT,
                         UI_ITEM_NONE);
     layout->prop(&ptr, "show_group_selector", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -306,7 +309,8 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 
 static void modifier_panel_header(const bContext *C, Panel *panel)
 {
-  uiLayout *row, *sub, *name_row;
+  /* bfa - modifers apply button */
+  uiLayout *row, *sub, *name_row, *op_row;
   uiLayout *layout = panel->layout;
 
   /* Don't use #modifier_panel_get_property_pointers, we don't want to lock the header. */
@@ -416,6 +420,20 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
     buttons_number += 2;
   }
 
+  /* bfa - modifer apply button */
+  op_row = &layout->row(true);
+  op_row->op("OBJECT_OT_modifier_apply", "", ICON_CHECKMARK);
+  buttons_number++;
+
+  /* bfa - modifier pin to last toggle button */
+  bool is_pinned = RNA_boolean_get(ptr, "use_pin_to_last");
+  row->prop(ptr,
+          "use_pin_to_last",
+          UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+          "",
+          is_pinned ? ICON_PINNED : ICON_UNPINNED);
+  buttons_number++;
+
   /* Extra operators menu. */
   row->menu_fn("", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
 
@@ -429,19 +447,16 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   /* Switch context buttons. */
   if (modifier_is_simulation(md) == 1) {
-    PointerRNA op_ptr = row->op("WM_OT_properties_context_change", "", ICON_PROPERTIES);
-    if (!RNA_pointer_is_null(&op_ptr)) {
-      RNA_string_set(&op_ptr, "context", "PHYSICS");
-    }
+    PointerRNA op_ptr = op_row->op("WM_OT_properties_context_change", "", ICON_PROPERTIES);
+    RNA_string_set(&op_ptr, "context", "PHYSICS");
     buttons_number++;
   }
   else if (modifier_is_simulation(md) == 2) {
-    PointerRNA op_ptr = row->op("WM_OT_properties_context_change", "", ICON_PROPERTIES);
-    if (!RNA_pointer_is_null(&op_ptr)) {
-      RNA_string_set(&op_ptr, "context", "PARTICLES");
-    }
+    PointerRNA op_ptr = op_row->op("WM_OT_properties_context_change", "", ICON_PROPERTIES);
+    RNA_string_set(&op_ptr, "context", "PARTICLES");
     buttons_number++;
   }
+
 
   bool display_name = (panel->sizex / UI_UNIT_X - buttons_number > 5) || (panel->sizex == 0);
   if (display_name) {

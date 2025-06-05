@@ -122,8 +122,9 @@ static void blo_update_defaults_screen(bScreen *screen,
       BLI_freelistN(&region->panels_category_active);
 
       /* Reset size so it uses consistent defaults from the region types. */
-      region->sizex = 0;
-      region->sizey = 0;
+      /*bfa - NEVER ! - this is the cause for single row tool shelf factory default*/
+      // region->sizex = 0;
+      // region->sizey = 0;
     }
 
     if (area->spacetype == SPACE_IMAGE) {
@@ -352,14 +353,14 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   STRNCPY(scene->r.engine, RE_engine_id_BLENDER_EEVEE_NEXT);
 
   scene->r.cfra = 1.0f;
-
+  /* BFA - Turn on the compositor nodes by default, or else they an unnecessary step for compsiting.*/
   /* Don't enable compositing nodes. */
-  if (scene->nodetree) {
-    blender::bke::node_tree_free_embedded_tree(scene->nodetree);
-    MEM_freeN(scene->nodetree);
-    scene->nodetree = nullptr;
-    scene->use_nodes = false;
-  }
+  //if (scene->nodetree) {
+  //  blender::bke::node_tree_free_embedded_tree(scene->nodetree);
+  //  MEM_freeN(scene->nodetree);
+  //  scene->nodetree = nullptr;
+  //  scene->use_nodes = false;
+  //}
 
   /* Rename render layers. */
   BKE_view_layer_rename(

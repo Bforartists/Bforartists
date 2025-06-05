@@ -20,9 +20,9 @@ from bpy.app.translations import (
 
 
 class ANIM_OT_keying_set_export(Operator):
-    """Export Keying Set to a Python script"""
+    """Export Keying Set\nExport Keying Set to a Python script\nImport goes across Text Editor. Open, then run the Python file"""
     bl_idname = "anim.keying_set_export"
-    bl_label = "Export Keying Set..."
+    bl_label = "Export Keying Set"
 
     filepath: StringProperty(
         subtype='FILE_PATH',
@@ -335,7 +335,7 @@ class NLA_OT_bake(Operator):
 
 
 class ClearUselessActions(Operator):
-    """Mark actions with no F-Curves for deletion after save and reload of """ \
+    """Clear Useless Actions\nMark actions with no F-Curves for deletion after save and reload of """ \
         """file preserving \"action libraries\""""
     bl_idname = "anim.clear_useless_actions"
     bl_label = "Clear Useless Actions"
@@ -374,7 +374,7 @@ class ClearUselessActions(Operator):
 
 
 class UpdateAnimatedTransformConstraint(Operator):
-    """Update f-curves/drivers affecting Transform constraints (use it with files from 2.70 and earlier)"""
+    """Update Animated Transform Constraints\nUpdate f-curves/drivers affecting Transform constraints (use it with files from 2.70 and earlier)"""
     bl_idname = "anim.update_animated_transform_constraints"
     bl_label = "Update Animated Transform Constraints"
     bl_options = {'REGISTER', 'UNDO'}

@@ -1111,6 +1111,26 @@ static wmOperatorStatus node_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string node_ot_select_all_get_description(struct bContext * /*C*/,
+                                                      struct wmOperatorType * /*op*/,
+                                                      struct PointerRNA *values)
+{
+  /*Select*/
+  if (RNA_enum_get(values, "action") == SEL_SELECT) {
+    return "Select all nodes";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
+    return "Deselect all nodes";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(values, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 void NODE_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1120,6 +1140,7 @@ void NODE_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = node_select_all_exec;
+  ot->get_description = node_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_node_active;
 
   /* flags */

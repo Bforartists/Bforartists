@@ -82,6 +82,7 @@ class PARTICLE_MT_context_menu(Menu):
         props = layout.operator(
             "particle.copy_particle_systems",
             text="Copy All to Selected Objects",
+            icon='COPYDOWN',
         )
         props.use_active = False
         props.remove_target_particles = True
@@ -331,18 +332,31 @@ class PARTICLE_PT_emission_source(ParticleButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(part, "emit_from")
-        col.prop(part, "use_modifier_stack")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(part, "use_modifier_stack")
+        row.prop_decorator(part, "use_modifier_stack")
+
         if part.emit_from in {'FACE', 'VOLUME'}:
             col.prop(part, "distribution")
 
         if part.emit_from == 'VERT':
+            col.use_property_split = False
             col.prop(part, "use_emit_random", text="Random Order")
         elif part.distribution == 'GRID':
-            col.prop(part, "invert_grid")
-            col.prop(part, "hexagonal_grid")
+            col.use_property_split = False
+            row = col.row()
+            row.prop(part, "invert_grid")
+            row.prop_decorator(part, "invert_grid")
+            row = col.row()
+            row.prop(part, "hexagonal_grid")
+            row.prop_decorator(part, "hexagonal_grid")
         else:
+            col.use_property_split = False
             col.prop(part, "use_emit_random", text="Random Order")
             col.prop(part, "use_even_distribution")
+            col.use_property_split = True
 
         if part.emit_from in {'FACE', 'VOLUME'}:
 
@@ -698,6 +712,7 @@ class PARTICLE_PT_rotation(ParticleButtonsPanel, Panel):
         col.prop(part, "phase_factor_random", text="Randomize Phase", slider=True)
 
         if part.type != 'HAIR':
+            col.use_property_split = False
             col.prop(part, "use_dynamic_rotation")
 
 
@@ -767,7 +782,9 @@ class PARTICLE_PT_physics(ParticleButtonsPanel, Panel):
         if part.physics_type != 'NO':
             col = col.column()
             col.prop(part, "mass")
+            col.use_property_split = False
             col.prop(part, "use_multiply_size_mass", text="Multiply Mass with Size")
+            col.use_property_split = True
 
         if part.physics_type == 'FLUID':
             fluid = part.fluid
@@ -784,6 +801,7 @@ class PARTICLE_PT_physics(ParticleButtonsPanel, Panel):
             sub.active = not psys or not psys.use_keyed_timing
             sub.prop(part, "keyed_loops", text="Loops")
             if psys:
+                col.use_property_split = False
                 col.prop(psys, "use_keyed_timing", text="Use Timing")
 
 
@@ -809,22 +827,33 @@ class PARTICLE_PT_physics_fluid_advanced(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
         fluid = part.fluid
 
-        col = layout.column()
+        col = layout.column(align = True)
 
         if fluid.solver == 'DDR':
-            sub = col.column()
-            sub.prop(fluid, "repulsion", slider=fluid.use_factor_repulsion)
-            sub.prop(fluid, "use_factor_repulsion")
 
-            sub.prop(fluid, "stiff_viscosity", slider=fluid.use_factor_stiff_viscosity)
-            sub.prop(fluid, "use_factor_stiff_viscosity")
+            col.prop(fluid, "repulsion", slider=fluid.use_factor_repulsion)
+            row = col.row()
+            row.use_property_split = False
+            row.prop(fluid, "use_factor_repulsion")
+            row.prop_decorator(fluid, "use_factor_repulsion")
 
-        sub = col.column()
-        sub.prop(fluid, "fluid_radius", slider=fluid.use_factor_radius)
-        sub.prop(fluid, "use_factor_radius")
+            col.prop(fluid, "stiff_viscosity", slider=fluid.use_factor_stiff_viscosity)
+            row = col.row()
+            row.use_property_split = False
+            row.prop(fluid, "use_factor_stiff_viscosity")
+            row.prop_decorator(fluid, "use_factor_stiff_viscosity")
 
-        sub.prop(fluid, "rest_density", slider=fluid.use_factor_density)
-        sub.prop(fluid, "use_factor_density")
+        col.prop(fluid, "fluid_radius", slider=fluid.use_factor_radius)
+        row = col.row()
+        row.use_property_split = False
+        row.prop(fluid, "use_factor_radius")
+        row.prop_decorator(fluid, "use_factor_radius")
+
+        col.prop(fluid, "rest_density", slider=fluid.use_factor_density)
+        row = col.row()
+        row.use_property_split = False
+        row.prop(fluid, "use_factor_density")
+        row.prop_decorator(fluid, "use_factor_density")
 
         if fluid.solver == 'CLASSICAL':
             # With the classical solver, it is possible to calculate the
@@ -900,7 +929,10 @@ class PARTICLE_PT_physics_fluid_springs_viscoelastic(ParticleButtonsPanel, Panel
 
         col.separator()
 
-        col.prop(fluid, "use_initial_rest_length")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(fluid, "use_initial_rest_length")
+        row.prop_decorator(fluid, "use_initial_rest_length")
         col.prop(fluid, "spring_frames", text="Frames")
 
 
@@ -927,9 +959,12 @@ class PARTICLE_PT_physics_fluid_springs_advanced(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
         fluid = part.fluid
 
-        sub = layout.column()
-        sub.prop(fluid, "rest_length", slider=fluid.use_factor_rest_length)
-        sub.prop(fluid, "use_factor_rest_length")
+        col = layout.column(align = True)
+        col.prop(fluid, "rest_length", slider=fluid.use_factor_rest_length)
+        row = col.row()
+        row.use_property_split = False
+        row.prop(fluid, "use_factor_rest_length")
+        row.prop_decorator(fluid, "use_factor_rest_length")
 
 
 class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
@@ -956,9 +991,19 @@ class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
 
         col = layout.column()
 
-        col.prop(boids, "use_flight")
-        col.prop(boids, "use_land")
-        col.prop(boids, "use_climb")
+        col = layout.column(align = True)
+        row = col.row()
+        row.use_property_split = False
+        row.prop(boids, "use_flight")
+        row.prop_decorator(boids, "use_flight")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(boids, "use_land")
+        row.prop_decorator(boids, "use_land")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(boids, "use_climb")
+        row.prop_decorator(boids, "use_climb")
 
         col = layout.column()
 
@@ -970,19 +1015,20 @@ class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
         col.prop(boids, "air_ave_max", slider=True)
         col.prop(boids, "air_personal_space")
         row = col.row(align=True)
-        row.active = (boids.use_land or boids.use_climb) and boids.use_flight
-        row.prop(boids, "land_smooth")
+        #row.active = (boids.use_land or boids.use_climb) and boids.use_flight
+        if (boids.use_land or boids.use_climb) and boids.use_flight:
+            row.prop(boids, "land_smooth")
 
-        layout.separator()
+            layout.separator()
 
-        col = layout.column()
-        col.active = boids.use_land or boids.use_climb
-        col.prop(boids, "land_speed_max")
-        col.prop(boids, "land_jump_speed")
-        col.prop(boids, "land_acc_max", slider=True)
-        col.prop(boids, "land_ave_max", slider=True)
-        col.prop(boids, "land_personal_space")
-        col.prop(boids, "land_stick_force")
+            col = layout.column()
+            col.active = boids.use_land or boids.use_climb
+            col.prop(boids, "land_speed_max")
+            col.prop(boids, "land_jump_speed")
+            col.prop(boids, "land_acc_max", slider=True)
+            col.prop(boids, "land_ave_max", slider=True)
+            col.prop(boids, "land_personal_space")
+            col.prop(boids, "land_stick_force")
 
         layout.separator()
 
@@ -1182,8 +1228,10 @@ class PARTICLE_PT_physics_deflection(ParticleButtonsPanel, Panel):
         layout.enabled = particle_panel_enabled(context, psys)
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(part, "use_size_deflect")
         col.prop(part, "use_die_on_collision")
+        col.use_property_split = True
 
         col.prop(part, "collision_collection")
 
@@ -1249,10 +1297,13 @@ class PARTICLE_PT_physics_integration(ParticleButtonsPanel, Panel):
         col.prop(part, "subframes")
 
         if part.physics_type == 'FLUID':
-            col.prop(part, "use_adaptive_subframes", text="Adaptive")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(part, "use_adaptive_subframes", text="Adaptive")
+            row.prop_decorator(part, "use_adaptive_subframes")
             sub = col.row()
-            sub.enabled = part.use_adaptive_subframes
-            sub.prop(part, "courant_target", text="Threshold")
+            if part.use_adaptive_subframes:
+                sub.prop(part, "courant_target", text="Threshold")
 
 
 class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
@@ -1327,31 +1378,40 @@ class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
 
         if rule:
             col = layout.column(align=True)
+            col.use_property_split = False
             col.prop(rule, "use_in_air")
             col.prop(rule, "use_on_land")
 
-            col = layout.column()
+            col = layout.column(align = True)
 
             if rule.type == 'GOAL':
                 col.prop(rule, "object")
+                col.use_property_split = False
                 col.prop(rule, "use_predict")
             elif rule.type == 'AVOID':
                 col.prop(rule, "object")
+                col.use_property_split = False
                 col.prop(rule, "use_predict")
+                col.use_property_split = True
                 col.prop(rule, "fear_factor")
             elif rule.type == 'FOLLOW_PATH':
                 col.label(text="Not yet functional")
             elif rule.type == 'AVOID_COLLISION':
+                col.use_property_split = False
                 col.prop(rule, "use_avoid")
                 col.prop(rule, "use_avoid_collision")
+                col.use_property_split = True
                 col.prop(rule, "look_ahead")
             elif rule.type == 'FOLLOW_LEADER':
                 col.prop(rule, "object")
                 col.prop(rule, "distance")
-                col.prop(rule, "use_line")
-                sub = col.row()
-                sub.active = rule.use_line
-                sub.prop(rule, "queue_count")
+                row = layout.row()
+                row.use_property_split = False
+                row.prop(rule, "use_line")
+                sub = row.row()
+                if rule.use_line:
+                    sub.use_property_split = True
+                    sub.prop(rule, "queue_count")
             elif rule.type == 'AVERAGE_SPEED':
                 col.prop(rule, "speed", slider=True)
                 col.prop(rule, "wander", slider=True)
@@ -1407,8 +1467,10 @@ class PARTICLE_PT_render(ParticleButtonsPanel, Panel):
                 col.prop(psys, "parent", text="Coordinate System")
 
         if context.object:
-            layout.separator()
-            layout.prop(context.object, "show_instancer_for_render", text="Show Emitter")
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(context.object, "show_instancer_for_render", text="Show Emitter")
+            row.prop_decorator(context.object, "show_instancer_for_render")
 
 
 class PARTICLE_PT_render_extra(ParticleButtonsPanel, Panel):
@@ -1433,11 +1495,16 @@ class PARTICLE_PT_render_extra(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
 
         col = layout.column()
-
-        col = layout.column()
-        col.prop(part, "use_parent_particles", text="Parent Particles")
-        col.prop(part, "show_unborn", text="Unborn")
-        col.prop(part, "use_dead", text="Dead")
+        col.use_property_split = False
+        row = col.row()
+        row.prop(part, "use_parent_particles", text="Parent Particles")
+        row.prop_decorator(part, "use_parent_particles")
+        row = col.row()
+        row.prop(part, "show_unborn", text="Unborn")
+        row.prop_decorator(part, "show_unborn")
+        row = col.row()
+        row.prop(part, "use_dead", text="Dead")
+        row.prop_decorator(part, "use_dead")
 
 
 class PARTICLE_PT_render_path(ParticleButtonsPanel, Panel):
@@ -1461,7 +1528,11 @@ class PARTICLE_PT_render_path(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
 
         col = layout.column()
-        col.prop(part, "use_hair_bspline")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(part, "use_hair_bspline")
+        row.prop_decorator(part, "use_hair_bspline")
         col.prop(part, "render_step", text="Steps")
 
 
@@ -1488,8 +1559,10 @@ class PARTICLE_PT_render_path_timing(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
 
         col = layout.column()
-
-        col.prop(part, "use_absolute_path_time")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(part, "use_absolute_path_time")
+        row.prop_decorator(part, "use_absolute_path_time")
 
         if part.type == 'HAIR' or psys.point_cache.is_baked:
             col.prop(part, "path_start", text="Start", slider=not part.use_absolute_path_time)
@@ -1518,13 +1591,22 @@ class PARTICLE_PT_render_object(ParticleButtonsPanel, Panel):
 
         part = particle_get_settings(context)
 
-        col = layout.column()
+        col = layout.column(align = True)
 
         col.prop(part, "instance_object", text="Instance Object")
-        sub = col.column()
-        sub.prop(part, "use_global_instance", text="Global Coordinates")
-        sub.prop(part, "use_rotation_instance", text="Object Rotation")
-        sub.prop(part, "use_scale_instance", text="Object Scale")
+
+        col.separator()
+
+        col.use_property_split = False
+        row = col.row()
+        row.prop(part, "use_global_instance", text="Global Coordinates")
+        row.prop_decorator(part, "use_global_instance")
+        row = col.row()
+        row.prop(part, "use_rotation_instance", text="Object Rotation")
+        row.prop_decorator(part, "use_rotation_instance")
+        row = col.row()
+        row.prop(part, "use_scale_instance", text="Object Scale")
+        row.prop_decorator(part, "use_scale_instance")
 
 
 class PARTICLE_PT_render_collection(ParticleButtonsPanel, Panel):
@@ -1551,13 +1633,28 @@ class PARTICLE_PT_render_collection(ParticleButtonsPanel, Panel):
 
         col.prop(part, "instance_collection", text="Instance Collection")
 
-        col.prop(part, "use_whole_collection")
-        sub = col.column()
-        sub.active = (part.use_whole_collection is False)
-        sub.prop(part, "use_collection_pick_random")
-        sub.prop(part, "use_global_instance", text="Global Coordinates")
-        sub.prop(part, "use_rotation_instance", text="Object Rotation")
-        sub.prop(part, "use_scale_instance", text="Object Scale")
+        col = layout.column(align=True)
+        col.use_property_split = False
+
+        row = col.row()
+        row.prop(part, "use_whole_collection")
+        row.prop_decorator(part, "use_whole_collection")
+
+        col = layout.column(align=True)
+        col.active = (part.use_whole_collection is False)
+        col.use_property_split = False
+        row = col.row()
+        row.prop(part, "use_collection_pick_random")
+        row.prop_decorator(part, "use_collection_pick_random")
+        row = col.row()
+        row.prop(part, "use_global_instance", text="Global Coordinates")
+        row.prop_decorator(part, "use_global_instance")
+        row = col.row()
+        row.prop(part, "use_rotation_instance", text="Object Rotation")
+        row.prop_decorator(part, "use_rotation_instance")
+        row = col.row()
+        row.prop(part, "use_scale_instance", text="Object Scale")
+        row.prop_decorator(part, "use_scale_instance")
 
 
 class PARTICLE_PT_render_collection_use_count(ParticleButtonsPanel, Panel):
@@ -1673,8 +1770,10 @@ class PARTICLE_PT_draw(ParticleButtonsPanel, Panel):
             layout.separator()
 
         if context.object:
-            layout.separator()
-            layout.prop(context.object, "show_instancer_for_viewport", text="Show Emitter")
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(context.object, "show_instancer_for_viewport", text="Show Emitter")
+            row.prop_decorator(context.object, "show_instancer_for_viewport")
 
 
 class PARTICLE_PT_children(ParticleButtonsPanel, Panel):
@@ -1721,7 +1820,11 @@ class PARTICLE_PT_children(ParticleButtonsPanel, Panel):
 
         if part.child_type == 'INTERPOLATED':
             col.prop(part, "virtual_parents", slider=True)
-            col.prop(part, "create_long_hair_children")
+
+            row = col.row()
+            row.use_property_split = False
+            row.prop(part, "create_long_hair_children")
+            row.prop_decorator(part, "create_long_hair_children")
         else:
             col.separator()
             sub = col.column(align=True)
@@ -1793,9 +1896,13 @@ class PARTICLE_PT_children_clumping(ParticleButtonsPanel, Panel):
 
         col = layout.column()
 
+        row = col.row()
+        row.use_property_split = False
+        row.prop(part, "use_clump_curve")
+        row.prop_decorator(part, "use_clump_curve")
+
         sub = col.column()
 
-        sub.prop(part, "use_clump_curve")
         if part.use_clump_curve:
             sub.template_curve_mapping(part, "clump_curve")
         else:
@@ -1804,7 +1911,12 @@ class PARTICLE_PT_children_clumping(ParticleButtonsPanel, Panel):
 
         if part.child_type == 'SIMPLE':
             col.prop(part, "twist")
-            col.prop(part, "use_twist_curve")
+
+            row = col.row()
+            row.use_property_split = False
+            row.prop(part, "use_twist_curve")
+            row.prop_decorator(part, "use_twist_curve")
+
             if part.use_twist_curve:
                 col.template_curve_mapping(part, "twist_curve")
 
@@ -1860,8 +1972,10 @@ class PARTICLE_PT_children_roughness(ParticleButtonsPanel, Panel):
         layout.use_property_split = True
 
         col = layout.column()
-
-        col.prop(part, "use_roughness_curve")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(part, "use_roughness_curve")
+        row.prop_decorator(part, "use_roughness_curve")
         if part.use_roughness_curve:
             sub = col.column()
             sub.template_curve_mapping(part, "roughness_curve")
@@ -1951,15 +2065,20 @@ class PARTICLE_PT_field_weights(ParticleButtonsPanel, Panel):
         return particle_panel_poll(cls, context)
 
     def draw(self, context):
+        layout = self.layout
         part = particle_get_settings(context)
         effector_weights_ui(self, part.effector_weights, 'PSYS')
 
         if part.type == 'HAIR':
-            row = self.layout.row()
-            row.prop(part.effector_weights, "apply_to_hair_growing")
-            row.prop(part, "apply_effector_to_children")
-            row = self.layout.row()
-            row.prop(part, "effect_hair", slider=True)
+            col = layout.column(align=True)
+            col.use_property_split = False
+            col.prop(part.effector_weights, "apply_to_hair_growing")
+            col.prop(part, "apply_effector_to_children")
+
+            col.separator()
+
+            col.use_property_split = True
+            col.prop(part, "effect_hair", slider=True)
 
 
 class PARTICLE_PT_force_fields(ParticleButtonsPanel, Panel):
@@ -1978,7 +2097,10 @@ class PARTICLE_PT_force_fields(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
 
         col = layout.column()
-        col.prop(part, "use_self_effect")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(part, "use_self_effect")
+        row.prop_decorator(part, "use_self_effect")
         col.prop(part, "effector_amount", text="Effector Amount")
 
 
@@ -2224,7 +2346,11 @@ class PARTICLE_PT_hair_shape(ParticleButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(part, "radius_scale")
-        col.prop(part, "use_close_tip")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(part, "use_close_tip")
+        row.prop_decorator(part, "use_close_tip")
 
 
 class PARTICLE_PT_animation(ParticleButtonsPanel, PropertiesAnimationMixin, PropertyPanel, Panel):

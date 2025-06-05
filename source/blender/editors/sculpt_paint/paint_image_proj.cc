@@ -5773,7 +5773,7 @@ static void paint_proj_stroke_ps(const bContext * /*C*/,
     paint_brush_color_get(scene,
                           paint,
                           brush,
-                          ps_handle->initial_hsv_jitter,
+                          *ps_handle->initial_hsv_jitter,
                           false,
                           ps->mode == BRUSH_STROKE_INVERT,
                           distance,
@@ -6889,10 +6889,12 @@ static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
       uiLayout *col = &layout->column(true);
       col->prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       col->prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
+      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
       layout->prop(op->ptr, "alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       layout->prop(op->ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
       layout->prop(op->ptr, "float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = back to true */
       break;
     }
     case PAINT_CANVAS_SOURCE_COLOR_ATTRIBUTE:

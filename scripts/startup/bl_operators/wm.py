@@ -116,7 +116,7 @@ rna_relative_prop = BoolProperty(
 rna_space_type_prop = EnumProperty(
     name="Type",
     items=tuple(
-        (e.identifier, e.name, "", e. value)
+        (e.identifier, e.name, "", e.value)
         for e in bpy.types.Space.bl_rna.properties["type"].enum_items
     ),
     default='EMPTY',
@@ -658,7 +658,7 @@ class WM_OT_context_cycle_enum(Operator):
 
 class WM_OT_context_cycle_array(Operator):
     """Set a context array value """ \
-        """(useful for cycling the active mesh edit mode)"""
+    """(useful for cycling the active mesh edit mode)"""
     bl_idname = "wm.context_cycle_array"
     bl_label = "Context Array Cycle"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -1126,16 +1126,17 @@ class WM_OT_url_open_preset(Operator):
           tip_("The API reference manual for this version of Blender")),
          _url_from_api),
 
+        # BFA - disable blender funding links
         # Static URL's.
-        (('FUND', iface_("Development Fund"),
-          tip_("The donation program to support maintenance and improvements")),
-         "https://fund.blender.org"),
-        (('BLENDER', "blender.org",
-          tip_("Blender's official web-site")),
-         "https://www.blender.org"),
-        (('CREDITS', iface_("Credits"),
-          tip_("Lists committers to Blender's source code")),
-         "https://www.blender.org/about/credits/"),
+        # (('FUND', "Development Fund",
+        #  "The donation program to support maintenance and improvements"),
+        # "https://fund.blender.org"),
+        # (('BLENDER', "blender.org",
+        #  "Blender's official web-site"),
+        # "https://www.blender.org"),
+        # (('CREDITS', "Credits",
+        #  "Lists committers to Blender's source code"),
+        # "https://www.blender.org/about/credits/"),
         (('EXTENSIONS', iface_("Extensions Platform"),
           tip_("Online directory of free and open source extensions")),
          "https://extensions.blender.org/"),
@@ -1198,7 +1199,6 @@ class WM_OT_path_open(Operator):
 
 
 def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
-
     def operator_exists_pair(a, b):
         # Not fast, this is only for docs.
         return b in dir(getattr(bpy.ops, a))
@@ -1273,7 +1273,7 @@ def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
 
 
 class WM_OT_doc_view_manual(Operator):
-    """Load online manual"""
+    """Load online manual\nNote that this link leads to the online Blender manual. This is not officially part of Bforartists"""
     bl_idname = "wm.doc_view_manual"
     bl_label = "View Manual"
 
@@ -1348,7 +1348,7 @@ class WM_OT_doc_view_manual(Operator):
 
 
 class WM_OT_doc_view(Operator):
-    """Open online reference docs in a web browser"""
+    """View Documentation\nOpen online reference docs in a web browser"""
     bl_idname = "wm.doc_view"
     bl_label = "View Documentation"
 
@@ -1680,8 +1680,8 @@ class WM_OT_properties_edit(Operator):
             if rna_data["subtype"] in [item[0] for item in self.subtype_items_cb(None)]:
                 self.subtype = rna_data["subtype"]
             self.use_soft_limits = (
-                self.min_float != self.soft_min_float or
-                self.max_float != self.soft_max_float
+                    self.min_float != self.soft_min_float or
+                    self.max_float != self.soft_max_float
             )
             default = self._convert_new_value_array(rna_data["default"], float, 32)
             self.default_float = default if isinstance(default, list) else [default] * 32
@@ -1692,8 +1692,8 @@ class WM_OT_properties_edit(Operator):
             self.soft_max_int = rna_data["soft_max"]
             self.step_int = rna_data["step"]
             self.use_soft_limits = (
-                self.min_int != self.soft_min_int or
-                self.max_int != self.soft_max_int
+                    self.min_int != self.soft_min_int or
+                    self.max_int != self.soft_max_int
             )
             self.default_int = self._convert_new_value_array(rna_data["default"], int, 32)
         elif self.property_type == 'STRING':
@@ -2158,7 +2158,7 @@ class WM_OT_properties_add(Operator):
 
 
 class WM_OT_properties_context_change(Operator):
-    """Jump to a different tab inside the properties editor"""
+    """Change Context\nJump to a different tab inside the properties editor"""
     bl_idname = "wm.properties_context_change"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -2588,9 +2588,9 @@ class WM_OT_toolbar_prompt(Operator):
         event_value = event.value
 
         if event_type in {
-                'LEFTMOUSE', 'RIGHTMOUSE', 'MIDDLEMOUSE',
-                'WHEELDOWNMOUSE', 'WHEELUPMOUSE', 'WHEELINMOUSE', 'WHEELOUTMOUSE',
-                'ESC',
+            'LEFTMOUSE', 'RIGHTMOUSE', 'MIDDLEMOUSE',
+            'WHEELDOWNMOUSE', 'WHEELUPMOUSE', 'WHEELINMOUSE', 'WHEELOUTMOUSE',
+            'ESC',
         }:
             context.workspace.status_text_set(None)
             return {'CANCELLED', 'PASS_THROUGH'}
@@ -2747,35 +2747,35 @@ class WM_OT_batch_rename(Operator):
     bl_label = "Batch Rename"
 
     bl_options = {'UNDO'}
-
+    # BFA - tooltips and icons added, a long with unique identifier per the EnumProperty guidelines
     data_type: EnumProperty(
         name="Type",
         items=(
-            ('OBJECT', "Objects", "", 'OBJECT_DATA', 0),
-            ('COLLECTION', "Collections", "", 'OUTLINER_COLLECTION', 1),
-            ('MATERIAL', "Materials", "", 'MATERIAL_DATA', 2),
+            ('OBJECT', "Objects", "Rename selected objects in the scene", 'OBJECT_DATA', 0),
+            ('COLLECTION', "Collections", "Rename selected collections in the outliner editor", 'OUTLINER_COLLECTION', 1),
+            ('MATERIAL', "Materials", "Rename selected materials in the outliner editor ", 'MATERIAL', 2),
             None,
             # Enum identifiers are compared with `object.type`.
             # Follow order in "Add" menu.
-            ('MESH', "Meshes", "", 'MESH_DATA', 3),
-            ('CURVE', "Curves", "", 'CURVE_DATA', 4),
-            ('META', "Metaballs", "", 'META_DATA', 5),
-            ('VOLUME', "Volumes", "", 'VOLUME_DATA', 6),
-            ('GPENCIL', "Grease Pencils", "", 'OUTLINER_DATA_GREASEPENCIL', 7),
-            ('ARMATURE', "Armatures", "", 'ARMATURE_DATA', 8),
-            ('LATTICE', "Lattices", "", 'LATTICE_DATA', 9),
-            ('LIGHT', "Lights", "", 'LIGHT_DATA', 10),
-            ('LIGHT_PROBE', "Light Probes", "", 'OUTLINER_DATA_LIGHTPROBE', 11),
-            ('CAMERA', "Cameras", "", 'CAMERA_DATA', 12),
-            ('SPEAKER', "Speakers", "", 'OUTLINER_DATA_SPEAKER', 13),
+            ('MESH', "Meshes", "Rename selected mesh data in the scene", 'MESH_DATA', 3),
+            ('CURVE', "Curves", "Rename selected curve data in the scene", 'CURVE_DATA', 4),
+            ('META', "Metaballs", "Rename selected metaball data in the scene", 'META_BALL', 5),
+            ('VOLUME', "Volumes", "Rename selected volume data in the scene", 'VOLUME_DATA', 6),
+            ('GPENCIL', "Grease Pencils", "Rename selected grease pencil data in the scene", 'OUTLINER_OB_GREASEPENCIL', 7),
+            ('ARMATURE', "Armatures", "Rename selected armature data in the scene", 'ARMATURE_DATA', 8),
+            ('LATTICE', "Lattices", "Rename selected lattice data in the scene", 'LATTICE_DATA', 9),
+            ('LIGHT', "Lights", "Rename selected light data in the scene", 'LIGHT', 10),
+            ('LIGHT_PROBE', "Light Probes", "Rename selected light probe data in the scene", 'LIGHTPROBE_SPHERE', 11),
+            ('CAMERA', "Cameras", "Rename selected camera data in the scene", 'CAMERA_DATA', 12),
+            ('SPEAKER', "Speakers", "Rename selected speaker data in the scene", 'SPEAKER', 13),
             None,
-            ('BONE', "Bones", "", 'BONE_DATA', 14),
-            ('NODE', "Nodes", "", 'NODETREE', 15),
-            ('SEQUENCE_STRIP', "Sequence Strips", "", 'SEQ_SEQUENCER', 16),
-            ('ACTION_CLIP', "Action Clips", "", 'ACTION', 17),
+            ('BONE', "Bones", "Rename selected bones in the scene", 'BONE_DATA', 14),
+            ('NODE', "Nodes", "Rename selected nodes in the scene", 'NODETREE', 15),
+            ('SEQUENCE_STRIP', "Sequence Strips", "Rename selected sequence strips in the scene", 'SEQUENCE', 16),
+            ('ACTION_CLIP', "Action Clips", "Rename selected action clips in the outliner editor", 'ACTION', 17),
             None,
-            ('SCENE', "Scenes", "", 'SCENE_DATA', 18),
-            ('BRUSH', "Brushes", "", 'BRUSH_DATA', 19),
+            ('SCENE', "Scenes", "Rename selected scenes in the outliner editor", 'SCENE_DATA', 18),
+            ('BRUSH', "Brushes", "Rename selected brushes in the outliner editor", 'BRUSH_DATA', 19),
         ),
         translation_context=i18n_contexts.id_id,
         description="Type of data to rename",
@@ -2784,8 +2784,8 @@ class WM_OT_batch_rename(Operator):
     data_source: EnumProperty(
         name="Source",
         items=(
-            ('SELECT', "Selected", ""),
-            ('ALL', "All", ""),
+            ('SELECT', "Selected", "Use objects selected in the 3D View", 'RESTRICT_SELECT_OFF', 0),
+            ('ALL', "All", "Use all available objects in the scene", 'SELECT_ALL', 1)
         ),
     )
 
@@ -3123,8 +3123,9 @@ class WM_OT_batch_rename(Operator):
         layout = self.layout
 
         split = layout.split(align=True)
-        split.row(align=True).prop(self, "data_source", expand=True)
-        split.prop(self, "data_type", text="")
+        icon = "BLANK1" # BFA - added icon references from the enums
+        split.row(align=True).prop(self, "data_source", expand=True, icon=icon) # BFA - added icons
+        split.prop(self, "data_type", text="", icon=icon) # BFA - added icons
 
         for action in self.actions:
             box = layout.box()
@@ -3337,10 +3338,11 @@ class WM_MT_splash_quick_setup(Menu):
             col = split.column()
             col.operator(
                 "preferences.copy_prev",
-                text=iface_("Import Blender {:d}.{:d} Preferences", "Operator").format(*old_version),
-                icon='NONE',
+                text=iface_("Load Bforartists {:d}.{:d} Preferences", "Operator").format(old_version[0], old_version[1] - 1), #BFA - made it subtract a version, since we are ahead one of Blender in the config settings
+                icon='DUPLICATE', #BFA
                 translate=False,
             )
+
             layout.separator()
             layout.separator(type='LINE')
 
@@ -3364,7 +3366,7 @@ class WM_MT_splash_quick_setup(Menu):
         sub = col.column(heading="Theme")
         label = bpy.types.USERPREF_MT_interface_theme_presets.bl_label
         if label == "Presets":
-            label = "Blender Dark"
+            label = "Bforartists"  # BFA - default theme
         sub.menu("USERPREF_MT_interface_theme_presets", text=label)
 
         col.separator()
@@ -3390,12 +3392,15 @@ class WM_MT_splash_quick_setup(Menu):
         sub.separator(factor=2)
 
         if can_import:
-            sub.operator("wm.save_userpref", text="Save New Preferences", icon='NONE')
+            sub.operator("wm.save_userpref", text="Save New Preferences", icon='FILE_TICK')
         else:
             sub.operator("wm.save_userpref", text="Continue")
 
         layout.separator(factor=2.0)
 
+        layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}") #BFA - added to first use
+
+        layout.separator()  #BFA - added to first use
 
 class WM_MT_splash(Menu):
     bl_label = "Splash"
@@ -3425,11 +3430,12 @@ class WM_MT_splash(Menu):
             # Links if no recent files.
             col2_title.label(text="Getting Started")
 
-            col2.operator("wm.url_open_preset", text="Manual", icon='URL').type = 'MANUAL'
-            col2.operator("wm.url_open", text="Tutorials", icon='URL').url = "https://www.blender.org/tutorials/"
-            col2.operator("wm.url_open", text="Support", icon='URL').url = "https://www.blender.org/support/"
-            col2.operator("wm.url_open", text="User Communities", icon='URL').url = "https://www.blender.org/community/"
-            col2.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'
+            col2.operator("wm.url_open", text="Manual",
+                          icon='URL').url = "https://www.bforartists.de/bforartists-2-reference-manual/"
+            col2.operator("wm.url_open", text="Release Notes",
+                          icon='URL').url = "https://www.bforartists.de/release-notes/"
+            col2.operator("wm.url_open", text="Credits",
+                          icon='URL').url = "https://www.bforartists.de/credits-page-bforartists/"
 
         layout.separator()
 
@@ -3443,13 +3449,18 @@ class WM_MT_splash(Menu):
 
         col2 = split.column()
 
-        col2.operator("wm.url_open_preset", text="Donate", icon='FUND').type = 'FUND'
-        col2.operator("wm.url_open_preset", text="What's New", icon='URL').type = 'RELEASE_NOTES'
+        col2.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de/"
+        col2.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)",
+                      icon='URL').url = "https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB/"
 
         layout.separator()
 
         if (not bpy.app.online_access) and bpy.app.online_access_override:
-            self.layout.label(text="Running in Offline Mode", icon='INTERNET_OFFLINE')
+            self.layout.label(text="Running in Offline Mode", icon='DELETE') #BFA - wip, update icon to INTERNET_OFFLINE
+
+        layout.separator()
+
+        layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}")
 
         layout.separator()
 
@@ -3458,7 +3469,6 @@ class WM_MT_splash_about(Menu):
     bl_label = "About"
 
     def draw(self, context):
-
         layout = self.layout
         layout.operator_context = 'EXEC_DEFAULT'
 
@@ -3466,7 +3476,7 @@ class WM_MT_splash_about(Menu):
 
         col = split.column(align=True)
         col.scale_y = 0.8
-        col.label(text=iface_("Version: {:s}").format(bpy.app.version_string), translate=False)
+        col.label(text=iface_("Version: {:s}").format(bpy.app.bfa_version_string), translate=False) # bfa - show our version
         col.separator(factor=2.5)
         col.label(text=iface_("Date: {:s} {:s}").format(
             bpy.app.build_commit_date.decode("utf-8", "replace"),
@@ -3485,18 +3495,18 @@ class WM_MT_splash_about(Menu):
         del _ghost_backend, ghost_backend
 
         col.separator(factor=2.0)
-        col.label(text="Blender is free software")
+        col.label(text="Bforartists is free software") # BFA - our name
         col.label(text="Licensed under the GNU General Public License")
 
         col = split.column(align=True)
         col.emboss = 'PULLDOWN_MENU'
-        col.operator("wm.url_open_preset", text="Donate", icon='FUND').type = 'FUND'
-        col.operator("wm.url_open_preset", text="What's New", icon='URL').type = 'RELEASE_NOTES'
-        col.separator(factor=2.0)
-        col.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'
-        col.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"
-        col.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"
-        col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'
+        # col.operator("wm.url_open_preset", text="Donate", icon='FUND').type = 'FUND' # BFA - Not Used
+        #col.operator("wm.url_open_preset", text="What's New", icon='URL').type = 'RELEASE_NOTES'  BFA - Not Used
+        #col.separator(factor=2.0)
+        #col.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'  BFA - Not Used
+        #col.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"  BFA - Not Used
+        #col.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"  BFA - Not Used
+        #col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'  BFA - Not Used
 
 
 class WM_MT_region_toggle_pie(Menu):

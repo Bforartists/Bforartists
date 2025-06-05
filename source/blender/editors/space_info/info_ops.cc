@@ -55,9 +55,7 @@ void FILE_OT_pack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pack Linked Libraries";
   ot->idname = "FILE_OT_pack_libraries";
-  ot->description =
-      "Store all data-blocks linked from other .blend files in the current .blend file. "
-      "Library references are preserved so the linked data-blocks can be unpacked again";
+  ot->description = "Pack all linked library files in use into the current .blend";
 
   /* API callbacks. */
   ot->exec = pack_libraries_exec;
@@ -101,7 +99,7 @@ void FILE_OT_unpack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unpack Linked Libraries";
   ot->idname = "FILE_OT_unpack_libraries";
-  ot->description = "Restore all packed linked data-blocks to their original locations";
+  ot->description = "Restore all packed linked data  to their original locations";
 
   /* API callbacks. */
   ot->invoke = unpack_libraries_invoke;
@@ -135,7 +133,7 @@ static wmOperatorStatus autopack_toggle_exec(bContext *C, wmOperator *op)
 void FILE_OT_autopack_toggle(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Automatically Pack Resources";
+  ot->name = "Automatically Pack Into .blend";
   ot->idname = "FILE_OT_autopack_toggle";
   ot->description = "Automatically pack all external files into the .blend file";
 
@@ -213,24 +211,36 @@ void FILE_OT_pack_all(wmOperatorType *ot)
  * \{ */
 
 static const EnumPropertyItem unpack_all_method_items[] = {
-    {PF_USE_LOCAL, "USE_LOCAL", 0, "Use files in current directory (create when necessary)", ""},
+    {PF_USE_LOCAL,
+     "USE_LOCAL",
+     ICON_FILE_FOLDER,
+     "Use files in current directory (create when necessary)",
+     ""},
     {PF_WRITE_LOCAL,
      "WRITE_LOCAL",
-     0,
+     ICON_FILE_FOLDER,
      "Write files to current directory (overwrite existing files)",
      ""},
     {PF_USE_ORIGINAL,
      "USE_ORIGINAL",
-     0,
+     ICON_FILE_FOLDER,
      "Use files in original location (create when necessary)",
      ""},
     {PF_WRITE_ORIGINAL,
      "WRITE_ORIGINAL",
-     0,
+     ICON_FILE_FOLDER,
      "Write files to original location (overwrite existing files)",
      ""},
-    {PF_KEEP, "KEEP", 0, "Disable auto-pack, keep all packed files", ""},
-    {PF_REMOVE, "REMOVE", 0, "Remove Pack", ""},
+    /*{PF_KEEP, "KEEP", 0, "Disable auto-pack, keep all packed files", ""},*/  // bfa - disabled
+                                                                               // this nonsense
+                                                                               // menu item.
+                                                                               // Abandon by move
+                                                                               // the mouse out of
+                                                                               // menu. And
+                                                                               // auto-pack is a
+                                                                               // checkbox in same
+                                                                               // menu.
+    {PF_REMOVE, "REMOVE", ICON_DELETE, "Remove Pack", ""},
     /* {PF_ASK, "ASK", 0, "Ask for each file", ""}, */
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -568,7 +578,7 @@ void FILE_OT_find_missing_files(wmOperatorType *ot)
                   "find_all",
                   false,
                   "Find All",
-                  "Find all files in the search path (not just missing)");
+                  "Find All\nFind all files in the search path (not just missing)");
 
   WM_operator_properties_filesel(ot,
                                  0,

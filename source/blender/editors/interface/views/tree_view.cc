@@ -527,7 +527,7 @@ void AbstractTreeViewItem::add_collapse_chevron(uiBlock &block) const
     return;
   }
 
-  const BIFIconID icon = this->is_collapsed() ? ICON_RIGHTARROW : ICON_DOWNARROW_HLT;
+  const BIFIconID icon = this->is_collapsed() ? ICON_DISCLOSURE_TRI_RIGHT : ICON_DISCLOSURE_TRI_DOWN;
   uiBut *but = uiDefIconBut(&block,
                             UI_BTYPE_BUT_TOGGLE,
                             0,
@@ -999,9 +999,7 @@ void TreeViewBuilder::build_tree_view(const bContext &C,
 
   TreeViewLayoutBuilder builder(layout);
   builder.add_box_ = add_box;
-  UI_block_flag_enable(&block, UI_BLOCK_LIST_ITEM);
   builder.build_from_tree(tree_view);
-  UI_block_flag_disable(&block, UI_BLOCK_LIST_ITEM);
 }
 
 /* ---------------------------------------------------------------------- */

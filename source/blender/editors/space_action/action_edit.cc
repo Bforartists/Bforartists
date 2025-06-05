@@ -40,6 +40,7 @@
 
 #include "UI_interface_icons.hh"
 #include "UI_view2d.hh"
+#include "UI_resources.hh" /* BFA - needed for icons */
 
 #include "ANIM_action.hh"
 #include "ANIM_animdata.hh"
@@ -453,7 +454,7 @@ void ACTION_OT_view_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame All";
   ot->idname = "ACTION_OT_view_all";
-  ot->description = "Reset viewable area to show full keyframe range";
+  ot->description = "Zooms in or out to fit the display to show full keyframe range";
 
   /* API callbacks. */
   ot->exec = actkeys_viewall_exec;
@@ -468,7 +469,7 @@ void ACTION_OT_view_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame Selected";
   ot->idname = "ACTION_OT_view_selected";
-  ot->description = "Reset viewable area to show selected keyframes range";
+  ot->description = "Zooms in or out to fit the display to show selected keyframes range";
 
   /* API callbacks. */
   ot->exec = actkeys_viewsel_exec;
@@ -744,12 +745,12 @@ void ACTION_OT_paste(wmOperatorType *ot)
 {
   PropertyRNA *prop;
   /* identifiers */
-  ot->name = "Paste Keyframes";
+  ot->name = "Paste Keyframes / Flipped";
   ot->idname = "ACTION_OT_paste";
   ot->description =
-      "Paste keyframes from the internal clipboard for the selected channels, starting on the "
-      "current "
-      "frame";
+      "Paste Keyframes pastes keyframes into the selected channels, "
+      "starting on the current frame\nPaste Flipped pastes keyframes flipped into the selected "
+      "channels, starting on the current frame";
 
   /* API callbacks. */
   //  ot->invoke = WM_operator_props_popup; /* Better wait for action redo panel. */
@@ -786,10 +787,10 @@ void ACTION_OT_paste(wmOperatorType *ot)
 
 /* defines for insert keyframes tool */
 static const EnumPropertyItem prop_actkeys_insertkey_types[] = {
-    {1, "ALL", 0, "All Channels", ""},
-    {2, "SEL", 0, "Only Selected Channels", ""},
+    {1, "ALL", ICON_KEYFRAMES_INSERT, "All Channels", ""},
+    {2, "SEL", ICON_KEYFRAMES_INSERT, "Only Selected Channels", ""},
     /* XXX not in all cases. */
-    {3, "GROUP", 0, "In Active Group", ""},
+    {3, "GROUP", ICON_KEYFRAMES_INSERT, "In Active Group", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1287,6 +1288,16 @@ static wmOperatorStatus actkeys_clean_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
+/*bfa - description*/
+static std::string action_ot_clean_get_description(bContext * /*C*/,
+                                                   wmOperatorType * /*ot*/,
+                                                   PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "channels")) {
+    return "Simplify F-Curves by removing closely spaced keyframes in selected channels";
+  }
+  return "";
+}
 
 void ACTION_OT_clean(wmOperatorType *ot)
 {
@@ -1298,6 +1309,7 @@ void ACTION_OT_clean(wmOperatorType *ot)
   /* API callbacks. */
   // ot->invoke =  /* XXX we need that number popup for this! */
   ot->exec = actkeys_clean_exec;
+  ot->get_description = action_ot_clean_get_description;/*bfa - description*/
   ot->poll = ED_operator_action_active;
 
   /* flags */
@@ -1391,23 +1403,23 @@ void ACTION_OT_bake_keys(wmOperatorType *ot)
 static const EnumPropertyItem prop_actkeys_expo_types[] = {
     {FCURVE_EXTRAPOLATE_CONSTANT,
      "CONSTANT",
-     0,
+     ICON_EXTRAPOLATION_CONSTANT,
      "Constant Extrapolation",
      "Values on endpoint keyframes are held"},
     {FCURVE_EXTRAPOLATE_LINEAR,
      "LINEAR",
-     0,
+     ICON_EXTRAPOLATION_LINEAR,
      "Linear Extrapolation",
      "Straight-line slope of end segments are extended past the endpoint keyframes"},
 
     {MAKE_CYCLIC_EXPO,
      "MAKE_CYCLIC",
-     0,
+     ICON_EXTRAPOLATION_CYCLIC,
      "Make Cyclic (F-Modifier)",
      "Add Cycles F-Modifier if one doesn't exist already"},
     {CLEAR_CYCLIC_EXPO,
      "CLEAR_CYCLIC",
-     0,
+     ICON_EXTRAPOLATION_CYCLIC_CLEAR,
      "Clear Cyclic (F-Modifier)",
      "Remove Cycles F-Modifier if not needed anymore"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -1555,7 +1567,8 @@ void ACTION_OT_interpolation_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Interpolation";
   ot->idname = "ACTION_OT_interpolation_type";
   ot->description =
-      "Set interpolation mode for the F-Curve segments starting from the selected keyframes";
+      "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the "
+      "selected keyframes";
 
   /* API callbacks. */
   ot->invoke = WM_menu_invoke;
@@ -1609,7 +1622,7 @@ void ACTION_OT_easing_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Easing Type";
   ot->idname = "ACTION_OT_easing_type";
   ot->description =
-      "Set easing type for the F-Curve segments starting from the selected keyframes";
+      "Easing Mode\nSet easing type for the F-Curve segments starting from the selected keyframes";
 
   /* API callbacks. */
   ot->invoke = WM_menu_invoke;
@@ -1698,7 +1711,7 @@ void ACTION_OT_handle_type(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Keyframe Handle Type";
   ot->idname = "ACTION_OT_handle_type";
-  ot->description = "Set type of handle for selected keyframes";
+  ot->description = "Keyframe Handle Type\nSet type of handle for selected keyframes";
 
   /* API callbacks. */
   ot->invoke = WM_menu_invoke;
@@ -1792,7 +1805,7 @@ void ACTION_OT_keyframe_type(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Keyframe Type";
   ot->idname = "ACTION_OT_keyframe_type";
-  ot->description = "Set type of keyframe for the selected keyframes";
+  ot->description = "Keyframe Type\nSet type of keyframe for the selected keyframes";
 
   /* API callbacks. */
   ot->invoke = WM_menu_invoke;
@@ -1925,23 +1938,23 @@ void ACTION_OT_frame_jump(wmOperatorType *ot)
 static const EnumPropertyItem prop_actkeys_snap_types[] = {
     {ACTKEYS_SNAP_CFRA,
      "CFRA",
-     0,
+     ICON_SNAP_CURRENTFRAME,
      "Selection to Current Frame",
      "Snap selected keyframes to the current frame"},
     {ACTKEYS_SNAP_NEAREST_FRAME,
      "NEAREST_FRAME",
-     0,
+     ICON_SNAP_NEARESTFRAME,
      "Selection to Nearest Frame",
      "Snap selected keyframes to the nearest (whole) frame "
      "(use to fix accidental subframe offsets)"},
     {ACTKEYS_SNAP_NEAREST_SECOND,
      "NEAREST_SECOND",
-     0,
+     ICON_SNAP_NEARESTSECOND,
      "Selection to Nearest Second",
      "Snap selected keyframes to the nearest second"},
     {ACTKEYS_SNAP_NEAREST_MARKER,
      "NEAREST_MARKER",
-     0,
+     ICON_SNAP_NEARESTMARKER,
      "Selection to Nearest Marker",
      "Snap selected keyframes to the nearest marker"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -2063,17 +2076,17 @@ void ACTION_OT_snap(wmOperatorType *ot)
 static const EnumPropertyItem prop_actkeys_mirror_types[] = {
     {ACTKEYS_MIRROR_CFRA,
      "CFRA",
-     0,
+     ICON_MIRROR_TIME,
      "By Times Over Current Frame",
      "Flip times of selected keyframes using the current frame as the mirror line"},
     {ACTKEYS_MIRROR_XAXIS,
      "XAXIS",
-     0,
+     ICON_MIRROR_CURSORVALUE,
      "By Values Over Zero Value",
      "Flip values of selected keyframes (i.e. negative values become positive, and vice versa)"},
     {ACTKEYS_MIRROR_MARKER,
      "MARKER",
-     0,
+     ICON_MIRROR_MARKER,
      "By Times Over First Selected Marker",
      "Flip times of selected keyframes using the first selected marker as the reference point"},
     {0, nullptr, 0, nullptr, nullptr},

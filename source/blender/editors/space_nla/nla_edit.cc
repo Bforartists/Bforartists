@@ -47,6 +47,7 @@
 #include "DEG_depsgraph_build.hh"
 
 #include "UI_view2d.hh"
+#include "UI_resources.hh" /* BFA - needed for icons */
 
 #include "ANIM_action.hh"
 #include "ANIM_action_legacy.hh"
@@ -174,6 +175,27 @@ static wmOperatorStatus nlaedit_enable_tweakmode_exec(bContext *C, wmOperator *o
   /* done */
   return OPERATOR_FINISHED;
 }
+/*bfa - description*/
+static std::string nla_ot_tweakmode_enter_get_description(bContext * /*C*/,
+                                                          wmOperatorType * /*ot*/,
+                                                          PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "isolate_action")) {
+    return "Enter tweak mode to edit the keyframes of just the selected action strip of this "
+           "object\nSwitch to Dope Sheet editor to edit the keyframes\nWhen done switch back to "
+           "NLA "
+           "editor and leave tweak mode";
+  }
+  if (RNA_boolean_get(ptr, "use_upper_stack_evaluation")) {
+    return "Enter tweak (Full Stack) mode to edit the keyframes of the action strips of this "
+           "object"
+           "\nAllows you to insert keyframes and preserve the pose that you visually keyed while "
+           "upper strips are evaluating"
+           "\nSwitch to Dope Sheet editor to edit the keyframes "
+           "\nWhen done switch back to NLA editor and leave tweak mode";
+  }
+  return "";
+}
 
 void NLA_OT_tweakmode_enter(wmOperatorType *ot)
 {
@@ -183,10 +205,13 @@ void NLA_OT_tweakmode_enter(wmOperatorType *ot)
   ot->name = "Enter Tweak Mode";
   ot->idname = "NLA_OT_tweakmode_enter";
   ot->description =
-      "Enter tweaking mode for the action referenced by the active strip to edit its keyframes";
+      "Enter tweak mode to edit the keyframes of the action strips of this object\nSwitch to Dope "
+      "Sheet editor to edit the keyframes\nWhen done switch back to NLA editor and leave tweak "
+      "mode";
 
   /* API callbacks. */
   ot->exec = nlaedit_enable_tweakmode_exec;
+  ot->get_description = nla_ot_tweakmode_enter_get_description;/*bfa - description*/
   ot->poll = nlaop_poll_tweakmode_off;
 
   /* flags */
@@ -549,7 +574,7 @@ void NLA_OT_view_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame All";
   ot->idname = "NLA_OT_view_all";
-  ot->description = "Reset viewable area to show full strips range";
+  ot->description = "Zooms in or out to fit the display to show full strips range";
 
   /* API callbacks. */
   ot->exec = nlaedit_viewall_exec;
@@ -564,7 +589,7 @@ void NLA_OT_view_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame Selected";
   ot->idname = "NLA_OT_view_selected";
-  ot->description = "Reset viewable area to show selected strips range";
+  ot->description = "Zooms in or out to fit the display to show selected strips range";
 
   /* API callbacks. */
   ot->exec = nlaedit_viewsel_exec;
@@ -675,8 +700,8 @@ static wmOperatorStatus nlaedit_add_actionclip_exec(bContext *C, wmOperator *op)
      * the user knows what they're doing... */
     BKE_reportf(op->reports,
                 RPT_WARNING,
-                "Action '%s' does not specify what data-blocks it can be used on "
-                "(try setting the 'ID Root Type' setting from the data-blocks editor "
+                "Action '%s' does not specify what data it can be used on "
+                "(try setting the 'ID Root Type' setting from the data editor "
                 "for this action to avoid future problems)",
                 act->id.name + 2);
   }
@@ -2357,14 +2382,26 @@ void NLA_OT_clear_scale(wmOperatorType *ot)
  * Moves the start-point of the selected strips to the specified places.
  * \{ */
 
-/* defines for snap keyframes tool */
+/* defines for snap keyframes tool */ /*BFA - icons added*/
 static const EnumPropertyItem prop_nlaedit_snap_types[] = {
-    {NLAEDIT_SNAP_CFRA, "CFRA", 0, "Selection to Current Frame", ""},
+    {NLAEDIT_SNAP_CFRA, "CFRA", ICON_SNAP_CURRENTFRAME, "Selection to Current Frame", ""},
     /* XXX as single entry? */
-    {NLAEDIT_SNAP_NEAREST_FRAME, "NEAREST_FRAME", 0, "Selection to Nearest Frame", ""},
+    {NLAEDIT_SNAP_NEAREST_FRAME,
+     "NEAREST_FRAME",
+     ICON_SNAP_NEARESTFRAME,
+     "Selection to Nearest Frame",
+     ""},
     /* XXX as single entry? */
-    {NLAEDIT_SNAP_NEAREST_SECOND, "NEAREST_SECOND", 0, "Selection to Nearest Second", ""},
-    {NLAEDIT_SNAP_NEAREST_MARKER, "NEAREST_MARKER", 0, "Selection to Nearest Marker", ""},
+    {NLAEDIT_SNAP_NEAREST_SECOND,
+     "NEAREST_SECOND",
+     ICON_SNAP_NEARESTSECOND,
+     "Selection to Nearest Second",
+     ""},
+    {NLAEDIT_SNAP_NEAREST_MARKER,
+     "NEAREST_MARKER",
+     ICON_SNAP_NEARESTMARKER,
+     "Selection to Nearest Marker",
+     ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 

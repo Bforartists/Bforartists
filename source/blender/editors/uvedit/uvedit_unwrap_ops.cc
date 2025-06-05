@@ -1889,28 +1889,90 @@ static const EnumPropertyItem pinned_islands_method_items[] = {
 static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 {
   uiLayout *layout = op->layout;
+  uiLayout *col, *row; /*bfa, added *col and *row*/
+
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
   layout->prop(op->ptr, "shape_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(op->ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
+  col = &layout->column(false); /*bfa -  added col*/
+  uiLayoutSetPropSep(col, false);      /* bfa - use_property_split = False */
+  col->prop(op->ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   {
-    layout->prop(op->ptr, "rotate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    // ------------------ bfa new left aligned prop with triangle button
+
+    /* NOTE: split amount here needs to be synced with normal labels */
+    uiLayout *split = &layout->split(0.385f, true);
+
+    /* FIRST PART ................................................ */
+    row = &split->row(false);
+    uiLayoutSetPropDecorate(row, false);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->prop(op->ptr, "rotate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
+    /* SECOND PART ................................................ */
+    row = &split->row(true);
+    if (RNA_boolean_get(op->ptr, "rotate")) {
+      row->label(TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
+    }
+    else {
+      row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    }
+
+    // ------------------------------- end bfa
+
     uiLayout *sub = &layout->row(true);
-    uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "rotate"));
-    sub->prop(op->ptr, "rotate_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    layout->separator();
+    if (RNA_boolean_get(op->ptr, "rotate")) {
+      layout->separator(); /*bfa - separator*/
+      layout->separator(); /*bfa - separator*/
+      layout->separator(); /*bfa - separator*/
+      sub->prop(op->ptr, "rotate_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout->separator();
+    }
   }
   layout->prop(op->ptr, "margin_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(op->ptr, "margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->separator();
+  uiLayout *sub = &layout->row(true);
+  layout->separator(); /*bfa - separator*/
+  layout->separator(); /*bfa - separator*/
+  layout->separator(); /*bfa - separator*/
+  sub->prop(op->ptr, "margin_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
   {
-    layout->prop(op->ptr, "pin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    // ------------------ bfa new left aligned prop with triangle button
+
+    /* NOTE: split amount here needs to be synced with normal labels */
+    uiLayout *split = &layout->split(0.385f, true);
+
+    /* FIRST PART ................................................ */
+    row = &split->row(false);
+    uiLayoutSetPropDecorate(row, false);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->prop(op->ptr, "pin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
+    /* SECOND PART ................................................ */
+    row = &split->row(false);
+    if (RNA_boolean_get(op->ptr, "pin")) {
+      row->label(TIP_(""), ICON_DISCLOSURE_TRI_DOWN);
+    }
+    else {
+      row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    }
+
+    // ------------------------------- end bfa
+
     uiLayout *sub = &layout->row(true);
-    uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "pin"));
-    sub->prop(op->ptr, "pin_method", UI_ITEM_NONE, IFACE_("Lock Method"), ICON_NONE);
-    layout->separator();
+    if (RNA_boolean_get(op->ptr, "pin")) {
+      layout->separator(); /*bfa - separator*/
+      layout->separator(); /*bfa - separator*/
+      layout->separator(); /*bfa - separator*/
+      sub->prop(op->ptr, "pin_method", UI_ITEM_NONE, IFACE_("Lock Method"), ICON_NONE);
+      layout->separator();
+    }
   }
+  uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
   layout->prop(op->ptr, "merge_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = true */
   layout->prop(op->ptr, "udim_source", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->separator();
 }
@@ -2901,7 +2963,6 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
 
     col->separator();
     col->prop(&ptr, "use_weights", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
     if (RNA_boolean_get(op->ptr, "use_weights")) {
       col = &layout->column(true);
       col->prop(&ptr, "weight_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -2926,9 +2987,13 @@ void UV_OT_unwrap(wmOperatorType *ot)
   const ToolSettings *tool_settings_default = DNA_struct_default_get(ToolSettings);
 
   static const EnumPropertyItem method_items[] = {
-      {UVCALC_UNWRAP_METHOD_ANGLE, "ANGLE_BASED", 0, "Angle Based", ""},
-      {UVCALC_UNWRAP_METHOD_CONFORMAL, "CONFORMAL", 0, "Conformal", ""},
-      {UVCALC_UNWRAP_METHOD_MINIMUM_STRETCH, "MINIMUM_STRETCH", 0, "Minimum Stretch", ""},
+      {UVCALC_UNWRAP_METHOD_ANGLE, "ANGLE_BASED", ICON_UNWRAP_ABF, "Angle Based", ""},
+      {UVCALC_UNWRAP_METHOD_CONFORMAL, "CONFORMAL", ICON_UNWRAP_LSCM, "Conformal", ""},
+      {UVCALC_UNWRAP_METHOD_MINIMUM_STRETCH,
+       "MINIMUM_STRETCH",
+       ICON_UNWRAP_MINSTRETCH,
+       "Minimum Stretch",
+       ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -2952,8 +3017,7 @@ void UV_OT_unwrap(wmOperatorType *ot)
       method_items,
       tool_settings_default->unwrapper,
       "Method",
-      "Unwrapping method (Angle Based usually gives better results than Conformal, while "
-      "being somewhat slower)");
+      "The method to unwrap the mesh");
   RNA_def_boolean(ot->srna,
                   "fill_holes",
                   tool_settings_default->uvcalc_flag & UVCALC_FILLHOLES,
@@ -2975,8 +3039,9 @@ void UV_OT_unwrap(wmOperatorType *ot)
                ED_UVPACK_MARGIN_SCALED,
                "Margin Method",
                "");
+  /* bfa - change the defaults of uv margin */
   RNA_def_float_factor(
-      ot->srna, "margin", 0.001f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);
+      ot->srna, "margin", 0.01f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);
 
   /* SLIM only */
   RNA_def_boolean(ot->srna,
@@ -4297,7 +4362,7 @@ void ED_uvedit_add_simple_uvs(Main *bmain, const Scene *scene, Object *ob)
   params.correct_aspect = false;
   params.use_seams = true;
   params.margin_method = ED_UVPACK_MARGIN_SCALED;
-  params.margin = 0.001f;
+  params.margin = 0.01f; /* bfa - change the defaults of uv margin*/
 
   uvedit_pack_islands_multi(scene, {ob}, &bm, nullptr, false, true, &params);
 

@@ -172,6 +172,10 @@ void ED_buttons_visible_tabs_menu(bContext *C, uiLayout *layout, void * /*arg*/)
 
   /* These can be reordered freely. */
   constexpr std::array<blender::StringRefNull, BCONTEXT_TOT> filter_items = {
+        /*bfa - we don't have the tools in the properties editor.
+  Not commenting this out leads to a crash to desktop since the array then doesn't fit anymore
+  See also source\blender\makesrna\intern\rna_space.cc - static const EnumPropertyItem
+  *rna_SpaceProperties_context_itemf */
       "show_properties_tool",
       "show_properties_render",
       "show_properties_output",
@@ -221,10 +225,10 @@ blender::Vector<eSpaceButtons_Context> ED_buttons_tabs_list(const SpacePropertie
       tabs.append(tab);
     }
   };
+  /*BFA - tools tab not shown*/
+  //add_tab(BCONTEXT_TOOL);
 
-  add_tab(BCONTEXT_TOOL);
-
-  add_spacer();
+ // add_spacer();
 
   add_tab(BCONTEXT_RENDER);
   add_tab(BCONTEXT_OUTPUT);
@@ -293,8 +297,9 @@ static const char *buttons_main_region_context_string(const short mainb)
       return "constraint";
     case BCONTEXT_BONE_CONSTRAINT:
       return "bone_constraint";
-    case BCONTEXT_TOOL:
-      return "tool";
+    /*BFA - Tools tab not shown*/
+    //case BCONTEXT_TOOL:
+    //  return "tool";
   }
 
   /* All the cases should be handled. */

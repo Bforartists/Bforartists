@@ -299,7 +299,7 @@ void ACTION_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Action";
   ot->idname = "ACTION_OT_new";
-  ot->description = "Create new action";
+  ot->description = "Creates a duplicate of the current action";
 
   /* API callbacks. */
   ot->exec = action_new_exec;
@@ -698,9 +698,9 @@ void ACTION_OT_unlink(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Unlink Action";
+  ot->name = "Remove Action";
   ot->idname = "ACTION_OT_unlink";
-  ot->description = "Unlink this action from the active action slot (and/or exit Tweak Mode)";
+  ot->description = "Remove this action from the active action slot (and/or exit Tweak Mode)";
 
   /* callbacks */
   ot->invoke = action_unlink_invoke;
@@ -713,7 +713,7 @@ void ACTION_OT_unlink(wmOperatorType *ot)
                          false,
                          "Force Delete",
                          "Clear Fake User and remove "
-                         "copy stashed in this data-block's NLA stack");
+                         "copy stashed in this data's NLA stack");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
   /* flags */

@@ -853,7 +853,7 @@ ModifierTypeInfo modifierType_GreasePencilBuild = {
     /*flags*/
     eModifierTypeFlag_AcceptsGreasePencil | eModifierTypeFlag_EnableInEditmode |
         eModifierTypeFlag_SupportsEditmode,
-    /*icon*/ ICON_MOD_LENGTH,
+    /*icon*/ ICON_NONE,
 
     /*copy_data*/ blender::copy_data,
 

@@ -343,7 +343,7 @@ ModifierTypeInfo modifierType_GreasePencilLength = {
     /*flags*/
     eModifierTypeFlag_AcceptsGreasePencil | eModifierTypeFlag_EnableInEditmode |
         eModifierTypeFlag_SupportsEditmode,
-    /*icon*/ ICON_MOD_LENGTH,
+    /*icon*/ ICON_SPLINE_LENGTH,
 
     /*copy_data*/ blender::copy_data,
 

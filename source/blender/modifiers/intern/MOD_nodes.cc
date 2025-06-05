@@ -929,8 +929,7 @@ static void check_property_socket_sync(const Object *ob,
     IDProperty *property = properties.lookup_key_default_as(socket->identifier, nullptr);
     if (property == nullptr) {
       if (!ELEM(type, SOCK_GEOMETRY, SOCK_MATRIX, SOCK_BUNDLE, SOCK_CLOSURE)) {
-        BKE_modifier_set_error(
-            ob, md, "Missing property for input socket \"%s\"", socket->name ? socket->name : "");
+        BKE_modifier_set_error(ob, md, "Missing property for input socket \"%s\"", socket->name);
       }
       continue;
     }

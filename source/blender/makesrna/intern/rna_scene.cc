@@ -175,9 +175,9 @@ static const EnumPropertyItem *rna_enum_snap_element_individual_items =
 #endif
 
 const EnumPropertyItem rna_enum_snap_animation_element_items[] = {
-    {SCE_SNAP_TO_FRAME, "FRAME", 0, "Frame", "Snap to frame"},
-    {SCE_SNAP_TO_SECOND, "SECOND", 0, "Second", "Snap to seconds"},
-    {SCE_SNAP_TO_MARKERS, "MARKER", 0, "Nearest Marker", "Snap to nearest marker"},
+    {SCE_SNAP_TO_FRAME, "FRAME", ICON_SNAP_STEP, "Frame", "Snap to frame"},
+    {SCE_SNAP_TO_SECOND, "SECOND", ICON_SNAP_STEP_SECOND, "Second", "Snap to seconds"},
+    {SCE_SNAP_TO_MARKERS, "MARKER", ICON_SNAP_NEARESTMARKER, "Nearest Marker", "Snap to nearest marker"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -448,7 +448,7 @@ const EnumPropertyItem rna_enum_bake_save_mode_items[] = {
      "INTERNAL",
      0,
      "Internal",
-     "Save the baking map in an internal image data-block"},
+     "Save the baking map in an internal image file"},
     {R_BAKE_SAVE_EXTERNAL, "EXTERNAL", 0, "External", "Save the baking map in an external file"},
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -618,7 +618,7 @@ const EnumPropertyItem rna_enum_transform_orientation_items[] = {
      "Align the transformation axes to the 3D cursor"},
     {V3D_ORIENT_PARENT,
      "PARENT",
-     ICON_ORIENTATION_PARENT,
+     ICON_PARENT,
      "Parent",
      "Align the transformation axes to the object's parent space"},
     // {V3D_ORIENT_CUSTOM, "CUSTOM", 0, "Custom", "Use a custom transform orientation"},
@@ -3876,7 +3876,9 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "gpencil_flags", GP_TOOL_FLAG_PAINT_ONBACK);
   RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
   RNA_def_property_ui_text(
-      prop, "Draw Strokes on Back", "New strokes are drawn below of all strokes in the layer");
+      prop,
+      "Draw Strokes on Back",
+      "When drawing new strokes, the new stroke is drawn below of all strokes in the layer");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
   prop = RNA_def_property(srna, "use_gpencil_thumbnail_list", PROP_BOOLEAN, PROP_NONE);
@@ -4184,7 +4186,9 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   prop = RNA_def_property(srna, "vertex_group_weight", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, nullptr, "vgroup_weight");
   RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
-  RNA_def_property_ui_text(prop, "Vertex Group Weight", "Weight to assign in vertex groups");
+  RNA_def_property_ui_text(prop,
+                           "Vertex Group Weight",
+                           "Weight to assign in vertex groups\nHotkey in default keymap: V");
 
   prop = RNA_def_property(srna, "use_edge_path_live_unwrap", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "edge_mode_live_unwrap", 1);
@@ -4411,7 +4415,7 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS * 10);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 1, -1);
-  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush");
+  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush\nHotkey in the default keymap: X");
   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_radius_update");
 
   prop = RNA_def_property(srna, "unprojected_radius", PROP_FLOAT, PROP_DISTANCE);
@@ -4437,7 +4441,8 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
-  RNA_def_property_ui_text(prop, "Weight", "Weight to assign in vertex groups");
+  RNA_def_property_ui_text(
+      prop, "Weight", "Weight to assign in vertex groups\nHotkey in default keymap: V");
   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
 
   prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -5898,8 +5903,7 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "FreestyleSettings", nullptr);
   RNA_def_struct_sdna(srna, "FreestyleConfig");
   RNA_def_struct_nested(brna, srna, "ViewLayer");
-  RNA_def_struct_ui_text(
-      srna, "Freestyle Settings", "Freestyle settings for a ViewLayer data-block");
+  RNA_def_struct_ui_text(srna, "Freestyle Settings", "Freestyle settings for a ViewLayer");
 
   prop = RNA_def_property(srna, "modules", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, nullptr, "modules", nullptr);
@@ -5993,7 +5997,7 @@ static void rna_def_bake_data(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "BakeSettings", nullptr);
   RNA_def_struct_sdna(srna, "BakeData");
   RNA_def_struct_nested(brna, srna, "RenderSettings");
-  RNA_def_struct_ui_text(srna, "Bake Data", "Bake data for a Scene data-block");
+  RNA_def_struct_ui_text(srna, "Bake Data", "Bake data for a Scene");
   RNA_def_struct_path_func(srna, "rna_BakeSettings_path");
 
   prop = RNA_def_property(srna, "cage_object", PROP_POINTER, PROP_NONE);
@@ -7021,7 +7025,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "RenderData");
   RNA_def_struct_nested(brna, srna, "Scene");
   RNA_def_struct_path_func(srna, "rna_RenderSettings_path");
-  RNA_def_struct_ui_text(srna, "Render Data", "Rendering settings for a Scene data-block");
+  RNA_def_struct_ui_text(srna, "Render Data", "Rendering settings for a Scene");
 
   /* Render Data */
   prop = RNA_def_property(srna, "image_settings", PROP_POINTER, PROP_NONE);
@@ -7159,10 +7163,10 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "film_transparent", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "alphamode", R_ALPHAPREMUL);
-  RNA_def_property_ui_text(
-      prop,
-      "Transparent",
-      "World background is transparent, for compositing the render over another background");
+  RNA_def_property_ui_text(prop,
+                           "Transparent",
+                           "Render the world background as transparent. This allows compositing "
+                           "the rendered image over another background");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_render_update");
 
   prop = RNA_def_property(srna, "use_freestyle", PROP_BOOLEAN, PROP_NONE);
@@ -7243,7 +7247,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "mode", R_BORDER);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(
-      prop, "Render Region", "Render a user-defined render region, within the frame size");
+      prop, "Render Region", "Box select an area to render a part of the image");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
   prop = RNA_def_property(srna, "border_min_x", PROP_FLOAT, PROP_NONE);
@@ -8370,7 +8374,7 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Resolution",
                            "Control the quality of the volumetric effects. "
-                           "Higher resolution uses more memory.");
+                           "Higher resolution uses more memory");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
@@ -8378,8 +8382,8 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Steps",
                            "Number of steps to compute volumetric effects. "
-                           "Higher step count increase VRAM usage and quality.");
-  RNA_def_property_range(prop, 1, 256);
+                           "Higher step count increase VRAM usage and quality");
+  RNA_def_property_range(prop, 1, 512); /* BFA - doubled*/
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
@@ -8415,7 +8419,7 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
   prop = RNA_def_property(srna, "volumetric_shadow_samples", PROP_INT, PROP_NONE);
-  RNA_def_property_range(prop, 1, 128);
+  RNA_def_property_range(prop, 1, 256); /* BFA - doubled*/
   RNA_def_property_ui_text(
       prop, "Volumetric Shadow Samples", "Number of samples to compute volumetric shadowing");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
@@ -8797,7 +8801,7 @@ void RNA_def_scene(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "Scene", "ID");
   RNA_def_struct_ui_text(srna,
                          "Scene",
-                         "Scene data-block, consisting in objects and "
+                         "Scene, consisting in objects and "
                          "defining time and render related settings");
   RNA_def_struct_ui_icon(srna, ICON_SCENE_DATA);
   RNA_def_struct_clear_flag(srna, STRUCT_ID_REFCOUNT);
@@ -9209,7 +9213,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(
-      prop, "Annotations", "Grease Pencil data-block used for annotations in the 3D view");
+      prop, "Annotations", "Grease Pencil data used for annotations in the 3D view");
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA | NA_EDITED, nullptr);
 
   /* active MovieClip */

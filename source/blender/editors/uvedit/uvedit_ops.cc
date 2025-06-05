@@ -587,31 +587,32 @@ static wmOperatorStatus uv_align_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa-added icons to the enum*/
 static void UV_OT_align(wmOperatorType *ot)
 {
   static const EnumPropertyItem axis_items[] = {
       {UV_STRAIGHTEN,
        "ALIGN_S",
-       0,
+       ICON_ALIGN,
        "Straighten",
        "Align UV vertices along the line defined by the endpoints"},
       {UV_STRAIGHTEN_X,
        "ALIGN_T",
-       0,
+       ICON_STRAIGHTEN_X,
        "Straighten X",
        "Align UV vertices, moving them horizontally to the line defined by the endpoints"},
       {UV_STRAIGHTEN_Y,
        "ALIGN_U",
-       0,
+       ICON_STRAIGHTEN_Y,
        "Straighten Y",
        "Align UV vertices, moving them vertically to the line defined by the endpoints"},
       {UV_ALIGN_AUTO,
        "ALIGN_AUTO",
-       0,
+       ICON_ALIGNAUTO,
        "Align Auto",
        "Automatically choose the direction on which there is most alignment already"},
-      {UV_ALIGN_X, "ALIGN_X", 0, "Align Vertically", "Align UV vertices on a vertical line"},
-      {UV_ALIGN_Y, "ALIGN_Y", 0, "Align Horizontally", "Align UV vertices on a horizontal line"},
+      {UV_ALIGN_X, "ALIGN_X", ICON_ALIGNHORIZONTAL, "Align Vertically", "Align UV vertices on a vertical line"},
+      {UV_ALIGN_Y, "ALIGN_Y", ICON_ALIGNVERTICAL, "Align Horizontally", "Align UV vertices on a horizontal line"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1760,7 +1761,7 @@ static void UV_OT_cursor_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Set 2D Cursor";
-  ot->description = "Set 2D cursor location";
+  ot->description = "Set 2D cursor location\nHotkey Only Tool! Please use the hotkey!";
   ot->idname = "UV_OT_cursor_set";
 
   /* API callbacks. */

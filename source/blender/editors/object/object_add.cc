@@ -71,6 +71,7 @@
 #include "BKE_grease_pencil_legacy_convert.hh"
 #include "BKE_key.hh"
 #include "BKE_lattice.hh"
+#include "BKE_idtype.hh" // bfa override asset
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
@@ -101,6 +102,8 @@
 #include "DEG_depsgraph_build.hh"
 #include "DEG_depsgraph_query.hh"
 
+#include "DNA_windowmanager_enums.h"
+#include "DNA_windowmanager_types.h"
 #include "GEO_join_geometries.hh"
 #include "GEO_mesh_to_curve.hh"
 
@@ -130,6 +133,7 @@
 #include "ED_select_utils.hh"
 #include "ED_transform.hh"
 #include "ED_view3d.hh"
+#include "ED_undo.hh" // bfa override asset
 
 #include "ANIM_bone_collections.hh"
 
@@ -1786,6 +1790,229 @@ void OBJECT_OT_collection_instance_add(wmOperatorType *ot)
   object_add_drop_xy_props(ot);
 }
 
+// bfa asset data-block link override
+static bool make_override_library_object_overridable_check(Main *bmain, Object *object)
+{
+  /* An object is actually overridable only if it is in at least one local collection.
+   * Unfortunately 'direct link' flag is not enough here. */
+  LISTBASE_FOREACH (Collection *, collection, &bmain->collections) {
+    if (!ID_IS_LINKED(collection) && BKE_collection_has_object(collection, object)) {
+      return true;
+    }
+  }
+  LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+    if (!ID_IS_LINKED(scene) && BKE_collection_has_object(scene->master_collection, object)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+static bool create_override(Main *bmain, Scene *scene, ViewLayer *view_layer, ID *id_root, ID *id_root_override, Object *obact, GSet *user_overrides_objects_uids, bool is_override_instancing_object , const bool do_fully_editable) 
+{
+  const bool success = BKE_lib_override_library_create(bmain,
+                                                       scene,
+                                                       view_layer,
+                                                       nullptr,
+                                                       id_root,
+                                                       id_root,
+                                                       &obact->id,
+                                                       &id_root_override,
+                                                       do_fully_editable);
+
+  if (!do_fully_editable) {
+    /* Define liboverrides from selected/validated objects as user defined. */
+    ID *id_hierarchy_root_override = id_root_override->override_library->hierarchy_root;
+    ID *id_iter;
+    FOREACH_MAIN_ID_BEGIN (bmain, id_iter) {
+      if (ID_IS_LINKED(id_iter) || !ID_IS_OVERRIDE_LIBRARY_REAL(id_iter) ||
+          id_iter->override_library->hierarchy_root != id_hierarchy_root_override)
+      {
+        continue;
+      }
+      if (BLI_gset_haskey(user_overrides_objects_uids,
+                          POINTER_FROM_UINT(id_iter->override_library->reference->session_uid)))
+      {
+        id_iter->override_library->flag &= ~LIBOVERRIDE_FLAG_SYSTEM_DEFINED;
+      }
+    }
+    FOREACH_MAIN_ID_END;
+
+    BLI_gset_free(user_overrides_objects_uids, nullptr);
+  }
+
+  if (success) {
+    if (is_override_instancing_object) {
+      /* Remove the instance empty from this scene, the items now have an overridden collection
+       * instead. */
+      base_free_and_unlink(bmain, scene, obact);
+    }
+    else {
+      /* Remove the found root ID from the view layer. */
+      switch (GS(id_root->name)) {
+        case ID_GR: {
+          Collection *collection_root = (Collection *)id_root;
+          LISTBASE_FOREACH_MUTABLE (
+              CollectionParent *, collection_parent, &collection_root->runtime.parents)
+          {
+            if (ID_IS_LINKED(collection_parent->collection) ||
+                !BKE_view_layer_has_collection(view_layer, collection_parent->collection))
+            {
+              continue;
+            }
+            BKE_collection_child_remove(bmain, collection_parent->collection, collection_root);
+          }
+          break;
+        }
+        case ID_OB: {
+          /* TODO: Not sure how well we can handle this case, when we don't have the collections
+           * as reference containers... */
+          break;
+        }
+        default:
+          break;
+      }
+    }
+  }
+  return success;
+}
+
+static wmOperatorStatus collection_drop_override(bContext *C, wmOperator *op)
+{
+  Main *bmain = CTX_data_main(C);
+  Scene *scene = CTX_data_scene(C);
+  ViewLayer *view_layer = CTX_data_view_layer(C);
+  Object *obact = CTX_data_active_object(C);
+  ID *id_root = nullptr;
+  bool is_override_instancing_object = false;
+
+  bool user_overrides_from_selected_objects = false;
+
+  if (!ID_IS_LINKED(obact) && obact->instance_collection != nullptr &&
+      ID_IS_LINKED(obact->instance_collection))
+  {
+    if (!ID_IS_OVERRIDABLE_LIBRARY(obact->instance_collection)) {
+      BKE_reportf(op->reports,
+                  RPT_ERROR_INVALID_INPUT,
+                  "Collection '%s' (instantiated by the active object) is not overridable",
+                  obact->instance_collection->id.name + 2);
+      return OPERATOR_CANCELLED;
+    }
+
+    id_root = &obact->instance_collection->id;
+    is_override_instancing_object = true;
+    user_overrides_from_selected_objects = false;
+  }
+  else if (!make_override_library_object_overridable_check(bmain, obact)) {
+    const int i = RNA_property_int_get(op->ptr, op->type->prop);
+    const uint collection_session_uid = *((const uint *)&i);
+    if (collection_session_uid == MAIN_ID_SESSION_UID_UNSET) {
+      BKE_reportf(op->reports,
+                  RPT_ERROR_INVALID_INPUT,
+                  "Could not find an overridable root hierarchy for object '%s'",
+                  obact->id.name + 2);
+      return OPERATOR_CANCELLED;
+    }
+    Collection *collection = static_cast<Collection *>(
+        BLI_listbase_bytes_find(&bmain->collections,
+                                &collection_session_uid,
+                                sizeof(collection_session_uid),
+                                offsetof(ID, session_uid)));
+    id_root = &collection->id;
+    user_overrides_from_selected_objects = true;
+  }
+  /* Else, poll func ensures us that ID_IS_LINKED(obact) is true, or that it is already an
+   * existing liboverride. */
+  else {
+    BLI_assert(ID_IS_LINKED(obact) || ID_IS_OVERRIDE_LIBRARY_REAL(obact));
+    id_root = &obact->id;
+    user_overrides_from_selected_objects = true;
+  }
+
+  /* Make already existing selected liboverrides editable. */
+  bool is_active_override = false;
+  FOREACH_SELECTED_OBJECT_BEGIN (view_layer, CTX_wm_view3d(C), ob_iter) {
+    if (ID_IS_OVERRIDE_LIBRARY_REAL(ob_iter) && !ID_IS_LINKED(ob_iter)) {
+      ob_iter->id.override_library->flag &= ~LIBOVERRIDE_FLAG_SYSTEM_DEFINED;
+      is_active_override = is_active_override || (&ob_iter->id == id_root);
+      DEG_id_tag_update(&ob_iter->id, ID_RECALC_SYNC_TO_EVAL);
+    }
+  }
+  FOREACH_SELECTED_OBJECT_END;
+  /* If the active object is a liboverride, there is no point going further, since in the weird
+   * case where some other selected objects would be linked ones, there is no way to properly
+   * create overrides for them currently.
+   *
+   * Could be added later if really needed, but would rather avoid that extra complexity here. */
+  if (is_active_override) {
+    return OPERATOR_FINISHED;
+  }
+
+  /** Currently there is no 'all editable' option from the 3DView. */
+  const bool do_fully_editable = false;
+
+  GSet *user_overrides_objects_uids = do_fully_editable ? nullptr :
+                                                          BLI_gset_new(BLI_ghashutil_inthash_p,
+                                                                       BLI_ghashutil_intcmp,
+                                                                       __func__);
+
+  if (do_fully_editable) {
+    /* Pass. */
+  }
+  else if (user_overrides_from_selected_objects) {
+    /* Only selected objects can be 'user overrides'. */
+    FOREACH_SELECTED_OBJECT_BEGIN (view_layer, CTX_wm_view3d(C), ob_iter) {
+      BLI_gset_add(user_overrides_objects_uids, POINTER_FROM_UINT(ob_iter->id.session_uid));
+    }
+    FOREACH_SELECTED_OBJECT_END;
+  }
+  else {
+    /* Only armatures inside the root collection (and their children) can be 'user overrides'. */
+    FOREACH_COLLECTION_OBJECT_RECURSIVE_BEGIN ((Collection *)id_root, ob_iter) {
+      if (ob_iter->type == OB_ARMATURE) {
+        BLI_gset_add(user_overrides_objects_uids, POINTER_FROM_UINT(ob_iter->id.session_uid));
+      }
+    }
+    FOREACH_COLLECTION_OBJECT_RECURSIVE_END;
+  }
+
+  BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
+
+  /* For the time being, replace selected linked objects by their overrides in all collections.
+   * While this may not be the absolute best behavior in all cases, in most common one this
+   * should match the expected result. */
+  if (user_overrides_objects_uids != nullptr) {
+    LISTBASE_FOREACH (Collection *, coll_iter, &bmain->collections) {
+      if (ID_IS_LINKED(coll_iter)) {
+        continue;
+      }
+      LISTBASE_FOREACH (CollectionObject *, coll_ob_iter, &coll_iter->gobject) {
+        if (BLI_gset_haskey(user_overrides_objects_uids,
+                            POINTER_FROM_UINT(coll_ob_iter->ob->id.session_uid)))
+        {
+          /* Tag for remapping when creating overrides. */
+          coll_iter->id.tag |= ID_TAG_DOIT;
+          break;
+        }
+      }
+    }
+    /* Also tag the Scene itself for remapping when creating overrides (includes the scene's master
+     * collection too). */
+    scene->id.tag |= ID_TAG_DOIT;
+  }
+  ID *id_root_override = nullptr;
+  bool success = false;
+  success = create_override(bmain, scene, view_layer, id_root, id_root_override, obact, user_overrides_objects_uids, is_override_instancing_object, do_fully_editable);
+
+  DEG_id_tag_update(&CTX_data_scene(C)->id, ID_RECALC_BASE_FLAGS | ID_RECALC_SYNC_TO_EVAL);
+  WM_event_add_notifier(C, NC_WINDOW, nullptr);
+  WM_event_add_notifier(C, NC_WM | ND_LIB_OVERRIDE_CHANGED, nullptr);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
+
+  return success ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+// bfa end 
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1815,8 +2042,8 @@ static wmOperatorStatus collection_drop_exec(bContext *C, wmOperator *op)
   if (!add_info) {
     return OPERATOR_CANCELLED;
   }
-
-  if (RNA_boolean_get(op->ptr, "use_instance")) {
+  const bool use_override = RNA_boolean_get(op->ptr, "use_override"); // bfa use override for linked data-block
+  if (!use_override && RNA_boolean_get(op->ptr, "use_instance")) {
     BKE_collection_child_remove(bmain, active_collection->collection, add_info->collection);
     DEG_id_tag_update(&active_collection->collection->id, ID_RECALC_SYNC_TO_EVAL);
     DEG_relations_tag_update(bmain);
@@ -1853,7 +2080,13 @@ static wmOperatorStatus collection_drop_exec(bContext *C, wmOperator *op)
     object_xform_array_m4(objects.data(), objects.size(), delta_mat);
   }
 
-  return OPERATOR_FINISHED;
+  // bfa asset override, default fall back for adding override
+  wmOperatorStatus r = OPERATOR_FINISHED;
+  if (use_override){
+      //ViewLayer *view_layer = CTX_data_view_layer(C);
+      r = collection_drop_override(C, op);
+  }
+  return r; // bfa end return OPERATOR_FINISHED;
 }
 
 void OBJECT_OT_collection_external_asset_drop(wmOperatorType *ot)
@@ -1885,6 +2118,13 @@ void OBJECT_OT_collection_external_asset_drop(wmOperatorType *ot)
                          "Instance",
                          "Add the dropped collection as collection instance");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+  // bfa asset override define use_override, hide the checkbox away from the user
+  prop = RNA_def_boolean(ot->srna,
+                         "use_override",
+                         false,
+                         "Override",
+                         "Use library override. Will ignore Instance when on");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE | PROP_HIDDEN);
 
   object_add_drop_xy_props(ot);
 
@@ -2297,6 +2537,17 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string object_ot_delete_get_description(struct bContext * /*C*/,
+                                                    struct wmOperatorType * /*op*/,
+                                                    struct PointerRNA *values)
+{
+  if (RNA_boolean_get(values, "use_global")) {
+    return "Delete selected objects from all scenes";
+  }
+  return "";
+}
+
 static wmOperatorStatus object_delete_invoke(bContext *C,
                                              wmOperator *op,
                                              const wmEvent * /*event*/)
@@ -2323,6 +2574,7 @@ void OBJECT_OT_delete(wmOperatorType *ot)
   /* API callbacks. */
   ot->invoke = object_delete_invoke;
   ot->exec = object_delete_exec;
+  ot->get_description = object_ot_delete_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_objectmode;
 
   /* flags */
@@ -4255,7 +4507,7 @@ static void object_convert_ui(bContext * /*C*/, wmOperator *op)
 {
   uiLayout *layout = op->layout;
 
-  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropSep(layout, false); /*bfa - checkboxes, don't split*/
 
   layout->prop(op->ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(op->ptr, "keep_original", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -4265,8 +4517,10 @@ static void object_convert_ui(bContext * /*C*/, wmOperator *op)
     layout->prop(op->ptr, "merge_customdata", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (target == OB_GREASE_PENCIL) {
+    uiLayoutSetPropSep(layout, true); /*bfa - split*/
     layout->prop(op->ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     layout->prop(op->ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiLayoutSetPropSep(layout, false); /*bfa - boolean, don't split*/
     layout->prop(op->ptr, "faces", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 }
@@ -4914,7 +5168,9 @@ void OBJECT_OT_join(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Join";
-  ot->description = "Join selected objects into active object";
+  ot->description =
+      "Join selected objects into active object\nSelect first object, hold down shift, select "
+      "second object\nThen perform the join tool";
   ot->idname = "OBJECT_OT_join";
 
   /* API callbacks. */

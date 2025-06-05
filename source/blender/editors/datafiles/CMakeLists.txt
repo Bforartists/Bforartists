@@ -2,18 +2,19 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+# BFA - this document is heavily modified, so best compare Blender new with Blender old (a week back or so)
+# BFA - then when you see any changes, splice them in. Bforartists icon list is completely different.
+
 set(INC
   PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
   ../include
 )
 
 set(INC_SYS
-
 )
 
 # Part of the `blender` binary (sources for data-files are appended).
 set(SRC
-
 )
 
 set(LIB
@@ -23,6 +24,7 @@ set(LIB
 # This section is maintained by the updating script, keep BEGIN/END comments.
 # See: `make icons_geom` and the script `./release/datafiles/blender_icons_geom_update.py`.
 set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
+
   # BEGIN ICON_GEOM_NAMES
   brush.generic
   brush.gpencil_draw.erase
@@ -117,6 +119,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.mesh.rip
   ops.mesh.rip_edge
   ops.mesh.spin
+  ops.mesh.spin.duplicate
   ops.mesh.vertices_smooth
   ops.node.links_cut
   ops.paint.eyedropper_add
@@ -168,90 +171,266 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.transform.vert_slide
   ops.transform.vertex_random
   ops.view3d.ruler
+
   # END ICON_GEOM_NAMES
 )
 
 data_to_c_simple(../../../../release/datafiles/bfont.pfb SRC)
 
-
 if(WITH_BLENDER)
   # Blender only (not Cycles stand-alone).
-
   if(NOT WITH_HEADLESS)
     # Blender UI only.
-
     set(SVG_FILENAMES_NOEXT
+
+      # ------------------------- icons --------------------------*/
+      none # never change, needs to stay on top of the list!
+
+      # letter def icon
+      anim
+      area_dock
+      area_join_down
+      area_join_left
+      area_join_up
+      color_tag
+      decorate_library_override
+      decorate_linked
+      fund
+      heart
+      image_plane
+      lockview_off
+      lockview_on
+      node_texture
+      play_sound
+      preset_new
+      preview_loading
+      restrict_instanced_off
+      restrict_instanced_on
+      rna_add
+      strands
+      trash
+      group_bright
+
+      # letter numbers
+      4l_off
+      4l_on
+
+      # letter A
+      absolutepath
+      accumulate
       action
       action_slot
       action_tweak
+      action_tweak_solo
+      active_element
       add
+      add_all
+      add_ik
+      add_metastrip
+      add_selected
+      add_strip
+      add_to_active
+      add_track
+      add_track_above
+      after_current_frame
       aliased
+      align
       align_bottom
       align_center
+      align_euler_to_vector
       align_flush
       align_justify
       align_left
       align_middle
       align_right
+      align_rotation_to_vector
       align_top
+      align_transform
+      alignauto
+      aligncamera_active
+      aligncamera_view
+      alignhorizontal
+      alignvertical
+      alternated
       anchor_bottom
       anchor_center
       anchor_left
       anchor_right
       anchor_top
-      anim
+      angle
       anim_data
       antialiased
       append_blend
-      area_dock
-      area_join
-      area_join_down
-      area_join_left
-      area_join_up
+      apply_parent_inverse
+      apply_rotscale
+      applyall
+      applyalldelta
+      applyanidelta
+      applymove
+      applymovedelta
+      applyrotate
+      applyrotatedelta
+      applyscale
+      applyscaledelta
+      apptemplate
+      area
       area_swap
       armature_data
       arrow_leftright
       asset_manager
+      assign
+      attribute_capture
+      attribute_clamp
+      attribute_colorramp
+      attribute_combine_xyz
+      attribute_compare
+      attribute_convert
+      attribute_curvemap
+      attribute_fill
+      attribute_maprange
+      attribute_math
+      attribute_mix
+      attribute_proximity
+      attribute_randomize
+      attribute_remove
+      attribute_separate_xyz
+      attribute_statistic
+      attribute_store
+      attribute_texture
+      attribute_transfer
+      attribute_vector_rotate
+      attribute_vectormath
       auto
+      autocomplete
       automerge_off
       automerge_on
+      averageislandscale
+      avoid
+      axes_to_rotation
+      axis_angle_to_rotation
       axis_front
       axis_side
       axis_top
+
+      # letter B
       back
-      blank1
+      background
+      bake
+      bake_action
+      bake_curve
+      bake_sound
+      batch_generate
+      batch_generate_clear
+      beautify
+      before_current_frame
+      bend
+      between_markers
+      bevel
+      bisect
+      blank1 # BFA - not actually blank - this is used all over the place
+      blend_offset
+      blend_tex
+      blend_to_default
+      blend_to_ease
+      blend_to_neighbour
       blender
-      blender_logo_large
+      blendfromshape
+      blur_attribute
       boids
       bold
       bone_data
+      bone_layer
       bookmarks
+      boolean_intersect
+      boolean_math
+      border_lasso
+      border_rect
       bordermove
-      brushes_all
+      box_add
+      box_hide
+      box_mask
+      box_show
+      box_trim
+      breakdowner_pose
+      bridge_edgeloops
+      brightness_contrast
       brush_data
+      brush_reset
+      brushangle
+      brushes_all
+      brushsize
+      brushstrength
+      builtin_modifier
+      buts
+      buts_active
+
+      # letter c
       camera_data
       camera_stereo
       cancel
-      cancel_large
+      caret_line_begin
+      caret_line_end
+      caret_next_char
+      caret_next_word
+      caret_prev_char
+      caret_prev_word
+      center
       center_only
       char_notdef
       char_replacement
+      centertocursor
+      centertomouse
       checkbox_dehlt
       checkbox_hlt
+      checker_deselect
       checkmark
+      child
+      child_recursive
+      circle
+      circle_select
+      clean_channels
+      clean_channels_frames
+      clean_keys
+      clear
+      clear_constraint
+      clear_fs_edge
+      clear_ik
+      clear_mask
+      clear_roll
+      clear_seam
+      clear_tilt
+      clear_track
+      clearfsface
+      clearmove
+      clearorigin
+      clearrotate
+      clearscale
+      clearsharpedges
+      clearsharpverts
+      clip
+      clippingborder
       clipuv_dehlt
       clipuv_hlt
+      cloud_tex
       collapsemenu
+      collection_bone_add
+      collection_bone_new
+      collection_bone_remove
+      collection_info
       collection_new
-      color
+      color # see color_red/green/blue */
       color_blue
       color_green
       color_red
+      color_space
+      column_current_frame
+      columns_keys
+      columns_markers
+      combine_color
+      combine_matrix
+      combine_transform
+      comment
       community
-      cone
-      console
-      constraint
-      constraint_bone
       con_action
       con_armature
       con_camerasolver
@@ -279,66 +458,195 @@ if(WITH_BLENDER)
       con_transform
       con_transform_cache
       con_translike
-      copydown
+      cone
+      connected
+      console
+      constraint
+      constraint_bone
+      constraint_data
+      controlpointrow
+      convexhull
       copy_id
+      copydown
+      copymirrored
+      copyright
+      corners_of_edge
+      corners_of_face
+      corners_of_vertex
+      crease
+      cryptomatte
       cube
+      cubeproject
       current_file
       cursor
-      curves
-      curves_data
+      cursor_to_pixels
+      cursortoactive
+      cursortocenter
+      cursortogrid
+      cursortoselection
+      curve_arc
       curve_bezcircle
       curve_bezcurve
       curve_data
+      curve_fill
+      curve_fillet
+      curve_handle_positions
+      curve_line
       curve_ncircle
       curve_ncurve
+      curve_normal
+      curve_of_point
+      curve_parameter
       curve_path
+      curve_quadrilateral
+      curve_resample
+      curve_sample
+      curve_spiral
+      curve_star
+      curve_startend
+      curve_tangent
+      curve_tilt
+      curve_trim
+      curves
+      cut
+      cut_links
+      cycles_modifier
+      cylinderproject
+
+      # letter d
+      datablock_clear
+      debug
+      dec_contrast
+      decimate
       decorate
       decorate_animate
       decorate_driver
       decorate_keyframe
-      decorate_library_override
-      decorate_linked
-      decorate_locked
+
       decorate_override
-      decorate_unlocked
+
+      decorate_unlocked # bfa- don't change the order
+      decorate_locked # bfa- don't change the order
+
+      decrease_kerning
+      deform_curves
+      degenerate_dissolve
+      degree
+      delete
+      delete_all
+      delete_duplicate
+      delete_loose
+	  depth
       desktop
+      detach_links
+      detach_links_move
+      detect
+      dial_gizmo
+      dirty_vertex
+      disable
       disc
-      disc_large
+      disclosure_tri_right # BFA - exception to the order for the icon +1 toggle
       disclosure_tri_down
-      disclosure_tri_right
+      discontinue_euler
       disk_drive
-      disk_drive_large
+      dissolve_between
+      dissolve_edges
+      dissolve_faces
+      dissolve_limited
+      dissolve_selection
+      dissolve_unselected
+      dissolve_verts
+      distorted_noise_tex
       documents
+      dof
+      dolly
+      domain_size
+      dopesheet_active
       dot
+      double_left
+      double_right
       downarrow_hlt
+      drawsize
       driver
+      driver_active
       driver_distance
       driver_rotational_difference
       driver_transform
+      dual_mesh
+      dupli_extrude
+      dupli_extrude_rotate
       duplicate
+      duplicate_all
+      dutch_florin
+
+      # letter e
+      edge_angle
+      edge_collapse
+      edge_neighbors
+      edge_path_to_selection
+      edge_paths_to_curves
+      edge_vertices
+      edges_of_corner
+      edges_of_vertex
       edgesel
+      edit
+      edit_external
       editmode_hlt
       empty_arrows
       empty_axis
+      empty_circle
+      empty_cone
+      empty_cube
       empty_data
+      empty_image
       empty_single_arrow
+      empty_sphere
+      enable
+      enhance
+      envelope_modifier
+      equalize_handler
+      erase
       error
+      euler_to_rotation
+      euro
+      expandmenu
       experimental
       export
+      export_collection
+      exposure
+      extend_vertices
+      external_data
       external_drive
-      external_drive_large
+      extensions_all
+      extrapolation_constant
+      extrapolation_cyclic
+      extrapolation_cyclic_clear
+      extrapolation_linear
+      extrude_region
+      extrudesize
       eyedropper
-      facesel
+
+      # letter f
       face_corner
       face_maps
+      face_maps_active
+      face_neighbors
+      face_of_corner
+      face_set
+      facegroup
+      faceregions
+      facesel
+      facesel_hlt
       fake_user_off
       fake_user_on
+	  falloffstroke
       fcurve
       fcurve_snapshot
       ff
+      field_at_index
+      field_domain
+      fight
       file
-      file_large
-      filebrowser
       file_3d
       file_alias
       file_archive
@@ -347,25 +655,43 @@ if(WITH_BLENDER)
       file_blend
       file_cache
       file_folder
-      file_folder_large
       file_font
       file_hidden
       file_image
       file_movie
       file_new
       file_parent
-      file_parent_large
       file_refresh
       file_script
       file_sound
       file_text
       file_tick
       file_volume
+      filebrowser
+      fill
+      fill_hole
+      fill_mask
+      fillbetween
       filter
       fixed_size
+      flatten_handler
+      flip
+      flip_normals
+      flip_x
+      flip_y
+      flip_z
+      float_compare
+      float_curve
+      float_to_int
+      flock
+      floodfill
+      floor
+      fly_navigation
       folder_redirect
-      fontpreview
+      follow_leader
+      followquads
       font_data
+      fontpreview
       force_boid
       force_charge
       force_curve
@@ -379,21 +705,39 @@ if(WITH_BLENDER)
       force_turbulence
       force_vortex
       force_wind
+      for_each
       forward
       frame_next
       frame_prev
+      frame_preview_range
+      frame_scene_range
       freeze
+      fullscreen
       fullscreen_enter
       fullscreen_exit
-      fund
+
+      # letter g
+      gabor_noise
+      game
+      generator_modifier
+      geometry_instance
+      geometry_name
       geometry_nodes
+      geometry_nodes_active
+      geometry_proximity
       geometry_set
+      geometry_to_origin
+      german_s
       gesture_pan
       gesture_rotate
       gesture_zoom
+      get_id
+      ghost
       ghost_disabled
       ghost_enabled
       gizmo
+      goal
+      goto
       gp_caps_flat
       gp_caps_round
       gp_multiframe_editing
@@ -401,49 +745,107 @@ if(WITH_BLENDER)
       gp_select_between_strokes
       gp_select_points
       gp_select_strokes
+      gradient
       graph
+      graph_active
       greasepencil
       greasepencil_layer_group
       grid
+      gridfill
       grip
       grip_v
+      groundgrid
       group
       group_bone
       group_uvs
       group_vcol
       group_vertex
+      groupinput
+      groupoutput
+
+      # letter h
+      hair_data
       hand
+      handle_align_single
       handle_aligned
       handle_auto
       handle_autoclamped
       handle_free
       handle_vector
-      heart
+      hash
       help
-      hide_off
-      hide_on
+
+      hide_on # bfa - don't change the order of the icons
+      hide_off # bfa - don't change the order of the icons
+
+      hide_renderview
+      hide_unselected
+      hierarchy
+      hierarchy_down
+      hierarchy_up
+      history_cycle_back
+      history_cycle_forward
+      hold_split
       holdout_off
       holdout_on
       home
       hook
+      hook_assign
+      hook_bone
+      hook_new
+      hook_recenter
+      hook_remove
+      hook_reset
+      hook_select
+      hook_selected
+      hue
+      huecorrect
+      huesatval
+
+      # letter i
       image
       image_alpha
+      image_aspect
       image_background
       image_data
-      image_plane
+      image_info
       image_reference
       image_rgb
       image_rgb_alpha
       image_zdepth
+      imasel
       imgdisplay
       import
+      inc_contrast
+      increase_kerning
+      indent
+      index
+      index_of_nearest
+      index_switch
       indirect_only_off
       indirect_only_on
+      inflate
       info
-      info_large
+      input_bool
+      inset_faces
+      instance_rotate
+      instance_scale
+      instance_transform
+      instance_transform_get
+      instances_to_points
+      integer
+      integer_math
       internet
       internet_offline
+      interpolate
+      interpolate_curve
+      intersect
+      inverse
       inversesquarecurve
+      invert_mask
+      invert_matrix
+      invert_rotation
+      ipo
       ipo_back
       ipo_bezier
       ipo_bounce
@@ -460,79 +862,166 @@ if(WITH_BLENDER)
       ipo_quart
       ipo_quint
       ipo_sine
+      is_spline_cyclic
       italic
+
+      # letter j
+      join
+      join_areas
+      joincopy
+      jump_to_keyframes
+
+      # letter k
+      key_dehlt
+      key_hlt
       keyframe
       keyframe_hlt
+      keyframes_clear
+      keyframes_insert
+      keyframes_remove
       keyingset
-      key_backspace
-      key_backspace_filled
-      key_command
-      key_command_filled
-      key_control
-      key_control_filled
-      key_dehlt
-      key_empty1
-      key_empty1_filled
-      key_empty2
-      key_empty2_filled
-      key_empty3
-      key_empty3_filled
-      key_hlt
-      key_menu
-      key_menu_filled
-      key_option
-      key_option_filled
-      key_return
-      key_return_filled
-      key_ring
-      key_ring_filled
-      key_shift
-      key_shift_filled
-      key_tab
-      key_tab_filled
-      key_windows
-      key_windows_filled
+      knife
+      knife_project
+      kuwahara
+
+      # letter L
+      lasso_add
+      lasso_hide
+      lasso_mask
+      lasso_show
+      lasso_trim
+      lastoperator
       lattice_data
+      layer
       layer_active
+      layer_add
       layer_used
+      lens_angle
+      lens_scale
+      levels
+      library
       library_data_broken
       library_data_direct
+      library_data_indirect
       library_data_override
+      library_object
       light
-      lightprobe_plane
-      lightprobe_sphere
-      lightprobe_volume
       light_area
       light_data
       light_hemi
       light_point
+      light_size
       light_spot
+      light_strength
       light_sun
+      lightmappack
+      lightprobe_plane
+      lightprobe_sphere
+      lightprobe_volume
+      limit_modifier
       lincurve
+      line_data
+      line_hide
+      line_project
+      line_show
+      line_trim
+      linear_gizmo
+      lineart_collection
+      lineart_object
+      lineart_scene
       linenumbers_off
       linenumbers_on
-      line_data
-      linked
+      link_area
       link_blend
-      locked
-      lockview_off
-      lockview_on
+      link_data
+      link_replace
+      load_3ds
+      load_abc
+      load_csv
+      load_bvh
+      load_dae
+      load_factory
+      load_fbx
+      load_gltf
+      load_obj
+      load_ply
+      load_stl
+      load_svg
+      load_svg_gpencil
+      load_usd
+      load_x3d
+      loc_rot
+      loc_rot_scale
+      loc_rot_scale_custom
+      loc_scale
+      lock_clear
+      lock_rotation
+      lock_to_camview
+      lock_to_camview_on
+      locktoactive
+      locktocenter
       longdisplay
       loop_back
+      loop_cut_and_slide
       loop_forwards
+      loopsel
+
+      # letter m
+      magic_tex
+      make_curvesegment
+      make_edgeface
+      make_internal
+      make_local
+      make_planar
+      make_proxy
+      make_regular
+      make_screenshot
+      make_screenshot_area
+      make_single_user
+      makedupliface
+      makeduplireal
+      man_rot
+      man_scale
+      man_trans
+      manipul
+      marble_tex
+      mark_fs_edge
+      mark_seam
       marker
+      marker_bind
       marker_hlt
+      marker_to_mesh
+      markfsface
+      marksharpangle
+      marksharpedges
+      marksharpverts
+      mask_above
+      mask_below
+      mask_slice
+      mask_slice_fill
+      mask_slice_new
+      mat_sphere_sky
+      matrix_determinant
       matcloth
       matcube
       material
+      material_add
       material_data
+      material_index
+      material_replace
       matfluid
       matplane
       matshaderball
       matsphere
-      mat_sphere_sky
+      maximize_area
       memory
       menu_panel
+      menu_switch
+      merge
+      merge_at_first
+      merge_at_last
+      merge_center
+      merge_cursor
       mesh_capsule
       mesh_circle
       mesh_cone
@@ -541,8 +1030,11 @@ if(WITH_BLENDER)
       mesh_data
       mesh_grid
       mesh_icosphere
+      mesh_line
       mesh_monkey
       mesh_plane
+      mesh_to_points
+      mesh_to_volume
       mesh_torus
       mesh_uvsphere
       meta_ball
@@ -550,12 +1042,19 @@ if(WITH_BLENDER)
       meta_cube
       meta_data
       meta_ellipsoid
+      meta_empty
       meta_plane
-      modifier
-      modifier_data
-      modifier_off
-      modifier_on
+      metallic
+      minimizestretch
+      mirror_cursorvalue
+      mirror_marker
+      mirror_time
+      mirror_vertexgroup
+      mirror_x
+      mirror_y
+      mirror_z
       mod_armature
+      mod_armature_selected
       mod_array
       mod_bevel
       mod_boolean
@@ -569,16 +1068,16 @@ if(WITH_BLENDER)
       mod_displace
       mod_dynamicpaint
       mod_edgesplit
-      mod_envelope
+      mod_equalizer
       mod_explode
       mod_fluid
       mod_fluidsim
       mod_hue_saturation
-      mod_instance
       mod_lattice
-      mod_length
       mod_lineart
       mod_mask
+      mod_mask_off
+      mod_mesh_cache
       mod_meshdeform
       mod_mirror
       mod_multires
@@ -587,9 +1086,8 @@ if(WITH_BLENDER)
       mod_ocean
       mod_offset
       mod_opacity
-      mod_outline
-      mod_particles
       mod_particle_instance
+      mod_particles
       mod_physics
       mod_remesh
       mod_screw
@@ -597,6 +1095,7 @@ if(WITH_BLENDER)
       mod_simpledeform
       mod_simplify
       mod_skin
+      mod_smoke
       mod_smooth
       mod_soft
       mod_solidify
@@ -610,49 +1109,233 @@ if(WITH_BLENDER)
       mod_warp
       mod_wave
       mod_wireframe
+      modifier
+      modifier_data
+      modifier_off
+      modifier_on
       monkey
+      motionpaths_calculate
+      motionpaths_clear
+      motionpaths_update
+      motionpaths_update_all
+
+      # bfa - don't change the order of the icons
       mouse_lmb
-      mouse_lmb_2x
-      mouse_lmb_drag
       mouse_mmb
-      mouse_mmb_drag
-      mouse_mmb_scroll
-      mouse_move
       mouse_rmb
+      mouse_mmb_scroll
+      mouse_lmb_2x
+      mouse_move
+      mouse_lmb_drag
+      mouse_mmb_drag
       mouse_rmb_drag
+
+      # ##
+      mouse_position
+      move_down
+      move_texturespace
+      move_to_bottom
+      move_to_top
+      move_up
+      multiplication
+      multiply_matrix
+      musgrave_tex
       mute_ipo_off
       mute_ipo_on
+
+      # letter n
+      named_attribute
+      named_layer_selection
       network_drive
-      network_drive_large
+      new
+      new_group
+      new_window
+      new_window_main
       newfolder
       next_keyframe
+      nextactive
       nla
+      nla_active
       nla_pushdown
       nocurve
       node
-      nodetree
+      node_add_shader
+      node_alphaconvert
+      node_ambient_occlusion
+      node_anisotopic
+      node_at
+      node_attribute
+      node_backgroundshader
+      node_bilateral_blur
+      node_blackbody
+      node_blur
+      node_bokeh_blur
+      node_bokeh_image
+      node_boxmask
+      node_brick
+      node_bump
+      node_channel
+      node_checker
+      node_chroma
+      node_clamp
+      node_clouds
+      node_colorbalance
+      node_colorcorrection
+      node_colorramp
+      node_combinehsv
+      node_combinergb
+      node_combinexyz
+      node_combineycbcra
+      node_combineyuva
       node_compositing
+      node_compositing_active
       node_corner
-      node_insert_off
-      node_insert_on
+      node_cornerpin
+      node_crop
+      node_curve_time
+      node_defocus
+      node_denoise
+      node_despeckle
+      node_diffuseshader
+      node_direcitonalblur
+      node_doubleedgemask
+      node_editgroup
+      node_ellipsemask
+      node_emission
+      node_environment
+      node_erode
+      node_fileoutput
+      node_frame
+      node_fresnel
+      node_gamma
+      node_geometry
+      node_glare
+      node_glasshader
+      node_glossyshader
+      node_gradient
+      node_groupinsert
+      node_hairinfo
+      node_holdoutshader
+      node_huesaturation
+      node_impaint
+
+      node_insert_on # bfa - don't change the order of the icons
+      node_insert_off # bfa - don't change the order of the icons
+
+      node_invert
+      node_keying
+      node_keyingscreen
+      node_layerweight
+      node_lensdistort
+      node_lightfalloff
+      node_lightpath
+      node_linestyle_output
+      node_luminance
+      node_makegroup
+      node_map_range
+      node_mapping
       node_material
+      node_math
+      node_mix
+      node_mixrgb
+      node_mixshader
+      node_moviedistort
+      node_normalize
+      node_normalmap
+      node_objectinfo
+      node_output
+      node_particleinfo
+      node_pixelated
+      node_planetrackdeform
+      node_pointcloud
+      node_principled
+      node_range
+      node_refractionshader
+      node_reroute
+      node_rgb
+      node_rgbcurve
+      node_rgbtobw
       node_sel
+      node_separate_ycbcra
+      node_separate_yuva
+      node_separatehsv
+      node_separatergb
+      node_separatexyz
       node_side
-      node_texture
+      node_sky
+      node_spill
+      node_sss
+      node_stabilize2d
+      node_sunbeams
+      node_tangent
+      node_texcoordinate
+      node_tonemap
+      node_toonshader
       node_top
-      none
+      node_trackposition
+      node_transform
+      node_transform_clear
+      node_translucent
+      node_transparent
+      node_ungroup
+      node_uvalongstroke
+      node_value
+      node_vector
+      node_vector_blur
+      node_vector_transform
+      node_vectormath
+      node_vectorrotate
+      node_velvet
+      node_vertex_color
+      node_viewer
+      node_viwersplit
+      node_volume_info
+      node_volumeabsorption
+      node_volumeprincipled
+      node_volumescatter
+      node_wavelength
+      node_waves
+      node_white_noise
+      node_wireframe
+      node_zcombine
+      nodetree
+      nodetree_active
+      noise
+      noise_modifier
+      noise_tex
+      normal_average
+      normal_multiply
+      normal_rotate
+      normal_setstrength
+      normal_smooth
+      normal_target
       normalize_fcurves
       normals_face
       normals_vertex
       normals_vertex_face
       not_found
+
+      # letter o
+      object_contents
       object_data
       object_datamode
       object_hidden
       object_origin
+      offset_corner_in_face
+      offset_edge_slide
+      offset_point_in_curve
       onionskin_off
       onionskin_on
+      oops
+      oops_active
+      open_recent
+      optimize
       options
+      orbit_down
+      orbit_left
+      orbit_opposite
+      orbit_right
+      orbit_up
       orientation_cursor
       orientation_gimbal
       orientation_global
@@ -660,13 +1343,19 @@ if(WITH_BLENDER)
       orientation_normal
       orientation_parent
       orientation_view
+      origin
+      origin_to_centerofmass
+      origin_to_cursor
+      origin_to_geometry
+      origin_to_volume
       orphan_data
+      ortho
+      outline
       outliner
       outliner_collection
       outliner_data_armature
       outliner_data_camera
       outliner_data_curve
-      outliner_data_curves
       outliner_data_empty
       outliner_data_font
       outliner_data_gp_layer
@@ -676,7 +1365,7 @@ if(WITH_BLENDER)
       outliner_data_lightprobe
       outliner_data_mesh
       outliner_data_meta
-      outliner_data_pointcloud
+      outliner_data_pose
       outliner_data_speaker
       outliner_data_surface
       outliner_data_volume
@@ -700,113 +1389,417 @@ if(WITH_BLENDER)
       outliner_ob_surface
       outliner_ob_volume
       output
+      overlap
       overlay
+
+      # letter p
       package
+      packisland
+      paint_add
+      paint_average
+      paint_blur
+      paint_darken
+      paint_draw
+      paint_lighten
+      paint_mix
+      paint_multiply
+      paint_smear
+      paint_subtract
+      palette
+      pan_down
+      pan_left
+      pan_right
+      pan_up
       panel_close
-      particlemode
-      particles
+      parent
+      parent_bone
+      parent_clear
+      parent_curve
+      parent_lattice
+      parent_object
+      parent_set
       particle_data
       particle_path
       particle_point
       particle_tip
+      particlebrush_add
+      particlebrush_comb
+      particlebrush_length
+      particlebrush_none
+      particlebrush_puff
+      particlebrush_smooth
+      particlebrush_weight
+      particlemode
+      particles
+      pass
       pastedown
+      pastefile
       pasteflipdown
       pasteflipup
+      pattern
       pause
+      perimeter
+      persp_ortho
       physics
-      pinned
       pivot_active
       pivot_boundbox
       pivot_cursor
       pivot_individual
       pivot_median
+      pivot_to_active_vert
+      pivot_to_maskborder
+      pivot_to_origin
+      pivot_to_surface
+      pivot_to_unmasked
+      planar
+      planetrack
       play
+      play_audio
       play_reverse
-      play_sound
       plugin
       plus
       pmarker
       pmarker_act
       pmarker_sel
+      point_distribute
+      point_info
+      point_instance
+      point_of_curve
+      point_rotate
+      point_scale
+      point_separate
+      point_to_volume
+      point_translate
       pointcloud_data
       pointcloud_point
+      points_to_curves
+      points_to_vertices
+      pokefaces
+      pole
+      polygonsides
+      polyline_hide
+      polyline_show
+      pose_data
+      pose_from_breakdown
       pose_hlt
+      pose_relax_to_breakdown
+      position
+      posterize
+      pound
       preferences
+      prefetch
+      prefix
       preset
-      preset_new
-      preview_loading
-      preview_range
       prev_keyframe
-      properties
-      prop_con
-      prop_off
-      prop_on
+      preview_range
+      previousactive
+      project_point
+      projectfromview
+      projectfromview_bounds
+      promille
+
+      prop_off # bfa - don't change the order of the icons
+      prop_on # bfa - don't change the order of the icons
+      prop_con # bfa - don't change the order of the icons
+
       prop_projected
+      propagate
+      propagate_marker
+      propagate_next
+      propagate_previous
+      propagate_selected
+      properties
+      protect
+      push_pose
+      push_pull
+
+      # letter q
+      quadview
+      quaternion_to_rotation
       question
-      question_large
       quit
+
+      # letter r
+      radio
       radiobut_off
       radiobut_on
+      radius
+      random_float
+      randomize
+      randomize_transform
+      raycast
       rec
+      recalc_normals
+      recalc_normals_inside
       record_off
       record_on
+      recover_auto
       recover_last
+      redo
+      redo_history
+      relativepath
+      relax_face_sets
+      relax_pose
+      relax_topology
       remove
-      renderlayers
+      remove_active_group
+      remove_all_groups
+      remove_doubles
+      remove_from_all_groups
+      remove_metastrip
+      remove_selected_from_active_group
+      rename
+      rename_x
+      rename_y
+      rename_z
+      render_ani_view
       render_animation
+      render_region
       render_result
       render_still
-      restrict_color_off
+      render_still_view
+      renderborder
+      renderborder_clear
+      renderlayers
+      repeat
+      replace_string
+      reproject
+      reset
+
+      # bfa-don't change the order of the icons
       restrict_color_on
-      restrict_instanced_off
-      restrict_instanced_on
-      restrict_render_off
+      restrict_color_off
       restrict_render_on
-      restrict_select_off
+      restrict_render_off
       restrict_select_on
-      restrict_view_off
+      restrict_select_off
       restrict_view_on
+      restrict_view_off
+
+      # ##
+      retopo
+      reverse_colors
+      reverse_uvs
       rew
       rightarrow
       rightarrow_thin
+      rigid_add_active
+      rigid_add_passive
+      rigid_apply_trans
+      rigid_bake_to_keyframe
       rigid_body
       rigid_body_constraint
+      rigid_calculate_mass
+      rigid_change_shape
+      rigid_constraints_connect
+      rigid_copy_from_active
+      rigid_remove
+      rimlight
+      rip
+      rip_fill
       rna
-      rna_add
       rndcurve
+      roll_left
+      roll_right
+      roll_x_neg
+      roll_x_pos
+      roll_x_tang_neg
+      roll_x_tang_pos
+      roll_y_neg
+      roll_y_pos
+      roll_z_neg
+      roll_z_pos
+      roll_z_tang_neg
+      roll_z_tang_pos
       rootcurve
+      rot_scale
+      rotactive
+      rotate
+      rotate_colors
+      rotate_euler
+      rotate_instance
+      rotate_minus_90
+      rotate_plus_90
+      rotate_uvs
+      rotateccw
+      rotatecenter
+      rotatecollection
+      rotatecw
+      rotation
+      rotation_to_axis_angle
+      rotation_to_euler
+      rotation_to_quaternion
+      ruler
+
+      # letter s
+      sample_index
+      sample_keyframes
+      sample_nearest
+      sample_nearest_surface
+      sample_uv_surface
+      saturation
+      save_3ds
+      save_abc
+      save_all
+      save_as
+      save_bvh
+      save_copy
+      save_dae
+      save_fbx
+      save_gltf
+      save_obj
+      save_pdf
+      save_ply
+      save_prefs
+      save_stl
+      save_svg
+      save_usd
+      save_x3d
+      scale_average
+      scale_instance
+      scale_texturespace
       scene
       scene_data
       screen_back
+      screw
       script
       scriptplugins
+      scriptwin
+      sculpt_dyntopo
       sculptmode_hlt
+      seamsfromisland
+      search_menu
+      select_all
+      select_boundary
+      select_by_material
       select_difference
+      select_edgeloop
+      select_edgering
       select_extend
+      select_faces_by_side
+      select_first
+      select_handle_both
+      select_handle_left
+      select_handle_right
+      select_handletype
+      select_interior
       select_intersect
+      select_key
+      select_last
+      select_line
+      select_loopinner
+      select_loose
+      select_none
+      select_nonmanifold
+      select_root
       select_set
+      select_sharpedges
+      select_shortestpath
+      select_sideofactive
       select_subtract
-      sequence
+      select_tip
+      select_tracks
+      select_ungrouped_verts
+      selectiontoactive
+      selectiontocursor
+      selectiontocursoroffset
+      selectiontogrid
+      selectless
+      selectmore
+      self_object
+      separate
+      separate_bymaterial
+      separate_color
+      separate_copy
+      separate_geometry
+      separate_gp_layer
+      separate_gp_points
+      separate_gp_strokes
+      separate_loose
+      separate_matrix
+      separate_transform
+      seq_add
+      seq_alpha_over
       seq_chroma_scope
+      seq_clear_offset
+      seq_deinterlace
       seq_histogram
+      seq_insert_gaps
       seq_luma_waveform
+      seq_move_extend
+      seq_multicam
+      seq_multiply
       seq_preview
+      seq_remove_gaps
+      seq_remove_gaps_all
       seq_sequencer
+      seq_slip_contents
+      seq_snap_strip
+      seq_snap_to_frame
       seq_splitview
       seq_strip_duplicate
       seq_strip_meta
+      seq_swap_left
+      seq_swap_right
+      seq_text
+      sequence
+      set_curve_handle_positions
+      set_curve_radius
+      set_curve_tilt
+      set_face_set
+      set_frames
+      set_from_faces
+      set_id
+      set_lowercase
+      set_material_index
+      set_position
+      set_roll
+      set_selection
+      set_shade_smooth
+      set_smooth
+      set_spline_resolution
+      set_time
+      set_uppercase
       settings
+      setup
+      shader_active
       shaderfx
       shading_bbox
+      shading_edge_sharp
+      shading_edge_smooth
+      shading_flat
       shading_rendered
+      shading_smooth
       shading_solid
       shading_texture
+      shading_vert_sharp
+      shading_vert_smooth
       shading_wire
+      shape
       shapekey_data
+      shapepropagate
       sharpcurve
+      sharpen
+      shear
       shortdisplay
+      show_unselected
+      shrink_fatten
+      siblings
+      similar
+      simplify_adaptive
+      simplify_sample
+      slide_edge
+      slide_vertex
       small_caps
+      smooth_keyframes
+      smooth_laplacian
+      smooth_radius
+      smooth_tilt
+      smooth_vertex
+      smooth_weight
       smoothcurve
+      snap_currentframe
+      snap_cursorvalue
       snap_edge
       snap_face
       snap_face_center
@@ -814,35 +1807,87 @@ if(WITH_BLENDER)
       snap_grid
       snap_increment
       snap_midpoint
+      snap_nearestframe
+      snap_nearestmarker
+      snap_nearestsecond
       snap_normal
       snap_off
       snap_on
       snap_peel_object
       snap_perpendicular
+      snap_step
+      snap_step_second
+      snap_surface
+      snap_symmetry
+      snap_to_adjacent
+      snap_to_pixels
       snap_vertex
       snap_volume
+      snaptopixel_center
+      snaptopixel_corner
+      snaptopixel_off
+      solidify
       solo_off
       solo_on
+      sort_asc
+      sort_desc
       sortalpha
       sortbyext
       sortsize
       sorttime
-      sort_asc
-      sort_desc
       sound
+      space2
+      space3
+      spanish_exclamation
+      spanish_question
       speaker
+      special
       sphere
       spherecurve
+      sphereproject
+      spin
+      spline_length
+      spline_resolution
+      spline_type
+      split
+      split_byvertices
+      split_concave
       split_horizontal
+      split_nonplanar
+      split_to_instances
       split_vertical
+      splitbyedges
+      splitedge
+      splitscreen
+      spot_blend
       spreadsheet
+      startpoint
       statusbar
+      stepped_modifier
       sticky_uvs_disable
       sticky_uvs_loc
       sticky_uvs_vert
-      strands
+      stitch
+      straighten
+      straighten_x
+      straighten_y
+      string
+      string_find
+      string_join
+      string_length
+      string_substring
+      string_to_curve
       stroke
+      stucci_tex
       stylus_pressure
+      subdiv_edgering
+      subdivedgeloop
+      subdivide_edges
+      subdivide_mesh
+      suffix
+      super_one
+      super_three
+      super_two
       surface_data
       surface_ncircle
       surface_ncurve
@@ -850,18 +1895,42 @@ if(WITH_BLENDER)
       surface_nsphere
       surface_nsurface
       surface_ntorus
+      surface_smooth
+      swap
+      swirl
+      switch
+      switch_direction
+      symmetrize
+      sync
       syntax_off
       syntax_on
       system
+
+      # letter t
       tag
       temp
+      template
       text
       texture
-      texture_data
+      texture_active
+      texture_shaded
       three_dots
+      tilt
       time
+      toggle_close
+      toggle_cyclic
+      toggle_meta
+      toggle_node_mute
+      toggle_node_options
+      toggle_node_preview
+      togglecaps_both
+      togglecaps_default
+      togglecaps_end
+      togglecaps_start
       tool_settings
+      toolbar
       topbar
+      tosphere
       tpaint_hlt
       tracker
       tracker_data
@@ -874,8 +1943,22 @@ if(WITH_BLENDER)
       tracking_forwards_single
       tracking_refine_backwards
       tracking_refine_forwards
+      trademark
+      transfer_data
+      transfer_data_layout
+      transfer_sculpt
+      transfer_uv
+      transform_direction
+      transform_gizmo
+      transform_mirror
+      transform_move
       transform_origins
-      trash
+      transform_point
+      transform_rotate
+      transform_scale
+      transition
+      translate_instance
+      transpose_matrix
       tria_down
       tria_down_bar
       tria_left
@@ -884,11 +1967,34 @@ if(WITH_BLENDER)
       tria_right_bar
       tria_up
       tria_up_bar
+      triangulate
+      tristoquads
+      type
+
+      # letter u
       uglypackage
+      ui
+      uncomment
       underline
+      underlined
+      undo
+      undo_history
+      unicode
+      unindent
+
+      # bfa - don't change the order of the icons
       unlinked
+      linked
       unlocked
+      locked
       unpinned
+      pinned
+
+      # ##
+      unsubdivide
+      unwrap_abf
+      unwrap_lscm
+      unwrap_minstretch
       url
       user
       uv
@@ -898,41 +2004,186 @@ if(WITH_BLENDER)
       uv_islandsel
       uv_sync_select
       uv_vertexsel
+
+      # letter v
+      value_to_selection
+      value_to_string
+      vector_displace
+      vertcolfromweight
+      vertex_crease
+      vertex_neighbors
+      vertex_of_corner
+      vertex_parent
+      vertexconnect
+      vertexconnectpath
       vertexsel
+      view
       view3d
-      viewzoom
+      view_active_back
+      view_active_bottom
+      view_active_front
+      view_active_left
+      view_active_right
+      view_active_top
+      view_back
+      view_bottom
       view_camera
       view_camera_unselected
-      view_locked
+      view_fill
+      view_fit
+      view_frame
+      view_front
+      view_global_local
+      view_graph
+      view_graph_all
+      view_left
+      view_navigation
       view_ortho
       view_pan
       view_perspective
-      view_unlocked
+      view_remove_local
+      view_reset
+      view_right
+      view_selected
+      view_stretch
+      view_switchactivecam
+      view_switchtocam
+      view_top
       view_zoom
-      vis_sel_00
-      vis_sel_01
-      vis_sel_10
+      viewall
+      viewall_resetcursor
+      viewcameracenter
+      viewport_transform
+      viewzoom
+
+      # bfa - don't change the order of the icons
       vis_sel_11
+      vis_sel_10
+      vis_sel_01
+      vis_sel_00
+
+      # ###
+      visual_loc_rot
+      visual_loc_rot_scale
+      visual_loc_scale
+      visual_move
+      visual_rot_scale
+      visual_rotate
+      visual_scale
+      visualtransform
+      volume_cube
       volume_data
+      volume_distribute
+      volume_to_mesh
+      voroni_tex
       vpaint_hlt
-      warning_large
+
+      # letter w
+      walk_navigation
+      wall
+      warning
+      weight_clean
+      weight_fix_deforms
+      weight_invert
+      weight_levels
+      weight_limit_total
+      weight_mirror
+      weight_normalize
+      weight_normalize_all
+      weight_quantize
+      weight_smooth
+      weight_transfer_weights
+      weld
+      white_balance
+      whitespace_spaces
+      whitespace_tabs
+      width_size
+      winding
       window
+      wireframe
+      wood_tex
       wordwrap_off
       wordwrap_on
       workspace
       world
-      world_data
       wpaint_hlt
+
+      # letter x
       x
+      x_icon
       xray
+
+      # letter y
+      y_icon
+      yen
+
+      # letter z
+      z_icon
       zoom_all
+      zoom_border
+      zoom_camera
       zoom_in
       zoom_out
       zoom_previous
+      zoom_reset
       zoom_selected
+      zoom_set
+      zoomin
+      zoomout
+
+      # letter unsorted
+      mod_instance
+      outliner_data_hair
+      outliner_data_pointcloud
+      texture_data
+      world_data
+
+      # ------------------------- large --------------------------
+      cancel_large
+      warning_large
+      question_large
+      info_large
+      disc_large
+      disk_drive_large
+      external_drive_large
+      file_folder_large
+      file_large
+      file_parent_large
+      network_drive_large
+      blender_large
+      blender_logo_large
+
+      # The following are used when creating the Event Icons.
+      key_backspace
+      key_backspace_filled
+      key_command
+      key_command_filled
+      key_control
+      key_control_filled
+      key_empty1
+      key_empty1_filled
+      key_empty2
+      key_empty2_filled
+      key_empty3
+      key_empty3_filled
+      key_menu
+      key_menu_filled
+      key_option
+      key_option_filled
+      key_return
+      key_return_filled
+      key_ring
+      key_ring_filled
+      key_shift
+      key_shift_filled
+      key_tab
+      key_tab_filled
+      key_windows
+      key_windows_filled
     )
     set(SVG_CONTENTS_H)
     set(SVG_CONTENTS_C)
+
     foreach(svg ${SVG_FILENAMES_NOEXT})
       data_to_c_simple(../../../../release/datafiles/icons_svg/${svg}.svg SRC)
       string(TOUPPER ${svg} svg_name_upper)
@@ -943,6 +2194,7 @@ if(WITH_BLENDER)
         "case ICON_${svg_name_upper}: return datatoc_${svg}_svg\;\n"
       )
     endforeach()
+
     unset(svg_name_upper)
 
     list(JOIN SVG_CONTENTS_C "" SVG_CONTENTS_C)
@@ -963,6 +2215,7 @@ if(WITH_BLENDER)
 
     list(APPEND SRC ${CMAKE_CURRENT_BINARY_DIR}/svg_icons.h)
     list(APPEND SRC ${CMAKE_CURRENT_BINARY_DIR}/svg_icons.cc)
+
     # Blend files.
     data_to_c_simple(../../../../release/datafiles/preview.blend SRC)
     data_to_c_simple(../../../../release/datafiles/preview_grease_pencil.blend SRC)
@@ -973,7 +2226,6 @@ if(WITH_BLENDER)
     unset(SVG_CONTENTS_H)
     unset(SVG_CONTENTS_C)
     unset(SVG_FILENAMES_NOEXT)
-
   endif()
 
   data_to_c_simple(../../../../release/datafiles/startup.blend SRC)

@@ -274,7 +274,7 @@ def main(context, operator):
 
 
 class FollowActiveQuads(Operator):
-    """Follow UVs from active quads along continuous face loops"""
+    """Follow Active Quads\nFollow UVs from active quads along continuous face loops"""
     bl_idname = "uv.follow_active_quads"
     bl_label = "Follow Active Quads"
     bl_options = {'REGISTER', 'UNDO'}

@@ -1,39 +1,39 @@
 
-  This version of Blender has been originally released at www.blender.org.
-  It is subject to the GNU GPL license, which is part of this download.
+This version of Bforartists has been originally released at www.Bforartists.de.
+It is subject to the GNU GPL license, which is part of this download.
+For more information please review the Bforartists source code distribution, 
+which can be found at Github: https://github.com/Bforartists/Bforartists
+  
+Bforartists is a fork of the popular 3D package Blender.
 
-    Blender, the free and open source 3D creation suite
-    Copyright (C) 2023  Blender Foundation
+LICENSE AGREEMENT
+===================
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+You should read the following terms and conditions carefully before using 
+this software.Your use of this software indicates your full acceptance of 
+this license agreement and warranty.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+The term "Software" also shall include any upgrades, modified versions, 
+editions, issues or updates of the Software.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+1. GRANTING OF LICENSE: Asides the GPL License, Bforartists, grants to you, 
+the Licensee, a non-exclusive right and licence to install and use this Software. 
+You may install and use the SOFTWARE on as many computers as you wish.
 
-  The Blender project uses code and libraries which are licensed under terms of
-  licenses which are compatible with the GNU GPL 3 or later.
+2. OWNERSHIP: Every artwork you create with the software, be it images, 
+movies, scripts, exported 2d and 3d content, or even the *.blend files, is 
+completely your property. And can be licensed in any way you want.
 
-  The license of each individual Blender source file can be found in the first
-  few lines after "SPDX-License-Identifier:". The license text of every such
-  license can be found in license/.
+3. REDISTRIBUTION: You are allowed to distribute copies of the Software 
+freely to other individual users, without the need to ask for a permission.
+The source code has to contain all copies of the software as well.
 
-  The complete overview of copyright and licenses of third-party libraries used
-  by Blender can be found in license/license.md.
+4 DISCLAIMER: This software is provided 'as-is', without any express or 
+implied warranty. In no event will Bforartists be held liable for any damages 
+arising from the use of this software in any form. The risk of using the software
+remains with you.
+ 
+5. LAW: The license agreement and all possible disputes will be governed by 
+the german law.
 
-  Stichting Blender Foundation
-  Amsterdam
-  the Netherlands
-  Chamber of Commerce: 34176425
-
-  http://www.blender.org
-  foundation@blender.org
-
+http://www.Bforartists.de

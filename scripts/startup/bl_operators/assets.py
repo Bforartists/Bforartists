@@ -72,6 +72,49 @@ class ASSET_OT_tag_remove(AssetBrowserMetadataOperator, Operator):
 
         return {'FINISHED'}
 
+# BFA - Custom tags assignment for the shelves
+class ASSET_OT_tag_add_shelf(AssetBrowserMetadataOperator, Operator):
+    """Adds pre-defined tags to assign a Node Group to an Asset Shelf"""
+    bl_idname = "asset.tag_add_shelf"
+    bl_label = "Assign Node Group to Asset Shelf"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    tag_type: bpy.props.EnumProperty(
+        name="Tag Type",
+        description="Type of tag to add",
+        items=[
+            ('GEOMETRY_NODES', "Geometry Nodes", "Add Geometry Nodes tag"),
+            ('3D_VIEW', "3D View", "Add 3D View tag"),
+            ('SHADER', "Shader", "Add Shader tag"),
+            ('COMPOSITOR', "Compositor", "Add Compositor tag"),
+        ],
+        default='GEOMETRY_NODES'
+    )
+
+    def execute(self, context):
+        active_asset = context.asset
+        tag_map = {
+            'GEOMETRY_NODES': "Geometry Nodes",
+            '3D_VIEW': "3D View",
+            'SHADER': "Shader",
+            'COMPOSITOR': "Compositor"
+        }
+
+        tag_name = tag_map[self.tag_type]
+        # Remove other shelf tags if they exist, except when adding 3D_VIEW and GEOMETRY_NODES exists
+        for existing_tag in active_asset.metadata.tags:
+            if existing_tag.name in tag_map.values() and existing_tag.name != tag_name:
+                # Keep GEOMETRY_NODES tag when adding 3D_VIEW
+                if not (self.tag_type == '3D_VIEW' and existing_tag.name == "Geometry Nodes"):
+                    active_asset.metadata.tags.remove(existing_tag)
+
+        # Add new tag if it doesn't exist
+        if tag_name not in active_asset.metadata.tags:
+            active_asset.metadata.tags.new(tag_name)
+
+        return {'FINISHED'}
+
+
 
 class ASSET_OT_open_containing_blend_file(Operator):
     """Open the blend file that contains the active asset"""
@@ -153,5 +196,6 @@ class ASSET_OT_open_containing_blend_file(Operator):
 classes = (
     ASSET_OT_tag_add,
     ASSET_OT_tag_remove,
+    ASSET_OT_tag_add_shelf, # BFA
     ASSET_OT_open_containing_blend_file,
 )

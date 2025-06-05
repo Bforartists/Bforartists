@@ -16,10 +16,9 @@ def add_node_type(layout, node_type, *, label=None, poll=None, search_weight=0.0
     bl_rna = bpy.types.Node.bl_rna_get_subclass(node_type)
     if not label:
         label = bl_rna.name if bl_rna else iface_("Unknown")
-
     if poll is True or poll is None:
         translation_context = bl_rna.translation_context if bl_rna else i18n_contexts.default
-        props = layout.operator("node.add_node", text=label, text_ctxt=translation_context, search_weight=search_weight)
+        props = layout.operator("node.add_node", text=label, text_ctxt=translation_context, icon=bl_rna.icon, search_weight=search_weight)
         props.type = node_type
         props.use_transform = True
         return props
@@ -47,6 +46,14 @@ def draw_node_group_add_menu(context, layout):
     node_tree = space_node.edit_tree
     all_node_groups = context.blend_data.node_groups
 
+    layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
+    layout.operator("node.group_insert", text = "Insert into Group ", icon = "NODE_GROUPINSERT")
+    layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
+
+    layout.separator()
+
+    layout.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
+
     if node_tree in all_node_groups.values():
         layout.separator()
         add_node_type(layout, "NodeGroupInput")
@@ -69,9 +76,11 @@ def draw_node_group_add_menu(context, layout):
         if groups:
             layout.separator()
             for group in groups:
-                props = add_node_type(layout, node_tree_group_type[group.bl_idname], label=group.name)
-                ops = props.settings.add()
-                ops.name = "node_tree"
+                props = layout.operator("node.add_node", text=group.name, icon="NODETREE") # BFA
+                props.use_transform = True # BFA
+                props.type = node_tree_group_type[group.bl_idname] # BFA
+                ops = props.settings.add() # BFA
+                ops.name = "node_tree" # BFA
                 ops.value = "bpy.data.node_groups[{!r}]".format(group.name)
                 ops = props.settings.add()
                 ops.name = "width"
@@ -126,13 +135,13 @@ def add_color_mix_node(context, layout):
 
 def add_simulation_zone(layout, label):
     """Add simulation zone to a menu."""
-    props = layout.operator("node.add_simulation_zone", text=label, text_ctxt=i18n_contexts.default)
+    props = layout.operator("node.add_simulation_zone", text=label, text_ctxt=i18n_contexts.default, icon = "TIME") #BFA - added icon to Add Menu
     props.use_transform = True
     return props
 
 
 def add_repeat_zone(layout, label):
-    props = layout.operator("node.add_repeat_zone", text=label, text_ctxt=i18n_contexts.default)
+    props = layout.operator("node.add_repeat_zone", text=label, text_ctxt=i18n_contexts.default, icon = "REPEAT") #BFA - added icon to Add Menu
     props.use_transform = True
     return props
 
@@ -140,6 +149,7 @@ def add_repeat_zone(layout, label):
 def add_foreach_geometry_element_zone(layout, label):
     props = layout.operator(
         "node.add_foreach_geometry_element_zone",
+        icon = "FOR_EACH", #BFA - added icon to Add Menu
         text=label,
         text_ctxt=i18n_contexts.default,
     )

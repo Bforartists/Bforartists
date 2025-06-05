@@ -103,6 +103,8 @@
 
 #include "render_intern.hh" /* own include */
 
+#include "UI_resources.hh" /*bfa - needed for the icons*/
+
 using blender::Vector;
 
 static bool object_materials_supported_poll_ex(bContext *C, const Object *ob);
@@ -241,7 +243,7 @@ static wmOperatorStatus material_slot_remove_exec(bContext *C, wmOperator *op)
   }
 
   /* Removing material slots in edit mode screws things up, see bug #21822. */
-  if (BKE_object_is_in_editmode(ob)) {
+  if (ob == CTX_data_edit_object(C)) {
     BKE_report(op->reports, RPT_ERROR, "Unable to remove material slot in edit mode");
     return OPERATOR_CANCELLED;
   }
@@ -875,7 +877,7 @@ void MATERIAL_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Material";
   ot->idname = "MATERIAL_OT_new";
-  ot->description = "Add a new material";
+  ot->description = "Creates a Duplicate of the current material";
 
   /* API callbacks. */
   ot->exec = new_material_exec;
@@ -939,7 +941,7 @@ void TEXTURE_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Texture";
   ot->idname = "TEXTURE_OT_new";
-  ot->description = "Add a new texture";
+  ot->description = "Creates a duplicate of the current texture";
 
   /* API callbacks. */
   ot->exec = new_texture_exec;
@@ -1000,7 +1002,7 @@ void WORLD_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New World";
   ot->idname = "WORLD_OT_new";
-  ot->description = "Create a new world Data-Block";
+  ot->description = "Create a new world Data";
 
   /* API callbacks. */
   ot->exec = new_world_exec;
@@ -1045,11 +1047,15 @@ static wmOperatorStatus view_layer_add_exec(bContext *C, wmOperator *op)
 void SCENE_OT_view_layer_add(wmOperatorType *ot)
 {
   static EnumPropertyItem type_items[] = {
-      {VIEWLAYER_ADD_NEW, "NEW", 0, "New", "Add a new view layer"},
-      {VIEWLAYER_ADD_COPY, "COPY", 0, "Copy Settings", "Copy settings of current view layer"},
+      {VIEWLAYER_ADD_NEW, "NEW", ICON_ADD, "New", "Add a new view layer"},
+      {VIEWLAYER_ADD_COPY,
+       "COPY",
+       ICON_COPYDOWN,
+       "Copy Settings",
+       "Copy settings of current view layer"},
       {VIEWLAYER_ADD_EMPTY,
        "EMPTY",
-       0,
+       ICON_LAYER,
        "Blank",
        "Add a new view layer with all collections disabled"},
       {0, nullptr, 0, nullptr, nullptr},

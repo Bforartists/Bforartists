@@ -1715,7 +1715,7 @@ static void rna_def_dopesheet(BlenderRNA *brna)
       prop,
       "Show Data-Block Filters",
       "Show options for whether channels related to certain types of data are included");
-  RNA_def_property_ui_icon(prop, ICON_RIGHTARROW, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1);
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN, nullptr);
 
   /* General Filtering Settings */
@@ -1745,8 +1745,8 @@ static void rna_def_dopesheet(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_datablock_sort", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", ADS_FLAG_NO_DB_SORT);
   RNA_def_property_ui_text(prop,
-                           "Sort Data-Blocks",
-                           "Alphabetically sorts data-blocks - mainly objects in the scene "
+                           "Sort Data",
+                           "Alphabetically sorts data - mainly objects in the scene "
                            "(disable to increase viewport speed)");
   RNA_def_property_ui_icon(prop, ICON_SORTALPHA, 0);
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, nullptr);
@@ -1805,9 +1805,8 @@ static void rna_def_dopesheet(BlenderRNA *brna)
   /* NLA Specific Settings */
   prop = RNA_def_property(srna, "show_missing_nla", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "filterflag", ADS_FILTER_NLA_NOACT);
-  RNA_def_property_ui_text(prop,
-                           "Include Missing NLA",
-                           "Include animation data-blocks with no NLA data (NLA editor only)");
+  RNA_def_property_ui_text(
+      prop, "Include Missing NLA", "Include animation data with no NLA data (NLA editor only)");
   RNA_def_property_ui_icon(prop, ICON_ACTION, 0);
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, nullptr);
 
@@ -1849,7 +1848,7 @@ static void rna_def_dopesheet(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Display Modifier Data",
-      "Include visualization of animation data related to data-blocks linked to modifiers");
+      "Include visualization of animation data related to data linked to modifiers");
   RNA_def_property_ui_icon(prop, ICON_MODIFIER_DATA, 0);
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, nullptr);
 
@@ -1899,7 +1898,7 @@ static void rna_def_dopesheet(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "filterflag", ADS_FILTER_NOTEX);
   RNA_def_property_ui_text(
       prop, "Display Texture", "Include visualization of texture related animation data");
-  RNA_def_property_ui_icon(prop, ICON_TEXTURE_DATA, 0);
+  RNA_def_property_ui_icon(prop, ICON_TEXTURE, 0);
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, nullptr);
 
   prop = RNA_def_property(srna, "show_curves", PROP_BOOLEAN, PROP_NONE);
@@ -1913,7 +1912,7 @@ static void rna_def_dopesheet(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "filterflag", ADS_FILTER_NOWOR);
   RNA_def_property_ui_text(
       prop, "Display World", "Include visualization of world related animation data");
-  RNA_def_property_ui_icon(prop, ICON_WORLD_DATA, 0);
+  RNA_def_property_ui_icon(prop, ICON_WORLD, 0);
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, nullptr);
 
   prop = RNA_def_property(srna, "show_scenes", PROP_BOOLEAN, PROP_NONE);

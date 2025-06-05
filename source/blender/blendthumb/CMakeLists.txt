@@ -93,7 +93,7 @@ elseif(APPLE)
   )
 elseif(UNIX)
   # -----------------------------------------------------------------------------
-  # Build `blender-thumbnailer` executable
+  # Build `blenderthumbnailer` executable
 
   set(SRC_CMD
     src/blender_thumbnailer.cc
@@ -102,7 +102,7 @@ elseif(UNIX)
   add_executable(blender-thumbnailer ${SRC} ${SRC_CMD})
   setup_platform_linker_flags(blender-thumbnailer)
   setup_platform_linker_libs(blender-thumbnailer)
-  target_link_libraries(blender-thumbnailer PRIVATE bf_blenlib bf_blenloader_core)
+  target_link_libraries(blender-thumbnailer PRIVATE bf_blenlib bf_blenloader)
   if(DEFINED PTHREADS_LIBRARIES)
     target_link_libraries(blender-thumbnailer PRIVATE ${PTHREADS_LIBRARIES})
   endif()

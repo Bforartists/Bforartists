@@ -18,7 +18,6 @@ set(SRC
   intern/extend_curves.cc
   intern/extract_elements.cc
   intern/fillet_curves.cc
-  intern/fit_curves.cc
   intern/interpolate_curves.cc
   intern/join_geometries.cc
   intern/merge_curves.cc
@@ -62,7 +61,6 @@ set(SRC
   GEO_extend_curves.hh
   GEO_extract_elements.hh
   GEO_fillet_curves.hh
-  GEO_fit_curves.hh
   GEO_interpolate_curves.hh
   GEO_join_geometries.hh
   GEO_merge_curves.hh
@@ -111,7 +109,6 @@ set(LIB
   PRIVATE bf::intern::atomic
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::extern::fmtlib
-  PRIVATE bf::extern::curve_fit_nd
   PRIVATE bf::dependencies::optional::manifold
 )
 

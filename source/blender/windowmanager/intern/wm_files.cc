@@ -2980,7 +2980,7 @@ static void read_homefile_props(wmOperatorType *ot)
 void WM_OT_read_homefile(wmOperatorType *ot)
 {
   PropertyRNA *prop;
-  ot->name = "Reload Start-Up File";
+  ot->name = "File New"; /*bfa - file new, not reload startup file*/
   ot->idname = "WM_OT_read_homefile";
   ot->description = "Open the default file";
 
@@ -3363,7 +3363,7 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
 {
   ot->name = "Open";
   ot->idname = "WM_OT_open_mainfile";
-  ot->description = "Open a Blender file";
+  ot->description = "Open a *.blend file"; /*BFA*/
   ot->get_description = wm_open_mainfile_get_description;
 
   ot->invoke = wm_open_mainfile_invoke;
@@ -3849,7 +3849,10 @@ void WM_OT_save_as_mainfile(wmOperatorType *ot)
 
   ot->name = "Save As";
   ot->idname = "WM_OT_save_as_mainfile";
-  ot->description = "Save the current file in the desired location";
+  ot->description =
+      "Save As saves the current file in the desired location"
+      "\nIncremental Save saves an already saved file with incremental file name. 001, 002, 003 "
+      "etc";
 
   ot->invoke = wm_save_as_mainfile_invoke;
   ot->exec = wm_save_as_mainfile_exec;
@@ -3936,9 +3939,9 @@ static std::string wm_save_mainfile_get_description(bContext * /*C*/,
 
 void WM_OT_save_mainfile(wmOperatorType *ot)
 {
-  ot->name = "Save Blender File";
+  ot->name = "Save Blend File";
   ot->idname = "WM_OT_save_mainfile";
-  ot->description = "Save the current Blender file";
+  ot->description = "Save the current Blend file";
 
   ot->invoke = wm_save_mainfile_invoke;
   ot->exec = wm_save_as_mainfile_exec;
@@ -4622,14 +4625,31 @@ static void wm_block_file_close_save(bContext *C, void *arg_block, void *arg_dat
 
 static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback *post_action)
 {
-  uiBut *but = uiDefIconTextBut(
-      block, UI_BTYPE_BUT, 0, ICON_NONE, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, "");
+  /* BFA - made the buttons higher. UI_UNIT_Y * 1.5, changed to UI_UNIT_Y + UI_UNIT_Y / 2,
+   * because 1.5 gets converted to 1 implicitly because UI_UNIT_Y is of type "short", an integer type
+   */
+  uiBut *but = uiDefIconTextBut(block,
+                                UI_BTYPE_BUT,
+                                0,
+                                ICON_NONE,
+                                IFACE_("Cancel"),
+                                0,
+                                0,
+                                0,
+                                UI_UNIT_Y + UI_UNIT_Y / 2,
+                                nullptr,
+                                0,
+                                0,
+                                "");
   UI_but_func_set(but, wm_block_file_close_cancel, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
 }
 
 static void wm_block_file_close_discard_button(uiBlock *block, wmGenericCallback *post_action)
 {
+  /* BFA - made the buttons higher. UI_UNIT_Y * 1.5, changed to UI_UNIT_Y + UI_UNIT_Y / 2,
+   * because 1.5 gets converted to 1 implictly because UI_UNIT_Y is of type "short", an integer type
+   */
   uiBut *but = uiDefIconTextBut(block,
                                 UI_BTYPE_BUT,
                                 0,
@@ -4638,7 +4658,7 @@ static void wm_block_file_close_discard_button(uiBlock *block, wmGenericCallback
                                 0,
                                 0,
                                 0,
-                                UI_UNIT_Y,
+                                UI_UNIT_Y + UI_UNIT_Y / 2,
                                 nullptr,
                                 0,
                                 0,
@@ -4651,6 +4671,9 @@ static void wm_block_file_close_save_button(uiBlock *block,
                                             wmGenericCallback *post_action,
                                             const bool needs_overwrite_confirm)
 {
+  /* BFA - made the buttons higher. changed UI_UNIT_Y to UI_UNIT_Y * 1.5, and later changed to UI_UNIT_Y + UI_UNIT_Y / 2,
+   * because 1.5 gets converted to 1 implictly because UI_UNIT_Y is of type "short", an integer type
+   */
   uiBut *but = uiDefIconTextBut(
       block,
       UI_BTYPE_BUT,
@@ -4661,7 +4684,7 @@ static void wm_block_file_close_save_button(uiBlock *block,
       0,
       0,
       0,
-      UI_UNIT_Y,
+      UI_UNIT_Y + UI_UNIT_Y / 2,
       nullptr,
       0,
       0,

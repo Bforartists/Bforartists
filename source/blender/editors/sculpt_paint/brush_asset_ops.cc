@@ -345,7 +345,7 @@ void BRUSH_OT_asset_save_as(wmOperatorType *ot)
 {
   ot->name = "Save as Brush Asset";
   ot->description =
-      "Save a copy of the active brush asset into the default asset library, and make it the "
+      "Duplicates the active brush asset, saves it into the default asset library, and make it the "
       "active brush";
   ot->idname = "BRUSH_OT_asset_save_as";
 
@@ -435,7 +435,7 @@ static wmOperatorStatus brush_asset_edit_metadata_invoke(bContext *C,
     RNA_string_set(op->ptr, "description", meta_data.description ? meta_data.description : "");
   }
 
-  return WM_operator_props_dialog_popup(C, op, 400, std::nullopt, IFACE_("Edit Metadata"));
+  return WM_operator_props_dialog_popup(C, op, 400, std::nullopt, IFACE_("OK")); /*bfa - we use OK for the OK button*/
 }
 
 static void visit_active_library_catalogs_catalog_for_search_fn(

@@ -451,6 +451,26 @@ static wmOperatorStatus lattice_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static std::string lattice_ot_select_all_get_description(bContext * /*C*/,
+                                                         wmOperatorType * /*ot*/,
+                                                         PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all UVW control points";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all UVW control points";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 void LATTICE_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -460,6 +480,7 @@ void LATTICE_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = lattice_select_all_exec;
+  ot->get_description = lattice_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editlattice;
 
   /* flags */

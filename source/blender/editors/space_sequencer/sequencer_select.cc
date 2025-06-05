@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "DNA_windowmanager_enums.h"
 #include "MEM_guardedalloc.h"
 
 #include "BLI_ghash.h"
@@ -50,6 +51,8 @@
 #include "ED_screen.hh"
 #include "ED_select_utils.hh"
 #include "ED_sequencer.hh"
+
+#include "UI_resources.hh" /* BFA - needed for icons */
 
 #include "UI_view2d.hh"
 
@@ -425,10 +428,12 @@ bool strip_point_image_isect(const Scene *scene, const Strip *strip, float point
                              strip_image_quad[3]);
 }
 
-void sequencer_select_do_updates(const bContext *C, Scene *scene)
+void sequencer_select_do_updates(const bContext *C, Scene * /*scene*/)
 {
   ED_outliner_select_sync_from_sequence_tag(C);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(C,
+                        NC_SCENE | ND_SEQUENCER | NA_SELECTED,
+                        seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 }
 
 /** \} */
@@ -486,9 +491,30 @@ static wmOperatorStatus sequencer_de_select_all_exec(bContext *C, wmOperator *op
     }
   }
   ED_outliner_select_sync_from_sequence_tag(C);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
+}
+
+/*bfa - descriptions*/
+static std::string sequencer_ot_select_all_get_description(bContext * /*C*/,
+                                                           wmOperatorType * /*ot*/,
+                                                           PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all strips";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all strips";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
 }
 
 void SEQUENCER_OT_select_all(wmOperatorType *ot)
@@ -500,6 +526,7 @@ void SEQUENCER_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = sequencer_de_select_all_exec;
+  ot->get_description = sequencer_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = sequencer_edit_poll;
 
   /* Flags. */
@@ -516,7 +543,8 @@ void SEQUENCER_OT_select_all(wmOperatorType *ot)
 
 static wmOperatorStatus sequencer_select_inverse_exec(bContext *C, wmOperator * /*op*/)
 {
-  Scene *scene = CTX_data_scene(C);
+  /*Scene *scene = CTX_data_scene(C);*/ /*BFA - warning, 'scene': local variable is initialized but
+                                           not referenced*/
 
   if (sequencer_view_has_preview_poll(C) && !sequencer_view_preview_only_poll(C)) {
     return OPERATOR_CANCELLED;
@@ -535,7 +563,8 @@ static wmOperatorStatus sequencer_select_inverse_exec(bContext *C, wmOperator * 
   }
 
   ED_outliner_select_sync_from_sequence_tag(C);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1676,7 +1705,8 @@ static wmOperatorStatus sequencer_select_more_exec(bContext *C, wmOperator * /*o
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1712,7 +1742,8 @@ static wmOperatorStatus sequencer_select_less_exec(bContext *C, wmOperator * /*o
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1770,7 +1801,8 @@ static wmOperatorStatus sequencer_select_linked_pick_invoke(bContext *C,
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1813,7 +1845,8 @@ static wmOperatorStatus sequencer_select_linked_exec(bContext *C, wmOperator * /
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1921,7 +1954,8 @@ static wmOperatorStatus sequencer_select_handles_exec(bContext *C, wmOperator *o
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1991,7 +2025,8 @@ static wmOperatorStatus sequencer_select_side_of_frame_exec(bContext *C, wmOpera
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1999,9 +2034,13 @@ static wmOperatorStatus sequencer_select_side_of_frame_exec(bContext *C, wmOpera
 void SEQUENCER_OT_select_side_of_frame(wmOperatorType *ot)
 {
   static const EnumPropertyItem sequencer_select_left_right_types[] = {
-      {-1, "LEFT", 0, "Left", "Select to the left of the current frame"},
-      {1, "RIGHT", 0, "Right", "Select to the right of the current frame"},
-      {2, "CURRENT", 0, "Current Frame", "Select intersecting with the current frame"},
+      {-1, "LEFT", ICON_RESTRICT_SELECT_OFF, "Left", "Select to the left of the current frame"},
+      {1, "RIGHT", ICON_RESTRICT_SELECT_OFF, "Right", "Select to the right of the current frame"},
+      {2,
+       "CURRENT",
+       ICON_RESTRICT_SELECT_OFF,
+       "Current Frame",
+       "Select intersecting with the current frame"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -2066,7 +2105,8 @@ static wmOperatorStatus sequencer_select_side_exec(bContext *C, wmOperator *op)
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2348,27 +2388,26 @@ enum {
 };
 
 static const EnumPropertyItem sequencer_prop_select_grouped_types[] = {
-    {SEQ_SELECT_GROUP_TYPE, "TYPE", 0, "Type", "Shared strip type"},
+    {SEQ_SELECT_GROUP_TYPE, "TYPE", ICON_TYPE, "Type", "Shared strip type"},
     {SEQ_SELECT_GROUP_TYPE_BASIC,
      "TYPE_BASIC",
-     0,
+     ICON_TYPE,
      "Global Type",
      "All strips of same basic type (graphical or sound)"},
     {SEQ_SELECT_GROUP_TYPE_EFFECT,
      "TYPE_EFFECT",
-     0,
+     ICON_TYPE,
      "Effect Type",
      "Shared strip effect type (if active strip is not an effect one, select all non-effect "
      "strips)"},
-    {SEQ_SELECT_GROUP_DATA, "DATA", 0, "Data", "Shared data (scene, image, sound, etc.)"},
-    {SEQ_SELECT_GROUP_EFFECT, "EFFECT", 0, "Effect", "Shared effects"},
+    {SEQ_SELECT_GROUP_DATA, "DATA", ICON_TEXT, "Data", "Shared data (scene, image, sound, etc.)"},
+    {SEQ_SELECT_GROUP_EFFECT, "EFFECT", ICON_PHYSICS, "Effect", "Shared effects"},
     {SEQ_SELECT_GROUP_EFFECT_LINK,
      "EFFECT_LINK",
-     0,
+     ICON_LINKED,
      "Effect/Linked",
-     "Other strips affected by the active one (sharing some time, and below or "
-     "effect-assigned)"},
-    {SEQ_SELECT_GROUP_OVERLAP, "OVERLAP", 0, "Overlap", "Overlapping time"},
+     "Other strips affected by the active one (sharing some time, and below or effect-assigned)"},
+    {SEQ_SELECT_GROUP_OVERLAP, "OVERLAP", ICON_LAYER, "Overlap", "Overlapping time"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2667,7 +2706,8 @@ static wmOperatorStatus sequencer_select_grouped_exec(bContext *C, wmOperator *o
 
   if (changed) {
     ED_outliner_select_sync_from_sequence_tag(C);
-    WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+    WM_event_add_notifier(
+        C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
     return OPERATOR_FINISHED;
   }
 

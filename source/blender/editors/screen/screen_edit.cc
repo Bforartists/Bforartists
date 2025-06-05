@@ -1287,18 +1287,21 @@ static int screen_global_header_size()
   return int(ceilf(ED_area_headersize() / UI_SCALE_FAC));
 }
 
+// BFA Top Toolbar */
 static void screen_global_topbar_area_refresh(wmWindow *win, bScreen *screen)
 {
-  const blender::int2 win_size = WM_window_native_pixel_size(win);
-  const short size = screen_global_header_size();
+  const short size_min = screen_global_header_size();
+  const short size_max = size_min * 2.15;
+  const short size = (screen->flag & SCREEN_BFA_TOP_BAR) ? size_min : size_max;
   rcti rect;
 
-  BLI_rcti_init(&rect, 0, win_size[0] - 1, 0, win_size[1] - 1);
-  rect.ymin = rect.ymax - size;
+  BLI_rcti_init(&rect, 0, WM_window_native_pixel_x(win) - 1, 0, WM_window_native_pixel_y(win) - 1);
+  rect.ymin = rect.ymax - size_max;
 
   screen_global_area_refresh(
-      win, screen, SPACE_TOPBAR, GLOBAL_AREA_ALIGN_TOP, &rect, size, size, size);
+      win, screen, SPACE_TOPBAR, GLOBAL_AREA_ALIGN_TOP, &rect, size, size_min, size_max);
 }
+/*bfa -end*/
 
 static void screen_global_statusbar_area_refresh(wmWindow *win, bScreen *screen)
 {
@@ -1852,6 +1855,8 @@ void ED_screen_animation_timer(bContext *C, int redraws, int sync, int enable)
     screen->animtimer = WM_event_timer_add(wm, win, TIMER0, (1.0 / FPS));
 
     sad->region = CTX_wm_region(C);
+    sad->scene = scene;                       /*BFA - 3D Sequencer*/
+    sad->view_layer = CTX_data_view_layer(C); /*BFA - 3D Sequencer*/
     sad->sfra = scene->r.cfra;
     /* Make sure that were are inside the scene or preview frame range. */
     CLAMP(scene->r.cfra, PSFRA, PEFRA);

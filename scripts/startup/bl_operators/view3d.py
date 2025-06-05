@@ -19,7 +19,7 @@ bl_file_extensions_image_and_movie = ";".join((
 
 
 class VIEW3D_OT_edit_mesh_extrude_individual_move(Operator):
-    """Extrude each individual face separately along local normals"""
+    "Extrude Individual\nExtrude each individual face separately along local normals"
     bl_label = "Extrude Individual and Move"
     bl_idname = "view3d.edit_mesh_extrude_individual_move"
 
@@ -81,7 +81,7 @@ class VIEW3D_OT_edit_mesh_extrude_individual_move(Operator):
 
 
 class VIEW3D_OT_edit_mesh_extrude_move(Operator):
-    """Extrude region together along the average normal"""
+    "Extrude Region\nExtrude region together along the average normal\nHotkey Tool! Please use the hotkey to use this tool"
     bl_label = "Extrude and Move on Normals"
     bl_idname = "view3d.edit_mesh_extrude_move_normal"
 
@@ -171,7 +171,7 @@ class VIEW3D_OT_edit_mesh_extrude_move(Operator):
 
 
 class VIEW3D_OT_edit_mesh_extrude_shrink_fatten(Operator):
-    """Extrude region together along local normals"""
+    """Extrude Region Vertex Normals\nExtrude region together along local normals"""
     bl_label = "Extrude and Move on Individual Normals"
     bl_idname = "view3d.edit_mesh_extrude_move_shrink_fatten"
 

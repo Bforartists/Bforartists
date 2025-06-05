@@ -13,6 +13,7 @@
 
 #include <fmt/format.h>
 
+#include "DNA_space_types.h"
 #include "MEM_guardedalloc.h"
 
 #include "AS_asset_representation.hh"
@@ -25,6 +26,7 @@
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
+#include "UI_interface_c.hh"
 
 #ifdef WIN32
 #  include "BLI_winstuff.h"
@@ -375,6 +377,8 @@ static void file_but_enable_drag(uiBut *but,
   {
     const int import_method = ED_fileselect_asset_import_method_get(sfile, file);
     BLI_assert(import_method > -1);
+
+    BLI_assert(ED_fileselect_is_asset_browser(sfile) && file->asset);
     if (import_method > -1) {
       AssetImportSettings import_settings{};
       import_settings.method = eAssetImportMethod(import_method);
@@ -383,7 +387,9 @@ static void file_but_enable_drag(uiBut *but,
            (import_method == ASSET_IMPORT_LINK ?
                 FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK :
                 FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND)) != 0;
-
+      import_settings.drop_instances_to_origin = (sfile->asset_params->import_flags &
+                                                  FILE_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
+      import_settings.is_from_browser = true; // bfa asset override
       UI_but_drag_set_asset(but, file->asset, import_settings, icon, file->preview_icon_id);
     }
   }
@@ -782,7 +788,8 @@ static void file_draw_special_image(const FileDirEntry *file,
 
   if (file_type_icon) {
     /* Small icon in the middle of large image, scaled to fit container and UI scale */
-    float icon_opacity = 0.4f;
+    float icon_opacity = 1.0f; /* bfa - keep small icons on large image fully opaque (icon in
+                                  center of file_folder_large etc) */
     uchar icon_color[4] = {0, 0, 0, 255};
     if (srgb_to_grayscale(document_img_col) < 0.5f) {
       icon_color[0] = 255;
@@ -904,7 +911,7 @@ static void file_draw_indicator_icons(const FileList *files,
     icon_y = float(tile_draw_rect->ymax) - (20.0f * UI_SCALE_FAC);
     UI_icon_draw_ex(icon_x,
                     icon_y,
-                    ICON_CURRENT_FILE,
+                    ICON_BLENDER,
                     1.0f / UI_SCALE_FAC,
                     0.6f,
                     0.0f,

@@ -22,7 +22,9 @@
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_sound_types.h"
+#include "DNA_space_types.h" /*BFA - 3D Sequencer*/
 
+#include "BKE_context.hh" /*BFA - 3D Sequencer*/
 #include "BLI_listbase.h"
 #include "BLI_path_utils.hh"
 
@@ -228,7 +230,7 @@ static void seq_strip_free_ex(Scene *scene,
    * be _very_ careful here, invalidating cache loops over the scene sequences and
    * assumes the listbase is valid for all strips,
    * this may not be the case if lists are being freed.
-   * this is optional SEQ_relations_invalidate_cache
+   * this is optional relations_invalidate_cache
    */
   if (do_cache) {
     if (scene) {
@@ -1094,5 +1096,28 @@ void eval_strips(Depsgraph *depsgraph, Scene *scene, ListBase *seqbase)
   edit_update_muting(scene->ed);
   sound_update_bounds_all(scene);
 }
+/*############## BFA - 3D Sequencer ##############*/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Scene override functions
+ * \{ */
+
+Scene *get_ref_scene_for_notifiers(const bContext *C)
+{
+  SpaceSeq *seq = CTX_wm_space_seq(C);
+  if (seq != NULL && seq->scene_override != NULL) {
+    /* Passing NULL in the reference of `WM_event_add_notifier` will not restrict the update to one
+     * particular scene/screen. This needs to be done because when the notifiers are evaluated, the
+     * current scene is always expected to be the active scene in the window. In the case of an
+     * override, passing the overriden scene as a reference to the notifier will no longer cause
+     * updates. So we need to update everything for this to work. */
+    return NULL;
+  }
+  return CTX_data_scene(C);
+}
+
+/** \} */
+/*############## BFA - 3D Sequencer END ##############*/
 
 }  // namespace blender::seq

@@ -12,8 +12,8 @@ class INFO_HT_header(Header):
 
     def draw(self, context):
         layout = self.layout
-        layout.template_header()
 
+        ALL_MT_editormenu_info.draw_hidden(context, layout)  # BFA - show hide the editormenu, editor suffix is needed.
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
 
@@ -42,14 +42,14 @@ class INFO_MT_info(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("info.select_all", text="Select All").action = 'SELECT'
-        layout.operator("info.select_all", text="Deselect All").action = 'DESELECT'
-        layout.operator("info.select_all", text="Invert Selection").action = 'INVERT'
-        layout.operator("info.select_all", text="Toggle Selection").action = 'TOGGLE'
+        layout.operator("info.select_all", text="All", icon="SELECT_ALL").action = 'SELECT'
+        layout.operator("info.select_all", text="None", icon="SELECT_NONE").action = 'DESELECT'
+        layout.operator("info.select_all", text="Inverse", icon="INVERSE").action = 'INVERT'
+        layout.operator("info.select_all", text="Toggle Selection", icon="RESTRICT_SELECT_OFF").action = 'TOGGLE'
 
         layout.separator()
 
-        layout.operator("info.select_box")
+        layout.operator("info.select_box", icon='BORDER_RECT')
 
         layout.separator()
 
@@ -60,8 +60,22 @@ class INFO_MT_info(Menu):
         # layout.operator("info.report_replay")
         # layout.separator()
 
-        layout.operator("info.report_delete", text="Delete")
-        layout.operator("info.report_copy", text="Copy")
+        layout.operator("info.report_delete", text="Delete", icon="DELETE")
+        layout.operator("info.report_copy", text="Copy", icon='COPYDOWN')
+
+
+# BFA - show hide the editormenu, editor suffix is needed.
+class ALL_MT_editormenu_info(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header()  # editor type menus
 
 
 class INFO_MT_area(Menu):
@@ -71,22 +85,24 @@ class INFO_MT_area(Menu):
     def draw(self, context):
         layout = self.layout
 
-        if context.space_data.type == 'VIEW_3D':
-            layout.operator("screen.region_quadview")
-            layout.separator()
-
-        layout.operator("screen.area_split", icon='SPLIT_HORIZONTAL', text="Horizontal Split").direction = 'HORIZONTAL'
-        layout.operator("screen.area_split", icon='SPLIT_VERTICAL', text="Vertical Split").direction = 'VERTICAL'
+        layout.operator("screen.area_split", icon="SPLIT_HORIZONTAL", text="Horizontal Split").direction = 'HORIZONTAL'
+        layout.operator("screen.area_split", icon="SPLIT_VERTICAL", text="Vertical Split").direction = 'VERTICAL'
 
         layout.separator()
 
-        layout.operator("screen.screen_full_area")
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
-        layout.operator("screen.area_dupli")
+        layout.operator("screen.area_dupli", icon="NEW_WINDOW")
 
         layout.separator()
 
-        layout.operator("screen.area_close")
+        layout.operator("screen.screen_full_area", icon='MAXIMIZE_AREA')
+        layout.operator(
+            "screen.screen_full_area",
+            text="Toggle Fullscreen Area",
+            icon='FULLSCREEN_ENTER').use_hide_panels = True
+
+        layout.separator()
+
+        layout.operator("screen.area_close", icon="PANEL_CLOSE")
 
 
 class INFO_MT_context_menu(Menu):
@@ -95,11 +111,12 @@ class INFO_MT_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("info.report_copy", text="Copy")
-        layout.operator("info.report_delete", text="Delete")
+        layout.operator("info.report_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("info.report_delete", text="Delete", icon='DELETE')
 
 
 classes = (
+    ALL_MT_editormenu_info,
     INFO_HT_header,
     INFO_MT_editor_menus,
     INFO_MT_area,

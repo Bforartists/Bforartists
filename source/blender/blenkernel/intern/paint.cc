@@ -2115,12 +2115,15 @@ void BKE_sculptsession_free_vwpaint_data(SculptSession *ss)
 /**
  * Write out the sculpt dynamic-topology #BMesh to the #Mesh.
  */
-static void sculptsession_bm_to_me_update_data_only(Object *ob)
+static void sculptsession_bm_to_me_update_data_only(Object *ob, bool reorder)
 {
   SculptSession &ss = *ob->sculpt;
 
   if (ss.bm) {
     if (ob->data) {
+      if (reorder) {
+        BM_log_mesh_elems_reorder(ss.bm, ss.bm_log);
+      }
       BMeshToMeshParams params{};
       params.calc_object_remap = false;
       BM_mesh_bm_to_me(nullptr, ss.bm, static_cast<Mesh *>(ob->data), &params);
@@ -2128,10 +2131,10 @@ static void sculptsession_bm_to_me_update_data_only(Object *ob)
   }
 }
 
-void BKE_sculptsession_bm_to_me(Object *ob)
+void BKE_sculptsession_bm_to_me(Object *ob, bool reorder)
 {
   if (ob && ob->sculpt) {
-    sculptsession_bm_to_me_update_data_only(ob);
+    sculptsession_bm_to_me_update_data_only(ob, reorder);
 
     /* Ensure the objects evaluated mesh doesn't hold onto arrays
      * now realloc'd in the mesh #34473. */
@@ -2175,7 +2178,7 @@ void BKE_sculptsession_bm_to_me_for_render(Object *object)
        */
       BKE_object_free_derived_caches(object);
 
-      sculptsession_bm_to_me_update_data_only(object);
+      sculptsession_bm_to_me_update_data_only(object, false);
 
       /* In contrast with sculptsession_bm_to_me no need in
        * DAG tag update here - derived mesh was freed and
@@ -2191,7 +2194,7 @@ void BKE_sculptsession_free(Object *ob)
     SculptSession *ss = ob->sculpt;
 
     if (ss->bm) {
-      BKE_sculptsession_bm_to_me(ob);
+      BKE_sculptsession_bm_to_me(ob, true);
       BM_mesh_free(ss->bm);
     }
 
@@ -2726,17 +2729,6 @@ void BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
   }
 }
 
-void BKE_sculpt_cavity_curves_ensure(Sculpt *sd)
-{
-  if (!sd->automasking_cavity_curve) {
-    sd->automasking_cavity_curve = BKE_sculpt_default_cavity_curve();
-  }
-
-  if (!sd->automasking_cavity_curve_op) {
-    sd->automasking_cavity_curve_op = BKE_sculpt_default_cavity_curve();
-  }
-}
-
 void BKE_sculpt_toolsettings_data_ensure(Main *bmain, Scene *scene)
 {
   BKE_paint_ensure(scene->toolsettings, (Paint **)&scene->toolsettings->sculpt);
@@ -2780,7 +2772,7 @@ void BKE_sculpt_toolsettings_data_ensure(Main *bmain, Scene *scene)
   }
 
   if (!sd->automasking_cavity_curve || !sd->automasking_cavity_curve_op) {
-    BKE_sculpt_cavity_curves_ensure(sd);
+    BKE_sculpt_check_cavity_curves(sd);
   }
 }
 

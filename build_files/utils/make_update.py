@@ -47,7 +47,7 @@ def print_stage(text: str) -> None:
 
 def parse_arguments() -> argparse.Namespace:
     """
-    Parse command line arguments.
+    Parse command line line arguments.
 
     Returns parsed object from which the command line arguments can be accessed
     as properties. The name of the properties matches the command line argument,
@@ -297,20 +297,15 @@ def work_tree_update(args: argparse.Namespace, use_fetch: bool = True) -> str:
         # update the branch from the fork.
 
     update_command = [args.git_command, "pull", "--rebase"]
-    # This seems to be required some times, e.g. on initial checkout from third party, non-lfs repository
-    # (like the github one). The fallback repository set by `lfs_fallback_setup` is fetched, but running the
-    # `update_command` above does not seem to do the actual checkout for these LFS-managed files.
-    update_lfs_command = [args.git_command, "lfs", "checkout"]
 
     call(update_command)
-    call(update_lfs_command)
 
     return ""
 
 
 # Update blender repository.
 def blender_update(args: argparse.Namespace) -> str:
-    print_stage("Updating Blender Git Repository")
+    print_stage("Updating Bforartists Git Repository")
 
     return work_tree_update(args)
 
@@ -618,7 +613,7 @@ def lfs_fallback_setup(args: argparse.Namespace) -> None:
         print_stage("Adding Git LFS fallback remote")
         print("Used to fetch files from projects.blender.org if missing.")
 
-        url = "https://projects.blender.org/blender/blender.git"
+        url = "https://github.com/Bforartists/Bforartists.git"
         push_url = "no_push"
         make_utils.git_add_remote(args.git_command, fallback_remote, url, push_url)
 
@@ -655,7 +650,7 @@ def main() -> int:
         if not blender_skip_msg:
             blender_skip_msg = blender_update(args)
         if blender_skip_msg:
-            blender_skip_msg = "Blender repository skipped: " + blender_skip_msg + "\n"
+            blender_skip_msg = "Bforartists repository skipped: " + blender_skip_msg + "\n"
 
     if not args.no_libraries:
         libraries_skip_msg += initialize_precompiled_libraries(args)

@@ -214,6 +214,26 @@ static wmOperatorStatus select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - description*/
+static std::string wm_mask_select_all_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all curve points";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all curve points";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Invert selection of the selected curve points";
+  }
+  return "";
+}
+
 void MASK_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -223,6 +243,7 @@ void MASK_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = select_all_exec;
+  ot->get_description = wm_mask_select_all_get_description; /* bfa - dynamic description */
   ot->poll = ED_maskedit_mask_visible_splines_poll;
 
   /* flags */

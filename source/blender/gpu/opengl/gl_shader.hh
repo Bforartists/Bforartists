@@ -69,7 +69,6 @@ struct GLSourcesBaked : NonCopyable {
 class GLShader : public Shader {
   friend shader::ShaderCreateInfo;
   friend shader::StageInterfaceInfo;
-  friend class GLSubprocessShaderCompiler;
   friend class GLShaderCompiler;
 
  private:
@@ -209,18 +208,10 @@ class GLShader : public Shader {
   MEM_CXX_CLASS_ALLOC_FUNCS("GLShader");
 };
 
-class GLShaderCompiler : public ShaderCompiler {
- public:
-  GLShaderCompiler(uint32_t threads_count = 1)
-      : ShaderCompiler(threads_count, GPUWorker::ContextType::PerThread, true){};
-
-  virtual void specialize_shader(ShaderSpecialization &specialization) override;
-};
-
 #if BLI_SUBPROCESS_SUPPORT
 
 class GLCompilerWorker {
-  friend class GLSubprocessShaderCompiler;
+  friend class GLShaderCompiler;
 
  private:
   BlenderSubprocess subprocess_;
@@ -253,7 +244,7 @@ class GLCompilerWorker {
   bool is_lost();
 };
 
-class GLSubprocessShaderCompiler : public ShaderCompiler {
+class GLShaderCompiler : public ShaderCompiler {
  private:
   Vector<GLCompilerWorker *> workers_;
   std::mutex workers_mutex_;
@@ -263,9 +254,9 @@ class GLSubprocessShaderCompiler : public ShaderCompiler {
   GLShader::GLProgram *specialization_program_get(ShaderSpecialization &specialization);
 
  public:
-  GLSubprocessShaderCompiler()
+  GLShaderCompiler()
       : ShaderCompiler(GPU_max_parallel_compilations(), GPUWorker::ContextType::PerThread, true){};
-  virtual ~GLSubprocessShaderCompiler() override;
+  virtual ~GLShaderCompiler() override;
 
   virtual Shader *compile_shader(const shader::ShaderCreateInfo &info) override;
   virtual void specialize_shader(ShaderSpecialization &specialization) override;
@@ -273,7 +264,7 @@ class GLSubprocessShaderCompiler : public ShaderCompiler {
 
 #else
 
-class GLSubprocessShaderCompiler : public ShaderCompiler {};
+class GLShaderCompiler : public ShaderCompiler {};
 
 #endif
 

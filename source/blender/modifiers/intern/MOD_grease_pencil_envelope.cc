@@ -745,7 +745,7 @@ ModifierTypeInfo modifierType_GreasePencilEnvelope = {
     /*type*/ ModifierTypeType::Nonconstructive,
     /*flags*/ eModifierTypeFlag_AcceptsGreasePencil | eModifierTypeFlag_SupportsEditmode |
         eModifierTypeFlag_EnableInEditmode | eModifierTypeFlag_SupportsMapping,
-    /*icon*/ ICON_MOD_ENVELOPE,
+    /*icon*/ ICON_NONE,
 
     /*copy_data*/ blender::copy_data,
 

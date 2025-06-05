@@ -128,7 +128,7 @@ void BUTTONS_OT_toggle_pin(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "Toggle Pin ID";
-  ot->description = "Keep the current data-block displayed";
+  ot->description = "Keep the current data displayed";
   ot->idname = "BUTTONS_OT_toggle_pin";
 
   /* Callbacks. */
@@ -451,7 +451,7 @@ static bool file_browse_poll_property(const bContext * /*C*/,
 void BUTTONS_OT_file_browse(wmOperatorType *ot)
 {
   /* Identifiers. */
-  ot->name = "Accept";
+  ot->name = "Browse"; /*bfa - renamed from Accept to Browse*/
   ot->description =
       "Open a file browser, hold Shift to open the file, Alt to browse containing directory";
   ot->idname = "BUTTONS_OT_file_browse";
@@ -483,7 +483,7 @@ void BUTTONS_OT_file_browse(wmOperatorType *ot)
 void BUTTONS_OT_directory_browse(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Accept";
+  ot->name = "Browse"; /*bfa - renamed from Accept to Browse*/
   ot->description =
       "Open a directory browser, hold Shift to open the file, Alt to browse containing directory";
   ot->idname = "BUTTONS_OT_directory_browse";

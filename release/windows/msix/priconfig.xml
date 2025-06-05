@@ -20,7 +20,7 @@
 			<qualifier name="Custom" value=""/>
 		</default>
 		<indexer-config type="folder" foldernameAsQualifier="true" filenameAsQualifier="true" qualifierDelimiter=".">
-			<exclude type="path" value="Blender" doNotTraverse="true" doNotIndex="true" />
+			<exclude type="path" value="Bforartists" doNotTraverse="true" doNotIndex="true" />
 		</indexer-config>
 	</index>
 </resources>

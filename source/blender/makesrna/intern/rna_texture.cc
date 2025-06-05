@@ -35,15 +35,15 @@ static const EnumPropertyItem texture_filter_items[] = {
 
 const EnumPropertyItem rna_enum_texture_type_items[] = {
     {0, "NONE", 0, "None", ""},
-    {TEX_BLEND, "BLEND", ICON_TEXTURE, "Blend", "Procedural - create a ramp texture"},
+    {TEX_BLEND, "BLEND", ICON_BLEND_TEX, "Blend", "Procedural - create a ramp texture"},
     {TEX_CLOUDS,
      "CLOUDS",
-     ICON_TEXTURE,
+     ICON_CLOUD_TEX,
      "Clouds",
      "Procedural - create a cloud-like fractal noise texture"},
     {TEX_DISTNOISE,
      "DISTORTED_NOISE",
-     ICON_TEXTURE,
+     ICON_DISTORTED_NOISE_TEX,
      "Distorted Noise",
      "Procedural - noise texture distorted by two noise algorithms"},
     {TEX_IMAGE,
@@ -53,34 +53,38 @@ const EnumPropertyItem rna_enum_texture_type_items[] = {
      "Allow for images or movies to be used as textures"},
     {TEX_MAGIC,
      "MAGIC",
-     ICON_TEXTURE,
+     ICON_MAGIC_TEX,
      "Magic",
      "Procedural - color texture based on trigonometric functions"},
     {TEX_MARBLE,
      "MARBLE",
-     ICON_TEXTURE,
+     ICON_MARBLE_TEX,
      "Marble",
      "Procedural - marble-like noise texture with wave generated bands"},
     {TEX_MUSGRAVE,
      "MUSGRAVE",
-     ICON_TEXTURE,
+     ICON_MUSGRAVE_TEX,
      "Musgrave",
      "Procedural - highly flexible fractal noise texture"},
     {TEX_NOISE,
      "NOISE",
-     ICON_TEXTURE,
+     ICON_NOISE_TEX,
      "Noise",
-     "Procedural - random noise, gives a different result every time, for every frame, for every "
+     "Procedural - highly flexible fractal random noise, gives a different result every time, for every frame, for every "
      "pixel"},
-    {TEX_STUCCI, "STUCCI", ICON_TEXTURE, "Stucci", "Procedural - create a fractal noise texture"},
+    {TEX_STUCCI,
+     "STUCCI",
+     ICON_STUCCI_TEX,
+     "Stucci",
+     "Procedural - create a fractal noise texture"},
     {TEX_VORONOI,
      "VORONOI",
-     ICON_TEXTURE,
+     ICON_VORONI_TEX,
      "Voronoi",
      "Procedural - create cell-like patterns based on Worley noise"},
     {TEX_WOOD,
      "WOOD",
-     ICON_TEXTURE,
+     ICON_WOOD_TEX,
      "Wood",
      "Procedural - wave generated bands or rings, with optional noise"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -618,14 +622,14 @@ static void rna_def_mtex(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna, "Texture Slot", "Texture slot defining the mapping and influence of a texture");
   RNA_def_struct_path_func(srna, "rna_TextureSlot_path");
-  RNA_def_struct_ui_icon(srna, ICON_TEXTURE_DATA);
+  RNA_def_struct_ui_icon(srna, ICON_TEXTURE);
 
   prop = RNA_def_property(srna, "texture", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "tex");
   RNA_def_property_struct_type(prop, "Texture");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_CONTEXT_UPDATE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-  RNA_def_property_ui_text(prop, "Texture", "Texture data-block used by this texture slot");
+  RNA_def_property_ui_text(prop, "Texture", "Texture used by this texture slot");
   RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING_LINKS, "rna_TextureSlotTexture_update");
 
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
@@ -1548,9 +1552,8 @@ static void rna_def_texture(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Texture", "ID");
   RNA_def_struct_sdna(srna, "Tex");
-  RNA_def_struct_ui_text(
-      srna, "Texture", "Texture data-block used by materials, lights, worlds and brushes");
-  RNA_def_struct_ui_icon(srna, ICON_TEXTURE_DATA);
+  RNA_def_struct_ui_text(srna, "Texture", "Texture used by materials, lights, worlds and brushes");
+  RNA_def_struct_ui_icon(srna, ICON_TEXTURE);
   RNA_def_struct_refine_func(srna, "rna_Texture_refine");
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);

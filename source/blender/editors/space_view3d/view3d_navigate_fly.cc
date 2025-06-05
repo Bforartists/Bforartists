@@ -1136,6 +1136,7 @@ static void fly_cancel(bContext *C, wmOperator *op)
 
 static wmOperatorStatus fly_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
+  wmOperatorStatus exit_code;
   bool do_draw = false;
   FlyInfo *fly = static_cast<FlyInfo *>(op->customdata);
   View3D *v3d = fly->v3d;
@@ -1156,15 +1157,13 @@ static wmOperatorStatus fly_modal(bContext *C, wmOperator *op, const wmEvent *ev
   }
   else
 #endif /* WITH_INPUT_NDOF */
-  {
     if (event->type == TIMER && event->customdata == fly->timer) {
       flyApply(C, fly, false);
     }
-  }
 
   do_draw |= fly->redraw;
 
-  wmOperatorStatus exit_code = flyEnd(C, fly);
+  exit_code = flyEnd(C, fly);
 
   if (exit_code == OPERATOR_FINISHED) {
     const bool is_undo_pushed = ED_view3d_camera_lock_undo_push(op->type->name, v3d, rv3d, C);

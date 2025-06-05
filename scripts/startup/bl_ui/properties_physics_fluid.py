@@ -167,12 +167,26 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col.prop(domain, "time_scale", text="Time Scale")
 
             col = flow.column()
-            col.prop(domain, "use_adaptive_timesteps")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(domain, "use_adaptive_timesteps")
+            if domain.use_adaptive_timesteps:
+                row.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
+            row.prop_decorator(domain, "use_adaptive_timesteps")
+
             sub = col.column(align=True)
-            sub.active = domain.use_adaptive_timesteps
-            sub.prop(domain, "cfl_condition", text="CFL Number")
-            sub.prop(domain, "timesteps_max", text="Timesteps Maximum")
-            sub.prop(domain, "timesteps_min", text="Minimum")
+            if domain.use_adaptive_timesteps:
+                row = sub.row()
+                row.separator()
+                row.prop(domain, "cfl_condition", text="CFL Number")
+                row = sub.row()
+                row.separator()
+                row.prop(domain, "timesteps_max", text="Timesteps Maximum")
+                row = sub.row()
+                row.separator()
+                row.prop(domain, "timesteps_min", text="Minimum")
 
             col.separator()
 
@@ -187,7 +201,10 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col = flow.column()
             if PhysicButtonsPanel.poll_gas_domain(context):
                 col.prop(domain, "clipping", text="Empty Space")
-            col.prop(domain, "delete_in_obstacle", text="Delete in Obstacle")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(domain, "delete_in_obstacle", text="Delete in Obstacle")
+            row.prop_decorator(domain, "delete_in_obstacle")
 
             if domain.cache_type == 'MODULAR':
                 col.separator()
@@ -247,7 +264,10 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col = grid.column()
             col.prop(flow, "flow_behavior", expand=False)
             if flow.flow_behavior in {'INFLOW', 'OUTFLOW'}:
-                col.prop(flow, "use_inflow")
+                row = col.row()
+                row.use_property_split = False
+                row.prop(flow, "use_inflow")
+                row.prop_decorator(flow, "use_inflow")
 
             col.prop(flow, "subframes", text="Sampling Substeps")
 
@@ -257,7 +277,9 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
                     col.prop(flow, "smoke_color", text="Smoke Color")
 
                 col = grid.column(align=True)
+                col.use_property_split = False
                 col.prop(flow, "use_absolute", text="Absolute Density")
+                col.use_property_split = True
 
                 if flow.flow_type in {'SMOKE', 'BOTH'}:
                     col.prop(flow, "temperature", text="Initial Temperature")
@@ -282,9 +304,14 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col.prop(effector_settings, "surface_distance", text="Surface Thickness")
 
             col = grid.column()
-
-            col.prop(effector_settings, "use_effector", text="Use Effector")
-            col.prop(effector_settings, "use_plane_init", text="Is Planar")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(effector_settings, "use_effector", text="Use Effector")
+            row.prop_decorator(effector_settings, "use_effector")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(effector_settings, "use_plane_init", text="Is Planar")
+            row.prop_decorator(effector_settings, "use_plane_init")
 
             if effector_settings.effector_type == 'GUIDE':
                 col.prop(effector_settings, "velocity_factor", text="Velocity Factor")
@@ -294,6 +321,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_borders(PhysicButtonsPanel, Panel):
     bl_label = "Border Collisions"
     bl_parent_id = "PHYSICS_PT_settings"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
         'BLENDER_EEVEE_NEXT',
@@ -309,7 +337,7 @@ class PHYSICS_PT_borders(PhysicButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         md = context.fluid
         domain = md.domain_settings
@@ -320,17 +348,35 @@ class PHYSICS_PT_borders(PhysicButtonsPanel, Panel):
         col = layout.column(align=True)
         col.enabled = not is_baking_any and not has_baked_data
 
-        col.prop(domain, "use_collision_border_front")
-        col.prop(domain, "use_collision_border_back")
-        col.prop(domain, "use_collision_border_right")
-        col.prop(domain, "use_collision_border_left")
-        col.prop(domain, "use_collision_border_top")
-        col.prop(domain, "use_collision_border_bottom")
+        row = col.row()
+        row.prop(domain, "use_collision_border_front")
+        row.prop_decorator(domain, "use_collision_border_front")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_back")
+        row.prop_decorator(domain, "use_collision_border_back")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_right")
+        row.prop_decorator(domain, "use_collision_border_right")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_left")
+        row.prop_decorator(domain, "use_collision_border_left")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_top")
+        row.prop_decorator(domain, "use_collision_border_top")
+
+        row = col.row()
+        row.prop(domain, "use_collision_border_bottom")
+        row.prop_decorator(domain, "use_collision_border_bottom")
 
 
 class PHYSICS_PT_smoke(PhysicButtonsPanel, Panel):
     bl_label = "Gas"
     bl_parent_id = "PHYSICS_PT_fluid"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
         'BLENDER_EEVEE_NEXT',
@@ -410,7 +456,10 @@ class PHYSICS_PT_smoke_dissolve(PhysicButtonsPanel, Panel):
         col.prop(domain, "dissolve_speed", text="Time")
 
         col = flow.column()
-        col.prop(domain, "use_dissolve_smoke_log", text="Slow")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(domain, "use_dissolve_smoke_log", text="Slow")
+        row.prop_decorator(domain, "use_dissolve_smoke_log")
 
 
 class PHYSICS_PT_fire(PhysicButtonsPanel, Panel):
@@ -516,11 +565,24 @@ class PHYSICS_PT_liquid(PhysicButtonsPanel, Panel):
         col.prop(domain, "particle_band_width", text="Narrow Band Width")
 
         col = col.column()
-        col.prop(domain, "use_fractions", text="Fractional Obstacles")
-        sub = col.column()
-        sub.active = domain.use_fractions
-        sub.prop(domain, "fractions_distance", text="Obstacle Distance")
-        sub.prop(domain, "fractions_threshold", text="Threshold")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(domain, "use_fractions", text="Fractional Obstacles")
+        if domain.use_fractions:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        row.prop_decorator(domain, "use_fractions")
+
+        if domain.use_fractions:
+            sub = col.column()
+            row = sub.row()
+            row.separator()
+            row.prop(domain, "fractions_distance", text="Obstacle Distance")
+            row = sub.row()
+            row.separator()
+            row.prop(domain, "fractions_threshold", text="Threshold")
 
 
 class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
@@ -556,14 +618,22 @@ class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
 
         col = grid.column()
         if flow.flow_source == 'MESH':
-            col.prop(flow, "use_plane_init", text="Is Planar")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(flow, "use_plane_init", text="Is Planar")
+            row.prop_decorator(flow, "use_plane_init")
+
             col.prop(flow, "surface_distance", text="Surface Emission")
             if flow.flow_type in {'SMOKE', 'BOTH', 'FIRE'}:
                 col = grid.column()
                 col.prop(flow, "volume_density", text="Volume Emission")
 
         if flow.flow_source == 'PARTICLES':
-            col.prop(flow, "use_particle_size", text="Set Size")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(flow, "use_particle_size", text="Set Size")
+            row.prop_decorator(flow, "use_particle_size")
+
             sub = col.column()
             sub.active = flow.use_particle_size
             sub.prop(flow, "particle_size")
@@ -853,7 +923,9 @@ class PHYSICS_PT_mesh(PhysicButtonsPanel, Panel):
         col.prop(domain, "mesh_particle_radius", text="Particle Radius")
 
         col = flow.column()
-        col.prop(domain, "use_speed_vectors", text="Speed Vectors")
+        col.use_property_split = False
+        col.prop(domain, "use_speed_vectors", text="Use Speed Vectors")
+        col.use_property_split = True
 
         col.separator()
         col.prop(domain, "mesh_generator", text="Mesh Generator")
@@ -943,8 +1015,14 @@ class PHYSICS_PT_particles(PhysicButtonsPanel, Panel):
         col = flow.column()
         row = col.row()
         row.enabled = sndparticle_combined_export in {'OFF', 'FOAM + BUBBLES'}
+        row = col.row()
+        row.use_property_split = False
         row.prop(domain, "use_spray_particles", text="Spray")
+        row = col.row()
+        row.use_property_split = False
         row.prop(domain, "use_foam_particles", text="Foam")
+        row = col.row()
+        row.use_property_split = False
         row.prop(domain, "use_bubble_particles", text="Bubbles")
 
         col.separator()
@@ -1244,6 +1322,7 @@ class PHYSICS_PT_collections(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
     bl_label = "Cache"
     bl_parent_id = "PHYSICS_PT_fluid"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
         'BLENDER_EEVEE_NEXT',
@@ -1290,7 +1369,8 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
 
         row = col.row()
         row.enabled = not is_baking_any and not has_baked_data
-        row.prop(domain, "cache_resumable", text="Resumable")
+        row.use_property_split = False
+        row.prop(domain, "cache_resumable", text="Is Resumable")
 
         if domain.cache_type == 'ALL':
             col.separator()
@@ -1370,6 +1450,7 @@ class PHYSICS_PT_export(PhysicButtonsPanel, Panel):
         # Only show the advanced panel to advanced users who know Mantaflow's birthday :)
         if bpy.app.debug_value == 3001:
             col = flow.column()
+            col.use_property_split = False
             col.prop(domain, "export_manta_script", text="Export Mantaflow Script")
 
 
@@ -1452,9 +1533,47 @@ class PHYSICS_PT_viewport_display_slicing(PhysicButtonsPanel, Panel):
         col.prop(domain, "slice_depth")
 
         sub = col.column()
-        sub.prop(domain, "show_gridlines")
-
         sub.active = domain.display_interpolation == 'CLOSEST' or domain.color_ramp_field == 'FLAGS'
+        row = sub.row()
+        row.use_property_split = False
+        row.prop(domain, "show_gridlines")
+        if domain.show_gridlines:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+        row.prop_decorator(domain, "show_gridlines")
+
+        if domain.show_gridlines:
+            col = layout.column()
+            col.active = domain.display_interpolation == 'CLOSEST' or domain.color_ramp_field == 'FLAGS'
+            row = col.row()
+            row.separator()
+            row.prop(domain, "gridlines_color_field", text="Color Gridlines")
+
+            if domain.gridlines_color_field == 'RANGE':
+                if domain.use_color_ramp and domain.color_ramp_field != 'FLAGS':
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.prop(domain, "gridlines_lower_bound")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.prop(domain, "gridlines_upper_bound")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.prop(domain, "gridlines_range_color")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.prop(domain, "gridlines_cell_filter")
+                else:
+                    note = layout.split()
+                    if not domain.use_color_ramp:
+                        note.label(icon='INFO', text="Enable Grid Display to use range highlighting!")
+                    else:
+                        note.label(icon='INFO', text="Range highlighting for flags is not available!")
 
 
 class PHYSICS_PT_viewport_display_color(PhysicButtonsPanel, Panel):
@@ -1520,17 +1639,27 @@ class PHYSICS_PT_viewport_display_debug(PhysicButtonsPanel, Panel):
             note.label(icon='INFO', text="Enable Guides first! Defaulting to Fluid Velocity")
 
         if domain.vector_display_type == 'MAC':
-            sub = col.column(heading="MAC Grid")
-            sub.prop(domain, "vector_show_mac_x")
-            sub.prop(domain, "vector_show_mac_y")
-            sub.prop(domain, "vector_show_mac_z")
+            sub = col.column()
+            sub.use_property_split = False
+            sub.label(text = "MAC Grid")
+            row = sub.row()
+            row.separator()
+            row.prop(domain, "vector_show_mac_x")
+            row = sub.row()
+            row.separator()
+            row.prop(domain, "vector_show_mac_y")
+            row = sub.row()
+            row.separator()
+            row.prop(domain, "vector_show_mac_z")
         else:
+            col.use_property_split = False
             col.prop(domain, "vector_scale_with_magnitude")
 
+        col.use_property_split = True
         col.prop(domain, "vector_field")
         col.prop(domain, "vector_scale")
 
-
+# bfa -  this content belongs to the gridlines prop. And is obsolete in BFA. Class deactivated.
 class PHYSICS_PT_viewport_display_advanced(PhysicButtonsPanel, Panel):
     bl_label = "Advanced"
     bl_parent_id = "PHYSICS_PT_viewport_display"
@@ -1618,7 +1747,7 @@ classes = (
     PHYSICS_PT_viewport_display_slicing,
     PHYSICS_PT_viewport_display_color,
     PHYSICS_PT_viewport_display_debug,
-    PHYSICS_PT_viewport_display_advanced,
+    #PHYSICS_PT_viewport_display_advanced, # bfa - deactivated the advanced panel. Keep for compatibility reasons.
     PHYSICS_PT_fluid_domain_render,
 )
 

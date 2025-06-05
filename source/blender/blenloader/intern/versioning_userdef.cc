@@ -210,6 +210,13 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(tui.editor_outline_active);
   }
 
+  /* start bfa asset shelf versioning */
+  if (!USER_VERSION_ATLEAST(403, 0)) {
+    FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.back);
+    FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.header_back);
+  }
+  /* end bfa */
+
   if (!USER_VERSION_ATLEAST(404, 7)) {
     if (btheme->space_view3d.face_front[0] == 0 && btheme->space_view3d.face_front[1] == 0 &&
         btheme->space_view3d.face_front[2] == 0xFF && btheme->space_view3d.face_front[3] == 0xB3)
@@ -1367,12 +1374,19 @@ void blo_do_versions_userdef(UserDef *userdef)
   }
 
   if (!USER_VERSION_ATLEAST(403, 3)) {
+    /*BFA - expose default categories for large amount of brushes on hand3*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/Cloth");
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Add & Subtract");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General");
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Contrast");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Transform");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/General/Utilities");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/Paint");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_sculpt", "Brushes/Mesh Sculpt/Simulation");
   }
 
   if (!USER_VERSION_ATLEAST(403, 12)) {
@@ -1385,12 +1399,13 @@ void blo_do_versions_userdef(UserDef *userdef)
       style->tooltip.shadowcolor = 0.0f;
     }
   }
+
   if (!USER_VERSION_ATLEAST(403, 19)) {
     userdef->sequencer_editor_flag |= USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT;
   }
 
-  if (!USER_VERSION_ATLEAST(404, 3)) {
-    userdef->uiflag &= ~USER_FILTER_BRUSHES_BY_TOOL;
+  if (!USER_VERSION_ATLEAST(404, 32)) {
+    userdef->uiflag |= USER_FILTER_BRUSHES_BY_TOOL; /*BFA Default to on*/
 
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_brush_gpencil_paint", "Brushes/Grease Pencil Draw/Draw");
@@ -1424,8 +1439,51 @@ void blo_do_versions_userdef(UserDef *userdef)
     }
   }
 
+  /* start bfa asset shelf default catalogs versioning */
+  if (!USER_VERSION_ATLEAST(404, 0)) {
+    /* 3D Viewport*/
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_object", "Primitives");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_object", "Collections/Lights");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_object", "Materials");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_object", "Grease Pencil Tools");
+    /* Node editors*/
+
+    /*Shader*/
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Color");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Mapping");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Masks");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Patterns");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shader");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shapes");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Utility");
+
+
+    /*Geometry Nodes*/
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Grease Pencil Tools");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Hair");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Normals");
+
+    /*Compositor*/
+    /*To Be created*/
+  }
+  /* end bfa asset shelf default catalogs versioning */
+
   if (!USER_VERSION_ATLEAST(404, 28)) {
-    userdef->ndof_flag |= NDOF_SHOW_GUIDE_ORBIT_CENTER | NDOF_ORBIT_CENTER_AUTO;
+      userdef->ndof_flag |= NDOF_SHOW_GUIDE_ORBIT_CENTER | NDOF_ORBIT_CENTER_AUTO;
   }
 
   if (userdef->border_width == 0) {

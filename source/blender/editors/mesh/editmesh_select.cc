@@ -2055,6 +2055,26 @@ static wmOperatorStatus edbm_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string mesh_ot_select_all_get_description(struct bContext * /*C*/,
+                                                      struct wmOperatorType * /*op*/,
+                                                      struct PointerRNA *values)
+{
+  /*Select*/
+  if (RNA_enum_get(values, "action") == SEL_SELECT) {
+    return "Select all vertices, edges or faces";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(values, "action") == SEL_DESELECT) {
+    return "Deselect all vertices, edges or faces";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(values, "action") == SEL_INVERT) {
+    return "Inverts the current selection";
+  }
+  return "";
+}
+
 void MESH_OT_select_all(wmOperatorType *ot)
 {
   /* Identifiers. */
@@ -2064,6 +2084,7 @@ void MESH_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = edbm_select_all_exec;
+  ot->get_description = mesh_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
   /* Flags. */
@@ -2294,8 +2315,12 @@ bool EDBM_select_pick(bContext *C, const int mval[2], const SelectPick_Params &p
     EDBM_selectmode_flush(em);
 
     if (efa) {
-      blender::ed::object::material_active_index_set(obedit, efa->mat_nr);
-      em->mat_nr = efa->mat_nr;
+      /* Change active material on object. */
+      if (efa->mat_nr != obedit->actcol - 1) {
+        obedit->actcol = efa->mat_nr + 1;
+        em->mat_nr = efa->mat_nr;
+        WM_event_add_notifier(C, NC_MATERIAL | ND_SHADING_LINKS, nullptr);
+      }
     }
 
     /* Changing active object is handy since it allows us to

@@ -2883,7 +2883,8 @@ static bool isStartedFromCommandPrompt()
     if (getProcessName(ppid, parent_name, sizeof(parent_name))) {
       char *filename = strrchr(parent_name, '\\');
       if (filename != nullptr) {
-        start_from_launcher = strstr(filename, "blender.exe") != nullptr;
+	// bfa - we start from bforartists.exe. not from blender.exe
+        start_from_launcher = strstr(filename, "bforartists.exe") != nullptr;
       }
     }
 

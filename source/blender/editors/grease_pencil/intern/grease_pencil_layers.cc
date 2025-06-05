@@ -582,6 +582,20 @@ static wmOperatorStatus grease_pencil_layer_isolate_exec(bContext *C, wmOperator
 
   return OPERATOR_FINISHED;
 }
+/*bfa - descriptions*/
+static std::string GREASE_PENCIL_OT_layer_isolate_description(struct bContext * /*C*/,
+                                                              struct wmOperatorType * /*op*/,
+                                                              struct PointerRNA *ptr)
+{
+  const bool visibility = RNA_boolean_get(ptr, "affect_visibility");
+  if (!visibility) {
+    return BLI_strdup("Make only active layer editable");
+  }
+  else {
+    return BLI_strdup("Make only active layer visible");
+  }
+  return NULL;
+}
 
 static void GREASE_PENCIL_OT_layer_isolate(wmOperatorType *ot)
 {
@@ -592,6 +606,7 @@ static void GREASE_PENCIL_OT_layer_isolate(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = grease_pencil_layer_isolate_exec;
+  ot->get_description = GREASE_PENCIL_OT_layer_isolate_description; /*bfa - descriptions*/
   ot->poll = active_grease_pencil_layer_poll;
 
   /* flags */
@@ -688,6 +703,21 @@ static wmOperatorStatus grease_pencil_layer_duplicate_exec(bContext *C, wmOperat
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string GREASE_PENCIL_OT_layer_duplicate_description(struct bContext * /*C*/,
+                                                                struct wmOperatorType * /*op*/,
+                                                                struct PointerRNA *ptr)
+{
+  const bool visibility = RNA_boolean_get(ptr, "empty_keyframes");
+  if (!visibility) {
+    return BLI_strdup("Make a copy of the active Grease Pencil layer as a new layer");
+  }
+  else {
+    return BLI_strdup("Add an empty copy of the active Grease Pencil layer");
+  }
+  return NULL;
+}
+
 static void GREASE_PENCIL_OT_layer_duplicate(wmOperatorType *ot)
 {
   /* identifiers */
@@ -697,6 +727,7 @@ static void GREASE_PENCIL_OT_layer_duplicate(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = grease_pencil_layer_duplicate_exec;
+  ot->get_description = GREASE_PENCIL_OT_layer_duplicate_description; /*bfa - descriptions*/
   ot->poll = active_grease_pencil_layer_poll;
 
   /* flags */
@@ -1241,6 +1272,78 @@ static void GREASE_PENCIL_OT_layer_duplicate_object(wmOperatorType *ot)
   ot->prop = RNA_def_enum(ot->srna, "mode", copy_mode, 0, "Mode", "");
 }
 
+/* bfa - added move up/down operators */
+static wmOperatorStatus grease_pencil_layer_move_top_exec(bContext *C, wmOperator *)
+{
+  using namespace blender::bke::greasepencil;
+  Object *object = CTX_data_active_object(C);
+  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
+
+  if (!grease_pencil.has_active_layer()) {
+    return OPERATOR_CANCELLED;
+  }
+
+  Layer &active_layer = *grease_pencil.get_active_layer();
+  grease_pencil.move_node_top(active_layer.as_node());
+
+  DEG_id_tag_update(&grease_pencil.id, ID_RECALC_GEOMETRY);
+  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, &grease_pencil);
+
+  return OPERATOR_FINISHED;
+}
+
+/* bfa - added move up/down operators */
+static void GREASE_PENCIL_OT_layer_move_top(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Move Layer to Top";
+  ot->idname = "GREASE_PENCIL_OT_layer_move_top";
+  ot->description = "Move the active Grease Pencil layer to the top";
+
+  /* api callbacks */
+  ot->exec = grease_pencil_layer_move_top_exec;
+  ot->poll = active_grease_pencil_layer_poll;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/* bfa - added move up/down operators */
+static wmOperatorStatus grease_pencil_layer_move_bottom_exec(bContext *C, wmOperator *)
+{
+  using namespace blender::bke::greasepencil;
+  Object *object = CTX_data_active_object(C);
+  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
+
+  if (!grease_pencil.has_active_layer()) {
+    return OPERATOR_CANCELLED;
+  }
+
+  Layer &active_layer = *grease_pencil.get_active_layer();
+  grease_pencil.move_node_bottom(active_layer.as_node());
+
+  DEG_id_tag_update(&grease_pencil.id, ID_RECALC_GEOMETRY);
+  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, &grease_pencil);
+
+  return OPERATOR_FINISHED;
+}
+
+/* bfa - added move up/down operators */
+static void GREASE_PENCIL_OT_layer_move_bottom(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Move Layer to Bottom";
+  ot->idname = "GREASE_PENCIL_OT_layer_move_bottom";
+  ot->description = "Move the active Grease Pencil layer to the bottom";
+
+  /* api callbacks */
+  ot->exec = grease_pencil_layer_move_bottom_exec;
+  ot->poll = active_grease_pencil_layer_poll;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
 }  // namespace blender::ed::greasepencil
 
 void ED_operatortypes_grease_pencil_layers()
@@ -1265,4 +1368,8 @@ void ED_operatortypes_grease_pencil_layers()
   WM_operatortype_append(GREASE_PENCIL_OT_layer_mask_reorder);
   WM_operatortype_append(GREASE_PENCIL_OT_layer_group_color_tag);
   WM_operatortype_append(GREASE_PENCIL_OT_layer_duplicate_object);
+
+  WM_operatortype_append(GREASE_PENCIL_OT_layer_move_top); /* bfa - added move up/down operators */
+  WM_operatortype_append(
+      GREASE_PENCIL_OT_layer_move_bottom); /* bfa - added move up/down operators */
 }

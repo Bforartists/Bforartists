@@ -303,7 +303,8 @@ static wmOperatorStatus sequencer_gap_remove_exec(bContext *C, wmOperator *op)
 
   seq::edit_remove_gaps(scene, ed->seqbasep, scene->r.cfra, do_all);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
 
   return OPERATOR_FINISHED;
@@ -342,7 +343,8 @@ static wmOperatorStatus sequencer_gap_insert_exec(bContext *C, wmOperator *op)
   const Editing *ed = seq::editing_get(scene);
   seq::transform_offset_after_frame(scene, ed->seqbasep, frames, scene->r.cfra);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -444,7 +446,8 @@ static wmOperatorStatus sequencer_snap_exec(bContext *C, wmOperator *op)
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -678,7 +681,8 @@ static wmOperatorStatus sequencer_slip_invoke(bContext *C, wmOperator *op, const
   op->type->flag |= OPTYPE_GRAB_CURSOR_X;
 
   /* Notify so we draw extensions immediately. */
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_RUNNING_MODAL;
 }
@@ -958,7 +962,8 @@ static wmOperatorStatus sequencer_mute_exec(bContext *C, wmOperator *op)
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1018,7 +1023,8 @@ static wmOperatorStatus sequencer_unmute_exec(bContext *C, wmOperator *op)
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1061,7 +1067,8 @@ static wmOperatorStatus sequencer_lock_exec(bContext *C, wmOperator * /*op*/)
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1098,7 +1105,8 @@ static wmOperatorStatus sequencer_unlock_exec(bContext *C, wmOperator * /*op*/)
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1221,7 +1229,8 @@ static wmOperatorStatus sequencer_reload_exec(bContext *C, wmOperator *op)
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1273,7 +1282,8 @@ static wmOperatorStatus sequencer_refresh_all_exec(bContext *C, wmOperator * /*o
   blender::seq::media_presence_free(scene);
   seq::cache_cleanup(scene);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1386,7 +1396,8 @@ static wmOperatorStatus sequencer_reassign_inputs_exec(bContext *C, wmOperator *
   seq::relations_invalidate_cache(scene, active_strip);
   seq::offset_animdata(scene, active_strip, (active_strip->start - old_start));
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1434,7 +1445,8 @@ static wmOperatorStatus sequencer_swap_inputs_exec(bContext *C, wmOperator *op)
   active_strip->input2 = strip;
 
   seq::relations_invalidate_cache(scene, active_strip);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+        C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1496,7 +1508,7 @@ static int sequence_split_side_for_exec_get(wmOperator *op)
   /* The mouse position can not be resolved from the exec() as the mouse coordinate is not
    * accessible. So fall-back to the RIGHT side instead.
    *
-   * The SEQ_SIDE_MOUSE is used by the Strip menu, together with the EXEC_DEFAULT operator
+   * The seq::SIDE_MOUSE is used by the Strip menu, together with the EXEC_DEFAULT operator
    * context in order to have properly resolved shortcut in the menu. */
   if (split_side == seq::SIDE_MOUSE) {
     return seq::SIDE_RIGHT;
@@ -1583,7 +1595,8 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
     }
   }
   if (changed) {
-    WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+    WM_event_add_notifier(
+        C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
     return OPERATOR_FINISHED;
   }
 
@@ -1641,6 +1654,29 @@ static void sequencer_split_ui(bContext * /*C*/, wmOperator *op)
   }
 }
 
+/*bfa - tool name*/
+static std::string SEQUENCER_OT_split_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "type") == seq::SPLIT_HARD) {
+    return CTX_IFACE_(ot->translation_context, "Hold Split");
+  }
+  return "";
+}
+
+/*bfa - descriptions*/
+static std::string SEQUENCER_OT_split_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "type") == seq::SPLIT_HARD) {
+    return "Split the selected strips in two\nBut you cannot drag the endpoints to show the "
+           "frames "
+           "past the split of each resulting strip";
+  }
+  return "";
+}
+
 void SEQUENCER_OT_split(wmOperatorType *ot)
 {
   /* Identifiers. */
@@ -1651,6 +1687,8 @@ void SEQUENCER_OT_split(wmOperatorType *ot)
   /* API callbacks. */
   ot->invoke = sequencer_split_invoke;
   ot->exec = sequencer_split_exec;
+  ot->get_name = SEQUENCER_OT_split_get_name;               /*bfa - tool name*/
+  ot->get_description = SEQUENCER_OT_split_get_description; /*bfa - descriptions*/
   ot->poll = sequencer_edit_poll;
   ot->ui = sequencer_split_ui;
 
@@ -1789,7 +1827,7 @@ static wmOperatorStatus sequencer_add_duplicate_exec(bContext *C, wmOperator * /
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
   DEG_relations_tag_update(CTX_data_main(C));
-  sequencer_select_do_updates(C, scene);
+  sequencer_select_do_updates(C, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
   return OPERATOR_FINISHED;
 }
 
@@ -1854,8 +1892,10 @@ static wmOperatorStatus sequencer_delete_exec(bContext *C, wmOperator *op)
     DEG_id_tag_update(&scene->adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
   }
   DEG_relations_tag_update(bmain);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
-  WM_event_add_notifier(C, NC_SCENE | ND_ANIMCHAN, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_ANIMCHAN, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
   return OPERATOR_FINISHED;
 }
 
@@ -1883,10 +1923,10 @@ void SEQUENCER_OT_delete(wmOperatorType *ot)
   /* Identifiers. */
   ot->name = "Delete Strips";
   ot->idname = "SEQUENCER_OT_delete";
-  ot->description = "Delete selected strips from the sequencer";
+  ot->description = "Delete selected strips from the sequencer"; /*BFA - updated tooltip*/
 
   /* API callbacks. */
-  ot->invoke = sequencer_delete_invoke;
+  /*ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
   ot->exec = sequencer_delete_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -1945,7 +1985,8 @@ static wmOperatorStatus sequencer_offset_clear_exec(bContext *C, wmOperator * /*
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2044,7 +2085,8 @@ static wmOperatorStatus sequencer_separate_images_exec(bContext *C, wmOperator *
   }
 
   seq::edit_remove_flagged_strips(scene, seqbase);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2106,7 +2148,8 @@ static wmOperatorStatus sequencer_meta_toggle_exec(bContext *C, wmOperator * /*o
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2190,7 +2233,8 @@ static wmOperatorStatus sequencer_meta_make_exec(bContext *C, wmOperator * /*op*
 
   seq::strip_lookup_invalidate(ed);
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2252,7 +2296,8 @@ static wmOperatorStatus sequencer_meta_separate_exec(bContext *C, wmOperator * /
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2487,11 +2532,40 @@ static wmOperatorStatus sequencer_swap_exec(bContext *C, wmOperator *op)
       }
     }
 
-    WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+    WM_event_add_notifier(
+        C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
     return OPERATOR_FINISHED;
   }
 
   return OPERATOR_CANCELLED;
+}
+
+/*bfa - tool name*/
+static std::string SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "side") == seq::SIDE_RIGHT) {
+    return CTX_IFACE_(ot->translation_context, "Swap Strip Right");
+  }
+  if (RNA_enum_get(ptr, "side") == seq::SIDE_LEFT) {
+    return CTX_IFACE_(ot->translation_context, "Swap Strip Left");
+  }
+  return "";
+}
+
+/*bfa - descriptions*/
+static std::string SEQUENCER_OT_swap_get_description(bContext * /*C*/,
+                                                     wmOperatorType * /*ot*/,
+                                                     PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "side") == seq::SIDE_RIGHT) {
+    return "Swap active strip with strip to the right";
+  }
+  /*Deselect*/
+  if (RNA_enum_get(ptr, "side") == seq::SIDE_LEFT) {
+    return "Swap active strip with strip to the left";
+  }
+  return "";
 }
 
 void SEQUENCER_OT_swap(wmOperatorType *ot)
@@ -2503,6 +2577,8 @@ void SEQUENCER_OT_swap(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = sequencer_swap_exec;
+  ot->get_name = SEQUENCER_OT_swap_get_name;               /*bfa - tool name*/
+  ot->get_description = SEQUENCER_OT_swap_get_description; /*bfa - descriptions*/
   ot->poll = sequencer_edit_poll;
 
   /* Flags. */
@@ -2672,7 +2748,8 @@ static wmOperatorStatus sequencer_swap_data_exec(bContext *C, wmOperator *op)
   seq::relations_invalidate_cache_raw(scene, strip_act);
   seq::relations_invalidate_cache_raw(scene, strip_other);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2699,23 +2776,23 @@ void SEQUENCER_OT_swap_data(wmOperatorType *ot)
  * \{ */
 
 const EnumPropertyItem sequencer_prop_effect_types[] = {
-    {STRIP_TYPE_CROSS, "CROSS", 0, "Crossfade", "Fade out of one video, fading into another"},
-    {STRIP_TYPE_ADD, "ADD", 0, "Add", "Add together color channels from two videos"},
-    {STRIP_TYPE_SUB, "SUBTRACT", 0, "Subtract", "Subtract one strip's color from another"},
-    {STRIP_TYPE_ALPHAOVER, "ALPHA_OVER", 0, "Alpha Over", "Blend alpha on top of another video"},
-    {STRIP_TYPE_ALPHAUNDER, "ALPHA_UNDER", 0, "Alpha Under", "Blend alpha below another video"},
-    {STRIP_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Crossfade", "Crossfade with color correction"},
-    {STRIP_TYPE_MUL, "MULTIPLY", 0, "Multiply", "Multiply color channels from two videos"},
-    {STRIP_TYPE_WIPE, "WIPE", 0, "Wipe", "Sweep a transition line across the frame"},
-    {STRIP_TYPE_GLOW, "GLOW", 0, "Glow", "Add blur and brightness to light areas"},
-    {STRIP_TYPE_TRANSFORM, "TRANSFORM", 0, "Transform", "Apply scale, rotation, or translation"},
-    {STRIP_TYPE_COLOR, "COLOR", 0, "Color", "Add a simple color strip"},
-    {STRIP_TYPE_SPEED, "SPEED", 0, "Speed", "Timewarp video strips, modifying playback speed"},
-    {STRIP_TYPE_MULTICAM, "MULTICAM", 0, "Multicam Selector", "Control active camera angles"},
-    {STRIP_TYPE_ADJUSTMENT, "ADJUSTMENT", 0, "Adjustment Layer", "Apply nondestructive effects"},
-    {STRIP_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", 0, "Gaussian Blur", "Soften details along axes"},
-    {STRIP_TYPE_TEXT, "TEXT", 0, "Text", "Add a simple text strip"},
-    {STRIP_TYPE_COLORMIX, "COLORMIX", 0, "Color Mix", "Combine two strips using blend modes"},
+    {STRIP_TYPE_CROSS, "CROSS", ICON_NODE_VECTOR, "Crossfade", "Crossfade effect strip type"},
+    {STRIP_TYPE_ADD, "ADD", ICON_SEQ_ADD, "Add", "Add effect strip type"},
+    {STRIP_TYPE_SUB, "SUBTRACT", ICON_NODE_INVERT, "Subtract", "Subtract effect strip type"},
+    {STRIP_TYPE_ALPHAOVER, "ALPHA_OVER", ICON_SEQ_ALPHA_OVER, "Alpha Over", "Alpha Over effect strip type"},
+    {STRIP_TYPE_ALPHAUNDER, "ALPHA_UNDER", ICON_NODE_HOLDOUTSHADER, "Alpha Under", "Alpha Under effect strip type"},
+    {STRIP_TYPE_GAMCROSS, "GAMMA_CROSS", ICON_NODE_VECTOR, "Gamma Cross", "Gamma Cross effect strip type"},
+    {STRIP_TYPE_MUL, "MULTIPLY", ICON_SEQ_MULTIPLY, "Multiply", "Multiply effect strip type"},
+    {STRIP_TYPE_WIPE, "WIPE", ICON_NODE_VECTOR_TRANSFORM, "Wipe", "Wipe effect strip type"},
+    {STRIP_TYPE_GLOW, "GLOW", ICON_LIGHT_SUN, "Glow", "Glow effect strip type"},
+    {STRIP_TYPE_TRANSFORM, "TRANSFORM", ICON_TRANSFORM_MOVE, "Transform", "Transform effect strip type"},
+    {STRIP_TYPE_COLOR, "COLOR", ICON_COLOR, "Color", "Color effect strip type"},
+    {STRIP_TYPE_SPEED, "SPEED", ICON_NODE_CURVE_TIME, "Speed", "Color effect strip type"},
+    {STRIP_TYPE_MULTICAM, "MULTICAM", ICON_SEQ_MULTICAM, "Multicam Selector", ""},
+    {STRIP_TYPE_ADJUSTMENT, "ADJUSTMENT", ICON_MOD_DISPLACE, "Adjustment Layer", ""},
+    {STRIP_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", ICON_NODE_BLUR, "Gaussian Blur", ""},
+    {STRIP_TYPE_TEXT, "TEXT", ICON_FONT_DATA, "Text", ""},
+    {STRIP_TYPE_COLORMIX, "COLORMIX", ICON_NODE_MIXRGB, "Color Mix", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2757,7 +2834,8 @@ static wmOperatorStatus sequencer_change_effect_type_exec(bContext *C, wmOperato
   sh.init(strip);
 
   seq::relations_invalidate_cache(scene, strip);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+        C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2882,7 +2960,8 @@ static wmOperatorStatus sequencer_change_path_exec(bContext *C, wmOperator *op)
   }
 
   seq::relations_invalidate_cache_raw(scene, strip);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2981,7 +3060,8 @@ static wmOperatorStatus sequencer_change_scene_exec(bContext *C, wmOperator *op)
   }
 
   WM_event_add_notifier(C, NC_SCENE | ND_SCENEBROWSE, scene);
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -3356,7 +3436,8 @@ static wmOperatorStatus sequencer_strip_transform_clear_exec(bContext *C, wmOper
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
   return OPERATOR_FINISHED;
 }
 
@@ -3389,9 +3470,17 @@ void SEQUENCER_OT_strip_transform_clear(wmOperatorType *ot)
  * \{ */
 
 static const EnumPropertyItem scale_fit_methods[] = {
-    {SEQ_SCALE_TO_FIT, "FIT", 0, "Scale to Fit", "Scale image so fits in preview"},
-    {SEQ_SCALE_TO_FILL, "FILL", 0, "Scale to Fill", "Scale image so it fills preview completely"},
-    {SEQ_STRETCH_TO_FILL, "STRETCH", 0, "Stretch to Fill", "Stretch image so it fills preview"},
+    {SEQ_SCALE_TO_FIT, "FIT", ICON_VIEW_FIT, "Scale to Fit", "Scale image so fits in preview"},
+    {SEQ_SCALE_TO_FILL,
+     "FILL",
+     ICON_VIEW_FILL,
+     "Scale to Fill",
+     "Scale image so it fills preview completely"},
+    {SEQ_STRETCH_TO_FILL,
+     "STRETCH",
+     ICON_VIEW_STRETCH,
+     "Stretch to Fill",
+     "Stretch image so it fills preview"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -3420,7 +3509,8 @@ static wmOperatorStatus sequencer_strip_transform_fit_exec(bContext *C, wmOperat
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
   return OPERATOR_FINISHED;
 }
 
@@ -3457,7 +3547,8 @@ static wmOperatorStatus sequencer_strip_color_tag_set_exec(bContext *C, wmOperat
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  WM_event_add_notifier(
+      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
   return OPERATOR_FINISHED;
 }
 
@@ -3557,6 +3648,50 @@ void SEQUENCER_OT_cursor_set(wmOperatorType *ot)
                        "Cursor location in normalized preview coordinates",
                        -10.0f,
                        10.0f);
+}
+/*BFA - Section is for the 3D Sequencer*/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Remove scence override operator
++ * \{ */
+
+static bool sequencer_remove_scene_override_poll(bContext *C)
+{
+  SpaceSeq *seq = CTX_wm_space_seq(C);
+  return (seq != NULL && seq->scene_override != NULL);
+}
+
+static wmOperatorStatus sequencer_remove_scene_override_exec(bContext *C, wmOperator *op)
+{
+  SpaceSeq *seq = CTX_wm_space_seq(C);
+
+  if (seq == NULL) {
+    BKE_report(op->reports, RPT_ERROR, "Incorrect context for removing scene override");
+    return OPERATOR_CANCELLED;
+  }
+
+  /* Remove scene override. */
+  seq->scene_override = NULL;
+
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, CTX_data_scene(C));
+
+  return OPERATOR_FINISHED;
+}
+
+void SEQUENCER_OT_remove_scene_override(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Remove Scene Override";
+  ot->idname = "SEQUENCER_OT_remove_scene_override";
+  ot->description = "Remove the scene override from the sequencer";
+
+  /* api callbacks */
+  ot->exec = sequencer_remove_scene_override_exec;
+  ot->poll = sequencer_remove_scene_override_poll;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 }
 
 /** \} */

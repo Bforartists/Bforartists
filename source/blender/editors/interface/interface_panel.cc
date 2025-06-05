@@ -570,6 +570,7 @@ static bool panel_custom_pin_to_last_get(const Panel *panel)
   return false;
 }
 
+/* bfa - we use the toggle itself to unpin */
 static void panel_custom_pin_to_last_set(const bContext *C, const Panel *panel, const bool value)
 {
   if (panel->type->pin_to_last_property[0] != '\0') {
@@ -1126,7 +1127,9 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
     GPU_blend(GPU_BLEND_ALPHA);
     UI_icon_draw_ex(widget_rect.xmin + size_y * 0.2f,
                     widget_rect.ymin + size_y * (UI_panel_is_closed(panel) ? 0.17f : 0.14f),
-                    UI_panel_is_closed(panel) ? ICON_RIGHTARROW : ICON_DOWNARROW_HLT,
+                    /*bfa - tri buttons, not right and down arrows*/
+                    UI_panel_is_closed(panel) ? ICON_DISCLOSURE_TRI_RIGHT :
+                                                ICON_DISCLOSURE_TRI_DOWN,
                     aspect * UI_INV_SCALE_FAC,
                     0.8f,
                     0.0f,
@@ -1170,7 +1173,8 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
     const float x = widget_rect.xmax - scaled_unit * 1.15;
     const float y = widget_rect.ymin + (header_height - (header_height * 0.7f)) * 0.5f;
     const bool is_pin = panel_custom_pin_to_last_get(panel);
-    const int icon = is_pin ? ICON_PINNED : ICON_GRIP;
+    /* bfa - we use the toggle itself to unpin, so draw no grip icon */
+    const int icon = is_pin ? ICON_NONE : ICON_GRIP;
     const float size = aspect * UI_INV_SCALE_FAC;
     const float alpha = is_pin ? 1.0f : 0.5f;
     UI_icon_draw_ex(x, y, icon, size, alpha, 0.0f, title_color, false, UI_NO_ICON_OVERLAY_TEXT);
@@ -1228,6 +1232,8 @@ static void panel_draw_aligned_backdrop(const ARegion *region,
   const bool is_open = !UI_panel_is_closed(panel);
   const bool is_subpanel = panel->type->parent != nullptr;
   const bool has_header = (panel->type->flag & PANEL_TYPE_NO_HEADER) == 0;
+  /*bfa - transparent background for the tool shelf panels*/
+  const float hide_bg = panel->type->flag & PANEL_HIDE_BG;
 
   if (is_subpanel && !is_open) {
     return;
@@ -1249,6 +1255,11 @@ static void panel_draw_aligned_backdrop(const ARegion *region,
     }
     else {
       UI_GetThemeColor4fv((is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK), panel_backcolor);
+    }
+
+    /* bfa - transparent background */
+    if (hide_bg) {
+      panel_backcolor[3] = 0.0f;
     }
 
     rctf box_rect;
@@ -2283,7 +2294,8 @@ static void ui_handle_panel_header(const bContext *C,
     const float drag_area_xmax = block->rect.xmax;
     if (IN_RANGE(mx, drag_area_xmin, drag_area_xmax)) {
       if (panel_custom_pin_to_last_get(panel)) {
-        panel_custom_pin_to_last_set(C, panel, false);
+        /* bfa - we use the toggle itself to unpin */
+        /* panel_custom_pin_to_last_set(C, panel, false); */
         return;
       }
       panel_activate_state(C, panel, PANEL_STATE_DRAG);

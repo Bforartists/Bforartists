@@ -50,8 +50,9 @@ enum eView2D_CommonViewTypes {
 /** Scroll bar area. */
 
 /* Maximum has to include outline which varies with line width. */
-#define V2D_SCROLL_HEIGHT ((0.45f * U.widget_unit) + (2.0f * U.pixelsize))
-#define V2D_SCROLL_WIDTH ((0.45f * U.widget_unit) + (2.0f * U.pixelsize))
+/* bfa - scrollbar width and height - changed from 0.45 to 0.55 */
+#define V2D_SCROLL_HEIGHT ((0.55f * U.widget_unit) + (2.0f * U.pixelsize))
+#define V2D_SCROLL_WIDTH ((0.55f * U.widget_unit) + (2.0f * U.pixelsize))
 
 /* Alpha of scroll-bar when at minimum size. */
 #define V2D_SCROLL_MIN_ALPHA (0.4f)

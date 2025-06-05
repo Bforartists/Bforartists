@@ -1956,6 +1956,9 @@ void uiLayout::prop(PointerRNA *ptr,
   bool use_prop_sep_split_label = use_prop_sep;
   bool use_split_empty_name = (flag & UI_ITEM_R_SPLIT_EMPTY_NAME);
 
+  /* bfa - whether label is added before expanded prop */
+  bool expand_label_added = false;
+
 #ifdef UI_PROP_DECORATE
   struct DecorateInfo {
     bool use_prop_decorate;
@@ -2121,22 +2124,49 @@ void uiLayout::prop(PointerRNA *ptr,
         /* Pass */
       }
       else if (ui_item_rna_is_expand(prop, index, flag)) {
-        fmt::memory_buffer name_with_suffix;
+      // fmt::memory_buffer name_with_suffix;
+        /* bfa - create a column so label could be added before */
+        uiLayout *col;
+        if (layout_row != nullptr) {
+          col = &layout_row->column(true);
+        } else {
+          col = &layout->column(true);
+        }
+
+        /* bfa - property label */
+        col->label(name, ICON_NONE);
+        expand_label_added = true;
+
+        /* bfa - replace split with row */
+        layout_split = &col->row(true);
+
+        /* bfa - indent */
+        layout_split->separator();
+        layout_split->separator();
+
+        /* bfa - XYZW column */
+        layout_sub = &layout_split->column(true);
+        /* bfa - set fixed size, otherwise space is wasted */
+        uiLayoutSetFixedSize(layout_sub, true);
+
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
           str[0] = RNA_property_array_item_char(prop, a);
-          const bool use_prefix = (a == 0 && !name.is_empty());
+          /*bfa -turned off code*/
+          /*onst bool use_prefix = (a == 0 && !name.is_empty());
           if (use_prefix) {
             fmt::format_to(fmt::appender(name_with_suffix), "{} {}", name, str[0]);
-          }
+          }*/
           but = uiDefBut(block,
                          UI_BTYPE_LABEL,
                          0,
-                         use_prefix ? StringRef(name_with_suffix.data(), name_with_suffix.size()) :
-                                      str,
+                         /* bfa - don't prefix X with prop name */
+                         // se_prefix ? StringRef(name_with_suffix.data(), name_with_suffix.size()) :
+                         str,
                          0,
                          0,
-                         w,
+                         /* bfa - suitable dynamic size for XYZW char */
+                         UI_UNIT_X * 75 / 100,
                          UI_UNIT_Y,
                          nullptr,
                          0.0,
@@ -2356,6 +2386,11 @@ void uiLayout::prop(PointerRNA *ptr,
     uiLayout *layout_col = &ui_decorate.layout->column(false);
     layout_col->space_ = 0;
     layout_col->emboss_ = blender::ui::EmbossType::None;
+
+    /* bfa - move decorators down to account for label */
+    if (expand_label_added) {
+      layout_col->label("", ICON_BLANK1);
+    }
 
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {

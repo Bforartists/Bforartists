@@ -853,6 +853,10 @@ function(get_blender_version)
   # - BLENDER_VERSION_PATCH
   # - BLENDER_VERSION_CYCLE (alpha, beta, rc, release)
 
+  # - BFORARTISTS_VERSION_MAJOR
+  # - BFORARTISTS_VERSION_MINOR
+  # - BFORARTISTS_VERSION_PATCH
+
   # So CMAKE depends on `BKE_blender_version.h`, beware of infinite-loops!
   configure_file(
     ${CMAKE_SOURCE_DIR}/source/blender/blenkernel/BKE_blender_version.h
@@ -898,6 +902,36 @@ function(get_blender_version)
   set(BLENDER_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
   set(BLENDER_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
   set(BLENDER_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
+
+# bfa
+  file(STRINGS ${CMAKE_SOURCE_DIR}/source/blender/blenkernel/BKE_blender_version.h _contents REGEX "^#define[ \t]+BFORARTISTS_.*$")
+
+  string(REGEX REPLACE ".*#define[ \t]+BFORARTISTS_VERSION[ \t]+([0-9]+).*" "\\1" _out_version "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+BFORARTISTS_VERSION_PATCH[ \t]+([0-9]+).*" "\\1" _out_version_patch "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+BFORARTISTS_VERSION_CYCLE[ \t]+([a-z]+).*" "\\1" _out_version_cycle "${_contents}")
+
+  if(NOT ${_out_version} MATCHES "[0-9]+")
+    message(FATAL_ERROR "Version parsing failed for BFORARTISTS_VERSION")
+  endif()
+
+  if(NOT ${_out_version_patch} MATCHES "[0-9]+")
+    message(FATAL_ERROR "Version parsing failed for BFORARTISTS_VERSION_PATCH")
+  endif()
+
+  if(NOT ${_out_version_cycle} MATCHES "[a-z]+")
+    message(FATAL_ERROR "Version parsing failed for BFORARTISTS_VERSION_CYCLE")
+  endif()
+
+  math(EXPR _out_version_major "${_out_version} / 10")
+  math(EXPR _out_version_minor "${_out_version} % 10")
+
+  # output vars
+  set(BFORARTISTS_VERSION "${_out_version_major}.${_out_version_minor}" PARENT_SCOPE)
+  set(BFORARTISTS_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
+  set(BFORARTISTS_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
+  set(BFORARTISTS_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
+  set(BFORARTISTS_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
+#end bfa
 
 endfunction()
 
@@ -1393,7 +1427,7 @@ macro(windows_install_shared_manifest)
     endif()
     install(
       FILES ${WINDOWS_INSTALL_FILES}
-      DESTINATION "blender.shared"
+      DESTINATION "bforartists.shared"
       CONFIGURATIONS ${WINDOWS_CONFIGURATIONS}
     )
   else()
@@ -1423,7 +1457,7 @@ macro(windows_generate_manifest)
     set(MANIFEST_LIBS "${MANIFEST_LIBS}    <file name=\"${filename}\"/>\n")
   endforeach()
   configure_file(
-    ${CMAKE_SOURCE_DIR}/release/windows/manifest/blender.manifest.in
+    ${CMAKE_SOURCE_DIR}/release/windows/manifest/Bforartists.manifest.in
     ${WINDOWS_MANIFEST_OUTPUT}
     @ONLY
   )
@@ -1433,24 +1467,24 @@ macro(windows_generate_shared_manifest)
   if(WINDOWS_SHARED_MANIFEST_DEBUG)
     windows_generate_manifest(
       FILES "${WINDOWS_SHARED_MANIFEST_DEBUG}"
-      OUTPUT "${CMAKE_BINARY_DIR}/Debug/blender.shared.manifest"
-      NAME "blender.shared"
+      OUTPUT "${CMAKE_BINARY_DIR}/Debug/bforartists.shared.manifest"
+      NAME "bforartists.shared"
     )
     install(
-      FILES ${CMAKE_BINARY_DIR}/Debug/blender.shared.manifest
-      DESTINATION "blender.shared"
+      FILES ${CMAKE_BINARY_DIR}/Debug/bforartists.shared.manifest
+      DESTINATION "bforartists.shared"
       CONFIGURATIONS Debug
     )
   endif()
   if(WINDOWS_SHARED_MANIFEST_RELEASE)
     windows_generate_manifest(
       FILES "${WINDOWS_SHARED_MANIFEST_RELEASE}"
-      OUTPUT "${CMAKE_BINARY_DIR}/Release/blender.shared.manifest"
-      NAME "blender.shared"
+      OUTPUT "${CMAKE_BINARY_DIR}/Release/bforartists.shared.manifest"
+      NAME "bforartists.shared"
     )
     install(
-      FILES ${CMAKE_BINARY_DIR}/Release/blender.shared.manifest
-      DESTINATION "blender.shared"
+      FILES ${CMAKE_BINARY_DIR}/Release/bforartists.shared.manifest
+      DESTINATION "bforartists.shared"
       CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
     )
   endif()

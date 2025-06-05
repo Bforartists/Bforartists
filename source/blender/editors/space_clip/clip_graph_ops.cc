@@ -497,6 +497,26 @@ static wmOperatorStatus graph_select_all_markers_exec(bContext *C, wmOperator *o
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string clip_ot_graph_select_all_markers_get_description(bContext * /*C*/,
+                                                                    wmOperatorType * /*ot*/,
+                                                                    PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Select all markers";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselects all markers";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Inverts the current marker selection";
+  }
+  return "";
+}
+
 void CLIP_OT_graph_select_all_markers(wmOperatorType *ot)
 {
   /* identifiers */
@@ -506,6 +526,7 @@ void CLIP_OT_graph_select_all_markers(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = graph_select_all_markers_exec;
+  ot->get_description = clip_ot_graph_select_all_markers_get_description; /*bfa - descriptions*/
   ot->poll = clip_graph_knots_poll;
 
   /* flags */

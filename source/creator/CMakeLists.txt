@@ -152,11 +152,12 @@ endif()
 
 # MSVC 2010 gives linking errors with the manifest.
 if(WIN32 AND NOT UNIX)
+  # BFA: modifed BLEN_VER_RC_STR to show patch version as well
   add_definitions(
-    -DBLEN_VER_RC_STR="${BLENDER_VERSION}"
-    -DBLEN_VER_RC_1=${BLENDER_VERSION_MAJOR}
-    -DBLEN_VER_RC_2=${BLENDER_VERSION_MINOR}
-    -DBLEN_VER_RC_3=${BLENDER_VERSION_PATCH}
+    -DBLEN_VER_RC_STR="${BFORARTISTS_VERSION}.${BFORARTISTS_VERSION_PATCH}"
+    -DBLEN_VER_RC_1=${BFORARTISTS_VERSION_MAJOR}
+    -DBLEN_VER_RC_2=${BFORARTISTS_VERSION_MINOR}
+    -DBLEN_VER_RC_3=${BFORARTISTS_VERSION_PATCH}
     -DBLEN_VER_RC_4=0
   )
 
@@ -166,7 +167,7 @@ if(WIN32 AND NOT UNIX)
 
   if(NOT WITH_WINDOWS_EXTERNAL_MANIFEST)
     list(APPEND SRC
-      ${CMAKE_BINARY_DIR}/blender.exe.manifest
+      ${CMAKE_BINARY_DIR}/bforartists.exe.manifest
     )
   endif()
 endif()
@@ -285,7 +286,7 @@ if(WITH_BUILDINFO)
   add_dependencies(buildinfoobj buildinfo)
 endif()
 
-add_cc_flags_custom_test(blender)
+add_cc_flags_custom_test(bforartists)
 
 # message(STATUS "Configuring blender")
 if(WITH_PYTHON_MODULE)
@@ -294,7 +295,7 @@ if(WITH_PYTHON_MODULE)
   # Creates `./bpy/__init__.so` which can be imported as a Python module.
   #
   # Note that 'SHARED' works on Linux and Windows, but not MACOS which _must_ be 'MODULE'.
-  add_library(blender MODULE ${SRC})
+  add_library(bforartists MODULE ${SRC})
 
 
   get_property(GENERATOR_IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -305,7 +306,7 @@ if(WITH_PYTHON_MODULE)
   endif()
 
   set_target_properties(
-    blender
+    bforartists
     PROPERTIES
       PREFIX ""
       OUTPUT_NAME __init__
@@ -315,7 +316,7 @@ if(WITH_PYTHON_MODULE)
   unset(BPY_OUTPUT_DIRECTORY)
 
   if(APPLE)
-    set_target_properties(blender PROPERTIES MACOSX_BUNDLE TRUE)
+    set_target_properties(bforartists PROPERTIES MACOSX_BUNDLE TRUE)
     if(WITH_BLENDER_THUMBNAILER)
       set_target_properties(blender-thumbnailer PROPERTIES MACOSX_BUNDLE TRUE)
     endif()
@@ -324,38 +325,38 @@ if(WITH_PYTHON_MODULE)
   if(WIN32)
     # Python modules use this.
     set_target_properties(
-      blender
+      bforartists
       PROPERTIES
       SUFFIX ".pyd"
     )
   endif()
 
 else()
-  add_executable(blender ${EXETYPE} ${SRC})
+  add_executable(bforartists ${EXETYPE} ${SRC})
   if(WITH_CPU_CHECK)
     # blender_cpu_check *NEEDS* to be linked first, there can be no exceptions
     # to this, this is to ensure this will be the first code to run once the
     # blender binary has been loaded by the OS.
-    target_link_libraries(blender PRIVATE blender_cpu_check)
+    target_link_libraries(bforartists PRIVATE blender_cpu_check)
   endif()
   if(WIN32)
-    add_executable(blender-launcher WIN32
+    add_executable(bforartists-launcher WIN32
       blender_launcher_win32.c
       ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.rc
     )
     if(NOT WITH_WINDOWS_EXTERNAL_MANIFEST)
-      target_sources(blender-launcher PRIVATE
-        ${CMAKE_BINARY_DIR}/blender.exe.manifest
+      target_sources(bforartists-launcher PRIVATE
+        ${CMAKE_BINARY_DIR}/bforartists.exe.manifest
       )
     endif()
-    target_compile_definitions(blender-launcher PRIVATE -D_UNICODE -DUNICODE)
-    target_link_libraries(blender-launcher Pathcch.lib)
+    target_compile_definitions(bforartists-launcher PRIVATE -D_UNICODE -DUNICODE)
+    target_link_libraries(bforartists-launcher Pathcch.lib)
   endif()
 endif()
 
 if(WITH_BUILDINFO)
   # Explicitly say that the executable depends on the `buildinfo`.
-  add_dependencies(blender buildinfo)
+  add_dependencies(bforartists buildinfo)
 endif()
 
 
@@ -392,8 +393,8 @@ if(UNIX AND NOT APPLE)
       set(TARGETDIR_TEXT ".")
       set(TARGETDIR_LIB "lib")
     else()
-      set(TARGETDIR_VER "share/blender/${BLENDER_VERSION}")
-      set(TARGETDIR_TEXT "share/doc/blender")
+      set(TARGETDIR_VER "share/bforartists/${BLENDER_VERSION}")
+      set(TARGETDIR_TEXT "share/doc/bforartists")
     endif()
   endif()
   set(TARGETDIR_SITE_PACKAGES "${TARGETDIR_VER}/python/lib/python${PYTHON_VERSION}/site-packages")
@@ -407,7 +408,7 @@ elseif(WIN32)
   else()
     set(TARGETDIR_VER "${BLENDER_VERSION}")
     set(TARGETDIR_TEXT ".")
-    set(TARGETDIR_LIB "blender.shared")
+    set(TARGETDIR_LIB "bforartists.shared")
     set(TARGETDIR_EXE ".")
   endif()
   set(TARGETDIR_SITE_PACKAGES "${TARGETDIR_VER}/python/lib/site-packages")
@@ -425,13 +426,13 @@ elseif(APPLE)
       set(TARGETDIR_LIB ${PYTHON_SITE_PACKAGES}/bpy/lib)
     endif()
   else()
-    set(TARGETDIR_VER "Blender.app/Contents/Resources/${BLENDER_VERSION}")
-    set(TARGETDIR_LIB "Blender.app/Contents/Resources/lib")
-    set(TARGETDIR_TEXT "Blender.app/Contents/Resources/text")
+    set(TARGETDIR_VER "Bforartists.app/Contents/Resources/${BLENDER_VERSION}")
+    set(TARGETDIR_LIB "Bforartists.app/Contents/Resources/lib")
+    set(TARGETDIR_TEXT "Bforartists.app/Contents/Resources/text")
   endif()
   set(TARGETDIR_SITE_PACKAGES "${TARGETDIR_VER}/python/lib/python${PYTHON_VERSION}/site-packages")
   # Skip re-linking on CPACK / install.
-  set_target_properties(blender PROPERTIES BUILD_WITH_INSTALL_RPATH true)
+  set_target_properties(bforartists PROPERTIES BUILD_WITH_INSTALL_RPATH true)
   if(WITH_BLENDER_THUMBNAILER)
     set_target_properties(blender-thumbnailer PROPERTIES BUILD_WITH_INSTALL_RPATH true)
   endif()
@@ -514,7 +515,7 @@ if(WITH_INTERNATIONAL)
     locales
     DEPENDS ${_all_mo_files}
   )
-  add_dependencies(blender locales)
+  add_dependencies(bforartists locales)
 
   # Generate INSTALL rules.
   install(
@@ -649,7 +650,7 @@ if(NOT ("${_install_cmd}" STREQUAL ""))
   # Message to display after building.
   get_filename_component(_install_dst ${TARGETDIR_VER} ABSOLUTE BASE_DIR ${CMAKE_INSTALL_PREFIX})
   add_custom_command(
-    TARGET blender POST_BUILD
+    TARGET bforartists POST_BUILD
     COMMAND
       ${CMAKE_COMMAND} -E echo
       "Run: \\\"${_install_cmd}\\\" to copy runtime files and scripts to: ${_install_dst}"
@@ -704,21 +705,21 @@ if(UNIX AND NOT APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
       install(
-        TARGETS blender
+        TARGETS bforartists
         DESTINATION ${TARGETDIR_BPY}
       )
     else()
       install(
-        TARGETS blender
+        TARGETS bforartists
         LIBRARY DESTINATION ${TARGETDIR_BPY}
       )
     endif()
 
     # none of the other files are needed currently
   elseif(WITH_INSTALL_PORTABLE)
-    set(BLENDER_BIN "blender")
+    set(BLENDER_BIN "bforartists")
     install(
-      TARGETS blender
+      TARGETS bforartists
       DESTINATION "."
     )
 
@@ -731,9 +732,9 @@ if(UNIX AND NOT APPLE)
 
     install(
       FILES
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/blender-symbolic.svg
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/bforartists.desktop
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/bforartists.svg
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/bforartists-symbolic.svg
       DESTINATION "."
     )
 
@@ -756,8 +757,8 @@ if(UNIX AND NOT APPLE)
 
       install(
         PROGRAMS
-        ${CMAKE_SOURCE_DIR}/release/bin/blender-launcher
-        ${CMAKE_SOURCE_DIR}/release/bin/blender-softwaregl
+        ${CMAKE_SOURCE_DIR}/release/bin/bforartists-launcher
+        ${CMAKE_SOURCE_DIR}/release/bin/bforartists-softwaregl
         DESTINATION "."
       )
 
@@ -779,26 +780,26 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/libglapi.so.0.0.0)\n
     endif()
   else()
     # main blender binary
-    set(BLENDER_BIN "bin/blender")
+    set(BLENDER_BIN "bin/bforartists")
     install(
-      TARGETS blender
+      TARGETS bforartists
       DESTINATION "./bin"
     )
     # Misc files.
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/bforartists.desktop
       DESTINATION "./share/applications"
     )
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/org.blender.Blender.metainfo.xml
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/de.bforartists.Bforartists.metainfo.xml
       DESTINATION "./share/metainfo"
     )
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/bforartists.svg
       DESTINATION "./share/icons/hicolor/scalable/apps"
     )
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/blender-symbolic.svg
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/bforartists-symbolic.svg
       DESTINATION "./share/icons/hicolor/symbolic/apps"
     )
     if(WITH_BLENDER_THUMBNAILER)
@@ -1002,13 +1003,13 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/libglapi.so.0.0.0)\n
 elseif(WIN32)
   if(WITH_WINDOWS_EXTERNAL_MANIFEST)
     install(
-      FILES ${CMAKE_BINARY_DIR}/blender.exe.manifest
+      FILES ${CMAKE_BINARY_DIR}/bforartists.exe.manifest
       DESTINATION "."
     )
     install(
-      FILES ${CMAKE_BINARY_DIR}/blender.exe.manifest
+      FILES ${CMAKE_BINARY_DIR}/bforartists.exe.manifest
       DESTINATION "."
-      RENAME blender-launcher.exe.manifest
+      RENAME bforartists-launcher.exe.manifest
     )
   endif()
   windows_install_shared_manifest(
@@ -1127,16 +1128,16 @@ elseif(WIN32)
       # `$<CONFIG>` will work in newer CMAKE but the version currently (3.12)
       # on the build-bot does not support this endeavor.
       install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/\${CMAKE_INSTALL_CONFIG_NAME}/blender_public.pdb
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/\${CMAKE_INSTALL_CONFIG_NAME}/bforartists_public.pdb
         DESTINATION "."
-        RENAME blender.pdb
+        RENAME bforartists.pdb
         CONFIGURATIONS Release
       )
     else()
       install(
-        FILES $<TARGET_PDB_FILE:blender>
+        FILES $<TARGET_PDB_FILE:bforartists>
         DESTINATION "."
-        RENAME blender.pdb
+        RENAME bforartists.pdb
         CONFIGURATIONS Release
       )
     endif()
@@ -1584,7 +1585,7 @@ elseif(WIN32)
 
   if(WITH_PYTHON_MODULE AND TARGETDIR_BPY)
     install(
-      TARGETS blender
+      TARGETS bforartists
       LIBRARY DESTINATION ${TARGETDIR_BPY}
     )
   endif()
@@ -1595,10 +1596,10 @@ elseif(WIN32)
 elseif(APPLE)
   if(NOT WITH_PYTHON_MODULE)
     # Uppercase name for app bundle.
-    set_target_properties(blender PROPERTIES OUTPUT_NAME Blender)
+    set_target_properties(bforartists PROPERTIES OUTPUT_NAME Bforartists)
   endif()
 
-  set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/Blender.app)
+  set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/Bforartists.app)
 
   # Setup `Info.plist`.
   execute_process(
@@ -1607,10 +1608,10 @@ elseif(APPLE)
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
-  set_target_properties(blender PROPERTIES
+  set_target_properties(bforartists PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${OSX_APP_SOURCEDIR}/Contents/Info.plist
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}"
-    MACOSX_BUNDLE_LONG_VERSION_STRING "${BLENDER_VERSION}.${BLENDER_VERSION_PATCH} ${BLENDER_DATE}"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${BFORARTISTS_VERSION}.${BFORARTISTS_VERSION_PATCH}"
+    MACOSX_BUNDLE_LONG_VERSION_STRING "${BFORARTISTS_VERSION}.${BFORARTISTS_VERSION_PATCH} ${BLENDER_DATE}"
   )
 
   if(WITH_BLENDER_THUMBNAILER)
@@ -1633,33 +1634,33 @@ elseif(APPLE)
   # Give the bundle actual creation/modification date.
   #
   # Note that the directory might not yet exist, which happens when CMAKE is first run.
-  if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/Blender.app)
-    file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/Blender.app)
+  if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/Bforartists.app)
+    file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/Bforartists.app)
   endif()
   execute_process(
-    COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE} ${EXECUTABLE_OUTPUT_PATH}/Blender.app
+    COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE} ${EXECUTABLE_OUTPUT_PATH}/Bforartists.app
   )
 
-  set(BLENDER_BIN "bin/blender")
+  set(BLENDER_BIN "bin/bforartists")
   install(
-    TARGETS blender
+    TARGETS bforartists
     DESTINATION "."
   )
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-    DESTINATION "Blender.app/Contents"
+    DESTINATION "Bforartists.app/Contents"
   )
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    "Blender.app/Contents"
+    "Bforartists.app/Contents"
   )
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
       TARGETS blender-thumbnailer
-      DESTINATION "./Blender.app/Contents/PlugIns"
+      DESTINATION "./Bforartists.app/Contents/PlugIns"
     )
   endif()
 
@@ -1703,7 +1704,7 @@ elseif(APPLE)
 
   if(WITH_PYTHON_MODULE AND TARGETDIR_BPY)
     install(
-      TARGETS blender
+      TARGETS bforartists
       LIBRARY DESTINATION ${TARGETDIR_BPY}
     )
   endif()
@@ -1718,7 +1719,7 @@ elseif(APPLE)
     unset(PYTHON_EXECUTABLE_NAME_ONLY)
     install(
       PROGRAMS ${CMAKE_BINARY_DIR}/release/darwin/scripts/blender-system-info.sh
-      DESTINATION "Blender.app/Contents/Resources"
+      DESTINATION "Bforartists.app/Contents/Resources"
     )
   endif()
 
@@ -1848,18 +1849,18 @@ endif()
 # -----------------------------------------------------------------------------
 # Setup link libraries
 
-add_dependencies(blender makesdna)
-target_link_libraries(blender PRIVATE ${LIB})
+add_dependencies(bforartists makesdna)
+target_link_libraries(bforartists PRIVATE ${LIB})
 unset(LIB)
 
-setup_platform_linker_flags(blender)
-setup_platform_linker_libs(blender)
+setup_platform_linker_flags(bforartists)
+setup_platform_linker_libs(bforartists)
 
 if(DEFINED PLATFORM_SYMBOLS_MAP)
-  set_target_properties(blender PROPERTIES LINK_DEPENDS ${PLATFORM_SYMBOLS_MAP})
+  set_target_properties(bforartists PROPERTIES LINK_DEPENDS ${PLATFORM_SYMBOLS_MAP})
 endif()
 
-blender_target_include_dirs(blender ${INC})
+blender_target_include_dirs(bforartists ${INC})
 
 # -----------------------------------------------------------------------------
 # USD registry.
@@ -1871,11 +1872,11 @@ if(WITH_USD)
   absolute_include_dirs(../blender/io/usd)
 endif()
 
-# Always install USD shared library and `datafiles` regardless if Blender
+# Always install USD shared library and `datafiles` regardless if Bforartists
 # itself uses them, the bundled Python module still needs it.
 if((DEFINED LIBDIR) AND TARGETDIR_LIB)
-  # On windows the USD library sits in `./blender.shared` copy the files
-  # relative to the location of the USD DLL, if the DLL does not exist
+  # On windows the usd library sits in ./bforartists.shared copy the files
+  # relative to the location of the USD dll, if the dll does not exist
   # assume we are linking against the static 3.5 lib.
   if(WITH_USD)
     if(WIN32 AND
@@ -1892,7 +1893,7 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
         ${LIBDIR}/usd/plugin/usd/hdStorm
         ${LIBDIR}/usd/plugin/usd/usdShaders
         ${LIBDIR}/usd/plugin/usd/hioOiio
-        DESTINATION "blender.shared/usd"
+        DESTINATION "bforartists.shared/usd"
       )
     elseif(USD_PYTHON_SUPPORT)
       install(DIRECTORY
@@ -1989,9 +1990,9 @@ endif()
 # `vcpkg` substitutes our libraries with theirs, which will cause issues when you run
 # these builds on other systems due to missing DLL's. So we opt out the use of `vcpkg`.
 if(WIN32)
-  set_target_properties(blender PROPERTIES VS_GLOBAL_VcpkgEnabled "false")
-  set_target_properties(blender PROPERTIES
-    PDB_NAME "blender_private"
+  set_target_properties(bforartists PROPERTIES VS_GLOBAL_VcpkgEnabled "false")
+  set_target_properties(bforartists PROPERTIES
+    PDB_NAME "bforartists_private"
     PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>"
   )
   # If compiling with clang-cl we skip PDBSTRIPPED.
@@ -2003,13 +2004,13 @@ if(WIN32)
     # generator expression in newer CMAKE (2.13+) but until that time this fill have suffice.
     if(CMAKE_BUILD_TYPE)
       set_property(
-        TARGET blender APPEND_STRING PROPERTY LINK_FLAGS_RELEASE
-        " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/blender_public.pdb"
+        TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS_RELEASE
+        " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bforartists_public.pdb"
       )
     else()
       set_property(
-        TARGET blender APPEND_STRING PROPERTY LINK_FLAGS_RELEASE
-        " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/blender_public.pdb"
+        TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS_RELEASE
+        " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bforartists_public.pdb"
       )
     endif()
   endif()
@@ -2019,23 +2020,23 @@ endif()
 # Setup launcher
 
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
-  set(BLENDER_BIN "blender.exe")
+  set(BLENDER_BIN "bforartists.exe")
   install(
-    TARGETS blender blender-launcher
-    COMPONENT Blender
+    TARGETS bforartists bforartists-launcher
+    COMPONENT Bforartists
     DESTINATION "."
   )
   if(WITH_CPU_CHECK)
     install(
       TARGETS blender_cpu_check
-      COMPONENT Blender
+      COMPONENT Bforartists
       DESTINATION "."
     )
   endif()
   set_target_properties(
-    blender
+    bforartists
     PROPERTIES
-      VS_USER_PROPS "blender.Cpp.user.props"
+      VS_USER_PROPS "bforartists.Cpp.user.props"
   )
 endif()
 
@@ -2086,7 +2087,7 @@ detect_leaks=0\"\n\
   )\n\
 endif()\n\
 "
-        DEPENDS blender
+        DEPENDS bforartists
       )
 
       if(WITH_INSTALL_PORTABLE)

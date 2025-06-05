@@ -448,7 +448,94 @@ static void rna_def_area(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_menus", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", HEADER_NO_PULLDOWN);
-  RNA_def_property_ui_text(prop, "Show Menus", "Show menus in the header");
+  RNA_def_property_ui_text(prop, "Show Menus", "Show Show menus in the header");
+
+  // bfa - show hide the editortype menu
+  prop = RNA_def_property(srna, "show_editortypemenu", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_NO_EDITORTYPEMENU);
+  RNA_def_property_ui_text(prop,
+                           "Show Editortype menu",
+                           "Shows or hides the Editortype menu to change the editor type");
+
+  // bfa - show hide the File toolbars
+  prop = RNA_def_property(srna, "file_toolbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_FILE);
+  RNA_def_property_ui_text(prop, "File Toolbars", "Shows or hides the File Toolbars");
+
+  // bfa - show hide the Meshedit toolbars
+  prop = RNA_def_property(srna, "meshedit_toolbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_MESHEDIT);
+  RNA_def_property_ui_text(prop, "Mesh Edit Toolbars", "Shows or hides the Mesh Edit Toolbars");
+
+  // bfa - show hide the Primitives toolbars
+  prop = RNA_def_property(srna, "primitives_toolbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_PRIMITIVES);
+  RNA_def_property_ui_text(prop, "Primitives Toolbars", "Shows or hides the Primitives Toolbars");
+
+  // bfa - show hide the Image toolbars
+  prop = RNA_def_property(srna, "image_toolbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_IMAGE);
+  RNA_def_property_ui_text(prop, "Image Toolbars", "Shows or hides the Image Toolbars");
+
+  // bfa - show hide the Tools toolbars
+  prop = RNA_def_property(srna, "tools_toolbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_TOOLS);
+  RNA_def_property_ui_text(prop, "Tools Toolbars", "Shows or hides the Tools Toolbars");
+
+  // bfa - show hide the Animation toolbars
+  prop = RNA_def_property(srna, "animation_toolbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_ANIMATION);
+  RNA_def_property_ui_text(prop, "Animation Toolbars", "Shows or hides the Animation Toolbars");
+
+  // bfa - show hide the Edit toolbars
+  prop = RNA_def_property(srna, "edit_toolbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_EDIT);
+  RNA_def_property_ui_text(prop, "Edit Toolbars", "Shows or hides the Edit Toolbars");
+
+  // bfa - show hide the Misc toolbars
+  prop = RNA_def_property(srna, "misc_toolbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_MISC);
+  RNA_def_property_ui_text(prop, "Misc Toolbars", "Shows or hides the Misc Toolbars");
+
+    // bfa - show hide the File topbars
+  prop = RNA_def_property(srna, "file_topbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_FILE);
+  RNA_def_property_ui_text(prop, "File Topbars", "Shows or hides the File Topbars");
+
+  // bfa - show hide the Meshedit topbars
+  prop = RNA_def_property(srna, "meshedit_topbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_MESHEDIT);
+  RNA_def_property_ui_text(prop, "Mesh Edit Topbars", "Shows or hides the Mesh Edit Topbars");
+
+  // bfa - show hide the Primitives topbars
+  prop = RNA_def_property(srna, "primitives_topbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_PRIMITIVES);
+  RNA_def_property_ui_text(prop, "Primitives Topbars", "Shows or hides the Primitives Topbars");
+
+  // bfa - show hide the Image topbars
+  prop = RNA_def_property(srna, "image_topbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_IMAGE);
+  RNA_def_property_ui_text(prop, "Image Topbars", "Shows or hides the Image Topbars");
+
+  // bfa - show hide the Tools topbars
+  prop = RNA_def_property(srna, "tools_topbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_TOOLS);
+  RNA_def_property_ui_text(prop, "Tools Topbars", "Shows or hides the Tools Topbars");
+
+  // bfa - show hide the Animation topbars
+  prop = RNA_def_property(srna, "animation_topbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_ANIMATION);
+  RNA_def_property_ui_text(prop, "Animation Topbars", "Shows or hides the Animation Topbars");
+
+  // bfa - show hide the Edit topbars
+  prop = RNA_def_property(srna, "edit_topbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_EDIT);
+  RNA_def_property_ui_text(prop, "Edit Topbars", "Shows or hides the Edit Topbars");
+
+  // bfa - show hide the Misc topbars
+  prop = RNA_def_property(srna, "misc_topbars", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_MISC);
+  RNA_def_property_ui_text(prop, "Misc Topbars", "Shows or hides the Misc Topbars");
 
   /* Note on space type use of #SPACE_EMPTY, this is not visible to the user,
    * and script authors should be able to assign this value, however the value may be set
@@ -682,7 +769,7 @@ static void rna_def_screen(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "Screen", "ID");
   RNA_def_struct_sdna(srna, "Screen"); /* Actually #bScreen but for 2.5 the DNA is patched! */
   RNA_def_struct_ui_text(
-      srna, "Screen", "Screen data-block, defining the layout of areas in a window");
+      srna, "Screen", "Screen data, defining the layout of areas in a window");
   RNA_def_struct_ui_icon(srna, ICON_WORKSPACE);
 
   /* collections */
@@ -713,11 +800,17 @@ static void rna_def_screen(BlenderRNA *brna)
   RNA_def_property_boolean_funcs(prop, "rna_Screen_fullscreen_get", nullptr);
   RNA_def_property_ui_text(prop, "Maximize", "An area is maximized, filling this screen");
 
+   /* BFA Top Bar. */
+  prop = RNA_def_property(srna, "show_bfa_topbar", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SCREEN_BFA_TOP_BAR);
+  RNA_def_property_ui_text(prop, "Show Topbar Toolbar", "Show/Hide the customizable Top Bar Toolbar");
+  RNA_def_property_update(prop, 0, "rna_Screen_bar_update");
+
   /* Status Bar. */
 
   prop = RNA_def_property(srna, "show_statusbar", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SCREEN_COLLAPSE_STATUSBAR);
-  RNA_def_property_ui_text(prop, "Show Status Bar", "Show status bar");
+  RNA_def_property_ui_text(prop, "Show Statusbar", "Show status bar");
   RNA_def_property_update(prop, 0, "rna_Screen_bar_update");
 
   func = RNA_def_function(srna, "statusbar_info", "rna_Screen_statusbar_info_get");

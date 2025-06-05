@@ -165,6 +165,26 @@ static wmOperatorStatus nlaedit_deselectall_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static std::string nla_ot_select_all_get_description(bContext * /*C*/,
+                                                     wmOperatorType * /*ot*/,
+                                                     PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return "Toggle selection of all keyframes";
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return "Deselect all keyframes";
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return "Invert selection of the selected keyframes";
+  }
+  return "";
+}
+
 void NLA_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -174,6 +194,7 @@ void NLA_OT_select_all(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = nlaedit_deselectall_exec;
+  ot->get_description = nla_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = nlaop_poll_tweakmode_off;
 
   /* flags */

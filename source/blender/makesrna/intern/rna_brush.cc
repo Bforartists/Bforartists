@@ -113,12 +113,14 @@ const EnumPropertyItem rna_enum_brush_automasking_flag_items[] = {
      "use_automasking_topology",
      0,
      "Topology",
-     "Affect only vertices connected to the active vertex under the brush"},
+     "Affect only vertices connected to the active vertex under the brush \nGlobal Auto Masking "
+     "from Header will override brush settings"},
     {BRUSH_AUTOMASKING_FACE_SETS,
      "use_automasking_face_sets",
      0,
      "Face Sets",
-     "Affect only vertices that share Face Sets with the active vertex"},
+     "Affect only vertices that share Face Sets with the active vertex \nGlobal Auto Masking from "
+     "Header will override brush settings"},
     {BRUSH_AUTOMASKING_BOUNDARY_EDGES,
      "use_automasking_boundary_edges",
      0,
@@ -128,17 +130,20 @@ const EnumPropertyItem rna_enum_brush_automasking_flag_items[] = {
      "use_automasking_boundary_face_sets",
      0,
      "Face Sets Boundary Automasking",
-     "Do not affect vertices that belong to a Face Set boundary"},
+     "Do not affect vertices that belong to a Face Set boundary \nGlobal Auto Masking from Header "
+     "will override brush settings"},
     {BRUSH_AUTOMASKING_CAVITY_NORMAL,
      "use_automasking_cavity",
      0,
      "Cavity Mask",
-     "Do not affect vertices on peaks, based on the surface curvature"},
+     "Do not affect vertices on peaks, based on the surface curvature \nGlobal Auto Masking from "
+     "Header will override brush settings"},
     {BRUSH_AUTOMASKING_CAVITY_INVERTED,
      "use_automasking_cavity_inverted",
      0,
      "Inverted Cavity Mask",
-     "Do not affect vertices within crevices, based on the surface curvature"},
+     "Do not affect vertices within crevices, based on the surface curvature \nGlobal Auto "
+     "Masking from Header will override brush settings"},
     {BRUSH_AUTOMASKING_CAVITY_USE_CURVE,
      "use_automasking_custom_cavity_curve",
      0,
@@ -655,6 +660,22 @@ static PointerRNA rna_Brush_capabilities_get(PointerRNA *ptr)
   return RNA_pointer_create_with_parent(*ptr, &RNA_BrushCapabilities, ptr->data);
 }
 
+static void rna_Brush_reset_icon(Brush *br)
+{
+  ID *id = &br->id;
+
+  if (br->flag & BRUSH_CUSTOM_ICON) {
+    return;
+  }
+
+  if (id->icon_id >= BIFICONID_LAST_STATIC) {
+    BKE_icon_id_delete(id);
+    BKE_previewimg_id_free(id);
+  }
+
+  id->icon_id = 0;
+}
+
 static void rna_Brush_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
 {
   Brush *br = static_cast<Brush *>(ptr->data);
@@ -697,10 +718,35 @@ static void rna_Brush_size_update(Main *bmain, Scene *scene, PointerRNA *ptr)
   rna_Brush_update(bmain, scene, ptr);
 }
 
+static void rna_Brush_update_and_reset_icon(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+  Brush *br = static_cast<Brush *>(ptr->data);
+  rna_Brush_reset_icon(br);
+  rna_Brush_update(bmain, scene, ptr);
+}
+
 static void rna_Brush_stroke_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
   WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, scene);
   rna_Brush_update(bmain, scene, ptr);
+}
+
+static void rna_Brush_icon_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
+{
+  Brush *br = static_cast<Brush *>(ptr->data);
+
+  if (br->icon_imbuf) {
+    IMB_freeImBuf(br->icon_imbuf);
+    br->icon_imbuf = nullptr;
+  }
+
+  br->id.icon_id = 0;
+
+  if (br->flag & BRUSH_CUSTOM_ICON) {
+    BKE_icon_changed(BKE_icon_id_ensure(&br->id));
+  }
+
+  WM_main_add_notifier(NC_BRUSH | NA_EDITED, br);
 }
 
 static void rna_TextureSlot_brush_angle_update(bContext *C, PointerRNA *ptr)
@@ -1065,13 +1111,16 @@ static void rna_def_brush_texture_slot(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "BrushTextureSlot", "TextureSlot");
   RNA_def_struct_sdna(srna, "MTex");
-  RNA_def_struct_ui_text(
-      srna, "Brush Texture Slot", "Texture slot for textures in a Brush data-block");
+  RNA_def_struct_ui_text(srna, "Brush Texture Slot", "Texture slot for textures in a Brush data");
 
   prop = RNA_def_property(srna, "angle", PROP_FLOAT, PROP_ANGLE);
   RNA_def_property_float_sdna(prop, nullptr, "rot");
   RNA_def_property_range(prop, 0, M_PI * 2);
-  RNA_def_property_ui_text(prop, "Angle", "Brush texture rotation");
+  RNA_def_property_ui_text(
+      prop,
+      "Angle",
+      "Brush texture rotation\nTexture angle Hotkey in the default keymap: C\nTexture Mask "
+      "angle Hotkey in the default keymap: V");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, 0, "rna_TextureSlot_brush_angle_update");
 
@@ -1288,8 +1337,10 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "draw_strength");
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
-  RNA_def_property_ui_text(
-      prop, "Strength", "Color strength for new strokes (affect alpha factor of color)");
+  RNA_def_property_ui_text(prop,
+                           "Strength",
+                           "Color strength for new strokes (affect alpha factor of color)\nHotkey "
+                           "in the default keymap: C");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_GPENCIL);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_BrushGpencilSettings_update");
@@ -1816,7 +1867,11 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_settings_outline", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GP_BRUSH_OUTLINE_STROKE);
   RNA_def_property_boolean_default(prop, false);
-  RNA_def_property_ui_text(prop, "Outline", "Convert stroke to outline");
+  RNA_def_property_ui_text(
+      prop,
+      "Outline",
+      "Requires a active camera in the scene\nConvert stroke to perimeter"); /*BFA - more
+                                                                                explicit*/
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, 0, "rna_BrushGpencilSettings_update");
 
@@ -2435,7 +2490,7 @@ static void rna_def_brush(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Brush", "ID");
   RNA_def_struct_ui_text(
-      srna, "Brush", "Brush data-block for storing brush settings for painting and sculpting");
+      srna, "Brush", "Brush data for storing brush settings for painting and sculpting");
   RNA_def_struct_ui_icon(srna, ICON_BRUSH_DATA);
 
   prop = RNA_def_property(srna, "has_unsaved_changes", PROP_BOOLEAN, PROP_NONE);
@@ -2461,26 +2516,26 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, rna_enum_brush_sculpt_brush_type_items);
   RNA_def_property_ui_text(prop, "Brush Type", "");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_BRUSH);
-  RNA_def_property_update(prop, 0, "rna_Brush_update");
+  RNA_def_property_update(prop, 0, "rna_Brush_update_and_reset_icon");
 
   prop = RNA_def_property(srna, "vertex_tool", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "vertex_brush_type");
   RNA_def_property_enum_items(prop, rna_enum_brush_vertex_brush_type_items);
   RNA_def_property_ui_text(prop, "Brush Type", "");
-  RNA_def_property_update(prop, 0, "rna_Brush_update");
+  RNA_def_property_update(prop, 0, "rna_Brush_update_and_reset_icon");
 
   prop = RNA_def_property(srna, "weight_tool", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "weight_brush_type");
   RNA_def_property_enum_items(prop, rna_enum_brush_weight_brush_type_items);
   RNA_def_property_ui_text(prop, "Brush Type", "");
-  RNA_def_property_update(prop, 0, "rna_Brush_update");
+  RNA_def_property_update(prop, 0, "rna_Brush_update_and_reset_icon");
 
   prop = RNA_def_property(srna, "image_tool", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "image_brush_type");
   RNA_def_property_enum_items(prop, rna_enum_brush_image_brush_type_items);
   RNA_def_property_ui_text(prop, "Brush Type", "");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_BRUSH);
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, "rna_Brush_update");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, "rna_Brush_update_and_reset_icon");
 
   prop = RNA_def_property(srna, "gpencil_tool", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "gpencil_brush_type");
@@ -2656,7 +2711,8 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_int_funcs(prop, nullptr, "rna_Brush_set_size", nullptr);
   RNA_def_property_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS * 10);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 1, -1);
-  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush in pixels");
+  RNA_def_property_ui_text(
+      prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: X");
   RNA_def_property_update(prop, 0, "rna_Brush_size_update");
 
   prop = RNA_def_property(srna, "unprojected_radius", PROP_FLOAT, PROP_DISTANCE);
@@ -2799,7 +2855,8 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "smooth_stroke_radius", PROP_INT, PROP_PIXEL);
-  RNA_def_property_range(prop, 10, 200);
+  RNA_def_property_range(
+      prop, 1, 200); /*BFA - changed to 1 instead of 10, to make it more user accurate*/
   RNA_def_property_ui_text(
       prop, "Smooth Stroke Radius", "Minimum distance from last point before stroke continues");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
@@ -2831,15 +2888,20 @@ static void rna_def_brush(BlenderRNA *brna)
   prop = RNA_def_property(srna, "weight", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
-  RNA_def_property_ui_text(prop, "Weight", "Vertex weight when brush is applied");
+  RNA_def_property_ui_text(prop,
+                           "Weight",
+                           "Vertex weight when brush is applied\nHotkey in the "
+                           "default keymap: V");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "strength", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, nullptr, "alpha");
   RNA_def_property_range(prop, 0.0f, 10.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
-  RNA_def_property_ui_text(
-      prop, "Strength", "How powerful the effect of the brush is when applied");
+  RNA_def_property_ui_text(prop,
+                           "Strength",
+                           "How powerful the effect of the brush is when applied\nHotkey in the "
+                           "default keymap: C");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "flow", PROP_FLOAT, PROP_FACTOR);
@@ -3613,7 +3675,9 @@ static void rna_def_brush(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_frontface", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", BRUSH_FRONTFACE);
   RNA_def_property_ui_text(
-      prop, "Use Front-Face", "Brush only affects vertices that face the viewer");
+      prop,
+      "Use Front-Face",
+      "Brush only affects vertices that face the viewer. Projected falloff only");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "use_frontface_falloff", PROP_BOOLEAN, PROP_NONE);
@@ -3867,6 +3931,17 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "Subtract Color", "Color of cursor when subtracting");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
+
+  prop = RNA_def_property(srna, "use_custom_icon", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", BRUSH_CUSTOM_ICON);
+  RNA_def_property_ui_text(prop, "Custom Icon", "Set the brush icon from an image file");
+  RNA_def_property_update(prop, 0, "rna_Brush_icon_update");
+
+  prop = RNA_def_property(srna, "icon_filepath", PROP_STRING, PROP_FILEPATH);
+  RNA_def_property_flag(prop, PROP_PATH_SUPPORTS_BLEND_RELATIVE);
+  RNA_def_property_string_sdna(prop, nullptr, "icon_filepath");
+  RNA_def_property_ui_text(prop, "Brush Icon Filepath", "File path to brush icon");
+  RNA_def_property_update(prop, 0, "rna_Brush_icon_update");
 
   prop = RNA_def_property(srna, "brush_capabilities", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);

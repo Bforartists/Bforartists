@@ -589,7 +589,7 @@ static void arg_py_context_restore(bContext *C, BlendePyContextStore *c_py)
 
 static void print_version_full()
 {
-  printf("Blender %s\n", BKE_blender_version_string());
+  printf("Bforartists %s\n", BKE_bforartists_version_string());
 #  ifdef BUILD_DATE
   printf("\tbuild date: %s\n", build_date);
   printf("\tbuild time: %s\n", build_time);

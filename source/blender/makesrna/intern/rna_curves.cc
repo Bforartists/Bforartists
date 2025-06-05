@@ -20,32 +20,32 @@
 #include "WM_types.hh"
 
 const EnumPropertyItem rna_enum_curves_type_items[] = {
-    {CURVE_TYPE_CATMULL_ROM, "CATMULL_ROM", 0, "Catmull Rom", ""},
-    {CURVE_TYPE_POLY, "POLY", 0, "Poly", ""},
-    {CURVE_TYPE_BEZIER, "BEZIER", 0, "Bézier", ""},
-    {CURVE_TYPE_NURBS, "NURBS", 0, "NURBS", ""},
+    {CURVE_TYPE_CATMULL_ROM, "CATMULL_ROM", ICON_CURVE_DATA, "Catmull Rom", ""},
+    {CURVE_TYPE_POLY, "POLY", ICON_OUTLINER_DATA_MESH, "Poly", ""},
+    {CURVE_TYPE_BEZIER, "BEZIER", ICON_CURVE_DATA, "Bézier", ""},
+    {CURVE_TYPE_NURBS, "NURBS", ICON_CURVE_DATA, "NURBS", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 const EnumPropertyItem rna_enum_curves_handle_type_items[] = {
     {BEZIER_HANDLE_FREE,
      "FREE",
-     0,
+     ICON_HANDLE_FREE,
      "Free",
      "The handle can be moved anywhere, and doesn't influence the point's other handle"},
     {BEZIER_HANDLE_AUTO,
      "AUTO",
-     0,
+     ICON_HANDLE_AUTO,
      "Auto",
      "The location is automatically calculated to be smooth"},
     {BEZIER_HANDLE_VECTOR,
      "VECTOR",
-     0,
+     ICON_HANDLE_VECTOR,
      "Vector",
      "The location is calculated to point to the next/previous control point"},
     {BEZIER_HANDLE_ALIGN,
      "ALIGN",
-     0,
+     ICON_HANDLE_ALIGNED,
      "Align",
      "The location is constrained to point in the opposite direction as the other handle"},
     {0, nullptr, 0, nullptr, nullptr},
@@ -371,7 +371,7 @@ static void rna_def_curves_curve(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "CurveSlice", nullptr);
-  RNA_def_struct_ui_text(srna, "Curve Slice", "A single curve from a curves data-block");
+  RNA_def_struct_ui_text(srna, "Curve Slice", "A single curve from a curves data");
   RNA_def_struct_path_func(srna, "rna_CurveSlice_path");
 
   prop = RNA_def_property(srna, "points", PROP_COLLECTION, PROP_NONE);
@@ -411,8 +411,8 @@ static void rna_def_curves(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Curves", "ID");
-  RNA_def_struct_ui_text(srna, "Hair Curves", "Hair data-block for hair curves");
-  RNA_def_struct_ui_icon(srna, ICON_CURVES_DATA);
+  RNA_def_struct_ui_text(srna, "Hair Curves", "Hair data for hair curves");
+  RNA_def_struct_ui_icon(srna, ICON_CURVES);
 
   /* Point and Curve RNA API helpers. */
 
@@ -428,7 +428,7 @@ static void rna_def_curves(BlenderRNA *brna)
                                     nullptr,
                                     nullptr);
   RNA_def_property_struct_type(prop, "CurveSlice");
-  RNA_def_property_ui_text(prop, "Curves", "All curves in the data-block");
+  RNA_def_property_ui_text(prop, "Curves", "All curves in the data");
 
   prop = RNA_def_property(srna, "points", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_struct_type(prop, "CurvePoint");
