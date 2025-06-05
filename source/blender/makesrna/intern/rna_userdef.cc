@@ -6038,6 +6038,14 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
                            "Resolution used for Shader node previews (should be changed for "
                            "performance convenience)");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
+  
+  /*BFA - Toggle Viewer Auto-Positioning*/
+  prop = RNA_def_property(srna, "node_use_autoposition_viewer", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "uiflag", USER_NODE_AUTOPOSITION_VIEWER);
+  RNA_def_property_ui_text(prop,
+                           "Auto-Position Viewer Node",
+                           "Automatically reposition the viewer node near the selected socket "
+                           "when viewing data");
 
   /* cursor */
   prop = RNA_def_property(srna, "use_cursor_lock_adjust", PROP_BOOLEAN, PROP_NONE);

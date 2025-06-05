@@ -573,6 +573,9 @@ class USERPREF_PT_edit_node_editor(EditingPanel, CenterAlignMixIn, Panel):
         if edit.node_use_insert_offset:
             col.prop(edit, "node_margin", text="Auto-Offset Margin")
         col.prop(edit, "node_preview_resolution", text="Preview Resolution")
+        
+        col.use_property_split = False
+        col.prop(edit, "node_use_autoposition_viewer") # BFA - Toggle Viewer Auto-positioning
 
 
 class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):
