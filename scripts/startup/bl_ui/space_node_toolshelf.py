@@ -1461,6 +1461,122 @@ class NODES_PT_comp_add_mask(bpy.types.Panel):
             props.type = "CompositorNodeIDMask"
 
 
+#Compositor, Add tab, Texture Panel
+class NODES_PT_comp_add_texture(bpy.types.Panel):
+    bl_label = "Texture"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+            #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Brick Texture            ", icon = "NODE_BRICK")
+            props.use_transform = True
+            props.type = "ShaderNodeTexBrick"
+
+            props = col.operator("node.add_node", text=" Checker Texture       ", icon = "NODE_CHECKER")
+            props.use_transform = True
+            props.type = "ShaderNodeTexChecker"
+
+            props = col.operator("node.add_node", text=" Gabor Texture        ", icon = "GABOR_NOISE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexGabor"
+
+            props = col.operator("node.add_node", text=" Gradient Texture      ", icon = "NODE_GRADIENT")
+            props.use_transform = True
+            props.type = "ShaderNodeTexGradient"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Magic Texture         ", icon = "MAGIC_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexMagic"
+
+            props = col.operator("node.add_node", text=" Noise Texture         ", icon = "NOISE_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexNoise"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Voronoi Texture       ", icon = "VORONI_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexVoronoi"
+
+            props = col.operator("node.add_node", text=" Wave Texture          ", icon = "NODE_WAVES")
+            props.use_transform = True
+            props.type = "ShaderNodeTexWave"
+
+            props = col.operator("node.add_node", text = " White Noise             ", icon = "NODE_WHITE_NOISE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexWhiteNoise"
+
+
+        #### Icon Buttons
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_BRICK")
+            props.use_transform = True
+            props.type = "ShaderNodeTexBrick"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_CHECKER")
+            props.use_transform = True
+            props.type = "ShaderNodeTexChecker"
+
+            props = flow.operator("node.add_node", text="", icon = "GABOR_NOISE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexGabor"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
+            props.use_transform = True
+            props.type = "ShaderNodeTexGradient"
+
+            props = flow.operator("node.add_node", text = "", icon = "MAGIC_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexMagic"
+
+            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexNoise"
+
+            props = flow.operator("node.add_node", text = "", icon = "VORONI_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexVoronoi"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_WAVES")
+            props.use_transform = True
+            props.type = "ShaderNodeTexWave"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
+            props.use_transform = True
+            props.type = "ShaderNodeTexWhiteNoise"
+
+
 #Compositor, Add tab, Tracking Panel
 class NODES_PT_comp_add_tracking(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -1554,45 +1670,45 @@ class NODES_PT_comp_add_transform(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Rotate               ", icon = "TRANSFORM_ROTATE")
+            props = col.operator("node.add_node", text=" Rotate", icon = "TRANSFORM_ROTATE")
             props.use_transform = True
             props.type = "CompositorNodeRotate"
 
-            props = col.operator("node.add_node", text=" Scale                ", icon = "TRANSFORM_SCALE")
+            props = col.operator("node.add_node", text=" Scale", icon = "TRANSFORM_SCALE")
             props.use_transform = True
             props.type = "CompositorNodeScale"
 
-            props = col.operator("node.add_node", text=" Transform         ", icon = "NODE_TRANSFORM")
+            props = col.operator("node.add_node", text=" Transform", icon = "NODE_TRANSFORM")
             props.use_transform = True
             props.type = "CompositorNodeTransform"
 
-            props = col.operator("node.add_node", text=" Translate          ", icon = "TRANSFORM_MOVE")
+            props = col.operator("node.add_node", text=" Translate", icon = "TRANSFORM_MOVE")
             props.use_transform = True
             props.type = "CompositorNodeTranslate"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Corner Pin        ", icon = "NODE_CORNERPIN")
+            props = col.operator("node.add_node", text=" Corner Pin", icon = "NODE_CORNERPIN")
             props.use_transform = True
             props.type = "CompositorNodeCornerPin"
 
-            props = col.operator("node.add_node", text=" Crop                 ", icon = "NODE_CROP")
+            props = col.operator("node.add_node", text=" Crop", icon = "NODE_CROP")
             props.use_transform = True
             props.type = "CompositorNodeCrop"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Displace          ", icon = "MOD_DISPLACE")
+            props = col.operator("node.add_node", text=" Displace", icon = "MOD_DISPLACE")
             props.use_transform = True
             props.type = "CompositorNodeDisplace"
 
-            props = col.operator("node.add_node", text=" Flip                   ", icon = "FLIP")
+            props = col.operator("node.add_node", text=" Flip", icon = "FLIP")
             props.use_transform = True
             props.type = "CompositorNodeFlip"
 
-            props = col.operator("node.add_node", text=" Map UV            ", icon = "GROUP_UVS")
+            props = col.operator("node.add_node", text=" Map UV", icon = "GROUP_UVS")
             props.use_transform = True
             props.type = "CompositorNodeMapUV"
 
@@ -8112,6 +8228,7 @@ classes = (
     NODES_PT_comp_add_filter_blur,
     NODES_PT_comp_add_keying,
     NODES_PT_comp_add_mask,
+    NODES_PT_comp_add_texture,
     NODES_PT_comp_add_tracking,
     NODES_PT_comp_add_transform,
     NODES_PT_comp_add_utility,
