@@ -1771,7 +1771,7 @@ class CLIP_MT_view_annotations(Menu):
 
 
 class CLIP_MT_view_pie_menus(Menu):
-    bl_label = "Pie menus"
+    bl_label = "Pie Menus"
 
     def draw(self, _context):
         layout = self.layout

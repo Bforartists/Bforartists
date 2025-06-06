@@ -1691,7 +1691,7 @@ class VIEW3D_PT_meshtab_split(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("mesh.split", text="Selection", icon = "SPLIT")
-            col.operator("mesh.edge_split", text="Faces by edges", icon = "SPLITEDGE").type = 'EDGE'
+            col.operator("mesh.edge_split", text="Faces by Edges", icon = "SPLITEDGE").type = 'EDGE'
             col.operator("mesh.edge_split", text="Faces/Edges by Vertices", icon = "SPLIT_BYVERTICES").type = 'VERT'
 
         # icon buttons
