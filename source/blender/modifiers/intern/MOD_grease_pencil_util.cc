@@ -187,9 +187,9 @@ void draw_custom_curve_settings(const bContext * /*C*/, uiLayout *layout, Pointe
   bool use_custom_curve = RNA_boolean_get(ptr, "use_custom_curve");
   uiLayout *row;
 
-  uiLayoutSetPropSep(layout, true);
   row = &layout->row(true);
-  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_custom_curve", UI_ITEM_NONE, IFACE_("Custom Curve"), ICON_NONE);
   if (use_custom_curve) {
     uiTemplateCurveMapping(layout, ptr, "custom_curve", 0, false, false, false, false);

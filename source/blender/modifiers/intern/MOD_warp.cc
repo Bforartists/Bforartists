@@ -340,7 +340,7 @@ static void deform_verts(ModifierData *md,
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa, added *row*/
+  uiLayout *col, *row; /*bfa - added *row */
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -366,14 +366,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     uiItemPointerR(col, ptr, "bone_to", &to_obj_data_ptr, "bones", IFACE_("Bone"), ICON_BONE_DATA);
   }
 
-  /*------------------- bfa - original props */
-  
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_volume_preserve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_volume_preserve", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   layout->prop(ptr, "strength", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 

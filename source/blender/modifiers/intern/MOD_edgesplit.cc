@@ -132,7 +132,6 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  // uiLayout *row, *sub;
   uiLayout *row, *col; /*bfa, added *col, removed *sub*/
   uiLayout *layout = panel->layout;
 
@@ -140,21 +139,17 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  /*------------------- bfa - original props */
-  // ------------------ bfa new left aligned prop with triangle button to hide the slider
 
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = &layout->split(0.385f, true);
 
-  /* FIRST PART ................................................ */
-  row = &split->row(false);
+  row = &split->row(false); /* bfa - our layout */
   uiLayoutSetPropDecorate(row, false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_angle", UI_ITEM_NONE, "Edge Angle", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_angle", 0); /*bfa - decorator*/
 
-  /* SECOND PART ................................................ */
-  row = &split->row(false);
+  row = &split->row(false); /* bfa - our layout */
   if (RNA_boolean_get(ptr, "use_edge_angle")) {
     row->prop(ptr, "split_angle", UI_ITEM_NONE, "", ICON_NONE);
   }
@@ -162,16 +157,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
 
-  // ------------------------------- end bfa
-
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &col->row(true);
+  col = &layout->column(true); /* bfa - our layout */
+  row = &col->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_sharp", 0); /*bfa - decorator*/
-
-  /* ------------ end bfa */
 
   modifier_error_message_draw(layout, ptr);
 }
