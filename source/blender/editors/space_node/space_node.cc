@@ -1252,7 +1252,7 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
     ID *owner_id = id; 
     ID *id_or = id;
     PointerRNA owner_ptr;
-    PropertyRNA *prop;
+    PropertyRNA *prop; // Unreferenced?
     if (!ELEM(nullptr, owner_id, id_or)) {
       id = ui_template_id_liboverride_hierarchy_make(
       C, CTX_data_main(C), owner_id, id_or, nullptr);
