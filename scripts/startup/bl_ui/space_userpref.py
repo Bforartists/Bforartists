@@ -308,7 +308,6 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
         flow.use_property_split = False
         flow.prop(system, "use_region_overlap")
         flow.prop(view, "show_navigate_ui")
-        flow.prop(view, "border_width")
 
         flow.use_property_split = True
         flow.prop(view, "border_width")
