@@ -251,6 +251,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row; /* bfa - added row */
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
@@ -259,13 +260,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "frame_start", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "frame_duration", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
-  uiLayout *row;
-  row = &layout->row(true);
+  row = &layout->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_reverse", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   modifier_error_message_draw(layout, ptr);
 }

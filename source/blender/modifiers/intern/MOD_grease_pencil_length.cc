@@ -271,7 +271,7 @@ static void modify_geometry_set(ModifierData *md,
 static void panel_draw(const bContext *C, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *row; /* bfa - added row */
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   uiLayoutSetPropSep(layout, true);
@@ -313,7 +313,11 @@ static void panel_draw(const bContext *C, Panel *panel)
     subcol->prop(ptr, "point_density", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     subcol->prop(ptr, "segment_influence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     subcol->prop(ptr, "max_angle", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    subcol->prop(ptr, "invert_curvature", UI_ITEM_NONE, IFACE_("Invert"), ICON_NONE);
+    row = &subcol->row(true); /* bfa - our layout */
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
+    row->prop(ptr, "invert_curvature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "invert_curvature", 0); /*bfa - decorator*/
   }
 
   if (uiLayout *influence_panel = layout->panel_prop(

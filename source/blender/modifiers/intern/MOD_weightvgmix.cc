@@ -443,7 +443,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-  uiLayout *row, *col; /*bfa, added *row, *col*/
+  uiLayout *row, *col; /* bfa - added *row, *col */
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -464,15 +464,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "mix_set", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
-  // layout->prop(ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   modifier_error_message_draw(layout, ptr);
 }

@@ -445,7 +445,11 @@ static void panel_draw(const bContext *C, Panel *panel)
     sub->prop(&ds_ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     sub->prop(&ds_ptr, "opacity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     sub->prop(&ds_ptr, "material_index", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    sub->prop(&ds_ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row = &sub->row(true); /* bfa - our layout */
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
+    row->prop(&ds_ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, &ds_ptr, "use_cyclic", 0); /*bfa - decorator*/
   }
 
   if (uiLayout *influence_panel = layout->panel_prop(

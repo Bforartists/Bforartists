@@ -300,17 +300,16 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "default_weight", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
 
-  // ------------------ bfa new left aligned prop with triangle button to hide the slider
-
+  /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = &layout->split(0.385f, true);
 
-  /* FIRST PART ................................................ */
+  /* bfa - our layout */
   row = &split->row(false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop( ptr, "use_add", UI_ITEM_NONE, IFACE_("Group Add"), ICON_NONE);
 
-  /* SECOND PART ................................................ */
+  /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_add")) {
     row->prop( ptr, "add_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
@@ -318,18 +317,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
-
-  // ------------------ bfa new left aligned prop with triangle button to hide the slider
-
   /* NOTE: split amount here needs to be synced with normal labels */
   split = &layout->split(0.385f, true);
 
-  /* FIRST PART ................................................ */
+  /* bfa - our layout */
   row = &split->row(false);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop( ptr, "use_remove", UI_ITEM_NONE, IFACE_("Group Remove"), ICON_NONE);
 
-  /* SECOND PART ................................................ */
+  /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_remove")) {
     row->prop( ptr, "remove_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
@@ -338,13 +334,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
 
-  /*------------------- bfa - original props */
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   modifier_error_message_draw(layout, ptr);
 }

@@ -268,7 +268,11 @@ static void panel_draw(const bContext *C, Panel *panel)
   sub->prop(ptr, "distance_end", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   layout->prop(ptr, "minimum_weight", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "use_multiply", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row = &layout->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_multiply", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_multiply", 0); /*bfa - decorator*/
 
   if (uiLayout *influence_panel = layout->panel_prop(
           C, ptr, "open_influence_panel", IFACE_("Influence")))

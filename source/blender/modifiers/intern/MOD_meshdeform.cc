@@ -505,7 +505,6 @@ void BKE_modifier_mdef_compact_influences(ModifierData *md)
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *col, *row; /*bfa, added *row*/
-
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -525,13 +524,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetEnabled(col, !is_bound);
   col->prop(ptr, "precision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &col->row(true);
+  col = &layout->column(true); /* bfa - our layout */
+  row = &col->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_dynamic_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_dynamic_bind", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   layout->op("OBJECT_OT_meshdeform_bind", is_bound ? IFACE_("Unbind") : IFACE_("Bind"), ICON_NONE);
 

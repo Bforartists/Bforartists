@@ -997,25 +997,24 @@ static void symmetry_panel_header_draw(const bContext * /*C*/, Panel *panel)
 static void symmetry_panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *col, *row; /* bfa - added col, row */
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayout *col = &layout->column(false);
+  col = &layout->column(false); /* bfa - our layout */
   uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_merge_vertices"));
   col->prop(ptr, "merge_threshold", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
 
-  uiLayout *row;
-  row = &col->row(true);
+  row = &col->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /* bfa - Indent */
   row->prop(ptr,
           "use_merge_vertices_cap",
           UI_ITEM_NONE,
           IFACE_("First and Last Copies"),
           ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_merge_vertices_cap", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
+  uiItemDecoratorR(row, ptr, "use_merge_vertices_cap", 0); /* bfa - Add the decorator */
 }
 
 static void uv_panel_draw(const bContext * /*C*/, Panel *panel)

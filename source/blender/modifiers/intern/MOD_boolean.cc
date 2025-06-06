@@ -641,6 +641,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *col, *row; /* bfa - added col,row */
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   const bool use_exact = RNA_enum_get(ptr, "solver") == eBooleanModifierSolver_Mesh_Arr;
@@ -648,29 +649,26 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayout *col = &layout->column(true);
+  col = &layout->column(true); /* bfa - our layout */
   if (use_exact) {
     col->prop(ptr, "material_mode", UI_ITEM_NONE, IFACE_("Materials"), ICON_NONE);
     /* When operand is collection, we always use_self. */
     if (RNA_enum_get(ptr, "operand_type") == eBooleanModifierFlag_Object) {
 
-      /*------------------- bfa - original prop */
-      uiLayout *row;
-      col = &layout->column(true);
-      row = &col->row(true);
+      col = &layout->column(true); /* bfa - our layout */
+      row = &col->row(true); /* bfa - our layout */
       uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-      layout->prop(ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      row->separator(); /*bfa - indent*/
+      row->prop(ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       uiItemDecoratorR(row, ptr, "use_self", 0); /*bfa - decorator*/
-      /* ------------ end bfa */
     }
-    /*------------------- bfa - original prop */
-    uiLayout *row;
-    col = &layout->column(true);
-    row = &col->row(true);
+
+    col = &layout->column(true); /* bfa - our layout */
+    row = &col->row(true); /* bfa - our layout */
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_hole_tolerant", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
   else if (use_manifold) {
     /* No options as of yet. */

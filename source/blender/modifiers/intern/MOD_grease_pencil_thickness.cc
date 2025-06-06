@@ -175,14 +175,22 @@ static void modify_geometry_set(ModifierData *md,
 static void panel_draw(const bContext *C, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *row; /* bfa - added row */
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   uiLayoutSetPropSep(layout, true);
 
-  layout->prop(ptr, "use_uniform_thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row = &layout->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_uniform_thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_uniform_thickness", 0); /*bfa - decorator*/
   if (RNA_boolean_get(ptr, "use_uniform_thickness")) {
-    layout->prop(ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row = &layout->row(true); /* bfa - our layout */
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
+    row->prop(ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "thickness", 0); /*bfa - decorator*/
   }
   else {
     const bool is_weighted = !RNA_boolean_get(ptr, "use_weight_factor");

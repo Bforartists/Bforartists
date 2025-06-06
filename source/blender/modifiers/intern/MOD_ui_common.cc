@@ -294,7 +294,6 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
   layout->separator();
 
   /* bfa - moved to top level header */
-  /* layout->prop(&ptr, "use_pin_to_last", UI_ITEM_NONE, std::nullopt, ICON_NONE);*/
 
   if (md->type == eModifierType_Nodes) {
     layout->separator();
@@ -310,7 +309,7 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 static void modifier_panel_header(const bContext *C, Panel *panel)
 {
   /* bfa - modifers apply button */
-  uiLayout *row, *sub, *name_row, *op_row;
+  uiLayout *row, *sub, *name_row;
   uiLayout *layout = panel->layout;
 
   /* Don't use #modifier_panel_get_property_pointers, we don't want to lock the header. */
@@ -424,9 +423,11 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
     buttons_number += 2;
   }
 
+  /* bfa - our layout */
+  row->separator();
+
   /* bfa - modifer apply button */
-  op_row = &layout->row(true);
-  op_row->op("OBJECT_OT_modifier_apply", "", ICON_CHECKMARK);
+  row->op("OBJECT_OT_modifier_apply", "", ICON_CHECKMARK);
   buttons_number++;
 
   /* bfa - modifier pin to last toggle button */
@@ -438,29 +439,28 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
           is_pinned ? ICON_PINNED : ICON_UNPINNED);
   buttons_number++;
 
-  /* Extra operators menu. */
-  row->menu_fn("", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
-
   /* Delete button. */
   if (modifier_can_delete(md) && !modifier_is_simulation(md)) {
-    sub = &row->row(false);
-    uiLayoutSetEmboss(sub, blender::ui::EmbossType::None);
-    sub->op("OBJECT_OT_modifier_remove", "", ICON_X);
+    uiLayoutSetEmboss(sub, blender::ui::EmbossType::Emboss); /* bfa - set as emboss */
+    row->op("OBJECT_OT_modifier_remove", "", ICON_X); /* bfa - row */
     buttons_number++;
   }
 
   /* Switch context buttons. */
   if (modifier_is_simulation(md) == 1) {
     uiItemStringO(
-        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PHYSICS"); /*BFA - op_row*/
+        row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PHYSICS"); /*BFA - row*/
     buttons_number++;
   }
   else if (modifier_is_simulation(md) == 2) {
     uiItemStringO(
-        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES"); /*BFA - op_row*/
+        row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES"); /*BFA - row*/
     buttons_number++;
   }
 
+  /* Extra operators menu. */
+  row->menu_fn("", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md); /* bfa - our layout */
+  
   bool display_name = (panel->sizex / UI_UNIT_X - buttons_number > 5) || (panel->sizex == 0);
   if (display_name) {
     name_row->prop(ptr, "name", UI_ITEM_NONE, "", ICON_NONE);
