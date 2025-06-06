@@ -1692,15 +1692,19 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Map Range       ", icon="NODE_MAP_RANGE")
             props.use_transform = True
-            props.type = "CompositorNodeMapRange"
-
-            props = col.operator("node.add_node", text=" Map Value       ", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "CompositorNodeMapValue"
+            props.type = "ShaderNodeMapRange"
 
             props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
             props.use_transform = True
-            props.type = "CompositorNodeMath"
+            props.type = "ShaderNodeMath"
+
+            props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
+
+            props = col.operator("node.add_node", text=" Float Curve      ", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -1716,21 +1720,24 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            if context.space_data.tree_type == 'CompositorNodeTree':
-                col = layout.column(align=True)
-                col.scale_y = 1.5
+            props = col.operator("node.add_node", text=" Split                 ", icon = "NODE_VIWERSPLIT")
+            props.use_transform = True
+            props.type = "CompositorNodeSplit"
 
-                props = col.operator("node.add_node", text=" Split                 ", icon = "NODE_VIWERSPLIT")
-                props.use_transform = True
-                props.type = "CompositorNodeSplit"
-
-                props = col.operator("node.add_node", text=" Switch              ", icon = "SWITCH_DIRECTION")
-                props.use_transform = True
-                props.type = "CompositorNodeSwitch"
+            props = col.operator("node.add_node", text=" Switch              ", icon = "SWITCH_DIRECTION")
+            props.use_transform = True
+            props.type = "CompositorNodeSwitch"
 
             props = col.operator("node.add_node", text=" Switch View    ", icon = "VIEW_SWITCHACTIVECAM")
             props.use_transform = True
             props.type = "CompositorNodeSwitchView"
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Relative to Pixel    ")
+            props.use_transform = True
+            props.type = "CompositorNodeRelativeToPixel"
 
 
         #### Icon Buttons
@@ -1741,17 +1748,21 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RANGE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "CompositorNodeMapRange"
 
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "CompositorNodeMapValue"
-
             props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
             props.use_transform = True
-            props.type = "CompositorNodeMath"
+            props.type = "ShaderNodeMath"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_CLAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
+
+            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
+            props.use_transform = True
+            props.type = "ShaderNodeFloatCurve"
 
             props = flow.operator("node.add_node", text = "", icon = "LEVELS")
             props.use_transform = True
@@ -1761,19 +1772,21 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeNormalize"
 
-            if context.space_data.tree_type == 'CompositorNodeTree':
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
+            props.use_transform = True
+            props.type = "CompositorNodeSplit"
 
-                props = flow.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
-                props.use_transform = True
-                props.type = "CompositorNodeSplit"
-
-                props = flow.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
-                props.use_transform = True
-                props.type = "CompositorNodeSwitch"
+            props = flow.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
+            props.use_transform = True
+            props.type = "CompositorNodeSwitch"
 
             props = flow.operator("node.add_node", text = "", icon = "VIEW_SWITCHACTIVECAM")
             props.use_transform = True
             props.type = "CompositorNodeSwitchView"
+
+            props = flow.operator("node.add_node", text = "")
+            props.use_transform = True
+            props.type = "CompositorNodeRelativeToPixel"
 
 
 #Compositor, Add tab, Vector Panel
@@ -1808,14 +1821,29 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Combine XYZ  ", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
-            props.type = "CompositorNodeCombineXYZ"
+            props.type = "ShaderNodeCombineXYZ"
 
             props = col.operator("node.add_node", text=" Separate XYZ  ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
-            props.type = "CompositorNodeSeparateXYZ"
+            props.type = "ShaderNodeSeparateXYZ"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORMATH")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorMath"
+
+            props = col.operator("node.add_node", text=" Vector Rotate   ", icon = "TRANSFORM_ROTATE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorRotate"
+
+            props = col.operator("node.add_node", text=" Mix Vector       ", icon = "NODE_MIX")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+            ops = props.settings.add()
+            ops.name = "data_type"
+            ops.value = "'VECTOR'"
 
             props = col.operator("node.add_node", text=" Normal            ", icon = "RECALC_NORMALS")
             props.use_transform = True
@@ -1823,7 +1851,7 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Vector Curves  ", icon = "NODE_VECTOR")
             props.use_transform = True
-            props.type = "CompositorNodeCurveVec"
+            props.type = "ShaderNodeVectorCurve"
 
         #### Icon Buttons
 
@@ -1835,11 +1863,26 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text="", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
-            props.type = "CompositorNodeCombineXYZ"
+            props.type = "ShaderNodeCombineXYZ"
 
             props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
-            props.type = "CompositorNodeSeparateXYZ"
+            props.type = "ShaderNodeSeparateXYZ"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_VECTORMATH")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorMath"
+
+            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_ROTATE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorRotate"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_MIX")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+            ops = props.settings.add()
+            ops.name = "data_type"
+            ops.value = "'VECTOR'"
 
             props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
             props.use_transform = True
@@ -1847,7 +1890,7 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
-            props.type = "CompositorNodeCurveVec"
+            props.type = "ShaderNodeVectorCurve"
 
 
 #Input nodes tab, textures common panel. Texture mode
