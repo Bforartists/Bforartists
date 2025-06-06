@@ -57,7 +57,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     bfa_topbar_types: EnumProperty(name='Topbar Types', description='', items=[
         ('Files', 'Files', 'Files Options', 0, 0),
-        ('Meshedit', 'Meshedit', 'Meshedit Options', 0, 1),
+        ('Mesh Edit', 'Mesh Edit', 'Mesh Edit Options', 0, 1),
         ('Primitives', 'Primitives', 'Primitives Options', 0, 2),
         ('Image', 'Image', '', 0, 3),
         ('Tools', 'Tools', '', 0, 4),
@@ -84,12 +84,12 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     topbar_file_export_common2 : BoolProperty(name="Export Common2", default=False, description = "Display the Export Common2 Topbar - Collada, BVH, 3DS\nAll Modes", )
     topbar_file_export_uncommon : BoolProperty(name="Export Uncommon", default=False, description = "Display the Export Uncommon Topbar - STL, PLY, WRL, SVG\nAll Modes", )
     topbar_file_render : BoolProperty(name="Render", default=True, description = "Display the Render Topbar\nAll Modes", )
-    topbar_file_render_opengl : BoolProperty(name="Render Open GL", default=False, description = "Display the Render Open GL Topbar\nAll Modes", )
+    topbar_file_render_opengl : BoolProperty(name="Render OpenGL", default=False, description = "Display the Render OpenGL Topbar\nAll Modes", )
     topbar_file_render_misc : BoolProperty(name="Render Misc", default=False, description = "Display the Render Misc Topbar\nAll Modes", )
 
 
-    # Meshedit Topbar
-    topbar_mesh_cbox: BoolProperty(name='Meshedit', default=True, description = "Display the Topbar Meshedit Operators\nAll Modes",)
+    # Mesh Edit Topbar
+    topbar_mesh_cbox: BoolProperty(name='Mesh Edit', default=True, description = "Display the Topbar Mesh Edit Operators\nAll Modes",)
     topbar_mesh_vertices_splitconnect : BoolProperty(name="Vertices Split Connect", default=True, description = "Display the the Mesh Edit Vertices Split / Connect\nMesh Object, Edit Mode", )
     topbar_mesh_vertices_misc : BoolProperty(name="Vertices Misc", default=False, description = "Display the the Mesh Edit Vertices Misc Topbar with misc tools\nMesh Object, Edit Mode", )
     topbar_mesh_edges_subdiv : BoolProperty(name="Edges Subdiv", default=False, description = "Display the the Mesh Edit Edges Subdiv Topbar\nMesh Object, Edit Mode", )
@@ -190,11 +190,11 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     file_export_common2 : BoolProperty(name="Export Common2", default=False, description = "Display the Export Common2 Toolbar - Collada, BVH, 3DS\nAll Modes", )
     file_export_uncommon : BoolProperty(name="Export Uncommon", default=False, description = "Display the Export Uncommon Toolbar - STL, PLY, WRL, SVG\nAll Modes", )
     file_render : BoolProperty(name="Render", default=True, description = "Display the Render Toolbar\nAll Modes", )
-    file_render_opengl : BoolProperty(name="Render Open GL", default=False, description = "Display the Render Open GL Toolbar\nAll Modes", )
+    file_render_opengl : BoolProperty(name="Render OpenGL", default=False, description = "Display the Render OpenGL Toolbar\nAll Modes", )
     file_render_misc : BoolProperty(name="Render Misc", default=False, description = "Display the Render Misc Toolbar\nAll Modes", )
 
 
-    # Meshedit Toolbar
+    # Mesh Edit Toolbar
     mesh_vertices_splitconnect : BoolProperty(name="Vertices Split Connect", default=True, description = "Display the the Mesh Edit Vertices Split / Connect\nMesh Object, Edit Mode", )
     mesh_vertices_misc : BoolProperty(name="Vertices Misc", default=False, description = "Display the the Mesh Edit Vertices Misc Toolbar with misc tools\nMesh Object, Edit Mode", )
     mesh_edges_subdiv : BoolProperty(name="Edges Subdiv", default=False, description = "Display the the Mesh Edit Edges Subdiv Toolbar\nMesh Object, Edit Mode", )
@@ -722,7 +722,7 @@ def bfa_reset_meshedit(layout_function,):
         prefs = bpy.context.preferences.addons[__name__].preferences
         reset = prefs.property_unset
 
-        # Topbar Meshedit Defaults #
+        # Topbar Mesh Edit Defaults #
         reset("topbar_mesh_cbox")
         reset("topbar_mesh_vertices_splitconnect")
         reset("topbar_mesh_vertices_misc")
@@ -882,16 +882,16 @@ class BFA_OT_reset_files(Operator):
 
 
 class BFA_OT_reset_meshedit(Operator):
-    """ Reset Topbar Meshedit To Defaults """
+    """ Reset Topbar Mesh Edit To Defaults """
     bl_idname = "bfa.reset_meshedit"
-    bl_label = "Meshedit"
+    bl_label = "Mesh Edit"
     bl_options = {"REGISTER"}
 
     def execute(self, context):
         layout = self.layout
         layout_function = layout
         bfa_reset_meshedit(layout_function,)
-        self.report({'INFO'}, message='Topbar Meshedit Set to Defaults')
+        self.report({'INFO'}, message='Topbar Mesh Edit Set to Defaults')
         return {'FINISHED'}
 
 

@@ -338,7 +338,7 @@ class GRAPH_MT_view(Menu):
 
 
 class GRAPH_MT_view_pie_menus(Menu):
-    bl_label = "Pie menus"
+    bl_label = "Pie Menus"
 
     def draw(self, _context):
         layout = self.layout

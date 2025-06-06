@@ -131,7 +131,7 @@ class TOOLBAR_PT_type(Panel):
         if not context.area.meshedit_toolbars:
             row.active_default = True
         row.separator()
-        row.operator("screen.header_toolbar_meshedit", text = "Meshedit")
+        row.operator("screen.header_toolbar_meshedit", text = "Mesh Edit")
 
         row = col.row()
         if not context.area.primitives_toolbars:

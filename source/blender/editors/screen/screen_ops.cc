@@ -5213,7 +5213,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
   layout->op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE);
 }
 
-// bfa - show hide the meshedit toolbar menus
+// bfa - show hide the mesh edit toolbar menus
 static wmOperatorStatus header_toolbar_meshedit_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
@@ -5228,9 +5228,9 @@ static wmOperatorStatus header_toolbar_meshedit_exec(bContext *C, wmOperator *)
 static void SCREEN_OT_header_toolbar_meshedit(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Toolbar Meshedit";
+  ot->name = "Toolbar Mesh Edit";
   ot->idname = "SCREEN_OT_header_toolbar_meshedit";
-  ot->description = "Show or Hide the Meshedit toolbars";
+  ot->description = "Show or Hide the Mesh Edit toolbars";
 
   /* api callbacks */
   ot->exec = header_toolbar_meshedit_exec;
@@ -5403,9 +5403,9 @@ static wmOperatorStatus header_toggle_editortypemenu_exec(bContext *C, wmOperato
 static void SCREEN_OT_header_toggle_editortypemenu(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Hide Editortype menu";
+  ot->name = "Hide Editor Type Menu";
   ot->idname = "SCREEN_OT_header_toggle_editortypemenu";
-  ot->description = "Shows or hides the Editortype menu to change the editor type";
+  ot->description = "Shows or hides the menu for changing the editor type";
 
   /* api callbacks */
   ot->exec = header_toggle_editortypemenu_exec;
@@ -5463,7 +5463,7 @@ static void SCREEN_OT_header_topbar_file(wmOperatorType *ot)
   ot->flag = 0;
 }
 
-// bfa - show hide the meshedit topbar menus
+// bfa - show hide the mesh edit topbar menus
 static wmOperatorStatus header_topbar_meshedit_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
@@ -5478,9 +5478,9 @@ static wmOperatorStatus header_topbar_meshedit_exec(bContext *C, wmOperator *)
 static void SCREEN_OT_header_topbar_meshedit(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Topbar Meshedit";
+  ot->name = "Topbar Mesh Edit";
   ot->idname = "SCREEN_OT_header_topbar_meshedit";
-  ot->description = "Show or Hide the Meshedit topbars";
+  ot->description = "Show or Hide the Mesh Edit topbars";
 
   /* api callbacks */
   ot->exec = header_topbar_meshedit_exec;
@@ -5668,7 +5668,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
     ED_screens_region_flip_menu_create(C, layout, nullptr);
     /* bfa - show hide the editortypemenu*/
     layout->op("SCREEN_OT_header_toggle_editortypemenu",
-               IFACE_("Hide Editortype menu"),
+               IFACE_("Hide Editor Type Menu"),
                (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
                WM_OP_INVOKE_DEFAULT,
                UI_ITEM_NONE);
@@ -5691,9 +5691,9 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void * 
              IFACE_("Toolbar File"),
              (area->flag & HEADER_TOOLBAR_FILE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT);
 
-  // bfa - show hide the Meshedit toolbar
+  // bfa - show hide the Mesh Edit toolbar
   layout->op("SCREEN_OT_header_toolbar_meshedit",
-             IFACE_("Toolbar Meshedit"),
+             IFACE_("Toolbar Mesh Edit"),
              (area->flag & HEADER_TOOLBAR_MESHEDIT) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT);
 
   // bfa - show hide the Primitives toolbar
@@ -5767,9 +5767,9 @@ void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void * /
              IFACE_("Topbar File"),
              (area->flag & HEADER_TOPBAR_FILE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT);
 
-  // bfa - show hide the Meshedit topbar
+  // bfa - show hide the Mesh Edit topbar
   layout->op("SCREEN_OT_header_topbar_meshedit",
-             IFACE_("Topbar Meshedit"),
+             IFACE_("Topbar Mesh Edit"),
              (area->flag & HEADER_TOPBAR_MESHEDIT) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT);
 
   // bfa - show hide the Primitives topbar
@@ -7359,7 +7359,7 @@ void ED_operatortypes_screen()
       SCREEN_OT_header_toggle_editortypemenu);            // bfa - show hide the editorsmenu
   WM_operatortype_append(SCREEN_OT_header_toolbar_file);  // bfa - show hide the file toolbar
   WM_operatortype_append(
-      SCREEN_OT_header_toolbar_meshedit);  // bfa - show hide the meshedit toolbar
+      SCREEN_OT_header_toolbar_meshedit);  // bfa - show hide the mesh edit toolbar
   WM_operatortype_append(
       SCREEN_OT_header_toolbar_primitives);  // bfa - show hide the primitives toolbar
   WM_operatortype_append(
@@ -7373,7 +7373,7 @@ void ED_operatortypes_screen()
   WM_operatortype_append(
       SCREEN_OT_toolbar_toolbox);  // bfa - toolbar types menu in the toolbar editor
   WM_operatortype_append(SCREEN_OT_header_topbar_file);      // bfa - show hide the file topbar
-  WM_operatortype_append(SCREEN_OT_header_topbar_meshedit);  // bfa - show hide the meshedit topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_meshedit);  // bfa - show hide the mesh edit topbar
   WM_operatortype_append(
       SCREEN_OT_header_topbar_primitives);                // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_image);  // bfa - show hide the primitives topbar

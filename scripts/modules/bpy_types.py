@@ -1310,7 +1310,7 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
         if not context.area.file_toolbars:
             cls.draw_menus(layout, context)
 
-    # bfa - show hide the meshedit toolbar
+    # bfa - show hide the mesh edit toolbar
     @classmethod
     def hide_meshedit_toolbar(cls, context, layout):
         if not context.area.meshedit_toolbars:
@@ -1362,7 +1362,7 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
         if context.area.file_topbars:
             cls.draw_menus(layout, context)
 
-    # bfa - show hide the meshedit topbar #
+    # bfa - show hide the mesh edit topbar #
     @classmethod
     def hide_meshedit_topbar(cls, context, layout):
         if context.area.meshedit_topbars:
