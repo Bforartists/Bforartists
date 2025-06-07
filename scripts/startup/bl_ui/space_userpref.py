@@ -308,9 +308,9 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
         flow.use_property_split = False
         flow.prop(system, "use_region_overlap")
         flow.prop(view, "show_navigate_ui")
-        flow.prop(view, "border_width")
 
         flow.use_property_split = True
+        flow.prop(view, "border_width")
         flow.prop(view, "color_picker_type")
         flow.row().prop(view, "header_align")
         flow.prop(view, "factor_display_type")
@@ -573,6 +573,9 @@ class USERPREF_PT_edit_node_editor(EditingPanel, CenterAlignMixIn, Panel):
         if edit.node_use_insert_offset:
             col.prop(edit, "node_margin", text="Auto-Offset Margin")
         col.prop(edit, "node_preview_resolution", text="Preview Resolution")
+        
+        col.use_property_split = False
+        col.prop(edit, "node_use_autoposition_viewer") # BFA - Toggle Viewer Auto-positioning
 
 
 class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):

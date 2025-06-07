@@ -1600,15 +1600,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout->column(false);
   uiLayoutSetEnabled(col, !is_bound);
   uiLayoutSetActive(col, !is_bound && RNA_string_length(ptr, "vertex_group") != 0);
-  /*------------------- bfa - original props */
 
+  /* bfa - our layout */
   row = &col->row(true);
   layout->separator();;
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_sparse_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  /* ------------ end bfa */
-
-  layout->separator();
 
   col = &layout->column(false);
   if (is_bound) {

@@ -540,9 +540,12 @@ static void panel_draw(const bContext *C, Panel *panel)
   uiLayoutSetActive(row, !use_fixed_offset);
   row->prop(ptr, "frame_scale", UI_ITEM_NONE, IFACE_("Scale"), ICON_NONE);
 
-  row = &layout->row(false);
+  row = &layout->row(true); /* bfa - our layout */
   uiLayoutSetActive(row, !use_fixed_offset);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_keep_loop", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_keep_loop", 0); /*bfa - decorator*/
 
   if (mode == MOD_GREASE_PENCIL_TIME_MODE_CHAIN) {
     row = &layout->row(false);

@@ -1424,9 +1424,9 @@ class CYCLES_PT_context_material(CyclesButtonsPanel, Panel):
 
             if ob.mode == 'EDIT':
                 row = layout.row(align=True)
-                row.operator("object.material_slot_assign", text="Assign")
-                row.operator("object.material_slot_select", text="Select")
-                row.operator("object.material_slot_deselect", text="Deselect")
+                row.operator("object.material_slot_assign", text="Assign", icon='CHECKMARK') # BFA - icon
+                row.operator("object.material_slot_select", text="Select", icon='RESTRICT_SELECT_OFF') # BFA - icon
+                row.operator("object.material_slot_deselect", text="Deselect", icon='RESTRICT_SELECT_ON') # BFA - icon
 
         row = layout.row()
 

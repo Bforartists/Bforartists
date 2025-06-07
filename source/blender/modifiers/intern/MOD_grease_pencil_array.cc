@@ -277,7 +277,7 @@ static void modify_geometry_set(ModifierData *md,
 static void panel_draw(const bContext *C, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *row; /* bfa - added row */
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
@@ -312,7 +312,11 @@ static void panel_draw(const bContext *C, Panel *panel)
     sub->prop(ptr, "random_offset", UI_ITEM_NONE, IFACE_("Offset"), ICON_NONE);
     sub->prop(ptr, "random_rotation", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
     sub->prop(ptr, "random_scale", UI_ITEM_NONE, IFACE_("Scale"), ICON_NONE);
-    sub->prop(ptr, "use_uniform_random_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row = &sub->row(true); /* bfa - our layout */
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
+    row->prop(ptr, "use_uniform_random_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_uniform_random_scale", 0); /*bfa - decorator*/
     sub->prop(ptr, "seed", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
