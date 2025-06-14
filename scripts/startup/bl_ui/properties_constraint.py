@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-from bpy.types import Panel, Menu, Operator
+from bpy.types import Panel, Menu, Operator # BFA
 from bpy.app.translations import contexts as i18n_contexts
-from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator
+from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator # BFA
 
 class ObjectConstraintPanel:
     bl_context = "constraint"
@@ -30,7 +30,7 @@ class OBJECT_PT_constraints(ObjectConstraintPanel, Panel):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("object.add_constraints_menu", icon='ADD')
+        layout.operator("object.add_constraints_menu", icon='ADD') 
 
         layout.template_constraints(use_bone_constraints=False)
 
@@ -632,6 +632,7 @@ class ConstraintButtonsPanel:
 
         self.target_template(layout, con)
 
+        # BFA        
         row = layout.row()
         row.use_property_split = False
         row.prop(con, "remove_target_shear")
@@ -653,7 +654,7 @@ class ConstraintButtonsPanel:
         target_row.active = not con.use_eval_time
         self.target_template(target_row, con)
 
-        ###########################################
+        # BFA ###########################################
 
         split = layout.split(factor = 0.38)
         col = split.column(align = True)
@@ -666,7 +667,7 @@ class ConstraintButtonsPanel:
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        ##########################################
+        # BFA ##########################################
 
         layout.prop(con, "mix_mode", text="Mix", text_ctxt=i18n_contexts.constraint)
 

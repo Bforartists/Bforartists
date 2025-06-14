@@ -7355,35 +7355,27 @@ void ED_operatortypes_screen()
   WM_operatortype_append(SCREEN_OT_region_toggle);
   WM_operatortype_append(SCREEN_OT_region_flip);
   WM_operatortype_append(SCREEN_OT_header_toggle_menus);
-  WM_operatortype_append(
-      SCREEN_OT_header_toggle_editortypemenu);            // bfa - show hide the editorsmenu
+  WM_operatortype_append(SCREEN_OT_header_toggle_editortypemenu); // bfa - show hide the editorsmenu
   WM_operatortype_append(SCREEN_OT_header_toolbar_file);  // bfa - show hide the file toolbar
-  WM_operatortype_append(
-      SCREEN_OT_header_toolbar_meshedit);  // bfa - show hide the meshedit toolbar
-  WM_operatortype_append(
-      SCREEN_OT_header_toolbar_primitives);  // bfa - show hide the primitives toolbar
-  WM_operatortype_append(
-      SCREEN_OT_header_toolbar_image);  // bfa - show hide the primitives toolbar
-  WM_operatortype_append(
-      SCREEN_OT_header_toolbar_tools);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_meshedit);  // bfa - show hide the meshedit toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_primitives);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_image);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_tools);  // bfa - show hide the primitives toolbar
   WM_operatortype_append(SCREEN_OT_header_toolbar_animation);  // bfa - show hide the primitives
                                                                // toolbarfSCREEN_OT_header_toolbox
   WM_operatortype_append(SCREEN_OT_header_toolbar_edit);  // bfa - show hide the primitives toolbar
   WM_operatortype_append(SCREEN_OT_header_toolbar_misc);  // bfa - show hide the primitives toolbar
-  WM_operatortype_append(
-      SCREEN_OT_toolbar_toolbox);  // bfa - toolbar types menu in the toolbar editor
+  WM_operatortype_append(SCREEN_OT_toolbar_toolbox);  // bfa - toolbar types menu in the toolbar editor
   WM_operatortype_append(SCREEN_OT_header_topbar_file);      // bfa - show hide the file topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_meshedit);  // bfa - show hide the meshedit topbar
-  WM_operatortype_append(
-      SCREEN_OT_header_topbar_primitives);                // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_primitives);                // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_image);  // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_tools);  // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_animation);  // bfa - show hide the primitives
                                                               // topbarfSCREEN_OT_header_toolbox
   WM_operatortype_append(SCREEN_OT_header_topbar_edit);  // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_misc);  // bfa - show hide the primitives topbar
-  WM_operatortype_append(
-      SCREEN_OT_topbar_toolbox);  // bfa - topbar types menu in the topbar editor
+  WM_operatortype_append(SCREEN_OT_topbar_toolbox);  // bfa - topbar types menu in the topbar editor
   WM_operatortype_append(SCREEN_OT_region_context_menu);
   WM_operatortype_append(SCREEN_OT_screen_set);
   WM_operatortype_append(SCREEN_OT_screen_full_area);

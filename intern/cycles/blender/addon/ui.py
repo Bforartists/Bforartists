@@ -215,7 +215,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
 class CYCLES_RENDER_PT_sampling_viewport(CyclesButtonsPanel, Panel):
     bl_label = "Viewport"
     bl_parent_id = "CYCLES_RENDER_PT_sampling"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'} # BFA
 
     def draw_header_preset(self, context):
         CYCLES_PT_viewport_sampling_presets.draw_panel_header(self.layout)
@@ -226,7 +226,7 @@ class CYCLES_RENDER_PT_sampling_viewport(CyclesButtonsPanel, Panel):
         scene = context.scene
         cscene = scene.cycles
 
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         split = layout.split(factor=0.425)
@@ -307,7 +307,7 @@ class CYCLES_RENDER_PT_sampling_render(CyclesButtonsPanel, Panel):
         scene = context.scene
         cscene = scene.cycles
 
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         split = layout.split(factor=0.425)
@@ -529,7 +529,6 @@ class CYCLES_RENDER_PT_sampling_lights(CyclesButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(cscene, "use_light_tree")
         sub = col.row()
-        sub.use_property_split = True #BFA
         sub.prop(cscene, "light_sampling_threshold", text="Light Threshold")
         sub.active = not cscene.use_light_tree
 
@@ -677,7 +676,7 @@ class CYCLES_RENDER_PT_light_paths_caustics(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.prop(cscene, "blur_glossy")
 
-		#col = layout.column(heading="Caustics", align=True) #BFA - redundant
+	#col = layout.column(heading="Caustics", align=True) #BFA - redundant
         col.use_property_split = False
         col.prop(cscene, "caustics_reflective")
         col.prop(cscene, "caustics_refractive")
@@ -932,7 +931,7 @@ class CYCLES_RENDER_PT_performance_acceleration_structure(CyclesButtonsPanel, Pa
         import _cycles
 
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -975,7 +974,7 @@ class CYCLES_RENDER_PT_performance_final_render(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        #layout.use_property_split = True
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -1010,7 +1009,7 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -1080,7 +1079,7 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -1142,8 +1141,6 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         layout.prop(view_layer, "pass_alpha_threshold")
 
 # bfa - move mist panel to viewlayers
-
-
 class CYCLES_RENDER_PT_passes_mist(CyclesButtonsPanel, Panel):
     bl_label = "Mist Pass"
     bl_context = "view_layer"
@@ -1178,7 +1175,7 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
     bl_label = "Light"
     bl_context = "view_layer"
     bl_parent_id = "CYCLES_RENDER_PT_passes"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'} # BFA
 
     def draw(self, context):
         layout = self.layout
@@ -1255,7 +1252,7 @@ class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, ViewLayerCryptomattePan
     bl_label = "Cryptomatte"
     bl_context = "view_layer"
     bl_parent_id = "CYCLES_RENDER_PT_passes"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'} # BFA
 
 
 class CYCLES_RENDER_PT_passes_aov(CyclesButtonsPanel, ViewLayerAOVPanelHelper, Panel):
@@ -1535,9 +1532,10 @@ class CYCLES_OBJECT_PT_shading_caustics(CyclesButtonsPanel, Panel):
         col.prop(cob, "is_caustics_caster")
         col.prop(cob, "is_caustics_receiver")
 
+
 class CYCLES_OBJECT_PT_lightgroup(CyclesButtonsPanel, Panel):
     bl_label = "Light Group"
-    bl_parent_id = "OBJECT_PT_lightoptions"
+    bl_parent_id = "OBJECT_PT_lightoptions" # BFA - moved to light options panel
     bl_context = "object"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1558,6 +1556,7 @@ class CYCLES_OBJECT_PT_lightgroup(CyclesButtonsPanel, Panel):
         sub = row.column(align=True)
         sub.enabled = bool(ob.lightgroup) and not any(lg.name == ob.lightgroup for lg in view_layer.lightgroups)
         sub.operator("scene.view_layer_add_lightgroup", icon='ADD', text="").name = ob.lightgroup
+
 
 class CYCLES_OBJECT_PT_visibility(CyclesButtonsPanel, Panel):
     bl_label = "Visibility"
@@ -1604,7 +1603,7 @@ class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
     bl_label = "Ray Visibility"
     bl_parent_id = "CYCLES_OBJECT_PT_visibility"
     bl_context = "object"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'} # BFA
 
     @classmethod
     def poll(cls, context):
@@ -1639,7 +1638,7 @@ class CYCLES_OBJECT_PT_visibility_culling(CyclesButtonsPanel, Panel):
     bl_label = "Culling"
     bl_parent_id = "CYCLES_OBJECT_PT_visibility"
     bl_context = "object"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'} # BFA
 
     @classmethod
     def poll(cls, context):
@@ -1918,6 +1917,8 @@ class CYCLES_WORLD_PT_volume(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+
+        layout.use_property_split = False
 
         world = context.world
         panel_node_draw(layout, world, 'OUTPUT_WORLD', 'Volume')

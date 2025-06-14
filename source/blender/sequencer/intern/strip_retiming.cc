@@ -148,7 +148,7 @@ void retiming_reset(Scene *scene, Strip *strip)
 
   retiming_data_clear(strip);
 
-  blender::Span<Strip *> effects = lookup_effects_by_strip(scene->ed, strip);
+  blender::Span<Strip *> effects = SEQ_lookup_effects_by_strip(scene->ed, strip);
   strip_time_update_effects_strip_range(scene, effects);
   time_update_meta_strip_range(scene, lookup_meta_by_strip(scene->ed, strip));
 
@@ -773,7 +773,7 @@ void retiming_key_timeline_frame_set(const Scene *scene,
     strip_retiming_key_offset(scene, strip, key, offset);
   }
 
-  blender::Span<Strip *> effects = lookup_effects_by_strip(scene->ed, strip);
+  blender::Span<Strip *> effects = SEQ_lookup_effects_by_strip(scene->ed, strip);
   strip_time_update_effects_strip_range(scene, effects);
   time_update_meta_strip_range(scene, lookup_meta_by_strip(scene->ed, strip));
 }

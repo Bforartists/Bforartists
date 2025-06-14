@@ -1794,6 +1794,7 @@ bool file_draw_check_exists(SpaceFile *sfile)
  * \{ */
 
 static const EnumPropertyItem file_external_operation[] = {
+    /* BFA - Added icons*/
     {FILE_EXTERNAL_OPERATION_OPEN, "OPEN", ICON_FILE, "Open", "Open the file"},
     {FILE_EXTERNAL_OPERATION_FOLDER_OPEN, "FOLDER_OPEN", ICON_FILE_FOLDER, "Open Folder", "Open the folder"},
     {FILE_EXTERNAL_OPERATION_EDIT, "EDIT", ICON_FILE, "Edit", "Edit the file"},
@@ -2846,7 +2847,7 @@ static bool can_create_dir_from_user_input(const char dir[FILE_MAX_LIBEXTRA])
    * in the would immediately be created (if possible) which isn't good, see: #128567.
    *
    * The reason to treat user input differently here is the user could input anything,
-   * Values such as a single space for e.g. this resolves to the current-working-directory:
+   * e.g. values such as a single space. This resolves to the current-working-directory:
    * `$PWD/ ` which is a valid path name and could be created
    * (this was in fact the behavior until v4.4).
    *

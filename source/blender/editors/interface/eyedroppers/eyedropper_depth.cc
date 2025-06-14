@@ -479,7 +479,7 @@ void UI_OT_eyedropper_depth(wmOperatorType *ot)
   ot->description =
       "Sample depth from the 3D view\nHotkey only tool with crazy design! This button is not "
       "clickable!\nYou need to be with the mouse over the Focus Distance slider\nThen press the "
-      "hotkey";
+      "hotkey"; /* BFA */
 
   /* API callbacks. */
   ot->invoke = depthdropper_invoke;

@@ -139,7 +139,7 @@ void ED_operatormacros_node()
 
   ot = WM_operatortype_append_macro("NODE_OT_select_link_viewer",
                                     "Link Viewer",
-                                    "Select node and link it to a viewer node. \nOnly works under mouse cursor",
+                                    "Select node and link it to a viewer node. \nOnly works under mouse cursor", /* BFA */
                                     OPTYPE_UNDO);
   mot = WM_operatortype_macro_define(ot, "NODE_OT_select");
   RNA_boolean_set(mot->ptr, "extend", false);
@@ -159,7 +159,7 @@ void ED_operatormacros_node()
 
   ot = WM_operatortype_append_macro("NODE_OT_translate_attach",
                                     "Move and Attach",
-                                    "Move and Attach\nMove nodes and attach to frame",
+                                    "Move nodes and attach to frame",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   mot = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
   WM_operatortype_macro_define(ot, "NODE_OT_attach");
@@ -167,7 +167,7 @@ void ED_operatormacros_node()
   /* `NODE_OT_translate_attach` with remove_on_cancel set to true. */
   ot = WM_operatortype_append_macro("NODE_OT_translate_attach_remove_on_cancel",
                                     "Move and Attach",
-                                    "Move and Attach\nMove nodes and attach to frame",
+                                    "Move nodes and attach to frame",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   mot = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
   RNA_boolean_set(mot->ptr, "remove_on_cancel", true);
@@ -180,7 +180,7 @@ void ED_operatormacros_node()
    */
   ot = WM_operatortype_append_macro("NODE_OT_detach_translate_attach",
                                     "Detach and Move",
-                                    "Detach and Move\nDetach nodes, move and attach to frame",
+                                    "Detach nodes, move and attach to frame",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "NODE_OT_detach");
   mot = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
@@ -221,7 +221,7 @@ void ED_operatormacros_node()
 
   ot = WM_operatortype_append_macro("NODE_OT_move_detach_links_release",
                                     "Detach",
-                                    "Detach\nMove a node to detach links",
+                                    "Move a node to detach links",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "NODE_OT_links_detach");
   WM_operatortype_macro_define(ot, "NODE_OT_translate_attach");

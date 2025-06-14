@@ -360,6 +360,30 @@ static void generate_specialization_constant_declarations(const shader::ShaderCr
   }
 }
 
+static void generate_compilation_constant_declarations(const shader::ShaderCreateInfo *info,
+                                                       std::stringstream &ss)
+{
+  for (const CompilationConstant &cc : info->compilation_constants_) {
+    std::string value;
+    std::string value_define;
+    switch (cc.type) {
+      case Type::uint_t:
+        value = std::to_string(cc.value.u);
+        break;
+      case Type::int_t:
+        value = std::to_string(cc.value.i);
+        break;
+      case Type::bool_t:
+        value = cc.value.u ? "true" : "false";
+        value_define = std::to_string(cc.value.u);
+        break;
+      default:
+        BLI_assert_unreachable();
+    }
+    ss << "constant " << cc.type << " " << cc.name << " = " << value << ";\n";
+  }
+}
+
 bool MTLShader::generate_msl_from_glsl(const shader::ShaderCreateInfo *info)
 {
   /* Verify if create-info is available.
@@ -500,6 +524,13 @@ bool MTLShader::generate_msl_from_glsl(const shader::ShaderCreateInfo *info)
   generate_specialization_constant_declarations(info, ss_vertex);
   generate_specialization_constant_declarations(info, ss_fragment);
 
+<<<<<<< HEAD
+=======
+  /* Generate compilation constants. */
+  generate_compilation_constant_declarations(info, ss_vertex);
+  generate_compilation_constant_declarations(info, ss_fragment);
+
+>>>>>>> 69091c50284f (Cycles: Show device optimizations status in preferences for oneAPI)
   /*** Generate VERTEX Stage ***/
   /* Conditional defines. */
   if (msl_iface.use_argument_buffer_for_samplers()) {
@@ -878,6 +909,10 @@ bool MTLShader::generate_msl_from_glsl_compute(const shader::ShaderCreateInfo *i
   }
 
   generate_specialization_constant_declarations(info, ss_compute);
+<<<<<<< HEAD
+=======
+  generate_compilation_constant_declarations(info, ss_compute);
+>>>>>>> 69091c50284f (Cycles: Show device optimizations status in preferences for oneAPI)
 
   /* Conditional defines. */
   if (msl_iface.use_argument_buffer_for_samplers()) {

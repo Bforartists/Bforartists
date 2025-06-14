@@ -137,6 +137,7 @@ const EnumPropertyItem *custom_libraries_rna_enum_itemf()
   int totitem = 0;
 
   rna_enum_add_custom_libraries(&item, &totitem);
+
   RNA_enum_item_end(&item, &totitem);
   return item;
 }

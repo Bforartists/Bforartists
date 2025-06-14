@@ -183,26 +183,6 @@ class DATA_PT_context_mesh(MeshButtonsPanel, Panel):
             layout.template_ID(space, "pin_id")
 
 
-class DATA_PT_normals_auto_smooth(MeshButtonsPanel, Panel):
-    bl_label = "Auto Smooth"
-    bl_parent_id = "DATA_PT_normals"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
-
-    def draw_header(self, context):
-        mesh = context.mesh
-
-        self.layout.prop(mesh, "use_auto_smooth", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        mesh = context.mesh
-
-        layout.active = mesh.use_auto_smooth and not mesh.has_custom_normals
-        layout.prop(mesh, "auto_smooth_angle", text="Angle")
-
-
 class DATA_PT_texture_space(MeshButtonsPanel, Panel):
     bl_label = "Texture Space"
     bl_options = {'DEFAULT_CLOSED'}
@@ -220,7 +200,7 @@ class DATA_PT_texture_space(MeshButtonsPanel, Panel):
 
         layout.prop(mesh, "texture_mesh")
 
-        row = layout.row()
+        row = layout.row() # BFA
         row.use_property_split = False
         row.prop(mesh, "use_auto_texspace")
         row.prop_decorator(mesh, "use_auto_texspace")
@@ -394,7 +374,7 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
                 row.prop(key, "eval_time")
         
         if ob.type == 'MESH':
-	        row = layout.row()
+	        row = layout.row() # BFA
 	        row.use_property_split = False
 	        row.prop(ob, "add_rest_position_attribute")
 	        row.prop_decorator(ob, "add_rest_position_attribute")
@@ -447,10 +427,10 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
         if mesh.remesh_mode == 'VOXEL':
             col.prop(mesh, "remesh_voxel_size")
             col.prop(mesh, "remesh_voxel_adaptivity")
-            col.use_property_split = False
+            col.use_property_split = False # BFA
             col.prop(mesh, "use_remesh_fix_poles")
 
-            col.label(text = "Preserve")
+            col.label(text = "Preserve") # BFA
             row.use_property_split = False
             row = col.row()
             row.separator()
@@ -485,7 +465,7 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
         col.operator("mesh.customdata_mask_clear", icon='X')
         col.operator("mesh.customdata_skin_clear", icon='X')
 
-        layout.separator()
+        layout.separator() # BFA
 
         if me.has_custom_normals:
             col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')

@@ -535,7 +535,7 @@ static void wm_init_userdef(Main *bmain)
 
   BKE_sound_init(bmain);
 
-  /* Update the temporary directory from the preferences or fallback to the system default. */
+  /* Update the temporary directory from the preferences or fall back to the system default. */
   BKE_tempdir_init(U.tempdir);
 
   /* Update input device preference. */
@@ -3852,7 +3852,7 @@ void WM_OT_save_as_mainfile(wmOperatorType *ot)
   ot->description =
       "Save As saves the current file in the desired location"
       "\nIncremental Save saves an already saved file with incremental file name. 001, 002, 003 "
-      "etc";
+      "etc"; /* BFA */ 
 
   ot->invoke = wm_save_as_mainfile_invoke;
   ot->exec = wm_save_as_mainfile_exec;
@@ -3939,9 +3939,9 @@ static std::string wm_save_mainfile_get_description(bContext * /*C*/,
 
 void WM_OT_save_mainfile(wmOperatorType *ot)
 {
-  ot->name = "Save Blend File";
+  ot->name = "Save Blend File"; /* BFA */
   ot->idname = "WM_OT_save_mainfile";
-  ot->description = "Save the current Blend file";
+  ot->description = "Save the current Blend file"; /* BFA */
 
   ot->invoke = wm_save_mainfile_invoke;
   ot->exec = wm_save_as_mainfile_exec;

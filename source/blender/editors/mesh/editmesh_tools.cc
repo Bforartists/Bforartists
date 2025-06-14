@@ -524,6 +524,7 @@ static wmOperatorStatus edbm_delete_exec(bContext *C, wmOperator *op)
 void MESH_OT_delete(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_mesh_delete_types[] = {
+      /* BFA - added icons*/ 
       {MESH_DELETE_VERT, "VERT", ICON_DELETE, "Vertices", ""},
       {MESH_DELETE_EDGE, "EDGE", ICON_DELETE, "Edges", ""},
       {MESH_DELETE_FACE, "FACE", ICON_DELETE, "Faces", ""},
@@ -2002,10 +2003,10 @@ void MESH_OT_edge_split(wmOperatorType *ot)
 
   /* properties */
   static const EnumPropertyItem merge_type_items[] = {
-      {BM_EDGE, "EDGE", ICON_SPLITEDGE, "Faces by Edges", "Split faces along selected edges"},
+      {BM_EDGE, "EDGE", ICON_SPLITEDGE, "Faces by Edges", "Split faces along selected edges"}, /* BFA */
       {BM_VERT,
        "VERT",
-       ICON_SPLIT_BYVERTICES,
+       ICON_SPLIT_BYVERTICES, /* BFA */
        "Faces & Edges by Vertices",
        "Split faces and edges connected to selected vertices"},
       {0, nullptr, 0, nullptr, nullptr},
@@ -3520,6 +3521,7 @@ static wmOperatorStatus edbm_merge_exec(bContext *C, wmOperator *op)
 }
 
 static const EnumPropertyItem merge_type_items[] = {
+    /* BFA - Added icons*/
     {MESH_MERGE_CENTER, "CENTER", ICON_MERGE_CENTER, "At Center", ""},
     {MESH_MERGE_CURSOR, "CURSOR", ICON_MERGE_CURSOR, "At Cursor", ""},
     {MESH_MERGE_COLLAPSE, "COLLAPSE", ICON_MERGE, "Collapse", ""},
@@ -4568,6 +4570,7 @@ static wmOperatorStatus edbm_separate_exec(bContext *C, wmOperator *op)
 void MESH_OT_separate(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_separate_types[] = {
+      /* BFA - Added icons*/
       {MESH_SEPARATE_SELECTED, "SELECTED", ICON_SEPARATE, "Selection", ""},
       {MESH_SEPARATE_MATERIAL, "MATERIAL", ICON_SEPARATE_BYMATERIAL, "By Material", ""},
       {MESH_SEPARATE_LOOSE, "LOOSE", ICON_SEPARATE_LOOSE, "By Loose Parts", ""},

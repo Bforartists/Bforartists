@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 from bpy.types import (
-    Operator,
+    Operator, # BFA
     Panel,
 )
 
-from bpy.props import EnumProperty
+from bpy.props import EnumProperty # BFA
 
 
 # BFA - Preset sizes for asset shelf thumbnails
@@ -91,7 +91,7 @@ class ASSETSHELF_PT_display(Panel):
 
 classes = (
     ASSETSHELF_PT_display,
-    ASSETSHELF_OT_change_thumbnail_size
+    ASSETSHELF_OT_change_thumbnail_size # BFA
 )
 
 

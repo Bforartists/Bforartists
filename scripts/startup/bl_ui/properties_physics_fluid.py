@@ -201,7 +201,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col = flow.column()
             if PhysicButtonsPanel.poll_gas_domain(context):
                 col.prop(domain, "clipping", text="Empty Space")
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.prop(domain, "delete_in_obstacle", text="Delete in Obstacle")
             row.prop_decorator(domain, "delete_in_obstacle")
@@ -456,7 +456,7 @@ class PHYSICS_PT_smoke_dissolve(PhysicButtonsPanel, Panel):
         col.prop(domain, "dissolve_speed", text="Time")
 
         col = flow.column()
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(domain, "use_dissolve_smoke_log", text="Slow")
         row.prop_decorator(domain, "use_dissolve_smoke_log")
@@ -618,7 +618,7 @@ class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
 
         col = grid.column()
         if flow.flow_source == 'MESH':
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.prop(flow, "use_plane_init", text="Is Planar")
             row.prop_decorator(flow, "use_plane_init")
@@ -629,7 +629,7 @@ class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
                 col.prop(flow, "volume_density", text="Volume Emission")
 
         if flow.flow_source == 'PARTICLES':
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.prop(flow, "use_particle_size", text="Set Size")
             row.prop_decorator(flow, "use_particle_size")
@@ -1322,7 +1322,7 @@ class PHYSICS_PT_collections(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
     bl_label = "Cache"
     bl_parent_id = "PHYSICS_PT_fluid"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'} # BFA
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
         'BLENDER_EEVEE_NEXT',
@@ -1534,7 +1534,7 @@ class PHYSICS_PT_viewport_display_slicing(PhysicButtonsPanel, Panel):
 
         sub = col.column()
         sub.active = domain.display_interpolation == 'CLOSEST' or domain.color_ramp_field == 'FLAGS'
-        row = sub.row()
+        row = sub.row() # BFA
         row.use_property_split = False
         row.prop(domain, "show_gridlines")
         if domain.show_gridlines:
@@ -1639,7 +1639,7 @@ class PHYSICS_PT_viewport_display_debug(PhysicButtonsPanel, Panel):
             note.label(icon='INFO', text="Enable Guides first! Defaulting to Fluid Velocity")
 
         if domain.vector_display_type == 'MAC':
-            sub = col.column()
+            sub = col.column() # BFA
             sub.use_property_split = False
             sub.label(text = "MAC Grid")
             row = sub.row()

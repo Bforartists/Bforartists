@@ -314,7 +314,7 @@ static void graph_main_region_draw(const bContext *C, ARegion *region)
   /*if (sipo->mode != SIPO_MODE_DRIVERS) {*/ /*bfa - we display the preview range in driver
                                                 editor*/
   UI_view2d_view_ortho(v2d);
-  ANIM_draw_previewrange(C, v2d, 0);
+  ANIM_draw_previewrange(scene, v2d, 0);
   /*}*/ /*bfa - we display the preview range in driver editor*/
 
   /* callback */

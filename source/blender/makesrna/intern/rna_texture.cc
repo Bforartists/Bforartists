@@ -6,6 +6,8 @@
  * \ingroup RNA
  */
 
+/* BFA - Added icons and removed "block". Data is Data*/
+
 #include <cfloat>
 #include <cstdlib>
 
@@ -1552,8 +1554,8 @@ static void rna_def_texture(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Texture", "ID");
   RNA_def_struct_sdna(srna, "Tex");
-  RNA_def_struct_ui_text(srna, "Texture", "Texture used by materials, lights, worlds and brushes");
-  RNA_def_struct_ui_icon(srna, ICON_TEXTURE);
+  RNA_def_struct_ui_text(srna, "Texture", "Texture used by materials, lights, worlds and brushes");  /* BFA */
+  RNA_def_struct_ui_icon(srna, ICON_TEXTURE); /* BFA */
   RNA_def_struct_refine_func(srna, "rna_Texture_refine");
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);

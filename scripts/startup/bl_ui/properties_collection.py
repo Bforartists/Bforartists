@@ -33,7 +33,7 @@ class COLLECTION_PT_collection_flags(CollectionButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         collection = context.collection
@@ -108,6 +108,7 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
         row = layout.row()
         row.prop(collection, "lineart_usage")
 
+        # BFA - Float left        
         split = layout.split()
         col = split.column()
         col.use_property_split = False

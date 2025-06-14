@@ -185,7 +185,7 @@ static void seq_strip_free_ex(Scene *scene,
   relations_strip_free_anim(strip);
 
   if (strip->type & STRIP_TYPE_EFFECT) {
-    EffectHandle sh = effect_handle_get(strip);
+    EffectHandle sh = strip_effect_handle_get(strip);
     sh.free(strip, do_id_user);
   }
 
@@ -230,7 +230,7 @@ static void seq_strip_free_ex(Scene *scene,
    * be _very_ careful here, invalidating cache loops over the scene sequences and
    * assumes the listbase is valid for all strips,
    * this may not be the case if lists are being freed.
-   * this is optional relations_invalidate_cache
+   * this is optional SEQ_relations_invalidate_cache
    */
   if (do_cache) {
     if (scene) {
@@ -583,7 +583,7 @@ static Strip *strip_duplicate(const Scene *scene_src,
   }
   else if (strip->type & STRIP_TYPE_EFFECT) {
     EffectHandle sh;
-    sh = effect_handle_get(strip);
+    sh = strip_effect_handle_get(strip);
     if (sh.copy) {
       sh.copy(strip_new, strip, flag);
     }

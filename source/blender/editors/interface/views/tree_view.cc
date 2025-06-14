@@ -526,7 +526,7 @@ void AbstractTreeViewItem::add_collapse_chevron(uiBlock &block) const
   if (!this->is_collapsible()) {
     return;
   }
-
+/* BFA - changed the arrows*/
   const BIFIconID icon = this->is_collapsed() ? ICON_DISCLOSURE_TRI_RIGHT : ICON_DISCLOSURE_TRI_DOWN;
   uiBut *but = uiDefIconBut(&block,
                             UI_BTYPE_BUT_TOGGLE,

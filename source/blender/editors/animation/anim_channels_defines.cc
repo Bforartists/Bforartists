@@ -1870,7 +1870,7 @@ static bAnimChannelType ACF_DSLIGHT = {
 /* TODO: just get this from RNA? */
 static int acf_dstex_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_TEXTURE;
+  return ICON_TEXTURE; /* BFA */
 }
 
 /* offset for texture expanders */
@@ -2327,7 +2327,7 @@ static bAnimChannelType ACF_DSSKEY = {
 /* TODO: just get this from RNA? */
 static int acf_dswor_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_WORLD;
+  return ICON_WORLD; /* BFA */
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */
@@ -3087,7 +3087,7 @@ static bAnimChannelType ACF_DSSPK = {
 /* TODO: just get this from RNA? */
 static int acf_dscurves_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_HAIR_DATA;
+  return ICON_HAIR_DATA; /* BFA */
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */

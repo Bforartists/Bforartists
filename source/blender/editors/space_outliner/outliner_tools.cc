@@ -3276,7 +3276,7 @@ static wmOperatorStatus outliner_action_set_exec(bContext *C, wmOperator *op)
                 RPT_WARNING,
                 "Action '%s' does not specify what data it can be used on "
                 "(try setting the 'ID Root Type' setting from the data editor "
-                "for this action to avoid future problems)",
+                "for this action to avoid future problems)", /* BFA */
                 act->id.name + 2);
   }
 
@@ -3447,7 +3447,7 @@ void OUTLINER_OT_animdata_operation(wmOperatorType *ot)
 static const EnumPropertyItem prop_constraint_op_types[] = {
     {OL_CONSTRAINTOP_ENABLE, "ENABLE", ICON_HIDE_OFF, "Enable", ""},
     {OL_CONSTRAINTOP_DISABLE, "DISABLE", ICON_HIDE_ON, "Disable", ""},
-    {OL_CONSTRAINTOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
+    {OL_CONSTRAINTOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""}, /* BFA */
     {0, nullptr, 0, nullptr, nullptr},
 };
 

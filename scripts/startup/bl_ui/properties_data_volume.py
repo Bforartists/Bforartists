@@ -62,9 +62,9 @@ class DATA_PT_volume_file(DataButtonsPanel, Panel):
             layout.use_property_decorate = False
 
             col = layout.column(align=True)
-            col.use_property_split = False
+            col.use_property_split = False # BFA
             col.prop(volume, "is_sequence")
-            col.use_property_split = True
+            col.use_property_split = True # BFA
             if volume.is_sequence:
                 col.prop(volume, "frame_duration", text="Frames")
                 col.prop(volume, "frame_start", text="Start")

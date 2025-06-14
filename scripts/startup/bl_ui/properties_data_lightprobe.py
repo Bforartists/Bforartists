@@ -76,6 +76,7 @@ class DATA_PT_lightprobe(DataButtonsPanel, Panel):
                 col.prop(probe, "influence_distance", text="Size")
 
             col.prop(probe, "falloff")
+            col.prop(probe, "intensity")
 
         sub = col.column(align=True)
         if probe.type == 'PLANE':
@@ -244,7 +245,7 @@ class DATA_PT_lightprobe_bake_capture(DataButtonsPanel, Panel):
 
         col.prop(probe, "capture_distance", text="Distance")
 
-        col = layout.column(align=True)
+        col = layout.column(align=True) # BFA
         col.use_property_split = False
         col.label(text = "Contributions")
         row = col.row()
@@ -371,10 +372,10 @@ class DATA_PT_lightprobe_display_eevee_next(DataButtonsPanel, Panel):
         probe = context.lightprobe
 
         col = layout.column()
-        col.label(text = "Data")
+        col.label(text = "Data") # BFA
 
         if probe.type in {'VOLUME', 'SPHERE'}:
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             split = row.split(factor = 0.4)
             row = split.row()
@@ -396,14 +397,14 @@ class DATA_PT_lightprobe_display_eevee_next(DataButtonsPanel, Panel):
             row.prop(probe, "show_influence")
 
         if probe.type == 'SPHERE':
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.separator()
             row.active = probe.use_custom_parallax
             row.prop(probe, "show_parallax")
 
         if probe.type == 'PLANE':
-            row = col.row()
+            row = col.row() # BFA
             row.separator()
             row.prop(ob, "empty_display_size", text="Arrow Size")
             row = col.row()

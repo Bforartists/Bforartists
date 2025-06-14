@@ -227,7 +227,8 @@ typedef struct UserDef_Experimental {
   char use_new_volume_nodes;
   char use_shader_node_previews;
   char use_bundle_and_closure_nodes;
-  char _pad[5];
+  char use_socket_structure_type;
+  char _pad[4];
 } UserDef_Experimental;
 
 #define USER_EXPERIMENTAL_TEST(userdef, member) \
@@ -776,6 +777,7 @@ typedef enum eUserpref_UI_Flag {
   USER_HIDE_DOT = (1 << 16),
   USER_SHOW_GIZMO_NAVIGATE = (1 << 17),
   USER_SHOW_VIEWPORTNAME = (1 << 18),
+  USER_UIFLAG_UNUSED_3 = (1 << 19), /* Cleared. */
   USER_NODE_AUTOPOSITION_VIEWER = (1 << 19), /*BFA - Toggle Viewer Auto-Positioning*/
   USER_ZOOM_TO_MOUSEPOS = (1 << 20),
   USER_SHOW_FPS = (1 << 21),

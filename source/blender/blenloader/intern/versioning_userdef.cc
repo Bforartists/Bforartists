@@ -242,6 +242,10 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(space_node.node_zone_closure);
   }
 
+  if (!USER_VERSION_ATLEAST(405, 82)) {
+    FROM_DEFAULT_V4_UCHAR(space_clip.anim_preview_range);
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a USER_VERSION_ATLEAST check.
@@ -1120,6 +1124,8 @@ void blo_do_versions_userdef(UserDef *userdef)
     if (userdef->pixelsize == 0.0f) {
       userdef->pixelsize = 1.0f;
     }
+    /* Clear old userdef flag for "Camera Parent Lock". */
+    userdef->uiflag &= ~USER_UIFLAG_UNUSED_3;
   }
 
   if (!USER_VERSION_ATLEAST(292, 9)) {
@@ -1393,7 +1399,6 @@ void blo_do_versions_userdef(UserDef *userdef)
       style->tooltip.shadowcolor = 0.0f;
     }
   }
-
   if (!USER_VERSION_ATLEAST(403, 19)) {
     userdef->sequencer_editor_flag |= USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT;
   }

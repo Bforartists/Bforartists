@@ -59,7 +59,7 @@ def guess_player_path(preset):
 
 
 class PlayRenderedAnim(Operator):
-    """Play Rendered Animation\nPlay back rendered frames/movies using an external player"""
+    """Play Rendered Animation\nPlay back rendered frames/movies using an external player""" # BFA
     bl_idname = "render.play_rendered_anim"
     bl_label = "Play Rendered Animation"
     bl_options = {'REGISTER'}

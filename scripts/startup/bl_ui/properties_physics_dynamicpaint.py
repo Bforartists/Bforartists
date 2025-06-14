@@ -12,6 +12,7 @@ from bl_ui.properties_physics_common import (
     effector_weights_ui,
 )
 
+# BFA - Added icons and floated properties left
 
 class PHYSICS_UL_dynapaint_surfaces(UIList):
     def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):

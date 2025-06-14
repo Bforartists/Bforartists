@@ -16,10 +16,13 @@ from bl_ui.properties_data_grease_pencil import (
     GreasePencil_LayerAdjustmentsPanel,
     GreasePencil_LayerDisplayPanel,
 )
-from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
-
+from bl_ui.utils import (
+    PlayheadSnappingPanel,
+)
 
 from rna_prop_ui import PropertyPanel
+
+# BFA - Added icons and floated properties left
 
 #######################################
 # DopeSheet Filtering - Header Buttons
@@ -315,8 +318,6 @@ class DOPESHEET_HT_header(Header):
             DOPESHEET_HT_editor_buttons.draw_header(context, layout)
 
 # bfa - show hide the editormenu, editor suffix is needed.
-
-
 class ALL_MT_editormenu_dopesheet(Menu):
     bl_label = ""
 
@@ -334,15 +335,13 @@ class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
 
 
 # Header for "normal" dopesheet editor modes (e.g. Dope Sheet, Action, Shape Keys, etc.)
-
-
 class DOPESHEET_HT_editor_buttons:
 
     @classmethod
     def draw_header(cls, context, layout):
         st = context.space_data
         tool_settings = context.tool_settings
-        ds_mode = context.space_data.mode
+        ds_mode = context.space_data.mode # BFAu
 
         dopesheet = context.space_data.dopesheet
         st = context.space_data
@@ -791,7 +790,7 @@ class DOPESHEET_MT_key(Menu):
 
         layout.operator("action.bake_keys", icon = 'BAKE_ACTION')
 
-
+# BFA
 class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
     bl_category = "View"

@@ -213,7 +213,7 @@ class SelectHierarchy(Operator):
 
 
 class SubdivisionSet(Operator):
-    """Subdivision Set\nSets a Subdivision Surface Level (1 to 5)"""
+    """Subdivision Set\nSets a Subdivision Surface Level (1 to 5)""" # BFA
 
     bl_idname = "object.subdivision_set"
     bl_label = "Subdivision Set"
@@ -682,7 +682,7 @@ class MakeDupliFace(Operator):
 
 class IsolateTypeRender(Operator):
     """Render just the selected Item, disables rendering for all others.\nBest used in the Outliner editor view columns""" \
-        """by setting the hide render flag"""
+        """by setting the hide render flag""" # BFA
     bl_idname = "object.isolate_type_render"
     bl_label = "Restrict Render Unselected"
     bl_options = {'REGISTER', 'UNDO'}
@@ -708,7 +708,7 @@ class IsolateTypeRender(Operator):
 
 class ClearAllRestrictRender(Operator):
     """Render all Objects in the scene\nnBest used in the Outliner editor view columns""" \
-        """by setting the hide render flag"""
+        """by setting the hide render flag""" # BFA
     bl_idname = "object.hide_render_clear_all"
     bl_label = "Clear All Restrict Render"
     bl_options = {'REGISTER', 'UNDO'}

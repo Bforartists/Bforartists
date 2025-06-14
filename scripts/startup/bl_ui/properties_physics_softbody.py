@@ -248,7 +248,7 @@ class PHYSICS_PT_softbody_edge(PhysicButtonsPanel, Panel):
 
         col = flow.column()
         col.prop(softbody, "spring_length", text="Length")
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(softbody, "use_edge_collision", text="Collision Edge")
         row.prop_decorator(softbody, "use_edge_collision")
@@ -377,7 +377,7 @@ class PHYSICS_PT_softbody_solver(PhysicButtonsPanel, Panel):
         col.prop(softbody, "step_max", text="Max")
 
         col = flow.column()
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(softbody, "use_auto_step", text="Auto-Step")
         row.prop_decorator(softbody, "use_auto_step")
@@ -403,7 +403,7 @@ class PHYSICS_PT_softbody_solver_diagnostics(PhysicButtonsPanel, Panel):
         softbody = md.settings
 
         layout.active = softbody_panel_enabled(md)
-        row = layout.row()
+        row = layout.row() # BFA
         row.use_property_split = False
         row.prop(softbody, "use_diagnose")
         row.prop_decorator(softbody, "use_diagnose")

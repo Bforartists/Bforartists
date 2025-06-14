@@ -242,16 +242,16 @@ class TEXTURE_PT_wood(TextureTypePanel, Panel):
         col.prop(tex, "noise_basis_2", text="Second Basis")
 
         col = col.column()
-        if tex.wood_type in {'RINGNOISE', 'BANDNOISE'}:
-            col.prop(tex, "noise_type", text="Type")
+        col.active = tex.wood_type in {'RINGNOISE', 'BANDNOISE'}
+        col.prop(tex, "noise_type", text="Type")
 
         col.separator()
 
         sub = flow.column()
-        if tex.wood_type in {'RINGNOISE', 'BANDNOISE'}:
-            sub.prop(tex, "noise_scale", text="Size")
-            sub.prop(tex, "turbulence")
-            sub.prop(tex, "nabla")
+        sub.active = tex.wood_type in {'RINGNOISE', 'BANDNOISE'}
+        sub.prop(tex, "noise_scale", text="Size")
+        sub.prop(tex, "turbulence")
+        sub.prop(tex, "nabla")
 
 
 class TEXTURE_PT_marble(TextureTypePanel, Panel):
@@ -337,8 +337,8 @@ class TEXTURE_PT_blend(TextureTypePanel, Panel):
         col.separator()
 
         col = flow.column()
-        if (tex.progression in {'LINEAR', 'QUADRATIC', 'EASING', 'RADIAL'}):
-            col.prop(tex, "use_flip_axis", text="Orientation")
+        col.active = (tex.progression in {'LINEAR', 'QUADRATIC', 'EASING', 'RADIAL'})
+        col.prop(tex, "use_flip_axis", text="Orientation")
 
 
 class TEXTURE_PT_stucci(TextureTypePanel, Panel):
@@ -420,7 +420,7 @@ def texture_filter_common(tex, layout):
 
     layout.prop(tex, "filter_size", text="Size")
 
-    row = layout.row()
+    row = layout.row() # BFA
     row.use_property_split = False
     row.prop(tex, "use_filter_size_min", text="Minimum Size")
     row.prop_decorator(tex, "use_filter_size_min")
@@ -446,7 +446,7 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
 
         col = flow.column()
 
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(tex, "use_interpolation")
         row.prop_decorator(tex, "use_interpolation")
@@ -497,10 +497,10 @@ class TEXTURE_PT_image_alpha(TextureTypePanel, Panel):
         tex = context.texture
 
         col = layout.column()
-        if bool(tex.image and tex.image.alpha_mode != 'NONE'):
-            col.use_property_split = False
-            col.prop(tex, "use_calculate_alpha", text="Calculate")
-            col.prop(tex, "invert_alpha", text="Invert")
+        col.active = bool(tex.image and tex.image.alpha_mode != 'NONE')
+        col.use_property_split = False # BFA
+        col.prop(tex, "use_calculate_alpha", text="Calculate")
+        col.prop(tex, "invert_alpha", text="Invert")
 
 
 class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
@@ -556,7 +556,7 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
 
             col = flow.column(heading="Tiles")
 
-            row.use_property_split = False
+            row.use_property_split = False # BFA
             row.prop(tex, "use_checker_even", text="Even", text_ctxt=i18n_contexts.amount)
             row.prop_decorator(tex, "use_checker_even")
 
@@ -666,8 +666,8 @@ class TEXTURE_PT_voronoi(TextureTypePanel, Panel):
         col.prop(tex, "distance_metric")
 
         sub = col.column()
-        if tex.distance_metric == 'MINKOVSKY':
-            sub.prop(tex, "minkovsky_exponent", text="Exponent")
+        sub.active = tex.distance_metric == 'MINKOVSKY'
+        sub.prop(tex, "minkovsky_exponent", text="Exponent")
 
         sub.separator()
 
@@ -929,7 +929,7 @@ class TEXTURE_PT_colors(TextureButtonsPanel, TextureColorsPoll, Panel):
 
         col = flow.column()
 
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(tex, "use_clamp", text="Clamp")
         row.prop_decorator(tex, "use_clamp")

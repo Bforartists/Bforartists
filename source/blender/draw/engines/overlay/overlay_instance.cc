@@ -377,7 +377,6 @@ void Resources::update_theme_settings(const DRWContext *ctx, const State &state)
       srgb_to_linearrgb_v4(&color->x, &color->x);
     } while (++color <= color_end);
   }
-  
 
   gb.sizes.pixel = 1.0f;
   gb.sizes.object_center = UI_GetThemeValuef(TH_OBCENTER_DIA) + 1.0f;

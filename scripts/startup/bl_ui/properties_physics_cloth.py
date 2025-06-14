@@ -12,6 +12,7 @@ from bl_ui.properties_physics_common import (
     effector_weights_ui,
 )
 
+# BFA - Float left and added icons
 
 def cloth_panel_enabled(md):
     return md.point_cache.is_baked is False

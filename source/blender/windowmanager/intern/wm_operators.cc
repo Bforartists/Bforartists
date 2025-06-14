@@ -402,7 +402,7 @@ static const char *wm_context_member_from_ptr(bContext *C, const PointerRNA *ptr
         break;
       }
       if (is_id) {
-        /* Found a reference to this ID, so fallback to it if there is no direct reference. */
+        /* Found a reference to this ID, so fall back to it if there is no direct reference. */
         member_id = identifier;
       }
     }
@@ -713,7 +713,7 @@ std::optional<std::string> WM_prop_pystring_assign(bContext *C,
                                        std::nullopt;
 
   if (!lhs.has_value()) {
-    /* Fallback to `bpy.data.foo[id]` if we don't find in the context. */
+    /* Fall back to `bpy.data.foo[id]` if we don't find in the context. */
     if (std::optional<std::string> lhs_str = RNA_path_full_property_py(ptr, prop, index)) {
       lhs = lhs_str;
     }
@@ -1602,7 +1602,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
   const bool windows_layout = false;
 #endif
 
-  /* Check there are no active default buttons, allowing a dialog to define it's own
+  /* Check there are no active default buttons, allowing a dialog to define its own
    * confirmation buttons which are shown instead of these, see: #124098. */
   if (!UI_block_has_active_default_button(uiLayoutGetBlock(layout))) {
     /* New column so as not to interfere with custom layouts, see: #26436. */
@@ -2119,7 +2119,7 @@ static void WM_OT_search_menu(wmOperatorType *ot)
   ot->idname = "WM_OT_search_menu";
   ot->description =
       "Search for menu items in current context, means in general or in a specific menu\nIn Add menus, expand the menu and start to type to start the "
-      "search\nIn other menus, expand the menu and press spacebar to start the search";
+      "search\nIn other menus, expand the menu and press spacebar to start the search"; /* BFA */
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -2130,7 +2130,7 @@ static void WM_OT_search_operator(wmOperatorType *ot)
 {
   ot->name = "Search Operator";
   ot->idname = "WM_OT_search_operator";
-  ot->description = "Pop-up Search for all available operators in current context";
+  ot->description = "Pop-up a search panel for all available operators in current context"; /* BFA */
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -2143,7 +2143,7 @@ static void WM_OT_search_single_menu(wmOperatorType *ot)
   ot->idname = "WM_OT_search_single_menu";
   ot->description =
       "Search for menu items in this menu\nAlternatively, expand the add menu and start to type to start the "
-      "search";
+      "search"; /* BFA */
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -4046,10 +4046,10 @@ static wmOperatorStatus previews_clear_exec(bContext *C, wmOperator *op)
 
 static void WM_OT_previews_clear(wmOperatorType *ot)
 {
-  ot->name = "Clear Data Previews";
+  ot->name = "Clear Data Previews"; /* BFA */
   ot->idname = "WM_OT_previews_clear";
   ot->description =
-      "Clear data previews (only for some types like objects, materials, textures, etc.)";
+      "Clear data previews (only for some types like objects, materials, textures, etc.)"; /* BFA */
 
   ot->exec = previews_clear_exec;
   ot->invoke = WM_menu_invoke;
@@ -4059,7 +4059,7 @@ static void WM_OT_previews_clear(wmOperatorType *ot)
                                preview_id_type_items,
                                PREVIEW_FILTER_ALL,
                                "Data Type",
-                               "Which data previews to clear");
+                               "Which data previews to clear"); /* BFA */
 }
 
 /** \} */
@@ -4612,6 +4612,7 @@ const EnumPropertyItem *RNA_seq_scene_without_active_itemf(bContext *C,
                       scene_active);
 }
 /*############## BFA - 3D Sequencer END ##############*/
+
 const EnumPropertyItem *RNA_movieclip_itemf(bContext *C,
                                             PointerRNA * /*ptr*/,
                                             PropertyRNA * /*prop*/,

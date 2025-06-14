@@ -868,7 +868,7 @@ static void ui_node_draw_input(uiLayout &layout,
                     (lnode->typeinfo->draw_buttons && lnode->type_legacy != NODE_GROUP)))
       {
         int icon = (input.flag & SOCK_COLLAPSED) ? ICON_DISCLOSURE_TRI_RIGHT :
-                                                   ICON_DISCLOSURE_TRI_DOWN;
+                                                   ICON_DISCLOSURE_TRI_DOWN; /* BFA */
         sub->prop(&inputptr, "show_expanded", UI_ITEM_R_ICON_ONLY, "", icon);
       }
 

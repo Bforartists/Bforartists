@@ -4,9 +4,17 @@
 
 import math
 
-from bpy.props import BoolProperty, EnumProperty, FloatProperty, FloatVectorProperty, IntProperty
 from bpy.types import Operator
 from mathutils import Matrix, Vector
+
+from bpy.props import (
+    BoolProperty,
+    EnumProperty,
+    FloatProperty,
+    FloatVectorProperty,
+    IntProperty,
+)
+
 
 # ------------------------------------------------------------------------------
 # Local Utility Functions
@@ -259,7 +267,7 @@ def align_uv_rotation(context, method, axis, correct_aspect):
 
 
 class AlignUVRotation(Operator):
-    """Align UV island's rotation"""
+    """Align the UV island's rotation"""
     bl_idname = "uv.align_rotation"
     bl_label = "Align Rotation"
     bl_options = {'REGISTER', 'UNDO'}
@@ -307,8 +315,8 @@ class AlignUVRotation(Operator):
 # Randomize UV Operator
 
 def get_random_transform(transform_params, entropy):
-    from random import seed as random_seed
     from random import uniform
+    from random import seed as random_seed
 
     (seed, loc, rot, scale, scale_even) = transform_params
 

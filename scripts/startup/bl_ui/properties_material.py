@@ -348,7 +348,7 @@ def draw_material_settings(self, context):
 
     mat = context.material
 
-    layout.use_property_split = False
+    layout.use_property_split = False # BFA
     layout.prop(mat, "use_backface_culling")
     layout.use_property_split = True
 
@@ -502,7 +502,7 @@ class EEVEE_NEXT_MATERIAL_PT_settings_volume(MaterialButtonsPanel, Panel):
 
         layout.prop(mat, "volume_intersection_method", text="Intersection")
 
-        #draw_material_volume_settings(layout, mat)
+        #draw_material_volume_settings(layout, mat) # BFA - exposed to top level
 
 
 class MATERIAL_PT_viewport(MaterialButtonsPanel, Panel):
@@ -545,7 +545,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         mat = context.material
         lineart = mat.lineart
 
-        row = layout.row()
+        row = layout.row() # BFA
         split = row.split(factor=0.4)
         row = split.row()
         row.prop(lineart, "use_material_mask", text="Material Mask")
@@ -561,7 +561,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         layout.use_property_split = True
 
         col = layout.column(align=True)
-        if lineart.use_material_mask:
+        if lineart.use_material_mask: # BFA
             row = col.row(align=True, heading="      Masks")
             for i in range(8):
                 row.prop(lineart, "use_material_mask_bits", text=str(i),
@@ -572,7 +572,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         row = layout.row(align=True, heading="Custom Occlusion")
         row.prop(lineart, "mat_occlusion", text="Levels")
 
-        col = layout.column()
+        col = layout.column() # BFA
         split = col.split(factor=.4)
         split.use_property_split = False
         split.prop(lineart, "use_intersection_priority_override", text="Intersection Priority")

@@ -1819,7 +1819,7 @@ void CLIP_OT_cursor_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Set 2D Cursor";
-  ot->description = "Set 2D cursor location\nHotkey only Tool! Please use the hotkey!";
+  ot->description = "Set 2D cursor location\nHotkey only Tool. Please use the hotkey in the 2D View"; /* BFA */
   ot->idname = "CLIP_OT_cursor_set";
 
   /* API callbacks. */

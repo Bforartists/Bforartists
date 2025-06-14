@@ -96,7 +96,7 @@ class CURVES_MT_add_attribute(Menu):
         props.name = name
         props.data_type = data_type
         props.domain = domain
-        #props.icon = icon
+        #props.icon = icon # BFA
 
     def draw(self, context):
         layout = self.layout
@@ -108,7 +108,7 @@ class CURVES_MT_add_attribute(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("geometry.attribute_add", text="Custom...", icon = 'ADD')
+        layout.operator("geometry.attribute_add", text="Custom", icon = 'ADD')
 
 
 class CURVES_UL_attributes(UIList):

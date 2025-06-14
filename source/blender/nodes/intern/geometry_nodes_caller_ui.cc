@@ -408,7 +408,7 @@ static void add_attribute_search_or_value_buttons(DrawGroupInputsContext &ctx,
                                                   const bNodeTreeInterfaceSocket &socket)
 {
   const bke::bNodeSocketType *typeinfo = socket.socket_typeinfo();
-  const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) : SOCK_CUSTOM;
+  const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
   const std::string rna_path_attribute_name = fmt::format(
       "[\"{}{}\"]", BLI_str_escape(socket.identifier), nodes::input_attribute_name_suffix);
 
@@ -417,7 +417,7 @@ static void add_attribute_search_or_value_buttons(DrawGroupInputsContext &ctx,
 
   uiLayout *split = &layout->split(0.4f, false);
   uiLayout *name_row = &split->row(false);
-  //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT); /*bfa - turned off, we align our labels left*/
+  uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);
 
   uiLayout *prop_row = nullptr;
 
@@ -495,7 +495,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
    * information about what type of ID to select for editing the values. This is because
    * pointer IDProperties contain no information about their type. */
   const bke::bNodeSocketType *typeinfo = socket.socket_typeinfo();
-  const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) : SOCK_CUSTOM;
+  const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
   const char *name = socket.name ? IFACE_(socket.name) : "";
   switch (type) {
     case SOCK_OBJECT: {
@@ -758,7 +758,7 @@ static bool has_output_attribute(const bNodeTree *tree)
   }
   for (const bNodeTreeInterfaceSocket *interface_socket : tree->interface_outputs()) {
     const bke::bNodeSocketType *typeinfo = interface_socket->socket_typeinfo();
-    const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) : SOCK_CUSTOM;
+    const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
     if (nodes::socket_type_has_attribute_toggle(type)) {
       return true;
     }
@@ -775,7 +775,7 @@ static void draw_property_for_output_socket(DrawGroupInputsContext &ctx,
 
   uiLayout *split = &layout->split(0.4f, false);
   uiLayout *name_row = &split->row(false);
-  //uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);  /*bfa - turned off, we align our labels left*/
+  uiLayoutSetAlignment(name_row, UI_LAYOUT_ALIGN_RIGHT);
   name_row->label(socket.name ? socket.name : "", ICON_NONE);
 
   uiLayout *row = &split->row(true);
@@ -787,8 +787,7 @@ static void draw_output_attributes_panel(DrawGroupInputsContext &ctx, uiLayout *
   if (ctx.tree != nullptr && !ctx.properties.is_empty()) {
     for (const bNodeTreeInterfaceSocket *socket : ctx.tree->interface_outputs()) {
       const bke::bNodeSocketType *typeinfo = socket->socket_typeinfo();
-      const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) :
-                                                  SOCK_CUSTOM;
+      const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
       if (nodes::socket_type_has_attribute_toggle(type)) {
         draw_property_for_output_socket(ctx, layout, *socket);
       }

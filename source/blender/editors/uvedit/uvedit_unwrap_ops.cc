@@ -2963,6 +2963,7 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
 
     col->separator();
     col->prop(&ptr, "use_weights", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
     if (RNA_boolean_get(op->ptr, "use_weights")) {
       col = &layout->column(true);
       col->prop(&ptr, "weight_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -2987,6 +2988,7 @@ void UV_OT_unwrap(wmOperatorType *ot)
   const ToolSettings *tool_settings_default = DNA_struct_default_get(ToolSettings);
 
   static const EnumPropertyItem method_items[] = {
+      /* BFA - Addeed icons*/
       {UVCALC_UNWRAP_METHOD_ANGLE, "ANGLE_BASED", ICON_UNWRAP_ABF, "Angle Based", ""},
       {UVCALC_UNWRAP_METHOD_CONFORMAL, "CONFORMAL", ICON_UNWRAP_LSCM, "Conformal", ""},
       {UVCALC_UNWRAP_METHOD_MINIMUM_STRETCH,
@@ -3017,7 +3019,7 @@ void UV_OT_unwrap(wmOperatorType *ot)
       method_items,
       tool_settings_default->unwrapper,
       "Method",
-      "The method to unwrap the mesh");
+      "The method to unwrap the mesh"); /* BFA */
   RNA_def_boolean(ot->srna,
                   "fill_holes",
                   tool_settings_default->uvcalc_flag & UVCALC_FILLHOLES,

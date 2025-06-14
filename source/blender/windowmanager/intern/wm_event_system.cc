@@ -533,7 +533,8 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
       }
     }
 /*############## BFA - 3D Sequencer END##############*/
-    /* Copied to set's in #scene_update_tagged_recursive(). */
+
+/* Copied to set's in #scene_update_tagged_recursive(). */
     scene->customdata_mask = win_combine_v3d_datamask;
     /* XXX, hack so operators can enforce data-masks #26482, GPU render. */
     CustomData_MeshMasks_update(&scene->customdata_mask, &scene->customdata_mask_modal);
@@ -3374,7 +3375,7 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
     /* Don't use from now on. */
     gz = nullptr;
 
-    /* Fallback to selected gizmo (when un-handled). */
+    /* Fall back to selected gizmo (when un-handled). */
     if ((action & WM_HANDLER_BREAK) == 0) {
       if (WM_gizmomap_is_any_selected(gzmap)) {
         const ListBase *groups = WM_gizmomap_group_list(gzmap);
@@ -4412,7 +4413,7 @@ static wmWindow *wm_event_find_fileselect_root_window_from_context(const bContex
     }
   }
 
-  /* Fallback to the first window. */
+  /* Fall back to the first window. */
   const wmWindowManager *wm = CTX_wm_manager(C);
   BLI_assert(!ED_fileselect_handler_area_find_any_with_op(
       static_cast<const wmWindow *>(wm->windows.first)));
@@ -6402,6 +6403,12 @@ void wm_event_add_ghostevent(wmWindowManager *wm,
     case GHOST_kEventImeComposition: {
       event.val = KM_PRESS;
       event.type = WM_IME_COMPOSITE_EVENT;
+
+      /* Update our copy of the ghost custom data. */
+      MEM_delete(win->runtime->ime_data);
+      const wmIMEData *ghost_event_data = static_cast<const wmIMEData *>(customdata);
+      win->runtime->ime_data = MEM_new<wmIMEData>(__func__, *ghost_event_data);
+
       wm_event_add_intern(win, &event);
       break;
     }
@@ -6690,7 +6697,7 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
   {
     return;
   }
-  /* Fallback to window. */
+  /* Fall back to window. */
   if (ELEM(region->regiontype, RGN_TYPE_TOOLS, RGN_TYPE_TOOL_PROPS)) {
     region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
   }

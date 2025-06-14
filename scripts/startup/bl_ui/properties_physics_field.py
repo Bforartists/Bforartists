@@ -115,6 +115,12 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             if field.use_max_distance:
                 sub.prop(field, "distance_max")
 
+            row = col.row()
+            row.use_property_split = False
+            row.prop(field, "guide_minimum")
+            row.prop_decorator(field, "guide_minimum", text="Min Distance")
+
+
         elif field.type == 'TEXTURE':
             col = flow.column()
             col.prop(field, "texture_mode")

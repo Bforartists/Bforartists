@@ -1681,8 +1681,8 @@ static void rna_def_ui_layout(BlenderRNA *brna)
       {int(blender::ui::EmbossType::Pulldown),
        "PULLDOWN_MENU",
        0,
-       "Pulldown Menu",
-       "Draw pulldown menu style"},
+       "Pull-down Menu",
+       "Draw pull-down menu style"},
       {int(blender::ui::EmbossType::PieMenu),
        "RADIAL_MENU",
        0,
@@ -2465,7 +2465,7 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   // bfa start asset shelf
-  // jưst gonna put the enum here then
+  // BFA - WIP - jưst gonna put the enum here
   static const EnumPropertyItem asset_shelf_import_method_items[] = {
       {SHELF_ASSET_IMPORT_LINK,
        "LINK",

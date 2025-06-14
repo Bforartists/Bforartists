@@ -10,6 +10,7 @@
 
 #include "GHOST_C-api.h"
 
+#include "BLI_path_utils.hh"
 #include "BLI_threads.h"
 
 #include "CLG_log.h"
@@ -166,6 +167,25 @@ bool VKBackend::is_supported()
 {
   CLG_logref_init(&LOG);
 
+  /*
+   * Disable implicit layers and only allow layers that we trust.
+   *
+   * Render doc layer is hidden behind a debug flag. There are malicious layers that impersonate
+   * renderdoc and can crash when loaded. See #139543
+   */
+  std::stringstream allowed_layers;
+  allowed_layers << "VK_LAYER_KHRONOS_*";
+  allowed_layers << ",VK_LAYER_AMD_*";
+  allowed_layers << ",VK_LAYER_INTEL_*";
+  allowed_layers << ",VK_LAYER_NV_*";
+  allowed_layers << ",VK_LAYER_MESA_*";
+  if (bool(G.debug & G_DEBUG_GPU)) {
+    allowed_layers << ",VK_LAYER_LUNARG_*";
+    allowed_layers << ",VK_LAYER_RENDERDOC_*";
+  }
+  BLI_setenv("VK_LOADER_LAYERS_DISABLE", "~implicit~");
+  BLI_setenv("VK_LOADER_LAYERS_ALLOW", allowed_layers.str().c_str());
+
   /* Initialize an vulkan 1.2 instance. */
   VkApplicationInfo vk_application_info = {VK_STRUCTURE_TYPE_APPLICATION_INFO};
   vk_application_info.pApplicationName = "Blender";
@@ -258,26 +278,18 @@ void VKBackend::platform_init()
            "",
            "",
            GPU_ARCHITECTURE_IMR);
+}
 
-  /* Query for all compatible devices */
-  VkApplicationInfo vk_application_info = {VK_STRUCTURE_TYPE_APPLICATION_INFO};
-  vk_application_info.pApplicationName = "Blender";
-  vk_application_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-  vk_application_info.pEngineName = "Blender";
-  vk_application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-  vk_application_info.apiVersion = VK_API_VERSION_1_2;
-
-  VkInstanceCreateInfo vk_instance_info = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
-  vk_instance_info.pApplicationInfo = &vk_application_info;
-
-  VkInstance vk_instance = VK_NULL_HANDLE;
-  vkCreateInstance(&vk_instance_info, nullptr, &vk_instance);
-  BLI_assert(vk_instance != VK_NULL_HANDLE);
+static void init_device_list(GHOST_ContextHandle ghost_context)
+{
+  GHOST_VulkanHandles vulkan_handles = {};
+  GHOST_GetVulkanHandles(ghost_context, &vulkan_handles);
 
   uint32_t physical_devices_count = 0;
-  vkEnumeratePhysicalDevices(vk_instance, &physical_devices_count, nullptr);
+  vkEnumeratePhysicalDevices(vulkan_handles.instance, &physical_devices_count, nullptr);
   Array<VkPhysicalDevice> vk_physical_devices(physical_devices_count);
-  vkEnumeratePhysicalDevices(vk_instance, &physical_devices_count, vk_physical_devices.data());
+  vkEnumeratePhysicalDevices(
+      vulkan_handles.instance, &physical_devices_count, vk_physical_devices.data());
   int index = 0;
   for (VkPhysicalDevice vk_physical_device : vk_physical_devices) {
     if (missing_capabilities_get(vk_physical_device).is_empty() &&
@@ -296,7 +308,6 @@ void VKBackend::platform_init()
     }
     index++;
   }
-  vkDestroyInstance(vk_instance, nullptr);
   std::sort(GPG.devices.begin(), GPG.devices.end(), [&](const GPUDevice &a, const GPUDevice &b) {
     if (a.name == b.name) {
       return a.index < b.index;
@@ -511,6 +522,7 @@ Context *VKBackend::context_alloc(void *ghost_window, void *ghost_context)
   if (!device.is_initialized()) {
     device.init(ghost_context);
     device.extensions_get().log();
+    init_device_list((GHOST_ContextHandle)ghost_context);
   }
 
   VKContext *context = new VKContext(ghost_window, ghost_context);
@@ -608,6 +620,18 @@ void VKBackend::render_end()
   if (G.is_rendering && thread_data.rendering_depth == 0 && !BLI_thread_is_main()) {
     device.orphaned_data.move_data(device.orphaned_data_render,
                                    device.orphaned_data.timeline_ + 1);
+    /* Fix #139284: During rendering when main thread is blocked or all screens are minimized the
+     * garbage collection will not happen resulting in crashes as resources are not freed.
+     *
+     * A better solution would be to do garbage collection in a separate thread but that requires a
+     * ref counting system. The specifics of such a system is still unclear.
+     *
+     * A possible solution for a Vulkan specific ref counting is to store the ref counts in the
+     * resource tracker. That would only handle images and buffers, but it would solve the most
+     * resource hungry issues.
+     */
+    device.wait_queue_idle();
+    device.orphaned_data.destroy_discarded_resources(device);
   }
 }
 

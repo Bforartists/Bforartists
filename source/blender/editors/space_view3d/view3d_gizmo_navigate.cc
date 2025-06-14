@@ -127,25 +127,25 @@ static NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
         "GIZMO_GT_button_2d",
         ICON_OUTLINER_DATA_CAMERA,
         nullptr,
-    },
+    }, /* BFA */
     {
         "VIEW3D_OT_view_camera",
         "GIZMO_GT_button_2d",
         ICON_OUTLINER_OB_CAMERA,
         nullptr,
-    },
+    }, /* BFA */
     {
         "WM_OT_context_toggle",
         "GIZMO_GT_button_2d",
         ICON_LOCK_TO_CAMVIEW_ON,
         navigate_context_toggle_camera_lock_init,
-    },
+    }, /* BFA */
     {
         "WM_OT_context_toggle",
         "GIZMO_GT_button_2d",
         ICON_LOCK_TO_CAMVIEW,
         navigate_context_toggle_camera_lock_init,
-    },
+    }, /* BFA */
 };
 
 static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)
@@ -373,9 +373,8 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) {
       gz = navgroup
                ->gz_array[(rv3d->persp == RV3D_CAMOB) ? GZ_INDEX_CAMERA_ON : GZ_INDEX_CAMERA_OFF];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      gz->matrix_basis[3][0] = roundf(co[0]);
+      gz->matrix_basis[3][1] = roundf(co[1] - (icon_offset_mini * icon_mini_slot++));
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
       if (navgroup->state.rv3d.is_camera == false) {

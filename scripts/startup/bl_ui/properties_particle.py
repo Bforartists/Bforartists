@@ -24,6 +24,7 @@ from bl_ui.properties_physics_common import (
     basic_force_field_falloff_ui,
 )
 
+# BFA - Float left and add icons
 
 def particle_panel_enabled(context, psys):
     if psys is None:
@@ -1016,6 +1017,7 @@ class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
         col.prop(boids, "air_personal_space")
         row = col.row(align=True)
         #row.active = (boids.use_land or boids.use_climb) and boids.use_flight
+        # BFA        
         if (boids.use_land or boids.use_climb) and boids.use_flight:
             row.prop(boids, "land_smooth")
 
@@ -1821,7 +1823,7 @@ class PARTICLE_PT_children(ParticleButtonsPanel, Panel):
         if part.child_type == 'INTERPOLATED':
             col.prop(part, "virtual_parents", slider=True)
 
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.prop(part, "create_long_hair_children")
             row.prop_decorator(part, "create_long_hair_children")
@@ -2347,7 +2349,7 @@ class PARTICLE_PT_hair_shape(ParticleButtonsPanel, Panel):
         col = layout.column()
         col.prop(part, "radius_scale")
 
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(part, "use_close_tip")
         row.prop_decorator(part, "use_close_tip")

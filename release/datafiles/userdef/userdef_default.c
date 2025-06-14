@@ -18,7 +18,7 @@
 #include "BLO_userdef_default.h" /* own include */
 
 /* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
-/*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI, USER_OUTLINER_COL_COLLECTION_ROWS, USER_ANIM_SHOW_CHANNEL_GROUP_COLORS and USER_FILENOUI to the .flag*/
+/*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI, and USER_FILENOUI to the .flag*/
 const UserDef U_default = {
     .versionfile = BLENDER_FILE_VERSION,
     .subversionfile = BLENDER_FILE_SUBVERSION,
@@ -28,6 +28,10 @@ const UserDef U_default = {
     .dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE | USER_DUP_FONT |
                USER_DUP_MBALL | USER_DUP_LAMP | USER_DUP_ARM | USER_DUP_CAMERA | USER_DUP_SPEAKER |
                USER_DUP_ACT | USER_DUP_LIGHTPROBE | USER_DUP_GPENCIL | USER_DUP_CURVES | USER_DUP_NTREE | USER_DUP_POINTCLOUD,
+    /* BFA - WIP - enable outliner collection rows*/
+    //.outliner_editor_flag = USER_OUTLINER_COL_COLLECTION_ROWS
+    /* BFA - WIP - enable animaotion props*/
+    //.animation_flag = USER_ANIM_SHOW_CHANNEL_GROUP_COLORS
     .pref_flag = USER_PREF_FLAG_SAVE,
     .savetime = 2,
     .tempdir = "",

@@ -53,7 +53,7 @@ class POINTCLOUD_MT_add_attribute(Menu):
     bl_label = "Add Attribute"
 
     @staticmethod
-    def add_standard_attribute(layout, pointcloud, name, data_type, domain, icon):
+    def add_standard_attribute(layout, pointcloud, name, data_type, domain, icon): # BFA
         exists = pointcloud.attributes.get(name) is not None
 
         col = layout.column()
@@ -64,7 +64,7 @@ class POINTCLOUD_MT_add_attribute(Menu):
         props.name = name
         props.data_type = data_type
         props.domain = domain
-        #props.icon = icon
+        #props.icon = icon # BFA
 
     def draw(self, context):
         layout = self.layout
@@ -78,7 +78,7 @@ class POINTCLOUD_MT_add_attribute(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("geometry.attribute_add", text="Custom", icon = 'ADD')
+        layout.operator("geometry.attribute_add", text="Custom", icon = 'ADD') # BFA
 
 class POINTCLOUD_UL_attributes(UIList):
     def filter_items(self, _context, data, property):

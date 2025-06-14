@@ -236,7 +236,7 @@ class GLCompilerWorker {
   ~GLCompilerWorker();
 
   void compile(const GLSourcesBaked &sources);
-  void block_until_ready();
+  bool block_until_ready();
   bool load_program_binary(GLint program);
   void release();
 
@@ -249,8 +249,7 @@ class GLShaderCompiler : public ShaderCompiler {
   Vector<GLCompilerWorker *> workers_;
   std::mutex workers_mutex_;
 
-  GLCompilerWorker *get_compiler_worker(const GLSourcesBaked &sources);
-  bool check_worker_is_lost(GLCompilerWorker *&worker);
+  GLCompilerWorker *get_compiler_worker();
 
   GLShader::GLProgram *specialization_program_get(ShaderSpecialization &specialization);
 

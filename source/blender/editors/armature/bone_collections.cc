@@ -130,6 +130,7 @@ void ARMATURE_OT_collection_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Bone Collection";
   ot->idname = "ARMATURE_OT_collection_add";
+  /* BFA - Tooltip*/
   ot->description = "Add a new bone collection\nTo create a child collection, click and drag an existing collection onto a parent collection";
 
   /* API callbacks. */
@@ -1063,11 +1064,14 @@ static void menu_add_item_for_move_assign_unassign(uiLayout *layout,
   const int icon = icon_for_bone_collection(contains_active_bone);
 
   if (contains_active_bone) {
-    uiItemStringO(
-        layout, bcoll->name, icon, "ARMATURE_OT_collection_unassign", "name", bcoll->name);
+    PointerRNA op_ptr = layout->op(
+        "ARMATURE_OT_collection_unassign", bcoll->name, icon);
+    RNA_string_set(&op_ptr, "name", bcoll->name);
   }
   else {
-    uiItemStringO(layout, bcoll->name, icon, "ARMATURE_OT_collection_assign", "name", bcoll->name);
+    PointerRNA op_ptr = layout->op(
+        "ARMATURE_OT_collection_assign", bcoll->name, icon);
+    RNA_string_set(&op_ptr, "name", bcoll->name);
   }
 }
 

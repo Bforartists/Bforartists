@@ -1903,10 +1903,10 @@ void RNA_api_ui_layout(StructRNA *srna)
   RNA_def_function_ui_description(
       func, "Item. A preview window for materials, textures, lights or worlds.");
   RNA_def_function_flag(func, FUNC_USE_CONTEXT);
-  parm = RNA_def_pointer(func, "id", "ID", "", "ID data");
+  parm = RNA_def_pointer(func, "id", "ID", "", "ID data"); /* BFA */
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   RNA_def_boolean(func, "show_buttons", true, "", "Show preview buttons?");
-  RNA_def_pointer(func, "parent", "ID", "", "ID data");
+  RNA_def_pointer(func, "parent", "ID", "", "ID data"); /* BFA */
   RNA_def_pointer(func, "slot", "TextureSlot", "", "Texture slot");
   RNA_def_string(
       func,

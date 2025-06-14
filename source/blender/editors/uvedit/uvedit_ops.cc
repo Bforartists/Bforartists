@@ -1761,7 +1761,7 @@ static void UV_OT_cursor_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Set 2D Cursor";
-  ot->description = "Set 2D cursor location\nHotkey Only Tool! Please use the hotkey!";
+  ot->description = "Set 2D cursor location\nHotkey Only Tool. Please use the hotkey in the 2D View";
   ot->idname = "UV_OT_cursor_set";
 
   /* API callbacks. */

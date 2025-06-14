@@ -186,7 +186,7 @@ void CLIP_OT_dopesheet_view_all(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Frame All";
-  ot->description = "Zooms in or out to fit the display to show full keyframe range";
+  ot->description = "Zooms in or out to fit the display to show full keyframe range"; /* BFA */
   ot->idname = "CLIP_OT_dopesheet_view_all";
 
   /* API callbacks. */

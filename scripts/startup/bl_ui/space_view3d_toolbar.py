@@ -32,6 +32,7 @@ from bl_ui.properties_paint_common import (
 )
 from bl_ui.utils import PresetPanel
 
+# BFA - Added icons and floated properties left
 
 class VIEW3D_MT_brush_context_menu(Menu):
     bl_label = "Brush Specials"
@@ -2705,7 +2706,7 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_advanced(View3DPanel, Panel):
         if ob.type != 'GREASEPENCIL':
             return False
         brush = context.tool_settings.gpencil_paint.brush
-        return brush is not None and brush.gpencil_tool not in {'ERASE', 'TINT'}
+        return brush is not None and brush.gpencil_tool not in {'ERASE', 'TINT', 'FILL'}
 
     def draw(self, context):
         layout = self.layout
@@ -2720,65 +2721,98 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_advanced(View3DPanel, Panel):
         col = layout.column(align=True)
         if brush is None:
             return
-        if brush.gpencil_tool != 'FILL':
+
+        row = col.row(align=True)
+        row.prop(brush, "use_locked_size", expand=True)
+        col.separator()
+
+        col.prop(brush, "spacing", slider=True)
+        col.separator()
+
+        col.prop(gp_settings, "active_smooth_factor")
+        col.separator()
+
+        col.prop(gp_settings, "angle", slider=True)
+        col.prop(gp_settings, "angle_factor", text="Factor", slider=True)
+
+        ob = context.object
+        ma = None
+        if ob and brush.gpencil_settings.use_material_pin is False:
+            ma = ob.active_material
+        elif brush.gpencil_settings.material:
+            ma = brush.gpencil_settings.material
+
+        col.separator()
+        col.prop(gp_settings, "hardness", slider=True)
+        subcol = col.column(align=True)
+        if ma and ma.grease_pencil.mode == 'LINE':
+            subcol.enabled = False
+        subcol.prop(gp_settings, "aspect")
+
+
+class VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced(View3DPanel, Panel):
+    bl_context = ".greasepencil_paint"
+    bl_label = "Advanced"
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_v3_brush_settings"
+    bl_category = "Tool"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 14
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.active_object
+        if ob.type != 'GREASEPENCIL':
+            return False
+        brush = context.tool_settings.gpencil_paint.brush
+        return brush is not None and brush.gpencil_tool == 'FILL'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        tool_settings = context.scene.tool_settings
+        gpencil_paint = tool_settings.gpencil_paint
+        brush = gpencil_paint.brush
+        gp_settings = brush.gpencil_settings
+
+        col = layout.column(align=True)
+        if brush is None:
+            return
+
+        row = col.row(align=True)
+        row.prop(gp_settings, "fill_draw_mode", text="Boundary", text_ctxt=i18n_contexts.id_gpencil)
+        row.prop(
+            gp_settings,
+            "show_fill_boundary",
+            icon='HIDE_OFF' if gp_settings.show_fill_boundary else 'HIDE_ON',
+            text="",
+        )
+
+        col.separator()
+        row = col.row(align=True)
+        row.prop(gp_settings, "fill_layer_mode", text="Layers")
+
+        col.separator()
+        col.prop(gp_settings, "fill_simplify_level", text="Simplify")
+
+        if gp_settings.fill_draw_mode != 'STROKE':
+            col = layout.column(align=False, heading="Ignore Transparent")
+            col.use_property_decorate = False
             row = col.row(align=True)
-            row.prop(brush, "use_locked_size", expand=True)
-            col.separator()
+            sub = row.row(align=True)
+            sub.use_property_split = False
+            sub.prop(gp_settings, "show_fill", text="")
+            sub = sub.row(align=True)
+            sub.active = gp_settings.show_fill
+            sub.prop(gp_settings, "fill_threshold", text="")
 
-            col.prop(brush, "spacing", slider=True)
-            col.separator()
-
-            col.prop(gp_settings, "active_smooth_factor")
-            col.separator()
-
-            col.prop(gp_settings, "angle", slider=True)
-            col.prop(gp_settings, "angle_factor", text="Factor", slider=True)
-
-            ob = context.object
-            ma = None
-            if ob and brush.gpencil_settings.use_material_pin is False:
-                ma = ob.active_material
-            elif brush.gpencil_settings.material:
-                ma = brush.gpencil_settings.material
-
-            col.separator()
-            col.prop(gp_settings, "hardness", slider=True)
-            subcol = col.column(align=True)
-            if ma and ma.grease_pencil.mode == 'LINE':
-                subcol.enabled = False
-            subcol.prop(gp_settings, "aspect")
-        elif brush.gpencil_tool == 'FILL':
-            row = col.row(align=True)
-            row.prop(gp_settings, "fill_draw_mode", text="Boundary", text_ctxt=i18n_contexts.id_gpencil)
-            row.prop(
-                gp_settings,
-                "show_fill_boundary",
-                icon='HIDE_OFF' if gp_settings.show_fill_boundary else 'HIDE_ON',
-                text="",
-            )
-
-            col.separator()
-            row = col.row(align=True)
-            row.prop(gp_settings, "fill_layer_mode", text="Layers")
-
-            col.separator()
-            col.prop(gp_settings, "fill_simplify_level", text="Simplify")
-            if gp_settings.fill_draw_mode != 'STROKE':
-                col = layout.column()
-                col.use_property_decorate = False
-                row = col.row(align=True)
-                sub = row.row(align=True)
-                sub.use_property_split = False
-                sub.prop(gp_settings, "show_fill", text="Ignore Transparency")
-                sub = sub.row(align=True)
-                sub.active = gp_settings.show_fill
-                sub.use_property_split = True
-                sub.prop(gp_settings, "fill_threshold", text="")
-
-            col.separator()
-            row = col.row(align=True)
-            row.use_property_split = False
-            row.prop(gp_settings, "use_fill_limit")
+        col.separator()
+        row = col.row(align=True)
+        row.prop(gp_settings, "use_fill_limit")
+        row = col.row(align=True)
+        row.use_property_split = False
+        row.prop(gp_settings, "use_auto_remove_fill_guides")
 
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_stroke(Panel, View3DPanel):
@@ -3033,19 +3067,20 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_mixcolor(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
         col = layout.column()
-        if settings.color_mode == 'VERTEXCOLOR':
-            # This panel is only used for Draw mode, which does not use unified paint settings.
-            col.template_color_picker(prop_owner, "color", value_slider=True)
+        col.enabled = settings.color_mode == 'VERTEXCOLOR'
 
-            sub_row = col.row(align=True)
-            if use_unified_paint:
-                UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "color", text="")
-                UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "secondary_color", text="")
-            else:
-                sub_row.prop(brush, "color", text="")
-                sub_row.prop(brush, "secondary_color", text="")
+        # This panel is only used for Draw mode, which does not use unified paint settings.
+        col.template_color_picker(prop_owner, "color", value_slider=True)
 
-                sub_row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
+        sub_row = col.row(align=True)
+        if use_unified_paint:
+            UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "color", text="")
+            UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "secondary_color", text="")
+        else:
+            sub_row.prop(brush, "color", text="")
+            sub_row.prop(brush, "secondary_color", text="")
+
+        sub_row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
 
         if brush.gpencil_tool in {'DRAW', 'FILL'}:
             col.prop(gp_settings, "vertex_mode", text="Mode")
@@ -3126,7 +3161,7 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_eraser(View3DPanel, Panel):
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_gap_closure(View3DPanel, Panel):
     bl_context = ".grease_pencil_paint"
-    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_v3_brush_advanced"
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced"
     bl_label = "Gap Closure"
     bl_category = "Tool"
 
@@ -3255,6 +3290,7 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_v3_brush_settings,
     VIEW3D_PT_tools_grease_pencil_v3_brush_eraser,
     VIEW3D_PT_tools_grease_pencil_v3_brush_advanced,
+    VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced,
     VIEW3D_PT_tools_grease_pencil_v3_brush_stroke,
     VIEW3D_PT_tools_grease_pencil_v3_brush_post_processing,
     VIEW3D_PT_tools_grease_pencil_v3_brush_random,

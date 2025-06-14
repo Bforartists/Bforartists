@@ -1493,7 +1493,7 @@ static void VIEW2D_OT_zoom_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Zoom to Border";
-  ot->description = "Drawing rectangle with LMB zooms in the view to the nearest item contained in the border,\nDrawing rectangle with MMB zooms out";
+  ot->description = "Drawing rectangle with LMB zooms in the view to the nearest item contained in the border,\nDrawing rectangle with MMB zooms out"; /* BFA */ 
   ot->idname = "VIEW2D_OT_zoom_border";
 
   /* API callbacks. */
@@ -1756,7 +1756,7 @@ static void VIEW2D_OT_smoothview(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Smooth View 2D";
-  ot->description = "Smooth View 2D"; /*bfa - added description*/
+  ot->description = "Smoothens the 2D View"; /*bfa - added description*/
   ot->idname = "VIEW2D_OT_smoothview";
 
   /* API callbacks. */

@@ -1115,7 +1115,7 @@ static wmOperatorStatus armature_parent_clear_invoke(bContext *C,
   uiItemEnumO(row_disconnect,
               "ARMATURE_OT_parent_clear",
               std::nullopt,
-              ICON_PARENT_CLEAR,
+              ICON_PARENT_CLEAR, /* BFA */
               "type",
               ARM_PAR_CLEAR_DISCONNECT);
 

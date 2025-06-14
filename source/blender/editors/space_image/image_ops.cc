@@ -1089,7 +1089,7 @@ void IMAGE_OT_view_zoom_in(wmOperatorType *ot)
                               -FLT_MAX,
                               FLT_MAX,
                               "Location",
-                              "Location\nCursor location in screen coordinates",
+                              "Cursor location in screen coordinates",
                               -10.0f,
                               10.0f);
   RNA_def_property_flag(prop, PROP_HIDDEN);
@@ -1150,7 +1150,7 @@ void IMAGE_OT_view_zoom_out(wmOperatorType *ot)
                               -FLT_MAX,
                               FLT_MAX,
                               "Location",
-                              "Location\nCursor location in screen coordinates",
+                              "Cursor location in screen coordinates",
                               -10.0f,
                               10.0f);
   RNA_def_property_flag(prop, PROP_HIDDEN);
@@ -1249,7 +1249,7 @@ void IMAGE_OT_view_zoom_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Zoom Border";
   ot->description =
-      "Drawing a rectangle with LMB zooms in. Drawing a rectangle with MMB zooms out";
+      "Drawing a rectangle with LMB zooms in. Drawing a rectangle with MMB zooms out"; /* BFA */
   ot->idname = "IMAGE_OT_view_zoom_border";
 
   /* API callbacks. */
@@ -2773,7 +2773,7 @@ void IMAGE_OT_new(wmOperatorType *ot)
 
   /* properties */
   ot->prop = RNA_def_string(
-      ot->srna, "name", IMA_DEF_NAME, MAX_ID_NAME - 2, "Name", "Image name");
+      ot->srna, "name", IMA_DEF_NAME, MAX_ID_NAME - 2, "Name", "Image name"); /* BFA */
   prop = RNA_def_int(ot->srna, "width", 1024, 1, INT_MAX, "Width", "Image width", 1, 16384);
   RNA_def_property_subtype(prop, PROP_PIXEL);
   prop = RNA_def_int(ot->srna, "height", 1024, 1, INT_MAX, "Height", "Image height", 1, 16384);
@@ -3593,7 +3593,7 @@ void IMAGE_OT_unpack(wmOperatorType *ot)
       ot->srna, "method", rna_enum_unpack_method_items, PF_USE_LOCAL, "Method", "How to unpack");
   /* XXX, weak!, will fail with library, name collisions */
   RNA_def_string(
-      ot->srna, "id", nullptr, MAX_ID_NAME - 2, "Image Name", "Image name to unpack");
+      ot->srna, "id", nullptr, MAX_ID_NAME - 2, "Image Name", "Image name to unpack"); /* BFA */
 }
 
 /** \} */
@@ -4242,7 +4242,7 @@ void IMAGE_OT_clear_render_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Render Region";
-  ot->description = "Removes an existing Render Region rectangle";  // BFA
+  ot->description = "Removes an existing Render Region rectangle";  /* BFA */
   ot->idname = "IMAGE_OT_clear_render_border";
 
   /* API callbacks. */

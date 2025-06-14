@@ -587,7 +587,7 @@ from bpy.props import BoolProperty, FloatProperty, IntProperty
 
 
 class LightMapPack(Operator):
-    """Lightmap Pack\nPack each face's UV's into the UV bounds"""
+    """Lightmap Pack\nPack each face's UV's into the UV bounds""" # BFA
     bl_idname = "uv.lightmap_pack"
     bl_label = "Lightmap Pack"
 
@@ -649,13 +649,13 @@ class LightMapPack(Operator):
         if is_editmode:
             layout.prop(self, "PREF_CONTEXT")
 
+        # BFA
         col = layout.column()
         col.use_property_split = False
         col.prop(self, "PREF_PACK_IN_ONE")
         col.prop(self, "PREF_NEW_UVLAYER")
         col.use_property_split = True
 
-        layout.prop(self, "PREF_IMG_PX_SIZE")
         layout.prop(self, "PREF_BOX_DIV")
         layout.prop(self, "PREF_MARGIN_DIV")
 

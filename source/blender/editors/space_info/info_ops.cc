@@ -55,7 +55,9 @@ void FILE_OT_pack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pack Linked Libraries";
   ot->idname = "FILE_OT_pack_libraries";
-  ot->description = "Pack all linked library files in use into the current .blend";
+  ot->description =
+      "Pack and store all data linked from other .blend files in the current .blend file. "
+      "Library references are preserved so the linked data can be unpacked again"; /* BFA */
 
   /* API callbacks. */
   ot->exec = pack_libraries_exec;
@@ -99,7 +101,7 @@ void FILE_OT_unpack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unpack Linked Libraries";
   ot->idname = "FILE_OT_unpack_libraries";
-  ot->description = "Restore all packed linked data  to their original locations";
+  ot->description = "Restore all packed linked data  to their original locations"; /* BFA */
 
   /* API callbacks. */
   ot->invoke = unpack_libraries_invoke;
@@ -133,7 +135,7 @@ static wmOperatorStatus autopack_toggle_exec(bContext *C, wmOperator *op)
 void FILE_OT_autopack_toggle(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Automatically Pack Into .blend";
+  ot->name = "Automatically Pack Resources";
   ot->idname = "FILE_OT_autopack_toggle";
   ot->description = "Automatically pack all external files into the .blend file";
 
@@ -578,7 +580,7 @@ void FILE_OT_find_missing_files(wmOperatorType *ot)
                   "find_all",
                   false,
                   "Find All",
-                  "Find All\nFind all files in the search path (not just missing)");
+                  "Find all files in the search path (not just missing)");
 
   WM_operator_properties_filesel(ot,
                                  0,

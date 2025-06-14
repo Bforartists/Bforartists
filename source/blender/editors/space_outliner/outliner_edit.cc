@@ -11,8 +11,6 @@
 
 #include <fmt/format.h>
 
-#include "DNA_windowmanager_enums.h"
-#include "DNA_windowmanager_types.h"
 #include "MEM_guardedalloc.h"
 
 #include "DNA_ID.h"
@@ -2420,7 +2418,7 @@ static wmOperatorStatus outliner_orphans_purge_exec(bContext *C, wmOperator *op)
 
   BKE_id_multi_tagged_delete(bmain);
 
-  BKE_reportf(op->reports, RPT_INFO, "Deleted %d data", data.num_total[INDEX_ID_NULL]);
+  BKE_reportf(op->reports, RPT_INFO, "Deleted %d data", data.num_total[INDEX_ID_NULL]); /* BFA */
 
   /* XXX: tree management normally happens from draw_outliner(), but when
    *      you're clicking to fast on Delete object from context menu in

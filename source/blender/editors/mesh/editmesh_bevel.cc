@@ -929,10 +929,10 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   col->prop(op->ptr, "clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(true);
+  col = &layout->column(true, IFACE_("Mark"));
   uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
-  col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Mark Seams"), ICON_NONE);
-  col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Mark Sharp"), ICON_NONE);
+  col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seams"), ICON_NONE);
+  col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
   uiLayoutSetPropSep(layout, true); /*bfa - checkboxes end. split again*/
 
   layout->separator();
@@ -1048,7 +1048,7 @@ void MESH_OT_bevel(wmOperatorType *ot)
       "Cut into selected items at an angle to create bevel or chamfer\nVertex Bevel is a "
       "separated tool, but has the "
       "same functionality\nActivate the tool, then drag mouse until the geometry changes\nFiner "
-      "adjustments can be done in the Last operator panel then";
+      "adjustments can be done in the Last operator panel then"; /* BFA - more explicit*/
   ot->idname = "MESH_OT_bevel";
 
   /* API callbacks. */
@@ -1092,7 +1092,7 @@ void MESH_OT_bevel(wmOperatorType *ot)
               SEGMENTS_HARD_MAX,
               "Segments",
               "Segments for curved edge determines how many segments the bevel geometry will "
-              "have\nFirst adjust the number of edges, then perform the Bevel operation",
+              "have\nFirst adjust the number of edges, then perform the Bevel operation", /* BFA - more explicity*/
               1,
               100);
 

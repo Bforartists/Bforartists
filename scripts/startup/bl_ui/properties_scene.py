@@ -353,7 +353,7 @@ class SCENE_PT_simulation(SceneButtonsPanel, Panel):
         scene = context.scene
 
         col = layout.column()
-        split = col.split(factor=.4)
+        split = col.split(factor=.4) # BFA
         split.use_property_split=False
         split.prop(scene, "use_custom_simulation_range", text="Simulation Range")
 
@@ -429,7 +429,7 @@ class SCENE_PT_rigid_body_world_settings(RigidBodySubPanel, Panel):
 
             col = flow.column()
             col.active = rbw.enabled
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.prop(rbw, "use_split_impulse")
             row.prop_decorator(rbw, "use_split_impulse")

@@ -11,11 +11,12 @@ from bpy.app.translations import (
     pgettext_iface as iface_,
 )
 
+# BFA - Added icons and floated properties left
 
 # bfa -  added the render engine prop
 class RENDER_PT_context_output(Panel):
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
     bl_context = "output"
     bl_options = {"HIDE_HEADER"}
     bl_label = ""
@@ -64,22 +65,22 @@ class RENDER_MT_pixeldensity_presets(Menu):
 
 
 class RenderOutputButtonsPanel:
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
     bl_context = "output"
     # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
 
     @classmethod
     def poll(cls, context):
-        return context.engine in cls.COMPAT_ENGINES
+        return (context.engine in cls.COMPAT_ENGINES)
 
 
 class RENDER_PT_format(RenderOutputButtonsPanel, Panel):
     bl_label = "Format"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     _frame_rate_args_prev = None
@@ -123,7 +124,7 @@ class RENDER_PT_format(RenderOutputButtonsPanel, Panel):
             show_framerate = True
         else:
             fps_label_text = iface_("{:.4g} fps").format(fps_rate)
-            show_framerate = preset_label == "Custom"
+            show_framerate = (preset_label == "Custom")
 
         RENDER_PT_format._frame_rate_args_prev = args
         RENDER_PT_format._frame_rate_ret = args = (fps_label_text, show_framerate)
@@ -186,9 +187,9 @@ class RENDER_PT_format(RenderOutputButtonsPanel, Panel):
 class RENDER_PT_frame_range(RenderOutputButtonsPanel, Panel):
     bl_label = "Frame Range"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -211,11 +212,11 @@ class RENDER_PT_frame_range(RenderOutputButtonsPanel, Panel):
 class RENDER_PT_time_stretching(RenderOutputButtonsPanel, Panel):
     bl_label = "Time Stretching"
     bl_parent_id = "RENDER_PT_frame_range"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -232,11 +233,11 @@ class RENDER_PT_time_stretching(RenderOutputButtonsPanel, Panel):
 
 class RENDER_PT_post_processing(RenderOutputButtonsPanel, Panel):
     bl_label = "Post Processing"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -260,11 +261,11 @@ class RENDER_PT_post_processing(RenderOutputButtonsPanel, Panel):
 
 class RENDER_PT_stamp(RenderOutputButtonsPanel, Panel):
     bl_label = "Metadata"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -325,11 +326,11 @@ class RENDER_PT_stamp(RenderOutputButtonsPanel, Panel):
 class RENDER_PT_stamp_note(RenderOutputButtonsPanel, Panel):
     bl_label = "Note"
     bl_parent_id = "RENDER_PT_stamp"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw_header(self, context):
@@ -349,11 +350,11 @@ class RENDER_PT_stamp_note(RenderOutputButtonsPanel, Panel):
 class RENDER_PT_stamp_burn(RenderOutputButtonsPanel, Panel):
     bl_label = "Burn Into Image"
     bl_parent_id = "RENDER_PT_stamp"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw_header(self, context):
@@ -373,7 +374,7 @@ class RENDER_PT_stamp_burn(RenderOutputButtonsPanel, Panel):
         col.prop(rd, "stamp_font_size", text="Font Size")
         col.column().prop(rd, "stamp_foreground", slider=True)
         col.column().prop(rd, "stamp_background", slider=True)
-        row = layout.row()
+        row = layout.row() # BFA
         row.active = rd.use_stamp
         row.use_property_split = False
         row.prop(rd, "use_stamp_labels", text="Include Labels")
@@ -383,9 +384,9 @@ class RENDER_PT_stamp_burn(RenderOutputButtonsPanel, Panel):
 class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
     bl_label = "Output"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -395,9 +396,9 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
 
         rd = context.scene.render
         image_settings = rd.image_settings
-        is_eevee = context.scene.render.engine == "BLENDER_EEVEE"
-        is_eevee_next = context.scene.render.engine == "BLENDER_EEVEE_NEXT"
-        is_workbench = context.scene.render.engine == "BLENDER_WORKBENCH"
+        is_eevee = context.scene.render.engine == 'BLENDER_EEVEE'
+        is_eevee_next = context.scene.render.engine == 'BLENDER_EEVEE_NEXT'
+        is_workbench = context.scene.render.engine == 'BLENDER_WORKBENCH'
 
         layout.prop(rd, "filepath", text="")
 
@@ -453,9 +454,9 @@ class RENDER_PT_output_views(RenderOutputButtonsPanel, Panel):
     bl_label = "Views"
     bl_parent_id = "RENDER_PT_output"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     @classmethod
@@ -474,12 +475,12 @@ class RENDER_PT_output_views(RenderOutputButtonsPanel, Panel):
 
 class RENDER_PT_output_color_management(RenderOutputButtonsPanel, Panel):
     bl_label = "Color Management"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "RENDER_PT_output"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -493,11 +494,9 @@ class RENDER_PT_output_color_management(RenderOutputButtonsPanel, Panel):
         layout.row().prop(image_settings, "color_management", text=" ", expand=True)
         layout.use_property_split = True
 
-        flow = layout.grid_flow(
-            row_major=True, columns=0, even_columns=False, even_rows=False, align=True
-        )
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=False, even_rows=False, align=True)
 
-        if image_settings.color_management == "OVERRIDE":
+        if image_settings.color_management == 'OVERRIDE':
             owner = image_settings
         else:
             owner = scene
@@ -594,11 +593,11 @@ class RENDER_PT_output_pixel_density(RenderOutputButtonsPanel, Panel):
 class RENDER_PT_encoding(RenderOutputButtonsPanel, Panel):
     bl_label = "Encoding"
     bl_parent_id = "RENDER_PT_output"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     def draw_header_preset(self, _context):
@@ -607,7 +606,7 @@ class RENDER_PT_encoding(RenderOutputButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         rd = context.scene.render
-        return rd.image_settings.file_format in {"FFMPEG", "XVID", "H264", "THEORA"}
+        return rd.image_settings.file_format in {'FFMPEG', 'XVID', 'H264', 'THEORA'}
 
     def draw(self, context):
         layout = self.layout
@@ -626,15 +625,15 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
     bl_label = "Video"
     bl_parent_id = "RENDER_PT_encoding"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     @classmethod
     def poll(cls, context):
         rd = context.scene.render
-        return rd.image_settings.file_format in {"FFMPEG", "XVID", "H264", "THEORA"}
+        return rd.image_settings.file_format in {'FFMPEG', 'XVID', 'H264', 'THEORA'}
 
     def draw(self, context):
         layout = self.layout
@@ -649,17 +648,17 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
         ffmpeg = context.scene.render.ffmpeg
 
         needs_codec = ffmpeg.format in {
-            "AVI",
-            "QUICKTIME",
-            "MKV",
-            "OGG",
-            "MPEG4",
-            "WEBM",
+            'AVI',
+            'QUICKTIME',
+            'MKV',
+            'OGG',
+            'MPEG4',
+            'WEBM',
         }
         if needs_codec:
             layout.prop(ffmpeg, "codec")
 
-        if needs_codec and ffmpeg.codec == "NONE":
+        if needs_codec and ffmpeg.codec == 'NONE':
             return
 
         # Color depth. List of codecs needs to be in sync with
@@ -669,7 +668,7 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
             image_settings = context.scene.render.image_settings
             layout.prop(image_settings, "color_depth", expand=True)
 
-        if ffmpeg.codec == "DNXHD":
+        if ffmpeg.codec == 'DNXHD':
             layout.use_property_split = False
             layout.prop(ffmpeg, "use_lossless_output")
             layout.use_property_split = True
@@ -681,19 +680,19 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
 
         # Output quality
         use_crf = needs_codec and ffmpeg.codec in {
-            "H264",
-            "H265",
-            "MPEG4",
-            "WEBM",
-            "AV1",
+            'H264',
+            'H265',
+            'MPEG4',
+            'WEBM',
+            'AV1',
         }
         if use_crf:
             layout.prop(ffmpeg, "constant_rate_factor")
 
-        use_encoding_speed = needs_codec and ffmpeg.codec not in {'DNXHD', 'FFV1', 'HUFFYUV', 'PNG', 'QTRLE'}
-        use_bitrate = needs_codec and ffmpeg.codec not in {'FFV1', 'HUFFYUV', 'PNG', 'QTRLE'}
+        use_encoding_speed = needs_codec and ffmpeg.codec not in {'DNXHD', 'FFV1', 'HUFFYUV', 'PNG', 'PRORES', 'QTRLE'}
+        use_bitrate = needs_codec and ffmpeg.codec not in {'FFV1', 'HUFFYUV', 'PNG', 'PRORES', 'QTRLE'}
         use_min_max_bitrate = ffmpeg.codec not in {'DNXHD'}
-        use_gop = needs_codec and ffmpeg.codec not in {'DNXHD', 'HUFFYUV', 'PNG'}
+        use_gop = needs_codec and ffmpeg.codec not in {'DNXHD', 'HUFFYUV', 'PNG', 'PRORES'}
         use_b_frames = needs_codec and use_gop and ffmpeg.codec not in {'FFV1', 'QTRLE'}
 
         # Encoding speed
@@ -714,7 +713,7 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
             else:
                 col.label(icon="DISCLOSURE_TRI_RIGHT")
 
-        if (not use_crf or ffmpeg.constant_rate_factor == "NONE") and use_bitrate:
+        if (not use_crf or ffmpeg.constant_rate_factor == 'NONE') and use_bitrate:
             col = layout.column()
 
             sub = col.column(align=True)
@@ -735,15 +734,15 @@ class RENDER_PT_encoding_audio(RenderOutputButtonsPanel, Panel):
     bl_label = "Audio"
     bl_parent_id = "RENDER_PT_encoding"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
 
     @classmethod
     def poll(cls, context):
         rd = context.scene.render
-        return rd.image_settings.file_format in {"FFMPEG", "XVID", "H264", "THEORA"}
+        return rd.image_settings.file_format in {'FFMPEG', 'XVID', 'H264', 'THEORA'}
 
     def draw(self, context):
         layout = self.layout
@@ -753,10 +752,10 @@ class RENDER_PT_encoding_audio(RenderOutputButtonsPanel, Panel):
         rd = context.scene.render
         ffmpeg = rd.ffmpeg
 
-        if ffmpeg.format != "MP3":
+        if ffmpeg.format != 'MP3':
             layout.prop(ffmpeg, "audio_codec", text="Audio Codec")
 
-        if ffmpeg.audio_codec != "NONE":
+        if ffmpeg.audio_codec != 'NONE':
             layout.prop(ffmpeg, "audio_channels")
             layout.prop(ffmpeg, "audio_mixrate", text="Sample Rate")
             layout.prop(ffmpeg, "audio_bitrate")
@@ -764,32 +763,28 @@ class RENDER_PT_encoding_audio(RenderOutputButtonsPanel, Panel):
 
 
 class RENDER_UL_renderviews(UIList):
-    def draw_item(
-        self, _context, layout, _data, item, icon, _active_data, _active_propname, index
-    ):
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, index):
         view = item
-        if self.layout_type in {"DEFAULT", "COMPACT"}:
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
             if view.name in {"left", "right"}:
                 layout.label(text=view.name, icon_value=icon + (not view.use))
             else:
-                layout.prop(
-                    view, "name", text="", index=index, icon_value=icon, emboss=False
-                )
+                layout.prop(view, "name", text="", index=index, icon_value=icon, emboss=False)
             layout.prop(view, "use", text="", index=index)
 
-        elif self.layout_type == "GRID":
-            layout.alignment = "CENTER"
+        elif self.layout_type == 'GRID':
+            layout.alignment = 'CENTER'
             layout.label(text="", icon_value=icon + (not view.use))
 
 
 class RENDER_PT_stereoscopy(RenderOutputButtonsPanel, Panel):
     bl_label = "Stereoscopy"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE_NEXT',
+        'BLENDER_WORKBENCH',
     }
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
         rd = context.scene.render
@@ -803,22 +798,14 @@ class RENDER_PT_stereoscopy(RenderOutputButtonsPanel, Panel):
         rv = rd.views.active
 
         layout.active = rd.use_multiview
-        basic_stereo = rd.views_format == "STEREO_3D"
+        basic_stereo = rd.views_format == 'STEREO_3D'
 
         row = layout.row()
         layout.row().prop(rd, "views_format", expand=True)
 
         if basic_stereo:
             row = layout.row()
-            row.template_list(
-                "RENDER_UL_renderviews",
-                "name",
-                rd,
-                "stereo_views",
-                rd.views,
-                "active_index",
-                rows=2,
-            )
+            row.template_list("RENDER_UL_renderviews", "name", rd, "stereo_views", rd.views, "active_index", rows=2)
 
             row = layout.row()
             row.use_property_split = True
@@ -827,19 +814,11 @@ class RENDER_PT_stereoscopy(RenderOutputButtonsPanel, Panel):
 
         else:
             row = layout.row()
-            row.template_list(
-                "RENDER_UL_renderviews",
-                "name",
-                rd,
-                "views",
-                rd.views,
-                "active_index",
-                rows=2,
-            )
+            row.template_list("RENDER_UL_renderviews", "name", rd, "views", rd.views, "active_index", rows=2)
 
             col = row.column(align=True)
-            col.operator("scene.render_view_add", icon="ADD", text="")
-            col.operator("scene.render_view_remove", icon="REMOVE", text="")
+            col.operator("scene.render_view_add", icon='ADD', text="")
+            col.operator("scene.render_view_remove", icon='REMOVE', text="")
 
             row = layout.row()
             row.use_property_split = True

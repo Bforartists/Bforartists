@@ -855,8 +855,9 @@ static void collection_exporter_menu_draw(const bContext * /*C*/, Menu *menu)
         icon = ICON_NONE;
       }
       /* BFA end */
-      uiItemStringO(
-          layout, fh->label, icon, "COLLECTION_OT_exporter_add", "name", fh->idname);
+      PointerRNA op_ptr = layout->op(
+          "COLLECTION_OT_exporter_add", fh->label, icon);
+      RNA_string_set(&op_ptr, "name", fh->idname);
       at_least_one = true;
     }
   }
@@ -907,9 +908,9 @@ static wmOperatorStatus collection_add_exec(bContext *C, wmOperator * /*op*/)
 void OBJECT_OT_collection_add(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Add to New Collection";
+  ot->name = "Add to New Collection"; /* BFA - more explicit*/
   ot->idname = "OBJECT_OT_collection_add";
-  ot->description = "Add an object to a new collection";
+  ot->description = "Adds the selected object to a new collection";  /* BFA - more explicit*/
 
   /* API callbacks. */
   ot->exec = collection_add_exec;

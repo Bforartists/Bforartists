@@ -11,6 +11,7 @@ from bpy.types import Panel, Menu
 from rna_prop_ui import PropertyPanel
 from bl_ui.space_properties import PropertiesAnimationMixin
 
+# BFA - Added icons and floated peroperties left
 
 class ObjectButtonsPanel:
     bl_space_type = 'PROPERTIES'
@@ -566,6 +567,7 @@ class OBJECT_PT_shading(ObjectButtonsPanel, Panel):
     def draw(self, context):
         pass
 
+# BFA - light parent panel
 class OBJECT_PT_lightoptions(ObjectButtonsPanel, Panel):
     bl_label = "Light Options"
     bl_context = "object"
@@ -573,7 +575,7 @@ class OBJECT_PT_lightoptions(ObjectButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        # bfa - light parent panel
+
 
 class OBJECT_MT_light_linking_context_menu(Menu):
     bl_label = "Light Linking Specials"
@@ -630,7 +632,7 @@ class OBJECT_MT_shadow_linking_context_menu(Menu):
 
 class OBJECT_PT_shadow_linking(ObjectButtonsPanel, Panel):
     bl_label = "Shadow Linking"
-    bl_parent_id = "OBJECT_PT_lightoptions"
+    bl_parent_id = "OBJECT_PT_lightoptions" # BFA - moved to own light options
     bl_context = "object"
     bl_options = {'DEFAULT_CLOSED'}
 

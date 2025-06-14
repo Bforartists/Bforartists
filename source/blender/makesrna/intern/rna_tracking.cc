@@ -6,6 +6,8 @@
  * \ingroup RNA
  */
 
+/* BFA - Data is data*/
+
 #include <climits>
 #include <cstdlib>
 
@@ -981,7 +983,7 @@ static void rna_def_trackingSettings(BlenderRNA *brna)
       "Refine Tangential",
       "Refine tangential coefficients of distortion model during camera solving\n"
       "Activates with camera lens distortion model Brown\n"
-      "See sidebar > Track > Camera > Lens Distortion ");
+      "See sidebar > Track > Camera > Lens Distortion "); /* BFA */
 
   /* tool settings */
 
@@ -1584,7 +1586,7 @@ static void rna_def_trackingTrack(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Use Mask",
-      "Use a grease pencil data as a mask to use only specified areas of pattern "
+      "Use a grease pencil data as a mask to use only specified areas of pattern " /* BFA */
       "when tracking");
   RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, nullptr);
 
@@ -2111,7 +2113,7 @@ static void rna_def_trackingStabilization(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", TRACKING_SHOW_STAB_TRACKS);
   RNA_def_property_ui_text(
       prop, "Show Tracks", "Show UI list of tracks participating in stabilization");
-  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1); /* BFA */
 }
 
 static void rna_def_reconstructedCamera(BlenderRNA *brna)

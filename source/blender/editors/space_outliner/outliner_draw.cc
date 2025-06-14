@@ -2871,7 +2871,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.drag_parent = (data.drag_id && te->parent) ? TREESTORE(te->parent)->id : nullptr;
         }
 
-        data.icon = ICON_GROUP_BRIGHT;
+        data.icon = ICON_GROUP_BRIGHT; /* BFA */
         break;
       }
       case TSE_GP_LAYER: {
@@ -3430,11 +3430,11 @@ static void outliner_draw_tree_element(uiBlock *block,
       /* Icons a bit higher. */
       if (TSELEM_OPEN(tselem, space_outliner)) {
         UI_icon_draw_alpha(
-            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_DOWN, alpha_fac);
+            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_DOWN, alpha_fac); /* BFA */
       }
       else {
         UI_icon_draw_alpha(
-            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_RIGHT, alpha_fac);
+            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_RIGHT, alpha_fac); /* BFA */
       }
     }
     offsx += UI_UNIT_X;
@@ -3758,7 +3758,7 @@ static void outliner_draw_highlights(uint pos,
                                      const float col_active[4],
                                      const float col_highlight[4],
                                      const float col_searchmatch[4],
-                                     uchar col_collection[4],
+                                     uchar col_collection[4], /* BFA */
                                      int start_x,
                                      int *io_start_y)
 {
@@ -3913,7 +3913,7 @@ static void outliner_draw_highlights(ARegion *region,
 {
   const float col_highlight[4] = {1.0f, 1.0f, 1.0f, 0.13f};
   float col_selection[4], col_active[4], col_searchmatch[4];
-  uchar col_collection[4];
+  uchar col_collection[4]; /* BFA */
 
   UI_GetThemeColor3fv(TH_SELECT_HIGHLIGHT, col_selection);
   col_selection[3] = 1.0f; /* No alpha. */
@@ -3933,7 +3933,7 @@ static void outliner_draw_highlights(ARegion *region,
                            col_active,
                            col_highlight,
                            col_searchmatch,
-                           col_collection,
+                           col_collection, /* BFA */
                            startx,
                            starty);
   immUnbindProgram();

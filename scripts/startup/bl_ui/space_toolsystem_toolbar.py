@@ -106,11 +106,11 @@ class _defs_view3d_generic:
     def cursor():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("view3d.cursor3d")
-            layout.use_property_split = False #BFA
+            layout.use_property_split = False # BFA
             layout.prop(props, "use_depth")
-            layout.use_property_split = True #BFA
+            layout.use_property_split = True # BFA
             layout.prop(props, "orientation")
-            layout.use_property_split = False #BFA
+            layout.use_property_split = False # BFA
         return dict(
             idname="builtin.cursor",
             label="Cursor",
@@ -245,7 +245,7 @@ class _defs_annotate:
                 split.use_property_split=False
                 split.prop(props, "use_stabilizer", text="Stabilize Stroke")
 
-                split.alignment = 'LEFT' #BFA
+                split.alignment = 'LEFT' # BFA
                 if props.use_stabilizer:
                     split.label(icon='DISCLOSURE_TRI_DOWN')
                     col = layout.column()
@@ -455,7 +455,6 @@ class _defs_view3d_select:
             row = layout.row()
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
-
         return dict(
             idname="builtin.select_box",
             label="Select Box",
@@ -472,7 +471,6 @@ class _defs_view3d_select:
             row = layout.row()
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
-
         return dict(
             idname="builtin.select_lasso",
             label="Select Lasso",
@@ -672,7 +670,6 @@ class _defs_view3d_add:
 
             if show_extra:
                 layout.popover("TOPBAR_PT_tool_settings_extra", text="...")
-
         return dict(
             idname="builtin.primitive_uv_sphere_add",
             label="Add UV Sphere",
@@ -697,7 +694,6 @@ class _defs_view3d_add:
 
             if show_extra:
                 layout.popover("TOPBAR_PT_tool_settings_extra", text="...")
-
         return dict(
             idname="builtin.primitive_ico_sphere_add",
             label="Add Ico Sphere",
@@ -776,7 +772,6 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.rip_move")
             props_macro = props.MESH_OT_rip
-            layout.use_property_split = False
             layout.prop(props_macro, "use_fill")
 
         return dict(
@@ -803,7 +798,6 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.polybuild_face_at_cursor_move")
             props_macro = props.MESH_OT_polybuild_face_at_cursor
-            layout.use_property_split = False
             layout.prop(props_macro, "create_quads")
 
         def description(_context, _item, km):
@@ -1171,7 +1165,6 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool, *, extra=False):
             show_extra = False
             props = tool.operator_properties("mesh.knife_tool")
-
             if not extra:
                 layout.use_property_split = False
                 layout.prop(props, "use_occlude_geometry")
@@ -1182,18 +1175,17 @@ class _defs_edit_mesh:
                     show_extra = True
                 else:
                     extra = True
-
             if extra:
                 layout.use_property_decorate = False
                 layout.use_property_split = True
 
                 layout.prop(props, "visible_measurements")
                 layout.prop(props, "angle_snapping")
-                layout.label(text="Angle Snapping Increment") #BFA - make it explicit, and in a label
+                layout.label(text="Angle Snapping Increment") # BFA - make it explicit, and in a label
                 layout.row().prop(props, "angle_snapping_increment", text="", expand=True)
 
             if show_extra:
-                layout.popover("TOPBAR_PT_tool_settings_extra", text="Settings") #BFA - make it explicit
+                layout.popover("TOPBAR_PT_tool_settings_extra", text="Settings") # BFA - make it explicit
 
         return dict(
             idname="builtin.knife",
@@ -1312,7 +1304,6 @@ class _defs_edit_curve:
 
     @ToolDef.from_fn
     def draw():
-
         return dict(
             idname="builtin.draw",
             label="Draw",
@@ -3662,7 +3653,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_sculpt.mesh_filter,
             _defs_sculpt.cloth_filter,
             _defs_sculpt.color_filter,
-            #None, #bfa - too big gap
+            #None, # BFA - too big gap
             _defs_sculpt.face_set_edit,
             _defs_sculpt.mask_by_color,
             None,
@@ -3733,7 +3724,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 if context is None or context.pose_object
                 else ()
             ),
-            #None, #bfa - too big gap
+            #None, # BFA - too big gap
             _defs_weight_paint.poll_select_tools,
             *_tools_annotate,
         ],
@@ -3790,8 +3781,8 @@ class SEQUENCER_PT_tools_active(ToolSelectPanelHelper, Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_label = "Tools"
-    bl_category = "Tools" #BFA - tabs are visible
-    bl_options = {'HIDE_BG'}#BFA - panels has transparent background
+    bl_category = "Tools" # BFA - tabs are visible
+    bl_options = {'HIDE_BG'}# BFA - panels has transparent background
 
     # Satisfy the `ToolSelectPanelHelper` API.
     keymap_prefix = "Sequence Editor Tool:"

@@ -298,7 +298,7 @@ void GRAPH_OT_view_all(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Frame All";
   ot->idname = "GRAPH_OT_view_all";
-  ot->description = "Zooms in or out to fit the display to show full keyframe range";
+  ot->description = "Zooms in or out to fit the display to show full keyframe range"; /* BFA */
 
   /* API callbacks */
   ot->exec = graphkeys_viewall_exec;
@@ -321,7 +321,7 @@ void GRAPH_OT_view_selected(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Frame Selected";
   ot->idname = "GRAPH_OT_view_selected";
-  ot->description = "Zooms in or out to fit the display to show selected keyframe range";
+  ot->description = "Zooms in or out to fit the display to show selected keyframe range"; /* BFA */
 
   /* API callbacks */
   ot->exec = graphkeys_view_selected_exec;

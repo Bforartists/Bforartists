@@ -141,7 +141,7 @@ static void PALETTE_OT_new(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add New Palette";
-  ot->description = "Add a new palette of indexed colors";
+  ot->description = "Add a new palette of indexed colors"; /* BFA */
   ot->idname = "PALETTE_OT_new";
 
   /* API callbacks. */

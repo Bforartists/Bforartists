@@ -36,6 +36,9 @@ class USERPREF_HT_header(Header):
             layout.operator(
                 "wm.save_userpref",
                 text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""), icon = "SAVE_PREFS",
+                # BFA - WIP - Make the save indicator more explicity with the icon (button gets cut off)
+                #text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""),
+                #icon = "FILE_TICK" if prefs.is_dirty else "SAVE_PREFS",
                 translate=False,
             )
 
@@ -445,6 +448,7 @@ class USERPREF_PT_edit_objects_duplicate_data(EditingPanel, CenterAlignMixIn, Pa
     def draw_centered(self, context, layout):
         prefs = context.preferences
         edit = prefs.edit
+
         layout.use_property_split = False
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
@@ -591,6 +595,7 @@ class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):
         layout.prop(edit, "connect_strips_by_default") # BFA - wip
 
 
+# BFA - menu
 class USERPREF_PT_edit_outliner_editor(EditingPanel, CenterAlignMixIn, Panel):
     bl_label = "Outliner"
     bl_options = {'DEFAULT_CLOSED'}
@@ -714,6 +719,7 @@ class SystemPanel:
 
 class USERPREF_PT_system_sound(SystemPanel, CenterAlignMixIn, Panel):
     bl_label = "Sound"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_centered(self, context, layout):
         prefs = context.preferences
@@ -775,7 +781,8 @@ class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
         if system.gpu_backend == 'VULKAN':
             col = layout.column()
             col.label(text="Vulkan backend limitations:", icon='INFO')
-            col.label(text="\u2022 USD/Hydra is not supported", icon='BLANK1')
+            col.label(text="\u2022 WoA support", icon='BLANK1')
+            col.label(text="\u2022 Low VR performance", icon='BLANK1')
 
 
 class USERPREF_PT_system_os_settings(SystemPanel, CenterAlignMixIn, Panel):
@@ -1911,6 +1918,7 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.prop(paths, "save_version")
         flow.prop(paths, "recent_files")
 
+
 # BFA - custom menu
 class USERPREF_PT_saveload_blend_autosave(SaveLoadPanel, CenterAlignMixIn, Panel):
     bl_label = "Auto Save"
@@ -3001,6 +3009,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                 ({"property": "use_new_volume_nodes"}, ("blender/blender/issues/103248", "#103248")),
                 ({"property": "use_shader_node_previews"}, ("blender/blender/issues/110353", "#110353")),
                 ({"property": "use_bundle_and_closure_nodes"}, ("blender/blender/issues/134029", "#134029")),
+                ({"property": "use_socket_structure_type"}, ("blender/blender/issues/127106", "#127106")),
             ),
         )
 

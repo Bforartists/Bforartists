@@ -4,8 +4,8 @@ Tips and Tricks
 ***************
 
 Here are various suggestions that you might find useful when writing scripts.
-Some of these are just Python features that you may not have thought to use with Blender,
-others are Blender-specific.
+Some of these are just Python features that you may not have thought to use with Bforartists,
+others are Bforartists-specific.
 
 
 .. _use_the_terminal:
@@ -14,13 +14,13 @@ Use the Terminal
 ================
 
 When writing Python scripts, it's useful to have a terminal open,
-this is not the built-in Python console but a terminal application which is used to start Blender.
+this is not the built-in Python console but a terminal application which is used to start Bforartists.
 
 The three main use cases for the terminal are:
 
 - You can see the output of ``print()`` as your script runs, which is useful to view debug info.
 - The error traceback is printed in full to the terminal which won't always generate an report message in
-  Blender's user interface (depending on how the script is executed).
+  Bforartists's user interface (depending on how the script is executed).
 - If the script runs for too long or you accidentally enter an infinite loop,
   :kbd:`Ctrl-C` in the terminal (:kbd:`Ctrl-Break` on Windows) will quit the script early.
 
@@ -59,22 +59,22 @@ if this can't be generated, only the property name is copied.
 Show All Operators
 ==================
 
-While Blender logs operators in the Info editor,
+While Bforartists logs operators in the Info editor,
 this only reports operators with the ``REGISTER`` option enabled so as not to flood the *Info* view
 with calls to ``bpy.ops.view3d.smoothview`` and ``bpy.ops.view3d.zoom``.
 Yet for testing it can be useful to see **every** operator called in a terminal,
-do this by enabling the debug option either by passing the ``--debug-wm`` argument when starting Blender
-or by setting :mod:`bpy.app.debug_wm` to ``True`` while Blender is running.
+do this by enabling the debug option either by passing the ``--debug-wm`` argument when starting Bforartists
+or by setting :mod:`bpy.app.debug_wm` to ``True`` while Bforartists is running.
 
 
 Use an External Editor
 ======================
 
-Blender's text editor is fine for small changes and writing tests but its not full featured,
+Bforartists's text editor is fine for small changes and writing tests but its not full featured,
 for larger projects you'll probably want to use a standalone editor or Python IDE.
-Editing a text file externally and having the same text open in Blender does work
-but isn't that optimal so here are two ways you can use an external file from Blender.
-Using the following examples you'll still need text data-block in Blender to execute,
+Editing a text file externally and having the same text open in Bforartists does work
+but isn't that optimal so here are two ways you can use an external file from Bforartists.
+Using the following examples you'll still need text data-block in Bforartists to execute,
 but reference an external file rather than including it directly.
 
 
@@ -115,7 +115,7 @@ This example shows loading a script in as a module and executing a module functi
 
 
 Notice that the script is reloaded every time, this forces use of the modified version,
-otherwise the cached one in ``sys.modules`` would be used until Blender was restarted.
+otherwise the cached one in ``sys.modules`` would be used until Bforartists was restarted.
 
 The important difference between this and executing the script directly is it
 has to call a function in the module, in this case ``main()`` but it can be any function,
@@ -143,41 +143,41 @@ and then loads the script as a module.
    myscript.main()
 
 
-Use Blender without it's User Interface
+Use Bforartists without it's User Interface
 =======================================
 
-While developing your own scripts Blender's interface can get in the way,
+While developing your own scripts Bforartists's interface can get in the way,
 manually reloading, running the scripts, opening file import, etc. adds overhead.
 For scripts that are not interactive it can end up being more efficient not to use
-Blender's interface at all and instead execute the script on the command line.
+Bforartists's interface at all and instead execute the script on the command line.
 
 .. code-block:: sh
 
-   blender --background --python myscript.py
+   Bforartists --background --python myscript.py
 
 
 You might want to run this with a blend-file so the script has some data to operate on.
 
 .. code-block:: sh
 
-   blender myscene.blend --background --python myscript.py
+   Bforartists myscene.blend --background --python myscript.py
 
 .. note::
 
-   Depending on your setup you might have to enter the full path to the Blender executable.
+   Depending on your setup you might have to enter the full path to the Bforartists executable.
 
 
 Once the script is running properly in background mode, you'll want to check the output of the script,
 this depends completely on the task at hand, however, here are some suggestions:
 
 - Render the output to an image, use an image viewer and keep writing over the same image each time.
-- Save a new blend-file, or export the file using one of Blender's exporters.
+- Save a new blend-file, or export the file using one of Bforartists's exporters.
 - If the results can be displayed as text then print them or write them to a file.
 
 
 While this can take a little time to setup, it can be well worth the effort
 to reduce the time it takes to test changes. You can even have
-Blender running the script every few seconds with a viewer updating the results,
+Bforartists running the script every few seconds with a viewer updating the results,
 so no need to leave your text editor to see changes.
 
 
@@ -201,13 +201,13 @@ Examples include:
 Bundled Python & Extensions
 ===========================
 
-The Blender releases distributed from blender.org include a complete Python installation on all platforms,
+The Bforartists releases distributed from Bforartists.org include a complete Python installation on all platforms,
 this has the disadvantage that any extensions you have installed on your system's Python environment
-will not be found by Blender.
+will not be found by Bforartists.
 
 There are two ways to work around this:
 
-- Remove Blender Python subdirectory, Blender will then fallback on the system's Python and use that instead.
+- Remove Bforartists Python subdirectory, Bforartists will then fall back on the system's Python and use that instead.
 
   Depending on your platform,
   you may need to explicitly reference the location of your Python installation using
@@ -215,18 +215,18 @@ There are two ways to work around this:
 
   .. code-block:: sh
 
-     PYTHONPATH=/usr/lib/python3.7 ./blender --python-use-system-env
+     PYTHONPATH=/usr/lib/python3.7 ./Bforartists --python-use-system-env
 
   .. warning::
 
-     The Python (major, minor) version must match the one that Blender comes with.
-     Therefor you can't use Python 3.6 with Blender built to use Python 3.7.
+     The Python (major, minor) version must match the one that Bforartists comes with.
+     Therefor you can't use Python 3.6 with Bforartists built to use Python 3.7.
 
-- Copy or link the extensions into Blender's Python subdirectory so Blender can access them,
-  you can also copy the entire Python installation into Blender's subdirectory,
-  replacing the one Blender comes with.
+- Copy or link the extensions into Bforartists's Python subdirectory so Bforartists can access them,
+  you can also copy the entire Python installation into Bforartists's subdirectory,
+  replacing the one Bforartists comes with.
   This works as long as the Python versions match and the paths are created in the same relative locations.
-  Doing this has the advantage that you can redistribute this bundle to others with Blender
+  Doing this has the advantage that you can redistribute this bundle to others with Bforartists
   including any extensions you rely on.
 
 
@@ -273,14 +273,14 @@ The IPython prompt has auto-complete and some useful features that the standard 
    IPython.embed()
 
 
-Admittedly this highlights the lack of any Python debugging support built into Blender,
+Admittedly this highlights the lack of any Python debugging support built into Bforartists,
 but its still a handy thing to know.
 
 
 Advanced
 ========
 
-Blender as a Module
+Bforartists as a Module
 -------------------
 
 From a Python perspective it's nicer to have everything as an extension
@@ -288,14 +288,14 @@ which lets the Python script combine many components.
 
 Advantages include:
 
-- You can use external editors or IDEs with Blender's Python API and execute scripts within the IDE
+- You can use external editors or IDEs with Bforartists's Python API and execute scripts within the IDE
   (step over code, inspect variables as the script runs).
-- Editors or IDEs can auto-complete Blender modules and variables.
-- Existing scripts can import Blender APIs without having to be run inside of Blender.
+- Editors or IDEs can auto-complete Bforartists modules and variables.
+- Existing scripts can import Bforartists APIs without having to be run inside of Bforartists.
 
-This is marked advanced because to run Blender as a Python module requires a special build option.
+This is marked advanced because to run Bforartists as a Python module requires a special build option.
 For instructions on building see
-`Building Blender as a Python module <https://developer.blender.org/docs/handbook/building_blender/python_module/>`__.
+`Building Bforartists as a Python module <https://developer.blender.org/docs/handbook/building_blender/python_module/>`__.
 
 
 Python Safety (Build Option)

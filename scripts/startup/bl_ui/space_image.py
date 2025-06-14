@@ -5,6 +5,8 @@
 import bpy
 import math
 
+# BFA - Added icons and floated properties left
+
 from bpy.types import (
     AssetShelf,
     Header,
@@ -62,7 +64,7 @@ class IMAGE_PT_active_tool(Panel, ToolActivePanelHelper):
     bl_region_type = 'UI'
     bl_category = "Tool"
 
-
+# BFA - menu
 class IMAGE_MT_view_legacy(Menu):
     bl_label = "Legacy"
 
@@ -162,6 +164,7 @@ class IMAGE_MT_view(Menu):
 
         layout.menu("INFO_MT_area")
         layout.menu("IMAGE_MT_view_pie_menus")
+
 
 # BFA - Hidden legacy operators exposed to GUI
 class IMAGE_MT_view_annotations(Menu):
@@ -273,6 +276,7 @@ class IMAGE_MT_select_linked(Menu):
         layout.operator("uv.shortest_path_select", text="Shortest Path", icon="LINKED")
 
 
+# BFA - menu
 class IMAGE_MT_brush(Menu):
     bl_label = "Brush"
 

@@ -353,9 +353,9 @@ static bool datadropper_poll(bContext *C)
 void UI_OT_eyedropper_id(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Eyedropper Data";
+  ot->name = "Eyedropper Data"; /* BFA - removed block*/
   ot->idname = "UI_OT_eyedropper_id";
-  ot->description = "Sample a data from the 3D View to store in a property";
+  ot->description = "Sample a data from the 3D View to store in a property"; /* BFA - removed block*/
 
   /* API callbacks. */
   ot->invoke = datadropper_invoke;

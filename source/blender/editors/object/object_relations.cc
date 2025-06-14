@@ -96,6 +96,8 @@
 
 #include "object_intern.hh"
 
+/* BFA - Added icons and updated descriptions*/
+
 namespace blender::ed::object {
 
 /* ------------------------------------------------------------------- */
@@ -2707,7 +2709,7 @@ void OBJECT_OT_make_override_library(wmOperatorType *ot)
   ot->name = "Make Library Override";
   ot->description =
       "Make a local override of this library linked data\nIterates through the hierarchy of "
-      "objects and collections based on the selection";
+      "objects and collections based on the selection"; /* BFA */
   ot->idname = "OBJECT_OT_make_override_library";
 
   /* API callbacks. */
@@ -2965,7 +2967,7 @@ void OBJECT_OT_make_single_user(wmOperatorType *ot)
 
   RNA_def_boolean(ot->srna, "object", false, "Object", "Make single user objects");
   RNA_def_boolean(ot->srna, "obdata", false, "Object Data", "Make single user object data");
-  RNA_def_boolean(ot->srna, "material", false, "Materials", "Make materials local to each data");
+  RNA_def_boolean(ot->srna, "material", false, "Materials", "Make materials local to each data"); /* BFA */
   RNA_def_boolean(ot->srna,
                   "animation",
                   false,
@@ -3084,7 +3086,7 @@ static bool check_geometry_node_group_sockets(wmOperator *op, const bNodeTree *t
       return false;
     }
     const bke::bNodeSocketType *typeinfo = first_output->socket_typeinfo();
-    const eNodeSocketDatatype type = typeinfo ? eNodeSocketDatatype(typeinfo->type) : SOCK_CUSTOM;
+    const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
     if (type != SOCK_GEOMETRY) {
       BKE_report(op->reports, RPT_ERROR, "The first output must be a geometry socket");
       return false;

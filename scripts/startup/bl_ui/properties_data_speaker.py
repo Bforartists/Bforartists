@@ -56,12 +56,12 @@ class DATA_PT_speaker(DataButtonsPanel, Panel):
 
         layout.template_ID(speaker, "sound", open="sound.open_mono")
 
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
 
         layout.prop(speaker, "muted")
 
         col = layout.column()
-        col.use_property_split = True
+        col.use_property_split = True # BFA
         col.active = not speaker.muted
         col.prop(speaker, "volume", slider=True)
         col.prop(speaker, "pitch")

@@ -271,6 +271,7 @@ static wmOperatorStatus scene_new_exec(bContext *C, wmOperator *op)
 }
 
 static EnumPropertyItem scene_new_items[] = {
+    /* BFA - Added icons*/
     {SCE_COPY_NEW, "NEW", ICON_ADD, "New", "Add a new, empty scene with default settings"},
     {SCE_COPY_EMPTY,
      "EMPTY",

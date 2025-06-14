@@ -269,7 +269,7 @@ class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_const
 
         if rbc.type == 'HINGE':
             col = flow.column()
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.prop(rbc, "use_limit_ang_z")
             row.prop_decorator(rbc, "use_limit_ang_z")
@@ -495,7 +495,7 @@ class PHYSICS_PT_rigid_body_constraint_springs_angular(PHYSICS_PT_rigidbody_cons
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
         col = flow.column()
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(rbc, "use_spring_ang_x", text="X Angle")
         row.prop_decorator(rbc, "use_spring_ang_x")
@@ -558,7 +558,7 @@ class PHYSICS_PT_rigid_body_constraint_springs_linear(PHYSICS_PT_rigidbody_const
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
         col = flow.column()
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(rbc, "use_spring_x", text="X Axis")
         row.prop_decorator(rbc, "use_spring_x")

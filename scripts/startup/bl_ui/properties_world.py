@@ -9,6 +9,7 @@ from rna_prop_ui import PropertyPanel
 from bpy_extras.node_utils import find_node_input
 from bl_ui.space_properties import PropertiesAnimationMixin
 
+# BFA - Added icons and floated properties left
 
 # bfa -  added the render engine prop
 class WORLD_PT_context(Panel):

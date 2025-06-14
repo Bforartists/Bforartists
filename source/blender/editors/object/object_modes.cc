@@ -529,7 +529,7 @@ void OBJECT_OT_transfer_mode(wmOperatorType *ot)
   ot->description =
       "Switch to another object without leaving the mode\nHotkey in the default keymap: D\nThe "
       "menu operator calls an object picker\nThe hotkey switches directly to the object under the "
-      "mouse";
+      "mouse"; /* BFA - more explicit*/
 
   /* API callbacks. */
   ot->invoke = object_transfer_mode_invoke;

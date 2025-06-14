@@ -10,6 +10,7 @@ from bpy.app.translations import (
     contexts as i18n_contexts,
 )
 
+# BFA - Added icons and floated properties left
 
 class PhysicButtonsPanel:
     bl_space_type = 'PROPERTIES'

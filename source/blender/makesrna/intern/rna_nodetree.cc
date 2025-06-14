@@ -233,6 +233,8 @@ const EnumPropertyItem rna_enum_node_vec_math_items[] = {
     {NODE_VECTOR_MATH_NORMALIZE, "NORMALIZE", 0, "Normalize", "Normalize A"},
     RNA_ENUM_ITEM_SEPR,
     {NODE_VECTOR_MATH_ABSOLUTE, "ABSOLUTE", 0, "Absolute", "Entry-wise absolute"},
+    {NODE_VECTOR_MATH_POWER, "POWER", 0, "Power", "Entry-wise power"},
+    {NODE_VECTOR_MATH_SIGN, "SIGN", 0, "Sign", "Entry-wise sign"},
     {NODE_VECTOR_MATH_MINIMUM, "MINIMUM", 0, "Minimum", "Entry-wise minimum"},
     {NODE_VECTOR_MATH_MAXIMUM, "MAXIMUM", 0, "Maximum", "Entry-wise maximum"},
     {NODE_VECTOR_MATH_FLOOR, "FLOOR", 0, "Floor", "Entry-wise floor"},
@@ -629,6 +631,7 @@ static const EnumPropertyItem node_cryptomatte_layer_name_items[] = {
 
 #  include "NOD_common.hh"
 #  include "NOD_composite.hh"
+#  include "NOD_fn_format_string.hh"
 #  include "NOD_geo_bake.hh"
 #  include "NOD_geo_bundle.hh"
 #  include "NOD_geo_capture_attribute.hh"
@@ -667,6 +670,7 @@ using blender::nodes::EvaluateClosureOutputItemsAccessor;
 using blender::nodes::ForeachGeometryElementGenerationItemsAccessor;
 using blender::nodes::ForeachGeometryElementInputItemsAccessor;
 using blender::nodes::ForeachGeometryElementMainItemsAccessor;
+using blender::nodes::FormatStringItemsAccessor;
 using blender::nodes::IndexSwitchItemsAccessor;
 using blender::nodes::MenuSwitchItemsAccessor;
 using blender::nodes::RepeatItemsAccessor;
@@ -3979,6 +3983,33 @@ static void rna_NodeCrop_size_y_set(PointerRNA *ptr, const int value)
   bNode *node = ptr->data_as<bNode>();
   bNodeSocket *input = blender::bke::node_find_socket(*node, SOCK_IN, "Size");
   input->default_value_typed<bNodeSocketValueVector>()->value[1] = float(value);
+}
+
+static int rna_NodeFlip_axis_get(PointerRNA *ptr)
+{
+  bNode *node = ptr->data_as<bNode>();
+  const bNodeSocket *x_input = blender::bke::node_find_socket(*node, SOCK_IN, "Flip X");
+  const bNodeSocket *y_input = blender::bke::node_find_socket(*node, SOCK_IN, "Flip Y");
+  const bool flip_x = x_input->default_value_typed<bNodeSocketValueBoolean>()->value;
+  const bool flip_y = y_input->default_value_typed<bNodeSocketValueBoolean>()->value;
+  if (flip_x && flip_y) {
+    return 2;
+  }
+
+  if (flip_y) {
+    return 1;
+  }
+
+  return 0;
+}
+
+static void rna_NodeFlip_axis_set(PointerRNA *ptr, const int value)
+{
+  bNode *node = ptr->data_as<bNode>();
+  bNodeSocket *x_input = blender::bke::node_find_socket(*node, SOCK_IN, "Flip X");
+  bNodeSocket *y_input = blender::bke::node_find_socket(*node, SOCK_IN, "Flip Y");
+  x_input->default_value_typed<bNodeSocketValueBoolean>()->value = value != 1;
+  y_input->default_value_typed<bNodeSocketValueBoolean>()->value = value != 0;
 }
 
 /* A getter that returns the value of the input socket with the given template identifier and type.
@@ -7827,6 +7858,7 @@ static void rna_def_cmp_output_file_slot_file(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Path", "Subpath used for this slot");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
   RNA_def_property_flag(prop, PROP_PATH_OUTPUT | PROP_PATH_SUPPORTS_TEMPLATES);
+  RNA_def_property_path_template_type(prop, PROP_VARIABLES_RENDER_OUTPUT);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, nullptr);
 }
 static void rna_def_cmp_output_file_slot_layer(BlenderRNA *brna)
@@ -7905,6 +7937,7 @@ static void def_cmp_output_file(BlenderRNA *brna, StructRNA *srna)
   RNA_def_property_ui_text(prop, "Base Path", "Base output path for the image");
   RNA_def_property_flag(
       prop, PROP_PATH_OUTPUT | PROP_PATH_SUPPORTS_BLEND_RELATIVE | PROP_PATH_SUPPORTS_TEMPLATES);
+  RNA_def_property_path_template_type(prop, PROP_VARIABLES_RENDER_OUTPUT);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "active_input_index", PROP_INT, PROP_NONE);
@@ -8540,9 +8573,9 @@ static void def_cmp_flip(BlenderRNA * /*brna*/, StructRNA *srna)
   PropertyRNA *prop;
 
   prop = RNA_def_property(srna, "axis", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, nullptr, "custom1");
+  RNA_def_property_enum_funcs(prop, "rna_NodeFlip_axis_get", "rna_NodeFlip_axis_set", nullptr);
   RNA_def_property_enum_items(prop, node_flip_items);
-  RNA_def_property_ui_text(prop, "Axis", "");
+  RNA_def_property_ui_text(prop, "Axis", "(Deprecated: Use Flip X and Flip Y inputs instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -8756,7 +8789,7 @@ static void def_cmp_invert(BlenderRNA * /*brna*/, StructRNA *srna)
       prop,
       "rna_node_property_to_input_getter<bool, node_input_invert_color>",
       "rna_node_property_to_input_setter<bool, node_input_invert_color>");
-  RNA_def_property_ui_text(prop, "RGB", "(Deprecated: Use Invert Color node instead.)");
+  RNA_def_property_ui_text(prop, "RGB", "(Deprecated: Use Invert Color input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "invert_alpha", PROP_BOOLEAN, PROP_NONE);
@@ -8764,7 +8797,7 @@ static void def_cmp_invert(BlenderRNA * /*brna*/, StructRNA *srna)
       prop,
       "rna_node_property_to_input_getter<bool, node_input_invert_alpha>",
       "rna_node_property_to_input_setter<bool, node_input_invert_alpha>");
-  RNA_def_property_ui_text(prop, "Alpha", "(Deprecated: Use Invert Alpha node instead.)");
+  RNA_def_property_ui_text(prop, "Alpha", "(Deprecated: Use Invert Alpha input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -9472,7 +9505,7 @@ static void def_cmp_zcombine(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_ui_text(prop,
                            "Use Alpha",
                            "Take alpha channel into account when doing the Z operation. "
-                           "(Deprecated: Use Use Alpha input instead.)");
+                           "(Deprecated: Use \"Use Alpha\" input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "use_antialias_z", PROP_BOOLEAN, PROP_NONE);
@@ -9481,8 +9514,8 @@ static void def_cmp_zcombine(BlenderRNA * /*brna*/, StructRNA *srna)
                                  "rna_node_property_to_input_setter<bool, node_input_anti_alias>");
   RNA_def_property_ui_text(prop,
                            "Anti-Alias Z",
-                           "Anti-alias the z-buffer to try to avoid artifacts"
-                           "(Deprecated: Use Anti-Alias input instead.)");
+                           "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for "
+                           "Blender renders. (Deprecated: Use Anti-Alias input instead.)");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -12152,6 +12185,53 @@ static void def_geo_index_switch(BlenderRNA *brna, StructRNA *srna)
   RNA_def_property_srna(prop, "NodeIndexSwitchItems");
 }
 
+static void rna_def_fn_format_string_item(BlenderRNA *brna)
+{
+  StructRNA *srna;
+
+  srna = RNA_def_struct(brna, "NodeFunctionFormatStringItem", nullptr);
+  RNA_def_struct_ui_text(srna, "Format String Item", "");
+
+  rna_def_node_item_array_socket_item_common(srna, "FormatStringItemsAccessor", true);
+}
+
+static void rna_def_fn_format_string_items(BlenderRNA *brna)
+{
+  StructRNA *srna;
+
+  srna = RNA_def_struct(brna, "NodeFunctionFormatStringItems", nullptr);
+  RNA_def_struct_sdna(srna, "bNode");
+  RNA_def_struct_ui_text(srna, "Items", "Collection of format string items");
+
+  rna_def_node_item_array_new_with_socket_and_name(
+      srna, "NodeFunctionFormatStringItem", "FormatStringItemsAccessor");
+  rna_def_node_item_array_common_functions(
+      srna, "NodeFunctionFormatStringItem", "FormatStringItemsAccessor");
+}
+
+static void def_fn_format_string(BlenderRNA *brna, StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  rna_def_fn_format_string_item(brna);
+  rna_def_fn_format_string_items(brna);
+
+  RNA_def_struct_sdna_from(srna, "NodeFunctionFormatString", "storage");
+
+  prop = RNA_def_property(srna, "format_items", PROP_COLLECTION, PROP_NONE);
+  RNA_def_property_collection_sdna(prop, nullptr, "items", "items_num");
+  RNA_def_property_struct_type(prop, "NodeFunctionFormatStringItem");
+  RNA_def_property_ui_text(prop, "Items", "");
+  RNA_def_property_srna(prop, "NodeFunctionFormatStringItems");
+
+  prop = RNA_def_property(srna, "active_index", PROP_INT, PROP_UNSIGNED);
+  RNA_def_property_int_sdna(prop, nullptr, "active_index");
+  RNA_def_property_ui_text(prop, "Active Item Index", "Index of the active item");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
+  RNA_def_property_update(prop, NC_NODE, nullptr);
+}
+
 static void def_geo_curve_handle_type_selection(BlenderRNA * /*brna*/, StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -14013,6 +14093,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeEulerToRotation", nullptr, ICON_EULER_TO_ROTATION);
   define(brna, "FunctionNode", "FunctionNodeFindInString", nullptr, ICON_STRING_FIND);
   define(brna, "FunctionNode", "FunctionNodeFloatToInt", def_float_to_int, ICON_FLOAT_TO_INT);
+  define(brna, "FunctionNode", "FunctionNodeFormatString", def_fn_format_string, ICON_NONE);
   define(brna, "FunctionNode", "FunctionNodeHashValue", nullptr, ICON_HASH);
   define(brna, "FunctionNode", "FunctionNodeInputBool", def_fn_input_bool, ICON_INPUT_BOOL);
   define(brna, "FunctionNode", "FunctionNodeInputColor", def_fn_input_color, ICON_COLOR);

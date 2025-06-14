@@ -66,6 +66,10 @@
 /* Own include. */
 #include "sequencer_intern.hh"
 
+#include "DNA_space_types.h" /*BFA - 3D Sequencer*/
+
+#include "BKE_context.hh" /*BFA - 3D Sequencer*/
+
 namespace blender::ed::vse {
 
 struct SequencerAddData {
@@ -1750,7 +1754,8 @@ static std::string sequencer_add_effect_strip_get_description(bContext * /*C*/,
       return TIP_(
           "Add an alpha under blend mode effect strip for two selected strips with video content");
     case STRIP_TYPE_GAMCROSS:
-      return TIP_("Add a gamma cross transition strip for two selected strips with video content");
+      return TIP_(
+          "Add a gamma crossfade transition strip for two selected strips with video content");
     case STRIP_TYPE_MUL:
       return TIP_(
           "Add a multiply blend mode effect strip for two selected strips with video content");

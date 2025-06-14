@@ -57,10 +57,8 @@ class VIEW3D_HT_tool_header(Header):
         # Active Tool
         # -----------
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
-
         tool = ToolSelectPanelHelper.draw_active_tool_header(
-            context,
-            layout,
+            context, layout,
             tool_key=('VIEW_3D', tool_mode),
         )
         # Object Mode Options
@@ -114,12 +112,11 @@ class VIEW3D_HT_tool_header(Header):
             if is_valid_context:
                 brush = context.tool_settings.gpencil_paint.brush
                 if brush:
-                    if brush.gpencil_tool != 'ERASE':
-                        if brush.gpencil_tool != 'TINT':
-                            layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_advanced")
-
-                        if brush.gpencil_tool not in {'FILL', 'TINT'}:
-                            layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_stroke")
+                    if brush.gpencil_tool not in {'FILL', 'TINT', 'ERASE'}:
+                        layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_advanced")
+                        layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_stroke")
+                    if brush.gpencil_tool == 'FILL':
+                        layout.popover("VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced")
                     layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
         elif tool_mode == 'SCULPT_GREASE_PENCIL':
             if is_valid_context:
@@ -148,20 +145,20 @@ class VIEW3D_HT_tool_header(Header):
             # sub.scale_x = 0.6 #bfa - just needed for text buttons. we use icons, and then the buttons are too small
             return row, sub
 
-        if mode_string == "EDIT_ARMATURE":
+        if mode_string == 'EDIT_ARMATURE':
             ob = context.object
             _row, sub = row_for_mirror()
             sub.prop(
                 ob.data, "use_mirror_x", icon="MIRROR_X", toggle=True, icon_only=True
             )
-        elif mode_string == "POSE":
+        elif mode_string == 'POSE':
             ob = context.object
             _row, sub = row_for_mirror()
             sub.prop(
                 ob.pose, "use_mirror_x", icon="MIRROR_X", toggle=True, icon_only=True
             )
         elif mode_string in {
-            "EDIT_MESH",
+            'EDIT_MESH',
             'PAINT_WEIGHT',
             'SCULPT',
             'PAINT_VERTEX',
@@ -227,23 +224,23 @@ class VIEW3D_HT_tool_header(Header):
             layout.popover_group(context=".weightpaint", **popover_kw)
         elif mode_string == 'PAINT_TEXTURE':
             layout.popover_group(context=".imagepaint", **popover_kw)
-        elif mode_string == "EDIT_TEXT":
+        elif mode_string == 'EDIT_TEXT':
             layout.popover_group(context=".text_edit", **popover_kw)
-        elif mode_string == "EDIT_ARMATURE":
+        elif mode_string == 'EDIT_ARMATURE':
             layout.popover_group(context=".armature_edit", **popover_kw)
-        elif mode_string == "EDIT_METABALL":
+        elif mode_string == 'EDIT_METABALL':
             layout.popover_group(context=".mball_edit", **popover_kw)
-        elif mode_string == "EDIT_LATTICE":
+        elif mode_string == 'EDIT_LATTICE':
             layout.popover_group(context=".lattice_edit", **popover_kw)
-        elif mode_string == "EDIT_CURVE":
+        elif mode_string == 'EDIT_CURVE':
             layout.popover_group(context=".curve_edit", **popover_kw)
-        elif mode_string == "EDIT_MESH":
+        elif mode_string == 'EDIT_MESH':
             layout.popover_group(context=".mesh_edit", **popover_kw)
-        elif mode_string == "POSE":
+        elif mode_string == 'POSE':
             layout.popover_group(context=".posemode", **popover_kw)
-        elif mode_string == "PARTICLE":
+        elif mode_string == 'PARTICLE':
             layout.popover_group(context=".particlemode", **popover_kw)
-        elif mode_string == "OBJECT":
+        elif mode_string == 'OBJECT':
             layout.popover_group(context=".objectmode", **popover_kw)
 
         if mode_string in {
@@ -1402,7 +1399,7 @@ class VIEW3D_MT_editor_menus(Menu):
                 text="Add",
                 text_ctxt=i18n_contexts.operator_default,
             )
-        elif mode_string == "EDIT_ARMATURE":
+        elif mode_string == 'EDIT_ARMATURE':
             layout.menu(
                 "TOPBAR_MT_edit_armature_add",
                 text="Add",
@@ -6806,7 +6803,7 @@ class BoneOptions:
             "use_inherit_rotation",
         ]
 
-        if context.mode == "EDIT_ARMATURE":
+        if context.mode == 'EDIT_ARMATURE':
             bone_props = bpy.types.EditBone.bl_rna.properties
             data_path_iter = "selected_bones"
             opt_suffix = ""
@@ -7222,7 +7219,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("mesh.faces_shade_smooth", icon="SHADING_SMOOTH")
             col.operator("mesh.faces_shade_flat", icon="SHADING_FLAT")
 
-            col.separator()
+            layout.separator()
 
             # Removal Operators
             col.operator("mesh.unsubdivide", icon="UNSUBDIVIDE")
@@ -8843,13 +8840,15 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
             )
             layout.operator("grease_pencil.reproject", icon="REPROJECT")
 
+            layout.separator()
+            layout.operator("grease_pencil.remove_fill_guides")
+
 
 class VIEW3D_MT_edit_greasepencil(Menu):
     bl_label = "Grease Pencil"
 
     def draw(self, _context):
         layout = self.layout
-
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("GREASE_PENCIL_MT_snap")
@@ -8886,6 +8885,9 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
+
+        layout.separator()
+        layout.operator("grease_pencil.outline", text="Outline")
 
         layout.separator()
         layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
@@ -8930,6 +8932,8 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.separator()
         layout.operator_menu_enum("grease_pencil.join_selection", "type", text="Join")
 
+        layout.separator()
+        layout.operator("grease_pencil.outline", text="Outline")
         layout.separator()
 
         layout.menu("GREASE_PENCIL_MT_move_to_layer")
@@ -11188,7 +11192,7 @@ class VIEW3D_PT_overlay_bones(Panel):
 
         if mode in {"POSE", 'PAINT_WEIGHT'}:
             armature = context.pose_object
-        elif mode == "EDIT_ARMATURE":
+        elif mode == 'EDIT_ARMATURE':
             armature = context.edit_object
         else:
             return False
@@ -11219,7 +11223,7 @@ class VIEW3D_PT_overlay_bones(Panel):
         col = layout.column()
         col.active = display_all
 
-        if mode == "POSE":
+        if mode == 'POSE':
             col = layout.column(align=True)
             col.active = display_all
             split = col.split()
@@ -11858,7 +11862,7 @@ class VIEW3D_PT_context_properties(Panel):
         obj = context.object
         if obj:
             object_mode = obj.mode
-            if object_mode == "POSE":
+            if object_mode == 'POSE':
                 return "active_pose_bone"
             elif object_mode == "EDIT" and obj.type == 'ARMATURE':
                 return "active_bone"
@@ -12167,6 +12171,9 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
                 )
 
                 col.separator()
+
+            col.operator("grease_pencil.outline", text="Outline")
+
             col.operator("grease_pencil.stroke_split", text="Split", icon="SPLIT")
             col.operator(
                 "grease_pencil.separate", text="Separate", icon="SEPARATE"
@@ -12231,6 +12238,9 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.operator(
                 "grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY"
             )
+
+            col.separator()
+            col.operator("grease_pencil.outline", text="Outline")
 
             col.separator()
 
@@ -13431,8 +13441,8 @@ classes = (
     VIEW3D_PT_greasepencil_weight_context_menu,
 )
 
+
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
-
     for cls in classes:
         register_class(cls)

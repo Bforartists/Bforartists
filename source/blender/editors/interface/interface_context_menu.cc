@@ -29,7 +29,6 @@
 #include "ED_buttons.hh"
 #include "ED_keyframing.hh"
 #include "ED_screen.hh"
-#include "UI_view2d.hh"
 
 #include "UI_abstract_view.hh"
 #include "UI_interface.hh"

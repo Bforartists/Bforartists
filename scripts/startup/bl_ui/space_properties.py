@@ -195,7 +195,7 @@ classes = (
     PROPERTIES_HT_header,
     PROPERTIES_PT_navigation_bar,
     PROPERTIES_PT_options,
-    ALL_MT_editormenu_properties,
+    ALL_MT_editormenu_properties, # BFA - menu
 )
 
 if __name__ == "__main__":  # only for live edit.

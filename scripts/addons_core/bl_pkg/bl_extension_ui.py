@@ -143,7 +143,7 @@ def pkg_manifest_zip_all_items(pkg_manifest_local, pkg_manifest_remote):
 
 # While this is not a strict definition (internally they're just add-ons from different places),
 # for the purposes of the UI it makes sense to differentiate add-ons this way because these add-on
-# characteristics are mutually exclusive (there is no such thing as a user-core-extension for e.g.).
+# characteristics are mutually exclusive (there is no such thing as a user-core-extension for example).
 
 # Add-On Types:
 

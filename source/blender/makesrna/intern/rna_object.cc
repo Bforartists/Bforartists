@@ -104,7 +104,7 @@ const EnumPropertyItem rna_enum_workspace_object_mode_items[] = {
      "Grease Pencil Weight Paint Strokes"},
     {0, nullptr, 0, nullptr, nullptr},
 };
-
+/* BFA - Added icons*/
 const EnumPropertyItem rna_enum_object_empty_drawtype_items[] = {
     {OB_PLAINAXES, "PLAIN_AXES", ICON_EMPTY_AXIS, "Plain Axes", ""},
     {OB_ARROWS, "ARROWS", ICON_EMPTY_ARROWS, "Arrows", ""},
@@ -2343,7 +2343,7 @@ static void rna_def_material_slot(BlenderRNA *brna)
                                  "rna_MaterialSlot_material_set",
                                  nullptr,
                                  "rna_MaterialSlot_material_poll");
-  RNA_def_property_ui_text(prop, "Material", "Material data used by this material slot");
+  RNA_def_property_ui_text(prop, "Material", "Material data used by this material slot"); /* BFA */
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_MaterialSlot_update");
 
   prop = RNA_def_property(srna, "slot_index", PROP_INT, PROP_NONE);
@@ -2896,7 +2896,7 @@ static void rna_def_object(BlenderRNA *brna)
   static int boundbox_dimsize[] = {8, 3};
 
   srna = RNA_def_struct(brna, "Object", "ID");
-  RNA_def_struct_ui_text(srna, "Object", "Object data defining an object in a scene");
+  RNA_def_struct_ui_text(srna, "Object", "Object data defining an object in a scene"); /* BFA */
   RNA_def_struct_clear_flag(srna, STRUCT_ID_REFCOUNT);
   RNA_def_struct_ui_icon(srna, ICON_OBJECT_DATA);
 
@@ -3399,7 +3399,7 @@ static void rna_def_object(BlenderRNA *brna)
       prop,
       "Color",
       "The color to display the object in the viewport\nYou need to be in Viewport Shading "
-      "Solid\nAnd the Color type in the viewport shading settings must be Object");
+      "Solid\nAnd the Color type in the viewport shading settings must be Object"); /* BFA */
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
 
   /* physics */

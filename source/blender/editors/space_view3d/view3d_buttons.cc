@@ -51,7 +51,7 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "UI_interface_c.hh"
+#include "UI_interface_c.hh" /* BFA */
 #include "WM_api.hh"
 #include "WM_types.hh"
 

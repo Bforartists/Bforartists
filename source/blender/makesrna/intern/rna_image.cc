@@ -815,7 +815,7 @@ static void rna_def_imageuser(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "ImageUser", nullptr);
   RNA_def_struct_ui_text(
-      srna, "Image User", "Parameters defining how an Image data is used by another data");
+      srna, "Image User", "Parameters defining how an Image data is used by another data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_ImageUser_path");
 
   RNA_define_lib_overridable(true);
@@ -1150,7 +1150,7 @@ static void rna_def_image(BlenderRNA *brna)
   };
 
   srna = RNA_def_struct(brna, "Image", "ID");
-  RNA_def_struct_ui_text(srna, "Image", "Image data referencing an external or packed image");
+  RNA_def_struct_ui_text(srna, "Image", "Image data referencing an external or packed image"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_IMAGE_DATA);
 
   prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);

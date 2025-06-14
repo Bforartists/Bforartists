@@ -1036,7 +1036,7 @@ void RNA_api_object(StructRNA *srna)
   RNA_def_function_ui_description(
       func,
       "Create a Mesh data from the current state of the object. The object owns the "
-      "data. To force free it use to_mesh_clear(). "
+      "data. To force free it use to_mesh_clear(). " /* BFA */
       "The result is temporary and cannot be used by objects from the main database.");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
   RNA_def_boolean(func,
@@ -1056,7 +1056,7 @@ void RNA_api_object(StructRNA *srna)
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "to_mesh_clear", "rna_Object_to_mesh_clear");
-  RNA_def_function_ui_description(func, "Clears mesh data created by to_mesh()");
+  RNA_def_function_ui_description(func, "Clears mesh data created by to_mesh()"); /* BFA */
 
   /* curve */
   func = RNA_def_function(srna, "to_curve", "rna_Object_to_curve");

@@ -41,7 +41,7 @@
 
 #include "BLT_translation.hh"
 
-#include "ED_asset_shelf.hh" /* bfa assetshelf */
+// #include "ED_asset_shelf.hh" /* bfa assetshelf */
 #include "ED_image.hh"
 #include "ED_node.hh"
 #include "ED_node_preview.hh"
@@ -1251,8 +1251,9 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
   if (use_override) {  
     ID *owner_id = id; 
     ID *id_or = id;
-    PointerRNA owner_ptr;
-    PropertyRNA *prop;
+    /* BFA - WIP - removed for warning?*/
+    //PointerRNA owner_ptr;
+    //PropertyRNA *prop;
     if (!ELEM(nullptr, owner_id, id_or)) {
       id = ui_template_id_liboverride_hierarchy_make(
       C, CTX_data_main(C), owner_id, id_or, nullptr);
@@ -1839,7 +1840,6 @@ static int node_space_subtype_get(ScrArea *area)
 static void node_space_subtype_set(ScrArea *area, int value)
 {
   SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
   ED_node_set_tree_type(snode, rna_node_tree_type_from_enum(value));
 }
 

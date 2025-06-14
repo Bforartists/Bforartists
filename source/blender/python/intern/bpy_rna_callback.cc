@@ -242,7 +242,7 @@ static eSpace_Type rna_Space_refine_reverse(StructRNA *srna)
   }
   if (srna == &RNA_SpaceToolbarEditor) {
     return SPACE_TOOLBAR;
-  }
+  } /* BFA */
   if (srna == &RNA_SpaceClipEditor) {
     return SPACE_CLIP;
   }

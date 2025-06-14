@@ -2528,7 +2528,7 @@ static void rna_def_fluid_domain_settings(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Gridlines",
-      "Show gridlines\nSet the Interpolation mode to Closest to activate Gridlines");
+      "Show gridlines\nSet the Interpolation mode to Closest to activate Gridlines"); /* BFA */
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, nullptr);
 
   prop = RNA_def_property(srna, "show_velocity", PROP_BOOLEAN, PROP_NONE);

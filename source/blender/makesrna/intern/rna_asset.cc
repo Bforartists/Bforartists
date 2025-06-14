@@ -21,7 +21,7 @@
 const EnumPropertyItem rna_enum_asset_library_type_items[] = {
     {ASSET_LIBRARY_ALL,
      "ALL",
-     ICON_DOCUMENTS,
+     ICON_DOCUMENTS, 
      "All",
      "Show assets from all of the listed asset libraries"},
     {ASSET_LIBRARY_LOCAL,

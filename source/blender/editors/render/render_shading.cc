@@ -877,7 +877,7 @@ void MATERIAL_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Material";
   ot->idname = "MATERIAL_OT_new";
-  ot->description = "Creates a Duplicate of the current material";
+  ot->description = "Creates a Duplicate of the current material"; /* BFA */
 
   /* API callbacks. */
   ot->exec = new_material_exec;
@@ -941,7 +941,7 @@ void TEXTURE_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Texture";
   ot->idname = "TEXTURE_OT_new";
-  ot->description = "Creates a duplicate of the current texture";
+  ot->description = "Creates a duplicate of the current texture"; /* BFA */
 
   /* API callbacks. */
   ot->exec = new_texture_exec;
@@ -1002,7 +1002,7 @@ void WORLD_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New World";
   ot->idname = "WORLD_OT_new";
-  ot->description = "Create a new world Data";
+  ot->description = "Create a new world Data"; /* BFA */
 
   /* API callbacks. */
   ot->exec = new_world_exec;
@@ -1047,6 +1047,7 @@ static wmOperatorStatus view_layer_add_exec(bContext *C, wmOperator *op)
 void SCENE_OT_view_layer_add(wmOperatorType *ot)
 {
   static EnumPropertyItem type_items[] = {
+      /* BFA - added icons*/
       {VIEWLAYER_ADD_NEW, "NEW", ICON_ADD, "New", "Add a new view layer"},
       {VIEWLAYER_ADD_COPY,
        "COPY",

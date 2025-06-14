@@ -5,6 +5,7 @@
 import bpy
 from bpy.types import Header, Menu
 
+# BFA - Added icons and floated properties left
 
 class CONSOLE_HT_header(Header):
     bl_space_type = 'CONSOLE'
@@ -124,7 +125,7 @@ class CONSOLE_MT_edit_move_cursor(Menu):
         layout.operator("console.move", text ="Cursor to Previous Character", icon = "CARET_PREV_CHAR").type = "PREVIOUS_CHARACTER"
         layout.operator("console.move", text ="Cursor to Next Character", icon = "CARET_NEXT_CHAR").type = "NEXT_CHARACTER"
 
-
+# BFA - menu
 class CONSOLE_MT_edit(Menu):
     bl_label = "Edit"
 
@@ -219,11 +220,11 @@ classes = (
     ALL_MT_editormenu_console,
     CONSOLE_MT_edit_select_text, # bfa menu
     CONSOLE_MT_edit_move_cursor, # bfa menu
-    CONSOLE_MT_edit,
+    CONSOLE_MT_edit, # BFA - menu
     CONSOLE_MT_editor_menus,
     CONSOLE_MT_console,
-    CONSOLE_MT_language,
-    CONSOLE_MT_edit_delete,
+    CONSOLE_MT_language, # BFA - menu
+    CONSOLE_MT_edit_delete, # BFA - menu
     CONSOLE_MT_context_menu,
 )
 

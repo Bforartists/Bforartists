@@ -370,6 +370,30 @@ class NODE_HT_header(Header):
         sub.active = overlay.show_overlays
         sub.popover(panel="NODE_PT_overlay", text="")
 
+
+class NODE_PT_gizmo_display(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = 'Gizmos'
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        layout = self.layout
+        snode = context.space_data
+        is_compositor = snode.tree_type == 'CompositorNodeTree'
+
+        if not is_compositor:
+            return
+
+        col = layout.column()
+        col.label(text="Viewport Gizmos")
+        col.separator()
+
+        col.active = snode.show_gizmo
+        colsub = col.column()
+        colsub.active = snode.node_tree is not None and col.active
+        colsub.prop(snode, "show_gizmo_active_node", text="Active Node")
+
 # BFA - show hide the editormenu, editor suffix is needed.
 class ALL_MT_editormenu_node(Menu):
     bl_label = ""
@@ -654,6 +678,7 @@ class NODE_MT_node(Menu):
             layout.operator("node.render_changed", icon='RENDERLAYERS')
 
 
+ # BFA - Menu
 class NODE_MT_node_links(Menu):
     bl_label = "Links"
 
@@ -856,6 +881,8 @@ class NODE_MT_context_menu_show_hide_menu(Menu):
         layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
         layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
         layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
+
+
 class NODE_MT_context_menu_select_menu(Menu):
     bl_label = "Select"
 
@@ -1265,6 +1292,7 @@ class NODE_PT_node_tree_interface(Panel):
         tree = snode.edit_tree
 
         split = layout.row()
+
         split.template_node_tree_interface(tree.interface)
 
         ops_col = split.column(align=True)
@@ -1507,24 +1535,24 @@ class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
 
 classes = (
-    ALL_MT_editormenu_node,
+    ALL_MT_editormenu_node,  # BFA - Menu
     NODE_HT_header,
     NODE_MT_editor_menus,
     NODE_MT_add,
-    NODE_MT_pie_menus,
+    NODE_MT_pie_menus,  # BFA - Menu
     NODE_MT_view,
     NODE_MT_viewer, # BFA - Menu
     NODE_MT_select,
-    NODE_MT_select_legacy,
-    NODE_MT_node_group_separate,
+    NODE_MT_select_legacy,  # BFA - Menu
+    NODE_MT_node_group_separate,  # BFA - Menu
     NODE_MT_node,
-    NODE_MT_node_links,
+    NODE_MT_node_links,  # BFA - Menu
     NODE_MT_node_color_context_menu,
     NODE_MT_context_menu_show_hide_menu,
     NODE_MT_context_menu_select_menu,
     NODE_MT_context_menu,
     NODE_MT_view_pie,
-    NODE_MT_view_annotations,
+    NODE_MT_view_annotations,  # BFA - Menu
     NODE_PT_material_slots,
     NODE_PT_geometry_node_tool_object_types,
     NODE_PT_geometry_node_tool_mode,
@@ -1532,7 +1560,7 @@ classes = (
     NODE_PT_node_color_presets,
     NODE_PT_node_tree_properties,
     NODE_MT_node_tree_interface_context_menu,
-    NODE_PT_node_tree_interface_new_input,
+    NODE_PT_node_tree_interface_new_input,  # BFA - Menu
     NODE_PT_node_tree_interface,
     NODE_PT_node_tree_interface_panel_toggle,
     NODE_PT_active_node_generic,
@@ -1544,6 +1572,7 @@ classes = (
     NODE_PT_annotation,
     NODE_PT_overlay,
     NODE_PT_active_node_properties,
+    NODE_PT_gizmo_display,
 
     node_panel(EEVEE_NEXT_MATERIAL_PT_settings),
     node_panel(EEVEE_NEXT_MATERIAL_PT_settings_surface),
