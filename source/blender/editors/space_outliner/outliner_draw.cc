@@ -3795,7 +3795,7 @@ static void outliner_draw_highlights(uint pos,
         copy_v4_v4_uchar(background_color, col_collection);
         background_color[3] = alpha;  // Set the alpha channel for the background
         immUniformColor4ubv(background_color);
-        immRecti(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
+        immRectf(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
 
         if (collection && TSELEM_OPEN(tselem, space_outliner)) {
           int child_start_y = start_y;
@@ -3825,7 +3825,7 @@ static void outliner_draw_highlights(uint pos,
             background_color[3] = alpha;  // Set the alpha channel for the background
 
             immUniformColor4ubv(background_color);
-            immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
+            immRectf(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
           }
           /*FOR CHILDREN*/
           else {
@@ -3836,7 +3836,7 @@ static void outliner_draw_highlights(uint pos,
             background_color[3] = alpha;  // Set the alpha channel for the background
 
             immUniformColor4ubv(background_color);
-            immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
+            immRectf(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
 
             /*VERTICAL*/
             /* Draw the background rectangle with the modified alpha */
@@ -3845,7 +3845,7 @@ static void outliner_draw_highlights(uint pos,
             nested_color[3] = alpha + alpha;  // Set the alpha channel for the background
 
             immUniformColor4ubv(nested_color);
-            immRecti(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
+            immRectf(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
           }
         }
       }
