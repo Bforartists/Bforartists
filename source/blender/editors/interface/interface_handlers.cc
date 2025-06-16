@@ -11296,8 +11296,9 @@ static int ui_handle_menu_event(bContext *C,
               break;
             }
 
+            // bfa - disable_search_on_keypress
             if (ui_menu_pass_event_to_parent_if_nonactive(
-                    menu, but, level, is_parent_menu, retval))
+                    menu, but, level, is_parent_menu, retval) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS))
             {
               break;
             }
