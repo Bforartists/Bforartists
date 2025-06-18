@@ -905,15 +905,7 @@ bool MTLShader::generate_msl_from_glsl_compute(const shader::ShaderCreateInfo *i
     ss_compute << ATOMIC_DEFINE_STR;
   }
 
-  generate_specialization_constant_declarations(info, ss_compute);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
   generate_compilation_constant_declarations(info, ss_compute);
->>>>>>> 69091c50284f (Cycles: Show device optimizations status in preferences for oneAPI)
-=======
-  generate_compilation_constant_declarations(info, ss_compute);
->>>>>>> main
 
   /* Conditional defines. */
   if (msl_iface.use_argument_buffer_for_samplers()) {
