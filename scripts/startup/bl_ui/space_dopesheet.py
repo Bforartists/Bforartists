@@ -334,6 +334,10 @@ class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
     bl_space_type = 'DOPESHEET_EDITOR'
 
 
+class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
+    bl_space_type = 'DOPESHEET_EDITOR'
+
+
 # Header for "normal" dopesheet editor modes (e.g. Dope Sheet, Action, Shape Keys, etc.)
 class DOPESHEET_HT_editor_buttons:
 

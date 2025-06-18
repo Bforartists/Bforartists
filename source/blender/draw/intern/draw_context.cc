@@ -600,13 +600,13 @@ void DupliCacheManager::try_add(blender::draw::ObjectRef &ob_ref)
   if (ob_ref.is_dupli() == false) {
     return;
   }
-  if (last_key_ == ob_ref.dupli_object) {
+  if (last_key_ == ob_ref.dupli_object_) {
     /* Same data as previous iteration. No need to perform the check again. */
     return;
   }
 
-  last_key_.ob = ob_ref.dupli_object->ob;
-  last_key_.ob_data = ob_ref.dupli_object->ob_data;
+  last_key_.ob = ob_ref.dupli_object_->ob;
+  last_key_.ob_data = ob_ref.dupli_object_->ob_data;
 
   if (dupli_set_ == nullptr) {
     dupli_set_ = MEM_new<blender::Set<DupliKey>>("DupliCacheManager::dupli_set_");
@@ -674,22 +674,13 @@ void DupliCacheManager::extract_all(ExtractionGraph &extraction)
 namespace blender::draw {
 
 ObjectRef::ObjectRef(DEGObjectIterData &iter_data, Object *ob)
+    : dupli_object_(iter_data.dupli_object_current),
+      dupli_parent_(iter_data.dupli_parent),
+      object(ob)
 {
-  this->dupli_parent = iter_data.dupli_parent;
-  this->dupli_object = iter_data.dupli_object_current;
-  this->object = ob;
-  /* Set by the first draw-call. */
-  this->handle = ResourceHandle(0);
 }
 
-ObjectRef::ObjectRef(Object *ob)
-{
-  this->dupli_parent = nullptr;
-  this->dupli_object = nullptr;
-  this->object = ob;
-  /* Set by the first draw-call. */
-  this->handle = ResourceHandle(0);
-}
+ObjectRef::ObjectRef(Object *ob) : object(ob) {}
 
 }  // namespace blender::draw
 
@@ -2003,7 +1994,7 @@ bool DRWContext::is_viewport_compositor_enabled() const
     return false;
   }
 
-  if (!this->scene->nodetree) {
+  if (!this->scene->compositing_node_group) {
     return false;
   }
 

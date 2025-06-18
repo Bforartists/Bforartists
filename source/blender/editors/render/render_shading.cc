@@ -243,7 +243,7 @@ static wmOperatorStatus material_slot_remove_exec(bContext *C, wmOperator *op)
   }
 
   /* Removing material slots in edit mode screws things up, see bug #21822. */
-  if (ob == CTX_data_edit_object(C)) {
+  if (BKE_object_is_in_editmode(ob)) {
     BKE_report(op->reports, RPT_ERROR, "Unable to remove material slot in edit mode");
     return OPERATOR_CANCELLED;
   }
@@ -1143,8 +1143,8 @@ static wmOperatorStatus view_layer_add_aov_exec(bContext *C, wmOperator * /*op*/
     engine = nullptr;
   }
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1195,8 +1195,8 @@ static wmOperatorStatus view_layer_remove_aov_exec(bContext *C, wmOperator * /*o
     engine = nullptr;
   }
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1247,8 +1247,8 @@ static wmOperatorStatus view_layer_add_lightgroup_exec(bContext *C, wmOperator *
 
   BKE_view_layer_add_lightgroup(view_layer, name);
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1297,8 +1297,8 @@ static wmOperatorStatus view_layer_remove_lightgroup_exec(bContext *C, wmOperato
 
   BKE_view_layer_remove_lightgroup(view_layer, view_layer->active_lightgroup);
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1361,8 +1361,8 @@ static wmOperatorStatus view_layer_add_used_lightgroups_exec(bContext *C, wmOper
     }
   }
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1404,8 +1404,8 @@ static wmOperatorStatus view_layer_remove_unused_lightgroups_exec(bContext *C, w
     }
   }
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);

@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-import bpy
+import bpy # BFA
 from bpy.types import Header, Menu, Panel
 from bpy.app.translations import contexts as i18n_contexts
 from bl_ui.space_dopesheet import (
@@ -228,7 +228,7 @@ class NLA_MT_view(Menu):
         layout.menu("NLA_MT_view_pie_menus")
         layout.menu("INFO_MT_area")
 
-
+# BFA - menu
 class NLA_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
 
@@ -361,7 +361,6 @@ class NLA_MT_add(Menu):
         layout.operator("nla.soundclip_add", text="Sound")
 
         layout.separator()
-
         layout.operator("nla.selected_objects_add", text="Selected Objects")
 
 

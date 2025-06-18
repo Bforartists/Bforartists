@@ -41,7 +41,7 @@ class CurveTextImport(bpy.types.Operator):
         if not self.filepath or not self.filepath.endswith(".txt"):
             return {'CANCELLED'}
 
-        # Create a Text object from the contents of the provided file.
+        # Create a Blender Text object from the contents of the provided file.
         with open(self.filepath) as file:
             text_curve = bpy.data.curves.new(type="FONT", name="Text")
             text_curve.body = ''.join(file.readlines())

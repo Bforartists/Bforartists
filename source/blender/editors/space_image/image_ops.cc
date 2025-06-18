@@ -790,14 +790,12 @@ static wmOperatorStatus image_view_ndof_invoke(bContext *C,
 
   SpaceImage *sima = CTX_wm_space_image(C);
   ARegion *region = CTX_wm_region(C);
-  float pan_vec[3];
 
-  const wmNDOFMotionData *ndof = static_cast<const wmNDOFMotionData *>(event->customdata);
+  const wmNDOFMotionData &ndof = *static_cast<const wmNDOFMotionData *>(event->customdata);
   const float pan_speed = NDOF_PIXELS_PER_SECOND;
 
-  WM_event_ndof_pan_get(ndof, pan_vec, true);
+  blender::float3 pan_vec = -ndof.time_delta * WM_event_ndof_translation_get(ndof);
 
-  mul_v3_fl(pan_vec, ndof->dt);
   mul_v2_fl(pan_vec, pan_speed / sima->zoom);
 
   sima_zoom_set_factor(sima, region, max_ff(0.0f, 1.0f - pan_vec[2]), nullptr, false);
@@ -2887,10 +2885,6 @@ static wmOperatorStatus image_flip_exec(bContext *C, wmOperator *op)
   ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
   BKE_image_mark_dirty(ima, ibuf);
 
-  if (ibuf->mipmap[0]) {
-    ibuf->userflags |= IB_MIPMAP_INVALID;
-  }
-
   ED_image_undo_push_end();
 
   BKE_image_partial_update_mark_full_update(ima);
@@ -2960,10 +2954,6 @@ static wmOperatorStatus image_rotate_orthogonal_exec(bContext *C, wmOperator *op
 
   ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
   BKE_image_mark_dirty(ima, ibuf);
-
-  if (ibuf->mipmap[0]) {
-    ibuf->userflags |= IB_MIPMAP_INVALID;
-  }
 
   ED_image_undo_push_end();
 
@@ -3227,10 +3217,6 @@ static wmOperatorStatus image_invert_exec(bContext *C, wmOperator *op)
 
   ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
   BKE_image_mark_dirty(ima, ibuf);
-
-  if (ibuf->mipmap[0]) {
-    ibuf->userflags |= IB_MIPMAP_INVALID;
-  }
 
   ED_image_undo_push_end();
 

@@ -46,15 +46,7 @@ static void queue_error_cb(const char *message, void *user_ptr)
 }
 
 OneapiDevice::OneapiDevice(const DeviceInfo &info, Stats &stats, Profiler &profiler, bool headless)
-    : GPUDevice(info, stats, profiler, headless),
-      device_queue_(nullptr),
-#  ifdef WITH_EMBREE_GPU
-      embree_device(nullptr),
-      embree_scene(nullptr),
-#  endif
-      kg_memory_(nullptr),
-      kg_memory_device_(nullptr),
-      kg_memory_size_(0)
+    : GPUDevice(info, stats, profiler, headless)
 {
   /* Verify that base class types can be used with specific backend types */
   static_assert(sizeof(texMemObject) ==
@@ -189,7 +181,11 @@ void OneapiDevice::build_bvh(BVH *bvh, Progress &progress, bool refit)
 #    endif
 
     if (bvh->params.top_level) {
-      embree_scene = bvh_embree->scene;
+#    if RTC_VERSION >= 40400
+      embree_traversable = rtcGetSceneTraversable(bvh_embree->scene);
+#    else
+      embree_traversable = bvh_embree->scene;
+#    endif
 #    if RTC_VERSION >= 40302
       RTCError error_code = bvh_embree->offload_scenes_to_gpu(all_embree_scenes);
       if (error_code != RTC_ERROR_NONE) {
@@ -593,18 +589,14 @@ void OneapiDevice::const_copy_to(const char *name, void *host, const size_t size
              << string_human_readable_size(size) << ")";
 
 #  ifdef WITH_EMBREE_GPU
-  if (embree_scene != nullptr && strcmp(name, "data") == 0) {
+  if (embree_traversable != nullptr && strcmp(name, "data") == 0) {
     assert(size <= sizeof(KernelData));
 
-    /* Update scene handle(since it is different for each device on multi devices) */
+    /* Update scene handle(since it is different for each device on multi devices).
+     * This must be a raw pointer copy since at some points during scene update this
+     * pointer may be invalid. */
     KernelData *const data = (KernelData *)host;
-    data->device_bvh =
-#    if RTC_VERSION >= 40400
-        rtcGetSceneTraversable(embree_scene)
-#    else
-        embree_scene
-#    endif
-        ;
+    data->device_bvh = embree_traversable;
 
     /* We need this number later for proper local memory allocation. */
     scene_max_shaders_ = data->max_shaders;
@@ -764,6 +756,41 @@ void OneapiDevice::tex_alloc(device_texture &mem)
     sycl::ext::oneapi::experimental::image_descriptor desc{};
 
     if (mem.data_height > 0) {
+      const sycl::device &device = reinterpret_cast<sycl::queue *>(queue)->get_device();
+      if (mem.data_depth > 1) {
+        const size_t max_width = device.get_info<sycl::info::device::image3d_max_width>();
+        const size_t max_height = device.get_info<sycl::info::device::image3d_max_height>();
+        const size_t max_depth = device.get_info<sycl::info::device::image3d_max_depth>();
+
+        if (mem.data_width > max_width || mem.data_height > max_height ||
+            mem.data_depth > max_depth)
+        {
+          set_error(string_printf(
+              "Maximum GPU 3D texture size exceeded (max %zux%zux%zu, found %zux%zux%zu)",
+              max_width,
+              max_height,
+              max_depth,
+              mem.data_width,
+              mem.data_height,
+              mem.data_depth));
+          return;
+        }
+      }
+      else {
+        const size_t max_width = device.get_info<sycl::info::device::image2d_max_width>();
+        const size_t max_height = device.get_info<sycl::info::device::image2d_max_height>();
+
+        if (mem.data_width > max_width || mem.data_height > max_height) {
+          set_error(
+              string_printf("Maximum GPU 2D texture size exceeded (max %zux%zu, found %zux%zu)",
+                            max_width,
+                            max_height,
+                            mem.data_width,
+                            mem.data_height));
+          return;
+        }
+      }
+
       /* 2D/3D texture -- Tile optimized */
       size_t depth = mem.data_depth == 1 ? 0 : mem.data_depth;
       desc = sycl::ext::oneapi::experimental::image_descriptor(
@@ -775,6 +802,10 @@ void OneapiDevice::tex_alloc(device_texture &mem)
 
       sycl::ext::oneapi::experimental::image_mem_handle memHandle =
           sycl::ext::oneapi::experimental::alloc_image_mem(desc, *queue);
+      if (!memHandle.raw_handle) {
+        set_error("GPU texture allocation failed: Raw handle is null");
+        return;
+      }
 
       /* Copy data from host to the texture properly based on the texture description */
       queue->ext_oneapi_copy(mem.host_pointer, memHandle, desc);
@@ -848,8 +879,7 @@ void OneapiDevice::tex_alloc(device_texture &mem)
     }
   }
   catch (sycl::exception const &e) {
-    set_error("oneAPI texture allocation error: got runtime exception \"" + string(e.what()) +
-              "\"");
+    set_error("GPU texture allocation failed: runtime exception \"" + string(e.what()) + "\"");
   }
 }
 

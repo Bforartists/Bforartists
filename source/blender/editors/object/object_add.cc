@@ -1839,6 +1839,7 @@ static bool create_override(Main *bmain, Scene *scene, ViewLayer *view_layer, ID
     BLI_gset_free(user_overrides_objects_uids, nullptr);
   }
 
+  /* BFA - override asset*/
   if (success) {
     if (is_override_instancing_object) {
       /* Remove the instance empty from this scene, the items now have an overridden collection
@@ -1851,7 +1852,7 @@ static bool create_override(Main *bmain, Scene *scene, ViewLayer *view_layer, ID
         case ID_GR: {
           Collection *collection_root = (Collection *)id_root;
           LISTBASE_FOREACH_MUTABLE (
-              CollectionParent *, collection_parent, &collection_root->runtime.parents)
+              CollectionParent *, collection_parent, &collection_root->runtime->parents)
           {
             if (ID_IS_LINKED(collection_parent->collection) ||
                 !BKE_view_layer_has_collection(view_layer, collection_parent->collection))
@@ -2376,7 +2377,6 @@ static wmOperatorStatus object_pointcloud_add_exec(bContext *C, wmOperator *op)
   Object *object = add_type(C, OB_POINTCLOUD, nullptr, loc, rot, false, local_view_bits);
   PointCloud &pointcloud = *static_cast<PointCloud *>(object->data);
   pointcloud.totpoint = 400;
-  CustomData_realloc(&pointcloud.pdata, 0, pointcloud.totpoint);
 
   bke::MutableAttributeAccessor attributes = pointcloud.attributes_for_write();
   bke::SpanAttributeWriter<float3> position = attributes.lookup_or_add_for_write_only_span<float3>(
@@ -2749,10 +2749,10 @@ static void make_object_duplilist_real(bContext *C,
     return;
   }
 
-  ListBase *lb_duplis = object_duplilist(depsgraph, scene, object_eval);
+  DupliList duplilist;
+  object_duplilist(depsgraph, scene, object_eval, nullptr, duplilist);
 
-  if (BLI_listbase_is_empty(lb_duplis)) {
-    free_object_duplilist(lb_duplis);
+  if (duplilist.is_empty()) {
     return;
   }
 
@@ -2766,8 +2766,8 @@ static void make_object_duplilist_real(bContext *C,
     }
   }
 
-  LISTBASE_FOREACH (DupliObject *, dob, lb_duplis) {
-    Object *ob_src = DEG_get_original(dob->ob);
+  for (DupliObject &dob : duplilist) {
+    Object *ob_src = DEG_get_original(dob.ob);
     Object *ob_dst = static_cast<Object *>(ID_NEW_SET(ob_src, BKE_id_copy(bmain, &ob_src->id)));
     id_us_min(&ob_dst->id);
 
@@ -2802,32 +2802,32 @@ static void make_object_duplilist_real(bContext *C,
     id_us_min((ID *)ob_dst->instance_collection);
     ob_dst->instance_collection = nullptr;
 
-    copy_m4_m4(ob_dst->runtime->object_to_world.ptr(), dob->mat);
+    copy_m4_m4(ob_dst->runtime->object_to_world.ptr(), dob.mat);
     BKE_object_apply_mat4(ob_dst, ob_dst->object_to_world().ptr(), false, false);
 
-    dupli_map.add(dob, ob_dst);
+    dupli_map.add(&dob, ob_dst);
 
     if (parent_gh) {
       void **val;
       /* Due to nature of hash/comparison of this ghash, a lot of duplis may be considered as
        * 'the same', this avoids trying to insert same key several time and
        * raise asserts in debug builds... */
-      if (!BLI_ghash_ensure_p(parent_gh, dob, &val)) {
+      if (!BLI_ghash_ensure_p(parent_gh, &dob, &val)) {
         *val = ob_dst;
       }
 
       if (is_dupli_instancer && instancer_gh) {
         /* Same as above, we may have several 'hits'. */
-        if (!BLI_ghash_ensure_p(instancer_gh, dob, &val)) {
+        if (!BLI_ghash_ensure_p(instancer_gh, &dob, &val)) {
           *val = ob_dst;
         }
       }
     }
   }
 
-  LISTBASE_FOREACH (DupliObject *, dob, lb_duplis) {
-    Object *ob_src = dob->ob;
-    Object *ob_dst = dupli_map.lookup(dob);
+  for (DupliObject &dob : duplilist) {
+    Object *ob_src = dob.ob;
+    Object *ob_dst = dupli_map.lookup(&dob);
 
     /* Remap new object to itself, and clear again newid pointer of orig object. */
     BKE_libblock_relink_to_newid(bmain, &ob_dst->id, 0);
@@ -2845,14 +2845,14 @@ static void make_object_duplilist_real(bContext *C,
          * they won't be read, this is simply for a hash lookup. */
         DupliObject dob_key;
         dob_key.ob = ob_src_par;
-        dob_key.type = dob->type;
-        if (dob->type == OB_DUPLICOLLECTION) {
+        dob_key.type = dob.type;
+        if (dob.type == OB_DUPLICOLLECTION) {
           memcpy(&dob_key.persistent_id[1],
-                 &dob->persistent_id[1],
-                 sizeof(dob->persistent_id[1]) * (MAX_DUPLI_RECUR - 1));
+                 &dob.persistent_id[1],
+                 sizeof(dob.persistent_id[1]) * (MAX_DUPLI_RECUR - 1));
         }
         else {
-          dob_key.persistent_id[0] = dob->persistent_id[0];
+          dob_key.persistent_id[0] = dob.persistent_id[0];
         }
         ob_dst_par = static_cast<Object *>(BLI_ghash_lookup(parent_gh, &dob_key));
       }
@@ -2881,7 +2881,7 @@ static void make_object_duplilist_real(bContext *C,
          * ignoring the first item.
          * We only check on persistent_id here, since we have no idea what object it might be. */
         memcpy(&dob_key.persistent_id[0],
-               &dob->persistent_id[1],
+               &dob.persistent_id[1],
                sizeof(dob_key.persistent_id[0]) * (MAX_DUPLI_RECUR - 1));
         ob_dst_par = static_cast<Object *>(BLI_ghash_lookup(instancer_gh, &dob_key));
       }
@@ -2899,7 +2899,7 @@ static void make_object_duplilist_real(bContext *C,
     if (ob_dst->parent) {
       /* NOTE: this may be the parent of other objects, but it should
        * still work out ok */
-      BKE_object_apply_mat4(ob_dst, dob->mat, false, true);
+      BKE_object_apply_mat4(ob_dst, dob.mat, false, true);
 
       /* to set ob_dst->orig and in case there's any other discrepancies */
       DEG_id_tag_update(&ob_dst->id, ID_RECALC_TRANSFORM);
@@ -2919,8 +2919,6 @@ static void make_object_duplilist_real(bContext *C,
   if (instancer_gh) {
     BLI_ghash_free(instancer_gh, nullptr, nullptr);
   }
-
-  free_object_duplilist(lb_duplis);
 
   BKE_main_id_newptr_and_tag_clear(bmain);
 
@@ -4477,18 +4475,16 @@ static wmOperatorStatus object_convert_exec(bContext *C, wmOperator *op)
     if (incompatible_count == selected_editable_bases.size()) {
       BKE_reportf(op->reports,
                   RPT_INFO,
-                  "%s \"%s\"",
-                  RPT_("None of the objects are compatible of conversion to"),
-                  IFACE_(target_type_name));
+                  "None of the objects are compatible with a conversion to \"%s\"",
+                  RPT_(target_type_name));
     }
     else {
-      BKE_reportf(op->reports,
-                  RPT_INFO,
-                  "%s %d %s \"%s\"",
-                  RPT_("The selection included"),
-                  incompatible_count,
-                  RPT_("object(s) types which don't support conversion to"),
-                  IFACE_(target_type_name));
+      BKE_reportf(
+          op->reports,
+          RPT_INFO,
+          "The selection included %d object type(s) which do not support conversion to \"%s\"",
+          incompatible_count,
+          RPT_(target_type_name));
     }
   }
 

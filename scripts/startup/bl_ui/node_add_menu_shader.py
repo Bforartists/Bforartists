@@ -35,7 +35,7 @@ def cycles_shader_nodes_poll(context):
 
 
 def eevee_shader_nodes_poll(context):
-    return context.engine == 'BLENDER_EEVEE_NEXT'
+    return context.engine == 'BLENDER_EEVEE'
 
 
 def object_not_eevee_shader_nodes_poll(context):
@@ -127,8 +127,7 @@ class NODE_MT_category_shader_output(Menu):
 
         node_add_menu.add_node_type(
             layout,
-            "ShaderNodeOutputMaterial",
-            poll=object_shader_nodes_poll(context),
+            "ShaderNodeOutputAOV",
         )
         node_add_menu.add_node_type(
             layout,
@@ -137,17 +136,18 @@ class NODE_MT_category_shader_output(Menu):
         )
         node_add_menu.add_node_type(
             layout,
-            "ShaderNodeOutputAOV",
+            "ShaderNodeOutputLineStyle",
+            poll=line_style_shader_nodes_poll(context),
+        )
+        node_add_menu.add_node_type(
+            layout,
+            "ShaderNodeOutputMaterial",
+            poll=object_shader_nodes_poll(context),
         )
         node_add_menu.add_node_type(
             layout,
             "ShaderNodeOutputWorld",
             poll=world_shader_nodes_poll(context),
-        )
-        node_add_menu.add_node_type(
-            layout,
-            "ShaderNodeOutputLineStyle",
-            poll=line_style_shader_nodes_poll(context),
         )
 
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
@@ -168,11 +168,6 @@ class NODE_MT_category_shader_shader(Menu):
             layout,
             "ShaderNodeBackground",
             poll=world_shader_nodes_poll(context),
-        )
-        node_add_menu.add_node_type(
-            layout,
-            "ShaderNodeBsdfMetallic",
-            poll=object_shader_nodes_poll(context),
         )
         node_add_menu.add_node_type(
             layout,
@@ -201,6 +196,11 @@ class NODE_MT_category_shader_shader(Menu):
         node_add_menu.add_node_type(
             layout,
             "ShaderNodeHoldout",
+            poll=object_shader_nodes_poll(context),
+        )
+        node_add_menu.add_node_type(
+            layout,
+            "ShaderNodeBsdfMetallic",
             poll=object_shader_nodes_poll(context),
         )
         node_add_menu.add_node_type(
@@ -337,7 +337,6 @@ class NODE_MT_category_shader_texture(Menu):
         node_add_menu.add_node_type(layout, "ShaderNodeTexImage")
         node_add_menu.add_node_type(layout, "ShaderNodeTexMagic")
         node_add_menu.add_node_type(layout, "ShaderNodeTexNoise")
-        node_add_menu.add_node_type(layout, "ShaderNodeTexPointDensity")
         node_add_menu.add_node_type(layout, "ShaderNodeTexSky")
         node_add_menu.add_node_type(layout, "ShaderNodeTexVoronoi")
         node_add_menu.add_node_type(layout, "ShaderNodeTexWave")

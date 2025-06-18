@@ -252,7 +252,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
     row = &layout->row(false);
-    uiLayoutSetActive(row, RNA_boolean_get(ptr, "use_remove_disconnected"));
+    row->active_set(RNA_boolean_get(ptr, "use_remove_disconnected"));
     layout->prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   /* bfa - our layout */

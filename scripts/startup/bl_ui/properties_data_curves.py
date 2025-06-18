@@ -24,7 +24,7 @@ class DATA_PT_context_curves(DataButtonsPanel, Panel):
     bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -45,7 +45,7 @@ class DATA_PT_curves_surface(DataButtonsPanel, Panel):
     bl_label = "Surface"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -154,7 +154,7 @@ class DATA_PT_CURVES_attributes(DataButtonsPanel, Panel):
     bl_label = "Attributes"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -187,7 +187,7 @@ class DATA_PT_CURVES_attributes(DataButtonsPanel, Panel):
 class DATA_PT_curves_animation(DataButtonsPanel, PropertiesAnimationMixin, PropertyPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     _animated_id_context_property = "curves"
@@ -196,7 +196,7 @@ class DATA_PT_curves_animation(DataButtonsPanel, PropertiesAnimationMixin, Prope
 class DATA_PT_custom_props_curves(DataButtonsPanel, PropertyPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     _context_path = "object.data"

@@ -79,7 +79,7 @@ class RENDER_PT_format(RenderOutputButtonsPanel, Panel):
     bl_label = "Format"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -188,7 +188,7 @@ class RENDER_PT_frame_range(RenderOutputButtonsPanel, Panel):
     bl_label = "Frame Range"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -215,7 +215,7 @@ class RENDER_PT_time_stretching(RenderOutputButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -236,7 +236,7 @@ class RENDER_PT_post_processing(RenderOutputButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -264,7 +264,7 @@ class RENDER_PT_stamp(RenderOutputButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -329,7 +329,7 @@ class RENDER_PT_stamp_note(RenderOutputButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -353,7 +353,7 @@ class RENDER_PT_stamp_burn(RenderOutputButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -385,7 +385,7 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
     bl_label = "Output"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -455,7 +455,7 @@ class RENDER_PT_output_views(RenderOutputButtonsPanel, Panel):
     bl_parent_id = "RENDER_PT_output"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -479,7 +479,7 @@ class RENDER_PT_output_color_management(RenderOutputButtonsPanel, Panel):
     bl_parent_id = "RENDER_PT_output"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -521,7 +521,7 @@ class RENDER_PT_output_pixel_density(RenderOutputButtonsPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
         'BLENDER_EEVEE',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -596,7 +596,7 @@ class RENDER_PT_encoding(RenderOutputButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -626,7 +626,7 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
     bl_parent_id = "RENDER_PT_encoding"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -735,7 +735,7 @@ class RENDER_PT_encoding_audio(RenderOutputButtonsPanel, Panel):
     bl_parent_id = "RENDER_PT_encoding"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -781,7 +781,7 @@ class RENDER_PT_stereoscopy(RenderOutputButtonsPanel, Panel):
     bl_label = "Stereoscopy"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     bl_options = {'DEFAULT_CLOSED'}

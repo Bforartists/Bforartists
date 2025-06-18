@@ -823,7 +823,7 @@ def _stale_pending_check_and_remove_once():
             if stale_handle.is_modified():
                 stale_handle.state_store(check_exists=False)
         except Exception as ex:
-            print("Unexpected error clearing stale data, this is is a bug!", str(ex))
+            print("Unexpected error clearing stale data, this is a bug!", str(ex))
 
     if is_empty:
         try:
@@ -1126,7 +1126,7 @@ def _initialize_extensions_compat_ensure_up_to_date(extensions_directory, extens
             if _extension_compat_cache_update_needed(cache_data, blender_id, extensions_enabled, print_debug):
                 cache_data = None
         except Exception:
-            print("Extension: unexpected error reading cache, this is is a bug! (regenerating)")
+            print("Extension: unexpected error reading cache, this is a bug! (regenerating)")
             import traceback
             traceback.print_exc()
             cache_data = None

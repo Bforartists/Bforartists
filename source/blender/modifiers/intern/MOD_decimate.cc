@@ -265,7 +265,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
     sub = &layout->row(true);
     bool has_vertex_group = RNA_string_length(ptr, "vertex_group") != 0;
-    uiLayoutSetActive(sub, has_vertex_group);
+    sub->active_set(has_vertex_group);
     sub->prop(ptr, "vertex_group_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (decimate_type == MOD_DECIM_MODE_UNSUBDIV) {

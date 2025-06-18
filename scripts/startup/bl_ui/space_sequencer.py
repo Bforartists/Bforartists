@@ -209,9 +209,10 @@ class SEQUENCER_HT_header(Header):
         row = layout.row(align=True)
         row.prop(tool_settings, "use_snap_sequencer", text="")
         sub = row.row(align=True)
-        sub.popover(panel="SEQUENCER_PT_snapping", text="")  # BFA - removed text
-        layout.popover(panel="SEQUENCER_PT_playhead_snapping")
-        # layout.separator_spacer() #BFA
+        sub.popover(panel="SEQUENCER_PT_snapping")
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
+            layout.popover(panel="SEQUENCER_PT_playhead_snapping")
+        # layout.separator_spacer() ) #BFA
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             layout.prop(st, "display_mode", text="", icon_only=True)
@@ -1025,8 +1026,7 @@ class SEQUENCER_MT_change(Menu):
                             props.filter_sound = True
                 elif strip_type in effect_strips:
                     layout.operator_context = 'INVOKE_DEFAULT'
-                    layout.operator("sequencer.change_effect_input")
-                    layout.operator_menu_enum("sequencer.change_effect_type", "type")
+                    layout.menu("SEQUENCER_MT_strip_effect_change")
                     layout.operator("sequencer.reassign_inputs")
                     layout.operator("sequencer.swap_inputs")
                 else:
@@ -1471,7 +1471,8 @@ class SEQUENCER_MT_strip_effect(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        # BFA - couple of these operators were moved to a conditional
+        # BFA - WIP - couple of these operators were moved to a conditional
+        layout.menu("SEQUENCER_MT_strip_effect_change")
         layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
         layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
 
@@ -1656,7 +1657,7 @@ class SEQUENCER_MT_strip(Menu):
         layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
 
-        if strip and strip.type == "SCENE":
+        if strip and strip.type == 'SCENE':
             layout.operator(
                 "sequencer.delete", text="Delete Strip & Data", icon="DELETE_DUPLICATE"
             ).delete_data = True
@@ -1669,7 +1670,7 @@ class SEQUENCER_MT_strip(Menu):
         # BFA - If there is no correct strip selected, a label will advise what to do
         try:
             layout.operator_context = 'INVOKE_REGION_WIN'
-            if strip and strip.type == "SCENE":
+            if strip and strip.type == 'SCENE':
                 bpy_data_scenes_len = len(bpy.data.scenes)
 
                 if bpy_data_scenes_len > 14:
@@ -3586,6 +3587,7 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
         col.prop(cache_settings, "show_cache_final_out", text="Final")
         if show_developer_ui:
             col.prop(cache_settings, "show_cache_raw", text="Raw")
+        col.prop(cache_settings, "show_cache_final_out", text="Final")
 
         show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
         if show_cache_size:
@@ -3761,6 +3763,7 @@ class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
             split.label(text="Final")
             split.alignment = 'LEFT'
             split.label(text="{:d} MB".format(cache_final_size), translate=False)
+
 
 class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
     bl_label = "Scene Strip Display"

@@ -955,23 +955,23 @@ static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 #if 0
   uiItemEnumO_ptr(layout, ot, std::nullopt, ICON_NONE, "type", PAR_OBJECT);
 #else
-  opptr = layout->op(ot, IFACE_("Object"), ICON_PARENT_OBJECT, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE);
+  opptr = layout->op(ot, IFACE_("Object"), ICON_NONE, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", false);
 
   opptr = layout->op(
-      ot, IFACE_("Object (Keep Transform)"), ICON_PARENT_OBJECT, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE);
+      ot, IFACE_("Object (Keep Transform)"), ICON_NONE, WM_OP_EXEC_DEFAULT, UI_ITEM_NONE);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", true);
 #endif
 
   PointerRNA op_ptr = layout->op(
-      "OBJECT_OT_parent_no_inverse_set", IFACE_("Object (Without Inverse)"), ICON_PARENT);
+      "OBJECT_OT_parent_no_inverse_set", IFACE_("Object (Without Inverse)"), ICON_NONE);
   RNA_boolean_set(&op_ptr, "keep_transform", false);
 
   op_ptr = layout->op("OBJECT_OT_parent_no_inverse_set",
                       IFACE_("Object (Keep Transform Without Inverse)"),
-                      ICON_PARENT);
+                      ICON_NONE);
   RNA_boolean_set(&op_ptr, "keep_transform", true);
 
   struct {
@@ -2560,7 +2560,7 @@ static wmOperatorStatus make_override_library_exec(bContext *C, wmOperator *op)
         case ID_GR: {
           Collection *collection_root = (Collection *)id_root;
           LISTBASE_FOREACH_MUTABLE (
-              CollectionParent *, collection_parent, &collection_root->runtime.parents)
+              CollectionParent *, collection_parent, &collection_root->runtime->parents)
           {
             if (ID_IS_LINKED(collection_parent->collection) ||
                 !BKE_view_layer_has_collection(view_layer, collection_parent->collection))

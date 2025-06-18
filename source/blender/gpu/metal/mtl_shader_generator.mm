@@ -524,13 +524,10 @@ bool MTLShader::generate_msl_from_glsl(const shader::ShaderCreateInfo *info)
   generate_specialization_constant_declarations(info, ss_vertex);
   generate_specialization_constant_declarations(info, ss_fragment);
 
-<<<<<<< HEAD
-=======
   /* Generate compilation constants. */
   generate_compilation_constant_declarations(info, ss_vertex);
   generate_compilation_constant_declarations(info, ss_fragment);
 
->>>>>>> 69091c50284f (Cycles: Show device optimizations status in preferences for oneAPI)
   /*** Generate VERTEX Stage ***/
   /* Conditional defines. */
   if (msl_iface.use_argument_buffer_for_samplers()) {
@@ -910,9 +907,13 @@ bool MTLShader::generate_msl_from_glsl_compute(const shader::ShaderCreateInfo *i
 
   generate_specialization_constant_declarations(info, ss_compute);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   generate_compilation_constant_declarations(info, ss_compute);
 >>>>>>> 69091c50284f (Cycles: Show device optimizations status in preferences for oneAPI)
+=======
+  generate_compilation_constant_declarations(info, ss_compute);
+>>>>>>> main
 
   /* Conditional defines. */
   if (msl_iface.use_argument_buffer_for_samplers()) {

@@ -614,7 +614,9 @@ static SlipData *slip_data_init(const Scene *scene)
   VectorSet<Strip *> strips = seq::query_selected_strips(ed->seqbasep);
   ListBase *channels = seq::channels_displayed_get(seq::editing_get(scene));
   strips.remove_if([&](Strip *strip) {
-    return ((strip->type & STRIP_TYPE_EFFECT) || seq::transform_is_locked(channels, strip));
+    return ((strip->type & STRIP_TYPE_EFFECT) ||
+            ((strip->type == STRIP_TYPE_IMAGE) && seq::transform_single_image_check(strip)) ||
+            seq::transform_is_locked(channels, strip));
   });
   if (strips.is_empty()) {
     return nullptr;
@@ -1446,8 +1448,7 @@ static wmOperatorStatus sequencer_swap_inputs_exec(bContext *C, wmOperator *op)
 
   seq::relations_invalidate_cache(scene, active_strip);
 
-  WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1596,8 +1597,7 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
     }
   }
   if (changed) {
-    WM_event_add_notifier(
-        C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+    WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
     return OPERATOR_FINISHED;
   }
 
@@ -2773,47 +2773,6 @@ void SEQUENCER_OT_swap_data(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Change Effect Input Operator
- * \{ */
-
-static wmOperatorStatus sequencer_change_effect_input_exec(bContext *C, wmOperator *op)
-{
-  Scene *scene = CTX_data_scene(C);
-  Strip *strip = seq::select_active_get(scene);
-
-  Strip **strip_1 = &strip->input1, **strip_2 = &strip->input2;
-
-  if (*strip_1 == nullptr || *strip_2 == nullptr) {
-    BKE_report(op->reports, RPT_ERROR, "One of the effect inputs is unset, cannot swap");
-    return OPERATOR_CANCELLED;
-  }
-
-  std::swap(*strip_1, *strip_2);
-
-  seq::relations_invalidate_cache(scene, strip);
-  WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-
-  return OPERATOR_FINISHED;
-}
-
-void SEQUENCER_OT_change_effect_input(wmOperatorType *ot)
-{
-  /* Identifiers. */
-  ot->name = "Change Effect Input";
-  ot->idname = "SEQUENCER_OT_change_effect_input";
-
-  /* API callbacks. */
-  ot->exec = sequencer_change_effect_input_exec;
-  ot->poll = sequencer_effect_poll;
-
-  /* Flags. */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Change Effect Type Operator
  * \{ */
 
@@ -2876,8 +2835,7 @@ static wmOperatorStatus sequencer_change_effect_type_exec(bContext *C, wmOperato
   sh.init(strip);
 
   seq::relations_invalidate_cache(scene, strip);
-  WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2901,7 +2859,7 @@ void SEQUENCER_OT_change_effect_type(wmOperatorType *ot)
                           sequencer_prop_effect_types,
                           STRIP_TYPE_CROSS,
                           "Type",
-                          "Sequencer effect type");
+                          "Strip effect type");
   RNA_def_property_translation_context(ot->prop, BLT_I18NCONTEXT_ID_SEQUENCE);
 }
 
@@ -3766,8 +3724,7 @@ static wmOperatorStatus sequencer_scene_frame_range_update_exec(bContext *C, wmO
 static bool sequencer_scene_frame_range_update_poll(bContext *C)
 {
   Editing *ed = seq::editing_get(CTX_data_scene(C));
-  return (ed != nullptr && ed->act_strip != nullptr &&
-          (ed->act_strip->type & STRIP_TYPE_SCENE) != 0);
+  return (ed != nullptr && ed->act_strip != nullptr && ed->act_strip->type == STRIP_TYPE_SCENE);
 }
 
 void SEQUENCER_OT_scene_frame_range_update(wmOperatorType *ot)

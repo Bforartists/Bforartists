@@ -1664,7 +1664,7 @@ def extensions_panel_draw_impl(
     # Exceptions to this rule:
     # - *version*: when outdated, it's useful to show both versions as the user may wish to upgrade.
     #   Otherwise it's typically not useful to attempt to make the user aware of other minor discrepancies.
-    #   (changes to the description or maintainer for e.g.).
+    #   (changes to the description or maintainer for example).
     #
     # - *website*: the host of the remote repository may wish to override the website with a landing page for
     #   each extension, this page can show information managed by the organization hosting repository,
@@ -2141,7 +2141,7 @@ def extensions_panel_draw(panel, context):
     # When an update is in progress disallow any destructive operations.
     # While a non-blocking update is nice, users should *never* be performing
     # destructive operations with an outdated repository. There are a couple of reasons for this.
-    # - Pressing "Install" on an extension may either fail (the version may be old for e.g.).
+    # - Pressing "Install" on an extension may either fail (the version may be old for example).
     # - Pressing any buttons immediately before the UI refreshes risks the user installing or operating
     #   on the wrong extension, one which they may not trust!
     # Prevent these kinds of accidents by disabling parts of the extension UI while synchronize is in progress.

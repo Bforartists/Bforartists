@@ -137,6 +137,9 @@ static Vector<StringRefNull> missing_capabilities_get(VkPhysicalDevice vk_physic
   if (features_12.timelineSemaphore == VK_FALSE) {
     missing_capabilities.append("timeline semaphores");
   }
+  if (features_12.bufferDeviceAddress == VK_FALSE) {
+    missing_capabilities.append("buffer device address");
+  }
 
   /* Check device extensions. */
   uint32_t vk_extension_count;
@@ -171,7 +174,7 @@ bool VKBackend::is_supported()
    * Disable implicit layers and only allow layers that we trust.
    *
    * Render doc layer is hidden behind a debug flag. There are malicious layers that impersonate
-   * renderdoc and can crash when loaded. See #139543
+   * RenderDoc and can crash when loaded. See #139543
    */
   std::stringstream allowed_layers;
   allowed_layers << "VK_LAYER_KHRONOS_*";
@@ -308,6 +311,7 @@ static void init_device_list(GHOST_ContextHandle ghost_context)
     }
     index++;
   }
+
   std::sort(GPG.devices.begin(), GPG.devices.end(), [&](const GPUDevice &a, const GPUDevice &b) {
     if (a.name == b.name) {
       return a.index < b.index;
@@ -384,6 +388,7 @@ void VKBackend::detect_workarounds(VKDevice &device)
     extensions.dynamic_rendering = false;
     extensions.dynamic_rendering_local_read = false;
     extensions.dynamic_rendering_unused_attachments = false;
+    extensions.descriptor_buffer = false;
 
     GCaps.render_pass_workaround = true;
 
@@ -413,6 +418,16 @@ void VKBackend::detect_workarounds(VKDevice &device)
 #else
   extensions.external_memory = false;
 #endif
+
+  /* Descriptor buffers are disabled on the NVIDIA platform due to performance regressions. Both
+   * still seem to be faster than OpenGL.
+   *
+   * See #140125
+   */
+  if (device.vk_physical_device_driver_properties_.driverID != VK_DRIVER_ID_NVIDIA_PROPRIETARY) {
+    extensions.descriptor_buffer = device.supports_extension(
+        VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME);
+  }
 
   /* AMD GPUs don't support texture formats that use are aligned to 24 or 48 bits. */
   if (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_ANY) ||
@@ -618,8 +633,11 @@ void VKBackend::render_end()
    * after each frame.
    */
   if (G.is_rendering && thread_data.rendering_depth == 0 && !BLI_thread_is_main()) {
-    device.orphaned_data.move_data(device.orphaned_data_render,
-                                   device.orphaned_data.timeline_ + 1);
+    {
+      std::scoped_lock lock(device.orphaned_data.mutex_get());
+      device.orphaned_data.move_data(device.orphaned_data_render,
+                                     device.orphaned_data.timeline_ + 1);
+    }
     /* Fix #139284: During rendering when main thread is blocked or all screens are minimized the
      * garbage collection will not happen resulting in crashes as resources are not freed.
      *
@@ -638,6 +656,7 @@ void VKBackend::render_end()
 void VKBackend::render_step(bool force_resource_release)
 {
   if (force_resource_release) {
+    std::scoped_lock lock(device.orphaned_data.mutex_get());
     device.orphaned_data.move_data(device.orphaned_data_render,
                                    device.orphaned_data.timeline_ + 1);
   }

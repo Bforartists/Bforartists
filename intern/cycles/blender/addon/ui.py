@@ -1047,21 +1047,6 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
         row.active = scene.cycles.use_denoising
 
 
-class CYCLES_RENDER_PT_override(CyclesButtonsPanel, Panel):
-    bl_label = "Override"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_context = "view_layer"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        view_layer = context.view_layer
-
-        layout.prop(view_layer, "material_override")
-        layout.prop(view_layer, "world_override")
-        layout.prop(view_layer, "samples")
 
 
 class CYCLES_RENDER_PT_passes(CyclesButtonsPanel, Panel):
@@ -1765,7 +1750,6 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
             col.prop(light, "use_soft_falloff")
             col.use_property_split = True
             col.prop(light, "shadow_soft_size", text="Radius")
-            col.prop(light, "use_soft_falloff")
         elif light.type == 'SUN':
             col.prop(light, "angle")
         elif light.type == 'AREA':
@@ -2819,7 +2803,6 @@ classes = (
     CYCLES_RENDER_PT_passes_aov,
     CYCLES_RENDER_PT_passes_lightgroups,
     CYCLES_RENDER_PT_filter,
-    CYCLES_RENDER_PT_override,
     CYCLES_PT_post_processing,
     CYCLES_CAMERA_PT_dof,
     CYCLES_CAMERA_PT_dof_aperture,

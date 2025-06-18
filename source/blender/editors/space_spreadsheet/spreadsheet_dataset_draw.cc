@@ -247,7 +247,7 @@ class MeshViewItem : public DataSetViewItem {
   void build_row(uiLayout &row) override
   {
     if (!has_mesh_) {
-      uiLayoutSetActive(&row, false);
+      row.active_set(false);
     }
     row.label(label_, ICON_MESH_DATA);
   }
@@ -292,7 +292,7 @@ class CurvesViewItem : public DataSetViewItem {
   void build_row(uiLayout &row) override
   {
     if (!has_curves_) {
-      uiLayoutSetActive(&row, false);
+      row.active_set(false);
     }
     row.label(label_, ICON_CURVE_DATA);
   }
@@ -337,7 +337,7 @@ class GreasePencilViewItem : public DataSetViewItem {
   void build_row(uiLayout &row) override
   {
     if (!has_grease_pencil_) {
-      uiLayoutSetActive(&row, false);
+      row.active_set(false);
     }
     row.label(label_, ICON_OUTLINER_DATA_GREASEPENCIL);
   }
@@ -434,7 +434,7 @@ class PointCloudViewItem : public DataSetViewItem {
   void build_row(uiLayout &row) override
   {
     if (!has_pointcloud_) {
-      uiLayoutSetActive(&row, false);
+      row.active_set(false);
     }
     row.label(label_, ICON_POINTCLOUD_DATA);
   }
@@ -483,7 +483,7 @@ class VolumeGridsViewItem : public DataSetViewItem {
   void build_row(uiLayout &row) override
   {
     if (!volume_) {
-      uiLayoutSetActive(&row, false);
+      row.active_set(false);
     }
     row.label(label_, ICON_VOLUME_DATA);
     if (volume_) {
@@ -511,7 +511,7 @@ class InstancesViewItem : public DataSetViewItem {
   void build_row(uiLayout &row) override
   {
     if (!instances_) {
-      uiLayoutSetActive(&row, false);
+      row.active_set(false);
     }
     row.label(label_, ICON_EMPTY_AXIS);
     if (instances_) {
@@ -1054,7 +1054,7 @@ static void draw_context_panel(const bContext &C, uiLayout &layout)
   SpaceSpreadsheet &sspreadsheet = *CTX_wm_space_spreadsheet(&C);
 
   PanelLayout context_panel = layout.panel(&C, "context", false);
-  uiLayoutSetEmboss(context_panel.header, ui::EmbossType::None);
+  context_panel.header->emboss_set(ui::EmbossType::None);
   if (ID *root_id = get_current_id(&sspreadsheet)) {
     std::string label = BKE_id_name(*root_id);
     if (!context_panel.body) {

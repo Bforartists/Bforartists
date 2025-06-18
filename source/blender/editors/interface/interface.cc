@@ -2090,7 +2090,7 @@ void UI_block_end_ex(const bContext *C,
     }
 
     const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
-        depsgraph, (scene) ? scene->r.cfra : 0.0f);
+        depsgraph, (scene) ? BKE_scene_frame_get(scene) : 0.0f);
     ui_but_anim_flag(but.get(), &anim_eval_context);
     ui_but_override_flag(bmain, but.get());
     if (UI_but_is_decorator(but)) {
@@ -2283,6 +2283,12 @@ void UI_block_draw(const bContext *C, uiBlock *block)
     ui_but_to_pixelrect(&rect, region, block, but.get());
     /* Optimization: Don't draw buttons that are not visible (outside view bounds). */
     if (!ui_but_pixelrect_in_view(region, &rect)) {
+      continue;
+    }
+
+    /* Don't draw buttons that are wider than available space. */
+    const int width = BLI_rcti_size_x(&rect);
+    if ((width > U.widget_unit * 2.5f / block->aspect) && width > region->winx) {
       continue;
     }
 

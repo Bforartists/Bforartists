@@ -3,6 +3,21 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+################## BFORARTISTS ########################
+# To do changes to the default theme, you have to recompile them to the repository. The theming is not stored in the startup.blend. But needs to be recreated.
+#
+#	1. Save the theme to disk from the theme Editor in the User Preferences. The Add Preset button does this then saves it in to the user preferences folder.
+#	2. Grab the *.xml from the appdata folder, and replace the one in the \scripts\presets\interface_theme with the new one.
+#	3. To change the factory presests you need to save a userpref.blend, throw it into \tools\utils
+#	4. Then open the blender_theme_as_c.py file, and follow the instructions there.
+#		This script recreates the userdef_default_theme.c in the \release\datafiles\userdef then.
+#		a. Run Script
+#			Open console, and navigate to the utils folder.
+#			- windows does not auto detect the required python version. So with windows the useage in the console is as follow:
+#				py -3 blender_theme_as_c.py userpref.blend
+#			or if you just have python 3 installed
+#				python blender_theme_as_c.py userpref.blend
+
 """
 Generates 'userdef_default_theme.c' from a 'userpref.blend' file.
 
@@ -37,13 +52,9 @@ C_SOURCE_HEADER = r'''/* SPDX-FileCopyrightText: 2018 Blender Authors
 
 /* clang-format off */
 
-#ifdef __LITTLE_ENDIAN__
-#  define RGBA(c) {((c) >> 24) & 0xff, ((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
-#  define RGB(c)  {((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
-#else
-#  define RGBA(c) {(c) & 0xff, ((c) >> 8) & 0xff, ((c) >> 16) & 0xff, ((c) >> 24) & 0xff}
-#  define RGB(c)  {(c) & 0xff, ((c) >> 8) & 0xff, ((c) >> 16) & 0xff}
-#endif
+/* NOTE: this is endianness-sensitive. */
+#define RGBA(c) {((c) >> 24) & 0xff, ((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
+#define RGB(c)  {((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
 
 '''
 

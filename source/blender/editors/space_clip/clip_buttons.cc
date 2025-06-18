@@ -451,7 +451,7 @@ void uiTemplateMarker(uiLayout *layout,
     BKE_movieclip_get_size(clip, user, &width, &height);
 
     if (track->flag & TRACK_LOCKED) {
-      uiLayoutSetActive(layout, false);
+      layout->active_set(false);
       uiBlock *block = layout->absolute_block();
       uiDefBut(block,
                UI_BTYPE_LABEL,
@@ -521,7 +521,7 @@ void uiTemplateMarker(uiLayout *layout,
     uiLayout *col, *row, *lcol, *vcol;  // label column, values column
 
     col = &layout->column(true);
-    uiLayoutSetActive(col, (cb->marker_flag & MARKER_DISABLED) == 0);
+    col->active_set((cb->marker_flag & MARKER_DISABLED) == 0);
 
     col->label(IFACE_("Position"), ICON_NONE); 	/*bfa */
 
@@ -533,7 +533,7 @@ void uiTemplateMarker(uiLayout *layout,
     layout->separator();
 
     lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, .75);
+    lcol->ui_units_x_set(.75f);
     uiLayoutSetFixedSize(lcol, true);
     row->label(IFACE_("X"), ICON_NONE);
     row->label(IFACE_("Y"), ICON_NONE);
@@ -584,7 +584,7 @@ void uiTemplateMarker(uiLayout *layout,
     layout->separator();
 
     lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, .75);
+    lcol->ui_units_x_set(.75f);
     uiLayoutSetFixedSize(lcol, true);
     row->label(IFACE_("X"), ICON_NONE);
     row->label(IFACE_("Y"), ICON_NONE);
@@ -634,7 +634,7 @@ void uiTemplateMarker(uiLayout *layout,
     layout->separator();
 
     lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, 2.);
+    lcol->ui_units_x_set(2.f);
     uiLayoutSetFixedSize(lcol, true);
     row->label(IFACE_("Width"), ICON_NONE);
     row->label(IFACE_("Height"), ICON_NONE);
@@ -685,7 +685,7 @@ void uiTemplateMarker(uiLayout *layout,
     layout->separator();
 
     lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, .75);
+    lcol->ui_units_x_set(.75f);
     uiLayoutSetFixedSize(lcol, true);
     row->label(IFACE_("X"), ICON_NONE);
     row->label(IFACE_("Y"), ICON_NONE);
@@ -735,7 +735,7 @@ void uiTemplateMarker(uiLayout *layout,
     layout->separator();
 
     lcol = &row->column(true);
-    uiLayoutSetUnitsX(lcol, 2.);
+    lcol->ui_units_x_set(2.f);
     uiLayoutSetFixedSize(lcol, true);
     row->label(IFACE_("Width"), ICON_NONE);
     row->label(IFACE_("Height"), ICON_NONE);

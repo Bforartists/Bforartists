@@ -159,10 +159,6 @@ void imapaint_image_update(
     return;
   }
 
-  if (ibuf->mipmap[0]) {
-    ibuf->userflags |= IB_MIPMAP_INVALID;
-  }
-
   IMB_partial_display_buffer_update_delayed(ibuf,
                                             imapaintpartial.dirty_region.xmin,
                                             imapaintpartial.dirty_region.ymin,
@@ -373,7 +369,7 @@ bool paint_use_opacity_masking(const Scene *scene, const Paint *paint, const Bru
 void paint_brush_color_get(Scene *scene,
                            const Paint *paint,
                            Brush *br,
-                           blender::float3 &initial_hsv_jitter,
+                           std::optional<blender::float3> &initial_hsv_jitter,
                            bool color_correction,
                            bool invert,
                            float distance,
@@ -410,7 +406,7 @@ void paint_brush_color_get(Scene *scene,
     else if (color_jitter_settings) {
       copy_v3_v3(r_color,
                  BKE_paint_randomize_color(*color_jitter_settings,
-                                           initial_hsv_jitter,
+                                           *initial_hsv_jitter,
                                            distance,
                                            pressure,
                                            BKE_brush_color_get(scene, paint, br)));

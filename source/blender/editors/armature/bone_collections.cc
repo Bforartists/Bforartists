@@ -1064,13 +1064,11 @@ static void menu_add_item_for_move_assign_unassign(uiLayout *layout,
   const int icon = icon_for_bone_collection(contains_active_bone);
 
   if (contains_active_bone) {
-    PointerRNA op_ptr = layout->op(
-        "ARMATURE_OT_collection_unassign", bcoll->name, icon);
+    PointerRNA op_ptr = layout->op("ARMATURE_OT_collection_unassign", bcoll->name, icon);
     RNA_string_set(&op_ptr, "name", bcoll->name);
   }
   else {
-    PointerRNA op_ptr = layout->op(
-        "ARMATURE_OT_collection_assign", bcoll->name, icon);
+    PointerRNA op_ptr = layout->op("ARMATURE_OT_collection_assign", bcoll->name, icon);
     RNA_string_set(&op_ptr, "name", bcoll->name);
   }
 }
@@ -1097,7 +1095,7 @@ static void move_to_collection_menu_create(bContext *C, uiLayout *layout, void *
 
   /* The "Create a new collection" mode of this operator has its own menu, and should thus be
    * invoked. */
-  uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
+  layout->operator_context_set(WM_OP_INVOKE_DEFAULT);
   PointerRNA op_ptr = layout->op(
       is_move_operation ? "ARMATURE_OT_move_to_collection" : "ARMATURE_OT_assign_to_collection",
       CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "New Bone Collection"),
@@ -1108,7 +1106,7 @@ static void move_to_collection_menu_create(bContext *C, uiLayout *layout, void *
 
   /* The remaining operators in this menu should be executed on click. Invoking
    * them would show this same menu again. */
-  uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
+  layout->operator_context_set(WM_OP_EXEC_DEFAULT);
 
   int child_index, child_count;
   if (parent_bcoll_index == -1) {

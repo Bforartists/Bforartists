@@ -1556,11 +1556,6 @@ static uintptr_t image_mem_size(Image *image)
       }
 
       size += IMB_get_size_in_memory(ibuf);
-
-      for (int level = 0; level < IMB_MIPMAP_LEVELS; level++) {
-        ImBuf *ibufm = ibuf->mipmap[level];
-        size += IMB_get_size_in_memory(ibufm);
-      }
     }
     IMB_moviecacheIter_free(iter);
   }
@@ -2991,13 +2986,6 @@ static void image_walk_id_all_users(
             callback(sima->image, nullptr, &sima->iuser, customdata);
           }
         }
-      }
-      break;
-    }
-    case ID_SCE: {
-      Scene *scene = (Scene *)id;
-      if (scene->nodetree && scene->use_nodes && !skip_nested_nodes) {
-        image_walk_ntree_all_users(scene->nodetree, &scene->id, customdata, callback);
       }
       break;
     }

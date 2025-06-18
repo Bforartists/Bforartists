@@ -1176,6 +1176,8 @@ def description_from_id(context, space_type, idname, *, use_operator=True):
             return tip_(_bpy.ops.get_rna_type(operator).description)
     return ""
 
+# NOTE: used by tool-tips in C++ (not called from Python).
+
 
 def item_from_id(context, space_type, idname):
     # Used directly for tooltips.

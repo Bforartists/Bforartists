@@ -596,7 +596,7 @@ void BKE_sculptsession_free(Object *ob);
 void BKE_sculptsession_free_deformMats(SculptSession *ss);
 void BKE_sculptsession_free_vwpaint_data(SculptSession *ss);
 void BKE_sculptsession_free_pbvh(Object &object);
-void BKE_sculptsession_bm_to_me(Object *ob, bool reorder);
+void BKE_sculptsession_bm_to_me(Object *ob);
 void BKE_sculptsession_bm_to_me_for_render(Object *object);
 
 /**
@@ -669,6 +669,6 @@ bool BKE_paint_canvas_image_get(PaintModeSettings *settings,
                                 Image **r_image,
                                 ImageUser **r_image_user);
 int BKE_paint_canvas_uvmap_layer_index_get(const PaintModeSettings *settings, Object *ob);
-void BKE_sculpt_check_cavity_curves(Sculpt *sd);
+void BKE_sculpt_cavity_curves_ensure(Sculpt *sd);
 CurveMapping *BKE_sculpt_default_cavity_curve();
 CurveMapping *BKE_paint_default_curve();

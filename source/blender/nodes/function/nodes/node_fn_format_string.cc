@@ -447,7 +447,7 @@ static std::optional<ProcessedPythonCompatibleFormat> preprocess_python_compatib
   return result;
 }
 
-static void format_with_fmt(const fmt::format_string<> format,
+static void format_with_fmt(const fmt::runtime_format_string<> format,
                             const GVArray &input,
                             const GVArray *widths,
                             const GVArray *precisions,
@@ -479,7 +479,7 @@ static void format_with_fmt(const fmt::format_string<> format,
           }
         }
       }
-      catch (const fmt::format_error &error) {
+      catch (const fmt::format_error & /*error*/) {
         /* Invalid patterns should have been caught before already. */
         BLI_assert_unreachable();
       }

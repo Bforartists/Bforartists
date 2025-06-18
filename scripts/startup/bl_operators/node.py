@@ -522,10 +522,11 @@ class NODE_OT_interface_item_remove(NodeInterfaceOperator, Operator):
 
         if item:
             if item.item_type == 'PANEL':
-                child = item.interface_items
-                if child and child[0].is_panel_toggle:
-                    panel_toggle = item.interface_items[0]
-                    interface.remove(panel_toggle)
+                children = item.interface_items
+                if len(children) > 0:
+                    first_child = children[0]
+                    if isinstance(first_child, bpy.types.NodeTreeInterfaceSocket) and first_child.is_panel_toggle:
+                        interface.remove(first_child)
             interface.remove(item)
             interface.active_index = min(interface.active_index, len(interface.items_tree) - 1)
 
@@ -796,7 +797,7 @@ class NODE_OT_viewer_shortcut_set(Operator):
             bpy.ops.node.activate_viewer()
 
         viewer_node.ui_shortcut = self.viewer_index
-        self.report({'INFO'}, "Assigned shortcut {:d} to {:s}".format(self.viewer_index, viewer_node.name))
+        self.report({'INFO'}, rpt_("Assigned shortcut {:d} to {:s}").format(self.viewer_index, viewer_node.name))
 
         return {'FINISHED'}
 
@@ -832,7 +833,7 @@ class NODE_OT_viewer_shortcut_get(Operator):
                 viewer_node = n
 
         if not viewer_node:
-            self.report({'INFO'}, "Shortcut {:d} is not assigned to a Viewer node yet".format(self.viewer_index))
+            self.report({'INFO'}, rpt_("Shortcut {:d} is not assigned to a Viewer node yet").format(self.viewer_index))
             return {'CANCELLED'}
 
         with bpy.context.temp_override(node=viewer_node):

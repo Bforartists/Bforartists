@@ -1911,6 +1911,22 @@ bool RNA_enum_name(const EnumPropertyItem *item, const int value, const char **r
   return false;
 }
 
+bool RNA_enum_name_gettexted(const EnumPropertyItem *item,
+                             int value,
+                             const char *translation_context,
+                             const char **r_name)
+{
+  bool result;
+
+  result = RNA_enum_name(item, value, r_name);
+
+  if (result) {
+    *r_name = BLT_translate_do_iface(translation_context, *r_name);
+  }
+
+  return result;
+};
+
 bool RNA_enum_description(const EnumPropertyItem *item,
                           const int value,
                           const char **r_description)
@@ -3990,7 +4006,7 @@ void RNA_property_enum_set(PointerRNA *ptr, PropertyRNA *prop, int value)
   }
 }
 
-int RNA_property_enum_get_default(PointerRNA * /*ptr*/, PropertyRNA *prop)
+int RNA_property_enum_get_default(PointerRNA *ptr, PropertyRNA *prop)
 {
   EnumPropertyRNA *eprop = (EnumPropertyRNA *)rna_ensure_property(prop);
   BLI_assert(RNA_property_type(prop) == PROP_ENUM);
@@ -4003,6 +4019,9 @@ int RNA_property_enum_get_default(PointerRNA * /*ptr*/, PropertyRNA *prop)
           idprop->ui_data);
       return ui_data->default_value;
     }
+  }
+  if (eprop->get_default) {
+    return eprop->get_default(ptr, prop);
   }
 
   return eprop->defaultvalue;

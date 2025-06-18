@@ -1105,7 +1105,7 @@ wmOperatorStatus WM_menu_invoke_ex(bContext *C, wmOperator *op, wmOperatorCallCo
         C, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
     uiLayout *layout = UI_popup_menu_layout(pup);
     /* Set this so the default execution context is the same as submenus. */
-    uiLayoutSetOperatorContext(layout, opcontext);
+    layout->operator_context_set(opcontext);
     uiItemsFullEnumO(layout,
                      op->type->idname,
                      RNA_property_identifier(prop),
@@ -1579,7 +1579,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
   /* Message lines. */
   if (message_lines.size() > 0) {
     uiLayout *lines = &layout->column(false);
-    uiLayoutSetScaleY(lines, 0.65f);
+    lines->scale_y_set(0.65f);
     lines->separator(0.1f);
     for (auto &st : message_lines) {
       lines->label(st, ICON_NONE);
@@ -1612,7 +1612,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
     uiBut *cancel_but;
 
     col = &col->split(0.0f, true);
-    uiLayoutSetScaleY(col, small ? 1.0f : 1.2f);
+    col->scale_y_set(small ? 1.0f : 1.2f);
 
     if (windows_layout) {
       confirm_but = uiDefBut(col_block,
@@ -2694,10 +2694,11 @@ static void radial_control_paint_tex(RadialControl *rc, float radius, float alph
   }
 
   GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   if (rc->texture) {
-    uint texCoord = GPU_vertformat_attr_add(format, "texCoord", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    uint texCoord = GPU_vertformat_attr_add(
+        format, "texCoord", blender::gpu::VertAttrType::SFLOAT_32_32);
 
     /* Set up rotation if available. */
     if (rc->rot_prop) {
@@ -2851,7 +2852,7 @@ static void radial_control_paint_cursor(bContext * /*C*/,
   }
 
   GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 

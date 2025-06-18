@@ -312,7 +312,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   int limit_method = RNA_enum_get(ptr, "limit_method");
   if (limit_method == MOD_BEVEL_ANGLE) {
     sub = &col->column(false);
-    uiLayoutSetActive(sub, edge_bevel);
+    sub->active_set(edge_bevel);
     col->prop(ptr, "angle_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (limit_method == MOD_BEVEL_WEIGHT) {
@@ -344,11 +344,10 @@ static void profile_panel_draw(const bContext * /*C*/, Panel *panel)
 
   if (ELEM(profile_type, MOD_BEVEL_PROFILE_SUPERELLIPSE, MOD_BEVEL_PROFILE_CUSTOM)) {
     row = &layout->row(false);
-    uiLayoutSetActive(
-        row,
+    row->active_set(
         profile_type == MOD_BEVEL_PROFILE_SUPERELLIPSE ||
-            (profile_type == MOD_BEVEL_PROFILE_CUSTOM && edge_bevel &&
-             !((miter_inner == MOD_BEVEL_MITER_SHARP) && (miter_outer == MOD_BEVEL_MITER_SHARP))));
+        (profile_type == MOD_BEVEL_PROFILE_CUSTOM && edge_bevel &&
+         !((miter_inner == MOD_BEVEL_MITER_SHARP) && (miter_outer == MOD_BEVEL_MITER_SHARP))));
     row->prop(ptr,
               "profile",
               UI_ITEM_R_SLIDER,
@@ -376,20 +375,20 @@ static void geometry_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   row = &layout->row(false);
-  uiLayoutSetActive(row, edge_bevel);
+  row->active_set(edge_bevel);
   row->prop(ptr, "miter_outer", UI_ITEM_NONE, IFACE_("Miter Outer"), ICON_NONE);
   row = &layout->row(false);
-  uiLayoutSetActive(row, edge_bevel);
+  row->active_set(edge_bevel);
   row->prop(ptr, "miter_inner", UI_ITEM_NONE, IFACE_("Inner"), ICON_NONE);
   if (RNA_enum_get(ptr, "miter_inner") == BEVEL_MITER_ARC) {
     row = &layout->row(false);
-    uiLayoutSetActive(row, edge_bevel);
+    row->active_set(edge_bevel);
     row->prop(ptr, "spread", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   layout->separator();
 
   row = &layout->row(false);
-  uiLayoutSetActive(row, edge_bevel);
+  row->active_set(edge_bevel);
   row->prop(ptr, "vmesh_method", UI_ITEM_NONE, IFACE_("Intersections"), ICON_NONE);
 
   col = &layout->column(true); /* bfa - our layout */
@@ -424,7 +423,7 @@ static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
   uiItemDecoratorR(row, ptr, "harden_normals", 0); /*bfa - decorator*/
 
   col = &layout->column(true); /* bfa - moved below to own label */
-  uiLayoutSetActive(col, edge_bevel);
+  col->active_set(edge_bevel);
 
   col->label(TIP_("Mark"), ICON_NONE);
 

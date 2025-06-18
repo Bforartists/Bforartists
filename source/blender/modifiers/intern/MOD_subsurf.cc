@@ -440,7 +440,7 @@ static void panel_draw(const bContext *C, Panel *panel)
         "use_adaptive_subdivision",
         IFACE_("Adaptive Subdivision"));
     if (adaptive_panel.body) {
-      uiLayoutSetActive(adaptive_panel.body, ob_use_adaptive_subdivision);
+      adaptive_panel.body->active_set(ob_use_adaptive_subdivision);
       adaptive_panel.body->prop(
           &ob_cycles_ptr, "dicing_rate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 

@@ -83,7 +83,7 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   }
 
   row = &layout->row(false);
-  uiLayoutSetActive(row, is_alembic && engine_supports_procedural);
+  row->active_set(is_alembic && engine_supports_procedural);
   uiLayoutSetPropSep(row, false); /* BFA - use_property_split = False */
   row->prop(fileptr, "use_render_procedural", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "use_render_procedural", 0); /* BFA - decorator */
@@ -147,7 +147,7 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
 
   row = &layout->row(false);
   row->prop(fileptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetActive(row, !RNA_boolean_get(fileptr, "is_sequence"));
+  row->active_set(!RNA_boolean_get(fileptr, "is_sequence"));
 }
 
 static void cache_file_layer_item(uiList * /*ui_list*/,

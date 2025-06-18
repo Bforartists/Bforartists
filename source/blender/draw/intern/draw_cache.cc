@@ -70,8 +70,8 @@ namespace blender::draw {
 
 void DRW_vertbuf_create_wiredata(gpu::VertBuf *vbo, const int vert_len)
 {
-  static const GPUVertFormat format = GPU_vertformat_from_attribute(
-      "wd", GPU_COMP_F32, 1, GPU_FETCH_FLOAT);
+  static const GPUVertFormat format = GPU_vertformat_from_attribute("wd",
+                                                                    gpu::VertAttrType::SFLOAT_32);
   GPU_vertbuf_init_with_format(*vbo, format);
   GPU_vertbuf_data_alloc(*vbo, vert_len);
   vbo->data<float>().fill(1.0f);
@@ -167,6 +167,12 @@ gpu::Batch *DRW_cache_mesh_all_verts_get(Object *ob)
   return DRW_mesh_batch_cache_get_all_verts(DRW_object_get_data_for_drawing<Mesh>(*ob));
 }
 
+gpu::Batch *DRW_cache_mesh_paint_overlay_verts_get(Object *ob)
+{
+  BLI_assert(ob->type == OB_MESH);
+  return DRW_mesh_batch_cache_get_paint_overlay_verts(DRW_object_get_data_for_drawing<Mesh>(*ob));
+}
+
 gpu::Batch *DRW_cache_mesh_all_edges_get(Object *ob)
 {
   BLI_assert(ob->type == OB_MESH);
@@ -192,10 +198,17 @@ gpu::Batch *DRW_cache_mesh_surface_get(Object *ob)
   return DRW_mesh_batch_cache_get_surface(DRW_object_get_data_for_drawing<Mesh>(*ob));
 }
 
-gpu::Batch *DRW_cache_mesh_surface_edges_get(Object *ob)
+gpu::Batch *DRW_cache_mesh_paint_overlay_surface_get(Object *ob)
 {
   BLI_assert(ob->type == OB_MESH);
-  return DRW_mesh_batch_cache_get_surface_edges(DRW_object_get_data_for_drawing<Mesh>(*ob));
+  return DRW_mesh_batch_cache_get_paint_overlay_surface(
+      DRW_object_get_data_for_drawing<Mesh>(*ob));
+}
+
+gpu::Batch *DRW_cache_mesh_paint_overlay_edges_get(Object *ob)
+{
+  BLI_assert(ob->type == OB_MESH);
+  return DRW_mesh_batch_cache_get_paint_overlay_edges(DRW_object_get_data_for_drawing<Mesh>(*ob));
 }
 
 Span<gpu::Batch *> DRW_cache_mesh_surface_shaded_get(Object *ob,

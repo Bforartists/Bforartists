@@ -743,13 +743,10 @@ cache_end:
         union {
           uint32_t as_u32;
           struct {
-#ifdef __BIG_ENDIAN__
-            uint16_t ob;
-            uint16_t bone;
-#else
+            /* NOTE: this is endianness-sensitive.
+             * In Big Endian the order of these two variable would have to be inverted. */
             uint16_t bone;
             uint16_t ob;
-#endif
           };
         } offset, test, best;
       } cycle_order;
@@ -2298,7 +2295,7 @@ static wmOperatorStatus armature_shortest_path_pick_invoke(bContext *C,
   ebone_src = arm->act_edbone;
   ebone_dst = ED_armature_pick_ebone(C, event->mval, false, &base_dst);
 
-  /* fallback to object selection */
+  /* fall back to object selection */
   if (ELEM(nullptr, ebone_src, ebone_dst) || (ebone_src == ebone_dst)) {
     return OPERATOR_PASS_THROUGH;
   }

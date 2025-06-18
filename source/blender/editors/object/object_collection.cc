@@ -849,11 +849,8 @@ static void collection_exporter_menu_draw(const bContext * /*C*/, Menu *menu)
       /* BFA start */
       int icon ;
       if (auto it = ks_icons_map.find(fh->idname); it != ks_icons_map.end()) {
-        icon = it->second;
-      }
-      else {
-        icon = ICON_NONE;
-      }
+        icon = it->second;}
+      else {icon = ICON_NONE;}
       /* BFA end */
       PointerRNA op_ptr = layout->op(
           "COLLECTION_OT_exporter_add", fh->label, icon);

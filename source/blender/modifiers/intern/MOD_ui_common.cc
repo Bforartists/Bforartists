@@ -136,7 +136,7 @@ void modifier_vgroup_ui(uiLayout *layout,
   uiItemPointerR(row, ptr, vgroup_prop, ob_ptr, "vertex_groups", text, ICON_GROUP_VERTEX);
   if (invert_vgroup_prop) {
     uiLayout *sub = &row->row(true);
-    uiLayoutSetActive(sub, has_vertex_group);
+    sub->active_set(has_vertex_group);
     uiLayoutSetPropDecorate(sub, false);
     sub->prop(ptr, *invert_vgroup_prop, UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
   }
@@ -217,9 +217,9 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
   Object *ob = blender::ed::object::context_active_object(C);
   PointerRNA ptr = RNA_pointer_create_discrete(&ob->id, &RNA_Modifier, md);
   uiLayoutSetContextPointer(layout, "modifier", &ptr);
-  uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
+  layout->operator_context_set(WM_OP_INVOKE_DEFAULT);
 
-  uiLayoutSetUnitsX(layout, 4.0f);
+  layout->ui_units_x_set(4.0f);
 
   /* Apply. */
   // BFA - Moved apply button to top level
@@ -325,7 +325,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   /* Modifier Icon. */
   sub = &layout->row(true);
-  uiLayoutSetEmboss(sub, blender::ui::EmbossType::None);
+  sub->emboss_set(blender::ui::EmbossType::None);
   if (mti->is_disabled && mti->is_disabled(scene, md, false)) {
     uiLayoutSetRedAlert(sub, true);
   }
@@ -346,7 +346,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
     if (BKE_modifier_supports_cage(scene, md) && (index <= last_cage_index)) {
       sub = &row->row(true);
       if (index < cage_index || !BKE_modifier_couldbe_cage(scene, md)) {
-        uiLayoutSetActive(sub, false);
+        sub->active_set(false);
       }
       sub->prop(ptr, "show_on_cage", UI_ITEM_NONE, "", ICON_NONE);
       buttons_number++;
@@ -410,7 +410,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   if (!ELEM(md->type, eModifierType_Collision, eModifierType_Surface)) {
     if (mti->flags & eModifierTypeFlag_SupportsEditmode) {
       sub = &row->row(true);
-      uiLayoutSetActive(sub, (md->mode & eModifierMode_Realtime));
+      sub->active_set((md->mode & eModifierMode_Realtime));
       sub->prop(ptr, "show_in_editmode", UI_ITEM_NONE, "", ICON_NONE);
       buttons_number++;
     }
@@ -437,7 +437,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   /* Delete button. */
   if (modifier_can_delete(md) && !modifier_is_simulation(md)) {
-    uiLayoutSetEmboss(sub, blender::ui::EmbossType::Emboss); /* bfa - set as emboss */
+    sub->emboss_set(blender::ui::EmbossType::Emboss); /* bfa - set as emboss */
     row->op("OBJECT_OT_modifier_remove", "", ICON_X); /* bfa - row */
     buttons_number++;
   }
@@ -459,7 +459,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   /* Extra operators menu. */
   row->menu_fn("", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md); /* bfa - our layout */
-  
+
   bool display_name = (panel->sizex / UI_UNIT_X - buttons_number > 5) || (panel->sizex == 0);
   if (display_name) {
     name_row->prop(ptr, "name", UI_ITEM_NONE, "", ICON_NONE);

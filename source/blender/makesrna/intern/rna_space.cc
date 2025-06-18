@@ -1517,7 +1517,7 @@ static const EnumPropertyItem *rna_3DViewShading_render_pass_itemf(bContext *C,
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   const bool aov_available = BKE_view_layer_has_valid_aov(view_layer);
-  const bool eevee_active = STREQ(scene->r.engine, "BLENDER_EEVEE_NEXT");
+  const bool eevee_active = STREQ(scene->r.engine, "BLENDER_EEVEE");
 
   int totitem = 0;
   EnumPropertyItem *result = nullptr;
@@ -8290,6 +8290,19 @@ static void rna_def_space_node(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, insert_ofs_dir_items);
   RNA_def_property_ui_text(
       prop, "Auto-offset Direction", "Direction to offset nodes on insertion");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
+
+  /* Gizmo Toggles. */
+  prop = RNA_def_property(srna, "show_gizmo", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, nullptr, "gizmo_flag", SNODE_GIZMO_HIDE);
+  RNA_def_property_ui_text(prop, "Show Gizmo", "Show gizmos of all types");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
+
+  prop = RNA_def_property(srna, "show_gizmo_active_node", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(
+      prop, nullptr, "gizmo_flag", SNODE_GIZMO_HIDE_ACTIVE_NODE);
+  RNA_def_property_ui_text(prop, "Active Node", "Context sensitive gizmo for the active node");
+  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 
   /* Overlays */

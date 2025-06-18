@@ -915,7 +915,7 @@ class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
         col = layout.column(heading="Collection Instances")
         col.prop(params, "instance_collections_on_link", text="Link")
         col.prop(params, "instance_collections_on_append", text="Append")
-        col.prop(params, "drop_instances_to_origin", text="Drop To Origin")
+        col.prop(params, "drop_instances_to_origin", text="Drop To Origin") # BFA
 
 
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):

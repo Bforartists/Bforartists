@@ -326,7 +326,6 @@ SECTIONS = (
             ("materialx", "A standard for representing materials. Used by USD, Hydra & Blender's shader nodes."),
             ("mesa", "Used for it's software OpenGL implementation."),
             ("openal", "Cross platform audio output."),
-            ("opencollada", "Support for the COLLADA 3D interchange file format."),
             ("opencolorio", "A solution for highly precise, performant, and consistent color management."),
             ("openexr", "EXR image-format support."),
             ("openimagedenoise", "Denoising filters for images rendered with ray tracing. Used by Cycles."),
@@ -1095,7 +1094,7 @@ def main():
     VFONT_FROM_STYLE["mono"] = bpy.data.fonts.load(FONT_FILE_MONO)
 
     scene = bpy.context.scene
-    scene.render.engine = 'BLENDER_EEVEE_NEXT'
+    scene.render.engine = 'BLENDER_EEVEE'
 
     # Without this, the whites are gray.
     scene.view_settings.view_transform = "Standard"

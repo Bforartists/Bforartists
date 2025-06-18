@@ -690,11 +690,6 @@ static void sequencer_main_cursor(wmWindow *win, ScrArea *area, ARegion *region)
     return;
   }
 
-  if ((U.sequencer_editor_flag & USER_SEQ_ED_SIMPLE_TWEAKING) == 0) {
-    WM_cursor_set(win, wmcursor);
-    return;
-  }
-
   const View2D *v2d = &region->v2d;
   if (UI_view2d_mouse_in_scrollers(region, v2d, win->eventstate->xy)) {
     WM_cursor_set(win, wmcursor);
@@ -1177,6 +1172,7 @@ void ED_spacetype_sequencer()
   art->message_subscribe = ED_area_do_mgs_subscribe_for_tool_ui;
   art->listener = sequencer_buttons_region_listener;
   art->init = sequencer_buttons_region_init;
+  art->snap_size = ED_region_generic_panel_region_snap_size;
   art->draw = sequencer_buttons_region_draw;
   BLI_addhead(&st->regiontypes, art);
 
