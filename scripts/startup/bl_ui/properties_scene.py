@@ -353,7 +353,7 @@ class SCENE_PT_simulation(SceneButtonsPanel, Panel):
         scene = context.scene
 
         col = layout.column()
-        split = col.split(factor=.4)
+        split = col.split(factor=.4) # BFA
         split.use_property_split=False
         split.prop(scene, "use_custom_simulation_range", text="Simulation Range")
 
@@ -429,7 +429,7 @@ class SCENE_PT_rigid_body_world_settings(RigidBodySubPanel, Panel):
 
             col = flow.column()
             col.active = rbw.enabled
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.prop(rbw, "use_split_impulse")
             row.prop_decorator(rbw, "use_split_impulse")
@@ -463,10 +463,10 @@ class SCENE_PT_rigid_body_field_weights(RigidBodySubPanel, Panel):
         effector_weights_ui(self, rbw.effector_weights, 'RIGID_BODY')
 
 
-class SCENE_PT_eevee_next_light_probes(SceneButtonsPanel, Panel):
+class SCENE_PT_eevee_light_probes(SceneButtonsPanel, Panel):
     bl_label = "Light Probes"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     @classmethod
     def poll(cls, context):
@@ -504,11 +504,6 @@ class SCENE_PT_animation(SceneButtonsPanel, PropertiesAnimationMixin, PropertyPa
         col.label(text="Scene")
         self.draw_action_and_slot_selector(context, col, scene)
 
-        if node_tree := scene.node_tree:
-            col = layout.column(align=True)
-            col.label(text="Compositing Node Tree")
-            self.draw_action_and_slot_selector(context, col, node_tree)
-
 
 class SCENE_PT_custom_props(SceneButtonsPanel, PropertyPanel, Panel):
     _context_path = "scene"
@@ -530,7 +525,7 @@ classes = (
     SCENE_PT_rigid_body_world_settings,
     SCENE_PT_rigid_body_cache,
     SCENE_PT_rigid_body_field_weights,
-    SCENE_PT_eevee_next_light_probes,
+    SCENE_PT_eevee_light_probes,
     SCENE_PT_animation,
     SCENE_PT_custom_props,
 )

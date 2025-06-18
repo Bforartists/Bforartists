@@ -68,10 +68,13 @@ TimelineValue VKDevice::render_graph_submit(render_graph::VKRenderGraph *render_
   if (wait_for_submission) {
     submit_task->wait_for_submission = &wait_condition;
   }
-  TimelineValue timeline = submit_task->timeline = submit_to_device ? ++timeline_value_ :
-                                                                      timeline_value_ + 1;
-  orphaned_data.timeline_ = timeline + 1;
-  orphaned_data.move_data(context_discard_pool, timeline);
+  TimelineValue timeline = 0;
+  {
+    std::scoped_lock lock(orphaned_data.mutex_get());
+    timeline = submit_task->timeline = submit_to_device ? ++timeline_value_ : timeline_value_ + 1;
+    orphaned_data.timeline_ = timeline;
+    orphaned_data.move_data(context_discard_pool, timeline);
+  }
 
   BLI_thread_queue_push(submitted_render_graphs_, submit_task);
   submit_task = nullptr;
@@ -95,6 +98,12 @@ void VKDevice::wait_for_timeline(TimelineValue timeline)
   VkSemaphoreWaitInfo vk_semaphore_wait_info = {
       VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO, nullptr, 0, 1, &vk_timeline_semaphore_, &timeline};
   vkWaitSemaphores(vk_device_, &vk_semaphore_wait_info, UINT64_MAX);
+}
+
+void VKDevice::wait_queue_idle()
+{
+  std::scoped_lock lock(*queue_mutex_);
+  vkQueueWaitIdle(vk_queue_);
 }
 
 render_graph::VKRenderGraph *VKDevice::render_graph_new()

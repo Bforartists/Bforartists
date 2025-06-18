@@ -111,33 +111,6 @@ class MESH_UL_vgroups(UIList):
             layout.label(text="", icon_value=icon)
 
 
-class MESH_UL_shape_keys(UIList):
-    def draw_item(self, _context, layout, _data, item, icon, active_data, _active_propname, index):
-        # assert(isinstance(item, bpy.types.ShapeKey))
-        obj = active_data
-        # key = data
-        key_block = item
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            split = layout.split(factor=0.5, align=True)
-            split.prop(key_block, "name", text="", emboss=False, icon_value=icon)
-            row = split.row(align=True)
-            row.emboss = 'NONE_OR_STATUS'
-            row.alignment = 'RIGHT'
-            if key_block.mute or (obj.mode == 'EDIT' and not (obj.use_shape_key_edit_mode and obj.type == 'MESH')):
-                split.active = False
-            if not item.id_data.use_relative:
-                row.prop(key_block, "frame", text="")
-            elif index > 0:
-                row.prop(key_block, "value", text="")
-            else:
-                row.label(text="")
-            row.prop(key_block, "mute", text="", emboss=False)
-            row.prop(key_block, "lock_shape", text="", emboss=False)
-        elif self.layout_type == 'GRID':
-            layout.alignment = 'CENTER'
-            layout.label(text="", icon_value=icon)
-
-
 class MESH_UL_uvmaps(UIList):
     def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         # assert(isinstance(item, (bpy.types.MeshTexturePolyLayer, bpy.types.MeshLoopColorLayer)))
@@ -166,7 +139,7 @@ class DATA_PT_context_mesh(MeshButtonsPanel, Panel):
     bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -183,32 +156,12 @@ class DATA_PT_context_mesh(MeshButtonsPanel, Panel):
             layout.template_ID(space, "pin_id")
 
 
-class DATA_PT_normals_auto_smooth(MeshButtonsPanel, Panel):
-    bl_label = "Auto Smooth"
-    bl_parent_id = "DATA_PT_normals"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
-
-    def draw_header(self, context):
-        mesh = context.mesh
-
-        self.layout.prop(mesh, "use_auto_smooth", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        mesh = context.mesh
-
-        layout.active = mesh.use_auto_smooth and not mesh.has_custom_normals
-        layout.prop(mesh, "auto_smooth_angle", text="Angle")
-
-
 class DATA_PT_texture_space(MeshButtonsPanel, Panel):
     bl_label = "Texture Space"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -220,7 +173,7 @@ class DATA_PT_texture_space(MeshButtonsPanel, Panel):
 
         layout.prop(mesh, "texture_mesh")
 
-        row = layout.row()
+        row = layout.row() # BFA
         row.use_property_split = False
         row.prop(mesh, "use_auto_texspace")
         row.prop_decorator(mesh, "use_auto_texspace")
@@ -233,7 +186,7 @@ class DATA_PT_vertex_groups(MeshButtonsPanel, Panel):
     bl_label = "Vertex Groups"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -300,7 +253,7 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
     bl_label = "Shape Keys"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -328,11 +281,7 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
 
         row = layout.row()
 
-        rows = 3
-        if kb:
-            rows = 5
-
-        row.template_list("MESH_UL_shape_keys", "", key, "key_blocks", ob, "active_shape_key_index", rows=rows)
+        row.template_shape_key_tree()
 
         col = row.column(align=True)
 
@@ -394,7 +343,7 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
                 row.prop(key, "eval_time")
         
         if ob.type == 'MESH':
-	        row = layout.row()
+	        row = layout.row() # BFA
 	        row.use_property_split = False
 	        row.prop(ob, "add_rest_position_attribute")
 	        row.prop_decorator(ob, "add_rest_position_attribute")
@@ -405,7 +354,7 @@ class DATA_PT_uv_texture(MeshButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -431,7 +380,7 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -447,10 +396,10 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
         if mesh.remesh_mode == 'VOXEL':
             col.prop(mesh, "remesh_voxel_size")
             col.prop(mesh, "remesh_voxel_adaptivity")
-            col.use_property_split = False
+            col.use_property_split = False # BFA
             col.prop(mesh, "use_remesh_fix_poles")
 
-            col.label(text = "Preserve")
+            col.label(text = "Preserve") # BFA
             row.use_property_split = False
             row = col.row()
             row.separator()
@@ -470,7 +419,7 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -485,7 +434,7 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
         col.operator("mesh.customdata_mask_clear", icon='X')
         col.operator("mesh.customdata_skin_clear", icon='X')
 
-        layout.separator()
+        layout.separator() # BFA
 
         if me.has_custom_normals:
             col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
@@ -496,7 +445,7 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
 class DATA_PT_mesh_animation(MeshButtonsPanel, PropertiesAnimationMixin, PropertyPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -521,7 +470,7 @@ class DATA_PT_mesh_animation(MeshButtonsPanel, PropertiesAnimationMixin, Propert
 class DATA_PT_custom_props_mesh(MeshButtonsPanel, PropertyPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     _context_path = "object.data"
@@ -581,7 +530,7 @@ class DATA_PT_mesh_attributes(MeshButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -719,7 +668,7 @@ class DATA_PT_vertex_colors(MeshButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -757,7 +706,6 @@ classes = (
     MESH_MT_color_attribute_context_menu,
     MESH_MT_attribute_context_menu,
     MESH_UL_vgroups,
-    MESH_UL_shape_keys,
     MESH_UL_uvmaps,
     MESH_UL_attributes,
     DATA_PT_context_mesh,

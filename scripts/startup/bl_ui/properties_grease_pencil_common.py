@@ -53,7 +53,7 @@ class GreasePencilSculptAdvancedPanel:
 
         tool_settings = context.scene.tool_settings
         brush = tool_settings.gpencil_sculpt_paint.brush
-        tool = brush.gpencil_sculpt_tool
+        tool = brush.gpencil_sculpt_brush_type
         gp_settings = brush.gpencil_settings
 
         if tool in {'SMOOTH', 'RANDOMIZE'}:
@@ -130,7 +130,7 @@ class GreasePencilDisplayPanel:
                 row = layout.row(align=True)
                 row.prop(settings, "show_brush", text="Display Cursor")
 
-            if brush.gpencil_tool == 'DRAW':
+            if brush.gpencil_brush_type == 'DRAW':
                 row = layout.row(align=True)
                 row.active = settings.show_brush
                 row.prop(gp_settings, "show_lasso", text="Show Fill Color While Drawing")
@@ -140,7 +140,7 @@ class GreasePencilDisplayPanel:
             col.active = settings.show_brush
 
             col.prop(brush, "cursor_color_add", text="Cursor Color")
-            if brush.gpencil_sculpt_tool in {'THICKNESS', 'STRENGTH', 'PINCH', 'TWIST'}:
+            if brush.gpencil_sculpt_brush_type in {'THICKNESS', 'STRENGTH', 'PINCH', 'TWIST'}:
                 col.prop(brush, "cursor_color_subtract", text="Inverse Color")
 
         elif ob.mode == 'WEIGHT_GREASE_PENCIL':
@@ -554,7 +554,7 @@ class GreasePencilSimplifyPanel:
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         rd = context.scene.render
@@ -659,7 +659,7 @@ class GreasePencilLayerRelationsPanel:
         col = layout.row(align=True)
         # Only enable this property when a view layer is selected.
         if bool(gpl.viewlayer_render):
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.separator()
             row.prop(gpl, "use_viewlayer_masks")
@@ -686,7 +686,7 @@ class GreasePencilLayerDisplayPanel:
             col.label(text="Channel Colors are disabled in Animation preferences")
 
         row = layout.row()
-        row.use_property_split = False
+        row.use_property_split = False # BFA
         row.prop(gpl, "use_solo_mode", text="Show Only on Keyframed")
 
 
@@ -739,7 +739,7 @@ class GREASE_PENCIL_MT_snap(Menu):
 
     def draw(self, _context):
         layout = self.layout
-
+        # BFA - Added icons
         layout.operator("grease_pencil.snap_to_grid", text="Selection to Grid", icon = "SELECTIONTOGRID")
         layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
         layout.operator("grease_pencil.snap_to_cursor", text="Selection to Cursor (Keep Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True

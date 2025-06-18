@@ -64,6 +64,7 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
 
         layout.prop(arm, "display_type", text="Display As")
 
+        # BFA - Float left
         col = layout.column(align=True)
         col.label( text = "Show")
         col.use_property_split = False
@@ -152,12 +153,12 @@ class DATA_PT_bone_collections(ArmatureButtonsPanel, Panel):
 	        row = layout.row()
 	
 	        sub = row.row(align=True)
-	        sub.operator("armature.collection_assign", icon='COLLECTION_BONE_ADD', text="Assign")
-	        sub.operator("armature.collection_unassign", icon='COLLECTION_BONE_REMOVE', text="Remove")
+	        sub.operator("armature.collection_assign", icon='COLLECTION_BONE_ADD', text="Assign") # BFA
+	        sub.operator("armature.collection_unassign", icon='COLLECTION_BONE_REMOVE', text="Remove") # BFA
 	
 	        sub = row.row(align=True)
-	        sub.operator("armature.collection_select", icon='RESTRICT_SELECT_OFF', text="Select")
-	        sub.operator("armature.collection_deselect", icon='SELECT_NONE', text="Deselect")
+	        sub.operator("armature.collection_select", icon='RESTRICT_SELECT_OFF', text="Select") # BFA
+	        sub.operator("armature.collection_deselect", icon='SELECT_NONE', text="Deselect") # BFA
 
 
 class ARMATURE_MT_collection_context_menu(Menu):
@@ -173,15 +174,15 @@ class ARMATURE_MT_collection_context_menu(Menu):
         # editable or not. That means this menu has to do the disabling for it.
         sub = layout.column()
         sub.enabled = not active_bcoll_is_locked
-        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE")
+        sub.operator("armature.collection_remove_unused", text="Remove Unused Collections", icon="DELETE") # BFA
 
         layout.separator()
 
-        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED')
-        layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF")
+        layout.operator("armature.collection_show_all", icon='SHOW_UNSELECTED') # BFA
+        layout.operator("armature.collection_unsolo_all", icon="SOLO_OFF") # BFA
 
         layout.separator()
-        layout.operator("UI_OT_view_item_rename", text="Rename", icon="RENAME")
+        layout.operator("UI_OT_view_item_rename", text="Rename", icon="RENAME") # BFA
 
 
 class ARMATURE_MT_collection_tree_context_menu(Menu):
@@ -256,6 +257,15 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
             col.prop(itasc, "precision")
             col.prop(itasc, "iterations")
 
+            if simulation:
+                col.prop(itasc, "use_auto_step")
+                sub = layout.column(align=True)
+                if itasc.use_auto_step:
+                    sub.prop(itasc, "step_min", text="Steps Min")
+                    sub.prop(itasc, "step_max", text="Max")
+                else:
+                    sub.prop(itasc, "step_count", text="Steps")
+
             col.prop(itasc, "solver")
             if simulation:
                 col.prop(itasc, "feedback")
@@ -264,17 +274,6 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
                 col.separator()
                 col.prop(itasc, "damping_max", text="Damping Max", slider=True)
                 col.prop(itasc, "damping_epsilon", text="Damping Epsilon", slider=True)
-
-            if simulation:
-                col.use_property_split = False
-                col.prop(itasc, "use_auto_step")
-                col.use_property_split = True
-                sub = layout.column(align=True)
-                if itasc.use_auto_step:
-                    sub.prop(itasc, "step_min", text="Steps Min")
-                    sub.prop(itasc, "step_max", text="Max")
-                else:
-                    sub.prop(itasc, "step_count", text="Steps")
 
 
 class DATA_PT_motion_paths(MotionPathButtonsPanel, Panel):
@@ -411,12 +410,12 @@ class POSE_PT_selection_sets(Panel):
         row = layout.row()
 
         sub = row.row(align=True)
-        sub.operator("pose.selection_set_assign", text="Assign", icon = 'ADD')
-        sub.operator("pose.selection_set_unassign", text="Remove", icon = 'DELETE')
+        sub.operator("pose.selection_set_assign", text="Assign", icon = 'ADD') # BFA
+        sub.operator("pose.selection_set_unassign", text="Remove", icon = 'DELETE') # BFA
 
         sub = row.row(align=True)
-        sub.operator("pose.selection_set_select", text="Select", icon = 'RESTRICT_SELECT_OFF').selection_set_index = -1
-        sub.operator("pose.selection_set_deselect", text="Deselect", icon = 'SELECT_NONE')
+        sub.operator("pose.selection_set_select", text="Select", icon = 'RESTRICT_SELECT_OFF').selection_set_index = -1 # BFA
+        sub.operator("pose.selection_set_deselect", text="Deselect", icon = 'SELECT_NONE') # BFA
 
 
 class POSE_UL_selection_set(UIList):

@@ -475,7 +475,7 @@ static std::string get_os_info()
 }
 
 /**
- * Retrieve the path to "bforartists-launcher.exe" if it exists; otherwise, return the current
+ * Retrieve the path to "blender-launcher.exe" if it exists; otherwise, return the current
  * executable path.
  */
 static bool bli_executable_path_get(LPWSTR path, DWORD size)
@@ -495,7 +495,7 @@ static bool bli_executable_path_get(LPWSTR path, DWORD size)
     return false;
   }
 
-  /* Replace the filename "bforartists.exe" with "bforartists-launcher.exe". */
+  /* Replace the filename "blender.exe" with "blender-launcher.exe". */
   if (!PathRemoveFileSpecW(executable_path)) {
     /* Failed to remove the file spec. Use the original path. */
     return true;

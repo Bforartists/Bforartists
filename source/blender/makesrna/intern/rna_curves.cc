@@ -19,6 +19,8 @@
 
 #include "WM_types.hh"
 
+/* BFA - Added icons*/
+
 const EnumPropertyItem rna_enum_curves_type_items[] = {
     {CURVE_TYPE_CATMULL_ROM, "CATMULL_ROM", ICON_CURVE_DATA, "Catmull Rom", ""},
     {CURVE_TYPE_POLY, "POLY", ICON_OUTLINER_DATA_MESH, "Poly", ""},
@@ -371,7 +373,7 @@ static void rna_def_curves_curve(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "CurveSlice", nullptr);
-  RNA_def_struct_ui_text(srna, "Curve Slice", "A single curve from a curves data");
+  RNA_def_struct_ui_text(srna, "Curve Slice", "A single curve from a curves data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_CurveSlice_path");
 
   prop = RNA_def_property(srna, "points", PROP_COLLECTION, PROP_NONE);
@@ -411,7 +413,7 @@ static void rna_def_curves(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Curves", "ID");
-  RNA_def_struct_ui_text(srna, "Hair Curves", "Hair data for hair curves");
+  RNA_def_struct_ui_text(srna, "Hair Curves", "Hair data for hair curves"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_CURVES);
 
   /* Point and Curve RNA API helpers. */
@@ -428,7 +430,7 @@ static void rna_def_curves(BlenderRNA *brna)
                                     nullptr,
                                     nullptr);
   RNA_def_property_struct_type(prop, "CurveSlice");
-  RNA_def_property_ui_text(prop, "Curves", "All curves in the data");
+  RNA_def_property_ui_text(prop, "Curves", "All curves in the data"); /* BFA */
 
   prop = RNA_def_property(srna, "points", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_struct_type(prop, "CurvePoint");

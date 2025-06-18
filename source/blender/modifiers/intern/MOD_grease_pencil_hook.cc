@@ -290,7 +290,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     bool use_falloff = RNA_enum_get(ptr, "falloff_type") != eWarp_Falloff_None;
 
     uiLayout *row = &sub->row(false);
-    uiLayoutSetActive(row, use_falloff);
+    row->active_set(use_falloff);
     row->prop(ptr, "falloff_radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     col = &sub->column(true); /* bfa - our layout */

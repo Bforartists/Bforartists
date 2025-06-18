@@ -587,7 +587,7 @@ from bpy.props import BoolProperty, FloatProperty, IntProperty
 
 
 class LightMapPack(Operator):
-    """Lightmap Pack\nPack each face's UV's into the UV bounds"""
+    """Lightmap Pack\nPack each face's UV's into the UV bounds""" # BFA
     bl_idname = "uv.lightmap_pack"
     bl_label = "Lightmap Pack"
 
@@ -598,7 +598,7 @@ class LightMapPack(Operator):
     # Proper solution would be to make undo stack aware of such things,
     # but for now just disable redo. Keep undo here so unwanted changes to uv
     # coords might be undone.
-    # This fixes infinite image creation reported there #30968 (sergey)
+    # NOTE(@sergey): This fixes infinite image creation reported there #30968.
     bl_options = {'UNDO'}
 
     PREF_CONTEXT: bpy.props.EnumProperty(
@@ -649,13 +649,13 @@ class LightMapPack(Operator):
         if is_editmode:
             layout.prop(self, "PREF_CONTEXT")
 
+        # BFA
         col = layout.column()
         col.use_property_split = False
         col.prop(self, "PREF_PACK_IN_ONE")
         col.prop(self, "PREF_NEW_UVLAYER")
         col.use_property_split = True
 
-        layout.prop(self, "PREF_IMG_PX_SIZE")
         layout.prop(self, "PREF_BOX_DIV")
         layout.prop(self, "PREF_MARGIN_DIV")
 

@@ -57,6 +57,62 @@ class ArrayDataImplicitSharing : public ImplicitSharingInfo {
   }
 };
 
+Attribute::ArrayData Attribute::ArrayData::ForValue(const GPointer &value,
+                                                    const int64_t domain_size)
+{
+  Attribute::ArrayData data{};
+  const CPPType &type = *value.type();
+  const void *value_ptr = type.default_value();
+
+  /* Prefer `calloc` to zeroing after allocation since it is faster. */
+  if (BLI_memory_is_zero(value_ptr, type.size)) {
+    data.data = MEM_calloc_arrayN_aligned(domain_size, type.size, type.alignment, __func__);
+  }
+  else {
+    data.data = MEM_malloc_arrayN_aligned(domain_size, type.size, type.alignment, __func__);
+    type.fill_construct_n(value_ptr, data.data, domain_size);
+  }
+
+  data.size = domain_size;
+  BLI_assert(type.is_trivially_destructible);
+  data.sharing_info = ImplicitSharingPtr<>(implicit_sharing::info_for_mem_free(data.data));
+  return data;
+}
+
+Attribute::ArrayData Attribute::ArrayData::ForDefaultValue(const CPPType &type,
+                                                           const int64_t domain_size)
+{
+  return ForValue(GPointer(type, type.default_value()), domain_size);
+}
+
+Attribute::ArrayData Attribute::ArrayData::ForConstructed(const CPPType &type,
+                                                          const int64_t domain_size)
+{
+  Attribute::ArrayData data{};
+  data.data = MEM_malloc_arrayN_aligned(domain_size, type.size, type.alignment, __func__);
+  type.default_construct_n(data.data, domain_size);
+  data.size = domain_size;
+  BLI_assert(type.is_trivially_destructible);
+  data.sharing_info = ImplicitSharingPtr<>(implicit_sharing::info_for_mem_free(data.data));
+  return data;
+}
+
+Attribute::SingleData Attribute::SingleData::ForValue(const GPointer &value)
+{
+  Attribute::SingleData data{};
+  const CPPType &type = *value.type();
+  data.value = MEM_mallocN_aligned(type.size, type.alignment, __func__);
+  type.copy_construct(value.get(), data.value);
+  BLI_assert(type.is_trivially_destructible);
+  data.sharing_info = ImplicitSharingPtr<>(implicit_sharing::info_for_mem_free(data.value));
+  return data;
+}
+
+Attribute::SingleData Attribute::SingleData::ForDefaultValue(const CPPType &type)
+{
+  return ForValue(GPointer(type, type.default_value()));
+}
+
 void AttributeStorage::foreach(FunctionRef<void(Attribute &)> fn)
 {
   for (const std::unique_ptr<Attribute> &attribute : this->runtime->attributes) {
@@ -70,11 +126,21 @@ void AttributeStorage::foreach(FunctionRef<void(const Attribute &)> fn) const
   }
 }
 
-static ImplicitSharingInfo *create_sharing_info_for_array(void *data,
-                                                          const int64_t size,
-                                                          const CPPType &type)
+void AttributeStorage::foreach_with_stop(FunctionRef<bool(Attribute &)> fn)
 {
-  return MEM_new<ArrayDataImplicitSharing>(__func__, data, size, type);
+  for (const std::unique_ptr<Attribute> &attribute : this->runtime->attributes) {
+    if (!fn(*attribute)) {
+      break;
+    }
+  }
+}
+void AttributeStorage::foreach_with_stop(FunctionRef<bool(const Attribute &)> fn) const
+{
+  for (const std::unique_ptr<Attribute> &attribute : this->runtime->attributes) {
+    if (!fn(*attribute)) {
+      break;
+    }
+  }
 }
 
 AttrStorageType Attribute::storage_type() const
@@ -96,19 +162,18 @@ Attribute::DataVariant &Attribute::data_for_write()
       data->sharing_info->tag_ensured_mutable();
       return data_;
     }
-
-    const CPPType &cpp_type = attribute_type_to_cpp_type(type_);
-    void *new_data = MEM_malloc_arrayN_aligned(
-        data->size, cpp_type.size, cpp_type.alignment, __func__);
-    cpp_type.copy_construct_n(data->data, new_data, data->size);
-
-    data->data = new_data;
-    data->sharing_info = ImplicitSharingPtr<>(
-        create_sharing_info_for_array(data->data, data->size, cpp_type));
+    const CPPType &type = attribute_type_to_cpp_type(type_);
+    ArrayData new_data = ArrayData::ForConstructed(type, data->size);
+    type.copy_construct_n(data->data, new_data.data, data->size);
+    *data = std::move(new_data);
   }
-  else if (std::get_if<Attribute::SingleData>(&data_)) {
-    /* Not yet implemented because #SingleData isn't used at runtime yet. */
-    BLI_assert_unreachable();
+  else if (auto *data = std::get_if<Attribute::SingleData>(&data_)) {
+    if (data->sharing_info->is_mutable()) {
+      data->sharing_info->tag_ensured_mutable();
+      return data_;
+    }
+    const CPPType &type = attribute_type_to_cpp_type(type_);
+    *data = SingleData::ForValue(GPointer(type, data->value));
   }
   return data_;
 }
@@ -163,6 +228,25 @@ AttributeStorage::~AttributeStorage()
   MEM_delete(this->runtime);
 }
 
+int AttributeStorage::count() const
+{
+  return this->runtime->attributes.size();
+}
+
+Attribute &AttributeStorage::at_index(int index)
+{
+  return *this->runtime->attributes[index];
+}
+const Attribute &AttributeStorage::at_index(int index) const
+{
+  return *this->runtime->attributes[index];
+}
+
+int AttributeStorage::index_of(StringRef name) const
+{
+  return this->runtime->attributes.index_of_try_as(name);
+}
+
 const Attribute *AttributeStorage::lookup(const StringRef name) const
 {
   const std::unique_ptr<blender::bke::Attribute> *attribute =
@@ -208,6 +292,19 @@ std::string AttributeStorage::unique_name_calc(const StringRef name)
 {
   return BLI_uniquename_cb(
       [&](const StringRef check_name) { return this->lookup(check_name) != nullptr; }, '.', name);
+}
+
+void AttributeStorage::rename(const StringRef old_name, std::string new_name)
+{
+  /* The VectorSet must be rebuilt from scratch because the data used to create the hash is
+   * changed. */
+  const int index = this->runtime->attributes.index_of_try_as(old_name);
+  Vector<std::unique_ptr<Attribute>> old_vector = this->runtime->attributes.extract_vector();
+  old_vector[index]->name_ = std::move(new_name);
+  this->runtime->attributes.reserve(old_vector.size());
+  for (std::unique_ptr<Attribute> &attribute : old_vector) {
+    this->runtime->attributes.add_new(std::move(attribute));
+  }
 }
 
 static void read_array_data(BlendDataReader &reader,
@@ -431,52 +528,10 @@ static void write_array_data(BlendWriter &writer,
   }
 }
 
-void attribute_storage_blend_write_prepare(
-    AttributeStorage &data,
-    const Map<AttrDomain, Vector<CustomDataLayer, 16> *> &layers_to_write,
-    AttributeStorage::BlendWriteData &write_data)
+void attribute_storage_blend_write_prepare(AttributeStorage &data,
+                                           AttributeStorage::BlendWriteData &write_data)
 {
-  Set<std::string, 16> all_names_written;
-  for (Vector<CustomDataLayer, 16> *const layers : layers_to_write.values()) {
-    for (const CustomDataLayer &layer : *layers) {
-      all_names_written.add(layer.name);
-    }
-  }
   data.foreach([&](Attribute &attr) {
-    if (!U.experimental.use_attribute_storage_write) {
-      /* In version 4.5, all attribute data is written in the #CustomData format (at least when the
-       * debug option is not enabled), so the #Attribute needs to be converted to a
-       * #CustomDataLayer in the proper list. This is only relevant when #AttributeStorage is
-       * actually used at runtime.
-       *
-       * When removing this option to always write the new format in 5.0, #BLENDER_FILE_MIN_VERSION
-       * must be increased. */
-      if (const std::optional data_type = attr_type_to_custom_data_type(attr.data_type())) {
-        if (const auto *array_data = std::get_if<Attribute::ArrayData>(&attr.data())) {
-          CustomDataLayer layer{};
-          layer.type = *data_type;
-          layer.data = array_data->data;
-          layer.sharing_info = array_data->sharing_info.get();
-
-          /* Because the #Attribute::name_ `std::string` has no length limit (unlike
-           * #CustomDataLayer::name), we have to manually make the name unique in case it exceeds
-           * the limit. */
-          BLI_uniquename_cb(
-              [&](const StringRefNull name) { return all_names_written.contains(name); },
-              attr.name().c_str(),
-              '.',
-              layer.name,
-              MAX_CUSTOMDATA_LAYER_NAME);
-          all_names_written.add(layer.name);
-
-          layers_to_write.lookup(attr.domain())->append(layer);
-        }
-      }
-      return;
-    }
-
-    /* Names within an AttributeStorage are unique. */
-    all_names_written.add(attr.name());
     ::Attribute attribute_dna{};
     attribute_dna.name = attr.name().c_str();
     attribute_dna.data_type = int16_t(attr.data_type());

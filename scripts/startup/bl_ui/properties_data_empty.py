@@ -41,7 +41,7 @@ class DATA_PT_empty(DataButtonsPanel, Panel):
             depth_row.prop(ob, "empty_image_depth", text="Depth", expand=True)
             col.row().prop(ob, "empty_image_side", text="Side", expand=True)
 
-            col = layout.column(align=True)
+            col = layout.column(align=True) # BFA
             col.label( text = "Show in")
             col.use_property_split = False
             row = col.row()

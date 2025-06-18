@@ -32,7 +32,6 @@
 #include "RNA_define.hh"
 
 #include "ED_asset.hh"
-#include "ED_asset_handle.hh"
 #include "ED_asset_library.hh"
 #include "ED_asset_list.hh"
 #include "ED_asset_mark_clear.hh"
@@ -346,7 +345,7 @@ void BRUSH_OT_asset_save_as(wmOperatorType *ot)
   ot->name = "Save as Brush Asset";
   ot->description =
       "Duplicates the active brush asset, saves it into the default asset library, and make it the "
-      "active brush";
+      "active brush"; /* BFA - more explicit*/
   ot->idname = "BRUSH_OT_asset_save_as";
 
   ot->exec = brush_asset_save_as_exec;
@@ -770,7 +769,7 @@ static wmOperatorStatus brush_asset_revert_exec(bContext *C, wmOperator *op)
     BKE_paint_brush_set(paint, reinterpret_cast<Brush *>(reverted_id));
   }
   else {
-    /* bke::asset_edit_id_revert() deleted the brush for sure, even on failure. Fallback to the
+    /* bke::asset_edit_id_revert() deleted the brush for sure, even on failure. Fall back to the
      * default. */
     BKE_paint_brush_set_default(bmain, paint);
   }

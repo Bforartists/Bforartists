@@ -80,6 +80,7 @@ set(SRC
   intern/geometry_nodes_lazy_function.cc
   intern/geometry_nodes_log.cc
   intern/geometry_nodes_repeat_zone.cc
+  intern/geometry_nodes_warning.cc
   intern/inverse_eval.cc
   intern/math_functions.cc
   intern/node_common.cc
@@ -115,11 +116,13 @@ set(SRC
   NOD_geometry_nodes_gizmos.hh
   NOD_geometry_nodes_lazy_function.hh
   NOD_geometry_nodes_log.hh
+  NOD_geometry_nodes_warning.hh
   NOD_inverse_eval_params.hh
   NOD_inverse_eval_path.hh
   NOD_inverse_eval_run.hh
   NOD_math_functions.hh
   NOD_multi_function.hh
+  NOD_nested_node_id.hh
   NOD_node_declaration.hh
   NOD_node_extra_info.hh
   NOD_node_in_compute_context.hh

@@ -41,6 +41,7 @@ struct EffectInfo {
 
 /* These wrap strangely, disable formatting for fixed indentation and wrapping. */
 /* clang-format off */
+/* BFA - Added icons*/
 #define RNA_ENUM_SEQUENCER_VIDEO_MODIFIER_TYPE_ITEMS \
   {seqModifierType_BrightContrast, "BRIGHT_CONTRAST", ICON_BRIGHTNESS_CONTRAST, "Brightness/Contrast", ""}, \
   {seqModifierType_ColorBalance, "COLOR_BALANCE", ICON_NODE_COLORBALANCE, "Color Balance", ""}, \
@@ -307,6 +308,13 @@ static void rna_SequenceEditor_update_cache(Main * /*bmain*/, Scene *scene, Poin
 
   blender::seq::relations_free_imbuf(scene, &ed->seqbase, false);
   blender::seq::cache_cleanup(scene);
+}
+
+static void rna_SequenceEditor_cache_settings_changed(Main * /*bmain*/,
+                                                      Scene *scene,
+                                                      PointerRNA * /*ptr*/)
+{
+  blender::seq::cache_settings_changed(scene);
 }
 
 /* internal use */
@@ -2107,12 +2115,12 @@ static void rna_def_strip(BlenderRNA *brna)
       {STRIP_TYPE_MOVIECLIP, "MOVIECLIP", 0, "Clip", ""},
       {STRIP_TYPE_MASK, "MASK", 0, "Mask", ""},
       {STRIP_TYPE_SOUND_RAM, "SOUND", 0, "Sound", ""},
-      {STRIP_TYPE_CROSS, "CROSS", 0, "Cross", ""},
+      {STRIP_TYPE_CROSS, "CROSS", 0, "Crossfade", ""},
       {STRIP_TYPE_ADD, "ADD", 0, "Add", ""},
       {STRIP_TYPE_SUB, "SUBTRACT", 0, "Subtract", ""},
       {STRIP_TYPE_ALPHAOVER, "ALPHA_OVER", 0, "Alpha Over", ""},
       {STRIP_TYPE_ALPHAUNDER, "ALPHA_UNDER", 0, "Alpha Under", ""},
-      {STRIP_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Cross", ""},
+      {STRIP_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Crossfade", ""},
       {STRIP_TYPE_MUL, "MULTIPLY", 0, "Multiply", ""},
       {STRIP_TYPE_WIPE, "WIPE", 0, "Wipe", ""},
       {STRIP_TYPE_GLOW, "GLOW", 0, "Glow", ""},
@@ -2387,7 +2395,7 @@ static void rna_def_editor(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
   srna = RNA_def_struct(brna, "SequenceEditor", nullptr);
-  RNA_def_struct_ui_text(srna, "Sequence Editor", "Sequence editing data for a Scene data");
+  RNA_def_struct_ui_text(srna, "Sequence Editor", "Sequence editing data for a Scene data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_SequenceEditor_path");
   RNA_def_struct_ui_icon(srna, ICON_SEQUENCE);
   RNA_def_struct_sdna(srna, "Editing");
@@ -2476,7 +2484,7 @@ static void rna_def_editor(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Show Overlay",
                            "Partial overlay on top of the sequencer with a frame offset\nHotkey "
-                           "in the default keymap: Shift o");
+                           "in the default keymap: Shift o"); /* BFA */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "use_overlay_frame_lock", PROP_BOOLEAN, PROP_NONE);
@@ -2521,10 +2529,14 @@ static void rna_def_editor(BlenderRNA *brna)
                            "Cache Raw",
                            "Cache raw images read from disk, for faster tweaking of strip "
                            "parameters at the cost of memory usage");
+  RNA_def_property_update(
+      prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SequenceEditor_cache_settings_changed");
 
   prop = RNA_def_property(srna, "use_cache_final", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "cache_flag", SEQ_CACHE_STORE_FINAL_OUT);
   RNA_def_property_ui_text(prop, "Cache Final", "Cache final image for each frame");
+  RNA_def_property_update(
+      prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SequenceEditor_cache_settings_changed");
 
   prop = RNA_def_property(srna, "use_prefetch", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "cache_flag", SEQ_CACHE_PREFETCH_ENABLE);
@@ -3069,7 +3081,7 @@ static void rna_def_sound(BlenderRNA *brna)
   prop = RNA_def_property(srna, "sound", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_struct_type(prop, "Sound");
-  RNA_def_property_ui_text(prop, "Sound", "Sound data used by this sequence");
+  RNA_def_property_ui_text(prop, "Sound", "Sound data used by this sequence"); /* BFA */
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_sound_update");
 
   rna_def_audio_options(srna);
@@ -3616,8 +3628,8 @@ static EffectInfo def_effects[] = {
      "Sequence strip creating an image filled with a single color",
      rna_def_solid_color,
      0},
-    {"CrossStrip", "Cross Strip", "Cross Sequence", nullptr, 2},
-    {"GammaCrossStrip", "Gamma Cross Strip", "Gamma Cross Strip", nullptr, 2},
+    {"CrossStrip", "Crossfade Strip", "Crossfade Strip", nullptr, 2},
+    {"GammaCrossStrip", "Gamma Crossfade Strip", "Gamma Crossfade Strip", nullptr, 2},
     {"GlowStrip", "Glow Strip", "Sequence strip creating a glow effect", rna_def_glow, 1},
     {"MulticamStrip",
      "Multicam Select Strip",
@@ -3718,7 +3730,7 @@ static void rna_def_modifier(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQUENCE_MODIFIER_EXPANDED);
   RNA_def_property_ui_text(prop, "Expanded", "Mute expanded settings for the modifier");
-  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1); /* BFA */
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "input_mask_type", PROP_ENUM, PROP_NONE);

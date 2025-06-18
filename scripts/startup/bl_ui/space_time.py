@@ -6,6 +6,7 @@ import bpy
 from bpy.types import Menu, Panel
 from bpy.app.translations import contexts as i18n_contexts
 
+# BFA - Added icons and floated properties left
 
 # Header buttons for timeline header (play, etc.)
 class TIME_HT_editor_buttons:
@@ -337,8 +338,6 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
 
 
 ############# Panels in sidebar #########################
-
-
 class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
     bl_label = "View Options"
     bl_category = "View"
@@ -434,7 +433,7 @@ classes = (
     TIME_MT_cache, #BFA - not used, replaced by the PT_view_view_options
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
-    TIME_PT_view_view_options,
+    TIME_PT_view_view_options, # BFA - menu
     TIME_PT_auto_keyframing,
 )
 

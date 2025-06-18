@@ -383,7 +383,7 @@ void outliner_item_mode_toggle(bContext *C,
 
 /**
  * Calculates the depth of the hierarchy for a given tree element.
- */ 
+ */
 int calculate_hierarchy_depth(const TreeElement *te);
 /**
  * Computes the total height occupied by all child elements of a given tree element.

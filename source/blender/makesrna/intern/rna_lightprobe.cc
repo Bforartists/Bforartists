@@ -237,7 +237,7 @@ static void rna_def_lightprobe_sphere(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_parallax", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", LIGHTPROBE_FLAG_SHOW_PARALLAX);
-  RNA_def_property_ui_text(prop, "Parallax", "Show the parallax correction volume in the 3D view\nThe Parallax checkbox turns active when Custom Parallax is activated");
+  RNA_def_property_ui_text(prop, "Parallax", "Show the parallax correction volume in the 3D view\nThe Parallax checkbox turns active when Custom Parallax is activated"); /* BFA */
   RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING, nullptr);
 
   prop = RNA_def_property(srna, "parallax_type", PROP_ENUM, PROP_NONE);

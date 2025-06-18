@@ -85,7 +85,7 @@ static PyStructSequence_Field app_info_fields[] = {
      "Blender version is under development. This value is, and should be, used for handling "
      "compatibility changes between Blender versions"},
     {"version_string", "The Blender version formatted as a string"},
-    {"bfa_version_string", "The Bforartists version formatted as a string"},
+    {"bfa_version_string", "The Bforartists version formatted as a string"}, /* BFA */
     {"version_cycle", "The release status of this build alpha/beta/rc/release"},
     {"background",
      "Boolean, True when blender is running without a user interface (started with -b)"},

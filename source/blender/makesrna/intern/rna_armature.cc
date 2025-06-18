@@ -1710,7 +1710,7 @@ static void rna_def_bone(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Bone", nullptr);
-  RNA_def_struct_ui_text(srna, "Bone", "Bone in an Armature data");
+  RNA_def_struct_ui_text(srna, "Bone", "Bone in an Armature data"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_BONE_DATA);
   RNA_def_struct_path_func(srna, "rna_Bone_path");
   RNA_def_struct_idprops_func(srna, "rna_Bone_idprops");
@@ -1849,7 +1849,7 @@ static void rna_def_edit_bone(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "EditBone", nullptr);
   RNA_def_struct_sdna(srna, "EditBone");
   RNA_def_struct_idprops_func(srna, "rna_EditBone_idprops");
-  RNA_def_struct_ui_text(srna, "Edit Bone", "Editmode bone in an armature data");
+  RNA_def_struct_ui_text(srna, "Edit Bone", "Editmode bone in an armature data"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_BONE_DATA);
 
   prop = RNA_def_property(srna, "collections", PROP_COLLECTION, PROP_NONE);
@@ -2201,7 +2201,7 @@ static void rna_def_armature(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna,
       "Armature",
-      "Armature data containing a hierarchy of bones, usually used for rigging characters");
+      "Armature data containing a hierarchy of bones, usually used for rigging characters"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_ARMATURE_DATA);
   RNA_def_struct_sdna(srna, "bArmature");
 

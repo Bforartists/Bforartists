@@ -16,6 +16,7 @@ def add_node_type(layout, node_type, *, label=None, poll=None, search_weight=0.0
     bl_rna = bpy.types.Node.bl_rna_get_subclass(node_type)
     if not label:
         label = bl_rna.name if bl_rna else iface_("Unknown")
+
     if poll is True or poll is None:
         translation_context = bl_rna.translation_context if bl_rna else i18n_contexts.default
         props = layout.operator("node.add_node", text=label, text_ctxt=translation_context, icon=bl_rna.icon, search_weight=search_weight)
@@ -24,7 +25,7 @@ def add_node_type(layout, node_type, *, label=None, poll=None, search_weight=0.0
         return props
 
 
-def add_node_type_with_subnames(context, layout, node_type, subnames, *, label=None, search_weight=0.0):
+def add_node_type_with_outputs(context, layout, node_type, subnames, *, label=None, search_weight=0.0):
     bl_rna = bpy.types.Node.bl_rna_get_subclass(node_type)
     if not label:
         label = bl_rna.name if bl_rna else "Unknown"
@@ -34,7 +35,9 @@ def add_node_type_with_subnames(context, layout, node_type, subnames, *, label=N
     if getattr(context, "is_menu_search", False):
         for subname in subnames:
             sublabel = "{} ▸ {}".format(iface_(label), iface_(subname))
-            props.append(add_node_type(layout, node_type, label=sublabel, search_weight=search_weight))
+            item_props = add_node_type(layout, node_type, label=sublabel, search_weight=search_weight)
+            item_props.visible_output = subname
+            props.append(item_props)
     return props
 
 
@@ -44,6 +47,7 @@ def draw_node_group_add_menu(context, layout):
     node_tree = space_node.edit_tree
     all_node_groups = context.blend_data.node_groups
 
+    # BFA
     layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
     layout.operator("node.group_insert", text = "Insert into Group ", icon = "NODE_GROUPINSERT")
     layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
@@ -174,7 +178,7 @@ class NODE_MT_category_layout(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        node_add_menu.add_node_type(layout, "NodeFrame")
+        node_add_menu.add_node_type(layout, "NodeFrame", search_weight=-1)
         node_add_menu.add_node_type(layout, "NodeReroute")
 
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)

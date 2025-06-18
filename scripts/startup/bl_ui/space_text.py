@@ -9,6 +9,8 @@ from bpy.app.translations import (
     pgettext_iface as iface_,
 )
 
+# BFA - Added icons and floated properties left, 
+# BFA - Also unified and made menus consistent with Info
 
 class TEXT_HT_header(Header):
     bl_space_type = 'TEXT_EDITOR'
@@ -205,6 +207,30 @@ class TEXT_PT_find(Panel):
 
 
 # BFA - not used, exposed to top level
+class TEXT_MT_view_navigation(Menu):
+    bl_label = "Navigation"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("text.move", text="Top").type = 'FILE_TOP'
+        layout.operator("text.move", text="Bottom").type = 'FILE_BOTTOM'
+
+        layout.separator()
+
+        layout.operator("text.move", text="Line Begin").type = 'LINE_BEGIN'
+        layout.operator("text.move", text="Line End").type = 'LINE_END'
+
+        layout.separator()
+
+        layout.operator("text.move", text="Previous Line").type = 'PREVIOUS_LINE'
+        layout.operator("text.move", text="Next Line").type = 'NEXT_LINE'
+
+        layout.separator()
+
+        layout.operator("text.move", text="Previous Word").type = 'PREVIOUS_WORD'
+        layout.operator("text.move", text="Next Word").type = 'NEXT_WORD'
+
 class TEXT_MT_view(Menu):
     bl_label = "View"
 
@@ -336,7 +362,38 @@ class TEXT_MT_templates(Menu):
         )
 
 
-# BFA -
+class TEXT_MT_select(Menu):
+    bl_label = "Select"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("text.select_all", text="All")
+        layout.operator("text.select_line", text="Line")
+        layout.operator("text.select_word", text="Word")
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Top").type = 'FILE_TOP'
+        layout.operator("text.move_select", text="Bottom").type = 'FILE_BOTTOM'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Line Begin").type = 'LINE_BEGIN'
+        layout.operator("text.move_select", text="Line End").type = 'LINE_END'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Previous Line").type = 'PREVIOUS_LINE'
+        layout.operator("text.move_select", text="Next Line").type = 'NEXT_LINE'
+
+        layout.separator()
+
+        layout.operator("text.move_select", text="Previous Word").type = 'PREVIOUS_WORD'
+        layout.operator("text.move_select", text="Next Word").type = 'NEXT_WORD'
+
+
+# BFA - menu
 class TEXT_MT_format(Menu):
     bl_label = "Format"
 
@@ -455,6 +512,46 @@ class TEXT_MT_edit_move_select(Menu):
         layout.operator("text.move_select", text="Next Word", icon="HAND").type = 'NEXT_WORD'
 
 
+class TEXT_MT_edit(Menu):
+    bl_label = "Edit"
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.text is not None
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("ed.undo")
+        layout.operator("ed.redo")
+
+        layout.separator()
+
+        layout.operator("text.cut")
+        layout.operator("text.copy", icon='COPYDOWN')
+        layout.operator("text.paste", icon='PASTEDOWN')
+        layout.operator("text.duplicate_line")
+
+        layout.separator()
+
+        layout.operator("text.move_lines", text="Move Line(s) Up").direction = 'UP'
+        layout.operator("text.move_lines", text="Move Line(s) Down").direction = 'DOWN'
+
+        layout.separator()
+
+        layout.operator("text.start_find", text="Find & Replace...")
+        layout.operator("text.find_set_selected")
+        layout.operator("text.jump", text="Jump To...")
+
+        layout.separator()
+
+        layout.operator("text.autocomplete")
+
+        layout.separator()
+
+        layout.menu("TEXT_MT_edit_to3d")
+
+
 class TEXT_MT_context_menu(Menu):
     bl_label = ""
 
@@ -500,24 +597,26 @@ class TEXT_MT_edit_delete(Menu):
 
 
 classes = (
-    ALL_MT_editormenu_text,
+    ALL_MT_editormenu_text, # BFA - menu
     TEXT_HT_header,
     TEXT_HT_footer,
     TEXT_MT_editor_menus,
-    TEXT_PT_properties,
     TEXT_PT_find,
+    TEXT_PT_properties,
     TEXT_MT_view,
-    TEXT_MT_redraw_timer,
+    TEXT_MT_view_navigation, # BFA - Not used
+    TEXT_MT_redraw_timer, # BFA - menu
     TEXT_MT_text,
     TEXT_MT_templates,
     TEXT_MT_templates_py,
     TEXT_MT_templates_osl,
+    TEXT_MT_select, # BFA - Not used
     TEXT_MT_format,
     TEXT_MT_context_menu,
-    TEXT_MT_edit,
-    TEXT_MT_edit_to3d,
-    TEXT_MT_edit_move_select,
-    TEXT_MT_edit_delete,
+    TEXT_MT_edit, # BFA - menu
+    TEXT_MT_edit_to3d, # BFA - menu
+    TEXT_MT_edit_move_select, # BFA - menu
+    TEXT_MT_edit_delete, # BFA - menu
 )
 
 if __name__ == "__main__":  # only for live edit.

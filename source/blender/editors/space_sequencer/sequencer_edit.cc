@@ -7,6 +7,7 @@
  */
 
 #include "BLI_string_ref.hh"
+#include "BLI_string_utils.hh"
 #include "BLI_vector.hh"
 #include "MEM_guardedalloc.h"
 
@@ -259,6 +260,33 @@ bool sequencer_view_strips_poll(bContext *C)
     return false;
   }
   return true;
+}
+
+static bool sequencer_effect_poll(bContext *C)
+{
+  Scene *scene = CTX_data_scene(C);
+  Editing *ed = seq::editing_get(scene);
+
+  if (ed) {
+    Strip *active_strip = seq::select_active_get(scene);
+    if (active_strip && (active_strip->type & STRIP_TYPE_EFFECT)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static bool sequencer_swap_inputs_poll(bContext *C)
+{
+  Scene *scene = CTX_data_scene(C);
+  Strip *active_strip = seq::select_active_get(scene);
+
+  if (sequencer_effect_poll(C) && seq::effect_get_num_inputs(active_strip->type) == 2) {
+    return true;
+  }
+
+  return false;
 }
 
 /** \} */
@@ -586,7 +614,9 @@ static SlipData *slip_data_init(const Scene *scene)
   VectorSet<Strip *> strips = seq::query_selected_strips(ed->seqbasep);
   ListBase *channels = seq::channels_displayed_get(seq::editing_get(scene));
   strips.remove_if([&](Strip *strip) {
-    return ((strip->type & STRIP_TYPE_EFFECT) || seq::transform_is_locked(channels, strip));
+    return ((strip->type & STRIP_TYPE_EFFECT) ||
+            ((strip->type == STRIP_TYPE_IMAGE) && seq::transform_single_image_check(strip)) ||
+            seq::transform_is_locked(channels, strip));
   });
   if (strips.is_empty()) {
     return nullptr;
@@ -1335,7 +1365,7 @@ static wmOperatorStatus sequencer_reassign_inputs_exec(bContext *C, wmOperator *
     return OPERATOR_CANCELLED;
   }
 
-  VectorSet<Strip *> inputs = strip_effect_get_new_inputs(scene, true);
+  VectorSet<Strip *> inputs = strip_effect_get_new_inputs(scene, num_inputs, true);
   StringRef error_msg = effect_inputs_validate(inputs, num_inputs);
 
   if (!error_msg.is_empty()) {
@@ -1374,21 +1404,6 @@ static wmOperatorStatus sequencer_reassign_inputs_exec(bContext *C, wmOperator *
   return OPERATOR_FINISHED;
 }
 
-static bool sequencer_effect_poll(bContext *C)
-{
-  Scene *scene = CTX_data_scene(C);
-  Editing *ed = seq::editing_get(scene);
-
-  if (ed) {
-    Strip *active_strip = seq::select_active_get(scene);
-    if (active_strip && (active_strip->type & STRIP_TYPE_EFFECT)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
 void SEQUENCER_OT_reassign_inputs(wmOperatorType *ot)
 {
   /* Identifiers. */
@@ -1415,8 +1430,15 @@ static wmOperatorStatus sequencer_swap_inputs_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   Strip *active_strip = seq::select_active_get(scene);
 
-  if (active_strip->input1 == nullptr || active_strip->input2 == nullptr) {
-    BKE_report(op->reports, RPT_ERROR, "No valid inputs to swap");
+  if (!(active_strip->type & STRIP_TYPE_EFFECT)) {
+    BKE_report(op->reports, RPT_ERROR, "Active strip is not an effect strip");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (seq::effect_get_num_inputs(active_strip->type) != 2 || active_strip->input1 == nullptr ||
+      active_strip->input2 == nullptr)
+  {
+    BKE_report(op->reports, RPT_ERROR, "Strip needs two inputs to swap");
     return OPERATOR_CANCELLED;
   }
 
@@ -1426,8 +1448,7 @@ static wmOperatorStatus sequencer_swap_inputs_exec(bContext *C, wmOperator *op)
 
   seq::relations_invalidate_cache(scene, active_strip);
 
-  WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -1440,7 +1461,7 @@ void SEQUENCER_OT_swap_inputs(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = sequencer_swap_inputs_exec;
-  ot->poll = sequencer_effect_poll;
+  ot->poll = sequencer_swap_inputs_poll;
 
   /* Flags. */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1576,8 +1597,7 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
     }
   }
   if (changed) {
-    WM_event_add_notifier(
-        C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+    WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
     return OPERATOR_FINISHED;
   }
 
@@ -2753,47 +2773,6 @@ void SEQUENCER_OT_swap_data(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Change Effect Input Operator
- * \{ */
-
-static wmOperatorStatus sequencer_change_effect_input_exec(bContext *C, wmOperator *op)
-{
-  Scene *scene = CTX_data_scene(C);
-  Strip *strip = seq::select_active_get(scene);
-
-  Strip **strip_1 = &strip->input1, **strip_2 = &strip->input2;
-
-  if (*strip_1 == nullptr || *strip_2 == nullptr) {
-    BKE_report(op->reports, RPT_ERROR, "One of the effect inputs is unset, cannot swap");
-    return OPERATOR_CANCELLED;
-  }
-
-  std::swap(*strip_1, *strip_2);
-
-  seq::relations_invalidate_cache(scene, strip);
-  WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
-
-  return OPERATOR_FINISHED;
-}
-
-void SEQUENCER_OT_change_effect_input(wmOperatorType *ot)
-{
-  /* Identifiers. */
-  ot->name = "Change Effect Input";
-  ot->idname = "SEQUENCER_OT_change_effect_input";
-
-  /* API callbacks. */
-  ot->exec = sequencer_change_effect_input_exec;
-  ot->poll = sequencer_effect_poll;
-
-  /* Flags. */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Change Effect Type Operator
  * \{ */
 
@@ -2822,6 +2801,7 @@ static wmOperatorStatus sequencer_change_effect_type_exec(bContext *C, wmOperato
 {
   Scene *scene = CTX_data_scene(C);
   Strip *strip = seq::select_active_get(scene);
+  const int old_type = strip->type;
   const int new_type = RNA_enum_get(op->ptr, "type");
 
   /* Free previous effect and init new effect. */
@@ -2831,24 +2811,31 @@ static wmOperatorStatus sequencer_change_effect_type_exec(bContext *C, wmOperato
     return OPERATOR_CANCELLED;
   }
 
-  /* Can someone explain the logic behind only allowing to increase this,
-   * copied from 2.4x - campbell */
-  if (seq::effect_get_num_inputs(strip->type) < seq::effect_get_num_inputs(new_type)) {
-    BKE_report(op->reports, RPT_ERROR, "New effect needs more input strips");
+  if (seq::effect_get_num_inputs(strip->type) != seq::effect_get_num_inputs(new_type)) {
+    BKE_report(op->reports, RPT_ERROR, "New effect takes less or more inputs");
     return OPERATOR_CANCELLED;
   }
 
-  sh = seq::effect_handle_get(strip);
+  sh = seq::strip_effect_handle_get(strip);
   sh.free(strip, true);
 
   strip->type = new_type;
 
-  sh = seq::effect_handle_get(strip);
+  /* If the strip's name is the default (equal to the old effect type),
+   * rename to the new type to avoid confusion. */
+  char name_base[MAX_ID_NAME];
+  int name_num;
+  BLI_string_split_name_number(strip->name + 2, '.', name_base, &name_num);
+  if (STREQ(name_base, seq::get_default_stripname_by_type(old_type))) {
+    seq::edit_strip_name_set(scene, strip, seq::strip_give_name(strip));
+    seq::ensure_unique_name(strip, scene);
+  }
+
+  sh = seq::strip_effect_handle_get(strip);
   sh.init(strip);
 
   seq::relations_invalidate_cache(scene, strip);
-  WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
 
   return OPERATOR_FINISHED;
 }
@@ -2858,6 +2845,7 @@ void SEQUENCER_OT_change_effect_type(wmOperatorType *ot)
   /* Identifiers. */
   ot->name = "Change Effect Type";
   ot->idname = "SEQUENCER_OT_change_effect_type";
+  ot->description = "Replace effect strip with another that takes the same number of inputs";
 
   /* API callbacks. */
   ot->exec = sequencer_change_effect_type_exec;
@@ -2871,7 +2859,7 @@ void SEQUENCER_OT_change_effect_type(wmOperatorType *ot)
                           sequencer_prop_effect_types,
                           STRIP_TYPE_CROSS,
                           "Type",
-                          "Sequencer effect type");
+                          "Strip effect type");
   RNA_def_property_translation_context(ot->prop, BLT_I18NCONTEXT_ID_SEQUENCE);
 }
 
@@ -3736,8 +3724,7 @@ static wmOperatorStatus sequencer_scene_frame_range_update_exec(bContext *C, wmO
 static bool sequencer_scene_frame_range_update_poll(bContext *C)
 {
   Editing *ed = seq::editing_get(CTX_data_scene(C));
-  return (ed != nullptr && ed->act_strip != nullptr &&
-          (ed->act_strip->type & STRIP_TYPE_SCENE) != 0);
+  return (ed != nullptr && ed->act_strip != nullptr && ed->act_strip->type == STRIP_TYPE_SCENE);
 }
 
 void SEQUENCER_OT_scene_frame_range_update(wmOperatorType *ot)

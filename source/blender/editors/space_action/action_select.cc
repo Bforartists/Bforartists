@@ -1695,7 +1695,7 @@ void ACTION_OT_select_leftright(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Left/Right";
   ot->idname = "ACTION_OT_select_leftright";
-  ot->description = "Select keyframes to the right of the current frame";
+  ot->description = "Select keyframes to the right of the current frame"; /* BFA */
 
   /* API callbacks. */
   ot->invoke = actkeys_select_leftright_invoke;

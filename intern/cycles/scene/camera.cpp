@@ -196,24 +196,15 @@ Camera::~Camera() = default;
 void Camera::compute_auto_viewplane()
 {
   if (camera_type == CAMERA_PANORAMA || camera_type == CAMERA_CUSTOM) {
-    viewplane.left = 0.0f;
-    viewplane.right = 1.0f;
-    viewplane.bottom = 0.0f;
-    viewplane.top = 1.0f;
+    viewplane = BoundBox2D();
   }
   else {
     const float aspect = (float)full_width / (float)full_height;
     if (full_width >= full_height) {
-      viewplane.left = -aspect;
-      viewplane.right = aspect;
-      viewplane.bottom = -1.0f;
-      viewplane.top = 1.0f;
+      viewplane = BoundBox2D(make_float2(aspect, 1.0f));
     }
     else {
-      viewplane.left = -1.0f;
-      viewplane.right = 1.0f;
-      viewplane.bottom = -1.0f / aspect;
-      viewplane.top = 1.0f / aspect;
+      viewplane = BoundBox2D(make_float2(1.0f, 1.0f / aspect));
     }
   }
 }
@@ -881,8 +872,9 @@ void Camera::set_osl_camera(Scene *scene,
   }
   else {
     hash = scene->osl_manager->shader_test_loaded(bytecode_hash);
-    if (!hash)
+    if (!hash) {
       hash = scene->osl_manager->shader_load_bytecode(bytecode_hash, bytecode);
+    }
   }
 
   bool changed = false;
@@ -912,22 +904,25 @@ void Camera::set_osl_camera(Scene *scene,
       int vec_size = (int)param->type.aggregate;
       if (param->type.basetype == TypeDesc::INT) {
         vector<int> data;
-        if (!params.get_int(param->name, data) || data.size() != vec_size)
+        if (!params.get_int(param->name, data) || data.size() != vec_size) {
           continue;
+        }
         raw_data.resize(sizeof(int) * vec_size);
         memcpy(raw_data.data(), data.data(), sizeof(int) * vec_size);
       }
       else if (param->type.basetype == TypeDesc::FLOAT) {
         vector<float> data;
-        if (!params.get_float(param->name, data) || data.size() != vec_size)
+        if (!params.get_float(param->name, data) || data.size() != vec_size) {
           continue;
+        }
         raw_data.resize(sizeof(float) * vec_size);
         memcpy(raw_data.data(), data.data(), sizeof(float) * vec_size);
       }
       else if (param->type.basetype == TypeDesc::STRING) {
         string data;
-        if (!params.get_string(param->name, data))
+        if (!params.get_string(param->name, data)) {
           continue;
+        }
         raw_data.resize(data.length() + 1);
         memcpy(raw_data.data(), data.c_str(), data.length() + 1);
       }
@@ -950,8 +945,9 @@ void Camera::set_osl_camera(Scene *scene,
 
     /* Remove unused parameters. */
     for (auto it = script_params.begin(); it != script_params.end();) {
-      if (used_params.count(it->first))
+      if (used_params.count(it->first)) {
         it++;
+      }
       else {
         it = script_params.erase(it);
         changed = true;

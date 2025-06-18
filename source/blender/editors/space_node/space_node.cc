@@ -41,7 +41,7 @@
 
 #include "BLT_translation.hh"
 
-#include "ED_asset_shelf.hh" /* bfa assetshelf */
+// #include "ED_asset_shelf.hh" /* bfa assetshelf */
 #include "ED_image.hh"
 #include "ED_node.hh"
 #include "ED_node_preview.hh"
@@ -271,51 +271,53 @@ float2 space_node_group_offset(const SpaceNode &snode)
   return float2(0);
 }
 
-static const bNode *group_node_by_name(const bNodeTree &ntree, StringRef name)
-{
-  for (const bNode *node : ntree.group_nodes()) {
-    if (node->name == name) {
-      return node;
-    }
-  }
-  return nullptr;
-}
-
-std::optional<int32_t> find_nested_node_id_in_root(const SpaceNode &snode, const bNode &query_node)
+std::optional<nodes::FoundNestedNodeID> find_nested_node_id_in_root(const SpaceNode &snode,
+                                                                    const bNode &query_node)
 {
   BLI_assert(snode.edittree->runtime->nodes_by_id.contains(const_cast<bNode *>(&query_node)));
+  bke::ComputeContextCache compute_context_cache;
+  const ComputeContext *compute_context = compute_context_for_edittree_node(
+      snode, compute_context_cache, query_node);
+  if (!compute_context) {
+    return {};
+  }
+  return find_nested_node_id_in_root(*snode.nodetree, compute_context, query_node.identifier);
+}
 
-  std::optional<int32_t> id_in_node;
-  const char *group_node_name = nullptr;
-  const bNode *node = &query_node;
-  LISTBASE_FOREACH_BACKWARD (const bNodeTreePath *, path, &snode.treepath) {
-    const bNodeTree *ntree = path->nodetree;
-    ntree->ensure_topology_cache();
-    if (group_node_name) {
-      node = group_node_by_name(*ntree, group_node_name);
+std::optional<nodes::FoundNestedNodeID> find_nested_node_id_in_root(
+    const bNodeTree &root_tree, const ComputeContext *compute_context, const int node_id)
+{
+  nodes::FoundNestedNodeID found;
+  Vector<int> node_ids;
+  for (const ComputeContext *context = compute_context; context != nullptr;
+       context = context->parent())
+  {
+    if (const auto *node_context = dynamic_cast<const bke::GroupNodeComputeContext *>(context)) {
+      node_ids.append(node_context->node_id());
     }
-    bool found = false;
-    for (const bNestedNodeRef &ref : ntree->nested_node_refs_span()) {
-      if (node->is_group()) {
-        if (ref.path.node_id == node->identifier && ref.path.id_in_node == id_in_node) {
-          group_node_name = path->node_name;
-          id_in_node = ref.id;
-          found = true;
-          break;
-        }
-      }
-      else if (ref.path.node_id == node->identifier) {
-        group_node_name = path->node_name;
-        id_in_node = ref.id;
-        found = true;
-        break;
-      }
+    else if (dynamic_cast<const bke::RepeatZoneComputeContext *>(context) != nullptr) {
+      found.is_in_loop = true;
     }
-    if (!found) {
-      return std::nullopt;
+    else if (dynamic_cast<const bke::SimulationZoneComputeContext *>(context) != nullptr) {
+      found.is_in_simulation = true;
+    }
+    else if (dynamic_cast<const bke::ForeachGeometryElementZoneComputeContext *>(context) !=
+             nullptr)
+    {
+      found.is_in_loop = true;
+    }
+    else if (dynamic_cast<const bke::EvaluateClosureComputeContext *>(context) != nullptr) {
+      found.is_in_closure = true;
     }
   }
-  return id_in_node;
+  std::reverse(node_ids.begin(), node_ids.end());
+  node_ids.append(node_id);
+  const bNestedNodeRef *nested_node_ref = root_tree.nested_node_ref_from_node_id_path(node_ids);
+  if (nested_node_ref == nullptr) {
+    return std::nullopt;
+  }
+  found.id = nested_node_ref->id;
+  return found;
 }
 
 std::optional<ObjectAndModifier> get_modifier_for_node_editor(const SpaceNode &snode)
@@ -470,11 +472,11 @@ static std::optional<const ComputeContext *> compute_context_for_tree_path(
   return current;
 }
 
-[[nodiscard]] const ComputeContext *compute_context_for_closure_evaluation(
-    const ComputeContext *closure_socket_context,
-    const bNodeSocket &closure_socket,
+static Vector<nodes::SocketInContext> find_target_sockets_through_contexts(
+    const nodes::SocketInContext start_socket,
     bke::ComputeContextCache &compute_context_cache,
-    const std::optional<nodes::ClosureSourceLocation> &source_location)
+    const StringRef query_node_idname,
+    const bool find_all)
 {
   using BundlePath = Vector<nodes::SocketInterfaceKey, 0>;
 
@@ -492,8 +494,9 @@ static std::optional<const ComputeContext *> compute_context_for_tree_path(
     }
   };
 
-  const nodes::SocketInContext start_socket{closure_socket_context, &closure_socket};
   add_if_new(start_socket, {});
+
+  VectorSet<nodes::SocketInContext> found_targets;
 
   while (!sockets_to_check.is_empty()) {
     const SocketToCheck socket_to_check = sockets_to_check.pop();
@@ -509,9 +512,16 @@ static std::optional<const ComputeContext *> compute_context_for_tree_path(
         }
         continue;
       }
-      if (node->is_type("GeometryNodeEvaluateClosure")) {
-        return &compute_context_cache.for_evaluate_closure(
-            socket.context, node->identifier, &node->owner_tree(), source_location);
+      if (bundle_path.is_empty() && node->is_type(query_node_idname)) {
+        found_targets.add(socket);
+        if (!find_all) {
+          break;
+        }
+        continue;
+      }
+      if (node->is_reroute()) {
+        add_if_new(node.output_socket(0), bundle_path);
+        continue;
       }
       if (node->is_group()) {
         if (const bNodeTree *group = reinterpret_cast<const bNodeTree *>(node->id)) {
@@ -589,7 +599,217 @@ static std::optional<const ComputeContext *> compute_context_for_tree_path(
       }
     }
   }
-  return nullptr;
+  return found_targets.extract_vector();
+}
+
+[[nodiscard]] const ComputeContext *compute_context_for_closure_evaluation(
+    const ComputeContext *closure_socket_context,
+    const bNodeSocket &closure_socket,
+    bke::ComputeContextCache &compute_context_cache,
+    const std::optional<nodes::ClosureSourceLocation> &source_location)
+{
+  const Vector<nodes::SocketInContext> target_sockets = find_target_sockets_through_contexts(
+      {closure_socket_context, &closure_socket},
+      compute_context_cache,
+      "GeometryNodeEvaluateClosure",
+      false);
+  if (target_sockets.is_empty()) {
+    return nullptr;
+  }
+  const nodes::SocketInContext target_socket = target_sockets[0];
+  const nodes::NodeInContext target_node = target_socket.owner_node();
+  return &compute_context_cache.for_evaluate_closure(target_socket.context,
+                                                     target_node->identifier,
+                                                     &target_socket->owner_tree(),
+                                                     source_location);
+}
+
+Vector<const bNode *> gather_linked_separate_bundle_nodes(
+    const ComputeContext *bundle_socket_context,
+    const bNodeSocket &bundle_socket,
+    bke::ComputeContextCache &compute_context_cache)
+{
+  const Vector<nodes::SocketInContext> target_sockets = find_target_sockets_through_contexts(
+      {bundle_socket_context, &bundle_socket},
+      compute_context_cache,
+      "GeometryNodeSeparateBundle",
+      true);
+  Vector<const bNode *> separate_bundle_nodes;
+  for (const nodes::SocketInContext &target_socket : target_sockets) {
+    const nodes::NodeInContext &target_node = target_socket.owner_node();
+    separate_bundle_nodes.append(target_node.node);
+  }
+  return separate_bundle_nodes;
+}
+
+static Vector<nodes::SocketInContext> find_origin_sockets_through_contexts(
+    const nodes::SocketInContext start_socket,
+    bke::ComputeContextCache &compute_context_cache,
+    const StringRef query_node_idname,
+    const bool find_all)
+{
+  using BundlePath = Vector<nodes::SocketInterfaceKey, 0>;
+
+  struct SocketToCheck {
+    nodes::SocketInContext socket;
+    BundlePath bundle_path;
+  };
+
+  Stack<SocketToCheck> sockets_to_check;
+  Set<nodes::SocketInContext> added_sockets;
+
+  auto add_if_new = [&](const nodes::SocketInContext &socket, BundlePath bundle_path) {
+    if (added_sockets.add(socket)) {
+      sockets_to_check.push({socket, std::move(bundle_path)});
+    }
+  };
+
+  add_if_new(start_socket, {});
+
+  VectorSet<nodes::SocketInContext> found_origins;
+
+  while (!sockets_to_check.is_empty()) {
+    const SocketToCheck socket_to_check = sockets_to_check.pop();
+    const nodes::SocketInContext socket = socket_to_check.socket;
+    const BundlePath &bundle_path = socket_to_check.bundle_path;
+    const nodes::NodeInContext &node = socket.owner_node();
+    if (socket->is_input()) {
+      const bke::bNodeTreeZones *zones = node->owner_tree().zones();
+      if (!zones) {
+        continue;
+      }
+      const bke::bNodeTreeZone *to_zone = zones->get_zone_by_socket(*socket.socket);
+      for (const bNodeLink *link : socket->directly_linked_links()) {
+        if (!link->is_used()) {
+          continue;
+        }
+        const bNodeSocket *from_socket = link->fromsock;
+        const bke::bNodeTreeZone *from_zone = zones->get_zone_by_socket(*from_socket);
+        if (!zones->link_between_zones_is_allowed(from_zone, to_zone)) {
+          continue;
+        }
+        const Vector<const bke::bNodeTreeZone *> zones_to_enter = zones->get_zones_to_enter(
+            from_zone, to_zone);
+        const ComputeContext *compute_context = socket.context;
+        for (int i = zones_to_enter.size() - 1; i >= 0; i--) {
+          if (!compute_context) {
+            /* There must be a compute context when we are in a zone. */
+            BLI_assert_unreachable();
+            return found_origins.extract_vector();
+          }
+          /* Each zone corresponds to one compute context level. */
+          compute_context = compute_context->parent();
+        }
+        add_if_new({compute_context, from_socket}, bundle_path);
+      }
+    }
+    else {
+      if (node->is_muted()) {
+        for (const bNodeLink &link : node->internal_links()) {
+          if (link.tosock == socket.socket) {
+            add_if_new({socket.context, link.fromsock}, bundle_path);
+          }
+        }
+        continue;
+      }
+      if (bundle_path.is_empty() && node->is_type(query_node_idname)) {
+        found_origins.add(socket);
+        if (!find_all) {
+          break;
+        }
+        continue;
+      }
+      if (node->is_reroute()) {
+        add_if_new(node.input_socket(0), bundle_path);
+        continue;
+      }
+      if (node->is_group()) {
+        if (const bNodeTree *group = reinterpret_cast<const bNodeTree *>(node->id)) {
+          group->ensure_topology_cache();
+          if (const bNode *group_output_node = group->group_output_node()) {
+            const ComputeContext &group_compute_context = compute_context_cache.for_group_node(
+                socket.context, node->identifier, &node->owner_tree());
+            add_if_new({&group_compute_context, &group_output_node->input_socket(socket->index())},
+                       bundle_path);
+          }
+        }
+        continue;
+      }
+      if (node->is_group_input()) {
+        if (const auto *group_context = dynamic_cast<const bke::GroupNodeComputeContext *>(
+                socket.context))
+        {
+          const bNodeTree *caller_group = group_context->tree();
+          const bNode *caller_group_node = group_context->node();
+          if (caller_group && caller_group_node) {
+            caller_group->ensure_topology_cache();
+            const bNodeSocket &input_socket = caller_group_node->input_socket(socket->index());
+            add_if_new({group_context->parent(), &input_socket}, bundle_path);
+          }
+        }
+        continue;
+      }
+      if (node->is_type("GeometryNodeCombineBundle")) {
+        if (bundle_path.is_empty()) {
+          continue;
+        }
+        const nodes::SocketInterfaceKey &last_key = bundle_path.last();
+        const auto &storage = *static_cast<const NodeGeometryCombineBundle *>(node->storage);
+        for (const int input_i : IndexRange(storage.items_num)) {
+          const nodes::SocketInterfaceKey key{storage.items[input_i].name};
+          if (last_key.matches(key)) {
+            add_if_new(node.input_socket(input_i), bundle_path.as_span().drop_back(1));
+          }
+        }
+        continue;
+      }
+      if (node->is_type("GeometryNodeSeparateBundle")) {
+        const auto &storage = *static_cast<const NodeGeometrySeparateBundle *>(node->storage);
+        BundlePath new_bundle_path = bundle_path;
+        new_bundle_path.append(nodes::SocketInterfaceKey{storage.items[socket->index()].name});
+        add_if_new(node.input_socket(0), std::move(new_bundle_path));
+        continue;
+      }
+    }
+  }
+
+  return found_origins.extract_vector();
+}
+
+Vector<const bNode *> gather_linked_closure_origin_nodes(
+    const ComputeContext *closure_socket_context,
+    const bNodeSocket &closure_socket,
+    bke::ComputeContextCache &compute_context_cache)
+{
+  const Vector<nodes::SocketInContext> origin_sockets = find_origin_sockets_through_contexts(
+      {closure_socket_context, &closure_socket},
+      compute_context_cache,
+      "GeometryNodeClosureOutput",
+      true);
+  Vector<const bNode *> closure_origin_nodes;
+  for (const nodes::SocketInContext &origin_socket : origin_sockets) {
+    const nodes::NodeInContext &origin_node = origin_socket.owner_node();
+    closure_origin_nodes.append(origin_node.node);
+  }
+  return closure_origin_nodes;
+}
+
+Vector<const bNode *> gather_linked_combine_bundle_nodes(
+    const ComputeContext *bundle_socket_context,
+    const bNodeSocket &bundle_socket,
+    bke::ComputeContextCache &compute_context_cache)
+{
+  const Vector<nodes::SocketInContext> origin_sockets = find_origin_sockets_through_contexts(
+      {bundle_socket_context, &bundle_socket},
+      compute_context_cache,
+      "GeometryNodeCombineBundle",
+      true);
+  Vector<const bNode *> combine_bundle_nodes;
+  for (const nodes::SocketInContext &origin_socket : origin_sockets) {
+    const nodes::NodeInContext &origin_node = origin_socket.owner_node();
+    combine_bundle_nodes.append(origin_node.node);
+  }
+  return combine_bundle_nodes;
 }
 
 static const ComputeContext *get_node_editor_root_compute_context(
@@ -644,6 +864,22 @@ const ComputeContext *compute_context_for_edittree_socket(
     return nullptr;
   }
   const bke::bNodeTreeZone *zone = zones->get_zone_by_socket(socket);
+  const Vector<const bke::bNodeTreeZone *> zone_stack = zones->get_zones_to_enter_from_root(zone);
+  return compute_context_for_zones(zone_stack, compute_context_cache, context);
+}
+
+const ComputeContext *compute_context_for_edittree_node(
+    const SpaceNode &snode, bke::ComputeContextCache &compute_context_cache, const bNode &node)
+{
+  const ComputeContext *context = compute_context_for_edittree(snode, compute_context_cache);
+  if (!context) {
+    return nullptr;
+  }
+  const bke::bNodeTreeZones *zones = snode.edittree->zones();
+  if (!zones) {
+    return nullptr;
+  }
+  const bke::bNodeTreeZone *zone = zones->get_zone_by_node(node.identifier);
   const Vector<const bke::bNodeTreeZone *> zone_stack = zones->get_zones_to_enter_from_root(zone);
   return compute_context_for_zones(zone_stack, compute_context_cache, context);
 }
@@ -1251,8 +1487,9 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
   if (use_override) {  
     ID *owner_id = id; 
     ID *id_or = id;
-    PointerRNA owner_ptr;
-    PropertyRNA *prop;
+    /* BFA - WIP - removed for warning?*/
+    //PointerRNA owner_ptr;
+    //PropertyRNA *prop;
     if (!ELEM(nullptr, owner_id, id_or)) {
       id = ui_template_id_liboverride_hierarchy_make(
       C, CTX_data_main(C), owner_id, id_or, nullptr);
@@ -1839,7 +2076,6 @@ static int node_space_subtype_get(ScrArea *area)
 static void node_space_subtype_set(ScrArea *area, int value)
 {
   SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
   ED_node_set_tree_type(snode, rna_node_tree_type_from_enum(value));
 }
 
@@ -1967,6 +2203,7 @@ void ED_spacetype_node()
   art->listener = node_region_listener;
   art->message_subscribe = ED_area_do_mgs_subscribe_for_tool_ui;
   art->init = node_buttons_region_init;
+  art->snap_size = ED_region_generic_panel_region_snap_size;
   art->draw = node_buttons_region_draw;
   BLI_addhead(&st->regiontypes, art);
 

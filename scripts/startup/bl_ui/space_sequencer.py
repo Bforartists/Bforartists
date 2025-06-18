@@ -2,6 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+# BFA - Added icons and floated properties left
+# BFA - This document is heavily modified, so like the space_view3d.py, 
+# BFA - compare old Blender with new Blender then splice in changes. 
+# BFA - Rebase compare every now and then. 
+
 import bpy
 from bpy.types import (
     Header,
@@ -18,8 +23,11 @@ from bl_ui.properties_grease_pencil_common import (
 )
 from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
+)
+from bl_ui.utils import (
     PlayheadSnappingPanel,
 )
+
 from rna_prop_ui import PropertyPanel
 
 
@@ -201,9 +209,10 @@ class SEQUENCER_HT_header(Header):
         row = layout.row(align=True)
         row.prop(tool_settings, "use_snap_sequencer", text="")
         sub = row.row(align=True)
-        sub.popover(panel="SEQUENCER_PT_snapping", text="")  # BFA - removed text
-        layout.popover(panel="SEQUENCER_PT_playhead_snapping")
-        # layout.separator_spacer() #BFA
+        sub.popover(panel="SEQUENCER_PT_snapping")
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
+            layout.popover(panel="SEQUENCER_PT_playhead_snapping")
+        # layout.separator_spacer() ) #BFA
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             layout.prop(st, "display_mode", text="", icon_only=True)
@@ -229,6 +238,38 @@ class SEQUENCER_HT_header(Header):
         row.popover(panel="SEQUENCER_PT_view_options", text="Options")
         # BFA - moved "class SEQUENCER_MT_editor_menus" below
 
+class SEQUENCER_MT_editor_menus(Menu):
+    bl_idname = "SEQUENCER_MT_editor_menus"
+    bl_label = ""
+
+    def draw(self, context):
+        layout = self.layout
+        st = context.space_data
+        has_sequencer, _has_preview = _space_view_types(st)
+
+        layout.menu("SCREEN_MT_user_menu", text="Quick")  # Quick favourites menu
+        layout.menu("SEQUENCER_MT_view")
+        layout.menu("SEQUENCER_MT_select")
+        layout.menu("SEQUENCER_MT_export")
+
+        if has_sequencer:
+            layout.menu("SEQUENCER_MT_navigation")
+            if st.show_markers:
+                layout.menu("SEQUENCER_MT_marker")
+            layout.menu("SEQUENCER_MT_add")
+
+        layout.menu("SEQUENCER_MT_strip")
+
+        if st.view_type in {"SEQUENCER", "PREVIEW"}:
+            layout.menu("SEQUENCER_MT_image")
+
+        # BFA - start
+        strip = context.active_strip
+
+        if _has_preview:
+            if strip and strip.type == "TEXT":
+                layout.menu("SEQUENCER_MT_strip_text")
+        # BFA - end
 
 class SEQUENCER_PT_gizmo_display(Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
@@ -389,39 +430,6 @@ class ALL_MT_editormenu_sequencer(Menu):
         row.template_header()  # editor type menus
 
 
-# BFA - moved here from above
-class SEQUENCER_MT_editor_menus(Menu):
-    bl_idname = "SEQUENCER_MT_editor_menus"
-    bl_label = ""
-
-    def draw(self, context):
-        layout = self.layout
-        st = context.space_data
-        has_sequencer, _has_preview = _space_view_types(st)
-
-        layout.menu("SCREEN_MT_user_menu", text="Quick")  # Quick favourites menu
-        layout.menu("SEQUENCER_MT_view")
-        layout.menu("SEQUENCER_MT_select")
-        layout.menu("SEQUENCER_MT_export")
-
-        if has_sequencer:
-            layout.menu("SEQUENCER_MT_navigation")
-            if st.show_markers:
-                layout.menu("SEQUENCER_MT_marker")
-            layout.menu("SEQUENCER_MT_add")
-
-        layout.menu("SEQUENCER_MT_strip")
-
-        if st.view_type in {"SEQUENCER", "PREVIEW"}:
-            layout.menu("SEQUENCER_MT_image")
-
-        # BFA - start
-        strip = context.active_strip
-
-        if _has_preview:
-            if strip and strip.type == "TEXT":
-                layout.menu("SEQUENCER_MT_strip_text")
-        # BFA - end
 
 #BFA - Submenu
 class SEQUENCER_MT_view_cache(Menu):
@@ -1018,8 +1026,7 @@ class SEQUENCER_MT_change(Menu):
                             props.filter_sound = True
                 elif strip_type in effect_strips:
                     layout.operator_context = 'INVOKE_DEFAULT'
-                    layout.operator("sequencer.change_effect_input")
-                    layout.operator_menu_enum("sequencer.change_effect_type", "type")
+                    layout.menu("SEQUENCER_MT_strip_effect_change")
                     layout.operator("sequencer.reassign_inputs")
                     layout.operator("sequencer.swap_inputs")
                 else:
@@ -1464,9 +1471,47 @@ class SEQUENCER_MT_strip_effect(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        # BFA - couple of these operators were moved to a conditional
+        # BFA - WIP - couple of these operators were moved to a conditional
+        layout.menu("SEQUENCER_MT_strip_effect_change")
         layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
         layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
+
+
+class SEQUENCER_MT_strip_effect_change(Menu):
+    bl_label = "Change Effect Type"
+
+    def draw(self, context):
+        layout = self.layout
+
+        strip = context.active_strip
+
+        col = layout.column()
+        col.operator("sequencer.change_effect_type", text="Adjustment Layer").type = 'ADJUSTMENT'
+        col.operator("sequencer.change_effect_type", text="Multicam Selector").type = 'MULTICAM'
+        col.enabled = strip.input_count == 0
+
+        layout.separator()
+
+        col = layout.column()
+        col.operator("sequencer.change_effect_type", text="Transform").type = 'TRANSFORM'
+        col.operator("sequencer.change_effect_type", text="Speed Control").type = 'SPEED'
+        col.operator("sequencer.change_effect_type", text="Glow").type = 'GLOW'
+        col.operator("sequencer.change_effect_type", text="Gaussian Blur").type = 'GAUSSIAN_BLUR'
+        col.enabled = strip.input_count == 1
+
+        layout.separator()
+
+        col = layout.column()
+        col.operator("sequencer.change_effect_type", text="Add").type = 'ADD'
+        col.operator("sequencer.change_effect_type", text="Subtract").type = 'SUBTRACT'
+        col.operator("sequencer.change_effect_type", text="Multiply").type = 'MULTIPLY'
+        col.operator("sequencer.change_effect_type", text="Alpha Over").type = 'ALPHA_OVER'
+        col.operator("sequencer.change_effect_type", text="Alpha Under").type = 'ALPHA_UNDER'
+        col.operator("sequencer.change_effect_type", text="Color Mix").type = 'COLORMIX'
+        col.operator("sequencer.change_effect_type", text="Crossfade").type = 'CROSS'
+        col.operator("sequencer.change_effect_type", text="Gamma Crossfade").type = 'GAMMA_CROSS'
+        col.operator("sequencer.change_effect_type", text="Wipe").type = 'WIPE'
+        col.enabled = strip.input_count == 2
 
 
 class SEQUENCER_MT_strip_movie(Menu):
@@ -1612,7 +1657,7 @@ class SEQUENCER_MT_strip(Menu):
         layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
 
-        if strip and strip.type == "SCENE":
+        if strip and strip.type == 'SCENE':
             layout.operator(
                 "sequencer.delete", text="Delete Strip & Data", icon="DELETE_DUPLICATE"
             ).delete_data = True
@@ -1625,7 +1670,7 @@ class SEQUENCER_MT_strip(Menu):
         # BFA - If there is no correct strip selected, a label will advise what to do
         try:
             layout.operator_context = 'INVOKE_REGION_WIN'
-            if strip and strip.type == "SCENE":
+            if strip and strip.type == 'SCENE':
                 bpy_data_scenes_len = len(bpy.data.scenes)
 
                 if bpy_data_scenes_len > 14:
@@ -3542,6 +3587,7 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
         col.prop(cache_settings, "show_cache_final_out", text="Final")
         if show_developer_ui:
             col.prop(cache_settings, "show_cache_raw", text="Raw")
+        col.prop(cache_settings, "show_cache_final_out", text="Final")
 
         show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
         if show_cache_size:
@@ -3717,6 +3763,7 @@ class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
             split.label(text="Final")
             split.alignment = 'LEFT'
             split.label(text="{:d} MB".format(cache_final_size), translate=False)
+
 
 class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
     bl_label = "Scene Strip Display"
@@ -4336,6 +4383,7 @@ classes = (
     SEQUENCER_MT_add_transitions,
     SEQUENCER_MT_add_empty,
     SEQUENCER_MT_strip_effect,
+    SEQUENCER_MT_strip_effect_change,
     SEQUENCER_MT_strip_movie,
     SEQUENCER_MT_strip,
     SEQUENCER_MT_strip_transform,
@@ -4355,16 +4403,20 @@ classes = (
     SEQUENCER_MT_retiming,
     SEQUENCER_MT_view_pie,
     SEQUENCER_MT_preview_view_pie,
+
     SEQUENCER_PT_color_tag_picker,
+
     SEQUENCER_PT_active_tool,
     SEQUENCER_MT_change_scene_with_icons,  # BFA
     SEQUENCER_PT_strip,
+
     SEQUENCER_PT_gizmo_display,
     SEQUENCER_PT_overlay,
     SEQUENCER_PT_preview_overlay,
     SEQUENCER_PT_sequencer_overlay,
     SEQUENCER_PT_sequencer_overlay_strips,
     SEQUENCER_PT_sequencer_overlay_waveforms,
+
     SEQUENCER_PT_effect,
     SEQUENCER_PT_scene,
     SEQUENCER_PT_scene_sound,
@@ -4375,28 +4427,36 @@ classes = (
     SEQUENCER_PT_effect_text_box,
     SEQUENCER_PT_effect_text_layout,
     SEQUENCER_PT_movie_clip,
+
     SEQUENCER_PT_adjust_comp,
     SEQUENCER_PT_adjust_transform,
     SEQUENCER_PT_adjust_crop,
     SEQUENCER_PT_adjust_video,
     SEQUENCER_PT_adjust_color,
     SEQUENCER_PT_adjust_sound,
+
     SEQUENCER_PT_time,
     SEQUENCER_PT_source,
+
     SEQUENCER_PT_modifiers,
+
     SEQUENCER_PT_cache_settings,
     SEQUENCER_PT_cache_view_settings,
     SEQUENCER_PT_proxy_settings,
     SEQUENCER_PT_strip_proxy,
+
     SEQUENCER_PT_custom_props,
+
     SEQUENCER_PT_view,
     SEQUENCER_PT_view_cursor,
     SEQUENCER_PT_frame_overlay,
     SEQUENCER_PT_view_safe_areas,
     SEQUENCER_PT_view_safe_areas_center_cut,
     SEQUENCER_PT_preview,
+
     SEQUENCER_PT_annotation,
     SEQUENCER_PT_annotation_onion,
+
     SEQUENCER_PT_snapping,
     SEQUENCER_PT_preview_snapping,
     SEQUENCER_PT_sequencer_snapping,
@@ -4408,6 +4468,5 @@ classes = (
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
-
     for cls in classes:
         register_class(cls)

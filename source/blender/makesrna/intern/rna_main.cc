@@ -163,6 +163,7 @@ struct MainCollectionDef {
   CollectionDefFunc *func;
 };
 
+/* BFA - Removed "Blocks" as data.. is data.*/
 void RNA_def_main(BlenderRNA *brna)
 {
   StructRNA *srna;

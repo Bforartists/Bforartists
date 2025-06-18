@@ -26,6 +26,7 @@ class MotionPathButtonsPanel:
         col = layout.column(align=True)
         col.prop(mps, "type")
         range_group = col.column(align=True)
+        # BFA - float left
         if mps.type == 'RANGE':
             row = range_group.row()
             row.separator()
@@ -71,7 +72,7 @@ class MotionPathButtonsPanel:
             col = layout.column(align=True)
             row = col.row(align=True)
             row.enabled = False
-            row.prop(mpath, "frame_start", text="Cached Range (Info)")
+            row.prop(mpath, "frame_start", text="Cached Range (Info)") # BFA
             row.prop(mpath, "frame_end", text="")
 
             # Update Selected.
@@ -102,7 +103,7 @@ class MotionPathButtonsPanel_display:
 
         mps = avs.motion_path
 
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=False, even_rows=False, align=True)
@@ -122,6 +123,7 @@ class MotionPathButtonsPanel_display:
             col = layout.column()
             col.prop(mpath, "line_thickness", text="Thickness")
 
+            # BFA - Float Left
             row = layout.row()
             row.use_property_split = False
             split = row.split(factor = 0.5)

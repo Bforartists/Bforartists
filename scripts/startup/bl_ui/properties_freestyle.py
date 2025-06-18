@@ -27,7 +27,7 @@ class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
     bl_order = 10
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -89,7 +89,7 @@ class ViewLayerFreestyleLineStyle(ViewLayerFreestyleEditorButtonsPanel):
     # Freestyle Linestyle Panels
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -137,7 +137,7 @@ class VIEWLAYER_PT_freestyle(ViewLayerFreestyleButtonsPanel, Panel):
     bl_label = "Freestyle"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -162,7 +162,7 @@ class VIEWLAYER_PT_freestyle(ViewLayerFreestyleButtonsPanel, Panel):
 
         col = layout.column(align=True)
         col.prop(freestyle, "mode", text="Control Mode")
-        col.use_property_split = False
+        col.use_property_split = False # BFA
         col.prop(freestyle, "use_view_map_cache", text="View Map Cache")
         col.prop(freestyle, "as_render_pass", text="As Render Pass")
 
@@ -172,7 +172,7 @@ class VIEWLAYER_PT_freestyle_edge_detection(ViewLayerFreestyleButtonsPanel, Pane
     bl_parent_id = "VIEWLAYER_PT_freestyle"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -188,7 +188,7 @@ class VIEWLAYER_PT_freestyle_edge_detection(ViewLayerFreestyleButtonsPanel, Pane
 
         col = layout.column()
         col.prop(freestyle, "crease_angle")
-        col.use_property_split = False
+        col.use_property_split = False # BFA
         col.prop(freestyle, "use_culling")
         col.prop(freestyle, "use_smoothness")
 
@@ -199,7 +199,7 @@ class VIEWLAYER_PT_freestyle_edge_detection(ViewLayerFreestyleButtonsPanel, Pane
             col.prop(freestyle, "use_ridges_and_valleys")
             col.prop(freestyle, "use_suggestive_contours")
 
-        col.use_property_split = True
+        col.use_property_split = True # BFA
         col.prop(freestyle, "sphere_radius")
         col.prop(freestyle, "kr_derivative_epsilon")
 
@@ -209,7 +209,7 @@ class VIEWLAYER_PT_freestyle_style_modules(ViewLayerFreestyleButtonsPanel, Panel
     bl_parent_id = "VIEWLAYER_PT_freestyle"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -249,7 +249,7 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
     bl_label = "Freestyle Line Set"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -304,7 +304,7 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
         if lineset:
             layout.template_ID(lineset, "linestyle", new="scene.freestyle_linestyle_new")
             layout.separator()
-            col = layout.column()
+            col = layout.column() # BFA
             col.use_property_split = False
             col.use_property_decorate = False
             col.prop(lineset, "select_by_image_border", text="Select by Image Border")
@@ -316,7 +316,7 @@ class VIEWLAYER_PT_freestyle_lineset_visibilty(ViewLayerFreestyleLineStyle, Pane
     bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -354,7 +354,7 @@ class VIEWLAYER_PT_freestyle_lineset_edgetype(ViewLayerFreestyleLineStyle, Panel
     bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -392,7 +392,7 @@ class VIEWLAYER_PT_freestyle_lineset_edgetype(ViewLayerFreestyleLineStyle, Panel
         layout.row().prop(lineset, "edge_type_negation", expand=True, text="Negation")
         layout.row().prop(lineset, "edge_type_combination", expand=True, text="Combination")
 
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.label(text = "Type:")
 
         col = layout.column(align = True)
@@ -431,7 +431,7 @@ class VIEWLAYER_PT_freestyle_lineset_facemarks(ViewLayerFreestyleLineStyle, Pane
     bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     bl_options = {'DEFAULT_CLOSED'}
@@ -464,7 +464,7 @@ class VIEWLAYER_PT_freestyle_lineset_collection(ViewLayerFreestyleLineStyle, Pan
     bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     bl_options = {'DEFAULT_CLOSED'}
@@ -629,19 +629,19 @@ class VIEWLAYER_PT_freestyle_linestyle_strokes_splitting(ViewLayerFreestyleLines
         lineset = view_layer.freestyle_settings.linesets.active
         linestyle = lineset.linestyle
 
-        row = layout.row(align=False)
+        row = layout.row(align=False) # BFA
         row.prop(linestyle, "use_angle_min", text="Min 2D Angle")
         sub = row.row()
         sub.active = linestyle.use_angle_min
         sub.prop(linestyle, "angle_min", text="")
 
-        row = layout.row(align=False)
+        row = layout.row(align=False) # BFA
         row.prop(linestyle, "use_angle_max", text="Max 2D Angle")
         sub = row.row()
         sub.active = linestyle.use_angle_max
         sub.prop(linestyle, "angle_max", text="")
 
-        row = layout.row(align=False)
+        row = layout.row(align=False) # BFA
         row.prop(linestyle, "use_split_length", text="2D Length")
         sub = row.row()
         sub.active = linestyle.use_split_length
@@ -1290,7 +1290,7 @@ class VIEWLAYER_PT_freestyle_animation(ViewLayerFreestyleButtonsPanel, Propertie
     bl_label = "Freestyle Animation"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -1328,7 +1328,7 @@ class MATERIAL_PT_freestyle_line(MaterialFreestyleButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 

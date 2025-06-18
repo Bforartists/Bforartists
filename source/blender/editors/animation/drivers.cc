@@ -828,7 +828,7 @@ const EnumPropertyItem prop_driver_create_mapping_types[] = {
     /* XXX: These names need reviewing. */
     {CREATEDRIVER_MAPPING_1_N,
      "SINGLE_MANY",
-     ICON_UI,
+     ICON_UI, /* BFA */
      "All from Target",
      "Drive all components of this property using the target picked"},
     {CREATEDRIVER_MAPPING_1_1,

@@ -929,16 +929,16 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   col->prop(op->ptr, "clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(true);
-  uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
-  col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Mark Seams"), ICON_NONE);
-  col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Mark Sharp"), ICON_NONE);
+  col = &layout->column(true, IFACE_("Mark"));
+  col->active_set(affect_type == BEVEL_AFFECT_EDGES);
+  col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seams"), ICON_NONE);
+  col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
   uiLayoutSetPropSep(layout, true); /*bfa - checkboxes end. split again*/
 
   layout->separator();
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
+  col->active_set(affect_type == BEVEL_AFFECT_EDGES);
   col->prop(op->ptr, "miter_outer", UI_ITEM_NONE, IFACE_("Miter Outer"), ICON_NONE);
   col->prop(op->ptr, "miter_inner", UI_ITEM_NONE, IFACE_("Inner"), ICON_NONE);
   if (RNA_enum_get(op->ptr, "miter_inner") == BEVEL_MITER_ARC) {
@@ -948,7 +948,7 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   layout->separator();
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
+  col->active_set(affect_type == BEVEL_AFFECT_EDGES);
   col->prop(op->ptr, "vmesh_method", UI_ITEM_NONE, IFACE_("Intersection Type"), ICON_NONE);
 
   layout->prop(op->ptr, "face_strength_mode", UI_ITEM_NONE, IFACE_("Face Strength"), ICON_NONE);
@@ -1048,7 +1048,7 @@ void MESH_OT_bevel(wmOperatorType *ot)
       "Cut into selected items at an angle to create bevel or chamfer\nVertex Bevel is a "
       "separated tool, but has the "
       "same functionality\nActivate the tool, then drag mouse until the geometry changes\nFiner "
-      "adjustments can be done in the Last operator panel then";
+      "adjustments can be done in the Last operator panel then"; /* BFA - more explicit*/
   ot->idname = "MESH_OT_bevel";
 
   /* API callbacks. */
@@ -1092,7 +1092,7 @@ void MESH_OT_bevel(wmOperatorType *ot)
               SEGMENTS_HARD_MAX,
               "Segments",
               "Segments for curved edge determines how many segments the bevel geometry will "
-              "have\nFirst adjust the number of edges, then perform the Bevel operation",
+              "have\nFirst adjust the number of edges, then perform the Bevel operation", /* BFA - more explicity*/
               1,
               100);
 

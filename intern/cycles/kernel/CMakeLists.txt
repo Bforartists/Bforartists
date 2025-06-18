@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-remove_extra_strict_flags()
-
 set(INC
   ..
 )
@@ -223,7 +221,6 @@ set(SRC_KERNEL_SVM_HEADERS
   svm/vector_rotate.h
   svm/vector_transform.h
   svm/voronoi.h
-  svm/voxel.h
   svm/wave.h
   svm/white_noise.h
   svm/vertex_color.h

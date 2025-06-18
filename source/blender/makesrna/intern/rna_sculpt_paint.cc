@@ -42,7 +42,7 @@ const EnumPropertyItem rna_enum_particle_edit_hair_brush_items[] = {
 static const EnumPropertyItem rna_enum_gpencil_lock_axis_items[] = {
     {GP_LOCKAXIS_VIEW,
      "VIEW",
-     ICON_VIEW,
+     ICON_VIEW, /* BFA */
      "View",
      "Align strokes to current view plane"},
     {GP_LOCKAXIS_Y,
@@ -119,6 +119,7 @@ const EnumPropertyItem rna_enum_symmetrize_direction_items[] = {
 #  include "ED_paint.hh"
 #  include "ED_particle.hh"
 
+/* BFA - added icons*/
 const EnumPropertyItem rna_enum_particle_edit_disconnected_hair_brush_items[] = {
     {PE_BRUSH_COMB, "COMB", ICON_PARTICLEBRUSH_COMB, "Comb", "Comb hairs"},
     {PE_BRUSH_SMOOTH, "SMOOTH", ICON_PARTICLEBRUSH_SMOOTH, "Smooth", "Smooth hairs"},
@@ -760,7 +761,7 @@ static void rna_def_sculpt(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Detail Size",
                            "Maximum edge length for dynamic topology sculpting (in "
-                           "pixels)\nHotkey in the default keymap: S");
+                           "pixels)\nHotkey in the default keymap: S"); /* BFA */
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
   prop = RNA_def_property(srna, "detail_percent", PROP_FLOAT, PROP_PERCENTAGE);
@@ -1403,11 +1404,11 @@ static void rna_def_particle_edit(BlenderRNA *brna)
   RNA_def_property_range(prop, 1, SHRT_MAX);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 10, 3);
   RNA_def_property_ui_text(
-      prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: X");
+      prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: X"); /* BFA */
 
   prop = RNA_def_property(srna, "strength", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_range(prop, 0.001, 1.0);
-  RNA_def_property_ui_text(prop, "Strength", "Brush strength\nHotkey in the default keymap: C");
+  RNA_def_property_ui_text(prop, "Strength", "Brush strength\nHotkey in the default keymap: C"); /* BFA */
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_AMOUNT);
 
   prop = RNA_def_property(srna, "count", PROP_INT, PROP_NONE);

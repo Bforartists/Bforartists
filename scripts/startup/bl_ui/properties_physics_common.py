@@ -10,6 +10,7 @@ from bpy.app.translations import (
     contexts as i18n_contexts,
 )
 
+# BFA - Added icons and floated properties left
 
 class PhysicButtonsPanel:
     bl_space_type = 'PROPERTIES'
@@ -57,7 +58,7 @@ class PHYSICS_PT_add(PhysicButtonsPanel, Panel):
     bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 

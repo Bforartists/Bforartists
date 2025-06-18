@@ -10,8 +10,8 @@ from rna_prop_ui import PropertyPanel
 
 # bfa -  added the render engine prop
 class VIEWLAYER_PT_context(Panel):
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
     bl_context = "view_layer"
     bl_options = {"HIDE_HEADER"}
     bl_label = ""
@@ -33,33 +33,31 @@ class VIEWLAYER_PT_context(Panel):
 
 
 class VIEWLAYER_UL_aov(UIList):
-    def draw_item(
-        self, _context, layout, _data, item, icon, _active_data, _active_propname
-    ):
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname):
         row = layout.row()
         split = row.split(factor=0.65)
-        icon = "NONE" if item.is_valid else "ERROR"
+        icon = 'NONE' if item.is_valid else 'ERROR'
         split.row().prop(item, "name", text="", icon=icon, emboss=False)
         split.row().prop(item, "type", text="", emboss=False)
 
 
 class ViewLayerButtonsPanel:
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
     bl_context = "view_layer"
     # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
 
     @classmethod
     def poll(cls, context):
-        return context.engine in cls.COMPAT_ENGINES
+        return (context.engine in cls.COMPAT_ENGINES)
 
 
 class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
     bl_label = "View Layer"
     COMPAT_ENGINES = {
-        "BLENDER_RENDER",
-        "BLENDER_EEVEE_NEXT",
-        "BLENDER_WORKBENCH",
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_WORKBENCH',
     }
 
     def draw(self, context):
@@ -99,7 +97,7 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
 class VIEWLAYER_PT_layer_passes(ViewLayerButtonsPanel, Panel):
     bl_label = "Passes"
     COMPAT_ENGINES = {
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -107,33 +105,11 @@ class VIEWLAYER_PT_layer_passes(ViewLayerButtonsPanel, Panel):
         pass
 
 
-class VIEWLAYER_PT_eevee_layer_passes_data(ViewLayerButtonsPanel, Panel):
-    bl_label = "Data"
-    bl_parent_id = "VIEWLAYER_PT_layer_passes"
-
-    COMPAT_ENGINES = {"BLENDER_EEVEE"}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = False
-        layout.use_property_decorate = False
-
-        view_layer = context.view_layer
-
-        col = layout.column(align=True)
-        col.prop(view_layer, "use_pass_combined")
-        col.prop(view_layer, "use_pass_z")
-        col.prop(view_layer, "use_pass_mist")
-        col.prop(view_layer, "use_pass_normal")
-
-
-# bfa - move mist panel to viewlayers
-
-
+# BFA
 class VIEWLAYER_PT_eevee_layer_passes_mist(ViewLayerButtonsPanel, Panel):
     bl_label = "Mist Pass"
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {"BLENDER_EEVEE_NEXT"}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     @classmethod
     def poll(cls, context):
@@ -159,11 +135,11 @@ class VIEWLAYER_PT_eevee_layer_passes_mist(ViewLayerButtonsPanel, Panel):
         col.prop(world.mist_settings, "falloff")
 
 
-class VIEWLAYER_PT_eevee_next_layer_passes_data(ViewLayerButtonsPanel, Panel):
+class VIEWLAYER_PT_eevee_layer_passes_data(ViewLayerButtonsPanel, Panel):
     bl_label = "Data"
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
 
-    COMPAT_ENGINES = {"BLENDER_EEVEE_NEXT"}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
         layout = self.layout
@@ -189,7 +165,7 @@ class VIEWLAYER_PT_workbench_layer_passes_data(ViewLayerButtonsPanel, Panel):
     bl_label = "Data"
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
 
-    COMPAT_ENGINES = {"BLENDER_WORKBENCH"}
+    COMPAT_ENGINES = {'BLENDER_WORKBENCH'}
 
     def draw(self, context):
         layout = self.layout
@@ -208,84 +184,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
     bl_label = "Light"
     bl_translation_context = i18n_contexts.render_layer
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {"BLENDER_EEVEE"}
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        view_layer = context.view_layer
-        view_layer_eevee = view_layer.eevee
-        # BFA - changed to a flow grid
-        flow = layout.grid_flow(
-            row_major=True, columns=0, even_columns=True, even_rows=False, align=False
-        )
-
-        col = flow.column(align=True)
-        col.label(text="Diffuse")
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(
-            view_layer,
-            "use_pass_diffuse_direct",
-            text="Light",
-            text_ctxt=i18n_contexts.render_layer,
-        )
-        row = col.row()
-        row.separator()
-        row.prop(view_layer, "use_pass_diffuse_color", text="Color")
-
-        col = flow.column(align=True)
-        col.label(text="Specular")
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(
-            view_layer,
-            "use_pass_glossy_direct",
-            text="Light",
-            text_ctxt=i18n_contexts.render_layer,
-        )
-        row = col.row()
-        row.separator()
-        row.prop(view_layer, "use_pass_glossy_color", text="Color")
-
-        col = flow.column(align=True)
-        col.label(text="Volume")
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(
-            view_layer_eevee,
-            "use_pass_volume_direct",
-            text="Light",
-            text_ctxt=i18n_contexts.render_layer,
-        )
-
-        col = flow.column(align=True)
-        col.label(text="Other")
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(view_layer, "use_pass_emit", text="Emission")
-        row = col.row()
-        row.separator()
-        row.prop(view_layer, "use_pass_environment")
-        row = col.row()
-        row.separator()
-        row.prop(view_layer, "use_pass_shadow")
-        row = col.row()
-        row.separator()
-        row.prop(view_layer, "use_pass_ambient_occlusion", text="Ambient Occlusion")
-
-
-class VIEWLAYER_PT_eevee_next_layer_passes_light(ViewLayerButtonsPanel, Panel):
-    bl_label = "Light"
-    bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {"BLENDER_EEVEE_NEXT"}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
         layout = self.layout
@@ -352,35 +251,13 @@ class VIEWLAYER_PT_eevee_next_layer_passes_light(ViewLayerButtonsPanel, Panel):
             row = col.row()
             row.use_property_split = True
             row.separator(factor=4)
-            row.prop(context.scene.eevee, "gtao_distance", text="Occlusion Distance")
+            row.prop(view_layer_eevee, "ambient_occlusion_distance", text="Occlusion Distance")
 
         row = col.row()
         row.separator()
         row.prop(view_layer_eevee, "use_pass_transparent", text="Transparent")
 
 
-class VIEWLAYER_PT_eevee_layer_passes_effects(ViewLayerButtonsPanel, Panel):
-    bl_label = "Effects"
-    bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {"BLENDER_EEVEE"}
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.use_property_split = False
-        layout.use_property_decorate = False
-
-        view_layer = context.view_layer
-        view_layer_eevee = view_layer.eevee
-        scene = context.scene
-        scene_eevee = scene.eevee
-
-        col = layout.column()
-        col.prop(view_layer_eevee, "use_pass_bloom", text="Bloom")
-        col.active = scene_eevee.use_bloom
-
-        col = layout.column()
-        col.prop(view_layer_eevee, "use_pass_transparent")
 
 
 class ViewLayerAOVPanelHelper(ViewLayerButtonsPanel):
@@ -396,32 +273,21 @@ class ViewLayerAOVPanelHelper(ViewLayerButtonsPanel):
 
         row = layout.row()
         col = row.column()
-        col.template_list(
-            "VIEWLAYER_UL_aov",
-            "aovs",
-            view_layer,
-            "aovs",
-            view_layer,
-            "active_aov_index",
-            rows=3,
-        )
+        col.template_list("VIEWLAYER_UL_aov", "aovs", view_layer, "aovs", view_layer, "active_aov_index", rows=3)
 
         col = row.column()
         sub = col.column(align=True)
-        sub.operator("scene.view_layer_add_aov", icon="ADD", text="")
-        sub.operator("scene.view_layer_remove_aov", icon="REMOVE", text="")
+        sub.operator("scene.view_layer_add_aov", icon='ADD', text="")
+        sub.operator("scene.view_layer_remove_aov", icon='REMOVE', text="")
 
         aov = view_layer.active_aov
         if aov and not aov.is_valid:
-            layout.label(
-                text="Conflicts with another render pass with the same name",
-                icon="ERROR",
-            )
+            layout.label(text="Conflicts with another render pass with the same name", icon='ERROR')
 
 
 class VIEWLAYER_PT_layer_passes_aov(ViewLayerAOVPanelHelper, Panel):
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {"BLENDER_EEVEE_NEXT"}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
 
 class ViewLayerCryptomattePanelHelper(ViewLayerButtonsPanel):
@@ -482,7 +348,7 @@ class ViewLayerCryptomattePanelHelper(ViewLayerButtonsPanel):
 
 class VIEWLAYER_PT_layer_passes_cryptomatte(ViewLayerCryptomattePanelHelper, Panel):
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {"BLENDER_EEVEE_NEXT"}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
 
 class VIEWLAYER_MT_lightgroup_sync(Menu):
@@ -509,32 +375,27 @@ class ViewLayerLightgroupsPanelHelper(ViewLayerButtonsPanel):
         row = layout.row()
         col = row.column()
         col.template_list(
-            "UI_UL_list",
-            "lightgroups",
-            view_layer,
-            "lightgroups",
-            view_layer,
-            "active_lightgroup_index",
-            rows=3,
+            "UI_UL_list", "lightgroups", view_layer,
+            "lightgroups", view_layer, "active_lightgroup_index", rows=3,
         )
 
         col = row.column()
         sub = col.column(align=True)
-        sub.operator("scene.view_layer_add_lightgroup", icon="ADD", text="")
-        sub.operator("scene.view_layer_remove_lightgroup", icon="REMOVE", text="")
+        sub.operator("scene.view_layer_add_lightgroup", icon='ADD', text="")
+        sub.operator("scene.view_layer_remove_lightgroup", icon='REMOVE', text="")
         sub.separator()
-        sub.menu("VIEWLAYER_MT_lightgroup_sync", icon="DOWNARROW_HLT", text="")
+        sub.menu("VIEWLAYER_MT_lightgroup_sync", icon='DOWNARROW_HLT', text="")
 
 
 class VIEWLAYER_PT_layer_passes_lightgroups(ViewLayerLightgroupsPanelHelper, Panel):
     bl_parent_id = "VIEWLAYER_PT_layer_passes"
-    COMPAT_ENGINES = {"CYCLES"}
+    COMPAT_ENGINES = {'CYCLES'}
 
 
 class VIEWLAYER_PT_filter(ViewLayerButtonsPanel, Panel):
     bl_label = "Filter"
-    bl_options = {"DEFAULT_CLOSED"}
-    COMPAT_ENGINES = {"BLENDER_EEVEE_NEXT"}
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
         layout = self.layout
@@ -570,9 +431,29 @@ class VIEWLAYER_PT_filter(ViewLayerButtonsPanel, Panel):
         row.active = scene.render.use_motion_blur
 
 
+class VIEWLAYER_PT_override(ViewLayerButtonsPanel, Panel):
+    bl_label = "Override"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {
+        'BLENDER_EEVEE_NEXT',
+        'CYCLES',
+    }
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        view_layer = context.view_layer
+
+        layout.prop(view_layer, "material_override")
+        layout.prop(view_layer, "world_override")
+        layout.prop(view_layer, "samples")
+
+
 class VIEWLAYER_PT_layer_custom_props(PropertyPanel, Panel):
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
     bl_context = "view_layer"
     _context_path = "view_layer"
     _property_type = ViewLayer
@@ -584,20 +465,19 @@ classes = (
     VIEWLAYER_PT_layer,
     VIEWLAYER_PT_layer_passes,
     VIEWLAYER_PT_workbench_layer_passes_data,
-    VIEWLAYER_PT_eevee_layer_passes_data,
     VIEWLAYER_PT_eevee_layer_passes_mist,  # bfa - move mist panel to viewlayers
-    VIEWLAYER_PT_eevee_next_layer_passes_data,
-    VIEWLAYER_PT_eevee_next_layer_passes_light,
+    VIEWLAYER_PT_eevee_layer_passes_data,
+    VIEWLAYER_PT_eevee_layer_passes_light,
     VIEWLAYER_PT_layer_passes_cryptomatte,
     VIEWLAYER_PT_layer_passes_aov,
     VIEWLAYER_PT_layer_passes_lightgroups,
     VIEWLAYER_PT_filter,
+    VIEWLAYER_PT_override,
     VIEWLAYER_PT_layer_custom_props,
     VIEWLAYER_UL_aov,
 )
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
-
     for cls in classes:
         register_class(cls)

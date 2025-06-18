@@ -506,8 +506,7 @@ static bool ui_imageuser_pass_menu_step(bContext *C, int direction, void *rnd_pt
     return false;
   }
 
-  /* NOTE: this looks reversed, but matches menu direction. */
-  if (direction == -1) {
+  if (direction == 1) {
     RenderPass *rp;
     int rp_index = iuser->pass + 1;
 
@@ -519,7 +518,7 @@ static bool ui_imageuser_pass_menu_step(bContext *C, int direction, void *rnd_pt
       }
     }
   }
-  else if (direction == 1) {
+  else if (direction == -1) {
     RenderPass *rp;
     int rp_index = 0;
 
@@ -958,7 +957,7 @@ void uiTemplateImage(uiLayout *layout,
           sub->prop(&imaptr, "alpha_mode", UI_ITEM_NONE, IFACE_("Alpha"), ICON_NONE);
 
           bool is_data = IMB_colormanagement_space_name_is_data(ima->colorspace_settings.name);
-          uiLayoutSetActive(sub, !is_data);
+          sub->active_set(!is_data);
         }
 
         if (ima && iuser) {

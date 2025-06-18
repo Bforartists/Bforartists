@@ -67,10 +67,6 @@ static Geometry *create_geometry(Geometry *const prev_geometry,
     }
   }
 
-  if (prev_geometry && prev_geometry->geom_type_ == GEOM_CURVE) {
-    return new_geometry();
-  }
-
   return new_geometry();
 }
 
@@ -433,7 +429,7 @@ OBJParser::OBJParser(const OBJImportParams &import_params, size_t read_buffer_si
 {
   obj_file_ = BLI_fopen(import_params_.filepath, "rb");
   if (!obj_file_) {
-    CLOG_ERROR(&LOG, "Cannot read from OBJ file:'%s'.\n", import_params_.filepath);
+    CLOG_ERROR(&LOG, "Cannot read from OBJ file:'%s'.", import_params_.filepath);
     BKE_reportf(import_params_.reports,
                 RPT_ERROR,
                 "OBJ Import: Cannot open file '%s'",

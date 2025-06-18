@@ -1755,7 +1755,7 @@ static void area_move_set_limits(wmWindow *win,
       }
     }
     else {
-      const int x1 = area->winx - (AREAMINX * UI_SCALE_FAC);
+      const int x1 = area->winx - int(AREAMINX * UI_SCALE_FAC) - 1;
       /* if left or right edge selected, test width */
       if (area->v1->editflag && area->v2->editflag) {
         *bigger = min_ii(*bigger, x1);
@@ -5165,7 +5165,7 @@ static void SCREEN_OT_header_toggle_menus(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Expand/Collapse Header Menus";
   ot->idname = "SCREEN_OT_header_toggle_menus";
-  ot->description = "Expand or collapse the header pulldown menus";
+  ot->description = "Expand or collapse the header pull-down menus";
 
   /* API callbacks. */
   ot->exec = header_toggle_menus_exec;
@@ -5208,9 +5208,9 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
     RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
 
-  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW);
+  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW); /*BFA icon*/
   layout->separator();
-  layout->op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE);
+  layout->op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE); /*BFA icon*/
 }
 
 // bfa - show hide the meshedit toolbar menus
@@ -5651,7 +5651,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
 
     ARegion *region_header = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
     uiLayout *col = &layout->column(false);
-    uiLayoutSetActive(col, (region_header->flag & RGN_FLAG_HIDDEN) == 0);
+    col->active_set((region_header->flag & RGN_FLAG_HIDDEN) == 0);
 
     if (BKE_area_find_region_type(area, RGN_TYPE_TOOL_HEADER)) {
       col->prop(
@@ -5855,7 +5855,7 @@ void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*
                                                                     IFACE_("Flip to Bottom");
 
   /* default is WM_OP_INVOKE_REGION_WIN, which we don't want here. */
-  uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
+  layout->operator_context_set(WM_OP_INVOKE_DEFAULT);
 
   layout->op("SCREEN_OT_region_flip", but_flip_str, ICON_FLIP); /*BFA - icon added*/
 }
@@ -5906,7 +5906,7 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
       uiLayout *layout = UI_popup_menu_layout(pup);
 
       /* We need WM_OP_INVOKE_DEFAULT in case menu item is over another area. */
-      uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
+      layout->operator_context_set(WM_OP_INVOKE_DEFAULT);
       layout->op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_NONE);
 
       ED_screens_region_flip_menu_create(C, layout, nullptr);
@@ -6723,7 +6723,7 @@ static std::string userpref_show_get_description(bContext *C,
       return fmt::format(fmt::runtime(TIP_("Show {} preferences")), section_name);
     }
   }
-  /* Fallback to default. */
+  /* Fall back to default. */
   return "";
 }
 
@@ -7355,35 +7355,27 @@ void ED_operatortypes_screen()
   WM_operatortype_append(SCREEN_OT_region_toggle);
   WM_operatortype_append(SCREEN_OT_region_flip);
   WM_operatortype_append(SCREEN_OT_header_toggle_menus);
-  WM_operatortype_append(
-      SCREEN_OT_header_toggle_editortypemenu);            // bfa - show hide the editorsmenu
+  WM_operatortype_append(SCREEN_OT_header_toggle_editortypemenu); // bfa - show hide the editorsmenu
   WM_operatortype_append(SCREEN_OT_header_toolbar_file);  // bfa - show hide the file toolbar
-  WM_operatortype_append(
-      SCREEN_OT_header_toolbar_meshedit);  // bfa - show hide the meshedit toolbar
-  WM_operatortype_append(
-      SCREEN_OT_header_toolbar_primitives);  // bfa - show hide the primitives toolbar
-  WM_operatortype_append(
-      SCREEN_OT_header_toolbar_image);  // bfa - show hide the primitives toolbar
-  WM_operatortype_append(
-      SCREEN_OT_header_toolbar_tools);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_meshedit);  // bfa - show hide the meshedit toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_primitives);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_image);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_tools);  // bfa - show hide the primitives toolbar
   WM_operatortype_append(SCREEN_OT_header_toolbar_animation);  // bfa - show hide the primitives
                                                                // toolbarfSCREEN_OT_header_toolbox
   WM_operatortype_append(SCREEN_OT_header_toolbar_edit);  // bfa - show hide the primitives toolbar
   WM_operatortype_append(SCREEN_OT_header_toolbar_misc);  // bfa - show hide the primitives toolbar
-  WM_operatortype_append(
-      SCREEN_OT_toolbar_toolbox);  // bfa - toolbar types menu in the toolbar editor
+  WM_operatortype_append(SCREEN_OT_toolbar_toolbox);  // bfa - toolbar types menu in the toolbar editor
   WM_operatortype_append(SCREEN_OT_header_topbar_file);      // bfa - show hide the file topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_meshedit);  // bfa - show hide the meshedit topbar
-  WM_operatortype_append(
-      SCREEN_OT_header_topbar_primitives);                // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_primitives);                // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_image);  // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_tools);  // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_animation);  // bfa - show hide the primitives
                                                               // topbarfSCREEN_OT_header_toolbox
   WM_operatortype_append(SCREEN_OT_header_topbar_edit);  // bfa - show hide the primitives topbar
   WM_operatortype_append(SCREEN_OT_header_topbar_misc);  // bfa - show hide the primitives topbar
-  WM_operatortype_append(
-      SCREEN_OT_topbar_toolbox);  // bfa - topbar types menu in the topbar editor
+  WM_operatortype_append(SCREEN_OT_topbar_toolbox);  // bfa - topbar types menu in the topbar editor
   WM_operatortype_append(SCREEN_OT_region_context_menu);
   WM_operatortype_append(SCREEN_OT_screen_set);
   WM_operatortype_append(SCREEN_OT_screen_full_area);

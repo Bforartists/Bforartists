@@ -185,7 +185,7 @@ static void seq_strip_free_ex(Scene *scene,
   relations_strip_free_anim(strip);
 
   if (strip->type & STRIP_TYPE_EFFECT) {
-    EffectHandle sh = effect_handle_get(strip);
+    EffectHandle sh = strip_effect_handle_get(strip);
     sh.free(strip, do_id_user);
   }
 
@@ -216,6 +216,10 @@ static void seq_strip_free_ex(Scene *scene,
     IDP_FreePropertyContent_ex(strip->prop, do_id_user);
     MEM_freeN(strip->prop);
   }
+  if (strip->system_properties) {
+    IDP_FreePropertyContent_ex(strip->system_properties, do_id_user);
+    MEM_freeN(strip->system_properties);
+  }
 
   /* free modifiers */
   modifier_clear(strip);
@@ -230,7 +234,7 @@ static void seq_strip_free_ex(Scene *scene,
    * be _very_ careful here, invalidating cache loops over the scene sequences and
    * assumes the listbase is valid for all strips,
    * this may not be the case if lists are being freed.
-   * this is optional relations_invalidate_cache
+   * this is optional SEQ_relations_invalidate_cache
    */
   if (do_cache) {
     if (scene) {
@@ -279,7 +283,7 @@ Editing *editing_ensure(Scene *scene)
 
     ed = scene->ed = MEM_callocN<Editing>("addseq");
     ed->seqbasep = &ed->seqbase;
-    ed->cache_flag = (SEQ_CACHE_STORE_FINAL_OUT | SEQ_CACHE_STORE_RAW);
+    ed->cache_flag = (SEQ_CACHE_PREFETCH_ENABLE | SEQ_CACHE_STORE_FINAL_OUT | SEQ_CACHE_STORE_RAW);
     ed->show_missing_media_flag = SEQ_EDIT_SHOW_MISSING_MEDIA;
     ed->displayed_channels = &ed->channels;
     channels_ensure(ed->displayed_channels);
@@ -536,6 +540,9 @@ static Strip *strip_duplicate(const Scene *scene_src,
   if (strip->prop) {
     strip_new->prop = IDP_CopyProperty_ex(strip->prop, flag);
   }
+  if (strip->system_properties) {
+    strip_new->system_properties = IDP_CopyProperty_ex(strip->system_properties, flag);
+  }
 
   if (strip_new->modifiers.first) {
     BLI_listbase_clear(&strip_new->modifiers);
@@ -583,7 +590,7 @@ static Strip *strip_duplicate(const Scene *scene_src,
   }
   else if (strip->type & STRIP_TYPE_EFFECT) {
     EffectHandle sh;
-    sh = effect_handle_get(strip);
+    sh = strip_effect_handle_get(strip);
     if (sh.copy) {
       sh.copy(strip_new, strip, flag);
     }
@@ -793,6 +800,8 @@ static bool strip_write_data_cb(Strip *strip, void *userdata)
   if (strip->prop) {
     IDP_BlendWrite(writer, strip->prop);
   }
+  /* Never write system_properties in Blender 4.5, will be reset to `nullptr` by reading code (by
+   * the matching call to #BLO_read_struct). */
 
   modifier_blend_write(writer, &strip->modifiers);
 
@@ -881,6 +890,8 @@ static bool strip_read_data_cb(Strip *strip, void *user_data)
 
   BLO_read_struct(reader, IDProperty, &strip->prop);
   IDP_BlendDataRead(reader, &strip->prop);
+  BLO_read_struct(reader, IDProperty, &strip->system_properties);
+  IDP_BlendDataRead(reader, &strip->system_properties);
 
   BLO_read_struct(reader, StripData, &strip->data);
   if (strip->data && strip->data->done == 0) {

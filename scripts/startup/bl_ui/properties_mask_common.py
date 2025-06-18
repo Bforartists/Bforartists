@@ -9,6 +9,7 @@ from bpy.types import Menu, UIList
 from bpy.app.translations import contexts as i18n_contexts
 from bl_ui import anim
 
+    # BFA Added icons and flaoted left
 
 # Use by both image & clip context menus.
 def draw_mask_context_menu(layout, _context):
@@ -161,6 +162,7 @@ class MASK_PT_spline:
         col.use_property_split = False
         col.prop(spline, "use_cyclic")
         col.prop(spline, "use_fill")
+
         col.prop(spline, "use_self_intersection_check")
 
 
@@ -207,7 +209,7 @@ class MASK_PT_point:
             row = col.row()
             row.prop(parent, "type", expand=True)
 
-            col.prop_search(parent, "parent", tracking, "objects", text = "Object", icon='OBJECT_DATA')
+            col.prop_search(parent, "parent", tracking, "objects", text = "Object", icon='OBJECT_DATA') # BFA
 
             tracks_list = "tracks" if parent.type == 'POINT_TRACK' else "plane_tracks"
 
@@ -358,7 +360,7 @@ class MASK_MT_mask(Menu):
         layout.separator()
 
         layout.operator("mask.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
-        layout.operator("mask.delete", icon = "DELETE")
+        layout.operator("mask.delete", icon = "DELETE") # BFA
 
         layout.separator()
 

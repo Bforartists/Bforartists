@@ -51,7 +51,7 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "UI_interface_c.hh"
+#include "UI_interface_c.hh" /* BFA */
 #include "WM_api.hh"
 #include "WM_types.hh"
 
@@ -623,7 +623,7 @@ static void v3d_editvertex_buts(
     layout->separator();
 
     col = &row->column(true);
-    uiLayoutSetUnitsX(col, .75);
+    col->ui_units_x_set(.75);
     uiLayoutSetFixedSize(col, true);
 
     col->label(IFACE_("X"), ICON_NONE);
@@ -1704,9 +1704,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
     row = &col->row(true);        /* bfa - row = col.row(align=True) */
     row->prop(ptr, "location", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* bfa - row.prop(ob, "location") */
     uiLayoutSetPropDecorate(row, false); /* bfa - row.use_property_decorate = False */
-    uiLayoutSetEmboss(row, blender::ui::EmbossType::None); /* bfa - emboss=False */
+    row->emboss_set(blender::ui::EmbossType::None); /* bfa - emboss=False */
     row->prop(ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-    uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
+    row->emboss_set(blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
     layout->separator(.25f);
   }
 
@@ -1719,7 +1719,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
       sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
+      sub->emboss_set(blender::ui::EmbossType::NoneOrStatus);
 
       draw4L = true; /* bfa - show 4L button if quaternion */
 
@@ -1742,7 +1742,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
 
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
+      sub->emboss_set(blender::ui::EmbossType::NoneOrStatus);
       draw4L = true; /* bfa - show 4L button if axis-angle */
 
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
@@ -1753,7 +1753,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
         sub->label("", ICON_BLANK1);
       }
       sub->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::Undefined); /* bfa */
+      sub->emboss_set(blender::ui::EmbossType::Undefined); /* bfa */
       break;
 
     default: /* euler rotations */
@@ -1763,16 +1763,16 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       row = &col->row(true);
       row->prop(ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
       uiLayoutSetPropDecorate(row, false);
-      uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
+      row->emboss_set(blender::ui::EmbossType::NoneOrStatus);
       row->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa */
+      row->emboss_set(blender::ui::EmbossType::Undefined); /* bfa */
       break;
   }
 
   row = &layout->row(true);
   row->label(IFACE_("Mode"), ICON_NONE);
   row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
+  row->emboss_set(blender::ui::EmbossType::None);
 
   /* bfa - display 4L button */
   if (draw4L) {
@@ -1782,7 +1782,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   else {
     row->label("", ICON_BLANK1);
   }
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
+  row->emboss_set(blender::ui::EmbossType::Undefined);
 
   layout->separator(.25f);
 
@@ -1795,9 +1795,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
           IFACE_("Scale"),
           ICON_NONE); /* bfa - row.prop(ob, "scale") */
   uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
+  row->emboss_set(blender::ui::EmbossType::NoneOrStatus);
   row->prop(ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
+  row->emboss_set(blender::ui::EmbossType::Undefined);
   /* end bfa */
 }
 

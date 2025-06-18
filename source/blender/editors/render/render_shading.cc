@@ -243,7 +243,7 @@ static wmOperatorStatus material_slot_remove_exec(bContext *C, wmOperator *op)
   }
 
   /* Removing material slots in edit mode screws things up, see bug #21822. */
-  if (ob == CTX_data_edit_object(C)) {
+  if (BKE_object_is_in_editmode(ob)) {
     BKE_report(op->reports, RPT_ERROR, "Unable to remove material slot in edit mode");
     return OPERATOR_CANCELLED;
   }
@@ -877,7 +877,7 @@ void MATERIAL_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Material";
   ot->idname = "MATERIAL_OT_new";
-  ot->description = "Creates a Duplicate of the current material";
+  ot->description = "Creates a Duplicate of the current material"; /* BFA */
 
   /* API callbacks. */
   ot->exec = new_material_exec;
@@ -941,7 +941,7 @@ void TEXTURE_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Texture";
   ot->idname = "TEXTURE_OT_new";
-  ot->description = "Creates a duplicate of the current texture";
+  ot->description = "Creates a duplicate of the current texture"; /* BFA */
 
   /* API callbacks. */
   ot->exec = new_texture_exec;
@@ -1002,7 +1002,7 @@ void WORLD_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New World";
   ot->idname = "WORLD_OT_new";
-  ot->description = "Create a new world Data";
+  ot->description = "Create a new world Data"; /* BFA */
 
   /* API callbacks. */
   ot->exec = new_world_exec;
@@ -1047,6 +1047,7 @@ static wmOperatorStatus view_layer_add_exec(bContext *C, wmOperator *op)
 void SCENE_OT_view_layer_add(wmOperatorType *ot)
 {
   static EnumPropertyItem type_items[] = {
+      /* BFA - added icons*/
       {VIEWLAYER_ADD_NEW, "NEW", ICON_ADD, "New", "Add a new view layer"},
       {VIEWLAYER_ADD_COPY,
        "COPY",
@@ -1142,8 +1143,8 @@ static wmOperatorStatus view_layer_add_aov_exec(bContext *C, wmOperator * /*op*/
     engine = nullptr;
   }
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1194,8 +1195,8 @@ static wmOperatorStatus view_layer_remove_aov_exec(bContext *C, wmOperator * /*o
     engine = nullptr;
   }
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1246,8 +1247,8 @@ static wmOperatorStatus view_layer_add_lightgroup_exec(bContext *C, wmOperator *
 
   BKE_view_layer_add_lightgroup(view_layer, name);
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1296,8 +1297,8 @@ static wmOperatorStatus view_layer_remove_lightgroup_exec(bContext *C, wmOperato
 
   BKE_view_layer_remove_lightgroup(view_layer, view_layer->active_lightgroup);
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1360,8 +1361,8 @@ static wmOperatorStatus view_layer_add_used_lightgroups_exec(bContext *C, wmOper
     }
   }
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1403,8 +1404,8 @@ static wmOperatorStatus view_layer_remove_unused_lightgroups_exec(bContext *C, w
     }
   }
 
-  if (scene->nodetree) {
-    ntreeCompositUpdateRLayers(scene->nodetree);
+  if (scene->compositing_node_group) {
+    ntreeCompositUpdateRLayers(scene->compositing_node_group);
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);

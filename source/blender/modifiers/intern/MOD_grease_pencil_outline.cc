@@ -331,7 +331,7 @@ ModifierTypeInfo modifierType_GreasePencilOutline = {
     /*type*/ ModifierTypeType::Nonconstructive,
     /*flags*/ eModifierTypeFlag_AcceptsGreasePencil | eModifierTypeFlag_SupportsEditmode |
         eModifierTypeFlag_EnableInEditmode | eModifierTypeFlag_SupportsMapping,
-    /*icon*/ ICON_NONE,
+    /*icon*/ ICON_MOD_OUTLINE,
 
     /*copy_data*/ blender::copy_data,
 

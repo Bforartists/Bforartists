@@ -379,8 +379,8 @@ ScrArea *ED_screen_temp_space_open(bContext *C,
                                    int display_type,
                                    bool dialog) ATTR_NONNULL(1, 2, 3);
 void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *arg);
-void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void *arg); /*bfa - topbar*/
-void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *arg); /*bfa - toolbar*/
+void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void *arg); /* bfa - topbar*/
+void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *arg); /* bfa - toolbar*/
 void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void *arg);
 void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void *arg);
 /**
@@ -687,6 +687,7 @@ void ED_region_generic_tools_region_message_subscribe(
  * Callback for #ARegionType.snap_size
  */
 int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, int axis);
+int ED_region_generic_panel_region_snap_size(const ARegion *region, int size, int axis);
 
 /* `area_query.cc` */
 

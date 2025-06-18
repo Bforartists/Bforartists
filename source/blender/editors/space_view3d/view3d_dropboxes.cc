@@ -404,8 +404,9 @@ static void view3d_ob_drop_copy_external_asset(bContext *C, wmDrag *drag, wmDrop
   if (use_override) {  
     ID *owner_id = id; 
     ID *id_or = id;
-    PointerRNA owner_ptr;
-    PropertyRNA *prop;
+    /* BFA - WIP - removed for warning?*/
+    //PointerRNA owner_ptr;
+    //PropertyRNA *prop;
     if (!ELEM(nullptr, owner_id, id_or)) {
       id = ui_template_id_liboverride_hierarchy_make(
       C, CTX_data_main(C), owner_id, id_or, nullptr);
@@ -539,8 +540,8 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   WM_event_add_notifier(C, NC_SCENE | ND_LAYER_CONTENT, scene);
 
   RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
-  RNA_boolean_set(drop->ptr, "use_instance", use_instance);
-  RNA_boolean_set(drop->ptr, "use_override", use_override);
+  RNA_boolean_set(drop->ptr, "use_instance", use_instance); /* BFA */
+  RNA_boolean_set(drop->ptr, "use_override", use_override); /* BFA */
 
   /* Make an object active, just use the first one in the collection. */
   CollectionObject *cobject = static_cast<CollectionObject *>(collection->gobject.first);
@@ -555,6 +556,7 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   ED_outliner_select_sync_from_object_tag(C);
 
   V3DSnapCursorState *snap_state = static_cast<V3DSnapCursorState *>(drop->draw_data);
+  /* BFA */
   if (use_instance_collections && drop_instances_to_origin) {
     float zeros[3] = {0.0f, 0.0f, 0.0f};
     RNA_float_set_array(drop->ptr, "location", zeros);

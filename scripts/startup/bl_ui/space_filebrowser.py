@@ -12,6 +12,7 @@ from bpy_extras import (
 
 from bpy.app.translations import contexts as i18n_contexts
 
+# BFA - Added icons and floated properties left
 
 # BFA - Operator to toggle both instance collection settings with on/off icon state
 class FILEBROWSER_OT_toggle_instance_collections(bpy.types.Operator):
@@ -128,7 +129,7 @@ class FILEBROWSER_HT_header(Header):
             text="",
             icon="PREFERENCES",
             depress=is_option_region_visible(context, space_data),
-        ).region_type = "TOOL_PROPS"
+        ).region_type = 'TOOL_PROPS'
 
     def draw(self, context):
         from bpy_extras.asset_utils import SpaceAssetInfo
@@ -169,7 +170,7 @@ class ALL_MT_editormenu_filebrowser(Menu):
 
 
 class FileBrowserPanel:
-    bl_space_type = "FILE_BROWSER"
+    bl_space_type = 'FILE_BROWSER'
 
     @classmethod
     def poll(cls, context):
@@ -179,15 +180,11 @@ class FileBrowserPanel:
         if space_data.params is None:
             return False
 
-        return (
-            space_data
-            and space_data.type == "FILE_BROWSER"
-            and space_data.browse_mode == "FILES"
-        )
+        return space_data and space_data.type == 'FILE_BROWSER' and space_data.browse_mode == 'FILES'
 
 
 class FILEBROWSER_PT_display(FileBrowserPanel, Panel):
-    bl_region_type = "HEADER"
+    bl_region_type = 'HEADER'
     bl_label = "Display Settings"  # Shows as tooltip in popover
     bl_ui_units_x = 16
 
@@ -200,7 +197,7 @@ class FILEBROWSER_PT_display(FileBrowserPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        if params.display_type == "THUMBNAIL":
+        if params.display_type == 'THUMBNAIL':
             layout.prop(
                 params, "display_size_discrete", text="Thumbnail Presets", expand=True
             )  # BFA - added quick thumbnail sizes.
@@ -227,8 +224,8 @@ class FILEBROWSER_PT_display(FileBrowserPanel, Panel):
 
 
 class FILEBROWSER_PT_filter(FileBrowserPanel, Panel):
-    bl_space_type = "FILE_BROWSER"
-    bl_region_type = "HEADER"
+    bl_space_type = "FILE_BROWSER" # BFA
+    bl_region_type = 'HEADER'
     bl_label = "Filter Settings"  # Shows as tooltip in popover
     bl_ui_units_x = 10
 
@@ -308,31 +305,20 @@ class FILEBROWSER_PT_filter(FileBrowserPanel, Panel):
 def panel_poll_is_upper_region(region):
     # The upper region is left-aligned, the lower is split into it then.
     # Note that after "Flip Regions" it's right-aligned.
-    return region.alignment in {"LEFT", "RIGHT"}
+    return region.alignment in {'LEFT', 'RIGHT'}
 
 
 def panel_poll_is_asset_browsing(context):
     from bpy_extras.asset_utils import SpaceAssetInfo
-
     return SpaceAssetInfo.is_asset_browser_poll(context)
 
 
 class FILEBROWSER_UL_dir(UIList):
-    def draw_item(
-        self,
-        _context,
-        layout,
-        _data,
-        item,
-        icon,
-        _active_data,
-        _active_propname,
-        _index,
-    ):
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         direntry = item
         # space = context.space_data
 
-        if self.layout_type in {"DEFAULT", "COMPACT"}:
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
             row = layout.row(align=True)
             row.enabled = direntry.is_valid
             # Non-editable entries would show grayed-out, which is bad in this specific case, so switch to mere label.
@@ -341,14 +327,14 @@ class FILEBROWSER_UL_dir(UIList):
             else:
                 row.prop(direntry, "name", text="", emboss=False, icon_value=icon)
 
-        elif self.layout_type == "GRID":
-            layout.alignment = "CENTER"
+        elif self.layout_type == 'GRID':
+            layout.alignment = 'CENTER'
             layout.prop(direntry, "path", text="")
 
 
 class FILEBROWSER_PT_bookmarks_volumes(Panel):
-    bl_space_type = "FILE_BROWSER"
-    bl_region_type = "TOOLS"
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOLS'
     bl_category = "Bookmarks"
     bl_label = "Volumes"
     bl_translation_context = i18n_contexts.editor_filebrowser
@@ -379,8 +365,8 @@ class FILEBROWSER_PT_bookmarks_volumes(Panel):
 
 
 class FILEBROWSER_PT_bookmarks_system(Panel):
-    bl_space_type = "FILE_BROWSER"
-    bl_region_type = "TOOLS"
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOLS'
     bl_category = "Bookmarks"
     bl_label = "System"
 
@@ -428,8 +414,8 @@ class FILEBROWSER_MT_bookmarks_context_menu(Menu):
 
 
 class FILEBROWSER_PT_bookmarks_favorites(FileBrowserPanel, Panel):
-    bl_space_type = "FILE_BROWSER"
-    bl_region_type = "TOOLS"
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOLS'
     bl_category = "Bookmarks"
     bl_label = "Bookmarks"
 
@@ -487,8 +473,8 @@ class FILEBROWSER_MT_bookmarks_recents_specials_menu(Menu):
 
 
 class FILEBROWSER_PT_bookmarks_recents(Panel):
-    bl_space_type = "FILE_BROWSER"
-    bl_region_type = "TOOLS"
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOLS'
     bl_category = "Bookmarks"
     bl_label = "Recent"
 
@@ -507,28 +493,17 @@ class FILEBROWSER_PT_bookmarks_recents(Panel):
         if space.recent_folders:
             row = layout.row()
             row.template_list(
-                "FILEBROWSER_UL_dir",
-                "recent_folders",
-                space,
-                "recent_folders",
-                space,
-                "recent_folders_active",
-                item_dyntip_propname="path",
-                rows=1,
-                maxrows=10,
+                "FILEBROWSER_UL_dir", "recent_folders", space, "recent_folders",
+                space, "recent_folders_active", item_dyntip_propname="path", rows=1, maxrows=10,
             )
 
             col = row.column(align=True)
-            col.menu(
-                "FILEBROWSER_MT_bookmarks_recents_specials_menu",
-                icon="DOWNARROW_HLT",
-                text="",
-            )
+            col.menu("FILEBROWSER_MT_bookmarks_recents_specials_menu", icon='DOWNARROW_HLT', text="")
 
 
 class FILEBROWSER_PT_advanced_filter(Panel):
     bl_space_type = "FILE_BROWSER"
-    bl_region_type = "TOOL_PROPS"
+    bl_region_type = 'TOOL_PROPS'
     bl_category = "Filter"
     bl_label = "Advanced Filter"
 
@@ -536,10 +511,10 @@ class FILEBROWSER_PT_advanced_filter(Panel):
     def poll(cls, context):
         # only useful in append/link (library) context currently...
         return (
-            context.space_data.params
-            and context.space_data.params.use_library_browsing
-            and panel_poll_is_upper_region(context.region)
-            and not panel_poll_is_asset_browsing(context)
+            context.space_data.params and
+            context.space_data.params.use_library_browsing and
+            panel_poll_is_upper_region(context.region) and
+            not panel_poll_is_asset_browsing(context)
         )
 
     def draw(self, context):
@@ -573,22 +548,22 @@ def is_option_region_visible(context, space):
         return False
 
     for region in context.area.regions:
-        if region.type == "TOOL_PROPS" and region.width <= 1:
+        if region.type == 'TOOL_PROPS' and region.width <= 1:
             return False
 
     return True
 
 
 class FILEBROWSER_PT_directory_path(Panel):
-    bl_space_type = "FILE_BROWSER"
-    bl_region_type = "UI"
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'UI'
     bl_label = "Directory Path"
     bl_category = "Attributes"
-    bl_options = {"HIDE_HEADER"}
+    bl_options = {'HIDE_HEADER'}
 
     def is_header_visible(self, context):
         for region in context.area.regions:
-            if region.type == "HEADER" and region.height <= 1:
+            if region.type == 'HEADER' and region.height <= 1:
                 return False
 
         return True
@@ -606,9 +581,7 @@ class FILEBROWSER_PT_directory_path(Panel):
         layout.scale_y = 1.3
 
         row = layout.row()
-        flow = row.grid_flow(
-            row_major=True, columns=0, even_columns=False, even_rows=False, align=False
-        )
+        flow = row.grid_flow(row_major=True, columns=0, even_columns=False, even_rows=False, align=False)
 
         subrow = flow.row()
 
@@ -619,7 +592,7 @@ class FILEBROWSER_PT_directory_path(Panel):
         subsubrow.operator("file.refresh", text="", icon="FILE_REFRESH")
 
         subsubrow = subrow.row()
-        subsubrow.operator_context = "EXEC_DEFAULT"
+        subsubrow.operator_context = 'EXEC_DEFAULT'
         subsubrow.operator("file.directory_new", icon="NEWFOLDER", text="")
 
         subrow.template_file_select_path(params)
@@ -644,7 +617,7 @@ class FILEBROWSER_PT_directory_path(Panel):
                 text="",
                 icon="PREFERENCES",
                 depress=is_option_region_visible(context, space),
-            ).region_type = "TOOL_PROPS"
+            ).region_type = 'TOOL_PROPS'
 
 
 class FileBrowserMenu:
@@ -736,20 +709,20 @@ class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
 
         layout.operator("file.rename", text="Rename", icon="RENAME")
         sub = layout.row()
-        sub.operator_context = "EXEC_DEFAULT"
+        sub.operator_context = 'EXEC_DEFAULT'
         sub.operator("file.delete", text="Delete", icon="DELETE")
 
         layout.separator()
 
         sub = layout.row()
-        sub.operator_context = "EXEC_DEFAULT"
+        sub.operator_context = 'EXEC_DEFAULT'
         sub.operator("file.directory_new", text="New Folder", icon="FILE_FOLDER")
         layout.operator("file.bookmark_add", text="Add Bookmark", icon="BOOKMARKS")
 
         layout.separator()
 
         layout.prop_menu_enum(params, "display_type")
-        if params.display_type == "THUMBNAIL":
+        if params.display_type == 'THUMBNAIL':
             layout.prop_menu_enum(params, "display_size_discrete")
         layout.prop_menu_enum(params, "recursion_level", text="Recursions")
         layout.prop_menu_enum(params, "sort_method")
@@ -771,7 +744,7 @@ class FILEBROWSER_MT_view_pie(Menu):
 
 
 class ASSETBROWSER_PT_display(asset_utils.AssetBrowserPanel, Panel):
-    bl_region_type = "HEADER"
+    bl_region_type = 'HEADER'
     bl_label = "Display Settings"  # Shows as tooltip in popover
     bl_ui_units_x = 10
 
@@ -800,7 +773,7 @@ class ASSETBROWSER_PT_display(asset_utils.AssetBrowserPanel, Panel):
 
 
 class ASSETBROWSER_PT_filter(asset_utils.AssetBrowserPanel, Panel):
-    bl_region_type = "HEADER"
+    bl_region_type = 'HEADER'
     bl_category = "Filter"
     bl_label = "Filter"
 
@@ -830,7 +803,6 @@ class AssetBrowserMenu:
     @classmethod
     def poll(cls, context):
         from bpy_extras.asset_utils import SpaceAssetInfo
-
         return SpaceAssetInfo.is_asset_browser_poll(context)
 
 
@@ -878,6 +850,7 @@ class FILEBROWSER_MT_view_pie_menus(Menu):
         ).name = "FILEBROWSER_MT_view_pie"
 
 
+# BFA - menu
 class ASSETBROWSER_MT_select(AssetBrowserMenu, Menu):
     bl_label = "Select"
 
@@ -925,9 +898,9 @@ class ASSETBROWSER_MT_catalog(AssetBrowserMenu, Menu):
 # BFA - not used
 class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
     bl_idname = "ASSETBROWSER_PT_import_settings"
-    bl_region_type = "HEADER"
+    bl_region_type = 'HEADER'
     bl_label = "Import Settings"
-    bl_options = {"HIDE_HEADER"}
+    bl_options = {'HIDE_HEADER'}
     bl_ui_units_x = 15
 
     def draw(self, context):
@@ -942,13 +915,13 @@ class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
         col = layout.column(heading="Collection Instances")
         col.prop(params, "instance_collections_on_link", text="Link")
         col.prop(params, "instance_collections_on_append", text="Append")
-        col.prop(params, "drop_instances_to_origin", text="Drop To Origin")
+        col.prop(params, "drop_instances_to_origin", text="Drop To Origin") # BFA
 
 
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
-    bl_region_type = "TOOL_PROPS"
+    bl_region_type = 'TOOL_PROPS'
     bl_label = "Asset Metadata"
-    bl_options = {"HIDE_HEADER"}
+    bl_options = {'HIDE_HEADER'}
 
     @staticmethod
     def metadata_prop(layout, asset_metadata, propname):
@@ -1131,13 +1104,8 @@ class ASSETBROWSER_PT_metadata_tags(asset_utils.AssetMetaDataPanel, Panel):
 
         row = layout.row()
         row.template_list(
-            "ASSETBROWSER_UL_metadata_tags",
-            "asset_tags",
-            asset_metadata,
-            "tags",
-            asset_metadata,
-            "active_tag",
-            rows=4,
+            "ASSETBROWSER_UL_metadata_tags", "asset_tags", asset_metadata, "tags",
+            asset_metadata, "active_tag", rows=4,
         )
 
         col = row.column(align=True)
@@ -1180,7 +1148,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
         layout.separator()
 
         sub = layout.column()
-        sub.operator_context = "EXEC_DEFAULT"
+        sub.operator_context = 'EXEC_DEFAULT'
         sub.operator(
             "asset.clear", text="Clear Asset", icon="CLEAR"
         ).set_fake_user = False
