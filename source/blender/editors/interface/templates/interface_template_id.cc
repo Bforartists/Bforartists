@@ -1039,9 +1039,9 @@ static void template_ID(const bContext *C,
   // lb = template_ui->idlb;
 
   /* Allow operators to take the ID from context. */
-  uiLayoutSetContextPointer(layout, "id", &idptr);
+  layout->context_ptr_set("id", &idptr);
 
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
   UI_block_align_begin(block);
 
   if (idptr.type) {
@@ -1444,7 +1444,7 @@ static void template_ID_tabs(const bContext *C,
 
   const int but_height = UI_UNIT_Y * 1.1;
 
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
   const uiStyle *style = UI_style_get_dpi();
 
   for (ID *id : BKE_id_ordered_list(template_id.idlb)) {
@@ -1818,7 +1818,7 @@ void uiTemplateAnyID(uiLayout *layout,
   /* HACK: special group just for the enum,
    * otherwise we get ugly layout with text included too... */
   uiLayout *sub = &row->row(true);
-  uiLayoutSetAlignment(sub, UI_LAYOUT_ALIGN_LEFT);
+  sub->alignment_set(blender::ui::LayoutAlign::Left);
 
   sub->prop(ptr, propType, 0, 0, UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
 
@@ -1827,7 +1827,7 @@ void uiTemplateAnyID(uiLayout *layout,
   /* HACK: special group to counteract the effects of the previous enum,
    * which now pushes everything too far right. */
   sub = &row->row(true);
-  uiLayoutSetAlignment(sub, UI_LAYOUT_ALIGN_EXPAND);
+  sub->alignment_set(blender::ui::LayoutAlign::Expand);
 
   sub->prop(ptr, propID, 0, 0, UI_ITEM_NONE, "", ICON_NONE);
 }

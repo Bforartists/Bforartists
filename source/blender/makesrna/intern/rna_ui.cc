@@ -1377,22 +1377,22 @@ static void rna_UILayout_active_set(PointerRNA *ptr, bool value)
 
 static bool rna_UILayout_active_default_get(PointerRNA *ptr)
 {
-  return uiLayoutGetActiveDefault(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->active_default();
 }
 
 static void rna_UILayout_active_default_set(PointerRNA *ptr, bool value)
 {
-  uiLayoutSetActiveDefault(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->active_default_set(value);
 }
 
 static bool rna_UILayout_activate_init_get(PointerRNA *ptr)
 {
-  return uiLayoutGetActivateInit(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->activate_init();
 }
 
 static void rna_UILayout_activate_init_set(PointerRNA *ptr, bool value)
 {
-  uiLayoutSetActivateInit(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->activate_init_set(value);
 }
 
 static bool rna_UILayout_alert_get(PointerRNA *ptr)
@@ -1417,12 +1417,12 @@ static int rna_UILayout_op_context_get(PointerRNA *ptr)
 
 static bool rna_UILayout_enabled_get(PointerRNA *ptr)
 {
-  return uiLayoutGetEnabled(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->enabled();
 }
 
 static void rna_UILayout_enabled_set(PointerRNA *ptr, bool value)
 {
-  uiLayoutSetEnabled(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->enabled_set(value);
 }
 
 #  if 0
@@ -1435,26 +1435,16 @@ static void rna_UILayout_red_alert_set(PointerRNA *ptr, bool value)
 {
   uiLayoutSetRedAlert(static_cast<uiLayout *>(ptr->data), value);
 }
-
-static bool rna_UILayout_keep_aspect_get(PointerRNA *ptr)
-{
-  return uiLayoutGetKeepAspect(static_cast<uiLayout *>(ptr->data));
-}
-
-static void rna_UILayout_keep_aspect_set(PointerRNA *ptr, int value)
-{
-  uiLayoutSetKeepAspect(static_cast<uiLayout *>(ptr->data), value);
-}
 #  endif
 
 static int rna_UILayout_alignment_get(PointerRNA *ptr)
 {
-  return uiLayoutGetAlignment(static_cast<uiLayout *>(ptr->data));
+  return int(static_cast<uiLayout *>(ptr->data)->alignment());
 }
 
 static void rna_UILayout_alignment_set(PointerRNA *ptr, int value)
 {
-  uiLayoutSetAlignment(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->alignment_set(blender::ui::LayoutAlign(value));
 }
 
 static int rna_UILayout_direction_get(PointerRNA *ptr)
@@ -1658,10 +1648,10 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   PropertyRNA *prop;
 
   static const EnumPropertyItem alignment_items[] = {
-      {UI_LAYOUT_ALIGN_EXPAND, "EXPAND", 0, "Expand", ""},
-      {UI_LAYOUT_ALIGN_LEFT, "LEFT", 0, "Left", ""},
-      {UI_LAYOUT_ALIGN_CENTER, "CENTER", 0, "Center", ""},
-      {UI_LAYOUT_ALIGN_RIGHT, "RIGHT", 0, "Right", ""},
+      {int(blender::ui::LayoutAlign::Expand), "EXPAND", 0, "Expand", ""},
+      {int(blender::ui::LayoutAlign::Left), "LEFT", 0, "Left", ""},
+      {int(blender::ui::LayoutAlign::Center), "CENTER", 0, "Center", ""},
+      {int(blender::ui::LayoutAlign::Right), "RIGHT", 0, "Right", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1748,12 +1738,6 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, direction_items);
   RNA_def_property_enum_funcs(prop, "rna_UILayout_direction_get", nullptr, nullptr);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-
-#  if 0
-  prop = RNA_def_property(srna, "keep_aspect", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_funcs(
-      prop, "rna_UILayout_keep_aspect_get", "rna_UILayout_keep_aspect_set");
-#  endif
 
   prop = RNA_def_property(srna, "scale_x", PROP_FLOAT, PROP_UNSIGNED);
   RNA_def_property_float_funcs(

@@ -6303,51 +6303,6 @@ static void def_cmp_filter(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
-static void def_cmp_map_value(BlenderRNA * /*brna*/, StructRNA *srna)
-{
-  PropertyRNA *prop;
-
-  RNA_def_struct_sdna_from(srna, "TexMapping", "storage");
-
-  prop = RNA_def_property(srna, "offset", PROP_FLOAT, PROP_NONE);
-  RNA_def_property_float_sdna(prop, nullptr, "loc");
-  RNA_def_property_array(prop, 1);
-  RNA_def_property_range(prop, -1000.0f, 1000.0f);
-  RNA_def_property_ui_text(prop, "Offset", "");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-
-  prop = RNA_def_property(srna, "size", PROP_FLOAT, PROP_NONE);
-  RNA_def_property_float_sdna(prop, nullptr, "size");
-  RNA_def_property_array(prop, 1);
-  RNA_def_property_range(prop, -1000.0f, 1000.0f);
-  RNA_def_property_ui_text(prop, "Size", "");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-
-  prop = RNA_def_property(srna, "use_min", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", TEXMAP_CLIP_MIN);
-  RNA_def_property_ui_text(prop, "Use Minimum", "");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-
-  prop = RNA_def_property(srna, "use_max", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", TEXMAP_CLIP_MAX);
-  RNA_def_property_ui_text(prop, "Use Maximum", "");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-
-  prop = RNA_def_property(srna, "min", PROP_FLOAT, PROP_NONE);
-  RNA_def_property_float_sdna(prop, nullptr, "min");
-  RNA_def_property_array(prop, 1);
-  RNA_def_property_range(prop, -1000.0f, 1000.0f);
-  RNA_def_property_ui_text(prop, "Minimum", "");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-
-  prop = RNA_def_property(srna, "max", PROP_FLOAT, PROP_NONE);
-  RNA_def_property_float_sdna(prop, nullptr, "max");
-  RNA_def_property_array(prop, 1);
-  RNA_def_property_range(prop, -1000.0f, 1000.0f);
-  RNA_def_property_ui_text(prop, "Maximum", "");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-}
-
 static void def_cmp_set_alpha(BlenderRNA * /*brna*/, StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -6946,15 +6901,10 @@ static void def_cmp_double_edge_mask(BlenderRNA * /*brna*/, StructRNA *srna)
 
 static void def_cmp_map_uv(BlenderRNA * /*brna*/, StructRNA *srna)
 {
-  static const EnumPropertyItem filter_type_items[] = {
-      {CMP_NODE_MAP_UV_FILTERING_NEAREST, "NEAREST", 0, "Nearest", ""},
-      {CMP_NODE_MAP_UV_FILTERING_ANISOTROPIC, "ANISOTROPIC", 0, "Anisotropic", ""},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
 
   PropertyRNA *prop = RNA_def_property(srna, "filter_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "custom2");
-  RNA_def_property_enum_items(prop, filter_type_items);
+  RNA_def_property_enum_items(prop, cmp_interpolation_items);
   RNA_def_property_ui_text(prop, "Filter Type", "");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_NODETREE);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
@@ -10554,8 +10504,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeCameraData", nullptr, ICON_CAMERA_DATA);
   define(brna, "ShaderNode", "ShaderNodeClamp", def_clamp, ICON_NODE_CLAMP);
   define(brna, "ShaderNode", "ShaderNodeCombineColor", def_sh_combsep_color, ICON_COMBINE_COLOR);
-  define(brna, "ShaderNode", "ShaderNodeCombineHSV", nullptr, ICON_NODE_COMBINEHSV);
-  define(brna, "ShaderNode", "ShaderNodeCombineRGB", nullptr, ICON_NODE_COMBINERGB);
   define(brna, "ShaderNode", "ShaderNodeCombineXYZ", nullptr, ICON_NODE_COMBINEXYZ);
   define(brna, "ShaderNode", "ShaderNodeDisplacement", def_sh_displacement, ICON_MOD_DISPLACE);
   define(brna, "ShaderNode", "ShaderNodeEeveeSpecular", nullptr, ICON_NODE_GLOSSYSHADER);
@@ -10647,7 +10595,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeColorSpill", def_cmp_color_spill, ICON_NODE_SPILL);
   define(brna, "CompositorNode", "CompositorNodeCombHSVA", nullptr, ICON_NODE_COMBINEHSV);
   define(brna, "CompositorNode", "CompositorNodeCombineColor", def_cmp_combsep_color, ICON_COMBINE_COLOR);
-  define(brna, "CompositorNode", "CompositorNodeCombineXYZ", nullptr, ICON_NODE_COMBINEXYZ);
   define(brna, "CompositorNode", "CompositorNodeCombRGBA", nullptr, ICON_NODE_COMBINERGB);
   define(brna, "CompositorNode", "CompositorNodeCombYCCA", def_cmp_ycc, ICON_NODE_COMBINEYCBCRA);
   define(brna, "CompositorNode", "CompositorNodeCombYUVA", nullptr, ICON_NODE_COMBINEYUVA);
@@ -10658,7 +10605,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeCryptomatte", def_cmp_cryptomatte_legacy, ICON_CRYPTOMATTE);
   define(brna, "CompositorNode", "CompositorNodeCryptomatteV2", def_cmp_cryptomatte, ICON_CRYPTOMATTE);
   define(brna, "CompositorNode", "CompositorNodeCurveRGB", def_rgb_curve, ICON_NODE_RGBCURVE);
-  define(brna, "CompositorNode", "CompositorNodeCurveVec", def_vector_curve, ICON_NODE_VECTOR);
   define(brna, "CompositorNode", "CompositorNodeDBlur", nullptr, ICON_NODE_DIRECITONALBLUR);
   define(brna, "CompositorNode", "CompositorNodeDefocus", def_cmp_defocus, ICON_NODE_DEFOCUS);
   define(brna, "CompositorNode", "CompositorNodeDenoise", def_cmp_denoise, ICON_NODE_DENOISE);
@@ -10688,12 +10634,9 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeImageInfo", nullptr, ICON_NONE);
   define(brna, "CompositorNode", "CompositorNodeLevels", def_cmp_levels, ICON_LEVELS);
   define(brna, "CompositorNode", "CompositorNodeLumaMatte", nullptr, ICON_NODE_LUMINANCE);
-  define(brna, "CompositorNode", "CompositorNodeMapRange", nullptr, ICON_NODE_MAP_RANGE);
   define(brna, "CompositorNode", "CompositorNodeMapUV", def_cmp_map_uv, ICON_GROUP_UVS);
   define(brna, "CompositorNode", "CompositorNodeMapValue", def_cmp_map_value, ICON_NODE_VALUE);
   define(brna, "CompositorNode", "CompositorNodeMask", def_cmp_mask, ICON_MOD_MASK);
-  define(brna, "CompositorNode", "CompositorNodeMath", def_math, ICON_NODE_MATH);
-  define(brna, "CompositorNode", "CompositorNodeMixRGB", def_mix_rgb, ICON_NODE_MIXRGB);
   define(brna, "CompositorNode", "CompositorNodeMovieClip", def_cmp_movieclip, ICON_FILE_MOVIE);
   define(brna, "CompositorNode", "CompositorNodeMovieDistortion", def_cmp_moviedistortion, ICON_NODE_MOVIEDISTORT);
   define(brna, "CompositorNode", "CompositorNodeNormal", nullptr, ICON_RECALC_NORMALS);

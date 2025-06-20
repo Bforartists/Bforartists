@@ -245,6 +245,11 @@ class NODE_HT_header(Header):
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
+            layout.separator_spacer()
+            row = layout.row()
+            row.enabled = not snode.pin
+            row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
+
         elif snode.tree_type == 'GeometryNodeTree':
 			#BFA - Editor Switchers
             row = layout.row(align = True)

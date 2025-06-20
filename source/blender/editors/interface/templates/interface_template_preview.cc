@@ -118,10 +118,9 @@ void uiTemplatePreview(uiLayout *layout,
   }
 
   /* layout */
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
   uiLayout *row = &layout->row(false);
   uiLayout *col = &row->column(false);
-  uiLayoutSetKeepAspect(col, true);
 
   /* add preview */
   uiDefBut(

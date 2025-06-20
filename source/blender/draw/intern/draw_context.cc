@@ -106,11 +106,6 @@
 
 thread_local DRWContext *DRWContext::g_context = nullptr;
 
-DRWContext &drw_get()
-{
-  return DRWContext::get_active();
-}
-
 DRWContext::DRWContext(Mode mode_,
                        Depsgraph *depsgraph,
                        const int2 size,
@@ -368,18 +363,6 @@ bool DRW_object_is_visible_psys_in_active_context(const Object *object, const Pa
     }
   }
   return true;
-}
-
-template<> Mesh &DRW_object_get_data_for_drawing(const Object &object)
-{
-  /* For drawing we want either the base mesh if GPU subdivision is enabled, or the
-   * tessellated mesh if GPU subdivision is disabled. */
-  BLI_assert(object.type == OB_MESH);
-  Mesh &mesh = *static_cast<Mesh *>(object.data);
-  if (BKE_subsurf_modifier_has_gpu_subdiv(&mesh)) {
-    return mesh;
-  }
-  return *BKE_mesh_wrapper_ensure_subdivision(&mesh);
 }
 
 const Mesh *DRW_object_get_editmesh_cage_for_drawing(const Object &object)
@@ -1641,7 +1624,7 @@ static void draw_select_framebuffer_depth_only_setup(const int size[2])
   if (g_select_buffer.texture_depth == nullptr) {
     eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_ATTACHMENT;
     g_select_buffer.texture_depth = GPU_texture_create_2d(
-        "select_depth", size[0], size[1], 1, GPU_DEPTH_COMPONENT24, usage, nullptr);
+        "select_depth", size[0], size[1], 1, GPU_DEPTH_COMPONENT32F, usage, nullptr);
 
     GPU_framebuffer_texture_attach(
         g_select_buffer.framebuffer_depth_only, g_select_buffer.texture_depth, 0, 0);
@@ -1987,10 +1970,6 @@ bool DRWContext::is_viewport_compositor_enabled() const
   }
 
   if (!(this->v3d->shading.type >= OB_MATERIAL)) {
-    return false;
-  }
-
-  if (!this->scene->use_nodes) {
     return false;
   }
 

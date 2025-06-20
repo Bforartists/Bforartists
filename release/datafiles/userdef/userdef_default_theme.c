@@ -299,6 +299,7 @@ const bTheme U_theme_default = {
     .panel_header = RGBA(0x3d3d3dff),
     .panel_back = RGBA(0x3d3d3dff),
     .panel_sub_back = RGBA(0x0000001f),
+    .panel_outline = RGBA(0xffffff11),
   },
   .space_properties = {
     .back = RGBA(0x40404000),
@@ -1010,6 +1011,10 @@ const bTheme U_theme_default = {
     .active_object = RGBA(0xffaf29ff),
     .edited_object = RGBA(0x00806266),
     .row_alternate = RGBA(0xffffff06),
+  },
+  .asset_shelf = {
+    .header_back = RGBA(0x1d1d1dff),
+    .back = RGBA(0x303030ff),
   },
   .tarm = {
     {
