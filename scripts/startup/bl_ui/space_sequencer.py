@@ -1009,16 +1009,10 @@ class SEQUENCER_MT_change(Menu):
                 strip_type = strip.type
                 data_strips = ['IMAGE', 'MOVIE', 'SOUND']
                 effect_strips = [
-                    'GAUSSIAN_BLUR',
-                    'SPEED',
-                    'GLOW',
-                    'TRANSFORM',
-                    'MULTICAM',
-                    'ADD',
-                    'SUBRACT',
-                    'ALPHA_OVER',
-                    'ALPHA_UNDER',
-                    'COLORMIX',
+                    'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
+                    'GAMMA_CROSS', 'MULTIPLY', 'WIPE', 'GLOW',
+                    'TRANSFORM', 'SPEED', 'MULTICAM', 'ADJUSTMENT',
+                    'GAUSSIAN_BLUR'
                 ]
 
                 if strip_type in data_strips:

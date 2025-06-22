@@ -300,6 +300,8 @@ const bTheme U_theme_default = {
     .panel_back = RGBA(0x3d3d3dff),
     .panel_sub_back = RGBA(0x0000001f),
     .panel_outline = RGBA(0xffffff11),
+    .panel_title = RGBA(0xe6e6e600),
+    .panel_text = RGBA(0xe6e6e600),
   },
   .space_properties = {
     .back = RGBA(0x40404000),
