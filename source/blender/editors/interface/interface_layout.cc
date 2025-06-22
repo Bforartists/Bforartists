@@ -6012,7 +6012,7 @@ void UI_menutype_draw(bContext *C, MenuType *mt, uiLayout *layout)
     printf("%s: opening menu \"%s\"\n", __func__, mt->idname);
   }
 
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
   // bfa - disable_search_on_keypress
   if (bool(mt->flag & MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
     UI_block_flag_enable(block, UI_BLOCK_NO_ACCELERATOR_KEYS);

@@ -10635,7 +10635,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeLevels", def_cmp_levels, ICON_LEVELS);
   define(brna, "CompositorNode", "CompositorNodeLumaMatte", nullptr, ICON_NODE_LUMINANCE);
   define(brna, "CompositorNode", "CompositorNodeMapUV", def_cmp_map_uv, ICON_GROUP_UVS);
-  define(brna, "CompositorNode", "CompositorNodeMapValue", def_cmp_map_value, ICON_NODE_VALUE);
   define(brna, "CompositorNode", "CompositorNodeMask", def_cmp_mask, ICON_MOD_MASK);
   define(brna, "CompositorNode", "CompositorNodeMovieClip", def_cmp_movieclip, ICON_FILE_MOVIE);
   define(brna, "CompositorNode", "CompositorNodeMovieDistortion", def_cmp_moviedistortion, ICON_NODE_MOVIEDISTORT);

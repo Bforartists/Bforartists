@@ -243,6 +243,9 @@ class TimelinePanelButtons:
     bl_space_type = 'DOPESHEET_EDITOR'
     bl_region_type = 'UI'
 
+    @staticmethod
+    def has_timeline(context):
+        return context.space_data.mode == 'TIMELINE'
 
 class TIME_PT_playback(TimelinePanelButtons, Panel):
     bl_label = "Playback"

@@ -210,13 +210,6 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(tui.editor_outline_active);
   }
 
-  /* start bfa asset shelf versioning */
-  if (!USER_VERSION_ATLEAST(403, 0)) {
-    FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.back);
-    FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.header_back);
-  }
-  /* end bfa */
-
   if (!USER_VERSION_ATLEAST(404, 7)) {
     if (btheme->space_view3d.face_front[0] == 0 && btheme->space_view3d.face_front[1] == 0 &&
         btheme->space_view3d.face_front[2] == 0xFF && btheme->space_view3d.face_front[3] == 0xB3)

@@ -635,7 +635,7 @@ static void v3d_editvertex_buts(
     }
 
     col = &row->column(true);
-    subblock = uiLayoutGetBlock(col);
+    subblock = col->block();
     UI_block_layout_set_current(subblock, col);
 
     /* Should be no need to translate these. */
@@ -709,7 +709,7 @@ static void v3d_editvertex_buts(
 
     /* bfa */
     row = &layout->row(true); /* bfa - use high level UI when possible */
-    subblock = uiLayoutGetBlock(row);
+    subblock = row->block();
     UI_block_layout_set_current(subblock, row);
 
     uiDefButBitS(subblock,
@@ -757,7 +757,7 @@ static void v3d_editvertex_buts(
         col->label(IFACE_("Crease"), ICON_NONE); /* -bfa move text to left of slider */
 
         col = &row->column(false);
-        subblock = uiLayoutGetBlock(col);
+        subblock = col->block();
         UI_block_layout_set_current(subblock, col);
 
         /* bfa */
@@ -802,7 +802,7 @@ static void v3d_editvertex_buts(
         col->label(IFACE_("Radius Y"), ICON_NONE);
 
         col = &row->column(true);
-        subblock = uiLayoutGetBlock(col);
+        subblock = col->block();
 
         /* bfa */
         but = uiDefButF(subblock,
@@ -849,7 +849,7 @@ static void v3d_editvertex_buts(
         col->label(IFACE_("Crease"), ICON_NONE);
 
         col = &row->column(false);
-        subblock = uiLayoutGetBlock(col);
+        subblock = col->block();
         UI_block_layout_set_current(subblock, col);
 
         /* customdata layer added on demand */
@@ -899,7 +899,7 @@ static void v3d_editvertex_buts(
       col->label(totcurvedata == 1 ? IFACE_("Tilt") : IFACE_("Mean Tilt"), ICON_NONE);
 
       col = &row->column(false);
-      subblock = uiLayoutGetBlock(col);
+      subblock = col->block();
       UI_block_layout_set_current(subblock, col);
 
       if (totcurvedata == 1) {
@@ -1017,7 +1017,7 @@ static void v3d_editvertex_buts(
       col->label(totlattdata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
 
       col = &row->column(false);
-      subblock = uiLayoutGetBlock(col);
+      subblock = col->block();
       UI_block_layout_set_current(subblock, col);
 
       if (totlattdata == 1) {

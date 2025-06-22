@@ -539,7 +539,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
 	/*end bfa */
     UI_block_align_begin(block);
 
@@ -590,7 +590,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
     UI_block_align_begin(block);
 	/*end bfa */
 
@@ -640,7 +640,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Height"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
     UI_block_align_begin(block);
 	/*end bfa */
 
@@ -691,7 +691,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
     UI_block_align_begin(block);
 	/*end bfa */
 
@@ -741,7 +741,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Height"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
     UI_block_align_begin(block);
     /*bfa end*/
 

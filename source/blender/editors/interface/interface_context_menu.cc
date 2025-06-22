@@ -1363,7 +1363,7 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
   if (region->v2d.flag & V2D_IS_INIT) {
     layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
     layout->separator();
-    uiBlock *block = uiLayoutGetBlock(layout);
+    uiBlock *block = layout->block();
     uiBut *but = block->buttons.last().get();
     but->flag |= UI_BUT_HAS_SEP_CHAR;
   }
