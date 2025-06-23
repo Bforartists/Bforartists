@@ -3758,7 +3758,8 @@ int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_
 }
 /* BFA - End*/
 
-static void outliner_draw_highlights(const ARegion *region,
+static void outliner_draw_highlights(uint pos,
+                                     const ARegion *region,
                                      const SpaceOutliner *space_outliner,
                                      const float col_selection[4],
                                      const float col_active[4],
@@ -3869,36 +3870,41 @@ static void outliner_draw_highlights(const ARegion *region,
 
     /* Highlights. */
     if (tselem->flag & (TSE_DRAG_ANY | TSE_HIGHLIGHTED | TSE_SEARCHMATCH)) {
+      const int end_x = int(region->v2d.cur.xmax);
+
       if (tselem->flag & TSE_DRAG_ANY) {
         /* Drag and drop highlight. */
-        float col_outline[4];
-        UI_GetThemeColorBlend4f(TH_TEXT, TH_BACK, 0.4f, col_outline);
+        float col[4];
+        UI_GetThemeColorShade4fv(TH_BACK, -40, col);
 
         if (tselem->flag & TSE_DRAG_BEFORE) {
-          rect.ymax += (1.0f * UI_SCALE_FAC) + (1.0f * U.pixelsize);
-          rect.ymin = rect.ymax - (2.0f * U.pixelsize);
-          UI_draw_roundbox_4fv(&rect, true, 0.0f, col_outline);
+          immUniformColor4fv(col);
+          immRectf(pos,
+                   start_x,
+                   start_y + UI_UNIT_Y - U.pixelsize,
+                   end_x,
+                   start_y + UI_UNIT_Y + U.pixelsize);
         }
         else if (tselem->flag & TSE_DRAG_AFTER) {
-          rect.ymin -= (1.0f * UI_SCALE_FAC) + (1.0f * U.pixelsize);
-          rect.ymax = rect.ymin + (2.0f * U.pixelsize);
-          UI_draw_roundbox_4fv(&rect, true, 0.0f, col_outline);
+          immUniformColor4fv(col);
+          immRectf(pos, start_x, start_y - U.pixelsize, end_x, start_y + U.pixelsize);
         }
         else {
-          float col_bg[4];
-          UI_GetThemeColorShade4fv(TH_BACK, 40, col_bg);
-          UI_draw_roundbox_4fv_ex(&rect, col_bg, nullptr, 1.0f, col_outline, U.pixelsize, radius);
+          immUniformColor3fvAlpha(col, col[3] * 0.5f);
+          immRectf(pos, start_x, start_y, end_x, start_y + UI_UNIT_Y);
         }
       }
       else {
         if (is_searching && (tselem->flag & TSE_SEARCHMATCH)) {
           /* Search match highlights. We don't expand items when searching in the data-blocks,
            * but we still want to highlight any filter matches. */
-          UI_draw_roundbox_4fv(&rect, true, radius, col_searchmatch);
+          immUniformColor4fv(col_searchmatch);
+          immRectf(pos, start_x, start_y, end_x, start_y + UI_UNIT_Y);
         }
         else if (tselem->flag & TSE_HIGHLIGHTED) {
           /* Mouse hover highlight. */
-          UI_draw_roundbox_4fv(&rect, true, radius, col_highlight);
+          immUniformColor4fv(col_highlight);
+          immRectf(pos, 0, start_y, end_x, start_y + UI_UNIT_Y);
         }
       }
     }
@@ -3924,7 +3930,11 @@ static void outliner_draw_highlights(ARegion *region,
   col_searchmatch[3] = 0.5f;
 
   GPU_blend(GPU_BLEND_ALPHA);
-  outliner_draw_highlights(region,
+  GPUVertFormat *format = immVertexFormat();
+  uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+  outliner_draw_highlights(pos,
+                           region,
                            space_outliner,
                            col_selection,
                            col_active,
@@ -3933,6 +3943,7 @@ static void outliner_draw_highlights(ARegion *region,
                            col_collection, /* BFA */
                            startx,
                            starty);
+  immUnbindProgram();
   GPU_blend(GPU_BLEND_NONE);
 }
 
