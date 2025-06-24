@@ -14,6 +14,7 @@
 #include "BKE_node.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_view2d.hh"
 
 struct ARegion;
@@ -441,5 +442,9 @@ void invoke_node_link_drag_add_menu(bContext &C,
 MenuType add_catalog_assets_menu_type();
 MenuType add_unassigned_assets_menu_type();
 MenuType add_root_catalogs_menu_type();
+
+/* `node_sync_sockets.cc` */
+
+void NODE_OT_sockets_sync(wmOperatorType *ot);
 
 }  // namespace blender::ed::space_node

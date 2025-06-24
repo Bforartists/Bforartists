@@ -11,7 +11,7 @@
 
 #include "RNA_access.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "interface_intern.hh"
 
 using blender::StringRef;
@@ -57,7 +57,7 @@ void uiTemplateComponentMenu(uiLayout *layout,
   args->ptr = *ptr;
   STRNCPY(args->propname, propname.c_str());
 
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
   UI_block_align_begin(block);
 
   uiBut *but = uiDefBlockButN(block,

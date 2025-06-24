@@ -34,6 +34,7 @@
 #include "ED_screen.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -119,7 +120,7 @@ void uiTemplateMovieClip(uiLayout *layout,
   PointerRNA clipptr = RNA_property_pointer_get(ptr, prop);
   MovieClip *clip = static_cast<MovieClip *>(clipptr.data);
 
-  uiLayoutSetContextPointer(layout, "edit_movieclip", &clipptr);
+  layout->context_ptr_set("edit_movieclip", &clipptr);
 
   if (!compact) {
     uiTemplateID(layout, C, ptr, propname, nullptr, "CLIP_OT_open", nullptr);
@@ -127,7 +128,7 @@ void uiTemplateMovieClip(uiLayout *layout,
 
   if (clip) {
     uiLayout *row = &layout->row(false);
-    uiBlock *block = uiLayoutGetBlock(row);
+    uiBlock *block = row->block();
     uiDefBut(block, UI_BTYPE_LABEL, 0, IFACE_("File Path:"), 0, 19, 145, 19, nullptr, 0, 0, "");
 
     row = &layout->row(false);
@@ -178,7 +179,7 @@ void uiTemplateTrack(uiLayout *layout, PointerRNA *ptr, const StringRefNull prop
   }
 
   uiLayout *col = &layout->column(true);
-  uiBlock *block = uiLayoutGetBlock(col);
+  uiBlock *block = col->block();
 
   uiDefBut(block,
            UI_BTYPE_TRACK_PREVIEW,
@@ -419,7 +420,7 @@ void uiTemplateMarker(uiLayout *layout,
   cb->framenr = user->framenr;
 
   if (compact) {
-    uiBlock *block = uiLayoutGetBlock(layout);
+    uiBlock *block = layout->block();
 
     blender::StringRef tip;
     if (cb->marker_flag & MARKER_DISABLED) {
@@ -539,7 +540,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
 	/*end bfa */
     UI_block_align_begin(block);
 
@@ -590,7 +591,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
     UI_block_align_begin(block);
 	/*end bfa */
 
@@ -640,7 +641,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Height"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
     UI_block_align_begin(block);
 	/*end bfa */
 
@@ -691,7 +692,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Y"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
     UI_block_align_begin(block);
 	/*end bfa */
 
@@ -741,7 +742,7 @@ void uiTemplateMarker(uiLayout *layout,
     row->label(IFACE_("Height"), ICON_NONE);
 
     vcol = &row->column(true);
-    block = uiLayoutGetBlock(vcol);
+    block = vcol->block();
     UI_block_align_begin(block);
     /*bfa end*/
 
@@ -813,7 +814,7 @@ void uiTemplateMovieclipInformation(uiLayout *layout,
   MovieClipUser *user = static_cast<MovieClipUser *>(userptr->data);
 
   uiLayout *col = &layout->column(false);
-  uiLayoutSetAlignment(col, UI_LAYOUT_ALIGN_RIGHT);
+  col->alignment_set(blender::ui::LayoutAlign::Right);
 
   /* NOTE: Put the frame to cache. If the panel is drawn, the display will also be shown, as well
    * as metadata panel. So if the cache is skipped here it is not really a memory saver, but

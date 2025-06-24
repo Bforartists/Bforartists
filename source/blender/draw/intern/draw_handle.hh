@@ -115,7 +115,7 @@ class ObjectRef {
   Object *const object;
 
   ObjectRef(DEGObjectIterData &iter_data, Object *ob);
-  ObjectRef(Object *ob);
+  explicit ObjectRef(Object *ob);
 
   /* Is the object coming from a Dupli system. */
   bool is_dupli() const
@@ -156,8 +156,7 @@ class ObjectRef {
 
   int recalc_flags(uint64_t last_update) const
   {
-    /* TODO: There should also be a way to get the the min last_update for all objects in the
-     * range.  */
+    /* TODO: There should also be a way to get the min last_update for all objects in the range. */
     auto get_flags = [&](const ObjectRuntimeHandle &runtime) {
       int flags = 0;
       SET_FLAG_FROM_TEST(flags, runtime.last_update_transform > last_update, ID_RECALC_TRANSFORM);

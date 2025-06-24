@@ -205,6 +205,10 @@ typedef struct ThemeUI {
   unsigned char panel_header[4];
   unsigned char panel_back[4];
   unsigned char panel_sub_back[4];
+  unsigned char panel_outline[4];
+  unsigned char panel_title[4];
+  unsigned char panel_text[4];
+  char _pad2[4];
 
 } ThemeUI;
 
@@ -244,10 +248,7 @@ typedef struct ThemeSpace {
   /* button/tool regions */
   /** Region background. */
   unsigned char button[4];
-  /** Panel title. */
-  unsigned char button_title[4];
-  unsigned char button_text[4];
-  unsigned char button_text_hi[4];
+  unsigned char _pad3[4];
 
   /* List-view regions. */
   /** Region background. */
@@ -256,14 +257,6 @@ typedef struct ThemeSpace {
   unsigned char list_title[4];
   unsigned char list_text[4];
   unsigned char list_text_hi[4];
-
-  /* navigation bar regions */
-  /** Region background. */
-  unsigned char navigation_bar[4];
-  /** Region background. */
-  unsigned char execution_buts[4];
-
-  ThemeAssetShelf asset_shelf;
 
   unsigned char shade1[4];
   unsigned char shade2[4];
@@ -520,6 +513,8 @@ typedef struct bTheme {
   ThemeSpace space_topbar;
   ThemeSpace space_statusbar;
   ThemeSpace space_spreadsheet;
+
+  ThemeAssetShelf asset_shelf;
 
   /* 20 sets of bone colors for this theme */
   ThemeWireColor tarm[20];

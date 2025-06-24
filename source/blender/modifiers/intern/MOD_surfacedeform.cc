@@ -25,7 +25,7 @@
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLO_read_write.hh"
@@ -1598,7 +1598,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   col = &layout->column(false);
-  uiLayoutSetEnabled(col, !is_bound);
+  col->enabled_set(!is_bound);
   col->active_set(!is_bound && RNA_string_length(ptr, "vertex_group") != 0);
 
   /* bfa - our layout */

@@ -25,7 +25,7 @@
 
 #include "WM_api.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "interface_intern.hh"
 
 /* we may want to make this optional, disable for now. */
@@ -66,7 +66,7 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
     const eButLabelAlign label_align,
     int layout_flags)
 {
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
   eAutoPropButsReturn return_info = eAutoPropButsReturn(0);
 
   if (!op->properties) {
@@ -155,7 +155,7 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
     uiLayout *col; /* needed to avoid alignment errors with previous buttons */
 
     col = &layout->column(false);
-    block = uiLayoutGetBlock(col);
+    block = col->block();
     but = uiDefIconTextBut(block,
                            UI_BTYPE_BUT,
                            0,
@@ -289,7 +289,7 @@ void uiTemplateOperatorPropertyButs(
 void uiTemplateOperatorRedoProperties(uiLayout *layout, const bContext *C)
 {
   wmOperator *op = WM_operator_last_redo(C);
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
 
   if (op == nullptr) {
     return;
@@ -448,7 +448,7 @@ void uiTemplateCollectionExporters(uiLayout *layout, bContext *C)
 
   col = &layout->column(true);
   col->op("COLLECTION_OT_export_all", std::nullopt, ICON_EXPORT);
-  uiLayoutSetEnabled(col, !BLI_listbase_is_empty(exporters));
+  col->enabled_set(!BLI_listbase_is_empty(exporters));
 
   /* Draw the active exporter. */
   CollectionExport *data = (CollectionExport *)BLI_findlink(exporters, index);
@@ -479,7 +479,7 @@ void uiTemplateCollectionExporters(uiLayout *layout, bContext *C)
   PointerRNA properties = RNA_pointer_create_discrete(
       &collection->id, ot->srna, data->export_properties);
   wmOperator *op = minimal_operator_create(ot, &properties);
-  UI_block_set_active_operator(uiLayoutGetBlock(panel.header), op, true);
+  UI_block_set_active_operator(panel.header->block(), op, true);
 
   /* Draw panel header and contents. */
   std::string label(fh->label);

@@ -3871,47 +3871,40 @@ static void outliner_draw_highlights(uint pos,
     /* Highlights. */
     if (tselem->flag & (TSE_DRAG_ANY | TSE_HIGHLIGHTED | TSE_SEARCHMATCH)) {
       const int end_x = int(region->v2d.cur.xmax);
-      const float radius = UI_UNIT_Y / 4.0f;
-      rctf rect;
-      BLI_rctf_init(&rect, start_x, end_x, start_y, start_y + UI_UNIT_Y);
 
       if (tselem->flag & TSE_DRAG_ANY) {
         /* Drag and drop highlight. */
-        float col_outline[4];
-        UI_GetThemeColorBlend4f(TH_TEXT, TH_BACK, 0.4f, col_outline);
+        float col[4];
+        UI_GetThemeColorShade4fv(TH_BACK, -40, col);
 
         if (tselem->flag & TSE_DRAG_BEFORE) {
-          GPU_blend(GPU_BLEND_ALPHA);
-          immUniformColor4fv(col_outline);
+          immUniformColor4fv(col);
           immRectf(pos,
                    start_x,
                    start_y + UI_UNIT_Y - U.pixelsize,
                    end_x,
                    start_y + UI_UNIT_Y + U.pixelsize);
-          GPU_blend(GPU_BLEND_NONE);
         }
         else if (tselem->flag & TSE_DRAG_AFTER) {
-          GPU_blend(GPU_BLEND_ALPHA);
-          immUniformColor4fv(col_outline);
+          immUniformColor4fv(col);
           immRectf(pos, start_x, start_y - U.pixelsize, end_x, start_y + U.pixelsize);
-          GPU_blend(GPU_BLEND_NONE);
         }
         else {
-          float col_bg[4];
-          UI_GetThemeColorShade4fv(TH_BACK, 40, col_bg);
-          UI_draw_roundbox_4fv(&rect, true, radius, col_bg);
-          UI_draw_roundbox_4fv(&rect, false, radius, col_outline);
+          immUniformColor3fvAlpha(col, col[3] * 0.5f);
+          immRectf(pos, start_x, start_y, end_x, start_y + UI_UNIT_Y);
         }
       }
       else {
         if (is_searching && (tselem->flag & TSE_SEARCHMATCH)) {
           /* Search match highlights. We don't expand items when searching in the data-blocks,
            * but we still want to highlight any filter matches. */
-          UI_draw_roundbox_4fv(&rect, true, radius, col_searchmatch);
+          immUniformColor4fv(col_searchmatch);
+          immRectf(pos, start_x, start_y, end_x, start_y + UI_UNIT_Y);
         }
         else if (tselem->flag & TSE_HIGHLIGHTED) {
           /* Mouse hover highlight. */
-          UI_draw_roundbox_4fv(&rect, true, radius, col_highlight);
+          immUniformColor4fv(col_highlight);
+          immRectf(pos, 0, start_y, end_x, start_y + UI_UNIT_Y);
         }
       }
     }

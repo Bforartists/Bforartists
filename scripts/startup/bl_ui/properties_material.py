@@ -35,16 +35,12 @@ class MATERIAL_UL_matslots(UIList):
         layout.context_pointer_set("id", ma)
         layout.context_pointer_set("material_slot", slot)
 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            if ma:
-                if bpy.context.preferences.disable_material_icon: # bfa - just show material icon when enabled.
-                    layout.prop(ma, "name", text="", emboss=False, icon="MATERIAL")
-                else:
-                    layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
+        if ma:
+            if bpy.context.preferences.disable_material_icon: # bfa - just show material icon when enabled.
+                layout.prop(ma, "name", text="", emboss=False, icon="MATERIAL")
             else:
-                layout.label(text="", icon_value=icon)
-        elif self.layout_type == 'GRID':
-            layout.alignment = 'CENTER'
+                layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
+        else:
             layout.label(text="", icon_value=icon)
 
 

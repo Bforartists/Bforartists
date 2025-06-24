@@ -114,8 +114,8 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
   }
 
   if (!USER_VERSION_ATLEAST(400, 14)) {
-    FROM_DEFAULT_V4_UCHAR(space_view3d.asset_shelf.back);
-    FROM_DEFAULT_V4_UCHAR(space_view3d.asset_shelf.header_back);
+    FROM_DEFAULT_V4_UCHAR(asset_shelf.back);
+    FROM_DEFAULT_V4_UCHAR(asset_shelf.header_back);
   }
 
   if (!USER_VERSION_ATLEAST(400, 24)) {
@@ -162,8 +162,8 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
   }
 
   if (!USER_VERSION_ATLEAST(402, 21)) {
-    FROM_DEFAULT_V4_UCHAR(space_image.asset_shelf.back);
-    FROM_DEFAULT_V4_UCHAR(space_image.asset_shelf.header_back);
+    FROM_DEFAULT_V4_UCHAR(asset_shelf.back);
+    FROM_DEFAULT_V4_UCHAR(asset_shelf.header_back);
   }
 
   if (!USER_VERSION_ATLEAST(402, 47)) {
@@ -209,13 +209,6 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(tui.editor_outline);
     FROM_DEFAULT_V4_UCHAR(tui.editor_outline_active);
   }
-
-  /* start bfa asset shelf versioning */
-  if (!USER_VERSION_ATLEAST(403, 0)) {
-    FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.back);
-    FROM_DEFAULT_V4_UCHAR(space_node.asset_shelf.header_back);
-  }
-  /* end bfa */
 
   if (!USER_VERSION_ATLEAST(404, 7)) {
     if (btheme->space_view3d.face_front[0] == 0 && btheme->space_view3d.face_front[1] == 0 &&
@@ -305,6 +298,47 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(tui.panel_header);
     FROM_DEFAULT_V4_UCHAR(tui.panel_back);
     FROM_DEFAULT_V4_UCHAR(tui.panel_sub_back);
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 12)) {
+    FROM_DEFAULT_V4_UCHAR(space_node.syntaxs);
+    FROM_DEFAULT_V4_UCHAR(space_node.syntaxb);
+    FROM_DEFAULT_V4_UCHAR(space_node.syntaxn);
+    FROM_DEFAULT_V4_UCHAR(space_node.syntaxv);
+    FROM_DEFAULT_V4_UCHAR(space_node.syntaxc);
+    FROM_DEFAULT_V4_UCHAR(space_node.syntaxd);
+    FROM_DEFAULT_V4_UCHAR(space_node.nodeclass_attribute);
+    FROM_DEFAULT_V4_UCHAR(space_node.nodeclass_filter);
+    FROM_DEFAULT_V4_UCHAR(space_node.nodeclass_geometry);
+    FROM_DEFAULT_V4_UCHAR(space_node.nodeclass_output);
+    FROM_DEFAULT_V4_UCHAR(space_node.nodeclass_script);
+    FROM_DEFAULT_V4_UCHAR(space_node.nodeclass_shader);
+    FROM_DEFAULT_V4_UCHAR(space_node.nodeclass_texture);
+    FROM_DEFAULT_V4_UCHAR(space_node.nodeclass_vector);
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 16)) {
+    FROM_DEFAULT_V4_UCHAR(asset_shelf.header_back);
+    FROM_DEFAULT_V4_UCHAR(asset_shelf.back);
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 18)) {
+    FROM_DEFAULT_V4_UCHAR(space_preferences.button);
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 19)) {
+    btheme->tui.menu_shadow_fac = U_theme_default.tui.menu_shadow_fac;
+    btheme->tui.menu_shadow_width = U_theme_default.tui.menu_shadow_width;
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 24)) {
+    FROM_DEFAULT_V4_UCHAR(tui.panel_title);
+    FROM_DEFAULT_V4_UCHAR(tui.panel_text);
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 25)) {
+    FROM_DEFAULT_V4_UCHAR(space_properties.tab_back);
+    FROM_DEFAULT_V4_UCHAR(space_properties.button);
   }
 
   /**

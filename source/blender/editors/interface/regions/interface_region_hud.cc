@@ -26,7 +26,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_view2d.hh"
 
 #include "BLT_translation.hh"
@@ -172,7 +172,7 @@ static void hud_panel_operator_redo_draw(const bContext *C, Panel *panel)
     return;
   }
   if (!WM_operator_check_ui_enabled(C, op->type->name)) {
-    uiLayoutSetEnabled(panel->layout, false);
+    panel->layout->enabled_set(false);
   }
   uiLayout *col = &panel->layout->column(false);
   uiTemplateOperatorRedoProperties(col, C);

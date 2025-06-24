@@ -32,6 +32,7 @@
 #include "RNA_prototypes.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 #include "UI_tree_view.hh"
 #include "UI_view2d.hh"
@@ -793,7 +794,7 @@ static uiBut *add_tab_button(uiBlock &block, StringRefNull name)
 
 static void add_catalog_tabs(AssetShelf &shelf, uiLayout &layout)
 {
-  uiBlock *block = uiLayoutGetBlock(&layout);
+  uiBlock *block = layout.block();
   AssetShelfSettings &shelf_settings = shelf.settings;
 
   /* "All" tab. */
@@ -835,7 +836,7 @@ static void add_catalog_tabs(AssetShelf &shelf, uiLayout &layout)
 static void asset_shelf_header_draw(const bContext *C, Header *header)
 {
   uiLayout *layout = header->layout;
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
   const AssetLibraryReference *library_ref = CTX_wm_asset_library_ref(C);
 
   list::storage_fetch(library_ref, C);

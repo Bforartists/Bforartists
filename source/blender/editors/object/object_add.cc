@@ -109,7 +109,7 @@
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -2994,18 +2994,12 @@ static const EnumPropertyItem convert_target_items[] = {
      "MESH",
      ICON_OUTLINER_OB_MESH,
      "Mesh",
-#ifdef WITH_POINTCLOUD
      "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"},
-#else
-     "Mesh from Curve, Surface, Metaball, or Text objects"},
-#endif
-#ifdef WITH_POINTCLOUD
     {OB_POINTCLOUD,
      "POINTCLOUD",
      ICON_OUTLINER_OB_POINTCLOUD,
      "Point Cloud",
      "Point Cloud from Mesh objects"},
-#endif
     {OB_CURVES, "CURVES", ICON_OUTLINER_OB_CURVES, "Curves", "Curves from evaluated curve data"},
     {OB_GREASE_PENCIL,
      "GREASEPENCIL",

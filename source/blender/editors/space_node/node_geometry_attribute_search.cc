@@ -25,6 +25,7 @@
 #include "ED_undo.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "NOD_geometry_nodes_log.hh"
@@ -227,7 +228,7 @@ void node_geometry_add_attribute_search_button(const bContext & /*C*/,
                                                uiLayout &layout,
                                                const StringRef placeholder)
 {
-  uiBlock *block = uiLayoutGetBlock(&layout);
+  uiBlock *block = layout.block();
   uiBut *but = uiDefIconTextButR(block,
                                  UI_BTYPE_SEARCH_MENU,
                                  0,

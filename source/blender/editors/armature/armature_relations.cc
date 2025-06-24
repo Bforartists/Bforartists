@@ -51,6 +51,7 @@
 #include "ED_screen.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "ANIM_armature.hh"
@@ -989,12 +990,12 @@ static wmOperatorStatus armature_parent_set_invoke(bContext *C,
   uiLayout *layout = UI_popup_menu_layout(pup);
 
   uiLayout *row_offset = &layout->row(false);
-  uiLayoutSetEnabled(row_offset, enable_offset);
+  row_offset->enabled_set(enable_offset);
   uiItemEnumO(
       row_offset, "ARMATURE_OT_parent_set", std::nullopt, ICON_PARENT_SET, "type", ARM_PAR_OFFSET);
 
   uiLayout *row_connect = &layout->row(false);
-  uiLayoutSetEnabled(row_connect, enable_connect);
+  row_connect->enabled_set(enable_connect);
   uiItemEnumO(
       row_connect, "ARMATURE_OT_parent_set", std::nullopt, ICON_PARENT_BONE, "type", ARM_PAR_CONNECT);
 
@@ -1109,12 +1110,12 @@ static wmOperatorStatus armature_parent_clear_invoke(bContext *C,
   uiLayout *layout = UI_popup_menu_layout(pup);
 
   uiLayout *row_clear = &layout->row(false);
-  uiLayoutSetEnabled(row_clear, enable_clear);
+  row_clear->enabled_set(enable_clear);
   uiItemEnumO(
       row_clear, "ARMATURE_OT_parent_clear", std::nullopt, ICON_CLEAR, "type", ARM_PAR_CLEAR);
 
   uiLayout *row_disconnect = &layout->row(false);
-  uiLayoutSetEnabled(row_disconnect, enable_disconnect);
+  row_disconnect->enabled_set(enable_disconnect);
   uiItemEnumO(row_disconnect,
               "ARMATURE_OT_parent_clear",
               std::nullopt,

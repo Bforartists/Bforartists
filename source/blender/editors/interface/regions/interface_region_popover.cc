@@ -41,7 +41,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 
 #include "interface_intern.hh"
 
@@ -100,7 +100,7 @@ static void ui_popover_create_block(bContext *C,
 
   if (pup->but) {
     if (pup->but->context) {
-      uiLayoutContextCopy(pup->layout, pup->but->context);
+      pup->layout->context_copy(pup->but->context);
     }
   }
 }

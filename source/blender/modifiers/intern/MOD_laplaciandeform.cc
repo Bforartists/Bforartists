@@ -25,7 +25,7 @@
 #include "BKE_deform.hh"
 #include "BKE_mesh_mapping.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLO_read_write.hh"
@@ -801,7 +801,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->separator();
 
   row = &layout->row(true);
-  uiLayoutSetEnabled(row, has_vertex_group);
+  row->enabled_set(has_vertex_group);
   row->op(
       "OBJECT_OT_laplaciandeform_bind", is_bind ? IFACE_("Unbind") : IFACE_("Bind"), ICON_NONE);
 

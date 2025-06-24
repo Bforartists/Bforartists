@@ -29,6 +29,7 @@ from bl_ui.utils import (
 )
 
 from rna_prop_ui import PropertyPanel
+from bl_ui.space_time import playback_controls
 
 
 def _space_view_types(st):
@@ -237,6 +238,16 @@ class SEQUENCER_HT_header(Header):
 
         row.popover(panel="SEQUENCER_PT_view_options", text="Options")
         # BFA - moved "class SEQUENCER_MT_editor_menus" below
+
+class SEQUENCER_HT_playback_controls(Header):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'FOOTER'
+
+    def draw(self, context):
+        layout = self.layout
+
+        playback_controls(layout, context)
+
 
 class SEQUENCER_MT_editor_menus(Menu):
     bl_idname = "SEQUENCER_MT_editor_menus"
@@ -584,6 +595,7 @@ class SEQUENCER_MT_view(Menu):
 
         layout.prop(addon_prefs, "vse_show_toolshelf_tabs")  # BFA
 
+        layout.prop(st, "show_region_footer")
         layout.separator()
 
         layout.menu("SEQUENCER_MT_view_annotations")  # BFA
@@ -997,16 +1009,10 @@ class SEQUENCER_MT_change(Menu):
                 strip_type = strip.type
                 data_strips = ['IMAGE', 'MOVIE', 'SOUND']
                 effect_strips = [
-                    'GAUSSIAN_BLUR',
-                    'SPEED',
-                    'GLOW',
-                    'TRANSFORM',
-                    'MULTICAM',
-                    'ADD',
-                    'SUBRACT',
-                    'ALPHA_OVER',
-                    'ALPHA_UNDER',
-                    'COLORMIX',
+                    'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
+                    'GAMMA_CROSS', 'MULTIPLY', 'WIPE', 'GLOW',
+                    'TRANSFORM', 'SPEED', 'MULTICAM', 'ADJUSTMENT',
+                    'GAUSSIAN_BLUR'
                 ]
 
                 if strip_type in data_strips:
@@ -4362,6 +4368,7 @@ classes = (
     SEQUENCER_MT_change,  # BFA - no longer used
     SEQUENCER_HT_tool_header,
     SEQUENCER_HT_header,
+    SEQUENCER_HT_playback_controls,
     SEQUENCER_MT_editor_menus,
     SEQUENCER_MT_range,
     SEQUENCER_MT_view_pie_menus,  # BFA

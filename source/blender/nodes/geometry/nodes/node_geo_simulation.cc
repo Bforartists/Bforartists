@@ -17,7 +17,7 @@
 
 #include "DEG_depsgraph_query.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 
 #include "NOD_common.hh"
 #include "NOD_geo_bake.hh"
@@ -232,7 +232,7 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *current_no
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
 
-  uiLayoutSetEnabled(layout, ID_IS_EDITABLE(ctx.object));
+  layout->enabled_set(ID_IS_EDITABLE(ctx.object));
 
   {
     uiLayout *col = &layout->column(false);

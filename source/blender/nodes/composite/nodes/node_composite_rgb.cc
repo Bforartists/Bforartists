@@ -13,6 +13,7 @@
 #include "COM_node_operation.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "node_composite_util.hh"
@@ -26,7 +27,7 @@ static void cmp_node_rgb_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Color>("RGBA")
       .default_value({0.5f, 0.5f, 0.5f, 1.0f})
       .custom_draw([](CustomSocketDrawParams &params) {
-        uiLayoutSetAlignment(&params.layout, UI_LAYOUT_ALIGN_EXPAND);
+        params.layout.alignment_set(blender::ui::LayoutAlign::Expand);
         uiLayout &col = params.layout.column(true); /* BFA */
         uiTemplateColorPicker(
             &col, &params.socket_ptr, "default_value", true, false, false, false);

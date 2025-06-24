@@ -441,7 +441,8 @@ static bool seq_need_scale_to_render_size(const Strip *strip, bool is_proxy_imag
   return true;
 }
 
-static float3x3 sequencer_image_crop_transform_matrix(const Strip *strip,
+static float3x3 sequencer_image_crop_transform_matrix(const Scene *scene,
+                                                      const Strip *strip,
                                                       const ImBuf *in,
                                                       const ImBuf *out,
                                                       const float image_scale_factor,
@@ -459,7 +460,9 @@ static float3x3 sequencer_image_crop_transform_matrix(const Strip *strip,
   const float rotation = transform->rotation;
   const float2 scale(transform->scale_x * image_scale_factor,
                      transform->scale_y * image_scale_factor);
-  const float2 pivot(in->x * transform->origin[0], in->y * transform->origin[1]);
+
+  const float2 origin = image_transform_origin_get(scene, strip);
+  const float2 pivot(in->x * origin[0], in->y * origin[1]);
 
   const float3x3 matrix = math::from_loc_rot_scale<float3x3>(
       translation + float2(image_center_offs), rotation, scale);
@@ -540,7 +543,7 @@ static void sequencer_preprocess_transform_crop(
   const float image_scale_factor = do_scale_to_render_size ? preview_scale_factor : 1.0f;
 
   float3x3 matrix = sequencer_image_crop_transform_matrix(
-      strip, in, out, image_scale_factor, preview_scale_factor);
+      scene, strip, in, out, image_scale_factor, preview_scale_factor);
 
   /* Proxy image is smaller, so crop values must be corrected by proxy scale factor.
    * Proxy scale factor always matches preview_scale_factor. */
@@ -1416,7 +1419,7 @@ static ImBuf *seq_render_scene_strip(const RenderData *context,
 #if 0 /* UNUSED */
   have_seq = (scene->r.scemode & R_DOSEQ) && scene->ed && scene->ed->seqbase.first;
 #endif
-  have_comp = (scene->r.scemode & R_DOCOMP) && scene->use_nodes && scene->compositing_node_group;
+  have_comp = (scene->r.scemode & R_DOCOMP) && scene->compositing_node_group;
 
   /* Get view layer for the strip. */
   ViewLayer *view_layer = BKE_view_layer_default_render(scene);
