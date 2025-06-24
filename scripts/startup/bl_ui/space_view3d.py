@@ -771,9 +771,9 @@ class VIEW3D_HT_header(Header):
 
         # Pivot
         if has_pose_mode or object_mode in {
-                    'OBJECT', 
-                    'EDIT', 
-                    'EDIT_GPENCIL', 
+                    'OBJECT',
+                    'EDIT',
+                    'EDIT_GPENCIL',
                     'SCULPT_GREASE_PENCIL'
         }:
             layout.prop(tool_settings, "transform_pivot_point", text="", icon_only=True)
@@ -2319,7 +2319,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_select_object_more_less", text="Select More/Less")
+        layout.menu("VIEW3D_MT_select_object_more_less", text="More/Less")
 
 
 # BFA menu
@@ -2462,7 +2462,7 @@ class VIEW3D_MT_select_linked(Menu):
 
 
 class VIEW3D_MT_select_pose_more_less(Menu):
-    bl_label = "Select More/Less"
+    bl_label = "More/Less"
 
     def draw(self, _context):
         layout = self.layout
@@ -2603,7 +2603,7 @@ class VIEW3D_MT_select_particle(Menu):
 
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
-    bl_label = "Select Similar"
+    bl_label = "Similar"
 
     def draw(self, _context):
         layout = self.layout
@@ -2618,7 +2618,7 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
 
 
 class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
-    bl_label = "Select All by Trait"
+    bl_label = "All by Trait"
 
     def draw(self, context):
         layout = self.layout
@@ -2794,6 +2794,17 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
+# bfa menu
+class VIEW3D_MT_select_edit_curve_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("curve.select_more", text="More", icon="SELECTMORE")
+        layout.operator("curve.select_less", text="Less", icon="SELECTLESS")
+
+
 class VIEW3D_MT_select_edit_curve(Menu):
     bl_label = "Select"
 
@@ -2844,8 +2855,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_more", text="More", icon="SELECTMORE")
-        layout.operator("curve.select_less", text="Less", icon="SELECTLESS")
+        layout.menu("VIEW3D_MT_select_edit_curve_more_less")
 
 
 # bfa menu
@@ -2865,6 +2875,17 @@ class VIEW3D_MT_select_edit_curve_select_similar(Menu):
         layout.operator(
             "curve.select_similar", text="Direction", icon="SWITCH_DIRECTION"
         ).type = "DIRECTION"
+
+
+# bfa menu
+class VIEW3D_MT_select_edit_surface_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("curve.select_more", text="More", icon="SELECTMORE")
+        layout.operator("curve.select_less", text="Less", icon="SELECTLESS")
 
 
 class VIEW3D_MT_select_edit_surface(Menu):
@@ -2906,8 +2927,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_more", text="More", icon="SELECTMORE")
-        layout.operator("curve.select_less", text="Less", icon="SELECTLESS")
+        layout.menu("VIEW3D_MT_select_edit_surface_more_less")
+
 
 
 class VIEW3D_MT_select_edit_text(Menu):
@@ -3037,6 +3058,17 @@ class VIEW3D_MT_edit_lattice_context_menu(Menu):
         layout.operator("lattice.make_regular", icon="MAKE_REGULAR")
 
 
+# bfa menu
+class VIEW3D_MT_select_edit_lattice_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("lattice.select_more", text="More", icon="SELECTMORE")
+        layout.operator("lattice.select_less", text="Less", icon="SELECTLESS")
+
+
 class VIEW3D_MT_select_edit_lattice(Menu):
     bl_label = "Select"
 
@@ -3073,8 +3105,18 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_more", text="More", icon="SELECTMORE")
-        layout.operator("lattice.select_less", text="Less", icon="SELECTLESS")
+        layout.menu("VIEW3D_MT_select_edit_lattice_more_less")  # bfa menu
+
+
+# bfa menu
+class VIEW3D_MT_select_edit_armature_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("armature.select_more", text="More", icon="SELECTMORE")
+        layout.operator("armature.select_less", text="Less", icon="SELECTLESS")
 
 
 class VIEW3D_MT_select_edit_armature(Menu):
@@ -3143,9 +3185,9 @@ class VIEW3D_MT_select_edit_armature(Menu):
         props.direction = 'CHILD'
 
         layout.separator()
+        layout.menu("VIEW3D_MT_select_edit_armature_more_less")  # bfa menu
 
-        layout.operator("armature.select_more", text="More", icon="SELECTMORE")
-        layout.operator("armature.select_less", text="Less", icon="SELECTLESS")
+
 
 
 # bfa menu
@@ -3172,6 +3214,17 @@ class VIEW3D_MT_select_greasepencil_legacy(Menu):
         layout.operator("view3d.select_circle", icon="CIRCLE_SELECT")
 
 
+# bfa menu
+class VIEW3D_MT_select_edit_grease_pencil_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("grease_pencil.select_more", text="More", icon="SELECTMORE")
+        layout.operator("grease_pencil.select_less", text="Less", icon="SELECTLESS")
+
+
 class VIEW3D_MT_select_edit_grease_pencil(Menu):
     bl_label = "Select"
 
@@ -3195,10 +3248,9 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
 
         layout.separator()
 
-
         if context.scene.tool_settings.gpencil_selectmode_edit != 'STROKE':
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
-        layout.operator_menu_enum("grease_pencil.select_similar", "mode")
+        layout.operator_menu_enum("grease_pencil.select_similar", "mode", text = "Similar")
 
         layout.separator()
 
@@ -3225,8 +3277,7 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
         # BFA - moved below
         if context.scene.tool_settings.gpencil_selectmode_edit != 'STROKE':
             layout.separator()
-            layout.operator("grease_pencil.select_more", text="More", icon="SELECTMORE")
-            layout.operator("grease_pencil.select_less", text="Less", icon="SELECTLESS")
+            layout.menu("VIEW3D_MT_select_edit_grease_pencil_more_less")  # bfa menu
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -3296,8 +3347,6 @@ class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout = self.layout
-
         layout.operator("paint.face_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
 
@@ -3344,8 +3393,6 @@ class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout = self.layout
-
         layout.operator("paint.vert_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.vert_select_less", text="Less", icon="SELECTLESS")
 
@@ -3369,7 +3416,7 @@ class VIEW3D_MT_select_edit_pointcloud(Menu):
 
 # BFA - not used
 class VIEW3D_MT_edit_curves_select_more_less(Menu):
-    bl_label = "Select More/Less"
+    bl_label = "More/Less"
 
     def draw(self, _context):
         layout = self.layout
@@ -10413,32 +10460,32 @@ class VIEW3D_PT_overlay_guides(Panel):
         layout.separator()
 
         layout.label(text="Options")
-        
+
         # bfa - indent the Options group, matching other panels.
         col = layout.column(align=True)
         col.active = display_all
         split = col.split()
         sub = split.column(align=True)
-        
+
         row = sub.row()
         row.separator()
         row.prop(overlay, "show_cursor", text="3D Cursor")
         row.prop(overlay, "show_annotation", text="Annotations")
-        
+
         row = sub.row()
         row.separator()
         row.prop(overlay, "show_stats", text="Statistics")
         row.prop(overlay, "show_text", text="Text Info")
-        
+
         # bfa - Camera and HDRi Preview options placed at the bottom,
         # since they're only relevant in specific view modes.
         if view.region_3d.view_perspective == "CAMERA" or shading.type == "MATERIAL":
             row = sub.row()
             row.separator()
-        
+
         if view.region_3d.view_perspective == "CAMERA":
             row.prop(overlay, "show_camera_guides", text="Camera Guides")
-        
+
         if shading.type == "MATERIAL":
                 row = row if view.region_3d.view_perspective != "CAMERA" else row.row()
                 row.active = shading.render_pass == "COMBINED"
@@ -13035,17 +13082,22 @@ classes = (
     VIEW3D_MT_edit_mesh_select_by_trait,
     VIEW3D_MT_edit_mesh_select_more_less,
     VIEW3D_MT_select_edit_mesh,
+    VIEW3D_MT_select_edit_curve_more_less, # bfa menu
     VIEW3D_MT_select_edit_curve,
     VIEW3D_MT_select_edit_curve_select_similar,  # bfa menu
+    VIEW3D_MT_select_edit_surface_more_less, # bfa menu
     VIEW3D_MT_select_edit_surface,
     VIEW3D_MT_select_edit_text,
     VIEW3D_MT_select_edit_metaball,
     VIEW3D_MT_edit_lattice_context_menu,
     VIEW3D_MT_select_edit_metaball_select_similar,  # bfa menu
+    VIEW3D_MT_select_edit_lattice_more_less,  # bfa menu
     VIEW3D_MT_select_edit_lattice,
+    VIEW3D_MT_select_edit_armature_more_less,  # BFA - menu
     VIEW3D_MT_select_edit_armature,
     VIEW3D_PT_greasepencil_edit_options,  # BFA - menu
     VIEW3D_MT_select_greasepencil_legacy,  # BFA - legacy menu
+    VIEW3D_MT_select_edit_grease_pencil_more_less,  # BFA - menu
     VIEW3D_MT_select_edit_grease_pencil,
     VIEW3D_MT_select_paint_mask_face_more_less,  # bfa menu
     VIEW3D_MT_select_paint_mask_vertex,
