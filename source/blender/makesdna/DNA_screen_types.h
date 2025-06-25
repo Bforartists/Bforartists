@@ -303,9 +303,6 @@ typedef struct uiListDyn {
   int *items_filter_neworder;
 
   struct wmOperatorType *custom_drag_optype;
-  struct PointerRNA *custom_drag_opptr;
-  struct wmOperatorType *custom_activate_optype;
-  struct PointerRNA *custom_activate_opptr;
 } uiListDyn;
 
 typedef struct uiList { /* some list UI data need to be saved in file */
@@ -453,7 +450,6 @@ typedef struct ScrArea {
    */
   char butspacetype;
   short butspacetype_subtype;
-  char _pad2[2];
 
   /** Size. */
   short winx, winy;
@@ -462,13 +458,14 @@ typedef struct ScrArea {
   char headertype DNA_DEPRECATED;
   /** Private, for spacetype refresh callback. */
   char do_refresh;
-  int flag; // BFA short to int
+  short flag; // BFA
+  // int flag; // BFA - WIP - short to int, why?
   /**
    * Index of last used region of 'RGN_TYPE_WINDOW'
    * runtime variable, updated by executing operators.
    */
-  int region_active_win;
-  char _pad[4];
+  short region_active_win;
+  char _pad[2];
 
   /** Callbacks for this space type. */
   struct SpaceType *type;

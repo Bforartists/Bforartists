@@ -231,7 +231,7 @@ static void sequencer_draw_borders_overlay(const SpaceSeq &sseq,
 
   /* Draw border. */
   const uint shdr_pos = GPU_vertformat_attr_add(
-      immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+      immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_LINE_DASHED_UNIFORM_COLOR);
 
@@ -703,7 +703,8 @@ static void sequencer_draw_scopes(const SpaceSeq &space_sequencer, ARegion &regi
   /* Draw black rectangle over scopes area. */
   if (space_sequencer.mainb != SEQ_DRAW_IMG_IMBUF) {
     GPU_blend(GPU_BLEND_NONE);
-    uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    uint pos = GPU_vertformat_attr_add(
+        immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
     uchar black[4] = {0, 0, 0, 255};
     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     immUniformColor4ubv(black);
@@ -747,9 +748,10 @@ static void sequencer_draw_scopes(const SpaceSeq &space_sequencer, ARegion &regi
     GPU_texture_bind(texture, 0);
 
     GPUVertFormat *imm_format = immVertexFormat();
-    uint pos = GPU_vertformat_attr_add(imm_format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    uint pos = GPU_vertformat_attr_add(
+        imm_format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
     uint texCoord = GPU_vertformat_attr_add(
-        imm_format, "texCoord", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+        imm_format, "texCoord", blender::gpu::VertAttrType::SFLOAT_32_32);
     immBindBuiltinProgram(GPU_SHADER_3D_IMAGE_COLOR);
     immUniformColor3f(1.0f, 1.0f, 1.0f);
 
@@ -919,7 +921,7 @@ static void strip_draw_image_origin_and_outline(const bContext *C,
 
   /* Origin. */
   GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
   immBindBuiltinProgram(GPU_SHADER_2D_POINT_UNIFORM_SIZE_UNIFORM_COLOR_OUTLINE_AA);
   immUniform1f("outlineWidth", 1.5f);
   immUniformColor3f(1.0f, 1.0f, 1.0f);
@@ -1045,12 +1047,12 @@ static void text_edit_draw_cursor(const bContext *C, const Strip *strip, uint po
       text->lines[cursor_position.y].characters[cursor_position.x].position;
   /* Clamp cursor coords to be inside of text boundbox. Compensate for cursor width, but also line
    * width hardcoded in shader. */
-  rcti text_boundbox = text->text_boundbox;
-  text_boundbox.xmax -= cursor_width + U.pixelsize;
-  text_boundbox.xmin += U.pixelsize;
+  const float bound_left = float(text->text_boundbox.xmin) + U.pixelsize;
+  const float bound_right = float(text->text_boundbox.xmax) - (cursor_width + U.pixelsize);
+  /* Note: do not use std::clamp since due to math above left can become larger than right. */
+  cursor_coords.x = std::max(cursor_coords.x, bound_left);
+  cursor_coords.x = std::min(cursor_coords.x, bound_right);
 
-  cursor_coords.x = std::clamp(
-      cursor_coords.x, float(text_boundbox.xmin), float(text_boundbox.xmax));
   cursor_coords = coords_region_view_align(UI_view2d_fromcontext(C), cursor_coords);
 
   blender::float4x2 cursor_quad{
@@ -1076,42 +1078,6 @@ static void text_edit_draw_cursor(const bContext *C, const Strip *strip, uint po
   immEnd();
 }
 
-static void text_edit_draw_box(const bContext *C, const Strip *strip, uint pos)
-{
-  const TextVars *data = static_cast<TextVars *>(strip->effectdata);
-  const TextVarsRuntime *text = data->runtime;
-  const Scene *scene = CTX_data_scene(C);
-
-  const blender::float2 view_offs{-scene->r.xsch / 2.0f, -scene->r.ysch / 2.0f};
-  const float view_aspect = scene->r.xasp / scene->r.yasp;
-  blender::float3x3 transform_mat = seq::image_transform_matrix_get(CTX_data_scene(C), strip);
-  blender::float4x2 box_quad{
-      {float(text->text_boundbox.xmin), float(text->text_boundbox.ymin)},
-      {float(text->text_boundbox.xmin), float(text->text_boundbox.ymax)},
-      {float(text->text_boundbox.xmax), float(text->text_boundbox.ymax)},
-      {float(text->text_boundbox.xmax), float(text->text_boundbox.ymin)},
-  };
-
-  GPU_blend(GPU_BLEND_NONE);
-  immBindBuiltinProgram(GPU_SHADER_3D_LINE_DASHED_UNIFORM_COLOR);
-  blender::float3 col;
-  UI_GetThemeColorShade3fv(TH_SEQ_ACTIVE, -50, col);
-  immUniformColor3fv(col);
-  immUniform1f("lineWidth", U.pixelsize);
-  immUniform1f("dash_width", 10.0f);
-  immBegin(GPU_PRIM_LINE_LOOP, 4);
-
-  for (int i : blender::IndexRange(0, 4)) {
-    box_quad[i] += view_offs;
-    box_quad[i] = blender::math::transform_point(transform_mat, box_quad[i]);
-    box_quad[i].x *= view_aspect;
-    immVertex2f(pos, box_quad[i][0], box_quad[i][1]);
-  }
-
-  immEnd();
-  immUnbindProgram();
-}
-
 static void text_edit_draw(const bContext *C)
 {
   if (!sequencer_text_editing_active_poll(const_cast<bContext *>(C))) {
@@ -1123,7 +1089,8 @@ static void text_edit_draw(const bContext *C)
   }
 
   GPUVertFormat *format = immVertexFormat();
-  const uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  const uint pos = GPU_vertformat_attr_add(
+      format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
   GPU_line_smooth(true);
   GPU_blend(GPU_BLEND_ALPHA);
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
@@ -1134,8 +1101,6 @@ static void text_edit_draw(const bContext *C)
   immUnbindProgram();
   GPU_blend(GPU_BLEND_NONE);
   GPU_line_smooth(false);
-
-  text_edit_draw_box(C, strip, pos);
 }
 
 /* Draw empty preview region.
@@ -1234,9 +1199,10 @@ static void preview_draw_texture_simple(GPUTexture &texture,
                                         const rctf &texture_coord)
 {
   GPUVertFormat *imm_format = immVertexFormat();
-  const uint pos = GPU_vertformat_attr_add(imm_format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  const uint pos = GPU_vertformat_attr_add(
+      imm_format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
   const uint tex_coord = GPU_vertformat_attr_add(
-      imm_format, "texCoord", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+      imm_format, "texCoord", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_IMAGE_COLOR);
   immUniformColor3f(1.0f, 1.0f, 1.0f);
@@ -1262,9 +1228,10 @@ static void preview_draw_texture_to_linear(GPUTexture &texture,
                                            const rctf &texture_coord)
 {
   GPUVertFormat *imm_format = immVertexFormat();
-  const uint pos = GPU_vertformat_attr_add(imm_format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  const uint pos = GPU_vertformat_attr_add(
+      imm_format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
   const uint tex_coord = GPU_vertformat_attr_add(
-      imm_format, "texCoord", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+      imm_format, "texCoord", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   if (!IMB_colormanagement_setup_glsl_draw_to_scene_linear(texture_colorspace_name, predivide)) {
     /* An error happened when configuring GPU side color space conversion. Return and allow the
@@ -1341,8 +1308,9 @@ static void draw_cursor_2d(const ARegion *region, const blender::float2 &cursor)
   struct {
     uint pos, col;
   } attr_id{};
-  attr_id.pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-  attr_id.col = GPU_vertformat_attr_add(format, "color", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+  attr_id.pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
+  attr_id.col = GPU_vertformat_attr_add(
+      format, "color", blender::gpu::VertAttrType::SFLOAT_32_32_32);
   immBindBuiltinProgram(GPU_SHADER_3D_POLYLINE_FLAT_COLOR);
   immUniform2fv("viewportSize", &viewport[2]);
   immUniform1f("lineWidth", U.pixelsize);
@@ -1583,7 +1551,8 @@ static void sequencer_preview_draw_overlays(const bContext *C,
     const rctf position = preview_get_full_position(region);
 
     GPUVertFormat *imm_format = immVertexFormat();
-    const uint pos = GPU_vertformat_attr_add(imm_format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    const uint pos = GPU_vertformat_attr_add(
+        imm_format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
     GPU_blend(GPU_BLEND_OVERLAY_MASK_FROM_ALPHA);
 

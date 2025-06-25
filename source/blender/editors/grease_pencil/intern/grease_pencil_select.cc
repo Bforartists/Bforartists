@@ -581,7 +581,7 @@ enum class SelectSimilarMode {
 };
 
 static const EnumPropertyItem select_similar_mode_items[] = {
-    {int(SelectSimilarMode::LAYER), "LAYER", ICON_LAYER, "Layer", ""},
+    {int(SelectSimilarMode::LAYER), "LAYER", ICON_LAYER, "Layer", ""}, /* BFA - Icons added*/
     {int(SelectSimilarMode::MATERIAL), "MATERIAL", ICON_MATERIAL, "Material", ""},
     {int(SelectSimilarMode::VERTEX_COLOR), "VERTEX_COLOR", ICON_NODE_VERTEX_COLOR, "Vertex Color", ""},
     {int(SelectSimilarMode::RADIUS), "RADIUS", ICON_RADIUS, "Radius", ""},

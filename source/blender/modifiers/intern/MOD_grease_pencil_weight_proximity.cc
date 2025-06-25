@@ -27,7 +27,7 @@
 #include "BKE_lib_query.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "MOD_grease_pencil_util.hh"
@@ -258,7 +258,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   sub = &row->row(true);
   bool has_output = RNA_string_length(ptr, "target_vertex_group") != 0;
   uiLayoutSetPropDecorate(sub, false);
-  uiLayoutSetActive(sub, has_output);
+  sub->active_set(has_output);
   sub->prop(ptr, "use_invert_output", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
 
   layout->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);

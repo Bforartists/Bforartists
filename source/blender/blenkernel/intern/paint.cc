@@ -32,6 +32,7 @@
 #include "BLI_math_color.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_vector.h"
+#include "BLI_noise.hh"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
@@ -134,6 +135,7 @@ static void palette_undo_preserve(BlendLibReader * /*reader*/, ID *id_new, ID *i
    *       fairly delicate. */
   BKE_lib_id_swap(nullptr, id_new, id_old, false, 0);
   std::swap(id_new->properties, id_old->properties);
+  std::swap(id_new->system_properties, id_old->system_properties);
 }
 
 IDTypeInfo IDType_ID_PAL = {
@@ -587,14 +589,14 @@ PaintMode BKE_paintmode_get_from_tool(const bToolRef *tref)
   return PaintMode::Invalid;
 }
 
-bool BKE_paint_use_unified_color(const ToolSettings *tool_settings, const Paint *paint)
+bool BKE_paint_use_unified_color(const Paint *paint)
 {
   /* Grease pencil draw mode never uses unified paint. */
   if (paint->runtime.ob_mode == OB_MODE_PAINT_GREASE_PENCIL) {
     return false;
   }
 
-  return tool_settings->unified_paint_settings.flag & UNIFIED_PAINT_COLOR;
+  return paint->unified_paint_settings.flag & UNIFIED_PAINT_COLOR;
 }
 
 /**
@@ -633,7 +635,7 @@ static bool paint_brush_update_from_asset_reference(Main *bmain, Paint *paint)
 
 Brush *BKE_paint_brush(Paint *paint)
 {
-  return (Brush *)BKE_paint_brush_for_read((const Paint *)paint);
+  return paint ? paint->brush : nullptr;
 }
 
 const Brush *BKE_paint_brush_for_read(const Paint *paint)
@@ -1153,7 +1155,7 @@ static bool paint_eraser_brush_set_from_asset_reference(Main *bmain, Paint *pain
 
 Brush *BKE_paint_eraser_brush(Paint *paint)
 {
-  return (Brush *)BKE_paint_eraser_brush_for_read((const Paint *)paint);
+  return paint ? paint->eraser_brush : nullptr;
 }
 
 const Brush *BKE_paint_eraser_brush_for_read(const Paint *paint)
@@ -1244,6 +1246,7 @@ static void paint_runtime_init(const ToolSettings *ts, Paint *paint)
   }
 
   paint->runtime.initialized = true;
+  paint->runtime.previous_active_brush_reference = nullptr;
 }
 
 uint BKE_paint_get_brush_type_offset_from_paintmode(const PaintMode mode)
@@ -1669,6 +1672,28 @@ eObjectMode BKE_paint_object_mode_from_paintmode(const PaintMode mode)
   }
 }
 
+static void paint_init_data(Paint &paint)
+{
+  const UnifiedPaintSettings &default_ups = *DNA_struct_default_get(UnifiedPaintSettings);
+  paint.unified_paint_settings.size = default_ups.size;
+  paint.unified_paint_settings.input_samples = default_ups.input_samples;
+  paint.unified_paint_settings.unprojected_radius = default_ups.unprojected_radius;
+  paint.unified_paint_settings.alpha = default_ups.alpha;
+  paint.unified_paint_settings.weight = default_ups.weight;
+  paint.unified_paint_settings.flag = default_ups.flag;
+  if (!paint.unified_paint_settings.curve_rand_hue) {
+    paint.unified_paint_settings.curve_rand_hue = BKE_paint_default_curve();
+  }
+  if (!paint.unified_paint_settings.curve_rand_saturation) {
+    paint.unified_paint_settings.curve_rand_saturation = BKE_paint_default_curve();
+  }
+  if (!paint.unified_paint_settings.curve_rand_value) {
+    paint.unified_paint_settings.curve_rand_value = BKE_paint_default_curve();
+  }
+  copy_v3_v3(paint.unified_paint_settings.rgb, default_ups.rgb);
+  copy_v3_v3(paint.unified_paint_settings.secondary_rgb, default_ups.secondary_rgb);
+}
+
 bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint)
 {
   Paint *paint = nullptr;
@@ -1705,6 +1730,7 @@ bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint)
   if (((VPaint **)r_paint == &ts->vpaint) || ((VPaint **)r_paint == &ts->wpaint)) {
     VPaint *data = MEM_callocN<VPaint>(__func__);
     paint = &data->paint;
+    paint_init_data(*paint);
   }
   else if ((Sculpt **)r_paint == &ts->sculpt) {
     Sculpt *data = MEM_callocN<Sculpt>(__func__);
@@ -1712,29 +1738,36 @@ bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint)
     *data = *DNA_struct_default_get(Sculpt);
 
     paint = &data->paint;
+    paint_init_data(*paint);
   }
   else if ((GpPaint **)r_paint == &ts->gp_paint) {
     GpPaint *data = MEM_callocN<GpPaint>(__func__);
     paint = &data->paint;
+    paint_init_data(*paint);
   }
   else if ((GpVertexPaint **)r_paint == &ts->gp_vertexpaint) {
     GpVertexPaint *data = MEM_callocN<GpVertexPaint>(__func__);
     paint = &data->paint;
+    paint_init_data(*paint);
   }
   else if ((GpSculptPaint **)r_paint == &ts->gp_sculptpaint) {
     GpSculptPaint *data = MEM_callocN<GpSculptPaint>(__func__);
     paint = &data->paint;
+    paint_init_data(*paint);
   }
   else if ((GpWeightPaint **)r_paint == &ts->gp_weightpaint) {
     GpWeightPaint *data = MEM_callocN<GpWeightPaint>(__func__);
     paint = &data->paint;
+    paint_init_data(*paint);
   }
   else if ((CurvesSculpt **)r_paint == &ts->curves_sculpt) {
     CurvesSculpt *data = MEM_callocN<CurvesSculpt>(__func__);
     paint = &data->paint;
+    paint_init_data(*paint);
   }
   else if (*r_paint == &ts->imapaint.paint) {
     paint = &ts->imapaint.paint;
+    paint_init_data(*paint);
   }
 
   paint->flags |= PAINT_SHOW_BRUSH;
@@ -1766,10 +1799,10 @@ void BKE_paint_brushes_ensure(Main *bmain, Paint *paint)
 void BKE_paint_init(
     Main *bmain, Scene *sce, PaintMode mode, const uchar col[3], const bool ensure_brushes)
 {
-  UnifiedPaintSettings *ups = &sce->toolsettings->unified_paint_settings;
 
   BKE_paint_ensure_from_paintmode(sce, mode);
   Paint *paint = BKE_paint_get_active_from_paintmode(sce, mode);
+  UnifiedPaintSettings *ups = &paint->unified_paint_settings;
 
   if (ensure_brushes) {
     BKE_paint_brushes_ensure(bmain, paint);
@@ -1801,6 +1834,10 @@ void BKE_paint_free(Paint *paint)
     MEM_delete(brush_ref);
   }
   MEM_delete(paint->runtime.previous_active_brush_reference);
+
+  BKE_curvemapping_free(paint->unified_paint_settings.curve_rand_hue);
+  BKE_curvemapping_free(paint->unified_paint_settings.curve_rand_saturation);
+  BKE_curvemapping_free(paint->unified_paint_settings.curve_rand_value);
 }
 
 void BKE_paint_copy(const Paint *src, Paint *dst, const int flag)
@@ -1830,14 +1867,21 @@ void BKE_paint_copy(const Paint *src, Paint *dst, const int flag)
         __func__, *brush_ref->brush_asset_reference);
   }
 
+  dst->unified_paint_settings.curve_rand_hue = BKE_curvemapping_copy(
+      src->unified_paint_settings.curve_rand_hue);
+  dst->unified_paint_settings.curve_rand_saturation = BKE_curvemapping_copy(
+      src->unified_paint_settings.curve_rand_saturation);
+  dst->unified_paint_settings.curve_rand_value = BKE_curvemapping_copy(
+      src->unified_paint_settings.curve_rand_value);
+
   if ((flag & LIB_ID_CREATE_NO_USER_REFCOUNT) == 0) {
     id_us_plus((ID *)dst->palette);
   }
 }
 
-void BKE_paint_stroke_get_average(const Scene *scene, const Object *ob, float stroke[3])
+void BKE_paint_stroke_get_average(const Paint *paint, const Object *ob, float stroke[3])
 {
-  const UnifiedPaintSettings *ups = &scene->toolsettings->unified_paint_settings;
+  const UnifiedPaintSettings *ups = &paint->unified_paint_settings;
   if (ups->last_stroke_valid && ups->average_stroke_counter > 0) {
     float fac = 1.0f / ups->average_stroke_counter;
     mul_v3_v3fl(stroke, ups->average_stroke_accum, fac);
@@ -1845,6 +1889,62 @@ void BKE_paint_stroke_get_average(const Scene *scene, const Object *ob, float st
   else {
     copy_v3_v3(stroke, ob->object_to_world().location());
   }
+}
+
+blender::float3 BKE_paint_randomize_color(const BrushColorJitterSettings &color_jitter,
+                                          const blender::float3 &initial_hsv_jitter,
+                                          const float distance,
+                                          const float pressure,
+                                          const blender::float3 &color)
+{
+  constexpr float noise_scale = 1 / 20.0f;
+
+  const float random_hue = (color_jitter.flag & BRUSH_COLOR_JITTER_USE_HUE_AT_STROKE) ?
+                               initial_hsv_jitter[0] :
+                               blender::noise::perlin(blender::float2(
+                                   distance * noise_scale, initial_hsv_jitter[0] * 100));
+
+  const float random_sat = (color_jitter.flag & BRUSH_COLOR_JITTER_USE_SAT_AT_STROKE) ?
+                               initial_hsv_jitter[1] :
+                               blender::noise::perlin(blender::float2(
+                                   distance * noise_scale, initial_hsv_jitter[1] * 100));
+
+  const float random_val = (color_jitter.flag & BRUSH_COLOR_JITTER_USE_VAL_AT_STROKE) ?
+                               initial_hsv_jitter[2] :
+                               blender::noise::perlin(blender::float2(
+                                   distance * noise_scale, initial_hsv_jitter[2] * 100));
+
+  float hue_jitter_scale = color_jitter.hue;
+  if ((color_jitter.flag & BRUSH_COLOR_JITTER_USE_HUE_RAND_PRESS)) {
+    hue_jitter_scale *= BKE_curvemapping_evaluateF(color_jitter.curve_hue_jitter, 0, pressure);
+  }
+  float sat_jitter_scale = color_jitter.saturation;
+  if ((color_jitter.flag & BRUSH_COLOR_JITTER_USE_SAT_RAND_PRESS)) {
+    sat_jitter_scale *= BKE_curvemapping_evaluateF(color_jitter.curve_sat_jitter, 0, pressure);
+  }
+  float val_jitter_scale = color_jitter.value;
+  if ((color_jitter.flag & BRUSH_COLOR_JITTER_USE_VAL_RAND_PRESS)) {
+    val_jitter_scale *= BKE_curvemapping_evaluateF(color_jitter.curve_val_jitter, 0, pressure);
+  }
+
+  blender::float3 hsv;
+  rgb_to_hsv_v(color, hsv);
+
+  hsv[0] += blender::math::interpolate(0.5f, random_hue, hue_jitter_scale) - 0.5f;
+  /* Wrap hue. */
+  if (hsv[0] > 1.0f) {
+    hsv[0] -= 1.0f;
+  }
+  else if (hsv[0] < 0.0f) {
+    hsv[0] += 1.0f;
+  }
+
+  hsv[1] *= blender::math::interpolate(1.0f, random_sat * 2.0f, sat_jitter_scale);
+  hsv[2] *= blender::math::interpolate(1.0f, random_val * 2.0f, val_jitter_scale);
+
+  blender::float3 random_color;
+  hsv_to_rgb_v(hsv, random_color);
+  return random_color;
 }
 
 void BKE_paint_blend_write(BlendWriter *writer, Paint *paint)
@@ -1876,6 +1976,18 @@ void BKE_paint_blend_write(BlendWriter *writer, Paint *paint)
         BKE_asset_weak_reference_write(writer, brush_ref->brush_asset_reference);
       }
     }
+  }
+
+  if (paint->unified_paint_settings.curve_rand_hue) {
+    BKE_curvemapping_blend_write(writer, paint->unified_paint_settings.curve_rand_hue);
+  }
+
+  if (paint->unified_paint_settings.curve_rand_saturation) {
+    BKE_curvemapping_blend_write(writer, paint->unified_paint_settings.curve_rand_saturation);
+  }
+
+  if (paint->unified_paint_settings.curve_rand_value) {
+    BKE_curvemapping_blend_write(writer, paint->unified_paint_settings.curve_rand_value);
   }
 }
 
@@ -1920,8 +2032,32 @@ void BKE_paint_blend_read_data(BlendDataReader *reader, const Scene *scene, Pain
       }
     }
   }
+  UnifiedPaintSettings *ups = &paint->unified_paint_settings;
+  BLO_read_struct(reader, CurveMapping, &ups->curve_rand_hue);
+  if (ups->curve_rand_hue) {
+    BKE_curvemapping_blend_read(reader, ups->curve_rand_hue);
+    BKE_curvemapping_init(ups->curve_rand_hue);
+  }
+
+  BLO_read_struct(reader, CurveMapping, &ups->curve_rand_saturation);
+  if (ups->curve_rand_saturation) {
+    BKE_curvemapping_blend_read(reader, ups->curve_rand_saturation);
+    BKE_curvemapping_init(ups->curve_rand_saturation);
+  }
+
+  BLO_read_struct(reader, CurveMapping, &ups->curve_rand_value);
+  if (ups->curve_rand_value) {
+    BKE_curvemapping_blend_read(reader, ups->curve_rand_value);
+    BKE_curvemapping_init(ups->curve_rand_value);
+  }
 
   paint->paint_cursor = nullptr;
+
+  /* Reset last_location and last_hit, so they are not remembered across sessions. In some files
+   * these are also NaN, which could lead to crashes in painting. */
+  zero_v3(ups->last_location);
+  ups->last_hit = 0;
+
   paint_runtime_init(scene->toolsettings, paint);
 }
 
@@ -2057,15 +2193,12 @@ void BKE_sculptsession_free_vwpaint_data(SculptSession *ss)
 /**
  * Write out the sculpt dynamic-topology #BMesh to the #Mesh.
  */
-static void sculptsession_bm_to_me_update_data_only(Object *ob, bool reorder)
+static void sculptsession_bm_to_me_update_data_only(Object *ob)
 {
   SculptSession &ss = *ob->sculpt;
 
   if (ss.bm) {
     if (ob->data) {
-      if (reorder) {
-        BM_log_mesh_elems_reorder(ss.bm, ss.bm_log);
-      }
       BMeshToMeshParams params{};
       params.calc_object_remap = false;
       BM_mesh_bm_to_me(nullptr, ss.bm, static_cast<Mesh *>(ob->data), &params);
@@ -2073,10 +2206,10 @@ static void sculptsession_bm_to_me_update_data_only(Object *ob, bool reorder)
   }
 }
 
-void BKE_sculptsession_bm_to_me(Object *ob, bool reorder)
+void BKE_sculptsession_bm_to_me(Object *ob)
 {
   if (ob && ob->sculpt) {
-    sculptsession_bm_to_me_update_data_only(ob, reorder);
+    sculptsession_bm_to_me_update_data_only(ob);
 
     /* Ensure the objects evaluated mesh doesn't hold onto arrays
      * now realloc'd in the mesh #34473. */
@@ -2120,7 +2253,7 @@ void BKE_sculptsession_bm_to_me_for_render(Object *object)
        */
       BKE_object_free_derived_caches(object);
 
-      sculptsession_bm_to_me_update_data_only(object, false);
+      sculptsession_bm_to_me_update_data_only(object);
 
       /* In contrast with sculptsession_bm_to_me no need in
        * DAG tag update here - derived mesh was freed and
@@ -2136,7 +2269,7 @@ void BKE_sculptsession_free(Object *ob)
     SculptSession *ss = ob->sculpt;
 
     if (ss->bm) {
-      BKE_sculptsession_bm_to_me(ob, true);
+      BKE_sculptsession_bm_to_me(ob);
       BM_mesh_free(ss->bm);
     }
 
@@ -2671,6 +2804,17 @@ void BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
   }
 }
 
+void BKE_sculpt_cavity_curves_ensure(Sculpt *sd)
+{
+  if (!sd->automasking_cavity_curve) {
+    sd->automasking_cavity_curve = BKE_sculpt_default_cavity_curve();
+  }
+
+  if (!sd->automasking_cavity_curve_op) {
+    sd->automasking_cavity_curve_op = BKE_sculpt_default_cavity_curve();
+  }
+}
+
 void BKE_sculpt_toolsettings_data_ensure(Main *bmain, Scene *scene)
 {
   BKE_paint_ensure(scene->toolsettings, (Paint **)&scene->toolsettings->sculpt);
@@ -2714,7 +2858,7 @@ void BKE_sculpt_toolsettings_data_ensure(Main *bmain, Scene *scene)
   }
 
   if (!sd->automasking_cavity_curve || !sd->automasking_cavity_curve_op) {
-    BKE_sculpt_check_cavity_curves(sd);
+    BKE_sculpt_cavity_curves_ensure(sd);
   }
 }
 

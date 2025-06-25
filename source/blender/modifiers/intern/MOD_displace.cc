@@ -29,6 +29,7 @@
 #include "BKE_texture.h"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -162,7 +163,7 @@ static void displaceModifier_do_task(void *__restrict userdata,
   float(*tex_co)[3] = data->tex_co;
   blender::MutableSpan<blender::float3> positions = data->positions;
 
-  /* When no texture is used, we fallback to white. */
+  /* When no texture is used, we fall back to white. */
   const float delta_fixed = 1.0f - dmd->midlevel;
 
   TexResult texres;
@@ -351,7 +352,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   uiTemplateID(layout, C, ptr, "texture", "texture.new", nullptr, nullptr);
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, has_texture);
+  col->active_set(has_texture);
   col->prop(ptr, "texture_coords", UI_ITEM_NONE, IFACE_("Coordinates"), ICON_NONE);
   if (texture_coords == MOD_DISP_MAP_OBJECT) {
     col->prop(ptr, "texture_coords_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);

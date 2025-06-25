@@ -25,7 +25,7 @@
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLO_read_write.hh"
@@ -1589,7 +1589,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, !is_bound);
+  col->active_set(!is_bound);
   col->prop(ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "falloff", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -1598,8 +1598,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   col = &layout->column(false);
-  uiLayoutSetEnabled(col, !is_bound);
-  uiLayoutSetActive(col, !is_bound && RNA_string_length(ptr, "vertex_group") != 0);
+  col->enabled_set(!is_bound);
+  col->active_set(!is_bound && RNA_string_length(ptr, "vertex_group") != 0);
 
   /* bfa - our layout */
   row = &col->row(true);
@@ -1613,7 +1613,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     col->op("OBJECT_OT_surfacedeform_bind", IFACE_("Unbind"), ICON_NONE);
   }
   else {
-    uiLayoutSetActive(col, !RNA_pointer_is_null(&target_ptr));
+    col->active_set(!RNA_pointer_is_null(&target_ptr));
     col->op("OBJECT_OT_surfacedeform_bind", IFACE_("Bind"), ICON_NONE);
   }
   modifier_error_message_draw(layout, ptr);

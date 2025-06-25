@@ -296,6 +296,13 @@ typedef struct Strip {
   struct Stereo3dFormat *stereo3d_format;
 
   struct IDProperty *prop;
+  /**
+   * System-defined custom properties storage.
+   *
+   * In Blender 4.5, only used to ensure forward compatibility with 5.x blend-files, and data
+   * management consistency.
+   */
+  struct IDProperty *system_properties;
 
   /* modifiers */
   ListBase modifiers;
@@ -305,7 +312,6 @@ typedef struct Strip {
   float speed_factor;
 
   struct SeqRetimingKey *retiming_keys;
-  void *_pad5;
   int retiming_keys_num;
   char _pad6[4];
 
@@ -440,7 +446,14 @@ typedef struct GaussianBlurVars {
 } GaussianBlurVars;
 
 typedef struct TextVars {
-  char text[512];
+  char *text_ptr;
+  /**
+   * Text length in bytes, not including terminating zero
+   * (The `strlen` of text).
+   */
+  int text_len_bytes;
+  char _pad2[4];
+
   struct VFont *text_font;
   int text_blf_id;
   float text_size;
@@ -457,7 +470,7 @@ typedef struct TextVars {
   char align;
   char _pad[2];
 
-  /** Offsets in characters (unicode code-points) for #TextVars::text. */
+  /** Offsets in characters (unicode code-points) for #TextVars::text_ptr. */
   int cursor_offset;
   int selection_start_offset;
   int selection_end_offset;
@@ -466,6 +479,10 @@ typedef struct TextVars {
   char anchor_x, anchor_y;
   char _pad1;
   TextVarsRuntime *runtime;
+
+  /* Fixed size text buffer, only exists for forward/backward compatibility.
+   * #TextVars::text_ptr and #TextVars::text_len_bytes are used for full text. */
+  char text_legacy[512];
 } TextVars;
 
 /** #TextVars.flag */

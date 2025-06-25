@@ -27,7 +27,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_scene.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -286,7 +286,7 @@ static void random_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayoutSetActive(layout, RNA_boolean_get(ptr, "use_random_order"));
+  layout->active_set(RNA_boolean_get(ptr, "use_random_order"));
   layout->prop(ptr, "seed", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 

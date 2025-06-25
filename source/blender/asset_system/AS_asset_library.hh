@@ -268,8 +268,8 @@ void AS_asset_libraries_exit();
  *
  * To get the in-memory-only "current file" asset library, pass an empty path.
  */
-blender::asset_system::AssetLibrary *AS_asset_library_load(const char *name,
-                                                           const char *library_dirpath);
+blender::asset_system::AssetLibrary *AS_asset_library_load_from_directory(
+    const char *name, const char *library_dirpath);
 
 /** Return whether any loaded AssetLibrary has unsaved changes to its catalogs. */
 bool AS_asset_library_has_any_unsaved_catalogs();
@@ -299,7 +299,7 @@ void AS_asset_library_remap_ids(const blender::bke::id::IDRemapper &mappings);
  * \param r_name: Returns the ID name on success. Optional (passing null is allowed).
  */
 void AS_asset_full_path_explode_from_weak_ref(const AssetWeakReference *asset_reference,
-                                              char r_path_buffer[1090 /* FILE_MAX_LIBEXTRA */],
+                                              char r_path_buffer[1282 /* FILE_MAX_LIBEXTRA */],
                                               char **r_dir,
                                               char **r_group,
                                               char **r_name);

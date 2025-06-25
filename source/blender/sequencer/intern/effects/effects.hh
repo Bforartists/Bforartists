@@ -88,7 +88,7 @@ void get_default_fac_fade(const Scene *scene,
                           float timeline_frame,
                           float *fac);
 
-EffectHandle get_sequence_effect_impl(int strip_type);
+EffectHandle effect_handle_get(int strip_type);
 
 void add_effect_get_handle(EffectHandle &rval);
 void adjustment_effect_get_handle(EffectHandle &rval);
@@ -143,5 +143,8 @@ static void apply_effect_op(const OpT &op, const ImBuf *src1, const ImBuf *src2,
         }
       });
 }
+
+TextVarsRuntime *text_effect_calc_runtime(const Strip *strip, int font, const int2 image_size);
+int text_effect_font_init(const RenderData *context, const Strip *strip, int font_flags);
 
 }  // namespace blender::seq

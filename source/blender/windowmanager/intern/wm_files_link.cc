@@ -410,7 +410,7 @@ static void wm_link_append_properties_common(wmOperatorType *ot,
                          "link",
                          is_link || is_relocate,
                          "Link",
-                         "Link the objects or data rather than appending");
+                         "Link the objects or data rather than appending"); /* BFA */
   RNA_def_property_flag(prop, PROP_SKIP_SAVE | PROP_HIDDEN);
 
   prop = RNA_def_boolean(
@@ -763,18 +763,19 @@ ID *WM_file_link_datablock(Main *bmain,
       bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag);
 }
 
+/* BFA - Link Override*/
 ID *WM_file_link_override_datablock(Main *bmain,
-                                    Scene *scene,
-                                    ViewLayer *view_layer,
-                                    View3D *v3d,
-                                    const char *filepath,
-                                    const short id_code,
-                                    const char *id_name,
-                                    int flag)
+  Scene *scene,
+  ViewLayer *view_layer,
+  View3D *v3d,
+  const char *filepath,
+  const short id_code,
+  const char *id_name,
+  int flag)
 {
-  flag |= FILE_LINK;
-  return wm_file_link_append_datablock_ex(
-      bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag, true);
+flag |= FILE_LINK;
+return wm_file_link_append_datablock_ex(
+bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag, true);
 }
 
 ID *WM_file_append_datablock(Main *bmain,

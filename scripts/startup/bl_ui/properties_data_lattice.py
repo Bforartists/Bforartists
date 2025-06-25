@@ -58,7 +58,7 @@ class DATA_PT_lattice(DataButtonsPanel, Panel):
         sub.prop(lat, "interpolation_type_v", text="V")
         sub.prop(lat, "interpolation_type_w", text="W")
 
-        row = layout.row()
+        row = layout.row() # BFA
         row.use_property_split = False
         row.prop(lat, "use_outside")
         row.prop_decorator(lat, "use_outside")

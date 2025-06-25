@@ -12,6 +12,8 @@
 #include "DNA_mask_types.h"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
+
 #include "UI_resources.hh"
 
 #include "COM_cached_mask.hh"
@@ -68,14 +70,6 @@ static void cmp_node_mask_declare(NodeDeclarationBuilder &b)
       .max(1.0f)
       .description("Exposure for motion blur as a factor of FPS")
       .compositor_expects_single_value();
-}
-
-static void node_composit_init_mask(bNodeTree * /*ntree*/, bNode *node)
-{
-  /* All members are deprecated and needn't be set, but the data is still allocated for forward
-   * compatibility. */
-  NodeMask *data = MEM_callocN<NodeMask>(__func__);
-  node->storage = data;
 }
 
 static void node_mask_label(const bNodeTree * /*ntree*/,
@@ -218,12 +212,8 @@ static void register_node_type_cmp_mask()
   ntype.nclass = NODE_CLASS_INPUT;
   ntype.declare = file_ns::cmp_node_mask_declare;
   ntype.updatefunc = file_ns::node_update;
-  ntype.initfunc = file_ns::node_composit_init_mask;
   ntype.labelfunc = file_ns::node_mask_label;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
-
-  blender::bke::node_type_storage(
-      ntype, "NodeMask", node_free_standard_storage, node_copy_standard_storage);
 
   blender::bke::node_register_type(ntype);
 }

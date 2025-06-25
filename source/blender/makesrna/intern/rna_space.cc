@@ -6,6 +6,8 @@
  * \ingroup RNA
  */
 
+/* BFA - Added icons and updated descriptions to not have "block". Data is data. */
+
 #include <cstdlib>
 #include <cstring>
 
@@ -266,10 +268,21 @@ const EnumPropertyItem rna_enum_space_action_mode_items[] = {
 #undef SACT_ITEM_CACHEFILE
 
 #define SI_ITEM_VIEW(identifier, name, icon) \
-  {SI_MODE_VIEW, identifier, icon, name, "View the image"}
-#define SI_ITEM_UV {SI_MODE_UV, "UV", ICON_UV, "UV Editor", "UV edit in mesh editmode"}
-#define SI_ITEM_PAINT {SI_MODE_PAINT, "PAINT", ICON_TPAINT_HLT, "Paint", "2D image painting mode"}
-#define SI_ITEM_MASK {SI_MODE_MASK, "MASK", ICON_MOD_MASK, "Mask", "Mask editing"}
+  { \
+    SI_MODE_VIEW, identifier, icon, name, "View the image" \
+  }
+#define SI_ITEM_UV \
+  { \
+    SI_MODE_UV, "UV", ICON_UV, "UV Editor", "UV edit in mesh editmode" \
+  }
+#define SI_ITEM_PAINT \
+  { \
+    SI_MODE_PAINT, "PAINT", ICON_TPAINT_HLT, "Paint", "2D image painting mode" \
+  }
+#define SI_ITEM_MASK \
+  { \
+    SI_MODE_MASK, "MASK", ICON_MOD_MASK, "Mask", "Mask editing" \
+  }
 
 const EnumPropertyItem rna_enum_space_image_mode_all_items[] = {
     SI_ITEM_VIEW("VIEW", "View", ICON_FILE_IMAGE),
@@ -1197,7 +1210,7 @@ static void rna_RegionView3D_view_matrix_set(PointerRNA *ptr, const float *value
 {
   RegionView3D *rv3d = (RegionView3D *)(ptr->data);
   float mat[4][4];
-  invert_m4_m4(mat, (float (*)[4])values);
+  invert_m4_m4(mat, (float(*)[4])values);
   ED_view3d_from_m4(mat, rv3d->ofs, rv3d->viewquat, &rv3d->dist);
   rna_RegionView3D_view_rotation_set_validate_view_axis(rv3d);
 }
@@ -1225,7 +1238,7 @@ static void rna_RegionView3D_is_orthographic_side_view_set(PointerRNA *ptr, bool
         rv3d->viewquat, eps_quat, &rv3d->view, &rv3d->view_axis_roll);
   }
   else {
-    /* Only allow changing from axis-views to user view as camera view for e.g.
+    /* Only allow changing from axis-views to user view as camera view for example
      * doesn't make sense to update. */
     if (!was_axis_view) {
       return;
@@ -1504,7 +1517,7 @@ static const EnumPropertyItem *rna_3DViewShading_render_pass_itemf(bContext *C,
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   const bool aov_available = BKE_view_layer_has_valid_aov(view_layer);
-  const bool eevee_active = STREQ(scene->r.engine, "BLENDER_EEVEE_NEXT");
+  const bool eevee_active = STREQ(scene->r.engine, "BLENDER_EEVEE");
 
   int totitem = 0;
   EnumPropertyItem *result = nullptr;
@@ -3848,7 +3861,7 @@ static void rna_def_space(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Sync Visible Range",
                            "Synchronize the visible timeline range with other time-based "
-                           "editors\nEach editor to sync needs to have Sync Visible Range on");
+                           "editors\nEach editor to sync needs to have Sync Visible Range on"); /* BFA */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Space_view2d_sync_update");
 
   rna_def_space_generic_show_region_toggles(srna, (1 << RGN_TYPE_HEADER));
@@ -4021,7 +4034,7 @@ bpy.ops.wm.save_as_mainfile()
   RNA_def_property_ui_text(
       prop,
       "Display Faces",
-      "Display faces over the image\nDoes not work when Display Stretch is active");
+      "Display faces over the image\nDoes not work when Display Stretch is active"); /* BFA */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, nullptr);
 
   prop = RNA_def_property(srna, "tile_grid_shape", PROP_INT, PROP_XYZ);
@@ -4040,7 +4053,7 @@ bpy.ops.wm.save_as_mainfile()
   RNA_def_property_ui_text(
       prop,
       "Grid Over Image",
-      "Show the grid over the image\nRequires an image to be active and loaded");
+      "Show the grid over the image\nRequires an image to be active and loaded"); /* BFA */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, nullptr);
 
   prop = RNA_def_property(srna, "grid_shape_source", PROP_ENUM, PROP_NONE);
@@ -4350,13 +4363,13 @@ static void rna_def_space_outliner(BlenderRNA *brna)
   /* Libraries filter. */
   prop = RNA_def_property(srna, "use_filter_id_type", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "filter", SO_FILTER_ID_TYPE);
-  RNA_def_property_ui_text(prop, "Filter by Type", "Show only data of one type");
+  RNA_def_property_ui_text(prop, "Filter by Type", "Show only data of one type"); /* BFA */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
   prop = RNA_def_property(srna, "filter_id_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "filter_id_type");
   RNA_def_property_enum_items(prop, rna_enum_id_type_items);
-  RNA_def_property_ui_text(prop, "Filter by Type", "Data type to show");
+  RNA_def_property_ui_text(prop, "Filter by Type", "Data type to show"); /* BFA */
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_ID);
 
   prop = RNA_def_property(srna, "use_filter_lib_override_system", PROP_BOOLEAN, PROP_NONE);
@@ -4926,7 +4939,10 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_look_dev", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlay.flag", V3D_OVERLAY_LOOK_DEV);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "HDRI Preview", "Show HDRI preview spheres");
+  RNA_def_property_ui_text(prop,
+                           "Reference Spheres",
+                           "Show reference spheres with neutral shading that react to lighting to "
+                           "assist in look development");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D | NS_VIEW3D_SHADING, nullptr);
 
   prop = RNA_def_property(srna, "show_wireframes", PROP_BOOLEAN, PROP_NONE);
@@ -5024,7 +5040,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_split_normals", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlay.edit_flag", V3D_OVERLAY_EDIT_LOOP_NORMALS);
   RNA_def_property_ui_text(
-      prop, "Display Split Normals", "Display vertex-per-face normals as lines");
+      prop, "Display Custom Normals", "Display vertex-per-face normals as lines");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "show_faces", PROP_BOOLEAN, PROP_NONE);
@@ -6451,9 +6467,9 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_struct_ui_text(srna, "Space Sequence Editor", "Sequence editor space data");
 
   rna_def_space_generic_show_region_toggles(srna,
-                                            (1 << RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_UI) |
-                                                (1 << RGN_TYPE_TOOLS) | (1 << RGN_TYPE_HUD) |
-                                                (1 << RGN_TYPE_CHANNELS));
+                                            (1 << RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_FOOTER) |
+                                                (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_TOOLS) |
+                                                (1 << RGN_TYPE_HUD) | (1 << RGN_TYPE_CHANNELS));
 
   /* view type, fairly important */
   prop = RNA_def_property(srna, "view_type", PROP_ENUM, PROP_NONE);
@@ -6804,8 +6820,9 @@ static void rna_def_space_dopesheet(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "SpaceAction");
   RNA_def_struct_ui_text(srna, "Space Dope Sheet Editor", "Dope Sheet space data");
 
-  rna_def_space_generic_show_region_toggles(
-      srna, (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_HUD) | (1 << RGN_TYPE_CHANNELS));
+  rna_def_space_generic_show_region_toggles(srna,
+                                            (1 << RGN_TYPE_FOOTER) | (1 << RGN_TYPE_UI) |
+                                                (1 << RGN_TYPE_HUD) | (1 << RGN_TYPE_CHANNELS));
 
   /* data */
   prop = RNA_def_property(srna, "action", PROP_POINTER, PROP_NONE);
@@ -6973,8 +6990,9 @@ static void rna_def_space_graph(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "SpaceGraph");
   RNA_def_struct_ui_text(srna, "Space Graph Editor", "Graph Editor space data");
 
-  rna_def_space_generic_show_region_toggles(
-      srna, (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_HUD) | (1 << RGN_TYPE_CHANNELS));
+  rna_def_space_generic_show_region_toggles(srna,
+                                            (1 << RGN_TYPE_FOOTER) | (1 << RGN_TYPE_UI) |
+                                                (1 << RGN_TYPE_HUD) | (1 << RGN_TYPE_CHANNELS));
 
   /* mode */
   prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
@@ -7106,8 +7124,9 @@ static void rna_def_space_nla(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "SpaceNla");
   RNA_def_struct_ui_text(srna, "Space Nla Editor", "NLA editor space data");
 
-  rna_def_space_generic_show_region_toggles(
-      srna, (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_HUD) | (1 << RGN_TYPE_CHANNELS));
+  rna_def_space_generic_show_region_toggles(srna,
+                                            (1 << RGN_TYPE_FOOTER) | (1 << RGN_TYPE_UI) |
+                                                (1 << RGN_TYPE_HUD) | (1 << RGN_TYPE_CHANNELS));
 
   /* display */
   prop = RNA_def_property(srna, "show_seconds", PROP_BOOLEAN, PROP_NONE);
@@ -8279,6 +8298,19 @@ static void rna_def_space_node(BlenderRNA *brna)
       prop, "Auto-offset Direction", "Direction to offset nodes on insertion");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 
+  /* Gizmo Toggles. */
+  prop = RNA_def_property(srna, "show_gizmo", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, nullptr, "gizmo_flag", SNODE_GIZMO_HIDE);
+  RNA_def_property_ui_text(prop, "Show Gizmo", "Show gizmos of all types");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
+
+  prop = RNA_def_property(srna, "show_gizmo_active_node", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(
+      prop, nullptr, "gizmo_flag", SNODE_GIZMO_HIDE_ACTIVE_NODE);
+  RNA_def_property_ui_text(prop, "Active Node", "Context sensitive gizmo for the active node");
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
+
   /* Overlays */
   prop = RNA_def_property(srna, "overlay", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
@@ -8512,10 +8544,7 @@ static void rna_def_space_clip(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_graph_tracks_motion", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SC_SHOW_GRAPH_TRACKS_MOTION);
   RNA_def_property_ui_text(
-      prop,
-      "Show Tracks Motion",
-      "Display the speed curves (in \"x\" direction red, in \"y\" direction green) "
-      "for the selected tracks");
+      prop, "Show Tracks Motion", "Display speed curves for the selected tracks");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CLIP, nullptr);
 
   /* show graph tracks motion */
@@ -9021,6 +9050,14 @@ static void rna_def_space_spreadsheet(BlenderRNA *brna)
   prop = RNA_def_property(srna, "is_pinned", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SPREADSHEET_FLAG_PINNED);
   RNA_def_property_ui_text(prop, "Is Pinned", "Context path is pinned");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, nullptr);
+
+  prop = RNA_def_property(srna, "show_internal_attributes", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SPREADSHEET_FLAG_SHOW_INTERNAL_ATTRIBUTES);
+  RNA_def_property_ui_text(
+      prop,
+      "Show Internal Attributes",
+      "Display attributes with names starting with a period that are meant for internal use");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, nullptr);
 
   prop = RNA_def_property(srna, "use_filter", PROP_BOOLEAN, PROP_NONE);

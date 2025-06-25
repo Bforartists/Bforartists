@@ -34,7 +34,7 @@ static void rna_def_speaker(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Speaker", "ID");
-  RNA_def_struct_ui_text(srna, "Speaker", "Speaker data´for 3D audio speaker objects");
+  RNA_def_struct_ui_text(srna, "Speaker", "Speaker data´for 3D audio speaker objects"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_SPEAKER);
 
   prop = RNA_def_property(srna, "muted", PROP_BOOLEAN, PROP_NONE);
@@ -51,7 +51,7 @@ static void rna_def_speaker(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-  RNA_def_property_ui_text(prop, "Sound", "Sound data used by this speaker");
+  RNA_def_property_ui_text(prop, "Sound", "Sound data used by this speaker"); /* BFA */
 #  if 0
   RNA_def_property_float_funcs(prop, nullptr, "rna_Speaker_sound_set", nullptr);
   RNA_def_property_update(prop, 0, "rna_Speaker_update");

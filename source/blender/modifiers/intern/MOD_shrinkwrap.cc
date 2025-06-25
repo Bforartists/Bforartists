@@ -20,7 +20,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_shrinkwrap.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -170,9 +170,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
     layout->prop(ptr, "cull_face", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
     col = &layout->column(false);
-    uiLayoutSetActive(col,
-                      RNA_boolean_get(ptr, "use_negative_direction") &&
-                          RNA_enum_get(ptr, "cull_face") != 0);
+    col->active_set(RNA_boolean_get(ptr, "use_negative_direction") &&
+                    RNA_enum_get(ptr, "cull_face") != 0);
 
     /* bfa - our layout */
     row = &col->row(true);

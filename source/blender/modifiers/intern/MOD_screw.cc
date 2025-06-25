@@ -32,7 +32,7 @@
 #include "BKE_lib_query.hh"
 #include "BKE_mesh.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -1071,9 +1071,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout->column(false);
   col->prop(ptr, "angle", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row = &col->row(false);
-  uiLayoutSetActive(row,
-                    RNA_pointer_is_null(&screw_obj_ptr) ||
-                        !RNA_boolean_get(ptr, "use_object_screw_offset"));
+  row->active_set(RNA_pointer_is_null(&screw_obj_ptr) ||
+                  !RNA_boolean_get(ptr, "use_object_screw_offset"));
   row->prop(ptr, "screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -1086,7 +1085,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col->separator();
   row = &col->row(true);
-  uiLayoutSetActive(row, !RNA_pointer_is_null(&screw_obj_ptr));
+  row->active_set(!RNA_pointer_is_null(&screw_obj_ptr));
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_object_screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);

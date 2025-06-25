@@ -20,7 +20,7 @@
 #include "BKE_deform.hh"
 #include "BKE_mesh.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -184,7 +184,7 @@ static void vertex_group_panel_draw(const bContext * /*C*/, Panel *panel)
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
   row = &layout->row(true);
-  uiLayoutSetActive(row, has_vertex_group);
+  row->active_set(has_vertex_group);
   row->prop(ptr, "thickness_vertex_group", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
 }
 

@@ -23,7 +23,7 @@
 #include "BKE_grease_pencil.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "MOD_grease_pencil_util.hh"
@@ -294,7 +294,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   if (uiLayout *random_layout = random_panel_layout.body) {
     uiLayout *subcol = &random_layout->column(false);
     uiLayoutSetPropSep(subcol, true);
-    uiLayoutSetActive(subcol, RNA_boolean_get(ptr, "use_random"));
+    subcol->active_set(RNA_boolean_get(ptr, "use_random"));
 
     subcol->prop(ptr, "step", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -308,7 +308,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   if (uiLayout *curvature_layout = curvature_panel_layout.body) {
     uiLayout *subcol = &curvature_layout->column(false);
     uiLayoutSetPropSep(subcol, true);
-    uiLayoutSetActive(subcol, RNA_boolean_get(ptr, "use_curvature"));
+    subcol->active_set(RNA_boolean_get(ptr, "use_curvature"));
 
     subcol->prop(ptr, "point_density", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     subcol->prop(ptr, "segment_influence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -347,7 +347,7 @@ ModifierTypeInfo modifierType_GreasePencilLength = {
     /*flags*/
     eModifierTypeFlag_AcceptsGreasePencil | eModifierTypeFlag_EnableInEditmode |
         eModifierTypeFlag_SupportsEditmode,
-    /*icon*/ ICON_SPLINE_LENGTH,
+    /*icon*/ ICON_SPLINE_LENGTH, /* BFA */
 
     /*copy_data*/ blender::copy_data,
 

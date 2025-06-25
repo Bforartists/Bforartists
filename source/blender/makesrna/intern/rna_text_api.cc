@@ -67,7 +67,7 @@ void RNA_api_text(StructRNA *srna)
   func = RNA_def_function(srna, "write", "rna_Text_write");
   RNA_def_function_ui_description(
       func, "write text at the cursor location and advance to the end of the text block");
-  parm = RNA_def_string(func, "text", "Text", 0, "", "New text for this data");
+  parm = RNA_def_string(func, "text", "Text", 0, "", "New text for this data"); /* BFA */
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 
   func = RNA_def_function(srna, "from_string", "rna_Text_from_string");

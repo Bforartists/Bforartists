@@ -16,7 +16,7 @@ from bpy.props import (
 
 class SCENE_OT_freestyle_fill_range_by_selection(Operator):
     """Fill Range by Selection\nFill the Range Min/Max entries by the min/max distance between selected mesh objects and the source object """ \
-        """(either a user-specified object or the active camera)"""
+        """(either a user-specified object or the active camera)""" # BFA
     bl_idname = "scene.freestyle_fill_range_by_selection"
     bl_label = "Fill Range by Selection"
     bl_options = {'INTERNAL'}
@@ -185,7 +185,7 @@ class SCENE_OT_freestyle_add_face_marks_to_keying_set(Operator):
 
 
 class SCENE_OT_freestyle_module_open(Operator):
-    """Open Style Module File\nOpen a style module file"""
+    """Open a style module file"""
     bl_idname = "scene.freestyle_module_open"
     bl_label = "Open Style Module File"
     bl_options = {'INTERNAL'}

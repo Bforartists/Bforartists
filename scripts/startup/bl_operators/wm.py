@@ -56,7 +56,7 @@ def _rna_path_prop_search_for_context_impl(context, edit_text, unique_attrs):
 
 def rna_path_prop_search_for_context(self, context, edit_text):
     # NOTE(@campbellbarton): Limiting data-path expansion is rather arbitrary.
-    # It's possible for e.g. that someone would want to set a shortcut in the preferences or
+    # It's possible for example that someone would want to set a shortcut in the preferences or
     # in other region types than those currently expanded. Unless there is a reasonable likelihood
     # users might expand these space-type/region-type combinations - exclude them from this search.
     # After all, this list is mainly intended as a hint, users are not prevented from constructing
@@ -69,7 +69,7 @@ def rna_path_prop_search_for_context(self, context, edit_text):
             if area.type == 'PREFERENCES':
                 continue
             # Ignore the same region type multiple times in an area.
-            # Prevents the 3D-viewport quad-view from attempting to expand 3 extra times for e.g.
+            # Prevents the 3D-viewport quad-view from attempting to expand 3 extra times for example
             region_type_unique = set()
             for region in area.regions:
                 if region.type not in {'WINDOW', 'PREVIEW'}:
@@ -116,7 +116,7 @@ rna_relative_prop = BoolProperty(
 rna_space_type_prop = EnumProperty(
     name="Type",
     items=tuple(
-        (e.identifier, e.name, "", e.value)
+        (e.identifier, e.name, "", e. value)
         for e in bpy.types.Space.bl_rna.properties["type"].enum_items
     ),
     default='EMPTY',
@@ -1273,7 +1273,7 @@ def _wm_doc_get_id(doc_id, *, do_url=True, url_prefix="", report=None):
 
 
 class WM_OT_doc_view_manual(Operator):
-    """Load online manual\nNote that this link leads to the online Blender manual. This is not officially part of Bforartists"""
+    """Load online manual\nNote that this link leads to the online Blender manual. This is not officially part of Bforartists""" # BFA
     bl_idname = "wm.doc_view_manual"
     bl_label = "View Manual"
 
@@ -1348,7 +1348,7 @@ class WM_OT_doc_view_manual(Operator):
 
 
 class WM_OT_doc_view(Operator):
-    """View Documentation\nOpen online reference docs in a web browser"""
+    """View Documentation\nOpen online reference docs in a web browser""" # BFA
     bl_idname = "wm.doc_view"
     bl_label = "View Documentation"
 
@@ -1680,8 +1680,8 @@ class WM_OT_properties_edit(Operator):
             if rna_data["subtype"] in [item[0] for item in self.subtype_items_cb(None)]:
                 self.subtype = rna_data["subtype"]
             self.use_soft_limits = (
-                    self.min_float != self.soft_min_float or
-                    self.max_float != self.soft_max_float
+                self.min_float != self.soft_min_float or
+                self.max_float != self.soft_max_float
             )
             default = self._convert_new_value_array(rna_data["default"], float, 32)
             self.default_float = default if isinstance(default, list) else [default] * 32
@@ -1692,8 +1692,8 @@ class WM_OT_properties_edit(Operator):
             self.soft_max_int = rna_data["soft_max"]
             self.step_int = rna_data["step"]
             self.use_soft_limits = (
-                    self.min_int != self.soft_min_int or
-                    self.max_int != self.soft_max_int
+                self.min_int != self.soft_min_int or
+                self.max_int != self.soft_max_int
             )
             self.default_int = self._convert_new_value_array(rna_data["default"], int, 32)
         elif self.property_type == 'STRING':
@@ -2158,7 +2158,7 @@ class WM_OT_properties_add(Operator):
 
 
 class WM_OT_properties_context_change(Operator):
-    """Change Context\nJump to a different tab inside the properties editor"""
+    """Change Context\nJump to a different tab inside the properties editor""" # BFA
     bl_idname = "wm.properties_context_change"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -3513,7 +3513,7 @@ class WM_MT_region_toggle_pie(Menu):
     bl_label = "Region Toggle"
 
     # Map the `region.type` to the `space_data` attribute & text label.
-    # The order of items defines priority, so in the sequencer for e.g.
+    # The order of items defines priority, so for example in the sequencer
     # when there is both a toolbar and channels, the toolbar gets the
     # axis-aligned pie, and the channels don't.
     _region_info = {

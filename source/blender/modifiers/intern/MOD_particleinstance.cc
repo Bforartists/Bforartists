@@ -30,7 +30,7 @@
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -588,7 +588,7 @@ static void path_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayoutSetActive(layout, RNA_boolean_get(ptr, "use_path"));
+  layout->active_set(RNA_boolean_get(ptr, "use_path"));
 
   col = &layout->column(true);
   col->prop(ptr, "position", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);

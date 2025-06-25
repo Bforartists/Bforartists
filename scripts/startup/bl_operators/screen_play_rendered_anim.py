@@ -59,7 +59,7 @@ def guess_player_path(preset):
 
 
 class PlayRenderedAnim(Operator):
-    """Play Rendered Animation\nPlay back rendered frames/movies using an external player"""
+    """Play Rendered Animation\nPlay back rendered frames/movies using an external player""" # BFA
     bl_idname = "render.play_rendered_anim"
     bl_label = "Play Rendered Animation"
     bl_options = {'REGISTER'}
@@ -140,6 +140,15 @@ class PlayRenderedAnim(Operator):
             frame_start = scene.frame_start
             frame_end = scene.frame_end
         if preset == 'INTERNAL':
+            # Use the current GPU backend for the player.
+            import gpu
+            gpu_backend = gpu.platform.backend_type_get()
+            if gpu_backend not in {'NONE', 'UNKNOWN'}:
+                cmd.extend([
+                    "--gpu-backend", gpu_backend.lower(),
+                ])
+            del gpu, gpu_backend
+
             opts = [
                 "-a",
                 "-f", str(rd.fps), str(rd.fps_base),

@@ -54,6 +54,7 @@
 #include "ANIM_rna.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "WM_api.hh"
@@ -495,12 +496,8 @@ static wmOperatorStatus insert_key_menu_invoke(bContext *C,
   for (int i = 0; i < totitem; i++) {
     const EnumPropertyItem *item = &item_array[i];
     if (item->identifier[0] != '\0') {
-      uiItemStringO(layout,
-                    item->name,
-                    item->icon,
-                    "ANIM_OT_keyframe_insert_by_name",
-                    "type",
-                    item->identifier);
+      PointerRNA op_ptr = layout->op("ANIM_OT_keyframe_insert_by_name", item->name, item->icon);
+      RNA_string_set(&op_ptr, "type", item->identifier);
     }
     else {
       /* This enum shouldn't contain headings, assert there are none.
@@ -968,6 +965,7 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   // WM_operator_properties_confirm_or_exec(ot); /*BFA - Remove confirmation dialog*/
 }
 
+/* BFA - multikeyframe*/
 static void insert_keyframes_multi(Main *bmain,
                                    blender::Vector<PointerRNA> &ptrs,
                                    PropertyRNA *prop,
@@ -1042,7 +1040,7 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
     return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
   }
 
-  blender::Set<ID *> changed_owner_ids;
+  blender::Set<ID *> changed_owner_ids; /* BFA */
   if ((ptr.owner_id && ptr.data && prop) && RNA_property_anim_editable(&ptr, prop)) {
     if (ptr.type == &RNA_NlaStrip) {
       /* Handle special properties for NLA Strips, whose F-Curves are stored on the
@@ -1158,7 +1156,7 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
                   (void *)prop);
     }
   }
-
+  /* BFA */
   if (changed || !changed_owner_ids.is_empty()) {
     if (changed) {
       changed_owner_ids.add(ptr.owner_id);
@@ -1211,6 +1209,7 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "all", true, "All", "Insert a keyframe for all element of the array");
 }
 
+/*BFA - Multi Keyframe*/
 static bool delete_key_multi(Main *bmain,
                              ReportList *reports,
                              const blender::Vector<PointerRNA> &ptrs,

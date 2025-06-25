@@ -47,6 +47,7 @@
 #include "ED_view3d.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -279,7 +280,7 @@ bool ED_editors_flush_edits_for_object_ex(Main *bmain,
       else {
         /* Set reorder=false so that saving the file doesn't reorder
          * the BMesh's elements */
-        BKE_sculptsession_bm_to_me(ob, false);
+        BKE_sculptsession_bm_to_me(ob);
       }
     }
   }

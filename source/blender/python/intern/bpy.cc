@@ -48,7 +48,7 @@
 #include "bpy_utils_units.hh"
 
 #include "../generic/py_capi_utils.hh"
-#include "../generic/python_compat.hh"
+#include "../generic/python_compat.hh" /* IWYU pragma: keep. */
 #include "../generic/python_utildefines.hh"
 
 /* external util modules */
@@ -708,8 +708,6 @@ static PyMethodDef bpy_methods[] = {
 static PyObject *bpy_import_test(const char *modname)
 {
   PyObject *mod = PyImport_ImportModuleLevel(modname, nullptr, nullptr, nullptr, 0);
-
-  GPU_bgl_end();
 
   if (mod) {
     Py_DECREF(mod);

@@ -661,7 +661,7 @@ static void rna_def_maskParent(BlenderRNA *brna)
   /* parent */
   prop = RNA_def_property(srna, "parent", PROP_STRING, PROP_NONE);
   RNA_def_property_ui_text(
-      prop, "Parent", "Name of parent object in specified data to which parenting happens");
+      prop, "Parent", "Name of parent object in specified data to which parenting happens"); /* BFA */
   RNA_def_property_string_maxlength(prop, MAX_ID_NAME - 2);
   RNA_def_property_update(prop, 0, "rna_Mask_update_parent");
 
@@ -670,7 +670,7 @@ static void rna_def_maskParent(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Sub Parent",
-      "Name of parent sub-object in specified data to which parenting happens");
+      "Name of parent sub-object in specified data to which parenting happens"); /* BFA */
   RNA_def_property_string_maxlength(prop, MAX_ID_NAME - 2);
   RNA_def_property_update(prop, 0, "rna_Mask_update_parent");
 }
@@ -1141,7 +1141,7 @@ static void rna_def_mask(BlenderRNA *brna)
   rna_def_mask_layer(brna);
 
   srna = RNA_def_struct(brna, "Mask", "ID");
-  RNA_def_struct_ui_text(srna, "Mask", "Mask data defining mask for compositing");
+  RNA_def_struct_ui_text(srna, "Mask", "Mask data defining mask for compositing"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_MOD_MASK);
 
   /* mask layers */

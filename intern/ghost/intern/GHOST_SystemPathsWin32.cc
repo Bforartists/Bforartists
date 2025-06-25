@@ -32,7 +32,7 @@ const char *GHOST_SystemPathsWin32::getSystemDir(int, const char *versionstr) co
 
   if (hResult == S_OK) {
     conv_utf_16_to_8(knownpath_16, knownpath, MAX_PATH * 3);
-    strcat(knownpath, "\\Bforartists\\Bforartists\\");
+    strcat(knownpath, "\\Bforartists\\Bforartists\\"); /* bfa */
     strcat(knownpath, versionstr);
     system_dir = knownpath;
   }
@@ -53,7 +53,7 @@ const char *GHOST_SystemPathsWin32::getUserDir(int, const char *versionstr) cons
 
   if (hResult == S_OK) {
     conv_utf_16_to_8(knownpath_16, knownpath, MAX_PATH * 3);
-    strcat(knownpath, "\\Bforartists\\Bforartists\\");
+    strcat(knownpath, "\\Bforartists\\Bforartists\\"); /* bfa */
     strcat(knownpath, versionstr);
     user_dir = knownpath;
   }

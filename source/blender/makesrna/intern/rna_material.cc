@@ -920,7 +920,7 @@ void RNA_def_material(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna,
       "Material",
-      "Material data to define the appearance of geometric objects for rendering");
+      "Material data to define the appearance of geometric objects for rendering"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_MATERIAL_DATA);
 
   prop = RNA_def_property(srna, "surface_render_method", PROP_ENUM, PROP_NONE);

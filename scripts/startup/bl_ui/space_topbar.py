@@ -16,6 +16,7 @@ from bpy.app.translations import (
     contexts as i18n_contexts,
 )
 
+# BFA - Added icons and floated properties left
 
 class TOPBAR_HT_upper_bar(Header):
     bl_space_type = 'TOPBAR'
@@ -36,7 +37,7 @@ class TOPBAR_HT_upper_bar(Header):
 
         TOPBAR_MT_editor_menus.draw_collapsible(context, layout)
 
-        layout.separator()
+        layout.separator(type='LINE')
 
         if not screen.show_fullscreen:
             layout.template_ID_tabs(
@@ -78,16 +79,14 @@ class TOPBAR_PT_tool_settings_extra(Panel):
     """
     Popover panel for adding extra options that don't fit in the tool settings header
     """
-
     bl_idname = "TOPBAR_PT_tool_settings_extra"
-    bl_region_type = "HEADER"
-    bl_space_type = "TOPBAR"
+    bl_region_type = 'HEADER'
+    bl_space_type = 'TOPBAR'
     bl_label = "Extra Options"
     bl_description = "Extra options"
 
     def draw(self, context):
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
-
         layout = self.layout
 
         # Get the active tool
@@ -102,19 +101,18 @@ class TOPBAR_PT_tool_settings_extra(Panel):
 
 
 class TOPBAR_PT_tool_fallback(Panel):
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "HEADER"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
     bl_label = "Layers"
     bl_ui_units_x = 8
 
     def draw(self, context):
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
-
         layout = self.layout
 
         tool_settings = context.tool_settings
         ToolSelectPanelHelper.draw_fallback_tool_items(layout, context)
-        if tool_settings.workspace_tool_type == "FALLBACK":
+        if tool_settings.workspace_tool_type == 'FALLBACK':
             tool = context.tool
             ToolSelectPanelHelper.draw_active_tool_fallback(context, layout, tool)
 
@@ -143,8 +141,6 @@ class TOPBAR_MT_editor_menus(Menu):
 
 
 # BFA - not used
-
-
 class TOPBAR_MT_blender(Menu):
     bl_label = "Blender"
 
@@ -448,10 +444,7 @@ class TOPBAR_MT_file_defaults(Menu):
             layout.operator("wm.read_factory_settings", icon="LOAD_FACTORY")
 
 
-# BFA - these are located in the Text Editor now, this has been made consistent though
 # Include technical operators here which would otherwise have no way for users to access.
-
-
 class TOPBAR_MT_blender_system(Menu):
     bl_label = "System"
 
@@ -482,10 +475,6 @@ class TOPBAR_MT_file_import(Menu):
     bl_owner_use_filter = False
 
     def draw(self, _context):
-        if bpy.app.build_options.collada:
-            self.layout.operator(
-                "wm.collada_import", text="Collada (.dae) (legacy)", icon="LOAD_DAE"
-            )
         if bpy.app.build_options.alembic:
             self.layout.operator(
                 "wm.alembic_import", text="Alembic (.abc)", icon="LOAD_ABC"
@@ -518,8 +507,6 @@ class TOPBAR_MT_file_import(Menu):
 
         if bpy.app.build_options.io_fbx:
             self.layout.operator("wm.fbx_import", text="FBX (.fbx) (experimental)")
-        if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_import", text="Collada (.dae) (Legacy)")
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -528,10 +515,6 @@ class TOPBAR_MT_file_export(Menu):
     bl_owner_use_filter = False
 
     def draw(self, _context):
-        if bpy.app.build_options.collada:
-            self.layout.operator(
-                "wm.collada_export", text="Collada (.dae) (legacy)", icon="SAVE_DAE"
-            )
         if bpy.app.build_options.alembic:
             self.layout.operator(
                 "wm.alembic_export", text="Alembic (.abc)", icon="SAVE_ABC"
@@ -969,8 +952,8 @@ class TOPBAR_MT_workspace_menu(Menu):
 
 # Grease Pencil Object - Primitive curve
 class TOPBAR_PT_gpencil_primitive(Panel):
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "HEADER"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
     bl_label = "Primitives"
 
     def draw(self, context):
@@ -983,8 +966,8 @@ class TOPBAR_PT_gpencil_primitive(Panel):
 
 # Only a popover
 class TOPBAR_PT_name(Panel):
-    bl_space_type = "TOPBAR"  # dummy
-    bl_region_type = "HEADER"
+    bl_space_type = 'TOPBAR'  # dummy
+    bl_region_type = 'HEADER'
     bl_label = "Rename Active Item"
     bl_ui_units_x = 14
 
@@ -1054,8 +1037,8 @@ class TOPBAR_PT_name(Panel):
 
 
 class TOPBAR_PT_name_marker(Panel):
-    bl_space_type = "TOPBAR"  # dummy
-    bl_region_type = "HEADER"
+    bl_space_type = 'TOPBAR'  # dummy
+    bl_region_type = 'HEADER'
     bl_label = "Rename Marker"
     bl_ui_units_x = 14
 
@@ -1116,8 +1099,8 @@ class TOPBAR_PT_name_marker(Panel):
 
 
 class TOPBAR_PT_grease_pencil_layers(Panel):
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "HEADER"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
     bl_label = "Layers"
     bl_ui_units_x = 14
 
@@ -1172,6 +1155,5 @@ classes = (
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
-
     for cls in classes:
         register_class(cls)

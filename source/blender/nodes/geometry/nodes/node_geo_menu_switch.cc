@@ -8,7 +8,7 @@
 
 #include "FN_multi_function.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "NOD_geo_menu_switch.hh"
@@ -95,7 +95,7 @@ static void node_declare(blender::nodes::NodeDeclarationBuilder &b)
     output.propagate_all();
   }
 
-  b.add_input<decl::Extend>("", "__extend__");
+  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Dynamic);
 }
 
 static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)

@@ -69,6 +69,7 @@ extern "C" {
 }
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -5019,10 +5020,7 @@ bool ED_curve_editnurb_select_pick(bContext *C,
     }
 
     /* Change active material on object. */
-    if (nu->mat_nr != obedit->actcol - 1) {
-      obedit->actcol = nu->mat_nr + 1;
-      WM_event_add_notifier(C, NC_MATERIAL | ND_SHADING_LINKS, nullptr);
-    }
+    blender::ed::object::material_active_index_set(obedit, nu->mat_nr);
 
     BKE_view_layer_synced_ensure(vc.scene, vc.view_layer);
     if (BKE_view_layer_active_base_get(vc.view_layer) != basact) {

@@ -17,7 +17,7 @@
 
 #include "BLO_read_write.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLT_translation.hh"
@@ -252,11 +252,11 @@ static void panel_draw(const bContext *C, Panel *panel)
     const char *text = (use_uniform_opacity) ? IFACE_("Opacity") : IFACE_("Opacity Factor");
 
     row = &layout->row(true); /* bfa - our layout */
-    uiLayoutSetActive(row, !use_weight_as_factor || use_uniform_opacity);
+    row->active_set(!use_weight_as_factor || use_uniform_opacity);
     row->prop(ptr, "color_factor", UI_ITEM_NONE, text, ICON_NONE);
     if (!use_uniform_opacity) {
       uiLayout *sub = &row->row(true);
-      uiLayoutSetActive(sub, true);
+      sub->active_set(true);
       row->prop(ptr, "use_weight_as_factor", UI_ITEM_NONE, "", ICON_MOD_VERTEX_WEIGHT);
     }
   }

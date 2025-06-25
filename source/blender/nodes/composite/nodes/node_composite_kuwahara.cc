@@ -16,7 +16,7 @@
 
 #include "RNA_access.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "COM_node_operation.hh"
@@ -668,7 +668,7 @@ class ConvertKuwaharaOperation : public NodeOperation {
         weighted_sum += color_mean * weight;
       }
 
-      /* Fallback to the original color if all sector weights are zero due to very high standard
+      /* Fall back to the original color if all sector weights are zero due to very high standard
        * deviation and sharpness. */
       if (sum_of_weights == 0.0f) {
         weighted_sum = center_color;

@@ -35,6 +35,7 @@
 #include "sculpt_undo.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "bmesh.hh"
@@ -122,7 +123,7 @@ static void disable(
     undo::restore_from_bmesh_enter_geometry(*undo_step, *mesh);
   }
   else {
-    BKE_sculptsession_bm_to_me(&ob, true);
+    BKE_sculptsession_bm_to_me(&ob);
   }
 
   /* Clear data. */

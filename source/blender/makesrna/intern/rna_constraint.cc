@@ -131,7 +131,7 @@ const EnumPropertyItem rna_enum_constraint_type_items[] = {
     RNA_ENUM_ITEM_HEADING(N_("Relationship"), nullptr),
     {CONSTRAINT_TYPE_ACTION,
      "ACTION",
-     ICON_CON_ACTION,
+     ICON_CON_ACTION, /* BFA */
      "Action",
      "Use transform property of target to look up pose for owner from an Action"},
     {CONSTRAINT_TYPE_ARMATURE,
@@ -1548,12 +1548,12 @@ static void rna_def_constraint_rotate_like(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Invert Z", "Invert the Z rotation");
   RNA_def_property_update(prop, NC_OBJECT | ND_CONSTRAINT, "rna_Constraint_update");
 
+  /* bfa - goo engine - copy rotation constraint invert rotation patch*/
   prop = RNA_def_property(srna, "invert_all", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", ROTLIKE_INVERT_ALL);
   RNA_def_property_ui_text(prop, "Invert All", "Invert final combined rotation");
   RNA_def_property_update(prop, NC_OBJECT | ND_CONSTRAINT, "rna_Constraint_update");
 
-  /* bfa - goo engine - copy rotation constraint invert rotation patch*/
   prop = RNA_def_property(srna, "euler_order", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "euler_order");
   RNA_def_property_enum_items(prop, euler_order_items);
@@ -3701,7 +3701,7 @@ void RNA_def_constraint(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
   RNA_def_property_boolean_sdna(prop, nullptr, "ui_expand_flag", 0);
   RNA_def_property_ui_text(prop, "Expanded", "Constraint's panel is expanded in UI");
-  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1); /* BFA */
 
   /* XXX this is really an internal flag,
    * but it may be useful for some tools to be able to access this... */

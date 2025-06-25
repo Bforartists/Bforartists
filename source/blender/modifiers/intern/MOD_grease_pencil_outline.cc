@@ -36,7 +36,7 @@
 
 #include "GEO_resample_curves.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLT_translation.hh"
@@ -331,7 +331,7 @@ ModifierTypeInfo modifierType_GreasePencilOutline = {
     /*type*/ ModifierTypeType::Nonconstructive,
     /*flags*/ eModifierTypeFlag_AcceptsGreasePencil | eModifierTypeFlag_SupportsEditmode |
         eModifierTypeFlag_EnableInEditmode | eModifierTypeFlag_SupportsMapping,
-    /*icon*/ ICON_NONE,
+    /*icon*/ ICON_MOD_OUTLINE,
 
     /*copy_data*/ blender::copy_data,
 

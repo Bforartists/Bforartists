@@ -25,7 +25,7 @@
 
 #include "RNA_access.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 #include "UI_tree_view.hh"
 
@@ -756,7 +756,7 @@ void file_create_asset_catalog_tree_view_in_layout(const bContext *C,
                                                    SpaceFile *space_file,
                                                    FileAssetSelectParams *params)
 {
-  uiBlock *block = uiLayoutGetBlock(layout);
+  uiBlock *block = layout->block();
 
   UI_block_layout_set_current(block, layout);
 

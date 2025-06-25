@@ -28,6 +28,7 @@
 #include "DEG_depsgraph_query.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLT_translation.hh"
@@ -537,11 +538,11 @@ static void panel_draw(const bContext *C, Panel *panel)
   col->prop(ptr, "offset", UI_ITEM_NONE, text, ICON_NONE);
 
   row = &col->row(false);
-  uiLayoutSetActive(row, !use_fixed_offset);
+  row->active_set(!use_fixed_offset);
   row->prop(ptr, "frame_scale", UI_ITEM_NONE, IFACE_("Scale"), ICON_NONE);
 
   row = &layout->row(true); /* bfa - our layout */
-  uiLayoutSetActive(row, !use_fixed_offset);
+  row->active_set(!use_fixed_offset);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_keep_loop", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -600,12 +601,12 @@ static void panel_draw(const bContext *C, Panel *panel)
   PanelLayout custom_range_panel_layout = layout->panel_prop(C, ptr, "open_custom_range_panel");
   if (uiLayout *header = custom_range_panel_layout.header) {
     uiLayoutSetPropSep(header, false);
-    uiLayoutSetActive(header, use_custom_range);
+    header->active_set(use_custom_range);
     header->prop(ptr, "use_custom_frame_range", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   if (uiLayout *body = custom_range_panel_layout.body) {
     uiLayoutSetPropSep(body, true);
-    uiLayoutSetActive(body, use_custom_range && RNA_boolean_get(ptr, "use_custom_frame_range"));
+    body->active_set(use_custom_range && RNA_boolean_get(ptr, "use_custom_frame_range"));
 
     col = &body->column(true);
     col->prop(ptr, "frame_start", UI_ITEM_NONE, IFACE_("Frame Start"), ICON_NONE);

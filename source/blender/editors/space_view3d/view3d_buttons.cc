@@ -51,7 +51,7 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "UI_interface_c.hh"
+#include "UI_interface_c.hh" /* BFA */
 #include "WM_api.hh"
 #include "WM_types.hh"
 
@@ -68,6 +68,7 @@
 #include "ANIM_bone_collections.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "view3d_intern.hh" /* own include */
@@ -623,7 +624,7 @@ static void v3d_editvertex_buts(
     layout->separator();
 
     col = &row->column(true);
-    uiLayoutSetUnitsX(col, .75);
+    col->ui_units_x_set(.75);
     uiLayoutSetFixedSize(col, true);
 
     col->label(IFACE_("X"), ICON_NONE);
@@ -635,7 +636,7 @@ static void v3d_editvertex_buts(
     }
 
     col = &row->column(true);
-    subblock = uiLayoutGetBlock(col);
+    subblock = col->block();
     UI_block_layout_set_current(subblock, col);
 
     /* Should be no need to translate these. */
@@ -709,7 +710,7 @@ static void v3d_editvertex_buts(
 
     /* bfa */
     row = &layout->row(true); /* bfa - use high level UI when possible */
-    subblock = uiLayoutGetBlock(row);
+    subblock = row->block();
     UI_block_layout_set_current(subblock, row);
 
     uiDefButBitS(subblock,
@@ -757,7 +758,7 @@ static void v3d_editvertex_buts(
         col->label(IFACE_("Crease"), ICON_NONE); /* -bfa move text to left of slider */
 
         col = &row->column(false);
-        subblock = uiLayoutGetBlock(col);
+        subblock = col->block();
         UI_block_layout_set_current(subblock, col);
 
         /* bfa */
@@ -802,7 +803,7 @@ static void v3d_editvertex_buts(
         col->label(IFACE_("Radius Y"), ICON_NONE);
 
         col = &row->column(true);
-        subblock = uiLayoutGetBlock(col);
+        subblock = col->block();
 
         /* bfa */
         but = uiDefButF(subblock,
@@ -849,7 +850,7 @@ static void v3d_editvertex_buts(
         col->label(IFACE_("Crease"), ICON_NONE);
 
         col = &row->column(false);
-        subblock = uiLayoutGetBlock(col);
+        subblock = col->block();
         UI_block_layout_set_current(subblock, col);
 
         /* customdata layer added on demand */
@@ -899,7 +900,7 @@ static void v3d_editvertex_buts(
       col->label(totcurvedata == 1 ? IFACE_("Tilt") : IFACE_("Mean Tilt"), ICON_NONE);
 
       col = &row->column(false);
-      subblock = uiLayoutGetBlock(col);
+      subblock = col->block();
       UI_block_layout_set_current(subblock, col);
 
       if (totcurvedata == 1) {
@@ -1017,7 +1018,7 @@ static void v3d_editvertex_buts(
       col->label(totlattdata == 1 ? IFACE_("Weight") : IFACE_("Mean Weight"), ICON_NONE);
 
       col = &row->column(false);
-      subblock = uiLayoutGetBlock(col);
+      subblock = col->block();
       UI_block_layout_set_current(subblock, col);
 
       if (totlattdata == 1) {
@@ -1597,7 +1598,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
           xco += x;
 
           row = &split->row(true);
-          uiLayoutSetEnabled(row, !locked);
+          row->enabled_set(!locked);
 
           /* The weight group value */
           /* To be reworked still */
@@ -1704,9 +1705,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
     row = &col->row(true);        /* bfa - row = col.row(align=True) */
     row->prop(ptr, "location", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* bfa - row.prop(ob, "location") */
     uiLayoutSetPropDecorate(row, false); /* bfa - row.use_property_decorate = False */
-    uiLayoutSetEmboss(row, blender::ui::EmbossType::None); /* bfa - emboss=False */
+    row->emboss_set(blender::ui::EmbossType::None); /* bfa - emboss=False */
     row->prop(ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-    uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
+    row->emboss_set(blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
     layout->separator(.25f);
   }
 
@@ -1719,7 +1720,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
       sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
+      sub->emboss_set(blender::ui::EmbossType::NoneOrStatus);
 
       draw4L = true; /* bfa - show 4L button if quaternion */
 
@@ -1742,7 +1743,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       sub = &row->column(true);
       uiLayoutSetPropDecorate(sub, false);
 
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::NoneOrStatus);
+      sub->emboss_set(blender::ui::EmbossType::NoneOrStatus);
       draw4L = true; /* bfa - show 4L button if axis-angle */
 
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
@@ -1753,7 +1754,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
         sub->label("", ICON_BLANK1);
       }
       sub->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(sub, blender::ui::EmbossType::Undefined); /* bfa */
+      sub->emboss_set(blender::ui::EmbossType::Undefined); /* bfa */
       break;
 
     default: /* euler rotations */
@@ -1763,16 +1764,16 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       row = &col->row(true);
       row->prop(ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
       uiLayoutSetPropDecorate(row, false);
-      uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
+      row->emboss_set(blender::ui::EmbossType::NoneOrStatus);
       row->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-      uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined); /* bfa */
+      row->emboss_set(blender::ui::EmbossType::Undefined); /* bfa */
       break;
   }
 
   row = &layout->row(true);
   row->label(IFACE_("Mode"), ICON_NONE);
   row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::None);
+  row->emboss_set(blender::ui::EmbossType::None);
 
   /* bfa - display 4L button */
   if (draw4L) {
@@ -1782,7 +1783,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   else {
     row->label("", ICON_BLANK1);
   }
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
+  row->emboss_set(blender::ui::EmbossType::Undefined);
 
   layout->separator(.25f);
 
@@ -1795,9 +1796,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
           IFACE_("Scale"),
           ICON_NONE); /* bfa - row.prop(ob, "scale") */
   uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::NoneOrStatus);
+  row->emboss_set(blender::ui::EmbossType::NoneOrStatus);
   row->prop(ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
-  uiLayoutSetEmboss(row, blender::ui::EmbossType::Undefined);
+  row->emboss_set(blender::ui::EmbossType::Undefined);
   /* end bfa */
 }
 
@@ -1965,7 +1966,7 @@ static void view3d_panel_transform(const bContext *C, Panel *panel)
   Object *obedit = OBEDIT_FROM_OBACT(ob);
   uiLayout *col;
 
-  block = uiLayoutGetBlock(panel->layout);
+  block = panel->layout->block();
   UI_block_func_handle_set(block, do_view3d_region_buttons, nullptr);
 
   col = &panel->layout->column(false);
@@ -1998,11 +1999,6 @@ static void view3d_panel_transform(const bContext *C, Panel *panel)
   }
 }
 
-static void hide_collections_menu_draw(const bContext *C, Menu *menu)
-{
-  blender::ed::object::collection_hide_menu_draw(C, menu->layout);
-}
-
 void view3d_buttons_register(ARegionType *art)
 {
   PanelType *pt;
@@ -2024,15 +2020,6 @@ void view3d_buttons_register(ARegionType *art)
   pt->draw = view3d_panel_vgroup;
   pt->poll = view3d_panel_vgroup_poll;
   BLI_addtail(&art->paneltypes, pt);
-
-  MenuType *mt;
-
-  mt = MEM_callocN<MenuType>("spacetype view3d menu collections");
-  STRNCPY(mt->idname, "VIEW3D_MT_collection");
-  STRNCPY(mt->label, N_("Collection"));
-  STRNCPY(mt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
-  mt->draw = hide_collections_menu_draw;
-  WM_menutype_add(mt);
 }
 
 static wmOperatorStatus view3d_object_mode_menu_exec(bContext *C, wmOperator *op)

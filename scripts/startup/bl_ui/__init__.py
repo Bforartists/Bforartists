@@ -172,8 +172,6 @@ def register():
         description="Filter add-ons by category",
     )
 
-
-
     # These items are static but depend on the version cycle.
     # bfa - iconized enum menu
     items = [

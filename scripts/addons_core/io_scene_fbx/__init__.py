@@ -53,6 +53,7 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
 
     directory: StringProperty(
         subtype='DIR_PATH',
+        options={'HIDDEN', 'SKIP_PRESET'},
     )
 
     filename_ext = ".fbx"
@@ -61,6 +62,7 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
     files: CollectionProperty(
         name="File Path",
         type=bpy.types.OperatorFileListElement,
+        options={'HIDDEN', 'SKIP_PRESET'},
     )
 
     ui_tab: EnumProperty(
@@ -396,7 +398,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
                ('SMOOTH_GROUP', "Smoothing Groups", "Write face smoothing groups"),
                ),
         description="Export smoothing information "
-        "(prefer 'Normals Only' option if your target importer understand split normals)",
+        "(prefer 'Normals Only' option if your target importer understands custom normals)",
         default='OFF',
     )
     colors_type: EnumProperty(

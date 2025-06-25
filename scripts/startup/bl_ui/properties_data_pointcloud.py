@@ -23,7 +23,7 @@ class DATA_PT_context_pointcloud(DataButtonsPanel, Panel):
     bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -53,7 +53,7 @@ class POINTCLOUD_MT_add_attribute(Menu):
     bl_label = "Add Attribute"
 
     @staticmethod
-    def add_standard_attribute(layout, pointcloud, name, data_type, domain, icon):
+    def add_standard_attribute(layout, pointcloud, name, data_type, domain, icon): # BFA
         exists = pointcloud.attributes.get(name) is not None
 
         col = layout.column()
@@ -64,7 +64,7 @@ class POINTCLOUD_MT_add_attribute(Menu):
         props.name = name
         props.data_type = data_type
         props.domain = domain
-        #props.icon = icon
+        #props.icon = icon # BFA
 
     def draw(self, context):
         layout = self.layout
@@ -78,7 +78,7 @@ class POINTCLOUD_MT_add_attribute(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("geometry.attribute_add", text="Custom", icon = 'ADD')
+        layout.operator("geometry.attribute_add", text="Custom", icon = 'ADD') # BFA
 
 class POINTCLOUD_UL_attributes(UIList):
     def filter_items(self, _context, data, property):
@@ -120,7 +120,7 @@ class DATA_PT_pointcloud_attributes(DataButtonsPanel, Panel):
     bl_label = "Attributes"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -153,7 +153,7 @@ class DATA_PT_pointcloud_attributes(DataButtonsPanel, Panel):
 class DATA_PT_custom_props_pointcloud(DataButtonsPanel, PropertyPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     _context_path = "object.data"

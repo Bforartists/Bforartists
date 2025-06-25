@@ -274,7 +274,7 @@ void PAINTCURVE_OT_add_point(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add New Paint Curve Point";
-  ot->description = "Add a new Paint Curve Point";
+  ot->description = ot->name;
   ot->idname = "PAINTCURVE_OT_add_point";
 
   /* API callbacks. */
@@ -367,7 +367,7 @@ void PAINTCURVE_OT_delete_point(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Remove Paint Curve Point";
-  ot->description = "Remove a Paint Curve Point";
+  ot->description = ot->name;
   ot->idname = "PAINTCURVE_OT_delete_point";
 
   /* API callbacks. */
@@ -661,7 +661,7 @@ void PAINTCURVE_OT_slide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Slide Paint Curve Point";
-  ot->description = "Select and slide a paint curve point";
+  ot->description = "Select and slide a paint curve point"; /* BFA */
   ot->idname = "PAINTCURVE_OT_slide";
 
   /* API callbacks. */
@@ -715,7 +715,7 @@ void PAINTCURVE_OT_draw(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Draw Curve";
-  ot->description = "Draw a curve";
+  ot->description = "Draw a curve"; /* BFA */
   ot->idname = "PAINTCURVE_OT_draw";
 
   /* API callbacks. */
@@ -760,7 +760,7 @@ void PAINTCURVE_OT_cursor(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Place Cursor";
-  ot->description = "Place the cursor";
+  ot->description = "Place the cursor"; /* BFA */
   ot->idname = "PAINTCURVE_OT_cursor";
 
   /* API callbacks. */

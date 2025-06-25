@@ -825,10 +825,6 @@ class NODES_PT_comp_add_color(bpy.types.Panel):
             props.type = "CompositorNodeRGBToBW"
 
 
-
-            # BFA - wip
-
-
 #Compositor, Add tab, Color, Adjust supbanel
 class NODES_PT_comp_add_color_adjust(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""

@@ -7,6 +7,7 @@
 #include "BLI_math_vector.h"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 namespace blender::nodes::node_fn_input_color_cc {
@@ -14,8 +15,8 @@ namespace blender::nodes::node_fn_input_color_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_output<decl::Color>("Color").custom_draw([](CustomSocketDrawParams &params) {
-    uiLayoutSetAlignment(&params.layout, UI_LAYOUT_ALIGN_EXPAND);
-    uiLayout &col = params.layout.column(true);
+    params.layout.alignment_set(blender::ui::LayoutAlign::Expand);
+    uiLayout &col = params.layout.column(true); /* BFA */
     uiTemplateColorPicker(&col, &params.node_ptr, "value", true, false, false, true);
     col.prop(&params.node_ptr, "value", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
   });

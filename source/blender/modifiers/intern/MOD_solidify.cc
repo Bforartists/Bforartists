@@ -19,7 +19,7 @@
 #include "BKE_context.hh"
 #include "BKE_screen.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -131,12 +131,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
   row = &layout->row(false);
-  uiLayoutSetActive(row, has_vertex_group);
+  row->active_set(has_vertex_group);
   row->prop(ptr, "thickness_vertex_group", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
 
   if (solidify_mode == MOD_SOLIDIFY_MODE_NONMANIFOLD) {
     row = &layout->row(false);
-    uiLayoutSetActive(row, has_vertex_group);
+    row->active_set(has_vertex_group);
     /* bfa - our layout */
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     row->separator(); /*bfa -indent*/
@@ -185,7 +185,7 @@ static void materials_panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "material_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col = &layout->column(true);
-  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_rim"));
+  col->active_set(RNA_boolean_get(ptr, "use_rim"));
   col->prop(ptr,
             "material_offset_rim",
             UI_ITEM_NONE,
@@ -232,7 +232,7 @@ static void clamp_panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout->column(false);
   col->prop(ptr, "thickness_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row = &col->row(false);
-  uiLayoutSetActive(row, RNA_float_get(ptr, "thickness_clamp") > 0.0f);
+  row->active_set(RNA_float_get(ptr, "thickness_clamp") > 0.0f);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_thickness_angle_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);

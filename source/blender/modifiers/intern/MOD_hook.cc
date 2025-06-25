@@ -30,6 +30,7 @@
 #include "BKE_object_types.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLO_read_write.hh"
@@ -495,7 +496,7 @@ static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "falloff_type", UI_ITEM_NONE, IFACE_("Type"), ICON_NONE);
 
   row = &layout->row(false);
-  uiLayoutSetActive(row, use_falloff);
+  row->active_set(use_falloff);
   row->prop(ptr, "falloff_radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true); /* bfa - our layout */

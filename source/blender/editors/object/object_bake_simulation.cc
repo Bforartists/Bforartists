@@ -46,6 +46,7 @@
 #include "object_intern.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 
 namespace bake = blender::bke::bake;
 
@@ -1102,7 +1103,7 @@ static wmOperatorStatus unpack_single_bake_invoke(bContext *C,
   pup = UI_popup_menu_begin(C, IFACE_("Unpack"), ICON_NONE);
   layout = UI_popup_menu_layout(pup);
 
-  uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
+  layout->operator_context_set(WM_OP_EXEC_DEFAULT);
   uiItemsFullEnumO(layout,
                    op->type->idname,
                    "method",

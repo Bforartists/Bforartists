@@ -30,7 +30,7 @@
 #include "BKE_lib_query.hh"
 #include "BKE_mesh.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -629,7 +629,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, mode == MOD_NORMALEDIT_MODE_DIRECTIONAL);
+  col->active_set(mode == MOD_NORMALEDIT_MODE_DIRECTIONAL);
 
   /* bfa - our layout */
   col = &layout->column(true);
@@ -682,7 +682,7 @@ static void offset_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayoutSetActive(layout, needs_object_offset);
+  layout->active_set(needs_object_offset);
   layout->prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 

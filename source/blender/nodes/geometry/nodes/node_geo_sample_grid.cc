@@ -10,7 +10,7 @@
 #include "NOD_rna_define.hh"
 #include "NOD_socket_search_link.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_enum_types.hh"
@@ -37,7 +37,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   }
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
 
-  b.add_input(data_type, "Grid").hide_value();
+  b.add_input(data_type, "Grid").hide_value().structure_type(StructureType::Grid);
   b.add_input<decl::Vector>("Position").implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
 
   b.add_output(data_type, "Value").dependent_field({1});

@@ -21,7 +21,7 @@
 #include "BKE_mesh_mirror.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -161,7 +161,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   prop = RNA_struct_find_property(ptr, "use_bisect_flip_axis");
   row = &col->row(true, IFACE_("Flip"));
-  uiLayoutSetActive(row, has_bisect);
+  row->active_set(has_bisect);
   row->prop(ptr, prop, 0, 0, toggles_flag, IFACE_("X"), ICON_NONE);
   row->prop(ptr, prop, 1, 0, toggles_flag, IFACE_("Y"), ICON_NONE);
   row->prop(ptr, prop, 2, 0, toggles_flag, IFACE_("Z"), ICON_NONE);
@@ -204,7 +204,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col = &layout->row(true); /*bfa - col, not sub*/
   uiLayoutSetPropSep(col, true);   /* bfa - use_property_split = true */
-  uiLayoutSetActive(col, is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
+  col->active_set(is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
   col->prop(ptr, "bisect_threshold", UI_ITEM_NONE, IFACE_("Bisect Distance"), ICON_NONE);
 
   modifier_error_message_draw(layout, ptr);

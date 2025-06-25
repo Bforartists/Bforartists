@@ -31,6 +31,7 @@
 #include "WM_types.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -55,7 +56,9 @@ void FILE_OT_pack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pack Linked Libraries";
   ot->idname = "FILE_OT_pack_libraries";
-  ot->description = "Pack all linked library files in use into the current .blend";
+  ot->description =
+      "Pack and store all data linked from other .blend files in the current .blend file. "
+      "Library references are preserved so the linked data can be unpacked again"; /* BFA */
 
   /* API callbacks. */
   ot->exec = pack_libraries_exec;
@@ -99,7 +102,7 @@ void FILE_OT_unpack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unpack Linked Libraries";
   ot->idname = "FILE_OT_unpack_libraries";
-  ot->description = "Restore all packed linked data  to their original locations";
+  ot->description = "Restore all packed linked data  to their original locations"; /* BFA */
 
   /* API callbacks. */
   ot->invoke = unpack_libraries_invoke;
@@ -133,7 +136,7 @@ static wmOperatorStatus autopack_toggle_exec(bContext *C, wmOperator *op)
 void FILE_OT_autopack_toggle(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Automatically Pack Into .blend";
+  ot->name = "Automatically Pack Resources";
   ot->idname = "FILE_OT_autopack_toggle";
   ot->description = "Automatically pack all external files into the .blend file";
 
@@ -281,7 +284,7 @@ static wmOperatorStatus unpack_all_invoke(bContext *C, wmOperator *op, const wmE
   pup = UI_popup_menu_begin(C, title.c_str(), ICON_NONE);
   layout = UI_popup_menu_layout(pup);
 
-  uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
+  layout->operator_context_set(WM_OP_EXEC_DEFAULT);
   uiItemsEnumO(layout, "FILE_OT_unpack_all", "method");
 
   UI_popup_menu_end(C, pup);
@@ -375,7 +378,7 @@ static wmOperatorStatus unpack_item_invoke(bContext *C, wmOperator *op, const wm
   pup = UI_popup_menu_begin(C, IFACE_("Unpack"), ICON_NONE);
   layout = UI_popup_menu_layout(pup);
 
-  uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
+  layout->operator_context_set(WM_OP_EXEC_DEFAULT);
   uiItemsFullEnumO(layout,
                    op->type->idname,
                    "method",
@@ -578,7 +581,7 @@ void FILE_OT_find_missing_files(wmOperatorType *ot)
                   "find_all",
                   false,
                   "Find All",
-                  "Find All\nFind all files in the search path (not just missing)");
+                  "Find all files in the search path (not just missing)");
 
   WM_operator_properties_filesel(ot,
                                  0,

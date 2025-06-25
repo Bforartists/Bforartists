@@ -22,7 +22,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_types.hh"
 
 #include "BLT_translation.hh"
 
@@ -143,9 +143,6 @@ static void initSeqSlide(TransInfo *t, wmOperator *op)
 
 bool transform_mode_edge_seq_slide_use_restore_handle_selection(const TransInfo *t)
 {
-  if ((U.sequencer_editor_flag & USER_SEQ_ED_SIMPLE_TWEAKING) == 0) {
-    return false;
-  }
   SeqSlideParams *ssp = static_cast<SeqSlideParams *>(t->custom.mode.data);
   if (ssp == nullptr) {
     return false;

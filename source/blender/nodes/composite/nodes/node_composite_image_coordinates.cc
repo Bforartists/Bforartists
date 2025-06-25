@@ -13,11 +13,12 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Color>("Image").hide_value().compositor_realization_mode(
       CompositorInputRealizationMode::None);
 
-  b.add_output<decl::Vector>("Uniform").description(
+  b.add_output<decl::Vector>("Uniform").dimensions(2).description(
       "Zero centered coordinates normalizes along the larger dimension for uniform scaling");
   b.add_output<decl::Vector>("Normalized")
+      .dimensions(2)
       .description("Normalized coordinates with half pixel offsets");
-  b.add_output<decl::Vector>("Pixel").description("Integer pixel coordinates");
+  b.add_output<decl::Vector>("Pixel").dimensions(2).description("Integer pixel coordinates");
 }
 
 using namespace blender::compositor;
@@ -37,9 +38,15 @@ class ImageCoordinatesOperation : public NodeOperation {
     Result &normalized_coordinates_result = this->get_result("Normalized");
     Result &pixel_coordinates_result = this->get_result("Pixel");
     if (input.is_single_value()) {
-      uniform_coordinates_result.allocate_invalid();
-      normalized_coordinates_result.allocate_invalid();
-      pixel_coordinates_result.allocate_invalid();
+      if (uniform_coordinates_result.should_compute()) {
+        uniform_coordinates_result.allocate_invalid();
+      }
+      if (normalized_coordinates_result.should_compute()) {
+        normalized_coordinates_result.allocate_invalid();
+      }
+      if (pixel_coordinates_result.should_compute()) {
+        pixel_coordinates_result.allocate_invalid();
+      }
       return;
     }
 

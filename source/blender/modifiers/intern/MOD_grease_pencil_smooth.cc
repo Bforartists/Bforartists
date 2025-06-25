@@ -23,7 +23,7 @@
 #include "BKE_grease_pencil.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "GEO_smooth_curves.hh"
@@ -250,7 +250,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   layout->prop(ptr, "step", UI_ITEM_NONE, IFACE_("Repeat"), ICON_NONE);
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_edit_position"));
+  col->active_set(RNA_boolean_get(ptr, "use_edit_position"));
   row = &col->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/

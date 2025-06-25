@@ -157,6 +157,7 @@ class BFA_OUTLINER_PT_scene_ops(Panel):
         col.label(text="New Scene")
         col.operator_enum(operator="scene.new", property="type")
 
+
 class OUTLINER_MT_editor_menus(Menu):
     bl_idname = "OUTLINER_MT_editor_menus"
     bl_label = ""
@@ -242,7 +243,6 @@ class OUTLINER_MT_view(Menu):
         layout.separator()
         layout.menu("OUTLINER_MT_pie_menus")
         layout.menu("INFO_MT_area")
-
 
 
 
@@ -730,12 +730,12 @@ class OUTLINER_PT_filter(Panel):
 
 classes = (
     OUTLINER_HT_header,
-    OUTLINER_MT_object_collection,
-    ALL_MT_editormenu_outliner,
-    BFA_OUTLINER_PT_scene_ops,
+    OUTLINER_MT_object_collection, # BFA - menu
+    ALL_MT_editormenu_outliner, # BFA - menu
+    BFA_OUTLINER_PT_scene_ops, # BFA - menu
     OUTLINER_MT_editor_menus,
-    OUTLINER_MT_pie_menus,
-    OUTLINER_MT_view,
+    OUTLINER_MT_pie_menus, # BFA - menu
+    OUTLINER_MT_view, # BFA - menu
     OUTLINER_MT_edit_datablocks,
     OUTLINER_MT_collection,
     OUTLINER_MT_collection_new,
