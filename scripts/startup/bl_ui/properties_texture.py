@@ -38,13 +38,9 @@ class TEXTURE_UL_texslots(UIList):
         slot = item
         tex = slot.texture if slot else None
 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            if tex:
-                layout.prop(tex, "name", text="", emboss=False, icon_value=icon)
-            else:
-                layout.label(text="", icon_value=icon)
-        elif self.layout_type == 'GRID':
-            layout.alignment = 'CENTER'
+        if tex:
+            layout.prop(tex, "name", text="", emboss=False, icon_value=icon)
+        else:
             layout.label(text="", icon_value=icon)
 
 
@@ -73,7 +69,7 @@ class TEXTURE_PT_preview(TextureButtonsPanel, Panel):
     bl_label = "Preview"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -106,7 +102,7 @@ class TEXTURE_PT_context(TextureButtonsPanel, Panel):
     bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -149,7 +145,7 @@ class TEXTURE_PT_node(TextureButtonsPanel, Panel):
     bl_context = "texture"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -182,7 +178,7 @@ class TEXTURE_PT_clouds(TextureTypePanel, Panel):
     tex_type = 'CLOUDS'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -218,7 +214,7 @@ class TEXTURE_PT_wood(TextureTypePanel, Panel):
     tex_type = 'WOOD'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -242,16 +238,16 @@ class TEXTURE_PT_wood(TextureTypePanel, Panel):
         col.prop(tex, "noise_basis_2", text="Second Basis")
 
         col = col.column()
-        if tex.wood_type in {'RINGNOISE', 'BANDNOISE'}:
-            col.prop(tex, "noise_type", text="Type")
+        col.active = tex.wood_type in {'RINGNOISE', 'BANDNOISE'}
+        col.prop(tex, "noise_type", text="Type")
 
         col.separator()
 
         sub = flow.column()
-        if tex.wood_type in {'RINGNOISE', 'BANDNOISE'}:
-            sub.prop(tex, "noise_scale", text="Size")
-            sub.prop(tex, "turbulence")
-            sub.prop(tex, "nabla")
+        sub.active = tex.wood_type in {'RINGNOISE', 'BANDNOISE'}
+        sub.prop(tex, "noise_scale", text="Size")
+        sub.prop(tex, "turbulence")
+        sub.prop(tex, "nabla")
 
 
 class TEXTURE_PT_marble(TextureTypePanel, Panel):
@@ -259,7 +255,7 @@ class TEXTURE_PT_marble(TextureTypePanel, Panel):
     tex_type = 'MARBLE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -297,7 +293,7 @@ class TEXTURE_PT_magic(TextureTypePanel, Panel):
     tex_type = 'MAGIC'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -320,7 +316,7 @@ class TEXTURE_PT_blend(TextureTypePanel, Panel):
     tex_type = 'BLEND'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -337,8 +333,8 @@ class TEXTURE_PT_blend(TextureTypePanel, Panel):
         col.separator()
 
         col = flow.column()
-        if (tex.progression in {'LINEAR', 'QUADRATIC', 'EASING', 'RADIAL'}):
-            col.prop(tex, "use_flip_axis", text="Orientation")
+        col.active = (tex.progression in {'LINEAR', 'QUADRATIC', 'EASING', 'RADIAL'})
+        col.prop(tex, "use_flip_axis", text="Orientation")
 
 
 class TEXTURE_PT_stucci(TextureTypePanel, Panel):
@@ -346,7 +342,7 @@ class TEXTURE_PT_stucci(TextureTypePanel, Panel):
     tex_type = 'STUCCI'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -381,7 +377,7 @@ class TEXTURE_PT_image(TextureTypePanel, Panel):
     tex_type = 'IMAGE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -397,7 +393,7 @@ class TEXTURE_PT_image_settings(TextureTypePanel, Panel):
     tex_type = 'IMAGE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -408,24 +404,6 @@ class TEXTURE_PT_image_settings(TextureTypePanel, Panel):
         layout.template_image(tex, "image", tex.image_user)
 
 
-def texture_filter_common(tex, layout):
-    layout.prop(tex, "filter_type", text="Filter Type")
-
-    if tex.use_mipmap and tex.filter_type in {'AREA', 'EWA', 'FELINE'}:
-        col = layout.column()
-        if tex.filter_type == 'FELINE':
-            col.prop(tex, "filter_lightprobes", text="Light Probes")
-        else:
-            col.prop(tex, "filter_eccentricity", text="Eccentricity")
-
-    layout.prop(tex, "filter_size", text="Size")
-
-    row = layout.row()
-    row.use_property_split = False
-    row.prop(tex, "use_filter_size_min", text="Minimum Size")
-    row.prop_decorator(tex, "use_filter_size_min")
-
-
 class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
     bl_label = "Sampling"
     bl_options = {'DEFAULT_CLOSED'}
@@ -433,7 +411,7 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
     tex_type = 'IMAGE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -446,33 +424,16 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
 
         col = flow.column()
 
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(tex, "use_interpolation")
         row.prop_decorator(tex, "use_interpolation")
 
         row = col.row()
         row.use_property_split = False
-        row.prop(tex, "use_mipmap")
-        if tex.use_mipmap:
-            row.label(icon='DISCLOSURE_TRI_DOWN')
-        else:
-            row.label(icon='DISCLOSURE_TRI_RIGHT')
-        row.prop_decorator(tex, "use_mipmap")
+        row.prop(tex, "filter_size", text="Size")
+        row.prop_decorator(tex, "filter_size")
 
-        if tex.use_mipmap:
-
-            row = col.row()
-            row.use_property_split = False
-            row.separator()
-            row.prop(tex, "use_mipmap_gauss", text="Gaussian Filter")
-            row.prop_decorator(tex, "use_mipmap_gauss")
-
-        col = flow.column()
-
-        col.separator()
-
-        texture_filter_common(tex, flow)
 
 
 class TEXTURE_PT_image_alpha(TextureTypePanel, Panel):
@@ -482,7 +443,7 @@ class TEXTURE_PT_image_alpha(TextureTypePanel, Panel):
     tex_type = 'IMAGE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -497,10 +458,10 @@ class TEXTURE_PT_image_alpha(TextureTypePanel, Panel):
         tex = context.texture
 
         col = layout.column()
-        if bool(tex.image and tex.image.alpha_mode != 'NONE'):
-            col.use_property_split = False
-            col.prop(tex, "use_calculate_alpha", text="Calculate")
-            col.prop(tex, "invert_alpha", text="Invert")
+        col.active = bool(tex.image and tex.image.alpha_mode != 'NONE')
+        col.use_property_split = False # BFA
+        col.prop(tex, "use_calculate_alpha", text="Calculate")
+        col.prop(tex, "invert_alpha", text="Invert")
 
 
 class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
@@ -510,7 +471,7 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
     tex_type = 'IMAGE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -556,7 +517,7 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
 
             col = flow.column(heading="Tiles")
 
-            row.use_property_split = False
+            row.use_property_split = False # BFA
             row.prop(tex, "use_checker_even", text="Even", text_ctxt=i18n_contexts.amount)
             row.prop_decorator(tex, "use_checker_even")
 
@@ -576,7 +537,7 @@ class TEXTURE_PT_image_mapping_crop(TextureTypePanel, Panel):
     tex_type = 'IMAGE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -602,7 +563,7 @@ class TEXTURE_PT_musgrave(TextureTypePanel, Panel):
     tex_type = 'MUSGRAVE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -651,7 +612,7 @@ class TEXTURE_PT_voronoi(TextureTypePanel, Panel):
     tex_type = 'VORONOI'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -666,8 +627,8 @@ class TEXTURE_PT_voronoi(TextureTypePanel, Panel):
         col.prop(tex, "distance_metric")
 
         sub = col.column()
-        if tex.distance_metric == 'MINKOVSKY':
-            sub.prop(tex, "minkovsky_exponent", text="Exponent")
+        sub.active = tex.distance_metric == 'MINKOVSKY'
+        sub.prop(tex, "minkovsky_exponent", text="Exponent")
 
         sub.separator()
 
@@ -688,7 +649,7 @@ class TEXTURE_PT_voronoi_feature_weights(TextureTypePanel, Panel):
     tex_type = 'VORONOI'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -713,7 +674,7 @@ class TEXTURE_PT_distortednoise(TextureTypePanel, Panel):
     tex_type = 'DISTORTED_NOISE'
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -742,7 +703,7 @@ class TEXTURE_PT_distortednoise(TextureTypePanel, Panel):
 class TextureSlotPanel(TextureButtonsPanel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -758,7 +719,7 @@ class TEXTURE_PT_mapping(TextureSlotPanel, Panel):
     bl_label = "Mapping"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -830,7 +791,7 @@ class TEXTURE_PT_influence(TextureSlotPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -916,7 +877,7 @@ class TEXTURE_PT_colors(TextureButtonsPanel, TextureColorsPoll, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -929,7 +890,7 @@ class TEXTURE_PT_colors(TextureButtonsPanel, TextureColorsPoll, Panel):
 
         col = flow.column()
 
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(tex, "use_clamp", text="Clamp")
         row.prop_decorator(tex, "use_clamp")
@@ -955,7 +916,7 @@ class TEXTURE_PT_colors_ramp(TextureButtonsPanel, TextureColorsPoll, Panel):
     bl_parent_id = "TEXTURE_PT_colors"
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -1015,7 +976,7 @@ class TEXTURE_PT_animation(TextureButtonsPanel, PropertiesAnimationMixin, Proper
 class TEXTURE_PT_custom_props(TextureButtonsPanel, PropertyPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     _context_path = "texture"

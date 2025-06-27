@@ -20,7 +20,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_shrinkwrap.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -154,34 +154,31 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->prop(ptr, "use_project_y", toggles_flag, std::nullopt, ICON_NONE);
     row->prop(ptr, "use_project_z", toggles_flag, std::nullopt, ICON_NONE);
 
-    /*------------------- bfa - original props */
+    /* bfa - our layout */
     row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_negative_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_negative_direction", 0); /*bfa - decorator*/
 
+    /* bfa - our layout */
     row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_positive_direction", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
-
-    col->prop(ptr, "use_negative_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    col->prop(ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     layout->prop(ptr, "cull_face", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
     col = &layout->column(false);
-    uiLayoutSetActive(col,
-                      RNA_boolean_get(ptr, "use_negative_direction") &&
-                          RNA_enum_get(ptr, "cull_face") != 0);
+    col->active_set(RNA_boolean_get(ptr, "use_negative_direction") &&
+                    RNA_enum_get(ptr, "cull_face") != 0);
 
-    /*------------------- bfa - original props */
+    /* bfa - our layout */
     row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    /*row->prop();*/
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_invert_cull", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_invert_cull", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
 
   layout->prop(ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);

@@ -13,7 +13,7 @@
 
 #include "node_function_util.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 namespace blender::nodes::node_fn_hash_value_cc {
@@ -43,7 +43,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 
 static const mf::MultiFunction *get_multi_function(const bNode &bnode)
 {
-  const eNodeSocketDatatype socket_type = static_cast<eNodeSocketDatatype>(bnode.custom1);
+  const eNodeSocketDatatype socket_type = eNodeSocketDatatype(bnode.custom1);
 
   static auto exec_preset = mf::build::exec_presets::AllSpanOrSingle();
 

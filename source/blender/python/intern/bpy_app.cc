@@ -54,7 +54,7 @@
 
 #include "../generic/py_capi_rna.hh"
 #include "../generic/py_capi_utils.hh"
-#include "../generic/python_compat.hh"
+#include "../generic/python_compat.hh" /* IWYU pragma: keep. */
 
 #ifdef BUILD_DATE
 extern "C" char build_date[];
@@ -85,7 +85,7 @@ static PyStructSequence_Field app_info_fields[] = {
      "Blender version is under development. This value is, and should be, used for handling "
      "compatibility changes between Blender versions"},
     {"version_string", "The Blender version formatted as a string"},
-    {"bfa_version_string", "The Bforartists version formatted as a string"},
+    {"bfa_version_string", "The Bforartists version formatted as a string"}, /* BFA */
     {"version_cycle", "The release status of this build alpha/beta/rc/release"},
     {"background",
      "Boolean, True when blender is running without a user interface (started with -b)"},
@@ -699,7 +699,7 @@ PyObject *BPY_app_struct()
   BlenderAppType.tp_init = nullptr;
   BlenderAppType.tp_new = nullptr;
   /* Without this we can't do `set(sys.modules)` #29635. */
-  BlenderAppType.tp_hash = (hashfunc)_Py_HashPointer;
+  BlenderAppType.tp_hash = (hashfunc)Py_HashPointer;
 
   /* Kind of a hack on top of #PyStructSequence. */
   py_struct_seq_getset_init();

@@ -574,7 +574,7 @@ void NLA_OT_view_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame All";
   ot->idname = "NLA_OT_view_all";
-  ot->description = "Zooms in or out to fit the display to show full strips range";
+  ot->description = "Zooms in or out to fit the display to show full strips range"; /* BFA */
 
   /* API callbacks. */
   ot->exec = nlaedit_viewall_exec;
@@ -589,7 +589,7 @@ void NLA_OT_view_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Frame Selected";
   ot->idname = "NLA_OT_view_selected";
-  ot->description = "Zooms in or out to fit the display to show selected strips range";
+  ot->description = "Zooms in or out to fit the display to show selected strips range"; /* BFA */
 
   /* API callbacks. */
   ot->exec = nlaedit_viewsel_exec;
@@ -702,7 +702,7 @@ static wmOperatorStatus nlaedit_add_actionclip_exec(bContext *C, wmOperator *op)
                 RPT_WARNING,
                 "Action '%s' does not specify what data it can be used on "
                 "(try setting the 'ID Root Type' setting from the data editor "
-                "for this action to avoid future problems)",
+                "for this action to avoid future problems)", /* BFA */
                 act->id.name + 2);
   }
 
@@ -2382,7 +2382,8 @@ void NLA_OT_clear_scale(wmOperatorType *ot)
  * Moves the start-point of the selected strips to the specified places.
  * \{ */
 
-/* defines for snap keyframes tool */ /*BFA - icons added*/
+/* defines for snap keyframes tool */
+/*BFA - icons added*/
 static const EnumPropertyItem prop_nlaedit_snap_types[] = {
     {NLAEDIT_SNAP_CFRA, "CFRA", ICON_SNAP_CURRENTFRAME, "Selection to Current Frame", ""},
     /* XXX as single entry? */

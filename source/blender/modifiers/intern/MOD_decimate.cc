@@ -22,7 +22,7 @@
 #include "BKE_deform.hh"
 #include "BKE_mesh.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -235,22 +235,17 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   if (decimate_type == MOD_DECIM_MODE_COLLAPSE) {
     layout->prop(ptr, "ratio", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
-    /*------------------- bfa - original props */
-    // ------------------ bfa new left aligned prop with triangle button to hide the inactive
-    // content
-
     /* NOTE: split amount here needs to be synced with normal labels */
-    uiLayout *split = &layout->split(0.385f, true);
+    uiLayout *split = &layout->split(0.385f, true); /* bfa - our layout */
 
-    /* FIRST PART ................................................ */
-    row = &split->row(false);
+    row = &split->row(true); /* bfa - our layout */
     uiLayoutSetPropDecorate(row, false);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_symmetry", UI_ITEM_NONE, "Symmetry", ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_symmetry", 0);
 
-    /* SECOND PART ................................................ */
-    row = &split->row(false);
+    row = &split->row(false); /* bfa - our layout */
     if (RNA_boolean_get(ptr, "use_symmetry")) {
       uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
       row->prop(ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
@@ -260,22 +255,17 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
       row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
     }
 
-    // ------------------------------- end bfa
-
-    /* ------------ end bfa */
-    /*------------------- bfa - original props */
-    col = &layout->column(true);
-    row = &col->row(true);
+    col = &layout->column(true); /* bfa - our layout */
+    row = &col->row(true); /* bfa - our layout */
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_collapse_triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/
-
-    /* ------------ end bfa */
 
     modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
     sub = &layout->row(true);
     bool has_vertex_group = RNA_string_length(ptr, "vertex_group") != 0;
-    uiLayoutSetActive(sub, has_vertex_group);
+    sub->active_set(has_vertex_group);
     sub->prop(ptr, "vertex_group_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (decimate_type == MOD_DECIM_MODE_UNSUBDIV) {
@@ -286,12 +276,10 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     uiLayout *col = &layout->column(false);
     col->prop(ptr, "delimit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    /*------------------- bfa - original prop */
-    row = &layout->row(true);
+    row = &layout->row(true); /* bfa - our layout */
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_dissolve_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
   layout->label(count_info, ICON_NONE);
 

@@ -43,7 +43,6 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "UI_interface.hh"
 #include "UI_resources.hh"
 #include "UI_string_search.hh"
 #include "UI_view2d.hh"
@@ -799,6 +798,7 @@ static wmOperatorStatus node_box_select_exec(bContext *C, wmOperator *op)
   tree_draw_order_update(node_tree);
 
   WM_event_add_notifier(C, NC_NODE | NA_SELECTED, nullptr);
+  WM_event_add_notifier(C, NC_NODE | ND_NODE_GIZMO, nullptr);
 
   return OPERATOR_FINISHED;
 }
@@ -900,6 +900,7 @@ static wmOperatorStatus node_circleselect_exec(bContext *C, wmOperator *op)
   }
 
   WM_event_add_notifier(C, NC_NODE | NA_SELECTED, nullptr);
+  WM_event_add_notifier(C, NC_NODE | ND_NODE_GIZMO, nullptr);
 
   return OPERATOR_FINISHED;
 }
@@ -1004,6 +1005,7 @@ static bool do_lasso_select_node(bContext *C, const Span<int2> mcoords, eSelectO
 
   if (changed) {
     WM_event_add_notifier(C, NC_NODE | NA_SELECTED, nullptr);
+    WM_event_add_notifier(C, NC_NODE | ND_NODE_GIZMO, nullptr);
   }
 
   return changed;
@@ -1388,7 +1390,7 @@ static uiBlock *node_find_menu(bContext *C, ARegion *region, void *arg_optype)
   UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_MOVEMOUSE_QUIT | UI_BLOCK_SEARCH_MENU);
   UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
 
-  const int box_width = UI_searchbox_size_x_guess(C, node_find_update_fn);
+  const int box_width = UI_searchbox_size_x_guess(C, node_find_update_fn, nullptr);
 
   but = uiDefSearchBut(
       block, search, 0, ICON_VIEWZOOM, sizeof(search), 0, 0, box_width, UI_UNIT_Y, "");

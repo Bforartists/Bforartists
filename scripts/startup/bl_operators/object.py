@@ -213,7 +213,7 @@ class SelectHierarchy(Operator):
 
 
 class SubdivisionSet(Operator):
-    """Subdivision Set\nSets a Subdivision Surface Level (1 to 5)"""
+    """Subdivision Set\nSets a Subdivision Surface Level (1 to 5)""" # BFA
 
     bl_idname = "object.subdivision_set"
     bl_label = "Subdivision Set"
@@ -230,6 +230,12 @@ class SubdivisionSet(Operator):
         description="Apply the subdivision surface level as an offset relative to the current level",
         default=False,
     )
+    ensure_modifier: BoolProperty(
+        name="Ensure Modifier",
+        description="Create the corresponding modifier if it does not exist",
+        default=True,
+        options={'HIDDEN'}
+    )
 
     @classmethod
     def poll(cls, context):
@@ -239,9 +245,29 @@ class SubdivisionSet(Operator):
     def execute(self, context):
         level = self.level
         relative = self.relative
+        ensure_modifier = self.ensure_modifier
 
         if relative and level == 0:
             return {'CANCELLED'}  # nothing to do
+
+        if not ensure_modifier:
+            any_object_has_relevant_modifier = False
+            for obj in context.selected_editable_objects:
+                if obj.mode == 'SCULPT':
+                    any_object_has_relevant_modifier |= any(mod.type == 'MULTIRES' for mod in obj.modifiers)
+                elif obj.mode == 'OBJECT':
+                    any_object_has_relevant_modifier |= any(mod.type == 'SUBSURF' for mod in obj.modifiers)
+                if any_object_has_relevant_modifier:
+                    break
+
+            if not any_object_has_relevant_modifier:
+                mod_name = ""
+                if obj.mode == 'SCULPT':
+                    mod_name = "Multiresolution"
+                else:
+                    mod_name = "Subdivision Surface"
+                self.report({'WARNING'}, "No {0} modifiers found".format(mod_name))
+                return {'CANCELLED'}
 
         if not relative and level < 0:
             self.level = level = 0
@@ -293,19 +319,20 @@ class SubdivisionSet(Operator):
                     return
 
             # add a new modifier
-            try:
-                if obj.mode == 'SCULPT':
-                    mod = obj.modifiers.new("Multires", 'MULTIRES')
-                    if level > 0:
-                        for _ in range(level):
-                            bpy.ops.object.multires_subdivide(modifier="Multires")
-                else:
-                    mod = obj.modifiers.new("Subdivision", 'SUBSURF')
-                    mod.levels = level
-                    if use_render_levels:  # BFA - Set render_levels if toggle is enabled
-                        mod.render_levels = level
-            except Exception:
-                self.report({'WARNING'}, "Modifiers cannot be added to object: " + obj.name)
+            if ensure_modifier:
+                try:
+                    if obj.mode == 'SCULPT':
+                        mod = obj.modifiers.new("Multires", 'MULTIRES')
+                        if level > 0:
+                            for _ in range(level):
+                                bpy.ops.object.multires_subdivide(modifier="Multires")
+                    else:
+                        mod = obj.modifiers.new("Subdivision", 'SUBSURF')
+                        mod.levels = level
+                        if use_render_levels:  # BFA - Set render_levels if toggle is enabled
+                            mod.render_levels = level
+                except Exception:
+                    self.report({'WARNING'}, "Modifiers cannot be added to object: " + obj.name)
 
         for obj in context.selected_editable_objects:
             set_object_subd(obj)
@@ -682,7 +709,7 @@ class MakeDupliFace(Operator):
 
 class IsolateTypeRender(Operator):
     """Render just the selected Item, disables rendering for all others.\nBest used in the Outliner editor view columns""" \
-        """by setting the hide render flag"""
+        """by setting the hide render flag""" # BFA
     bl_idname = "object.isolate_type_render"
     bl_label = "Restrict Render Unselected"
     bl_options = {'REGISTER', 'UNDO'}
@@ -708,7 +735,7 @@ class IsolateTypeRender(Operator):
 
 class ClearAllRestrictRender(Operator):
     """Render all Objects in the scene\nnBest used in the Outliner editor view columns""" \
-        """by setting the hide render flag"""
+        """by setting the hide render flag""" # BFA
     bl_idname = "object.hide_render_clear_all"
     bl_label = "Clear All Restrict Render"
     bl_options = {'REGISTER', 'UNDO'}

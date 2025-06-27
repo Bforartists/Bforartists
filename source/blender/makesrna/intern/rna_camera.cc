@@ -423,7 +423,7 @@ static void rna_def_camera_background_image(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", CAM_BGIMG_FLAG_EXPANDED);
   RNA_def_property_ui_text(prop, "Show Expanded", "Show the details in the user interface");
-  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1);
+  RNA_def_property_ui_icon(prop, ICON_DISCLOSURE_TRI_RIGHT, 1); /* BFA */
 
   prop = RNA_def_property(srna, "use_camera_clip", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", CAM_BGIMG_FLAG_CAMERACLIP);
@@ -514,7 +514,7 @@ static void rna_def_camera_stereo_data(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "CameraStereoData", nullptr);
   RNA_def_struct_sdna(srna, "CameraStereoSettings");
   RNA_def_struct_nested(brna, srna, "Camera");
-  RNA_def_struct_ui_text(srna, "Stereo", "Stereoscopy settings for a Camera data");
+  RNA_def_struct_ui_text(srna, "Stereo", "Stereoscopy settings for a Camera data"); /* BFA */
 
   RNA_define_lib_overridable(true);
 
@@ -724,7 +724,7 @@ void RNA_def_camera(BlenderRNA *brna)
   };
 
   srna = RNA_def_struct(brna, "Camera", "ID");
-  RNA_def_struct_ui_text(srna, "Camera", "Camera data for storing camera settings");
+  RNA_def_struct_ui_text(srna, "Camera", "Camera data for storing camera settings"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_CAMERA_DATA);
 
   RNA_define_lib_overridable(true);

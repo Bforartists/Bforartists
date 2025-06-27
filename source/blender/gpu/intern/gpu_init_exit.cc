@@ -36,6 +36,7 @@ void GPU_init()
   gpu_shader_dependency_init();
   gpu_shader_create_info_init();
 
+  GPU_shader_builtin_warm_up();
   GPU_pass_cache_init();
 
   gpu_batch_init();
@@ -49,8 +50,6 @@ void GPU_exit()
 
   BKE_material_defaults_free_gpu();
   GPU_shader_free_builtin_shaders();
-
-  gpu_backend_delete_resources();
 
   gpu_backend_delete_resources();
 

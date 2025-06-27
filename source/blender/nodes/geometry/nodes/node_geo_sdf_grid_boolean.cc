@@ -13,7 +13,7 @@
 
 #include "NOD_rna_define.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
@@ -30,7 +30,8 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
 
-  auto &first_grid = b.add_input<decl::Float>("Grid 1").hide_value();
+  auto &first_grid = b.add_input<decl::Float>("Grid 1").hide_value().structure_type(
+      StructureType::Grid);
 
   if (node) {
     static const auto make_available = [](bNode &node) {
@@ -42,16 +43,20 @@ static void node_declare(NodeDeclarationBuilder &b)
         b.add_input<decl::Float>("Grid", "Grid 2")
             .hide_value()
             .multi_input()
-            .make_available(make_available);
+            .make_available(make_available)
+            .structure_type(StructureType::Grid);
         break;
       case Operation::Difference:
-        b.add_input<decl::Float>("Grid 2").hide_value().multi_input().make_available(
-            make_available);
+        b.add_input<decl::Float>("Grid 2")
+            .hide_value()
+            .multi_input()
+            .make_available(make_available)
+            .structure_type(StructureType::Grid);
         break;
     }
   }
 
-  b.add_output<decl::Float>("Grid").hide_value();
+  b.add_output<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
 
   if (node) {
     switch (Operation(node->custom1)) {

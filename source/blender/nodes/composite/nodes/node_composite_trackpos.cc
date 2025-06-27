@@ -23,6 +23,7 @@
 #include "RNA_prototypes.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "COM_node_operation.hh"
@@ -37,7 +38,7 @@ static void cmp_node_trackpos_declare(NodeDeclarationBuilder &b)
 {
   b.add_output<decl::Float>("X");
   b.add_output<decl::Float>("Y");
-  b.add_output<decl::Vector>("Speed").subtype(PROP_VELOCITY);
+  b.add_output<decl::Vector>("Speed").subtype(PROP_VELOCITY).dimensions(2);
 }
 
 static void init(const bContext *C, PointerRNA *ptr)

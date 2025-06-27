@@ -64,6 +64,8 @@
 
 #include "graph_intern.hh"
 
+/* BFA - Added icons and improved descriptions*/
+
 /* -------------------------------------------------------------------- */
 /** \name Insert Keyframes Operator
  * \{ */
@@ -628,12 +630,12 @@ void GRAPH_OT_paste(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* Identifiers */
-  ot->name = "Paste Keyframes / Flipped";
+  ot->name = "Paste Keyframes / Flipped"; /* BFA */
   ot->idname = "GRAPH_OT_paste";
   ot->description =
       "Paste Keyframes pastes keyframes into the selected channels, "
       "starting on the current frame\nPaste Flipped pastes keyframes flipped into the selected "
-      "channels, starting on the current frame";
+      "channels, starting on the current frame"; /* BFA */
 
   /* API callbacks */
 
@@ -1596,7 +1598,7 @@ void GRAPH_OT_interpolation_type(wmOperatorType *ot)
   ot->idname = "GRAPH_OT_interpolation_type";
   ot->description =
       "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the "
-      "selected keyframes";
+      "selected keyframes"; /* BFA */
 
   /* API callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1673,7 +1675,7 @@ void GRAPH_OT_easing_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Easing Type";
   ot->idname = "GRAPH_OT_easing_type";
   ot->description =
-      "Easing Mode\nSet easing type for the F-Curve segments starting from the selected keyframes";
+      "Set easing type for the F-Curve segments starting from the selected keyframes";
 
   /* API callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1757,7 +1759,7 @@ void GRAPH_OT_handle_type(wmOperatorType *ot)
   /* Identifiers */
   ot->name = "Set Keyframe Handle Type";
   ot->idname = "GRAPH_OT_handle_type";
-  ot->description = "Keyframe Handle Type\nSet type of handle for selected keyframes";
+  ot->description = "Set type of handle for selected keyframes";
 
   /* API callbacks */
   ot->invoke = WM_menu_invoke;

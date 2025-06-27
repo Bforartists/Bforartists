@@ -10,7 +10,7 @@
 
 #include "BLT_translation.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "IMB_colormanagement.hh"
@@ -77,7 +77,7 @@ static void node_update(bNodeTree *ntree, bNode *node)
 
   LISTBASE_FOREACH (bNodeSocket *, socket, &node->inputs) {
     bke::node_set_socket_availability(
-        *ntree, *socket, socket->type == (eNodeSocketDatatype)data->data_type);
+        *ntree, *socket, socket->type == eNodeSocketDatatype(data->data_type));
   }
 
   bke::node_set_socket_availability(

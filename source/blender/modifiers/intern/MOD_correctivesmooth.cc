@@ -26,7 +26,7 @@
 #include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -736,6 +736,7 @@ static void deform_verts(ModifierData *md,
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
+  uiLayout *row; /* bfa - added row */
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -749,17 +750,17 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  /*------------------- bfa - original props */
-  uiLayout *row;
-  row = &layout->row(true);
+  row = &layout->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_only_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_only_smooth", 0); /*bfa - decorator*/
-  row = &layout->row(true);
+
+  row = &layout->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_pin_boundary", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_pin_boundary", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   layout->prop(ptr, "rest_source", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (RNA_enum_get(ptr, "rest_source") == MOD_CORRECTIVESMOOTH_RESTSOURCE_BIND) {

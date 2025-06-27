@@ -19,7 +19,7 @@
 #include "BKE_context.hh"
 #include "BKE_screen.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -97,19 +97,20 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     layout->prop(ptr, "nonmanifold_merge_threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else {
-    /*------------------- bfa - original props */
+    /* bfa - our layout */
     col = &layout->column(true);
     row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_even_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
 
-  /*------------------- bfa - original props */
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(
           ptr,
           "use_rim",
@@ -121,30 +122,26 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   if (RNA_boolean_get(ptr, "use_rim")) {
     uiLayout *row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    layout->separator();;
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_rim_only", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_rim_only", 0); /*bfa - decorator*/
   }
-  /* ------------ end bfa */
 
-  layout->separator();
+  col->separator();
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
   row = &layout->row(false);
-  uiLayoutSetActive(row, has_vertex_group);
-  /*row->prop();*/
+  row->active_set(has_vertex_group);
   row->prop(ptr, "thickness_vertex_group", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
 
   if (solidify_mode == MOD_SOLIDIFY_MODE_NONMANIFOLD) {
     row = &layout->row(false);
-    uiLayoutSetActive(row, has_vertex_group);
-
-    /*------------------- bfa - original props */
+    row->active_set(has_vertex_group);
+    /* bfa - our layout */
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    layout->separator();;                   /*bfa -indent*/
+    row->separator(); /*bfa -indent*/
     row->prop(ptr, "use_flat_faces", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_flat_faces", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
 
   modifier_error_message_draw(layout, ptr);
@@ -162,10 +159,16 @@ static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
+  /* bfa - our layout */
   col = &layout->column(false);
   row = &col->row(false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_flip_normals", UI_ITEM_NONE, IFACE_("Flip"), ICON_NONE);
   if (solidify_mode == MOD_SOLIDIFY_MODE_EXTRUDE) {
+    row = &col->row(false); 
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator();
     row->prop(ptr, "use_quality_normals", UI_ITEM_NONE, IFACE_("High Quality"), ICON_NONE);
   }
 }
@@ -182,7 +185,7 @@ static void materials_panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "material_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col = &layout->column(true);
-  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_rim"));
+  col->active_set(RNA_boolean_get(ptr, "use_rim"));
   col->prop(ptr,
             "material_offset_rim",
             UI_ITEM_NONE,
@@ -225,10 +228,13 @@ static void clamp_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
+  /* bfa - our layout*/
   col = &layout->column(false);
   col->prop(ptr, "thickness_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row = &col->row(false);
-  uiLayoutSetActive(row, RNA_float_get(ptr, "thickness_clamp") > 0.0f);
+  row->active_set(RNA_float_get(ptr, "thickness_clamp") > 0.0f);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_thickness_angle_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 

@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import bpy
+from itertools import chain
 from mathutils import Vector, Quaternion, Matrix
 from ...io.imp.gltf2_io_binary import BinaryData
 from ..com.gltf2_blender_math import scale_rot_swap_matrix, nearby_signed_perm_matrix
@@ -149,7 +150,7 @@ def init_vnodes(gltf):
     # Create needed scenes
     for idx_scene, scene in enumerate(gltf.data.scenes or []):
         # Create a new scene for all not default scenes
-        if idx_scene != gltf.data.scene:
+        if idx_scene != (gltf.data.scene or 0):
             new_scene = bpy.data.scenes.new(name=scene.name or "Scene %d" % idx_scene)
             gltf.blender_scenes[idx_scene] = new_scene
         else:
@@ -160,7 +161,7 @@ def init_vnodes(gltf):
     # If we have multiple scenes, we create a collection for each scene (as child of active collection)
     # And if some nodes are orphan, we create a collection for them too
     if len(gltf.data.scenes) == 1:
-        gltf.blender_collections[gltf.data.scene] = bpy.context.collection
+        gltf.blender_collections[gltf.data.scene or 0] = bpy.context.collection
     elif len(gltf.data.scenes) > 1:
         for idx_scene, scene in enumerate(gltf.data.scenes or []):
             if gltf.import_settings['import_scene_as_collection'] is True:
@@ -242,6 +243,7 @@ def manage_gpu_instancing(gltf, vnode, i, ext, mesh_id):
         inst_vnode.children = []
         inst_vnode.base_trs = get_inst_trs(gltf, trans_list[inst], rot_list[inst], scale_list[inst])
         inst_vnode.mesh_idx = mesh_id
+        # Do not set scenes here, this will be handle later by recursive add_nodes_to_scene
 
         vnode.children.append(inst_id)
 
@@ -283,6 +285,13 @@ def mark_bones_and_armas(gltf):
             gltf.vnodes[arma_id].type = VNode.Object
             gltf.vnodes[arma_id].is_arma = True
             gltf.vnodes[arma_id].arma_name = skin.name or 'Armature'
+            # Because the dummy root node is no more an dummy node, but a real armature object,
+            # We need to set the scenes on the vnode
+            gltf.vnodes[arma_id].scenes = list(
+                set(chain.from_iterable(
+                    gltf.vnodes[joint].scenes for joint in skin.joints
+                ))
+            )
 
         for joint in skin.joints:
             while joint != arma_id:
@@ -434,6 +443,7 @@ def fixup_multitype_nodes(gltf):
                 gltf.vnodes[new_id] = VNode()
                 gltf.vnodes[new_id].mesh_node_idx = vnode.mesh_node_idx
                 gltf.vnodes[new_id].parent = id
+                gltf.vnodes[new_id].scenes = vnode.scenes
                 vnode.children.append(new_id)
                 vnode.mesh_node_idx = None
             needs_move = True
@@ -444,6 +454,7 @@ def fixup_multitype_nodes(gltf):
                 gltf.vnodes[new_id] = VNode()
                 gltf.vnodes[new_id].camera_node_idx = vnode.camera_node_idx
                 gltf.vnodes[new_id].parent = id
+                gltf.vnodes[new_id].scenes = vnode.scenes
                 vnode.children.append(new_id)
                 vnode.camera_node_idx = None
             needs_move = True
@@ -454,6 +465,7 @@ def fixup_multitype_nodes(gltf):
                 gltf.vnodes[new_id] = VNode()
                 gltf.vnodes[new_id].light_node_idx = vnode.light_node_idx
                 gltf.vnodes[new_id].parent = id
+                gltf.vnodes[new_id].scenes = vnode.scenes
                 vnode.children.append(new_id)
                 vnode.light_node_idx = None
             needs_move = True

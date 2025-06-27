@@ -22,7 +22,7 @@
 
 #include "GEO_realize_instances.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLT_translation.hh"
@@ -277,7 +277,7 @@ static void modify_geometry_set(ModifierData *md,
 static void panel_draw(const bContext *C, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *row; /* bfa - added row */
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
@@ -289,21 +289,21 @@ static void panel_draw(const bContext *C, Panel *panel)
       C, ptr, "open_relative_offset_panel", ptr, "use_relative_offset", IFACE_("Relative Offset"));
   if (uiLayout *sub = relative_offset_layout.body) {
     uiLayout *col = &sub->column(false);
-    uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_relative_offset"));
+    col->active_set(RNA_boolean_get(ptr, "use_relative_offset"));
     col->prop(ptr, "relative_offset", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
   }
   PanelLayout constant_offset_layout = layout->panel_prop_with_bool_header(
       C, ptr, "open_constant_offset_panel", ptr, "use_constant_offset", IFACE_("Constant Offset"));
   if (uiLayout *sub = constant_offset_layout.body) {
     uiLayout *col = &sub->column(false);
-    uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_constant_offset"));
+    col->active_set(RNA_boolean_get(ptr, "use_constant_offset"));
     col->prop(ptr, "constant_offset", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
   }
   PanelLayout object_offset_layout = layout->panel_prop_with_bool_header(
       C, ptr, "open_object_offset_panel", ptr, "use_object_offset", IFACE_("Object Offset"));
   if (uiLayout *sub = object_offset_layout.body) {
     uiLayout *col = &sub->column(false);
-    uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_object_offset"));
+    col->active_set(RNA_boolean_get(ptr, "use_object_offset"));
     col->prop(ptr, "offset_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
   }
 
@@ -312,7 +312,11 @@ static void panel_draw(const bContext *C, Panel *panel)
     sub->prop(ptr, "random_offset", UI_ITEM_NONE, IFACE_("Offset"), ICON_NONE);
     sub->prop(ptr, "random_rotation", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
     sub->prop(ptr, "random_scale", UI_ITEM_NONE, IFACE_("Scale"), ICON_NONE);
-    sub->prop(ptr, "use_uniform_random_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row = &sub->row(true); /* bfa - our layout */
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
+    row->prop(ptr, "use_uniform_random_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_uniform_random_scale", 0); /*bfa - decorator*/
     sub->prop(ptr, "seed", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 

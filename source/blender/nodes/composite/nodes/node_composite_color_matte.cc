@@ -15,7 +15,6 @@
 
 #include "NOD_multi_function.hh"
 
-#include "UI_interface.hh"
 #include "UI_resources.hh"
 
 #include "GPU_material.hh"
@@ -57,14 +56,6 @@ static void cmp_node_color_matte_declare(NodeDeclarationBuilder &b)
 
   b.add_output<decl::Color>("Image");
   b.add_output<decl::Float>("Matte");
-}
-
-static void node_composit_init_color_matte(bNodeTree * /*ntree*/, bNode *node)
-{
-  /* All members are deprecated and needn't be set, but the data is still allocated for forward
-   * compatibility. */
-  NodeChroma *c = MEM_callocN<NodeChroma>(__func__);
-  node->storage = c;
 }
 
 using namespace blender::compositor;
@@ -139,9 +130,6 @@ static void register_node_type_cmp_color_matte()
   ntype.nclass = NODE_CLASS_MATTE;
   ntype.declare = file_ns::cmp_node_color_matte_declare;
   ntype.flag |= NODE_PREVIEW;
-  ntype.initfunc = file_ns::node_composit_init_color_matte;
-  blender::bke::node_type_storage(
-      ntype, "NodeChroma", node_free_standard_storage, node_copy_standard_storage);
   ntype.gpu_fn = file_ns::node_gpu_material;
   ntype.build_multi_function = file_ns::node_build_multi_function;
 

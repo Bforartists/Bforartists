@@ -57,6 +57,7 @@
 #include "ANIM_keyingsets.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -688,7 +689,7 @@ void OBJECT_OT_select_linked(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Linked";
-  ot->description = "Select all visible objects that are linked to";
+  ot->description = "Select all visible objects that are linked to the active element"; /* BFA */
   ot->idname = "OBJECT_OT_select_linked";
 
   /* API callbacks. */
@@ -729,6 +730,7 @@ enum {
 };
 
 static const EnumPropertyItem prop_select_grouped_types[] = {
+    /* BFA - icons added*/
     {OBJECT_GRPSEL_CHILDREN_RECURSIVE, "CHILDREN_RECURSIVE", ICON_CHILD_RECURSIVE, "Children", ""},
     {OBJECT_GRPSEL_CHILDREN, "CHILDREN", ICON_CHILD, "Immediate Children", ""},
     {OBJECT_GRPSEL_PARENT, "PARENT", ICON_PARENT, "Parent", ""},
@@ -837,12 +839,9 @@ static bool select_grouped_collection(bContext *C, Object *ob)
 
   for (i = 0; i < collection_count; i++) {
     collection = ob_collections[i];
-    uiItemStringO(layout,
-                  collection->id.name + 2,
-                  ICON_NONE,
-                  "OBJECT_OT_select_same_collection",
-                  "collection",
-                  collection->id.name + 2);
+    PointerRNA op_ptr = layout->op(
+        "OBJECT_OT_select_same_collection", collection->id.name + 2, ICON_NONE);
+    RNA_string_set(&op_ptr, "collection", collection->id.name + 2);
   }
 
   UI_popup_menu_end(C, pup);

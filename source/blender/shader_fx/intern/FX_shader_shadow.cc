@@ -18,7 +18,7 @@
 #include "BKE_screen.hh"
 #include "BKE_shader_fx.h"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -137,7 +137,7 @@ static void wave_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayoutSetActive(layout, RNA_boolean_get(ptr, "use_wave"));
+  layout->active_set(RNA_boolean_get(ptr, "use_wave"));
 
   layout->prop(ptr, "orientation", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
   layout->prop(ptr, "amplitude", UI_ITEM_NONE, std::nullopt, ICON_NONE);

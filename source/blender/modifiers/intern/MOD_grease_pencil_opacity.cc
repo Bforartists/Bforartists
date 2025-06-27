@@ -17,7 +17,7 @@
 
 #include "BLO_read_write.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLT_translation.hh"
@@ -226,7 +226,7 @@ static void modify_geometry_set(ModifierData *md,
 static void panel_draw(const bContext *C, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *row; /* bfa - added row */
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
@@ -244,15 +244,19 @@ static void panel_draw(const bContext *C, Panel *panel)
     const bool use_uniform_opacity = RNA_boolean_get(ptr, "use_uniform_opacity");
     const bool use_weight_as_factor = RNA_boolean_get(ptr, "use_weight_as_factor");
 
-    layout->prop(ptr, "use_uniform_opacity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row = &layout->row(true); /* bfa - our layout */
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
+    row->prop(ptr, "use_uniform_opacity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "use_uniform_opacity", 0); /*bfa - decorator*/
     const char *text = (use_uniform_opacity) ? IFACE_("Opacity") : IFACE_("Opacity Factor");
 
-    uiLayout *row = &layout->row(true);
-    uiLayoutSetActive(row, !use_weight_as_factor || use_uniform_opacity);
+    row = &layout->row(true); /* bfa - our layout */
+    row->active_set(!use_weight_as_factor || use_uniform_opacity);
     row->prop(ptr, "color_factor", UI_ITEM_NONE, text, ICON_NONE);
     if (!use_uniform_opacity) {
       uiLayout *sub = &row->row(true);
-      uiLayoutSetActive(sub, true);
+      sub->active_set(true);
       row->prop(ptr, "use_weight_as_factor", UI_ITEM_NONE, "", ICON_MOD_VERTEX_WEIGHT);
     }
   }

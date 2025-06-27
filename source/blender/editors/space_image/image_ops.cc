@@ -79,6 +79,7 @@
 #include "ED_uvedit.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
 
@@ -790,14 +791,12 @@ static wmOperatorStatus image_view_ndof_invoke(bContext *C,
 
   SpaceImage *sima = CTX_wm_space_image(C);
   ARegion *region = CTX_wm_region(C);
-  float pan_vec[3];
 
-  const wmNDOFMotionData *ndof = static_cast<const wmNDOFMotionData *>(event->customdata);
+  const wmNDOFMotionData &ndof = *static_cast<const wmNDOFMotionData *>(event->customdata);
   const float pan_speed = NDOF_PIXELS_PER_SECOND;
 
-  WM_event_ndof_pan_get(ndof, pan_vec, true);
+  blender::float3 pan_vec = ndof.time_delta * WM_event_ndof_translation_get_for_navigation(ndof);
 
-  mul_v3_fl(pan_vec, ndof->dt);
   mul_v2_fl(pan_vec, pan_speed / sima->zoom);
 
   sima_zoom_set_factor(sima, region, max_ff(0.0f, 1.0f - pan_vec[2]), nullptr, false);
@@ -1089,7 +1088,7 @@ void IMAGE_OT_view_zoom_in(wmOperatorType *ot)
                               -FLT_MAX,
                               FLT_MAX,
                               "Location",
-                              "Location\nCursor location in screen coordinates",
+                              "Cursor location in screen coordinates",
                               -10.0f,
                               10.0f);
   RNA_def_property_flag(prop, PROP_HIDDEN);
@@ -1150,7 +1149,7 @@ void IMAGE_OT_view_zoom_out(wmOperatorType *ot)
                               -FLT_MAX,
                               FLT_MAX,
                               "Location",
-                              "Location\nCursor location in screen coordinates",
+                              "Cursor location in screen coordinates",
                               -10.0f,
                               10.0f);
   RNA_def_property_flag(prop, PROP_HIDDEN);
@@ -1249,7 +1248,7 @@ void IMAGE_OT_view_zoom_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Zoom Border";
   ot->description =
-      "Drawing a rectangle with LMB zooms in. Drawing a rectangle with MMB zooms out";
+      "Drawing a rectangle with LMB zooms in. Drawing a rectangle with MMB zooms out"; /* BFA */
   ot->idname = "IMAGE_OT_view_zoom_border";
 
   /* API callbacks. */
@@ -1692,8 +1691,9 @@ static wmOperatorStatus image_file_browse_invoke(bContext *C, wmOperator *op, co
   }
 
   /* The image is typically passed to the operator via layout/button context (e.g.
-   * #uiLayoutSetContextPointer()). The File Browser doesn't support restoring this context
-   * when calling `exec()` though, so we have to pass it the image via custom data. */
+   * #uiLayout::context_ptr_set. The File Browser doesn't support
+   * restoring this context when calling `exec()` though, so we have to pass it the image via
+   * custom data. */
   op->customdata = ima;
 
   image_filesel(C, op, filepath);
@@ -2773,7 +2773,7 @@ void IMAGE_OT_new(wmOperatorType *ot)
 
   /* properties */
   ot->prop = RNA_def_string(
-      ot->srna, "name", IMA_DEF_NAME, MAX_ID_NAME - 2, "Name", "Image name");
+      ot->srna, "name", IMA_DEF_NAME, MAX_ID_NAME - 2, "Name", "Image name"); /* BFA */
   prop = RNA_def_int(ot->srna, "width", 1024, 1, INT_MAX, "Width", "Image width", 1, 16384);
   RNA_def_property_subtype(prop, PROP_PIXEL);
   prop = RNA_def_int(ot->srna, "height", 1024, 1, INT_MAX, "Height", "Image height", 1, 16384);
@@ -2887,10 +2887,6 @@ static wmOperatorStatus image_flip_exec(bContext *C, wmOperator *op)
   ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
   BKE_image_mark_dirty(ima, ibuf);
 
-  if (ibuf->mipmap[0]) {
-    ibuf->userflags |= IB_MIPMAP_INVALID;
-  }
-
   ED_image_undo_push_end();
 
   BKE_image_partial_update_mark_full_update(ima);
@@ -2960,10 +2956,6 @@ static wmOperatorStatus image_rotate_orthogonal_exec(bContext *C, wmOperator *op
 
   ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
   BKE_image_mark_dirty(ima, ibuf);
-
-  if (ibuf->mipmap[0]) {
-    ibuf->userflags |= IB_MIPMAP_INVALID;
-  }
 
   ED_image_undo_push_end();
 
@@ -3227,10 +3219,6 @@ static wmOperatorStatus image_invert_exec(bContext *C, wmOperator *op)
 
   ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
   BKE_image_mark_dirty(ima, ibuf);
-
-  if (ibuf->mipmap[0]) {
-    ibuf->userflags |= IB_MIPMAP_INVALID;
-  }
 
   ED_image_undo_push_end();
 
@@ -3593,7 +3581,7 @@ void IMAGE_OT_unpack(wmOperatorType *ot)
       ot->srna, "method", rna_enum_unpack_method_items, PF_USE_LOCAL, "Method", "How to unpack");
   /* XXX, weak!, will fail with library, name collisions */
   RNA_def_string(
-      ot->srna, "id", nullptr, MAX_ID_NAME - 2, "Image Name", "Image name to unpack");
+      ot->srna, "id", nullptr, MAX_ID_NAME - 2, "Image Name", "Image name to unpack"); /* BFA */
 }
 
 /** \} */
@@ -4242,7 +4230,7 @@ void IMAGE_OT_clear_render_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Render Region";
-  ot->description = "Removes an existing Render Region rectangle";  // BFA
+  ot->description = "Removes an existing Render Region rectangle";  /* BFA */
   ot->idname = "IMAGE_OT_clear_render_border";
 
   /* API callbacks. */

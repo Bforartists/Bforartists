@@ -32,6 +32,7 @@
 #include "BKE_subsurf.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -292,7 +293,7 @@ static void deform_matrices(ModifierData *md,
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa, added *row*/
+  uiLayout *col, *row; /*bfa - added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -305,25 +306,25 @@ static void panel_draw(const bContext *C, Panel *panel)
   col->prop(ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
   const bool is_sculpt_mode = CTX_data_active_object(C)->mode & OB_MODE_SCULPT;
-  uiBlock *block = uiLayoutGetBlock(panel->layout);
+  uiBlock *block = panel->layout->block();
   UI_block_lock_set(block, !is_sculpt_mode, N_("Sculpt Base Mesh"));
-  /*------------------- bfa - original props */
+
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
   UI_block_lock_clear(block);
 
-  /*------------------- bfa - original props */
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
-
-  /* ------------ end bfa */
 
   modifier_error_message_draw(layout, ptr);
 }
@@ -336,7 +337,7 @@ static void subdivisions_panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetEnabled(layout, RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
+  layout->enabled_set(RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
 
   MultiresModifierData *mmd = (MultiresModifierData *)ptr->data;
 
@@ -390,7 +391,7 @@ static void shape_panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetEnabled(layout, RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
+  layout->enabled_set(RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
 
   row = &layout->row(false);
   row->op("OBJECT_OT_multires_reshape", IFACE_("Reshape"), ICON_NONE);
@@ -435,26 +436,29 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayoutSetActive(layout, !has_displacement);
+  layout->active_set(!has_displacement);
 
   layout->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, true);
+  col->active_set(true);
   col->prop(ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  /*------------------- bfa - original props */
+
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
 
+  /* bfa - our layout */
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 }
 
 static void panel_register(ARegionType *region_type)

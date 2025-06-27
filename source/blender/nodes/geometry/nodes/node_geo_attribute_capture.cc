@@ -2,7 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "NOD_geo_capture_attribute.hh"
@@ -51,8 +51,10 @@ static void node_declare(NodeDeclarationBuilder &b)
       b.add_output(data_type, item.name, output_identifier).field_on_all().align_with_previous();
     }
   }
-  b.add_input<decl::Extend>("", "__extend__");
-  b.add_output<decl::Extend>("", "__extend__").align_with_previous();
+  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Field);
+  b.add_output<decl::Extend>("", "__extend__")
+      .structure_type(StructureType::Field)
+      .align_with_previous();
 }
 
 static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)

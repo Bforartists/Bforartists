@@ -18,6 +18,8 @@
 #include "BLI_color.hh"
 #include "BLI_color_mix.hh"
 #include "BLI_enumerable_thread_specific.hh"
+#include "BLI_listbase.h"
+#include "BLI_math_color.h"
 #include "BLI_math_geom.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_rotation.h"
@@ -214,8 +216,12 @@ void init_stroke(Depsgraph &depsgraph, Object &ob)
   }
 }
 
-void init_session(
-    Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob, eObjectMode object_mode)
+void init_session(Main &bmain,
+                  Depsgraph &depsgraph,
+                  Scene &scene,
+                  Paint &paint,
+                  Object &ob,
+                  eObjectMode object_mode)
 {
   /* Create persistent sculpt mode data */
   BKE_sculpt_toolsettings_data_ensure(&bmain, &scene);
@@ -225,7 +231,7 @@ void init_session(
   ob.sculpt->mode_type = object_mode;
   BKE_sculpt_update_object_for_edit(&depsgraph, &ob, true);
 
-  ensure_valid_pivot(ob, scene);
+  ensure_valid_pivot(ob, paint);
 }
 
 void init_session_data(const ToolSettings &ts, Object &ob)
@@ -313,12 +319,13 @@ void mode_enter_generic(
    */
   BKE_object_free_derived_caches(&ob);
 
+  Paint *paint = nullptr;
   if (mode_flag == OB_MODE_VERTEX_PAINT) {
     const PaintMode paint_mode = PaintMode::Vertex;
     ED_mesh_color_ensure(mesh, nullptr);
 
     BKE_paint_ensure(scene.toolsettings, (Paint **)&scene.toolsettings->vpaint);
-    Paint *paint = BKE_paint_get_active_from_paintmode(&scene, paint_mode);
+    paint = BKE_paint_get_active_from_paintmode(&scene, paint_mode);
     ED_paint_cursor_start(paint, vertex_paint_poll);
     BKE_paint_init(&bmain, &scene, paint_mode, PAINT_CURSOR_VERTEX_PAINT);
   }
@@ -326,7 +333,7 @@ void mode_enter_generic(
     const PaintMode paint_mode = PaintMode::Weight;
 
     BKE_paint_ensure(scene.toolsettings, (Paint **)&scene.toolsettings->wpaint);
-    Paint *paint = BKE_paint_get_active_from_paintmode(&scene, paint_mode);
+    paint = BKE_paint_get_active_from_paintmode(&scene, paint_mode);
     ED_paint_cursor_start(paint, weight_paint_poll);
     BKE_paint_init(&bmain, &scene, paint_mode, PAINT_CURSOR_WEIGHT_PAINT);
 
@@ -345,7 +352,8 @@ void mode_enter_generic(
     BKE_sculptsession_free(&ob);
   }
 
-  vwpaint::init_session(bmain, depsgraph, scene, ob, mode_flag);
+  BLI_assert(paint != nullptr);
+  vwpaint::init_session(bmain, depsgraph, scene, *paint, ob, mode_flag);
 
   /* Flush object mode. */
   DEG_id_tag_update(&ob.id, ID_RECALC_SYNC_TO_EVAL);
@@ -411,7 +419,7 @@ bool mode_toggle_poll_test(bContext *C)
   return true;
 }
 
-void smooth_brush_toggle_off(const bContext *C, Paint *paint, StrokeCache *cache)
+void smooth_brush_toggle_off(Paint *paint, StrokeCache *cache)
 {
   Brush *brush = BKE_paint_brush(paint);
   /* The current brush should match with what we have stored in the cache. */
@@ -420,8 +428,7 @@ void smooth_brush_toggle_off(const bContext *C, Paint *paint, StrokeCache *cache
   /* If saved_active_brush is not set, brush was not switched/affected in
    * smooth_brush_toggle_on(). */
   if (cache->saved_active_brush) {
-    Scene *scene = CTX_data_scene(C);
-    BKE_brush_size_set(scene, brush, cache->saved_smooth_size);
+    BKE_brush_size_set(paint, brush, cache->saved_smooth_size);
     BKE_paint_brush_set(paint, cache->saved_active_brush);
     cache->saved_active_brush = nullptr;
   }
@@ -430,8 +437,7 @@ void update_cache_invariants(
     bContext *C, VPaint &vp, SculptSession &ss, wmOperator *op, const float mval[2])
 {
   StrokeCache *cache;
-  const Scene *scene = CTX_data_scene(C);
-  UnifiedPaintSettings *ups = &CTX_data_tool_settings(C)->unified_paint_settings;
+  UnifiedPaintSettings &ups = vp.paint.unified_paint_settings;
   ViewContext *vc = paint_stroke_view_context((PaintStroke *)op->customdata);
   Object &ob = *CTX_data_active_object(C);
   float mat[3][3];
@@ -461,10 +467,10 @@ void update_cache_invariants(
   /* not very nice, but with current events system implementation
    * we can't handle brush appearance inversion hotkey separately (sergey) */
   if (cache->invert) {
-    ups->draw_inverted = true;
+    ups.draw_inverted = true;
   }
   else {
-    ups->draw_inverted = false;
+    ups.draw_inverted = false;
   }
 
   if (cache->alt_smooth) {
@@ -476,6 +482,7 @@ void update_cache_invariants(
   /* Truly temporary data that isn't stored in properties */
   cache->vc = vc;
   cache->brush = brush;
+  cache->paint = &vp.paint;
   cache->first_time = true;
 
   /* cache projection matrix */
@@ -489,16 +496,19 @@ void update_cache_invariants(
   normalize_v3_v3(cache->view_normal, view_dir);
 
   cache->view_normal_symm = cache->view_normal;
-  cache->bstrength = BKE_brush_alpha_get(scene, brush);
+  cache->bstrength = BKE_brush_alpha_get(&vp.paint, brush);
   cache->is_last_valid = false;
 
   cache->accum = true;
+
+  if (BKE_brush_color_jitter_get_settings(&vp.paint, brush)) {
+    cache->initial_hsv_jitter = seed_hsv_jitter();
+  }
 }
 
 void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr)
 {
   using namespace blender;
-  Scene *scene = CTX_data_scene(C);
   const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
   SculptSession &ss = *ob.sculpt;
   StrokeCache *cache = ss.cache;
@@ -524,8 +534,8 @@ void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr)
   /* Truly temporary data that isn't stored in properties */
   if (cache->first_time) {
     cache->initial_radius = paint_calc_object_space_radius(
-        *cache->vc, cache->location, BKE_brush_size_get(scene, &brush));
-    BKE_brush_unprojected_radius_set(scene, &brush, cache->initial_radius);
+        *cache->vc, cache->location, BKE_brush_size_get(&vp.paint, &brush));
+    BKE_brush_unprojected_radius_set(&vp.paint, &brush, cache->initial_radius);
   }
 
   if (BKE_brush_use_size_pressure(&brush) && paint_supports_dynamic_size(brush, PaintMode::Sculpt))
@@ -543,22 +553,22 @@ void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr)
   }
 }
 
-void get_brush_alpha_data(const Scene &scene,
-                          const SculptSession &ss,
+void get_brush_alpha_data(const SculptSession &ss,
+                          const Paint &paint,
                           const Brush &brush,
                           float *r_brush_size_pressure,
                           float *r_brush_alpha_value,
                           float *r_brush_alpha_pressure)
 {
-  *r_brush_size_pressure = BKE_brush_size_get(&scene, &brush) *
+  *r_brush_size_pressure = BKE_brush_size_get(&paint, &brush) *
                            (BKE_brush_use_size_pressure(&brush) ? ss.cache->pressure : 1.0f);
-  *r_brush_alpha_value = BKE_brush_alpha_get(&scene, &brush);
+  *r_brush_alpha_value = BKE_brush_alpha_get(&paint, &brush);
   *r_brush_alpha_pressure = (BKE_brush_use_alpha_pressure(&brush) ? ss.cache->pressure : 1.0f);
 }
 
-void last_stroke_update(Scene &scene, const float location[3])
+void last_stroke_update(const float location[3], Paint &paint)
 {
-  UnifiedPaintSettings &ups = scene.toolsettings->unified_paint_settings;
+  UnifiedPaintSettings &ups = paint.unified_paint_settings;
   ups.average_stroke_counter++;
   add_v3_v3(ups.average_stroke_accum, location);
   ups.last_stroke_valid = true;
@@ -569,7 +579,6 @@ void last_stroke_update(Scene &scene, const float location[3])
 void smooth_brush_toggle_on(const bContext *C, Paint *paint, StrokeCache *cache)
 {
   Main *bmain = CTX_data_main(C);
-  Scene *scene = CTX_data_scene(C);
   Brush *cur_brush = BKE_paint_brush(paint);
 
   /* Switch to the blur (smooth) brush if possible. */
@@ -583,11 +592,11 @@ void smooth_brush_toggle_on(const bContext *C, Paint *paint, StrokeCache *cache)
     return;
   }
 
-  int cur_brush_size = BKE_brush_size_get(scene, cur_brush);
+  int cur_brush_size = BKE_brush_size_get(paint, cur_brush);
 
   cache->saved_active_brush = cur_brush;
-  cache->saved_smooth_size = BKE_brush_size_get(scene, smooth_brush);
-  BKE_brush_size_set(scene, smooth_brush, cur_brush_size);
+  cache->saved_smooth_size = BKE_brush_size_get(paint, smooth_brush);
+  BKE_brush_size_set(paint, smooth_brush, cur_brush_size);
   BKE_curvemapping_init(smooth_brush->curve);
 }
 /** \} */
@@ -638,12 +647,12 @@ bool vertex_paint_poll_ignore_tool(bContext *C)
   return vertex_paint_poll_ex(C, false);
 }
 
-static ColorPaint4f vpaint_get_current_col(Scene &scene, VPaint &vp, bool secondary)
+static ColorPaint4f vpaint_get_current_col(VPaint &vp, bool secondary)
 {
   const Brush *brush = BKE_paint_brush_for_read(&vp.paint);
   float color[4];
-  const float *brush_color = secondary ? BKE_brush_secondary_color_get(&scene, &vp.paint, brush) :
-                                         BKE_brush_color_get(&scene, &vp.paint, brush);
+  const float *brush_color = secondary ? BKE_brush_secondary_color_get(&vp.paint, brush) :
+                                         BKE_brush_color_get(&vp.paint, brush);
   IMB_colormanagement_srgb_to_scene_linear_v3(color, brush_color);
 
   color[3] = 1.0f; /* alpha isn't used, could even be removed to speedup paint a little */
@@ -710,6 +719,55 @@ static Color vpaint_blend(const VPaint &vp,
   return color_blend;
 }
 
+/* If in accumulate mode, blend brush mark directly onto mesh, else blend into temporary
+ * stroke_buffer and blend the stroke onto the mesh. */
+template<typename Color, typename Traits>
+static Color vpaint_blend_stroke(const VPaint &vp,
+                                 MutableSpan<Color> prev_vertex_colors,
+                                 MutableSpan<Color> vertex_colors,
+                                 MutableSpan<Color> stroke_buffer,
+                                 Color brush_mark_color,
+                                 float brush_mark_alpha,
+                                 float brush_strength,
+                                 int index)
+{
+  Color result;
+  if (!vwpaint::brush_use_accumulate(vp)) {
+    BLI_assert(!stroke_buffer.is_empty());
+    BLI_assert(!prev_vertex_colors.is_empty());
+
+    if (isZero(prev_vertex_colors[index])) {
+      prev_vertex_colors[index] = vertex_colors[index];
+    }
+
+    /* Mix with mesh color under the stroke (a bit easier than trying to premultiply
+     * byte Color types */
+    if (isZero(stroke_buffer[index])) {
+      stroke_buffer[index] = vertex_colors[index];
+      stroke_buffer[index].a = 0;
+    }
+
+    stroke_buffer[index] = BLI_mix_colors<Color, Traits>(
+        IMB_BlendMode::IMB_BLEND_MIX, stroke_buffer[index], brush_mark_color, brush_mark_alpha);
+
+    result = vpaint_blend<Color, Traits>(vp,
+                                         prev_vertex_colors[index],
+                                         prev_vertex_colors[index],
+                                         stroke_buffer[index],
+                                         stroke_buffer[index].a,
+                                         Traits::range * brush_strength);
+  }
+  else {
+    result = vpaint_blend<Color, Traits>(vp,
+                                         vertex_colors[index],
+                                         Color() /* unused in accumulate mode */,
+                                         brush_mark_color,
+                                         brush_mark_alpha,
+                                         Traits::range * brush_strength);
+  }
+  return result;
+}
+
 static void paint_and_tex_color_alpha_intern(const VPaint &vp,
                                              const ViewContext *vc,
                                              const float co[3],
@@ -719,7 +777,7 @@ static void paint_and_tex_color_alpha_intern(const VPaint &vp,
   const MTex *mtex = BKE_brush_mask_texture_get(brush, OB_MODE_SCULPT);
   BLI_assert(mtex->tex != nullptr);
   if (mtex->brush_map_mode == MTEX_MAP_MODE_3D) {
-    BKE_brush_sample_tex_3d(vc->scene, brush, mtex, co, r_rgba, 0, nullptr);
+    BKE_brush_sample_tex_3d(&vp.paint, brush, mtex, co, r_rgba, 0, nullptr);
   }
   else {
     float co_ss[2]; /* screenspace */
@@ -728,7 +786,7 @@ static void paint_and_tex_color_alpha_intern(const VPaint &vp,
         V3D_PROJ_RET_OK)
     {
       const float co_ss_3d[3] = {co_ss[0], co_ss[1], 0.0f}; /* we need a 3rd empty value */
-      BKE_brush_sample_tex_3d(vc->scene, brush, mtex, co_ss_3d, r_rgba, 0, nullptr);
+      BKE_brush_sample_tex_3d(&vp.paint, brush, mtex, co_ss_3d, r_rgba, 0, nullptr);
     }
     else {
       zero_v4(r_rgba);
@@ -906,6 +964,7 @@ struct VPaintData : public PaintModeData {
 
   /* For brushes that don't use accumulation, a temporary holding array */
   GArray<> prev_colors;
+  GArray<> stroke_buffer;
 
   ~VPaintData() override
   {
@@ -937,8 +996,8 @@ static std::unique_ptr<VPaintData> vpaint_init_vpaint(bContext *C,
                                   brush.falloff_angle,
                                   (brush.flag & BRUSH_FRONTFACE_FALLOFF) != 0);
 
-  vpd->paintcol = vpaint_get_current_col(
-      scene, vp, (RNA_enum_get(op->ptr, "mode") == BRUSH_STROKE_INVERT));
+  vpd->paintcol = vpaint_get_current_col(vp,
+                                         (RNA_enum_get(op->ptr, "mode") == BRUSH_STROKE_INVERT));
 
   vpd->is_texbrush = !(brush.vertex_brush_type == VPAINT_BRUSH_TYPE_BLUR) && brush.mtex.tex;
 
@@ -964,9 +1023,16 @@ static std::unique_ptr<VPaintData> vpaint_init_vpaint(bContext *C,
       vpd->prev_colors = GArray(attribute.type(), attribute.size());
       attribute.type().value_initialize_n(vpd->prev_colors.data(), vpd->prev_colors.size());
     }
+
+    if (vpd->stroke_buffer.is_empty()) {
+      const GVArray attribute = *mesh.attributes().lookup(mesh.active_color_attribute);
+      vpd->stroke_buffer = GArray(attribute.type(), attribute.size());
+      attribute.type().value_initialize_n(vpd->stroke_buffer.data(), vpd->stroke_buffer.size());
+    }
   }
   else {
     vpd->prev_colors = {};
+    vpd->stroke_buffer = {};
   }
 
   return vpd;
@@ -1036,12 +1102,11 @@ static void do_vpaint_brush_blur_loops(const bContext *C,
   const StrokeCache &cache = *ss.cache;
 
   const Brush &brush = *ob.sculpt->cache->brush;
-  const Scene &scene = *CTX_data_scene(C);
   const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
 
   float brush_size_pressure, brush_alpha_value, brush_alpha_pressure;
   vwpaint::get_brush_alpha_data(
-      scene, ss, brush, &brush_size_pressure, &brush_alpha_value, &brush_alpha_pressure);
+      ss, vp.paint, brush, &brush_size_pressure, &brush_alpha_value, &brush_alpha_pressure);
   const bool use_normal = vwpaint::use_normal(vp);
   const bool use_vert_sel = (mesh.editflag & (ME_EDIT_PAINT_FACE_SEL | ME_EDIT_PAINT_VERT_SEL)) !=
                             0;
@@ -1192,12 +1257,11 @@ static void do_vpaint_brush_blur_verts(const bContext *C,
   const StrokeCache &cache = *ss.cache;
 
   const Brush &brush = *ss.cache->brush;
-  const Scene &scene = *CTX_data_scene(C);
   const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
 
   float brush_size_pressure, brush_alpha_value, brush_alpha_pressure;
   vwpaint::get_brush_alpha_data(
-      scene, ss, brush, &brush_size_pressure, &brush_alpha_value, &brush_alpha_pressure);
+      ss, vp.paint, brush, &brush_size_pressure, &brush_alpha_value, &brush_alpha_pressure);
   const bool use_normal = vwpaint::use_normal(vp);
   const bool use_vert_sel = (mesh.editflag & (ME_EDIT_PAINT_FACE_SEL | ME_EDIT_PAINT_VERT_SEL)) !=
                             0;
@@ -1342,7 +1406,6 @@ static void do_vpaint_brush_smear(const bContext *C,
   }
 
   const Brush &brush = *cache.brush;
-  const Scene &scene = *CTX_data_scene(C);
   const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
   GMutableSpan g_color_curr = vpd.smear.color_curr;
   GMutableSpan g_color_prev_smear = vpd.smear.color_prev;
@@ -1351,7 +1414,7 @@ static void do_vpaint_brush_smear(const bContext *C,
   float brush_size_pressure, brush_alpha_value, brush_alpha_pressure;
 
   vwpaint::get_brush_alpha_data(
-      scene, ss, brush, &brush_size_pressure, &brush_alpha_value, &brush_alpha_pressure);
+      ss, vp.paint, brush, &brush_size_pressure, &brush_alpha_value, &brush_alpha_pressure);
   const bool use_normal = vwpaint::use_normal(vp);
   const bool use_vert_sel = (mesh.editflag & (ME_EDIT_PAINT_FACE_SEL | ME_EDIT_PAINT_VERT_SEL)) !=
                             0;
@@ -1650,6 +1713,25 @@ static float paint_and_tex_color_alpha(const VPaint &vp,
   return rgba[3];
 }
 
+/* Compute brush color, using jitter if it's enabled */
+static blender::float3 get_brush_color(const Paint *paint,
+                                       const Brush *brush,
+                                       const StrokeCache &cache,
+                                       const ColorPaint4f &paint_color)
+{
+  blender::float3 brush_color = blender::float3(paint_color.r, paint_color.g, paint_color.b);
+  const std::optional<BrushColorJitterSettings> color_jitter_settings =
+      BKE_brush_color_jitter_get_settings(paint, brush);
+  if (color_jitter_settings) {
+    brush_color = BKE_paint_randomize_color(*color_jitter_settings,
+                                            *cache.initial_hsv_jitter,
+                                            cache.stroke_distance,
+                                            cache.pressure,
+                                            brush_color);
+  }
+  return brush_color;
+}
+
 static void vpaint_do_draw(const bContext *C,
                            const VPaint &vp,
                            VPaintData &vpd,
@@ -1662,12 +1744,11 @@ static void vpaint_do_draw(const bContext *C,
   SculptSession &ss = *ob.sculpt;
   const StrokeCache &cache = *ss.cache;
   const Brush &brush = *ob.sculpt->cache->brush;
-  const Scene &scene = *CTX_data_scene(C);
   const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
 
   float brush_size_pressure, brush_alpha_value, brush_alpha_pressure;
   vwpaint::get_brush_alpha_data(
-      scene, ss, brush, &brush_size_pressure, &brush_alpha_value, &brush_alpha_pressure);
+      ss, vp.paint, brush, &brush_size_pressure, &brush_alpha_value, &brush_alpha_pressure);
   const bool use_normal = vwpaint::use_normal(vp);
   const bool use_vert_sel = (mesh.editflag & (ME_EDIT_PAINT_FACE_SEL | ME_EDIT_PAINT_VERT_SEL)) !=
                             0;
@@ -1677,6 +1758,7 @@ static void vpaint_do_draw(const bContext *C,
       ss, brush.falloff_shape);
 
   GMutableSpan g_previous_color = vpd.prev_colors;
+  GMutableSpan g_stroke_buffer = vpd.stroke_buffer;
 
   const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
   const OffsetIndices faces = mesh.faces();
@@ -1693,6 +1775,8 @@ static void vpaint_do_draw(const bContext *C,
   if (use_face_sel) {
     select_poly = *attributes.lookup<bool>(".select_poly", bke::AttrDomain::Face);
   }
+
+  const blender::float3 brush_color = get_brush_color(&vp.paint, &brush, cache, vpd.paintcol);
 
   struct LocalData {
     Vector<float> factors;
@@ -1742,7 +1826,10 @@ static void vpaint_do_draw(const bContext *C,
         using Traits = blender::color::Traits<Color>;
         MutableSpan<Color> colors = attribute.typed<T>().template cast<Color>();
         MutableSpan<Color> previous_color = g_previous_color.typed<T>().template cast<Color>();
-        Color color_final = fromFloat<Color>(vpd.paintcol);
+        MutableSpan<Color> stroke_buffer = g_stroke_buffer.typed<T>().template cast<Color>();
+
+        Color color_final = fromFloat<Color>(
+            ColorPaint4f(brush_color[0], brush_color[1], brush_color[2], 1.0));
 
         /* If we're painting with a texture, sample the texture color and alpha. */
         float tex_alpha = 1.0;
@@ -1764,24 +1851,18 @@ static void vpaint_do_draw(const bContext *C,
           tex_alpha = paint_and_tex_color_alpha<Color>(vp, vpd, symm_point, &color_final);
         }
 
-        Color color_orig(0, 0, 0, 0);
+        const float final_alpha = Traits::frange * brush_fade * brush_strength * tex_alpha *
+                                  brush_alpha_pressure;
 
         if (vpd.domain == AttrDomain::Point) {
-          if (!previous_color.is_empty()) {
-            if (isZero(previous_color[vert])) {
-              previous_color[vert] = colors[vert];
-            }
-            color_orig = previous_color[vert];
-          }
-          const float final_alpha = Traits::frange * brush_fade * brush_strength * tex_alpha *
-                                    brush_alpha_pressure;
-
-          colors[vert] = vpaint_blend<Color, Traits>(vp,
-                                                     colors[vert],
-                                                     color_orig,
-                                                     color_final,
-                                                     final_alpha,
-                                                     Traits::range * brush_strength);
+          colors[vert] = vpaint_blend_stroke<Color, Traits>(vp,
+                                                            previous_color,
+                                                            colors,
+                                                            stroke_buffer,
+                                                            color_final,
+                                                            final_alpha,
+                                                            brush_strength,
+                                                            vert);
         }
         else {
           /* For each face owning this vert, paint each loop belonging to this vert. */
@@ -1791,23 +1872,14 @@ static void vpaint_do_draw(const bContext *C,
             if (!select_poly.is_empty() && !select_poly[face]) {
               continue;
             }
-            Color color_orig = Color(0, 0, 0, 0); /* unused when array is nullptr */
-
-            if (!previous_color.is_empty()) {
-              if (isZero(previous_color[corner])) {
-                previous_color[corner] = colors[corner];
-              }
-              color_orig = previous_color[corner];
-            }
-            const float final_alpha = Traits::frange * brush_fade * brush_strength * tex_alpha *
-                                      brush_alpha_pressure;
-
-            colors[corner] = vpaint_blend<Color, Traits>(vp,
-                                                         colors[corner],
-                                                         color_orig,
-                                                         color_final,
-                                                         final_alpha,
-                                                         Traits::range * brush_strength);
+            colors[corner] = vpaint_blend_stroke<Color, Traits>(vp,
+                                                                previous_color,
+                                                                colors,
+                                                                stroke_buffer,
+                                                                color_final,
+                                                                final_alpha,
+                                                                brush_strength,
+                                                                corner);
           }
         }
       });
@@ -1966,13 +2038,14 @@ static void vpaint_stroke_update_step(bContext *C,
                                       PaintStroke *stroke,
                                       PointerRNA *itemptr)
 {
-  Scene &scene = *CTX_data_scene(C);
   ToolSettings *ts = CTX_data_tool_settings(C);
   VPaintData &vpd = *static_cast<VPaintData *>(paint_stroke_mode_data(stroke));
   VPaint &vp = *ts->vpaint;
   ViewContext &vc = vpd.vc;
   Object &ob = *vc.obact;
   SculptSession &ss = *ob.sculpt;
+
+  ss.cache->stroke_distance = paint_stroke_distance_get(stroke);
 
   vwpaint::update_cache_variants(C, vp, ob, itemptr);
 
@@ -1999,7 +2072,7 @@ static void vpaint_stroke_update_step(bContext *C,
    * also needed for "Frame Selected" on last stroke. */
   float loc_world[3];
   mul_v3_m4v3(loc_world, ob.object_to_world().ptr(), ss.cache->location);
-  vwpaint::last_stroke_update(scene, loc_world);
+  vwpaint::last_stroke_update(loc_world, vp.paint);
 
   ED_region_tag_redraw(vc.region);
 
@@ -2016,7 +2089,7 @@ static void vpaint_stroke_done(const bContext *C, PaintStroke *stroke)
   if (ss.cache && ss.cache->alt_smooth) {
     ToolSettings *ts = CTX_data_tool_settings(C);
     VPaint &vp = *ts->vpaint;
-    vwpaint::smooth_brush_toggle_off(C, &vp.paint, ss.cache);
+    vwpaint::smooth_brush_toggle_off(&vp.paint, ss.cache);
   }
 
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, &ob);
@@ -2269,7 +2342,7 @@ static wmOperatorStatus vertex_color_set_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  ColorPaint4f paintcol = vpaint_get_current_col(scene, *scene.toolsettings->vpaint, false);
+  ColorPaint4f paintcol = vpaint_get_current_col(*scene.toolsettings->vpaint, false);
   const bool affect_alpha = RNA_boolean_get(op->ptr, "use_alpha");
 
   /* Ensure valid sculpt state. */

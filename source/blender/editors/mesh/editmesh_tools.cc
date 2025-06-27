@@ -70,6 +70,7 @@
 #include "ED_view3d.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "mesh_intern.hh" /* own include */
@@ -524,6 +525,7 @@ static wmOperatorStatus edbm_delete_exec(bContext *C, wmOperator *op)
 void MESH_OT_delete(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_mesh_delete_types[] = {
+      /* BFA - added icons*/ 
       {MESH_DELETE_VERT, "VERT", ICON_DELETE, "Vertices", ""},
       {MESH_DELETE_EDGE, "EDGE", ICON_DELETE, "Edges", ""},
       {MESH_DELETE_FACE, "FACE", ICON_DELETE, "Faces", ""},
@@ -2001,18 +2003,18 @@ void MESH_OT_edge_split(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* properties */
-  static const EnumPropertyItem merge_type_items[] = {
-      {BM_EDGE, "EDGE", ICON_SPLITEDGE, "Faces by Edges", "Split faces along selected edges"},
+  static const EnumPropertyItem split_type_items[] = {
+      {BM_EDGE, "EDGE", ICON_SPLITEDGE, "Faces by Edges", "Split faces along selected edges"}, /* BFA */
       {BM_VERT,
        "VERT",
-       ICON_SPLIT_BYVERTICES,
+       ICON_SPLIT_BYVERTICES, /* BFA */
        "Faces & Edges by Vertices",
        "Split faces and edges connected to selected vertices"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
   ot->prop = RNA_def_enum(
-      ot->srna, "type", merge_type_items, BM_EDGE, "Type", "Method to use for splitting");
+      ot->srna, "type", split_type_items, BM_EDGE, "Type", "Method to use for splitting");
 }
 
 /** \} */
@@ -3520,6 +3522,7 @@ static wmOperatorStatus edbm_merge_exec(bContext *C, wmOperator *op)
 }
 
 static const EnumPropertyItem merge_type_items[] = {
+    /* BFA - Added icons*/
     {MESH_MERGE_CENTER, "CENTER", ICON_MERGE_CENTER, "At Center", ""},
     {MESH_MERGE_CURSOR, "CURSOR", ICON_MERGE_CURSOR, "At Cursor", ""},
     {MESH_MERGE_COLLAPSE, "COLLAPSE", ICON_MERGE, "Collapse", ""},
@@ -4568,6 +4571,7 @@ static wmOperatorStatus edbm_separate_exec(bContext *C, wmOperator *op)
 void MESH_OT_separate(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_separate_types[] = {
+      /* BFA - Added icons*/
       {MESH_SEPARATE_SELECTED, "SELECTED", ICON_SEPARATE, "Selection", ""},
       {MESH_SEPARATE_MATERIAL, "MATERIAL", ICON_SEPARATE_BYMATERIAL, "By Material", ""},
       {MESH_SEPARATE_LOOSE, "LOOSE", ICON_SEPARATE_LOOSE, "By Loose Parts", ""},
@@ -5823,14 +5827,14 @@ static void edbm_decimate_ui(bContext * /*C*/, wmOperator *op)
 
   layout->prop(op->ptr, "use_vertex_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col = &layout->column(false);
-  uiLayoutSetActive(col, RNA_boolean_get(op->ptr, "use_vertex_group"));
+  col->active_set(RNA_boolean_get(op->ptr, "use_vertex_group"));
   col->prop(op->ptr, "vertex_group_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "invert_vertex_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   row = &layout->row(true, IFACE_("Symmetry"));
   row->prop(op->ptr, "use_symmetry", UI_ITEM_NONE, "", ICON_NONE);
   sub = &row->row(true);
-  uiLayoutSetActive(sub, RNA_boolean_get(op->ptr, "use_symmetry"));
+  sub->active_set(RNA_boolean_get(op->ptr, "use_symmetry"));
   sub->prop(op->ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 }
 
@@ -5885,8 +5889,11 @@ static void edbm_dissolve_prop__use_verts(wmOperatorType *ot, bool value, int fl
 {
   PropertyRNA *prop;
 
-  prop = RNA_def_boolean(
-      ot->srna, "use_verts", value, "Dissolve Vertices", "Dissolve remaining vertices");
+  prop = RNA_def_boolean(ot->srna,
+                         "use_verts",
+                         value,
+                         "Dissolve Vertices",
+                         "Dissolve remaining vertices which connect to only two edges");
 
   if (flag) {
     RNA_def_property_flag(prop, PropertyFlag(flag));
@@ -5907,6 +5914,22 @@ static void edbm_dissolve_prop__use_boundary_tear(wmOperatorType *ot)
                   false,
                   "Tear Boundary",
                   "Split off face corners instead of merging faces");
+}
+static void edbm_dissolve_prop__use_angle_threshold(wmOperatorType *ot)
+{
+  PropertyRNA *prop = RNA_def_float_rotation(
+      ot->srna,
+      "angle_threshold",
+      0,
+      nullptr,
+      0.0f,
+      DEG2RADF(180.0f),
+      "Angle Threshold",
+      "Remaining vertices which separate edge pairs are preserved if their edge angle exceeds "
+      "this threshold.",
+      0.0f,
+      DEG2RADF(180.0f));
+  RNA_def_property_float_default(prop, DEG2RADF(20.0f));
 }
 
 static wmOperatorStatus edbm_dissolve_verts_exec(bContext *C, wmOperator *op)
@@ -5978,6 +6001,7 @@ static wmOperatorStatus edbm_dissolve_edges_exec(bContext *C, wmOperator *op)
 {
   const bool use_verts = RNA_boolean_get(op->ptr, "use_verts");
   const bool use_face_split = RNA_boolean_get(op->ptr, "use_face_split");
+  const float angle_threshold = RNA_float_get(op->ptr, "angle_threshold");
 
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -5992,12 +6016,14 @@ static wmOperatorStatus edbm_dissolve_edges_exec(bContext *C, wmOperator *op)
 
     BM_custom_loop_normals_to_vector_layer(em->bm);
 
-    if (!EDBM_op_callf(em,
-                       op,
-                       "dissolve_edges edges=%he use_verts=%b use_face_split=%b",
-                       BM_ELEM_SELECT,
-                       use_verts,
-                       use_face_split))
+    if (!EDBM_op_callf(
+            em,
+            op,
+            "dissolve_edges edges=%he use_verts=%b use_face_split=%b angle_threshold=%f",
+            BM_ELEM_SELECT,
+            use_verts,
+            use_face_split,
+            angle_threshold))
     {
       continue;
     }
@@ -6029,6 +6055,7 @@ void MESH_OT_dissolve_edges(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   edbm_dissolve_prop__use_verts(ot, true, 0);
+  edbm_dissolve_prop__use_angle_threshold(ot);
   edbm_dissolve_prop__use_face_split(ot);
 }
 
@@ -6123,6 +6150,32 @@ static wmOperatorStatus edbm_dissolve_mode_exec(bContext *C, wmOperator *op)
   return edbm_dissolve_faces_exec(C, op);
 }
 
+static bool dissolve_mode_poll_property(const bContext *C, wmOperator *op, const PropertyRNA *prop)
+{
+  UNUSED_VARS(op);
+
+  const char *prop_id = RNA_property_identifier(prop);
+
+  Object *obedit = CTX_data_edit_object(C);
+  const BMEditMesh *em = BKE_editmesh_from_object(obedit);
+  bool is_edge_select_mode = false;
+
+  if (em->selectmode & SCE_SELECT_VERTEX) {
+    /* Pass. */
+  }
+  if (em->selectmode & SCE_SELECT_EDGE) {
+    is_edge_select_mode = true;
+  }
+
+  if (!is_edge_select_mode) {
+    /* Angle Threshold is only used in edge select mode. */
+    if (STREQ(prop_id, "angle_threshold")) {
+      return false;
+    }
+  }
+  return true;
+}
+
 void MESH_OT_dissolve_mode(wmOperatorType *ot)
 {
   /* identifiers */
@@ -6133,11 +6186,13 @@ void MESH_OT_dissolve_mode(wmOperatorType *ot)
   /* API callbacks. */
   ot->exec = edbm_dissolve_mode_exec;
   ot->poll = ED_operator_editmesh;
+  ot->poll_property = dissolve_mode_poll_property;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   edbm_dissolve_prop__use_verts(ot, false, PROP_SKIP_SAVE);
+  edbm_dissolve_prop__use_angle_threshold(ot);
   edbm_dissolve_prop__use_face_split(ot);
   edbm_dissolve_prop__use_boundary_tear(ot);
 }
@@ -6382,12 +6437,14 @@ static wmOperatorStatus edbm_delete_edgeloop_exec(bContext *C, wmOperator *op)
       }
     }
 
-    if (!EDBM_op_callf(em,
-                       op,
-                       "dissolve_edges edges=%he use_verts=%b use_face_split=%b",
-                       BM_ELEM_SELECT,
-                       true,
-                       use_face_split))
+    if (!EDBM_op_callf(
+            em,
+            op,
+            "dissolve_edges edges=%he use_verts=%b use_face_split=%b angle_threshold=%f",
+            BM_ELEM_SELECT,
+            true,
+            use_face_split,
+            M_PI))
     {
       continue;
     }

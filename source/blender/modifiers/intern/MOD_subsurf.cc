@@ -36,7 +36,7 @@
 #include "BKE_subdiv_mesh.hh"
 #include "BKE_subdiv_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RE_engine.h"
@@ -396,15 +396,17 @@ static void panel_draw(const bContext *C, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   uiLayout *col = &layout->column(true);
+  uiLayout *row = &col->row(true); /* bfa - added row */
   col->prop(ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
   col->prop(ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
-  /*------------------- bfa - original props */
-  uiLayout *row = &col->row(true);
+  /* bfa - our layout */
+  col = &layout->column(false);
+  row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   SubsurfModifierData *smd = static_cast<SubsurfModifierData *>(ptr->data);
@@ -438,7 +440,7 @@ static void panel_draw(const bContext *C, Panel *panel)
         "use_adaptive_subdivision",
         IFACE_("Adaptive Subdivision"));
     if (adaptive_panel.body) {
-      uiLayoutSetActive(adaptive_panel.body, ob_use_adaptive_subdivision);
+      adaptive_panel.body->active_set(ob_use_adaptive_subdivision);
       adaptive_panel.body->prop(
           &ob_cycles_ptr, "dicing_rate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -460,40 +462,48 @@ static void panel_draw(const bContext *C, Panel *panel)
   if (uiLayout *advanced_layout = layout->panel_prop(
           C, ptr, "open_advanced_panel", IFACE_("Advanced")))
   {
-    uiLayoutSetPropSep(advanced_layout, true);
+    /* bfa - our layout */
+    uiLayoutSetPropSep(layout, true);
 
-    /*------------------- bfa - original props */
+    /* bfa - our layout */
+    uiLayout *col = &advanced_layout->column(false);
+    col = &advanced_layout->column(false);
 
-    uiLayout *col = &advanced_layout->column(true);
-    col = &advanced_layout->column(true);
+    /* bfa - our layout */
     row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_limit_surface", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
-
-    // uiLayout *col = &advanced_layout->column(true); /*bfa - layout defined at the top*/
-    /* bfa - hide UI based on condition instead of deactivating */
+    
+    /* bfa - our layout */
     if (ob_use_adaptive_subdivision || RNA_boolean_get(ptr, "use_limit_surface")) {
-      uiLayout *col = &advanced_layout->column(true);
-      uiLayout *row = &col->row(true);
-      layout->separator();; /*bfa - indent*/
+      row = &col->row(false);
+      row->separator(); /*bfa - indent*/
       row->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
 
-    col->prop(ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    col->prop(ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    /* bfa - our layout */
+    row = &col->row(true);
+    row->prop(ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    /*------------------- bfa - original props */
-    uiLayout *row = &col->row(true);
+    /* bfa - our layout */
+    row = &col->row(true);
+    row->prop(ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row = &col->row(true);
+
+    /* bfa - our layout */
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
 
+    /* bfa - our layout */
+    row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
 
   modifier_error_message_draw(layout, ptr);

@@ -37,7 +37,7 @@
 #include "BKE_object_deform.h"
 #include "BKE_object_types.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -932,7 +932,7 @@ static void relative_offset_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayout *col = &layout->column(false);
 
-  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_relative_offset"));
+  col->active_set(RNA_boolean_get(ptr, "use_relative_offset"));
   col->prop(ptr, "relative_offset_displace", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
 }
 
@@ -955,7 +955,7 @@ static void constant_offset_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayout *col = &layout->column(false);
 
-  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_constant_offset"));
+  col->active_set(RNA_boolean_get(ptr, "use_constant_offset"));
   col->prop(ptr, "constant_offset_displace", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
 }
 
@@ -981,7 +981,7 @@ static void object_offset_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayout *col = &layout->column(false);
 
-  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_object_offset"));
+  col->active_set(RNA_boolean_get(ptr, "use_object_offset"));
   col->prop(ptr, "offset_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
 }
 
@@ -997,25 +997,24 @@ static void symmetry_panel_header_draw(const bContext * /*C*/, Panel *panel)
 static void symmetry_panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *col, *row; /* bfa - added col, row */
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   uiLayoutSetPropSep(layout, true);
 
-  uiLayout *col = &layout->column(false);
-  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_merge_vertices"));
+  col = &layout->column(false); /* bfa - our layout */
+  col->active_set(RNA_boolean_get(ptr, "use_merge_vertices"));
   col->prop(ptr, "merge_threshold", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
 
-  uiLayout *row;
-  row = &col->row(true);
+  row = &col->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /* bfa - Indent */
   row->prop(ptr,
           "use_merge_vertices_cap",
           UI_ITEM_NONE,
           IFACE_("First and Last Copies"),
           ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_merge_vertices_cap", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
+  uiItemDecoratorR(row, ptr, "use_merge_vertices_cap", 0); /* bfa - Add the decorator */
 }
 
 static void uv_panel_draw(const bContext * /*C*/, Panel *panel)

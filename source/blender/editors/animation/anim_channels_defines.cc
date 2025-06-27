@@ -158,7 +158,8 @@ static void acf_generic_dataexpand_backdrop(bAnimContext *ac,
   short offset = (acf->get_offset) ? acf->get_offset(ac, ale) : 0;
   float color[3];
 
-  uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(
+      immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   /* set backdrop drawing color */
   acf->get_backdrop_color(ac, ale, color);
@@ -201,7 +202,8 @@ static void acf_generic_channel_backdrop(bAnimContext *ac,
   short offset = (acf->get_offset) ? acf->get_offset(ac, ale) : 0;
   float color[3];
 
-  uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(
+      immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   /* set backdrop drawing color */
   acf->get_backdrop_color(ac, ale, color);
@@ -1870,7 +1872,7 @@ static bAnimChannelType ACF_DSLIGHT = {
 /* TODO: just get this from RNA? */
 static int acf_dstex_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_TEXTURE;
+  return ICON_TEXTURE; /* BFA */
 }
 
 /* offset for texture expanders */
@@ -2327,7 +2329,7 @@ static bAnimChannelType ACF_DSSKEY = {
 /* TODO: just get this from RNA? */
 static int acf_dswor_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_WORLD;
+  return ICON_WORLD; /* BFA */
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */
@@ -3087,7 +3089,7 @@ static bAnimChannelType ACF_DSSPK = {
 /* TODO: just get this from RNA? */
 static int acf_dscurves_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_HAIR_DATA;
+  return ICON_HAIR_DATA; /* BFA */
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */
@@ -5113,7 +5115,7 @@ void ANIM_channel_draw(
       if (ELEM(ale->type, ANIMTYPE_FCURVE, ANIMTYPE_NLACURVE)) {
         FCurve *fcu = static_cast<FCurve *>(ale->data);
         uint pos = GPU_vertformat_attr_add(
-            immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+            immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
         immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
@@ -5178,7 +5180,7 @@ void ANIM_channel_draw(
     /* draw red underline if channel is disabled */
     if (achannel_is_broken(ale)) {
       uint pos = GPU_vertformat_attr_add(
-          immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+          immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
       immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
@@ -5215,7 +5217,8 @@ void ANIM_channel_draw(
     short draw_sliders = 0;
     float ymin_ofs = 0.0f;
     float color[3];
-    uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    uint pos = GPU_vertformat_attr_add(
+        immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
@@ -6107,7 +6110,7 @@ void ANIM_channel_draw_widgets(const bContext *C,
           immUniformColor3ubv(color);
 
           GPUVertFormat format = {0};
-          uint pos = GPU_vertformat_attr_add(&format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+          uint pos = GPU_vertformat_attr_add(&format, "pos", gpu::VertAttrType::SFLOAT_32_32);
           immRectf(pos,
                    rect->xmax - rect_width - rect_margin,
                    rect->ymin + rect_margin,

@@ -24,7 +24,7 @@
 #include "BKE_grease_pencil.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "MOD_grease_pencil_util.hh"
@@ -175,22 +175,30 @@ static void modify_geometry_set(ModifierData *md,
 static void panel_draw(const bContext *C, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *row; /* bfa - added row */
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   uiLayoutSetPropSep(layout, true);
 
-  layout->prop(ptr, "use_uniform_thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row = &layout->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_uniform_thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_uniform_thickness", 0); /*bfa - decorator*/
   if (RNA_boolean_get(ptr, "use_uniform_thickness")) {
-    layout->prop(ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row = &layout->row(true); /* bfa - our layout */
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
+    row->prop(ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    uiItemDecoratorR(row, ptr, "thickness", 0); /*bfa - decorator*/
   }
   else {
     const bool is_weighted = !RNA_boolean_get(ptr, "use_weight_factor");
     uiLayout *row = &layout->row(true);
-    uiLayoutSetActive(row, is_weighted);
+    row->active_set(is_weighted);
     row->prop(ptr, "thickness_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayout *sub = &row->row(true);
-    uiLayoutSetActive(sub, true);
+    sub->active_set(true);
     row->prop(ptr, "use_weight_factor", UI_ITEM_NONE, "", ICON_MOD_VERTEX_WEIGHT);
   }
 

@@ -45,7 +45,9 @@
 #include "ED_curve.hh"
 #include "ED_screen.hh"
 #include "ED_text.hh"
+
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RE_engine.h"
@@ -2436,7 +2438,7 @@ void TEXT_OT_jump(wmOperatorType *ot)
 
   /* properties */
   ot->prop = RNA_def_int(
-      ot->srna, "line", 1, 1, INT_MAX, "Line", "Line number to go to", 1, 10000);
+      ot->srna, "line", 1, 1, INT_MAX, "Line", "Line number to go to", 1, 10000); /* BFA */
   RNA_def_property_translation_context(ot->prop, BLT_I18NCONTEXT_ID_TEXT);
 }
 
@@ -4276,7 +4278,7 @@ void TEXT_OT_to_3d_object(wmOperatorType *ot)
   /* identifiers */
   ot->name = "To 3D Object";
   ot->idname = "TEXT_OT_to_3d_object";
-  ot->description = "Create 3D text object from active text data";
+  ot->description = "Create 3D text object from active text data"; /* BFA */
 
   /* API callbacks. */
   ot->exec = text_to_3d_object_exec;

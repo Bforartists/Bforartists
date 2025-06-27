@@ -58,6 +58,7 @@ static const EnumPropertyItem prop_similar_compare_types[] = {
 };
 
 static const EnumPropertyItem prop_similar_types[] = {
+    /* BFA - icons */
     {SIMVERT_NORMAL, "VERT_NORMAL", ICON_RECALC_NORMALS, "Normal", ""},
     {SIMVERT_FACE, "VERT_FACES", ICON_FACESEL, "Amount of Adjacent Faces", ""},
     {SIMVERT_VGROUP, "VERT_GROUPS", ICON_GROUP_VERTEX, "Vertex Groups", ""},

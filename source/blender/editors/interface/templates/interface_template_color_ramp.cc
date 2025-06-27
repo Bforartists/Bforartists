@@ -24,7 +24,7 @@
 #include "RNA_access.hh"
 #include "RNA_prototypes.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "interface_intern.hh"
 #include "interface_templates_intern.hh"
 
@@ -84,7 +84,7 @@ static uiBlock *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
                                      style);
   UI_block_layout_set_current(block, layout);
   {
-    uiLayoutSetContextPointer(layout, "color_ramp", &coba_ptr);
+    layout->context_ptr_set("color_ramp", &coba_ptr);
   }
 
   /* We could move these to operators,

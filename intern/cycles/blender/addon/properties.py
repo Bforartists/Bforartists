@@ -269,7 +269,7 @@ def enum_openimagedenoise_denoiser(self, context):
 
 
 def enum_optix_denoiser(self, context):
-    if not context or bool(context.preferences.addons[__package__].preferences.get_devices_for_type('OPTIX')):
+    if not context or bool(context.preferences.addons[__package__].preferences.get_device_list('OPTIX')):
         return [('OPTIX', "OptiX", n_(
             "Use the OptiX AI denoiser with GPU acceleration, only available on NVIDIA GPUs when configured in the system tab in the user preferences"), 2)]
     return []
@@ -364,7 +364,7 @@ def update_render_engine(self, context):
 
 
 def update_world(self, context):
-    # Force a depsgraph update, because add-on properties dont.
+    # Force a depsgraph update, because add-on properties don't.
     # (at least not from the UI, see #138071)
     context.scene.world.update_tag()
 
@@ -536,9 +536,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         default=1.0,
         min=0.0,
         soft_max=1.0,
-        description="Speeds up rendering at the GPU by scrambling pixels that are farer away"
-        "\nLower values renders faster, with less noise"
-        "\nBut too low values can lead to artifacts"
+        description="Reduce randomization between pixels to improve GPU rendering performance, at the cost of possible rendering artifacts if set too low",
     )
     preview_scrambling_distance: BoolProperty(
         name="Scrambling Distance viewport",
@@ -926,7 +924,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
     debug_use_hair_bvh: BoolProperty(
         name="Use Curves BVH",
-        description="Use special type BVH optimized for hair curves(uses more ram but renders faster)\nActivates with device type GPU Compute",
+        description="Use special type BVH optimized for curves (uses more ram but renders faster)",
         default=True,
     )
     debug_use_compact_bvh: BoolProperty(
@@ -936,7 +934,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
     debug_bvh_time_steps: IntProperty(
         name="BVH Time Steps",
-        description="Split BVH primitives by this number of time steps to speed up render time in cost of memory\nDeactivates with Use Spatial Splits active",
+        description="Split BVH primitives by this number of time steps to speed up render time in cost of memory",
         default=0,
         min=0, max=16,
     )
@@ -1271,7 +1269,7 @@ class CyclesWorldSettings(bpy.types.PropertyGroup):
     volume_step_size: FloatProperty(
         name="Step Size",
         description="Distance between volume shader samples when rendering the volume "
-        "(lower values give more accurate and detailed results, but also increased render time)\nDeactivates when Homogenous is on",
+                    "(lower values give more accurate and detailed results, but also increased render time)",
         default=1.0,
         min=0.0000001, max=100000.0, soft_min=0.1, soft_max=100.0, precision=4
     )
@@ -1431,7 +1429,7 @@ class CyclesObjectSettings(bpy.types.PropertyGroup):
 
     ao_distance: FloatProperty(
         name="AO Distance",
-        description="AO distance used for approximate global illumination (0 means use world setting)\nFast GI Approximation needs to be active\nIt is in the render settings in the Light Paths panel",
+        description="AO distance used for approximate global illumination (0 means use world setting)",
         min=0.0,
         default=0.0,
         subtype='DISTANCE',
@@ -1614,7 +1612,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
     use_hiprt: BoolProperty(
         name="HIP RT",
         description="HIP RT enables AMD hardware ray tracing on RDNA2 and above",
-        default=True,
+        default=False,
     )
 
     use_oneapirt: BoolProperty(
@@ -1670,16 +1668,19 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                 # Update name in case it changed
                 entry.name = device[0]
 
-    # Gets all devices types for a compute device type.
-    def get_devices_for_type(self, compute_device_type):
+    # Gets all devices types to display in the preferences for a compute device type.
+    # This includes the CPU device.
+    def get_devices_for_type(self, compute_device_type, device_list=None):
         # Layout of the device tuples: (Name, Type, Persistent ID)
-        device_list = self.get_device_list(compute_device_type)
+        if device_list is None:
+            device_list = self.get_device_list(compute_device_type)
 
         # Sort entries into lists
         devices = []
         cpu_devices = []
         for device in device_list:
             entry = self.find_existing_device_entry(device)
+            entry.optimized = device[7]
             if entry.type == compute_device_type:
                 devices.append(entry)
             elif entry.type == 'CPU':
@@ -1770,8 +1771,19 @@ class CyclesPreferences(bpy.types.AddonPreferences):
 
         return False
 
-    def _draw_devices(self, layout, device_type, devices):
+    @staticmethod
+    def _format_device_name(name):
+        import unicodedata
+        return name.replace('(TM)', unicodedata.lookup('TRADE MARK SIGN')) \
+                   .replace('(tm)', unicodedata.lookup('TRADE MARK SIGN')) \
+                   .replace('(R)', unicodedata.lookup('REGISTERED SIGN')) \
+                   .replace('(C)', unicodedata.lookup('COPYRIGHT SIGN'))
+
+    def _draw_devices(self, layout, device_type, device_list):
         box = layout.box()
+
+        # Get preference devices, including CPU.
+        devices = self.get_devices_for_type(device_type, device_list)
 
         found_device = False
         for device in devices:
@@ -1841,15 +1853,10 @@ class CyclesPreferences(bpy.types.AddonPreferences):
             return
 
         for device in devices:
-            import unicodedata
-            box.prop(
-                device, "use", text=device.name
-                .replace('(TM)', unicodedata.lookup('TRADE MARK SIGN'))
-                .replace('(tm)', unicodedata.lookup('TRADE MARK SIGN'))
-                .replace('(R)', unicodedata.lookup('REGISTERED SIGN'))
-                .replace('(C)', unicodedata.lookup('COPYRIGHT SIGN')),
-                translate=False
-            )
+            name = self._format_device_name(device.name)
+            if not device.optimized:
+                name += rpt_(" (Unoptimized Performance)")
+            box.prop(device, "use", text=name, translate=False)
 
     def draw_impl(self, layout, context):
         row = layout.row()
@@ -1859,14 +1866,14 @@ class CyclesPreferences(bpy.types.AddonPreferences):
         if compute_device_type == 'NONE':
             return
         row = layout.row()
-        devices = self.get_devices_for_type(compute_device_type)
+        devices = self.get_device_list(compute_device_type)
         self._draw_devices(row, compute_device_type, devices)
 
         import _cycles
         has_peer_memory = False
         has_enabled_hardware_rt = False
         has_disabled_hardware_rt = False
-        for device in self.get_device_list(compute_device_type):
+        for device in devices:
             if not self.find_existing_device_entry(device).use:
                 continue
             if device[1] != compute_device_type:
@@ -1900,10 +1907,17 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                 row.prop(self, "metalrt")
 
         if compute_device_type == 'HIP':
-            import platform
-            row = layout.row()
+            col = layout.column()
+            row = col.row()
             row.active = has_hardware_rt
             row.prop(self, "use_hiprt")
+
+            row_status = col.split(factor=0.7)
+            row_status.label(text="HIP has known stability issues", icon='ERROR')
+            row_status.operator(
+                "wm.url_open",
+                text='#140278',
+                icon='URL').url = "https://projects.blender.org/blender/blender/issues/140278"
 
         elif compute_device_type == 'ONEAPI' and _cycles.with_embree_gpu:
             row = layout.row()

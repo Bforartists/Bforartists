@@ -21,7 +21,7 @@
 #include "DNA_object_types.h"
 #include "DNA_screen_types.h"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_prototypes.hh"
@@ -75,7 +75,7 @@ static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-  uiLayout *row, *col; /*bfa*/
+  uiLayout *row, *col; /* bfa - added row, col */
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
   VolumeToMeshModifierData *vmmd = static_cast<VolumeToMeshModifierData *>(ptr->data);
@@ -83,13 +83,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   {
-    col = &layout->column(false); /*bfa*/
+    col = &layout->column(false); /* bfa - our layout */
     col->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "grid_name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   {
-    col = &layout->column(false); /*bfa*/
+    col = &layout->column(false); /* bfa - our layout */
     col->prop(ptr, "resolution_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     if (vmmd->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT) {
       col->prop(ptr, "voxel_amount", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -100,17 +100,17 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
 
   {
-    col = &layout->column(false); /*bfa*/
+    col = &layout->column(false); /* bfa - our layout */
     col->prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "adaptivity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    /*------------------- bfa - original props */
+    /* bfa - our layout */
     col = &layout->column(false);;
     row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
-    col->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row->separator(); /*bfa - indent*/
+    row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
 
   modifier_error_message_draw(layout, ptr);

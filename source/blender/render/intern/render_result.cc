@@ -182,7 +182,7 @@ static int get_num_planes_for_pass_ibuf(const RenderPass &render_pass)
       return R_IMF_PLANES_RGBA;
   }
 
-  /* Fallback to a commonly used default value of planes for odd-ball number of channel. */
+  /* Fall back to a commonly used default value of planes for odd-ball number of channel. */
   return R_IMF_PLANES_RGBA;
 }
 
@@ -1034,6 +1034,11 @@ static void render_result_exr_file_cache_path(Scene *sce,
     root = root_buf;
   }
 
+  /* FIXME: MAX_ID_NAME & FILE_MAXFILE
+   *
+   * If #filename is already long (it is initialized from the blend-file name itself), adding the
+   * scene name can cause the file name to be truncated.
+   */
   SNPRINTF(filename_full, "cached_RR_%s_%s_%s.exr", filename, sce->id.name + 2, path_hexdigest);
 
   BLI_path_join(r_path, FILE_CACHE_MAX, root, filename_full);

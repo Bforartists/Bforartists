@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-import bpy
+import bpy # BFA
 from bpy.types import Header, Menu, Panel
 from bpy.app.translations import contexts as i18n_contexts
 from bl_ui.space_dopesheet import (
@@ -10,8 +10,14 @@ from bl_ui.space_dopesheet import (
     DopesheetActionPanelBase,
     dopesheet_filter,
 )
+from bl_ui.space_time import playback_controls
+from bl_ui.utils import (
+    PlayheadSnappingPanel,
+)
 
 from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
+
+# BFA - Added icons and floated properties left
 
 class NLA_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
     bl_space_type = 'NLA_EDITOR'
@@ -110,9 +116,19 @@ class NLA_HT_header(Header):
         layout.popover(panel="NLA_PT_playhead_snapping")
 
 
+class NLA_HT_playback_controls(Header):
+    bl_space_type = 'NLA_EDITOR'
+    bl_region_type = 'FOOTER'
+
+    def draw(self, context):
+        layout = self.layout
+
+        playback_controls(layout, context)
+
+
 class NLA_PT_snapping(Panel):
-    bl_space_type = "NLA_EDITOR"
-    bl_region_type = "HEADER"
+    bl_space_type = 'NLA_EDITOR'
+    bl_region_type = 'HEADER'
     bl_label = "Snapping"
 
     def draw(self, context):
@@ -139,8 +155,8 @@ class ALL_MT_editormenu_nla(Menu):
 
 
 class NLA_PT_filters(DopesheetFilterPopoverBase, Panel):
-    bl_space_type = "NLA_EDITOR"
-    bl_region_type = "HEADER"
+    bl_space_type = 'NLA_EDITOR'
+    bl_region_type = 'HEADER'
     bl_label = "Filters"
 
     def draw(self, context):
@@ -155,9 +171,9 @@ class NLA_PT_filters(DopesheetFilterPopoverBase, Panel):
 
 
 class NLA_PT_action(DopesheetActionPanelBase, Panel):
-    bl_space_type = "NLA_EDITOR"
+    bl_space_type = 'NLA_EDITOR'
     bl_category = "Strip"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -197,6 +213,8 @@ class NLA_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # bfa - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
+        layout.prop(st, "show_region_channels")
+        layout.prop(st, "show_region_footer")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon="BORDER_RECT")
@@ -223,7 +241,7 @@ class NLA_MT_view(Menu):
         layout.menu("NLA_MT_view_pie_menus")
         layout.menu("INFO_MT_area")
 
-
+# BFA - menu
 class NLA_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
 
@@ -237,11 +255,11 @@ class NLA_MT_view_pie_menus(Menu):
             "wm.call_menu_pie", text="View", icon="MENU_PANEL"
         ).name = "NLA_MT_view_pie"
 
-
+# BFA - menu
 class NLA_PT_view_view_options(Panel):
     bl_label = "View Options"
-    bl_space_type = "NLA_EDITOR"
-    bl_region_type = "HEADER"
+    bl_space_type = 'NLA_EDITOR'
+    bl_region_type = 'HEADER'
     bl_category = "View"
 
     def draw(self, context):
@@ -311,7 +329,6 @@ class NLA_MT_marker(Menu):
         layout = self.layout
 
         from bl_ui.space_time import marker_menu_generic
-
         marker_menu_generic(layout, context)
 
 
@@ -357,7 +374,6 @@ class NLA_MT_add(Menu):
         layout.operator("nla.soundclip_add", text="Sound")
 
         layout.separator()
-
         layout.operator("nla.selected_objects_add", text="Selected Objects")
 
 
@@ -438,7 +454,7 @@ class NLA_MT_strips(Menu):
                 icon="ACTION_TWEAK",
             ).use_upper_stack_evaluation = False
 
-
+# BFA - menu
 class NLA_MT_add(Menu):
     bl_label = "Add"
     bl_translation_context = i18n_contexts.operator_default
@@ -465,7 +481,7 @@ class NLA_MT_add(Menu):
             "nla.selected_objects_add", text="Selected Objects", icon="ADD_SELECTED"
         )
 
-
+# BFA - menu
 class NLA_MT_strips_transform(Menu):
     bl_label = "Transform"
 
@@ -498,16 +514,16 @@ class NLA_MT_snap_pie(Menu):
 
         pie.operator(
             "nla.snap", text="Selection to Current Frame", icon="SNAP_CURRENTFRAME"
-        ).type = "CFRA"
+        ).type = 'CFRA'
         pie.operator(
             "nla.snap", text="Selection to Nearest Frame", icon="SNAP_NEARESTFRAME"
-        ).type = "NEAREST_FRAME"
+        ).type = 'NEAREST_FRAME'
         pie.operator(
             "nla.snap", text="Selection to Nearest Second", icon="SNAP_NEARESTSECOND"
-        ).type = "NEAREST_SECOND"
+        ).type = 'NEAREST_SECOND'
         pie.operator(
             "nla.snap", text="Selection to Nearest Marker", icon="SNAP_NEARESTMARKER"
-        ).type = "NEAREST_MARKER"
+        ).type = 'NEAREST_MARKER'
 
 
 class NLA_MT_view_pie(Menu):
@@ -596,19 +612,20 @@ class NLA_MT_channel_context_menu(Menu):
         layout = self.layout
 
         layout.operator_menu_enum(
-            "anim.channels_move", "direction", text="Track Ordering..."
+            "anim.channels_move", "direction", text="Track Ordering"
         )
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
 
 
 classes = (
-    ANIM_OT_switch_editors_in_nla,
-    ALL_MT_editormenu_nla,
+    ANIM_OT_switch_editors_in_nla, # BFA - menu
+    ALL_MT_editormenu_nla, # BFA - menu
     NLA_HT_header,
+    NLA_HT_playback_controls,
     NLA_MT_editor_menus,
     NLA_MT_view,
-    NLA_MT_view_pie_menus,
-    NLA_PT_view_view_options,
+    NLA_MT_view_pie_menus, # BFA - menu
+    NLA_PT_view_view_options, # BFA - menu
     NLA_MT_select,
     NLA_MT_marker,
     NLA_MT_marker_select,

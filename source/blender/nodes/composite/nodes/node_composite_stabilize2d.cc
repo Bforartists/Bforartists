@@ -13,6 +13,7 @@
 #include "BLI_math_vector_types.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "DNA_movieclip_types.h"
@@ -114,6 +115,7 @@ class Stabilize2DOperation : public NodeOperation {
         return Interpolation::Nearest;
       case CMP_NODE_INTERPOLATION_BILINEAR:
         return Interpolation::Bilinear;
+      case CMP_NODE_INTERPOLATION_ANISOTROPIC:
       case CMP_NODE_INTERPOLATION_BICUBIC:
         return Interpolation::Bicubic;
     }

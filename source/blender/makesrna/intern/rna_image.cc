@@ -556,13 +556,6 @@ static void rna_Image_resolution_set(PointerRNA *ptr, const float *values)
   BKE_image_release_ibuf(im, ibuf, lock);
 }
 
-static int rna_Image_bindcode_get(PointerRNA *ptr)
-{
-  Image *ima = (Image *)ptr->data;
-  GPUTexture *tex = ima->gputexture[TEXTARGET_2D][0];
-  return (tex) ? GPU_texture_opengl_bindcode(tex) : 0;
-}
-
 static int rna_Image_depth_get(PointerRNA *ptr)
 {
   Image *im = (Image *)ptr->data;
@@ -676,7 +669,7 @@ static void rna_Image_pixels_set(PointerRNA *ptr, const float *values)
     /* NOTE: Do update from the set() because typically pixels.foreach_set() is used to update
      * the values, and it does not invoke the update(). */
 
-    ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID | IB_MIPMAP_INVALID;
+    ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
     BKE_image_mark_dirty(ima, ibuf);
     if (!G.background) {
       BKE_image_free_gputextures(ima);
@@ -815,7 +808,7 @@ static void rna_def_imageuser(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "ImageUser", nullptr);
   RNA_def_struct_ui_text(
-      srna, "Image User", "Parameters defining how an Image data is used by another data");
+      srna, "Image User", "Parameters defining how an Image data is used by another data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_ImageUser_path");
 
   RNA_define_lib_overridable(true);
@@ -1150,7 +1143,7 @@ static void rna_def_image(BlenderRNA *brna)
   };
 
   srna = RNA_def_struct(brna, "Image", "ID");
-  RNA_def_struct_ui_text(srna, "Image", "Image data referencing an external or packed image");
+  RNA_def_struct_ui_text(srna, "Image", "Image data referencing an external or packed image"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_IMAGE_DATA);
 
   prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);
@@ -1291,12 +1284,6 @@ static void rna_def_image(BlenderRNA *brna)
   RNA_def_property_ui_range(prop, 0.1f, 5000.0f, 1, 2);
   RNA_def_property_ui_text(
       prop, "Display Aspect", "Display Aspect for this image, does not affect rendering");
-  RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, nullptr);
-
-  prop = RNA_def_property(srna, "bindcode", PROP_INT, PROP_UNSIGNED);
-  RNA_def_property_int_funcs(prop, "rna_Image_bindcode_get", nullptr, nullptr);
-  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop, "Bindcode", "OpenGL bindcode");
   RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, nullptr);
 
   prop = RNA_def_property(srna, "render_slots", PROP_COLLECTION, PROP_NONE);

@@ -34,8 +34,8 @@
 
 #include "ED_anim_api.hh"
 
-#include "UI_interface.hh"
 #include "UI_interface_c.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "nla_intern.hh" /* own include */
@@ -306,7 +306,7 @@ static void nla_panel_animdata(const bContext *C, Panel *panel)
 
   // adt = adt_ptr.data;
 
-  block = uiLayoutGetBlock(layout);
+  block = layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
@@ -322,7 +322,7 @@ static void nla_panel_animdata(const bContext *C, Panel *panel)
 
     /* ID-block name > AnimData */
     row = &layout->row(true);
-    uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_LEFT);
+    row->alignment_set(blender::ui::LayoutAlign::Left);
 
     row->label(id->name + 2, RNA_struct_ui_icon(id_ptr.type)); /* id-block (src) */
     row->label("", ICON_RIGHTARROW);                           /* expander */
@@ -370,7 +370,7 @@ static void nla_panel_stripname(const bContext *C, Panel *panel)
     return;
   }
 
-  block = uiLayoutGetBlock(layout);
+  block = layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   /* Strip Properties ------------------------------------- */
@@ -409,7 +409,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     return;
   }
 
-  block = uiLayoutGetBlock(layout);
+  block = layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   /* Strip Properties ------------------------------------- */
@@ -444,14 +444,15 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     layout->separator();
 
     column = &layout->column(true);
-    uiLayoutSetActive(column, RNA_boolean_get(&strip_ptr, "use_auto_blend") == false);
+    column->active_set(RNA_boolean_get(&strip_ptr, "use_auto_blend") == false);
     column->prop(&strip_ptr, "blend_in", UI_ITEM_NONE, IFACE_("Blend In"), ICON_NONE);
     column->prop(&strip_ptr, "blend_out", UI_ITEM_NONE, IFACE_("Out"), ICON_NONE);
 
     row = &column->row(true);
-    uiLayoutSetActive(row, RNA_boolean_get(&strip_ptr, "use_animated_influence") == false);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = false*/
-    row->prop(&strip_ptr, "use_auto_blend", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* XXX as toggle? */
+    row->active_set(RNA_boolean_get(&strip_ptr, "use_animated_influence") == false);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = false*/    
+row->prop(
+        &strip_ptr, "use_auto_blend", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* XXX as toggle? */
 
     /* settings */
     uiLayoutSetPropSep(layout, false);
@@ -462,7 +463,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
 
     row = &column->row(true);
     layout->separator();; /* bfa - separator */
-    uiLayoutSetActive(row,
+    row->active_set(
                       !(RNA_boolean_get(&strip_ptr, "use_animated_influence") ||
                         RNA_boolean_get(&strip_ptr, "use_animated_time")));
     /* bfa */
@@ -493,7 +494,7 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
     return;
   }
 
-  block = uiLayoutGetBlock(layout);
+  block = layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, true);
@@ -511,8 +512,8 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
     ID &animated_id = *strip_ptr.owner_id;
     if (!blender::animrig::legacy::action_treat_as_legacy(action)) {
       PointerRNA animated_id_ptr = RNA_id_pointer_create(&animated_id);
-      uiLayoutSetContextPointer(column, "animated_id", &animated_id_ptr);
-      uiLayoutSetContextPointer(column, "nla_strip", &strip_ptr);
+      column->context_ptr_set("animated_id", &animated_id_ptr);
+      column->context_ptr_set("nla_strip", &strip_ptr);
       uiTemplateSearch(column,
                        C,
                        &strip_ptr,
@@ -538,7 +539,7 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
 
   /* action usage */
   column = &layout->column(true);
-  uiLayoutSetActive(column, RNA_boolean_get(&strip_ptr, "use_animated_time") == false);
+  column->active_set(RNA_boolean_get(&strip_ptr, "use_animated_time") == false);
   column->prop(&strip_ptr, "scale", UI_ITEM_NONE, IFACE_("Playback Scale"), ICON_NONE);
   column->prop(&strip_ptr, "repeat", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
@@ -556,7 +557,7 @@ static void nla_panel_animated_influence_header(const bContext *C, Panel *panel)
     return;
   }
 
-  block = uiLayoutGetBlock(layout);
+  block = layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   col = &layout->column(true);
@@ -575,11 +576,11 @@ static void nla_panel_evaluation(const bContext *C, Panel *panel)
     return;
   }
 
-  block = uiLayoutGetBlock(layout);
+  block = layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
   uiLayoutSetPropSep(layout, true);
 
-  uiLayoutSetEnabled(layout, RNA_boolean_get(&strip_ptr, "use_animated_influence"));
+  layout->enabled_set(RNA_boolean_get(&strip_ptr, "use_animated_influence"));
   layout->prop(&strip_ptr, "influence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
@@ -595,7 +596,7 @@ static void nla_panel_animated_strip_time_header(const bContext *C, Panel *panel
     return;
   }
 
-  block = uiLayoutGetBlock(layout);
+  block = layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   col = &layout->column(true);
@@ -613,11 +614,11 @@ static void nla_panel_animated_strip_time(const bContext *C, Panel *panel)
     return;
   }
 
-  block = uiLayoutGetBlock(layout);
+  block = layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
   uiLayoutSetPropSep(layout, true);
 
-  uiLayoutSetEnabled(layout, RNA_boolean_get(&strip_ptr, "use_animated_time"));
+  layout->enabled_set(RNA_boolean_get(&strip_ptr, "use_animated_time"));
   layout->prop(&strip_ptr, "strip_time", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
@@ -644,13 +645,13 @@ static void nla_panel_modifiers(const bContext *C, Panel *panel)
   }
   NlaStrip *strip = static_cast<NlaStrip *>(strip_ptr.data);
 
-  block = uiLayoutGetBlock(panel->layout);
+  block = panel->layout->block();
   UI_block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   /* 'add modifier' button at top of panel */
   {
     row = &panel->layout->row(false);
-    block = uiLayoutGetBlock(row);
+    block = row->block();
 
     /* FIXME: we need to set the only-active property so that this
      * will only add modifiers for the active strip (not all selected). */

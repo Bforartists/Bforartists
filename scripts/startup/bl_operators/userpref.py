@@ -454,10 +454,9 @@ class PREFERENCES_OT_keyconfig_remove(Operator):
 # Add-on Operators
 
 class PREFERENCES_OT_addon_enable(Operator):
-    """Turn on the legacy add-ons
-No action required. The legacy addons comes with Bforartists, and are enabled by default
-Only if you accidentally deactivated it will you need to reactivate it
-Since Bforartists requires some of the legacy addons to work"""
+    """Turn on the legacy add-ons\n
+No action required. The legacy addons comes with Bforartists, and are enabled by default\n
+If you accidentally deactivated it, you will need to reactivate it""" # BFA
     bl_idname = "preferences.addon_enable"
     bl_label = "Enable Add-on"
 

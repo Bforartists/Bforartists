@@ -3578,7 +3578,7 @@ static wmOperatorStatus geometry_node_tree_copy_assign_exec(bContext *C, wmOpera
 void OBJECT_OT_geometry_node_tree_copy_assign(wmOperatorType *ot)
 {
   ot->name = "Duplicate Geometry Node Group";
-  ot->description = "Duplicates the active geometry node group and assigns it to the active modifier";
+  ot->description = "Duplicates the active geometry node group and assigns it to the active modifier"; /* BFA - made more explicit*/
   ot->idname = "OBJECT_OT_geometry_node_tree_copy_assign";
 
   ot->exec = geometry_node_tree_copy_assign_exec;

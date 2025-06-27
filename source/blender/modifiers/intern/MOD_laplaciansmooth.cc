@@ -21,7 +21,7 @@
 #include "BKE_deform.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_prototypes.hh"
@@ -516,7 +516,7 @@ static void deform_verts(ModifierData *md,
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /*bfa, added *col*/
+  uiLayout *row, *col; /* bfa - added col */
   uiLayout *layout = panel->layout;
   const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
@@ -535,18 +535,18 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "lambda_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "lambda_border", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &col->row(true);
+  col = &layout->column(true); /* bfa - our layout */
+  row = &col->row(true); /* bfa - our layout */
+  row->separator(); /*bfa - indent*/
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_volume_preserve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_volume_preserve", 0); /*bfa - decorator*/
 
-  row = &col->row(true);
+  row = &col->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_normalized", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_normalized", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 

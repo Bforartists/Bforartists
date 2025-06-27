@@ -26,6 +26,7 @@
 
 #include "ANIM_armature_iter.hh"
 #include "ANIM_bone_collections.hh"
+#include "WM_api.hh"
 
 #include "intern/bone_collections_internal.hh"
 
@@ -63,8 +64,6 @@ BoneCollection *ANIM_bonecoll_new(const char *name)
   STRNCPY_UTF8(bcoll->name, name);
   bcoll->flags = default_flags;
 
-  bcoll->prop = nullptr;
-
   return bcoll;
 }
 
@@ -75,6 +74,9 @@ void ANIM_bonecoll_free(BoneCollection *bcoll, const bool do_id_user_count)
                  "bone runtime data");
   if (bcoll->prop) {
     IDP_FreeProperty_ex(bcoll->prop, do_id_user_count);
+  }
+  if (bcoll->system_properties) {
+    IDP_FreeProperty_ex(bcoll->system_properties, do_id_user_count);
   }
   MEM_delete(bcoll);
 }
@@ -257,6 +259,10 @@ static BoneCollection *copy_and_update_ownership(const bArmature *armature_dst,
   if (bcoll->prop) {
     bcoll->prop = IDP_CopyProperty_ex(bcoll_to_copy->prop,
                                       0 /*do_id_user ? 0 : LIB_ID_CREATE_NO_USER_REFCOUNT*/);
+  }
+  if (bcoll->system_properties) {
+    bcoll->system_properties = IDP_CopyProperty_ex(
+        bcoll_to_copy->system_properties, 0 /*do_id_user ? 0 : LIB_ID_CREATE_NO_USER_REFCOUNT*/);
   }
 
   /* Remap the bone pointers to the given armature, as `bcoll_to_copy` is
@@ -695,6 +701,7 @@ void ANIM_armature_bonecoll_remove_from_index(bArmature *armature, int index)
      * solo'ing should still be active on the armature. */
     ANIM_armature_refresh_solo_active(armature);
   }
+  WM_main_add_notifier(NC_OBJECT | ND_BONE_COLLECTION, nullptr);
 }
 
 void ANIM_armature_bonecoll_remove(bArmature *armature, BoneCollection *bcoll)
@@ -1406,6 +1413,10 @@ blender::Map<BoneCollection *, BoneCollection *> ANIM_bonecoll_array_copy_no_mem
       bcoll_dst->prop = IDP_CopyProperty_ex(bcoll_src->prop,
                                             do_id_user ? 0 : LIB_ID_CREATE_NO_USER_REFCOUNT);
     }
+    if (bcoll_src->system_properties) {
+      bcoll_dst->system_properties = IDP_CopyProperty_ex(
+          bcoll_src->system_properties, do_id_user ? 0 : LIB_ID_CREATE_NO_USER_REFCOUNT);
+    }
 
     (*bcoll_array_dst)[i] = bcoll_dst;
 
@@ -1424,6 +1435,9 @@ void ANIM_bonecoll_array_free(BoneCollection ***bcoll_array,
 
     if (bcoll->prop) {
       IDP_FreeProperty_ex(bcoll->prop, do_id_user);
+    }
+    if (bcoll->system_properties) {
+      IDP_FreeProperty_ex(bcoll->system_properties, do_id_user);
     }
 
     /* This will usually already be empty, because the passed BoneCollection

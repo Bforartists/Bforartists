@@ -22,7 +22,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_object_types.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -482,15 +482,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  
-  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  row = &layout->row(true);
-  layout->separator();;
+  row = &layout->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_radius_as_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_radius_as_size", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 

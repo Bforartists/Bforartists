@@ -64,7 +64,7 @@
 #include "BKE_mesh_mapping.hh"
 #include "BKE_modifier.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -2010,7 +2010,7 @@ static void required_data_mask(ModifierData * /*md*/, CustomData_MeshMasks *r_cd
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /*bfa - added *col*/
+  uiLayout *row, *col; /* bfa - added col */
   uiLayout *layout = panel->layout;
   const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
@@ -2028,13 +2028,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->prop(ptr, "use_y_symmetry", toggles_flag, std::nullopt, ICON_NONE);
   row->prop(ptr, "use_z_symmetry", toggles_flag, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   row = &layout->row(false);
   row->op("OBJECT_OT_skin_armature_create", IFACE_("Create Armature"), ICON_NONE);

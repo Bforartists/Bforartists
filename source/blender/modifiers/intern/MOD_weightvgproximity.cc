@@ -37,6 +37,7 @@
 #include "BKE_texture.h" /* Texture masking. */
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLO_read_write.hh"
@@ -626,7 +627,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa, added *row*/
+  uiLayout *col, *row; /* bfa- added *row */
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -650,13 +651,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col->prop(ptr, "min_dist", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "max_dist", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 }
 
 static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)

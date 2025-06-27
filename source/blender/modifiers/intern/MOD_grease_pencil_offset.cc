@@ -22,7 +22,7 @@
 
 #include "BLO_read_write.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLT_translation.hh"
@@ -413,9 +413,13 @@ static void panel_draw(const bContext *C, Panel *panel)
     advanced_panel->prop(ptr, "stroke_scale", UI_ITEM_NONE, IFACE_("Scale"), ICON_NONE);
 
     uiLayout *col = &advanced_panel->column(true);
+    uiLayout *row; /* bfa - added row */
     switch (offset_mode) {
       case MOD_GREASE_PENCIL_OFFSET_RANDOM:
-        advanced_panel->prop(
+        row = &col->row(true); /* bfa - our layout */
+        uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+        row->separator(); /*bfa - indent*/
+        row->prop(
             ptr, "use_uniform_random_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
         advanced_panel->prop(ptr, "seed", UI_ITEM_NONE, std::nullopt, ICON_NONE);
         break;

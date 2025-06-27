@@ -67,7 +67,7 @@ bool BLO_main_validate_libraries(Main *bmain, ReportList *reports)
   for (Main *curmain = bmain->next; curmain != nullptr; curmain = curmain->next) {
     Library *curlib = curmain->curlib;
     if (curlib == nullptr) {
-      BKE_report(reports, RPT_ERROR, "Library database with null library data pointer!");
+      BKE_report(reports, RPT_ERROR, "Library database with null library data pointer!"); /* BFA */
       continue;
     }
 

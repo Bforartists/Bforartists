@@ -1730,7 +1730,8 @@ static wmOperatorStatus set_handle_type_exec(bContext *C, wmOperator *op)
 void MASK_OT_handle_type_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem editcurve_handle_type_items[] = {
-      {HD_AUTO, "AUTO", ICON_HANDLE_AUTO, "Auto", ""},
+      /* BFA */
+      {HD_AUTO, "AUTO", ICON_HANDLE_AUTO, "Auto", ""}, 
       {HD_VECT, "VECTOR", ICON_HANDLE_VECTOR, "Vector", ""},
       {HD_ALIGN, "ALIGNED", ICON_HANDLE_ALIGN_SINGLE, "Aligned Single", ""},
       {HD_ALIGN_DOUBLESIDE, "ALIGNED_DOUBLESIDE", ICON_HANDLE_ALIGNED, "Aligned", ""},
@@ -1847,7 +1848,7 @@ void MASK_OT_hide_view_set(wmOperatorType *ot)
   /* identifiers */
 /*bfa human understandable tool name*/
   ot->name = "Hide Layer";
-  ot->description = "Hide the layer";
+  ot->description = "Hide the mask layer";
   ot->idname = "MASK_OT_hide_view_set";
 
   /* API callbacks. */

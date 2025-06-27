@@ -1095,14 +1095,22 @@ void transform_convert_mesh_connectivity_distance(BMesh *bm,
         }
 
         if (bmesh_test_dist_add(v2, v1, nullptr, dists, index, mtx)) {
-          /* Add adjacent loose edges to the queue, or all edges if this is a loose edge.
-           * Other edges are handled by propagation across edges below. */
+          /* Add adjacent edges to the queue if:
+           * - Adjacent edge is loose
+           * - Edge itself is loose
+           * - Edge has vertex that was originally selected
+           * In all these cases a direct distance along the edge is accurate and
+           * required to make sure we visit all edges. Other edges are handled by
+           * propagation across edges below. */
+          const bool need_direct_distance = BM_elem_flag_test(e, tag_loose) ||
+                                            BM_elem_flag_test(v1, BM_ELEM_SELECT) ||
+                                            BM_elem_flag_test(v2, BM_ELEM_SELECT);
           BMEdge *e_other;
           BMIter eiter;
           BM_ITER_ELEM (e_other, &eiter, v2, BM_EDGES_OF_VERT) {
             if (e_other != e && BM_elem_flag_test(e_other, tag_queued) == 0 &&
                 !BM_elem_flag_test(e_other, BM_ELEM_HIDDEN) &&
-                (BM_elem_flag_test(e, tag_loose) || BM_elem_flag_test(e_other, tag_loose)))
+                (need_direct_distance || BM_elem_flag_test(e_other, tag_loose)))
             {
               BM_elem_flag_enable(e_other, tag_queued);
               BLI_LINKSTACK_PUSH(queue_next, e_other);
@@ -2153,24 +2161,13 @@ Array<TransDataVertSlideVert> transform_mesh_vert_slide_data_create(
     const TransDataContainer *tc, Vector<float3> &r_loc_dst_buffer)
 {
   int td_selected_len = 0;
-  TransData *td = tc->data;
-  for (int i = 0; i < tc->data_len; i++, td++) {
-    if (!(td->flag & TD_SELECTED)) {
-      /* The selected ones are sorted at the beginning. */
-      break;
-    }
-    td_selected_len++;
-  }
+  tc->foreach_index_selected([&](const int /*i*/) { td_selected_len++; });
 
   Array<TransDataVertSlideVert> r_sv(td_selected_len);
 
   r_loc_dst_buffer.reserve(r_sv.size() * 4);
-  td = tc->data;
-  for (int i = 0; i < tc->data_len; i++, td++) {
-    if (!(td->flag & TD_SELECTED)) {
-      /* The selected ones are sorted at the beginning. */
-      break;
-    }
+  tc->foreach_index_selected([&](const int i) {
+    TransData *td = &tc->data[i];
     const int size_prev = r_loc_dst_buffer.size();
 
     BMVert *v = static_cast<BMVert *>(td->extra);
@@ -2196,7 +2193,7 @@ Array<TransDataVertSlideVert> transform_mesh_vert_slide_data_create(
 
     /* Store the buffer size temporarily in `target_curr`. */
     sv.co_link_curr = r_loc_dst_buffer.size() - size_prev;
-  }
+  });
 
   int start = 0;
   for (TransDataVertSlideVert &sv : r_sv) {
@@ -2288,19 +2285,21 @@ Array<TransDataEdgeSlideVert> transform_mesh_edge_slide_data_create(const TransD
   /* Ensure valid selection. */
   BMIter iter;
   BMVert *v;
-  TransData *td = tc->data;
-  for (int i = 0; i < tc->data_len; i++, td++) {
-    if (!(td->flag & TD_SELECTED)) {
-      /* The selected ones are sorted at the beginning. */
-      break;
-    }
+  bool found_invalid_edge_selection = false;
+  tc->foreach_index_selected([&](const int i) {
+    TransData *td = &tc->data[i];
     v = static_cast<BMVert *>(td->extra);
     int numsel = BM_iter_elem_count_flag(BM_EDGES_OF_VERT, v, BM_ELEM_SELECT, true);
     if (numsel == 0 || numsel > 2) {
       /* Invalid edge selection. */
-      return {};
+      found_invalid_edge_selection = true;
+      return;
     }
     td_selected_len++;
+  });
+
+  if (found_invalid_edge_selection) {
+    return {};
   }
 
   BMEdge *e;
@@ -2324,11 +2323,9 @@ Array<TransDataEdgeSlideVert> transform_mesh_edge_slide_data_create(const TransD
   Array<TransDataEdgeSlideVert> r_sv(td_selected_len);
   TransDataEdgeSlideVert *sv = r_sv.data();
   int sv_index = 0;
-  td = tc->data;
-  for (int i = 0; i < tc->data_len; i++, td++) {
-    if (!(td->flag & TD_SELECTED)) {
-      continue;
-    }
+  tc->foreach_index_selected([&](const int i) {
+    TransData *td = &tc->data[i];
+
     sv->td = td;
     sv->loop_nr = -1;
     sv->dir_side[0] = float3(0);
@@ -2339,7 +2336,7 @@ Array<TransDataEdgeSlideVert> transform_mesh_edge_slide_data_create(const TransD
     BM_elem_index_set(v, sv_index);
     sv_index++;
     sv++;
-  }
+  });
 
   /* Map indicating the indexes of #TransData connected by edge. */
   Array<int2> td_connected(tc->data_len, int2(-1, -1));

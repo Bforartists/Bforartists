@@ -15,7 +15,7 @@
 
 #include "DNA_screen_types.h"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -49,7 +49,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "use_dof_mode", UI_ITEM_NONE, IFACE_("Use Depth of Field"), ICON_NONE);
   col = &layout->column(false);
-  uiLayoutSetActive(col, !RNA_boolean_get(ptr, "use_dof_mode"));
+  col->active_set(!RNA_boolean_get(ptr, "use_dof_mode"));
   col->prop(ptr, "size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "rotation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 

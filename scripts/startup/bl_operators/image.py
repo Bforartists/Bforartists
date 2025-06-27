@@ -17,7 +17,7 @@ from bpy.app.translations import pgettext_rpt as rpt_
 
 
 class EditExternally(Operator):
-    """Image Edit Externally\nEdit image in an external application"""
+    """Image Edit Externally\nEdit image in an external application""" # BFA
     bl_idname = "image.external_edit"
     bl_label = "Image Edit Externally"
     bl_options = {'REGISTER'}
@@ -112,7 +112,7 @@ class EditExternally(Operator):
 
 
 class ProjectEdit(Operator):
-    """Project Edit\nEdit a snapshot of the 3D Viewport in an external image editor"""
+    """Project Edit\nEdit a snapshot of the 3D Viewport in an external image editor""" # BFA
     bl_idname = "image.project_edit"
     bl_label = "Project Edit"
     bl_options = {'REGISTER'}
@@ -184,7 +184,7 @@ class ProjectEdit(Operator):
 
 
 class ProjectApply(Operator):
-    """Project Apply\nProject edited image back onto the object"""
+    """Project Apply\nProject edited image back onto the object""" # BFA
     bl_idname = "image.project_apply"
     bl_label = "Project Apply"
     bl_options = {'REGISTER'}

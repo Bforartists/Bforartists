@@ -31,6 +31,8 @@
 
 #define MESH_ADD_VERTS_MAXI 10000000
 
+/* BFA - "Construct" vs "Add" to scene, keep it artistically comprehensive*/
+
 /* ********* add primitive operators ************* */
 
 struct MakePrimitiveData {

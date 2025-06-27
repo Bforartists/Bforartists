@@ -78,6 +78,7 @@
 #include "WM_types.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
 
@@ -3276,7 +3277,7 @@ static wmOperatorStatus outliner_action_set_exec(bContext *C, wmOperator *op)
                 RPT_WARNING,
                 "Action '%s' does not specify what data it can be used on "
                 "(try setting the 'ID Root Type' setting from the data editor "
-                "for this action to avoid future problems)",
+                "for this action to avoid future problems)", /* BFA */
                 act->id.name + 2);
   }
 
@@ -3447,7 +3448,7 @@ void OUTLINER_OT_animdata_operation(wmOperatorType *ot)
 static const EnumPropertyItem prop_constraint_op_types[] = {
     {OL_CONSTRAINTOP_ENABLE, "ENABLE", ICON_HIDE_OFF, "Enable", ""},
     {OL_CONSTRAINTOP_DISABLE, "DISABLE", ICON_HIDE_ON, "Disable", ""},
-    {OL_CONSTRAINTOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
+    {OL_CONSTRAINTOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""}, /* BFA */
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -3698,7 +3699,7 @@ static wmOperatorStatus outliner_operator_menu(bContext *C, const char *opname)
   uiLayout *layout = UI_popup_menu_layout(pup);
 
   /* Set this so the default execution context is the same as sub-menus. */
-  uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_REGION_WIN);
+  layout->operator_context_set(WM_OP_INVOKE_REGION_WIN);
 
   if (WM_operator_poll(C, ot)) {
     uiItemsEnumO(layout, ot->idname, RNA_property_identifier(ot->prop));

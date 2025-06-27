@@ -22,7 +22,7 @@ def _lang_module_get(sc):
 
 
 class ConsoleExec(Operator):
-    """Console Execute\nExecute the current console line as a Python expression"""
+    """Console Execute\nExecute the current console line as a Python expression""" # BFA
     bl_idname = "console.execute"
     bl_label = "Console Execute"
     bl_options = {'UNDO_GROUPED'}
@@ -50,7 +50,7 @@ class ConsoleExec(Operator):
 
 class ConsoleAutocomplete(Operator):
     """Console Autocomplete\nEvaluate the namespace up until the cursor and give a list of """ \
-        """options or complete the name if there is only one"""
+        """options or complete the name if there is only one""" # BFA
     bl_idname = "console.autocomplete"
     bl_label = "Console Autocomplete"
 
@@ -71,7 +71,7 @@ class ConsoleAutocomplete(Operator):
 
 
 class ConsoleCopyAsScript(Operator):
-    """Copy to Clipboard (as script\nCopy the console contents for use in a script"""
+    """Copy to Clipboard (as script\nCopy the console contents for use in a script""" # BFA
     bl_idname = "console.copy_as_script"
     bl_label = "Copy to Clipboard (as Script)"
 
@@ -93,7 +93,7 @@ class ConsoleCopyAsScript(Operator):
 
 
 class ConsoleBanner(Operator):
-    """Console Banner\nPrint a message when the terminal initializes"""
+    """Console Banner\nPrint a message when the terminal initializes""" # BFA
     bl_idname = "console.banner"
     bl_label = "Console Banner"
 
@@ -119,7 +119,7 @@ class ConsoleBanner(Operator):
 
 
 class ConsoleLanguage(Operator):
-    """Console Language\nSet the current language for this console"""
+    """Console Language\nSet the current language for this console""" # BFA
     bl_idname = "console.language"
     bl_label = "Console Language"
 

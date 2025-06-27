@@ -21,7 +21,7 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_grease_pencil.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "MOD_grease_pencil_util.hh"
@@ -294,7 +294,7 @@ static void panel_draw(const bContext *C, Panel *panel)
       C, ptr, "open_random_panel", ptr, "use_random", IFACE_("Random"));
   if (uiLayout *random_layout = random_panel_layout.body) {
     uiLayout *random_col = &random_layout->column(false);
-    uiLayoutSetActive(random_col, RNA_boolean_get(ptr, "use_random"));
+    random_col->active_set(RNA_boolean_get(ptr, "use_random"));
 
     random_col->prop(ptr, "random_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     const int mode = RNA_enum_get(ptr, "random_mode");

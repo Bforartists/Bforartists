@@ -36,7 +36,7 @@
 
 #include "GEO_resample_curves.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLT_translation.hh"
@@ -275,7 +275,11 @@ static void panel_draw(const bContext *C, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   layout->prop(ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "use_keep_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiLayout *row = &layout->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_keep_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_keep_shape", 0); /*bfa - decorator*/
   layout->prop(ptr, "subdivision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "sample_length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "outline_material", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -327,7 +331,7 @@ ModifierTypeInfo modifierType_GreasePencilOutline = {
     /*type*/ ModifierTypeType::Nonconstructive,
     /*flags*/ eModifierTypeFlag_AcceptsGreasePencil | eModifierTypeFlag_SupportsEditmode |
         eModifierTypeFlag_EnableInEditmode | eModifierTypeFlag_SupportsMapping,
-    /*icon*/ ICON_NONE,
+    /*icon*/ ICON_MOD_OUTLINE,
 
     /*copy_data*/ blender::copy_data,
 

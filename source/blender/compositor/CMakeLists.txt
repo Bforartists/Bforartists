@@ -75,6 +75,7 @@ set(SRC
   algorithms/intern/morphological_blur.cc
   algorithms/intern/morphological_distance.cc
   algorithms/intern/morphological_distance_feather.cc
+  algorithms/intern/pad.cc
   algorithms/intern/parallel_reduction.cc
   algorithms/intern/recursive_gaussian_blur.cc
   algorithms/intern/smaa.cc
@@ -90,6 +91,7 @@ set(SRC
   algorithms/COM_algorithm_morphological_blur.hh
   algorithms/COM_algorithm_morphological_distance.hh
   algorithms/COM_algorithm_morphological_distance_feather.hh
+  algorithms/COM_algorithm_pad.hh
   algorithms/COM_algorithm_parallel_reduction.hh
   algorithms/COM_algorithm_recursive_gaussian_blur.hh
   algorithms/COM_algorithm_smaa.hh
@@ -180,6 +182,7 @@ set(GLSL_SRC
   shaders/compositor_deriche_gaussian_blur_sum.glsl
   shaders/compositor_directional_blur.glsl
   shaders/compositor_displace.glsl
+  shaders/compositor_displace_anisotropic.glsl
   shaders/compositor_double_edge_mask_compute_boundary.glsl
   shaders/compositor_double_edge_mask_compute_gradient.glsl
   shaders/compositor_edge_filter.glsl
@@ -220,8 +223,8 @@ set(GLSL_SRC
   shaders/compositor_kuwahara_anisotropic.glsl
   shaders/compositor_kuwahara_anisotropic_compute_structure_tensor.glsl
   shaders/compositor_kuwahara_classic.glsl
+  shaders/compositor_map_uv.glsl
   shaders/compositor_map_uv_anisotropic.glsl
-  shaders/compositor_map_uv_nearest_neighbour.glsl
   shaders/compositor_morphological_blur.glsl
   shaders/compositor_morphological_distance.glsl
   shaders/compositor_morphological_distance_feather.glsl
@@ -231,6 +234,7 @@ set(GLSL_SRC
   shaders/compositor_motion_blur_max_velocity_dilate.glsl
   shaders/compositor_movie_distortion.glsl
   shaders/compositor_normalize.glsl
+  shaders/compositor_pad.glsl
   shaders/compositor_parallel_reduction.glsl
   shaders/compositor_pixelate.glsl
   shaders/compositor_plane_deform_anisotropic.glsl
@@ -290,7 +294,6 @@ set(GLSL_SRC
   shaders/library/gpu_shader_compositor_main.glsl
   shaders/library/gpu_shader_compositor_map_value.glsl
   shaders/library/gpu_shader_compositor_motion_blur_lib.glsl
-  shaders/library/gpu_shader_compositor_normal.glsl
   shaders/library/gpu_shader_compositor_ocio_processor.glsl
   shaders/library/gpu_shader_compositor_posterize.glsl
   shaders/library/gpu_shader_compositor_separate_combine.glsl

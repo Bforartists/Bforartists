@@ -24,7 +24,7 @@
 
 #include "DEG_depsgraph_query.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLT_translation.hh"
@@ -266,18 +266,32 @@ static void modify_geometry_set(ModifierData *md,
 static void panel_draw(const bContext *C, Panel *panel)
 {
   uiLayout *layout = panel->layout;
-
+  uiLayout *col, *row, *split; /* bfa - added row, col, split */
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   uiLayoutSetPropSep(layout, true);
 
   layout->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  modifier::greasepencil::draw_vertex_group_settings(C, layout, ptr);
+  split = &layout->split(0.95f, true); /* bfa - keep at (0.95f) */
+  row = &split->row(true);
+  modifier::greasepencil::draw_vertex_group_settings(C, row, ptr);
 
-  uiLayout *col = &layout->column(true, IFACE_("Bind To"));
-  col->prop(ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
-  col->prop(ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE);
+  layout->label(IFACE_("Bind To"), ICON_NONE); /* bfa - our layout */
+
+  col = &layout->column(true);/* bfa - our layout */
+
+  row = &col->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_vertex_groups", 0); /*bfa - decorator*/
+
+  row = &col->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE);
+  uiItemDecoratorR(row, ptr, "use_bone_envelopes", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 }
