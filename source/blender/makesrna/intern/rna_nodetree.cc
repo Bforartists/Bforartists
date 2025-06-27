@@ -10645,7 +10645,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodePlaneTrackDeform", def_cmp_planetrackdeform, ICON_NODE_PLANETRACKDEFORM);
   define(brna, "CompositorNode", "CompositorNodePosterize", nullptr, ICON_POSTERIZE);
   define(brna, "CompositorNode", "CompositorNodePremulKey", def_cmp_premul_key, ICON_NODE_ALPHACONVERT);
-  define(brna, "CompositorNode", "CompositorNodeRelativeToPixel", nullptr, ICON_NONE);
+  define(brna, "CompositorNode", "CompositorNodeRelativeToPixel", nullptr, ICON_NODE_RELATIVE_TO_PIXEL);
   define(brna, "CompositorNode", "CompositorNodeRGB", nullptr, ICON_NODE_RGB);
   define(brna, "CompositorNode", "CompositorNodeRGBToBW", nullptr, ICON_NODE_RGBTOBW);
   define(brna, "CompositorNode", "CompositorNodeRLayers", def_cmp_render_layers, ICON_RENDERLAYERS);
