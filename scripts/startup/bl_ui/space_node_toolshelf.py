@@ -1810,6 +1810,10 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeMath"
 
+            props = col.operator("node.add_node", text = "Mix              ", icon = "NODE_MIX")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+
             props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
@@ -1871,6 +1875,10 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MIX")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
 
             props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
             props.use_transform = True
@@ -1942,6 +1950,18 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Mix Vector       ", icon = "NODE_MIX")
+            props.use_transform = True
+            props.type = "ShaderNodeMix"
+            ops = props.settings.add()
+            ops.name = "data_type"
+            ops.value = "'VECTOR'"
+
+            props = col.operator("node.add_node", text=" Vector Curves  ", icon = "NODE_VECTOR")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorCurve"
+
+
             props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORMATH")
             props.use_transform = True
             props.type = "ShaderNodeVectorMath"
@@ -1950,20 +1970,6 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeVectorRotate"
 
-            props = col.operator("node.add_node", text=" Mix Vector       ", icon = "NODE_MIX")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-            ops = props.settings.add()
-            ops.name = "data_type"
-            ops.value = "'VECTOR'"
-
-            props = col.operator("node.add_node", text=" Normal            ", icon = "RECALC_NORMALS")
-            props.use_transform = True
-            props.type = "CompositorNodeNormal"
-
-            props = col.operator("node.add_node", text=" Vector Curves  ", icon = "NODE_VECTOR")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorCurve"
 
         #### Icon Buttons
 
@@ -1981,14 +1987,6 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
 
-            props = flow.operator("node.add_node", text="", icon = "NODE_VECTORMATH")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorMath"
-
-            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_ROTATE")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorRotate"
-
             props = flow.operator("node.add_node", text="", icon = "NODE_MIX")
             props.use_transform = True
             props.type = "ShaderNodeMix"
@@ -1996,13 +1994,17 @@ class NODES_PT_comp_add_vector(bpy.types.Panel):
             ops.name = "data_type"
             ops.value = "'VECTOR'"
 
-            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
-            props.use_transform = True
-            props.type = "CompositorNodeNormal"
-
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "ShaderNodeVectorCurve"
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_VECTORMATH")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorMath"
+
+            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_ROTATE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorRotate"
 
 
 #Input nodes tab, textures common panel. Texture mode
