@@ -1847,7 +1847,7 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Relative to Pixel    ")
+            props = col.operator("node.add_node", text=" Relative to Pixel    ", icon = "NODE_RELATIVE_TO_PIXEL")
             props.use_transform = True
             props.type = "CompositorNodeRelativeToPixel"
 
@@ -1896,7 +1896,7 @@ class NODES_PT_comp_add_utility(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeSwitchView"
 
-            props = flow.operator("node.add_node", text = "")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_RELATIVE_TO_PIXEL")
             props.use_transform = True
             props.type = "CompositorNodeRelativeToPixel"
 
