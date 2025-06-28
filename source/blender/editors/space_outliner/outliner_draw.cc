@@ -21,6 +21,7 @@
 #include "BLI_fileops.h"
 #include "BLI_listbase.h"
 #include "BLI_math_vector.h"
+#include "BLI_math_color.h" // bfa - color row collection uchar to float4
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
 #include "BLI_string_utils.hh"
@@ -3758,15 +3759,14 @@ int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_
 }
 /* BFA - End*/
 
-static void outliner_draw_highlights(uint pos,
-                                     const ARegion *region,
+static void outliner_draw_highlights(const ARegion *region,
                                      const SpaceOutliner *space_outliner,
                                      const float col_selection[4],
                                      const float col_active[4],
                                      const float col_highlight[4],
                                      const float col_searchmatch[4],
-                                     uchar col_collection[4], /* BFA */
-                                     int start_x,
+                                     float col_collection[4], /* BFA */
+                                     int /* start_x */,
                                      int *io_start_y)
 {
   const bool is_searching = (SEARCHING_OUTLINER(space_outliner) ||
@@ -3780,29 +3780,38 @@ static void outliner_draw_highlights(uint pos,
     const TreeStoreElem *tselem = TREESTORE(te);
     const int start_y = *io_start_y;
 
+    const float ufac = UI_UNIT_X / 20.0f;
+    const float radius = UI_UNIT_Y / 8.0f;
+    const int padding_x = 3 * UI_SCALE_FAC;
+    rctf rect{};
+    BLI_rctf_init(&rect,
+                  padding_x,
+                  int(region->v2d.cur.xmax) - padding_x,
+                  start_y + ufac,
+                  start_y + UI_UNIT_Y - ufac);
+    UI_draw_roundbox_corner_set(UI_CNR_ALL);
+
     /*BFA - Start*/
     Collection *collection = nullptr;
     bTheme *btheme = UI_GetTheme();
     if (outliner_colored_collection_rows) /*bfa - outliner colored collection rows*/
       if (outliner_is_collection_tree_element(te)) {
         collection = outliner_collection_from_tree_element(te);
-        col_collection = (collection && collection->color_tag != COLLECTION_COLOR_NONE) ?
-                                  btheme->collection_color[collection->color_tag].color :
-                                  btheme->space_outliner.back;
+        // Convert the uchar to float4 
+        rgba_uchar_to_float(col_collection, (collection && collection->color_tag != COLLECTION_COLOR_NONE) ?
+                                            btheme->collection_color[collection->color_tag].color :
+                                            btheme->space_outliner.back);
 
         int depth = calculate_hierarchy_depth(te);  // Calculate the hierarchy depth of the tree item
         int offset_x = depth * UI_UNIT_X;  // Define the offset based on the hierarchy depth
-        int alpha = 20;
-
-        /* Draw the collection icon with the original alpha */
-        immUniformColor4ubv(col_collection);
+        float alpha = 0.08f; // origin value is 20 integer divided 255, rounded to 0.8
 
         /* Draw the background rectangle with the modified alpha */
-        uchar background_color[4];
-        copy_v4_v4_uchar(background_color, col_collection);
+        float background_color[4];
+        copy_v4_v4(background_color, col_collection);
         background_color[3] = alpha;  // Set the alpha channel for the background
-        immUniformColor4ubv(background_color);
-        immRectf(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
+        rect.xmin += offset_x - UI_UNIT_X;
+        UI_draw_roundbox_4fv(&rect, true, radius, background_color);
 
         if (collection && TSELEM_OPEN(tselem, space_outliner)) {
           int child_start_y = start_y;
@@ -3827,84 +3836,93 @@ static void outliner_draw_highlights(uint pos,
           /*FOR ROOT*/
           if (is_nested_once) {
             /* Draw the background rectangle with the modified alpha */
-            uchar background_color[4];
-            copy_v4_v4_uchar(background_color, col_collection);
+            float background_color[4];
+            copy_v4_v4(background_color, col_collection);
             background_color[3] = alpha;  // Set the alpha channel for the background
 
-            immUniformColor4ubv(background_color);
-            immRectf(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
+            rect.xmin += offset_x - UI_UNIT_X;
+            rect.ymin = child_start_y;
+            rect.ymax -= total_height + UI_UNIT_Y;
+            UI_draw_roundbox_4fv(&rect, true, radius, background_color);
           }
           /*FOR CHILDREN*/
           else {
             /*HORIZONTAL*/
             /* Draw the background rectangle with the modified alpha */
-            uchar background_color[4];
-            copy_v4_v4_uchar(background_color, col_collection);
+            float background_color[4];
+            copy_v4_v4(background_color, col_collection);
             background_color[3] = alpha;  // Set the alpha channel for the background
 
-            immUniformColor4ubv(background_color);
-            immRectf(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
+            rect.xmin += offset_x - UI_UNIT_X; 
+            rect.ymin = child_start_y;
+            rect.ymax = child_start_y + UI_UNIT_Y;
+            UI_draw_roundbox_4fv(&rect, true, radius, background_color);
 
             /*VERTICAL*/
             /* Draw the background rectangle with the modified alpha */
-            uchar nested_color[4];
-            copy_v4_v4_uchar(nested_color, col_collection);
+            float nested_color[4];
+            copy_v4_v4(nested_color, col_collection);
             nested_color[3] = alpha + alpha;  // Set the alpha channel for the background
 
-            immUniformColor4ubv(nested_color);
-            immRectf(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
+            rect.xmin += offset_x; 
+            rect.xmax = rect.xmin - UI_UNIT_X;
+            rect.ymin = child_start_y;
+            rect.ymax -= total_height + UI_UNIT_Y;
+            UI_draw_roundbox_4fv(&rect, true, radius, nested_color);
           }
         }
+        // reset back? zNight: not sure if it is needed 
+        rect.xmin = padding_x;
+        rect.xmax = int(region->v2d.cur.xmax) - padding_x;
+        rect.ymin = start_y + ufac;
+        rect.ymax = start_y + UI_UNIT_Y - ufac;
       }
     /*BFA - End*/
 
     /* Selection status. */
     if ((tselem->flag & TSE_ACTIVE) && (tselem->flag & TSE_SELECTED)) {
-      immUniformColor4fv(col_active);
-      immRectf(pos, 0, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
+      UI_draw_roundbox_4fv(&rect, true, radius, col_active);
+
+      float col_active_outline[4];
+      UI_GetThemeColorShade4fv(TH_SELECT_ACTIVE, 40, col_active_outline);
+      UI_draw_roundbox_4fv(&rect, false, radius, col_active_outline);
     }
     else if (tselem->flag & TSE_SELECTED) {
-      immUniformColor4fv(col_selection);
-      immRectf(pos, 0, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
+      UI_draw_roundbox_4fv(&rect, true, radius, col_selection);
     }
 
     /* Highlights. */
     if (tselem->flag & (TSE_DRAG_ANY | TSE_HIGHLIGHTED | TSE_SEARCHMATCH)) {
-      const int end_x = int(region->v2d.cur.xmax);
-
       if (tselem->flag & TSE_DRAG_ANY) {
         /* Drag and drop highlight. */
-        float col[4];
-        UI_GetThemeColorShade4fv(TH_BACK, -40, col);
+        float col_outline[4];
+        UI_GetThemeColorBlend4f(TH_TEXT, TH_BACK, 0.4f, col_outline);
 
         if (tselem->flag & TSE_DRAG_BEFORE) {
-          immUniformColor4fv(col);
-          immRectf(pos,
-                   start_x,
-                   start_y + UI_UNIT_Y - U.pixelsize,
-                   end_x,
-                   start_y + UI_UNIT_Y + U.pixelsize);
+          rect.ymax += (1.0f * UI_SCALE_FAC) + (1.0f * U.pixelsize);
+          rect.ymin = rect.ymax - (2.0f * U.pixelsize);
+          UI_draw_roundbox_4fv(&rect, true, 0.0f, col_outline);
         }
         else if (tselem->flag & TSE_DRAG_AFTER) {
-          immUniformColor4fv(col);
-          immRectf(pos, start_x, start_y - U.pixelsize, end_x, start_y + U.pixelsize);
+          rect.ymin -= (1.0f * UI_SCALE_FAC) + (1.0f * U.pixelsize);
+          rect.ymax = rect.ymin + (2.0f * U.pixelsize);
+          UI_draw_roundbox_4fv(&rect, true, 0.0f, col_outline);
         }
         else {
-          immUniformColor3fvAlpha(col, col[3] * 0.5f);
-          immRectf(pos, start_x, start_y, end_x, start_y + UI_UNIT_Y);
+          float col_bg[4];
+          UI_GetThemeColorShade4fv(TH_BACK, 40, col_bg);
+          UI_draw_roundbox_4fv_ex(&rect, col_bg, nullptr, 1.0f, col_outline, U.pixelsize, radius);
         }
       }
       else {
         if (is_searching && (tselem->flag & TSE_SEARCHMATCH)) {
           /* Search match highlights. We don't expand items when searching in the data-blocks,
            * but we still want to highlight any filter matches. */
-          immUniformColor4fv(col_searchmatch);
-          immRectf(pos, start_x, start_y, end_x, start_y + UI_UNIT_Y);
+          UI_draw_roundbox_4fv(&rect, true, radius, col_searchmatch);
         }
         else if (tselem->flag & TSE_HIGHLIGHTED) {
           /* Mouse hover highlight. */
-          immUniformColor4fv(col_highlight);
-          immRectf(pos, 0, start_y, end_x, start_y + UI_UNIT_Y);
+          UI_draw_roundbox_4fv(&rect, true, radius, col_highlight);
         }
       }
     }
@@ -3920,7 +3938,7 @@ static void outliner_draw_highlights(ARegion *region,
 {
   const float col_highlight[4] = {1.0f, 1.0f, 1.0f, 0.13f};
   float col_selection[4], col_active[4], col_searchmatch[4];
-  uchar col_collection[4]; /* BFA */
+  float col_collection[4]; /* BFA */
 
   UI_GetThemeColor3fv(TH_SELECT_HIGHLIGHT, col_selection);
   col_selection[3] = 1.0f; /* No alpha. */
@@ -3930,11 +3948,7 @@ static void outliner_draw_highlights(ARegion *region,
   col_searchmatch[3] = 0.5f;
 
   GPU_blend(GPU_BLEND_ALPHA);
-  GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
-  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
-  outliner_draw_highlights(pos,
-                           region,
+  outliner_draw_highlights(region,
                            space_outliner,
                            col_selection,
                            col_active,
@@ -3943,7 +3957,6 @@ static void outliner_draw_highlights(ARegion *region,
                            col_collection, /* BFA */
                            startx,
                            starty);
-  immUnbindProgram();
   GPU_blend(GPU_BLEND_NONE);
 }
 
