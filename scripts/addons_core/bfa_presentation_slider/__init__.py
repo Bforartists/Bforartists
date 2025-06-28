@@ -112,7 +112,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
     """Setup or duplicate slide scenes and collections with camera"""
     bl_idname = "scene.setup_slide_scene"
     bl_label = "Insert New Slide Scene"
-    bl_description = "Sets up a new slide scene/collection/camera structure, or duplicates current slide scene"
+    bl_description = "Sets up a new slide scene/collection/camera structure, or inserts a new slide scene after current select slide scene"
 
     frame_range: IntProperty(
         name="Duration",
