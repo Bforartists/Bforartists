@@ -106,9 +106,7 @@ class DATA_PT_EEVEE_light(DataButtonsPanel, Panel):
             row.label(icon="DISCLOSURE_TRI_DOWN")
             row = layout.row()
             row.prop(light, "temperature", text="")
-            #row.prop_decorator(light, "temperature")
         else:
-            #row = layout.row()
             row.alignment = 'LEFT'
             row.label(icon="DISCLOSURE_TRI_RIGHT")
 
@@ -118,14 +116,12 @@ class DATA_PT_EEVEE_light(DataButtonsPanel, Panel):
         col.use_property_split = False # BFA
         col.prop(light, "normalize")
 
-        layout.separator()
-
         col = layout.column()
         if light.type in {'POINT', 'SPOT'}:
-            col.use_property_split = True # BFA
-            col.prop(light, "shadow_soft_size", text="Radius")
             col.use_property_split = False # BFA
             col.prop(light, "use_soft_falloff")
+            col.use_property_split = True # BFA
+            col.prop(light, "shadow_soft_size", text="Radius")
         elif light.type == 'SUN':
             col.prop(light, "angle")
         elif light.type == 'AREA':

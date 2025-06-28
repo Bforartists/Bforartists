@@ -1714,41 +1714,38 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
             layout.row().prop(light, "type")
 
         col = layout.column()
-        heading = col.column(align=True, heading="Temperature")
-        row = heading.column(align=True).row(align=True)
-        row.prop(light, "use_temperature", text="")
-        # Don't show color preview for now, it is grayed out so the color
-        # is not accurate. Would not a change in the UI code to allow
-        # non-editable colors to be displayed as is.
-        if False:  # light.use_temperature:
-            sub = row.split(factor=0.7, align=True)
-            sub.active = light.use_temperature
-            sub.prop(light, "temperature", text="")
-            sub.prop(light, "temperature_color", text="")
-        else:
-            sub = row.row()
-            sub.active = light.use_temperature
-            sub.prop(light, "temperature", text="")
 
+        # BFA - high priority, moved up
         if light.use_temperature:
             col.prop(light, "color", text="Tint")
         else:
             col.prop(light, "color", text="Color")
 
-        layout.separator()
+        # BFA - collapse hidden content
+        row = layout.row()
+        row.scale_x = 0.8
+        row.use_property_split = False
+        row.prop(light, "use_temperature", text="Temperature")
+        if light.use_temperature:
+            row.alignment = 'LEFT'
+            row.label(icon="DISCLOSURE_TRI_DOWN")
+            row = layout.row()
+            row.prop(light, "temperature", text="")
+        else:
+            row.alignment = 'LEFT'
+            row.label(icon="DISCLOSURE_TRI_RIGHT")
 
         col = layout.column()
         col.prop(light, "energy")
         col.prop(light, "exposure")
+        col.use_property_split = False # BFA
         col.prop(light, "normalize")
-
-        layout.separator()
 
         col = layout.column()
         if light.type in {'POINT', 'SPOT'}:
-            col.use_property_split = False
+            col.use_property_split = False # BFA
             col.prop(light, "use_soft_falloff")
-            col.use_property_split = True
+            col.use_property_split = True # BFA
             col.prop(light, "shadow_soft_size", text="Radius")
         elif light.type == 'SUN':
             col.prop(light, "angle")
