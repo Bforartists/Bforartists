@@ -1549,11 +1549,11 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
     return;
   }
 
-  bool show_asset_option = false;
   wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
   if (!asset_drag) {
     return;
   }
+
   bool use_override = false;
   if (!asset_drag->import_settings.is_from_browser) {
     AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
@@ -1573,7 +1573,7 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
       C, CTX_data_main(C), owner_id, id_or, nullptr);
     }
   }
-  show_asset_option = asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK;
+  bool show_asset_option = asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK;
   /* end bfa */ 
   // ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0); 
 
