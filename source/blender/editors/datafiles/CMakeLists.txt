@@ -2102,6 +2102,7 @@ if(WITH_BLENDER)
       width_size
       winding
       window
+      window_close
       wireframe
       wood_tex
       wordwrap_off

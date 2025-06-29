@@ -2366,7 +2366,7 @@ static void WM_OT_window_close(wmOperatorType *ot)
 {
   ot->name = "Close Window";
   ot->idname = "WM_OT_window_close";
-  ot->description = "Close the current window";
+  ot->description = "Close the current window, If this is the last open window, the application will quit"; /* BFA */
 
   ot->exec = wm_window_close_exec;
   ot->poll = WM_operator_winactive;
