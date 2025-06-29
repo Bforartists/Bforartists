@@ -41,13 +41,12 @@
 
 #include "BLT_translation.hh"
 
-// #include "ED_asset_shelf.hh" /* bfa assetshelf */
+#include "ED_asset_shelf.hh" /* bfa assetshelf */
 #include "ED_image.hh"
 #include "ED_node.hh"
 #include "ED_node_preview.hh"
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
-#include "../asset/ED_asset_shelf.hh" /* bfa assetshelf */ 
 
 #include "UI_view2d.hh"
 
@@ -1546,7 +1545,15 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
   
   /* start bfa asset shelf props*/
+  if (!ELEM(drag->type, WM_DRAG_ASSET, WM_DRAG_ID)) {
+    return;
+  }
+
+  bool show_asset_option = false;
   wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
+  if (!asset_drag) {
+    return;
+  }
   bool use_override = false;
   if (!asset_drag->import_settings.is_from_browser) {
     AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
@@ -1561,22 +1568,17 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
   if (use_override) {  
     ID *owner_id = id; 
     ID *id_or = id;
-    /* BFA - WIP - removed for warning?*/
-    //PointerRNA owner_ptr;
-    //PropertyRNA *prop;
     if (!ELEM(nullptr, owner_id, id_or)) {
       id = ui_template_id_liboverride_hierarchy_make(
       C, CTX_data_main(C), owner_id, id_or, nullptr);
     }
   }
-  /* end bfa */
-  // ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
+  show_asset_option = asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK;
+  /* end bfa */ 
+  // ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0); 
 
   RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
-
-  RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET || 
-    (asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK))
-  ); // bfa addded for displaying the linked data-block 
+  RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET || show_asset_option)); // bfa addded show_asset_option for displaying linked
 }
 
 static void node_id_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
