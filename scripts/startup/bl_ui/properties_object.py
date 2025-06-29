@@ -193,7 +193,7 @@ class OBJECT_PT_collections(ObjectButtonsPanel, Panel):
 
         row = layout.row(align=True)
         if bpy.data.collections:
-            row.operator("object.collection_link", text="Link to existing Collection", icon="DECORATE_LINKED")
+            row.operator("object.collection_link", text="Link to Existing Collection", icon="DECORATE_LINKED")
             row.operator("object.collection_add", text="", icon='ADD')
         else:
             row.operator("object.collection_add", text="Add to New Collection", icon='ADD')
