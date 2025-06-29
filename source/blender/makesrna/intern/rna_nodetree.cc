@@ -10723,7 +10723,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeEulerToRotation", nullptr, ICON_EULER_TO_ROTATION);
   define(brna, "FunctionNode", "FunctionNodeFindInString", nullptr, ICON_STRING_FIND);
   define(brna, "FunctionNode", "FunctionNodeFloatToInt", def_float_to_int, ICON_FLOAT_TO_INT);
-  define(brna, "FunctionNode", "FunctionNodeFormatString", def_fn_format_string, ICON_NONE);
+  define(brna, "FunctionNode", "FunctionNodeFormatString", def_fn_format_string, ICON_FORMAT_STRING);
   define(brna, "FunctionNode", "FunctionNodeHashValue", nullptr, ICON_HASH);
   define(brna, "FunctionNode", "FunctionNodeInputBool", def_fn_input_bool, ICON_INPUT_BOOL);
   define(brna, "FunctionNode", "FunctionNodeInputColor", def_fn_input_color, ICON_COLOR);
