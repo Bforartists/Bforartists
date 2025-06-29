@@ -6865,6 +6865,10 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeStringJoin"
 
+            props = col.operator("node.add_node", text=" Match String            ", icon = "MATCH_STRING")
+            props.use_transform = True
+            props.type = "FunctionNodeMatchString"
+
             props = col.operator("node.add_node", text=" Replace Strings       ", icon = "REPLACE_STRING")
             props.use_transform = True
             props.type = "FunctionNodeReplaceString"
@@ -6904,6 +6908,10 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "STRING_JOIN")
             props.use_transform = True
             props.type = "GeometryNodeStringJoin"
+
+            props = flow.operator("node.add_node", text="", icon = "MATCH_STRING")
+            props.use_transform = True
+            props.type = "FunctionNodeMatchString"
 
             props = flow.operator("node.add_node", text="", icon = "REPLACE_STRING")
             props.use_transform = True
