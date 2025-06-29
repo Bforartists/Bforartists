@@ -10735,7 +10735,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeIntegerMath", nullptr, ICON_INTEGER_MATH);
   define(brna, "FunctionNode", "FunctionNodeInvertMatrix", nullptr, ICON_INVERT_MATRIX);
   define(brna, "FunctionNode", "FunctionNodeInvertRotation", nullptr, ICON_INVERT_ROTATION);
-  define(brna, "FunctionNode", "FunctionNodeMatchString", nullptr, ICON_NONE);
+  define(brna, "FunctionNode", "FunctionNodeMatchString", nullptr, ICON_MATCH_STRING);
   define(brna, "FunctionNode", "FunctionNodeMatrixDeterminant", nullptr, ICON_MATRIX_DETERMINANT);
   define(brna, "FunctionNode", "FunctionNodeMatrixMultiply", nullptr, ICON_MULTIPLY_MATRIX);
   define(brna, "FunctionNode", "FunctionNodeProjectPoint", nullptr, ICON_PROJECT_POINT);
