@@ -705,6 +705,7 @@ if(WITH_BLENDER)
       force_turbulence
       force_vortex
       force_wind
+      format_string
       for_each
       forward
       frame_next
