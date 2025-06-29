@@ -169,7 +169,7 @@ static void rna_def_text_line(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "TextLine", nullptr);
-  RNA_def_struct_ui_text(srna, "Text Line", "Line of text in a Text file");
+  RNA_def_struct_ui_text(srna, "Text Line", "Line of text in a Text file"); /* BFA */
 
   prop = RNA_def_property(srna, "body", PROP_STRING, PROP_NONE);
   RNA_def_property_string_funcs(
@@ -192,7 +192,7 @@ static void rna_def_text(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Text", "ID");
-  RNA_def_struct_ui_text(srna, "Text", "Text file referencing an external or packed text file");
+  RNA_def_struct_ui_text(srna, "Text", "Text file referencing an external or packed text file"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_TEXT);
   RNA_def_struct_clear_flag(srna, STRUCT_ID_REFCOUNT);
 

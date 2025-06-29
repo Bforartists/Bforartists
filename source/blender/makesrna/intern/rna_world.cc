@@ -124,7 +124,7 @@ static void rna_def_lighting(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "WorldLighting", nullptr);
   RNA_def_struct_sdna(srna, "World");
   RNA_def_struct_nested(brna, srna, "World");
-  RNA_def_struct_ui_text(srna, "Lighting", "Lighting for a World data");
+  RNA_def_struct_ui_text(srna, "Lighting", "Lighting for a World data"); /* BFA */
 
   /* ambient occlusion */
   prop = RNA_def_property(srna, "ao_factor", PROP_FLOAT, PROP_FACTOR);
@@ -161,7 +161,7 @@ static void rna_def_world_mist(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "WorldMistSettings", nullptr);
   RNA_def_struct_sdna(srna, "World");
   RNA_def_struct_nested(brna, srna, "World");
-  RNA_def_struct_ui_text(srna, "World Mist", "Mist settings for a World data");
+  RNA_def_struct_ui_text(srna, "World Mist", "Mist settings for a World data"); /* BFA */
 
   prop = RNA_def_property(srna, "use_mist", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "mode", WO_MIST);
@@ -213,7 +213,7 @@ void RNA_def_world(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "World", "ID");
   RNA_def_struct_ui_text(
       srna, "World", "World data describing the environment and ambient lighting of a scene");
-  RNA_def_struct_ui_icon(srna, ICON_WORLD);
+  RNA_def_struct_ui_icon(srna, ICON_WORLD); /* BFA */
 
   rna_def_animdata_common(srna);
 
@@ -322,7 +322,7 @@ void RNA_def_world(BlenderRNA *brna)
       prop,
       "Shadow Jitter",
       "Enable jittered soft shadows to increase shadow precision (disabled in viewport unless "
-      "enabled in the render settings). Has a high performance impact");
+      "enabled in the render settings). Has a high performance impact.");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, 0, "rna_World_draw_update");
 

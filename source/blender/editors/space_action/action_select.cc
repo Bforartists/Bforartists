@@ -31,7 +31,6 @@
 #include "BKE_grease_pencil.hh"
 #include "BKE_nla.hh"
 
-#include "UI_interface.hh"
 #include "UI_view2d.hh"
 
 #include "ED_anim_api.hh"
@@ -1695,7 +1694,7 @@ void ACTION_OT_select_leftright(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Left/Right";
   ot->idname = "ACTION_OT_select_leftright";
-  ot->description = "Select keyframes to the right of the current frame";
+  ot->description = "Select keyframes to the right of the current frame"; /* BFA */
 
   /* API callbacks. */
   ot->invoke = actkeys_select_leftright_invoke;

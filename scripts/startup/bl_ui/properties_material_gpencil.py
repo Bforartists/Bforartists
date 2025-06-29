@@ -12,6 +12,7 @@ from bl_ui.properties_grease_pencil_common import (
     GreasePencilMaterialsPanel,
 )
 
+# BFA - Added icons and floated left
 
 class GPENCIL_MT_material_context_menu(Menu):
     bl_label = "Material Specials"
@@ -28,14 +29,10 @@ class GPENCIL_MT_material_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("grease_pencil.material_lock_all", icon="LOCKED", text="Lock All")
-        layout.operator(
-            "grease_pencil.material_unlock_all", icon="UNLOCKED", text="Unlock All"
-        )
+        layout.operator("grease_pencil.material_lock_all", icon='LOCKED', text="Lock All")
+        layout.operator("grease_pencil.material_unlock_all", icon='UNLOCKED', text="Unlock All")
 
-        layout.operator(
-            "grease_pencil.material_lock_unused", text="Lock Unselected", icon="LOCKED"
-        )
+        layout.operator("grease_pencil.material_lock_unused", text="Lock Unselected", icon="LOCKED"        )
         layout.operator("grease_pencil.lock_layer", text="Lock Unused", icon="LOCKED")
 
         layout.separator()
@@ -56,51 +53,37 @@ class GPENCIL_MT_material_context_menu(Menu):
 
 
 class GPENCIL_UL_matslots(UIList):
-    def draw_item(
-        self,
-        _context,
-        layout,
-        _data,
-        item,
-        icon,
-        _active_data,
-        _active_propname,
-        _index,
-    ):
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         slot = item
         ma = slot.material
 
-        if self.layout_type in {"DEFAULT", "COMPACT"}:
-            row = layout.row(align=True)
-            row.label(text="", icon_value=icon)
-            if ma is None:
-                return
+        row = layout.row(align=True)
+        row.label(text="", icon_value=icon)
 
-            if (gpcolor := ma.grease_pencil) is None:
-                return
+        if ma is None:
+            return
 
-            row = layout.row(align=True)
-            row.enabled = not gpcolor.lock
-            row.prop(ma, "name", text="", emboss=False, icon="NONE")
+        if (gpcolor := ma.grease_pencil) is None:
+            return
 
-            row = layout.row(align=True)
+        row = layout.row(align=True)
+        row.enabled = not gpcolor.lock
+        row.prop(ma, "name", text="", emboss=False, icon='NONE')
 
-            if gpcolor.ghost is True:
-                icon = "ONIONSKIN_OFF"
-            else:
-                icon = "ONIONSKIN_ON"
-            row.prop(gpcolor, "ghost", text="", icon=icon, emboss=False)
-            row.prop(gpcolor, "hide", text="", emboss=False)
-            row.prop(gpcolor, "lock", text="", emboss=False)
+        row = layout.row(align=True)
 
-        elif self.layout_type == "GRID":
-            layout.alignment = "CENTER"
-            layout.label(text="", icon_value=icon)
+        if gpcolor.ghost is True:
+            icon = 'ONIONSKIN_OFF'
+        else:
+            icon = 'ONIONSKIN_ON'
+        row.prop(gpcolor, "ghost", text="", icon=icon, emboss=False)
+        row.prop(gpcolor, "hide", text="", emboss=False)
+        row.prop(gpcolor, "lock", text="", emboss=False)
 
 
 class GPMaterialButtonsPanel:
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
     bl_context = "material"
 
     @classmethod
@@ -111,16 +94,16 @@ class GPMaterialButtonsPanel:
 
 class MATERIAL_PT_gpencil_slots(GreasePencilMaterialsPanel, Panel):
     bl_label = "Grease Pencil Material Slots"
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
     bl_context = "material"
-    bl_options = {"HIDE_HEADER"}
+    bl_options = {'HIDE_HEADER'}
 
     @classmethod
     def poll(cls, context):
         ma = context.material
         found_material = ma and ma.grease_pencil
-        found_object = context.object and context.object.type == "GREASEPENCIL"
+        found_object = context.object and context.object.type == 'GREASEPENCIL'
         return found_material or found_object
 
 
@@ -164,23 +147,23 @@ class MATERIAL_PT_gpencil_strokecolor(GPMaterialButtonsPanel, Panel):
             row.prop(gpcolor, "color", text="Base Color")
             # col.prop(gpcolor, "use_stroke_holdout")#BFA - moved below
 
-            if gpcolor.stroke_style == "TEXTURE":
+            if gpcolor.stroke_style == 'TEXTURE':
                 row = col.row()
                 col = row.column(align=True)
                 col.template_ID(gpcolor, "stroke_image", open="image.open")
                 col.separator()
 
-            if gpcolor.stroke_style == "TEXTURE":
+            if gpcolor.stroke_style == 'TEXTURE':
                 row = col.row()
                 row.prop(gpcolor, "mix_stroke_factor", text="Blend", slider=True)
-                if gpcolor.mode == "LINE":
+                if gpcolor.mode == 'LINE':
                     col.prop(gpcolor, "pixel_size", text="UV Factor")
 
-            if gpcolor.mode in {"DOTS", "BOX"}:
+            if gpcolor.mode in {'DOTS', 'BOX'}:
                 col.prop(gpcolor, "alignment_mode")
                 col.prop(gpcolor, "alignment_rotation")
 
-            if gpcolor.mode == "LINE":
+            if gpcolor.mode == 'LINE':
                 row = layout.row()
                 row.use_property_split = False
                 row.prop(gpcolor, "use_overlap_strokes")
@@ -212,11 +195,11 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
         col = layout.column()
         col.prop(gpcolor, "fill_style", text="Style")
 
-        if gpcolor.fill_style == "SOLID":
+        if gpcolor.fill_style == 'SOLID':
             col.prop(gpcolor, "fill_color", text="Base Color")
             # col.prop(gpcolor, "use_fill_holdout") #BFA - shown below
 
-        elif gpcolor.fill_style == "GRADIENT":
+        elif gpcolor.fill_style == 'GRADIENT':
             col.prop(gpcolor, "gradient_type")
 
             col.prop(gpcolor, "fill_color", text="Base Color")
@@ -232,12 +215,12 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             col.prop(gpcolor, "texture_offset", text="Location")
 
             row = col.row()
-            row.enabled = gpcolor.gradient_type == "LINEAR"
+            row.enabled = gpcolor.gradient_type == 'LINEAR'
             row.prop(gpcolor, "texture_angle", text="Rotation")
 
             col.prop(gpcolor, "texture_scale", text="Scale")
 
-        elif gpcolor.fill_style == "TEXTURE":
+        elif gpcolor.fill_style == 'TEXTURE':
             col.prop(gpcolor, "fill_color", text="Base Color")
             # col.prop(gpcolor, "use_fill_holdout")#BFA - below
 
@@ -260,15 +243,13 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
         row.prop_decorator(gpcolor, "use_fill_holdout")
 
 
-class MATERIAL_PT_gpencil_animation(
-    GPMaterialButtonsPanel, PropertiesAnimationMixin, PropertyPanel, Panel
-):
+class MATERIAL_PT_gpencil_animation(GPMaterialButtonsPanel, PropertiesAnimationMixin, PropertyPanel, Panel):
     _animated_id_context_property = "material"
 
 
 class MATERIAL_PT_gpencil_preview(GPMaterialButtonsPanel, Panel):
     bl_label = "Preview"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         ma = context.material
@@ -276,14 +257,14 @@ class MATERIAL_PT_gpencil_preview(GPMaterialButtonsPanel, Panel):
 
 
 class MATERIAL_PT_gpencil_custom_props(GPMaterialButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {"BLENDER_WORKBENCH"}
+    COMPAT_ENGINES = {'BLENDER_WORKBENCH'}
     _context_path = "object.active_material"
     _property_type = bpy.types.Material
 
 
 class MATERIAL_PT_gpencil_settings(GPMaterialButtonsPanel, Panel):
     bl_label = "Settings"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -296,7 +277,6 @@ class MATERIAL_PT_gpencil_settings(GPMaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_gpencil_material_presets(PresetPanel, Panel):
     """Material settings"""
-
     bl_label = "Material Presets"
     preset_subdir = "gpencil_material"
     preset_operator = "script.execute_preset"

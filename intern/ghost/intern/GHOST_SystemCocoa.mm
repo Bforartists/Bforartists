@@ -282,7 +282,7 @@ static GHOST_TKey convertKey(int rawCode, unichar recvChar)
 
         /* Get actual character value of the "remappable" keys in international keyboards,
          * if keyboard layout is not correctly reported (e.g. some non Apple keyboards in Tiger),
-         * then fallback on using the received #charactersIgnoringModifiers. */
+         * then fall back on using the received #charactersIgnoringModifiers. */
         if (uchrHandle) {
           UInt32 deadKeyState = 0;
           UniCharCount actualStrLength = 0;
@@ -592,14 +592,14 @@ GHOST_TSuccess GHOST_SystemCocoa::init()
         NSMenu *appMenu;
 
         /* Create the application menu. */
-        appMenu = [[NSMenu alloc] initWithTitle:@"Bforartists"];
+        appMenu = [[NSMenu alloc] initWithTitle:@"Blender"];
 
-        [appMenu addItemWithTitle:@"About Bforartists"
+        [appMenu addItemWithTitle:@"About Blender"
                            action:@selector(orderFrontStandardAboutPanel:)
                     keyEquivalent:@""];
         [appMenu addItem:[NSMenuItem separatorItem]];
 
-        menuItem = [appMenu addItemWithTitle:@"Hide Bforartists"
+        menuItem = [appMenu addItemWithTitle:@"Hide Blender"
                                       action:@selector(hide:)
                                keyEquivalent:@"h"];
         menuItem.keyEquivalentModifierMask = NSEventModifierFlagCommand;
@@ -614,7 +614,7 @@ GHOST_TSuccess GHOST_SystemCocoa::init()
                            action:@selector(unhideAllApplications:)
                     keyEquivalent:@""];
 
-        menuItem = [appMenu addItemWithTitle:@"Quit Bforartists"
+        menuItem = [appMenu addItemWithTitle:@"Quit Blender"
                                       action:@selector(terminate:)
                                keyEquivalent:@"q"];
         menuItem.keyEquivalentModifierMask = NSEventModifierFlagCommand;
@@ -1012,8 +1012,9 @@ bool GHOST_SystemCocoa::processEvents(bool /*waitForEvent*/)
       }
       else {
         timeOut = (double)(next - getMilliSeconds())/1000.0;
-        if (timeOut < 0.0)
+        if (timeOut < 0.0) {
           timeOut = 0.0;
+        }
       }
 
       ::ReceiveNextEvent(0, nullptr, timeOut, false, &event);
@@ -1645,7 +1646,7 @@ GHOST_TSuccess GHOST_SystemCocoa::handleMouseEvent(void *eventPtr)
 
           GHOST_Rect bounds, windowBounds, correctedBounds;
 
-          /* fallback to window bounds */
+          /* fall back to window bounds */
           if (window->getCursorGrabBounds(bounds) == GHOST_kFailure) {
             window->getClientBounds(bounds);
           }

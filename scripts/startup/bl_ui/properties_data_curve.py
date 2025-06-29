@@ -111,7 +111,7 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
             sub.prop(curve, "fill_mode")
 
         if is_curve:
-            col.label(text = "Curve Deform")
+            col.label(text = "Curve Deform") # BFA
 
             col.use_property_split = False
             row = col.row()
@@ -174,14 +174,14 @@ class DATA_PT_geometry_curve(CurveButtonsPanelCurve, Panel):
         sub.prop(curve, "extrude")
 
         col.prop(curve, "taper_object")
-        if curve.taper_object is not None:
+        if curve.taper_object is not None: # BFA
             row = col.row()
             row.separator()
             row.prop(curve, "taper_radius_mode")
 
         if type(curve) is not TextCurve:
             # This setting makes no sense for texts, since we have no control over start/end of the bevel object curve.
-            row = col.row()
+            row = col.row() # BFA
             if curve.taper_object is not None:
                 row.use_property_split = False
                 row.separator()
@@ -212,7 +212,7 @@ class DATA_PT_geometry_curve_bevel(CurveButtonsPanelCurve, Panel):
             col.prop(curve, "bevel_depth", text="Depth")
             col.prop(curve, "bevel_resolution", text="Resolution")
 
-        row = col.row()
+        row = col.row() # BFA
         row.use_property_split = False
         row.prop(curve, "use_fill_caps")
         row.prop_decorator(curve, "use_fill_caps")
@@ -293,12 +293,12 @@ class DATA_PT_pathanim(CurveButtonsPanelCurve, Panel):
         col.prop(curve, "eval_time")
 
         # these are for paths only
-        row = layout.row()
+        row = layout.row() # BFA
         row.use_property_split = False
         row.prop(curve, "use_path_clamp")
         row.prop_decorator(curve, "use_path_clamp")
 
-        row = layout.row()
+        row = layout.row() # BFA
         row.use_property_split = False
         row.prop(curve, "use_path_follow")
         row.prop_decorator(curve, "use_path_follow")

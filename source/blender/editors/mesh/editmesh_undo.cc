@@ -72,6 +72,30 @@
 #  define ARRAY_CHUNK_NUM_MIN 256
 
 #  define USE_ARRAY_STORE_THREAD
+
+/**
+ * Use run length encoding for boolean custom-data.
+ *
+ * Avoid poor performance caused by boolean arrays not having enough *uniqueness* to
+ * efficiently de-duplicate, see: #136737.
+ *
+ * NOTE(@ideasman42): This has the down-side that creating undo steps needs to encode
+ * data *before* comparing it with the previous state (when creating each undo step).
+ * Adding additional work even when nothing change.
+ *
+ * Since there is overhead for RLE encoding this is only used on boolean array,
+ * typically used for storing selection/hidden state as well as edge flags.
+ * The encoding has also been optimized for performance instead of "compression"
+ * which would pack bits into the smallest possible space.
+ *
+ * In practice, arrays of 32 million booleans (on an AMD TRX 3990X):
+ * - ~0.11 seconds for random data.
+ * - ~0.0025 seconds uniform arrays.
+ * ... so the tradeoff seems reasonable.
+ *
+ * There is also the benefit of reduced memory use, although that isn't the goal.
+ */
+#  define USE_ARRAY_STORE_RLE
 #endif
 
 #ifdef USE_ARRAY_STORE_THREAD
@@ -101,6 +125,19 @@ struct BArrayCustomData {
   eCustomDataType type;
   blender::Array<std::variant<BArrayState *, blender::ImplicitSharingInfoAndData>> states;
 };
+
+#  ifdef USE_ARRAY_STORE_RLE
+static bool um_customdata_layer_use_rle(const BArrayCustomData *bcd)
+{
+  /* NOTE(@ideasman42): This could be enabled for all byte sized layers.
+   * for now only use for boolean layers to address: #136737. */
+  if (bcd->type == CD_PROP_BOOL) {
+    BLI_assert(CustomData_sizeof(bcd->type) == 1);
+    return true;
+  }
+  return false;
+}
+#  endif
 
 #endif
 
@@ -278,13 +315,40 @@ static void um_arraystore_cd_compact(CustomData *cdata,
             bcd->states[i] = ImplicitSharingInfoAndData{sharing_info, layer->data};
           }
           else {
-            BArrayState *state_reference = nullptr;
+            const BArrayState *state_reference = nullptr;
             if (bcd_reference_current && i < bcd_reference_current->states.size()) {
               state_reference = std::get<BArrayState *>(bcd_reference_current->states[i]);
             }
 
-            bcd->states[i] = BLI_array_store_state_add(
-                bs, layer->data, size_t(data_len) * stride, state_reference);
+            void *data_final = layer->data;
+            size_t data_final_size = size_t(data_len) * stride;
+
+#  ifdef USE_ARRAY_STORE_RLE
+            const bool use_rle = um_customdata_layer_use_rle(bcd);
+            uint8_t *data_enc = nullptr;
+            if (use_rle) {
+              /* Store the size in the encoded data (for convenience). */
+              size_t data_enc_extra_size = sizeof(size_t);
+              size_t data_enc_len;
+              data_enc = BLI_array_store_rle_encode(reinterpret_cast<const uint8_t *>(data_final),
+                                                    data_final_size,
+                                                    data_enc_extra_size,
+                                                    &data_enc_len);
+              memcpy(data_enc, &data_final_size, data_enc_extra_size);
+              data_final = data_enc;
+              data_final_size = data_enc_extra_size + data_enc_len;
+            }
+#  endif
+
+            bcd->states[i] = {
+                BLI_array_store_state_add(bs, data_final, data_final_size, state_reference),
+            };
+
+#  ifdef USE_ARRAY_STORE_RLE
+            if (use_rle) {
+              MEM_freeN(data_enc);
+            }
+#  endif
           }
         }
         else {
@@ -331,10 +395,32 @@ static void um_arraystore_cd_expand(const BArrayCustomData *bcd,
     for (int i = 0; i < bcd->states.size(); i++) {
       BLI_assert(bcd->type == layer->type);
       if (std::holds_alternative<BArrayState *>(bcd->states[i])) {
-        BArrayState *state = std::get<BArrayState *>(bcd->states[i]);
+        const BArrayState *state = std::get<BArrayState *>(bcd->states[i]);
         if (state) {
           size_t state_len;
-          layer->data = BLI_array_store_state_data_get_alloc(state, &state_len);
+          void *data = BLI_array_store_state_data_get_alloc(state, &state_len);
+
+#  ifdef USE_ARRAY_STORE_RLE
+          const bool use_rle = um_customdata_layer_use_rle(bcd);
+          if (use_rle) {
+            /* Store the size in the encoded data (for convenience). */
+            size_t data_enc_extra_size = sizeof(size_t);
+            const uint8_t *data_enc = reinterpret_cast<uint8_t *>(data);
+            size_t data_dec_len;
+            memcpy(&data_dec_len, data_enc, sizeof(size_t));
+            uint8_t *data_dec = MEM_malloc_arrayN<uint8_t>(data_dec_len, __func__);
+            BLI_array_store_rle_decode(data_enc + data_enc_extra_size,
+                                       state_len - data_enc_extra_size,
+                                       data_dec,
+                                       data_dec_len);
+            MEM_freeN(data);
+            data = static_cast<void *>(data_dec);
+            /* Just for the assert to succeed. */
+            state_len = data_dec_len;
+          }
+#  endif
+
+          layer->data = data;
           layer->sharing_info = implicit_sharing::info_for_mem_free(layer->data);
           BLI_assert(stride * data_len == state_len);
           UNUSED_VARS_NDEBUG(stride, data_len);
@@ -432,7 +518,8 @@ static void um_arraystore_compact_ex(UndoMesh *um, const UndoMesh *um_ref, bool 
         if (mesh->face_offset_indices) {
           BLI_assert(create == (um->store.face_offset_indices == nullptr));
           if (create) {
-            BArrayState *state_reference = um_ref ? um_ref->store.face_offset_indices : nullptr;
+            const BArrayState *state_reference = um_ref ? um_ref->store.face_offset_indices :
+                                                          nullptr;
             const size_t stride = sizeof(*mesh->face_offset_indices);
             BArrayStore *bs = BLI_array_store_at_size_ensure(
                 &um_arraystore.bs_stride[ARRAY_STORE_INDEX_POLY_OFFSETS],
@@ -463,10 +550,10 @@ static void um_arraystore_compact_ex(UndoMesh *um, const UndoMesh *um_ref, bool 
           KeyBlock *keyblock = static_cast<KeyBlock *>(mesh->key->block.first);
           for (int i = 0; i < mesh->key->totkey; i++, keyblock = keyblock->next) {
             if (create) {
-              BArrayState *state_reference = (um_ref && um_ref->mesh->key &&
-                                              (i < um_ref->mesh->key->totkey)) ?
-                                                 um_ref->store.keyblocks[i] :
-                                                 nullptr;
+              const BArrayState *state_reference = (um_ref && um_ref->mesh->key &&
+                                                    (i < um_ref->mesh->key->totkey)) ?
+                                                       um_ref->store.keyblocks[i] :
+                                                       nullptr;
               um->store.keyblocks[i] = BLI_array_store_state_add(
                   bs, keyblock->data, size_t(keyblock->totelem) * stride, state_reference);
             }
@@ -482,7 +569,7 @@ static void um_arraystore_compact_ex(UndoMesh *um, const UndoMesh *um_ref, bool 
         if (mesh->mselect && mesh->totselect) {
           BLI_assert(create == (um->store.mselect == nullptr));
           if (create) {
-            BArrayState *state_reference = um_ref ? um_ref->store.mselect : nullptr;
+            const BArrayState *state_reference = um_ref ? um_ref->store.mselect : nullptr;
             const size_t stride = sizeof(*mesh->mselect);
             BArrayStore *bs = BLI_array_store_at_size_ensure(
                 &um_arraystore.bs_stride[ARRAY_STORE_INDEX_MSEL],
@@ -599,7 +686,7 @@ static void um_arraystore_expand(UndoMesh *um)
     const size_t stride = mesh->key->elemsize;
     KeyBlock *keyblock = static_cast<KeyBlock *>(mesh->key->block.first);
     for (int i = 0; i < mesh->key->totkey; i++, keyblock = keyblock->next) {
-      BArrayState *state = um->store.keyblocks[i];
+      const BArrayState *state = um->store.keyblocks[i];
       size_t state_len;
       keyblock->data = BLI_array_store_state_data_get_alloc(state, &state_len);
       BLI_assert(keyblock->totelem == (state_len / stride));
@@ -609,7 +696,7 @@ static void um_arraystore_expand(UndoMesh *um)
 
   if (um->store.face_offset_indices) {
     const size_t stride = sizeof(*mesh->face_offset_indices);
-    BArrayState *state = um->store.face_offset_indices;
+    const BArrayState *state = um->store.face_offset_indices;
     size_t state_len;
     mesh->face_offset_indices = static_cast<int *>(
         BLI_array_store_state_data_get_alloc(state, &state_len));
@@ -620,7 +707,7 @@ static void um_arraystore_expand(UndoMesh *um)
   }
   if (um->store.mselect) {
     const size_t stride = sizeof(*mesh->mselect);
-    BArrayState *state = um->store.mselect;
+    const BArrayState *state = um->store.mselect;
     size_t state_len;
     mesh->mselect = static_cast<MSelect *>(
         BLI_array_store_state_data_get_alloc(state, &state_len));

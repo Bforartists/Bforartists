@@ -26,7 +26,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_ocean.h"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -469,7 +469,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   uiLayout *layout = panel->layout;
 #ifdef WITH_OCEANSIM
-  uiLayout *col, *sub, *row; /*bfa, added *row*/
+  uiLayout *col, *sub, *row; /*bfa - added *row*/
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -496,12 +496,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   col->prop(ptr, "random_seed", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
+  /* bfa - our layout */
+  col = &layout->column(false);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  /* ------------ end bfa */
 
   modifier_error_message_draw(layout, ptr);
 
@@ -531,7 +531,7 @@ static void waves_panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout->column(false);
   col->prop(ptr, "wave_alignment", UI_ITEM_R_SLIDER, IFACE_("Alignment"), ICON_NONE);
   sub = &col->column(false);
-  uiLayoutSetActive(sub, RNA_float_get(ptr, "wave_alignment") > 0.0f);
+  sub->active_set(RNA_float_get(ptr, "wave_alignment") > 0.0f);
   sub->prop(ptr, "wave_direction", UI_ITEM_NONE, IFACE_("Direction"), ICON_NONE);
   sub->prop(ptr, "damping", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
@@ -557,7 +557,7 @@ static void foam_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, use_foam);
+  col->active_set(use_foam);
   col->prop(ptr, "foam_layer_name", UI_ITEM_NONE, IFACE_("Data Layer"), ICON_NONE);
   col->prop(ptr, "foam_coverage", UI_ITEM_NONE, IFACE_("Coverage"), ICON_NONE);
 }
@@ -572,14 +572,14 @@ static void spray_panel_draw_header(const bContext * /*C*/, Panel *panel)
   bool use_foam = RNA_boolean_get(ptr, "use_foam");
 
   row = &layout->row(false);
-  uiLayoutSetActive(row, use_foam);
+  row->active_set(use_foam);
   row->prop(
       ptr, "use_spray", UI_ITEM_NONE, CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Spray"), ICON_NONE);
 }
 
 static void spray_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa, added *row*/
+  uiLayout *col, *row; /*bfa - added *row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -590,14 +590,14 @@ static void spray_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, use_foam && use_spray);
+  col->active_set(use_foam && use_spray);
   col->prop(ptr, "spray_layer_name", UI_ITEM_NONE, IFACE_("Data Layer"), ICON_NONE);
 
-  /*------------------- bfa - original props */
+  /* bfa - our layout */
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "invert_spray", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  /* ------------ end bfa */
 }
 
 static void spectrum_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -648,12 +648,12 @@ static void bake_panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(true);
-  uiLayoutSetEnabled(col, !is_cached);
+  col->enabled_set(!is_cached);
   col->prop(ptr, "frame_start", UI_ITEM_NONE, IFACE_("Frame Start"), ICON_NONE);
   col->prop(ptr, "frame_end", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
 
   col = &layout->column(false);
-  uiLayoutSetActive(col, use_foam);
+  col->active_set(use_foam);
   col->prop(ptr, "bake_foam_fade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 #endif /* WITH_OCEANSIM */

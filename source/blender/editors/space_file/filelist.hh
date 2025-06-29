@@ -70,6 +70,7 @@ void filelist_set_asset_catalog_filter_options(
     FileList *filelist,
     eFileSel_Params_AssetCatalogVisibility catalog_visibility,
     const bUUID *catalog_id);
+bool filelist_needs_filtering(FileList *filelist);
 void filelist_tag_needs_filtering(FileList *filelist);
 void filelist_filter(FileList *filelist);
 /**
@@ -81,7 +82,7 @@ void filelist_init_icons();
 void filelist_free_icons();
 void filelist_file_get_full_path(const FileList *filelist,
                                  const FileDirEntry *file,
-                                 char r_filepath[/*FILE_MAX_LIBEXTRA*/ 1090]);
+                                 char r_filepath[/*FILE_MAX_LIBEXTRA*/ 1282]);
 bool filelist_file_is_preview_pending(const FileList *filelist, const FileDirEntry *file);
 /**
  * \return True if a new preview request was pushed, false otherwise (e.g. because the preview is
@@ -120,7 +121,7 @@ bool filelist_is_dir(const FileList *filelist, const char *path);
 /**
  * May modify in place given `dirpath`, which is expected to be #FILE_MAX_LIBEXTRA length.
  */
-void filelist_setdir(FileList *filelist, char dirpath[/*FILE_MAX_LIBEXTRA*/ 1090]);
+void filelist_setdir(FileList *filelist, char dirpath[/*FILE_MAX_LIBEXTRA*/ 1282]);
 
 /**
  * Limited version of full update done by space_file's file_refresh(),

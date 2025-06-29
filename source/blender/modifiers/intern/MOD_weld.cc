@@ -33,7 +33,7 @@
 #include "BKE_modifier.hh"
 #include "BKE_screen.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -163,14 +163,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "merge_threshold", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
   if (weld_mode == MOD_WELD_MODE_CONNECTED) {
-    /*------------------- bfa - original props */
-    uiLayout * row, *col; /*bfa*/
+    /* bfa - our layout */
+    uiLayout * row, *col;
     col = &layout->column(true);
     row = &col->row(true);
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator();
     row->prop( ptr, "loose_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "loose_edges", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 

@@ -6,6 +6,7 @@ from bpy.types import Header, Menu
 
 from bpy.app.translations import contexts as i18n_contexts
 
+# BFA - Added icons, removed redundency
 
 class INFO_HT_header(Header):
     bl_space_type = 'INFO'
@@ -116,7 +117,7 @@ class INFO_MT_context_menu(Menu):
 
 
 classes = (
-    ALL_MT_editormenu_info,
+    ALL_MT_editormenu_info, # BFA - menu
     INFO_HT_header,
     INFO_MT_editor_menus,
     INFO_MT_area,

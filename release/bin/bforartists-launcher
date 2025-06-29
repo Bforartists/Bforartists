@@ -1,6 +1,6 @@
 #!/bin/sh
 BF_DIST_BIN=$(dirname "$(readlink -f "$0")")
-BF_PROGRAM="blender"
+BF_PROGRAM="bforartists" # BFA
 
 # Add own lib folder first, because Steam or other environments may set an
 # $LD_LIBRARY_PATH that has priority over the run-path in the Blender executable,

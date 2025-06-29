@@ -61,7 +61,7 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_icons.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -837,12 +837,11 @@ static wmOperatorStatus apply_objects_internal(bContext *C,
       /* correct for scale, note mul_m3_m3m3 has swapped args! */
       BKE_object_scale_to_mat3(ob, tmat);
       if (!invert_m3_m3(timat, tmat)) {
-        BKE_reportf(reports,
-                    RPT_WARNING,
-                    "%s \"%s\" %s",
-                    RPT_("Object"),
-                    ob->id.name + 2,
-                    RPT_("have non-invertable transformation matrix, not applying transform."));
+        BKE_reportf(
+            reports,
+            RPT_WARNING,
+            "Object \"%s\" has a non-invertible transformation matrix, not applying transform",
+            ob->id.name + 2);
         has_non_invertable_matrix = true;
         continue;
       }
@@ -1633,7 +1632,7 @@ static wmOperatorStatus object_origin_set_exec(bContext *C, wmOperator *op)
         continue;
       }
 
-      if (curves.points_num() == 0) {
+      if (curves.is_empty()) {
         continue;
       }
 
@@ -1855,29 +1854,29 @@ void OBJECT_OT_origin_set(wmOperatorType *ot)
   static const EnumPropertyItem prop_set_center_types[] = {
       {GEOMETRY_TO_ORIGIN,
        "GEOMETRY_ORIGIN",
-       ICON_GEOMETRY_TO_ORIGIN,
+       ICON_GEOMETRY_TO_ORIGIN, /* BFA */
        "Geometry to Origin",
        "Move object geometry to object origin"},
       {ORIGIN_TO_GEOMETRY,
        "ORIGIN_GEOMETRY",
-       ICON_ORIGIN_TO_GEOMETRY,
+       ICON_ORIGIN_TO_GEOMETRY, /* BFA */
        "Origin to Geometry",
        "Calculate the center of geometry based on the current pivot point (median, otherwise "
        "bounding box)"},
       {ORIGIN_TO_CURSOR,
        "ORIGIN_CURSOR",
-       ICON_ORIGIN_TO_CURSOR,
+       ICON_ORIGIN_TO_CURSOR, /* BFA */
        "Origin to 3D Cursor",
        "Move object origin to position of the 3D cursor"},
       /* Intentional naming mismatch since some scripts refer to this. */
       {ORIGIN_TO_CENTER_OF_MASS_SURFACE,
        "ORIGIN_CENTER_OF_MASS",
-       ICON_ORIGIN_TO_CENTEROFMASS,
+       ICON_ORIGIN_TO_CENTEROFMASS, /* BFA */
        "Origin to Center of Mass (Surface)",
        "Calculate the center of mass from the surface area"},
       {ORIGIN_TO_CENTER_OF_MASS_VOLUME,
        "ORIGIN_CENTER_OF_VOLUME",
-       ICON_ORIGIN_TO_VOLUME,
+       ICON_ORIGIN_TO_VOLUME, /* BFA */
        "Origin to Center of Mass (Volume)",
        "Calculate the center of mass from the volume (must be manifold geometry with consistent "
        "normals)"},
@@ -2376,7 +2375,7 @@ void OBJECT_OT_transform_axis_target(wmOperatorType *ot)
       "normal)\n"
       "Select object and shift select light > "
       "Perform tool and point to target\nWithout target object the light rotates freely\n"
-      "Hotkey tool !Please use the hotkey !";
+      "Hotkey tool. Please use the hotkey in the 3D View"; /* BFA - more explicit*/
   ot->idname = "OBJECT_OT_transform_axis_target";
 
   /* API callbacks. */

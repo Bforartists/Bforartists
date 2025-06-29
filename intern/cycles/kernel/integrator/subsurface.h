@@ -79,9 +79,6 @@ ccl_device int subsurface_bounce(KernelGlobals kg,
                                  ccl_private ShaderData *sd,
                                  const ccl_private ShaderClosure *sc)
 {
-  /* We should never have two consecutive BSSRDF bounces, the second one should
-   * be converted to a diffuse BSDF to avoid this. */
-  kernel_assert(!(INTEGRATOR_STATE(state, path, flag) & PATH_RAY_DIFFUSE_ANCESTOR));
 
   /* Setup path state for intersect_subsurface kernel. */
   const ccl_private Bssrdf *bssrdf = (const ccl_private Bssrdf *)sc;
@@ -102,6 +99,10 @@ ccl_device int subsurface_bounce(KernelGlobals kg,
 
   uint32_t path_flag = (INTEGRATOR_STATE(state, path, flag) & ~PATH_RAY_CAMERA);
   if (sc->type == CLOSURE_BSSRDF_BURLEY_ID) {
+    /* We should never have two consecutive BSSRDF bounces, the second one should
+     * be converted to a diffuse BSDF to avoid this. */
+    kernel_assert(!(INTEGRATOR_STATE(state, path, flag) & PATH_RAY_DIFFUSE_ANCESTOR));
+
     path_flag |= PATH_RAY_SUBSURFACE_DISK;
     INTEGRATOR_STATE_WRITE(state, subsurface, N) = sd->Ng;
   }
@@ -144,10 +145,7 @@ ccl_device int subsurface_bounce(KernelGlobals kg,
   return LABEL_SUBSURFACE_SCATTER;
 }
 
-ccl_device void subsurface_shader_data_setup(KernelGlobals kg,
-                                             IntegratorState state,
-                                             ccl_private ShaderData *sd,
-                                             const uint32_t path_flag)
+ccl_device void subsurface_shader_data_setup(KernelGlobals kg, ccl_private ShaderData *sd)
 {
   /* Get bump mapped normal from shader evaluation at exit point. */
   float3 N = sd->N;

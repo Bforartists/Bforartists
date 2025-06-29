@@ -127,25 +127,25 @@ static NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
         "GIZMO_GT_button_2d",
         ICON_OUTLINER_DATA_CAMERA,
         nullptr,
-    },
+    }, /* BFA */
     {
         "VIEW3D_OT_view_camera",
         "GIZMO_GT_button_2d",
         ICON_OUTLINER_OB_CAMERA,
         nullptr,
-    },
+    }, /* BFA */
     {
         "WM_OT_context_toggle",
         "GIZMO_GT_button_2d",
         ICON_LOCK_TO_CAMVIEW_ON,
         navigate_context_toggle_camera_lock_init,
-    },
+    }, /* BFA */
     {
         "WM_OT_context_toggle",
         "GIZMO_GT_button_2d",
         ICON_LOCK_TO_CAMVIEW,
         navigate_context_toggle_camera_lock_init,
-    },
+    }, /* BFA */
 };
 
 static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)

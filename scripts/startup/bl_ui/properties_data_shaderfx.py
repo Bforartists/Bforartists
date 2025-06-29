@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-from bpy.types import Panel, Menu, Operator
-from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator
+from bpy.types import Panel, Menu, Operator # BFA
+from bl_ui.generic_column_menu import GenericColumnMenu, fetch_op_data, InvokeMenuOperator # BFA
 
 
 class ShaderFxButtonsPanel:
@@ -21,7 +21,7 @@ class DATA_PT_shader_fx(ShaderFxButtonsPanel, Panel):
         layout.operator("object.add_gpencil_shaderfx_menu", text="Add Effect", icon='ADD')
         layout.template_shaderfx()
 
-
+# BFA
 class OBJECT_MT_gpencil_shaderfx_add(GenericColumnMenu, Menu):
     bl_description = "Add a visual effect to the active grease pencil object"
 
@@ -41,7 +41,7 @@ class OBJECT_MT_gpencil_shaderfx_add(GenericColumnMenu, Menu):
         self.draw_operator_column(layout, header="Add Effect",
             types=('FX_BLUR', 'FX_COLORIZE', 'FX_FLIP', 'FX_GLOW', 'FX_PIXEL', 'FX_RIM', 'FX_SHADOW', 'FX_SWIRL', 'FX_WAVE'))
 
-
+# BFA
 class OBJECT_OT_add_gpencil_shaderfx_menu(InvokeMenuOperator, Operator):
     bl_idname = "object.add_gpencil_shaderfx_menu"
     bl_label = "Add Grease Pencil Effect"
@@ -54,8 +54,8 @@ class OBJECT_OT_add_gpencil_shaderfx_menu(InvokeMenuOperator, Operator):
 
 classes = (
     DATA_PT_shader_fx,
-    OBJECT_MT_gpencil_shaderfx_add,
-    OBJECT_OT_add_gpencil_shaderfx_menu,
+    OBJECT_MT_gpencil_shaderfx_add, # BFA
+    OBJECT_OT_add_gpencil_shaderfx_menu, # BFA
 )
 
 if __name__ == "__main__":  # only for live edit.

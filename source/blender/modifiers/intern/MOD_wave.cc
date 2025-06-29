@@ -24,6 +24,7 @@
 #include "BKE_texture.h"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -300,40 +301,26 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   row = &layout->row(true, IFACE_("Motion"));
-  row->prop(ptr,
-          "use_x",
-          UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE,
-          std::nullopt,
-          ICON_NONE);
-  row->prop(ptr,
-          "use_y",
-          UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE,
-          std::nullopt,
-          ICON_NONE);
+  row->prop(
+      ptr, "use_x", UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE, std::nullopt, ICON_NONE);
+  row->prop(
+      ptr, "use_y", UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
-  // layout->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
+  /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_cyclic", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
-
-  // ------------------ bfa new left aligned prop with triangle button to hide the slider
-
+  /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = &layout->split(0.385f, true);
-
-  /* FIRST PART ................................................ */
-  row = &split->row(false);
-  uiLayoutSetPropDecorate(row, false);
+  row = &split->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_normal", UI_ITEM_NONE, "Along Normals", ICON_NONE);
 
-  /* SECOND PART ................................................ */
+  /* bfa - our layout */
   row = &split->row(true);
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
   if (RNA_boolean_get(ptr, "use_normal")) {
@@ -347,7 +334,6 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->label(TIP_(""), ICON_NONE);           /* bfa - aligns the decorator right...*/
     uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
-  // ------------------------------- end bfa
 
   col = &layout->column(false);
   col->prop(ptr, "falloff_radius", UI_ITEM_NONE, IFACE_("Falloff"), ICON_NONE);

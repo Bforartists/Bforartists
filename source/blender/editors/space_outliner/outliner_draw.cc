@@ -46,8 +46,10 @@
 #include "BKE_object.hh"
 #include "BKE_particle.h"
 #include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "ANIM_bone_collections.hh"
+#include "ANIM_keyframing.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -299,6 +301,8 @@ static void outliner_object_set_flag_recursive_fn(bContext *C,
         ptr = RNA_pointer_create_discrete(&scene->id, &RNA_ObjectBase, base_iter);
       }
       RNA_property_boolean_set(&ptr, base_or_object_prop, value);
+      blender::animrig::autokeyframe_property(
+          C, scene, &ptr, base_or_object_prop, -1, BKE_scene_frame_get(scene), true);
     }
   }
 
@@ -583,7 +587,7 @@ void outliner_collection_isolate_flag(Scene *scene,
   else {
     CollectionParent *parent;
     Collection *child = collection;
-    while ((parent = static_cast<CollectionParent *>(child->runtime.parents.first))) {
+    while ((parent = static_cast<CollectionParent *>(child->runtime->parents.first))) {
       if (parent->collection->flag & COLLECTION_IS_MASTER) {
         break;
       }
@@ -2048,7 +2052,8 @@ static void outliner_draw_separator(ARegion *region, const int x)
 
   GPU_line_width(1.0f);
 
-  uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(
+      immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformThemeColorShadeAlpha(TH_BACK, -15, -200);
 
@@ -2871,7 +2876,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.drag_parent = (data.drag_id && te->parent) ? TREESTORE(te->parent)->id : nullptr;
         }
 
-        data.icon = ICON_GROUP_BRIGHT;
+        data.icon = ICON_GROUP_BRIGHT; /* BFA */
         break;
       }
       case TSE_GP_LAYER: {
@@ -3430,11 +3435,11 @@ static void outliner_draw_tree_element(uiBlock *block,
       /* Icons a bit higher. */
       if (TSELEM_OPEN(tselem, space_outliner)) {
         UI_icon_draw_alpha(
-            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_DOWN, alpha_fac);
+            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_DOWN, alpha_fac); /* BFA */
       }
       else {
         UI_icon_draw_alpha(
-            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_RIGHT, alpha_fac);
+            float(icon_x) + 2 * ufac, float(*starty) + 1 * ufac, ICON_DISCLOSURE_TRI_RIGHT, alpha_fac); /* BFA */
       }
     }
     offsx += UI_UNIT_X;
@@ -3664,7 +3669,7 @@ static void outliner_draw_hierarchy_lines(SpaceOutliner *space_outliner,
                                           int *starty)
 {
   GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
   uchar col[4];
 
   immBindBuiltinProgram(GPU_SHADER_3D_LINE_DASHED_UNIFORM_COLOR);
@@ -3698,7 +3703,8 @@ static void outliner_draw_struct_marks(ARegion *region,
     if (TSELEM_OPEN(tselem, space_outliner)) {
       if (tselem->type == TSE_RNA_STRUCT) {
         GPUVertFormat *format = immVertexFormat();
-        uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+        uint pos = GPU_vertformat_attr_add(
+            format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
         immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
         immThemeColorShadeAlpha(TH_BACK, -15, -200);
         immRectf(pos, 0, *starty + 1, int(region->v2d.cur.xmax), *starty + UI_UNIT_Y - 1);
@@ -3711,7 +3717,8 @@ static void outliner_draw_struct_marks(ARegion *region,
       outliner_draw_struct_marks(region, space_outliner, &te->subtree, starty);
       if (tselem->type == TSE_RNA_STRUCT) {
         GPUVertFormat *format = immVertexFormat();
-        uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+        uint pos = GPU_vertformat_attr_add(
+            format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
         immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
         immThemeColorShadeAlpha(TH_BACK, -15, -200);
 
@@ -3758,7 +3765,7 @@ static void outliner_draw_highlights(uint pos,
                                      const float col_active[4],
                                      const float col_highlight[4],
                                      const float col_searchmatch[4],
-                                     uchar col_collection[4],
+                                     uchar col_collection[4], /* BFA */
                                      int start_x,
                                      int *io_start_y)
 {
@@ -3795,7 +3802,7 @@ static void outliner_draw_highlights(uint pos,
         copy_v4_v4_uchar(background_color, col_collection);
         background_color[3] = alpha;  // Set the alpha channel for the background
         immUniformColor4ubv(background_color);
-        immRecti(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
+        immRectf(pos, offset_x - UI_UNIT_X, start_y, int(region->v2d.cur.xmax), start_y + UI_UNIT_Y);
 
         if (collection && TSELEM_OPEN(tselem, space_outliner)) {
           int child_start_y = start_y;
@@ -3825,7 +3832,7 @@ static void outliner_draw_highlights(uint pos,
             background_color[3] = alpha;  // Set the alpha channel for the background
 
             immUniformColor4ubv(background_color);
-            immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
+            immRectf(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), start_y - total_height + UI_UNIT_Y);
           }
           /*FOR CHILDREN*/
           else {
@@ -3836,7 +3843,7 @@ static void outliner_draw_highlights(uint pos,
             background_color[3] = alpha;  // Set the alpha channel for the background
 
             immUniformColor4ubv(background_color);
-            immRecti(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
+            immRectf(pos, offset_x - UI_UNIT_X, child_start_y, int(region->v2d.cur.xmax), child_start_y + UI_UNIT_Y);
 
             /*VERTICAL*/
             /* Draw the background rectangle with the modified alpha */
@@ -3845,7 +3852,7 @@ static void outliner_draw_highlights(uint pos,
             nested_color[3] = alpha + alpha;  // Set the alpha channel for the background
 
             immUniformColor4ubv(nested_color);
-            immRecti(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
+            immRectf(pos, offset_x, child_start_y, offset_x - UI_UNIT_X, start_y - total_height + UI_UNIT_Y);
           }
         }
       }
@@ -3913,7 +3920,7 @@ static void outliner_draw_highlights(ARegion *region,
 {
   const float col_highlight[4] = {1.0f, 1.0f, 1.0f, 0.13f};
   float col_selection[4], col_active[4], col_searchmatch[4];
-  uchar col_collection[4];
+  uchar col_collection[4]; /* BFA */
 
   UI_GetThemeColor3fv(TH_SELECT_HIGHLIGHT, col_selection);
   col_selection[3] = 1.0f; /* No alpha. */
@@ -3924,7 +3931,7 @@ static void outliner_draw_highlights(ARegion *region,
 
   GPU_blend(GPU_BLEND_ALPHA);
   GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   outliner_draw_highlights(pos,
                            region,
@@ -3933,7 +3940,7 @@ static void outliner_draw_highlights(ARegion *region,
                            col_active,
                            col_highlight,
                            col_searchmatch,
-                           col_collection,
+                           col_collection, /* BFA */
                            startx,
                            starty);
   immUnbindProgram();
@@ -4030,7 +4037,7 @@ static void outliner_back(ARegion *region)
   ystart = UI_UNIT_Y * (ystart / (UI_UNIT_Y)) - OL_Y_OFFSET;
 
   GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 

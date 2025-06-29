@@ -21,6 +21,7 @@
 #include "rna_internal.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 
 #include "WM_toolsystem.hh"
 #include "WM_types.hh"
@@ -1367,32 +1368,32 @@ static void rna_Menu_bl_description_set(PointerRNA *ptr, const char *value)
 
 static bool rna_UILayout_active_get(PointerRNA *ptr)
 {
-  return uiLayoutGetActive(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->active();
 }
 
 static void rna_UILayout_active_set(PointerRNA *ptr, bool value)
 {
-  uiLayoutSetActive(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->active_set(value);
 }
 
 static bool rna_UILayout_active_default_get(PointerRNA *ptr)
 {
-  return uiLayoutGetActiveDefault(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->active_default();
 }
 
 static void rna_UILayout_active_default_set(PointerRNA *ptr, bool value)
 {
-  uiLayoutSetActiveDefault(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->active_default_set(value);
 }
 
 static bool rna_UILayout_activate_init_get(PointerRNA *ptr)
 {
-  return uiLayoutGetActivateInit(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->activate_init();
 }
 
 static void rna_UILayout_activate_init_set(PointerRNA *ptr, bool value)
 {
-  uiLayoutSetActivateInit(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->activate_init_set(value);
 }
 
 static bool rna_UILayout_alert_get(PointerRNA *ptr)
@@ -1407,22 +1408,22 @@ static void rna_UILayout_alert_set(PointerRNA *ptr, bool value)
 
 static void rna_UILayout_op_context_set(PointerRNA *ptr, int value)
 {
-  uiLayoutSetOperatorContext(static_cast<uiLayout *>(ptr->data), wmOperatorCallContext(value));
+  static_cast<uiLayout *>(ptr->data)->operator_context_set(wmOperatorCallContext(value));
 }
 
 static int rna_UILayout_op_context_get(PointerRNA *ptr)
 {
-  return uiLayoutGetOperatorContext(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->operator_context();
 }
 
 static bool rna_UILayout_enabled_get(PointerRNA *ptr)
 {
-  return uiLayoutGetEnabled(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->enabled();
 }
 
 static void rna_UILayout_enabled_set(PointerRNA *ptr, bool value)
 {
-  uiLayoutSetEnabled(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->enabled_set(value);
 }
 
 #  if 0
@@ -1435,26 +1436,16 @@ static void rna_UILayout_red_alert_set(PointerRNA *ptr, bool value)
 {
   uiLayoutSetRedAlert(static_cast<uiLayout *>(ptr->data), value);
 }
-
-static bool rna_UILayout_keep_aspect_get(PointerRNA *ptr)
-{
-  return uiLayoutGetKeepAspect(static_cast<uiLayout *>(ptr->data));
-}
-
-static void rna_UILayout_keep_aspect_set(PointerRNA *ptr, int value)
-{
-  uiLayoutSetKeepAspect(static_cast<uiLayout *>(ptr->data), value);
-}
 #  endif
 
 static int rna_UILayout_alignment_get(PointerRNA *ptr)
 {
-  return uiLayoutGetAlignment(static_cast<uiLayout *>(ptr->data));
+  return int(static_cast<uiLayout *>(ptr->data)->alignment());
 }
 
 static void rna_UILayout_alignment_set(PointerRNA *ptr, int value)
 {
-  uiLayoutSetAlignment(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->alignment_set(blender::ui::LayoutAlign(value));
 }
 
 static int rna_UILayout_direction_get(PointerRNA *ptr)
@@ -1464,52 +1455,52 @@ static int rna_UILayout_direction_get(PointerRNA *ptr)
 
 static float rna_UILayout_scale_x_get(PointerRNA *ptr)
 {
-  return uiLayoutGetScaleX(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->scale_x();
 }
 
 static void rna_UILayout_scale_x_set(PointerRNA *ptr, float value)
 {
-  uiLayoutSetScaleX(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->scale_x_set(value);
 }
 
 static float rna_UILayout_scale_y_get(PointerRNA *ptr)
 {
-  return uiLayoutGetScaleY(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->scale_y();
 }
 
 static void rna_UILayout_scale_y_set(PointerRNA *ptr, float value)
 {
-  uiLayoutSetScaleY(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->scale_y_set(value);
 }
 
 static float rna_UILayout_units_x_get(PointerRNA *ptr)
 {
-  return uiLayoutGetUnitsX(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->ui_units_x();
 }
 
 static void rna_UILayout_units_x_set(PointerRNA *ptr, float value)
 {
-  uiLayoutSetUnitsX(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->ui_units_x_set(value);
 }
 
 static float rna_UILayout_units_y_get(PointerRNA *ptr)
 {
-  return uiLayoutGetUnitsY(static_cast<uiLayout *>(ptr->data));
+  return static_cast<uiLayout *>(ptr->data)->ui_units_y();
 }
 
 static void rna_UILayout_units_y_set(PointerRNA *ptr, float value)
 {
-  uiLayoutSetUnitsY(static_cast<uiLayout *>(ptr->data), value);
+  static_cast<uiLayout *>(ptr->data)->ui_units_y_set(value);
 }
 
 static int rna_UILayout_emboss_get(PointerRNA *ptr)
 {
-  return int(uiLayoutGetEmboss(static_cast<uiLayout *>(ptr->data)));
+  return int(static_cast<uiLayout *>(ptr->data)->emboss());
 }
 
 static void rna_UILayout_emboss_set(PointerRNA *ptr, int value)
 {
-  uiLayoutSetEmboss(static_cast<uiLayout *>(ptr->data), blender::ui::EmbossType(value));
+  static_cast<uiLayout *>(ptr->data)->emboss_set(blender::ui::EmbossType(value));
 }
 
 static bool rna_UILayout_property_split_get(PointerRNA *ptr)
@@ -1658,10 +1649,10 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   PropertyRNA *prop;
 
   static const EnumPropertyItem alignment_items[] = {
-      {UI_LAYOUT_ALIGN_EXPAND, "EXPAND", 0, "Expand", ""},
-      {UI_LAYOUT_ALIGN_LEFT, "LEFT", 0, "Left", ""},
-      {UI_LAYOUT_ALIGN_CENTER, "CENTER", 0, "Center", ""},
-      {UI_LAYOUT_ALIGN_RIGHT, "RIGHT", 0, "Right", ""},
+      {int(blender::ui::LayoutAlign::Expand), "EXPAND", 0, "Expand", ""},
+      {int(blender::ui::LayoutAlign::Left), "LEFT", 0, "Left", ""},
+      {int(blender::ui::LayoutAlign::Center), "CENTER", 0, "Center", ""},
+      {int(blender::ui::LayoutAlign::Right), "RIGHT", 0, "Right", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1681,8 +1672,8 @@ static void rna_def_ui_layout(BlenderRNA *brna)
       {int(blender::ui::EmbossType::Pulldown),
        "PULLDOWN_MENU",
        0,
-       "Pulldown Menu",
-       "Draw pulldown menu style"},
+       "Pull-down Menu",
+       "Draw pull-down menu style"},
       {int(blender::ui::EmbossType::PieMenu),
        "RADIAL_MENU",
        0,
@@ -1748,12 +1739,6 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, direction_items);
   RNA_def_property_enum_funcs(prop, "rna_UILayout_direction_get", nullptr, nullptr);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-
-#  if 0
-  prop = RNA_def_property(srna, "keep_aspect", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_funcs(
-      prop, "rna_UILayout_keep_aspect_get", "rna_UILayout_keep_aspect_set");
-#  endif
 
   prop = RNA_def_property(srna, "scale_x", PROP_FLOAT, PROP_UNSIGNED);
   RNA_def_property_float_funcs(
@@ -2465,7 +2450,7 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   // bfa start asset shelf
-  // jưst gonna put the enum here then
+  // BFA - WIP - jưst gonna put the enum here
   static const EnumPropertyItem asset_shelf_import_method_items[] = {
       {SHELF_ASSET_IMPORT_LINK,
        "LINK",

@@ -48,7 +48,7 @@ if(WITH_BLENDER)
   add_subdirectory(space_statusbar)
   add_subdirectory(space_text)
   add_subdirectory(space_topbar)
-  add_subdirectory(space_toolbar)
+  add_subdirectory(space_toolbar) # BFA 
   add_subdirectory(space_userpref)
   add_subdirectory(space_view3d)
   add_subdirectory(transform)

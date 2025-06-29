@@ -55,7 +55,8 @@ class Outline : Overlay {
       return;
     }
 
-    const float outline_width = UI_GetThemeValuef(TH_OUTLINE_WIDTH) || (U.viewport_line_width > 1.0f);
+    const float outline_width = UI_GetThemeValuef(TH_OUTLINE_WIDTH) || (U.viewport_line_width > 1.0f); /* BFA - Goo?*/
+    //const float outline_width = UI_GetThemeValuef(TH_OUTLINE_WIDTH);
     const bool do_smooth_lines = (U.gpu_flag & USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE) != 0;
     const bool do_expand = (U.pixelsize > 1.0) || (outline_width > 2.0f);
     const bool is_transform = (G.moving & G_TRANSFORM_OBJ) != 0;
@@ -239,7 +240,7 @@ class Outline : Overlay {
     int2 render_size = int2(res.depth_tx.size());
 
     eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_ATTACHMENT;
-    tmp_depth_tx_.acquire(render_size, GPU_DEPTH24_STENCIL8, usage);
+    tmp_depth_tx_.acquire(render_size, GPU_DEPTH32F_STENCIL8, usage);
     object_id_tx_.acquire(render_size, GPU_R16UI, usage);
 
     prepass_fb_.ensure(GPU_ATTACHMENT_TEXTURE(tmp_depth_tx_),

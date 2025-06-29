@@ -30,6 +30,7 @@
 #include "BKE_object_types.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "BLO_read_write.hh"
@@ -495,16 +496,15 @@ static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "falloff_type", UI_ITEM_NONE, IFACE_("Type"), ICON_NONE);
 
   row = &layout->row(false);
-  uiLayoutSetActive(row, use_falloff);
+  row->active_set(use_falloff);
   row->prop(ptr, "falloff_radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  row = &col->row(true);
+  col = &layout->column(true); /* bfa - our layout */
+  row = &col->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_falloff_uniform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_falloff_uniform", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   if (RNA_enum_get(ptr, "falloff_type") == eWarp_Falloff_Curve) {
     uiTemplateCurveMapping(layout, ptr, "falloff_curve", 0, false, false, false, false);

@@ -769,7 +769,7 @@ static void rna_def_screen(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "Screen", "ID");
   RNA_def_struct_sdna(srna, "Screen"); /* Actually #bScreen but for 2.5 the DNA is patched! */
   RNA_def_struct_ui_text(
-      srna, "Screen", "Screen data, defining the layout of areas in a window");
+      srna, "Screen", "Screen data, defining the layout of areas in a window"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_WORKSPACE);
 
   /* collections */
@@ -810,7 +810,7 @@ static void rna_def_screen(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_statusbar", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SCREEN_COLLAPSE_STATUSBAR);
-  RNA_def_property_ui_text(prop, "Show Statusbar", "Show status bar");
+  RNA_def_property_ui_text(prop, "Show Status Bar", "Show status bar");
   RNA_def_property_update(prop, 0, "rna_Screen_bar_update");
 
   func = RNA_def_function(srna, "statusbar_info", "rna_Screen_statusbar_info_get");

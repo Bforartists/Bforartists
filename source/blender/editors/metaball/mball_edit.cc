@@ -711,7 +711,7 @@ void MBALL_OT_hide_metaelems(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
-  ot->description = "Hide selected metaball element(s)";
+  ot->description = "Hide selected metaball element(s)"; /* BFA */
   ot->idname = "MBALL_OT_hide_metaelems";
 
   /* callback functions */

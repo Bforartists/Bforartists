@@ -30,6 +30,7 @@
 #include "RNA_prototypes.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 
 #include "GEO_resample_curves.hh"
 
@@ -132,7 +133,7 @@ void draw_layer_filter_settings(const bContext * /*C*/, uiLayout *layout, Pointe
   sub = &row->row(true);
   sub->prop(ptr, "use_layer_pass_filter", UI_ITEM_NONE, "", ICON_NONE);
   subsub = &sub->row(true);
-  uiLayoutSetActive(subsub, use_layer_pass);
+  subsub->active_set(use_layer_pass);
   subsub->prop(ptr, "layer_pass_filter", UI_ITEM_NONE, "", ICON_NONE);
   subsub->prop(ptr, "invert_layer_pass_filter", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
 }
@@ -159,7 +160,7 @@ void draw_material_filter_settings(const bContext * /*C*/, uiLayout *layout, Poi
   sub = &row->row(true);
   sub->prop(ptr, "use_material_pass_filter", UI_ITEM_NONE, "", ICON_NONE);
   subsub = &sub->row(true);
-  uiLayoutSetActive(subsub, use_material_pass);
+  subsub->active_set(use_material_pass);
   subsub->prop(ptr, "material_pass_filter", UI_ITEM_NONE, "", ICON_NONE);
   subsub->prop(ptr, "invert_material_pass_filter", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
 }
@@ -177,7 +178,7 @@ void draw_vertex_group_settings(const bContext * /*C*/, uiLayout *layout, Pointe
   uiLayoutSetPropDecorate(row, false);
   uiItemPointerR(row, ptr, "vertex_group_name", &ob_ptr, "vertex_groups", std::nullopt, ICON_NONE);
   sub = &row->row(true);
-  uiLayoutSetActive(sub, has_vertex_group);
+  sub->active_set(has_vertex_group);
   uiLayoutSetPropDecorate(sub, false);
   sub->prop(ptr, "invert_vertex_group", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
 }
@@ -187,9 +188,9 @@ void draw_custom_curve_settings(const bContext * /*C*/, uiLayout *layout, Pointe
   bool use_custom_curve = RNA_boolean_get(ptr, "use_custom_curve");
   uiLayout *row;
 
-  uiLayoutSetPropSep(layout, true);
   row = &layout->row(true);
-  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_custom_curve", UI_ITEM_NONE, IFACE_("Custom Curve"), ICON_NONE);
   if (use_custom_curve) {
     uiTemplateCurveMapping(layout, ptr, "custom_curve", 0, false, false, false, false);
@@ -354,7 +355,7 @@ VArray<float> get_influence_vertex_weights(const bke::CurvesGeometry &curves,
     /* If vertex group is not set, use full weight for all vertices. */
     return VArray<float>::ForSingle(1.0f, curves.point_num);
   }
-  /* Vertex group weights, with zero weight as fallback. */
+  /* Vertex group weights, with zero weight as a fallback. */
   VArray<float> influence_weights = *curves.attributes().lookup_or_default<float>(
       influence_data.vertex_group_name, bke::AttrDomain::Point, 0.0f);
 

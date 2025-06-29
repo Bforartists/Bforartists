@@ -11,10 +11,12 @@ set(INC
 )
 
 set(INC_SYS
+
 )
 
 # Part of the `blender` binary (sources for data-files are appended).
 set(SRC
+
 )
 
 set(LIB
@@ -24,7 +26,6 @@ set(LIB
 # This section is maintained by the updating script, keep BEGIN/END comments.
 # See: `make icons_geom` and the script `./release/datafiles/blender_icons_geom_update.py`.
 set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
-
   # BEGIN ICON_GEOM_NAMES
   brush.generic
   brush.gpencil_draw.erase
@@ -1252,6 +1253,7 @@ if(WITH_BLENDER)
       node_principled
       node_range
       node_refractionshader
+      node_relative_to_pixel
       node_reroute
       node_rgb
       node_rgbcurve
@@ -2183,7 +2185,6 @@ if(WITH_BLENDER)
     )
     set(SVG_CONTENTS_H)
     set(SVG_CONTENTS_C)
-
     foreach(svg ${SVG_FILENAMES_NOEXT})
       data_to_c_simple(../../../../release/datafiles/icons_svg/${svg}.svg SRC)
       string(TOUPPER ${svg} svg_name_upper)
@@ -2194,7 +2195,6 @@ if(WITH_BLENDER)
         "case ICON_${svg_name_upper}: return datatoc_${svg}_svg\;\n"
       )
     endforeach()
-
     unset(svg_name_upper)
 
     list(JOIN SVG_CONTENTS_C "" SVG_CONTENTS_C)
@@ -2215,7 +2215,6 @@ if(WITH_BLENDER)
 
     list(APPEND SRC ${CMAKE_CURRENT_BINARY_DIR}/svg_icons.h)
     list(APPEND SRC ${CMAKE_CURRENT_BINARY_DIR}/svg_icons.cc)
-
     # Blend files.
     data_to_c_simple(../../../../release/datafiles/preview.blend SRC)
     data_to_c_simple(../../../../release/datafiles/preview_grease_pencil.blend SRC)

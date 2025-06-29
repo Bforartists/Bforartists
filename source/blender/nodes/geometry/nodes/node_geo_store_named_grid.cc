@@ -13,7 +13,7 @@
 #include "NOD_rna_define.hh"
 #include "NOD_socket_search_link.hh"
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 namespace blender::nodes::node_geo_store_named_grid_cc {
@@ -32,7 +32,9 @@ static void node_declare(NodeDeclarationBuilder &b)
     return;
   }
 
-  b.add_input(*bke::grid_type_to_socket_type(VolumeGridType(node->custom1)), "Grid").hide_value();
+  b.add_input(*bke::grid_type_to_socket_type(VolumeGridType(node->custom1)), "Grid")
+      .hide_value()
+      .structure_type(StructureType::Grid);
 }
 
 static void search_link_ops(GatherLinkSearchOpParams &params)

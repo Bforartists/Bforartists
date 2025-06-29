@@ -35,16 +35,12 @@ class MATERIAL_UL_matslots(UIList):
         layout.context_pointer_set("id", ma)
         layout.context_pointer_set("material_slot", slot)
 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            if ma:
-                if bpy.context.preferences.disable_material_icon: # bfa - just show material icon when enabled.
-                    layout.prop(ma, "name", text="", emboss=False, icon="MATERIAL")
-                else:
-                    layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
+        if ma:
+            if bpy.context.preferences.disable_material_icon: # bfa - just show material icon when enabled.
+                layout.prop(ma, "name", text="", emboss=False, icon="MATERIAL")
             else:
-                layout.label(text="", icon_value=icon)
-        elif self.layout_type == 'GRID':
-            layout.alignment = 'CENTER'
+                layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
+        else:
             layout.label(text="", icon_value=icon)
 
 
@@ -63,7 +59,7 @@ class MaterialButtonsPanel:
 class MATERIAL_PT_preview(MaterialButtonsPanel, Panel):
     bl_label = "Preview"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
         self.layout.template_preview(context.material)
@@ -72,7 +68,7 @@ class MATERIAL_PT_preview(MaterialButtonsPanel, Panel):
 class MATERIAL_PT_custom_props(MaterialButtonsPanel, PropertyPanel, Panel):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
     _context_path = "material"
@@ -84,7 +80,7 @@ class EEVEE_MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
     bl_context = "material"
     bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -177,7 +173,7 @@ def panel_node_draw(layout, ntree, _output_type, input_name):
 class EEVEE_MATERIAL_PT_surface(MaterialButtonsPanel, Panel):
     bl_label = "Surface"
     bl_context = "material"
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
         layout = self.layout
@@ -201,7 +197,7 @@ class EEVEE_MATERIAL_PT_volume(MaterialButtonsPanel, Panel):
     bl_translation_context = i18n_contexts.id_id
     bl_context = "material"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     @classmethod
     def poll(cls, context):
@@ -223,7 +219,7 @@ class EEVEE_MATERIAL_PT_displacement(MaterialButtonsPanel, Panel):
     bl_label = "Displacement"
     bl_context = "material"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     @classmethod
     def poll(cls, context):
@@ -246,7 +242,7 @@ class EEVEE_MATERIAL_PT_thickness(MaterialButtonsPanel, Panel):
     bl_translation_context = i18n_contexts.id_material
     bl_context = "material"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     @classmethod
     def poll(cls, context):
@@ -348,7 +344,7 @@ def draw_material_settings(self, context):
 
     mat = context.material
 
-    layout.use_property_split = False
+    layout.use_property_split = False # BFA
     layout.prop(mat, "use_backface_culling")
     layout.use_property_split = True
 
@@ -390,16 +386,6 @@ def draw_material_settings(self, context):
     draw_material_volume_settings(layout, mat, False)
 
 
-# TODO: used by `./scripts/addons_core/hydra_storm/ui.py`, move to `EEVEE_NEXT_MATERIAL_PT_settings`.
-class EEVEE_MATERIAL_PT_settings(MaterialButtonsPanel, Panel):
-    bl_label = "Settings"
-    bl_context = "material"
-    COMPAT_ENGINES = {'BLENDER_EEVEE'}
-
-    def draw(self, context):
-        draw_material_settings(self, context)
-
-
 class EEVEE_MATERIAL_PT_viewport_settings(MaterialButtonsPanel, Panel):
     bl_label = "Settings"
     bl_context = "material"
@@ -410,10 +396,10 @@ class EEVEE_MATERIAL_PT_viewport_settings(MaterialButtonsPanel, Panel):
         draw_material_settings(self, context)
 
 
-class EEVEE_NEXT_MATERIAL_PT_settings(MaterialButtonsPanel, Panel):
+class EEVEE_MATERIAL_PT_settings(MaterialButtonsPanel, Panel):
     bl_label = "Settings"
     bl_context = "material"
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
         layout = self.layout
@@ -425,11 +411,11 @@ class EEVEE_NEXT_MATERIAL_PT_settings(MaterialButtonsPanel, Panel):
         layout.prop(mat, "pass_index")
 
 
-class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
+class EEVEE_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
     bl_label = "Surface"
     bl_context = "material"
-    bl_parent_id = "EEVEE_NEXT_MATERIAL_PT_settings"
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    bl_parent_id = "EEVEE_MATERIAL_PT_settings"
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
         layout = self.layout
@@ -487,11 +473,11 @@ class EEVEE_NEXT_MATERIAL_PT_settings_surface(MaterialButtonsPanel, Panel):
         '''
         draw_material_surface_settings(layout, mat)
 
-class EEVEE_NEXT_MATERIAL_PT_settings_volume(MaterialButtonsPanel, Panel):
+class EEVEE_MATERIAL_PT_settings_volume(MaterialButtonsPanel, Panel):
     bl_label = "Volume"
     bl_context = "material"
-    bl_parent_id = "EEVEE_NEXT_MATERIAL_PT_settings"
-    COMPAT_ENGINES = {'BLENDER_EEVEE_NEXT'}
+    bl_parent_id = "EEVEE_MATERIAL_PT_settings"
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     def draw(self, context):
         layout = self.layout
@@ -502,7 +488,7 @@ class EEVEE_NEXT_MATERIAL_PT_settings_volume(MaterialButtonsPanel, Panel):
 
         layout.prop(mat, "volume_intersection_method", text="Intersection")
 
-        #draw_material_volume_settings(layout, mat)
+        #draw_material_volume_settings(layout, mat) # BFA - exposed to top level
 
 
 class MATERIAL_PT_viewport(MaterialButtonsPanel, Panel):
@@ -545,7 +531,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         mat = context.material
         lineart = mat.lineart
 
-        row = layout.row()
+        row = layout.row() # BFA
         split = row.split(factor=0.4)
         row = split.row()
         row.prop(lineart, "use_material_mask", text="Material Mask")
@@ -561,7 +547,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         layout.use_property_split = True
 
         col = layout.column(align=True)
-        if lineart.use_material_mask:
+        if lineart.use_material_mask: # BFA
             row = col.row(align=True, heading="      Masks")
             for i in range(8):
                 row.prop(lineart, "use_material_mask_bits", text=str(i),
@@ -572,7 +558,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
         row = layout.row(align=True, heading="Custom Occlusion")
         row.prop(lineart, "mat_occlusion", text="Levels")
 
-        col = layout.column()
+        col = layout.column() # BFA
         split = col.split(factor=.4)
         split.use_property_split = False
         split.prop(lineart, "use_intersection_priority_override", text="Intersection Priority")
@@ -589,7 +575,7 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
 class MATERIAL_PT_animation(MaterialButtonsPanel, Panel, PropertiesAnimationMixin):
     COMPAT_ENGINES = {
         'BLENDER_RENDER',
-        'BLENDER_EEVEE_NEXT',
+        'BLENDER_EEVEE',
         'BLENDER_WORKBENCH',
     }
 
@@ -621,9 +607,8 @@ classes = (
     EEVEE_MATERIAL_PT_displacement,
     EEVEE_MATERIAL_PT_thickness,
     EEVEE_MATERIAL_PT_settings,
-    EEVEE_NEXT_MATERIAL_PT_settings,
-    EEVEE_NEXT_MATERIAL_PT_settings_surface,
-    EEVEE_NEXT_MATERIAL_PT_settings_volume,
+    EEVEE_MATERIAL_PT_settings_surface,
+    EEVEE_MATERIAL_PT_settings_volume,
     MATERIAL_PT_lineart,
     MATERIAL_PT_viewport,
     EEVEE_MATERIAL_PT_viewport_settings,

@@ -888,7 +888,6 @@ static void pose_slide_reset(tPoseSlideOp *pso)
 static void pose_slide_draw_status(bContext *C, tPoseSlideOp *pso)
 {
   const char *mode_st;
-
   switch (pso->mode) {
     case POSESLIDE_PUSH:
       mode_st = IFACE_("Push Pose");
@@ -902,7 +901,6 @@ static void pose_slide_draw_status(bContext *C, tPoseSlideOp *pso)
     case POSESLIDE_BLEND:
       mode_st = IFACE_("Blend to Neighbor");
       break;
-
     default:
       /* Unknown. */
       mode_st = IFACE_("Sliding-Tool");

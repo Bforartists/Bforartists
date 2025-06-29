@@ -55,6 +55,7 @@
 
 #include "UI_abstract_view.hh"
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 
 #include "interface_intern.hh"
 
@@ -1011,9 +1012,9 @@ static bool override_idtemplate_menu_poll(const bContext *C_const, MenuType * /*
 static void override_idtemplate_menu_draw(const bContext * /*C*/, Menu *menu)
 {
   uiLayout *layout = menu->layout;
-  layout->op("UI_OT_override_idtemplate_make", IFACE_("Make"), ICON_LIBRARY_DATA_OVERRIDE);
-  layout->op("UI_OT_override_idtemplate_reset", IFACE_("Reset"), ICON_RESET);
-  layout->op("UI_OT_override_idtemplate_clear", IFACE_("Clear"), ICON_CLEAR);
+  layout->op("UI_OT_override_idtemplate_make", IFACE_("Make"), ICON_LIBRARY_DATA_OVERRIDE); /* BFA */
+  layout->op("UI_OT_override_idtemplate_reset", IFACE_("Reset"), ICON_RESET); /* BFA */
+  layout->op("UI_OT_override_idtemplate_clear", IFACE_("Clear"), ICON_CLEAR); /* BFA */
 }
 
 static void override_idtemplate_menu()

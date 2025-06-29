@@ -42,7 +42,6 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "UI_interface.hh"
 #include "UI_interface_c.hh"
 
 #include "action_intern.hh"
@@ -299,7 +298,7 @@ void ACTION_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Action";
   ot->idname = "ACTION_OT_new";
-  ot->description = "Creates a duplicate of the current action";
+  ot->description = "Creates a duplicate of the current action"; /* BFA - More explicit*/
 
   /* API callbacks. */
   ot->exec = action_new_exec;
@@ -468,7 +467,7 @@ static bool action_stash_create_poll(bContext *C)
       }
     }
     else {
-      /* There may not be any action/animdata yet, so, just fallback to the global setting
+      /* There may not be any action/animdata yet, so, just fall back to the global setting
        * (which may not be totally valid yet if the action editor was used and things are
        * now in an inconsistent state)
        */
@@ -698,9 +697,9 @@ void ACTION_OT_unlink(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Remove Action";
+  ot->name = "Remove Action"; /* BFA */
   ot->idname = "ACTION_OT_unlink";
-  ot->description = "Remove this action from the active action slot (and/or exit Tweak Mode)";
+  ot->description = "Remove this action from the active action slot (and/or exit Tweak Mode)"; /* BFA */
 
   /* callbacks */
   ot->invoke = action_unlink_invoke;
@@ -713,7 +712,7 @@ void ACTION_OT_unlink(wmOperatorType *ot)
                          false,
                          "Force Delete",
                          "Clear Fake User and remove "
-                         "copy stashed in this data's NLA stack");
+                         "copy stashed in this data's NLA stack"); /* BFA */
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
   /* flags */

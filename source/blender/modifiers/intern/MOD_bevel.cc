@@ -25,6 +25,7 @@
 #include "BKE_modifier.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -312,7 +313,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   int limit_method = RNA_enum_get(ptr, "limit_method");
   if (limit_method == MOD_BEVEL_ANGLE) {
     sub = &col->column(false);
-    uiLayoutSetActive(sub, edge_bevel);
+    sub->active_set(edge_bevel);
     col->prop(ptr, "angle_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (limit_method == MOD_BEVEL_WEIGHT) {
@@ -344,11 +345,10 @@ static void profile_panel_draw(const bContext * /*C*/, Panel *panel)
 
   if (ELEM(profile_type, MOD_BEVEL_PROFILE_SUPERELLIPSE, MOD_BEVEL_PROFILE_CUSTOM)) {
     row = &layout->row(false);
-    uiLayoutSetActive(
-        row,
+    row->active_set(
         profile_type == MOD_BEVEL_PROFILE_SUPERELLIPSE ||
-            (profile_type == MOD_BEVEL_PROFILE_CUSTOM && edge_bevel &&
-             !((miter_inner == MOD_BEVEL_MITER_SHARP) && (miter_outer == MOD_BEVEL_MITER_SHARP))));
+        (profile_type == MOD_BEVEL_PROFILE_CUSTOM && edge_bevel &&
+         !((miter_inner == MOD_BEVEL_MITER_SHARP) && (miter_outer == MOD_BEVEL_MITER_SHARP))));
     row->prop(ptr,
               "profile",
               UI_ITEM_R_SLIDER,
@@ -366,7 +366,7 @@ static void profile_panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void geometry_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row;
+  uiLayout *col, *row; /* bfa - added col */
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -376,38 +376,39 @@ static void geometry_panel_draw(const bContext * /*C*/, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   row = &layout->row(false);
-  uiLayoutSetActive(row, edge_bevel);
+  row->active_set(edge_bevel);
   row->prop(ptr, "miter_outer", UI_ITEM_NONE, IFACE_("Miter Outer"), ICON_NONE);
   row = &layout->row(false);
-  uiLayoutSetActive(row, edge_bevel);
+  row->active_set(edge_bevel);
   row->prop(ptr, "miter_inner", UI_ITEM_NONE, IFACE_("Inner"), ICON_NONE);
   if (RNA_enum_get(ptr, "miter_inner") == BEVEL_MITER_ARC) {
     row = &layout->row(false);
-    uiLayoutSetActive(row, edge_bevel);
+    row->active_set(edge_bevel);
     row->prop(ptr, "spread", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   layout->separator();
 
   row = &layout->row(false);
-  uiLayoutSetActive(row, edge_bevel);
+  row->active_set(edge_bevel);
   row->prop(ptr, "vmesh_method", UI_ITEM_NONE, IFACE_("Intersections"), ICON_NONE);
 
-  /*------------------- bfa - original props */
-  uiLayout *col;
-  col = &layout->column(true);
-  row = &col->row(true);
+  col = &layout->column(true); /* bfa - our layout */
+  row = &col->row(true);  /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_clamp_overlap", 0); /*bfa - decorator*/
 
-  row = &col->row(true);
+  row = &col->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  uiItemDecoratorR(row, ptr, "loop_slide", 0); /*bfa - decorator*/
 }
 
 static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /* bfa - added row */
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -416,32 +417,28 @@ static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  /*------------------- bfa - original prop */
-  uiLayout *row;
-  row = &layout->row(true);
+  row = &layout->row(true); /* bfa - our layout */
   uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "harden_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "harden_normals", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
-  /*------------------- bfa - original props */
-  col = &layout->column(true);
-  uiLayoutSetActive(col, edge_bevel);
-  row->prop(ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seam"), ICON_NONE);
-  row->prop(ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
+  col = &layout->column(true); /* bfa - moved below to own label */
+  col->active_set(edge_bevel);
 
   col->label(TIP_("Mark"), ICON_NONE);
 
-  row = &col->row(true);
-  layout->separator();;
+  row = &col->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seam"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "mark_seam", 0); /*bfa - decorator*/
 
-  row = &col->row(true);
-  layout->separator();;
+  row = &col->row(true); /* bfa - our layout */
+  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->separator(); /*bfa - indent*/
   row->prop(ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "mark_sharp", 0); /*bfa - decorator*/
-  /* ------------ end bfa */
 
   layout->prop(ptr, "material", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "face_strength_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);

@@ -16,10 +16,15 @@ from bl_ui.properties_data_grease_pencil import (
     GreasePencil_LayerAdjustmentsPanel,
     GreasePencil_LayerDisplayPanel,
 )
-from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
 
+from bl_ui.utils import (
+    PlayheadSnappingPanel,
+)
+from bl_ui.space_time import playback_controls
 
 from rna_prop_ui import PropertyPanel
+
+# BFA - Added icons and floated properties left
 
 #######################################
 # DopeSheet Filtering - Header Buttons
@@ -288,12 +293,9 @@ class DOPESHEET_HT_header(Header):
         ALL_MT_editormenu_dopesheet.draw_hidden(context, layout)
 
         if st.mode == 'TIMELINE':
-            from bl_ui.space_time import (
-                TIME_MT_editor_menus,
-                TIME_HT_editor_buttons,
-            )
+            from bl_ui.space_time import TIME_MT_editor_menus
             TIME_MT_editor_menus.draw_collapsible(context, layout)
-            TIME_HT_editor_buttons.draw_header(context, layout)
+            playback_controls(layout, context)
         else:
 
             # Switch between the editors
@@ -315,8 +317,6 @@ class DOPESHEET_HT_header(Header):
             DOPESHEET_HT_editor_buttons.draw_header(context, layout)
 
 # bfa - show hide the editormenu, editor suffix is needed.
-
-
 class ALL_MT_editormenu_dopesheet(Menu):
     bl_label = ""
 
@@ -333,16 +333,18 @@ class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
     bl_space_type = 'DOPESHEET_EDITOR'
 
 
+class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
+    bl_space_type = 'DOPESHEET_EDITOR'
+
+
 # Header for "normal" dopesheet editor modes (e.g. Dope Sheet, Action, Shape Keys, etc.)
-
-
 class DOPESHEET_HT_editor_buttons:
 
     @classmethod
     def draw_header(cls, context, layout):
         st = context.space_data
         tool_settings = context.tool_settings
-        ds_mode = context.space_data.mode
+        ds_mode = context.space_data.mode # BFAu
 
         dopesheet = context.space_data.dopesheet
         st = context.space_data
@@ -462,6 +464,16 @@ class DOPESHEET_HT_editor_buttons:
                 return context.object
 
 
+class DOPESHEET_HT_playback_controls(Header):
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'FOOTER'
+
+    def draw(self, context):
+        layout = self.layout
+
+        playback_controls(layout, context)
+
+
 class DOPESHEET_PT_snapping(Panel):
     bl_space_type = 'DOPESHEET_EDITOR'
     bl_region_type = 'HEADER'
@@ -529,6 +541,8 @@ class DOPESHEET_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
+        layout.prop(st, "show_region_channels")
+        layout.prop(st, "show_region_footer")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
@@ -791,7 +805,7 @@ class DOPESHEET_MT_key(Menu):
 
         layout.operator("action.bake_keys", icon = 'BAKE_ACTION')
 
-
+# BFA
 class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
     bl_category = "View"
@@ -1266,6 +1280,7 @@ classes = (
     ANIM_OT_switch_editors_to_nla, # BFA menu
     ANIM_OT_switch_editors_in_dopesheet, # BFA menu
     DOPESHEET_HT_header,
+    DOPESHEET_HT_playback_controls,
     DOPESHEET_PT_proportional_edit,
     DOPESHEET_MT_editor_menus,
     DOPESHEET_MT_view,

@@ -8,8 +8,22 @@ from bl_ui.space_dopesheet import (
     DopesheetFilterPopoverBase,
     dopesheet_filter,
 )
+from bl_ui.space_time import playback_controls
+from bl_ui.utils import (
+    PlayheadSnappingPanel,
+)
 
-from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
+
+class GRAPH_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
+    bl_space_type = 'GRAPH_EDITOR'
+
+from bl_ui.utils import (
+    PlayheadSnappingPanel,
+)
+# BFA - WIP - to be removed: from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
+
+# BFA - Added icons and floated properties left, also moved options to it's own menu, 
+# BFA - and made header menus consistent with other editors
 
 ################################ BFA - Switch between the editors ##########################################
 
@@ -43,8 +57,29 @@ class ANIM_OT_switch_editor_in_driver(Operator):
 class GRAPH_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
     bl_space_type = 'GRAPH_EDITOR'
 
+def drivers_editor_footer(layout, context):
+    act_fcurve = context.active_editable_fcurve
+    if not act_fcurve:
+        return
+
+    act_driver = act_fcurve.driver
+    if not act_driver:
+        return
+
+    layout.separator_spacer()
+    layout.label(text="Driver: {!s} ({!s})".format(act_fcurve.id_data.name, act_fcurve.data_path))
+
+    if act_driver.variables:
+        layout.separator(type='LINE')
+        layout.label(text="Variables: %i" % len(act_driver.variables))
+
+    if act_driver.type == 'SCRIPTED' and act_driver.expression:
+        layout.separator(type='LINE')
+        layout.label(text="Expression: %s" % act_driver.expression)
+
+
 class GRAPH_HT_header(Header):
-    bl_space_type = "GRAPH_EDITOR"
+    bl_space_type = 'GRAPH_EDITOR'
 
     def draw(self, context):
         layout = self.layout
@@ -61,7 +96,7 @@ class GRAPH_HT_header(Header):
 
         # Switch between the editors
 
-        if context.space_data.mode == "FCURVES":
+        if context.space_data.mode == 'FCURVES':
             # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
             row = layout.row(align=True)
 
@@ -70,7 +105,7 @@ class GRAPH_HT_header(Header):
             row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
             row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
 
-        elif context.space_data.mode == "DRIVERS":
+        elif context.space_data.mode == 'DRIVERS':
             # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
             row = layout.row(align=True)
 
@@ -150,8 +185,6 @@ class GRAPH_HT_header(Header):
 
 
 # bfa - show hide the editormenu, editor suffix is needed.
-
-
 class ALL_MT_editormenu_graph(Menu):
     bl_label = ""
 
@@ -164,9 +197,23 @@ class ALL_MT_editormenu_graph(Menu):
         row.template_header()  # editor type menus
 
 
+class GRAPH_HT_playback_controls(Header):
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'FOOTER'
+
+    def draw(self, context):
+        layout = self.layout
+        is_drivers_editor = context.space_data.mode == 'DRIVERS'
+
+        if is_drivers_editor:
+            drivers_editor_footer(layout, context)
+        else:
+            playback_controls(layout, context)
+
+
 class GRAPH_PT_proportional_edit(Panel):
-    bl_space_type = "GRAPH_EDITOR"
-    bl_region_type = "HEADER"
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'HEADER'
     bl_label = "Proportional Editing"
     bl_ui_units_x = 8
 
@@ -181,8 +228,8 @@ class GRAPH_PT_proportional_edit(Panel):
 
 
 class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
-    bl_space_type = "GRAPH_EDITOR"
-    bl_region_type = "HEADER"
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'HEADER'
     bl_label = "Filters"
 
     def draw(self, context):
@@ -196,18 +243,18 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
         layout.separator()
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
-        if st.mode == "DRIVERS":
+        if st.mode == 'DRIVERS':
             layout.separator()
             col = layout.column(align=True)
             col.label(text="Drivers:")
             col.prop(st.dopesheet, "show_driver_fallback_as_error")
 
-
+# BFA - menu
 class GRAPH_PT_properties_view_options(Panel):
     bl_label = "View Options"
     bl_category = "View"
-    bl_space_type = "GRAPH_EDITOR"
-    bl_region_type = "HEADER"
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'HEADER'
 
     def draw(self, context):
         sc = context.scene
@@ -232,15 +279,15 @@ class GRAPH_PT_properties_view_options(Panel):
         col.prop(st, "use_only_selected_keyframe_handles")
 
         col = layout.column(align=True)
-        if st.mode != "DRIVERS":
+        if st.mode != 'DRIVERS':
             col.prop(st, "show_markers")
-        if context.space_data.mode != "DRIVERS":
+        if context.space_data.mode != 'DRIVERS':
             col.prop(tool_settings, "lock_markers")
 
 
 class GRAPH_PT_snapping(Panel):
-    bl_space_type = "GRAPH_EDITOR"
-    bl_region_type = "HEADER"
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'HEADER'
     bl_label = "Snapping"
 
     def draw(self, context):
@@ -275,7 +322,7 @@ class GRAPH_MT_editor_menus(Menu):
         layout.menu("SCREEN_MT_user_menu", text="Quick")  # BFA - Quick favourites menu
         layout.menu("GRAPH_MT_view")
         layout.menu("GRAPH_MT_select")
-        if st.mode != "DRIVERS" and st.show_markers:
+        if st.mode != 'DRIVERS' and st.show_markers:
             layout.menu("GRAPH_MT_marker")
         layout.menu("GRAPH_MT_channel")
         layout.menu("GRAPH_MT_key")
@@ -291,6 +338,8 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
+        layout.prop(st, "show_region_channels")
+        layout.prop(st, "show_region_footer")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon="BORDER_RECT")
@@ -336,7 +385,7 @@ class GRAPH_MT_view(Menu):
         props.data_path = "area.type"
         props.value = "DOPESHEET_EDITOR"
 
-
+# BFA - menu
 class GRAPH_MT_view_pie_menus(Menu):
     bl_label = "Pie Menus"
 
@@ -353,19 +402,19 @@ class GRAPH_MT_view_pie_menus(Menu):
             "wm.call_menu_pie", text="View", icon="MENU_PANEL"
         ).name = "GRAPH_MT_view_pie"
 
-
+# BFA - menu
 class GRAPH_MT_select(Menu):
-    bl_label = "Select"
+    bl_label = 'SELECT'
 
     def draw(self, _context):
         layout = self.layout
 
         layout.operator(
             "graph.select_all", text="All", icon="SELECT_ALL"
-        ).action = "SELECT"
+        ).action = 'SELECT'
         layout.operator(
             "graph.select_all", text="None", icon="SELECT_NONE"
-        ).action = "DESELECT"
+        ).action = 'DESELECT'
         layout.operator(
             "graph.select_all", text="Invert", icon="INVERSE"
         ).action = "INVERT"
@@ -396,7 +445,7 @@ class GRAPH_MT_select(Menu):
         ).mode = "CFRA"
 
         # BFA - just in graph editor. Drivers does not have markers. graph editor = FCURVES
-        if _context.space_data.mode == "FCURVES":
+        if _context.space_data.mode == 'FCURVES':
             layout.operator(
                 "graph.select_column",
                 text="Columns on Selected Markers",
@@ -432,15 +481,15 @@ class GRAPH_MT_select(Menu):
         props = layout.operator(
             "graph.select_key_handles", text="Select Handles", icon="SELECT_HANDLETYPE"
         )
-        props.left_handle_action = "SELECT"
-        props.right_handle_action = "SELECT"
+        props.left_handle_action = 'SELECT'
+        props.right_handle_action = 'SELECT'
         props.key_action = "KEEP"
         props = layout.operator(
             "graph.select_key_handles", text="Select Key", icon="SELECT_KEY"
         )
-        props.left_handle_action = "DESELECT"
-        props.right_handle_action = "DESELECT"
-        props.key_action = "SELECT"
+        props.left_handle_action = 'DESELECT'
+        props.right_handle_action = 'DESELECT'
+        props.key_action = 'SELECT'
 
         layout.separator()
         layout.operator("graph.select_more", text="More", icon="SELECTMORE")
@@ -454,7 +503,6 @@ class GRAPH_MT_marker(Menu):
         layout = self.layout
 
         from bl_ui.space_time import marker_menu_generic
-
         marker_menu_generic(layout, context)
 
         # TODO: pose markers for action edit mode only?
@@ -470,7 +518,7 @@ class GRAPH_MT_channel(Menu):
 
         layout.operator("anim.channels_delete", icon="DELETE")
 
-        if context.space_data.mode == "DRIVERS":
+        if context.space_data.mode == 'DRIVERS':
             layout.operator("graph.driver_delete_invalid", icon="DELETE")
 
         layout.separator()
@@ -623,7 +671,6 @@ class GRAPH_MT_key_density(Menu):
 
     def draw(self, _context):
         from bl_ui_utils.layout import operator_context
-
         layout = self.layout
         layout.operator(
             "graph.decimate", text="Decimate (Ratio)", icon="DECIMATE"
@@ -646,7 +693,7 @@ class GRAPH_MT_key_blending(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("graph.breakdown", text="Breakdown", icon="BREAKDOWNER_POSE")
         layout.operator(
             "graph.blend_to_neighbor",
@@ -681,7 +728,7 @@ class GRAPH_MT_key_smoothing(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator(
             "graph.gaussian_smooth",
             text="Smooth (Gaussian)",
@@ -861,7 +908,7 @@ class GRAPH_MT_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.operator("graph.copy", text="Copy", icon="COPYDOWN")
         layout.operator("graph.paste", text="Paste", icon="PASTEDOWN")
@@ -920,23 +967,24 @@ class GRAPH_MT_snap_pie(Menu):
 
 
 classes = (
-    ANIM_OT_switch_editor_in_graph,
-    ANIM_OT_switch_editor_in_driver,
-    ALL_MT_editormenu_graph,
+    ANIM_OT_switch_editor_in_graph, # BFA - menu
+    ANIM_OT_switch_editor_in_driver, # BFA - menu
+    ALL_MT_editormenu_graph, # BFA - menu
     GRAPH_HT_header,
-    GRAPH_PT_properties_view_options,
+    GRAPH_PT_properties_view_options, # BFA - menu
+    GRAPH_HT_playback_controls,
     GRAPH_PT_proportional_edit,
     GRAPH_MT_editor_menus,
     GRAPH_MT_view,
-    GRAPH_MT_view_pie_menus,
+    GRAPH_MT_view_pie_menus, # BFA - menu
     GRAPH_MT_select,
     GRAPH_MT_marker,
     GRAPH_MT_channel,
-    GRAPH_MT_channel_settings_toggle,
-    GRAPH_MT_channel_extrapolation,
-    GRAPH_MT_channel_move,
+    GRAPH_MT_channel_settings_toggle, # BFA - menu
+    GRAPH_MT_channel_extrapolation, # BFA - menu
+    GRAPH_MT_channel_move, # BFA - menu
     GRAPH_MT_key,
-    GRAPH_MT_key_mirror,
+    GRAPH_MT_key_mirror, # BFA - menu
     GRAPH_MT_key_density,
     GRAPH_MT_key_transform,
     GRAPH_MT_key_snap,
@@ -955,6 +1003,5 @@ classes = (
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
-
     for cls in classes:
         register_class(cls)

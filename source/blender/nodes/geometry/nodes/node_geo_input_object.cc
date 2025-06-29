@@ -2,7 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "node_geometry_util.hh"
@@ -12,7 +12,7 @@ namespace blender::nodes::node_geo_input_object_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_output<decl::Object>("Object").custom_draw([](CustomSocketDrawParams &params) {
-    uiLayoutSetAlignment(&params.layout, UI_LAYOUT_ALIGN_EXPAND);
+    params.layout.alignment_set(blender::ui::LayoutAlign::Expand);
     params.layout.prop(&params.node_ptr, "object", UI_ITEM_NONE, "", ICON_NONE);
   });
 }

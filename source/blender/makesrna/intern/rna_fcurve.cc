@@ -26,6 +26,8 @@
 
 #include <fmt/format.h>
 
+/* BFA - Added icons*/
+
 const EnumPropertyItem rna_enum_fmodifier_type_items[] = {
     {FMODIFIER_TYPE_NULL, "NULL", 0, "Invalid", ""},
     {FMODIFIER_TYPE_GENERATOR,

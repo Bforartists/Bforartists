@@ -1367,7 +1367,7 @@ static void rna_def_keyingset_paths(BlenderRNA *brna, PropertyRNA *cprop)
       func, "ksp", "KeyingSetPath", "New Path", "Path created and added to the Keying Set");
   RNA_def_function_return(func, parm);
   /* ID-block for target */
-  parm = RNA_def_pointer(func, "target_id", "ID", "Target ID", "ID data for the destination");
+  parm = RNA_def_pointer(func, "target_id", "ID", "Target ID", "ID data for the destination"); /* BFA */
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   /* rna-path */
   /* XXX hopefully this is long enough */
@@ -1609,7 +1609,7 @@ void rna_def_animdata_common(StructRNA *srna)
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_override_funcs(prop, nullptr, nullptr, "rna_AnimaData_override_apply");
-  RNA_def_property_ui_text(prop, "Animation Data", "Animation data for this data");
+  RNA_def_property_ui_text(prop, "Animation Data", "Animation data for this data"); /* BFA */
 }
 
 static void rna_def_animdata(BlenderRNA *brna)
@@ -1618,7 +1618,7 @@ static void rna_def_animdata(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "AnimData", nullptr);
-  RNA_def_struct_ui_text(srna, "Animation Data", "Animation data for data");
+  RNA_def_struct_ui_text(srna, "Animation Data", "Animation data for data"); /* BFA */
   RNA_def_struct_ui_icon(srna, ICON_ANIM_DATA);
   RNA_def_struct_path_func(srna, "rna_AnimData_path");
 
@@ -1655,7 +1655,7 @@ static void rna_def_animdata(BlenderRNA *brna)
       nullptr,
       "rna_Action_id_poll");
   RNA_def_property_editable_func(prop, "rna_AnimData_action_editable");
-  RNA_def_property_ui_text(prop, "Action", "Active Action for this data");
+  RNA_def_property_ui_text(prop, "Action", "Active Action for this data"); /* BFA */
   RNA_def_property_update(prop, NC_ANIMATION | ND_NLA_ACTCHANGE, "rna_AnimData_dependency_update");
 
   /* Active Action Settings */
@@ -1706,7 +1706,7 @@ static void rna_def_animdata(BlenderRNA *brna)
   prop = RNA_def_property(srna, "drivers", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, nullptr, "drivers", nullptr);
   RNA_def_property_struct_type(prop, "FCurve");
-  RNA_def_property_ui_text(prop, "Drivers", "The Drivers/Expressions for this data");
+  RNA_def_property_ui_text(prop, "Drivers", "The Drivers/Expressions for this data"); /* BFA */
 
   RNA_define_lib_overridable(false);
 

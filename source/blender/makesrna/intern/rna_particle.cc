@@ -992,8 +992,9 @@ static void rna_PartSettings_start_set(PointerRNA *ptr, float value)
   }
 
 #  if 0
-  if (settings->type == PART_REACTOR && value < 1.0)
+  if (settings->type == PART_REACTOR && value < 1.0) {
     value = 1.0;
+  }
   else
 #  endif
   if (value < MINAFRAMEF) {
@@ -2201,7 +2202,7 @@ static void rna_def_particle_settings_mtex(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "MTex");
   RNA_def_struct_ui_text(srna,
                          "Particle Settings Texture Slot",
-                         "Texture slot for textures in a Particle Settings data");
+                         "Texture slot for textures in a Particle Settings data"); /* BFA */
 
   prop = RNA_def_property(srna, "texture_coords", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "texco");

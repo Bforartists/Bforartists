@@ -32,8 +32,6 @@
 #include "ANIM_fcurve.hh"
 #include "ANIM_keyframing.hh"
 
-#include "UI_interface.hh"
-
 #include "RNA_access.hh"
 #include "RNA_path.hh"
 
@@ -268,13 +266,13 @@ bool ui_but_anim_expression_create(uiBut *but, const char *str)
     }
   }
 
-  /* make sure we have animdata for this */
+  /* Make sure we have animation-data for this. */
   /* FIXME: until materials can be handled by depsgraph,
-   * don't allow drivers to be created for them */
+   * don't allow drivers to be created for them. */
   id = but->rnapoin.owner_id;
   if ((id == nullptr) || (GS(id->name) == ID_MA) || (GS(id->name) == ID_TE)) {
     if (G.debug & G_DEBUG) {
-      printf("ERROR: create expression failed - invalid data for adding drivers (%p)\n", id);
+      printf("ERROR: create expression failed - invalid data for adding drivers (%p)\n", id); /* BFA */
     }
     return false;
   }

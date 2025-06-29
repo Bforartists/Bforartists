@@ -2094,7 +2094,7 @@ static void rna_def_medge(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "MeshEdge", nullptr);
   RNA_def_struct_sdna(srna, "vec2i");
-  RNA_def_struct_ui_text(srna, "Mesh Edge", "Edge in a Mesh data");
+  RNA_def_struct_ui_text(srna, "Mesh Edge", "Edge in a Mesh data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_MeshEdge_path");
   RNA_def_struct_ui_icon(srna, ICON_EDGESEL);
 
@@ -2153,7 +2153,7 @@ static void rna_def_mlooptri(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "MeshLoopTriangle", nullptr);
   RNA_def_struct_sdna(srna, "vec3i");
-  RNA_def_struct_ui_text(srna, "Mesh Loop Triangle", "Tessellated triangle in a Mesh data");
+  RNA_def_struct_ui_text(srna, "Mesh Loop Triangle", "Tessellated triangle in a Mesh data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_MeshLoopTriangle_path");
   RNA_def_struct_ui_icon(srna, ICON_FACESEL);
 
@@ -2189,9 +2189,9 @@ static void rna_def_mlooptri(BlenderRNA *brna)
   RNA_def_property_float_funcs(prop, "rna_MeshLoopTriangle_split_normals_get", nullptr, nullptr);
   RNA_def_property_ui_text(
       prop,
-      "Split Normals",
-      "Local space unit length split normal vectors of the face corners of this triangle "
-      "(must be computed beforehand using calc_normals_split or calc_tangents)");
+      "Custom Normals",
+      "Local space unit length custom normal vectors of the face corners of this triangle"
+      "(must be computed beforehand using calc_normals_split or calc_tangents)"); /* BFA */
 
   prop = RNA_def_property(srna, "area", PROP_FLOAT, PROP_UNSIGNED);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -2220,7 +2220,7 @@ static void rna_def_mloop(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "MeshLoop", nullptr);
-  RNA_def_struct_ui_text(srna, "Mesh Loop", "Loop in a Mesh data");
+  RNA_def_struct_ui_text(srna, "Mesh Loop", "Loop in a Mesh data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_MeshLoop_path");
   RNA_def_struct_ui_icon(srna, ICON_EDGESEL);
 
@@ -2250,7 +2250,7 @@ static void rna_def_mloop(BlenderRNA *brna)
                            "Normal",
                            "The normal direction of the face corner, taking into account sharp "
                            "faces, sharp edges, and custom normal data"
-      "(must be computed beforehand using calc_normals_split or calc_tangents)");
+      "(must be computed beforehand using calc_normals_split or calc_tangents)"); /* BFA */
 
   prop = RNA_def_property(srna, "tangent", PROP_FLOAT, PROP_DIRECTION);
   RNA_def_property_array(prop, 3);
@@ -2292,7 +2292,7 @@ static void rna_def_mpolygon(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "MeshPolygon", nullptr);
   RNA_def_struct_sdna(srna, "MIntProperty");
-  RNA_def_struct_ui_text(srna, "Mesh Polygon", "Polygon in a Mesh data");
+  RNA_def_struct_ui_text(srna, "Mesh Polygon", "Polygon in a Mesh data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_MeshPolygon_path");
   RNA_def_struct_ui_icon(srna, ICON_FACESEL);
 
@@ -2947,7 +2947,7 @@ static void rna_def_mesh(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Mesh", "ID");
-  RNA_def_struct_ui_text(srna, "Mesh", "Mesh data defining geometric surfaces");
+  RNA_def_struct_ui_text(srna, "Mesh", "Mesh data-block defining geometric surfaces");
   RNA_def_struct_ui_icon(srna, ICON_MESH_DATA);
 
   prop = RNA_def_property(srna, "vertices", PROP_COLLECTION, PROP_NONE);
@@ -3069,7 +3069,7 @@ static void rna_def_mesh(BlenderRNA *brna)
       prop,
       "Corner Normals",
       "The \"slit\" normal direction of each face corner, influenced by vertex normals, "
-      "sharp faces, sharp edges, and custom normals. May be empty");
+      "sharp faces, sharp edges, and custom normals. May be empty.");
   RNA_def_property_collection_funcs(prop,
                                     "rna_Mesh_corner_normals_begin",
                                     "rna_iterator_array_next",
@@ -3191,7 +3191,7 @@ static void rna_def_mesh(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Vertex Colors",
-      "Legacy vertex color layers. Deprecated, use color attributes instead");
+      "Legacy vertex color layers. Deprecated, use color attributes instead.");
   rna_def_loop_colors(brna, prop);
 
   /* Skin vertices */
@@ -3225,7 +3225,7 @@ static void rna_def_mesh(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Voxel Size",
                            "Size of the voxel in object space used for volume evaluation. Lower "
-                           "values preserve finer details\nHotkey in the default keymap: S");
+                           "values preserve finer details\nHotkey in the default keymap: S"); /* BFA */
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
@@ -3238,7 +3238,7 @@ static void rna_def_mesh(BlenderRNA *brna)
       prop,
       "Adaptivity",
       "Reduces the final face count by simplifying geometry where detail is not needed, "
-      "generating triangles. A value greater than 0 disables Fix Poles");
+      "generating triangles. A value greater than 0 disables Fix Poles"); /* BFA */
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
@@ -3302,7 +3302,7 @@ static void rna_def_mesh(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Mirror Vertex Groups",
                            "Mirror the left/right vertex groups when painting. The symmetry axis "
-                           "is determined by the symmetry settings");
+                           "is determined by the symmetry settings.");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
   /* End Symmetry */
 
@@ -3311,7 +3311,7 @@ static void rna_def_mesh(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "", 0);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(
-      prop, "Has Custom Normals", "True if there are custom split normals data in this mesh");
+      prop, "Has Custom Normals", "True if there is custom normal data for this mesh");
   RNA_def_property_boolean_funcs(prop, "rna_Mesh_has_custom_normals_get", nullptr);
   RNA_define_verify_sdna(true);
 

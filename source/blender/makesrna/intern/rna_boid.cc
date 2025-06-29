@@ -19,6 +19,8 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+/* BFA - Add icons*/
+
 const EnumPropertyItem rna_enum_boidrule_type_items[] = {
     {eBoidRuleType_Goal,
      "GOAL",

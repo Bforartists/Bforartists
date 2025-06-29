@@ -5,6 +5,8 @@
 import bpy
 import math
 
+# BFA - Added icons and floated properties left
+
 from bpy.types import (
     AssetShelf,
     Header,
@@ -62,7 +64,7 @@ class IMAGE_PT_active_tool(Panel, ToolActivePanelHelper):
     bl_region_type = 'UI'
     bl_category = "Tool"
 
-
+# BFA - menu
 class IMAGE_MT_view_legacy(Menu):
     bl_label = "Legacy"
 
@@ -162,6 +164,7 @@ class IMAGE_MT_view(Menu):
 
         layout.menu("INFO_MT_area")
         layout.menu("IMAGE_MT_view_pie_menus")
+
 
 # BFA - Hidden legacy operators exposed to GUI
 class IMAGE_MT_view_annotations(Menu):
@@ -273,6 +276,7 @@ class IMAGE_MT_select_linked(Menu):
         layout.operator("uv.shortest_path_select", text="Shortest Path", icon="LINKED")
 
 
+# BFA - menu
 class IMAGE_MT_brush(Menu):
     bl_label = "Brush"
 
@@ -731,9 +735,17 @@ class IMAGE_MT_uvs_select_mode(Menu):
             props.value = 'FACE'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_string", text="Island", icon='UV_ISLANDSEL')
-            props.value = 'ISLAND'
-            props.data_path = "tool_settings.uv_select_mode"
+        layout.separator()
+
+        is_select_island_supported = True
+        if tool_settings.use_uv_select_sync:
+            mesh_select_mode = tool_settings.mesh_select_mode
+            if mesh_select_mode[0] or mesh_select_mode[1]:
+                is_select_island_supported = False
+
+        row = layout.row()
+        row.active = is_select_island_supported
+        row.prop(tool_settings, "use_uv_select_island", text="Island")
 
 
 class IMAGE_MT_uvs_context_menu(Menu):
@@ -754,7 +766,7 @@ class IMAGE_MT_uvs_context_menu(Menu):
                 is_vert_mode = uv_select_mode == 'VERTEX'
                 is_edge_mode = uv_select_mode == 'EDGE'
                 # is_face_mode = uv_select_mode == 'FACE'
-                # is_island_mode = uv_select_mode == 'ISLAND'
+                # is_island_mode = ts.use_uv_select_island
 
             # Add
             layout.operator("uv.unwrap", icon='UNWRAP_ABF')
@@ -1087,9 +1099,16 @@ class IMAGE_HT_header(Header):
             if tool_settings.use_uv_select_sync:
                 layout.template_edit_mode_selection()
 
+                # Currently this only works for face-select mode.
+                mesh_select_mode = tool_settings.mesh_select_mode
+                row = layout.row()
+                if mesh_select_mode[0] or mesh_select_mode[1]:
+                    row.active = False
+                row.prop(tool_settings, "use_uv_select_island", icon_only=True)
+
                 # Currently this only works for edge-select & face-select modes.
                 row = layout.row()
-                if tool_settings.mesh_select_mode[0]:
+                if mesh_select_mode[0]:
                     row.active = False
                 row.prop(tool_settings, "uv_sticky_select_mode", icon_only=True)
             else:
@@ -1101,9 +1120,8 @@ class IMAGE_HT_header(Header):
                              depress=(uv_select_mode == 'EDGE')).type = 'EDGE'
                 row.operator("uv.select_mode", text="", icon='UV_FACESEL',
                              depress=(uv_select_mode == 'FACE')).type = 'FACE'
-                row.operator("uv.select_mode", text="", icon='UV_ISLANDSEL',
-                             depress=(uv_select_mode == 'ISLAND')).type = 'ISLAND'
 
+                layout.prop(tool_settings, "use_uv_select_island", icon_only=True)
                 layout.prop(tool_settings, "uv_sticky_select_mode", icon_only=True)
 
         IMAGE_MT_editor_menus.draw_collapsible(context, layout)
@@ -2040,7 +2058,7 @@ class IMAGE_PT_overlay_uv_display(Panel):
     @classmethod
     def poll(cls, context):
         sima = context.space_data
-        return (sima and not (sima.show_uvedit or sima.show_render))
+        return (sima and sima.mode in {'UV', 'PAINT'} and not (sima.show_uvedit or sima.show_render))
 
     def draw(self, context):
         layout = self.layout
@@ -2071,6 +2089,40 @@ class IMAGE_PT_overlay_image(Panel):
         row = layout.row()
         row.separator()
         row.prop(uvedit, "show_metadata")
+
+
+class IMAGE_PT_overlay_render_guides(Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Guides"
+    bl_parent_id = "IMAGE_PT_overlay"
+
+    @classmethod
+    def poll(cls, context):
+        sima = context.space_data
+        return (
+            (sima.mode in {'MASK', 'VIEW'}) and
+            (image := sima.image) is not None and
+            (image.source == 'VIEWER') and
+            (image.type == 'COMPOSITING')
+        )
+
+    def draw(self, context):
+        layout = self.layout
+
+        sima = context.space_data
+        overlay = sima.overlay
+
+        layout.active = overlay.show_overlays
+
+        row = layout.row(align=True)
+        layout.prop(overlay, "show_text_info")
+
+        row = layout.row(align=True)
+        row.prop(overlay, "show_render_size")
+        subrow = row.row()
+        subrow.active = overlay.show_render_size
+        subrow.prop(overlay, "passepartout_alpha", text="Passepartout")
 
 
 class IMAGE_PT_overlay_render_guides(Panel):
@@ -2155,7 +2207,6 @@ class ImageAssetShelf(BrushAssetShelf):
 class IMAGE_AST_brush_paint(ImageAssetShelf, AssetShelf):
     mode_prop = "use_paint_image"
     brush_type_prop = "image_brush_type"
-    tool_prop = "image_tool"
 
     @classmethod
     def poll(cls, context):

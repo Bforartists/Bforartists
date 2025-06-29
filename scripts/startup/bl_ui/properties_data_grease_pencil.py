@@ -35,14 +35,10 @@ class LayerDataButtonsPanel:
 class GREASE_PENCIL_UL_masks(UIList):
     def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         mask = item
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            row = layout.row(align=True)
-            row.prop(mask, "name", text="", emboss=False, icon_value=icon)
-            row.prop(mask, "invert", text="", emboss=False)
-            row.prop(mask, "hide", text="", emboss=False)
-        elif self.layout_type == 'GRID':
-            layout.alignment = 'CENTER'
-            layout.prop(mask, "name", text="", emboss=False, icon_value=icon)
+        row = layout.row(align=True)
+        row.prop(mask, "name", text="", emboss=False, icon_value=icon)
+        row.prop(mask, "invert", text="", emboss=False)
+        row.prop(mask, "hide", text="", emboss=False)
 
 
 class GreasePencil_LayerMaskPanel:
@@ -147,7 +143,7 @@ class GreasePencil_LayerRelationsPanel:
         col = layout.row(align=True)
         # Only enable this property when a view layer is selected.
         if  bool(layer.viewlayer_render):
-            col.use_property_split = False
+            col.use_property_split = False # BFA
             col.prop(layer, "use_viewlayer_masks")
 
 
@@ -178,8 +174,8 @@ class GREASE_PENCIL_MT_layer_mask_add(Menu):
                 continue
 
             found = True
-            props = layout.operator("grease_pencil.layer_mask_add", text=layer.name, icon="GREASEPENCIL")
-            props.name = layer.name
+            props = layout.operator("grease_pencil.layer_mask_add", text=layer.name, icon="GREASEPENCIL") 
+            props.name = layer.name # BFA
 
         if not found:
             layout.label(text="No layers to add")
@@ -286,17 +282,14 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
             sub.operator("grease_pencil.layer_group_remove", icon='REMOVE', text="").keep_children = True
 
         sub.separator()
-
+        # BFA
         sub.operator("grease_pencil.layer_group_add", icon='COLLECTION_NEW', text="")
 
         col.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="") # BFA - moved below per standards
 
-        sub = col.column(align=True)
+        sub = col.column(align=True) 
         sub.operator("grease_pencil.layer_move", icon='TRIA_UP', text="").direction = 'UP'
         sub.operator("grease_pencil.layer_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
-        #sub.operator_context = 'EXEC_DEFAULT'
-        #sub.operator("grease_pencil.interface_item_move", icon='TRIA_UP', text="").direction = 'UP' # BFA - WIP - operator for GUI buttons to re-order in and out of groups
-        #sub.operator("grease_pencil.interface_item_move", icon='TRIA_DOWN', text="").direction = 'DOWN' # BFA - WIP - operator for GUI buttons to re-order in and out of groups
 
         col.separator()
 
@@ -313,7 +306,7 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
         layout.use_property_decorate = True
 		# BFA - expose props to top level
         col = layout.column(align=True)
-        col.use_property_split = False
+        col.use_property_split = False # BFA
 
         col.separator()
 

@@ -31,6 +31,7 @@
 #include "BKE_mesh.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
@@ -110,7 +111,8 @@ static bool is_disabled(const Scene * /*scene*/, ModifierData *md, bool /*use_re
 static bool can_use_mesh_for_orco_evaluation(MeshSeqCacheModifierData *mcmd,
                                              const ModifierEvalContext *ctx,
                                              const Mesh *mesh,
-                                             const float time,
+                                             const double frame_offset,
+                                             const double time_offset,
                                              const char **r_err_str)
 {
   if ((ctx->flag & MOD_APPLY_ORCO) == 0) {
@@ -122,7 +124,7 @@ static bool can_use_mesh_for_orco_evaluation(MeshSeqCacheModifierData *mcmd,
   switch (cache_file->type) {
     case CACHEFILE_TYPE_ALEMBIC:
 #  ifdef WITH_ALEMBIC
-      if (!ABC_mesh_topology_changed(mcmd->reader, ctx->object, mesh, time, r_err_str)) {
+      if (!ABC_mesh_topology_changed(mcmd->reader, ctx->object, mesh, time_offset, r_err_str)) {
         return true;
       }
 #  endif
@@ -130,7 +132,7 @@ static bool can_use_mesh_for_orco_evaluation(MeshSeqCacheModifierData *mcmd,
     case CACHEFILE_TYPE_USD:
 #  ifdef WITH_USD
       if (!blender::io::usd::USD_mesh_topology_changed(
-              mcmd->reader, ctx->object, mesh, time, r_err_str))
+              mcmd->reader, ctx->object, mesh, frame_offset, r_err_str))
       {
         return true;
       }
@@ -173,8 +175,9 @@ static void modify_geometry_set(ModifierData *md,
 
   Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
   CacheFile *cache_file = mcmd->cache_file;
-  const float frame = DEG_get_ctime(ctx->depsgraph);
-  const double time = BKE_cachefile_time_offset(cache_file, frame, FPS);
+  const double frame = double(DEG_get_ctime(ctx->depsgraph));
+  const double frame_offset = BKE_cachefile_frame_offset(cache_file, frame);
+  const double time_offset = BKE_cachefile_time_offset(cache_file, frame, FPS);
   const char *err_str = nullptr;
 
   if (!mcmd->reader || !STREQ(mcmd->reader_object_path, mcmd->object_path)) {
@@ -189,7 +192,7 @@ static void modify_geometry_set(ModifierData *md,
 
   if (geometry_set->has_mesh()) {
     const Mesh *mesh = geometry_set->get_mesh();
-    if (can_use_mesh_for_orco_evaluation(mcmd, ctx, mesh, time, &err_str)) {
+    if (can_use_mesh_for_orco_evaluation(mcmd, ctx, mesh, frame_offset, time_offset, &err_str)) {
       return;
     }
   }
@@ -225,7 +228,7 @@ static void modify_geometry_set(ModifierData *md,
     case CACHEFILE_TYPE_ALEMBIC: {
 #  ifdef WITH_ALEMBIC
       ABCReadParams params;
-      params.time = time;
+      params.time = time_offset;
       params.read_flags = mcmd->read_flag;
       params.velocity_name = mcmd->cache_file->velocity_name;
       params.velocity_scale = velocity_scale;
@@ -236,7 +239,7 @@ static void modify_geometry_set(ModifierData *md,
     case CACHEFILE_TYPE_USD: {
 #  ifdef WITH_USD
       const blender::io::usd::USDMeshReadParams params = blender::io::usd::create_mesh_read_params(
-          time * FPS, mcmd->read_flag);
+          frame_offset, mcmd->read_flag);
       blender::io::usd::USD_read_geometry(
           mcmd->reader, ctx->object, *geometry_set, params, &err_str);
 #  endif
@@ -268,8 +271,9 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
   Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
   CacheFile *cache_file = mcmd->cache_file;
-  const float frame = DEG_get_ctime(ctx->depsgraph);
-  const double time = BKE_cachefile_time_offset(cache_file, double(frame), FPS);
+  const double frame = double(DEG_get_ctime(ctx->depsgraph));
+  const double frame_offset = BKE_cachefile_frame_offset(cache_file, frame);
+  const double time_offset = BKE_cachefile_time_offset(cache_file, frame, FPS);
   const char *err_str = nullptr;
 
   if (!mcmd->reader || !STREQ(mcmd->reader_object_path, mcmd->object_path)) {
@@ -290,7 +294,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
   /* If this invocation is for the ORCO mesh, and the mesh hasn't changed topology, we
    * must return the mesh as-is instead of deforming it. */
-  if (can_use_mesh_for_orco_evaluation(mcmd, ctx, mesh, time, &err_str)) {
+  if (can_use_mesh_for_orco_evaluation(mcmd, ctx, mesh, frame_offset, time_offset, &err_str)) {
     return mesh;
   }
 
@@ -367,7 +371,7 @@ static void update_depsgraph(ModifierData *md, const ModifierUpdateDepsgraphCont
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *layout = panel->layout, *row, *col; /*bfa, added *col and *row*/
+  uiLayout *layout = panel->layout, *row, *col; /*bfa - added *col, *row*/
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -387,13 +391,12 @@ static void panel_draw(const bContext *C, Panel *panel)
   if (RNA_enum_get(&ob_ptr, "type") == OB_MESH) {
     layout->prop(ptr, "read_data", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-    /*------------------- bfa - original props */
-    col = &layout->column(true);
-    row = &col->row(true);
+    col = &layout->column(true); /* bfa - our layout */
+    row = &col->row(true); /* bfa - our layout */
     uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_vertex_interpolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_vertex_interpolation", 0); /*bfa - decorator*/
-    /* ------------ end bfa */
   }
   else if (RNA_enum_get(&ob_ptr, "type") == OB_CURVES) {
     layout->prop(ptr, "use_vertex_interpolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);

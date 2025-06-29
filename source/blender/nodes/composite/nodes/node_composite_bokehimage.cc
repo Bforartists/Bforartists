@@ -9,7 +9,6 @@
 #include "BLI_math_base.hh"
 #include "BLI_math_vector_types.hh"
 
-#include "UI_interface.hh"
 #include "UI_resources.hh"
 
 #include "COM_bokeh_kernel.hh"
@@ -59,14 +58,6 @@ static void cmp_node_bokehimage_declare(NodeDeclarationBuilder &b)
       .compositor_expects_single_value();
 
   b.add_output<decl::Color>("Image");
-}
-
-static void node_composit_init_bokehimage(bNodeTree * /*ntree*/, bNode *node)
-{
-  /* All members are deprecated and needn't be set, but the data is still allocated for forward
-   * compatibility. */
-  NodeBokehImage *data = MEM_callocN<NodeBokehImage>(__func__);
-  node->storage = data;
 }
 
 using namespace blender::compositor;
@@ -144,9 +135,6 @@ static void register_node_type_cmp_bokehimage()
   ntype.nclass = NODE_CLASS_INPUT;
   ntype.declare = file_ns::cmp_node_bokehimage_declare;
   ntype.flag |= NODE_PREVIEW;
-  ntype.initfunc = file_ns::node_composit_init_bokehimage;
-  blender::bke::node_type_storage(
-      ntype, "NodeBokehImage", node_free_standard_storage, node_copy_standard_storage);
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
   blender::bke::node_register_type(ntype);

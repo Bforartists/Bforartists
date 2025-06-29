@@ -28,8 +28,10 @@ ccl_device_inline Spectrum integrate_camera_sample(KernelGlobals kg,
                                              path_rng_2D(kg, rng_pixel, sample, PRNG_FILTER);
 
   /* Motion blur (time) and depth of field (lens) sampling. (time, lens_x, lens_y) */
-  const float3 rand_time_lens = (kernel_data.cam.shuttertime != -1.0f ||
-                                 kernel_data.cam.aperturesize > 0.0f) ?
+  const bool use_motionblur = kernel_data.cam.shuttertime != -1.0f;
+  const bool use_dof = kernel_data.cam.aperturesize > 0.0f;
+  const bool use_custom_cam = kernel_data.cam.type == CAMERA_CUSTOM;
+  const float3 rand_time_lens = (use_motionblur || use_dof || use_custom_cam) ?
                                     path_rng_3D(kg, rng_pixel, sample, PRNG_LENS_TIME) :
                                     zero_float3();
 
@@ -96,10 +98,10 @@ ccl_device bool integrator_init_from_camera(KernelGlobals kg,
   /* Continue with intersect_closest kernel, optionally initializing volume
    * stack before that if the camera may be inside a volume. */
   if (kernel_data.cam.is_inside_volume) {
-    integrator_path_init(kg, state, DEVICE_KERNEL_INTEGRATOR_INTERSECT_VOLUME_STACK);
+    integrator_path_init(state, DEVICE_KERNEL_INTEGRATOR_INTERSECT_VOLUME_STACK);
   }
   else {
-    integrator_path_init(kg, state, DEVICE_KERNEL_INTEGRATOR_INTERSECT_CLOSEST);
+    integrator_path_init(state, DEVICE_KERNEL_INTEGRATOR_INTERSECT_CLOSEST);
   }
 
   return true;

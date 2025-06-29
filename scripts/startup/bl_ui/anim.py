@@ -39,16 +39,16 @@ class ANIM_MT_keyframe_insert_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        prop = pie.operator("anim.keyframe_insert_by_name", text="Location", icon="TRANSFORM_MOVE")
+        prop = pie.operator("anim.keyframe_insert_by_name", text="Location", icon="TRANSFORM_MOVE") # BFA
         prop.type = "Location"
 
-        prop = pie.operator("anim.keyframe_insert_by_name", text="Scale", icon="TRANSFORM_SCALE")
+        prop = pie.operator("anim.keyframe_insert_by_name", text="Scale", icon="TRANSFORM_SCALE") # BFA
         prop.type = "Scaling"
 
-        prop = pie.operator("anim.keyframe_insert_by_name", text="Available", icon="DECORATE_KEYFRAME")
+        prop = pie.operator("anim.keyframe_insert_by_name", text="Available", icon="DECORATE_KEYFRAME") # BFA
         prop.type = "Available"
 
-        prop = pie.operator("anim.keyframe_insert_by_name", text="Rotation", icon="TRANSFORM_ROTATE")
+        prop = pie.operator("anim.keyframe_insert_by_name", text="Rotation", icon="TRANSFORM_ROTATE") # BFA
         prop.type = "Rotation"
 
 

@@ -626,11 +626,8 @@ static void mouse_mesh_shortest_path_face(Scene * /*scene*/,
     }
     BM_mesh_active_face_set(bm, f_dst_last);
 
-    if (f_dst_last->mat_nr != obedit->actcol - 1) {
-      obedit->actcol = f_dst_last->mat_nr + 1;
-      em->mat_nr = f_dst_last->mat_nr;
-      WM_main_add_notifier(NC_MATERIAL | ND_SHADING_LINKS, nullptr);
-    }
+    blender::ed::object::material_active_index_set(obedit, f_dst_last->mat_nr);
+    em->mat_nr = f_dst_last->mat_nr;
   }
 
   EDBMUpdate_Params params{};
@@ -959,7 +956,7 @@ void MESH_OT_shortest_path_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Shortest Path";
   ot->idname = "MESH_OT_shortest_path_select";
-  ot->description = "Select shortest path between two vertices/edges/faces";
+  ot->description = "Select shortest path between two vertices/edges/faces"; /* BFA - keep it verb tensesed on what it does*/
 
   /* API callbacks. */
   ot->exec = edbm_shortest_path_select_exec;

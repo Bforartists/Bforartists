@@ -210,9 +210,9 @@ class AddTorus(Operator, object_utils.AddObjectHelper):
 
         layout.separator()
 
-        layout.use_property_split = False
+        layout.use_property_split = False # BFA
         layout.prop(self, "generate_uvs")
-        layout.use_property_split = True
+        layout.use_property_split = True # BFA
         layout.prop(self, "align")
         layout.prop(self, "location")
         layout.prop(self, "rotation")

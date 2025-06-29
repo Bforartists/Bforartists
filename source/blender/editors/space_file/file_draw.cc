@@ -13,7 +13,6 @@
 
 #include <fmt/format.h>
 
-#include "DNA_space_types.h"
 #include "MEM_guardedalloc.h"
 
 #include "AS_asset_representation.hh"
@@ -26,7 +25,6 @@
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
-#include "UI_interface_c.hh"
 
 #ifdef WIN32
 #  include "BLI_winstuff.h"
@@ -377,8 +375,6 @@ static void file_but_enable_drag(uiBut *but,
   {
     const int import_method = ED_fileselect_asset_import_method_get(sfile, file);
     BLI_assert(import_method > -1);
-
-    BLI_assert(ED_fileselect_is_asset_browser(sfile) && file->asset);
     if (import_method > -1) {
       AssetImportSettings import_settings{};
       import_settings.method = eAssetImportMethod(import_method);
@@ -387,9 +383,7 @@ static void file_but_enable_drag(uiBut *but,
            (import_method == ASSET_IMPORT_LINK ?
                 FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK :
                 FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND)) != 0;
-      import_settings.drop_instances_to_origin = (sfile->asset_params->import_flags &
-                                                  FILE_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
-      import_settings.is_from_browser = true; // bfa asset override
+
       UI_but_drag_set_asset(but, file->asset, import_settings, icon, file->preview_icon_id);
     }
   }
@@ -717,7 +711,7 @@ static void file_draw_preview(const FileDirEntry *file,
     GPU_blend(GPU_BLEND_ALPHA);
 
     GPUVertFormat *format = immVertexFormat();
-    uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     float border_color[4] = {1.0f, 1.0f, 1.0f, 0.15f};
     float bgcolor[4];
@@ -911,7 +905,7 @@ static void file_draw_indicator_icons(const FileList *files,
     icon_y = float(tile_draw_rect->ymax) - (20.0f * UI_SCALE_FAC);
     UI_icon_draw_ex(icon_x,
                     icon_y,
-                    ICON_BLENDER,
+                    ICON_CURRENT_FILE,
                     1.0f / UI_SCALE_FAC,
                     0.6f,
                     0.0f,
@@ -971,7 +965,8 @@ static void draw_background(FileLayout *layout, View2D *v2d)
   int i;
   int sy;
 
-  uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(
+      immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   float col_alternating[4];
   UI_GetThemeColor4fv(TH_ROW_ALTERNATE, col_alternating);
@@ -1018,8 +1013,9 @@ static void draw_dividers(FileLayout *layout, View2D *v2d)
     v2[1] = v2d->cur.ymin;
 
     GPUVertFormat *format = immVertexFormat();
-    uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-    uint color = GPU_vertformat_attr_add(format, "color", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+    uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
+    uint color = GPU_vertformat_attr_add(
+        format, "color", blender::gpu::VertAttrType::SFLOAT_32_32_32);
 
     immBindBuiltinProgram(GPU_SHADER_3D_FLAT_COLOR);
     immBegin(GPU_PRIM_LINES, vertex_len);
@@ -1048,7 +1044,8 @@ static void draw_dividers(FileLayout *layout, View2D *v2d)
 
 static void draw_columnheader_background(const FileLayout *layout, const View2D *v2d)
 {
-  uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  uint pos = GPU_vertformat_attr_add(
+      immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformThemeColorShade(TH_BACK, 11);
@@ -1100,7 +1097,7 @@ static void draw_columnheader_columns(const FileSelectParams *params,
     /* Separator line */
     if (column_type != COLUMN_NAME) {
       uint pos = GPU_vertformat_attr_add(
-          immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+          immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
 
       immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
       immUniformThemeColorShade(TH_BACK, -10);
@@ -1116,7 +1113,8 @@ static void draw_columnheader_columns(const FileSelectParams *params,
 
   /* Vertical separator lines line */
   {
-    uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+    uint pos = GPU_vertformat_attr_add(
+        immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     immUniformThemeColorShade(TH_BACK, -10);
     immBegin(GPU_PRIM_LINES, 4);

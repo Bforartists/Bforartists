@@ -251,19 +251,19 @@ class BONE_PT_relations(BoneButtonsPanel, Panel):
             col.prop_search(bone, "parent", arm, "edit_bones")
 
         if ob and pchan:
-            row = col.row()
+            row = col.row() # BFA
             row.use_property_split = False
             row.prop(bone, "use_relative_parent")
             row.prop_decorator(bone, "use_relative_parent")
 
         sub = col.column()
         sub.active = (bone.parent is not None)
-        sub.use_property_split = False
+        sub.use_property_split = False # BFA
         sub.prop(bone, "use_connect")
         sub = col.column()
         sub.active = (not bone.parent or not bone.use_connect)
 
-        row = sub.row()
+        row = sub.row() # BFA
         row.use_property_split = False
         row.prop(bone, "use_local_location")
         row.prop_decorator(bone, "use_local_location")
@@ -271,7 +271,7 @@ class BONE_PT_relations(BoneButtonsPanel, Panel):
         sub = col.column()
         sub.active = (bone.parent is not None)
 
-        row = sub.row()
+        row = sub.row() # BFA
         row.use_property_split = False
         row.prop(bone, "use_inherit_rotation")
         row.prop_decorator(bone, "use_inherit_rotation")
@@ -353,7 +353,7 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
     def draw_bone(self, context, layout):
         bone = context.bone
 
-        row = layout.row()
+        row = layout.row() # BFA
         row.use_property_split = False
         row.prop(bone, "hide", text = "Hide", toggle=False)
         row.prop_decorator(bone, "hide")
@@ -451,6 +451,7 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
             col.prop(pchan, "custom_shape")
 
             sub = col.column()
+            # BFA - Float left
             if bool(pchan and pchan.custom_shape):
                 sub.separator()
 
@@ -625,7 +626,7 @@ class BONE_PT_deform(BoneButtonsPanel, Panel):
         col.prop(bone, "envelope_distance", text="Envelope Distance")
         col.prop(bone, "envelope_weight", text="Envelope Weight")
 
-        row = layout.row()
+        row = layout.row() # BFA
         row.use_property_split = False
         row.prop(bone, "use_envelope_multiply", text="Envelope Multiply")
         row.prop_decorator(bone, "use_envelope_multiply")

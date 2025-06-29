@@ -34,7 +34,7 @@ const EnumPropertyItem rna_enum_id_type_items[] = {
     {ID_CA, "CAMERA", ICON_CAMERA_DATA, "Camera", ""},
     {ID_GR, "COLLECTION", ICON_OUTLINER_COLLECTION, "Collection", ""},
     {ID_CU_LEGACY, "CURVE", ICON_CURVE_DATA, "Curve", ""},
-    {ID_CV, "CURVES", ICON_CURVE_DATA, "Curves", ""},
+    {ID_CV, "CURVES", ICON_CURVE_DATA, "Curves", ""}, /* BFA */
     {ID_VF, "FONT", ICON_FONT_DATA, "Font", ""},
     {ID_GD_LEGACY, "GREASEPENCIL", ICON_GREASEPENCIL, "Grease Pencil", ""},
     {ID_GP, "GREASEPENCIL_V3", ICON_GREASEPENCIL, "Grease Pencil v3", ""},
@@ -137,7 +137,7 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
      "Show Collection data-blocks"},
     {FILTER_ID_CV,
      "filter_curves",
-     ICON_CURVE_DATA,
+     ICON_CURVE_DATA, /* BFA */
      "Hair Curves",
      "Show/hide Curves data-blocks"},
     {FILTER_ID_IM, "filter_image", ICON_IMAGE_DATA, "Images", "Show Image data-blocks"},
@@ -191,7 +191,7 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
     {FILTER_ID_TXT, "filter_text", ICON_TEXT, "Texts", "Show Text data-blocks"},
     {FILTER_ID_VF, "filter_font", ICON_FONT_DATA, "Fonts", "Show Font data-blocks"},
     {FILTER_ID_VO, "filter_volume", ICON_VOLUME_DATA, "Volumes", "Show/hide Volume data-blocks"},
-    {FILTER_ID_WO, "filter_world", ICON_WORLD, "Worlds", "Show World data-blocks"}, /* BFA - Change to World icon to match Properties Panel */
+    {FILTER_ID_WO, "filter_world", ICON_WORLD, "Worlds", "Show World data"}, /* BFA - Change to World icon to match Properties Panel */
     {FILTER_ID_WS,
      "filter_work_space",
      ICON_WORKSPACE,
@@ -1537,6 +1537,13 @@ static void rna_Library_version_get(PointerRNA *ptr, int *value)
   value[2] = lib->runtime->subversionfile;
 }
 
+static PointerRNA rna_Library_parent_get(PointerRNA *ptr)
+{
+  Library *lib = ptr->data_as<Library>();
+  Library *parent = lib->runtime->parent;
+  return RNA_id_pointer_create(reinterpret_cast<ID *>(parent));
+}
+
 static void rna_Library_reload(Library *lib, bContext *C, ReportList *reports)
 {
 #  ifdef WITH_PYTHON
@@ -1676,13 +1683,13 @@ static void rna_def_ID_materials(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "append", "rna_IDMaterials_append_id");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Add a new material to the data");
+  RNA_def_function_ui_description(func, "Add a new material to the data"); /* BFA */
   parm = RNA_def_pointer(func, "material", "Material", "", "Material to add");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 
   func = RNA_def_function(srna, "pop", "rna_IDMaterials_pop_id");
   RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Remove a material from the data");
+  RNA_def_function_ui_description(func, "Remove a material from the data"); /* BFA */
   parm = RNA_def_int(
       func, "index", -1, -MAXMAT, MAXMAT, "", "Index of material to remove", 0, MAXMAT);
   parm = RNA_def_pointer(func, "material", "Material", "", "Material to remove");
@@ -1690,7 +1697,7 @@ static void rna_def_ID_materials(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "clear", "rna_IDMaterials_clear_id");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Remove all materials from the data");
+  RNA_def_function_ui_description(func, "Remove all materials from the data"); /* BFA */
 }
 
 static void rna_def_image_preview(BlenderRNA *brna)
@@ -2616,7 +2623,7 @@ static void rna_def_library(BlenderRNA *brna)
   RNA_def_property_string_funcs(prop, nullptr, nullptr, "rna_Library_filepath_set");
 
   prop = RNA_def_property(srna, "parent", PROP_POINTER, PROP_NONE);
-  RNA_def_property_pointer_sdna(prop, nullptr, "runtime->parent");
+  RNA_def_property_pointer_funcs(prop, "rna_Library_parent_get", nullptr, nullptr, nullptr);
   RNA_def_property_struct_type(prop, "Library");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_ui_text(prop, "Parent", "");
