@@ -1585,7 +1585,7 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
   /* end bfa */ 
 
   RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
-  RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET || show_asset_option)); // bfa addded show_asset_option for displaying linked
+  RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET || show_asset_option)); // bfa added show_asset_option for displaying linked
 }
 
 static void node_id_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)

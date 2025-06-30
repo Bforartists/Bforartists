@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
-  ../asset
+  # bfa added asset
+  ../asset 
   ../include
   ../io
   ../../compositor
