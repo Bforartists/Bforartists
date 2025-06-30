@@ -1567,7 +1567,7 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
         use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
       }
     } else {
-      use_override = eAssetImportMethod(asset_drag->import_settings.import_method) == ASSET_IMPORT_LINK_OVERRIDE;
+      use_override = eAssetImportMethod(asset_drag->import_settings.method) == ASSET_IMPORT_LINK_OVERRIDE;
     }
     id = WM_drag_asset_id_import(C, asset_drag, 0);
     if (use_override) {  
