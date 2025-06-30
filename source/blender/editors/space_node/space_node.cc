@@ -1549,33 +1549,40 @@ static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
     return;
   }
 
-  wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
-  if (!asset_drag) {
-    return;
-  }
+  ID *id;
+  bool show_asset_option = false;
+  // Do asset drag for asset then ID 
+  if (ELEM(drag->type, WM_DRAG_ASSET)) {
+    wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
+    if (!asset_drag) {
+      return;
+    }
 
-  bool use_override = false;
-  if (!asset_drag->import_settings.is_from_browser) {
-    AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
-    if (active_shelf) {
-      eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
-      asset_drag->import_settings.method = import_method_prop;
-      asset_drag->import_settings.use_instance_collections = false;
-      use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
+    bool use_override = false;
+    if (!asset_drag->import_settings.is_from_browser) {
+      AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
+      if (active_shelf) {
+        eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
+        asset_drag->import_settings.method = import_method_prop;
+        use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
+      }
+    } else {
+      use_override = eAssetImportMethod(asset_drag->import_settings.import_method) == ASSET_IMPORT_LINK_OVERRIDE;
     }
-  }
-  ID *id = WM_drag_asset_id_import(C, asset_drag, 0);
-  if (use_override) {  
-    ID *owner_id = id; 
-    ID *id_or = id;
-    if (!ELEM(nullptr, owner_id, id_or)) {
-      id = ui_template_id_liboverride_hierarchy_make(
-      C, CTX_data_main(C), owner_id, id_or, nullptr);
+    id = WM_drag_asset_id_import(C, asset_drag, 0);
+    if (use_override) {  
+      ID *owner_id = id; 
+      ID *id_or = id;
+      if (!ELEM(nullptr, owner_id, id_or)) {
+        id = ui_template_id_liboverride_hierarchy_make(
+        C, CTX_data_main(C), owner_id, id_or, nullptr);
+      }
     }
+    show_asset_option = asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK;
+  } else {
+    id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0); // original drag
   }
-  bool show_asset_option = asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE || asset_drag->import_settings.method == ASSET_IMPORT_LINK;
   /* end bfa */ 
-  // ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0); 
 
   RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
   RNA_boolean_set(drop->ptr, "show_datablock_in_node", (drag->type != WM_DRAG_ASSET || show_asset_option)); // bfa addded show_asset_option for displaying linked
