@@ -36,7 +36,7 @@ class SPREADSHEET_HT_header(bpy.types.Header):
         sub.active = self._selection_filter_available(space)
         sub.prop(space, "show_only_selected", text="")
         row.prop(space, "use_filter", toggle=True, icon='FILTER', icon_only=True)
-        row.prop(space, "show_internal_attributes", toggle=True, icon='INFO', icon_only=True) # bfa - moved from view menu, temp icon
+        row.prop(space, "show_internal_attributes", toggle=True, icon='NODE_ATTRIBUTE', icon_only=True) # bfa - moved from view menu, temp icon
 
     @staticmethod
     def _selection_filter_available(space):
