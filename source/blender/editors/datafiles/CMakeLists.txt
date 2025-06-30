@@ -1003,6 +1003,7 @@ if(WITH_BLENDER)
       mask_slice_new
       mat_sphere_sky
       matrix_determinant
+      match_string
       matcloth
       matcube
       material
