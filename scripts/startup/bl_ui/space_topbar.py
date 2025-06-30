@@ -813,6 +813,11 @@ class TOPBAR_MT_window(Menu):
 
         layout.operator("wm.window_new", icon="NEW_WINDOW")
         layout.operator("wm.window_new_main", icon="NEW_WINDOW_MAIN")
+        layout.operator("wm.window_close", icon="WINDOW_CLOSE") # BFA - added close window operator and icon
+
+        layout.separator()
+
+        layout.operator("wm.window_fullscreen_toggle", icon='FULLSCREEN_ENTER')
 
         layout.separator()
 
