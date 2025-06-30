@@ -1635,7 +1635,7 @@ class VIEW3D_MT_uv_map_clear_seam(bpy.types.Operator):
     bl_idname = (
         "mesh.clear_seam"  # unique identifier for buttons and menu items to reference.
     )
-    bl_label = "Clear seam"  # display name in the interface.
+    bl_label = "Clear Seam"  # display name in the interface.
     bl_options = {"REGISTER", "UNDO"}  # enable undo for the operator.
 
     def execute(
@@ -1878,7 +1878,7 @@ class VIEW3D_MT_view_local(Menu):
 
 # bfa menu
 class VIEW3D_MT_view_pie_menus(Menu):
-    bl_label = "Pie menus"
+    bl_label = "Pie Menus"
 
     def draw(self, _context):
         layout = self.layout

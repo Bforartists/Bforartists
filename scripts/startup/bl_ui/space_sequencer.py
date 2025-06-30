@@ -544,7 +544,7 @@ class SEQUENCER_MT_proxy(Menu):
 
 # BFA menu
 class SEQUENCER_MT_view_pie_menus(Menu):
-    bl_label = "Pie menus"
+    bl_label = "Pie Menus"
 
     def draw(self, context):
         layout = self.layout

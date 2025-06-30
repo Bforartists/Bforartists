@@ -455,7 +455,7 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("text.jump", text="Go to line", icon="GOTO")
+        layout.operator("text.jump", text="Go to Line", icon="GOTO")
         layout.operator("text.start_find", text="Find", icon="ZOOM_SET")
         layout.operator("text.find_set_selected", icon="ZOOM_SET")
 
