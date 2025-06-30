@@ -893,7 +893,7 @@ void WM_drag_add_asset_list_item(wmDrag *drag,
     import_settings.method = ASSET_IMPORT_APPEND;
     import_settings.use_instance_collections = false;
     import_settings.drop_instances_to_origin = false; /* BFA */
-    import_settings.is_from_browser = false; /* BFA - asset shelf */
+    import_settings.is_from_browser = true; /* BFA - asset shelf */
 
     drag_asset->asset_data.external_info = WM_drag_create_asset_data(asset, import_settings);
   }

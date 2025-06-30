@@ -502,9 +502,7 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   asset_drag->import_settings.use_instance_collections = false;
 
   /* start bfa asset shelf props*/
-  bool use_instance = asset_drag->import_settings.use_instance_collections;
-  bool use_override = false;
-  bool drop_instances_to_origin = asset_drag->import_settings.drop_instances_to_origin;
+  bool use_instance, use_override, drop_instances_to_origin;
 
   // use is_from_browser to differentiate between asset browser and asset shelf drag.
   if (!asset_drag->import_settings.is_from_browser) {
@@ -523,8 +521,8 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
       use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
     }
   } else {
-    asset_drag->import_settings.use_instance_collections = use_instance_collections;
-    asset_drag->import_settings.drop_instances_to_origin = drop_instances_to_origin;
+    use_instance = use_instance_collections;
+    drop_instances_to_origin = asset_drag->import_settings.drop_instances_to_origin;
     use_override = asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE;
   }
 
