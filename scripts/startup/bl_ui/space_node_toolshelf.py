@@ -10,9 +10,14 @@ from nodeitems_builtins import node_tree_group_type
 
 class NodePanel:
     @staticmethod
-    def draw_text_button(layout, node=None, operator="node.add_node", text="", icon='NONE', settings=None, pad=0):
+    def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, pad=0):
         if text != "" and pad > 0:
             text = " " + text.strip().ljust(pad)
+
+        # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
+        if icon is None and operator == "node.add_node":
+            bl_rna = bpy.types.Node.bl_rna_get_subclass(node)
+            icon = getattr(bl_rna, "icon", "NONE")
         
         props = layout.operator(operator, text=text, icon=icon)
         props.use_transform = True
@@ -27,7 +32,12 @@ class NodePanel:
                 ops.value = value
 
     @staticmethod
-    def draw_icon_button(layout, node=None, operator="node.add_node", icon='NONE', settings=None):
+    def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None):
+        # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
+        if icon is None and operator == "node.add_node":
+            bl_rna = bpy.types.Node.bl_rna_get_subclass(node)
+            icon = getattr(bl_rna, "icon", "NONE")
+            
         props = layout.operator(operator, text="", icon=icon)
         props.use_transform = True
 
@@ -203,38 +213,38 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeAmbientOcclusion", text="Ambient Occlusion", icon="NODE_AMBIENT_OCCLUSION")
-            self.draw_text_button(col, "ShaderNodeAttribute", text="Attribute", icon="NODE_ATTRIBUTE")
-            self.draw_text_button(col, "ShaderNodeBevel", text="Bevel", icon="BEVEL")
-            self.draw_text_button(col, "ShaderNodeCameraData", text="Camera Data", icon="CAMERA_DATA")
-            self.draw_text_button(col, "ShaderNodeVertexColor", text="Color Attribute", icon="NODE_VERTEX_COLOR")
-            self.draw_text_button(col, "ShaderNodeFresnel", text="Fresnel", icon="NODE_FRESNEL")
+            self.draw_text_button(col, "ShaderNodeAmbientOcclusion", text="Ambient Occlusion")
+            self.draw_text_button(col, "ShaderNodeAttribute", text="Attribute")
+            self.draw_text_button(col, "ShaderNodeBevel", text="Bevel")
+            self.draw_text_button(col, "ShaderNodeCameraData", text="Camera Data")
+            self.draw_text_button(col, "ShaderNodeVertexColor", text="Color Attribute")
+            self.draw_text_button(col, "ShaderNodeFresnel", text="Fresnel")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeNewGeometry", text="Geometry", icon="NODE_GEOMETRY")
-            self.draw_text_button(col, "ShaderNodeHairInfo", text="Curves Info", icon="NODE_HAIRINFO")
-            self.draw_text_button(col, "ShaderNodeLayerWeight", text="Layer Weight", icon="NODE_LAYERWEIGHT")
-            self.draw_text_button(col, "ShaderNodeLightPath", text="Light Path", icon="NODE_LIGHTPATH")
-            self.draw_text_button(col, "ShaderNodeObjectInfo", text="Object Info", icon="NODE_OBJECTINFO")
+            self.draw_text_button(col, "ShaderNodeNewGeometry", text="Geometry")
+            self.draw_text_button(col, "ShaderNodeHairInfo", text="Curves Info")
+            self.draw_text_button(col, "ShaderNodeLayerWeight", text="Layer Weight")
+            self.draw_text_button(col, "ShaderNodeLightPath", text="Light Path")
+            self.draw_text_button(col, "ShaderNodeObjectInfo", text="Object Info")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeParticleInfo", text="Particle Info", icon="NODE_PARTICLEINFO")
-            self.draw_text_button(col, "ShaderNodePointInfo", text="Point Info", icon="POINT_INFO")
-            self.draw_text_button(col, "ShaderNodeRGB", text="RGB", icon="NODE_RGB")
-            self.draw_text_button(col, "ShaderNodeTangent", text="Tangent", icon="NODE_TANGENT")
-            self.draw_text_button(col, "ShaderNodeTexCoord", text="Texture Coordinate", icon="NODE_TEXCOORDINATE")
+            self.draw_text_button(col, "ShaderNodeParticleInfo", text="Particle Info")
+            self.draw_text_button(col, "ShaderNodePointInfo", text="Point Info")
+            self.draw_text_button(col, "ShaderNodeRGB", text="RGB")
+            self.draw_text_button(col, "ShaderNodeTangent", text="Tangent")
+            self.draw_text_button(col, "ShaderNodeTexCoord", text="Texture Coordinate")
 
             if context.space_data.shader_type == 'LINESTYLE':
-                self.draw_text_button(col, "ShaderNodeUVALongStroke", text="UV along stroke", icon="NODE_UVALONGSTROKE")
+                self.draw_text_button(col, "ShaderNodeUVALongStroke", text="UV along stroke")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeUVMap", text="UV Map", icon="GROUP_UVS")
-            self.draw_text_button(col, "ShaderNodeValue", text="Value", icon="NODE_VALUE")
-            self.draw_text_button(col, "ShaderNodeVolumeInfo", text="Volume Info", icon="NODE_VOLUME_INFO")
-            self.draw_text_button(col, "ShaderNodeWireframe", text="Wireframe", icon="NODE_WIREFRAME")
+            self.draw_text_button(col, "ShaderNodeUVMap", text="UV Map")
+            self.draw_text_button(col, "ShaderNodeValue", text="Value")
+            self.draw_text_button(col, "ShaderNodeVolumeInfo", text="Volume Info")
+            self.draw_text_button(col, "ShaderNodeWireframe", text="Wireframe")
 
         #### Icon Buttons
 
@@ -242,29 +252,29 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeAmbientOcclusion", icon="NODE_AMBIENT_OCCLUSION")
-            self.draw_icon_button(flow, "ShaderNodeAttribute", icon="NODE_ATTRIBUTE")
-            self.draw_icon_button(flow, "ShaderNodeBevel", icon="BEVEL")
-            self.draw_icon_button(flow, "ShaderNodeCameraData", icon="CAMERA_DATA")
-            self.draw_icon_button(flow, "ShaderNodeVertexColor", icon="NODE_VERTEX_COLOR")
-            self.draw_icon_button(flow, "ShaderNodeFresnel", icon="NODE_FRESNEL")
-            self.draw_icon_button(flow, "ShaderNodeNewGeometry", icon="NODE_GEOMETRY")
-            self.draw_icon_button(flow, "ShaderNodeHairInfo", icon="NODE_HAIRINFO")
-            self.draw_icon_button(flow, "ShaderNodeLayerWeight", icon="NODE_LAYERWEIGHT")
-            self.draw_icon_button(flow, "ShaderNodeLightPath", icon="NODE_LIGHTPATH")
-            self.draw_icon_button(flow, "ShaderNodeObjectInfo", icon="NODE_OBJECTINFO")
-            self.draw_icon_button(flow, "ShaderNodeParticleInfo", icon="NODE_PARTICLEINFO")
-            self.draw_icon_button(flow, "ShaderNodePointInfo", icon="POINT_INFO")
-            self.draw_icon_button(flow, "ShaderNodeRGB", icon="NODE_RGB")
-            self.draw_icon_button(flow, "ShaderNodeTangent", icon="NODE_TANGENT")
-            self.draw_icon_button(flow, "ShaderNodeTexCoord", icon="NODE_TEXCOORDINATE")
+            self.draw_icon_button(flow, "ShaderNodeAmbientOcclusion")
+            self.draw_icon_button(flow, "ShaderNodeAttribute")
+            self.draw_icon_button(flow, "ShaderNodeBevel")
+            self.draw_icon_button(flow, "ShaderNodeCameraData")
+            self.draw_icon_button(flow, "ShaderNodeVertexColor")
+            self.draw_icon_button(flow, "ShaderNodeFresnel")
+            self.draw_icon_button(flow, "ShaderNodeNewGeometry")
+            self.draw_icon_button(flow, "ShaderNodeHairInfo")
+            self.draw_icon_button(flow, "ShaderNodeLayerWeight")
+            self.draw_icon_button(flow, "ShaderNodeLightPath")
+            self.draw_icon_button(flow, "ShaderNodeObjectInfo")
+            self.draw_icon_button(flow, "ShaderNodeParticleInfo")
+            self.draw_icon_button(flow, "ShaderNodePointInfo")
+            self.draw_icon_button(flow, "ShaderNodeRGB")
+            self.draw_icon_button(flow, "ShaderNodeTangent")
+            self.draw_icon_button(flow, "ShaderNodeTexCoord")
 
             if context.space_data.shader_type == 'LINESTYLE':
-                self.draw_icon_button(flow, "ShaderNodeUVALongStroke", icon="NODE_UVALONGSTROKE")
-            self.draw_icon_button(flow, "ShaderNodeUVMap", icon="GROUP_UVS")
-            self.draw_icon_button(flow, "ShaderNodeValue", icon="NODE_VALUE")
-            self.draw_icon_button(flow, "ShaderNodeVolumeInfo", icon="NODE_VOLUME_INFO")
-            self.draw_icon_button(flow, "ShaderNodeWireframe", icon="NODE_WIREFRAME")
+                self.draw_icon_button(flow, "ShaderNodeUVALongStroke")
+            self.draw_icon_button(flow, "ShaderNodeUVMap")
+            self.draw_icon_button(flow, "ShaderNodeValue")
+            self.draw_icon_button(flow, "ShaderNodeVolumeInfo")
+            self.draw_icon_button(flow, "ShaderNodeWireframe")
 
 
 #Shader editor , Output panel
@@ -301,18 +311,18 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeOutputAOV", text="AOV Output", icon="NODE_VALUE")
+            self.draw_text_button(col, "ShaderNodeOutputAOV", text="AOV Output")
 
             if context.space_data.shader_type == 'OBJECT':
                 if engine == 'CYCLES':
-                    self.draw_text_button(col, "ShaderNodeOutputLight", text="Light Output", icon="LIGHT")
-                self.draw_text_button(col, "ShaderNodeOutputMaterial", text="Material Output", icon="NODE_MATERIAL")
+                    self.draw_text_button(col, "ShaderNodeOutputLight", text="Light Output")
+                self.draw_text_button(col, "ShaderNodeOutputMaterial", text="Material Output")
 
             elif context.space_data.shader_type == 'WORLD':
-                self.draw_text_button(col, "ShaderNodeOutputWorld", text="World Output", icon="WORLD")
+                self.draw_text_button(col, "ShaderNodeOutputWorld", text="World Output")
 
             elif context.space_data.shader_type == 'LINESTYLE':
-                self.draw_text_button(col, "ShaderNodeOutputLineStyle", text="Line Style Output", icon="NODE_LINESTYLE_OUTPUT")
+                self.draw_text_button(col, "ShaderNodeOutputLineStyle", text="Line Style Output")
 
         #### Image Buttons
 
@@ -320,18 +330,18 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeOutputAOV", icon="NODE_VALUE")
+            self.draw_icon_button(flow, "ShaderNodeOutputAOV")
 
             if context.space_data.shader_type == 'OBJECT':
                 if engine == 'CYCLES':
-                    self.draw_icon_button(flow, "ShaderNodeOutputLight", icon="LIGHT")
-                self.draw_icon_button(flow, "ShaderNodeOutputMaterial", icon="NODE_MATERIAL")
+                    self.draw_icon_button(flow, "ShaderNodeOutputLight")
+                self.draw_icon_button(flow, "ShaderNodeOutputMaterial")
 
             elif context.space_data.shader_type == 'WORLD':
-                self.draw_icon_button(flow, "ShaderNodeOutputWorld", icon="WORLD")
+                self.draw_icon_button(flow, "ShaderNodeOutputWorld")
 
             elif context.space_data.shader_type == 'LINESTYLE':
-                self.draw_icon_button(flow, "ShaderNodeOutputLineStyle", icon="NODE_LINESTYLE_OUTPUT")
+                self.draw_icon_button(flow, "ShaderNodeOutputLineStyle")
 
 
 #Compositor, Add tab, input panel
@@ -362,14 +372,14 @@ class NODES_PT_comp_add_input(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeBokehImage", text="Bokeh Image", icon="NODE_BOKEH_IMAGE")
-            self.draw_text_button(col, "CompositorNodeImage", text="Image", icon="FILE_IMAGE")
-            self.draw_text_button(col, "CompositorNodeMask", text="Mask               ", icon="MOD_MASK")
-            self.draw_text_button(col, "CompositorNodeMovieClip", text="Movie Clip", icon="FILE_MOVIE")
+            self.draw_text_button(col, "CompositorNodeBokehImage", text="Bokeh Image")
+            self.draw_text_button(col, "CompositorNodeImage", text="Image")
+            self.draw_text_button(col, "CompositorNodeMask", text="Mask               ")
+            self.draw_text_button(col, "CompositorNodeMovieClip", text="Movie Clip")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeTexture", text="Texture", icon="TEXTURE")
+            self.draw_text_button(col, "CompositorNodeTexture", text="Texture")
 
 
         #### Image Buttons
@@ -378,13 +388,13 @@ class NODES_PT_comp_add_input(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeBokehImage", icon="NODE_BOKEH_IMAGE")
-            self.draw_icon_button(flow, "CompositorNodeImage", icon="FILE_IMAGE")
-            self.draw_icon_button(flow, "CompositorNodeMask", icon="MOD_MASK")
-            self.draw_icon_button(flow, "CompositorNodeMovieClip", icon="FILE_MOVIE")
-            self.draw_icon_button(flow, "CompositorNodeRGB", icon="NODE_RGB")
-            self.draw_icon_button(flow, "CompositorNodeTexture", icon="TEXTURE")
-            self.draw_icon_button(flow, "CompositorNodeValue", icon="NODE_VALUE")
+            self.draw_icon_button(flow, "CompositorNodeBokehImage")
+            self.draw_icon_button(flow, "CompositorNodeImage")
+            self.draw_icon_button(flow, "CompositorNodeMask")
+            self.draw_icon_button(flow, "CompositorNodeMovieClip")
+            self.draw_icon_button(flow, "CompositorNodeRGB")
+            self.draw_icon_button(flow, "CompositorNodeTexture")
+            self.draw_icon_button(flow, "CompositorNodeValue")
 
 
 #Compositor, Add tab, Constant supbanel
@@ -412,8 +422,8 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeRGB", text="RGB", icon="NODE_RGB")
-            self.draw_text_button(col, "CompositorNodeValue", text="Value", icon="NODE_VALUE")
+            self.draw_text_button(col, "CompositorNodeRGB", text="RGB")
+            self.draw_text_button(col, "CompositorNodeValue", text="Value")
 
         #### Icon Buttons
 
@@ -421,8 +431,8 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeRGB", icon="NODE_RGB")
-            self.draw_icon_button(flow, "CompositorNodeValue", icon="NODE_VALUE")
+            self.draw_icon_button(flow, "CompositorNodeRGB")
+            self.draw_icon_button(flow, "CompositorNodeValue")
 
 
 #Compositor, Add tab, Scene supbanel
@@ -450,9 +460,9 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeRLayers", text=" Render Layers", icon="RENDERLAYERS")
-            self.draw_text_button(col, "CompositorNodeSceneTime", text=" Scene Time", icon="TIME")
-            self.draw_text_button(col, "CompositorNodeTime", text=" Time Curve", icon="NODE_CURVE_TIME")
+            self.draw_text_button(col, "CompositorNodeRLayers", text=" Render Layers")
+            self.draw_text_button(col, "CompositorNodeSceneTime", text=" Scene Time")
+            self.draw_text_button(col, "CompositorNodeTime", text=" Time Curve")
 
         #### Icon Buttons
 
@@ -460,9 +470,9 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeRLayers", icon="RENDERLAYERS")
-            self.draw_icon_button(flow, "CompositorNodeSceneTime", icon="TIME")
-            self.draw_icon_button(flow, "CompositorNodeTime", icon="NODE_CURVE_TIME")
+            self.draw_icon_button(flow, "CompositorNodeRLayers")
+            self.draw_icon_button(flow, "CompositorNodeSceneTime")
+            self.draw_icon_button(flow, "CompositorNodeTime")
 
 
 #Compositor, Add tab, Output Panel
@@ -493,12 +503,12 @@ class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeComposite", text="Composite", icon="NODE_COMPOSITING")
-            self.draw_text_button(col, "CompositorNodeViewer", text="Viewer", icon="NODE_VIEWER")
+            self.draw_text_button(col, "CompositorNodeComposite", text="Composite")
+            self.draw_text_button(col, "CompositorNodeViewer", text="Viewer")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeOutputFile", text="File Output", icon="NODE_FILEOUTPUT")
+            self.draw_text_button(col, "CompositorNodeOutputFile", text="File Output")
 
 
         #### Image Buttons
@@ -507,9 +517,9 @@ class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeComposite", icon="NODE_COMPOSITING")
-            self.draw_icon_button(flow, "CompositorNodeOutputFile", icon="NODE_FILEOUTPUT")
-            self.draw_icon_button(flow, "CompositorNodeViewer", icon="NODE_VIEWER")
+            self.draw_icon_button(flow, "CompositorNodeComposite")
+            self.draw_icon_button(flow, "CompositorNodeOutputFile")
+            self.draw_icon_button(flow, "CompositorNodeViewer")
 
 #Compositor, Add tab, Color Panel
 class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
@@ -539,15 +549,15 @@ class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodePremulKey", text="Alpha Convert", icon="NODE_ALPHACONVERT")
-            self.draw_text_button(col, "CompositorNodeValToRGB", text="Color Ramp", icon="NODE_COLORRAMP")
-            self.draw_text_button(col, "CompositorNodeConvertColorSpace", text="Convert Colorspace", icon="COLOR_SPACE")
-            self.draw_text_button(col, "CompositorNodeSetAlpha", text="Set Alpha", icon="IMAGE_ALPHA")
+            self.draw_text_button(col, "CompositorNodePremulKey", text="Alpha Convert")
+            self.draw_text_button(col, "CompositorNodeValToRGB", text="Color Ramp")
+            self.draw_text_button(col, "CompositorNodeConvertColorSpace", text="Convert Colorspace")
+            self.draw_text_button(col, "CompositorNodeSetAlpha", text="Set Alpha")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeInvert", text="Invert Color", icon="NODE_INVERT")
-            self.draw_text_button(col, "CompositorNodeRGBToBW", text="RGB to BW", icon="NODE_RGBTOBW")
+            self.draw_text_button(col, "CompositorNodeInvert", text="Invert Color")
+            self.draw_text_button(col, "CompositorNodeRGBToBW", text="RGB to BW")
 
 
         #### Image Buttons
@@ -557,12 +567,12 @@ class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            self.draw_icon_button(flow, "CompositorNodePremulKey", icon="NODE_ALPHACONVERT")
-            self.draw_icon_button(flow, "CompositorNodeValToRGB", icon="NODE_COLORRAMP")
-            self.draw_icon_button(flow, "CompositorNodeConvertColorSpace", icon="COLOR_SPACE")
-            self.draw_icon_button(flow, "CompositorNodeSetAlpha", icon="IMAGE_ALPHA")
-            self.draw_icon_button(flow, "CompositorNodeInvert", icon="NODE_INVERT")
-            self.draw_icon_button(flow, "CompositorNodeRGBToBW", icon="NODE_RGBTOBW")
+            self.draw_icon_button(flow, "CompositorNodePremulKey")
+            self.draw_icon_button(flow, "CompositorNodeValToRGB")
+            self.draw_icon_button(flow, "CompositorNodeConvertColorSpace")
+            self.draw_icon_button(flow, "CompositorNodeSetAlpha")
+            self.draw_icon_button(flow, "CompositorNodeInvert")
+            self.draw_icon_button(flow, "CompositorNodeRGBToBW")
 
 
 #Compositor, Add tab, Color, Adjust supbanel
@@ -590,21 +600,21 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeBrightContrast", text=" Bright / Contrast", icon="BRIGHTNESS_CONTRAST")
-            self.draw_text_button(col, "CompositorNodeColorBalance", text="Color Balance", icon="NODE_COLORBALANCE")
-            self.draw_text_button(col, "CompositorNodeColorCorrection", text="Color Correction", icon="NODE_COLORCORRECTION")
+            self.draw_text_button(col, "CompositorNodeBrightContrast", text=" Bright / Contrast")
+            self.draw_text_button(col, "CompositorNodeColorBalance", text="Color Balance")
+            self.draw_text_button(col, "CompositorNodeColorCorrection", text="Color Correction")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeExposure", text="Exposure", icon="EXPOSURE")
-            self.draw_text_button(col, "CompositorNodeGamma", text="Gamma", icon="NODE_GAMMA")
+            self.draw_text_button(col, "CompositorNodeExposure", text="Exposure")
+            self.draw_text_button(col, "CompositorNodeGamma", text="Gamma")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeHueCorrect", text="Hue Correct", icon="NODE_HUESATURATION")
-            self.draw_text_button(col, "CompositorNodeHueSat", text=" Hue/Saturation/Value", icon="NODE_HUESATURATION")
-            self.draw_text_button(col, "CompositorNodeCurveRGB", text="RGB Curves", icon="NODE_RGBCURVE")
-            self.draw_text_button(col, "CompositorNodeTonemap", text="Tonemap", icon="NODE_TONEMAP")
+            self.draw_text_button(col, "CompositorNodeHueCorrect", text="Hue Correct")
+            self.draw_text_button(col, "CompositorNodeHueSat", text=" Hue/Saturation/Value")
+            self.draw_text_button(col, "CompositorNodeCurveRGB", text="RGB Curves")
+            self.draw_text_button(col, "CompositorNodeTonemap", text="Tonemap")
 
 
 
@@ -614,15 +624,15 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeBrightContrast", icon="BRIGHTNESS_CONTRAST")
-            self.draw_icon_button(flow, "CompositorNodeColorBalance", icon="NODE_COLORBALANCE")
-            self.draw_icon_button(flow, "CompositorNodeColorCorrection", icon="NODE_COLORCORRECTION")
-            self.draw_icon_button(flow, "CompositorNodeExposure", icon="EXPOSURE")
-            self.draw_icon_button(flow, "CompositorNodeGamma", icon="NODE_GAMMA")
-            self.draw_icon_button(flow, "CompositorNodeHueCorrect", icon="NODE_HUESATURATION")
-            self.draw_icon_button(flow, "CompositorNodeHueSat", icon="NODE_HUESATURATION")
-            self.draw_icon_button(flow, "CompositorNodeCurveRGB", icon="NODE_RGBCURVE")
-            self.draw_icon_button(flow, "CompositorNodeTonemap", icon="NODE_TONEMAP")
+            self.draw_icon_button(flow, "CompositorNodeBrightContrast")
+            self.draw_icon_button(flow, "CompositorNodeColorBalance")
+            self.draw_icon_button(flow, "CompositorNodeColorCorrection")
+            self.draw_icon_button(flow, "CompositorNodeExposure")
+            self.draw_icon_button(flow, "CompositorNodeGamma")
+            self.draw_icon_button(flow, "CompositorNodeHueCorrect")
+            self.draw_icon_button(flow, "CompositorNodeHueSat")
+            self.draw_icon_button(flow, "CompositorNodeCurveRGB")
+            self.draw_icon_button(flow, "CompositorNodeTonemap")
 
 
 #Compositor, Add tab, Color, Mix supbanel
@@ -650,17 +660,17 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeAlphaOver", text="Alpha Over", icon="IMAGE_ALPHA")
+            self.draw_text_button(col, "CompositorNodeAlphaOver", text="Alpha Over")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeCombineColor", text="Combine Color", icon="COMBINE_COLOR")
-            self.draw_text_button(col, "CompositorNodeSeparateColor", text="Separate Color", icon="SEPARATE_COLOR")
+            self.draw_text_button(col, "CompositorNodeCombineColor", text="Combine Color")
+            self.draw_text_button(col, "CompositorNodeSeparateColor", text="Separate Color")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeMixRGB", text="Mix Color", icon="NODE_MIXRGB")
-            self.draw_text_button(col, "CompositorNodeZcombine", text="Z Combine", icon="NODE_ZCOMBINE")
+            self.draw_text_button(col, "CompositorNodeMixRGB", text="Mix Color")
+            self.draw_text_button(col, "CompositorNodeZcombine", text="Z Combine")
 
 
         #### Icon Buttons
@@ -669,11 +679,11 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeAlphaOver", icon="IMAGE_ALPHA")
-            self.draw_icon_button(flow, "CompositorNodeCombineColor", icon="COMBINE_COLOR")
-            self.draw_icon_button(flow, "CompositorNodeSeparateColor", icon="SEPARATE_COLOR")
-            self.draw_icon_button(flow, "CompositorNodeMixRGB", icon="NODE_MIXRGB")
-            self.draw_icon_button(flow, "CompositorNodeZcombine", icon="NODE_ZCOMBINE")
+            self.draw_icon_button(flow, "CompositorNodeAlphaOver")
+            self.draw_icon_button(flow, "CompositorNodeCombineColor")
+            self.draw_icon_button(flow, "CompositorNodeSeparateColor")
+            self.draw_icon_button(flow, "CompositorNodeMixRGB")
+            self.draw_icon_button(flow, "CompositorNodeZcombine")
 
 
 #Compositor, Add tab, Filter Panel
@@ -702,26 +712,26 @@ class NODES_PT_comp_add_filter(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeAntiAliasing", text="Anti Aliasing", icon="ANTIALIASED")
-            self.draw_text_button(col, "CompositorNodeDenoise", text="Denoise", icon="NODE_DENOISE")
-            self.draw_text_button(col, "CompositorNodeDespeckle", text="Despeckle", icon="NODE_DESPECKLE")
+            self.draw_text_button(col, "CompositorNodeAntiAliasing", text="Anti Aliasing")
+            self.draw_text_button(col, "CompositorNodeDenoise", text="Denoise")
+            self.draw_text_button(col, "CompositorNodeDespeckle", text="Despeckle")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDilateErode", text=" Dilate / Erode    ", icon="NODE_ERODE")
-            self.draw_text_button(col, "CompositorNodeInpaint", text="Inpaint", icon="NODE_IMPAINT")
+            self.draw_text_button(col, "CompositorNodeDilateErode", text=" Dilate / Erode    ")
+            self.draw_text_button(col, "CompositorNodeInpaint", text="Inpaint")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeFilter", text="Filter", icon="FILTER")
-            self.draw_text_button(col, "CompositorNodeGlare", text="Glare", icon="NODE_GLARE")
-            self.draw_text_button(col, "CompositorNodeKuwahara", text="Kuwahara", icon="KUWAHARA")
-            self.draw_text_button(col, "CompositorNodePixelate", text="Pixelate", icon="NODE_PIXELATED")
+            self.draw_text_button(col, "CompositorNodeFilter", text="Filter")
+            self.draw_text_button(col, "CompositorNodeGlare", text="Glare")
+            self.draw_text_button(col, "CompositorNodeKuwahara", text="Kuwahara")
+            self.draw_text_button(col, "CompositorNodePixelate", text="Pixelate")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodePosterize", text="Posterize", icon="POSTERIZE")
-            self.draw_text_button(col, "CompositorNodeSunBeams", text="Sunbeams", icon="NODE_SUNBEAMS")
+            self.draw_text_button(col, "CompositorNodePosterize", text="Posterize")
+            self.draw_text_button(col, "CompositorNodeSunBeams", text="Sunbeams")
 
 
 
@@ -731,17 +741,17 @@ class NODES_PT_comp_add_filter(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeAntiAliasing", icon="ANTIALIASED")
-            self.draw_icon_button(flow, "CompositorNodeDenoise", icon="NODE_DENOISE")
-            self.draw_icon_button(flow, "CompositorNodeDespeckle", icon="NODE_DESPECKLE")
-            self.draw_icon_button(flow, "CompositorNodeDilateErode", icon="NODE_ERODE")
-            self.draw_icon_button(flow, "CompositorNodeInpaint", icon="NODE_IMPAINT")
-            self.draw_icon_button(flow, "CompositorNodeFilter", icon="FILTER")
-            self.draw_icon_button(flow, "CompositorNodeGlare", icon="NODE_GLARE")
-            self.draw_icon_button(flow, "CompositorNodeKuwahara", icon="KUWAHARA")
-            self.draw_icon_button(flow, "CompositorNodePixelate", icon="NODE_PIXELATED")
-            self.draw_icon_button(flow, "CompositorNodePosterize", icon="POSTERIZE")
-            self.draw_icon_button(flow, "CompositorNodeSunBeams", icon="NODE_SUNBEAMS")
+            self.draw_icon_button(flow, "CompositorNodeAntiAliasing")
+            self.draw_icon_button(flow, "CompositorNodeDenoise")
+            self.draw_icon_button(flow, "CompositorNodeDespeckle")
+            self.draw_icon_button(flow, "CompositorNodeDilateErode")
+            self.draw_icon_button(flow, "CompositorNodeInpaint")
+            self.draw_icon_button(flow, "CompositorNodeFilter")
+            self.draw_icon_button(flow, "CompositorNodeGlare")
+            self.draw_icon_button(flow, "CompositorNodeKuwahara")
+            self.draw_icon_button(flow, "CompositorNodePixelate")
+            self.draw_icon_button(flow, "CompositorNodePosterize")
+            self.draw_icon_button(flow, "CompositorNodeSunBeams")
 
 
 #Compositor, Add tab, Filter, Blur supbanel
@@ -769,15 +779,15 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeBilateralblur", text="Bilateral Blur", icon="NODE_BILATERAL_BLUR")
-            self.draw_text_button(col, "CompositorNodeBlur", text="Blur", icon="NODE_BLUR")
-            self.draw_text_button(col, "CompositorNodeBokehBlur", text="Bokeh Blur", icon="NODE_BOKEH_BLUR")
-            self.draw_text_button(col, "CompositorNodeDefocus", text="Defocus", icon="NODE_DEFOCUS")
+            self.draw_text_button(col, "CompositorNodeBilateralblur", text="Bilateral Blur")
+            self.draw_text_button(col, "CompositorNodeBlur", text="Blur")
+            self.draw_text_button(col, "CompositorNodeBokehBlur", text="Bokeh Blur")
+            self.draw_text_button(col, "CompositorNodeDefocus", text="Defocus")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDBlur", text="Directional Blur", icon="NODE_DIRECITONALBLUR")
-            self.draw_text_button(col, "CompositorNodeVecBlur", text="Vector Blur", icon="NODE_VECTOR_BLUR")
+            self.draw_text_button(col, "CompositorNodeDBlur", text="Directional Blur")
+            self.draw_text_button(col, "CompositorNodeVecBlur", text="Vector Blur")
 
         #### Icon Buttons
 
@@ -785,12 +795,12 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeBilateralblur", icon="NODE_BILATERAL_BLUR")
-            self.draw_icon_button(flow, "CompositorNodeBlur", icon="NODE_BLUR")
-            self.draw_icon_button(flow, "CompositorNodeBokehBlur", icon="NODE_BOKEH_BLUR")
-            self.draw_icon_button(flow, "CompositorNodeDefocus", icon="NODE_DEFOCUS")
-            self.draw_icon_button(flow, "CompositorNodeDBlur", icon="NODE_DIRECITONALBLUR")
-            self.draw_icon_button(flow, "CompositorNodeVecBlur", icon="NODE_VECTOR_BLUR")
+            self.draw_icon_button(flow, "CompositorNodeBilateralblur")
+            self.draw_icon_button(flow, "CompositorNodeBlur")
+            self.draw_icon_button(flow, "CompositorNodeBokehBlur")
+            self.draw_icon_button(flow, "CompositorNodeDefocus")
+            self.draw_icon_button(flow, "CompositorNodeDBlur")
+            self.draw_icon_button(flow, "CompositorNodeVecBlur")
 
 
 #Compositor, Add tab, Keying Panel
@@ -821,21 +831,21 @@ class NODES_PT_comp_add_keying(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeChannelMatte", text="Channel Key", icon="NODE_CHANNEL")
-            self.draw_text_button(col, "CompositorNodeChromaMatte", text="Chroma Key", icon="NODE_CHROMA")
-            self.draw_text_button(col, "CompositorNodeColorMatte", text="Color Key", icon="COLOR")
-            self.draw_text_button(col, "CompositorNodeColorSpill", text="Color Spill", icon="NODE_SPILL")
+            self.draw_text_button(col, "CompositorNodeChannelMatte", text="Channel Key")
+            self.draw_text_button(col, "CompositorNodeChromaMatte", text="Chroma Key")
+            self.draw_text_button(col, "CompositorNodeColorMatte", text="Color Key")
+            self.draw_text_button(col, "CompositorNodeColorSpill", text="Color Spill")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDiffMatte", text="Difference Key", icon="SELECT_DIFFERENCE")
-            self.draw_text_button(col, "CompositorNodeDistanceMatte", text="Distance Key", icon="DRIVER_DISTANCE")
-            self.draw_text_button(col, "CompositorNodeKeying", text="Keying", icon="NODE_KEYING")
-            self.draw_text_button(col, "CompositorNodeKeyingScreen", text="Keying Screen", icon="NODE_KEYINGSCREEN")
+            self.draw_text_button(col, "CompositorNodeDiffMatte", text="Difference Key")
+            self.draw_text_button(col, "CompositorNodeDistanceMatte", text="Distance Key")
+            self.draw_text_button(col, "CompositorNodeKeying", text="Keying")
+            self.draw_text_button(col, "CompositorNodeKeyingScreen", text="Keying Screen")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeLumaMatte", text="Luminance Key", icon="NODE_LUMINANCE")
+            self.draw_text_button(col, "CompositorNodeLumaMatte", text="Luminance Key")
 
         #### Icon Buttons
 
@@ -843,15 +853,15 @@ class NODES_PT_comp_add_keying(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeChannelMatte", icon="NODE_CHANNEL")
-            self.draw_icon_button(flow, "CompositorNodeChromaMatte", icon="NODE_CHROMA")
-            self.draw_icon_button(flow, "CompositorNodeColorMatte", icon="COLOR")
-            self.draw_icon_button(flow, "CompositorNodeColorSpill", icon="NODE_SPILL")
-            self.draw_icon_button(flow, "CompositorNodeDiffMatte", icon="SELECT_DIFFERENCE")
-            self.draw_icon_button(flow, "CompositorNodeDistanceMatte", icon="DRIVER_DISTANCE")
-            self.draw_icon_button(flow, "CompositorNodeKeying", icon="NODE_KEYING")
-            self.draw_icon_button(flow, "CompositorNodeKeyingScreen", icon="NODE_KEYINGSCREEN")
-            self.draw_icon_button(flow, "CompositorNodeLumaMatte", icon="NODE_LUMINANCE")
+            self.draw_icon_button(flow, "CompositorNodeChannelMatte")
+            self.draw_icon_button(flow, "CompositorNodeChromaMatte")
+            self.draw_icon_button(flow, "CompositorNodeColorMatte")
+            self.draw_icon_button(flow, "CompositorNodeColorSpill")
+            self.draw_icon_button(flow, "CompositorNodeDiffMatte")
+            self.draw_icon_button(flow, "CompositorNodeDistanceMatte")
+            self.draw_icon_button(flow, "CompositorNodeKeying")
+            self.draw_icon_button(flow, "CompositorNodeKeyingScreen")
+            self.draw_icon_button(flow, "CompositorNodeLumaMatte")
 
 
 #Compositor, Add tab, Mask Panel
@@ -882,18 +892,18 @@ class NODES_PT_comp_add_mask(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeCryptomatteV2", text="Cryptomatte", icon="CRYPTOMATTE")
-            self.draw_text_button(col, "CompositorNodeCryptomatte", text=" Cryptomatte (Legacy)", icon="CRYPTOMATTE")
+            self.draw_text_button(col, "CompositorNodeCryptomatteV2", text="Cryptomatte")
+            self.draw_text_button(col, "CompositorNodeCryptomatte", text=" Cryptomatte (Legacy)")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeBoxMask", text="Box Mask", icon="NODE_BOXMASK")
-            self.draw_text_button(col, "CompositorNodeEllipseMask", text="Ellipse Mask", icon="NODE_ELLIPSEMASK")
+            self.draw_text_button(col, "CompositorNodeBoxMask", text="Box Mask")
+            self.draw_text_button(col, "CompositorNodeEllipseMask", text="Ellipse Mask")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDoubleEdgeMask", text="Double Edge Mask", icon="NODE_DOUBLEEDGEMASK")
-            self.draw_text_button(col, "CompositorNodeIDMask", text="ID Mask", icon="MOD_MASK")
+            self.draw_text_button(col, "CompositorNodeDoubleEdgeMask", text="Double Edge Mask")
+            self.draw_text_button(col, "CompositorNodeIDMask", text="ID Mask")
 
         #### Icon Buttons
 
@@ -901,12 +911,12 @@ class NODES_PT_comp_add_mask(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeCryptomatte", icon="CRYPTOMATTE")
-            self.draw_icon_button(flow, "CompositorNodeCryptomatteV2", icon="CRYPTOMATTE")
-            self.draw_icon_button(flow, "CompositorNodeBoxMask", icon="NODE_BOXMASK")
-            self.draw_icon_button(flow, "CompositorNodeEllipseMask", icon="NODE_ELLIPSEMASK")
-            self.draw_icon_button(flow, "CompositorNodeDoubleEdgeMask", icon="NODE_DOUBLEEDGEMASK")
-            self.draw_icon_button(flow, "CompositorNodeIDMask", icon="MOD_MASK")
+            self.draw_icon_button(flow, "CompositorNodeCryptomatte")
+            self.draw_icon_button(flow, "CompositorNodeCryptomatteV2")
+            self.draw_icon_button(flow, "CompositorNodeBoxMask")
+            self.draw_icon_button(flow, "CompositorNodeEllipseMask")
+            self.draw_icon_button(flow, "CompositorNodeDoubleEdgeMask")
+            self.draw_icon_button(flow, "CompositorNodeIDMask")
 
 
 #Compositor, Add tab, Texture Panel
@@ -936,21 +946,21 @@ class NODES_PT_comp_add_texture(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexBrick", text="Brick Texture", icon="NODE_BRICK")
-            self.draw_text_button(col, "ShaderNodeTexChecker", text="Checker Texture", icon="NODE_CHECKER")
-            self.draw_text_button(col, "ShaderNodeTexGabor", text="Gabor Texture", icon="GABOR_NOISE")
-            self.draw_text_button(col, "ShaderNodeTexGradient", text="Gradient Texture", icon="NODE_GRADIENT")
+            self.draw_text_button(col, "ShaderNodeTexBrick", text="Brick Texture")
+            self.draw_text_button(col, "ShaderNodeTexChecker", text="Checker Texture")
+            self.draw_text_button(col, "ShaderNodeTexGabor", text="Gabor Texture")
+            self.draw_text_button(col, "ShaderNodeTexGradient", text="Gradient Texture")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexMagic", text="Magic Texture", icon="MAGIC_TEX")
-            self.draw_text_button(col, "ShaderNodeTexNoise", text="Noise Texture", icon="NOISE_TEX")
+            self.draw_text_button(col, "ShaderNodeTexMagic", text="Magic Texture")
+            self.draw_text_button(col, "ShaderNodeTexNoise", text="Noise Texture")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexVoronoi", text="Voronoi Texture", icon="VORONI_TEX")
-            self.draw_text_button(col, "ShaderNodeTexWave", text="Wave Texture", icon="NODE_WAVES")
-            self.draw_text_button(col, "ShaderNodeTexWhiteNoise", text="White Noise", icon="NODE_WHITE_NOISE")
+            self.draw_text_button(col, "ShaderNodeTexVoronoi", text="Voronoi Texture")
+            self.draw_text_button(col, "ShaderNodeTexWave", text="Wave Texture")
+            self.draw_text_button(col, "ShaderNodeTexWhiteNoise", text="White Noise")
 
 
         #### Icon Buttons
@@ -958,15 +968,15 @@ class NODES_PT_comp_add_texture(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeTexBrick", icon="NODE_BRICK")
-            self.draw_icon_button(flow, "ShaderNodeTexChecker", icon="NODE_CHECKER")
-            self.draw_icon_button(flow, "ShaderNodeTexGabor", icon="GABOR_NOISE")
-            self.draw_icon_button(flow, "ShaderNodeTexGradient", icon="NODE_GRADIENT")
-            self.draw_icon_button(flow, "ShaderNodeTexMagic", icon="MAGIC_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexNoise", icon="NOISE_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexVoronoi", icon="VORONI_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexWave", icon="NODE_WAVES")
-            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise", icon="NODE_WHITE_NOISE")
+            self.draw_icon_button(flow, "ShaderNodeTexBrick")
+            self.draw_icon_button(flow, "ShaderNodeTexChecker")
+            self.draw_icon_button(flow, "ShaderNodeTexGabor")
+            self.draw_icon_button(flow, "ShaderNodeTexGradient")
+            self.draw_icon_button(flow, "ShaderNodeTexMagic")
+            self.draw_icon_button(flow, "ShaderNodeTexNoise")
+            self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
+            self.draw_icon_button(flow, "ShaderNodeTexWave")
+            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise")
 
 
 #Compositor, Add tab, Tracking Panel
@@ -997,9 +1007,9 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodePlaneTrackDeform", text="Plane Track Deform", icon="NODE_PLANETRACKDEFORM")
-            self.draw_text_button(col, "CompositorNodeStabilize", text=" Stabilize 2D     ", icon="NODE_STABILIZE2D")
-            self.draw_text_button(col, "CompositorNodeTrackPos", text="Track Position", icon="NODE_TRACKPOSITION")
+            self.draw_text_button(col, "CompositorNodePlaneTrackDeform", text="Plane Track Deform")
+            self.draw_text_button(col, "CompositorNodeStabilize", text=" Stabilize 2D     ")
+            self.draw_text_button(col, "CompositorNodeTrackPos", text="Track Position")
 
         #### Icon Buttons
 
@@ -1007,9 +1017,9 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodePlaneTrackDeform", icon="NODE_PLANETRACKDEFORM")
-            self.draw_icon_button(flow, "CompositorNodeStabilize", icon="NODE_STABILIZE2D")
-            self.draw_icon_button(flow, "CompositorNodeTrackPos", icon="NODE_TRACKPOSITION")
+            self.draw_icon_button(flow, "CompositorNodePlaneTrackDeform")
+            self.draw_icon_button(flow, "CompositorNodeStabilize")
+            self.draw_icon_button(flow, "CompositorNodeTrackPos")
 
 
 #Compositor, Add tab, Transform Panel
@@ -1040,26 +1050,26 @@ class NODES_PT_comp_add_transform(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeRotate", text="Rotate", icon="TRANSFORM_ROTATE")
-            self.draw_text_button(col, "CompositorNodeScale", text="Scale", icon="TRANSFORM_SCALE")
-            self.draw_text_button(col, "CompositorNodeTransform", text="Transform", icon="NODE_TRANSFORM")
-            self.draw_text_button(col, "CompositorNodeTranslate", text="Translate", icon="TRANSFORM_MOVE")
+            self.draw_text_button(col, "CompositorNodeRotate", text="Rotate")
+            self.draw_text_button(col, "CompositorNodeScale", text="Scale")
+            self.draw_text_button(col, "CompositorNodeTransform", text="Transform")
+            self.draw_text_button(col, "CompositorNodeTranslate", text="Translate")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeCornerPin", text="Corner Pin", icon="NODE_CORNERPIN")
-            self.draw_text_button(col, "CompositorNodeCrop", text="Crop", icon="NODE_CROP")
+            self.draw_text_button(col, "CompositorNodeCornerPin", text="Corner Pin")
+            self.draw_text_button(col, "CompositorNodeCrop", text="Crop")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDisplace", text="Displace", icon="MOD_DISPLACE")
-            self.draw_text_button(col, "CompositorNodeFlip", text="Flip", icon="FLIP")
-            self.draw_text_button(col, "CompositorNodeMapUV", text="Map UV", icon="GROUP_UVS")
+            self.draw_text_button(col, "CompositorNodeDisplace", text="Displace")
+            self.draw_text_button(col, "CompositorNodeFlip", text="Flip")
+            self.draw_text_button(col, "CompositorNodeMapUV", text="Map UV")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeLensdist", text="Lens Distortion", icon="NODE_LENSDISTORT")
-            self.draw_text_button(col, "CompositorNodeMovieDistortion", text="Movie Distortion", icon="NODE_MOVIEDISTORT")
+            self.draw_text_button(col, "CompositorNodeLensdist", text="Lens Distortion")
+            self.draw_text_button(col, "CompositorNodeMovieDistortion", text="Movie Distortion")
 
         #### Icon Buttons
 
@@ -1067,17 +1077,17 @@ class NODES_PT_comp_add_transform(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeRotate", icon="TRANSFORM_ROTATE")
-            self.draw_icon_button(flow, "CompositorNodeScale", icon="TRANSFORM_SCALE")
-            self.draw_icon_button(flow, "CompositorNodeTransform", icon="NODE_TRANSFORM")
-            self.draw_icon_button(flow, "CompositorNodeTranslate", icon="TRANSFORM_MOVE")
-            self.draw_icon_button(flow, "CompositorNodeCornerPin", icon="NODE_CORNERPIN")
-            self.draw_icon_button(flow, "CompositorNodeCrop", icon="NODE_CROP")
-            self.draw_icon_button(flow, "CompositorNodeDisplace", icon="MOD_DISPLACE")
-            self.draw_icon_button(flow, "CompositorNodeFlip", icon="FLIP")
-            self.draw_icon_button(flow, "CompositorNodeMapUV", icon="GROUP_UVS")
-            self.draw_icon_button(flow, "CompositorNodeLensdist", icon="NODE_LENSDISTORT")
-            self.draw_icon_button(flow, "CompositorNodeMovieDistortion", icon="NODE_MOVIEDISTORT")
+            self.draw_icon_button(flow, "CompositorNodeRotate")
+            self.draw_icon_button(flow, "CompositorNodeScale")
+            self.draw_icon_button(flow, "CompositorNodeTransform")
+            self.draw_icon_button(flow, "CompositorNodeTranslate")
+            self.draw_icon_button(flow, "CompositorNodeCornerPin")
+            self.draw_icon_button(flow, "CompositorNodeCrop")
+            self.draw_icon_button(flow, "CompositorNodeDisplace")
+            self.draw_icon_button(flow, "CompositorNodeFlip")
+            self.draw_icon_button(flow, "CompositorNodeMapUV")
+            self.draw_icon_button(flow, "CompositorNodeLensdist")
+            self.draw_icon_button(flow, "CompositorNodeMovieDistortion")
 
 
 #Compositor, Add tab, Utility Panel
@@ -1108,26 +1118,26 @@ class NODES_PT_comp_add_utility(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeMapRange", text="Map Range", icon="NODE_MAP_RANGE")
-            self.draw_text_button(col, "ShaderNodeMath", text="Math", icon="NODE_MATH")
-            self.draw_text_button(col, "ShaderNodeMix", text="Mix              ", icon="NODE_MIX")
-            self.draw_text_button(col, "ShaderNodeClamp", text="Clamp", icon="NODE_CLAMP")
-            self.draw_text_button(col, "ShaderNodeFloatCurve", text="Float Curve", icon="FLOAT_CURVE")
+            self.draw_text_button(col, "ShaderNodeMapRange", text="Map Range")
+            self.draw_text_button(col, "ShaderNodeMath", text="Math")
+            self.draw_text_button(col, "ShaderNodeMix", text="Mix              ")
+            self.draw_text_button(col, "ShaderNodeClamp", text="Clamp")
+            self.draw_text_button(col, "ShaderNodeFloatCurve", text="Float Curve")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeLevels", text="Levels", icon="LEVELS")
-            self.draw_text_button(col, "CompositorNodeNormalize", text="Normalize", icon="NODE_NORMALIZE")
+            self.draw_text_button(col, "CompositorNodeLevels", text="Levels")
+            self.draw_text_button(col, "CompositorNodeNormalize", text="Normalize")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeSplit", text="Split", icon="NODE_VIWERSPLIT")
-            self.draw_text_button(col, "CompositorNodeSwitch", text="Switch", icon="SWITCH_DIRECTION")
-            self.draw_text_button(col, "CompositorNodeSwitchView", text="Switch View", icon="VIEW_SWITCHACTIVECAM")
+            self.draw_text_button(col, "CompositorNodeSplit", text="Split")
+            self.draw_text_button(col, "CompositorNodeSwitch", text="Switch")
+            self.draw_text_button(col, "CompositorNodeSwitchView", text="Switch View")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeRelativeToPixel", text="Relative to Pixel", icon="NODE_RELATIVE_TO_PIXEL")
+            self.draw_text_button(col, "CompositorNodeRelativeToPixel", text="Relative to Pixel")
 
 
         #### Icon Buttons
@@ -1136,17 +1146,17 @@ class NODES_PT_comp_add_utility(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeMapRange", icon="NODE_MAP_RANGE")
-            self.draw_icon_button(flow, "ShaderNodeMath", icon="NODE_MATH")
-            self.draw_icon_button(flow, "ShaderNodeClamp", icon="NODE_CLAMP")
-            self.draw_icon_button(flow, "ShaderNodeMix", icon="NODE_MIX")
-            self.draw_icon_button(flow, "ShaderNodeFloatCurve", icon="FLOAT_CURVE")
-            self.draw_icon_button(flow, "CompositorNodeLevels", icon="LEVELS")
-            self.draw_icon_button(flow, "CompositorNodeNormalize", icon="NODE_NORMALIZE")
-            self.draw_icon_button(flow, "CompositorNodeSplit", icon="NODE_VIWERSPLIT")
-            self.draw_icon_button(flow, "CompositorNodeSwitch", icon="SWITCH_DIRECTION")
-            self.draw_icon_button(flow, "CompositorNodeSwitchView", icon="VIEW_SWITCHACTIVECAM")
-            self.draw_icon_button(flow, "CompositorNodeRelativeToPixel", icon="NODE_RELATIVE_TO_PIXEL")
+            self.draw_icon_button(flow, "CompositorNodeMapRange")
+            self.draw_icon_button(flow, "ShaderNodeMath")
+            self.draw_icon_button(flow, "ShaderNodeClamp")
+            self.draw_icon_button(flow, "ShaderNodeMix")
+            self.draw_icon_button(flow, "ShaderNodeFloatCurve")
+            self.draw_icon_button(flow, "CompositorNodeLevels")
+            self.draw_icon_button(flow, "CompositorNodeNormalize")
+            self.draw_icon_button(flow, "CompositorNodeSplit")
+            self.draw_icon_button(flow, "CompositorNodeSwitch")
+            self.draw_icon_button(flow, "CompositorNodeSwitchView")
+            self.draw_icon_button(flow, "CompositorNodeRelativeToPixel")
 
 
 #Compositor, Add tab, Vector Panel
@@ -1177,16 +1187,16 @@ class NODES_PT_comp_add_vector(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeCombineXYZ", text="Combine XYZ", icon="NODE_COMBINEXYZ")
-            self.draw_text_button(col, "ShaderNodeSeparateXYZ", text="Separate XYZ", icon="NODE_SEPARATEXYZ")
+            self.draw_text_button(col, "ShaderNodeCombineXYZ", text="Combine XYZ")
+            self.draw_text_button(col, "ShaderNodeSeparateXYZ", text="Separate XYZ")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeMix", text="Mix Vector", icon="NODE_MIX", settings={"data_type": "'VECTOR'"})
-            self.draw_text_button(col, "ShaderNodeVectorCurve", text="Vector Curves", icon="NODE_VECTOR")
+            self.draw_text_button(col, "ShaderNodeMix", text="Mix Vector", settings={"data_type": "'VECTOR'"})
+            self.draw_text_button(col, "ShaderNodeVectorCurve", text="Vector Curves")
 
-            self.draw_text_button(col, "ShaderNodeVectorMath", text="Vector Math", icon="NODE_VECTORMATH")
-            self.draw_text_button(col, "ShaderNodeVectorRotate", text="Vector Rotate", icon="TRANSFORM_ROTATE")
+            self.draw_text_button(col, "ShaderNodeVectorMath", text="Vector Math")
+            self.draw_text_button(col, "ShaderNodeVectorRotate", text="Vector Rotate")
 
         #### Icon Buttons
 
@@ -1194,12 +1204,12 @@ class NODES_PT_comp_add_vector(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeCombineXYZ", icon="NODE_COMBINEXYZ")
-            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ", icon="NODE_SEPARATEXYZ")
-            self.draw_icon_button(flow, "ShaderNodeMix", icon="NODE_MIX", settings={"data_type": "'VECTOR'"})
-            self.draw_icon_button(flow, "ShaderNodeVectorCurve", icon="NODE_VECTOR")
-            self.draw_icon_button(flow, "ShaderNodeVectorMath", icon="NODE_VECTORMATH")
-            self.draw_icon_button(flow, "ShaderNodeVectorRotate", icon="TRANSFORM_ROTATE")
+            self.draw_icon_button(flow, "ShaderNodeCombineXYZ")
+            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ")
+            self.draw_icon_button(flow, "ShaderNodeMix", settings={"data_type": "'VECTOR'"})
+            self.draw_icon_button(flow, "ShaderNodeVectorCurve")
+            self.draw_icon_button(flow, "ShaderNodeVectorMath")
+            self.draw_icon_button(flow, "ShaderNodeVectorRotate")
 
 
 #Input nodes tab, textures common panel. Texture mode
@@ -1228,8 +1238,8 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeImage", text="Image", icon="FILE_IMAGE")
-            self.draw_text_button(col, "TextureNodeTexture", text="Texture", icon="TEXTURE")
+            self.draw_text_button(col, "TextureNodeImage", text="Image")
+            self.draw_text_button(col, "TextureNodeTexture", text="Texture")
 
         #### Icon Buttons
 
@@ -1237,8 +1247,8 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeImage", icon="FILE_IMAGE")
-            self.draw_icon_button(flow, "TextureNodeTexture", icon="TEXTURE")
+            self.draw_icon_button(flow, "TextureNodeImage")
+            self.draw_icon_button(flow, "TextureNodeTexture")
 
 
 #Input nodes tab, textures advanced panel. Just in Texture mode
@@ -1268,19 +1278,19 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeTexBlend", text="Blend", icon="BLEND_TEX")
-            self.draw_text_button(col, "TextureNodeTexClouds", text="Clouds", icon="CLOUD_TEX")
-            self.draw_text_button(col, "TextureNodeTexDistNoise", text="Distorted Noise", icon="NOISE_TEX")
-            self.draw_text_button(col, "TextureNodeTexMagic", text="Magic", icon="MAGIC_TEX")
+            self.draw_text_button(col, "TextureNodeTexBlend", text="Blend")
+            self.draw_text_button(col, "TextureNodeTexClouds", text="Clouds")
+            self.draw_text_button(col, "TextureNodeTexDistNoise", text="Distorted Noise")
+            self.draw_text_button(col, "TextureNodeTexMagic", text="Magic")
 
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeTexMarble", text="Marble", icon="MARBLE_TEX")
-            self.draw_text_button(col, "TextureNodeTexNoise", text="Noise", icon="NOISE_TEX")
-            self.draw_text_button(col, "TextureNodeTexStucci", text="Stucci", icon="STUCCI_TEX")
-            self.draw_text_button(col, "TextureNodeTexVoronoi", text="Voronoi", icon="VORONI_TEX")
+            self.draw_text_button(col, "TextureNodeTexMarble", text="Marble")
+            self.draw_text_button(col, "TextureNodeTexNoise", text="Noise")
+            self.draw_text_button(col, "TextureNodeTexStucci", text="Stucci")
+            self.draw_text_button(col, "TextureNodeTexVoronoi", text="Voronoi")
 
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeTexWood", text="Wood", icon="WOOD_TEX")
+            self.draw_text_button(col, "TextureNodeTexWood", text="Wood")
 
         #### Icon Buttons
 
@@ -1288,15 +1298,15 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeTexBlend", icon="BLEND_TEX")
-            self.draw_icon_button(flow, "TextureNodeTexClouds", icon="CLOUD_TEX")
-            self.draw_icon_button(flow, "TextureNodeTexDistNoise", icon="NOISE_TEX")
-            self.draw_icon_button(flow, "TextureNodeTexMagic", icon="MAGIC_TEX")
-            self.draw_icon_button(flow, "TextureNodeTexMarble", icon="MARBLE_TEX")
-            self.draw_icon_button(flow, "TextureNodeTexNoise", icon="NOISE_TEX")
-            self.draw_icon_button(flow, "TextureNodeTexStucci", icon="STUCCI_TEX")
-            self.draw_icon_button(flow, "TextureNodeTexVoronoi", icon="VORONI_TEX")
-            self.draw_icon_button(flow, "TextureNodeTexWood", icon="WOOD_TEX")
+            self.draw_icon_button(flow, "TextureNodeTexBlend")
+            self.draw_icon_button(flow, "TextureNodeTexClouds")
+            self.draw_icon_button(flow, "TextureNodeTexDistNoise")
+            self.draw_icon_button(flow, "TextureNodeTexMagic")
+            self.draw_icon_button(flow, "TextureNodeTexMarble")
+            self.draw_icon_button(flow, "TextureNodeTexNoise")
+            self.draw_icon_button(flow, "TextureNodeTexStucci")
+            self.draw_icon_button(flow, "TextureNodeTexVoronoi")
+            self.draw_icon_button(flow, "TextureNodeTexWood")
 
 
 #Shader Editor - Shader panel
@@ -1332,56 +1342,56 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeAddShader", text="Add", icon="NODE_ADD_SHADER")
-            self.draw_text_button(col, "ShaderNodeBsdfMetallic", text="Metallic", icon="METALLIC")
+            self.draw_text_button(col, "ShaderNodeAddShader", text="Add")
+            self.draw_text_button(col, "ShaderNodeBsdfMetallic", text="Metallic")
 
             if context.space_data.shader_type == 'OBJECT':
 
                 if engine == 'CYCLES':
-                    self.draw_text_button(col, "ShaderNodeBsdfAnisotropic", text="Anisotopic BSDF", icon="NODE_ANISOTOPIC")
-                self.draw_text_button(col, "ShaderNodeBsdfDiffuse", text="Diffuse BSDF", icon="NODE_DIFFUSESHADER")
-                self.draw_text_button(col, "ShaderNodeEmission", text="Emission", icon="NODE_EMISSION")
-                self.draw_text_button(col, "ShaderNodeBsdfGlass", text="Glass BSDF", icon="NODE_GLASSHADER")
+                    self.draw_text_button(col, "ShaderNodeBsdfAnisotropic", text="Anisotopic BSDF")
+                self.draw_text_button(col, "ShaderNodeBsdfDiffuse", text="Diffuse BSDF")
+                self.draw_text_button(col, "ShaderNodeEmission", text="Emission")
+                self.draw_text_button(col, "ShaderNodeBsdfGlass", text="Glass BSDF")
 
                 col = layout.column(align=True)
                 col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeBsdfGlossy", text="Glossy BSDF", icon="NODE_GLOSSYSHADER")
-                self.draw_text_button(col, "ShaderNodeHoldout", text="Holdout", icon="NODE_HOLDOUTSHADER")
-                self.draw_text_button(col, "ShaderNodeMixShader", text="Mix Shader", icon="NODE_MIXSHADER")
-                self.draw_text_button(col, "ShaderNodeBsdfPrincipled", text="Principled BSDF", icon="NODE_PRINCIPLED")
+                self.draw_text_button(col, "ShaderNodeBsdfGlossy", text="Glossy BSDF")
+                self.draw_text_button(col, "ShaderNodeHoldout", text="Holdout")
+                self.draw_text_button(col, "ShaderNodeMixShader", text="Mix Shader")
+                self.draw_text_button(col, "ShaderNodeBsdfPrincipled", text="Principled BSDF")
 
                 col = layout.column(align=True)
                 col.scale_y = 1.5
 
                 if engine == 'CYCLES':
-                    self.draw_text_button(col, "ShaderNodeBsdfHairPrincipled", text="Principled Hair BSDF", icon="CURVES")
-                self.draw_text_button(col, "ShaderNodeVolumePrincipled", text="Principled Volume", icon="NODE_VOLUMEPRINCIPLED")
-                self.draw_text_button(col, "ShaderNodeBsdfRefraction", text="Refraction BSDF", icon="NODE_REFRACTIONSHADER")
+                    self.draw_text_button(col, "ShaderNodeBsdfHairPrincipled", text="Principled Hair BSDF")
+                self.draw_text_button(col, "ShaderNodeVolumePrincipled", text="Principled Volume")
+                self.draw_text_button(col, "ShaderNodeBsdfRefraction", text="Refraction BSDF")
 
                 if engine == 'BLENDER_EEVEE':
-                    self.draw_text_button(col, "ShaderNodeEeveeSpecular", text="Specular BSDF", icon="NODE_GLOSSYSHADER")
-                self.draw_text_button(col, "ShaderNodeSubsurfaceScattering", text="Subsurface Scattering", icon="NODE_SSS")
+                    self.draw_text_button(col, "ShaderNodeEeveeSpecular", text="Specular BSDF")
+                self.draw_text_button(col, "ShaderNodeSubsurfaceScattering", text="Subsurface Scattering")
 
                 if engine == 'CYCLES':
-                    self.draw_text_button(col, "ShaderNodeBsdfToon", text="Toon BSDF", icon="NODE_TOONSHADER")
+                    self.draw_text_button(col, "ShaderNodeBsdfToon", text="Toon BSDF")
 
                 col = layout.column(align=True)
                 col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeBsdfTranslucent", text="Translucent BSDF", icon="NODE_TRANSLUCENT")
-                self.draw_text_button(col, "ShaderNodeBsdfTransparent", text="Transparent BSDF", icon="NODE_TRANSPARENT")
+                self.draw_text_button(col, "ShaderNodeBsdfTranslucent", text="Translucent BSDF")
+                self.draw_text_button(col, "ShaderNodeBsdfTransparent", text="Transparent BSDF")
 
                 if engine == 'CYCLES':
-                    self.draw_text_button(col, "ShaderNodeBsdfSheen", text="Sheen BSDF", icon="NODE_VELVET")
-                self.draw_text_button(col, "ShaderNodeVolumeAbsorption", text="Volume Absorption", icon="NODE_VOLUMEABSORPTION")
-                self.draw_text_button(col, "ShaderNodeVolumeScatter", text="Volume Scatter", icon="NODE_VOLUMESCATTER")
+                    self.draw_text_button(col, "ShaderNodeBsdfSheen", text="Sheen BSDF")
+                self.draw_text_button(col, "ShaderNodeVolumeAbsorption", text="Volume Absorption")
+                self.draw_text_button(col, "ShaderNodeVolumeScatter", text="Volume Scatter")
 
             if context.space_data.shader_type == 'WORLD':
                 col = layout.column(align=True)
                 col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeBackground", text="Background", icon="NODE_BACKGROUNDSHADER")
-                self.draw_text_button(col, "ShaderNodeEmission", text="Emission", icon="NODE_EMISSION")
-                self.draw_text_button(col, "ShaderNodeVolumePrincipled", text="Principled Volume", icon="NODE_VOLUMEPRINCIPLED")
-                self.draw_text_button(col, "ShaderNodeMixShader", text="Mix", icon="NODE_MIXSHADER")
+                self.draw_text_button(col, "ShaderNodeBackground", text="Background")
+                self.draw_text_button(col, "ShaderNodeEmission", text="Emission")
+                self.draw_text_button(col, "ShaderNodeVolumePrincipled", text="Principled Volume")
+                self.draw_text_button(col, "ShaderNodeMixShader", text="Mix")
 
 
         #### Icon Buttons
@@ -1391,44 +1401,44 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            self.draw_icon_button(flow, "ShaderNodeAddShader", icon="NODE_ADD_SHADER")
-            self.draw_icon_button(flow, "ShaderNodeBsdfMetallic", icon="METALLIC")
+            self.draw_icon_button(flow, "ShaderNodeAddShader")
+            self.draw_icon_button(flow, "ShaderNodeBsdfMetallic")
 
             if context.space_data.shader_type == 'OBJECT':
 
                 if engine == 'CYCLES':
-                    self.draw_icon_button(flow, "ShaderNodeBsdfAnisotropic", icon="NODE_ANISOTOPIC")
-                self.draw_icon_button(flow, "ShaderNodeBsdfDiffuse", icon="NODE_DIFFUSESHADER")
-                self.draw_icon_button(flow, "ShaderNodeEmission", icon="NODE_EMISSION")
-                self.draw_icon_button(flow, "ShaderNodeBsdfGlass", icon="NODE_GLASSHADER")
-                self.draw_icon_button(flow, "ShaderNodeBsdfGlossy", icon="NODE_GLOSSYSHADER")
-                self.draw_icon_button(flow, "ShaderNodeHoldout", icon="NODE_HOLDOUTSHADER")
-                self.draw_icon_button(flow, "ShaderNodeMixShader", icon="NODE_MIXSHADER")
-                self.draw_icon_button(flow, "ShaderNodeBsdfPrincipled", icon="NODE_PRINCIPLED")
+                    self.draw_icon_button(flow, "ShaderNodeBsdfAnisotropic")
+                self.draw_icon_button(flow, "ShaderNodeBsdfDiffuse")
+                self.draw_icon_button(flow, "ShaderNodeEmission")
+                self.draw_icon_button(flow, "ShaderNodeBsdfGlass")
+                self.draw_icon_button(flow, "ShaderNodeBsdfGlossy")
+                self.draw_icon_button(flow, "ShaderNodeHoldout")
+                self.draw_icon_button(flow, "ShaderNodeMixShader")
+                self.draw_icon_button(flow, "ShaderNodeBsdfPrincipled")
 
                 if engine == 'CYCLES':
-                    self.draw_icon_button(flow, "ShaderNodeBsdfHairPrincipled", icon="CURVES")
-                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled", icon="NODE_VOLUMEPRINCIPLED")
+                    self.draw_icon_button(flow, "ShaderNodeBsdfHairPrincipled")
+                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
 
                 if engine == 'BLENDER_EEVEE':
-                    self.draw_icon_button(flow, "ShaderNodeEeveeSpecular", icon="NODE_GLOSSYSHADER")
-                self.draw_icon_button(flow, "ShaderNodeSubsurfaceScattering", icon="NODE_SSS")
+                    self.draw_icon_button(flow, "ShaderNodeEeveeSpecular")
+                self.draw_icon_button(flow, "ShaderNodeSubsurfaceScattering")
 
                 if engine == 'CYCLES':
-                    self.draw_icon_button(flow, "ShaderNodeBsdfToon", icon="NODE_TOONSHADER")
-                self.draw_icon_button(flow, "ShaderNodeBsdfTranslucent", icon="NODE_TRANSLUCENT")
-                self.draw_icon_button(flow, "ShaderNodeBsdfTransparent", icon="NODE_TRANSPARENT")
+                    self.draw_icon_button(flow, "ShaderNodeBsdfToon")
+                self.draw_icon_button(flow, "ShaderNodeBsdfTranslucent")
+                self.draw_icon_button(flow, "ShaderNodeBsdfTransparent")
 
                 if engine == 'CYCLES':
-                    self.draw_icon_button(flow, "ShaderNodeBsdfSheen", icon="NODE_VELVET")
-                self.draw_icon_button(flow, "ShaderNodeVolumeAbsorption", icon="NODE_VOLUMEABSORPTION")
-                self.draw_icon_button(flow, "ShaderNodeVolumeScatter", icon="NODE_VOLUMESCATTER")
+                    self.draw_icon_button(flow, "ShaderNodeBsdfSheen")
+                self.draw_icon_button(flow, "ShaderNodeVolumeAbsorption")
+                self.draw_icon_button(flow, "ShaderNodeVolumeScatter")
 
             if context.space_data.shader_type == 'WORLD':
-                self.draw_icon_button(flow, "ShaderNodeBackground", icon="NODE_BACKGROUNDSHADER")
-                self.draw_icon_button(flow, "ShaderNodeEmission", icon="NODE_EMISSION")
-                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled", icon="NODE_VOLUMEPRINCIPLED")
-                self.draw_icon_button(flow, "ShaderNodeMixShader", icon="NODE_MIXSHADER")
+                self.draw_icon_button(flow, "ShaderNodeBackground")
+                self.draw_icon_button(flow, "ShaderNodeEmission")
+                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
+                self.draw_icon_button(flow, "ShaderNodeMixShader")
 
 
 #Shader Editor - Texture panel
@@ -1464,25 +1474,25 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexBrick", text="Brick Texture", icon="NODE_BRICK")
-            self.draw_text_button(col, "ShaderNodeTexChecker", text="Checker Texture", icon="NODE_CHECKER")
-            self.draw_text_button(col, "ShaderNodeTexEnvironment", text="Environment Texture", icon="NODE_ENVIRONMENT")
-            self.draw_text_button(col, "ShaderNodeTexGabor", text="Gabor Texture", icon="GABOR_NOISE")
-            self.draw_text_button(col, "ShaderNodeTexGradient", text="Gradient Texture", icon="NODE_GRADIENT")
-            self.draw_text_button(col, "ShaderNodeTexIES", text="IES Texture", icon="LIGHT")
+            self.draw_text_button(col, "ShaderNodeTexBrick", text="Brick Texture")
+            self.draw_text_button(col, "ShaderNodeTexChecker", text="Checker Texture")
+            self.draw_text_button(col, "ShaderNodeTexEnvironment", text="Environment Texture")
+            self.draw_text_button(col, "ShaderNodeTexGabor", text="Gabor Texture")
+            self.draw_text_button(col, "ShaderNodeTexGradient", text="Gradient Texture")
+            self.draw_text_button(col, "ShaderNodeTexIES", text="IES Texture")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexImage", text="Image Texture", icon="FILE_IMAGE")
-            self.draw_text_button(col, "ShaderNodeTexMagic", text="Magic Texture", icon="MAGIC_TEX")
-            self.draw_text_button(col, "ShaderNodeTexNoise", text="Noise Texture", icon="NOISE_TEX")
-            self.draw_text_button(col, "ShaderNodeTexSky", text="Sky Texture", icon="NODE_SKY")
+            self.draw_text_button(col, "ShaderNodeTexImage", text="Image Texture")
+            self.draw_text_button(col, "ShaderNodeTexMagic", text="Magic Texture")
+            self.draw_text_button(col, "ShaderNodeTexNoise", text="Noise Texture")
+            self.draw_text_button(col, "ShaderNodeTexSky", text="Sky Texture")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexVoronoi", text="Voronoi Texture", icon="VORONI_TEX")
-            self.draw_text_button(col, "ShaderNodeTexWave", text="Wave Texture", icon="NODE_WAVES")
-            self.draw_text_button(col, "ShaderNodeTexWhiteNoise", text="White Noise", icon="NODE_WHITE_NOISE")
+            self.draw_text_button(col, "ShaderNodeTexVoronoi", text="Voronoi Texture")
+            self.draw_text_button(col, "ShaderNodeTexWave", text="Wave Texture")
+            self.draw_text_button(col, "ShaderNodeTexWhiteNoise", text="White Noise")
 
 
         #### Icon Buttons
@@ -1490,20 +1500,20 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeTexBrick", icon="NODE_BRICK")
-            self.draw_icon_button(flow, "ShaderNodeTexChecker", icon="NODE_CHECKER")
-            self.draw_icon_button(flow, "ShaderNodeTexEnvironment", icon="NODE_ENVIRONMENT")
-            self.draw_icon_button(flow, "ShaderNodeTexGabor", icon="GABOR_NOISE")
-            self.draw_icon_button(flow, "ShaderNodeTexGradient", icon="NODE_GRADIENT")
-            self.draw_icon_button(flow, "ShaderNodeTexIES", icon="LIGHT")
-            self.draw_icon_button(flow, "ShaderNodeTexImage", icon="FILE_IMAGE")
-            self.draw_icon_button(flow, "ShaderNodeTexMagic", icon="MAGIC_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexNoise", icon="NOISE_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexPointDensity", icon="NODE_POINTCLOUD")
-            self.draw_icon_button(flow, "ShaderNodeTexSky", icon="NODE_SKY")
-            self.draw_icon_button(flow, "ShaderNodeTexVoronoi", icon="VORONI_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexWave", icon="NODE_WAVES")
-            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise", icon="NODE_WHITE_NOISE")
+            self.draw_icon_button(flow, "ShaderNodeTexBrick")
+            self.draw_icon_button(flow, "ShaderNodeTexChecker")
+            self.draw_icon_button(flow, "ShaderNodeTexEnvironment")
+            self.draw_icon_button(flow, "ShaderNodeTexGabor")
+            self.draw_icon_button(flow, "ShaderNodeTexGradient")
+            self.draw_icon_button(flow, "ShaderNodeTexIES")
+            self.draw_icon_button(flow, "ShaderNodeTexImage")
+            self.draw_icon_button(flow, "ShaderNodeTexMagic")
+            self.draw_icon_button(flow, "ShaderNodeTexNoise")
+            self.draw_icon_button(flow, "ShaderNodeTexPointDensity")
+            self.draw_icon_button(flow, "ShaderNodeTexSky")
+            self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
+            self.draw_icon_button(flow, "ShaderNodeTexWave")
+            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise")
 
 
 #Shader Editor - Color panel
@@ -1537,29 +1547,29 @@ class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeBrightContrast", text=" Bright / Contrast ", icon="BRIGHTNESS_CONTRAST")
-            self.draw_text_button(col, "ShaderNodeGamma", text="Gamma", icon="NODE_GAMMA")
-            self.draw_text_button(col, "ShaderNodeHueSaturation", text=" Hue / Saturation ", icon="NODE_HUESATURATION")
-            self.draw_text_button(col, "ShaderNodeInvert", text="Invert Color", icon="NODE_INVERT")
+            self.draw_text_button(col, "ShaderNodeBrightContrast", text=" Bright / Contrast ")
+            self.draw_text_button(col, "ShaderNodeGamma", text="Gamma")
+            self.draw_text_button(col, "ShaderNodeHueSaturation", text=" Hue / Saturation ")
+            self.draw_text_button(col, "ShaderNodeInvert", text="Invert Color")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeLightFalloff", text="Light Falloff", icon="NODE_LIGHTFALLOFF")
-            self.draw_text_button(col, "ShaderNodeMix", text="Mix Color", icon="NODE_MIX", settings={"data_type": "'RGBA'"})
-            self.draw_text_button(col, "ShaderNodeRGBCurve", text=" RGB Curves", icon="NODE_RGBCURVE")
+            self.draw_text_button(col, "ShaderNodeLightFalloff", text="Light Falloff")
+            self.draw_text_button(col, "ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"})
+            self.draw_text_button(col, "ShaderNodeRGBCurve", text=" RGB Curves")
 
         ##### Icon Buttons
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeBrightContrast", icon="BRIGHTNESS_CONTRAST")
-            self.draw_icon_button(flow, "ShaderNodeGamma", icon="NODE_GAMMA")
-            self.draw_icon_button(flow, "ShaderNodeHueSaturation", icon="NODE_HUESATURATION")
-            self.draw_icon_button(flow, "ShaderNodeInvert", icon="NODE_INVERT")
-            self.draw_icon_button(flow, "ShaderNodeLightFalloff", icon="NODE_LIGHTFALLOFF")
-            self.draw_icon_button(flow, "ShaderNodeMix", icon="NODE_MIX", settings={"data_type": "'RGBA'"})
-            self.draw_icon_button(flow, "ShaderNodeRGBCurve", icon="NODE_RGBCURVE")
+            self.draw_icon_button(flow, "ShaderNodeBrightContrast")
+            self.draw_icon_button(flow, "ShaderNodeGamma")
+            self.draw_icon_button(flow, "ShaderNodeHueSaturation")
+            self.draw_icon_button(flow, "ShaderNodeInvert")
+            self.draw_icon_button(flow, "ShaderNodeLightFalloff")
+            self.draw_icon_button(flow, "ShaderNodeMix", settings={"data_type": "'RGBA'"})
+            self.draw_icon_button(flow, "ShaderNodeRGBCurve")
 
 
 #Input nodes tab, Input panel. Just in texture mode
@@ -1589,16 +1599,16 @@ class NODES_PT_Input_input_advanced_tex(bpy.types.Panel, NodePanel):
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeCoordinates", text="Coordinates", icon="NODE_TEXCOORDINATE")
-            self.draw_text_button(col, "TextureNodeCurveTime", text="Curve Time", icon="NODE_CURVE_TIME")
+            self.draw_text_button(col, "TextureNodeCoordinates", text="Coordinates")
+            self.draw_text_button(col, "TextureNodeCurveTime", text="Curve Time")
 
         #### Icon Buttons
 
         else:
             row = layout.row()
             row.alignment = 'LEFT'
-            self.draw_icon_button(flow, "TextureNodeCoordinates", icon="NODE_TEXCOORDINATE")
-            self.draw_icon_button(flow, "TextureNodeCurveTime", icon="NODE_CURVE_TIME")
+            self.draw_icon_button(flow, "TextureNodeCoordinates")
+            self.draw_icon_button(flow, "TextureNodeCurveTime")
 
 
 #Input nodes tab, Pattern panel. # Just in texture mode
@@ -1628,8 +1638,8 @@ class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeBricks", text="Bricks", icon="NODE_BRICK")
-            self.draw_text_button(col, "TextureNodeChecker", text="Checker", icon="NODE_CHECKER")
+            self.draw_text_button(col, "TextureNodeBricks", text="Bricks")
+            self.draw_text_button(col, "TextureNodeChecker", text="Checker")
 
         #### Icon Buttons
 
@@ -1637,8 +1647,8 @@ class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeBricks", icon="NODE_BRICK")
-            self.draw_icon_button(flow, "TextureNodeChecker", icon="NODE_CHECKER")
+            self.draw_icon_button(flow, "TextureNodeBricks")
+            self.draw_icon_button(flow, "TextureNodeChecker")
 
 
 #Input nodes tab, Color panel. Just in texture mode
@@ -1668,14 +1678,14 @@ class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeCurveRGB", text="RGB Curves", icon="NODE_RGBCURVE")
-            self.draw_text_button(col, "TextureNodeHueSaturation", text=" Hue / Saturation", icon="NODE_HUESATURATION")
-            self.draw_text_button(col, "TextureNodeInvert", text="Invert Color", icon="NODE_INVERT")
-            self.draw_text_button(col, "TextureNodeMixRGB", text="Mix RGB", icon="NODE_MIXRGB")
+            self.draw_text_button(col, "TextureNodeCurveRGB", text="RGB Curves")
+            self.draw_text_button(col, "TextureNodeHueSaturation", text=" Hue / Saturation")
+            self.draw_text_button(col, "TextureNodeInvert", text="Invert Color")
+            self.draw_text_button(col, "TextureNodeMixRGB", text="Mix RGB")
 
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeCompose", text="Combine RGBA", icon="NODE_COMBINERGB")
-            self.draw_text_button(col, "TextureNodeDecompose", text="Separate RGBA", icon="NODE_SEPARATERGB")
+            self.draw_text_button(col, "TextureNodeCompose", text="Combine RGBA")
+            self.draw_text_button(col, "TextureNodeDecompose", text="Separate RGBA")
 
         #### Icon Buttons
 
@@ -1683,12 +1693,12 @@ class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeCurveRGB", icon="NODE_RGBCURVE")
-            self.draw_icon_button(flow, "TextureNodeHueSaturation", icon="NODE_HUESATURATION")
-            self.draw_icon_button(flow, "TextureNodeInvert", icon="NODE_INVERT")
-            self.draw_icon_button(flow, "TextureNodeMixRGB", icon="NODE_MIXRGB")
-            self.draw_icon_button(flow, "TextureNodeCompose", icon="NODE_COMBINERGB")
-            self.draw_icon_button(flow, "TextureNodeDecompose", icon="NODE_SEPARATERGB")
+            self.draw_icon_button(flow, "TextureNodeCurveRGB")
+            self.draw_icon_button(flow, "TextureNodeHueSaturation")
+            self.draw_icon_button(flow, "TextureNodeInvert")
+            self.draw_icon_button(flow, "TextureNodeMixRGB")
+            self.draw_icon_button(flow, "TextureNodeCompose")
+            self.draw_icon_button(flow, "TextureNodeDecompose")
 
 
 #Input nodes tab, Output panel, Texture mode
@@ -1718,8 +1728,8 @@ class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeOutput", text="Output", icon="NODE_OUTPUT")
-            self.draw_text_button(col, "TextureNodeViewer", text="Viewer", icon="NODE_VIEWER")
+            self.draw_text_button(col, "TextureNodeOutput", text="Output")
+            self.draw_text_button(col, "TextureNodeViewer", text="Viewer")
 
         #### Icon Buttons
 
@@ -1727,8 +1737,8 @@ class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeOutput", icon="NODE_OUTPUT")
-            self.draw_icon_button(flow, "TextureNodeViewer", icon="NODE_VIEWER")
+            self.draw_icon_button(flow, "TextureNodeOutput")
+            self.draw_icon_button(flow, "TextureNodeViewer")
 
 
 #Modify nodes tab, converter panel. Just in texture mode
@@ -1757,13 +1767,13 @@ class NODES_PT_Modify_converter_tex(bpy.types.Panel, NodePanel):
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeValToRGB", text="Color Ramp", icon="NODE_COLORRAMP")
-            self.draw_text_button(col, "TextureNodeDistance", text="Distance", icon="DRIVER_DISTANCE")
-            self.draw_text_button(col, "TextureNodeMath", text="Math", icon="NODE_MATH")
-            self.draw_text_button(col, "TextureNodeRGBToBW", text="RGB to BW", icon="NODE_RGBTOBW")
+            self.draw_text_button(col, "TextureNodeValToRGB", text="Color Ramp")
+            self.draw_text_button(col, "TextureNodeDistance", text="Distance")
+            self.draw_text_button(col, "TextureNodeMath", text="Math")
+            self.draw_text_button(col, "TextureNodeRGBToBW", text="RGB to BW")
 
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeValToNor", text="Value to Normal", icon="RECALC_NORMALS")
+            self.draw_text_button(col, "TextureNodeValToNor", text="Value to Normal")
 
         #### Icon Buttons
 
@@ -1771,11 +1781,11 @@ class NODES_PT_Modify_converter_tex(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeValToRGB", icon="NODE_COLORRAMP")
-            self.draw_icon_button(flow, "TextureNodeDistance", icon="DRIVER_DISTANCE")
-            self.draw_icon_button(flow, "TextureNodeMath", icon="NODE_MATH")
-            self.draw_icon_button(flow, "TextureNodeRGBToBW", icon="NODE_RGBTOBW")
-            self.draw_icon_button(flow, "TextureNodeValToNor", icon="RECALC_NORMALS")
+            self.draw_icon_button(flow, "TextureNodeValToRGB")
+            self.draw_icon_button(flow, "TextureNodeDistance")
+            self.draw_icon_button(flow, "TextureNodeMath")
+            self.draw_icon_button(flow, "TextureNodeRGBToBW")
+            self.draw_icon_button(flow, "TextureNodeValToNor")
 
 
 #Shader Editor - Vector panel
@@ -1810,18 +1820,18 @@ class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeBump", text="Bump", icon="NODE_BUMP")
-            self.draw_text_button(col, "ShaderNodeDisplacement", text="Displacement", icon="MOD_DISPLACE")
-            self.draw_text_button(col, "ShaderNodeMapping", text="Mapping", icon="NODE_MAPPING")
-            self.draw_text_button(col, "ShaderNodeNormal", text="Normal", icon="RECALC_NORMALS")
-            self.draw_text_button(col, "ShaderNodeNormalMap", text="Normal Map", icon="NODE_NORMALMAP")
+            self.draw_text_button(col, "ShaderNodeBump", text="Bump")
+            self.draw_text_button(col, "ShaderNodeDisplacement", text="Displacement")
+            self.draw_text_button(col, "ShaderNodeMapping", text="Mapping")
+            self.draw_text_button(col, "ShaderNodeNormal", text="Normal")
+            self.draw_text_button(col, "ShaderNodeNormalMap", text="Normal Map")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeVectorCurve", text="Vector Curves", icon="NODE_VECTOR")
-            self.draw_text_button(col, "ShaderNodeVectorDisplacement", text="Vector Displacement", icon="VECTOR_DISPLACE")
-            self.draw_text_button(col, "ShaderNodeVectorRotate", text="Vector Rotate", icon="TRANSFORM_ROTATE")
-            self.draw_text_button(col, "ShaderNodeVectorTransform", text="Vector Transform", icon="NODE_VECTOR_TRANSFORM")
+            self.draw_text_button(col, "ShaderNodeVectorCurve", text="Vector Curves")
+            self.draw_text_button(col, "ShaderNodeVectorDisplacement", text="Vector Displacement")
+            self.draw_text_button(col, "ShaderNodeVectorRotate", text="Vector Rotate")
+            self.draw_text_button(col, "ShaderNodeVectorTransform", text="Vector Transform")
 
         ##### Icon Buttons
 
@@ -1832,15 +1842,15 @@ class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeBump", icon="NODE_BUMP")
-            self.draw_icon_button(flow, "ShaderNodeDisplacement", icon="MOD_DISPLACE")
-            self.draw_icon_button(flow, "ShaderNodeMapping", icon="NODE_MAPPING")
-            self.draw_icon_button(flow, "ShaderNodeNormal", icon="RECALC_NORMALS")
-            self.draw_icon_button(flow, "ShaderNodeNormalMap", icon="NODE_NORMALMAP")
-            self.draw_icon_button(flow, "ShaderNodeVectorCurve", icon="NODE_VECTOR")
-            self.draw_icon_button(flow, "ShaderNodeVectorDisplacement", icon="VECTOR_DISPLACE")
-            self.draw_icon_button(flow, "ShaderNodeVectorRotate", icon="TRANSFORM_ROTATE")
-            self.draw_icon_button(flow, "ShaderNodeVectorTransform", icon="NODE_VECTOR_TRANSFORM")
+            self.draw_icon_button(flow, "ShaderNodeBump")
+            self.draw_icon_button(flow, "ShaderNodeDisplacement")
+            self.draw_icon_button(flow, "ShaderNodeMapping")
+            self.draw_icon_button(flow, "ShaderNodeNormal")
+            self.draw_icon_button(flow, "ShaderNodeNormalMap")
+            self.draw_icon_button(flow, "ShaderNodeVectorCurve")
+            self.draw_icon_button(flow, "ShaderNodeVectorDisplacement")
+            self.draw_icon_button(flow, "ShaderNodeVectorRotate")
+            self.draw_icon_button(flow, "ShaderNodeVectorTransform")
 
 
 #Shader Editor - Converter panel
@@ -1876,52 +1886,52 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeBlackbody", text="Blackbody", icon="NODE_BLACKBODY")
-            self.draw_text_button(col, "ShaderNodeClamp", text="Clamp", icon="NODE_CLAMP")
-            self.draw_text_button(col, "ShaderNodeValToRGB", text="ColorRamp", icon="NODE_COLORRAMP")
-            self.draw_text_button(col, "ShaderNodeCombineColor", text="Combine Color", icon="COMBINE_COLOR")
-            self.draw_text_button(col, "ShaderNodeCombineXYZ", text="Combine XYZ", icon="NODE_COMBINEXYZ")
+            self.draw_text_button(col, "ShaderNodeBlackbody", text="Blackbody")
+            self.draw_text_button(col, "ShaderNodeClamp", text="Clamp")
+            self.draw_text_button(col, "ShaderNodeValToRGB", text="ColorRamp")
+            self.draw_text_button(col, "ShaderNodeCombineColor", text="Combine Color")
+            self.draw_text_button(col, "ShaderNodeCombineXYZ", text="Combine XYZ")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeFloatCurve", text="Float Curve", icon="FLOAT_CURVE")
-            self.draw_text_button(col, "ShaderNodeMapRange", text="Map Range", icon="NODE_MAP_RANGE")
-            self.draw_text_button(col, "ShaderNodeMath", text="Math", icon="NODE_MATH")
-            self.draw_text_button(col, "ShaderNodeMix", text="Mix", icon="NODE_MIXSHADER")
-            self.draw_text_button(col, "ShaderNodeRGBToBW", text="RGB to BW", icon="NODE_RGBTOBW")
+            self.draw_text_button(col, "ShaderNodeFloatCurve", text="Float Curve")
+            self.draw_text_button(col, "ShaderNodeMapRange", text="Map Range")
+            self.draw_text_button(col, "ShaderNodeMath", text="Math")
+            self.draw_text_button(col, "ShaderNodeMix", text="Mix")
+            self.draw_text_button(col, "ShaderNodeRGBToBW", text="RGB to BW")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeSeparateColor", text="Separate Color", icon="SEPARATE_COLOR")
-            self.draw_text_button(col, "ShaderNodeSeparateXYZ", text="Separate XYZ", icon="NODE_SEPARATEXYZ")
+            self.draw_text_button(col, "ShaderNodeSeparateColor", text="Separate Color")
+            self.draw_text_button(col, "ShaderNodeSeparateXYZ", text="Separate XYZ")
 
             if engine == 'BLENDER_EEVEE_NEXT':
-                self.draw_text_button(col, "ShaderNodeShaderToRGB", text="Shader to RGB", icon="NODE_RGB")
-            self.draw_text_button(col, "ShaderNodeVectorMath", text="Vector Math", icon="NODE_VECTORMATH")
-            self.draw_text_button(col, "ShaderNodeWavelength", text="Wavelength", icon="NODE_WAVELENGTH")
+                self.draw_text_button(col, "ShaderNodeShaderToRGB", text="Shader to RGB")
+            self.draw_text_button(col, "ShaderNodeVectorMath", text="Vector Math")
+            self.draw_text_button(col, "ShaderNodeWavelength", text="Wavelength")
 
         ##### Icon Buttons
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeBlackbody", icon="NODE_BLACKBODY")
-            self.draw_icon_button(flow, "ShaderNodeClamp", icon="NODE_CLAMP")
-            self.draw_icon_button(flow, "ShaderNodeValToRGB", icon="NODE_COLORRAMP")
-            self.draw_icon_button(flow, "ShaderNodeCombineColor", icon="COMBINE_COLOR")
-            self.draw_icon_button(flow, "ShaderNodeCombineXYZ", icon="NODE_COMBINEXYZ")
-            self.draw_icon_button(flow, "ShaderNodeFloatCurve", icon="FLOAT_CURVE")
-            self.draw_icon_button(flow, "ShaderNodeMapRange", icon="NODE_MAP_RANGE")
-            self.draw_icon_button(flow, "ShaderNodeMath", icon="NODE_MATH")
-            self.draw_icon_button(flow, "ShaderNodeMix", icon="NODE_MIXSHADER")
-            self.draw_icon_button(flow, "ShaderNodeRGBToBW", icon="NODE_RGBTOBW")
-            self.draw_icon_button(flow, "ShaderNodeSeparateColor", icon="SEPARATE_COLOR")
-            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ", icon="NODE_SEPARATEXYZ")
+            self.draw_icon_button(flow, "ShaderNodeBlackbody")
+            self.draw_icon_button(flow, "ShaderNodeClamp")
+            self.draw_icon_button(flow, "ShaderNodeValToRGB")
+            self.draw_icon_button(flow, "ShaderNodeCombineColor")
+            self.draw_icon_button(flow, "ShaderNodeCombineXYZ")
+            self.draw_icon_button(flow, "ShaderNodeFloatCurve")
+            self.draw_icon_button(flow, "ShaderNodeMapRange")
+            self.draw_icon_button(flow, "ShaderNodeMath")
+            self.draw_icon_button(flow, "ShaderNodeMix")
+            self.draw_icon_button(flow, "ShaderNodeRGBToBW")
+            self.draw_icon_button(flow, "ShaderNodeSeparateColor")
+            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ")
 
             if engine == 'BLENDER_EEVEE':
-                self.draw_icon_button(flow, "ShaderNodeShaderToRGB", icon="NODE_RGB")
-            self.draw_icon_button(flow, "ShaderNodeVectorMath", icon="NODE_VECTORMATH")
-            self.draw_icon_button(flow, "ShaderNodeWavelength", icon="NODE_WAVELENGTH")
+                self.draw_icon_button(flow, "ShaderNodeShaderToRGB")
+            self.draw_icon_button(flow, "ShaderNodeVectorMath")
+            self.draw_icon_button(flow, "ShaderNodeWavelength")
 
 
 #Modify nodes tab, distort panel. Just in texture mode
@@ -1951,10 +1961,10 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel, NodePanel):
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeAt", text="At", icon="NODE_AT")
-            self.draw_text_button(col, "TextureNodeRotate", text="Rotate", icon="TRANSFORM_ROTATE")
-            self.draw_text_button(col, "TextureNodeScale", text="Scale", icon="TRANSFORM_SCALE")
-            self.draw_text_button(col, "TextureNodeTranslate", text="Translate", icon="TRANSFORM_MOVE")
+            self.draw_text_button(col, "TextureNodeAt", text="At")
+            self.draw_text_button(col, "TextureNodeRotate", text="Rotate")
+            self.draw_text_button(col, "TextureNodeScale", text="Scale")
+            self.draw_text_button(col, "TextureNodeTranslate", text="Translate")
 
         #### Icon Buttons
 
@@ -1962,10 +1972,10 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeAt", icon="NODE_AT")
-            self.draw_icon_button(flow, "TextureNodeRotate", icon="TRANSFORM_ROTATE")
-            self.draw_icon_button(flow, "TextureNodeScale", icon="TRANSFORM_SCALE")
-            self.draw_icon_button(flow, "TextureNodeTranslate", icon="TRANSFORM_MOVE")
+            self.draw_icon_button(flow, "TextureNodeAt")
+            self.draw_icon_button(flow, "TextureNodeRotate")
+            self.draw_icon_button(flow, "TextureNodeScale")
+            self.draw_icon_button(flow, "TextureNodeTranslate")
 
 
 # ------------- Relations tab -------------------------------
@@ -2010,8 +2020,8 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
             all_node_groups = context.blend_data.node_groups
 
             if node_tree in all_node_groups.values():
-                self.draw_text_button(col, "NodeGroupInput", text="Group Input", icon="GROUPINPUT")
-                self.draw_text_button(col, "NodeGroupOutput", text="Group Output", icon="GROUPOUTPUT")
+                self.draw_text_button(col, "NodeGroupInput", text="Group Input")
+                self.draw_text_button(col, "NodeGroupOutput", text="Group Output")
 
 
         #### Icon Buttons
@@ -2032,8 +2042,8 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
             all_node_groups = context.blend_data.node_groups
 
             if node_tree in all_node_groups.values():
-                self.draw_icon_button(flow, "NodeGroupInput", icon="GROUPINPUT")
-                self.draw_icon_button(flow, "NodeGroupOutput", icon="GROUPOUTPUT")
+                self.draw_icon_button(flow, "NodeGroupInput")
+                self.draw_icon_button(flow, "NodeGroupOutput")
 
 
 #Shader Editor - Relations tab, Node Group Panel
@@ -2114,8 +2124,8 @@ class NODES_PT_Relations_layout(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "NodeFrame", text="Frame", icon="NODE_FRAME")
-            self.draw_text_button(col, "NodeReroute", text="Reroute", icon="NODE_REROUTE")
+            self.draw_text_button(col, "NodeFrame", text="Frame")
+            self.draw_text_button(col, "NodeReroute", text="Reroute")
 
         #### Icon Buttons
 
@@ -2123,8 +2133,8 @@ class NODES_PT_Relations_layout(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "NodeFrame", icon="NODE_FRAME")
-            self.draw_icon_button(flow, "NodeReroute", icon="NODE_REROUTE")
+            self.draw_icon_button(flow, "NodeFrame")
+            self.draw_icon_button(flow, "NodeReroute")
 
 
 
@@ -2158,15 +2168,15 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeAttributeStatistic", text="Attribute Statistics", icon="ATTRIBUTE_STATISTIC")
-            self.draw_text_button(col, "GeometryNodeAttributeDomainSize", text="Domain Size", icon="DOMAIN_SIZE")
+            self.draw_text_button(col, "GeometryNodeAttributeStatistic", text="Attribute Statistics")
+            self.draw_text_button(col, "GeometryNodeAttributeDomainSize", text="Domain Size")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeBlurAttribute", text="Blur Attribute", icon="BLUR_ATTRIBUTE")
-            self.draw_text_button(col, "GeometryNodeCaptureAttribute", text="Capture Attribute", icon="ATTRIBUTE_CAPTURE")
-            self.draw_text_button(col, "GeometryNodeRemoveAttribute", text="Remove Attribute", icon="ATTRIBUTE_REMOVE")
-            self.draw_text_button(col, "GeometryNodeStoreNamedAttribute", text="Store Named Attribute", icon="ATTRIBUTE_STORE")
+            self.draw_text_button(col, "GeometryNodeBlurAttribute", text="Blur Attribute")
+            self.draw_text_button(col, "GeometryNodeCaptureAttribute", text="Capture Attribute")
+            self.draw_text_button(col, "GeometryNodeRemoveAttribute", text="Remove Attribute")
+            self.draw_text_button(col, "GeometryNodeStoreNamedAttribute", text="Store Named Attribute")
 
         #### Icon Buttons
 
@@ -2174,12 +2184,12 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeAttributeStatistic", icon="ATTRIBUTE_STATISTIC")
-            self.draw_icon_button(flow, "GeometryNodeAttributeDomainSize", icon="DOMAIN_SIZE")
-            self.draw_icon_button(flow, "GeometryNodeBlurAttribute", icon="BLUR_ATTRIBUTE")
-            self.draw_icon_button(flow, "GeometryNodeCaptureAttribute", icon="ATTRIBUTE_CAPTURE")
-            self.draw_icon_button(flow, "GeometryNodeRemoveAttribute", icon="ATTRIBUTE_REMOVE")
-            self.draw_icon_button(flow, "GeometryNodeStoreNamedAttribute", icon="ATTRIBUTE_STORE")
+            self.draw_icon_button(flow, "GeometryNodeAttributeStatistic")
+            self.draw_icon_button(flow, "GeometryNodeAttributeDomainSize")
+            self.draw_icon_button(flow, "GeometryNodeBlurAttribute")
+            self.draw_icon_button(flow, "GeometryNodeCaptureAttribute")
+            self.draw_icon_button(flow, "GeometryNodeRemoveAttribute")
+            self.draw_icon_button(flow, "GeometryNodeStoreNamedAttribute")
 
 
 #add input panel
@@ -2225,17 +2235,17 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeInputBool", text="Boolean", icon="INPUT_BOOL")
-            self.draw_text_button(col, "GeometryNodeInputCollection", text="Collection           ", icon="OUTLINER_COLLECTION")
-            self.draw_text_button(col, "FunctionNodeInputColor", text="Color", icon="COLOR")
-            self.draw_text_button(col, "GeometryNodeInputImage", text="Image", icon="FILE_IMAGE")
-            self.draw_text_button(col, "FunctionNodeInputInt", text="Integer", icon="INTEGER")
-            self.draw_text_button(col, "GeometryNodeInputMaterial", text="Material", icon="NODE_MATERIAL")
-            self.draw_text_button(col, "GeometryNodeInputObject", text="Object               ", icon="OBJECT_DATA")
-            self.draw_text_button(col, "FunctionNodeInputRotation", text="Rotation", icon="ROTATION")
-            self.draw_text_button(col, "FunctionNodeInputString", text="String", icon="STRING")
-            self.draw_text_button(col, "ShaderNodeValue", text="Value", icon="NODE_VALUE")
-            self.draw_text_button(col, "FunctionNodeInputVector", text="Vector", icon="NODE_VECTOR")
+            self.draw_text_button(col, "FunctionNodeInputBool", text="Boolean")
+            self.draw_text_button(col, "GeometryNodeInputCollection", text="Collection           ")
+            self.draw_text_button(col, "FunctionNodeInputColor", text="Color")
+            self.draw_text_button(col, "GeometryNodeInputImage", text="Image")
+            self.draw_text_button(col, "FunctionNodeInputInt", text="Integer")
+            self.draw_text_button(col, "GeometryNodeInputMaterial", text="Material")
+            self.draw_text_button(col, "GeometryNodeInputObject", text="Object               ")
+            self.draw_text_button(col, "FunctionNodeInputRotation", text="Rotation")
+            self.draw_text_button(col, "FunctionNodeInputString", text="String")
+            self.draw_text_button(col, "ShaderNodeValue", text="Value")
+            self.draw_text_button(col, "FunctionNodeInputVector", text="Vector")
 
         #### Icon Buttons
 
@@ -2244,17 +2254,17 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            self.draw_icon_button(flow, "FunctionNodeInputBool", icon="INPUT_BOOL")
-            self.draw_icon_button(flow, "GeometryNodeInputCollection", icon="OUTLINER_COLLECTION")
-            self.draw_icon_button(flow, "FunctionNodeInputColor", icon="COLOR")
-            self.draw_icon_button(flow, "GeometryNodeInputImage", icon="FILE_IMAGE")
-            self.draw_icon_button(flow, "FunctionNodeInputInt", icon="INTEGER")
-            self.draw_icon_button(flow, "GeometryNodeInputMaterial", icon="NODE_MATERIAL")
-            self.draw_icon_button(flow, "GeometryNodeInputObject", icon="OBJECT_DATA")
-            self.draw_icon_button(flow, "FunctionNodeInputRotation", icon="ROTATION")
-            self.draw_icon_button(flow, "FunctionNodeInputString", icon="STRING")
-            self.draw_icon_button(flow, "ShaderNodeValue", icon="NODE_VALUE")
-            self.draw_icon_button(flow, "FunctionNodeInputVector", icon="NODE_VECTOR")
+            self.draw_icon_button(flow, "FunctionNodeInputBool")
+            self.draw_icon_button(flow, "GeometryNodeInputCollection")
+            self.draw_icon_button(flow, "FunctionNodeInputColor")
+            self.draw_icon_button(flow, "GeometryNodeInputImage")
+            self.draw_icon_button(flow, "FunctionNodeInputInt")
+            self.draw_icon_button(flow, "GeometryNodeInputMaterial")
+            self.draw_icon_button(flow, "GeometryNodeInputObject")
+            self.draw_icon_button(flow, "FunctionNodeInputRotation")
+            self.draw_icon_button(flow, "FunctionNodeInputString")
+            self.draw_icon_button(flow, "ShaderNodeValue")
+            self.draw_icon_button(flow, "FunctionNodeInputVector")
 
 
 #add input panel, gizmo supbanel
@@ -2282,9 +2292,9 @@ class NODES_PT_geom_add_input_gizmo(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeGizmoDial", text="Dial Gizmo", icon="DIAL_GIZMO")
-            self.draw_text_button(col, "GeometryNodeGizmoLinear", text="Linear Gizmo", icon="LINEAR_GIZMO")
-            self.draw_text_button(col, "GeometryNodeGizmoTransform", text="Transform Gizmo", icon="TRANSFORM_GIZMO")
+            self.draw_text_button(col, "GeometryNodeGizmoDial", text="Dial Gizmo")
+            self.draw_text_button(col, "GeometryNodeGizmoLinear", text="Linear Gizmo")
+            self.draw_text_button(col, "GeometryNodeGizmoTransform", text="Transform Gizmo")
 
         #### Icon Buttons
 
@@ -2293,9 +2303,9 @@ class NODES_PT_geom_add_input_gizmo(bpy.types.Panel, NodePanel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            self.draw_icon_button(flow, "GeometryNodeGizmoDial", icon="DIAL_GIZMO")
-            self.draw_icon_button(flow, "GeometryNodeGizmoLinear", icon="LINEAR_GIZMO")
-            self.draw_icon_button(flow, "GeometryNodeGizmoTransform", icon="TRANSFORM_GIZMO")
+            self.draw_icon_button(flow, "GeometryNodeGizmoDial")
+            self.draw_icon_button(flow, "GeometryNodeGizmoLinear")
+            self.draw_icon_button(flow, "GeometryNodeGizmoTransform")
 
 
 #add input panel, file supbanel
@@ -2323,12 +2333,12 @@ class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeImportOBJ", text="Import OBJ", icon="LOAD_OBJ")
-            self.draw_text_button(col, "GeometryNodeImportPLY", text="Import PLY", icon="LOAD_PLY")
-            self.draw_text_button(col, "GeometryNodeImportSTL", text="Import STL", icon="LOAD_STL")
-            self.draw_text_button(col, "GeometryNodeImportCSV", text="Import CSV", icon="LOAD_CSV")
-            self.draw_text_button(col, "GeometryNodeImportText", text="Import Text", icon="FILE_TEXT")
-            self.draw_text_button(col, "GeometryNodeImportVDB", text="Import OpenVDB", icon="FILE_VOLUME")
+            self.draw_text_button(col, "GeometryNodeImportOBJ", text="Import OBJ")
+            self.draw_text_button(col, "GeometryNodeImportPLY", text="Import PLY")
+            self.draw_text_button(col, "GeometryNodeImportSTL", text="Import STL")
+            self.draw_text_button(col, "GeometryNodeImportCSV", text="Import CSV")
+            self.draw_text_button(col, "GeometryNodeImportText", text="Import Text")
+            self.draw_text_button(col, "GeometryNodeImportVDB", text="Import OpenVDB")
 
         #### Icon Buttons
 
@@ -2336,12 +2346,12 @@ class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeImportOBJ", icon="LOAD_OBJ")
-            self.draw_icon_button(flow, "GeometryNodeImportPLY", icon="LOAD_PLY")
-            self.draw_icon_button(flow, "GeometryNodeImportSTL", icon="LOAD_STL")
-            self.draw_icon_button(flow, "GeometryNodeImportCSV", icon="LOAD_CSV")
-            self.draw_icon_button(flow, "GeometryNodeImportText", icon="FILE_TEXT")
-            self.draw_icon_button(flow, "GeometryNodeImportVDB", icon="FILE_VOLUME")
+            self.draw_icon_button(flow, "GeometryNodeImportOBJ")
+            self.draw_icon_button(flow, "GeometryNodeImportPLY")
+            self.draw_icon_button(flow, "GeometryNodeImportSTL")
+            self.draw_icon_button(flow, "GeometryNodeImportCSV")
+            self.draw_icon_button(flow, "GeometryNodeImportText")
+            self.draw_icon_button(flow, "GeometryNodeImportVDB")
 
 
 
@@ -2372,22 +2382,22 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
             col.scale_y = 1.5
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_text_button(col, "GeometryNodeTool3DCursor", text="Cursor", icon="CURSOR")
-            self.draw_text_button(col, "GeometryNodeInputActiveCamera", text="Active Camera", icon="VIEW_SWITCHTOCAM")
-            self.draw_text_button(col, "GeometryNodeCameraInfo", text="Camera Info", icon="CAMERA_DATA")
-            self.draw_text_button(col, "GeometryNodeCollectionInfo", text="Collection Info", icon="COLLECTION_INFO")
-            self.draw_text_button(col, "GeometryNodeImageInfo", text="Image Info", icon="IMAGE_INFO")
-            self.draw_text_button(col, "GeometryNodeIsViewport", text="Is Viewport", icon="VIEW")
-            self.draw_text_button(col, "GeometryNodeInputNamedLayerSelection", text="Named Layer Selection", icon="NAMED_LAYER_SELECTION")
+                self.draw_text_button(col, "GeometryNodeTool3DCursor", text="Cursor")
+            self.draw_text_button(col, "GeometryNodeInputActiveCamera", text="Active Camera")
+            self.draw_text_button(col, "GeometryNodeCameraInfo", text="Camera Info")
+            self.draw_text_button(col, "GeometryNodeCollectionInfo", text="Collection Info")
+            self.draw_text_button(col, "GeometryNodeImageInfo", text="Image Info")
+            self.draw_text_button(col, "GeometryNodeIsViewport", text="Is Viewport")
+            self.draw_text_button(col, "GeometryNodeInputNamedLayerSelection", text="Named Layer Selection")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_text_button(col, "GeometryNodeToolMousePosition", text="Mouse Position", icon="MOUSE_POSITION")
-            self.draw_text_button(col, "GeometryNodeObjectInfo", text="Object Info", icon="NODE_OBJECTINFO")
-            self.draw_text_button(col, "GeometryNodeInputSceneTime", text="Scene Time", icon="TIME")
-            self.draw_text_button(col, "GeometryNodeSelfObject", text="Self Object", icon="SELF_OBJECT")
+                self.draw_text_button(col, "GeometryNodeToolMousePosition", text="Mouse Position")
+            self.draw_text_button(col, "GeometryNodeObjectInfo", text="Object Info")
+            self.draw_text_button(col, "GeometryNodeInputSceneTime", text="Scene Time")
+            self.draw_text_button(col, "GeometryNodeSelfObject", text="Self Object")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_text_button(col, "GeometryNodeViewportTransform", text="Viewport Transform", icon="VIEWPORT_TRANSFORM")
+                self.draw_text_button(col, "GeometryNodeViewportTransform", text="Viewport Transform")
 
         #### Icon Buttons
 
@@ -2397,22 +2407,22 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
             flow.scale_y = 1.5
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_icon_button(flow, "GeometryNodeTool3DCursor", icon="CURSOR")
-            self.draw_icon_button(flow, "GeometryNodeInputActiveCamera", icon="VIEW_SWITCHTOCAM")
-            self.draw_icon_button(flow, "GeometryNodeCameraInfo", icon="CAMERA_DATA")
-            self.draw_icon_button(flow, "GeometryNodeCollectionInfo", icon="COLLECTION_INFO")
-            self.draw_icon_button(flow, "GeometryNodeImageInfo", icon="IMAGE_INFO")
-            self.draw_icon_button(flow, "GeometryNodeIsViewport", icon="VIEW")
-            self.draw_icon_button(flow, "GeometryNodeInputNamedLayerSelection", icon="NAMED_LAYER_SELECTION")
+                self.draw_icon_button(flow, "GeometryNodeTool3DCursor")
+            self.draw_icon_button(flow, "GeometryNodeInputActiveCamera")
+            self.draw_icon_button(flow, "GeometryNodeCameraInfo")
+            self.draw_icon_button(flow, "GeometryNodeCollectionInfo")
+            self.draw_icon_button(flow, "GeometryNodeImageInfo")
+            self.draw_icon_button(flow, "GeometryNodeIsViewport")
+            self.draw_icon_button(flow, "GeometryNodeInputNamedLayerSelection")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_icon_button(flow, "GeometryNodeToolMousePosition", icon="MOUSE_POSITION")
-            self.draw_icon_button(flow, "GeometryNodeObjectInfo", icon="NODE_OBJECTINFO")
-            self.draw_icon_button(flow, "GeometryNodeInputSceneTime", icon="TIME")
-            self.draw_icon_button(flow, "GeometryNodeSelfObject", icon="SELF_OBJECT")
+                self.draw_icon_button(flow, "GeometryNodeToolMousePosition")
+            self.draw_icon_button(flow, "GeometryNodeObjectInfo")
+            self.draw_icon_button(flow, "GeometryNodeInputSceneTime")
+            self.draw_icon_button(flow, "GeometryNodeSelfObject")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_icon_button(flow, "GeometryNodeViewportTransform", icon="VIEWPORT_TRANSFORM")
+                self.draw_icon_button(flow, "GeometryNodeViewportTransform")
 
 
 #add output panel
@@ -2443,8 +2453,8 @@ class NODES_PT_geom_add_output(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeViewer", text="Viewer", icon="NODE_VIEWER")
-            self.draw_text_button(col, "GeometryNodeWarning", text="Warning", icon="ERROR")
+            self.draw_text_button(col, "GeometryNodeViewer", text="Viewer")
+            self.draw_text_button(col, "GeometryNodeWarning", text="Warning")
 
         #### Icon Buttons
 
@@ -2452,8 +2462,8 @@ class NODES_PT_geom_add_output(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeViewer", icon="NODE_VIEWER")
-            self.draw_icon_button(flow, "GeometryNodeWarning", icon="ERROR")
+            self.draw_icon_button(flow, "GeometryNodeViewer")
+            self.draw_icon_button(flow, "GeometryNodeWarning")
 
 
 #add geometry panel
@@ -2484,8 +2494,8 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeGeometryToInstance", text="Geometry to Instance", icon="GEOMETRY_INSTANCE")
-            self.draw_text_button(col, "GeometryNodeJoinGeometry", text="Join Geometry", icon="JOIN")
+            self.draw_text_button(col, "GeometryNodeGeometryToInstance", text="Geometry to Instance")
+            self.draw_text_button(col, "GeometryNodeJoinGeometry", text="Join Geometry")
 
         #### Icon Buttons
 
@@ -2493,8 +2503,8 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeGeometryToInstance", icon="GEOMETRY_INSTANCE")
-            self.draw_icon_button(flow, "GeometryNodeJoinGeometry", icon="JOIN")
+            self.draw_icon_button(flow, "GeometryNodeGeometryToInstance")
+            self.draw_icon_button(flow, "GeometryNodeJoinGeometry")
 
 
 #add geometry panel, read subpanel
@@ -2526,16 +2536,16 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputID", text="ID", icon="GET_ID")
-            self.draw_text_button(col, "GeometryNodeInputIndex", text="Index", icon="INDEX")
-            self.draw_text_button(col, "GeometryNodeInputNamedAttribute", text="Named Attribute", icon="NAMED_ATTRIBUTE")
-            self.draw_text_button(col, "GeometryNodeInputNormal", text="Normal", icon="RECALC_NORMALS")
-            self.draw_text_button(col, "GeometryNodeInputPosition", text="Position", icon="POSITION")
-            self.draw_text_button(col, "GeometryNodeInputRadius", text="Radius", icon="RADIUS")
+            self.draw_text_button(col, "GeometryNodeInputID", text="ID")
+            self.draw_text_button(col, "GeometryNodeInputIndex", text="Index")
+            self.draw_text_button(col, "GeometryNodeInputNamedAttribute", text="Named Attribute")
+            self.draw_text_button(col, "GeometryNodeInputNormal", text="Normal")
+            self.draw_text_button(col, "GeometryNodeInputPosition", text="Position")
+            self.draw_text_button(col, "GeometryNodeInputRadius", text="Radius")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_text_button(col, "GeometryNodeToolSelection", text="Selection", icon="RESTRICT_SELECT_OFF")
-                self.draw_text_button(col, "GeometryNodeToolActiveElement", text="Active Element", icon="ACTIVE_ELEMENT")
+                self.draw_text_button(col, "GeometryNodeToolSelection", text="Selection")
+                self.draw_text_button(col, "GeometryNodeToolActiveElement", text="Active Element")
 
         #### Icon Buttons
 
@@ -2543,16 +2553,16 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInputID", icon="GET_ID")
-            self.draw_icon_button(flow, "GeometryNodeInputIndex", icon="INDEX")
-            self.draw_icon_button(flow, "GeometryNodeInputNamedAttribute", icon="NAMED_ATTRIBUTE")
-            self.draw_icon_button(flow, "GeometryNodeInputNormal", icon="RECALC_NORMALS")
-            self.draw_icon_button(flow, "GeometryNodeInputPosition", icon="POSITION")
-            self.draw_icon_button(flow, "GeometryNodeInputRadius", icon="RADIUS")
+            self.draw_icon_button(flow, "GeometryNodeInputID")
+            self.draw_icon_button(flow, "GeometryNodeInputIndex")
+            self.draw_icon_button(flow, "GeometryNodeInputNamedAttribute")
+            self.draw_icon_button(flow, "GeometryNodeInputNormal")
+            self.draw_icon_button(flow, "GeometryNodeInputPosition")
+            self.draw_icon_button(flow, "GeometryNodeInputRadius")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_icon_button(flow, "GeometryNodeToolSelection", icon="RESTRICT_SELECT_OFF")
-                self.draw_icon_button(flow, "GeometryNodeToolActiveElement", icon="ACTIVE_ELEMENT")
+                self.draw_icon_button(flow, "GeometryNodeToolSelection")
+                self.draw_icon_button(flow, "GeometryNodeToolActiveElement")
 
 
 
@@ -2585,11 +2595,11 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeProximity", text="Geometry Proximity", icon="GEOMETRY_PROXIMITY")
-            self.draw_text_button(col, "GeometryNodeIndexOfNearest", text="Index of Nearest", icon="INDEX_OF_NEAREST")
-            self.draw_text_button(col, "GeometryNodeRaycast", text="Raycast", icon="RAYCAST")
-            self.draw_text_button(col, "GeometryNodeSampleIndex", text="Sample Index", icon="SAMPLE_INDEX")
-            self.draw_text_button(col, "GeometryNodeSampleNearest", text="Sample Nearest", icon="SAMPLE_NEAREST")
+            self.draw_text_button(col, "GeometryNodeProximity", text="Geometry Proximity")
+            self.draw_text_button(col, "GeometryNodeIndexOfNearest", text="Index of Nearest")
+            self.draw_text_button(col, "GeometryNodeRaycast", text="Raycast")
+            self.draw_text_button(col, "GeometryNodeSampleIndex", text="Sample Index")
+            self.draw_text_button(col, "GeometryNodeSampleNearest", text="Sample Nearest")
 
         #### Icon Buttons
 
@@ -2597,11 +2607,11 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeMergeByDistance", icon="GEOMETRY_PROXIMITY")
-            self.draw_icon_button(flow, "GeometryNodeIndexOfNearest", icon="INDEX_OF_NEAREST")
-            self.draw_icon_button(flow, "GeometryNodeRaycast", icon="RAYCAST")
-            self.draw_icon_button(flow, "GeometryNodeSampleIndex", icon="SAMPLE_INDEX")
-            self.draw_icon_button(flow, "GeometryNodeSampleNearest", icon="SAMPLE_NEAREST")
+            self.draw_icon_button(flow, "GeometryNodeMergeByDistance")
+            self.draw_icon_button(flow, "GeometryNodeIndexOfNearest")
+            self.draw_icon_button(flow, "GeometryNodeRaycast")
+            self.draw_icon_button(flow, "GeometryNodeSampleIndex")
+            self.draw_icon_button(flow, "GeometryNodeSampleNearest")
 
 
 #add geometry panel, write subpanel
@@ -2633,12 +2643,12 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSetGeometryName", text="Set Geometry Name", icon="GEOMETRY_NAME")
-            self.draw_text_button(col, "GeometryNodeSetID", text="Set ID", icon="SET_ID")
-            self.draw_text_button(col, "GeometryNodeSetPosition", text="Set Postion", icon="SET_POSITION")
+            self.draw_text_button(col, "GeometryNodeSetGeometryName", text="Set Geometry Name")
+            self.draw_text_button(col, "GeometryNodeSetID", text="Set ID")
+            self.draw_text_button(col, "GeometryNodeSetPosition", text="Set Postion")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_text_button(col, "GeometryNodeToolSetSelection", text="Set Selection", icon="SET_SELECTION")
+                self.draw_text_button(col, "GeometryNodeToolSetSelection", text="Set Selection")
 
         #### Icon Buttons
 
@@ -2646,12 +2656,12 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSetGeometryName", icon="GEOMETRY_NAME")
-            self.draw_icon_button(flow, "GeometryNodeSetID", icon="SET_ID")
-            self.draw_icon_button(flow, "GeometryNodeSetPosition", icon="SET_POSITION")
+            self.draw_icon_button(flow, "GeometryNodeSetGeometryName")
+            self.draw_icon_button(flow, "GeometryNodeSetID")
+            self.draw_icon_button(flow, "GeometryNodeSetPosition")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_icon_button(flow, "GeometryNodeToolSetSelection", icon="SET_SELECTION")
+                self.draw_icon_button(flow, "GeometryNodeToolSetSelection")
 
 
 #add geometry panel, operations subpanel
@@ -2683,20 +2693,20 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeBake", text="Bake", icon="BAKE")
-            self.draw_text_button(col, "GeometryNodeBoundBox", text="Bounding Box", icon="PIVOT_BOUNDBOX")
-            self.draw_text_button(col, "GeometryNodeConvexHull", text="Convex Hull", icon="CONVEXHULL")
-            self.draw_text_button(col, "GeometryNodeDeleteGeometry", text="Delete Geometry", icon="DELETE")
-            self.draw_text_button(col, "GeometryNodeDuplicateElements", text="Duplicate Geometry", icon="DUPLICATE")
-            self.draw_text_button(col, "GeometryNodeMergeByDistance", text="Merge by Distance", icon="REMOVE_DOUBLES")
-            self.draw_text_button(col, "GeometryNodeSortElements", text="Sort Elements", icon="SORTSIZE")
-            self.draw_text_button(col, "GeometryNodeTransform", text="Transform Geometry", icon="NODE_TRANSFORM")
+            self.draw_text_button(col, "GeometryNodeBake", text="Bake")
+            self.draw_text_button(col, "GeometryNodeBoundBox", text="Bounding Box")
+            self.draw_text_button(col, "GeometryNodeConvexHull", text="Convex Hull")
+            self.draw_text_button(col, "GeometryNodeDeleteGeometry", text="Delete Geometry")
+            self.draw_text_button(col, "GeometryNodeDuplicateElements", text="Duplicate Geometry")
+            self.draw_text_button(col, "GeometryNodeMergeByDistance", text="Merge by Distance")
+            self.draw_text_button(col, "GeometryNodeSortElements", text="Sort Elements")
+            self.draw_text_button(col, "GeometryNodeTransform", text="Transform Geometry")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSeparateComponents", text="Separate Components", icon="SEPARATE")
-            self.draw_text_button(col, "GeometryNodeSeparateGeometry", text="Separate Geometry", icon="SEPARATE_GEOMETRY")
-            self.draw_text_button(col, "GeometryNodeSplitToInstances", text="Split to Instances", icon="SPLIT_TO_INSTANCES")
+            self.draw_text_button(col, "GeometryNodeSeparateComponents", text="Separate Components")
+            self.draw_text_button(col, "GeometryNodeSeparateGeometry", text="Separate Geometry")
+            self.draw_text_button(col, "GeometryNodeSplitToInstances", text="Split to Instances")
 
         #### Icon Buttons
 
@@ -2704,17 +2714,17 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeBake", icon="BAKE")
-            self.draw_icon_button(flow, "GeometryNodeBoundBox", icon="PIVOT_BOUNDBOX")
-            self.draw_icon_button(flow, "GeometryNodeConvexHull", icon="CONVEXHULL")
-            self.draw_icon_button(flow, "GeometryNodeDeleteGeometry", icon="DELETE")
-            self.draw_icon_button(flow, "GeometryNodeDuplicateElements", icon="DUPLICATE")
-            self.draw_icon_button(flow, "GeometryNodeMergeByDistance", icon="REMOVE_DOUBLES")
-            self.draw_icon_button(flow, "GeometryNodeSortElements", icon="SORTSIZE")
-            self.draw_icon_button(flow, "GeometryNodeTransform", icon="NODE_TRANSFORM")
-            self.draw_icon_button(flow, "GeometryNodeSeparateComponents", icon="SEPARATE")
-            self.draw_icon_button(flow, "GeometryNodeSeparateGeometry", icon="SEPARATE_GEOMETRY")
-            self.draw_icon_button(flow, "GeometryNodeSplitToInstances", icon="SPLIT_TO_INSTANCES")
+            self.draw_icon_button(flow, "GeometryNodeBake")
+            self.draw_icon_button(flow, "GeometryNodeBoundBox")
+            self.draw_icon_button(flow, "GeometryNodeConvexHull")
+            self.draw_icon_button(flow, "GeometryNodeDeleteGeometry")
+            self.draw_icon_button(flow, "GeometryNodeDuplicateElements")
+            self.draw_icon_button(flow, "GeometryNodeMergeByDistance")
+            self.draw_icon_button(flow, "GeometryNodeSortElements")
+            self.draw_icon_button(flow, "GeometryNodeTransform")
+            self.draw_icon_button(flow, "GeometryNodeSeparateComponents")
+            self.draw_icon_button(flow, "GeometryNodeSeparateGeometry")
+            self.draw_icon_button(flow, "GeometryNodeSplitToInstances")
 
 
 #add Curves panel
@@ -2763,16 +2773,16 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputCurveHandlePositions", text="Curve Handle Positions", icon="CURVE_HANDLE_POSITIONS")
-            self.draw_text_button(col, "GeometryNodeCurveLength", text="Curve Length", icon="PARTICLEBRUSH_LENGTH")
-            self.draw_text_button(col, "GeometryNodeInputTangent", text="Curve Tangent", icon="CURVE_TANGENT")
-            self.draw_text_button(col, "GeometryNodeInputCurveTilt", text="Curve Tilt", icon="CURVE_TILT")
-            self.draw_text_button(col, "GeometryNodeCurveEndpointSelection", text="Endpoint Selection", icon="SELECT_LAST")
-            self.draw_text_button(col, "GeometryNodeCurveHandleTypeSelection", text="Handle Type Selection", icon="SELECT_HANDLETYPE")
-            self.draw_text_button(col, "GeometryNodeInputSplineCyclic", text="Is Spline Cyclic", icon="IS_SPLINE_CYCLIC")
-            self.draw_text_button(col, "GeometryNodeSplineLength", text="Spline Length", icon="SPLINE_LENGTH")
-            self.draw_text_button(col, "GeometryNodeSplineParameter", text="Spline Parameter", icon="CURVE_PARAMETER")
-            self.draw_text_button(col, "GeometryNodeInputSplineResolution", text="Spline Resolution", icon="SPLINE_RESOLUTION")
+            self.draw_text_button(col, "GeometryNodeInputCurveHandlePositions", text="Curve Handle Positions")
+            self.draw_text_button(col, "GeometryNodeCurveLength", text="Curve Length")
+            self.draw_text_button(col, "GeometryNodeInputTangent", text="Curve Tangent")
+            self.draw_text_button(col, "GeometryNodeInputCurveTilt", text="Curve Tilt")
+            self.draw_text_button(col, "GeometryNodeCurveEndpointSelection", text="Endpoint Selection")
+            self.draw_text_button(col, "GeometryNodeCurveHandleTypeSelection", text="Handle Type Selection")
+            self.draw_text_button(col, "GeometryNodeInputSplineCyclic", text="Is Spline Cyclic")
+            self.draw_text_button(col, "GeometryNodeSplineLength", text="Spline Length")
+            self.draw_text_button(col, "GeometryNodeSplineParameter", text="Spline Parameter")
+            self.draw_text_button(col, "GeometryNodeInputSplineResolution", text="Spline Resolution")
 
         #### Icon Buttons
 
@@ -2780,16 +2790,16 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInputCurveHandlePositions", icon="CURVE_HANDLE_POSITIONS")
-            self.draw_icon_button(flow, "GeometryNodeCurveLength", icon="PARTICLEBRUSH_LENGTH")
-            self.draw_icon_button(flow, "GeometryNodeInputTangent", icon="CURVE_TANGENT")
-            self.draw_icon_button(flow, "GeometryNodeInputCurveTilt", icon="CURVE_TILT")
-            self.draw_icon_button(flow, "GeometryNodeCurveEndpointSelection", icon="SELECT_LAST")
-            self.draw_icon_button(flow, "GeometryNodeCurveHandleTypeSelection", icon="SELECT_HANDLETYPE")
-            self.draw_icon_button(flow, "GeometryNodeInputSplineCyclic", icon="IS_SPLINE_CYCLIC")
-            self.draw_icon_button(flow, "GeometryNodeSplineLength", icon="SPLINE_LENGTH")
-            self.draw_icon_button(flow, "GeometryNodeSplineParameter", icon="CURVE_PARAMETER")
-            self.draw_icon_button(flow, "GeometryNodeInputSplineResolution", icon="SPLINE_RESOLUTION")
+            self.draw_icon_button(flow, "GeometryNodeInputCurveHandlePositions")
+            self.draw_icon_button(flow, "GeometryNodeCurveLength")
+            self.draw_icon_button(flow, "GeometryNodeInputTangent")
+            self.draw_icon_button(flow, "GeometryNodeInputCurveTilt")
+            self.draw_icon_button(flow, "GeometryNodeCurveEndpointSelection")
+            self.draw_icon_button(flow, "GeometryNodeCurveHandleTypeSelection")
+            self.draw_icon_button(flow, "GeometryNodeInputSplineCyclic")
+            self.draw_icon_button(flow, "GeometryNodeSplineLength")
+            self.draw_icon_button(flow, "GeometryNodeSplineParameter")
+            self.draw_icon_button(flow, "GeometryNodeInputSplineResolution")
 
 
 #add Curves panel, read subpanel
@@ -2821,7 +2831,7 @@ class NODES_PT_geom_add_curve_sample(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSampleCurve", text="Sample Curve", icon="CURVE_SAMPLE")
+            self.draw_text_button(col, "GeometryNodeSampleCurve", text="Sample Curve")
 
         #### Icon Buttons
 
@@ -2829,7 +2839,7 @@ class NODES_PT_geom_add_curve_sample(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSampleCurve", icon="CURVE_SAMPLE")
+            self.draw_icon_button(flow, "GeometryNodeSampleCurve")
 
 
 
@@ -2863,14 +2873,14 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSetCurveNormal", text="Set Curve Normal", icon="CURVE_NORMAL")
-            self.draw_text_button(col, "GeometryNodeSetCurveRadius", text="Set Curve Radius", icon="SET_CURVE_RADIUS")
-            self.draw_text_button(col, "GeometryNodeSetCurveTilt", text="Set Curve Tilt", icon="SET_CURVE_TILT")
-            self.draw_text_button(col, "GeometryNodeSetCurveHandlePositions", text="Set Handle Positions", icon="SET_CURVE_HANDLE_POSITIONS")
-            self.draw_text_button(col, "GeometryNodeCurveSetHandles", text="Set Handle Type", icon="HANDLE_AUTO")
-            self.draw_text_button(col, "GeometryNodeSetSplineCyclic", text="Set Spline Cyclic", icon="TOGGLE_CYCLIC")
-            self.draw_text_button(col, "GeometryNodeSetSplineResolution", text="Set Spline Resolution", icon="SET_SPLINE_RESOLUTION")
-            self.draw_text_button(col, "GeometryNodeCurveSplineType", text="Set Spline Type", icon="SPLINE_TYPE")
+            self.draw_text_button(col, "GeometryNodeSetCurveNormal", text="Set Curve Normal")
+            self.draw_text_button(col, "GeometryNodeSetCurveRadius", text="Set Curve Radius")
+            self.draw_text_button(col, "GeometryNodeSetCurveTilt", text="Set Curve Tilt")
+            self.draw_text_button(col, "GeometryNodeSetCurveHandlePositions", text="Set Handle Positions")
+            self.draw_text_button(col, "GeometryNodeCurveSetHandles", text="Set Handle Type")
+            self.draw_text_button(col, "GeometryNodeSetSplineCyclic", text="Set Spline Cyclic")
+            self.draw_text_button(col, "GeometryNodeSetSplineResolution", text="Set Spline Resolution")
+            self.draw_text_button(col, "GeometryNodeCurveSplineType", text="Set Spline Type")
 
         #### Icon Buttons
 
@@ -2878,14 +2888,14 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSetCurveNormal", icon="CURVE_NORMAL")
-            self.draw_icon_button(flow, "GeometryNodeSetCurveRadius", icon="SET_CURVE_RADIUS")
-            self.draw_icon_button(flow, "GeometryNodeSetCurveTilt", icon="SET_CURVE_TILT")
-            self.draw_icon_button(flow, "GeometryNodeSetCurveHandlePositions", icon="SET_CURVE_HANDLE_POSITIONS")
-            self.draw_icon_button(flow, "GeometryNodeCurveSetHandles", icon="HANDLE_AUTO")
-            self.draw_icon_button(flow, "GeometryNodeSetSplineCyclic", icon="TOGGLE_CYCLIC")
-            self.draw_icon_button(flow, "GeometryNodeSetSplineResolution", icon="SET_SPLINE_RESOLUTION")
-            self.draw_icon_button(flow, "GeometryNodeCurveSplineType", icon="SPLINE_TYPE")
+            self.draw_icon_button(flow, "GeometryNodeSetCurveNormal")
+            self.draw_icon_button(flow, "GeometryNodeSetCurveRadius")
+            self.draw_icon_button(flow, "GeometryNodeSetCurveTilt")
+            self.draw_icon_button(flow, "GeometryNodeSetCurveHandlePositions")
+            self.draw_icon_button(flow, "GeometryNodeCurveSetHandles")
+            self.draw_icon_button(flow, "GeometryNodeSetSplineCyclic")
+            self.draw_icon_button(flow, "GeometryNodeSetSplineResolution")
+            self.draw_icon_button(flow, "GeometryNodeCurveSplineType")
 
 
 #add Curves panel, operations subpanel
@@ -2917,19 +2927,19 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeCurvesToGreasePencil", text="Curves to Grease Pencil", icon="OUTLINER_OB_GREASEPENCIL")
-            self.draw_text_button(col, "GeometryNodeCurveToMesh", text="Curve to Mesh", icon="OUTLINER_OB_MESH")
-            self.draw_text_button(col, "GeometryNodeCurveToPoints", text="Curve to Points", icon="POINTCLOUD_DATA")
-            self.draw_text_button(col, "GeometryNodeDeformCurvesOnSurface", text="Deform Curves on Surface", icon="DEFORM_CURVES")
-            self.draw_text_button(col, "GeometryNodeFillCurve", text="Fill Curve", icon="CURVE_FILL")
-            self.draw_text_button(col, "GeometryNodeFilletCurve", text="Fillet Curve", icon="CURVE_FILLET")
-            self.draw_text_button(col, "GeometryNodeGreasePencilToCurves", text="Grease Pencil to Curves", icon="OUTLINER_OB_CURVES")
-            self.draw_text_button(col, "GeometryNodeInterpolateCurves", text="Interpolate Curve", icon="INTERPOLATE_CURVE")
-            self.draw_text_button(col, "GeometryNodeInterpolateCurves", text="Merge Layers", icon="MERGE")
-            self.draw_text_button(col, "GeometryNodeResampleCurve", text="Resample Curve", icon="CURVE_RESAMPLE")
-            self.draw_text_button(col, "GeometryNodeReverseCurve", text="Reverse Curve", icon="SWITCH_DIRECTION")
-            self.draw_text_button(col, "GeometryNodeSubdivideCurve", text="Subdivide Curve", icon="SUBDIVIDE_EDGES")
-            self.draw_text_button(col, "GeometryNodeTrimCurve", text="Trim Curve", icon="CURVE_TRIM")
+            self.draw_text_button(col, "GeometryNodeCurvesToGreasePencil", text="Curves to Grease Pencil")
+            self.draw_text_button(col, "GeometryNodeCurveToMesh", text="Curve to Mesh")
+            self.draw_text_button(col, "GeometryNodeCurveToPoints", text="Curve to Points")
+            self.draw_text_button(col, "GeometryNodeDeformCurvesOnSurface", text="Deform Curves on Surface")
+            self.draw_text_button(col, "GeometryNodeFillCurve", text="Fill Curve")
+            self.draw_text_button(col, "GeometryNodeFilletCurve", text="Fillet Curve")
+            self.draw_text_button(col, "GeometryNodeGreasePencilToCurves", text="Grease Pencil to Curves")
+            self.draw_text_button(col, "GeometryNodeInterpolateCurves", text="Interpolate Curve")
+            self.draw_text_button(col, "GeometryNodeInterpolateCurves", text="Merge Layers")
+            self.draw_text_button(col, "GeometryNodeResampleCurve", text="Resample Curve")
+            self.draw_text_button(col, "GeometryNodeReverseCurve", text="Reverse Curve")
+            self.draw_text_button(col, "GeometryNodeSubdivideCurve", text="Subdivide Curve")
+            self.draw_text_button(col, "GeometryNodeTrimCurve", text="Trim Curve")
 
         #### Icon Buttons
 
@@ -2937,19 +2947,19 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeCurvesToGreasePencil", icon="OUTLINER_OB_GREASEPENCIL")
-            self.draw_icon_button(flow, "GeometryNodeCurveToMesh", icon="OUTLINER_OB_MESH")
-            self.draw_icon_button(flow, "GeometryNodeCurveToPoints", icon="POINTCLOUD_DATA")
-            self.draw_icon_button(flow, "GeometryNodeDeformCurvesOnSurface", icon="DEFORM_CURVES")
-            self.draw_icon_button(flow, "GeometryNodeFillCurve", icon="CURVE_FILL")
-            self.draw_icon_button(flow, "GeometryNodeFilletCurve", icon="CURVE_FILLET")
-            self.draw_icon_button(flow, "GeometryNodeGreasePencilToCurves", icon="OUTLINER_OB_CURVES")
-            self.draw_icon_button(flow, "GeometryNodeInterpolateCurves", icon="INTERPOLATE_CURVE")
-            self.draw_icon_button(flow, "GeometryNodeInterpolateCurves", icon="MERGE")
-            self.draw_icon_button(flow, "GeometryNodeResampleCurve", icon="CURVE_RESAMPLE")
-            self.draw_icon_button(flow, "GeometryNodeReverseCurve", icon="SWITCH_DIRECTION")
-            self.draw_icon_button(flow, "GeometryNodeSubdivideCurve", icon="SUBDIVIDE_EDGES")
-            self.draw_icon_button(flow, "GeometryNodeTrimCurve", icon="CURVE_TRIM")
+            self.draw_icon_button(flow, "GeometryNodeCurvesToGreasePencil")
+            self.draw_icon_button(flow, "GeometryNodeCurveToMesh")
+            self.draw_icon_button(flow, "GeometryNodeCurveToPoints")
+            self.draw_icon_button(flow, "GeometryNodeDeformCurvesOnSurface")
+            self.draw_icon_button(flow, "GeometryNodeFillCurve")
+            self.draw_icon_button(flow, "GeometryNodeFilletCurve")
+            self.draw_icon_button(flow, "GeometryNodeGreasePencilToCurves")
+            self.draw_icon_button(flow, "GeometryNodeInterpolateCurves")
+            self.draw_icon_button(flow, "GeometryNodeInterpolateCurves")
+            self.draw_icon_button(flow, "GeometryNodeResampleCurve")
+            self.draw_icon_button(flow, "GeometryNodeReverseCurve")
+            self.draw_icon_button(flow, "GeometryNodeSubdivideCurve")
+            self.draw_icon_button(flow, "GeometryNodeTrimCurve")
 
 
 #add Curves panel, Primitives subpanel
@@ -2981,14 +2991,14 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeCurveArc", text="Arc", icon="CURVE_ARC")
-            self.draw_text_button(col, "GeometryNodeCurvePrimitiveBezierSegment", text="Bezier Segment", icon="CURVE_BEZCURVE")
-            self.draw_text_button(col, "GeometryNodeCurvePrimitiveCircle", text="Curve Circle", icon="CURVE_BEZCIRCLE")
-            self.draw_text_button(col, "GeometryNodeCurvePrimitiveLine", text="Curve Line", icon="CURVE_LINE")
-            self.draw_text_button(col, "GeometryNodeCurveSpiral", text="Curve Spiral", icon="CURVE_SPIRAL")
-            self.draw_text_button(col, "GeometryNodeCurveQuadraticBezier", text="Quadratic Bezier", icon="CURVE_NCURVE")
-            self.draw_text_button(col, "GeometryNodeCurvePrimitiveQuadrilateral", text="Quadrilateral", icon="CURVE_QUADRILATERAL")
-            self.draw_text_button(col, "GeometryNodeCurveStar", text="Star", icon="CURVE_STAR")
+            self.draw_text_button(col, "GeometryNodeCurveArc", text="Arc")
+            self.draw_text_button(col, "GeometryNodeCurvePrimitiveBezierSegment", text="Bezier Segment")
+            self.draw_text_button(col, "GeometryNodeCurvePrimitiveCircle", text="Curve Circle")
+            self.draw_text_button(col, "GeometryNodeCurvePrimitiveLine", text="Curve Line")
+            self.draw_text_button(col, "GeometryNodeCurveSpiral", text="Curve Spiral")
+            self.draw_text_button(col, "GeometryNodeCurveQuadraticBezier", text="Quadratic Bezier")
+            self.draw_text_button(col, "GeometryNodeCurvePrimitiveQuadrilateral", text="Quadrilateral")
+            self.draw_text_button(col, "GeometryNodeCurveStar", text="Star")
 
         #### Icon Buttons
 
@@ -2996,14 +3006,14 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeCurveArc", icon="CURVE_ARC")
-            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveBezierSegment", icon="CURVE_BEZCURVE")
-            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveCircle", icon="CURVE_BEZCIRCLE")
-            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveLine", icon="CURVE_LINE")
-            self.draw_icon_button(flow, "GeometryNodeCurveSpiral", icon="CURVE_SPIRAL")
-            self.draw_icon_button(flow, "GeometryNodeCurveQuadraticBezier", icon="CURVE_NCURVE")
-            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveQuadrilateral", icon="CURVE_QUADRILATERAL")
-            self.draw_icon_button(flow, "GeometryNodeCurveStar", icon="CURVE_STAR")
+            self.draw_icon_button(flow, "GeometryNodeCurveArc")
+            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveBezierSegment")
+            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveCircle")
+            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveLine")
+            self.draw_icon_button(flow, "GeometryNodeCurveSpiral")
+            self.draw_icon_button(flow, "GeometryNodeCurveQuadraticBezier")
+            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveQuadrilateral")
+            self.draw_icon_button(flow, "GeometryNodeCurveStar")
 
 
 #add Curve panel, Topology subpanel
@@ -3035,9 +3045,9 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeCurveOfPoint", text="Curve of Point", icon="CURVE_OF_POINT")
-            self.draw_text_button(col, "GeometryNodeOffsetPointInCurve", text="Offset Point in Curve", icon="OFFSET_POINT_IN_CURVE")
-            self.draw_text_button(col, "GeometryNodePointsOfCurve", text="Points of Curve", icon="POINT_OF_CURVE")
+            self.draw_text_button(col, "GeometryNodeCurveOfPoint", text="Curve of Point")
+            self.draw_text_button(col, "GeometryNodeOffsetPointInCurve", text="Offset Point in Curve")
+            self.draw_text_button(col, "GeometryNodePointsOfCurve", text="Points of Curve")
 
         #### Icon Buttons
 
@@ -3045,9 +3055,9 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeCurveOfPoint", icon="CURVE_OF_POINT")
-            self.draw_icon_button(flow, "GeometryNodeOffsetPointInCurve", icon="OFFSET_POINT_IN_CURVE")
-            self.draw_icon_button(flow, "GeometryNodePointsOfCurve", icon="POINT_OF_CURVE")
+            self.draw_icon_button(flow, "GeometryNodeCurveOfPoint")
+            self.draw_icon_button(flow, "GeometryNodeOffsetPointInCurve")
+            self.draw_icon_button(flow, "GeometryNodePointsOfCurve")
 
 
 #add Grease Pencil panel
@@ -3097,7 +3107,7 @@ class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputNamedLayerSelection", text="Named Layer Selection", icon="NAMED_LAYER_SELECTION")
+            self.draw_text_button(col, "GeometryNodeInputNamedLayerSelection", text="Named Layer Selection")
 
         #### Icon Buttons
 
@@ -3105,7 +3115,7 @@ class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInputNamedLayerSelection", icon="NAMED_LAYER_SELECTION")
+            self.draw_icon_button(flow, "GeometryNodeInputNamedLayerSelection")
 
 
 #add Grease Pencil panel, Read subpanel
@@ -3137,9 +3147,9 @@ class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSetGreasePencilColor", text="Set Grease Pencil Color", icon="COLOR")
-            self.draw_text_button(col, "GeometryNodeSetGreasePencilDepth", text="Set Grease Pencil Depth", icon="DEPTH")
-            self.draw_text_button(col, "GeometryNodeSetGreasePencilSoftness", text="Set Grease Pencil Softness", icon="FALLOFFSTROKE")
+            self.draw_text_button(col, "GeometryNodeSetGreasePencilColor", text="Set Grease Pencil Color")
+            self.draw_text_button(col, "GeometryNodeSetGreasePencilDepth", text="Set Grease Pencil Depth")
+            self.draw_text_button(col, "GeometryNodeSetGreasePencilSoftness", text="Set Grease Pencil Softness")
 
         #### Icon Buttons
 
@@ -3147,9 +3157,9 @@ class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilColor", icon="COLOR")
-            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilDepth", icon="DEPTH")
-            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilSoftness", icon="FALLOFFSTROKE")
+            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilColor")
+            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilDepth")
+            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilSoftness")
 
 
 #add Grease Pencil panel, Read subpanel
@@ -3181,8 +3191,8 @@ class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeGreasePencilToCurves", text="Set Grease Pencil to Curves", icon="OUTLINER_OB_CURVES")
-            self.draw_text_button(col, "GeometryNodeMergeLayers", text="Merge Layers", icon="MERGE")
+            self.draw_text_button(col, "GeometryNodeGreasePencilToCurves", text="Set Grease Pencil to Curves")
+            self.draw_text_button(col, "GeometryNodeMergeLayers", text="Merge Layers")
 
         #### Icon Buttons
 
@@ -3190,8 +3200,8 @@ class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeGreasePencilToCurves", icon="OUTLINER_OB_CURVES")
-            self.draw_icon_button(flow, "GeometryNodeMergeLayers", icon="MERGE")
+            self.draw_icon_button(flow, "GeometryNodeGreasePencilToCurves")
+            self.draw_icon_button(flow, "GeometryNodeMergeLayers")
 
 
 #add mesh panel
@@ -3222,19 +3232,19 @@ class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInstanceOnPoints", text="Instances on Points", icon="POINT_INSTANCE")
-            self.draw_text_button(col, "GeometryNodeInstancesToPoints", text="Instances to Points", icon="INSTANCES_TO_POINTS")
-            self.draw_text_button(col, "GeometryNodeRealizeInstances", text="Realize Instances", icon="MOD_INSTANCE")
-            self.draw_text_button(col, "GeometryNodeRotateInstances", text="Rotate Instances", icon="ROTATE_INSTANCE")
-            self.draw_text_button(col, "GeometryNodeScaleInstances", text="Scale Instances", icon="SCALE_INSTANCE")
-            self.draw_text_button(col, "GeometryNodeTranslateInstances", text="Translate Instances", icon="TRANSLATE_INSTANCE")
-            self.draw_text_button(col, "GeometryNodeSetInstanceTransform", text="Set Instance Transform", icon="INSTANCE_TRANSFORM")
+            self.draw_text_button(col, "GeometryNodeInstanceOnPoints", text="Instances on Points")
+            self.draw_text_button(col, "GeometryNodeInstancesToPoints", text="Instances to Points")
+            self.draw_text_button(col, "GeometryNodeRealizeInstances", text="Realize Instances")
+            self.draw_text_button(col, "GeometryNodeRotateInstances", text="Rotate Instances")
+            self.draw_text_button(col, "GeometryNodeScaleInstances", text="Scale Instances")
+            self.draw_text_button(col, "GeometryNodeTranslateInstances", text="Translate Instances")
+            self.draw_text_button(col, "GeometryNodeSetInstanceTransform", text="Set Instance Transform")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInstanceTransform", text="Instance Transform", icon="INSTANCE_TRANSFORM_GET")
-            self.draw_text_button(col, "GeometryNodeInputInstanceRotation", text="Instance Rotation", icon="INSTANCE_ROTATE")
-            self.draw_text_button(col, "GeometryNodeInputInstanceScale", text="Instance Scale", icon="INSTANCE_SCALE")
+            self.draw_text_button(col, "GeometryNodeInstanceTransform", text="Instance Transform")
+            self.draw_text_button(col, "GeometryNodeInputInstanceRotation", text="Instance Rotation")
+            self.draw_text_button(col, "GeometryNodeInputInstanceScale", text="Instance Scale")
 
         #### Icon Buttons
 
@@ -3242,16 +3252,16 @@ class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInstanceOnPoints", icon="POINT_INSTANCE")
-            self.draw_icon_button(flow, "GeometryNodeInstancesToPoints", icon="INSTANCES_TO_POINTS")
-            self.draw_icon_button(flow, "GeometryNodeRealizeInstances", icon="MOD_INSTANCE")
-            self.draw_icon_button(flow, "GeometryNodeRotateInstances", icon="ROTATE_INSTANCE")
-            self.draw_icon_button(flow, "GeometryNodeTriangulate", icon="SCALE_INSTANCE")
-            self.draw_icon_button(flow, "GeometryNodeTranslateInstances", icon="TRANSLATE_INSTANCE")
-            self.draw_icon_button(flow, "GeometryNodeSetInstanceTransform", icon="INSTANCE_TRANSFORM")
-            self.draw_icon_button(flow, "GeometryNodeInstanceTransform", icon="INSTANCE_TRANSFORM_GET")
-            self.draw_icon_button(flow, "GeometryNodeInputInstanceRotation", icon="INSTANCE_ROTATE")
-            self.draw_icon_button(flow, "GeometryNodeInputInstanceScale", icon="INSTANCE_SCALE")
+            self.draw_icon_button(flow, "GeometryNodeInstanceOnPoints")
+            self.draw_icon_button(flow, "GeometryNodeInstancesToPoints")
+            self.draw_icon_button(flow, "GeometryNodeRealizeInstances")
+            self.draw_icon_button(flow, "GeometryNodeRotateInstances")
+            self.draw_icon_button(flow, "GeometryNodeTriangulate")
+            self.draw_icon_button(flow, "GeometryNodeTranslateInstances")
+            self.draw_icon_button(flow, "GeometryNodeSetInstanceTransform")
+            self.draw_icon_button(flow, "GeometryNodeInstanceTransform")
+            self.draw_icon_button(flow, "GeometryNodeInputInstanceRotation")
+            self.draw_icon_button(flow, "GeometryNodeInputInstanceScale")
 
 
 #add mesh panel
@@ -3301,28 +3311,28 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputMeshEdgeAngle", text="Edge Angle", icon="EDGE_ANGLE")
-            self.draw_text_button(col, "GeometryNodeInputMeshEdgeNeighbors", text="Edge Neighbors", icon="EDGE_NEIGHBORS")
-            self.draw_text_button(col, "GeometryNodeInputMeshEdgeVertices", text="Edge Vertices", icon="EDGE_VERTICES")
-            self.draw_text_button(col, "GeometryNodeEdgesToFaceGroups", text="Edges to Face Groups", icon="FACEGROUP")
-            self.draw_text_button(col, "GeometryNodeInputMeshFaceArea", text="Face Area", icon="FACEREGIONS")
+            self.draw_text_button(col, "GeometryNodeInputMeshEdgeAngle", text="Edge Angle")
+            self.draw_text_button(col, "GeometryNodeInputMeshEdgeNeighbors", text="Edge Neighbors")
+            self.draw_text_button(col, "GeometryNodeInputMeshEdgeVertices", text="Edge Vertices")
+            self.draw_text_button(col, "GeometryNodeEdgesToFaceGroups", text="Edges to Face Groups")
+            self.draw_text_button(col, "GeometryNodeInputMeshFaceArea", text="Face Area")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeMeshFaceSetBoundaries", text="Face Group Boundaries", icon="SELECT_BOUNDARY")
-            self.draw_text_button(col, "GeometryNodeInputMeshFaceNeighbors", text="Face Neighbors", icon="FACE_NEIGHBORS")
+            self.draw_text_button(col, "GeometryNodeMeshFaceSetBoundaries", text="Face Group Boundaries")
+            self.draw_text_button(col, "GeometryNodeInputMeshFaceNeighbors", text="Face Neighbors")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_text_button(col, "GeometryNodeToolFaceSet", text="Face Set", icon="FACE_SET")
-            self.draw_text_button(col, "GeometryNodeInputMeshFaceIsPlanar", text="Is Face Planar", icon="PLANAR")
-            self.draw_text_button(col, "GeometryNodeInputShadeSmooth", text="Is Face Smooth", icon="SHADING_SMOOTH")
-            self.draw_text_button(col, "GeometryNodeInputEdgeSmooth", text="is Edge Smooth", icon="SHADING_EDGE_SMOOTH")
+                self.draw_text_button(col, "GeometryNodeToolFaceSet", text="Face Set")
+            self.draw_text_button(col, "GeometryNodeInputMeshFaceIsPlanar", text="Is Face Planar")
+            self.draw_text_button(col, "GeometryNodeInputShadeSmooth", text="Is Face Smooth")
+            self.draw_text_button(col, "GeometryNodeInputEdgeSmooth", text="is Edge Smooth")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputMeshIsland", text="Mesh Island", icon="UV_ISLANDSEL")
-            self.draw_text_button(col, "GeometryNodeInputShortestEdgePaths", text="Shortest Edge Path", icon="SELECT_SHORTESTPATH")
-            self.draw_text_button(col, "GeometryNodeInputMeshVertexNeighbors", text="Vertex Neighbors", icon="VERTEX_NEIGHBORS")
+            self.draw_text_button(col, "GeometryNodeInputMeshIsland", text="Mesh Island")
+            self.draw_text_button(col, "GeometryNodeInputShortestEdgePaths", text="Shortest Edge Path")
+            self.draw_text_button(col, "GeometryNodeInputMeshVertexNeighbors", text="Vertex Neighbors")
 
         #### Icon Buttons
 
@@ -3330,22 +3340,22 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeAngle", icon="EDGE_ANGLE")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeNeighbors", icon="EDGE_NEIGHBORS")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeVertices", icon="EDGE_VERTICES")
-            self.draw_icon_button(flow, "GeometryNodeEdgesToFaceGroups", icon="FACEGROUP")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceArea", icon="FACEREGIONS")
-            self.draw_icon_button(flow, "GeometryNodeMeshFaceSetBoundaries", icon="SELECT_BOUNDARY")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceNeighbors", icon="FACE_NEIGHBORS")
+            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeAngle")
+            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeNeighbors")
+            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeVertices")
+            self.draw_icon_button(flow, "GeometryNodeEdgesToFaceGroups")
+            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceArea")
+            self.draw_icon_button(flow, "GeometryNodeMeshFaceSetBoundaries")
+            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceNeighbors")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_icon_button(flow, "GeometryNodeToolFaceSet", icon="FACE_SET")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceIsPlanar", icon="PLANAR")
-            self.draw_icon_button(flow, "GeometryNodeInputShadeSmooth", icon="SHADING_SMOOTH")
-            self.draw_icon_button(flow, "GeometryNodeInputEdgeSmooth", icon="SHADING_EDGE_SMOOTH")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshIsland", icon="UV_ISLANDSEL")
-            self.draw_icon_button(flow, "GeometryNodeInputShortestEdgePaths", icon="SELECT_SHORTESTPATH")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshVertexNeighbors", icon="VERTEX_NEIGHBORS")
+                self.draw_icon_button(flow, "GeometryNodeToolFaceSet")
+            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceIsPlanar")
+            self.draw_icon_button(flow, "GeometryNodeInputShadeSmooth")
+            self.draw_icon_button(flow, "GeometryNodeInputEdgeSmooth")
+            self.draw_icon_button(flow, "GeometryNodeInputMeshIsland")
+            self.draw_icon_button(flow, "GeometryNodeInputShortestEdgePaths")
+            self.draw_icon_button(flow, "GeometryNodeInputMeshVertexNeighbors")
 
 
 #add mesh panel, sample subpanel
@@ -3377,8 +3387,8 @@ class NODES_PT_geom_add_mesh_sample(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSampleNearestSurface", text="Sample Nearest Surface", icon="SAMPLE_NEAREST_SURFACE")
-            self.draw_text_button(col, "GeometryNodeSampleUVSurface", text="Sample UV Surface", icon="SAMPLE_UV_SURFACE")
+            self.draw_text_button(col, "GeometryNodeSampleNearestSurface", text="Sample Nearest Surface")
+            self.draw_text_button(col, "GeometryNodeSampleUVSurface", text="Sample UV Surface")
 
         #### Icon Buttons
 
@@ -3386,8 +3396,8 @@ class NODES_PT_geom_add_mesh_sample(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSampleNearestSurface", icon="SAMPLE_NEAREST_SURFACE")
-            self.draw_icon_button(flow, "GeometryNodeSampleUVSurface", icon="SAMPLE_UV_SURFACE")
+            self.draw_icon_button(flow, "GeometryNodeSampleNearestSurface")
+            self.draw_icon_button(flow, "GeometryNodeSampleUVSurface")
 
 
 #add mesh panel, write subpanel
@@ -3421,9 +3431,9 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
             col.scale_y = 1.5
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_text_button(col, "GeometryNodeToolFaceSet", text="Set Face Set", icon="FACE_SET")
-            self.draw_text_button(col, "GeometryNodeSetMeshNormal", text="Set Mesh Normal", icon="SET_SMOOTH")
-            self.draw_text_button(col, "GeometryNodeSetShadeSmooth", text="Set Shade Smooth", icon="SET_SHADE_SMOOTH")
+                self.draw_text_button(col, "GeometryNodeToolFaceSet", text="Set Face Set")
+            self.draw_text_button(col, "GeometryNodeSetMeshNormal", text="Set Mesh Normal")
+            self.draw_text_button(col, "GeometryNodeSetShadeSmooth", text="Set Shade Smooth")
 
         #### Icon Buttons
 
@@ -3433,9 +3443,9 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
             flow.scale_y = 1.5
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                self.draw_icon_button(flow, "GeometryNodeToolSetFaceSet", icon="SET_FACE_SET")
-            self.draw_icon_button(flow, "GeometryNodeSetMeshNormal", icon="SET_SMOOTH")
-            self.draw_icon_button(flow, "GeometryNodeSetShadeSmooth", icon="SET_SHADE_SMOOTH")
+                self.draw_icon_button(flow, "GeometryNodeToolSetFaceSet")
+            self.draw_icon_button(flow, "GeometryNodeSetMeshNormal")
+            self.draw_icon_button(flow, "GeometryNodeSetShadeSmooth")
 
 
 #add mesh panel, operations subpanel
@@ -3467,26 +3477,26 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeDualMesh", text="Dual Mesh", icon="DUAL_MESH")
-            self.draw_text_button(col, "GeometryNodeEdgePathsToCurves", text="Edge Paths to Curves", icon="EDGE_PATHS_TO_CURVES")
-            self.draw_text_button(col, "GeometryNodeEdgePathsToSelection", text="Edge Paths to Selection", icon="EDGE_PATH_TO_SELECTION")
-            self.draw_text_button(col, "GeometryNodeExtrudeMesh", text="Extrude Mesh", icon="EXTRUDE_REGION")
-            self.draw_text_button(col, "GeometryNodeFlipFaces", text="Flip Faces", icon="FLIP_NORMALS")
+            self.draw_text_button(col, "GeometryNodeDualMesh", text="Dual Mesh")
+            self.draw_text_button(col, "GeometryNodeEdgePathsToCurves", text="Edge Paths to Curves")
+            self.draw_text_button(col, "GeometryNodeEdgePathsToSelection", text="Edge Paths to Selection")
+            self.draw_text_button(col, "GeometryNodeExtrudeMesh", text="Extrude Mesh")
+            self.draw_text_button(col, "GeometryNodeFlipFaces", text="Flip Faces")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeMeshBoolean", text="Mesh Boolean", icon="MOD_BOOLEAN")
-            self.draw_text_button(col, "GeometryNodeMeshToCurve", text="Mesh to Curve", icon="OUTLINER_OB_CURVE")
-            self.draw_text_button(col, "GeometryNodeMeshToPoints", text="Mesh to Points", icon="MESH_TO_POINTS")
-            self.draw_text_button(col, "GeometryNodeMeshToVolume", text="Mesh to Volume", icon="MESH_TO_VOLUME")
-            self.draw_text_button(col, "GeometryNodeScaleElements", text="Scale Elements", icon="TRANSFORM_SCALE")
+            self.draw_text_button(col, "GeometryNodeMeshBoolean", text="Mesh Boolean")
+            self.draw_text_button(col, "GeometryNodeMeshToCurve", text="Mesh to Curve")
+            self.draw_text_button(col, "GeometryNodeMeshToPoints", text="Mesh to Points")
+            self.draw_text_button(col, "GeometryNodeMeshToVolume", text="Mesh to Volume")
+            self.draw_text_button(col, "GeometryNodeScaleElements", text="Scale Elements")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSplitEdges", text="Split Edges", icon="SPLITEDGE")
-            self.draw_text_button(col, "GeometryNodeSubdivideMesh", text="Subdivide Mesh", icon="SUBDIVIDE_MESH")
-            self.draw_text_button(col, "GeometryNodeSubdivisionSurface", text="Subdivision Surface", icon="SUBDIVIDE_EDGES")
-            self.draw_text_button(col, "GeometryNodeTriangulate", text="Triangulate", icon="MOD_TRIANGULATE")
+            self.draw_text_button(col, "GeometryNodeSplitEdges", text="Split Edges")
+            self.draw_text_button(col, "GeometryNodeSubdivideMesh", text="Subdivide Mesh")
+            self.draw_text_button(col, "GeometryNodeSubdivisionSurface", text="Subdivision Surface")
+            self.draw_text_button(col, "GeometryNodeTriangulate", text="Triangulate")
 
 
         #### Icon Buttons
@@ -3495,20 +3505,20 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeDualMesh", icon="DUAL_MESH")
-            self.draw_icon_button(flow, "GeometryNodeEdgePathsToCurves", icon="EDGE_PATHS_TO_CURVES")
-            self.draw_icon_button(flow, "GeometryNodeEdgePathsToSelection", icon="EDGE_PATH_TO_SELECTION")
-            self.draw_icon_button(flow, "GeometryNodeExtrudeMesh", icon="EXTRUDE_REGION")
-            self.draw_icon_button(flow, "GeometryNodeFlipFaces", icon="FLIP_NORMALS")
-            self.draw_icon_button(flow, "GeometryNodeMeshBoolean", icon="MOD_BOOLEAN")
-            self.draw_icon_button(flow, "GeometryNodeMeshToCurve", icon="OUTLINER_OB_CURVE")
-            self.draw_icon_button(flow, "GeometryNodeMeshToPoints", icon="MESH_TO_POINTS")
-            self.draw_icon_button(flow, "GeometryNodeMeshToVolume", icon="MESH_TO_VOLUME")
-            self.draw_icon_button(flow, "GeometryNodeScaleElements", icon="TRANSFORM_SCALE")
-            self.draw_icon_button(flow, "GeometryNodeSplitEdges", icon="SPLITEDGE")
-            self.draw_icon_button(flow, "GeometryNodeSubdivideMesh", icon="SUBDIVIDE_MESH")
-            self.draw_icon_button(flow, "GeometryNodeSubdivisionSurface", icon="SUBDIVIDE_EDGES")
-            self.draw_icon_button(flow, "GeometryNodeTriangulate", icon="MOD_TRIANGULATE")
+            self.draw_icon_button(flow, "GeometryNodeDualMesh")
+            self.draw_icon_button(flow, "GeometryNodeEdgePathsToCurves")
+            self.draw_icon_button(flow, "GeometryNodeEdgePathsToSelection")
+            self.draw_icon_button(flow, "GeometryNodeExtrudeMesh")
+            self.draw_icon_button(flow, "GeometryNodeFlipFaces")
+            self.draw_icon_button(flow, "GeometryNodeMeshBoolean")
+            self.draw_icon_button(flow, "GeometryNodeMeshToCurve")
+            self.draw_icon_button(flow, "GeometryNodeMeshToPoints")
+            self.draw_icon_button(flow, "GeometryNodeMeshToVolume")
+            self.draw_icon_button(flow, "GeometryNodeScaleElements")
+            self.draw_icon_button(flow, "GeometryNodeSplitEdges")
+            self.draw_icon_button(flow, "GeometryNodeSubdivideMesh")
+            self.draw_icon_button(flow, "GeometryNodeSubdivisionSurface")
+            self.draw_icon_button(flow, "GeometryNodeTriangulate")
 
 
 #add mesh panel, primitives subpanel
@@ -3540,17 +3550,17 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeMeshCone", text="Cone", icon="MESH_CONE")
-            self.draw_text_button(col, "GeometryNodeMeshCube", text="Cube", icon="MESH_CUBE")
-            self.draw_text_button(col, "GeometryNodeMeshCylinder", text="Cylinder", icon="MESH_CYLINDER")
-            self.draw_text_button(col, "GeometryNodeMeshGrid", text="Grid", icon="MESH_GRID")
+            self.draw_text_button(col, "GeometryNodeMeshCone", text="Cone")
+            self.draw_text_button(col, "GeometryNodeMeshCube", text="Cube")
+            self.draw_text_button(col, "GeometryNodeMeshCylinder", text="Cylinder")
+            self.draw_text_button(col, "GeometryNodeMeshGrid", text="Grid")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeMeshIcoSphere", text="Ico Sphere", icon="MESH_ICOSPHERE")
-            self.draw_text_button(col, "GeometryNodeMeshCircle", text="Mesh Circle", icon="MESH_CIRCLE")
-            self.draw_text_button(col, "GeometryNodeMeshLine", text="Mesh Line", icon="MESH_LINE")
-            self.draw_text_button(col, "GeometryNodeMeshUVSphere", text="UV Sphere", icon="MESH_UVSPHERE")
+            self.draw_text_button(col, "GeometryNodeMeshIcoSphere", text="Ico Sphere")
+            self.draw_text_button(col, "GeometryNodeMeshCircle", text="Mesh Circle")
+            self.draw_text_button(col, "GeometryNodeMeshLine", text="Mesh Line")
+            self.draw_text_button(col, "GeometryNodeMeshUVSphere", text="UV Sphere")
 
         #### Icon Buttons
 
@@ -3558,14 +3568,14 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeMeshCone", icon="MESH_CONE")
-            self.draw_icon_button(flow, "GeometryNodeMeshCube", icon="MESH_CUBE")
-            self.draw_icon_button(flow, "GeometryNodeMeshCylinder", icon="MESH_CYLINDER")
-            self.draw_icon_button(flow, "GeometryNodeMeshGrid", icon="MESH_GRID")
-            self.draw_icon_button(flow, "GeometryNodeMeshIcoSphere", icon="MESH_ICOSPHERE")
-            self.draw_icon_button(flow, "GeometryNodeMeshCircle", icon="MESH_CIRCLE")
-            self.draw_icon_button(flow, "GeometryNodeMeshLine", icon="MESH_LINE")
-            self.draw_icon_button(flow, "GeometryNodeMeshUVSphere", icon="MESH_UVSPHERE")
+            self.draw_icon_button(flow, "GeometryNodeMeshCone")
+            self.draw_icon_button(flow, "GeometryNodeMeshCube")
+            self.draw_icon_button(flow, "GeometryNodeMeshCylinder")
+            self.draw_icon_button(flow, "GeometryNodeMeshGrid")
+            self.draw_icon_button(flow, "GeometryNodeMeshIcoSphere")
+            self.draw_icon_button(flow, "GeometryNodeMeshCircle")
+            self.draw_icon_button(flow, "GeometryNodeMeshLine")
+            self.draw_icon_button(flow, "GeometryNodeMeshUVSphere")
 
 
 #add mesh panel, topology subpanel
@@ -3597,17 +3607,17 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeCornersOfEdge", text="Corners of Edge", icon="CORNERS_OF_EDGE")
-            self.draw_text_button(col, "GeometryNodeCornersOfFace", text="Corners of Face", icon="CORNERS_OF_FACE")
-            self.draw_text_button(col, "GeometryNodeCornersOfVertex", text="Corners of Vertex", icon="CORNERS_OF_VERTEX")
-            self.draw_text_button(col, "GeometryNodeEdgesOfCorner", text="Edges of Corner", icon="EDGES_OF_CORNER")
+            self.draw_text_button(col, "GeometryNodeCornersOfEdge", text="Corners of Edge")
+            self.draw_text_button(col, "GeometryNodeCornersOfFace", text="Corners of Face")
+            self.draw_text_button(col, "GeometryNodeCornersOfVertex", text="Corners of Vertex")
+            self.draw_text_button(col, "GeometryNodeEdgesOfCorner", text="Edges of Corner")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeEdgesOfVertex", text="Edges of Vertex", icon="EDGES_OF_VERTEX")
-            self.draw_text_button(col, "GeometryNodeFaceOfCorner", text="Face of Corner", icon="FACE_OF_CORNER")
-            self.draw_text_button(col, "GeometryNodeOffsetCornerInFace", text="Offset Corner In Face", icon="OFFSET_CORNER_IN_FACE")
-            self.draw_text_button(col, "GeometryNodeVertexOfCorner", text="Vertex of Corner", icon="VERTEX_OF_CORNER")
+            self.draw_text_button(col, "GeometryNodeEdgesOfVertex", text="Edges of Vertex")
+            self.draw_text_button(col, "GeometryNodeFaceOfCorner", text="Face of Corner")
+            self.draw_text_button(col, "GeometryNodeOffsetCornerInFace", text="Offset Corner In Face")
+            self.draw_text_button(col, "GeometryNodeVertexOfCorner", text="Vertex of Corner")
 
         #### Icon Buttons
 
@@ -3615,14 +3625,14 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeCornersOfEdge", icon="CORNERS_OF_EDGE")
-            self.draw_icon_button(flow, "GeometryNodeCornersOfFace", icon="CORNERS_OF_FACE")
-            self.draw_icon_button(flow, "GeometryNodeCornersOfVertex", icon="CORNERS_OF_VERTEX")
-            self.draw_icon_button(flow, "GeometryNodeEdgesOfCorner", icon="EDGES_OF_CORNER")
-            self.draw_icon_button(flow, "GeometryNodeEdgesOfVertex", icon="EDGES_OF_VERTEX")
-            self.draw_icon_button(flow, "GeometryNodeFaceOfCorner", icon="FACE_OF_CORNER")
-            self.draw_icon_button(flow, "GeometryNodeOffsetCornerInFace", icon="OFFSET_CORNER_IN_FACE")
-            self.draw_icon_button(flow, "GeometryNodeVertexOfCorner", icon="VERTEX_OF_CORNER")
+            self.draw_icon_button(flow, "GeometryNodeCornersOfEdge")
+            self.draw_icon_button(flow, "GeometryNodeCornersOfFace")
+            self.draw_icon_button(flow, "GeometryNodeCornersOfVertex")
+            self.draw_icon_button(flow, "GeometryNodeEdgesOfCorner")
+            self.draw_icon_button(flow, "GeometryNodeEdgesOfVertex")
+            self.draw_icon_button(flow, "GeometryNodeFaceOfCorner")
+            self.draw_icon_button(flow, "GeometryNodeOffsetCornerInFace")
+            self.draw_icon_button(flow, "GeometryNodeVertexOfCorner")
 
 
 #add volume panel
@@ -3654,8 +3664,8 @@ class NODES_PT_geom_add_mesh_uv(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeUVPackIslands", text="Pack UV Islands", icon="PACKISLAND")
-            self.draw_text_button(col, "GeometryNodeUVUnwrap", text="UV Unwrap", icon="UNWRAP_ABF")
+            self.draw_text_button(col, "GeometryNodeUVPackIslands", text="Pack UV Islands")
+            self.draw_text_button(col, "GeometryNodeUVUnwrap", text="UV Unwrap")
 
         #### Icon Buttons
 
@@ -3663,8 +3673,8 @@ class NODES_PT_geom_add_mesh_uv(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeUVPackIslands", icon="VOLUME_CUBE")
-            self.draw_icon_button(flow, "GeometryNodeUVUnwrap", icon="VOLUME_TO_MESH")
+            self.draw_icon_button(flow, "GeometryNodeUVPackIslands")
+            self.draw_icon_button(flow, "GeometryNodeUVUnwrap")
 
 
 #add mesh panel
@@ -3695,16 +3705,16 @@ class NODES_PT_geom_add_point(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeDistributePointsInVolume", text="Distribute Points in Volume", icon="VOLUME_DISTRIBUTE")
-            self.draw_text_button(col, "GeometryNodeDistributePointsOnFaces", text="Distribute Points on Faces", icon="POINT_DISTRIBUTE")
+            self.draw_text_button(col, "GeometryNodeDistributePointsInVolume", text="Distribute Points in Volume")
+            self.draw_text_button(col, "GeometryNodeDistributePointsOnFaces", text="Distribute Points on Faces")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodePoints", text="Points", icon="DECORATE")
-            self.draw_text_button(col, "GeometryNodePointsToCurves", text="Points to Curves", icon="POINTS_TO_CURVES")
-            self.draw_text_button(col, "GeometryNodePointsToVertices", text="Points to Vertices", icon="POINTS_TO_VERTICES")
-            self.draw_text_button(col, "GeometryNodePointsToVolume", text="Points to Volume", icon="POINT_TO_VOLUME")
-            self.draw_text_button(col, "GeometryNodeSetPointRadius", text="Set Point Radius", icon="SET_CURVE_RADIUS")
+            self.draw_text_button(col, "GeometryNodePoints", text="Points")
+            self.draw_text_button(col, "GeometryNodePointsToCurves", text="Points to Curves")
+            self.draw_text_button(col, "GeometryNodePointsToVertices", text="Points to Vertices")
+            self.draw_text_button(col, "GeometryNodePointsToVolume", text="Points to Volume")
+            self.draw_text_button(col, "GeometryNodeSetPointRadius", text="Set Point Radius")
 
         #### Icon Buttons
 
@@ -3712,13 +3722,13 @@ class NODES_PT_geom_add_point(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeDistributePointsInVolume", icon="VOLUME_DISTRIBUTE")
-            self.draw_icon_button(flow, "GeometryNodeDistributePointsOnFaces", icon="POINT_DISTRIBUTE")
-            self.draw_icon_button(flow, "GeometryNodePoints", icon="DECORATE")
-            self.draw_icon_button(flow, "GeometryNodePointsToCurves", icon="POINTS_TO_CURVES")
-            self.draw_icon_button(flow, "GeometryNodePointsToVertices", icon="POINTS_TO_VERTICES")
-            self.draw_icon_button(flow, "GeometryNodePointsToVolume", icon="POINT_TO_VOLUME")
-            self.draw_icon_button(flow, "GeometryNodeSetPointRadius", icon="SET_CURVE_RADIUS")
+            self.draw_icon_button(flow, "GeometryNodeDistributePointsInVolume")
+            self.draw_icon_button(flow, "GeometryNodeDistributePointsOnFaces")
+            self.draw_icon_button(flow, "GeometryNodePoints")
+            self.draw_icon_button(flow, "GeometryNodePointsToCurves")
+            self.draw_icon_button(flow, "GeometryNodePointsToVertices")
+            self.draw_icon_button(flow, "GeometryNodePointsToVolume")
+            self.draw_icon_button(flow, "GeometryNodeSetPointRadius")
 
 
 #add volume panel
@@ -3749,8 +3759,8 @@ class NODES_PT_geom_add_volume(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeVolumeCube", text="Volume Cube", icon="VOLUME_CUBE")
-            self.draw_text_button(col, "GeometryNodeVolumeToMesh", text="Volume to Mesh", icon="VOLUME_TO_MESH")
+            self.draw_text_button(col, "GeometryNodeVolumeCube", text="Volume Cube")
+            self.draw_text_button(col, "GeometryNodeVolumeToMesh", text="Volume to Mesh")
 
         #### Icon Buttons
 
@@ -3758,8 +3768,8 @@ class NODES_PT_geom_add_volume(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeVolumeCube", icon="VOLUME_CUBE")
-            self.draw_icon_button(flow, "GeometryNodeVolumeToMesh", icon="VOLUME_TO_MESH")
+            self.draw_icon_button(flow, "GeometryNodeVolumeCube")
+            self.draw_icon_button(flow, "GeometryNodeVolumeToMesh")
 
 #add simulation panel
 class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
@@ -3828,11 +3838,11 @@ class NODES_PT_geom_add_material(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeReplaceMaterial", text="Replace Material", icon="MATERIAL_REPLACE")
-            self.draw_text_button(col, "GeometryNodeInputMaterialIndex", text="Material Index", icon="MATERIAL_INDEX")
-            self.draw_text_button(col, "GeometryNodeMaterialSelection", text="Material Selection", icon="SELECT_BY_MATERIAL")
-            self.draw_text_button(col, "GeometryNodeSetMaterial", text="Set Material", icon="MATERIAL_ADD")
-            self.draw_text_button(col, "GeometryNodeSetMaterialIndex", text="Set Material Index", icon="SET_MATERIAL_INDEX")
+            self.draw_text_button(col, "GeometryNodeReplaceMaterial", text="Replace Material")
+            self.draw_text_button(col, "GeometryNodeInputMaterialIndex", text="Material Index")
+            self.draw_text_button(col, "GeometryNodeMaterialSelection", text="Material Selection")
+            self.draw_text_button(col, "GeometryNodeSetMaterial", text="Set Material")
+            self.draw_text_button(col, "GeometryNodeSetMaterialIndex", text="Set Material Index")
 
         #### Icon Buttons
 
@@ -3840,11 +3850,11 @@ class NODES_PT_geom_add_material(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeReplaceMaterial", icon="MATERIAL_REPLACE")
-            self.draw_icon_button(flow, "GeometryNodeInputMaterialIndex", icon="MATERIAL_INDEX")
-            self.draw_icon_button(flow, "GeometryNodeMaterialSelection", icon="SELECT_BY_MATERIAL")
-            self.draw_icon_button(flow, "GeometryNodeSetMaterial", icon="MATERIAL_ADD")
-            self.draw_icon_button(flow, "GeometryNodeSetMaterialIndex", icon="SET_MATERIAL_INDEX")
+            self.draw_icon_button(flow, "GeometryNodeReplaceMaterial")
+            self.draw_icon_button(flow, "GeometryNodeInputMaterialIndex")
+            self.draw_icon_button(flow, "GeometryNodeMaterialSelection")
+            self.draw_icon_button(flow, "GeometryNodeSetMaterial")
+            self.draw_icon_button(flow, "GeometryNodeSetMaterialIndex")
 
 
 #add vector panel
@@ -3875,15 +3885,15 @@ class NODES_PT_geom_add_texture(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexBrick", text="Brick Texture", icon="NODE_BRICK")
-            self.draw_text_button(col, "ShaderNodeTexChecker", text="Checker Texture", icon="NODE_CHECKER")
-            self.draw_text_button(col, "ShaderNodeTexGradient", text="Gradient Texture", icon="NODE_GRADIENT")
-            self.draw_text_button(col, "GeometryNodeImageTexture", text="Image Texture", icon="FILE_IMAGE")
-            self.draw_text_button(col, "ShaderNodeTexMagic", text="Magic Texture", icon="MAGIC_TEX")
-            self.draw_text_button(col, "ShaderNodeTexNoise", text="Noise Texture", icon="NOISE_TEX")
-            self.draw_text_button(col, "ShaderNodeTexVoronoi", text="Voronoi Texture", icon="VORONI_TEX")
-            self.draw_text_button(col, "ShaderNodeTexWave", text="Wave Texture", icon="NODE_WAVES")
-            self.draw_text_button(col, "ShaderNodeTexWhiteNoise", text="White Noise", icon="NODE_WHITE_NOISE")
+            self.draw_text_button(col, "ShaderNodeTexBrick", text="Brick Texture")
+            self.draw_text_button(col, "ShaderNodeTexChecker", text="Checker Texture")
+            self.draw_text_button(col, "ShaderNodeTexGradient", text="Gradient Texture")
+            self.draw_text_button(col, "GeometryNodeImageTexture", text="Image Texture")
+            self.draw_text_button(col, "ShaderNodeTexMagic", text="Magic Texture")
+            self.draw_text_button(col, "ShaderNodeTexNoise", text="Noise Texture")
+            self.draw_text_button(col, "ShaderNodeTexVoronoi", text="Voronoi Texture")
+            self.draw_text_button(col, "ShaderNodeTexWave", text="Wave Texture")
+            self.draw_text_button(col, "ShaderNodeTexWhiteNoise", text="White Noise")
 
         #### Icon Buttons
 
@@ -3891,15 +3901,15 @@ class NODES_PT_geom_add_texture(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeTexBrick", icon="NODE_BRICK")
-            self.draw_icon_button(flow, "ShaderNodeTexChecker", icon="NODE_CHECKER")
-            self.draw_icon_button(flow, "ShaderNodeTexGradient", icon="NODE_GRADIENT")
-            self.draw_icon_button(flow, "GeometryNodeImageTexture", icon="FILE_IMAGE")
-            self.draw_icon_button(flow, "ShaderNodeTexMagic", icon="MAGIC_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexNoise", icon="NOISE_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexVoronoi", icon="VORONI_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexWave", icon="NODE_WAVES")
-            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise", icon="NODE_WHITE_NOISE")
+            self.draw_icon_button(flow, "ShaderNodeTexBrick")
+            self.draw_icon_button(flow, "ShaderNodeTexChecker")
+            self.draw_icon_button(flow, "ShaderNodeTexGradient")
+            self.draw_icon_button(flow, "GeometryNodeImageTexture")
+            self.draw_icon_button(flow, "ShaderNodeTexMagic")
+            self.draw_icon_button(flow, "ShaderNodeTexNoise")
+            self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
+            self.draw_icon_button(flow, "ShaderNodeTexWave")
+            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise")
 
 
 #add utilities panel
@@ -3931,11 +3941,11 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
             col = layout.column(align=True)
             col.scale_y = 1.5
             self.draw_text_button(col, operator="node.add_foreach_geometry_element_zone", text="For Each Element", icon="FOR_EACH")
-            self.draw_text_button(col, "GeometryNodeIndexSwitch", text="Index Switch", icon="INDEX_SWITCH")
-            self.draw_text_button(col, "GeometryNodeMenuSwitch", text="Menu Switch", icon="MENU_SWITCH")
-            self.draw_text_button(col, "FunctionNodeRandomValue", text="Random Value", icon="RANDOM_FLOAT")
+            self.draw_text_button(col, "GeometryNodeIndexSwitch", text="Index Switch")
+            self.draw_text_button(col, "GeometryNodeMenuSwitch", text="Menu Switch")
+            self.draw_text_button(col, "FunctionNodeRandomValue", text="Random Value")
             self.draw_text_button(col, operator="node.add_repeat_zone", text="Repeat Zone", icon="REPEAT")
-            self.draw_text_button(col, "GeometryNodeSwitch", text="Switch", icon="SWITCH")
+            self.draw_text_button(col, "GeometryNodeSwitch", text="Switch")
 
         #### Icon Buttons
 
@@ -3943,11 +3953,11 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeIndexSwitch", icon="INDEX_SWITCH")
-            self.draw_icon_button(flow, "GeometryNodeMenuSwitch", icon="MENU_SWITCH")
-            self.draw_icon_button(flow, "FunctionNodeRandomValue", icon="RANDOM_FLOAT")
+            self.draw_icon_button(flow, "GeometryNodeIndexSwitch")
+            self.draw_icon_button(flow, "GeometryNodeMenuSwitch")
+            self.draw_icon_button(flow, "FunctionNodeRandomValue")
             self.draw_icon_button(flow, operator="node.add_repeat_zone", icon="REPEAT")
-            self.draw_icon_button(flow, "GeometryNodeSwitch", icon="SWITCH")
+            self.draw_icon_button(flow, "GeometryNodeSwitch")
 
 
 #add utilities panel, color subpanel
@@ -3979,13 +3989,13 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeValToRGB", text="ColorRamp", icon="NODE_COLORRAMP")
-            self.draw_text_button(col, "ShaderNodeRGBCurve", text="RGB Curves", icon="NODE_RGBCURVE")
+            self.draw_text_button(col, "ShaderNodeValToRGB", text="ColorRamp")
+            self.draw_text_button(col, "ShaderNodeRGBCurve", text="RGB Curves")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeCombineColor", text="Combine Color", icon="COMBINE_COLOR")
-            self.draw_text_button(col, "FunctionNodeSeparateColor", text="Separate Color", icon="SEPARATE_COLOR")
+            self.draw_text_button(col, "FunctionNodeCombineColor", text="Combine Color")
+            self.draw_text_button(col, "FunctionNodeSeparateColor", text="Separate Color")
 
         #### Icon Buttons
 
@@ -3993,11 +4003,11 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeValToRGB", icon="NODE_COLORRAMP")
-            self.draw_icon_button(flow, "ShaderNodeRGBCurve", icon="NODE_RGBCURVE")
-            self.draw_icon_button(flow, "FunctionNodeCombineColor", icon="COMBINE_COLOR")
-            self.draw_icon_button(flow, "ShaderNodeMix", icon="NODE_MIX", settings={"data_type": "'RGBA'"})
-            self.draw_icon_button(flow, "FunctionNodeSeparateColor", icon="SEPARATE_COLOR")
+            self.draw_icon_button(flow, "ShaderNodeValToRGB")
+            self.draw_icon_button(flow, "ShaderNodeRGBCurve")
+            self.draw_icon_button(flow, "FunctionNodeCombineColor")
+            self.draw_icon_button(flow, "ShaderNodeMix", settings={"data_type": "'RGBA'"})
+            self.draw_icon_button(flow, "FunctionNodeSeparateColor")
 
 
 #add utilities panel, text subpanel
@@ -4029,16 +4039,16 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeFormatString", text="Format String", icon="FORMAT_STRING")
-            self.draw_text_button(col, "GeometryNodeStringJoin", text="Join Strings", icon="STRING_JOIN")
-            self.draw_text_button(col, "FunctionNodeMatchString", text="Match String", icon="MATCH_STRING")
-            self.draw_text_button(col, "FunctionNodeReplaceString", text="Replace Strings", icon="REPLACE_STRING")
-            self.draw_text_button(col, "FunctionNodeSliceString", text="Slice Strings", icon="STRING_SUBSTRING")
-            self.draw_text_button(col, "FunctionNodeStringLength", text="String Length", icon="STRING_LENGTH")
-            self.draw_text_button(col, "FunctionNodeFindInString", text="Find in String", icon="STRING_FIND")
-            self.draw_text_button(col, "GeometryNodeStringToCurves", text="String to Curves", icon="STRING_TO_CURVE")
-            self.draw_text_button(col, "FunctionNodeValueToString", text="Value to String", icon="VALUE_TO_STRING")
-            self.draw_text_button(col, "FunctionNodeInputSpecialCharacters", text="Special Characters", icon="SPECIAL")
+            self.draw_text_button(col, "FunctionNodeFormatString", text="Format String")
+            self.draw_text_button(col, "GeometryNodeStringJoin", text="Join Strings")
+            self.draw_text_button(col, "FunctionNodeMatchString", text="Match String")
+            self.draw_text_button(col, "FunctionNodeReplaceString", text="Replace Strings")
+            self.draw_text_button(col, "FunctionNodeSliceString", text="Slice Strings")
+            self.draw_text_button(col, "FunctionNodeStringLength", text="String Length")
+            self.draw_text_button(col, "FunctionNodeFindInString", text="Find in String")
+            self.draw_text_button(col, "GeometryNodeStringToCurves", text="String to Curves")
+            self.draw_text_button(col, "FunctionNodeValueToString", text="Value to String")
+            self.draw_text_button(col, "FunctionNodeInputSpecialCharacters", text="Special Characters")
 
         #### Icon Buttons
 
@@ -4046,16 +4056,16 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeFormatString", icon="FORMAT_STRING")
-            self.draw_icon_button(flow, "GeometryNodeStringJoin", icon="STRING_JOIN")
-            self.draw_icon_button(flow, "FunctionNodeMatchString", icon="MATCH_STRING")
-            self.draw_icon_button(flow, "FunctionNodeReplaceString", icon="REPLACE_STRING")
-            self.draw_icon_button(flow, "FunctionNodeSliceString", icon="STRING_SUBSTRING")
-            self.draw_icon_button(flow, "FunctionNodeStringLength", icon="STRING_LENGTH")
-            self.draw_icon_button(flow, "FunctionNodeFindInString", icon="STRING_FIND")
-            self.draw_icon_button(flow, "GeometryNodeStringToCurves", icon="STRING_TO_CURVE")
-            self.draw_icon_button(flow, "FunctionNodeValueToString", icon="VALUE_TO_STRING")
-            self.draw_icon_button(flow, "FunctionNodeInputSpecialCharacters", icon="SPECIAL")
+            self.draw_icon_button(flow, "FunctionNodeFormatString")
+            self.draw_icon_button(flow, "GeometryNodeStringJoin")
+            self.draw_icon_button(flow, "FunctionNodeMatchString")
+            self.draw_icon_button(flow, "FunctionNodeReplaceString")
+            self.draw_icon_button(flow, "FunctionNodeSliceString")
+            self.draw_icon_button(flow, "FunctionNodeStringLength")
+            self.draw_icon_button(flow, "FunctionNodeFindInString")
+            self.draw_icon_button(flow, "GeometryNodeStringToCurves")
+            self.draw_icon_button(flow, "FunctionNodeValueToString")
+            self.draw_icon_button(flow, "FunctionNodeInputSpecialCharacters")
 
 
 #add utilities panel, vector subpanel
@@ -4087,12 +4097,12 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeVectorCurve", text="Vector Curves", icon="NODE_VECTOR")
-            self.draw_text_button(col, "ShaderNodeVectorMath", text="Vector Math", icon="NODE_VECTORMATH")
-            self.draw_text_button(col, "ShaderNodeVectorRotate", text="Vector Rotate", icon="NODE_VECTORROTATE")
-            self.draw_text_button(col, "ShaderNodeCombineXYZ", text="Combine XYZ", icon="NODE_COMBINEXYZ")
-            self.draw_text_button(col, "ShaderNodeMix", text="Mix Vector", icon="NODE_MIX", settings={"data_type": "'VECTOR'"})
-            self.draw_text_button(col, "ShaderNodeSeparateXYZ", text="Separate XYZ", icon="NODE_SEPARATEXYZ")
+            self.draw_text_button(col, "ShaderNodeVectorCurve", text="Vector Curves")
+            self.draw_text_button(col, "ShaderNodeVectorMath", text="Vector Math")
+            self.draw_text_button(col, "ShaderNodeVectorRotate", text="Vector Rotate")
+            self.draw_text_button(col, "ShaderNodeCombineXYZ", text="Combine XYZ")
+            self.draw_text_button(col, "ShaderNodeMix", text="Mix Vector", settings={"data_type": "'VECTOR'"})
+            self.draw_text_button(col, "ShaderNodeSeparateXYZ", text="Separate XYZ")
 
         #### Icon Buttons
 
@@ -4100,12 +4110,12 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeVectorCurve", icon="NODE_VECTOR")
-            self.draw_icon_button(flow, "ShaderNodeVectorMath", icon="NODE_VECTORMATH")
-            self.draw_icon_button(flow, "ShaderNodeVectorRotate", icon="NODE_VECTORROTATE")
-            self.draw_icon_button(flow, "ShaderNodeCombineXYZ", icon="NODE_COMBINEXYZ")
-            self.draw_icon_button(flow, "ShaderNodeMix", icon="NODE_MIX", settings={"data_type": "'VECTOR'"})
-            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ", icon="NODE_SEPARATEXYZ")
+            self.draw_icon_button(flow, "ShaderNodeVectorCurve")
+            self.draw_icon_button(flow, "ShaderNodeVectorMath")
+            self.draw_icon_button(flow, "ShaderNodeVectorRotate")
+            self.draw_icon_button(flow, "ShaderNodeCombineXYZ")
+            self.draw_icon_button(flow, "ShaderNodeMix", settings={"data_type": "'VECTOR'"})
+            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ")
 
 
 #add utilities panel, field subpanel
@@ -4137,9 +4147,9 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeAccumulateField", text="Accumulate Field", icon="ACCUMULATE")
-            self.draw_text_button(col, "GeometryNodeFieldAtIndex", text="Evaluate at Index", icon="FIELD_AT_INDEX")
-            self.draw_text_button(col, "GeometryNodeFieldOnDomain", text="Evaluate On Domain", icon="FIELD_DOMAIN")
+            self.draw_text_button(col, "GeometryNodeAccumulateField", text="Accumulate Field")
+            self.draw_text_button(col, "GeometryNodeFieldAtIndex", text="Evaluate at Index")
+            self.draw_text_button(col, "GeometryNodeFieldOnDomain", text="Evaluate On Domain")
 
         #### Icon Buttons
 
@@ -4147,9 +4157,9 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeAccumulateField", icon="ACCUMULATE")
-            self.draw_icon_button(flow, "GeometryNodeFieldAtIndex", icon="FIELD_AT_INDEX")
-            self.draw_icon_button(flow, "GeometryNodeFieldOnDomain", icon="FIELD_DOMAIN")
+            self.draw_icon_button(flow, "GeometryNodeAccumulateField")
+            self.draw_icon_button(flow, "GeometryNodeFieldAtIndex")
+            self.draw_icon_button(flow, "GeometryNodeFieldOnDomain")
 
 
 #add utilities panel, math subpanel
@@ -4181,19 +4191,19 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeBooleanMath", text="Boolean Math", icon="BOOLEAN_MATH")
-            self.draw_text_button(col, "FunctionNodeIntegerMath", text="Integer Math", icon="INTEGER_MATH")
-            self.draw_text_button(col, "ShaderNodeClamp", text="Clamp", icon="NODE_CLAMP")
-            self.draw_text_button(col, "FunctionNodeCompare", text="Compare", icon="FLOAT_COMPARE")
-            self.draw_text_button(col, "ShaderNodeFloatCurve", text="Float Curve", icon="FLOAT_CURVE")
+            self.draw_text_button(col, "FunctionNodeBooleanMath", text="Boolean Math")
+            self.draw_text_button(col, "FunctionNodeIntegerMath", text="Integer Math")
+            self.draw_text_button(col, "ShaderNodeClamp", text="Clamp")
+            self.draw_text_button(col, "FunctionNodeCompare", text="Compare")
+            self.draw_text_button(col, "ShaderNodeFloatCurve", text="Float Curve")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeFloatToInt", text="Float to Integer", icon="FLOAT_TO_INT")
-            self.draw_text_button(col, "FunctionNodeHashValue", text="Hash Value", icon="HASH")
-            self.draw_text_button(col, "ShaderNodeMapRange", text="Map Range", icon="NODE_MAP_RANGE")
-            self.draw_text_button(col, "ShaderNodeMath", text="Math", icon="NODE_MATH")
-            self.draw_text_button(col, "ShaderNodeMix", text="Mix", icon="NODE_MIXSHADER")
+            self.draw_text_button(col, "FunctionNodeFloatToInt", text="Float to Integer")
+            self.draw_text_button(col, "FunctionNodeHashValue", text="Hash Value")
+            self.draw_text_button(col, "ShaderNodeMapRange", text="Map Range")
+            self.draw_text_button(col, "ShaderNodeMath", text="Math")
+            self.draw_text_button(col, "ShaderNodeMix", text="Mix")
 
         #### Icon Buttons
 
@@ -4201,16 +4211,16 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeBooleanMath", icon="BOOLEAN_MATH")
-            self.draw_icon_button(flow, "FunctionNodeIntegerMath", icon="INTEGER_MATH")
-            self.draw_icon_button(flow, "ShaderNodeClamp", icon="NODE_CLAMP")
-            self.draw_icon_button(flow, "FunctionNodeCompare", icon="FLOAT_COMPARE")
-            self.draw_icon_button(flow, "ShaderNodeFloatCurve", icon="FLOAT_CURVE")
-            self.draw_icon_button(flow, "FunctionNodeFloatToInt", icon="FLOAT_TO_INT")
-            self.draw_icon_button(flow, "FunctionNodeHashValue", icon="HASH")
-            self.draw_icon_button(flow, "ShaderNodeMapRange", icon="NODE_MAP_RANGE")
-            self.draw_icon_button(flow, "ShaderNodeMath", icon="NODE_MATH")
-            self.draw_icon_button(flow, "ShaderNodeMix", icon="NODE_MIXSHADER")
+            self.draw_icon_button(flow, "FunctionNodeBooleanMath")
+            self.draw_icon_button(flow, "FunctionNodeIntegerMath")
+            self.draw_icon_button(flow, "ShaderNodeClamp")
+            self.draw_icon_button(flow, "FunctionNodeCompare")
+            self.draw_icon_button(flow, "ShaderNodeFloatCurve")
+            self.draw_icon_button(flow, "FunctionNodeFloatToInt")
+            self.draw_icon_button(flow, "FunctionNodeHashValue")
+            self.draw_icon_button(flow, "ShaderNodeMapRange")
+            self.draw_icon_button(flow, "ShaderNodeMath")
+            self.draw_icon_button(flow, "ShaderNodeMix")
 
 
 #add utilities panel, matrix subpanel
@@ -4242,17 +4252,17 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeCombineMatrix", text="Combine Matrix", icon="COMBINE_MATRIX")
-            self.draw_text_button(col, "FunctionNodeCombineTransform", text="Combine Transform", icon="COMBINE_TRANSFORM")
-            self.draw_text_button(col, "FunctionNodeMatrixDeterminant", text="Matrix Determinant", icon="MATRIX_DETERMINANT")
-            self.draw_text_button(col, "FunctionNodeInvertMatrix", text="Invert Matrix", icon="INVERT_MATRIX")
-            self.draw_text_button(col, "FunctionNodeMatrixMultiply", text="Multiply Matrix", icon="MULTIPLY_MATRIX")
-            self.draw_text_button(col, "FunctionNodeProjectPoint", text="Project Point", icon="PROJECT_POINT")
-            self.draw_text_button(col, "FunctionNodeSeparateMatrix", text="Separate Matrix", icon="SEPARATE_MATRIX")
-            self.draw_text_button(col, "FunctionNodeSeparateTransform", text="Separate Transform", icon="SEPARATE_TRANSFORM")
-            self.draw_text_button(col, "FunctionNodeTransformDirection", text="Transform Direction", icon="TRANSFORM_DIRECTION")
-            self.draw_text_button(col, "FunctionNodeTransformPoint", text="Transform Point", icon="TRANSFORM_POINT")
-            self.draw_text_button(col, "FunctionNodeTransposeMatrix", text="Transpose Matrix", icon="TRANSPOSE_MATRIX")
+            self.draw_text_button(col, "FunctionNodeCombineMatrix", text="Combine Matrix")
+            self.draw_text_button(col, "FunctionNodeCombineTransform", text="Combine Transform")
+            self.draw_text_button(col, "FunctionNodeMatrixDeterminant", text="Matrix Determinant")
+            self.draw_text_button(col, "FunctionNodeInvertMatrix", text="Invert Matrix")
+            self.draw_text_button(col, "FunctionNodeMatrixMultiply", text="Multiply Matrix")
+            self.draw_text_button(col, "FunctionNodeProjectPoint", text="Project Point")
+            self.draw_text_button(col, "FunctionNodeSeparateMatrix", text="Separate Matrix")
+            self.draw_text_button(col, "FunctionNodeSeparateTransform", text="Separate Transform")
+            self.draw_text_button(col, "FunctionNodeTransformDirection", text="Transform Direction")
+            self.draw_text_button(col, "FunctionNodeTransformPoint", text="Transform Point")
+            self.draw_text_button(col, "FunctionNodeTransposeMatrix", text="Transpose Matrix")
 
         #### Icon Buttons
 
@@ -4260,17 +4270,17 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeCombineMatrix", icon="COMBINE_MATRIX")
-            self.draw_icon_button(flow, "FunctionNodeCombineTransform", icon="COMBINE_TRANSFORM")
-            self.draw_icon_button(flow, "FunctionNodeMatrixDeterminant", icon="MATRIX_DETERMINANT")
-            self.draw_icon_button(flow, "FunctionNodeInvertMatrix", icon="INVERT_MATRIX")
-            self.draw_icon_button(flow, "FunctionNodeMatrixMultiply", icon="MULTIPLY_MATRIX")
-            self.draw_icon_button(flow, "FunctionNodeProjectPoint", icon="PROJECT_POINT")
-            self.draw_icon_button(flow, "FunctionNodeSeparateMatrix", icon="SEPARATE_MATRIX")
-            self.draw_icon_button(flow, "FunctionNodeSeparateTransform", icon="SEPARATE_TRANSFORM")
-            self.draw_icon_button(flow, "FunctionNodeTransformDirection", icon="TRANSFORM_DIRECTION")
-            self.draw_icon_button(flow, "FunctionNodeTransformPoint", icon="TRANSFORM_POINT")
-            self.draw_icon_button(flow, "FunctionNodeTransposeMatrix", icon="TRANSPOSE_MATRIX")
+            self.draw_icon_button(flow, "FunctionNodeCombineMatrix")
+            self.draw_icon_button(flow, "FunctionNodeCombineTransform")
+            self.draw_icon_button(flow, "FunctionNodeMatrixDeterminant")
+            self.draw_icon_button(flow, "FunctionNodeInvertMatrix")
+            self.draw_icon_button(flow, "FunctionNodeMatrixMultiply")
+            self.draw_icon_button(flow, "FunctionNodeProjectPoint")
+            self.draw_icon_button(flow, "FunctionNodeSeparateMatrix")
+            self.draw_icon_button(flow, "FunctionNodeSeparateTransform")
+            self.draw_icon_button(flow, "FunctionNodeTransformDirection")
+            self.draw_icon_button(flow, "FunctionNodeTransformPoint")
+            self.draw_icon_button(flow, "FunctionNodeTransposeMatrix")
 
 
 #add utilities panel, rotation subpanel
@@ -4302,17 +4312,17 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeAlignRotationToVector", text="Align Rotation to Vector", icon="ALIGN_ROTATION_TO_VECTOR")
-            self.draw_text_button(col, "FunctionNodeAxesToRotation", text="Axes to Rotation", icon="AXES_TO_ROTATION")
-            self.draw_text_button(col, "FunctionNodeAxisAngleToRotation", text="Axis Angle to Rotation", icon="AXIS_ANGLE_TO_ROTATION")
-            self.draw_text_button(col, "FunctionNodeEulerToRotation", text="Euler to Rotation", icon="EULER_TO_ROTATION")
-            self.draw_text_button(col, "FunctionNodeInvertRotation", text="Invert Rotation", icon="INVERT_ROTATION")
-            self.draw_text_button(col, "FunctionNodeRotateRotation", text="Rotate Rotation", icon="ROTATE_EULER")
-            self.draw_text_button(col, "FunctionNodeRotateVector", text="Rotate Vector", icon="NODE_VECTORROTATE")
-            self.draw_text_button(col, "FunctionNodeRotationToAxisAngle", text="Rotation to Axis Angle", icon="ROTATION_TO_AXIS_ANGLE")
-            self.draw_text_button(col, "FunctionNodeRotationToEuler", text="Rotation to Euler", icon="ROTATION_TO_EULER")
-            self.draw_text_button(col, "FunctionNodeRotationToQuaternion", text="Rotation to Quaternion", icon="ROTATION_TO_QUATERNION")
-            self.draw_text_button(col, "FunctionNodeQuaternionToRotation", text="Quaternion to Rotation", icon="QUATERNION_TO_ROTATION")
+            self.draw_text_button(col, "FunctionNodeAlignRotationToVector", text="Align Rotation to Vector")
+            self.draw_text_button(col, "FunctionNodeAxesToRotation", text="Axes to Rotation")
+            self.draw_text_button(col, "FunctionNodeAxisAngleToRotation", text="Axis Angle to Rotation")
+            self.draw_text_button(col, "FunctionNodeEulerToRotation", text="Euler to Rotation")
+            self.draw_text_button(col, "FunctionNodeInvertRotation", text="Invert Rotation")
+            self.draw_text_button(col, "FunctionNodeRotateRotation", text="Rotate Rotation")
+            self.draw_text_button(col, "FunctionNodeRotateVector", text="Rotate Vector")
+            self.draw_text_button(col, "FunctionNodeRotationToAxisAngle", text="Rotation to Axis Angle")
+            self.draw_text_button(col, "FunctionNodeRotationToEuler", text="Rotation to Euler")
+            self.draw_text_button(col, "FunctionNodeRotationToQuaternion", text="Rotation to Quaternion")
+            self.draw_text_button(col, "FunctionNodeQuaternionToRotation", text="Quaternion to Rotation")
 
         #### Icon Buttons
 
@@ -4320,17 +4330,17 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeAlignRotationToVector", icon="ALIGN_ROTATION_TO_VECTOR")
-            self.draw_icon_button(flow, "FunctionNodeAxesToRotation", icon="AXES_TO_ROTATION")
-            self.draw_icon_button(flow, "FunctionNodeAxisAngleToRotation", icon="AXIS_ANGLE_TO_ROTATION")
-            self.draw_icon_button(flow, "FunctionNodeEulerToRotation", icon="EULER_TO_ROTATION")
-            self.draw_icon_button(flow, "FunctionNodeInvertRotation", icon="INVERT_ROTATION")
-            self.draw_icon_button(flow, "FunctionNodeRotateRotation", icon="ROTATE_EULER")
-            self.draw_icon_button(flow, "FunctionNodeRotateVector", icon="NODE_VECTORROTATE")
-            self.draw_icon_button(flow, "FunctionNodeRotationToAxisAngle", icon="ROTATION_TO_AXIS_ANGLE")
-            self.draw_icon_button(flow, "FunctionNodeRotationToEuler", icon="ROTATION_TO_EULER")
-            self.draw_icon_button(flow, "FunctionNodeRotationToQuaternion", icon="ROTATION_TO_QUATERNION")
-            self.draw_icon_button(flow, "FunctionNodeQuaternionToRotation", icon="QUATERNION_TO_ROTATION")
+            self.draw_icon_button(flow, "FunctionNodeAlignRotationToVector")
+            self.draw_icon_button(flow, "FunctionNodeAxesToRotation")
+            self.draw_icon_button(flow, "FunctionNodeAxisAngleToRotation")
+            self.draw_icon_button(flow, "FunctionNodeEulerToRotation")
+            self.draw_icon_button(flow, "FunctionNodeInvertRotation")
+            self.draw_icon_button(flow, "FunctionNodeRotateRotation")
+            self.draw_icon_button(flow, "FunctionNodeRotateVector")
+            self.draw_icon_button(flow, "FunctionNodeRotationToAxisAngle")
+            self.draw_icon_button(flow, "FunctionNodeRotationToEuler")
+            self.draw_icon_button(flow, "FunctionNodeRotationToQuaternion")
+            self.draw_icon_button(flow, "FunctionNodeQuaternionToRotation")
 
 
 #add utilities panel, deprecated subpanel
@@ -4362,8 +4372,8 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeAlignEulerToVector", text="Align Euler to Vector", icon="ALIGN_EULER_TO_VECTOR")
-            self.draw_text_button(col, "FunctionNodeRotateEuler", text=" Rotate Euler (Depreacated)        ", icon="ROTATE_EULER")
+            self.draw_text_button(col, "FunctionNodeAlignEulerToVector", text="Align Euler to Vector")
+            self.draw_text_button(col, "FunctionNodeRotateEuler", text=" Rotate Euler (Depreacated)        ")
 
         #### Icon Buttons
 
@@ -4371,8 +4381,8 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeAlignEulerToVector", icon="ALIGN_EULER_TO_VECTOR")
-            self.draw_icon_button(flow, "FunctionNodeRotateEuler", icon="ROTATE_EULER")
+            self.draw_icon_button(flow, "FunctionNodeAlignEulerToVector")
+            self.draw_icon_button(flow, "FunctionNodeRotateEuler")
 
 
 # ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
@@ -4411,10 +4421,10 @@ class NODES_PT_shader_add_input_common(bpy.types.Panel, NodePanel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeFresnel", text="Fresnel", icon="NODE_FRESNEL")
-            self.draw_text_button(col, "ShaderNodeNewGeometry", text="Geometry", icon="NODE_GEOMETRY")
-            self.draw_text_button(col, "ShaderNodeRGB", text="RGB", icon="NODE_RGB")
-            self.draw_text_button(col, "ShaderNodeTexCoord", text="Texture Coordinate   ", icon="NODE_TEXCOORDINATE")
+            self.draw_text_button(col, "ShaderNodeFresnel", text="Fresnel")
+            self.draw_text_button(col, "ShaderNodeNewGeometry", text="Geometry")
+            self.draw_text_button(col, "ShaderNodeRGB", text="RGB")
+            self.draw_text_button(col, "ShaderNodeTexCoord", text="Texture Coordinate   ")
 
         #### Icon Buttons
 
@@ -4422,10 +4432,10 @@ class NODES_PT_shader_add_input_common(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeFresnel", icon="NODE_FRESNEL")
-            self.draw_icon_button(flow, "ShaderNodeNewGeometry", icon="NODE_GEOMETRY")
-            self.draw_icon_button(flow, "ShaderNodeRGB", icon="NODE_RGB")
-            self.draw_icon_button(flow, "ShaderNodeTexCoord", icon="NODE_TEXCOORDINATE")
+            self.draw_icon_button(flow, "ShaderNodeFresnel")
+            self.draw_icon_button(flow, "ShaderNodeNewGeometry")
+            self.draw_icon_button(flow, "ShaderNodeRGB")
+            self.draw_icon_button(flow, "ShaderNodeTexCoord")
 
 
 #Shader editor , Output panel
@@ -4463,13 +4473,13 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel, NodePanel):
             col.scale_y = 1.5
 
             if context.space_data.shader_type == 'OBJECT':
-                self.draw_text_button(col, "ShaderNodeOutputMaterial", text="Material Output", icon="NODE_MATERIAL")
+                self.draw_text_button(col, "ShaderNodeOutputMaterial", text="Material Output")
 
             elif context.space_data.shader_type == 'WORLD':
-                self.draw_text_button(col, "ShaderNodeOutputWorld", text="World Output", icon="WORLD")
+                self.draw_text_button(col, "ShaderNodeOutputWorld", text="World Output")
 
             elif context.space_data.shader_type == 'LINESTYLE':
-                self.draw_text_button(col, "ShaderNodeOutputLineStyle", text="Line Style Output", icon="NODE_LINESTYLE_OUTPUT")
+                self.draw_text_button(col, "ShaderNodeOutputLineStyle", text="Line Style Output")
 
         #### Image Buttons
 
@@ -4479,13 +4489,13 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel, NodePanel):
             flow.scale_y = 1.5
 
             if context.space_data.shader_type == 'OBJECT':
-                self.draw_icon_button(flow, "ShaderNodeOutputMaterial", icon="NODE_MATERIAL")
+                self.draw_icon_button(flow, "ShaderNodeOutputMaterial")
 
             elif context.space_data.shader_type == 'WORLD':
-                self.draw_icon_button(flow, "ShaderNodeOutputWorld", icon="WORLD")
+                self.draw_icon_button(flow, "ShaderNodeOutputWorld")
 
             elif context.space_data.shader_type == 'LINESTYLE':
-                self.draw_icon_button(flow, "ShaderNodeOutputLineStyle", icon="NODE_LINESTYLE_OUTPUT")
+                self.draw_icon_button(flow, "ShaderNodeOutputLineStyle")
 
 
 #Shader Editor - Shader panel
@@ -4521,35 +4531,35 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeAddShader", text="Add", icon="NODE_ADD_SHADER")
+            self.draw_text_button(col, "ShaderNodeAddShader", text="Add")
 
             if context.space_data.shader_type == 'OBJECT':
 
                 if engine == 'CYCLES':
-                    self.draw_text_button(col, "ShaderNodeBsdfHairPrincipled", text="Hair BSDF", icon="CURVES")
-                self.draw_text_button(col, "ShaderNodeMixShader", text="Mix Shader", icon="NODE_MIXSHADER")
-                self.draw_text_button(col, "ShaderNodeBsdfPrincipled", text="Principled BSDF", icon="NODE_PRINCIPLED")
+                    self.draw_text_button(col, "ShaderNodeBsdfHairPrincipled", text="Hair BSDF")
+                self.draw_text_button(col, "ShaderNodeMixShader", text="Mix Shader")
+                self.draw_text_button(col, "ShaderNodeBsdfPrincipled", text="Principled BSDF")
 
                 col = layout.column(align=True)
                 col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeVolumePrincipled", text="Principled Volume", icon="NODE_VOLUMEPRINCIPLED")
+                self.draw_text_button(col, "ShaderNodeVolumePrincipled", text="Principled Volume")
 
                 if engine == 'CYCLES':
-                    self.draw_text_button(col, "ShaderNodeBsdfToon", text="Toon BSDF", icon="NODE_TOONSHADER")
+                    self.draw_text_button(col, "ShaderNodeBsdfToon", text="Toon BSDF")
 
                 col = layout.column(align=True)
                 col.scale_y = 1.5
 
-                self.draw_text_button(col, "ShaderNodeVolumeAbsorption", text="Volume Absorption", icon="NODE_VOLUMEABSORPTION")
-                self.draw_text_button(col, "ShaderNodeVolumeScatter", text="Volume Scatter", icon="NODE_VOLUMESCATTER")
+                self.draw_text_button(col, "ShaderNodeVolumeAbsorption", text="Volume Absorption")
+                self.draw_text_button(col, "ShaderNodeVolumeScatter", text="Volume Scatter")
 
             if context.space_data.shader_type == 'WORLD':
                 col = layout.column(align=True)
                 col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeBackground", text="Background", icon="NODE_BACKGROUNDSHADER")
-                self.draw_text_button(col, "ShaderNodeEmission", text="Emission", icon="NODE_EMISSION")
-                self.draw_text_button(col, "ShaderNodeVolumePrincipled", text="Principled Volume", icon="NODE_VOLUMEPRINCIPLED")
-                self.draw_text_button(col, "ShaderNodeMixShader", text="Mix", icon="NODE_MIXSHADER")
+                self.draw_text_button(col, "ShaderNodeBackground", text="Background")
+                self.draw_text_button(col, "ShaderNodeEmission", text="Emission")
+                self.draw_text_button(col, "ShaderNodeVolumePrincipled", text="Principled Volume")
+                self.draw_text_button(col, "ShaderNodeMixShader", text="Mix")
 
         #### Icon Buttons
 
@@ -4558,26 +4568,26 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            self.draw_icon_button(flow, "ShaderNodeAddShader", icon="NODE_ADD_SHADER")
+            self.draw_icon_button(flow, "ShaderNodeAddShader")
 
             if context.space_data.shader_type == 'OBJECT':
 
                 if engine == 'CYCLES':
-                    self.draw_icon_button(flow, "ShaderNodeBsdfHairPrincipled", icon="CURVES")
-                self.draw_icon_button(flow, "ShaderNodeMixShader", icon="NODE_MIXSHADER")
-                self.draw_icon_button(flow, "ShaderNodeBsdfPrincipled", icon="NODE_PRINCIPLED")
-                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled", icon="NODE_VOLUMEPRINCIPLED")
+                    self.draw_icon_button(flow, "ShaderNodeBsdfHairPrincipled")
+                self.draw_icon_button(flow, "ShaderNodeMixShader")
+                self.draw_icon_button(flow, "ShaderNodeBsdfPrincipled")
+                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
 
                 if engine == 'CYCLES':
-                    self.draw_icon_button(flow, "ShaderNodeBsdfToon", icon="NODE_TOONSHADER")
-                self.draw_icon_button(flow, "ShaderNodeVolumeAbsorption", icon="NODE_VOLUMEABSORPTION")
-                self.draw_icon_button(flow, "ShaderNodeVolumeScatter", icon="NODE_VOLUMESCATTER")
+                    self.draw_icon_button(flow, "ShaderNodeBsdfToon")
+                self.draw_icon_button(flow, "ShaderNodeVolumeAbsorption")
+                self.draw_icon_button(flow, "ShaderNodeVolumeScatter")
 
             if context.space_data.shader_type == 'WORLD':
-                self.draw_icon_button(flow, "ShaderNodeBackground", icon="NODE_BACKGROUNDSHADER")
-                self.draw_icon_button(flow, "ShaderNodeEmission", icon="NODE_EMISSION")
-                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled", icon="NODE_VOLUMEPRINCIPLED")
-                self.draw_icon_button(flow, "ShaderNodeMixShader", icon="NODE_MIXSHADER")
+                self.draw_icon_button(flow, "ShaderNodeBackground")
+                self.draw_icon_button(flow, "ShaderNodeEmission")
+                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
+                self.draw_icon_button(flow, "ShaderNodeMixShader")
 
 
 #Shader Editor - Texture panel
@@ -4613,17 +4623,17 @@ class NODES_PT_shader_add_texture_common(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexEnvironment", text="Environment Texture", icon="NODE_ENVIRONMENT")
+            self.draw_text_button(col, "ShaderNodeTexEnvironment", text="Environment Texture")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexImage", text="Image Texture", icon="FILE_IMAGE")
-            self.draw_text_button(col, "ShaderNodeTexNoise", text="Noise Texture", icon="NOISE_TEX")
+            self.draw_text_button(col, "ShaderNodeTexImage", text="Image Texture")
+            self.draw_text_button(col, "ShaderNodeTexNoise", text="Noise Texture")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexSky", text="Sky Texture", icon="NODE_SKY")
-            self.draw_text_button(col, "ShaderNodeTexVoronoi", text="Voronoi Texture", icon="VORONI_TEX")
+            self.draw_text_button(col, "ShaderNodeTexSky", text="Sky Texture")
+            self.draw_text_button(col, "ShaderNodeTexVoronoi", text="Voronoi Texture")
 
 
         #### Icon Buttons
@@ -4631,11 +4641,11 @@ class NODES_PT_shader_add_texture_common(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeTexEnvironment", icon="NODE_ENVIRONMENT")
-            self.draw_icon_button(flow, "ShaderNodeTexImage", icon="FILE_IMAGE")
-            self.draw_icon_button(flow, "ShaderNodeTexNoise", icon="NOISE_TEX")
-            self.draw_icon_button(flow, "ShaderNodeTexSky", icon="NODE_SKY")
-            self.draw_icon_button(flow, "ShaderNodeTexVoronoi", icon="VORONI_TEX")
+            self.draw_icon_button(flow, "ShaderNodeTexEnvironment")
+            self.draw_icon_button(flow, "ShaderNodeTexImage")
+            self.draw_icon_button(flow, "ShaderNodeTexNoise")
+            self.draw_icon_button(flow, "ShaderNodeTexSky")
+            self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
 
 
 #Shader Editor - Color panel
@@ -4669,27 +4679,27 @@ class NODES_PT_shader_add_color_common(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeBrightContrast", text=" Bright / Contrast ", icon="BRIGHTNESS_CONTRAST")
-            self.draw_text_button(col, "ShaderNodeGamma", text="Gamma", icon="NODE_GAMMA")
-            self.draw_text_button(col, "ShaderNodeHueSaturation", text=" Hue / Saturation ", icon="NODE_HUESATURATION")
-            self.draw_text_button(col, "ShaderNodeInvert", text="Invert", icon="NODE_INVERT")
+            self.draw_text_button(col, "ShaderNodeBrightContrast", text=" Bright / Contrast ")
+            self.draw_text_button(col, "ShaderNodeGamma", text="Gamma")
+            self.draw_text_button(col, "ShaderNodeHueSaturation", text=" Hue / Saturation ")
+            self.draw_text_button(col, "ShaderNodeInvert", text="Invert")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeMixRGB", text="Mix RGB", icon="NODE_MIXRGB")
-            self.draw_text_button(col, "ShaderNodeRGBCurve", text=" RGB Curves", icon="NODE_RGBCURVE")
+            self.draw_text_button(col, "ShaderNodeMixRGB", text="Mix RGB")
+            self.draw_text_button(col, "ShaderNodeRGBCurve", text=" RGB Curves")
 
         ##### Icon Buttons
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeBrightContrast", icon="BRIGHTNESS_CONTRAST")
-            self.draw_icon_button(flow, "ShaderNodeGamma", icon="NODE_GAMMA")
-            self.draw_icon_button(flow, "ShaderNodeHueSaturation", icon="NODE_HUESATURATION")
-            self.draw_icon_button(flow, "ShaderNodeInvert", icon="NODE_INVERT")
-            self.draw_icon_button(flow, "ShaderNodeMixRGB", icon="NODE_MIXRGB")
-            self.draw_icon_button(flow, "ShaderNodeRGBCurve", icon="NODE_RGBCURVE")
+            self.draw_icon_button(flow, "ShaderNodeBrightContrast")
+            self.draw_icon_button(flow, "ShaderNodeGamma")
+            self.draw_icon_button(flow, "ShaderNodeHueSaturation")
+            self.draw_icon_button(flow, "ShaderNodeInvert")
+            self.draw_icon_button(flow, "ShaderNodeMixRGB")
+            self.draw_icon_button(flow, "ShaderNodeRGBCurve")
 
 
 #Shader Editor - Vector panel
@@ -4724,9 +4734,9 @@ class NODES_PT_shader_add_vector_common(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeMapping", text="Mapping", icon="NODE_MAPPING")
-            self.draw_text_button(col, "ShaderNodeNormal", text="Normal", icon="RECALC_NORMALS")
-            self.draw_text_button(col, "ShaderNodeNormalMap", text="Normal Map", icon="NODE_NORMALMAP")
+            self.draw_text_button(col, "ShaderNodeMapping", text="Mapping")
+            self.draw_text_button(col, "ShaderNodeNormal", text="Normal")
+            self.draw_text_button(col, "ShaderNodeNormalMap", text="Normal Map")
 
         ##### Icon Buttons
 
@@ -4734,9 +4744,9 @@ class NODES_PT_shader_add_vector_common(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeMapping", icon="NODE_MAPPING")
-            self.draw_icon_button(flow, "ShaderNodeNormal", icon="RECALC_NORMALS")
-            self.draw_icon_button(flow, "ShaderNodeNormalMap", icon="NODE_NORMALMAP")
+            self.draw_icon_button(flow, "ShaderNodeMapping")
+            self.draw_icon_button(flow, "ShaderNodeNormal")
+            self.draw_icon_button(flow, "ShaderNodeNormalMap")
 
 
 #Shader Editor - Converter panel
@@ -4772,27 +4782,27 @@ class NODES_PT_shader_add_converter_common(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeClamp", text="Clamp", icon="NODE_CLAMP")
-            self.draw_text_button(col, "ShaderNodeValToRGB", text="ColorRamp", icon="NODE_COLORRAMP")
+            self.draw_text_button(col, "ShaderNodeClamp", text="Clamp")
+            self.draw_text_button(col, "ShaderNodeValToRGB", text="ColorRamp")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeFloatCurve", text="Float Curve", icon="FLOAT_CURVE")
-            self.draw_text_button(col, "ShaderNodeMapRange", text="Map Range", icon="NODE_MAP_RANGE")
-            self.draw_text_button(col, "ShaderNodeMath", text="Math", icon="NODE_MATH")
-            self.draw_text_button(col, "ShaderNodeRGBToBW", text="RGB to BW", icon="NODE_RGBTOBW")
+            self.draw_text_button(col, "ShaderNodeFloatCurve", text="Float Curve")
+            self.draw_text_button(col, "ShaderNodeMapRange", text="Map Range")
+            self.draw_text_button(col, "ShaderNodeMath", text="Math")
+            self.draw_text_button(col, "ShaderNodeRGBToBW", text="RGB to BW")
 
         ##### Icon Buttons
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeClamp", icon="NODE_CLAMP")
-            self.draw_icon_button(flow, "ShaderNodeValToRGB", icon="NODE_COLORRAMP")
-            self.draw_icon_button(flow, "ShaderNodeFloatCurve", icon="FLOAT_CURVE")
-            self.draw_icon_button(flow, "ShaderNodeMapRange", icon="NODE_MAP_RANGE")
-            self.draw_icon_button(flow, "ShaderNodeMath", icon="NODE_MATH")
-            self.draw_icon_button(flow, "ShaderNodeRGBToBW", icon="NODE_RGBTOBW")
+            self.draw_icon_button(flow, "ShaderNodeClamp")
+            self.draw_icon_button(flow, "ShaderNodeValToRGB")
+            self.draw_icon_button(flow, "ShaderNodeFloatCurve")
+            self.draw_icon_button(flow, "ShaderNodeMapRange")
+            self.draw_icon_button(flow, "ShaderNodeMath")
+            self.draw_icon_button(flow, "ShaderNodeRGBToBW")
 
 
 #Shader Editor - Script panel
@@ -4823,7 +4833,7 @@ class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeScript", text="Script", icon="FILE_SCRIPT")
+            self.draw_text_button(col, "ShaderNodeScript", text="Script")
 
         ##### Icon Buttons
 
@@ -4831,7 +4841,7 @@ class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeScript", icon="FILE_SCRIPT")
+            self.draw_icon_button(flow, "ShaderNodeScript")
 
 
 classes = (
