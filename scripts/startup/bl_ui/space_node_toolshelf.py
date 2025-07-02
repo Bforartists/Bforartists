@@ -2534,10 +2534,6 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexNoise"
 
-            props = col.operator("node.add_node", text=" Point Density          ", icon = "NODE_POINTCLOUD")
-            props.use_transform = True
-            props.type = "ShaderNodeTexPointDensity"
-
             props = col.operator("node.add_node", text=" Sky Texture             ", icon = "NODE_SKY")
             props.use_transform = True
             props.type = "ShaderNodeTexSky"
@@ -2600,10 +2596,6 @@ class NODES_PT_shader_add_texture(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexNoise"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_POINTCLOUD")
-            props.use_transform = True
-            props.type = "ShaderNodeTexPointDensity"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_SKY")
             props.use_transform = True
