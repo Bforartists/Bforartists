@@ -2057,8 +2057,8 @@ static void image_save_as_draw(bContext * /*C*/, wmOperator *op)
   const bool is_multiview = RNA_boolean_get(op->ptr, "show_multiview");
   const bool save_as_render = RNA_boolean_get(op->ptr, "save_as_render");
 
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
 
   /* Operator settings. */
   uiDefAutoButsRNA(layout,
@@ -2723,19 +2723,19 @@ static void image_new_draw(bContext * /*C*/, wmOperator *op)
 
   /* copy of WM_operator_props_dialog_popup() layout */
 
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
 
   col = &layout->column(false);
   col->prop(op->ptr, "name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+  col->use_property_split_set(false); /* bfa - use_property_split = False */
   col->prop(op->ptr, "alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
+  col->use_property_split_set(true); /* bfa - use_property_split = True */
   col->prop(op->ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+  col->use_property_split_set(false); /* bfa - use_property_split = False */
   col->prop(op->ptr, "float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "tiled", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -4263,20 +4263,20 @@ static bool do_fill_tile(PointerRNA *ptr, Image *ima, ImageTile *tile)
 
 static void draw_fill_tile(PointerRNA *ptr, uiLayout *layout)
 {
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
 
   uiLayout *col = &layout->column(false);
   col->prop(ptr, "color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+  col->use_property_split_set(false); /* bfa - use_property_split = False */
   col->prop(ptr, "alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
+  col->use_property_split_set(true); /* bfa - use_property_split = True */
   col->prop(ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+  col->use_property_split_set(false); /* bfa - use_property_split = False */
   col->prop(ptr, "float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
+  col->use_property_split_set(true); /* bfa - use_property_split = True */
 }
 
 static void tile_fill_init(PointerRNA *ptr, Image *ima, ImageTile *tile)
@@ -4414,8 +4414,8 @@ static void tile_add_draw(bContext * /*C*/, wmOperator *op)
   uiLayout *col;
   uiLayout *layout = op->layout;
 
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
 
   col = &layout->column(false);
   col->prop(op->ptr, "number", UI_ITEM_NONE, std::nullopt, ICON_NONE);

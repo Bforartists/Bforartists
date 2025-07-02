@@ -379,13 +379,13 @@ static void panel_draw(const bContext *C, Panel *panel)
   PointerRNA cache_file_ptr = RNA_pointer_get(ptr, "cache_file");
   bool has_cache_file = !RNA_pointer_is_null(&cache_file_ptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   uiTemplateCacheFile(layout, C, ptr, "cache_file");
 
   if (has_cache_file) {
-    uiItemPointerR(
-        layout, ptr, "object_path", &cache_file_ptr, "object_paths", std::nullopt, ICON_NONE);
+    layout->prop_search(
+        ptr, "object_path", &cache_file_ptr, "object_paths", std::nullopt, ICON_NONE);
   }
 
   if (RNA_enum_get(&ob_ptr, "type") == OB_MESH) {
@@ -393,7 +393,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
     col = &layout->column(true); /* bfa - our layout */
     row = &col->row(true); /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_vertex_interpolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_vertex_interpolation", 0); /*bfa - decorator*/
@@ -417,7 +417,7 @@ static void velocity_panel_draw(const bContext * /*C*/, Panel *panel)
     return;
   }
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
   uiTemplateCacheFileVelocity(layout, &fileptr);
   layout->prop(ptr, "velocity_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
@@ -434,7 +434,7 @@ static void time_panel_draw(const bContext * /*C*/, Panel *panel)
     return;
   }
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
   uiTemplateCacheFileTimeSettings(layout, &fileptr);
 }
 
@@ -450,7 +450,7 @@ static void render_procedural_panel_draw(const bContext *C, Panel *panel)
     return;
   }
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
   uiTemplateCacheFileProcedural(layout, C, &fileptr);
 }
 
@@ -466,7 +466,7 @@ static void override_layers_panel_draw(const bContext *C, Panel *panel)
     return;
   }
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
   uiTemplateCacheFileLayers(layout, C, &fileptr);
 }
 

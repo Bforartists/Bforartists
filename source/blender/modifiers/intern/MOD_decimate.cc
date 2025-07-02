@@ -230,7 +230,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "decimate_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   if (decimate_type == MOD_DECIM_MODE_COLLAPSE) {
     layout->prop(ptr, "ratio", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
@@ -239,15 +239,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     uiLayout *split = &layout->split(0.385f, true); /* bfa - our layout */
 
     row = &split->row(true); /* bfa - our layout */
-    uiLayoutSetPropDecorate(row, false);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_decorate_set(false);
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_symmetry", UI_ITEM_NONE, "Symmetry", ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_symmetry", 0);
 
     row = &split->row(false); /* bfa - our layout */
     if (RNA_boolean_get(ptr, "use_symmetry")) {
-      uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+      row->use_property_split_set(false); /* bfa - use_property_split = False */
       row->prop(ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
       uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
     }
@@ -257,7 +257,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
     col = &layout->column(true); /* bfa - our layout */
     row = &col->row(true); /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_collapse_triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/
@@ -277,7 +277,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     col->prop(ptr, "delimit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     row = &layout->row(true); /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_dissolve_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/
   }

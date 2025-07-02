@@ -202,6 +202,8 @@ class GHOST_SystemWayland : public GHOST_System {
   GHOST_TSuccess getCursorPosition(int32_t &x, int32_t &y) const override;
   GHOST_TSuccess setCursorPosition(int32_t x, int32_t y) override;
 
+  uint32_t getCursorPreferredLogicalSize() const override;
+
   void getMainDisplayDimensions(uint32_t &width, uint32_t &height) const override;
 
   void getAllDisplayDimensions(uint32_t &width, uint32_t &height) const override;
@@ -233,10 +235,8 @@ class GHOST_SystemWayland : public GHOST_System {
 
   GHOST_TSuccess cursor_shape_custom_set(const uint8_t *bitmap,
                                          const uint8_t *mask,
-                                         int sizex,
-                                         int sizey,
-                                         int hotX,
-                                         int hotY,
+                                         const int size[2],
+                                         const int hot_spot[2],
                                          bool canInvertColor);
 
   GHOST_TSuccess cursor_bitmap_get(GHOST_CursorBitmapRef *bitmap);

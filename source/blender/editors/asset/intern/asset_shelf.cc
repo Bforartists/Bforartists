@@ -842,7 +842,7 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
   list::storage_fetch(library_ref, C);
 
   UI_block_emboss_set(block, blender::ui::EmbossType::None);
-  uiItemPopoverPanel(layout, C, "ASSETSHELF_PT_catalog_selector", "", ICON_COLLAPSEMENU);
+  layout->popover(C, "ASSETSHELF_PT_catalog_selector", "", ICON_COLLAPSEMENU);
   UI_block_emboss_set(block, blender::ui::EmbossType::Emboss);
 
   layout->separator();
@@ -852,7 +852,7 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
     add_catalog_tabs(*shelf, *layout);
   }
 
-  uiItemSpacer(layout);
+  layout->separator_spacer();
   // start bfa - asset shelf ui props
   if ((CTX_data_mode_enum(C) == CTX_MODE_OBJECT && CTX_wm_view3d(C) != nullptr) || CTX_wm_space_node(C) != nullptr) {
     PropertyRNA *prop = RNA_struct_find_property(&shelf_ptr, "import_method");
@@ -882,7 +882,7 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
     layout->prop(&shelf_ptr, "import_method", UI_ITEM_R_EXPAND, "", ICON_NONE);
   }
   // end bfa
-  uiItemPopoverPanel(layout, C, "ASSETSHELF_PT_display", "", ICON_IMGDISPLAY);
+  layout->popover(C, "ASSETSHELF_PT_display", "", ICON_IMGDISPLAY);
   uiLayout *sub = &layout->row(false);
   /* Same as file/asset browser header. */
   sub->ui_units_x_set(8);

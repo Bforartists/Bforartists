@@ -570,6 +570,25 @@ const EnumPropertyItem rna_enum_geometry_nodes_linear_gizmo_draw_style_items[] =
 };
 
 #ifndef RNA_RUNTIME
+static const EnumPropertyItem cmp_extension_mode_items[] = {
+    {CMP_NODE_EXTENSION_MODE_ZERO,
+     "ZERO",
+     0,
+     "Zero",
+     "Areas outside of the image are filled with zero"},
+    {CMP_NODE_EXTENSION_MODE_EXTEND,
+     "EXTEND",
+     0,
+     "Extend",
+     "Areas outside of the image are filled with the closest boundary pixel in the image"},
+    {CMP_NODE_EXTENSION_MODE_REPEAT,
+     "REPEAT",
+     0,
+     "Repeat",
+     "Areas outside of the image are filled with repetitions of the image"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
 static const EnumPropertyItem cmp_interpolation_items[] = {
     {CMP_NODE_INTERPOLATION_NEAREST, "NEAREST", 0, "Nearest", "Use Nearest interpolation"},
     {CMP_NODE_INTERPOLATION_BILINEAR, "BILINEAR", 0, "Bilinear", "Use Bilinear interpolation"},
@@ -7454,14 +7473,6 @@ static void def_cmp_trackpos(BlenderRNA * /*brna*/, StructRNA *srna)
 
 static void def_cmp_translate(BlenderRNA * /*brna*/, StructRNA *srna)
 {
-  static const EnumPropertyItem translate_repeat_axis_items[] = {
-      {CMP_NODE_TRANSLATE_REPEAT_AXIS_NONE, "NONE", 0, "None", "No repeating"},
-      {CMP_NODE_TRANSLATE_REPEAT_AXIS_X, "XAXIS", 0, "X Axis", "Repeats on the X axis"},
-      {CMP_NODE_TRANSLATE_REPEAT_AXIS_Y, "YAXIS", 0, "Y Axis", "Repeats on the Y axis"},
-      {CMP_NODE_TRANSLATE_REPEAT_AXIS_XY, "BOTH", 0, "Both Axes", "Repeats on both axes"},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
-
   PropertyRNA *prop;
 
   RNA_def_struct_sdna_from(srna, "NodeTranslateData", "storage");
@@ -7469,13 +7480,19 @@ static void def_cmp_translate(BlenderRNA * /*brna*/, StructRNA *srna)
   prop = RNA_def_property(srna, "interpolation", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "interpolation");
   RNA_def_property_enum_items(prop, cmp_interpolation_items);
-  RNA_def_property_ui_text(prop, "", "");
+  RNA_def_property_ui_text(prop, "Interpolation", "Interpolation method");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
-  prop = RNA_def_property(srna, "wrap_axis", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, nullptr, "wrap_axis");
-  RNA_def_property_enum_items(prop, translate_repeat_axis_items);
-  RNA_def_property_ui_text(prop, "Repeat", "Repeats image on a specific axis");
+  prop = RNA_def_property(srna, "extension_x", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "extension_x");
+  RNA_def_property_enum_items(prop, cmp_extension_mode_items);
+  RNA_def_property_ui_text(prop, "X Extension Mode", "The extension mode applied to the X axis");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "extension_y", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "extension_y");
+  RNA_def_property_enum_items(prop, cmp_extension_mode_items);
+  RNA_def_property_ui_text(prop, "Y Extension Mode", "The extension mode applied to the Y axis");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -9510,7 +9527,7 @@ static void rna_def_node(BlenderRNA *brna)
   RNA_def_struct_refine_func(srna, "rna_Node_refine");
   RNA_def_struct_path_func(srna, "rna_Node_path");
   RNA_def_struct_register_funcs(srna, "rna_Node_register", "rna_Node_unregister", nullptr);
-  RNA_def_struct_idprops_func(srna, "rna_Node_idprops");
+  RNA_def_struct_system_idprops_func(srna, "rna_Node_idprops");
 
   prop = RNA_def_property(srna, "type", PROP_STRING, PROP_NONE);
   RNA_def_property_string_funcs(prop, "rna_node_type_get", "rna_node_type_length", nullptr);
@@ -9660,8 +9677,8 @@ static void rna_def_node(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, nullptr);
 
   prop = RNA_def_property(srna, "hide", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", NODE_HIDDEN);
-  RNA_def_property_ui_text(prop, "Hide", "");
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", NODE_COLLAPSED);
+  RNA_def_property_ui_text(prop, "Collapse", "");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, nullptr);
 
   prop = RNA_def_property(srna, "mute", PROP_BOOLEAN, PROP_NONE);
@@ -10540,8 +10557,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeRGBToBW", nullptr, ICON_NODE_RGBTOBW);
   define(brna, "ShaderNode", "ShaderNodeScript", def_sh_script, ICON_FILE_SCRIPT);
   define(brna, "ShaderNode", "ShaderNodeSeparateColor", def_sh_combsep_color, ICON_SEPARATE_COLOR);
-  define(brna, "ShaderNode", "ShaderNodeSeparateHSV", nullptr, ICON_NODE_SEPARATEHSV);
-  define(brna, "ShaderNode", "ShaderNodeSeparateRGB", nullptr, ICON_NODE_SEPARATERGB);
   define(brna, "ShaderNode", "ShaderNodeSeparateXYZ", nullptr, ICON_NODE_SEPARATEXYZ);
   define(brna, "ShaderNode", "ShaderNodeShaderToRGB", nullptr, ICON_NODE_RGB);
   define(brna, "ShaderNode", "ShaderNodeSqueeze", nullptr, ICON_NONE);
@@ -10653,7 +10668,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeScale", def_cmp_scale, ICON_TRANSFORM_SCALE);
   define(brna, "CompositorNode", "CompositorNodeSceneTime", nullptr, ICON_TIME);
   define(brna, "CompositorNode", "CompositorNodeSeparateColor", def_cmp_combsep_color, ICON_SEPARATE_COLOR);
-  define(brna, "CompositorNode", "CompositorNodeSeparateXYZ", nullptr, ICON_NODE_SEPARATEXYZ);
   define(brna, "CompositorNode", "CompositorNodeSepHSVA", nullptr, ICON_NODE_SEPARATEHSV);
   define(brna, "CompositorNode", "CompositorNodeSepRGBA", nullptr, ICON_NODE_SEPARATERGB);
   define(brna, "CompositorNode", "CompositorNodeSepYCCA", def_cmp_ycc, ICON_NODE_SEPARATE_YCBCRA);
@@ -10664,7 +10678,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeSunBeams", nullptr, ICON_NODE_SUNBEAMS);
   define(brna, "CompositorNode", "CompositorNodeSwitch", nullptr, ICON_SWITCH_DIRECTION);
   define(brna, "CompositorNode", "CompositorNodeSwitchView", nullptr, ICON_VIEW_SWITCHACTIVECAM);
-  define(brna, "CompositorNode", "CompositorNodeTexture", def_texture, ICON_TEXTURE);
   define(brna, "CompositorNode", "CompositorNodeTime", def_time, ICON_NODE_CURVE_TIME);
   define(brna, "CompositorNode", "CompositorNodeTonemap", def_cmp_tonemap, ICON_NODE_TONEMAP);
   define(brna, "CompositorNode", "CompositorNodeTrackPos", def_cmp_trackpos, ICON_NODE_TRACKPOSITION);

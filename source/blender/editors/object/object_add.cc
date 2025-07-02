@@ -398,7 +398,7 @@ float new_primitive_matrix(bContext *C,
 
 static void view_align_update(Main * /*main*/, Scene * /*scene*/, PointerRNA *ptr)
 {
-  RNA_struct_idprops_unset(ptr, "rotation");
+  RNA_struct_system_idprops_unset(ptr, "rotation");
 }
 
 void add_unit_props_size(wmOperatorType *ot)
@@ -1806,7 +1806,7 @@ static bool make_override_library_object_overridable_check(Main *bmain, Object *
   return false;
 }
 
-static bool create_override(Main *bmain, Scene *scene, ViewLayer *view_layer, ID *id_root, ID *id_root_override, Object *obact, GSet *user_overrides_objects_uids, bool is_override_instancing_object , const bool do_fully_editable) 
+static bool create_override(Main *bmain, Scene *scene, ViewLayer *view_layer, ID *id_root, ID *id_root_override, Object *obact, GSet *user_overrides_objects_uids, bool is_override_instancing_object , const bool do_fully_editable)
 {
   const bool success = BKE_lib_override_library_create(bmain,
                                                        scene,
@@ -2010,7 +2010,7 @@ static wmOperatorStatus collection_drop_override(bContext *C, wmOperator *op)
 
   return success ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
-// bfa end 
+// bfa end
 
 /** \} */
 
@@ -4495,7 +4495,7 @@ static void object_convert_ui(bContext * /*C*/, wmOperator *op)
 {
   uiLayout *layout = op->layout;
 
-  uiLayoutSetPropSep(layout, false); /*bfa - checkboxes, don't split*/
+  layout->uiLayoutSetPropSep(false); /*bfa - checkboxes, don't split*/
 
   layout->prop(op->ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(op->ptr, "keep_original", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -4505,10 +4505,10 @@ static void object_convert_ui(bContext * /*C*/, wmOperator *op)
     layout->prop(op->ptr, "merge_customdata", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (target == OB_GREASE_PENCIL) {
-    uiLayoutSetPropSep(layout, true); /*bfa - split*/
+    layout->use_property_split_set(true); /*bfa - split*/
     layout->prop(op->ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     layout->prop(op->ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(layout, false); /*bfa - boolean, don't split*/
+    layout->use_property_split_set(false); /*bfa - boolean, don't split*/
     layout->prop(op->ptr, "faces", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 }

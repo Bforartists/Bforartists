@@ -5,7 +5,6 @@
 from bpy.types import Menu
 from bl_ui import node_add_menu
 from bpy.app.translations import (
-    pgettext_iface as iface_,
     contexts as i18n_contexts,
 )
 
@@ -27,7 +26,6 @@ class NODE_MT_category_compositor_input(Menu):
         node_add_menu.add_node_type(layout, "CompositorNodeImageCoordinates")
         node_add_menu.add_node_type(layout, "CompositorNodeMask")
         node_add_menu.add_node_type(layout, "CompositorNodeMovieClip")
-        node_add_menu.add_node_type(layout, "CompositorNodeTexture")
 
         if is_group:
             layout.separator()
@@ -307,7 +305,7 @@ class NODE_MT_category_compositor_utilities(Menu):
         node_add_menu.add_node_type(layout, "CompositorNodeSwitch")
         node_add_menu.add_node_type(
             layout, "CompositorNodeSwitchView",
-            label=iface_("Switch Stereo View"))
+            label="Switch Stereo View")
         layout.separator()
         node_add_menu.add_node_type(layout, "CompositorNodeRelativeToPixel")
 
@@ -323,7 +321,7 @@ class NODE_MT_category_compositor_vector(Menu):
         node_add_menu.add_node_type(layout, "ShaderNodeCombineXYZ")
         node_add_menu.add_node_type(layout, "ShaderNodeSeparateXYZ")
         layout.separator()
-        props = node_add_menu.add_node_type(layout, "ShaderNodeMix", label=iface_("Mix Vector"))
+        props = node_add_menu.add_node_type(layout, "ShaderNodeMix", label="Mix Vector")
         ops = props.settings.add()
         ops.name = "data_type"
         ops.value = "'VECTOR'"

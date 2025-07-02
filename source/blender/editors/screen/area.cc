@@ -3623,7 +3623,7 @@ void ED_region_header_layout(const bContext *C, ARegion *region)
       }
 
       /* for view2d */
-      xco = uiLayoutGetWidth(layout);
+      xco = layout->width();
       maxco = std::max(xco, maxco);
     }
 

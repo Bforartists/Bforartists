@@ -137,15 +137,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
 
   /* NOTE: split amount here needs to be synced with normal labels */
   uiLayout *split = &layout->split(0.385f, true);
 
   row = &split->row(false); /* bfa - our layout */
-  uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_decorate_set(false);
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_angle", UI_ITEM_NONE, "Edge Angle", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_angle", 0); /*bfa - decorator*/
 
@@ -159,7 +159,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout->column(true); /* bfa - our layout */
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_edge_sharp", 0); /*bfa - decorator*/
 

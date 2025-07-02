@@ -324,12 +324,13 @@ static IDProperty *idp_generic_copy(const IDProperty *prop, const int /*flag*/)
 
 static IDProperty *IDP_CopyArray(const IDProperty *prop, const int flag)
 {
+  BLI_assert(prop->type == IDP_ARRAY);
   IDProperty *newp = idp_generic_copy(prop, flag);
 
   if (prop->data.pointer) {
     newp->data.pointer = MEM_dupallocN(prop->data.pointer);
 
-    if (prop->type == IDP_GROUP) {
+    if (prop->subtype == IDP_GROUP) {
       IDProperty **array = static_cast<IDProperty **>(newp->data.pointer);
       int a;
 
@@ -892,6 +893,24 @@ IDProperty *IDP_EnsureProperties(ID *id)
     // STRNCPY(id->name, "top_level_group");
   }
   return id->properties;
+}
+
+IDProperty *IDP_ID_system_properties_get(ID *id)
+{
+  return id->system_properties;
+}
+
+IDProperty *IDP_ID_system_properties_ensure(ID *id)
+{
+  if (id->system_properties == nullptr) {
+    id->system_properties = MEM_callocN<IDProperty>(__func__);
+    id->system_properties->type = IDP_GROUP;
+    /* NOTE(@ideasman42): Don't overwrite the data's name and type
+     * some functions might need this if they
+     * don't have a real ID, should be named elsewhere. */
+    // STRNCPY(id->name, "top_level_group");
+  }
+  return id->system_properties;
 }
 
 bool IDP_EqualsProperties_ex(const IDProperty *prop1,

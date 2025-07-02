@@ -213,7 +213,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
@@ -221,13 +221,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout->column(true);
   /* bfa - our layout */
   uiLayout *row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_deform_preserve_volume", UI_ITEM_NONE, IFACE_("Preserve Volume"), ICON_NONE); /* bfa - Create the property */
   uiItemDecoratorR(row, ptr, "use_deform_preserve_volume", 0); /* bfa - Add the decorator */
 
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_multi_modifier", UI_ITEM_NONE, IFACE_("Multi Modifier"), ICON_NONE); /* bfa - Create the property */
   uiItemDecoratorR(row, ptr, "use_multi_modifier", 0); /* bfa - Add the decorator */
@@ -237,13 +237,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col->label(TIP_("Bind To"), ICON_NONE);
 
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE); /* bfa - Create the property */
   uiItemDecoratorR(row, ptr, "use_vertex_groups", 0); /* bfa - Add the decorator */
 
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE); /* bfa - Create the property */
   uiItemDecoratorR(row, ptr, "use_bone_envelopes", 0); /* bfa - Add the decorator */

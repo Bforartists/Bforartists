@@ -744,18 +744,51 @@ static uiBlock *wm_block_insert_unicode_create(bContext *C, ARegion *region, voi
   split->column(false);
 
   if (windows_layout) {
-    confirm = uiDefIconTextBut(
-        block, UI_BTYPE_BUT, 0, 0, "Insert", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, std::nullopt);
+    confirm = uiDefIconTextBut(block,
+                               UI_BTYPE_BUT,
+                               0,
+                               0,
+                               IFACE_("Insert"),
+                               0,
+                               0,
+                               0,
+                               UI_UNIT_Y,
+                               nullptr,
+                               0,
+                               0,
+                               std::nullopt);
     split->column(false);
   }
 
-  cancel = uiDefIconTextBut(
-      block, UI_BTYPE_BUT, 0, 0, "Cancel", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, std::nullopt);
+  cancel = uiDefIconTextBut(block,
+                            UI_BTYPE_BUT,
+                            0,
+                            0,
+                            IFACE_("Cancel"),
+                            0,
+                            0,
+                            0,
+                            UI_UNIT_Y,
+                            nullptr,
+                            0,
+                            0,
+                            std::nullopt);
 
   if (!windows_layout) {
     split->column(false);
-    confirm = uiDefIconTextBut(
-        block, UI_BTYPE_BUT, 0, 0, "Insert", 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, std::nullopt);
+    confirm = uiDefIconTextBut(block,
+                               UI_BTYPE_BUT,
+                               0,
+                               0,
+                               IFACE_("Insert"),
+                               0,
+                               0,
+                               0,
+                               UI_UNIT_Y,
+                               nullptr,
+                               0,
+                               0,
+                               std::nullopt);
   }
 
   UI_block_func_set(block, nullptr, nullptr, nullptr);
@@ -766,7 +799,7 @@ static uiBlock *wm_block_insert_unicode_create(bContext *C, ARegion *region, voi
   UI_but_flag_enable(confirm, UI_BUT_ACTIVE_DEFAULT);
 
   int bounds_offset[2];
-  bounds_offset[0] = uiLayoutGetWidth(layout) * -0.2f;
+  bounds_offset[0] = layout->width() * -0.2f;
   bounds_offset[1] = UI_UNIT_Y * 2.5;
   UI_block_bounds_set_popup(block, 7 * UI_SCALE_FAC, bounds_offset);
 

@@ -625,7 +625,7 @@ static void v3d_editvertex_buts(
 
     col = &row->column(true);
     col->ui_units_x_set(.75);
-    uiLayoutSetFixedSize(col, true);
+    col->fixed_size_set(true);
 
     col->label(IFACE_("X"), ICON_NONE);
     col->label(IFACE_("Y"), ICON_NONE);
@@ -1683,7 +1683,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 {
   /* bfa - rewrite transform panel to match the Python one */
   uiLayout *col, *row, *sub;
-  uiLayoutSetPropSep(layout, true); /* bfa - layout.use_property_split = True */
+  layout->use_property_split_set(true); /* bfa - layout.use_property_split = True */
 
   bool drawLocation = true; /* bfa - boolean to decide show location or not */
   bool draw4L = false;      /* bfa - boolean to decide show 4L button or not*/
@@ -1704,7 +1704,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
     col = &layout->column(false); /* bfa - col = layout.column() */
     row = &col->row(true);        /* bfa - row = col.row(align=True) */
     row->prop(ptr, "location", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* bfa - row.prop(ob, "location") */
-    uiLayoutSetPropDecorate(row, false); /* bfa - row.use_property_decorate = False */
+    row->use_property_decorate_set(false); /* bfa - row.use_property_decorate = False */
     row->emboss_set(blender::ui::EmbossType::None); /* bfa - emboss=False */
     row->prop(ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
     row->emboss_set(blender::ui::EmbossType::Undefined); /* bfa - restore emboss to default?*/
@@ -1719,7 +1719,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       row->prop(ptr, "rotation_quaternion", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
 
       sub = &row->column(true);
-      uiLayoutSetPropDecorate(sub, false);
+      sub->use_property_decorate_set(false);
       sub->emboss_set(blender::ui::EmbossType::NoneOrStatus);
 
       draw4L = true; /* bfa - show 4L button if quaternion */
@@ -1741,7 +1741,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       row->prop(ptr, "rotation_axis_angle", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
 
       sub = &row->column(true);
-      uiLayoutSetPropDecorate(sub, false);
+      sub->use_property_decorate_set(false);
 
       sub->emboss_set(blender::ui::EmbossType::NoneOrStatus);
       draw4L = true; /* bfa - show 4L button if axis-angle */
@@ -1763,7 +1763,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
       row = &col->row(true);
       row->prop(ptr, "rotation_euler", UI_ITEM_NONE, IFACE_("Rotation"), ICON_NONE);
-      uiLayoutSetPropDecorate(row, false);
+      row->use_property_decorate_set(false);
       row->emboss_set(blender::ui::EmbossType::NoneOrStatus);
       row->prop(ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
       row->emboss_set(blender::ui::EmbossType::Undefined); /* bfa */
@@ -1777,7 +1777,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
   /* bfa - display 4L button */
   if (draw4L) {
-    uiLayoutSetPropDecorate(row, false);
+    row->use_property_decorate_set(false);
     row->prop(ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
   }
   else {
@@ -1795,7 +1795,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
           UI_ITEM_NONE,
           IFACE_("Scale"),
           ICON_NONE); /* bfa - row.prop(ob, "scale") */
-  uiLayoutSetPropDecorate(row, false);
+  row->use_property_decorate_set(false);
   row->emboss_set(blender::ui::EmbossType::NoneOrStatus);
   row->prop(ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
   row->emboss_set(blender::ui::EmbossType::Undefined);
@@ -1839,8 +1839,8 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
 
   PointerRNA eboneptr = RNA_pointer_create_discrete(&arm->id, &RNA_EditBone, ebone);
 
-  uiLayoutSetPropSep(layout, true);       /* bfa */
-  uiLayoutSetPropDecorate(layout, false); /* bfa */
+  layout->use_property_split_set(true);       /* bfa */
+ layout->use_property_decorate_set(false); /* bfa */
 
   col = &layout->column(false);
   col->prop(&eboneptr, "head", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -1858,7 +1858,7 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
   col->prop(&eboneptr, "roll", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&eboneptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&eboneptr, "envelope_distance", UI_ITEM_NONE, IFACE_("Envelope"), ICON_NONE);
-  uiLayoutSetPropSep(col, false); /* bfa - no split */
+  col->use_property_split_set(false); /* bfa - no split */
   col->prop(
           &eboneptr,
           "lock",
@@ -1879,8 +1879,8 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
 
   PointerRNA ptr = RNA_pointer_create_discrete(&mball->id, &RNA_MetaElement, mball->lastelem);
 
-  uiLayoutSetPropSep(layout, true);       /* bfa */
-  uiLayoutSetPropDecorate(layout, false); /* bfa */
+  layout->use_property_split_set(true);       /* bfa */
+ layout->use_property_decorate_set(false); /* bfa */
 
   col = &layout->column(false);
   col->prop(&ptr, "co", UI_ITEM_NONE, std::nullopt, ICON_NONE);

@@ -247,7 +247,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   int wrap_method = RNA_enum_get(ptr, "wrap_method");
   uiLayout *col, *row;
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "wrap_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -270,13 +270,13 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->prop(ptr, "use_project_z", toggles_flag, std::nullopt, ICON_NONE);
 
     row = &col->row(true); /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();
     row->prop(ptr, "use_negative_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_negative_direction", 0); /*bfa - decorator*/
 
     row = &col->row(true); /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();
     row->prop(ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_positive_direction", 0); /*bfa - decorator*/
@@ -286,7 +286,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     col->active_set(RNA_boolean_get(ptr, "use_negative_direction") &&
                     RNA_enum_get(ptr, "cull_face") != 0);
     row = &col->row(true); /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();
     row->prop(ptr, "use_invert_cull", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_invert_cull", 0); /*bfa - decorator*/
@@ -298,7 +298,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   }
   layout->prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "smooth_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "smooth_step", UI_ITEM_NONE, IFACE_("Repeat"), ICON_NONE);

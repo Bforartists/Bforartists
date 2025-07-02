@@ -244,7 +244,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   row->prop(ptr, "use_edit_uv", UI_ITEM_R_TOGGLE, IFACE_("UV"), ICON_NONE);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "step", UI_ITEM_NONE, IFACE_("Repeat"), ICON_NONE);
@@ -252,13 +252,13 @@ static void panel_draw(const bContext *C, Panel *panel)
   col = &layout->column(false);
   col->active_set(RNA_boolean_get(ptr, "use_edit_position"));
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_keep_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_keep_shape", 0); /*bfa - decorator*/
-  
+
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_smooth_ends", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_ends", 0); /*bfa - decorator*/

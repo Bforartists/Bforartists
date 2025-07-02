@@ -896,8 +896,8 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   int offset_type = RNA_enum_get(op->ptr, "offset_type");
   bool affect_type = RNA_enum_get(op->ptr, "affect");
 
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
 
   row = &layout->row(false);
   row->prop(op->ptr, "affect", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
@@ -924,7 +924,7 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   }
   layout->prop(op->ptr, "material", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  uiLayoutSetPropSep(layout, false); /*bfa - checkboxes, don't split*/
+  layout->use_property_decorate_set(false); /*bfa - checkboxes, don't split*/
   col = &layout->column(true);
   col->prop(op->ptr, "harden_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -934,7 +934,7 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   col->active_set(affect_type == BEVEL_AFFECT_EDGES);
   col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seams"), ICON_NONE);
   col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
-  uiLayoutSetPropSep(layout, true); /*bfa - checkboxes end. split again*/
+  layout->use_property_decorate_set(true); /*bfa - checkboxes end. split again*/
 
   layout->separator();
 

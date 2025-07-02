@@ -46,7 +46,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   auto &remainder = b.add_output<decl::String>("Remainder").make_available([](bNode &node) {
     node_storage(node).overflow = GEO_NODE_STRING_TO_CURVES_MODE_TRUNCATE;
   });
-  b.add_output<decl::Int>("Line").field_on_all();
+  b.add_output<decl::Int>("Line").field_on_all().translation_context(BLT_I18NCONTEXT_ID_TEXT);
   b.add_output<decl::Vector>("Pivot Point").field_on_all();
 
   const bNode *node = b.node_or_null();
@@ -62,8 +62,8 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_layout(uiLayout *layout, bContext *C, PointerRNA *ptr)
 {
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
   uiTemplateID(layout, C, ptr, "font", nullptr, "FONT_OT_open", "FONT_OT_unlink");
   layout->prop(ptr, "overflow", UI_ITEM_NONE, "", ICON_NONE);
   layout->prop(ptr, "align_x", UI_ITEM_NONE, "", ICON_NONE);

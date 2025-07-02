@@ -582,10 +582,11 @@ static void cmp_node_cryptomatte_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Color>("Image")
       .default_value({0.0f, 0.0f, 0.0f, 1.0f})
-      .compositor_domain_priority(0);
-  b.add_output<decl::Color>("Image");
-  b.add_output<decl::Float>("Matte");
-  b.add_output<decl::Color>("Pick");
+      .structure_type(StructureType::Dynamic);
+
+  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Matte").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Pick").structure_type(StructureType::Dynamic);
 }
 
 static void node_init_cryptomatte(bNodeTree * /*ntree*/, bNode *node)
@@ -647,7 +648,7 @@ static bool node_poll_cryptomatte(const blender::bke::bNodeType * /*ntype*/,
 
     if (scene == nullptr) {
       *r_disabled_hint = RPT_(
-          "The node tree must be the compositing node tree of any scene in the file");
+          "The node tree must be the compositing node group of any scene in the file");
     }
     return scene != nullptr;
   }

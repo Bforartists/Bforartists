@@ -303,8 +303,9 @@ static void write_bone(BlendWriter *writer, Bone *bone)
   if (bone->prop) {
     IDP_BlendWrite(writer, bone->prop);
   }
-  /* Never write system_properties in Blender 4.5, will be reset to `nullptr` by reading code (by
-   * the matching call to #BLO_read_struct). */
+  if (bone->system_properties) {
+    IDP_BlendWrite(writer, bone->system_properties);
+  }
 
   /* Write Children */
   LISTBASE_FOREACH (Bone *, cbone, &bone->childbase) {
@@ -322,8 +323,9 @@ static void write_bone_collection(BlendWriter *writer, BoneCollection *bcoll)
   if (bcoll->prop) {
     IDP_BlendWrite(writer, bcoll->prop);
   }
-  /* Never write system_properties in Blender 4.5, will be reset to `nullptr` by reading code (by
-   * the matching call to #BLO_read_struct). */
+  if (bcoll->system_properties) {
+    IDP_BlendWrite(writer, bcoll->system_properties);
+  }
 
   BLO_write_struct_list(writer, BoneCollectionMember, &bcoll->bones);
 }
@@ -3146,7 +3148,19 @@ void BKE_pchan_minmax(const Object *ob,
 {
   using namespace blender;
   const bArmature *arm = static_cast<const bArmature *>(ob->data);
-  Object *ob_custom = (arm->flag & ARM_NO_CUSTOM) ? nullptr : pchan->custom;
+
+  Object *ob_custom = nullptr;
+  if (!(arm->flag & ARM_NO_CUSTOM) && pchan->custom) {
+    /* This should not be possible, protected against in RNA code and
+     * BKE_pose_blend_read_after_liblink(). Just for safety do another check
+     * here, as otherwise this code can end in an infinite loop. */
+    BLI_assert(pchan->custom->type != OB_ARMATURE);
+
+    if (pchan->custom->type != OB_ARMATURE) {
+      ob_custom = pchan->custom;
+    }
+  }
+
   const bPoseChannel *pchan_tx = (ob_custom && pchan->custom_tx) ? pchan->custom_tx : pchan;
 
   std::optional<Bounds<float3>> bb_custom;

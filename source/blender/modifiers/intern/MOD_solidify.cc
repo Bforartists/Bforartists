@@ -80,7 +80,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   int solidify_mode = RNA_enum_get(ptr, "solidify_mode");
   bool has_vertex_group = RNA_string_length(ptr, "vertex_group") != 0;
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "solidify_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -100,7 +100,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     /* bfa - our layout */
     col = &layout->column(true);
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_even_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
@@ -109,7 +109,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(
           ptr,
@@ -121,7 +121,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   if (RNA_boolean_get(ptr, "use_rim")) {
     uiLayout *row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_rim_only", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_rim_only", 0); /*bfa - decorator*/
@@ -138,7 +138,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row = &layout->row(false);
     row->active_set(has_vertex_group);
     /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa -indent*/
     row->prop(ptr, "use_flat_faces", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_flat_faces", 0); /*bfa - decorator*/
@@ -157,17 +157,17 @@ static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
 
   int solidify_mode = RNA_enum_get(ptr, "solidify_mode");
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   /* bfa - our layout */
   col = &layout->column(false);
   row = &col->row(false);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_flip_normals", UI_ITEM_NONE, IFACE_("Flip"), ICON_NONE);
   if (solidify_mode == MOD_SOLIDIFY_MODE_EXTRUDE) {
-    row = &col->row(false); 
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row = &col->row(false);
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();
     row->prop(ptr, "use_quality_normals", UI_ITEM_NONE, IFACE_("High Quality"), ICON_NONE);
   }
@@ -181,7 +181,7 @@ static void materials_panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "material_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col = &layout->column(true);
@@ -202,7 +202,7 @@ static void edge_data_panel_draw(const bContext * /*C*/, Panel *panel)
 
   int solidify_mode = RNA_enum_get(ptr, "solidify_mode");
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   if (solidify_mode == MOD_SOLIDIFY_MODE_EXTRUDE) {
     uiLayout *col;
@@ -226,14 +226,14 @@ static void clamp_panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   /* bfa - our layout*/
   col = &layout->column(false);
   col->prop(ptr, "thickness_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row = &col->row(false);
   row->active_set(RNA_float_get(ptr, "thickness_clamp") > 0.0f);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_thickness_angle_clamp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
@@ -246,18 +246,17 @@ static void vertex_group_panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   col = &layout->column(false);
-  uiItemPointerR(
-      col, ptr, "shell_vertex_group", &ob_ptr, "vertex_groups", IFACE_("Shell"), ICON_NONE);
-  uiItemPointerR(col,
-                 ptr,
-                 "rim_vertex_group",
-                 &ob_ptr,
-                 "vertex_groups",
-                 CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Rim"),
-                 ICON_NONE);
+  col->prop_search(
+      ptr, "shell_vertex_group", &ob_ptr, "vertex_groups", IFACE_("Shell"), ICON_NONE);
+  col->prop_search(ptr,
+                   "rim_vertex_group",
+                   &ob_ptr,
+                   "vertex_groups",
+                   CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Rim"),
+                   ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

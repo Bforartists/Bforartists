@@ -130,7 +130,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   int wrap_method = RNA_enum_get(ptr, "wrap_method");
 
@@ -156,14 +156,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
     /* bfa - our layout */
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_negative_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_negative_direction", 0); /*bfa - decorator*/
 
     /* bfa - our layout */
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_positive_direction", 0); /*bfa - decorator*/
@@ -175,7 +175,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
     /* bfa - our layout */
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_invert_cull", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_invert_cull", 0); /*bfa - decorator*/

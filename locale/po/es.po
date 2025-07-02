@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'6ccdb8c06e27')\n"
+"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-16 10:45+0000\n"
-"PO-Revision-Date: 2025-06-13 23:59+0000\n"
+"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"PO-Revision-Date: 2025-06-23 18:59+0000\n"
 "Last-Translator: Gabriel Gazzán <gabcorreo@gmail.com>\n"
 "Language-Team: Spanish <https://translate.blender.org/projects/blender-ui/ui/es/>\n"
 "Language: es\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.11"
+"X-Generator: Weblate 5.12.1"
 
 
 msgid "Shader AOV"
@@ -34660,10 +34660,6 @@ msgid "Bone Roll"
 msgstr "Giro de huesos"
 
 
-msgid "Merge"
-msgstr "Fusionar"
-
-
 msgid "Pivot Point"
 msgstr "Punto de pivote"
 
@@ -34692,172 +34688,176 @@ msgid "Vertex Group Locks"
 msgstr "Bloqueos de grupo de vértices"
 
 
-msgid "Set Face Strength"
-msgstr "Definir intensidad de caras"
-
-
-msgid "Select by Face Strength"
-msgstr "Seleccionar por intensidad de caras"
-
-
-msgid "Hooks"
-msgstr "Asignar gancho"
-
-
-msgid "Link/Transfer Data"
-msgstr "Vincular / Transferir datos"
-
-
-msgid "Convert"
-msgstr "Convertir"
-
-
-msgid "Relations"
-msgstr "Relaciones"
-
-
-msgid "Add Image"
-msgstr "Agregar imagen"
-
-
-msgid "Light Probe"
-msgstr "Sonda de luz"
-
-
-msgid "Face Data"
-msgstr "Datos de caras"
-
-
-msgid "Light"
-msgstr "Luz"
-
-
-msgid "Make Single User"
-msgstr "Hacer de único usuario"
-
-
-msgid "Asset"
-msgstr "Recurso"
-
-
-msgid "Mesh Select Mode"
-msgstr "Modo de selección de mallas"
-
-
-msgid "Quick Effects"
-msgstr "Efectos rápidos"
-
-
-msgid "Disable Bone Options"
-msgstr "Deshabilitar opciones huesos"
-
-
-msgid "Enable Bone Options"
-msgstr "Habilitar opciones huesos"
-
-
-msgid "Track"
-msgstr "Rastrear"
-
-
-msgid "Toggle Bone Options"
-msgstr "Alternar opciones de huesos"
-
-
-msgid "Apply"
-msgstr "Aplicar"
-
-
-msgid "Assign Material"
-msgstr "Asignar material"
-
-
-msgid "Rigid Body"
-msgstr "Cuerpo rígido"
-
-
-msgid "Propagate"
-msgstr "Propagar"
-
-
-msgid "Local View"
-msgstr "Vista local"
-
-
-msgid "Select More/Less"
-msgstr "Seleccionar más / menos"
-
-
-msgid "Bone Collections"
-msgstr "Colecciones de huesos"
-
-
-msgid "In-Betweens"
-msgstr "Intermedios"
-
-
-msgid "Clear Transform"
-msgstr "Restablecer transformación"
-
-
-msgid "Select Loops"
-msgstr "Seleccionar bucles"
-
-
-msgid "Select Linked"
-msgstr "Seleccionar vinculado"
-
-
-msgid "Select All by Trait"
-msgstr "Seleccionar por condición"
-
-
-msgid "Select Similar"
-msgstr "Seleccionar similar"
-
-
-msgid "View Regions"
-msgstr "Regiones de la vista"
-
-
-msgid "Align View to Active"
-msgstr "Alinear vista al activo"
-
-
-msgid "Align View"
-msgstr "Alinear vista"
-
-
-msgid "Navigation"
-msgstr "Navegación"
-
-
-msgid "Viewpoint"
-msgstr "Punto de vista"
+msgid "Mirror"
+msgstr "Simetrizar"
 
 
 msgid "UV Mapping"
 msgstr "Mapeo UV"
 
 
-msgid "Mirror"
-msgstr "Simetrizar"
+msgid "Local View"
+msgstr "Vista local"
 
 
-msgid "Random Mask"
-msgstr "Máscara aleatoria"
+msgid "Viewpoint"
+msgstr "Punto de vista"
 
 
-msgid "Face Sets Init"
-msgstr "Inicialización de conjuntos de caras"
+msgid "Navigation"
+msgstr "Navegación"
+
+
+msgid "Align View"
+msgstr "Alinear vista"
+
+
+msgid "Align View to Active"
+msgstr "Alinear vista al activo"
+
+
+msgid "View Regions"
+msgstr "Regiones de la vista"
+
+
+msgid "Select More/Less"
+msgstr "Seleccionar más / menos"
+
+
+msgid "Select Similar"
+msgstr "Seleccionar similar"
+
+
+msgid "Select All by Trait"
+msgstr "Seleccionar por condición"
+
+
+msgid "Select Linked"
+msgstr "Seleccionar vinculado"
+
+
+msgid "Select Loops"
+msgstr "Seleccionar bucles"
+
+
+msgid "Assign Material"
+msgstr "Asignar material"
+
+
+msgid "Light"
+msgstr "Luz"
+
+
+msgid "Light Probe"
+msgstr "Sonda de luz"
+
+
+msgid "Add Image"
+msgstr "Agregar imagen"
+
+
+msgid "Relations"
+msgstr "Relaciones"
+
+
+msgid "Rigid Body"
+msgstr "Cuerpo rígido"
+
+
+msgid "Apply"
+msgstr "Aplicar"
+
+
+msgid "Track"
+msgstr "Rastrear"
+
+
+msgid "Quick Effects"
+msgstr "Efectos rápidos"
+
+
+msgid "Asset"
+msgstr "Recurso"
+
+
+msgid "Make Single User"
+msgstr "Hacer de único usuario"
+
+
+msgid "Convert"
+msgstr "Convertir"
+
+
+msgid "Link/Transfer Data"
+msgstr "Vincular / Transferir datos"
+
+
+msgid "Hooks"
+msgstr "Asignar gancho"
+
+
+msgid "Trim/Add"
+msgstr "Recortar / Agregar"
 
 
 msgid "Sculpt Set Pivot"
 msgstr "Esculpido definir pivote"
 
 
-msgid "Trim/Add"
-msgstr "Recortar / Agregar"
+msgid "Face Sets Init"
+msgstr "Inicialización de conjuntos de caras"
+
+
+msgid "Random Mask"
+msgstr "Máscara aleatoria"
+
+
+msgid "Clear Transform"
+msgstr "Restablecer transformación"
+
+
+msgid "In-Betweens"
+msgstr "Intermedios"
+
+
+msgid "Propagate"
+msgstr "Propagar"
+
+
+msgid "Bone Collections"
+msgstr "Colecciones de huesos"
+
+
+msgid "Toggle Bone Options"
+msgstr "Alternar opciones de huesos"
+
+
+msgid "Enable Bone Options"
+msgstr "Habilitar opciones huesos"
+
+
+msgid "Disable Bone Options"
+msgstr "Deshabilitar opciones huesos"
+
+
+msgid "Mesh Select Mode"
+msgstr "Modo de selección de mallas"
+
+
+msgid "Face Data"
+msgstr "Datos de caras"
+
+
+msgid "Select by Face Strength"
+msgstr "Seleccionar por intensidad de caras"
+
+
+msgid "Set Face Strength"
+msgstr "Definir intensidad de caras"
+
+
+msgid "Merge"
+msgstr "Fusionar"
 
 
 msgid "Keyframe Insert Pie"
@@ -35042,6 +35042,11 @@ msgstr "UV"
 
 msgid "Align"
 msgstr "Alinear"
+
+
+msgctxt "Operator"
+msgid "Mirror"
+msgstr "Voltear"
 
 
 msgid "UV Select Mode"
@@ -65950,8 +65955,8 @@ msgid "The factor to scale keys with"
 msgstr "El factor de escala de los claves"
 
 
-msgid "Are handles tested individually against the selection criteria"
-msgstr "Si las asas son comprobadas individualmente contra los criterios de selección"
+msgid "Are handles tested individually against the selection criteria, independently from their keys. When unchecked, handles are (de)selected in unison with their keys"
+msgstr "Determina si las asas serán evaluadas en base a los criterios de selección de manera independiente a sus claves. Cuando esté inactiva, el estado de selección de las asas será modificado en concierto con el de sus claves"
 
 
 msgid "Select Curves"
@@ -68957,6 +68962,14 @@ msgstr "Adivinar pose original de enlace"
 
 msgid "Try to guess the original bind pose for skinned meshes from the inverse bind matrices. When off, use default/rest pose as bind pose"
 msgstr "Intenta obtener la pose de enlace original de mallas deformadas, a partir de las matrices inversas de enlace. Cuando se encuentre desactivado, usará la pose de reposo predefinida como pose de enlace"
+
+
+msgid "Merge Material Slot when possible"
+msgstr "Fusionar contenedores de material cuando sea posible"
+
+
+msgid "Merge material slots when possible"
+msgstr "Fusionar contenedores de material cuando sea posible"
 
 
 msgid "Pack Images"
@@ -74744,8 +74757,12 @@ msgid "Curve from Mesh or Text objects"
 msgstr "Curva a partir de mallas o textos"
 
 
-msgid "Mesh from Curve, Surface, Metaball, or Text objects"
-msgstr "Malla a partir de Curvas, Superficies, Metabolas o Textos"
+msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
+msgstr "Malla a partir de Curvas, Superficies, Metabolas, Textos o Nubes de puntos"
+
+
+msgid "Point Cloud from Mesh objects"
+msgstr "Nube de puntos a partir de Mallas"
 
 
 msgid "Curves from evaluated curve data"
@@ -79708,11 +79725,6 @@ msgstr "Deshace todas las ediciones hechas a este sistema de partículas"
 
 msgid "Hide selected particles"
 msgstr "Oculta las partículas seleccionadas"
-
-
-msgctxt "Operator"
-msgid "Mirror"
-msgstr "Voltear"
 
 
 msgid "Duplicate and mirror the selected particles along the local X axis"
@@ -97691,8 +97703,8 @@ msgid "Automatic (Automatic)"
 msgstr "Automático (Automatic)"
 
 
-msgid "Automatically choose system's defined language if available, or fall-back to English"
-msgstr "Elige automáticamente el idioma definido en el sistema, si no estuviera disponible se mostrará en inglés"
+msgid "Automatically choose the system-defined language if available, or fall-back to English (US)"
+msgstr "Eligir automáticamente el idioma definido en el sistema; si no estuviera disponible se mostrará en Inglés (EE.UU.)"
 
 
 msgid "HDRI Preview Size"
@@ -121383,10 +121395,6 @@ msgid "Active camera is not in this scene"
 msgstr "La cámara activa no se encuentra en esta escena"
 
 
-msgid "No {0} modifiers found"
-msgstr "Ningún modificador {0} encontrado"
-
-
 msgid "Skipping '{:s}', not a mesh"
 msgstr "Omitiendo a '{:s}', debido a que no es una malla"
 
@@ -127022,18 +127030,6 @@ msgstr "Cycles se encuentra deshabilitado en esta compilación del programa"
 
 msgid "A restart of Blender is required"
 msgstr "Se necesitará reiniciar Blender"
-
-
-msgid "Vulkan backend limitations:"
-msgstr "Limitaciones con Vulkan:"
-
-
-msgid "• WoA support"
-msgstr "• Soporte para WoA"
-
-
-msgid "• Low VR performance"
-msgstr "• Bajo rendimiento con RV"
 
 
 msgid "Open blend files with this Blender version"
@@ -134657,6 +134653,14 @@ msgid "Object '%s' has no evaluated curves data"
 msgstr "El objeto '%s' no contiene datos de curvas evaluados"
 
 
+msgid "None of the objects are compatible with a conversion to \"%s\""
+msgstr "Ninguno de los objetos son compatibles con la conversión a \"%s\""
+
+
+msgid "The selection included %d object type(s) which do not support conversion to \"%s\""
+msgstr "La selección incluyó %d objetos cuyo tipo no soporta la conversión a \"%s\""
+
+
 msgid "Cannot edit object '%s' as it is used by override collections"
 msgstr "No es posible editar el objeto '%s' porque está siendo usado por colecciones de redefiniciones"
 
@@ -135635,6 +135639,10 @@ msgstr "Sólo es posible aplicar la escala a tipografías: \"%s\""
 
 msgid "Area Lights can only have scale applied: \"%s\""
 msgstr "Sólo es posible aplicar la escala a las luces de área: \"%s\""
+
+
+msgid "Object \"%s\" has a non-invertible transformation matrix, not applying transform"
+msgstr "El objeto \"%s\" tiene una matriz de transformación no invertible, no se aplicará la transformación"
 
 
 msgid "%i object(s) not centered, %i changed:"
@@ -140915,6 +140923,10 @@ msgid "USD Import: unable to open stage to read %s"
 msgstr "Importación de USD: No es posible abrir un escenario para leer %s"
 
 
+msgid "One or more objects used as prototypes in 'Instance on Points' nodes either do not have 'As Instance' enabled in their 'Object Info' nodes, or the prototype is the base geometry input itself. Both cases prevent valid point instancer export. If it's the former, enable 'As Instance' to avoid incorrect self-referencing."
+msgstr "Uno o más objetos usados como prototipos en nodos 'Instanciar en puntos' bien no tienen activa la opción 'Como instancia' en sus nodos 'Información de objeto' o el prototipo es la geometría base de entrada en sí misma. En ambos casos esto evitará la exportación de un instanciador de puntos válidos. En caso de tratarse del primer caso, activar la opción 'Como instancia' para evitar un auto referenciamiento incorrecto."
+
+
 msgid "An exception occurred invoking USD hook '%s'. Please see the console for details"
 msgstr "Ocurrió una excepción al invocar el enganche USD '%s'. Ver la consola para más detalles"
 
@@ -141089,6 +141101,10 @@ msgstr "La malla '%s', Atributo '%s' (dominio %d, tipo %d) no puede ser converti
 
 msgid "USD export: Simple subdivision not supported, exporting subdivided mesh"
 msgstr "Exportación de USD: Subdivisión simple no soportada, se exportará la malla subdividida"
+
+
+msgid "Instances number '%d' doesn't match transforms size '%d'"
+msgstr "Las instancias número '%d' no coinciden con los tamaños de transformación '%d'"
 
 
 msgid "USD Export: failed to resolve .vdb file for object: %s"
@@ -146487,6 +146503,10 @@ msgstr "Resolución horizontal de la esfera"
 
 msgid "The number of horizontal rings"
 msgstr "Cantidad de anillos horizontales"
+
+
+msgid "The subdivision level is too large"
+msgstr "El nivel de subdivisiones es demasiado grande"
 
 
 msgid "Disabled, Blender was compiled without OpenSubdiv"

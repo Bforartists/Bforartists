@@ -293,7 +293,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "affect", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   col = &layout->column(false);
   col->prop(ptr, "offset_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -341,7 +341,7 @@ static void profile_panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "profile_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   if (ELEM(profile_type, MOD_BEVEL_PROFILE_SUPERELLIPSE, MOD_BEVEL_PROFILE_CUSTOM)) {
     row = &layout->row(false);
@@ -358,7 +358,7 @@ static void profile_panel_draw(const bContext * /*C*/, Panel *panel)
 
     if (profile_type == MOD_BEVEL_PROFILE_CUSTOM) {
       uiLayout *sub = &layout->column(false);
-      uiLayoutSetPropDecorate(sub, false);
+      sub->use_property_decorate_set(false);
       uiTemplateCurveProfile(sub, ptr, "custom_profile");
     }
   }
@@ -373,7 +373,7 @@ static void geometry_panel_draw(const bContext * /*C*/, Panel *panel)
 
   bool edge_bevel = RNA_enum_get(ptr, "affect") != MOD_BEVEL_AFFECT_VERTICES;
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   row = &layout->row(false);
   row->active_set(edge_bevel);
@@ -394,13 +394,13 @@ static void geometry_panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout->column(true); /* bfa - our layout */
   row = &col->row(true);  /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_clamp_overlap", 0); /*bfa - decorator*/
 
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "loop_slide", 0); /*bfa - decorator*/
@@ -415,10 +415,10 @@ static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
 
   bool edge_bevel = RNA_enum_get(ptr, "affect") != MOD_BEVEL_AFFECT_VERTICES;
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   row = &layout->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "harden_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "harden_normals", 0); /*bfa - decorator*/
@@ -429,13 +429,13 @@ static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
   col->label(TIP_("Mark"), ICON_NONE);
 
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seam"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "mark_seam", 0); /*bfa - decorator*/
 
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "mark_sharp", 0); /*bfa - decorator*/

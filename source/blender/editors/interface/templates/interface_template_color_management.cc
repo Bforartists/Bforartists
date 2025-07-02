@@ -63,8 +63,8 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
 
   uiLayout *row = &col->row(false);
   row = &col->row(true); // bfa - our layout
-  uiLayoutSetPropSep(row, false); // bfa - use_property_split = False
-  row->separator(); // bfa - Indent 
+  row->use_property_decorate_set(false); // bfa - use_property_split = False
+  row->separator(); // bfa - Indent
   row->alignment_set(blender::ui::LayoutAlign::Left); // bfa - left align
   row->prop(&view_transform_ptr, "use_curve_mapping", UI_ITEM_NONE, std::nullopt, ICON_NONE); // bfa - row prop
   if (!(view_settings->flag & COLORMANAGE_VIEW_USE_CURVES)) { // bfa - if unchecked, show icon
@@ -76,8 +76,8 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   }
 
   row = &col->row(true); // bfa - our layout
-  uiLayoutSetPropSep(row, false); // bfa - use_property_split = False
-  row->separator(); // bfa - Indent 
+  row->use_property_decorate_set(false); // bfa - use_property_split = False
+  row->separator(); // bfa - Indent
   row->alignment_set(blender::ui::LayoutAlign::Left); // bfa - left align
   row->prop(&view_transform_ptr, "use_white_balance", UI_ITEM_NONE, std::nullopt, ICON_NONE); // bfa - row prop
   if (!(view_settings->flag & COLORMANAGE_VIEW_USE_WHITE_BALANCE)) { // bfa - if unchecked, show icon

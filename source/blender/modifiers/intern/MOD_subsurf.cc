@@ -393,7 +393,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   layout->prop(ptr, "subdivision_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   uiLayout *col = &layout->column(true);
   uiLayout *row = &col->row(true); /* bfa - added row */
@@ -403,7 +403,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(false);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
@@ -463,7 +463,7 @@ static void panel_draw(const bContext *C, Panel *panel)
           C, ptr, "open_advanced_panel", IFACE_("Advanced")))
   {
     /* bfa - our layout */
-    uiLayoutSetPropSep(layout, true);
+    layout->use_property_decorate_set(true);
 
     /* bfa - our layout */
     uiLayout *col = &advanced_layout->column(false);
@@ -471,7 +471,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
     /* bfa - our layout */
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_limit_surface", 0); /*bfa - decorator*/
@@ -493,14 +493,14 @@ static void panel_draw(const bContext *C, Panel *panel)
     row = &col->row(true);
 
     /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
 
     /* bfa - our layout */
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/

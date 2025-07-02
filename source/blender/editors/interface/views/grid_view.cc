@@ -137,15 +137,6 @@ bool AbstractGridViewItem::matches(const AbstractViewItem &other) const
   return identifier_ == other_grid_item.identifier_;
 }
 
-void AbstractGridViewItem::grid_tile_click_fn(bContext *C, void *but_arg1, void * /*arg2*/)
-{
-  uiButViewItem *view_item_but = (uiButViewItem *)but_arg1;
-  AbstractGridViewItem &grid_item = reinterpret_cast<AbstractGridViewItem &>(
-      *view_item_but->view_item);
-
-  grid_item.activate(*C);
-}
-
 void AbstractGridViewItem::add_grid_tile_button(uiBlock &block)
 {
   const GridViewStyle &style = this->get_view().get_style();
@@ -163,7 +154,6 @@ void AbstractGridViewItem::add_grid_tile_button(uiBlock &block)
                                              "");
 
   view_item_but_->view_item = this;
-  UI_but_func_set(view_item_but_, grid_tile_click_fn, view_item_but_, nullptr);
 }
 
 std::optional<std::string> AbstractGridViewItem::debug_name() const
@@ -386,7 +376,7 @@ void GridViewLayoutBuilder::build_grid_tile(const bContext &C,
                                             AbstractGridViewItem &item) const
 {
   uiLayout *overlap = &grid_layout.overlap();
-  uiLayoutSetFixedSize(overlap, true);
+  overlap->fixed_size_set(true);
 
   item.add_grid_tile_button(block_);
   item.build_grid_tile(C, overlap->row(false));
@@ -406,7 +396,7 @@ void GridViewLayoutBuilder::build_from_view(const bContext &C,
    * the root level and inherits its width. Might need a more reliable method. */
   const int guessed_layout_width = (parent_layout->ui_units_x() > 0) ?
                                        parent_layout->ui_units_x() * UI_UNIT_X :
-                                       uiLayoutGetWidth(parent_layout);
+                                       parent_layout->width();
   const int cols_per_row = std::max(guessed_layout_width / style.tile_width, 1);
 
   const AbstractGridViewItem *search_highlight_item = dynamic_cast<const AbstractGridViewItem *>(
