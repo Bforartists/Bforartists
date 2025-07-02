@@ -222,96 +222,32 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_AMBIENT_OCCLUSION")
-            props.use_transform = True
-            props.type = "ShaderNodeAmbientOcclusion"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_ATTRIBUTE")
-            props.use_transform = True
-            props.type = "ShaderNodeAttribute"
-
-            props = flow.operator("node.add_node", text="", icon = "BEVEL")
-            props.use_transform = True
-            props.type = "ShaderNodeBevel"
-
-            props = flow.operator("node.add_node", text="", icon = "CAMERA_DATA")
-            props.use_transform = True
-            props.type = "ShaderNodeCameraData"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
-            props.use_transform = True
-            props.type = "ShaderNodeVertexColor"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_FRESNEL")
-            props.use_transform = True
-            props.type = "ShaderNodeFresnel"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GEOMETRY")
-            props.use_transform = True
-            props.type = "ShaderNodeNewGeometry"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_HAIRINFO")
-            props.use_transform = True
-            props.type = "ShaderNodeHairInfo"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_LAYERWEIGHT")
-            props.use_transform = True
-            props.type = "ShaderNodeLayerWeight"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_LIGHTPATH")
-            props.use_transform = True
-            props.type = "ShaderNodeLightPath"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
-            props.use_transform = True
-            props.type = "ShaderNodeObjectInfo"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_PARTICLEINFO")
-            props.use_transform = True
-            props.type = "ShaderNodeParticleInfo"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_INFO")
-            props.use_transform = True
-            props.type = "ShaderNodePointInfo"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGB")
-            props.use_transform = True
-            props.type = "ShaderNodeRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TANGENT")
-            props.use_transform = True
-            props.type = "ShaderNodeTangent"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TEXCOORDINATE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexCoord"
+            self.draw_text_button(flow, "ShaderNodeAmbientOcclusion", text="", icon="NODE_AMBIENT_OCCLUSION")
+            self.draw_text_button(flow, "ShaderNodeAttribute", text="", icon="NODE_ATTRIBUTE")
+            self.draw_text_button(flow, "ShaderNodeBevel", text="", icon="BEVEL")
+            self.draw_text_button(flow, "ShaderNodeCameraData", text="", icon="CAMERA_DATA")
+            self.draw_text_button(flow, "ShaderNodeVertexColor", text="", icon="NODE_VERTEX_COLOR")
+            self.draw_text_button(flow, "ShaderNodeFresnel", text="", icon="NODE_FRESNEL")
+            self.draw_text_button(flow, "ShaderNodeNewGeometry", text="", icon="NODE_GEOMETRY")
+            self.draw_text_button(flow, "ShaderNodeHairInfo", text="", icon="NODE_HAIRINFO")
+            self.draw_text_button(flow, "ShaderNodeLayerWeight", text="", icon="NODE_LAYERWEIGHT")
+            self.draw_text_button(flow, "ShaderNodeLightPath", text="", icon="NODE_LIGHTPATH")
+            self.draw_text_button(flow, "ShaderNodeObjectInfo", text="", icon="NODE_OBJECTINFO")
+            self.draw_text_button(flow, "ShaderNodeParticleInfo", text="", icon="NODE_PARTICLEINFO")
+            self.draw_text_button(flow, "ShaderNodePointInfo", text="", icon="POINT_INFO")
+            self.draw_text_button(flow, "ShaderNodeRGB", text="", icon="NODE_RGB")
+            self.draw_text_button(flow, "ShaderNodeTangent", text="", icon="NODE_TANGENT")
+            self.draw_text_button(flow, "ShaderNodeTexCoord", text="", icon="NODE_TEXCOORDINATE")
 
             if context.space_data.shader_type == 'LINESTYLE':
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_UVALONGSTROKE")
-                props.use_transform = True
-                props.type = "ShaderNodeUVALongStroke"
-
-            props = flow.operator("node.add_node", text = "", icon = "GROUP_UVS")
-            props.use_transform = True
-            props.type = "ShaderNodeUVMap"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "ShaderNodeValue"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
-            props.use_transform = True
-            props.type = "ShaderNodeVolumeInfo"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_WIREFRAME")
-            props.use_transform = True
-            props.type = "ShaderNodeWireframe"
+                self.draw_text_button(flow, "ShaderNodeUVALongStroke", text="", icon="NODE_UVALONGSTROKE")
+            self.draw_text_button(flow, "ShaderNodeUVMap", text="", icon="GROUP_UVS")
+            self.draw_text_button(flow, "ShaderNodeValue", text="", icon="NODE_VALUE")
+            self.draw_text_button(flow, "ShaderNodeVolumeInfo", text="", icon="NODE_VOLUME_INFO")
+            self.draw_text_button(flow, "ShaderNodeWireframe", text="", icon="NODE_WIREFRAME")
 
 
 #Shader editor , Output panel
@@ -364,38 +300,21 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
         #### Image Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "ShaderNodeOutputAOV"
+            self.draw_text_button(flow, "ShaderNodeOutputAOV", text="", icon="NODE_VALUE")
 
             if context.space_data.shader_type == 'OBJECT':
-
                 if engine == 'CYCLES':
-
-                    props = flow.operator("node.add_node", text="", icon = "LIGHT")
-                    props.use_transform = True
-                    props.type = "ShaderNodeOutputLight"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_MATERIAL")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputMaterial"
+                    self.draw_text_button(flow, "ShaderNodeOutputLight", text="", icon="LIGHT")
+                self.draw_text_button(flow, "ShaderNodeOutputMaterial", text="", icon="NODE_MATERIAL")
 
             elif context.space_data.shader_type == 'WORLD':
-
-                props = flow.operator("node.add_node", text="", icon = "WORLD")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputWorld"
+                self.draw_text_button(flow, "ShaderNodeOutputWorld", text="", icon="WORLD")
 
             elif context.space_data.shader_type == 'LINESTYLE':
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_LINESTYLE_OUTPUT")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputLineStyle"
+                self.draw_text_button(flow, "ShaderNodeOutputLineStyle", text="", icon="NODE_LINESTYLE_OUTPUT")
 
 
 #Compositor, Add tab, input panel
@@ -439,40 +358,16 @@ class NODES_PT_comp_add_input(bpy.types.Panel, NodePanel):
         #### Image Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BOKEH_IMAGE")
-            props.use_transform = True
-            props.type = "CompositorNodeBokehImage"
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_IMAGE")
-            props.use_transform = True
-            props.type = "CompositorNodeImage"
-
-            props = flow.operator("node.add_node", text = "", icon = "MOD_MASK")
-            props.use_transform = True
-            props.type = "CompositorNodeMask"
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_MOVIE")
-            props.use_transform = True
-            props.type = "CompositorNodeMovieClip"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGB")
-            props.use_transform = True
-            props.type = "CompositorNodeRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "TEXTURE")
-            props.use_transform = True
-            props.type = "CompositorNodeTexture"
-
-
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "CompositorNodeValue"
+            self.draw_text_button(flow, "CompositorNodeBokehImage", text="", icon="NODE_BOKEH_IMAGE")
+            self.draw_text_button(flow, "CompositorNodeImage", text="", icon="FILE_IMAGE")
+            self.draw_text_button(flow, "CompositorNodeMask", text="", icon="MOD_MASK")
+            self.draw_text_button(flow, "CompositorNodeMovieClip", text="", icon="FILE_MOVIE")
+            self.draw_text_button(flow, "CompositorNodeRGB", text="", icon="NODE_RGB")
+            self.draw_text_button(flow, "CompositorNodeTexture", text="", icon="TEXTURE")
+            self.draw_text_button(flow, "CompositorNodeValue", text="", icon="NODE_VALUE")
 
 
 #Compositor, Add tab, Constant supbanel
@@ -506,18 +401,11 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGB")
-            props.use_transform = True
-            props.type = "CompositorNodeRGB"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "CompositorNodeValue"
+            self.draw_text_button(flow, "CompositorNodeRGB", text="", icon="NODE_RGB")
+            self.draw_text_button(flow, "CompositorNodeValue", text="", icon="NODE_VALUE")
 
 
 #Compositor, Add tab, Scene supbanel
@@ -552,22 +440,12 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "RENDERLAYERS")
-            props.use_transform = True
-            props.type = "CompositorNodeRLayers"
-
-            props = flow.operator("node.add_node", text = "", icon = "TIME")
-            props.use_transform = True
-            props.type = "CompositorNodeSceneTime"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CURVE_TIME")
-            props.use_transform = True
-            props.type = "CompositorNodeTime"
+            self.draw_text_button(flow, "CompositorNodeRLayers", text="", icon="RENDERLAYERS")
+            self.draw_text_button(flow, "CompositorNodeSceneTime", text="", icon="TIME")
+            self.draw_text_button(flow, "CompositorNodeTime", text="", icon="NODE_CURVE_TIME")
 
 
 #Compositor, Add tab, Output Panel
@@ -609,22 +487,12 @@ class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
         #### Image Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMPOSITING")
-            props.use_transform = True
-            props.type = "CompositorNodeComposite"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_FILEOUTPUT")
-            props.use_transform = True
-            props.type = "CompositorNodeOutputFile"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VIEWER")
-            props.use_transform = True
-            props.type = "CompositorNodeViewer"
+            self.draw_text_button(flow, "CompositorNodeComposite", text="", icon="NODE_COMPOSITING")
+            self.draw_text_button(flow, "CompositorNodeOutputFile", text="", icon="NODE_FILEOUTPUT")
+            self.draw_text_button(flow, "CompositorNodeViewer", text="", icon="NODE_VIEWER")
 
 #Compositor, Add tab, Color Panel
 class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
@@ -668,35 +536,16 @@ class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
         #### Image Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_ALPHACONVERT")
-            props.use_transform = True
-            props.type = "CompositorNodePremulKey"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
-            props.use_transform = True
-            props.type = "CompositorNodeValToRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "COLOR_SPACE")
-            props.use_transform = True
-            props.type = "CompositorNodeConvertColorSpace"
-
-            props = flow.operator("node.add_node", text = "", icon = "IMAGE_ALPHA")
-            props.use_transform = True
-            props.type = "CompositorNodeSetAlpha"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_INVERT")
-            props.use_transform = True
-            props.type = "CompositorNodeInvert"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBTOBW")
-            props.use_transform = True
-            props.type = "CompositorNodeRGBToBW"
+            self.draw_text_button(flow, "CompositorNodePremulKey", text="", icon="NODE_ALPHACONVERT")
+            self.draw_text_button(flow, "CompositorNodeValToRGB", text="", icon="NODE_COLORRAMP")
+            self.draw_text_button(flow, "CompositorNodeConvertColorSpace", text="", icon="COLOR_SPACE")
+            self.draw_text_button(flow, "CompositorNodeSetAlpha", text="", icon="IMAGE_ALPHA")
+            self.draw_text_button(flow, "CompositorNodeInvert", text="", icon="NODE_INVERT")
+            self.draw_text_button(flow, "CompositorNodeRGBToBW", text="", icon="NODE_RGBTOBW")
 
 
 #Compositor, Add tab, Color, Adjust supbanel
@@ -745,46 +594,18 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "BRIGHTNESS_CONTRAST")
-            props.use_transform = True
-            props.type = "CompositorNodeBrightContrast"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORBALANCE")
-            props.use_transform = True
-            props.type = "CompositorNodeColorBalance"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORCORRECTION")
-            props.use_transform = True
-            props.type = "CompositorNodeColorCorrection"
-
-            props = flow.operator("node.add_node", text = "", icon = "EXPOSURE")
-            props.use_transform = True
-            props.type = "CompositorNodeExposure"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GAMMA")
-            props.use_transform = True
-            props.type = "CompositorNodeGamma"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
-            props.use_transform = True
-            props.type = "CompositorNodeHueCorrect"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
-            props.use_transform = True
-            props.type = "CompositorNodeHueSat"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
-            props.use_transform = True
-            props.type = "CompositorNodeCurveRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TONEMAP")
-            props.use_transform = True
-            props.type = "CompositorNodeTonemap"
+            self.draw_text_button(flow, "CompositorNodeBrightContrast", text="", icon="BRIGHTNESS_CONTRAST")
+            self.draw_text_button(flow, "CompositorNodeColorBalance", text="", icon="NODE_COLORBALANCE")
+            self.draw_text_button(flow, "CompositorNodeColorCorrection", text="", icon="NODE_COLORCORRECTION")
+            self.draw_text_button(flow, "CompositorNodeExposure", text="", icon="EXPOSURE")
+            self.draw_text_button(flow, "CompositorNodeGamma", text="", icon="NODE_GAMMA")
+            self.draw_text_button(flow, "CompositorNodeHueCorrect", text="", icon="NODE_HUESATURATION")
+            self.draw_text_button(flow, "CompositorNodeHueSat", text="", icon="NODE_HUESATURATION")
+            self.draw_text_button(flow, "CompositorNodeCurveRGB", text="", icon="NODE_RGBCURVE")
+            self.draw_text_button(flow, "CompositorNodeTonemap", text="", icon="NODE_TONEMAP")
 
 
 #Compositor, Add tab, Color, Mix supbanel
@@ -828,30 +649,14 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "IMAGE_ALPHA")
-            props.use_transform = True
-            props.type = "CompositorNodeAlphaOver"
-
-            props = flow.operator("node.add_node", text = "", icon = "COMBINE_COLOR")
-            props.use_transform = True
-            props.type = "CompositorNodeCombineColor"
-
-            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_COLOR")
-            props.use_transform = True
-            props.type = "CompositorNodeSeparateColor"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MIXRGB")
-            props.use_transform = True
-            props.type = "CompositorNodeMixRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_ZCOMBINE")
-            props.use_transform = True
-            props.type = "CompositorNodeZcombine"
+            self.draw_text_button(flow, "CompositorNodeAlphaOver", text="", icon="IMAGE_ALPHA")
+            self.draw_text_button(flow, "CompositorNodeCombineColor", text="", icon="COMBINE_COLOR")
+            self.draw_text_button(flow, "CompositorNodeSeparateColor", text="", icon="SEPARATE_COLOR")
+            self.draw_text_button(flow, "CompositorNodeMixRGB", text="", icon="NODE_MIXRGB")
+            self.draw_text_button(flow, "CompositorNodeZcombine", text="", icon="NODE_ZCOMBINE")
 
 
 #Compositor, Add tab, Filter Panel
@@ -906,54 +711,20 @@ class NODES_PT_comp_add_filter(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "ANTIALIASED")
-            props.use_transform = True
-            props.type = "CompositorNodeAntiAliasing"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_DENOISE")
-            props.use_transform = True
-            props.type = "CompositorNodeDenoise"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_DESPECKLE")
-            props.use_transform = True
-            props.type = "CompositorNodeDespeckle"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_ERODE")
-            props.use_transform = True
-            props.type = "CompositorNodeDilateErode"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_IMPAINT")
-            props.use_transform = True
-            props.type = "CompositorNodeInpaint"
-
-            props = flow.operator("node.add_node", text = "", icon = "FILTER")
-            props.use_transform = True
-            props.type = "CompositorNodeFilter"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GLARE")
-            props.use_transform = True
-            props.type = "CompositorNodeGlare"
-
-            props = flow.operator("node.add_node", text = "", icon = "KUWAHARA")
-            props.use_transform = True
-            props.type = "CompositorNodeKuwahara"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_PIXELATED")
-            props.use_transform = True
-            props.type = "CompositorNodePixelate"
-
-            props = flow.operator("node.add_node", text = "", icon = "POSTERIZE")
-            props.use_transform = True
-            props.type = "CompositorNodePosterize"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SUNBEAMS")
-            props.use_transform = True
-            props.type = "CompositorNodeSunBeams"
+            self.draw_text_button(flow, "CompositorNodeAntiAliasing", text="", icon="ANTIALIASED")
+            self.draw_text_button(flow, "CompositorNodeDenoise", text="", icon="NODE_DENOISE")
+            self.draw_text_button(flow, "CompositorNodeDespeckle", text="", icon="NODE_DESPECKLE")
+            self.draw_text_button(flow, "CompositorNodeDilateErode", text="", icon="NODE_ERODE")
+            self.draw_text_button(flow, "CompositorNodeInpaint", text="", icon="NODE_IMPAINT")
+            self.draw_text_button(flow, "CompositorNodeFilter", text="", icon="FILTER")
+            self.draw_text_button(flow, "CompositorNodeGlare", text="", icon="NODE_GLARE")
+            self.draw_text_button(flow, "CompositorNodeKuwahara", text="", icon="KUWAHARA")
+            self.draw_text_button(flow, "CompositorNodePixelate", text="", icon="NODE_PIXELATED")
+            self.draw_text_button(flow, "CompositorNodePosterize", text="", icon="POSTERIZE")
+            self.draw_text_button(flow, "CompositorNodeSunBeams", text="", icon="NODE_SUNBEAMS")
 
 
 #Compositor, Add tab, Filter, Blur supbanel
@@ -994,34 +765,15 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BILATERAL_BLUR")
-            props.use_transform = True
-            props.type = "CompositorNodeBilateralblur"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BLUR")
-            props.use_transform = True
-            props.type = "CompositorNodeBlur"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BOKEH_BLUR")
-            props.use_transform = True
-            props.type = "CompositorNodeBokehBlur"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_DEFOCUS")
-            props.use_transform = True
-            props.type = "CompositorNodeDefocus"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_DIRECITONALBLUR")
-            props.use_transform = True
-            props.type = "CompositorNodeDBlur"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR_BLUR")
-            props.use_transform = True
-            props.type = "CompositorNodeVecBlur"
+            self.draw_text_button(flow, "CompositorNodeBilateralblur", text="", icon="NODE_BILATERAL_BLUR")
+            self.draw_text_button(flow, "CompositorNodeBlur", text="", icon="NODE_BLUR")
+            self.draw_text_button(flow, "CompositorNodeBokehBlur", text="", icon="NODE_BOKEH_BLUR")
+            self.draw_text_button(flow, "CompositorNodeDefocus", text="", icon="NODE_DEFOCUS")
+            self.draw_text_button(flow, "CompositorNodeDBlur", text="", icon="NODE_DIRECITONALBLUR")
+            self.draw_text_button(flow, "CompositorNodeVecBlur", text="", icon="NODE_VECTOR_BLUR")
 
 
 #Compositor, Add tab, Keying Panel
@@ -1071,46 +823,18 @@ class NODES_PT_comp_add_keying(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CHANNEL")
-            props.use_transform = True
-            props.type = "CompositorNodeChannelMatte"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CHROMA")
-            props.use_transform = True
-            props.type = "CompositorNodeChromaMatte"
-
-            props = flow.operator("node.add_node", text = "", icon = "COLOR")
-            props.use_transform = True
-            props.type = "CompositorNodeColorMatte"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_SPILL")
-            props.use_transform = True
-            props.type = "CompositorNodeColorSpill"
-
-            props = flow.operator("node.add_node", text = "", icon = "SELECT_DIFFERENCE")
-            props.use_transform = True
-            props.type = "CompositorNodeDiffMatte"
-
-            props = flow.operator("node.add_node", text = "", icon = "DRIVER_DISTANCE")
-            props.use_transform = True
-            props.type = "CompositorNodeDistanceMatte"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_KEYING")
-            props.use_transform = True
-            props.type = "CompositorNodeKeying"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_KEYINGSCREEN")
-            props.use_transform = True
-            props.type = "CompositorNodeKeyingScreen"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_LUMINANCE")
-            props.use_transform = True
-            props.type = "CompositorNodeLumaMatte"
+            self.draw_text_button(flow, "CompositorNodeChannelMatte", text="", icon="NODE_CHANNEL")
+            self.draw_text_button(flow, "CompositorNodeChromaMatte", text="", icon="NODE_CHROMA")
+            self.draw_text_button(flow, "CompositorNodeColorMatte", text="", icon="COLOR")
+            self.draw_text_button(flow, "CompositorNodeColorSpill", text="", icon="NODE_SPILL")
+            self.draw_text_button(flow, "CompositorNodeDiffMatte", text="", icon="SELECT_DIFFERENCE")
+            self.draw_text_button(flow, "CompositorNodeDistanceMatte", text="", icon="DRIVER_DISTANCE")
+            self.draw_text_button(flow, "CompositorNodeKeying", text="", icon="NODE_KEYING")
+            self.draw_text_button(flow, "CompositorNodeKeyingScreen", text="", icon="NODE_KEYINGSCREEN")
+            self.draw_text_button(flow, "CompositorNodeLumaMatte", text="", icon="NODE_LUMINANCE")
 
 
 #Compositor, Add tab, Mask Panel
@@ -1157,34 +881,15 @@ class NODES_PT_comp_add_mask(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "CRYPTOMATTE")
-            props.use_transform = True
-            props.type = "CompositorNodeCryptomatte"
-
-            props = flow.operator("node.add_node", text="", icon = "CRYPTOMATTE")
-            props.use_transform = True
-            props.type = "CompositorNodeCryptomatteV2"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BOXMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeBoxMask"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_ELLIPSEMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeEllipseMask"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_DOUBLEEDGEMASK")
-            props.use_transform = True
-            props.type = "CompositorNodeDoubleEdgeMask"
-
-            props = flow.operator("node.add_node", text = "", icon = "MOD_MASK")
-            props.use_transform = True
-            props.type = "CompositorNodeIDMask"
+            self.draw_text_button(flow, "CompositorNodeCryptomatte", text="", icon="CRYPTOMATTE")
+            self.draw_text_button(flow, "CompositorNodeCryptomatteV2", text="", icon="CRYPTOMATTE")
+            self.draw_text_button(flow, "CompositorNodeBoxMask", text="", icon="NODE_BOXMASK")
+            self.draw_text_button(flow, "CompositorNodeEllipseMask", text="", icon="NODE_ELLIPSEMASK")
+            self.draw_text_button(flow, "CompositorNodeDoubleEdgeMask", text="", icon="NODE_DOUBLEEDGEMASK")
+            self.draw_text_button(flow, "CompositorNodeIDMask", text="", icon="MOD_MASK")
 
 
 #Compositor, Add tab, Texture Panel
@@ -1233,46 +938,18 @@ class NODES_PT_comp_add_texture(bpy.types.Panel, NodePanel):
 
         #### Icon Buttons
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BRICK")
-            props.use_transform = True
-            props.type = "ShaderNodeTexBrick"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CHECKER")
-            props.use_transform = True
-            props.type = "ShaderNodeTexChecker"
-
-            props = flow.operator("node.add_node", text="", icon = "GABOR_NOISE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexGabor"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
-            props.use_transform = True
-            props.type = "ShaderNodeTexGradient"
-
-            props = flow.operator("node.add_node", text = "", icon = "MAGIC_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexMagic"
-
-            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexNoise"
-
-            props = flow.operator("node.add_node", text = "", icon = "VORONI_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexVoronoi"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_WAVES")
-            props.use_transform = True
-            props.type = "ShaderNodeTexWave"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexWhiteNoise"
+            self.draw_text_button(flow, "ShaderNodeTexBrick", text="", icon="NODE_BRICK")
+            self.draw_text_button(flow, "ShaderNodeTexChecker", text="", icon="NODE_CHECKER")
+            self.draw_text_button(flow, "ShaderNodeTexGabor", text="", icon="GABOR_NOISE")
+            self.draw_text_button(flow, "ShaderNodeTexGradient", text="", icon="NODE_GRADIENT")
+            self.draw_text_button(flow, "ShaderNodeTexMagic", text="", icon="MAGIC_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexNoise", text="", icon="NOISE_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexVoronoi", text="", icon="VORONI_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexWave", text="", icon="NODE_WAVES")
+            self.draw_text_button(flow, "ShaderNodeTexWhiteNoise", text="", icon="NODE_WHITE_NOISE")
 
 
 #Compositor, Add tab, Tracking Panel
@@ -1310,22 +987,12 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_PLANETRACKDEFORM")
-            props.use_transform = True
-            props.type = "CompositorNodePlaneTrackDeform"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_STABILIZE2D")
-            props.use_transform = True
-            props.type = "CompositorNodeStabilize"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TRACKPOSITION")
-            props.use_transform = True
-            props.type = "CompositorNodeTrackPos"
+            self.draw_text_button(flow, "CompositorNodePlaneTrackDeform", text="", icon="NODE_PLANETRACKDEFORM")
+            self.draw_text_button(flow, "CompositorNodeStabilize", text="", icon="NODE_STABILIZE2D")
+            self.draw_text_button(flow, "CompositorNodeTrackPos", text="", icon="NODE_TRACKPOSITION")
 
 
 #Compositor, Add tab, Transform Panel
@@ -1380,54 +1047,20 @@ class NODES_PT_comp_add_transform(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_ROTATE")
-            props.use_transform = True
-            props.type = "CompositorNodeRotate"
-
-            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_SCALE")
-            props.use_transform = True
-            props.type = "CompositorNodeScale"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
-            props.use_transform = True
-            props.type = "CompositorNodeTransform"
-
-            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_MOVE")
-            props.use_transform = True
-            props.type = "CompositorNodeTranslate"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CORNERPIN")
-            props.use_transform = True
-            props.type = "CompositorNodeCornerPin"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CROP")
-            props.use_transform = True
-            props.type = "CompositorNodeCrop"
-
-            props = flow.operator("node.add_node", text = "", icon = "MOD_DISPLACE")
-            props.use_transform = True
-            props.type = "CompositorNodeDisplace"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLIP")
-            props.use_transform = True
-            props.type = "CompositorNodeFlip"
-
-            props = flow.operator("node.add_node", text = "", icon = "GROUP_UVS")
-            props.use_transform = True
-            props.type = "CompositorNodeMapUV"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_LENSDISTORT")
-            props.use_transform = True
-            props.type = "CompositorNodeLensdist"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MOVIEDISTORT")
-            props.use_transform = True
-            props.type = "CompositorNodeMovieDistortion"
+            self.draw_text_button(flow, "CompositorNodeRotate", text="", icon="TRANSFORM_ROTATE")
+            self.draw_text_button(flow, "CompositorNodeScale", text="", icon="TRANSFORM_SCALE")
+            self.draw_text_button(flow, "CompositorNodeTransform", text="", icon="NODE_TRANSFORM")
+            self.draw_text_button(flow, "CompositorNodeTranslate", text="", icon="TRANSFORM_MOVE")
+            self.draw_text_button(flow, "CompositorNodeCornerPin", text="", icon="NODE_CORNERPIN")
+            self.draw_text_button(flow, "CompositorNodeCrop", text="", icon="NODE_CROP")
+            self.draw_text_button(flow, "CompositorNodeDisplace", text="", icon="MOD_DISPLACE")
+            self.draw_text_button(flow, "CompositorNodeFlip", text="", icon="FLIP")
+            self.draw_text_button(flow, "CompositorNodeMapUV", text="", icon="GROUP_UVS")
+            self.draw_text_button(flow, "CompositorNodeLensdist", text="", icon="NODE_LENSDISTORT")
+            self.draw_text_button(flow, "CompositorNodeMovieDistortion", text="", icon="NODE_MOVIEDISTORT")
 
 
 #Compositor, Add tab, Utility Panel
@@ -1483,54 +1116,20 @@ class NODES_PT_comp_add_utility(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MAP_RANGE")
-            props.use_transform = True
-            props.type = "CompositorNodeMapRange"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "ShaderNodeMath"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CLAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeClamp"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MIX")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeFloatCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "LEVELS")
-            props.use_transform = True
-            props.type = "CompositorNodeLevels"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_NORMALIZE")
-            props.use_transform = True
-            props.type = "CompositorNodeNormalize"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
-            props.use_transform = True
-            props.type = "CompositorNodeSplit"
-
-            props = flow.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
-            props.use_transform = True
-            props.type = "CompositorNodeSwitch"
-
-            props = flow.operator("node.add_node", text = "", icon = "VIEW_SWITCHACTIVECAM")
-            props.use_transform = True
-            props.type = "CompositorNodeSwitchView"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RELATIVE_TO_PIXEL")
-            props.use_transform = True
-            props.type = "CompositorNodeRelativeToPixel"
+            self.draw_text_button(flow, "CompositorNodeMapRange", text="", icon="NODE_MAP_RANGE")
+            self.draw_text_button(flow, "ShaderNodeMath", text="", icon="NODE_MATH")
+            self.draw_text_button(flow, "ShaderNodeClamp", text="", icon="NODE_CLAMP")
+            self.draw_text_button(flow, "ShaderNodeMix", text="", icon="NODE_MIX")
+            self.draw_text_button(flow, "ShaderNodeFloatCurve", text="", icon="FLOAT_CURVE")
+            self.draw_text_button(flow, "CompositorNodeLevels", text="", icon="LEVELS")
+            self.draw_text_button(flow, "CompositorNodeNormalize", text="", icon="NODE_NORMALIZE")
+            self.draw_text_button(flow, "CompositorNodeSplit", text="", icon="NODE_VIWERSPLIT")
+            self.draw_text_button(flow, "CompositorNodeSwitch", text="", icon="SWITCH_DIRECTION")
+            self.draw_text_button(flow, "CompositorNodeSwitchView", text="", icon="VIEW_SWITCHACTIVECAM")
+            self.draw_text_button(flow, "CompositorNodeRelativeToPixel", text="", icon="NODE_RELATIVE_TO_PIXEL")
 
 
 #Compositor, Add tab, Vector Panel
@@ -1575,37 +1174,15 @@ class NODES_PT_comp_add_vector(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_COMBINEXYZ")
-            props.use_transform = True
-            props.type = "ShaderNodeCombineXYZ"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_SEPARATEXYZ")
-            props.use_transform = True
-            props.type = "ShaderNodeSeparateXYZ"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MIX")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-            ops = props.settings.add()
-            ops.name = "data_type"
-            ops.value = "'VECTOR'"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorCurve"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_VECTORMATH")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorMath"
-
-            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_ROTATE")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorRotate"
+            self.draw_text_button(flow, "ShaderNodeCombineXYZ", text="", icon="NODE_COMBINEXYZ")
+            self.draw_text_button(flow, "ShaderNodeSeparateXYZ", text="", icon="NODE_SEPARATEXYZ")
+            self.draw_text_button(flow, "ShaderNodeMix", text="", icon="NODE_MIX", settings={"data_type": "'VECTOR'"})
+            self.draw_text_button(flow, "ShaderNodeVectorCurve", text="", icon="NODE_VECTOR")
+            self.draw_text_button(flow, "ShaderNodeVectorMath", text="", icon="NODE_VECTORMATH")
+            self.draw_text_button(flow, "ShaderNodeVectorRotate", text="", icon="TRANSFORM_ROTATE")
 
 
 #Input nodes tab, textures common panel. Texture mode
@@ -1643,14 +1220,8 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "FILE_IMAGE")
-            props.use_transform = True
-            props.type = "TextureNodeImage"
-
-            props = row.operator("node.add_node", text="", icon = "TEXTURE")
-            props.use_transform = True
-            props.type = "TextureNodeTexture"
+            self.draw_text_button(row, "TextureNodeImage", text="", icon="FILE_IMAGE")
+            self.draw_text_button(row, "TextureNodeTexture", text="", icon="TEXTURE")
 
 
 #Input nodes tab, textures advanced panel. Just in Texture mode
@@ -1700,48 +1271,21 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "BLEND_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexBlend"
-
-            props = row.operator("node.add_node", text="", icon = "CLOUD_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexClouds"
-
-            props = row.operator("node.add_node", text="", icon = "NOISE_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexDistNoise"
-
-            props = row.operator("node.add_node", text="", icon = "MAGIC_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexMagic"
+            self.draw_text_button(row, "TextureNodeTexBlend", text="", icon="BLEND_TEX")
+            self.draw_text_button(row, "TextureNodeTexClouds", text="", icon="CLOUD_TEX")
+            self.draw_text_button(row, "TextureNodeTexDistNoise", text="", icon="NOISE_TEX")
+            self.draw_text_button(row, "TextureNodeTexMagic", text="", icon="MAGIC_TEX")
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "MARBLE_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexMarble"
-
-            props = row.operator("node.add_node", text="", icon = "NOISE_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexNoise"
-
-            props = row.operator("node.add_node", text="", icon = "STUCCI_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexStucci"
-
-            props = row.operator("node.add_node", text="", icon = "VORONI_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexVoronoi"
+            self.draw_text_button(row, "TextureNodeTexMarble", text="", icon="MARBLE_TEX")
+            self.draw_text_button(row, "TextureNodeTexNoise", text="", icon="NOISE_TEX")
+            self.draw_text_button(row, "TextureNodeTexStucci", text="", icon="STUCCI_TEX")
+            self.draw_text_button(row, "TextureNodeTexVoronoi", text="", icon="VORONI_TEX")
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "WOOD_TEX")
-            props.use_transform = True
-            props.type = "TextureNodeTexWood"
+            self.draw_text_button(row, "TextureNodeTexWood", text="", icon="WOOD_TEX")
 
 
 #Shader Editor - Shader panel
@@ -1832,121 +1376,48 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_ADD_SHADER")
-            props.use_transform = True
-            props.type = "ShaderNodeAddShader"
-
-            props = flow.operator("node.add_node", text="", icon = "METALLIC")
-            props.use_transform = True
-            props.type = "ShaderNodeBsdfMetallic"
+            self.draw_text_button(flow, "ShaderNodeAddShader", text="", icon="NODE_ADD_SHADER")
+            self.draw_text_button(flow, "ShaderNodeBsdfMetallic", text="", icon="METALLIC")
 
             if context.space_data.shader_type == 'OBJECT':
 
                 if engine == 'CYCLES':
-
-                    props = flow.operator("node.add_node", text = "", icon = "NODE_ANISOTOPIC")
-                    props.use_transform = True
-                    props.type = "ShaderNodeBsdfAnisotropic"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_DIFFUSESHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeBsdfDiffuse"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_EMISSION")
-                props.use_transform = True
-                props.type = "ShaderNodeEmission"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_GLASSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeBsdfGlass"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_GLOSSYSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeBsdfGlossy"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_HOLDOUTSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeHoldout"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeMixShader"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
-                props.use_transform = True
-                props.type = "ShaderNodeBsdfPrincipled"
+                    self.draw_text_button(flow, "ShaderNodeBsdfAnisotropic", text="", icon="NODE_ANISOTOPIC")
+                self.draw_text_button(flow, "ShaderNodeBsdfDiffuse", text="", icon="NODE_DIFFUSESHADER")
+                self.draw_text_button(flow, "ShaderNodeEmission", text="", icon="NODE_EMISSION")
+                self.draw_text_button(flow, "ShaderNodeBsdfGlass", text="", icon="NODE_GLASSHADER")
+                self.draw_text_button(flow, "ShaderNodeBsdfGlossy", text="", icon="NODE_GLOSSYSHADER")
+                self.draw_text_button(flow, "ShaderNodeHoldout", text="", icon="NODE_HOLDOUTSHADER")
+                self.draw_text_button(flow, "ShaderNodeMixShader", text="", icon="NODE_MIXSHADER")
+                self.draw_text_button(flow, "ShaderNodeBsdfPrincipled", text="", icon="NODE_PRINCIPLED")
 
                 if engine == 'CYCLES':
-
-                    props = flow.operator("node.add_node", text="", icon = "CURVES")
-                    props.use_transform = True
-                    props.type = "ShaderNodeBsdfHairPrincipled"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
-                props.use_transform = True
-                props.type = "ShaderNodeVolumePrincipled"
+                    self.draw_text_button(flow, "ShaderNodeBsdfHairPrincipled", text="", icon="CURVES")
+                self.draw_text_button(flow, "ShaderNodeVolumePrincipled", text="", icon="NODE_VOLUMEPRINCIPLED")
 
                 if engine == 'BLENDER_EEVEE':
-
-                    props = flow.operator("node.add_node", text="", icon = "NODE_GLOSSYSHADER")
-                    props.use_transform = True
-                    props.type = "ShaderNodeEeveeSpecular"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_SSS")
-                props.use_transform = True
-                props.type = "ShaderNodeSubsurfaceScattering"
+                    self.draw_text_button(flow, "ShaderNodeEeveeSpecular", text="", icon="NODE_GLOSSYSHADER")
+                self.draw_text_button(flow, "ShaderNodeSubsurfaceScattering", text="", icon="NODE_SSS")
 
                 if engine == 'CYCLES':
-
-                    props = flow.operator("node.add_node", text = "", icon = "NODE_TOONSHADER")
-                    props.use_transform = True
-                    props.type = "ShaderNodeBsdfToon"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSLUCENT")
-                props.use_transform = True
-                props.type = "ShaderNodeBsdfTranslucent"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSPARENT")
-                props.use_transform = True
-                props.type = "ShaderNodeBsdfTransparent"
+                    self.draw_text_button(flow, "ShaderNodeBsdfToon", text="", icon="NODE_TOONSHADER")
+                self.draw_text_button(flow, "ShaderNodeBsdfTranslucent", text="", icon="NODE_TRANSLUCENT")
+                self.draw_text_button(flow, "ShaderNodeBsdfTransparent", text="", icon="NODE_TRANSPARENT")
 
                 if engine == 'CYCLES':
-
-                    props = flow.operator("node.add_node", text = "", icon = "NODE_VELVET")
-                    props.use_transform = True
-                    props.type = "ShaderNodeBsdfSheen"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEABSORPTION")
-                props.use_transform = True
-                props.type = "ShaderNodeVolumeAbsorption"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMESCATTER")
-                props.use_transform = True
-                props.type = "ShaderNodeVolumeScatter"
+                    self.draw_text_button(flow, "ShaderNodeBsdfSheen", text="", icon="NODE_VELVET")
+                self.draw_text_button(flow, "ShaderNodeVolumeAbsorption", text="", icon="NODE_VOLUMEABSORPTION")
+                self.draw_text_button(flow, "ShaderNodeVolumeScatter", text="", icon="NODE_VOLUMESCATTER")
 
             if context.space_data.shader_type == 'WORLD':
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeBackground"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_EMISSION")
-                props.use_transform = True
-                props.type = "ShaderNodeEmission"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
-                props.use_transform = True
-                props.type = "ShaderNodeVolumePrincipled"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeMixShader"
+                self.draw_text_button(flow, "ShaderNodeBackground", text="", icon="NODE_BACKGROUNDSHADER")
+                self.draw_text_button(flow, "ShaderNodeEmission", text="", icon="NODE_EMISSION")
+                self.draw_text_button(flow, "ShaderNodeVolumePrincipled", text="", icon="NODE_VOLUMEPRINCIPLED")
+                self.draw_text_button(flow, "ShaderNodeMixShader", text="", icon="NODE_MIXSHADER")
 
 
 #Shader Editor - Texture panel
@@ -2005,62 +1476,23 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
 
         #### Icon Buttons
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BRICK")
-            props.use_transform = True
-            props.type = "ShaderNodeTexBrick"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CHECKER")
-            props.use_transform = True
-            props.type = "ShaderNodeTexChecker"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
-            props.use_transform = True
-            props.type = "ShaderNodeTexEnvironment"
-
-            props = flow.operator("node.add_node", text="", icon = "GABOR_NOISE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexGabor"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
-            props.use_transform = True
-            props.type = "ShaderNodeTexGradient"
-
-            props = flow.operator("node.add_node", text="", icon = "LIGHT")
-            props.use_transform = True
-            props.type = "ShaderNodeTexIES"
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_IMAGE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexImage"
-
-            props = flow.operator("node.add_node", text = "", icon = "MAGIC_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexMagic"
-
-            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexNoise"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SKY")
-            props.use_transform = True
-            props.type = "ShaderNodeTexSky"
-
-            props = flow.operator("node.add_node", text = "", icon = "VORONI_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexVoronoi"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_WAVES")
-            props.use_transform = True
-            props.type = "ShaderNodeTexWave"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexWhiteNoise"
+            self.draw_text_button(flow, "ShaderNodeTexBrick", text="", icon="NODE_BRICK")
+            self.draw_text_button(flow, "ShaderNodeTexChecker", text="", icon="NODE_CHECKER")
+            self.draw_text_button(flow, "ShaderNodeTexEnvironment", text="", icon="NODE_ENVIRONMENT")
+            self.draw_text_button(flow, "ShaderNodeTexGabor", text="", icon="GABOR_NOISE")
+            self.draw_text_button(flow, "ShaderNodeTexGradient", text="", icon="NODE_GRADIENT")
+            self.draw_text_button(flow, "ShaderNodeTexIES", text="", icon="LIGHT")
+            self.draw_text_button(flow, "ShaderNodeTexImage", text="", icon="FILE_IMAGE")
+            self.draw_text_button(flow, "ShaderNodeTexMagic", text="", icon="MAGIC_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexNoise", text="", icon="NOISE_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexPointDensity", text="", icon="NODE_POINTCLOUD")
+            self.draw_text_button(flow, "ShaderNodeTexSky", text="", icon="NODE_SKY")
+            self.draw_text_button(flow, "ShaderNodeTexVoronoi", text="", icon="VORONI_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexWave", text="", icon="NODE_WAVES")
+            self.draw_text_button(flow, "ShaderNodeTexWhiteNoise", text="", icon="NODE_WHITE_NOISE")
 
 
 #Shader Editor - Color panel
@@ -2107,41 +1539,16 @@ class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
 
         ##### Icon Buttons
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "BRIGHTNESS_CONTRAST")
-            props.use_transform = True
-            props.type = "ShaderNodeBrightContrast"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GAMMA")
-            props.use_transform = True
-            props.type = "ShaderNodeGamma"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
-            props.use_transform = True
-            props.type = "ShaderNodeHueSaturation"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_INVERT")
-            props.use_transform = True
-            props.type = "ShaderNodeInvert"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_LIGHTFALLOFF")
-            props.use_transform = True
-            props.type = "ShaderNodeLightFalloff"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MIX")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-            ops = props.settings.add()
-            ops.name = "data_type"
-            ops.value = "'RGBA'"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeRGBCurve"
+            self.draw_text_button(flow, "ShaderNodeBrightContrast", text="", icon="BRIGHTNESS_CONTRAST")
+            self.draw_text_button(flow, "ShaderNodeGamma", text="", icon="NODE_GAMMA")
+            self.draw_text_button(flow, "ShaderNodeHueSaturation", text="", icon="NODE_HUESATURATION")
+            self.draw_text_button(flow, "ShaderNodeInvert", text="", icon="NODE_INVERT")
+            self.draw_text_button(flow, "ShaderNodeLightFalloff", text="", icon="NODE_LIGHTFALLOFF")
+            self.draw_text_button(flow, "ShaderNodeMix", text="", icon="NODE_MIX", settings={"data_type": "'RGBA'"})
+            self.draw_text_button(flow, "ShaderNodeRGBCurve", text="", icon="NODE_RGBCURVE")
 
 
 #Input nodes tab, Input panel. Just in texture mode
@@ -2179,14 +1586,8 @@ class NODES_PT_Input_input_advanced_tex(bpy.types.Panel, NodePanel):
         else:
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "NODE_TEXCOORDINATE")
-            props.use_transform = True
-            props.type = "TextureNodeCoordinates"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_CURVE_TIME")
-            props.use_transform = True
-            props.type = "TextureNodeCurveTime"
+            self.draw_text_button(row, "TextureNodeCoordinates", text="", icon="NODE_TEXCOORDINATE")
+            self.draw_text_button(row, "TextureNodeCurveTime", text="", icon="NODE_CURVE_TIME")
 
 
 #Input nodes tab, Pattern panel. # Just in texture mode
@@ -2225,14 +1626,8 @@ class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "NODE_BRICK")
-            props.use_transform = True
-            props.type = "TextureNodeBricks"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_CHECKER")
-            props.use_transform = True
-            props.type = "TextureNodeChecker"
+            self.draw_text_button(row, "TextureNodeBricks", text="", icon="NODE_BRICK")
+            self.draw_text_button(row, "TextureNodeChecker", text="", icon="NODE_CHECKER")
 
 
 #Input nodes tab, Color panel. Just in texture mode
@@ -2277,33 +1672,15 @@ class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "NODE_RGBCURVE")
-            props.use_transform = True
-            props.type = "TextureNodeCurveRGB"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_HUESATURATION")
-            props.use_transform = True
-            props.type = "TextureNodeHueSaturation"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_INVERT")
-            props.use_transform = True
-            props.type = "TextureNodeInvert"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_MIXRGB")
-            props.use_transform = True
-            props.type = "TextureNodeMixRGB"
+            self.draw_text_button(row, "TextureNodeCurveRGB", text="", icon="NODE_RGBCURVE")
+            self.draw_text_button(row, "TextureNodeHueSaturation", text="", icon="NODE_HUESATURATION")
+            self.draw_text_button(row, "TextureNodeInvert", text="", icon="NODE_INVERT")
+            self.draw_text_button(row, "TextureNodeMixRGB", text="", icon="NODE_MIXRGB")
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "NODE_COMBINERGB")
-            props.use_transform = True
-            props.type = "TextureNodeCompose"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_SEPARATERGB")
-            props.use_transform = True
-            props.type = "TextureNodeDecompose"
+            self.draw_text_button(row, "TextureNodeCompose", text="", icon="NODE_COMBINERGB")
+            self.draw_text_button(row, "TextureNodeDecompose", text="", icon="NODE_SEPARATERGB")
 
 
 #Input nodes tab, Output panel, Texture mode
@@ -2342,14 +1719,8 @@ class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "NODE_OUTPUT")
-            props.use_transform = True
-            props.type = "TextureNodeOutput"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_VIEWER")
-            props.use_transform = True
-            props.type = "TextureNodeViewer"
+            self.draw_text_button(row, "TextureNodeOutput", text="", icon="NODE_OUTPUT")
+            self.draw_text_button(row, "TextureNodeViewer", text="", icon="NODE_VIEWER")
 
 
 #Modify nodes tab, converter panel. Just in texture mode
@@ -2392,29 +1763,14 @@ class NODES_PT_Modify_converter_tex(bpy.types.Panel, NodePanel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "NODE_COLORRAMP")
-            props.use_transform = True
-            props.type = "TextureNodeValToRGB"
-
-            props = row.operator("node.add_node", text="", icon = "DRIVER_DISTANCE")
-            props.use_transform = True
-            props.type = "TextureNodeDistance"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "TextureNodeMath"
-
-            props = row.operator("node.add_node", text="", icon = "NODE_RGBTOBW")
-            props.use_transform = True
-            props.type = "TextureNodeRGBToBW"
+            self.draw_text_button(row, "TextureNodeValToRGB", text="", icon="NODE_COLORRAMP")
+            self.draw_text_button(row, "TextureNodeDistance", text="", icon="DRIVER_DISTANCE")
+            self.draw_text_button(row, "TextureNodeMath", text="", icon="NODE_MATH")
+            self.draw_text_button(row, "TextureNodeRGBToBW", text="", icon="NODE_RGBTOBW")
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "RECALC_NORMALS")
-            props.use_transform = True
-            props.type = "TextureNodeValToNor"
+            self.draw_text_button(row, "TextureNodeValToNor", text="", icon="RECALC_NORMALS")
 
 
 #Shader Editor - Vector panel
@@ -2471,42 +1827,15 @@ class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BUMP")
-            props.use_transform = True
-            props.type = "ShaderNodeBump"
-
-            props = flow.operator("node.add_node", text="", icon = "MOD_DISPLACE")
-            props.use_transform = True
-            props.type = "ShaderNodeDisplacement"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MAPPING")
-            props.use_transform = True
-            props.type = "ShaderNodeMapping"
-
-            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
-            props.use_transform = True
-            props.type = "ShaderNodeNormal"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
-            props.use_transform = True
-            props.type = "ShaderNodeNormalMap"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorCurve"
-
-            props = flow.operator("node.add_node", text="", icon = "VECTOR_DISPLACE")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorDisplacement"
-
-            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_ROTATE")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorRotate"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR_TRANSFORM")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorTransform"
+            self.draw_text_button(flow, "ShaderNodeBump", text="", icon="NODE_BUMP")
+            self.draw_text_button(flow, "ShaderNodeDisplacement", text="", icon="MOD_DISPLACE")
+            self.draw_text_button(flow, "ShaderNodeMapping", text="", icon="NODE_MAPPING")
+            self.draw_text_button(flow, "ShaderNodeNormal", text="", icon="RECALC_NORMALS")
+            self.draw_text_button(flow, "ShaderNodeNormalMap", text="", icon="NODE_NORMALMAP")
+            self.draw_text_button(flow, "ShaderNodeVectorCurve", text="", icon="NODE_VECTOR")
+            self.draw_text_button(flow, "ShaderNodeVectorDisplacement", text="", icon="VECTOR_DISPLACE")
+            self.draw_text_button(flow, "ShaderNodeVectorRotate", text="", icon="TRANSFORM_ROTATE")
+            self.draw_text_button(flow, "ShaderNodeVectorTransform", text="", icon="NODE_VECTOR_TRANSFORM")
 
 
 #Shader Editor - Converter panel
@@ -2568,72 +1897,26 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
 
         ##### Icon Buttons
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon= "NODE_BLACKBODY")
-            props.use_transform = True
-            props.type = "ShaderNodeBlackbody"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeClamp"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeValToRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "COMBINE_COLOR")
-            props.use_transform = True
-            props.type = "ShaderNodeCombineColor"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
-            props.use_transform = True
-            props.type = "ShaderNodeCombineXYZ"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeFloatCurve"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
-            props.use_transform = True
-            props.type = "ShaderNodeMapRange"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "ShaderNodeMath"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MIXSHADER")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBTOBW")
-            props.use_transform = True
-            props.type = "ShaderNodeRGBToBW"
-
-            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_COLOR")
-            props.use_transform = True
-            props.type = "ShaderNodeSeparateColor"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
-            props.use_transform = True
-            props.type = "ShaderNodeSeparateXYZ"
+            self.draw_text_button(flow, "ShaderNodeBlackbody", text="", icon="NODE_BLACKBODY")
+            self.draw_text_button(flow, "ShaderNodeClamp", text="", icon="NODE_CLAMP")
+            self.draw_text_button(flow, "ShaderNodeValToRGB", text="", icon="NODE_COLORRAMP")
+            self.draw_text_button(flow, "ShaderNodeCombineColor", text="", icon="COMBINE_COLOR")
+            self.draw_text_button(flow, "ShaderNodeCombineXYZ", text="", icon="NODE_COMBINEXYZ")
+            self.draw_text_button(flow, "ShaderNodeFloatCurve", text="", icon="FLOAT_CURVE")
+            self.draw_text_button(flow, "ShaderNodeMapRange", text="", icon="NODE_MAP_RANGE")
+            self.draw_text_button(flow, "ShaderNodeMath", text="", icon="NODE_MATH")
+            self.draw_text_button(flow, "ShaderNodeMix", text="", icon="NODE_MIXSHADER")
+            self.draw_text_button(flow, "ShaderNodeRGBToBW", text="", icon="NODE_RGBTOBW")
+            self.draw_text_button(flow, "ShaderNodeSeparateColor", text="", icon="SEPARATE_COLOR")
+            self.draw_text_button(flow, "ShaderNodeSeparateXYZ", text="", icon="NODE_SEPARATEXYZ")
 
             if engine == 'BLENDER_EEVEE':
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_RGB")
-                props.use_transform = True
-                props.type = "ShaderNodeShaderToRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorMath"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_WAVELENGTH")
-            props.use_transform = True
-            props.type = "ShaderNodeWavelength"
+                self.draw_text_button(flow, "ShaderNodeShaderToRGB", text="", icon="NODE_RGB")
+            self.draw_text_button(flow, "ShaderNodeVectorMath", text="", icon="NODE_VECTORMATH")
+            self.draw_text_button(flow, "ShaderNodeWavelength", text="", icon="NODE_WAVELENGTH")
 
 
 #Modify nodes tab, distort panel. Just in texture mode
@@ -2674,22 +1957,10 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel, NodePanel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "NODE_AT")
-            props.use_transform = True
-            props.type = "TextureNodeAt"
-
-            props = row.operator("node.add_node", text="", icon = "TRANSFORM_ROTATE")
-            props.use_transform = True
-            props.type = "TextureNodeRotate"
-
-            props = row.operator("node.add_node", text="", icon = "TRANSFORM_SCALE")
-            props.use_transform = True
-            props.type = "TextureNodeScale"
-
-            props = row.operator("node.add_node", text="", icon = "TRANSFORM_MOVE")
-            props.use_transform = True
-            props.type = "TextureNodeTranslate"
+            self.draw_text_button(row, "TextureNodeAt", text="", icon="NODE_AT")
+            self.draw_text_button(row, "TextureNodeRotate", text="", icon="TRANSFORM_ROTATE")
+            self.draw_text_button(row, "TextureNodeScale", text="", icon="TRANSFORM_SCALE")
+            self.draw_text_button(row, "TextureNodeTranslate", text="", icon="TRANSFORM_MOVE")
 
 
 # ------------- Relations tab -------------------------------
@@ -2741,7 +2012,6 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
@@ -2757,13 +2027,8 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
             all_node_groups = context.blend_data.node_groups
 
             if node_tree in all_node_groups.values():
-                props = flow.operator("node.add_node", text = "", icon = "GROUPINPUT")
-                props.use_transform = True
-                props.type = "NodeGroupInput"
-
-                props = flow.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
-                props.use_transform = True
-                props.type = "NodeGroupOutput"
+                self.draw_text_button(flow, "NodeGroupInput", text="", icon="GROUPINPUT")
+                self.draw_text_button(flow, "NodeGroupOutput", text="", icon="GROUPOUTPUT")
 
 
 #Shader Editor - Relations tab, Node Group Panel
@@ -2850,18 +2115,11 @@ class NODES_PT_Relations_layout(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_FRAME")
-            props.use_transform = True
-            props.type = "NodeFrame"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_REROUTE")
-            props.use_transform = True
-            props.type = "NodeReroute"
+            self.draw_text_button(flow, "NodeFrame", text="", icon="NODE_FRAME")
+            self.draw_text_button(flow, "NodeReroute", text="", icon="NODE_REROUTE")
 
 
 
@@ -2908,34 +2166,15 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_STATISTIC")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeStatistic"
-
-            props = flow.operator("node.add_node", text="", icon = "DOMAIN_SIZE")
-            props.use_transform = True
-            props.type = "GeometryNodeAttributeDomainSize"
-
-            props = flow.operator("node.add_node", text="", icon = "BLUR_ATTRIBUTE")
-            props.use_transform = True
-            props.type = "GeometryNodeBlurAttribute"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CAPTURE")
-            props.use_transform = True
-            props.type = "GeometryNodeCaptureAttribute"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_REMOVE")
-            props.use_transform = True
-            props.type = "GeometryNodeRemoveAttribute"
-
-            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_STORE")
-            props.use_transform = True
-            props.type = "GeometryNodeStoreNamedAttribute"
+            self.draw_text_button(flow, "GeometryNodeAttributeStatistic", text="", icon="ATTRIBUTE_STATISTIC")
+            self.draw_text_button(flow, "GeometryNodeAttributeDomainSize", text="", icon="DOMAIN_SIZE")
+            self.draw_text_button(flow, "GeometryNodeBlurAttribute", text="", icon="BLUR_ATTRIBUTE")
+            self.draw_text_button(flow, "GeometryNodeCaptureAttribute", text="", icon="ATTRIBUTE_CAPTURE")
+            self.draw_text_button(flow, "GeometryNodeRemoveAttribute", text="", icon="ATTRIBUTE_REMOVE")
+            self.draw_text_button(flow, "GeometryNodeStoreNamedAttribute", text="", icon="ATTRIBUTE_STORE")
 
 
 #add input panel
@@ -2996,55 +2235,21 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-
-            props = flow.operator("node.add_node", text = "", icon = "INPUT_BOOL")
-            props.use_transform = True
-            props.type = "FunctionNodeInputBool"
-
-            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_COLLECTION")
-            props.use_transform = True
-            props.type = "GeometryNodeInputCollection"
-
-            props = flow.operator("node.add_node", text = "", icon = "COLOR")
-            props.use_transform = True
-            props.type = "FunctionNodeInputColor"
-
-            props = flow.operator("node.add_node", text="", icon = "FILE_IMAGE")
-            props.use_transform = True
-            props.type = "GeometryNodeInputImage"
-
-            props = flow.operator("node.add_node", text = "", icon = "INTEGER")
-            props.use_transform = True
-            props.type = "FunctionNodeInputInt"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MATERIAL")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMaterial"
-
-            props = flow.operator("node.add_node", text = "", icon = "OBJECT_DATA")
-            props.use_transform = True
-            props.type = "GeometryNodeInputObject"
-
-            props = flow.operator("node.add_node", text="", icon = "ROTATION")
-            props.use_transform = True
-            props.type = "FunctionNodeInputRotation"
-
-            props = flow.operator("node.add_node", text = "", icon = "STRING")
-            props.use_transform = True
-            props.type = "FunctionNodeInputString"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "ShaderNodeValue"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
-            props.use_transform = True
-            props.type = "FunctionNodeInputVector"
+            self.draw_text_button(flow, "FunctionNodeInputBool", text="", icon="INPUT_BOOL")
+            self.draw_text_button(flow, "GeometryNodeInputCollection", text="", icon="OUTLINER_COLLECTION")
+            self.draw_text_button(flow, "FunctionNodeInputColor", text="", icon="COLOR")
+            self.draw_text_button(flow, "GeometryNodeInputImage", text="", icon="FILE_IMAGE")
+            self.draw_text_button(flow, "FunctionNodeInputInt", text="", icon="INTEGER")
+            self.draw_text_button(flow, "GeometryNodeInputMaterial", text="", icon="NODE_MATERIAL")
+            self.draw_text_button(flow, "GeometryNodeInputObject", text="", icon="OBJECT_DATA")
+            self.draw_text_button(flow, "FunctionNodeInputRotation", text="", icon="ROTATION")
+            self.draw_text_button(flow, "FunctionNodeInputString", text="", icon="STRING")
+            self.draw_text_button(flow, "ShaderNodeValue", text="", icon="NODE_VALUE")
+            self.draw_text_button(flow, "FunctionNodeInputVector", text="", icon="NODE_VECTOR")
 
 
 #add input panel, gizmo supbanel
@@ -3079,23 +2284,13 @@ class NODES_PT_geom_add_input_gizmo(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-
-            props = flow.operator("node.add_node", text = "", icon = "DIAL_GIZMO")
-            props.use_transform = True
-            props.type = "GeometryNodeGizmoDial"
-
-            props = flow.operator("node.add_node", text = "", icon = "LINEAR_GIZMO")
-            props.use_transform = True
-            props.type = "GeometryNodeGizmoLinear"
-
-            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_GIZMO")
-            props.use_transform = True
-            props.type = "GeometryNodeGizmoTransform"
+            self.draw_text_button(flow, "GeometryNodeGizmoDial", text="", icon="DIAL_GIZMO")
+            self.draw_text_button(flow, "GeometryNodeGizmoLinear", text="", icon="LINEAR_GIZMO")
+            self.draw_text_button(flow, "GeometryNodeGizmoTransform", text="", icon="TRANSFORM_GIZMO")
 
 
 #add input panel, file supbanel
@@ -3133,34 +2328,15 @@ class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "LOAD_OBJ")
-            props.use_transform = True
-            props.type = "GeometryNodeImportOBJ"
-
-            props = flow.operator("node.add_node", text = "", icon = "LOAD_PLY")
-            props.use_transform = True
-            props.type = "GeometryNodeImportPLY"
-
-            props = flow.operator("node.add_node", text = "", icon = "LOAD_STL")
-            props.use_transform = True
-            props.type = "GeometryNodeImportSTL"
-
-            props = flow.operator("node.add_node", text = "", icon = "LOAD_CSV")
-            props.use_transform = True
-            props.type = "GeometryNodeImportCSV"
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_TEXT")
-            props.use_transform = True
-            props.type = "GeometryNodeImportText"
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_VOLUME")
-            props.use_transform = True
-            props.type = "GeometryNodeImportVDB"
+            self.draw_text_button(flow, "GeometryNodeImportOBJ", text="", icon="LOAD_OBJ")
+            self.draw_text_button(flow, "GeometryNodeImportPLY", text="", icon="LOAD_PLY")
+            self.draw_text_button(flow, "GeometryNodeImportSTL", text="", icon="LOAD_STL")
+            self.draw_text_button(flow, "GeometryNodeImportCSV", text="", icon="LOAD_CSV")
+            self.draw_text_button(flow, "GeometryNodeImportText", text="", icon="FILE_TEXT")
+            self.draw_text_button(flow, "GeometryNodeImportVDB", text="", icon="FILE_VOLUME")
 
 
 
@@ -3211,61 +2387,27 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = flow.operator("node.add_node", text="", icon = "CURSOR")
-                props.use_transform = True
-                props.type = "GeometryNodeTool3DCursor"
-
-            props = flow.operator("node.add_node", text="", icon = "VIEW_SWITCHTOCAM")
-            props.use_transform = True
-            props.type = "GeometryNodeInputActiveCamera"
-
-            props = flow.operator("node.add_node", text="", icon = "CAMERA_DATA")
-            props.use_transform = True
-            props.type = "GeometryNodeCameraInfo"
-
-            props = flow.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
-            props.use_transform = True
-            props.type = "GeometryNodeCollectionInfo"
-
-            props = flow.operator("node.add_node", text="", icon = "IMAGE_INFO")
-            props.use_transform = True
-            props.type = "GeometryNodeImageInfo"
-
-            props = flow.operator("node.add_node", text = "", icon = "VIEW")
-            props.use_transform = True
-            props.type = "GeometryNodeIsViewport"
-
-            props = flow.operator("node.add_node", text="", icon = "NAMED_LAYER_SELECTION")
-            props.use_transform = True
-            props.type = "GeometryNodeInputNamedLayerSelection"
+                self.draw_text_button(flow, "GeometryNodeTool3DCursor", text="", icon="CURSOR")
+            self.draw_text_button(flow, "GeometryNodeInputActiveCamera", text="", icon="VIEW_SWITCHTOCAM")
+            self.draw_text_button(flow, "GeometryNodeCameraInfo", text="", icon="CAMERA_DATA")
+            self.draw_text_button(flow, "GeometryNodeCollectionInfo", text="", icon="COLLECTION_INFO")
+            self.draw_text_button(flow, "GeometryNodeImageInfo", text="", icon="IMAGE_INFO")
+            self.draw_text_button(flow, "GeometryNodeIsViewport", text="", icon="VIEW")
+            self.draw_text_button(flow, "GeometryNodeInputNamedLayerSelection", text="", icon="NAMED_LAYER_SELECTION")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = flow.operator("node.add_node", text="", icon = "MOUSE_POSITION")
-                props.use_transform = True
-                props.type = "GeometryNodeToolMousePosition"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
-            props.use_transform = True
-            props.type = "GeometryNodeObjectInfo"
-
-            props = flow.operator("node.add_node", text = "", icon = "TIME")
-            props.use_transform = True
-            props.type = "GeometryNodeInputSceneTime"
-
-            props = flow.operator("node.add_node", text="", icon = "SELF_OBJECT")
-            props.use_transform = True
-            props.type = "GeometryNodeSelfObject"
+                self.draw_text_button(flow, "GeometryNodeToolMousePosition", text="", icon="MOUSE_POSITION")
+            self.draw_text_button(flow, "GeometryNodeObjectInfo", text="", icon="NODE_OBJECTINFO")
+            self.draw_text_button(flow, "GeometryNodeInputSceneTime", text="", icon="TIME")
+            self.draw_text_button(flow, "GeometryNodeSelfObject", text="", icon="SELF_OBJECT")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = flow.operator("node.add_node", text="", icon = "VIEWPORT_TRANSFORM")
-                props.use_transform = True
-                props.type = "GeometryNodeViewportTransform"
+                self.draw_text_button(flow, "GeometryNodeViewportTransform", text="", icon="VIEWPORT_TRANSFORM")
 
 
 #add output panel
@@ -3302,18 +2444,11 @@ class NODES_PT_geom_add_output(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VIEWER")
-            props.use_transform = True
-            props.type = "GeometryNodeViewer"
-
-            props = flow.operator("node.add_node", text="", icon = "ERROR")
-            props.use_transform = True
-            props.type = "GeometryNodeWarning"
+            self.draw_text_button(flow, "GeometryNodeViewer", text="", icon="NODE_VIEWER")
+            self.draw_text_button(flow, "GeometryNodeWarning", text="", icon="ERROR")
 
 
 #add geometry panel
@@ -3350,18 +2485,11 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeGeometryToInstance"
-
-            props = flow.operator("node.add_node", text = "", icon = "JOIN")
-            props.use_transform = True
-            props.type = "GeometryNodeJoinGeometry"
+            self.draw_text_button(flow, "GeometryNodeGeometryToInstance", text="", icon="GEOMETRY_INSTANCE")
+            self.draw_text_button(flow, "GeometryNodeJoinGeometry", text="", icon="JOIN")
 
 
 #add geometry panel, read subpanel
@@ -3407,43 +2535,19 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "GET_ID")
-            props.use_transform = True
-            props.type = "GeometryNodeInputID"
-
-            props = flow.operator("node.add_node", text = "", icon = "INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeInputIndex"
-
-            props = flow.operator("node.add_node", text = "", icon = "NAMED_ATTRIBUTE")
-            props.use_transform = True
-            props.type = "GeometryNodeInputNamedAttribute"
-
-            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputNormal"
-
-            props = flow.operator("node.add_node", text = "", icon = "POSITION")
-            props.use_transform = True
-            props.type = "GeometryNodeInputPosition"
-
-            props = flow.operator("node.add_node", text = "", icon = "RADIUS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputRadius"
+            self.draw_text_button(flow, "GeometryNodeInputID", text="", icon="GET_ID")
+            self.draw_text_button(flow, "GeometryNodeInputIndex", text="", icon="INDEX")
+            self.draw_text_button(flow, "GeometryNodeInputNamedAttribute", text="", icon="NAMED_ATTRIBUTE")
+            self.draw_text_button(flow, "GeometryNodeInputNormal", text="", icon="RECALC_NORMALS")
+            self.draw_text_button(flow, "GeometryNodeInputPosition", text="", icon="POSITION")
+            self.draw_text_button(flow, "GeometryNodeInputRadius", text="", icon="RADIUS")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = flow.operator("node.add_node", text="", icon = "RESTRICT_SELECT_OFF")
-                props.use_transform = True
-                props.type = "GeometryNodeToolSelection"
-
-                props = flow.operator("node.add_node", text="", icon = "ACTIVE_ELEMENT")
-                props.use_transform = True
-                props.type = "GeometryNodeToolActiveElement"
+                self.draw_text_button(flow, "GeometryNodeToolSelection", text="", icon="RESTRICT_SELECT_OFF")
+                self.draw_text_button(flow, "GeometryNodeToolActiveElement", text="", icon="ACTIVE_ELEMENT")
 
 
 
@@ -3485,30 +2589,14 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_PROXIMITY")
-            props.use_transform = True
-            props.type = "GeometryNodeMergeByDistance"
-
-            props = flow.operator("node.add_node", text="", icon = "INDEX_OF_NEAREST")
-            props.use_transform = True
-            props.type = "GeometryNodeIndexOfNearest"
-
-            props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
-            props.use_transform = True
-            props.type = "GeometryNodeRaycast"
-
-            props = flow.operator("node.add_node", text="", icon = "SAMPLE_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleIndex"
-
-            props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleNearest"
+            self.draw_text_button(flow, "GeometryNodeMergeByDistance", text="", icon="GEOMETRY_PROXIMITY")
+            self.draw_text_button(flow, "GeometryNodeIndexOfNearest", text="", icon="INDEX_OF_NEAREST")
+            self.draw_text_button(flow, "GeometryNodeRaycast", text="", icon="RAYCAST")
+            self.draw_text_button(flow, "GeometryNodeSampleIndex", text="", icon="SAMPLE_INDEX")
+            self.draw_text_button(flow, "GeometryNodeSampleNearest", text="", icon="SAMPLE_NEAREST")
 
 
 #add geometry panel, write subpanel
@@ -3550,27 +2638,15 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "GEOMETRY_NAME")
-            props.use_transform = True
-            props.type = "GeometryNodeSetGeometryName"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_ID")
-            props.use_transform = True
-            props.type = "GeometryNodeSetID"
-
-            props = flow.operator("node.add_node", text="", icon = "SET_POSITION")
-            props.use_transform = True
-            props.type = "GeometryNodeSetPosition"
+            self.draw_text_button(flow, "GeometryNodeSetGeometryName", text="", icon="GEOMETRY_NAME")
+            self.draw_text_button(flow, "GeometryNodeSetID", text="", icon="SET_ID")
+            self.draw_text_button(flow, "GeometryNodeSetPosition", text="", icon="SET_POSITION")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = flow.operator("node.add_node", text="", icon = "SET_SELECTION")
-                props.use_transform = True
-                props.type = "GeometryNodeToolSetSelection"
+                self.draw_text_button(flow, "GeometryNodeToolSetSelection", text="", icon="SET_SELECTION")
 
 
 #add geometry panel, operations subpanel
@@ -3620,54 +2696,20 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "BAKE")
-            props.use_transform = True
-            props.type = "GeometryNodeBake"
-
-            props = flow.operator("node.add_node", text = "", icon = "PIVOT_BOUNDBOX")
-            props.use_transform = True
-            props.type = "GeometryNodeBoundBox"
-
-            props = flow.operator("node.add_node", text = "", icon = "CONVEXHULL")
-            props.use_transform = True
-            props.type = "GeometryNodeConvexHull"
-
-            props = flow.operator("node.add_node", text = "", icon = "DELETE")
-            props.use_transform = True
-            props.type = "GeometryNodeDeleteGeometry"
-
-            props = flow.operator("node.add_node", text = "", icon = "DUPLICATE")
-            props.use_transform = True
-            props.type = "GeometryNodeDuplicateElements"
-
-            props = flow.operator("node.add_node", text = "", icon = "REMOVE_DOUBLES")
-            props.use_transform = True
-            props.type = "GeometryNodeMergeByDistance"
-
-            props = flow.operator("node.add_node", text="", icon = "SORTSIZE")
-            props.use_transform = True
-            props.type = "GeometryNodeSortElements"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
-            props.use_transform = True
-            props.type = "GeometryNodeTransform"
-
-            props = flow.operator("node.add_node", text = "", icon = "SEPARATE")
-            props.use_transform = True
-            props.type = "GeometryNodeSeparateComponents"
-
-            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_GEOMETRY")
-            props.use_transform = True
-            props.type = "GeometryNodeSeparateGeometry"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPLIT_TO_INSTANCES")
-            props.use_transform = True
-            props.type = "GeometryNodeSplitToInstances"
+            self.draw_text_button(flow, "GeometryNodeBake", text="", icon="BAKE")
+            self.draw_text_button(flow, "GeometryNodeBoundBox", text="", icon="PIVOT_BOUNDBOX")
+            self.draw_text_button(flow, "GeometryNodeConvexHull", text="", icon="CONVEXHULL")
+            self.draw_text_button(flow, "GeometryNodeDeleteGeometry", text="", icon="DELETE")
+            self.draw_text_button(flow, "GeometryNodeDuplicateElements", text="", icon="DUPLICATE")
+            self.draw_text_button(flow, "GeometryNodeMergeByDistance", text="", icon="REMOVE_DOUBLES")
+            self.draw_text_button(flow, "GeometryNodeSortElements", text="", icon="SORTSIZE")
+            self.draw_text_button(flow, "GeometryNodeTransform", text="", icon="NODE_TRANSFORM")
+            self.draw_text_button(flow, "GeometryNodeSeparateComponents", text="", icon="SEPARATE")
+            self.draw_text_button(flow, "GeometryNodeSeparateGeometry", text="", icon="SEPARATE_GEOMETRY")
+            self.draw_text_button(flow, "GeometryNodeSplitToInstances", text="", icon="SPLIT_TO_INSTANCES")
 
 
 #add Curves panel
@@ -3733,46 +2775,16 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_HANDLE_POSITIONS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputCurveHandlePositions"
-
-            props = flow.operator("node.add_node", text = "", icon = "PARTICLEBRUSH_LENGTH")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveLength"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_TANGENT")
-            props.use_transform = True
-            props.type = "GeometryNodeInputTangent"
-
-            props = flow.operator("node.add_node", text="", icon = "CURVE_TILT")
-            props.use_transform = True
-            props.type = "GeometryNodeInputCurveTilt"
-
-            props = flow.operator("node.add_node", text="", icon = "SELECT_LAST")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveEndpointSelection"
-
-            props = flow.operator("node.add_node", text="", icon = "SELECT_HANDLETYPE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveHandleTypeSelection"
-
-            props = flow.operator("node.add_node", text = "", icon = "IS_SPLINE_CYCLIC")
-            props.use_transform = True
-            props.type = "GeometryNodeInputSplineCyclic"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPLINE_LENGTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSplineLength"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_PARAMETER")
-            props.use_transform = True
-            props.type = "GeometryNodeSplineParameter"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPLINE_RESOLUTION")
-            props.use_transform = True
-            props.type = "GeometryNodeInputSplineResolution"
+            self.draw_text_button(flow, "GeometryNodeInputCurveHandlePositions", text="", icon="CURVE_HANDLE_POSITIONS")
+            self.draw_text_button(flow, "GeometryNodeCurveLength", text="", icon="PARTICLEBRUSH_LENGTH")
+            self.draw_text_button(flow, "GeometryNodeInputTangent", text="", icon="CURVE_TANGENT")
+            self.draw_text_button(flow, "GeometryNodeInputCurveTilt", text="", icon="CURVE_TILT")
+            self.draw_text_button(flow, "GeometryNodeCurveEndpointSelection", text="", icon="SELECT_LAST")
+            self.draw_text_button(flow, "GeometryNodeCurveHandleTypeSelection", text="", icon="SELECT_HANDLETYPE")
+            self.draw_text_button(flow, "GeometryNodeInputSplineCyclic", text="", icon="IS_SPLINE_CYCLIC")
+            self.draw_text_button(flow, "GeometryNodeSplineLength", text="", icon="SPLINE_LENGTH")
+            self.draw_text_button(flow, "GeometryNodeSplineParameter", text="", icon="CURVE_PARAMETER")
+            self.draw_text_button(flow, "GeometryNodeInputSplineResolution", text="", icon="SPLINE_RESOLUTION")
 
 
 #add Curves panel, read subpanel
@@ -3812,10 +2824,7 @@ class NODES_PT_geom_add_curve_sample(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_SAMPLE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleCurve"
+            self.draw_text_button(flow, "GeometryNodeSampleCurve", text="", icon="CURVE_SAMPLE")
 
 
 
@@ -3864,38 +2873,14 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "CURVE_NORMAL")
-            props.use_transform = True
-            props.type = "GeometryNodeSetCurveNormal"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_RADIUS")
-            props.use_transform = True
-            props.type = "GeometryNodeSetCurveRadius"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_TILT")
-            props.use_transform = True
-            props.type = "GeometryNodeSetCurveTilt"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_HANDLE_POSITIONS")
-            props.use_transform = True
-            props.type = "GeometryNodeSetCurveHandlePositions"
-
-            props = flow.operator("node.add_node", text = "", icon = "HANDLE_AUTO")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveSetHandles"
-
-            props = flow.operator("node.add_node", text = "", icon = "TOGGLE_CYCLIC")
-            props.use_transform = True
-            props.type = "GeometryNodeSetSplineCyclic"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_SPLINE_RESOLUTION")
-            props.use_transform = True
-            props.type = "GeometryNodeSetSplineResolution"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPLINE_TYPE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveSplineType"
+            self.draw_text_button(flow, "GeometryNodeSetCurveNormal", text="", icon="CURVE_NORMAL")
+            self.draw_text_button(flow, "GeometryNodeSetCurveRadius", text="", icon="SET_CURVE_RADIUS")
+            self.draw_text_button(flow, "GeometryNodeSetCurveTilt", text="", icon="SET_CURVE_TILT")
+            self.draw_text_button(flow, "GeometryNodeSetCurveHandlePositions", text="", icon="SET_CURVE_HANDLE_POSITIONS")
+            self.draw_text_button(flow, "GeometryNodeCurveSetHandles", text="", icon="HANDLE_AUTO")
+            self.draw_text_button(flow, "GeometryNodeSetSplineCyclic", text="", icon="TOGGLE_CYCLIC")
+            self.draw_text_button(flow, "GeometryNodeSetSplineResolution", text="", icon="SET_SPLINE_RESOLUTION")
+            self.draw_text_button(flow, "GeometryNodeCurveSplineType", text="", icon="SPLINE_TYPE")
 
 
 #add Curves panel, operations subpanel
@@ -3947,58 +2932,19 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "OUTLINER_OB_GREASEPENCIL")
-            props.use_transform = True
-            props.type = "GeometryNodeCurvesToGreasePencil"
-
-            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveToMesh"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINTCLOUD_DATA")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveToPoints"
-
-            props = flow.operator("node.add_node", text = "", icon = "DEFORM_CURVES")
-            props.use_transform = True
-            props.type = "GeometryNodeDeformCurvesOnSurface"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_FILL")
-            props.use_transform = True
-            props.type = "GeometryNodeFillCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_FILLET")
-            props.use_transform = True
-            props.type = "GeometryNodeFilletCurve"
-
-            props = flow.operator("node.add_node", text="", icon = "OUTLINER_OB_CURVES")
-            props.use_transform = True
-            props.type = "GeometryNodeGreasePencilToCurves"
-
-            props = flow.operator("node.add_node", text="", icon = "INTERPOLATE_CURVE")
-            props.use_transform = True
-            props.type = "GeometryNodeInterpolateCurves"
-
-            props = flow.operator("node.add_node", text="", icon = "MERGE")
-            props.use_transform = True
-            props.type = "GeometryNodeInterpolateCurves"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
-            props.use_transform = True
-            props.type = "GeometryNodeResampleCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "SWITCH_DIRECTION")
-            props.use_transform = True
-            props.type = "GeometryNodeReverseCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
-            props.use_transform = True
-            props.type = "GeometryNodeSubdivideCurve"
-
-            props = flow.operator("node.add_node", text="", icon = "CURVE_TRIM")
-            props.use_transform = True
-            props.type = "GeometryNodeTrimCurve"
+            self.draw_text_button(flow, "GeometryNodeCurvesToGreasePencil", text="", icon="OUTLINER_OB_GREASEPENCIL")
+            self.draw_text_button(flow, "GeometryNodeCurveToMesh", text="", icon="OUTLINER_OB_MESH")
+            self.draw_text_button(flow, "GeometryNodeCurveToPoints", text="", icon="POINTCLOUD_DATA")
+            self.draw_text_button(flow, "GeometryNodeDeformCurvesOnSurface", text="", icon="DEFORM_CURVES")
+            self.draw_text_button(flow, "GeometryNodeFillCurve", text="", icon="CURVE_FILL")
+            self.draw_text_button(flow, "GeometryNodeFilletCurve", text="", icon="CURVE_FILLET")
+            self.draw_text_button(flow, "GeometryNodeGreasePencilToCurves", text="", icon="OUTLINER_OB_CURVES")
+            self.draw_text_button(flow, "GeometryNodeInterpolateCurves", text="", icon="INTERPOLATE_CURVE")
+            self.draw_text_button(flow, "GeometryNodeInterpolateCurves", text="", icon="MERGE")
+            self.draw_text_button(flow, "GeometryNodeResampleCurve", text="", icon="CURVE_RESAMPLE")
+            self.draw_text_button(flow, "GeometryNodeReverseCurve", text="", icon="SWITCH_DIRECTION")
+            self.draw_text_button(flow, "GeometryNodeSubdivideCurve", text="", icon="SUBDIVIDE_EDGES")
+            self.draw_text_button(flow, "GeometryNodeTrimCurve", text="", icon="CURVE_TRIM")
 
 
 #add Curves panel, Primitives subpanel
@@ -4042,42 +2988,17 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_ARC")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveArc"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_BEZCURVE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurvePrimitiveBezierSegment"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_BEZCIRCLE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurvePrimitiveCircle"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_LINE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurvePrimitiveLine"
-
-            props = flow.operator("node.add_node", text="", icon = "CURVE_SPIRAL")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveSpiral"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_NCURVE")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveQuadraticBezier"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_QUADRILATERAL")
-            props.use_transform = True
-            props.type = "GeometryNodeCurvePrimitiveQuadrilateral"
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_STAR")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveStar"
+            self.draw_text_button(flow, "GeometryNodeCurveArc", text="", icon="CURVE_ARC")
+            self.draw_text_button(flow, "GeometryNodeCurvePrimitiveBezierSegment", text="", icon="CURVE_BEZCURVE")
+            self.draw_text_button(flow, "GeometryNodeCurvePrimitiveCircle", text="", icon="CURVE_BEZCIRCLE")
+            self.draw_text_button(flow, "GeometryNodeCurvePrimitiveLine", text="", icon="CURVE_LINE")
+            self.draw_text_button(flow, "GeometryNodeCurveSpiral", text="", icon="CURVE_SPIRAL")
+            self.draw_text_button(flow, "GeometryNodeCurveQuadraticBezier", text="", icon="CURVE_NCURVE")
+            self.draw_text_button(flow, "GeometryNodeCurvePrimitiveQuadrilateral", text="", icon="CURVE_QUADRILATERAL")
+            self.draw_text_button(flow, "GeometryNodeCurveStar", text="", icon="CURVE_STAR")
 
 
 #add Curve panel, Topology subpanel
@@ -4116,22 +3037,12 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "CURVE_OF_POINT")
-            props.use_transform = True
-            props.type = "GeometryNodeCurveOfPoint"
-
-            props = flow.operator("node.add_node", text = "", icon = "OFFSET_POINT_IN_CURVE")
-            props.use_transform = True
-            props.type = "GeometryNodeOffsetPointInCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_OF_CURVE")
-            props.use_transform = True
-            props.type = "GeometryNodePointsOfCurve"
+            self.draw_text_button(flow, "GeometryNodeCurveOfPoint", text="", icon="CURVE_OF_POINT")
+            self.draw_text_button(flow, "GeometryNodeOffsetPointInCurve", text="", icon="OFFSET_POINT_IN_CURVE")
+            self.draw_text_button(flow, "GeometryNodePointsOfCurve", text="", icon="POINT_OF_CURVE")
 
 
 #add Grease Pencil panel
@@ -4186,14 +3097,10 @@ class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NAMED_LAYER_SELECTION")
-            props.use_transform = True
-            props.type = "GeometryNodeInputNamedLayerSelection"
+            self.draw_text_button(flow, "GeometryNodeInputNamedLayerSelection", text="", icon="NAMED_LAYER_SELECTION")
 
 
 #add Grease Pencil panel, Read subpanel
@@ -4232,22 +3139,12 @@ class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "COLOR")
-            props.use_transform = True
-            props.type = "GeometryNodeSetGreasePencilColor"
-
-            props = flow.operator("node.add_node", text = "", icon = "DEPTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSetGreasePencilDepth"
-
-            props = flow.operator("node.add_node", text = "", icon = "FALLOFFSTROKE")
-            props.use_transform = True
-            props.type = "GeometryNodeSetGreasePencilSoftness"
+            self.draw_text_button(flow, "GeometryNodeSetGreasePencilColor", text="", icon="COLOR")
+            self.draw_text_button(flow, "GeometryNodeSetGreasePencilDepth", text="", icon="DEPTH")
+            self.draw_text_button(flow, "GeometryNodeSetGreasePencilSoftness", text="", icon="FALLOFFSTROKE")
 
 
 #add Grease Pencil panel, Read subpanel
@@ -4285,18 +3182,11 @@ class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_CURVES")
-            props.use_transform = True
-            props.type = "GeometryNodeGreasePencilToCurves"
-
-            props = flow.operator("node.add_node", text = "", icon = "MERGE")
-            props.use_transform = True
-            props.type = "GeometryNodeMergeLayers"
+            self.draw_text_button(flow, "GeometryNodeGreasePencilToCurves", text="", icon="OUTLINER_OB_CURVES")
+            self.draw_text_button(flow, "GeometryNodeMergeLayers", text="", icon="MERGE")
 
 
 #add mesh panel
@@ -4344,50 +3234,19 @@ class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeInstanceOnPoints"
-
-            props = flow.operator("node.add_node", text = "", icon = "INSTANCES_TO_POINTS")
-            props.use_transform = True
-            props.type = "GeometryNodeInstancesToPoints"
-
-            props = flow.operator("node.add_node", text = "", icon = "MOD_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeRealizeInstances"
-
-            props = flow.operator("node.add_node", text = "", icon = "ROTATE_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeRotateInstances"
-
-            props = flow.operator("node.add_node", text = "", icon = "SCALE_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeTriangulate"
-
-            props = flow.operator("node.add_node", text = "", icon = "TRANSLATE_INSTANCE")
-            props.use_transform = True
-            props.type = "GeometryNodeTranslateInstances"
-
-            props = flow.operator("node.add_node", text="", icon = "INSTANCE_TRANSFORM")
-            props.use_transform = True
-            props.type = "GeometryNodeSetInstanceTransform"
-
-            props = flow.operator("node.add_node", text = "", icon = "INSTANCE_TRANSFORM_GET")
-            props.use_transform = True
-            props.type = "GeometryNodeInstanceTransform"
-
-            props = flow.operator("node.add_node", text = "", icon = "INSTANCE_ROTATE")
-            props.use_transform = True
-            props.type = "GeometryNodeInputInstanceRotation"
-
-            props = flow.operator("node.add_node", text = "", icon = "INSTANCE_SCALE")
-            props.use_transform = True
-            props.type = "GeometryNodeInputInstanceScale"
+            self.draw_text_button(flow, "GeometryNodeInstanceOnPoints", text="", icon="POINT_INSTANCE")
+            self.draw_text_button(flow, "GeometryNodeInstancesToPoints", text="", icon="INSTANCES_TO_POINTS")
+            self.draw_text_button(flow, "GeometryNodeRealizeInstances", text="", icon="MOD_INSTANCE")
+            self.draw_text_button(flow, "GeometryNodeRotateInstances", text="", icon="ROTATE_INSTANCE")
+            self.draw_text_button(flow, "GeometryNodeTriangulate", text="", icon="SCALE_INSTANCE")
+            self.draw_text_button(flow, "GeometryNodeTranslateInstances", text="", icon="TRANSLATE_INSTANCE")
+            self.draw_text_button(flow, "GeometryNodeSetInstanceTransform", text="", icon="INSTANCE_TRANSFORM")
+            self.draw_text_button(flow, "GeometryNodeInstanceTransform", text="", icon="INSTANCE_TRANSFORM_GET")
+            self.draw_text_button(flow, "GeometryNodeInputInstanceRotation", text="", icon="INSTANCE_ROTATE")
+            self.draw_text_button(flow, "GeometryNodeInputInstanceScale", text="", icon="INSTANCE_SCALE")
 
 
 #add mesh panel
@@ -4463,67 +3322,25 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "EDGE_ANGLE")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeAngle"
-
-            props = flow.operator("node.add_node", text="", icon = "EDGE_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeNeighbors"
-
-            props = flow.operator("node.add_node", text="", icon = "EDGE_VERTICES")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshEdgeVertices"
-
-            props = flow.operator("node.add_node", text="", icon = "FACEGROUP")
-            props.use_transform = True
-            props.type = "GeometryNodeEdgesToFaceGroups"
-
-            props = flow.operator("node.add_node", text="", icon = "FACEREGIONS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceArea"
-
-            props = flow.operator("node.add_node", text="", icon = "SELECT_BOUNDARY")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshFaceSetBoundaries"
-
-            props = flow.operator("node.add_node", text = "", icon = "FACE_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceNeighbors"
+            self.draw_text_button(flow, "GeometryNodeInputMeshEdgeAngle", text="", icon="EDGE_ANGLE")
+            self.draw_text_button(flow, "GeometryNodeInputMeshEdgeNeighbors", text="", icon="EDGE_NEIGHBORS")
+            self.draw_text_button(flow, "GeometryNodeInputMeshEdgeVertices", text="", icon="EDGE_VERTICES")
+            self.draw_text_button(flow, "GeometryNodeEdgesToFaceGroups", text="", icon="FACEGROUP")
+            self.draw_text_button(flow, "GeometryNodeInputMeshFaceArea", text="", icon="FACEREGIONS")
+            self.draw_text_button(flow, "GeometryNodeMeshFaceSetBoundaries", text="", icon="SELECT_BOUNDARY")
+            self.draw_text_button(flow, "GeometryNodeInputMeshFaceNeighbors", text="", icon="FACE_NEIGHBORS")
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = flow.operator("node.add_node", text="", icon = "FACE_SET")
-                props.use_transform = True
-                props.type = "GeometryNodeToolFaceSet"
-
-            props = flow.operator("node.add_node", text="", icon = "PLANAR")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshFaceIsPlanar"
-
-            props = flow.operator("node.add_node", text = "", icon = "SHADING_SMOOTH")
-            props.use_transform = True
-            props.type = "GeometryNodeInputShadeSmooth"
-
-            props = flow.operator("node.add_node", text="", icon = "SHADING_EDGE_SMOOTH")
-            props.use_transform = True
-            props.type = "GeometryNodeInputEdgeSmooth"
-
-            props = flow.operator("node.add_node", text="", icon = "UV_ISLANDSEL")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshIsland"
-
-            props = flow.operator("node.add_node", text = "", icon = "SELECT_SHORTESTPATH")
-            props.use_transform = True
-            props.type = "GeometryNodeInputShortestEdgePaths"
-
-            props = flow.operator("node.add_node", text = "", icon = "VERTEX_NEIGHBORS")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMeshVertexNeighbors"
+                self.draw_text_button(flow, "GeometryNodeToolFaceSet", text="", icon="FACE_SET")
+            self.draw_text_button(flow, "GeometryNodeInputMeshFaceIsPlanar", text="", icon="PLANAR")
+            self.draw_text_button(flow, "GeometryNodeInputShadeSmooth", text="", icon="SHADING_SMOOTH")
+            self.draw_text_button(flow, "GeometryNodeInputEdgeSmooth", text="", icon="SHADING_EDGE_SMOOTH")
+            self.draw_text_button(flow, "GeometryNodeInputMeshIsland", text="", icon="UV_ISLANDSEL")
+            self.draw_text_button(flow, "GeometryNodeInputShortestEdgePaths", text="", icon="SELECT_SHORTESTPATH")
+            self.draw_text_button(flow, "GeometryNodeInputMeshVertexNeighbors", text="", icon="VERTEX_NEIGHBORS")
 
 
 #add mesh panel, sample subpanel
@@ -4561,18 +3378,11 @@ class NODES_PT_geom_add_mesh_sample(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "SAMPLE_NEAREST_SURFACE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleNearestSurface"
-
-            props = flow.operator("node.add_node", text="", icon = "SAMPLE_UV_SURFACE")
-            props.use_transform = True
-            props.type = "GeometryNodeSampleUVSurface"
+            self.draw_text_button(flow, "GeometryNodeSampleNearestSurface", text="", icon="SAMPLE_NEAREST_SURFACE")
+            self.draw_text_button(flow, "GeometryNodeSampleUVSurface", text="", icon="SAMPLE_UV_SURFACE")
 
 
 #add mesh panel, write subpanel
@@ -4613,23 +3423,14 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
             if context.space_data.geometry_nodes_type == 'TOOL':
-                props = flow.operator("node.add_node", text="", icon = "SET_FACE_SET")
-                props.use_transform = True
-                props.type = "GeometryNodeToolSetFaceSet"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_SMOOTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSetMeshNormal"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_SHADE_SMOOTH")
-            props.use_transform = True
-            props.type = "GeometryNodeSetShadeSmooth"
+                self.draw_text_button(flow, "GeometryNodeToolSetFaceSet", text="", icon="SET_FACE_SET")
+            self.draw_text_button(flow, "GeometryNodeSetMeshNormal", text="", icon="SET_SMOOTH")
+            self.draw_text_button(flow, "GeometryNodeSetShadeSmooth", text="", icon="SET_SHADE_SMOOTH")
 
 
 #add mesh panel, operations subpanel
@@ -4686,66 +3487,23 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "DUAL_MESH")
-            props.use_transform = True
-            props.type = "GeometryNodeDualMesh"
-
-            props = flow.operator("node.add_node", text="", icon = "EDGE_PATHS_TO_CURVES")
-            props.use_transform = True
-            props.type = "GeometryNodeEdgePathsToCurves"
-
-            props = flow.operator("node.add_node", text="", icon = "EDGE_PATH_TO_SELECTION")
-            props.use_transform = True
-            props.type = "GeometryNodeEdgePathsToSelection"
-
-            props = flow.operator("node.add_node", text = "", icon = "EXTRUDE_REGION")
-            props.use_transform = True
-            props.type = "GeometryNodeExtrudeMesh"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLIP_NORMALS")
-            props.use_transform = True
-            props.type = "GeometryNodeFlipFaces"
-
-            props = flow.operator("node.add_node", text = "", icon = "MOD_BOOLEAN")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshBoolean"
-
-            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_CURVE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshToCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_TO_POINTS")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshToPoints"
-
-            props = flow.operator("node.add_node", text="", icon = "MESH_TO_VOLUME")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshToVolume"
-
-            props = flow.operator("node.add_node", text = "", icon = "TRANSFORM_SCALE")
-            props.use_transform = True
-            props.type = "GeometryNodeScaleElements"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPLITEDGE")
-            props.use_transform = True
-            props.type = "GeometryNodeSplitEdges"
-
-            props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_MESH")
-            props.use_transform = True
-            props.type = "GeometryNodeSubdivideMesh"
-
-            props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
-            props.use_transform = True
-            props.type = "GeometryNodeSubdivisionSurface"
-
-            props = flow.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
-            props.use_transform = True
-            props.type = "GeometryNodeTriangulate"
+            self.draw_text_button(flow, "GeometryNodeDualMesh", text="", icon="DUAL_MESH")
+            self.draw_text_button(flow, "GeometryNodeEdgePathsToCurves", text="", icon="EDGE_PATHS_TO_CURVES")
+            self.draw_text_button(flow, "GeometryNodeEdgePathsToSelection", text="", icon="EDGE_PATH_TO_SELECTION")
+            self.draw_text_button(flow, "GeometryNodeExtrudeMesh", text="", icon="EXTRUDE_REGION")
+            self.draw_text_button(flow, "GeometryNodeFlipFaces", text="", icon="FLIP_NORMALS")
+            self.draw_text_button(flow, "GeometryNodeMeshBoolean", text="", icon="MOD_BOOLEAN")
+            self.draw_text_button(flow, "GeometryNodeMeshToCurve", text="", icon="OUTLINER_OB_CURVE")
+            self.draw_text_button(flow, "GeometryNodeMeshToPoints", text="", icon="MESH_TO_POINTS")
+            self.draw_text_button(flow, "GeometryNodeMeshToVolume", text="", icon="MESH_TO_VOLUME")
+            self.draw_text_button(flow, "GeometryNodeScaleElements", text="", icon="TRANSFORM_SCALE")
+            self.draw_text_button(flow, "GeometryNodeSplitEdges", text="", icon="SPLITEDGE")
+            self.draw_text_button(flow, "GeometryNodeSubdivideMesh", text="", icon="SUBDIVIDE_MESH")
+            self.draw_text_button(flow, "GeometryNodeSubdivisionSurface", text="", icon="SUBDIVIDE_EDGES")
+            self.draw_text_button(flow, "GeometryNodeTriangulate", text="", icon="MOD_TRIANGULATE")
 
 
 #add mesh panel, primitives subpanel
@@ -4792,42 +3550,17 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_CONE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshCone"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_CUBE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshCube"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_CYLINDER")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshCylinder"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_GRID")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshGrid"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_ICOSPHERE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshIcoSphere"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_CIRCLE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshCircle"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_LINE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshLine"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_UVSPHERE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshUVSphere"
+            self.draw_text_button(flow, "GeometryNodeMeshCone", text="", icon="MESH_CONE")
+            self.draw_text_button(flow, "GeometryNodeMeshCube", text="", icon="MESH_CUBE")
+            self.draw_text_button(flow, "GeometryNodeMeshCylinder", text="", icon="MESH_CYLINDER")
+            self.draw_text_button(flow, "GeometryNodeMeshGrid", text="", icon="MESH_GRID")
+            self.draw_text_button(flow, "GeometryNodeMeshIcoSphere", text="", icon="MESH_ICOSPHERE")
+            self.draw_text_button(flow, "GeometryNodeMeshCircle", text="", icon="MESH_CIRCLE")
+            self.draw_text_button(flow, "GeometryNodeMeshLine", text="", icon="MESH_LINE")
+            self.draw_text_button(flow, "GeometryNodeMeshUVSphere", text="", icon="MESH_UVSPHERE")
 
 
 #add mesh panel, topology subpanel
@@ -4874,42 +3607,17 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "CORNERS_OF_EDGE")
-            props.use_transform = True
-            props.type = "GeometryNodeCornersOfEdge"
-
-            props = flow.operator("node.add_node", text = "", icon = "CORNERS_OF_FACE")
-            props.use_transform = True
-            props.type = "GeometryNodeCornersOfFace"
-
-            props = flow.operator("node.add_node", text = "", icon = "CORNERS_OF_VERTEX")
-            props.use_transform = True
-            props.type = "GeometryNodeCornersOfVertex"
-
-            props = flow.operator("node.add_node", text = "", icon = "EDGES_OF_CORNER")
-            props.use_transform = True
-            props.type = "GeometryNodeEdgesOfCorner"
-
-            props = flow.operator("node.add_node", text = "", icon = "EDGES_OF_VERTEX")
-            props.use_transform = True
-            props.type = "GeometryNodeEdgesOfVertex"
-
-            props = flow.operator("node.add_node", text = "", icon = "FACE_OF_CORNER")
-            props.use_transform = True
-            props.type = "GeometryNodeFaceOfCorner"
-
-            props = flow.operator("node.add_node", text = "", icon = "OFFSET_CORNER_IN_FACE")
-            props.use_transform = True
-            props.type = "GeometryNodeOffsetCornerInFace"
-
-            props = flow.operator("node.add_node", text = "", icon = "VERTEX_OF_CORNER")
-            props.use_transform = True
-            props.type = "GeometryNodeVertexOfCorner"
+            self.draw_text_button(flow, "GeometryNodeCornersOfEdge", text="", icon="CORNERS_OF_EDGE")
+            self.draw_text_button(flow, "GeometryNodeCornersOfFace", text="", icon="CORNERS_OF_FACE")
+            self.draw_text_button(flow, "GeometryNodeCornersOfVertex", text="", icon="CORNERS_OF_VERTEX")
+            self.draw_text_button(flow, "GeometryNodeEdgesOfCorner", text="", icon="EDGES_OF_CORNER")
+            self.draw_text_button(flow, "GeometryNodeEdgesOfVertex", text="", icon="EDGES_OF_VERTEX")
+            self.draw_text_button(flow, "GeometryNodeFaceOfCorner", text="", icon="FACE_OF_CORNER")
+            self.draw_text_button(flow, "GeometryNodeOffsetCornerInFace", text="", icon="OFFSET_CORNER_IN_FACE")
+            self.draw_text_button(flow, "GeometryNodeVertexOfCorner", text="", icon="VERTEX_OF_CORNER")
 
 
 #add volume panel
@@ -4947,18 +3655,11 @@ class NODES_PT_geom_add_mesh_uv(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "VOLUME_CUBE")
-            props.use_transform = True
-            props.type = "GeometryNodeUVPackIslands"
-
-            props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
-            props.use_transform = True
-            props.type = "GeometryNodeUVUnwrap"
+            self.draw_text_button(flow, "GeometryNodeUVPackIslands", text="", icon="VOLUME_CUBE")
+            self.draw_text_button(flow, "GeometryNodeUVUnwrap", text="", icon="VOLUME_TO_MESH")
 
 
 #add mesh panel
@@ -5003,38 +3704,16 @@ class NODES_PT_geom_add_point(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "VOLUME_DISTRIBUTE")
-            props.use_transform = True
-            props.type = "GeometryNodeDistributePointsInVolume"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
-            props.use_transform = True
-            props.type = "GeometryNodeDistributePointsOnFaces"
-
-            props = flow.operator("node.add_node", text="", icon = "DECORATE")
-            props.use_transform = True
-            props.type = "GeometryNodePoints"
-
-            props = flow.operator("node.add_node", text="", icon = "POINTS_TO_CURVES")
-            props.use_transform = True
-            props.type = "GeometryNodePointsToCurves"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINTS_TO_VERTICES")
-            props.use_transform = True
-            props.type = "GeometryNodePointsToVertices"
-
-            props = flow.operator("node.add_node", text = "", icon = "POINT_TO_VOLUME")
-            props.use_transform = True
-            props.type = "GeometryNodePointsToVolume"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_CURVE_RADIUS")
-            props.use_transform = True
-            props.type = "GeometryNodeSetPointRadius"
+            self.draw_text_button(flow, "GeometryNodeDistributePointsInVolume", text="", icon="VOLUME_DISTRIBUTE")
+            self.draw_text_button(flow, "GeometryNodeDistributePointsOnFaces", text="", icon="POINT_DISTRIBUTE")
+            self.draw_text_button(flow, "GeometryNodePoints", text="", icon="DECORATE")
+            self.draw_text_button(flow, "GeometryNodePointsToCurves", text="", icon="POINTS_TO_CURVES")
+            self.draw_text_button(flow, "GeometryNodePointsToVertices", text="", icon="POINTS_TO_VERTICES")
+            self.draw_text_button(flow, "GeometryNodePointsToVolume", text="", icon="POINT_TO_VOLUME")
+            self.draw_text_button(flow, "GeometryNodeSetPointRadius", text="", icon="SET_CURVE_RADIUS")
 
 
 #add volume panel
@@ -5071,18 +3750,11 @@ class NODES_PT_geom_add_volume(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "VOLUME_CUBE")
-            props.use_transform = True
-            props.type = "GeometryNodeVolumeCube"
-
-            props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
-            props.use_transform = True
-            props.type = "GeometryNodeVolumeToMesh"
+            self.draw_text_button(flow, "GeometryNodeVolumeCube", text="", icon="VOLUME_CUBE")
+            self.draw_text_button(flow, "GeometryNodeVolumeToMesh", text="", icon="VOLUME_TO_MESH")
 
 #add simulation panel
 class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
@@ -5117,14 +3789,10 @@ class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_simulation_zone", text="", icon = "TIME")
-            props.use_transform = True
-            #props.type = "GeometryNodeVolumeCube"
+            self.draw_text_button(flow, operator="node.add_simulation_zone", text="", icon="TIME")
 
 
 #add material panel
@@ -5164,30 +3832,14 @@ class NODES_PT_geom_add_material(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "MATERIAL_REPLACE")
-            props.use_transform = True
-            props.type = "GeometryNodeReplaceMaterial"
-
-            props = flow.operator("node.add_node", text = "", icon = "MATERIAL_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeInputMaterialIndex"
-
-            props = flow.operator("node.add_node", text = "", icon = "SELECT_BY_MATERIAL")
-            props.use_transform = True
-            props.type = "GeometryNodeMaterialSelection"
-
-            props = flow.operator("node.add_node", text = "", icon = "MATERIAL_ADD")
-            props.use_transform = True
-            props.type = "GeometryNodeSetMaterial"
-
-            props = flow.operator("node.add_node", text = "", icon = "SET_MATERIAL_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeSetMaterialIndex"
+            self.draw_text_button(flow, "GeometryNodeReplaceMaterial", text="", icon="MATERIAL_REPLACE")
+            self.draw_text_button(flow, "GeometryNodeInputMaterialIndex", text="", icon="MATERIAL_INDEX")
+            self.draw_text_button(flow, "GeometryNodeMaterialSelection", text="", icon="SELECT_BY_MATERIAL")
+            self.draw_text_button(flow, "GeometryNodeSetMaterial", text="", icon="MATERIAL_ADD")
+            self.draw_text_button(flow, "GeometryNodeSetMaterialIndex", text="", icon="SET_MATERIAL_INDEX")
 
 
 #add vector panel
@@ -5231,46 +3883,18 @@ class NODES_PT_geom_add_texture(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_BRICK")
-            props.use_transform = True
-            props.type = "ShaderNodeTexBrick"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_CHECKER")
-            props.use_transform = True
-            props.type = "ShaderNodeTexChecker"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
-            props.use_transform = True
-            props.type = "ShaderNodeTexGradient"
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_IMAGE")
-            props.use_transform = True
-            props.type = "GeometryNodeImageTexture"
-
-            props = flow.operator("node.add_node", text = "", icon = "MAGIC_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexMagic"
-
-            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexNoise"
-
-            props = flow.operator("node.add_node", text = "", icon = "VORONI_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexVoronoi"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_WAVES")
-            props.use_transform = True
-            props.type = "ShaderNodeTexWave"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexWhiteNoise"
+            self.draw_text_button(flow, "ShaderNodeTexBrick", text="", icon="NODE_BRICK")
+            self.draw_text_button(flow, "ShaderNodeTexChecker", text="", icon="NODE_CHECKER")
+            self.draw_text_button(flow, "ShaderNodeTexGradient", text="", icon="NODE_GRADIENT")
+            self.draw_text_button(flow, "GeometryNodeImageTexture", text="", icon="FILE_IMAGE")
+            self.draw_text_button(flow, "ShaderNodeTexMagic", text="", icon="MAGIC_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexNoise", text="", icon="NOISE_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexVoronoi", text="", icon="VORONI_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexWave", text="", icon="NODE_WAVES")
+            self.draw_text_button(flow, "ShaderNodeTexWhiteNoise", text="", icon="NODE_WHITE_NOISE")
 
 
 #add utilities panel
@@ -5311,32 +3935,14 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "INDEX_SWITCH")
-            props.use_transform = True
-            props.type = "GeometryNodeIndexSwitch"
-
-            props = flow.operator("node.add_node", text = "", icon = "MENU_SWITCH")
-            props.use_transform = True
-            props.type = "GeometryNodeMenuSwitch"
-
-            props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
-            props.use_transform = True
-            props.type = "FunctionNodeRandomValue"
-
-            props = flow.operator("node.add_repeat_zone", text="", icon = "REPEAT")
-            props.use_transform = True
-            #props.type = ""
-
-            props = flow.operator("node.add_node", text = "", icon = "SWITCH")
-            props.use_transform = True
-            props.type = "GeometryNodeSwitch"
-
-
+            self.draw_text_button(flow, "GeometryNodeIndexSwitch", text="", icon="INDEX_SWITCH")
+            self.draw_text_button(flow, "GeometryNodeMenuSwitch", text="", icon="MENU_SWITCH")
+            self.draw_text_button(flow, "FunctionNodeRandomValue", text="", icon="RANDOM_FLOAT")
+            self.draw_text_button(flow, operator="node.add_repeat_zone", text="", icon="REPEAT")
+            self.draw_text_button(flow, "GeometryNodeSwitch", text="", icon="SWITCH")
 
 
 #add utilities panel, color subpanel
@@ -5379,34 +3985,14 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeValToRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeRGBCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "COMBINE_COLOR")
-            props.use_transform = True
-            props.type = "FunctionNodeCombineColor"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MIX")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-            ops = props.settings.add()
-            ops.name = "data_type"
-            ops.value = "'RGBA'"
-            #props.settings = [{"name":"data_type", "value":"'RGBA'"}] # halp :(
-
-            props = flow.operator("node.add_node", text = "", icon = "SEPARATE_COLOR")
-            props.use_transform = True
-            props.type = "FunctionNodeSeparateColor"
+            self.draw_text_button(flow, "ShaderNodeValToRGB", text="", icon="NODE_COLORRAMP")
+            self.draw_text_button(flow, "ShaderNodeRGBCurve", text="", icon="NODE_RGBCURVE")
+            self.draw_text_button(flow, "FunctionNodeCombineColor", text="", icon="COMBINE_COLOR")
+            self.draw_text_button(flow, "ShaderNodeMix", text="", icon="NODE_MIX", settings={"data_type": "'RGBA'"})
+            self.draw_text_button(flow, "FunctionNodeSeparateColor", text="", icon="SEPARATE_COLOR")
 
 
 #add utilities panel, text subpanel
@@ -5452,50 +4038,19 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "FORMAT_STRING")
-            props.use_transform = True
-            props.type = "FunctionNodeFormatString"
-
-            props = flow.operator("node.add_node", text="", icon = "STRING_JOIN")
-            props.use_transform = True
-            props.type = "GeometryNodeStringJoin"
-
-            props = flow.operator("node.add_node", text="", icon = "MATCH_STRING")
-            props.use_transform = True
-            props.type = "FunctionNodeMatchString"
-
-            props = flow.operator("node.add_node", text="", icon = "REPLACE_STRING")
-            props.use_transform = True
-            props.type = "FunctionNodeReplaceString"
-
-            props = flow.operator("node.add_node", text="", icon = "STRING_SUBSTRING")
-            props.use_transform = True
-            props.type = "FunctionNodeSliceString"
-
-            props = flow.operator("node.add_node", text = "", icon = "STRING_LENGTH")
-            props.use_transform = True
-            props.type = "FunctionNodeStringLength"
-
-            props = flow.operator("node.add_node", text="", icon = "STRING_FIND")
-            props.use_transform = True
-            props.type = "FunctionNodeFindInString"
-
-            props = flow.operator("node.add_node", text = "", icon = "STRING_TO_CURVE")
-            props.use_transform = True
-            props.type = "GeometryNodeStringToCurves"
-
-            props = flow.operator("node.add_node", text="", icon = "VALUE_TO_STRING")
-            props.use_transform = True
-            props.type = "FunctionNodeValueToString"
-
-            props = flow.operator("node.add_node", text = "", icon = "SPECIAL")
-            props.use_transform = True
-            props.type = "FunctionNodeInputSpecialCharacters"
+            self.draw_text_button(flow, "FunctionNodeFormatString", text="", icon="FORMAT_STRING")
+            self.draw_text_button(flow, "GeometryNodeStringJoin", text="", icon="STRING_JOIN")
+            self.draw_text_button(flow, "FunctionNodeMatchString", text="", icon="MATCH_STRING")
+            self.draw_text_button(flow, "FunctionNodeReplaceString", text="", icon="REPLACE_STRING")
+            self.draw_text_button(flow, "FunctionNodeSliceString", text="", icon="STRING_SUBSTRING")
+            self.draw_text_button(flow, "FunctionNodeStringLength", text="", icon="STRING_LENGTH")
+            self.draw_text_button(flow, "FunctionNodeFindInString", text="", icon="STRING_FIND")
+            self.draw_text_button(flow, "GeometryNodeStringToCurves", text="", icon="STRING_TO_CURVE")
+            self.draw_text_button(flow, "FunctionNodeValueToString", text="", icon="VALUE_TO_STRING")
+            self.draw_text_button(flow, "FunctionNodeInputSpecialCharacters", text="", icon="SPECIAL")
 
 
 #add utilities panel, vector subpanel
@@ -5537,37 +4092,15 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorCurve"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorMath"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORROTATE")
-            props.use_transform = True
-            props.type = "ShaderNodeVectorRotate"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
-            props.use_transform = True
-            props.type = "ShaderNodeCombineXYZ"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MIX")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
-            ops = props.settings.add()
-            ops.name = "data_type"
-            ops.value = "'VECTOR'"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
-            props.use_transform = True
-            props.type = "ShaderNodeSeparateXYZ"
+            self.draw_text_button(flow, "ShaderNodeVectorCurve", text="", icon="NODE_VECTOR")
+            self.draw_text_button(flow, "ShaderNodeVectorMath", text="", icon="NODE_VECTORMATH")
+            self.draw_text_button(flow, "ShaderNodeVectorRotate", text="", icon="NODE_VECTORROTATE")
+            self.draw_text_button(flow, "ShaderNodeCombineXYZ", text="", icon="NODE_COMBINEXYZ")
+            self.draw_text_button(flow, "ShaderNodeMix", text="", icon="NODE_MIX", settings={"data_type": "'VECTOR'"})
+            self.draw_text_button(flow, "ShaderNodeSeparateXYZ", text="", icon="NODE_SEPARATEXYZ")
 
 
 #add utilities panel, field subpanel
@@ -5606,22 +4139,12 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "ACCUMULATE")
-            props.use_transform = True
-            props.type = "GeometryNodeAccumulateField"
-
-            props = flow.operator("node.add_node", text = "", icon = "FIELD_AT_INDEX")
-            props.use_transform = True
-            props.type = "GeometryNodeFieldAtIndex"
-
-            props = flow.operator("node.add_node", text="", icon = "FIELD_DOMAIN")
-            props.use_transform = True
-            props.type = "GeometryNodeFieldOnDomain"
+            self.draw_text_button(flow, "GeometryNodeAccumulateField", text="", icon="ACCUMULATE")
+            self.draw_text_button(flow, "GeometryNodeFieldAtIndex", text="", icon="FIELD_AT_INDEX")
+            self.draw_text_button(flow, "GeometryNodeFieldOnDomain", text="", icon="FIELD_DOMAIN")
 
 
 #add utilities panel, math subpanel
@@ -5670,50 +4193,19 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
-            props.use_transform = True
-            props.type = "FunctionNodeBooleanMath"
-
-            props = flow.operator("node.add_node", text="", icon = "INTEGER_MATH")
-            props.use_transform = True
-            props.type = "FunctionNodeIntegerMath"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeClamp"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
-            props.use_transform = True
-            props.type = "FunctionNodeCompare"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeFloatCurve"
-
-            props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
-            props.use_transform = True
-            props.type = "FunctionNodeFloatToInt"
-
-            props = flow.operator("node.add_node", text="", icon = "HASH")
-            props.use_transform = True
-            props.type = "FunctionNodeHashValue"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
-            props.use_transform = True
-            props.type = "ShaderNodeMapRange"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "ShaderNodeMath"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MIXSHADER")
-            props.use_transform = True
-            props.type = "ShaderNodeMix"
+            self.draw_text_button(flow, "FunctionNodeBooleanMath", text="", icon="BOOLEAN_MATH")
+            self.draw_text_button(flow, "FunctionNodeIntegerMath", text="", icon="INTEGER_MATH")
+            self.draw_text_button(flow, "ShaderNodeClamp", text="", icon="NODE_CLAMP")
+            self.draw_text_button(flow, "FunctionNodeCompare", text="", icon="FLOAT_COMPARE")
+            self.draw_text_button(flow, "ShaderNodeFloatCurve", text="", icon="FLOAT_CURVE")
+            self.draw_text_button(flow, "FunctionNodeFloatToInt", text="", icon="FLOAT_TO_INT")
+            self.draw_text_button(flow, "FunctionNodeHashValue", text="", icon="HASH")
+            self.draw_text_button(flow, "ShaderNodeMapRange", text="", icon="NODE_MAP_RANGE")
+            self.draw_text_button(flow, "ShaderNodeMath", text="", icon="NODE_MATH")
+            self.draw_text_button(flow, "ShaderNodeMix", text="", icon="NODE_MIXSHADER")
 
 
 #add utilities panel, matrix subpanel
@@ -5760,54 +4252,20 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "COMBINE_MATRIX")
-            props.use_transform = True
-            props.type = "FunctionNodeCombineMatrix"
-
-            props = flow.operator("node.add_node", text="", icon = "COMBINE_TRANSFORM")
-            props.use_transform = True
-            props.type = "FunctionNodeCombineTransform"
-
-            props = flow.operator("node.add_node", text="", icon = "MATRIX_DETERMINANT")
-            props.use_transform = True
-            props.type = "FunctionNodeMatrixDeterminant"
-
-            props = flow.operator("node.add_node", text="", icon = "INVERT_MATRIX")
-            props.use_transform = True
-            props.type = "FunctionNodeInvertMatrix"
-
-            props = flow.operator("node.add_node", text="", icon = "MULTIPLY_MATRIX")
-            props.use_transform = True
-            props.type = "FunctionNodeMatrixMultiply"
-
-            props = flow.operator("node.add_node", text="", icon = "PROJECT_POINT")
-            props.use_transform = True
-            props.type = "FunctionNodeProjectPoint"
-
-            props = flow.operator("node.add_node", text="", icon = "SEPARATE_MATRIX")
-            props.use_transform = True
-            props.type = "FunctionNodeSeparateMatrix"
-
-            props = flow.operator("node.add_node", text="", icon = "SEPARATE_TRANSFORM")
-            props.use_transform = True
-            props.type = "FunctionNodeSeparateTransform"
-
-            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_DIRECTION")
-            props.use_transform = True
-            props.type = "FunctionNodeTransformDirection"
-
-            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_POINT")
-            props.use_transform = True
-            props.type = "FunctionNodeTransformPoint"
-
-            props = flow.operator("node.add_node", text="", icon = "TRANSPOSE_MATRIX")
-            props.use_transform = True
-            props.type = "FunctionNodeTransposeMatrix"
+            self.draw_text_button(flow, "FunctionNodeCombineMatrix", text="", icon="COMBINE_MATRIX")
+            self.draw_text_button(flow, "FunctionNodeCombineTransform", text="", icon="COMBINE_TRANSFORM")
+            self.draw_text_button(flow, "FunctionNodeMatrixDeterminant", text="", icon="MATRIX_DETERMINANT")
+            self.draw_text_button(flow, "FunctionNodeInvertMatrix", text="", icon="INVERT_MATRIX")
+            self.draw_text_button(flow, "FunctionNodeMatrixMultiply", text="", icon="MULTIPLY_MATRIX")
+            self.draw_text_button(flow, "FunctionNodeProjectPoint", text="", icon="PROJECT_POINT")
+            self.draw_text_button(flow, "FunctionNodeSeparateMatrix", text="", icon="SEPARATE_MATRIX")
+            self.draw_text_button(flow, "FunctionNodeSeparateTransform", text="", icon="SEPARATE_TRANSFORM")
+            self.draw_text_button(flow, "FunctionNodeTransformDirection", text="", icon="TRANSFORM_DIRECTION")
+            self.draw_text_button(flow, "FunctionNodeTransformPoint", text="", icon="TRANSFORM_POINT")
+            self.draw_text_button(flow, "FunctionNodeTransposeMatrix", text="", icon="TRANSPOSE_MATRIX")
 
 
 #add utilities panel, rotation subpanel
@@ -5854,54 +4312,20 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "ALIGN_ROTATION_TO_VECTOR")
-            props.use_transform = True
-            props.type = "FunctionNodeAlignRotationToVector"
-
-            props = flow.operator("node.add_node", text="", icon = "AXES_TO_ROTATION")
-            props.use_transform = True
-            props.type = "FunctionNodeAxesToRotation"
-
-            props = flow.operator("node.add_node", text="", icon = "AXIS_ANGLE_TO_ROTATION")
-            props.use_transform = True
-            props.type = "FunctionNodeAxisAngleToRotation"
-
-            props = flow.operator("node.add_node", text="", icon = "EULER_TO_ROTATION")
-            props.use_transform = True
-            props.type = "FunctionNodeEulerToRotation"
-
-            props = flow.operator("node.add_node", text="", icon = "INVERT_ROTATION")
-            props.use_transform = True
-            props.type = "FunctionNodeInvertRotation"
-
-            props = flow.operator("node.add_node", text="", icon = "ROTATE_EULER")
-            props.use_transform = True
-            props.type = "FunctionNodeRotateRotation"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_VECTORROTATE")
-            props.use_transform = True
-            props.type = "FunctionNodeRotateVector"
-
-            props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_AXIS_ANGLE")
-            props.use_transform = True
-            props.type = "FunctionNodeRotationToAxisAngle"
-
-            props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_EULER")
-            props.use_transform = True
-            props.type = "FunctionNodeRotationToEuler"
-
-            props = flow.operator("node.add_node", text="", icon = "ROTATION_TO_QUATERNION")
-            props.use_transform = True
-            props.type = "FunctionNodeRotationToQuaternion"
-
-            props = flow.operator("node.add_node", text="", icon = "QUATERNION_TO_ROTATION")
-            props.use_transform = True
-            props.type = "FunctionNodeQuaternionToRotation"
+            self.draw_text_button(flow, "FunctionNodeAlignRotationToVector", text="", icon="ALIGN_ROTATION_TO_VECTOR")
+            self.draw_text_button(flow, "FunctionNodeAxesToRotation", text="", icon="AXES_TO_ROTATION")
+            self.draw_text_button(flow, "FunctionNodeAxisAngleToRotation", text="", icon="AXIS_ANGLE_TO_ROTATION")
+            self.draw_text_button(flow, "FunctionNodeEulerToRotation", text="", icon="EULER_TO_ROTATION")
+            self.draw_text_button(flow, "FunctionNodeInvertRotation", text="", icon="INVERT_ROTATION")
+            self.draw_text_button(flow, "FunctionNodeRotateRotation", text="", icon="ROTATE_EULER")
+            self.draw_text_button(flow, "FunctionNodeRotateVector", text="", icon="NODE_VECTORROTATE")
+            self.draw_text_button(flow, "FunctionNodeRotationToAxisAngle", text="", icon="ROTATION_TO_AXIS_ANGLE")
+            self.draw_text_button(flow, "FunctionNodeRotationToEuler", text="", icon="ROTATION_TO_EULER")
+            self.draw_text_button(flow, "FunctionNodeRotationToQuaternion", text="", icon="ROTATION_TO_QUATERNION")
+            self.draw_text_button(flow, "FunctionNodeQuaternionToRotation", text="", icon="QUATERNION_TO_ROTATION")
 
 
 #add utilities panel, deprecated subpanel
@@ -5939,18 +4363,11 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "ALIGN_EULER_TO_VECTOR")
-            props.use_transform = True
-            props.type = "FunctionNodeAlignEulerToVector"
-
-            props = flow.operator("node.add_node", text = "", icon = "ROTATE_EULER")
-            props.use_transform = True
-            props.type = "FunctionNodeRotateEuler"
+            self.draw_text_button(flow, "FunctionNodeAlignEulerToVector", text="", icon="ALIGN_EULER_TO_VECTOR")
+            self.draw_text_button(flow, "FunctionNodeRotateEuler", text="", icon="ROTATE_EULER")
 
 
 # ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
@@ -5997,26 +4414,13 @@ class NODES_PT_shader_add_input_common(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_FRESNEL")
-            props.use_transform = True
-            props.type = "ShaderNodeFresnel"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GEOMETRY")
-            props.use_transform = True
-            props.type = "ShaderNodeNewGeometry"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGB")
-            props.use_transform = True
-            props.type = "ShaderNodeRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_TEXCOORDINATE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexCoord"
+            self.draw_text_button(flow, "ShaderNodeFresnel", text="", icon="NODE_FRESNEL")
+            self.draw_text_button(flow, "ShaderNodeNewGeometry", text="", icon="NODE_GEOMETRY")
+            self.draw_text_button(flow, "ShaderNodeRGB", text="", icon="NODE_RGB")
+            self.draw_text_button(flow, "ShaderNodeTexCoord", text="", icon="NODE_TEXCOORDINATE")
 
 
 #Shader editor , Output panel
@@ -6065,28 +4469,18 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel, NodePanel):
         #### Image Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
             if context.space_data.shader_type == 'OBJECT':
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_MATERIAL")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputMaterial"
+                self.draw_text_button(flow, "ShaderNodeOutputMaterial", text="", icon="NODE_MATERIAL")
 
             elif context.space_data.shader_type == 'WORLD':
-
-                props = flow.operator("node.add_node", text="", icon = "WORLD")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputWorld"
+                self.draw_text_button(flow, "ShaderNodeOutputWorld", text="", icon="WORLD")
 
             elif context.space_data.shader_type == 'LINESTYLE':
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_LINESTYLE_OUTPUT")
-                props.use_transform = True
-                props.type = "ShaderNodeOutputLineStyle"
+                self.draw_text_button(flow, "ShaderNodeOutputLineStyle", text="", icon="NODE_LINESTYLE_OUTPUT")
 
 
 #Shader Editor - Shader panel
@@ -6155,67 +4549,30 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_ADD_SHADER")
-            props.use_transform = True
-            props.type = "ShaderNodeAddShader"
+            self.draw_text_button(flow, "ShaderNodeAddShader", text="", icon="NODE_ADD_SHADER")
 
             if context.space_data.shader_type == 'OBJECT':
 
                 if engine == 'CYCLES':
-
-                    props = flow.operator("node.add_node", text="", icon = "CURVES")
-                    props.use_transform = True
-                    props.type = "ShaderNodeBsdfHairPrincipled"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeMixShader"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
-                props.use_transform = True
-                props.type = "ShaderNodeBsdfPrincipled"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
-                props.use_transform = True
-                props.type = "ShaderNodeVolumePrincipled"
+                    self.draw_text_button(flow, "ShaderNodeBsdfHairPrincipled", text="", icon="CURVES")
+                self.draw_text_button(flow, "ShaderNodeMixShader", text="", icon="NODE_MIXSHADER")
+                self.draw_text_button(flow, "ShaderNodeBsdfPrincipled", text="", icon="NODE_PRINCIPLED")
+                self.draw_text_button(flow, "ShaderNodeVolumePrincipled", text="", icon="NODE_VOLUMEPRINCIPLED")
 
                 if engine == 'CYCLES':
-
-                    props = flow.operator("node.add_node", text = "", icon = "NODE_TOONSHADER")
-                    props.use_transform = True
-                    props.type = "ShaderNodeBsdfToon"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEABSORPTION")
-                props.use_transform = True
-                props.type = "ShaderNodeVolumeAbsorption"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMESCATTER")
-                props.use_transform = True
-                props.type = "ShaderNodeVolumeScatter"
+                    self.draw_text_button(flow, "ShaderNodeBsdfToon", text="", icon="NODE_TOONSHADER")
+                self.draw_text_button(flow, "ShaderNodeVolumeAbsorption", text="", icon="NODE_VOLUMEABSORPTION")
+                self.draw_text_button(flow, "ShaderNodeVolumeScatter", text="", icon="NODE_VOLUMESCATTER")
 
             if context.space_data.shader_type == 'WORLD':
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeBackground"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_EMISSION")
-                props.use_transform = True
-                props.type = "ShaderNodeEmission"
-
-                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
-                props.use_transform = True
-                props.type = "ShaderNodeVolumePrincipled"
-
-                props = flow.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeMixShader"
+                self.draw_text_button(flow, "ShaderNodeBackground", text="", icon="NODE_BACKGROUNDSHADER")
+                self.draw_text_button(flow, "ShaderNodeEmission", text="", icon="NODE_EMISSION")
+                self.draw_text_button(flow, "ShaderNodeVolumePrincipled", text="", icon="NODE_VOLUMEPRINCIPLED")
+                self.draw_text_button(flow, "ShaderNodeMixShader", text="", icon="NODE_MIXSHADER")
 
 
 #Shader Editor - Texture panel
@@ -6266,30 +4623,14 @@ class NODES_PT_shader_add_texture_common(bpy.types.Panel, NodePanel):
 
         #### Icon Buttons
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
-            props.use_transform = True
-            props.type = "ShaderNodeTexEnvironment"
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_IMAGE")
-            props.use_transform = True
-            props.type = "ShaderNodeTexImage"
-
-            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexNoise"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_SKY")
-            props.use_transform = True
-            props.type = "ShaderNodeTexSky"
-
-            props = flow.operator("node.add_node", text = "", icon = "VORONI_TEX")
-            props.use_transform = True
-            props.type = "ShaderNodeTexVoronoi"
+            self.draw_text_button(flow, "ShaderNodeTexEnvironment", text="", icon="NODE_ENVIRONMENT")
+            self.draw_text_button(flow, "ShaderNodeTexImage", text="", icon="FILE_IMAGE")
+            self.draw_text_button(flow, "ShaderNodeTexNoise", text="", icon="NOISE_TEX")
+            self.draw_text_button(flow, "ShaderNodeTexSky", text="", icon="NODE_SKY")
+            self.draw_text_button(flow, "ShaderNodeTexVoronoi", text="", icon="VORONI_TEX")
 
 
 #Shader Editor - Color panel
@@ -6335,34 +4676,15 @@ class NODES_PT_shader_add_color_common(bpy.types.Panel, NodePanel):
 
         ##### Icon Buttons
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "BRIGHTNESS_CONTRAST")
-            props.use_transform = True
-            props.type = "ShaderNodeBrightContrast"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_GAMMA")
-            props.use_transform = True
-            props.type = "ShaderNodeGamma"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
-            props.use_transform = True
-            props.type = "ShaderNodeHueSaturation"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_INVERT")
-            props.use_transform = True
-            props.type = "ShaderNodeInvert"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MIXRGB")
-            props.use_transform = True
-            props.type = "ShaderNodeMixRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeRGBCurve"
+            self.draw_text_button(flow, "ShaderNodeBrightContrast", text="", icon="BRIGHTNESS_CONTRAST")
+            self.draw_text_button(flow, "ShaderNodeGamma", text="", icon="NODE_GAMMA")
+            self.draw_text_button(flow, "ShaderNodeHueSaturation", text="", icon="NODE_HUESATURATION")
+            self.draw_text_button(flow, "ShaderNodeInvert", text="", icon="NODE_INVERT")
+            self.draw_text_button(flow, "ShaderNodeMixRGB", text="", icon="NODE_MIXRGB")
+            self.draw_text_button(flow, "ShaderNodeRGBCurve", text="", icon="NODE_RGBCURVE")
 
 
 #Shader Editor - Vector panel
@@ -6404,22 +4726,12 @@ class NODES_PT_shader_add_vector_common(bpy.types.Panel, NodePanel):
         ##### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MAPPING")
-            props.use_transform = True
-            props.type = "ShaderNodeMapping"
-
-            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
-            props.use_transform = True
-            props.type = "ShaderNodeNormal"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
-            props.use_transform = True
-            props.type = "ShaderNodeNormalMap"
+            self.draw_text_button(flow, "ShaderNodeMapping", text="", icon="NODE_MAPPING")
+            self.draw_text_button(flow, "ShaderNodeNormal", text="", icon="RECALC_NORMALS")
+            self.draw_text_button(flow, "ShaderNodeNormalMap", text="", icon="NODE_NORMALMAP")
 
 
 #Shader Editor - Converter panel
@@ -6467,34 +4779,15 @@ class NODES_PT_shader_add_converter_common(bpy.types.Panel, NodePanel):
 
         ##### Icon Buttons
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeClamp"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
-            props.use_transform = True
-            props.type = "ShaderNodeValToRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "FLOAT_CURVE")
-            props.use_transform = True
-            props.type = "ShaderNodeFloatCurve"
-
-            props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
-            props.use_transform = True
-            props.type = "ShaderNodeMapRange"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
-            props.use_transform = True
-            props.type = "ShaderNodeMath"
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBTOBW")
-            props.use_transform = True
-            props.type = "ShaderNodeRGBToBW"
+            self.draw_text_button(flow, "ShaderNodeClamp", text="", icon="NODE_CLAMP")
+            self.draw_text_button(flow, "ShaderNodeValToRGB", text="", icon="NODE_COLORRAMP")
+            self.draw_text_button(flow, "ShaderNodeFloatCurve", text="", icon="FLOAT_CURVE")
+            self.draw_text_button(flow, "ShaderNodeMapRange", text="", icon="NODE_MAP_RANGE")
+            self.draw_text_button(flow, "ShaderNodeMath", text="", icon="NODE_MATH")
+            self.draw_text_button(flow, "ShaderNodeRGBToBW", text="", icon="NODE_RGBTOBW")
 
 
 #Shader Editor - Script panel
@@ -6530,14 +4823,10 @@ class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
         ##### Icon Buttons
 
         else:
-
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            props = flow.operator("node.add_node", text = "", icon = "FILE_SCRIPT")
-            props.use_transform = True
-            props.type = "ShaderNodeScript"
+            self.draw_text_button(flow, "ShaderNodeScript", text="", icon="FILE_SCRIPT")
 
 
 classes = (
