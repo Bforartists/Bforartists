@@ -4495,7 +4495,7 @@ static void object_convert_ui(bContext * /*C*/, wmOperator *op)
 {
   uiLayout *layout = op->layout;
 
-  layout->uiLayoutSetPropSep(false); /*bfa - checkboxes, don't split*/
+  layout->use_property_decorate_set(false); /*bfa - checkboxes, don't split*/
 
   layout->prop(op->ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(op->ptr, "keep_original", UI_ITEM_NONE, std::nullopt, ICON_NONE);
