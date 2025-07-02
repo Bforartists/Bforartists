@@ -1517,7 +1517,6 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "ShaderNodeTexImage")
             self.draw_icon_button(flow, "ShaderNodeTexMagic")
             self.draw_icon_button(flow, "ShaderNodeTexNoise")
-            self.draw_icon_button(flow, "ShaderNodeTexPointDensity")
             self.draw_icon_button(flow, "ShaderNodeTexSky")
             self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
             self.draw_icon_button(flow, "ShaderNodeTexWave")
