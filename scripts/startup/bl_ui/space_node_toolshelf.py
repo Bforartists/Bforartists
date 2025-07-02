@@ -245,7 +245,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "ShaderNodeTexCoord")
 
             if context.space_data.shader_type == 'LINESTYLE':
-                self.draw_text_button(col, "ShaderNodeUVALongStroke")
+                self.draw_text_button(col, "ShaderNodeUVAlongStroke")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -278,7 +278,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "ShaderNodeTexCoord")
 
             if context.space_data.shader_type == 'LINESTYLE':
-                self.draw_icon_button(flow, "ShaderNodeUVALongStroke")
+                self.draw_icon_button(flow, "ShaderNodeUVAlongStroke")
             self.draw_icon_button(flow, "ShaderNodeUVMap")
             self.draw_icon_button(flow, "ShaderNodeValue")
             self.draw_icon_button(flow, "ShaderNodeVolumeInfo")
