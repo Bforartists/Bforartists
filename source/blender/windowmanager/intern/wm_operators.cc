@@ -835,7 +835,7 @@ void WM_operator_properties_reset(wmOperator *op)
 
       if ((RNA_property_flag(prop) & (PROP_SKIP_SAVE | PROP_SKIP_PRESET)) == 0) {
         const char *identifier = RNA_property_identifier(prop);
-        RNA_struct_idprops_unset(op->ptr, identifier);
+        RNA_struct_system_idprops_unset(op->ptr, identifier);
       }
     }
     RNA_PROP_END;
@@ -1660,7 +1660,7 @@ static uiBlock *wm_block_dialog_create(bContext *C, ARegion *region, void *user_
   if (data->position == WM_POPUP_POSITION_MOUSE) {
     const float button_center_x = windows_layout ? -0.4f : -0.90f;
     const float button_center_y = small ? 2.0f : 3.1f;
-    const int bounds_offset[2] = {int(button_center_x * uiLayoutGetWidth(layout)),
+    const int bounds_offset[2] = {int(button_center_x * layout->width()),
                                   int(button_center_y * UI_UNIT_X)};
     UI_block_bounds_set_popup(block, padding, bounds_offset);
   }
@@ -2366,7 +2366,7 @@ static void WM_OT_window_close(wmOperatorType *ot)
 {
   ot->name = "Close Window";
   ot->idname = "WM_OT_window_close";
-  ot->description = "Close the current window";
+  ot->description = "Close the current window, If this is the last open window, the application will quit"; /* BFA */
 
   ot->exec = wm_window_close_exec;
   ot->poll = WM_operator_winactive;

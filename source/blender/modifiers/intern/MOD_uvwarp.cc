@@ -23,6 +23,7 @@
 #include "DNA_screen_types.h"
 
 #include "BKE_action.hh" /* BKE_pose_channel_find_name */
+#include "BKE_attribute.hh"
 #include "BKE_customdata.hh"
 #include "BKE_deform.hh"
 #include "BKE_lib_query.hh"
@@ -82,7 +83,7 @@ static void matrix_from_obj_pchan(float mat[4][4], Object *ob, const char *bonen
 struct UVWarpData {
   blender::OffsetIndices<int> faces;
   blender::Span<int> corner_verts;
-  float (*mloopuv)[2];
+  blender::MutableSpan<blender::float2> mloopuv;
 
   const MDeformVert *dvert;
   int defgrp_index;
@@ -99,7 +100,7 @@ static void uv_warp_compute(void *__restrict userdata,
   const blender::IndexRange face = data->faces[i];
   const blender::Span<int> face_verts = data->corner_verts.slice(face);
 
-  float(*mluv)[2] = &data->mloopuv[face.start()];
+  blender::float2 *mluv = &data->mloopuv[face.start()];
 
   const MDeformVert *dvert = data->dvert;
   const int defgrp_index = data->defgrp_index;
@@ -195,14 +196,16 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   const blender::OffsetIndices faces = mesh->faces();
   const blender::Span<int> corner_verts = mesh->corner_verts();
 
-  float(*mloopuv)[2] = static_cast<float(*)[2]>(CustomData_get_layer_named_for_write(
-      &mesh->corner_data, CD_PROP_FLOAT2, uvname, corner_verts.size()));
+  blender::bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
+  blender::bke::SpanAttributeWriter mloopuv =
+      attributes.lookup_or_add_for_write_span<blender::float2>(uvname,
+                                                               blender::bke::AttrDomain::Corner);
   MOD_get_vgroup(ctx->object, mesh, umd->vgroup_name, &dvert, &defgrp_index);
 
   UVWarpData data{};
   data.faces = faces;
   data.corner_verts = corner_verts;
-  data.mloopuv = mloopuv;
+  data.mloopuv = mloopuv.span;
   data.dvert = dvert;
   data.defgrp_index = defgrp_index;
   data.warp_mat = warp_mat;
@@ -214,6 +217,8 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   BLI_task_parallel_range(0, faces.size(), &data, uv_warp_compute, &settings);
 
   mesh->runtime->is_original_bmesh = false;
+
+  mloopuv.finish();
 
   return mesh;
 }
@@ -249,10 +254,9 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA warp_obj_ptr;
   PointerRNA obj_data_ptr = RNA_pointer_get(&ob_ptr, "data");
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
-  uiItemPointerR(
-      layout, ptr, "uv_layer", &obj_data_ptr, "uv_layers", std::nullopt, ICON_GROUP_UVS);
+  layout->prop_search(ptr, "uv_layer", &obj_data_ptr, "uv_layers", std::nullopt, ICON_GROUP_UVS);
 
   col = &layout->column(false);
   col->prop(ptr, "center", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -266,15 +270,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   warp_obj_ptr = RNA_pointer_get(ptr, "object_from");
   if (!RNA_pointer_is_null(&warp_obj_ptr) && RNA_enum_get(&warp_obj_ptr, "type") == OB_ARMATURE) {
     PointerRNA warp_obj_data_ptr = RNA_pointer_get(&warp_obj_ptr, "data");
-    uiItemPointerR(
-        col, ptr, "bone_from", &warp_obj_data_ptr, "bones", std::nullopt, ICON_BONE_DATA);
+    col->prop_search(ptr, "bone_from", &warp_obj_data_ptr, "bones", std::nullopt, ICON_BONE_DATA);
   }
 
   col->prop(ptr, "object_to", UI_ITEM_NONE, CTX_IFACE_(BLT_I18NCONTEXT_MODIFIER, "To"), ICON_NONE);
   warp_obj_ptr = RNA_pointer_get(ptr, "object_to");
   if (!RNA_pointer_is_null(&warp_obj_ptr) && RNA_enum_get(&warp_obj_ptr, "type") == OB_ARMATURE) {
     PointerRNA warp_obj_data_ptr = RNA_pointer_get(&warp_obj_ptr, "data");
-    uiItemPointerR(col, ptr, "bone_to", &warp_obj_data_ptr, "bones", std::nullopt, ICON_BONE_DATA);
+    col->prop_search(ptr, "bone_to", &warp_obj_data_ptr, "bones", std::nullopt, ICON_BONE_DATA);
   }
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
@@ -288,7 +291,7 @@ static void transform_panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);

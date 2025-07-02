@@ -454,15 +454,15 @@ static void rna_def_area(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_editortypemenu", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_NO_EDITORTYPEMENU);
   RNA_def_property_ui_text(prop,
-                           "Show Editortype menu",
-                           "Shows or hides the Editortype menu to change the editor type");
+                           "Show editor type menu",
+                           "Shows or hides the menu for changing the editor type");
 
   // bfa - show hide the File toolbars
   prop = RNA_def_property(srna, "file_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_FILE);
   RNA_def_property_ui_text(prop, "File Toolbars", "Shows or hides the File Toolbars");
 
-  // bfa - show hide the Meshedit toolbars
+  // bfa - show hide the Mesh Edit toolbars
   prop = RNA_def_property(srna, "meshedit_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_MESHEDIT);
   RNA_def_property_ui_text(prop, "Mesh Edit Toolbars", "Shows or hides the Mesh Edit Toolbars");
@@ -502,7 +502,7 @@ static void rna_def_area(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_FILE);
   RNA_def_property_ui_text(prop, "File Topbars", "Shows or hides the File Topbars");
 
-  // bfa - show hide the Meshedit topbars
+  // bfa - show hide the Mesh Edit topbars
   prop = RNA_def_property(srna, "meshedit_topbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOPBAR_MESHEDIT);
   RNA_def_property_ui_text(prop, "Mesh Edit Topbars", "Shows or hides the Mesh Edit Topbars");

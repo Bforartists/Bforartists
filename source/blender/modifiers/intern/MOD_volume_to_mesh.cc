@@ -80,7 +80,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
   VolumeToMeshModifierData *vmmd = static_cast<VolumeToMeshModifierData *>(ptr->data);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   {
     col = &layout->column(false); /* bfa - our layout */
@@ -107,7 +107,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     /* bfa - our layout */
     col = &layout->column(false);;
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/

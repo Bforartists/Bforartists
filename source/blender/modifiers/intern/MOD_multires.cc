@@ -298,7 +298,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   col = &layout->column(true);
   col->prop(ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
@@ -312,7 +312,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
@@ -321,7 +321,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
@@ -416,7 +416,7 @@ static void generate_panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(false);
   if (is_external) {
     row->op("OBJECT_OT_multires_external_pack", IFACE_("Pack External"), ICON_NONE);
-    uiLayoutSetPropSep(col, true);
+    col->use_property_split_set(true);
     row = &col->row(false);
     row->prop(ptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
@@ -434,7 +434,7 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
 
   bool has_displacement = RNA_int_get(ptr, "total_levels") != 0;
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->active_set(!has_displacement);
 
@@ -448,14 +448,14 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/

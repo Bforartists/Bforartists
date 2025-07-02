@@ -2019,7 +2019,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA op_ptr;
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "branch_smoothing", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -2031,7 +2031,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/

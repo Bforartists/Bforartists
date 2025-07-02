@@ -158,7 +158,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
   int weld_mode = RNA_enum_get(ptr, "mode");
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "merge_threshold", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
@@ -167,7 +167,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     uiLayout * row, *col;
     col = &layout->column(true);
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();
     row->prop( ptr, "loose_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "loose_edges", 0); /*bfa - decorator*/

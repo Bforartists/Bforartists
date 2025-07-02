@@ -623,7 +623,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "operation", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "operand_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (RNA_enum_get(ptr, "operand_type") == eBooleanModifierFlag_Object) {
@@ -647,7 +647,7 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
   const bool use_exact = RNA_enum_get(ptr, "solver") == eBooleanModifierSolver_Mesh_Arr;
   const bool use_manifold = RNA_enum_get(ptr, "solver") == eBooleanModifierSolver_Manifold;
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   col = &layout->column(true); /* bfa - our layout */
   if (use_exact) {
@@ -657,7 +657,7 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
 
       col = &layout->column(true); /* bfa - our layout */
       row = &col->row(true); /* bfa - our layout */
-      uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+      row->use_property_split_set(false); /* bfa - use_property_split = False */
       row->separator(); /*bfa - indent*/
       row->prop(ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       uiItemDecoratorR(row, ptr, "use_self", 0); /*bfa - decorator*/
@@ -665,13 +665,13 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
 
     col = &layout->column(true); /* bfa - our layout */
     row = &col->row(true); /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_hole_tolerant", 0); /*bfa - decorator*/
   }
   else if (use_manifold) {
-    /* No options as of yet. */
+    col->prop(ptr, "material_mode", UI_ITEM_NONE, IFACE_("Materials"), ICON_NONE);
   }
   else {
     col->prop(ptr, "double_threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);

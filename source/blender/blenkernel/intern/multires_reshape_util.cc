@@ -16,6 +16,7 @@
 #include "DNA_object_types.h"
 
 #include "BLI_math_matrix.h"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_vector.h"
 #include "BLI_task.h"
 
@@ -73,8 +74,7 @@ static void context_init_lookup(MultiresReshapeContext *reshape_context)
 {
   const blender::OffsetIndices faces = reshape_context->base_faces;
 
-  reshape_context->face_start_grid_index = MEM_malloc_arrayN<int>(size_t(faces.size()),
-                                                                  "face_start_grid_index");
+  reshape_context->face_start_grid_index.reinitialize(faces.size());
   int num_grids = 0;
   int num_ptex_faces = 0;
   for (const int face_index : faces.index_range()) {
@@ -84,10 +84,8 @@ static void context_init_lookup(MultiresReshapeContext *reshape_context)
     num_ptex_faces += (num_corners == 4) ? 1 : num_corners;
   }
 
-  reshape_context->grid_to_face_index = MEM_malloc_arrayN<int>(size_t(num_grids),
-                                                               "grid_to_face_index");
-  reshape_context->ptex_start_grid_index = MEM_malloc_arrayN<int>(size_t(num_ptex_faces),
-                                                                  "ptex_start_grid_index");
+  reshape_context->grid_to_face_index.reinitialize(num_grids);
+  reshape_context->ptex_start_grid_index.reinitialize(num_ptex_faces);
   for (int face_index = 0, grid_index = 0, ptex_index = 0; face_index < faces.size(); ++face_index)
   {
     const int num_corners = faces[face_index].size();
@@ -351,10 +349,6 @@ void multires_reshape_context_free(MultiresReshapeContext *reshape_context)
   }
 
   multires_reshape_free_original_grids(reshape_context);
-
-  MEM_SAFE_FREE(reshape_context->face_start_grid_index);
-  MEM_SAFE_FREE(reshape_context->ptex_start_grid_index);
-  MEM_SAFE_FREE(reshape_context->grid_to_face_index);
 }
 
 /** \} */
@@ -459,8 +453,8 @@ GridCoord multires_reshape_ptex_coord_to_grid(const MultiresReshapeContext *resh
 void multires_reshape_tangent_matrix_for_corner(const MultiresReshapeContext *reshape_context,
                                                 const int face_index,
                                                 const int corner,
-                                                const float dPdu[3],
-                                                const float dPdv[3],
+                                                const blender::float3 &dPdu,
+                                                const blender::float3 &dPdv,
                                                 blender::float3x3 &r_tangent_matrix)
 {
   /* For a quad faces we would need to flip the tangent, since they will use
@@ -742,17 +736,15 @@ static void object_grid_element_to_tangent_displacement(
   blender::float3x3 tangent_matrix;
   multires_reshape_evaluate_limit_at_grid(reshape_context, grid_coord, P, tangent_matrix);
 
-  float inv_tangent_matrix[3][3];
-  invert_m3_m3(inv_tangent_matrix, tangent_matrix.ptr());
+  const blender::float3x3 inv_tangent_matrix = blender::math::invert(tangent_matrix);
 
   ReshapeGridElement grid_element = multires_reshape_grid_element_for_grid_coord(reshape_context,
                                                                                  grid_coord);
 
-  float D[3];
+  blender::float3 D;
   sub_v3_v3v3(D, grid_element.displacement, P);
 
-  float tangent_D[3];
-  mul_v3_m3v3(tangent_D, inv_tangent_matrix, D);
+  blender::float3 tangent_D = blender::math::transform_direction(inv_tangent_matrix, D);
 
   copy_v3_v3(grid_element.displacement, tangent_D);
 }
@@ -785,7 +777,7 @@ static void assign_final_coords_from_mdisps(const MultiresReshapeContext *reshap
 
   ReshapeGridElement grid_element = multires_reshape_grid_element_for_grid_coord(reshape_context,
                                                                                  grid_coord);
-  float D[3];
+  blender::float3 D;
   mul_v3_m3v3(D, tangent_matrix.ptr(), grid_element.displacement);
 
   add_v3_v3v3(grid_element.displacement, P, D);
@@ -809,7 +801,7 @@ static void assign_final_elements_from_orig_mdisps(const MultiresReshapeContext 
   const ReshapeConstGridElement orig_grid_element =
       multires_reshape_orig_grid_element_for_grid_coord(reshape_context, grid_coord);
 
-  float D[3];
+  blender::float3 D;
   mul_v3_m3v3(D, tangent_matrix.ptr(), orig_grid_element.displacement);
 
   ReshapeGridElement grid_element = multires_reshape_grid_element_for_grid_coord(reshape_context,

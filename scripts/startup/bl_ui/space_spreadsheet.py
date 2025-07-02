@@ -26,7 +26,6 @@ class SPREADSHEET_HT_header(bpy.types.Header):
         layout = self.layout
         space = context.space_data
 
-        layout.template_header()
         ALL_MT_editormenu_spreadsheet.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
         SPREADSHEET_MT_editor_menus.draw_collapsible(context, layout)
@@ -37,6 +36,7 @@ class SPREADSHEET_HT_header(bpy.types.Header):
         sub.active = self._selection_filter_available(space)
         sub.prop(space, "show_only_selected", text="")
         row.prop(space, "use_filter", toggle=True, icon='FILTER', icon_only=True)
+        row.prop(space, "show_internal_attributes", toggle=True, icon='NODE_ATTRIBUTE', icon_only=True) # bfa - moved from view menu, temp icon
 
     @staticmethod
     def _selection_filter_available(space):

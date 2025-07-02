@@ -512,7 +512,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   bool is_bound = RNA_boolean_get(ptr, "is_bound");
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   col = &layout->column(true);
   col->enabled_set(!is_bound);
@@ -526,7 +526,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout->column(true); /* bfa - our layout */
   row = &col->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_dynamic_bind", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_dynamic_bind", 0); /*bfa - decorator*/

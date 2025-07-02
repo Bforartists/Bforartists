@@ -425,8 +425,8 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
 {
 
   uiLayout *layout = op->layout;
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
 
   PointerRNA *ptr = op->ptr;
   const bUserExtensionRepoAddType repo_type = bUserExtensionRepoAddType(RNA_enum_get(ptr, "type"));
@@ -434,7 +434,7 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
   switch (repo_type) {
     case bUserExtensionRepoAddType::Remote: {
       layout->prop(op->ptr, "remote_url", UI_ITEM_R_IMMEDIATE, std::nullopt, ICON_NONE);
-      uiLayoutSetPropSep(layout, false);
+      layout->use_property_split_set(false);
       /* bfa - use_property_split = False */ /* bfa - use_property_split = False */
       layout->prop(op->ptr, "use_sync_on_startup", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -444,7 +444,7 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
       const int token_icon = (use_access_token && RNA_string_length(op->ptr, "access_token")) ?
                                  ICON_LOCKED :
                                  ICON_UNLOCKED;
-      
+
       //uiLayout *row = &layout->row(true, IFACE_("Authentication")); -/*bfa, old code*/
       uiLayout *row = &layout->row(true);/*bfa*/
       layout->label(IFACE_("Authentication"), ICON_NONE); /*BFA - separate label*/
@@ -468,9 +468,9 @@ static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
     }
   }
 
-  uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
+  layout->use_property_split_set(false); /* bfa - use_property_split = False */
   layout->prop(op->ptr, "use_custom_directory", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = False */
+  layout->use_property_split_set(true); /* bfa - use_property_split = False */
   uiLayout *col = &layout->row(false);
   col->active_set(RNA_boolean_get(ptr, "use_custom_directory"));
   col->prop(op->ptr, "custom_directory", UI_ITEM_NONE, std::nullopt, ICON_NONE);

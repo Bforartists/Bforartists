@@ -230,7 +230,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->prop(ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   col = &layout->column(false);
   if (mode == MOD_REMESH_VOXEL) {
@@ -248,7 +248,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     /* bfa - our layout */
     col = row = &layout->column(true);
     row = &col->row(true);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
     row = &layout->row(false);
@@ -258,7 +258,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/

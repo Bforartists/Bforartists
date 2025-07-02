@@ -274,7 +274,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   uiLayout *row; /* bfa - added row */
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
   layout->prop(ptr, "mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiLayout *col = &layout->column(true);
@@ -293,7 +293,7 @@ static void panel_draw(const bContext *C, Panel *panel)
       C, ptr, "open_random_panel", ptr, "use_random", IFACE_("Randomize"));
   if (uiLayout *random_layout = random_panel_layout.body) {
     uiLayout *subcol = &random_layout->column(false);
-    uiLayoutSetPropSep(subcol, true);
+    subcol->use_property_split_set(true);
     subcol->active_set(RNA_boolean_get(ptr, "use_random"));
 
     subcol->prop(ptr, "step", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -307,14 +307,14 @@ static void panel_draw(const bContext *C, Panel *panel)
       C, ptr, "open_curvature_panel", ptr, "use_curvature", IFACE_("Curvature"));
   if (uiLayout *curvature_layout = curvature_panel_layout.body) {
     uiLayout *subcol = &curvature_layout->column(false);
-    uiLayoutSetPropSep(subcol, true);
+    subcol->use_property_split_set(true);
     subcol->active_set(RNA_boolean_get(ptr, "use_curvature"));
 
     subcol->prop(ptr, "point_density", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     subcol->prop(ptr, "segment_influence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     subcol->prop(ptr, "max_angle", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row = &subcol->row(true); /* bfa - our layout */
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "invert_curvature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiItemDecoratorR(row, ptr, "invert_curvature", 0); /*bfa - decorator*/

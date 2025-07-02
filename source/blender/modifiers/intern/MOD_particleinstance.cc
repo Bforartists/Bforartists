@@ -6,6 +6,7 @@
  * \ingroup modifiers
  */
 
+#include "BLI_color.hh"
 #include "MEM_guardedalloc.h"
 
 #include "BLI_utildefines.h"
@@ -178,7 +179,7 @@ static bool particle_skip(ParticleInstanceModifierData *pimd, ParticleSystem *ps
   return true;
 }
 
-static void store_float_in_vcol(MLoopCol *vcol, float float_value)
+static void store_float_in_vcol(blender::ColorGeometry4b *vcol, float float_value)
 {
   const uchar value = unit_float_to_uchar_clamp(float_value);
   vcol->r = vcol->g = vcol->b = value;
@@ -187,6 +188,7 @@ static void store_float_in_vcol(MLoopCol *vcol, float float_value)
 
 static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh)
 {
+  using namespace blender;
   Mesh *result;
   ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *)md;
   Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
@@ -317,14 +319,16 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   blender::MutableSpan<int> face_offsets = result->face_offsets_for_write();
   blender::MutableSpan<int> corner_verts = result->corner_verts_for_write();
   blender::MutableSpan<int> corner_edges = result->corner_edges_for_write();
-
-  MLoopCol *mloopcols_index = static_cast<MLoopCol *>(CustomData_get_layer_named_for_write(
-      &result->corner_data, CD_PROP_BYTE_COLOR, pimd->index_layer_name, result->corners_num));
-  MLoopCol *mloopcols_value = static_cast<MLoopCol *>(CustomData_get_layer_named_for_write(
-      &result->corner_data, CD_PROP_BYTE_COLOR, pimd->value_layer_name, result->corners_num));
+  blender::bke::MutableAttributeAccessor attributes = result->attributes_for_write();
+  bke::SpanAttributeWriter mloopcols_index =
+      attributes.lookup_or_add_for_write_span<ColorGeometry4b>(pimd->index_layer_name,
+                                                               bke::AttrDomain::Corner);
+  bke::SpanAttributeWriter mloopcols_value =
+      attributes.lookup_or_add_for_write_span<ColorGeometry4b>(pimd->value_layer_name,
+                                                               bke::AttrDomain::Corner);
   int *vert_part_index = nullptr;
   float *vert_part_value = nullptr;
-  if (mloopcols_index != nullptr) {
+  if (mloopcols_index) {
     vert_part_index = MEM_calloc_arrayN<int>(maxvert, "vertex part index array");
   }
   if (mloopcols_value) {
@@ -491,14 +495,14 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
           corner_verts[dst_corner_i] = orig_corner_verts[orig_corner_i] + (p_skip * totvert);
           corner_edges[dst_corner_i] = orig_corner_edges[orig_corner_i] + (p_skip * totedge);
           const int vert = corner_verts[dst_corner_i];
-          if (mloopcols_index != nullptr) {
+          if (mloopcols_index) {
             const int part_index = vert_part_index[vert];
-            store_float_in_vcol(&mloopcols_index[dst_corner_i],
+            store_float_in_vcol(&mloopcols_index.span[dst_corner_i],
                                 float(part_index) / float(psys->totpart - 1));
           }
-          if (mloopcols_value != nullptr) {
+          if (mloopcols_value) {
             const float part_value = vert_part_value[vert];
-            store_float_in_vcol(&mloopcols_value[dst_corner_i], part_value);
+            store_float_in_vcol(&mloopcols_value.span[dst_corner_i], part_value);
           }
         }
       }
@@ -515,6 +519,9 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   MEM_SAFE_FREE(vert_part_index);
   MEM_SAFE_FREE(vert_part_value);
 
+  mloopcols_index.finish();
+  mloopcols_value.finish();
+
   return result;
 }
 
@@ -529,17 +536,16 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA particle_obj_ptr = RNA_pointer_get(ptr, "object");
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (!RNA_pointer_is_null(&particle_obj_ptr)) {
-    uiItemPointerR(layout,
-                   ptr,
-                   "particle_system",
-                   &particle_obj_ptr,
-                   "particle_systems",
-                   IFACE_("Particle System"),
-                   ICON_NONE);
+    layout->prop_search(ptr,
+                        "particle_system",
+                        &particle_obj_ptr,
+                        "particle_systems",
+                        IFACE_("Particle System"),
+                        ICON_NONE);
   }
   else {
     layout->prop(ptr, "particle_system_index", UI_ITEM_NONE, IFACE_("Particle System"), ICON_NONE);
@@ -586,7 +592,7 @@ static void path_panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->active_set(RNA_boolean_get(ptr, "use_path"));
 
@@ -599,7 +605,7 @@ static void path_panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_preserve_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_preserve_shape", 0); /*bfa - decorator*/
@@ -615,13 +621,13 @@ static void layers_panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA obj_data_ptr = RNA_pointer_get(&ob_ptr, "data");
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   col = &layout->column(false);
-  uiItemPointerR(
-      col, ptr, "index_layer_name", &obj_data_ptr, "vertex_colors", IFACE_("Index"), ICON_NONE);
-  uiItemPointerR(
-      col, ptr, "value_layer_name", &obj_data_ptr, "vertex_colors", IFACE_("Value"), ICON_NONE);
+  col->prop_search(
+      ptr, "index_layer_name", &obj_data_ptr, "vertex_colors", IFACE_("Index"), ICON_NONE);
+  col->prop_search(
+      ptr, "value_layer_name", &obj_data_ptr, "vertex_colors", IFACE_("Value"), ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

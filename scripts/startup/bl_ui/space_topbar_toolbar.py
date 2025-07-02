@@ -138,7 +138,7 @@ class TOPBAR_PT_main(Panel):
             grid = box.grid_flow(row_major=False, columns=2, even_columns=True, even_rows=True, align=True)
 
             grid.operator("bfa.reset_files", text='Files')
-            grid.operator("bfa.reset_meshedit", text='Meshedit')
+            grid.operator("bfa.reset_meshedit", text='Mesh Edit')
             grid.operator("bfa.reset_primitives", text='Primitives')
             grid.operator("bfa.reset_image", text='Image')
             grid.operator("bfa.reset_tools", text='Tools')
@@ -202,7 +202,7 @@ class TOPBAR_PT_main(Panel):
                 row.alert = True
                 row.label(text='Files is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_topbar_types == 'Meshedit'):
+        if (addon_prefs.bfa_topbar_types == 'Mesh Edit'):
             if addon_prefs.topbar_mesh_cbox:
                 row = box.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "topbar_mesh_vertices_splitconnect",toggle=addon_prefs.bfa_button_style)
@@ -220,7 +220,7 @@ class TOPBAR_PT_main(Panel):
                 row = box.row()
                 row.alignment = 'Center'.upper()
                 row.alert = True
-                row.label(text='Meshedit is hidden', icon="NONE")
+                row.label(text='Mesh Edit is hidden', icon="NONE")
 
         if (addon_prefs.bfa_topbar_types == 'Primitives'):
             if addon_prefs.topbar_primitives_cbox:
@@ -562,7 +562,7 @@ class TOPBAR_PT_file(Panel):
         col.prop(addon_prefs, "topbar_file_render_misc",toggle=addon_prefs.bfa_button_style)
 
 
-######################################## Meshedit Menu ########################################
+######################################## Mesh Edit Menu ########################################
 class TOPBAR_MT_meshedit(Menu):
     bl_idname = "TOPBAR_MT_meshedit"
     bl_label = ""
@@ -698,7 +698,7 @@ class TOPBAR_MT_meshedit(Menu):
                             row.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
 
 
-######################################## Meshedit Panel ########################################
+######################################## Mesh Edit Panel ########################################
 class TOPBAR_PT_meshedit(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
@@ -717,7 +717,7 @@ class TOPBAR_PT_meshedit(Panel):
 
             col = layout.column(align = True)
             col.alert=False
-            col.label(text = "Topbar Meshedit:", icon="NONE")
+            col.label(text = "Topbar Mesh Edit:", icon="NONE")
             col.separator()
             col.alert=True
             col.label(text = "No Active Mesh", icon="INFO")
@@ -725,7 +725,7 @@ class TOPBAR_PT_meshedit(Panel):
         if obj is not None:
 
             col = layout.column(align = True)
-            col.label(text = "Topbar Meshedit:", icon="NONE")
+            col.label(text = "Topbar Mesh Edit:", icon="NONE")
             col.separator()
             col.alert=True
             col.label(text = "Edit Mode Only", icon="EDITMODE_HLT")

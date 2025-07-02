@@ -145,7 +145,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
                      (MOD_MIR_BISECT_AXIS_X | MOD_MIR_BISECT_AXIS_Y | MOD_MIR_BISECT_AXIS_Z));
 
   col = &layout->column(false);
-  uiLayoutSetPropSep(col, true);
+  col->use_property_split_set(true);
 
   prop = RNA_struct_find_property(ptr, "use_axis");
   row = &col->row(true, IFACE_("Axis"));
@@ -173,7 +173,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_clip", UI_ITEM_NONE, IFACE_("Clipping"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_clip", 0); /*bfa - decorator*/
@@ -184,7 +184,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   row = &split->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_mirror_merge", UI_ITEM_NONE, "Merge", ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_mirror_merge", 0); /*bfa - decorator*/
@@ -192,7 +192,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   row = &split->row(true);
   if (RNA_boolean_get(ptr, "use_mirror_merge")) {
-    uiLayoutSetPropSep(row, true);
+    row->use_property_decorate_set(true);
     row->prop(ptr, "merge_threshold", toggles_flag, "", ICON_NONE);
   }
   else {
@@ -203,7 +203,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   col = &layout->row(true); /*bfa - col, not sub*/
-  uiLayoutSetPropSep(col, true);   /* bfa - use_property_split = true */
+  col->use_property_split_set(true);   /* bfa - use_property_split = true */
   col->active_set(is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
   col->prop(ptr, "bisect_threshold", UI_ITEM_NONE, IFACE_("Bisect Distance"), ICON_NONE);
 
@@ -217,7 +217,7 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   col = &layout->column(true);
   /* bfa - our layout */
@@ -225,8 +225,8 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   row = &split->row(false);
-  uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_decorate_set(false);
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_mirror_u", UI_ITEM_NONE, "Mirror U", ICON_NONE);
 
   /* bfa - our layout */
@@ -243,8 +243,8 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   row = &split->row(false);
-  uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_decorate_set(false);
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_mirror_v", UI_ITEM_NONE, "V", ICON_NONE);
 
   /* bfa - our layout */
@@ -263,13 +263,13 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_mirror_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_mirror_vertex_groups", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_mirror_udim", UI_ITEM_NONE, IFACE_("Flip UDIM"), ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_mirror_udim", 0); /*bfa - decorator*/
 }

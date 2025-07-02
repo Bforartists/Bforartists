@@ -448,14 +448,6 @@ std::optional<DropLocation> TreeViewItemDropTarget::choose_drop_location(
 
 /* ---------------------------------------------------------------------- */
 
-void AbstractTreeViewItem::tree_row_click_fn(bContext *C, void *but_arg1, void * /*arg2*/)
-{
-  uiButViewItem *item_but = (uiButViewItem *)but_arg1;
-  AbstractTreeViewItem &tree_item = reinterpret_cast<AbstractTreeViewItem &>(*item_but->view_item);
-
-  tree_item.activate(*C);
-}
-
 void AbstractTreeViewItem::add_treerow_button(uiBlock &block)
 {
   /* For some reason a width > (UI_UNIT_X * 2) make the layout system use all available width. */
@@ -474,7 +466,6 @@ void AbstractTreeViewItem::add_treerow_button(uiBlock &block)
 
   view_item_but_->view_item = this;
   view_item_but_->draw_height = unpadded_item_height();
-  UI_but_func_set(view_item_but_, tree_row_click_fn, view_item_but_, nullptr);
 }
 
 int AbstractTreeViewItem::indent_width() const
@@ -486,7 +477,7 @@ void AbstractTreeViewItem::add_indent(uiLayout &row) const
 {
   uiBlock *block = row.block();
   uiLayout *subrow = &row.row(true);
-  uiLayoutSetFixedSize(subrow, true);
+  subrow->fixed_size_set(true);
 
   uiDefBut(block, UI_BTYPE_SEPR, 0, "", 0, 0, this->indent_width(), 0, nullptr, 0.0, 0.0, "");
 
@@ -901,7 +892,7 @@ void TreeViewLayoutBuilder::build_row(AbstractTreeViewItem &item) const
 
   uiLayout &prev_layout = current_layout();
 
-  const int width = uiLayoutGetWidth(&prev_layout);
+  const int width = prev_layout.width();
   if (width < int(40 * UI_SCALE_FAC)) {
     return;
   }

@@ -104,7 +104,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "quad_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "ngon_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -113,7 +113,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   col = &layout->column(true);
   row = &col->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "keep_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 

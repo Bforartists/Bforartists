@@ -1891,12 +1891,12 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
   uiLayout *layout = op->layout;
   uiLayout *col, *row; /*bfa, added *col and *row*/
 
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_decorate_set(true);
+ layout->use_property_decorate_set(false);
   layout->prop(op->ptr, "shape_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col = &layout->column(false); /*bfa -  added col*/
-  uiLayoutSetPropSep(col, false);      /* bfa - use_property_split = False */
+  col->use_property_split_set(false);      /* bfa - use_property_split = False */
   col->prop(op->ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   {
     // ------------------ bfa new left aligned prop with triangle button
@@ -1906,8 +1906,8 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 
     /* FIRST PART ................................................ */
     row = &split->row(false);
-    uiLayoutSetPropDecorate(row, false);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_decorate_set(false);
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(op->ptr, "rotate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* SECOND PART ................................................ */
@@ -1946,8 +1946,8 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 
     /* FIRST PART ................................................ */
     row = &split->row(false);
-    uiLayoutSetPropDecorate(row, false);
-    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+    row->use_property_decorate_set(false);
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(op->ptr, "pin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* SECOND PART ................................................ */
@@ -1970,9 +1970,9 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
       layout->separator();
     }
   }
-  uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
+  layout->use_property_split_set(false); /* bfa - use_property_split = False */
   layout->prop(op->ptr, "merge_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = true */
+  layout->use_property_decorate_set(true); /* bfa - use_property_split = true */
   layout->prop(op->ptr, "udim_source", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->separator();
 }
@@ -2945,8 +2945,8 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
 {
   uiLayout *layout = op->layout;
 
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
 
   /* Main draw call */
   PointerRNA ptr = RNA_pointer_create_discrete(nullptr, op->type->srna, op->properties);

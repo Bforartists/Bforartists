@@ -351,11 +351,11 @@ struct PropertyRNA {
   short tags;
 
   /**
-   * Indicates which set of template variables this property supports.
+   * Indicates which set of purpose-specific path template variables this
+   * property supports.
    *
-   * Must be set for path properties that are marked as supporting path
-   * templates (`PROP_PATH_SUPPORTS_TEMPLATES` in `flag`). Is ignored for other
-   * properties.
+   * Note that the property must also be marked as supporting path templates
+   * (`PROP_PATH_SUPPORTS_TEMPLATES` in `flag`) for this to have any effect.
    */
   PropertyPathTemplateType path_template_type;
 
@@ -667,8 +667,11 @@ struct StructRNA {
    */
   StructInstanceFunc instance;
 
-  /** Return the location of the struct's pointer to the root group IDProperty. */
+  /** Return the location of the struct's pointer to the user-defined root group IDProperty. */
   IDPropertiesFunc idproperties;
+
+  /** Return the location of the struct's pointer to the system-defined root group IDProperty. */
+  IDPropertiesFunc system_idproperties;
 
   /** Functions of this struct. */
   ListBase functions;

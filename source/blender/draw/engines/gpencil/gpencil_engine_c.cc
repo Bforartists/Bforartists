@@ -8,6 +8,7 @@
 #include "DRW_engine.hh"
 #include "DRW_render.hh"
 
+#include "BKE_compositor.hh"
 #include "BKE_context.hh"
 #include "BKE_curves.hh"
 #include "BKE_gpencil_geom_legacy.h"
@@ -171,8 +172,13 @@ void Instance::begin_sync()
   this->use_layer_fb = false;
   this->use_object_fb = false;
   this->use_mask_fb = false;
-  /* Always use high precision for render. */
-  this->use_signed_fb = !this->is_viewport;
+  this->use_separate_pass =
+      draw_ctx->is_viewport_compositor_enabled() ?
+          bke::compositor::get_used_passes(*scene, view_layer).contains("GreasePencil") :
+          false;
+  /* Always use high precision for render and viewport compositor (viewport compositor only takes
+   * RGBA16F/32F formats). */
+  this->use_signed_fb = this->use_separate_pass || !this->is_viewport;
 
   if (draw_ctx->v3d) {
     const bool hide_overlay = ((draw_ctx->v3d->flag2 & V3D_HIDE_OVERLAYS) != 0);
@@ -341,7 +347,7 @@ bool Instance::use_layer_in_render(const GreasePencil &grease_pencil,
   return true;
 }
 
-tObject *Instance::object_sync_do(Object *ob, ResourceHandle res_handle)
+tObject *Instance::object_sync_do(Object *ob, ResourceHandleRange res_handle)
 {
   using namespace ed::greasepencil;
   using namespace bke::greasepencil;
@@ -585,7 +591,7 @@ void Instance::object_sync(ObjectRef &ob_ref, Manager &manager)
   }
 
   if (ob->data && (ob->type == OB_GREASE_PENCIL) && (ob->dt >= OB_SOLID)) {
-    ResourceHandle res_handle = manager.unique_handle(ob_ref);
+    ResourceHandleRange res_handle = manager.unique_handle(ob_ref);
 
     tObject *tgp_ob = object_sync_do(ob, res_handle);
     vfx_sync(ob, tgp_ob);
@@ -662,6 +668,13 @@ void Instance::acquire_resources()
     this->mask_fb.ensure(GPU_ATTACHMENT_TEXTURE(this->mask_depth_tx),
                          GPU_ATTACHMENT_TEXTURE(this->mask_color_tx),
                          GPU_ATTACHMENT_TEXTURE(this->mask_tx));
+  }
+
+  if (this->use_separate_pass) {
+    const int2 size = int2(draw_ctx->viewport_size_get());
+    draw::TextureFromPool &output_pass_texture = DRW_viewport_pass_texture_get("GreasePencil");
+    output_pass_texture.acquire(size, GPU_RGBA16F);
+    this->gpencil_pass_fb.ensure(GPU_ATTACHMENT_NONE, GPU_ATTACHMENT_TEXTURE(output_pass_texture));
   }
 }
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'6ccdb8c06e27')\n"
+"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-16 10:45+0000\n"
+"POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:50+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Swahili <https://translate.blender.org/projects/blender-ui/ui/sw/>\n"
@@ -28738,10 +28738,6 @@ msgid "Metaball"
 msgstr "Mpira wa miguu"
 
 
-msgid "Merge"
-msgstr "Unganisha"
-
-
 msgid "Pivot Point"
 msgstr "Egemeo"
 
@@ -28750,36 +28746,40 @@ msgid "Snap"
 msgstr "Picha"
 
 
-msgid "Light Probe"
-msgstr "Uchunguzi wa Mwanga"
-
-
-msgid "Light"
-msgstr "Mwanga"
-
-
-msgid "Asset"
-msgstr "Mali"
-
-
-msgid "Apply"
-msgstr "Tumia"
-
-
-msgid "Bone Collections"
-msgstr "Mikusanyo ya Mifupa"
-
-
-msgid "Select Linked"
-msgstr "Chagua Imeunganishwa"
+msgid "Mirror"
+msgstr "Kioo"
 
 
 msgid "Navigation"
 msgstr "Urambazaji"
 
 
-msgid "Mirror"
-msgstr "Kioo"
+msgid "Select Linked"
+msgstr "Chagua Imeunganishwa"
+
+
+msgid "Light"
+msgstr "Mwanga"
+
+
+msgid "Light Probe"
+msgstr "Uchunguzi wa Mwanga"
+
+
+msgid "Apply"
+msgstr "Tumia"
+
+
+msgid "Asset"
+msgstr "Mali"
+
+
+msgid "Bone Collections"
+msgstr "Mikusanyo ya Mifupa"
+
+
+msgid "Merge"
+msgstr "Unganisha"
 
 
 msgid "Keyframe Insert Pie"
@@ -28923,6 +28923,11 @@ msgstr "Hamisha hadi Tabaka"
 
 msgid "Align"
 msgstr "Pangilia"
+
+
+msgctxt "Operator"
+msgid "Mirror"
+msgstr "Kioo"
 
 
 msgid "UV Select Mode"
@@ -53548,10 +53553,6 @@ msgid "The factor to scale keys with"
 msgstr "Sababu ya kuongeza funguo na"
 
 
-msgid "Are handles tested individually against the selection criteria"
-msgstr "Vipini vinajaribiwa kibinafsi dhidi ya vigezo vya uteuzi"
-
-
 msgid "Select Curves"
 msgstr "Chagua Curves"
 
@@ -64866,11 +64867,6 @@ msgstr "Tendua toleo lote lililotekelezwa kwenye mfumo wa chembe"
 
 msgid "Hide selected particles"
 msgstr "Ficha chembe zilizochaguliwa"
-
-
-msgctxt "Operator"
-msgid "Mirror"
-msgstr "Kioo"
 
 
 msgid "Duplicate and mirror the selected particles along the local X axis"
@@ -78760,10 +78756,6 @@ msgstr "Lugha inayotumika kutafsiri"
 
 msgid "Automatic (Automatic)"
 msgstr "Otomatiki (Otomatiki)"
-
-
-msgid "Automatically choose system's defined language if available, or fall-back to English"
-msgstr "Chagua kiotomatiki lugha iliyofafanuliwa ya mfumo ikiwa inapatikana, au rudi kwa Kiingereza"
 
 
 msgid "HDRI Preview Size"

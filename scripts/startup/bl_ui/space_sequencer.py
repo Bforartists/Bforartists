@@ -15,6 +15,7 @@ from bpy.types import (
 )
 from bpy.app.translations import (
     contexts as i18n_contexts,
+    pgettext_iface as iface_,
     pgettext_rpt as rpt_,
 )
 from bl_ui.properties_grease_pencil_common import (
@@ -544,7 +545,7 @@ class SEQUENCER_MT_proxy(Menu):
 
 # BFA menu
 class SEQUENCER_MT_view_pie_menus(Menu):
-    bl_label = "Pie menus"
+    bl_label = "Pie Menus"
 
     def draw(self, context):
         layout = self.layout
@@ -1207,9 +1208,7 @@ class SEQUENCER_MT_add_scene(Menu):
                     continue
 
                 layout.operator_context = 'INVOKE_REGION_WIN'
-                layout.operator(
-                    "sequencer.scene_strip_add", text=sc_item.name, icon="SEQUENCE"
-                ).scene = sc_item.name  # BFA - added icon
+                layout.operator("sequencer.scene_strip_add", text=sc_item.name, icon="SEQUENCE").scene = sc_item.name  # BFA - added icon
 
         del bpy_data_scenes_len
 
@@ -1419,6 +1418,17 @@ class SEQUENCER_MT_strip_show_hide(Menu):
         layout.separator()
         layout.operator("sequencer.mute", text="Hide Selected").unselected = False
         layout.operator("sequencer.mute", text="Hide Unselected").unselected = True
+
+
+class SEQUENCER_MT_strip_animation(Menu):
+    bl_label = "Animation"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("anim.keyframe_insert", text="Insert Keyframe")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set").always_prompt = True
+        layout.operator("anim.keying_set_active_set", text="Change Keying Set...")
 
 
 class SEQUENCER_MT_strip_input(Menu):
@@ -1636,6 +1646,10 @@ class SEQUENCER_MT_strip(Menu):
             layout.operator(
                 "sequencer.preview_duplicate_move", text="Duplicate", icon='DUPLICATE'
             )
+            layout.separator()
+            layout.menu("SEQUENCER_MT_strip_animation")
+            layout.separator()
+            layout.menu("SEQUENCER_MT_strip_show_hide")
             layout.separator()
             # BFA - moved to top header level
             # if strip and strip.type == 'TEXT':
@@ -3416,7 +3430,10 @@ class SEQUENCER_PT_adjust_transform(SequencerButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(strip.transform, "rotation", text="Rotation")
 
-        row = layout.row(heading="Mirror")
+        col = layout.column(align=True)
+        col.prop(strip.transform, "origin")
+
+        row = layout.row(heading="Mirror", heading_ctxt=i18n_contexts.id_image)
         sub = row.row(align=True)
         sub.prop(strip, "use_flip_x", text="X", toggle=True)
         sub.prop(strip, "use_flip_y", text="Y", toggle=True)
@@ -3607,19 +3624,19 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
             split.alignment = 'RIGHT'
             split.label(text="Current Cache Size")
             split.alignment = 'LEFT'
-            split.label(text="{:d} MB".format(cache_raw_size + cache_final_size), translate=False)
+            split.label(text=iface_("{:d} MB").format(cache_raw_size + cache_final_size), translate=False)
 
             split = col.split(factor=0.4, align=True)
             split.alignment = 'RIGHT'
             split.label(text="Raw")
             split.alignment = 'LEFT'
-            split.label(text="{:d} MB".format(cache_raw_size), translate=False)
+            split.label(text=iface_("{:d} MB").format(cache_raw_size), translate=False)
 
             split = col.split(factor=0.4, align=True)
             split.alignment = 'RIGHT'
             split.label(text="Final")
             split.alignment = 'LEFT'
-            split.label(text="{:d} MB".format(cache_final_size), translate=False)
+            split.label(text=iface_("{:d} MB").format(cache_final_size), translate=False)
 
 
 class SEQUENCER_PT_proxy_settings(SequencerButtonsPanel, Panel):
@@ -4397,6 +4414,7 @@ classes = (
     SEQUENCER_MT_strip_retiming,
     SEQUENCER_MT_strip_text,
     SEQUENCER_MT_strip_show_hide,
+    SEQUENCER_MT_strip_animation,
     SEQUENCER_MT_strip_input,
     SEQUENCER_MT_strip_lock_mute,
     SEQUENCER_MT_image,

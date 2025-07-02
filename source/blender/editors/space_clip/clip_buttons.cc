@@ -535,7 +535,7 @@ void uiTemplateMarker(uiLayout *layout,
 
     lcol = &row->column(true);
     lcol->ui_units_x_set(.75f);
-    uiLayoutSetFixedSize(lcol, true);
+    lcol->fixed_size_set(true);
     row->label(IFACE_("X"), ICON_NONE);
     row->label(IFACE_("Y"), ICON_NONE);
 
@@ -586,7 +586,7 @@ void uiTemplateMarker(uiLayout *layout,
 
     lcol = &row->column(true);
     lcol->ui_units_x_set(.75f);
-    uiLayoutSetFixedSize(lcol, true);
+    lcol->fixed_size_set(true);
     row->label(IFACE_("X"), ICON_NONE);
     row->label(IFACE_("Y"), ICON_NONE);
 
@@ -636,7 +636,7 @@ void uiTemplateMarker(uiLayout *layout,
 
     lcol = &row->column(true);
     lcol->ui_units_x_set(2.f);
-    uiLayoutSetFixedSize(lcol, true);
+    lcol->fixed_size_set(true);
     row->label(IFACE_("Width"), ICON_NONE);
     row->label(IFACE_("Height"), ICON_NONE);
 
@@ -687,7 +687,7 @@ void uiTemplateMarker(uiLayout *layout,
 
     lcol = &row->column(true);
     lcol->ui_units_x_set(.75f);
-    uiLayoutSetFixedSize(lcol, true);
+    lcol->fixed_size_set(true);
     row->label(IFACE_("X"), ICON_NONE);
     row->label(IFACE_("Y"), ICON_NONE);
 
@@ -737,7 +737,7 @@ void uiTemplateMarker(uiLayout *layout,
 
     lcol = &row->column(true);
     lcol->ui_units_x_set(2.f);
-    uiLayoutSetFixedSize(lcol, true);
+    lcol->fixed_size_set(true);
     row->label(IFACE_("Width"), ICON_NONE);
     row->label(IFACE_("Height"), ICON_NONE);
 

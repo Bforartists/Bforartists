@@ -177,7 +177,7 @@ struct USDExportParams {
   int usdz_downscale_custom_size = 128;
 
   char root_prim_path[1024] = ""; /* FILE_MAX */
-  char collection[MAX_IDPROP_NAME] = "";
+  char collection[MAX_ID_NAME - 2] = "";
   char custom_properties_namespace[MAX_IDPROP_NAME] = "";
 
   eUSDSceneUnits convert_scene_units = eUSDSceneUnits::USD_SCENE_UNITS_METERS;
@@ -332,7 +332,7 @@ void USD_register_hook(std::unique_ptr<USDHook> hook);
  * Remove the given entry from the list of registered hooks and
  * free the allocated memory for the hook instance.
  */
-void USD_unregister_hook(USDHook *hook);
+void USD_unregister_hook(const USDHook *hook);
 USDHook *USD_find_hook_name(const char idname[]);
 
 double get_meters_per_unit(const USDExportParams &params);

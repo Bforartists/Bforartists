@@ -148,12 +148,6 @@ DRWContext::DRWContext(Mode mode_,
     this->object_pose = nullptr;
   }
 
-  /* TODO(fclem): This belongs to the overlay engine. */
-  if (this->v3d != nullptr && mode == DRWContext::VIEWPORT) {
-    this->options.draw_text = ((this->v3d->flag2 & V3D_HIDE_OVERLAYS) == 0 &&
-                               (this->v3d->overlay.flag & V3D_OVERLAY_HIDE_TEXT) == 0);
-  }
-
   /* View layer can be lazily synced. */
   BKE_view_layer_synced_ensure(this->scene, this->view_layer);
 
@@ -288,7 +282,12 @@ bool DRW_object_is_renderable(const Object *ob)
 
   if (ob->type == OB_MESH) {
     DRWContext &draw_ctx = drw_get();
-    if ((ob == draw_ctx.object_edit) || ob->mode == OB_MODE_EDIT) {
+    /* The evaluated object might be a mesh even though the original object has a different type.
+     * Also make sure the original object is a mesh (see #140762). */
+    if (draw_ctx.object_edit && draw_ctx.object_edit->type != OB_MESH) {
+      /* Noop. */
+    }
+    else if ((ob == draw_ctx.object_edit) || ob->mode == OB_MODE_EDIT) {
       View3D *v3d = draw_ctx.v3d;
       if (v3d && ((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) && RETOPOLOGY_ENABLED(v3d)) {
         return false;
@@ -760,18 +759,7 @@ void DRWContext::engines_init_and_sync(iter_callback_t iter_callback)
 
   view_data_active->manager->begin_sync(this->obact);
 
-  view_data_active->foreach_enabled_engine([&](DrawEngine &instance) {
-    /* TODO(fclem): Remove. Only there for overlay engine. */
-    if (instance.text_draw_cache) {
-      DRW_text_cache_destroy(instance.text_draw_cache);
-      instance.text_draw_cache = nullptr;
-    }
-    if (text_store_p == nullptr) {
-      text_store_p = &instance.text_draw_cache;
-    }
-
-    instance.begin_sync();
-  });
+  view_data_active->foreach_enabled_engine([&](DrawEngine &instance) { instance.begin_sync(); });
 
   sync(iter_callback);
 
@@ -798,16 +786,6 @@ void DRWContext::engines_draw_scene()
   if (GPU_type_matches_ex(GPU_DEVICE_ANY, GPU_OS_ANY, GPU_DRIVER_ANY, GPU_BACKEND_OPENGL)) {
     GPU_flush();
   }
-}
-
-static void drw_engines_draw_text()
-{
-  DRWContext &ctx = drw_get();
-  ctx.view_data_active->foreach_enabled_engine([&](DrawEngine &instance) {
-    if (instance.text_draw_cache) {
-      DRW_text_cache_draw(instance.text_draw_cache, ctx.region, ctx.v3d);
-    }
-  });
 }
 
 void DRW_draw_region_engine_info(int xoffset, int *yoffset, int line_height)
@@ -1030,8 +1008,6 @@ static void drw_callbacks_post_scene(DRWContext &draw_ctx)
     }
 
     GPU_depth_test(GPU_DEPTH_NONE);
-    drw_engines_draw_text();
-
     DRW_draw_region_info(draw_ctx.evil_C, region);
 
     /* Annotations - temporary drawing buffer (screen-space). */
@@ -1149,10 +1125,8 @@ static void drw_callbacks_post_scene_2D(DRWContext &draw_ctx, View2D &v2d)
     blender::draw::command::StateSet::set();
 
     GPU_depth_test(GPU_DEPTH_NONE);
-    drw_engines_draw_text();
 
     if (do_annotations) {
-      GPU_depth_test(GPU_DEPTH_NONE);
       ED_annotation_draw_view2d(draw_ctx.evil_C, false);
     }
   }
@@ -2054,17 +2028,10 @@ void DRW_module_init()
 
 void DRW_module_exit()
 {
-  if (DRW_gpu_context_try_enable() == false) {
-    /* Nothing has been setup. Nothing to clear. */
-    return;
-  }
-
   GPU_TEXTURE_FREE_SAFE(g_select_buffer.texture_depth);
   GPU_FRAMEBUFFER_FREE_SAFE(g_select_buffer.framebuffer_depth_only);
 
   DRW_shaders_free();
-
-  DRW_gpu_context_disable();
 }
 
 /** \} */

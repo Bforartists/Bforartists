@@ -437,8 +437,9 @@ enum PropertyFlag {
    * Support for templating needs to be manually implemented.
    *
    * When this is set, the property's `path_template_type` field should also be
-   * set to something other than `PROP_VARIABLES_NONE`, to indicate which
-   * template variables it supports.
+   * set.
+   *
+   * \see The top-level documentation of BKE_path_templates.hh.
    */
   PROP_PATH_SUPPORTS_TEMPLATES = (1 << 14),
 
@@ -448,13 +449,20 @@ enum PropertyFlag {
 ENUM_OPERATORS(PropertyFlag, PROP_TEXTEDIT_UPDATE)
 
 /**
- * For properties that support path templates, this indicates which variables
- * should be available to them and how those variables should be built.
+ * For properties that support path templates, this indicates which
+ * purpose-specific variables (if any) should be available to them and how those
+ * variables should be built.
  *
- * \see BKE_build_template_variables_for_prop()
+ * \see The top-level documentation of BKE_path_templates.hh.
  */
 enum PropertyPathTemplateType {
+  /* Only supports general and type-specific variables, no purpose-specific
+   * variables. */
   PROP_VARIABLES_NONE = 0,
+
+  /* Supports render output variables.
+   *
+   * \see BKE_add_template_variables_for_render_path() */
   PROP_VARIABLES_RENDER_OUTPUT,
 };
 
@@ -792,8 +800,20 @@ enum FunctionFlag {
   FUNC_USE_SELF_ID = (1 << 11),
 
   /**
+   * Pass 'self' data as a PointerRNA (by value), rather than as a pointer of the relevant DNA
+   * type.
+   *
+   * Mutually exclusive with #FUNC_NO_SELF and #FUNC_USE_SELF_TYPE.
+   *
+   * Useful for functions that need to access `self` as RNA data, not as DNA data (e.g. when doing
+   * 'generic', type-agnostic processing).
+   */
+  FUNC_SELF_AS_RNA = (1 << 13),
+  /**
    * Do not pass the object (DNA struct pointer) from which it is called,
    * used to define static or class functions.
+   *
+   * Mutually exclusive with #FUNC_SELF_AS_RNA.
    */
   FUNC_NO_SELF = (1 << 0),
   /** Pass RNA type, used to define class functions, only valid when #FUNC_NO_SELF is set. */

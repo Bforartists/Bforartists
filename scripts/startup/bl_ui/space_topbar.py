@@ -506,7 +506,7 @@ class TOPBAR_MT_file_import(Menu):
             self.layout.operator("wm.stl_import", text="STL (.stl)", icon="LOAD_STL")
 
         if bpy.app.build_options.io_fbx:
-            self.layout.operator("wm.fbx_import", text="FBX (.fbx) (experimental)")
+            self.layout.operator("wm.fbx_import", text="FBX (.fbx)")
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -813,6 +813,11 @@ class TOPBAR_MT_window(Menu):
 
         layout.operator("wm.window_new", icon="NEW_WINDOW")
         layout.operator("wm.window_new_main", icon="NEW_WINDOW_MAIN")
+        layout.operator("wm.window_close", icon="WINDOW_CLOSE") # BFA - added close window operator and icon
+
+        layout.separator()
+
+        layout.operator("wm.window_fullscreen_toggle", icon='FULLSCREEN_ENTER')
 
         layout.separator()
 

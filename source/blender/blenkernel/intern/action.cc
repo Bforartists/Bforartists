@@ -2085,8 +2085,9 @@ void BKE_pose_blend_write(BlendWriter *writer, bPose *pose, bArmature *arm)
     if (chan->prop) {
       IDP_BlendWrite(writer, chan->prop);
     }
-    /* Never write system_properties in Blender 4.5, will be reset to `nullptr` by reading code (by
-     * the matching call to #BLO_read_struct). */
+    if (chan->system_properties) {
+      IDP_BlendWrite(writer, chan->system_properties);
+    }
 
     BKE_constraint_blend_write(writer, &chan->constraints);
 
@@ -2206,6 +2207,14 @@ void BKE_pose_blend_read_after_liblink(BlendLibReader *reader, Object *ob, bPose
       /* local pose selection copied to armature, bit hackish */
       pchan->bone->flag &= ~BONE_SELECTED;
       pchan->bone->flag |= pchan->selectflag;
+    }
+
+    /* At some point in history, bones could have an armature object as custom shape, which caused
+     * all kinds of wonderful issues. This is now avoided in RNA, but through the magic of linking
+     * and editing the library file, the situation can still occur. Better to just reset the
+     * pointer in those cases. */
+    if (pchan->custom && pchan->custom->type == OB_ARMATURE) {
+      pchan->custom = nullptr;
     }
   }
 

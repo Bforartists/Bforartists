@@ -141,6 +141,8 @@ MDeformVert *BKE_object_defgroup_data_create(ID *id)
 
 bool BKE_object_defgroup_clear(Object *ob, bDeformGroup *dg, const bool use_selection)
 {
+  using namespace blender;
+  using namespace blender::bke;
   MDeformVert *dv;
   const ListBase *defbase = BKE_object_defgroup_list(ob);
   const int def_nr = BLI_findindex(defbase, dg);
@@ -169,14 +171,15 @@ bool BKE_object_defgroup_clear(Object *ob, bDeformGroup *dg, const bool use_sele
     }
     else {
       if (mesh->deform_verts().data()) {
-        const bool *select_vert = (const bool *)CustomData_get_layer_named(
-            &mesh->vert_data, CD_PROP_BOOL, ".select_vert");
+        const AttributeAccessor attributes = mesh->attributes();
+        const VArray select_vert = *attributes.lookup_or_default<bool>(
+            ".select_vert", AttrDomain::Point, false);
         int i;
 
         dv = mesh->deform_verts_for_write().data();
 
         for (i = 0; i < mesh->verts_num; i++, dv++) {
-          if (dv->dw && (!use_selection || (select_vert && select_vert[i]))) {
+          if (dv->dw && (!use_selection || select_vert[i])) {
             MDeformWeight *dw = BKE_defvert_find_index(dv, def_nr);
             BKE_defvert_remove_group(dv, dw); /* dw can be nullptr */
             changed = true;
@@ -794,15 +797,12 @@ bool *BKE_object_defgroup_subset_from_select_type(Object *ob,
     case WT_VGROUP_BONE_DEFORM: {
       int i;
       defgroup_validmap = BKE_object_defgroup_validmap_get(ob, *r_defgroup_tot);
-      const bool *locked_vgroups = BKE_object_defgroup_lock_flags_get(ob, *r_defgroup_tot);
       *r_subset_count = 0;
       for (i = 0; i < *r_defgroup_tot; i++) {
-        defgroup_validmap[i] &= !(locked_vgroups && locked_vgroups[i]);
         if (defgroup_validmap[i] == true) {
           *r_subset_count += 1;
         }
       }
-      MEM_SAFE_FREE(locked_vgroups);
       break;
     }
     case WT_VGROUP_BONE_DEFORM_OFF: {

@@ -369,7 +369,7 @@ class TEXT_MT_select(Menu):
         layout = self.layout
 
         layout.operator("text.select_all", text="All")
-        layout.operator("text.select_line", text="Line")
+        layout.operator("text.select_line", text="Line", text_ctxt=i18n_contexts.id_text)
         layout.operator("text.select_word", text="Word")
 
         layout.separator()
@@ -455,7 +455,7 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("text.jump", text="Go to line", icon="GOTO")
+        layout.operator("text.jump", text="Go to Line", icon="GOTO")
         layout.operator("text.start_find", text="Find", icon="ZOOM_SET")
         layout.operator("text.find_set_selected", icon="ZOOM_SET")
 

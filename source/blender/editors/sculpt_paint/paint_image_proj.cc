@@ -6873,8 +6873,8 @@ static wmOperatorStatus texture_paint_add_texture_paint_slot_invoke(bContext *C,
 static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
 {
   uiLayout *layout = op->layout;
-  uiLayoutSetPropSep(layout, true);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_split_set(true);
+  layout->use_property_decorate_set(false);
   Object *ob = blender::ed::object::context_active_object(C);
   ePaintCanvasSource slot_type = PAINT_CANVAS_SOURCE_IMAGE;
 
@@ -6890,11 +6890,11 @@ static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
       uiLayout *col = &layout->column(true);
       col->prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       col->prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+      col->use_property_split_set(false); /* bfa - use_property_split_set = False */
       layout->prop(op->ptr, "alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       layout->prop(op->ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       layout->prop(op->ptr, "float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = back to true */
+      layout->use_property_split_set(true); /* bfa - use_property_split = back to true */
       break;
     }
     case PAINT_CANVAS_SOURCE_COLOR_ATTRIBUTE:

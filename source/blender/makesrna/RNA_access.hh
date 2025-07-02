@@ -140,19 +140,28 @@ void RNA_struct_blender_type_set(StructRNA *srna, void *blender_type);
 IDProperty **RNA_struct_idprops_p(PointerRNA *ptr);
 IDProperty *RNA_struct_idprops(PointerRNA *ptr, bool create);
 bool RNA_struct_idprops_check(const StructRNA *srna);
-bool RNA_struct_idprops_register_check(const StructRNA *type);
+bool RNA_struct_system_idprops_register_check(const StructRNA *type);
 bool RNA_struct_idprops_datablock_allowed(const StructRNA *type);
+
+/** Get root IDProperty for system-defined runtime properties. */
+IDProperty **RNA_struct_system_idprops_p(PointerRNA *ptr);
+IDProperty *RNA_struct_system_idprops(PointerRNA *ptr, bool create);
+/** Return `true` if the given RNA type supports system-defined IDProperties. */
+bool RNA_struct_system_idprops_check(StructRNA *srna);
 /**
  * Whether given type implies datablock usage by IDProperties.
  * This is used to prevent classes allowed to have IDProperties,
  * but not datablock ones, to indirectly use some
  * (e.g. by assigning an IDP_GROUP containing some IDP_ID pointers...).
+ *
+ * \note This is currently giving results for both user-defined and system-defined IDProperties,
+ * there is no distinction for this between both storages.
  */
 bool RNA_struct_idprops_contains_datablock(const StructRNA *type);
 /**
  * Remove an id-property.
  */
-bool RNA_struct_idprops_unset(PointerRNA *ptr, const char *identifier);
+bool RNA_struct_system_idprops_unset(PointerRNA *ptr, const char *identifier);
 
 PropertyRNA *RNA_struct_find_property(PointerRNA *ptr, const char *identifier);
 
@@ -173,6 +182,22 @@ PropertyRNA *RNA_struct_find_collection_property_check(PointerRNA &props,
 
 bool RNA_struct_contains_property(PointerRNA *ptr, PropertyRNA *prop_test);
 unsigned int RNA_struct_count_properties(StructRNA *srna);
+
+/**
+ * Return the closest ancestor (itself included) matching the requested RNA
+ * type.
+ *
+ * The check starts from `ptr` itself, and then works its way up to the parent,
+ * then grandparent, etc. The first one that matches is returned as an
+ * `AncestorPointerRNA`.
+ *
+ * Base types are considered matching, so e.g. an RNA pointer of type
+ * `RNA_SpotLight` will also match `RNA_Light`.
+ *
+ * \return The matching pointer if any, or `nullopt` otherwise.
+ */
+std::optional<AncestorPointerRNA> RNA_struct_search_closest_ancestor_by_type(
+    PointerRNA *ptr, const StructRNA *srna);
 
 /**
  * Low level direct access to type->properties,

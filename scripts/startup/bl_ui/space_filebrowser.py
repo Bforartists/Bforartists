@@ -56,7 +56,7 @@ class FILEBROWSER_HT_header(Header):
         # BFA - Check if we have a valid asset context first
         if hasattr(context, 'asset') and context.asset is not None:
             if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
-                
+
                 # BFA - Determine if the selected asset is a collection in the FILE_BROWSER
                 is_collection = False
                 asset = getattr(context, "asset", None)
@@ -835,7 +835,7 @@ class ASSETBROWSER_MT_view(AssetBrowserMenu, Menu):
 
 
 class FILEBROWSER_MT_view_pie_menus(Menu):
-    bl_label = "Pie menus"
+    bl_label = "Pie Menus"
 
     def draw(self, _context):
         layout = self.layout
@@ -1064,11 +1064,11 @@ class ASSETBROWSER_MT_metadata_preview_menu(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.operator(
-            "ed.lib_id_generate_preview_from_object", text="Render Active Object"
+            "ed.lib_id_generate_preview_from_object", text="Render Active Object", icon='RENDER_STILL'
         )
         layout.separator()
-        layout.operator("ed.lib_id_remove_preview")
-        layout.operator("asset.screenshot_preview")
+        layout.operator("ed.lib_id_remove_preview", icon='REMOVE')
+        layout.operator("asset.screenshot_preview", icon='MAKE_SCREENSHOT')
 
 
 class ASSETBROWSER_PT_metadata_tags(asset_utils.AssetMetaDataPanel, Panel):

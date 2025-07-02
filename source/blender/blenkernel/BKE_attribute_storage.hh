@@ -45,6 +45,7 @@ class Attribute {
     ImplicitSharingPtr<> sharing_info;
     static ArrayData ForValue(const GPointer &value, int64_t domain_size);
     static ArrayData ForDefaultValue(const CPPType &type, int64_t domain_size);
+    static ArrayData ForUninitialized(const CPPType &type, int64_t domain_size);
     static ArrayData ForConstructed(const CPPType &type, int64_t domain_size);
   };
   /** Data for an attribute stored as a single value for the entire domain. */
@@ -103,10 +104,11 @@ class Attribute {
   /**
    * The same as #data(), but if the attribute data is shared initially, it will be unshared and
    * made mutable.
-   *
-   * \warning Does not yet support attributes stored as a single value (#AttrStorageType::Single).
    */
   DataVariant &data_for_write();
+
+  /** Replace the attribute's data without first making the existing data mutable. */
+  void assign_data(DataVariant &&data);
 };
 
 class AttributeStorageRuntime {
@@ -182,6 +184,12 @@ class AttributeStorage : public ::AttributeStorage {
   void rename(StringRef old_name, std::string new_name);
 
   /**
+   * Resize the data for a given domain. New values will be default initialized (meaning no zero
+   * initialization for trivial types).
+   */
+  void resize(AttrDomain domain, int64_t new_size);
+
+  /**
    * Read data owned by the #AttributeStorage struct. This works by converting the DNA-specific
    * types stored in the files to the runtime data structures.
    */
@@ -225,6 +233,11 @@ inline AttrType Attribute::data_type() const
 inline const Attribute::DataVariant &Attribute::data() const
 {
   return data_;
+}
+
+inline void Attribute::assign_data(DataVariant &&data)
+{
+  data_ = std::move(data);
 }
 
 }  // namespace blender::bke

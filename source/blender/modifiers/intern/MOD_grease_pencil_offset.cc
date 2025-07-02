@@ -389,11 +389,11 @@ static void panel_draw(const bContext *C, Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
   const auto offset_mode = GreasePencilOffsetModifierMode(RNA_enum_get(ptr, "offset_mode"));
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
   if (uiLayout *general_panel = layout->panel_prop(
           C, ptr, "open_general_panel", IFACE_("General")))
   {
-    uiLayoutSetPropSep(general_panel, true);
+    general_panel->use_property_split_set(true);
     general_panel->prop(ptr, "location", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     general_panel->prop(ptr, "rotation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     general_panel->prop(ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -417,7 +417,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     switch (offset_mode) {
       case MOD_GREASE_PENCIL_OFFSET_RANDOM:
         row = &col->row(true); /* bfa - our layout */
-        uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+        row->use_property_split_set(false); /* bfa - use_property_split = False */
         row->separator(); /*bfa - indent*/
         row->prop(
             ptr, "use_uniform_random_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);

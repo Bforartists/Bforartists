@@ -80,7 +80,7 @@ struct uiLayout : uiItem {
   uiLayout *parent_;
   blender::Vector<uiItem *> items_;
 
-  char heading_[UI_MAX_NAME_STR];
+  std::string heading_;
 
   /** Sub layout to add child items, if not the layout itself. */
   uiLayout *child_items_layout_;
@@ -104,7 +104,7 @@ struct uiLayout : uiItem {
   float search_weight_;
 
  public:
-  bool active() const;
+  [[nodiscard]] bool active() const;
   /**
    * Sets the active state of the layout and its items.
    * When false the layout and its buttons are grayed out, user can still interact with them but
@@ -112,14 +112,14 @@ struct uiLayout : uiItem {
    */
   void active_set(bool active);
 
-  bool active_default() const;
+  [[nodiscard]] bool active_default() const;
   /**
    * When set to true the next operator button added in the layout will be highlighted as default
    * action when pressing return, in popup dialogs this overrides default confirmation buttons.
    */
   void active_default_set(bool active_default);
 
-  bool activate_init() const;
+  [[nodiscard]] bool activate_init() const;
   /**
    * When set to true, the next button added in the layout will be activated on first display.
    * Only for popups dialogs and only the first button in the popup with this flag will be
@@ -127,28 +127,30 @@ struct uiLayout : uiItem {
    */
   void activate_init_set(bool activate_init);
 
-  blender::ui::LayoutAlign alignment() const;
+  [[nodiscard]] blender::ui::LayoutAlign alignment() const;
   void alignment_set(blender::ui::LayoutAlign alignment);
 
-  uiBlock *block() const;
+  [[nodiscard]] uiBlock *block() const;
 
   void context_copy(const bContextStore *context);
 
-  const PointerRNA *context_ptr_get(const blender::StringRef name, const StructRNA *type) const;
+  [[nodiscard]] const PointerRNA *context_ptr_get(const blender::StringRef name,
+                                                  const StructRNA *type) const;
   void context_ptr_set(blender::StringRef name, const PointerRNA *ptr);
 
-  std::optional<blender::StringRefNull> context_string_get(const blender::StringRef name) const;
+  [[nodiscard]] std::optional<blender::StringRefNull> context_string_get(
+      const blender::StringRef name) const;
   void context_string_set(blender::StringRef name, blender::StringRef value);
 
-  std::optional<int64_t> context_int_get(const blender::StringRef name) const;
+  [[nodiscard]] std::optional<int64_t> context_int_get(const blender::StringRef name) const;
   void context_int_set(blender::StringRef name, int64_t value);
 
   /** Only for convenience. */
   void context_set_from_but(const uiBut *but);
 
-  bContextStore *context_store() const;
+  [[nodiscard]] bContextStore *context_store() const;
 
-  bool enabled() const;
+  [[nodiscard]] bool enabled() const;
   /**
    * Sets the enabled state of the layout and its items.
    * When false the layout and its buttons are grayed out, user can't interaction with them, only
@@ -156,26 +158,56 @@ struct uiLayout : uiItem {
    */
   void enabled_set(bool enabled);
 
-  blender::ui::EmbossType emboss() const;
+  [[nodiscard]] blender::ui::EmbossType emboss() const;
   void emboss_set(blender::ui::EmbossType emboss);
 
-  wmOperatorCallContext operator_context() const;
+  [[nodiscard]] bool fixed_size() const;
+  void fixed_size_set(bool fixed_size);
+
+  [[nodiscard]] wmOperatorCallContext operator_context() const;
   /** Sets the default call context for new operator buttons added in any #root_ sub-layout. */
   void operator_context_set(wmOperatorCallContext opcontext);
 
-  float scale_x() const;
+  [[nodiscard]] bool red_alert() const;
+  /**
+   * When set to true new items added in the layout are highlighted with the error state
+   * color #TH_REDALERT.
+   */
+  void red_alert_set(bool red_alert);
+
+  [[nodiscard]] Panel *root_panel() const;
+
+  [[nodiscard]] float scale_x() const;
   void scale_x_set(float scale);
 
-  float scale_y() const;
+  [[nodiscard]] float scale_y() const;
   void scale_y_set(float scale);
 
-  float ui_units_x() const;
+  [[nodiscard]] float search_weight() const;
+  void search_weight_set(float weight);
+
+  [[nodiscard]] float ui_units_x() const;
   /** Sets a fixed width size for this layout. */
   void ui_units_x_set(float width);
 
-  float ui_units_y() const;
+  [[nodiscard]] float ui_units_y() const;
   /** Sets a fixed height size for this layout. */
   void ui_units_y_set(float height);
+
+  [[nodiscard]] bool use_property_split() const;
+  /**
+   * Sets when to split property's label into a separate button when adding new property buttons.
+   */
+  void use_property_split_set(bool value);
+
+  [[nodiscard]] bool use_property_decorate() const;
+  /**
+   * Sets when to add an extra button to insert keyframes next to new property buttons added in the
+   * layout.
+   */
+  void use_property_decorate_set(bool is_sep);
+
+  [[nodiscard]] int width() const;
 
   /** Sub-layout items. */
 
@@ -393,6 +425,22 @@ struct uiLayout : uiItem {
                 wmOperatorCallContext context,
                 eUI_Item_Flag flag);
   /**
+   * Adds a operator item, places a button in the layout to call the operator, if the button is
+   * held down, a menu will be displayed instead.
+   * \param ot: Operator to add.
+   * \param name: Text to show in the layout.
+   * \param context: Operator call context for #WM_operator_name_call.
+   * \param menu_id: menu to show on held down.
+   * \returns Operator pointer to write properties, might be #PointerRNA_NULL if operator does not
+   * exists.
+   */
+  PointerRNA op_menu_hold(wmOperatorType *ot,
+                          std::optional<blender::StringRef> name,
+                          int icon,
+                          wmOperatorCallContext context,
+                          eUI_Item_Flag flag,
+                          const char *menu_id);
+  /**
    * Adds a RNA property item, and exposes it into the layout.
    * \param ptr: RNA pointer to the struct owner of \a prop.
    * \param prop: The property in \a ptr to add.
@@ -414,8 +462,116 @@ struct uiLayout : uiItem {
             std::optional<blender::StringRef> name,
             int icon);
 
+  void popover(const bContext *C,
+               PanelType *pt,
+               std::optional<blender::StringRef> name_opt,
+               int icon);
+  void popover(const bContext *C,
+               blender::StringRef panel_type,
+               std::optional<blender::StringRef> name_opt,
+               int icon);
+  void popover_group(
+      bContext *C, int space_id, int region_id, const char *context, const char *category);
+
+  /**
+   * Add a enum property value item. This button acts like a radio button that are used to chose
+   * a single enum value from a set of the enum property value items.
+   */
+  void prop_enum(PointerRNA *ptr,
+                 PropertyRNA *prop,
+                 int value,
+                 std::optional<blender::StringRefNull> name,
+                 int icon);
+  /**
+   * Add a enum property value item. This button acts like a radio button that are used to chose
+   * a single enum value from a set of the enum property value items.
+   */
+  void prop_enum(PointerRNA *ptr,
+                 PropertyRNA *prop,
+                 const char *value,
+                 std::optional<blender::StringRefNull> name,
+                 int icon);
+  /**
+   * Add a enum property value item. This button acts like a radio button that are used to chose
+   * a single enum value from a set of the enum property value items.
+   */
+  void prop_enum(PointerRNA *ptr,
+                 blender::StringRefNull propname,
+                 const char *value,
+                 std::optional<blender::StringRefNull> name,
+                 int icon);
+
+  /** Add a enum property item, and exposes its value throw a radio button menu. */
+  void prop_menu_enum(PointerRNA *ptr,
+                      PropertyRNA *prop,
+                      std::optional<blender::StringRefNull> name,
+                      int icon);
+
+  /** Expands enum property value items as tabs buttons. */
+  void prop_tabs_enum(bContext *C,
+                      PointerRNA *ptr,
+                      PropertyRNA *prop,
+                      PointerRNA *ptr_highlight,
+                      PropertyRNA *prop_highlight,
+                      bool icon_only);
+
+  /** Expands enum property value items as radio buttons. */
+  void props_enum(PointerRNA *ptr, blender::StringRefNull propname);
+
+  /**
+   * Adds a RNA enum/pointer/string/ property item, and exposes it into the layout. Button input
+   * would suggest values from the search property collection.
+   * \param searchprop: Collection property in \a searchptr from where to take input values.
+   * \param results_are_suggestions: Allow inputs that not match any suggested value.
+   */
+  void prop_search(PointerRNA *ptr,
+                   PropertyRNA *prop,
+                   PointerRNA *searchptr,
+                   PropertyRNA *searchprop,
+                   std::optional<blender::StringRefNull> name,
+                   int icon,
+                   bool results_are_suggestions);
+  /**
+   * Adds a RNA enum/pointer/string/ property item, and exposes it into the layout. Button input
+   * would suggest values from the search property collection, input must match a suggested value.
+   * \param searchprop: Collection property in \a searchptr from where to take input values.
+   */
+  void prop_search(PointerRNA *ptr,
+                   blender::StringRefNull propname,
+                   PointerRNA *searchptr,
+                   blender::StringRefNull searchpropname,
+                   std::optional<blender::StringRefNull> name,
+                   int icon);
+
+  /**
+   * Adds a RNA property item, and sets a custom popover to expose its value.
+   */
+  void prop_with_popover(PointerRNA *ptr,
+                         PropertyRNA *prop,
+                         int index,
+                         int value,
+                         eUI_Item_Flag flag,
+                         std::optional<blender::StringRefNull> name,
+                         int icon,
+                         const char *panel_type);
+
+  /**
+   * Adds a RNA property item, and sets a custom menu to expose its value.
+   */
+  void prop_with_menu(PointerRNA *ptr,
+                      PropertyRNA *prop,
+                      int index,
+                      int value,
+                      eUI_Item_Flag flag,
+                      std::optional<blender::StringRefNull> name,
+                      int icon,
+                      const char *menu_type);
+
   /** Adds a separator item, that adds empty space between items. */
   void separator(float factor = 1.0f, LayoutSeparatorType type = LayoutSeparatorType::Auto);
+
+  /** Adds a spacer item that inserts empty horizontal space between other items in the layout. */
+  void separator_spacer();
 };
 
 inline bool uiLayout::active() const
@@ -469,6 +625,24 @@ inline void uiLayout::enabled_set(bool enabled)
   enabled_ = enabled;
 }
 
+inline bool uiLayout::red_alert() const
+{
+  return redalert_;
+}
+inline void uiLayout::red_alert_set(bool red_alert)
+{
+  redalert_ = red_alert;
+}
+
+inline float uiLayout::search_weight() const
+{
+  return search_weight_;
+}
+inline void uiLayout::search_weight_set(float weight)
+{
+  search_weight_ = weight;
+}
+
 inline float uiLayout::scale_x() const
 {
   return scale_[0];
@@ -504,6 +678,11 @@ inline void uiLayout::ui_units_y_set(float height)
 {
   units_[1] = height;
 };
+
+inline int uiLayout::width() const
+{
+  return this->w_;
+}
 
 enum {
   UI_LAYOUT_HORIZONTAL = 0,
@@ -619,20 +798,7 @@ void UI_menutype_draw(bContext *C, MenuType *mt, uiLayout *layout);
  */
 void UI_paneltype_draw(bContext *C, PanelType *pt, uiLayout *layout);
 
-void uiLayoutSetRedAlert(uiLayout *layout, bool redalert);
-void uiLayoutSetFixedSize(uiLayout *layout, bool fixed_size);
-void uiLayoutSetPropSep(uiLayout *layout, bool is_sep);
-void uiLayoutSetPropDecorate(uiLayout *layout, bool is_sep);
 int uiLayoutGetLocalDir(const uiLayout *layout);
-void uiLayoutSetSearchWeight(uiLayout *layout, float weight);
-
-bool uiLayoutGetRedAlert(uiLayout *layout);
-bool uiLayoutGetFixedSize(uiLayout *layout);
-int uiLayoutGetWidth(uiLayout *layout);
-bool uiLayoutGetPropSep(uiLayout *layout);
-bool uiLayoutGetPropDecorate(uiLayout *layout);
-Panel *uiLayoutGetRootPanel(uiLayout *layout);
-float uiLayoutGetSearchWeight(uiLayout *layout);
 
 int uiLayoutListItemPaddingWidth();
 void uiLayoutListItemAddPadding(uiLayout *layout);
@@ -673,71 +839,6 @@ void uiItemEnumO_string(uiLayout *layout,
 void uiItemsEnumO(uiLayout *layout,
                   blender::StringRefNull opname,
                   blender::StringRefNull propname);
-
-void uiItemFullOMenuHold_ptr(uiLayout *layout,
-                             wmOperatorType *ot,
-                             std::optional<blender::StringRef> name,
-                             int icon,
-                             wmOperatorCallContext context,
-                             eUI_Item_Flag flag,
-                             const char *menu_id, /* extra menu arg. */
-                             PointerRNA *r_opptr);
-
-/**
- * Use a wrapper function since re-implementing all the logic in this function would be messy.
- */
-void uiItemFullR_with_popover(uiLayout *layout,
-                              PointerRNA *ptr,
-                              PropertyRNA *prop,
-                              int index,
-                              int value,
-                              eUI_Item_Flag flag,
-                              std::optional<blender::StringRefNull> name,
-                              int icon,
-                              const char *panel_type);
-void uiItemFullR_with_menu(uiLayout *layout,
-                           PointerRNA *ptr,
-                           PropertyRNA *prop,
-                           int index,
-                           int value,
-                           eUI_Item_Flag flag,
-                           std::optional<blender::StringRefNull> name,
-                           int icon,
-                           const char *menu_type);
-void uiItemEnumR_prop(uiLayout *layout,
-                      std::optional<blender::StringRefNull> name,
-                      int icon,
-                      PointerRNA *ptr,
-                      PropertyRNA *prop,
-                      int value);
-void uiItemEnumR_string_prop(uiLayout *layout,
-                             PointerRNA *ptr,
-                             PropertyRNA *prop,
-                             const char *value,
-                             std::optional<blender::StringRefNull> name,
-                             int icon);
-void uiItemEnumR_string(uiLayout *layout,
-                        PointerRNA *ptr,
-                        blender::StringRefNull propname,
-                        const char *value,
-                        std::optional<blender::StringRefNull> name,
-                        int icon);
-void uiItemsEnumR(uiLayout *layout, PointerRNA *ptr, blender::StringRefNull propname);
-void uiItemPointerR_prop(uiLayout *layout,
-                         PointerRNA *ptr,
-                         PropertyRNA *prop,
-                         PointerRNA *searchptr,
-                         PropertyRNA *searchprop,
-                         std::optional<blender::StringRefNull> name,
-                         int icon,
-                         bool results_are_suggestions);
-void uiItemPointerR(uiLayout *layout,
-                    PointerRNA *ptr,
-                    blender::StringRefNull propname,
-                    PointerRNA *searchptr,
-                    blender::StringRefNull searchpropname,
-                    std::optional<blender::StringRefNull> name,
-                    int icon);
 
 /**
  * Create a list of enum items.
@@ -822,9 +923,6 @@ void uiItemDecoratorR(uiLayout *layout,
                       std::optional<blender::StringRefNull> propname,
                       int index);
 
-/** Flexible spacing. */
-void uiItemSpacer(uiLayout *layout);
-
 enum eButProgressType {
   UI_BUT_PROGRESS_TYPE_BAR = 0,
   UI_BUT_PROGRESS_TYPE_RING = 1,
@@ -834,24 +932,6 @@ void uiItemProgressIndicator(uiLayout *layout,
                              const char *text,
                              float factor,
                              eButProgressType progress_type);
-
-/* popover */
-void uiItemPopoverPanel_ptr(uiLayout *layout,
-                            const bContext *C,
-                            PanelType *pt,
-                            std::optional<blender::StringRef> name_opt,
-                            int icon);
-void uiItemPopoverPanel(uiLayout *layout,
-                        const bContext *C,
-                        blender::StringRef panel_type,
-                        std::optional<blender::StringRef> name_opt,
-                        int icon);
-void uiItemPopoverPanelFromGroup(uiLayout *layout,
-                                 bContext *C,
-                                 int space_id,
-                                 int region_id,
-                                 const char *context,
-                                 const char *category);
 
 /**
  * Level items.
@@ -876,18 +956,6 @@ void uiItemMenuEnumO(uiLayout *layout,
                      blender::StringRefNull propname,
                      blender::StringRefNull name,
                      int icon);
-void uiItemMenuEnumR_prop(uiLayout *layout,
-                          PointerRNA *ptr,
-                          PropertyRNA *prop,
-                          std::optional<blender::StringRefNull>,
-                          int icon);
-void uiItemTabsEnumR_prop(uiLayout *layout,
-                          bContext *C,
-                          PointerRNA *ptr,
-                          PropertyRNA *prop,
-                          PointerRNA *ptr_highlight,
-                          PropertyRNA *prop_highlight,
-                          bool icon_only);
 
 /* Only for testing, inspecting layouts. */
 /**

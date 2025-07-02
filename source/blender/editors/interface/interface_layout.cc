@@ -1366,17 +1366,17 @@ PointerRNA uiLayout::op(wmOperatorType *ot,
   return ptr;
 }
 
-void uiItemFullOMenuHold_ptr(uiLayout *layout,
-                             wmOperatorType *ot,
-                             std::optional<StringRef> name,
-                             int icon,
-                             const wmOperatorCallContext context,
-                             const eUI_Item_Flag flag,
-                             const char *menu_id,
-                             PointerRNA *r_opptr)
+PointerRNA uiLayout::op_menu_hold(wmOperatorType *ot,
+                                  std::optional<StringRef> name,
+                                  int icon,
+                                  const wmOperatorCallContext context,
+                                  const eUI_Item_Flag flag,
+                                  const char *menu_id)
 {
-  uiBut *but = uiItemFullO_ptr_ex(layout, ot, name, icon, context, flag, r_opptr);
+  PointerRNA ptr;
+  uiBut *but = uiItemFullO_ptr_ex(this, ot, name, icon, context, flag, &ptr);
   UI_but_func_hold_set(but, ui_item_menu_hold, BLI_strdup(menu_id));
+  return ptr;
 }
 
 PointerRNA uiLayout::op(const blender::StringRefNull opname,
@@ -1877,7 +1877,7 @@ static bool ui_item_rna_is_expand(PropertyRNA *prop, int index, const eUI_Item_F
 static uiLayout *ui_layout_heading_find(uiLayout *cur_layout)
 {
   for (uiLayout *parent = cur_layout; parent; parent = parent->parent_) {
-    if (parent->heading_[0]) {
+    if (!parent->heading_.empty()) {
       return parent;
     }
   }
@@ -1904,7 +1904,7 @@ static void ui_layout_heading_label_add(uiLayout *layout,
   }
   /* After adding the heading label, we have to mark it somehow as added, so it's not added again
    * for other items in this layout. For now just clear it. */
-  heading_layout->heading_[0] = '\0';
+  heading_layout->heading_ = {};
 
   layout->alignment_ = prev_alignment;
 }
@@ -1922,7 +1922,7 @@ static uiLayout *ui_item_prop_split_layout_hack(uiLayout *layout_parent, uiLayou
 
   if (layout_parent->type_ == uiItemType::LayoutRow) {
     /* Prevent further splits within the row. */
-    uiLayoutSetPropSep(layout_parent, false);
+    layout_parent->use_property_split_set(false);
 
     layout_parent->child_items_layout_ = &layout_split->row(true);
     return layout_parent->child_items_layout_;
@@ -2147,7 +2147,7 @@ void uiLayout::prop(PointerRNA *ptr,
         /* bfa - XYZW column */
         layout_sub = &layout_split->column(true);
         /* bfa - set fixed size, otherwise space is wasted */
-        uiLayoutSetFixedSize(layout_sub, true);
+        layout_sub->fixed_size_set(true);
 
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
@@ -2445,19 +2445,18 @@ void uiLayout::prop(PointerRNA *ptr,
   this->prop(ptr, prop, RNA_NO_INDEX, 0, flag, name, icon);
 }
 
-void uiItemFullR_with_popover(uiLayout *layout,
-                              PointerRNA *ptr,
-                              PropertyRNA *prop,
-                              int index,
-                              int value,
-                              const eUI_Item_Flag flag,
-                              const std::optional<StringRefNull> name,
-                              int icon,
-                              const char *panel_type)
+void uiLayout::prop_with_popover(PointerRNA *ptr,
+                                 PropertyRNA *prop,
+                                 int index,
+                                 int value,
+                                 const eUI_Item_Flag flag,
+                                 const std::optional<StringRefNull> name,
+                                 int icon,
+                                 const char *panel_type)
 {
-  uiBlock *block = layout->block();
+  uiBlock *block = this->block();
   int i = block->buttons.size();
-  layout->prop(ptr, prop, index, value, flag, name, icon);
+  this->prop(ptr, prop, index, value, flag, name, icon);
   for (; i < block->buttons.size(); i++) {
     uiBut *but = block->buttons[i].get();
     if (but->rnaprop == prop && ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_COLOR)) {
@@ -2467,7 +2466,7 @@ void uiItemFullR_with_popover(uiLayout *layout,
   }
   if (i == block->buttons.size()) {
     const StringRefNull propname = RNA_property_identifier(prop);
-    ui_item_disabled(layout, panel_type);
+    ui_item_disabled(this, panel_type);
     RNA_warning("property could not use a popover: %s.%s (%s)",
                 RNA_struct_identifier(ptr->type),
                 propname.c_str(),
@@ -2475,19 +2474,18 @@ void uiItemFullR_with_popover(uiLayout *layout,
   }
 }
 
-void uiItemFullR_with_menu(uiLayout *layout,
-                           PointerRNA *ptr,
-                           PropertyRNA *prop,
-                           int index,
-                           int value,
-                           const eUI_Item_Flag flag,
-                           const std::optional<StringRefNull> name,
-                           int icon,
-                           const char *menu_type)
+void uiLayout::prop_with_menu(PointerRNA *ptr,
+                              PropertyRNA *prop,
+                              int index,
+                              int value,
+                              const eUI_Item_Flag flag,
+                              const std::optional<StringRefNull> name,
+                              int icon,
+                              const char *menu_type)
 {
-  uiBlock *block = layout->block();
+  uiBlock *block = this->block();
   int i = block->buttons.size();
-  layout->prop(ptr, prop, index, value, flag, name, icon);
+  this->prop(ptr, prop, index, value, flag, name, icon);
   while (i < block->buttons.size()) {
     uiBut *but = block->buttons[i].get();
     if (but->rnaprop == prop && but->type == UI_BTYPE_MENU) {
@@ -2498,7 +2496,7 @@ void uiItemFullR_with_menu(uiLayout *layout,
   }
   if (i == block->buttons.size()) {
     const StringRefNull propname = RNA_property_identifier(prop);
-    ui_item_disabled(layout, menu_type);
+    ui_item_disabled(this, menu_type);
     RNA_warning("property could not use a menu: %s.%s (%s)",
                 RNA_struct_identifier(ptr->type),
                 propname.c_str(),
@@ -2506,33 +2504,31 @@ void uiItemFullR_with_menu(uiLayout *layout,
   }
 }
 
-void uiItemEnumR_prop(uiLayout *layout,
-                      const std::optional<StringRefNull> name,
-                      int icon,
-                      PointerRNA *ptr,
-                      PropertyRNA *prop,
-                      int value)
+void uiLayout::prop_enum(PointerRNA *ptr,
+                         PropertyRNA *prop,
+                         int value,
+                         const std::optional<StringRefNull> name,
+                         int icon)
 {
   if (RNA_property_type(prop) != PROP_ENUM) {
     const StringRefNull propname = RNA_property_identifier(prop);
-    ui_item_disabled(layout, propname.c_str());
+    ui_item_disabled(this, propname.c_str());
     RNA_warning("property not an enum: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
 
-  layout->prop(ptr, prop, RNA_ENUM_VALUE, value, UI_ITEM_NONE, name, icon);
+  this->prop(ptr, prop, RNA_ENUM_VALUE, value, UI_ITEM_NONE, name, icon);
 }
 
-void uiItemEnumR_string_prop(uiLayout *layout,
-                             PointerRNA *ptr,
-                             PropertyRNA *prop,
-                             const char *value,
-                             const std::optional<StringRefNull> name,
-                             int icon)
+void uiLayout::prop_enum(PointerRNA *ptr,
+                         PropertyRNA *prop,
+                         const char *value,
+                         const std::optional<StringRefNull> name,
+                         int icon)
 {
   if (UNLIKELY(RNA_property_type(prop) != PROP_ENUM)) {
     const StringRefNull propname = RNA_property_identifier(prop);
-    ui_item_disabled(layout, propname.c_str());
+    ui_item_disabled(this, propname.c_str());
     RNA_warning("not an enum property: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
@@ -2540,7 +2536,7 @@ void uiItemEnumR_string_prop(uiLayout *layout,
   const EnumPropertyItem *item;
   bool free;
   RNA_property_enum_items(
-      static_cast<bContext *>(layout->block()->evil_C), ptr, prop, &item, nullptr, &free);
+      static_cast<bContext *>(this->block()->evil_C), ptr, prop, &item, nullptr, &free);
 
   int ivalue;
   if (!RNA_enum_value_from_id(item, value, &ivalue)) {
@@ -2548,7 +2544,7 @@ void uiItemEnumR_string_prop(uiLayout *layout,
     if (free) {
       MEM_freeN(item);
     }
-    ui_item_disabled(layout, propname.c_str());
+    ui_item_disabled(this, propname.c_str());
     RNA_warning("enum property value not found: %s", value);
     return;
   }
@@ -2563,7 +2559,7 @@ void uiItemEnumR_string_prop(uiLayout *layout,
           CTX_IFACE_(RNA_property_translation_context(prop), item[a].name));
       const eUI_Item_Flag flag = !item_name.is_empty() ? UI_ITEM_NONE : UI_ITEM_R_ICON_ONLY;
 
-      layout->prop(ptr, prop, RNA_ENUM_VALUE, ivalue, flag, item_name, icon ? icon : item[a].icon);
+      this->prop(ptr, prop, RNA_ENUM_VALUE, ivalue, flag, item_name, icon ? icon : item[a].icon);
       break;
     }
   }
@@ -2573,31 +2569,30 @@ void uiItemEnumR_string_prop(uiLayout *layout,
   }
 }
 
-void uiItemEnumR_string(uiLayout *layout,
-                        PointerRNA *ptr,
-                        const StringRefNull propname,
-                        const char *value,
-                        const std::optional<StringRefNull> name,
-                        int icon)
+void uiLayout::prop_enum(PointerRNA *ptr,
+                         const StringRefNull propname,
+                         const char *value,
+                         const std::optional<StringRefNull> name,
+                         int icon)
 {
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
   if (UNLIKELY(prop == nullptr)) {
-    ui_item_disabled(layout, propname.c_str());
+    ui_item_disabled(this, propname.c_str());
     RNA_warning(
         "enum property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
   }
-  uiItemEnumR_string_prop(layout, ptr, prop, value, name, icon);
+  this->prop_enum(ptr, prop, value, name, icon);
 }
 
-void uiItemsEnumR(uiLayout *layout, PointerRNA *ptr, const StringRefNull propname)
+void uiLayout::props_enum(PointerRNA *ptr, const StringRefNull propname)
 {
-  uiBlock *block = layout->block();
+  uiBlock *block = this->block();
 
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
   if (!prop) {
-    ui_item_disabled(layout, propname.c_str());
+    ui_item_disabled(this, propname.c_str());
     RNA_warning(
         "enum property not found: %s.%s", RNA_struct_identifier(ptr->type), propname.c_str());
     return;
@@ -2608,7 +2603,7 @@ void uiItemsEnumR(uiLayout *layout, PointerRNA *ptr, const StringRefNull propnam
     return;
   }
 
-  uiLayout *split = &layout->split(0.0f, false);
+  uiLayout *split = &this->split(0.0f, false);
   uiLayout *column = &split->column(false);
 
   int totitem;
@@ -2619,7 +2614,7 @@ void uiItemsEnumR(uiLayout *layout, PointerRNA *ptr, const StringRefNull propnam
 
   for (int i = 0; i < totitem; i++) {
     if (item[i].identifier[0]) {
-      uiItemEnumR_prop(column, item[i].name, item[i].icon, ptr, prop, item[i].value);
+      column->prop_enum(ptr, prop, item[i].value, item[i].name, item[i].icon);
       ui_but_tip_from_enum_item(block->buttons.last().get(), &item[i]);
     }
     else {
@@ -2765,18 +2760,17 @@ uiBut *ui_but_add_search(uiBut *but,
   return but;
 }
 
-void uiItemPointerR_prop(uiLayout *layout,
-                         PointerRNA *ptr,
-                         PropertyRNA *prop,
-                         PointerRNA *searchptr,
-                         PropertyRNA *searchprop,
-                         const std::optional<StringRefNull> name_opt,
-                         int icon,
-                         bool results_are_suggestions)
+void uiLayout::prop_search(PointerRNA *ptr,
+                           PropertyRNA *prop,
+                           PointerRNA *searchptr,
+                           PropertyRNA *searchprop,
+                           const std::optional<StringRefNull> name_opt,
+                           int icon,
+                           bool results_are_suggestions)
 {
-  const bool use_prop_sep = bool(layout->flag_ & uiItemInternalFlag::PropSep);
-
-  ui_block_new_button_group(layout->block(), uiButtonGroupFlag(0));
+  const bool use_prop_sep = bool(flag_ & uiItemInternalFlag::PropSep);
+  uiBlock *block = this->block();
+  ui_block_new_button_group(block, uiButtonGroupFlag(0));
 
   const PropertyType type = RNA_property_type(prop);
   if (!ELEM(type, PROP_POINTER, PROP_STRING, PROP_ENUM)) {
@@ -2812,23 +2806,21 @@ void uiItemPointerR_prop(uiLayout *layout,
   }
 
   /* create button */
-  uiBlock *block = layout->block();
 
   int w, h;
-  ui_item_rna_size(layout, name, icon, ptr, prop, 0, false, false, &w, &h);
+  ui_item_rna_size(this, name, icon, ptr, prop, 0, false, false, &w, &h);
   w += UI_UNIT_X; /* X icon needs more space */
-  uiBut *but = ui_item_with_label(layout, block, name, icon, ptr, prop, 0, 0, 0, w, h, 0);
+  uiBut *but = ui_item_with_label(this, block, name, icon, ptr, prop, 0, 0, 0, w, h, 0);
 
   but = ui_but_add_search(but, ptr, prop, searchptr, searchprop, results_are_suggestions);
 }
 
-void uiItemPointerR(uiLayout *layout,
-                    PointerRNA *ptr,
-                    const StringRefNull propname,
-                    PointerRNA *searchptr,
-                    const StringRefNull searchpropname,
-                    const std::optional<StringRefNull> name,
-                    int icon)
+void uiLayout::prop_search(PointerRNA *ptr,
+                           const StringRefNull propname,
+                           PointerRNA *searchptr,
+                           const StringRefNull searchpropname,
+                           const std::optional<StringRefNull> name,
+                           int icon)
 {
   /* validate arguments */
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
@@ -2844,7 +2836,7 @@ void uiItemPointerR(uiLayout *layout,
     return;
   }
 
-  uiItemPointerR_prop(layout, ptr, prop, searchptr, searchprop, name, icon, false);
+  this->prop_search(ptr, prop, searchptr, searchprop, name, icon, false);
 }
 
 void ui_item_menutype_func(bContext *C, uiLayout *layout, void *arg_mt)
@@ -3063,25 +3055,25 @@ void uiItemDecoratorR(uiLayout *layout,
   uiItemDecoratorR_prop(layout, ptr, prop, index);
 }
 
-void uiItemPopoverPanel_ptr(uiLayout *layout,
-                            const bContext *C,
-                            PanelType *pt,
-                            const std::optional<StringRef> name_opt,
-                            int icon)
+void uiLayout::popover(const bContext *C,
+                       PanelType *pt,
+                       const std::optional<StringRef> name_opt,
+                       int icon)
 {
+  uiLayout *layout = this;
   const StringRef name = name_opt.value_or(CTX_IFACE_(pt->translation_context, pt->label));
 
-  if (layout->root_->type == UI_LAYOUT_MENU && !icon) {
+  if (root_->type == UI_LAYOUT_MENU && !icon) {
     icon = ICON_BLANK1;
   }
 
   const bContextStore *previous_ctx = CTX_store_get(C);
   /* Set context for polling (and panel header drawing). */
-  CTX_store_set(const_cast<bContext *>(C), layout->context_);
+  CTX_store_set(const_cast<bContext *>(C), context_);
 
   const bool ok = (pt->poll == nullptr) || pt->poll(C, pt);
   if (ok && (pt->draw_header != nullptr)) {
-    layout = &layout->row(true);
+    layout = &this->row(true);
     Panel panel{};
     Panel_Runtime panel_runtime{};
     panel.runtime = &panel_runtime;
@@ -3101,26 +3093,21 @@ void uiItemPopoverPanel_ptr(uiLayout *layout,
   }
 }
 
-void uiItemPopoverPanel(uiLayout *layout,
-                        const bContext *C,
-                        const StringRef panel_type,
-                        std::optional<blender::StringRef> name_opt,
-                        int icon)
+void uiLayout::popover(const bContext *C,
+                       const StringRef panel_type,
+                       std::optional<blender::StringRef> name_opt,
+                       int icon)
 {
   PanelType *pt = WM_paneltype_find(panel_type, true);
   if (pt == nullptr) {
     RNA_warning("Panel type not found '%s'", std::string(panel_type).c_str());
     return;
   }
-  uiItemPopoverPanel_ptr(layout, C, pt, name_opt, icon);
+  this->popover(C, pt, name_opt, icon);
 }
 
-void uiItemPopoverPanelFromGroup(uiLayout *layout,
-                                 bContext *C,
-                                 int space_id,
-                                 int region_id,
-                                 const char *context,
-                                 const char *category)
+void uiLayout::popover_group(
+    bContext *C, int space_id, int region_id, const char *context, const char *category)
 {
   SpaceType *st = BKE_spacetype_from_id(space_id);
   if (st == nullptr) {
@@ -3139,7 +3126,7 @@ void uiItemPopoverPanelFromGroup(uiLayout *layout,
       if (/* (*context == '\0') || */ STREQ(pt->context, context)) {
         if ((*category == '\0') || STREQ(pt->category, category)) {
           if (pt->poll == nullptr || pt->poll(C, pt)) {
-            uiItemPopoverPanel_ptr(layout, C, pt, std::nullopt, ICON_NONE);
+            this->popover(C, pt, std::nullopt, ICON_NONE);
           }
         }
       }
@@ -3226,7 +3213,7 @@ uiPropertySplitWrapper uiItemPropertySplitWrapperCreate(uiLayout *parent_layout)
   split_wrapper.label_column = &layout_split->column(true);
   split_wrapper.label_column->alignment_ = blender::ui::LayoutAlign::Right;
   split_wrapper.property_row = ui_item_prop_split_layout_hack(parent_layout, layout_split);
-  split_wrapper.decorate_column = uiLayoutGetPropDecorate(parent_layout) ?
+  split_wrapper.decorate_column = parent_layout->use_property_decorate() ?
                                       &layout_row->column(true) :
                                       nullptr;
 
@@ -3355,9 +3342,9 @@ void uiItemProgressIndicator(uiLayout *layout,
   progress_bar->progress_factor = factor;
 }
 
-void uiItemSpacer(uiLayout *layout)
+void uiLayout::separator_spacer()
 {
-  uiBlock *block = layout->block();
+  uiBlock *block = this->block();
   const bool is_popup = ui_block_is_popup_any(block);
 
   if (is_popup) {
@@ -3370,7 +3357,7 @@ void uiItemSpacer(uiLayout *layout)
     return;
   }
 
-  UI_block_layout_set_current(block, layout);
+  UI_block_layout_set_current(block, this);
   uiDefBut(block,
            UI_BTYPE_SEPR_SPACER,
            0,
@@ -3556,25 +3543,24 @@ static void menu_item_enum_rna_menu(bContext * /*C*/, uiLayout *layout, void *ar
   MenuItemLevel *lvl = (MenuItemLevel *)(((uiBut *)arg)->func_argN);
 
   layout->operator_context_set(lvl->opcontext);
-  uiItemsEnumR(layout, &lvl->rnapoin, lvl->propname);
+  layout->props_enum(&lvl->rnapoin, lvl->propname);
 }
 
-void uiItemMenuEnumR_prop(uiLayout *layout,
-                          PointerRNA *ptr,
-                          PropertyRNA *prop,
-                          const std::optional<StringRefNull> name,
-                          int icon)
+void uiLayout::prop_menu_enum(PointerRNA *ptr,
+                              PropertyRNA *prop,
+                              const std::optional<StringRefNull> name,
+                              int icon)
 {
-  if (layout->root_->type == UI_LAYOUT_MENU && !icon) {
+  if (root_->type == UI_LAYOUT_MENU && !icon) {
     icon = ICON_BLANK1;
   }
 
   MenuItemLevel *lvl = MEM_new<MenuItemLevel>("MenuItemLevel");
   lvl->rnapoin = *ptr;
   STRNCPY(lvl->propname, RNA_property_identifier(prop));
-  lvl->opcontext = layout->root_->opcontext;
+  lvl->opcontext = root_->opcontext;
 
-  ui_item_menu(layout,
+  ui_item_menu(this,
                name.value_or(RNA_property_ui_name(prop)),
                icon,
                menu_item_enum_rna_menu,
@@ -3586,18 +3572,17 @@ void uiItemMenuEnumR_prop(uiLayout *layout,
                but_func_argN_copy<MenuItemLevel>);
 }
 
-void uiItemTabsEnumR_prop(uiLayout *layout,
-                          bContext *C,
-                          PointerRNA *ptr,
-                          PropertyRNA *prop,
-                          PointerRNA *ptr_highlight,
-                          PropertyRNA *prop_highlight,
-                          bool icon_only)
+void uiLayout::prop_tabs_enum(bContext *C,
+                              PointerRNA *ptr,
+                              PropertyRNA *prop,
+                              PointerRNA *ptr_highlight,
+                              PropertyRNA *prop_highlight,
+                              bool icon_only)
 {
-  uiBlock *block = layout->block();
+  uiBlock *block = this->block();
 
-  UI_block_layout_set_current(block, layout);
-  ui_item_enum_expand_tabs(layout,
+  UI_block_layout_set_current(block, this);
+  ui_item_enum_expand_tabs(this,
                            C,
                            block,
                            ptr,
@@ -4073,7 +4058,7 @@ static void ui_litem_estimate_panel_header(uiLayout *litem)
 static void ui_litem_layout_panel_header(uiLayout *litem)
 {
   uiLayoutItemPanelHeader *header_litem = static_cast<uiLayoutItemPanelHeader *>(litem);
-  Panel *panel = litem->block()->panel;
+  Panel *panel = litem->root_panel();
 
   BLI_assert(litem->items_.size() == 1);
   uiItem *item = litem->items_.first();
@@ -4097,7 +4082,7 @@ static void ui_litem_estimate_panel_body(uiLayout *litem)
 
 static void ui_litem_layout_panel_body(uiLayout *litem)
 {
-  Panel *panel = litem->block()->panel;
+  Panel *panel = litem->root_panel();
   ui_litem_layout_column(litem, false, false);
   const float offset = UI_style_get_dpi()->panelspace;
   panel->runtime->layout_panels.bodies.append({
@@ -4829,11 +4814,6 @@ static void ui_litem_init_from_parent(uiLayout *litem, uiLayout *layout, int ali
   }
 }
 
-static void ui_layout_heading_set(uiLayout *layout, const StringRef heading)
-{
-  heading.copy_utf8_truncated(layout->heading_);
-}
-
 uiLayout &uiLayout::row(bool align)
 {
   uiLayout *litem = MEM_new<uiLayout>(__func__);
@@ -4922,7 +4902,7 @@ uiLayout *uiLayout::panel_prop(const bContext *C,
 
 PanelLayout uiLayout::panel(const bContext *C, const StringRef idname, const bool default_closed)
 {
-  Panel *root_panel = uiLayoutGetRootPanel(this);
+  Panel *root_panel = this->root_panel();
   BLI_assert(root_panel != nullptr);
 
   LayoutPanelState *state = BKE_panel_layout_panel_state_ensure(
@@ -4955,7 +4935,7 @@ bool uiLayoutEndsWithPanelHeader(const uiLayout &layout)
 uiLayout &uiLayout::row(bool align, const StringRef heading)
 {
   uiLayout &litem = this->row(align);
-  ui_layout_heading_set(&litem, heading);
+  litem.heading_ = heading;
   return litem;
 }
 
@@ -4975,7 +4955,7 @@ uiLayout &uiLayout::column(bool align)
 uiLayout &uiLayout::column(bool align, const StringRef heading)
 {
   uiLayout &litem = this->column(align);
-  ui_layout_heading_set(&litem, heading);
+  litem.heading_ = heading;
   return litem;
 }
 
@@ -5136,59 +5116,34 @@ uiLayout &uiLayout::split(float percentage, bool align)
   return *split;
 }
 
-void uiLayoutSetRedAlert(uiLayout *layout, bool redalert)
-{
-  layout->redalert_ = redalert;
-}
-
 void uiLayout::emboss_set(blender::ui::EmbossType emboss)
 {
   emboss_ = emboss;
 }
 
-bool uiLayoutGetPropSep(uiLayout *layout)
+bool uiLayout::use_property_split() const
 {
-  return bool(layout->flag_ & uiItemInternalFlag::PropSep);
+  return bool(flag_ & uiItemInternalFlag::PropSep);
 }
 
-void uiLayoutSetPropSep(uiLayout *layout, bool is_sep)
+void uiLayout::use_property_split_set(bool is_sep)
 {
-  SET_FLAG_FROM_TEST(layout->flag_, is_sep, uiItemInternalFlag::PropSep);
+  SET_FLAG_FROM_TEST(flag_, is_sep, uiItemInternalFlag::PropSep);
 }
 
-bool uiLayoutGetPropDecorate(uiLayout *layout)
+bool uiLayout::use_property_decorate() const
 {
-  return bool(layout->flag_ & uiItemInternalFlag::PropDecorate);
+  return bool(flag_ & uiItemInternalFlag::PropDecorate);
 }
 
-void uiLayoutSetPropDecorate(uiLayout *layout, bool is_sep)
+void uiLayout::use_property_decorate_set(bool is_sep)
 {
-  SET_FLAG_FROM_TEST(layout->flag_, is_sep, uiItemInternalFlag::PropDecorate);
+  SET_FLAG_FROM_TEST(flag_, is_sep, uiItemInternalFlag::PropDecorate);
 }
 
-void uiLayoutSetSearchWeight(uiLayout *layout, const float weight)
+Panel *uiLayout::root_panel() const
 {
-  layout->search_weight_ = weight;
-}
-
-float uiLayoutGetSearchWeight(uiLayout *layout)
-{
-  return layout->search_weight_;
-}
-
-Panel *uiLayoutGetRootPanel(uiLayout *layout)
-{
-  return layout->block()->panel;
-}
-
-bool uiLayoutGetRedAlert(uiLayout *layout)
-{
-  return layout->redalert_;
-}
-
-int uiLayoutGetWidth(uiLayout *layout)
-{
-  return layout->w_;
+  return this->block()->panel;
 }
 
 blender::ui::EmbossType uiLayout::emboss() const
@@ -5208,7 +5163,7 @@ void uiLayoutListItemAddPadding(uiLayout *layout)
 {
   uiBlock *block = layout->block();
   uiLayout *row = &layout->row(true);
-  uiLayoutSetFixedSize(row, true);
+  row->fixed_size_set(true);
 
   uiDefBut(
       block, UI_BTYPE_SEPR, 0, "", 0, 0, uiLayoutListItemPaddingWidth(), 0, nullptr, 0.0, 0.0, "");
@@ -5802,19 +5757,14 @@ bool ui_layout_replace_but_ptr(uiLayout *layout, const void *old_but_ptr, uiBut 
   return true;
 }
 
-void uiLayoutSetFixedSize(uiLayout *layout, bool fixed_size)
+void uiLayout::fixed_size_set(bool fixed_size)
 {
-  if (fixed_size) {
-    layout->flag_ |= uiItemInternalFlag::FixedSize;
-  }
-  else {
-    layout->flag_ &= ~uiItemInternalFlag::FixedSize;
-  }
+  SET_FLAG_FROM_TEST(flag_, fixed_size, uiItemInternalFlag::FixedSize);
 }
 
-bool uiLayoutGetFixedSize(uiLayout *layout)
+bool uiLayout::fixed_size() const
 {
-  return bool(layout->flag_ & uiItemInternalFlag::FixedSize);
+  return bool(flag_ & uiItemInternalFlag::FixedSize);
 }
 
 void uiLayout::operator_context_set(wmOperatorCallContext opcontext)
@@ -6072,7 +6022,7 @@ static void ui_paneltype_draw_impl(bContext *C, PanelType *pt, uiLayout *layout,
   /* This check may be paranoid, this function might run outside the context of a popup or can run
    * in popovers that are not supposed to support refreshing, see #ui_popover_create_block. */
   if (block->handle && block->handle->region) {
-    /* Allow popovers to contain collapsible sections, see #uiItemPopoverPanel. */
+    /* Allow popovers to contain collapsible sections, see #uiLayout::popover. */
     UI_popup_dummy_panel_set(block->handle->region, block);
   }
 

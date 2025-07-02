@@ -60,20 +60,22 @@ def stop_playback(scene):
         #current_scene.frame_set(bpy.context.scene.frame_end)
         #bpy.ops.screen.frame_jump(end=True)
 
-
-
-
-def get_next_s_name():
+def get_next_s_name(insert_idx=None):
     pattern = re.compile(r"S(\d{3})")
-    indices = []
-
+    used_indices = set()
     for scene in bpy.data.scenes:
         match = pattern.fullmatch(scene.name)
         if match:
-            indices.append(int(match.group(1)))
-
-    next_index = max(indices, default=-1) + 1
-    return f"S{str(next_index).zfill(3)}"
+            used_indices.add(int(match.group(1)))
+    if insert_idx is None:
+        # default: lowest available (backwards compatible)
+        for idx in range(1000):
+            if idx not in used_indices:
+                return f"S{str(idx).zfill(3)}"
+        return f"S{str(max(used_indices, default=-1) + 1).zfill(3)}"
+    else:
+        # force S{insert_idx:03d}
+        return f"S{str(insert_idx).zfill(3)}"
 
 def duplicate_collection_recursive(original_coll, new_name):
     # Duplicate collection and its full hierarchy
@@ -83,11 +85,9 @@ def duplicate_collection_recursive(original_coll, new_name):
         if obj.data:
             obj_copy.data = obj.data.copy()
         new_coll.objects.link(obj_copy)
-    
     for child in original_coll.children:
         child_copy = duplicate_collection_recursive(child, child.name)
         new_coll.children.link(child_copy)
-    
     # 🖌️ Color tag — 3 is "Red"
     new_coll.color_tag = 'COLOR_01'
     return new_coll
@@ -95,14 +95,12 @@ def duplicate_collection_recursive(original_coll, new_name):
 def clean_orphaned_s_collections():
     pattern = re.compile(r"S(\d{3})")
     orphan_names = []
-
     for coll in bpy.data.collections:
         if pattern.fullmatch(coll.name):
             # Check if it's linked to any scene
             linked = any(coll.name in [c.name for c in scene.collection.children] for scene in bpy.data.scenes)
             if not linked:
                 orphan_names.append(coll.name)
-
     for name in orphan_names:
         coll = bpy.data.collections.get(name)
         if coll:
@@ -113,110 +111,157 @@ def clean_orphaned_s_collections():
 class VIEW_OT_SlideSetupOperator(Operator):
     """Setup or duplicate slide scenes and collections with camera"""
     bl_idname = "scene.setup_slide_scene"
-    bl_label = "Setup Slide Scene"
-    bl_description = "Sets up a new slide scene/collection/camera structure, or duplicates current slide scene"
-    
+    bl_label = "Insert New Slide Scene"
+    bl_description = "Sets up a new slide scene/collection/camera structure, or inserts a new slide scene after current select slide scene"
+
+    frame_range: IntProperty(
+        name="Duration",
+        description="Number of frames for each slide",
+        default=30,
+        min=1,
+        soft_max=300
+    )
+
     def execute(self, context):
-        # === Config ===
-        scene_name = "S000"
-        camera_name = "S000"
-        collection_set_name = "SET"
-        collection_shot_name = scene_name
+        base_scene_name = "S000"
+        base_collection_name = "SET"
 
-        current_scene = bpy.context.scene
-        # Only run setup if S000 does NOT exist at all
-        if scene_name not in bpy.data.scenes:
-            # Step 1: Create new scene
-            new_scene = bpy.data.scenes.new(scene_name)
+        def create_slide_camera(collection, cam_name):
+            cam_obj = bpy.data.objects.get(cam_name)
+            if not cam_obj:
+                cam_data = bpy.data.cameras.new(cam_name)
+                cam_obj = bpy.data.objects.new(cam_name, cam_data)
+                cam_obj.location = (0, 0, 0)
+                collection.objects.link(cam_obj)
+                self.report({'INFO'}, f"🎥 Created camera '{cam_name}' in '{collection.name}'")
+            elif cam_obj.name not in [o.name for o in collection.objects]:
+                collection.objects.link(cam_obj)
+                self.report({'INFO'}, f"🎥 Linked existing camera '{cam_name}' to '{collection.name}'")
+            return cam_obj
+
+        # ======= 1. SETUP S000 ===========
+        if base_scene_name not in bpy.data.scenes:
+            new_scene = bpy.data.scenes.new(base_scene_name)
             bpy.context.window.scene = new_scene
-            self.report({'INFO'}, f"📂 Created new scene: '{scene_name}'")
-
-            # Step 2: Create/set SET collection
-            set_collection = bpy.data.collections.get(collection_set_name)
-            if set_collection is None:
-                set_collection = bpy.data.collections.new(collection_set_name)
-                set_collection.color_tag = 'COLOR_05'  # Red
-                bpy.data.collections.link(set_collection)
-                self.report({'INFO'}, f"📁 Created red collection: '{collection_set_name}'")
-            # Link SET collection to scene
-            if all(child.name != set_collection.name for child in new_scene.collection.children):
-                new_scene.collection.children.link(set_collection)
-
-            # Step 3: Create shot collection (S000)
-            shot_collection = bpy.data.collections.get(collection_shot_name)
-            if shot_collection is None:
-                shot_collection = bpy.data.collections.new(collection_shot_name)
-                bpy.data.collections.link(shot_collection)
-                self.report({'INFO'}, f"🎬 Created collection: '{collection_shot_name}'")
-            if all(child.name != shot_collection.name for child in new_scene.collection.children):
-                new_scene.collection.children.link(shot_collection)
-
-            # Step 4: Create camera named S000 at origin if not present
-            cam_object = bpy.data.objects.get(camera_name)
-            if cam_object is None:
-                cam_data = bpy.data.cameras.new(camera_name)
-                cam_object = bpy.data.objects.new(camera_name, cam_data)
-                cam_object.location = (0.0, 0.0, 0.0)
-                shot_collection.objects.link(cam_object)
-                new_scene.camera = cam_object
-                self.report({'INFO'}, f"🎥 Created camera '{camera_name}' at origin.")
+            new_scene.name = base_scene_name
+            # -- Setup SET collection (red tag)
+            set_coll = bpy.data.collections.get(base_collection_name)
+            if set_coll is None:
+                set_coll = bpy.data.collections.new(base_collection_name)
+                set_coll.color_tag = 'COLOR_05'
+                for sc in bpy.data.scenes:
+                    if set_coll.name not in [c.name for c in sc.collection.children]:
+                        sc.collection.children.link(set_coll)
+                self.report({'INFO'}, f"📁 Created new SET collection '{base_collection_name}'")
             else:
-                self.report({'WARNING'}, f"⚠️ Camera '{camera_name}' already exists.")
-
-            self.report({'INFO'}, f"✅ Initial slide '{scene_name}' ready.")
+                for sc in bpy.data.scenes:
+                    if set_coll.name not in [c.name for c in sc.collection.children]:
+                        sc.collection.children.link(set_coll)
+            # -- Create S000 slide collection (blue)
+            slide_coll_name = base_scene_name
+            slide_coll = bpy.data.collections.get(slide_coll_name)
+            if slide_coll is None:
+                slide_coll = bpy.data.collections.new(slide_coll_name)
+                slide_coll.color_tag = 'COLOR_02'
+                new_scene.collection.children.link(slide_coll)
+                self.report({'INFO'}, f"📦 Created slide collection '{slide_coll_name}'")
+            else:
+                if slide_coll.name not in [c.name for c in new_scene.collection.children]:
+                    new_scene.collection.children.link(slide_coll)
+            # -- Setup SET and Slide links
+            if set_coll.name not in [c.name for c in new_scene.collection.children]:
+                new_scene.collection.children.link(set_coll)
+            if slide_coll.name not in [c.name for c in new_scene.collection.children]:
+                new_scene.collection.children.link(slide_coll)
+            # -- Add camera named S000 in S000 collection
+            cam_obj = create_slide_camera(slide_coll, slide_coll_name)
+            new_scene.camera = cam_obj
+            # -- Set frame range
+            new_scene.frame_start = 1
+            new_scene.frame_end = self.frame_range
+            self.report({'INFO'}, f"✅ Initial slide '{base_scene_name}' ready.")
             return {'FINISHED'}
+
+        # ======= 2. INSERT SLIDE SCENE (SEQUENTIALLY, shifting higher) ===========
+        # Identify where to insert: the current selected Sxxx scene
+        current_scene = context.scene
+        s_pattern = re.compile(r"S(\d{3})")
+        current_match = s_pattern.fullmatch(current_scene.name)
+        if not current_match:
+            self.report({'ERROR'}, "Current scene is not a slide (Sxxx). Select a slide scene to insert after!")
+            return {'CANCELLED'}
+        insert_idx = int(current_match.group(1)) + 1
+
+        # Collect all "Sxxx" scenes, sorted by index
+        scenes_s = []
+        for sc in bpy.data.scenes:
+            m = s_pattern.fullmatch(sc.name)
+            if m:
+                scenes_s.append((int(m.group(1)), sc))
+        scenes_s.sort()
+
+        # Check if insert_idx is already taken. If NOT, we can just add S{insert_idx:03d}
+        target_scene_name = f"S{insert_idx:03d}"
+        if target_scene_name in bpy.data.scenes:
+            # SHIFT UP: from highest down to insert_idx, shift scene & collection & camera names
+            for idx, scene in reversed(scenes_s):
+                if idx >= insert_idx:
+                    new_index = idx + 1
+                    new_scenename = f"S{new_index:03d}"
+                    if new_scenename in bpy.data.scenes:
+                        self.report({'WARNING'}, f"Scene '{new_scenename}' already exists, skipping shift.")
+                        continue
+
+                    old_collection = bpy.data.collections.get(f"S{idx:03d}")
+                    old_camera = None
+                    for obj in bpy.data.objects:
+                        if obj.type == 'CAMERA' and obj.name == f"S{idx:03d}":
+                            old_camera = obj
+                            break
+
+                    scene.name = new_scenename
+
+                    # Rename corresponding slide collection
+                    if old_collection and f"S{new_index:03d}" not in bpy.data.collections:
+                        old_collection.name = f"S{new_index:03d}"
+                    # Rename camera object (if present and safe)
+                    if old_camera and f"S{new_index:03d}" not in bpy.data.objects:
+                        old_camera.name = f"S{new_index:03d}"
+
+        # Now, insert new slide at insert_idx (name Sxxx with insert_idx)
+        src_scene = bpy.data.scenes.get(base_scene_name)
+        if not src_scene:
+            self.report({'ERROR'}, "Couldn't find S000 for duplication.")
+            return {'CANCELLED'}
+        new_slide_name = get_next_s_name(insert_idx)
+        new_scene = src_scene.copy()
+        new_scene.name = new_slide_name
+        bpy.context.window.scene = new_scene
+        new_scene.frame_start = 1
+        new_scene.frame_end = self.frame_range
+        # Remove S000 from children of new scene
+        for coll in list(new_scene.collection.children):
+            if coll.name == base_scene_name:
+                new_scene.collection.children.unlink(coll)
+                self.report({'INFO'}, f"🧹 Unlinked '{base_scene_name}' collection from new scene '{new_slide_name}'")
+                break
+        # Create new slide collection with appropriate name/color, link to new scene
+        new_slide_coll = bpy.data.collections.get(new_slide_name)
+        if new_slide_coll is None:
+            new_slide_coll = bpy.data.collections.new(new_slide_name)
+            new_slide_coll.color_tag = 'COLOR_02'
+            new_scene.collection.children.link(new_slide_coll)
+            self.report({'INFO'}, f"📦 Created new slide collection '{new_slide_name}'")
         else:
-            # If we are currently on S000, do nothing further
-
-            # === Main Process: Duplicate from current S### (not S000) ===
-            original_scene = bpy.context.scene
-            original_scene_name = original_scene.name
-
-            # Only allow duplication if selected scene's name matches S### and is not S000
-            pattern = re.compile(r"S\d{3}")
-            match = pattern.fullmatch(original_scene_name)
-            if not match:
-                self.report({'WARNING'}, "Please select a slide scene (S###) other than S000 to duplicate.")
-                return {'CANCELLED'}
-
-            new_scene_name = get_next_s_name()
-
-            # Clean orphaned collections
-            clean_orphaned_s_collections()
-
-            # Duplicate scene
-            new_scene = original_scene.copy()
-            new_scene.name = new_scene_name
-            new_scene.frame_start += 30
-            new_scene.frame_end += 30
-            bpy.context.window.scene = new_scene
-
-            scene_collection = new_scene.collection
-
-            # Get original collection named like the original scene
-            original_collection = bpy.data.collections.get(original_scene_name)
-            existing_duplicate = bpy.data.collections.get(new_scene_name)
-
-            if original_collection:
-                if existing_duplicate:
-                    # Reuse if exists
-                    if existing_duplicate.name not in [c.name for c in scene_collection.children]:
-                        scene_collection.children.link(existing_duplicate)
-                    self.report({'INFO'}, f"🔁 Reused existing collection '{existing_duplicate.name}'.")
-                else:
-                    # Deep copy with hierarchy + set blue color
-                    duplicated = duplicate_collection_recursive(original_collection, new_scene_name)
-                    scene_collection.children.link(duplicated)
-                    self.report({'INFO'}, f"📦 Duplicated '{original_collection.name}' to '{duplicated.name}' with hierarchy preserved and color set.")
-
-                # Unlink original collection from new scene
-                if original_collection.name in [c.name for c in scene_collection.children]:
-                    scene_collection.children.unlink(original_collection)
-                    self.report({'INFO'}, f"🧹 Unlinked original collection '{original_collection.name}' from scene '{new_scene_name}'.")
-
-            self.report({'INFO'}, f"✅ Scene '{new_scene_name}' ready: colored, cleaned, and structured.")
-
+            if new_slide_coll.name not in [c.name for c in new_scene.collection.children]:
+                new_scene.collection.children.link(new_slide_coll)
+                self.report({'INFO'}, f"🔁 Linked existing collection '{new_slide_coll.name}'")
+        # Add new camera for this slide (named slide)
+        cam_obj = create_slide_camera(new_slide_coll, new_slide_name)
+        new_scene.camera = cam_obj
+        self.report({'INFO'}, f"✅ Inserted slide '{new_slide_name}' with new collection & camera, scenes updated!")
         return {'FINISHED'}
+
 
 
   
@@ -484,23 +529,40 @@ class VIEW_PT_PlayAnimationPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        # Add a button that calls the operator
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        # Math From Box
+        # Math From Box (Slides and playback control)
         box = layout.box()
-        col = box.column(align=True)      
-        
+        col = box.column(align=True)
         col.label(text="Slides:")
-        layout.use_property_split = False
 
-        row = col.row(align = True)
+        row = col.row(align=True)
         row.operator("screen.play_back_animation", icon="PREV_KEYFRAME")
         row.operator("screen.play_animation", icon="NEXT_KEYFRAME")
-                
+
+        # Big button for Insert Slide
         row = layout.row()
-        layout.operator("scene.setup_slide_scene", icon="ADD")
-        layout.operator("screen.remove_stop", icon="FLIP")
-        layout.operator("screen.hide_interface", icon="BOX_HIDE")
+        row.scale_y = 2.0
+        row.operator("scene.setup_slide_scene", icon="ADD")
+
+        # Property field for frames
+        row = layout.row()
+        row.scale_y = 1.0
+        row.prop(context.scene, "frame_end", text="Duration")
+
+        # Spacer/break
+        layout.separator()
+
+        # Full width Loop Animation button
+        row = layout.row()
+        row.scale_y = 1
+        row.operator("screen.remove_stop", icon="FLIP")
+
+        # Full width Hide Interface button
+        row = layout.row()
+        row.operator("screen.hide_interface", icon="BOX_HIDE")
+
 
 
 

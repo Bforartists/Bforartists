@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'6ccdb8c06e27')\n"
+"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-16 10:45+0000\n"
+"POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-05-01 10:56+0000\n"
 "Last-Translator: \"Adriel Y.\" <mixnblend@users.noreply.translate.blender.org>\n"
 "Language-Team: Indonesian <https://translate.blender.org/projects/blender-ui/ui/id/>\n"
@@ -15367,56 +15367,56 @@ msgid "Names"
 msgstr "Nama"
 
 
-msgid "Merge"
-msgstr "Menggabungkan"
-
-
 msgid "Snap"
 msgstr "Jepret"
 
 
-msgid "Hooks"
-msgstr "Kait"
-
-
-msgid "Add Image"
-msgstr "Tambah Gambar"
-
-
-msgid "Light Probe"
-msgstr "Probe Cahaya"
-
-
-msgid "Light"
-msgstr "Cahaya"
-
-
-msgid "Asset"
-msgstr "Aset"
-
-
-msgid "Track"
-msgstr "Lacak"
-
-
-msgid "Apply"
-msgstr "Tetapkan"
-
-
-msgid "Assign Material"
-msgstr "Tugaskan Bahan"
-
-
-msgid "Select Linked"
-msgstr "Seleksi yang Terhubung"
+msgid "Mirror"
+msgstr "Cermin"
 
 
 msgid "Navigation"
 msgstr "Navigasi"
 
 
-msgid "Mirror"
-msgstr "Cermin"
+msgid "Select Linked"
+msgstr "Seleksi yang Terhubung"
+
+
+msgid "Assign Material"
+msgstr "Tugaskan Bahan"
+
+
+msgid "Light"
+msgstr "Cahaya"
+
+
+msgid "Light Probe"
+msgstr "Probe Cahaya"
+
+
+msgid "Add Image"
+msgstr "Tambah Gambar"
+
+
+msgid "Apply"
+msgstr "Tetapkan"
+
+
+msgid "Track"
+msgstr "Lacak"
+
+
+msgid "Asset"
+msgstr "Aset"
+
+
+msgid "Hooks"
+msgstr "Kait"
+
+
+msgid "Merge"
+msgstr "Menggabungkan"
 
 
 msgctxt "MovieClip"
@@ -15466,6 +15466,11 @@ msgstr "Pindah ke Layer"
 
 msgid "UV"
 msgstr "UV"
+
+
+msgctxt "Operator"
+msgid "Mirror"
+msgstr "Cermin"
 
 
 msgid "Shape Key Specials"
@@ -23011,11 +23016,6 @@ msgstr "Penyunting Grafik"
 
 msgid "Hide selected particles"
 msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Mirror"
-msgstr "Cermin"
 
 
 msgctxt "Operator"

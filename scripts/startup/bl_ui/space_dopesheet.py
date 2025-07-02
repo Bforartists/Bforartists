@@ -570,14 +570,17 @@ class DOPESHEET_MT_view(Menu):
 
         layout.menu("DOPESHEET_MT_view_pie_menus")#BFA - make pies discoverable
         layout.menu("INFO_MT_area")
+        layout.separator()
 
+        layout.menu("DOPESHEET_MT_cache")
+        layout.separator()
         # Add this to show key-binding (reverse action in dope-sheet).
         props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
         props.data_path = "area.type"
         props.value = 'GRAPH_EDITOR'
 
 class DOPESHEET_MT_view_pie_menus(Menu):
-    bl_label = "Pie menus"
+    bl_label = "Pie Menus"
 
     def draw(self, _context):
         layout = self.layout
@@ -601,6 +604,29 @@ class DOPESHEET_MT_view_pie(Menu):
             pie.operator("anim.scene_range_frame", text="Frame Preview Range")
         else:
             pie.operator("anim.scene_range_frame", text="Frame Scene Range")
+
+
+class DOPESHEET_MT_cache(Menu):
+    bl_label = "Cache"
+
+    def draw(self, context):
+        layout = self.layout
+
+        st = context.space_data
+
+        layout.prop(st, "show_cache")
+
+        layout.separator()
+
+        col = layout.column()
+        col.enabled = st.show_cache
+        col.prop(st, "cache_softbody")
+        col.prop(st, "cache_particles")
+        col.prop(st, "cache_cloth")
+        col.prop(st, "cache_simulation_nodes")
+        col.prop(st, "cache_smoke")
+        col.prop(st, "cache_dynamicpaint")
+        col.prop(st, "cache_rigidbody")
 
 
 class DOPESHEET_MT_select(Menu):
@@ -1285,6 +1311,7 @@ classes = (
     DOPESHEET_MT_editor_menus,
     DOPESHEET_MT_view,
     DOPESHEET_MT_view_pie_menus, # BFA menu
+    DOPESHEET_MT_cache,
     DOPESHEET_MT_select,
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,

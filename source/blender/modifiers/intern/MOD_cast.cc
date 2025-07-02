@@ -470,7 +470,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA cast_object_ptr = RNA_pointer_get(ptr, "object");
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   layout->prop(ptr, "cast_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -484,7 +484,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout->prop(ptr, "size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   row = &layout->row(true); /* bfa - our layout */
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_radius_as_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, ptr, "use_radius_as_size", 0); /*bfa - decorator*/

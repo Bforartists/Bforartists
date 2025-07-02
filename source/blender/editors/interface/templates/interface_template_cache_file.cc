@@ -84,7 +84,7 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
 
   row = &layout->row(false);
   row->active_set(is_alembic && engine_supports_procedural);
-  uiLayoutSetPropSep(row, false); /* BFA - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(fileptr, "use_render_procedural", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "use_render_procedural", 0); /* BFA - decorator */
 
@@ -115,9 +115,9 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   row = &layout->row(false);
 
   /*------------------- bfa - original props */
-    col = &layout->column(true);
+  col = &layout->column(true);
   row = &layout->row(true);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
   /* ------------ end bfa */
@@ -129,8 +129,7 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
 
   /* FIRST PART ................................................ */
   row = &split->row(false);
-  uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetPropSep(row, false); /* bfa - use_property_split = False */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(fileptr, "override_frame", UI_ITEM_NONE, "Override Frame", ICON_NONE);
 
   /* SECOND PART ................................................ */
@@ -268,7 +267,7 @@ void uiTemplateCacheFile(uiLayout *layout,
 
   uiLayout *row, *sub;
 
-  uiLayoutSetPropSep(layout, true);
+  layout->use_property_split_set(true);
 
   row = &layout->row(true);
   row->prop(&fileptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);

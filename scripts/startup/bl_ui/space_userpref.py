@@ -236,9 +236,9 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.use_property_split = False
-        flow.prop(prefs, "use_recent_searches", text="Sort search by Most Recent")
+        flow.prop(prefs, "use_recent_searches", text="Sort Search by Most Recent")
         # bfa - gooengine disable_search_on_keypress
-        flow.prop(prefs, "disable_search_on_keypress", text="Disable search on Key press")
+        flow.prop(prefs, "disable_search_on_keypress", text="Disable Search on Key Press")
         # bfa - gooengine disable_material_icon
         flow.prop(prefs, "disable_material_icon", text="Disable Material Icon Rendering")
 
@@ -767,6 +767,7 @@ class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         system = prefs.system
         import gpu
+        import sys
 
         col = layout.column()
         col.prop(system, "gpu_backend", text="Backend")
@@ -780,9 +781,10 @@ class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
 
         if system.gpu_backend == 'VULKAN':
             col = layout.column()
-            col.label(text="Vulkan backend limitations:", icon='INFO')
-            col.label(text="\u2022 WoA support", icon='BLANK1')
-            col.label(text="\u2022 Low VR performance", icon='BLANK1')
+            col.label(text="Current Vulkan backend limitations:", icon='INFO')
+            col.label(text="\u2022 Low performance in VR", icon='BLANK1')
+            if sys.platform == "win32" and gpu.platform.device_type_get() == 'QUALCOMM':
+                col.label(text="\u2022 Windows on ARM requires driver 31.0.112.0 or higher", icon='BLANK1')
 
 
 class USERPREF_PT_system_os_settings(SystemPanel, CenterAlignMixIn, Panel):
@@ -3040,6 +3042,13 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
                 ({"property": "write_legacy_blend_file_format"}, ("/blender/blender/issues/129309", "#129309")),
             ),
         )
+        import sys
+        if sys.platform == "linux":
+            self._draw_items(
+                context, (
+                    ({"property": "use_vulkan_hdr"}, ("/blender/blender/issues/140277", "#140277")),
+                ),
+            )
 
 
 # Keep this as tweaks can be useful to restore.

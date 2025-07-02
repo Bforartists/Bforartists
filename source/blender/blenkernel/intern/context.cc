@@ -292,18 +292,18 @@ static void *ctx_wm_python_context_get(const bContext *C,
 #ifdef WITH_PYTHON
   if (UNLIKELY(C && CTX_py_dict_get(C))) {
     bContextDataResult result{};
-    BPY_context_member_get((bContext *)C, member, &result);
+    if (BPY_context_member_get((bContext *)C, member, &result)) {
+      if (result.ptr.data) {
+        if (RNA_struct_is_a(result.ptr.type, member_type)) {
+          return result.ptr.data;
+        }
 
-    if (result.ptr.data) {
-      if (RNA_struct_is_a(result.ptr.type, member_type)) {
-        return result.ptr.data;
+        CLOG_WARN(&LOG,
+                  "PyContext '%s' is a '%s', expected a '%s'",
+                  member,
+                  RNA_struct_identifier(result.ptr.type),
+                  RNA_struct_identifier(member_type));
       }
-
-      CLOG_WARN(&LOG,
-                "PyContext '%s' is a '%s', expected a '%s'",
-                member,
-                RNA_struct_identifier(result.ptr.type),
-                RNA_struct_identifier(member_type));
     }
   }
 #else
@@ -1541,12 +1541,8 @@ const AssetLibraryReference *CTX_wm_asset_library_ref(const bContext *C)
 
 blender::asset_system::AssetRepresentation *CTX_wm_asset(const bContext *C)
 {
-  if (auto *asset = static_cast<blender::asset_system::AssetRepresentation *>(
-          ctx_data_pointer_get(C, "asset")))
-  {
-    return asset;
-  }
-  return nullptr;
+  return static_cast<blender::asset_system::AssetRepresentation *>(
+      ctx_data_pointer_get(C, "asset"));
 }
 
 Depsgraph *CTX_data_depsgraph_pointer(const bContext *C)

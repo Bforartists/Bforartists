@@ -834,12 +834,12 @@ void uiTemplateImage(uiLayout *layout,
 
   layout = &layout->column(false);
   layout->enabled_set(!is_dirty);
-  uiLayoutSetPropDecorate(layout, false);
+  layout->use_property_decorate_set(false);
 
   /* Image source */
   {
     uiLayout *col = &layout->column(false);
-    uiLayoutSetPropSep(col, true);
+    col->use_property_split_set(true);
     col->prop(&imaptr, "source", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
@@ -873,15 +873,15 @@ void uiTemplateImage(uiLayout *layout,
 
     /* Generated */
     uiLayout *col = &layout->column(false);
-    uiLayoutSetPropSep(col, true);
+    col->use_property_split_set(true);
 
     uiLayout *sub = &col->column(true);
     sub->prop(&imaptr, "generated_width", UI_ITEM_NONE, "X", ICON_NONE);
     sub->prop(&imaptr, "generated_height", UI_ITEM_NONE, "Y", ICON_NONE);
 
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+    col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(&imaptr, "use_generated_float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
+    col->use_property_split_set(true); /* bfa - use_property_split = True */
 
     col->separator();
 
@@ -906,7 +906,7 @@ void uiTemplateImage(uiLayout *layout,
     layout->separator();
 
     uiLayout *col = &layout->column(true);
-    uiLayoutSetPropSep(col, true);
+    col->use_property_split_set(true);
 
     uiLayout *sub = &col->column(true);
     uiLayout *row = &sub->row(true);
@@ -916,15 +916,15 @@ void uiTemplateImage(uiLayout *layout,
     sub->prop(userptr, "frame_start", UI_ITEM_NONE, IFACE_("Start"), ICON_NONE);
     sub->prop(userptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+    col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(userptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(userptr, "use_auto_refresh", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
+    col->use_property_split_set(true); /* bfa - use_property_split = True */
 
     if (ima->source == IMA_SRC_MOVIE && compact == 0) {
-      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+      col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&imaptr, "use_deinterlace", UI_ITEM_NONE, IFACE_("Deinterlace"), ICON_NONE);
-      uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
+      col->use_property_split_set(true); /* bfa - use_property_split = True */
     }
   }
 
@@ -934,7 +934,7 @@ void uiTemplateImage(uiLayout *layout,
       layout->separator();
 
       uiLayout *col = &layout->column(false);
-      uiLayoutSetPropSep(col, true);
+      col->use_property_split_set(true);
       col->prop(&imaptr, "use_multiview", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
       if (RNA_boolean_get(&imaptr, "use_multiview")) {
@@ -948,7 +948,7 @@ void uiTemplateImage(uiLayout *layout,
     layout->separator();
 
     uiLayout *col = &layout->column(false);
-    uiLayoutSetPropSep(col, true);
+    col->use_property_split_set(true);
     uiTemplateColorspaceSettings(col, &imaptr, "colorspace_settings");
 
     if (compact == 0) {
@@ -966,17 +966,17 @@ void uiTemplateImage(uiLayout *layout,
           ImBuf *ibuf = BKE_image_acquire_ibuf(ima, iuser, &lock);
 
           if (ibuf && ibuf->float_buffer.data && (ibuf->foptions.flag & OPENEXR_HALF) == 0) {
-            uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+            col->use_property_split_set(false); /* bfa - use_property_split = False */
             col->prop(&imaptr, "use_half_precision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-            uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
+            col->use_property_split_set(true); /* bfa - use_property_split = True */
           }
           BKE_image_release_ibuf(ima, ibuf, lock);
         }
       }
-      uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+      col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&imaptr, "use_view_as_render", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       col->prop(&imaptr, "seam_margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
+      col->use_property_split_set(true); /* bfa - use_property_split = True */
     }
   }
 
@@ -998,8 +998,8 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
 
   col = &layout->column(false);
 
-  uiLayoutSetPropSep(col, true);
-  uiLayoutSetPropDecorate(col, false);
+  col->use_property_split_set(true);
+  col->use_property_decorate_set(false);
 
   col->prop(imfptr, "file_format", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -1037,26 +1037,26 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
   }
 
   if (is_render_out && ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+    col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(imfptr, "use_preview", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
+    col->use_property_split_set(true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_JP2) {
     col->prop(imfptr, "jpeg2k_codec", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+    col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(imfptr, "use_jpeg2k_cinema_preset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(imfptr, "use_jpeg2k_cinema_48", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     col->prop(imfptr, "use_jpeg2k_ycc", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
+    col->use_property_split_set(true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_DPX) {
-    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+    col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(imfptr, "use_cineon_log", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
+    col->use_property_split_set(true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_CINEON) {
@@ -1131,8 +1131,8 @@ static void uiTemplateViewsFormat(uiLayout *layout,
 
   col = &layout->column(false);
 
-  uiLayoutSetPropSep(col, true);
-  uiLayoutSetPropDecorate(col, false);
+  col->use_property_split_set(true);
+  col->use_property_decorate_set(false);
 
   col->prop(ptr, "views_format", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
