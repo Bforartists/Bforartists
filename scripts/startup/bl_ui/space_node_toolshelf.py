@@ -1217,11 +1217,11 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeImage", text="", icon="FILE_IMAGE")
-            self.draw_text_button(row, "TextureNodeTexture", text="", icon="TEXTURE")
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+            self.draw_text_button(flow, "TextureNodeImage", text="", icon="FILE_IMAGE")
+            self.draw_text_button(flow, "TextureNodeTexture", text="", icon="TEXTURE")
 
 
 #Input nodes tab, textures advanced panel. Just in Texture mode
@@ -1268,24 +1268,18 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeTexBlend", text="", icon="BLEND_TEX")
-            self.draw_text_button(row, "TextureNodeTexClouds", text="", icon="CLOUD_TEX")
-            self.draw_text_button(row, "TextureNodeTexDistNoise", text="", icon="NOISE_TEX")
-            self.draw_text_button(row, "TextureNodeTexMagic", text="", icon="MAGIC_TEX")
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeTexMarble", text="", icon="MARBLE_TEX")
-            self.draw_text_button(row, "TextureNodeTexNoise", text="", icon="NOISE_TEX")
-            self.draw_text_button(row, "TextureNodeTexStucci", text="", icon="STUCCI_TEX")
-            self.draw_text_button(row, "TextureNodeTexVoronoi", text="", icon="VORONI_TEX")
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeTexWood", text="", icon="WOOD_TEX")
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+            self.draw_text_button(flow, "TextureNodeTexBlend", text="", icon="BLEND_TEX")
+            self.draw_text_button(flow, "TextureNodeTexClouds", text="", icon="CLOUD_TEX")
+            self.draw_text_button(flow, "TextureNodeTexDistNoise", text="", icon="NOISE_TEX")
+            self.draw_text_button(flow, "TextureNodeTexMagic", text="", icon="MAGIC_TEX")
+            self.draw_text_button(flow, "TextureNodeTexMarble", text="", icon="MARBLE_TEX")
+            self.draw_text_button(flow, "TextureNodeTexNoise", text="", icon="NOISE_TEX")
+            self.draw_text_button(flow, "TextureNodeTexStucci", text="", icon="STUCCI_TEX")
+            self.draw_text_button(flow, "TextureNodeTexVoronoi", text="", icon="VORONI_TEX")
+            self.draw_text_button(flow, "TextureNodeTexWood", text="", icon="WOOD_TEX")
 
 
 #Shader Editor - Shader panel
@@ -1586,8 +1580,8 @@ class NODES_PT_Input_input_advanced_tex(bpy.types.Panel, NodePanel):
         else:
             row = layout.row()
             row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeCoordinates", text="", icon="NODE_TEXCOORDINATE")
-            self.draw_text_button(row, "TextureNodeCurveTime", text="", icon="NODE_CURVE_TIME")
+            self.draw_text_button(flow, "TextureNodeCoordinates", text="", icon="NODE_TEXCOORDINATE")
+            self.draw_text_button(flow, "TextureNodeCurveTime", text="", icon="NODE_CURVE_TIME")
 
 
 #Input nodes tab, Pattern panel. # Just in texture mode
@@ -1623,11 +1617,11 @@ class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeBricks", text="", icon="NODE_BRICK")
-            self.draw_text_button(row, "TextureNodeChecker", text="", icon="NODE_CHECKER")
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+            self.draw_text_button(flow, "TextureNodeBricks", text="", icon="NODE_BRICK")
+            self.draw_text_button(flow, "TextureNodeChecker", text="", icon="NODE_CHECKER")
 
 
 #Input nodes tab, Color panel. Just in texture mode
@@ -1669,18 +1663,15 @@ class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeCurveRGB", text="", icon="NODE_RGBCURVE")
-            self.draw_text_button(row, "TextureNodeHueSaturation", text="", icon="NODE_HUESATURATION")
-            self.draw_text_button(row, "TextureNodeInvert", text="", icon="NODE_INVERT")
-            self.draw_text_button(row, "TextureNodeMixRGB", text="", icon="NODE_MIXRGB")
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeCompose", text="", icon="NODE_COMBINERGB")
-            self.draw_text_button(row, "TextureNodeDecompose", text="", icon="NODE_SEPARATERGB")
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+            self.draw_text_button(flow, "TextureNodeCurveRGB", text="", icon="NODE_RGBCURVE")
+            self.draw_text_button(flow, "TextureNodeHueSaturation", text="", icon="NODE_HUESATURATION")
+            self.draw_text_button(flow, "TextureNodeInvert", text="", icon="NODE_INVERT")
+            self.draw_text_button(flow, "TextureNodeMixRGB", text="", icon="NODE_MIXRGB")
+            self.draw_text_button(flow, "TextureNodeCompose", text="", icon="NODE_COMBINERGB")
+            self.draw_text_button(flow, "TextureNodeDecompose", text="", icon="NODE_SEPARATERGB")
 
 
 #Input nodes tab, Output panel, Texture mode
@@ -1716,11 +1707,11 @@ class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeOutput", text="", icon="NODE_OUTPUT")
-            self.draw_text_button(row, "TextureNodeViewer", text="", icon="NODE_VIEWER")
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+            self.draw_text_button(flow, "TextureNodeOutput", text="", icon="NODE_OUTPUT")
+            self.draw_text_button(flow, "TextureNodeViewer", text="", icon="NODE_VIEWER")
 
 
 #Modify nodes tab, converter panel. Just in texture mode
@@ -1760,17 +1751,14 @@ class NODES_PT_Modify_converter_tex(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeValToRGB", text="", icon="NODE_COLORRAMP")
-            self.draw_text_button(row, "TextureNodeDistance", text="", icon="DRIVER_DISTANCE")
-            self.draw_text_button(row, "TextureNodeMath", text="", icon="NODE_MATH")
-            self.draw_text_button(row, "TextureNodeRGBToBW", text="", icon="NODE_RGBTOBW")
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeValToNor", text="", icon="RECALC_NORMALS")
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+            self.draw_text_button(flow, "TextureNodeValToRGB", text="", icon="NODE_COLORRAMP")
+            self.draw_text_button(flow, "TextureNodeDistance", text="", icon="DRIVER_DISTANCE")
+            self.draw_text_button(flow, "TextureNodeMath", text="", icon="NODE_MATH")
+            self.draw_text_button(flow, "TextureNodeRGBToBW", text="", icon="NODE_RGBTOBW")
+            self.draw_text_button(flow, "TextureNodeValToNor", text="", icon="RECALC_NORMALS")
 
 
 #Shader Editor - Vector panel
@@ -1954,13 +1942,13 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-            self.draw_text_button(row, "TextureNodeAt", text="", icon="NODE_AT")
-            self.draw_text_button(row, "TextureNodeRotate", text="", icon="TRANSFORM_ROTATE")
-            self.draw_text_button(row, "TextureNodeScale", text="", icon="TRANSFORM_SCALE")
-            self.draw_text_button(row, "TextureNodeTranslate", text="", icon="TRANSFORM_MOVE")
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+            self.draw_text_button(flow, "TextureNodeAt", text="", icon="NODE_AT")
+            self.draw_text_button(flow, "TextureNodeRotate", text="", icon="TRANSFORM_ROTATE")
+            self.draw_text_button(flow, "TextureNodeScale", text="", icon="TRANSFORM_SCALE")
+            self.draw_text_button(flow, "TextureNodeTranslate", text="", icon="TRANSFORM_MOVE")
 
 
 # ------------- Relations tab -------------------------------
