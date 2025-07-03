@@ -1634,7 +1634,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
 
     # 3D and 2D Texture Paint.
     elif mode in {"PAINT_TEXTURE", "PAINT_2D"}:
-        layout.prop(brush, "image_tool")
+        layout.prop(brush, "image_brush_type")
         layout.separator()
 
         capabilities = brush.image_paint_capabilities
