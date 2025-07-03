@@ -3339,6 +3339,43 @@ class VIEW3D_MT_paint_vertex_grease_pencil(Menu):
         )
 
 
+class VIEW3D_MT_select_paint_mask(Menu):
+    bl_label = "Select"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("paint.face_select_all", text="All", icon="SELECT_ALL").action = 'SELECT'
+        layout.operator("paint.face_select_all", text="None", icon="SELECT_NONE").action = 'DESELECT'
+        layout.operator("paint.face_select_all", text="Invert", icon="INVERSE").action = 'INVERT'
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_select_paint_mask_legacy") # bfa menu
+
+        layout.separator()
+
+        layout.operator("paint.face_select_more", text="More", icon="SELECTMORE")
+        layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
+
+        layout.separator()
+
+        layout.operator("paint.face_select_linked", icon="LINKED")
+
+
+# BFA menu
+class VIEW3D_MT_select_paint_mask_legacy(Menu):
+    bl_label = "Select (Legacy)"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("view3d.select_box", icon="BORDER_RECT")
+        layout.operator("view3d.select_circle", icon="CIRCLE_SELECT")
+        layout.operator_menu_enum("view3d.select_lasso", "mode", icon="BORDER_LASSO")
+
+
+
 # bfa menu
 class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
     bl_label = "More/Less"
@@ -13097,6 +13134,8 @@ classes = (
     VIEW3D_MT_select_greasepencil_legacy,  # BFA - legacy menu
     VIEW3D_MT_select_edit_grease_pencil_more_less,  # BFA - menu
     VIEW3D_MT_select_edit_grease_pencil,
+    VIEW3D_MT_select_paint_mask,
+    VIEW3D_MT_select_paint_mask_legacy, # BFA menu
     VIEW3D_MT_select_paint_mask_face_more_less,  # bfa menu
     VIEW3D_MT_select_paint_mask_vertex,
     VIEW3D_MT_select_paint_mask_vertex_more_less,  # bfa menu
