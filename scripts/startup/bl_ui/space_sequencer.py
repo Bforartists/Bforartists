@@ -3610,7 +3610,6 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
         col.prop(cache_settings, "show_cache_final_out", text="Final")
         if show_developer_ui:
             col.prop(cache_settings, "show_cache_raw", text="Raw")
-        col.prop(cache_settings, "show_cache_final_out", text="Final")
 
         show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
         if show_cache_size:
