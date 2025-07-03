@@ -1680,7 +1680,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
     # Weight Paint
     elif mode == 'PAINT_WEIGHT':
         layout.use_property_split = False  # BFA
-        layout.prop(brush, "weight_tool")
+        layout.prop(brush, "weight_brush_type")
         layout.separator()
 
         layout.use_property_split = False  # BFA
@@ -1693,7 +1693,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
     elif mode == 'SCULPT_CURVES':
         layout.use_property_split = False  # BFA
 
-        layout.prop(brush, "curves_sculpt_tool")
+        layout.prop(brush, "curves_sculpt_brush_type")
 
     # Draw shared settings.
     if use_accumulate:
