@@ -47,6 +47,66 @@ def add_node_type_with_outputs(context, layout, node_type, subnames, *, label=No
     return props
 
 
+icon_sorting_order = {
+    'NODETREE' : 0,
+    'FAKE_USER_ON' : 1,
+    'ASSET_MANAGER' : 2,
+    'LIBRARY_DATA_DIRECT' : 3,
+    'LIBRARY_DATA_OVERRIDE' : 4,
+}
+
+
+def node_group_icon(group):
+    if group.library is not None:
+        return 'LIBRARY_DATA_DIRECT'
+    elif group.override_library is not None: 
+        return 'LIBRARY_DATA_OVERRIDE'
+    elif group.asset_data is not None:
+        return 'ASSET_MANAGER'
+    elif group.use_fake_user:
+        return 'FAKE_USER_ON'
+    else:
+        return 'NODETREE'
+
+def icon_sorting_function(group):
+    return icon_sorting_order[node_group_icon(group)]
+
+
+def draw_node_groups(context, layout):
+    space_node = context.space_data
+    node_tree = space_node.edit_tree
+
+    from nodeitems_builtins import node_tree_group_type
+
+    prefs = context.preferences
+    show_hidden = prefs.filepaths.show_hidden_files_datablocks
+
+    groups = [
+        group for group in context.blend_data.node_groups
+        if (group.bl_idname == node_tree.bl_idname and
+            not group.contains_tree(node_tree) and
+            (show_hidden or not group.name.startswith('.')))
+    ]
+
+    import itertools
+    for icon, groups in itertools.groupby(sorted(groups, key=icon_sorting_function), key=node_group_icon):
+        if groups:
+            layout.separator()
+            for group in groups:
+                props = layout.operator("node.add_node", text=group.name, icon=node_group_icon(group)) # BFA
+                props.use_transform = True # BFA
+                props.type = node_tree_group_type[group.bl_idname] # BFA
+                ops = props.settings.add() # BFA
+                ops.name = "node_tree" # BFA
+                ops.value = "bpy.data.node_groups[{!r}]".format(group.name)
+                ops = props.settings.add()
+                ops.name = "width"
+                ops.value = repr(group.default_group_node_width)
+                ops = props.settings.add()
+                ops.name = "name"
+                ops.value = repr(group.name)
+
+
 def draw_node_group_add_menu(context, layout):
     """Add items to the layout used for interacting with node groups."""
     space_node = context.space_data
@@ -70,32 +130,7 @@ def draw_node_group_add_menu(context, layout):
     add_empty_group(layout)
 
     if node_tree:
-        from nodeitems_builtins import node_tree_group_type
-
-        prefs = bpy.context.preferences
-        show_hidden = prefs.filepaths.show_hidden_files_datablocks
-
-        groups = [
-            group for group in context.blend_data.node_groups
-            if (group.bl_idname == node_tree.bl_idname and
-                not group.contains_tree(node_tree) and
-                (show_hidden or not group.name.startswith('.')))
-        ]
-        if groups:
-            layout.separator()
-            for group in groups:
-                props = layout.operator("node.add_node", text=group.name, icon="NODETREE") # BFA
-                props.use_transform = True # BFA
-                props.type = node_tree_group_type[group.bl_idname] # BFA
-                ops = props.settings.add() # BFA
-                ops.name = "node_tree" # BFA
-                ops.value = "bpy.data.node_groups[{!r}]".format(group.name)
-                ops = props.settings.add()
-                ops.name = "width"
-                ops.value = repr(group.default_group_node_width)
-                ops = props.settings.add()
-                ops.name = "name"
-                ops.value = repr(group.name)
+        draw_node_groups(context, layout)
 
 
 def draw_assets_for_catalog(layout, catalog_path):

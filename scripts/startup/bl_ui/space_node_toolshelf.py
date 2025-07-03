@@ -6,6 +6,8 @@ from bpy import context
 
 #Add tab, Node Group panel
 from nodeitems_builtins import node_tree_group_type
+from .node_add_menu import draw_node_groups
+
 
 # Icon or text buttons in shader editor and compositor in the ADD panel
 class NODES_PT_shader_comp_textoricon_shader_add(bpy.types.Panel):
@@ -3527,23 +3529,10 @@ class NODES_PT_Input_node_group(bpy.types.Panel):
         if not ntree:
             return
 
-        for group in context.blend_data.node_groups:
-            if group.bl_idname != ntree.bl_idname:
-                continue
-            # filter out recursive groups
-            if contains_group(group, ntree):
-                continue
-            # filter out hidden nodetrees
-            if group.name.startswith('.'):
-                continue
-
-            props = layout.operator("node.add_node", text=group.name, icon="NODETREE")
-            props.use_transform = True
-            props.type = node_tree_group_type[group.bl_idname]
-
-            ops = props.settings.add()
-            ops.name = "node_tree"
-            ops.value = "bpy.data.node_groups['{0}']".format(group.name)
+        col = layout.column(align=True)
+        col.scale_y = 1.5
+        draw_node_groups(context, col)
+        return
 
 
 #Relations tab, Layout Panel
