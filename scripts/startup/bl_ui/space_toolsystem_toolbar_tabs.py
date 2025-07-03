@@ -1425,11 +1425,6 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
             else:
                 col.operator_enum("object.convert", "target")
 
-
-            # Potrace lib dependency.
-            if bpy.app.build_options.potrace:
-                col.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
-
             if ob and ob.type == 'CURVES':
                 col.operator("curves.convert_to_particle_system", text="Particle System", icon='PARTICLE_DATA')
 
@@ -1464,11 +1459,6 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
                     #row.operator_enum("object.convert", "target")
 
-
-                # Potrace lib dependency.
-                if bpy.app.build_options.potrace:
-                    col.operator("gpencil.trace_image",  text="", icon='OUTLINER_OB_GREASEPENCIL')
-
                 if ob and ob.type == 'CURVES':
                     col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')
 
@@ -1495,10 +1485,6 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                     row.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
                     #row.operator_enum("object.convert", "target")
 
-                # Potrace lib dependency.
-                if bpy.app.build_options.potrace:
-                    col.operator("gpencil.trace_image", text="", icon='OUTLINER_OB_GREASEPENCIL')
-
                 if ob and ob.type == 'CURVES':
                     col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')
 
@@ -1522,11 +1508,6 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
                     #row.operator_enum("object.convert", "target")
-
-
-                # Potrace lib dependency.
-                if bpy.app.build_options.potrace:
-                    col.operator("gpencil.trace_image", text="", icon='OUTLINER_OB_GREASEPENCIL')
 
                 if ob and ob.type == 'CURVES':
                     col.operator("curves.convert_to_particle_system", text="", icon='PARTICLE_DATA')

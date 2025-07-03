@@ -916,7 +916,7 @@ def brush_settings(layout, context, brush, popover=False):
 
             layout.separator()
 
-            if sculpt_tool != 'PLANE':
+            if sculpt_brush_type != 'PLANE':
                 split = layout.split(factor=0.36)
                 col = split.column()
                 col.use_property_split = False
@@ -1054,7 +1054,7 @@ def brush_settings(layout, context, brush, popover=False):
             layout.prop(brush, "stabilize_normal")
             layout.prop(brush, "stabilize_plane")
 
-        elif sculpt_tool == 'GRAB':
+        elif sculpt_brush_type == 'GRAB':
             layout.use_property_split = False
             layout.prop(brush, "use_grab_active_vertex")
             layout.prop(brush, "use_grab_silhouette")
@@ -1144,7 +1144,7 @@ def brush_settings(layout, context, brush, popover=False):
                 layout.row().prop(brush, "gradient_fill_mode", expand=True)
 
     elif mode == 'SCULPT_CURVES':
-        if brush.curves_sculpt_tool == 'ADD':
+        if brush.curves_sculpt_brush_type == 'ADD':
             layout.use_property_split = True
             layout.prop(brush.curves_sculpt_settings, "add_amount")
 
@@ -1187,7 +1187,7 @@ def brush_settings(layout, context, brush, popover=False):
             col.active = not brush.curves_sculpt_settings.use_point_count_interpolate
             col.prop(brush.curves_sculpt_settings, "points_per_curve", text="Points")
 
-        if brush.curves_sculpt_tool == 'DENSITY':
+        if brush.curves_sculpt_brush_type == 'DENSITY':
             
             
             col = layout.column(align=True)
@@ -1231,7 +1231,7 @@ def brush_settings(layout, context, brush, popover=False):
             col.active = not brush.curves_sculpt_settings.use_point_count_interpolate
             col.prop(brush.curves_sculpt_settings, "points_per_curve", text="Points")
 
-        elif brush.curves_sculpt_tool == "GROW_SHRINK":
+        elif brush.curves_sculpt_brush_type == "GROW_SHRINK":
             layout.use_property_split = False
             layout.prop(brush.curves_sculpt_settings, "use_uniform_scale")
             layout.use_property_split = True
@@ -1592,7 +1592,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
             col.prop(brush, "sculpt_plane")
             col.use_property_split = False
 
-            if brush.sculpt_tool != 'PLANE':
+            if brush.sculpt_brush_type != 'PLANE':
                 col = layout.column()
                 col.label(text="Use Original")
                 col.use_property_split = False
@@ -1634,7 +1634,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
 
     # 3D and 2D Texture Paint.
     elif mode in {"PAINT_TEXTURE", "PAINT_2D"}:
-        layout.prop(brush, "image_tool")
+        layout.prop(brush, "image_brush_type")
         layout.separator()
 
         capabilities = brush.image_paint_capabilities
@@ -1680,7 +1680,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
     # Weight Paint
     elif mode == 'PAINT_WEIGHT':
         layout.use_property_split = False  # BFA
-        layout.prop(brush, "weight_tool")
+        layout.prop(brush, "weight_brush_type")
         layout.separator()
 
         layout.use_property_split = False  # BFA
@@ -1693,7 +1693,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
     elif mode == 'SCULPT_CURVES':
         layout.use_property_split = False  # BFA
 
-        layout.prop(brush, "curves_sculpt_tool")
+        layout.prop(brush, "curves_sculpt_brush_type")
 
     # Draw shared settings.
     if use_accumulate:
@@ -1704,8 +1704,8 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
         layout.use_property_split = False  # BFA
         layout.prop(brush, "use_frontface", text="Front Faces Only")
 
-    if popover:
-        color_jitter_panel(layout, context, brush)
+    # BFA - exposed in all areas
+    color_jitter_panel(layout, context, brush)
 
     # Brush modes
     header, panel = layout.panel("modes", default_closed=True)
