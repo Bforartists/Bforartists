@@ -3345,35 +3345,48 @@ class VIEW3D_MT_select_paint_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("paint.face_select_all", text="All", icon="SELECT_ALL").action = 'SELECT'
-        layout.operator("paint.face_select_all", text="None", icon="SELECT_NONE").action = 'DESELECT'
-        layout.operator("paint.face_select_all", text="Invert", icon="INVERSE").action = 'INVERT'
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_select_paint_mask_legacy") # bfa menu
+        layout.operator_menu_enum("view3d.select_lasso", "mode", icon="BORDER_LASSO")
 
         layout.separator()
 
-        layout.operator("paint.face_select_more", text="More", icon="SELECTMORE")
-        layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
+        layout.operator("paint.face_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("paint.face_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("paint.face_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("paint.face_select_linked", icon="LINKED")
+        layout.operator("paint.face_select_linked", text="Linked", icon="LINKED")
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick Select", icon="LINKED").deselect = False
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect", icon="LINKED").deselect = True
+
+        layout.separator()
+
+        if _context.mode == 'PAINT_TEXTURE':
+
+            myvar = layout.operator("paint.face_select_loop", text="Select Loop", icon="SELECT_EDGERING")
+
+            myvar = layout.operator("paint.face_select_loop", text="Add Loop to Selection", icon="SELECT_EDGERING")
+            myvar.extend = True
+
+            myvar = layout.operator("paint.face_select_loop", text="Remove Loop from Selection", icon="SELECT_EDGERING")
+            myvar.select = False
+            myvar.extend = True
+
+            layout.separator()
+
+        layout.menu("VIEW3D_MT_select_paint_mask_face_more_less")  # bfa menu
 
 
 # BFA menu
 class VIEW3D_MT_select_paint_mask_legacy(Menu):
-    bl_label = "Select (Legacy)"
+    bl_label = "Legacy"
 
     def draw(self, _context):
         layout = self.layout
 
         layout.operator("view3d.select_box", icon="BORDER_RECT")
         layout.operator("view3d.select_circle", icon="CIRCLE_SELECT")
-        layout.operator_menu_enum("view3d.select_lasso", "mode", icon="BORDER_LASSO")
-
 
 
 # bfa menu
@@ -3398,24 +3411,14 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.separator()
 
-        layout.operator(
-            "paint.vert_select_all", text="All", icon="SELECT_ALL"
-        ).action = 'SELECT'
-        layout.operator(
-            "paint.vert_select_all", text="None", icon="SELECT_NONE"
-        ).action = 'DESELECT'
-        layout.operator(
-            "paint.vert_select_all", text="Invert", icon="INVERSE"
-        ).action = 'INVERT'
+        layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("paint.vert_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("paint.vert_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator(
-            "paint.vert_select_ungrouped",
-            text="Ungrouped Vertices",
-            icon="SELECT_UNGROUPED_VERTS",
-        )
-        layout.operator("paint.vert_select_linked", text="Select Linked", icon="LINKED")
+        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
+        layout.operator("paint.vert_select_linked", text="Select Linked", icon='LINKED')
 
         layout.separator()
 
