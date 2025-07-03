@@ -3804,7 +3804,7 @@ static void outliner_draw_highlights(const ARegion *region,
 
         int depth = calculate_hierarchy_depth(te);  // Calculate the hierarchy depth of the tree item
         int offset_x = depth * UI_UNIT_X;  // Define the offset based on the hierarchy depth
-        float alpha = 0.08f; // origin value is 20 integer divided 255, rounded to 0.8
+        float alpha = 0.1f; // Alpha for highlights
 
         /* Draw the background rectangle with the modified alpha */
         float background_color[4];
@@ -3835,43 +3835,45 @@ static void outliner_draw_highlights(const ARegion *region,
 
           /*FOR ROOT*/
           if (is_nested_once) {
-            /* Draw the background rectangle with the modified alpha */
+            /* Draw the background rectangle with the modified alpha of the top level */
             float background_color[4];
             copy_v4_v4(background_color, col_collection);
             background_color[3] = alpha;  // Set the alpha channel for the background
 
-            rect.xmin += offset_x - UI_UNIT_X;
-            rect.ymin = child_start_y;
-            rect.ymax -= total_height + UI_UNIT_Y;
+            rect.xmin = offset_x - UI_UNIT_X;
+            rect.ymin = child_start_y - total_height + UI_UNIT_Y;
+            rect.ymax = rect.ymin + total_height;  // Draw downward covering children
             UI_draw_roundbox_4fv(&rect, true, radius, background_color);
           }
-          /*FOR CHILDREN*/
+          /*RECTANGLES FOR CHILDREN*/
           else {
-            /*HORIZONTAL*/
+            /*HORIZONTAL HIGHLIGHT*/
             /* Draw the background rectangle with the modified alpha */
             float background_color[4];
             copy_v4_v4(background_color, col_collection);
             background_color[3] = alpha;  // Set the alpha channel for the background
 
-            rect.xmin += offset_x - UI_UNIT_X; 
+            rect.xmin = offset_x;
+            rect.xmax = rect.xmax;
             rect.ymin = child_start_y;
             rect.ymax = child_start_y + UI_UNIT_Y;
             UI_draw_roundbox_4fv(&rect, true, radius, background_color);
 
-            /*VERTICAL*/
-            /* Draw the background rectangle with the modified alpha */
+            /*VERTICAL HIGHLIGHT*/
+            /* Draw the background rectangle with the modified alpha for total height of children */
             float nested_color[4];
             copy_v4_v4(nested_color, col_collection);
-            nested_color[3] = alpha + alpha;  // Set the alpha channel for the background
+            nested_color[3] = alpha;  // Set the alpha channel for the background
 
-            rect.xmin += offset_x; 
-            rect.xmax = rect.xmin - UI_UNIT_X;
-            rect.ymin = child_start_y;
-            rect.ymax -= total_height + UI_UNIT_Y;
+            rect.xmin = offset_x - UI_UNIT_X;
+            rect.xmax = rect.xmin + UI_UNIT_X;
+            // Offset downward by children height:
+            rect.ymin = child_start_y - total_height + UI_UNIT_Y;
+            rect.ymax = child_start_y + UI_UNIT_Y;
             UI_draw_roundbox_4fv(&rect, true, radius, nested_color);
           }
         }
-        // reset back? zNight: not sure if it is needed 
+        // Reset rect to properly aligned position after collection bg
         rect.xmin = padding_x;
         rect.xmax = int(region->v2d.cur.xmax) - padding_x;
         rect.ymin = start_y + ufac;
