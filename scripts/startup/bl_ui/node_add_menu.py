@@ -173,7 +173,7 @@ def add_closure_zone(layout, label):
 
 
 def add_empty_group(layout):
-    props = layout.operator("node.add_empty_group", text="New Group", text_ctxt=i18n_contexts.default)
+    props = layout.operator("node.add_empty_group", text="New Group", text_ctxt=i18n_contexts.default, icon='ADD') #BFA - added icon to Add Menu
     props.use_transform = True
     return props
 

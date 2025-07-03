@@ -6,6 +6,8 @@ from bpy import context
 
 #Add tab, Node Group panel
 from nodeitems_builtins import node_tree_group_type
+from .node_add_menu import add_empty_group
+
 
 # Icon or text buttons in shader editor and compositor in the ADD panel
 class NODES_PT_shader_comp_textoricon_shader_add(bpy.types.Panel):
@@ -3517,6 +3519,10 @@ class NODES_PT_Input_node_group(bpy.types.Panel):
         layout = self.layout
 
         layout.label( text = "Add Node Group:")
+
+        col = layout.column()
+        col.scale_y = 1.5
+        add_empty_group(col)
 
         if context is None:
             return
