@@ -1685,7 +1685,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
 
         layout.use_property_split = False  # BFA
 
-        if brush.weight_brush_type != "SMEAR":
+        if brush.weight_brush_type != 'SMEAR':
             use_accumulate = True
         use_frontface = True
 
