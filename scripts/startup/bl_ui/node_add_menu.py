@@ -47,6 +47,7 @@ def add_node_type_with_outputs(context, layout, node_type, subnames, *, label=No
     return props
 
 
+# BFA - Dictionary for sorting order of the different node group icon types
 icon_sorting_order = {
     'NODETREE' : 0,
     'FAKE_USER_ON' : 1,
@@ -56,6 +57,7 @@ icon_sorting_order = {
 }
 
 
+# BFA - Function for determining appropriate icon for node group
 def node_group_icon(group):
     if group.library is not None:
         return 'LIBRARY_DATA_DIRECT'
@@ -68,10 +70,13 @@ def node_group_icon(group):
     else:
         return 'NODETREE'
 
+
+# BFA - Callback function to be used for sorting nodegroups by icon
 def icon_sorting_function(group):
     return icon_sorting_order[node_group_icon(group)]
 
 
+# BFA - Separated function from `draw_node_group_add_menu` so that both the add menu and toolshelf can use this
 def draw_node_groups(context, layout):
     space_node = context.space_data
     node_tree = space_node.edit_tree
@@ -88,6 +93,7 @@ def draw_node_groups(context, layout):
             (show_hidden or not group.name.startswith('.')))
     ]
 
+    # BFA - Group each node group by their type and apply the appropriate icon
     import itertools
     for icon, groups in itertools.groupby(sorted(groups, key=icon_sorting_function), key=node_group_icon):
         if groups:
