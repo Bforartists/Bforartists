@@ -1704,8 +1704,8 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
         layout.use_property_split = False  # BFA
         layout.prop(brush, "use_frontface", text="Front Faces Only")
 
-    if popover:
-        color_jitter_panel(layout, context, brush)
+    # BFA - exposed in all areas
+    color_jitter_panel(layout, context, brush)
 
     # Brush modes
     header, panel = layout.panel("modes", default_closed=True)
