@@ -328,6 +328,7 @@ if(WITH_BLENDER)
       between_markers
       bevel
       bisect
+	  bitmath
       blank1 # BFA - not actually blank - this is used all over the place
       blend_offset
       blend_tex

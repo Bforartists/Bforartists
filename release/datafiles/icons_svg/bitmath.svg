@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="1600"
+   height="1600"
+   viewBox="0 0 1600 1600"
+   sodipodi:docname="bitmath.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.52342475"
+     inkscape:cx="604.67145"
+     inkscape:cy="876.91689"
+     inkscape:window-width="2560"
+     inkscape:window-height="1361"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g8" />
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g8"
+     transform="translate(0,3168)">
+    <g
+       id="bitmath"
+       transform="matrix(100,0,0,100,0,-3168)">
+      <path
+         style="fill:#fefefe;stroke-width:0.03125"
+         d="M 8,16 H 0 V 8 0 h 8 8 v 8 8 z M 2,15 H 3 V 12 9 H 2 1 v 3 3 z m 4,0 H 8 V 12 9 H 6 4 v 3 3 z M 6,14 H 5 v -2 -2 h 1 1 v 2 2 z m 4,1 h 1 V 12 9 H 10 9 v 3 3 z m 3,0 h 1 V 12 9 h -1 -1 v 3 3 z M 3,7 H 5 V 4 1 H 3 1 V 4 7 Z M 3,6 H 2 V 4 2 H 3 4 V 4 6 Z M 7,7 H 8 V 4 1 H 7 6 v 3 3 z m 4,0 h 2 V 4 1 H 11 9 V 4 7 Z M 11,6 H 10 V 4 2 h 1 1 v 2 2 z"
+         id="path297" />
+      <path
+         style="fill:#323232;stroke-width:0.03125"
+         d="M 2,15 H 1 V 12 9 h 1 1 v 3 3 z m 4,0 H 4 V 12 9 h 2 2 v 3 3 z M 6,14 H 7 V 12 10 H 6 5 v 2 2 z m 4,1 H 9 V 12 9 h 1 1 v 3 3 z m 3,0 H 12 V 12 9 h 1 1 v 3 3 z M 3,7 H 1 V 4 1 H 3 5 V 4 7 Z M 3,6 H 4 V 4 2 H 3 2 V 4 6 Z M 7,7 H 6 V 4 1 h 1 1 v 3 3 z m 4,0 H 9 V 4 1 h 2 2 v 3 3 z m 0,-1 h 1 V 4 2 h -1 -1 v 2 2 z"
+         id="path295" />
+    </g>
+  </g>
+</svg>
