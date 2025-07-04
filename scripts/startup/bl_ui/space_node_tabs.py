@@ -259,7 +259,7 @@ class NODE_PT_node_tools(toolshelf_calculate, Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Node"
-    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG'}
 
      # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -319,11 +319,86 @@ class NODE_PT_node_tools(toolshelf_calculate, Panel):
                 col.operator("node.parent_set", text = "", icon = "PARENT_SET")
 
 
+class NODE_PT_group(toolshelf_calculate, Panel):
+    bl_label = "Group"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Node"
+    bl_options = {'HIDE_BG'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        #view = context.space_data
+        #overlay = view.overlay
+        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
+        return addon_prefs.node_show_toolshelf_tabs
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
+            col.operator("node.group_insert", text = " Insert into Group ", icon = "NODE_GROUPINSERT")
+            col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
+
+            col = layout.column(align=True)
+            col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("node.group_make", text="", icon="NODE_MAKEGROUP")
+                row.operator("node.group_insert", text="", icon="NODE_GROUPINSERT")
+                row.operator("node.group_ungroup", text="", icon="NODE_UNGROUP")
+
+                row = col.row(align=True)
+                row.operator("node.group_edit", text="", icon="NODE_EDITGROUP").exit = False
+
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("node.group_make", text="", icon="NODE_MAKEGROUP")
+                row.operator("node.group_insert", text="", icon="NODE_GROUPINSERT")
+
+                row = col.row(align=True)
+                row.operator("node.group_ungroup", text="", icon="NODE_UNGROUP")
+                row.operator("node.group_edit", text="", icon="NODE_EDITGROUP").exit = False
+
+            elif column_count == 1:
+
+                col.operator("node.group_make", text="", icon="NODE_MAKEGROUP")
+                col.operator("node.group_insert", text="", icon="NODE_GROUPINSERT")
+                col.operator("node.group_ungroup", text="", icon="NODE_UNGROUP")
+                col.operator("node.group_edit", text="", icon="NODE_EDITGROUP").exit = False
+
+
 classes = (
     NODE_PT_transform,
     NODE_PT_links,
     NODE_PT_separate,
     NODE_PT_node_tools,
+    NODE_PT_group,
 )
 
 if __name__ == "__main__":  # only for live edit.

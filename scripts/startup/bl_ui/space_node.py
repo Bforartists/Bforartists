@@ -676,6 +676,10 @@ class NODE_MT_node(Menu):
         props.keep_open = False
 
         layout.separator()
+        ## BFA - set to sub-menu
+        layout.menu("NODE_MT_node_group")
+
+        layout.separator()
 		## BFA - set to sub-menu
         layout.menu("NODE_MT_node_links")
 
@@ -695,7 +699,21 @@ class NODE_MT_node(Menu):
             layout.operator("node.render_changed", icon='RENDERLAYERS')
 
 
- # BFA - Menu
+# BFA - Menu
+class NODE_MT_node_group(Menu):
+    bl_label = "Group"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
+        layout.operator("node.group_insert", text = "Insert into Group ", icon = "NODE_GROUPINSERT")
+        layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
+        layout.separator()
+        layout.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
+
+
+# BFA - Menu
 class NODE_MT_node_links(Menu):
     bl_label = "Links"
 
@@ -1594,7 +1612,8 @@ classes = (
     NODE_MT_select_legacy,  # BFA - Menu
     NODE_MT_node_group_separate,  # BFA - Menu
     NODE_MT_node,
-    NODE_MT_node_links,  # BFA - Menu
+    NODE_MT_node_group, # BFA - Menu
+    NODE_MT_node_links, # BFA - Menu
     NODE_MT_node_color_context_menu,
     NODE_MT_context_menu_show_hide_menu,
     NODE_MT_context_menu_select_menu,
