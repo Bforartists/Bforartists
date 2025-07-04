@@ -3440,17 +3440,6 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
-            col.operator("node.group_insert", text = " Insert into Group ", icon = "NODE_GROUPINSERT")
-            col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
             space_node = context.space_data
             node_tree = space_node.edit_tree
             all_node_groups = context.blend_data.node_groups
@@ -3464,6 +3453,7 @@ class NODES_PT_Relations_group(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "NodeGroupOutput"
 
+            add_empty_group(col)
 
         #### Icon Buttons
 
@@ -3472,12 +3462,6 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-
-            flow.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
-            flow.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
-            flow.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
-
-            flow.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
 
             space_node = context.space_data
             node_tree = space_node.edit_tree
@@ -3491,6 +3475,10 @@ class NODES_PT_Relations_group(bpy.types.Panel):
                 props = flow.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
                 props.use_transform = True
                 props.type = "NodeGroupOutput"
+
+            # Add empty group without label
+            props = flow.operator("node.add_empty_group", text="", icon="ADD")
+            props.use_transform = True
 
 
 #Shader Editor - Relations tab, Node Group Panel
@@ -3506,7 +3494,7 @@ def contains_group(nodetree, group):
     return False
 
 class NODES_PT_Input_node_group(bpy.types.Panel):
-    bl_label = "Node Group"
+    bl_label = "Nodegroups"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Relations"
@@ -3517,12 +3505,6 @@ class NODES_PT_Input_node_group(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-
-        layout.label( text = "Add Node Group:")
-
-        col = layout.column()
-        col.scale_y = 1.5
-        add_empty_group(col)
 
         if context is None:
             return

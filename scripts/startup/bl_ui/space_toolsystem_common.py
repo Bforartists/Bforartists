@@ -653,10 +653,6 @@ class ToolSelectPanelHelper:
         )
         width_scale = region.width * view2d_scale / system.ui_scale
 
-        # BFA - WIP - fix the width snapping issue
-        #if bpy.context.space_data.show_toolshelf_tabs:
-        #    width_scale -= 40  # Adjust this value based on the actual width of the toolshelf tabs, as this will subtract the width if the tabs are "on"
-
         # BFA - change to 3 column        
         if width_scale > 160.0:
             show_text = True
