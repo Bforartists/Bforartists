@@ -7124,6 +7124,9 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Bit Math          ", icon = "BITMATH")
+            props.use_transform = True
+            props.type = "FunctionNodeBitMath"
 
             props = col.operator("node.add_node", text=" Boolean Math  ", icon = "BOOLEAN_MATH")
             props.use_transform = True
@@ -7176,6 +7179,10 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "BITMATH")
+            props.use_transform = True
+            props.type = "FunctionNodeBitMath"
 
             props = flow.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
             props.use_transform = True
