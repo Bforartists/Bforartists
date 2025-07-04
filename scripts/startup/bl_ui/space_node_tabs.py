@@ -355,6 +355,7 @@ class NODE_PT_group(toolshelf_calculate, Panel):
             col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
 
             col = layout.column(align=True)
+            col.scale_y = 2
             col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
 
         # icon buttons
