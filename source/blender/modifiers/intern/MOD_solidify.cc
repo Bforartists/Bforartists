@@ -103,7 +103,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_even_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_even_offset", 0); /*bfa - decorator*/
   }
 
   /* bfa - our layout */
@@ -117,14 +117,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
           UI_ITEM_NONE,
           CTX_IFACE_(BLT_I18NCONTEXT_ID_MESH, "Fill Rim"),
           ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_rim", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_rim", 0); /*bfa - decorator*/
 
   if (RNA_boolean_get(ptr, "use_rim")) {
     uiLayout *row = &col->row(true);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_rim_only", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_rim_only", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_rim_only", 0); /*bfa - decorator*/
   }
 
   col->separator();
@@ -141,7 +141,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa -indent*/
     row->prop(ptr, "use_flat_faces", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_flat_faces", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_flat_faces", 0); /*bfa - decorator*/
   }
 
   modifier_error_message_draw(layout, ptr);

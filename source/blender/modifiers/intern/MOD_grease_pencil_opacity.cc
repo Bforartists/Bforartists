@@ -248,7 +248,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_uniform_opacity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_uniform_opacity", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_uniform_opacity", 0); /*bfa - decorator*/
     const char *text = (use_uniform_opacity) ? IFACE_("Opacity") : IFACE_("Opacity Factor");
 
     row = &layout->row(true); /* bfa - our layout */

@@ -285,13 +285,13 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_vertex_groups", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_vertex_groups", 0); /*bfa - decorator*/
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_bone_envelopes", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_bone_envelopes", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 }

@@ -147,7 +147,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_decorate_set(false);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_angle", UI_ITEM_NONE, "Edge Angle", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_edge_angle", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_edge_angle", 0); /*bfa - decorator*/
 
   row = &split->row(false); /* bfa - our layout */
   if (RNA_boolean_get(ptr, "use_edge_angle")) {
@@ -161,7 +161,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_edge_sharp", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_edge_sharp", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 }

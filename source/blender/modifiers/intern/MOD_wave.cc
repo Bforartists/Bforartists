@@ -311,7 +311,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_cyclic", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_cyclic", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
@@ -327,12 +327,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->prop(ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
     row->prop(ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
     row->prop(ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
+    row->decorator(ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
     row->label(TIP_(""), ICON_NONE);           /* bfa - aligns the decorator right...*/
-    uiItemDecoratorR(row, ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
+    row->decorator(ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
 
   col = &layout->column(false);

@@ -397,13 +397,13 @@ static void geometry_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_clamp_overlap", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_clamp_overlap", 0); /*bfa - decorator*/
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "loop_slide", 0); /*bfa - decorator*/
+  row->decorator(ptr, "loop_slide", 0); /*bfa - decorator*/
 }
 
 static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -421,7 +421,7 @@ static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "harden_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "harden_normals", 0); /*bfa - decorator*/
+  row->decorator(ptr, "harden_normals", 0); /*bfa - decorator*/
 
   col = &layout->column(true); /* bfa - moved below to own label */
   col->active_set(edge_bevel);
@@ -432,13 +432,13 @@ static void shading_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seam"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "mark_seam", 0); /*bfa - decorator*/
+  row->decorator(ptr, "mark_seam", 0); /*bfa - decorator*/
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "mark_sharp", 0); /*bfa - decorator*/
+  row->decorator(ptr, "mark_sharp", 0); /*bfa - decorator*/
 
   layout->prop(ptr, "material", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "face_strength_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);

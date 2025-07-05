@@ -407,7 +407,7 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_decorate_set(false);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_max_distance", UI_ITEM_NONE, "Max Distance", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_max_distance", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_max_distance", 0); /*bfa - decorator*/
 
   row = &split->row(false); /* bfa - our layout */
   if (RNA_boolean_get(ptr, "use_max_distance")) {

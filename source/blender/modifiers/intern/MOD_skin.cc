@@ -2034,7 +2034,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_smooth_shade", 0); /*bfa - decorator*/
 
   row = &layout->row(false);
   row->op("OBJECT_OT_skin_armature_create", IFACE_("Create Armature"), ICON_NONE);
