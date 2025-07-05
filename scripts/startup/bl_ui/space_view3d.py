@@ -4708,7 +4708,7 @@ class VIEW3D_MT_object_context_menu(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("object.move_to_collection", icon="GROUP")
+        layout.menu("OBJECT_MT_move_to_collection", icon="GROUP")
 
         layout.separator()
         if view and view.local_view:
@@ -4930,10 +4930,8 @@ class VIEW3D_MT_object_collection(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("object.move_to_collection", icon="GROUP")
-
-        layout.operator("object.link_to_collection", icon="GROUP")
+        layout.menu("OBJECT_MT_move_to_collection", icon="GROUP")
+        layout.menu("OBJECT_MT_link_to_collection", icon="GROUP")
 
         layout.separator()
 

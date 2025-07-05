@@ -1031,7 +1031,7 @@ class SEQUENCER_MT_change(Menu):
                             props.filter_movie = True
                         elif strip_type == 'SOUND':
                             props.filter_sound = True
-                elif strip_type in effect_strips:
+                elif strip and strip_type in effect_strips:
                     layout.operator_context = 'INVOKE_DEFAULT'
                     layout.menu("SEQUENCER_MT_strip_effect_change")
                     layout.operator("sequencer.reassign_inputs")
