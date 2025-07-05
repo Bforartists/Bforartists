@@ -250,7 +250,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row = &col->row(true);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
     row = &layout->row(false);
     row->active_set(RNA_boolean_get(ptr, "use_remove_disconnected"));
     layout->prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -261,7 +261,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_smooth_shade", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 

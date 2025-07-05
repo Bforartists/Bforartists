@@ -315,7 +315,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
   UI_block_lock_clear(block);
 
   /* bfa - our layout */
@@ -324,7 +324,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
+  row->decorator(ptr, "show_only_control_edges", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 }
@@ -451,14 +451,14 @@ static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_creases", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_custom_normals", 0); /*bfa - decorator*/
 }
 
 static void panel_register(ARegionType *region_type)

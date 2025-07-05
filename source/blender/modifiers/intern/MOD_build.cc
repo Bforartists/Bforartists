@@ -264,7 +264,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_reverse", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_reverse", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 }

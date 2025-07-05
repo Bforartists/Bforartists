@@ -840,14 +840,14 @@ class IMAGE_MT_uvs_snap_pie(Menu):
         layout.operator_context = 'EXEC_REGION_WIN'
 
         pie.operator(
-            "uv.snap_selected",
-            text="Selected to Pixels",
-            icon='RESTRICT_SELECT_OFF',
-        ).target = 'PIXELS'
-        pie.operator(
             "uv.snap_cursor",
             text="Cursor to Pixels",
             icon='PIVOT_CURSOR',
+        ).target = 'PIXELS'
+        pie.operator(
+            "uv.snap_selected",
+            text="Selected to Pixels",
+            icon='RESTRICT_SELECT_OFF',
         ).target = 'PIXELS'
         pie.operator(
             "uv.snap_cursor",

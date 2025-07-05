@@ -3707,7 +3707,7 @@ static wmOperatorStatus outliner_operator_menu(bContext *C, const char *opname)
     layout->separator();
   }
   /* BFA - only asset menu not whole context menu */
-  uiItemMContents(layout, "OUTLINER_MT_asset");
+  layout->menu_contents("OUTLINER_MT_asset");
 
   UI_popup_menu_end(C, pup);
 

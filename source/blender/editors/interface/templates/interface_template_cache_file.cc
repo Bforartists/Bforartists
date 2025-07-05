@@ -86,7 +86,7 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   row->active_set(is_alembic && engine_supports_procedural);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(fileptr, "use_render_procedural", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, fileptr, "use_render_procedural", 0); /* BFA - decorator */
+  row->decorator(fileptr, "use_render_procedural", 0); /* BFA - decorator */
 
   const bool use_render_procedural = RNA_boolean_get(fileptr, "use_render_procedural");
   const bool use_prefetch = RNA_boolean_get(fileptr, "use_prefetch");
@@ -94,7 +94,7 @@ void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerR
   row = &layout->row(false);
   row->enabled_set(use_render_procedural);
   row->prop(fileptr, "use_prefetch", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, fileptr, "use_prefetch", 0); /* BFA - decorator */
+  row->decorator(fileptr, "use_prefetch", 0); /* BFA - decorator */
 
   sub = &layout->row(false);
   sub->enabled_set(use_prefetch && use_render_procedural);
@@ -119,7 +119,7 @@ void uiTemplateCacheFileTimeSettings(uiLayout *layout, PointerRNA *fileptr)
   row = &layout->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, fileptr, "is_sequence", 0); /*bfa - decorator*/
+  row->decorator(fileptr, "is_sequence", 0); /*bfa - decorator*/
   /* ------------ end bfa */
 
   // ------------------ bfa new left aligned prop with triangle button to hide the slider

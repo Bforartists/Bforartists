@@ -243,13 +243,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_symmetry", UI_ITEM_NONE, "Symmetry", ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_symmetry", 0);
+    row->decorator(ptr, "use_symmetry", 0);
 
     row = &split->row(false); /* bfa - our layout */
     if (RNA_boolean_get(ptr, "use_symmetry")) {
       row->use_property_split_set(false); /* bfa - use_property_split = False */
       row->prop(ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
-      uiItemDecoratorR(row, ptr, "symmetry_axis", 0);
+      row->decorator(ptr, "symmetry_axis", 0);
     }
     else {
       row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
@@ -260,7 +260,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_collapse_triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/
 
     modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
     sub = &layout->row(true);
@@ -279,7 +279,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row = &layout->row(true); /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_dissolve_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/
   }
   layout->label(count_info, ICON_NONE);
 

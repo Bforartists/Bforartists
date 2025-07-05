@@ -317,7 +317,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "invert_curvature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "invert_curvature", 0); /*bfa - decorator*/
+    row->decorator(ptr, "invert_curvature", 0); /*bfa - decorator*/
   }
 
   if (uiLayout *influence_panel = layout->panel_prop(

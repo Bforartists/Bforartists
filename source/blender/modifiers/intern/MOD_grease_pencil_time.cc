@@ -546,7 +546,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_keep_loop", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_keep_loop", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_keep_loop", 0); /*bfa - decorator*/
 
   if (mode == MOD_GREASE_PENCIL_TIME_MODE_CHAIN) {
     row = &layout->row(false);

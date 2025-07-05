@@ -396,7 +396,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_vertex_interpolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_vertex_interpolation", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_vertex_interpolation", 0); /*bfa - decorator*/
   }
   else if (RNA_enum_get(&ob_ptr, "type") == OB_CURVES) {
     layout->prop(ptr, "use_vertex_interpolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);

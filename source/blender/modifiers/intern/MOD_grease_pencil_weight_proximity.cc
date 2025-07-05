@@ -271,7 +271,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_multiply", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_multiply", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_multiply", 0); /*bfa - decorator*/
 
   if (uiLayout *influence_panel = layout->panel_prop(
           C, ptr, "open_influence_panel", IFACE_("Influence")))

@@ -660,7 +660,7 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
       row->use_property_split_set(false); /* bfa - use_property_split = False */
       row->separator(); /*bfa - indent*/
       row->prop(ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      uiItemDecoratorR(row, ptr, "use_self", 0); /*bfa - decorator*/
+      row->decorator(ptr, "use_self", 0); /*bfa - decorator*/
     }
 
     col = &layout->column(true); /* bfa - our layout */
@@ -668,7 +668,7 @@ static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_hole_tolerant", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_hole_tolerant", 0); /*bfa - decorator*/
   }
   else if (use_manifold) {
     col->prop(ptr, "material_mode", UI_ITEM_NONE, IFACE_("Materials"), ICON_NONE);

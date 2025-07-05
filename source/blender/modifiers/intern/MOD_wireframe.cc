@@ -118,14 +118,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator();
   row->prop(ptr, "use_boundary", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_boundary", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_boundary", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator();
   row->prop(ptr, "use_replace", UI_ITEM_NONE, IFACE_("Replace Original"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_replace", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_replace", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   col->separator();
@@ -136,14 +136,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator();
   row->prop(ptr, "use_even_offset", UI_ITEM_NONE, IFACE_("Even"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_even_offset", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_even_offset", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator();
   row->prop(ptr, "use_relative_offset", UI_ITEM_NONE, IFACE_("Relative"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_relative_offset", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_relative_offset", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
@@ -155,7 +155,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator();
   row->prop(ptr, "use_crease", UI_ITEM_NONE, "Crease Edges", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_crease", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_crease", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &split->row(false);

@@ -5914,7 +5914,7 @@ static void edbm_dissolve_prop__use_boundary_tear(wmOperatorType *ot)
                   "Tear Boundary",
                   "Split off face corners instead of merging faces");
 }
-static void edbm_dissolve_prop__use_angle_threshold(wmOperatorType *ot)
+static void edbm_dissolve_prop__use_angle_threshold(wmOperatorType *ot, int flag)
 {
   PropertyRNA *prop = RNA_def_float_rotation(
       ot->srna,
@@ -5928,7 +5928,10 @@ static void edbm_dissolve_prop__use_angle_threshold(wmOperatorType *ot)
       "this threshold.",
       0.0f,
       DEG2RADF(180.0f));
-  RNA_def_property_float_default(prop, DEG2RADF(20.0f));
+  RNA_def_property_float_default(prop, DEG2RADF(180.0f));
+  if (flag) {
+    RNA_def_property_flag(prop, PropertyFlag(flag));
+  }
 }
 
 static wmOperatorStatus edbm_dissolve_verts_exec(bContext *C, wmOperator *op)
@@ -6054,7 +6057,7 @@ void MESH_OT_dissolve_edges(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   edbm_dissolve_prop__use_verts(ot, true, 0);
-  edbm_dissolve_prop__use_angle_threshold(ot);
+  edbm_dissolve_prop__use_angle_threshold(ot, 0);
   edbm_dissolve_prop__use_face_split(ot);
 }
 
@@ -6191,7 +6194,7 @@ void MESH_OT_dissolve_mode(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   edbm_dissolve_prop__use_verts(ot, false, PROP_SKIP_SAVE);
-  edbm_dissolve_prop__use_angle_threshold(ot);
+  edbm_dissolve_prop__use_angle_threshold(ot, PROP_SKIP_SAVE);
   edbm_dissolve_prop__use_face_split(ot);
   edbm_dissolve_prop__use_boundary_tear(ot);
 }

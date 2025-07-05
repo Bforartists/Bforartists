@@ -593,14 +593,14 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "keep_sharp", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "keep_sharp", 0); /*bfa - decorator*/
+  row->decorator(ptr, "keep_sharp", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_face_influence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_face_influence", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_face_influence", 0); /*bfa - decorator*/
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 

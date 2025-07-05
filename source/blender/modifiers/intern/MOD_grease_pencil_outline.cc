@@ -279,7 +279,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_keep_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_keep_shape", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_keep_shape", 0); /*bfa - decorator*/
   layout->prop(ptr, "subdivision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "sample_length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(ptr, "outline_material", UI_ITEM_NONE, std::nullopt, ICON_NONE);

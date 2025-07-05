@@ -656,7 +656,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
+  row->decorator(ptr, "normalize", 0); /*bfa - decorator*/
 }
 
 static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)

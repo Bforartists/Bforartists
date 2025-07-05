@@ -425,6 +425,7 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
 
         col.operator("mesh.customdata_mask_clear", icon='X')
         col.operator("mesh.customdata_skin_clear", icon='X')
+        col.operator("mesh.reorder_vertices_spatial")
 
         layout.separator() # BFA
 

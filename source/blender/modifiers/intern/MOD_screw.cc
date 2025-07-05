@@ -1089,7 +1089,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_object_screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_object_screw_offset", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_object_screw_offset", 0); /*bfa - decorator*/
 
   col->separator();
 
@@ -1107,7 +1107,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_merge_vertices", UI_ITEM_NONE, "Merge", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_merge_vertices", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_merge_vertices", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &split->row(false);
@@ -1140,21 +1140,21 @@ static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_smooth_shade", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_smooth_shade", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_normal_calculate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_normal_calculate", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_normal_calculate", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_normal_flip", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_normal_flip", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_normal_flip", 0); /*bfa - decorator*/
 }
 
 static void panel_register(ARegionType *region_type)

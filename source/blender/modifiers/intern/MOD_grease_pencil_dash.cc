@@ -450,7 +450,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(&ds_ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, &ds_ptr, "use_cyclic", 0); /*bfa - decorator*/
+    row->decorator(&ds_ptr, "use_cyclic", 0); /*bfa - decorator*/
   }
 
   if (uiLayout *influence_panel = layout->panel_prop(

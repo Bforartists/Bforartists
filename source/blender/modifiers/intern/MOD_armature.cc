@@ -224,13 +224,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_deform_preserve_volume", UI_ITEM_NONE, IFACE_("Preserve Volume"), ICON_NONE); /* bfa - Create the property */
-  uiItemDecoratorR(row, ptr, "use_deform_preserve_volume", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_deform_preserve_volume", 0); /* bfa - Add the decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_multi_modifier", UI_ITEM_NONE, IFACE_("Multi Modifier"), ICON_NONE); /* bfa - Create the property */
-  uiItemDecoratorR(row, ptr, "use_multi_modifier", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_multi_modifier", 0); /* bfa - Add the decorator */
 
 
   col = &layout->column(true); /* bfa - our layout */
@@ -240,13 +240,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE); /* bfa - Create the property */
-  uiItemDecoratorR(row, ptr, "use_vertex_groups", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_vertex_groups", 0); /* bfa - Add the decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE); /* bfa - Create the property */
-  uiItemDecoratorR(row, ptr, "use_bone_envelopes", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_bone_envelopes", 0); /* bfa - Add the decorator */
   modifier_error_message_draw(layout, ptr);
 }
 
