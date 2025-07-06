@@ -1648,7 +1648,7 @@ UserDef *BKE_blendfile_userdef_from_defaults()
 
 bool BKE_blendfile_userdef_write(const char *filepath, ReportList *reports)
 {
-  Main *mainb = MEM_callocN<Main>("empty main");
+  Main *mainb = MEM_new<Main>(__func__);
   bool ok = false;
 
   BlendFileWriteParams params{};
@@ -1658,7 +1658,7 @@ bool BKE_blendfile_userdef_write(const char *filepath, ReportList *reports)
     ok = true;
   }
 
-  MEM_freeN(mainb);
+  MEM_delete(mainb);
 
   return ok;
 }
@@ -1813,7 +1813,6 @@ namespace blender::bke::blendfile {
 PartialWriteContext::PartialWriteContext(StringRefNull reference_root_filepath)
     : reference_root_filepath_(reference_root_filepath)
 {
-  BKE_main_init(this->bmain);
   if (!reference_root_filepath_.empty()) {
     STRNCPY(this->bmain.filepath, reference_root_filepath_.c_str());
   }
@@ -1827,9 +1826,6 @@ PartialWriteContext::PartialWriteContext(StringRefNull reference_root_filepath)
 PartialWriteContext::~PartialWriteContext()
 {
   BKE_main_idmap_destroy(matching_uid_map_);
-
-  BLI_assert(this->bmain.next == nullptr);
-  BKE_main_destroy(this->bmain);
 };
 
 void PartialWriteContext::preempt_session_uid(ID *ctx_id, uint session_uid)

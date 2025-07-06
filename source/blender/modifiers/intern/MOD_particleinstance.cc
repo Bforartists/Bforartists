@@ -608,7 +608,7 @@ static void path_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_preserve_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_preserve_shape", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_preserve_shape", 0); /*bfa - decorator*/
 }
 
 static void layers_panel_draw(const bContext * /*C*/, Panel *panel)

@@ -154,7 +154,7 @@ static void modify_curves(ModifierData &md,
   }
 
   ImplicitSharingPtrAndData old_positions_data = save_shared_attribute(
-      curves.attributes().lookup("position", CD_PROP_FLOAT3));
+      curves.attributes().lookup("position", bke::AttrType::Float3));
   Span<float3> old_positions = {static_cast<const float3 *>(old_positions_data.data),
                                 curves.points_num()};
 
@@ -285,13 +285,13 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_vertex_groups", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_vertex_groups", 0); /*bfa - decorator*/
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_bone_envelopes", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_bone_envelopes", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 }

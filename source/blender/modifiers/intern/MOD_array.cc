@@ -1014,7 +1014,7 @@ static void symmetry_panel_draw(const bContext * /*C*/, Panel *panel)
           UI_ITEM_NONE,
           IFACE_("First and Last Copies"),
           ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_merge_vertices_cap", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_merge_vertices_cap", 0); /* bfa - Add the decorator */
 }
 
 static void uv_panel_draw(const bContext * /*C*/, Panel *panel)

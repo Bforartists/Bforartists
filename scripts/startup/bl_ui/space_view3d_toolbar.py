@@ -126,7 +126,7 @@ class View3DPanel:
 # **************** standard tool clusters ******************
 
 # Used by vertex & weight paint
-def draw_vpaint_symmetry(layout, vpaint, obj):
+def draw_vpaint_symmetry(layout, obj):
     mesh = obj.data
 
     col = layout.column()
@@ -136,7 +136,7 @@ def draw_vpaint_symmetry(layout, vpaint, obj):
     row.prop(obj, "use_mesh_mirror_z", text="Z", toggle=True)
 
     col = layout.column()
-    col.active = not obj.data.use_mirror_vertex_groups
+    col.active = not mesh.use_mirror_vertex_groups
     col.prop(mesh, "radial_symmetry", text="Radial")
 
 
@@ -1404,9 +1404,6 @@ class VIEW3D_PT_tools_weightpaint_symmetry(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        tool_settings = context.tool_settings
-        wpaint = tool_settings.weight_paint
-
         ob = context.object
         mesh = ob.data
 
@@ -1422,7 +1419,7 @@ class VIEW3D_PT_tools_weightpaint_symmetry(Panel, View3DPaintPanel):
 
         layout.use_property_split = True
 
-        draw_vpaint_symmetry(layout, wpaint, ob)
+        draw_vpaint_symmetry(layout, ob)
 
 
 class VIEW3D_PT_tools_weightpaint_symmetry_for_topbar(Panel):
@@ -1493,12 +1490,9 @@ class VIEW3D_PT_tools_vertexpaint_symmetry(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        tool_settings = context.tool_settings
-        vpaint = tool_settings.vertex_paint
-
         ob = context.object
 
-        draw_vpaint_symmetry(layout, vpaint, ob)
+        draw_vpaint_symmetry(layout, ob)
 
 
 class VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar(Panel):

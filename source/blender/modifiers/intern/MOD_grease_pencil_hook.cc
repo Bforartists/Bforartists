@@ -298,7 +298,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_falloff_uniform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_falloff_uniform", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_falloff_uniform", 0); /*bfa - decorator*/
 
     if (RNA_enum_get(ptr, "falloff_type") == eWarp_Falloff_Curve) {
       uiTemplateCurveMapping(sub, ptr, "custom_curve", 0, false, false, false, false);

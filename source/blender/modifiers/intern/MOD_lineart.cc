@@ -313,25 +313,25 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_intersection", UI_ITEM_NONE, IFACE_("Intersections"), ICON_NONE); /* bfa - Create the property */
-  uiItemDecoratorR(row, ptr, "use_intersection", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_intersection", 0); /* bfa - Add the decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_material", UI_ITEM_NONE, IFACE_("Material Borders"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_material", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_material", 0); /* bfa - Add the decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_edge_mark", UI_ITEM_NONE, IFACE_("Edge Marks"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_edge_mark", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_edge_mark", 0); /* bfa - Add the decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_loose", UI_ITEM_NONE, IFACE_("Loose"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_loose", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_loose", 0); /* bfa - Add the decorator */
 
   uiLayout *light_entry = &layout->column(false);
   light_entry->active_set(has_light);
@@ -340,7 +340,7 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
   light_row->use_property_split_set(false); /* bfa - use_property_split = False */
   light_row->separator(); /* bfa - Indent */
   light_row->prop(ptr, "use_light_contour", UI_ITEM_NONE, IFACE_("Light Contour"), ICON_NONE);
-  uiItemDecoratorR(light_row, ptr, "use_light_contour", 0); /* bfa - Add the decorator */
+  light_row->decorator(ptr, "use_light_contour", 0); /* bfa - Add the decorator */
 
   row = &light_entry->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
@@ -350,7 +350,7 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
     UI_ITEM_NONE,
     CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, "Cast Shadow"),
     ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_shadow", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_shadow", 0); /* bfa - Add the decorator */
 
   layout->label(IFACE_("Options"), ICON_NONE);
 
@@ -367,7 +367,7 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
               UI_ITEM_NONE,
               IFACE_("Allow Overlapping Types"),
               ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_overlap_edge_type_support", 0); /* bfa - Add the decorator */
+    row->decorator(ptr, "use_overlap_edge_type_support", 0); /* bfa - Add the decorator */
   }
 }
 
@@ -435,37 +435,37 @@ static void options_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_edge_overlap", UI_ITEM_NONE,  IFACE_("Overlapping Edges As Contour"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_edge_overlap", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_edge_overlap", 0); /* bfa - decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_object_instances", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_object_instances", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_object_instances", 0); /* bfa - decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_clip_plane_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_clip_plane_boundaries", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_clip_plane_boundaries", 0); /* bfa - decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_crease_on_smooth", UI_ITEM_NONE, IFACE_("Crease On Smooth"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_crease_on_smooth", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_crease_on_smooth", 0); /* bfa - decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_crease_on_sharp", UI_ITEM_NONE, IFACE_("Crease On Sharp"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_crease_on_sharp", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_crease_on_sharp", 0); /* bfa - decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_back_face_culling", UI_ITEM_NONE, IFACE_("Force Backface Culling"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_back_face_culling", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_back_face_culling", 0); /* bfa - decorator */
 }
 
 static void occlusion_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -494,7 +494,7 @@ static void occlusion_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_decorate_set(false);
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_multiple_levels", UI_ITEM_NONE, IFACE_("Range"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_multiple_levels", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_multiple_levels", 0); /* bfa - decorator */
 
   if (use_multiple_levels) {
     uiLayout *col = &layout->column(true);
@@ -562,7 +562,7 @@ static void material_mask_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_material_mask_match", UI_ITEM_NONE, IFACE_("Exact Match"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_material_mask_match", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_material_mask_match", 0); /* bfa - decorator */
 }
 
 static void intersection_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -593,7 +593,7 @@ static void intersection_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_intersection_match", UI_ITEM_NONE, IFACE_("Exact Match"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_intersection_match", 0); /* bfa - decorator */
+  row->decorator(ptr, "use_intersection_match", 0); /* bfa - decorator */
 }
 
 static void face_mark_panel_draw_header(const bContext * /*C*/, Panel *panel)
@@ -646,7 +646,7 @@ static void face_mark_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_face_mark_invert", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_face_mark_invert", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_face_mark_invert", 0); /* bfa - Add the decorator */
 
   col->separator(); /* bfa - Indent */
 
@@ -654,7 +654,7 @@ static void face_mark_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_face_mark_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_face_mark_boundaries", 0);  /* bfa - Add the decorator */
+  row->decorator(ptr, "use_face_mark_boundaries", 0);  /* bfa - Add the decorator */
 
   col->separator(); /* bfa - Indent */
 
@@ -662,7 +662,7 @@ static void face_mark_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_face_mark_keep_contour", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_face_mark_keep_contour", 0);  /* bfa - Add the decorator */
+  row->decorator(ptr, "use_face_mark_keep_contour", 0);  /* bfa - Add the decorator */
 }
 
 static void chaining_panel_draw(const bContext * /*C*/, Panel *panel)
@@ -696,37 +696,37 @@ static void chaining_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_fuzzy_intersections", UI_ITEM_NONE, IFACE_("Fuzzy Intersections"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_fuzzy_intersections", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_fuzzy_intersections", 0); /* bfa - Add the decorator */
 
   row = &col->row(true);  /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_fuzzy_all", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_fuzzy_all", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_fuzzy_all", 0); /* bfa - Add the decorator */
 
   row = &col->row(true);  /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_loose_edge_chain", UI_ITEM_NONE, IFACE_("Loose Edges"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_loose_edge_chain", 0);  /* bfa - Add the decorator */
+  row->decorator(ptr, "use_loose_edge_chain", 0);  /* bfa - Add the decorator */
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_loose_as_contour", UI_ITEM_NONE, IFACE_("Loose Edges As Contour"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_loose_as_contour", 0);  /* bfa - Add the decorator */
+  row->decorator(ptr, "use_loose_as_contour", 0);  /* bfa - Add the decorator */
 
   row = &col->row(true);  /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_detail_preserve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_detail_preserve", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_detail_preserve", 0); /* bfa - Add the decorator */
 
   row = &col->row(true);  /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_geometry_space_chain", UI_ITEM_NONE, IFACE_("Geometry Space"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_geometry_space_chain", 0);  /* bfa - Add the decorator */
+  row->decorator(ptr, "use_geometry_space_chain", 0);  /* bfa - Add the decorator */
 
   layout->prop(ptr,
                "chaining_image_threshold",
@@ -770,7 +770,7 @@ static void vgroup_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_output_vertex_group_match_by_name", UI_ITEM_NONE, IFACE_("Match By Name"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_output_vertex_group_match_by_name", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_output_vertex_group_match_by_name", 0); /* bfa - Add the decorator */
 
   col->prop_search(ptr, "vertex_group", &ob_ptr, "vertex_groups", IFACE_("Target"), ICON_NONE);
 }
@@ -825,7 +825,7 @@ static void composition_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_image_boundary_trimming", UI_ITEM_NONE, IFACE_("Image Boundary Trimming"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_image_boundary_trimming", 0); /* bfa - Add the decorator */
+  row->decorator(ptr, "use_image_boundary_trimming", 0); /* bfa - Add the decorator */
 
   if (show_in_front) {
     layout->label(TIP_("Object is shown in front"), ICON_ERROR);
@@ -840,7 +840,7 @@ static void composition_panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_offset_towards_custom_camera", UI_ITEM_NONE, IFACE_("Towards Custom Camera"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_offset_towards_custom_camera", 0);  /* bfa - Add the decorator */
+  row->decorator(ptr, "use_offset_towards_custom_camera", 0);  /* bfa - Add the decorator */
 }
 
 static void panel_register(ARegionType *region_type)

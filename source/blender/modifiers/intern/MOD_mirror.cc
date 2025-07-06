@@ -176,7 +176,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_clip", UI_ITEM_NONE, IFACE_("Clipping"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_clip", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_clip", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
@@ -187,7 +187,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_mirror_merge", UI_ITEM_NONE, "Merge", ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_mirror_merge", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_mirror_merge", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &split->row(true);
@@ -265,13 +265,13 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_mirror_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_mirror_vertex_groups", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_mirror_vertex_groups", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_mirror_udim", UI_ITEM_NONE, IFACE_("Flip UDIM"), ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_mirror_udim", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_mirror_udim", 0); /*bfa - decorator*/
 }
 
 static void panel_register(ARegionType *region_type)
