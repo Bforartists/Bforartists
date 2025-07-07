@@ -121,15 +121,6 @@ def draw_node_group_add_menu(context, layout):
     node_tree = space_node.edit_tree
     all_node_groups = context.blend_data.node_groups
 
-    # BFA
-    layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
-    layout.operator("node.group_insert", text = "Insert into Group ", icon = "NODE_GROUPINSERT")
-    layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
-
-    layout.separator()
-
-    layout.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
-
     if node_tree in all_node_groups.values():
         layout.separator()
         add_node_type(layout, "NodeGroupInput")
