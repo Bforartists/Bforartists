@@ -1,4 +1,4 @@
-keyconfig_version = (4, 5, 13)
+keyconfig_version = (5, 0, 33)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1573,6 +1573,22 @@ keyconfig_data = \
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
    [("poselib.blend_pose_asset",
+     {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True},
+     {"properties":
+      [("flipped", True),
+       ],
+      },
+     ),
+    ("poselib.blend_pose_asset", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
+    ("poselib.apply_pose_asset",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
+     {"properties":
+      [("flipped", True),
+       ],
+      },
+     ),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'CLICK'}, None),
+    ("poselib.blend_pose_asset",
      {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "oskey": True},
      {"properties":
       [("flipped", True),
@@ -2780,6 +2796,7 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -8985,6 +9002,14 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.call_panel",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'BFA_PT_FIND_AND_REPLACE'),
+       ("keep_open", True),
+       ],
+      },
+     ),
     ("text.move",
      {"type": 'LEFT_ARROW', "value": 'PRESS', "alt": True},
      {"properties":
@@ -9730,6 +9755,22 @@ keyconfig_data = \
     ("ui.view_scroll", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
     ("ui.list_start_filter", {"type": 'F', "value": 'PRESS', "oskey": True}, None),
     ("ui.view_start_filter", {"type": 'F', "value": 'PRESS', "oskey": True}, None),
+    ("ui.view_item_select", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+    ("ui.view_item_select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
+     {"properties":
+      [("extend", True),
+       ],
+      },
+     ),
+    ("ui.view_item_select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("extend", True),
+       ("range_select", True),
+       ],
+      },
+     ),
     ],
    },
   ),
