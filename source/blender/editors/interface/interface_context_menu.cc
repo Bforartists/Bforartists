@@ -777,7 +777,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
 
       layout->op("SCREEN_OT_drivers_editor_show",
                  CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open Drivers Editor"),
-                 ICON_NONE);
+                 ICON_DRIVER); /*BFA*/
     }
 
     /* Keying Sets */
