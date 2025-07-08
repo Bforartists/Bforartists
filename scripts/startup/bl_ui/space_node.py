@@ -1333,7 +1333,7 @@ class NODE_PT_node_tree_interface(Panel):
         ops_col = split.column(align=True)
         ops_col.alignment = 'RIGHT'
         #ops_col.operator_menu_enum("node.interface_item_new", "item_type", icon='ADD', text="") # bfa - keep as reminder. Blender might add more content!
-        ops_col.popover(panel="NODE_PT_node_tree_interface_new_input", text="")
+        ops_col.popover(panel="NODE_PT_node_tree_interface_new_input", text="", icon='ADD')
 
         ops_col.separator()
         ops_col.operator("node.interface_item_duplicate", text='', icon='DUPLICATE')
