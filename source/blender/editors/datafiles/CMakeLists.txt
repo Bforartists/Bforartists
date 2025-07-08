@@ -809,7 +809,6 @@ if(WITH_BLENDER)
       image_alpha
       image_aspect
       image_background
-	  image_coordinates
       image_data
       image_info
       image_reference
@@ -831,11 +830,12 @@ if(WITH_BLENDER)
       info
       input_bool
       inset_faces
+	  instances_to_points
+	  instance_bounds
       instance_rotate
       instance_scale
       instance_transform
       instance_transform_get
-      instances_to_points
       integer
       integer_math
       internet

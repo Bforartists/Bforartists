@@ -5453,6 +5453,10 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text = " Instance Bounds     ", icon = "INSTANCE_BOUNDS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputInstanceBounds"
+
             props = col.operator("node.add_node", text = " Instance Transform     ", icon = "INSTANCE_TRANSFORM_GET")
             props.use_transform = True
             props.type = "GeometryNodeInstanceTransform"
@@ -5500,6 +5504,10 @@ class NODES_PT_geom_add_instances(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "INSTANCE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeSetInstanceTransform"
+
+            props = flow.operator("node.add_node", text = "", icon = "INSTANCE_BOUNDS")
+            props.use_transform = True
+            props.type = "GeometryNodeInputInstanceBounds"
 
             props = flow.operator("node.add_node", text = "", icon = "INSTANCE_TRANSFORM_GET")
             props.use_transform = True
