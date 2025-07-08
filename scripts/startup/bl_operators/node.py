@@ -28,6 +28,32 @@ from bpy.app.translations import (
 )
 
 
+# BFA - Helper function to make socket type matching easier
+def compare_attributes(item, *_, **keywords):
+    for key, value in keywords.items():
+        if getattr(item, key, None) != value:
+            return False
+        
+    return True
+
+
+# BFA - Helper function to make panel toggle checking easier
+def is_panel_toggle(item):
+    return compare_attributes(item, in_out="INPUT", socket_type="NodeSocketBool", is_panel_toggle=True, )
+
+
+# BFA - Helper function to make panel toggle fetching easier
+def get_panel_toggle(panel):
+    try:
+        first_item = panel.interface_items[0]
+        if is_panel_toggle(first_item):
+            return first_item
+        else:
+            return None
+    except (AttributeError, IndexError):
+        return None
+
+    
 class NodeSetting(PropertyGroup):
     value: StringProperty(
         name="Value",
