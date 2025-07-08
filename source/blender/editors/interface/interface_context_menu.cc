@@ -1243,7 +1243,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         ptr_props = layout->op(
             "WM_OT_doc_view",
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Online Python Reference"),
-            ICON_NONE,
+            ICON_URL,
             WM_OP_EXEC_DEFAULT,/* bfa - turned off the link to the online manual*/
             UI_ITEM_NONE);
         RNA_string_set(&ptr_props, "doc_id", manual_id.value().c_str());
