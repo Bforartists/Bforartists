@@ -2481,6 +2481,7 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, nullptr, "settings.import_method");
   RNA_def_property_ui_text(prop, "Import Method", "Determines how the asset will be imported");
   RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
+  RNA_def_property_enum_default(prop, SHELF_ASSET_IMPORT_APPEND);
 
   prop = RNA_def_property(srna, "instance_collections_on_link", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(

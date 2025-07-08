@@ -1930,7 +1930,14 @@ static void node_asset_shelf_region_init(wmWindowManager *wm, ARegion *region)
   wmKeyMap *keymap = WM_keymap_ensure(
       wm->defaultconf, "Node Generic", SPACE_NODE, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
-
+  // bfa asset shelf set default
+  RegionAssetShelf *shelf_data = static_cast<RegionAssetShelf *>(region->regiondata);
+  if (shelf_data && shelf_data->active_shelf &&
+      (AssetShelfImportMethod(shelf_data->active_shelf->settings.import_method) == SHELF_ASSET_IMPORT_LINK))
+  {
+    shelf_data->active_shelf->settings.import_method = SHELF_ASSET_IMPORT_APPEND;
+  }
+  // bfa end
   asset::shelf::region_init(wm, region);
 }
 /* end bfa */
