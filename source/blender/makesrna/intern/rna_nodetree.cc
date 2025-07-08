@@ -10628,14 +10628,14 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeHueSat", nullptr, ICON_NODE_HUESATURATION);
   define(brna, "CompositorNode", "CompositorNodeIDMask", nullptr, ICON_MOD_MASK);
   define(brna, "CompositorNode", "CompositorNodeImage", def_cmp_image, ICON_FILE_IMAGE);
-  define(brna, "CompositorNode", "CompositorNodeImageCoordinates", nullptr, ICON_IMAGE_COORDINATES);
+  define(brna, "CompositorNode", "CompositorNodeImageCoordinates", nullptr, ICON_NONE);
   define(brna, "CompositorNode", "CompositorNodeInpaint", nullptr, ICON_NODE_IMPAINT);
   define(brna, "CompositorNode", "CompositorNodeInvert", nullptr, ICON_NODE_INVERT);
   define(brna, "CompositorNode", "CompositorNodeKeying", def_cmp_keying, ICON_NODE_KEYING);
   define(brna, "CompositorNode", "CompositorNodeKeyingScreen", def_cmp_keyingscreen, ICON_NODE_KEYINGSCREEN);
   define(brna, "CompositorNode", "CompositorNodeKuwahara", def_cmp_kuwahara, ICON_KUWAHARA);
   define(brna, "CompositorNode", "CompositorNodeLensdist", def_cmp_lensdist, ICON_NODE_LENSDISTORT);
-  define(brna, "CompositorNode", "CompositorNodeImageInfo", nullptr, ICON_IMAGE_INFO);
+  define(brna, "CompositorNode", "CompositorNodeImageInfo", nullptr, ICON_NONE);
   define(brna, "CompositorNode", "CompositorNodeLevels", def_cmp_levels, ICON_LEVELS);
   define(brna, "CompositorNode", "CompositorNodeLumaMatte", nullptr, ICON_NODE_LUMINANCE);
   define(brna, "CompositorNode", "CompositorNodeMapUV", def_cmp_map_uv, ICON_GROUP_UVS);
@@ -10841,7 +10841,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeInputID", nullptr, ICON_GET_ID);
   define(brna, "GeometryNode", "GeometryNodeInputImage", def_geo_image, ICON_FILE_IMAGE);
   define(brna, "GeometryNode", "GeometryNodeInputIndex", nullptr, ICON_INDEX);
-  define(brna, "GeometryNode", "GeometryNodeInputInstanceBounds", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeInputInstanceBounds", nullptr, ICON_INSTANCE_BOUNDS);
   define(brna, "GeometryNode", "GeometryNodeInputInstanceRotation", nullptr, ICON_INSTANCE_ROTATE);
   define(brna, "GeometryNode", "GeometryNodeInputInstanceScale", nullptr, ICON_INSTANCE_SCALE);
   define(brna, "GeometryNode", "GeometryNodeInputMaterial", def_geo_input_material, ICON_NODE_MATERIAL);
