@@ -504,6 +504,46 @@ class NODE_OT_interface_item_new_output(
         name="Item Type", items=(("OUTPUT", "Output", ""),), default="OUTPUT"
     )
 
+# BFA - Create dedicated operator for adding panel checkbox
+class NODE_OT_interface_item_new_panel_toggle(Operator):
+    '''Add a new panel toggle to the currently selected panel'''
+    bl_idname = "node.interface_item_new_panel_toggle"
+    bl_label = "New Panel Checkbox"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        try:
+            snode = context.space_data
+            tree = snode.edit_tree
+            interface = tree.interface
+
+            active_item = interface.active
+
+            if active_item.item_type != 'PANEL':
+                cls.poll_message_set("Active item is not a panel")
+                return False
+            
+            if get_panel_toggle(active_item) is not None:
+                cls.poll_message_set("Panel already has a toggle")
+                return False
+            
+            return True
+        except AttributeError:
+            return False
+
+    def execute(self, context):
+        snode = context.space_data
+        tree = snode.edit_tree
+
+        interface = tree.interface
+        active_panel = interface.active
+
+        item = interface.new_socket(active_panel.name, socket_type='NodeSocketBool', in_out='INPUT')
+        item.is_panel_toggle = True
+        interface.move_to_parent(item, active_panel, 0)
+        return {'FINISHED'}
+
 
 class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
     """Add a copy of the active item to the interface"""
@@ -899,6 +939,7 @@ classes = (
     NODE_OT_interface_item_new_input,  # BFA separated add input operator with own description.
     NODE_OT_interface_item_new_output,  # BFA separated add output operator with own description.
     NODE_OT_interface_item_new_panel,  # BFA separated add panel operator with own description.
+    NODE_OT_interface_item_new_panel_toggle, # BFA - Create dedicated operator with separate poll function.
     NODE_OT_interface_item_duplicate,
     NODE_OT_interface_item_remove,
     NODE_OT_interface_item_make_panel_toggle,

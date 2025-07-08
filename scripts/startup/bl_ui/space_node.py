@@ -1298,7 +1298,7 @@ class NODE_PT_node_tree_interface_new_input(Panel):
         layout.operator('node.interface_item_new_input', text='Input ', icon='GROUPINPUT').item_type='INPUT'
         layout.operator('node.interface_item_new_output', text='Output', icon='GROUPOUTPUT').item_type='OUTPUT'
         layout.operator('node.interface_item_new_panel', text='Panel', icon='MENU_PANEL').item_type='PANEL'
-        layout.operator('node.interface_item_make_panel_toggle', text='Panel Boolean', icon='CHECKBOX_DEHLT')
+        layout.operator('node.interface_item_new_panel_toggle', text='Panel Toggle', icon='CHECKBOX_HLT')
 
 
 class NODE_PT_node_tree_interface(Panel):
