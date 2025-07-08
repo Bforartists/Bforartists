@@ -1285,7 +1285,7 @@ class NODE_MT_node_tree_interface_context_menu(Menu):
 
 
 class NODE_PT_node_tree_interface_new_input(Panel):
-    '''Add a new Item to the interface list'''
+    '''Add a new item to the interface list'''
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "New Item"
@@ -1293,7 +1293,7 @@ class NODE_PT_node_tree_interface_new_input(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text="Add new Item")
+        layout.label(text="Add New Item")
 
         layout.operator('node.interface_item_new_input', text='Input ', icon='GROUPINPUT').item_type='INPUT'
         layout.operator('node.interface_item_new_output', text='Output', icon='GROUPOUTPUT').item_type='OUTPUT'
