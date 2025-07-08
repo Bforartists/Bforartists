@@ -1285,7 +1285,7 @@ class NODE_MT_node_tree_interface_context_menu(Menu):
 
 
 class NODE_PT_node_tree_interface_new_input(Panel):
-    '''Add a new Item to the interface list'''
+    '''Add a new item to the interface list'''
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "New Item"
@@ -1293,12 +1293,12 @@ class NODE_PT_node_tree_interface_new_input(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text="Add new Item")
+        layout.label(text="Add New Item")
 
         layout.operator('node.interface_item_new_input', text='Input ', icon='GROUPINPUT').item_type='INPUT'
         layout.operator('node.interface_item_new_output', text='Output', icon='GROUPOUTPUT').item_type='OUTPUT'
         layout.operator('node.interface_item_new_panel', text='Panel', icon='MENU_PANEL').item_type='PANEL'
-        layout.operator('node.interface_item_make_panel_toggle', text='Panel Boolean', icon='CHECKBOX_DEHLT')
+        layout.operator('node.interface_item_new_panel_toggle', text='Panel Toggle', icon='CHECKBOX_HLT')
 
 
 class NODE_PT_node_tree_interface(Panel):
@@ -1333,7 +1333,7 @@ class NODE_PT_node_tree_interface(Panel):
         ops_col = split.column(align=True)
         ops_col.alignment = 'RIGHT'
         #ops_col.operator_menu_enum("node.interface_item_new", "item_type", icon='ADD', text="") # bfa - keep as reminder. Blender might add more content!
-        ops_col.popover(panel="NODE_PT_node_tree_interface_new_input", text="")
+        ops_col.popover(panel="NODE_PT_node_tree_interface_new_input", text="", icon='ADD')
 
         ops_col.separator()
         ops_col.operator("node.interface_item_duplicate", text='', icon='DUPLICATE')
