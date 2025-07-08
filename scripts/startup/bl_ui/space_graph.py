@@ -404,7 +404,7 @@ class GRAPH_MT_view_pie_menus(Menu):
 
 # BFA - menu
 class GRAPH_MT_select(Menu):
-    bl_label = 'SELECT'
+    bl_label = 'Select'
 
     def draw(self, _context):
         layout = self.layout

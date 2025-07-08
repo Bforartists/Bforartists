@@ -14,27 +14,9 @@ def playback_controls(layout, context):
     screen = context.screen
 
     row = layout.row(align=True)
-    row.popover(
-        panel="TIME_PT_playback",
-        text="Playback",
-    )
-    row.popover(
-        panel="TIME_PT_keyframing_settings",
-        text="Keying",
-        text_ctxt=i18n_contexts.id_windowmanager,
-    )
 
     layout.separator_spacer()
-
-    row = layout.row(align=True)
-    #BFA - moved below
-    #row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
-    #sub = row.row(align=True)
-    #sub.active = tool_settings.use_keyframe_insert_auto
-    #sub.popover(
-    #    panel="TIME_PT_auto_keyframing",
-    #    text="",
-    #)
+    #BFA - moved dropdowns to consistently float right
 
     row.operator("screen.frame_jump", text="", icon='REW').end = False
     row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
@@ -99,7 +81,8 @@ def playback_controls(layout, context):
         row.popover(panel="TIME_PT_playback", text="Playback")
         row.popover(panel="TIME_PT_keyframing_settings", text="Keying")
 
-        row.popover(panel = "TIME_PT_view_view_options", text = "")
+        if context.space_data.mode == 'TIMELINE': # BFA - Make this only show in the timeline editor to not show this in the footer.
+            row.popover(panel = "TIME_PT_view_view_options", text = "")
 
 
 class TIME_MT_editor_menus(Menu):
