@@ -501,6 +501,14 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeImage"
 
+            props = col.operator("node.add_node", text=" Image Info       ", icon = "IMAGE_INFO")
+            props.use_transform = True
+            props.type = "CompositorNodeImageInfo"
+
+            props = col.operator("node.add_node", text=" Image Coordinates ", icon = "IMAGE_COORDINATES")
+            props.use_transform = True
+            props.type = "CompositorNodeImageCoordinates"
+
             props = col.operator("node.add_node", text = "Mask               ", icon = "MOD_MASK")
             props.use_transform = True
             props.type = "CompositorNodeMask"
@@ -508,13 +516,6 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Movie Clip        ", icon = "FILE_MOVIE")
             props.use_transform = True
             props.type = "CompositorNodeMovieClip"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            props = col.operator("node.add_node", text=" Texture             ", icon = "TEXTURE")
-            props.use_transform = True
-            props.type = "CompositorNodeTexture"
 
 
         #### Image Buttons
@@ -533,6 +534,14 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeImage"
 
+            props = flow.operator("node.add_node", text = "", icon = "IMAGE_INFO")
+            props.use_transform = True
+            props.type = "CompositorNodeImageInfo"
+
+            props = flow.operator("node.add_node", text = "", icon = "IMAGE_COORDINATES")
+            props.use_transform = True
+            props.type = "CompositorNodeImageCoordinates"
+
             props = flow.operator("node.add_node", text = "", icon = "MOD_MASK")
             props.use_transform = True
             props.type = "CompositorNodeMask"
@@ -544,16 +553,6 @@ class NODES_PT_comp_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_RGB")
             props.use_transform = True
             props.type = "CompositorNodeRGB"
-
-            props = flow.operator("node.add_node", text = "", icon = "TEXTURE")
-            props.use_transform = True
-            props.type = "CompositorNodeTexture"
-
-
-
-            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
-            props.use_transform = True
-            props.type = "CompositorNodeValue"
 
 
 #Compositor, Add tab, Constant supbanel
@@ -589,7 +588,12 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Value               ", icon = "NODE_VALUE")
             props.use_transform = True
-            props.type = "CompositorNodeValue"
+            props.type = "ShaderNodeValue"
+
+            props = col.operator("node.add_node", text=" Normal               ", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "CompositorNodeNormal"
+
 
         #### Icon Buttons
 
@@ -605,7 +609,11 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text="", icon = "NODE_VALUE")
             props.use_transform = True
-            props.type = "CompositorNodeValue"
+            props.type = "ShaderNodeValue"
+
+            props = flow.operator("node.add_node", text="", icon = "RECALC_NORMALS")
+            props.use_transform = True
+            props.type = "CompositorNodeNormal"
 
 
 #Compositor, Add tab, Scene supbanel

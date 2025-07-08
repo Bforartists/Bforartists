@@ -809,6 +809,7 @@ if(WITH_BLENDER)
       image_alpha
       image_aspect
       image_background
+	  image_coordinates
       image_data
       image_info
       image_reference
