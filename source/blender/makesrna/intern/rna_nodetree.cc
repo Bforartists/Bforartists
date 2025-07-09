@@ -10805,10 +10805,10 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeExtrudeMesh", nullptr, ICON_EXTRUDE_REGION);
   define(brna, "GeometryNode", "GeometryNodeFaceOfCorner", nullptr, ICON_FACE_OF_CORNER);
   define(brna, "GeometryNode", "GeometryNodeFieldAtIndex", nullptr, ICON_FIELD_AT_INDEX);
-  define(brna, "GeometryNode", "GeometryNodeFieldAverage", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeFieldMinAndMax", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeFieldAverage", nullptr, ICON_AVERAGE);
+  define(brna, "GeometryNode", "GeometryNodeFieldMinAndMax", nullptr, ICON_MINMAX);
   define(brna, "GeometryNode", "GeometryNodeFieldOnDomain", nullptr, ICON_FIELD_DOMAIN);
-  define(brna, "GeometryNode", "GeometryNodeFieldVariance", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeFieldVariance", nullptr, ICON_VARIANCE);
   define(brna, "GeometryNode", "GeometryNodeFillCurve", nullptr, ICON_CURVE_FILL);
   define(brna, "GeometryNode", "GeometryNodeFilletCurve", nullptr, ICON_CURVE_FILLET);
   define(brna, "GeometryNode", "GeometryNodeFlipFaces", nullptr, ICON_FLIP_NORMALS);
