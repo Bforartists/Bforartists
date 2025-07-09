@@ -1276,7 +1276,8 @@ class NODE_MT_node_tree_interface_context_menu(Menu):
         tree = snode.edit_tree
         active_item = tree.interface.active
 
-        layout.operator("node.interface_item_duplicate", icon='DUPLICATE')
+        # BFA - Disable this as it's already exposed in top level
+        #layout.operator("node.interface_item_duplicate", icon='DUPLICATE')
         layout.separator()
         if active_item.item_type == 'SOCKET':
             layout.operator("node.interface_item_make_panel_toggle")
@@ -1339,6 +1340,8 @@ class NODE_PT_node_tree_interface(Panel):
         ops_col.operator("node.interface_item_duplicate", text='', icon='DUPLICATE')
         ops_col.operator("node.interface_item_remove", icon='REMOVE', text="")
 
+        ops_col.separator()
+        ops_col.menu("NODE_MT_node_tree_interface_context_menu", text="")
         ops_col.separator()
 
         ops_col.operator("node.interface_item_move", icon='TRIA_UP', text="").direction = "UP" # BFA operator for GUI buttons to re-order
