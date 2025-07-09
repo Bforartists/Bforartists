@@ -305,6 +305,7 @@ if(WITH_BLENDER)
       autocomplete
       automerge_off
       automerge_on
+	  average
       averageislandscale
       avoid
       axes_to_rotation
@@ -1050,6 +1051,7 @@ if(WITH_BLENDER)
       meta_plane
       metallic
       minimizestretch
+	  minmax
       mirror_cursorvalue
       mirror_marker
       mirror_time
@@ -2014,6 +2016,7 @@ if(WITH_BLENDER)
       # letter v
       value_to_selection
       value_to_string
+	  variance
       vector_displace
       vertcolfromweight
       vertex_crease

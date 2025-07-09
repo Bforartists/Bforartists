@@ -7070,6 +7070,18 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeFieldOnDomain"
 
+            props = col.operator("node.add_node", text="Field Average        ", icon = "AVERAGE")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldAverage"
+
+            props = col.operator("node.add_node", text=" Field Min & Max     ", icon = "MINMAX")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldMinAndMax"
+
+            props = col.operator("node.add_node", text=" Field Variance        ", icon = "VARIANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldVariance"
+
         #### Icon Buttons
 
         else:
@@ -7089,6 +7101,18 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "FIELD_DOMAIN")
             props.use_transform = True
             props.type = "GeometryNodeFieldOnDomain"
+
+            props = flow.operator("node.add_node", text = "", icon = "AVERAGE")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldAverage"
+
+            props = flow.operator("node.add_node", text = "", icon = "MINMAX")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldMinAndMax"
+
+            props = flow.operator("node.add_node", text="", icon = "VARIANCE")
+            props.use_transform = True
+            props.type = "GeometryNodeFieldVariance"
 
 
 #add utilities panel, math subpanel
