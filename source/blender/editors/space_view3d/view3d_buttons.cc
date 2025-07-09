@@ -918,10 +918,10 @@ static void v3d_editvertex_buts(
       TransformMedian_Mesh *ve_median = &tfp->ve_median.mesh;
       if (tot) {
         /* bfa */
-        col->label(tot == 1 ? IFACE_("Vertex Data Mean") : IFACE_("Vertices Data Mean"), ICON_NONE); /* bfa - put the term "mean" into the label */
+        layout->label(tot == 1 ? IFACE_("Vertex Data Mean") : IFACE_("Vertices Data Mean"), ICON_NONE); /* bfa - put the term "mean" into the label */
 
         row = &layout->row(false);
-        layout->separator(); /* bfa - separator indent */
+        row->separator(); /* bfa - separator indent */
         col = &row->column(false);
 
         col->label(IFACE_("Bevel Weight"), ICON_NONE);
@@ -1010,10 +1010,10 @@ static void v3d_editvertex_buts(
       }
       if (totedgedata) {
         /* bfa */
-        col->label(totedgedata == 1 ? IFACE_("Edge Data Mean") : IFACE_("Edges Data Mean"), ICON_NONE);
+        layout->label(totedgedata == 1 ? IFACE_("Edge Data Mean") : IFACE_("Edges Data Mean"), ICON_NONE);
 
         row = &layout->row(false);
-        layout->separator(); /* bfa - separator indent */
+        row->separator(); /* bfa - separator indent */
         col = &row->column(false);
 
         col->label(IFACE_("Bevel Weight"), ICON_NONE);
