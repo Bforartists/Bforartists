@@ -1280,9 +1280,9 @@ class NODE_MT_node_tree_interface_context_menu(Menu):
         #layout.operator("node.interface_item_duplicate", icon='DUPLICATE')
         layout.separator()
         if active_item.item_type == 'SOCKET':
-            layout.operator("node.interface_item_make_panel_toggle")
+            layout.operator("node.interface_item_make_panel_toggle", icon="PANEL_TOGGLE_MAKE")
         elif active_item.item_type == 'PANEL':
-            layout.operator("node.interface_item_unlink_panel_toggle")
+            layout.operator("node.interface_item_unlink_panel_toggle", icon="PANEL_TOGGLE_UNLINK")
 
 
 class NODE_PT_node_tree_interface_new_input(Panel):
