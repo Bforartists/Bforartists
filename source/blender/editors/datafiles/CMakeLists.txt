@@ -1554,6 +1554,7 @@ if(WITH_BLENDER)
       remove_all_groups
       remove_doubles
       remove_from_all_groups
+	  remove_guides
       remove_metastrip
       remove_selected_from_active_group
       rename
