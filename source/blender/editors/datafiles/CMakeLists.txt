@@ -1419,6 +1419,8 @@ if(WITH_BLENDER)
       pan_right
       pan_up
       panel_close
+      panel_toggle_make
+      panel_toggle_unlink
       parent
       parent_bone
       parent_clear

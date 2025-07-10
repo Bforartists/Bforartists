@@ -37,6 +37,11 @@ def compare_attributes(item, *_, **keywords):
     return True
 
 
+# BFA - Helper function to make checking boolean inputs easier
+def is_boolean_input(item):
+    return compare_attributes(item, in_out="INPUT", socket_type="NodeSocketBool")
+
+
 # BFA - Helper function to make panel toggle checking easier
 def is_panel_toggle(item):
     return compare_attributes(item, in_out="INPUT", socket_type="NodeSocketBool", is_panel_toggle=True, )
@@ -606,32 +611,32 @@ class NODE_OT_interface_item_make_panel_toggle(NodeInterfaceOperator, Operator):
     bl_label = "Make Panel Toggle"
     bl_options = {'REGISTER', 'UNDO'}
 
+    # BFA - Make poll function easier to read through
     @classmethod
     def poll(cls, context):
-        if not super().poll(context):
-            return False
+        try:
+            snode = context.space_data
+            tree = snode.edit_tree
+            active_item = tree.interface.active
 
-        snode = context.space_data
-        tree = snode.edit_tree
-        interface = tree.interface
-        active_item = interface.active
-        if not active_item:
-            return False
+            if not is_boolean_input(active_item):
+                cls.poll_message_set("Active item is not a boolean input socket")
+                return False
 
-        if type(active_item) is not bpy.types.NodeTreeInterfaceSocketBool or active_item.in_out != 'INPUT':
-            cls.poll_message_set("Only boolean input sockets are supported")
-            return False
+            panel = active_item.parent
 
-        parent_panel = active_item.parent
-        if parent_panel.parent is None:
-            cls.poll_message_set("Socket must be in a panel")
-            return False
-        if len(parent_panel.interface_items) > 0:
-            first_item = parent_panel.interface_items[0]
-            if first_item.is_panel_toggle:
+            if panel.parent is None:
+                cls.poll_message_set("Socket must be in a panel")
+                return False
+            
+            if get_panel_toggle(panel) is not None:
                 cls.poll_message_set("Panel already has a toggle")
                 return False
-        return True
+                
+            return True
+            
+        except AttributeError:
+            return False
 
     def execute(self, context):
         snode = context.space_data
@@ -664,22 +669,26 @@ class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator
     bl_label = "Unlink Panel Toggle"
     bl_options = {'REGISTER', 'UNDO'}
 
+    # BFA - Add proper poll messages when operator is not executable
     @classmethod
     def poll(cls, context):
-        if not super().poll(context):
-            return False
+        try:
+            snode = context.space_data
+            tree = snode.edit_tree
+            active_item = tree.interface.active
 
-        snode = context.space_data
-        tree = snode.edit_tree
-        interface = tree.interface
-        active_item = interface.active
-        if not active_item or active_item.item_type != 'PANEL':
-            return False
-        if len(active_item.interface_items) == 0:
-            return False
+            if active_item.item_type != 'PANEL':
+                cls.poll_message_set("Active item is not a panel")
+                return False
 
-        first_item = active_item.interface_items[0]
-        return first_item.is_panel_toggle
+            if get_panel_toggle(active_item) is None:
+                cls.poll_message_set("Panel does not have a toggle")
+                return False
+            
+            return True
+
+        except AttributeError:
+            return False
 
     def execute(self, context):
         snode = context.space_data
