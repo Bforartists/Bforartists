@@ -5954,7 +5954,7 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
 
       /* We need WM_OP_INVOKE_DEFAULT in case menu item is over another area. */
       layout->operator_context_set(WM_OP_INVOKE_DEFAULT);
-      layout->op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_NONE);
+      layout->op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_HIDE_ON);
 
       ED_screens_region_flip_menu_create(C, layout, nullptr);
       const ScrArea *area = CTX_wm_area(C);
