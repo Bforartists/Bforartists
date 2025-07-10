@@ -6890,9 +6890,11 @@ static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
       uiLayout *col = &layout->column(true);
       col->prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       col->prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      col->use_property_split_set(false); /* bfa - use_property_split_set = False */
+      layout->use_property_split_set(false); /* bfa - use_property_split_set = False */
       layout->prop(op->ptr, "alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout->use_property_split_set(true); /* bfa - use_property_split = back to true */
       layout->prop(op->ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout->use_property_split_set(false); /* bfa - use_property_split_set = False */
       layout->prop(op->ptr, "float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       layout->use_property_split_set(true); /* bfa - use_property_split = back to true */
       break;
