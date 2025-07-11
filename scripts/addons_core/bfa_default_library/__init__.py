@@ -138,6 +138,7 @@ classes = (
 submodule_names = [
     "ui",
     "ops",
+    "handlers_collections",
 ]
 
 # Get the register/unregister functions from the factory

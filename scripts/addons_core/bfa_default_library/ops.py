@@ -108,7 +108,7 @@ class OBJECT_OT_ApplySmartPrimitives(bpy.types.Operator):
                 for mod in obj.modifiers:
                     if (mod.type == 'NODES' and 
                         mod.node_group and 
-                        mod.node_group.name in OBJECT_PT_GeometryNodesPanel.smart_primitive_names):
+                        any(mod.node_group.name.startswith(name) for name in OBJECT_PT_GeometryNodesPanel.smart_primitive_names)):
                         return True
         return False
     
@@ -284,11 +284,11 @@ class OBJECT_PT_GeometryNodesPanel(bpy.types.Panel):
         if not cls.show_panel or not context.object or not context.object.modifiers:
             return False
             
-        # Check if any modifier is a Geometry Nodes modifier with a node group in our list
+        # Check if any modifier is a Geometry Nodes modifier with a node group whose name starts with our smart primitive names
         for mod in context.object.modifiers:
             if (mod.type == 'NODES' and 
                 mod.node_group and 
-                mod.node_group.name in cls.smart_primitive_names):
+                any(mod.node_group.name.startswith(name) for name in cls.smart_primitive_names)):
                 return True
         return False
 
