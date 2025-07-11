@@ -42,8 +42,8 @@ from os import path as p
 bl_info = {
     "name": "Default Asset Library",
     "author": "Draise",
-    "version": (1, 2, 0),
-    "blender": (4, 4, 0),
+    "version": (1, 2, 1),
+    "blender": (4, 4, 3),
     "location": "Asset Browser>Default Library",
     "description": "Adds a default library with complementary assets that you can use from the Asset Browser Editor",
     "warning": "This is the third iteration of the default asset library. Expect changes. Use at own risk.",
