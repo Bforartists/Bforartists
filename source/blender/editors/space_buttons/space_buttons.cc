@@ -226,10 +226,10 @@ blender::Vector<eSpaceButtons_Context> ED_buttons_tabs_list(const SpacePropertie
       tabs.append(tab);
     }
   };
-  /*BFA - tools tab not shown*/
-  //add_tab(BCONTEXT_TOOL);
 
- // add_spacer();
+  add_tab(BCONTEXT_TOOL);
+
+  add_spacer();
 
   add_tab(BCONTEXT_RENDER);
   add_tab(BCONTEXT_OUTPUT);
