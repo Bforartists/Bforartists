@@ -5244,7 +5244,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 
   layout->op("SCREEN_OT_screen_full_area",
              area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
-             ICON_NONE);
+             ICON_MAXIMIZE_AREA);
 
   if (area->spacetype != SPACE_FILE && !area->full) {
     ptr = layout->op("SCREEN_OT_screen_full_area",
