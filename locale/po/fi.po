@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:20+0000\n"
@@ -1107,8 +1107,8 @@ msgid "Is Internal"
 msgstr "On sisäinen"
 
 
-msgid "The attribute is meant for internal use by Blender"
-msgstr "Attribuutti on tarkoitettu Blenderin sisäiseen käyttöön"
+msgid "The attribute is meant for internal use by Bforartists"
+msgstr "Attribuutti on tarkoitettu Bforartistsin sisäiseen käyttöön"
 
 
 msgid "Is Required"
@@ -7478,8 +7478,8 @@ msgid "Cache"
 msgstr "Välimuisti"
 
 
-msgid "Blender"
-msgstr "Blender"
+msgid "Bforartists"
+msgstr "Bforartists"
 
 
 msgid "File"
@@ -10711,8 +10711,8 @@ msgid "Texture Node Editor"
 msgstr "Tekstuurinoodieditori"
 
 
-msgid "Blender File"
-msgstr "Blender-tiedosto"
+msgid "Bforartists File"
+msgstr "Bforartists-tiedosto"
 
 
 msgid "Show visible objects"
@@ -14781,8 +14781,8 @@ msgid "Scene has no camera"
 msgstr "Kohtauksessa ei ole kameraa"
 
 
-msgid "Blender Render"
-msgstr "Blender renderöinti"
+msgid "Bforartists Render"
+msgstr "Bforartists renderöinti"
 
 
 msgid "Failed to open window!"
@@ -17185,8 +17185,8 @@ msgstr "Näytönohjaimesi tai macOS-vesio ei ole tuettu"
 
 
 msgctxt "WindowManager"
-msgid "Upgrading to the latest macOS version may improve Blender support"
-msgstr "Päivittäminen viimeisimpään macOS-versioon saattaa parantaa Blender-tukea"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Päivittäminen viimeisimpään macOS-versioon saattaa parantaa Bforartists-tukea"
 
 
 msgctxt "WindowManager"
@@ -17407,8 +17407,8 @@ msgid "Stroke and Fill"
 msgstr "Piirrä ja täytä"
 
 
-msgid "Blender 27x"
-msgstr "Blender 27x"
+msgid "Bforartists 27x"
+msgstr "Bforartists 27x"
 
 
 msgid "Industry Compatible"
@@ -17586,8 +17586,8 @@ msgid "Video Editing"
 msgstr "Videoeditointi"
 
 
-msgid "Blender Extensions"
-msgstr "Blender-laajennukset"
+msgid "Bforartists Extensions"
+msgstr "Bforartists-laajennukset"
 
 
 msgid "Copy Global Transform"
@@ -17614,8 +17614,8 @@ msgid "Manage UI translations"
 msgstr "Hallitse käyttöliittymän käännöksiä"
 
 
-msgid "Allows managing UI translations directly from Blender (update main .po files, update scripts' translations, etc.)"
-msgstr "Mahdollistaa käyttöliittymäkäännösten hallinnan suoraan Blenderistä (päivittää .po-päätiedostot, päivittää skriptien käännökset jne.)"
+msgid "Allows managing UI translations directly from Bforartists (update main .po files, update scripts' translations, etc.)"
+msgstr "Mahdollistaa käyttöliittymäkäännösten hallinnan suoraan Bforartistsistä (päivittää .po-päätiedostot, päivittää skriptien käännökset jne.)"
 
 
 msgid "Pose Library"

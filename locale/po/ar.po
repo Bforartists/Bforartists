@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:10+0000\n"
@@ -268,7 +268,7 @@ msgid "Source Root"
 msgstr "ﻲﻌﻴﺑﺮﺘﻟﺍ ﺭﺬﺠﻟﺍ"
 
 
-msgid "The Blender source root path"
+msgid "The Bforartists source root path"
 msgstr "ﺭﺪﻨﻠﺑ ﺭﺪﺼﻤﻟ ﺭﺬﺠﻟﺍ ﺭﺎﺴﻣ"
 
 
@@ -292,7 +292,7 @@ msgid "Persistent Data Path"
 msgstr "ﺮﻤﺘﺴﻣ"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
 msgstr "(ﺎﻨﻫ ﻞﻤﻌﻳ ﻻ﻿ ﺭﺪﻨﻠﺑ ﻡﺎﻈﻧ ,ﻆﺤﻟﺍ ءﺆﺴﻟ) ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ ﻩﺬﻬﻟ ﻥﺰّﺨﻤﻟﺍ ﺖﺑﺮﻜﺳ ﺎﻓﺎﺠﻟﺍ ﻒﻠﻣ ﻢﺳﺍ"
 
 
@@ -1224,11 +1224,11 @@ msgid "Worlds"
 msgstr "ﻢﻟﺍﻮﻌﻟﺍ"
 
 
-msgid "Blender RNA"
+msgid "Bforartists RNA"
 msgstr "ﺍ.ﻥ.ﺭ ﺭﺪﻨﻠﺑ"
 
 
-msgid "Blender RNA structure definitions"
+msgid "Bforartists RNA structure definitions"
 msgstr "ﺍ.ﻥ.ﺭ ﺭﺪﻨﻠﺒﻟ ﺔﻴﻨﺒﻟﺍ ﺕﺎﻔﻳﺮﻌﺗ"
 
 
@@ -3119,7 +3119,7 @@ msgid "Lin error"
 msgstr "ﻲﻠﺧﺍﺩ ﺄﻄﺧ"
 
 
-msgid "Amount of residual error in Blender space unit for constraints that work on position"
+msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
 msgstr "ﺭﺪﻨﻠﺑ ﺱﺎﻴﻗ ﺪﺣﻮﺑ ﻊﻗﻮﻤﻟﺍ ﻰﻠﻋ ﺔﻠﻣﺎﻌﻟﺍ ﺩﻮﻴﻘﻠﻟ ﻲﻘﺒﺘﻤﻟﺍ ﺄﻄﺨﻟﺍ ﺔﻴﻤﻛ"
 
 
@@ -5552,7 +5552,7 @@ msgid "Max Velocity"
 msgstr "ﺔﻋﺮﺳ ﻰﻠﻋﺍ"
 
 
-msgid "Velocity considered as maximum influence (Blender units per frame)"
+msgid "Velocity considered as maximum influence (Bforartists units per frame)"
 msgstr "(ﺭﺎﻃﻹ﻿ﺍ ﻲﻓ ﺭﺪﻨﻠﺑ ﺕﺍﺪﺣﻭ) ﻱﻮﺼﻗ ﺮﻴﺛﺄﺘﻛ ﺓﺮﺒﺘﻌﻤﻟﺍ ﺔﻋﺮﺴﻟﺍ"
 
 
@@ -5876,7 +5876,7 @@ msgid "Save this output layer"
 msgstr "ﻩﺬﻫ ﺝﺍﺮﺧﻹ﻿ﺍ ﺔﻘﺒﻃ ﻆﻔﺣﺇ"
 
 
-msgid "Multiply color by alpha (recommended for Blender input)"
+msgid "Multiply color by alpha (recommended for Bforartists input)"
 msgstr "(ﺭﺪﻨﻠﺒﻟﺍ ﺕﻼ﻿ﺧﺪﻤﻟ ﺎﻬﺑ ﻰﺻﻮﻣ) ﺎﻔﻟﺃ ﻲﻓ ﻥﻮﻠﻟ ﺔﻴﻠﺒﻗ-ﺔﻔﻋﺎﻀﻣ"
 
 
@@ -7389,7 +7389,7 @@ msgid "Show .blend1, .blend2, etc. files"
 msgstr "blend. ﺕﺎﻔﻠﻣ ﺮﻬﻇﺃ"
 
 
-msgid "Filter Blender"
+msgid "Filter Bforartists"
 msgstr "ﺭﺪﻨﻠﺑ ﺔﻴﻔﺼﺗ"
 
 
@@ -7397,7 +7397,7 @@ msgid "Show .blend files"
 msgstr "blend. ﺕﺎﻔﻠﻣ ﺮﻬﻇﺃ"
 
 
-msgid "Filter Blender IDs"
+msgid "Filter Bforartists IDs"
 msgstr "ﺭﺪﻨﻠﺑ ﺕﺎﻓﺮﻌﻣ ﻒّﺻ"
 
 
@@ -8920,7 +8920,7 @@ msgid "Unprojected Radius"
 msgstr "ﺭﻮﺼﻣ ﺮﻴﻏ ﺮﻄﻗ"
 
 
-msgid "Radius of brush in Blender units"
+msgid "Radius of brush in Bforartists units"
 msgstr "ﺭﺪﻨﻠﺑ ﺕﺍﺪﺣﻮﺑ ﺓﺎﺷﺮﻔﻟﺍ ﺮﻄﻗ"
 
 
@@ -13334,11 +13334,11 @@ msgid "Noise basis used for turbulence"
 msgstr "ﺏﺍﺮﻄﺿﻻ﻿ﺍ ﻲﻓ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺏﺎﺒﻀﻟﺍ ﺱﺎﺳﺍ"
 
 
-msgid "Blender Original"
+msgid "Bforartists Original"
 msgstr "ﺭﺪﻨﻠﺑ ﻲﻠﺻﺃ"
 
 
-msgid "Noise algorithm - Blender original: Smooth interpolated noise"
+msgid "Noise algorithm - Bforartists original: Smooth interpolated noise"
 msgstr "ﺲﻠﺳ ﺪﻟﻮﻣ ﺞﻴﺠﺿ :ﺭﺪﻨﻠﺑ ﻲﻠﺻﺃ - ﺞﻴﺠﺿ ﺔﻴﻣﺯﺭﺍﻮﺧ"
 
 
@@ -19639,7 +19639,7 @@ msgid "World space normal mapping"
 msgstr "ءﺎﻀﻔﻟﺍ ﻢﻟﺎﻋ ﺕﻻ﻿ﻮﺤﺗ ﺔﻓﻮﻔﺼﻣ"
 
 
-msgid "Blender Object Space"
+msgid "Bforartists Object Space"
 msgstr "ﺭﺪﻨﻠﺑ ﻦﺋﺎﻛ ءﺎﻀﻓ"
 
 
@@ -28262,7 +28262,7 @@ msgstr "ﺔﻤﺴﻟﺍ ﻢﺳﺇ ﻞﻳﺪﻌﺗ"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
+msgid "Quit Bforartists"
 msgstr "ﺭﺪﻨﻠﺑ ﻖﻠﻏﺍ"
 
 
@@ -28349,7 +28349,7 @@ msgstr "ﻲﺋﺍﺪﺒﻟﺍ ﺭﺎﻃﻻ﻿ﺍ ﻊﺿ"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Bforartists File"
 msgstr "ﺭﺪﻨﻠﺒﻟﺍ ﻒﻠﻣ ﻆﻔﺣﺍ"
 
 
@@ -29858,7 +29858,7 @@ msgid "Edit Methods"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻕﺮﻃ"
 
 
-msgid "Settings for interacting with Blender data"
+msgid "Settings for interacting with Bforartists data"
 msgstr "ﺭﺪﻨﻠﺑ ﺕﺎﻧﺎﻴﺑ ﻊﻣ ﻞﻋﺎﻔﺘﻠﻟ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
@@ -32315,7 +32315,7 @@ msgid "Type of data to take texture from"
 msgstr "ﺞﻴﺴﻨﻟﺍ ﺎﻬﻨﻣ ﺫﻮﺧﺄﻤﻟﺍ ﺕﺎﻧﺎﻴﺒﻟﺍ ﻉﻮﻧ"
 
 
-msgid "Blender File"
+msgid "Bforartists File"
 msgstr "ﺭﺪﻨﻠﺑ ﻒﻠﻣ ﺮﻬﻇﺃ"
 
 
@@ -37047,7 +37047,7 @@ msgid "Scene has no camera"
 msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺍﺮﻴﻤﻜﻟﺍ ﺮﺘﺧﺍ"
 
 
-msgid "Blender Render"
+msgid "Bforartists Render"
 msgstr "ﺭﺪﻨﻠﺑ ﺮﻴّﺼﻣ"
 
 
@@ -37988,7 +37988,7 @@ msgid "Rim"
 msgstr "ﺔﻓﺎﺣ"
 
 
-msgid "Blender File View"
+msgid "Bforartists File View"
 msgstr "ﺭﺪﻨﻠﺑ ﻒﻠﻣ ﺮﻬﻇﺃ"
 
 
