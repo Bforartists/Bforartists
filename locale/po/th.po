@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:42+0000\n"
@@ -1999,8 +1999,8 @@ msgid "Scene"
 msgstr "ฉาก"
 
 
-msgid "Blender"
-msgstr "Blender"
+msgid "Bforartists"
+msgstr "Bforartists"
 
 
 msgid "System"
@@ -3212,8 +3212,8 @@ msgstr "เลือกเท่านั้น"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "ออกจาก Blender"
+msgid "Quit Bforartists"
+msgstr "ออกจาก Bforartists"
 
 
 msgid "Zoom Path"
@@ -3235,8 +3235,8 @@ msgstr "บันทึกการคัดลอก"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "บันทึกเป็นไฟล์ Blender"
+msgid "Save Bforartists File"
+msgstr "บันทึกเป็นไฟล์ Bforartists"
 
 
 msgid "Red-Cyan"
@@ -4091,8 +4091,8 @@ msgid "Text Files"
 msgstr "ไฟล์ข้อความ"
 
 
-msgid "Blender IDs"
-msgstr "Blender ID"
+msgid "Bforartists IDs"
+msgstr "Bforartists ID"
 
 
 msgctxt "Operator"
@@ -5044,8 +5044,8 @@ msgid "Paper"
 msgstr "กระดาษ"
 
 
-msgid "Blender Render"
-msgstr "ตัวเรนเดอร์ของ Blender"
+msgid "Bforartists Render"
+msgstr "ตัวเรนเดอร์ของ Bforartists"
 
 
 msgid "%d x %d"

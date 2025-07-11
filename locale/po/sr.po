@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:40+0000\n"
@@ -263,8 +263,8 @@ msgid "Source Root"
 msgstr "Корен изворног кода"
 
 
-msgid "The Blender source root path"
-msgstr "Корени директоријум изворног кода Blender-а"
+msgid "The Bforartists source root path"
+msgstr "Корени директоријум изворног кода Bforartists-а"
 
 
 msgid "Persistent Data Path"
@@ -927,11 +927,11 @@ msgid "Worlds"
 msgstr "Светови"
 
 
-msgid "Blender RNA"
+msgid "Bforartists RNA"
 msgstr "Блендер РНК"
 
 
-msgid "Blender RNA structure definitions"
+msgid "Bforartists RNA structure definitions"
 msgstr "Дефиниције структуре Блендер РНК"
 
 
@@ -4292,8 +4292,8 @@ msgid "Show .blend1, .blend2, etc. files"
 msgstr "Прикажи .blend датотеке"
 
 
-msgid "Filter Blender"
-msgstr "Филтер Blender"
+msgid "Filter Bforartists"
+msgstr "Филтер Bforartists"
 
 
 msgid "Show .blend files"
@@ -5134,8 +5134,8 @@ msgid "Unprojected Radius"
 msgstr "Непројектован полупречник"
 
 
-msgid "Radius of brush in Blender units"
-msgstr "Полупречник четкице у Blender јединицама"
+msgid "Radius of brush in Bforartists units"
+msgstr "Полупречник четкице у Bforartists јединицама"
 
 
 msgid "Airbrush"
@@ -7492,7 +7492,7 @@ msgid "Noise Basis"
 msgstr "Основа шума"
 
 
-msgid "Blender Original"
+msgid "Bforartists Original"
 msgstr "Оригинални Блендеров"
 
 
@@ -11352,8 +11352,8 @@ msgid "Object space normal mapping"
 msgstr "Основни директоријум са текстурама"
 
 
-msgid "Blender Object Space"
-msgstr "Простор Blender објекта"
+msgid "Bforartists Object Space"
+msgstr "Простор Bforartists објекта"
 
 
 msgid "Cycles"
@@ -14631,7 +14631,7 @@ msgstr "Узорак боје"
 
 
 msgid "Save As Render"
-msgstr "Сачувај Blender датотеку"
+msgstr "Сачувај Bforartists датотеку"
 
 
 msgctxt "Operator"
@@ -19392,12 +19392,12 @@ msgstr "Измена назива особине"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Излаз из Blender-а"
+msgid "Quit Bforartists"
+msgstr "Излаз из Bforartists-а"
 
 
-msgid "Quit Blender"
-msgstr "Излаз из Blender-а"
+msgid "Quit Bforartists"
+msgstr "Излаз из Bforartists-а"
 
 
 msgctxt "Operator"
@@ -19499,12 +19499,12 @@ msgstr "Сачувај почетну датотеку"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Сачувај Blender датотеку"
+msgid "Save Bforartists File"
+msgstr "Сачувај Bforartists датотеку"
 
 
-msgid "Save the current Blender file"
-msgstr "Уписује тренутну Blender датотеку"
+msgid "Save the current Bforartists file"
+msgstr "Уписује тренутну Bforartists датотеку"
 
 
 msgctxt "Operator"
@@ -21832,8 +21832,8 @@ msgid "Node tree type to display and edit"
 msgstr "Поставља приказ рендеровања у 3D погледу"
 
 
-msgid "Blender File"
-msgstr "Blender датотека"
+msgid "Bforartists File"
+msgstr "Bforartists датотека"
 
 
 msgid "Filter method"
@@ -25436,8 +25436,8 @@ msgid "Scene has no camera"
 msgstr "Сцена не садржи камеру"
 
 
-msgid "Blender Render"
-msgstr "Blender рендеринг"
+msgid "Bforartists Render"
+msgstr "Bforartists рендеринг"
 
 
 msgid "Flip to Top"
@@ -26144,8 +26144,8 @@ msgid "Rim"
 msgstr "Обод"
 
 
-msgid "Blender File View"
-msgstr "Blender-ов преглед датотека"
+msgid "Bforartists File View"
+msgstr "Bforartists-ов преглед датотека"
 
 
 msgid "unable to open the file"

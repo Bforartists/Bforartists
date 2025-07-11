@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-06-21 21:59+0000\n"
@@ -562,8 +562,8 @@ msgid "Bottom"
 msgstr "Botten"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
-msgstr "FriBidis C-kompilerade bibliotek (.so under Linux, .dll under Windows ...), du måste troligen redigera det om du är under Windows, t.ex. genom att använda det som ingår i Blender-bibliotekens förråd"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
+msgstr "FriBidis C-kompilerade bibliotek (.so under Linux, .dll under Windows ...), du måste troligen redigera det om du är under Windows, t.ex. genom att använda det som ingår i Bforartists-bibliotekens förråd"
 
 
 msgid "Translation Root"
@@ -995,16 +995,16 @@ msgid "Current File"
 msgstr "Aktuell fil"
 
 
-msgid "Show the assets currently available in this Blender session"
-msgstr "Visa tillgångarna som är tillgängliga i denna Blender-session"
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Visa tillgångarna som är tillgängliga i denna Bforartists-session"
 
 
 msgid "Essentials"
 msgstr "Grundläggande"
 
 
-msgid "Show the basic building blocks and utilities coming with Blender"
-msgstr "Visa de grundläggande byggstenarna och verktygen som kommer med Blender"
+msgid "Show the basic building blocks and utilities coming with Bforartists"
+msgstr "Visa de grundläggande byggstenarna och verktygen som kommer med Bforartists"
 
 
 msgid "Custom"
@@ -1211,8 +1211,8 @@ msgid "Is Internal"
 msgstr "Är intern"
 
 
-msgid "The attribute is meant for internal use by Blender"
-msgstr "Attributen är avsedd för intern användning av Blender"
+msgid "The attribute is meant for internal use by Bforartists"
+msgstr "Attributen är avsedd för intern användning av Bforartists"
 
 
 msgid "Is Required"
@@ -4661,16 +4661,16 @@ msgid "Only Assets"
 msgstr "Endast tillgångar"
 
 
-msgid "Filter Blender Backup Files"
-msgstr "Filtrera Blender säkerhetskopior"
+msgid "Filter Bforartists Backup Files"
+msgstr "Filtrera Bforartists säkerhetskopior"
 
 
 msgid "Show .blend1, .blend2, etc. files"
 msgstr "Visa .blend1, .blend2 osv. filer"
 
 
-msgid "Filter Blender"
-msgstr "Filtrera Blender"
+msgid "Filter Bforartists"
+msgstr "Filtrera Bforartists"
 
 
 msgid "Show .blend files"
@@ -4745,8 +4745,8 @@ msgid "Library Browser"
 msgstr "Biblioteksbläddrare"
 
 
-msgid "Whether we may browse Blender files' content or not"
-msgstr "Huruvida vi kan bläddra i Blender-filers innehåll eller inte"
+msgid "Whether we may browse Bforartists files' content or not"
+msgstr "Huruvida vi kan bläddra i Bforartists-filers innehåll eller inte"
 
 
 msgid "Reverse Sorting"
@@ -9659,8 +9659,8 @@ msgid "Cache"
 msgstr "Cache"
 
 
-msgid "Blender"
-msgstr "Blender"
+msgid "Bforartists"
+msgstr "Bforartists"
 
 
 msgid "System"
@@ -13389,8 +13389,8 @@ msgid "Unlock All Repositories (Testing)"
 msgstr "Lås upp alla förråd (testning)"
 
 
-msgid "Allow internet access. Blender may access configured online extension repositories. Installed third party add-ons may access the internet for their own functionality"
-msgstr "Tillåt internetåtkomst. Blender kan få tillgång till konfigurerade tilläggsförråd på internet. Installerade tillägg från tredje part kan få tillgång till internet för sin egen funktionalitet"
+msgid "Allow internet access. Bforartists may access configured online extension repositories. Installed third party add-ons may access the internet for their own functionality"
+msgstr "Tillåt internetåtkomst. Bforartists kan få tillgång till konfigurerade tilläggsförråd på internet. Installerade tillägg från tredje part kan få tillgång till internet för sin egen funktionalitet"
 
 
 msgid "Edit image in an external application"
@@ -13768,8 +13768,8 @@ msgid "Uninstall Studio Light"
 msgstr "Avinstallera Studio Light"
 
 
-msgid "Load and apply a Blender XML theme file"
-msgstr "Läs in och tillämpa en Blender XML-temafil"
+msgid "Load and apply a Bforartists XML theme file"
+msgstr "Läs in och tillämpa en Bforartists XML-temafil"
 
 
 msgctxt "Operator"
@@ -13870,13 +13870,13 @@ msgid "I18n Save Settings"
 msgstr "Inställningar för I18n-sparning"
 
 
-msgid "Update i18n data (po files) in Blender source code repository"
-msgstr "Uppdatera i18n-data (po-filer) i Blenders källkodsförråd"
+msgid "Update i18n data (po files) in Bforartists source code repository"
+msgstr "Uppdatera i18n-data (po-filer) i Bforartistss källkodsförråd"
 
 
 msgctxt "Operator"
-msgid "Update I18n Blender Repository"
-msgstr "Uppdatera Blenders I18n-förråd"
+msgid "Update I18n Bforartists Repository"
+msgstr "Uppdatera Bforartistss I18n-förråd"
 
 
 msgctxt "Operator"
@@ -19769,8 +19769,8 @@ msgid "Save Screenshot"
 msgstr "Spara skärmdump"
 
 
-msgid "Capture a picture of the whole Blender window"
-msgstr "Ta en bild av hela Blender-fönstret"
+msgid "Capture a picture of the whole Bforartists window"
+msgstr "Ta en bild av hela Bforartists-fönstret"
 
 
 msgctxt "Operator"
@@ -21111,8 +21111,8 @@ msgid "Open"
 msgstr "Öppna"
 
 
-msgid "Open a Blender file"
-msgstr "Öppna ett Blenderdokument"
+msgid "Open a Bforartists file"
+msgstr "Öppna ett Bforartistsdokument"
 
 
 msgid "Load UI"
@@ -21307,12 +21307,12 @@ msgstr "Spara uppstartsfil"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Spara Blender-fil"
+msgid "Save Bforartists File"
+msgstr "Spara Bforartists-fil"
 
 
-msgid "Save the current Blender file"
-msgstr "Spara den aktuella Blender-filen"
+msgid "Save the current Bforartists file"
+msgstr "Spara den aktuella Bforartists-filen"
 
 
 msgctxt "Operator"
@@ -21368,12 +21368,12 @@ msgstr "Öppna startskärmen med releaseinfo"
 
 
 msgctxt "Operator"
-msgid "About Blender"
-msgstr "Om Blender"
+msgid "About Bforartists"
+msgstr "Om Bforartists"
 
 
-msgid "Open a window with information about Blender"
-msgstr "Öppna ett fönster med information om Blender"
+msgid "Open a window with information about Bforartists"
+msgstr "Öppna ett fönster med information om Bforartists"
 
 
 msgctxt "Operator"
@@ -22470,8 +22470,8 @@ msgid "Recent Searches"
 msgstr "Senaste sökningarna"
 
 
-msgid "Version of Blender the userpref.blend was saved with"
-msgstr "Version av Blender som userpref.blend har sparats med"
+msgid "Version of Bforartists the userpref.blend was saved with"
+msgstr "Version av Bforartists som userpref.blend har sparats med"
 
 
 msgid "View & Controls"
@@ -22772,8 +22772,8 @@ msgid "Tablet API"
 msgstr "Tablet-API"
 
 
-msgid "Select the tablet API to use for pressure sensitivity (may require restarting Blender for changes to take effect)"
-msgstr "Välj tablet-API att använda för tryckkänslighet (kan kräva omstart av Blender för att ändringen ska träda i kraft)"
+msgid "Select the tablet API to use for pressure sensitivity (may require restarting Bforartists for changes to take effect)"
+msgstr "Välj tablet-API att använda för tryckkänslighet (kan kräva omstart av Bforartists för att ändringen ska träda i kraft)"
 
 
 msgid "Automatically choose Wintab or Windows Ink depending on the device"
@@ -22976,8 +22976,8 @@ msgid "GPU Backend"
 msgstr "GPU-backend"
 
 
-msgid "GPU backend to use (requires restarting Blender for changes to take effect)"
-msgstr "GPU-backend att använda (kräver att starta om Blender för att ändringen ska träda i kraft)"
+msgid "GPU backend to use (requires restarting Bforartists for changes to take effect)"
+msgstr "GPU-backend att använda (kräver att starta om Bforartists för att ändringen ska träda i kraft)"
 
 
 msgid "OpenGL"
@@ -23037,7 +23037,7 @@ msgstr "Är Microsoft Store installerad"
 
 
 msgid "Whether this blender installation is a sandboxed Microsoft Store version"
-msgstr "Huruvida denna Blender-installation är en sandboxad Microsoft Store-version"
+msgstr "Huruvida denna Bforartists-installation är en sandboxad Microsoft Store-version"
 
 
 msgid "For backwards compatibility only"
@@ -23080,8 +23080,8 @@ msgid "UI Line Width"
 msgstr "Gränssnitt linjebredd"
 
 
-msgid "Suggested line thickness and point size in pixels, for add-ons displaying custom user interface elements, based on operating system settings and Blender UI scale"
-msgstr "Föreslagen linjetjocklek och punktstorlek i pixlar, för tillägg som visar anpassade gränssnittselement, baserat på operativsystemets inställningar och Blenders gränssnittsskala"
+msgid "Suggested line thickness and point size in pixels, for add-ons displaying custom user interface elements, based on operating system settings and Bforartists UI scale"
+msgstr "Föreslagen linjetjocklek och punktstorlek i pixlar, för tillägg som visar anpassade gränssnittselement, baserat på operativsystemets inställningar och Bforartistss gränssnittsskala"
 
 
 msgid "UI Scale"
@@ -23384,8 +23384,8 @@ msgid "Show Memory"
 msgstr "Visa minne"
 
 
-msgid "Show Blender memory usage"
-msgstr "Visa hur mycket minne Blender använder"
+msgid "Show Bforartists memory usage"
+msgstr "Visa hur mycket minne Bforartists använder"
 
 
 msgid "Tooltips"
@@ -24882,8 +24882,8 @@ msgid "Theme Preferences"
 msgstr "Temainställningar"
 
 
-msgid "Theme settings for the Blender Preferences"
-msgstr "Tema-inställningar för Blender-inställningarna"
+msgid "Theme settings for the Bforartists Preferences"
+msgstr "Tema-inställningar för Bforartists-inställningarna"
 
 
 msgid "Theme Properties"
@@ -26099,8 +26099,8 @@ msgid "Report a Bug"
 msgstr "Rapportera en bugg"
 
 
-msgid "Blender's extension repository must be enabled to install extensions!"
-msgstr "Blenders tilläggsförråd måste vara aktiverat för att installera tillägg!"
+msgid "Bforartists's extension repository must be enabled to install extensions!"
+msgstr "Bforartistss tilläggsförråd måste vara aktiverat för att installera tillägg!"
 
 
 msgctxt "Operator"
@@ -26513,8 +26513,8 @@ msgstr "Städa upp arbetsförråd"
 
 
 msgctxt "Operator"
-msgid "Update Blender Repository"
-msgstr "Uppdatera Blender-förråd"
+msgid "Update Bforartists Repository"
+msgstr "Uppdatera Bforartists-förråd"
 
 
 msgctxt "Operator"
@@ -26731,13 +26731,13 @@ msgstr "Licens"
 
 
 msgctxt "Operator"
-msgid "Blender Store"
-msgstr "Blender-butik"
+msgid "Bforartists Store"
+msgstr "Bforartists-butik"
 
 
 msgctxt "Operator"
-msgid "Blender Website"
-msgstr "Blenders webbplats"
+msgid "Bforartists Website"
+msgstr "Bforartistss webbplats"
 
 
 msgctxt "Operator"
@@ -26770,32 +26770,32 @@ msgid "Release Notes"
 msgstr "Versionsinformation"
 
 
-msgid "Read about what's new in this version of Blender"
-msgstr "Läs om vad som är nytt i denna version av Blender"
+msgid "Read about what's new in this version of Bforartists"
+msgstr "Läs om vad som är nytt i denna version av Bforartists"
 
 
 msgid "User Manual"
 msgstr "Användarmanual"
 
 
-msgid "The reference manual for this version of Blender"
-msgstr "Referensmanualen för denna version av Blender"
+msgid "The reference manual for this version of Bforartists"
+msgstr "Referensmanualen för denna version av Bforartists"
 
 
 msgid "Python API Reference"
 msgstr "Referens till Pythons API"
 
 
-msgid "The API reference manual for this version of Blender"
-msgstr "API-referensmanualen för denna version av Blender"
+msgid "The API reference manual for this version of Bforartists"
+msgstr "API-referensmanualen för denna version av Bforartists"
 
 
 msgid "Development Fund"
 msgstr "Utvecklingsfond"
 
 
-msgid "Blender's official web-site"
-msgstr "Blenders officiella webbplats"
+msgid "Bforartists's official web-site"
+msgstr "Bforartistss officiella webbplats"
 
 
 msgid "Credits"
@@ -26903,8 +26903,8 @@ msgstr "Material"
 
 
 msgctxt "Operator"
-msgid "Import Blender {:d}.{:d} Preferences"
-msgstr "Importera inställningar för Blender {:d}.{:d}"
+msgid "Import Bforartists {:d}.{:d} Preferences"
+msgstr "Importera inställningar för Bforartists {:d}.{:d}"
 
 
 msgid "Windowing Environment: {:s}"
@@ -28027,8 +28027,8 @@ msgid "Volume Files"
 msgstr "Volymfiler"
 
 
-msgid "Blender IDs"
-msgstr "Blender-ID:n"
+msgid "Bforartists IDs"
+msgstr "Bforartists-ID:n"
 
 
 msgctxt "Operator"
@@ -29007,8 +29007,8 @@ msgstr "Allmänt"
 
 
 msgctxt "Operator"
-msgid "Load Factory Blender Settings"
-msgstr "Läs in fabriksinställningar för Blender"
+msgid "Load Factory Bforartists Settings"
+msgstr "Läs in fabriksinställningar för Bforartists"
 
 
 msgctxt "Operator"
@@ -29123,8 +29123,8 @@ msgid "Video Memory"
 msgstr "Videominne"
 
 
-msgid "Blender Version"
-msgstr "Blender-version"
+msgid "Bforartists Version"
+msgstr "Bforartists-version"
 
 
 msgid "Link Materials To"
@@ -29216,16 +29216,16 @@ msgstr "Spara som studioljus"
 
 
 msgctxt "Operator"
-msgid "Load Factory Blender Preferences"
-msgstr "Läs in fabriksinställningar för Blender"
+msgid "Load Factory Bforartists Preferences"
+msgstr "Läs in fabriksinställningar för Bforartists"
 
 
-msgid "A restart of Blender is required"
-msgstr "En omstart av Blender krävs"
+msgid "A restart of Bforartists is required"
+msgstr "En omstart av Bforartists krävs"
 
 
-msgid "Open blend files with this Blender version"
-msgstr "Öppna blend-filer med denna Blender-version"
+msgid "Open blend files with this Bforartists version"
+msgstr "Öppna blend-filer med denna Bforartists-version"
 
 
 msgctxt "Operator"
@@ -30808,8 +30808,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "Tillgångskataloger kan inte redigeras i det här tillgångsbiblioteket"
 
 
-msgid "Cannot save asset catalogs before the Blender file is saved"
-msgstr "Kan inte spara katalog med tillgångar innan Blender-filen har sparats"
+msgid "Cannot save asset catalogs before the Bforartists file is saved"
+msgstr "Kan inte spara katalog med tillgångar innan Bforartists-filen har sparats"
 
 
 msgid "No changes to be saved"
@@ -33981,8 +33981,8 @@ msgid "Load Factory \"{}\" Preferences."
 msgstr "Läs in fabriksinställningar \"{}\"."
 
 
-msgid "Load Factory Blender Preferences"
-msgstr "Läs in fabriksinställningar för Blender"
+msgid "Load Factory Bforartists Preferences"
+msgstr "Läs in fabriksinställningar för Bforartists"
 
 
 msgid "To make changes to Preferences permanent, use \"Save Preferences\""
@@ -34041,8 +34041,8 @@ msgid "unable to open the file"
 msgstr "kan inte öppna filen"
 
 
-msgid "This file was saved by a newer version of Blender (%s)."
-msgstr "Denna fil har sparats av en nyare version av Blender (%s)."
+msgid "This file was saved by a newer version of Bforartists (%s)."
+msgstr "Denna fil har sparats av en nyare version av Bforartists (%s)."
 
 
 msgid "saved as a new, regular file."
@@ -34053,8 +34053,8 @@ msgid "Cannot overwrite asset system files. Save as new file"
 msgstr "Det går inte att skriva över systemfiler för tillgångar. Spara som ny fil"
 
 
-msgid "with an older Blender version?"
-msgstr "med en äldre Blender-version?"
+msgid "with an older Bforartists version?"
+msgstr "med en äldre Bforartists-version?"
 
 
 msgid "Cannot overwrite asset system files. Save as new file?"
@@ -34170,8 +34170,8 @@ msgstr "Ditt grafikkort eller din macOS-version stöds inte"
 
 
 msgctxt "WindowManager"
-msgid "Upgrading to the latest macOS version may improve Blender support"
-msgstr "Uppgradering till den senaste macOS-versionen kan förbättra stödet för Blender"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Uppgradering till den senaste macOS-versionen kan förbättra stödet för Bforartists"
 
 
 msgctxt "WindowManager"
