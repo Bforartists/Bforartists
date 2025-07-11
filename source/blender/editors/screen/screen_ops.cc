@@ -5234,7 +5234,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 
   PointerRNA ptr;
 
-  ptr = layout->op("SCREEN_OT_area_join",
+    ptr = layout->op("SCREEN_OT_area_join",
                    IFACE_("Move/Split Area"),
                    ICON_AREA_DOCK,
                    WM_OP_INVOKE_DEFAULT,
@@ -5242,20 +5242,22 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 
   layout->separator();
 
+  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW); /*BFA icon*/
+  layout->separator();
+
   layout->op("SCREEN_OT_screen_full_area",
-             area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
+             area->full ? IFACE_("Restore Areas") : IFACE_("Toggle Maximize Area"),
              ICON_MAXIMIZE_AREA);
 
   if (area->spacetype != SPACE_FILE && !area->full) {
     ptr = layout->op("SCREEN_OT_screen_full_area",
-                     IFACE_("Full Screen Area"),
+                     IFACE_("Toggle Fullscreen Area"),
                      ICON_FULLSCREEN_ENTER, /*BFA icon*/
                      WM_OP_INVOKE_DEFAULT,
                      UI_ITEM_NONE);
     RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
 
-  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW); /*BFA icon*/
   layout->separator();
   layout->op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE); /*BFA icon*/
 }
