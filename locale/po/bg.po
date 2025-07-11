@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:10+0000\n"
@@ -1999,8 +1999,8 @@ msgid "Print memory statistics to the console"
 msgstr "Принтирай статистиката на паметта в конзолата"
 
 
-msgid "Open a Blender file"
-msgstr "Отваряне на Blender файл"
+msgid "Open a Bforartists file"
+msgstr "Отваряне на Bforartists файл"
 
 
 msgid "Trusted Source"
@@ -2008,12 +2008,12 @@ msgstr "Надежден Източник"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Излез от Blender"
+msgid "Quit Bforartists"
+msgstr "Излез от Bforartists"
 
 
-msgid "Quit Blender"
-msgstr "Излез от Blender"
+msgid "Quit Bforartists"
+msgstr "Излез от Bforartists"
 
 
 msgid "Color Path"
@@ -2072,12 +2072,12 @@ msgstr "Преначертай относителните"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Запази Blender Файл"
+msgid "Save Bforartists File"
+msgstr "Запази Bforartists Файл"
 
 
-msgid "Save the current Blender file"
-msgstr "Запази текущия Blender файл"
+msgid "Save the current Bforartists file"
+msgstr "Запази текущия Bforartists файл"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:31+0000\n"
@@ -533,7 +533,7 @@ msgid "Source Root"
 msgstr "소스 루트"
 
 
-msgid "The Blender source root path"
+msgid "The Bforartists source root path"
 msgstr "블렌더 소스 루트 경로"
 
 
@@ -557,7 +557,7 @@ msgid "Persistent Data Path"
 msgstr "지속적인 데이터 경로"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
 msgstr "이러한 설정을 저장하는 json 파일의 이름 (불행히도 블렌더 시스템은 여기서 작동하지 않습니다)"
 
 
@@ -2130,11 +2130,11 @@ msgid "ID Type"
 msgstr "ID 유형"
 
 
-msgid "Blender RNA"
+msgid "Bforartists RNA"
 msgstr "블렌더 RNA"
 
 
-msgid "Blender RNA structure definitions"
+msgid "Bforartists RNA structure definitions"
 msgstr "블렌더 RNA 구조 정의"
 
 
@@ -4897,7 +4897,7 @@ msgid "Lin error"
 msgstr "린 오류"
 
 
-msgid "Amount of residual error in Blender space unit for constraints that work on position"
+msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
 msgstr "위치에서 작동하는 제약들에 대해 블렌더 공간 단위의 예측 오차의 양"
 
 
@@ -8190,7 +8190,7 @@ msgid "Max Velocity"
 msgstr "최대 속도"
 
 
-msgid "Velocity considered as maximum influence (Blender units per frame)"
+msgid "Velocity considered as maximum influence (Bforartists units per frame)"
 msgstr "최대의 영향으로 간주된 속도 (프레임 당 블렌더 단위)"
 
 
@@ -8534,7 +8534,7 @@ msgid "Premultiply Alpha"
 msgstr "사전 곱셈 알파"
 
 
-msgid "Multiply color by alpha (recommended for Blender input)"
+msgid "Multiply color by alpha (recommended for Bforartists input)"
 msgstr "알파로 컬러를 곱하기(블렌더 입력을 권장)"
 
 
@@ -10424,7 +10424,7 @@ msgid "Enable filtering of files"
 msgstr "파일의 필터링을 사용"
 
 
-msgid "Filter Blender Backup Files"
+msgid "Filter Bforartists Backup Files"
 msgstr "블렌더 백업 파일을 필터"
 
 
@@ -10432,7 +10432,7 @@ msgid "Show .blend1, .blend2, etc. files"
 msgstr ".blend1 .blend2 등 파일을 표시"
 
 
-msgid "Filter Blender"
+msgid "Filter Bforartists"
 msgstr "블렌더를 필터"
 
 
@@ -10440,8 +10440,8 @@ msgid "Show .blend files"
 msgstr ".blend 파일을 표시"
 
 
-msgid "Filter Blender IDs"
-msgstr "Blender ID를 필터"
+msgid "Filter Bforartists IDs"
+msgstr "Bforartists ID를 필터"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
@@ -13603,7 +13603,7 @@ msgid "Unprojected Radius"
 msgstr "투사되지 않은 반경"
 
 
-msgid "Radius of brush in Blender units"
+msgid "Radius of brush in Bforartists units"
 msgstr "블렌더 단위 브러시의 반경"
 
 
@@ -15907,7 +15907,7 @@ msgid "Path to the library .blend file"
 msgstr "라이브러리 .blend 파일의 경로"
 
 
-msgid "Version of Blender the library .blend was saved with"
+msgid "Version of Bforartists the library .blend was saved with"
 msgstr "블렌더의 버전 라이브러리 .blend는 다음과 함께 저장"
 
 
@@ -19425,11 +19425,11 @@ msgid "Noise basis used for turbulence"
 msgstr "난기류에 사용되는 노이즈 기반"
 
 
-msgid "Blender Original"
+msgid "Bforartists Original"
 msgstr "블렌더 원본"
 
 
-msgid "Noise algorithm - Blender original: Smooth interpolated noise"
+msgid "Noise algorithm - Bforartists original: Smooth interpolated noise"
 msgstr "노이즈 알고리즘 - 블렌더 오리지널: 스무스 보간된 노이즈"
 
 
@@ -24265,7 +24265,7 @@ msgid "Cache"
 msgstr "캐시"
 
 
-msgid "Blender"
+msgid "Bforartists"
 msgstr "블렌더"
 
 
@@ -31969,19 +31969,19 @@ msgid "World space normal mapping"
 msgstr "월드 공간 노멀 맵핑"
 
 
-msgid "Blender Object Space"
+msgid "Bforartists Object Space"
 msgstr "블렌더 오브젝트 공간"
 
 
-msgid "Object space normal mapping, compatible with Blender render baking"
+msgid "Object space normal mapping, compatible with Bforartists render baking"
 msgstr "오브젝트 공간 노멀 매핑, 블렌더 렌더 배이킹과 호환"
 
 
-msgid "Blender World Space"
+msgid "Bforartists World Space"
 msgstr "블렌더 월드 공간"
 
 
-msgid "World space normal mapping, compatible with Blender render baking"
+msgid "World space normal mapping, compatible with Bforartists render baking"
 msgstr "월드 공간 노멀 매핑, 블렌더 렌더 배이킹과 호환"
 
 
@@ -33706,7 +33706,7 @@ msgid "Uninstall Studio Light"
 msgstr "스튜디오 라이트를 제거"
 
 
-msgid "Load and apply a Blender XML theme file"
+msgid "Load and apply a Bforartists XML theme file"
 msgstr "블렌더 XML 테마 파일을 불러오기 및 적용"
 
 
@@ -38106,7 +38106,7 @@ msgid "Apply Scalings"
 msgstr "축적 조정을 적용"
 
 
-msgid "How to apply custom and units scalings in generated FBX file (Blender uses FBX scale to detect units on import, but many other applications do not handle the same way)"
+msgid "How to apply custom and units scalings in generated FBX file (Bforartists uses FBX scale to detect units on import, but many other applications do not handle the same way)"
 msgstr "생성된 FBX 파일에 커스텀 및 단위 축적 조정을 적용하는 방법 (블렌더는 FBX 축적을 사용하여 가져올 때 단위를 감지하지만 다른 많은 응용 프로그램은 동일한 방식으로 처리하지 않습니다)"
 
 
@@ -38146,8 +38146,8 @@ msgid "Apply Unit"
 msgstr "단위를 적용"
 
 
-msgid "Take into account current Blender units settings (if unset, raw Blender Units values are used as-is)"
-msgstr "현재 Blender 단위 설정을 고려하십시오 (설정되지 않은 경우 Blender Units 값이 그대로 사용)"
+msgid "Take into account current Bforartists units settings (if unset, raw Bforartists Units values are used as-is)"
+msgstr "현재 Bforartists 단위 설정을 고려하십시오 (설정되지 않은 경우 Bforartists Units 값이 그대로 사용)"
 
 
 msgid "Armature FBXNode Type"
@@ -38158,8 +38158,8 @@ msgid "Null"
 msgstr "Null"
 
 
-msgid "'Null' FBX node, similar to Blender's Empty (default)"
-msgstr "'Null' FBX 노드, Blender의 엠프티 (기본값)와 비슷합니다"
+msgid "'Null' FBX node, similar to Bforartists's Empty (default)"
+msgstr "'Null' FBX 노드, Bforartists의 엠프티 (기본값)와 비슷합니다"
 
 
 msgid "'Root' FBX node, supposed to be the root of chains of bones..."
@@ -38458,8 +38458,8 @@ msgid "Use Modifiers Render Setting"
 msgstr "모디파이어 렌더 설정을 사용"
 
 
-msgid "Use render settings when applying modifiers to mesh objects (DISABLED in Blender 2.8)"
-msgstr "메쉬 오브젝트에 모디파이어를 적용 할 때 렌더 설정을 사용 (Blender 2.8에서는 DISABLED)"
+msgid "Use render settings when applying modifiers to mesh objects (DISABLED in Bforartists 2.8)"
+msgstr "메쉬 오브젝트에 모디파이어를 적용 할 때 렌더 설정을 사용 (Bforartists 2.8에서는 DISABLED)"
 
 
 msgid "Use Metadata"
@@ -38654,7 +38654,7 @@ msgid "Remember Export Settings"
 msgstr "내보내기 설정 저장"
 
 
-msgid "Store glTF export settings in the Blender project"
+msgid "Store glTF export settings in the Bforartists project"
 msgstr "블렌더 프로젝트에 glTF 내보내기 설정을 저장"
 
 
@@ -40719,8 +40719,8 @@ msgid "Scale FPS"
 msgstr "FPS 축적"
 
 
-msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame"
-msgstr "BVH에서 현재 씬으로 프레임 속도를 조절, 그렇지 않으면 각 BVH 프레임이 직접 Blender 프레임에 매핑됩니다"
+msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Bforartists frame"
+msgstr "BVH에서 현재 씬으로 프레임 속도를 조절, 그렇지 않으면 각 BVH 프레임이 직접 Bforartists 프레임에 매핑됩니다"
 
 
 msgid "Animation Offset"
@@ -40795,7 +40795,7 @@ msgid "Import FBX animation"
 msgstr "FBX 애니메이션을 가져오기"
 
 
-msgid "Import custom normals, if available (otherwise Blender will recompute them)"
+msgid "Import custom normals, if available (otherwise Bforartists will recompute them)"
 msgstr "커스텀 노멀을 가져 오기, 가능한 경우 (그렇지 않으면 블렌더로 다시 계산)"
 
 
@@ -40883,7 +40883,7 @@ msgid "Update Reports Display"
 msgstr "업데이트 보고서 표시"
 
 
-msgid "Update the display of reports in Blender UI (internal use)"
+msgid "Update the display of reports in Bforartists UI (internal use)"
 msgstr "블렌더 UI에서 보고서의 표시를 업데이트 (내부 사용)"
 
 
@@ -51491,7 +51491,7 @@ msgid "Eyedropper"
 msgstr "아이드라퍼"
 
 
-msgid "Sample a color from the Blender window to store in a property"
+msgid "Sample a color from the Bforartists window to store in a property"
 msgstr "블렌더 윈도우에서 컬러를 샘플링하여 속성에 저장합니다"
 
 
@@ -51574,7 +51574,7 @@ msgid "Grease Pencil Eyedropper"
 msgstr "그리스 펜슬 스포이드"
 
 
-msgid "Sample a color from the Blender Window and create Grease Pencil material"
+msgid "Sample a color from the Bforartists Window and create Grease Pencil material"
 msgstr "블렌더 창에서 컬러를 샘플링하고 그리스 펜슬 매트리얼을 생성"
 
 
@@ -53012,7 +53012,7 @@ msgid "Run as Background Job"
 msgstr "백그라운드 작업으로 실행"
 
 
-msgid "Enable this to run the import in the background, disable to block Blender while importing. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
+msgid "Enable this to run the import in the background, disable to block Bforartists while importing. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
 msgstr "이 기능을 사용하면 배경에서 가져 오기를 실행할 수 있으며 가져 오는 동안 블렌더를 차단하려면 사용하지 않도록 설정하십시오. 이 옵션은 더 이상 사용되지 않습니다. 전경에서 실행되도록이 작업자를 EXECUTE하고 백그라운드 작업으로 실행하도록 INVOKE"
 
 
@@ -53133,7 +53133,7 @@ msgid "Load an Alembic archive"
 msgstr "Alembic 아카이브에서 블러오기"
 
 
-msgid "Enable this to run the export in the background, disable to block Blender while exporting. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
+msgid "Enable this to run the export in the background, disable to block Bforartists while exporting. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
 msgstr "이 기능을 사용하면 배경에서 내보내기를 실행하고, 내보내는 동안 블렌더를 차단할 수는 없습니다. 이 옵션은 더 이상 사용되지 않습니다. 전경에서 실행되도록이 작업자를 EXECUTE하고 백그라운드 작업으로 실행하도록 INVOKE"
 
 
@@ -53477,11 +53477,11 @@ msgid "Sort exported data by Object name"
 msgstr "오브젝트 이름으로 내보낸 데이터를 분류"
 
 
-msgid "Use Blender Profile"
+msgid "Use Bforartists Profile"
 msgstr "블렌더 프로필을 사용"
 
 
-msgid "Export additional Blender specific information (for material, shaders, bones, etc.)"
+msgid "Export additional Bforartists specific information (for material, shaders, bones, etc.)"
 msgstr "추가적인 블렌더 지정 정보를 내보내기 (매테리얼, 쉐이더, 본, 등.)"
 
 
@@ -53525,7 +53525,7 @@ msgid "Import Units"
 msgstr "단위를 가져오기"
 
 
-msgid "If disabled match import to Blender's current Unit settings, otherwise use the settings from the Imported scene"
+msgid "If disabled match import to Bforartists's current Unit settings, otherwise use the settings from the Imported scene"
 msgstr "비활성 시 블렌더의 현재 단위 설정을 사용하고, 활성 시에는 가져온 씬에 사용된 단위 설정을 사용합니다"
 
 
@@ -53699,7 +53699,7 @@ msgid "Open"
 msgstr "열기"
 
 
-msgid "Open a Blender file"
+msgid "Open a Bforartists file"
 msgstr "블렌더 파일을 열기"
 
 
@@ -53856,11 +53856,11 @@ msgstr "속성 이름 편집"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
+msgid "Quit Bforartists"
 msgstr "블렌더를 끝내기"
 
 
-msgid "Quit Blender"
+msgid "Quit Bforartists"
 msgstr "블렌더를 끝내기"
 
 
@@ -54088,15 +54088,15 @@ msgstr "스타트업 파일을 저장"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Bforartists File"
 msgstr "블렌더 파일 저장"
 
 
-msgid "Save the current Blender file"
+msgid "Save the current Bforartists file"
 msgstr "현재 블렌더 파일을 저장함"
 
 
-msgid "Exit Blender after saving"
+msgid "Exit Bforartists after saving"
 msgstr "저장 후 블렌더를 종료"
 
 
@@ -57083,7 +57083,7 @@ msgid "Edit Methods"
 msgstr "메서드를 편집"
 
 
-msgid "Settings for interacting with Blender data"
+msgid "Settings for interacting with Bforartists data"
 msgstr "블렌더 데이터와 함께 상호 작용에 대한 설정"
 
 
@@ -57123,7 +57123,7 @@ msgid "Save preferences on exit when modified (unless factory settings have been
 msgstr "수정 종료시 환경 설정을 저장 (초기 설정 값을 불러오지 않은 경우)"
 
 
-msgid "Version of Blender the userpref.blend was saved with"
+msgid "Version of Bforartists the userpref.blend was saved with"
 msgstr "다음과 함께 userpref.blend가 저장된 블렌더 버전"
 
 
@@ -57727,7 +57727,7 @@ msgid "Max Threshold"
 msgstr "최대 임계 값"
 
 
-msgid "Raw input pressure value that is interpreted as 100% by Blender"
+msgid "Raw input pressure value that is interpreted as 100% by Bforartists"
 msgstr "블렌더에 의해 100%로 해석된 원시 입력 압력 값"
 
 
@@ -60851,12 +60851,12 @@ msgid "Which implementation of spring to use"
 msgstr "사용할 스프링의 구현"
 
 
-msgid "Blender 2.7"
-msgstr "Blender 2.7"
+msgid "Bforartists 2.7"
+msgstr "Bforartists 2.7"
 
 
-msgid "Blender 2.8"
-msgstr "Blender 2.8"
+msgid "Bforartists 2.8"
+msgstr "Bforartists 2.8"
 
 
 msgid "New implementation available since 2.8"
@@ -63353,7 +63353,7 @@ msgid "Display collections and objects in the view layer"
 msgstr "뷰 레이어에 컬렉션 및 오브젝트를 표시"
 
 
-msgid "Blender File"
+msgid "Bforartists File"
 msgstr "블렌더 파일"
 
 
@@ -63365,7 +63365,7 @@ msgid "Data API"
 msgstr "데이터 API"
 
 
-msgid "Display low level Blender data and its properties"
+msgid "Display low level Bforartists data and its properties"
 msgstr "로우 레벨 블렌더 데이터 및 해당 속성을 표시"
 
 
@@ -63517,7 +63517,7 @@ msgid "Space Preferences"
 msgstr "공간 환경 설정"
 
 
-msgid "Blender preferences space data"
+msgid "Bforartists preferences space data"
 msgstr "블렌더 환경 설정 공간 데이터"
 
 
@@ -66277,7 +66277,7 @@ msgid "Theme Preferences"
 msgstr "테마 환경 설정"
 
 
-msgid "Theme settings for the Blender Preferences"
+msgid "Theme settings for the Bforartists Preferences"
 msgstr "블렌더 환경 설정의 테마 설정"
 
 
@@ -69048,7 +69048,7 @@ msgid "Deselect"
 msgstr "선택 해제"
 
 
-msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
+msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Bforartists scene have the same frame rate"
 msgstr "BVH 파일은 모션 섹션에 프레임 지속 시간을 포함하지 않음, BVH 및 블렌더 씬이 동일한 프레임 속도를 가지고 있다고 가정합니다"
 
 
@@ -71037,8 +71037,8 @@ msgid "Text Files"
 msgstr "텍스트 파일"
 
 
-msgid "Blender IDs"
-msgstr "Blender IDs"
+msgid "Bforartists IDs"
+msgstr "Bforartists IDs"
 
 
 msgctxt "Operator"
@@ -73526,7 +73526,7 @@ msgid "Unable to create app-template userpref path"
 msgstr "앱 템플릿 userpref 경로를 생성할 수 없습니다"
 
 
-msgid "File written by newer Blender binary (%d.%d), expect loss of data!"
+msgid "File written by newer Bforartists binary (%d.%d), expect loss of data!"
 msgstr "최신 블렌더 바이너리 (%d.%d)로 작성된 파일, 데이터 손실이 예상 됩니다!"
 
 
@@ -73534,7 +73534,7 @@ msgid "Loading failed: "
 msgstr "불러오기 실패: "
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Bforartists"
 msgstr "매우 오래된 .blend 파일 형식 (%d.%d)에서 연결하거나 추가하면 애니메이션 변환이 수행되지 않습니다! 현재 블렌더로 lib 파일을 다시 저장하고 싶을 수도 있습니다"
 
 
@@ -73853,7 +73853,7 @@ msgid "At least 8 common tracks on both keyframes are needed for reconstruction"
 msgstr "재구성을 위해 두 키 프레임 모두에 최소한 8 개의 공통 트랙이 필요합니다"
 
 
-msgid "Blender is compiled without motion tracking library"
+msgid "Bforartists is compiled without motion tracking library"
 msgstr "블렌더는 모션 트래킹 라이브러리 없이 컴파일됩니다"
 
 
@@ -75175,8 +75175,8 @@ msgid "Error during export (see Console)"
 msgstr "내보내기 중 오류 (콘솔 참조)"
 
 
-msgid "Parsing errors in Document (see Blender Console)"
-msgstr "문서의 구문 분석 오류 (Blender Console 참조)"
+msgid "Parsing errors in Document (see Bforartists Console)"
+msgstr "문서의 구문 분석 오류 (Bforartists Console 참조)"
 
 
 msgid "Material Groups"
@@ -76339,7 +76339,7 @@ msgid "Removed %d slots"
 msgstr "%d 슬롯을 제거"
 
 
-msgid "Blender Render"
+msgid "Bforartists Render"
 msgstr "블렌더 렌더"
 
 
@@ -76383,11 +76383,11 @@ msgid "Flip to Bottom"
 msgstr "아래쪽으로 뒤집기"
 
 
-msgid "Blender Drivers Editor"
+msgid "Bforartists Drivers Editor"
 msgstr "블렌더 드라이버 에디터"
 
 
-msgid "Blender Info Log"
+msgid "Bforartists Info Log"
 msgstr "블렌더 정보 로그"
 
 
@@ -77429,7 +77429,7 @@ msgid "Can't set a negative range"
 msgstr "음수 범위를 설정할 수 없습니다"
 
 
-msgid "File Modified Outside and Inside Blender"
+msgid "File Modified Outside and Inside Bforartists"
 msgstr "블렌더 외부 및 내부 수정된 파일"
 
 
@@ -77445,7 +77445,7 @@ msgid "Make text internal (separate copy)"
 msgstr "내부에 텍스트를 만듭니다 (사본을 분리)"
 
 
-msgid "File Modified Outside Blender"
+msgid "File Modified Outside Bforartists"
 msgstr "블렌더 외부 수정된 파일"
 
 
@@ -77453,7 +77453,7 @@ msgid "Reload from disk"
 msgstr "디스크에서 다시 불러오기"
 
 
-msgid "File Deleted Outside Blender"
+msgid "File Deleted Outside Bforartists"
 msgstr "블렌더 외부 삭제된 파일"
 
 
@@ -78791,7 +78791,7 @@ msgid "Modifier was not found in the stack"
 msgstr "스택에서 모디파이어를 찾을 수 없습니다"
 
 
-msgid "Blender compiled without Audaspace support"
+msgid "Bforartists compiled without Audaspace support"
 msgstr "Audaspace 지원 없이 블렌더 컴파일됨"
 
 
@@ -79368,7 +79368,7 @@ msgid "Rim"
 msgstr "가장자리"
 
 
-msgid "Blender File View"
+msgid "Bforartists File View"
 msgstr "블렌더 파일 보기"
 
 
@@ -79576,8 +79576,8 @@ msgstr "그래픽 카드 또는 드라이버가 제한적으로 지원합니다.
 
 
 msgctxt "WindowManager"
-msgid "Newer graphics drivers may be available to improve Blender support."
-msgstr "Blender 지원을 향상시키기 위해 최신 그래픽 드라이버를 사용할 수 있습니다."
+msgid "Newer graphics drivers may be available to improve Bforartists support."
+msgstr "Bforartists 지원을 향상시키기 위해 최신 그래픽 드라이버를 사용할 수 있습니다."
 
 
 msgctxt "WindowManager"

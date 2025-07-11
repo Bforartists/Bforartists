@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:19+0000\n"
@@ -419,8 +419,8 @@ msgid "Fribidi Library"
 msgstr "FriBidi ﻪﻧﺎﺨﺑﺎﺘﮐ"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
-msgstr "Blender ﯼﺎﻫ‌ﻪﻧﺎﺨﺑﺎﺘﮐ ﻥﺰﺨﻣ ﺭﺩ ﺩﻮﺟﻮﻣ ﻥﺰﺨﻣ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ ﺎﺑ ﻝﺎﺜﻣ ﻥﺍﻮﻨﻋ ﻪﺑ ،ﺪﯿﻨﮐ ﺶﯾﺍﺮﯾﻭ ﺍﺭ ﻥﺁ ﺪﯾﺎﺑ ﻻً﻿ﺎﻤﺘﺣﺍ ،ﺪﯿﺘﺴﻫ ﺯﻭﺪﻨﯾﻭ ﺖﺤﺗ ﺮﮔﺍ ،(...ﺯﻭﺪﻨﯾﻭ ﺭﺩ dll. ،ﺲﮐﻮﻨﯿﻟ ﯼﺍﺮﺑ FriBidi C (.so ﻩﺪﺷ ﻞﯾﺎﭙﻣﺎﮐ ﻪﻧﺎﺨﺑﺎﺘﮐ"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
+msgstr "Bforartists ﯼﺎﻫ‌ﻪﻧﺎﺨﺑﺎﺘﮐ ﻥﺰﺨﻣ ﺭﺩ ﺩﻮﺟﻮﻣ ﻥﺰﺨﻣ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ ﺎﺑ ﻝﺎﺜﻣ ﻥﺍﻮﻨﻋ ﻪﺑ ،ﺪﯿﻨﮐ ﺶﯾﺍﺮﯾﻭ ﺍﺭ ﻥﺁ ﺪﯾﺎﺑ ﻻً﻿ﺎﻤﺘﺣﺍ ،ﺪﯿﺘﺴﻫ ﺯﻭﺪﻨﯾﻭ ﺖﺤﺗ ﺮﮔﺍ ،(...ﺯﻭﺪﻨﯾﻭ ﺭﺩ dll. ،ﺲﮐﻮﻨﯿﻟ ﯼﺍﺮﺑ FriBidi C (.so ﻩﺪﺷ ﻞﯾﺎﭙﻣﺎﮐ ﻪﻧﺎﺨﺑﺎﺘﮐ"
 
 
 msgid "Translation Root"
@@ -443,8 +443,8 @@ msgid "Source Root"
 msgstr "ﻊﺒﻨﻣ ﻪﺸﯾﺭ"
 
 
-msgid "The Blender source root path"
-msgstr "Blender ﻊﺒﻨﻣ ﻪﺸﯾﺭ ﺮﯿﺴﻣ"
+msgid "The Bforartists source root path"
+msgstr "Bforartists ﻊﺒﻨﻣ ﻪﺸﯾﺭ ﺮﯿﺴﻣ"
 
 
 msgid "Spell Cache"
@@ -467,8 +467,8 @@ msgid "Persistent Data Path"
 msgstr "ﺭﺍﺪﯾﺎﭘ ﻩﺩﺍﺩ ﺮﯿﺴﻣ"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
-msgstr "(ﺪﻨﮐ ﯽﻤﻧ ﺭﺎﮐ ﺎﺠﻨﯾﺍ ﺭﺩ Blender ﻢﺘﺴﯿﺳ ﻪﻧﺎﻔﺳﺎﺘﻣ) ﺪﻨﮐ ﯽﻣ ﻩﺮﯿﺧﺫ ﺍﺭ ﺕﺎﻤﯿﻈﻨﺗ ﻦﯾﺍ ﻪﮐ json ﻞﯾﺎﻓ ﮏﯾ ﻡﺎﻧ"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgstr "(ﺪﻨﮐ ﯽﻤﻧ ﺭﺎﮐ ﺎﺠﻨﯾﺍ ﺭﺩ Bforartists ﻢﺘﺴﯿﺳ ﻪﻧﺎﻔﺳﺎﺘﻣ) ﺪﻨﮐ ﯽﻣ ﻩﺮﯿﺧﺫ ﺍﺭ ﺕﺎﻤﯿﻈﻨﺗ ﻦﯾﺍ ﻪﮐ json ﻞﯾﺎﻓ ﮏﯾ ﻡﺎﻧ"
 
 
 msgid "User Add-ons"
@@ -1099,7 +1099,7 @@ msgid "Textures"
 msgstr "ﺎﻫ‌ﺖﻓﺎﺑ"
 
 
-msgid "Blender RNA"
+msgid "Bforartists RNA"
 msgstr "RNA ﺭﺪﻨﻠﺑ"
 
 
@@ -5106,7 +5106,7 @@ msgid "Time:"
 msgstr ":ﻥﺎﻣﺯ"
 
 
-msgid "Blender Render"
+msgid "Bforartists Render"
 msgstr "ﺭﺪﻨﻠﺑ ﺭﺪﻧﺭ"
 
 
@@ -5206,7 +5206,7 @@ msgid "Old"
 msgstr "ﯽﻤﯾﺪﻗ"
 
 
-msgid "Blender File View"
+msgid "Bforartists File View"
 msgstr "ﺭﺪﻨﻠﺑ ﻞﯾﺎﻓ ﺶﯾﺎﻤﻧ"
 
 

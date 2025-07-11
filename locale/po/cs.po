@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:12+0000\n"
@@ -615,7 +615,7 @@ msgid "Source Root"
 msgstr "Zdrojový kořen"
 
 
-msgid "The Blender source root path"
+msgid "The Bforartists source root path"
 msgstr "Kořenová cesta zdroje blenderu"
 
 
@@ -639,8 +639,8 @@ msgid "Persistent Data Path"
 msgstr "Trvalá datová cesta"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
-msgstr "Název souboru json, který ukládá tato nastavení (bohužel zde nefunguje systém Blenderu)"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgstr "Název souboru json, který ukládá tato nastavení (bohužel zde nefunguje systém Bforartistsu)"
 
 
 msgid "User Add-ons"
@@ -2192,12 +2192,12 @@ msgid "ID Type"
 msgstr "ID typ"
 
 
-msgid "Blender RNA"
-msgstr "Blender RNA"
+msgid "Bforartists RNA"
+msgstr "Bforartists RNA"
 
 
-msgid "Blender RNA structure definitions"
-msgstr "Definice struktury Blender RNA"
+msgid "Bforartists RNA structure definitions"
+msgstr "Definice struktury Bforartists RNA"
 
 
 msgid "Structs"
@@ -7194,8 +7194,8 @@ msgid "Show .blend1, .blend2, etc. files"
 msgstr "Ukázat .blend soubory"
 
 
-msgid "Filter Blender"
-msgstr "Filtr Blenderu"
+msgid "Filter Bforartists"
+msgstr "Filtr Bforartistsu"
 
 
 msgid "Show .blend files"
@@ -8392,7 +8392,7 @@ msgid "Unprojected Radius"
 msgstr "Plášť"
 
 
-msgid "Radius of brush in Blender units"
+msgid "Radius of brush in Bforartists units"
 msgstr "Konečná velikost vláken v pixelech"
 
 
@@ -9541,11 +9541,11 @@ msgstr "W"
 
 
 msgid "Path to the library .blend file"
-msgstr "Uložit současný soubor Blenderu"
+msgstr "Uložit současný soubor Bforartistsu"
 
 
-msgid "Version of Blender the library .blend was saved with"
-msgstr "Verze Blenderu ve které byla knihovna .blend uložena"
+msgid "Version of Bforartists the library .blend was saved with"
+msgstr "Verze Bforartistsu ve které byla knihovna .blend uložena"
 
 
 msgctxt "Light"
@@ -11514,8 +11514,8 @@ msgid "Noise basis used for turbulence"
 msgstr "Spustit renderovani"
 
 
-msgid "Blender Original"
-msgstr "Blender Původní"
+msgid "Bforartists Original"
+msgstr "Bforartists Původní"
 
 
 msgid "Original Perlin"
@@ -18608,8 +18608,8 @@ msgid "Uninstall Studio Light"
 msgstr "Odinstalovat Studiové Světlo"
 
 
-msgid "Load and apply a Blender XML theme file"
-msgstr "Načíst a použít soubor motivu Blender XML"
+msgid "Load and apply a Bforartists XML theme file"
+msgstr "Načíst a použít soubor motivu Bforartists XML"
 
 
 msgctxt "Operator"
@@ -22721,7 +22721,7 @@ msgstr "Uložit jako obrázek"
 
 
 msgid "Save As Render"
-msgstr "Uložit jako Blender soubor"
+msgstr "Uložit jako Bforartists soubor"
 
 
 msgctxt "Operator"
@@ -28662,7 +28662,7 @@ msgstr "Vybrat obrázek pozadí"
 
 
 msgid "Pack the sound into the current blend file"
-msgstr "Uložit současný soubor Blenderu"
+msgstr "Uložit současný soubor Bforartistsu"
 
 
 msgctxt "Operator"
@@ -29255,8 +29255,8 @@ msgid "Eyedropper"
 msgstr "Kapátko"
 
 
-msgid "Sample a color from the Blender window to store in a property"
-msgstr "Vybrat vzorek barvy z okna Blenderu a uložit ji ve vlastnosti"
+msgid "Sample a color from the Bforartists window to store in a property"
+msgstr "Vybrat vzorek barvy z okna Bforartistsu a uložit ji ve vlastnosti"
 
 
 msgctxt "Operator"
@@ -30273,8 +30273,8 @@ msgid "Sort exported data by Object name"
 msgstr "Seřadit exportovaná data podle Názvu Objektu"
 
 
-msgid "Use Blender Profile"
-msgstr "Použít Blender Profil"
+msgid "Use Bforartists Profile"
+msgstr "Použít Bforartists Profil"
 
 
 msgid "Use Object Instances"
@@ -30359,8 +30359,8 @@ msgid "Open"
 msgstr "Otevřít"
 
 
-msgid "Open a Blender file"
-msgstr "Otevře Blender soubor"
+msgid "Open a Bforartists file"
+msgstr "Otevře Bforartists soubor"
 
 
 msgid "Load UI"
@@ -30419,12 +30419,12 @@ msgstr "Kontex"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Ukončit Blender"
+msgid "Quit Bforartists"
+msgstr "Ukončit Bforartists"
 
 
-msgid "Quit Blender"
-msgstr "Ukončit Blender"
+msgid "Quit Bforartists"
+msgstr "Ukončit Bforartists"
 
 
 msgid "Primary Data Path"
@@ -30561,16 +30561,16 @@ msgstr "Uložit Spouštěcí Soubor"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Uložit Blender soubor"
+msgid "Save Bforartists File"
+msgstr "Uložit Bforartists soubor"
 
 
-msgid "Save the current Blender file"
-msgstr "Uloží současný soubor Blenderu"
+msgid "Save the current Bforartists file"
+msgstr "Uloží současný soubor Bforartistsu"
 
 
-msgid "Exit Blender after saving"
-msgstr "Ukončit Blender po uložení"
+msgid "Exit Bforartists after saving"
+msgstr "Ukončit Bforartists po uložení"
 
 
 msgctxt "Operator"
@@ -30638,12 +30638,12 @@ msgstr "Otevřít uvítací okno s informacemi o vydání"
 
 
 msgctxt "Operator"
-msgid "About Blender"
-msgstr "O Blenderu"
+msgid "About Bforartists"
+msgstr "O Bforartistsu"
 
 
-msgid "Open a window with information about Blender"
-msgstr "Otevřít okno s informacemi o Blenderu"
+msgid "Open a window with information about Bforartists"
+msgstr "Otevřít okno s informacemi o Bforartistsu"
 
 
 msgctxt "Operator"
@@ -33256,14 +33256,14 @@ msgstr "Zobrazit Uvítací Okno"
 
 
 msgid "Display splash screen on startup"
-msgstr "Zobrazit uvítací okno při startu Blenderu"
+msgstr "Zobrazit uvítací okno při startu Bforartistsu"
 
 
 msgid "Show Memory"
 msgstr "Zobrazit Paměť"
 
 
-msgid "Show Blender memory usage"
+msgid "Show Bforartists memory usage"
 msgstr "Zobrazit využití paměti"
 
 
@@ -33279,8 +33279,8 @@ msgid "Show Version"
 msgstr "Zobrazit Verzi"
 
 
-msgid "Show Blender version string"
-msgstr "Zobrazit verzi Blenderu"
+msgid "Show Bforartists version string"
+msgstr "Zobrazit verzi Bforartistsu"
 
 
 msgid "Show VRAM"
@@ -34263,12 +34263,12 @@ msgid "Z Axis Stiffness"
 msgstr "Tuhost Osy Z"
 
 
-msgid "Blender 2.7"
-msgstr "Blender 2.7"
+msgid "Bforartists 2.7"
+msgstr "Bforartists 2.7"
 
 
-msgid "Blender 2.8"
-msgstr "Blender 2.8"
+msgid "Bforartists 2.8"
+msgstr "Bforartists 2.8"
 
 
 msgid "Type of Rigid Body Constraint"
@@ -35314,8 +35314,8 @@ msgid "Type of information to display"
 msgstr "Jaký typ informace zobrazit"
 
 
-msgid "Blender File"
-msgstr "Otevřít Blender soubor"
+msgid "Bforartists File"
+msgstr "Otevřít Bforartists soubor"
 
 
 msgctxt "ID"
@@ -38093,12 +38093,12 @@ msgstr "Licence"
 
 
 msgctxt "Operator"
-msgid "Blender Store"
-msgstr "Blender obchod"
+msgid "Bforartists Store"
+msgstr "Bforartists obchod"
 
 
 msgctxt "Operator"
-msgid "Blender Website"
+msgid "Bforartists Website"
 msgstr "Webové stránky blenderu"
 
 
@@ -39282,8 +39282,8 @@ msgid "Text Files"
 msgstr "Textové soubory"
 
 
-msgid "Blender IDs"
-msgstr "ID Blenderu"
+msgid "Bforartists IDs"
+msgstr "ID Bforartistsu"
 
 
 msgctxt "Operator"
@@ -40049,7 +40049,7 @@ msgid "Video Memory"
 msgstr "Videopamět"
 
 
-msgid "Blender Version"
+msgid "Bforartists Version"
 msgstr "Verze blenderu"
 
 
@@ -42784,8 +42784,8 @@ msgid "Unable to remove material slot in edit mode"
 msgstr "Zobrazit materiál daného objektu"
 
 
-msgid "Blender Render"
-msgstr "Blender render"
+msgid "Bforartists Render"
+msgstr "Bforartists render"
 
 
 msgid "Maximize Area"

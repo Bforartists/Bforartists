@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:14+0000\n"
@@ -560,8 +560,8 @@ msgid "Source Root"
 msgstr "Quellverzeichnis"
 
 
-msgid "The Blender source root path"
-msgstr "Der Blender Quellverzeichnis-Stammpfad"
+msgid "The Bforartists source root path"
+msgstr "Der Bforartists Quellverzeichnis-Stammpfad"
 
 
 msgid "Spell Cache"
@@ -584,8 +584,8 @@ msgid "Persistent Data Path"
 msgstr "Durchgängiger Datenpfad"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
-msgstr "Der Name einer json Datei, welche die Einstellungen gespeichert hat (unglücklicherweiße, funktioniert Blender's System hier nicht)"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgstr "Der Name einer json Datei, welche die Einstellungen gespeichert hat (unglücklicherweiße, funktioniert Bforartists's System hier nicht)"
 
 
 msgid "User Add-ons"
@@ -2445,12 +2445,12 @@ msgid "ID Type"
 msgstr "ID-Typ"
 
 
-msgid "Blender RNA"
-msgstr "Blender RNA"
+msgid "Bforartists RNA"
+msgstr "Bforartists RNA"
 
 
-msgid "Blender RNA structure definitions"
-msgstr "Blender RNA Strukturdefinitionen"
+msgid "Bforartists RNA structure definitions"
+msgstr "Bforartists RNA Strukturdefinitionen"
 
 
 msgid "Structs"
@@ -5532,8 +5532,8 @@ msgid "Lin error"
 msgstr "Lin-Fehler"
 
 
-msgid "Amount of residual error in Blender space unit for constraints that work on position"
-msgstr "Menge des Restfehlers in der Blender-Raumeinheit für Abhängigkeiten, die auf dieser Position arbeiten"
+msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
+msgstr "Menge des Restfehlers in der Bforartists-Raumeinheit für Abhängigkeiten, die auf dieser Position arbeiten"
 
 
 msgid "Rotation error"
@@ -8218,7 +8218,7 @@ msgstr "Vormultipliziertes Alpha"
 
 
 msgid "Open Borders"
-msgstr "Blender-Datei öffnen"
+msgstr "Bforartists-Datei öffnen"
 
 
 msgid "UV Map"
@@ -9692,7 +9692,7 @@ msgstr "Rekursion"
 
 
 msgid "Blend File"
-msgstr "Blender Datei"
+msgstr "Bforartists Datei"
 
 
 msgid "List .blend files' content"
@@ -9791,24 +9791,24 @@ msgid "Hide .blend files items that are not data-blocks with asset metadata"
 msgstr "Ausblenden von .blend-Dateien, die keine Datenblöcke mit Asset-Metadaten sind"
 
 
-msgid "Filter Blender Backup Files"
-msgstr "Filter Blender Sicherungsdateien"
+msgid "Filter Bforartists Backup Files"
+msgstr "Filter Bforartists Sicherungsdateien"
 
 
 msgid "Show .blend1, .blend2, etc. files"
 msgstr ".blend-Dateien anzeigen"
 
 
-msgid "Filter Blender"
-msgstr "Blender filtern"
+msgid "Filter Bforartists"
+msgstr "Bforartists filtern"
 
 
 msgid "Show .blend files"
 msgstr ".blend-Dateien anzeigen"
 
 
-msgid "Filter Blender IDs"
-msgstr "Blender IDs filtern"
+msgid "Filter Bforartists IDs"
+msgstr "Bforartists IDs filtern"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
@@ -12014,8 +12014,8 @@ msgid "Unprojected Radius"
 msgstr "Unprojektierter Radius"
 
 
-msgid "Radius of brush in Blender units"
-msgstr "Pinselradius in Blendereinheiten"
+msgid "Radius of brush in Bforartists units"
+msgstr "Pinselradius in Bforartistseinheiten"
 
 
 msgid "Accumulate"
@@ -13518,8 +13518,8 @@ msgid "Path to the library .blend file"
 msgstr "In .blend-Datei verpacken"
 
 
-msgid "Version of Blender the library .blend was saved with"
-msgstr "Version von Blender wurde die Bibliothek .blend mit"
+msgid "Version of Bforartists the library .blend was saved with"
+msgstr "Version von Bforartists wurde die Bibliothek .blend mit"
 
 
 msgctxt "Light"
@@ -15957,8 +15957,8 @@ msgid "Grayscale"
 msgstr "Graustufen"
 
 
-msgid "Blender Original"
-msgstr "Blender Original"
+msgid "Bforartists Original"
+msgstr "Bforartists Original"
 
 
 msgid "Voronoi F1"
@@ -19271,8 +19271,8 @@ msgid "Cache"
 msgstr "Zwischenspeicher"
 
 
-msgid "Blender"
-msgstr "Blender"
+msgid "Bforartists"
+msgstr "Bforartists"
 
 
 msgid "System"
@@ -24812,8 +24812,8 @@ msgid "Object space normal mapping"
 msgstr "Objektdaten"
 
 
-msgid "Blender Object Space"
-msgstr "Blender-Objektraum"
+msgid "Bforartists Object Space"
+msgstr "Bforartists-Objektraum"
 
 
 msgid "UV Map for tangent space maps"
@@ -25509,7 +25509,7 @@ msgstr "Alles zeigen"
 
 msgctxt "Operator"
 msgid "Open Blend File"
-msgstr "Blender-Datei öffnen"
+msgstr "Bforartists-Datei öffnen"
 
 
 msgid "Add or remove a Camera Preset"
@@ -30987,7 +30987,7 @@ msgstr "Bild unter anderem Namen und/oder Einstellungen speichern"
 
 
 msgid "Save As Render"
-msgstr "Als Blender-Datei speichern"
+msgstr "Als Bforartists-Datei speichern"
 
 
 msgctxt "Operator"
@@ -39164,8 +39164,8 @@ msgid "Open"
 msgstr "Öffnen"
 
 
-msgid "Open a Blender file"
-msgstr "Eine Blender-Datei öffnen"
+msgid "Open a Bforartists file"
+msgstr "Eine Bforartists-Datei öffnen"
 
 
 msgid "Display File Selector"
@@ -39264,12 +39264,12 @@ msgstr "Weiche Begrenzungen"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Blender beenden"
+msgid "Quit Bforartists"
+msgstr "Bforartists beenden"
 
 
-msgid "Quit Blender"
-msgstr "Blender beenden"
+msgid "Quit Bforartists"
+msgstr "Bforartists beenden"
 
 
 msgctxt "Operator"
@@ -39456,16 +39456,16 @@ msgstr "Startdatei festlegen"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Blender-Datei speichern"
+msgid "Save Bforartists File"
+msgstr "Bforartists-Datei speichern"
 
 
-msgid "Save the current Blender file"
-msgstr "Aktuelle Blender-Datei speichern"
+msgid "Save the current Bforartists file"
+msgstr "Aktuelle Bforartists-Datei speichern"
 
 
-msgid "Exit Blender after saving"
-msgstr "Blender nach dem Speichern beenden"
+msgid "Exit Bforartists after saving"
+msgstr "Bforartists nach dem Speichern beenden"
 
 
 msgctxt "Operator"
@@ -39505,8 +39505,8 @@ msgstr "Startbildschirm"
 
 
 msgctxt "Operator"
-msgid "About Blender"
-msgstr "Über Blender"
+msgid "About Bforartists"
+msgstr "Über Bforartists"
 
 
 msgctxt "Operator"
@@ -41690,8 +41690,8 @@ msgid "Sort the recently searched items at the top"
 msgstr "Zeige zuletzt gesuchte Begriffe oben an"
 
 
-msgid "Version of Blender the userpref.blend was saved with"
-msgstr "Version der Blender mit der die userpref.blend gespeichert wurde"
+msgid "Version of Bforartists the userpref.blend was saved with"
+msgstr "Version der Bforartists mit der die userpref.blend gespeichert wurde"
 
 
 msgid "Add/Replace"
@@ -42987,8 +42987,8 @@ msgid "Show Memory"
 msgstr "Speicher anzeigen"
 
 
-msgid "Show Blender memory usage"
-msgstr "Blender Speicherbenutzung anzeigen"
+msgid "Show Bforartists memory usage"
+msgstr "Bforartists Speicherbenutzung anzeigen"
 
 
 msgid "Show Statistics"
@@ -43003,8 +43003,8 @@ msgid "Show Version"
 msgstr "Version anzeigen"
 
 
-msgid "Show Blender version string"
-msgstr "Blenderversionzeichenkette anzeigen"
+msgid "Show Bforartists version string"
+msgstr "Bforartistsversionzeichenkette anzeigen"
 
 
 msgid "Show VRAM"
@@ -44747,12 +44747,12 @@ msgid "Which implementation of spring to use"
 msgstr "Welche Implementierung der Sprungfeder verwendet wird"
 
 
-msgid "Blender 2.7"
-msgstr "Blender 2.7"
+msgid "Bforartists 2.7"
+msgstr "Bforartists 2.7"
 
 
-msgid "Blender 2.8"
-msgstr "Blender 2.8"
+msgid "Bforartists 2.8"
+msgstr "Bforartists 2.8"
 
 
 msgid "New implementation available since 2.8"
@@ -46132,8 +46132,8 @@ msgid "Type of information to display"
 msgstr "Darzustellender Informationstyp"
 
 
-msgid "Blender File"
-msgstr "Blender-Datei"
+msgid "Bforartists File"
+msgstr "Bforartists-Datei"
 
 
 msgid "Library Overrides"
@@ -47921,8 +47921,8 @@ msgid "Theme Preferences"
 msgstr "Themeeinstellungen"
 
 
-msgid "Theme settings for the Blender Preferences"
-msgstr "Themeneinstellungen für die Blendereinstellungen"
+msgid "Theme settings for the Bforartists Preferences"
+msgstr "Themeneinstellungen für die Bforartistseinstellungen"
 
 
 msgid "Theme Properties"
@@ -50303,8 +50303,8 @@ msgid "Could not make new image"
 msgstr "Neues Bild konnte nicht erstellt werden"
 
 
-msgid "Image editor could not be launched, ensure that the path in User Preferences > File is valid, and Blender has rights to launch it"
-msgstr "Bildeditor konnte nicht gestartet werden, stelle sicher das der Pfad unter Benutzereinstellungen > Datei gültig ist und Blender die Rechte besitzt um diesen zu öffnen"
+msgid "Image editor could not be launched, ensure that the path in User Preferences > File is valid, and Bforartists has rights to launch it"
+msgstr "Bildeditor konnte nicht gestartet werden, stelle sicher das der Pfad unter Benutzereinstellungen > Datei gültig ist und Bforartists die Rechte besitzt um diesen zu öffnen"
 
 
 msgid "Context incorrect, image not found"
@@ -50408,8 +50408,8 @@ msgid "Open..."
 msgstr "Öffnen..."
 
 
-msgid "Blender is free software"
-msgstr "Blender ist eine kostenlose Software"
+msgid "Bforartists is free software"
+msgstr "Bforartists ist eine kostenlose Software"
 
 
 msgid "Licensed under the GNU General Public License"
@@ -50455,13 +50455,13 @@ msgstr "Lizens"
 
 
 msgctxt "Operator"
-msgid "Blender Store"
-msgstr "Blender Store"
+msgid "Bforartists Store"
+msgstr "Bforartists Store"
 
 
 msgctxt "Operator"
-msgid "Blender Website"
-msgstr "Blender Website"
+msgid "Bforartists Website"
+msgstr "Bforartists Website"
 
 
 msgctxt "Operator"
@@ -52305,8 +52305,8 @@ msgid "Volume Files"
 msgstr "Volumendateien"
 
 
-msgid "Blender IDs"
-msgstr "Blender IDs"
+msgid "Bforartists IDs"
+msgstr "Bforartists IDs"
 
 
 msgctxt "Operator"
@@ -53391,8 +53391,8 @@ msgid "Video Memory"
 msgstr "Videospeicher"
 
 
-msgid "Blender Version"
-msgstr "Blenderversion"
+msgid "Bforartists Version"
+msgstr "Bforartistsversion"
 
 
 msgid "Top Level"
@@ -55014,8 +55014,8 @@ msgid "Unable to create app-template userpref path"
 msgstr "Benutzerdefinierter App-Template Pfad konnte nicht erstellt werden"
 
 
-msgid "File written by newer Blender binary (%d.%d), expect loss of data!"
-msgstr "Datei wurden von neuer Blender binary (%d.%d) geschrieben, rechne mit Datenverlust!"
+msgid "File written by newer Bforartists binary (%d.%d), expect loss of data!"
+msgstr "Datei wurden von neuer Bforartists binary (%d.%d) geschrieben, rechne mit Datenverlust!"
 
 
 msgid "Loading failed: "
@@ -55241,8 +55241,8 @@ msgid "Plane Track"
 msgstr "Ebenenspur"
 
 
-msgid "Blender is compiled without motion tracking library"
-msgstr "Blender ist ohne Bewegungsverfolgungs-Bibliothek kompiliert"
+msgid "Bforartists is compiled without motion tracking library"
+msgstr "Bforartists ist ohne Bewegungsverfolgungs-Bibliothek kompiliert"
 
 
 msgid "Original Mode"
@@ -56329,8 +56329,8 @@ msgid "Error during export (see Console)"
 msgstr "Fehler beim Exportieren (siehe Konsole)"
 
 
-msgid "Parsing errors in Document (see Blender Console)"
-msgstr "Analysieren von Fehlern im Dokument (siehe Blender-Konsole)"
+msgid "Parsing errors in Document (see Bforartists Console)"
+msgstr "Analysieren von Fehlern im Dokument (siehe Bforartists-Konsole)"
 
 
 msgid "Scene Options"
@@ -57106,8 +57106,8 @@ msgid "Unable to remove material slot in edit mode"
 msgstr "Materialslot kann nicht im Bearbeitenmodus entfernt werden"
 
 
-msgid "Blender Render"
-msgstr "Blender Renderer"
+msgid "Bforartists Render"
+msgstr "Bforartists Renderer"
 
 
 msgid "Failed to open window!"
@@ -57150,8 +57150,8 @@ msgid "Flip to Bottom"
 msgstr "Nach unten schieben"
 
 
-msgid "Blender Info Log"
-msgstr "Blender Information Log"
+msgid "Bforartists Info Log"
+msgstr "Bforartists Information Log"
 
 
 msgid "Unable to close area"
@@ -59550,8 +59550,8 @@ msgid "Input pending "
 msgstr "Eingabe ausstehend "
 
 
-msgid "Blender File View"
-msgstr "Blender-Dateibetrachter"
+msgid "Bforartists File View"
+msgstr "Bforartists-Dateibetrachter"
 
 
 msgid "Missing 'window' in context"
@@ -59726,8 +59726,8 @@ msgstr "Deine Grafikkarte oder dein Treiber hat limitierten Support. Es kann fun
 
 
 msgctxt "WindowManager"
-msgid "Newer graphics drivers may be available to improve Blender support."
-msgstr "Neue Grafikkartentreiber sind möglicherweiße verfügbar um den Blender Support zu verbessern."
+msgid "Newer graphics drivers may be available to improve Bforartists support."
+msgstr "Neue Grafikkartentreiber sind möglicherweiße verfügbar um den Bforartists Support zu verbessern."
 
 
 msgctxt "WindowManager"
@@ -59751,8 +59751,8 @@ msgstr "Deine Grafikkarte oder macOS-Version wird nicht unterstützt"
 
 
 msgctxt "WindowManager"
-msgid "Upgrading to the latest macOS version may improve Blender support"
-msgstr "Ein Upgrade auf die aktuellste macOS-Version könnte die Unterstützung von Blender verbessern"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Ein Upgrade auf die aktuellste macOS-Version könnte die Unterstützung von Bforartists verbessern"
 
 
 msgctxt "WindowManager"

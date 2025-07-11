@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:36+0000\n"
@@ -777,7 +777,7 @@ msgid "Fribidi Library"
 msgstr "Biblioteca FriBidi"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
 msgstr "A biblioteca Fribidi C compilada (.so em sistemas Linux, .dll em sistemas Windows...), você provavelmente precisará editá-la se estiver no Windows, ex: usando a inclusa dentro das bibliotecas no repositório svn"
 
 
@@ -786,7 +786,7 @@ msgstr "Raiz das traduções"
 
 
 msgid "The bf-translation repository"
-msgstr "O repositório de tradução da fundação Blender"
+msgstr "O repositório de tradução da fundação Bforartists"
 
 
 msgid "Import Paths"
@@ -801,8 +801,8 @@ msgid "Source Root"
 msgstr "Raiz dos arquivos fonte"
 
 
-msgid "The Blender source root path"
-msgstr "O caminho raiz de arquivos fonte do Blender"
+msgid "The Bforartists source root path"
+msgstr "O caminho raiz de arquivos fonte do Bforartists"
 
 
 msgid "Spell Cache"
@@ -825,8 +825,8 @@ msgid "Persistent Data Path"
 msgstr "Dados persistentes"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
-msgstr "O nome do arquivo json que guarda estas configurações (infelizmente, o sistema do Blender não funciona aqui)"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgstr "O nome do arquivo json que guarda estas configurações (infelizmente, o sistema do Bforartists não funciona aqui)"
 
 
 msgid "User Add-ons"
@@ -1569,16 +1569,16 @@ msgid "Show assets from all of the listed asset libraries"
 msgstr "Mostrar itens de todas as bibliotecas listadas"
 
 
-msgid "Show the assets currently available in this Blender session"
-msgstr "Mostrar os itens atualmente disponíveis nesta sessão do Blender"
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Mostrar os itens atualmente disponíveis nesta sessão do Bforartists"
 
 
 msgid "Essentials"
 msgstr "Essenciais"
 
 
-msgid "Show the basic building blocks and utilities coming with Blender"
-msgstr "Mostre os blocos de construção básicos e utilidades que vêm com o Blender"
+msgid "Show the basic building blocks and utilities coming with Bforartists"
+msgstr "Mostre os blocos de construção básicos e utilidades que vêm com o Bforartists"
 
 
 msgid "Custom"
@@ -1809,8 +1809,8 @@ msgid "Is Internal"
 msgstr "É interno"
 
 
-msgid "The attribute is meant for internal use by Blender"
-msgstr "O atributo é destinado ao uso interno do Blender"
+msgid "The attribute is meant for internal use by Bforartists"
+msgstr "O atributo é destinado ao uso interno do Bforartists"
 
 
 msgid "Is Required"
@@ -2330,7 +2330,7 @@ msgstr "Peso de objetivo de corpo maleável."
 
 
 msgid "Main data structure representing a .blend file and all its data-blocks"
-msgstr "Estrutura principal de dados representando um arquivo Blender e todos os seus blocos de dados."
+msgstr "Estrutura principal de dados representando um arquivo Bforartists e todos os seus blocos de dados."
 
 
 msgid "Actions"
@@ -2386,7 +2386,7 @@ msgstr "Nome de arquivo"
 
 
 msgid "Path to the .blend file"
-msgstr "O caminho para o arquivo Blender."
+msgstr "O caminho para o arquivo Bforartists."
 
 
 msgid "Vector Fonts"
@@ -2422,7 +2422,7 @@ msgstr "Arquivo está salvo"
 
 
 msgid "Has the current session been saved to disk as a .blend file"
-msgstr "Possui a sessão atual salva no disco como um arquivo Blender."
+msgstr "Possui a sessão atual salva no disco como um arquivo Bforartists."
 
 
 msgid "Lattices"
@@ -2602,7 +2602,7 @@ msgstr "Bloco de dados de texturas"
 
 
 msgid "Automatically pack all external data into .blend file"
-msgstr "Empacota todos os arquivos externos dentro do arquivo Blender"
+msgstr "Empacota todos os arquivos externos dentro do arquivo Bforartists"
 
 
 msgid "Version"
@@ -2878,12 +2878,12 @@ msgid "ID Type"
 msgstr "Tipo de identificador"
 
 
-msgid "Blender RNA"
-msgstr "RNA Blender"
+msgid "Bforartists RNA"
+msgstr "RNA Bforartists"
 
 
-msgid "Blender RNA structure definitions"
-msgstr "Configurações de estrutura de RNA do Blender."
+msgid "Bforartists RNA structure definitions"
+msgstr "Configurações de estrutura de RNA do Bforartists."
 
 
 msgid "Structs"
@@ -5169,8 +5169,8 @@ msgid "Lin error"
 msgstr "Erro linear"
 
 
-msgid "Amount of residual error in Blender space unit for constraints that work on position"
-msgstr "Quantidade de erro residual em unidades Blender para restrições que trabalham na posição."
+msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
+msgstr "Quantidade de erro residual em unidades Bforartists para restrições que trabalham na posição."
 
 
 msgid "Amount of residual error in radians for constraints that work on orientation"
@@ -7922,8 +7922,8 @@ msgid "Max Velocity"
 msgstr "Velocidade máxima"
 
 
-msgid "Velocity considered as maximum influence (Blender units per frame)"
-msgstr "Velocidade considerada como a influência máxima (em unidades Blender por quadro)."
+msgid "Velocity considered as maximum influence (Bforartists units per frame)"
+msgstr "Velocidade considerada como a influência máxima (em unidades Bforartists por quadro)."
 
 
 msgid "Velocity Color Ramp"
@@ -8254,8 +8254,8 @@ msgid "Premultiply Alpha"
 msgstr "Pré-multiplicar alfa"
 
 
-msgid "Multiply color by alpha (recommended for Blender input)"
-msgstr "Multiplica a cor pelo alfa (recomendado para a entrada Blender)."
+msgid "Multiply color by alpha (recommended for Bforartists input)"
+msgstr "Multiplica a cor pelo alfa (recomendado para a entrada Bforartists)."
 
 
 msgid "Use Shrink"
@@ -9986,11 +9986,11 @@ msgstr "Lista somente o conteúdo do diretório atual, sem recursões."
 
 
 msgid "Blend File"
-msgstr "Arquivo Blender"
+msgstr "Arquivo Bforartists"
 
 
 msgid "List .blend files' content"
-msgstr "Lista o conteúdo dos arquivos Blender."
+msgstr "Lista o conteúdo dos arquivos Bforartists."
 
 
 msgid "One Level"
@@ -10070,23 +10070,23 @@ msgstr "Apenas Recursos"
 
 
 msgid "Show .blend1, .blend2, etc. files"
-msgstr "Mostra os arquivos das cópias de segurança do Blender com extensões \".blend1\", \".blend2\", \".blend*\", etc."
+msgstr "Mostra os arquivos das cópias de segurança do Bforartists com extensões \".blend1\", \".blend2\", \".blend*\", etc."
 
 
-msgid "Filter Blender"
-msgstr "Filtrar por arquivos Blender"
+msgid "Filter Bforartists"
+msgstr "Filtrar por arquivos Bforartists"
 
 
 msgid "Show .blend files"
-msgstr "Mostra os arquivos Blender (com extensão .blend)"
+msgstr "Mostra os arquivos Bforartists (com extensão .blend)"
 
 
-msgid "Filter Blender IDs"
-msgstr "Filtrar por identificadores Blender"
+msgid "Filter Bforartists IDs"
+msgstr "Filtrar por identificadores Bforartists"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
-msgstr "Mostra os itens dos arquivos Blender (tais como objetos, materiais, texturas, etc.)."
+msgstr "Mostra os itens dos arquivos Bforartists (tais como objetos, materiais, texturas, etc.)."
 
 
 msgid "Filter Folder"
@@ -12135,8 +12135,8 @@ msgid "Unprojected Radius"
 msgstr "Raio não projetado"
 
 
-msgid "Radius of brush in Blender units"
-msgstr "O raio do pincel em unidades Blender."
+msgid "Radius of brush in Bforartists units"
+msgstr "O raio do pincel em unidades Bforartists."
 
 
 msgid "Accumulate"
@@ -14205,7 +14205,7 @@ msgstr "Arquivo .blend externo ao qual os dados estão vinculados."
 
 
 msgid "Path to the library .blend file"
-msgstr "Caminho para o arquivo de biblioteca Blender."
+msgstr "Caminho para o arquivo de biblioteca Bforartists."
 
 
 msgctxt "Light"
@@ -17139,12 +17139,12 @@ msgid "Noise basis used for turbulence"
 msgstr "Base de ruído usada para turbulência."
 
 
-msgid "Blender Original"
-msgstr "Blender original"
+msgid "Bforartists Original"
+msgstr "Bforartists original"
 
 
-msgid "Noise algorithm - Blender original: Smooth interpolated noise"
-msgstr "Usa o ruído original do Blender, com interpolação suavizada."
+msgid "Noise algorithm - Bforartists original: Smooth interpolated noise"
+msgstr "Usa o ruído original do Bforartists, com interpolação suavizada."
 
 
 msgid "Original Perlin"
@@ -17860,7 +17860,7 @@ msgstr "Oficiais"
 
 
 msgid "Officially supported"
-msgstr "Com suporte oficial da fundação Blender."
+msgstr "Com suporte oficial da fundação Bforartists."
 
 
 msgid "Community"
@@ -17992,7 +17992,7 @@ msgstr "Um solucionador de cinemática inversa com base em estado, que permite m
 
 
 msgid "bItasc"
-msgstr "Especificação de tarefas por restrições Blender"
+msgstr "Especificação de tarefas por restrições Bforartists"
 
 
 msgid "Parameters for the iTaSC IK solver"
@@ -24529,7 +24529,7 @@ msgstr "Tamanho espacial"
 
 
 msgid "Size of the simulation domain (in meters), and of the generated geometry (in BU)"
-msgstr "Tamanho do domínio de simulação (em metros), e da geometria gerada, em unidades Blender."
+msgstr "Tamanho do domínio de simulação (em metros), e da geometria gerada, em unidades Bforartists."
 
 
 msgid "Spectrum"
@@ -28568,20 +28568,20 @@ msgid "World space normal mapping"
 msgstr "Mapeamento das normais no espaço do ambiente (mundo)."
 
 
-msgid "Blender Object Space"
-msgstr "Espaço de objeto Blender"
+msgid "Bforartists Object Space"
+msgstr "Espaço de objeto Bforartists"
 
 
-msgid "Object space normal mapping, compatible with Blender render baking"
-msgstr "Mapeamento das normais no espaço de objeto, compatível com as operações de gerar e gravar do Blender."
+msgid "Object space normal mapping, compatible with Bforartists render baking"
+msgstr "Mapeamento das normais no espaço de objeto, compatível com as operações de gerar e gravar do Bforartists."
 
 
-msgid "Blender World Space"
-msgstr "Espaço de ambiente (mundo) Blender"
+msgid "Bforartists World Space"
+msgstr "Espaço de ambiente (mundo) Bforartists"
 
 
-msgid "World space normal mapping, compatible with Blender render baking"
-msgstr "Mapeamento das normais no espaço de ambiente (mundo), compatível com as operações de gerar e gravar do Blender."
+msgid "World space normal mapping, compatible with Bforartists render baking"
+msgstr "Mapeamento das normais no espaço de ambiente (mundo), compatível com as operações de gerar e gravar do Bforartists."
 
 
 msgid "UV Map for tangent space maps"
@@ -29504,7 +29504,7 @@ msgstr "Atribuir Ação"
 
 msgctxt "Operator"
 msgid "Open Blend File"
-msgstr "Abrir Arquivo Blender"
+msgstr "Abrir Arquivo Bforartists"
 
 
 msgctxt "Operator"
@@ -30193,8 +30193,8 @@ msgid "Uninstall Studio Light"
 msgstr "Desinstalar Luz de Estúdio"
 
 
-msgid "Load and apply a Blender XML theme file"
-msgstr "Carrega e aplica um arquivo de temas XML Blender."
+msgid "Load and apply a Bforartists XML theme file"
+msgstr "Carrega e aplica um arquivo de temas XML Bforartists."
 
 
 msgctxt "Operator"
@@ -30585,7 +30585,7 @@ msgstr "Carrega o manual na internet."
 
 msgctxt "Operator"
 msgid "View Manual"
-msgstr "Ver manual do Blender"
+msgstr "Ver manual do Bforartists"
 
 
 msgctxt "Operator"
@@ -32211,7 +32211,7 @@ msgstr "Modo de navegação de arquivos"
 
 
 msgid "The setting for the file browser mode to load a .blend file, a library or a special file"
-msgstr "As definições para o navegador de arquivos carregar arquivos Blender, bibliotecas ou arquivos especiais."
+msgstr "As definições para o navegador de arquivos carregar arquivos Bforartists, bibliotecas ou arquivos especiais."
 
 
 msgid "Path to file"
@@ -32223,7 +32223,7 @@ msgstr "Filtra por arquivos do tipo Alembic"
 
 
 msgid "Filter .blend files"
-msgstr "Filtra por arquivos Blender (.blend)"
+msgstr "Filtra por arquivos Bforartists (.blend)"
 
 
 msgid "Filter btx files"
@@ -32496,7 +32496,7 @@ msgstr "Diretório do arquivo"
 
 
 msgid "Select the file relative to the blend file"
-msgstr "Seleciona o arquivo relativo ao arquivo Blender."
+msgstr "Seleciona o arquivo relativo ao arquivo Bforartists."
 
 
 msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
@@ -34480,8 +34480,8 @@ msgid "Apply Scalings"
 msgstr "Aplicar escalonamentos"
 
 
-msgid "How to apply custom and units scalings in generated FBX file (Blender uses FBX scale to detect units on import, but many other applications do not handle the same way)"
-msgstr "Como aplicar os escalonamentos e unidades personalizadas no arquivo FBX gerado (O Blender usa a escala presente no arquivo FBX para detectar as unidades durante a importação, mas muitos outros aplicativos não operam desta mesma forma)."
+msgid "How to apply custom and units scalings in generated FBX file (Bforartists uses FBX scale to detect units on import, but many other applications do not handle the same way)"
+msgstr "Como aplicar os escalonamentos e unidades personalizadas no arquivo FBX gerado (O Bforartists usa a escala presente no arquivo FBX para detectar as unidades durante a importação, mas muitos outros aplicativos não operam desta mesma forma)."
 
 
 msgid "All Local"
@@ -34520,8 +34520,8 @@ msgid "Apply Unit"
 msgstr "Aplicar unidades"
 
 
-msgid "Take into account current Blender units settings (if unset, raw Blender Units values are used as-is)"
-msgstr "Leva em consideração as definições atuais das unidades Blender (caso não definido, as unidades Blender serão usadas de maneira direta, como estão)"
+msgid "Take into account current Bforartists units settings (if unset, raw Bforartists Units values are used as-is)"
+msgstr "Leva em consideração as definições atuais das unidades Bforartists (caso não definido, as unidades Bforartists serão usadas de maneira direta, como estão)"
 
 
 msgid "Armature FBXNode Type"
@@ -34532,8 +34532,8 @@ msgid "Null"
 msgstr "Nulo"
 
 
-msgid "'Null' FBX node, similar to Blender's Empty (default)"
-msgstr "Nós de armações de ossos FBX do tipo \"Nulo\". Similares aos objetos do tipo \"Vazio\" do Blender. (padrão)."
+msgid "'Null' FBX node, similar to Bforartists's Empty (default)"
+msgstr "Nós de armações de ossos FBX do tipo \"Nulo\". Similares aos objetos do tipo \"Vazio\" do Bforartists. (padrão)."
 
 
 msgid "'Root' FBX node, supposed to be the root of chains of bones..."
@@ -34866,7 +34866,7 @@ msgstr "Empacotar Recursos Automaticamente"
 
 
 msgid "Automatically pack all external files into the .blend file"
-msgstr "Empacota automaticamente todos os arquivos externos dentro do arquivo Blender."
+msgstr "Empacota automaticamente todos os arquivos externos dentro do arquivo Bforartists."
 
 
 msgctxt "Operator"
@@ -35028,7 +35028,7 @@ msgstr "Tornar os Caminhos Relativos"
 
 
 msgid "Make all paths to external files relative to current .blend"
-msgstr "Torna todos os caminhos para arquivos externos relativos ao caminho do arquivo Blender atual."
+msgstr "Torna todos os caminhos para arquivos externos relativos ao caminho do arquivo Bforartists atual."
 
 
 msgctxt "Operator"
@@ -36670,7 +36670,7 @@ msgstr "Empacotar imagem"
 
 
 msgid "Pack an image as embedded data into the .blend file"
-msgstr "Empacota uma imagem como dados embutidos dentro do arquivo Blender."
+msgstr "Empacota uma imagem como dados embutidos dentro do arquivo Bforartists."
 
 
 msgctxt "Operator"
@@ -36876,8 +36876,8 @@ msgid "Scale FPS"
 msgstr "Escalonar quadros por segundo"
 
 
-msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame"
-msgstr "Escalona a taxa de quadros a partir da hierarquia de volume circundante para as cenas atuais, caso contrário, cada quadro mapeará diretamente para um quadro Blender."
+msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Bforartists frame"
+msgstr "Escalona a taxa de quadros a partir da hierarquia de volume circundante para as cenas atuais, caso contrário, cada quadro mapeará diretamente para um quadro Bforartists."
 
 
 msgid "Animation Offset"
@@ -36952,8 +36952,8 @@ msgid "Import FBX animation"
 msgstr "Importa as animações em formato FBX."
 
 
-msgid "Import custom normals, if available (otherwise Blender will recompute them)"
-msgstr "Importa normais personalizadas, caso disponíveis (caso contrário o Blender irá computá-las novamente)."
+msgid "Import custom normals, if available (otherwise Bforartists will recompute them)"
+msgstr "Importa normais personalizadas, caso disponíveis (caso contrário o Bforartists irá computá-las novamente)."
 
 
 msgid "Import user properties as custom properties"
@@ -37028,8 +37028,8 @@ msgid "Update Reports Display"
 msgstr "Atualizar mostrador de relatórios"
 
 
-msgid "Update the display of reports in Blender UI (internal use)"
-msgstr "Atualiza a amostragem de relatórios na interface de usuário do Blender (uso interno)."
+msgid "Update the display of reports in Bforartists UI (internal use)"
+msgstr "Atualiza a amostragem de relatórios na interface de usuário do Bforartists (uso interno)."
 
 
 msgid "Toggle box selection"
@@ -48289,7 +48289,7 @@ msgstr "Anexar"
 
 
 msgid "Append from a Library .blend file"
-msgstr "Permite anexar a partir de uma biblioteca de arquivo Blender."
+msgstr "Permite anexar a partir de uma biblioteca de arquivo Bforartists."
 
 
 msgid "Select new objects"
@@ -48419,12 +48419,12 @@ msgid "Sort exported data by Object name"
 msgstr "Ordena os dados exportados pelo nome do objeto."
 
 
-msgid "Use Blender Profile"
-msgstr "Usar o perfil do Blender."
+msgid "Use Bforartists Profile"
+msgstr "Usar o perfil do Bforartists."
 
 
-msgid "Export additional Blender specific information (for material, shaders, bones, etc.)"
-msgstr "Exporta informações adicionais específicas do Blender. (para materiais, sombreadores, ossos, etc.)."
+msgid "Export additional Bforartists specific information (for material, shaders, bones, etc.)"
+msgstr "Exporta informações adicionais específicas do Bforartists. (para materiais, sombreadores, ossos, etc.)."
 
 
 msgid "Use Object Instances"
@@ -48467,8 +48467,8 @@ msgid "Import Units"
 msgstr "Importar unidades"
 
 
-msgid "If disabled match import to Blender's current Unit settings, otherwise use the settings from the Imported scene"
-msgstr "Caso desabilitado, combina a importação com as configurações de unidades atuais do Blender, caso contrário, usa as configurações a partir da cena importada."
+msgid "If disabled match import to Bforartists's current Unit settings, otherwise use the settings from the Imported scene"
+msgstr "Caso desabilitado, combina a importação com as configurações de unidades atuais do Bforartists, caso contrário, usa as configurações a partir da cena importada."
 
 
 msgid "Minimum Chain Length"
@@ -48618,7 +48618,7 @@ msgstr "Vincular"
 
 
 msgid "Link from a Library .blend file"
-msgstr "Permite vincular a partir de uma biblioteca de arquivo Blender."
+msgstr "Permite vincular a partir de uma biblioteca de arquivo Bforartists."
 
 
 msgctxt "Operator"
@@ -48648,8 +48648,8 @@ msgid "Open"
 msgstr "Abrir"
 
 
-msgid "Open a Blender file"
-msgstr "Abre um arquivo Blender."
+msgid "Open a Bforartists file"
+msgstr "Abre um arquivo Bforartists."
 
 
 msgid "Load UI"
@@ -48712,11 +48712,11 @@ msgstr "Limpa as previsões de cenas."
 
 
 msgid "Trusted Blend Files"
-msgstr "Arquivos Blender confiáveis"
+msgstr "Arquivos Bforartists confiáveis"
 
 
-msgid "Show Blender files in the File Browser"
-msgstr "Mostrar arquivos do Blender no Navegador de Arquivos"
+msgid "Show Bforartists files in the File Browser"
+msgstr "Mostrar arquivos do Bforartists no Navegador de Arquivos"
 
 
 msgid "Show folders in the File Browser"
@@ -48762,7 +48762,7 @@ msgstr "Atualizar previsões de blocos de dados"
 
 
 msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
-msgstr "Assegura que as previsões de blocos de dados estejam disponíveis e atualizadas (para serem salvas no arquivo Blender, somente para alguns tipos como materiais, texturas, etc.)."
+msgstr "Assegura que as previsões de blocos de dados estejam disponíveis e atualizadas (para serem salvas no arquivo Bforartists, somente para alguns tipos como materiais, texturas, etc.)."
 
 
 msgid "Property Edit"
@@ -48782,12 +48782,12 @@ msgstr "Permite a edição do nome da propriedade."
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Sair do Blender"
+msgid "Quit Bforartists"
+msgstr "Sair do Bforartists"
 
 
-msgid "Quit Blender"
-msgstr "Encerra o Blender (fecha o software)."
+msgid "Quit Bforartists"
+msgstr "Encerra o Bforartists (fecha o software)."
 
 
 msgctxt "Operator"
@@ -49005,12 +49005,12 @@ msgstr "Salvar arquivo de inicialização"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Salvar arquivo Blender"
+msgid "Save Bforartists File"
+msgstr "Salvar arquivo Bforartists"
 
 
-msgid "Save the current Blender file"
-msgstr "Salva o arquivo Blender atual."
+msgid "Save the current Bforartists file"
+msgstr "Salva o arquivo Bforartists atual."
 
 
 msgctxt "Operator"
@@ -49131,8 +49131,8 @@ msgstr "Abre uma tela de abertura com as informações de lançamento."
 
 
 msgctxt "Operator"
-msgid "About Blender"
-msgstr "Sobre o Blender"
+msgid "About Bforartists"
+msgstr "Sobre o Bforartists"
 
 
 msgctxt "Operator"
@@ -49535,7 +49535,7 @@ msgid "Set the mask layer from the UV map buttons"
 msgstr "Configura a camada de máscara a partir dos botões de mapa UV."
 
 
-msgid "Maximum edge length for dynamic topology sculpting (as divisor of Blender unit - higher value means smaller edge length)"
+msgid "Maximum edge length for dynamic topology sculpting (as divisor of Bforartists unit - higher value means smaller edge length)"
 msgstr "O comprimento máximo de arestas para a escultura de topologia dinâmica (Valores mais altos significam menores comprimentos de arestas)"
 
 
@@ -51283,7 +51283,7 @@ msgstr "Cache de disco"
 
 
 msgid "Save cache files to disk (.blend file must be saved first)"
-msgstr "Salva os arquivos de cache para o disco (o arquivo Blender deve ser salvo primeiro)."
+msgstr "Salva os arquivos de cache para o disco (o arquivo Bforartists deve ser salvo primeiro)."
 
 
 msgid "Read cache from an external location"
@@ -51578,8 +51578,8 @@ msgid "Edit Methods"
 msgstr "Métodos de edição"
 
 
-msgid "Settings for interacting with Blender data"
-msgstr "Preferências para a interação com os dados do Blender."
+msgid "Settings for interacting with Bforartists data"
+msgstr "Preferências para a interação com os dados do Bforartists."
 
 
 msgid "Default paths for external files"
@@ -51606,8 +51606,8 @@ msgid "Save on Exit"
 msgstr "Salvar ao Sair"
 
 
-msgid "Version of Blender the userpref.blend was saved with"
-msgstr "Versão do Blender com a qual o arquivo de preferências userpref.blend foi salvo."
+msgid "Version of Bforartists the userpref.blend was saved with"
+msgstr "Versão do Bforartists com a qual o arquivo de preferências userpref.blend foi salvo."
 
 
 msgid "View & Controls"
@@ -52028,7 +52028,7 @@ msgstr "Comprimir arquivos"
 
 
 msgid "Enable file compression when saving .blend files"
-msgstr "Habilita a compressão de arquivo ao salvar os arquivos Blender."
+msgstr "Habilita a compressão de arquivo ao salvar os arquivos Bforartists."
 
 
 msgid "Enable filtering of files in the File Browser"
@@ -52104,7 +52104,7 @@ msgstr "Zona de inatividade"
 
 
 msgid "Threshold of initial movement needed from the device's rest position"
-msgstr "O ajuste de movimento inicial necessário para informar o Blender sobre a interrupção de movimento de um dispositivo."
+msgstr "O ajuste de movimento inicial necessário para informar o Bforartists sobre a interrupção de movimento de um dispositivo."
 
 
 msgid "Helicopter Mode"
@@ -52767,8 +52767,8 @@ msgid "Show Version"
 msgstr "Mostar Versão"
 
 
-msgid "Show Blender version string"
-msgstr "Mostrar texto com a Versão do Blender"
+msgid "Show Bforartists version string"
+msgstr "Mostrar texto com a Versão do Bforartists"
 
 
 msgid "Show VRAM"
@@ -54839,12 +54839,12 @@ msgid "Stiffness on the Z axis"
 msgstr "A rigidez no eixo Z"
 
 
-msgid "Blender 2.7"
-msgstr "Blender 2.7"
+msgid "Bforartists 2.7"
+msgstr "Bforartists 2.7"
 
 
-msgid "Blender 2.8"
-msgstr "Blender 2.8"
+msgid "Bforartists 2.8"
+msgstr "Bforartists 2.8"
 
 
 msgid "Type of Rigid Body Constraint"
@@ -56846,8 +56846,8 @@ msgid "Type of information to display"
 msgstr "Tipo de informação para mostrar."
 
 
-msgid "Blender File"
-msgstr "Arquivo Blender"
+msgid "Bforartists File"
+msgstr "Arquivo Bforartists"
 
 
 msgid "Display data of current file and linked libraries"
@@ -61390,8 +61390,8 @@ msgid "Open..."
 msgstr "Abrir..."
 
 
-msgid "Blender is free software"
-msgstr "Blender é um software livre"
+msgid "Bforartists is free software"
+msgstr "Bforartists é um software livre"
 
 
 msgctxt "Operator"
@@ -61405,13 +61405,13 @@ msgstr "Licença"
 
 
 msgctxt "Operator"
-msgid "Blender Store"
-msgstr "Loja do Blender"
+msgid "Bforartists Store"
+msgstr "Loja do Bforartists"
 
 
 msgctxt "Operator"
-msgid "Blender Website"
-msgstr "Site do Blender"
+msgid "Bforartists Website"
+msgstr "Site do Bforartists"
 
 
 msgctxt "Operator"
@@ -61912,7 +61912,7 @@ msgstr "Gerar e gravar todas as dinâmicas"
 
 
 msgid "Cache is disabled until the file is saved"
-msgstr "O cache está desabilitado até que o arquivo Blender seja salvo."
+msgstr "O cache está desabilitado até que o arquivo Bforartists seja salvo."
 
 
 msgid "Linked object baking requires Disk Cache to be enabled"
@@ -63295,8 +63295,8 @@ msgid "Video Memory"
 msgstr "Memória de Vídeo"
 
 
-msgid "Blender Version"
-msgstr "Versão do Blender"
+msgid "Bforartists Version"
+msgstr "Versão do Bforartists"
 
 
 msgid "Top Level"
@@ -64570,12 +64570,12 @@ msgid "Unable to create app-template userpref path"
 msgstr "Não é possível criar o caminho das preferências de usuário para os modelos de aplicação."
 
 
-msgid "File written by newer Blender binary (%d.%d), expect loss of data!"
-msgstr "Arquivo escrito por um executável Blender mais novo: (%d.%d), espere por perda de dados !"
+msgid "File written by newer Bforartists binary (%d.%d), expect loss of data!"
+msgstr "Arquivo escrito por um executável Bforartists mais novo: (%d.%d), espere por perda de dados !"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Vínculo ou anexação a partir de um formato de arquivo (%d.%d) muito antigo do Blender. Nenhuma conversão de animação será feita ! Talvez você queira salvar novamente seu arquivo de bibliotecas usando a versão atual do Blender."
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Bforartists"
+msgstr "Vínculo ou anexação a partir de um formato de arquivo (%d.%d) muito antigo do Bforartists. Nenhuma conversão de animação será feita ! Talvez você queira salvar novamente seu arquivo de bibliotecas usando a versão atual do Bforartists."
 
 
 msgid "Total files %d | Changed %d | Failed %d"
@@ -64881,8 +64881,8 @@ msgid "At least 8 common tracks on both keyframes are needed for reconstruction"
 msgstr "Pelo menos 8 trilhas comuns em ambos os quadros-chave são necessárias para a reconstrução."
 
 
-msgid "Blender is compiled without motion tracking library"
-msgstr "Blender está compilado sem suporte a biblioteca de captura de movimentos."
+msgid "Bforartists is compiled without motion tracking library"
+msgstr "Bforartists está compilado sem suporte a biblioteca de captura de movimentos."
 
 
 msgid "unknown error reading file"
@@ -64902,7 +64902,7 @@ msgstr "Biblioteca '%s', '%s' possui múltiplas instâncias, salve e recarregue!
 
 
 msgid "LIB: Data refers to main .blend file: '%s' from %s"
-msgstr "BIBLIOTECA: Dados referem-se ao arquivo Blender principal: '%s' a partir de %s"
+msgstr "BIBLIOTECA: Dados referem-se ao arquivo Bforartists principal: '%s' a partir de %s"
 
 
 msgid "LIB: %s: '%s' is directly linked from '%s' (parent '%s'), but is a non-linkable data type"
@@ -67081,8 +67081,8 @@ msgid "No active line style in the current scene"
 msgstr "Nenhum estilo de linha ativo na cena atual."
 
 
-msgid "Blender Render"
-msgstr "Renderizador interno Blender"
+msgid "Bforartists Render"
+msgstr "Renderizador interno Bforartists"
 
 
 msgid "Failed to open window!"
@@ -68059,8 +68059,8 @@ msgid "No subtitles (text strips) to export"
 msgstr "Sem faixas de texto para as quais exportar os subtítulos."
 
 
-msgid "File Modified Outside and Inside Blender"
-msgstr "Arquivo modificado fora e dentro do Blender"
+msgid "File Modified Outside and Inside Bforartists"
+msgstr "Arquivo modificado fora e dentro do Bforartists"
 
 
 msgid "Reload from disk (ignore local changes)"
@@ -68075,16 +68075,16 @@ msgid "Make text internal (separate copy)"
 msgstr "Torna o texto interno (criando uma cópia separada)."
 
 
-msgid "File Modified Outside Blender"
-msgstr "Arquivo modificado fora do Blender"
+msgid "File Modified Outside Bforartists"
+msgstr "Arquivo modificado fora do Bforartists"
 
 
 msgid "Reload from disk"
 msgstr "Recarrega a partir do disco."
 
 
-msgid "File Deleted Outside Blender"
-msgstr "Arquivo apagado fora do Blender"
+msgid "File Deleted Outside Bforartists"
+msgstr "Arquivo apagado fora do Bforartists"
 
 
 msgid "Make text internal"
@@ -69233,8 +69233,8 @@ msgid "Modifier was not found in the stack"
 msgstr "Modificador não foi encontrado na pilha."
 
 
-msgid "Blender compiled without Audaspace support"
-msgstr "Blender compilado sem suporte a Audaspace "
+msgid "Bforartists compiled without Audaspace support"
+msgstr "Bforartists compilado sem suporte a Audaspace "
 
 
 msgid "Sound not packed"
@@ -69827,8 +69827,8 @@ msgid "Wave Effect"
 msgstr "Efeito de Onda"
 
 
-msgid "Blender File View"
-msgstr "Visualização de arquivos do Blender"
+msgid "Bforartists File View"
+msgstr "Visualização de arquivos do Bforartists"
 
 
 msgid "Missing 'window' in context"

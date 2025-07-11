@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:33+0000\n"
@@ -2822,8 +2822,8 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Blender"
-msgstr "Blender"
+msgid "Bforartists"
+msgstr "Bforartists"
 
 
 msgid "System"
@@ -5685,8 +5685,8 @@ msgid "Save Screenshot"
 msgstr "Sla screenshot op"
 
 
-msgid "Capture a picture of the whole Blender window"
-msgstr "Maak een afbeelding van het hele Blender scherm"
+msgid "Capture a picture of the whole Bforartists window"
+msgstr "Maak een afbeelding van het hele Bforartists scherm"
 
 
 msgctxt "Operator"
@@ -6208,8 +6208,8 @@ msgid "Object Properties"
 msgstr "Objecteigenschappen"
 
 
-msgid "Open a Blender file"
-msgstr "Open een Blender Bestand"
+msgid "Open a Bforartists file"
+msgstr "Open een Bforartists Bestand"
 
 
 msgctxt "Operator"
@@ -6227,12 +6227,12 @@ msgstr "Alle Types"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Blender Afsluiten"
+msgid "Quit Bforartists"
+msgstr "Bforartists Afsluiten"
 
 
-msgid "Quit Blender"
-msgstr "Blender Afsluiten"
+msgid "Quit Bforartists"
+msgstr "Bforartists Afsluiten"
 
 
 msgctxt "Operator"
@@ -6297,12 +6297,12 @@ msgstr "Sla Opstartbestand Op"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Sla Blender Bestand op"
+msgid "Save Bforartists File"
+msgstr "Sla Bforartists Bestand op"
 
 
-msgid "Save the current Blender file"
-msgstr "Sla het huidige Blender bestand op"
+msgid "Save the current Bforartists file"
+msgstr "Sla het huidige Bforartists bestand op"
 
 
 msgctxt "Operator"
@@ -6320,8 +6320,8 @@ msgstr "Interface"
 
 
 msgctxt "Operator"
-msgid "About Blender"
-msgstr "Over Blender"
+msgid "About Bforartists"
+msgstr "Over Bforartists"
 
 
 msgctxt "Operator"
@@ -6532,7 +6532,7 @@ msgstr "Sla instellingen Op"
 
 
 msgid "Blend Files"
-msgstr "Blenderbestanden"
+msgstr "Bforartistsbestanden"
 
 
 msgctxt "Operator"
@@ -8020,8 +8020,8 @@ msgid "Scene Statistics"
 msgstr "Scene Statistieken"
 
 
-msgid "Blender Version"
-msgstr "Blender Versie"
+msgid "Bforartists Version"
+msgstr "Bforartists Versie"
 
 
 msgid "Show Warning"
@@ -8961,8 +8961,8 @@ msgid "Gold"
 msgstr "Goud"
 
 
-msgid "Blender Render"
-msgstr "Blender Render"
+msgid "Bforartists Render"
+msgstr "Bforartists Render"
 
 
 msgid "Failed to open window!"

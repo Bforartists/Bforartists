@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-30 09:22+0000\n"
 "PO-Revision-Date: 2025-04-14 08:32+0000\n"
@@ -2556,8 +2556,8 @@ msgid "Memory Statistics"
 msgstr "Эс статистикасы"
 
 
-msgid "Open a Blender file"
-msgstr "Blender файлын ачуу"
+msgid "Open a Bforartists file"
+msgstr "Bforartists файлын ачуу"
 
 
 msgid "Trusted Source"
@@ -2565,12 +2565,12 @@ msgstr "Ишеничтүү булак"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Blender'ден чыгуу"
+msgid "Quit Bforartists"
+msgstr "Bforartists'ден чыгуу"
 
 
-msgid "Quit Blender"
-msgstr "Blender'ден чыгуу"
+msgid "Quit Bforartists"
+msgstr "Bforartists'ден чыгуу"
 
 
 msgid "Image ID"
