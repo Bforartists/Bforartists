@@ -22,7 +22,7 @@ from bl_ui.utils import (
 )
 # BFA - WIP - to be removed: from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
 
-# BFA - Added icons and floated properties left, also moved options to it's own menu, 
+# BFA - Added icons and floated properties left, also moved options to it's own menu,
 # BFA - and made header menus consistent with other editors
 
 ################################ BFA - Switch between the editors ##########################################
@@ -338,7 +338,6 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-        layout.prop(st, "show_region_channels")
         layout.prop(st, "show_region_footer")
         layout.separator()
 
