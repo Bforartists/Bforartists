@@ -1317,13 +1317,8 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
         rv3d->runtime_viewlock = 0;
       }
     }
-    /* BFA - Updates toolshelf tab width  - Start */
-    else if (ELEM(spacetype, SPACE_IMAGE, SPACE_NODE, SPACE_SEQ)) {
-      if (region->regiontype == RGN_TYPE_TOOLS) {
-        region->regiondata = nullptr;
-      }
-    }
-    /* BFA - Updates toolshelf tab width  - End */
+    if (region->regiontype == RGN_TYPE_ASSET_SHELF) {
+      blender::ed::asset::shelf::region_blend_read_data(reader, region);
     }
   }
 
