@@ -3448,7 +3448,7 @@ class VIEW3D_MT_select_edit_pointcloud(Menu):
 
         layout.separator()
 
-        layout.operator("pointcloud.select_random", icon="RANDOMIZE")
+        layout.operator("pointcloud.select_random", text="Random", icon="RANDOMIZE")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
