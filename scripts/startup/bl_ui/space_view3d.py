@@ -3442,13 +3442,13 @@ class VIEW3D_MT_select_edit_pointcloud(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("pointcloud.select_all", text="All").action = 'SELECT'
-        layout.operator("pointcloud.select_all", text="None").action = 'DESELECT'
-        layout.operator("pointcloud.select_all", text="Invert").action = 'INVERT'
+        layout.operator("pointcloud.select_all", text="All", icon="SELECT_ALL").action = 'SELECT'
+        layout.operator("pointcloud.select_all", text="None", icon="SELECT_NONE").action = 'DESELECT'
+        layout.operator("pointcloud.select_all", text="Invert", icon="INVERSE").action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("pointcloud.select_random")
+        layout.operator("pointcloud.select_random", icon="INVERSE")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
