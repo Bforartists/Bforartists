@@ -90,19 +90,13 @@ class IMAGE_MT_view(Menu):
         show_render = sima.show_render
         show_maskedit = sima.show_maskedit
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        #overlay = sima.overlay
-
         layout.prop(sima, "show_region_toolbar")
         layout.prop(sima, "show_region_ui")
         layout.prop(sima, "show_region_tool_header")
         layout.prop(sima, "show_region_asset_shelf")
         layout.prop(sima, "show_region_hud")
         if sima.mode == 'UV':
-            layout.prop(addon_prefs, "uv_show_toolshelf_tabs")
-            # layout.prop(overlay, "show_toolshelf_tabs", text="Tool Shelf Tabs") # bfa - the toolshelf tabs.
+            layout.prop(sima, "show_toolshelf_tabs")
 
         layout.separator()
 

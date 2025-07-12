@@ -42,7 +42,7 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
   float offset = 0.0;
   // check if panel has tabs visible
   if (UI_panel_category_is_visible(region)) {
-    offset = 20.0f;
+    offset = UI_TOOLBAR_TAB_OFFSET;
   }
 
   if (axis == 0) {

@@ -425,6 +425,7 @@ typedef enum eSpaceSeq_Flag {
   SPACE_SEQ_FLAG_UNUSED_16 = (1 << 16),
   SEQ_USE_PROXIES = (1 << 17),
   SEQ_SHOW_GRID = (1 << 18),
+  SEQ_SHOW_TOOLSHELF_TABS = (1 << 19), /* BFA - toolshelf tabs toggle flag */
 } eSpaceSeq_Flag;
 
 /** #SpaceSeq.view */
@@ -755,7 +756,7 @@ typedef enum eSpaceImage_Flag {
   SI_SHOW_GPENCIL = (1 << 22),
   SI_FLAG_UNUSED_23 = (1 << 23), /* cleared */
 
-  SI_FLAG_UNUSED_24 = (1 << 24),
+  SI_SHOW_TOOLSHELF_TABS = (1 << 24), /* BFA - toolshelf tabs toggle flag */
 
 #ifdef DNA_DEPRECATED_ALLOW
   SI_NO_DRAW_TEXPAINT = (1 << 25), /* deprecated - use SI_NO_DRAW_UV_GUIDE instead, see #135102 */
@@ -853,6 +854,7 @@ typedef enum eSpaceNode_Flag {
   SNODE_FLAG_UNUSED_11 = (1 << 11), /* cleared */
   SNODE_PIN = (1 << 12),
   SNODE_FLAG_UNUSED_12 = (1 << 13),
+  SNODE_SHOW_TOOLSHELF_TABS = (1 << 14), /* BFA - toolshelf tabs toggle flag */
 } eSpaceNode_Flag;
 
 /** #SpaceNode.gizmo_flag */

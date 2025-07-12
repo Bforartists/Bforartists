@@ -53,11 +53,71 @@
 
 #include "BLO_read_write.hh"
 
+#include "BKE_toolshelf_runtime.h" /* BFA */
+
 #include "DRW_engine.hh"
 
 #include "image_intern.hh"
 
 /**************************** common state *****************************/
+/* BFA - Updates toolshelf tab width  - Start */
+/**
+ * Helper function to update toolbar width based on edit mode and toolshelf tabs setting.
+ * This centralizes the width management logic to avoid code duplication.
+ */
+static void image_toolbar_width_update(SpaceImage *sima, ScrArea *area, wmWindow *win)
+{
+  if (!(sima->flag & SI_SHOW_TOOLSHELF_TABS)) {
+    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
+      if (region->regiontype == RGN_TYPE_TOOLS) {
+        /* Get current edit object to check if we're in edit mode */
+        Scene *scene = WM_window_get_active_scene(win);
+        ViewLayer *view_layer = WM_window_get_active_view_layer(win);
+        BKE_view_layer_synced_ensure(scene, view_layer);
+        Object *obedit = BKE_view_layer_edit_object_get(view_layer);
+
+        if (obedit) {
+          /* In edit mode - always calculate snap size with category tab offset */
+          float offset = 0.0f;
+
+          /* Check if UV editing is available - if so, category tabs should be visible */
+          bool uv_editing_available = ED_space_image_show_uvedit(sima, obedit);
+          if (uv_editing_available || UI_panel_category_is_visible(region)) {
+            offset = UI_TOOLBAR_TAB_OFFSET;
+          }
+
+          const float aspect = BLI_rctf_size_y(&region->v2d.cur) /
+                               (BLI_rcti_size_y(&region->v2d.mask) + 1);
+          const float column = UI_TOOLBAR_COLUMN / aspect;
+          const float margin = UI_TOOLBAR_MARGIN / aspect;
+          const float snap_width = column + margin + offset;
+
+          region->sizex = snap_width;
+        } else {
+          /* In object mode - store current width as preferred */
+          if (region->sizex > UI_TOOLBAR_MIN_WIDTH_THRESHOLD) {
+            BKE_toolshelf_category_tabs_offset_set(region, region->sizex);
+          }
+          /* Reset to minimum width */
+          region->sizex = 0;
+        }
+
+        ED_area_tag_region_size_update(area, region);
+        break;
+      }
+    }
+  } else {
+    /* When toolshelf tabs are disabled, set toolbar width to 0 */
+    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
+      if (region->regiontype == RGN_TYPE_TOOLS) {
+        region->sizex = 0;
+        ED_area_tag_region_size_update(area, region);
+        break;
+      }
+    }
+  }
+}
+/* BFA - Updates toolshelf tab width  - End */
 
 static void image_scopes_tag_refresh(ScrArea *area)
 {
@@ -324,6 +384,8 @@ static void image_listener(const wmSpaceTypeListenerParams *params)
           if (wmn->subtype == NS_EDITMODE_MESH) {
             ED_area_tag_refresh(area);
           }
+          /* BFA - Update toolbar width when object mode changes - only if toolshelf tabs are enabled */
+          image_toolbar_width_update(sima, area, win);/* BFA */
           ED_area_tag_redraw(area);
           break;
         case ND_RENDER_RESULT:
@@ -350,6 +412,8 @@ static void image_listener(const wmSpaceTypeListenerParams *params)
       if (wmn->data == ND_SPACE_IMAGE) {
         image_scopes_tag_refresh(area);
         ED_area_tag_redraw(area);
+        /* Update toolbar width when toolshelf tabs setting changes */
+        image_toolbar_width_update(sima, area, win);/* BFA */
       }
       break;
     case NC_MASK: {
@@ -983,6 +1047,8 @@ static void image_tools_region_listener(const wmRegionListenerParams *params)
     case NC_SCENE:
       switch (wmn->data) {
         case ND_MODE:
+          ED_region_tag_redraw(region); /* BFA */
+          break; /* BFA */
         case ND_RENDER_RESULT:
         case ND_COMPO_RESULT:
           ED_region_tag_redraw(region);
