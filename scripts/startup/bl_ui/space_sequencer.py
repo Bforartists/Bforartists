@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # BFA - Added icons and floated properties left
-# BFA - This document is heavily modified, so like the space_view3d.py, 
-# BFA - compare old Blender with new Blender then splice in changes. 
-# BFA - Rebase compare every now and then. 
+# BFA - This document is heavily modified, so like the space_view3d.py,
+# BFA - compare old Blender with new Blender then splice in changes.
+# BFA - Rebase compare every now and then.
 
 import bpy
 from bpy.types import (
@@ -594,7 +594,7 @@ class SEQUENCER_MT_view(Menu):
         if is_sequencer_only:
             layout.prop(st, "show_region_channels")
 
-        layout.prop(addon_prefs, "vse_show_toolshelf_tabs")  # BFA
+        layout.prop(st, "show_toolshelf_tabs")
 
         layout.prop(st, "show_region_footer")
         layout.separator()

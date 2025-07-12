@@ -56,6 +56,7 @@
 #include "BKE_material.hh" /* #BKE_material_copybuf_clear. */
 #include "BKE_studiolight.h"
 #include "BKE_subdiv.hh"
+#include "BKE_toolshelf_runtime.h" /* BFA */
 #include "BKE_tracking.h" /* Free tracking clipboard. */
 
 #include "RE_engine.h"
@@ -327,6 +328,9 @@ void WM_init(bContext *C, int argc, const char **argv)
 
   ED_render_clear_mtex_copybuf();
 
+  /* BFA - Initialize toolshelf runtime data system */
+  BKE_toolshelf_runtime_init();
+
   wm_history_file_read();
 
   if (!G.background) {
@@ -572,6 +576,9 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
   ed::greasepencil::clipboard_free();
   UV_clipboard_free();
   wm_clipboard_free();
+
+  /* BFA - Free toolshelf runtime data system */
+  BKE_toolshelf_runtime_exit();
 
   COM_deinitialize();
 

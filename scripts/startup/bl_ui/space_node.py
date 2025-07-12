@@ -499,7 +499,7 @@ class NODE_MT_view(Menu):
 
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
-        layout.prop(addon_prefs, "node_show_toolshelf_tabs")
+        layout.prop(snode, "show_toolshelf_tabs")
         layout.prop(snode, "show_region_asset_shelf")
 
         layout.separator()
@@ -658,7 +658,7 @@ class NODE_MT_node(Menu):
         props.NODE_OT_translate_attach.TRANSFORM_OT_translate.view2d_edge_pan = True
         props = layout.operator("node.duplicate_move_linked", icon = "DUPLICATE")
         props.NODE_OT_translate_attach.TRANSFORM_OT_translate.view2d_edge_pan = True
-        
+
         layout.separator()
         layout.operator("node.delete", icon = "DELETE")
         layout.operator("node.delete_reconnect", icon = "DELETE")
@@ -892,7 +892,7 @@ class NODE_MT_node_color_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        # BFA - Remove "Copy Color" Operator from this context menu 
+        # BFA - Remove "Copy Color" Operator from this context menu
         #layout.operator("node.node_copy_color", icon='COPY_ID')
 
 
@@ -1007,14 +1007,14 @@ class NODE_MT_context_menu(Menu):
         if group and group.bl_use_group_interface:
 	        layout.operator("node.group_make", text="Make Group", icon="NODE_MAKEGROUP")
 	        layout.operator("node.group_insert", text="Insert Into Group", icon = 'NODE_GROUPINSERT')
-	
+
 	        if active_node and active_node.type == 'GROUP':
 	            layout.operator("node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP").exit = False
 	            layout.operator("node.group_ungroup", text="Ungroup", icon="NODE_UNGROUP")
-	
+
 	            if is_nested:
 	                layout.operator("node.tree_path_parent", text="Exit Group", icon='FILE_PARENT')
-	
+
 	            layout.separator()
 
         layout.operator("node.join", text="Join in New Frame", icon = 'JOIN')
@@ -1093,11 +1093,11 @@ class NODE_PT_active_node_color(Panel):
         layout.enabled = node.use_custom_color
 
         row = layout.row()
-        
+
         subrow = row.row(align=True)
         subrow.prop(node, "color", text="")
         subrow.operator("node.node_copy_color", icon='COPY_ID', text="")
-        
+
         # BFA - Temporarily disable this menu for as long as it doesn't have operators
         #row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
 
@@ -1558,7 +1558,7 @@ class NODE_PT_view(bpy.types.Panel):
 
 
 # BFA - asset shelf
-# TODO: Finalize the node asset shelf poll, for now use the current "S_" Shader asset name 
+# TODO: Finalize the node asset shelf poll, for now use the current "S_" Shader asset name
 class NodeAssetShelf:
     bl_space_type = 'NODE_EDITOR'
     bl_options = {'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
@@ -1569,7 +1569,7 @@ class NODE_AST_composite_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type == 'CompositorNodeTree'
-    
+
     @classmethod
     def asset_poll(cls, asset):
         if asset.id_type == 'NODETREE' and "Compositor" in asset.metadata.tags:
@@ -1581,7 +1581,7 @@ class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type == 'GeometryNodeTree'
-        
+
     @classmethod
     def asset_poll(cls, asset):
         if asset.id_type == 'NODETREE' and "Geometry Nodes" in asset.metadata.tags:

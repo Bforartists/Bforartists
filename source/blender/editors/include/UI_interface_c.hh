@@ -311,6 +311,12 @@ enum {
 /** Total width of Toolbar showing one icon column. */
 #define UI_TOOLBAR_WIDTH UI_TOOLBAR_MARGIN + UI_TOOLBAR_COLUMN
 
+/** Offset for toolbar when tabs are visible. */
+#define UI_TOOLBAR_TAB_OFFSET 20.f /* BFA */
+
+/* Minimum width threshold for storing preferred toolbar width */
+#define UI_TOOLBAR_MIN_WIDTH_THRESHOLD 1.0f /* BFA */
+
 #define UI_PANEL_CATEGORY_MARGIN_WIDTH (U.widget_unit * 1.0f)
 
 /* Minimum width for a panel showing only category tabs. */

@@ -71,15 +71,10 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
@@ -190,15 +185,10 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
@@ -263,15 +253,10 @@ class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
@@ -358,15 +343,10 @@ class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
@@ -473,15 +453,10 @@ class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
@@ -546,15 +521,10 @@ class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
@@ -676,15 +646,10 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
 
     def draw(self, context):
         layout = self.layout
@@ -770,15 +735,10 @@ class IMAGE_PT_image_masktab_add(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+        return space.show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
 
     def draw(self, context):
         layout = self.layout
@@ -844,15 +804,10 @@ class IMAGE_PT_image_masktab_transform(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+        return space.show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
 
     def draw(self, context):
         layout = self.layout
@@ -929,15 +884,10 @@ class IMAGE_PT_image_masktab_mask(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+        return space.show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
 
     def draw(self, context):
         layout = self.layout
@@ -1014,15 +964,10 @@ class IMAGE_PT_image_masktab_handletype(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+        return space.show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
 
     def draw(self, context):
         layout = self.layout
@@ -1092,15 +1037,10 @@ class IMAGE_PT_image_masktab_animation(toolshelf_calculate, Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        view = context.space_data
+        space = context.space_data
         sima = context.space_data
         show_uvedit = sima.show_uvedit
-        # overlay = view.overlay
-        # return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.uv_show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
+        return space.show_toolshelf_tabs == True and sima.mode != 'UV' and sima.ui_mode == 'MASK'
 
     def draw(self, context):
         layout = self.layout

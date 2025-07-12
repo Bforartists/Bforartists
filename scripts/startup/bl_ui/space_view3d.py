@@ -1770,9 +1770,7 @@ class VIEW3D_MT_view(Menu):
         layout.prop(view, "show_region_tool_header")
         layout.prop(view, "show_region_asset_shelf")
         layout.prop(view, "show_region_hud")
-        layout.prop(
-            overlay, "show_toolshelf_tabs", text="Tool Shelf Tabs"
-        )  # bfa - the toolshelf tabs.
+        layout.prop(view, "show_toolshelf_tabs")
 
         layout.separator()
 
@@ -10539,6 +10537,7 @@ class VIEW3D_PT_overlay_object(Panel):
         view = context.space_data
         overlay = view.overlay
         display_all = overlay.show_overlays
+        shading = view.shading
 
         col = layout.column(align=True)
         col.active = display_all

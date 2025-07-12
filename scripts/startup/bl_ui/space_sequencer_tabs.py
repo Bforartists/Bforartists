@@ -59,13 +59,8 @@ class SEQUENCER_PT_imagetab_clear(toolshelf_calculate, Panel):
      # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        #view = context.space_data
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.vse_show_toolshelf_tabs
+        space = context.space_data
+        return space.show_toolshelf_tabs
 
     def draw(self, context):
         layout = self.layout
@@ -131,13 +126,8 @@ class SEQUENCER_PT_imagetab_image(toolshelf_calculate, Panel):
      # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        #view = context.space_data
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.vse_show_toolshelf_tabs
+        space = context.space_data
+        return space.show_toolshelf_tabs
 
     def draw(self, context):
         layout = self.layout
@@ -198,14 +188,8 @@ class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
      # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        st = context.space_data
-
-        #view = context.space_data
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.vse_show_toolshelf_tabs and st.view_type in {'SEQUENCER'}
+        space = context.space_data
+        return space.show_toolshelf_tabs and space.view_type in {'SEQUENCER'}
 
     def draw(self, context):
         layout = self.layout
@@ -324,14 +308,8 @@ class SEQUENCER_PT_sequencer_striptab_split(toolshelf_calculate, Panel):
      # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        st = context.space_data
-
-        #view = context.space_data
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.vse_show_toolshelf_tabs and st.view_type in {'SEQUENCER'}
+        space = context.space_data
+        return space.show_toolshelf_tabs and space.view_type in {'SEQUENCER'}
 
     def draw(self, context):
         layout = self.layout
@@ -386,14 +364,8 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
      # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        st = context.space_data
-
-        #view = context.space_data
-        #overlay = view.overlay
-        #return overlay.show_toolshelf_tabs == True and sima.mode == 'UV'
-        return addon_prefs.vse_show_toolshelf_tabs and st.view_type in {'SEQUENCER'}
+        space = context.space_data
+        return space.show_toolshelf_tabs and space.view_type in {'SEQUENCER'}
 
     def draw_strip_context(self, context):
         try:

@@ -43,6 +43,7 @@
 #include "BKE_lib_query.hh"
 #include "BKE_preview_image.hh"
 #include "BKE_screen.hh"
+#include "BKE_toolshelf_runtime.h" /* BFA */
 
 #include "BLO_read_write.hh"
 
@@ -605,6 +606,9 @@ void BKE_area_region_free(SpaceType *st, ARegion *region)
     region->runtime->type->free(region);
   }
 
+  /* BFA - Free our runtime data if it exists */
+  BKE_toolshelf_region_free(region);/* BFA */
+
   BKE_area_region_panels_free(&region->panels);
 
   LISTBASE_FOREACH (uiList *, uilst, &region->ui_lists) {
@@ -1126,6 +1130,14 @@ static void write_region(BlendWriter *writer, ARegion *region, int spacetype)
           printf("regiondata write missing!\n");
         }
         break;
+      /* BFA - Updates toolshelf tab width  - Start */
+      case SPACE_IMAGE:
+      case SPACE_NODE:
+      case SPACE_SEQ:
+        if (region->regiontype == RGN_TYPE_TOOLS) {
+        }
+        break;
+      /* BFA - Updates toolshelf tab width  - End */
       default:
         printf("regiondata write missing!\n");
     }
@@ -1305,8 +1317,13 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
         rv3d->runtime_viewlock = 0;
       }
     }
-    if (region->regiontype == RGN_TYPE_ASSET_SHELF) {
-      blender::ed::asset::shelf::region_blend_read_data(reader, region);
+    /* BFA - Updates toolshelf tab width  - Start */
+    else if (ELEM(spacetype, SPACE_IMAGE, SPACE_NODE, SPACE_SEQ)) {
+      if (region->regiontype == RGN_TYPE_TOOLS) {
+        region->regiondata = nullptr;
+      }
+    }
+    /* BFA - Updates toolshelf tab width  - End */
     }
   }
 
