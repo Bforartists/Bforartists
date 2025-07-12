@@ -47,7 +47,7 @@
 #include "versioning_common.hh"
 
 // #include "CLG_log.h"
-// static CLG_LogRef LOG = {"blo.readfile.doversion"};
+// static CLG_LogRef LOG = {"blend.doversion"};
 
 void version_system_idprops_generate(Main *bmain)
 {
@@ -1282,6 +1282,64 @@ void blo_do_versions_500(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     }
   }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 34)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type != NTREE_COMPOSIT) {
+        continue;
+      }
+      LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+        if (node->type_legacy != CMP_NODE_SCALE) {
+          continue;
+        }
+        if (node->storage == nullptr) {
+          continue;
+        }
+        NodeScaleData *data = static_cast<NodeScaleData *>(node->storage);
+        data->extension_x = CMP_NODE_EXTENSION_MODE_ZERO;
+        data->extension_y = CMP_NODE_EXTENSION_MODE_ZERO;
+        node->storage = data;
+      }
+      FOREACH_NODETREE_END;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 35)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type != NTREE_COMPOSIT) {
+        continue;
+      }
+      LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+        if (node->type_legacy != CMP_NODE_TRANSFORM) {
+          continue;
+        }
+        if (node->storage != nullptr) {
+          continue;
+        }
+        NodeTransformData *data = MEM_callocN<NodeTransformData>(__func__);
+        data->interpolation = node->custom1;
+        data->extension_x = CMP_NODE_EXTENSION_MODE_ZERO;
+        data->extension_y = CMP_NODE_EXTENSION_MODE_ZERO;
+        node->storage = data;
+      }
+      FOREACH_NODETREE_END;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 36)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_COMPOSIT) {
+        version_node_input_socket_name(ntree, CMP_NODE_ZCOMBINE, "Image", "A");
+        version_node_input_socket_name(ntree, CMP_NODE_ZCOMBINE, "Image_001", "B");
+
+        version_node_input_socket_name(ntree, CMP_NODE_ZCOMBINE, "Z", "Depth A");
+        version_node_input_socket_name(ntree, CMP_NODE_ZCOMBINE, "Z_001", "Depth B");
+
+        version_node_output_socket_name(ntree, CMP_NODE_ZCOMBINE, "Image", "Result");
+        version_node_output_socket_name(ntree, CMP_NODE_ZCOMBINE, "Z", "Depth");
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.

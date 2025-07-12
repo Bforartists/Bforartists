@@ -60,8 +60,6 @@ inline std::ostream &operator<<(std::ostream &stream, const ObjectMatrices &matr
 /** \name ObjectInfos
  * \{ */
 
-ENUM_OPERATORS(eObjectInfoFlag, OBJECT_NEGATIVE_SCALE)
-
 inline void ObjectInfos::sync()
 {
   object_attrs_len = 0;
@@ -70,7 +68,9 @@ inline void ObjectInfos::sync()
   flag = eObjectInfoFlag::OBJECT_NO_INFO;
 }
 
-inline void ObjectInfos::sync(const blender::draw::ObjectRef ref, bool is_active_object)
+inline void ObjectInfos::sync(const blender::draw::ObjectRef ref,
+                              bool is_active_object,
+                              bool is_active_edit_mode)
 {
   object_attrs_len = 0;
   object_attrs_offset = 0;
@@ -97,6 +97,7 @@ inline void ObjectInfos::sync(const blender::draw::ObjectRef ref, bool is_active
   SET_FLAG_FROM_TEST(
       flag, ref.object->transflag & OB_NEG_SCALE, eObjectInfoFlag::OBJECT_NEGATIVE_SCALE);
   SET_FLAG_FROM_TEST(flag, is_holdout, eObjectInfoFlag::OBJECT_HOLDOUT);
+  SET_FLAG_FROM_TEST(flag, is_active_edit_mode, eObjectInfoFlag::OBJECT_ACTIVE_EDIT_MODE);
 
   if (ref.object->shadow_terminator_normal_offset > 0.0f) {
     using namespace blender::math;

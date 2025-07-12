@@ -260,8 +260,7 @@ void world_material_to_dome_light(const USDExportParams &params,
 
   /* Create USD dome light. */
 
-  pxr::SdfPath env_light_path = get_unique_path(stage,
-                                                std::string(params.root_prim_path) + "/env_light");
+  pxr::SdfPath env_light_path = get_unique_path(stage, params.root_prim_path + "/env_light");
 
   pxr::UsdLuxDomeLight dome_light = pxr::UsdLuxDomeLight::Define(stage, env_light_path);
 
@@ -345,7 +344,7 @@ void dome_light_to_world_material(const USDImportParams &params,
                                   Main *bmain,
                                   const USDImportDomeLightData &dome_light_data,
                                   const pxr::UsdPrim &prim,
-                                  const double motionSampleTime)
+                                  const pxr::UsdTimeCode time)
 {
   if (!(scene && scene->world && prim)) {
     return;
@@ -479,7 +478,7 @@ void dome_light_to_world_material(const USDImportParams &params,
   tex->id = &image->id;
 
   /* Set the transform. */
-  pxr::UsdGeomXformCache xf_cache(motionSampleTime);
+  pxr::UsdGeomXformCache xf_cache(time);
   pxr::GfMatrix4d xf = xf_cache.GetLocalToWorldTransform(prim);
 
   pxr::UsdStageRefPtr stage = prim.GetStage();

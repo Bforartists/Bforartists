@@ -3472,6 +3472,17 @@ void CURVE_OT_reveal(wmOperatorType *ot)
 /** \name Subdivide Operator
  * \{ */
 
+static void interp_bpoint(BPoint *bp_target,
+                          const BPoint *bp_a,
+                          const BPoint *bp_b,
+                          const float factor)
+{
+  interp_v4_v4v4(bp_target->vec, bp_a->vec, bp_b->vec, factor);
+  bp_target->tilt = interpf(bp_a->tilt, bp_b->tilt, factor);
+  bp_target->weight = interpf(bp_a->weight, bp_b->weight, factor);
+  bp_target->radius = interpf(bp_a->radius, bp_b->radius, factor);
+}
+
 /**
  * Divide the line segments associated with the currently selected
  * curve nodes (Bezier or NURB). If there are no valid segment
@@ -3535,6 +3546,9 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
               BEZT_ISSEL_ANY_HIDDENHANDLES(v3d, nextbezt))
           {
             float prevvec[3][3];
+            float prev_tilt = bezt->tilt;
+            float prev_radius = bezt->radius;
+            float prev_weight = bezt->weight;
 
             memcpy(prevvec, bezt->vec, sizeof(float[9]));
 
@@ -3565,10 +3579,12 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
                 copy_v3_v3(nextbezt->vec[0], vec + 6);
               }
 
-              beztn->radius = (bezt->radius + nextbezt->radius) / 2;
-              beztn->weight = (bezt->weight + nextbezt->weight) / 2;
+              beztn->tilt = prev_tilt = interpf(nextbezt->tilt, prev_tilt, factor);
+              beztn->radius = prev_radius = interpf(nextbezt->radius, prev_radius, factor);
+              beztn->weight = prev_weight = interpf(nextbezt->weight, prev_weight, factor);
 
               memcpy(prevvec, beztn->vec, sizeof(float[9]));
+
               beztn++;
             }
           }
@@ -3630,8 +3646,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
               factor = float(i + 1) / (number_cuts + 1);
 
               memcpy(bpn, nextbp, sizeof(BPoint));
-              interp_v4_v4v4(bpn->vec, bp->vec, nextbp->vec, factor);
-              bpn->radius = interpf(bp->radius, nextbp->radius, factor);
+              interp_bpoint(bpn, bp, nextbp, factor);
               bpn++;
             }
           }
@@ -3731,7 +3746,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
               for (int i = 0; i < number_cuts; i++) {
                 factor = float(i + 1) / (number_cuts + 1);
                 *bpn = *bp;
-                interp_v4_v4v4(bpn->vec, prevbp->vec, bp->vec, factor);
+                interp_bpoint(bpn, prevbp, bp, factor);
                 bpn++;
               }
             }
@@ -3749,7 +3764,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
             for (int i = 0; i < number_cuts; i++) {
               factor = float(i + 1) / (number_cuts + 1);
               *tmp = *bp;
-              interp_v4_v4v4(tmp->vec, prevbp->vec, bp->vec, factor);
+              interp_bpoint(tmp, prevbp, bp, factor);
               tmp += countu;
             }
             bp++;
@@ -3799,7 +3814,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
                    * node. (is it?)
                    */
                   *bpn = *prevbp;
-                  interp_v4_v4v4(bpn->vec, prevbp->vec, bp->vec, factor);
+                  interp_bpoint(bpn, prevbp, bp, factor);
                   bpn++;
 
                   prevbp++;
@@ -3847,7 +3862,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
                     factor = float(i + 1) / (number_cuts + 1);
                     prevbp = bp - 1;
                     *bpn = *prevbp;
-                    interp_v4_v4v4(bpn->vec, prevbp->vec, bp->vec, factor);
+                    interp_bpoint(bpn, prevbp, bp, factor);
                     bpn++;
                   }
                 }
@@ -5968,7 +5983,7 @@ static wmOperatorStatus toggle_cyclic_invoke(bContext *C,
         if (nu->type == CU_NURBS) {
           pup = UI_popup_menu_begin(C, IFACE_("Direction"), ICON_NONE);
           layout = UI_popup_menu_layout(pup);
-          uiItemsEnumO(layout, op->type->idname, "direction");
+          layout->op_enum(op->type->idname, "direction");
           UI_popup_menu_end(C, pup);
           return OPERATOR_INTERFACE;
         }

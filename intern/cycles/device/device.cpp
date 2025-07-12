@@ -49,6 +49,15 @@ uint Device::devices_initialized_mask = 0;
 
 Device::~Device() noexcept(false) = default;
 
+void Device::set_error(const string &error)
+{
+  if (!have_error()) {
+    error_msg = error;
+  }
+  LOG_ERROR << error;
+  fflush(stderr);
+}
+
 void Device::build_bvh(BVH *bvh, Progress &progress, bool refit)
 {
   assert(bvh->params.bvh_layout == BVH_LAYOUT_BVH2);
@@ -410,8 +419,8 @@ DeviceInfo Device::get_multi_device(const vector<DeviceInfo> &subdevices,
         const int orig_cpu_threads = (threads) ? threads : TaskScheduler::max_concurrency();
         const int cpu_threads = max(orig_cpu_threads - (subdevices.size() - 1), size_t(0));
 
-        VLOG_INFO << "CPU render threads reduced from " << orig_cpu_threads << " to "
-                  << cpu_threads << ", to dedicate to GPU.";
+        LOG_INFO << "CPU render threads reduced from " << orig_cpu_threads << " to " << cpu_threads
+                 << ", to dedicate to GPU.";
 
         if (cpu_threads >= 1) {
           DeviceInfo cpu_device = device;
@@ -423,7 +432,7 @@ DeviceInfo Device::get_multi_device(const vector<DeviceInfo> &subdevices,
         }
       }
       else {
-        VLOG_INFO << "CPU render threads disabled for interactive render.";
+        LOG_INFO << "CPU render threads disabled for interactive render.";
         continue;
       }
     }
@@ -474,7 +483,7 @@ void Device::free_memory()
 
 unique_ptr<DeviceQueue> Device::gpu_queue_create()
 {
-  LOG(FATAL) << "Device does not support queues.";
+  LOG_FATAL << "Device does not support queues.";
   return nullptr;
 }
 
@@ -488,7 +497,7 @@ const CPUKernels &Device::get_cpu_kernels()
 void Device::get_cpu_kernel_thread_globals(
     vector<ThreadKernelGlobalsCPU> & /*kernel_thread_globals*/)
 {
-  LOG(FATAL) << "Device does not support CPU kernels.";
+  LOG_FATAL << "Device does not support CPU kernels.";
 }
 
 OSLGlobals *Device::get_cpu_osl_memory()
@@ -496,9 +505,15 @@ OSLGlobals *Device::get_cpu_osl_memory()
   return nullptr;
 }
 
+void *Device::get_guiding_device() const
+{
+  LOG_ERROR << "Request guiding field from a device which does not support it.";
+  return nullptr;
+}
+
 void *Device::host_alloc(const MemoryType /*type*/, const size_t size)
 {
-  return util_aligned_malloc(size, MIN_ALIGNMENT_CPU_DATA_TYPES);
+  return util_aligned_malloc(size, MIN_ALIGNMENT_DEVICE_MEMORY);
 }
 
 void Device::host_free(const MemoryType /*type*/, void *host_pointer, const size_t size)
@@ -538,7 +553,7 @@ void GPUDevice::init_host_memory(const size_t preferred_texture_headroom,
     }
   }
   else {
-    VLOG_WARNING << "Mapped host memory disabled, failed to get system RAM";
+    LOG_WARNING << "Mapped host memory disabled, failed to get system RAM";
     map_host_limit = 0;
   }
 
@@ -551,8 +566,8 @@ void GPUDevice::init_host_memory(const size_t preferred_texture_headroom,
   device_texture_headroom = preferred_texture_headroom > 0 ? preferred_texture_headroom :
                                                              128 * 1024 * 1024LL;  // 128MB
 
-  VLOG_INFO << "Mapped host memory limit set to " << string_human_readable_number(map_host_limit)
-            << " bytes. (" << string_human_readable_size(map_host_limit) << ")";
+  LOG_INFO << "Mapped host memory limit set to " << string_human_readable_number(map_host_limit)
+           << " bytes. (" << string_human_readable_size(map_host_limit) << ")";
 }
 
 void GPUDevice::move_textures_to_host(size_t size, const size_t headroom, const bool for_texture)
@@ -613,7 +628,7 @@ void GPUDevice::move_textures_to_host(size_t size, const size_t headroom, const 
      * multiple backend devices could be moving the memory. The
      * first one will do it, and the rest will adopt the pointer. */
     if (max_mem) {
-      VLOG_WORK << "Move memory from device to host: " << max_mem->name;
+      LOG_WORK << "Move memory from device to host: " << max_mem->name;
 
       /* Potentially need to call back into multi device, so pointer mapping
        * and peer devices are updated. This is also necessary since the device
@@ -712,9 +727,9 @@ GPUDevice::Mem *GPUDevice::generic_alloc(device_memory &mem, const size_t pitch_
   }
 
   if (mem.name) {
-    VLOG_WORK << "Buffer allocate: " << mem.name << ", "
-              << string_human_readable_number(mem.memory_size()) << " bytes. ("
-              << string_human_readable_size(mem.memory_size()) << ")" << status;
+    LOG_WORK << "Buffer allocate: " << mem.name << ", "
+             << string_human_readable_number(mem.memory_size()) << " bytes. ("
+             << string_human_readable_size(mem.memory_size()) << ")" << status;
   }
 
   mem.device_pointer = (device_ptr)device_pointer;
