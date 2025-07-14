@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # BFA - Added icons and floated properties left
-# BFA - This document is heavily modified, so like the space_view3d.py, 
-# BFA - compare old Blender with new Blender then splice in changes. 
-# BFA - Rebase compare every now and then. 
+# BFA - This document is heavily modified, so like the space_view3d.py,
+# BFA - compare old Blender with new Blender then splice in changes.
+# BFA - Rebase compare every now and then.
 
 import bpy
 from bpy.types import (
@@ -624,12 +624,12 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
             layout.operator("sequencer.view_all", text="Frame All", icon='VIEWALL')
-            layout.operator(
-                "anim.scene_range_frame",
-                text="Frame Preview Range"
-                if context.scene.use_preview_range
-                else "Frame Scene Range",
-            )
+
+            if context.scene.use_preview_range:
+                layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon = "FRAME_PREVIEW_RANGE")
+            else:
+                layout.operator("anim.scene_range_frame",text= "Frame Scene Range", icon = "FRAME_SCENE_RANGE")
+
             layout.operator("sequencer.view_frame", icon='VIEW_FRAME')
             layout.operator(
                 "sequencer.view_selected", text="Frame Selected", icon="VIEW_SELECTED"
