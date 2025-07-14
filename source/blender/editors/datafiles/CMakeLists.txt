@@ -810,6 +810,7 @@ if(WITH_BLENDER)
       image_alpha
       image_aspect
       image_background
+      image_coordinates
       image_data
       image_info
       image_reference
@@ -2019,7 +2020,7 @@ if(WITH_BLENDER)
       # letter v
       value_to_selection
       value_to_string
-	  variance
+	    variance
       vector_displace
       vertcolfromweight
       vertex_crease
@@ -2075,6 +2076,7 @@ if(WITH_BLENDER)
       vis_sel_00
 
       # ###
+      visual_geometry_to_objects
       visual_loc_rot
       visual_loc_rot_scale
       visual_loc_scale

@@ -4847,7 +4847,7 @@ class VIEW3D_MT_object_apply(Menu):
             text_ctxt=i18n_contexts.default,
             icon="APPLY_PARENT_INVERSE",
         )
-        layout.operator("object.visual_geometry_to_objects")
+        layout.operator("object.visual_geometry_to_objects", icon="VISUAL_GEOMETRY_TO_OBJECTS")
         # layout.operator("object.duplicates_make_real") # BFA - redundant
         # layout.operator("object.parent_inverse_apply", text="Parent Inverse",
         # text_ctxt=i18n_contexts.default)  # BFA - redundant
