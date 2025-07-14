@@ -1,4 +1,4 @@
-keyconfig_version = (5, 0, 33)
+keyconfig_version = (5, 0, 37)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -3637,6 +3637,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True},
      {"properties":
       [("mode", 'TRANSLATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -3644,6 +3645,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'SCALE'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -3651,6 +3653,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True},
      {"properties":
       [("mode", 'ROTATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -6814,6 +6817,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS'},
      {"properties":
       [("mode", 'TRANSLATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -6821,6 +6825,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'SCALE'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -6828,6 +6833,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True},
      {"properties":
       [("mode", 'ROTATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -8223,6 +8229,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'SCALE'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -8230,6 +8237,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True},
      {"properties":
       [("mode", 'ROTATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -8250,7 +8258,7 @@ keyconfig_data = \
       },
      ),
     ("brush.stencil_control",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True, "oskey": True},
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
      {"properties":
       [("mode", 'ROTATION'),
        ("texmode", 'SECONDARY'),
