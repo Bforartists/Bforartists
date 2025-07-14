@@ -1755,6 +1755,7 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("object.visual_transform_apply", text = "", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
                     row.operator("object.duplicates_make_real", text = "", icon = "MAKEDUPLIREAL")
                     row.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
+                    row.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
             if addon_prefs.edit_objectapplydeltas:
 
