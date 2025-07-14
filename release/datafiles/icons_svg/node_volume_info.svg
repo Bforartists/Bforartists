@@ -8,7 +8,7 @@
    height="1600"
    viewBox="0 0 1600 1600"
    sodipodi:docname="node_volume_info.svg"
-   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -38,13 +38,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="2560"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="false"
      inkscape:zoom="0.5"
-     inkscape:cx="189"
-     inkscape:cy="58"
+     inkscape:cx="579"
+     inkscape:cy="888"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -56,6 +56,12 @@
      id="NODE_VOLUME_INFO"
      transform="matrix(100,0,0,100,0,4.9999997e-5)"
      style="stroke-width:0.0114286">
+    <circle
+       style="fill:#323232;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="path13"
+       cx="7.9950809"
+       cy="8"
+       r="7.9950809" />
     <path
        style="fill:none;stroke-width:0.000357143"
        d="M 0,8 V 0 h 8 8 v 8 8 H 8 0 Z m 9.234375,7.409887 c 1.307585,-0.224235 2.458183,-0.736795 3.453076,-1.538252 0.385636,-0.310656 1.050687,-0.995119 1.332897,-1.3718 0.733654,-0.979249 1.199262,-2.090798 1.407115,-3.35921 0.0802,-0.4894316 0.0802,-1.7918184 0,-2.28125 C 15.21961,5.5909634 14.754002,4.4794141 14.020348,3.5001647 13.738138,3.1234842 13.073087,2.4390213 12.687451,2.1283649 11.673813,1.3118082 10.494122,0.79433234 9.140625,0.57253706 c -0.4894316,-0.0802023 -1.7918184,-0.0802023 -2.28125,0 C 5.5058784,0.79433234 4.3261869,1.3118082 3.3125488,2.1283649 2.9269135,2.4390213 2.2618616,3.1234842 1.9796525,3.5001647 1.2459985,4.4794141 0.78038959,5.5909634 0.57253706,6.859375 c -0.0802023,0.4894316 -0.0802023,1.7918184 0,2.28125 0.22179528,1.353497 0.73927114,2.533188 1.55582784,3.546826 0.3106564,0.385636 0.9951193,1.050687 1.3717998,1.332897 1.0955928,0.820818 2.3782881,1.314176 3.7967103,1.460315 0.06875,0.0071 0.4484375,0.0085 0.84375,0.0032 0.5478163,-0.0074 0.8079328,-0.02497 1.09375,-0.07398 z"

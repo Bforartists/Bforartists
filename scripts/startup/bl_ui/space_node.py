@@ -161,7 +161,7 @@ class NODE_HT_header(Header):
                 #     row = layout.row()
                 #     row.prop(snode_id, "use_nodes")
 
-                # layout.separator_spacer()
+                layout.separator_spacer()
 
                 types_that_support_material = {
                     'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD',
@@ -214,8 +214,8 @@ class NODE_HT_header(Header):
                     #if snode_id:
                     #    row = layout.row()
                     #    row.prop(snode_id, "use_nodes")
-					#
-                    #layout.separator_spacer()
+
+                    layout.separator_spacer()
 
                     row = layout.row()
                     row.enabled = not snode.pin
@@ -228,8 +228,8 @@ class NODE_HT_header(Header):
 			## BFA - moved below to a different solution
             #if snode_id:
             #    layout.prop(snode_id, "use_nodes")
-			#
-            #layout.separator_spacer()
+
+            layout.separator_spacer()
             if id_from:
                 if snode.texture_type == 'BRUSH':
                     layout.template_ID(id_from, "texture", new="texture.new")

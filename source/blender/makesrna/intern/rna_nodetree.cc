@@ -10605,7 +10605,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeVolumeInfo", nullptr, ICON_NODE_VOLUME_INFO);
   define(brna, "ShaderNode", "ShaderNodeVolumePrincipled", nullptr, ICON_NODE_VOLUMEPRINCIPLED);
   define(brna, "ShaderNode", "ShaderNodeVolumeScatter", def_scatter, ICON_NODE_VOLUMESCATTER);
-  define(brna, "ShaderNode", "ShaderNodeVolumeCoefficients", def_volume_coefficients, ICON_NONE);
+  define(brna, "ShaderNode", "ShaderNodeVolumeCoefficients", def_volume_coefficients, ICON_NODE_VOLUME_COEFFICIENTS);
   define(brna, "ShaderNode", "ShaderNodeWavelength", nullptr, ICON_NODE_WAVELENGTH);
   define(brna, "ShaderNode", "ShaderNodeWireframe", def_sh_tex_wireframe, ICON_NODE_WIREFRAME);
 

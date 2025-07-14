@@ -1299,6 +1299,7 @@ if(WITH_BLENDER)
       node_vertex_color
       node_viewer
       node_viwersplit
+      node_volume_coefficients
       node_volume_info
       node_volumeabsorption
       node_volumeprincipled
