@@ -11,10 +11,10 @@ from bpy.app.handlers import persistent
 
 from bpy.types import (
     Context,
-    MetaSequence,
+    MetaStrip,
     Operator,
     PropertyGroup,
-    SceneSequence,
+    SceneStrip,
     Window,
     WindowManager,
 )
@@ -307,7 +307,7 @@ def get_not_main_window(wm: WindowManager) -> Window:
     return None
 
 
-def get_main_strip(wm: WindowManager) -> SceneSequence:
+def get_main_strip(wm: WindowManager) -> SceneStrip:
     """Get Scene Strip at current time in Main window
 
     :param wm: the WindowManager instance
@@ -391,10 +391,10 @@ def get_sequence_at_frame(
 
     # consider higher strip in stack
     strip = sorted(strips, key=lambda x: x.channel)[-1]
-    # go deeper when current strip is a MetaSequence
-    if isinstance(strip, MetaSequence):
+    # go deeper when current strip is a MetaStrip
+    if isinstance(strip, MetaStrip):
         return get_sequence_at_frame(frame, strip.sequences, skip_muted)
-    if isinstance(strip, SceneSequence):
+    if isinstance(strip, SceneStrip):
         # apply time offset to get in sequence's referential
         frame = frame - strip.frame_start + strip.scene.frame_start
         # enter scene's sequencer if used as input
@@ -420,7 +420,7 @@ def set_scene_frame(scene, frame, force_update_main=False):
                 bpy.context, bpy.context.window_manager.storypencil_settings.main_window_id)
 
 
-def setup_window_from_scene_strip(window: Window, strip: SceneSequence):
+def setup_window_from_scene_strip(window: Window, strip: SceneStrip):
     """Change the Scene and camera of `window` based on `strip`.
 
     :param window: [description]
@@ -487,7 +487,7 @@ def update_sync(context: Context, win_id=None):
             sequences=sequences
         )
         # only do bidirectional sync if secondary window matches the strip at current time in main
-        if not isinstance(strip, SceneSequence) or strip.scene != context.scene:
+        if not isinstance(strip, SceneStrip) or strip.scene != context.scene:
             return
 
         # calculate offset
@@ -505,7 +505,7 @@ def update_sync(context: Context, win_id=None):
                 new_main_frame,
                 main_scene.sequence_editor.sequences,
             )
-            update_main_time = isinstance(new_strip, SceneSequence)
+            update_main_time = isinstance(new_strip, SceneStrip)
         if update_main_time:
             # update main time change in the next event loop + force the sync system update
             # because Blender won't trigger a frame_changed event to avoid infinite recursion
@@ -534,7 +534,7 @@ def update_sync(context: Context, win_id=None):
     seq, frame = get_sequence_at_frame(main_scene.frame_current, sequences)
 
     # return if no sequence at current time or not a scene strip
-    if not isinstance(seq, SceneSequence) or not seq.scene:
+    if not isinstance(seq, SceneStrip) or not seq.scene:
         wm.storypencil_settings.main_strip_name = ""
         return
 
