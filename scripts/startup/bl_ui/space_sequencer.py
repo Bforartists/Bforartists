@@ -594,7 +594,7 @@ class SEQUENCER_MT_view(Menu):
         if is_sequencer_only:
             layout.prop(st, "show_region_channels")
 
-        layout.prop(addon_prefs, "vse_show_toolshelf_tabs")  # BFA
+        layout.prop(st, "show_toolshelf_tabs")
 
         layout.prop(st, "show_region_footer")
         layout.separator()

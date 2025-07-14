@@ -21,9 +21,8 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
     def poll(cls, context):
         wm = context.window_manager
         view = context.space_data
-        overlay = view.overlay
         if context.object is not None and context.object.mode in {'OBJECT', 'POSE'}:
-            return overlay.show_toolshelf_tabs == True and wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel
+            return view.show_toolshelf_tabs == True and wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel
         else:
             return False
 
@@ -156,9 +155,8 @@ class BFA_PT_toolshelf_frames(bpy.types.Panel):
     def poll(cls, context):
         wm = context.window_manager
         view = context.space_data
-        overlay = view.overlay
         if context.object is not None and context.object.mode in {'OBJECT', 'POSE', 'PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'VERTEX_GREASE_PENCIL'}:
-            return overlay.show_toolshelf_tabs == True and wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes
+            return view.show_toolshelf_tabs == True and wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes
         else:
             return False
 
