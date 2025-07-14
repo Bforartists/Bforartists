@@ -114,7 +114,8 @@ def collection_asset_added_handler(scene):
     #print(f"Handler: Added collection set to: {added_collection.name}")  # DEBUG
 
     # Set the active object of the collection (first)
-    bpy.context.view_layer.objects.active = added_collection.objects[0]
+    if added_collection and added_collection.objects:
+        bpy.context.view_layer.objects.active = added_collection.objects[0]
     #print(f"Active object set to: {added_collection.objects[0].name}") # DEBUG
     
 
