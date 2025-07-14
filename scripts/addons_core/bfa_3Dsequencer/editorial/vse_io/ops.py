@@ -294,7 +294,7 @@ class EXPORT_OT_otio(bpy.types.Operator, ExportHelper):
     def track_kind_from_strip(strip: bpy.types.Strip) -> otio.schema.TrackKind:
         """Return otio track kind based on strip type."""
         match type(strip):
-            case bpy.types.SoundSequence:
+            case bpy.types.SoundStrip:
                 return otio.schema.TrackKind.Audio
             case _:
                 return otio.schema.TrackKind.Video
@@ -379,13 +379,13 @@ class EXPORT_OT_otio(bpy.types.Operator, ExportHelper):
 
         # Retrieve filepath based on strip type.
         match type(strip):
-            case bpy.types.SoundSequence:
+            case bpy.types.SoundStrip:
                 media_filepath = strip.sound.filepath
-            case bpy.types.ImageSequence:
+            case bpy.types.ImageStrip:
                 media_filepath = os.path.join(
                     strip.directory, strip.elements[0].filename
                 )
-            case bpy.types.MovieSequence:
+            case bpy.types.MovieStrip:
                 media_filepath = strip.filepath
                 media_fps = strip.fps or timeline_fps
             case _:

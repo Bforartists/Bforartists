@@ -29,7 +29,7 @@ def get_scenes_from_selected_sequences(
     return [
         s.scene
         for s in sed.sequences
-        if isinstance(s, bpy.types.Strip) and s.select and s.scene
+        if isinstance(s, bpy.types.SceneStrip) and s.select and s.scene
     ]
 
 

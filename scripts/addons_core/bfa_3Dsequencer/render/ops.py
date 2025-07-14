@@ -48,7 +48,7 @@ class SEQUENCER_OT_batch_render(bpy.types.Operator):
         self.active_task: Optional[BaseTask] = None
 
         self.output_channel_offset: int = 0
-        self.output_sound_strips: list[bpy.types.SoundSequence] = []
+        self.output_sound_strips: list[bpy.types.SoundStrip] = []
 
         self.cancelled: bool = False
 
@@ -88,7 +88,7 @@ class SEQUENCER_OT_batch_render(bpy.types.Operator):
         seqs = [
             seq
             for seq in self.scene.sequence_editor.sequences
-            if isinstance(seq, bpy.types.Strip)
+            if isinstance(seq, bpy.types.SceneStrip)
             and (seq.select or not self.render_options.selection_only)
         ]
 
@@ -105,7 +105,7 @@ class SEQUENCER_OT_batch_render(bpy.types.Operator):
             sound_strips = [
                 seq
                 for seq in self.scene.sequence_editor.sequences
-                if isinstance(seq, bpy.types.SoundSequence)
+                if isinstance(seq, bpy.types.SoundStrip)
                 and (seq.select or not self.render_options.selection_only)
             ]
             self.output_sound_strips = sorted(
