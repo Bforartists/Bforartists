@@ -1146,13 +1146,12 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
     case SPACE_SEQ: {
       switch (tkey->mode) {
         case SEQ_VIEW_SEQUENCE:
-          return "builtin.select";
-        case SEQ_VIEW_PREVIEW:
-          return "builtin.select_box";
         case SEQ_VIEW_SEQUENCE_PREVIEW:
+          return "builtin.select_box";
+        case SEQ_VIEW_PREVIEW:
           return "builtin.select";
       }
-      return "builtin.select"; /*bfa - changed default from builtin.select_box to builtin.select*/
+      break;
     }
   }
 
