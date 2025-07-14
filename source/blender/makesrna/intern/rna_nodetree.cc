@@ -6718,6 +6718,18 @@ static void def_cmp_scale(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_enum_items(prop, cmp_interpolation_items);
   RNA_def_property_ui_text(prop, "Interpolation", "Interpolation method");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "extension_x", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "extension_x");
+  RNA_def_property_enum_items(prop, cmp_extension_mode_items);
+  RNA_def_property_ui_text(prop, "X Extension Mode", "The extension mode applied to the X axis");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "extension_y", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "extension_y");
+  RNA_def_property_enum_items(prop, cmp_extension_mode_items);
+  RNA_def_property_ui_text(prop, "Y Extension Mode", "The extension mode applied to the Y axis");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
 static void def_cmp_rotate(BlenderRNA * /*brna*/, StructRNA *srna)
@@ -7031,6 +7043,7 @@ static void def_cmp_glare(BlenderRNA * /*brna*/, StructRNA *srna)
       {CMP_NODE_GLARE_STREAKS, "STREAKS", 0, "Streaks", ""},
       {CMP_NODE_GLARE_FOG_GLOW, "FOG_GLOW", 0, "Fog Glow", ""},
       {CMP_NODE_GLARE_SIMPLE_STAR, "SIMPLE_STAR", 0, "Simple Star", ""},
+      {CMP_NODE_GLARE_SUN_BEAMS, "SUN_BEAMS", 0, "Sun Beams", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -7315,17 +7328,6 @@ static void def_cmp_mask(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
-static void dev_cmd_transform(BlenderRNA * /*brna*/, StructRNA *srna)
-{
-  PropertyRNA *prop;
-
-  prop = RNA_def_property(srna, "filter_type", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, nullptr, "custom1");
-  RNA_def_property_enum_items(prop, cmp_interpolation_items);
-  RNA_def_property_ui_text(prop, "Filter", "Method to use to filter transform");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-}
-
 /* -- Compositor Nodes ------------------------------------------------------ */
 
 static const EnumPropertyItem node_masktype_items[] = {
@@ -7468,6 +7470,30 @@ static void def_cmp_trackpos(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_string_sdna(prop, nullptr, "track_name");
   RNA_def_property_ui_text(prop, "Track", "");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_MOVIECLIP);
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
+static void def_cmp_transform(BlenderRNA * /*brna*/, StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeTransformData", "storage");
+  prop = RNA_def_property(srna, "interpolation", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "interpolation");
+  RNA_def_property_enum_items(prop, cmp_interpolation_items);
+  RNA_def_property_ui_text(prop, "Interpolation", "Interpolation method");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "extension_x", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "extension_x");
+  RNA_def_property_enum_items(prop, cmp_extension_mode_items);
+  RNA_def_property_ui_text(prop, "X Extension Mode", "The extension mode applied to the X axis");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "extension_y", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "extension_y");
+  RNA_def_property_enum_items(prop, cmp_extension_mode_items);
+  RNA_def_property_ui_text(prop, "Y Extension Mode", "The extension mode applied to the Y axis");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -10670,7 +10696,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeTime", def_time, ICON_NODE_CURVE_TIME);
   define(brna, "CompositorNode", "CompositorNodeTonemap", def_cmp_tonemap, ICON_NODE_TONEMAP);
   define(brna, "CompositorNode", "CompositorNodeTrackPos", def_cmp_trackpos, ICON_NODE_TRACKPOSITION);
-  define(brna, "CompositorNode", "CompositorNodeTransform", dev_cmd_transform, ICON_NODE_TRANSFORM);
+  define(brna, "CompositorNode", "CompositorNodeTransform", def_cmp_transform, ICON_NODE_TRANSFORM);
   define(brna, "CompositorNode", "CompositorNodeTranslate", def_cmp_translate, ICON_TRANSFORM_MOVE);
   define(brna, "CompositorNode", "CompositorNodeVecBlur", nullptr, ICON_NODE_VECTOR_BLUR);
   define(brna, "CompositorNode", "CompositorNodeViewer", def_cmp_viewer, ICON_NODE_VIEWER);

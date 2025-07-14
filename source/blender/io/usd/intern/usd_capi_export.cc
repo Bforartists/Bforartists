@@ -95,11 +95,9 @@ struct ExportJobData {
  * the requirements of the prim path manipulation logic
  * of the exporter. Also returns true if the path is
  * the empty string. Returns false otherwise. */
-static bool prim_path_valid(const char *path)
+static bool prim_path_valid(const std::string &path)
 {
-  BLI_assert(path);
-
-  if (path[0] == '\0') {
+  if (path.empty()) {
     /* Empty paths are ignored in the code,
      * so they can be passed through. */
     return true;
@@ -108,7 +106,8 @@ static bool prim_path_valid(const char *path)
   /* Check path syntax. */
   std::string errMsg;
   if (!pxr::SdfPath::IsValidPathString(path, &errMsg)) {
-    WM_global_reportf(RPT_ERROR, "USD Export: invalid path string '%s': %s", path, errMsg.c_str());
+    WM_global_reportf(
+        RPT_ERROR, "USD Export: invalid path string '%s': %s", path.c_str(), errMsg.c_str());
     return false;
   }
 
@@ -117,12 +116,12 @@ static bool prim_path_valid(const char *path)
 
   pxr::SdfPath sdf_path(path);
   if (!sdf_path.IsAbsolutePath()) {
-    WM_global_reportf(RPT_ERROR, "USD Export: path '%s' is not an absolute path", path);
+    WM_global_reportf(RPT_ERROR, "USD Export: path '%s' is not an absolute path", path.c_str());
     return false;
   }
 
   if (!sdf_path.IsPrimPath()) {
-    WM_global_reportf(RPT_ERROR, "USD Export: path string '%s' is not a prim path", path);
+    WM_global_reportf(RPT_ERROR, "USD Export: path string '%s' is not a prim path", path.c_str());
     return false;
   }
 
@@ -154,7 +153,7 @@ static bool export_params_valid(const USDExportParams &params)
  */
 static void ensure_root_prim(pxr::UsdStageRefPtr stage, const USDExportParams &params)
 {
-  if (params.root_prim_path[0] == '\0') {
+  if (params.root_prim_path.empty()) {
     return;
   }
 
@@ -258,12 +257,11 @@ static void process_usdz_textures(const ExportJobData *data, const char *path)
                        height_adjusted);
           }
           else {
-            CLOG_INFO(&LOG,
-                      2,
-                      "Downscaled '%s' to %dx%d",
-                      entries[index].path,
-                      width_adjusted,
-                      height_adjusted);
+            CLOG_DEBUG(&LOG,
+                       "Downscaled '%s' to %dx%d",
+                       entries[index].path,
+                       width_adjusted,
+                       height_adjusted);
           }
         }
 
@@ -377,7 +375,7 @@ std::string cache_image_color(const float color[4])
   ibuf->ftype = IMB_FTYPE_RADHDR;
 
   if (IMB_save_image(ibuf, file_path.c_str(), IB_float_data)) {
-    CLOG_INFO(&LOG, 1, "%s", file_path.c_str());
+    CLOG_INFO(&LOG, "%s", file_path.c_str());
   }
   else {
     CLOG_ERROR(&LOG, "Can't save %s", file_path.c_str());
@@ -388,10 +386,17 @@ std::string cache_image_color(const float color[4])
   return file_path;
 }
 
-static void mark_point_instancer_prototypes_as_over(const pxr::UsdStageRefPtr &stage,
-                                                    const pxr::SdfPath &wrapper_path,
-                                                    std::set<pxr::SdfPath> &visited)
+static void collect_point_instancer_prototypes_and_set_extent(
+    pxr::UsdGeomPointInstancer instancer,
+    const pxr::UsdStageRefPtr &stage,
+    const pxr::SdfPath &wrapper_path,
+    std::vector<pxr::UsdPrim> &proto_list)
 {
+  /* Compute extent of the current point instancer. */
+  pxr::VtArray<pxr::GfVec3f> extent;
+  instancer.ComputeExtentAtTime(&extent, pxr::UsdTimeCode::Default(), pxr::UsdTimeCode::Default());
+  instancer.CreateExtentAttr().Set(extent);
+
   pxr::UsdPrim wrapper_prim = stage->GetPrimAtPath(wrapper_path);
   if (!wrapper_prim || !wrapper_prim.IsValid()) {
     return;
@@ -423,17 +428,13 @@ static void mark_point_instancer_prototypes_as_over(const pxr::UsdStageRefPtr &s
   const pxr::SdfPath real_path(real_path_str);
   pxr::UsdPrim proto_prim = stage->GetPrimAtPath(real_path);
 
-  if (visited.count(real_path)) {
-    return;
-  }
-  visited.insert(real_path);
-
   if (!proto_prim || !proto_prim.IsValid()) {
     CLOG_WARN(&LOG, "Referenced prototype not found at: %s", real_path.GetText());
     return;
   }
 
-  proto_prim.SetSpecifier(pxr::SdfSpecifierOver);
+  proto_list.push_back(proto_prim);
+  proto_list.push_back(wrapper_prim.GetParent());
 
   std::string doc_message = fmt::format(
       "This prim is used as a prototype by the PointInstancer \"{}\" so we override the def "
@@ -442,12 +443,28 @@ static void mark_point_instancer_prototypes_as_over(const pxr::UsdStageRefPtr &s
       wrapper_prim.GetName().GetString());
   proto_prim.SetDocumentation(doc_message);
 
-  if (wrapper_prim.IsA<pxr::UsdGeomPointInstancer>()) {
-    pxr::UsdGeomPointInstancer nested_instancer(wrapper_prim);
+  /* Check if the proto prim itself is a PointInstancer. */
+  if (proto_prim.IsA<pxr::UsdGeomPointInstancer>()) {
+    pxr::UsdGeomPointInstancer nested_instancer(proto_prim);
     pxr::SdfPathVector nested_targets;
     if (nested_instancer.GetPrototypesRel().GetTargets(&nested_targets)) {
       for (const pxr::SdfPath &nested_wrapper_path : nested_targets) {
-        mark_point_instancer_prototypes_as_over(stage, nested_wrapper_path, visited);
+        collect_point_instancer_prototypes_and_set_extent(
+            nested_instancer, stage, nested_wrapper_path, proto_list);
+      }
+    }
+  }
+
+  /* Also check all children of the proto prim for nested PointInstancers. */
+  for (const pxr::UsdPrim &child : proto_prim.GetAllChildren()) {
+    if (child.IsA<pxr::UsdGeomPointInstancer>()) {
+      pxr::UsdGeomPointInstancer nested_instancer(child);
+      pxr::SdfPathVector nested_targets;
+      if (nested_instancer.GetPrototypesRel().GetTargets(&nested_targets)) {
+        for (const pxr::SdfPath &nested_wrapper_path : nested_targets) {
+          collect_point_instancer_prototypes_and_set_extent(
+              nested_instancer, stage, nested_wrapper_path, proto_list);
+        }
       }
     }
   }
@@ -635,7 +652,7 @@ static void export_startjob(void *customdata, wmJobWorkerStatus *worker_status)
 
   /* Traverse the point instancer to make sure the prototype referenced by nested point instancers
    * are also marked as over. */
-  std::set<pxr::SdfPath> visited;
+  std::vector<pxr::UsdPrim> proto_list;
   for (const pxr::UsdPrim &prim : usd_stage->Traverse()) {
     if (!prim.IsA<pxr::UsdGeomPointInstancer>()) {
       continue;
@@ -644,9 +661,17 @@ static void export_startjob(void *customdata, wmJobWorkerStatus *worker_status)
     pxr::SdfPathVector targets;
     if (instancer.GetPrototypesRel().GetTargets(&targets)) {
       for (const pxr::SdfPath &wrapper_path : targets) {
-        mark_point_instancer_prototypes_as_over(usd_stage, wrapper_path, visited);
+        collect_point_instancer_prototypes_and_set_extent(
+            instancer, usd_stage, wrapper_path, proto_list);
       }
     }
+  }
+
+  /* The standard way is to mark the point instancer's prototypes as over. Reference in OpenUSD:
+   * https://openusd.org/docs/api/class_usd_geom_point_instancer.html#:~:text=place%20them%20under%20a%20prim%20that%20is%20just%20an%20%22over%22
+   */
+  for (pxr::UsdPrim &proto : proto_list) {
+    proto.SetSpecifier(pxr::SdfSpecifierOver);
   }
 
   usd_stage->GetRootLayer()->Save();

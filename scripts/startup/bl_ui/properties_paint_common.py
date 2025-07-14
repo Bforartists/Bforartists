@@ -1994,6 +1994,8 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
     tool_settings = context.tool_settings
     settings = tool_settings.gpencil_paint
     gp_settings = brush.gpencil_settings
+    ups = tool_settings.unified_paint_settings
+    brush_prop_owner = ups if ups.use_unified_size else brush
     tool = context.workspace.tools.from_space_view3d_mode(context.mode, create=False)
     if gp_settings is None:
         return
@@ -2002,17 +2004,16 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
     if brush.gpencil_brush_type == 'ERASE':
         row = layout.row(align=True)
         row.prop(brush, "size", text="Radius")
-        row.prop(gp_settings, "use_pressure", text="", icon="STYLUS_PRESSURE")
-        row.prop(gp_settings, "use_occlude_eraser", text="", icon="XRAY")
+        row.prop(brush, "use_pressure_size", text="", icon='STYLUS_PRESSURE')
+        row.prop(gp_settings, "use_occlude_eraser", text="", icon='XRAY')
 
         row = layout.row(align=True)
         row.prop(gp_settings, "eraser_mode", expand=True)
         if gp_settings.eraser_mode == 'SOFT':
             row = layout.row(align=True)
-            row.prop(gp_settings, "pen_strength", slider=True)
-            row.prop(
-                gp_settings, "use_strength_pressure", text="", icon="STYLUS_PRESSURE"
-            )
+            row.prop(brush_prop_owner, "strength", slider=True)
+            row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
+            row.prop(ups, "use_unified_strength", text="", icon='BRUSHES_ALL')
             row = layout.row(align=True)
             row.prop(gp_settings, "eraser_strength_factor")
             row = layout.row(align=True)
@@ -2051,8 +2052,9 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
             )
 
         row = layout.row(align=True)
-        row.prop(gp_settings, "pen_strength", slider=True)
-        row.prop(gp_settings, "use_strength_pressure", text="", icon="STYLUS_PRESSURE")
+        row.prop(brush_prop_owner, "strength", slider=True)
+        row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
+        row.prop(ups, "use_unified_strength", text="", icon='BRUSHES_ALL')
 
         if gp_settings.use_strength_pressure and not compact:
             row = layout.row()
@@ -2283,18 +2285,22 @@ def brush_basic_gpencil_weight_settings(layout, _context, brush, *, compact=Fals
     row.prop(brush, "use_pressure_strength", text="")
 
 
-def brush_basic_gpencil_vertex_settings(layout, _context, brush, *, compact=False):
+def brush_basic_gpencil_vertex_settings(layout, context, brush, *, compact=False):
+    del compact  # UNUSED.
     gp_settings = brush.gpencil_settings
+    ups = context.tool_settings.unified_paint_settings
+    brush_prop_owner = ups if ups.use_unified_size else brush
 
     # Brush details
     row = layout.row(align=True)
     row.prop(brush, "size", text="Radius")
-    row.prop(gp_settings, "use_pressure", text="", icon='STYLUS_PRESSURE')
+    row.prop(brush, "use_pressure_size", text="", icon='STYLUS_PRESSURE')
 
     if brush.gpencil_vertex_brush_type in {'DRAW', 'BLUR', 'SMEAR'}:
         row = layout.row(align=True)
-        row.prop(gp_settings, "pen_strength", slider=True)
-        row.prop(gp_settings, "use_strength_pressure", text="", icon='STYLUS_PRESSURE')
+        row.prop(brush_prop_owner, "strength", slider=True)
+        row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
+        row.prop(ups, "use_unified_strength", text="", icon='BRUSHES_ALL')
 
     if brush.gpencil_vertex_brush_type in {'DRAW', 'REPLACE'}:
         row = layout.row(align=True)

@@ -1074,8 +1074,8 @@ MTLRenderPipelineStateInstance *MTLShader::bake_pipeline_state(
             }
             using_null_buffer = true;
 #if MTL_DEBUG_SHADER_ATTRIBUTES == 1
-            MTL_LOG_INFO("Setting up buffer binding for null attribute with buffer index %d",
-                         null_buffer_index);
+            MTL_LOG_DEBUG("Setting up buffer binding for null attribute with buffer index %d",
+                          null_buffer_index);
 #endif
           }
         }
@@ -1463,14 +1463,14 @@ MTLComputePipelineStateInstance *MTLShader::bake_compute_pipeline_state(
      * worst-case allocation and increasing thread occupancy.
      *
      * NOTE: This is only enabled on Apple M1 and M2 GPUs. Apple M3 GPUs feature dynamic caching
-     * which controls register allocation dynamically based on the runtime state.  */
+     * which controls register allocation dynamically based on the runtime state. */
     const MTLCapabilities &capabilities = MTLBackend::get_capabilities();
     if (ELEM(capabilities.gpu, APPLE_GPU_M1, APPLE_GPU_M2)) {
       if (maxTotalThreadsPerThreadgroup_Tuning_ > 0) {
         desc.maxTotalThreadsPerThreadgroup = this->maxTotalThreadsPerThreadgroup_Tuning_;
-        MTL_LOG_INFO("Using custom parameter for shader %s value %u\n",
-                     this->name,
-                     maxTotalThreadsPerThreadgroup_Tuning_);
+        MTL_LOG_DEBUG("Using custom parameter for shader %s value %u\n",
+                      this->name,
+                      maxTotalThreadsPerThreadgroup_Tuning_);
       }
     }
 
@@ -1485,7 +1485,7 @@ MTLComputePipelineStateInstance *MTLShader::bake_compute_pipeline_state(
      * ideally the source shader should be modified to reduce local register pressure, or, local
      * work-group size should be reduced.
      * Similarly, the custom tuning parameter "mtl_max_total_threads_per_threadgroup" can be
-     * specified to a sufficiently large value to avoid this.  */
+     * specified to a sufficiently large value to avoid this. */
     if (pso) {
       uint num_required_threads_per_threadgroup = compute_pso_common_state_.threadgroup_x_len *
                                                   compute_pso_common_state_.threadgroup_y_len *

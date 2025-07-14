@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:36+0000\n"
 "Last-Translator: Ruan da Silva Andrade <ruanandrade818@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -34712,28 +34712,12 @@ msgid "Other geometry types, like curve, metaball, etc. (converted to meshes)"
 msgstr "Outros tipos de geometria, como curvas, esferas-meta, etc (convertida em malhas)."
 
 
-msgid "Path Mode"
-msgstr "Modo dos caminhos"
-
-
 msgid "Method used to reference paths"
 msgstr "Define o método usado para referenciar os caminhos de exportação."
 
 
 msgid "Always write absolute paths"
 msgstr "Sempre escrever caminhos absolutos"
-
-
-msgid "Always write relative paths (where possible)"
-msgstr "Sempre escrever em caminhos relativos (onde for possível)."
-
-
-msgid "Match"
-msgstr "Combinar"
-
-
-msgid "Strip Path"
-msgstr "Caminho da faixa"
 
 
 msgid "Filename only"
@@ -61665,11 +61649,6 @@ msgid "Spacing Along Stroke"
 msgstr "Espaçamento ao longo do traço"
 
 
-msgctxt "Operator"
-msgid "Go to Linestyle Textures Properties"
-msgstr "Ir às propriedades de textura dos estilos de linha"
-
-
 msgid "Priority"
 msgstr "Prioridade"
 
@@ -62068,6 +62047,10 @@ msgstr "Calibração"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "Pré-processamento"
+
+
+msgid "Match"
+msgstr "Combinar"
 
 
 msgctxt "Operator"
@@ -66019,6 +66002,10 @@ msgstr "Grupos de materiais"
 
 msgid "Smooth Groups"
 msgstr "Grupos suavizados"
+
+
+msgid "Path Mode"
+msgstr "Modo dos caminhos"
 
 
 msgid "Rigging"

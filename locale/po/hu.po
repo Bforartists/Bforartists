@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:24+0000\n"
 "Last-Translator: Balázs Füvesi <fuvesib@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.blender.org/projects/blender-ui/ui/hu/>\n"
@@ -10248,28 +10248,12 @@ msgid "Lamp"
 msgstr "Fényforrás"
 
 
-msgid "Path Mode"
-msgstr "Útvonal mód"
-
-
 msgid "Method used to reference paths"
 msgstr "A referenciaútvonalakhoz használt metódus"
 
 
 msgid "Always write absolute paths"
 msgstr "Mindig abszolút útvonal írása"
-
-
-msgid "Always write relative paths (where possible)"
-msgstr "Mindig relatív útvonal írása (ahol lehetséges)"
-
-
-msgid "Match"
-msgstr "Összehangolás"
-
-
-msgid "Strip Path"
-msgstr "Útvonal lecsupaszítása"
 
 
 msgid "Filename only"
@@ -15732,6 +15716,10 @@ msgid "Export to File"
 msgstr "Exportálás fájlba"
 
 
+msgid "Match"
+msgstr "Összehangolás"
+
+
 msgid "Merge:"
 msgstr "Összefésülés:"
 
@@ -16805,6 +16793,10 @@ msgstr "Anyag csoportok"
 
 msgid "Smooth Groups"
 msgstr "Simított csoportok"
+
+
+msgid "Path Mode"
+msgstr "Útvonal mód"
 
 
 msgctxt "Mesh"

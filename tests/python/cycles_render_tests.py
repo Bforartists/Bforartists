@@ -70,6 +70,8 @@ BLOCKLIST_OPTIX_OSL_LIMITED = [
     'image_.*_osl.blend',
     # OptiX OSL doesn't support the trace function
     'osl_trace_shader.blend',
+    # Noise functions do not return color with OptiX OSL
+    'osl_camera_advanced.blend',
 ]
 
 # Blocklist for SVM tests that fail when forced to run with OptiX OSL
@@ -106,7 +108,6 @@ BLOCKLIST_GPU = [
     'image_log.blend',
     'glass_mix_40964.blend',
     'filter_glossy_refraction_45609.blend',
-    'smoke_color.blend',
     'bevel_mblur.blend',
     # Inconsistency between Embree and Hair primitive on GPU.
     'denoise_hair.blend',

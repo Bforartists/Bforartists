@@ -286,13 +286,16 @@ void OSLManager::device_free(Device *device, DeviceScene * /*dscene*/, Scene *sc
   /* Remove any textures specific to an image manager from shared render services textures, since
    * the image manager may get destroyed next. */
   foreach_render_services([scene](OSLRenderServices *services) {
-    for (auto it = services->textures.begin(); it != services->textures.end(); ++it) {
+    for (auto it = services->textures.begin(); it != services->textures.end();) {
       if (it->second.handle.get_manager() == scene->image_manager.get()) {
         /* Don't lock again, since the iterator already did so. */
         services->textures.erase(it->first, false);
         it.clear();
         /* Iterator was invalidated, start from the beginning again. */
         it = services->textures.begin();
+      }
+      else {
+        ++it;
       }
     }
   });
@@ -382,7 +385,7 @@ void OSLManager::shading_system_init()
         ss->attribute("max_optix_groupdata_alloc", 2048);
       }
 
-      VLOG_INFO << "Using shader search path: " << shader_path;
+      LOG_INFO << "Using shader search path: " << shader_path;
 
       /* our own ray types */
       static const char *raytypes[] = {
@@ -564,7 +567,7 @@ const char *OSLManager::shader_load_filepath(string filepath)
   string bytecode;
 
   if (!path_read_text(filepath, bytecode)) {
-    fprintf(stderr, "Cycles shader graph: failed to read file %s\n", filepath.c_str());
+    LOG_ERROR << "Shader graph: failed to read file " << filepath;
     const OSLShaderInfo info;
     loaded_shaders[bytecode_hash] = info; /* to avoid repeat tries */
     return nullptr;
@@ -585,7 +588,7 @@ const char *OSLManager::shader_load_bytecode(const string &hash, const string &b
   OSLShaderInfo info;
 
   if (!info.query.open_bytecode(bytecode)) {
-    fprintf(stderr, "OSL query error: %s\n", info.query.geterror().c_str());
+    LOG_ERROR << "OSL query error: " << info.query.geterror();
   }
 
   /* this is a bit weak, but works */
@@ -625,7 +628,7 @@ void OSLShaderManager::device_update_specific(Device *device,
     }
   });
 
-  VLOG_INFO << "Total " << scene->shaders.size() << " shaders.";
+  LOG_INFO << "Total " << scene->shaders.size() << " shaders.";
 
   /* setup shader engine */
   OSLManager::foreach_osl_device(device, [](Device *, OSLGlobals *og) {

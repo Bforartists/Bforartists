@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
-"PO-Revision-Date: 2025-06-21 21:59+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
+"PO-Revision-Date: 2025-07-13 16:59+0000\n"
 "Last-Translator: Daniel Nylander <blender@danielnylander.se>\n"
 "Language-Team: Swedish <https://translate.blender.org/projects/blender-ui/ui/sv/>\n"
 "Language: sv\n"
@@ -570,12 +570,24 @@ msgid "Translation Root"
 msgstr "Översättningsrot"
 
 
+msgid "The bf-translation repository"
+msgstr "Arkivet för bf-translation"
+
+
 msgid "Import Paths"
 msgstr "Import-sökvägar"
 
 
 msgid "Additional paths to add to sys.path (';' separated)"
 msgstr "Ytterligare sökvägar att lägga till i sys.path (separerade med ';')"
+
+
+msgid "Warn about messages not starting by a capitalized letter (with a few allowed exceptions!)"
+msgstr "Varna för meddelanden som inte inleds med en versal bokstav (med några få tillåtna undantag!)"
+
+
+msgid "Persistent Data Path"
+msgstr "Beständig datasökväg"
 
 
 msgid "User Add-ons"
@@ -13080,10 +13092,6 @@ msgid "Minimum value"
 msgstr "Minimalt värde"
 
 
-msgid "Subtype"
-msgstr "Undertyp"
-
-
 msgid "Subtype of the default value"
 msgstr "Undertyp av standardvärdet"
 
@@ -15405,10 +15413,6 @@ msgstr "Annan"
 
 msgid "Always write absolute paths"
 msgstr "Skriv alltid absoluta sökvägar"
-
-
-msgid "Always write relative paths (where possible)"
-msgstr "Skriv alltid relativa sökvägar (där så är möjligt)"
 
 
 msgid "Custom Properties"
@@ -30828,6 +30832,10 @@ msgid "Cannot make segment"
 msgstr "Kan inte göra segment"
 
 
+msgid "Insert"
+msgstr "Infoga"
+
+
 msgid "Text too long"
 msgstr "Texten är för lång"
 
@@ -30945,10 +30953,6 @@ msgstr "R"
 
 msgid "OS"
 msgstr "OS"
-
-
-msgid "Insert"
-msgstr "Infoga"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -32291,6 +32295,10 @@ msgstr "Inga objekt"
 
 msgid "Menu Error"
 msgstr "Menyfel"
+
+
+msgid "Subtype"
+msgstr "Undertyp"
 
 
 msgid "Could not determine type of group node"

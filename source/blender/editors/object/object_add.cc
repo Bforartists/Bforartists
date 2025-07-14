@@ -64,11 +64,7 @@
 #include "BKE_effect.h"
 #include "BKE_geometry_set.hh"
 #include "BKE_geometry_set_instances.hh"
-#include "BKE_gpencil_geom_legacy.h"
-#include "BKE_gpencil_legacy.h"
-#include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_grease_pencil.hh"
-#include "BKE_grease_pencil_legacy_convert.hh"
 #include "BKE_key.hh"
 #include "BKE_lattice.hh"
 #include "BKE_idtype.hh" // bfa override asset
@@ -5225,6 +5221,20 @@ static wmOperatorStatus update_all_shape_keys_exec(bContext *C, wmOperator *op)
   return ED_mesh_shapes_join_objects_exec(C, false, op->reports);
 }
 
+static bool object_update_shapes_poll(bContext *C)
+{
+  if (!active_shape_key_editable_poll(C)) {
+    return false;
+  }
+
+  Object *ob = CTX_data_active_object(C);
+  const Key *key = BKE_key_from_object(ob);
+  if (!key || BLI_listbase_is_empty(&key->block)) {
+    return false;
+  }
+  return true;
+}
+
 void OBJECT_OT_update_shapes(wmOperatorType *ot)
 {
   ot->name = "Update from Objects";
@@ -5234,7 +5244,7 @@ void OBJECT_OT_update_shapes(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_update_shapes";
 
   ot->exec = update_all_shape_keys_exec;
-  ot->poll = active_shape_key_editable_poll;
+  ot->poll = object_update_shapes_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }

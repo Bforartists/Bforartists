@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:14+0000\n"
 "Last-Translator: Thomas Radeke <rahdick@gmx.de>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
@@ -29322,18 +29322,6 @@ msgid "Other"
 msgstr "Andere"
 
 
-msgid "Path Mode"
-msgstr "Pfadmodus"
-
-
-msgid "Match"
-msgstr "Übereinstimmung"
-
-
-msgid "Strip Path"
-msgstr "Streifenpfad"
-
-
 msgid "Filename only"
 msgstr "Nur Dateinamen"
 
@@ -51779,6 +51767,10 @@ msgid "Prefetch"
 msgstr "Vorabrufen"
 
 
+msgid "Match"
+msgstr "Übereinstimmung"
+
+
 msgctxt "Operator"
 msgid "Copy from Active Track"
 msgstr "Kopieren von aktiver Spur"
@@ -56351,6 +56343,10 @@ msgstr "Objektgruppen"
 
 msgid "Material Groups"
 msgstr "Materialgruppe"
+
+
+msgid "Path Mode"
+msgstr "Pfadmodus"
 
 
 msgid "ASCII"

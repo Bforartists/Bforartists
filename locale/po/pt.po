@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
-"PO-Revision-Date: 2025-06-27 21:59+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
+"PO-Revision-Date: 2025-07-11 23:59+0000\n"
 "Last-Translator: Duarte Ramos <duarte.framos@gmail.com>\n"
 "Language-Team: Portuguese <https://translate.blender.org/projects/blender-ui/ui/pt/>\n"
 "Language: pt\n"
@@ -10796,6 +10796,14 @@ msgstr "Mostrar treliças"
 
 msgid "Include visualization of lattice related animation data"
 msgstr "Inclui a visualização dos dados de animação relacionados a treliças."
+
+
+msgid "Display Light Probe"
+msgstr "Mostrar Sonda de Luz"
+
+
+msgid "Include visualization of lightprobe related animation data"
+msgstr "Incluir visualização de dados de animação relacionados com sondas de luz"
 
 
 msgid "Display Light"
@@ -53888,12 +53896,18 @@ msgid "Minimum value"
 msgstr "Valor mínimo"
 
 
+msgctxt "Unit"
 msgid "Subtype"
 msgstr "Subtipo"
 
 
 msgid "Subtype of the default value"
 msgstr "Subtipo do valor pré definido"
+
+
+msgctxt "Unit"
+msgid "Default"
+msgstr "Padrão"
 
 
 msgid "Geometry Node Socket Interface"
@@ -62918,40 +62932,63 @@ msgid "Other geometry types, like curve, metaball, etc. (converted to meshes)"
 msgstr "Outros tipos de geometria, como curvas, esferas-meta, etc (convertida em malhas)."
 
 
+msgctxt "File browser"
 msgid "Path Mode"
-msgstr "Modo de caminho"
+msgstr "Modo de Caminho"
 
 
 msgid "Method used to reference paths"
 msgstr "Método usado para referenciar caminhos"
 
 
+msgctxt "File browser"
+msgid "Auto"
+msgstr "Auto"
+
+
 msgid "Use relative paths with subdirectories only"
 msgstr "Usa apenas caminhos relativos com subpastas"
+
+
+msgctxt "File browser"
+msgid "Absolute"
+msgstr "Absoluto"
 
 
 msgid "Always write absolute paths"
 msgstr "Sempre escrever caminhos absolutos"
 
 
-msgid "Always write relative paths (where possible)"
-msgstr "Sempre escrever em caminhos relativos (onde for possível)."
+msgctxt "File browser"
+msgid "Relative"
+msgstr "Relativo"
 
 
+msgid "Write relative paths where possible"
+msgstr "Guardar caminhos relativos onde for possível"
+
+
+msgctxt "File browser"
 msgid "Match"
-msgstr "Combinar"
+msgstr "Corresponder"
 
 
 msgid "Match absolute/relative setting with input path"
 msgstr "Combinar definições absolutas/relativas com o caminho de entrada"
 
 
-msgid "Strip Path"
-msgstr "Caminho da faixa"
+msgctxt "File browser"
+msgid "Strip"
+msgstr "Remover"
 
 
 msgid "Filename only"
 msgstr "Apenas nome de ficheiro"
+
+
+msgctxt "File browser"
+msgid "Copy"
+msgstr "Copiar"
 
 
 msgid "Copy the file to the destination path (or subdirectory)"
@@ -82644,6 +82681,14 @@ msgid "Creates a smooth as possible geometry patch from the Face Set minimizing 
 msgstr "Criar um pedaço de geometria tão suave quanto possível a partir de um conjunto de faces minimizando alterações nas posições dos vértices"
 
 
+msgid "Modify Hidden"
+msgstr "Modificar Escondidos"
+
+
+msgid "Apply the edit operation to hidden geometry"
+msgstr "Aplicar operação de edição a geometria escondida"
+
+
 msgctxt "Operator"
 msgid "Face Set Extract"
 msgstr "Extracção de Conjunto de Faces"
@@ -82681,8 +82726,456 @@ msgid "Smooth iterations applied to the extracted mesh"
 msgstr "Iterações de suavização aplicadas na malha extraída"
 
 
+msgctxt "Operator"
+msgid "Face Set Lasso Gesture"
+msgstr "Gesto de Laço para Conjunto de Faces"
+
+
+msgid "Add a face set in a shape defined by the cursor"
+msgstr "Adicionar um conjunto de faces a partir da forma definida pelo cursor"
+
+
+msgctxt "Operator"
+msgid "Face Set Line Gesture"
+msgstr "Gesto de Linha para Conjunto de Faces"
+
+
+msgid "Add a face set to one side of a line defined by the cursor"
+msgstr "Adicionar um conjunto de faces para um lado de uma linha definida pelo cursor"
+
+
+msgctxt "Operator"
+msgid "Create Face Set"
+msgstr "Criar Conjunto de Faces"
+
+
+msgid "Create a new Face Set"
+msgstr "Criar um novo Conjunto de Faces"
+
+
+msgid "Face Set from Masked"
+msgstr "Conjunto de Faces a Partir de Máscara"
+
+
+msgid "Create a new Face Set from the masked faces"
+msgstr "Criar novo Conjunto de Faces das faces com máscara"
+
+
+msgid "Face Set from Visible"
+msgstr "Conjunto de Faces de Visível"
+
+
+msgid "Create a new Face Set from the visible vertices"
+msgstr "Criar novo Conjunto de Faces a partir de vértices visíveis"
+
+
+msgid "Face Set Full Mesh"
+msgstr "Conjunto de Faces da Malha Completa"
+
+
+msgid "Create an unique Face Set with all faces in the sculpt"
+msgstr "Criar Conjunto de Faces Único com todas as faces na escultura"
+
+
+msgid "Face Set from Edit Mode Selection"
+msgstr "Conjunto de Faces de Selecção em Modo de Edição"
+
+
+msgid "Create an Face Set corresponding to the Edit Mode face selection"
+msgstr "Criar um Conjunto de Faces correspondendo à selecção de faces em Modo de Edição"
+
+
+msgctxt "Operator"
+msgid "Init Face Sets"
+msgstr "Inicializar Conjuntos de Faces"
+
+
+msgid "Initializes all Face Sets in the mesh"
+msgstr "Inicializa todos os Conjunto de Faces na malha"
+
+
+msgid "Face Sets from Loose Parts"
+msgstr "Conjunto de Faces de Partes Soltas"
+
+
+msgid "Create a Face Set per loose part in the mesh"
+msgstr "Criar um Conjunto de Faces a partir de cada parte solda da malha"
+
+
+msgid "Face Sets from Material Slots"
+msgstr "Conjunto de Faces"
+
+
+msgid "Create a Face Set per Material Slot"
+msgstr "Criar um Conjunto de Faces por Compartimento de Material"
+
+
+msgid "Face Sets from Mesh Normals"
+msgstr "Conjuntos de Faces das Normais da Malha"
+
+
+msgid "Create Face Sets for Faces that have similar normal"
+msgstr "Criar Conjuntos de Faces para faces que têm normais semelhantes"
+
+
+msgid "Face Sets from UV Seams"
+msgstr "Conjuntos de Faces de Costuras UV"
+
+
+msgid "Create Face Sets using UV Seams as boundaries"
+msgstr "Criar Conjuntos de Faces usando costuras UV como limites"
+
+
+msgid "Face Sets from Edge Creases"
+msgstr "Conjuntos de Faces dos Vincos das Faces"
+
+
+msgid "Create Face Sets using Edge Creases as boundaries"
+msgstr "Criar Conjuntos de Faces usando Vincos de Arestas como limites"
+
+
+msgid "Face Sets from Bevel Weight"
+msgstr "Conjuntos de Faces dos Pesos de Boleado"
+
+
+msgid "Create Face Sets using Bevel Weights as boundaries"
+msgstr "Criar Conjuntos de Faces usando pesos de boleado como limites"
+
+
+msgid "Face Sets from Sharp Edges"
+msgstr "Conjuntos de Faces de Arestas Aguçadas"
+
+
+msgid "Create Face Sets using Sharp Edges as boundaries"
+msgstr "Criar Conjuntos de Faces usando arestas aguçadas como limites"
+
+
+msgid "Face Sets from Face Set Boundaries"
+msgstr "Conjuntos de Faces de Limites de Conjuntos de Faces"
+
+
+msgid "Create a Face Set per isolated Face Set"
+msgstr "Criar um Conjunto de Faces por cada Conjunto de Faces isolado"
+
+
+msgid "Minimum value to consider a certain attribute a boundary when creating the Face Sets"
+msgstr "Valor mínimo para considerar um certo atributo um limite ao criar Conjunto de Faces"
+
+
+msgctxt "Operator"
+msgid "Randomize Face Sets Colors"
+msgstr "Aleatorizar Cores de Conjuntos de Faces"
+
+
+msgid "Generates a new set of random colors to render the Face Sets in the viewport"
+msgstr "Gerara um novo conjunto de cores aleatórias ara representar Conjuntos de Faces na janela de visualização"
+
+
+msgctxt "Operator"
+msgid "Mask by Color"
+msgstr "Máscara por Cor"
+
+
+msgid "Creates a mask based on the active color attribute"
+msgstr "Cria uma máscara com base no atributo de cor activo"
+
+
+msgid "Contiguous"
+msgstr "Contíguo"
+
+
+msgid "Mask only contiguous color areas"
+msgstr "Mascarar apenas areas de cor contíguas"
+
+
+msgid "Invert the generated mask"
+msgstr "Inverte a máscara gerada"
+
+
+msgid "Region coordinates of sampling"
+msgstr "Coordenadas da amostragem da região"
+
+
+msgid "Preserve Previous Mask"
+msgstr "Preservar Máscara Anterior"
+
+
+msgid "Preserve the previous mask and add or subtract the new one generated by the colors"
+msgstr "Preservar a máscara anterior e adicionar ou subtrair a nova gerada pelas cores"
+
+
+msgid "How much changes in color affect the mask generation"
+msgstr "Quanto as alterações na cor afectam a geração da máscara"
+
+
+msgctxt "Operator"
+msgid "Mask Filter"
+msgstr "Mascarar Filtro"
+
+
+msgid "Applies a filter to modify the current mask"
+msgstr "Aplica um filtro para modificar a actual máscara"
+
+
+msgid "Filter that is going to be applied to the mask"
+msgstr "Filtro a ser aplicado à máscara"
+
+
+msgid "Smooth Mask"
+msgstr "Suavizar Máscara"
+
+
+msgid "Sharpen Mask"
+msgstr "Nitidez da Máscara"
+
+
+msgid "Grow Mask"
+msgstr "Crescer Máscara"
+
+
+msgid "Shrink Mask"
+msgstr "Encolher Máscara"
+
+
+msgid "Increase Contrast"
+msgstr "Aumentar Contraste"
+
+
+msgid "Decrease Contrast"
+msgstr "Reduzir Contraste"
+
+
+msgctxt "Operator"
+msgid "Mask From Boundary"
+msgstr "Máscara de Limite"
+
+
+msgid "Creates a mask based on the boundaries of the surface"
+msgstr "Criar uma máscara com base nos limites da superfície"
+
+
+msgid "Boundary type to mask"
+msgstr "Tipo de limite em máscara"
+
+
+msgid "Calculate the boundary mask based on disconnected mesh topology islands"
+msgstr "Calcular a máscara limite com base em ilhas de topologia de malha desconectadas"
+
+
+msgid "Calculate the boundary mask between face sets"
+msgstr "Calcular a máscara limite entre conjuntos de faces"
+
+
+msgid "Mix mode"
+msgstr "Modo de mistura"
+
+
+msgid "Use settings from here"
+msgstr "Usar estas definições"
+
+
+msgid "Use settings from operator properties"
+msgstr "Usar definições das propriedades do operador"
+
+
+msgid "Use settings from brush"
+msgstr "Usar definições do pincel"
+
+
+msgid "Use settings from scene"
+msgstr "Usar definições da cena"
+
+
+msgctxt "Operator"
+msgid "Mask From Cavity"
+msgstr "Máscara de Cavidade"
+
+
+msgid "Creates a mask based on the curvature of the surface"
+msgstr "Criar uma máscara com base na curvatura da superfície"
+
+
+msgid "Cavity (Inverted)"
+msgstr "Cavidade (Invertida)"
+
+
 msgid "Custom Curve"
 msgstr "Curva personalizada"
+
+
+msgctxt "Operator"
+msgid "Init Mask"
+msgstr "Inicializar Máscara"
+
+
+msgid "Creates a new mask for the entire mesh"
+msgstr "Criar uma nova máscara para a malha inteira"
+
+
+msgid "Random per Vertex"
+msgstr "Aleatório por Vértice"
+
+
+msgid "Random per Face Set"
+msgstr "Aleatório por Conjunto de Faces"
+
+
+msgid "Random per Loose Part"
+msgstr "Aleatório por Parte Separada"
+
+
+msgctxt "Operator"
+msgid "Filter Mesh"
+msgstr "Filtrar Malha"
+
+
+msgid "Applies a filter to modify the current mesh"
+msgstr "Aplicar um filtro para modificar a malha actual"
+
+
+msgid "Apply the deformation in the selected axis"
+msgstr "Aplicar a deformação no eixo seleccionado"
+
+
+msgid "Deform in the X axis"
+msgstr "Deformar no eixo X"
+
+
+msgid "Deform in the Y axis"
+msgstr "Deformar no eixo Y"
+
+
+msgid "Deform in the Z axis"
+msgstr "Deformar no eixo Z"
+
+
+msgid "Orientation of the axis to limit the filter displacement"
+msgstr "Orientação do eixo para limitar o filtro de deslocamento"
+
+
+msgid "Use the local axis to limit the displacement"
+msgstr "Usar o eixo local para limitar o deslocamento"
+
+
+msgid "Use the global axis to limit the displacement"
+msgstr "Usar o eixo global para limitar o deslocamento"
+
+
+msgid "Use the view axis to limit the displacement"
+msgstr "Usar o eixo do ponto de vista para limitar o deslocamento"
+
+
+msgid "Curvature Smooth Iterations"
+msgstr "Iterações de Suavização de Curvatura"
+
+
+msgid "How much smooth the resulting shape is, ignoring high frequency details"
+msgstr "Quão suavizada a forma resultante é, ignorando detalhes de alta frequência"
+
+
+msgid "Intensify Details"
+msgstr "Intensificar Detalhes"
+
+
+msgid "How much creases and valleys are intensified"
+msgstr "Quão intensificados são os vincos e vales"
+
+
+msgid "Smooth Ratio"
+msgstr "Rácio de Suavização"
+
+
+msgid "How much smoothing is applied to polished surfaces"
+msgstr "Quantidade de suavização aplicada a superfície polidas"
+
+
+msgid "Smooth mesh"
+msgstr "Suavizar malha"
+
+
+msgid "Scale mesh"
+msgstr "Redimensionar malha"
+
+
+msgid "Inflate mesh"
+msgstr "Insuflar malha"
+
+
+msgctxt "Operator"
+msgid "Sphere"
+msgstr "Esfera"
+
+
+msgid "Morph into sphere"
+msgstr "Transformar em esfera"
+
+
+msgctxt "Operator"
+msgid "Random"
+msgstr "Aleatório"
+
+
+msgid "Randomize vertex positions"
+msgstr "Aleatorizar Posições de Vértices"
+
+
+msgctxt "Operator"
+msgid "Relax"
+msgstr "Relaxar"
+
+
+msgid "Relax mesh"
+msgstr "Relaxar malha"
+
+
+msgctxt "Operator"
+msgid "Relax Face Sets"
+msgstr "Relaxar conjuntos de faces"
+
+
+msgid "Smooth the edges of all the Face Sets"
+msgstr "Suavizar as arestas de todos os Conjuntos de Faces"
+
+
+msgctxt "Operator"
+msgid "Surface Smooth"
+msgstr "Suavização de Superfície"
+
+
+msgid "Smooth the surface of the mesh, preserving the volume"
+msgstr "Suavizar a superfície da malha, preservando o volume"
+
+
+msgctxt "Operator"
+msgid "Sharpen"
+msgstr "Aguçar"
+
+
+msgid "Sharpen the cavities of the mesh"
+msgstr "Aguçar as cavidades da malha"
+
+
+msgctxt "Operator"
+msgid "Enhance Details"
+msgstr "Melhorar Detalhes"
+
+
+msgid "Enhance the high frequency surface detail"
+msgstr "Melhorar os detalhes de alta frequência da superfície"
+
+
+msgctxt "Operator"
+msgid "Erase Displacement"
+msgstr "Apagar Deslocamento"
+
+
+msgid "Deletes the displacement of the Multires Modifier"
+msgstr "Apaga o deslocamento do Modificador Multiresolução"
+
+
+msgctxt "Operator"
+msgid "Rebuild BVH"
+msgstr "Reconstruir BVH"
 
 
 msgid "Recalculate the sculpt BVH to improve performance"
@@ -82727,8 +83220,17 @@ msgid "Create a new object from the sliced mask"
 msgstr "Criar um novo objecto da máscara cortada"
 
 
+msgctxt "Operator"
+msgid "Project Line Gesture"
+msgstr "Gesto projectar Linha"
+
+
 msgid "Project the geometry onto a plane defined by a line"
 msgstr "­"
+
+
+msgid "Sample the vertex color of the active vertex"
+msgstr "Amostrar a cor de vértice do vértice activo"
 
 
 msgctxt "Operator"
@@ -82740,8 +83242,28 @@ msgid "Sample the mesh detail on clicked point"
 msgstr "Obtém uma amostra dos detalhes da malha no ponto clicado."
 
 
+msgid "Screen coordinates of sampling"
+msgstr "Coordenadas de ecrã de amostragem"
+
+
+msgid "Detail Mode"
+msgstr "Mode de Detalhe"
+
+
+msgid "Target sculpting workflow that is going to use the sampled size"
+msgstr "Modo de escultora alvo que vai usar o tamanho amostrado"
+
+
 msgid "Dyntopo"
 msgstr "Topologia dinâmica"
+
+
+msgid "Sample dyntopo detail"
+msgstr "Amostrar detalhe de topologia dinâmica"
+
+
+msgid "Sample mesh voxel size"
+msgstr "Amostrar tamanho de voxel da malha"
 
 
 msgctxt "Operator"
@@ -82762,20 +83284,184 @@ msgid "Reset the copy of the mesh that is being sculpted on"
 msgstr "Redefine a cópia da malha que está sendo esculpida."
 
 
+msgctxt "Operator"
+msgid "Set Pivot Position"
+msgstr "Definir Posição do Pivot"
+
+
+msgid "Sets the sculpt transform pivot position"
+msgstr "Define a posição do pivot de escultura"
+
+
+msgid "Sets the pivot to the origin of the sculpt"
+msgstr "Coloca o pivot na origem da escultura"
+
+
+msgid "Unmasked"
+msgstr "Sem Máscara"
+
+
+msgid "Sets the pivot position to the average position of the unmasked vertices"
+msgstr "Coloca o pivot na posição média dos vértices sem máscara"
+
+
+msgid "Mask Border"
+msgstr "Limite da Máscara"
+
+
+msgid "Sets the pivot position to the center of the border of the mask"
+msgstr "Coloca a posição do pivot no centro do limite da máscara"
+
+
+msgid "Active Vertex"
+msgstr "Vértice Activo"
+
+
+msgid "Sets the pivot position to the active vertex position"
+msgstr "Coloca a posição do pivot na posição do vértice activo"
+
+
+msgid "Sets the pivot position to the surface under the cursor"
+msgstr "Coloca a posição do pivot na superfície sob o cursor"
+
+
+msgid "Mouse Position X"
+msgstr "Posição X do Rato"
+
+
+msgid "Position of the mouse used for \"Surface\" mode"
+msgstr "Posição do rato usada para modo \"Superfície\""
+
+
+msgid "Mouse Position Y"
+msgstr "Posição Y do Rato"
+
+
 msgid "Symmetrize the topology modifications"
 msgstr "Simetriza as modificações da topologia."
+
+
+msgid "Distance within which symmetrical vertices are merged"
+msgstr "Distância dentro da qual vértices simétricos são fundidos"
+
+
+msgctxt "Operator"
+msgid "Trim Box Gesture"
+msgstr "Gesto Rectângulo de Aparar"
+
+
+msgid "Execute a boolean operation on the mesh and a rectangle defined by the cursor"
+msgstr "Executa uma operação booleana na malha com um rectângulo definido pelo cursor"
+
+
+msgid "Extrude Mode"
+msgstr "Modo de Extrusão"
+
+
+msgid "Align trim geometry with the perspective of the current view for a tapered shape"
+msgstr "Alinhar geometria de corte com a perspectiva do actual ponto de vista para forma afunilada"
+
+
+msgid "Align trim geometry orthogonally for a shape with 90 degree angles"
+msgstr "Alinhar geometria ortogonalmente para forma com ângulos 90 graus"
+
+
+msgid "Trim Mode"
+msgstr "Modo de Aparar"
+
+
+msgid "Use a difference boolean operation"
+msgstr "Usar operação booleana de diferença"
+
+
+msgid "Use a union boolean operation"
+msgstr "Usar operação booleana de união"
+
+
+msgid "Join the new mesh as separate geometry, without performing any boolean operation"
+msgstr "Juntar nova malha como geometria separada, sem calcular qualquer operação booleana"
+
+
+msgid "Shape Orientation"
+msgstr "Orientações da Forma"
+
+
+msgid "Use the view to orientate the trimming shape"
+msgstr "Usar o ponto de vista para orientar a forma de aparar"
+
+
+msgid "Use the surface normal to orientate the trimming shape"
+msgstr "Usar a normal da superfície para orientar a forma de aparar"
+
+
+msgid "Use Cursor for Depth"
+msgstr "Usar Profundidade do Cursor"
+
+
+msgid "Use cursor location and radius for the dimensions and position of the trimming shape"
+msgstr "Usar posição e raio do cursor para dimensões e posição da forma de aparar"
+
+
+msgctxt "Operator"
+msgid "Trim Lasso Gesture"
+msgstr "Gesto de Laço de Aparar"
+
+
+msgid "Execute a boolean operation on the mesh and a shape defined by the cursor"
+msgstr "Executar operação booleana na malha com forma definida pelo cursor"
+
+
+msgctxt "Operator"
+msgid "Trim Line Gesture"
+msgstr "Gesto de Linha de Aparar"
+
+
+msgid "Remove a portion of the mesh on one side of a line"
+msgstr "Remover uma porção da malha para um lado de uma linha"
+
+
+msgctxt "Operator"
+msgid "Trim Polyline Gesture"
+msgstr "Gesto de poli-linha de aparar"
+
+
+msgid "Execute a boolean operation on the mesh and a polygonal shape defined by the cursor"
+msgstr "Executar operação booleana na malha com forma poligonal definida pelo cursor"
+
+
+msgctxt "Operator"
+msgid "Grab UVs"
+msgstr "Agarrar UVs"
 
 
 msgid "Grab UVs"
 msgstr "Agarrar UVs"
 
 
+msgid "Invert action for the duration of the stroke"
+msgstr "Inverter acção durante o traço"
+
+
+msgctxt "Operator"
+msgid "Pinch UVs"
+msgstr "Beliscar UVs"
+
+
 msgid "Pinch UVs"
 msgstr "Pinçar UVs"
 
 
+msgctxt "Operator"
 msgid "Relax UVs"
 msgstr "Relaxar UVs"
+
+
+msgid "Relax UVs"
+msgstr "Relaxar UVs"
+
+
+msgid "Relax Method"
+msgstr "Método de Relaxamento"
 
 
 msgid "Algorithm used for UV relaxation"
@@ -82790,9 +83476,17 @@ msgid "Use HC method for relaxation"
 msgstr "Usa o método Classes de Humphrey para relaxamento."
 
 
+msgid "Use Geometry (cotangent) relaxation, making UVs follow the underlying 3D geometry"
+msgstr "Usar relaxamento de geometria (co-tangente), fazendo UVs seguir geometria 3D subjacente"
+
+
 msgctxt "Operator"
 msgid "Change Effect Type"
 msgstr "Alterar os tipos de efeito"
+
+
+msgid "Replace effect strip with another that takes the same number of inputs"
+msgstr "Substituir faixa de efeito com outra que receba o mesmo número de entradas"
 
 
 msgctxt "Sequence"
@@ -82800,9 +83494,26 @@ msgid "Type"
 msgstr "Tipo"
 
 
+msgid "Strip effect type"
+msgstr "Tipo de Efeito da Faixa"
+
+
+msgctxt "Sequence"
+msgid "Crossfade"
+msgstr "Transição de Desvanecimento"
+
+
+msgid "Fade out of one video, fading into another"
+msgstr "Desvanecer saída de um vídeo para entrada do outro"
+
+
 msgctxt "Sequence"
 msgid "Add"
 msgstr "Adicionar"
+
+
+msgid "Add together color channels from two videos"
+msgstr "Adicionar canais de cor de dois vídeos"
 
 
 msgctxt "Sequence"
@@ -82810,9 +83521,17 @@ msgid "Subtract"
 msgstr "Subtrair"
 
 
+msgid "Subtract one strip's color from another"
+msgstr "Subtrair a cor de uma faixa da outra"
+
+
 msgctxt "Sequence"
 msgid "Alpha Over"
 msgstr "Alfa por cima"
+
+
+msgid "Blend alpha on top of another video"
+msgstr "Misturar alfa sobre outro vídeo"
 
 
 msgctxt "Sequence"
@@ -82820,9 +83539,26 @@ msgid "Alpha Under"
 msgstr "Alfa por baixo"
 
 
+msgid "Blend alpha below another video"
+msgstr "Misturar alpha por baixo de outro vídeo"
+
+
+msgctxt "Sequence"
+msgid "Gamma Crossfade"
+msgstr "Transição de Desvanecimento Gama"
+
+
+msgid "Crossfade with color correction"
+msgstr "Transição de desvanecimento com correcção de cor"
+
+
 msgctxt "Sequence"
 msgid "Multiply"
 msgstr "Multiplicar"
+
+
+msgid "Multiply color channels from two videos"
+msgstr "Multiplicar canais de cor de dois vídeos"
 
 
 msgctxt "Sequence"
@@ -82830,9 +83566,17 @@ msgid "Wipe"
 msgstr "Varredura"
 
 
+msgid "Sweep a transition line across the frame"
+msgstr "Varrer uma linha de transição ao longo da tela"
+
+
 msgctxt "Sequence"
 msgid "Glow"
 msgstr "Incandescência"
+
+
+msgid "Add blur and brightness to light areas"
+msgstr "Adicionar desfoque e brilho a áreas iluminadas"
 
 
 msgctxt "Sequence"
@@ -82840,9 +83584,17 @@ msgid "Transform"
 msgstr "Transformar"
 
 
+msgid "Apply scale, rotation, or translation"
+msgstr "Aplicar escala, rotação ou translação"
+
+
 msgctxt "Sequence"
 msgid "Color"
 msgstr "Cor"
+
+
+msgid "Add a simple color strip"
+msgstr "Adicionar uma faixa de cor simples"
 
 
 msgctxt "Sequence"
@@ -82850,9 +83602,17 @@ msgid "Speed"
 msgstr "Velocidade"
 
 
+msgid "Timewarp video strips, modifying playback speed"
+msgstr "Saltar no tempo de faixas vídeo, modificando a velocidade de reprodução"
+
+
 msgctxt "Sequence"
 msgid "Multicam Selector"
 msgstr "Seletor multi-câmara"
+
+
+msgid "Control active camera angles"
+msgstr "Controlar ângulos da câmara activa"
 
 
 msgctxt "Sequence"
@@ -82860,14 +83620,35 @@ msgid "Adjustment Layer"
 msgstr "Camada de ajuste"
 
 
+msgid "Apply nondestructive effects"
+msgstr "Aplicar efeitos não destrutivos"
+
+
 msgctxt "Sequence"
 msgid "Gaussian Blur"
 msgstr "Desfoque gaussiano"
 
 
+msgid "Soften details along axes"
+msgstr "Suavizar detalhes ao longo dos eixos"
+
+
 msgctxt "Sequence"
 msgid "Text"
 msgstr "Textos"
+
+
+msgid "Add a simple text strip"
+msgstr "Adicionar um excerto de texto simples"
+
+
+msgctxt "Sequence"
+msgid "Color Mix"
+msgstr "Misturar Cor"
+
+
+msgid "Combine two strips using blend modes"
+msgstr "Combinar duas faixas usando modos de mistura"
 
 
 msgctxt "Operator"
@@ -82884,12 +83665,59 @@ msgstr "Cria substitutivos para os fotogramas que faltam na faixa."
 
 
 msgctxt "Operator"
+msgid "Change Scene"
+msgstr "Alterar Cena"
+
+
+msgid "Change Scene assigned to Strip"
+msgstr "Alterar cena atribuída a Faixa"
+
+
+msgctxt "Operator"
+msgid "Connect Strips"
+msgstr "Conectar Faixas"
+
+
+msgid "Link selected strips together for simplified group selection"
+msgstr "Conectar faixas para selecção agrupada simplificada"
+
+
+msgid "Toggle strip connections"
+msgstr "Alternar conexões das faixas"
+
+
+msgctxt "Operator"
 msgid "Copy"
 msgstr "Copiar"
 
 
 msgid "Copy the selected strips to the internal clipboard"
 msgstr "Copiar as faixas seleccionadas para a área de transferência interna"
+
+
+msgid "Cursor location in normalized preview coordinates"
+msgstr "Localização do cursor em coordenadas normalizadas de pré visualização"
+
+
+msgid "Delete selected strips from the sequencer"
+msgstr "Apagar faixas seleccionadas do editor de sequência"
+
+
+msgid "Delete Data"
+msgstr "Apagar Dados"
+
+
+msgid "After removing the Strip, delete the associated data also"
+msgstr "Após remoção de faixa, apagar também dados associados"
+
+
+msgctxt "Operator"
+msgid "Disconnect Strips"
+msgstr "Desconectar Faixas"
+
+
+msgid "Unlink selected strips so that they can be selected individually"
+msgstr "Desconectar faixas seleccionadas para poderem ser seleccionadas individualmente"
 
 
 msgid "Duplicate the selected strips"
@@ -82917,6 +83745,10 @@ msgid "Channel to place this strip into"
 msgstr "Canal no qual colocar esta faixa"
 
 
+msgid "Initialize the strip with this color"
+msgstr "Inicializar faixa com esta cor"
+
+
 msgid "End frame for the color strip"
 msgstr "Fotograma final par a faixa de cor."
 
@@ -82933,8 +83765,28 @@ msgid "Don't correct overlap on new sequence strips"
 msgstr "Não corrige as sobreposições em novas faixas de sequência."
 
 
+msgid "Override Overlap Shuffle Behavior"
+msgstr "Revogar Comportamento de Baralhamento"
+
+
+msgid "Use the overlap_mode tool settings to determine how to shuffle overlapping strips"
+msgstr "Utilizar definições da ferramenta overlap_mode para determinar como baralhar faixas sobrepostas"
+
+
 msgid "Replace Selection"
 msgstr "Sobrepor selecção"
+
+
+msgid "Deselect previously selected strips"
+msgstr "Desselecionar faixas anteriormente seleccionadas."
+
+
+msgid "Skip Locked or Muted Channels"
+msgstr "Ignorar Canais Trancados ou Silenciados"
+
+
+msgid "Add strips to muted or locked channels when adding movie strips"
+msgstr "Adicionar faixas em canais silenciados ou trancados ao adicionar faixas de Filme"
 
 
 msgid "Sequencer effect type"
@@ -82946,6 +83798,10 @@ msgid "Set Selected Strip Proxies"
 msgstr "Definir aproximações para as faixas seleccionadas"
 
 
+msgid "Enable selected proxies on all selected Movie and Image strips"
+msgstr "Activar aproximações seleccionadas em todas as faixas de Filme seleccionadas"
+
+
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "Exportar subtítulos"
@@ -82953,6 +83809,62 @@ msgstr "Exportar subtítulos"
 
 msgid "Export .srt file containing text strips"
 msgstr "Exporta um ficheiro com extensão .srt contendo as faixas de textos."
+
+
+msgid "Fade Duration"
+msgstr "Duração do Desvanecimento"
+
+
+msgid "Duration of the fade in seconds"
+msgstr "Duração do desvanecimento em segundos"
+
+
+msgid "Fade Type"
+msgstr "Tipo de Desvanecimento"
+
+
+msgid "Fade in, out, both in and out, to, or from the current frame. Default is both in and out"
+msgstr "Desvanecimento de entrada, saída, tanto de entrada como saída, a partir de ou até ao actual fotograma. Pré definição é tanto de entrada como saída"
+
+
+msgid "Fade In and Out"
+msgstr "Desvanecimento de Entrada e Saída"
+
+
+msgid "Fade selected strips in and out"
+msgstr "Desvanecer entrada e saída das faixas seleccionadas"
+
+
+msgid "Fade In"
+msgstr "Desvanecimento de Entrada"
+
+
+msgid "Fade in selected strips"
+msgstr "Desvanecer entrada das faixas seleccionadas"
+
+
+msgid "Fade Out"
+msgstr "Desvanecimento de Saída"
+
+
+msgid "Fade out selected strips"
+msgstr "Desvanecer saída das faixas seleccionadas"
+
+
+msgid "From Current Frame"
+msgstr "A Partir do Fotograma Actual"
+
+
+msgid "Fade from the time cursor to the end of overlapping strips"
+msgstr "Desvanecer a partir do cursor temporal até ao final da sobreposição entre faixas"
+
+
+msgid "To Current Frame"
+msgstr "Até Fotograma Actual"
+
+
+msgid "Fade from the start of strips under the time cursor to the current frame"
+msgstr "Desvanecer do início da faixa sob o cursor temporal até ao fotograma actual"
 
 
 msgctxt "Operator"
@@ -82994,6 +83906,46 @@ msgid "Add an image or image sequence to the sequencer"
 msgstr "Adiciona uma imagem ou sequência de imagens ao editor de sequências."
 
 
+msgid "Scale fit method"
+msgstr "Método de ajuste de dimensão"
+
+
+msgid "Scale image to fit within the canvas"
+msgstr "Redimensionar imagem para caber na tela"
+
+
+msgid "Scale to Fill"
+msgstr "Redimensionar para Preencher"
+
+
+msgid "Scale image to completely fill the canvas"
+msgstr "Redimensionar imagem para preencher completamente a tela"
+
+
+msgid "Stretch to Fill"
+msgstr "Esticar para Preencher"
+
+
+msgid "Stretch image to fill the canvas"
+msgstr "Esticar imagem para preencher a tela"
+
+
+msgid "Use Original Size"
+msgstr "Usar tamanho original"
+
+
+msgid "Keep image at its original size"
+msgstr "Manter imagem em tamanho original"
+
+
+msgid "Set View Transform"
+msgstr "Definir Transformação de Visualização"
+
+
+msgid "Set appropriate view transform based on media color space"
+msgstr "Definir transformação colorimétrica de visualização apropriada com base no espaço colorimétrico da media"
+
+
 msgctxt "Operator"
 msgid "Separate Images"
 msgstr "Separar imagens"
@@ -83012,6 +83964,10 @@ msgid "Lock Strips"
 msgstr "Travar faixas"
 
 
+msgid "Lock strips so they can't be transformed"
+msgstr "Trancar faixa para que não possam ser transformadas"
+
+
 msgctxt "Operator"
 msgid "Add Mask Strip"
 msgstr "Adicionar Faixa Máscara"
@@ -83026,14 +83982,26 @@ msgid "Make Meta Strip"
 msgstr "Criar faixa meta"
 
 
+msgid "Group selected strips into a meta-strip"
+msgstr "Agrupar faixas seleccionadas numa meta-faixa"
+
+
 msgctxt "Operator"
 msgid "UnMeta Strip"
 msgstr "Reverter para faixa não meta "
 
 
+msgid "Put the contents of a meta-strip back in the sequencer"
+msgstr "Colocar conteúdos da meta-faixa de volta no editor de sequências"
+
+
 msgctxt "Operator"
 msgid "Toggle Meta Strip"
 msgstr "Alternar faixa meta"
+
+
+msgid "Toggle a meta-strip (to edit enclosed strips)"
+msgstr "Alternar uma meta-faixa meta (para editar faixas nela contidas inclusas)"
 
 
 msgctxt "Operator"
@@ -83045,8 +84013,24 @@ msgid "Add a movie strip to the sequencer"
 msgstr "Adiciona uma faixa de filme para o editor de sequências."
 
 
+msgid "Adjust Playback Rate"
+msgstr "Ajustar Velocidade de Reprodução"
+
+
+msgid "Play at normal speed regardless of scene FPS"
+msgstr "Reproduzir velocidade normal independentemente dos fotogramas por segundo da cena"
+
+
 msgid "Load sound with the movie"
 msgstr "Carrega o som junto com o filme."
+
+
+msgid "Set Scene Frame Rate"
+msgstr "Definir Taxa de Fotogramas da Cena"
+
+
+msgid "Set frame rate of the current scene to the frame rate of the movie"
+msgstr "Definir a taxa de fotogramas da cena conforme a taxa do filme"
 
 
 msgctxt "Operator"
@@ -83089,6 +84073,10 @@ msgid "Paste strips from the internal clipboard"
 msgstr "Colar faixas da área de transferência interna"
 
 
+msgid "Keep strip offset relative to the current frame when pasting"
+msgstr "Manter deslocamento da faixa relativo ao fotograma actual ao colar"
+
+
 msgctxt "Operator"
 msgid "Reassign Inputs"
 msgstr "Reatribuir entradas"
@@ -83096,6 +84084,10 @@ msgstr "Reatribuir entradas"
 
 msgid "Reassign the inputs for the effect strip"
 msgstr "Reatribui as entradas para a faixa de efeito."
+
+
+msgid "Rebuild all selected proxies and timecode indices"
+msgstr "Reconstruir todas as aproximações seleccionadas e os índices de códigos temporais"
 
 
 msgctxt "Operator"
@@ -83129,8 +84121,134 @@ msgid "Set Render Size"
 msgstr "Definir tamanho de renderização"
 
 
+msgid "Set render size and aspect from active strip"
+msgstr "Definir tamanho de renderização e o proporções a partir da sequência activa"
+
+
+msgctxt "Operator"
+msgid "Add Freeze Frame And Slide"
+msgstr "Adicionar fotograma congelado e deslise"
+
+
+msgid "Add freeze frame and move it"
+msgstr "Adicionar fotograma congelado e movê-lo"
+
+
+msgid "Add Freeze Frame"
+msgstr "Adicionar Fotograma Congelado"
+
+
+msgid "Add freeze frame"
+msgstr "Adicionar um fotograma congelado"
+
+
+msgctxt "Operator"
+msgid "Add Speed Transition And Slide"
+msgstr "Adicionar Transição de velocidade e Deslize"
+
+
+msgid "Add smooth transition between 2 retimed segments and change its duration"
+msgstr "Adicionar uma transição suave entre dois segmentos recronometrados e alterar a sua duração"
+
+
+msgid "Add Speed Transition"
+msgstr "Adicionar Transição de Velocidade"
+
+
+msgid "Add smooth transition between 2 retimed segments"
+msgstr "Adicionar uma transição suave entre dois segmentos recronometrados"
+
+
+msgctxt "Operator"
+msgid "Add Freeze Frame"
+msgstr "Adicionar um Fotograma Congelado"
+
+
+msgid "Duration of freeze frame segment"
+msgstr "Duração do segmento congelado"
+
+
+msgctxt "Operator"
+msgid "Add Retiming Key"
+msgstr "Adicionar Chave de Recronometragem"
+
+
+msgid "Add retiming Key"
+msgstr "Adicionar chave de recronometragem"
+
+
+msgid "Timeline Frame"
+msgstr "Fotograma da Linha de Tempo"
+
+
+msgid "Frame where key will be added"
+msgstr "Fotograma onde a chave será adicionada"
+
+
+msgctxt "Operator"
+msgid "Delete Retiming Keys"
+msgstr "Apagar Chaves de Recronometragem"
+
+
+msgid "Delete selected retiming keys from the sequencer"
+msgstr "Apagar chaves de recronometragem seleccionadas do editor de sequências"
+
+
+msgctxt "Operator"
+msgid "Reset Retiming"
+msgstr "Repor Recronometragem"
+
+
+msgid "Reset strip retiming"
+msgstr "Repor ajustes de tempo da faixa"
+
+
+msgctxt "Operator"
+msgid "Set Speed"
+msgstr "Definir Velocidade"
+
+
+msgid "Set speed of retimed segment"
+msgstr "Definir tempo do segmento recronometrado"
+
+
+msgid "Preserve Current Retiming"
+msgstr "Manter Recronometragem Actual"
+
+
+msgid "Keep speed of other segments unchanged, change strip length instead"
+msgstr "Manter velocidade dos outros segmentos inalterada, alterar comprimento da faixa"
+
+
+msgid "New speed of retimed segment"
+msgstr "Nova velocidade do segmento recronometrado"
+
+
+msgctxt "Operator"
+msgid "Retime Strips"
+msgstr "Recronometrar Faixas"
+
+
+msgid "Show retiming keys in selected strips"
+msgstr "Mostrar chaves de ajuste de tempo nas faixas seleccionadas"
+
+
+msgctxt "Operator"
+msgid "Add Speed Transition"
+msgstr "Adicionar Transição de Velocidade"
+
+
 msgid "Use mouse to sample color in current frame"
 msgstr "Usa o rato para obter uma amostra de cor no fotograma actual."
+
+
+msgctxt "Operator"
+msgid "Update Scene Frame Range"
+msgstr "Actualizar Intervalo de Fotogramas a Cena"
+
+
+msgid "Update frame range of scene strip"
+msgstr "Actualizar intervalo de fotogramas da faixa de cena"
 
 
 msgctxt "Operator"
@@ -83138,8 +84256,49 @@ msgid "Add Scene Strip"
 msgstr "Adicionar faixa de cena"
 
 
+msgid "Add a strip to the sequencer using a Blender scene as a source"
+msgstr "Adicionar uma faixa ao editor de sequências usando uma cena Blender como origem"
+
+
+msgctxt "Operator"
+msgid "Add Strip with a new Scene"
+msgstr "Adicionar uma Faixa com uma nova Cena"
+
+
+msgid "Create a new Strip and assign a new Scene as source"
+msgstr "Criar nova faixa e atribuir nova cena como origem"
+
+
+msgid "Add new Strip with a new empty Scene with default settings"
+msgstr "Criar nova faixa com nova cena vazia como origem"
+
+
+msgid "Add a new Strip, with an empty scene, and copy settings from the current scene"
+msgstr "Adicionar nova faixa, com uma cena vazia, copiar definições da cena actual"
+
+
+msgid "Add a Strip and link in the collections from the current scene (shallow copy)"
+msgstr "Adicionar faixa e vincular colecções da cena actual (copia rápida)"
+
+
+msgid "Add a Strip and make a full copy of the current scene"
+msgstr "Adicionar faixa e fazer cópia completa da cena actual"
+
+
 msgid "Select a strip (last selected becomes the \"active strip\")"
 msgstr "Selecciona uma faixa (a última seleccionada se torna a \"faixa activa\")."
+
+
+msgid "Use the object center when selecting, in edit mode used to extend object selection"
+msgstr "Usar centro do objecto durante a selecção, usado para expandir selecção em modo de edição"
+
+
+msgid "Ignore Connections"
+msgstr "Ignorar Conexões"
+
+
+msgid "Select strips individually whether or not they are connected"
+msgstr "Seleccionar faixas individualmente, quer estejam conectadas quer não"
 
 
 msgid "Linked Handle"
@@ -83154,12 +84313,36 @@ msgid "Linked Time"
 msgstr "Tempo conectado"
 
 
+msgid "Select other strips or handles at the same time, or all retiming keys after the current in retiming mode"
+msgstr "Seleccionar outras faixas ou manípulos ao mesmo tempo, ou todas as chaves de recronometragem após o actual modo de recronometragem"
+
+
+msgid "Side of Frame"
+msgstr "Lado do Fotograma"
+
+
+msgid "Select all strips on same side of the current frame as the mouse cursor"
+msgstr "Seleccionar faixas do mesmo lado do cursor do rato em relação ao fotograma actual"
+
+
 msgid "Select or deselect all strips"
 msgstr "Selecciona ou desseleciona todas as faixas."
 
 
 msgid "Select strips using box selection"
 msgstr "Seleccionar faixas usando rectângulo de selecção"
+
+
+msgid "Select Handles"
+msgstr "Seleccionar Manípulos"
+
+
+msgid "Select the strips and their handles"
+msgstr "Seleccionar as faixas e os seus manípulos"
+
+
+msgid "Make box select pass through to sequence slide when the cursor is hovering on a strip"
+msgstr "Fazer o rectângulo de selecção converter em acção de deslisar ao pairar cursor sobre faixa"
 
 
 msgid "Select all strips grouped by various properties"
@@ -83172,6 +84355,10 @@ msgstr "Tipo de faixa partilhado"
 
 msgid "Global Type"
 msgstr "Tipo global"
+
+
+msgid "All strips of same basic type (graphical or sound)"
+msgstr "Todas as faixas do mesmo tipo básico (gráficos ou sons)"
 
 
 msgid "Shared strip effect type (if active strip is not an effect one, select all non-effect strips)"
@@ -83215,12 +84402,37 @@ msgstr "Considera apenas as faixas que estão no mesmo canal que a faixa activa.
 
 
 msgctxt "Operator"
+msgid "Select Handle"
+msgstr "Seleccionar Manípulo"
+
+
+msgid "Select strip handle"
+msgstr "Seleccionar manípulo da faixa"
+
+
+msgctxt "Operator"
 msgid "Select Handles"
 msgstr "Seleccionar hastes"
 
 
+msgid "Select gizmo handles on the sides of the selected strip"
+msgstr "Selecciona manipulador em ambos os lados da faixa seleccionada"
+
+
 msgid "The side of the handle that is selected"
 msgstr "O tamanho do manipulador que está seleccionado."
+
+
+msgid "Left Neighbor"
+msgstr "Vizinho Esquerdo"
+
+
+msgid "Right Neighbor"
+msgstr "Vizinho Direito"
+
+
+msgid "Both Neighbors"
+msgstr "Ambos os Vizinhos"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -83244,12 +84456,76 @@ msgid "Select more strips adjacent to the current selection"
 msgstr "Selecciona mais faixas adjacentes a selecção actual."
 
 
+msgctxt "Operator"
+msgid "Select Side"
+msgstr "Lado de Selecção"
+
+
 msgid "Select strips on the nominated side of the selected strips"
 msgstr "Seleccionar faixas do lado denominado das faixas seleccionadas"
 
 
+msgid "The side to which the selection is applied"
+msgstr "O lado para o qual a selecção é aplicada"
+
+
+msgid "No Change"
+msgstr "Inalterado"
+
+
+msgctxt "Operator"
+msgid "Select Side of Frame"
+msgstr "Seleccionar Lado do Fotograma"
+
+
+msgid "Select strips relative to the current frame"
+msgstr "Seleccionar faixas relativas ao fotograma actual"
+
+
+msgid "Select to the left of the current frame"
+msgstr "Seleccionar à esquerda do fotograma actual"
+
+
+msgid "Select to the right of the current frame"
+msgstr "Seleccionar à direita do fotograma actual"
+
+
+msgid "Select intersecting with the current frame"
+msgstr "Seleccionar intersectante com o fotograma actual"
+
+
+msgctxt "Operator"
+msgid "Set Range to Strips"
+msgstr "Definir Intervalo a Partir das Faixas"
+
+
+msgid "Set the frame range to the selected strips start and end"
+msgstr "Definir intervalo de fotogramas como início e fim das faixas seleccionadas"
+
+
+msgid "Set the preview range instead"
+msgstr "Definir Intervalo de Pré-Visualização"
+
+
+msgctxt "Operator"
+msgid "Slip Strips"
+msgstr "Desliza Faixas"
+
+
+msgid "Slip the contents of selected strips"
+msgstr "Deslizar conteúdos das faixas seleccionadas"
+
+
 msgid "Offset to the data of the strip"
 msgstr "Deslocamento dos dados da faixa."
+
+
+msgid "Slip Keyframes"
+msgstr "Deslizar Fotogramas Chave"
+
+
+msgid "Move the keyframes alongside the media"
+msgstr "Mover fotogramas chave ao longo da media"
 
 
 msgctxt "Operator"
@@ -83278,6 +84554,50 @@ msgid "Merge all the sound's channels into one"
 msgstr "Funde todos os canais de som em um único canal."
 
 
+msgid "Split the selected strips in two"
+msgstr "Dividir as faixas seleccionadas em dois"
+
+
+msgid "Channel in which strip will be cut"
+msgstr "Canal no qual a faixa será cortada"
+
+
+msgid "Frame where selected strips will be split"
+msgstr "Fotograma no qual as faixas seleccionadas serão cortadas"
+
+
+msgid "Ignore Selection"
+msgstr "Ignorar Selecção"
+
+
+msgid "Make cut even if strip is not selected preserving selection state after cut"
+msgstr "Efectuar corte mesmo que a faixa não esteja seleccionada, preservando selecção após corte"
+
+
+msgid "The side that remains selected after splitting"
+msgstr "O lado que permanece seleccionado após o corte"
+
+
+msgid "The type of split operation to perform on strips"
+msgstr "O tipo de operação de corte a efectuar nas faixas"
+
+
+msgid "Use Cursor Position"
+msgstr "Usar Posição do Cursor"
+
+
+msgid "Split at position of the cursor instead of current frame"
+msgstr "Separar pela posição do cursor em vez do fotograma actual"
+
+
+msgid "Set a color tag for the selected strips"
+msgstr "Seleccionar etiqueta de cor para as faixas seleccionadas"
+
+
+msgid "Color 09"
+msgstr "Cor 09"
+
+
 msgctxt "Operator"
 msgid "Jump to Strip"
 msgstr "Saltar para faixa"
@@ -83285,6 +84605,10 @@ msgstr "Saltar para faixa"
 
 msgid "Move frame to previous edit point"
 msgstr "Mover fotograma para o ponto de edição anterior."
+
+
+msgid "Use Strip Center"
+msgstr "Usar Centro da Faixa"
 
 
 msgid "Next Strip"
@@ -83318,6 +84642,47 @@ msgstr "Anexa os modificadores activos às faixas seleccionadas."
 
 
 msgctxt "Operator"
+msgid "Redefine Equalizer Graphs"
+msgstr "Redefinir Gráficos do Equalizador"
+
+
+msgid "Redefine equalizer graphs"
+msgstr "Redefinir gráficos do equalizador"
+
+
+msgid "Graphs"
+msgstr "Gráficos"
+
+
+msgid "Number of graphs"
+msgstr "Número de gráficos"
+
+
+msgid "Unique"
+msgstr "Único"
+
+
+msgid "One unique graphical definition"
+msgstr "Uma definição gráfica única"
+
+
+msgid "Graphical definition in 2 sections"
+msgstr "Definição gráfica em 2 secções"
+
+
+msgid "Triplet"
+msgstr "Triplo"
+
+
+msgid "Graphical definition in 3 sections"
+msgstr "Definição gráfica em 3 secções"
+
+
+msgid "Name of modifier to redefine"
+msgstr "Nome do modificador para redefinir"
+
+
+msgctxt "Operator"
 msgid "Move Strip Modifier"
 msgstr "Mover modificador de faixa"
 
@@ -83339,8 +84704,58 @@ msgid "Remove a modifier from the strip"
 msgstr "Remove um modificador da faixa."
 
 
+msgctxt "Operator"
+msgid "Clear Strip Transform"
+msgstr "Limpar Transformações da Faixa"
+
+
+msgid "Reset image transformation to default value"
+msgstr "Repor transformação da imagem para os valores pré definidos"
+
+
 msgid "Property"
 msgstr "Propriedade"
+
+
+msgid "Strip transform property to be reset"
+msgstr "Propriedade de transformação da faixa a ser reposta"
+
+
+msgid "Reset strip transform location"
+msgstr "Repor transformação de posição da faixa"
+
+
+msgid "Reset strip transform scale"
+msgstr "Repor transformação de escala da faixa"
+
+
+msgid "Reset strip transform rotation"
+msgstr "Repor transformação de rotação da faixa"
+
+
+msgid "Reset strip transform location, scale and rotation"
+msgstr "Repor transformação de posição, escala e rotação da faixa"
+
+
+msgctxt "Operator"
+msgid "Strip Transform Set Fit"
+msgstr "Transformar Faixa Ajustar Tamanho"
+
+
+msgid "Scale fit fit_method"
+msgstr "Método de ajuste de tamanho fit_method"
+
+
+msgid "Scale image so fits in preview"
+msgstr "Redimensionar imagem de modo a que caiba na pré visualização"
+
+
+msgid "Scale image so it fills preview completely"
+msgstr "Redimensionar imagem para preencher a pré visualização completamente"
+
+
+msgid "Stretch image so it fills preview"
+msgstr "Esticar imagem de modo a preencher pré visualização"
 
 
 msgctxt "Operator"
@@ -83370,9 +84785,91 @@ msgid "Swap Inputs"
 msgstr "Trocar entradas"
 
 
+msgid "Swap the two inputs of the effect strip"
+msgstr "Trocar as duas entradas da faixa de efeitos"
+
+
+msgid "Move cursor in text"
+msgstr "Mover cursor no texto"
+
+
+msgid "Select Text"
+msgstr "Seleccionar Texto"
+
+
+msgid "Select text while moving cursor"
+msgstr "Seleccionar texto durante movimentação do cursor"
+
+
+msgid "Set cursor position in text"
+msgstr "Definir posição do cursor no texto"
+
+
+msgctxt "Operator"
+msgid "Delete Character"
+msgstr "Apagar Carácter"
+
+
+msgid "Delete text at cursor position"
+msgstr "Apagar texto na posição do cursor"
+
+
 msgctxt "Operator"
 msgid "Deselect All"
 msgstr "Deseleccionar Tudo"
+
+
+msgid "Deselect all characters"
+msgstr "Desseleccionar todos os caracteres"
+
+
+msgid "Copy text to clipboard"
+msgstr "Copia texto para a área de transferência"
+
+
+msgid "Cut text to clipboard"
+msgstr "Cortar o texto para a área de transferência"
+
+
+msgctxt "Operator"
+msgid "Edit Text"
+msgstr "Editar Texto"
+
+
+msgid "Toggle text editing"
+msgstr "Alternar edição de texto"
+
+
+msgctxt "Operator"
+msgid "Insert Character"
+msgstr "Inserir Carácter"
+
+
+msgid "String to be inserted at cursor position"
+msgstr "Texto a inserir na posição do cursor"
+
+
+msgctxt "Operator"
+msgid "Insert Line Break"
+msgstr "Inserir Quebra de Linha"
+
+
+msgid "Select all characters"
+msgstr "Seleccionar Todos os Caracteres"
+
+
+msgctxt "Operator"
+msgid "Unlock Strips"
+msgstr "Destrancar Faixas"
+
+
+msgid "Unlock strips so they can be transformed"
+msgstr "Destrancar Faixas de maneira para que possam ser transformadas"
+
+
+msgctxt "Operator"
+msgid "Unmute Strips"
+msgstr "De-silenciar Faixas"
 
 
 msgid "Unmute (un)selected strips"
@@ -83394,6 +84891,10 @@ msgstr "Ampliar pré visualização para caber dentro na área"
 msgctxt "Operator"
 msgid "Border Offset View"
 msgstr "Deslocar através das margens de visão"
+
+
+msgid "Set the boundaries of the border used for offset view"
+msgstr "Definir limites das margens usadas no deslocamento da visualização"
 
 
 msgid "Zoom the sequencer on the selected strips"
@@ -83435,6 +84936,38 @@ msgid "Bitrate in kbit/s"
 msgstr "Taxa de bits em kbits/s"
 
 
+msgid "Single audio channel"
+msgstr "Canal Audio Individual"
+
+
+msgid "Stereo audio channels"
+msgstr "Canais Audio Estereofónicos"
+
+
+msgid "Stereo with LFE channel"
+msgstr "Estéreo com canal LFE"
+
+
+msgid "4 channel surround sound"
+msgstr "Som Surround de 4 canais"
+
+
+msgid "5 channel surround sound"
+msgstr "Som Surround de 5 canais"
+
+
+msgid "5.1 surround sound"
+msgstr "Som Surround 5.1"
+
+
+msgid "6.1 surround sound"
+msgstr "Som Surround 6.1"
+
+
+msgid "7.1 surround sound"
+msgstr "Som Surround 7.1"
+
+
 msgid "Advanced Audio Coding"
 msgstr "Codificação de áudio avançada"
 
@@ -83467,6 +85000,10 @@ msgid "File format"
 msgstr "Formato de ficheiro"
 
 
+msgid "MKV"
+msgstr "MKV"
+
+
 msgid "Xiph.Org Ogg Container"
 msgstr "Contêiner Xiph.Org Ogg"
 
@@ -83477,6 +85014,34 @@ msgstr "Ficheiro de áudio contendo formatos de onda."
 
 msgid "Sample format"
 msgstr "Formato de amostragem"
+
+
+msgid "8-bit unsigned"
+msgstr "8-bits sem sinal"
+
+
+msgid "16-bit signed"
+msgstr "16-bits sem sinal"
+
+
+msgid "24-bit signed"
+msgstr "24-bits com sinal"
+
+
+msgid "32-bit signed"
+msgstr "32-bits com sinal"
+
+
+msgid "32-bit floating-point"
+msgstr "Ponto flutuante de 32 bits"
+
+
+msgid "64-bit floating-point"
+msgstr "Ponto flutuante de 64 bits"
+
+
+msgid "Sample rate in samples/s"
+msgstr "Taxa de amostras em amostras/s"
 
 
 msgid "Split channels"
@@ -83542,6 +85107,68 @@ msgstr "Actualizar animação"
 
 msgid "Update animation flags"
 msgstr "Actualiza as bandeiras de animação."
+
+
+msgctxt "Operator"
+msgid "Add Row Filter"
+msgstr "Adicionar Filtro de Linha"
+
+
+msgid "Add a filter to remove rows from the displayed data"
+msgstr "Adicionar um filtro para remover linhas dos dados exibidos"
+
+
+msgctxt "Operator"
+msgid "Change Visible Data Source"
+msgstr "Alterar Origem de Dados Visíveis"
+
+
+msgid "Change visible data source in the spreadsheet"
+msgstr "Alterar origem de dados visíveis na tabela"
+
+
+msgid "Attribute Domain Type"
+msgstr "Tipo de Domínio De Atributos"
+
+
+msgid "Component Type"
+msgstr "Tipo de Componente"
+
+
+msgctxt "Operator"
+msgid "Fit Column"
+msgstr "Ajustar Coluna"
+
+
+msgid "Resize a spreadsheet column to the width of the data"
+msgstr "Redimensionar a coluna da tabela à largura dos dados"
+
+
+msgctxt "Operator"
+msgid "Remove Row Filter"
+msgstr "Remover Filtro de Linha"
+
+
+msgid "Remove a row filter from the rules"
+msgstr "Remover um filtro de linha das regras"
+
+
+msgctxt "Operator"
+msgid "Reorder Columns"
+msgstr "Reordenar Colunas"
+
+
+msgid "Change the order of columns"
+msgstr "Alterar ordem das colunas"
+
+
+msgctxt "Operator"
+msgid "Resize Column"
+msgstr "Redimensionar Colunas"
+
+
+msgid "Resize a spreadsheet column"
+msgstr "Redimensionar coluna da tabela"
 
 
 msgctxt "Operator"
@@ -83644,6 +85271,27 @@ msgstr "Mostra uma lista de textos usados no documento aberto."
 
 
 msgctxt "Operator"
+msgid "Toggle Comments"
+msgstr "Alternar Comentários"
+
+
+msgid "Add or remove comments"
+msgstr "Adicionar ou remover comentários"
+
+
+msgid "Toggle Comments"
+msgstr "Alternar Comentários"
+
+
+msgid "Comment"
+msgstr "Comentar"
+
+
+msgid "Un-Comment"
+msgstr "Remover Comentário"
+
+
+msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Converter os espaços em branco"
 
@@ -83689,6 +85337,11 @@ msgstr "Localizar próximo"
 
 msgid "Find specified text"
 msgstr "Localiza o texto especificado."
+
+
+msgctxt "Operator"
+msgid "Find & Set Selection"
+msgstr "Encontrar e Seleccionar"
 
 
 msgid "Find specified text and set as selected"
@@ -98097,11 +99750,6 @@ msgid "Spacing Along Stroke"
 msgstr "Espaçamento ao longo do traço"
 
 
-msgctxt "Operator"
-msgid "Go to Linestyle Textures Properties"
-msgstr "Por favor, vá às propriedades de textura para estilos de linha."
-
-
 msgid "Priority"
 msgstr "Prioridade"
 
@@ -98411,6 +100059,10 @@ msgstr "Calibração"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "Pré-processamento"
+
+
+msgid "Match"
+msgstr "Combinar"
 
 
 msgctxt "Operator"
@@ -101395,6 +103047,10 @@ msgid "Smooth Groups"
 msgstr "Grupos suavizados"
 
 
+msgid "Path Mode"
+msgstr "Modo de caminho"
+
+
 msgid "Rigging"
 msgstr "Arranjo de animação"
 
@@ -103217,6 +104873,10 @@ msgstr "Objectos Máscara:"
 
 msgid "Matte ID:"
 msgstr "ID de Máscara:"
+
+
+msgid "Subtype"
+msgstr "Subtipo"
 
 
 msgid " Named Attribute"

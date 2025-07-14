@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-06-20 17:59+0000\n"
 "Last-Translator: Gorazd Gorup <gorupgorazd@gmail.com>\n"
 "Language-Team: Slovenian <https://translate.blender.org/projects/blender-ui/ui/sl/>\n"
@@ -32829,6 +32829,7 @@ msgid "Minimum value"
 msgstr "Minimalna vrednost"
 
 
+msgctxt "Unit"
 msgid "Subtype"
 msgstr "Podtip"
 
@@ -36897,18 +36898,6 @@ msgstr "Svetilka"
 
 msgid "Other"
 msgstr "Drugo"
-
-
-msgid "Path Mode"
-msgstr "Način poti"
-
-
-msgid "Match"
-msgstr "Primerjaj"
-
-
-msgid "Strip Path"
-msgstr "Poreži pot"
 
 
 msgid "Filename only"
@@ -46922,11 +46911,6 @@ msgstr "Mehki maksimum"
 
 msgid "Soft Min"
 msgstr "Popustljiv minimum"
-
-
-msgctxt "Unit"
-msgid "Subtype"
-msgstr "Podtip"
 
 
 msgid "Soft Limits"
@@ -59574,6 +59558,14 @@ msgid "Mix Vector"
 msgstr "Mešaj vektor"
 
 
+msgid "For Each Element"
+msgstr "Za vsak element"
+
+
+msgid "Determinant"
+msgstr "Determinanta"
+
+
 msgid "Calculation Range"
 msgstr "Interval računanja"
 
@@ -60195,11 +60187,6 @@ msgstr "Osnovna debelina"
 
 msgid "Spacing Along Stroke"
 msgstr "Razmiki vzdolž poteze"
-
-
-msgctxt "Operator"
-msgid "Go to Linestyle Textures Properties"
-msgstr "Pojdi na lastnosti tekstur slogov potez"
 
 
 msgid "Priority"
@@ -61562,6 +61549,10 @@ msgstr "Kalibracija"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "Vnaprej prevzemi"
+
+
+msgid "Match"
+msgstr "Primerjaj"
 
 
 msgctxt "Operator"
@@ -68527,6 +68518,10 @@ msgid "Control point belongs to another spline"
 msgstr "Kontrolna točka pripada drugemu zlepku"
 
 
+msgid "Insert"
+msgstr "Vstavi"
+
+
 msgid "Text too long"
 msgstr "Besedilo je predolgo"
 
@@ -69003,10 +68998,6 @@ msgstr "Ubež."
 
 msgid "Pause"
 msgstr "Premor"
-
-
-msgid "Insert"
-msgstr "Vstavi"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -69703,6 +69694,10 @@ msgstr "Skupine glajenja"
 
 msgid "PBR Extensions"
 msgstr "Razširitve PBR"
+
+
+msgid "Path Mode"
+msgstr "Način poti"
 
 
 msgid "File exported successfully"
@@ -71309,6 +71304,10 @@ msgid "Menu Undefined"
 msgstr "Meni ni določen"
 
 
+msgid "Subtype"
+msgstr "Podtip"
+
+
 msgid "{} (Menu)"
 msgstr "{} (meni)"
 
@@ -71717,10 +71716,6 @@ msgstr "(Geometrija)"
 
 msgid "No Data-Block"
 msgstr "Ni podatkovnega bloka"
-
-
-msgid "For Each Element"
-msgstr "Za vsak element"
 
 
 msgid "No Active Context"
@@ -73538,10 +73533,6 @@ msgid "Invertible"
 msgstr "Obrnljiva"
 
 
-msgid "Determinant"
-msgstr "Determinanta"
-
-
 msgid "Rotate By"
 msgstr "Rotiraj za"
 
@@ -73992,11 +73983,6 @@ msgid "IOR Level"
 msgstr "Nivo lomnega količnika"
 
 
-msgctxt "NodeTree"
-msgid "Tint"
-msgstr "Odtenek"
-
-
 msgid "Subsurface"
 msgstr "Podpovršinsko sipanje"
 
@@ -74007,6 +73993,11 @@ msgstr "Lesk"
 
 msgid "Thin Film"
 msgstr "Tenka plast"
+
+
+msgctxt "NodeTree"
+msgid "Tint"
+msgstr "Odtenek"
 
 
 msgid "View Z Depth"

@@ -76,6 +76,12 @@ class DrawingRuntime {
    * and remove a drawing if it has zero users.
    */
   mutable std::atomic<int> user_count = 1;
+
+  /**
+   * Ensures that the drawing is not deleted and can be used temporarily (e.g. by the transform
+   * code).
+   */
+  mutable bool fake_user = false;
 };
 
 class Drawing : public ::GreasePencilDrawing {
@@ -429,6 +435,14 @@ class LayerRuntime {
    * when creating a copy of the owning GreasePencil ID for the depsgraph evaluation.
    */
   bool is_visibility_animated_;
+
+  /**
+   * For evaluated layers, the index of the corresponding original layer, or -1 if there is no
+   * original layer that could be mapped to. E.g. when the layer was created during evaluation.
+   *
+   * TODO: Find a way to store this information in #GreasePencilEditHints instead.
+   */
+  int orig_layer_index_ = -1;
 
  public:
   /** Reset all runtime data. */
@@ -968,7 +982,7 @@ class GreasePencilEditHints {
 
   /**
    * Array of #GreasePencilDrawingEditHints. There is one edit hint for each evaluated drawing.
-   * \note The index for each element is the layer index.
+   * \note The index for each element is the evaluated layer index.
    */
   std::optional<Array<GreasePencilDrawingEditHints>> drawing_hints;
 };

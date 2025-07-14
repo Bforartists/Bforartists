@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-06-19 13:59+0000\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Chinese (Traditional Han script) <https://translate.blender.org/projects/blender-ui/ui/zh_Hant/>\n"
@@ -36014,28 +36014,12 @@ msgid "Other geometry types, like curve, metaball, etc. (converted to meshes)"
 msgstr "其他幾何類型，例如曲線、變幻球等。(轉換成網格)"
 
 
-msgid "Path Mode"
-msgstr "路徑模式"
-
-
 msgid "Method used to reference paths"
 msgstr "用來參照路徑的方法"
 
 
 msgid "Always write absolute paths"
 msgstr "總是寫入絕對路徑"
-
-
-msgid "Always write relative paths (where possible)"
-msgstr "總是寫入相對路徑 (可能之處)"
-
-
-msgid "Match"
-msgstr "比對"
-
-
-msgid "Strip Path"
-msgstr "片段路徑"
 
 
 msgid "Filename only"
@@ -63289,11 +63273,6 @@ msgid "Spacing Along Stroke"
 msgstr "沿筆觸間距"
 
 
-msgctxt "Operator"
-msgid "Go to Linestyle Textures Properties"
-msgstr "前往線條樣式紋理屬性"
-
-
 msgid "Priority"
 msgstr "優先度"
 
@@ -63792,6 +63771,10 @@ msgstr "校準"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "預取"
+
+
+msgid "Match"
+msgstr "比對"
 
 
 msgid "Track:"
@@ -68712,6 +68695,10 @@ msgid "PBR Extensions"
 msgstr "PBR 擴充"
 
 
+msgid "Path Mode"
+msgstr "路徑模式"
+
+
 msgid "ASCII"
 msgstr "ASCII"
 
@@ -72654,13 +72641,13 @@ msgid "Sheen Tint"
 msgstr "光澤染色"
 
 
+msgid "Subsurface"
+msgstr "次表面"
+
+
 msgctxt "NodeTree"
 msgid "Tint"
 msgstr "染色"
-
-
-msgid "Subsurface"
-msgstr "次表面"
 
 
 msgid "View Vector"

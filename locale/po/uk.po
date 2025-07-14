@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:44+0000\n"
 "Last-Translator: Bartosz <gang65@poczta.onet.pl>\n"
 "Language-Team: Ukrainian <https://translate.blender.org/projects/blender-ui/ui/uk/>\n"
@@ -37307,10 +37307,6 @@ msgid "Minimum value"
 msgstr "Найменше значення"
 
 
-msgid "Subtype"
-msgstr "Підтип"
-
-
 msgid "Geometry Node Socket Interface"
 msgstr "Інтерфейс Роз'єму Вузла Геометрії"
 
@@ -43355,28 +43351,12 @@ msgid "Other geometry types, like curve, metaball, etc. (converted to meshes)"
 msgstr "Інші види геометрії, такі як криві, метакулі тощо. (конвертовані у сіті)"
 
 
-msgid "Path Mode"
-msgstr "Режим Шляху"
-
-
 msgid "Method used to reference paths"
 msgstr "Метод посилання на шляхи"
 
 
 msgid "Always write absolute paths"
 msgstr "Завжди записувати абсолютні шляхи"
-
-
-msgid "Always write relative paths (where possible)"
-msgstr "Завжди записувати відносні шляхи (де можливо)"
-
-
-msgid "Match"
-msgstr "Узгодження"
-
-
-msgid "Strip Path"
-msgstr "Обрізка шляху"
 
 
 msgid "Filename only"
@@ -79944,11 +79924,6 @@ msgid "Spacing Along Stroke"
 msgstr "Інтервал Уздовж Штриха"
 
 
-msgctxt "Operator"
-msgid "Go to Linestyle Textures Properties"
-msgstr "Перейти до Властивостей Текстур Стилю лінії"
-
-
 msgid "Priority"
 msgstr "Пріоритет"
 
@@ -81039,6 +81014,10 @@ msgstr "Калібрація"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "Заготовлення"
+
+
+msgid "Match"
+msgstr "Узгодження"
 
 
 msgctxt "Operator"
@@ -86597,6 +86576,10 @@ msgid "Smooth Groups"
 msgstr "Групи згладжування"
 
 
+msgid "Path Mode"
+msgstr "Режим Шляху"
+
+
 msgid "ASCII"
 msgstr "ASCII"
 
@@ -89075,6 +89058,10 @@ msgid "Select an existing NLA Track or an empty action line first"
 msgstr "Спочатку виберіть наявну доріжку НЛА або порожній рядок дії"
 
 
+msgid "Subtype"
+msgstr "Підтип"
+
+
 msgid "More than one collection is selected"
 msgstr "Більше, ніж одну колекцію вибрано"
 
@@ -89085,10 +89072,6 @@ msgstr "Неможливо додати нову колекцію у пов'яз
 
 msgid "No active collection"
 msgstr "Без активної колекції"
-
-
-msgid "Could not find a valid parent collection for the new duplicate, it won't be linked to any view layer"
-msgstr "Неможливо знайти дійсну предківську колекцію для нового дубліката, він не буде пов'язаний з жодним шаром оглядом"
 
 
 msgid "Cannot add a collection to a linked/override collection/scene"

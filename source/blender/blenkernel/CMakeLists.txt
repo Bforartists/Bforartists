@@ -26,6 +26,7 @@ set(INC
 
 set(INC_SYS
   ${ZLIB_INCLUDE_DIRS}
+  ${ZSTD_INCLUDE_DIRS}
 
   # For `vfontdata_freetype.cc`.
   ${FREETYPE_INCLUDE_DIRS}
@@ -253,6 +254,7 @@ set(SRC
   intern/packedFile.cc
   intern/paint.cc
   intern/paint_canvas.cc
+  intern/paint_runtime.cc
   intern/particle.cc
   intern/particle_child.cc
   intern/particle_distribute.cc
@@ -493,6 +495,7 @@ set(SRC
   BKE_paint.hh
   BKE_paint_bvh.hh
   BKE_paint_bvh_pixels.hh
+  BKE_paint_types.hh
   BKE_particle.h
   BKE_path_templates.hh
   BKE_pointcache.h
@@ -840,6 +843,7 @@ if(WITH_GTESTS)
     intern/brush_test.cc
     intern/cryptomatte_test.cc
     intern/curves_geometry_test.cc
+    intern/deform_test.cc
     intern/fcurve_test.cc
     intern/file_handler_test.cc
     intern/grease_pencil_test.cc

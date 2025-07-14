@@ -417,8 +417,8 @@ static void make_renderinfo_string(const RenderStats *rs,
   const uintptr_t mem_in_use = MEM_get_memory_in_use();
   const uintptr_t peak_memory = MEM_get_peak_memory();
 
-  const float megs_used_memory = (mem_in_use) / (1024.0 * 1024.0);
-  const float megs_peak_memory = (peak_memory) / (1024.0 * 1024.0);
+  const int megs_used_memory = ceilf(mem_in_use / (1024.0 * 1024.0));
+  const int megs_peak_memory = ceilf(peak_memory / (1024.0 * 1024.0));
 
   /* local view */
   if (rs->localview) {
@@ -469,13 +469,12 @@ static void make_renderinfo_string(const RenderStats *rs,
     else {
       if (rs->mem_peak == 0.0f) {
         SNPRINTF(info_buffers.statistics,
-                 RPT_("Mem:%.2fM (Peak %.2fM)"),
+                 RPT_("Mem:%dM, Peak %dM"),
                  megs_used_memory,
                  megs_peak_memory);
       }
       else {
-        SNPRINTF(
-            info_buffers.statistics, RPT_("Mem:%.2fM, Peak: %.2fM"), rs->mem_used, rs->mem_peak);
+        SNPRINTF(info_buffers.statistics, RPT_("Mem:%dM, Peak: %dM"), rs->mem_used, rs->mem_peak);
       }
       info_statistics = info_buffers.statistics;
     }
@@ -1080,10 +1079,10 @@ static wmOperatorStatus screen_render_invoke(bContext *C, wmOperator *op, const 
 
   /* setup job */
   if (RE_seq_render_active(scene, &scene->r)) {
-    name = "Sequence Render";
+    name = RPT_("Rendering sequence...");
   }
   else {
-    name = "Render";
+    name = RPT_("Render...");
   }
 
   wm_job = WM_jobs_get(CTX_wm_manager(C),

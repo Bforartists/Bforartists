@@ -55,7 +55,7 @@ static uiBlock *ui_block_func_PIE(bContext * /*C*/, uiPopupBlockHandle *handle, 
 {
   uiBlock *block;
   uiPieMenu *pie = static_cast<uiPieMenu *>(arg_pie);
-  int minwidth, width, height;
+  int minwidth;
 
   minwidth = UI_MENU_WIDTH_MIN;
   block = pie->pie_block;
@@ -66,7 +66,7 @@ static uiBlock *ui_block_func_PIE(bContext * /*C*/, uiPopupBlockHandle *handle, 
     UI_block_region_set(block, handle->region);
   }
 
-  UI_block_layout_resolve(block, &width, &height);
+  blender::ui::block_layout_resolve(block);
 
   UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_NUMSELECT);
   UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
@@ -233,7 +233,7 @@ wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEve
 /** \name Pie Menu Levels
  *
  * Pie menus can't contain more than 8 items (yet).
- * When using #uiItemsFullEnumO, a "More" button is created that calls
+ * When using ##uiLayout::operator_enum, a "More" button is created that calls
  * a new pie menu if the enum has too many items. We call this a new "level".
  * Indirect recursion is used, so that a theoretically unlimited number of items is supported.
  *
@@ -249,7 +249,7 @@ struct PieMenuLevelData {
   int icon;                    /* parent pie icon, copied for level */
   int totitem;                 /* total count of *remaining* items */
 
-  /* needed for calling uiItemsFullEnumO_array again for new level */
+  /* needed for calling #uiLayout::operator_enum_items again for new level */
   wmOperatorType *ot;
   blender::StringRefNull propname;
   IDProperty *properties;
@@ -279,15 +279,8 @@ static void ui_pie_menu_level_invoke(bContext *C, void *argN, void *arg2)
   PropertyRNA *prop = RNA_struct_find_property(&ptr, lvl->propname.c_str());
 
   if (prop) {
-    uiItemsFullEnumO_items(layout,
-                           lvl->ot,
-                           ptr,
-                           prop,
-                           lvl->properties,
-                           lvl->context,
-                           lvl->flag,
-                           item_array,
-                           lvl->totitem);
+    layout->op_enum_items(
+        lvl->ot, ptr, prop, lvl->properties, lvl->context, lvl->flag, item_array, lvl->totitem);
   }
   else {
     RNA_warning("%s.%s not found", RNA_struct_identifier(ptr.type), lvl->propname.c_str());

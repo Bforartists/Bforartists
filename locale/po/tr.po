@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-05-17 17:56+0000\n"
 "Last-Translator: Ugur Saglam <saglamugur556@gmail.com>\n"
 "Language-Team: Turkish <https://translate.blender.org/projects/blender-ui/ui/tr/>\n"
@@ -44894,10 +44894,6 @@ msgid "Minimum value"
 msgstr "Minimum değer"
 
 
-msgid "Subtype"
-msgstr "Alt tip"
-
-
 msgid "Subtype of the default value"
 msgstr "Varsayılan değerin alt türü"
 
@@ -52910,10 +52906,6 @@ msgid "Other geometry types, like curve, metaball, etc. (converted to meshes)"
 msgstr "Eğri, metaball vb. gibi diğer geometri türleri (ağlara dönüştürülür)"
 
 
-msgid "Path Mode"
-msgstr "Yol Modu"
-
-
 msgid "Method used to reference paths"
 msgstr "Yollara başvurmak için kullanılan yöntem"
 
@@ -52926,20 +52918,12 @@ msgid "Always write absolute paths"
 msgstr "Her zaman mutlak yollar yaz"
 
 
-msgid "Always write relative paths (where possible)"
-msgstr "Her zaman bağıl yolları yazın (mümkün olduğunda)"
-
-
-msgid "Match"
-msgstr "Kibrit"
+msgid "Write relative paths where possible"
+msgstr "Mümkün olan yerlerde bağıl yolları yazın"
 
 
 msgid "Match absolute/relative setting with input path"
 msgstr "Mutlak/göreceli ayarı giriş yolu ile eşleştirin"
-
-
-msgid "Strip Path"
-msgstr "Şerit Yolu"
 
 
 msgid "Filename only"
@@ -76507,10 +76491,6 @@ msgstr "Negatif Y ekseni"
 
 msgid "Negative Z axis"
 msgstr "Negatif Z ekseni"
-
-
-msgid "Write relative paths where possible"
-msgstr "Mümkün olan yerlerde bağıl yolları yazın"
 
 
 msgid "Write filename only"
@@ -104253,6 +104233,10 @@ msgid "Mix Vector"
 msgstr "Karışım Vektörü"
 
 
+msgid "For Each Element"
+msgstr "Her Element İçin"
+
+
 msgid "Calculation Range"
 msgstr "Hesaplama Aralığı"
 
@@ -104877,11 +104861,6 @@ msgstr "Taban Kalınlığı"
 
 msgid "Spacing Along Stroke"
 msgstr "Vuruş Boyunca Aralık"
-
-
-msgctxt "Operator"
-msgid "Go to Linestyle Textures Properties"
-msgstr "Çizgi Stili Doku Özelliklerine Git"
 
 
 msgid "Priority"
@@ -106182,6 +106161,10 @@ msgstr "Kalibrasyon"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "Ön yükleme"
+
+
+msgid "Match"
+msgstr "Kibrit"
 
 
 msgctxt "Operator"
@@ -114499,6 +114482,10 @@ msgid "PBR Extensions"
 msgstr "PBR Uzantıları"
 
 
+msgid "Path Mode"
+msgstr "Yol Modu"
+
+
 msgid "ASCII"
 msgstr "ASCII"
 
@@ -117999,6 +117986,10 @@ msgid "Menu Undefined"
 msgstr "Menü Tanımsız"
 
 
+msgid "Subtype"
+msgstr "Alt tip"
+
+
 msgid "Could not determine type of group node"
 msgstr "Grup düğümünün türü belirlenemedi"
 
@@ -118705,10 +118696,6 @@ msgstr "Seviye Ayarı"
 
 msgid "(Geometry)"
 msgstr "(Geometri)"
-
-
-msgid "For Each Element"
-msgstr "Her Element İçin"
 
 
 msgid "Data Set"
@@ -124672,11 +124659,6 @@ msgid "IOR Level"
 msgstr "IOR Seviyesi"
 
 
-msgctxt "NodeTree"
-msgid "Tint"
-msgstr "Açık Ton"
-
-
 msgid "Subsurface"
 msgstr "Yüzey Altı"
 
@@ -124687,6 +124669,11 @@ msgstr "Parlaklık"
 
 msgid "Thin Film"
 msgstr "İnce Film"
+
+
+msgctxt "NodeTree"
+msgid "Tint"
+msgstr "Açık Ton"
 
 
 msgid "View Vector"
