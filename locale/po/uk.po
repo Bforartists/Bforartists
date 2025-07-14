@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:44+0000\n"
