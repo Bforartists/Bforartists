@@ -6,6 +6,16 @@
  * \ingroup wm
  *
  * Cursor pixmap and cursor utility functions to change the cursor.
+ *
+ * Multiple types of mouse cursors are supported.
+ * Cursors provided by the OS are preferred.
+ * The availability of these are checked with #GHOST_HasCursorShape().
+ * These cursors can include platform-specific custom cursors.
+ * For example, on MacOS we provide vector PDF files.
+ *
+ * If the OS cannot provide a built-in or custom platform cursor,
+ * then we use our own internal custom cursors. These are defined in SVG files.
+ * The hot-spot for these are set during definition in #wm_init_cursor_data.
  */
 
 #include <cstring>
@@ -33,29 +43,24 @@
 
 /* Blender custom cursor. */
 struct BCursor {
+  /**
+   * An SVG document size of 1600x1600 being the "normal" size,
+   * cropped to the image size and without any padding.
+   */
   const char *svg_source;
+  /**
+   * A factor (0-1) from the top-left corner of the image (not of the document size).
+   */
   blender::float2 hotspot;
   bool can_invert;
 };
 
-/* We currently support multiple types of mouse cursors. Preferred
- * is to use one provided by the OS. The availability of these are
- * checked with GHOST_HasCursorShape(). These cursors can include
- * platform-specific custom cursors. For example, on MacOS we provide
- * vector PDF files and on Windows we have CUR files.
- *
- * If the OS cannot provide a built-in or custom platform cursor,
- * then we use our own internal custom cursors. These are defined in
- * SVG files, using a document size of 1600x1600 being the "normal"
- * size, cropped to the image size and without any padding.  The hotspot
- * for these are set during definition at the bottom of this file, and
- * are a float factor (0-1) from the top-left corner of the image (not
- * of the document size).
+/**
+ * A static array aligned with #WMCursorType for simple lookups.
  */
-
 static BCursor g_cursors[WM_CURSOR_NUM] = {{nullptr}};
 
-/* Blender cursor to GHOST standard cursor conversion. */
+/** Blender cursor to GHOST standard cursor conversion. */
 static GHOST_TStandardCursor convert_to_ghost_standard_cursor(WMCursorType curs)
 {
   switch (curs) {
@@ -133,7 +138,10 @@ static GHOST_TStandardCursor convert_to_ghost_standard_cursor(WMCursorType curs)
   }
 }
 
-static int cursor_size()
+/**
+ * Calculate the cursor in pixels to use when setting the cursor.
+ */
+static int wm_cursor_size(const wmWindow *win)
 {
   /* Keep for testing. */
   if (false) {
@@ -141,19 +149,27 @@ static int cursor_size()
     return std::lround(21.0f * UI_SCALE_FAC);
   }
 
-  /* The DPI as a scale without the UI scale preference. */
-  const float system_scale = UI_SCALE_FAC / U.ui_scale;
-
 #if (OS_MAC)
   /* MacOS always scales up this type of cursor for high-dpi displays. */
   return 21;
 #endif
 
+  /* The DPI as a scale without the UI scale preference. */
+  const float system_scale = WM_window_dpi_get_scale(win);
+
   return std::lround(WM_cursor_preferred_logical_size() * system_scale);
 }
 
+/**
+ * \param svg: The contents of an SVG file.
+ * \param cursor_size: The maximum dimension in pixels for the resulting cursors width or height.
+ * \param alloc_fn: A caller defined allocation functions.
+ * \param r_bitmap_size: The width & height of the cursor data (never exceeding `cursor_size`).
+ * \return the pixel data as a `sizeof(uint8_t[4]) * r_bitmap_size[0] * r_bitmap_size[1]` array
+ * or null on failure.
+ */
 static uint8_t *cursor_bitmap_from_svg(const char *svg,
-                                       const int size,
+                                       const int cursor_size,
                                        uint8_t *(*alloc_fn)(size_t size),
                                        int r_bitmap_size[2])
 {
@@ -174,10 +190,10 @@ static uint8_t *cursor_bitmap_from_svg(const char *svg,
     return nullptr;
   }
 
-  const float scale = float(size) / 1600.0f;
+  const float scale = float(cursor_size) / 1600.0f;
   const size_t dest_size[2] = {
-      std::min(size_t(ceil(image->width * scale)), size_t(size)),
-      std::min(size_t(ceil(image->height * scale)), size_t(size)),
+      std::min(size_t(ceil(image->width * scale)), size_t(cursor_size)),
+      std::min(size_t(ceil(image->height * scale)), size_t(cursor_size)),
   };
 
   uint8_t *bitmap_rgba = alloc_fn(sizeof(uint8_t[4]) * dest_size[0] * dest_size[1]);
@@ -232,7 +248,7 @@ static bool window_set_custom_cursor_pixmap(wmWindow *win, const BCursor &cursor
    * has a limit of 256. MacOS is likely 256 or larger, but unconfirmed. 255 is
    * probably large enough for now. */
   const int max_size = use_rgba ? 255 : 32;
-  const int size = std::min(cursor_size(), max_size);
+  const int size = std::min(wm_cursor_size(win), max_size);
 
   int bitmap_size[2] = {0, 0};
   uint8_t *bitmap_rgba = cursor_bitmap_from_svg(
@@ -607,34 +623,49 @@ static void wm_cursor_time_small(wmWindow *win, int nr)
                              false);
 }
 
+/**
+ * \param text: The text display in the cursor.
+ * \param cursor_size: The maximum dimension in pixels for the resulting cursors width or height.
+ * \param alloc_fn: A caller defined allocation functions.
+ * \param r_bitmap_size: The width & height of the cursor data (never exceeding `cursor_size`).
+ * \return the pixel data as a `sizeof(uint8_t[4]) * r_bitmap_size[0] * r_bitmap_size[1]` array
+ * or null on failure.
+ */
 static uint8_t *cursor_bitmap_from_text(const std::string &text,
+                                        const int cursor_size,
                                         int font_id,
                                         uint8_t *(*alloc_fn)(size_t size),
                                         int r_bitmap_size[2])
 {
-  /* A bit smaller than full cursor size since this is wider. */
-  float size = cursor_size() * 0.8f;
-  BLF_size(font_id, size);
+  /* Smaller than a full cursor size since this is typically wider.
+   * Also, use a small scale to avoid scaling single numbers up
+   * which are then shrunk when more digits are added since this seems strange. */
+  float size = floorf(cursor_size * 0.5f);
+  float blf_size[2];
+  float padding;
 
-  float blf_size[2] = {0.0f, 0.0f};
-  BLF_width_and_height(font_id, text.c_str(), text.size(), &blf_size[0], &blf_size[1]);
-  float padding = size * 0.15f;
-  blf_size[0] += padding * 2.0f;
-  blf_size[1] += padding * 2.0f;
-
-  if (blf_size[0] > 255.0f || blf_size[1] > 255.0f) {
-    const float blf_size_max = std::max(blf_size[0], blf_size[1]);
-    size *= 253.0f / blf_size_max;
+  for (int pass = 0; pass < 2; pass++) {
     BLF_size(font_id, size);
     BLF_width_and_height(font_id, text.c_str(), text.size(), &blf_size[0], &blf_size[1]);
     padding = size * 0.15f;
     blf_size[0] += padding * 2.0f;
     blf_size[1] += padding * 2.0f;
+
+    if (pass == 0) {
+      const float blf_size_max = std::max(blf_size[0], blf_size[1]);
+      if (blf_size_max <= cursor_size) {
+        break;
+      }
+      /* +1 to scale down more than a small fraction. */
+      size = floorf(size * (cursor_size / (blf_size_max + 1.0f)));
+    }
   }
 
-  const int dest_size[2] = {
-      int(std::ceil(blf_size[0])),
-      int(std::ceil(blf_size[1])),
+  /* Camping by `cursor_size` is a safeguard to ensure the size *never* exceeds the bounds.
+   * In practice this should happen rarely - if at all. */
+  const size_t dest_size[2] = {
+      std::min(size_t(std::ceil(blf_size[0])), size_t(cursor_size)),
+      std::min(size_t(std::ceil(blf_size[1])), size_t(cursor_size)),
   };
 
   uint8_t *bitmap_rgba = alloc_fn(sizeof(uint8_t[4]) * dest_size[0] * dest_size[1]);
@@ -685,6 +716,7 @@ static bool wm_cursor_text_pixmap(wmWindow *win, const std::string &text, int fo
   int bitmap_size[2];
   uint8_t *bitmap_rgba = cursor_bitmap_from_text(
       text,
+      wm_cursor_size(win),
       font_id,
       [](size_t size) -> uint8_t * { return MEM_malloc_arrayN<uint8_t>(size, "wm.cursor"); },
       bitmap_size);
@@ -724,7 +756,7 @@ void WM_cursor_time(wmWindow *win, int nr)
   if (WM_capabilities_flag() & WM_CAPABILITY_CURSOR_RGBA) {
     wm_cursor_text(win, std::to_string(nr), blf_mono_font);
   }
-  else if (cursor_size() < 24 || !wm_cursor_time_large(win, nr)) {
+  else if (wm_cursor_size(win) < 24 || !wm_cursor_time_large(win, nr)) {
     wm_cursor_time_small(win, nr);
   }
 
