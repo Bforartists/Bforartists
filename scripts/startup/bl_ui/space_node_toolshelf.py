@@ -2326,8 +2326,12 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
 
                 props = col.operator("node.add_node", text=" Volume Scatter       ", icon = "NODE_VOLUMESCATTER")
                 props.use_transform = True
+                props.type = "ShaderNodeVolumeScatter"
 
-            props.type = "ShaderNodeVolumeScatter"
+                props = col.operator("node.add_node", text=" Volume Coefficients   ", icon = "NODE_VOLUME_COEFFICIENTS")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumeCoefficients"
+
 
             if context.space_data.shader_type == 'WORLD':
                 col = layout.column(align=True)
@@ -2450,6 +2454,10 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
                 props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMESCATTER")
                 props.use_transform = True
                 props.type = "ShaderNodeVolumeScatter"
+
+                props = flow.operator("node.add_node", text="", icon = "NODE_VOLUME_COEFFICIENTS")
+                props.use_transform = True
+                props.type = "ShaderNodeVolumeCoefficients"
 
             if context.space_data.shader_type == 'WORLD':
 
