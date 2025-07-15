@@ -176,7 +176,7 @@ class OBJECT_OT_ApplySmartPrimitives(bpy.types.Operator):
                             # Add boolean modifier to base object
                             bool_mod = base_object.modifiers.new(name="Boolean", type='BOOLEAN')
                             bool_mod.operation = 'UNION'
-                            bool_mod.solver = 'FAST'  # Using FAST solver for better performance
+                            bool_mod.solver = 'FLOAT'  # Using FLOAT solver for better performance
                             bool_mod.object = obj
                             
                             # Apply the modifier
