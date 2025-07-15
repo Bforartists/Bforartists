@@ -11,5 +11,6 @@ fae56923-cd12-49fb-8396-1b87a93e60ba:Grease Pencil:Grease Pencil
 a0c6d1c6-c894-4896-aa3f-e7d6ab3f0cc9:Grease Pencil/Read:Grease Pencil-Read
 99749dcf-5253-4953-a802-32e2550f2d85:Grease Pencil/Write:Grease Pencil-Write
 6ff6c13c-f193-48d8-8e43-fcdf0a403640:Material:Material
+aafa1ef7-5955-4c2b-ae7b-f759b216d3bf:Mesh:Mesh
 b7f4b1b6-c1ca-4f56-8a5f-e2411a8bf790:Normals:Normals
 95c38dad-af82-4c27-a7d3-ed8670ffb1f1:Primitives:Primitives

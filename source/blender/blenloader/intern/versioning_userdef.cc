@@ -1543,7 +1543,7 @@ void blo_do_versions_userdef(UserDef *userdef)
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Materials");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Grease Pencil Tools");
+        userdef, "VIEW3D_AST_object", "Grease Pencil");
     /* Node editors*/
 
     /*Shader*/
@@ -1565,7 +1565,7 @@ void blo_do_versions_userdef(UserDef *userdef)
 
     /*Geometry Nodes*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Grease Pencil Tools");
+        userdef, "NODE_AST_geometry_node_groups", "Grease Pencil");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_geometry_node_groups", "Hair");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
