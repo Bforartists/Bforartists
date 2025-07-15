@@ -1123,7 +1123,6 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
 classes = (
     ALL_MT_editormenu_filebrowser,  # BFA
-    FILEBROWSER_OT_toggle_instance_collections, # BFA - opearator
     FILEBROWSER_HT_header,
     FILEBROWSER_PT_display,
     FILEBROWSER_PT_filter,
