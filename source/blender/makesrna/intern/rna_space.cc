@@ -3740,6 +3740,20 @@ static void rna_FileAssetSelectParams_catalog_id_set(PointerRNA *ptr, const char
   params->asset_catalog_visibility = FILE_SHOW_ASSETS_FROM_CATALOG;
 }
 
+// bfa start asset browser drop instance
+static void rna_FileAsset_instance_collection_set(PointerRNA *ptr, bool value)
+{
+  FileAssetSelectParams *params = static_cast<FileAssetSelectParams *>(ptr->data);
+  if (value) {
+    params->import_flags |= FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND;
+    params->import_flags |= FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK;
+  }
+  else {
+    params->import_flags &= ~FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND;
+    params->import_flags &= ~FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK;
+  }
+}
+// bfa end
 #else
 
 static const EnumPropertyItem dt_uv_items[] = {
@@ -7680,10 +7694,11 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(
       prop, nullptr, "import_flags", FILE_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND);
   RNA_def_property_ui_text(prop,
-                           "Instance Collections on Appending",
+                           "Instance Collections on Appending or Linking", // bfa
                            "Create instances for collections when appending, rather than adding "
                            "them directly to the scene");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
+  RNA_def_property_boolean_funcs(prop, nullptr, "rna_FileAsset_instance_collection_set"); // bfa make append also update link button
 
   prop = RNA_def_property(srna, "drop_instances_to_origin", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(

@@ -14,33 +14,6 @@ from bpy.app.translations import contexts as i18n_contexts
 
 # BFA - Added icons and floated properties left
 
-# BFA - Operator to toggle both instance collection settings with on/off icon state
-class FILEBROWSER_OT_toggle_instance_collections(bpy.types.Operator):
-    """Toggle both instance collection settings if either settings are Append or Link"""
-    bl_idname = "file.toggle_instance_collections"
-    bl_label = "Toggle Instance Collections"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def draw(self, context):
-        layout = self.layout
-        params = context.space_data.params
-        current_state = params.instance_collections_on_append
-
-        # Set icon based on state
-        icon = 'CHECKBOX_HLT' if current_state else 'CHECKBOX_DEHLT'
-        layout.prop(self, "show_icon", text="Instance Collections", icon=icon, toggle=True)
-
-    def execute(self, context):
-        params = context.space_data.params
-        # Toggle both settings to the same state
-        new_state = not params.instance_collections_on_append
-        params.instance_collections_on_append = new_state
-        params.instance_collections_on_link = new_state
-
-        # Force redraw to update icon
-        context.area.tag_redraw()
-        return {'FINISHED'}
-
 
 class FILEBROWSER_HT_header(Header):
     bl_space_type = "FILE_BROWSER"
@@ -65,26 +38,12 @@ class FILEBROWSER_HT_header(Header):
                     if id_type == 'COLLECTION':
                         is_collection = True
 
-                if params.import_method == 'LINK':
-                    row = layout.row(align=True)
-                    row.enabled = is_collection
-                    row.prop(params, "instance_collections_on_link", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
-                    row.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
-                elif params.import_method in {'APPEND', 'APPEND_REUSE'}:
-                    row = layout.row(align=True)
-                    row.enabled = is_collection
-                    row.prop(params, "instance_collections_on_append", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
-                    row.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
-                elif params.import_method in {'LINK_OVERRIDE'}:
+                if params.import_method == 'LINK_OVERRIDE':
                     pass
                 else:
                     row = layout.row(align=True)
                     row.enabled = is_collection
-                    row.label(icon="OUTLINER_OB_GROUP_INSTANCE")
-                    # Add button for the operator with dynamic icon
-                    current_state = params.instance_collections_on_append
-                    icon = 'CHECKBOX_HLT' if current_state else 'CHECKBOX_DEHLT'
-                    row.operator("file.toggle_instance_collections", icon=icon, text="", emboss=True)
+                    row.prop(params, "instance_collections_on_append", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
                     row.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
 
         if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
