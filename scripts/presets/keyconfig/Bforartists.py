@@ -3335,7 +3335,7 @@ keyconfig_data = \
       },
      ),
     ("view3d.select",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True},
      {"properties":
       [("extend", True),
        ],
