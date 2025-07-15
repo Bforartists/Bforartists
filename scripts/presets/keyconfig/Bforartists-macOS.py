@@ -2812,7 +2812,6 @@ keyconfig_data = \
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
    [("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
@@ -5798,7 +5797,7 @@ keyconfig_data = \
       },
      ),
     ("transform.transform",
-     {"type": 'S', "value": 'PRESS'},
+     {"type": 'R', "value": 'PRESS'},
      {"properties":
       [("mode", 'TIME_SCALE'),
        ],

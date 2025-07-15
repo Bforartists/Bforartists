@@ -4702,7 +4702,7 @@ keyconfig_data = \
       },
      ),
     ("transform.transform",
-     {"type": 'S', "value": 'PRESS'},
+     {"type": 'R', "value": 'PRESS'},
      {"properties":
       [("mode", 'TIME_SCALE'),
        ],
