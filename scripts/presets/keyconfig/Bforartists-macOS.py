@@ -1656,6 +1656,22 @@ keyconfig_data = \
     ],
    },
   ),
+ ("Clip Dopesheet Editor",
+  {"space_type": 'CLIP_EDITOR', "region_type": 'WINDOW'},
+  {"items":
+   [("clip.dopesheet_select_channel",
+     {"type": 'LEFTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("extend", True),
+       ],
+      },
+     ),
+    ("clip.dopesheet_view_all", {"type": 'HOME', "value": 'PRESS'}, None),
+    ("clip.dopesheet_view_all", {"type": 'NDOF_BUTTON_FIT', "value": 'PRESS'}, None),
+    ("clip.delete_track", {"type": 'DEL', "value": 'PRESS'}, None),
+    ],
+   },
+  ),
  ("Clip Editor",
   {"space_type": 'CLIP_EDITOR', "region_type": 'WINDOW'},
   {"items":
