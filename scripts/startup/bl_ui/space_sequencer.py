@@ -522,11 +522,7 @@ class SEQUENCER_MT_preview_zoom(Menu):
                 icon='ZOOM_SET',  # BFA
             ).ratio = ratio
 
-        layout.separator()
-        layout.operator("view2d.zoom_in")
-        layout.operator("view2d.zoom_out")
-        layout.operator("view2d.zoom_border", text="Zoom Region...")
-
+        # BFA - redundant zoom operators were removed
 
 class SEQUENCER_MT_proxy(Menu):
     bl_label = "Proxy"
