@@ -1,4 +1,4 @@
-keyconfig_version = (5, 0, 33)
+keyconfig_version = (5, 0, 37)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1573,22 +1573,6 @@ keyconfig_data = \
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
    [("poselib.blend_pose_asset",
-     {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True},
-     {"properties":
-      [("flipped", True),
-       ],
-      },
-     ),
-    ("poselib.blend_pose_asset", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
-    ("poselib.apply_pose_asset",
-     {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
-     {"properties":
-      [("flipped", True),
-       ],
-      },
-     ),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'CLICK'}, None),
-    ("poselib.blend_pose_asset",
      {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "ctrl": True},
      {"properties":
       [("flipped", True),
@@ -4717,6 +4701,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True},
      {"properties":
       [("mode", 'TRANSLATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -4724,6 +4709,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'SCALE'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -4731,6 +4717,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("mode", 'ROTATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -8327,6 +8314,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS'},
      {"properties":
       [("mode", 'TRANSLATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -8334,6 +8322,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'SCALE'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -8341,6 +8330,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("mode", 'ROTATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -9009,6 +8999,14 @@ keyconfig_data = \
   {"space_type": 'TEXT_EDITOR', "region_type": 'WINDOW'},
   {"items":
    [("wm.call_panel",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("name", 'BFA_PT_FIND_AND_REPLACE'),
+       ("keep_open", True),
+       ],
+      },
+     ),
+    ("wm.call_panel",
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("name", 'BFA_PT_FIND_AND_REPLACE'),
@@ -9849,6 +9847,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'SCALE'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
@@ -9856,6 +9855,7 @@ keyconfig_data = \
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "oskey": True},
      {"properties":
       [("mode", 'ROTATION'),
+       ("texmode", 'SECONDARY'),
        ],
       },
      ),
