@@ -9006,14 +9006,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True},
-     {"properties":
-      [("name", 'BFA_PT_FIND_AND_REPLACE'),
-       ("keep_open", True),
-       ],
-      },
-     ),
     ("text.move",
      {"type": 'LEFT_ARROW', "value": 'PRESS', "alt": True},
      {"properties":
