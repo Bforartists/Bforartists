@@ -641,7 +641,6 @@ class SEQUENCER_MT_view(Menu):
                     "view2d.zoom_border", text="Zoom Border", icon='ZOOM_BORDER'
                 )  # BFA
                 layout.menu("SEQUENCER_MT_preview_zoom")
-            layout.prop(st, "use_zoom_to_fit", text="Auto Zoom")
             layout.separator()
 
             layout.operator(
@@ -4328,7 +4327,6 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 if show_developer_ui:
                     col.prop(cache_settings, "show_cache_raw", text="Raw")
                     col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
-                    col.prop(cache_settings, "show_cache_composite", text="Composite")
 
 
             layout.use_property_split = False
@@ -4340,7 +4338,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 layout.prop(overlay_settings, "show_metadata")
 
             layout.use_property_split = False
-            layout.prop(st, "use_zoom_to_fit")
+            layout.prop(st, "use_zoom_to_fit", text="Auto Zoom to Fit")
 
         if is_sequencer_view:
             col = layout.column(align=True)
