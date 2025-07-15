@@ -2117,6 +2117,7 @@ if(WITH_BLENDER)
       window
       window_close
       wireframe
+      wizard
       wood_tex
       wordwrap_off
       wordwrap_on
