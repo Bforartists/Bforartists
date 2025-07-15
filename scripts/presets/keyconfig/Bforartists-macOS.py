@@ -348,7 +348,7 @@ keyconfig_data = \
       },
      ),
     ("view3d.view_roll",
-     {"type": 'NDOF_BUTTON_ROLL_CCW', "value": 'PRESS'},
+     {"type": 'NDOF_BUTTON_ROLL_CW', "value": 'PRESS'},
      {"properties":
       [("type", 'LEFT'),
        ],
