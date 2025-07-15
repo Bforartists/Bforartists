@@ -33,6 +33,10 @@ ASSETS = [
 
 def append_asset_as_object(filepath, object_name):
     """Append an object from the library as a local copy"""
+    if not os.path.exists(filepath):  # Check if file exists
+        print(f"Error: {filepath} not found!")
+        return None
+
     with bpy.data.libraries.load(filepath, link=False) as (data_from, data_to):
         if object_name in data_from.objects:
             data_to.objects = [object_name]
