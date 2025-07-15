@@ -2558,6 +2558,16 @@ class VIEW3D_MT_select_pose(Menu):
         props.extend = True
         props.direction = 'CHILD'
 
+# bfa menu
+class VIEW3D_MT_select_particle_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("particle.select_more", text="More", icon="SELECTMORE")
+        layout.operator("particle.select_less", text="Less", icon="SELECTLESS")
+
 
 class VIEW3D_MT_select_particle(Menu):
     bl_label = "Select"
@@ -2582,11 +2592,6 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
-        layout.operator("particle.select_more", text="More", icon="SELECTMORE")
-        layout.operator("particle.select_less", text="Less", icon="SELECTLESS")
-
-        layout.separator()
-
         layout.operator("particle.select_linked", text="Linked", icon="LINKED")
 
         layout.separator()
@@ -2597,6 +2602,10 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.operator("particle.select_roots", text="Roots", icon="SELECT_ROOT")
         layout.operator("particle.select_tips", text="Tips", icon="SELECT_TIP")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_select_particle_more_less")
 
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
@@ -2927,7 +2936,6 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.menu("VIEW3D_MT_select_edit_surface_more_less")
 
 
-
 class VIEW3D_MT_select_edit_text(Menu):
     bl_label = "Select"
 
@@ -3183,8 +3191,6 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
         layout.menu("VIEW3D_MT_select_edit_armature_more_less")  # bfa menu
-
-
 
 
 # bfa menu
@@ -3450,8 +3456,7 @@ class VIEW3D_MT_select_edit_pointcloud(Menu):
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
-
-# BFA - not used
+#bfa - menu
 class VIEW3D_MT_edit_curves_select_more_less(Menu):
     bl_label = "More/Less"
 
@@ -3489,9 +3494,7 @@ class VIEW3D_MT_select_edit_curves(Menu):
 
         layout.separator()
 
-        # layout.menu("VIEW3D_MT_edit_curves_select_more_less") # BFA - not used
-        layout.operator("curves.select_more", text="More", icon="SELECTMORE")
-        layout.operator("curves.select_less", text="Less", icon="SELECTLESS")
+        layout.menu("VIEW3D_MT_edit_curves_select_more_less")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -6333,6 +6336,16 @@ class VIEW3D_MT_particle(Menu):
 
         layout.operator("particle.delete", icon="DELETE")
 
+# bfa - menu
+class VIEW3D_MT_particle_context_menu_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("particle.select_more", icon="SELECTMORE")
+        layout.operator("particle.select_less", icon="SELECTLESS")
+
 
 class VIEW3D_MT_particle_context_menu(Menu):
     bl_label = "Particle"
@@ -6387,12 +6400,9 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("particle.select_more", icon="SELECTMORE")
-            layout.operator("particle.select_less", icon="SELECTLESS")
+            layout.menu("VIEW3D_MT_particle_context_menu_more_less")
 
-            layout.operator(
-                "particle.select_linked", text="Select Linked", icon="LINKED"
-            )
+            layout.operator("particle.select_linked", text="Select Linked", icon="LINKED")
 
         layout.separator()
 
@@ -13119,16 +13129,17 @@ classes = (
     VIEW3D_MT_select_by_type,  # bfa menu
     VIEW3D_MT_select_grouped,  # bfa menu
     VIEW3D_MT_select_linked,  # bfa menu
-    VIEW3D_MT_select_object_more_less,
+    VIEW3D_MT_select_object_more_less, # bfa menu
     VIEW3D_MT_select_pose,
-    VIEW3D_MT_select_pose_more_less,
+    VIEW3D_MT_select_pose_more_less, # bfa menu
+    VIEW3D_MT_select_particle_more_less, # bfa menu
     VIEW3D_MT_select_particle,
     VIEW3D_MT_edit_mesh,
     VIEW3D_MT_edit_mesh_legacy,  # bfa menu
     VIEW3D_MT_edit_mesh_sort_elements,  # bfa menu
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_by_trait,
-    VIEW3D_MT_edit_mesh_select_more_less,
+    VIEW3D_MT_edit_mesh_select_more_less, # bfa menu
     VIEW3D_MT_select_edit_mesh,
     VIEW3D_MT_select_edit_curve_more_less, # bfa menu
     VIEW3D_MT_select_edit_curve,
@@ -13153,7 +13164,7 @@ classes = (
     VIEW3D_MT_select_paint_mask_vertex,
     VIEW3D_MT_select_paint_mask_vertex_more_less,  # bfa menu
     VIEW3D_MT_select_edit_pointcloud,
-    VIEW3D_MT_edit_curves_select_more_less,
+    VIEW3D_MT_edit_curves_select_more_less, # bfa menu
     VIEW3D_MT_select_edit_curves,
     VIEW3D_MT_select_sculpt_curves,
     VIEW3D_MT_mesh_add,
@@ -13220,6 +13231,7 @@ classes = (
     VIEW3D_MT_face_sets_init,
     VIEW3D_MT_random_mask,
     VIEW3D_MT_particle,
+    VIEW3D_MT_particle_context_menu_more_less, # BFA - menu
     VIEW3D_MT_particle_context_menu,
     VIEW3D_MT_particle_showhide,
     VIEW3D_MT_pose,
