@@ -4120,7 +4120,7 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("paint.weight_from_bones", text = "Assign Automatic from Bones", icon = "BONE_DATA").type = 'AUTOMATIC'
-            col.operator("paint.weight_from_bones", text = "Assign from Bone Envelopes", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
+            col.operator("paint.weight_from_bones", text = "Assign from Bone Envelopes", icon = "MOD_ENVELOPE").type = 'ENVELOPES'
 
             col.separator(factor = 0.5)
 
@@ -4160,7 +4160,7 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("paint.weight_from_bones", text = "", icon = "BONE_DATA").type = 'AUTOMATIC'
-                row.operator("paint.weight_from_bones", text = "", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
+                row.operator("paint.weight_from_bones", text = "", icon = "MOD_ENVELOPE").type = 'ENVELOPES'
                 row.operator("object.vertex_group_normalize_all", text = "", icon='WEIGHT_NORMALIZE_ALL')
 
                 row = col.row(align=True)
@@ -4187,7 +4187,7 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("paint.weight_from_bones", text = "", icon = "BONE_DATA").type = 'AUTOMATIC'
-                row.operator("paint.weight_from_bones", text = "", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
+                row.operator("paint.weight_from_bones", text = "", icon = "MOD_ENVELOPE").type = 'ENVELOPES'
 
                 row = col.row(align=True)
                 row.operator("object.vertex_group_normalize_all", text = "", icon='WEIGHT_NORMALIZE_ALL')
@@ -4217,7 +4217,7 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
             elif column_count == 1:
 
                 col.operator("paint.weight_from_bones", text = "", icon = "BONE_DATA").type = 'AUTOMATIC'
-                col.operator("paint.weight_from_bones", text = "", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
+                col.operator("paint.weight_from_bones", text = "", icon = "MOD_ENVELOPE").type = 'ENVELOPES'
 
                 col.separator(factor = 0.5)
 
