@@ -116,7 +116,8 @@ class NodePanel:
                 if entry is Separator:
                     col.separator(factor=2/3)
                 elif isinstance(entry, OperatorEntry):
-                    self.draw_text_button(col, **entry.as_dict())
+                    if entry.should_draw:
+                        self.draw_text_button(col, **entry.as_dict())
                 else:
                     self.draw_text_button(col, entry)
 
@@ -132,7 +133,8 @@ class NodePanel:
                     flow.scale_x = 1.5
                     flow.scale_y = 1.5
                 elif isinstance(entry, OperatorEntry):
-                    self.draw_icon_button(flow, **entry.as_dict())
+                    if entry.should_draw:
+                        self.draw_icon_button(flow, **entry.as_dict())
                 else:
                     self.draw_icon_button(flow, entry)
 
