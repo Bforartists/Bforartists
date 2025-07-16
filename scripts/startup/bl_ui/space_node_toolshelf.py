@@ -12,6 +12,10 @@ from bpy.app.translations import (
 from nodeitems_builtins import node_tree_group_type
 
 
+# Null object used to abstractly represent a separator
+Separator = object()
+
+
 def is_shader_type(context, valid_types):
     if not isinstance(valid_types, set):
         valid_types = {valid_types,}
@@ -84,6 +88,35 @@ class NodePanel:
                 ops = props.settings.add()
                 ops.name = name
                 ops.value = value
+
+    def draw_entries(self, context, layout, entries):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        # Draw Text Buttons
+        if not addon_prefs.Node_text_or_icon:
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            for entry in entries:
+                if entry is Separator:
+                    col.separator(factor=2/3)
+                else:
+                    self.draw_text_button(col, entry)
+
+        # Draw Icon Buttons
+        else:
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            for entry in entries:
+                if entry is Separator:
+                    flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+                    flow.scale_x = 1.5
+                    flow.scale_y = 1.5
+                else:
+                    self.draw_icon_button(flow, entry)
 
 
 # Icon or text buttons in shader editor and compositor in the ADD panel
