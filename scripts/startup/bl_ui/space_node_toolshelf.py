@@ -25,7 +25,7 @@ class OperatorEntry:
     text : str = ""
     icon : str = None
     settings : dict = None
-    should_draw : bool = False
+    should_draw : bool = True
 
     as_dict = dataclasses.asdict
 
