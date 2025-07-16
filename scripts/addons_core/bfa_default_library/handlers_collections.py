@@ -141,7 +141,8 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
 
         # Collection selection panel
         row = layout.row()
-        row.label(text="Select a target collection with objects to blend normals by proximity", icon="INFO")
+        row.label(text="Select a target collection to blend normals", icon="INFO")
+        row = layout.row()
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")
 
     def execute(self, context):
