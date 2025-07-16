@@ -1861,7 +1861,7 @@ class SEQUENCER_MT_image_transform(Menu):
         layout.operator("transform.rotate", icon="TRANSFORM_ROTATE")
         layout.operator("transform.resize", text="Scale", icon="TRANSFORM_SCALE")
         layout.separator()
-        layout.operator("transform.translate", text="Move Origin").translate_origin = True
+        layout.operator("transform.translate", text="Move Origin", icon = "OBJECT_ORIGIN").translate_origin = True
 
 
 # BFA - Was used in the image menu. But not used in the UI anymore, remains for compatibility
