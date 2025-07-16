@@ -52,7 +52,7 @@ def is_engine(context, valid_engines):
 
 def is_tool_tree(context):
     try:
-        return is_tool_tree(context)
+        return context.space_data.geometry_nodes_type == 'TOOL'
     except AttributeError:
         return False
 
