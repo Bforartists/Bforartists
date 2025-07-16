@@ -1639,8 +1639,9 @@ class NODES_PT_Input_input_advanced_tex(bpy.types.Panel, NodePanel):
         #### Icon Buttons
 
         else:
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
             self.draw_icon_button(flow, "TextureNodeCoordinates")
             self.draw_icon_button(flow, "TextureNodeCurveTime")
 
