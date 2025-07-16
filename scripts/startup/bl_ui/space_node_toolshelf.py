@@ -933,7 +933,7 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = "Input"
+    bl_category = "Add"
 
     @classmethod
     def poll(cls, context):
@@ -948,22 +948,14 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeImage")
-            self.draw_text_button(col, "TextureNodeTexture")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeImage")
-            self.draw_icon_button(flow, "TextureNodeTexture")
+        entries = (
+            "TextureNodeCoordinates",
+            "TextureNodeCurveTime",
+            "TextureNodeImage",
+            "TextureNodeTexture",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Input nodes tab, textures advanced panel. Just in Texture mode
@@ -972,7 +964,7 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
     bl_label = "Textures"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = "Input"
+    bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -988,40 +980,177 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        entries = (
+            "TextureNodeTexBlend",
+            "TextureNodeTexClouds",
+            "TextureNodeTexDistNoise",
+            "TextureNodeTexMagic",
+            Separator,
+            "TextureNodeTexMarble",
+            "TextureNodeTexNoise",
+            "TextureNodeTexStucci",
+            "TextureNodeTexVoronoi",
+            Separator,
+            "TextureNodeTexWood",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
-        #### Text Buttons
 
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeTexBlend")
-            self.draw_text_button(col, "TextureNodeTexClouds")
-            self.draw_text_button(col, "TextureNodeTexDistNoise")
-            self.draw_text_button(col, "TextureNodeTexMagic")
+#Input nodes tab, Pattern panel. # Just in texture mode
+class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Pattern"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
 
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeTexMarble")
-            self.draw_text_button(col, "TextureNodeTexNoise")
-            self.draw_text_button(col, "TextureNodeTexStucci")
-            self.draw_text_button(col, "TextureNodeTexVoronoi")
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
 
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeTexWood")
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
 
-        #### Icon Buttons
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeTexBlend")
-            self.draw_icon_button(flow, "TextureNodeTexClouds")
-            self.draw_icon_button(flow, "TextureNodeTexDistNoise")
-            self.draw_icon_button(flow, "TextureNodeTexMagic")
-            self.draw_icon_button(flow, "TextureNodeTexMarble")
-            self.draw_icon_button(flow, "TextureNodeTexNoise")
-            self.draw_icon_button(flow, "TextureNodeTexStucci")
-            self.draw_icon_button(flow, "TextureNodeTexVoronoi")
-            self.draw_icon_button(flow, "TextureNodeTexWood")
+        scene = context.scene
+        entries = (
+            "TextureNodeBricks",
+            "TextureNodeChecker",
+        )
+        
+        self.draw_entries(context, layout, entries)
+
+
+#Input nodes tab, Color panel. Just in texture mode
+class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Color"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture and compositing mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout#### Textbuttons
+        default_context = bpy.app.translations.contexts.default
+
+        scene = context.scene
+        entries = (
+            "TextureNodeHueSaturation",
+            "TextureNodeInvert",
+            "TextureNodeMixRGB",
+            "TextureNodeCurveRGB",
+            Separator,
+            "TextureNodeCombineColor",
+            "TextureNodeSeparateColor",
+        )
+        
+        self.draw_entries(context, layout, entries)
+
+
+#Input nodes tab, Output panel, Texture mode
+class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Output"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout#### Textbuttons
+        default_context = bpy.app.translations.contexts.default
+
+        scene = context.scene
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        entries = (
+            "TextureNodeOutput",
+            "TextureNodeViewer",
+        )
+        
+        self.draw_entries(context, layout, entries)
+
+
+#Modify nodes tab, converter panel. Just in texture mode
+class NODES_PT_converter_tex(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Converter"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+        entries = (
+            "TextureNodeValToRGB",
+            "TextureNodeDistance",
+            "TextureNodeMath",
+            "TextureNodeRGBToBW",
+            Separator,
+            "TextureNodeValToNor",
+        )
+        
+        self.draw_entries(context, layout, entries)
+
+
+#Modify nodes tab, distort panel. Just in texture mode
+class NODES_PT_distort_tex(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Distort"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+        entries = (
+            "TextureNodeAt",
+            "TextureNodeRotate",
+            "TextureNodeScale",
+            "TextureNodeTranslate",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Shader Editor - Shader panel
@@ -1286,223 +1415,6 @@ class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "ShaderNodeRGBCurve")
 
 
-#Input nodes tab, Input panel. Just in texture mode
-class NODES_PT_Input_input_advanced_tex(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Input Advanced"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Input"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeCoordinates")
-            self.draw_text_button(col, "TextureNodeCurveTime")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeCoordinates")
-            self.draw_icon_button(flow, "TextureNodeCurveTime")
-
-
-#Input nodes tab, Pattern panel. # Just in texture mode
-class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Pattern"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Input"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeBricks")
-            self.draw_text_button(col, "TextureNodeChecker")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeBricks")
-            self.draw_icon_button(flow, "TextureNodeChecker")
-
-
-#Input nodes tab, Color panel. Just in texture mode
-class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Color"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Input"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture and compositing mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeCurveRGB")
-            self.draw_text_button(col, "TextureNodeHueSaturation")
-            self.draw_text_button(col, "TextureNodeInvert")
-            self.draw_text_button(col, "TextureNodeMixRGB")
-
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeCompose")
-            self.draw_text_button(col, "TextureNodeDecompose")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeCurveRGB")
-            self.draw_icon_button(flow, "TextureNodeHueSaturation")
-            self.draw_icon_button(flow, "TextureNodeInvert")
-            self.draw_icon_button(flow, "TextureNodeMixRGB")
-            self.draw_icon_button(flow, "TextureNodeCompose")
-            self.draw_icon_button(flow, "TextureNodeDecompose")
-
-
-#Input nodes tab, Output panel, Texture mode
-class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Output"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Input"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeOutput")
-            self.draw_text_button(col, "TextureNodeViewer")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeOutput")
-            self.draw_icon_button(flow, "TextureNodeViewer")
-
-
-#Modify nodes tab, converter panel. Just in texture mode
-class NODES_PT_Modify_converter_tex(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Converter"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Modify"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeValToRGB")
-            self.draw_text_button(col, "TextureNodeDistance")
-            self.draw_text_button(col, "TextureNodeMath")
-            self.draw_text_button(col, "TextureNodeRGBToBW")
-
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeValToNor")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeValToRGB")
-            self.draw_icon_button(flow, "TextureNodeDistance")
-            self.draw_icon_button(flow, "TextureNodeMath")
-            self.draw_icon_button(flow, "TextureNodeRGBToBW")
-            self.draw_icon_button(flow, "TextureNodeValToNor")
-
-
 #Shader Editor - Vector panel
 class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
@@ -1647,50 +1559,6 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
                 self.draw_icon_button(flow, "ShaderNodeShaderToRGB")
             self.draw_icon_button(flow, "ShaderNodeVectorMath")
             self.draw_icon_button(flow, "ShaderNodeWavelength")
-
-
-#Modify nodes tab, distort panel. Just in texture mode
-class NODES_PT_Modify_distort_tex(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Distort"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Modify"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            self.draw_text_button(col, "TextureNodeAt")
-            self.draw_text_button(col, "TextureNodeRotate")
-            self.draw_text_button(col, "TextureNodeScale")
-            self.draw_text_button(col, "TextureNodeTranslate")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "TextureNodeAt")
-            self.draw_icon_button(flow, "TextureNodeRotate")
-            self.draw_icon_button(flow, "TextureNodeScale")
-            self.draw_icon_button(flow, "TextureNodeTranslate")
 
 
 # ------------- Relations tab -------------------------------
@@ -4567,6 +4435,11 @@ classes = (
     NODES_PT_geom_textoricon_relations,
     NODES_PT_shader_add_input,
     NODES_PT_shader_add_output,
+    NODES_PT_shader_add_shader,
+    NODES_PT_shader_add_texture,
+    NODES_PT_shader_add_color,
+    NODES_PT_shader_add_vector,
+    NODES_PT_shader_add_converter,
 
     #-----------------------
 
@@ -4592,17 +4465,11 @@ classes = (
 
     NODES_PT_Input_input_tex,
     NODES_PT_Input_textures_tex,
-    NODES_PT_shader_add_shader,
-    NODES_PT_shader_add_texture,
-    NODES_PT_shader_add_color,
-    NODES_PT_Input_input_advanced_tex,
     NODES_PT_Input_pattern,
     NODES_PT_Input_color_tex,
     NODES_PT_Input_output_tex,
-    NODES_PT_Modify_converter_tex,
-    NODES_PT_shader_add_vector,
-    NODES_PT_shader_add_converter,
-    NODES_PT_Modify_distort_tex,
+    NODES_PT_converter_tex,
+    NODES_PT_distort_tex,
 
 
     #-----------------------
