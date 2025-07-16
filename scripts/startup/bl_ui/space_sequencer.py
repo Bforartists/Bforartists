@@ -1420,9 +1420,9 @@ class SEQUENCER_MT_strip_animation(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("anim.keyframe_insert", text="Insert Keyframe")
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set").always_prompt = True
-        layout.operator("anim.keying_set_active_set", text="Change Keying Set...")
+        layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon="KEYFRAMES_INSERT")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon="KEYFRAMES_INSERT").always_prompt = True
+        layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon="KEYINGSET")
 
 
 class SEQUENCER_MT_strip_input(Menu):
