@@ -258,7 +258,12 @@ class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):
         flow.use_property_split = True
         sub = flow.column()
         sub.active = view.use_text_antialiasing
+        
+        # BFA - Align property left
+        sub.use_property_split = False 
         sub.prop(view, "use_text_render_subpixelaa", text="Subpixel Anti-Aliasing")
+        sub.use_property_split = True
+
         sub.prop(view, "text_hinting", text="Hinting")
 
         flow.prop(view, "font_path_ui")
