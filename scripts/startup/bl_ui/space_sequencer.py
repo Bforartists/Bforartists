@@ -1402,17 +1402,16 @@ class SEQUENCER_MT_strip_text_characters(Menu):
         layout.operator_enum("sequencer.text_cursor_move", "type")
 
 
-# BFA - Not Used
 class SEQUENCER_MT_strip_show_hide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, _context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_PREVIEW'
-        layout.operator("sequencer.unmute", text="Show Hidden Strips").unselected = False
+        layout.operator("sequencer.unmute", text="Show Hidden Strips", icon="HIDE_OFF").unselected = False
         layout.separator()
-        layout.operator("sequencer.mute", text="Hide Selected").unselected = False
-        layout.operator("sequencer.mute", text="Hide Unselected").unselected = True
+        layout.operator("sequencer.mute", text="Hide Selected", icon="HIDE_ON").unselected = False
+        layout.operator("sequencer.mute", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
 
 
 class SEQUENCER_MT_strip_animation(Menu):
@@ -1642,13 +1641,14 @@ class SEQUENCER_MT_strip(Menu):
                 "sequencer.preview_duplicate_move", text="Duplicate", icon='DUPLICATE'
             )
             layout.separator()
+
             layout.menu("SEQUENCER_MT_strip_animation")
+
             layout.separator()
+
             layout.menu("SEQUENCER_MT_strip_show_hide")
+
             layout.separator()
-            # BFA - moved to top header level
-            # if strip and strip.type == 'TEXT':
-            #    layout.menu("SEQUENCER_MT_strip_text")
 
         if has_sequencer:
             layout.menu("SEQUENCER_MT_strip_retiming")
@@ -1861,7 +1861,7 @@ class SEQUENCER_MT_image_transform(Menu):
         layout.operator("transform.rotate", icon="TRANSFORM_ROTATE")
         layout.operator("transform.resize", text="Scale", icon="TRANSFORM_SCALE")
         layout.separator()
-        layout.operator("transform.translate", text="Move Origin").translate_origin = True
+        layout.operator("transform.translate", text="Move Origin", icon = "OBJECT_ORIGIN").translate_origin = True
 
 
 # BFA - Was used in the image menu. But not used in the UI anymore, remains for compatibility
