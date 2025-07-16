@@ -1752,6 +1752,7 @@ static void rna_space_generic_show_toolshelf_tabs_update(Main *bmain,
                   /* No preferred width stored, let snap_size function calculate optimal width */
                   region->sizex = 0;
                 }
+                region->v2d.scroll |= V2D_SCROLL_VERTICAL_TAB; // bfa tab offset
               } else {
                 /* Tabs are being hidden - store current width as preferred */
                 if (region->sizex > UI_TOOLBAR_MIN_WIDTH_THRESHOLD) {
@@ -1759,6 +1760,7 @@ static void rna_space_generic_show_toolshelf_tabs_update(Main *bmain,
                 }
                 /* Let snap_size function calculate minimal width for tabs-only view */
                 region->sizex = 0;
+                region->v2d.scroll &= ~V2D_SCROLL_VERTICAL_TAB; // bfa tab offset
               }
 
               ED_area_tag_region_size_update(area, region);

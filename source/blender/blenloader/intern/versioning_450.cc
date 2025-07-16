@@ -5921,24 +5921,36 @@ void blo_do_versions_450(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     FOREACH_NODETREE_END;
 
     // bfa start
-    // do versioning for existing asset shelf startup
+    // do bfa versioning 
+    // for existing asset shelf startup, add `V2D_SCROLL_VERTICAL_TAB` to toolbar scroll
     LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
       LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
         LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
-          if(ELEM(sl->spacetype, SPACE_VIEW3D, SPACE_NODE)) {
+          if(ELEM(sl->spacetype, SPACE_VIEW3D, SPACE_NODE, SPACE_IMAGE, SPACE_SEQ)) {
             const ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
-                                                                         &sl->regionbase;
+                                                                          &sl->regionbase;
+            // do asset shelf
+            if(ELEM(sl->spacetype, SPACE_VIEW3D, SPACE_NODE)) {
+              LISTBASE_FOREACH (ARegion *, region, regionbase) {
+                if (region->regiontype != RGN_TYPE_ASSET_SHELF) {
+                  continue;
+                }
+
+                RegionAssetShelf *shelf_data = static_cast<RegionAssetShelf *>(region->regiondata);
+                if (shelf_data && shelf_data->active_shelf &&
+                    (AssetShelfImportMethod(shelf_data->active_shelf->settings.import_method) == SHELF_ASSET_IMPORT_LINK))
+                {
+                  shelf_data->active_shelf->settings.import_method = SHELF_ASSET_IMPORT_APPEND;
+                }
+              }
+            }
+            // do vertical tool panel scroll
             LISTBASE_FOREACH (ARegion *, region, regionbase) {
-              if (region->regiontype != RGN_TYPE_ASSET_SHELF) {
+              if (region->regiontype != RGN_TYPE_TOOLS) {
                 continue;
               }
 
-              RegionAssetShelf *shelf_data = static_cast<RegionAssetShelf *>(region->regiondata);
-              if (shelf_data && shelf_data->active_shelf &&
-                  (AssetShelfImportMethod(shelf_data->active_shelf->settings.import_method) == SHELF_ASSET_IMPORT_LINK))
-              {
-                shelf_data->active_shelf->settings.import_method = SHELF_ASSET_IMPORT_APPEND;
-              }
+              region->v2d.scroll |= V2D_SCROLL_VERTICAL_TAB;
             }
           }
         }

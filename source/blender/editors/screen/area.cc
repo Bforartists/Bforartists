@@ -3434,6 +3434,11 @@ void ED_region_panels_init(wmWindowManager *wm, ARegion *region)
   if (region->alignment & RGN_ALIGN_LEFT) {
     region->v2d.scroll &= ~V2D_SCROLL_RIGHT;
     region->v2d.scroll |= V2D_SCROLL_LEFT;
+    // start bfa tab offset init
+    if (region->regiontype == RGN_TYPE_TOOLS) {
+      region->v2d.scroll |= V2D_SCROLL_VERTICAL_TAB; 
+    }
+    // end bfa
   }
   else if (region->alignment & RGN_ALIGN_RIGHT) {
     region->v2d.scroll &= ~V2D_SCROLL_LEFT;

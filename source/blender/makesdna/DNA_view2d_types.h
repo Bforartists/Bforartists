@@ -151,6 +151,7 @@ enum {
    * set when calculating scroll-bar for drawing */
   V2D_SCROLL_VERTICAL_FULLR = (1 << 9),
   V2D_SCROLL_HORIZONTAL_FULLR = (1 << 10),
+  V2D_SCROLL_VERTICAL_TAB = (1 << 11), /* bfa tab offset */
 };
 
 /** scroll_ui, activate flag for drawing. */

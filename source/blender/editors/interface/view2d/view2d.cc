@@ -161,6 +161,7 @@ static void view2d_masks(View2D *v2d, const rcti *mask_scroll)
    */
   if (scroll) {
     float scroll_width, scroll_height;
+    const uiStyle *style = UI_style_get(); // bfa tab offset get style for panel zoom
 
     UI_view2d_scroller_size_get(v2d, false, &scroll_width, &scroll_height);
 
@@ -168,7 +169,15 @@ static void view2d_masks(View2D *v2d, const rcti *mask_scroll)
     if (scroll & V2D_SCROLL_LEFT) {
       /* on left-hand edge of region */
       v2d->vert = *mask_scroll;
-      v2d->vert.xmax = scroll_width;
+      // bfa start do tab offset
+      int tab_offset = 0;
+      const float panelzoom = (style) ? style->panelzoom : 1.0f;
+      if (scroll & V2D_SCROLL_VERTICAL_TAB) {
+        tab_offset = 27 * panelzoom; // around 25 - 29 is good
+        v2d->vert.xmin += tab_offset;
+      }
+      // bfa end
+      v2d->vert.xmax = scroll_width + tab_offset; // bfa tab offset add
     }
     else if (scroll & V2D_SCROLL_RIGHT) {
       /* on right-hand edge of region */
