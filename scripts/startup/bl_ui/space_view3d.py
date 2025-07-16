@@ -9089,11 +9089,11 @@ class VIEW3D_MT_edit_pointcloud(Menu):
         layout = self.layout
         layout.menu("VIEW3D_MT_transform")
         layout.separator()
-        layout.operator("pointcloud.duplicate_move")
+        layout.operator("pointcloud.duplicate_move", icon="DUPLICATE")
         layout.separator()
-        layout.operator("pointcloud.attribute_set")
-        layout.operator("pointcloud.delete")
-        layout.operator("pointcloud.separate")
+        layout.operator("pointcloud.attribute_set", icon="NODE_ATTRIBUTE")
+        layout.operator("pointcloud.delete", icon = "DELETE")
+        layout.operator("pointcloud.separate", icon="SEPARATE")
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
