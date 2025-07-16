@@ -12,6 +12,33 @@ from bpy.app.translations import (
 from nodeitems_builtins import node_tree_group_type
 
 
+def is_shader_type(context, valid_types):
+    if not isinstance(valid_types, set):
+        valid_types = {valid_types,}
+
+    try:
+        return context.space_data.shader_type in valid_types
+    except AttributeError:
+        return False
+
+
+def is_engine(context, valid_engines):
+    if not isinstance(valid_engines, set):
+        valid_engines = {valid_engines,}
+
+    try:
+        return context.engine in valid_engines
+    except AttributeError:
+        return False
+
+
+def is_tool_tree(context):
+    try:
+        return is_tool_tree(context)
+    except AttributeError:
+        return False
+
+
 class NodePanel:
     @staticmethod
     def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, pad=0):
@@ -244,7 +271,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "ShaderNodeTangent")
             self.draw_text_button(col, "ShaderNodeTexCoord")
 
-            if context.space_data.shader_type == 'LINESTYLE':
+            if is_shader_type(context, 'LINESTYLE'):
                 self.draw_text_button(col, "ShaderNodeUVAlongStroke")
 
             col = layout.column(align=True)
@@ -277,7 +304,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "ShaderNodeTangent")
             self.draw_icon_button(flow, "ShaderNodeTexCoord")
 
-            if context.space_data.shader_type == 'LINESTYLE':
+            if is_shader_type(context, 'LINESTYLE'):
                 self.draw_icon_button(flow, "ShaderNodeUVAlongStroke")
             self.draw_icon_button(flow, "ShaderNodeUVMap")
             self.draw_icon_button(flow, "ShaderNodeValue")
@@ -321,15 +348,15 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
             col.scale_y = 1.5
             self.draw_text_button(col, "ShaderNodeOutputAOV")
 
-            if context.space_data.shader_type == 'OBJECT':
-                if engine == 'CYCLES':
+            if is_shader_type(context, 'OBJECT'):
+                if is_engine(context, 'CYCLES'):
                     self.draw_text_button(col, "ShaderNodeOutputLight")
                 self.draw_text_button(col, "ShaderNodeOutputMaterial")
 
-            elif context.space_data.shader_type == 'WORLD':
+            elif is_shader_type(context, 'WORLD'):
                 self.draw_text_button(col, "ShaderNodeOutputWorld")
 
-            elif context.space_data.shader_type == 'LINESTYLE':
+            elif is_shader_type(context, 'LINESTYLE'):
                 self.draw_text_button(col, "ShaderNodeOutputLineStyle")
 
         #### Image Buttons
@@ -340,15 +367,15 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
             flow.scale_y = 1.5
             self.draw_icon_button(flow, "ShaderNodeOutputAOV")
 
-            if context.space_data.shader_type == 'OBJECT':
-                if engine == 'CYCLES':
+            if is_shader_type(context, 'OBJECT'):
+                if is_engine(context, 'CYCLES'):
                     self.draw_icon_button(flow, "ShaderNodeOutputLight")
                 self.draw_icon_button(flow, "ShaderNodeOutputMaterial")
 
-            elif context.space_data.shader_type == 'WORLD':
+            elif is_shader_type(context, 'WORLD'):
                 self.draw_icon_button(flow, "ShaderNodeOutputWorld")
 
-            elif context.space_data.shader_type == 'LINESTYLE':
+            elif is_shader_type(context, 'LINESTYLE'):
                 self.draw_icon_button(flow, "ShaderNodeOutputLineStyle")
 
 
@@ -1353,9 +1380,9 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "ShaderNodeAddShader")
             self.draw_text_button(col, "ShaderNodeBsdfMetallic")
 
-            if context.space_data.shader_type == 'OBJECT':
+            if is_shader_type(context, 'OBJECT'):
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_text_button(col, "ShaderNodeBsdfAnisotropic")
                 self.draw_text_button(col, "ShaderNodeBsdfDiffuse")
                 self.draw_text_button(col, "ShaderNodeEmission")
@@ -1371,16 +1398,16 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
                 col = layout.column(align=True)
                 col.scale_y = 1.5
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_text_button(col, "ShaderNodeBsdfHairPrincipled")
                 self.draw_text_button(col, "ShaderNodeVolumePrincipled")
                 self.draw_text_button(col, "ShaderNodeBsdfRefraction")
 
-                if engine == 'BLENDER_EEVEE':
+                if is_engine(context, 'BLENDER_EEVEE'):
                     self.draw_text_button(col, "ShaderNodeEeveeSpecular")
                 self.draw_text_button(col, "ShaderNodeSubsurfaceScattering")
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_text_button(col, "ShaderNodeBsdfToon")
 
                 col = layout.column(align=True)
@@ -1388,12 +1415,12 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
                 self.draw_text_button(col, "ShaderNodeBsdfTranslucent")
                 self.draw_text_button(col, "ShaderNodeBsdfTransparent")
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_text_button(col, "ShaderNodeBsdfSheen")
                 self.draw_text_button(col, "ShaderNodeVolumeAbsorption")
                 self.draw_text_button(col, "ShaderNodeVolumeScatter")
 
-            if context.space_data.shader_type == 'WORLD':
+            if is_shader_type(context, 'WORLD'):
                 col = layout.column(align=True)
                 col.scale_y = 1.5
                 self.draw_text_button(col, "ShaderNodeBackground")
@@ -1412,9 +1439,9 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "ShaderNodeAddShader")
             self.draw_icon_button(flow, "ShaderNodeBsdfMetallic")
 
-            if context.space_data.shader_type == 'OBJECT':
+            if is_shader_type(context, 'OBJECT'):
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_icon_button(flow, "ShaderNodeBsdfAnisotropic")
                 self.draw_icon_button(flow, "ShaderNodeBsdfDiffuse")
                 self.draw_icon_button(flow, "ShaderNodeEmission")
@@ -1424,25 +1451,25 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
                 self.draw_icon_button(flow, "ShaderNodeMixShader")
                 self.draw_icon_button(flow, "ShaderNodeBsdfPrincipled")
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_icon_button(flow, "ShaderNodeBsdfHairPrincipled")
                 self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
 
-                if engine == 'BLENDER_EEVEE':
+                if is_engine(context, 'BLENDER_EEVEE'):
                     self.draw_icon_button(flow, "ShaderNodeEeveeSpecular")
                 self.draw_icon_button(flow, "ShaderNodeSubsurfaceScattering")
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_icon_button(flow, "ShaderNodeBsdfToon")
                 self.draw_icon_button(flow, "ShaderNodeBsdfTranslucent")
                 self.draw_icon_button(flow, "ShaderNodeBsdfTransparent")
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_icon_button(flow, "ShaderNodeBsdfSheen")
                 self.draw_icon_button(flow, "ShaderNodeVolumeAbsorption")
                 self.draw_icon_button(flow, "ShaderNodeVolumeScatter")
 
-            if context.space_data.shader_type == 'WORLD':
+            if is_shader_type(context, 'WORLD'):
                 self.draw_icon_button(flow, "ShaderNodeBackground")
                 self.draw_icon_button(flow, "ShaderNodeEmission")
                 self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
@@ -1912,7 +1939,7 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "ShaderNodeSeparateColor")
             self.draw_text_button(col, "ShaderNodeSeparateXYZ")
 
-            if engine == 'BLENDER_EEVEE_NEXT':
+            if is_engine(context, 'BLENDER_EEVEE'):
                 self.draw_text_button(col, "ShaderNodeShaderToRGB")
             self.draw_text_button(col, "ShaderNodeVectorMath")
             self.draw_text_button(col, "ShaderNodeWavelength")
@@ -1935,7 +1962,7 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "ShaderNodeSeparateColor")
             self.draw_icon_button(flow, "ShaderNodeSeparateXYZ")
 
-            if engine == 'BLENDER_EEVEE':
+            if is_engine(context, 'BLENDER_EEVEE'):
                 self.draw_icon_button(flow, "ShaderNodeShaderToRGB")
             self.draw_icon_button(flow, "ShaderNodeVectorMath")
             self.draw_icon_button(flow, "ShaderNodeWavelength")
@@ -2388,7 +2415,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_text_button(col, "GeometryNodeTool3DCursor")
             self.draw_text_button(col, "GeometryNodeInputActiveCamera")
             self.draw_text_button(col, "GeometryNodeCameraInfo")
@@ -2397,13 +2424,13 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "GeometryNodeIsViewport")
             self.draw_text_button(col, "GeometryNodeInputNamedLayerSelection")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_text_button(col, "GeometryNodeToolMousePosition")
             self.draw_text_button(col, "GeometryNodeObjectInfo")
             self.draw_text_button(col, "GeometryNodeInputSceneTime")
             self.draw_text_button(col, "GeometryNodeSelfObject")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_text_button(col, "GeometryNodeViewportTransform")
 
         #### Icon Buttons
@@ -2413,7 +2440,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_icon_button(flow, "GeometryNodeTool3DCursor")
             self.draw_icon_button(flow, "GeometryNodeInputActiveCamera")
             self.draw_icon_button(flow, "GeometryNodeCameraInfo")
@@ -2422,13 +2449,13 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "GeometryNodeIsViewport")
             self.draw_icon_button(flow, "GeometryNodeInputNamedLayerSelection")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_icon_button(flow, "GeometryNodeToolMousePosition")
             self.draw_icon_button(flow, "GeometryNodeObjectInfo")
             self.draw_icon_button(flow, "GeometryNodeInputSceneTime")
             self.draw_icon_button(flow, "GeometryNodeSelfObject")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_icon_button(flow, "GeometryNodeViewportTransform")
 
 
@@ -2550,7 +2577,7 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "GeometryNodeInputPosition")
             self.draw_text_button(col, "GeometryNodeInputRadius")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_text_button(col, "GeometryNodeToolSelection")
                 self.draw_text_button(col, "GeometryNodeToolActiveElement")
 
@@ -2567,7 +2594,7 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "GeometryNodeInputPosition")
             self.draw_icon_button(flow, "GeometryNodeInputRadius")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_icon_button(flow, "GeometryNodeToolSelection")
                 self.draw_icon_button(flow, "GeometryNodeToolActiveElement")
 
@@ -2654,7 +2681,7 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "GeometryNodeSetID")
             self.draw_text_button(col, "GeometryNodeSetPosition")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_text_button(col, "GeometryNodeToolSetSelection")
 
         #### Icon Buttons
@@ -2667,7 +2694,7 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "GeometryNodeSetID")
             self.draw_icon_button(flow, "GeometryNodeSetPosition")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_icon_button(flow, "GeometryNodeToolSetSelection")
 
 
@@ -3329,7 +3356,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "GeometryNodeMeshFaceSetBoundaries")
             self.draw_text_button(col, "GeometryNodeInputMeshFaceNeighbors")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_text_button(col, "GeometryNodeToolFaceSet")
             self.draw_text_button(col, "GeometryNodeInputMeshFaceIsPlanar")
             self.draw_text_button(col, "GeometryNodeInputShadeSmooth")
@@ -3355,7 +3382,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
             self.draw_icon_button(flow, "GeometryNodeMeshFaceSetBoundaries")
             self.draw_icon_button(flow, "GeometryNodeInputMeshFaceNeighbors")
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_icon_button(flow, "GeometryNodeToolFaceSet")
             self.draw_icon_button(flow, "GeometryNodeInputMeshFaceIsPlanar")
             self.draw_icon_button(flow, "GeometryNodeInputShadeSmooth")
@@ -3437,7 +3464,7 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_text_button(col, "GeometryNodeToolFaceSet")
             self.draw_text_button(col, "GeometryNodeSetMeshNormal")
             self.draw_text_button(col, "GeometryNodeSetShadeSmooth")
@@ -3449,7 +3476,7 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            if context.space_data.geometry_nodes_type == 'TOOL':
+            if is_tool_tree(context):
                 self.draw_icon_button(flow, "GeometryNodeToolSetFaceSet")
             self.draw_icon_button(flow, "GeometryNodeSetMeshNormal")
             self.draw_icon_button(flow, "GeometryNodeSetShadeSmooth")
@@ -4479,13 +4506,13 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel, NodePanel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            if context.space_data.shader_type == 'OBJECT':
+            if is_shader_type(context, 'OBJECT'):
                 self.draw_text_button(col, "ShaderNodeOutputMaterial")
 
-            elif context.space_data.shader_type == 'WORLD':
+            elif is_shader_type(context, 'WORLD'):
                 self.draw_text_button(col, "ShaderNodeOutputWorld")
 
-            elif context.space_data.shader_type == 'LINESTYLE':
+            elif is_shader_type(context, 'LINESTYLE'):
                 self.draw_text_button(col, "ShaderNodeOutputLineStyle")
 
         #### Image Buttons
@@ -4495,13 +4522,13 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel, NodePanel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            if context.space_data.shader_type == 'OBJECT':
+            if is_shader_type(context, 'OBJECT'):
                 self.draw_icon_button(flow, "ShaderNodeOutputMaterial")
 
-            elif context.space_data.shader_type == 'WORLD':
+            elif is_shader_type(context, 'WORLD'):
                 self.draw_icon_button(flow, "ShaderNodeOutputWorld")
 
-            elif context.space_data.shader_type == 'LINESTYLE':
+            elif is_shader_type(context, 'LINESTYLE'):
                 self.draw_icon_button(flow, "ShaderNodeOutputLineStyle")
 
 
@@ -4540,9 +4567,9 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
             col.scale_y = 1.5
             self.draw_text_button(col, "ShaderNodeAddShader")
 
-            if context.space_data.shader_type == 'OBJECT':
+            if is_shader_type(context, 'OBJECT'):
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_text_button(col, "ShaderNodeBsdfHairPrincipled")
                 self.draw_text_button(col, "ShaderNodeMixShader")
                 self.draw_text_button(col, "ShaderNodeBsdfPrincipled")
@@ -4551,7 +4578,7 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
                 col.scale_y = 1.5
                 self.draw_text_button(col, "ShaderNodeVolumePrincipled")
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_text_button(col, "ShaderNodeBsdfToon")
 
                 col = layout.column(align=True)
@@ -4560,7 +4587,7 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
                 self.draw_text_button(col, "ShaderNodeVolumeAbsorption")
                 self.draw_text_button(col, "ShaderNodeVolumeScatter")
 
-            if context.space_data.shader_type == 'WORLD':
+            if is_shader_type(context, 'WORLD'):
                 col = layout.column(align=True)
                 col.scale_y = 1.5
                 self.draw_text_button(col, "ShaderNodeBackground")
@@ -4577,20 +4604,20 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
 
             self.draw_icon_button(flow, "ShaderNodeAddShader")
 
-            if context.space_data.shader_type == 'OBJECT':
+            if is_shader_type(context, 'OBJECT'):
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_icon_button(flow, "ShaderNodeBsdfHairPrincipled")
                 self.draw_icon_button(flow, "ShaderNodeMixShader")
                 self.draw_icon_button(flow, "ShaderNodeBsdfPrincipled")
                 self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
 
-                if engine == 'CYCLES':
+                if is_engine(context, 'CYCLES'):
                     self.draw_icon_button(flow, "ShaderNodeBsdfToon")
                 self.draw_icon_button(flow, "ShaderNodeVolumeAbsorption")
                 self.draw_icon_button(flow, "ShaderNodeVolumeScatter")
 
-            if context.space_data.shader_type == 'WORLD':
+            if is_shader_type(context, 'WORLD'):
                 self.draw_icon_button(flow, "ShaderNodeBackground")
                 self.draw_icon_button(flow, "ShaderNodeEmission")
                 self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
