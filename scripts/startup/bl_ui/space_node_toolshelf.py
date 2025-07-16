@@ -292,77 +292,34 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        entries = (
+            "ShaderNodeAmbientOcclusion",
+            "ShaderNodeAttribute",
+            "ShaderNodeBevel",
+            "ShaderNodeCameraData",
+            "ShaderNodeVertexColor",
+            "ShaderNodeFresnel",
+            Separator,
+            "ShaderNodeNewGeometry",
+            "ShaderNodeHairInfo",
+            "ShaderNodeLayerWeight",
+            "ShaderNodeLightPath",
+            "ShaderNodeObjectInfo",
+            Separator,
+            "ShaderNodeParticleInfo",
+            "ShaderNodePointInfo",
+            "ShaderNodeRGB",
+            "ShaderNodeTangent",
+            "ShaderNodeTexCoord",
+            OperatorEntry("ShaderNodeUVAlongStroke", should_draw=is_shader_type(context, 'LINESTYLE')),
+            Separator,
+            "ShaderNodeUVMap",
+            "ShaderNodeValue",
+            "ShaderNodeVolumeInfo",
+            "ShaderNodeWireframe",
+        )
 
-        ##### Textbuttons
-
-        if not addon_prefs.Node_text_or_icon:
-
-        ##### --------------------------------- Textures common ------------------------------------------- ####
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeAmbientOcclusion")
-            self.draw_text_button(col, "ShaderNodeAttribute")
-            self.draw_text_button(col, "ShaderNodeBevel")
-            self.draw_text_button(col, "ShaderNodeCameraData")
-            self.draw_text_button(col, "ShaderNodeVertexColor")
-            self.draw_text_button(col, "ShaderNodeFresnel")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeNewGeometry")
-            self.draw_text_button(col, "ShaderNodeHairInfo")
-            self.draw_text_button(col, "ShaderNodeLayerWeight")
-            self.draw_text_button(col, "ShaderNodeLightPath")
-            self.draw_text_button(col, "ShaderNodeObjectInfo")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeParticleInfo")
-            self.draw_text_button(col, "ShaderNodePointInfo")
-            self.draw_text_button(col, "ShaderNodeRGB")
-            self.draw_text_button(col, "ShaderNodeTangent")
-            self.draw_text_button(col, "ShaderNodeTexCoord")
-
-            if is_shader_type(context, 'LINESTYLE'):
-                self.draw_text_button(col, "ShaderNodeUVAlongStroke")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeUVMap")
-            self.draw_text_button(col, "ShaderNodeValue")
-            self.draw_text_button(col, "ShaderNodeVolumeInfo")
-            self.draw_text_button(col, "ShaderNodeWireframe")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeAmbientOcclusion")
-            self.draw_icon_button(flow, "ShaderNodeAttribute")
-            self.draw_icon_button(flow, "ShaderNodeBevel")
-            self.draw_icon_button(flow, "ShaderNodeCameraData")
-            self.draw_icon_button(flow, "ShaderNodeVertexColor")
-            self.draw_icon_button(flow, "ShaderNodeFresnel")
-            self.draw_icon_button(flow, "ShaderNodeNewGeometry")
-            self.draw_icon_button(flow, "ShaderNodeHairInfo")
-            self.draw_icon_button(flow, "ShaderNodeLayerWeight")
-            self.draw_icon_button(flow, "ShaderNodeLightPath")
-            self.draw_icon_button(flow, "ShaderNodeObjectInfo")
-            self.draw_icon_button(flow, "ShaderNodeParticleInfo")
-            self.draw_icon_button(flow, "ShaderNodePointInfo")
-            self.draw_icon_button(flow, "ShaderNodeRGB")
-            self.draw_icon_button(flow, "ShaderNodeTangent")
-            self.draw_icon_button(flow, "ShaderNodeTexCoord")
-
-            if is_shader_type(context, 'LINESTYLE'):
-                self.draw_icon_button(flow, "ShaderNodeUVAlongStroke")
-            self.draw_icon_button(flow, "ShaderNodeUVMap")
-            self.draw_icon_button(flow, "ShaderNodeValue")
-            self.draw_icon_button(flow, "ShaderNodeVolumeInfo")
-            self.draw_icon_button(flow, "ShaderNodeWireframe")
+        self.draw_entries(context, layout, entries)
 
 
 #Shader editor , Output panel
@@ -393,43 +350,18 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         engine = context.engine
+        is_object_shader = is_shader_type(context, 'OBJECT')
+        is_cycles =  is_engine(context, 'CYCLES')
 
-        ##### Textbuttons
+        entries = (
+            "ShaderNodeOutputAOV",
+            OperatorEntry("ShaderNodeOutputLight", should_draw=is_object_shader and is_cycles),
+            OperatorEntry("ShaderNodeOutputMaterial", should_draw=is_object_shader),
+            OperatorEntry("ShaderNodeOutputWorld", should_draw=is_shader_type(context, 'WORLD')),
+            OperatorEntry("ShaderNodeOutputLineStyle", should_draw=is_shader_type(context, 'LINESTYLE')),
+        )
 
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeOutputAOV")
-
-            if is_shader_type(context, 'OBJECT'):
-                if is_engine(context, 'CYCLES'):
-                    self.draw_text_button(col, "ShaderNodeOutputLight")
-                self.draw_text_button(col, "ShaderNodeOutputMaterial")
-
-            elif is_shader_type(context, 'WORLD'):
-                self.draw_text_button(col, "ShaderNodeOutputWorld")
-
-            elif is_shader_type(context, 'LINESTYLE'):
-                self.draw_text_button(col, "ShaderNodeOutputLineStyle")
-
-        #### Image Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeOutputAOV")
-
-            if is_shader_type(context, 'OBJECT'):
-                if is_engine(context, 'CYCLES'):
-                    self.draw_icon_button(flow, "ShaderNodeOutputLight")
-                self.draw_icon_button(flow, "ShaderNodeOutputMaterial")
-
-            elif is_shader_type(context, 'WORLD'):
-                self.draw_icon_button(flow, "ShaderNodeOutputWorld")
-
-            elif is_shader_type(context, 'LINESTYLE'):
-                self.draw_icon_button(flow, "ShaderNodeOutputLineStyle")
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, input panel
@@ -454,35 +386,16 @@ class NODES_PT_comp_add_input(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        entries = (
+            "CompositorNodeBokehImage",
+            "CompositorNodeImage",
+            "CompositorNodeImageInfo",
+            "CompositorNodeImageCoordinates",
+            "CompositorNodeMask",
+            "CompositorNodeMovieClip",
+        )
 
-       #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeBokehImage")
-            self.draw_text_button(col, "CompositorNodeImage")
-            self.draw_text_button(col, "CompositorNodeMask")
-            self.draw_text_button(col, "CompositorNodeMovieClip")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeTexture")
-
-
-        #### Image Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeBokehImage")
-            self.draw_icon_button(flow, "CompositorNodeImage")
-            self.draw_icon_button(flow, "CompositorNodeMask")
-            self.draw_icon_button(flow, "CompositorNodeMovieClip")
-            self.draw_icon_button(flow, "CompositorNodeRGB")
-            self.draw_icon_button(flow, "CompositorNodeTexture")
-            self.draw_icon_button(flow, "CompositorNodeValue")
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Constant supbanel
@@ -504,23 +417,13 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        entries = (
+            "CompositorNodeRGB",
+            "ShaderNodeValue",
+            "CompositorNodeNormal",
+        )
 
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeRGB")
-            self.draw_text_button(col, "CompositorNodeValue")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeRGB")
-            self.draw_icon_button(flow, "CompositorNodeValue")
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Scene supbanel
@@ -542,26 +445,13 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeRLayers")
-            self.draw_text_button(col, "CompositorNodeSceneTime")
-            self.draw_text_button(col, "CompositorNodeTime")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeRLayers")
-            self.draw_icon_button(flow, "CompositorNodeSceneTime")
-            self.draw_icon_button(flow, "CompositorNodeTime")
-
+        entries = (
+            "CompositorNodeRLayers",
+            "CompositorNodeSceneTime",
+            "CompositorNodeTime",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 #Compositor, Add tab, Output Panel
 class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
@@ -585,29 +475,15 @@ class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        entries = (
+            "CompositorNodeComposite",
+            "CompositorNodeViewer",
+            Separator,
+            "CompositorNodeOutputFile",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeComposite")
-            self.draw_text_button(col, "CompositorNodeViewer")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeOutputFile")
-
-
-        #### Image Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeComposite")
-            self.draw_icon_button(flow, "CompositorNodeOutputFile")
-            self.draw_icon_button(flow, "CompositorNodeViewer")
 
 #Compositor, Add tab, Color Panel
 class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
@@ -631,36 +507,18 @@ class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodePremulKey")
-            self.draw_text_button(col, "CompositorNodeValToRGB")
-            self.draw_text_button(col, "CompositorNodeConvertColorSpace")
-            self.draw_text_button(col, "CompositorNodeSetAlpha")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeInvert")
-            self.draw_text_button(col, "CompositorNodeRGBToBW")
-
-
-        #### Image Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            self.draw_icon_button(flow, "CompositorNodePremulKey")
-            self.draw_icon_button(flow, "CompositorNodeValToRGB")
-            self.draw_icon_button(flow, "CompositorNodeConvertColorSpace")
-            self.draw_icon_button(flow, "CompositorNodeSetAlpha")
-            self.draw_icon_button(flow, "CompositorNodeInvert")
-            self.draw_icon_button(flow, "CompositorNodeRGBToBW")
+        entries = (
+            "CompositorNodePremulKey",
+            "ShaderNodeBlackbody",
+            "ShaderNodeValToRGB",
+            "CompositorNodeConvertColorSpace",
+            "CompositorNodeSetAlpha",
+            Separator,
+            "CompositorNodeInvert",
+            "CompositorNodeRGBToBW",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Color, Adjust supbanel
@@ -682,45 +540,20 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        entries = (
+            "CompositorNodeBrightContrast",
+            "CompositorNodeColorBalance",
+            "CompositorNodeColorCorrection",
 
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeBrightContrast")
-            self.draw_text_button(col, "CompositorNodeColorBalance")
-            self.draw_text_button(col, "CompositorNodeColorCorrection")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeExposure")
-            self.draw_text_button(col, "CompositorNodeGamma")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeHueCorrect")
-            self.draw_text_button(col, "CompositorNodeHueSat")
-            self.draw_text_button(col, "CompositorNodeCurveRGB")
-            self.draw_text_button(col, "CompositorNodeTonemap")
-
-
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeBrightContrast")
-            self.draw_icon_button(flow, "CompositorNodeColorBalance")
-            self.draw_icon_button(flow, "CompositorNodeColorCorrection")
-            self.draw_icon_button(flow, "CompositorNodeExposure")
-            self.draw_icon_button(flow, "CompositorNodeGamma")
-            self.draw_icon_button(flow, "CompositorNodeHueCorrect")
-            self.draw_icon_button(flow, "CompositorNodeHueSat")
-            self.draw_icon_button(flow, "CompositorNodeCurveRGB")
-            self.draw_icon_button(flow, "CompositorNodeTonemap")
+            "CompositorNodeExposure",
+            "CompositorNodeGamma",
+            "CompositorNodeHueCorrect",
+            "CompositorNodeHueSat",
+            "CompositorNodeCurveRGB",
+            "CompositorNodeTonemap",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Color, Mix supbanel
@@ -740,38 +573,17 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeAlphaOver")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeCombineColor")
-            self.draw_text_button(col, "CompositorNodeSeparateColor")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeMixRGB")
-            self.draw_text_button(col, "CompositorNodeZcombine")
-
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeAlphaOver")
-            self.draw_icon_button(flow, "CompositorNodeCombineColor")
-            self.draw_icon_button(flow, "CompositorNodeSeparateColor")
-            self.draw_icon_button(flow, "CompositorNodeMixRGB")
-            self.draw_icon_button(flow, "CompositorNodeZcombine")
+        entries = (
+            "CompositorNodeAlphaOver",
+            Separator,
+            "CompositorNodeCombineColor",
+            "CompositorNodeSeparateColor",
+            Separator,
+            OperatorEntry("ShaderNodeMix", text=iface_("Mix Color"), settings={"data_type": "'RGBA'"}),
+            "CompositorNodeZcombine",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Filter Panel
@@ -796,50 +608,23 @@ class NODES_PT_comp_add_filter(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeAntiAliasing")
-            self.draw_text_button(col, "CompositorNodeDenoise")
-            self.draw_text_button(col, "CompositorNodeDespeckle")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDilateErode")
-            self.draw_text_button(col, "CompositorNodeInpaint")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeFilter")
-            self.draw_text_button(col, "CompositorNodeGlare")
-            self.draw_text_button(col, "CompositorNodeKuwahara")
-            self.draw_text_button(col, "CompositorNodePixelate")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodePosterize")
-            self.draw_text_button(col, "CompositorNodeSunBeams")
-
-
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeAntiAliasing")
-            self.draw_icon_button(flow, "CompositorNodeDenoise")
-            self.draw_icon_button(flow, "CompositorNodeDespeckle")
-            self.draw_icon_button(flow, "CompositorNodeDilateErode")
-            self.draw_icon_button(flow, "CompositorNodeInpaint")
-            self.draw_icon_button(flow, "CompositorNodeFilter")
-            self.draw_icon_button(flow, "CompositorNodeGlare")
-            self.draw_icon_button(flow, "CompositorNodeKuwahara")
-            self.draw_icon_button(flow, "CompositorNodePixelate")
-            self.draw_icon_button(flow, "CompositorNodePosterize")
-            self.draw_icon_button(flow, "CompositorNodeSunBeams")
+        entries = (
+            "CompositorNodeAntiAliasing",
+            "CompositorNodeDenoise",
+            "CompositorNodeDespeckle",
+            Separator,
+            "CompositorNodeDilateErode",
+            "CompositorNodeInpaint",
+            Separator,
+            "CompositorNodeFilter",
+            "CompositorNodeGlare",
+            "CompositorNodeKuwahara",
+            "CompositorNodePixelate",
+            "CompositorNodePosterize",
+            "CompositorNodeSunBeams",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Filter, Blur supbanel
@@ -861,34 +646,16 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeBilateralblur")
-            self.draw_text_button(col, "CompositorNodeBlur")
-            self.draw_text_button(col, "CompositorNodeBokehBlur")
-            self.draw_text_button(col, "CompositorNodeDefocus")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDBlur")
-            self.draw_text_button(col, "CompositorNodeVecBlur")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeBilateralblur")
-            self.draw_icon_button(flow, "CompositorNodeBlur")
-            self.draw_icon_button(flow, "CompositorNodeBokehBlur")
-            self.draw_icon_button(flow, "CompositorNodeDefocus")
-            self.draw_icon_button(flow, "CompositorNodeDBlur")
-            self.draw_icon_button(flow, "CompositorNodeVecBlur")
+        entries = (
+            "CompositorNodeBilateralblur",
+            "CompositorNodeBlur",
+            "CompositorNodeBokehBlur",
+            "CompositorNodeDefocus",
+            "CompositorNodeDBlur",
+            "CompositorNodeVecBlur",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Keying Panel
@@ -912,44 +679,19 @@ class NODES_PT_comp_add_keying(bpy.types.Panel, NodePanel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeChannelMatte")
-            self.draw_text_button(col, "CompositorNodeChromaMatte")
-            self.draw_text_button(col, "CompositorNodeColorMatte")
-            self.draw_text_button(col, "CompositorNodeColorSpill")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDiffMatte")
-            self.draw_text_button(col, "CompositorNodeDistanceMatte")
-            self.draw_text_button(col, "CompositorNodeKeying")
-            self.draw_text_button(col, "CompositorNodeKeyingScreen")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeLumaMatte")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeChannelMatte")
-            self.draw_icon_button(flow, "CompositorNodeChromaMatte")
-            self.draw_icon_button(flow, "CompositorNodeColorMatte")
-            self.draw_icon_button(flow, "CompositorNodeColorSpill")
-            self.draw_icon_button(flow, "CompositorNodeDiffMatte")
-            self.draw_icon_button(flow, "CompositorNodeDistanceMatte")
-            self.draw_icon_button(flow, "CompositorNodeKeying")
-            self.draw_icon_button(flow, "CompositorNodeKeyingScreen")
-            self.draw_icon_button(flow, "CompositorNodeLumaMatte")
+        entries = (
+            "CompositorNodeChannelMatte",
+            "CompositorNodeChromaMatte",
+            "CompositorNodeColorMatte",
+            "CompositorNodeColorSpill",
+            "CompositorNodeDiffMatte",
+            "CompositorNodeDistanceMatte",
+            "CompositorNodeKeying",
+            "CompositorNodeKeyingScreen",
+            "CompositorNodeLumaMatte",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Mask Panel
@@ -974,37 +716,18 @@ class NODES_PT_comp_add_mask(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeCryptomatteV2")
-            self.draw_text_button(col, "CompositorNodeCryptomatte")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeBoxMask")
-            self.draw_text_button(col, "CompositorNodeEllipseMask")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDoubleEdgeMask")
-            self.draw_text_button(col, "CompositorNodeIDMask")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeCryptomatte")
-            self.draw_icon_button(flow, "CompositorNodeCryptomatteV2")
-            self.draw_icon_button(flow, "CompositorNodeBoxMask")
-            self.draw_icon_button(flow, "CompositorNodeEllipseMask")
-            self.draw_icon_button(flow, "CompositorNodeDoubleEdgeMask")
-            self.draw_icon_button(flow, "CompositorNodeIDMask")
+        entries = (
+            "CompositorNodeCryptomatteV2",
+            "CompositorNodeCryptomatte",
+            Separator,
+            "CompositorNodeBoxMask",
+            "CompositorNodeEllipseMask",
+            Separator,
+            "CompositorNodeDoubleEdgeMask",
+            "CompositorNodeIDMask",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Texture Panel
@@ -1028,43 +751,19 @@ class NODES_PT_comp_add_texture(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexBrick")
-            self.draw_text_button(col, "ShaderNodeTexChecker")
-            self.draw_text_button(col, "ShaderNodeTexGabor")
-            self.draw_text_button(col, "ShaderNodeTexGradient")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexMagic")
-            self.draw_text_button(col, "ShaderNodeTexNoise")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexVoronoi")
-            self.draw_text_button(col, "ShaderNodeTexWave")
-            self.draw_text_button(col, "ShaderNodeTexWhiteNoise")
-
-
-        #### Icon Buttons
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeTexBrick")
-            self.draw_icon_button(flow, "ShaderNodeTexChecker")
-            self.draw_icon_button(flow, "ShaderNodeTexGabor")
-            self.draw_icon_button(flow, "ShaderNodeTexGradient")
-            self.draw_icon_button(flow, "ShaderNodeTexMagic")
-            self.draw_icon_button(flow, "ShaderNodeTexNoise")
-            self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
-            self.draw_icon_button(flow, "ShaderNodeTexWave")
-            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise")
+        entries = (
+            "ShaderNodeTexBrick",
+            "ShaderNodeTexChecker",
+            "ShaderNodeTexGabor",
+            "ShaderNodeTexGradient",
+            "ShaderNodeTexMagic",
+            "ShaderNodeTexNoise",
+            "ShaderNodeTexVoronoi",
+            "ShaderNodeTexWave",
+            "ShaderNodeTexWhiteNoise",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Tracking Panel
@@ -1089,25 +788,24 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodePlaneTrackDeform")
-            self.draw_text_button(col, "CompositorNodeStabilize")
-            self.draw_text_button(col, "CompositorNodeTrackPos")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodePlaneTrackDeform")
-            self.draw_icon_button(flow, "CompositorNodeStabilize")
-            self.draw_icon_button(flow, "CompositorNodeTrackPos")
+        entries = (
+            "CompositorNodeRotate",
+            "CompositorNodeScale",
+            "CompositorNodeTransform",
+            "CompositorNodeTranslate",
+            Separator,
+            "CompositorNodeCornerPin",
+            "CompositorNodeCrop",
+            Separator,
+            "CompositorNodeDisplace",
+            "CompositorNodeFlip",
+            "CompositorNodeMapUV",
+            Separator,
+            "CompositorNodeLensdist",
+            "CompositorNodeMovieDistortion",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Transform Panel
@@ -1132,50 +830,24 @@ class NODES_PT_comp_add_transform(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeRotate")
-            self.draw_text_button(col, "CompositorNodeScale")
-            self.draw_text_button(col, "CompositorNodeTransform")
-            self.draw_text_button(col, "CompositorNodeTranslate")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeCornerPin")
-            self.draw_text_button(col, "CompositorNodeCrop")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeDisplace")
-            self.draw_text_button(col, "CompositorNodeFlip")
-            self.draw_text_button(col, "CompositorNodeMapUV")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeLensdist")
-            self.draw_text_button(col, "CompositorNodeMovieDistortion")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeRotate")
-            self.draw_icon_button(flow, "CompositorNodeScale")
-            self.draw_icon_button(flow, "CompositorNodeTransform")
-            self.draw_icon_button(flow, "CompositorNodeTranslate")
-            self.draw_icon_button(flow, "CompositorNodeCornerPin")
-            self.draw_icon_button(flow, "CompositorNodeCrop")
-            self.draw_icon_button(flow, "CompositorNodeDisplace")
-            self.draw_icon_button(flow, "CompositorNodeFlip")
-            self.draw_icon_button(flow, "CompositorNodeMapUV")
-            self.draw_icon_button(flow, "CompositorNodeLensdist")
-            self.draw_icon_button(flow, "CompositorNodeMovieDistortion")
+        entries = (
+            "CompositorNodeRotate",
+            "CompositorNodeScale",
+            "CompositorNodeTransform",
+            "CompositorNodeTranslate",
+            Separator,
+            "CompositorNodeCornerPin",
+            "CompositorNodeCrop",
+            Separator,
+            "CompositorNodeDisplace",
+            "CompositorNodeFlip",
+            "CompositorNodeMapUV",
+            Separator,
+            "CompositorNodeLensdist",
+            "CompositorNodeMovieDistortion",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Utility Panel
@@ -1200,51 +872,24 @@ class NODES_PT_comp_add_utility(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeMapRange")
-            self.draw_text_button(col, "ShaderNodeMath")
-            self.draw_text_button(col, "ShaderNodeMix")
-            self.draw_text_button(col, "ShaderNodeClamp")
-            self.draw_text_button(col, "ShaderNodeFloatCurve")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeLevels")
-            self.draw_text_button(col, "CompositorNodeNormalize")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeSplit")
-            self.draw_text_button(col, "CompositorNodeSwitch")
-            self.draw_text_button(col, "CompositorNodeSwitchView")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "CompositorNodeRelativeToPixel")
-
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "CompositorNodeMapRange")
-            self.draw_icon_button(flow, "ShaderNodeMath")
-            self.draw_icon_button(flow, "ShaderNodeClamp")
-            self.draw_icon_button(flow, "ShaderNodeMix")
-            self.draw_icon_button(flow, "ShaderNodeFloatCurve")
-            self.draw_icon_button(flow, "CompositorNodeLevels")
-            self.draw_icon_button(flow, "CompositorNodeNormalize")
-            self.draw_icon_button(flow, "CompositorNodeSplit")
-            self.draw_icon_button(flow, "CompositorNodeSwitch")
-            self.draw_icon_button(flow, "CompositorNodeSwitchView")
-            self.draw_icon_button(flow, "CompositorNodeRelativeToPixel")
+        entries = (
+            "ShaderNodeMapRange",
+            "ShaderNodeMath",
+            "ShaderNodeMix",
+            "ShaderNodeClamp",
+            "ShaderNodeFloatCurve",
+            Separator,
+            "CompositorNodeLevels",
+            "CompositorNodeNormalize",
+            Separator,
+            "CompositorNodeSplit",
+            "CompositorNodeSwitch",
+            OperatorEntry("CompositorNodeSwitchView", text="Switch Stereo View"),
+            Separator,
+            "CompositorNodeRelativeToPixel",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Compositor, Add tab, Vector Panel
@@ -1269,35 +914,17 @@ class NODES_PT_comp_add_vector(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-            #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeCombineXYZ")
-            self.draw_text_button(col, "ShaderNodeSeparateXYZ")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeMix", settings={"data_type": "'VECTOR'"})
-            self.draw_text_button(col, "ShaderNodeVectorCurve")
-
-            self.draw_text_button(col, "ShaderNodeVectorMath")
-            self.draw_text_button(col, "ShaderNodeVectorRotate")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeCombineXYZ")
-            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ")
-            self.draw_icon_button(flow, "ShaderNodeMix", settings={"data_type": "'VECTOR'"})
-            self.draw_icon_button(flow, "ShaderNodeVectorCurve")
-            self.draw_icon_button(flow, "ShaderNodeVectorMath")
-            self.draw_icon_button(flow, "ShaderNodeVectorRotate")
+        entries = (
+            "ShaderNodeCombineXYZ",
+            "ShaderNodeSeparateXYZ",
+            Separator,
+            OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), settings={"data_type": "'VECTOR'"}),
+            "ShaderNodeVectorCurve",
+            "ShaderNodeVectorMath",
+            "ShaderNodeVectorRotate",
+        )
+        
+        self.draw_entries(context, layout, entries)
 
 
 #Input nodes tab, textures common panel. Texture mode
