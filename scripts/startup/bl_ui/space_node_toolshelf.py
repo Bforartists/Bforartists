@@ -8,12 +8,26 @@ from bpy.app.translations import (
     contexts as i18n_contexts,
 )
 
+import dataclasses
+
 #Add tab, Node Group panel
 from nodeitems_builtins import node_tree_group_type
 
 
 # Null object used to abstractly represent a separator
 Separator = object()
+
+
+@dataclasses.dataclass
+class OperatorEntry:
+    node : str = None
+    operator : str = "node.add_node"
+    text : str = ""
+    icon : str = None
+    settings : dict = None
+    should_draw : bool = False
+
+    as_dict = dataclasses.asdict
 
 
 def is_shader_type(context, valid_types):
@@ -45,7 +59,7 @@ def is_tool_tree(context):
 
 class NodePanel:
     @staticmethod
-    def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, pad=0):
+    def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, pad=0, **kwargs):
         # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
         if operator == "node.add_node":
             bl_rna = bpy.types.Node.bl_rna_get_subclass(node)
@@ -71,7 +85,7 @@ class NodePanel:
                 ops.value = value
 
     @staticmethod
-    def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None):
+    def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None, **kwargs):
         # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
         if icon is None and operator == "node.add_node":
             bl_rna = bpy.types.Node.bl_rna_get_subclass(node)
@@ -101,6 +115,8 @@ class NodePanel:
             for entry in entries:
                 if entry is Separator:
                     col.separator(factor=2/3)
+                elif isinstance(entry, OperatorEntry):
+                    self.draw_text_button(col, **entry.as_dict())
                 else:
                     self.draw_text_button(col, entry)
 
@@ -115,6 +131,8 @@ class NodePanel:
                     flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
                     flow.scale_x = 1.5
                     flow.scale_y = 1.5
+                elif isinstance(entry, OperatorEntry):
+                    self.draw_icon_button(flow, **entry.as_dict())
                 else:
                     self.draw_icon_button(flow, entry)
 
