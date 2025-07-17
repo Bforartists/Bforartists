@@ -2172,7 +2172,6 @@ class IMAGE_OT_switch_editors_to_uv(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_uv"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to UV Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -2186,7 +2185,6 @@ class IMAGE_OT_switch_editors_to_image(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_image"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to Image Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):

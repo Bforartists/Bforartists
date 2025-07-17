@@ -42,7 +42,6 @@ class NODE_OT_switch_editors_to_compositor(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_compositor"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to Compositor Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -56,7 +55,6 @@ class NODE_OT_switch_editors_to_geometry(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_geometry"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to Geometry Node Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -70,7 +68,6 @@ class NODE_OT_switch_editors_to_shadereditor(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_shadereditor"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to Shader Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -87,7 +84,7 @@ class NODE_OT_switch_editors_in_compositor(bpy.types.Operator):
     bl_idname = "wm.switch_editor_in_compositor"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "You are in Compositor Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+    bl_options = {'INTERNAL'}  # use internal so it can not be searchable
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -99,7 +96,7 @@ class NODE_OT_switch_editors_in_geometry(bpy.types.Operator):
     bl_idname = "wm.switch_editor_in_geometry"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "You are in Geometry Node Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+    bl_options = {'INTERNAL'}  # use internal so it can not be searchable
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -111,7 +108,7 @@ class NODE_OT_switch_editors_in_shadereditor(bpy.types.Operator):
     bl_idname = "wm.switch_editor_in_shadereditor"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "You are in Shader Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+    bl_options = {'INTERNAL'}  # use internal so it can not be searchable
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
