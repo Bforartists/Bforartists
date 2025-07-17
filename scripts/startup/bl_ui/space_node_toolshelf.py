@@ -1207,6 +1207,29 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
+#Shader Editor - Script panel
+class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Script"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            "ShaderNodeScript",
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
 # ------------- Relations tab -------------------------------
 
 #Shader Editor - Relations tab, Group Panel
@@ -2595,39 +2618,6 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
         )
 
         self.draw_entries(context, layout, entries)
-
-
-#Shader Editor - Script panel
-class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Script"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeScript")
-
-        ##### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeScript")
 
 
 classes = (
