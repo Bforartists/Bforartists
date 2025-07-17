@@ -1181,108 +1181,37 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        #### Text Buttons
+        is_object = is_shader_type(context, 'OBJECT')
+        is_eevee = is_engine(context, 'BLENDER_EEVEE')
 
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeAddShader")
-            self.draw_text_button(col, "ShaderNodeBsdfMetallic")
+        entries = (
+            "ShaderNodeAddShader",
+            OperatorEntry("ShaderNodeBackground", should_draw=is_shader_type(context, 'WORLD')),
+            OperatorEntry("ShaderNodeBsdfDiffuse", should_draw=is_object),
+            "ShaderNodeEmission",
+            OperatorEntry("ShaderNodeBsdfGlass", should_draw=is_object),
+            OperatorEntry("ShaderNodeBsdfGlossy", should_draw=is_object),
+            OperatorEntry("ShaderNodeBsdfHair", should_draw=is_object and not is_eevee),
+            OperatorEntry("ShaderNodeHoldout", should_draw=is_object),
+            OperatorEntry("ShaderNodeBsdfMetallic", should_draw=is_object),
+            "ShaderNodeMixShader",
+            OperatorEntry("ShaderNodeBsdfPrincipled", should_draw=is_object),
+            OperatorEntry("ShaderNodeBsdfHairPrincipled", should_draw=is_object and not is_eevee),
+            OperatorEntry("ShaderNodeVolumePrincipled"),
+            OperatorEntry("ShaderNodeBsdfRayPortal", should_draw=is_object and not is_eevee),
+            OperatorEntry("ShaderNodeBsdfRefraction", should_draw=is_object),
+            OperatorEntry("ShaderNodeBsdfSheen", should_draw=is_object and not is_eevee),
+            OperatorEntry("ShaderNodeEeveeSpecular", should_draw=is_object and is_eevee),
+            OperatorEntry("ShaderNodeSubsurfaceScattering", should_draw=is_object),
+            OperatorEntry("ShaderNodeBsdfToon", should_draw=is_object and not is_eevee),
+            OperatorEntry("ShaderNodeBsdfTranslucent", should_draw=is_object),
+            OperatorEntry("ShaderNodeBsdfTransparent", should_draw=is_object),
+            "ShaderNodeVolumeAbsorption",
+            "ShaderNodeVolumeScatter",
+            "ShaderNodeVolumeCoefficients",
+        )
 
-            if is_shader_type(context, 'OBJECT'):
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_text_button(col, "ShaderNodeBsdfAnisotropic")
-                self.draw_text_button(col, "ShaderNodeBsdfDiffuse")
-                self.draw_text_button(col, "ShaderNodeEmission")
-                self.draw_text_button(col, "ShaderNodeBsdfGlass")
-
-                col = layout.column(align=True)
-                col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeBsdfGlossy")
-                self.draw_text_button(col, "ShaderNodeHoldout")
-                self.draw_text_button(col, "ShaderNodeMixShader")
-                self.draw_text_button(col, "ShaderNodeBsdfPrincipled")
-
-                col = layout.column(align=True)
-                col.scale_y = 1.5
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_text_button(col, "ShaderNodeBsdfHairPrincipled")
-                self.draw_text_button(col, "ShaderNodeVolumePrincipled")
-                self.draw_text_button(col, "ShaderNodeBsdfRefraction")
-
-                if is_engine(context, 'BLENDER_EEVEE'):
-                    self.draw_text_button(col, "ShaderNodeEeveeSpecular")
-                self.draw_text_button(col, "ShaderNodeSubsurfaceScattering")
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_text_button(col, "ShaderNodeBsdfToon")
-
-                col = layout.column(align=True)
-                col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeBsdfTranslucent")
-                self.draw_text_button(col, "ShaderNodeBsdfTransparent")
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_text_button(col, "ShaderNodeBsdfSheen")
-                self.draw_text_button(col, "ShaderNodeVolumeAbsorption")
-                self.draw_text_button(col, "ShaderNodeVolumeScatter")
-
-            if is_shader_type(context, 'WORLD'):
-                col = layout.column(align=True)
-                col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeBackground")
-                self.draw_text_button(col, "ShaderNodeEmission")
-                self.draw_text_button(col, "ShaderNodeVolumePrincipled")
-                self.draw_text_button(col, "ShaderNodeMixShader")
-
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            self.draw_icon_button(flow, "ShaderNodeAddShader")
-            self.draw_icon_button(flow, "ShaderNodeBsdfMetallic")
-
-            if is_shader_type(context, 'OBJECT'):
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_icon_button(flow, "ShaderNodeBsdfAnisotropic")
-                self.draw_icon_button(flow, "ShaderNodeBsdfDiffuse")
-                self.draw_icon_button(flow, "ShaderNodeEmission")
-                self.draw_icon_button(flow, "ShaderNodeBsdfGlass")
-                self.draw_icon_button(flow, "ShaderNodeBsdfGlossy")
-                self.draw_icon_button(flow, "ShaderNodeHoldout")
-                self.draw_icon_button(flow, "ShaderNodeMixShader")
-                self.draw_icon_button(flow, "ShaderNodeBsdfPrincipled")
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_icon_button(flow, "ShaderNodeBsdfHairPrincipled")
-                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
-
-                if is_engine(context, 'BLENDER_EEVEE'):
-                    self.draw_icon_button(flow, "ShaderNodeEeveeSpecular")
-                self.draw_icon_button(flow, "ShaderNodeSubsurfaceScattering")
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_icon_button(flow, "ShaderNodeBsdfToon")
-                self.draw_icon_button(flow, "ShaderNodeBsdfTranslucent")
-                self.draw_icon_button(flow, "ShaderNodeBsdfTransparent")
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_icon_button(flow, "ShaderNodeBsdfSheen")
-                self.draw_icon_button(flow, "ShaderNodeVolumeAbsorption")
-                self.draw_icon_button(flow, "ShaderNodeVolumeScatter")
-
-            if is_shader_type(context, 'WORLD'):
-                self.draw_icon_button(flow, "ShaderNodeBackground")
-                self.draw_icon_button(flow, "ShaderNodeEmission")
-                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
-                self.draw_icon_button(flow, "ShaderNodeMixShader")
+        self.draw_entries(context, layout, entries)
 
 
 #Shader Editor - Texture panel
@@ -1312,51 +1241,25 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        entries = (
+            "ShaderNodeTexBrick",
+            "ShaderNodeTexChecker",
+            "ShaderNodeTexEnvironment",
+            "ShaderNodeTexGabor",
+            "ShaderNodeTexGradient",
+            "ShaderNodeTexIES",
+            Separator,
+            "ShaderNodeTexImage",
+            "ShaderNodeTexMagic",
+            "ShaderNodeTexNoise",
+            "ShaderNodeTexSky",
+            Separator,
+            "ShaderNodeTexVoronoi",
+            "ShaderNodeTexWave",
+            "ShaderNodeTexWhiteNoise",
+        )
 
-        ##### Textbuttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexBrick")
-            self.draw_text_button(col, "ShaderNodeTexChecker")
-            self.draw_text_button(col, "ShaderNodeTexEnvironment")
-            self.draw_text_button(col, "ShaderNodeTexGabor")
-            self.draw_text_button(col, "ShaderNodeTexGradient")
-            self.draw_text_button(col, "ShaderNodeTexIES")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexImage")
-            self.draw_text_button(col, "ShaderNodeTexMagic")
-            self.draw_text_button(col, "ShaderNodeTexNoise")
-            self.draw_text_button(col, "ShaderNodeTexSky")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexVoronoi")
-            self.draw_text_button(col, "ShaderNodeTexWave")
-            self.draw_text_button(col, "ShaderNodeTexWhiteNoise")
-
-
-        #### Icon Buttons
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeTexBrick")
-            self.draw_icon_button(flow, "ShaderNodeTexChecker")
-            self.draw_icon_button(flow, "ShaderNodeTexEnvironment")
-            self.draw_icon_button(flow, "ShaderNodeTexGabor")
-            self.draw_icon_button(flow, "ShaderNodeTexGradient")
-            self.draw_icon_button(flow, "ShaderNodeTexIES")
-            self.draw_icon_button(flow, "ShaderNodeTexImage")
-            self.draw_icon_button(flow, "ShaderNodeTexMagic")
-            self.draw_icon_button(flow, "ShaderNodeTexNoise")
-            self.draw_icon_button(flow, "ShaderNodeTexSky")
-            self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
-            self.draw_icon_button(flow, "ShaderNodeTexWave")
-            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise")
+        self.draw_entries(context, layout, entries)
 
 
 #Shader Editor - Color panel
@@ -1385,34 +1288,18 @@ class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        entries = (
+            "ShaderNodeBrightContrast",
+            "ShaderNodeGamma",
+            "ShaderNodeHueSaturation",
+            "ShaderNodeInvert",
+            Separator,
+            "ShaderNodeLightFalloff",
+            OperatorEntry("ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"}),
+            "ShaderNodeRGBCurve",
+        )
 
-        ##### Textbuttons
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeBrightContrast")
-            self.draw_text_button(col, "ShaderNodeGamma")
-            self.draw_text_button(col, "ShaderNodeHueSaturation")
-            self.draw_text_button(col, "ShaderNodeInvert")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeLightFalloff")
-            self.draw_text_button(col, "ShaderNodeMix", settings={"data_type": "'RGBA'"})
-            self.draw_text_button(col, "ShaderNodeRGBCurve")
-
-        ##### Icon Buttons
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeBrightContrast")
-            self.draw_icon_button(flow, "ShaderNodeGamma")
-            self.draw_icon_button(flow, "ShaderNodeHueSaturation")
-            self.draw_icon_button(flow, "ShaderNodeInvert")
-            self.draw_icon_button(flow, "ShaderNodeLightFalloff")
-            self.draw_icon_button(flow, "ShaderNodeMix", settings={"data_type": "'RGBA'"})
-            self.draw_icon_button(flow, "ShaderNodeRGBCurve")
+        self.draw_entries(context, layout, entries)
 
 
 #Shader Editor - Vector panel
@@ -1441,43 +1328,20 @@ class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        entries = (
+            "ShaderNodeBump",
+            "ShaderNodeDisplacement",
+            "ShaderNodeMapping",
+            "ShaderNodeNormal",
+            "ShaderNodeNormalMap",
+            Separator,
+            "ShaderNodeVectorCurve",
+            "ShaderNodeVectorDisplacement",
+            "ShaderNodeVectorRotate",
+            "ShaderNodeVectorTransform",
+        )
 
-        ##### Textbuttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeBump")
-            self.draw_text_button(col, "ShaderNodeDisplacement")
-            self.draw_text_button(col, "ShaderNodeMapping")
-            self.draw_text_button(col, "ShaderNodeNormal")
-            self.draw_text_button(col, "ShaderNodeNormalMap")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeVectorCurve")
-            self.draw_text_button(col, "ShaderNodeVectorDisplacement")
-            self.draw_text_button(col, "ShaderNodeVectorRotate")
-            self.draw_text_button(col, "ShaderNodeVectorTransform")
-
-        ##### Icon Buttons
-
-        else:
-
-            ##### --------------------------------- Vector ------------------------------------------- ####
-
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeBump")
-            self.draw_icon_button(flow, "ShaderNodeDisplacement")
-            self.draw_icon_button(flow, "ShaderNodeMapping")
-            self.draw_icon_button(flow, "ShaderNodeNormal")
-            self.draw_icon_button(flow, "ShaderNodeNormalMap")
-            self.draw_icon_button(flow, "ShaderNodeVectorCurve")
-            self.draw_icon_button(flow, "ShaderNodeVectorDisplacement")
-            self.draw_icon_button(flow, "ShaderNodeVectorRotate")
-            self.draw_icon_button(flow, "ShaderNodeVectorTransform")
+        self.draw_entries(context, layout, entries)
 
 
 #Shader Editor - Converter panel
@@ -1507,58 +1371,27 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
 
         scene = context.scene
         engine = context.engine
+        entries = (
+            "ShaderNodeBlackbody",
+            "ShaderNodeClamp",
+            "ShaderNodeValToRGB",
+            "ShaderNodeCombineColor",
+            "ShaderNodeCombineXYZ",
+            Separator,
+            "ShaderNodeFloatCurve",
+            "ShaderNodeMapRange",
+            "ShaderNodeMath",
+            "ShaderNodeMix",
+            "ShaderNodeRGBToBW",
+            Separator,
+            "ShaderNodeSeparateColor",
+            "ShaderNodeSeparateXYZ",
+            OperatorEntry("ShaderNodeShaderToRGB", should_draw=is_engine(context, 'BLENDER_EEVEE')),
+            "ShaderNodeVectorMath",
+            "ShaderNodeWavelength",
+        )
 
-        ##### Textbuttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeBlackbody")
-            self.draw_text_button(col, "ShaderNodeClamp")
-            self.draw_text_button(col, "ShaderNodeValToRGB")
-            self.draw_text_button(col, "ShaderNodeCombineColor")
-            self.draw_text_button(col, "ShaderNodeCombineXYZ")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeFloatCurve")
-            self.draw_text_button(col, "ShaderNodeMapRange")
-            self.draw_text_button(col, "ShaderNodeMath")
-            self.draw_text_button(col, "ShaderNodeMix")
-            self.draw_text_button(col, "ShaderNodeRGBToBW")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeSeparateColor")
-            self.draw_text_button(col, "ShaderNodeSeparateXYZ")
-
-            if is_engine(context, 'BLENDER_EEVEE'):
-                self.draw_text_button(col, "ShaderNodeShaderToRGB")
-            self.draw_text_button(col, "ShaderNodeVectorMath")
-            self.draw_text_button(col, "ShaderNodeWavelength")
-
-        ##### Icon Buttons
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeBlackbody")
-            self.draw_icon_button(flow, "ShaderNodeClamp")
-            self.draw_icon_button(flow, "ShaderNodeValToRGB")
-            self.draw_icon_button(flow, "ShaderNodeCombineColor")
-            self.draw_icon_button(flow, "ShaderNodeCombineXYZ")
-            self.draw_icon_button(flow, "ShaderNodeFloatCurve")
-            self.draw_icon_button(flow, "ShaderNodeMapRange")
-            self.draw_icon_button(flow, "ShaderNodeMath")
-            self.draw_icon_button(flow, "ShaderNodeMix")
-            self.draw_icon_button(flow, "ShaderNodeRGBToBW")
-            self.draw_icon_button(flow, "ShaderNodeSeparateColor")
-            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ")
-
-            if is_engine(context, 'BLENDER_EEVEE'):
-                self.draw_icon_button(flow, "ShaderNodeShaderToRGB")
-            self.draw_icon_button(flow, "ShaderNodeVectorMath")
-            self.draw_icon_button(flow, "ShaderNodeWavelength")
+        self.draw_entries(context, layout, entries)
 
 
 # ------------- Relations tab -------------------------------
