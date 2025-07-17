@@ -959,7 +959,7 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
     @classmethod
     def poll(cls, context):
          # Just in shader mode, Just in Object and World
-        (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ('OBJECT', 'WORLD'))
+        return (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ('OBJECT', 'WORLD'))
 
     def draw(self, context):
         layout = self.layout
