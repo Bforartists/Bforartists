@@ -2063,8 +2063,26 @@ class IMAGE_PT_overlay_uv_display(Panel):
         overlay = sima.overlay
 
         layout.active = overlay.show_overlays
-        layout.prop(uvedit, "show_uv")
-        layout.prop(uvedit, "uv_face_opacity")
+        # BFA - changed greatly to be improved
+        # UV Display
+        split = layout.split()
+        col = split.column()
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(uvedit, "show_uv")
+        col = split.column()
+        if uvedit.show_uv:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+            
+        if uvedit.show_uv:
+            col = layout.column()
+            col.use_property_split = True
+            row = col.row()
+            row.separator ( factor = 3.0)
+            row.prop(uvedit, "uv_face_opacity")
 
 
 class IMAGE_PT_overlay_image(Panel):
