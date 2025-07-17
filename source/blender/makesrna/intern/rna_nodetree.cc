@@ -10526,7 +10526,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeBsdfHairPrincipled", def_hair_principled, ICON_CURVES);
   define(brna, "ShaderNode", "ShaderNodeBsdfMetallic", def_metallic, ICON_METALLIC);
   define(brna, "ShaderNode", "ShaderNodeBsdfPrincipled", def_principled, ICON_NODE_PRINCIPLED);
-  define(brna, "ShaderNode", "ShaderNodeBsdfRayPortal", nullptr, ICON_NONE);
+  define(brna, "ShaderNode", "ShaderNodeBsdfRayPortal", nullptr, ICON_NODE_RAY_PORTAL);
   define(brna, "ShaderNode", "ShaderNodeBsdfRefraction", def_refraction, ICON_NODE_REFRACTIONSHADER);
   define(brna, "ShaderNode", "ShaderNodeBsdfSheen", def_sheen, ICON_NODE_VELVET);
   define(brna, "ShaderNode", "ShaderNodeBsdfToon", def_toon, ICON_NODE_TOONSHADER);

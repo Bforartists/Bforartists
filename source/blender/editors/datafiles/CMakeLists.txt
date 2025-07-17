@@ -1259,6 +1259,7 @@ if(WITH_BLENDER)
       node_pointcloud
       node_principled
       node_range
+      node_ray_portal
       node_refractionshader
       node_relative_to_pixel
       node_reroute
