@@ -163,10 +163,6 @@ class NODES_PT_toolshelf_display_settings_add(bpy.types.Panel):
     bl_category = "Add"
     #bl_options = {'HIDE_HEADER'}
 
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.edit_tree is not None
-
     @staticmethod
     def draw(self, context):
         layout = self.layout
@@ -188,10 +184,6 @@ class NODES_PT_toolshelf_display_settings_relations(bpy.types.Panel):
     bl_label = "Display"
     bl_category = "Relations"
     #bl_options = {'HIDE_HEADER'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.edit_tree is not None
 
     @staticmethod
     def draw(self, context):
@@ -1194,7 +1186,7 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
         in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()
-        
+
         entries = (
             OperatorEntry(operator="node.group_make", icon="NODE_MAKEGROUP"),
             OperatorEntry(operator="node.group_insert", text="Insert into Group", icon="NODE_GROUPINSERT"),
