@@ -22,6 +22,7 @@ class OperatorEntry:
     operator : str = "node.add_node"
     text : str = ""
     icon : str = None
+    props : dict = None
     settings : dict = None
     should_draw : bool = True
 
@@ -57,9 +58,11 @@ def is_tool_tree(context):
 
 class NodePanel:
     @staticmethod
-    def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, pad=0, **kwargs):
+    def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, props=None, pad=0, **kwargs):
+        is_add_node_operator = operator == "node.add_node"
+        
         # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
-        if operator == "node.add_node":
+        if is_add_node_operator:
             bl_rna = bpy.types.Node.bl_rna_get_subclass(node)
             if icon is None:
                 icon = getattr(bl_rna, "icon", "NONE")
@@ -70,8 +73,16 @@ class NodePanel:
         if text != "" and pad > 0:
             text = " " + text.strip().ljust(pad)
         
-        props = layout.operator(operator, text=text, icon=icon)
-        props.use_transform = True
+        if is_add_node_operator or text != "":
+            props = layout.operator(operator, text=text, icon=icon)
+        else:    
+            props = layout.operator(operator, icon=icon)
+        
+        if is_add_node_operator:
+            props.use_transform = True
+        elif props is not None:
+            for prop_key, prop_value in props.items():
+                setattr(props, prop_key, prop_value)
 
         if node is not None:
             props.type = node
@@ -83,14 +94,21 @@ class NodePanel:
                 ops.value = value
 
     @staticmethod
-    def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None, **kwargs):
+    def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None, props=None, **kwargs):
+        is_add_node_operator = operator == "node.add_node"
+
         # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
-        if icon is None and operator == "node.add_node":
+        if icon is None and is_add_node_operator:
             bl_rna = bpy.types.Node.bl_rna_get_subclass(node)
             icon = getattr(bl_rna, "icon", "NONE")
             
         props = layout.operator(operator, text="", icon=icon)
-        props.use_transform = True
+        
+        if is_add_node_operator:
+            props.use_transform = True
+        elif props is not None:
+            for prop_key, prop_value in props.items():
+                setattr(props, prop_key, prop_value)
 
         if node is not None:
             props.type = node
