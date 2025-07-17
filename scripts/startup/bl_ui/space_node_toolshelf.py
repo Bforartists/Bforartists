@@ -77,10 +77,10 @@ class NodePanel:
             props = layout.operator(operator, text=text, icon=icon)
         else:    
             props = layout.operator(operator, icon=icon)
-        
-        if is_add_node_operator:
-            props.use_transform = True
-        elif props is not None:
+            
+        props.use_transform = True
+
+        if props is not None:
             for prop_key, prop_value in props.items():
                 setattr(props, prop_key, prop_value)
 
@@ -103,10 +103,9 @@ class NodePanel:
             icon = getattr(bl_rna, "icon", "NONE")
             
         props = layout.operator(operator, text="", icon=icon)
-        
-        if is_add_node_operator:
-            props.use_transform = True
-        elif props is not None:
+        props.use_transform = True
+
+        if props is not None:
             for prop_key, prop_value in props.items():
                 setattr(props, prop_key, prop_value)
 
