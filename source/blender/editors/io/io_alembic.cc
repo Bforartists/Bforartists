@@ -159,6 +159,7 @@ static void ui_alembic_export_settings(const bContext *C, uiLayout *layout, Poin
     col = &panel->column(false);
     if (CTX_wm_space_file(C)) {
       uiLayout *sub = &col->column(true, IFACE_("Include"));
+      sub->use_property_split_set(false); // bfa 
       sub->prop(ptr, "selected", UI_ITEM_NONE, IFACE_("Selection Only"), ICON_NONE);
       sub->prop(ptr, "visible_objects_only", UI_ITEM_NONE, IFACE_("Visible Only"), ICON_NONE);
     }
@@ -186,6 +187,7 @@ static void ui_alembic_export_settings(const bContext *C, uiLayout *layout, Poin
 
     col->separator();
 
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "use_instancing", UI_ITEM_NONE, IFACE_("Use Instancing"), ICON_NONE);
     col->prop(
         ptr, "export_custom_properties", UI_ITEM_NONE, IFACE_("Custom Properties"), ICON_NONE);
@@ -198,6 +200,7 @@ static void ui_alembic_export_settings(const bContext *C, uiLayout *layout, Poin
   /* Object Data */
   if (uiLayout *panel = layout->panel(C, "ABC_export_geometry", false, IFACE_("Geometry"))) {
     uiLayout *col = &panel->column(true);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "uvs", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     uiLayout *row = &col->row(false);
@@ -213,10 +216,12 @@ static void ui_alembic_export_settings(const bContext *C, uiLayout *layout, Poin
     col->separator();
 
     uiLayout *sub = &col->column(true, IFACE_("Subdivision"));
+    sub->use_property_split_set(false); // bfa 
     sub->prop(ptr, "apply_subdiv", UI_ITEM_NONE, IFACE_("Apply"), ICON_NONE);
     sub->prop(ptr, "subdiv_schema", UI_ITEM_NONE, IFACE_("Use Schema"), ICON_NONE);
 
     col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     sub = &col->column(false);
     sub->active_set(RNA_boolean_get(ptr, "triangulate"));
@@ -229,6 +234,7 @@ static void ui_alembic_export_settings(const bContext *C, uiLayout *layout, Poin
           C, "ABC_export_particles", false, IFACE_("Particle Systems")))
   {
     uiLayout *col = &panel->column(true);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "export_hair", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "export_particles", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
@@ -576,6 +582,7 @@ static void ui_alembic_import_settings(const bContext *C, uiLayout *layout, Poin
 
   if (uiLayout *panel = layout->panel(C, "ABC_import_options", false, IFACE_("Options"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "relative_path", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "set_frame_range", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);

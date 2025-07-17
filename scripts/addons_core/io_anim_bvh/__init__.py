@@ -202,7 +202,7 @@ class BVH_PT_import_animation(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False  # bfa
         layout.use_property_decorate = False  # No animation.
 
         sfile = context.space_data
