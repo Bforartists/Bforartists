@@ -195,7 +195,7 @@ class NODES_PT_toolshelf_display_settings_relations(bpy.types.Panel):
 
 
 # Shader editor, Input panel
-class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -252,7 +252,7 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
 
 
 #Shader editor , Output panel
-class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
@@ -293,7 +293,7 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, input panel
-class NODES_PT_comp_add_input(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -320,14 +320,14 @@ class NODES_PT_comp_add_input(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Constant supbanel
-class NODES_PT_comp_add_input_constant(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Constant"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     #bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_comp_add_input"
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_input"
 
     def draw(self, context):
         layout = self.layout
@@ -342,14 +342,14 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Scene supbanel
-class NODES_PT_comp_add_input_scene(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Scene"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     #bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_comp_add_input"
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_input"
 
     def draw(self, context):
         layout = self.layout
@@ -363,7 +363,7 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 #Compositor, Add tab, Output Panel
-class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
@@ -389,7 +389,7 @@ class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Color Panel
-class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
@@ -419,14 +419,14 @@ class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Color, Adjust supbanel
-class NODES_PT_comp_add_color_adjust(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Adjust"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_comp_add_color"
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_color"
 
     def draw(self, context):
         layout = self.layout
@@ -448,14 +448,14 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Color, Mix supbanel
-class NODES_PT_comp_add_color_mix(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Mix"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     #bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_comp_add_color"
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_color"
 
     def draw(self, context):
         layout = self.layout
@@ -474,7 +474,7 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Filter Panel
-class NODES_PT_comp_add_filter(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Filter"
     bl_space_type = 'NODE_EDITOR'
@@ -509,14 +509,14 @@ class NODES_PT_comp_add_filter(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Filter, Blur supbanel
-class NODES_PT_comp_add_filter_blur(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_filter_blur(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Blur"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_comp_add_filter"
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_filter"
 
     def draw(self, context):
         layout = self.layout
@@ -534,7 +534,7 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Keying Panel
-class NODES_PT_comp_add_keying(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Keying"
     bl_space_type = 'NODE_EDITOR'
@@ -565,7 +565,7 @@ class NODES_PT_comp_add_keying(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Mask Panel
-class NODES_PT_comp_add_mask(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Mask"
     bl_space_type = 'NODE_EDITOR'
@@ -595,7 +595,7 @@ class NODES_PT_comp_add_mask(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Texture Panel
-class NODES_PT_comp_add_texture(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
     bl_label = "Texture"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -625,7 +625,7 @@ class NODES_PT_comp_add_texture(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Tracking Panel
-class NODES_PT_comp_add_tracking(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Tracking"
     bl_space_type = 'NODE_EDITOR'
@@ -661,7 +661,7 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Transform Panel
-class NODES_PT_comp_add_transform(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Transform"
     bl_space_type = 'NODE_EDITOR'
@@ -697,7 +697,7 @@ class NODES_PT_comp_add_transform(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Utility Panel
-class NODES_PT_comp_add_utility(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Utilities"
     bl_space_type = 'NODE_EDITOR'
@@ -733,7 +733,7 @@ class NODES_PT_comp_add_utility(bpy.types.Panel, NodePanel):
 
 
 #Compositor, Add tab, Vector Panel
-class NODES_PT_comp_add_vector(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
@@ -762,7 +762,7 @@ class NODES_PT_comp_add_vector(bpy.types.Panel, NodePanel):
 
 
 #Input nodes tab, textures common panel. Texture mode
-class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -787,7 +787,7 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
 
 
 #Input nodes tab, textures advanced panel. Just in Texture mode
-class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Textures"
     bl_space_type = 'NODE_EDITOR'
@@ -820,7 +820,7 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
 
 
 #Input nodes tab, Pattern panel. # Just in texture mode
-class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Pattern"
     bl_space_type = 'NODE_EDITOR'
@@ -844,7 +844,7 @@ class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
 
 
 #Input nodes tab, Color panel. Just in texture mode
-class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
@@ -873,7 +873,7 @@ class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
 
 
 #Input nodes tab, Output panel, Texture mode
-class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
@@ -896,7 +896,7 @@ class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
 
 
 #Modify nodes tab, converter panel. Just in texture mode
-class NODES_PT_converter_tex(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
     bl_space_type = 'NODE_EDITOR'
@@ -923,7 +923,7 @@ class NODES_PT_converter_tex(bpy.types.Panel, NodePanel):
 
 
 #Modify nodes tab, distort panel. Just in texture mode
-class NODES_PT_distort_tex(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Distort"
     bl_space_type = 'NODE_EDITOR'
@@ -949,7 +949,7 @@ class NODES_PT_distort_tex(bpy.types.Panel, NodePanel):
 
 
 #Shader Editor - Shader panel
-class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader"
     bl_space_type = 'NODE_EDITOR'
@@ -1016,7 +1016,7 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
 
 
 #Shader Editor - Texture panel
-class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Texture"
     bl_space_type = 'NODE_EDITOR'
@@ -1066,7 +1066,7 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
 
 
 #Shader Editor - Color panel
-class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
@@ -1111,7 +1111,7 @@ class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
 
 
 #Shader Editor - Vector panel
-class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
@@ -1154,7 +1154,7 @@ class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
 
 
 #Shader Editor - Converter panel
-class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
     bl_space_type = 'NODE_EDITOR'
@@ -1208,7 +1208,7 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
 
 
 #Shader Editor - Script panel
-class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Script"
     bl_space_type = 'NODE_EDITOR'
@@ -1233,7 +1233,7 @@ class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
 # ------------- Relations tab -------------------------------
 
 #Shader Editor - Relations tab, Group Panel
-class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
+class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Group"
     bl_space_type = 'NODE_EDITOR'
@@ -1270,7 +1270,7 @@ def contains_group(nodetree, group):
                     return True
     return False
 
-class NODES_PT_Input_node_group(bpy.types.Panel, NodePanel):
+class NODES_PT_relations_nodegroups(bpy.types.Panel, NodePanel):
     bl_label = "Node Group"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -1313,7 +1313,7 @@ class NODES_PT_Input_node_group(bpy.types.Panel, NodePanel):
 
 
 #Relations tab, Layout Panel
-class NODES_PT_Relations_layout(bpy.types.Panel, NodePanel):
+class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Layout"
     bl_space_type = 'NODE_EDITOR'
@@ -1334,7 +1334,7 @@ class NODES_PT_Relations_layout(bpy.types.Panel, NodePanel):
 # ------------- Geometry Nodes Editor - Add tab -------------------------------
 
 #add attribute panel
-class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Attribute"
     bl_space_type = 'NODE_EDITOR'
@@ -1363,7 +1363,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
 
 
 #add input panel
-class NODES_PT_geom_add_input(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -1380,14 +1380,14 @@ class NODES_PT_geom_add_input(bpy.types.Panel, NodePanel):
 
 
 #add input panel, constant supbanel
-class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Constant"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_input"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
 
     def draw(self, context):
         layout = self.layout
@@ -1410,14 +1410,14 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
 
 
 #add input panel, gizmo supbanel
-class NODES_PT_geom_add_input_gizmo(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_input_gizmo(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Gizmo"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_input"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
 
     def draw(self, context):
         layout = self.layout
@@ -1432,14 +1432,14 @@ class NODES_PT_geom_add_input_gizmo(bpy.types.Panel, NodePanel):
 
 
 #add input panel, file supbanel
-class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Import"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_input"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
 
     def draw(self, context):
         layout = self.layout
@@ -1457,14 +1457,14 @@ class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
 
 
 #add input panel, scene subpanel
-class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Scene"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_input"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
 
     def draw(self, context):
         layout = self.layout
@@ -1489,7 +1489,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
 
 
 #add output panel
-class NODES_PT_geom_add_output(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
@@ -1513,7 +1513,7 @@ class NODES_PT_geom_add_output(bpy.types.Panel, NodePanel):
 
 
 #add geometry panel
-class NODES_PT_geom_add_geometry(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_geometry(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Geometry"
     bl_space_type = 'NODE_EDITOR'
@@ -1537,14 +1537,14 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel, NodePanel):
 
 
 #add geometry panel, read subpanel
-class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Read"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_geometry"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
 
     @classmethod
     def poll(cls, context):
@@ -1569,14 +1569,14 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
 
 
 #add geometry panel, sample subpanel
-class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_sample(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Sample"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_geometry"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
 
     @classmethod
     def poll(cls, context):
@@ -1597,14 +1597,14 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
 
 
 #add geometry panel, write subpanel
-class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Write"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_geometry"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
 
     @classmethod
     def poll(cls, context):
@@ -1624,14 +1624,14 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
 
 
 #add geometry panel, operations subpanel
-class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Operations"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_geometry"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
 
     @classmethod
     def poll(cls, context):
@@ -1659,7 +1659,7 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
 
 
 #add Curves panel
-class NODES_PT_geom_add_curve(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_curve(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Curve"
     bl_space_type = 'NODE_EDITOR'
@@ -1675,14 +1675,14 @@ class NODES_PT_geom_add_curve(bpy.types.Panel, NodePanel):
         layout = self.layout
 
 #add Curves panel, read subpanel
-class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Read"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_curve"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
 
     @classmethod
     def poll(cls, context):
@@ -1708,14 +1708,14 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
 
 
 #add Curves panel, read subpanel
-class NODES_PT_geom_add_curve_sample(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_curve_sample(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Sample"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_curve"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
 
     @classmethod
     def poll(cls, context):
@@ -1732,14 +1732,14 @@ class NODES_PT_geom_add_curve_sample(bpy.types.Panel, NodePanel):
 
 
 #add Curves panel, write subpanel
-class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Write"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_curve"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
 
     @classmethod
     def poll(cls, context):
@@ -1763,14 +1763,14 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
 
 
 #add Curves panel, operations subpanel
-class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_curve_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Operations"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_curve"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
 
     @classmethod
     def poll(cls, context):
@@ -1798,14 +1798,14 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
 
 
 #add Curves panel, Primitives subpanel
-class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_curve_primitives(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Primitives"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_curve"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
 
     @classmethod
     def poll(cls, context):
@@ -1829,14 +1829,14 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
 
 
 #add Curve panel, Topology subpanel
-class NODES_PT_geom_add_curve_topology(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_curve_topology(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Topology"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_curve"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
 
     @classmethod
     def poll(cls, context):
@@ -1855,7 +1855,7 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel, NodePanel):
 
 
 #add Grease Pencil panel
-class NODES_PT_geom_add_grease_pencil(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_grease_pencil(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Grease Pencil"
     bl_space_type = 'NODE_EDITOR'
@@ -1872,14 +1872,14 @@ class NODES_PT_geom_add_grease_pencil(bpy.types.Panel, NodePanel):
 
 
 #add Grease Pencil panel, Read subpanel
-class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Read"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_grease_pencil"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
 
     @classmethod
     def poll(cls, context):
@@ -1896,14 +1896,14 @@ class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel, NodePanel):
 
 
 #add Grease Pencil panel, Read subpanel
-class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_grease_pencil_write(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Write"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_grease_pencil"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
 
     @classmethod
     def poll(cls, context):
@@ -1922,14 +1922,14 @@ class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel, NodePanel):
 
 
 #add Grease Pencil panel, Read subpanel
-class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Operations"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_grease_pencil"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
 
     @classmethod
     def poll(cls, context):
@@ -1947,7 +1947,7 @@ class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel
-class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Instances"
     bl_space_type = 'NODE_EDITOR'
@@ -1980,7 +1980,7 @@ class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel
-class NODES_PT_geom_add_mesh(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_mesh(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Mesh"
     bl_space_type = 'NODE_EDITOR'
@@ -1997,14 +1997,14 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel, read subpanel
-class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Read"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_mesh"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -2036,14 +2036,14 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel, sample subpanel
-class NODES_PT_geom_add_mesh_sample(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_sample(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Sample"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_mesh"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -2061,14 +2061,14 @@ class NODES_PT_geom_add_mesh_sample(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel, write subpanel
-class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_write(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Write"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_mesh"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -2087,14 +2087,14 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel, operations subpanel
-class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Operations"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_mesh"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -2126,14 +2126,14 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel, primitives subpanel
-class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_primitives(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Primitives"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_mesh"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -2158,14 +2158,14 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel, topology subpanel
-class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_topology(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Topology"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_mesh"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -2190,14 +2190,14 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
 
 
 #add volume panel
-class NODES_PT_geom_add_mesh_uv(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "UV"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_mesh"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
 
     @classmethod
     def poll(cls, context):
@@ -2215,7 +2215,7 @@ class NODES_PT_geom_add_mesh_uv(bpy.types.Panel, NodePanel):
 
 
 #add mesh panel
-class NODES_PT_geom_add_point(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Point"
     bl_space_type = 'NODE_EDITOR'
@@ -2246,7 +2246,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel, NodePanel):
 
 
 #add volume panel
-class NODES_PT_geom_add_volume(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Volume"
     bl_space_type = 'NODE_EDITOR'
@@ -2270,7 +2270,7 @@ class NODES_PT_geom_add_volume(bpy.types.Panel, NodePanel):
 
 
 #add simulation panel
-class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Simulation"
     bl_space_type = 'NODE_EDITOR'
@@ -2293,7 +2293,7 @@ class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
 
 
 #add material panel
-class NODES_PT_geom_add_material(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Material"
     bl_space_type = 'NODE_EDITOR'
@@ -2320,7 +2320,7 @@ class NODES_PT_geom_add_material(bpy.types.Panel, NodePanel):
 
 
 #add vector panel
-class NODES_PT_geom_add_texture(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Texture"
     bl_space_type = 'NODE_EDITOR'
@@ -2351,7 +2351,7 @@ class NODES_PT_geom_add_texture(bpy.types.Panel, NodePanel):
 
 
 #add utilities panel
-class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Utilities"
     bl_space_type = 'NODE_EDITOR'
@@ -2378,14 +2378,14 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 #add utilities panel, color subpanel
-class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_utilities"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -2407,14 +2407,14 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
 
 
 #add utilities panel, text subpanel
-class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Text"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_utilities"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -2439,14 +2439,14 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 #add utilities panel, vector subpanel
-class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_utilities"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -2468,14 +2468,14 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
 
 
 #add utilities panel, field subpanel
-class NODES_PT_geom_add_utilities_field(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Field"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_utilities"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -2494,14 +2494,14 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel, NodePanel):
 
 
 #add utilities panel, math subpanel
-class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Math"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_utilities"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -2528,14 +2528,14 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
 
 
 #add utilities panel, matrix subpanel
-class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Matrix"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_utilities"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -2562,14 +2562,14 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
 
 
 #add utilities panel, rotation subpanel
-class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Rotation"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_utilities"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -2596,14 +2596,14 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
 
 
 #add utilities panel, deprecated subpanel
-class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_deprecated(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Deprecated"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_geom_add_utilities"
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -2621,111 +2621,121 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
 
 
 classes = (
+    #-----------------------
+    # Display Properties
     NODES_PT_toolshelf_display_settings_add,
     NODES_PT_toolshelf_display_settings_relations,
-    NODES_PT_shader_add_input,
-    NODES_PT_shader_add_output,
-    NODES_PT_shader_add_shader,
-    NODES_PT_shader_add_texture,
-    NODES_PT_shader_add_color,
-    NODES_PT_shader_add_vector,
-    NODES_PT_shader_add_converter,
-    NODES_PT_shader_add_script,
-
     #-----------------------
 
-    #Compositor nodes add tab
-    NODES_PT_comp_add_input,
-    NODES_PT_comp_add_input_constant,
-    NODES_PT_comp_add_input_scene,
-    NODES_PT_comp_add_output,
-    NODES_PT_comp_add_color,
-    NODES_PT_comp_add_color_adjust,
-    NODES_PT_comp_add_color_mix,
-    NODES_PT_comp_add_filter,
-    NODES_PT_comp_add_filter_blur,
-    NODES_PT_comp_add_keying,
-    NODES_PT_comp_add_mask,
-    NODES_PT_comp_add_texture,
-    NODES_PT_comp_add_tracking,
-    NODES_PT_comp_add_transform,
-    NODES_PT_comp_add_utility,
-    NODES_PT_comp_add_vector,
-
+    #-----------------------
+    # Relations Tab Panels
+    NODES_PT_relations_group_operations,
+    NODES_PT_relations_nodegroups,
+    NODES_PT_relations_layout,
     #-----------------------
 
-    NODES_PT_Input_input_tex,
-    NODES_PT_Input_textures_tex,
-    NODES_PT_Input_pattern,
-    NODES_PT_Input_color_tex,
-    NODES_PT_Input_output_tex,
-    NODES_PT_converter_tex,
-    NODES_PT_distort_tex,
+    #-----------------------
+    # Shader Nodes - Add
+    NODES_PT_toolshelf_shader_add_input,
+    NODES_PT_toolshelf_shader_add_output,
+    NODES_PT_toolshelf_shader_add_shader,
+    NODES_PT_toolshelf_shader_add_texture,
+    NODES_PT_toolshelf_shader_add_color,
+    NODES_PT_toolshelf_shader_add_vector,
+    NODES_PT_toolshelf_shader_add_converter,
+    NODES_PT_toolshelf_shader_add_script,
+    #-----------------------
+
+    #-----------------------
+    # Compositor Nodes - Add
+    NODES_PT_toolshelf_compositor_add_input,
+    NODES_PT_toolshelf_compositor_add_input_constant,
+    NODES_PT_toolshelf_compositor_add_input_scene,
+    NODES_PT_toolshelf_compositor_add_output,
+    NODES_PT_toolshelf_compositor_add_color,
+    NODES_PT_toolshelf_compositor_add_color_adjust,
+    NODES_PT_toolshelf_compositor_add_color_mix,
+    NODES_PT_toolshelf_compositor_add_filter,
+    NODES_PT_toolshelf_compositor_add_filter_blur,
+    NODES_PT_toolshelf_compositor_add_keying,
+    NODES_PT_toolshelf_compositor_add_mask,
+    NODES_PT_toolshelf_compositor_add_texture,
+    NODES_PT_toolshelf_compositor_add_tracking,
+    NODES_PT_toolshelf_compositor_add_transform,
+    NODES_PT_toolshelf_compositor_add_utility,
+    NODES_PT_toolshelf_compositor_add_vector,
+    #-----------------------
+
+    #-----------------------
+    # Texture Nodes - Add
+    NODES_PT_toolshelf_texture_add_input,
+    NODES_PT_toolshelf_texture_add_output,
+    NODES_PT_toolshelf_texture_add_color,
+    NODES_PT_toolshelf_texture_add_converter,
+    NODES_PT_toolshelf_texture_add_distort,
+    NODES_PT_toolshelf_texture_add_pattern,
+    NODES_PT_toolshelf_texture_add_texture,
+    #-----------------------
 
 
     #-----------------------
+    # Geometry Nodes - Add
+    NODES_PT_toolshelf_gn_add_attribute,
 
-    #geometry nodes relations tab
-    NODES_PT_Relations_group,
-    NODES_PT_Input_node_group,
-    NODES_PT_Relations_layout,
+    NODES_PT_toolshelf_gn_add_input,
+    NODES_PT_toolshelf_gn_add_input_constant,
+    NODES_PT_toolshelf_gn_add_input_gizmo,
+    NODES_PT_toolshelf_gn_add_input_file,
+    NODES_PT_toolshelf_gn_add_input_scene,
 
-    #geometry nodes add tab
-    NODES_PT_geom_add_attribute,
+    NODES_PT_toolshelf_gn_add_output,
 
-    NODES_PT_geom_add_input,
-    NODES_PT_geom_add_input_constant,
-    NODES_PT_geom_add_input_gizmo,
-    NODES_PT_geom_add_input_file,
-    NODES_PT_geom_add_input_scene,
+    NODES_PT_toolshelf_gn_add_geometry,
+    NODES_PT_toolshelf_gn_add_geometry_read,
+    NODES_PT_toolshelf_gn_add_geometry_sample,
+    NODES_PT_toolshelf_gn_add_geometry_write,
+    NODES_PT_toolshelf_gn_add_geometry_operations,
 
-    NODES_PT_geom_add_output,
+    NODES_PT_toolshelf_gn_add_curve,
+    NODES_PT_toolshelf_gn_add_curve_read,
+    NODES_PT_toolshelf_gn_add_curve_sample,
+    NODES_PT_toolshelf_gn_add_curve_write,
+    NODES_PT_toolshelf_gn_add_curve_operations,
+    NODES_PT_toolshelf_gn_add_curve_primitives,
+    NODES_PT_toolshelf_gn_add_curve_topology,
 
-    NODES_PT_geom_add_geometry,
-    NODES_PT_geom_add_geometry_read,
-    NODES_PT_geom_add_geometry_sample,
-    NODES_PT_geom_add_geometry_write,
-    NODES_PT_geom_add_geometry_operations,
+    NODES_PT_toolshelf_gn_add_grease_pencil,
+    NODES_PT_toolshelf_gn_add_grease_pencil_read,
+    NODES_PT_toolshelf_gn_add_grease_pencil_write,
+    NODES_PT_toolshelf_gn_add_grease_pencil_operations,
 
-    NODES_PT_geom_add_curve,
-    NODES_PT_geom_add_curve_read,
-    NODES_PT_geom_add_curve_sample,
-    NODES_PT_geom_add_curve_write,
-    NODES_PT_geom_add_curve_operations,
-    NODES_PT_geom_add_curve_primitives,
-    NODES_PT_geom_add_curve_topology,
+    NODES_PT_toolshelf_gn_add_instances,
 
-    NODES_PT_geom_add_grease_pencil,
-    NODES_PT_geom_add_grease_pencil_read,
-    NODES_PT_geom_add_grease_pencil_write,
-    NODES_PT_geom_add_grease_pencil_operations,
+    NODES_PT_toolshelf_gn_add_mesh,
+    NODES_PT_toolshelf_gn_add_mesh_read,
+    NODES_PT_toolshelf_gn_add_mesh_sample,
+    NODES_PT_toolshelf_gn_add_mesh_write,
+    NODES_PT_toolshelf_gn_add_mesh_operations,
+    NODES_PT_toolshelf_gn_add_mesh_primitives,
+    NODES_PT_toolshelf_gn_add_mesh_topology,
+    NODES_PT_toolshelf_gn_add_mesh_uv,
 
-    NODES_PT_geom_add_instances,
+    NODES_PT_toolshelf_gn_add_point,
+    NODES_PT_toolshelf_gn_add_volume,
+    NODES_PT_toolshelf_gn_add_simulation,
+    NODES_PT_toolshelf_gn_add_material,
+    NODES_PT_toolshelf_gn_add_texture,
 
-    NODES_PT_geom_add_mesh,
-    NODES_PT_geom_add_mesh_read,
-    NODES_PT_geom_add_mesh_sample,
-    NODES_PT_geom_add_mesh_write,
-    NODES_PT_geom_add_mesh_operations,
-    NODES_PT_geom_add_mesh_primitives,
-    NODES_PT_geom_add_mesh_topology,
-    NODES_PT_geom_add_mesh_uv,
-
-    NODES_PT_geom_add_point,
-    NODES_PT_geom_add_volume,
-    NODES_PT_geom_add_simulation,
-    NODES_PT_geom_add_material,
-    NODES_PT_geom_add_texture,
-
-    NODES_PT_geom_add_utilities,
-    NODES_PT_geom_add_utilities_color,
-    NODES_PT_geom_add_utilities_text,
-    NODES_PT_geom_add_utilities_vector,
-    NODES_PT_geom_add_utilities_field,
-    NODES_PT_geom_add_utilities_math,
-    NODES_PT_geom_add_utilities_matrix,
-    NODES_PT_geom_add_utilities_rotation,
-    NODES_PT_geom_add_utilities_deprecated,
+    NODES_PT_toolshelf_gn_add_utilities,
+    NODES_PT_toolshelf_gn_add_utilities_color,
+    NODES_PT_toolshelf_gn_add_utilities_text,
+    NODES_PT_toolshelf_gn_add_utilities_vector,
+    NODES_PT_toolshelf_gn_add_utilities_field,
+    NODES_PT_toolshelf_gn_add_utilities_math,
+    NODES_PT_toolshelf_gn_add_utilities_matrix,
+    NODES_PT_toolshelf_gn_add_utilities_rotation,
+    NODES_PT_toolshelf_gn_add_utilities_deprecated,
+    #-----------------------
 )
 
 if __name__ == "__main__":  # only for live edit.
