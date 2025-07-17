@@ -355,8 +355,6 @@ class TOOLBAR_MT_file(Menu):
         if addon_prefs.file_import_common2:
 
             row = layout.row(align=True)
-            if bpy.app.build_options.collada: # bfa - only show if built option is true
-                row.operator("wm.collada_import", text="", icon='LOAD_DAE')
             row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
             if bpy.app.build_options.usd: # bfa - only show if built option is true
                 row.operator("wm.usd_import", text="", icon='LOAD_USD')
@@ -393,8 +391,6 @@ class TOOLBAR_MT_file(Menu):
         if addon_prefs.file_export_common2:
 
             row = layout.row(align=True)
-            if bpy.app.build_options.collada: # bfa - only show if built option is true
-                row.operator("wm.collada_export", text="", icon='SAVE_DAE')
             row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
             if bpy.app.build_options.usd: # bfa - only show if built option is true
                 row.operator("wm.usd_export", text="", icon='SAVE_USD')
