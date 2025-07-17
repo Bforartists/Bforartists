@@ -1534,24 +1534,11 @@ class NODES_PT_Relations_layout(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        ##### Textbuttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "NodeFrame")
-            self.draw_text_button(col, "NodeReroute")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "NodeFrame")
-            self.draw_icon_button(flow, "NodeReroute")
-
+        entries = (
+            "NodeFrame",
+            "NodeReroute",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 # ------------- Geometry Nodes Editor - Add tab -------------------------------
