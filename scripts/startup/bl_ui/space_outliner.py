@@ -346,7 +346,7 @@ class OUTLINER_MT_id_data(Menu):
         id_linked = getattr(context, "id", None)
         if id_linked and id_linked.library:
             layout.separator()
-            layout.operator("outliner.id_linked_relocate", text="Relocate")
+            layout.operator("outliner.id_linked_relocate", text="Relocate", icon="LINK_DATA")
 
 
 class OUTLINER_MT_edit_datablocks(Menu):
