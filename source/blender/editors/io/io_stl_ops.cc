@@ -86,8 +86,10 @@ static void wm_stl_export_draw(bContext *C, wmOperator *op)
 
   if (uiLayout *panel = layout->panel(C, "STL_export_general", false, IFACE_("General"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa
 
     uiLayout *sub = &col->column(false, IFACE_("Format"));
+    sub->use_property_split_set(false); // bfa
     sub->prop(ptr, "ascii_format", UI_ITEM_NONE, IFACE_("ASCII"), ICON_NONE);
 
     /* The Batch mode and Selection only options only make sense when using regular export. */
@@ -95,6 +97,7 @@ static void wm_stl_export_draw(bContext *C, wmOperator *op)
       col->prop(ptr, "use_batch", UI_ITEM_NONE, IFACE_("Batch"), ICON_NONE);
 
       sub = &col->column(false, IFACE_("Include"));
+      sub->use_property_split_set(false); // bfa
       sub->prop(ptr, "export_selected_objects", UI_ITEM_NONE, IFACE_("Selection Only"), ICON_NONE);
     }
 
@@ -106,6 +109,7 @@ static void wm_stl_export_draw(bContext *C, wmOperator *op)
 
   if (uiLayout *panel = layout->panel(C, "STL_export_geometry", false, IFACE_("Geometry"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa
     col->prop(ptr, "apply_modifiers", UI_ITEM_NONE, IFACE_("Apply Modifiers"), ICON_NONE);
   }
 }
@@ -248,6 +252,7 @@ static void ui_stl_import_settings(const bContext *C, uiLayout *layout, PointerR
 
   if (uiLayout *panel = layout->panel(C, "STL_import_general", false, IFACE_("General"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "global_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "use_scene_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "forward_axis", UI_ITEM_NONE, IFACE_("Forward Axis"), ICON_NONE);
@@ -256,6 +261,7 @@ static void ui_stl_import_settings(const bContext *C, uiLayout *layout, PointerR
 
   if (uiLayout *panel = layout->panel(C, "STL_import_options", false, IFACE_("Options"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "use_facet_normal", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "use_mesh_validate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }

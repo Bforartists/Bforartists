@@ -94,15 +94,18 @@ static void ui_fbx_import_settings(const bContext *C, uiLayout *layout, PointerR
 
   if (uiLayout *panel = layout->panel(C, "FBX_import_general", false, IFACE_("General"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "global_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "use_custom_props", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayout &subcol = col->column(false);
+    subcol.use_property_split_set(false); // bfa 
     subcol.active_set(RNA_boolean_get(ptr, "use_custom_props"));
     subcol.prop(ptr, "use_custom_props_enum_as_string", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   if (uiLayout *panel = layout->panel(C, "FBX_import_geometry", false, IFACE_("Geometry"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "import_subdivision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "import_colors", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -122,6 +125,7 @@ static void ui_fbx_import_settings(const bContext *C, uiLayout *layout, PointerR
 
   if (uiLayout *panel = layout->panel(C, "FBX_import_armature", false, IFACE_("Armature"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "ignore_leaf_bones", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 }
