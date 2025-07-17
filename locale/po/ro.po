@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:37+0000\n"
 "Last-Translator: Alexandru Buhnici <in@alexm.ro>\n"
 "Language-Team: Romanian <https://translate.blender.org/projects/blender-ui/ui/ro/>\n"
@@ -454,8 +454,8 @@ msgid "Source Root"
 msgstr "Rădăcina Sursei"
 
 
-msgid "The Blender source root path"
-msgstr "Calea rădăcină sursă Blender"
+msgid "The Bforartists source root path"
+msgstr "Calea rădăcină sursă Bforartists"
 
 
 msgid "Spell Cache"
@@ -478,8 +478,8 @@ msgid "Persistent Data Path"
 msgstr "Calea a Datelor Persistentă"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
-msgstr "Numele unui fișier json care stochează acele setări (din păcate, sistemul Blender nu funcționează aici)"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgstr "Numele unui fișier json care stochează acele setări (din păcate, sistemul Bforartists nu funcționează aici)"
 
 
 msgid "User Add-ons"
@@ -3503,8 +3503,8 @@ msgid "Modifier '%s' not in object '%s'"
 msgstr "Modificatorul '%s' nu este în obiectul '%s'"
 
 
-msgid "Blender Render"
-msgstr "Render Blender"
+msgid "Bforartists Render"
+msgstr "Render Bforartists"
 
 
 msgid "Compiled without sound support"
@@ -3780,8 +3780,8 @@ msgid "Format:"
 msgstr "Format:"
 
 
-msgid "Blender File View"
-msgstr "Vizualizatorul de Fișiere Blender"
+msgid "Bforartists File View"
+msgstr "Vizualizatorul de Fișiere Bforartists"
 
 
 msgid "Context window not set"

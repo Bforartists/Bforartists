@@ -8,8 +8,8 @@ from bpy.app.translations import (
 
 import dataclasses
 
-
 from nodeitems_builtins import node_tree_group_type
+from .node_add_menu import draw_node_groups, add_empty_group
 
 
 # Null object used to abstractly represent a separator
@@ -1224,19 +1224,8 @@ class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-# from nodeitems_builtin, not directly importable
-def contains_group(nodetree, group):
-    if nodetree == group:
-        return True
-    else:
-        for node in nodetree.nodes:
-            if node.bl_idname in node_tree_group_type.values() and node.node_tree is not None:
-                if contains_group(node.node_tree, group):
-                    return True
-    return False
-
 class NODES_PT_relations_nodegroups(bpy.types.Panel, NodePanel):
-    bl_label = "Node Group"
+    bl_label = "Nodegroups"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Relations"
@@ -1247,34 +1236,12 @@ class NODES_PT_relations_nodegroups(bpy.types.Panel, NodePanel):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text = "Add Node Group:")
 
-        if context is None:
-            return
-        space = context.space_data
-        if not space:
-            return
-        ntree = space.edit_tree
-        if not ntree:
-            return
-
-        for group in context.blend_data.node_groups:
-            if group.bl_idname != ntree.bl_idname:
-                continue
-            # filter out recursive groups
-            if contains_group(group, ntree):
-                continue
-            # filter out hidden nodetrees
-            if group.name.startswith('.'):
-                continue
-
-            props = layout.operator("node.add_node", text=group.name, icon="NODETREE")
-            props.use_transform = True
-            props.type = node_tree_group_type[group.bl_idname]
-
-            ops = props.settings.add()
-            ops.name = "node_tree"
-            ops.value = "bpy.data.node_groups['{0}']".format(group.name)
+        col = layout.column(align=True)
+        col.scale_y = 1.5
+        add_empty_group(col)
+        draw_node_groups(context, col)
+        return
 
 
 class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
@@ -1910,6 +1877,7 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
             "GeometryNodeTranslateInstances",
             "GeometryNodeSetInstanceTransform",
             Separator,
+            "GeometryNodeInputInstanceBounds"
             "GeometryNodeInstanceTransform",
             "GeometryNodeInputInstanceRotation",
             "GeometryNodeInputInstanceScale",
@@ -2410,6 +2378,9 @@ class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
             "GeometryNodeAccumulateField",
             "GeometryNodeFieldAtIndex",
             "GeometryNodeFieldOnDomain",
+            "GeometryNodeFieldAverage",
+            "GeometryNodeFieldMinAndMax",
+            "GeometryNodeFieldVariance"
         )
 
         self.draw_entries(context, layout, entries)
@@ -2432,6 +2403,7 @@ class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
+            "FunctionNodeBitMath",
             "FunctionNodeBooleanMath",
             "FunctionNodeIntegerMath",
             "ShaderNodeClamp",

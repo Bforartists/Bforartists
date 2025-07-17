@@ -135,6 +135,8 @@ class DopesheetFilterPopoverBase:
             flow.prop(dopesheet, "show_pointclouds", text="Point Clouds")
         if bpy.data.volumes:
             flow.prop(dopesheet, "show_volumes", text="Volumes")
+        if bpy.data.lightprobes:
+            flow.prop(dopesheet, "show_lightprobes", text="Light Probes")
 
         # data types
         flow.prop(dopesheet, "show_worlds", text="Worlds")
@@ -216,7 +218,6 @@ class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_dopesheet"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to Dope Sheet Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -230,7 +231,6 @@ class ANIM_OT_switch_editors_to_graph(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_graph"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to Graph Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -244,7 +244,6 @@ class ANIM_OT_switch_editors_to_driver(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_driver"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to Driver Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -257,7 +256,6 @@ class ANIM_OT_switch_editors_to_nla(bpy.types.Operator):
     """Switch to NLA editor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_editor_to_nla"        # unique identifier for buttons and menu items to reference.
     bl_label = "Switch to NLA Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -271,7 +269,7 @@ class ANIM_OT_switch_editors_in_dopesheet(bpy.types.Operator):
     """You are in Dope Sheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_editor_in_dopesheet"        # unique identifier for buttons and menu items to reference.
     bl_label = "Dope Sheet Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+    bl_options = {'INTERNAL'}  # use internal so it can not be searchable
 
     # Blank button, we don't execute anything here.
     def execute(self, context):
@@ -541,7 +539,6 @@ class DOPESHEET_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-        layout.prop(st, "show_region_channels")
         layout.prop(st, "show_region_footer")
         layout.separator()
 

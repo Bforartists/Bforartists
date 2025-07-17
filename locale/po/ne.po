@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:32+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Nepali <https://translate.blender.org/projects/blender-ui/ui/ne/>\n"
@@ -501,11 +501,11 @@ msgstr "गुण :नाम संपादन "
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
+msgid "Quit Bforartists"
 msgstr "ब्लेंडर बन्द "
 
 
-msgid "Quit Blender"
+msgid "Quit Bforartists"
 msgstr "ब्लेंडर बन्द "
 
 
@@ -557,7 +557,7 @@ msgid "Radius:"
 msgstr "Radius:"
 
 
-msgid "Blender File View"
+msgid "Bforartists File View"
 msgstr "ब्लेंडरका फाएल देखाउने तरिका "
 
 

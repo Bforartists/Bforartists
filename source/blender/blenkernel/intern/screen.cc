@@ -43,6 +43,7 @@
 #include "BKE_lib_query.hh"
 #include "BKE_preview_image.hh"
 #include "BKE_screen.hh"
+#include "BKE_toolshelf_runtime.h" /* BFA */
 
 #include "BLO_read_write.hh"
 
@@ -55,6 +56,10 @@
 #endif
 
 #include "WM_types.hh"
+
+#include "CLG_log.h"
+
+static CLG_LogRef LOG_BLEND_DOVERSION = {"blend.doversion"};
 
 using blender::Span;
 using blender::StringRef;
@@ -605,6 +610,9 @@ void BKE_area_region_free(SpaceType *st, ARegion *region)
     region->runtime->type->free(region);
   }
 
+  /* BFA - Free our runtime data if it exists */
+  BKE_toolshelf_region_free(region);/* BFA */
+
   BKE_area_region_panels_free(&region->panels);
 
   LISTBASE_FOREACH (uiList *, uilst, &region->ui_lists) {
@@ -1126,6 +1134,14 @@ static void write_region(BlendWriter *writer, ARegion *region, int spacetype)
           printf("regiondata write missing!\n");
         }
         break;
+      /* BFA - Updates toolshelf tab width  - Start */
+      case SPACE_IMAGE:
+      case SPACE_NODE:
+      case SPACE_SEQ:
+        if (region->regiontype == RGN_TYPE_TOOLS) {
+        }
+        break;
+      /* BFA - Updates toolshelf tab width  - End */
       default:
         printf("regiondata write missing!\n");
     }
@@ -1445,10 +1461,11 @@ static void regions_remove_invalid(SpaceType *space_type, ListBase *regionbase)
       continue;
     }
 
-    printf("Warning: region type %d missing in space type \"%s\" (id: %d) - removing region\n",
-           region->regiontype,
-           space_type->name,
-           space_type->spaceid);
+    CLOG_WARN(&LOG_BLEND_DOVERSION,
+              "Region type %d missing in space type \"%s\" (id: %d) - removing region",
+              region->regiontype,
+              space_type->name,
+              space_type->spaceid);
 
     BKE_area_region_free(space_type, region);
     BLI_freelinkN(regionbase, region);

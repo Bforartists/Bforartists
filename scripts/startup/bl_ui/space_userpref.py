@@ -258,7 +258,12 @@ class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):
         flow.use_property_split = True
         sub = flow.column()
         sub.active = view.use_text_antialiasing
+        
+        # BFA - Align property left
+        sub.use_property_split = False 
         sub.prop(view, "use_text_render_subpixelaa", text="Subpixel Anti-Aliasing")
+        sub.use_property_split = True
+
         sub.prop(view, "text_hinting", text="Hinting")
 
         flow.prop(view, "font_path_ui")
@@ -591,7 +596,6 @@ class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):
         edit = prefs.edit
         layout.use_property_split = False
 
-        layout.prop(edit, "use_sequencer_simplified_tweaking")
         layout.prop(edit, "connect_strips_by_default") # BFA - wip
 
 
@@ -3042,13 +3046,6 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
                 ({"property": "write_legacy_blend_file_format"}, ("/blender/blender/issues/129309", "#129309")),
             ),
         )
-        import sys
-        if sys.platform == "linux":
-            self._draw_items(
-                context, (
-                    ({"property": "use_vulkan_hdr"}, ("/blender/blender/issues/140277", "#140277")),
-                ),
-            )
 
 
 # Keep this as tweaks can be useful to restore.

@@ -131,7 +131,8 @@ bool nla_panel_context(const bContext *C,
       case ANIMTYPE_PALETTE:
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
-      case ANIMTYPE_DSVOLUME: {
+      case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_DSLIGHTPROBE: {
         /* for these channels, we only do AnimData */
         if (ale->adt && adt_ptr) {
           ID *id;
@@ -655,7 +656,7 @@ static void nla_panel_modifiers(const bContext *C, Panel *panel)
 
     /* FIXME: we need to set the only-active property so that this
      * will only add modifiers for the active strip (not all selected). */
-    uiItemMenuEnumO(row, C, "NLA_OT_fmodifier_add", "type", IFACE_("Add Modifier"), ICON_NONE);
+    row->op_menu_enum(C, "NLA_OT_fmodifier_add", "type", IFACE_("Add Modifier"), ICON_NONE);
 
     /* copy/paste (as sub-row) */
     row = &row->row(true);

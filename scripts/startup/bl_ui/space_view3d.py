@@ -1770,9 +1770,7 @@ class VIEW3D_MT_view(Menu):
         layout.prop(view, "show_region_tool_header")
         layout.prop(view, "show_region_asset_shelf")
         layout.prop(view, "show_region_hud")
-        layout.prop(
-            overlay, "show_toolshelf_tabs", text="Tool Shelf Tabs"
-        )  # bfa - the toolshelf tabs.
+        layout.prop(view, "show_toolshelf_tabs")
 
         layout.separator()
 
@@ -2560,6 +2558,16 @@ class VIEW3D_MT_select_pose(Menu):
         props.extend = True
         props.direction = 'CHILD'
 
+# bfa menu
+class VIEW3D_MT_select_particle_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("particle.select_more", text="More", icon="SELECTMORE")
+        layout.operator("particle.select_less", text="Less", icon="SELECTLESS")
+
 
 class VIEW3D_MT_select_particle(Menu):
     bl_label = "Select"
@@ -2584,11 +2592,6 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
-        layout.operator("particle.select_more", text="More", icon="SELECTMORE")
-        layout.operator("particle.select_less", text="Less", icon="SELECTLESS")
-
-        layout.separator()
-
         layout.operator("particle.select_linked", text="Linked", icon="LINKED")
 
         layout.separator()
@@ -2599,6 +2602,10 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.operator("particle.select_roots", text="Roots", icon="SELECT_ROOT")
         layout.operator("particle.select_tips", text="Tips", icon="SELECT_TIP")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_select_particle_more_less")
 
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
@@ -2929,7 +2936,6 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.menu("VIEW3D_MT_select_edit_surface_more_less")
 
 
-
 class VIEW3D_MT_select_edit_text(Menu):
     bl_label = "Select"
 
@@ -3187,8 +3193,6 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.menu("VIEW3D_MT_select_edit_armature_more_less")  # bfa menu
 
 
-
-
 # bfa menu
 class VIEW3D_PT_greasepencil_edit_options(Panel):
     bl_space_type = 'VIEW_3D'
@@ -3339,6 +3343,56 @@ class VIEW3D_MT_paint_vertex_grease_pencil(Menu):
         )
 
 
+class VIEW3D_MT_select_paint_mask(Menu):
+    bl_label = "Select"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.menu("VIEW3D_MT_select_paint_mask_legacy") # bfa menu
+        layout.operator_menu_enum("view3d.select_lasso", "mode", icon="BORDER_LASSO")
+
+        layout.separator()
+
+        layout.operator("paint.face_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("paint.face_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("paint.face_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+
+        layout.separator()
+
+        layout.operator("paint.face_select_linked", text="Linked", icon="LINKED")
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick Select", icon="LINKED").deselect = False
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect", icon="LINKED").deselect = True
+
+        layout.separator()
+
+        if _context.mode == 'PAINT_TEXTURE':
+
+            myvar = layout.operator("paint.face_select_loop", text="Select Loop", icon="SELECT_EDGERING")
+
+            myvar = layout.operator("paint.face_select_loop", text="Add Loop to Selection", icon="SELECT_EDGERING")
+            myvar.extend = True
+
+            myvar = layout.operator("paint.face_select_loop", text="Remove Loop from Selection", icon="SELECT_EDGERING")
+            myvar.select = False
+            myvar.extend = True
+
+            layout.separator()
+
+        layout.menu("VIEW3D_MT_select_paint_mask_face_more_less")  # bfa menu
+
+
+# BFA menu
+class VIEW3D_MT_select_paint_mask_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("view3d.select_box", icon="BORDER_RECT")
+        layout.operator("view3d.select_circle", icon="CIRCLE_SELECT")
+
+
 # bfa menu
 class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
     bl_label = "More/Less"
@@ -3361,24 +3415,14 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.separator()
 
-        layout.operator(
-            "paint.vert_select_all", text="All", icon="SELECT_ALL"
-        ).action = 'SELECT'
-        layout.operator(
-            "paint.vert_select_all", text="None", icon="SELECT_NONE"
-        ).action = 'DESELECT'
-        layout.operator(
-            "paint.vert_select_all", text="Invert", icon="INVERSE"
-        ).action = 'INVERT'
+        layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("paint.vert_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("paint.vert_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator(
-            "paint.vert_select_ungrouped",
-            text="Ungrouped Vertices",
-            icon="SELECT_UNGROUPED_VERTS",
-        )
-        layout.operator("paint.vert_select_linked", text="Select Linked", icon="LINKED")
+        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
+        layout.operator("paint.vert_select_linked", text="Select Linked", icon='LINKED')
 
         layout.separator()
 
@@ -3402,18 +3446,17 @@ class VIEW3D_MT_select_edit_pointcloud(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("pointcloud.select_all", text="All").action = 'SELECT'
-        layout.operator("pointcloud.select_all", text="None").action = 'DESELECT'
-        layout.operator("pointcloud.select_all", text="Invert").action = 'INVERT'
+        layout.operator("pointcloud.select_all", text="All", icon="SELECT_ALL").action = 'SELECT'
+        layout.operator("pointcloud.select_all", text="None", icon="SELECT_NONE").action = 'DESELECT'
+        layout.operator("pointcloud.select_all", text="Invert", icon="INVERSE").action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("pointcloud.select_random")
+        layout.operator("pointcloud.select_random", text="Random", icon="RANDOMIZE")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
-
-# BFA - not used
+#bfa - menu
 class VIEW3D_MT_edit_curves_select_more_less(Menu):
     bl_label = "More/Less"
 
@@ -3451,9 +3494,7 @@ class VIEW3D_MT_select_edit_curves(Menu):
 
         layout.separator()
 
-        # layout.menu("VIEW3D_MT_edit_curves_select_more_less") # BFA - not used
-        layout.operator("curves.select_more", text="More", icon="SELECTMORE")
-        layout.operator("curves.select_less", text="Less", icon="SELECTLESS")
+        layout.menu("VIEW3D_MT_edit_curves_select_more_less")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -4668,7 +4709,7 @@ class VIEW3D_MT_object_context_menu(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("object.move_to_collection", icon="GROUP")
+        layout.menu("OBJECT_MT_move_to_collection", icon="GROUP")
 
         layout.separator()
         if view and view.local_view:
@@ -4809,7 +4850,7 @@ class VIEW3D_MT_object_apply(Menu):
             text_ctxt=i18n_contexts.default,
             icon="APPLY_PARENT_INVERSE",
         )
-        layout.operator("object.visual_geometry_to_objects")
+        layout.operator("object.visual_geometry_to_objects", icon="VISUAL_GEOMETRY_TO_OBJECTS")
         # layout.operator("object.duplicates_make_real") # BFA - redundant
         # layout.operator("object.parent_inverse_apply", text="Parent Inverse",
         # text_ctxt=i18n_contexts.default)  # BFA - redundant
@@ -4890,10 +4931,8 @@ class VIEW3D_MT_object_collection(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("object.move_to_collection", icon="GROUP")
-
-        layout.operator("object.link_to_collection", icon="GROUP")
+        layout.menu("OBJECT_MT_move_to_collection", icon="GROUP")
+        layout.menu("OBJECT_MT_link_to_collection", icon="GROUP")
 
         layout.separator()
 
@@ -6297,6 +6336,16 @@ class VIEW3D_MT_particle(Menu):
 
         layout.operator("particle.delete", icon="DELETE")
 
+# bfa - menu
+class VIEW3D_MT_particle_context_menu_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("particle.select_more", icon="SELECTMORE")
+        layout.operator("particle.select_less", icon="SELECTLESS")
+
 
 class VIEW3D_MT_particle_context_menu(Menu):
     bl_label = "Particle"
@@ -6351,12 +6400,9 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("particle.select_more", icon="SELECTMORE")
-            layout.operator("particle.select_less", icon="SELECTLESS")
+            layout.menu("VIEW3D_MT_particle_context_menu_more_less")
 
-            layout.operator(
-                "particle.select_linked", text="Select Linked", icon="LINKED"
-            )
+            layout.operator("particle.select_linked", text="Select Linked", icon="LINKED")
 
         layout.separator()
 
@@ -8770,17 +8816,11 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
         layout.operator("grease_pencil.clean_loose", icon="DELETE_LOOSE")
         layout.operator("grease_pencil.frame_clean_duplicate", icon="DELETE_DUPLICATE")
 
-        if ob.mode == "EDIT":  # BFA - should only show in edit mode
-            layout.operator(
-                "grease_pencil.stroke_merge_by_distance",
-                text="Merge by Distance",
-                icon="REMOVE_DOUBLES",
-            )
-            layout.operator("grease_pencil.reproject", icon="REPROJECT")
+        if ob.mode == "EDIT":
+            layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
 
-        layout.separator()
-        layout.operator("grease_pencil.reproject")
-        layout.operator("grease_pencil.remove_fill_guides")
+        layout.operator("grease_pencil.reproject", icon="REPROJECT")
+        layout.operator("grease_pencil.remove_fill_guides", icon="REMOVE_GUIDES")
 
 
 class VIEW3D_MT_edit_greasepencil(Menu):
@@ -9049,11 +9089,11 @@ class VIEW3D_MT_edit_pointcloud(Menu):
         layout = self.layout
         layout.menu("VIEW3D_MT_transform")
         layout.separator()
-        layout.operator("pointcloud.duplicate_move")
+        layout.operator("pointcloud.duplicate_move", icon="DUPLICATE")
         layout.separator()
-        layout.operator("pointcloud.attribute_set")
-        layout.operator("pointcloud.delete")
-        layout.operator("pointcloud.separate")
+        layout.operator("pointcloud.attribute_set", icon="NODE_ATTRIBUTE")
+        layout.operator("pointcloud.delete", icon = "DELETE")
+        layout.operator("pointcloud.separate", icon="SEPARATE")
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
@@ -10501,6 +10541,7 @@ class VIEW3D_PT_overlay_object(Panel):
         view = context.space_data
         overlay = view.overlay
         display_all = overlay.show_overlays
+        shading = view.shading
 
         col = layout.column(align=True)
         col.active = display_all
@@ -12230,12 +12271,22 @@ class VIEW3D_PT_greasepencil_draw_context_menu(Panel):
             col.separator()
 
         if brush.gpencil_brush_type not in {'FILL', 'CUTTER', 'ERASE'}:
-            radius = "size" if (brush.use_locked_size == 'VIEW') else "unprojected_radius"
-            layout.prop(brush, radius, text="Radius", slider=True)
+            if brush.use_locked_size == 'VIEW':
+                row = layout.row(align=True)
+                row.prop(brush, "size", slider=True)
+                row.prop(brush, "use_pressure_size", text="", icon='STYLUS_PRESSURE')
+            else:
+                row = layout.row(align=True)
+                row.prop(brush, "unprojected_radius", text="Size", slider=True)
+                row.prop(brush, "use_pressure_size", text="", icon='STYLUS_PRESSURE')
         if brush.gpencil_brush_type == 'ERASE':
-            layout.prop(brush, "size", slider=True)
+            row = layout.row(align=True)
+            row.prop(brush, "size", slider=True)
+            row.prop(brush, "use_pressure_size", text="", icon='STYLUS_PRESSURE')
         if brush.gpencil_brush_type not in {'ERASE', 'FILL', 'CUTTER'}:
-            layout.prop(gp_settings, "pen_strength")
+            row = layout.row(align=True)
+            row.prop(brush, "strength", slider=True)
+            row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
 
         layer = context.object.data.layers.active
 
@@ -12270,8 +12321,14 @@ class VIEW3D_PT_greasepencil_sculpt_context_menu(Panel):
         ups = paint.unified_paint_settings
         size_owner = ups if ups.use_unified_size else brush
         strength_owner = ups if ups.use_unified_strength else brush
-        layout.prop(size_owner, "size", text="")
-        layout.prop(strength_owner, "strength", text="")
+        row = layout.row(align=True)
+        row.prop(size_owner, "size", text="")
+        row.prop(brush, "use_pressure_size", text="", icon='STYLUS_PRESSURE')
+        row.prop(ups, "use_unified_size", text="", icon='BRUSHES_ALL')
+        row = layout.row(align=True)
+        row.prop(strength_owner, "strength", text="")
+        row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
+        row.prop(ups, "use_unified_strength", text="", icon='BRUSHES_ALL')
 
         layer = context.object.data.layers.active
 
@@ -12316,9 +12373,12 @@ class VIEW3D_PT_greasepencil_vertex_paint_context_menu(Panel):
         row.prop(brush, "use_pressure_size", text="", icon="STYLUS_PRESSURE")
 
         if brush.gpencil_vertex_brush_type in {'DRAW', 'BLUR', 'SMEAR'}:
+            ups = tool_settings.unified_paint_settings
+            strength_owner = ups if ups.use_unified_strength else brush
             row = layout.row(align=True)
-            row.prop(brush, "strength", slider=True)
-            row.prop(brush, "use_pressure_strength", text="", icon="STYLUS_PRESSURE")
+            row.prop(strength_owner, "strength", text="")
+            row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
+            row.prop(ups, "use_unified_strength", text="", icon='BRUSHES_ALL')
 
         layer = context.object.data.layers.active
 
@@ -13069,16 +13129,17 @@ classes = (
     VIEW3D_MT_select_by_type,  # bfa menu
     VIEW3D_MT_select_grouped,  # bfa menu
     VIEW3D_MT_select_linked,  # bfa menu
-    VIEW3D_MT_select_object_more_less,
+    VIEW3D_MT_select_object_more_less, # bfa menu
     VIEW3D_MT_select_pose,
-    VIEW3D_MT_select_pose_more_less,
+    VIEW3D_MT_select_pose_more_less, # bfa menu
+    VIEW3D_MT_select_particle_more_less, # bfa menu
     VIEW3D_MT_select_particle,
     VIEW3D_MT_edit_mesh,
     VIEW3D_MT_edit_mesh_legacy,  # bfa menu
     VIEW3D_MT_edit_mesh_sort_elements,  # bfa menu
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_by_trait,
-    VIEW3D_MT_edit_mesh_select_more_less,
+    VIEW3D_MT_edit_mesh_select_more_less, # bfa menu
     VIEW3D_MT_select_edit_mesh,
     VIEW3D_MT_select_edit_curve_more_less, # bfa menu
     VIEW3D_MT_select_edit_curve,
@@ -13097,11 +13158,13 @@ classes = (
     VIEW3D_MT_select_greasepencil_legacy,  # BFA - legacy menu
     VIEW3D_MT_select_edit_grease_pencil_more_less,  # BFA - menu
     VIEW3D_MT_select_edit_grease_pencil,
+    VIEW3D_MT_select_paint_mask,
+    VIEW3D_MT_select_paint_mask_legacy, # BFA menu
     VIEW3D_MT_select_paint_mask_face_more_less,  # bfa menu
     VIEW3D_MT_select_paint_mask_vertex,
     VIEW3D_MT_select_paint_mask_vertex_more_less,  # bfa menu
     VIEW3D_MT_select_edit_pointcloud,
-    VIEW3D_MT_edit_curves_select_more_less,
+    VIEW3D_MT_edit_curves_select_more_less, # bfa menu
     VIEW3D_MT_select_edit_curves,
     VIEW3D_MT_select_sculpt_curves,
     VIEW3D_MT_mesh_add,
@@ -13168,6 +13231,7 @@ classes = (
     VIEW3D_MT_face_sets_init,
     VIEW3D_MT_random_mask,
     VIEW3D_MT_particle,
+    VIEW3D_MT_particle_context_menu_more_less, # BFA - menu
     VIEW3D_MT_particle_context_menu,
     VIEW3D_MT_particle_showhide,
     VIEW3D_MT_pose,

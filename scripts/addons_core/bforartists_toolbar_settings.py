@@ -47,12 +47,10 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     bfa_pref_tab_types: EnumProperty(name='Preference Tabs Types', description='', items=[
         ('Topbar', 'Topbar', 'Topbar Options', 0, 0),
         ('Toolbar', 'Toolbar', 'Toolbar Options', 0, 1),
-        ('Tabs', 'Tabs', 'Tabs Options', 0, 2),
-        ('Nodes', 'Nodes', 'Nodes Options', 0, 3),
-        ('NLA', 'NLA', 'NLA Options', 0, 4),
-        ('Outliner', 'Outliner', 'Outliner Options', 0, 5),
-        ('Other', 'Other', 'Other Options', 0, 6),
-
+        ('Nodes', 'Nodes', 'Nodes Options', 0, 2),
+        ('NLA', 'NLA', 'NLA Options', 0, 3),
+        ('Outliner', 'Outliner', 'Outliner Options', 0, 4),
+        ('Other', 'Other', 'Other Options', 0, 5),
     ])
 
     bfa_topbar_types: EnumProperty(name='Topbar Types', description='', items=[
@@ -293,10 +291,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     # NLA Editor, switch tweak methods
     nla_tweak_isolate_action : BoolProperty(name="Isolate", default = False, description = "Edit action in isolate mode")
 
-    # Sidebar Tabs
-    uv_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the UV editor") # bfa
-    node_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the Node editor") # bfa
-    vse_show_toolshelf_tabs : BoolProperty(name="Tool Shelf Tabs", default = True, description = "Show or hide the tabs in the tool shelf in the Video Sequence editor") # bfa
 
     def draw(self, context, ):
         preferences = context.preferences
@@ -680,19 +674,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             grid.prop(self, "nla_tweak_isolate_action", toggle=addon_prefs.bfa_button_style)
 
-        # Toolshelf Tab
-        if (addon_prefs.bfa_pref_tab_types == 'Tabs'):
-
-            box = layout.box()
-            row = box.row()
-            row.alignment = 'Center'.upper()
-            row.label(text="Toolshelf Tabs")
-
-            grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
-
-            grid.prop(self, "node_show_toolshelf_tabs", toggle=addon_prefs.bfa_button_style)
-            grid.prop(self, "uv_show_toolshelf_tabs", toggle=addon_prefs.bfa_button_style)
-            grid.prop(self, "vse_show_toolshelf_tabs", toggle=addon_prefs.bfa_button_style)
 
 
 ##### Reset Functions ####

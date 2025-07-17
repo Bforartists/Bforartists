@@ -17,6 +17,7 @@
 #include "DNA_mesh_types.h"
 #include "DNA_object_force_types.h"
 #include "DNA_pointcloud_types.h"
+#include "DNA_screen_types.h" // bfa assetshelf
 #include "DNA_sequence_types.h"
 
 #include "BLI_listbase.h"
@@ -57,7 +58,7 @@
 
 #include "versioning_common.hh"
 
-// static CLG_LogRef LOG = {"blo.readfile.doversion"};
+// static CLG_LogRef LOG = {"blend.doversion"};
 
 static void version_fix_fcurve_noise_offset(FCurve &fcurve)
 {
@@ -3765,8 +3766,10 @@ static void do_version_replace_image_info_node_coordinates(bNodeTree *node_tree)
   }
 }
 
-/* Vector sockets can now have different dimensions, so set the dimensions for existing sockets to
- * 3.*/
+/**
+ * Vector sockets can now have different dimensions,
+ * so set the dimensions for existing sockets to 3.
+ */
 static void do_version_vector_sockets_dimensions(bNodeTree *node_tree)
 {
   node_tree->tree_interface.foreach_item([&](bNodeTreeInterfaceItem &item) {
@@ -4128,7 +4131,7 @@ void do_versions_after_linking_450(FileData * /*fd*/, Main *bmain)
         blender::animrig::foreach_fcurve_in_action_slot(action, slot->handle, [&](FCurve &fcurve) {
           /* Loop over all slot users, because when the slot is shared, not all F-Curves may
            * resolve on all users. For example, a custom property might only exist on a subset of
-           * the users.*/
+           * the users. */
           for (ID *slot_user : slot_users) {
             PointerRNA slot_user_ptr = RNA_id_pointer_create(slot_user);
             PointerRNA ptr;
@@ -4892,7 +4895,7 @@ static void version_set_uv_face_overlay_defaults(Main *bmain)
           const char *workspace_name = screen->id.name + 2;
           /* Don't set uv_face_opacity for Texture Paint or Shading since these are workspaces
            * where it's important to have unobstructed view of the Image Editor to see Image
-           * Textures. UV Editing is the only other default workspace with an Image Editor.*/
+           * Textures. UV Editing is the only other default workspace with an Image Editor. */
           if (STREQ(workspace_name, "UV Editing")) {
             sima->uv_face_opacity = 1.0f;
           }
@@ -5916,7 +5919,33 @@ void blo_do_versions_450(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       }
     }
     FOREACH_NODETREE_END;
+
+    // bfa start
+    // do versioning for existing asset shelf startup
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if(ELEM(sl->spacetype, SPACE_VIEW3D, SPACE_NODE)) {
+            const ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                         &sl->regionbase;
+            LISTBASE_FOREACH (ARegion *, region, regionbase) {
+              if (region->regiontype != RGN_TYPE_ASSET_SHELF) {
+                continue;
+              }
+
+              RegionAssetShelf *shelf_data = static_cast<RegionAssetShelf *>(region->regiondata);
+              if (shelf_data && shelf_data->active_shelf &&
+                  (AssetShelfImportMethod(shelf_data->active_shelf->settings.import_method) == SHELF_ASSET_IMPORT_LINK))
+              {
+                shelf_data->active_shelf->settings.import_method = SHELF_ASSET_IMPORT_APPEND;
+              }
+            }
+          }
+        }
+      }
+    }
   }
+  // bfa end
 
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning

@@ -42,6 +42,7 @@
 #include "DNA_screen_types.h"
 
 #include "BKE_attribute.hh"
+#include "BKE_attribute_legacy_convert.hh"
 #include "BKE_ccg.hh"
 #include "BKE_context.hh"
 #include "BKE_customdata.hh"
@@ -74,14 +75,12 @@
 #include "bmesh.hh"
 #include "mesh_brush_common.hh"
 #include "paint_hide.hh"
-#include "paint_intern.hh"
-#include "sculpt_automask.hh"
 #include "sculpt_color.hh"
 #include "sculpt_dyntopo.hh"
 #include "sculpt_face_set.hh"
 #include "sculpt_intern.hh"
 
-static CLG_LogRef LOG = {"ed.sculpt.undo"};
+static CLG_LogRef LOG = {"undo.sculpt"};
 
 namespace blender::ed::sculpt_paint::undo {
 
@@ -1150,7 +1149,7 @@ static const Node *get_node(const bke::pbvh::Node *node, const Type type)
   }
   /* This access does not need to be locked because this function is not expected to be called
    * while the per-node undo data is being pushed. In other words, this must not be called
-   * concurrently with #push_node.*/
+   * concurrently with #push_node. */
   std::unique_ptr<Node> *node_ptr = step_data->undo_nodes_by_pbvh_node.lookup_ptr(node);
   if (!node_ptr) {
     return nullptr;
@@ -1671,13 +1670,13 @@ static void save_active_attribute(Object &object, SculptAttrRef *attr)
     return;
   }
   if (!(ATTR_DOMAIN_AS_MASK(meta_data->domain) & ATTR_DOMAIN_MASK_COLOR) ||
-      !(CD_TYPE_AS_MASK(meta_data->data_type) & CD_MASK_COLOR_ALL))
+      !(ELEM(meta_data->data_type, bke::AttrType::ColorFloat, bke::AttrType::ColorByte)))
   {
     return;
   }
   attr->domain = meta_data->domain;
   STRNCPY(attr->name, name);
-  attr->type = meta_data->data_type;
+  attr->type = *bke::attr_type_to_custom_data_type(meta_data->data_type);
 }
 
 /**
@@ -1880,7 +1879,7 @@ static void set_active_layer(bContext *C, const SculptAttrRef *attr)
                                           mesh->attributes_for_write(),
                                           attr->name,
                                           attr->domain,
-                                          eCustomDataType(attr->type),
+                                          *bke::custom_data_type_to_attr_type(attr->type),
                                           nullptr))
       {
         layer = BKE_attribute_find(owner, attr->name, attr->type, attr->domain);
@@ -1890,8 +1889,10 @@ static void set_active_layer(bContext *C, const SculptAttrRef *attr)
 
   if (!layer) {
     /* Memfile undo killed the layer; re-create it. */
-    mesh->attributes_for_write().add(
-        attr->name, attr->domain, attr->type, bke::AttributeInitDefaultValue());
+    mesh->attributes_for_write().add(attr->name,
+                                     attr->domain,
+                                     *bke::custom_data_type_to_attr_type(attr->type),
+                                     bke::AttributeInitDefaultValue());
     layer = BKE_attribute_find(owner, attr->name, attr->type, attr->domain);
     DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
   }

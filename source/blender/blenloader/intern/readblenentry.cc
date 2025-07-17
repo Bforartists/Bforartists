@@ -75,6 +75,12 @@ BlendHandle *BLO_blendhandle_from_memory(const void *mem,
   return bh;
 }
 
+blender::int3 BLO_blendhandle_get_version(const BlendHandle *bh)
+{
+  const FileData *fd = reinterpret_cast<const FileData *>(bh);
+  return blender::int3(fd->fileversion / 100, fd->fileversion % 100, fd->filesubversion);
+}
+
 /* Return `false` if the block should be skipped because it is either an invalid block, or it does
  * not meet to required conditions. */
 static bool blendhandle_load_id_data_and_validate(FileData *fd,
@@ -365,7 +371,6 @@ BlendFileData *BLO_read_from_memfile(Main *oldmain,
 {
   BlendFileData *bfd = nullptr;
   FileData *fd;
-  ListBase old_mainlist;
   BlendFileReadReport bf_reports{};
   bf_reports.reports = reports;
 
@@ -378,8 +383,8 @@ BlendFileData *BLO_read_from_memfile(Main *oldmain,
     blo_make_old_idmap_from_main(fd, oldmain);
 
     /* Separate linked data from old main. */
-    blo_split_main(&old_mainlist, oldmain);
-    fd->old_mainlist = &old_mainlist;
+    blo_split_main(oldmain);
+    fd->old_bmain = oldmain;
 
     /* Removed packed data from this trick - it's internal data that needs saves. */
 
@@ -395,13 +400,15 @@ BlendFileData *BLO_read_from_memfile(Main *oldmain,
     /* Ensure relinked caches are not freed together with their old IDs. */
     blo_cache_storage_old_bmain_clear(fd, oldmain);
 
-    /* Still in-use libraries have already been moved from oldmain to new mainlist,
-     * but oldmain itself shall *never* be 'transferred' to new mainlist! */
-    BLI_assert(old_mainlist.first == oldmain);
+    /* Still in-use libraries have already been moved from oldmain to new main
+     * (fd->bmain->split_mains), but oldmain itself shall *never* be 'transferred' to the new
+     * split_mains!
+     */
+    BLI_assert(oldmain->split_mains && (*oldmain->split_mains)[0] == oldmain);
 
     /* That way, libraries (aka mains) we did not reuse in new undone/redone state
      * will be cleared together with `oldmain`. */
-    blo_join_main(&old_mainlist);
+    blo_join_main(oldmain);
 
     blo_filedata_free(fd);
   }

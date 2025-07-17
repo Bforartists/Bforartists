@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:18+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Basque <https://translate.blender.org/projects/blender-ui/ui/eu/>\n"
@@ -944,10 +944,6 @@ msgid "Always write absolute paths"
 msgstr "Beti helbide absolutuak idatzi"
 
 
-msgid "Always write relative paths (where possible)"
-msgstr "Beti helbide erlatiboak idatzi (posible denean)"
-
-
 msgid "Filename only"
 msgstr "Fitxategi-izena soilik"
 
@@ -1701,8 +1697,8 @@ msgid "Sepia"
 msgstr "Sepia"
 
 
-msgid "Blender File"
-msgstr "Blender Fitxategia"
+msgid "Bforartists File"
+msgstr "Bforartists Fitxategia"
 
 
 msgid "Sort Alphabetically"
@@ -2264,8 +2260,8 @@ msgid "%s: failed to load '%s'"
 msgstr "%s: errorea '%s' kargatzean "
 
 
-msgid "Blender File View"
-msgstr "Blender Fitxategi Bista"
+msgid "Bforartists File View"
+msgstr "Bforartists Fitxategi Bista"
 
 
 msgid "unable to open the file"

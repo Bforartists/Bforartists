@@ -5,7 +5,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (5, 0, 14),
+    "version": (5, 0, 16),
     'blender': (4, 4, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -141,9 +141,8 @@ def get_format_items(scene, context):
               'Exports multiple files, with separate JSON, binary and texture data. '
               'Easiest to edit later'))
 
-    if bpy.context.preferences.addons['io_scene_gltf2'].preferences \
-            and "allow_embedded_format" in bpy.context.preferences.addons['io_scene_gltf2'].preferences \
-            and bpy.context.preferences.addons['io_scene_gltf2'].preferences['allow_embedded_format']:
+    addon_preferences = bpy.context.preferences.addons['io_scene_gltf2'].preferences
+    if addon_preferences and addon_preferences.allow_embedded_format:
         # At initialization, the preferences are not yet loaded
         # The second line check is needed until the PR is merge in Blender, for github CI tests
         items += (('GLTF_EMBEDDED', 'glTF Embedded (.gltf)',
@@ -1405,6 +1404,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
 
 
 def export_main(layout, operator, is_file_browser):
+    layout.use_property_split = False  # BFA
     layout.prop(operator, 'export_format')
     if operator.export_format == 'GLTF_SEPARATE':
         layout.prop(operator, 'export_keep_originals')
@@ -1436,6 +1436,7 @@ def export_panel_include(layout, operator, is_file_browser):
     if body:
         if is_file_browser:
             col = body.column(heading="Limit to", align=True)
+            col.use_property_split = False  # BFA
             col.prop(operator, 'use_selection')
             col.prop(operator, 'use_visible')
             col.prop(operator, 'use_renderable')
@@ -1445,6 +1446,7 @@ def export_panel_include(layout, operator, is_file_browser):
             col.prop(operator, 'use_active_scene')
 
         col = body.column(heading="Data", align=True)
+        col.use_property_split = False  # BFA
         col.prop(operator, 'export_extras')
         col.prop(operator, 'export_cameras')
         col.prop(operator, 'export_lights')
@@ -1454,6 +1456,7 @@ def export_panel_transform(layout, operator):
     header, body = layout.panel("GLTF_export_transform", default_closed=True)
     header.label(text="Transform")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, 'export_yup')
 
 
@@ -1477,6 +1480,7 @@ def export_panel_data_scene_graph(layout, operator):
     header, body = layout.panel("GLTF_export_data_scene_graph", default_closed=True)
     header.label(text="Scene Graph")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, 'export_gn_mesh')
         body.prop(operator, 'export_gpu_instances')
         body.prop(operator, 'export_hierarchy_flatten_objs')
@@ -1487,6 +1491,7 @@ def export_panel_data_mesh(layout, operator):
     header, body = layout.panel("GLTF_export_data_mesh", default_closed=True)
     header.label(text="Mesh")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, 'export_apply')
         body.prop(operator, 'export_texcoords')
         body.prop(operator, 'export_normals')
@@ -1518,9 +1523,11 @@ def export_panel_data_mesh(layout, operator):
                 row = sub_body.row()
                 row.label(text="If you want to use VC for any other purpose than vertex color, you should use custom attributes.")
             row = sub_body.row()
+            row.use_property_split = False  # BFA
             row.active = operator.export_vertex_color != "NONE"
             row.prop(operator, 'export_all_vertex_colors')
             row = sub_body.row()
+            row.use_property_split = False  # BFA
             row.active = operator.export_vertex_color != "NONE"
             row.prop(operator, 'export_active_vertex_color_when_no_material')
 
@@ -1536,9 +1543,11 @@ def export_panel_data_material(layout, operator):
         if operator.export_image_format in ["AUTO", "JPEG", "WEBP"]:
             col.prop(operator, 'export_image_quality')
         col = body.column()
+        col.use_property_split = False  # BFA
         col.active = operator.export_image_format != "WEBP" and not operator.export_materials in ['PLACEHOLDER', 'NONE', 'VIEWPORT']
         col.prop(operator, "export_image_add_webp")
         col = body.column()
+        col.use_property_split = False  # BFA
         col.active = operator.export_image_format != "WEBP" and not operator.export_materials in ['PLACEHOLDER', 'NONE', 'VIEWPORT']
         col.prop(operator, "export_image_webp_fallback")
 
@@ -1548,8 +1557,10 @@ def export_panel_data_material(layout, operator):
         if sub_body:
             sub_body.active = operator.export_materials == "EXPORT"
             row = sub_body.row()
+            row.use_property_split = False  # BFA
             row.prop(operator, 'export_unused_images')
             row = sub_body.row()
+            row.use_property_split = False  # BFA
             row.prop(operator, 'export_unused_textures')
 
 
@@ -1559,10 +1570,12 @@ def export_panel_data_shapekeys(layout, operator):
     header.prop(operator, "export_morph", text="")
     header.label(text="Shape Keys")
     if body:
+        body.use_property_split = False  # BFA
         body.active = operator.export_morph
 
         body.prop(operator, 'export_morph_normal')
         col = body.column()
+        col.use_property_split = False  # BFA
         col.active = operator.export_morph_normal
         col.prop(operator, 'export_morph_tangent')
 
@@ -1571,9 +1584,11 @@ def export_panel_data_shapekeys(layout, operator):
         header.label(text="Optimize Shape Keys")
         if sub_body:
             row = sub_body.row()
+            row.use_property_split = False  # BFA
             row.prop(operator, 'export_try_sparse_sk')
 
             row = sub_body.row()
+            row.use_property_split = False  # BFA
             row.active = operator.export_try_sparse_sk
             row.prop(operator, 'export_try_omit_sparse_sk')
 
@@ -1582,20 +1597,25 @@ def export_panel_data_armature(layout, operator):
     header, body = layout.panel("GLTF_export_data_armature", default_closed=True)
     header.label(text="Armature")
     if body:
+        body.use_property_split = False  # BFA
         body.active = operator.export_skins
 
         body.prop(operator, 'export_rest_position_armature')
 
         row = body.row()
+        row.use_property_split = False  # BFA
         row.active = operator.export_force_sampling
         row.prop(operator, 'export_def_bones')
         if operator.export_force_sampling is False and operator.export_def_bones is True:
             body.label(text="Export only deformation bones is not possible when not sampling animation")
         row = body.row()
+        row.use_property_split = False  # BFA
         row.prop(operator, 'export_armature_object_remove')
         row = body.row()
+        row.use_property_split = False  # BFA
         row.prop(operator, 'export_hierarchy_flatten_bones')
         row = body.row()
+        row.use_property_split = False  # BFA
         row.prop(operator, 'export_leaf_bone')
 
 
@@ -1605,6 +1625,7 @@ def export_panel_data_skinning(layout, operator):
     header.prop(operator, "export_skins", text="")
     header.label(text="Skinning")
     if body:
+        body.use_property_split = False  # BFA
         body.active = operator.export_skins
 
         row = body.row()
@@ -1688,12 +1709,14 @@ def export_panel_animation_bake_and_merge(layout, operator):
         body.active = operator.export_animations
 
         row = body.row()
+        row.use_property_split = False  # BFA
         row.active = operator.export_force_sampling and operator.export_animation_mode in [
             'ACTIONS', 'ACTIVE_ACTIONS', 'BROACAST']
         row.prop(operator, 'export_bake_animation')
 
         if operator.export_animation_mode == "SCENE":
             row = body.row()
+            row.use_property_split = False  # BFA
             row.prop(operator, 'export_anim_scene_split_object')
 
         row = body.row()
@@ -1707,6 +1730,7 @@ def export_panel_animation_ranges(layout, operator):
     header, body = layout.panel("GLTF_export_animation_ranges", default_closed=True)
     header.label(text="Rest & Ranges")
     if body:
+        body.use_property_split = False  # BFA
         body.active = operator.export_animations
 
         body.prop(operator, 'export_current_frame')
@@ -1726,9 +1750,11 @@ def export_panel_animation_armature(layout, operator):
         body.active = operator.export_animations
 
         row = body.row()
+        row.use_property_split = False  # BFA
         row.active = operator.export_animation_mode == "ACTIONS"
         row.prop(operator, 'export_anim_single_armature')
         row = body.row()
+        row.use_property_split = False  # BFA
         row.prop(operator, 'export_reset_pose_bones')
 
 
@@ -1743,6 +1769,7 @@ def export_panel_animation_shapekeys(layout, operator):
 
         row = body.row()
         row.active = operator.export_morph_animation
+        row.use_property_split = False  # BFA
         row.prop(operator, 'export_morph_reset_sk_data')
 
 
@@ -1766,6 +1793,7 @@ def export_panel_animation_pointer(layout, operator):
     header.label(text="Animation Pointer (Experimental)")
     if body:
         row = body.row()
+        row.use_property_split = False  # BFA
         row.active = header.active and operator.export_pointer_animation
         row.prop(operator, 'export_convert_animation_pointer')
 
@@ -1774,17 +1802,21 @@ def export_panel_animation_optimize(layout, operator):
     header, body = layout.panel("GLTF_export_animation_optimize", default_closed=True)
     header.label(text="Optimize Animations")
     if body:
+        body.use_property_split = False  # BFA
         body.active = operator.export_animations
 
         body.prop(operator, 'export_optimize_animation_size')
 
         row = body.row()
+        row.use_property_split = False  # BFA
         row.prop(operator, 'export_optimize_animation_keep_anim_armature')
 
         row = body.row()
+        row.use_property_split = False  # BFA
         row.prop(operator, 'export_optimize_animation_keep_anim_object')
 
         row = body.row()
+        row.use_property_split = False  # BFA
         row.prop(operator, 'export_optimize_disable_viewport')
 
 
@@ -1792,6 +1824,7 @@ def export_panel_animation_extra(layout, operator):
     header, body = layout.panel("GLTF_export_animation_extra", default_closed=True)
     header.label(text="Extra Animations")
     if body:
+        body.use_property_split = False  # BFA
         body.active = operator.export_animations
 
         body.prop(operator, 'export_extra_animations')
@@ -1802,25 +1835,31 @@ def export_panel_gltfpack(layout, operator):
     header.label(text="gltfpack")
     if body:
         col = body.column(heading="gltfpack", align=True)
+        col.use_property_split = False  # BFA
         col.prop(operator, 'export_use_gltfpack')
 
         col = body.column(heading="Textures", align=True)
+        col.use_property_split = False  # BFA
         col.prop(operator, 'export_gltfpack_tc')
         col.prop(operator, 'export_gltfpack_tq')
         col = body.column(heading="Simplification", align=True)
+        col.use_property_split = False  # BFA
         col.prop(operator, 'export_gltfpack_si')
         col.prop(operator, 'export_gltfpack_sa')
         col.prop(operator, 'export_gltfpack_slb')
         col = body.column(heading="Vertices", align=True)
+        col.use_property_split = False  # BFA
         col.prop(operator, 'export_gltfpack_vp')
         col.prop(operator, 'export_gltfpack_vt')
         col.prop(operator, 'export_gltfpack_vn')
         col.prop(operator, 'export_gltfpack_vc')
         col = body.column(heading="Vertex positions", align=True)
+        col.use_property_split = False  # BFA
         col.prop(operator, 'export_gltfpack_vpi')
         # col = body.column(heading = "Animations", align = True)
         # col = body.column(heading = "Scene", align = True)
         col = body.column(heading="Miscellaneous", align=True)
+        col.use_property_split = False  # BFA
         col.prop(operator, 'export_gltfpack_noq')
         col.prop(operator, 'export_gltfpack_kn')
 
@@ -1850,6 +1889,11 @@ class ImportGLTF2(Operator, ConvertGLTF2_Base, ImportHelper):
     bl_options = {'REGISTER', 'UNDO'}
 
     filter_glob: StringProperty(default="*.glb;*.gltf", options={'HIDDEN'})
+
+    directory: StringProperty(
+        subtype='DIR_PATH',
+        options={'HIDDEN', 'SKIP_PRESET'},
+    )
 
     files: CollectionProperty(
         name="File Path",
@@ -2028,9 +2072,8 @@ class ImportGLTF2(Operator, ConvertGLTF2_Base, ImportHelper):
         if self.files:
             # Multiple file import
             ret = {'CANCELLED'}
-            dirname = os.path.dirname(self.filepath)
             for file in self.files:
-                path = os.path.join(dirname, file.name)
+                path = os.path.join(self.directory, file.name)
                 if self.unit_import(path, import_settings) == {'FINISHED'}:
                     ret = {'FINISHED'}
             return ret
@@ -2072,6 +2115,7 @@ def import_mesh_panel(layout, operator):
     header, body = layout.panel("GLTF_import_mesh", default_closed=False)
     header.label(text="Mesh")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, 'merge_vertices')
         body.prop(operator, 'import_merge_material_slots')
 
@@ -2079,6 +2123,7 @@ def import_bone_panel(layout, operator):
     header, body = layout.panel("GLTF_import_bone", default_closed=False)
     header.label(text="Bones & Skin")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, 'bone_heuristic')
         if operator.bone_heuristic == 'BLENDER':
             body.prop(operator, 'guess_original_bind_pose')
@@ -2090,6 +2135,7 @@ def import_ux_panel(layout, operator):
     header, body = layout.panel("GLTF_import_ux", default_closed=False)
     header.label(text="Pipeline")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, 'import_scene_as_collection')
         if operator.import_scene_as_collection is True:
             body.prop(operator, 'import_select_created_objects')
@@ -2099,6 +2145,7 @@ def import_texture_panel(layout, operator):
     header, body = layout.panel("GLTF_import_texture", default_closed=False)
     header.label(text="Texture")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, 'import_pack_images')
         body.prop(operator, 'import_webp_texture')
         body.prop(operator, 'import_unused_materials')

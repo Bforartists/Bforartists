@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:32+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Kyrgyz <https://translate.blender.org/projects/blender-ui/ui/ky/>\n"
@@ -1864,10 +1864,6 @@ msgid "Other"
 msgstr "Башка"
 
 
-msgid "Path Mode"
-msgstr "Жол режими"
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "Жаңы каталогду жаратуу"
@@ -2556,8 +2552,8 @@ msgid "Memory Statistics"
 msgstr "Эс статистикасы"
 
 
-msgid "Open a Blender file"
-msgstr "Blender файлын ачуу"
+msgid "Open a Bforartists file"
+msgstr "Bforartists файлын ачуу"
 
 
 msgid "Trusted Source"
@@ -2565,12 +2561,12 @@ msgstr "Ишеничтүү булак"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Blender'ден чыгуу"
+msgid "Quit Bforartists"
+msgstr "Bforartists'ден чыгуу"
 
 
-msgid "Quit Blender"
-msgstr "Blender'ден чыгуу"
+msgid "Quit Bforartists"
+msgstr "Bforartists'ден чыгуу"
 
 
 msgid "Image ID"
@@ -3521,6 +3517,10 @@ msgstr "Жаңы"
 msgctxt "World"
 msgid "New"
 msgstr "Жаңы"
+
+
+msgid "Path Mode"
+msgstr "Жол режими"
 
 
 msgid "Rigging"

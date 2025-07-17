@@ -26,9 +26,9 @@ void USDPointsReader::create_object(Main *bmain)
   object_->data = pointcloud;
 }
 
-void USDPointsReader::read_object_data(Main *bmain, double motionSampleTime)
+void USDPointsReader::read_object_data(Main *bmain, pxr::UsdTimeCode time)
 {
-  const USDMeshReadParams params = create_mesh_read_params(motionSampleTime,
+  const USDMeshReadParams params = create_mesh_read_params(time.GetValue(),
                                                            import_params_.mesh_read_flag);
 
   PointCloud *pointcloud = static_cast<PointCloud *>(object_->data);
@@ -52,7 +52,7 @@ void USDPointsReader::read_object_data(Main *bmain, double motionSampleTime)
   }
 
   /* Update the transform. */
-  USDXformReader::read_object_data(bmain, motionSampleTime);
+  USDXformReader::read_object_data(bmain, time);
 }
 
 void USDPointsReader::read_geometry(bke::GeometrySet &geometry_set,
@@ -103,10 +103,10 @@ void USDPointsReader::read_geometry(bke::GeometrySet &geometry_set,
   geometry_set.replace_pointcloud(pointcloud);
 }
 
-void USDPointsReader::read_velocities(PointCloud *pointcloud, const double motionSampleTime) const
+void USDPointsReader::read_velocities(PointCloud *pointcloud, const pxr::UsdTimeCode time) const
 {
   pxr::VtVec3fArray velocities;
-  points_prim_.GetVelocitiesAttr().Get(&velocities, motionSampleTime);
+  points_prim_.GetVelocitiesAttr().Get(&velocities, time);
 
   if (!velocities.empty()) {
     bke::MutableAttributeAccessor attributes = pointcloud->attributes_for_write();
@@ -119,7 +119,7 @@ void USDPointsReader::read_velocities(PointCloud *pointcloud, const double motio
   }
 }
 
-void USDPointsReader::read_custom_data(PointCloud *pointcloud, const double motionSampleTime) const
+void USDPointsReader::read_custom_data(PointCloud *pointcloud, const pxr::UsdTimeCode time) const
 {
   pxr::UsdGeomPrimvarsAPI pv_api(points_prim_);
 
@@ -131,13 +131,13 @@ void USDPointsReader::read_custom_data(PointCloud *pointcloud, const double moti
     }
 
     const bke::AttrDomain domain = bke::AttrDomain::Point;
-    const std::optional<eCustomDataType> type = convert_usd_type_to_blender(pv_type);
+    const std::optional<bke::AttrType> type = convert_usd_type_to_blender(pv_type);
     if (!type.has_value()) {
       return;
     }
 
     bke::MutableAttributeAccessor attributes = pointcloud->attributes_for_write();
-    copy_primvar_to_blender_attribute(pv, motionSampleTime, *type, domain, {}, attributes);
+    copy_primvar_to_blender_attribute(pv, time, *type, domain, {}, attributes);
   }
 }
 

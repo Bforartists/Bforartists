@@ -1404,16 +1404,22 @@ static void std_node_socket_interface_draw(ID *id,
     }
     case SOCK_VECTOR: {
       col->prop(&ptr, "subtype", DEFAULT_FLAGS, IFACE_("Subtype"), ICON_NONE);
-      col->prop(&ptr, "dimensions", DEFAULT_FLAGS, IFACE_("Dimensions"), ICON_NONE);
+      col->prop(&ptr,
+                "dimensions",
+                DEFAULT_FLAGS,
+                CTX_IFACE_(BLT_I18NCONTEXT_ID_TEXTURE, "Dimensions"),
+                ICON_NONE);
+      col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&ptr, "default_value", UI_ITEM_R_EXPAND, IFACE_("Default"), ICON_NONE);
+      col->separator(); /* bfa - Add slight spacing between these items */
       uiLayout *sub = &col->column(true);
       sub->prop(&ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), ICON_NONE);
       sub->prop(&ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), ICON_NONE);
       break;
     }
     case SOCK_STRING: {
-      col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&ptr, "subtype", DEFAULT_FLAGS, IFACE_("Subtype"), ICON_NONE);
+      col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), ICON_NONE);
       break;
     }
@@ -1434,6 +1440,7 @@ static void std_node_socket_interface_draw(ID *id,
     }
     case SOCK_MENU: {
       col->prop(&ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), ICON_NONE);
+      col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&ptr, "menu_expanded", DEFAULT_FLAGS, IFACE_("Expanded"), ICON_NONE);
       break;
     }
@@ -1462,6 +1469,7 @@ static void std_node_socket_interface_draw(ID *id,
   {
     uiLayout *sub = &col->column(false);
     sub->active_set(interface_socket->default_input == NODE_DEFAULT_INPUT_VALUE);
+    sub->use_property_split_set(false); /* bfa - use_property_split = False */
     sub->prop(&ptr, "hide_value", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
   }
 

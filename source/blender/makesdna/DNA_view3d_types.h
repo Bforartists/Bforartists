@@ -540,6 +540,7 @@ enum {
   V3D_SHOW_CAMERA_GUIDES = (1 << 18),
   V3D_SHOW_CAMERA_PASSEPARTOUT = (1 << 19),
   V3D_XR_SHOW_PASSTHROUGH = 1 << 20,
+  V3D_SHOW_TOOLSHELF_TABS = 1 << 21, /* BFA - toolshelf tabs toggle flag */
 };
 
 /** #View3D::gp_flag (short) */
@@ -708,7 +709,6 @@ enum {
   V3D_SHOW_Y = 1 << 2,
   V3D_SHOW_Z = 1 << 3,
   V3D_SHOW_ORTHO_GRID = 1 << 4,
-  V3D_SHOW_TOOLSHELF_TABS = 1 << 5, /* BFA - added our toolshelf tabs toggle here */
 };
 
 /** #TransformOrientationSlot.type */

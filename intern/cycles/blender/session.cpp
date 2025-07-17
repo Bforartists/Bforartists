@@ -133,12 +133,11 @@ void BlenderSession::create_session()
   /* create sync */
   sync = make_unique<BlenderSync>(
       b_engine, b_data, b_scene, scene, !background, use_developer_ui, session->progress);
-  BL::Object b_camera_override(b_engine.camera_override());
   if (b_v3d) {
     sync->sync_view(b_v3d, b_rv3d, width, height);
   }
   else {
-    sync->sync_camera(b_render, b_camera_override, width, height, "");
+    sync->sync_camera(b_render, width, height, "");
   }
 
   /* set buffer parameters */
@@ -227,11 +226,10 @@ void BlenderSession::reset_session(BL::BlendData &b_data, BL::Depsgraph &b_depsg
   }
   else {
     /* Sync recalculations to do just the required updates. */
-    sync->sync_recalc(b_depsgraph, b_v3d);
+    sync->sync_recalc(b_depsgraph, b_v3d, b_rv3d);
   }
 
-  BL::Object b_camera_override(b_engine.camera_override());
-  sync->sync_camera(b_render, b_camera_override, width, height, "");
+  sync->sync_camera(b_render, width, height, "");
 
   BL::SpaceView3D b_null_space_view3d(PointerRNA_NULL);
   BL::RegionView3D b_null_region_view3d(PointerRNA_NULL);
@@ -392,12 +390,11 @@ void BlenderSession::render(BL::Depsgraph &b_depsgraph_)
     }
 
     /* update scene */
-    BL::Object b_camera_override(b_engine.camera_override());
-    sync->sync_camera(b_render, b_camera_override, width, height, b_rview_name.c_str());
+    sync->sync_camera(b_render, width, height, b_rview_name.c_str());
     sync->sync_data(b_render,
                     b_depsgraph,
                     b_v3d,
-                    b_camera_override,
+                    b_rv3d,
                     width,
                     height,
                     &python_thread_state,
@@ -473,8 +470,8 @@ void BlenderSession::render(BL::Depsgraph &b_depsgraph_)
   double total_time;
   double render_time;
   session->progress.get_time(total_time, render_time);
-  VLOG_INFO << "Total render time: " << total_time;
-  VLOG_INFO << "Render time (without synchronization): " << render_time;
+  LOG_INFO << "Total render time: " << total_time;
+  LOG_INFO << "Render time (without synchronization): " << render_time;
 }
 
 void BlenderSession::render_frame_finish()
@@ -689,13 +686,12 @@ void BlenderSession::bake(BL::Depsgraph &b_depsgraph_,
   session->full_buffer_written_cb = [&](string_view filename) { full_buffer_written(filename); };
 
   /* Sync scene. */
-  BL::Object b_camera_override(b_engine.camera_override());
   sync->set_bake_target(b_object);
-  sync->sync_camera(b_render, b_camera_override, width, height, "");
+  sync->sync_camera(b_render, width, height, "");
   sync->sync_data(b_render,
                   b_depsgraph,
                   b_v3d,
-                  b_camera_override,
+                  b_rv3d,
                   width,
                   height,
                   &python_thread_state,
@@ -798,7 +794,7 @@ void BlenderSession::synchronize(BL::Depsgraph &b_depsgraph_)
 
   /* copy recalc flags, outside of mutex so we can decide to do the real
    * synchronization at a later time to not block on running updates */
-  sync->sync_recalc(b_depsgraph_, b_v3d);
+  sync->sync_recalc(b_depsgraph_, b_v3d, b_rv3d);
 
   /* don't do synchronization if on pause */
   if (session_pause) {
@@ -815,11 +811,10 @@ void BlenderSession::synchronize(BL::Depsgraph &b_depsgraph_)
   /* data and camera synchronize */
   b_depsgraph = b_depsgraph_;
 
-  BL::Object b_camera_override(b_engine.camera_override());
   sync->sync_data(b_render,
                   b_depsgraph,
                   b_v3d,
-                  b_camera_override,
+                  b_rv3d,
                   width,
                   height,
                   &python_thread_state,
@@ -829,7 +824,7 @@ void BlenderSession::synchronize(BL::Depsgraph &b_depsgraph_)
     sync->sync_view(b_v3d, b_rv3d, width, height);
   }
   else {
-    sync->sync_camera(b_render, b_camera_override, width, height, "");
+    sync->sync_camera(b_render, width, height, "");
   }
 
   /* get buffer parameters */
@@ -990,53 +985,36 @@ void BlenderSession::update_status_progress()
   string timestatus;
   string status;
   string substatus;
-  string scene_status;
-  double progress;
-  double total_time;
-  double remaining_time = 0;
-  double render_time;
-  const float mem_used = (float)session->stats.mem_used / 1024.0f / 1024.0f;
-  const float mem_peak = (float)session->stats.mem_peak / 1024.0f / 1024.0f;
-
   get_status(status, substatus);
-  get_progress(progress, total_time, render_time);
-
-  if (progress > 0) {
-    remaining_time = session->get_estimated_remaining_time();
+  if (background && !substatus.empty()) {
+    status += " | " + substatus;
   }
 
+  double progress;
+  double total_time;
+  double render_time;
+  get_progress(progress, total_time, render_time);
+
+  const float mem_used = (float)session->stats.mem_used / 1024.0f / 1024.0f;
+  const float mem_peak = (float)session->stats.mem_peak / 1024.0f / 1024.0f;
   if (background) {
-    if (scene) {
-      scene_status += " | " + scene->name;
-    }
-    if (!b_rlay_name.empty()) {
-      scene_status += ", " + b_rlay_name;
+
+    if (progress > 0) {
+      const double remaining_time = session->get_estimated_remaining_time();
+      if (remaining_time > 0) {
+        timestatus = "Remaining: " + time_human_readable_from_seconds(remaining_time) + " | ";
+      }
     }
 
-    if (!b_rview_name.empty()) {
-      scene_status += ", " + b_rview_name;
-    }
-
-    if (remaining_time > 0) {
-      timestatus += "Remaining:" + time_human_readable_from_seconds(remaining_time) + " | ";
-    }
-
-    timestatus += string_printf("Mem:%.2fM, Peak:%.2fM", (double)mem_used, (double)mem_peak);
-
-    if (!status.empty()) {
-      status = " | " + status;
-    }
-    if (!substatus.empty()) {
-      status += " | " + substatus;
-    }
+    timestatus += string_printf("Mem: %dM | ", (int)ceilf(mem_used));
   }
 
   const double current_time = time_dt();
-  /* When rendering in a window, redraw the status at least once per second to keep the elapsed
-   * and remaining time up-to-date. For headless rendering, only report when something
-   * significant changes to keep the console output readable. */
+  /* When rendering in a window, redraw the status at least once per second to keep things
+   * up to date. For headless rendering, only report when something significant changes to
+   * keep the console output readable. */
   if (status != last_status || (!headless && (current_time - last_status_time) > 1.0)) {
-    b_engine.update_stats("", (timestatus + scene_status + status).c_str());
+    b_engine.update_stats("", (timestatus + status).c_str());
     b_engine.update_memory_stats(mem_used, mem_peak);
     last_status = status;
     last_status_time = current_time;

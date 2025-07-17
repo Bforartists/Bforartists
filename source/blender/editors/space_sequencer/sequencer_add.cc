@@ -387,7 +387,8 @@ static void restore_move_strips_state(wmOperator *op)
 
 static bool load_data_init_from_operator(seq::LoadData *load_data, bContext *C, wmOperator *op)
 {
-  Main *bmain = CTX_data_main(C);
+  const Main *bmain = CTX_data_main(C);
+  const ARegion *region = CTX_wm_region(C);
 
   PropertyRNA *prop;
   const bool relative = (prop = RNA_struct_find_property(op->ptr, "relative_path")) &&
@@ -425,19 +426,18 @@ static bool load_data_init_from_operator(seq::LoadData *load_data, bContext *C, 
     STRNCPY(load_data->name, basename);
   }
   else if ((prop = RNA_struct_find_property(op->ptr, "directory"))) {
-    char *directory = RNA_string_get_alloc(op->ptr, "directory", nullptr, 0, nullptr);
+    std::string directory = RNA_string_get(op->ptr, "directory");
 
     if ((prop = RNA_struct_find_property(op->ptr, "files"))) {
       RNA_PROP_BEGIN (op->ptr, itemptr, prop) {
-        char *filename = RNA_string_get_alloc(&itemptr, "name", nullptr, 0, nullptr);
-        STRNCPY(load_data->name, filename);
-        BLI_path_join(load_data->path, sizeof(load_data->path), directory, filename);
-        MEM_freeN(filename);
+        std::string filename = RNA_string_get(&itemptr, "name");
+        STRNCPY(load_data->name, filename.c_str());
+        BLI_path_join(
+            load_data->path, sizeof(load_data->path), directory.c_str(), filename.c_str());
         break;
       }
       RNA_PROP_END;
     }
-    MEM_freeN(directory);
   }
 
   if (relative) {
@@ -486,11 +486,15 @@ static bool load_data_init_from_operator(seq::LoadData *load_data, bContext *C, 
     }
   }
 
-  /* Override strip position by current mouse position. */
-  if (RNA_boolean_get(op->ptr, "move_strips")) {
-    const wmWindow *win = CTX_wm_window(C);
-    const ARegion *region = CTX_wm_region(C);
+  if (region == nullptr) {
+    RNA_boolean_set(op->ptr, "move_strips", false);
+  }
 
+  /* Override strip position by current mouse position. */
+  if ((prop = RNA_struct_find_property(op->ptr, "move_strips")) &&
+      RNA_property_boolean_get(op->ptr, prop))
+  {
+    const wmWindow *win = CTX_wm_window(C);
     const float2 mouse_region(win->eventstate->xy[0] - region->winrct.xmin,
                               win->eventstate->xy[1] - region->winrct.ymin);
     float2 mouse_view;
@@ -1534,17 +1538,14 @@ int sequencer_image_seq_get_minmax_frame(wmOperator *op,
   int numdigits = 0;
 
   RNA_BEGIN (op->ptr, itemptr, "files") {
-    char *filename;
     int frame;
-    filename = RNA_string_get_alloc(&itemptr, "name", nullptr, 0, nullptr);
+    std::string filename = RNA_string_get(&itemptr, "name");
 
-    if (filename) {
-      if (BLI_path_frame_get(filename, &frame, &numdigits)) {
+    if (!filename.empty()) {
+      if (BLI_path_frame_get(filename.c_str(), &frame, &numdigits)) {
         minframe = min_ii(minframe, frame);
         maxframe = max_ii(maxframe, frame);
       }
-
-      MEM_freeN(filename);
     }
   }
   RNA_END;
@@ -1618,9 +1619,8 @@ static void sequencer_add_image_strip_load_files(wmOperator *op,
   else {
     size_t strip_frame = 0;
     RNA_BEGIN (op->ptr, itemptr, "files") {
-      char *filename = RNA_string_get_alloc(&itemptr, "name", nullptr, 0, nullptr);
-      seq::add_image_load_file(scene, strip, strip_frame, filename);
-      MEM_freeN(filename);
+      std::string filename = RNA_string_get(&itemptr, "name");
+      seq::add_image_load_file(scene, strip, strip_frame, filename.c_str());
       strip_frame++;
     }
     RNA_END;

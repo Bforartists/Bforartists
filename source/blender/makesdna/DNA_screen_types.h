@@ -311,7 +311,7 @@ typedef struct uiList { /* some list UI data need to be saved in file */
   /** Runtime. */
   struct uiListType *type;
 
-  char list_id[/*UI_MAX_NAME_STR*/ 128];
+  char list_id[/*UI_MAX_NAME_STR*/ 256];
 
   /** How items are laid out in the list. */
   int layout_type;
@@ -324,7 +324,7 @@ typedef struct uiList { /* some list UI data need to be saved in file */
 
   /* Filtering data. */
   /** Defined as . */
-  char filter_byname[/*UI_MAX_NAME_STR*/ 128];
+  char filter_byname[/*UI_MAX_NAME_STR*/ 256];
   int filter_flag;
   int filter_sort_flag;
 
@@ -458,14 +458,14 @@ typedef struct ScrArea {
   char headertype DNA_DEPRECATED;
   /** Private, for spacetype refresh callback. */
   char do_refresh;
-  short flag; // BFA
-  // int flag; // BFA - WIP - short to int, why?
+  char _pad0[2]; // BFA - padding for int flag alignment
+  int flag; // BFA - MUST be int (not short) to accommodate toolbar flags beyond bit 15 (Animation/Edit/Misc toolbars use bits 16-18)
   /**
    * Index of last used region of 'RGN_TYPE_WINDOW'
    * runtime variable, updated by executing operators.
    */
   short region_active_win;
-  char _pad[2];
+  char _pad[6]; // BFA - increased padding to fix alignment issues (was 2 bytes)
 
   /** Callbacks for this space type. */
   struct SpaceType *type;

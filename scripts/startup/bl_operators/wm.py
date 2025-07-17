@@ -3456,7 +3456,7 @@ class WM_MT_splash(Menu):
         layout.separator()
 
         if (not bpy.app.online_access) and bpy.app.online_access_override:
-            self.layout.label(text="Running in Offline Mode", icon='DELETE') #BFA - wip, update icon to INTERNET_OFFLINE
+            self.layout.label(text="Running in Offline Mode", icon='INTERNET_OFFLINE') #BFA - icon
 
         layout.separator()
 

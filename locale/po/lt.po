@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:54+0000\n"
 "Last-Translator: Martynas Žiemys <martynasziemys@gmail.com>\n"
 "Language-Team: Lithuanian <https://translate.blender.org/projects/blender-ui/ui/lt/>\n"
@@ -737,8 +737,8 @@ msgid "Current File"
 msgstr "Dabartinis failas"
 
 
-msgid "Show the assets currently available in this Blender session"
-msgstr "Rodyti išteklius pasiekiamus šioje Blender sesijoje"
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Rodyti išteklius pasiekiamus šioje Bforartists sesijoje"
 
 
 msgid "Essentials"
@@ -3201,8 +3201,8 @@ msgid "Python"
 msgstr "„Python“"
 
 
-msgid "Blender"
-msgstr "„Blender“"
+msgid "Bforartists"
+msgstr "„Bforartists“"
 
 
 msgid "System"
@@ -3467,8 +3467,8 @@ msgstr "„I18n“ išsaugojimo nustatymai"
 
 
 msgctxt "Operator"
-msgid "Update I18n Blender Repository"
-msgstr "Atnaujinti „I18n Blender“ saugyklą"
+msgid "Update I18n Bforartists Repository"
+msgstr "Atnaujinti „I18n Bforartists“ saugyklą"
 
 
 msgctxt "Operator"
@@ -3621,8 +3621,8 @@ msgid "View"
 msgstr "Rodymas"
 
 
-msgid "Use Blender Profile"
-msgstr "Naudoti „Blender“ profilį"
+msgid "Use Bforartists Profile"
+msgstr "Naudoti „Bforartists“ profilį"
 
 
 msgctxt "Operator"
@@ -3630,8 +3630,8 @@ msgid "Open"
 msgstr "Atidaryti"
 
 
-msgid "Open a Blender file"
-msgstr "Atidaryti „Blender“ failą"
+msgid "Open a Bforartists file"
+msgstr "Atidaryti „Bforartists“ failą"
 
 
 msgctxt "Operator"
@@ -3640,12 +3640,12 @@ msgstr "Importuoti „PLY“"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Išeiti iš „Blender“"
+msgid "Quit Bforartists"
+msgstr "Išeiti iš „Bforartists“"
 
 
-msgid "Quit Blender"
-msgstr "Išeiti iš „Blender“"
+msgid "Quit Bforartists"
+msgstr "Išeiti iš „Bforartists“"
 
 
 msgid "Save Copy"
@@ -3653,17 +3653,17 @@ msgstr "Išsaugoti kopiją"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Išsaugoti „Blender“ failą"
+msgid "Save Bforartists File"
+msgstr "Išsaugoti „Bforartists“ failą"
 
 
-msgid "Exit Blender after saving"
-msgstr "Išjungti „Blender“ po išsaugojimo"
+msgid "Exit Bforartists after saving"
+msgstr "Išjungti „Bforartists“ po išsaugojimo"
 
 
 msgctxt "Operator"
-msgid "About Blender"
-msgstr "Apie „Blender“"
+msgid "About Bforartists"
+msgstr "Apie „Bforartists“"
 
 
 msgctxt "Operator"
@@ -3671,8 +3671,8 @@ msgid "Import STL"
 msgstr "Importuoti „STL“"
 
 
-msgid "Blender Names"
-msgstr "„Blender“ pavadinimai"
+msgid "Bforartists Names"
+msgstr "„Bforartists“ pavadinimai"
 
 
 msgctxt "Operator"
@@ -3777,12 +3777,12 @@ msgid "Languages"
 msgstr "Kalbos"
 
 
-msgid "Blender 2.7"
-msgstr "„Blender 2.7“"
+msgid "Bforartists 2.7"
+msgstr "„Bforartists 2.7“"
 
 
-msgid "Blender 2.8"
-msgstr "„Blender 2.8“"
+msgid "Bforartists 2.8"
+msgstr "„Bforartists 2.8“"
 
 
 msgid "128 px"
@@ -3968,8 +3968,8 @@ msgid "ID From"
 msgstr "ID iš"
 
 
-msgid "Blender File"
-msgstr "„Blender“ failas"
+msgid "Bforartists File"
+msgstr "„Bforartists“ failas"
 
 
 msgctxt "ID"
@@ -4409,8 +4409,8 @@ msgstr "Atsiliepimas/-ai"
 
 
 msgctxt "Operator"
-msgid "Update Blender Repository"
-msgstr "Atnaujinti „Blender“ saugyklą"
+msgid "Update Bforartists Repository"
+msgstr "Atnaujinti „Bforartists“ saugyklą"
 
 
 msgctxt "Operator"
@@ -4428,8 +4428,8 @@ msgid "Open..."
 msgstr "Atidaryti..."
 
 
-msgid "Blender is free software"
-msgstr "„Blender“ yra nemokama taikomoji programa"
+msgid "Bforartists is free software"
+msgstr "„Bforartists“ yra nemokama taikomoji programa"
 
 
 msgctxt "Operator"
@@ -4438,17 +4438,17 @@ msgstr "Paremti"
 
 
 msgctxt "Operator"
-msgid "Blender Store"
-msgstr "„Blender“ parduotuvė"
+msgid "Bforartists Store"
+msgstr "„Bforartists“ parduotuvė"
 
 
 msgctxt "Operator"
-msgid "Blender Website"
-msgstr "„Blender“ tinklapis/svetainė"
+msgid "Bforartists Website"
+msgstr "„Bforartists“ tinklapis/svetainė"
 
 
-msgid "Blender's official web-site"
-msgstr "„Blender“ oficialus tinklapis"
+msgid "Bforartists's official web-site"
+msgstr "„Bforartists“ oficialus tinklapis"
 
 
 msgid "Object(s)"
@@ -4460,8 +4460,8 @@ msgid "New"
 msgstr "Nauja/-s/-i"
 
 
-msgid "Blender IDs"
-msgstr "„Blender“ ID (dgs.)"
+msgid "Bforartists IDs"
+msgstr "„Bforartists“ ID (dgs.)"
 
 
 msgctxt "Image"
@@ -4532,8 +4532,8 @@ msgid "Video Memory"
 msgstr "Vaizdo atmintis"
 
 
-msgid "Blender Version"
-msgstr "„Blender“ versija"
+msgid "Bforartists Version"
+msgstr "„Bforartists“ versija"
 
 
 msgid "Auto-Save"
@@ -4729,8 +4729,8 @@ msgid "New"
 msgstr "Nauja/-s/-i"
 
 
-msgid "Blender Data"
-msgstr "„Blender“ duomenys"
+msgid "Bforartists Data"
+msgstr "„Bforartists“ duomenys"
 
 
 msgid "Import {} files"
@@ -4746,8 +4746,8 @@ msgid "Magnet"
 msgstr "Magnetas"
 
 
-msgid "Blender Info Log"
-msgstr "„Blender“ informacijos žurnalas"
+msgid "Bforartists Info Log"
+msgstr "„Bforartists“ informacijos žurnalas"
 
 
 msgid "Saved %s"
@@ -4770,8 +4770,8 @@ msgid "(Unsaved)"
 msgstr "(Neišsaugota/-s)"
 
 
-msgid "Blender 27x"
-msgstr "„Blender 27x“"
+msgid "Bforartists 27x"
+msgstr "„Bforartists 27x“"
 
 
 msgctxt "WorkSpace"

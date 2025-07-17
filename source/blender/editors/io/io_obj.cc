@@ -148,6 +148,7 @@ static void ui_obj_export_settings(const bContext *C, uiLayout *layout, PointerR
 
     if (CTX_wm_space_file(C)) {
       uiLayout *sub = &col->column(false, IFACE_("Include"));
+      sub->use_property_split_set(false); // bfa 
       sub->prop(ptr, "export_selected_objects", UI_ITEM_NONE, IFACE_("Selection Only"), ICON_NONE);
     }
 
@@ -159,6 +160,7 @@ static void ui_obj_export_settings(const bContext *C, uiLayout *layout, PointerR
   /* Geometry options. */
   if (uiLayout *panel = layout->panel(C, "OBJ_export_geometry", false, IFACE_("Geometry"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "export_uv", UI_ITEM_NONE, IFACE_("UV Coordinates"), ICON_NONE);
     col->prop(ptr, "export_normals", UI_ITEM_NONE, IFACE_("Normals"), ICON_NONE);
     col->prop(ptr, "export_colors", UI_ITEM_NONE, IFACE_("Colors"), ICON_NONE);
@@ -173,11 +175,13 @@ static void ui_obj_export_settings(const bContext *C, uiLayout *layout, PointerR
   /* Grouping options. */
   if (uiLayout *panel = layout->panel(C, "OBJ_export_grouping", false, IFACE_("Grouping"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "export_object_groups", UI_ITEM_NONE, IFACE_("Object Groups"), ICON_NONE);
     col->prop(ptr, "export_material_groups", UI_ITEM_NONE, IFACE_("Material Groups"), ICON_NONE);
     col->prop(ptr, "export_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
     col->prop(ptr, "export_smooth_groups", UI_ITEM_NONE, IFACE_("Smooth Groups"), ICON_NONE);
     col = &col->column(false);
+    col->use_property_split_set(false); // bfa 
     col->enabled_set(export_smooth_groups);
     col->prop(
         ptr, "smooth_group_bitflags", UI_ITEM_NONE, IFACE_("Smooth Group Bitflags"), ICON_NONE);
@@ -190,6 +194,7 @@ static void ui_obj_export_settings(const bContext *C, uiLayout *layout, PointerR
   panel.header->label(IFACE_("Materials"), ICON_NONE);
   if (panel.body) {
     uiLayout *col = &panel.body->column(false);
+    col->use_property_split_set(false); // bfa 
     col->enabled_set(export_materials);
 
     col->prop(ptr, "export_pbr_extensions", UI_ITEM_NONE, IFACE_("PBR Extensions"), ICON_NONE);
@@ -353,12 +358,13 @@ void WM_OT_obj_export(wmOperatorType *ot)
                   "Export Materials with PBR Extensions",
                   "Export MTL library using PBR extensions (roughness, metallic, sheen, "
                   "coat, anisotropy, transmission)");
-  RNA_def_enum(ot->srna,
-               "path_mode",
-               io_obj_path_mode,
-               PATH_REFERENCE_AUTO,
-               "Path Mode",
-               "Method used to reference paths");
+  prop = RNA_def_enum(ot->srna,
+                      "path_mode",
+                      io_obj_path_mode,
+                      PATH_REFERENCE_AUTO,
+                      "Path Mode",
+                      "Method used to reference paths");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
   RNA_def_boolean(ot->srna,
                   "export_triangulated_mesh",
                   false,
@@ -463,6 +469,7 @@ static void ui_obj_import_settings(const bContext *C, uiLayout *layout, PointerR
 
   if (uiLayout *panel = layout->panel(C, "OBJ_import_general", false, IFACE_("General"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "global_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "clamp_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "forward_axis", UI_ITEM_NONE, IFACE_("Forward Axis"), ICON_NONE);
@@ -471,6 +478,7 @@ static void ui_obj_import_settings(const bContext *C, uiLayout *layout, PointerR
 
   if (uiLayout *panel = layout->panel(C, "OBJ_import_options", false, IFACE_("Options"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "use_split_objects", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "use_split_groups", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "import_vertex_groups", UI_ITEM_NONE, std::nullopt, ICON_NONE);

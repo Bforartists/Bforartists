@@ -73,7 +73,6 @@
 #include "WM_toolsystem.hh"
 #include "WM_types.hh"
 
-#include "ED_gpencil_legacy.hh"
 #include "ED_paint.hh"
 #include "ED_screen.hh"
 #include "ED_sculpt.hh"
@@ -107,7 +106,7 @@ using blender::Set;
 using blender::Span;
 using blender::Vector;
 
-static CLG_LogRef LOG = {"ed.sculpt_paint"};
+static CLG_LogRef LOG = {"sculpt"};
 
 namespace blender::ed::sculpt_paint {
 
@@ -3222,6 +3221,19 @@ static void do_brush_action(const Depsgraph &depsgraph,
     push_undo_nodes(depsgraph, ob, brush, node_mask);
   }
 
+  /* There are issues with the underlying normals cache / mesh data that can cause the data to
+   * become out of date.
+   *
+   * For EEVEE and Workbench, this is partially mitigated by the fact that the Paint BVH is used
+   * to signal this update when drawing.
+   *
+   * TODO: See #141417
+   */
+  const bool external_engine = ss.rv3d && ss.rv3d->view_render != nullptr;
+  if (external_engine) {
+    bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(ob);
+    bke::pbvh::update_normals(depsgraph, ob, pbvh);
+  }
   if (sculpt_brush_needs_normal(ss, brush)) {
     update_sculpt_normal(depsgraph, sd, ob, cursor_sample_result);
   }
@@ -5105,7 +5117,7 @@ void flush_update_step(const bContext *C, const UpdateType update_type)
 
   ED_region_tag_redraw(&region);
 
-  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(ob);
+  bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(ob);
   if (update_type == UpdateType::Position && !ss.shapekey_active) {
     if (pbvh.type() == bke::pbvh::Type::Mesh) {
       tag_mesh_positions_changed(ob, use_pbvh_draw);
@@ -5187,7 +5199,7 @@ void flush_update_done(const bContext *C, Object &ob, const UpdateType update_ty
 static void replace_attribute(const bke::AttributeAccessor src_attributes,
                               const StringRef name,
                               const bke::AttrDomain domain,
-                              const eCustomDataType data_type,
+                              const bke::AttrType data_type,
                               bke::MutableAttributeAccessor dst_attributes)
 {
   dst_attributes.remove(name);
@@ -5353,7 +5365,7 @@ void store_mesh_from_eval(const wmOperator &op,
       replace_attribute(new_mesh->attributes(),
                         ".sculpt_mask",
                         bke::AttrDomain::Point,
-                        CD_PROP_FLOAT,
+                        bke::AttrType::Float,
                         mesh.attributes_for_write());
       pbvh.tag_masks_changed(leaf_nodes);
       BKE_mesh_copy_parameters(&mesh, new_mesh);
@@ -5366,7 +5378,7 @@ void store_mesh_from_eval(const wmOperator &op,
       replace_attribute(new_mesh->attributes(),
                         ".sculpt_face_set",
                         bke::AttrDomain::Face,
-                        CD_PROP_INT32,
+                        bke::AttrType::Int32,
                         mesh.attributes_for_write());
       pbvh.tag_face_sets_changed(leaf_nodes);
       BKE_mesh_copy_parameters(&mesh, new_mesh);

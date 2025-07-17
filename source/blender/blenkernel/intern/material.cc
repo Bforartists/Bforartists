@@ -50,7 +50,6 @@
 #include "BKE_curves.hh"
 #include "BKE_displist.h"
 #include "BKE_editmesh.hh"
-#include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_icons.h"
 #include "BKE_idtype.hh"
@@ -79,7 +78,7 @@
 
 #include "BLO_read_write.hh"
 
-static CLG_LogRef LOG = {"bke.material"};
+static CLG_LogRef LOG = {"material"};
 
 static void material_init_data(ID *id)
 {

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-06-09 12:55+0000\n"
 "Last-Translator: Hoang Duy Tran <hoangduytran1960@googlemail.com>\n"
 "Language-Team: Vietnamese <https://translate.blender.org/projects/blender-ui/ui/vi/>\n"
@@ -53121,10 +53121,6 @@ msgid "Minimum value"
 msgstr "Giá trị tối thiểu"
 
 
-msgid "Subtype"
-msgstr "Kiểu Thứ"
-
-
 msgid "Subtype of the default value"
 msgstr "Kiểu thứ của giá trị mặc định"
 
@@ -62107,10 +62103,6 @@ msgid "Other geometry types, like curve, metaball, etc. (converted to meshes)"
 msgstr "Các thể loại hình học khác, như đường cong, siêu cầu v.v. (được chuyển đổi thành các khung lưới)"
 
 
-msgid "Path Mode"
-msgstr "Chế Độ Đường Dẫn"
-
-
 msgid "Method used to reference paths"
 msgstr "Phương pháp sử dụng để đối chiếu các đường dẫn"
 
@@ -62123,20 +62115,12 @@ msgid "Always write absolute paths"
 msgstr "Luôn luôn ghi đường dẫn tuyệt đối"
 
 
-msgid "Always write relative paths (where possible)"
-msgstr "Luôn luôn ghi đường dẫn tương đối (khi có thể)"
-
-
-msgid "Match"
-msgstr "Khớp"
+msgid "Write relative paths where possible"
+msgstr "Luôn luôn viết đường dẫn tương đối khi có thể"
 
 
 msgid "Match absolute/relative setting with input path"
 msgstr "Khớp cài đặt tuyệt đối/tương đối với đường dẫn đầu vào"
-
-
-msgid "Strip Path"
-msgstr "Lược Bỏ Đường Dẫn"
 
 
 msgid "Filename only"
@@ -88722,10 +88706,6 @@ msgstr "Trục Y Âm"
 
 msgid "Negative Z axis"
 msgstr "Trục Z Âm"
-
-
-msgid "Write relative paths where possible"
-msgstr "Luôn luôn viết đường dẫn tương đối khi có thể"
 
 
 msgid "Write filename only"
@@ -120317,6 +120297,14 @@ msgid "Mix Vector"
 msgstr "Hệ Số Hòa Trộn"
 
 
+msgid "For Each Element"
+msgstr "Đối Với Mỗi Phần Tử"
+
+
+msgid "Determinant"
+msgstr "Định Thức"
+
+
 msgid "Calculation Range"
 msgstr "Phạm Vi Tính Toán"
 
@@ -120973,11 +120961,6 @@ msgstr "Độ Dày Cơ Sở"
 
 msgid "Spacing Along Stroke"
 msgstr "Phân Nhịp Dọc theo Nét Vẽ"
-
-
-msgctxt "Operator"
-msgid "Go to Linestyle Textures Properties"
-msgstr "Tính Chất về Chất Liệu Phong cách Đường Nét"
 
 
 msgid "Priority"
@@ -122372,6 +122355,10 @@ msgstr "Hiệu Chuẩn"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "Nạp Sẵn"
+
+
+msgid "Match"
+msgstr "Khớp"
 
 
 msgctxt "Operator"
@@ -130341,6 +130328,10 @@ msgid "Control point belongs to another spline"
 msgstr "Điểm điều khiển trực thuộc một chốt trục khác"
 
 
+msgid "Insert"
+msgstr "Chèn"
+
+
 msgid "Unicode codepoint hex value"
 msgstr "Giá trị hex của điểm mã Unicode"
 
@@ -130961,10 +130952,6 @@ msgstr "Esc"
 
 msgid "Pause"
 msgstr "Tạm Dừng"
-
-
-msgid "Insert"
-msgstr "Chèn"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -131949,6 +131936,10 @@ msgstr "Cờ Bit của Nhóm Mịn"
 
 msgid "PBR Extensions"
 msgstr "Các Định Dạng PBR"
+
+
+msgid "Path Mode"
+msgstr "Chế Độ Đường Dẫn"
 
 
 msgid "File exported successfully"
@@ -136078,6 +136069,10 @@ msgid "Menu Undefined"
 msgstr "Trình Đơn Vô Định"
 
 
+msgid "Subtype"
+msgstr "Kiểu Thứ"
+
+
 msgid "Could not determine type of group node"
 msgstr "Không thể xác định loại nút nhóm"
 
@@ -136460,10 +136455,6 @@ msgstr "Không thể thêm một bộ sưu tập mới vào cảnh kết nối/v
 
 msgid "No active collection"
 msgstr "Không có bộ sưu tập nào đang hoạt động cả"
-
-
-msgid "Could not find a valid parent collection for the new duplicate, it won't be linked to any view layer"
-msgstr "Không tìm thấy một bộ sưu tập phụ huynh nào hợp lệ cho bản sao mới cả. Nó sẽ không được kết nối với bất cứ một Tầng Góc Nhìn nào hết"
 
 
 msgid "Cannot add a collection to a linked/override collection/scene"
@@ -137232,10 +137223,6 @@ msgstr "(Hình Học)"
 
 msgid "No Data-Block"
 msgstr "Không Có Khối Dữ Liệu"
-
-
-msgid "For Each Element"
-msgstr "Đối Với Mỗi Phần Tử"
 
 
 msgid "No Active Context"
@@ -142707,10 +142694,6 @@ msgid "The string to find in the input string"
 msgstr "Chuỗi văn bản cung cấp ở đầu vào cần tìm"
 
 
-msgid "Determinant"
-msgstr "Định Thức"
-
-
 msgid "The string to replace each match with"
 msgstr "Chuỗi văn bản để thay thế những phần xứng khớp"
 
@@ -145381,11 +145364,6 @@ msgid "IOR Level"
 msgstr "Cấp Độ Chỉ Số Khúc Xạ"
 
 
-msgctxt "NodeTree"
-msgid "Tint"
-msgstr "Màu Nhuốm"
-
-
 msgid "Subsurface"
 msgstr "Dưới Bề Mặt"
 
@@ -145396,6 +145374,11 @@ msgstr "Nước Láng Bóng"
 
 msgid "Thin Film"
 msgstr "Màng Mỏng"
+
+
+msgctxt "NodeTree"
+msgid "Tint"
+msgstr "Màu Nhuốm"
 
 
 msgid "Strength of the bump mapping effect, interpolating between no bump mapping and full bump mapping"

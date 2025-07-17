@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-06-11 19:59+0000\n"
 "Last-Translator: leif larsen <linuxdk1978@gmail.com>\n"
 "Language-Team: Danish <https://translate.blender.org/projects/blender-ui/ui/da/>\n"
@@ -791,8 +791,8 @@ msgid "Fribidi Library"
 msgstr "Fribidi bibliotek"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
-msgstr "FriBidi C kompilerede bibliotek (.så under Linux, .dll under Windows...), du bliver sandsynligvis nødt til at redigere det, hvis du er under Windows, f.eks. ved at bruge den, der er inkluderet i Blender library repository"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
+msgstr "FriBidi C kompilerede bibliotek (.så under Linux, .dll under Windows...), du bliver sandsynligvis nødt til at redigere det, hvis du er under Windows, f.eks. ved at bruge den, der er inkluderet i Bforartists library repository"
 
 
 msgid "The bf-translation repository"
@@ -811,8 +811,8 @@ msgid "Source Root"
 msgstr "Kilde rod"
 
 
-msgid "The Blender source root path"
-msgstr "Blender-kildens rodsti"
+msgid "The Bforartists source root path"
+msgstr "Bforartists-kildens rodsti"
 
 
 msgid "Spell Cache"
@@ -835,8 +835,8 @@ msgid "Persistent Data Path"
 msgstr "Vedvarende data sti"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
-msgstr "Navnet på en json-fil, der gemmer disse indstillinger (desværre virker Blenders system ikke her)"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgstr "Navnet på en json-fil, der gemmer disse indstillinger (desværre virker Bforartistss system ikke her)"
 
 
 msgid "User Add-ons"
@@ -1648,16 +1648,16 @@ msgid "Current File"
 msgstr "Nuværende fil"
 
 
-msgid "Show the assets currently available in this Blender session"
-msgstr "Vis de aktiver, der i øjeblikket er tilgængelige i denne Blender-session"
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Vis de aktiver, der i øjeblikket er tilgængelige i denne Bforartists-session"
 
 
 msgid "Essentials"
 msgstr "Væsentlige"
 
 
-msgid "Show the basic building blocks and utilities coming with Blender"
-msgstr "Vis de grundlæggende byggeklodser og hjælpeprogrammer, der følger med Blender"
+msgid "Show the basic building blocks and utilities coming with Bforartists"
+msgstr "Vis de grundlæggende byggeklodser og hjælpeprogrammer, der følger med Bforartists"
 
 
 msgid "Custom"
@@ -1960,7 +1960,7 @@ msgid "Is Internal"
 msgstr "Er intern"
 
 
-msgid "The attribute is meant for internal use by Blender"
+msgid "The attribute is meant for internal use by Bforartists"
 msgstr "atribut er ment til internal brug af blender"
 
 

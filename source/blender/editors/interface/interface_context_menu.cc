@@ -189,18 +189,18 @@ static uiBlock *menu_change_shortcut(bContext *C, ARegion *region, void *arg)
   UI_block_flag_enable(block, UI_BLOCK_MOVEMOUSE_QUIT);
   UI_block_direction_set(block, UI_DIR_CENTER_Y);
 
-  uiLayout *layout = UI_block_layout(block,
-                                     UI_LAYOUT_VERTICAL,
-                                     UI_LAYOUT_PANEL,
-                                     0,
-                                     0,
-                                     U.widget_unit * 10,
-                                     U.widget_unit * 2,
-                                     0,
-                                     style);
+  uiLayout &layout = blender::ui::block_layout(block,
+                                               blender::ui::LayoutDirection::Vertical,
+                                               blender::ui::LayoutType::Panel,
+                                               0,
+                                               0,
+                                               U.widget_unit * 10,
+                                               U.widget_unit * 2,
+                                               0,
+                                               style);
 
-  layout->label(CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Change Shortcut"), ICON_HAND);
-  layout->prop(&ptr, "type", UI_ITEM_R_FULL_EVENT | UI_ITEM_R_IMMEDIATE, "", ICON_NONE);
+  layout.label(CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Change Shortcut"), ICON_HAND);
+  layout.prop(&ptr, "type", UI_ITEM_R_FULL_EVENT | UI_ITEM_R_IMMEDIATE, "", ICON_NONE);
 
   const int bounds_offset[2] = {int(-100 * UI_SCALE_FAC), int(36 * UI_SCALE_FAC)};
   UI_block_bounds_set_popup(block, 6 * UI_SCALE_FAC, bounds_offset);
@@ -249,18 +249,18 @@ static uiBlock *menu_add_shortcut(bContext *C, ARegion *region, void *arg)
   UI_block_func_handle_set(block, but_shortcut_name_func, but);
   UI_block_direction_set(block, UI_DIR_CENTER_Y);
 
-  uiLayout *layout = UI_block_layout(block,
-                                     UI_LAYOUT_VERTICAL,
-                                     UI_LAYOUT_PANEL,
-                                     0,
-                                     0,
-                                     U.widget_unit * 10,
-                                     U.widget_unit * 2,
-                                     0,
-                                     style);
+  uiLayout &layout = blender::ui::block_layout(block,
+                                               blender::ui::LayoutDirection::Vertical,
+                                               blender::ui::LayoutType::Panel,
+                                               0,
+                                               0,
+                                               U.widget_unit * 10,
+                                               U.widget_unit * 2,
+                                               0,
+                                               style);
 
-  layout->label(CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Assign Shortcut"), ICON_HAND);
-  layout->prop(&ptr, "type", UI_ITEM_R_FULL_EVENT | UI_ITEM_R_IMMEDIATE, "", ICON_NONE);
+  layout.label(CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Assign Shortcut"), ICON_HAND);
+  layout.prop(&ptr, "type", UI_ITEM_R_FULL_EVENT | UI_ITEM_R_IMMEDIATE, "", ICON_NONE);
 
   const int bounds_offset[2] = {int(-100 * UI_SCALE_FAC), int(36 * UI_SCALE_FAC)};
   UI_block_bounds_set_popup(block, 6 * UI_SCALE_FAC, bounds_offset);
@@ -777,7 +777,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
 
       layout->op("SCREEN_OT_drivers_editor_show",
                  CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open Drivers Editor"),
-                 ICON_NONE);
+                 ICON_DRIVER); /*BFA*/
     }
 
     /* Keying Sets */
@@ -1243,7 +1243,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         ptr_props = layout->op(
             "WM_OT_doc_view",
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Online Python Reference"),
-            ICON_NONE,
+            ICON_URL,
             WM_OP_EXEC_DEFAULT,/* bfa - turned off the link to the online manual*/
             UI_ITEM_NONE);
         RNA_string_set(&ptr_props, "doc_id", manual_id.value().c_str());

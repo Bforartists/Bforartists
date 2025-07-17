@@ -38,6 +38,7 @@
 #include "DNA_lattice_types.h"
 #include "DNA_layer_types.h"
 #include "DNA_light_types.h"
+#include "DNA_lightprobe_types.h"
 #include "DNA_linestyle_types.h"
 #include "DNA_mask_types.h"
 #include "DNA_material_types.h"
@@ -772,6 +773,12 @@ static bAnimListElem *make_new_animlistelem(
       key_data_from_adt(*ale, volume->adt);
       break;
     }
+    case ANIMTYPE_DSLIGHTPROBE: {
+      LightProbe *probe = static_cast<LightProbe *>(data);
+      ale->flag = FILTER_LIGHTPROBE_OBJD(probe);
+      key_data_from_adt(*ale, probe->adt);
+      break;
+    }
     case ANIMTYPE_DSSKEY: {
       Key *key = static_cast<Key *>(data);
       ale->flag = FILTER_SKE_OBJD(key);
@@ -1418,7 +1425,7 @@ static size_t animfilter_fcurves_span(bAnimContext *ac,
     /* Note that this might not be the same as ale->adt->slot_handle. The reason this F-Curve is
      * shown could be because it's in the Action editor, showing ale->adt->action with _all_
      * slots, and this F-Curve could be from a different slot than what's used by the owner
-     * of `ale->adt`.  */
+     * of `ale->adt`. */
     ale->slot_handle = slot_handle;
 
     BLI_addtail(anim_data, ale);
@@ -2210,7 +2217,7 @@ static size_t animdata_filter_grease_pencil_data(bAnimContext *ac,
 
   /* The Grease Pencil mode is not supposed to show channels for regular F-Curves from regular
    * Actions. At some point this might be desirable, but it would also require changing the
-   * filtering flags for pretty much all operators running there.  */
+   * filtering flags for pretty much all operators running there. */
   const bool show_animdata = grease_pencil->adt && (ac->datatype != ANIMCONT_GPENCIL);
 
   /* When asked from "AnimData" blocks (i.e. the top-level containers for normal animation),
@@ -3061,6 +3068,18 @@ static size_t animdata_filter_ds_obdata(bAnimContext *ac,
       expanded = FILTER_VOLUME_OBJD(volume);
       break;
     }
+    case OB_LIGHTPROBE: /* ---------- LightProbe ----------- */
+    {
+      LightProbe *probe = static_cast<LightProbe *>(ob->data);
+
+      if (ads_filterflag2 & ADS_FILTER_NOLIGHTPROBE) {
+        return 0;
+      }
+
+      type = ANIMTYPE_DSLIGHTPROBE;
+      expanded = FILTER_LIGHTPROBE_OBJD(probe);
+      break;
+    }
   }
 
   /* add object data animation channels */
@@ -3552,11 +3571,11 @@ static bool animdata_filter_base_is_ok(bAnimContext *ac,
 
   /* Special case.
    * We don't do recursive checks for pin, but we need to deal with tricky
-   * setup like animated camera lens without animated camera location.
-   * Without such special handle here we wouldn't be able to bin such
-   * camera data only animation to the editor.
+   * setup like animated camera lens without (pinned) animated camera location.
+   * Without such special handle here we wouldn't be able to pin such
+   * camera data animation to the editor.
    */
-  if (ob->adt == nullptr && ob->data != nullptr) {
+  if (ob->data != nullptr) {
     AnimData *data_adt = BKE_animdata_from_id(static_cast<ID *>(ob->data));
     if (data_adt != nullptr && (data_adt->flag & ADT_CURVES_ALWAYS_VISIBLE)) {
       return true;
@@ -3673,7 +3692,7 @@ static size_t animdata_filter_dopesheet(bAnimContext *ac,
   }
 
   /* Annotations are always shown if "Only Show Selected" is disabled. This works in the Timeline
-   * as well as in the Dope Sheet.*/
+   * as well as in the Dope Sheet. */
   if (!(ac->ads->filterflag & ADS_FILTER_ONLYSEL) && !(ac->ads->filterflag & ADS_FILTER_NOGPENCIL))
   {
     LISTBASE_FOREACH (bGPdata *, gp_data, &ac->bmain->gpencils) {

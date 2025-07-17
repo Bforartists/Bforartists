@@ -1189,12 +1189,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_cut", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_edge_cut", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_edge_cut", 0); /*bfa - decorator*/
 
   row = &col->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_size", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_size", 0); /*bfa - decorator*/
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 

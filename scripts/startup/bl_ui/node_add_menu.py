@@ -30,6 +30,8 @@ def add_node_type(layout, node_type, *, label=None, poll=None, search_weight=0.0
         props.use_transform = True
         return props
 
+    return None
+
 
 def add_node_type_with_outputs(context, layout, node_type, subnames, *, label=None, search_weight=0.0):
     bl_rna = bpy.types.Node.bl_rna_get_subclass(node_type)
@@ -41,50 +43,65 @@ def add_node_type_with_outputs(context, layout, node_type, subnames, *, label=No
     if getattr(context, "is_menu_search", False):
         for subname in subnames:
             sublabel = "{} ▸ {}".format(iface_(label), iface_(subname))
-            item_props = add_node_type(layout, node_type, label=sublabel, search_weight=search_weight)
+            item_props = add_node_type(layout, node_type, label=sublabel, search_weight=search_weight, translate=False)
             item_props.visible_output = subname
             props.append(item_props)
     return props
 
 
-def draw_node_group_add_menu(context, layout):
-    """Add items to the layout used for interacting with node groups."""
+# BFA - Dictionary for sorting order of the different node group icon types
+icon_sorting_order = {
+    'NODETREE' : 0,
+    'FAKE_USER_ON' : 1,
+    'ASSET_MANAGER' : 2,
+    'LIBRARY_DATA_DIRECT' : 3,
+    'LIBRARY_DATA_OVERRIDE' : 4,
+}
+
+
+# BFA - Function for determining appropriate icon for node group
+def node_group_icon(group):
+    if group.library is not None:
+        return 'LIBRARY_DATA_DIRECT'
+    elif group.override_library is not None: 
+        return 'LIBRARY_DATA_OVERRIDE'
+    elif group.asset_data is not None:
+        return 'ASSET_MANAGER'
+    elif group.use_fake_user:
+        return 'FAKE_USER_ON'
+    else:
+        return 'NODETREE'
+
+
+# BFA - Callback function to be used for sorting nodegroups by icon
+def icon_sorting_function(group):
+    return icon_sorting_order[node_group_icon(group)]
+
+
+# BFA - Separated function from `draw_node_group_add_menu` so that both the add menu and toolshelf can use this
+def draw_node_groups(context, layout):
     space_node = context.space_data
     node_tree = space_node.edit_tree
-    all_node_groups = context.blend_data.node_groups
 
-    # BFA
-    layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
-    layout.operator("node.group_insert", text = "Insert into Group ", icon = "NODE_GROUPINSERT")
-    layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
+    from nodeitems_builtins import node_tree_group_type
 
-    layout.separator()
+    prefs = context.preferences
+    show_hidden = prefs.filepaths.show_hidden_files_datablocks
 
-    layout.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
+    groups = [
+        group for group in context.blend_data.node_groups
+        if (group.bl_idname == node_tree.bl_idname and
+            not group.contains_tree(node_tree) and
+            (show_hidden or not group.name.startswith('.')))
+    ]
 
-    if node_tree in all_node_groups.values():
-        layout.separator()
-        add_node_type(layout, "NodeGroupInput")
-        add_node_type(layout, "NodeGroupOutput")
-
-    add_empty_group(layout)
-
-    if node_tree:
-        from nodeitems_builtins import node_tree_group_type
-
-        prefs = bpy.context.preferences
-        show_hidden = prefs.filepaths.show_hidden_files_datablocks
-
-        groups = [
-            group for group in context.blend_data.node_groups
-            if (group.bl_idname == node_tree.bl_idname and
-                not group.contains_tree(node_tree) and
-                (show_hidden or not group.name.startswith('.')))
-        ]
+    # BFA - Group each node group by their type and apply the appropriate icon
+    import itertools
+    for icon, groups in itertools.groupby(sorted(groups, key=icon_sorting_function), key=node_group_icon):
         if groups:
             layout.separator()
             for group in groups:
-                props = layout.operator("node.add_node", text=group.name, icon="NODETREE") # BFA
+                props = layout.operator("node.add_node", text=group.name, icon=node_group_icon(group)) # BFA
                 props.use_transform = True # BFA
                 props.type = node_tree_group_type[group.bl_idname] # BFA
                 ops = props.settings.add() # BFA
@@ -96,6 +113,23 @@ def draw_node_group_add_menu(context, layout):
                 ops = props.settings.add()
                 ops.name = "name"
                 ops.value = repr(group.name)
+
+
+def draw_node_group_add_menu(context, layout):
+    """Add items to the layout used for interacting with node groups."""
+    space_node = context.space_data
+    node_tree = space_node.edit_tree
+    all_node_groups = context.blend_data.node_groups
+
+    if node_tree in all_node_groups.values():
+        layout.separator()
+        add_node_type(layout, "NodeGroupInput")
+        add_node_type(layout, "NodeGroupOutput")
+
+    add_empty_group(layout)
+
+    if node_tree:
+        draw_node_groups(context, layout)
 
 
 def draw_assets_for_catalog(layout, catalog_path):
@@ -110,12 +144,14 @@ def add_node_type_with_searchable_enum(context, layout, node_idname, property_na
     add_node_type(layout, node_idname, search_weight=search_weight)
     if getattr(context, "is_menu_search", False):
         node_type = getattr(bpy.types, node_idname)
+        translation_context = node_type.bl_rna.properties[property_name].translation_context
         for item in node_type.bl_rna.properties[property_name].enum_items_static:
-            label = "{} ▸ {}".format(node_type.bl_rna.name, item.name)
+            label = "{} ▸ {}".format(iface_(node_type.bl_rna.name), iface_(item.name, translation_context))
             props = add_node_type(
                 layout,
                 node_idname,
                 label=label,
+                translate=False,
                 search_weight=search_weight)
             prop = props.settings.add()
             prop.name = property_name
@@ -124,15 +160,16 @@ def add_node_type_with_searchable_enum(context, layout, node_idname, property_na
 
 def add_color_mix_node(context, layout):
     label = iface_("Mix Color")
-    props = node_add_menu.add_node_type(layout, "ShaderNodeMix", label=label)
+    props = node_add_menu.add_node_type(layout, "ShaderNodeMix", label=label, translate=False)
     ops = props.settings.add()
     ops.name = "data_type"
     ops.value = "'RGBA'"
 
     if getattr(context, "is_menu_search", False):
+        translation_context = bpy.types.ShaderNodeMix.bl_rna.properties["blend_type"].translation_context
         for item in bpy.types.ShaderNodeMix.bl_rna.properties["blend_type"].enum_items_static:
-            sublabel = "{} ▸ {}".format(label, item.name)
-            props = node_add_menu.add_node_type(layout, "ShaderNodeMix", label=sublabel)
+            sublabel = "{} ▸ {}".format(label, iface_(item.name, translation_context))
+            props = node_add_menu.add_node_type(layout, "ShaderNodeMix", label=sublabel, translate=False)
             prop = props.settings.add()
             prop.name = "data_type"
             prop.value = "'RGBA'"
@@ -173,7 +210,7 @@ def add_closure_zone(layout, label):
 
 
 def add_empty_group(layout):
-    props = layout.operator("node.add_empty_group", text="New Group", text_ctxt=i18n_contexts.default)
+    props = layout.operator("node.add_empty_group", text="New Group", text_ctxt=i18n_contexts.default, icon='ADD') #BFA - added icon to Add Menu
     props.use_transform = True
     return props
 

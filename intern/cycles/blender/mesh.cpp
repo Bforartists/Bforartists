@@ -114,7 +114,8 @@ static void attr_create_generic(Scene *scene,
       return;
     }
 
-    if (b_attr.domain == blender::bke::AttrDomain::Corner && iter.data_type == CD_PROP_BYTE_COLOR)
+    if (b_attr.domain == blender::bke::AttrDomain::Corner &&
+        iter.data_type == blender::bke::AttrType::ColorByte)
     {
       Attribute *attr = attributes.add(name, TypeRGBA, ATTR_ELEMENT_CORNER_BYTE);
       if (is_render_color) {
@@ -221,7 +222,9 @@ static set<ustring> get_blender_uv_names(const ::Mesh &b_mesh)
 {
   set<ustring> uv_names;
   b_mesh.attributes().foreach_attribute([&](const blender::bke::AttributeIter &iter) {
-    if (iter.domain == blender::bke::AttrDomain::Corner && iter.data_type == CD_PROP_FLOAT2) {
+    if (iter.domain == blender::bke::AttrDomain::Corner &&
+        iter.data_type == blender::bke::AttrType::Float2)
+    {
       if (!blender::bke::attribute_name_is_anonymous(iter.name)) {
         uv_names.emplace(std::string_view(iter.name));
       }
@@ -995,10 +998,10 @@ void BlenderSync::sync_mesh_motion(BObjectInfo &b_ob_info, Mesh *mesh, const int
       {
         /* no motion, remove attributes again */
         if (b_verts_num != numverts) {
-          VLOG_WARNING << "Topology differs, disabling motion blur for object " << ob_name;
+          LOG_WARNING << "Topology differs, disabling motion blur for object " << ob_name;
         }
         else {
-          VLOG_DEBUG << "No actual deformation motion for object " << ob_name;
+          LOG_DEBUG << "No actual deformation motion for object " << ob_name;
         }
         attributes.remove(ATTR_STD_MOTION_VERTEX_POSITION);
         if (attr_mN) {
@@ -1006,7 +1009,7 @@ void BlenderSync::sync_mesh_motion(BObjectInfo &b_ob_info, Mesh *mesh, const int
         }
       }
       else if (motion_step > 0) {
-        VLOG_DEBUG << "Filling deformation motion for object " << ob_name;
+        LOG_DEBUG << "Filling deformation motion for object " << ob_name;
         /* motion, fill up previous steps that we might have skipped because
          * they had no motion, but we need them anyway now */
         const float3 *P = mesh->get_verts().data();
@@ -1021,8 +1024,8 @@ void BlenderSync::sync_mesh_motion(BObjectInfo &b_ob_info, Mesh *mesh, const int
     }
     else {
       if (b_verts_num != numverts) {
-        VLOG_WARNING << "Topology differs, discarding motion blur for object " << ob_name
-                     << " at time " << motion_step;
+        LOG_WARNING << "Topology differs, discarding motion blur for object " << ob_name
+                    << " at time " << motion_step;
         const float3 *P = mesh->get_verts().data();
         const float3 *N = (attr_N) ? attr_N->data_float3() : nullptr;
         std::copy_n(P, numverts, mP);

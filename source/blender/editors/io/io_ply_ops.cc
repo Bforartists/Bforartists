@@ -112,6 +112,7 @@ static void wm_ply_export_draw(bContext *C, wmOperator *op)
     uiLayout *col = &panel->column(false);
 
     uiLayout *sub = &col->column(false, IFACE_("Format"));
+    sub->use_property_split_set(false); // bfa 
     sub->prop(ptr, "ascii_format", UI_ITEM_NONE, IFACE_("ASCII"), ICON_NONE);
 
     /* The Selection only options only make sense when using regular export. */
@@ -127,6 +128,7 @@ static void wm_ply_export_draw(bContext *C, wmOperator *op)
 
   if (uiLayout *panel = layout->panel(C, "PLY_export_geometry", false, IFACE_("Geometry"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
 
     col->prop(ptr, "export_uv", UI_ITEM_NONE, IFACE_("UV Coordinates"), ICON_NONE);
     col->prop(ptr, "export_normals", UI_ITEM_NONE, IFACE_("Vertex Normals"), ICON_NONE);
@@ -287,6 +289,7 @@ static void ui_ply_import_settings(const bContext *C, uiLayout *layout, PointerR
 
   if (uiLayout *panel = layout->panel(C, "PLY_import_general", false, IFACE_("General"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "global_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "use_scene_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "forward_axis", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -295,6 +298,7 @@ static void ui_ply_import_settings(const bContext *C, uiLayout *layout, PointerR
 
   if (uiLayout *panel = layout->panel(C, "PLY_import_options", false, IFACE_("Options"))) {
     uiLayout *col = &panel->column(false);
+    col->use_property_split_set(false); // bfa 
     col->prop(ptr, "merge_verts", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "import_colors", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }

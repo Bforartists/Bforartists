@@ -83,8 +83,10 @@ void node_group_label(const bNodeTree * /*ntree*/,
                       char *label,
                       int label_maxncpy)
 {
-  BLI_strncpy(
-      label, (node->id) ? node->id->name + 2 : IFACE_("Missing Data"), label_maxncpy); /* BFA */
+  BLI_strncpy(label,
+              (node->id) ? node->id->name + 2 :
+                           CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, "Missing Data"), /* BFA */
+              label_maxncpy);
 }
 
 int node_group_ui_class(const bNode *node)
@@ -784,7 +786,7 @@ static void group_input_declare(NodeDeclarationBuilder &b)
            * "dependency cycle" between this and the structure type inferencing which uses node
            * declarations. The compromise is to not use the proper structure type in the group
            * input/output declarations and instead use a special case for the choice of socket
-           * shapes.*/
+           * shapes. */
           build_interface_socket_declaration(*node_tree, socket, std::nullopt, SOCK_OUT, b);
         }
         break;

@@ -226,10 +226,10 @@ blender::Vector<eSpaceButtons_Context> ED_buttons_tabs_list(const SpacePropertie
       tabs.append(tab);
     }
   };
-  /*BFA - tools tab not shown*/
-  //add_tab(BCONTEXT_TOOL);
 
- // add_spacer();
+  add_tab(BCONTEXT_TOOL);
+
+  add_spacer();
 
   add_tab(BCONTEXT_RENDER);
   add_tab(BCONTEXT_OUTPUT);
@@ -893,6 +893,11 @@ static void buttons_area_listener(const wmSpaceTypeListenerParams *params)
           break;
         case ND_KEYFRAME:
           if (ELEM(wmn->action, NA_EDITED, NA_ADDED, NA_REMOVED)) {
+            ED_area_tag_redraw(area);
+          }
+          break;
+        case ND_ANIMCHAN:
+          if (wmn->action == NA_SELECTED) {
             ED_area_tag_redraw(area);
           }
           break;

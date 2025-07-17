@@ -215,9 +215,8 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
 
         if self.files:
             ret = {'CANCELLED'}
-            dirname = os.path.dirname(self.filepath)
             for file in self.files:
-                path = os.path.join(dirname, file.name)
+                path = os.path.join(self.directory, file.name)
                 if import_fbx.load(self, context, filepath=path, **keywords) == {'FINISHED'}:
                     ret = {'FINISHED'}
             return ret
@@ -232,6 +231,7 @@ def import_panel_include(layout, operator):
     header, body = layout.panel("FBX_import_include", default_closed=False)
     header.label(text="Include")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, "use_custom_normals")
         body.prop(operator, "use_subsurf")
         body.prop(operator, "use_custom_props")
@@ -249,8 +249,10 @@ def import_panel_transform(layout, operator):
         body.prop(operator, "global_scale")
         body.prop(operator, "decal_offset")
         row = body.row()
+        row.use_property_split = False  # BFA
         row.prop(operator, "bake_space_transform")
         row.label(text="", icon='ERROR')
+        body.use_property_split = False  # BFA
         body.prop(operator, "use_prepost_rot")
 
         import_panel_transform_orientation(body, operator)
@@ -281,6 +283,7 @@ def import_panel_armature(layout, operator):
     header, body = layout.panel("FBX_import_armature", default_closed=True)
     header.label(text="Armature")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, "ignore_leaf_bones")
         body.prop(operator, "force_connect_children"),
         body.prop(operator, "automatic_bone_orientation"),
@@ -620,12 +623,14 @@ def export_panel_include(layout, operator, is_file_browser):
     if body:
         sublayout = body.column(heading="Limit to")
         sublayout.enabled = (operator.batch_mode == 'OFF')
+        sublayout.use_property_split = False  # BFA
         if is_file_browser:
             sublayout.prop(operator, "use_selection")
             sublayout.prop(operator, "use_visible")
             sublayout.prop(operator, "use_active_collection")
 
         body.column().prop(operator, "object_types")
+        body.use_property_split = False  # BFA
         body.prop(operator, "use_custom_props")
 
 
@@ -633,6 +638,7 @@ def export_panel_transform(layout, operator):
     header, body = layout.panel("FBX_export_transform", default_closed=False)
     header.label(text="Transform")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, "global_scale")
         body.prop(operator, "apply_scale_options")
 
@@ -650,6 +656,7 @@ def export_panel_geometry(layout, operator):
     header, body = layout.panel("FBX_export_geometry", default_closed=True)
     header.label(text="Geometry")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, "mesh_smooth_type")
         body.prop(operator, "use_subsurf")
         body.prop(operator, "use_mesh_modifiers")
@@ -669,6 +676,7 @@ def export_panel_armature(layout, operator):
     header, body = layout.panel("FBX_export_armature", default_closed=True)
     header.label(text="Armature")
     if body:
+        body.use_property_split = False  # BFA
         body.prop(operator, "primary_bone_axis")
         body.prop(operator, "secondary_bone_axis")
         body.prop(operator, "armature_nodetype")
@@ -682,6 +690,7 @@ def export_panel_animation(layout, operator):
     header.prop(operator, "bake_anim", text="")
     header.label(text="Animation")
     if body:
+        body.use_property_split = False  # BFA
         body.enabled = operator.bake_anim
         body.prop(operator, "bake_anim_use_all_bones")
         body.prop(operator, "bake_anim_use_nla_strips")

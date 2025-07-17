@@ -1184,7 +1184,7 @@ static bool do_lasso_select_grease_pencil(const ViewContext *vc,
         const bke::greasepencil::Layer &layer = grease_pencil.layer(info.layer_index);
         const bke::crazyspace::GeometryDeformation deformation =
             bke::crazyspace::get_evaluated_grease_pencil_drawing_deformation(
-                ob_eval, *object, info.layer_index, info.frame_number);
+                ob_eval, *object, info.drawing);
         const IndexMask visible_handle_elements =
             ed::greasepencil::retrieve_visible_bezier_handle_elements(
                 *object, info.drawing, info.layer_index, selection_domain, memory);
@@ -3140,8 +3140,8 @@ static bool pointcloud_select_pick(bContext &C, const int2 mval, const SelectPic
           continue;
         }
 
-        bke::GSpanAttributeWriter selection = pointcloud::ensure_selection_attribute(pointcloud,
-                                                                                     CD_PROP_BOOL);
+        bke::GSpanAttributeWriter selection = pointcloud::ensure_selection_attribute(
+            pointcloud, bke::AttrType::Bool);
         pointcloud::fill_selection_false(selection.span, IndexMask(pointcloud.totpoint));
         selection.finish();
 
@@ -3158,8 +3158,8 @@ static bool pointcloud_select_pick(bContext &C, const int2 mval, const SelectPic
     return deselected;
   }
 
-  bke::GSpanAttributeWriter selection = pointcloud::ensure_selection_attribute(*closest.pointcloud,
-                                                                               CD_PROP_BOOL);
+  bke::GSpanAttributeWriter selection = pointcloud::ensure_selection_attribute(
+      *closest.pointcloud, bke::AttrType::Bool);
   curves::apply_selection_operation_at_index(selection.span, closest.elem.index, params.sel_op);
   selection.finish();
 
@@ -3283,7 +3283,7 @@ static bool ed_curves_select_pick(bContext &C, const int mval[2], const SelectPi
     bke::GSpanAttributeWriter selection = ed::curves::ensure_selection_attribute(
         closest.curves_id->geometry.wrap(),
         bke::AttrDomain::Point,
-        CD_PROP_BOOL,
+        bke::AttrType::Bool,
         closest.selection_attribute_name);
     ed::curves::apply_selection_operation_at_index(
         selection.span, closest.elem.index, params.sel_op);
@@ -3351,7 +3351,7 @@ static bool ed_grease_pencil_select_pick(bContext *C,
           /* Get deformation by modifiers. */
           bke::crazyspace::GeometryDeformation deformation =
               bke::crazyspace::get_evaluated_grease_pencil_drawing_deformation(
-                  ob_eval, *object, info.layer_index, info.frame_number);
+                  ob_eval, *object, info.drawing);
 
           IndexMaskMemory memory;
           const IndexMask elements = ed::greasepencil::retrieve_editable_elements(
@@ -4409,7 +4409,7 @@ static bool do_grease_pencil_box_select(const ViewContext *vc,
         const bke::greasepencil::Layer &layer = grease_pencil.layer(info.layer_index);
         const bke::crazyspace::GeometryDeformation deformation =
             bke::crazyspace::get_evaluated_grease_pencil_drawing_deformation(
-                ob_eval, *object, info.layer_index, info.frame_number);
+                ob_eval, *object, info.drawing);
         const IndexMask visible_handle_elements =
             ed::greasepencil::retrieve_visible_bezier_handle_elements(
                 *object, info.drawing, info.layer_index, selection_domain, memory);
@@ -5292,7 +5292,7 @@ static bool grease_pencil_circle_select(const ViewContext *vc,
         const bke::greasepencil::Layer &layer = grease_pencil.layer(info.layer_index);
         const bke::crazyspace::GeometryDeformation deformation =
             bke::crazyspace::get_evaluated_grease_pencil_drawing_deformation(
-                ob_eval, *object, info.layer_index, info.frame_number);
+                ob_eval, *object, info.drawing);
         const IndexMask visible_handle_elements =
             ed::greasepencil::retrieve_visible_bezier_handle_elements(
                 *object, info.drawing, info.layer_index, selection_domain, memory);

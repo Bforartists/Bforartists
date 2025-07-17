@@ -406,7 +406,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "show_only_control_edges", 0); /*bfa - decorator*/
+  row->decorator(ptr, "show_only_control_edges", 0); /*bfa - decorator*/
 
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   SubsurfModifierData *smd = static_cast<SubsurfModifierData *>(ptr->data);
@@ -474,7 +474,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_limit_surface", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_limit_surface", 0); /*bfa - decorator*/
     
     /* bfa - our layout */
     if (ob_use_adaptive_subdivision || RNA_boolean_get(ptr, "use_limit_surface")) {
@@ -496,14 +496,14 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_creases", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_creases", 0); /*bfa - decorator*/
 
     /* bfa - our layout */
     row = &col->row(true);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_custom_normals", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_custom_normals", 0); /*bfa - decorator*/
   }
 
   modifier_error_message_draw(layout, ptr);

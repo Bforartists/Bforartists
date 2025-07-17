@@ -754,13 +754,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_only_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_only_smooth", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_only_smooth", 0); /*bfa - decorator*/
 
   row = &layout->row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "use_pin_boundary", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "use_pin_boundary", 0); /*bfa - decorator*/
+  row->decorator(ptr, "use_pin_boundary", 0); /*bfa - decorator*/
 
   layout->prop(ptr, "rest_source", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (RNA_enum_get(ptr, "rest_source") == MOD_CORRECTIVESMOOTH_RESTSOURCE_BIND) {

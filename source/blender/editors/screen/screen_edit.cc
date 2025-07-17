@@ -660,6 +660,10 @@ static void region_cursor_set(wmWindow *win, bool swin_changed)
 {
   bScreen *screen = WM_window_get_active_screen(win);
 
+  /* Don't touch cursor if something else is controling it, like button handling. See #51739. */
+  if (win->grabcursor) {
+    return;
+  }
   ED_screen_areas_iter (win, screen, area) {
     LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
       if (region == screen->active_region) {
@@ -828,7 +832,7 @@ static void screen_refresh_if_needed(bContext *C, wmWindowManager *wm, wmWindow 
     /* Called even when creating the ghost window fails in #WM_window_open. */
     if (win->ghostwin) {
       /* Header size depends on DPI, let's verify. */
-      WM_window_set_dpi(win);
+      WM_window_dpi_set_userdef(win);
     }
 
     ED_screen_global_areas_refresh(win);

@@ -1867,10 +1867,7 @@ static wmOperatorStatus grease_pencil_move_to_layer_exec(bContext *C, wmOperator
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
-  int target_layer_name_length;
-  char *target_layer_name = RNA_string_get_alloc(
-      op->ptr, "target_layer_name", nullptr, 0, &target_layer_name_length);
-  BLI_SCOPED_DEFER([&] { MEM_SAFE_FREE(target_layer_name); });
+  std::string target_layer_name = RNA_string_get(op->ptr, "target_layer_name");
   const bool add_new_layer = RNA_boolean_get(op->ptr, "add_new_layer");
   TreeNode *target_node = nullptr;
 
@@ -1882,13 +1879,13 @@ static wmOperatorStatus grease_pencil_move_to_layer_exec(bContext *C, wmOperator
   }
 
   if (target_node == nullptr || !target_node->is_layer()) {
-    BKE_reportf(op->reports, RPT_ERROR, "There is no layer '%s'", target_layer_name);
+    BKE_reportf(op->reports, RPT_ERROR, "There is no layer '%s'", target_layer_name.c_str());
     return OPERATOR_CANCELLED;
   }
 
   Layer &layer_dst = target_node->as_layer();
   if (layer_dst.is_locked()) {
-    BKE_reportf(op->reports, RPT_ERROR, "'%s' Layer is locked", target_layer_name);
+    BKE_reportf(op->reports, RPT_ERROR, "'%s' Layer is locked", target_layer_name.c_str());
     return OPERATOR_CANCELLED;
   }
 
@@ -2693,7 +2690,7 @@ static wmOperatorStatus grease_pencil_paste_strokes_exec(bContext *C, wmOperator
   /* Make sure everything on the clipboard is selected, in the correct selection domain. */
   threading::parallel_for_each(clipboard.layers, [&](Clipboard::ClipboardLayer &layer) {
     bke::GSpanAttributeWriter selection = ed::curves::ensure_selection_attribute(
-        layer.curves, selection_domain, CD_PROP_BOOL);
+        layer.curves, selection_domain, bke::AttrType::Bool);
     selection.finish();
   });
 
@@ -2713,7 +2710,7 @@ static wmOperatorStatus grease_pencil_paste_strokes_exec(bContext *C, wmOperator
     const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(scene, grease_pencil);
     threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
       bke::GSpanAttributeWriter selection_in_target = ed::curves::ensure_selection_attribute(
-          info.drawing.strokes_for_write(), selection_domain, CD_PROP_BOOL);
+          info.drawing.strokes_for_write(), selection_domain, bke::AttrType::Bool);
       ed::curves::fill_selection_false(selection_in_target.span);
       selection_in_target.finish();
     });
@@ -2773,7 +2770,7 @@ static wmOperatorStatus grease_pencil_paste_strokes_exec(bContext *C, wmOperator
     const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(scene, grease_pencil);
     threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
       bke::GSpanAttributeWriter selection_in_target = ed::curves::ensure_selection_attribute(
-          info.drawing.strokes_for_write(), selection_domain, CD_PROP_BOOL);
+          info.drawing.strokes_for_write(), selection_domain, bke::AttrType::Bool);
       ed::curves::fill_selection_false(selection_in_target.span);
       selection_in_target.finish();
     });
@@ -3051,12 +3048,12 @@ static bke::CurvesGeometry extrude_grease_pencil_curves(const bke::CurvesGeometr
    *
    * This will lead to the extruded control point always having both handles selected, if it's a
    * bezier type stroke. This is to circumvent the issue of source curves handles not being
-   * deselected when the user extrudes a bezier control point with both handles selected*/
+   * deselected when the user extrudes a bezier control point with both handles selected. */
   for (const StringRef selection_attribute_name :
        ed::curves::get_curves_selection_attribute_names(src))
   {
     bke::GSpanAttributeWriter selection = ed::curves::ensure_selection_attribute(
-        dst, bke::AttrDomain::Point, CD_PROP_BOOL, selection_attribute_name);
+        dst, bke::AttrDomain::Point, bke::AttrType::Bool, selection_attribute_name);
     selection.span.copy_from(dst_selected.as_span());
     selection.finish();
   }
@@ -3934,7 +3931,7 @@ static wmOperatorStatus grease_pencil_set_handle_type_exec(bContext *C, wmOperat
       return;
     }
     IndexMaskMemory memory;
-    const IndexMask editable_strokes = ed::greasepencil::retrieve_editable_and_selected_strokes(
+    const IndexMask editable_strokes = ed::greasepencil::retrieve_editable_strokes(
         *object, info.drawing, info.layer_index, memory);
     const IndexMask bezier_curves = curves.indices_for_curve_type(
         CURVE_TYPE_BEZIER, editable_strokes, memory);
@@ -4803,13 +4800,13 @@ static bke::AttributeStorage merge_attributes(const bke::AttributeAccessor &a,
                                               const bke::AttributeAccessor &b,
                                               const int dst_size)
 {
-  Map<std::string, eCustomDataType> new_types;
+  Map<std::string, bke::AttrType> new_types;
   const auto add_or_upgrade_types = [&](const bke::AttributeAccessor &attributes) {
     attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
       new_types.add_or_modify(
           iter.name,
-          [&](eCustomDataType *value) { *value = iter.data_type; },
-          [&](eCustomDataType *value) {
+          [&](bke::AttrType *value) { *value = iter.data_type; },
+          [&](bke::AttrType *value) {
             *value = bke::attribute_data_type_highest_complexity({*value, iter.data_type});
           });
     });
@@ -4820,7 +4817,7 @@ static bke::AttributeStorage merge_attributes(const bke::AttributeAccessor &a,
 
   bke::AttributeStorage new_storage;
   for (const auto &[name, type] : new_types.items()) {
-    const CPPType &cpp_type = *bke::custom_data_type_to_cpp_type(type);
+    const CPPType &cpp_type = bke::attribute_type_to_cpp_type(type);
     auto new_data = bke::Attribute::ArrayData::ForUninitialized(cpp_type, dst_size);
 
     const GVArray data_a = *a.lookup_or_default(name, bke::AttrDomain::Layer, type);
@@ -4830,10 +4827,7 @@ static bke::AttributeStorage merge_attributes(const bke::AttributeAccessor &a,
     data_b.materialize_to_uninitialized(
         POINTER_OFFSET(new_data.data, cpp_type.size * domain_size_a));
 
-    new_storage.add(name,
-                    bke::AttrDomain::Layer,
-                    *bke::custom_data_type_to_attr_type(type),
-                    std::move(new_data));
+    new_storage.add(name, bke::AttrDomain::Layer, type, std::move(new_data));
   }
 
   return new_storage;

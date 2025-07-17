@@ -12,6 +12,7 @@
 
 #include "BLI_rect.h"
 #include "BLI_utildefines.h"
+#include "BLI_listbase.h"
 
 #include "WM_message.hh"
 
@@ -40,9 +41,8 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
   /* bfa - re-add tabs to tool area, take tabs' width into account when snapping */
   float offset = 0.0;
   // check if panel has tabs visible
-  if (region->panels_category_active.first &&
-      region->panels_category_active.first != region->panels_category_active.last) {
-    offset = 20;
+  if (UI_panel_category_is_visible(region)) {
+    offset = UI_TOOLBAR_TAB_OFFSET;
   }
 
   if (axis == 0) {

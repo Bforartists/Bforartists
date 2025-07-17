@@ -56,6 +56,7 @@
 #include "BKE_material.hh" /* #BKE_material_copybuf_clear. */
 #include "BKE_studiolight.h"
 #include "BKE_subdiv.hh"
+#include "BKE_toolshelf_runtime.h" /* BFA */
 #include "BKE_tracking.h" /* Free tracking clipboard. */
 
 #include "RE_engine.h"
@@ -116,13 +117,13 @@
 
 #include "DRW_engine.hh"
 
-CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_OPERATORS, "wm.operator");
-CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_HANDLERS, "wm.handler");
-CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_EVENTS, "wm.event");
-CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_KEYMAPS, "wm.keymap");
-CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_TOOLS, "wm.tool");
-CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_MSGBUS_PUB, "wm.msgbus.pub");
-CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_MSGBUS_SUB, "wm.msgbus.sub");
+CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_OPERATORS, "operator");
+CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_EVENTS, "event");
+CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_TOOL_GIZMO, "tool.gizmo");
+CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_MSGBUS_PUB, "msgbus.pub");
+CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_MSGBUS_SUB, "msgbus.sub");
+
+static CLG_LogRef LOG_BLEND = {"blend"};
 
 static void wm_init_scripts_extensions_once(bContext *C);
 
@@ -327,6 +328,9 @@ void WM_init(bContext *C, int argc, const char **argv)
 
   ED_render_clear_mtex_copybuf();
 
+  /* BFA - Initialize toolshelf runtime data system */
+  BKE_toolshelf_runtime_init();
+
   wm_history_file_read();
 
   if (!G.background) {
@@ -471,7 +475,7 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
       BlendFileWriteParams blend_file_write_params{};
       if (BLO_write_file(bmain, filepath, fileflags, &blend_file_write_params, nullptr)) {
         if (!G.quiet) {
-          printf("Saved session recovery to \"%s\"\n", filepath);
+          CLOG_INFO_NOCHECK(&LOG_BLEND, "Saved session recovery to \"%s\"", filepath);
         }
       }
     }
@@ -572,6 +576,9 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
   ed::greasepencil::clipboard_free();
   UV_clipboard_free();
   wm_clipboard_free();
+
+  /* BFA - Free toolshelf runtime data system */
+  BKE_toolshelf_runtime_exit();
 
   COM_deinitialize();
 

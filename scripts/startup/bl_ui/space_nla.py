@@ -32,7 +32,7 @@ class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
 
     bl_idname = "wm.switch_editor_in_nla"  # unique identifier for buttons and menu items to reference.
     bl_label = "Nonlinear Animation Editor"  # display name in the interface.
-    bl_options = {"REGISTER", "UNDO"}  # enable undo for the operator.
+    bl_options = {'INTERNAL'}  # use internal so it can not be searchable
 
     def execute(self, context):  # Blank button, we don't execute anything here.
         return {"FINISHED"}
@@ -213,7 +213,6 @@ class NLA_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # bfa - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-        layout.prop(st, "show_region_channels")
         layout.prop(st, "show_region_footer")
         layout.separator()
 

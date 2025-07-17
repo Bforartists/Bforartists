@@ -121,9 +121,8 @@ bool apply_mask_as_selection(bke::CurvesGeometry &curves,
     return false;
   }
 
-  const eCustomDataType create_type = CD_PROP_BOOL;
   bke::GSpanAttributeWriter writer = ed::curves::ensure_selection_attribute(
-      curves, selection_domain, create_type, attribute_name);
+      curves, selection_domain, bke::AttrType::Bool, attribute_name);
 
   selection_mask.foreach_index(grain_size, [&](const int64_t element_i) {
     ed::curves::apply_selection_operation_at_index(writer.span, element_i, sel_op);
@@ -164,9 +163,8 @@ bool apply_mask_as_segment_selection(bke::CurvesGeometry &curves,
       curves, changed_curve_mask, screen_space_positions, tree_data, tree_data_range);
 
   const OffsetIndices<int> segments_by_curve = OffsetIndices<int>(segment_data.segment_offsets);
-  const eCustomDataType create_type = CD_PROP_BOOL;
   bke::GSpanAttributeWriter attribute_writer = ed::curves::ensure_selection_attribute(
-      curves, bke::AttrDomain::Point, create_type, attribute_name);
+      curves, bke::AttrDomain::Point, bke::AttrType::Bool, attribute_name);
 
   /* Find all segments that have changed points and fill them. */
   Array<bool> changed_points(curves.points_num());
@@ -649,7 +647,7 @@ static void select_similar_by_value(Scene *scene,
   threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
     bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
     bke::GSpanAttributeWriter selection_writer = ed::curves::ensure_selection_attribute(
-        curves, selection_domain, CD_PROP_BOOL);
+        curves, selection_domain, bke::AttrType::Bool);
     MutableSpan<bool> selection = selection_writer.span.typed<bool>();
     const VArraySpan<T> values = *curves.attributes().lookup_or_default<T>(
         attribute_id, selection_domain, default_value);
@@ -897,7 +895,7 @@ bool ensure_selection_domain(ToolSettings *ts, Object *object)
       attributes.remove(".selection");
       if (!attributes.add(".selection",
                           domain,
-                          bke::cpp_type_to_custom_data_type(type),
+                          bke::cpp_type_to_attribute_type(type),
                           bke::AttributeInitMoveArray(dst)))
       {
         MEM_freeN(dst);
@@ -992,26 +990,31 @@ static wmOperatorStatus grease_pencil_material_select_exec(bContext *C, wmOperat
     if (strokes.is_empty()) {
       return;
     }
-    bke::GSpanAttributeWriter selection = ed::curves::ensure_selection_attribute(
-        curves, domain, CD_PROP_BOOL);
 
-    switch (domain) {
-      case bke::AttrDomain::Curve: {
-        index_mask::masked_fill(selection.span.typed<bool>(), select, strokes);
-        break;
+    const OffsetIndices<int> points_by_curve = curves.points_by_curve();
+    const Span<StringRef> selection_attribute_names =
+        ed::curves::get_curves_selection_attribute_names(curves);
+
+    for (const int i : selection_attribute_names.index_range()) {
+      bke::GSpanAttributeWriter selection = ed::curves::ensure_selection_attribute(
+          curves, domain, bke::AttrType::Bool, selection_attribute_names[i]);
+      switch (domain) {
+        case bke::AttrDomain::Curve: {
+          index_mask::masked_fill(selection.span.typed<bool>(), select, strokes);
+          break;
+        }
+        case bke::AttrDomain::Point: {
+          strokes.foreach_index([&](const int curve_index) {
+            const IndexRange points = points_by_curve[curve_index];
+            ed::curves::fill_selection(selection.span.slice(points), select);
+          });
+          break;
+        }
+        default:
+          BLI_assert_unreachable();
       }
-      case bke::AttrDomain::Point: {
-        const OffsetIndices<int> points_by_curve = curves.points_by_curve();
-        strokes.foreach_index([&](const int curve_index) {
-          const IndexRange points = points_by_curve[curve_index];
-          ed::curves::fill_selection(selection.span.slice(points), select);
-        });
-        break;
-      }
-      default:
-        BLI_assert_unreachable();
+      selection.finish();
     }
-    selection.finish();
   });
 
   DEG_id_tag_update(&grease_pencil.id, ID_RECALC_GEOMETRY);

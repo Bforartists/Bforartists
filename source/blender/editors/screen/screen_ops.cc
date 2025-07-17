@@ -5234,7 +5234,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 
   PointerRNA ptr;
 
-  ptr = layout->op("SCREEN_OT_area_join",
+    ptr = layout->op("SCREEN_OT_area_join",
                    IFACE_("Move/Split Area"),
                    ICON_AREA_DOCK,
                    WM_OP_INVOKE_DEFAULT,
@@ -5242,20 +5242,22 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 
   layout->separator();
 
+  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW); /*BFA icon*/
+  layout->separator();
+
   layout->op("SCREEN_OT_screen_full_area",
-             area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
-             ICON_NONE);
+             area->full ? IFACE_("Restore Areas") : IFACE_("Toggle Maximize Area"),
+             ICON_MAXIMIZE_AREA);
 
   if (area->spacetype != SPACE_FILE && !area->full) {
     ptr = layout->op("SCREEN_OT_screen_full_area",
-                     IFACE_("Full Screen Area"),
+                     IFACE_("Toggle Fullscreen Area"),
                      ICON_FULLSCREEN_ENTER, /*BFA icon*/
                      WM_OP_INVOKE_DEFAULT,
                      UI_ITEM_NONE);
     RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
 
-  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW); /*BFA icon*/
   layout->separator();
   layout->op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE); /*BFA icon*/
 }
@@ -5884,7 +5886,7 @@ void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void * /
   {
     PointerRNA ptr = RNA_pointer_create_discrete(
         (ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first);
-    layout->prop(&ptr, "show_region_footer", UI_ITEM_NONE, IFACE_("Show Footer"), ICON_NONE);
+    //layout->prop(&ptr, "show_region_footer", UI_ITEM_NONE, IFACE_("Show Footer"), ICON_NONE); /*bfa - the toggle is a double to the view menu
   }
 
   ED_screens_region_flip_menu_create(C, layout, nullptr);
@@ -5954,7 +5956,7 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
 
       /* We need WM_OP_INVOKE_DEFAULT in case menu item is over another area. */
       layout->operator_context_set(WM_OP_INVOKE_DEFAULT);
-      layout->op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_NONE);
+      layout->op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_HIDE_ON);
 
       ED_screens_region_flip_menu_create(C, layout, nullptr);
       const ScrArea *area = CTX_wm_area(C);

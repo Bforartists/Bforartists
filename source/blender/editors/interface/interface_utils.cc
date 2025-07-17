@@ -403,6 +403,7 @@ eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
           BLI_assert(label_align == UI_BUT_LABEL_ALIGN_SPLIT_COLUMN);
           col = &layout->column(true);
           /* Let uiLayout::prop() create the split layout. */
+          col->use_property_split_set(!is_boolean); /* BFA - align left if boolean prop */
           col->use_property_decorate_set(!is_boolean); /* bfa - align left if boolean prop */
         }
 

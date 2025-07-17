@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:42+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Thai <https://translate.blender.org/projects/blender-ui/ui/th/>\n"
@@ -1999,8 +1999,8 @@ msgid "Scene"
 msgstr "ฉาก"
 
 
-msgid "Blender"
-msgstr "Blender"
+msgid "Bforartists"
+msgstr "Bforartists"
 
 
 msgid "System"
@@ -2552,14 +2552,6 @@ msgstr "คอลเลกชันฉาก"
 
 msgid "Lamp"
 msgstr "แสงไฟ"
-
-
-msgid "Path Mode"
-msgstr "โหมดเส้นทาง"
-
-
-msgid "Match"
-msgstr "จับคู่"
 
 
 msgid "-X Axis"
@@ -3212,8 +3204,8 @@ msgstr "เลือกเท่านั้น"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "ออกจาก Blender"
+msgid "Quit Bforartists"
+msgstr "ออกจาก Bforartists"
 
 
 msgid "Zoom Path"
@@ -3235,8 +3227,8 @@ msgstr "บันทึกการคัดลอก"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "บันทึกเป็นไฟล์ Blender"
+msgid "Save Bforartists File"
+msgstr "บันทึกเป็นไฟล์ Bforartists"
 
 
 msgid "Red-Cyan"
@@ -4032,6 +4024,10 @@ msgid "Calculate"
 msgstr "คำนวณ"
 
 
+msgid "Match"
+msgstr "จับคู่"
+
+
 msgctxt "Operator"
 msgid "More"
 msgstr "เพิ่มเติม"
@@ -4091,8 +4087,8 @@ msgid "Text Files"
 msgstr "ไฟล์ข้อความ"
 
 
-msgid "Blender IDs"
-msgstr "Blender ID"
+msgid "Bforartists IDs"
+msgstr "Bforartists ID"
 
 
 msgctxt "Operator"
@@ -4983,6 +4979,10 @@ msgid "Yesterday"
 msgstr "เมื่อวาน"
 
 
+msgid "Path Mode"
+msgstr "โหมดเส้นทาง"
+
+
 msgid "Rigging"
 msgstr "Rigging"
 
@@ -5044,8 +5044,8 @@ msgid "Paper"
 msgstr "กระดาษ"
 
 
-msgid "Blender Render"
-msgstr "ตัวเรนเดอร์ของ Blender"
+msgid "Bforartists Render"
+msgstr "ตัวเรนเดอร์ของ Bforartists"
 
 
 msgid "%d x %d"

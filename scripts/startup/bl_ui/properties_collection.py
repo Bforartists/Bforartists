@@ -38,10 +38,9 @@ class COLLECTION_PT_collection_flags(CollectionButtonsPanel, Panel):
 
         collection = context.collection
 
-        layout.prop(collection, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
-
-        col = layout.column(heading="Show In", align=True)
-        col.prop(collection, "hide_render", text="Renders", toggle=False, invert_checkbox=True)
+        col = layout.column(align = True)
+        col.prop(collection, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
+        col.prop(collection, "hide_render", text="Show in Renders", toggle=False, invert_checkbox=True)
 
 
 class COLLECTION_PT_viewlayer_flags(CollectionButtonsPanel, Panel):
@@ -53,7 +52,7 @@ class COLLECTION_PT_viewlayer_flags(CollectionButtonsPanel, Panel):
         vlc = vl.active_layer_collection
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         col = layout.column(align=True)
@@ -108,7 +107,7 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
         row = layout.row()
         row.prop(collection, "lineart_usage")
 
-        # BFA - Float left        
+        # BFA - Float left
         split = layout.split()
         col = split.column()
         col.use_property_split = False
@@ -131,7 +130,7 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
             row = col.row(align=True)
             for i in range(8):
                 row.prop(collection, "lineart_intersection_mask", index=i, text="", toggle=True)
-        
+
         split = layout.split()
         col = split.column()
         col.use_property_split = False

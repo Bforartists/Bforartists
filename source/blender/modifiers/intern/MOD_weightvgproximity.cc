@@ -460,7 +460,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   if (defgrp_index == -1) {
     return mesh;
   }
-  const bool has_mdef = CustomData_has_layer(&mesh->vert_data, CD_MDEFORMVERT);
+  const bool has_mdef = !mesh->deform_verts().is_empty();
   /* If no vertices were ever added to an object's vgroup, dvert might be nullptr. */
   /* As this modifier never add vertices to vgroup, just return. */
   if (!has_mdef) {
@@ -656,7 +656,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiItemDecoratorR(row, ptr, "normalize", 0); /*bfa - decorator*/
+  row->decorator(ptr, "normalize", 0); /*bfa - decorator*/
 }
 
 static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)

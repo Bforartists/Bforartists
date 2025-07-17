@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:41+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian (Latin script) <https://translate.blender.org/projects/blender-ui/ui/sr_Latn/>\n"
@@ -263,8 +263,8 @@ msgid "Source Root"
 msgstr "Koren izvornog koda"
 
 
-msgid "The Blender source root path"
-msgstr "Koreni direktorijum izvornog koda Blender-a"
+msgid "The Bforartists source root path"
+msgstr "Koreni direktorijum izvornog koda Bforartists-a"
 
 
 msgid "Persistent Data Path"
@@ -927,12 +927,12 @@ msgid "Worlds"
 msgstr "Svetovi"
 
 
-msgid "Blender RNA"
-msgstr "Blender RNK"
+msgid "Bforartists RNA"
+msgstr "Bforartists RNK"
 
 
-msgid "Blender RNA structure definitions"
-msgstr "Definicije strukture Blender RNK"
+msgid "Bforartists RNA structure definitions"
+msgstr "Definicije strukture Bforartists RNK"
 
 
 msgid "Structs"
@@ -4292,8 +4292,8 @@ msgid "Show .blend1, .blend2, etc. files"
 msgstr "Prikaži .blend datoteke"
 
 
-msgid "Filter Blender"
-msgstr "Filter Blender"
+msgid "Filter Bforartists"
+msgstr "Filter Bforartists"
 
 
 msgid "Show .blend files"
@@ -5134,8 +5134,8 @@ msgid "Unprojected Radius"
 msgstr "Neprojektovan poluprečnik"
 
 
-msgid "Radius of brush in Blender units"
-msgstr "Poluprečnik četkice u Blender jedinicama"
+msgid "Radius of brush in Bforartists units"
+msgstr "Poluprečnik četkice u Bforartists jedinicama"
 
 
 msgid "Airbrush"
@@ -7492,8 +7492,8 @@ msgid "Noise Basis"
 msgstr "Osnova šuma"
 
 
-msgid "Blender Original"
-msgstr "Originalni Blenderov"
+msgid "Bforartists Original"
+msgstr "Originalni Bforartistsov"
 
 
 msgid "Cell Noise"
@@ -11352,8 +11352,8 @@ msgid "Object space normal mapping"
 msgstr "Osnovni direktorijum sa teksturama"
 
 
-msgid "Blender Object Space"
-msgstr "Prostor Blender objekta"
+msgid "Bforartists Object Space"
+msgstr "Prostor Bforartists objekta"
 
 
 msgid "Cycles"
@@ -13898,20 +13898,12 @@ msgid "Other"
 msgstr "Ostalo"
 
 
-msgid "Path Mode"
-msgstr "Režim putanje"
-
-
 msgid "Method used to reference paths"
 msgstr "Korišćen metod za referentne putanje"
 
 
 msgid "Always write absolute paths"
 msgstr "Uvek koristi apsolutne putanje"
-
-
-msgid "Always write relative paths (where possible)"
-msgstr "Ako je moguće, uvek koristi relativne pouanje"
 
 
 msgid "Filename only"
@@ -14631,7 +14623,7 @@ msgstr "Uzorak boje"
 
 
 msgid "Save As Render"
-msgstr "Sačuvaj Blender datoteku"
+msgstr "Sačuvaj Bforartists datoteku"
 
 
 msgctxt "Operator"
@@ -19392,12 +19384,12 @@ msgstr "Izmena naziva osobine"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Izlaz iz Blender-a"
+msgid "Quit Bforartists"
+msgstr "Izlaz iz Bforartists-a"
 
 
-msgid "Quit Blender"
-msgstr "Izlaz iz Blender-a"
+msgid "Quit Bforartists"
+msgstr "Izlaz iz Bforartists-a"
 
 
 msgctxt "Operator"
@@ -19499,12 +19491,12 @@ msgstr "Sačuvaj početnu datoteku"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Sačuvaj Blender datoteku"
+msgid "Save Bforartists File"
+msgstr "Sačuvaj Bforartists datoteku"
 
 
-msgid "Save the current Blender file"
-msgstr "Upisuje trenutnu Blender datoteku"
+msgid "Save the current Bforartists file"
+msgstr "Upisuje trenutnu Bforartists datoteku"
 
 
 msgctxt "Operator"
@@ -21832,8 +21824,8 @@ msgid "Node tree type to display and edit"
 msgstr "Postavlja prikaz renderovanja u 3D pogledu"
 
 
-msgid "Blender File"
-msgstr "Blender datoteka"
+msgid "Bforartists File"
+msgstr "Bforartists datoteka"
 
 
 msgid "Filter method"
@@ -25121,6 +25113,10 @@ msgid "Smooth Groups"
 msgstr "Grupe umekšanja"
 
 
+msgid "Path Mode"
+msgstr "Režim putanje"
+
+
 msgctxt "Mesh"
 msgid "Plane"
 msgstr "Ploča"
@@ -25436,8 +25432,8 @@ msgid "Scene has no camera"
 msgstr "Scena ne sadrži kameru"
 
 
-msgid "Blender Render"
-msgstr "Blender rendering"
+msgid "Bforartists Render"
+msgstr "Bforartists rendering"
 
 
 msgid "Flip to Top"
@@ -26144,8 +26140,8 @@ msgid "Rim"
 msgstr "Obod"
 
 
-msgid "Blender File View"
-msgstr "Blender-ov pregled datoteka"
+msgid "Bforartists File View"
+msgstr "Bforartists-ov pregled datoteka"
 
 
 msgid "unable to open the file"

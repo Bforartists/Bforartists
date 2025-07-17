@@ -5,7 +5,15 @@
 /** \file
  * \ingroup wm
  *
- * Experimental tool-system>
+ * Tool-system used to define tools in Blender's toolbar.
+ * See: `./scripts/startup/bl_ui/space_toolsystem_common.py`, `ToolDef` for a detailed
+ * description of tool definitions.
+ *
+ * \note Tools are stored per workspace.
+ * Notice many functions take #Main & #WorkSpace and *not* window/screen/scene data.
+ * This is intentional as changing tools must account for all scenes using that workspace.
+ * Functions that refreshes on tool change are responsible for updating all windows using
+ * this workspace.
  */
 
 #include <cstring>
@@ -35,6 +43,7 @@
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_paint.hh"
+#include "BKE_paint_types.hh"
 #include "BKE_workspace.hh"
 
 #include "RNA_access.hh"
@@ -383,7 +392,7 @@ static void toolsystem_brush_activate_from_toolref_for_object_paint(Main *bmain,
           return *brush_ref->brush_asset_reference;
         }
         /* No remembered brush found for this type, use a default for the type. */
-        return BKE_paint_brush_type_default_reference(eObjectMode(paint->runtime.ob_mode),
+        return BKE_paint_brush_type_default_reference(eObjectMode(paint->runtime->ob_mode),
                                                       tref_rt->brush_type);
       }();
 
@@ -403,7 +412,7 @@ static void toolsystem_brush_activate_from_toolref_for_object_paint(Main *bmain,
           if (paint->tool_brush_bindings.main_brush_asset_reference) {
             return *paint->tool_brush_bindings.main_brush_asset_reference;
           }
-          return BKE_paint_brush_type_default_reference(eObjectMode(paint->runtime.ob_mode),
+          return BKE_paint_brush_type_default_reference(eObjectMode(paint->runtime->ob_mode),
                                                         std::nullopt);
         }();
 
@@ -472,20 +481,27 @@ static void toolsystem_brush_sync_for_texture_paint(Main *bmain,
     }
   }
 }
-static void toolsystem_brush_clear_paint_reference(Scene *scene, bToolRef *tref)
+static void toolsystem_brush_clear_paint_reference(Main *bmain,
+                                                   WorkSpace *workspace,
+                                                   bToolRef *tref)
 {
   const PaintMode paint_mode = BKE_paintmode_get_from_tool(tref);
-  Paint *paint = BKE_paint_get_active_from_paintmode(scene, paint_mode);
-  if (!paint) {
-    return;
-  }
 
-  BKE_paint_previous_asset_reference_clear(paint);
+  wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+    if (workspace != WM_window_get_active_workspace(win)) {
+      continue;
+    }
+    Scene *scene = WM_window_get_active_scene(win);
+    if (Paint *paint = BKE_paint_get_active_from_paintmode(scene, paint_mode)) {
+      BKE_paint_previous_asset_reference_clear(paint);
+    }
+  }
 }
 
 /** \} */
 
-static void toolsystem_ref_link(Main *bmain, Scene *scene, WorkSpace *workspace, bToolRef *tref)
+static void toolsystem_ref_link(Main *bmain, WorkSpace *workspace, bToolRef *tref)
 {
   bToolRef_Runtime *tref_rt = tref->runtime;
   if (tref_rt->gizmo_group[0]) {
@@ -502,7 +518,7 @@ static void toolsystem_ref_link(Main *bmain, Scene *scene, WorkSpace *workspace,
       }
     }
     else {
-      CLOG_WARN(WM_LOG_TOOLS, "'%s' widget not found", idname);
+      CLOG_WARN(WM_LOG_TOOL_GIZMO, "'%s' widget not found", idname);
     }
   }
 
@@ -511,7 +527,7 @@ static void toolsystem_ref_link(Main *bmain, Scene *scene, WorkSpace *workspace,
     toolsystem_brush_sync_for_texture_paint(bmain, workspace, tref);
   }
   else {
-    toolsystem_brush_clear_paint_reference(scene, tref);
+    toolsystem_brush_clear_paint_reference(bmain, workspace, tref);
   }
 }
 
@@ -521,7 +537,7 @@ static void toolsystem_refresh_ref(const bContext *C, WorkSpace *workspace, bToo
     return;
   }
   /* Currently same operation. */
-  toolsystem_ref_link(CTX_data_main(C), CTX_data_scene(C), workspace, tref);
+  toolsystem_ref_link(CTX_data_main(C), workspace, tref);
 }
 void WM_toolsystem_refresh(const bContext *C, WorkSpace *workspace, const bToolKey *tkey)
 {
@@ -637,7 +653,7 @@ void WM_toolsystem_ref_set_from_runtime(bContext *C,
     tref->runtime->keymap_fallback[0] = '\0';
   }
 
-  toolsystem_ref_link(bmain, CTX_data_scene(C), workspace, tref);
+  toolsystem_ref_link(bmain, workspace, tref);
 
   toolsystem_refresh_screen_from_active_tool(bmain, workspace, tref);
 
@@ -1131,13 +1147,12 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
     case SPACE_SEQ: {
       switch (tkey->mode) {
         case SEQ_VIEW_SEQUENCE:
-          return "builtin.select";
-        case SEQ_VIEW_PREVIEW:
-          return "builtin.select_box";
         case SEQ_VIEW_SEQUENCE_PREVIEW:
+          return "builtin.select_box";
+        case SEQ_VIEW_PREVIEW:
           return "builtin.select";
       }
-      return "builtin.select"; /*bfa - changed default from builtin.select_box to builtin.select*/
+      break;
     }
   }
 

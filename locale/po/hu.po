@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-04-14 08:24+0000\n"
 "Last-Translator: Balázs Füvesi <fuvesib@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.blender.org/projects/blender-ui/ui/hu/>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.10.1\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-SearchPath-0: E:\\PROJEKTEK\\Blender\\FORDITAS\\osszefuzes"
+"X-Poedit-SearchPath-0: E:\\PROJEKTEK\\Bforartists\\FORDITAS\\osszefuzes"
 
 
 msgid "Valid"
@@ -9546,8 +9546,8 @@ msgid "Restore Key Map(s)"
 msgstr "Billentyű-hozzárendelések visszaállítása"
 
 
-msgid "Load and apply a Blender XML theme file"
-msgstr "Egy Blender XML témafájl betöltése és alkalmazása"
+msgid "Load and apply a Bforartists XML theme file"
+msgstr "Egy Bforartists XML témafájl betöltése és alkalmazása"
 
 
 msgctxt "Operator"
@@ -10248,28 +10248,12 @@ msgid "Lamp"
 msgstr "Fényforrás"
 
 
-msgid "Path Mode"
-msgstr "Útvonal mód"
-
-
 msgid "Method used to reference paths"
 msgstr "A referenciaútvonalakhoz használt metódus"
 
 
 msgid "Always write absolute paths"
 msgstr "Mindig abszolút útvonal írása"
-
-
-msgid "Always write relative paths (where possible)"
-msgstr "Mindig relatív útvonal írása (ahol lehetséges)"
-
-
-msgid "Match"
-msgstr "Összehangolás"
-
-
-msgid "Strip Path"
-msgstr "Útvonal lecsupaszítása"
 
 
 msgid "Filename only"
@@ -10665,8 +10649,8 @@ msgid "Scale FPS"
 msgstr "FPS skálázása"
 
 
-msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame"
-msgstr "A BVH képkockasebességnek a skálázása az aktuális jelenethez, másként minden BVH képkocka közvetlenül egy Blender képkockákra képeződik le"
+msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Bforartists frame"
+msgstr "A BVH képkockasebességnek a skálázása az aktuális jelenethez, másként minden BVH képkocka közvetlenül egy Bforartists képkockákra képeződik le"
 
 
 msgid "Image Search"
@@ -12738,8 +12722,8 @@ msgid "Import Units"
 msgstr "Egységek importálása"
 
 
-msgid "If disabled match import to Blender's current Unit settings, otherwise use the settings from the Imported scene"
-msgstr "Ha nincs engedélyezve, az importálás a Blender aktuális egységbeállításához lesz igazítva, egyébként az importált jelenet beállításai lesznek használva"
+msgid "If disabled match import to Bforartists's current Unit settings, otherwise use the settings from the Imported scene"
+msgstr "Ha nincs engedélyezve, az importálás a Bforartists aktuális egységbeállításához lesz igazítva, egyébként az importált jelenet beállításai lesznek használva"
 
 
 msgid "Header Text"
@@ -12759,8 +12743,8 @@ msgid "Include all scene frames"
 msgstr "Minden jelenet képkocka bevonása"
 
 
-msgid "Open a Blender file"
-msgstr "Blender fájl megnyitása"
+msgid "Open a Bforartists file"
+msgstr "Bforartists fájl megnyitása"
 
 
 msgid "Load UI"
@@ -12798,12 +12782,12 @@ msgstr "PLY importálása"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "Kilépés a Blenderből"
+msgid "Quit Bforartists"
+msgstr "Kilépés a Bforartistsből"
 
 
-msgid "Quit Blender"
-msgstr "Kilépés a Blenderből"
+msgid "Quit Bforartists"
+msgstr "Kilépés a Bforartistsből"
 
 
 msgctxt "Operator"
@@ -12869,12 +12853,12 @@ msgstr "Indítófájl újratöltése"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "Blender fájl mentése"
+msgid "Save Bforartists File"
+msgstr "Bforartists fájl mentése"
 
 
-msgid "Save the current Blender file"
-msgstr "Az aktuális Blender fájl mentése"
+msgid "Save the current Bforartists file"
+msgstr "Az aktuális Bforartists fájl mentése"
 
 
 msgctxt "Operator"
@@ -14449,8 +14433,8 @@ msgid "Channels of the image to draw"
 msgstr "A kép rajzolható csatornái"
 
 
-msgid "Blender File"
-msgstr "Blender fájl"
+msgid "Bforartists File"
+msgstr "Bforartists fájl"
 
 
 msgid "Show Object Children"
@@ -15732,6 +15716,10 @@ msgid "Export to File"
 msgstr "Exportálás fájlba"
 
 
+msgid "Match"
+msgstr "Összehangolás"
+
+
 msgid "Merge:"
 msgstr "Összefésülés:"
 
@@ -16807,6 +16795,10 @@ msgid "Smooth Groups"
 msgstr "Simított csoportok"
 
 
+msgid "Path Mode"
+msgstr "Útvonal mód"
+
+
 msgctxt "Mesh"
 msgid "Plane"
 msgstr "Síklap"
@@ -16929,8 +16921,8 @@ msgid "Scene has no camera"
 msgstr "Nincs kamera a jelenetben"
 
 
-msgid "Blender Render"
-msgstr "Blender Render"
+msgid "Bforartists Render"
+msgstr "Bforartists Render"
 
 
 msgid "GPencil Interpolation: "

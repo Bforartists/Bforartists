@@ -632,7 +632,7 @@ void ED_fileselect_deselect_all(SpaceFile *sfile)
 void ED_fileselect_window_params_get(const wmWindow *win, int r_win_size[2], bool *r_is_maximized)
 {
   /* Get DPI/pixel-size independent size to be stored in preferences. */
-  WM_window_set_dpi(win); /* Ensure the DPI is taken from the right window. */
+  WM_window_dpi_set_userdef(win); /* Ensure the DPI is taken from the right window. */
 
   const blender::int2 win_size = WM_window_native_pixel_size(win);
   r_win_size[0] = win_size[0] / UI_SCALE_FAC;
@@ -1503,4 +1503,18 @@ void ED_fileselect_ensure_default_filepath(bContext *C, wmOperator *op, const ch
     BLI_path_extension_replace(filepath, sizeof(filepath), extension);
     RNA_string_set(op->ptr, "filepath", filepath);
   }
+}
+
+blender::Vector<std::string> ED_fileselect_selected_files_full_paths(const SpaceFile *sfile)
+{
+  blender::Vector<std::string> paths;
+  char path[FILE_MAX_LIBEXTRA];
+  for (const int i : blender::IndexRange(filelist_files_ensure(sfile->files))) {
+    if (filelist_entry_is_selected(sfile->files, i)) {
+      const FileDirEntry *entry = filelist_file(sfile->files, i);
+      filelist_file_get_full_path(sfile->files, entry, path);
+      paths.append(path);
+    }
+  }
+  return paths;
 }

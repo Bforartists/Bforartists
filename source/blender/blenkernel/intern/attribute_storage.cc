@@ -21,7 +21,7 @@
 #include "BKE_attribute_storage.hh"
 #include "BKE_attribute_storage_blend_write.hh"
 
-static CLG_LogRef LOG = {"bke.attribute_storage"};
+static CLG_LogRef LOG = {"geom.attribute"};
 
 namespace blender::bke {
 
@@ -62,7 +62,7 @@ Attribute::ArrayData Attribute::ArrayData::ForValue(const GPointer &value,
 {
   Attribute::ArrayData data{};
   const CPPType &type = *value.type();
-  const void *value_ptr = type.default_value();
+  const void *value_ptr = value.get();
 
   /* Prefer `calloc` to zeroing after allocation since it is faster. */
   if (BLI_memory_is_zero(value_ptr, type.size)) {

@@ -22,7 +22,7 @@ from bl_ui.utils import (
 )
 # BFA - WIP - to be removed: from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
 
-# BFA - Added icons and floated properties left, also moved options to it's own menu, 
+# BFA - Added icons and floated properties left, also moved options to it's own menu,
 # BFA - and made header menus consistent with other editors
 
 ################################ BFA - Switch between the editors ##########################################
@@ -35,7 +35,7 @@ class ANIM_OT_switch_editor_in_graph(Operator):
 
     bl_idname = "wm.switch_editor_in_graph"  # unique identifier for buttons and menu items to reference.
     bl_label = "Graph Editor"  # display name in the interface.
-    bl_options = {"REGISTER", "UNDO"}  # enable undo for the operator.
+    bl_options = {'INTERNAL'}  # use internal so it can not be searchable
 
     def execute(self, context):  # Blank button, we don't execute anything here.
         return {"FINISHED"}
@@ -46,7 +46,7 @@ class ANIM_OT_switch_editor_in_driver(Operator):
 
     bl_idname = "wm.switch_editor_in_driver"  # unique identifier for buttons and menu items to reference.
     bl_label = "Driver Editor"  # display name in the interface.
-    bl_options = {"REGISTER", "UNDO"}  # enable undo for the operator.
+    bl_options = {'INTERNAL'}  # use internal so it can not be searchable
 
     def execute(self, context):  # Blank button, we don't execute anything here.
         return {"FINISHED"}
@@ -338,7 +338,6 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-        layout.prop(st, "show_region_channels")
         layout.prop(st, "show_region_footer")
         layout.separator()
 
@@ -404,7 +403,7 @@ class GRAPH_MT_view_pie_menus(Menu):
 
 # BFA - menu
 class GRAPH_MT_select(Menu):
-    bl_label = 'SELECT'
+    bl_label = 'Select'
 
     def draw(self, _context):
         layout = self.layout

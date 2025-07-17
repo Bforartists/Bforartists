@@ -28,6 +28,70 @@ from bpy.app.translations import (
 )
 
 
+# BFA - Helper function to make socket type matching easier
+def compare_attributes(item, *_, **keywords):
+    for key, value in keywords.items():
+        if getattr(item, key, None) != value:
+            return False
+        
+    return True
+
+
+# BFA - Helper function to make checking boolean inputs easier
+def is_boolean_input(item):
+    return compare_attributes(item, in_out="INPUT", socket_type="NodeSocketBool")
+
+
+# BFA - Helper function to make panel toggle checking easier
+def is_panel_toggle(item):
+    return compare_attributes(item, in_out="INPUT", socket_type="NodeSocketBool", is_panel_toggle=True, )
+
+
+# BFA - Helper function to make panel toggle fetching easier
+def get_panel_toggle(panel):
+    try:
+        first_item = panel.interface_items[0]
+        if is_panel_toggle(first_item):
+            return first_item
+        else:
+            return None
+    except (AttributeError, IndexError):
+        return None
+
+
+#BFA - Helper functions for detecting different group item types
+def is_input(item):
+    return compare_attributes(item, item_type="SOCKET", in_out="INPUT", is_panel_toggle=False)
+
+
+def is_output(item):
+    return compare_attributes(item, item_type="SOCKET", in_out="OUTPUT", is_panel_toggle=False)
+
+
+def is_panel(item):
+    return compare_attributes(item, item_type="PANEL")
+
+#BFA - Helper functions for detecting different group item types - END
+
+
+#BFA - Helper function for filtering item types, needed by the "Move Item" operator
+def get_similar_items(item):
+    items = item.parent.interface_items
+
+    if is_panel(item):
+        similar_items = filter(is_panel, items)
+    elif is_input(item):
+        similar_items = filter(is_input, items)
+    elif is_output(item):
+        similar_items = filter(is_output, items)
+    elif is_panel_toggle(item):
+        similar_items = filter(is_panel_toggle, items)
+    else:
+        raise ValueError(f"Unrecognized Type: \"{item}\"")
+
+    return tuple(similar_items)
+
+    
 class NodeSetting(PropertyGroup):
     value: StringProperty(
         name="Value",
@@ -478,6 +542,46 @@ class NODE_OT_interface_item_new_output(
         name="Item Type", items=(("OUTPUT", "Output", ""),), default="OUTPUT"
     )
 
+# BFA - Create dedicated operator for adding panel checkbox
+class NODE_OT_interface_item_new_panel_toggle(Operator):
+    '''Add a new panel toggle to the currently selected panel'''
+    bl_idname = "node.interface_item_new_panel_toggle"
+    bl_label = "New Panel Checkbox"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        try:
+            snode = context.space_data
+            tree = snode.edit_tree
+            interface = tree.interface
+
+            active_item = interface.active
+
+            if active_item.item_type != 'PANEL':
+                cls.poll_message_set("Active item is not a panel")
+                return False
+            
+            if get_panel_toggle(active_item) is not None:
+                cls.poll_message_set("Panel already has a toggle")
+                return False
+            
+            return True
+        except AttributeError:
+            return False
+
+    def execute(self, context):
+        snode = context.space_data
+        tree = snode.edit_tree
+
+        interface = tree.interface
+        active_panel = interface.active
+
+        item = interface.new_socket(active_panel.name, socket_type='NodeSocketBool', in_out='INPUT')
+        item.is_panel_toggle = True
+        interface.move_to_parent(item, active_panel, 0)
+        return {'FINISHED'}
+
 
 class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
     """Add a copy of the active item to the interface"""
@@ -540,32 +644,32 @@ class NODE_OT_interface_item_make_panel_toggle(NodeInterfaceOperator, Operator):
     bl_label = "Make Panel Toggle"
     bl_options = {'REGISTER', 'UNDO'}
 
+    # BFA - Make poll function easier to read through
     @classmethod
     def poll(cls, context):
-        if not super().poll(context):
-            return False
+        try:
+            snode = context.space_data
+            tree = snode.edit_tree
+            active_item = tree.interface.active
 
-        snode = context.space_data
-        tree = snode.edit_tree
-        interface = tree.interface
-        active_item = interface.active
-        if not active_item:
-            return False
+            if not is_boolean_input(active_item):
+                cls.poll_message_set("Active item is not a boolean input socket")
+                return False
 
-        if type(active_item) is not bpy.types.NodeTreeInterfaceSocketBool or active_item.in_out != 'INPUT':
-            cls.poll_message_set("Only boolean input sockets are supported")
-            return False
+            panel = active_item.parent
 
-        parent_panel = active_item.parent
-        if parent_panel.parent is None:
-            cls.poll_message_set("Socket must be in a panel")
-            return False
-        if len(parent_panel.interface_items) > 0:
-            first_item = parent_panel.interface_items[0]
-            if first_item.is_panel_toggle:
+            if panel.parent is None:
+                cls.poll_message_set("Socket must be in a panel")
+                return False
+            
+            if get_panel_toggle(panel) is not None:
                 cls.poll_message_set("Panel already has a toggle")
                 return False
-        return True
+                
+            return True
+            
+        except AttributeError:
+            return False
 
     def execute(self, context):
         snode = context.space_data
@@ -598,22 +702,26 @@ class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator
     bl_label = "Unlink Panel Toggle"
     bl_options = {'REGISTER', 'UNDO'}
 
+    # BFA - Add proper poll messages when operator is not executable
     @classmethod
     def poll(cls, context):
-        if not super().poll(context):
-            return False
+        try:
+            snode = context.space_data
+            tree = snode.edit_tree
+            active_item = tree.interface.active
 
-        snode = context.space_data
-        tree = snode.edit_tree
-        interface = tree.interface
-        active_item = interface.active
-        if not active_item or active_item.item_type != 'PANEL':
-            return False
-        if len(active_item.interface_items) == 0:
-            return False
+            if active_item.item_type != 'PANEL':
+                cls.poll_message_set("Active item is not a panel")
+                return False
 
-        first_item = active_item.interface_items[0]
-        return first_item.is_panel_toggle
+            if get_panel_toggle(active_item) is None:
+                cls.poll_message_set("Panel does not have a toggle")
+                return False
+            
+            return True
+
+        except AttributeError:
+            return False
 
     def execute(self, context):
         snode = context.space_data
@@ -664,71 +772,137 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
         interface = tree.interface
         return interface.active is not None
 
-    @staticmethod
-    def fetch_all_parents(interface):
-        # The root panel that sockets are parented to by default is not directly accessible
-        # Hence we retrieve it by creating a new socket and getting its parent
-        new_socket = interface.new_socket(name="DUMMY_SOCKET")
-        yield new_socket.parent
-        interface.remove(new_socket)
+    def should_change_parents(self, active_item):
+        similar_items = get_similar_items(active_item)
+        last_index = (len(similar_items) - 1)
+        in_base_panel = active_item.parent.parent is None
 
-        # Retrieve all other panels
-        for item in interface.items_tree:
-            if item.item_type == "PANEL":
-                yield item
-
-    @staticmethod
-    def get_prev_parent(parents, current_parent):
-        prev_parent = parents[0]
-
-        for parent in parents:
-            if parent == current_parent:
+        for i, item in enumerate(similar_items):
+            if item == active_item:
                 break
 
-            prev_parent = parent
-
-        return prev_parent
-
+        if is_panel(active_item):
+            if self.direction == "UP":
+                return not (i == 0) or not in_base_panel
+            elif self.direction == "DOWN":
+                return not (i == last_index) or not in_base_panel
+        else:
+            if self.direction == "UP":
+                return i == 0 and not in_base_panel
+            elif self.direction == "DOWN":
+                return i == last_index 
+    
     @staticmethod
-    def get_next_parent(parents, current_parent):
-        iter_parents = iter(parents)
-        for parent in iter_parents:
-            if parent == current_parent:
-                break
+    def adjacent_panel(panel, direction):
+        if panel.parent is None:
+            return None
+
+        items = filter(is_panel, panel.parent.interface_items)
 
         try:
-            next_parent = next(iter_parents)
+            import itertools
+            if direction == "UP":
+                return next(i[0] for i in itertools.pairwise(items) if i[1] == panel)
+            elif direction == "DOWN":
+                return next(i[1] for i in itertools.pairwise(items) if i[0] == panel)
         except StopIteration:
-            next_parent = parent
+            return None
+        
+    @staticmethod
+    def endpoint_panel(panel, direction):
+        items = panel.interface_items
 
-        return next_parent
+        try:
+            if direction == "UP":
+                return next(i for i in filter(is_panel, reversed(items)))
+            elif direction == "DOWN":
+                return next(i for i in filter(is_panel, items))
+        except StopIteration:
+            return None
+        
+    def next_panel_up(self, panel):
+        while True:
+            target = panel
+            panel = self.endpoint_panel(target, self.direction)
+            
+            if panel is None:
+                return target
+
+    def next_panel_down(self, panel):
+        target = panel
+        while True:
+            if target.parent is None:
+                return None
+
+            panel = self.adjacent_panel(target, self.direction)
+            if panel is not None:
+                return panel
+            
+            target = target.parent
+
+    def get_nearest_panel_up(self, active_item):
+        if is_panel(active_item):
+            target = self.adjacent_panel(active_item, self.direction)
+            if target is not None:
+                return target
+        else:
+            target = self.adjacent_panel(active_item.parent, self.direction)
+            if target is not None:
+                return self.next_panel_up(target)
+
+        return active_item.parent.parent
+
+    def get_nearest_panel_down(self, active_item):
+        if is_panel(active_item):
+            target = self.adjacent_panel(active_item, self.direction)
+            if target is None:
+                return active_item.parent.parent
+        else:
+            target = self.endpoint_panel(active_item.parent, self.direction)
+            if target is None:
+                return self.next_panel_down(active_item)
+            
+        return target
 
     def execute(self, context):
-        interface = context.space_data.edit_tree.interface
+        snode = context.space_data
+        tree = snode.edit_tree
+        interface = tree.interface
         active_item = interface.active
 
-        offset = -1 if self.direction == "UP" else 2
+        offset = -1 if self.direction == 'UP' else 2
 
-        old_position = active_item.position
-        interface.move(active_item, active_item.position + offset)
+        if not self.should_change_parents(active_item):
+            old_position = active_item.position
+            interface.move(active_item, active_item.position + offset)
 
-        if active_item.position == old_position and active_item.item_type == "SOCKET":
-            parents = tuple(self.fetch_all_parents(interface))
+            if old_position == active_item.position:
+                return {'CANCELLED'}
 
-            if self.direction == "UP":
-                new_parent = self.get_prev_parent(parents, active_item.parent)
-                new_position = len(new_parent.interface_items)
+            interface.active_index = active_item.index
+            return {'FINISHED'}
+
+        if self.direction == "UP":
+            target_panel = self.get_nearest_panel_up(active_item)
+            if is_panel(active_item) and (target_panel == active_item.parent.parent):
+                target_index = active_item.parent.position
             else:
-                new_parent = self.get_next_parent(parents, active_item.parent)
-                new_position = 0
-
-            if new_parent != active_item.parent:
-                interface.move_to_parent(active_item, new_parent, new_position)
+                target_index = len(target_panel.interface_items)
+            
+        elif self.direction == "DOWN":
+            target_panel = self.get_nearest_panel_down(active_item)
+            if is_panel(active_item) and (target_panel == active_item.parent.parent):
+                target_index = active_item.parent.position + 1
             else:
-                return {"CANCELLED"}
+                has_panel_toggle = get_panel_toggle(target_panel) is not None
+                target_index = has_panel_toggle
 
+        if target_panel is None:
+            return {'CANCELLED'}
+        
+        interface.move_to_parent(active_item, target_panel, target_index)
         interface.active_index = active_item.index
-        return {"FINISHED"}
+        return {'FINISHED'}
 
 
 ## BFA - BFA operator for GUI buttons to re-order items - End
@@ -873,6 +1047,7 @@ classes = (
     NODE_OT_interface_item_new_input,  # BFA separated add input operator with own description.
     NODE_OT_interface_item_new_output,  # BFA separated add output operator with own description.
     NODE_OT_interface_item_new_panel,  # BFA separated add panel operator with own description.
+    NODE_OT_interface_item_new_panel_toggle, # BFA - Create dedicated operator with separate poll function.
     NODE_OT_interface_item_duplicate,
     NODE_OT_interface_item_remove,
     NODE_OT_interface_item_make_panel_toggle,

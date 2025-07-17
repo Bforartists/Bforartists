@@ -90,19 +90,13 @@ class IMAGE_MT_view(Menu):
         show_render = sima.show_render
         show_maskedit = sima.show_maskedit
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        #overlay = sima.overlay
-
         layout.prop(sima, "show_region_toolbar")
         layout.prop(sima, "show_region_ui")
         layout.prop(sima, "show_region_tool_header")
         layout.prop(sima, "show_region_asset_shelf")
         layout.prop(sima, "show_region_hud")
         if sima.mode == 'UV':
-            layout.prop(addon_prefs, "uv_show_toolshelf_tabs")
-            # layout.prop(overlay, "show_toolshelf_tabs", text="Tool Shelf Tabs") # bfa - the toolshelf tabs.
+            layout.prop(sima, "show_toolshelf_tabs")
 
         layout.separator()
 
@@ -840,14 +834,14 @@ class IMAGE_MT_uvs_snap_pie(Menu):
         layout.operator_context = 'EXEC_REGION_WIN'
 
         pie.operator(
-            "uv.snap_selected",
-            text="Selected to Pixels",
-            icon='RESTRICT_SELECT_OFF',
-        ).target = 'PIXELS'
-        pie.operator(
             "uv.snap_cursor",
             text="Cursor to Pixels",
             icon='PIVOT_CURSOR',
+        ).target = 'PIXELS'
+        pie.operator(
+            "uv.snap_selected",
+            text="Selected to Pixels",
+            icon='RESTRICT_SELECT_OFF',
         ).target = 'PIXELS'
         pie.operator(
             "uv.snap_cursor",
@@ -2069,8 +2063,26 @@ class IMAGE_PT_overlay_uv_display(Panel):
         overlay = sima.overlay
 
         layout.active = overlay.show_overlays
-        layout.prop(uvedit, "show_uv")
-        layout.prop(uvedit, "uv_face_opacity")
+        # BFA - changed greatly to be improved
+        # UV Display
+        split = layout.split()
+        col = split.column()
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(uvedit, "show_uv")
+        col = split.column()
+        if uvedit.show_uv:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+            
+        if uvedit.show_uv:
+            col = layout.column()
+            col.use_property_split = True
+            row = col.row()
+            row.separator ( factor = 3.0)
+            row.prop(uvedit, "uv_face_opacity")
 
 
 class IMAGE_PT_overlay_image(Panel):
@@ -2178,7 +2190,6 @@ class IMAGE_OT_switch_editors_to_uv(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_uv"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to UV Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -2192,7 +2203,6 @@ class IMAGE_OT_switch_editors_to_image(bpy.types.Operator):
     bl_idname = "wm.switch_editor_to_image"        # unique identifier for buttons and menu items to reference.
     # display name in the interface.
     bl_label = "Switch to Image Editor"
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     # execute() is called by blender when running the operator.
     def execute(self, context):

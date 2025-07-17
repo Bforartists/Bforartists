@@ -55,7 +55,7 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
         strips = [
             s
             for s in master_scene.sequence_editor.sequences
-            if isinstance(s, bpy.types.Strip) and s.scene == bpy.context.scene
+            if isinstance(s, bpy.types.SceneStrip) and s.scene == bpy.context.scene
         ]
 
         candidates = [

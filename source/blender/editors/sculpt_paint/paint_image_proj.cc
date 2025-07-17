@@ -62,14 +62,12 @@
 #include "BKE_idprop.hh"
 #include "BKE_image.hh"
 #include "BKE_layer.hh"
-#include "BKE_lib_id.hh"
 #include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_main_invariants.hh"
 #include "BKE_material.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_mapping.hh"
-#include "BKE_mesh_runtime.hh"
 #include "BKE_node.hh"
 #include "BKE_node_legacy_types.hh"
 #include "BKE_node_runtime.hh"
@@ -6890,9 +6888,11 @@ static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
       uiLayout *col = &layout->column(true);
       col->prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       col->prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      col->use_property_split_set(false); /* bfa - use_property_split_set = False */
+      layout->use_property_split_set(false); /* bfa - use_property_split_set = False */
       layout->prop(op->ptr, "alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout->use_property_split_set(true); /* bfa - use_property_split = back to true */
       layout->prop(op->ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout->use_property_split_set(false); /* bfa - use_property_split_set = False */
       layout->prop(op->ptr, "float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       layout->use_property_split_set(true); /* bfa - use_property_split = back to true */
       break;

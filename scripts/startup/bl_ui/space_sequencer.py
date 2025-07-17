@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # BFA - Added icons and floated properties left
-# BFA - This document is heavily modified, so like the space_view3d.py, 
-# BFA - compare old Blender with new Blender then splice in changes. 
-# BFA - Rebase compare every now and then. 
+# BFA - This document is heavily modified, so like the space_view3d.py,
+# BFA - compare old Blender with new Blender then splice in changes.
+# BFA - Rebase compare every now and then.
 
 import bpy
 from bpy.types import (
@@ -522,11 +522,7 @@ class SEQUENCER_MT_preview_zoom(Menu):
                 icon='ZOOM_SET',  # BFA
             ).ratio = ratio
 
-        layout.separator()
-        layout.operator("view2d.zoom_in")
-        layout.operator("view2d.zoom_out")
-        layout.operator("view2d.zoom_border", text="Zoom Region...")
-
+        # BFA - redundant zoom operators were removed
 
 class SEQUENCER_MT_proxy(Menu):
     bl_label = "Proxy"
@@ -594,7 +590,7 @@ class SEQUENCER_MT_view(Menu):
         if is_sequencer_only:
             layout.prop(st, "show_region_channels")
 
-        layout.prop(addon_prefs, "vse_show_toolshelf_tabs")  # BFA
+        layout.prop(st, "show_toolshelf_tabs")
 
         layout.prop(st, "show_region_footer")
         layout.separator()
@@ -624,12 +620,12 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
             layout.operator("sequencer.view_all", text="Frame All", icon='VIEWALL')
-            layout.operator(
-                "anim.scene_range_frame",
-                text="Frame Preview Range"
-                if context.scene.use_preview_range
-                else "Frame Scene Range",
-            )
+
+            if context.scene.use_preview_range:
+                layout.operator("anim.scene_range_frame", text="Frame Preview Range", icon = "FRAME_PREVIEW_RANGE")
+            else:
+                layout.operator("anim.scene_range_frame",text= "Frame Scene Range", icon = "FRAME_SCENE_RANGE")
+
             layout.operator("sequencer.view_frame", icon='VIEW_FRAME')
             layout.operator(
                 "sequencer.view_selected", text="Frame Selected", icon="VIEW_SELECTED"
@@ -645,7 +641,6 @@ class SEQUENCER_MT_view(Menu):
                     "view2d.zoom_border", text="Zoom Border", icon='ZOOM_BORDER'
                 )  # BFA
                 layout.menu("SEQUENCER_MT_preview_zoom")
-            layout.prop(st, "use_zoom_to_fit", text="Auto Zoom")
             layout.separator()
 
             layout.operator(
@@ -1031,7 +1026,7 @@ class SEQUENCER_MT_change(Menu):
                             props.filter_movie = True
                         elif strip_type == 'SOUND':
                             props.filter_sound = True
-                elif strip_type in effect_strips:
+                elif strip and strip_type in effect_strips:
                     layout.operator_context = 'INVOKE_DEFAULT'
                     layout.menu("SEQUENCER_MT_strip_effect_change")
                     layout.operator("sequencer.reassign_inputs")
@@ -1407,17 +1402,16 @@ class SEQUENCER_MT_strip_text_characters(Menu):
         layout.operator_enum("sequencer.text_cursor_move", "type")
 
 
-# BFA - Not Used
 class SEQUENCER_MT_strip_show_hide(Menu):
     bl_label = "Show/Hide"
 
     def draw(self, _context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_PREVIEW'
-        layout.operator("sequencer.unmute", text="Show Hidden Strips").unselected = False
+        layout.operator("sequencer.unmute", text="Show Hidden Strips", icon="HIDE_OFF").unselected = False
         layout.separator()
-        layout.operator("sequencer.mute", text="Hide Selected").unselected = False
-        layout.operator("sequencer.mute", text="Hide Unselected").unselected = True
+        layout.operator("sequencer.mute", text="Hide Selected", icon="HIDE_ON").unselected = False
+        layout.operator("sequencer.mute", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
 
 
 class SEQUENCER_MT_strip_animation(Menu):
@@ -1426,9 +1420,9 @@ class SEQUENCER_MT_strip_animation(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("anim.keyframe_insert", text="Insert Keyframe")
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set").always_prompt = True
-        layout.operator("anim.keying_set_active_set", text="Change Keying Set...")
+        layout.operator("anim.keyframe_insert", text="Insert Keyframe", icon="KEYFRAMES_INSERT")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon="KEYFRAMES_INSERT").always_prompt = True
+        layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon="KEYINGSET")
 
 
 class SEQUENCER_MT_strip_input(Menu):
@@ -1647,13 +1641,14 @@ class SEQUENCER_MT_strip(Menu):
                 "sequencer.preview_duplicate_move", text="Duplicate", icon='DUPLICATE'
             )
             layout.separator()
+
             layout.menu("SEQUENCER_MT_strip_animation")
+
             layout.separator()
+
             layout.menu("SEQUENCER_MT_strip_show_hide")
+
             layout.separator()
-            # BFA - moved to top header level
-            # if strip and strip.type == 'TEXT':
-            #    layout.menu("SEQUENCER_MT_strip_text")
 
         if has_sequencer:
             layout.menu("SEQUENCER_MT_strip_retiming")
@@ -1866,7 +1861,7 @@ class SEQUENCER_MT_image_transform(Menu):
         layout.operator("transform.rotate", icon="TRANSFORM_ROTATE")
         layout.operator("transform.resize", text="Scale", icon="TRANSFORM_SCALE")
         layout.separator()
-        layout.operator("transform.translate", text="Move Origin").translate_origin = True
+        layout.operator("transform.translate", text="Move Origin", icon = "OBJECT_ORIGIN").translate_origin = True
 
 
 # BFA - Was used in the image menu. But not used in the UI anymore, remains for compatibility
@@ -3610,7 +3605,6 @@ class SEQUENCER_PT_cache_view_settings(SequencerButtonsPanel, Panel):
         col.prop(cache_settings, "show_cache_final_out", text="Final")
         if show_developer_ui:
             col.prop(cache_settings, "show_cache_raw", text="Raw")
-        col.prop(cache_settings, "show_cache_final_out", text="Final")
 
         show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
         if show_cache_size:
@@ -4333,7 +4327,6 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 if show_developer_ui:
                     col.prop(cache_settings, "show_cache_raw", text="Raw")
                     col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
-                    col.prop(cache_settings, "show_cache_composite", text="Composite")
 
 
             layout.use_property_split = False
@@ -4345,7 +4338,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 layout.prop(overlay_settings, "show_metadata")
 
             layout.use_property_split = False
-            layout.prop(st, "use_zoom_to_fit")
+            layout.prop(st, "use_zoom_to_fit", text="Auto Zoom to Fit")
 
         if is_sequencer_view:
             col = layout.column(align=True)

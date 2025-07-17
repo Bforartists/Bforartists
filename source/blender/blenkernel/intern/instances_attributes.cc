@@ -2,7 +2,6 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "BKE_attribute_legacy_convert.hh"
 #include "BKE_instances.hh"
 
 #include "attribute_access_intern.hh"
@@ -69,9 +68,7 @@ static constexpr AttributeAccessorFunctions get_instances_accessor_functions()
     if (!info) {
       return std::nullopt;
     }
-    const std::optional<eCustomDataType> cd_type = attr_type_to_custom_data_type(info->type);
-    BLI_assert(cd_type.has_value());
-    return AttributeDomainAndType{info->domain, *cd_type};
+    return AttributeDomainAndType{info->domain, info->type};
   };
   fn.get_builtin_default = [](const void * /*owner*/, StringRef name) -> GPointer {
     const AttrBuiltinInfo &info = builtin_attributes().lookup(name);
@@ -104,10 +101,7 @@ static constexpr AttributeAccessorFunctions get_instances_accessor_functions()
       const auto get_fn = [&]() {
         return attribute_to_reader(attribute, AttrDomain::Instance, instances.instances_num());
       };
-      const std::optional<eCustomDataType> cd_type = attr_type_to_custom_data_type(
-          attribute.data_type());
-      BLI_assert(cd_type.has_value());
-      AttributeIter iter(attribute.name(), attribute.domain(), *cd_type, get_fn);
+      AttributeIter iter(attribute.name(), attribute.domain(), attribute.data_type(), get_fn);
       iter.is_builtin = builtin_attributes().contains(attribute.name());
       iter.accessor = &accessor;
       fn(iter);
@@ -151,13 +145,11 @@ static constexpr AttributeAccessorFunctions get_instances_accessor_functions()
   fn.add = [](void *owner,
               const StringRef name,
               const AttrDomain domain,
-              const eCustomDataType data_type,
+              const AttrType type,
               const AttributeInit &initializer) {
     Instances &instances = *static_cast<Instances *>(owner);
     const int domain_size = instances.instances_num();
     AttributeStorage &storage = instances.attribute_storage();
-    const std::optional<AttrType> type = custom_data_type_to_attr_type(data_type);
-    BLI_assert(type.has_value());
     if (const AttrBuiltinInfo *info = builtin_attributes().lookup_ptr(name)) {
       if (info->domain != domain || info->type != type) {
         return false;
@@ -166,8 +158,12 @@ static constexpr AttributeAccessorFunctions get_instances_accessor_functions()
     if (storage.lookup(name)) {
       return false;
     }
-    Attribute::DataVariant data = attribute_init_to_data(*type, domain_size, initializer);
-    storage.add(name, domain, *type, std::move(data));
+    storage.add(name, domain, type, attribute_init_to_data(type, domain_size, initializer));
+    if (initializer.type != AttributeInit::Type::Construct) {
+      if (const std::optional<AttrUpdateOnChange> fn = changed_tags().lookup_try(name)) {
+        (*fn)(owner);
+      }
+    }
     return true;
   };
 

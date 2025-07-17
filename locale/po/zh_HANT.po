@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.5.0 Beta (b'b4eeddd11342')\n"
+"Project-Id-Version: Bforartists 4.5.0 Release Candidate (b'08ec4602a2f7')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:22+0000\n"
+"POT-Creation-Date: 2025-07-14 09:15+0000\n"
 "PO-Revision-Date: 2025-06-19 13:59+0000\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Chinese (Traditional Han script) <https://translate.blender.org/projects/blender-ui/ui/zh_Hant/>\n"
@@ -722,8 +722,8 @@ msgid "Fribidi Library"
 msgstr "Fribidi 函式庫"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
-msgstr "FriBidi C 編譯的函式庫 (Linux 下為 .so，Windows 下為 .dll⋯)，若您是在 Windows 下您可能需要編輯它，例如使用 Blender 函式庫儲存庫中收錄的版本"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
+msgstr "FriBidi C 編譯的函式庫 (Linux 下為 .so，Windows 下為 .dll⋯)，若您是在 Windows 下您可能需要編輯它，例如使用 Bforartists 函式庫儲存庫中收錄的版本"
 
 
 msgid "Translation Root"
@@ -746,8 +746,8 @@ msgid "Source Root"
 msgstr "來源基根"
 
 
-msgid "The Blender source root path"
-msgstr "Blender 來源根路徑"
+msgid "The Bforartists source root path"
+msgstr "Bforartists 來源根路徑"
 
 
 msgid "Spell Cache"
@@ -770,8 +770,8 @@ msgid "Persistent Data Path"
 msgstr "永恆資料路徑"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
-msgstr "一份儲存這些設定的 json 檔案名稱 (不幸地，Blender 的系統目前無法於此處運作)"
+msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgstr "一份儲存這些設定的 json 檔案名稱 (不幸地，Bforartists 的系統目前無法於此處運作)"
 
 
 msgid "User Add-ons"
@@ -1426,8 +1426,8 @@ msgid "Catalog UUID"
 msgstr "編目 UUID"
 
 
-msgid "Identifier for the asset's catalog, used by Blender to look up the asset's catalog path. Must be a UUID according to RFC4122."
-msgstr "此素材的編目的識別子，Blender 使用它來查找素材的編目路徑。必須視遵照 RFC4122 的 UUID。"
+msgid "Identifier for the asset's catalog, used by Bforartists to look up the asset's catalog path. Must be a UUID according to RFC4122."
+msgstr "此素材的編目的識別子，Bforartists 使用它來查找素材的編目路徑。必須視遵照 RFC4122 的 UUID。"
 
 
 msgid "Catalog Simple Name"
@@ -2892,12 +2892,12 @@ msgid "Import Info"
 msgstr "匯入資訊"
 
 
-msgid "Blender RNA"
-msgstr "Blender RNA"
+msgid "Bforartists RNA"
+msgstr "Bforartists RNA"
 
 
-msgid "Blender RNA structure definitions"
-msgstr "Blender RNA 結構定義"
+msgid "Bforartists RNA structure definitions"
+msgstr "Bforartists RNA 結構定義"
 
 
 msgid "Structs"
@@ -5857,8 +5857,8 @@ msgid "Lin error"
 msgstr "連結錯誤"
 
 
-msgid "Amount of residual error in Blender space unit for constraints that work on position"
-msgstr "Blender 空間單位中約束作用於位置的殘餘錯誤量"
+msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
+msgstr "Bforartists 空間單位中約束作用於位置的殘餘錯誤量"
 
 
 msgid "Rotation error"
@@ -8677,8 +8677,8 @@ msgid "Max Velocity"
 msgstr "最大速度"
 
 
-msgid "Velocity considered as maximum influence (Blender units per frame)"
-msgstr "速度被視為最大影響 (每幀的 Blender 單位)"
+msgid "Velocity considered as maximum influence (Bforartists units per frame)"
+msgstr "速度被視為最大影響 (每幀的 Bforartists 單位)"
 
 
 msgid "Velocity Color Ramp"
@@ -9046,8 +9046,8 @@ msgid "Premultiply Alpha"
 msgstr "預乘 Alpha"
 
 
-msgid "Multiply color by alpha (recommended for Blender input)"
-msgstr "色彩乘以 alpha (建議 Blender 輸入使用)"
+msgid "Multiply color by alpha (recommended for Bforartists input)"
+msgstr "色彩乘以 alpha (建議 Bforartists 輸入使用)"
 
 
 msgid "Use Shrink"
@@ -10936,24 +10936,24 @@ msgid "Hide .blend files items that are not data-blocks with asset metadata"
 msgstr "隱藏不是包含素材中介資料的資料組塊的 .blend 檔案項目"
 
 
-msgid "Filter Blender Backup Files"
-msgstr "過濾 Blender 備份檔案"
+msgid "Filter Bforartists Backup Files"
+msgstr "過濾 Bforartists 備份檔案"
 
 
 msgid "Show .blend1, .blend2, etc. files"
 msgstr "顯示 .blend1、.blend2 等檔案"
 
 
-msgid "Filter Blender"
-msgstr "過濾 Blender"
+msgid "Filter Bforartists"
+msgstr "過濾 Bforartists"
 
 
 msgid "Show .blend files"
 msgstr "顯示 .blend 檔案"
 
 
-msgid "Filter Blender IDs"
-msgstr "依 Blender ID 過濾"
+msgid "Filter Bforartists IDs"
+msgstr "依 Bforartists ID 過濾"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
@@ -13801,8 +13801,8 @@ msgid "Unprojected Radius"
 msgstr "未投射的半徑"
 
 
-msgid "Radius of brush in Blender units"
-msgstr "筆刷的半徑，單位為 Blender 單位"
+msgid "Radius of brush in Bforartists units"
+msgstr "筆刷的半徑，單位為 Bforartists 單位"
 
 
 msgid "Accumulate"
@@ -18808,11 +18808,11 @@ msgid "Noise basis used for turbulence"
 msgstr "用於擾動的噪訊基礎"
 
 
-msgid "Blender Original"
-msgstr "Blender 原始"
+msgid "Bforartists Original"
+msgstr "Bforartists 原始"
 
 
-msgid "Noise algorithm - Blender original: Smooth interpolated noise"
+msgid "Noise algorithm - Bforartists original: Smooth interpolated noise"
 msgstr "噪訊演算法 - Bledner 原始：平滑插補噪訊"
 
 
@@ -23121,8 +23121,8 @@ msgid "Cache"
 msgstr "快取"
 
 
-msgid "Blender"
-msgstr "Blender"
+msgid "Bforartists"
+msgstr "Bforartists"
 
 
 msgid "System"
@@ -30177,20 +30177,20 @@ msgid "World space normal mapping"
 msgstr "世界空間法向映射"
 
 
-msgid "Blender Object Space"
-msgstr "Blender 物體空間"
+msgid "Bforartists Object Space"
+msgstr "Bforartists 物體空間"
 
 
-msgid "Object space normal mapping, compatible with Blender render baking"
-msgstr "物體空間法向映射，與 Blender 算繪烘焙相容"
+msgid "Object space normal mapping, compatible with Bforartists render baking"
+msgstr "物體空間法向映射，與 Bforartists 算繪烘焙相容"
 
 
-msgid "Blender World Space"
-msgstr "Blender 世界空間"
+msgid "Bforartists World Space"
+msgstr "Bforartists 世界空間"
 
 
-msgid "World space normal mapping, compatible with Blender render baking"
-msgstr "世界空間法向映射，與 Blender 算繪烘焙相容"
+msgid "World space normal mapping, compatible with Bforartists render baking"
+msgstr "世界空間法向映射，與 Bforartists 算繪烘焙相容"
 
 
 msgid "UV Map for tangent space maps"
@@ -31533,8 +31533,8 @@ msgid "Unlock All Repositories (Testing)"
 msgstr "解鎖所有軟體庫（測試用）"
 
 
-msgid "Allow internet access. Blender may access configured online extension repositories. Installed third party add-ons may access the internet for their own functionality"
-msgstr "允許存取網際網路。Blender 能夠存取所設定的線上擴充套件軟體庫。已安裝的第三方附加元件能依它們自己的功能需要存取網際網路"
+msgid "Allow internet access. Bforartists may access configured online extension repositories. Installed third party add-ons may access the internet for their own functionality"
+msgstr "允許存取網際網路。Bforartists 能夠存取所設定的線上擴充套件軟體庫。已安裝的第三方附加元件能依它們自己的功能需要存取網際網路"
 
 
 msgid "Open extensions preferences"
@@ -31974,8 +31974,8 @@ msgid "Uninstall Studio Light"
 msgstr "解除安裝攝影棚燈光"
 
 
-msgid "Load and apply a Blender XML theme file"
-msgstr "載入並套用 Blender XML 主題檔案"
+msgid "Load and apply a Bforartists XML theme file"
+msgstr "載入並套用 Bforartists XML 主題檔案"
 
 
 msgctxt "Operator"
@@ -36014,28 +36014,12 @@ msgid "Other geometry types, like curve, metaball, etc. (converted to meshes)"
 msgstr "其他幾何類型，例如曲線、變幻球等。(轉換成網格)"
 
 
-msgid "Path Mode"
-msgstr "路徑模式"
-
-
 msgid "Method used to reference paths"
 msgstr "用來參照路徑的方法"
 
 
 msgid "Always write absolute paths"
 msgstr "總是寫入絕對路徑"
-
-
-msgid "Always write relative paths (where possible)"
-msgstr "總是寫入相對路徑 (可能之處)"
-
-
-msgid "Match"
-msgstr "比對"
-
-
-msgid "Strip Path"
-msgstr "片段路徑"
 
 
 msgid "Filename only"
@@ -37940,8 +37924,8 @@ msgid "Scale FPS"
 msgstr "縮放 FPS"
 
 
-msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame"
-msgstr "將幀率從 BVH 縮放成目前場景，否則每個 BVH 影格會直接映射成 Blender 影格"
+msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Bforartists frame"
+msgstr "將幀率從 BVH 縮放成目前場景，否則每個 BVH 影格會直接映射成 Bforartists 影格"
 
 
 msgid "Import vertex color attributes"
@@ -38008,8 +37992,8 @@ msgid "Update Reports Display"
 msgstr "更新報告顯示"
 
 
-msgid "Update the display of reports in Blender UI (internal use)"
-msgstr "更新 Blender UI 中 (內部使用) 報告的顯示"
+msgid "Update the display of reports in Bforartists UI (internal use)"
+msgstr "更新 Bforartists UI 中 (內部使用) 報告的顯示"
 
 
 msgctxt "Operator"
@@ -48641,8 +48625,8 @@ msgid "Sort exported data by Object name"
 msgstr "依物體名稱排序匯出的資料"
 
 
-msgid "Use Blender Profile"
-msgstr "使用 Blender 設定檔"
+msgid "Use Bforartists Profile"
+msgstr "使用 Bforartists 設定檔"
 
 
 msgid "Use Object Instances"
@@ -48670,8 +48654,8 @@ msgid "Import Units"
 msgstr "匯入單位"
 
 
-msgid "If disabled match import to Blender's current Unit settings, otherwise use the settings from the Imported scene"
-msgstr "若停用則讓匯入內容符合 Blender 目前的單位設定，否則使用匯入場景的設定"
+msgid "If disabled match import to Bforartists's current Unit settings, otherwise use the settings from the Imported scene"
+msgstr "若停用則讓匯入內容符合 Bforartists 目前的單位設定，否則使用匯入場景的設定"
 
 
 msgctxt "Operator"
@@ -48792,8 +48776,8 @@ msgid "Open"
 msgstr "開啟"
 
 
-msgid "Open a Blender file"
-msgstr "開啟一個 Blender 檔案"
+msgid "Open a Bforartists file"
+msgstr "開啟一個 Bforartists 檔案"
 
 
 msgid "Load UI"
@@ -48889,12 +48873,12 @@ msgstr "屬性名稱編輯"
 
 
 msgctxt "Operator"
-msgid "Quit Blender"
-msgstr "離開 Blender"
+msgid "Quit Bforartists"
+msgstr "離開 Bforartists"
 
 
-msgid "Quit Blender"
-msgstr "離開 Blender"
+msgid "Quit Bforartists"
+msgstr "離開 Bforartists"
 
 
 msgctxt "Operator"
@@ -49105,16 +49089,16 @@ msgstr "儲存初始啟動檔案"
 
 
 msgctxt "Operator"
-msgid "Save Blender File"
-msgstr "儲存 Blender 檔案"
+msgid "Save Bforartists File"
+msgstr "儲存 Bforartists 檔案"
 
 
-msgid "Save the current Blender file"
-msgstr "儲存目前的 Blender 檔案"
+msgid "Save the current Bforartists file"
+msgstr "儲存目前的 Bforartists 檔案"
 
 
-msgid "Save the current Blender file with a numerically incremented name that does not overwrite any existing files"
-msgstr "儲存目前的 Blender 檔案但在名稱上加上遞增數字來避免覆寫任何現存檔案"
+msgid "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
+msgstr "儲存目前的 Bforartists 檔案但在名稱上加上遞增數字來避免覆寫任何現存檔案"
 
 
 msgctxt "Operator"
@@ -49223,8 +49207,8 @@ msgstr "開啟包含發行資訊的啟動畫面"
 
 
 msgctxt "Operator"
-msgid "About Blender"
-msgstr "關於 Blender"
+msgid "About Bforartists"
+msgstr "關於 Bforartists"
 
 
 msgctxt "Operator"
@@ -51827,8 +51811,8 @@ msgid "Edit Methods"
 msgstr "編輯方法"
 
 
-msgid "Settings for interacting with Blender data"
-msgstr "Blender 資料的互動設定"
+msgid "Settings for interacting with Bforartists data"
+msgstr "Bforartists 資料的互動設定"
 
 
 msgid "Settings for extensions"
@@ -52767,8 +52751,8 @@ msgid "Register for All Users"
 msgstr "為所有使用者註冊"
 
 
-msgid "Make this Blender version open blend files for all users. Requires elevated privileges."
-msgstr "讓所有使用者都使用這個 Blender 版本來開啟 blend 檔案。需要管理員權限。"
+msgid "Make this Bforartists version open blend files for all users. Requires elevated privileges."
+msgstr "讓所有使用者都使用這個 Bforartists 版本來開啟 blend 檔案。需要管理員權限。"
 
 
 msgid "Maximum number of lines to store for the console buffer"
@@ -56905,8 +56889,8 @@ msgid "Type of information to display"
 msgstr "要顯示的資訊類型"
 
 
-msgid "Blender File"
-msgstr "Blender 檔案"
+msgid "Bforartists File"
+msgstr "Bforartists 檔案"
 
 
 msgid "Display data of current file and linked libraries"
@@ -56969,8 +56953,8 @@ msgid "Space Preferences"
 msgstr "空間偏好設定"
 
 
-msgid "Blender preferences space data"
-msgstr "Blender 偏好設定空間資料"
+msgid "Bforartists preferences space data"
+msgstr "Bforartists 偏好設定空間資料"
 
 
 msgid "Search term for filtering in the UI"
@@ -59559,8 +59543,8 @@ msgid "Theme Preferences"
 msgstr "主題偏好設定"
 
 
-msgid "Theme settings for the Blender Preferences"
-msgstr "Blender 偏好設定中的主題設定"
+msgid "Theme settings for the Bforartists Preferences"
+msgstr "Bforartists 偏好設定中的主題設定"
 
 
 msgid "Theme Properties"
@@ -62247,8 +62231,8 @@ msgid "Missing Built-in Add-ons"
 msgstr "缺乏的內建附加元件"
 
 
-msgid "Add-ons previously shipped with Blender are now available from extensions.blender.org."
-msgstr "之前與 Blender 搭配提供的擴充套件，現在可以從 extensions.blender.org 取得。"
+msgid "Add-ons previously shipped with Bforartists are now available from extensions.blender.org."
+msgstr "之前與 Bforartists 搭配提供的擴充套件，現在可以從 extensions.blender.org 取得。"
 
 
 msgid "Missing Add-ons"
@@ -62285,8 +62269,8 @@ msgid "None"
 msgstr "無"
 
 
-msgid "Blender's extension repository not found!"
-msgstr "找不到 Blender 的擴充套件軟體庫！"
+msgid "Bforartists's extension repository not found!"
+msgstr "找不到 Bforartists 的擴充套件軟體庫！"
 
 
 msgid ":"
@@ -62831,13 +62815,13 @@ msgstr "授權條款"
 
 
 msgctxt "Operator"
-msgid "Blender Store"
-msgstr "Blender 商店"
+msgid "Bforartists Store"
+msgstr "Bforartists 商店"
 
 
 msgctxt "Operator"
-msgid "Blender Website"
-msgstr "Blender 網站"
+msgid "Bforartists Website"
+msgstr "Bforartists 網站"
 
 
 msgctxt "Operator"
@@ -62862,8 +62846,8 @@ msgid "Release Notes"
 msgstr "發行備註"
 
 
-msgid "Read about what's new in this version of Blender"
-msgstr "關於這個版本的 Blender 的新功能與變更"
+msgid "Read about what's new in this version of Bforartists"
+msgstr "關於這個版本的 Bforartists 的新功能與變更"
 
 
 msgid "User Manual"
@@ -62979,8 +62963,8 @@ msgstr "材質"
 
 
 msgctxt "Operator"
-msgid "Import Blender {:d}.{:d} Preferences"
-msgstr "匯入 Blender {:d}.{:d} 偏好設定"
+msgid "Import Bforartists {:d}.{:d} Preferences"
+msgstr "匯入 Bforartists {:d}.{:d} 偏好設定"
 
 
 msgid "Bone(s)"
@@ -63287,11 +63271,6 @@ msgstr "基礎粗細"
 
 msgid "Spacing Along Stroke"
 msgstr "沿筆觸間距"
-
-
-msgctxt "Operator"
-msgid "Go to Linestyle Textures Properties"
-msgstr "前往線條樣式紋理屬性"
 
 
 msgid "Priority"
@@ -63792,6 +63771,10 @@ msgstr "校準"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "預取"
+
+
+msgid "Match"
+msgstr "比對"
 
 
 msgid "Track:"
@@ -65056,8 +65039,8 @@ msgstr "通用"
 
 
 msgctxt "Operator"
-msgid "Load Factory Blender Settings"
-msgstr "載入 Blender 原廠設定"
+msgid "Load Factory Bforartists Settings"
+msgstr "載入 Bforartists 原廠設定"
 
 
 msgctxt "Operator"
@@ -65161,8 +65144,8 @@ msgid "Video Memory"
 msgstr "視訊記憶體"
 
 
-msgid "Blender Version"
-msgstr "Blender 版本"
+msgid "Bforartists Version"
+msgstr "Bforartists 版本"
 
 
 msgid "Top Level"
@@ -65380,8 +65363,8 @@ msgid "Save as Studio light"
 msgstr "儲存為攝影棚燈光"
 
 
-msgid "Open blend files with this Blender version"
-msgstr "用這個 Blender 版本開啟 blend 檔案"
+msgid "Open blend files with this Bforartists version"
+msgstr "用這個 Bforartists 版本開啟 blend 檔案"
 
 
 msgctxt "Operator"
@@ -66746,8 +66729,8 @@ msgid "Unable to create app-template userpref path"
 msgstr "無法建立 app-template 使用者偏好路徑"
 
 
-msgid "File written by newer Blender binary (%d.%d), expect loss of data!"
-msgstr "檔案是由較新的 Blender 二元檔 (%d.%d) 寫入，預期會遺失資料！"
+msgid "File written by newer Bforartists binary (%d.%d), expect loss of data!"
+msgstr "檔案是由較新的 Bforartists 二元檔 (%d.%d) 寫入，預期會遺失資料！"
 
 
 msgid "Loading failed: "
@@ -67196,8 +67179,8 @@ msgid "Plane Track"
 msgstr "平面軌道"
 
 
-msgid "Blender is compiled without motion tracking library"
-msgstr "Blender 編譯時未開啟動態追蹤函式庫"
+msgid "Bforartists is compiled without motion tracking library"
+msgstr "Bforartists 編譯時未開啟動態追蹤函式庫"
 
 
 msgid "Original Mode"
@@ -67730,8 +67713,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "這個素材庫裡的素材編目不能被編輯"
 
 
-msgid "Cannot save asset catalogs before the Blender file is saved"
-msgstr "無法在 Blender 檔案儲存之前儲存素材編目"
+msgid "Cannot save asset catalogs before the Bforartists file is saved"
+msgstr "無法在 Bforartists 檔案儲存之前儲存素材編目"
 
 
 msgid "Enable catalog, making contained assets visible in the asset shelf"
@@ -68712,6 +68695,10 @@ msgid "PBR Extensions"
 msgstr "PBR 擴充"
 
 
+msgid "Path Mode"
+msgstr "路徑模式"
+
+
 msgid "ASCII"
 msgstr "ASCII"
 
@@ -69566,8 +69553,8 @@ msgid "The object the data pointer refers to is not a valid modifier"
 msgstr "資料指標參照的物體並非有效的修改器"
 
 
-msgid "Blender Render"
-msgstr "Blender 算繪"
+msgid "Bforartists Render"
+msgstr "Bforartists 算繪"
 
 
 msgid "View layer '%s' could not be removed from scene '%s'"
@@ -70564,8 +70551,8 @@ msgid "Class"
 msgstr "類別"
 
 
-msgid "File Modified Outside and Inside Blender"
-msgstr "檔案已在 Blender 之外與之內修改"
+msgid "File Modified Outside and Inside Bforartists"
+msgstr "檔案已在 Bforartists 之外與之內修改"
 
 
 msgid "Reload from disk (ignore local changes)"
@@ -70580,16 +70567,16 @@ msgid "Make text internal (separate copy)"
 msgstr "文字轉為內部 (分離副本)"
 
 
-msgid "File Modified Outside Blender"
-msgstr "檔案已在 Blender 之外修改"
+msgid "File Modified Outside Bforartists"
+msgstr "檔案已在 Bforartists 之外修改"
 
 
 msgid "Reload from disk"
 msgstr "從磁碟重新載入"
 
 
-msgid "File Deleted Outside Blender"
-msgstr "檔案已在 Blender 外刪除"
+msgid "File Deleted Outside Bforartists"
+msgstr "檔案已在 Bforartists 外刪除"
 
 
 msgid "Make text internal"
@@ -71807,8 +71794,8 @@ msgid "Modifier was not found in the stack"
 msgstr "堆疊中找不到修改器"
 
 
-msgid "Blender compiled without Audaspace support"
-msgstr "Blender 編譯時未開啟 Audaspace 支援"
+msgid "Bforartists compiled without Audaspace support"
+msgstr "Bforartists 編譯時未開啟 Audaspace 支援"
 
 
 msgid "Scripting"
@@ -72654,13 +72641,13 @@ msgid "Sheen Tint"
 msgstr "光澤染色"
 
 
+msgid "Subsurface"
+msgstr "次表面"
+
+
 msgctxt "NodeTree"
 msgid "Tint"
 msgstr "染色"
-
-
-msgid "Subsurface"
-msgstr "次表面"
 
 
 msgid "View Vector"
@@ -73037,8 +73024,8 @@ msgid "Input pending "
 msgstr "等候輸入 "
 
 
-msgid "Blender File View"
-msgstr "Blender 檔案檢視"
+msgid "Bforartists File View"
+msgstr "Bforartists 檔案檢視"
 
 
 msgid "Missing 'window' in context"
@@ -73289,8 +73276,8 @@ msgstr "您的圖形顯示卡或驅動程式支援有限。可能有辦法運作
 
 
 msgctxt "WindowManager"
-msgid "Newer graphics drivers may be available to improve Blender support."
-msgstr "或許更新版的圖形顯示卡驅動程式能改善 Blender 的支援。"
+msgid "Newer graphics drivers may be available to improve Bforartists support."
+msgstr "或許更新版的圖形顯示卡驅動程式能改善 Bforartists 的支援。"
 
 
 msgctxt "WindowManager"
@@ -73523,8 +73510,8 @@ msgid "Import-Export BVH from armature objects"
 msgstr "從骨架物件匯入/匯出 BVH"
 
 
-msgid "Blender Extensions"
-msgstr "Blender 擴充套件"
+msgid "Bforartists Extensions"
+msgstr "Bforartists 擴充套件"
 
 
 msgid "Extension repository support for remote repositories"

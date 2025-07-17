@@ -273,13 +273,13 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();
     row->prop(ptr, "use_negative_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_negative_direction", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_negative_direction", 0); /*bfa - decorator*/
 
     row = &col->row(true); /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();
     row->prop(ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_positive_direction", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_positive_direction", 0); /*bfa - decorator*/
 
     layout->prop(ptr, "cull_face", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
     col = &layout->column(false);
@@ -289,7 +289,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();
     row->prop(ptr, "use_invert_cull", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemDecoratorR(row, ptr, "use_invert_cull", 0); /*bfa - decorator*/
+    row->decorator(ptr, "use_invert_cull", 0); /*bfa - decorator*/
   }
 
   layout->prop(ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);

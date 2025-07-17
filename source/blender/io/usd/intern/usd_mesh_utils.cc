@@ -19,9 +19,9 @@ template<typename USDT>
 static void read_face_display_color(Mesh *mesh,
                                     const pxr::UsdGeomPrimvar &primvar,
                                     const pxr::TfToken &pv_name,
-                                    double motion_sample_time)
+                                    const pxr::UsdTimeCode time)
 {
-  const pxr::VtArray<USDT> usd_colors = get_primvar_array<USDT>(primvar, motion_sample_time);
+  const pxr::VtArray<USDT> usd_colors = get_primvar_array<USDT>(primvar, time);
   if (usd_colors.empty()) {
     return;
   }
@@ -81,7 +81,7 @@ static std::optional<bke::AttrDomain> convert_usd_varying_to_blender(const pxr::
 
 void read_generic_mesh_primvar(Mesh *mesh,
                                const pxr::UsdGeomPrimvar &primvar,
-                               const double motionSampleTime,
+                               const pxr::UsdTimeCode time,
                                const bool is_left_handed)
 {
   const pxr::SdfValueTypeName pv_type = primvar.GetTypeName();
@@ -89,7 +89,7 @@ void read_generic_mesh_primvar(Mesh *mesh,
   const pxr::TfToken pv_name = pxr::UsdGeomPrimvar::StripPrimvarsName(primvar.GetPrimvarName());
 
   const std::optional<bke::AttrDomain> domain = convert_usd_varying_to_blender(pv_interp);
-  const std::optional<eCustomDataType> type = convert_usd_type_to_blender(pv_type);
+  const std::optional<bke::AttrType> type = convert_usd_type_to_blender(pv_type);
 
   if (!domain.has_value() || !type.has_value()) {
     CLOG_WARN(&LOG,
@@ -109,10 +109,10 @@ void read_generic_mesh_primvar(Mesh *mesh,
              pxr::SdfValueTypeNames->Color3hArray,
              pxr::SdfValueTypeNames->Color3dArray))
     {
-      read_face_display_color<pxr::GfVec3f>(mesh, primvar, pv_name, motionSampleTime);
+      read_face_display_color<pxr::GfVec3f>(mesh, primvar, pv_name, time);
     }
     else {
-      read_face_display_color<pxr::GfVec4f>(mesh, primvar, pv_name, motionSampleTime);
+      read_face_display_color<pxr::GfVec4f>(mesh, primvar, pv_name, time);
     }
 
     return;
@@ -124,7 +124,7 @@ void read_generic_mesh_primvar(Mesh *mesh,
   }
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  copy_primvar_to_blender_attribute(primvar, motionSampleTime, *type, *domain, faces, attributes);
+  copy_primvar_to_blender_attribute(primvar, time, *type, *domain, faces, attributes);
 }
 
 }  // namespace blender::io::usd

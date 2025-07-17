@@ -311,6 +311,12 @@ enum {
 /** Total width of Toolbar showing one icon column. */
 #define UI_TOOLBAR_WIDTH UI_TOOLBAR_MARGIN + UI_TOOLBAR_COLUMN
 
+/** Offset for toolbar when tabs are visible. */
+#define UI_TOOLBAR_TAB_OFFSET 20.f /* BFA */
+
+/* Minimum width threshold for storing preferred toolbar width */
+#define UI_TOOLBAR_MIN_WIDTH_THRESHOLD 1.0f /* BFA */
+
 #define UI_PANEL_CATEGORY_MARGIN_WIDTH (U.widget_unit * 1.0f)
 
 /* Minimum width for a panel showing only category tabs. */
@@ -790,15 +796,6 @@ void UI_popover_once_clear(uiPopover *pup);
 struct uiPieMenu;
 
 wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event);
-wmOperatorStatus UI_pie_menu_invoke_from_operator_enum(bContext *C,
-                                                       blender::StringRefNull title,
-                                                       blender::StringRefNull opname,
-                                                       blender::StringRefNull propname,
-                                                       const wmEvent *event);
-wmOperatorStatus UI_pie_menu_invoke_from_rna_enum(bContext *C,
-                                                  const char *title,
-                                                  const char *path,
-                                                  const wmEvent *event);
 
 uiPieMenu *UI_pie_menu_begin(bContext *C, const char *title, int icon, const wmEvent *event)
     ATTR_NONNULL();

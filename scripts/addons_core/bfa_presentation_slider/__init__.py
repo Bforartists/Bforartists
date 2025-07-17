@@ -133,10 +133,10 @@ class VIEW_OT_SlideSetupOperator(Operator):
                 cam_obj = bpy.data.objects.new(cam_name, cam_data)
                 cam_obj.location = (0, 0, 0)
                 collection.objects.link(cam_obj)
-                self.report({'INFO'}, f"🎥 Created camera '{cam_name}' in '{collection.name}'")
+                # self.report({'INFO'}, f"🎥 Created camera '{cam_name}' in '{collection.name}'")
             elif cam_obj.name not in [o.name for o in collection.objects]:
                 collection.objects.link(cam_obj)
-                self.report({'INFO'}, f"🎥 Linked existing camera '{cam_name}' to '{collection.name}'")
+                # self.report({'INFO'}, f"🎥 Linked existing camera '{cam_name}' to '{collection.name}'")
             return cam_obj
 
         # ======= 1. SETUP S000 ===========
@@ -152,7 +152,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
                 for sc in bpy.data.scenes:
                     if set_coll.name not in [c.name for c in sc.collection.children]:
                         sc.collection.children.link(set_coll)
-                self.report({'INFO'}, f"📁 Created new SET collection '{base_collection_name}'")
+                # self.report({'INFO'}, f"📁 Created new SET collection '{base_collection_name}'")
             else:
                 for sc in bpy.data.scenes:
                     if set_coll.name not in [c.name for c in sc.collection.children]:
@@ -164,7 +164,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
                 slide_coll = bpy.data.collections.new(slide_coll_name)
                 slide_coll.color_tag = 'COLOR_02'
                 new_scene.collection.children.link(slide_coll)
-                self.report({'INFO'}, f"📦 Created slide collection '{slide_coll_name}'")
+                # self.report({'INFO'}, f"📦 Created slide collection '{slide_coll_name}'")
             else:
                 if slide_coll.name not in [c.name for c in new_scene.collection.children]:
                     new_scene.collection.children.link(slide_coll)
@@ -179,7 +179,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
             # -- Set frame range
             new_scene.frame_start = 1
             new_scene.frame_end = self.frame_range
-            self.report({'INFO'}, f"✅ Initial slide '{base_scene_name}' ready.")
+            # self.report({'INFO'}, f"✅ Initial slide '{base_scene_name}' ready.")
             return {'FINISHED'}
 
         # ======= 2. INSERT SLIDE SCENE (SEQUENTIALLY, shifting higher) ===========
@@ -188,7 +188,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
         s_pattern = re.compile(r"S(\d{3})")
         current_match = s_pattern.fullmatch(current_scene.name)
         if not current_match:
-            self.report({'ERROR'}, "Current scene is not a slide (Sxxx). Select a slide scene to insert after!")
+            # self.report({'ERROR'}, "Current scene is not a slide (Sxxx). Select a slide scene to insert after!")
             return {'CANCELLED'}
         insert_idx = int(current_match.group(1)) + 1
 
@@ -209,7 +209,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
                     new_index = idx + 1
                     new_scenename = f"S{new_index:03d}"
                     if new_scenename in bpy.data.scenes:
-                        self.report({'WARNING'}, f"Scene '{new_scenename}' already exists, skipping shift.")
+                        # self.report({'WARNING'}, f"Scene '{new_scenename}' already exists, skipping shift.")
                         continue
 
                     old_collection = bpy.data.collections.get(f"S{idx:03d}")
@@ -231,7 +231,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
         # Now, insert new slide at insert_idx (name Sxxx with insert_idx)
         src_scene = bpy.data.scenes.get(base_scene_name)
         if not src_scene:
-            self.report({'ERROR'}, "Couldn't find S000 for duplication.")
+            # self.report({'ERROR'}, "Couldn't find S000 for duplication.")
             return {'CANCELLED'}
         new_slide_name = get_next_s_name(insert_idx)
         new_scene = src_scene.copy()
@@ -243,7 +243,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
         for coll in list(new_scene.collection.children):
             if coll.name == base_scene_name:
                 new_scene.collection.children.unlink(coll)
-                self.report({'INFO'}, f"🧹 Unlinked '{base_scene_name}' collection from new scene '{new_slide_name}'")
+                # self.report({'INFO'}, f"🧹 Unlinked '{base_scene_name}' collection from new scene '{new_slide_name}'")
                 break
         # Create new slide collection with appropriate name/color, link to new scene
         new_slide_coll = bpy.data.collections.get(new_slide_name)
@@ -251,18 +251,16 @@ class VIEW_OT_SlideSetupOperator(Operator):
             new_slide_coll = bpy.data.collections.new(new_slide_name)
             new_slide_coll.color_tag = 'COLOR_02'
             new_scene.collection.children.link(new_slide_coll)
-            self.report({'INFO'}, f"📦 Created new slide collection '{new_slide_name}'")
+            # self.report({'INFO'}, f"📦 Created new slide collection '{new_slide_name}'")
         else:
             if new_slide_coll.name not in [c.name for c in new_scene.collection.children]:
                 new_scene.collection.children.link(new_slide_coll)
-                self.report({'INFO'}, f"🔁 Linked existing collection '{new_slide_coll.name}'")
+                # self.report({'INFO'}, f"🔁 Linked existing collection '{new_slide_coll.name}'")
         # Add new camera for this slide (named slide)
         cam_obj = create_slide_camera(new_slide_coll, new_slide_name)
         new_scene.camera = cam_obj
-        self.report({'INFO'}, f"✅ Inserted slide '{new_slide_name}' with new collection & camera, scenes updated!")
+        # self.report({'INFO'}, f"✅ Inserted slide '{new_slide_name}' with new collection & camera, scenes updated!")
         return {'FINISHED'}
-
-
 
   
 class VIEW_OT_PlayAnimationOperator(Operator):

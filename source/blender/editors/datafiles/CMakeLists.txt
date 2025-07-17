@@ -305,6 +305,7 @@ if(WITH_BLENDER)
       autocomplete
       automerge_off
       automerge_on
+	  average
       averageislandscale
       avoid
       axes_to_rotation
@@ -328,6 +329,7 @@ if(WITH_BLENDER)
       between_markers
       bevel
       bisect
+	  bitmath
       blank1 # BFA - not actually blank - this is used all over the place
       blend_offset
       blend_tex
@@ -808,6 +810,7 @@ if(WITH_BLENDER)
       image_alpha
       image_aspect
       image_background
+      image_coordinates
       image_data
       image_info
       image_reference
@@ -829,11 +832,12 @@ if(WITH_BLENDER)
       info
       input_bool
       inset_faces
+	  instances_to_points
+	  instance_bounds
       instance_rotate
       instance_scale
       instance_transform
       instance_transform_get
-      instances_to_points
       integer
       integer_math
       internet
@@ -1048,6 +1052,7 @@ if(WITH_BLENDER)
       meta_plane
       metallic
       minimizestretch
+	  minmax
       mirror_cursorvalue
       mirror_marker
       mirror_time
@@ -1294,6 +1299,7 @@ if(WITH_BLENDER)
       node_vertex_color
       node_viewer
       node_viwersplit
+      node_volume_coefficients
       node_volume_info
       node_volumeabsorption
       node_volumeprincipled
@@ -1415,6 +1421,8 @@ if(WITH_BLENDER)
       pan_right
       pan_up
       panel_close
+      panel_toggle_make
+      panel_toggle_unlink
       parent
       parent_bone
       parent_clear
@@ -1550,6 +1558,7 @@ if(WITH_BLENDER)
       remove_all_groups
       remove_doubles
       remove_from_all_groups
+	  remove_guides
       remove_metastrip
       remove_selected_from_active_group
       rename
@@ -2012,6 +2021,7 @@ if(WITH_BLENDER)
       # letter v
       value_to_selection
       value_to_string
+	    variance
       vector_displace
       vertcolfromweight
       vertex_crease
@@ -2067,6 +2077,7 @@ if(WITH_BLENDER)
       vis_sel_00
 
       # ###
+      visual_geometry_to_objects
       visual_loc_rot
       visual_loc_rot_scale
       visual_loc_scale
@@ -2106,6 +2117,7 @@ if(WITH_BLENDER)
       window
       window_close
       wireframe
+      wizard
       wood_tex
       wordwrap_off
       wordwrap_on
