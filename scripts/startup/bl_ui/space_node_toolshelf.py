@@ -204,41 +204,49 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
+        return context.space_data.tree_type == 'ShaderNodeTree'
 
     def draw(self, context):
         layout = self.layout
 
-        entries = (
-            "ShaderNodeAmbientOcclusion",
-            "ShaderNodeAttribute",
-            "ShaderNodeBevel",
-            "ShaderNodeCameraData",
-            "ShaderNodeVertexColor",
-            "ShaderNodeFresnel",
-            Separator,
-            "ShaderNodeNewGeometry",
-            "ShaderNodeHairInfo",
-            "ShaderNodeLayerWeight",
-            "ShaderNodeLightPath",
-            "ShaderNodeObjectInfo",
-            Separator,
-            "ShaderNodeParticleInfo",
-            "ShaderNodePointInfo",
-            "ShaderNodeRGB",
-            "ShaderNodeTangent",
-            "ShaderNodeTexCoord",
-            OperatorEntry("ShaderNodeUVAlongStroke", should_draw=is_shader_type(context, 'LINESTYLE')),
-            Separator,
-            "ShaderNodeUVMap",
-            "ShaderNodeValue",
-            "ShaderNodeVolumeInfo",
-            "ShaderNodeWireframe",
-        )
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        if use_common:
+            entries = (
+                "ShaderNodeFresnel",
+                "ShaderNodeNewGeometry",
+                "ShaderNodeRGB",
+                "ShaderNodeTexCoord",
+            )
+        else:
+            entries = (
+                "ShaderNodeAmbientOcclusion",
+                "ShaderNodeAttribute",
+                "ShaderNodeBevel",
+                "ShaderNodeCameraData",
+                "ShaderNodeVertexColor",
+                "ShaderNodeFresnel",
+                Separator,
+                "ShaderNodeNewGeometry",
+                "ShaderNodeHairInfo",
+                "ShaderNodeLayerWeight",
+                "ShaderNodeLightPath",
+                "ShaderNodeObjectInfo",
+                Separator,
+                "ShaderNodeParticleInfo",
+                "ShaderNodePointInfo",
+                "ShaderNodeRGB",
+                "ShaderNodeTangent",
+                "ShaderNodeTexCoord",
+                OperatorEntry("ShaderNodeUVAlongStroke", should_draw=is_shader_type(context, 'LINESTYLE')),
+                Separator,
+                "ShaderNodeUVMap",
+                "ShaderNodeValue",
+                "ShaderNodeVolumeInfo",
+                "ShaderNodeWireframe",
+            )
 
         self.draw_entries(context, layout, entries)
 
@@ -254,25 +262,32 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
+        return context.space_data.tree_type == 'ShaderNodeTree'
 
     def draw(self, context):
         layout = self.layout
 
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
         is_object_shader = is_shader_type(context, 'OBJECT')
         is_cycles =  is_engine(context, 'CYCLES')
 
-        entries = (
-            "ShaderNodeOutputAOV",
-            OperatorEntry("ShaderNodeOutputLight", should_draw=is_object_shader and is_cycles),
-            OperatorEntry("ShaderNodeOutputMaterial", should_draw=is_object_shader),
-            OperatorEntry("ShaderNodeOutputWorld", should_draw=is_shader_type(context, 'WORLD')),
-            OperatorEntry("ShaderNodeOutputLineStyle", should_draw=is_shader_type(context, 'LINESTYLE')),
-        )
+        if use_common:
+            entries = (
+                OperatorEntry("ShaderNodeOutputMaterial", should_draw=is_object_shader),
+                OperatorEntry("ShaderNodeOutputWorld", should_draw=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeOutputLineStyle", should_draw=is_shader_type(context, 'LINESTYLE')),
+            )
+        else:
+            entries = (
+                "ShaderNodeOutputAOV",
+                OperatorEntry("ShaderNodeOutputLight", should_draw=is_object_shader and is_cycles),
+                OperatorEntry("ShaderNodeOutputMaterial", should_draw=is_object_shader),
+                OperatorEntry("ShaderNodeOutputWorld", should_draw=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeOutputLineStyle", should_draw=is_shader_type(context, 'LINESTYLE')),
+            )
 
         self.draw_entries(context, layout, entries)
 
@@ -941,47 +956,61 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-
     @classmethod
     def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
+         # Just in shader mode, Just in Object and World
+        (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ('OBJECT', 'WORLD'))
 
     def draw(self, context):
         layout = self.layout
 
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
         is_object = is_shader_type(context, 'OBJECT')
         is_eevee = is_engine(context, 'BLENDER_EEVEE')
 
-        entries = (
-            "ShaderNodeAddShader",
-            OperatorEntry("ShaderNodeBackground", should_draw=is_shader_type(context, 'WORLD')),
-            OperatorEntry("ShaderNodeBsdfDiffuse", should_draw=is_object),
-            "ShaderNodeEmission",
-            OperatorEntry("ShaderNodeBsdfGlass", should_draw=is_object),
-            OperatorEntry("ShaderNodeBsdfGlossy", should_draw=is_object),
-            OperatorEntry("ShaderNodeBsdfHair", should_draw=is_object and not is_eevee),
-            OperatorEntry("ShaderNodeHoldout", should_draw=is_object),
-            OperatorEntry("ShaderNodeBsdfMetallic", should_draw=is_object),
-            "ShaderNodeMixShader",
-            OperatorEntry("ShaderNodeBsdfPrincipled", should_draw=is_object),
-            OperatorEntry("ShaderNodeBsdfHairPrincipled", should_draw=is_object and not is_eevee),
-            OperatorEntry("ShaderNodeVolumePrincipled"),
-            OperatorEntry("ShaderNodeBsdfRayPortal", should_draw=is_object and not is_eevee),
-            OperatorEntry("ShaderNodeBsdfRefraction", should_draw=is_object),
-            OperatorEntry("ShaderNodeBsdfSheen", should_draw=is_object and not is_eevee),
-            OperatorEntry("ShaderNodeEeveeSpecular", should_draw=is_object and is_eevee),
-            OperatorEntry("ShaderNodeSubsurfaceScattering", should_draw=is_object),
-            OperatorEntry("ShaderNodeBsdfToon", should_draw=is_object and not is_eevee),
-            OperatorEntry("ShaderNodeBsdfTranslucent", should_draw=is_object),
-            OperatorEntry("ShaderNodeBsdfTransparent", should_draw=is_object),
-            "ShaderNodeVolumeAbsorption",
-            "ShaderNodeVolumeScatter",
-            "ShaderNodeVolumeCoefficients",
-        )
+        if use_common:
+            entries = (
+                "ShaderNodeAddShader",
+                OperatorEntry("ShaderNodeBackground", should_draw=is_shader_type(context, 'WORLD')),
+                "ShaderNodeEmission",
+                "ShaderNodeMixShader",
+                OperatorEntry("ShaderNodeBsdfPrincipled", should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfHairPrincipled", should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeVolumePrincipled"),
+                OperatorEntry("ShaderNodeBsdfToon", should_draw=is_object and not is_eevee),
+                "ShaderNodeVolumeAbsorption",
+                "ShaderNodeVolumeScatter",
+            )
+        else:
+            entries = (
+                "ShaderNodeAddShader",
+                OperatorEntry("ShaderNodeBackground", should_draw=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeBsdfDiffuse", should_draw=is_object),
+                "ShaderNodeEmission",
+                OperatorEntry("ShaderNodeBsdfGlass", should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfGlossy", should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfHair", should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeHoldout", should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfMetallic", should_draw=is_object),
+                "ShaderNodeMixShader",
+                OperatorEntry("ShaderNodeBsdfPrincipled", should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfHairPrincipled", should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeVolumePrincipled"),
+                OperatorEntry("ShaderNodeBsdfRayPortal", should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfRefraction", should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfSheen", should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeEeveeSpecular", should_draw=is_object and is_eevee),
+                OperatorEntry("ShaderNodeSubsurfaceScattering", should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfToon", should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfTranslucent", should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfTransparent", should_draw=is_object),
+                "ShaderNodeVolumeAbsorption",
+                "ShaderNodeVolumeScatter",
+                "ShaderNodeVolumeCoefficients",
+            )
 
         self.draw_entries(context, layout, entries)
 
@@ -997,32 +1026,41 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader and texture mode
+        return context.space_data.tree_type == 'ShaderNodeTree'
 
     def draw(self, context):
         layout = self.layout
 
-        entries = (
-            "ShaderNodeTexBrick",
-            "ShaderNodeTexChecker",
-            "ShaderNodeTexEnvironment",
-            "ShaderNodeTexGabor",
-            "ShaderNodeTexGradient",
-            "ShaderNodeTexIES",
-            Separator,
-            "ShaderNodeTexImage",
-            "ShaderNodeTexMagic",
-            "ShaderNodeTexNoise",
-            "ShaderNodeTexSky",
-            Separator,
-            "ShaderNodeTexVoronoi",
-            "ShaderNodeTexWave",
-            "ShaderNodeTexWhiteNoise",
-        )
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+        
+        if use_common:
+            entries = (
+                "ShaderNodeTexEnvironment",
+                "ShaderNodeTexImage",
+                "ShaderNodeTexNoise",
+                "ShaderNodeTexSky",
+                "ShaderNodeTexVoronoi",
+            )
+        else:
+            entries = (
+                "ShaderNodeTexBrick",
+                "ShaderNodeTexChecker",
+                "ShaderNodeTexEnvironment",
+                "ShaderNodeTexGabor",
+                "ShaderNodeTexGradient",
+                "ShaderNodeTexIES",
+                Separator,
+                "ShaderNodeTexImage",
+                "ShaderNodeTexMagic",
+                "ShaderNodeTexNoise",
+                "ShaderNodeTexSky",
+                Separator,
+                "ShaderNodeTexVoronoi",
+                "ShaderNodeTexWave",
+                "ShaderNodeTexWhiteNoise",
+            )
 
         self.draw_entries(context, layout, entries)
 
@@ -1038,25 +1076,36 @@ class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree')
-
+        return context.space_data.tree_type == 'ShaderNodeTree'
+    
     def draw(self, context):
         layout = self.layout
 
-        entries = (
-            "ShaderNodeBrightContrast",
-            "ShaderNodeGamma",
-            "ShaderNodeHueSaturation",
-            "ShaderNodeInvert",
-            Separator,
-            "ShaderNodeLightFalloff",
-            OperatorEntry("ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"}),
-            "ShaderNodeRGBCurve",
-        )
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+        
+        if use_common:
+            entries = (
+                "ShaderNodeBrightContrast",
+                "ShaderNodeGamma",
+                "ShaderNodeHueSaturation",
+                "ShaderNodeInvert",
+                Separator,
+                OperatorEntry("ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"}),
+                "ShaderNodeRGBCurve",
+            )
+        else:
+            entries = (
+                "ShaderNodeBrightContrast",
+                "ShaderNodeGamma",
+                "ShaderNodeHueSaturation",
+                "ShaderNodeInvert",
+                Separator,
+                "ShaderNodeLightFalloff",
+                OperatorEntry("ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"}),
+                "ShaderNodeRGBCurve",
+            )
 
         self.draw_entries(context, layout, entries)
 
@@ -1072,27 +1121,34 @@ class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
+        return context.space_data.tree_type == 'ShaderNodeTree'
 
     def draw(self, context):
         layout = self.layout
 
-        entries = (
-            "ShaderNodeBump",
-            "ShaderNodeDisplacement",
-            "ShaderNodeMapping",
-            "ShaderNodeNormal",
-            "ShaderNodeNormalMap",
-            Separator,
-            "ShaderNodeVectorCurve",
-            "ShaderNodeVectorDisplacement",
-            "ShaderNodeVectorRotate",
-            "ShaderNodeVectorTransform",
-        )
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        if use_common:
+            entries = (
+                "ShaderNodeMapping",
+                "ShaderNodeNormal",
+                "ShaderNodeNormalMap",
+            )
+        else:
+            entries = (
+                "ShaderNodeBump",
+                "ShaderNodeDisplacement",
+                "ShaderNodeMapping",
+                "ShaderNodeNormal",
+                "ShaderNodeNormalMap",
+                Separator,
+                "ShaderNodeVectorCurve",
+                "ShaderNodeVectorDisplacement",
+                "ShaderNodeVectorRotate",
+                "ShaderNodeVectorTransform",
+            )
 
         self.draw_entries(context, layout, entries)
 
@@ -1108,34 +1164,45 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
+        return context.space_data.tree_type == 'ShaderNodeTree'
 
     def draw(self, context):
         layout = self.layout
 
-        entries = (
-            "ShaderNodeBlackbody",
-            "ShaderNodeClamp",
-            "ShaderNodeValToRGB",
-            "ShaderNodeCombineColor",
-            "ShaderNodeCombineXYZ",
-            Separator,
-            "ShaderNodeFloatCurve",
-            "ShaderNodeMapRange",
-            "ShaderNodeMath",
-            "ShaderNodeMix",
-            "ShaderNodeRGBToBW",
-            Separator,
-            "ShaderNodeSeparateColor",
-            "ShaderNodeSeparateXYZ",
-            OperatorEntry("ShaderNodeShaderToRGB", should_draw=is_engine(context, 'BLENDER_EEVEE')),
-            "ShaderNodeVectorMath",
-            "ShaderNodeWavelength",
-        )
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        if use_common:
+            entries = (
+                "ShaderNodeClamp",
+                "ShaderNodeValToRGB",
+                Separator,
+                "ShaderNodeFloatCurve",
+                "ShaderNodeMapRange",
+                "ShaderNodeMath",
+                "ShaderNodeRGBToBW",
+            )
+        else:
+            entries = (
+                "ShaderNodeBlackbody",
+                "ShaderNodeClamp",
+                "ShaderNodeValToRGB",
+                "ShaderNodeCombineColor",
+                "ShaderNodeCombineXYZ",
+                Separator,
+                "ShaderNodeFloatCurve",
+                "ShaderNodeMapRange",
+                "ShaderNodeMath",
+                "ShaderNodeMix",
+                "ShaderNodeRGBToBW",
+                Separator,
+                "ShaderNodeSeparateColor",
+                "ShaderNodeSeparateXYZ",
+                OperatorEntry("ShaderNodeShaderToRGB", should_draw=is_engine(context, 'BLENDER_EEVEE')),
+                "ShaderNodeVectorMath",
+                "ShaderNodeWavelength",
+            )
 
         self.draw_entries(context, layout, entries)
 
@@ -2530,371 +2597,6 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-# ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
-
-# Shader editor, Input panel
-class NODES_PT_shader_add_input_common(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Input"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-
-    @classmethod
-    def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        if not addon_prefs.Node_text_or_icon:
-
-        ##### --------------------------------- Textures common ------------------------------------------- ####
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeFresnel")
-            self.draw_text_button(col, "ShaderNodeNewGeometry")
-            self.draw_text_button(col, "ShaderNodeRGB")
-            self.draw_text_button(col, "ShaderNodeTexCoord")
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeFresnel")
-            self.draw_icon_button(flow, "ShaderNodeNewGeometry")
-            self.draw_icon_button(flow, "ShaderNodeRGB")
-            self.draw_icon_button(flow, "ShaderNodeTexCoord")
-
-
-#Shader editor , Output panel
-class NODES_PT_shader_add_output_common(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Output"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            if is_shader_type(context, 'OBJECT'):
-                self.draw_text_button(col, "ShaderNodeOutputMaterial")
-
-            elif is_shader_type(context, 'WORLD'):
-                self.draw_text_button(col, "ShaderNodeOutputWorld")
-
-            elif is_shader_type(context, 'LINESTYLE'):
-                self.draw_text_button(col, "ShaderNodeOutputLineStyle")
-
-        #### Image Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            if is_shader_type(context, 'OBJECT'):
-                self.draw_icon_button(flow, "ShaderNodeOutputMaterial")
-
-            elif is_shader_type(context, 'WORLD'):
-                self.draw_icon_button(flow, "ShaderNodeOutputWorld")
-
-            elif is_shader_type(context, 'LINESTYLE'):
-                self.draw_icon_button(flow, "ShaderNodeOutputLineStyle")
-
-
-#Shader Editor - Shader panel
-class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Shader"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == True and (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeAddShader")
-
-            if is_shader_type(context, 'OBJECT'):
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_text_button(col, "ShaderNodeBsdfHairPrincipled")
-                self.draw_text_button(col, "ShaderNodeMixShader")
-                self.draw_text_button(col, "ShaderNodeBsdfPrincipled")
-
-                col = layout.column(align=True)
-                col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeVolumePrincipled")
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_text_button(col, "ShaderNodeBsdfToon")
-
-                col = layout.column(align=True)
-                col.scale_y = 1.5
-
-                self.draw_text_button(col, "ShaderNodeVolumeAbsorption")
-                self.draw_text_button(col, "ShaderNodeVolumeScatter")
-
-            if is_shader_type(context, 'WORLD'):
-                col = layout.column(align=True)
-                col.scale_y = 1.5
-                self.draw_text_button(col, "ShaderNodeBackground")
-                self.draw_text_button(col, "ShaderNodeEmission")
-                self.draw_text_button(col, "ShaderNodeVolumePrincipled")
-                self.draw_text_button(col, "ShaderNodeMixShader")
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            self.draw_icon_button(flow, "ShaderNodeAddShader")
-
-            if is_shader_type(context, 'OBJECT'):
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_icon_button(flow, "ShaderNodeBsdfHairPrincipled")
-                self.draw_icon_button(flow, "ShaderNodeMixShader")
-                self.draw_icon_button(flow, "ShaderNodeBsdfPrincipled")
-                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
-
-                if is_engine(context, 'CYCLES'):
-                    self.draw_icon_button(flow, "ShaderNodeBsdfToon")
-                self.draw_icon_button(flow, "ShaderNodeVolumeAbsorption")
-                self.draw_icon_button(flow, "ShaderNodeVolumeScatter")
-
-            if is_shader_type(context, 'WORLD'):
-                self.draw_icon_button(flow, "ShaderNodeBackground")
-                self.draw_icon_button(flow, "ShaderNodeEmission")
-                self.draw_icon_button(flow, "ShaderNodeVolumePrincipled")
-                self.draw_icon_button(flow, "ShaderNodeMixShader")
-
-
-#Shader Editor - Texture panel
-class NODES_PT_shader_add_texture_common(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Texture"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and texture mode
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexEnvironment")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexImage")
-            self.draw_text_button(col, "ShaderNodeTexNoise")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexSky")
-            self.draw_text_button(col, "ShaderNodeTexVoronoi")
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeTexEnvironment")
-            self.draw_icon_button(flow, "ShaderNodeTexImage")
-            self.draw_icon_button(flow, "ShaderNodeTexNoise")
-            self.draw_icon_button(flow, "ShaderNodeTexSky")
-            self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
-
-
-#Shader Editor - Color panel
-class NODES_PT_shader_add_color_common(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Color"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree'
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeBrightContrast")
-            self.draw_text_button(col, "ShaderNodeGamma")
-            self.draw_text_button(col, "ShaderNodeHueSaturation")
-            self.draw_text_button(col, "ShaderNodeInvert")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeMixRGB")
-            self.draw_text_button(col, "ShaderNodeRGBCurve")
-
-        ##### Icon Buttons
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeBrightContrast")
-            self.draw_icon_button(flow, "ShaderNodeGamma")
-            self.draw_icon_button(flow, "ShaderNodeHueSaturation")
-            self.draw_icon_button(flow, "ShaderNodeInvert")
-            self.draw_icon_button(flow, "ShaderNodeMixRGB")
-            self.draw_icon_button(flow, "ShaderNodeRGBCurve")
-
-
-#Shader Editor - Vector panel
-class NODES_PT_shader_add_vector_common(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Vector"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeMapping")
-            self.draw_text_button(col, "ShaderNodeNormal")
-            self.draw_text_button(col, "ShaderNodeNormalMap")
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeMapping")
-            self.draw_icon_button(flow, "ShaderNodeNormal")
-            self.draw_icon_button(flow, "ShaderNodeNormalMap")
-
-
-#Shader Editor - Converter panel
-class NODES_PT_shader_add_converter_common(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Converter"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeClamp")
-            self.draw_text_button(col, "ShaderNodeValToRGB")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeFloatCurve")
-            self.draw_text_button(col, "ShaderNodeMapRange")
-            self.draw_text_button(col, "ShaderNodeMath")
-            self.draw_text_button(col, "ShaderNodeRGBToBW")
-
-        ##### Icon Buttons
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeClamp")
-            self.draw_icon_button(flow, "ShaderNodeValToRGB")
-            self.draw_icon_button(flow, "ShaderNodeFloatCurve")
-            self.draw_icon_button(flow, "ShaderNodeMapRange")
-            self.draw_icon_button(flow, "ShaderNodeMath")
-            self.draw_icon_button(flow, "ShaderNodeRGBToBW")
-
-
 #Shader Editor - Script panel
 class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
@@ -2938,6 +2640,7 @@ classes = (
     NODES_PT_shader_add_color,
     NODES_PT_shader_add_vector,
     NODES_PT_shader_add_converter,
+    NODES_PT_shader_add_script,
 
     #-----------------------
 
@@ -3033,19 +2736,6 @@ classes = (
     NODES_PT_geom_add_utilities_matrix,
     NODES_PT_geom_add_utilities_rotation,
     NODES_PT_geom_add_utilities_deprecated,
-
-    #----------------------------------
-
-    #- shader editor common classes
-    NODES_PT_shader_add_input_common,
-    NODES_PT_shader_add_output_common,
-    NODES_PT_shader_add_shader_common,
-    NODES_PT_shader_add_texture_common,
-    NODES_PT_shader_add_color_common,
-    NODES_PT_shader_add_vector_common,
-    NODES_PT_shader_add_converter_common,
-
-    NODES_PT_shader_add_script,
 )
 
 if __name__ == "__main__":  # only for live edit.
