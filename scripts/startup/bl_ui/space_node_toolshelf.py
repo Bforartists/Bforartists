@@ -2760,6 +2760,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
             "GeometryNodeSwitch",
         )
 
+        self.draw_entries(context, layout, entries)
 
 #add utilities panel, color subpanel
 class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
