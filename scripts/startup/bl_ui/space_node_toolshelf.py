@@ -8,7 +8,7 @@ from bpy.app.translations import (
 
 import dataclasses
 
-#Add tab, Node Group panel
+
 from nodeitems_builtins import node_tree_group_type
 
 
@@ -194,7 +194,6 @@ class NODES_PT_toolshelf_display_settings_relations(bpy.types.Panel):
         row.prop(addon_prefs,"Node_text_or_icon", text="Icon Buttons")
 
 
-# Shader editor, Input panel
 class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
@@ -251,7 +250,6 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Shader editor , Output panel
 class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
@@ -292,7 +290,6 @@ class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, input panel
 class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
@@ -302,7 +299,7 @@ class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -319,7 +316,6 @@ class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Constant supbanel
 class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Constant"
@@ -341,7 +337,6 @@ class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePane
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Scene supbanel
 class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Scene"
@@ -362,7 +357,7 @@ class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
         
         self.draw_entries(context, layout, entries)
 
-#Compositor, Add tab, Output Panel
+
 class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
@@ -373,7 +368,7 @@ class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -388,7 +383,6 @@ class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Color Panel
 class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
@@ -418,7 +412,6 @@ class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Color, Adjust supbanel
 class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Adjust"
@@ -447,7 +440,6 @@ class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel)
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Color, Mix supbanel
 class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Mix"
@@ -473,7 +465,6 @@ class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Filter Panel
 class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Filter"
@@ -484,7 +475,7 @@ class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -508,7 +499,6 @@ class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Filter, Blur supbanel
 class NODES_PT_toolshelf_compositor_add_filter_blur(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Blur"
@@ -533,7 +523,6 @@ class NODES_PT_toolshelf_compositor_add_filter_blur(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Keying Panel
 class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Keying"
@@ -544,7 +533,7 @@ class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -564,7 +553,6 @@ class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Mask Panel
 class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Mask"
@@ -575,7 +563,7 @@ class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -594,7 +582,6 @@ class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Texture Panel
 class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
     bl_label = "Texture"
     bl_space_type = 'NODE_EDITOR'
@@ -604,7 +591,7 @@ class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -624,7 +611,6 @@ class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Tracking Panel
 class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Tracking"
@@ -635,7 +621,7 @@ class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -660,7 +646,6 @@ class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Transform Panel
 class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Transform"
@@ -671,7 +656,7 @@ class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -696,7 +681,6 @@ class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Utility Panel
 class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Utilities"
@@ -707,7 +691,7 @@ class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -732,7 +716,6 @@ class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Compositor, Add tab, Vector Panel
 class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
@@ -743,7 +726,7 @@ class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -761,7 +744,6 @@ class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Input nodes tab, textures common panel. Texture mode
 class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
@@ -771,7 +753,7 @@ class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
+        return (context.space_data.tree_type == 'TextureNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -786,7 +768,6 @@ class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Input nodes tab, textures advanced panel. Just in Texture mode
 class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Textures"
@@ -797,7 +778,7 @@ class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in shader and texture mode
+        return (context.space_data.tree_type == 'TextureNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -819,7 +800,6 @@ class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Input nodes tab, Pattern panel. # Just in texture mode
 class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Pattern"
@@ -830,7 +810,7 @@ class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
+        return (context.space_data.tree_type == 'TextureNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -843,7 +823,6 @@ class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Input nodes tab, Color panel. Just in texture mode
 class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
@@ -854,7 +833,7 @@ class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture and compositing mode
+        return (context.space_data.tree_type == 'TextureNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -872,7 +851,6 @@ class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Input nodes tab, Output panel, Texture mode
 class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
@@ -882,7 +860,7 @@ class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
+        return (context.space_data.tree_type == 'TextureNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -895,7 +873,6 @@ class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Modify nodes tab, converter panel. Just in texture mode
 class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
@@ -905,7 +882,7 @@ class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
+        return (context.space_data.tree_type == 'TextureNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -922,7 +899,6 @@ class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Modify nodes tab, distort panel. Just in texture mode
 class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Distort"
@@ -933,7 +909,7 @@ class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
+        return (context.space_data.tree_type == 'TextureNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -948,7 +924,6 @@ class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Shader Editor - Shader panel
 class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader"
@@ -958,7 +933,6 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
     bl_options = {'DEFAULT_CLOSED'}
     @classmethod
     def poll(cls, context):
-         # Just in shader mode, Just in Object and World
         return (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ('OBJECT', 'WORLD'))
 
     def draw(self, context):
@@ -1015,7 +989,6 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Shader Editor - Texture panel
 class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Texture"
@@ -1065,7 +1038,6 @@ class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Shader Editor - Color panel
 class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
@@ -1110,7 +1082,6 @@ class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Shader Editor - Vector panel
 class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
@@ -1153,7 +1124,6 @@ class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Shader Editor - Converter panel
 class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
@@ -1207,7 +1177,6 @@ class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Shader Editor - Script panel
 class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Script"
@@ -1218,7 +1187,7 @@ class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
+        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1230,9 +1199,6 @@ class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-# ------------- Relations tab -------------------------------
-
-#Shader Editor - Relations tab, Group Panel
 class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Group"
@@ -1258,7 +1224,6 @@ class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#Shader Editor - Relations tab, Node Group Panel
 # from nodeitems_builtin, not directly importable
 def contains_group(nodetree, group):
     if nodetree == group:
@@ -1312,7 +1277,6 @@ class NODES_PT_relations_nodegroups(bpy.types.Panel, NodePanel):
             ops.value = "bpy.data.node_groups['{0}']".format(group.name)
 
 
-#Relations tab, Layout Panel
 class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Layout"
@@ -1331,9 +1295,6 @@ class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-# ------------- Geometry Nodes Editor - Add tab -------------------------------
-
-#add attribute panel
 class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Attribute"
@@ -1344,7 +1305,7 @@ class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1362,7 +1323,6 @@ class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add input panel
 class NODES_PT_toolshelf_gn_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
@@ -1373,13 +1333,12 @@ class NODES_PT_toolshelf_gn_add_input(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
 
 
-#add input panel, constant supbanel
 class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Constant"
@@ -1409,7 +1368,6 @@ class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add input panel, gizmo supbanel
 class NODES_PT_toolshelf_gn_add_input_gizmo(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Gizmo"
@@ -1431,7 +1389,6 @@ class NODES_PT_toolshelf_gn_add_input_gizmo(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add input panel, file supbanel
 class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Import"
@@ -1456,7 +1413,6 @@ class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add input panel, scene subpanel
 class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Scene"
@@ -1488,7 +1444,6 @@ class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add output panel
 class NODES_PT_toolshelf_gn_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
@@ -1499,7 +1454,7 @@ class NODES_PT_toolshelf_gn_add_output(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1512,7 +1467,6 @@ class NODES_PT_toolshelf_gn_add_output(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add geometry panel
 class NODES_PT_toolshelf_gn_add_geometry(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Geometry"
@@ -1523,7 +1477,7 @@ class NODES_PT_toolshelf_gn_add_geometry(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1536,7 +1490,6 @@ class NODES_PT_toolshelf_gn_add_geometry(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add geometry panel, read subpanel
 class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Read"
@@ -1548,7 +1501,7 @@ class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1568,7 +1521,6 @@ class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add geometry panel, sample subpanel
 class NODES_PT_toolshelf_gn_add_geometry_sample(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Sample"
@@ -1580,7 +1532,7 @@ class NODES_PT_toolshelf_gn_add_geometry_sample(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1596,7 +1548,6 @@ class NODES_PT_toolshelf_gn_add_geometry_sample(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add geometry panel, write subpanel
 class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Write"
@@ -1608,7 +1559,7 @@ class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1623,7 +1574,6 @@ class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add geometry panel, operations subpanel
 class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Operations"
@@ -1635,7 +1585,7 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1658,7 +1608,6 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Curves panel
 class NODES_PT_toolshelf_gn_add_curve(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Curve"
@@ -1669,12 +1618,12 @@ class NODES_PT_toolshelf_gn_add_curve(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
 
-#add Curves panel, read subpanel
+
 class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Read"
@@ -1686,7 +1635,7 @@ class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1707,7 +1656,6 @@ class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Curves panel, read subpanel
 class NODES_PT_toolshelf_gn_add_curve_sample(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Sample"
@@ -1719,7 +1667,7 @@ class NODES_PT_toolshelf_gn_add_curve_sample(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1731,7 +1679,6 @@ class NODES_PT_toolshelf_gn_add_curve_sample(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Curves panel, write subpanel
 class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Write"
@@ -1743,7 +1690,7 @@ class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1762,7 +1709,6 @@ class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Curves panel, operations subpanel
 class NODES_PT_toolshelf_gn_add_curve_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Operations"
@@ -1774,7 +1720,7 @@ class NODES_PT_toolshelf_gn_add_curve_operations(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1797,7 +1743,6 @@ class NODES_PT_toolshelf_gn_add_curve_operations(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Curves panel, Primitives subpanel
 class NODES_PT_toolshelf_gn_add_curve_primitives(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Primitives"
@@ -1809,7 +1754,7 @@ class NODES_PT_toolshelf_gn_add_curve_primitives(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1828,7 +1773,6 @@ class NODES_PT_toolshelf_gn_add_curve_primitives(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Curve panel, Topology subpanel
 class NODES_PT_toolshelf_gn_add_curve_topology(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Topology"
@@ -1840,7 +1784,7 @@ class NODES_PT_toolshelf_gn_add_curve_topology(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1854,7 +1798,6 @@ class NODES_PT_toolshelf_gn_add_curve_topology(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Grease Pencil panel
 class NODES_PT_toolshelf_gn_add_grease_pencil(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Grease Pencil"
@@ -1865,13 +1808,12 @@ class NODES_PT_toolshelf_gn_add_grease_pencil(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
 
 
-#add Grease Pencil panel, Read subpanel
 class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Read"
@@ -1883,7 +1825,7 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1895,7 +1837,6 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Grease Pencil panel, Read subpanel
 class NODES_PT_toolshelf_gn_add_grease_pencil_write(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Write"
@@ -1907,7 +1848,7 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_write(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1921,7 +1862,6 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_write(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add Grease Pencil panel, Read subpanel
 class NODES_PT_toolshelf_gn_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Operations"
@@ -1933,7 +1873,7 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_operations(bpy.types.Panel, NodePa
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1946,7 +1886,6 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_operations(bpy.types.Panel, NodePa
         self.draw_entries(context, layout, entries)
 
 
-#add mesh panel
 class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Instances"
@@ -1957,7 +1896,7 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -1979,7 +1918,6 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add mesh panel
 class NODES_PT_toolshelf_gn_add_mesh(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Mesh"
@@ -1990,13 +1928,12 @@ class NODES_PT_toolshelf_gn_add_mesh(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
 
 
-#add mesh panel, read subpanel
 class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Read"
@@ -2008,7 +1945,7 @@ class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2035,7 +1972,6 @@ class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add mesh panel, sample subpanel
 class NODES_PT_toolshelf_gn_add_mesh_sample(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Sample"
@@ -2047,7 +1983,7 @@ class NODES_PT_toolshelf_gn_add_mesh_sample(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2060,7 +1996,6 @@ class NODES_PT_toolshelf_gn_add_mesh_sample(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add mesh panel, write subpanel
 class NODES_PT_toolshelf_gn_add_mesh_write(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Write"
@@ -2072,7 +2007,7 @@ class NODES_PT_toolshelf_gn_add_mesh_write(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2086,7 +2021,6 @@ class NODES_PT_toolshelf_gn_add_mesh_write(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add mesh panel, operations subpanel
 class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Operations"
@@ -2098,7 +2032,7 @@ class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2125,7 +2059,6 @@ class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add mesh panel, primitives subpanel
 class NODES_PT_toolshelf_gn_add_mesh_primitives(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Primitives"
@@ -2137,7 +2070,7 @@ class NODES_PT_toolshelf_gn_add_mesh_primitives(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2157,7 +2090,6 @@ class NODES_PT_toolshelf_gn_add_mesh_primitives(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add mesh panel, topology subpanel
 class NODES_PT_toolshelf_gn_add_mesh_topology(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Topology"
@@ -2169,7 +2101,7 @@ class NODES_PT_toolshelf_gn_add_mesh_topology(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2189,7 +2121,6 @@ class NODES_PT_toolshelf_gn_add_mesh_topology(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add volume panel
 class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "UV"
@@ -2201,7 +2132,7 @@ class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2214,7 +2145,6 @@ class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add mesh panel
 class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Point"
@@ -2225,11 +2155,10 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
-
         
         entries = (
             "GeometryNodeDistributePointsInVolume",
@@ -2245,7 +2174,6 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add volume panel
 class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Volume"
@@ -2256,7 +2184,7 @@ class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2269,7 +2197,6 @@ class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add simulation panel
 class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Simulation"
@@ -2280,7 +2207,7 @@ class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2292,7 +2219,6 @@ class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add material panel
 class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Material"
@@ -2303,7 +2229,7 @@ class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2319,7 +2245,6 @@ class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add vector panel
 class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Texture"
@@ -2330,7 +2255,7 @@ class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2350,7 +2275,6 @@ class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add utilities panel
 class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Utilities"
@@ -2361,7 +2285,7 @@ class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2377,7 +2301,7 @@ class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
 
         self.draw_entries(context, layout, entries)
 
-#add utilities panel, color subpanel
+
 class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
@@ -2389,7 +2313,7 @@ class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2406,7 +2330,6 @@ class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add utilities panel, text subpanel
 class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Text"
@@ -2418,7 +2341,7 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2438,7 +2361,7 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
 
         self.draw_entries(context, layout, entries)
 
-#add utilities panel, vector subpanel
+
 class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
@@ -2450,7 +2373,7 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2467,7 +2390,6 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add utilities panel, field subpanel
 class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Field"
@@ -2479,7 +2401,7 @@ class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2493,7 +2415,6 @@ class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add utilities panel, math subpanel
 class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Math"
@@ -2505,7 +2426,7 @@ class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2527,7 +2448,6 @@ class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add utilities panel, matrix subpanel
 class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Matrix"
@@ -2539,7 +2459,7 @@ class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2561,7 +2481,6 @@ class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add utilities panel, rotation subpanel
 class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Rotation"
@@ -2573,7 +2492,7 @@ class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -2595,7 +2514,6 @@ class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-#add utilities panel, deprecated subpanel
 class NODES_PT_toolshelf_gn_add_utilities_deprecated(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Deprecated"
@@ -2607,7 +2525,7 @@ class NODES_PT_toolshelf_gn_add_utilities_deprecated(bpy.types.Panel, NodePanel)
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
