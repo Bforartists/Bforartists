@@ -163,7 +163,6 @@ class NODES_PT_toolshelf_display_settings_add(bpy.types.Panel):
     bl_category = "Add"
     #bl_options = {'HIDE_HEADER'}
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -185,7 +184,6 @@ class NODES_PT_toolshelf_display_settings_relations(bpy.types.Panel):
     bl_category = "Relations"
     #bl_options = {'HIDE_HEADER'}
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -212,7 +210,6 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -263,7 +260,6 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -293,7 +289,6 @@ class NODES_PT_comp_add_input(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -319,7 +314,6 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel, NodePanel):
     #bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_comp_add_input"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -342,7 +336,6 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel, NodePanel):
     #bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_comp_add_input"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -367,7 +360,6 @@ class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -394,7 +386,6 @@ class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in texture and compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -422,7 +413,6 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel, NodePanel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_comp_add_color"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -452,7 +442,6 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel, NodePanel):
     #bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_comp_add_color"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -482,7 +471,6 @@ class NODES_PT_comp_add_filter(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -515,7 +503,6 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel, NodePanel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_comp_add_filter"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -544,7 +531,6 @@ class NODES_PT_comp_add_keying(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -576,7 +562,6 @@ class NODES_PT_comp_add_mask(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -606,7 +591,6 @@ class NODES_PT_comp_add_texture(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -638,7 +622,6 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -675,7 +658,6 @@ class NODES_PT_comp_add_transform(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -712,7 +694,6 @@ class NODES_PT_comp_add_utility(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -749,7 +730,6 @@ class NODES_PT_comp_add_vector(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'CompositorNodeTree') # Just in compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -778,7 +758,6 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -805,7 +784,6 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'TextureNodeTree') # Just in shader and texture mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -839,7 +817,6 @@ class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -864,7 +841,6 @@ class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture and compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -893,7 +869,6 @@ class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -917,7 +892,6 @@ class NODES_PT_converter_tex(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -946,7 +920,6 @@ class NODES_PT_distort_tex(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'TextureNodeTree') # Just in texture mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -977,7 +950,6 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1031,7 +1003,6 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader and texture mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1073,7 +1044,6 @@ class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == False and (context.space_data.tree_type == 'ShaderNodeTree')
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1108,7 +1078,6 @@ class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1145,7 +1114,6 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == False and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1182,7 +1150,6 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
     bl_region_type = 'UI'
     bl_category = "Relations"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
         in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()
@@ -1263,7 +1230,6 @@ class NODES_PT_Relations_layout(bpy.types.Panel, NodePanel):
     bl_region_type = 'UI'
     bl_category = "Relations"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1290,7 +1256,6 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1320,7 +1285,6 @@ class NODES_PT_geom_add_input(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1335,7 +1299,6 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_geom_add_input"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1366,7 +1329,6 @@ class NODES_PT_geom_add_input_gizmo(bpy.types.Panel, NodePanel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_geom_add_input"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1389,7 +1351,6 @@ class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_geom_add_input"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1415,7 +1376,6 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_geom_add_input"
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1451,7 +1411,6 @@ class NODES_PT_geom_add_output(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1476,7 +1435,6 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1502,7 +1460,6 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1535,7 +1492,6 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1564,7 +1520,6 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1592,7 +1547,6 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1627,7 +1581,6 @@ class NODES_PT_geom_add_curve(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1645,7 +1598,6 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1679,7 +1631,6 @@ class NODES_PT_geom_add_curve_sample(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1704,7 +1655,6 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1736,7 +1686,6 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1772,7 +1721,6 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1804,7 +1752,6 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1830,7 +1777,6 @@ class NODES_PT_geom_add_grease_pencil(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1849,7 +1795,6 @@ class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1874,7 +1819,6 @@ class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1901,7 +1845,6 @@ class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1926,7 +1869,6 @@ class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1960,7 +1902,6 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -1979,7 +1920,6 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2019,7 +1959,6 @@ class NODES_PT_geom_add_mesh_sample(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2045,7 +1984,6 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2072,7 +2010,6 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2112,7 +2049,6 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2145,7 +2081,6 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2178,7 +2113,6 @@ class NODES_PT_geom_add_mesh_uv(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2203,7 +2137,6 @@ class NODES_PT_geom_add_point(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2235,7 +2168,6 @@ class NODES_PT_geom_add_volume(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2260,7 +2192,6 @@ class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2284,7 +2215,6 @@ class NODES_PT_geom_add_material(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2312,7 +2242,6 @@ class NODES_PT_geom_add_texture(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2344,7 +2273,6 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2373,7 +2301,6 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2403,7 +2330,6 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2436,7 +2362,6 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2466,7 +2391,6 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2493,7 +2417,6 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2528,7 +2451,6 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2563,7 +2485,6 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2598,7 +2519,6 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2628,7 +2548,6 @@ class NODES_PT_shader_add_input_common(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2672,7 +2591,6 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2725,7 +2643,6 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == True and (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2811,7 +2728,6 @@ class NODES_PT_shader_add_texture_common(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and texture mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2861,7 +2777,6 @@ class NODES_PT_shader_add_color_common(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree'
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2910,7 +2825,6 @@ class NODES_PT_shader_add_vector_common(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2949,7 +2863,6 @@ class NODES_PT_shader_add_converter_common(bpy.types.Panel, NodePanel):
 
         return addon_prefs.Node_shader_add_common == True and context.space_data.tree_type == 'ShaderNodeTree' # Just in shader and compositing mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
@@ -2995,7 +2908,6 @@ class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
     def poll(cls, context):
         return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
 
