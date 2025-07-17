@@ -2283,6 +2283,11 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeVolumePrincipled"
 
+                if engine == 'CYCLES':
+                    props = col.operator("node.add_node", text=" Ray Portal            ", icon = "NODE_RAY_PORTAL")
+                    props.use_transform = True
+                    props.type = "ShaderNodeRayPortal"
+
                 props = col.operator("node.add_node", text=" Refraction BSDF   ", icon = "NODE_REFRACTIONSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfRefraction"
@@ -2416,6 +2421,11 @@ class NODES_PT_shader_add_shader(bpy.types.Panel):
                 props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
                 props.use_transform = True
                 props.type = "ShaderNodeVolumePrincipled"
+
+                if engine == 'CYCLES':
+                    props = flow.operator("node.add_node", text="", icon = "NODE_RAY_PORTAL")
+                    props.use_transform = True
+                    props.type = "ShaderNodeRayPortal"
 
                 if engine == 'BLENDER_EEVEE':
 
