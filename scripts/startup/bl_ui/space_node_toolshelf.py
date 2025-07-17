@@ -1193,51 +1193,20 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
+        in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()
+        
+        entries = (
+            OperatorEntry(operator="node.group_make", icon="NODE_MAKEGROUP"),
+            OperatorEntry(operator="node.group_insert", text="Insert into Group", icon="NODE_GROUPINSERT"),
+            OperatorEntry(operator="node.group_ungroup", icon="NODE_UNGROUP"),
+            Separator,
+            OperatorEntry(operator="node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP", props={"exit" : False}),
+            Separator,
+            OperatorEntry("NodeGroupInput", should_draw=in_group),
+            OperatorEntry("NodeGroupOutput", should_draw=in_group),
+        )
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
-            col.operator("node.group_insert", text = " Insert into Group ", icon = "NODE_GROUPINSERT")
-            col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            space_node = context.space_data
-            node_tree = space_node.edit_tree
-            all_node_groups = context.blend_data.node_groups
-
-            if node_tree in all_node_groups.values():
-                self.draw_text_button(col, "NodeGroupInput")
-                self.draw_text_button(col, "NodeGroupOutput")
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            flow.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
-            flow.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
-            flow.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
-
-            flow.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
-
-            space_node = context.space_data
-            node_tree = space_node.edit_tree
-            all_node_groups = context.blend_data.node_groups
-
-            if node_tree in all_node_groups.values():
-                self.draw_icon_button(flow, "NodeGroupInput")
-                self.draw_icon_button(flow, "NodeGroupOutput")
+        self.draw_entries(context, layout, entries)
 
 
 #Shader Editor - Relations tab, Node Group Panel
