@@ -137,8 +137,7 @@ class NodePanel:
                     self.draw_icon_button(flow, entry)
 
 
-# Icon or text buttons in shader editor and compositor in the ADD panel
-class NODES_PT_shader_comp_textoricon_shader_add(bpy.types.Panel):
+class NODES_PT_toolshelf_display_settings_add(bpy.types.Panel):
     """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -148,7 +147,7 @@ class NODES_PT_shader_comp_textoricon_shader_add(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type in {'ShaderNodeTree'})
+        return context.space_data.edit_tree is not None
 
     @staticmethod
     def draw(self, context):
@@ -158,22 +157,23 @@ class NODES_PT_shader_comp_textoricon_shader_add(bpy.types.Panel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         row = layout.row()
-        row.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
-        row.prop(addon_prefs,"Node_shader_add_common", text = "Common")
+        row.prop(addon_prefs,"Node_text_or_icon", text="Icon Buttons")
+
+        if (context.space_data.tree_type in {'ShaderNodeTree'}):
+            row.prop(addon_prefs,"Node_shader_add_common", text = "Common")
 
 
-# Icon or text buttons in compositor in the ADD panel
-class NODES_PT_shader_comp_textoricon_compositor_add(bpy.types.Panel):
+class NODES_PT_toolshelf_display_settings_relations(bpy.types.Panel):
     """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Display"
-    bl_category = "Add"
+    bl_category = "Relations"
     #bl_options = {'HIDE_HEADER'}
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type in {'CompositorNodeTree'})
+        return context.space_data.edit_tree is not None
 
     @staticmethod
     def draw(self, context):
@@ -183,76 +183,7 @@ class NODES_PT_shader_comp_textoricon_compositor_add(bpy.types.Panel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         row = layout.row()
-        row.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
-
-
-# Icon or text buttons in shader editor and compositor in the RELATIONS panel
-class NODES_PT_shader_comp_textoricon_relations(bpy.types.Panel):
-    """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_label = "Display"
-    bl_category = "Relations"
-    #bl_options = {'HIDE_HEADER'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type in {'ShaderNodeTree', 'CompositorNodeTree'})
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
-
-
-# Icon or text buttons in geometry node editor in the ADD panel
-class NODES_PT_geom_textoricon_add(bpy.types.Panel):
-    """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_label = "Display"
-    bl_category = "Add"
-    #bl_options = {'HIDE_HEADER'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type in 'GeometryNodeTree')
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
-
-
-# Icon or text buttons in geometry node editor in the RELATIONS panel
-class NODES_PT_geom_textoricon_relations(bpy.types.Panel):
-    """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_label = "Display"
-    bl_category = "Relations"
-    #bl_options = {'HIDE_HEADER'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type in 'GeometryNodeTree')
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
+        row.prop(addon_prefs,"Node_text_or_icon", text="Icon Buttons")
 
 
 # Shader editor, Input panel
@@ -3107,11 +3038,8 @@ class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
 
 
 classes = (
-    NODES_PT_shader_comp_textoricon_shader_add,
-    NODES_PT_shader_comp_textoricon_compositor_add,
-    NODES_PT_shader_comp_textoricon_relations,
-    NODES_PT_geom_textoricon_add,
-    NODES_PT_geom_textoricon_relations,
+    NODES_PT_toolshelf_display_settings_add,
+    NODES_PT_toolshelf_display_settings_relations,
     NODES_PT_shader_add_input,
     NODES_PT_shader_add_output,
     NODES_PT_shader_add_shader,
