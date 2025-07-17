@@ -1578,34 +1578,16 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeAttributeStatistic")
-            self.draw_text_button(col, "GeometryNodeAttributeDomainSize")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeBlurAttribute")
-            self.draw_text_button(col, "GeometryNodeCaptureAttribute")
-            self.draw_text_button(col, "GeometryNodeRemoveAttribute")
-            self.draw_text_button(col, "GeometryNodeStoreNamedAttribute")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeAttributeStatistic")
-            self.draw_icon_button(flow, "GeometryNodeAttributeDomainSize")
-            self.draw_icon_button(flow, "GeometryNodeBlurAttribute")
-            self.draw_icon_button(flow, "GeometryNodeCaptureAttribute")
-            self.draw_icon_button(flow, "GeometryNodeRemoveAttribute")
-            self.draw_icon_button(flow, "GeometryNodeStoreNamedAttribute")
+        entries = (
+            "GeometryNodeAttributeStatistic",
+            "GeometryNodeAttributeDomainSize",
+            Separator,
+            "GeometryNodeBlurAttribute",
+            "GeometryNodeCaptureAttribute",
+            "GeometryNodeRemoveAttribute",
+            "GeometryNodeStoreNamedAttribute",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add input panel
@@ -1645,42 +1627,20 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeInputBool")
-            self.draw_text_button(col, "GeometryNodeInputCollection")
-            self.draw_text_button(col, "FunctionNodeInputColor")
-            self.draw_text_button(col, "GeometryNodeInputImage")
-            self.draw_text_button(col, "FunctionNodeInputInt")
-            self.draw_text_button(col, "GeometryNodeInputMaterial")
-            self.draw_text_button(col, "GeometryNodeInputObject")
-            self.draw_text_button(col, "FunctionNodeInputRotation")
-            self.draw_text_button(col, "FunctionNodeInputString")
-            self.draw_text_button(col, "ShaderNodeValue")
-            self.draw_text_button(col, "FunctionNodeInputVector")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            self.draw_icon_button(flow, "FunctionNodeInputBool")
-            self.draw_icon_button(flow, "GeometryNodeInputCollection")
-            self.draw_icon_button(flow, "FunctionNodeInputColor")
-            self.draw_icon_button(flow, "GeometryNodeInputImage")
-            self.draw_icon_button(flow, "FunctionNodeInputInt")
-            self.draw_icon_button(flow, "GeometryNodeInputMaterial")
-            self.draw_icon_button(flow, "GeometryNodeInputObject")
-            self.draw_icon_button(flow, "FunctionNodeInputRotation")
-            self.draw_icon_button(flow, "FunctionNodeInputString")
-            self.draw_icon_button(flow, "ShaderNodeValue")
-            self.draw_icon_button(flow, "FunctionNodeInputVector")
+        entries = (
+            "FunctionNodeInputBool",
+            "GeometryNodeInputCollection",
+            "FunctionNodeInputColor",
+            "GeometryNodeInputImage",
+            "FunctionNodeInputInt",
+            "GeometryNodeInputMaterial",
+            "GeometryNodeInputObject",
+            "FunctionNodeInputRotation",
+            "FunctionNodeInputString",
+            "ShaderNodeValue",
+            "FunctionNodeInputVector",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add input panel, gizmo supbanel
@@ -1702,26 +1662,12 @@ class NODES_PT_geom_add_input_gizmo(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeGizmoDial")
-            self.draw_text_button(col, "GeometryNodeGizmoLinear")
-            self.draw_text_button(col, "GeometryNodeGizmoTransform")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            self.draw_icon_button(flow, "GeometryNodeGizmoDial")
-            self.draw_icon_button(flow, "GeometryNodeGizmoLinear")
-            self.draw_icon_button(flow, "GeometryNodeGizmoTransform")
+        entries = (
+            "GeometryNodeGizmoDial",
+            "GeometryNodeGizmoLinear",
+            "GeometryNodeGizmoTransform",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add input panel, file supbanel
@@ -1743,31 +1689,15 @@ class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeImportOBJ")
-            self.draw_text_button(col, "GeometryNodeImportPLY")
-            self.draw_text_button(col, "GeometryNodeImportSTL")
-            self.draw_text_button(col, "GeometryNodeImportCSV")
-            self.draw_text_button(col, "GeometryNodeImportText")
-            self.draw_text_button(col, "GeometryNodeImportVDB")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeImportOBJ")
-            self.draw_icon_button(flow, "GeometryNodeImportPLY")
-            self.draw_icon_button(flow, "GeometryNodeImportSTL")
-            self.draw_icon_button(flow, "GeometryNodeImportCSV")
-            self.draw_icon_button(flow, "GeometryNodeImportText")
-            self.draw_icon_button(flow, "GeometryNodeImportVDB")
+        entries = (
+            "GeometryNodeImportOBJ",
+            "GeometryNodeImportPLY",
+            "GeometryNodeImportSTL",
+            "GeometryNodeImportCSV",
+            "GeometryNodeImportText",
+            "GeometryNodeImportVDB",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 
@@ -1790,55 +1720,22 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            if is_tool_tree(context):
-                self.draw_text_button(col, "GeometryNodeTool3DCursor")
-            self.draw_text_button(col, "GeometryNodeInputActiveCamera")
-            self.draw_text_button(col, "GeometryNodeCameraInfo")
-            self.draw_text_button(col, "GeometryNodeCollectionInfo")
-            self.draw_text_button(col, "GeometryNodeImageInfo")
-            self.draw_text_button(col, "GeometryNodeIsViewport")
-            self.draw_text_button(col, "GeometryNodeInputNamedLayerSelection")
-
-            if is_tool_tree(context):
-                self.draw_text_button(col, "GeometryNodeToolMousePosition")
-            self.draw_text_button(col, "GeometryNodeObjectInfo")
-            self.draw_text_button(col, "GeometryNodeInputSceneTime")
-            self.draw_text_button(col, "GeometryNodeSelfObject")
-
-            if is_tool_tree(context):
-                self.draw_text_button(col, "GeometryNodeViewportTransform")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            if is_tool_tree(context):
-                self.draw_icon_button(flow, "GeometryNodeTool3DCursor")
-            self.draw_icon_button(flow, "GeometryNodeInputActiveCamera")
-            self.draw_icon_button(flow, "GeometryNodeCameraInfo")
-            self.draw_icon_button(flow, "GeometryNodeCollectionInfo")
-            self.draw_icon_button(flow, "GeometryNodeImageInfo")
-            self.draw_icon_button(flow, "GeometryNodeIsViewport")
-            self.draw_icon_button(flow, "GeometryNodeInputNamedLayerSelection")
-
-            if is_tool_tree(context):
-                self.draw_icon_button(flow, "GeometryNodeToolMousePosition")
-            self.draw_icon_button(flow, "GeometryNodeObjectInfo")
-            self.draw_icon_button(flow, "GeometryNodeInputSceneTime")
-            self.draw_icon_button(flow, "GeometryNodeSelfObject")
-
-            if is_tool_tree(context):
-                self.draw_icon_button(flow, "GeometryNodeViewportTransform")
+        is_tool = is_tool_tree(context)
+        entries = (
+            OperatorEntry("GeometryNodeTool3DCursor", should_draw=is_tool),
+            "GeometryNodeInputActiveCamera",
+            "GeometryNodeCameraInfo",
+            "GeometryNodeCollectionInfo",
+            "GeometryNodeImageInfo",
+            "GeometryNodeIsViewport",
+            "GeometryNodeInputNamedLayerSelection",
+            OperatorEntry("GeometryNodeToolMousePosition", should_draw=is_tool),
+            "GeometryNodeObjectInfo",
+            "GeometryNodeInputSceneTime",
+            "GeometryNodeSelfObject",
+            OperatorEntry("GeometryNodeViewportTransform", should_draw=is_tool),
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add output panel
@@ -1863,23 +1760,11 @@ class NODES_PT_geom_add_output(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeViewer")
-            self.draw_text_button(col, "GeometryNodeWarning")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeViewer")
-            self.draw_icon_button(flow, "GeometryNodeWarning")
+        entries = (
+            "GeometryNodeViewer",
+            "GeometryNodeWarning",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add geometry panel
@@ -1904,23 +1789,11 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeGeometryToInstance")
-            self.draw_text_button(col, "GeometryNodeJoinGeometry")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeGeometryToInstance")
-            self.draw_icon_button(flow, "GeometryNodeJoinGeometry")
+        entries = (
+            "GeometryNodeGeometryToInstance",
+            "GeometryNodeJoinGeometry",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add geometry panel, read subpanel
@@ -1946,40 +1819,18 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputID")
-            self.draw_text_button(col, "GeometryNodeInputIndex")
-            self.draw_text_button(col, "GeometryNodeInputNamedAttribute")
-            self.draw_text_button(col, "GeometryNodeInputNormal")
-            self.draw_text_button(col, "GeometryNodeInputPosition")
-            self.draw_text_button(col, "GeometryNodeInputRadius")
-
-            if is_tool_tree(context):
-                self.draw_text_button(col, "GeometryNodeToolSelection")
-                self.draw_text_button(col, "GeometryNodeToolActiveElement")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInputID")
-            self.draw_icon_button(flow, "GeometryNodeInputIndex")
-            self.draw_icon_button(flow, "GeometryNodeInputNamedAttribute")
-            self.draw_icon_button(flow, "GeometryNodeInputNormal")
-            self.draw_icon_button(flow, "GeometryNodeInputPosition")
-            self.draw_icon_button(flow, "GeometryNodeInputRadius")
-
-            if is_tool_tree(context):
-                self.draw_icon_button(flow, "GeometryNodeToolSelection")
-                self.draw_icon_button(flow, "GeometryNodeToolActiveElement")
-
+        is_tool = is_tool_tree(context)
+        entries = (
+            "GeometryNodeInputID",
+            "GeometryNodeInputIndex",
+            "GeometryNodeInputNamedAttribute",
+            "GeometryNodeInputNormal",
+            "GeometryNodeInputPosition",
+            "GeometryNodeInputRadius",
+            OperatorEntry("GeometryNodeToolSelection", should_draw=is_tool),
+            OperatorEntry("GeometryNodeToolActiveElement", should_draw=is_tool),
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add geometry panel, sample subpanel
@@ -2005,29 +1856,14 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeProximity")
-            self.draw_text_button(col, "GeometryNodeIndexOfNearest")
-            self.draw_text_button(col, "GeometryNodeRaycast")
-            self.draw_text_button(col, "GeometryNodeSampleIndex")
-            self.draw_text_button(col, "GeometryNodeSampleNearest")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeMergeByDistance")
-            self.draw_icon_button(flow, "GeometryNodeIndexOfNearest")
-            self.draw_icon_button(flow, "GeometryNodeRaycast")
-            self.draw_icon_button(flow, "GeometryNodeSampleIndex")
-            self.draw_icon_button(flow, "GeometryNodeSampleNearest")
+        entries = (
+            "GeometryNodeProximity",
+            "GeometryNodeIndexOfNearest",
+            "GeometryNodeRaycast",
+            "GeometryNodeSampleIndex",
+            "GeometryNodeSampleNearest",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add geometry panel, write subpanel
@@ -2053,31 +1889,13 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSetGeometryName")
-            self.draw_text_button(col, "GeometryNodeSetID")
-            self.draw_text_button(col, "GeometryNodeSetPosition")
-
-            if is_tool_tree(context):
-                self.draw_text_button(col, "GeometryNodeToolSetSelection")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSetGeometryName")
-            self.draw_icon_button(flow, "GeometryNodeSetID")
-            self.draw_icon_button(flow, "GeometryNodeSetPosition")
-
-            if is_tool_tree(context):
-                self.draw_icon_button(flow, "GeometryNodeToolSetSelection")
+        entries = (
+            "GeometryNodeSetGeometryName",
+            "GeometryNodeSetID",
+            "GeometryNodeSetPosition",
+            OperatorEntry("GeometryNodeToolSetSelection", should_draw=is_tool_tree(context)),
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add geometry panel, operations subpanel
@@ -2103,44 +1921,21 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeBake")
-            self.draw_text_button(col, "GeometryNodeBoundBox")
-            self.draw_text_button(col, "GeometryNodeConvexHull")
-            self.draw_text_button(col, "GeometryNodeDeleteGeometry")
-            self.draw_text_button(col, "GeometryNodeDuplicateElements")
-            self.draw_text_button(col, "GeometryNodeMergeByDistance")
-            self.draw_text_button(col, "GeometryNodeSortElements")
-            self.draw_text_button(col, "GeometryNodeTransform")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSeparateComponents")
-            self.draw_text_button(col, "GeometryNodeSeparateGeometry")
-            self.draw_text_button(col, "GeometryNodeSplitToInstances")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeBake")
-            self.draw_icon_button(flow, "GeometryNodeBoundBox")
-            self.draw_icon_button(flow, "GeometryNodeConvexHull")
-            self.draw_icon_button(flow, "GeometryNodeDeleteGeometry")
-            self.draw_icon_button(flow, "GeometryNodeDuplicateElements")
-            self.draw_icon_button(flow, "GeometryNodeMergeByDistance")
-            self.draw_icon_button(flow, "GeometryNodeSortElements")
-            self.draw_icon_button(flow, "GeometryNodeTransform")
-            self.draw_icon_button(flow, "GeometryNodeSeparateComponents")
-            self.draw_icon_button(flow, "GeometryNodeSeparateGeometry")
-            self.draw_icon_button(flow, "GeometryNodeSplitToInstances")
+        entries = (
+            "GeometryNodeBake",
+            "GeometryNodeBoundBox",
+            "GeometryNodeConvexHull",
+            "GeometryNodeDeleteGeometry",
+            "GeometryNodeDuplicateElements",
+            "GeometryNodeMergeByDistance",
+            "GeometryNodeSortElements",
+            "GeometryNodeTransform",
+            Separator,
+            "GeometryNodeSeparateComponents",
+            "GeometryNodeSeparateGeometry",
+            "GeometryNodeSplitToInstances",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Curves panel
@@ -2183,39 +1978,19 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputCurveHandlePositions")
-            self.draw_text_button(col, "GeometryNodeCurveLength")
-            self.draw_text_button(col, "GeometryNodeInputTangent")
-            self.draw_text_button(col, "GeometryNodeInputCurveTilt")
-            self.draw_text_button(col, "GeometryNodeCurveEndpointSelection")
-            self.draw_text_button(col, "GeometryNodeCurveHandleTypeSelection")
-            self.draw_text_button(col, "GeometryNodeInputSplineCyclic")
-            self.draw_text_button(col, "GeometryNodeSplineLength")
-            self.draw_text_button(col, "GeometryNodeSplineParameter")
-            self.draw_text_button(col, "GeometryNodeInputSplineResolution")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInputCurveHandlePositions")
-            self.draw_icon_button(flow, "GeometryNodeCurveLength")
-            self.draw_icon_button(flow, "GeometryNodeInputTangent")
-            self.draw_icon_button(flow, "GeometryNodeInputCurveTilt")
-            self.draw_icon_button(flow, "GeometryNodeCurveEndpointSelection")
-            self.draw_icon_button(flow, "GeometryNodeCurveHandleTypeSelection")
-            self.draw_icon_button(flow, "GeometryNodeInputSplineCyclic")
-            self.draw_icon_button(flow, "GeometryNodeSplineLength")
-            self.draw_icon_button(flow, "GeometryNodeSplineParameter")
-            self.draw_icon_button(flow, "GeometryNodeInputSplineResolution")
+        entries = (
+            "GeometryNodeInputCurveHandlePositions",
+            "GeometryNodeCurveLength",
+            "GeometryNodeInputTangent",
+            "GeometryNodeInputCurveTilt",
+            "GeometryNodeCurveEndpointSelection",
+            "GeometryNodeCurveHandleTypeSelection",
+            "GeometryNodeInputSplineCyclic",
+            "GeometryNodeSplineLength",
+            "GeometryNodeSplineParameter",
+            "GeometryNodeInputSplineResolution",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Curves panel, read subpanel
@@ -2241,23 +2016,10 @@ class NODES_PT_geom_add_curve_sample(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSampleCurve")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSampleCurve")
-
-
+        entries = (
+            "GeometryNodeSampleCurve",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Curves panel, write subpanel
@@ -2283,35 +2045,17 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSetCurveNormal")
-            self.draw_text_button(col, "GeometryNodeSetCurveRadius")
-            self.draw_text_button(col, "GeometryNodeSetCurveTilt")
-            self.draw_text_button(col, "GeometryNodeSetCurveHandlePositions")
-            self.draw_text_button(col, "GeometryNodeCurveSetHandles")
-            self.draw_text_button(col, "GeometryNodeSetSplineCyclic")
-            self.draw_text_button(col, "GeometryNodeSetSplineResolution")
-            self.draw_text_button(col, "GeometryNodeCurveSplineType")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSetCurveNormal")
-            self.draw_icon_button(flow, "GeometryNodeSetCurveRadius")
-            self.draw_icon_button(flow, "GeometryNodeSetCurveTilt")
-            self.draw_icon_button(flow, "GeometryNodeSetCurveHandlePositions")
-            self.draw_icon_button(flow, "GeometryNodeCurveSetHandles")
-            self.draw_icon_button(flow, "GeometryNodeSetSplineCyclic")
-            self.draw_icon_button(flow, "GeometryNodeSetSplineResolution")
-            self.draw_icon_button(flow, "GeometryNodeCurveSplineType")
+        entries = (
+            "GeometryNodeSetCurveNormal",
+            "GeometryNodeSetCurveRadius",
+            "GeometryNodeSetCurveTilt",
+            "GeometryNodeSetCurveHandlePositions",
+            "GeometryNodeCurveSetHandles",
+            "GeometryNodeSetSplineCyclic",
+            "GeometryNodeSetSplineResolution",
+            "GeometryNodeCurveSplineType",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Curves panel, operations subpanel
@@ -2337,45 +2081,21 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeCurvesToGreasePencil")
-            self.draw_text_button(col, "GeometryNodeCurveToMesh")
-            self.draw_text_button(col, "GeometryNodeCurveToPoints")
-            self.draw_text_button(col, "GeometryNodeDeformCurvesOnSurface")
-            self.draw_text_button(col, "GeometryNodeFillCurve")
-            self.draw_text_button(col, "GeometryNodeFilletCurve")
-            self.draw_text_button(col, "GeometryNodeGreasePencilToCurves")
-            self.draw_text_button(col, "GeometryNodeInterpolateCurves")
-            self.draw_text_button(col, "GeometryNodeInterpolateCurves")
-            self.draw_text_button(col, "GeometryNodeResampleCurve")
-            self.draw_text_button(col, "GeometryNodeReverseCurve")
-            self.draw_text_button(col, "GeometryNodeSubdivideCurve")
-            self.draw_text_button(col, "GeometryNodeTrimCurve")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeCurvesToGreasePencil")
-            self.draw_icon_button(flow, "GeometryNodeCurveToMesh")
-            self.draw_icon_button(flow, "GeometryNodeCurveToPoints")
-            self.draw_icon_button(flow, "GeometryNodeDeformCurvesOnSurface")
-            self.draw_icon_button(flow, "GeometryNodeFillCurve")
-            self.draw_icon_button(flow, "GeometryNodeFilletCurve")
-            self.draw_icon_button(flow, "GeometryNodeGreasePencilToCurves")
-            self.draw_icon_button(flow, "GeometryNodeInterpolateCurves")
-            self.draw_icon_button(flow, "GeometryNodeInterpolateCurves")
-            self.draw_icon_button(flow, "GeometryNodeResampleCurve")
-            self.draw_icon_button(flow, "GeometryNodeReverseCurve")
-            self.draw_icon_button(flow, "GeometryNodeSubdivideCurve")
-            self.draw_icon_button(flow, "GeometryNodeTrimCurve")
+        entries = (
+            "GeometryNodeCurvesToGreasePencil",
+            "GeometryNodeCurveToMesh",
+            "GeometryNodeCurveToPoints",
+            "GeometryNodeDeformCurvesOnSurface",
+            "GeometryNodeFillCurve",
+            "GeometryNodeFilletCurve",
+            "GeometryNodeGreasePencilToCurves",
+            "GeometryNodeInterpolateCurves",
+            "GeometryNodeResampleCurve",
+            "GeometryNodeReverseCurve",
+            "GeometryNodeSubdivideCurve",
+            "GeometryNodeTrimCurve",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Curves panel, Primitives subpanel
@@ -2401,35 +2121,17 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeCurveArc")
-            self.draw_text_button(col, "GeometryNodeCurvePrimitiveBezierSegment")
-            self.draw_text_button(col, "GeometryNodeCurvePrimitiveCircle")
-            self.draw_text_button(col, "GeometryNodeCurvePrimitiveLine")
-            self.draw_text_button(col, "GeometryNodeCurveSpiral")
-            self.draw_text_button(col, "GeometryNodeCurveQuadraticBezier")
-            self.draw_text_button(col, "GeometryNodeCurvePrimitiveQuadrilateral")
-            self.draw_text_button(col, "GeometryNodeCurveStar")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeCurveArc")
-            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveBezierSegment")
-            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveCircle")
-            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveLine")
-            self.draw_icon_button(flow, "GeometryNodeCurveSpiral")
-            self.draw_icon_button(flow, "GeometryNodeCurveQuadraticBezier")
-            self.draw_icon_button(flow, "GeometryNodeCurvePrimitiveQuadrilateral")
-            self.draw_icon_button(flow, "GeometryNodeCurveStar")
+        entries = (
+            "GeometryNodeCurveArc",
+            "GeometryNodeCurvePrimitiveBezierSegment",
+            "GeometryNodeCurvePrimitiveCircle",
+            "GeometryNodeCurvePrimitiveLine",
+            "GeometryNodeCurveSpiral",
+            "GeometryNodeCurveQuadraticBezier",
+            "GeometryNodeCurvePrimitiveQuadrilateral",
+            "GeometryNodeCurveStar",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Curve panel, Topology subpanel
@@ -2455,25 +2157,12 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeCurveOfPoint")
-            self.draw_text_button(col, "GeometryNodeOffsetPointInCurve")
-            self.draw_text_button(col, "GeometryNodePointsOfCurve")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeCurveOfPoint")
-            self.draw_icon_button(flow, "GeometryNodeOffsetPointInCurve")
-            self.draw_icon_button(flow, "GeometryNodePointsOfCurve")
+        entries = (
+            "GeometryNodeCurveOfPoint",
+            "GeometryNodeOffsetPointInCurve",
+            "GeometryNodePointsOfCurve",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Grease Pencil panel
@@ -2517,21 +2206,10 @@ class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputNamedLayerSelection")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInputNamedLayerSelection")
+        entries = (
+            "GeometryNodeInputNamedLayerSelection",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Grease Pencil panel, Read subpanel
@@ -2557,25 +2235,12 @@ class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSetGreasePencilColor")
-            self.draw_text_button(col, "GeometryNodeSetGreasePencilDepth")
-            self.draw_text_button(col, "GeometryNodeSetGreasePencilSoftness")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilColor")
-            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilDepth")
-            self.draw_icon_button(flow, "GeometryNodeSetGreasePencilSoftness")
+        entries = (
+            "GeometryNodeSetGreasePencilColor",
+            "GeometryNodeSetGreasePencilDepth",
+            "GeometryNodeSetGreasePencilSoftness",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add Grease Pencil panel, Read subpanel
@@ -2599,25 +2264,11 @@ class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeGreasePencilToCurves")
-            self.draw_text_button(col, "GeometryNodeMergeLayers")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeGreasePencilToCurves")
-            self.draw_icon_button(flow, "GeometryNodeMergeLayers")
+        entries = (
+            "GeometryNodeGreasePencilToCurves",
+            "GeometryNodeMergeLayers",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add mesh panel
@@ -2642,42 +2293,20 @@ class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInstanceOnPoints")
-            self.draw_text_button(col, "GeometryNodeInstancesToPoints")
-            self.draw_text_button(col, "GeometryNodeRealizeInstances")
-            self.draw_text_button(col, "GeometryNodeRotateInstances")
-            self.draw_text_button(col, "GeometryNodeScaleInstances")
-            self.draw_text_button(col, "GeometryNodeTranslateInstances")
-            self.draw_text_button(col, "GeometryNodeSetInstanceTransform")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInstanceTransform")
-            self.draw_text_button(col, "GeometryNodeInputInstanceRotation")
-            self.draw_text_button(col, "GeometryNodeInputInstanceScale")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInstanceOnPoints")
-            self.draw_icon_button(flow, "GeometryNodeInstancesToPoints")
-            self.draw_icon_button(flow, "GeometryNodeRealizeInstances")
-            self.draw_icon_button(flow, "GeometryNodeRotateInstances")
-            self.draw_icon_button(flow, "GeometryNodeTriangulate")
-            self.draw_icon_button(flow, "GeometryNodeTranslateInstances")
-            self.draw_icon_button(flow, "GeometryNodeSetInstanceTransform")
-            self.draw_icon_button(flow, "GeometryNodeInstanceTransform")
-            self.draw_icon_button(flow, "GeometryNodeInputInstanceRotation")
-            self.draw_icon_button(flow, "GeometryNodeInputInstanceScale")
+        entries = (
+            "GeometryNodeInstanceOnPoints",
+            "GeometryNodeInstancesToPoints",
+            "GeometryNodeRealizeInstances",
+            "GeometryNodeRotateInstances",
+            "GeometryNodeScaleInstances",
+            "GeometryNodeTranslateInstances",
+            "GeometryNodeSetInstanceTransform",
+            Separator,
+            "GeometryNodeInstanceTransform",
+            "GeometryNodeInputInstanceRotation",
+            "GeometryNodeInputInstanceScale",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add mesh panel
@@ -2721,57 +2350,25 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputMeshEdgeAngle")
-            self.draw_text_button(col, "GeometryNodeInputMeshEdgeNeighbors")
-            self.draw_text_button(col, "GeometryNodeInputMeshEdgeVertices")
-            self.draw_text_button(col, "GeometryNodeEdgesToFaceGroups")
-            self.draw_text_button(col, "GeometryNodeInputMeshFaceArea")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeMeshFaceSetBoundaries")
-            self.draw_text_button(col, "GeometryNodeInputMeshFaceNeighbors")
-
-            if is_tool_tree(context):
-                self.draw_text_button(col, "GeometryNodeToolFaceSet")
-            self.draw_text_button(col, "GeometryNodeInputMeshFaceIsPlanar")
-            self.draw_text_button(col, "GeometryNodeInputShadeSmooth")
-            self.draw_text_button(col, "GeometryNodeInputEdgeSmooth")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeInputMeshIsland")
-            self.draw_text_button(col, "GeometryNodeInputShortestEdgePaths")
-            self.draw_text_button(col, "GeometryNodeInputMeshVertexNeighbors")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeAngle")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeNeighbors")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshEdgeVertices")
-            self.draw_icon_button(flow, "GeometryNodeEdgesToFaceGroups")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceArea")
-            self.draw_icon_button(flow, "GeometryNodeMeshFaceSetBoundaries")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceNeighbors")
-
-            if is_tool_tree(context):
-                self.draw_icon_button(flow, "GeometryNodeToolFaceSet")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshFaceIsPlanar")
-            self.draw_icon_button(flow, "GeometryNodeInputShadeSmooth")
-            self.draw_icon_button(flow, "GeometryNodeInputEdgeSmooth")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshIsland")
-            self.draw_icon_button(flow, "GeometryNodeInputShortestEdgePaths")
-            self.draw_icon_button(flow, "GeometryNodeInputMeshVertexNeighbors")
+        entries = (
+            "GeometryNodeInputMeshEdgeAngle",
+            "GeometryNodeInputMeshEdgeNeighbors",
+            "GeometryNodeInputMeshEdgeVertices",
+            "GeometryNodeEdgesToFaceGroups",
+            "GeometryNodeInputMeshFaceArea",
+            Separator,
+            "GeometryNodeMeshFaceSetBoundaries",
+            "GeometryNodeInputMeshFaceNeighbors",
+            OperatorEntry("GeometryNodeToolFaceSet", should_draw=is_tool_tree(context)),
+            "GeometryNodeInputMeshFaceIsPlanar",
+            "GeometryNodeInputShadeSmooth",
+            "GeometryNodeInputEdgeSmooth",
+            Separator,
+            "GeometryNodeInputMeshIsland",
+            "GeometryNodeInputShortestEdgePaths",
+            "GeometryNodeInputMeshVertexNeighbors",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add mesh panel, sample subpanel
@@ -2797,23 +2394,11 @@ class NODES_PT_geom_add_mesh_sample(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSampleNearestSurface")
-            self.draw_text_button(col, "GeometryNodeSampleUVSurface")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeSampleNearestSurface")
-            self.draw_icon_button(flow, "GeometryNodeSampleUVSurface")
+        entries = (
+            "GeometryNodeSampleNearestSurface",
+            "GeometryNodeSampleUVSurface",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add mesh panel, write subpanel
@@ -2839,29 +2424,12 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            if is_tool_tree(context):
-                self.draw_text_button(col, "GeometryNodeToolFaceSet")
-            self.draw_text_button(col, "GeometryNodeSetMeshNormal")
-            self.draw_text_button(col, "GeometryNodeSetShadeSmooth")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            if is_tool_tree(context):
-                self.draw_icon_button(flow, "GeometryNodeToolSetFaceSet")
-            self.draw_icon_button(flow, "GeometryNodeSetMeshNormal")
-            self.draw_icon_button(flow, "GeometryNodeSetShadeSmooth")
+        entries = (
+            OperatorEntry("GeometryNodeToolSetFaceSet", should_draw=is_tool_tree(context)),
+            "GeometryNodeSetMeshNormal",
+            "GeometryNodeSetShadeSmooth",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add mesh panel, operations subpanel
@@ -2887,54 +2455,25 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeDualMesh")
-            self.draw_text_button(col, "GeometryNodeEdgePathsToCurves")
-            self.draw_text_button(col, "GeometryNodeEdgePathsToSelection")
-            self.draw_text_button(col, "GeometryNodeExtrudeMesh")
-            self.draw_text_button(col, "GeometryNodeFlipFaces")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeMeshBoolean")
-            self.draw_text_button(col, "GeometryNodeMeshToCurve")
-            self.draw_text_button(col, "GeometryNodeMeshToPoints")
-            self.draw_text_button(col, "GeometryNodeMeshToVolume")
-            self.draw_text_button(col, "GeometryNodeScaleElements")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeSplitEdges")
-            self.draw_text_button(col, "GeometryNodeSubdivideMesh")
-            self.draw_text_button(col, "GeometryNodeSubdivisionSurface")
-            self.draw_text_button(col, "GeometryNodeTriangulate")
-
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeDualMesh")
-            self.draw_icon_button(flow, "GeometryNodeEdgePathsToCurves")
-            self.draw_icon_button(flow, "GeometryNodeEdgePathsToSelection")
-            self.draw_icon_button(flow, "GeometryNodeExtrudeMesh")
-            self.draw_icon_button(flow, "GeometryNodeFlipFaces")
-            self.draw_icon_button(flow, "GeometryNodeMeshBoolean")
-            self.draw_icon_button(flow, "GeometryNodeMeshToCurve")
-            self.draw_icon_button(flow, "GeometryNodeMeshToPoints")
-            self.draw_icon_button(flow, "GeometryNodeMeshToVolume")
-            self.draw_icon_button(flow, "GeometryNodeScaleElements")
-            self.draw_icon_button(flow, "GeometryNodeSplitEdges")
-            self.draw_icon_button(flow, "GeometryNodeSubdivideMesh")
-            self.draw_icon_button(flow, "GeometryNodeSubdivisionSurface")
-            self.draw_icon_button(flow, "GeometryNodeTriangulate")
+        entries = (
+            "GeometryNodeDualMesh",
+            "GeometryNodeEdgePathsToCurves",
+            "GeometryNodeEdgePathsToSelection",
+            "GeometryNodeExtrudeMesh",
+            "GeometryNodeFlipFaces",
+            Separator,
+            "GeometryNodeMeshBoolean",
+            "GeometryNodeMeshToCurve",
+            "GeometryNodeMeshToPoints",
+            "GeometryNodeMeshToVolume",
+            "GeometryNodeScaleElements",
+            Separator,
+            "GeometryNodeSplitEdges",
+            "GeometryNodeSubdivideMesh",
+            "GeometryNodeSubdivisionSurface",
+            "GeometryNodeTriangulate",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add mesh panel, primitives subpanel
@@ -2960,38 +2499,18 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeMeshCone")
-            self.draw_text_button(col, "GeometryNodeMeshCube")
-            self.draw_text_button(col, "GeometryNodeMeshCylinder")
-            self.draw_text_button(col, "GeometryNodeMeshGrid")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeMeshIcoSphere")
-            self.draw_text_button(col, "GeometryNodeMeshCircle")
-            self.draw_text_button(col, "GeometryNodeMeshLine")
-            self.draw_text_button(col, "GeometryNodeMeshUVSphere")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeMeshCone")
-            self.draw_icon_button(flow, "GeometryNodeMeshCube")
-            self.draw_icon_button(flow, "GeometryNodeMeshCylinder")
-            self.draw_icon_button(flow, "GeometryNodeMeshGrid")
-            self.draw_icon_button(flow, "GeometryNodeMeshIcoSphere")
-            self.draw_icon_button(flow, "GeometryNodeMeshCircle")
-            self.draw_icon_button(flow, "GeometryNodeMeshLine")
-            self.draw_icon_button(flow, "GeometryNodeMeshUVSphere")
+        entries = (
+            "GeometryNodeMeshCone",
+            "GeometryNodeMeshCube",
+            "GeometryNodeMeshCylinder",
+            "GeometryNodeMeshGrid",
+            Separator,
+            "GeometryNodeMeshIcoSphere",
+            "GeometryNodeMeshCircle",
+            "GeometryNodeMeshLine",
+            "GeometryNodeMeshUVSphere",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add mesh panel, topology subpanel
@@ -3017,38 +2536,18 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeCornersOfEdge")
-            self.draw_text_button(col, "GeometryNodeCornersOfFace")
-            self.draw_text_button(col, "GeometryNodeCornersOfVertex")
-            self.draw_text_button(col, "GeometryNodeEdgesOfCorner")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeEdgesOfVertex")
-            self.draw_text_button(col, "GeometryNodeFaceOfCorner")
-            self.draw_text_button(col, "GeometryNodeOffsetCornerInFace")
-            self.draw_text_button(col, "GeometryNodeVertexOfCorner")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeCornersOfEdge")
-            self.draw_icon_button(flow, "GeometryNodeCornersOfFace")
-            self.draw_icon_button(flow, "GeometryNodeCornersOfVertex")
-            self.draw_icon_button(flow, "GeometryNodeEdgesOfCorner")
-            self.draw_icon_button(flow, "GeometryNodeEdgesOfVertex")
-            self.draw_icon_button(flow, "GeometryNodeFaceOfCorner")
-            self.draw_icon_button(flow, "GeometryNodeOffsetCornerInFace")
-            self.draw_icon_button(flow, "GeometryNodeVertexOfCorner")
+        entries = (
+            "GeometryNodeCornersOfEdge",
+            "GeometryNodeCornersOfFace",
+            "GeometryNodeCornersOfVertex",
+            "GeometryNodeEdgesOfCorner",
+            Separator,
+            "GeometryNodeEdgesOfVertex",
+            "GeometryNodeFaceOfCorner",
+            "GeometryNodeOffsetCornerInFace",
+            "GeometryNodeVertexOfCorner",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add volume panel
@@ -3074,23 +2573,11 @@ class NODES_PT_geom_add_mesh_uv(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeUVPackIslands")
-            self.draw_text_button(col, "GeometryNodeUVUnwrap")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeUVPackIslands")
-            self.draw_icon_button(flow, "GeometryNodeUVUnwrap")
+        entries = (
+            "GeometryNodeUVPackIslands",
+            "GeometryNodeUVUnwrap",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add mesh panel
@@ -3110,41 +2597,19 @@ class NODES_PT_geom_add_point(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
         default_context = bpy.app.translations.contexts.default
+        
+        entries = (
+            "GeometryNodeDistributePointsInVolume",
+            "GeometryNodeDistributePointsOnFaces",
+            Separator,
+            "GeometryNodePoints",
+            "GeometryNodePointsToCurves",
+            "GeometryNodePointsToVertices",
+            "GeometryNodePointsToVolume",
+            "GeometryNodeSetPointRadius",
+        )
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeDistributePointsInVolume")
-            self.draw_text_button(col, "GeometryNodeDistributePointsOnFaces")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodePoints")
-            self.draw_text_button(col, "GeometryNodePointsToCurves")
-            self.draw_text_button(col, "GeometryNodePointsToVertices")
-            self.draw_text_button(col, "GeometryNodePointsToVolume")
-            self.draw_text_button(col, "GeometryNodeSetPointRadius")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeDistributePointsInVolume")
-            self.draw_icon_button(flow, "GeometryNodeDistributePointsOnFaces")
-            self.draw_icon_button(flow, "GeometryNodePoints")
-            self.draw_icon_button(flow, "GeometryNodePointsToCurves")
-            self.draw_icon_button(flow, "GeometryNodePointsToVertices")
-            self.draw_icon_button(flow, "GeometryNodePointsToVolume")
-            self.draw_icon_button(flow, "GeometryNodeSetPointRadius")
+        self.draw_entries(context, layout, entries)
 
 
 #add volume panel
@@ -3169,23 +2634,13 @@ class NODES_PT_geom_add_volume(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        entries = (
+            "GeometryNodeVolumeCube",
+            "GeometryNodeVolumeToMesh",
+        )
 
-        #### Text Buttons
+        self.draw_entries(context, layout, entries)
 
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeVolumeCube")
-            self.draw_text_button(col, "GeometryNodeVolumeToMesh")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeVolumeCube")
-            self.draw_icon_button(flow, "GeometryNodeVolumeToMesh")
 
 #add simulation panel
 class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
@@ -3209,21 +2664,12 @@ class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        
+        entries = (
+            OperatorEntry(operator="node.add_simulation_zone", text="Simulation Zone", icon="TIME"),
+        )
 
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, operator="node.add_simulation_zone", text="Simulation Zone", icon="TIME")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, operator="node.add_simulation_zone", icon="TIME")
+        self.draw_entries(context, layout, entries)
 
 
 #add material panel
@@ -3248,29 +2694,15 @@ class NODES_PT_geom_add_material(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        entries = (
+            "GeometryNodeReplaceMaterial",
+            "GeometryNodeInputMaterialIndex",
+            "GeometryNodeMaterialSelection",
+            "GeometryNodeSetMaterial",
+            "GeometryNodeSetMaterialIndex",
+        )
 
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeReplaceMaterial")
-            self.draw_text_button(col, "GeometryNodeInputMaterialIndex")
-            self.draw_text_button(col, "GeometryNodeMaterialSelection")
-            self.draw_text_button(col, "GeometryNodeSetMaterial")
-            self.draw_text_button(col, "GeometryNodeSetMaterialIndex")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeReplaceMaterial")
-            self.draw_icon_button(flow, "GeometryNodeInputMaterialIndex")
-            self.draw_icon_button(flow, "GeometryNodeMaterialSelection")
-            self.draw_icon_button(flow, "GeometryNodeSetMaterial")
-            self.draw_icon_button(flow, "GeometryNodeSetMaterialIndex")
+        self.draw_entries(context, layout, entries)
 
 
 #add vector panel
@@ -3295,37 +2727,19 @@ class NODES_PT_geom_add_texture(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        entries = (
+            "ShaderNodeTexBrick",
+            "ShaderNodeTexChecker",
+            "ShaderNodeTexGradient",
+            "GeometryNodeImageTexture",
+            "ShaderNodeTexMagic",
+            "ShaderNodeTexNoise",
+            "ShaderNodeTexVoronoi",
+            "ShaderNodeTexWave",
+            "ShaderNodeTexWhiteNoise",
+        )
 
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeTexBrick")
-            self.draw_text_button(col, "ShaderNodeTexChecker")
-            self.draw_text_button(col, "ShaderNodeTexGradient")
-            self.draw_text_button(col, "GeometryNodeImageTexture")
-            self.draw_text_button(col, "ShaderNodeTexMagic")
-            self.draw_text_button(col, "ShaderNodeTexNoise")
-            self.draw_text_button(col, "ShaderNodeTexVoronoi")
-            self.draw_text_button(col, "ShaderNodeTexWave")
-            self.draw_text_button(col, "ShaderNodeTexWhiteNoise")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeTexBrick")
-            self.draw_icon_button(flow, "ShaderNodeTexChecker")
-            self.draw_icon_button(flow, "ShaderNodeTexGradient")
-            self.draw_icon_button(flow, "GeometryNodeImageTexture")
-            self.draw_icon_button(flow, "ShaderNodeTexMagic")
-            self.draw_icon_button(flow, "ShaderNodeTexNoise")
-            self.draw_icon_button(flow, "ShaderNodeTexVoronoi")
-            self.draw_icon_button(flow, "ShaderNodeTexWave")
-            self.draw_icon_button(flow, "ShaderNodeTexWhiteNoise")
+        self.draw_entries(context, layout, entries)
 
 
 #add utilities panel
@@ -3350,30 +2764,14 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, operator="node.add_foreach_geometry_element_zone", text="For Each Element", icon="FOR_EACH")
-            self.draw_text_button(col, "GeometryNodeIndexSwitch")
-            self.draw_text_button(col, "GeometryNodeMenuSwitch")
-            self.draw_text_button(col, "FunctionNodeRandomValue")
-            self.draw_text_button(col, operator="node.add_repeat_zone", text="Repeat Zone", icon="REPEAT")
-            self.draw_text_button(col, "GeometryNodeSwitch")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeIndexSwitch")
-            self.draw_icon_button(flow, "GeometryNodeMenuSwitch")
-            self.draw_icon_button(flow, "FunctionNodeRandomValue")
-            self.draw_icon_button(flow, operator="node.add_repeat_zone", icon="REPEAT")
-            self.draw_icon_button(flow, "GeometryNodeSwitch")
+        entries = (
+            OperatorEntry(operator="node.add_foreach_geometry_element_zone", text="For Each Element", icon="FOR_EACH"),
+            "GeometryNodeIndexSwitch",
+            "GeometryNodeMenuSwitch",
+            "FunctionNodeRandomValue",
+            OperatorEntry(operator="node.add_repeat_zone", text="Repeat Zone", icon="REPEAT"),
+            "GeometryNodeSwitch",
+        )
 
 
 #add utilities panel, color subpanel
@@ -3397,33 +2795,16 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        entries = (
+            "ShaderNodeValToRGB",
+            "ShaderNodeRGBCurve",
+            Separator,
+            "FunctionNodeCombineColor",
+            OperatorEntry("ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"}),
+            "FunctionNodeSeparateColor",
+        )
 
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeValToRGB")
-            self.draw_text_button(col, "ShaderNodeRGBCurve")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeCombineColor")
-            self.draw_text_button(col, "FunctionNodeSeparateColor")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeValToRGB")
-            self.draw_icon_button(flow, "ShaderNodeRGBCurve")
-            self.draw_icon_button(flow, "FunctionNodeCombineColor")
-            self.draw_icon_button(flow, "ShaderNodeMix", settings={"data_type": "'RGBA'"})
-            self.draw_icon_button(flow, "FunctionNodeSeparateColor")
+        self.draw_entries(context, layout, entries)
 
 
 #add utilities panel, text subpanel
@@ -3449,40 +2830,19 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeFormatString")
-            self.draw_text_button(col, "GeometryNodeStringJoin")
-            self.draw_text_button(col, "FunctionNodeMatchString")
-            self.draw_text_button(col, "FunctionNodeReplaceString")
-            self.draw_text_button(col, "FunctionNodeSliceString")
-            self.draw_text_button(col, "FunctionNodeStringLength")
-            self.draw_text_button(col, "FunctionNodeFindInString")
-            self.draw_text_button(col, "GeometryNodeStringToCurves")
-            self.draw_text_button(col, "FunctionNodeValueToString")
-            self.draw_text_button(col, "FunctionNodeInputSpecialCharacters")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeFormatString")
-            self.draw_icon_button(flow, "GeometryNodeStringJoin")
-            self.draw_icon_button(flow, "FunctionNodeMatchString")
-            self.draw_icon_button(flow, "FunctionNodeReplaceString")
-            self.draw_icon_button(flow, "FunctionNodeSliceString")
-            self.draw_icon_button(flow, "FunctionNodeStringLength")
-            self.draw_icon_button(flow, "FunctionNodeFindInString")
-            self.draw_icon_button(flow, "GeometryNodeStringToCurves")
-            self.draw_icon_button(flow, "FunctionNodeValueToString")
-            self.draw_icon_button(flow, "FunctionNodeInputSpecialCharacters")
-
+        entries = (
+            "FunctionNodeFormatString",
+            "GeometryNodeStringJoin",
+            "FunctionNodeMatchString",
+            "FunctionNodeReplaceString",
+            "FunctionNodeSliceString",
+            "FunctionNodeStringLength",
+            "FunctionNodeFindInString",
+            "GeometryNodeStringToCurves",
+            "FunctionNodeValueToString",
+            "FunctionNodeInputSpecialCharacters",
+        )
+        self.draw_entries(context, layout, entries)
 
 #add utilities panel, vector subpanel
 class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
@@ -3507,31 +2867,15 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "ShaderNodeVectorCurve")
-            self.draw_text_button(col, "ShaderNodeVectorMath")
-            self.draw_text_button(col, "ShaderNodeVectorRotate")
-            self.draw_text_button(col, "ShaderNodeCombineXYZ")
-            self.draw_text_button(col, "ShaderNodeMix", settings={"data_type": "'VECTOR'"})
-            self.draw_text_button(col, "ShaderNodeSeparateXYZ")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "ShaderNodeVectorCurve")
-            self.draw_icon_button(flow, "ShaderNodeVectorMath")
-            self.draw_icon_button(flow, "ShaderNodeVectorRotate")
-            self.draw_icon_button(flow, "ShaderNodeCombineXYZ")
-            self.draw_icon_button(flow, "ShaderNodeMix", settings={"data_type": "'VECTOR'"})
-            self.draw_icon_button(flow, "ShaderNodeSeparateXYZ")
+        entries = (
+            "ShaderNodeVectorCurve",
+            "ShaderNodeVectorMath",
+            "ShaderNodeVectorRotate",
+            "ShaderNodeCombineXYZ",
+            OperatorEntry("ShaderNodeMix", text="Mix Vector", settings={"data_type": "'VECTOR'"}),
+            "ShaderNodeSeparateXYZ",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add utilities panel, field subpanel
@@ -3557,25 +2901,12 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "GeometryNodeAccumulateField")
-            self.draw_text_button(col, "GeometryNodeFieldAtIndex")
-            self.draw_text_button(col, "GeometryNodeFieldOnDomain")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "GeometryNodeAccumulateField")
-            self.draw_icon_button(flow, "GeometryNodeFieldAtIndex")
-            self.draw_icon_button(flow, "GeometryNodeFieldOnDomain")
+        entries = (
+            "GeometryNodeAccumulateField",
+            "GeometryNodeFieldAtIndex",
+            "GeometryNodeFieldOnDomain",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add utilities panel, math subpanel
@@ -3601,42 +2932,20 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeBooleanMath")
-            self.draw_text_button(col, "FunctionNodeIntegerMath")
-            self.draw_text_button(col, "ShaderNodeClamp")
-            self.draw_text_button(col, "FunctionNodeCompare")
-            self.draw_text_button(col, "ShaderNodeFloatCurve")
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeFloatToInt")
-            self.draw_text_button(col, "FunctionNodeHashValue")
-            self.draw_text_button(col, "ShaderNodeMapRange")
-            self.draw_text_button(col, "ShaderNodeMath")
-            self.draw_text_button(col, "ShaderNodeMix")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeBooleanMath")
-            self.draw_icon_button(flow, "FunctionNodeIntegerMath")
-            self.draw_icon_button(flow, "ShaderNodeClamp")
-            self.draw_icon_button(flow, "FunctionNodeCompare")
-            self.draw_icon_button(flow, "ShaderNodeFloatCurve")
-            self.draw_icon_button(flow, "FunctionNodeFloatToInt")
-            self.draw_icon_button(flow, "FunctionNodeHashValue")
-            self.draw_icon_button(flow, "ShaderNodeMapRange")
-            self.draw_icon_button(flow, "ShaderNodeMath")
-            self.draw_icon_button(flow, "ShaderNodeMix")
+        entries = (
+            "FunctionNodeBooleanMath",
+            "FunctionNodeIntegerMath",
+            "ShaderNodeClamp",
+            "FunctionNodeCompare",
+            "ShaderNodeFloatCurve",
+            Separator,
+            "FunctionNodeFloatToInt",
+            "FunctionNodeHashValue",
+            "ShaderNodeMapRange",
+            "ShaderNodeMath",
+            "ShaderNodeMix",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add utilities panel, matrix subpanel
@@ -3660,43 +2969,20 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeCombineMatrix")
-            self.draw_text_button(col, "FunctionNodeCombineTransform")
-            self.draw_text_button(col, "FunctionNodeMatrixDeterminant")
-            self.draw_text_button(col, "FunctionNodeInvertMatrix")
-            self.draw_text_button(col, "FunctionNodeMatrixMultiply")
-            self.draw_text_button(col, "FunctionNodeProjectPoint")
-            self.draw_text_button(col, "FunctionNodeSeparateMatrix")
-            self.draw_text_button(col, "FunctionNodeSeparateTransform")
-            self.draw_text_button(col, "FunctionNodeTransformDirection")
-            self.draw_text_button(col, "FunctionNodeTransformPoint")
-            self.draw_text_button(col, "FunctionNodeTransposeMatrix")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeCombineMatrix")
-            self.draw_icon_button(flow, "FunctionNodeCombineTransform")
-            self.draw_icon_button(flow, "FunctionNodeMatrixDeterminant")
-            self.draw_icon_button(flow, "FunctionNodeInvertMatrix")
-            self.draw_icon_button(flow, "FunctionNodeMatrixMultiply")
-            self.draw_icon_button(flow, "FunctionNodeProjectPoint")
-            self.draw_icon_button(flow, "FunctionNodeSeparateMatrix")
-            self.draw_icon_button(flow, "FunctionNodeSeparateTransform")
-            self.draw_icon_button(flow, "FunctionNodeTransformDirection")
-            self.draw_icon_button(flow, "FunctionNodeTransformPoint")
-            self.draw_icon_button(flow, "FunctionNodeTransposeMatrix")
+        entries = (
+            "FunctionNodeCombineMatrix",
+            "FunctionNodeCombineTransform",
+            "FunctionNodeMatrixDeterminant",
+            "FunctionNodeInvertMatrix",
+            "FunctionNodeMatrixMultiply",
+            "FunctionNodeProjectPoint",
+            "FunctionNodeSeparateMatrix",
+            "FunctionNodeSeparateTransform",
+            "FunctionNodeTransformDirection",
+            "FunctionNodeTransformPoint",
+            "FunctionNodeTransposeMatrix",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add utilities panel, rotation subpanel
@@ -3722,41 +3008,20 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeAlignRotationToVector")
-            self.draw_text_button(col, "FunctionNodeAxesToRotation")
-            self.draw_text_button(col, "FunctionNodeAxisAngleToRotation")
-            self.draw_text_button(col, "FunctionNodeEulerToRotation")
-            self.draw_text_button(col, "FunctionNodeInvertRotation")
-            self.draw_text_button(col, "FunctionNodeRotateRotation")
-            self.draw_text_button(col, "FunctionNodeRotateVector")
-            self.draw_text_button(col, "FunctionNodeRotationToAxisAngle")
-            self.draw_text_button(col, "FunctionNodeRotationToEuler")
-            self.draw_text_button(col, "FunctionNodeRotationToQuaternion")
-            self.draw_text_button(col, "FunctionNodeQuaternionToRotation")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeAlignRotationToVector")
-            self.draw_icon_button(flow, "FunctionNodeAxesToRotation")
-            self.draw_icon_button(flow, "FunctionNodeAxisAngleToRotation")
-            self.draw_icon_button(flow, "FunctionNodeEulerToRotation")
-            self.draw_icon_button(flow, "FunctionNodeInvertRotation")
-            self.draw_icon_button(flow, "FunctionNodeRotateRotation")
-            self.draw_icon_button(flow, "FunctionNodeRotateVector")
-            self.draw_icon_button(flow, "FunctionNodeRotationToAxisAngle")
-            self.draw_icon_button(flow, "FunctionNodeRotationToEuler")
-            self.draw_icon_button(flow, "FunctionNodeRotationToQuaternion")
-            self.draw_icon_button(flow, "FunctionNodeQuaternionToRotation")
+        entries = (
+            "FunctionNodeAlignRotationToVector",
+            "FunctionNodeAxesToRotation",
+            "FunctionNodeAxisAngleToRotation",
+            "FunctionNodeEulerToRotation",
+            "FunctionNodeInvertRotation",
+            "FunctionNodeRotateRotation",
+            "FunctionNodeRotateVector",
+            "FunctionNodeRotationToAxisAngle",
+            "FunctionNodeRotationToEuler",
+            "FunctionNodeRotationToQuaternion",
+            "FunctionNodeQuaternionToRotation",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 #add utilities panel, deprecated subpanel
@@ -3782,23 +3047,12 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-
-        #### Text Buttons
-
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-            self.draw_text_button(col, "FunctionNodeAlignEulerToVector")
-            self.draw_text_button(col, "FunctionNodeRotateEuler")
-
-        #### Icon Buttons
-
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-            self.draw_icon_button(flow, "FunctionNodeAlignEulerToVector")
-            self.draw_icon_button(flow, "FunctionNodeRotateEuler")
+        layout = self.layout
+        entries = (
+            "FunctionNodeAlignEulerToVector",
+            "FunctionNodeRotateEuler",
+        )
+        self.draw_entries(context, layout, entries)
 
 
 # ---------------- shader editor common. This content shows when you activate the common switch in the display panel.
