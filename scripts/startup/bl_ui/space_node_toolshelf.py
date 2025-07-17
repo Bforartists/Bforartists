@@ -2,10 +2,8 @@
 
 # <pep8 compliant>
 import bpy
-from bpy import context
 from bpy.app.translations import (
     pgettext_iface as iface_,
-    contexts as i18n_contexts,
 )
 
 import dataclasses
@@ -155,12 +153,10 @@ class NODES_PT_shader_comp_textoricon_shader_add(bpy.types.Panel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        scene = context.scene
         row = layout.row()
         row.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
         row.prop(addon_prefs,"Node_shader_add_common", text = "Common")
@@ -182,12 +178,10 @@ class NODES_PT_shader_comp_textoricon_compositor_add(bpy.types.Panel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        scene = context.scene
         row = layout.row()
         row.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
 
@@ -208,12 +202,10 @@ class NODES_PT_shader_comp_textoricon_relations(bpy.types.Panel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        scene = context.scene
         layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
 
 
@@ -233,12 +225,10 @@ class NODES_PT_geom_textoricon_add(bpy.types.Panel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        scene = context.scene
         layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
 
 
@@ -258,12 +248,10 @@ class NODES_PT_geom_textoricon_relations(bpy.types.Panel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        scene = context.scene
         layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
 
 
@@ -285,13 +273,8 @@ class NODES_PT_shader_add_input(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "ShaderNodeAmbientOcclusion",
             "ShaderNodeAttribute",
@@ -341,15 +324,8 @@ class NODES_PT_shader_add_output(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        engine = context.engine
         is_object_shader = is_shader_type(context, 'OBJECT')
         is_cycles =  is_engine(context, 'CYCLES')
 
@@ -380,12 +356,6 @@ class NODES_PT_comp_add_input(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "CompositorNodeBokehImage",
             "CompositorNodeImage",
@@ -411,12 +381,7 @@ class NODES_PT_comp_add_input_constant(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "CompositorNodeRGB",
             "ShaderNodeValue",
@@ -439,12 +404,7 @@ class NODES_PT_comp_add_input_scene(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "CompositorNodeRLayers",
             "CompositorNodeSceneTime",
@@ -468,13 +428,8 @@ class NODES_PT_comp_add_output(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "CompositorNodeComposite",
             "CompositorNodeViewer",
@@ -500,13 +455,8 @@ class NODES_PT_comp_add_color(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "CompositorNodePremulKey",
             "ShaderNodeBlackbody",
@@ -534,12 +484,7 @@ class NODES_PT_comp_add_color_adjust(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "CompositorNodeBrightContrast",
             "CompositorNodeColorBalance",
@@ -569,10 +514,7 @@ class NODES_PT_comp_add_color_mix(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "CompositorNodeAlphaOver",
             Separator,
@@ -602,12 +544,7 @@ class NODES_PT_comp_add_filter(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "CompositorNodeAntiAliasing",
             "CompositorNodeDenoise",
@@ -640,12 +577,7 @@ class NODES_PT_comp_add_filter_blur(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "CompositorNodeBilateralblur",
             "CompositorNodeBlur",
@@ -674,10 +606,6 @@ class NODES_PT_comp_add_keying(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         entries = (
             "CompositorNodeChannelMatte",
@@ -710,12 +638,7 @@ class NODES_PT_comp_add_mask(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "CompositorNodeCryptomatteV2",
             "CompositorNodeCryptomatte",
@@ -745,12 +668,7 @@ class NODES_PT_comp_add_texture(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "ShaderNodeTexBrick",
             "ShaderNodeTexChecker",
@@ -782,12 +700,7 @@ class NODES_PT_comp_add_tracking(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "CompositorNodeRotate",
             "CompositorNodeScale",
@@ -824,12 +737,7 @@ class NODES_PT_comp_add_transform(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "CompositorNodeRotate",
             "CompositorNodeScale",
@@ -866,12 +774,7 @@ class NODES_PT_comp_add_utility(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "ShaderNodeMapRange",
             "ShaderNodeMath",
@@ -908,12 +811,7 @@ class NODES_PT_comp_add_vector(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "ShaderNodeCombineXYZ",
             "ShaderNodeSeparateXYZ",
@@ -941,13 +839,8 @@ class NODES_PT_Input_input_tex(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "TextureNodeCoordinates",
             "TextureNodeCurveTime",
@@ -973,13 +866,8 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "TextureNodeTexBlend",
             "TextureNodeTexClouds",
@@ -1013,12 +901,7 @@ class NODES_PT_Input_pattern(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "TextureNodeBricks",
             "TextureNodeChecker",
@@ -1042,10 +925,8 @@ class NODES_PT_Input_color_tex(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
         entries = (
             "TextureNodeHueSaturation",
             "TextureNodeInvert",
@@ -1073,13 +954,8 @@ class NODES_PT_Input_output_tex(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "TextureNodeOutput",
             "TextureNodeViewer",
@@ -1103,12 +979,7 @@ class NODES_PT_converter_tex(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "TextureNodeValToRGB",
             "TextureNodeDistance",
@@ -1137,12 +1008,7 @@ class NODES_PT_distort_tex(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "TextureNodeAt",
             "TextureNodeRotate",
@@ -1172,14 +1038,7 @@ class NODES_PT_shader_add_shader(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
-        engine = context.engine
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        layout = self.layout
 
         is_object = is_shader_type(context, 'OBJECT')
         is_eevee = is_engine(context, 'BLENDER_EEVEE')
@@ -1233,14 +1092,8 @@ class NODES_PT_shader_add_texture(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
+        layout = self.layout
 
-        scene = context.scene
-        engine = context.engine
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "ShaderNodeTexBrick",
             "ShaderNodeTexChecker",
@@ -1282,12 +1135,7 @@ class NODES_PT_shader_add_color(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "ShaderNodeBrightContrast",
             "ShaderNodeGamma",
@@ -1322,12 +1170,7 @@ class NODES_PT_shader_add_vector(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "ShaderNodeBump",
             "ShaderNodeDisplacement",
@@ -1364,13 +1207,7 @@ class NODES_PT_shader_add_converter(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-        engine = context.engine
         entries = (
             "ShaderNodeBlackbody",
             "ShaderNodeClamp",
@@ -1407,14 +1244,9 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
@@ -1438,9 +1270,6 @@ class NODES_PT_Relations_group(bpy.types.Panel, NodePanel):
             if node_tree in all_node_groups.values():
                 self.draw_text_button(col, "NodeGroupInput")
                 self.draw_text_button(col, "NodeGroupOutput")
-
-
-        #### Icon Buttons
 
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
@@ -1486,8 +1315,7 @@ class NODES_PT_Input_node_group(bpy.types.Panel, NodePanel):
 
     def draw(self, context):
         layout = self.layout
-
-        layout.label( text = "Add Node Group:")
+        layout.label(text = "Add Node Group:")
 
         if context is None:
             return
@@ -1528,16 +1356,12 @@ class NODES_PT_Relations_layout(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "NodeFrame",
             "NodeReroute",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1559,12 +1383,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeAttributeStatistic",
             "GeometryNodeAttributeDomainSize",
@@ -1574,6 +1393,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel, NodePanel):
             "GeometryNodeRemoveAttribute",
             "GeometryNodeStoreNamedAttribute",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1608,12 +1428,7 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "FunctionNodeInputBool",
             "GeometryNodeInputCollection",
@@ -1627,6 +1442,7 @@ class NODES_PT_geom_add_input_constant(bpy.types.Panel, NodePanel):
             "ShaderNodeValue",
             "FunctionNodeInputVector",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1643,17 +1459,13 @@ class NODES_PT_geom_add_input_gizmo(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeGizmoDial",
             "GeometryNodeGizmoLinear",
             "GeometryNodeGizmoTransform",
         )
+        
         self.draw_entries(context, layout, entries)
 
 
@@ -1670,12 +1482,7 @@ class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeImportOBJ",
             "GeometryNodeImportPLY",
@@ -1684,8 +1491,8 @@ class NODES_PT_geom_add_input_file(bpy.types.Panel, NodePanel):
             "GeometryNodeImportText",
             "GeometryNodeImportVDB",
         )
-        self.draw_entries(context, layout, entries)
 
+        self.draw_entries(context, layout, entries)
 
 
 #add input panel, scene subpanel
@@ -1701,12 +1508,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         is_tool = is_tool_tree(context)
         entries = (
             OperatorEntry("GeometryNodeTool3DCursor", should_draw=is_tool),
@@ -1722,6 +1524,7 @@ class NODES_PT_geom_add_input_scene(bpy.types.Panel, NodePanel):
             "GeometryNodeSelfObject",
             OperatorEntry("GeometryNodeViewportTransform", should_draw=is_tool),
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1741,16 +1544,12 @@ class NODES_PT_geom_add_output(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeViewer",
             "GeometryNodeWarning",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1770,16 +1569,12 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeGeometryToInstance",
             "GeometryNodeJoinGeometry",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1800,12 +1595,7 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         is_tool = is_tool_tree(context)
         entries = (
             "GeometryNodeInputID",
@@ -1817,6 +1607,7 @@ class NODES_PT_geom_add_geometry_read(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeToolSelection", should_draw=is_tool),
             OperatorEntry("GeometryNodeToolActiveElement", should_draw=is_tool),
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1837,12 +1628,7 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeProximity",
             "GeometryNodeIndexOfNearest",
@@ -1850,6 +1636,7 @@ class NODES_PT_geom_add_geometry_sample(bpy.types.Panel, NodePanel):
             "GeometryNodeSampleIndex",
             "GeometryNodeSampleNearest",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1870,18 +1657,14 @@ class NODES_PT_geom_add_geometry_write(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeSetGeometryName",
             "GeometryNodeSetID",
             "GeometryNodeSetPosition",
             OperatorEntry("GeometryNodeToolSetSelection", should_draw=is_tool_tree(context)),
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1902,12 +1685,7 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeBake",
             "GeometryNodeBoundBox",
@@ -1922,6 +1700,7 @@ class NODES_PT_geom_add_geometry_operations(bpy.types.Panel, NodePanel):
             "GeometryNodeSeparateGeometry",
             "GeometryNodeSplitToInstances",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1959,12 +1738,7 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeInputCurveHandlePositions",
             "GeometryNodeCurveLength",
@@ -1977,6 +1751,7 @@ class NODES_PT_geom_add_curve_read(bpy.types.Panel, NodePanel):
             "GeometryNodeSplineParameter",
             "GeometryNodeInputSplineResolution",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1997,15 +1772,11 @@ class NODES_PT_geom_add_curve_sample(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeSampleCurve",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2026,12 +1797,7 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeSetCurveNormal",
             "GeometryNodeSetCurveRadius",
@@ -2042,6 +1808,7 @@ class NODES_PT_geom_add_curve_write(bpy.types.Panel, NodePanel):
             "GeometryNodeSetSplineResolution",
             "GeometryNodeCurveSplineType",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2062,12 +1829,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeCurvesToGreasePencil",
             "GeometryNodeCurveToMesh",
@@ -2082,6 +1844,7 @@ class NODES_PT_geom_add_curve_operations(bpy.types.Panel, NodePanel):
             "GeometryNodeSubdivideCurve",
             "GeometryNodeTrimCurve",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2102,12 +1865,7 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeCurveArc",
             "GeometryNodeCurvePrimitiveBezierSegment",
@@ -2118,6 +1876,7 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel, NodePanel):
             "GeometryNodeCurvePrimitiveQuadrilateral",
             "GeometryNodeCurveStar",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2138,17 +1897,13 @@ class NODES_PT_geom_add_curve_topology(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeCurveOfPoint",
             "GeometryNodeOffsetPointInCurve",
             "GeometryNodePointsOfCurve",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2187,15 +1942,11 @@ class NODES_PT_geom_add_grease_pencil_read(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeInputNamedLayerSelection",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2216,17 +1967,13 @@ class NODES_PT_geom_add_grease_pencil_write(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeSetGreasePencilColor",
             "GeometryNodeSetGreasePencilDepth",
             "GeometryNodeSetGreasePencilSoftness",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2247,14 +1994,12 @@ class NODES_PT_geom_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "GeometryNodeGreasePencilToCurves",
             "GeometryNodeMergeLayers",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2274,12 +2019,7 @@ class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeInstanceOnPoints",
             "GeometryNodeInstancesToPoints",
@@ -2293,6 +2033,7 @@ class NODES_PT_geom_add_instances(bpy.types.Panel, NodePanel):
             "GeometryNodeInputInstanceRotation",
             "GeometryNodeInputInstanceScale",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2331,12 +2072,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeInputMeshEdgeAngle",
             "GeometryNodeInputMeshEdgeNeighbors",
@@ -2355,6 +2091,7 @@ class NODES_PT_geom_add_mesh_read(bpy.types.Panel, NodePanel):
             "GeometryNodeInputShortestEdgePaths",
             "GeometryNodeInputMeshVertexNeighbors",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2375,16 +2112,12 @@ class NODES_PT_geom_add_mesh_sample(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeSampleNearestSurface",
             "GeometryNodeSampleUVSurface",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2405,17 +2138,13 @@ class NODES_PT_geom_add_mesh_write(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             OperatorEntry("GeometryNodeToolSetFaceSet", should_draw=is_tool_tree(context)),
             "GeometryNodeSetMeshNormal",
             "GeometryNodeSetShadeSmooth",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2436,12 +2165,7 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeDualMesh",
             "GeometryNodeEdgePathsToCurves",
@@ -2460,6 +2184,7 @@ class NODES_PT_geom_add_mesh_operations(bpy.types.Panel, NodePanel):
             "GeometryNodeSubdivisionSurface",
             "GeometryNodeTriangulate",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2480,12 +2205,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeMeshCone",
             "GeometryNodeMeshCube",
@@ -2497,6 +2217,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel, NodePanel):
             "GeometryNodeMeshLine",
             "GeometryNodeMeshUVSphere",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2517,12 +2238,7 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeCornersOfEdge",
             "GeometryNodeCornersOfFace",
@@ -2534,6 +2250,7 @@ class NODES_PT_geom_add_mesh_topology(bpy.types.Panel, NodePanel):
             "GeometryNodeOffsetCornerInFace",
             "GeometryNodeVertexOfCorner",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2554,16 +2271,12 @@ class NODES_PT_geom_add_mesh_uv(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeUVPackIslands",
             "GeometryNodeUVUnwrap",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2583,7 +2296,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
+
         
         entries = (
             "GeometryNodeDistributePointsInVolume",
@@ -2615,12 +2328,7 @@ class NODES_PT_geom_add_volume(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeVolumeCube",
             "GeometryNodeVolumeToMesh",
@@ -2645,13 +2353,7 @@ class NODES_PT_geom_add_simulation(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-        
         entries = (
             OperatorEntry(operator="node.add_simulation_zone", text="Simulation Zone", icon="TIME"),
         )
@@ -2675,12 +2377,7 @@ class NODES_PT_geom_add_material(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeReplaceMaterial",
             "GeometryNodeInputMaterialIndex",
@@ -2708,12 +2405,7 @@ class NODES_PT_geom_add_texture(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "ShaderNodeTexBrick",
             "ShaderNodeTexChecker",
@@ -2745,12 +2437,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             OperatorEntry(operator="node.add_foreach_geometry_element_zone", text="For Each Element", icon="FOR_EACH"),
             "GeometryNodeIndexSwitch",
@@ -2779,10 +2466,7 @@ class NODES_PT_geom_add_utilities_color(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "ShaderNodeValToRGB",
             "ShaderNodeRGBCurve",
@@ -2812,12 +2496,7 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "FunctionNodeFormatString",
             "GeometryNodeStringJoin",
@@ -2830,6 +2509,7 @@ class NODES_PT_geom_add_utilities_text(bpy.types.Panel, NodePanel):
             "FunctionNodeValueToString",
             "FunctionNodeInputSpecialCharacters",
         )
+
         self.draw_entries(context, layout, entries)
 
 #add utilities panel, vector subpanel
@@ -2849,12 +2529,7 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "ShaderNodeVectorCurve",
             "ShaderNodeVectorMath",
@@ -2863,6 +2538,7 @@ class NODES_PT_geom_add_utilities_vector(bpy.types.Panel, NodePanel):
             OperatorEntry("ShaderNodeMix", text="Mix Vector", settings={"data_type": "'VECTOR'"}),
             "ShaderNodeSeparateXYZ",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2883,17 +2559,13 @@ class NODES_PT_geom_add_utilities_field(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "GeometryNodeAccumulateField",
             "GeometryNodeFieldAtIndex",
             "GeometryNodeFieldOnDomain",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2914,12 +2586,7 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "FunctionNodeBooleanMath",
             "FunctionNodeIntegerMath",
@@ -2933,6 +2600,7 @@ class NODES_PT_geom_add_utilities_math(bpy.types.Panel, NodePanel):
             "ShaderNodeMath",
             "ShaderNodeMix",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2953,10 +2621,7 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         entries = (
             "FunctionNodeCombineMatrix",
             "FunctionNodeCombineTransform",
@@ -2970,6 +2635,7 @@ class NODES_PT_geom_add_utilities_matrix(bpy.types.Panel, NodePanel):
             "FunctionNodeTransformPoint",
             "FunctionNodeTransposeMatrix",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2990,12 +2656,7 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
         entries = (
             "FunctionNodeAlignRotationToVector",
             "FunctionNodeAxesToRotation",
@@ -3009,6 +2670,7 @@ class NODES_PT_geom_add_utilities_rotation(bpy.types.Panel, NodePanel):
             "FunctionNodeRotationToQuaternion",
             "FunctionNodeQuaternionToRotation",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -3029,17 +2691,12 @@ class NODES_PT_geom_add_utilities_deprecated(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-        layout = self.layout
         entries = (
             "FunctionNodeAlignEulerToVector",
             "FunctionNodeRotateEuler",
         )
+
         self.draw_entries(context, layout, entries)
 
 
@@ -3063,15 +2720,10 @@ class NODES_PT_shader_add_input_common(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
+        layout = self.layout
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
 
@@ -3083,8 +2735,6 @@ class NODES_PT_shader_add_input_common(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "ShaderNodeNewGeometry")
             self.draw_text_button(col, "ShaderNodeRGB")
             self.draw_text_button(col, "ShaderNodeTexCoord")
-
-        #### Icon Buttons
 
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
@@ -3114,18 +2764,10 @@ class NODES_PT_shader_add_output_common(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
+        layout = self.layout
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        engine = context.engine
-
-        ##### Textbuttons
-
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -3175,11 +2817,7 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
-        engine = context.engine
+        layout = self.layout
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -3218,8 +2856,6 @@ class NODES_PT_shader_add_shader_common(bpy.types.Panel, NodePanel):
                 self.draw_text_button(col, "ShaderNodeEmission")
                 self.draw_text_button(col, "ShaderNodeVolumePrincipled")
                 self.draw_text_button(col, "ShaderNodeMixShader")
-
-        #### Icon Buttons
 
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
@@ -3267,16 +2903,10 @@ class NODES_PT_shader_add_texture_common(bpy.types.Panel, NodePanel):
 
     @staticmethod
     def draw(self, context):
-        layout = self.layout#### Textbuttons
-        default_context = bpy.app.translations.contexts.default
-
-        scene = context.scene
-        engine = context.engine
+        layout = self.layout
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
@@ -3293,8 +2923,6 @@ class NODES_PT_shader_add_texture_common(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "ShaderNodeTexSky")
             self.draw_text_button(col, "ShaderNodeTexVoronoi")
 
-
-        #### Icon Buttons
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
@@ -3326,14 +2954,9 @@ class NODES_PT_shader_add_color_common(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        ##### Textbuttons
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -3380,14 +3003,9 @@ class NODES_PT_shader_add_vector_common(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
@@ -3395,9 +3013,6 @@ class NODES_PT_shader_add_vector_common(bpy.types.Panel, NodePanel):
             self.draw_text_button(col, "ShaderNodeMapping")
             self.draw_text_button(col, "ShaderNodeNormal")
             self.draw_text_button(col, "ShaderNodeNormalMap")
-
-        ##### Icon Buttons
-
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
@@ -3427,15 +3042,9 @@ class NODES_PT_shader_add_converter_common(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-        engine = context.engine
-
-        ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
@@ -3479,14 +3088,9 @@ class NODES_PT_shader_add_script(bpy.types.Panel, NodePanel):
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        scene = context.scene
-
-        ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
             col = layout.column(align=True)
