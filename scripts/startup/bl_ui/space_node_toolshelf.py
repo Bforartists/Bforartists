@@ -1876,7 +1876,7 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
             "GeometryNodeTranslateInstances",
             "GeometryNodeSetInstanceTransform",
             Separator,
-            "GeometryNodeInputInstanceBounds"
+            "GeometryNodeInputInstanceBounds",
             "GeometryNodeInstanceTransform",
             "GeometryNodeInputInstanceRotation",
             "GeometryNodeInputInstanceScale",
