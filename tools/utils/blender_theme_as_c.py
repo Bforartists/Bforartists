@@ -183,6 +183,7 @@ def is_ignore_dna_name(name):
         return True
     elif name in {
             b'active_theme_area',
+            b'filepath', # BFA - don't add the filepath to the userdef_default_theme.c file
     }:
         return True
     else:
