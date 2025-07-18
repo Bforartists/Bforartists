@@ -430,6 +430,8 @@ class TOPBAR_MT_file(Menu):
 
                 row = layout.row(align=True)
 
+                if bpy.app.build_options.io_fbx:
+                    row.operator("wm.fbx_import", text="", icon='LOAD_FBX')
                 if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
                 if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true
@@ -466,6 +468,9 @@ class TOPBAR_MT_file(Menu):
             if addon_prefs.topbar_file_export_common:
 
                 row = layout.row(align=True)
+                # BFA - WIP - future fbx api?
+                #if bpy.app.build_options.io_fbx:
+                #    row.operator("wm.fbx_export", text="", icon='SAVE_FBX')
                 if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("export_scene.fbx", text="", icon='SAVE_FBX')
                 if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true

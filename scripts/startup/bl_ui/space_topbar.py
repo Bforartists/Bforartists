@@ -494,6 +494,9 @@ class TOPBAR_MT_file_import(Menu):
                 icon="LOAD_SVG_GPENCIL",
             )
 
+        if bpy.app.build_options.io_fbx:
+            self.layout.operator("wm.fbx_import", text="FBX (.fbx)", icon='LOAD_FBX')
+
         if bpy.app.build_options.io_wavefront_obj:
             self.layout.operator(
                 "wm.obj_import", text="Wavefront (.obj)", icon="LOAD_OBJ"
@@ -505,8 +508,7 @@ class TOPBAR_MT_file_import(Menu):
         if bpy.app.build_options.io_stl:
             self.layout.operator("wm.stl_import", text="STL (.stl)", icon="LOAD_STL")
 
-        if bpy.app.build_options.io_fbx:
-            self.layout.operator("wm.fbx_import", text="FBX (.fbx)")
+
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -541,6 +543,10 @@ class TOPBAR_MT_file_export(Menu):
                     text="Grease Pencil as PDF",
                     icon="SAVE_PDF",
                 )
+
+        # BFA - WIP - future fbx api?
+        #if bpy.app.build_options.io_fbx:
+        #    self.layout.operator("wm.fbx_export", text="FBX (.fbx)", icon='SAVE_FBX')
 
         if bpy.app.build_options.io_wavefront_obj:
             self.layout.operator(
