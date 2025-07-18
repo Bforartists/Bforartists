@@ -221,13 +221,15 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout->column(true);
   /* bfa - our layout */
+  col->label(IFACE_("Mirror"), ICON_NONE); // bfa added label
   uiLayout *split = &col->split(0.385f, true);
 
   /* bfa - our layout */
   row = &split->row(false);
+  row->separator(); /*bfa - indent*/
   row->use_property_decorate_set(false);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->prop(ptr, "use_mirror_u", UI_ITEM_NONE, "Mirror U", ICON_NONE);
+  row->prop(ptr, "use_mirror_u", UI_ITEM_NONE, "U", ICON_NONE); // bfa renamed Mirror U
 
   /* bfa - our layout */
   row = &split->row(false);
@@ -243,6 +245,7 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   row = &split->row(false);
+  row->separator(); /*bfa - indent*/
   row->use_property_decorate_set(false);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_mirror_v", UI_ITEM_NONE, "V", ICON_NONE);
@@ -257,8 +260,14 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   }
 
   col = &layout->column(true);
-  col->prop(ptr, "offset_u", UI_ITEM_R_SLIDER, IFACE_("Offset U"), ICON_NONE);
-  col->prop(ptr, "offset_v", UI_ITEM_R_SLIDER, IFACE_("V"), ICON_NONE);
+  col->label(IFACE_("Offset"), ICON_NONE); // bfa added label
+  // bfa added Offset row indent
+  row = &col->row(false);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "offset_u", UI_ITEM_R_SLIDER, IFACE_("U"), ICON_NONE); // bfa renamed Offset U
+  row = &col->row(false);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "offset_v", UI_ITEM_R_SLIDER, IFACE_("V"), ICON_NONE);
 
   /* bfa - our layout */
   col = &layout->column(true);
