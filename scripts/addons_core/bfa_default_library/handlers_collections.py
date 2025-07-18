@@ -24,6 +24,11 @@ import bpy
 from bpy.app.handlers import persistent
 
 bpy.types.Scene.target_collection = bpy.props.PointerProperty(type=bpy.types.Collection)
+bpy.types.Scene.use_wireframe_on_collection = bpy.props.BoolProperty(
+    name="Use Wireframe",
+    description="Enable Wireframe Display on the Target Collection",
+    default=False
+)
 
 global added_collection
 
@@ -141,14 +146,16 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
 
         # Collection selection panel
         row = layout.row()
-        row.label(text="Select a target collection to blend normals", icon="INFO")
+        row.label(text="Select an existing collection of mesh objects to apply to mesh objects", icon="WIZARD")
         row = layout.row()
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")
+        row = layout.row()
+        row.prop(context.scene, "use_wireframe_on_collection", text="Enable Wireframe Display")
 
     def execute(self, context):
         try:
             # Set viewport settings to wireframe for all children objects
-            if context.scene.target_collection:
+            if context.scene.target_collection and context.scene.use_wireframe_on_collection:
                 for obj in context.scene.target_collection.objects:
                     if obj.type == 'MESH':
                         obj.display_type = 'WIRE'
