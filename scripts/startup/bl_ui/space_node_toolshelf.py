@@ -16,7 +16,7 @@ from .node_add_menu import draw_node_groups, add_empty_group
 Separator = object()
 
 
-@dataclasses.dataclass(frozen=True, slots=True)
+@dataclasses.dataclass(slots=True)
 class OperatorEntry:
     node : str = None
     operator : str = "node.add_node"
@@ -27,6 +27,21 @@ class OperatorEntry:
     should_draw : bool = True
 
     as_dict = dataclasses.asdict
+
+    def __post_init__(self):
+        is_add_node_operator = (self.operator == "node.add_node")
+        
+        # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
+        if is_add_node_operator:
+            bl_rna = bpy.types.Node.bl_rna_get_subclass(self.node)
+            if self.icon is None:
+                self.icon = getattr(bl_rna, "icon", "NONE")
+
+            if self.text == "":
+                self.text = getattr(bl_rna, "name", iface_("Unknown"))
+
+    def __len__(self):
+        return len(self.text)
 
 
 def is_shader_type(context, valid_types):
@@ -54,26 +69,27 @@ def is_tool_tree(context):
         return context.space_data.geometry_nodes_type == 'TOOL'
     except AttributeError:
         return False
+    
+
+def calculate_padding(items):
+    lengths = []
+
+    for i in items:
+        if isinstance(i, OperatorEntry):
+            lengths.append(len(i))
+        
+    return max(lengths)
 
 
 class NodePanel:
     @staticmethod
     def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, props=None, pad=0, **kwargs):
-        is_add_node_operator = operator == "node.add_node"
-        
-        # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
-        if is_add_node_operator:
-            bl_rna = bpy.types.Node.bl_rna_get_subclass(node)
-            if icon is None:
-                icon = getattr(bl_rna, "icon", "NONE")
-
-            if text == "":
-                text = getattr(bl_rna, "name", iface_("Unknown"))
-
         if text != "" and pad > 0:
-            text = " " + text.strip().ljust(pad)
+            # This scaled_padding was derived just by trying different values and testing what works
+            scaled_padding = int(((pad - len(text)) * 1.35) + len(text))
+            text = " " + text.strip().ljust(scaled_padding)
         
-        if is_add_node_operator or text != "":
+        if (operator == "node.add_node") or (text != ""):
             props = layout.operator(operator, text=text, icon=icon)
         else:    
             props = layout.operator(operator, icon=icon)
@@ -95,13 +111,6 @@ class NodePanel:
 
     @staticmethod
     def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None, props=None, **kwargs):
-        is_add_node_operator = operator == "node.add_node"
-
-        # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
-        if icon is None and is_add_node_operator:
-            bl_rna = bpy.types.Node.bl_rna_get_subclass(node)
-            icon = getattr(bl_rna, "icon", "NONE")
-            
         props = layout.operator(operator, text="", icon=icon)
         props.use_transform = True
 
@@ -118,7 +127,7 @@ class NodePanel:
                 ops.name = name
                 ops.value = value
 
-    def draw_entries(self, context, layout, entries):
+    def draw_entries(self, context, layout, entries, pad=0):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
@@ -132,7 +141,7 @@ class NodePanel:
                     col.separator(factor=2/3)
                 elif isinstance(entry, OperatorEntry):
                     if entry.should_draw:
-                        self.draw_text_button(col, **entry.as_dict())
+                        self.draw_text_button(col, pad=pad, **entry.as_dict())
                 else:
                     self.draw_text_button(col, entry)
 
@@ -213,40 +222,40 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
 
         if use_common:
             entries = (
-                "ShaderNodeFresnel",
-                "ShaderNodeNewGeometry",
-                "ShaderNodeRGB",
-                "ShaderNodeTexCoord",
+                OperatorEntry("ShaderNodeFresnel"),
+                OperatorEntry("ShaderNodeNewGeometry"),
+                OperatorEntry("ShaderNodeRGB"),
+                OperatorEntry("ShaderNodeTexCoord"),
             )
         else:
             entries = (
-                "ShaderNodeAmbientOcclusion",
-                "ShaderNodeAttribute",
-                "ShaderNodeBevel",
-                "ShaderNodeCameraData",
-                "ShaderNodeVertexColor",
-                "ShaderNodeFresnel",
+                OperatorEntry("ShaderNodeAmbientOcclusion"),
+                OperatorEntry("ShaderNodeAttribute"),
+                OperatorEntry("ShaderNodeBevel"),
+                OperatorEntry("ShaderNodeCameraData"),
+                OperatorEntry("ShaderNodeVertexColor"),
+                OperatorEntry("ShaderNodeFresnel"),
                 Separator,
-                "ShaderNodeNewGeometry",
-                "ShaderNodeHairInfo",
-                "ShaderNodeLayerWeight",
-                "ShaderNodeLightPath",
-                "ShaderNodeObjectInfo",
+                OperatorEntry("ShaderNodeNewGeometry"),
+                OperatorEntry("ShaderNodeHairInfo"),
+                OperatorEntry("ShaderNodeLayerWeight"),
+                OperatorEntry("ShaderNodeLightPath"),
+                OperatorEntry("ShaderNodeObjectInfo"),
                 Separator,
-                "ShaderNodeParticleInfo",
-                "ShaderNodePointInfo",
-                "ShaderNodeRGB",
-                "ShaderNodeTangent",
-                "ShaderNodeTexCoord",
+                OperatorEntry("ShaderNodeParticleInfo"),
+                OperatorEntry("ShaderNodePointInfo"),
+                OperatorEntry("ShaderNodeRGB"),
+                OperatorEntry("ShaderNodeTangent"),
+                OperatorEntry("ShaderNodeTexCoord"),
                 OperatorEntry("ShaderNodeUVAlongStroke", should_draw=is_shader_type(context, 'LINESTYLE')),
                 Separator,
-                "ShaderNodeUVMap",
-                "ShaderNodeValue",
-                "ShaderNodeVolumeInfo",
-                "ShaderNodeWireframe",
+                OperatorEntry("ShaderNodeUVMap"),
+                OperatorEntry("ShaderNodeValue"),
+                OperatorEntry("ShaderNodeVolumeInfo"),
+                OperatorEntry("ShaderNodeWireframe"),
             )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
@@ -279,14 +288,14 @@ class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
             )
         else:
             entries = (
-                "ShaderNodeOutputAOV",
+                OperatorEntry("ShaderNodeOutputAOV"),
                 OperatorEntry("ShaderNodeOutputLight", should_draw=is_object_shader and is_cycles),
                 OperatorEntry("ShaderNodeOutputMaterial", should_draw=is_object_shader),
                 OperatorEntry("ShaderNodeOutputWorld", should_draw=is_shader_type(context, 'WORLD')),
                 OperatorEntry("ShaderNodeOutputLineStyle", should_draw=is_shader_type(context, 'LINESTYLE')),
             )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
@@ -304,15 +313,15 @@ class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeBokehImage",
-            "CompositorNodeImage",
-            "CompositorNodeImageInfo",
-            "CompositorNodeImageCoordinates",
-            "CompositorNodeMask",
-            "CompositorNodeMovieClip",
+            OperatorEntry("CompositorNodeBokehImage"),
+            OperatorEntry("CompositorNodeImage"),
+            OperatorEntry("CompositorNodeImageInfo"),
+            OperatorEntry("CompositorNodeImageCoordinates"),
+            OperatorEntry("CompositorNodeMask"),
+            OperatorEntry("CompositorNodeMovieClip"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePanel):
@@ -328,12 +337,12 @@ class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePane
         layout = self.layout
 
         entries = (
-            "CompositorNodeRGB",
-            "ShaderNodeValue",
-            "CompositorNodeNormal",
+            OperatorEntry("CompositorNodeRGB"),
+            OperatorEntry("ShaderNodeValue"),
+            OperatorEntry("CompositorNodeNormal"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
@@ -349,12 +358,12 @@ class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeRLayers",
-            "CompositorNodeSceneTime",
-            "CompositorNodeTime",
+            OperatorEntry("CompositorNodeRLayers"),
+            OperatorEntry("CompositorNodeSceneTime"),
+            OperatorEntry("CompositorNodeTime"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
@@ -373,13 +382,13 @@ class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeComposite",
-            "CompositorNodeViewer",
+            OperatorEntry("CompositorNodeComposite"),
+            OperatorEntry("CompositorNodeViewer"),
             Separator,
-            "CompositorNodeOutputFile",
+            OperatorEntry("CompositorNodeOutputFile"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
@@ -398,17 +407,17 @@ class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodePremulKey",
-            "ShaderNodeBlackbody",
-            "ShaderNodeValToRGB",
-            "CompositorNodeConvertColorSpace",
-            "CompositorNodeSetAlpha",
+            OperatorEntry("CompositorNodePremulKey"),
+            OperatorEntry("ShaderNodeBlackbody"),
+            OperatorEntry("ShaderNodeValToRGB"),
+            OperatorEntry("CompositorNodeConvertColorSpace"),
+            OperatorEntry("CompositorNodeSetAlpha"),
             Separator,
-            "CompositorNodeInvert",
-            "CompositorNodeRGBToBW",
+            OperatorEntry("CompositorNodeInvert"),
+            OperatorEntry("CompositorNodeRGBToBW"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel):
@@ -424,19 +433,19 @@ class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel)
         layout = self.layout
 
         entries = (
-            "CompositorNodeBrightContrast",
-            "CompositorNodeColorBalance",
-            "CompositorNodeColorCorrection",
+            OperatorEntry("CompositorNodeBrightContrast"),
+            OperatorEntry("CompositorNodeColorBalance"),
+            OperatorEntry("CompositorNodeColorCorrection"),
 
-            "CompositorNodeExposure",
-            "CompositorNodeGamma",
-            "CompositorNodeHueCorrect",
-            "CompositorNodeHueSat",
-            "CompositorNodeCurveRGB",
-            "CompositorNodeTonemap",
+            OperatorEntry("CompositorNodeExposure"),
+            OperatorEntry("CompositorNodeGamma"),
+            OperatorEntry("CompositorNodeHueCorrect"),
+            OperatorEntry("CompositorNodeHueSat"),
+            OperatorEntry("CompositorNodeCurveRGB"),
+            OperatorEntry("CompositorNodeTonemap"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
@@ -452,16 +461,16 @@ class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeAlphaOver",
+            OperatorEntry("CompositorNodeAlphaOver"),
             Separator,
-            "CompositorNodeCombineColor",
-            "CompositorNodeSeparateColor",
+            OperatorEntry("CompositorNodeCombineColor"),
+            OperatorEntry("CompositorNodeSeparateColor"),
             Separator,
             OperatorEntry("ShaderNodeMix", text=iface_("Mix Color"), settings={"data_type": "'RGBA'"}),
-            "CompositorNodeZcombine",
+            OperatorEntry("CompositorNodeZcombine"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
@@ -480,22 +489,22 @@ class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeAntiAliasing",
-            "CompositorNodeDenoise",
-            "CompositorNodeDespeckle",
+            OperatorEntry("CompositorNodeAntiAliasing"),
+            OperatorEntry("CompositorNodeDenoise"),
+            OperatorEntry("CompositorNodeDespeckle"),
             Separator,
-            "CompositorNodeDilateErode",
-            "CompositorNodeInpaint",
+            OperatorEntry("CompositorNodeDilateErode"),
+            OperatorEntry("CompositorNodeInpaint"),
             Separator,
-            "CompositorNodeFilter",
-            "CompositorNodeGlare",
-            "CompositorNodeKuwahara",
-            "CompositorNodePixelate",
-            "CompositorNodePosterize",
-            "CompositorNodeSunBeams",
+            OperatorEntry("CompositorNodeFilter"),
+            OperatorEntry("CompositorNodeGlare"),
+            OperatorEntry("CompositorNodeKuwahara"),
+            OperatorEntry("CompositorNodePixelate"),
+            OperatorEntry("CompositorNodePosterize"),
+            OperatorEntry("CompositorNodeSunBeams"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_filter_blur(bpy.types.Panel, NodePanel):
@@ -511,15 +520,15 @@ class NODES_PT_toolshelf_compositor_add_filter_blur(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeBilateralblur",
-            "CompositorNodeBlur",
-            "CompositorNodeBokehBlur",
-            "CompositorNodeDefocus",
-            "CompositorNodeDBlur",
-            "CompositorNodeVecBlur",
+            OperatorEntry("CompositorNodeBilateralblur"),
+            OperatorEntry("CompositorNodeBlur"),
+            OperatorEntry("CompositorNodeBokehBlur"),
+            OperatorEntry("CompositorNodeDefocus"),
+            OperatorEntry("CompositorNodeDBlur"),
+            OperatorEntry("CompositorNodeVecBlur"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
@@ -538,18 +547,18 @@ class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeChannelMatte",
-            "CompositorNodeChromaMatte",
-            "CompositorNodeColorMatte",
-            "CompositorNodeColorSpill",
-            "CompositorNodeDiffMatte",
-            "CompositorNodeDistanceMatte",
-            "CompositorNodeKeying",
-            "CompositorNodeKeyingScreen",
-            "CompositorNodeLumaMatte",
+            OperatorEntry("CompositorNodeChannelMatte"),
+            OperatorEntry("CompositorNodeChromaMatte"),
+            OperatorEntry("CompositorNodeColorMatte"),
+            OperatorEntry("CompositorNodeColorSpill"),
+            OperatorEntry("CompositorNodeDiffMatte"),
+            OperatorEntry("CompositorNodeDistanceMatte"),
+            OperatorEntry("CompositorNodeKeying"),
+            OperatorEntry("CompositorNodeKeyingScreen"),
+            OperatorEntry("CompositorNodeLumaMatte"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
@@ -568,17 +577,17 @@ class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeCryptomatteV2",
-            "CompositorNodeCryptomatte",
+            OperatorEntry("CompositorNodeCryptomatteV2"),
+            OperatorEntry("CompositorNodeCryptomatte"),
             Separator,
-            "CompositorNodeBoxMask",
-            "CompositorNodeEllipseMask",
+            OperatorEntry("CompositorNodeBoxMask"),
+            OperatorEntry("CompositorNodeEllipseMask"),
             Separator,
-            "CompositorNodeDoubleEdgeMask",
-            "CompositorNodeIDMask",
+            OperatorEntry("CompositorNodeDoubleEdgeMask"),
+            OperatorEntry("CompositorNodeIDMask"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
@@ -596,18 +605,18 @@ class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "ShaderNodeTexBrick",
-            "ShaderNodeTexChecker",
-            "ShaderNodeTexGabor",
-            "ShaderNodeTexGradient",
-            "ShaderNodeTexMagic",
-            "ShaderNodeTexNoise",
-            "ShaderNodeTexVoronoi",
-            "ShaderNodeTexWave",
-            "ShaderNodeTexWhiteNoise",
+            OperatorEntry("ShaderNodeTexBrick"),
+            OperatorEntry("ShaderNodeTexChecker"),
+            OperatorEntry("ShaderNodeTexGabor"),
+            OperatorEntry("ShaderNodeTexGradient"),
+            OperatorEntry("ShaderNodeTexMagic"),
+            OperatorEntry("ShaderNodeTexNoise"),
+            OperatorEntry("ShaderNodeTexVoronoi"),
+            OperatorEntry("ShaderNodeTexWave"),
+            OperatorEntry("ShaderNodeTexWhiteNoise"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
@@ -626,23 +635,23 @@ class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeRotate",
-            "CompositorNodeScale",
-            "CompositorNodeTransform",
-            "CompositorNodeTranslate",
+            OperatorEntry("CompositorNodeRotate"),
+            OperatorEntry("CompositorNodeScale"),
+            OperatorEntry("CompositorNodeTransform"),
+            OperatorEntry("CompositorNodeTranslate"),
             Separator,
-            "CompositorNodeCornerPin",
-            "CompositorNodeCrop",
+            OperatorEntry("CompositorNodeCornerPin"),
+            OperatorEntry("CompositorNodeCrop"),
             Separator,
-            "CompositorNodeDisplace",
-            "CompositorNodeFlip",
-            "CompositorNodeMapUV",
+            OperatorEntry("CompositorNodeDisplace"),
+            OperatorEntry("CompositorNodeFlip"),
+            OperatorEntry("CompositorNodeMapUV"),
             Separator,
-            "CompositorNodeLensdist",
-            "CompositorNodeMovieDistortion",
+            OperatorEntry("CompositorNodeLensdist"),
+            OperatorEntry("CompositorNodeMovieDistortion"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
@@ -661,23 +670,23 @@ class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "CompositorNodeRotate",
-            "CompositorNodeScale",
-            "CompositorNodeTransform",
-            "CompositorNodeTranslate",
+            OperatorEntry("CompositorNodeRotate"),
+            OperatorEntry("CompositorNodeScale"),
+            OperatorEntry("CompositorNodeTransform"),
+            OperatorEntry("CompositorNodeTranslate"),
             Separator,
-            "CompositorNodeCornerPin",
-            "CompositorNodeCrop",
+            OperatorEntry("CompositorNodeCornerPin"),
+            OperatorEntry("CompositorNodeCrop"),
             Separator,
-            "CompositorNodeDisplace",
-            "CompositorNodeFlip",
-            "CompositorNodeMapUV",
+            OperatorEntry("CompositorNodeDisplace"),
+            OperatorEntry("CompositorNodeFlip"),
+            OperatorEntry("CompositorNodeMapUV"),
             Separator,
-            "CompositorNodeLensdist",
-            "CompositorNodeMovieDistortion",
+            OperatorEntry("CompositorNodeLensdist"),
+            OperatorEntry("CompositorNodeMovieDistortion"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
@@ -696,23 +705,23 @@ class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "ShaderNodeMapRange",
-            "ShaderNodeMath",
-            "ShaderNodeMix",
-            "ShaderNodeClamp",
-            "ShaderNodeFloatCurve",
+            OperatorEntry("ShaderNodeMapRange"),
+            OperatorEntry("ShaderNodeMath"),
+            OperatorEntry("ShaderNodeMix"),
+            OperatorEntry("ShaderNodeClamp"),
+            OperatorEntry("ShaderNodeFloatCurve"),
             Separator,
-            "CompositorNodeLevels",
-            "CompositorNodeNormalize",
+            OperatorEntry("CompositorNodeLevels"),
+            OperatorEntry("CompositorNodeNormalize"),
             Separator,
-            "CompositorNodeSplit",
-            "CompositorNodeSwitch",
+            OperatorEntry("CompositorNodeSplit"),
+            OperatorEntry("CompositorNodeSwitch"),
             OperatorEntry("CompositorNodeSwitchView", text="Switch Stereo View"),
             Separator,
-            "CompositorNodeRelativeToPixel",
+            OperatorEntry("CompositorNodeRelativeToPixel"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
@@ -731,16 +740,16 @@ class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "ShaderNodeCombineXYZ",
-            "ShaderNodeSeparateXYZ",
+            OperatorEntry("ShaderNodeCombineXYZ"),
+            OperatorEntry("ShaderNodeSeparateXYZ"),
             Separator,
             OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), settings={"data_type": "'VECTOR'"}),
-            "ShaderNodeVectorCurve",
-            "ShaderNodeVectorMath",
-            "ShaderNodeVectorRotate",
+            OperatorEntry("ShaderNodeVectorCurve"),
+            OperatorEntry("ShaderNodeVectorMath"),
+            OperatorEntry("ShaderNodeVectorRotate"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
@@ -758,13 +767,13 @@ class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "TextureNodeCoordinates",
-            "TextureNodeCurveTime",
-            "TextureNodeImage",
-            "TextureNodeTexture",
+            OperatorEntry("TextureNodeCoordinates"),
+            OperatorEntry("TextureNodeCurveTime"),
+            OperatorEntry("TextureNodeImage"),
+            OperatorEntry("TextureNodeTexture"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
@@ -783,20 +792,20 @@ class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "TextureNodeTexBlend",
-            "TextureNodeTexClouds",
-            "TextureNodeTexDistNoise",
-            "TextureNodeTexMagic",
+            OperatorEntry("TextureNodeTexBlend"),
+            OperatorEntry("TextureNodeTexClouds"),
+            OperatorEntry("TextureNodeTexDistNoise"),
+            OperatorEntry("TextureNodeTexMagic"),
             Separator,
-            "TextureNodeTexMarble",
-            "TextureNodeTexNoise",
-            "TextureNodeTexStucci",
-            "TextureNodeTexVoronoi",
+            OperatorEntry("TextureNodeTexMarble"),
+            OperatorEntry("TextureNodeTexNoise"),
+            OperatorEntry("TextureNodeTexStucci"),
+            OperatorEntry("TextureNodeTexVoronoi"),
             Separator,
-            "TextureNodeTexWood",
+            OperatorEntry("TextureNodeTexWood"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
@@ -815,11 +824,11 @@ class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "TextureNodeBricks",
-            "TextureNodeChecker",
+            OperatorEntry("TextureNodeBricks"),
+            OperatorEntry("TextureNodeChecker"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
@@ -838,16 +847,16 @@ class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "TextureNodeHueSaturation",
-            "TextureNodeInvert",
-            "TextureNodeMixRGB",
-            "TextureNodeCurveRGB",
+            OperatorEntry("TextureNodeHueSaturation"),
+            OperatorEntry("TextureNodeInvert"),
+            OperatorEntry("TextureNodeMixRGB"),
+            OperatorEntry("TextureNodeCurveRGB"),
             Separator,
-            "TextureNodeCombineColor",
-            "TextureNodeSeparateColor",
+            OperatorEntry("TextureNodeCombineColor"),
+            OperatorEntry("TextureNodeSeparateColor"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
@@ -865,11 +874,11 @@ class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "TextureNodeOutput",
-            "TextureNodeViewer",
+            OperatorEntry("TextureNodeOutput"),
+            OperatorEntry("TextureNodeViewer"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
@@ -887,15 +896,15 @@ class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "TextureNodeValToRGB",
-            "TextureNodeDistance",
-            "TextureNodeMath",
-            "TextureNodeRGBToBW",
+            OperatorEntry("TextureNodeValToRGB"),
+            OperatorEntry("TextureNodeDistance"),
+            OperatorEntry("TextureNodeMath"),
+            OperatorEntry("TextureNodeRGBToBW"),
             Separator,
-            "TextureNodeValToNor",
+            OperatorEntry("TextureNodeValToNor"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
@@ -914,13 +923,13 @@ class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "TextureNodeAt",
-            "TextureNodeRotate",
-            "TextureNodeScale",
-            "TextureNodeTranslate",
+            OperatorEntry("TextureNodeAt"),
+            OperatorEntry("TextureNodeRotate"),
+            OperatorEntry("TextureNodeScale"),
+            OperatorEntry("TextureNodeTranslate"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
@@ -946,29 +955,29 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
 
         if use_common:
             entries = (
-                "ShaderNodeAddShader",
+                OperatorEntry("ShaderNodeAddShader"),
                 OperatorEntry("ShaderNodeBackground", should_draw=is_shader_type(context, 'WORLD')),
-                "ShaderNodeEmission",
-                "ShaderNodeMixShader",
+                OperatorEntry("ShaderNodeEmission"),
+                OperatorEntry("ShaderNodeMixShader"),
                 OperatorEntry("ShaderNodeBsdfPrincipled", should_draw=is_object),
                 OperatorEntry("ShaderNodeBsdfHairPrincipled", should_draw=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeVolumePrincipled"),
                 OperatorEntry("ShaderNodeBsdfToon", should_draw=is_object and not is_eevee),
-                "ShaderNodeVolumeAbsorption",
-                "ShaderNodeVolumeScatter",
+                OperatorEntry("ShaderNodeVolumeAbsorption"),
+                OperatorEntry("ShaderNodeVolumeScatter"),
             )
         else:
             entries = (
-                "ShaderNodeAddShader",
+                OperatorEntry("ShaderNodeAddShader"),
                 OperatorEntry("ShaderNodeBackground", should_draw=is_shader_type(context, 'WORLD')),
                 OperatorEntry("ShaderNodeBsdfDiffuse", should_draw=is_object),
-                "ShaderNodeEmission",
+                OperatorEntry("ShaderNodeEmission"),
                 OperatorEntry("ShaderNodeBsdfGlass", should_draw=is_object),
                 OperatorEntry("ShaderNodeBsdfGlossy", should_draw=is_object),
                 OperatorEntry("ShaderNodeBsdfHair", should_draw=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeHoldout", should_draw=is_object),
                 OperatorEntry("ShaderNodeBsdfMetallic", should_draw=is_object),
-                "ShaderNodeMixShader",
+                OperatorEntry("ShaderNodeMixShader"),
                 OperatorEntry("ShaderNodeBsdfPrincipled", should_draw=is_object),
                 OperatorEntry("ShaderNodeBsdfHairPrincipled", should_draw=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeVolumePrincipled"),
@@ -980,12 +989,12 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeBsdfToon", should_draw=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeBsdfTranslucent", should_draw=is_object),
                 OperatorEntry("ShaderNodeBsdfTransparent", should_draw=is_object),
-                "ShaderNodeVolumeAbsorption",
-                "ShaderNodeVolumeScatter",
-                "ShaderNodeVolumeCoefficients",
+                OperatorEntry("ShaderNodeVolumeAbsorption"),
+                OperatorEntry("ShaderNodeVolumeScatter"),
+                OperatorEntry("ShaderNodeVolumeCoefficients"),
             )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
@@ -1009,32 +1018,32 @@ class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
         
         if use_common:
             entries = (
-                "ShaderNodeTexEnvironment",
-                "ShaderNodeTexImage",
-                "ShaderNodeTexNoise",
-                "ShaderNodeTexSky",
-                "ShaderNodeTexVoronoi",
+                OperatorEntry("ShaderNodeTexEnvironment"),
+                OperatorEntry("ShaderNodeTexImage"),
+                OperatorEntry("ShaderNodeTexNoise"),
+                OperatorEntry("ShaderNodeTexSky"),
+                OperatorEntry("ShaderNodeTexVoronoi"),
             )
         else:
             entries = (
-                "ShaderNodeTexBrick",
-                "ShaderNodeTexChecker",
-                "ShaderNodeTexEnvironment",
-                "ShaderNodeTexGabor",
-                "ShaderNodeTexGradient",
-                "ShaderNodeTexIES",
+                OperatorEntry("ShaderNodeTexBrick"),
+                OperatorEntry("ShaderNodeTexChecker"),
+                OperatorEntry("ShaderNodeTexEnvironment"),
+                OperatorEntry("ShaderNodeTexGabor"),
+                OperatorEntry("ShaderNodeTexGradient"),
+                OperatorEntry("ShaderNodeTexIES"),
                 Separator,
-                "ShaderNodeTexImage",
-                "ShaderNodeTexMagic",
-                "ShaderNodeTexNoise",
-                "ShaderNodeTexSky",
+                OperatorEntry("ShaderNodeTexImage"),
+                OperatorEntry("ShaderNodeTexMagic"),
+                OperatorEntry("ShaderNodeTexNoise"),
+                OperatorEntry("ShaderNodeTexSky"),
                 Separator,
-                "ShaderNodeTexVoronoi",
-                "ShaderNodeTexWave",
-                "ShaderNodeTexWhiteNoise",
+                OperatorEntry("ShaderNodeTexVoronoi"),
+                OperatorEntry("ShaderNodeTexWave"),
+                OperatorEntry("ShaderNodeTexWhiteNoise"),
             )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
@@ -1058,27 +1067,27 @@ class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
         
         if use_common:
             entries = (
-                "ShaderNodeBrightContrast",
-                "ShaderNodeGamma",
-                "ShaderNodeHueSaturation",
-                "ShaderNodeInvert",
+                OperatorEntry("ShaderNodeBrightContrast"),
+                OperatorEntry("ShaderNodeGamma"),
+                OperatorEntry("ShaderNodeHueSaturation"),
+                OperatorEntry("ShaderNodeInvert"),
                 Separator,
                 OperatorEntry("ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"}),
-                "ShaderNodeRGBCurve",
+                OperatorEntry("ShaderNodeRGBCurve"),
             )
         else:
             entries = (
-                "ShaderNodeBrightContrast",
-                "ShaderNodeGamma",
-                "ShaderNodeHueSaturation",
-                "ShaderNodeInvert",
+                OperatorEntry("ShaderNodeBrightContrast"),
+                OperatorEntry("ShaderNodeGamma"),
+                OperatorEntry("ShaderNodeHueSaturation"),
+                OperatorEntry("ShaderNodeInvert"),
                 Separator,
-                "ShaderNodeLightFalloff",
+                OperatorEntry("ShaderNodeLightFalloff"),
                 OperatorEntry("ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"}),
-                "ShaderNodeRGBCurve",
+                OperatorEntry("ShaderNodeRGBCurve"),
             )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
@@ -1102,25 +1111,25 @@ class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
 
         if use_common:
             entries = (
-                "ShaderNodeMapping",
-                "ShaderNodeNormal",
-                "ShaderNodeNormalMap",
+                OperatorEntry("ShaderNodeMapping"),
+                OperatorEntry("ShaderNodeNormal"),
+                OperatorEntry("ShaderNodeNormalMap"),
             )
         else:
             entries = (
-                "ShaderNodeBump",
-                "ShaderNodeDisplacement",
-                "ShaderNodeMapping",
-                "ShaderNodeNormal",
-                "ShaderNodeNormalMap",
+                OperatorEntry("ShaderNodeBump"),
+                OperatorEntry("ShaderNodeDisplacement"),
+                OperatorEntry("ShaderNodeMapping"),
+                OperatorEntry("ShaderNodeNormal"),
+                OperatorEntry("ShaderNodeNormalMap"),
                 Separator,
-                "ShaderNodeVectorCurve",
-                "ShaderNodeVectorDisplacement",
-                "ShaderNodeVectorRotate",
-                "ShaderNodeVectorTransform",
+                OperatorEntry("ShaderNodeVectorCurve"),
+                OperatorEntry("ShaderNodeVectorDisplacement"),
+                OperatorEntry("ShaderNodeVectorRotate"),
+                OperatorEntry("ShaderNodeVectorTransform"),
             )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
@@ -1144,36 +1153,36 @@ class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
 
         if use_common:
             entries = (
-                "ShaderNodeClamp",
-                "ShaderNodeValToRGB",
+                OperatorEntry("ShaderNodeClamp"),
+                OperatorEntry("ShaderNodeValToRGB"),
                 Separator,
-                "ShaderNodeFloatCurve",
-                "ShaderNodeMapRange",
-                "ShaderNodeMath",
-                "ShaderNodeRGBToBW",
+                OperatorEntry("ShaderNodeFloatCurve"),
+                OperatorEntry("ShaderNodeMapRange"),
+                OperatorEntry("ShaderNodeMath"),
+                OperatorEntry("ShaderNodeRGBToBW"),
             )
         else:
             entries = (
-                "ShaderNodeBlackbody",
-                "ShaderNodeClamp",
-                "ShaderNodeValToRGB",
-                "ShaderNodeCombineColor",
-                "ShaderNodeCombineXYZ",
+                OperatorEntry("ShaderNodeBlackbody"),
+                OperatorEntry("ShaderNodeClamp"),
+                OperatorEntry("ShaderNodeValToRGB"),
+                OperatorEntry("ShaderNodeCombineColor"),
+                OperatorEntry("ShaderNodeCombineXYZ"),
                 Separator,
-                "ShaderNodeFloatCurve",
-                "ShaderNodeMapRange",
-                "ShaderNodeMath",
-                "ShaderNodeMix",
-                "ShaderNodeRGBToBW",
+                OperatorEntry("ShaderNodeFloatCurve"),
+                OperatorEntry("ShaderNodeMapRange"),
+                OperatorEntry("ShaderNodeMath"),
+                OperatorEntry("ShaderNodeMix"),
+                OperatorEntry("ShaderNodeRGBToBW"),
                 Separator,
-                "ShaderNodeSeparateColor",
-                "ShaderNodeSeparateXYZ",
+                OperatorEntry("ShaderNodeSeparateColor"),
+                OperatorEntry("ShaderNodeSeparateXYZ"),
                 OperatorEntry("ShaderNodeShaderToRGB", should_draw=is_engine(context, 'BLENDER_EEVEE')),
-                "ShaderNodeVectorMath",
-                "ShaderNodeWavelength",
+                OperatorEntry("ShaderNodeVectorMath"),
+                OperatorEntry("ShaderNodeWavelength"),
             )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
@@ -1192,10 +1201,10 @@ class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "ShaderNodeScript",
+            OperatorEntry("ShaderNodeScript"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
@@ -1220,7 +1229,7 @@ class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("NodeGroupOutput", should_draw=in_group),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_relations_nodegroups(bpy.types.Panel, NodePanel):
@@ -1254,11 +1263,11 @@ class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "NodeFrame",
-            "NodeReroute",
+            OperatorEntry("NodeFrame"),
+            OperatorEntry("NodeReroute"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
@@ -1277,16 +1286,16 @@ class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeAttributeStatistic",
-            "GeometryNodeAttributeDomainSize",
+            OperatorEntry("GeometryNodeAttributeStatistic"),
+            OperatorEntry("GeometryNodeAttributeDomainSize"),
             Separator,
-            "GeometryNodeBlurAttribute",
-            "GeometryNodeCaptureAttribute",
-            "GeometryNodeRemoveAttribute",
-            "GeometryNodeStoreNamedAttribute",
+            OperatorEntry("GeometryNodeBlurAttribute"),
+            OperatorEntry("GeometryNodeCaptureAttribute"),
+            OperatorEntry("GeometryNodeRemoveAttribute"),
+            OperatorEntry("GeometryNodeStoreNamedAttribute"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_input(bpy.types.Panel, NodePanel):
@@ -1318,20 +1327,20 @@ class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "FunctionNodeInputBool",
-            "GeometryNodeInputCollection",
-            "FunctionNodeInputColor",
-            "GeometryNodeInputImage",
-            "FunctionNodeInputInt",
-            "GeometryNodeInputMaterial",
-            "GeometryNodeInputObject",
-            "FunctionNodeInputRotation",
-            "FunctionNodeInputString",
-            "ShaderNodeValue",
-            "FunctionNodeInputVector",
+            OperatorEntry("FunctionNodeInputBool"),
+            OperatorEntry("GeometryNodeInputCollection"),
+            OperatorEntry("FunctionNodeInputColor"),
+            OperatorEntry("GeometryNodeInputImage"),
+            OperatorEntry("FunctionNodeInputInt"),
+            OperatorEntry("GeometryNodeInputMaterial"),
+            OperatorEntry("GeometryNodeInputObject"),
+            OperatorEntry("FunctionNodeInputRotation"),
+            OperatorEntry("FunctionNodeInputString"),
+            OperatorEntry("ShaderNodeValue"),
+            OperatorEntry("FunctionNodeInputVector"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_input_gizmo(bpy.types.Panel, NodePanel):
@@ -1347,12 +1356,12 @@ class NODES_PT_toolshelf_gn_add_input_gizmo(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeGizmoDial",
-            "GeometryNodeGizmoLinear",
-            "GeometryNodeGizmoTransform",
+            OperatorEntry("GeometryNodeGizmoDial"),
+            OperatorEntry("GeometryNodeGizmoLinear"),
+            OperatorEntry("GeometryNodeGizmoTransform"),
         )
         
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
@@ -1368,15 +1377,15 @@ class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeImportOBJ",
-            "GeometryNodeImportPLY",
-            "GeometryNodeImportSTL",
-            "GeometryNodeImportCSV",
-            "GeometryNodeImportText",
-            "GeometryNodeImportVDB",
+            OperatorEntry("GeometryNodeImportOBJ"),
+            OperatorEntry("GeometryNodeImportPLY"),
+            OperatorEntry("GeometryNodeImportSTL"),
+            OperatorEntry("GeometryNodeImportCSV"),
+            OperatorEntry("GeometryNodeImportText"),
+            OperatorEntry("GeometryNodeImportVDB"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
@@ -1394,20 +1403,20 @@ class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
         is_tool = is_tool_tree(context)
         entries = (
             OperatorEntry("GeometryNodeTool3DCursor", should_draw=is_tool),
-            "GeometryNodeInputActiveCamera",
-            "GeometryNodeCameraInfo",
-            "GeometryNodeCollectionInfo",
-            "GeometryNodeImageInfo",
-            "GeometryNodeIsViewport",
-            "GeometryNodeInputNamedLayerSelection",
+            OperatorEntry("GeometryNodeInputActiveCamera"),
+            OperatorEntry("GeometryNodeCameraInfo"),
+            OperatorEntry("GeometryNodeCollectionInfo"),
+            OperatorEntry("GeometryNodeImageInfo"),
+            OperatorEntry("GeometryNodeIsViewport"),
+            OperatorEntry("GeometryNodeInputNamedLayerSelection"),
             OperatorEntry("GeometryNodeToolMousePosition", should_draw=is_tool),
-            "GeometryNodeObjectInfo",
-            "GeometryNodeInputSceneTime",
-            "GeometryNodeSelfObject",
+            OperatorEntry("GeometryNodeObjectInfo"),
+            OperatorEntry("GeometryNodeInputSceneTime"),
+            OperatorEntry("GeometryNodeSelfObject"),
             OperatorEntry("GeometryNodeViewportTransform", should_draw=is_tool),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_output(bpy.types.Panel, NodePanel):
@@ -1426,11 +1435,11 @@ class NODES_PT_toolshelf_gn_add_output(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeViewer",
-            "GeometryNodeWarning",
+            OperatorEntry("GeometryNodeViewer"),
+            OperatorEntry("GeometryNodeWarning"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_geometry(bpy.types.Panel, NodePanel):
@@ -1449,11 +1458,11 @@ class NODES_PT_toolshelf_gn_add_geometry(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeGeometryToInstance",
-            "GeometryNodeJoinGeometry",
+            OperatorEntry("GeometryNodeGeometryToInstance"),
+            OperatorEntry("GeometryNodeJoinGeometry"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
@@ -1474,17 +1483,17 @@ class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
 
         is_tool = is_tool_tree(context)
         entries = (
-            "GeometryNodeInputID",
-            "GeometryNodeInputIndex",
-            "GeometryNodeInputNamedAttribute",
-            "GeometryNodeInputNormal",
-            "GeometryNodeInputPosition",
-            "GeometryNodeInputRadius",
+            OperatorEntry("GeometryNodeInputID"),
+            OperatorEntry("GeometryNodeInputIndex"),
+            OperatorEntry("GeometryNodeInputNamedAttribute"),
+            OperatorEntry("GeometryNodeInputNormal"),
+            OperatorEntry("GeometryNodeInputPosition"),
+            OperatorEntry("GeometryNodeInputRadius"),
             OperatorEntry("GeometryNodeToolSelection", should_draw=is_tool),
             OperatorEntry("GeometryNodeToolActiveElement", should_draw=is_tool),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_geometry_sample(bpy.types.Panel, NodePanel):
@@ -1504,14 +1513,14 @@ class NODES_PT_toolshelf_gn_add_geometry_sample(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeProximity",
-            "GeometryNodeIndexOfNearest",
-            "GeometryNodeRaycast",
-            "GeometryNodeSampleIndex",
-            "GeometryNodeSampleNearest",
+            OperatorEntry("GeometryNodeProximity"),
+            OperatorEntry("GeometryNodeIndexOfNearest"),
+            OperatorEntry("GeometryNodeRaycast"),
+            OperatorEntry("GeometryNodeSampleIndex"),
+            OperatorEntry("GeometryNodeSampleNearest"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
@@ -1531,13 +1540,13 @@ class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeSetGeometryName",
-            "GeometryNodeSetID",
-            "GeometryNodeSetPosition",
+            OperatorEntry("GeometryNodeSetGeometryName"),
+            OperatorEntry("GeometryNodeSetID"),
+            OperatorEntry("GeometryNodeSetPosition"),
             OperatorEntry("GeometryNodeToolSetSelection", should_draw=is_tool_tree(context)),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
@@ -1557,21 +1566,21 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeBake",
-            "GeometryNodeBoundBox",
-            "GeometryNodeConvexHull",
-            "GeometryNodeDeleteGeometry",
-            "GeometryNodeDuplicateElements",
-            "GeometryNodeMergeByDistance",
-            "GeometryNodeSortElements",
-            "GeometryNodeTransform",
+            OperatorEntry("GeometryNodeBake"),
+            OperatorEntry("GeometryNodeBoundBox"),
+            OperatorEntry("GeometryNodeConvexHull"),
+            OperatorEntry("GeometryNodeDeleteGeometry"),
+            OperatorEntry("GeometryNodeDuplicateElements"),
+            OperatorEntry("GeometryNodeMergeByDistance"),
+            OperatorEntry("GeometryNodeSortElements"),
+            OperatorEntry("GeometryNodeTransform"),
             Separator,
-            "GeometryNodeSeparateComponents",
-            "GeometryNodeSeparateGeometry",
-            "GeometryNodeSplitToInstances",
+            OperatorEntry("GeometryNodeSeparateComponents"),
+            OperatorEntry("GeometryNodeSeparateGeometry"),
+            OperatorEntry("GeometryNodeSplitToInstances"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_curve(bpy.types.Panel, NodePanel):
@@ -1607,19 +1616,19 @@ class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeInputCurveHandlePositions",
-            "GeometryNodeCurveLength",
-            "GeometryNodeInputTangent",
-            "GeometryNodeInputCurveTilt",
-            "GeometryNodeCurveEndpointSelection",
-            "GeometryNodeCurveHandleTypeSelection",
-            "GeometryNodeInputSplineCyclic",
-            "GeometryNodeSplineLength",
-            "GeometryNodeSplineParameter",
-            "GeometryNodeInputSplineResolution",
+            OperatorEntry("GeometryNodeInputCurveHandlePositions"),
+            OperatorEntry("GeometryNodeCurveLength"),
+            OperatorEntry("GeometryNodeInputTangent"),
+            OperatorEntry("GeometryNodeInputCurveTilt"),
+            OperatorEntry("GeometryNodeCurveEndpointSelection"),
+            OperatorEntry("GeometryNodeCurveHandleTypeSelection"),
+            OperatorEntry("GeometryNodeInputSplineCyclic"),
+            OperatorEntry("GeometryNodeSplineLength"),
+            OperatorEntry("GeometryNodeSplineParameter"),
+            OperatorEntry("GeometryNodeInputSplineResolution"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_curve_sample(bpy.types.Panel, NodePanel):
@@ -1639,10 +1648,10 @@ class NODES_PT_toolshelf_gn_add_curve_sample(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeSampleCurve",
+            OperatorEntry("GeometryNodeSampleCurve"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
@@ -1662,17 +1671,17 @@ class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeSetCurveNormal",
-            "GeometryNodeSetCurveRadius",
-            "GeometryNodeSetCurveTilt",
-            "GeometryNodeSetCurveHandlePositions",
-            "GeometryNodeCurveSetHandles",
-            "GeometryNodeSetSplineCyclic",
-            "GeometryNodeSetSplineResolution",
-            "GeometryNodeCurveSplineType",
+            OperatorEntry("GeometryNodeSetCurveNormal"),
+            OperatorEntry("GeometryNodeSetCurveRadius"),
+            OperatorEntry("GeometryNodeSetCurveTilt"),
+            OperatorEntry("GeometryNodeSetCurveHandlePositions"),
+            OperatorEntry("GeometryNodeCurveSetHandles"),
+            OperatorEntry("GeometryNodeSetSplineCyclic"),
+            OperatorEntry("GeometryNodeSetSplineResolution"),
+            OperatorEntry("GeometryNodeCurveSplineType"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_curve_operations(bpy.types.Panel, NodePanel):
@@ -1692,21 +1701,21 @@ class NODES_PT_toolshelf_gn_add_curve_operations(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeCurvesToGreasePencil",
-            "GeometryNodeCurveToMesh",
-            "GeometryNodeCurveToPoints",
-            "GeometryNodeDeformCurvesOnSurface",
-            "GeometryNodeFillCurve",
-            "GeometryNodeFilletCurve",
-            "GeometryNodeGreasePencilToCurves",
-            "GeometryNodeInterpolateCurves",
-            "GeometryNodeResampleCurve",
-            "GeometryNodeReverseCurve",
-            "GeometryNodeSubdivideCurve",
-            "GeometryNodeTrimCurve",
+            OperatorEntry("GeometryNodeCurvesToGreasePencil"),
+            OperatorEntry("GeometryNodeCurveToMesh"),
+            OperatorEntry("GeometryNodeCurveToPoints"),
+            OperatorEntry("GeometryNodeDeformCurvesOnSurface"),
+            OperatorEntry("GeometryNodeFillCurve"),
+            OperatorEntry("GeometryNodeFilletCurve"),
+            OperatorEntry("GeometryNodeGreasePencilToCurves"),
+            OperatorEntry("GeometryNodeInterpolateCurves"),
+            OperatorEntry("GeometryNodeResampleCurve"),
+            OperatorEntry("GeometryNodeReverseCurve"),
+            OperatorEntry("GeometryNodeSubdivideCurve"),
+            OperatorEntry("GeometryNodeTrimCurve"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_curve_primitives(bpy.types.Panel, NodePanel):
@@ -1726,17 +1735,17 @@ class NODES_PT_toolshelf_gn_add_curve_primitives(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeCurveArc",
-            "GeometryNodeCurvePrimitiveBezierSegment",
-            "GeometryNodeCurvePrimitiveCircle",
-            "GeometryNodeCurvePrimitiveLine",
-            "GeometryNodeCurveSpiral",
-            "GeometryNodeCurveQuadraticBezier",
-            "GeometryNodeCurvePrimitiveQuadrilateral",
-            "GeometryNodeCurveStar",
+            OperatorEntry("GeometryNodeCurveArc"),
+            OperatorEntry("GeometryNodeCurvePrimitiveBezierSegment"),
+            OperatorEntry("GeometryNodeCurvePrimitiveCircle"),
+            OperatorEntry("GeometryNodeCurvePrimitiveLine"),
+            OperatorEntry("GeometryNodeCurveSpiral"),
+            OperatorEntry("GeometryNodeCurveQuadraticBezier"),
+            OperatorEntry("GeometryNodeCurvePrimitiveQuadrilateral"),
+            OperatorEntry("GeometryNodeCurveStar"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_curve_topology(bpy.types.Panel, NodePanel):
@@ -1756,12 +1765,12 @@ class NODES_PT_toolshelf_gn_add_curve_topology(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeCurveOfPoint",
-            "GeometryNodeOffsetPointInCurve",
-            "GeometryNodePointsOfCurve",
+            OperatorEntry("GeometryNodeCurveOfPoint"),
+            OperatorEntry("GeometryNodeOffsetPointInCurve"),
+            OperatorEntry("GeometryNodePointsOfCurve"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_grease_pencil(bpy.types.Panel, NodePanel):
@@ -1797,10 +1806,10 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeInputNamedLayerSelection",
+            OperatorEntry("GeometryNodeInputNamedLayerSelection"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_grease_pencil_write(bpy.types.Panel, NodePanel):
@@ -1820,12 +1829,12 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_write(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeSetGreasePencilColor",
-            "GeometryNodeSetGreasePencilDepth",
-            "GeometryNodeSetGreasePencilSoftness",
+            OperatorEntry("GeometryNodeSetGreasePencilColor"),
+            OperatorEntry("GeometryNodeSetGreasePencilDepth"),
+            OperatorEntry("GeometryNodeSetGreasePencilSoftness"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_grease_pencil_operations(bpy.types.Panel, NodePanel):
@@ -1845,11 +1854,11 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_operations(bpy.types.Panel, NodePa
         layout = self.layout
 
         entries = (
-            "GeometryNodeGreasePencilToCurves",
-            "GeometryNodeMergeLayers",
+            OperatorEntry("GeometryNodeGreasePencilToCurves"),
+            OperatorEntry("GeometryNodeMergeLayers"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
@@ -1868,21 +1877,21 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeInstanceOnPoints",
-            "GeometryNodeInstancesToPoints",
-            "GeometryNodeRealizeInstances",
-            "GeometryNodeRotateInstances",
-            "GeometryNodeScaleInstances",
-            "GeometryNodeTranslateInstances",
-            "GeometryNodeSetInstanceTransform",
+            OperatorEntry("GeometryNodeInstanceOnPoints"),
+            OperatorEntry("GeometryNodeInstancesToPoints"),
+            OperatorEntry("GeometryNodeRealizeInstances"),
+            OperatorEntry("GeometryNodeRotateInstances"),
+            OperatorEntry("GeometryNodeScaleInstances"),
+            OperatorEntry("GeometryNodeTranslateInstances"),
+            OperatorEntry("GeometryNodeSetInstanceTransform"),
             Separator,
-            "GeometryNodeInputInstanceBounds",
-            "GeometryNodeInstanceTransform",
-            "GeometryNodeInputInstanceRotation",
-            "GeometryNodeInputInstanceScale",
+            OperatorEntry("GeometryNodeInputInstanceBounds"),
+            OperatorEntry("GeometryNodeInstanceTransform"),
+            OperatorEntry("GeometryNodeInputInstanceRotation"),
+            OperatorEntry("GeometryNodeInputInstanceScale"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_mesh(bpy.types.Panel, NodePanel):
@@ -1918,25 +1927,25 @@ class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeInputMeshEdgeAngle",
-            "GeometryNodeInputMeshEdgeNeighbors",
-            "GeometryNodeInputMeshEdgeVertices",
-            "GeometryNodeEdgesToFaceGroups",
-            "GeometryNodeInputMeshFaceArea",
+            OperatorEntry("GeometryNodeInputMeshEdgeAngle"),
+            OperatorEntry("GeometryNodeInputMeshEdgeNeighbors"),
+            OperatorEntry("GeometryNodeInputMeshEdgeVertices"),
+            OperatorEntry("GeometryNodeEdgesToFaceGroups"),
+            OperatorEntry("GeometryNodeInputMeshFaceArea"),
             Separator,
-            "GeometryNodeMeshFaceSetBoundaries",
-            "GeometryNodeInputMeshFaceNeighbors",
+            OperatorEntry("GeometryNodeMeshFaceSetBoundaries"),
+            OperatorEntry("GeometryNodeInputMeshFaceNeighbors"),
             OperatorEntry("GeometryNodeToolFaceSet", should_draw=is_tool_tree(context)),
-            "GeometryNodeInputMeshFaceIsPlanar",
-            "GeometryNodeInputShadeSmooth",
-            "GeometryNodeInputEdgeSmooth",
+            OperatorEntry("GeometryNodeInputMeshFaceIsPlanar"),
+            OperatorEntry("GeometryNodeInputShadeSmooth"),
+            OperatorEntry("GeometryNodeInputEdgeSmooth"),
             Separator,
-            "GeometryNodeInputMeshIsland",
-            "GeometryNodeInputShortestEdgePaths",
-            "GeometryNodeInputMeshVertexNeighbors",
+            OperatorEntry("GeometryNodeInputMeshIsland"),
+            OperatorEntry("GeometryNodeInputShortestEdgePaths"),
+            OperatorEntry("GeometryNodeInputMeshVertexNeighbors"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_mesh_sample(bpy.types.Panel, NodePanel):
@@ -1956,11 +1965,11 @@ class NODES_PT_toolshelf_gn_add_mesh_sample(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeSampleNearestSurface",
-            "GeometryNodeSampleUVSurface",
+            OperatorEntry("GeometryNodeSampleNearestSurface"),
+            OperatorEntry("GeometryNodeSampleUVSurface"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_mesh_write(bpy.types.Panel, NodePanel):
@@ -1981,11 +1990,11 @@ class NODES_PT_toolshelf_gn_add_mesh_write(bpy.types.Panel, NodePanel):
 
         entries = (
             OperatorEntry("GeometryNodeToolSetFaceSet", should_draw=is_tool_tree(context)),
-            "GeometryNodeSetMeshNormal",
-            "GeometryNodeSetShadeSmooth",
+            OperatorEntry("GeometryNodeSetMeshNormal"),
+            OperatorEntry("GeometryNodeSetShadeSmooth"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
@@ -2005,25 +2014,25 @@ class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeDualMesh",
-            "GeometryNodeEdgePathsToCurves",
-            "GeometryNodeEdgePathsToSelection",
-            "GeometryNodeExtrudeMesh",
-            "GeometryNodeFlipFaces",
+            OperatorEntry("GeometryNodeDualMesh"),
+            OperatorEntry("GeometryNodeEdgePathsToCurves"),
+            OperatorEntry("GeometryNodeEdgePathsToSelection"),
+            OperatorEntry("GeometryNodeExtrudeMesh"),
+            OperatorEntry("GeometryNodeFlipFaces"),
             Separator,
-            "GeometryNodeMeshBoolean",
-            "GeometryNodeMeshToCurve",
-            "GeometryNodeMeshToPoints",
-            "GeometryNodeMeshToVolume",
-            "GeometryNodeScaleElements",
+            OperatorEntry("GeometryNodeMeshBoolean"),
+            OperatorEntry("GeometryNodeMeshToCurve"),
+            OperatorEntry("GeometryNodeMeshToPoints"),
+            OperatorEntry("GeometryNodeMeshToVolume"),
+            OperatorEntry("GeometryNodeScaleElements"),
             Separator,
-            "GeometryNodeSplitEdges",
-            "GeometryNodeSubdivideMesh",
-            "GeometryNodeSubdivisionSurface",
-            "GeometryNodeTriangulate",
+            OperatorEntry("GeometryNodeSplitEdges"),
+            OperatorEntry("GeometryNodeSubdivideMesh"),
+            OperatorEntry("GeometryNodeSubdivisionSurface"),
+            OperatorEntry("GeometryNodeTriangulate"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_mesh_primitives(bpy.types.Panel, NodePanel):
@@ -2043,18 +2052,18 @@ class NODES_PT_toolshelf_gn_add_mesh_primitives(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeMeshCone",
-            "GeometryNodeMeshCube",
-            "GeometryNodeMeshCylinder",
-            "GeometryNodeMeshGrid",
+            OperatorEntry("GeometryNodeMeshCone"),
+            OperatorEntry("GeometryNodeMeshCube"),
+            OperatorEntry("GeometryNodeMeshCylinder"),
+            OperatorEntry("GeometryNodeMeshGrid"),
             Separator,
-            "GeometryNodeMeshIcoSphere",
-            "GeometryNodeMeshCircle",
-            "GeometryNodeMeshLine",
-            "GeometryNodeMeshUVSphere",
+            OperatorEntry("GeometryNodeMeshIcoSphere"),
+            OperatorEntry("GeometryNodeMeshCircle"),
+            OperatorEntry("GeometryNodeMeshLine"),
+            OperatorEntry("GeometryNodeMeshUVSphere"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_mesh_topology(bpy.types.Panel, NodePanel):
@@ -2074,18 +2083,18 @@ class NODES_PT_toolshelf_gn_add_mesh_topology(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeCornersOfEdge",
-            "GeometryNodeCornersOfFace",
-            "GeometryNodeCornersOfVertex",
-            "GeometryNodeEdgesOfCorner",
+            OperatorEntry("GeometryNodeCornersOfEdge"),
+            OperatorEntry("GeometryNodeCornersOfFace"),
+            OperatorEntry("GeometryNodeCornersOfVertex"),
+            OperatorEntry("GeometryNodeEdgesOfCorner"),
             Separator,
-            "GeometryNodeEdgesOfVertex",
-            "GeometryNodeFaceOfCorner",
-            "GeometryNodeOffsetCornerInFace",
-            "GeometryNodeVertexOfCorner",
+            OperatorEntry("GeometryNodeEdgesOfVertex"),
+            OperatorEntry("GeometryNodeFaceOfCorner"),
+            OperatorEntry("GeometryNodeOffsetCornerInFace"),
+            OperatorEntry("GeometryNodeVertexOfCorner"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
@@ -2105,11 +2114,11 @@ class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeUVPackIslands",
-            "GeometryNodeUVUnwrap",
+            OperatorEntry("GeometryNodeUVPackIslands"),
+            OperatorEntry("GeometryNodeUVUnwrap"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
@@ -2128,17 +2137,17 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
         layout = self.layout
         
         entries = (
-            "GeometryNodeDistributePointsInVolume",
-            "GeometryNodeDistributePointsOnFaces",
+            OperatorEntry("GeometryNodeDistributePointsInVolume"),
+            OperatorEntry("GeometryNodeDistributePointsOnFaces"),
             Separator,
-            "GeometryNodePoints",
-            "GeometryNodePointsToCurves",
-            "GeometryNodePointsToVertices",
-            "GeometryNodePointsToVolume",
-            "GeometryNodeSetPointRadius",
+            OperatorEntry("GeometryNodePoints"),
+            OperatorEntry("GeometryNodePointsToCurves"),
+            OperatorEntry("GeometryNodePointsToVertices"),
+            OperatorEntry("GeometryNodePointsToVolume"),
+            OperatorEntry("GeometryNodeSetPointRadius"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
@@ -2157,11 +2166,11 @@ class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeVolumeCube",
-            "GeometryNodeVolumeToMesh",
+            OperatorEntry("GeometryNodeVolumeCube"),
+            OperatorEntry("GeometryNodeVolumeToMesh"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
@@ -2183,7 +2192,7 @@ class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
             OperatorEntry(operator="node.add_simulation_zone", text="Simulation Zone", icon="TIME"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
@@ -2202,14 +2211,14 @@ class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeReplaceMaterial",
-            "GeometryNodeInputMaterialIndex",
-            "GeometryNodeMaterialSelection",
-            "GeometryNodeSetMaterial",
-            "GeometryNodeSetMaterialIndex",
+            OperatorEntry("GeometryNodeReplaceMaterial"),
+            OperatorEntry("GeometryNodeInputMaterialIndex"),
+            OperatorEntry("GeometryNodeMaterialSelection"),
+            OperatorEntry("GeometryNodeSetMaterial"),
+            OperatorEntry("GeometryNodeSetMaterialIndex"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
@@ -2228,18 +2237,18 @@ class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "ShaderNodeTexBrick",
-            "ShaderNodeTexChecker",
-            "ShaderNodeTexGradient",
-            "GeometryNodeImageTexture",
-            "ShaderNodeTexMagic",
-            "ShaderNodeTexNoise",
-            "ShaderNodeTexVoronoi",
-            "ShaderNodeTexWave",
-            "ShaderNodeTexWhiteNoise",
+            OperatorEntry("ShaderNodeTexBrick"),
+            OperatorEntry("ShaderNodeTexChecker"),
+            OperatorEntry("ShaderNodeTexGradient"),
+            OperatorEntry("GeometryNodeImageTexture"),
+            OperatorEntry("ShaderNodeTexMagic"),
+            OperatorEntry("ShaderNodeTexNoise"),
+            OperatorEntry("ShaderNodeTexVoronoi"),
+            OperatorEntry("ShaderNodeTexWave"),
+            OperatorEntry("ShaderNodeTexWhiteNoise"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
@@ -2259,14 +2268,14 @@ class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
 
         entries = (
             OperatorEntry(operator="node.add_foreach_geometry_element_zone", text="For Each Element", icon="FOR_EACH"),
-            "GeometryNodeIndexSwitch",
-            "GeometryNodeMenuSwitch",
-            "FunctionNodeRandomValue",
+            OperatorEntry("GeometryNodeIndexSwitch"),
+            OperatorEntry("GeometryNodeMenuSwitch"),
+            OperatorEntry("FunctionNodeRandomValue"),
             OperatorEntry(operator="node.add_repeat_zone", text="Repeat Zone", icon="REPEAT"),
-            "GeometryNodeSwitch",
+            OperatorEntry("GeometryNodeSwitch"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
@@ -2286,15 +2295,15 @@ class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "ShaderNodeValToRGB",
-            "ShaderNodeRGBCurve",
+            OperatorEntry("ShaderNodeValToRGB"),
+            OperatorEntry("ShaderNodeRGBCurve"),
             Separator,
-            "FunctionNodeCombineColor",
+            OperatorEntry("FunctionNodeCombineColor"),
             OperatorEntry("ShaderNodeMix", text="Mix Color", settings={"data_type": "'RGBA'"}),
-            "FunctionNodeSeparateColor",
+            OperatorEntry("FunctionNodeSeparateColor"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
@@ -2314,19 +2323,19 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "FunctionNodeFormatString",
-            "GeometryNodeStringJoin",
-            "FunctionNodeMatchString",
-            "FunctionNodeReplaceString",
-            "FunctionNodeSliceString",
-            "FunctionNodeStringLength",
-            "FunctionNodeFindInString",
-            "GeometryNodeStringToCurves",
-            "FunctionNodeValueToString",
-            "FunctionNodeInputSpecialCharacters",
+            OperatorEntry("FunctionNodeFormatString"),
+            OperatorEntry("GeometryNodeStringJoin"),
+            OperatorEntry("FunctionNodeMatchString"),
+            OperatorEntry("FunctionNodeReplaceString"),
+            OperatorEntry("FunctionNodeSliceString"),
+            OperatorEntry("FunctionNodeStringLength"),
+            OperatorEntry("FunctionNodeFindInString"),
+            OperatorEntry("GeometryNodeStringToCurves"),
+            OperatorEntry("FunctionNodeValueToString"),
+            OperatorEntry("FunctionNodeInputSpecialCharacters"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
@@ -2346,15 +2355,15 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "ShaderNodeVectorCurve",
-            "ShaderNodeVectorMath",
-            "ShaderNodeVectorRotate",
-            "ShaderNodeCombineXYZ",
+            OperatorEntry("ShaderNodeVectorCurve"),
+            OperatorEntry("ShaderNodeVectorMath"),
+            OperatorEntry("ShaderNodeVectorRotate"),
+            OperatorEntry("ShaderNodeCombineXYZ"),
             OperatorEntry("ShaderNodeMix", text="Mix Vector", settings={"data_type": "'VECTOR'"}),
-            "ShaderNodeSeparateXYZ",
+            OperatorEntry("ShaderNodeSeparateXYZ"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
@@ -2374,15 +2383,15 @@ class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "GeometryNodeAccumulateField",
-            "GeometryNodeFieldAtIndex",
-            "GeometryNodeFieldOnDomain",
-            "GeometryNodeFieldAverage",
-            "GeometryNodeFieldMinAndMax",
-            "GeometryNodeFieldVariance"
+            OperatorEntry("GeometryNodeAccumulateField"),
+            OperatorEntry("GeometryNodeFieldAtIndex"),
+            OperatorEntry("GeometryNodeFieldOnDomain"),
+            OperatorEntry("GeometryNodeFieldAverage"),
+            OperatorEntry("GeometryNodeFieldMinAndMax"),
+            OperatorEntry("GeometryNodeFieldVariance"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
@@ -2402,21 +2411,21 @@ class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "FunctionNodeBitMath",
-            "FunctionNodeBooleanMath",
-            "FunctionNodeIntegerMath",
-            "ShaderNodeClamp",
-            "FunctionNodeCompare",
-            "ShaderNodeFloatCurve",
+            OperatorEntry("FunctionNodeBitMath"),
+            OperatorEntry("FunctionNodeBooleanMath"),
+            OperatorEntry("FunctionNodeIntegerMath"),
+            OperatorEntry("ShaderNodeClamp"),
+            OperatorEntry("FunctionNodeCompare"),
+            OperatorEntry("ShaderNodeFloatCurve"),
             Separator,
-            "FunctionNodeFloatToInt",
-            "FunctionNodeHashValue",
-            "ShaderNodeMapRange",
-            "ShaderNodeMath",
-            "ShaderNodeMix",
+            OperatorEntry("FunctionNodeFloatToInt"),
+            OperatorEntry("FunctionNodeHashValue"),
+            OperatorEntry("ShaderNodeMapRange"),
+            OperatorEntry("ShaderNodeMath"),
+            OperatorEntry("ShaderNodeMix"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
@@ -2436,20 +2445,20 @@ class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "FunctionNodeCombineMatrix",
-            "FunctionNodeCombineTransform",
-            "FunctionNodeMatrixDeterminant",
-            "FunctionNodeInvertMatrix",
-            "FunctionNodeMatrixMultiply",
-            "FunctionNodeProjectPoint",
-            "FunctionNodeSeparateMatrix",
-            "FunctionNodeSeparateTransform",
-            "FunctionNodeTransformDirection",
-            "FunctionNodeTransformPoint",
-            "FunctionNodeTransposeMatrix",
+            OperatorEntry("FunctionNodeCombineMatrix"),
+            OperatorEntry("FunctionNodeCombineTransform"),
+            OperatorEntry("FunctionNodeMatrixDeterminant"),
+            OperatorEntry("FunctionNodeInvertMatrix"),
+            OperatorEntry("FunctionNodeMatrixMultiply"),
+            OperatorEntry("FunctionNodeProjectPoint"),
+            OperatorEntry("FunctionNodeSeparateMatrix"),
+            OperatorEntry("FunctionNodeSeparateTransform"),
+            OperatorEntry("FunctionNodeTransformDirection"),
+            OperatorEntry("FunctionNodeTransformPoint"),
+            OperatorEntry("FunctionNodeTransposeMatrix"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
@@ -2469,20 +2478,20 @@ class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            "FunctionNodeAlignRotationToVector",
-            "FunctionNodeAxesToRotation",
-            "FunctionNodeAxisAngleToRotation",
-            "FunctionNodeEulerToRotation",
-            "FunctionNodeInvertRotation",
-            "FunctionNodeRotateRotation",
-            "FunctionNodeRotateVector",
-            "FunctionNodeRotationToAxisAngle",
-            "FunctionNodeRotationToEuler",
-            "FunctionNodeRotationToQuaternion",
-            "FunctionNodeQuaternionToRotation",
+            OperatorEntry("FunctionNodeAlignRotationToVector"),
+            OperatorEntry("FunctionNodeAxesToRotation"),
+            OperatorEntry("FunctionNodeAxisAngleToRotation"),
+            OperatorEntry("FunctionNodeEulerToRotation"),
+            OperatorEntry("FunctionNodeInvertRotation"),
+            OperatorEntry("FunctionNodeRotateRotation"),
+            OperatorEntry("FunctionNodeRotateVector"),
+            OperatorEntry("FunctionNodeRotationToAxisAngle"),
+            OperatorEntry("FunctionNodeRotationToEuler"),
+            OperatorEntry("FunctionNodeRotationToQuaternion"),
+            OperatorEntry("FunctionNodeQuaternionToRotation"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 class NODES_PT_toolshelf_gn_add_utilities_deprecated(bpy.types.Panel, NodePanel):
@@ -2502,11 +2511,11 @@ class NODES_PT_toolshelf_gn_add_utilities_deprecated(bpy.types.Panel, NodePanel)
         layout = self.layout
 
         entries = (
-            "FunctionNodeAlignEulerToVector",
-            "FunctionNodeRotateEuler",
+            OperatorEntry("FunctionNodeAlignEulerToVector"),
+            OperatorEntry("FunctionNodeRotateEuler"),
         )
 
-        self.draw_entries(context, layout, entries)
+        self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
 
 
 classes = (
