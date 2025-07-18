@@ -491,6 +491,16 @@ class GRAPH_MT_select(Menu):
         props.key_action = 'SELECT'
 
         layout.separator()
+        layout.menu("GRAPH_MT_select_more_less")
+
+
+ # BFA menu
+class GRAPH_MT_select_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
         layout.operator("graph.select_more", text="More", icon="SELECTMORE")
         layout.operator("graph.select_less", text="Less", icon="SELECTLESS")
 
@@ -977,6 +987,7 @@ classes = (
     GRAPH_MT_view,
     GRAPH_MT_view_pie_menus, # BFA - menu
     GRAPH_MT_select,
+    GRAPH_MT_select_more_less, # BFA menu
     GRAPH_MT_marker,
     GRAPH_MT_channel,
     GRAPH_MT_channel_settings_toggle, # BFA - menu

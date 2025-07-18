@@ -666,8 +666,18 @@ class DOPESHEET_MT_select(Menu):
         props.extend = False
         props.mode = 'RIGHT'
 
+        layout.separator()
+        layout.menu("DOPESHEET_MT_select_more_less")
+
+
+ # BFA menu
+class DOPESHEET_MT_select_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
-        if context.space_data.mode != 'GPENCIL':
+        if _context.space_data.mode != 'GPENCIL':
             layout.separator()
             layout.operator("action.select_more", text="More", icon="SELECTMORE")
             layout.operator("action.select_less", text="Less", icon="SELECTLESS")
@@ -1348,6 +1358,7 @@ classes = (
     DOPESHEET_MT_view_pie_menus, # BFA menu
     DOPESHEET_MT_cache,
     DOPESHEET_MT_select,
+    DOPESHEET_MT_select_more_less,  # BFA menu
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
     DOPESHEET_MT_channel_extrapolation, # BFA menu
