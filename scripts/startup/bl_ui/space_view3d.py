@@ -12141,7 +12141,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
                 col.separator()
 
-            col.operator("grease_pencil.outline", text="Outline")
+            col.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
 
             col.operator("grease_pencil.stroke_split", text="Split", icon="SPLIT")
             col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
@@ -12203,7 +12203,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator()
-            col.operator("grease_pencil.outline", text="Outline")
+            col.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
 
             col.separator()
 
