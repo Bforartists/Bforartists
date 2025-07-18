@@ -5295,9 +5295,7 @@ class VIEW3D_MT_brush(Menu):
         if obj.mode in {'VERTEX_PAINT', 'TEXTURE_PAINT'}:
             layout.separator()
 
-            layout.operator(
-                "paint.sample_color", text="Color Picker", icon="EYEDROPPER"
-            )
+            layout.operator("paint.sample_color", text="Color Picker", icon="EYEDROPPER").merged = False
 
 
 # bfa - show hide menu for face selection masking
@@ -5341,11 +5339,6 @@ class VIEW3D_MT_paint_vertex(Menu):
             text="Brightness/Contrast",
             icon="BRIGHTNESS_CONTRAST",
         )
-
-        layout.separator()
-
-        layout.operator("paint.vertex_color_set")
-        layout.operator("paint.sample_color").merged = False
 
 
 class VIEW3D_MT_hook(Menu):
@@ -5721,9 +5714,7 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_subdivision_set")  # BFA - add subdivion set menu
-        layout.operator(
-            "sculpt.sample_color", text="Sample Color", icon="EYEDROPPER"
-        )  # BFA - icon added
+        layout.operator("sculpt.sample_color", text="Sample Color", icon="EYEDROPPER")  # BFA - icon added
 
         layout.separator()
 
