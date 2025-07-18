@@ -1820,6 +1820,7 @@ if(WITH_BLENDER)
       snap_face_nearest
       snap_grid
       snap_increment
+      snap_keyframes
       snap_midpoint
       snap_nearestframe
       snap_nearestmarker
@@ -1829,6 +1830,8 @@ if(WITH_BLENDER)
       snap_on
       snap_peel_object
       snap_perpendicular
+      snap_playhead_off
+      snap_playhead_on
       snap_step
       snap_step_second
       snap_surface

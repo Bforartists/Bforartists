@@ -113,7 +113,10 @@ class NLA_HT_header(Header):
             panel="NLA_PT_snapping",
             text="",
         )
-        layout.popover(panel="NLA_PT_playhead_snapping")
+
+        row = layout.row(align=True)
+        row.prop(tool_settings, "use_snap_playhead", text="") # BFA - Exposed to top level
+        row.popover(panel="NLA_PT_playhead_snapping")
 
 
 class NLA_HT_playback_controls(Header):

@@ -192,12 +192,13 @@ static const EnumPropertyItem snap_uv_element_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+/*BFA - added icons*/
 const EnumPropertyItem rna_enum_snap_playhead_element_items[] = {
-    {SCE_SNAP_TO_FRAME, "FRAME", 0, "Frames", "Snap to frame increments"},
-    {SCE_SNAP_TO_SECOND, "SECOND", 0, "Seconds", "Snap to second increments"},
-    {SCE_SNAP_TO_MARKERS, "MARKER", 0, "Markers", "Snap to markers"},
-    {SCE_SNAP_TO_KEYS, "KEY", 0, "Keyframes", "Snap to keyframes"},
-    {SCE_SNAP_TO_STRIPS, "Strip", 0, "Strips", "Snap to Strips"},
+    {SCE_SNAP_TO_FRAME, "FRAME", ICON_SNAP_CURRENTFRAME, "Frames", "Snap to frame increments"},
+    {SCE_SNAP_TO_SECOND, "SECOND", ICON_SNAP_NEARESTSECOND, "Seconds", "Snap to second increments"},
+    {SCE_SNAP_TO_MARKERS, "MARKER", ICON_SNAP_NEARESTMARKER, "Markers", "Snap to markers"},
+    {SCE_SNAP_TO_KEYS, "KEY", ICON_SNAP_KEYFRAMES, "Keyframes", "Snap to keyframes"},
+    {SCE_SNAP_TO_STRIPS, "Strip", ICON_SEQ_SNAP_TO_FRAME, "Strips", "Snap to Strips"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -3706,6 +3707,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "snap_flag_playhead", SCE_SNAP);
   RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
   RNA_def_property_ui_text(prop, "Use Snapping", "Snap playhead when scrubbing");
+  RNA_def_property_ui_icon(prop, ICON_SNAP_PLAYHEAD_OFF, 1);
   RNA_def_property_boolean_default(prop, false);
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 

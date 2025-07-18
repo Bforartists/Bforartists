@@ -42,7 +42,7 @@ class PresetPanel:
 
 class PlayheadSnappingPanel:
     bl_region_type = 'HEADER'
-    bl_label = "Playhead"
+    bl_label = ""
 
     @classmethod
     def poll(cls, context):
@@ -54,14 +54,21 @@ class PlayheadSnappingPanel:
         layout = self.layout
         col = layout.column()
 
-        col.prop(tool_settings, "use_snap_playhead")
-        col.prop(tool_settings, "playhead_snap_distance")
+        col.label(text="Playhead Snapping") # BFA - panel label
+        #col.prop(tool_settings, "use_snap_playhead", icon='SNAP_ON') # BFA - exposed to a top level
+        col.use_property_split = True
+        col.prop(tool_settings, "playhead_snap_distance", text="Distance")
         col.separator()
+        col.use_property_split = False
         col.label(text="Snap Target")
         col.prop(tool_settings, "snap_playhead_element", expand=True)
         col.separator()
 
         if 'FRAME' in tool_settings.snap_playhead_element:
-            col.prop(tool_settings, "snap_playhead_frame_step")
+            col.use_property_split = True
+            col.prop(tool_settings, "snap_playhead_frame_step", icon='FRAME_NEXT')
         if 'SECOND' in tool_settings.snap_playhead_element:
-            col.prop(tool_settings, "snap_playhead_second_step")
+            col.use_property_split = True
+            col.prop(tool_settings, "snap_playhead_second_step", icon='TIME')
+        else: # BFA - show that there is hidden content
+            layout.label(text="", icon='RIGHT_ARROW')
