@@ -647,6 +647,7 @@ const bTheme U_theme_default = {
     .metadatatext = RGBA(0xffffffff),
   },
   .space_image = {
+    .back = RGBA(0x26262600),
     .title = RGBA(0xffffffff),
     .text = RGBA(0x000000ff),
     .text_hi = RGBA(0xffffffff),
