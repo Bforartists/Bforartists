@@ -16,7 +16,7 @@ from .node_add_menu import draw_node_groups, add_empty_group
 Separator = object()
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True, slots=True)
 class OperatorEntry:
     node : str = None
     operator : str = "node.add_node"
