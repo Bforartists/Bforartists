@@ -8857,9 +8857,6 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
 
         layout.separator()
-        layout.operator("grease_pencil.outline", text="Outline")
-
-        layout.separator()
         layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
@@ -8896,7 +8893,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.operator_menu_enum("grease_pencil.join_selection", "type", text="Join")
 
         layout.separator()
-        layout.operator("grease_pencil.outline", text="Outline")
+        layout.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
         layout.separator()
 
         layout.menu("GREASE_PENCIL_MT_move_to_layer")
@@ -12135,7 +12132,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
                 col.separator()
 
-            col.operator("grease_pencil.outline", text="Outline")
+            col.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
 
             col.operator("grease_pencil.stroke_split", text="Split", icon="SPLIT")
             col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
@@ -12197,7 +12194,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator()
-            col.operator("grease_pencil.outline", text="Outline")
+            col.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
 
             col.separator()
 
