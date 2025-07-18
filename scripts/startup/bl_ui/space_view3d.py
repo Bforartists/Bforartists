@@ -5513,7 +5513,7 @@ class VIEW3D_MT_paint_weight(Menu):
             layout.operator(
                 "paint.weight_from_bones",
                 text="Assign from Bone Envelopes",
-                icon="ENVELOPE_MODIFIER",
+                icon="MOD_ENVELOPE",
             ).type = 'ENVELOPES'
 
             layout.separator()
