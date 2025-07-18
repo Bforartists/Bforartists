@@ -512,46 +512,6 @@ class TEXT_MT_edit_move_select(Menu):
         layout.operator("text.move_select", text="Next Word", icon="HAND").type = 'NEXT_WORD'
 
 
-class TEXT_MT_edit(Menu):
-    bl_label = "Edit"
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.text is not None
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-
-        layout.separator()
-
-        layout.operator("text.cut")
-        layout.operator("text.copy", icon='COPYDOWN')
-        layout.operator("text.paste", icon='PASTEDOWN')
-        layout.operator("text.duplicate_line")
-
-        layout.separator()
-
-        layout.operator("text.move_lines", text="Move Line(s) Up").direction = 'UP'
-        layout.operator("text.move_lines", text="Move Line(s) Down").direction = 'DOWN'
-
-        layout.separator()
-
-        layout.operator("text.start_find", text="Find & Replace...")
-        layout.operator("text.find_set_selected")
-        layout.operator("text.jump", text="Jump To...")
-
-        layout.separator()
-
-        layout.operator("text.autocomplete")
-
-        layout.separator()
-
-        layout.menu("TEXT_MT_edit_to3d")
-
-
 class TEXT_MT_context_menu(Menu):
     bl_label = ""
 

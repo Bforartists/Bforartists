@@ -773,7 +773,7 @@ class TOOLBAR_MT_primitives(Menu):
             if addon_prefs.primitives_point_cloud:
 
                 row = layout.row(align=True)
-                row.operator("object.pointcloud_add", text="", icon='OUTLINER_OB_POINTCLOUD')
+                row.operator("object.pointcloud_random_add", text="", icon='OUTLINER_OB_POINTCLOUD')
 
 
             if addon_prefs.primitives_volume:
@@ -912,7 +912,7 @@ class TOOLBAR_MT_primitives(Menu):
                 if addon_prefs.primitives_point_cloud:
 
                     row = layout.row(align=True)
-                    row.operator("object.pointcloud_add", text="", icon='OUTLINER_OB_POINTCLOUD')
+                    row.operator("object.pointcloud_random_add", text="", icon='OUTLINER_OB_POINTCLOUD')
 
                 if addon_prefs.primitives_volume:
 

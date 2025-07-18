@@ -817,7 +817,7 @@ class TOPBAR_MT_primitives(Menu):
                 if addon_prefs.topbar_primitives_point_cloud:
 
                     row = layout.row(align=True)
-                    row.operator("object.pointcloud_add", text="", icon='OUTLINER_OB_POINTCLOUD')
+                    row.operator("object.pointcloud_random_add", text="", icon='OUTLINER_OB_POINTCLOUD')
 
                 if addon_prefs.topbar_primitives_volume:
 
@@ -955,7 +955,7 @@ class TOPBAR_MT_primitives(Menu):
                     if addon_prefs.topbar_primitives_point_cloud:
 
                         row = layout.row(align=True)
-                        row.operator("object.pointcloud_add", text="", icon='OUTLINER_OB_POINTCLOUD')
+                        row.operator("object.pointcloud_random_add", text="", icon='OUTLINER_OB_POINTCLOUD')
 
                     if addon_prefs.topbar_primitives_volume:
 
