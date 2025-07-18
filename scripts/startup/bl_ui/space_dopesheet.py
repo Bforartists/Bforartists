@@ -569,12 +569,13 @@ class DOPESHEET_MT_view(Menu):
         layout.menu("INFO_MT_area")
         layout.separator()
 
-        layout.menu("DOPESHEET_MT_cache")
+        #layout.menu("DOPESHEET_MT_cache") #bfa - deactivated
         layout.separator()
         # Add this to show key-binding (reverse action in dope-sheet).
         props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
         props.data_path = "area.type"
         props.value = 'GRAPH_EDITOR'
+
 
 class DOPESHEET_MT_view_pie_menus(Menu):
     bl_label = "Pie Menus"
@@ -602,7 +603,7 @@ class DOPESHEET_MT_view_pie(Menu):
         else:
             pie.operator("anim.scene_range_frame", text="Frame Scene Range")
 
-
+# bfa - not connected in the view menu anymore. But keep. You never know what addon wants to connect here.
 class DOPESHEET_MT_cache(Menu):
     bl_label = "Cache"
 
@@ -876,6 +877,43 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+
+        layout.separator()
+
+        row = layout.row()
+        row.use_property_split = False
+        split = row.split(factor = 0.5)
+        row = split.row()
+        row.prop(st, "show_cache")
+        row = split.row()
+        if st.show_cache:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if st.show_cache:
+            col = layout.column(align = True)
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_softbody")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_particles")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_cloth")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_simulation_nodes")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_smoke")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_dynamicpaint")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_rigidbody")
 
 
 class DOPESHEET_MT_key_transform(Menu):
