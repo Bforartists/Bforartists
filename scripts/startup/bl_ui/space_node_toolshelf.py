@@ -636,20 +636,9 @@ class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("CompositorNodeRotate"),
-            OperatorEntry("CompositorNodeScale"),
-            OperatorEntry("CompositorNodeTransform"),
-            OperatorEntry("CompositorNodeTranslate"),
-            Separator,
-            OperatorEntry("CompositorNodeCornerPin"),
-            OperatorEntry("CompositorNodeCrop"),
-            Separator,
-            OperatorEntry("CompositorNodeDisplace"),
-            OperatorEntry("CompositorNodeFlip"),
-            OperatorEntry("CompositorNodeMapUV"),
-            Separator,
-            OperatorEntry("CompositorNodeLensdist"),
-            OperatorEntry("CompositorNodeMovieDistortion"),
+            OperatorEntry("CompositorNodePlaneTrackDeform"),
+            OperatorEntry("CompositorNodeStabilize"),
+            OperatorEntry("CompositorNodeTrackPos"),
         )
         
         self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
