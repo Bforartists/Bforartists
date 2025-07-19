@@ -66,9 +66,10 @@ class PlayheadSnappingPanel:
 
         if 'FRAME' in tool_settings.snap_playhead_element:
             col.use_property_split = True
-            col.prop(tool_settings, "snap_playhead_frame_step", icon='FRAME_NEXT')
+            col.prop(tool_settings, "snap_playhead_frame_step")
         if 'SECOND' in tool_settings.snap_playhead_element:
             col.use_property_split = True
-            col.prop(tool_settings, "snap_playhead_second_step", icon='TIME')
-        else: # BFA - show that there is hidden content
-            layout.label(text="", icon='RIGHT_ARROW')
+            col.prop(tool_settings, "snap_playhead_second_step")
+        if not 'SECOND' in tool_settings.snap_playhead_element or not 'FRAME' in tool_settings.snap_playhead_element: # BFA - show that there is hidden content
+            layout.label(text="", icon='RIGHTARROW')
+

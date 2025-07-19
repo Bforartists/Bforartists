@@ -104,7 +104,7 @@ class NLA_HT_header(Header):
         row = layout.row()
 
         row.popover(panel="NLA_PT_filters", text="", icon="FILTER")
-        row.popover(panel="NLA_PT_view_view_options", text="Options")
+
         row = layout.row(align=True)
         tool_settings = context.tool_settings
         row.prop(tool_settings, "use_snap_anim", text="")
@@ -117,6 +117,9 @@ class NLA_HT_header(Header):
         row = layout.row(align=True)
         row.prop(tool_settings, "use_snap_playhead", text="") # BFA - Exposed to top level
         row.popover(panel="NLA_PT_playhead_snapping")
+
+        row = layout.row(align=True)
+        row.popover(panel="NLA_PT_view_view_options", text="Options")  # BFA - moved to end
 
 
 class NLA_HT_playback_controls(Header):

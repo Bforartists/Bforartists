@@ -2674,16 +2674,16 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
             "mesh.select_prev_item", text="Previous Active", icon="PREVIOUSACTIVE"
         )
 
-
+# BFA - not used
 class VIEW3D_MT_edit_mesh_select_linked(Menu):
     bl_label = "Select Linked"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mesh.select_linked", text="Linked")
-        layout.operator("mesh.shortest_path_select", text="Shortest Path")
-        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces")
+        layout.operator("mesh.select_linked", text="Linked", icon="LINKED")
+        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon="SELECT_SHORTESTPATH")
+        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon="LINKED")
 
 
 class VIEW3D_MT_edit_mesh_select_loops(Menu):
@@ -3422,7 +3422,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.separator()
 
         layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
-        layout.operator("paint.vert_select_linked", text="Select Linked", icon='LINKED')
+        layout.operator("paint.vert_select_linked", text="Linked", icon='LINKED')
 
         layout.separator()
 
@@ -6393,7 +6393,7 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
             layout.menu("VIEW3D_MT_particle_context_menu_more_less")
 
-            layout.operator("particle.select_linked", text="Select Linked", icon="LINKED")
+            layout.operator("particle.select_linked", text="Linked", icon="LINKED")
 
         layout.separator()
 

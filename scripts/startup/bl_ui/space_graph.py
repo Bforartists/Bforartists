@@ -481,13 +481,13 @@ class GRAPH_MT_select(Menu):
 
         layout.separator()
         props = layout.operator(
-            "graph.select_key_handles", text="Select Handles", icon="SELECT_HANDLETYPE"
+            "graph.select_key_handles", text="Handles", icon="SELECT_HANDLETYPE"
         )
         props.left_handle_action = 'SELECT'
         props.right_handle_action = 'SELECT'
         props.key_action = "KEEP"
         props = layout.operator(
-            "graph.select_key_handles", text="Select Key", icon="SELECT_KEY"
+            "graph.select_key_handles", text="Key", icon="SELECT_KEY"
         )
         props.left_handle_action = 'DESELECT'
         props.right_handle_action = 'DESELECT'

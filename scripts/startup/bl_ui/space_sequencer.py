@@ -464,9 +464,6 @@ class SEQUENCER_MT_view_cache(Menu):
         col.prop(cache_settings, "show_cache_final_out", text="Final")
         if show_developer_ui:
             col.prop(cache_settings, "show_cache_raw", text="Raw")
-            col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
-            col.prop(cache_settings, "show_cache_composite", text="Composite")
-
 
 
 class SEQUENCER_MT_range(Menu):
@@ -4328,8 +4325,6 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 col.prop(cache_settings, "show_cache_final_out", text="Final")
                 if show_developer_ui:
                     col.prop(cache_settings, "show_cache_raw", text="Raw")
-                    col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
-
 
             layout.use_property_split = False
             layout.prop(st, "show_markers")
