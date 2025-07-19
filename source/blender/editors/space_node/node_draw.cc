@@ -2884,7 +2884,7 @@ static void node_draw_basis(const bContext &C,
     iconofs -= iconbutw;
     UI_block_emboss_set(&block, blender::ui::EmbossType::None);
     uiDefIconBut(&block,
-                 UI_BTYPE_BUT,
+                 ButType::But,
                  0,
                  RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
                  iconofs,

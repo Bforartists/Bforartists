@@ -5719,7 +5719,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
     layout->op("SCREEN_OT_header_toggle_editortypemenu",
                IFACE_("Hide Editor Type Menu"),
                (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
-               WM_OP_INVOKE_DEFAULT,
+               blender::wm::OpCallContext::InvokeDefault,
                UI_ITEM_NONE);
     /*bfa - we don't show the area items in the rmb menu*/
     /*layout->separator();
@@ -5954,7 +5954,7 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
       uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Navigation Bar"), ICON_NONE);
       uiLayout *layout = UI_popup_menu_layout(pup);
 
-      /* We need WM_OP_INVOKE_DEFAULT in case menu item is over another area. */
+      /* We need blender::wm::OpCallContext::InvokeDefault in case menu item is over another area. */
       layout->operator_context_set(blender::wm::OpCallContext::InvokeDefault);
       layout->op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_HIDE_ON);
 

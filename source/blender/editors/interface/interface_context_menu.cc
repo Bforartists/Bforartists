@@ -1306,7 +1306,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
     wmOperatorType *ot = WM_operatortype_find("VIEW2D_OT_reset", true);
     if (ot) {
       layout->separator();
-      layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
+      layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, blender::wm::OpCallContext::InvokeDefault, UI_ITEM_NONE);
       layout->separator();
     }
   }
@@ -1365,7 +1365,7 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
 
   /* BFA - View2D reset option if view2d is initialized */
   if (region->v2d.flag & V2D_IS_INIT) {
-    layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
+    layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, blender::wm::OpCallContext::InvokeDefault, UI_ITEM_NONE);
     layout->separator();
     uiBlock *block = layout->block();
     uiBut *but = block->buttons.last().get();
