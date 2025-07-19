@@ -6187,10 +6187,8 @@ class VIEW3D_MT_face_sets(Menu):
         props.use_modify_active = True
 
         layout.separator()
-
-        layout.operator(
-            "sculpt.face_sets_randomize_colors", text="Randomize Colors", icon="COLOR"
-        )
+        layout.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
+        layout.operator("sculpt.face_sets_randomize_colors", text="Randomize Colors", icon="COLOR")
 
         layout.separator()
 

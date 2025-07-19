@@ -3743,6 +3743,9 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
             col.operator("paint.hide_show_all", text='Show Active Face Set', icon = "HIDE_OFF").action='SHOW'
 
             col.separator(factor = 0.5)
+            col.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
+
+            col.separator(factor = 0.5)
 
             col.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon = "COLOR")
 
@@ -3781,6 +3784,8 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
+                row = col.row(align=True)
+                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
             elif column_count == 2:
@@ -3815,6 +3820,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row.operator("paint.hide_show_all", text='', icon = "HIDE_OFF").action='SHOW'
 
                 row = col.row(align=True)
+                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
             elif column_count == 1:
@@ -3850,7 +3856,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 col.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
 
                 col.separator(factor = 0.5)
-
+                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
                 col.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
 
