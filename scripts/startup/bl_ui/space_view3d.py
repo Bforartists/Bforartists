@@ -3833,13 +3833,13 @@ class VIEW3D_MT_empty_add(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("object.empty_add", text="Plain Axes", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
+        layout.operator("object.empty_add", text="Plain Axes", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
         layout.operator("object.empty_add", text="Arrows", icon='EMPTY_ARROWS').type = 'ARROWS'
         layout.operator("object.empty_add", text="Single Arrow", icon='EMPTY_SINGLE_ARROW').type = 'SINGLE_ARROW'
-        layout.operator("object.empty_add", text="Circle", icon='MESH_CIRCLE').type = 'CIRCLE'
-        layout.operator("object.empty_add", text="Cube", icon='CUBE').type = 'CUBE'
-        layout.operator("object.empty_add", text="Sphere", icon='SPHERE').type = 'SPHERE'
-        layout.operator("object.empty_add", text="Cone", icon='CONE').type = 'CONE'
+        layout.operator("object.empty_add", text="Circle", icon='EMPTY_CIRCLE').type = 'CIRCLE'
+        layout.operator("object.empty_add", text="Cube", icon='EMPTY_CUBE').type = 'CUBE'
+        layout.operator("object.empty_add", text="Sphere", icon='EMPTY_SPHERE').type = 'SPHERE'
+        layout.operator("object.empty_add", text="Cone", icon='EMPTY_CONE').type = 'CONE'
 
 
 class VIEW3D_MT_add(Menu):
@@ -3897,13 +3897,7 @@ class VIEW3D_MT_add(Menu):
         ).type = "LATTICE"
         layout.separator()
 
-        layout.operator_menu_enum(
-            "object.empty_add",
-            "type",
-            text="Empty",
-            text_ctxt=i18n_contexts.id_id,
-            icon="OUTLINER_OB_EMPTY",
-        )
+        layout.menu("VIEW3D_MT_empty_add", icon='OUTLINER_OB_EMPTY')
         layout.menu("VIEW3D_MT_image_add", text="Image", icon="OUTLINER_OB_IMAGE")
 
         layout.separator()
