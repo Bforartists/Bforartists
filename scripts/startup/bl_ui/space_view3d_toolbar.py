@@ -2793,18 +2793,23 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced(View3DPanel, Panel):
         col.separator()
         col.prop(gp_settings, "fill_simplify_level", text="Simplify")
         if gp_settings.fill_draw_mode != 'STROKE':
-            col = layout.column(align=False, heading="Ignore Transparent")
+            col = layout.column(align=False)  # bfa remove Ignore Transparent heading 
             col.use_property_decorate = False
             row = col.row(align=True)
+            split = row.split(factor=0.39)  # add split row show fill
+            row = split.row()
             sub = row.row(align=True)
             sub.use_property_split = False
-            sub.prop(gp_settings, "show_fill", text="")
-            sub = sub.row(align=True)
-            sub.active = gp_settings.show_fill
-            sub.prop(gp_settings, "fill_threshold", text="")
+            sub.prop(gp_settings, "show_fill", text="Ignore Transparent")  # bfa move Ignore Transparent text here
+            sub = split.row(align=True)
+            if gp_settings.show_fill:
+                sub.prop(gp_settings, "fill_threshold", text="")
+            else:
+                sub.label(icon='DISCLOSURE_TRI_RIGHT')
 
         col.separator()
         row = col.row(align=True)
+        row.use_property_split = False  # bfa add use_property_split
         row.prop(gp_settings, "use_fill_limit")
         row = col.row(align=True)
         row.use_property_split = False
