@@ -1074,7 +1074,7 @@ GHOST_TSuccess GHOST_WindowWin32::setWindowCustomCursorShape(const uint8_t *bitm
                                                              const uint8_t *mask,
                                                              const int size[2],
                                                              const int hot_spot[2],
-                                                             bool /*canInvertColor*/)
+                                                             bool /*can_invert_color*/)
 {
   if (mask) {
     /* Old 1bpp XBitMap bitmap and mask. */
@@ -1141,7 +1141,7 @@ GHOST_TSuccess GHOST_WindowWin32::setWindowCustomCursorShape(const uint8_t *bitm
   header.bV5AlphaMask = 0xFF000000;
 
   HDC hdc = GetDC(m_hWnd);
-  void *bits = NULL;
+  void *bits = nullptr;
   HBITMAP bmp = CreateDIBSection(
       hdc, (BITMAPINFO *)&header, DIB_RGB_COLORS, (void **)&bits, NULL, (DWORD)0);
   ReleaseDC(NULL, hdc);

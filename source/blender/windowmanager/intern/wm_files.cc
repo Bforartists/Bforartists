@@ -2943,8 +2943,11 @@ static wmOperatorStatus wm_homefile_read_exec(bContext *C, wmOperator *op)
 
 static void wm_homefile_read_after_dialog_callback(bContext *C, void *user_data)
 {
-  WM_operator_name_call_with_properties(
-      C, "WM_OT_read_homefile", WM_OP_EXEC_DEFAULT, (IDProperty *)user_data, nullptr);
+  WM_operator_name_call_with_properties(C,
+                                        "WM_OT_read_homefile",
+                                        blender::wm::OpCallContext::ExecDefault,
+                                        (IDProperty *)user_data,
+                                        nullptr);
 }
 
 static wmOperatorStatus wm_homefile_read_invoke(bContext *C,
@@ -3147,8 +3150,11 @@ static wmOperatorStatus wm_open_mainfile_dispatch(bContext *C, wmOperator *op);
 
 static void wm_open_mainfile_after_dialog_callback(bContext *C, void *user_data)
 {
-  WM_operator_name_call_with_properties(
-      C, "WM_OT_open_mainfile", WM_OP_INVOKE_DEFAULT, (IDProperty *)user_data, nullptr);
+  WM_operator_name_call_with_properties(C,
+                                        "WM_OT_open_mainfile",
+                                        blender::wm::OpCallContext::InvokeDefault,
+                                        (IDProperty *)user_data,
+                                        nullptr);
 }
 
 static wmOperatorStatus wm_open_mainfile__discard_changes_exec(bContext *C, wmOperator *op)
@@ -3497,8 +3503,11 @@ static wmOperatorStatus wm_recover_last_session_exec(bContext *C, wmOperator *op
 
 static void wm_recover_last_session_after_dialog_callback(bContext *C, void *user_data)
 {
-  WM_operator_name_call_with_properties(
-      C, "WM_OT_recover_last_session", WM_OP_EXEC_DEFAULT, (IDProperty *)user_data, nullptr);
+  WM_operator_name_call_with_properties(C,
+                                        "WM_OT_recover_last_session",
+                                        blender::wm::OpCallContext::ExecDefault,
+                                        (IDProperty *)user_data,
+                                        nullptr);
 }
 
 static wmOperatorStatus wm_recover_last_session_invoke(bContext *C,
@@ -4068,7 +4077,8 @@ static void wm_block_autorun_warning_reload_with_scripts(bContext *C, uiBlock *b
 
   /* Save user preferences for permanent execution. */
   if ((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0) {
-    WM_operator_name_call(C, "WM_OT_save_userpref", WM_OP_EXEC_DEFAULT, nullptr, nullptr);
+    WM_operator_name_call(
+        C, "WM_OT_save_userpref", blender::wm::OpCallContext::ExecDefault, nullptr, nullptr);
   }
 
   /* Load file again with scripts enabled.
@@ -4085,7 +4095,8 @@ static void wm_block_autorun_warning_enable_scripts(bContext *C, uiBlock *block)
 
   /* Save user preferences for permanent execution. */
   if ((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0) {
-    WM_operator_name_call(C, "WM_OT_save_userpref", WM_OP_EXEC_DEFAULT, nullptr, nullptr);
+    WM_operator_name_call(
+        C, "WM_OT_save_userpref", blender::wm::OpCallContext::ExecDefault, nullptr, nullptr);
   }
 
   /* Force a full refresh, but without reloading the file. */
@@ -4158,7 +4169,7 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
    * Otherwise just enable scripts and reset the depsgraphs. */
   if ((blendfile_path[0] != '\0') && wm->file_saved) {
     but = uiDefIconTextBut(block,
-                           UI_BTYPE_BUT,
+                           ButType::But,
                            0,
                            ICON_NONE,
                            IFACE_("Allow Execution"),
@@ -4175,7 +4186,7 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
   }
   else {
     but = uiDefIconTextBut(block,
-                           UI_BTYPE_BUT,
+                           ButType::But,
                            0,
                            ICON_NONE,
                            IFACE_("Allow Execution"),
@@ -4194,7 +4205,7 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
 
   col = &split->column(false);
   but = uiDefIconTextBut(block,
-                         UI_BTYPE_BUT,
+                         ButType::But,
                          0,
                          ICON_NONE,
                          IFACE_("Ignore"),
@@ -4256,7 +4267,7 @@ void wm_test_autorun_revert_action_exec(bContext *C)
     wm_test_autorun_revert_action_set(ot, ptr);
   }
 
-  WM_operator_name_call_ptr(C, ot, WM_OP_EXEC_DEFAULT, ptr, nullptr);
+  WM_operator_name_call_ptr(C, ot, blender::wm::OpCallContext::ExecDefault, ptr, nullptr);
   wm_test_autorun_revert_action_set(nullptr, nullptr);
 }
 
@@ -4365,7 +4376,7 @@ static void save_file_overwrite_cancel(bContext *C, void *arg_block, void * /*ar
 static void save_file_overwrite_cancel_button(uiBlock *block, wmGenericCallback *post_action)
 {
   uiBut *but = uiDefIconTextBut(
-      block, UI_BTYPE_BUT, 0, ICON_NONE, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, "");
+      block, ButType::But, 0, ICON_NONE, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, 0, 0, "");
   UI_but_func_set(but, save_file_overwrite_cancel, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
 }
@@ -4388,7 +4399,11 @@ static void save_file_overwrite_confirm(bContext *C, void *arg_block, void *arg_
   IDProperty *operator_idproperties = static_cast<IDProperty *>(callback->user_data);
   WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_save_mainfile");
 
-  WM_operator_name_call(C, "WM_OT_save_mainfile", WM_OP_EXEC_DEFAULT, operator_propptr_p, nullptr);
+  WM_operator_name_call(C,
+                        "WM_OT_save_mainfile",
+                        blender::wm::OpCallContext::ExecDefault,
+                        operator_propptr_p,
+                        nullptr);
 
   WM_generic_callback_free(callback);
 }
@@ -4396,7 +4411,7 @@ static void save_file_overwrite_confirm(bContext *C, void *arg_block, void *arg_
 static void save_file_overwrite_confirm_button(uiBlock *block, wmGenericCallback *post_action)
 {
   uiBut *but = uiDefIconTextBut(block,
-                                UI_BTYPE_BUT,
+                                ButType::But,
                                 0,
                                 ICON_NONE,
                                 IFACE_("Overwrite"),
@@ -4418,13 +4433,14 @@ static void save_file_overwrite_saveas(bContext *C, void *arg_block, void * /*ar
   wmWindow *win = CTX_wm_window(C);
   UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
 
-  WM_operator_name_call(C, "WM_OT_save_as_mainfile", WM_OP_INVOKE_DEFAULT, nullptr, nullptr);
+  WM_operator_name_call(
+      C, "WM_OT_save_as_mainfile", blender::wm::OpCallContext::InvokeDefault, nullptr, nullptr);
 }
 
 static void save_file_overwrite_saveas_button(uiBlock *block, wmGenericCallback *post_action)
 {
   uiBut *but = uiDefIconTextBut(block,
-                                UI_BTYPE_BUT,
+                                ButType::But,
                                 0,
                                 ICON_NONE,
                                 IFACE_("Save As..."),
@@ -4599,19 +4615,24 @@ static void wm_block_file_close_save(bContext *C, void *arg_block, void *arg_dat
        *
        * This is the same situation as what happens when the file has never been saved before
        * (outer `else` statement, below). */
-      WM_operator_name_call(C, "WM_OT_save_as_mainfile", WM_OP_INVOKE_DEFAULT, nullptr, nullptr);
+      WM_operator_name_call(C,
+                            "WM_OT_save_as_mainfile",
+                            blender::wm::OpCallContext::InvokeDefault,
+                            nullptr,
+                            nullptr);
       execute_callback = false;
     }
     else {
-      if (WM_operator_name_call(C, "WM_OT_save_mainfile", WM_OP_EXEC_DEFAULT, nullptr, nullptr) &
-          OPERATOR_CANCELLED)
-      {
+      const wmOperatorStatus status = WM_operator_name_call(
+          C, "WM_OT_save_mainfile", blender::wm::OpCallContext::ExecDefault, nullptr, nullptr);
+      if (status & OPERATOR_CANCELLED) {
         execute_callback = false;
       }
     }
   }
   else {
-    WM_operator_name_call(C, "WM_OT_save_mainfile", WM_OP_INVOKE_DEFAULT, nullptr, nullptr);
+    WM_operator_name_call(
+        C, "WM_OT_save_mainfile", blender::wm::OpCallContext::InvokeDefault, nullptr, nullptr);
     execute_callback = false;
   }
 
@@ -4626,19 +4647,8 @@ static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback 
   /* BFA - made the buttons higher. UI_UNIT_Y * 1.5, changed to UI_UNIT_Y + UI_UNIT_Y / 2,
    * because 1.5 gets converted to 1 implicitly because UI_UNIT_Y is of type "short", an integer type
    */
-  uiBut *but = uiDefIconTextBut(block,
-                                UI_BTYPE_BUT,
-                                0,
-                                ICON_NONE,
-                                IFACE_("Cancel"),
-                                0,
-                                0,
-                                0,
-                                UI_UNIT_Y + UI_UNIT_Y / 2,
-                                nullptr,
-                                0,
-                                0,
-                                "");
+  uiBut *but = uiDefIconTextBut(
+      block, ButType::But, 0, ICON_NONE, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y + UI_UNIT_Y / 2, nullptr, 0, 0, "");
   UI_but_func_set(but, wm_block_file_close_cancel, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
 }
@@ -4649,7 +4659,7 @@ static void wm_block_file_close_discard_button(uiBlock *block, wmGenericCallback
    * because 1.5 gets converted to 1 implictly because UI_UNIT_Y is of type "short", an integer type
    */
   uiBut *but = uiDefIconTextBut(block,
-                                UI_BTYPE_BUT,
+                                ButType::But,
                                 0,
                                 ICON_NONE,
                                 IFACE_("Don't Save"),
@@ -4674,7 +4684,7 @@ static void wm_block_file_close_save_button(uiBlock *block,
    */
   uiBut *but = uiDefIconTextBut(
       block,
-      UI_BTYPE_BUT,
+      ButType::But,
       0,
       ICON_NONE,
       /* Forward compatibility issues force using 'save as' operator instead of 'save' one. */
@@ -4776,7 +4786,7 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
       layout->separator();
     }
     uiDefButBitC(block,
-                 UI_BTYPE_CHECKBOX,
+                 ButType::Checkbox,
                  1,
                  0,
                  message,
@@ -4801,7 +4811,7 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
       layout->separator();
     }
     uiBut *but = uiDefButBitC(block,
-                              UI_BTYPE_CHECKBOX,
+                              ButType::Checkbox,
                               1,
                               0,
                               "Save modified asset catalogs",

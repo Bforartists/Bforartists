@@ -928,7 +928,7 @@ static void image_buttons_region_layout(const bContext *C, ARegion *region)
   ED_region_panels_layout_ex(C,
                              region,
                              &region->runtime->type->paneltypes,
-                             WM_OP_INVOKE_REGION_WIN,
+                             blender::wm::OpCallContext::InvokeRegionWin,
                              contexts_base,
                              nullptr);
 }
@@ -1305,7 +1305,7 @@ void ED_spacetype_image()
   art->init = image_main_region_init;
   art->draw = image_main_region_draw;
   art->listener = image_main_region_listener;
-  art->lock = 1; /* can become flag, see BKE_spacedata_draw_locks */
+  art->lock = REGION_DRAW_LOCK_BAKING;
   BLI_addhead(&st->regiontypes, art);
 
   /* regions: list-view/buttons/scopes */

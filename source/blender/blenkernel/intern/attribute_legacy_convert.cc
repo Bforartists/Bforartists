@@ -23,6 +23,7 @@ std::optional<AttrType> custom_data_type_to_attr_type(const eCustomDataType data
   switch (data_type) {
     case CD_NUMTYPES:
     case CD_AUTO_FROM_NAME:
+    case CD_TANGENT:
       /* These type is not used for actual #CustomData layers. */
       BLI_assert_unreachable();
       return std::nullopt;
@@ -41,12 +42,14 @@ std::optional<AttrType> custom_data_type_to_attr_type(const eCustomDataType data
     case CD_SCULPT_FACE_SETS:
     case CD_MTFACE:
     case CD_TESSLOOPNORMAL:
+    case CD_FREESTYLE_EDGE:
+    case CD_FREESTYLE_FACE:
       /* These types are only used for versioning old files. */
       return std::nullopt;
-    /* These types are only used for #BMesh. */
     case CD_SHAPEKEY:
     case CD_SHAPE_KEYINDEX:
     case CD_BM_ELEM_PYPTR:
+      /* These types are only used for #BMesh. */
       return std::nullopt;
     case CD_MDEFORMVERT:
     case CD_MFACE:
@@ -55,14 +58,11 @@ std::optional<AttrType> custom_data_type_to_attr_type(const eCustomDataType data
     case CD_NORMAL:
     case CD_ORIGSPACE:
     case CD_ORCO:
-    case CD_TANGENT:
     case CD_MDISPS:
     case CD_CLOTH_ORCO:
     case CD_ORIGSPACE_MLOOP:
     case CD_GRID_PAINT_MASK:
     case CD_MVERT_SKIN:
-    case CD_FREESTYLE_EDGE:
-    case CD_FREESTYLE_FACE:
     case CD_MLOOPTANGENT:
       /* These types are not generic. They will either be moved to some generic data type or
        * #AttributeStorage will be extended to be able to support a similar format. */
@@ -276,8 +276,9 @@ void curves_convert_customdata_to_storage(CurvesGeometry &curves)
       {{AttrDomain::Point, {curves.point_data, curves.points_num()}},
        {AttrDomain::Curve, {curves.curve_data_legacy, curves.curves_num()}}},
       curves.attribute_storage.wrap());
+  CustomData_reset(&curves.curve_data_legacy);
   /* Update the curve type count again (the first time was done on file-read, where
-   * #AttributeStorage data doesn't exist yet for older fiels). */
+   * #AttributeStorage data doesn't exist yet for older files). */
   curves.update_curve_types();
 }
 
@@ -286,6 +287,7 @@ void pointcloud_convert_customdata_to_storage(PointCloud &pointcloud)
   attribute_legacy_convert_customdata_to_storage(
       {{AttrDomain::Point, {pointcloud.pdata_legacy, pointcloud.totpoint}}},
       pointcloud.attribute_storage.wrap());
+  CustomData_reset(&pointcloud.pdata_legacy);
 }
 
 void grease_pencil_convert_customdata_to_storage(GreasePencil &grease_pencil)
@@ -294,6 +296,7 @@ void grease_pencil_convert_customdata_to_storage(GreasePencil &grease_pencil)
       {{AttrDomain::Layer,
         {grease_pencil.layers_data_legacy, int(grease_pencil.layers().size())}}},
       grease_pencil.attribute_storage.wrap());
+  CustomData_reset(&grease_pencil.layers_data_legacy);
 }
 
 }  // namespace blender::bke
