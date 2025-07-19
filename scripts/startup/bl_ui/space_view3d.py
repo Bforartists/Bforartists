@@ -6055,7 +6055,6 @@ class VIEW3D_MT_mask(Menu):
         props = layout.operator(
             "sculpt.paint_mask_slice", text="Mask Slice", icon="MASK_SLICE"
         )
-        props.fill_holes = False
         props.new_object = False
         props = layout.operator(
             "sculpt.paint_mask_slice",
@@ -6186,12 +6185,6 @@ class VIEW3D_MT_face_sets(Menu):
         props.invert = False
         props.use_mask_preserve = False
         props.use_modify_active = True
-
-        layout.separator()
-
-        layout.operator(
-            "mesh.face_set_extract", text="Extract Face Set", icon="SEPARATE"
-        )
 
         layout.separator()
 
