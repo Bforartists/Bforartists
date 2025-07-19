@@ -93,8 +93,9 @@ class NodePanel:
             props = layout.operator(operator, text=text, icon=icon)
         else:    
             props = layout.operator(operator, icon=icon)
-            
-        props.use_transform = True
+        
+        if hasattr(props, "use_transform"):
+            props.use_transform = True
 
         if props is not None:
             for prop_key, prop_value in props.items():
