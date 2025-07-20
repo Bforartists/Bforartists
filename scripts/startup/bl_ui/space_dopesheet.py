@@ -400,7 +400,9 @@ class DOPESHEET_HT_editor_buttons:
                 text="",
             )
 
-        layout.popover(panel="DOPESHEET_PT_playhead_snapping")
+        row = layout.row(align=True)
+        row.prop(tool_settings, "use_snap_playhead", text="") # BFA - Exposed to top level
+        row.popover(panel="DOPESHEET_PT_playhead_snapping")
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_action", text="", icon_only=True)
@@ -569,12 +571,13 @@ class DOPESHEET_MT_view(Menu):
         layout.menu("INFO_MT_area")
         layout.separator()
 
-        layout.menu("DOPESHEET_MT_cache")
+        #layout.menu("DOPESHEET_MT_cache") #bfa - deactivated
         layout.separator()
         # Add this to show key-binding (reverse action in dope-sheet).
         props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
         props.data_path = "area.type"
         props.value = 'GRAPH_EDITOR'
+
 
 class DOPESHEET_MT_view_pie_menus(Menu):
     bl_label = "Pie Menus"
@@ -602,7 +605,7 @@ class DOPESHEET_MT_view_pie(Menu):
         else:
             pie.operator("anim.scene_range_frame", text="Frame Scene Range")
 
-
+# bfa - not connected in the view menu anymore. But keep. You never know what addon wants to connect here.
 class DOPESHEET_MT_cache(Menu):
     bl_label = "Cache"
 
@@ -665,8 +668,18 @@ class DOPESHEET_MT_select(Menu):
         props.extend = False
         props.mode = 'RIGHT'
 
+        layout.separator()
+        layout.menu("DOPESHEET_MT_select_more_less")
+
+
+ # BFA menu
+class DOPESHEET_MT_select_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
-        if context.space_data.mode != 'GPENCIL':
+        if _context.space_data.mode != 'GPENCIL':
             layout.separator()
             layout.operator("action.select_more", text="More", icon="SELECTMORE")
             layout.operator("action.select_less", text="Less", icon="SELECTLESS")
@@ -876,6 +889,43 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+
+        layout.separator()
+
+        row = layout.row()
+        row.use_property_split = False
+        split = row.split(factor = 0.5)
+        row = split.row()
+        row.prop(st, "show_cache")
+        row = split.row()
+        if st.show_cache:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if st.show_cache:
+            col = layout.column(align = True)
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_softbody")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_particles")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_cloth")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_simulation_nodes")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_smoke")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_dynamicpaint")
+            row = col.row()
+            row.separator()
+            row.prop(st, "cache_rigidbody")
 
 
 class DOPESHEET_MT_key_transform(Menu):
@@ -1310,6 +1360,7 @@ classes = (
     DOPESHEET_MT_view_pie_menus, # BFA menu
     DOPESHEET_MT_cache,
     DOPESHEET_MT_select,
+    DOPESHEET_MT_select_more_less,  # BFA menu
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
     DOPESHEET_MT_channel_extrapolation, # BFA menu

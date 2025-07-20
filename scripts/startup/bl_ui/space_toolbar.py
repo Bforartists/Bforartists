@@ -345,6 +345,8 @@ class TOOLBAR_MT_file(Menu):
         if addon_prefs.file_import_common:
 
             row = layout.row(align=True)
+            if bpy.app.build_options.io_fbx:
+                row.operator("wm.fbx_import", text="", icon='LOAD_FBX')
             if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                 row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
             if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true
@@ -355,8 +357,6 @@ class TOOLBAR_MT_file(Menu):
         if addon_prefs.file_import_common2:
 
             row = layout.row(align=True)
-            if bpy.app.build_options.collada: # bfa - only show if built option is true
-                row.operator("wm.collada_import", text="", icon='LOAD_DAE')
             row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
             if bpy.app.build_options.usd: # bfa - only show if built option is true
                 row.operator("wm.usd_import", text="", icon='LOAD_USD')
@@ -383,6 +383,9 @@ class TOOLBAR_MT_file(Menu):
         if addon_prefs.file_export_common:
 
             row = layout.row(align=True)
+            # BFA - WIP - future fbx api?
+            #if bpy.app.build_options.io_fbx:
+            #    row.operator("wm.fbx_export", text="", icon='SAVE_FBX')
             if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                 row.operator("export_scene.fbx", text="", icon='SAVE_FBX')
             if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true
@@ -393,8 +396,6 @@ class TOOLBAR_MT_file(Menu):
         if addon_prefs.file_export_common2:
 
             row = layout.row(align=True)
-            if bpy.app.build_options.collada: # bfa - only show if built option is true
-                row.operator("wm.collada_export", text="", icon='SAVE_DAE')
             row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
             if bpy.app.build_options.usd: # bfa - only show if built option is true
                 row.operator("wm.usd_export", text="", icon='SAVE_USD')
@@ -772,7 +773,7 @@ class TOOLBAR_MT_primitives(Menu):
             if addon_prefs.primitives_point_cloud:
 
                 row = layout.row(align=True)
-                row.operator("object.pointcloud_add", text="", icon='OUTLINER_OB_POINTCLOUD')
+                row.operator("object.pointcloud_random_add", text="", icon='OUTLINER_OB_POINTCLOUD')
 
 
             if addon_prefs.primitives_volume:
@@ -911,7 +912,7 @@ class TOOLBAR_MT_primitives(Menu):
                 if addon_prefs.primitives_point_cloud:
 
                     row = layout.row(align=True)
-                    row.operator("object.pointcloud_add", text="", icon='OUTLINER_OB_POINTCLOUD')
+                    row.operator("object.pointcloud_random_add", text="", icon='OUTLINER_OB_POINTCLOUD')
 
                 if addon_prefs.primitives_volume:
 

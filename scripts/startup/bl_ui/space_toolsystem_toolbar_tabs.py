@@ -3424,7 +3424,6 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
             col.separator(factor = 0.5)
 
             props = col.operator("mesh.paint_mask_slice", text="Mask Slice", icon = "MASK_SLICE")
-            props.fill_holes = False
             props.new_object = False
             props = col.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MASK_SLICE_FILL")
             props.new_object = False
@@ -3490,7 +3489,6 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
-                props.fill_holes = False
                 props.new_object = False
                 props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
                 props.new_object = False
@@ -3551,7 +3549,7 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
-                props.fill_holes = False
+
                 props.new_object = False
 
                 row = col.row(align=True)
@@ -3616,7 +3614,6 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
 
                 props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
-                props.fill_holes = False
                 props.new_object = False
                 props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
                 props.new_object = False
@@ -3742,12 +3739,11 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("mesh.face_set_extract", text='Extract Face Set', icon = "SEPARATE")
-
-            col.separator(factor = 0.5)
-
             col.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK").mode = 'TOGGLE'
             col.operator("paint.hide_show_all", text='Show Active Face Set', icon = "HIDE_OFF").action='SHOW'
+
+            col.separator(factor = 0.5)
+            col.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
 
             col.separator(factor = 0.5)
 
@@ -3784,11 +3780,12 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 props.invert = False
                 props.use_mask_preserve = False
                 props.use_modify_active = True
-                row.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
                 row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'TOGGLE'
 
                 row = col.row(align=True)
                 row.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
+                row = col.row(align=True)
+                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
             elif column_count == 2:
@@ -3817,13 +3814,13 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 props.invert = False
                 props.use_mask_preserve = False
                 props.use_modify_active = True
-                row.operator("mesh.face_set_extract", text = '', icon = "SEPARATE")
 
                 row = col.row(align=True)
                 row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'TOGGLE'
                 row.operator("paint.hide_show_all", text='', icon = "HIDE_OFF").action='SHOW'
 
                 row = col.row(align=True)
+                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
             elif column_count == 1:
@@ -3855,15 +3852,11 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
-
-                col.separator(factor = 0.5)
-
                 col.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'TOGGLE'
                 col.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
 
                 col.separator(factor = 0.5)
-
+                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
                 col.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
 

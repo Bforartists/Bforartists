@@ -1019,7 +1019,7 @@ static void symmetry_panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void uv_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /* bfa added row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -1027,13 +1027,19 @@ static void uv_panel_draw(const bContext * /*C*/, Panel *panel)
   layout->use_property_split_set(true);
 
   col = &layout->column(true);
-  col->prop(ptr, "offset_u", UI_ITEM_R_EXPAND, IFACE_("Offset U"), ICON_NONE);
-  col->prop(ptr, "offset_v", UI_ITEM_R_EXPAND, IFACE_("V"), ICON_NONE);
+  // bfa added Offset row indent 
+  col->label(IFACE_("Offset"), ICON_NONE);
+  row = &col->row(false);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "offset_u", UI_ITEM_R_EXPAND, IFACE_("U"), ICON_NONE); // bfa renamed Offset U
+  row = &col->row(false);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "offset_v", UI_ITEM_R_EXPAND, IFACE_("V"), ICON_NONE);
 }
 
 static void caps_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col;
+  uiLayout *col, *row; /* bfa added row*/
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
@@ -1041,8 +1047,14 @@ static void caps_panel_draw(const bContext * /*C*/, Panel *panel)
   layout->use_property_split_set(true);
 
   col = &layout->column(false);
-  col->prop(ptr, "start_cap", UI_ITEM_NONE, IFACE_("Cap Start"), ICON_NONE);
-  col->prop(ptr, "end_cap", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
+  // bfa added Offset row indent
+  col->label(IFACE_("Cap"), ICON_NONE);
+  row = &col->row(false);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "start_cap", UI_ITEM_NONE, IFACE_("Start"), ICON_NONE); // bfa renamed Cap Start
+  row = &col->row(false);
+  row->separator(); /*bfa - indent*/
+  row->prop(ptr, "end_cap", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

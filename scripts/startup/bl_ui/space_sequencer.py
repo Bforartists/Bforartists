@@ -211,9 +211,11 @@ class SEQUENCER_HT_header(Header):
         row = layout.row(align=True)
         row.prop(tool_settings, "use_snap_sequencer", text="")
         sub = row.row(align=True)
-        sub.popover(panel="SEQUENCER_PT_snapping")
+        sub.popover(panel="SEQUENCER_PT_snapping", text="",) # BFA - removed title
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
-            layout.popover(panel="SEQUENCER_PT_playhead_snapping")
+            row = layout.row(align=True)
+            row.prop(tool_settings, "use_snap_playhead", text="") # BFA - Exposed to top level
+            row.popover(panel="SEQUENCER_PT_playhead_snapping")
         # layout.separator_spacer() ) #BFA
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
@@ -462,9 +464,6 @@ class SEQUENCER_MT_view_cache(Menu):
         col.prop(cache_settings, "show_cache_final_out", text="Final")
         if show_developer_ui:
             col.prop(cache_settings, "show_cache_raw", text="Raw")
-            col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
-            col.prop(cache_settings, "show_cache_composite", text="Composite")
-
 
 
 class SEQUENCER_MT_range(Menu):
@@ -4326,8 +4325,6 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 col.prop(cache_settings, "show_cache_final_out", text="Final")
                 if show_developer_ui:
                     col.prop(cache_settings, "show_cache_raw", text="Raw")
-                    col.prop(cache_settings, "show_cache_preprocessed", text="Preprocessed")
-
 
             layout.use_property_split = False
             layout.prop(st, "show_markers")

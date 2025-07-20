@@ -117,7 +117,7 @@ def unregister_library(library_name: str):
         return
 
     bpy.ops.preferences.asset_library_remove(index=index)
-    print(f"Unregistered library: {library_name}")
+    #print(f"Unregistered library: {library_name}")
 
 
 def register_all_libraries():

@@ -2674,16 +2674,16 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
             "mesh.select_prev_item", text="Previous Active", icon="PREVIOUSACTIVE"
         )
 
-
+# BFA - not used
 class VIEW3D_MT_edit_mesh_select_linked(Menu):
     bl_label = "Select Linked"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mesh.select_linked", text="Linked")
-        layout.operator("mesh.shortest_path_select", text="Shortest Path")
-        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces")
+        layout.operator("mesh.select_linked", text="Linked", icon="LINKED")
+        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon="SELECT_SHORTESTPATH")
+        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon="LINKED")
 
 
 class VIEW3D_MT_edit_mesh_select_loops(Menu):
@@ -3422,7 +3422,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.separator()
 
         layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon="SELECT_UNGROUPED_VERTS")
-        layout.operator("paint.vert_select_linked", text="Select Linked", icon='LINKED')
+        layout.operator("paint.vert_select_linked", text="Linked", icon='LINKED')
 
         layout.separator()
 
@@ -3833,13 +3833,13 @@ class VIEW3D_MT_empty_add(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("object.empty_add", text="Plain Axes", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
+        layout.operator("object.empty_add", text="Plain Axes", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
         layout.operator("object.empty_add", text="Arrows", icon='EMPTY_ARROWS').type = 'ARROWS'
         layout.operator("object.empty_add", text="Single Arrow", icon='EMPTY_SINGLE_ARROW').type = 'SINGLE_ARROW'
-        layout.operator("object.empty_add", text="Circle", icon='MESH_CIRCLE').type = 'CIRCLE'
-        layout.operator("object.empty_add", text="Cube", icon='CUBE').type = 'CUBE'
-        layout.operator("object.empty_add", text="Sphere", icon='SPHERE').type = 'SPHERE'
-        layout.operator("object.empty_add", text="Cone", icon='CONE').type = 'CONE'
+        layout.operator("object.empty_add", text="Circle", icon='EMPTY_CIRCLE').type = 'CIRCLE'
+        layout.operator("object.empty_add", text="Cube", icon='EMPTY_CUBE').type = 'CUBE'
+        layout.operator("object.empty_add", text="Sphere", icon='EMPTY_SPHERE').type = 'SPHERE'
+        layout.operator("object.empty_add", text="Cone", icon='EMPTY_CONE').type = 'CONE'
 
 
 class VIEW3D_MT_add(Menu):
@@ -3897,13 +3897,7 @@ class VIEW3D_MT_add(Menu):
         ).type = "LATTICE"
         layout.separator()
 
-        layout.operator_menu_enum(
-            "object.empty_add",
-            "type",
-            text="Empty",
-            text_ctxt=i18n_contexts.id_id,
-            icon="OUTLINER_OB_EMPTY",
-        )
+        layout.menu("VIEW3D_MT_empty_add", icon='OUTLINER_OB_EMPTY')
         layout.menu("VIEW3D_MT_image_add", text="Image", icon="OUTLINER_OB_IMAGE")
 
         layout.separator()
@@ -5295,9 +5289,7 @@ class VIEW3D_MT_brush(Menu):
         if obj.mode in {'VERTEX_PAINT', 'TEXTURE_PAINT'}:
             layout.separator()
 
-            layout.operator(
-                "paint.sample_color", text="Color Picker", icon="EYEDROPPER"
-            )
+            layout.operator("paint.sample_color", text="Color Picker", icon="EYEDROPPER").merged = False
 
 
 # bfa - show hide menu for face selection masking
@@ -5341,11 +5333,6 @@ class VIEW3D_MT_paint_vertex(Menu):
             text="Brightness/Contrast",
             icon="BRIGHTNESS_CONTRAST",
         )
-
-        layout.separator()
-
-        layout.operator("paint.vertex_color_set")
-        layout.operator("paint.sample_color").merged = False
 
 
 class VIEW3D_MT_hook(Menu):
@@ -5520,7 +5507,7 @@ class VIEW3D_MT_paint_weight(Menu):
             layout.operator(
                 "paint.weight_from_bones",
                 text="Assign from Bone Envelopes",
-                icon="ENVELOPE_MODIFIER",
+                icon="MOD_ENVELOPE",
             ).type = 'ENVELOPES'
 
             layout.separator()
@@ -5721,9 +5708,7 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_subdivision_set")  # BFA - add subdivion set menu
-        layout.operator(
-            "sculpt.sample_color", text="Sample Color", icon="EYEDROPPER"
-        )  # BFA - icon added
+        layout.operator("sculpt.sample_color", text="Sample Color", icon="EYEDROPPER")  # BFA - icon added
 
         layout.separator()
 
@@ -6064,7 +6049,6 @@ class VIEW3D_MT_mask(Menu):
         props = layout.operator(
             "sculpt.paint_mask_slice", text="Mask Slice", icon="MASK_SLICE"
         )
-        props.fill_holes = False
         props.new_object = False
         props = layout.operator(
             "sculpt.paint_mask_slice",
@@ -6197,16 +6181,8 @@ class VIEW3D_MT_face_sets(Menu):
         props.use_modify_active = True
 
         layout.separator()
-
-        layout.operator(
-            "mesh.face_set_extract", text="Extract Face Set", icon="SEPARATE"
-        )
-
-        layout.separator()
-
-        layout.operator(
-            "sculpt.face_sets_randomize_colors", text="Randomize Colors", icon="COLOR"
-        )
+        layout.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
+        layout.operator("sculpt.face_sets_randomize_colors", text="Randomize Colors", icon="COLOR")
 
         layout.separator()
 
@@ -6402,7 +6378,7 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
             layout.menu("VIEW3D_MT_particle_context_menu_more_less")
 
-            layout.operator("particle.select_linked", text="Select Linked", icon="LINKED")
+            layout.operator("particle.select_linked", text="Linked", icon="LINKED")
 
         layout.separator()
 
@@ -8866,9 +8842,6 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout.menu("VIEW3D_MT_edit_greasepencil_showhide")
 
         layout.separator()
-        layout.operator("grease_pencil.outline", text="Outline")
-
-        layout.separator()
         layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
@@ -8905,7 +8878,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.operator_menu_enum("grease_pencil.join_selection", "type", text="Join")
 
         layout.separator()
-        layout.operator("grease_pencil.outline", text="Outline")
+        layout.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
         layout.separator()
 
         layout.menu("GREASE_PENCIL_MT_move_to_layer")
@@ -12144,7 +12117,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
                 col.separator()
 
-            col.operator("grease_pencil.outline", text="Outline")
+            col.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
 
             col.operator("grease_pencil.stroke_split", text="Split", icon="SPLIT")
             col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = 'SELECTED'
@@ -12206,7 +12179,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
 
             col.separator()
-            col.operator("grease_pencil.outline", text="Outline")
+            col.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
 
             col.separator()
 

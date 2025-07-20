@@ -1259,6 +1259,7 @@ if(WITH_BLENDER)
       node_pointcloud
       node_principled
       node_range
+      node_ray_portal
       node_refractionshader
       node_relative_to_pixel
       node_reroute
@@ -1819,6 +1820,7 @@ if(WITH_BLENDER)
       snap_face_nearest
       snap_grid
       snap_increment
+      snap_keyframes
       snap_midpoint
       snap_nearestframe
       snap_nearestmarker
@@ -1828,6 +1830,8 @@ if(WITH_BLENDER)
       snap_on
       snap_peel_object
       snap_perpendicular
+      snap_playhead_off
+      snap_playhead_on
       snap_step
       snap_step_second
       snap_surface

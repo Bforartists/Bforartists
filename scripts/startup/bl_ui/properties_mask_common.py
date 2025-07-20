@@ -465,6 +465,15 @@ class MASK_MT_select(Menu):
 
         layout.separator()
 
+        layout.menu("MASK_MT_select_more_less", text = "More/Less")
+
+
+# BFA menu
+class MASK_MT_select_more_less(Menu):
+    bl_label = "Select More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
         layout.operator("mask.select_more", text = "More", icon = "SELECTMORE")
         layout.operator("mask.select_less", text = "Less", icon = "SELECTLESS")
 
@@ -477,6 +486,7 @@ classes = (
     MASK_MT_transform,
     MASK_MT_animation,
     MASK_MT_select,
+    MASK_MT_select_more_less, # BFA menu
 )
 
 if __name__ == "__main__":  # only for live edit.

@@ -154,7 +154,10 @@ class GRAPH_HT_header(Header):
                 panel="GRAPH_PT_snapping",
                 text="",
             )
-            layout.popover(panel="GRAPH_PT_playhead_snapping")
+
+            row = layout.row(align=True)
+            row.prop(tool_settings, "use_snap_playhead", text="") # BFA - Exposed to top level
+            row.popover(panel="GRAPH_PT_playhead_snapping")
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_fcurve", text="", icon_only=True)
@@ -478,19 +481,29 @@ class GRAPH_MT_select(Menu):
 
         layout.separator()
         props = layout.operator(
-            "graph.select_key_handles", text="Select Handles", icon="SELECT_HANDLETYPE"
+            "graph.select_key_handles", text="Handles", icon="SELECT_HANDLETYPE"
         )
         props.left_handle_action = 'SELECT'
         props.right_handle_action = 'SELECT'
         props.key_action = "KEEP"
         props = layout.operator(
-            "graph.select_key_handles", text="Select Key", icon="SELECT_KEY"
+            "graph.select_key_handles", text="Key", icon="SELECT_KEY"
         )
         props.left_handle_action = 'DESELECT'
         props.right_handle_action = 'DESELECT'
         props.key_action = 'SELECT'
 
         layout.separator()
+        layout.menu("GRAPH_MT_select_more_less")
+
+
+ # BFA menu
+class GRAPH_MT_select_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
+
         layout.operator("graph.select_more", text="More", icon="SELECTMORE")
         layout.operator("graph.select_less", text="Less", icon="SELECTLESS")
 
@@ -977,6 +990,7 @@ classes = (
     GRAPH_MT_view,
     GRAPH_MT_view_pie_menus, # BFA - menu
     GRAPH_MT_select,
+    GRAPH_MT_select_more_less, # BFA menu
     GRAPH_MT_marker,
     GRAPH_MT_channel,
     GRAPH_MT_channel_settings_toggle, # BFA - menu

@@ -245,6 +245,15 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_similar", text="Similar", icon="SIMILAR")
 
         layout.separator()
+        layout.menu("IMAGE_MT_select_more_less")
+
+
+# BFA - menu
+class IMAGE_MT_select_more_less(Menu):
+    bl_label = "More/Less"
+
+    def draw(self, _context):
+        layout = self.layout
 
         layout.operator("uv.select_more", text="More", icon="SELECTMORE")
         layout.operator("uv.select_less", text="Less", icon="SELECTLESS")
@@ -2232,6 +2241,7 @@ classes = (
     IMAGE_MT_select,
     IMAGE_MT_select_legacy, # BFA menu
     IMAGE_MT_select_linked,
+    IMAGE_MT_select_more_less, # BFA menu
     IMAGE_MT_image,
     IMAGE_MT_image_transform,
     IMAGE_MT_image_invert,
