@@ -2227,15 +2227,7 @@ class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("ShaderNodeTexBrick"),
-            OperatorEntry("ShaderNodeTexChecker"),
-            OperatorEntry("ShaderNodeTexGradient"),
-            OperatorEntry("GeometryNodeImageTexture"),
-            OperatorEntry("ShaderNodeTexMagic"),
-            OperatorEntry("ShaderNodeTexNoise"),
-            OperatorEntry("ShaderNodeTexVoronoi"),
-            OperatorEntry("ShaderNodeTexWave"),
-            OperatorEntry("ShaderNodeTexWhiteNoise"),
+            OperatorEntry("ShaderNodeTexGabor"),
         )
 
         self.draw_entries(context, layout, entries, pad=calculate_padding(entries))
