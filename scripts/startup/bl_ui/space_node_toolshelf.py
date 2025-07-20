@@ -656,7 +656,7 @@ class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePane
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
-    #bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_input"
 
     def draw(self, context):
@@ -677,7 +677,7 @@ class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
-    #bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_input"
 
     def draw(self, context):
@@ -780,7 +780,7 @@ class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
-    #bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_color"
 
     def draw(self, context):
@@ -1097,6 +1097,7 @@ class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1147,6 +1148,7 @@ class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1281,7 +1283,6 @@ class NODES_PT_toolshelf_gn_add_input(bpy.types.Panel, NodePanel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1297,7 +1298,6 @@ class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
 
     def draw(self, context):
