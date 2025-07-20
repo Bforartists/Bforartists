@@ -24,7 +24,7 @@ class OperatorEntry:
     icon : str = None
     props : dict = None
     settings : dict = None
-    should_draw : bool = True
+    poll : bool = True
     pad : int = 0
 
     as_dict = dataclasses.asdict
@@ -128,7 +128,7 @@ class NodePanel:
                 if entry is Separator:
                     col.separator(factor=2/3)
                 elif isinstance(entry, OperatorEntry):
-                    if entry.should_draw:
+                    if entry.poll:
                         self.draw_text_button(col, **entry.as_dict())
                 else:
                     self.draw_text_button(col, entry)
@@ -145,7 +145,7 @@ class NodePanel:
                     flow.scale_x = 1.5
                     flow.scale_y = 1.5
                 elif isinstance(entry, OperatorEntry):
-                    if entry.should_draw:
+                    if entry.poll:
                         self.draw_icon_button(flow, **entry.as_dict())
                 else:
                     self.draw_icon_button(flow, entry)
@@ -208,8 +208,8 @@ class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry(operator="node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP", props={"exit" : False}),
             Separator,
-            OperatorEntry("NodeGroupInput", should_draw=in_group),
-            OperatorEntry("NodeGroupOutput", should_draw=in_group),
+            OperatorEntry("NodeGroupInput", poll=in_group),
+            OperatorEntry("NodeGroupOutput", poll=in_group),
         )
 
         self.draw_entries(context, layout, entries)
@@ -298,7 +298,7 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeRGB", pad=26),
                 OperatorEntry("ShaderNodeTangent", pad=19),
                 OperatorEntry("ShaderNodeTexCoord", pad=0),
-                OperatorEntry("ShaderNodeUVAlongStroke", pad=4, should_draw=is_shader_type(context, 'LINESTYLE')),
+                OperatorEntry("ShaderNodeUVAlongStroke", pad=4, poll=is_shader_type(context, 'LINESTYLE')),
                 Separator,
                 OperatorEntry("ShaderNodeUVMap", pad=19),
                 OperatorEntry("ShaderNodeValue", pad=23),
@@ -333,17 +333,17 @@ class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
 
         if use_common:
             entries = (
-                OperatorEntry("ShaderNodeOutputLineStyle", pad=1, should_draw=is_shader_type(context, 'LINESTYLE')),
-                OperatorEntry("ShaderNodeOutputMaterial", pad=4, should_draw=is_object_shader),
-                OperatorEntry("ShaderNodeOutputWorld", pad=8, should_draw=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeOutputLineStyle", pad=1, poll=is_shader_type(context, 'LINESTYLE')),
+                OperatorEntry("ShaderNodeOutputMaterial", pad=4, poll=is_object_shader),
+                OperatorEntry("ShaderNodeOutputWorld", pad=8, poll=is_shader_type(context, 'WORLD')),
             )
         else:
             entries = (
                 OperatorEntry("ShaderNodeOutputAOV", pad=10),
-                OperatorEntry("ShaderNodeOutputLight", pad=9, should_draw=is_object_shader and is_cycles),
-                OperatorEntry("ShaderNodeOutputLineStyle", pad=1, should_draw=is_shader_type(context, 'LINESTYLE')),
-                OperatorEntry("ShaderNodeOutputMaterial", pad=4, should_draw=is_object_shader),
-                OperatorEntry("ShaderNodeOutputWorld", pad=8, should_draw=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeOutputLight", pad=9, poll=is_object_shader and is_cycles),
+                OperatorEntry("ShaderNodeOutputLineStyle", pad=1, poll=is_shader_type(context, 'LINESTYLE')),
+                OperatorEntry("ShaderNodeOutputMaterial", pad=4, poll=is_object_shader),
+                OperatorEntry("ShaderNodeOutputWorld", pad=8, poll=is_shader_type(context, 'WORLD')),
             )
 
         self.draw_entries(context, layout, entries)
@@ -438,7 +438,7 @@ class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
                 Separator,
                 OperatorEntry("ShaderNodeSeparateColor", pad=2),
                 OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
-                OperatorEntry("ShaderNodeShaderToRGB", pad=3, should_draw=is_engine(context, 'BLENDER_EEVEE')),
+                OperatorEntry("ShaderNodeShaderToRGB", pad=3, poll=is_engine(context, 'BLENDER_EEVEE')),
                 OperatorEntry("ShaderNodeVectorMath", pad=6),
                 OperatorEntry("ShaderNodeWavelength", pad=7),
             )
@@ -470,39 +470,39 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeAddShader", pad=18),
-                OperatorEntry("ShaderNodeBackground", pad=18, should_draw=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeBackground", pad=18, poll=is_shader_type(context, 'WORLD')),
                 OperatorEntry("ShaderNodeEmission", pad=23),
                 OperatorEntry("ShaderNodeMixShader", pad=20),
-                OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, poll=is_object),
+                OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
-                OperatorEntry("ShaderNodeBsdfToon", pad=20, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfToon", pad=20, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeVolumeAbsorption", pad=7),
                 OperatorEntry("ShaderNodeVolumeScatter", pad=13),
             )
         else:
             entries = (
                 OperatorEntry("ShaderNodeAddShader", pad=18),
-                OperatorEntry("ShaderNodeBackground", pad=18, should_draw=is_shader_type(context, 'WORLD')),
-                OperatorEntry("ShaderNodeBsdfDiffuse", pad=16, should_draw=is_object),
+                OperatorEntry("ShaderNodeBackground", pad=18, poll=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeBsdfDiffuse", pad=16, poll=is_object),
                 OperatorEntry("ShaderNodeEmission", pad=23),
-                OperatorEntry("ShaderNodeBsdfGlass", pad=19, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfGlossy", pad=17, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfHair", pad=22, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeHoldout", pad=26, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfMetallic", pad=16, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfGlass", pad=19, poll=is_object),
+                OperatorEntry("ShaderNodeBsdfGlossy", pad=17, poll=is_object),
+                OperatorEntry("ShaderNodeBsdfHair", pad=22, poll=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeHoldout", pad=26, poll=is_object),
+                OperatorEntry("ShaderNodeBsdfMetallic", pad=16, poll=is_object),
                 OperatorEntry("ShaderNodeMixShader", pad=20),
-                OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, poll=is_object),
+                OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
-                OperatorEntry("ShaderNodeBsdfRayPortal", pad=6, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeBsdfRefraction", pad=11, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfSheen", pad=18, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeEeveeSpecular", pad=13, should_draw=is_object and is_eevee),
-                OperatorEntry("ShaderNodeSubsurfaceScattering", pad=1, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfToon", pad=20, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeBsdfTranslucent", pad=9, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfTransparent", pad=9, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfRayPortal", pad=6, poll=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfRefraction", pad=11, poll=is_object),
+                OperatorEntry("ShaderNodeBsdfSheen", pad=18, poll=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeEeveeSpecular", pad=13, poll=is_object and is_eevee),
+                OperatorEntry("ShaderNodeSubsurfaceScattering", pad=1, poll=is_object),
+                OperatorEntry("ShaderNodeBsdfToon", pad=20, poll=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfTranslucent", pad=9, poll=is_object),
+                OperatorEntry("ShaderNodeBsdfTransparent", pad=9, poll=is_object),
                 OperatorEntry("ShaderNodeVolumeAbsorption", pad=7),
                 OperatorEntry("ShaderNodeVolumeScatter", pad=13),
                 OperatorEntry("ShaderNodeVolumeCoefficients", pad=5),
@@ -1379,18 +1379,18 @@ class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
 
         is_tool = is_tool_tree(context)
         entries = (
-            OperatorEntry("GeometryNodeTool3DCursor", pad=21, should_draw=is_tool),
+            OperatorEntry("GeometryNodeTool3DCursor", pad=21, poll=is_tool),
             OperatorEntry("GeometryNodeInputActiveCamera", pad=14),
             OperatorEntry("GeometryNodeCameraInfo", pad=18),
             OperatorEntry("GeometryNodeCollectionInfo", pad=14),
             OperatorEntry("GeometryNodeImageInfo", pad=21),
             OperatorEntry("GeometryNodeIsViewport", pad=20),
             OperatorEntry("GeometryNodeInputNamedLayerSelection", pad=0),
-            OperatorEntry("GeometryNodeToolMousePosition", pad=14, should_draw=is_tool),
+            OperatorEntry("GeometryNodeToolMousePosition", pad=14, poll=is_tool),
             OperatorEntry("GeometryNodeObjectInfo", pad=20),
             OperatorEntry("GeometryNodeInputSceneTime", pad=19),
             OperatorEntry("GeometryNodeSelfObject", pad=21),
-            OperatorEntry("GeometryNodeViewportTransform", pad=6, should_draw=is_tool),
+            OperatorEntry("GeometryNodeViewportTransform", pad=6, poll=is_tool),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1466,8 +1466,8 @@ class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeInputNormal", pad=17),
             OperatorEntry("GeometryNodeInputPosition", pad=16),
             OperatorEntry("GeometryNodeInputRadius", pad=18),
-            OperatorEntry("GeometryNodeToolSelection", pad=13, should_draw=is_tool),
-            OperatorEntry("GeometryNodeToolActiveElement", pad=4, should_draw=is_tool),
+            OperatorEntry("GeometryNodeToolSelection", pad=13, poll=is_tool),
+            OperatorEntry("GeometryNodeToolActiveElement", pad=4, poll=is_tool),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1520,7 +1520,7 @@ class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeSetGeometryName", pad=1),
             OperatorEntry("GeometryNodeSetID", pad=25),
             OperatorEntry("GeometryNodeSetPosition", pad=15),
-            OperatorEntry("GeometryNodeToolSetSelection", pad=13, should_draw=is_tool_tree(context)),
+            OperatorEntry("GeometryNodeToolSetSelection", pad=13, poll=is_tool_tree(context)),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1912,7 +1912,7 @@ class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("GeometryNodeMeshFaceSetBoundaries", pad=0),
             OperatorEntry("GeometryNodeInputMeshFaceNeighbors", pad=13),
-            OperatorEntry("GeometryNodeToolFaceSet", pad=25, should_draw=is_tool_tree(context)),
+            OperatorEntry("GeometryNodeToolFaceSet", pad=25, poll=is_tool_tree(context)),
             OperatorEntry("GeometryNodeInputMeshFaceIsPlanar", pad=15),
             OperatorEntry("GeometryNodeInputShadeSmooth", pad=13),
             OperatorEntry("GeometryNodeInputEdgeSmooth", pad=12),
@@ -1966,7 +1966,7 @@ class NODES_PT_toolshelf_gn_add_mesh_write(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("GeometryNodeToolSetFaceSet", pad=10, should_draw=is_tool_tree(context)),
+            OperatorEntry("GeometryNodeToolSetFaceSet", pad=10, poll=is_tool_tree(context)),
             OperatorEntry("GeometryNodeSetMeshNormal", pad=2),
             OperatorEntry("GeometryNodeSetShadeSmooth", pad=0),
         )
