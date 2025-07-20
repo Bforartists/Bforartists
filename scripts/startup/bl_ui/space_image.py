@@ -249,6 +249,42 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_more", text="More", icon="SELECTMORE")
         layout.operator("uv.select_less", text="Less", icon="SELECTLESS")
 
+### BFA - Start select similiar
+class IMAGE_MT_select_similar(Menu):
+    bl_label = "Select Similar"
+
+    def draw(self, context):
+        layout = self.layout
+        uv_island = context.tool_settings.use_uv_selected_island
+        mode = bpy.context.tool_settings.uv_select_mode
+       
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator_context = 'INVOKE_DEFAULT'
+        layout.operator("uv.select_similar", text="Floating Menu", icon="SIMILAR")
+        layout.separator()
+        if uv_island:
+            # Detects if it's in Island mode
+            layout.operator("uv.select_similar_bfa", text="Area", icon="AREA").type = "AREA"
+            layout.operator("uv.select_similar_bfa", text="Area 3D", icon="AREA").type = "AREA_3D"
+            layout.operator("uv.select_similar_bfa", text="Amount of Faces", icon="WINDING").type = "FACE"
+        elif mode == 'EDGE':
+            # Detects if it's in Edge mode
+            layout.operator("uv.select_similar_bfa", text="Length", icon="PARTICLEBRUSH_LENGTH").type = "LENGTH"
+            layout.operator("uv.select_similar_bfa", text="Length 3D", icon="PARTICLEBRUSH_LENGTH").type = "LENGTH_3D"
+            layout.operator("uv.select_similar_bfa", text="Pinned", icon="PINNED").type = "PIN"
+        elif mode == 'FACE':
+            # Detects if it's in Face mode
+            layout.operator("uv.select_similar_bfa", text="Area", icon="AREA").type = "AREA"
+            layout.operator("uv.select_similar_bfa", text="Area 3D", icon="AREA").type = "AREA_3D"
+            layout.operator("uv.select_similar_bfa", text="Material", icon="MATERIAL_DATA").type = "MATERIAL"
+            layout.operator("uv.select_similar_bfa", text="Object", icon="OBJECT_DATA").type = "OBJECT"
+            layout.operator("uv.select_similar_bfa", text="Polygon Sides", icon="SELECT_FACES_BY_SIDE").type = "SIDES"
+            layout.operator("uv.select_similar_bfa", text="Winding", icon="WINDING").type = "WINDING"
+        else:
+            # Detects if it's in Vertex mode, the default
+            layout.operator("uv.select_similar_bfa", text="Pinned", icon="PINNED").type = "PIN"
+
+### BFA - End of changes
 
 class IMAGE_MT_select_legacy(Menu):
     bl_label = "Legacy"
@@ -2252,6 +2288,7 @@ classes = (
     IMAGE_MT_uvs_snap_pie,
     IMAGE_MT_view_annotations, # BFA menu
     IMAGE_MT_view_pie,
+    IMAGE_MT_select_similar,  # BFA menu
     IMAGE_HT_tool_header,
     IMAGE_HT_header,
     IMAGE_MT_editor_menus,
