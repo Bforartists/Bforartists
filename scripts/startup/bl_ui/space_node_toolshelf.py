@@ -190,6 +190,69 @@ class NODES_PT_toolshelf_display_settings_relations(bpy.types.Panel):
         row.prop(addon_prefs,"Node_text_or_icon", text="Icon Buttons")
 
 
+class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Group"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Relations"
+
+    def draw(self, context):
+        layout = self.layout
+        in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()
+
+        entries = (
+            OperatorEntry(operator="node.group_make", icon="NODE_MAKEGROUP"),
+            OperatorEntry(operator="node.group_insert", text="Insert into Group", icon="NODE_GROUPINSERT"),
+            OperatorEntry(operator="node.group_ungroup", icon="NODE_UNGROUP"),
+            Separator,
+            OperatorEntry(operator="node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP", props={"exit" : False}),
+            Separator,
+            OperatorEntry("NodeGroupInput", should_draw=in_group),
+            OperatorEntry("NodeGroupOutput", should_draw=in_group),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_relations_nodegroups(bpy.types.Panel, NodePanel):
+    bl_label = "Nodegroups"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Relations"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type in node_tree_group_type)
+
+    def draw(self, context):
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.scale_y = 1.5
+        add_empty_group(col)
+        draw_node_groups(context, col)
+        return
+
+
+class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Layout"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Relations"
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            OperatorEntry("NodeFrame"),
+            OperatorEntry("NodeReroute"),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
 class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
@@ -282,6 +345,281 @@ class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeOutputMaterial", pad=4, should_draw=is_object_shader),
                 OperatorEntry("ShaderNodeOutputWorld", pad=8, should_draw=is_shader_type(context, 'WORLD')),
             )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Color"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'ShaderNodeTree'
+    
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+        
+        if use_common:
+            entries = (
+                OperatorEntry("ShaderNodeBrightContrast", pad=3),
+                OperatorEntry("ShaderNodeGamma", pad=24),
+                OperatorEntry("ShaderNodeHueSaturation", pad=0),
+                OperatorEntry("ShaderNodeInvert", pad=16),
+                Separator,
+                OperatorEntry("ShaderNodeMix", text="Mix Color", pad=20, settings={"data_type": "'RGBA'"}),
+                OperatorEntry("ShaderNodeRGBCurve", pad=16),
+            )
+        else:
+            entries = (
+                OperatorEntry("ShaderNodeBrightContrast", pad=3),
+                OperatorEntry("ShaderNodeGamma", pad=24),
+                OperatorEntry("ShaderNodeHueSaturation", pad=0),
+                OperatorEntry("ShaderNodeInvert", pad=16),
+                Separator,
+                OperatorEntry("ShaderNodeLightFalloff", pad=16),
+                OperatorEntry("ShaderNodeMix", text="Mix Color", pad=20, settings={"data_type": "'RGBA'"}),
+                OperatorEntry("ShaderNodeRGBCurve", pad=16),
+            )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Converter"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'ShaderNodeTree'
+
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        if use_common:
+            entries = (
+                OperatorEntry("ShaderNodeClamp", pad=17),
+                OperatorEntry("ShaderNodeValToRGB", pad=8),
+                Separator,
+                OperatorEntry("ShaderNodeFloatCurve", pad=8),
+                OperatorEntry("ShaderNodeMapRange", pad=9),
+                OperatorEntry("ShaderNodeMath", pad=19),
+                OperatorEntry("ShaderNodeRGBToBW", pad=9),
+            )
+        else:
+            entries = (
+                OperatorEntry("ShaderNodeBlackbody", pad=10),
+                OperatorEntry("ShaderNodeClamp", pad=17),
+                OperatorEntry("ShaderNodeValToRGB", pad=8),
+                OperatorEntry("ShaderNodeCombineColor", pad=3),
+                OperatorEntry("ShaderNodeCombineXYZ", pad=5),
+                Separator,
+                OperatorEntry("ShaderNodeFloatCurve", pad=8),
+                OperatorEntry("ShaderNodeMapRange", pad=9),
+                OperatorEntry("ShaderNodeMath", pad=19),
+                OperatorEntry("ShaderNodeMix", pad=22),
+                OperatorEntry("ShaderNodeRGBToBW", pad=9),
+                Separator,
+                OperatorEntry("ShaderNodeSeparateColor", pad=2),
+                OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
+                OperatorEntry("ShaderNodeShaderToRGB", pad=3, should_draw=is_engine(context, 'BLENDER_EEVEE')),
+                OperatorEntry("ShaderNodeVectorMath", pad=6),
+                OperatorEntry("ShaderNodeWavelength", pad=7),
+            )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Shader"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ('OBJECT', 'WORLD'))
+
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        is_object = is_shader_type(context, 'OBJECT')
+        is_eevee = is_engine(context, 'BLENDER_EEVEE')
+
+        if use_common:
+            entries = (
+                OperatorEntry("ShaderNodeAddShader", pad=18),
+                OperatorEntry("ShaderNodeBackground", pad=18, should_draw=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeEmission", pad=23),
+                OperatorEntry("ShaderNodeMixShader", pad=20),
+                OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
+                OperatorEntry("ShaderNodeBsdfToon", pad=20, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeVolumeAbsorption", pad=7),
+                OperatorEntry("ShaderNodeVolumeScatter", pad=13),
+            )
+        else:
+            entries = (
+                OperatorEntry("ShaderNodeAddShader", pad=18),
+                OperatorEntry("ShaderNodeBackground", pad=18, should_draw=is_shader_type(context, 'WORLD')),
+                OperatorEntry("ShaderNodeBsdfDiffuse", pad=16, should_draw=is_object),
+                OperatorEntry("ShaderNodeEmission", pad=23),
+                OperatorEntry("ShaderNodeBsdfGlass", pad=19, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfGlossy", pad=17, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfHair", pad=22, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeHoldout", pad=26, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfMetallic", pad=16, should_draw=is_object),
+                OperatorEntry("ShaderNodeMixShader", pad=20),
+                OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
+                OperatorEntry("ShaderNodeBsdfRayPortal", pad=6, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfRefraction", pad=11, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfSheen", pad=18, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeEeveeSpecular", pad=13, should_draw=is_object and is_eevee),
+                OperatorEntry("ShaderNodeSubsurfaceScattering", pad=1, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfToon", pad=20, should_draw=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfTranslucent", pad=9, should_draw=is_object),
+                OperatorEntry("ShaderNodeBsdfTransparent", pad=9, should_draw=is_object),
+                OperatorEntry("ShaderNodeVolumeAbsorption", pad=7),
+                OperatorEntry("ShaderNodeVolumeScatter", pad=13),
+                OperatorEntry("ShaderNodeVolumeCoefficients", pad=5),
+            )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Texture"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'ShaderNodeTree'
+
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+        
+        if use_common:
+            entries = (
+                OperatorEntry("ShaderNodeTexEnvironment", pad=0),
+                OperatorEntry("ShaderNodeTexImage", pad=10),
+                OperatorEntry("ShaderNodeTexNoise", pad=12),
+                OperatorEntry("ShaderNodeTexSky", pad=15),
+                OperatorEntry("ShaderNodeTexVoronoi", pad=8),
+            )
+        else:
+            entries = (
+                OperatorEntry("ShaderNodeTexBrick", pad=13),
+                OperatorEntry("ShaderNodeTexChecker", pad=7),
+                OperatorEntry("ShaderNodeTexEnvironment", pad=0),
+                OperatorEntry("ShaderNodeTexGabor", pad=11),
+                OperatorEntry("ShaderNodeTexGradient", pad=7),
+                OperatorEntry("ShaderNodeTexIES", pad=15),
+                Separator,
+                OperatorEntry("ShaderNodeTexImage", pad=10),
+                OperatorEntry("ShaderNodeTexMagic", pad=11),
+                OperatorEntry("ShaderNodeTexNoise", pad=12),
+                OperatorEntry("ShaderNodeTexSky", pad=15),
+                Separator,
+                OperatorEntry("ShaderNodeTexVoronoi", pad=8),
+                OperatorEntry("ShaderNodeTexWave", pad=12),
+                OperatorEntry("ShaderNodeTexWhiteNoise", pad=0),
+            )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Vector"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'ShaderNodeTree'
+
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        if use_common:
+            entries = (
+                OperatorEntry("ShaderNodeMapping", pad=22),
+                OperatorEntry("ShaderNodeNormal", pad=25),
+                OperatorEntry("ShaderNodeNormalMap", pad=16),
+            )
+        else:
+            entries = (
+                OperatorEntry("ShaderNodeBump", pad=27),
+                OperatorEntry("ShaderNodeDisplacement", pad=14),
+                OperatorEntry("ShaderNodeMapping", pad=22),
+                OperatorEntry("ShaderNodeNormal", pad=25),
+                OperatorEntry("ShaderNodeNormalMap", pad=16),
+                Separator,
+                OperatorEntry("ShaderNodeVectorCurve", pad=12),
+                OperatorEntry("ShaderNodeVectorDisplacement", pad=0),
+                OperatorEntry("ShaderNodeVectorRotate", pad=13),
+                OperatorEntry("ShaderNodeVectorTransform", pad=6),
+            )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Script"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'ShaderNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            OperatorEntry("ShaderNodeScript"),
+        )
 
         self.draw_entries(context, layout, entries)
 
@@ -578,6 +916,30 @@ class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
+class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Tracking"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            OperatorEntry("CompositorNodePlaneTrackDeform", pad=0),
+            OperatorEntry("CompositorNodeStabilize", pad=14),
+            OperatorEntry("CompositorNodeTrackPos", pad=10),
+        )
+        
+        self.draw_entries(context, layout, entries)
+
+
 class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
     bl_label = "Texture"
     bl_space_type = 'NODE_EDITOR'
@@ -602,30 +964,6 @@ class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
             OperatorEntry("ShaderNodeTexVoronoi", pad=7),
             OperatorEntry("ShaderNodeTexWave", pad=11),
             OperatorEntry("ShaderNodeTexWhiteNoise", pad=0),
-        )
-        
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Tracking"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        entries = (
-            OperatorEntry("CompositorNodePlaneTrackDeform", pad=0),
-            OperatorEntry("CompositorNodeStabilize", pad=14),
-            OperatorEntry("CompositorNodeTrackPos", pad=10),
         )
         
         self.draw_entries(context, layout, entries)
@@ -753,13 +1091,12 @@ class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Textures"
+    bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -769,40 +1106,8 @@ class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("TextureNodeTexBlend", pad=18),
-            OperatorEntry("TextureNodeTexClouds", pad=16),
-            OperatorEntry("TextureNodeTexDistNoise", pad=1),
-            OperatorEntry("TextureNodeTexMagic", pad=17),
-            Separator,
-            OperatorEntry("TextureNodeTexMarble", pad=9),
-            OperatorEntry("TextureNodeTexNoise", pad=17),
-            OperatorEntry("TextureNodeTexStucci", pad=10),
-            OperatorEntry("TextureNodeTexVoronoi", pad=13),
-            Separator,
-            OperatorEntry("TextureNodeTexWood", pad=10),
-        )
-        
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Pattern"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        entries = (
-            OperatorEntry("TextureNodeBricks", pad=4),
-            OperatorEntry("TextureNodeChecker", pad=1),
+            OperatorEntry("TextureNodeOutput", pad=4),
+            OperatorEntry("TextureNodeViewer", pad=3),
         )
         
         self.draw_entries(context, layout, entries)
@@ -831,28 +1136,6 @@ class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("TextureNodeCombineColor", pad=12),
             OperatorEntry("TextureNodeSeparateColor", pad=12),
-        )
-        
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Output"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        entries = (
-            OperatorEntry("TextureNodeOutput", pad=4),
-            OperatorEntry("TextureNodeViewer", pad=3),
         )
         
         self.draw_entries(context, layout, entries)
@@ -909,74 +1192,9 @@ class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Shader"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ('OBJECT', 'WORLD'))
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        use_common = addon_prefs.Node_shader_add_common
-
-        is_object = is_shader_type(context, 'OBJECT')
-        is_eevee = is_engine(context, 'BLENDER_EEVEE')
-
-        if use_common:
-            entries = (
-                OperatorEntry("ShaderNodeAddShader", pad=18),
-                OperatorEntry("ShaderNodeBackground", pad=18, should_draw=is_shader_type(context, 'WORLD')),
-                OperatorEntry("ShaderNodeEmission", pad=23),
-                OperatorEntry("ShaderNodeMixShader", pad=20),
-                OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
-                OperatorEntry("ShaderNodeBsdfToon", pad=20, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeVolumeAbsorption", pad=7),
-                OperatorEntry("ShaderNodeVolumeScatter", pad=13),
-            )
-        else:
-            entries = (
-                OperatorEntry("ShaderNodeAddShader", pad=18),
-                OperatorEntry("ShaderNodeBackground", pad=18, should_draw=is_shader_type(context, 'WORLD')),
-                OperatorEntry("ShaderNodeBsdfDiffuse", pad=16, should_draw=is_object),
-                OperatorEntry("ShaderNodeEmission", pad=23),
-                OperatorEntry("ShaderNodeBsdfGlass", pad=19, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfGlossy", pad=17, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfHair", pad=22, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeHoldout", pad=26, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfMetallic", pad=16, should_draw=is_object),
-                OperatorEntry("ShaderNodeMixShader", pad=20),
-                OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
-                OperatorEntry("ShaderNodeBsdfRayPortal", pad=6, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeBsdfRefraction", pad=11, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfSheen", pad=18, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeEeveeSpecular", pad=13, should_draw=is_object and is_eevee),
-                OperatorEntry("ShaderNodeSubsurfaceScattering", pad=1, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfToon", pad=20, should_draw=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeBsdfTranslucent", pad=9, should_draw=is_object),
-                OperatorEntry("ShaderNodeBsdfTransparent", pad=9, should_draw=is_object),
-                OperatorEntry("ShaderNodeVolumeAbsorption", pad=7),
-                OperatorEntry("ShaderNodeVolumeScatter", pad=13),
-                OperatorEntry("ShaderNodeVolumeCoefficients", pad=5),
-            )
-
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Texture"
+    bl_label = "Pattern"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
@@ -984,48 +1202,22 @@ class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.tree_type == 'ShaderNodeTree'
+        return (context.space_data.tree_type == 'TextureNodeTree')
 
     def draw(self, context):
         layout = self.layout
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        use_common = addon_prefs.Node_shader_add_common
+        entries = (
+            OperatorEntry("TextureNodeBricks", pad=4),
+            OperatorEntry("TextureNodeChecker", pad=1),
+        )
         
-        if use_common:
-            entries = (
-                OperatorEntry("ShaderNodeTexEnvironment", pad=0),
-                OperatorEntry("ShaderNodeTexImage", pad=10),
-                OperatorEntry("ShaderNodeTexNoise", pad=12),
-                OperatorEntry("ShaderNodeTexSky", pad=15),
-                OperatorEntry("ShaderNodeTexVoronoi", pad=8),
-            )
-        else:
-            entries = (
-                OperatorEntry("ShaderNodeTexBrick", pad=13),
-                OperatorEntry("ShaderNodeTexChecker", pad=7),
-                OperatorEntry("ShaderNodeTexEnvironment", pad=0),
-                OperatorEntry("ShaderNodeTexGabor", pad=11),
-                OperatorEntry("ShaderNodeTexGradient", pad=7),
-                OperatorEntry("ShaderNodeTexIES", pad=15),
-                Separator,
-                OperatorEntry("ShaderNodeTexImage", pad=10),
-                OperatorEntry("ShaderNodeTexMagic", pad=11),
-                OperatorEntry("ShaderNodeTexNoise", pad=12),
-                OperatorEntry("ShaderNodeTexSky", pad=15),
-                Separator,
-                OperatorEntry("ShaderNodeTexVoronoi", pad=8),
-                OperatorEntry("ShaderNodeTexWave", pad=12),
-                OperatorEntry("ShaderNodeTexWhiteNoise", pad=0),
-            )
-
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
+class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Color"
+    bl_label = "Textures"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
@@ -1033,217 +1225,25 @@ class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.tree_type == 'ShaderNodeTree'
-    
+        return (context.space_data.tree_type == 'TextureNodeTree')
+
     def draw(self, context):
         layout = self.layout
 
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        use_common = addon_prefs.Node_shader_add_common
+        entries = (
+            OperatorEntry("TextureNodeTexBlend", pad=18),
+            OperatorEntry("TextureNodeTexClouds", pad=16),
+            OperatorEntry("TextureNodeTexDistNoise", pad=1),
+            OperatorEntry("TextureNodeTexMagic", pad=17),
+            Separator,
+            OperatorEntry("TextureNodeTexMarble", pad=9),
+            OperatorEntry("TextureNodeTexNoise", pad=17),
+            OperatorEntry("TextureNodeTexStucci", pad=10),
+            OperatorEntry("TextureNodeTexVoronoi", pad=13),
+            Separator,
+            OperatorEntry("TextureNodeTexWood", pad=10),
+        )
         
-        if use_common:
-            entries = (
-                OperatorEntry("ShaderNodeBrightContrast", pad=3),
-                OperatorEntry("ShaderNodeGamma", pad=24),
-                OperatorEntry("ShaderNodeHueSaturation", pad=0),
-                OperatorEntry("ShaderNodeInvert", pad=16),
-                Separator,
-                OperatorEntry("ShaderNodeMix", text="Mix Color", pad=20, settings={"data_type": "'RGBA'"}),
-                OperatorEntry("ShaderNodeRGBCurve", pad=16),
-            )
-        else:
-            entries = (
-                OperatorEntry("ShaderNodeBrightContrast", pad=3),
-                OperatorEntry("ShaderNodeGamma", pad=24),
-                OperatorEntry("ShaderNodeHueSaturation", pad=0),
-                OperatorEntry("ShaderNodeInvert", pad=16),
-                Separator,
-                OperatorEntry("ShaderNodeLightFalloff", pad=16),
-                OperatorEntry("ShaderNodeMix", text="Mix Color", pad=20, settings={"data_type": "'RGBA'"}),
-                OperatorEntry("ShaderNodeRGBCurve", pad=16),
-            )
-
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Vector"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'ShaderNodeTree'
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        use_common = addon_prefs.Node_shader_add_common
-
-        if use_common:
-            entries = (
-                OperatorEntry("ShaderNodeMapping", pad=22),
-                OperatorEntry("ShaderNodeNormal", pad=25),
-                OperatorEntry("ShaderNodeNormalMap", pad=16),
-            )
-        else:
-            entries = (
-                OperatorEntry("ShaderNodeBump", pad=27),
-                OperatorEntry("ShaderNodeDisplacement", pad=14),
-                OperatorEntry("ShaderNodeMapping", pad=22),
-                OperatorEntry("ShaderNodeNormal", pad=25),
-                OperatorEntry("ShaderNodeNormalMap", pad=16),
-                Separator,
-                OperatorEntry("ShaderNodeVectorCurve", pad=12),
-                OperatorEntry("ShaderNodeVectorDisplacement", pad=0),
-                OperatorEntry("ShaderNodeVectorRotate", pad=13),
-                OperatorEntry("ShaderNodeVectorTransform", pad=6),
-            )
-
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Converter"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'ShaderNodeTree'
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        use_common = addon_prefs.Node_shader_add_common
-
-        if use_common:
-            entries = (
-                OperatorEntry("ShaderNodeClamp", pad=17),
-                OperatorEntry("ShaderNodeValToRGB", pad=8),
-                Separator,
-                OperatorEntry("ShaderNodeFloatCurve", pad=8),
-                OperatorEntry("ShaderNodeMapRange", pad=9),
-                OperatorEntry("ShaderNodeMath", pad=19),
-                OperatorEntry("ShaderNodeRGBToBW", pad=9),
-            )
-        else:
-            entries = (
-                OperatorEntry("ShaderNodeBlackbody", pad=10),
-                OperatorEntry("ShaderNodeClamp", pad=17),
-                OperatorEntry("ShaderNodeValToRGB", pad=8),
-                OperatorEntry("ShaderNodeCombineColor", pad=3),
-                OperatorEntry("ShaderNodeCombineXYZ", pad=5),
-                Separator,
-                OperatorEntry("ShaderNodeFloatCurve", pad=8),
-                OperatorEntry("ShaderNodeMapRange", pad=9),
-                OperatorEntry("ShaderNodeMath", pad=19),
-                OperatorEntry("ShaderNodeMix", pad=22),
-                OperatorEntry("ShaderNodeRGBToBW", pad=9),
-                Separator,
-                OperatorEntry("ShaderNodeSeparateColor", pad=2),
-                OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
-                OperatorEntry("ShaderNodeShaderToRGB", pad=3, should_draw=is_engine(context, 'BLENDER_EEVEE')),
-                OperatorEntry("ShaderNodeVectorMath", pad=6),
-                OperatorEntry("ShaderNodeWavelength", pad=7),
-            )
-
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Script"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        entries = (
-            OperatorEntry("ShaderNodeScript"),
-        )
-
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Group"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Relations"
-
-    def draw(self, context):
-        layout = self.layout
-        in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()
-
-        entries = (
-            OperatorEntry(operator="node.group_make", icon="NODE_MAKEGROUP"),
-            OperatorEntry(operator="node.group_insert", text="Insert into Group", icon="NODE_GROUPINSERT"),
-            OperatorEntry(operator="node.group_ungroup", icon="NODE_UNGROUP"),
-            Separator,
-            OperatorEntry(operator="node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP", props={"exit" : False}),
-            Separator,
-            OperatorEntry("NodeGroupInput", should_draw=in_group),
-            OperatorEntry("NodeGroupOutput", should_draw=in_group),
-        )
-
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_relations_nodegroups(bpy.types.Panel, NodePanel):
-    bl_label = "Nodegroups"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Relations"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type in node_tree_group_type)
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.scale_y = 1.5
-        add_empty_group(col)
-        draw_node_groups(context, col)
-        return
-
-
-class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Layout"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Relations"
-
-    def draw(self, context):
-        layout = self.layout
-
-        entries = (
-            OperatorEntry("NodeFrame"),
-            OperatorEntry("NodeReroute"),
-        )
-
         self.draw_entries(context, layout, entries)
 
 
@@ -2514,11 +2514,11 @@ classes = (
     # Shader Nodes - Add
     NODES_PT_toolshelf_shader_add_input,
     NODES_PT_toolshelf_shader_add_output,
+    NODES_PT_toolshelf_shader_add_color,
+    NODES_PT_toolshelf_shader_add_converter,
     NODES_PT_toolshelf_shader_add_shader,
     NODES_PT_toolshelf_shader_add_texture,
-    NODES_PT_toolshelf_shader_add_color,
     NODES_PT_toolshelf_shader_add_vector,
-    NODES_PT_toolshelf_shader_add_converter,
     NODES_PT_toolshelf_shader_add_script,
     #-----------------------
 
@@ -2535,8 +2535,8 @@ classes = (
     NODES_PT_toolshelf_compositor_add_filter_blur,
     NODES_PT_toolshelf_compositor_add_keying,
     NODES_PT_toolshelf_compositor_add_mask,
-    NODES_PT_toolshelf_compositor_add_texture,
     NODES_PT_toolshelf_compositor_add_tracking,
+    NODES_PT_toolshelf_compositor_add_texture,
     NODES_PT_toolshelf_compositor_add_transform,
     NODES_PT_toolshelf_compositor_add_utility,
     NODES_PT_toolshelf_compositor_add_vector,
