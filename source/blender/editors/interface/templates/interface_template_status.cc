@@ -13,6 +13,7 @@
 #include "BKE_global.hh"
 #include "BKE_layer.hh"
 #include "BKE_main.hh"
+#include "BKE_paint.hh" // bfa grease pencil fill
 #include "BKE_report.hh"
 #include "BKE_screen.hh"
 #include "BKE_workspace.hh"
@@ -26,6 +27,8 @@
 #include "BLF_api.hh"
 #include "BLT_translation.hh"
 
+#include "DNA_brush_enums.h" // bfa grease pencil fill
+#include "DNA_brush_types.h" // bfa grease pencil fill
 #include "DNA_space_types.h"
 #include "DNA_workspace_types.h"
 
@@ -256,6 +259,21 @@ static bool uiTemplateInputStatus3DView(bContext *C, uiLayout *row)
 
   return false;
 }
+/* bfa grease pencil fill */
+static void uiTemplateInputStatusBFAGreasePencil(bContext *C, uiLayout *row)
+{
+  const Object *ob = CTX_data_active_object(C);
+  const Paint *paint = BKE_paint_get_active_from_context(C);
+  const Brush &brush = *BKE_paint_brush_for_read(paint);
+  if (ob != nullptr && CTX_data_mode_enum(C) == CTX_MODE_PAINT_GREASE_PENCIL && eBrushGPaintType(brush.gpencil_brush_type) == GPAINT_BRUSH_TYPE_FILL) {
+    row->label(nullptr, ICON_EVENT_ALT);
+    row->separator(1.2f);
+    row->label(nullptr, ICON_MOUSE_LMB_DRAG);
+    row->separator(-0.2f);
+    row->label(IFACE_("Draw Fill Guides"), ICON_NONE);
+  }
+}
+/* bfa end */
 
 void uiTemplateInputStatus(uiLayout *layout, bContext *C)
 {
@@ -365,6 +383,12 @@ void uiTemplateInputStatus(uiLayout *layout, bContext *C)
       row->separator(0.6f);
     }
   }
+
+  /* bfa start grease pencil fill */
+  if (area && area->spacetype == SPACE_VIEW3D) {
+    uiTemplateInputStatusBFAGreasePencil(C, row);
+  }
+  /* bfa end */
 }
 
 static std::string ui_template_status_tooltip(bContext *C,
