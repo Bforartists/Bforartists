@@ -8847,6 +8847,18 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
+class VIEW3D_MT_edit_greasepencil_stroke_simplify(Menu):
+    bl_label = "Simplify Strokes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("grease_pencil.stroke_simplify", text="Fixed", icon="MOD_SIMPLIFY").mode = "FIXED"
+        layout.operator("grease_pencil.stroke_simplify", text="Adaptive", icon="SIMPLIFY_ADAPTIVE").mode = "ADAPTIVE"
+        layout.operator("grease_pencil.stroke_simplify", text="Sample", icon="SIMPLIFY_SAMPLE").mode = "SAMPLE"
+        layout.operator("grease_pencil.stroke_simplify", text="Merge", icon="MERGE").mode = "MERGE"
+
+
 class VIEW3D_MT_edit_greasepencil_stroke(Menu):
     bl_label = "Stroke"
 
@@ -8869,10 +8881,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         )
         # bfa - not in stroke mode. It is greyed out for this mode, so hide.
         if mode != 'STROKE':
-            layout.operator("grease_pencil.stroke_simplify", text="Fixed", icon="MOD_SIMPLIFY").mode = "FIXED"
-            layout.operator("grease_pencil.stroke_simplify", text="Adaptive", icon="SIMPLIFY_ADAPTIVE").mode = "ADAPTIVE"
-            layout.operator("grease_pencil.stroke_simplify", text="Sample", icon="SIMPLIFY_SAMPLE").mode = "SAMPLE"
-            layout.operator("grease_pencil.stroke_simplify", text="Merge", icon="MERGE").mode = "MERGE"
+            layout.menu("VIEW3D_MT_edit_greasepencil_stroke_simplify")
         layout.separator()
 
         layout.operator_menu_enum("grease_pencil.join_selection", "type", text="Join")
@@ -12100,22 +12109,12 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             # Copy/paste
-            col.operator(
-                "grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE"
-            )
+            col.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
             col.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
-            col.operator(
-                "grease_pencil.paste", text="Paste", icon="PASTEDOWN"
-            ).type = 'ACTIVE'
+            col.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN").type = 'ACTIVE'
             col.operator("grease_pencil.paste", text="Paste by Layer", icon="PASTEDOWN").type = "LAYER"
 
             col.separator()
-
-            # bfa - not in stroke mode. It is greyed out for this mode, so hide.
-            if mode != 'STROKE':
-                col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
-
-                col.separator()
 
             col.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
 
@@ -12176,7 +12175,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
+            col.menu("VIEW3D_MT_edit_greasepencil_stroke_simplify")
 
             col.separator()
             col.operator("grease_pencil.outline", text="Outline", icon = "MOD_OUTLINE")
@@ -13260,6 +13259,7 @@ classes = (
     VIEW3D_MT_grease_pencil_assign_material,
     VIEW3D_MT_edit_greasepencil,
     VIEW3D_MT_edit_greasepencil_delete,  # BFA - not used
+    VIEW3D_MT_edit_greasepencil_stroke_simplify,  # BFA - menu
     VIEW3D_MT_edit_greasepencil_stroke,
     VIEW3D_MT_edit_greasepencil_point,
     VIEW3D_MT_edit_greasepencil_animation,
