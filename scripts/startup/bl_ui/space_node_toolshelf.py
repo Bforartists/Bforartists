@@ -190,6 +190,25 @@ class NODES_PT_toolshelf_display_settings_relations(bpy.types.Panel):
         row.prop(addon_prefs,"Node_text_or_icon", text="Icon Buttons")
 
 
+class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Group"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Relations"
+
+    def draw(self, context):
+        layout = self.layout
+        in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()
+
+        entries = (
+            OperatorEntry("NodeGroupInput", poll=in_group),
+            OperatorEntry("NodeGroupOutput", poll=in_group),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
 class NODES_PT_relations_nodegroups(bpy.types.Panel, NodePanel):
     bl_label = "Nodegroups"
     bl_space_type = 'NODE_EDITOR'
@@ -2480,6 +2499,7 @@ classes = (
 
     #-----------------------
     # Relations Tab Panels
+    NODES_PT_relations_group_operations,
     NODES_PT_relations_nodegroups,
     NODES_PT_relations_layout,
     #-----------------------
