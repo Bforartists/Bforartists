@@ -3419,19 +3419,25 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            props = col.operator("mesh.paint_mask_extract", text="Mask Extract", icon = "PACKAGE")
+            props = col.operator("sculpt.paint_mask_extract", text="Mask Extract", icon = "PACKAGE")
 
             col.separator(factor = 0.5)
 
-            props = col.operator("mesh.paint_mask_slice", text="Mask Slice", icon = "MASK_SLICE")
+            props = col.operator("sculpt.paint_mask_slice", text="Mask Slice", icon = "MASK_SLICE")
             props.new_object = False
-            props = col.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MASK_SLICE_FILL")
+            props = col.operator("sculpt.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MASK_SLICE_FILL")
             props.new_object = False
-            props = col.operator("mesh.paint_mask_slice", text="Mask Slice to New Object", icon = "MASK_SLICE_NEW")
+            props = col.operator("sculpt.paint_mask_slice", text="Mask Slice to New Object", icon = "MASK_SLICE_NEW")
 
             col.separator(factor = 0.5)
 
             props = col.operator("sculpt.mask_from_cavity", text='Mask from Cavity', icon = "DIRTY_VERTEX")
+            props = col.operator("sculpt.mask_from_boundary", text="Mask from Mesh Boundary", icon="MASK_MESH_BOUNDARY")
+            props.settings_source = 'OPERATOR'
+            props.boundary_mode = 'MESH'
+            props = col.operator("sculpt.mask_from_boundary", text="Mask from Face Sets Boundary", icon="MASK_FACE_SETS_BOUNDARY")
+            props.settings_source = 'OPERATOR'
+            props.boundary_mode = "FACE_SETS"
 
 
         # icon buttons
@@ -3485,17 +3491,23 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props.falloff_type = 'NORMALS'
                 props.invert = False
 
-                props = row.operator("mesh.paint_mask_extract", text="", icon = "PACKAGE")
+                props = row.operator("sculpt.paint_mask_extract", text="", icon = "PACKAGE")
 
                 row = col.row(align=True)
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = row.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE")
                 props.new_object = False
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
+                props = row.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
                 props.new_object = False
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
+                props = row.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
 
                 row = col.row(align=True)
-                props = row.operator("sculpt.mask_from_cavity", text='', icon = "DIRTY_VERTEX")
+                props = row.operator("sculpt.mask_from_cavity", text="", icon = "DIRTY_VERTEX")
+                props = row.operator("sculpt.mask_from_boundary", text="", icon="MASK_MESH_BOUNDARY")
+                props.settings_source = 'OPERATOR'
+                props.boundary_mode = 'MESH'
+                props = row.operator("sculpt.mask_from_boundary", text="", icon="MASK_FACE_SETS_BOUNDARY")
+                props.settings_source = 'OPERATOR'
+                props.boundary_mode = "FACE_SETS"
 
 
             elif column_count == 2:
@@ -3545,20 +3557,28 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props.falloff_type = 'NORMALS'
                 props.invert = False
 
-                props = row.operator("mesh.paint_mask_extract", text="", icon = "PACKAGE")
+                props = row.operator("sculpt.paint_mask_extract", text="", icon = "PACKAGE")
 
                 row = col.row(align=True)
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = row.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE")
 
                 props.new_object = False
 
                 row = col.row(align=True)
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
+                props = row.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
                 props.new_object = False
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
+                props = row.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
 
                 row = col.row(align=True)
                 props = row.operator("sculpt.mask_from_cavity", text='', icon = "DIRTY_VERTEX")
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mask_from_boundary", text="", icon="MASK_MESH_BOUNDARY")
+                props.settings_source = 'OPERATOR'
+                props.boundary_mode = 'MESH'
+                props = row.operator("sculpt.mask_from_boundary", text="", icon="MASK_FACE_SETS_BOUNDARY")
+                props.settings_source = 'OPERATOR'
+                props.boundary_mode = "FACE_SETS"
 
             elif column_count == 1:
 
@@ -3609,19 +3629,28 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                props = col.operator("mesh.paint_mask_extract", text="", icon = "PACKAGE")
+                props = col.operator("sculpt.paint_mask_extract", text="", icon = "PACKAGE")
 
                 col.separator(factor = 0.5)
 
-                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = col.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE")
                 props.new_object = False
-                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
+                props = col.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
                 props.new_object = False
-                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
+                props = col.operator("sculpt.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
 
                 col.separator(factor = 0.5)
 
                 props = col.operator("sculpt.mask_from_cavity", text='', icon = "DIRTY_VERTEX")
+
+                col.separator(factor = 0.5)
+                props = col.operator("sculpt.mask_from_boundary", text="", icon="MASK_MESH_BOUNDARY")
+                props.settings_source = 'OPERATOR'
+                props.boundary_mode = 'MESH'
+                props = col.operator("sculpt.mask_from_boundary", text="", icon="MASK_FACE_SETS_BOUNDARY")
+                props.settings_source = 'OPERATOR'
+                props.boundary_mode = "FACE_SETS"
+
 
 
 class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
@@ -3712,8 +3741,8 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("sculpt.face_sets_create", text='Face Set from Masked', icon = "MOD_MASK").mode = 'MASKED'
-            col.operator("sculpt.face_sets_create", text='Face Set from Visible', icon = "FILL_MASK").mode = 'VISIBLE'
+            col.operator("sculpt.face_sets_create", text='Face Set from Masked', icon = "MASK_FACE_SETS").mode = 'MASKED'
+            col.operator("sculpt.face_sets_create", text='Face Set from Visible', icon = "MASK_FACE_SETS_VISIBLE").mode = 'VISIBLE'
             col.operator("sculpt.face_sets_create", text='Face Set from Edit Mode Selection', icon = "EDITMODE_HLT").mode = 'SELECTION'
 
             col.separator(factor = 0.5)
@@ -3759,8 +3788,8 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("sculpt.face_sets_create", text='', icon = "MOD_MASK").mode = 'MASKED'
-                row.operator("sculpt.face_sets_create", text='', icon = "FILL_MASK").mode = 'VISIBLE'
+                row.operator("sculpt.face_sets_create", text='', icon = "MASK_FACE_SETS").mode = 'MASKED'
+                row.operator("sculpt.face_sets_create", text='', icon = "MASK_FACE_SETS_VISIBLE").mode = 'VISIBLE'
                 row.operator("sculpt.face_sets_create", text='', icon = "EDITMODE_HLT").mode = 'SELECTION'
 
                 row = col.row(align=True)
@@ -3783,16 +3812,16 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK").mode = 'TOGGLE'
 
                 row = col.row(align=True)
-                row.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
+                row.operator("paint.hide_show_all", text ="", icon = "HIDE_OFF").action='SHOW'
                 row = col.row(align=True)
-                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
+                row.operator("sculpt.face_set_extract", text="", icon="SEPARATE")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("sculpt.face_sets_create", text='', icon = "MOD_MASK").mode = 'MASKED'
-                row.operator("sculpt.face_sets_create", text='', icon = "FILL_MASK").mode = 'VISIBLE'
+                row.operator("sculpt.face_sets_create", text='', icon = "MASK_FACE_SETS").mode = 'MASKED'
+                row.operator("sculpt.face_sets_create", text='', icon = "MASK_FACE_SETS_VISIBLE").mode = 'VISIBLE'
 
                 row = col.row(align=True)
                 row.operator("sculpt.face_sets_create", text='', icon = "EDITMODE_HLT").mode = 'SELECTION'
@@ -3820,13 +3849,13 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 row.operator("paint.hide_show_all", text='', icon = "HIDE_OFF").action='SHOW'
 
                 row = col.row(align=True)
-                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
+                row.operator("sculpt.face_set_extract", text="", icon="SEPARATE")
                 row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
             elif column_count == 1:
 
-                col.operator("sculpt.face_sets_create", text='', icon = "MOD_MASK").mode = 'MASKED'
-                col.operator("sculpt.face_sets_create", text='', icon = "FILL_MASK").mode = 'VISIBLE'
+                col.operator("sculpt.face_sets_create", text='', icon = "MASK_FACE_SETS").mode = 'MASKED'
+                col.operator("sculpt.face_sets_create", text='', icon = "MASK_FACE_SETS_VISIBLE").mode = 'VISIBLE'
                 col.operator("sculpt.face_sets_create", text='', icon = "EDITMODE_HLT").mode = 'SELECTION'
 
                 col.separator(factor = 0.5)
@@ -3856,7 +3885,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 col.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
 
                 col.separator(factor = 0.5)
-                row.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
+                row.operator("sculpt.face_set_extract", text="", icon="SEPARATE")
                 col.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
 
