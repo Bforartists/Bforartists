@@ -1005,6 +1005,11 @@ if(WITH_BLENDER)
       mask_slice
       mask_slice_fill
       mask_slice_new
+      mask_by_color
+      mask_face_sets
+      mask_face_sets_boundary
+      mask_face_sets_visible
+      mask_mesh_boundary
       mat_sphere_sky
       matrix_determinant
       match_string

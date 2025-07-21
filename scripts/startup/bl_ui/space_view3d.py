@@ -6069,19 +6069,13 @@ class VIEW3D_MT_mask(Menu):
         )
         props.settings_source = 'OPERATOR'
 
-        props = layout.operator(
-            "sculpt.mask_from_boundary", text="Mask from Mesh Boundary"
-        )
+        props = layout.operator("sculpt.mask_from_boundary", text="Mask from Mesh Boundary", icon="MASK_MESH_BOUNDARY")
         props.settings_source = 'OPERATOR'
         props.boundary_mode = 'MESH'
 
-        props = layout.operator(
-            "sculpt.mask_from_boundary", text="Mask from Face Sets Boundary"
-        )
+        props = layout.operator("sculpt.mask_from_boundary", text="Mask from Face Sets Boundary", icon="MASK_FACE_SETS_BOUNDARY")
         props.settings_source = 'OPERATOR'
         props.boundary_mode = "FACE_SETS"
-
-        props = layout.operator("sculpt.mask_by_color", text="Mask by Color")
 
         layout.separator()
 
@@ -6106,6 +6100,10 @@ class VIEW3D_MT_mask_legacy(Menu):
         props = layout.operator(
             "paint.mask_lasso_gesture", text="Lasso Mask", icon="LASSO_MASK"
         )
+
+        layout.separator()
+
+        props = layout.operator("sculpt.mask_by_color", text="Mask by Color", icon="MASK_BY_COLOR")
 
 
 class VIEW3D_MT_face_sets_showhide(Menu):
@@ -6139,10 +6137,10 @@ class VIEW3D_MT_face_sets(Menu):
         layout = self.layout
 
         layout.operator(
-            "sculpt.face_sets_create", text="Face Set from Masked", icon="MOD_MASK"
+            "sculpt.face_sets_create", text="Face Set from Masked", icon="MASK_FACE_SETS"
         ).mode = "MASKED"
         layout.operator(
-            "sculpt.face_sets_create", text="Face Set from Visible", icon="FILL_MASK"
+            "sculpt.face_sets_create", text="Face Set from Visible", icon="MASK_FACE_SETS_VISIBLE"
         ).mode = "VISIBLE"
         layout.operator(
             "sculpt.face_sets_create",
