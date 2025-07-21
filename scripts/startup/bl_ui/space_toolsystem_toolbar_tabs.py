@@ -3885,7 +3885,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 col.operator("paint.hide_show_all", text = '', icon = "HIDE_OFF").action='SHOW'
 
                 col.separator(factor = 0.5)
-                row.operator("sculpt.face_set_extract", text="", icon="SEPARATE")
+                col.operator("sculpt.face_set_extract", text="", icon="SEPARATE")
                 col.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
 
