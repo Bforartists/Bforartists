@@ -327,7 +327,7 @@ static int /*eContextResult*/ sequencer_context(const bContext *C,
                                                 const char *member,
                                                 bContextDataResult *result)
 {
-  Scene *scene = CTX_data_scene(C);
+  Scene *scene = CTX_data_sequencer_scene(C);
 
   if (CTX_data_dir(member)) {
     CTX_data_dir_set(result, sequencer_context_dir);
@@ -485,7 +485,7 @@ static void sequencer_main_clamp_view(const bContext *C, ARegion *region)
   }
 
   View2D *v2d = &region->v2d;
-  Scene *scene = CTX_data_scene(C);
+  Scene *scene = CTX_data_sequencer_scene(C);
 
   /* Transformation uses edge panning to move view. Also if smooth view is running, don't apply
    * clamping to prevent overriding this functionality. */
@@ -796,17 +796,17 @@ static void sequencer_tools_region_init(wmWindowManager *wm, ARegion *region)
 static void sequencer_tools_region_draw(const bContext *C, ARegion *region)
 {
   ScrArea *area = CTX_wm_area(C);
-  wmOperatorCallContext op_context = WM_OP_INVOKE_REGION_WIN;
+  wm::OpCallContext op_context = wm::OpCallContext::InvokeRegionWin;
 
   LISTBASE_FOREACH (ARegion *, ar, &area->regionbase) {
     if (ar->regiontype == RGN_TYPE_PREVIEW && region->regiontype == RGN_TYPE_TOOLS) {
-      op_context = WM_OP_INVOKE_REGION_PREVIEW;
+      op_context = wm::OpCallContext::InvokeRegionPreview;
       break;
     }
   }
 
   if (region->regiontype == RGN_TYPE_CHANNELS) {
-    op_context = WM_OP_INVOKE_REGION_CHANNELS;
+    op_context = wm::OpCallContext::InvokeRegionChannels;
   }
 
   ED_region_panels_ex(C, region, op_context, nullptr);

@@ -45,7 +45,11 @@ static void do_running_jobs(bContext *C, void * /*arg*/, int event)
       WM_jobs_stop_all_from_owner(CTX_wm_manager(C), CTX_wm_screen(C));
       break;
     case B_STOPANIM:
-      WM_operator_name_call(C, "SCREEN_OT_animation_play", WM_OP_INVOKE_SCREEN, nullptr, nullptr);
+      WM_operator_name_call(C,
+                            "SCREEN_OT_animation_play",
+                            blender::wm::OpCallContext::InvokeScreen,
+                            nullptr,
+                            nullptr);
       break;
     case B_STOPCOMPO:
       WM_jobs_stop_all_from_owner(CTX_wm_manager(C), CTX_data_scene(C));
@@ -234,9 +238,9 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
     /* job icon as a button */
     if (op_name) {
       uiDefIconButO(block,
-                    UI_BTYPE_BUT,
+                    ButType::But,
                     op_name,
-                    WM_OP_INVOKE_DEFAULT,
+                    blender::wm::OpCallContext::InvokeDefault,
                     icon,
                     0,
                     0,
@@ -248,7 +252,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
     /* job name and icon if not previously set */
     const int textwidth = UI_fontstyle_string_width(fstyle, name);
     uiDefIconTextBut(block,
-                     UI_BTYPE_LABEL,
+                     ButType::Label,
                      0,
                      op_name ? 0 : icon,
                      name,
@@ -272,7 +276,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
       tip_arg->wm = wm;
       tip_arg->owner = owner;
       uiButProgress *but_progress = (uiButProgress *)uiDefIconTextBut(block,
-                                                                      UI_BTYPE_PROGRESS,
+                                                                      ButType::Progress,
                                                                       0,
                                                                       ICON_NONE,
                                                                       text,
@@ -291,7 +295,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 
     if (!wm->runtime->is_interface_locked) {
       uiDefIconTextBut(block,
-                       UI_BTYPE_BUT,
+                       ButType::But,
                        handle_event,
                        ICON_PANEL_CLOSE,
                        "",
@@ -308,7 +312,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 
   if (ED_screen_animation_no_scrub(wm)) {
     uiDefIconTextBut(block,
-                     UI_BTYPE_BUT,
+                     ButType::But,
                      B_STOPANIM,
                      ICON_CANCEL,
                      IFACE_("Anim Player"),

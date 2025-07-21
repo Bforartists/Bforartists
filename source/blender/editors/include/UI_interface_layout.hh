@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <functional>
 #include <optional>
 
 #include "BLI_math_vector_types.hh"
@@ -14,17 +15,22 @@
 #include "UI_interface_icons.hh" /* `eAlertIcon` */
 #include "UI_interface_types.hh"
 
-#include "WM_types.hh" /* `wmOperatorCallContext` */
-
 struct bContext;
 struct bContextStore;
+struct EnumPropertyItem;
+struct IDProperty;
 struct uiBlock;
 struct uiBut;
 struct uiLayoutRoot;
+struct uiList;
 struct uiStyle;
 struct MenuType;
 struct PanelType;
+struct Panel;
 struct PointerRNA;
+struct PropertyRNA;
+struct StructRNA;
+struct wmOperatorType;
 
 /* Layout
  *
@@ -44,6 +50,10 @@ enum class LayoutAlign : int8_t;
 enum class ButProgressType : int8_t;
 enum class LayoutDirection : int8_t;
 }  // namespace blender::ui
+
+namespace blender::wm {
+enum class OpCallContext : int8_t;
+}
 
 struct PanelLayout {
   uiLayout *header;
@@ -170,9 +180,9 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
 
   [[nodiscard]] blender::ui::LayoutDirection local_direction() const;
 
-  [[nodiscard]] wmOperatorCallContext operator_context() const;
+  [[nodiscard]] blender::wm::OpCallContext operator_context() const;
   /** Sets the default call context for new operator buttons added in any #root_ sub-layout. */
-  void operator_context_set(wmOperatorCallContext opcontext);
+  void operator_context_set(blender::wm::OpCallContext opcontext);
 
   [[nodiscard]] bool red_alert() const;
   /**
@@ -325,7 +335,7 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
                                           blender::StringRefNull open_prop_name,
                                           PointerRNA *bool_prop_owner,
                                           blender::StringRefNull bool_prop_name,
-                                          std::optional<blender::StringRefNull> label);
+                                          std::optional<blender::StringRef> label);
   /**
    * Variant of #panel_prop that automatically stores the open-close-state in the root
    * panel. When a dynamic number of panels is required, it's recommended to use #panel_prop
@@ -412,7 +422,7 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
   PointerRNA op(wmOperatorType *ot,
                 std::optional<blender::StringRef> name,
                 int icon,
-                wmOperatorCallContext context,
+                blender::wm::OpCallContext context,
                 eUI_Item_Flag flag);
 
   /**
@@ -443,7 +453,7 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
   PointerRNA op(blender::StringRefNull opname,
                 std::optional<blender::StringRef> name,
                 int icon,
-                wmOperatorCallContext context,
+                blender::wm::OpCallContext context,
                 eUI_Item_Flag flag);
   /**
    * Expands and sets each enum property value as an operator button.
@@ -454,7 +464,7 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
   void op_enum(blender::StringRefNull opname,
                blender::StringRefNull propname,
                IDProperty *properties,
-               wmOperatorCallContext context,
+               blender::wm::OpCallContext context,
                eUI_Item_Flag flag,
                const int active = -1);
 
@@ -474,7 +484,7 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
                      const PointerRNA &ptr,
                      PropertyRNA *prop,
                      IDProperty *properties,
-                     wmOperatorCallContext context,
+                     blender::wm::OpCallContext context,
                      eUI_Item_Flag flag,
                      const EnumPropertyItem *item_array,
                      int totitem,
@@ -513,7 +523,7 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
   PointerRNA op_menu_hold(wmOperatorType *ot,
                           std::optional<blender::StringRef> name,
                           int icon,
-                          wmOperatorCallContext context,
+                          blender::wm::OpCallContext context,
                           eUI_Item_Flag flag,
                           const char *menu_id);
 
@@ -647,6 +657,12 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
                       std::optional<blender::StringRefNull> name,
                       int icon,
                       const char *menu_type);
+
+  /** Simple button executing \a func on click. */
+  uiBut *button(blender::StringRef name,
+                int icon,
+                std::function<void(bContext &)> func,
+                std::optional<blender::StringRef> tooltip = std::nullopt);
 
   /** Adds a separator item, that adds empty space between items. */
   void separator(float factor = 1.0f, LayoutSeparatorType type = LayoutSeparatorType::Auto);
@@ -877,6 +893,16 @@ void uiLayoutSetTooltipFunc(uiLayout *layout,
                             void *arg,
                             uiCopyArgFunc copy_arg,
                             uiFreeArgFunc free_arg);
+
+/**
+ * Same as above but should be used when building a fully custom tooltip instead of just
+ * generating a description.
+ */
+void uiLayoutSetTooltipCustomFunc(uiLayout *layout,
+                                  uiButToolTipCustomFunc func,
+                                  void *arg,
+                                  uiCopyArgFunc copy_arg,
+                                  uiFreeArgFunc free_arg);
 
 void UI_menutype_draw(bContext *C, MenuType *mt, uiLayout *layout);
 

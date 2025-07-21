@@ -100,10 +100,11 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
     row->menu("WM_MT_operator_presets", std::nullopt, ICON_NONE);
 
     wmOperatorType *ot = WM_operatortype_find("WM_OT_operator_preset_add", false);
-    op_ptr = op_ptr = row->op(ot, "", ICON_ADD, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
+    op_ptr = op_ptr = row->op(
+        ot, "", ICON_ADD, blender::wm::OpCallContext::InvokeDefault, UI_ITEM_NONE);
     RNA_string_set(&op_ptr, "operator", op->type->idname);
 
-    op_ptr = row->op(ot, "", ICON_REMOVE, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
+    op_ptr = row->op(ot, "", ICON_REMOVE, blender::wm::OpCallContext::InvokeDefault, UI_ITEM_NONE);
     RNA_string_set(&op_ptr, "operator", op->type->idname);
     RNA_boolean_set(&op_ptr, "remove_active", true);
   }
@@ -157,7 +158,7 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
     col = &layout->column(false);
     block = col->block();
     but = uiDefIconTextBut(block,
-                           UI_BTYPE_BUT,
+                           ButType::But,
                            0,
                            ICON_FILE_REFRESH,
                            IFACE_("Reset"),
@@ -193,7 +194,7 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
        * - this is used for allowing operators with popups to rename stuff with fewer clicks
        */
       if (is_popup) {
-        if ((but->rnaprop == op->type->prop) && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_NUM)) {
+        if ((but->rnaprop == op->type->prop) && ELEM(but->type, ButType::Text, ButType::Num)) {
           UI_but_focus_on_enter_event(CTX_wm_window(C), but.get());
         }
       }
@@ -301,7 +302,7 @@ void uiTemplateOperatorRedoProperties(uiLayout *layout, const bContext *C)
   layout->op("SCREEN_OT_repeat_last",
              WM_operatortype_name(op->type, op->ptr),
              ICON_NONE,
-             WM_OP_INVOKE_DEFAULT,
+             blender::wm::OpCallContext::InvokeDefault,
              0);
 #endif
 

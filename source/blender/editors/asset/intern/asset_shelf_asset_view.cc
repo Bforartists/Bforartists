@@ -199,7 +199,7 @@ static std::optional<wmOperatorCallParams> create_activate_operator_params(
   PointerRNA *op_props = MEM_new<PointerRNA>(__func__);
   WM_operator_properties_create_ptr(op_props, ot);
   asset::operator_asset_reference_props_set(asset, *op_props);
-  return wmOperatorCallParams{ot, op_props, WM_OP_INVOKE_REGION_WIN};
+  return wmOperatorCallParams{ot, op_props, wm::OpCallContext::InvokeRegionWin};
 }
 
 void AssetViewItem::build_grid_tile(const bContext & /*C*/, uiLayout &layout) const
@@ -230,7 +230,7 @@ void AssetViewItem::build_grid_tile(const bContext & /*C*/, uiLayout &layout) co
 
   UI_but_func_tooltip_custom_set(
       item_but,
-      [](bContext & /*C*/, uiTooltipData &tip, void *argN) {
+      [](bContext & /*C*/, uiTooltipData &tip, uiBut * /*but*/, void *argN) {
         const asset_system::AssetRepresentation *asset =
             static_cast<const asset_system::AssetRepresentation *>(argN);
         asset_tooltip(*asset, tip);

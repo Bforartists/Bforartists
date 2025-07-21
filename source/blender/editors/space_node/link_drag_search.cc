@@ -415,7 +415,7 @@ static void link_drag_search_exec_fn(bContext *C, void *arg1, void *arg2)
   BLI_assert(ot);
   PointerRNA ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
-  WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &ptr, nullptr);
+  WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &ptr, nullptr);
   WM_operator_properties_free(&ptr);
 }
 
@@ -457,7 +457,7 @@ static uiBlock *create_search_popup_block(bContext *C, ARegion *region, void *ar
 
   /* Fake button to hold space for the search items. */
   uiDefBut(block,
-           UI_BTYPE_LABEL,
+           ButType::Label,
            0,
            "",
            storage.in_out() == SOCK_OUT ? 10 : 10 - UI_searchbox_size_x(),

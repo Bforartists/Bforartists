@@ -130,7 +130,7 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
                                                   wmOperatorType *ot,
                                                   PointerRNA *properties,
                                                   ReportList *reports,
-                                                  const wmOperatorCallContext context,
+                                                  const blender::wm::OpCallContext context,
                                                   const bool poll_only,
                                                   const wmEvent *event);
 
@@ -1120,11 +1120,10 @@ bool WM_operator_poll(bContext *C, wmOperatorType *ot)
   return true;
 }
 
-bool WM_operator_poll_context(bContext *C, wmOperatorType *ot, short context)
+bool WM_operator_poll_context(bContext *C, wmOperatorType *ot, blender::wm::OpCallContext context)
 {
   /* Sets up the new context and calls #wm_operator_invoke() with poll_only. */
-  return wm_operator_call_internal(
-      C, ot, nullptr, nullptr, static_cast<wmOperatorCallContext>(context), true, nullptr);
+  return wm_operator_call_internal(C, ot, nullptr, nullptr, context, true, nullptr);
 }
 
 bool WM_operator_ui_poll(wmOperatorType *ot, PointerRNA *ptr)
@@ -1778,7 +1777,7 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
                                                   wmOperatorType *ot,
                                                   PointerRNA *properties,
                                                   ReportList *reports,
-                                                  const wmOperatorCallContext context,
+                                                  const blender::wm::OpCallContext context,
                                                   const bool poll_only,
                                                   const wmEvent *event)
 {
@@ -1792,12 +1791,12 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
 
     if (event == nullptr) {
       switch (context) {
-        case WM_OP_INVOKE_DEFAULT:
-        case WM_OP_INVOKE_REGION_WIN:
-        case WM_OP_INVOKE_REGION_PREVIEW:
-        case WM_OP_INVOKE_REGION_CHANNELS:
-        case WM_OP_INVOKE_AREA:
-        case WM_OP_INVOKE_SCREEN:
+        case blender::wm::OpCallContext::InvokeDefault:
+        case blender::wm::OpCallContext::InvokeRegionWin:
+        case blender::wm::OpCallContext::InvokeRegionPreview:
+        case blender::wm::OpCallContext::InvokeRegionChannels:
+        case blender::wm::OpCallContext::InvokeArea:
+        case blender::wm::OpCallContext::InvokeScreen:
           /* Window is needed for invoke and cancel operators. */
           if (window == nullptr) {
             if (poll_only) {
@@ -1816,12 +1815,12 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
     }
     else {
       switch (context) {
-        case WM_OP_EXEC_DEFAULT:
-        case WM_OP_EXEC_REGION_WIN:
-        case WM_OP_EXEC_REGION_PREVIEW:
-        case WM_OP_EXEC_REGION_CHANNELS:
-        case WM_OP_EXEC_AREA:
-        case WM_OP_EXEC_SCREEN:
+        case blender::wm::OpCallContext::ExecDefault:
+        case blender::wm::OpCallContext::ExecRegionWin:
+        case blender::wm::OpCallContext::ExecRegionPreview:
+        case blender::wm::OpCallContext::ExecRegionChannels:
+        case blender::wm::OpCallContext::ExecArea:
+        case blender::wm::OpCallContext::ExecScreen:
           event = nullptr;
           break;
         default:
@@ -1830,12 +1829,12 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
     }
 
     switch (context) {
-      case WM_OP_EXEC_REGION_WIN:
-      case WM_OP_INVOKE_REGION_WIN:
-      case WM_OP_EXEC_REGION_CHANNELS:
-      case WM_OP_INVOKE_REGION_CHANNELS:
-      case WM_OP_EXEC_REGION_PREVIEW:
-      case WM_OP_INVOKE_REGION_PREVIEW: {
+      case blender::wm::OpCallContext::ExecRegionWin:
+      case blender::wm::OpCallContext::InvokeRegionWin:
+      case blender::wm::OpCallContext::ExecRegionChannels:
+      case blender::wm::OpCallContext::InvokeRegionChannels:
+      case blender::wm::OpCallContext::ExecRegionPreview:
+      case blender::wm::OpCallContext::InvokeRegionPreview: {
         /* Forces operator to go to the region window/channels/preview, for header menus,
          * but we stay in the same region if we are already in one. */
         ARegion *region = CTX_wm_region(C);
@@ -1843,18 +1842,18 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
         int type = RGN_TYPE_WINDOW;
 
         switch (context) {
-          case WM_OP_EXEC_REGION_CHANNELS:
-          case WM_OP_INVOKE_REGION_CHANNELS:
+          case blender::wm::OpCallContext::ExecRegionChannels:
+          case blender::wm::OpCallContext::InvokeRegionChannels:
             type = RGN_TYPE_CHANNELS;
             break;
 
-          case WM_OP_EXEC_REGION_PREVIEW:
-          case WM_OP_INVOKE_REGION_PREVIEW:
+          case blender::wm::OpCallContext::ExecRegionPreview:
+          case blender::wm::OpCallContext::InvokeRegionPreview:
             type = RGN_TYPE_PREVIEW;
             break;
 
-          case WM_OP_EXEC_REGION_WIN:
-          case WM_OP_INVOKE_REGION_WIN:
+          case blender::wm::OpCallContext::ExecRegionWin:
+          case blender::wm::OpCallContext::InvokeRegionWin:
           default:
             type = RGN_TYPE_WINDOW;
             break;
@@ -1876,8 +1875,8 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
 
         return retval;
       }
-      case WM_OP_EXEC_AREA:
-      case WM_OP_INVOKE_AREA: {
+      case blender::wm::OpCallContext::ExecArea:
+      case blender::wm::OpCallContext::InvokeArea: {
         /* Remove region from context. */
         ARegion *region = CTX_wm_region(C);
 
@@ -1887,8 +1886,8 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
 
         return retval;
       }
-      case WM_OP_EXEC_SCREEN:
-      case WM_OP_INVOKE_SCREEN: {
+      case blender::wm::OpCallContext::ExecScreen:
+      case blender::wm::OpCallContext::InvokeScreen: {
         /* Remove region + area from context. */
         ARegion *region = CTX_wm_region(C);
         ScrArea *area = CTX_wm_area(C);
@@ -1901,8 +1900,8 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
 
         return retval;
       }
-      case WM_OP_EXEC_DEFAULT:
-      case WM_OP_INVOKE_DEFAULT:
+      case blender::wm::OpCallContext::ExecDefault:
+      case blender::wm::OpCallContext::InvokeDefault:
         return wm_operator_invoke(C, ot, event, properties, reports, poll_only, true);
     }
   }
@@ -1912,7 +1911,7 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
 
 wmOperatorStatus WM_operator_name_call_ptr(bContext *C,
                                            wmOperatorType *ot,
-                                           wmOperatorCallContext context,
+                                           blender::wm::OpCallContext context,
                                            PointerRNA *properties,
                                            const wmEvent *event)
 {
@@ -1921,7 +1920,7 @@ wmOperatorStatus WM_operator_name_call_ptr(bContext *C,
 }
 wmOperatorStatus WM_operator_name_call(bContext *C,
                                        const char *opstring,
-                                       wmOperatorCallContext context,
+                                       blender::wm::OpCallContext context,
                                        PointerRNA *properties,
                                        const wmEvent *event)
 {
@@ -1945,7 +1944,7 @@ bool WM_operator_name_poll(bContext *C, const char *opstring)
 
 wmOperatorStatus WM_operator_name_call_with_properties(bContext *C,
                                                        const char *opstring,
-                                                       wmOperatorCallContext context,
+                                                       blender::wm::OpCallContext context,
                                                        IDProperty *properties,
                                                        const wmEvent *event)
 {
@@ -1955,19 +1954,20 @@ wmOperatorStatus WM_operator_name_call_with_properties(bContext *C,
   return WM_operator_name_call_ptr(C, ot, context, &props_ptr, event);
 }
 
-void WM_menu_name_call(bContext *C, const char *menu_name, short context)
+void WM_menu_name_call(bContext *C, const char *menu_name, blender::wm::OpCallContext context)
 {
   wmOperatorType *ot = WM_operatortype_find("WM_OT_call_menu", false);
   PointerRNA ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
   RNA_string_set(&ptr, "name", menu_name);
-  WM_operator_name_call_ptr(C, ot, static_cast<wmOperatorCallContext>(context), &ptr, nullptr);
+  WM_operator_name_call_ptr(
+      C, ot, static_cast<blender::wm::OpCallContext>(context), &ptr, nullptr);
   WM_operator_properties_free(&ptr);
 }
 
 wmOperatorStatus WM_operator_call_py(bContext *C,
                                      wmOperatorType *ot,
-                                     wmOperatorCallContext context,
+                                     blender::wm::OpCallContext context,
                                      PointerRNA *properties,
                                      ReportList *reports,
                                      const bool is_undo)
@@ -2094,7 +2094,7 @@ static int ui_handler_wait_for_input(bContext *C, const wmEvent *event, void *us
 
 void WM_operator_name_call_ptr_with_depends_on_cursor(bContext *C,
                                                       wmOperatorType *ot,
-                                                      wmOperatorCallContext opcontext,
+                                                      blender::wm::OpCallContext opcontext,
                                                       PointerRNA *properties,
                                                       const wmEvent *event,
                                                       const StringRef drawstr)
@@ -3383,7 +3383,9 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
                   wm_eventmatch(&event_test_click_drag, kmi))
               {
                 wmOperatorType *ot = WM_operatortype_find(kmi->idname, false);
-                if (WM_operator_poll_context(C, ot, WM_OP_INVOKE_DEFAULT)) {
+                const bool success = WM_operator_poll_context(
+                    C, ot, blender::wm::OpCallContext::InvokeDefault);
+                if (success) {
                   is_event_handle_all = true;
                   break;
                 }
@@ -3542,7 +3544,7 @@ static eHandlerActionFlag wm_handlers_do_intern(bContext *C,
                   BLI_addtail(&single_lb, drag);
                   event->customdata = &single_lb;
 
-                  const wmOperatorCallContext opcontext = wm_drop_operator_context_get(drop);
+                  const blender::wm::OpCallContext opcontext = wm_drop_operator_context_get(drop);
                   const wmOperatorStatus op_retval =
                       drop->ot ? wm_operator_call_internal(
                                      C, drop->ot, drop->ptr, nullptr, opcontext, false, event) :
@@ -6481,7 +6483,7 @@ static bool wm_operator_check_locked_interface(bContext *C, wmOperatorType *ot)
   return true;
 }
 
-void WM_set_locked_interface(wmWindowManager *wm, bool lock)
+void WM_set_locked_interface_with_flags(wmWindowManager *wm, short lock_flags)
 {
   /* This will prevent events from being handled while interface is locked
    *
@@ -6490,16 +6492,14 @@ void WM_set_locked_interface(wmWindowManager *wm, bool lock)
    * wouldn't be useful anywhere outside of window manager, so let's not
    * pollute global context with such an information for now).
    */
-  wm->runtime->is_interface_locked = lock;
+  wm->runtime->is_interface_locked = (lock_flags != 0);
 
-  /* This will prevent drawing regions which uses non-thread-safe data.
-   * Currently it'll be just a 3D viewport.
-   *
-   * TODO(sergey): Make it different locked states, so different jobs
-   *               could lock different areas of blender and allow
-   *               interaction with others?
-   */
-  BKE_spacedata_draw_locks(lock);
+  BKE_spacedata_draw_locks(static_cast<ARegionDrawLockFlags>(lock_flags));
+}
+
+void WM_set_locked_interface(wmWindowManager *wm, bool lock)
+{
+  WM_set_locked_interface_with_flags(wm, lock ? REGION_DRAW_LOCK_ALL : 0);
 }
 
 /** \} */
@@ -6532,7 +6532,7 @@ wmKeyMapItem *WM_event_match_keymap_item(bContext *C, wmKeyMap *keymap, const wm
   LISTBASE_FOREACH (wmKeyMapItem *, kmi, &keymap->items) {
     if (wm_eventmatch(event, kmi)) {
       wmOperatorType *ot = WM_operatortype_find(kmi->idname, false);
-      if (WM_operator_poll_context(C, ot, WM_OP_INVOKE_DEFAULT)) {
+      if (WM_operator_poll_context(C, ot, blender::wm::OpCallContext::InvokeDefault)) {
         return kmi;
       }
     }

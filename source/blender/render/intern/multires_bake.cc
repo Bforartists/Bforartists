@@ -82,7 +82,7 @@ struct MResolvePixelData {
   const bool *sharp_faces;
 
   float uv_offset[2];
-  float *pvtangent;
+  blender::Span<blender::float4> pvtangent;
   int w, h;
   int tri_index;
 
@@ -162,7 +162,6 @@ static void flush_pixel(const MResolvePixelData *data, const int x, const int y)
   const float st[2] = {(x + 0.5f) / data->w + data->uv_offset[0],
                        (y + 0.5f) / data->h + data->uv_offset[1]};
   const float *st0, *st1, *st2;
-  const float *tang0, *tang1, *tang2;
   float no0[3], no1[3], no2[3];
   float fUV[2], from_tang[3][3], to_tang[3][3];
   float u, v, w, sign;
@@ -182,10 +181,10 @@ static void flush_pixel(const MResolvePixelData *data, const int x, const int y)
   v = fUV[1];
   w = 1 - u - v;
 
-  if (data->pvtangent) {
-    tang0 = data->pvtangent + data->corner_tris[data->tri_index][0] * 4;
-    tang1 = data->pvtangent + data->corner_tris[data->tri_index][1] * 4;
-    tang2 = data->pvtangent + data->corner_tris[data->tri_index][2] * 4;
+  if (!data->pvtangent.is_empty()) {
+    const blender::float4 &tang0 = data->pvtangent[data->corner_tris[data->tri_index][0]];
+    const blender::float4 &tang1 = data->pvtangent[data->corner_tris[data->tri_index][1]];
+    const blender::float4 &tang2 = data->pvtangent[data->corner_tris[data->tri_index][2]];
 
     /* the sign is the same at all face vertices for any non degenerate face.
      * Just in case we clamp the interpolated value though. */
@@ -490,7 +489,7 @@ static void do_multires_bake(MultiresBakeRender *bkr,
       reinterpret_cast<const float2 *>(dm->getLoopDataArray(dm, CD_PROP_FLOAT2)),
       dm->getNumLoops(dm));
 
-  float *pvtangent = nullptr;
+  Array<blender::float4> pvtangent;
 
   ListBase threads;
   int i, tot_thread = bkr->threads > 0 ? bkr->threads : BLI_system_thread_count();
@@ -518,53 +517,42 @@ static void do_multires_bake(MultiresBakeRender *bkr,
   const Span<int> tri_faces = temp_mesh->corner_tri_faces();
 
   if (require_tangent) {
-    if (CustomData_get_layer_index(&dm->loopData, CD_TANGENT) == -1) {
-      const bool *sharp_edges = static_cast<const bool *>(
-          CustomData_get_layer_named(&dm->edgeData, CD_PROP_BOOL, "sharp_edge"));
-      const bool *sharp_faces = static_cast<const bool *>(
-          CustomData_get_layer_named(&dm->polyData, CD_PROP_BOOL, "sharp_face"));
+    const bool *sharp_edges = static_cast<const bool *>(
+        CustomData_get_layer_named(&dm->edgeData, CD_PROP_BOOL, "sharp_edge"));
+    const bool *sharp_faces = static_cast<const bool *>(
+        CustomData_get_layer_named(&dm->polyData, CD_PROP_BOOL, "sharp_face"));
 
-      /* Copy sharp faces and edges, for corner normals domain and tangents
-       * to be computed correctly. */
-      if (sharp_edges != nullptr) {
-        bke::MutableAttributeAccessor attributes = temp_mesh->attributes_for_write();
-        attributes.add<bool>("sharp_edge",
-                             bke::AttrDomain::Edge,
-                             bke::AttributeInitVArray(VArray<bool>::ForSpan(
-                                 Span<bool>(sharp_edges, temp_mesh->edges_num))));
-      }
-      if (sharp_faces != nullptr) {
-        bke::MutableAttributeAccessor attributes = temp_mesh->attributes_for_write();
-        attributes.add<bool>("sharp_face",
-                             bke::AttrDomain::Face,
-                             bke::AttributeInitVArray(VArray<bool>::ForSpan(
-                                 Span<bool>(sharp_faces, temp_mesh->faces_num))));
-      }
-
-      const float3 *orco = static_cast<const float3 *>(dm->getVertDataArray(dm, CD_ORCO));
-
-      const Span<float3> corner_normals = temp_mesh->corner_normals();
-      BKE_mesh_calc_loop_tangent_ex(positions,
-                                    faces,
-                                    Span(dm->getCornerVertArray(dm), faces.total_size()),
-                                    corner_tris,
-                                    tri_faces,
-                                    sharp_faces ? Span(sharp_faces, faces.size()) : Span<bool>(),
-                                    &dm->loopData,
-                                    true,
-                                    nullptr,
-                                    0,
-                                    vert_normals,
-                                    face_normals,
-                                    corner_normals,
-                                    orco ? Span(orco, positions.size()) : Span<float3>(),
-                                    /* result */
-                                    &dm->loopData,
-                                    dm->getNumLoops(dm),
-                                    &dm->tangent_mask);
+    /* Copy sharp faces and edges, for corner normals domain and tangents
+     * to be computed correctly. */
+    if (sharp_edges != nullptr) {
+      bke::MutableAttributeAccessor attributes = temp_mesh->attributes_for_write();
+      attributes.add<bool>("sharp_edge",
+                           bke::AttrDomain::Edge,
+                           bke::AttributeInitVArray(VArray<bool>::from_span(
+                               Span<bool>(sharp_edges, temp_mesh->edges_num))));
+    }
+    if (sharp_faces != nullptr) {
+      bke::MutableAttributeAccessor attributes = temp_mesh->attributes_for_write();
+      attributes.add<bool>("sharp_face",
+                           bke::AttrDomain::Face,
+                           bke::AttributeInitVArray(VArray<bool>::from_span(
+                               Span<bool>(sharp_faces, temp_mesh->faces_num))));
     }
 
-    pvtangent = static_cast<float *>(DM_get_loop_data_layer(dm, CD_TANGENT));
+    const Span<float3> corner_normals = temp_mesh->corner_normals();
+    Array<Array<float4>> tangent_data = bke::mesh::calc_uv_tangents(
+        positions,
+        faces,
+        corner_verts,
+        corner_tris,
+        tri_faces,
+        sharp_faces ? Span(sharp_faces, faces.size()) : Span<bool>(),
+        vert_normals,
+        face_normals,
+        corner_normals,
+        {uv_map});
+
+    pvtangent = std::move(tangent_data[0]);
   }
 
   /* all threads shares the same custom bake data */

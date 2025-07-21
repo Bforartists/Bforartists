@@ -44,6 +44,7 @@
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
 #include "BKE_paint_bvh.hh"
+#include "BKE_paint_types.hh"
 #include "BKE_subdiv_ccg.hh"
 
 #include "DEG_depsgraph.hh"
@@ -158,7 +159,7 @@ bool create_face_sets_mesh(Object &object)
   }
   attributes.add<int>(".sculpt_face_set",
                       bke::AttrDomain::Face,
-                      bke::AttributeInitVArray(VArray<int>::ForSingle(1, mesh.faces_num)));
+                      bke::AttributeInitVArray(VArray<int>::from_single(1, mesh.faces_num)));
   mesh.face_sets_color_default = 1;
   return true;
 }
@@ -169,7 +170,7 @@ bke::SpanAttributeWriter<int> ensure_face_sets_mesh(Mesh &mesh)
   if (!attributes.contains(".sculpt_face_set")) {
     attributes.add<int>(".sculpt_face_set",
                         bke::AttrDomain::Face,
-                        bke::AttributeInitVArray(VArray<int>::ForSingle(1, mesh.faces_num)));
+                        bke::AttributeInitVArray(VArray<int>::from_single(1, mesh.faces_num)));
     mesh.face_sets_color_default = 1;
   }
   return attributes.lookup_or_add_for_write_span<int>(".sculpt_face_set", bke::AttrDomain::Face);
@@ -1065,17 +1066,17 @@ static wmOperatorStatus change_visibility_exec(bContext *C, wmOperator *op)
    * navigation. */
   if (ELEM(mode, VisibilityMode::Toggle, VisibilityMode::ShowActive)) {
     Paint *paint = BKE_paint_get_active_from_context(C);
-    UnifiedPaintSettings *ups = &paint->unified_paint_settings;
+    bke::PaintRuntime *paint_runtime = paint->runtime;
     if (std::holds_alternative<std::monostate>(ss.active_vert())) {
-      ups->last_stroke_valid = false;
+      paint_runtime->last_stroke_valid = false;
     }
     else {
       float location[3];
       copy_v3_v3(location, ss.active_vert_position(depsgraph, object));
       mul_m4_v3(object.object_to_world().ptr(), location);
-      copy_v3_v3(ups->average_stroke_accum, location);
-      ups->average_stroke_counter = 1;
-      ups->last_stroke_valid = true;
+      copy_v3_v3(paint_runtime->average_stroke_accum, location);
+      paint_runtime->average_stroke_counter = 1;
+      paint_runtime->last_stroke_valid = true;
     }
   }
 

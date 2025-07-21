@@ -214,6 +214,7 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
     float ob_m3[3][3];
     copy_m3_m4(ob_m3, ob->object_to_world().ptr());
 
+    int custom_data_offset = -1;
     switch (type) {
       case SIMFACE_MATERIAL: {
         if (ob->totcol == 0) {
@@ -223,7 +224,9 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
         break;
       }
       case SIMFACE_FREESTYLE: {
-        if (!CustomData_has_layer(&bm->pdata, CD_FREESTYLE_FACE)) {
+        custom_data_offset = CustomData_get_offset_named(
+            &bm->pdata, CD_PROP_BOOL, "freestyle_face");
+        if (custom_data_offset == -1) {
           face_data_value |= SIMFACE_DATA_FALSE;
           continue;
         }
@@ -278,10 +281,7 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
             break;
           }
           case SIMFACE_FREESTYLE: {
-            FreestyleFace *fface;
-            fface = static_cast<FreestyleFace *>(
-                CustomData_bmesh_get(&bm->pdata, face->head.data, CD_FREESTYLE_FACE));
-            if ((fface == nullptr) || ((fface->flag & FREESTYLE_FACE_MARK) == 0)) {
+            if (custom_data_offset == -1 || !BM_ELEM_CD_GET_BOOL(face, custom_data_offset)) {
               face_data_value |= SIMFACE_DATA_FALSE;
             }
             else {
@@ -321,7 +321,7 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
     float ob_m3[3][3];
     copy_m3_m4(ob_m3, ob->object_to_world().ptr());
 
-    bool has_custom_data_layer = false;
+    int custom_data_offset = -1;
     switch (type) {
       case SIMFACE_MATERIAL: {
         if (ob->totcol == 0) {
@@ -331,8 +331,9 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
         break;
       }
       case SIMFACE_FREESTYLE: {
-        has_custom_data_layer = CustomData_has_layer(&bm->pdata, CD_FREESTYLE_FACE);
-        if ((face_data_value == SIMFACE_DATA_TRUE) && !has_custom_data_layer) {
+        custom_data_offset = CustomData_get_offset_named(
+            &bm->pdata, CD_PROP_BOOL, "freestyle_face");
+        if ((face_data_value == SIMFACE_DATA_TRUE) && (custom_data_offset == -1)) {
           continue;
         }
         break;
@@ -433,19 +434,15 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
             }
             break;
           case SIMFACE_FREESTYLE: {
-            FreestyleFace *fface;
 
-            if (!has_custom_data_layer) {
+            if (custom_data_offset == -1) {
               BLI_assert(face_data_value == SIMFACE_DATA_FALSE);
               select = true;
               break;
             }
 
-            fface = static_cast<FreestyleFace *>(
-                CustomData_bmesh_get(&bm->pdata, face->head.data, CD_FREESTYLE_FACE));
-            if (((fface != nullptr) && (fface->flag & FREESTYLE_FACE_MARK)) ==
-                ((face_data_value & SIMFACE_DATA_TRUE) != 0))
-            {
+            const bool value = BM_ELEM_CD_GET_BOOL(face, custom_data_offset);
+            if (value == ((face_data_value & SIMFACE_DATA_TRUE) != 0)) {
               select = true;
             }
             break;
@@ -615,7 +612,7 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
 
     switch (type) {
       case SIMEDGE_FREESTYLE: {
-        if (!CustomData_has_layer(&bm->edata, CD_FREESTYLE_EDGE)) {
+        if (!CustomData_has_layer_named(&bm->edata, CD_PROP_BOOL, "freestyle_edge")) {
           edge_data_value |= SIMEDGE_DATA_FALSE;
           continue;
         }
@@ -641,6 +638,11 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
 
     int custom_data_offset;
     switch (type) {
+      case SIMEDGE_FREESTYLE: {
+        custom_data_offset = CustomData_get_offset_named(
+            &bm->edata, CD_PROP_BOOL, "freestyle_edge");
+        break;
+      }
       case SIMEDGE_CREASE:
         custom_data_offset = CustomData_get_offset_named(&bm->edata, CD_PROP_FLOAT, "crease_edge");
         break;
@@ -696,10 +698,7 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
             }
             break;
           case SIMEDGE_FREESTYLE: {
-            FreestyleEdge *fedge;
-            fedge = static_cast<FreestyleEdge *>(
-                CustomData_bmesh_get(&bm->edata, edge->head.data, CD_FREESTYLE_EDGE));
-            if ((fedge == nullptr) || ((fedge->flag & FREESTYLE_EDGE_MARK) == 0)) {
+            if (custom_data_offset == -1 || !BM_ELEM_CD_GET_BOOL(edge, custom_data_offset)) {
               edge_data_value |= SIMEDGE_DATA_FALSE;
             }
             else {
@@ -740,7 +739,8 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
     bool has_custom_data_layer = false;
     switch (type) {
       case SIMEDGE_FREESTYLE: {
-        has_custom_data_layer = CustomData_has_layer(&bm->edata, CD_FREESTYLE_EDGE);
+        has_custom_data_layer = CustomData_has_layer_named(
+            &bm->edata, CD_PROP_BOOL, "freestyle_edge");
         if ((edge_data_value == SIMEDGE_DATA_TRUE) && !has_custom_data_layer) {
           continue;
         }
@@ -780,6 +780,10 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
 
     int custom_data_offset;
     switch (type) {
+      case SIMEDGE_FREESTYLE:
+        custom_data_offset = CustomData_get_offset_named(
+            &bm->edata, CD_PROP_BOOL, "freestyle_edge");
+        break;
       case SIMEDGE_CREASE:
         custom_data_offset = CustomData_get_offset_named(&bm->edata, CD_PROP_FLOAT, "crease_edge");
         break;
@@ -856,19 +860,14 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
             }
             break;
           case SIMEDGE_FREESTYLE: {
-            FreestyleEdge *fedge;
-
             if (!has_custom_data_layer) {
               BLI_assert(edge_data_value == SIMEDGE_DATA_FALSE);
               select = true;
               break;
             }
 
-            fedge = static_cast<FreestyleEdge *>(
-                CustomData_bmesh_get(&bm->edata, edge->head.data, CD_FREESTYLE_EDGE));
-            if (((fedge != nullptr) && (fedge->flag & FREESTYLE_EDGE_MARK)) ==
-                ((edge_data_value & SIMEDGE_DATA_TRUE) != 0))
-            {
+            const bool value = BM_ELEM_CD_GET_BOOL(edge, custom_data_offset);
+            if (value == ((edge_data_value & SIMEDGE_DATA_TRUE) != 0)) {
               select = true;
             }
             break;
