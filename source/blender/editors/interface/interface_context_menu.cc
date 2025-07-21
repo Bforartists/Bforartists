@@ -723,13 +723,13 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         PointerRNA op_ptr = layout->op(
             "UI_OT_copy_driver_to_selected_button",
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Drivers to Selected"),
-            ICON_NONE);
+            ICON_COPYDOWN); /*BFA*/
         RNA_boolean_set(&op_ptr, "all", true);
       }
       else {
         layout->op("ANIM_OT_copy_driver_button",
                    CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Driver"),
-                   ICON_NONE);
+                   ICON_COPYDOWN); /*BFA*/
         if (ANIM_driver_can_paste()) {
           layout->op("ANIM_OT_paste_driver_button",
                      CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Paste Driver"),
@@ -798,7 +798,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         RNA_boolean_set(&op_ptr, "all", false);
         layout->op("ANIM_OT_keyingset_button_remove",
                    CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove from Keying Set"),
-                   ICON_NONE);
+                   ICON_KEY_DEHLT); /*BFA*/
       }
       else {
         PointerRNA op_ptr = layout->op(
@@ -925,7 +925,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
       RNA_boolean_set(&op_ptr, "all", true);
       op_ptr = layout->op("UI_OT_copy_to_selected_button",
                           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Single to Selected"),
-                          ICON_NONE);
+                          ICON_COPYDOWN); /*BFA*/
       RNA_boolean_set(&op_ptr, "all", false);
     }
     else {
