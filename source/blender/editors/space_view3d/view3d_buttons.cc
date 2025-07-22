@@ -781,7 +781,7 @@ static void v3d_editvertex_buts(
     else {
       c = IFACE_("Median:");
     }
-    uiDefBut(block, UI_BTYPE_LABEL, 0, c, 0, yi -= buth, butw, buth, nullptr, 0, 0, "");
+    uiDefBut(block, ButType::Label, 0, c, 0, yi -= buth, butw, buth, nullptr, 0, 0, "");
 
     /* bfa */
 
@@ -807,9 +807,8 @@ static void v3d_editvertex_buts(
     UI_block_layout_set_current(subblock, col);
 
     /* Should be no need to translate these. */
-    /* bfa */
     but = uiDefButF(subblock,
-                    UI_BTYPE_NUM,
+                    ButType::Num,
                     B_TRANSFORM_PANEL_MEDIAN,
                     "", /* bfa - use high level UI when possible */
                     0,
@@ -825,7 +824,7 @@ static void v3d_editvertex_buts(
     UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
     /* bfa */
     but = uiDefButF(subblock,
-                    UI_BTYPE_NUM,
+                    ButType::Num,
                     B_TRANSFORM_PANEL_MEDIAN,
                     "", /* bfa - use high level UI when possible */
                     0,
@@ -841,7 +840,7 @@ static void v3d_editvertex_buts(
     UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
     /* bfa */
     but = uiDefButF(subblock,
-                    UI_BTYPE_NUM,
+                    ButType::Num,
                     B_TRANSFORM_PANEL_MEDIAN,
                     "", /* bfa - use high level UI when possible */
                     0,
@@ -862,7 +861,7 @@ static void v3d_editvertex_buts(
                           tfp->ve_median.curve.b_weight;
       /* bfa */
       but = uiDefButF(subblock,
-                      UI_BTYPE_NUM,
+                      ButType::Num,
                       B_TRANSFORM_PANEL_MEDIAN,
                       "", /* bfa - use high level UI when possible */
                       0,
@@ -884,7 +883,7 @@ static void v3d_editvertex_buts(
     UI_block_layout_set_current(subblock, row);
 
     uiDefButBitS(subblock,
-                 UI_BTYPE_TOGGLE,
+                 ButType::Toggle,
                  V3D_GLOBAL_STATS,
                  B_REDR,
                  IFACE_("Global"),
@@ -897,7 +896,7 @@ static void v3d_editvertex_buts(
                  0,
                  TIP_("Displays global values"));
     uiDefButBitS(subblock,
-                 UI_BTYPE_TOGGLE_N,
+                 ButType::ToggleN,
                  V3D_GLOBAL_STATS,
                  B_REDR,
                  IFACE_("Local"),
@@ -933,7 +932,7 @@ static void v3d_editvertex_buts(
 
         /* bfa */
         but = uiDefButF(block,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* -bfa remove text from slider */
                         0,
@@ -949,7 +948,7 @@ static void v3d_editvertex_buts(
         /* customdata layer added on demand */
         /* bfa */
         but = uiDefButF(block,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* -bfa remove text from slider */
                         0,
@@ -977,7 +976,7 @@ static void v3d_editvertex_buts(
 
         /* bfa */
         but = uiDefButF(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* bfa - use high level UI when possible */
                         0,
@@ -992,7 +991,7 @@ static void v3d_editvertex_buts(
         UI_but_number_precision_set(but, 3);
         /* bfa */
         but = uiDefButF(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* bfa - use high level UI when possible */
                         0,
@@ -1026,7 +1025,7 @@ static void v3d_editvertex_buts(
         /* customdata layer added on demand */
         /* bfa */
         but = uiDefButF(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1042,7 +1041,7 @@ static void v3d_editvertex_buts(
         /* customdata layer added on demand */
         /* bfa */
         but = uiDefButF(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1064,7 +1063,7 @@ static void v3d_editvertex_buts(
       TransformMedian_Curves *ve_median = &tfp->ve_median.curves;
 
       but = uiDefButF(block,
-                      UI_BTYPE_NUM,
+                      ButType::Num,
                       B_TRANSFORM_PANEL_MEDIAN,
                       is_single ? IFACE_("Radius:") : IFACE_("Mean Radius:"),
                       0,
@@ -1080,7 +1079,7 @@ static void v3d_editvertex_buts(
       UI_but_number_step_size_set(but, 1);
       UI_but_number_precision_set(but, 3);
       but = uiDefButF(block,
-                      UI_BTYPE_NUM,
+                      ButType::Num,
                       B_TRANSFORM_PANEL_MEDIAN,
                       is_single ? IFACE_("Tilt:") : IFACE_("Mean Tilt:"),
                       0,
@@ -1114,7 +1113,7 @@ static void v3d_editvertex_buts(
       if (totcurvedata == 1) {
         /* bfa */
         but = uiDefButR(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         0,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1131,7 +1130,7 @@ static void v3d_editvertex_buts(
         UI_but_number_precision_set(but, 3);
         /* bfa */
         but = uiDefButR(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         0,
                         "",
                         0,
@@ -1148,7 +1147,7 @@ static void v3d_editvertex_buts(
         UI_but_number_precision_set(but, 3);
         /* bfa */
         but = uiDefButR(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         0,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1167,7 +1166,7 @@ static void v3d_editvertex_buts(
       else if (totcurvedata > 1) {
         /* bfa */
         but = uiDefButF(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1182,7 +1181,7 @@ static void v3d_editvertex_buts(
         UI_but_number_precision_set(but, 3);
         /* bfa */
         but = uiDefButF(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1197,7 +1196,7 @@ static void v3d_editvertex_buts(
         UI_but_number_precision_set(but, 3);
         /* bfa */
         but = uiDefButF(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1231,7 +1230,7 @@ static void v3d_editvertex_buts(
 
       if (totlattdata == 1) {
         uiDefButR(block,
-                  UI_BTYPE_NUM,
+                  ButType::Num,
                   0,
                   IFACE_(""), /* -bfa remove text from slider */
                   0,
@@ -1250,7 +1249,7 @@ static void v3d_editvertex_buts(
       else if (totlattdata > 1) {
         /* bfa */
         but = uiDefButF(subblock,
-                        UI_BTYPE_NUM,
+                        ButType::Num,
                         B_TRANSFORM_PANEL_MEDIAN,
                         IFACE_(""), /* -bfa remove text from slider */
                         0,
@@ -1593,7 +1592,7 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
     copy_m4_m4(tfp->ob_obmat_orig, ob->object_to_world().ptr());
 
     uiDefBut(block,
-             UI_BTYPE_LABEL,
+             ButType::Label,
              0,
              IFACE_("Dimensions:"),
              0,
@@ -1610,7 +1609,7 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
       uiBut *but;
       const char text[3] = {char('X' + i), ':', '\0'};
       but = uiDefButF(block,
-                      UI_BTYPE_NUM,
+                      ButType::Num,
                       B_TRANSFORM_PANEL_DIMS,
                       text,
                       0,
@@ -1754,9 +1753,9 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 
           ot = WM_operatortype_find("OBJECT_OT_vertex_weight_set_active", true);
           but = uiDefButO_ptr(block,
-                              UI_BTYPE_BUT,
+                              ButType::But,
                               ot,
-                              WM_OP_EXEC_DEFAULT,
+                              blender::wm::OpCallContext::ExecDefault,
                               dg->name,
                               xco,
                               yco,
@@ -1780,7 +1779,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
           float &vertex_weight = tfp->vertex_weights[i];
           vertex_weight = dw->weight;
           but = uiDefButF(block,
-                          UI_BTYPE_NUM,
+                          ButType::Num,
                           B_VGRP_PNL_EDIT_SINGLE + i,
                           "",
                           xco,
@@ -1802,14 +1801,20 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 
           /* The weight group paste function */
           icon = (locked) ? ICON_BLANK1 : ICON_PASTEDOWN;
-          op_ptr = row->op(
-              "OBJECT_OT_vertex_weight_paste", "", icon, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
+          op_ptr = row->op("OBJECT_OT_vertex_weight_paste",
+                           "",
+                           icon,
+                           blender::wm::OpCallContext::InvokeDefault,
+                           UI_ITEM_NONE);
           RNA_int_set(&op_ptr, "weight_group", i);
 
           /* The weight entry delete function */
           icon = (locked) ? ICON_LOCKED : ICON_X;
-          op_ptr = row->op(
-              "OBJECT_OT_vertex_weight_delete", "", icon, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
+          op_ptr = row->op("OBJECT_OT_vertex_weight_delete",
+                           "",
+                           icon,
+                           blender::wm::OpCallContext::InvokeDefault,
+                           UI_ITEM_NONE);
           RNA_int_set(&op_ptr, "weight_group", i);
 
           yco -= UI_UNIT_Y;
@@ -1826,9 +1831,9 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
     ot = WM_operatortype_find("OBJECT_OT_vertex_weight_normalize_active_vertex", true);
     but = uiDefButO_ptr(
         block,
-        UI_BTYPE_BUT,
+        ButType::But,
         ot,
-        WM_OP_EXEC_DEFAULT,
+        blender::wm::OpCallContext::ExecDefault,
         IFACE_("Normalize"),
         0,
         yco,
@@ -1839,9 +1844,9 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
     ot = WM_operatortype_find("OBJECT_OT_vertex_weight_copy", true);
     but = uiDefButO_ptr(
         block,
-        UI_BTYPE_BUT,
+        ButType::But,
         ot,
-        WM_OP_EXEC_DEFAULT,
+        blender::wm::OpCallContext::ExecDefault,
         IFACE_("Copy"),
         UI_UNIT_X * 5,
         yco,

@@ -236,6 +236,7 @@ class DATA_PT_vertex_groups(MeshButtonsPanel, Panel):
             col.use_property_split = True
             col.use_property_decorate = False
             col.prop(context.tool_settings, "vertex_group_weight", text="Weight")
+            col.use_property_split = False # BFA - Align property left
             col.prop(context.tool_settings, "use_auto_normalize", text="Auto Normalize")
 
         draw_attribute_warnings(context, layout, None)

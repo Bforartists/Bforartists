@@ -288,6 +288,8 @@ static void grease_pencil_blend_write(BlendWriter *writer, ID *id, const void *i
   grease_pencil->attribute_storage.dna_attributes = attribute_data.attributes.data();
   grease_pencil->attribute_storage.dna_attributes_num = attribute_data.attributes.size();
 
+  CustomData_reset(&grease_pencil->layers_data_legacy);
+
   /* Write LibData */
   BLO_write_id_struct(writer, GreasePencil, id_address, &grease_pencil->id);
   BKE_id_blend_write(writer, &grease_pencil->id);
@@ -704,7 +706,7 @@ void Drawing::set_texture_matrices(Span<float4x2> matrices, const IndexMask &sel
   SpanAttributeWriter<float2> uv_scales = attributes.lookup_or_add_for_write_span<float2>(
       "uv_scale",
       AttrDomain::Curve,
-      AttributeInitVArray(VArray<float2>::ForSingle(float2(1.0f, 1.0f), curves.curves_num())));
+      AttributeInitVArray(VArray<float2>::from_single(float2(1.0f, 1.0f), curves.curves_num())));
 
   if (!uv_rotations || !uv_translations || !uv_scales) {
     /* FIXME: It might be better to ensure the attributes exist and are on the right domain. */
@@ -3772,7 +3774,9 @@ void GreasePencil::add_layers_for_eval(const int num_new_layers)
 }
 
 blender::bke::greasepencil::Layer &GreasePencil::duplicate_layer(
-    const blender::bke::greasepencil::Layer &duplicate_layer)
+    const blender::bke::greasepencil::Layer &duplicate_layer,
+    const bool duplicate_frames,
+    const bool duplicate_drawings)
 {
   using namespace blender;
   std::string unique_name = unique_layer_name(duplicate_layer.name());
@@ -3789,7 +3793,27 @@ blender::bke::greasepencil::Layer &GreasePencil::duplicate_layer(
     bke::GSpanAttributeWriter attr = attributes.lookup_for_write_span(iter.name);
     GMutableSpan span = attr.span;
     span.type().copy_assign(span[*duplicate_layer_idx], span[numLayers]);
+    attr.finish();
   });
+
+  /* When a layer is duplicated, the frames are shared by default. Clear the frames, to ensure a
+   * valid state. */
+  new_layer->frames_for_write().clear();
+  if (duplicate_frames) {
+    for (auto [frame_number, frame] : duplicate_layer.frames().items()) {
+      const int duration = duplicate_layer.get_frame_duration_at(frame_number);
+      bke::greasepencil::Drawing *dst_drawing = this->insert_frame(
+          *new_layer, frame_number, duration, eBezTriple_KeyframeType(frame.type));
+      if (duplicate_drawings) {
+        BLI_assert(dst_drawing != nullptr);
+        /* TODO: This can fail (return `nullptr`) if the drawing is a drawing reference! */
+        const bke::greasepencil::Drawing &src_drawing = *this->get_drawing_at(duplicate_layer,
+                                                                              frame_number);
+        /* Duplicate the drawing. */
+        *dst_drawing = src_drawing;
+      }
+    }
+  }
 
   this->update_drawing_users_for_layer(*new_layer);
   new_layer->set_name(unique_name);
@@ -3798,10 +3822,13 @@ blender::bke::greasepencil::Layer &GreasePencil::duplicate_layer(
 
 blender::bke::greasepencil::Layer &GreasePencil::duplicate_layer(
     blender::bke::greasepencil::LayerGroup &parent_group,
-    const blender::bke::greasepencil::Layer &duplicate_layer)
+    const blender::bke::greasepencil::Layer &duplicate_layer,
+    const bool duplicate_frames,
+    const bool duplicate_drawings)
 {
   using namespace blender;
-  bke::greasepencil::Layer &new_layer = this->duplicate_layer(duplicate_layer);
+  bke::greasepencil::Layer &new_layer = this->duplicate_layer(
+      duplicate_layer, duplicate_frames, duplicate_drawings);
   move_node_into(new_layer.as_node(), parent_group);
   return new_layer;
 }
@@ -3841,7 +3868,7 @@ static void reorder_attribute_domain(blender::bke::AttributeStorage &data,
     switch (attr.storage_type()) {
       case bke::AttrStorageType::Array: {
         const auto &data = std::get<bke::Attribute::ArrayData>(attr.data());
-        auto new_data = bke::Attribute::ArrayData::ForConstructed(type, new_by_old_map.size());
+        auto new_data = bke::Attribute::ArrayData::from_constructed(type, new_by_old_map.size());
         bke::attribute_math::gather(GSpan(type, data.data, data.size),
                                     new_by_old_map,
                                     GMutableSpan(type, new_data.data, new_data.size));
@@ -3878,7 +3905,7 @@ static void reorder_layer_data(GreasePencil &grease_pencil,
     const bke::greasepencil::Layer *layer = layers[layer_i_new];
     BLI_assert(old_layer_index_by_layer.contains(layer));
     const int layer_i_old = old_layer_index_by_layer.pop(layer);
-    new_by_old_map[layer_i_old] = layer_i_new;
+    new_by_old_map[layer_i_new] = layer_i_old;
   }
   BLI_assert(old_layer_index_by_layer.is_empty());
 
@@ -4182,7 +4209,7 @@ static void shrink_attribute_storage(blender::bke::AttributeStorage &storage,
       case bke::AttrStorageType::Array: {
         const auto &data = std::get<bke::Attribute::ArrayData>(attr.data());
 
-        auto new_data = bke::Attribute::ArrayData::ForUninitialized(type, size - 1);
+        auto new_data = bke::Attribute::ArrayData::from_uninitialized(type, size - 1);
         type.copy_construct_n(data.data, new_data.data, range_before.size());
         type.copy_construct_n(POINTER_OFFSET(data.data, type.size * range_after.start()),
                               POINTER_OFFSET(new_data.data, type.size * index_to_remove),

@@ -892,7 +892,7 @@ static void template_id_workspace_pin_extra_icon(const TemplateID &template_ui, 
   const WorkSpace *workspace = WM_window_get_active_workspace(win);
   UI_but_extra_operator_icon_add(but,
                                  "WORKSPACE_OT_scene_pin_toggle",
-                                 WM_OP_INVOKE_DEFAULT,
+                                 blender::wm::OpCallContext::InvokeDefault,
                                  (workspace->flags & WORKSPACE_USE_PIN_SCENE) ? ICON_PINNED :
                                                                                 ICON_UNPINNED);
 }
@@ -925,7 +925,7 @@ static uiBut *template_id_def_new_but(uiBlock *block,
 {
   ID *idfrom = template_ui.ptr.owner_id;
   uiBut *but;
-  const int but_type = use_tab_but ? UI_BTYPE_TAB : UI_BTYPE_BUT;
+  const ButType but_type = use_tab_but ? ButType::Tab : ButType::But;
 
   /* i18n markup, does nothing! */
   BLT_I18N_MSGID_MULTI_CTXT("New",
@@ -980,7 +980,7 @@ static uiBut *template_id_def_new_but(uiBlock *block,
     but = uiDefIconTextButO(block,
                             but_type,
                             newop,
-                            WM_OP_INVOKE_DEFAULT,
+                            blender::wm::OpCallContext::InvokeDefault,
                             icon,
                             button_text,
                             0,
@@ -1086,7 +1086,7 @@ static void template_ID(const bContext *C,
     // text_idbutton(id, name);
     name[0] = '\0';
     but = uiDefButR(block,
-                    UI_BTYPE_TEXT,
+                    ButType::Text,
                     0,
                     name,
                     0,
@@ -1123,7 +1123,7 @@ static void template_ID(const bContext *C,
         const bool disabled = !BKE_idtype_idcode_is_localizable(GS(id->name));
         if (id->tag & ID_TAG_INDIRECT) {
           but = uiDefIconBut(block,
-                             UI_BTYPE_BUT,
+                             ButType::But,
                              0,
                              ICON_LIBRARY_DATA_INDIRECT,
                              0,
@@ -1138,7 +1138,7 @@ static void template_ID(const bContext *C,
         }
         else {
           but = uiDefIconBut(block,
-                             UI_BTYPE_BUT,
+                             ButType::But,
                              0,
                              ICON_LIBRARY_DATA_DIRECT,
                              0,
@@ -1166,7 +1166,7 @@ static void template_ID(const bContext *C,
       else if (ID_IS_OVERRIDE_LIBRARY(id)) {
         but = uiDefIconBut(
             block,
-            UI_BTYPE_BUT,
+            ButType::But,
             0,
             ICON_LIBRARY_DATA_OVERRIDE,
             0,
@@ -1195,7 +1195,7 @@ static void template_ID(const bContext *C,
 
       but = uiDefBut(
           block,
-          UI_BTYPE_BUT,
+          ButType::But,
           0,
           numstr,
           0,
@@ -1230,9 +1230,9 @@ static void template_ID(const bContext *C,
       if (ID_IS_ASSET(id)) {
         uiDefIconButO(block,
                       /* Using `_N` version allows us to get the 'active' state by default. */
-                      UI_BTYPE_ICON_TOGGLE_N,
+                      ButType::IconToggleN,
                       "ASSET_OT_clear_single",
-                      WM_OP_INVOKE_DEFAULT,
+                      blender::wm::OpCallContext::InvokeDefault,
                       /* 'active' state of a toggle button uses icon + 1, so to get proper asset
                        * icon we need to pass its value - 1 here. */
                       ICON_ASSET_MANAGER - 1,
@@ -1245,7 +1245,7 @@ static void template_ID(const bContext *C,
       else if (!ELEM(GS(id->name), ID_GR, ID_SCE, ID_SCR, ID_OB, ID_WS) && (hide_buttons == false))
       {
         uiDefIconButR(block,
-                      UI_BTYPE_ICON_TOGGLE,
+                      ButType::IconToggle,
                       0,
                       ICON_FAKE_USER_OFF,
                       0,
@@ -1271,9 +1271,9 @@ static void template_ID(const bContext *C,
    * Only for images, sound and fonts */
   if (id && BKE_packedfile_id_check(id)) {
     but = uiDefIconButO(block,
-                        UI_BTYPE_BUT,
+                        ButType::But,
                         "FILE_OT_unpack_item",
-                        WM_OP_INVOKE_REGION_WIN,
+                        blender::wm::OpCallContext::InvokeRegionWin,
                         ICON_PACKAGE,
                         0,
                         0,
@@ -1300,9 +1300,9 @@ static void template_ID(const bContext *C,
 
     if (openop) {
       but = uiDefIconTextButO(block,
-                              UI_BTYPE_BUT,
+                              ButType::But,
                               openop,
-                              WM_OP_INVOKE_DEFAULT,
+                              blender::wm::OpCallContext::InvokeDefault,
                               ICON_FILEBROWSER,
                               (id) ? "" : IFACE_("Open"),
                               0,
@@ -1319,7 +1319,7 @@ static void template_ID(const bContext *C,
     }
     else {
       but = uiDefIconTextBut(block,
-                             UI_BTYPE_BUT,
+                             ButType::But,
                              0,
                              ICON_FILEBROWSER,
                              (id) ? "" : IFACE_("Open"),
@@ -1352,9 +1352,9 @@ static void template_ID(const bContext *C,
 
     if (unlinkop) {
       but = uiDefIconButO(block,
-                          UI_BTYPE_BUT,
+                          ButType::But,
                           unlinkop,
-                          WM_OP_INVOKE_DEFAULT,
+                          blender::wm::OpCallContext::InvokeDefault,
                           ICON_X,
                           0,
                           0,
@@ -1373,7 +1373,7 @@ static void template_ID(const bContext *C,
       if ((RNA_property_flag(template_ui.prop) & PROP_NEVER_UNLINK) == 0) {
         but = uiDefIconBut(
             block,
-            UI_BTYPE_BUT,
+            ButType::But,
             0,
             ICON_X,
             0,
@@ -1418,7 +1418,7 @@ ID *UI_context_active_but_get_tab_ID(bContext *C)
 {
   uiBut *but = UI_context_active_but_get(C);
 
-  if (but && but->type == UI_BTYPE_TAB) {
+  if (but && but->type == ButType::Tab) {
     return static_cast<ID *>(but->custom_data);
   }
   return nullptr;
@@ -1452,7 +1452,7 @@ static void template_ID_tabs(const bContext *C,
     const int but_width = name_width + UI_UNIT_X;
 
     uiButTab *tab = (uiButTab *)uiDefButR_prop(block,
-                                               UI_BTYPE_TAB,
+                                               ButType::Tab,
                                                0,
                                                id->name + 2,
                                                0,

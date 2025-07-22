@@ -488,7 +488,7 @@ static bool ui_but_menu_add_path_operators(uiLayout *layout, PointerRNA *ptr, Pr
     props_ptr = layout->op(ot,
                            CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open File Externally"),
                            ICON_FILE_FOLDER, /*BFA*/
-                           WM_OP_INVOKE_DEFAULT,
+                           blender::wm::OpCallContext::InvokeDefault,
                            UI_ITEM_NONE);
     RNA_string_set(&props_ptr, "filepath", filepath);
   }
@@ -502,7 +502,7 @@ static bool ui_but_menu_add_path_operators(uiLayout *layout, PointerRNA *ptr, Pr
   props_ptr = layout->op(ot,
                          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open Location Externally"),
                          ICON_FILE_FOLDER, /*BFA*/
-                         WM_OP_INVOKE_DEFAULT,
+                         blender::wm::OpCallContext::InvokeDefault,
                          UI_ITEM_NONE);
   RNA_string_set(&props_ptr, "filepath", dir);
 
@@ -523,7 +523,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
   using namespace blender::ed;
   /* ui_but_is_interactive() may let some buttons through that should not get a context menu - it
    * doesn't make sense for them. */
-  if (ELEM(but->type, UI_BTYPE_LABEL, UI_BTYPE_IMAGE)) {
+  if (ELEM(but->type, ButType::Label, ButType::Image)) {
     return false;
   }
 
@@ -535,7 +535,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
     layout = UI_popup_menu_layout(pup);
 
     set_layout_context_from_button(C, layout, but);
-    layout->operator_context_set(WM_OP_INVOKE_DEFAULT);
+    layout->operator_context_set(blender::wm::OpCallContext::InvokeDefault);
   }
 
   const bool is_disabled = but->flag & UI_BUT_DISABLED;
@@ -543,7 +543,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
   if (is_disabled) {
     /* Suppress editing commands. */
   }
-  else if (but->type == UI_BTYPE_TAB) {
+  else if (but->type == ButType::Tab) {
     uiButTab *tab = (uiButTab *)but;
     if (tab->menu) {
       UI_menutype_draw(C, tab->menu, layout);
@@ -670,7 +670,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
             ot,
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "View All in Graph Editor"),
             ICON_VIEW_GRAPH_ALL, /*BFA*/
-            WM_OP_INVOKE_DEFAULT,
+            blender::wm::OpCallContext::InvokeDefault,
             UI_ITEM_NONE);
         RNA_boolean_set(&op_ptr, "all", true);
 
@@ -678,7 +678,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
             ot,
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "View Single in Graph Editor"),
             ICON_VIEW_GRAPH, /*BFA*/
-            WM_OP_INVOKE_DEFAULT,
+            blender::wm::OpCallContext::InvokeDefault,
             UI_ITEM_NONE);
         RNA_boolean_set(&op_ptr, "all", false);
       }
@@ -690,7 +690,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         op_ptr = layout->op(ot,
                             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "View in Graph Editor"),
                             ICON_VIEW_GRAPH, /*BFA*/
-                            WM_OP_INVOKE_DEFAULT,
+                            blender::wm::OpCallContext::InvokeDefault,
                             UI_ITEM_NONE);
         RNA_boolean_set(&op_ptr, "all", false);
       }
@@ -723,13 +723,13 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         PointerRNA op_ptr = layout->op(
             "UI_OT_copy_driver_to_selected_button",
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Drivers to Selected"),
-            ICON_NONE);
+            ICON_COPYDOWN); /*BFA*/
         RNA_boolean_set(&op_ptr, "all", true);
       }
       else {
         layout->op("ANIM_OT_copy_driver_button",
                    CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Driver"),
-                   ICON_NONE);
+                   ICON_COPYDOWN); /*BFA*/
         if (ANIM_driver_can_paste()) {
           layout->op("ANIM_OT_paste_driver_button",
                      CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Paste Driver"),
@@ -798,7 +798,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         RNA_boolean_set(&op_ptr, "all", false);
         layout->op("ANIM_OT_keyingset_button_remove",
                    CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove from Keying Set"),
-                   ICON_NONE);
+                   ICON_KEY_DEHLT); /*BFA*/
       }
       else {
         PointerRNA op_ptr = layout->op(
@@ -822,9 +822,9 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         if (is_array_component) {
 #if 0 /* Disabled for now. */
           ot = WM_operatortype_find("UI_OT_override_type_set_button", false);
-          op_ptr = layout->op(ot, "Overrides Type", ICON_NONE, WM_OP_INVOKE_DEFAULT, 0);
+          op_ptr = layout->op(ot, "Overrides Type", ICON_NONE, blender::wm::OpCallContext::InvokeDefault, 0);
           RNA_boolean_set(&op_ptr, "all", true);
-          op_ptr = layout->op(ot, "Single Override Type", ICON_NONE, WM_OP_INVOKE_DEFAULT, 0);
+          op_ptr = layout->op(ot, "Single Override Type", ICON_NONE, blender::wm::OpCallContext::InvokeDefault, 0);
           RNA_boolean_set(&op_ptr, "all", false);
 #endif
           PointerRNA op_ptr = layout->op(
@@ -843,7 +843,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
           op_ptr = layout->op("UI_OT_override_type_set_button",
                               "Override Type",
                               ICON_NONE,
-                              WM_OP_INVOKE_DEFAULT,
+                              blender::wm::OpCallContext::InvokeDefault,
                               0);
           RNA_boolean_set(&op_ptr, "all", false);
 #endif
@@ -860,14 +860,14 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
           op_ptr = layout->op(ot,
                               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Define Overrides"),
                               ICON_NONE,
-                              WM_OP_INVOKE_DEFAULT,
+                              blender::wm::OpCallContext::InvokeDefault,
                               UI_ITEM_NONE);
           RNA_boolean_set(&op_ptr, "all", true);
           op_ptr = layout->op(
               ot,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Define Single Override"),
               ICON_NONE,
-              WM_OP_INVOKE_DEFAULT,
+              blender::wm::OpCallContext::InvokeDefault,
               UI_ITEM_NONE);
           RNA_boolean_set(&op_ptr, "all", false);
         }
@@ -875,7 +875,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
           op_ptr = layout->op("UI_OT_override_type_set_button",
                               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Define Override"),
                               ICON_NONE,
-                              WM_OP_INVOKE_DEFAULT,
+                              blender::wm::OpCallContext::InvokeDefault,
                               UI_ITEM_NONE);
           RNA_boolean_set(&op_ptr, "all", false);
         }
@@ -925,7 +925,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
       RNA_boolean_set(&op_ptr, "all", true);
       op_ptr = layout->op("UI_OT_copy_to_selected_button",
                           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Single to Selected"),
-                          ICON_NONE);
+                          ICON_COPYDOWN); /*BFA*/
       RNA_boolean_set(&op_ptr, "all", false);
     }
     else {
@@ -979,7 +979,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
         props_ptr = layout->op(ot,
                                CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open File Location"),
                                ICON_FILE_FOLDER, /*BFA*/
-                               WM_OP_INVOKE_DEFAULT,
+                               blender::wm::OpCallContext::InvokeDefault,
                                UI_ITEM_NONE);
         RNA_string_set(&props_ptr, "filepath", dir);
         layout->separator();
@@ -989,12 +989,12 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
 
   {
     const ARegion *region = CTX_wm_region_popup(C) ? CTX_wm_region_popup(C) : CTX_wm_region(C);
-    uiButViewItem *view_item_but = (but->type == UI_BTYPE_VIEW_ITEM) ?
+    uiButViewItem *view_item_but = (but->type == ButType::ViewItem) ?
                                        static_cast<uiButViewItem *>(but) :
                                        static_cast<uiButViewItem *>(
                                            ui_view_item_find_mouse_over(region, event->xy));
     if (view_item_but) {
-      BLI_assert(view_item_but->type == UI_BTYPE_VIEW_ITEM);
+      BLI_assert(view_item_but->type == ButType::ViewItem);
 
       const bContextStore *prev_ctx = CTX_store_get(C);
       /* Sub-layout for context override. */
@@ -1047,7 +1047,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
   if (but->rnapoin.data && but->rnaprop) {
     const PropertyType prop_type = RNA_property_type(but->rnaprop);
     if (((prop_type == PROP_POINTER) ||
-         (prop_type == PROP_STRING && but->type == UI_BTYPE_SEARCH_MENU &&
+         (prop_type == PROP_STRING && but->type == ButType::SearchMenu &&
           ((uiButSearch *)but)->items_update_fn == ui_rna_collection_search_update_fn)) &&
         ui_jump_to_target_button_poll(C))
     {
@@ -1075,7 +1075,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
       if (umi != nullptr) {
         uiBut *but2 = uiDefIconTextBut(
             block,
-            UI_BTYPE_BUT,
+            ButType::But,
             0,
             ICON_MENU_PANEL,
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove from Quick Favorites"),
@@ -1101,7 +1101,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
     if (!item_found) {
       uiBut *but2 = uiDefIconTextBut(
           block,
-          UI_BTYPE_BUT,
+          ButType::But,
           0,
           ICON_MENU_PANEL,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Add to Quick Favorites"),
@@ -1152,7 +1152,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
 
         uiBut *but2 = uiDefIconTextBut(
             block,
-            UI_BTYPE_BUT,
+            ButType::But,
             0,
             ICON_HAND,
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Change Shortcut"),
@@ -1170,7 +1170,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
       }
       else {
         uiBut *but2 = uiDefIconTextBut(block,
-                                       UI_BTYPE_BUT,
+                                       ButType::But,
                                        0,
                                        ICON_HAND,
                                        IFACE_("Non-Keyboard Shortcut"),
@@ -1188,7 +1188,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
 
       uiBut *but2 = uiDefIconTextBut(
           block,
-          UI_BTYPE_BUT,
+          ButType::But,
           0,
           ICON_DELETE, /*BFA*/
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove Shortcut"),
@@ -1206,7 +1206,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
     else if (WM_keymap_guess_opname(C, idname)) {
       uiBut *but2 = uiDefIconTextBut(
           block,
-          UI_BTYPE_BUT,
+          ButType::But,
           0,
           ICON_HAND,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Assign Shortcut"),
@@ -1244,7 +1244,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
             "WM_OT_doc_view",
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Online Python Reference"),
             ICON_URL,
-            WM_OP_EXEC_DEFAULT,/* bfa - turned off the link to the online manual*/
+            blender::wm::OpCallContext::ExecDefault, /* bfa - turned off the link to the online manual*/
             UI_ITEM_NONE);
         RNA_string_set(&ptr_props, "doc_id", manual_id.value().c_str());
       }
@@ -1258,7 +1258,11 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
   /* perhaps we should move this into (G.debug & G_DEBUG) - campbell */
   if (U.flag & USER_DEVELOPER_UI) {
     if (ui_block_is_menu(but->block) == false) {
-      layout->op("UI_OT_editsource", std::nullopt, ICON_TEXT, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE); /*BFA*/
+      layout->op("UI_OT_editsource",
+                 std::nullopt,
+                 ICON_TEXT, /*BFA*/
+                 blender::wm::OpCallContext::InvokeDefault, 
+                 UI_ITEM_NONE);
     }
   }
 
@@ -1302,7 +1306,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
     wmOperatorType *ot = WM_operatortype_find("VIEW2D_OT_reset", true);
     if (ot) {
       layout->separator();
-      layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
+      layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, blender::wm::OpCallContext::InvokeDefault, UI_ITEM_NONE);
       layout->separator();
     }
   }
@@ -1361,7 +1365,7 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
 
   /* BFA - View2D reset option if view2d is initialized */
   if (region->v2d.flag & V2D_IS_INIT) {
-    layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, WM_OP_INVOKE_DEFAULT, UI_ITEM_NONE);
+    layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, blender::wm::OpCallContext::InvokeDefault, UI_ITEM_NONE);
     layout->separator();
     uiBlock *block = layout->block();
     uiBut *but = block->buttons.last().get();

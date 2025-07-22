@@ -31,6 +31,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_image.hh"
+#include "BKE_layer.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 
@@ -249,7 +250,7 @@ static void wm_software_cursor_draw_bitmap(const float system_scale,
   float gl_matrix[4][4];
   eGPUTextureUsage usage = GPU_TEXTURE_USAGE_GENERAL;
   GPUTexture *texture = GPU_texture_create_2d(
-      "softeare_cursor", bitmap->data_size[0], bitmap->data_size[1], 1, GPU_RGBA8, usage, nullptr);
+      "software_cursor", bitmap->data_size[0], bitmap->data_size[1], 1, GPU_RGBA8, usage, nullptr);
   GPU_texture_update(texture, GPU_DATA_UBYTE, bitmap->data);
   GPU_texture_filter_mode(texture, false);
 
@@ -971,8 +972,15 @@ static void wm_draw_area_offscreen(bContext *C, wmWindow *win, ScrArea *area, bo
 
   if (area->flag & AREA_FLAG_ACTIVE_TOOL_UPDATE) {
     if ((1 << area->spacetype) & WM_TOOLSYSTEM_SPACE_MASK) {
-      WM_toolsystem_update_from_context(
-          C, CTX_wm_workspace(C), CTX_data_scene(C), CTX_data_view_layer(C), area);
+      if (area->spacetype == SPACE_SEQ) {
+        Scene *scene = CTX_data_sequencer_scene(C);
+        WM_toolsystem_update_from_context(
+            C, CTX_wm_workspace(C), scene, BKE_view_layer_default_render(scene), area);
+      }
+      else {
+        WM_toolsystem_update_from_context(
+            C, CTX_wm_workspace(C), CTX_data_scene(C), CTX_data_view_layer(C), area);
+      }
     }
     area->flag &= ~AREA_FLAG_ACTIVE_TOOL_UPDATE;
   }

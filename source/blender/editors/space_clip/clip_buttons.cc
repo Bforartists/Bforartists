@@ -129,7 +129,7 @@ void uiTemplateMovieClip(uiLayout *layout,
   if (clip) {
     uiLayout *row = &layout->row(false);
     uiBlock *block = row->block();
-    uiDefBut(block, UI_BTYPE_LABEL, 0, IFACE_("File Path:"), 0, 19, 145, 19, nullptr, 0, 0, "");
+    uiDefBut(block, ButType::Label, 0, IFACE_("File Path:"), 0, 19, 145, 19, nullptr, 0, 0, "");
 
     row = &layout->row(false);
     uiLayout *split = &row->split(0.0f, false);
@@ -182,7 +182,7 @@ void uiTemplateTrack(uiLayout *layout, PointerRNA *ptr, const StringRefNull prop
   uiBlock *block = col->block();
 
   uiDefBut(block,
-           UI_BTYPE_TRACK_PREVIEW,
+           ButType::TrackPreview,
            0,
            "",
            0,
@@ -196,7 +196,7 @@ void uiTemplateTrack(uiLayout *layout, PointerRNA *ptr, const StringRefNull prop
 
   /* Resize grip. */
   uiDefIconButI(block,
-                UI_BTYPE_GRIP,
+                ButType::Grip,
                 0,
                 ICON_GRIP,
                 0,
@@ -431,7 +431,7 @@ void uiTemplateMarker(uiLayout *layout,
     }
 
     uiBut *bt = uiDefIconButBitI(block,
-                                 UI_BTYPE_TOGGLE_N,
+                                 ButType::ToggleN,
                                  MARKER_DISABLED,
                                  0,
                                  ICON_HIDE_OFF,
@@ -455,7 +455,7 @@ void uiTemplateMarker(uiLayout *layout,
       layout->active_set(false);
       uiBlock *block = layout->absolute_block();
       uiDefBut(block,
-               UI_BTYPE_LABEL,
+               ButType::Label,
                0,
                IFACE_("Track is locked"),
                0,
@@ -505,7 +505,7 @@ void uiTemplateMarker(uiLayout *layout,
     }
 
     uiDefButBitI(block,
-                 UI_BTYPE_CHECKBOX_N,
+                 ButType::CheckboxN,
                  MARKER_DISABLED,
                  B_MARKER_FLAG,
                  IFACE_("Enabled"),
@@ -546,7 +546,7 @@ void uiTemplateMarker(uiLayout *layout,
 
 	/*bfa */
     uiBut *bt = uiDefButF(block,
-                          UI_BTYPE_NUM,
+                          ButType::Num,
                           B_MARKER_POS,
                           "",
                           0.5 * UI_UNIT_X,
@@ -561,7 +561,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_POS,
                    "",
                    8.25 * UI_UNIT_X,
@@ -597,7 +597,7 @@ void uiTemplateMarker(uiLayout *layout,
 
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_OFFSET,
                    "",
                    0.5 * UI_UNIT_X,
@@ -612,7 +612,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_OFFSET,
                    "",
                    8.25 * UI_UNIT_X,
@@ -647,7 +647,7 @@ void uiTemplateMarker(uiLayout *layout,
 
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_PAT_DIM,
                    "",
                    0.5 * UI_UNIT_X,
@@ -662,7 +662,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_PAT_DIM,
                    "",
                    0.5 * UI_UNIT_X,
@@ -698,7 +698,7 @@ void uiTemplateMarker(uiLayout *layout,
 
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_SEARCH_POS,
                    "",
                    0.5 * UI_UNIT_X,
@@ -713,7 +713,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_SEARCH_POS,
                    "",
                    8.25 * UI_UNIT_X,
@@ -748,7 +748,7 @@ void uiTemplateMarker(uiLayout *layout,
 
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_SEARCH_DIM,
                    "",
                    0.5 * UI_UNIT_X,
@@ -763,7 +763,7 @@ void uiTemplateMarker(uiLayout *layout,
     UI_but_number_precision_set(bt, digits);
 	/*bfa */
     bt = uiDefButF(block,
-                   UI_BTYPE_NUM,
+                   ButType::Num,
                    B_MARKER_SEARCH_DIM,
                    "",
                    0.5 * UI_UNIT_X,

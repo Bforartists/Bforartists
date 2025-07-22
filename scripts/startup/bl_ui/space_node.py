@@ -329,13 +329,6 @@ class NODE_HT_header(Header):
             if snode_id:
                 layout.prop(snode_id, "use_nodes")
 
-
-        elif snode.tree_type == 'CompositorNodeTree':
-
-            if snode_id:
-                layout.prop(snode_id, "use_nodes")
-
-
         # ----------------- rest of the options
 
 

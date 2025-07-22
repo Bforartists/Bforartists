@@ -875,11 +875,11 @@ static void namebutton_fn(bContext *C, void *tsep, char *oldname)
           BLI_uniquename(
               &gpd->layers, gpl, "GP Layer", '.', offsetof(bGPDlayer, info), sizeof(gpl->info));
 
-          WM_msg_publish_rna_prop(mbus, &gpd->id, gpl, GPencilLayer, info);
+          WM_msg_publish_rna_prop(mbus, &gpd->id, gpl, AnnotationLayer, info);
           DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
           WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, gpd);
           DEG_id_tag_update(tselem->id, ID_RECALC_SYNC_TO_EVAL);
-          undo_str = "Rename Grease Pencil Layer";
+          undo_str = "Rename Annotation Layer";
           break;
         }
         case TSE_GREASE_PENCIL_NODE: {
@@ -1197,7 +1197,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
           ViewLayer *layer = static_cast<ViewLayer *>(te->directdata);
 
           bt = uiDefIconButBitS(block,
-                                UI_BTYPE_ICON_TOGGLE_N,
+                                ButType::IconToggleN,
                                 VIEW_LAYER_RENDER,
                                 0,
                                 ICON_RESTRICT_RENDER_OFF,
@@ -1230,7 +1230,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
           if (base) {
             PointerRNA base_ptr = RNA_pointer_create_discrete(&scene->id, &RNA_ObjectBase, base);
             bt = uiDefIconButR_prop(block,
-                                    UI_BTYPE_ICON_TOGGLE,
+                                    ButType::IconToggle,
                                     0,
                                     ICON_NONE,
                                     int(region->v2d.cur.xmax - restrict_offsets.hide),
@@ -1255,7 +1255,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_SELECT) {
           bt = uiDefIconButR_prop(block,
-                                  UI_BTYPE_ICON_TOGGLE,
+                                  ButType::IconToggle,
                                   0,
                                   ICON_NONE,
                                   int(region->v2d.cur.xmax - restrict_offsets.select),
@@ -1278,7 +1278,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_VIEWPORT) {
           bt = uiDefIconButR_prop(block,
-                                  UI_BTYPE_ICON_TOGGLE,
+                                  ButType::IconToggle,
                                   0,
                                   ICON_NONE,
                                   int(region->v2d.cur.xmax - restrict_offsets.viewport),
@@ -1301,7 +1301,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_RENDER) {
           bt = uiDefIconButR_prop(block,
-                                  UI_BTYPE_ICON_TOGGLE,
+                                  ButType::IconToggle,
                                   0,
                                   ICON_NONE,
                                   int(region->v2d.cur.xmax - restrict_offsets.render),
@@ -1329,7 +1329,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_HIDE) {
           bt = uiDefIconButR_prop(block,
-                                  UI_BTYPE_ICON_TOGGLE,
+                                  ButType::IconToggle,
                                   0,
                                   ICON_NONE,
                                   int(region->v2d.cur.xmax - restrict_offsets.hide),
@@ -1355,7 +1355,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_VIEWPORT) {
           bt = uiDefIconButR_prop(block,
-                                  UI_BTYPE_ICON_TOGGLE,
+                                  ButType::IconToggle,
                                   0,
                                   ICON_NONE,
                                   int(region->v2d.cur.xmax - restrict_offsets.viewport),
@@ -1376,7 +1376,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_RENDER) {
           bt = uiDefIconButR_prop(block,
-                                  UI_BTYPE_ICON_TOGGLE,
+                                  ButType::IconToggle,
                                   0,
                                   ICON_NONE,
                                   int(region->v2d.cur.xmax - restrict_offsets.render),
@@ -1405,7 +1405,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_VIEWPORT) {
           bt = uiDefIconButR_prop(block,
-                                  UI_BTYPE_ICON_TOGGLE,
+                                  ButType::IconToggle,
                                   0,
                                   ICON_NONE,
                                   int(region->v2d.cur.xmax - restrict_offsets.viewport),
@@ -1426,7 +1426,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_SELECT) {
           bt = uiDefIconButBitI(block,
-                                UI_BTYPE_ICON_TOGGLE,
+                                ButType::IconToggle,
                                 BONE_UNSELECTABLE,
                                 0,
                                 ICON_RESTRICT_SELECT_OFF,
@@ -1450,7 +1450,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_VIEWPORT) {
           bt = uiDefIconButBitI(block,
-                                UI_BTYPE_ICON_TOGGLE,
+                                ButType::IconToggle,
                                 BONE_HIDDEN_A,
                                 0,
                                 ICON_RESTRICT_VIEW_OFF,
@@ -1470,7 +1470,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_SELECT) {
           bt = uiDefIconButBitI(block,
-                                UI_BTYPE_ICON_TOGGLE,
+                                ButType::IconToggle,
                                 BONE_UNSELECTABLE,
                                 0,
                                 ICON_RESTRICT_SELECT_OFF,
@@ -1494,7 +1494,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_HIDE) {
           bt = uiDefIconButBitS(block,
-                                UI_BTYPE_ICON_TOGGLE,
+                                ButType::IconToggle,
                                 GP_LAYER_HIDE,
                                 0,
                                 ICON_HIDE_OFF,
@@ -1513,7 +1513,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_SELECT) {
           bt = uiDefIconButBitS(block,
-                                UI_BTYPE_ICON_TOGGLE,
+                                ButType::IconToggle,
                                 GP_LAYER_LOCKED,
                                 0,
                                 ICON_UNLOCKED,
@@ -1545,7 +1545,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_HIDE) {
           bt = uiDefIconButR_prop(block,
-                                  UI_BTYPE_ICON_TOGGLE,
+                                  ButType::IconToggle,
                                   0,
                                   0,
                                   int(region->v2d.cur.xmax - restrict_offsets.hide),
@@ -1580,7 +1580,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
           if (layer_collection != nullptr) {
             if (space_outliner->show_restrict_flags & SO_RESTRICT_ENABLE) {
               bt = uiDefIconButR_prop(block,
-                                      UI_BTYPE_ICON_TOGGLE,
+                                      ButType::IconToggle,
                                       0,
                                       ICON_NONE,
                                       int(region->v2d.cur.xmax) - restrict_offsets.enable,
@@ -1602,7 +1602,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
             if (space_outliner->show_restrict_flags & SO_RESTRICT_HIDE) {
               bt = uiDefIconButR_prop(block,
-                                      UI_BTYPE_ICON_TOGGLE,
+                                      ButType::IconToggle,
                                       0,
                                       ICON_NONE,
                                       int(region->v2d.cur.xmax - restrict_offsets.hide),
@@ -1629,7 +1629,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
             if (space_outliner->show_restrict_flags & SO_RESTRICT_HOLDOUT) {
               bt = uiDefIconButR_prop(block,
-                                      UI_BTYPE_ICON_TOGGLE,
+                                      ButType::IconToggle,
                                       0,
                                       ICON_NONE,
                                       int(region->v2d.cur.xmax - restrict_offsets.holdout),
@@ -1657,7 +1657,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
             if (space_outliner->show_restrict_flags & SO_RESTRICT_INDIRECT_ONLY) {
               bt = uiDefIconButR_prop(
                   block,
-                  UI_BTYPE_ICON_TOGGLE,
+                  ButType::IconToggle,
                   0,
                   ICON_NONE,
                   int(region->v2d.cur.xmax - restrict_offsets.indirect_only),
@@ -1688,7 +1688,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
           if (space_outliner->show_restrict_flags & SO_RESTRICT_VIEWPORT) {
             bt = uiDefIconButR_prop(block,
-                                    UI_BTYPE_ICON_TOGGLE,
+                                    ButType::IconToggle,
                                     0,
                                     ICON_NONE,
                                     int(region->v2d.cur.xmax - restrict_offsets.viewport),
@@ -1723,7 +1723,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
           if (space_outliner->show_restrict_flags & SO_RESTRICT_RENDER) {
             bt = uiDefIconButR_prop(block,
-                                    UI_BTYPE_ICON_TOGGLE,
+                                    ButType::IconToggle,
                                     0,
                                     ICON_NONE,
                                     int(region->v2d.cur.xmax - restrict_offsets.render),
@@ -1756,7 +1756,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
 
           if (space_outliner->show_restrict_flags & SO_RESTRICT_SELECT) {
             bt = uiDefIconButR_prop(block,
-                                    UI_BTYPE_ICON_TOGGLE,
+                                    ButType::IconToggle,
                                     0,
                                     ICON_NONE,
                                     int(region->v2d.cur.xmax - restrict_offsets.select),
@@ -1830,7 +1830,7 @@ static void outliner_draw_userbuts(uiBlock *block,
 
     if (is_object) {
       bt = uiDefBut(block,
-                    UI_BTYPE_BUT,
+                    ButType::But,
                     0,
                     overlay,
                     int(region->v2d.cur.xmax - OL_TOG_USER_BUTS_USERS),
@@ -1861,7 +1861,7 @@ static void outliner_draw_userbuts(uiBlock *block,
       }
 
       bt = uiDefIconButBitS(block,
-                            UI_BTYPE_ICON_TOGGLE,
+                            ButType::IconToggle,
                             ID_FLAG_FAKEUSER,
                             1,
                             ICON_FAKE_USER_OFF,
@@ -1921,7 +1921,7 @@ static void outliner_draw_overrides_rna_buts(uiBlock *block,
 
     if (!override_elem->is_rna_path_valid) {
       uiBut *but = uiDefBut(block,
-                            UI_BTYPE_LABEL,
+                            ButType::Label,
                             0,
                             override_elem->rna_path,
                             x + pad_x,
@@ -1942,7 +1942,7 @@ static void outliner_draw_overrides_rna_buts(uiBlock *block,
       StringRefNull op_label = override_op_elem->get_override_operation_label();
       if (!op_label.is_empty()) {
         uiDefBut(block,
-                 UI_BTYPE_LABEL,
+                 ButType::Label,
                  0,
                  op_label,
                  x + pad_x,
@@ -2032,9 +2032,9 @@ static void outliner_draw_overrides_restrictbuts(Main *bmain,
     const BIFIconID icon = is_system_override ? ICON_LIBRARY_DATA_OVERRIDE_NONEDITABLE :
                                                 ICON_LIBRARY_DATA_OVERRIDE;
     uiBut *but = uiDefIconButO(block,
-                               UI_BTYPE_BUT,
+                               ButType::But,
                                "ED_OT_lib_id_override_editable_toggle",
-                               WM_OP_EXEC_DEFAULT,
+                               wm::OpCallContext::ExecDefault,
                                icon,
                                x,
                                te->ys,
@@ -2179,7 +2179,7 @@ static void outliner_buttons(const bContext *C,
   dx = region->v2d.cur.xmax - (spx + restrict_column_width + 0.2f * UI_UNIT_X);
 
   bt = uiDefBut(block,
-                UI_BTYPE_TEXT,
+                ButType::Text,
                 OL_NAMEBUTTON,
                 "",
                 spx,
@@ -2255,7 +2255,7 @@ static void outliner_draw_mode_column_toggle(uiBlock *block,
   if (ob->mode == OB_MODE_OBJECT && BKE_object_is_in_editmode(ob)) {
     /* Another object has our (shared) data in edit mode, so nothing we can change. */
     uiBut *but = uiDefIconBut(block,
-                              UI_BTYPE_BUT,
+                              ButType::But,
                               0,
                               UI_icon_from_object_mode(ob_active->mode),
                               0,
@@ -2298,7 +2298,7 @@ static void outliner_draw_mode_column_toggle(uiBlock *block,
   }
   UI_block_emboss_set(block, blender::ui::EmbossType::NoneOrStatus);
   uiBut *but = uiDefIconBut(block,
-                            UI_BTYPE_ICON_TOGGLE,
+                            ButType::IconToggle,
                             0,
                             icon,
                             0,
@@ -2386,7 +2386,7 @@ static void outliner_draw_warning_tree_element(uiBlock *block,
 
   UI_block_emboss_set(block, blender::ui::EmbossType::NoneOrStatus);
   uiBut *but = uiDefIconBut(block,
-                            UI_BTYPE_ICON_TOGGLE,
+                            ButType::IconToggle,
                             0,
                             ICON_ERROR,
                             mode_column_offset,
@@ -2996,7 +2996,7 @@ static bool tselem_draw_icon(uiBlock *block,
   else {
     uiBut *but = uiDefIconBut(
         block,
-        UI_BTYPE_LABEL,
+        ButType::Label,
         0,
         data.icon,
         x,
