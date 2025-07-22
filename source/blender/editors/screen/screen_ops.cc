@@ -4654,10 +4654,11 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
   if (sa1 && sa2) {
     eScreenDir dir = area_getorientation(sa1, sa2);
     if (dir != SCREEN_DIR_NONE) {
-      ptr = layout->op("SCREEN_OT_area_join",
-                       ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Up") :
-                                                               IFACE_("Join Right"),
-                       ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP : ICON_JOIN_AREAS,  /*BFA icon*/
+      ptr = layout->op(
+          "SCREEN_OT_area_join",
+          ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Up") : IFACE_("Join Right"),
+          /*BFA - use custom right icon instead reusing of ICON_JOIN_AREAS */
+          ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP : ICON_AREA_JOIN_RIGHT,
                        WM_OP_EXEC_DEFAULT,
                        UI_ITEM_NONE);
       RNA_int_set_array(&ptr, "source_xy", blender::int2{sa2->totrct.xmin, sa2->totrct.ymin});

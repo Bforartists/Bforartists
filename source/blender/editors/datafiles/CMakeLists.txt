@@ -193,6 +193,7 @@ if(WITH_BLENDER)
       area_join_down
       area_join_left
       area_join_up
+      area_join_right # BFA - Custom icon for Join Right are operator
       color_tag
       decorate_library_override
       decorate_linked
