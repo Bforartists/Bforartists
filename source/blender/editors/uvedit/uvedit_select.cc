@@ -5524,6 +5524,31 @@ void UV_OT_select_similar(wmOperatorType *ot)
   RNA_def_float(ot->srna, "threshold", 0.0f, 0.0f, 1.0f, "Threshold", "", 0.0f, 1.0f);
 }
 
+/* bfa start bfa select similiar operator */
+void UV_OT_select_similar_bfa(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Select Similar BFA";
+  ot->description = "Select similar UVs by property types";
+  ot->idname = "UV_OT_select_similar_bfa";
+
+  /* API callbacks. */
+  ot->invoke = WM_menu_invoke;
+  ot->exec = uv_select_similar_exec;
+  ot->poll = ED_operator_uvedit_space_image;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
+
+  /* properties */
+  PropertyRNA *prop = ot->prop = RNA_def_enum(
+      ot->srna, "type", uv_select_similar_type_items, SIMVERT_NORMAL, "Type", "");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_MESH);
+  RNA_def_enum(ot->srna, "compare", prop_similar_compare_types, SIM_CMP_EQ, "Compare", "");
+  RNA_def_float(ot->srna, "threshold", 0.0f, 0.0f, 1.0f, "Threshold", "", 0.0f, 1.0f);
+}
+/* bfa end */
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
