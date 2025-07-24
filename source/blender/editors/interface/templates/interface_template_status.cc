@@ -263,9 +263,9 @@ static bool uiTemplateInputStatus3DView(bContext *C, uiLayout *row)
 static void uiTemplateInputStatusBFAGreasePencil(bContext *C, uiLayout *row)
 {
   const Object *ob = CTX_data_active_object(C);
-  const Paint *paint = BKE_paint_get_active_from_context(C);
-  const Brush &brush = *BKE_paint_brush_for_read(paint);
-  if (ob != nullptr && CTX_data_mode_enum(C) == CTX_MODE_PAINT_GREASE_PENCIL && eBrushGPaintType(brush.gpencil_brush_type) == GPAINT_BRUSH_TYPE_FILL) {
+  const ToolSettings *ts = CTX_data_tool_settings(C);
+  const Brush *brush = BKE_paint_brush(&ts->gp_paint->paint);
+  if (ob != nullptr && CTX_data_mode_enum(C) == CTX_MODE_PAINT_GREASE_PENCIL && brush && brush->gpencil_settings && brush->gpencil_brush_type == GPAINT_BRUSH_TYPE_FILL) {
     row->label(nullptr, ICON_EVENT_ALT);
     row->separator(1.2f);
     row->label(nullptr, ICON_MOUSE_LMB_DRAG);
@@ -385,7 +385,7 @@ void uiTemplateInputStatus(uiLayout *layout, bContext *C)
   }
 
   /* bfa start grease pencil fill */
-  if (area && area->spacetype == SPACE_VIEW3D) {
+  if (area && area->spacetype == SPACE_VIEW3D && region->regiontype == RGN_TYPE_WINDOW) {
     uiTemplateInputStatusBFAGreasePencil(C, row);
   }
   /* bfa end */
