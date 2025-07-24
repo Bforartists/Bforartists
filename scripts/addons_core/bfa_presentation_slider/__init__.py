@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Presentation Slider",
     "author": "Draise (@trinumedia)",
-    "version": (0, 3, 8),
+    "version": (0, 3, 9),
     "blender": (4, 0, 0),
     "location": "View3D > Sidebar > View > Presentation Slider",
     "description": "Add controls to switch to the next Scene then plays the animation once, useful for presentation slides setup as Scenes",
@@ -35,9 +35,27 @@ import bpy
 import time
 import re
 
-from bpy.types import Operator, Panel
+from bpy.types import Operator, Panel, PropertyGroup
 from bpy.utils import register_class, unregister_class
-from bpy.props import IntProperty
+from bpy.props import IntProperty, PointerProperty
+
+
+class SlideSettings(PropertyGroup):
+    frame_range: IntProperty(
+        name="Duration",
+        description="Number of frames for each slide",
+        default=30,
+        min=1,
+        soft_max=300
+    )
+
+def register_properties():
+    bpy.utils.register_class(SlideSettings)
+    bpy.types.Scene.slide_settings = PointerProperty(type=SlideSettings)
+
+def unregister_properties():
+    del bpy.types.Scene.slide_settings
+    bpy.utils.unregister_class(SlideSettings)
 
 
 def stop_playback(scene):
@@ -60,6 +78,7 @@ def stop_playback(scene):
         #current_scene.frame_set(bpy.context.scene.frame_end)
         #bpy.ops.screen.frame_jump(end=True)
 
+
 def get_next_s_name(insert_idx=None):
     pattern = re.compile(r"S(\d{3})")
     used_indices = set()
@@ -77,6 +96,7 @@ def get_next_s_name(insert_idx=None):
         # force S{insert_idx:03d}
         return f"S{str(insert_idx).zfill(3)}"
 
+
 def duplicate_collection_recursive(original_coll, new_name):
     # Duplicate collection and its full hierarchy
     new_coll = bpy.data.collections.new(new_name)
@@ -91,6 +111,7 @@ def duplicate_collection_recursive(original_coll, new_name):
     # 🖌️ Color tag — 3 is "Red"
     new_coll.color_tag = 'COLOR_01'
     return new_coll
+
 
 def clean_orphaned_s_collections():
     pattern = re.compile(r"S(\d{3})")
@@ -114,17 +135,11 @@ class VIEW_OT_SlideSetupOperator(Operator):
     bl_label = "Insert New Slide Scene"
     bl_description = "Sets up a new slide scene/collection/camera structure, or inserts a new slide scene after current select slide scene"
 
-    frame_range: IntProperty(
-        name="Duration",
-        description="Number of frames for each slide",
-        default=30,
-        min=1,
-        soft_max=300
-    )
-
     def execute(self, context):
         base_scene_name = "S000"
         base_collection_name = "SET"
+
+        self.frame_range = context.scene.slide_settings.frame_range
 
         def create_slide_camera(collection, cam_name):
             cam_obj = bpy.data.objects.get(cam_name)
@@ -178,7 +193,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
             new_scene.camera = cam_obj
             # -- Set frame range
             new_scene.frame_start = 1
-            new_scene.frame_end = self.frame_range
+            new_scene.frame_end = context.scene.slide_settings.frame_range
             # self.report({'INFO'}, f"✅ Initial slide '{base_scene_name}' ready.")
             return {'FINISHED'}
 
@@ -237,8 +252,21 @@ class VIEW_OT_SlideSetupOperator(Operator):
         new_scene = src_scene.copy()
         new_scene.name = new_slide_name
         bpy.context.window.scene = new_scene
-        new_scene.frame_start = 1
-        new_scene.frame_end = self.frame_range
+        # Copy the slide settings from the current scene to maintain consistency
+        new_scene.slide_settings.frame_range = context.scene.slide_settings.frame_range
+        
+        # Calculate the new scene's frame range based on the previous scene's end frame
+        frame_range = context.scene.slide_settings.frame_range
+        prev_scene_name = f"S{insert_idx-1:03d}"
+        prev_scene = bpy.data.scenes.get(prev_scene_name)
+        if prev_scene:
+            # Calculate start frame as the next frame after previous scene's range
+            new_scene.frame_start = ((prev_scene.frame_end // frame_range) * frame_range) + 1
+        else:
+            new_scene.frame_start = 1
+        # End frame will be start + duration - 1 to maintain exact duration length
+        new_scene.frame_end = new_scene.frame_start + frame_range - 1
+        
         # Remove S000 from children of new scene
         for coll in list(new_scene.collection.children):
             if coll.name == base_scene_name:
@@ -261,6 +289,7 @@ class VIEW_OT_SlideSetupOperator(Operator):
         new_scene.camera = cam_obj
         # self.report({'INFO'}, f"✅ Inserted slide '{new_slide_name}' with new collection & camera, scenes updated!")
         return {'FINISHED'}
+
 
   
 class VIEW_OT_PlayAnimationOperator(Operator):
@@ -547,7 +576,7 @@ class VIEW_PT_PlayAnimationPanel(bpy.types.Panel):
         # Property field for frames
         row = layout.row()
         row.scale_y = 1.0
-        row.prop(context.scene, "frame_end", text="Duration")
+        row.prop(context.scene.slide_settings, "frame_range", text="Duration")
 
         # Spacer/break
         layout.separator()
@@ -577,13 +606,17 @@ classes = [
 ]
 
 def register():
+    register_properties()
+
     for cls in classes:
         bpy.utils.register_class(cls)
+
 
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
+    unregister_properties()
 
     if stop_playback in bpy.app.handlers.frame_change_post:
         print("Handler is appended.")
@@ -593,6 +626,7 @@ def unregister():
     else:
         print("Handler is not appended.")
         #handler_added = False
+
 
 # Run the register function when the script is executed
 if __name__ == "__main__":
