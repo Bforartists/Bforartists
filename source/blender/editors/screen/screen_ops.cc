@@ -4654,12 +4654,13 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
   if (sa1 && sa2) {
     eScreenDir dir = area_getorientation(sa1, sa2);
     if (dir != SCREEN_DIR_NONE) {
-      ptr = layout->op("SCREEN_OT_area_join",
-                       ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Up") :
-                                                               IFACE_("Join Right"),
-                       ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP : ICON_JOIN_AREAS,  /*BFA icon*/
-                       blender::wm::OpCallContext::ExecDefault,
-                       UI_ITEM_NONE);
+      ptr = layout->op(
+          "SCREEN_OT_area_join",
+          ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Up") : IFACE_("Join Right"),
+          /*BFA - use custom right icon instead reusing of ICON_JOIN_AREAS */
+          ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP : ICON_AREA_JOIN_RIGHT,
+          blender::wm::OpCallContext::ExecDefault,
+          UI_ITEM_NONE);
       RNA_int_set_array(&ptr, "source_xy", blender::int2{sa2->totrct.xmin, sa2->totrct.ymin});
       RNA_int_set_array(&ptr, "target_xy", blender::int2{sa1->totrct.xmin, sa1->totrct.ymin});
 
@@ -5234,7 +5235,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
 
   PointerRNA ptr;
 
-    ptr = layout->op("SCREEN_OT_area_join",
+  ptr = layout->op("SCREEN_OT_area_join",
                    IFACE_("Move/Split Area"),
                    ICON_AREA_DOCK,
                    blender::wm::OpCallContext::InvokeDefault,
@@ -5886,7 +5887,8 @@ void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void * /
   {
     PointerRNA ptr = RNA_pointer_create_discrete(
         (ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first);
-    //layout->prop(&ptr, "show_region_footer", UI_ITEM_NONE, IFACE_("Show Footer"), ICON_NONE); /*bfa - the toggle is a double to the view menu
+    // layout->prop(&ptr, "show_region_footer", UI_ITEM_NONE, IFACE_("Show Footer"), ICON_NONE);
+    // /*bfa - the toggle is a double to the view menu
   }
 
   ED_screens_region_flip_menu_create(C, layout, nullptr);
@@ -5921,7 +5923,11 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
   }
   layout->prop(
       &ptr, "show_extensions_updates", UI_ITEM_NONE, IFACE_("Extensions Updates"), ICON_NONE);
-  layout->prop(&ptr, "show_statusbar_version", UI_ITEM_NONE, IFACE_("Bforartists Version"), ICON_NONE);  /*bfa - bforartists version, not blender version*/
+  layout->prop(&ptr,
+               "show_statusbar_version",
+               UI_ITEM_NONE,
+               IFACE_("Bforartists Version"),
+               ICON_NONE); /*bfa - bforartists version, not blender version*/
 }
 
 static wmOperatorStatus screen_context_menu_invoke(bContext *C,
@@ -5954,7 +5960,8 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
       uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Navigation Bar"), ICON_NONE);
       uiLayout *layout = UI_popup_menu_layout(pup);
 
-      /* We need blender::wm::OpCallContext::InvokeDefault in case menu item is over another area. */
+      /* We need blender::wm::OpCallContext::InvokeDefault in case menu item is over another area.
+       */
       layout->operator_context_set(blender::wm::OpCallContext::InvokeDefault);
       layout->op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_HIDE_ON);
 
@@ -7410,25 +7417,33 @@ void ED_operatortypes_screen()
   WM_operatortype_append(SCREEN_OT_region_toggle);
   WM_operatortype_append(SCREEN_OT_region_flip);
   WM_operatortype_append(SCREEN_OT_header_toggle_menus);
-  WM_operatortype_append(SCREEN_OT_header_toggle_editortypemenu); // bfa - show hide the editorsmenu
-  WM_operatortype_append(SCREEN_OT_header_toolbar_file); // bfa - show hide the file toolbar
-  WM_operatortype_append(SCREEN_OT_header_toolbar_meshedit); // bfa - show hide the meshedit toolbar
-  WM_operatortype_append(SCREEN_OT_header_toolbar_primitives); // bfa - show hide the primitives toolbar
-  WM_operatortype_append(SCREEN_OT_header_toolbar_image); // bfa - show hide the primitives toolbar
-  WM_operatortype_append(SCREEN_OT_header_toolbar_tools); // bfa - show hide the primitives toolbar
-  WM_operatortype_append(SCREEN_OT_header_toolbar_animation); // bfa - show hide the primitives
-  WM_operatortype_append(SCREEN_OT_header_toolbar_edit); // bfa - show hide the primitives toolbar
-  WM_operatortype_append(SCREEN_OT_header_toolbar_misc); // bfa - show hide the primitives toolbar
-  WM_operatortype_append(SCREEN_OT_toolbar_toolbox); // bfa - toolbar types menu in the toolbar editor
-  WM_operatortype_append(SCREEN_OT_header_topbar_file); // bfa - show hide the file topbar
-  WM_operatortype_append(SCREEN_OT_header_topbar_meshedit); // bfa - show hide the meshedit topbar
-  WM_operatortype_append(SCREEN_OT_header_topbar_primitives); // bfa - show hide the primitives topbar
-  WM_operatortype_append(SCREEN_OT_header_topbar_image); // bfa - show hide the primitives topbar
-  WM_operatortype_append(SCREEN_OT_header_topbar_tools); // bfa - show hide the primitives topbar
-  WM_operatortype_append(SCREEN_OT_header_topbar_animation); // bfa - show hide the primitives
-  WM_operatortype_append(SCREEN_OT_header_topbar_edit); // bfa - show hide the primitives topbar
-  WM_operatortype_append(SCREEN_OT_header_topbar_misc); // bfa - show hide the primitives topbar
-  WM_operatortype_append(SCREEN_OT_topbar_toolbox); // bfa - topbar types menu in the topbar editor
+  WM_operatortype_append(
+      SCREEN_OT_header_toggle_editortypemenu);            // bfa - show hide the editorsmenu
+  WM_operatortype_append(SCREEN_OT_header_toolbar_file);  // bfa - show hide the file toolbar
+  WM_operatortype_append(
+      SCREEN_OT_header_toolbar_meshedit);  // bfa - show hide the meshedit toolbar
+  WM_operatortype_append(
+      SCREEN_OT_header_toolbar_primitives);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(
+      SCREEN_OT_header_toolbar_image);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(
+      SCREEN_OT_header_toolbar_tools);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_animation);  // bfa - show hide the primitives
+  WM_operatortype_append(SCREEN_OT_header_toolbar_edit);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(SCREEN_OT_header_toolbar_misc);  // bfa - show hide the primitives toolbar
+  WM_operatortype_append(
+      SCREEN_OT_toolbar_toolbox);  // bfa - toolbar types menu in the toolbar editor
+  WM_operatortype_append(SCREEN_OT_header_topbar_file);      // bfa - show hide the file topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_meshedit);  // bfa - show hide the meshedit topbar
+  WM_operatortype_append(
+      SCREEN_OT_header_topbar_primitives);                // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_image);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_tools);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_animation);  // bfa - show hide the primitives
+  WM_operatortype_append(SCREEN_OT_header_topbar_edit);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(SCREEN_OT_header_topbar_misc);  // bfa - show hide the primitives topbar
+  WM_operatortype_append(
+      SCREEN_OT_topbar_toolbox);  // bfa - topbar types menu in the topbar editor
   WM_operatortype_append(SCREEN_OT_region_context_menu);
   WM_operatortype_append(SCREEN_OT_screen_set);
   WM_operatortype_append(SCREEN_OT_screen_full_area);
@@ -7528,7 +7543,8 @@ static std::string screen_drop_scene_tooltip(bContext * /*C*/,
       case ASSET_IMPORT_LINK:
         return fmt::format(fmt::runtime(TIP_("Link {}")), dragged_scene_name);
       case ASSET_IMPORT_LINK_OVERRIDE:
-        return fmt::format(fmt::runtime(TIP_("Link (Override) {}")), dragged_scene_name); /* BFA - Link override*/
+        return fmt::format(fmt::runtime(TIP_("Link (Override) {}")),
+                           dragged_scene_name); /* BFA - Link override*/
       case ASSET_IMPORT_APPEND:
         return fmt::format(fmt::runtime(TIP_("Append {}")), dragged_scene_name);
       case ASSET_IMPORT_APPEND_REUSE:

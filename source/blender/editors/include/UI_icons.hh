@@ -50,12 +50,13 @@ DEF_ICON(NOT_FOUND)
 
 /* letter def icon*/
 
-DEF_ICON(ANIM)           /*BFA - DEF_ICON*/
-DEF_ICON(AREA_DOCK)      /*BFA - needs updating from Blender*/
-DEF_ICON(AREA_JOIN_DOWN) /*BFA - needs updating from Blender*/
-DEF_ICON(AREA_JOIN_LEFT) /*BFA - needs updating from Blender*/
-DEF_ICON(AREA_JOIN_UP)   /*BFA - needs updating from Blender*/
-DEF_ICON(COLOR_TAG)      /*bfa a plain white icon for colors in vse. DEF_ICON is required!*/
+DEF_ICON(ANIM)      /*BFA - DEF_ICON*/
+DEF_ICON(AREA_DOCK) /*BFA - needs updating from Blender*/
+DEF_ICON_COLOR(AREA_JOIN_DOWN)
+DEF_ICON_COLOR(AREA_JOIN_LEFT)
+DEF_ICON_COLOR(AREA_JOIN_UP)
+DEF_ICON_COLOR(AREA_JOIN_RIGHT) /*BFA - Use custom icon instead of reusing JOIN_AREAS*/
+DEF_ICON(COLOR_TAG)             /*bfa a plain white icon for colors in vse. DEF_ICON is required!*/
 DEF_ICON(DECORATE_LIBRARY_OVERRIDE)
 DEF_ICON(DECORATE_LINKED)
 DEF_ICON(FUND)
