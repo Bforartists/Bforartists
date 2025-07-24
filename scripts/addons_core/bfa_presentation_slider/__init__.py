@@ -141,22 +141,33 @@ class VIEW_OT_SlideSetupOperator(Operator):
 
         self.frame_range = context.scene.slide_settings.frame_range
 
-        def create_slide_camera(collection, cam_name):
+        def create_slide_camera(collection, cam_name, source_camera=None):
             cam_obj = bpy.data.objects.get(cam_name)
             if not cam_obj:
-                cam_data = bpy.data.cameras.new(cam_name)
-                cam_obj = bpy.data.objects.new(cam_name, cam_data)
-                cam_obj.location = (0, 0, 0)
+                # If we have a source camera, copy its data
+                if source_camera:
+                    cam_data = source_camera.data.copy()
+                    cam_data.name = cam_name
+                    cam_obj = source_camera.copy()
+                    cam_obj.name = cam_name
+                    cam_obj.data = cam_data
+                else:
+                    # Fall back to default camera creation
+                    cam_data = bpy.data.cameras.new(cam_name)
+                    cam_obj = bpy.data.objects.new(cam_name, cam_data)
+                    cam_obj.location = (0, 0, 0)
+                    
                 collection.objects.link(cam_obj)
-                # self.report({'INFO'}, f"🎥 Created camera '{cam_name}' in '{collection.name}'")
             elif cam_obj.name not in [o.name for o in collection.objects]:
                 collection.objects.link(cam_obj)
-                # self.report({'INFO'}, f"🎥 Linked existing camera '{cam_name}' to '{collection.name}'")
+            
             return cam_obj
 
         # ======= 1. SETUP S000 ===========
         if base_scene_name not in bpy.data.scenes:
             new_scene = bpy.data.scenes.new(base_scene_name)
+            # Ensure the scene is kept even with 0 users
+            new_scene.use_fake_user = True
             bpy.context.window.scene = new_scene
             new_scene.name = base_scene_name
             # -- Setup SET collection (red tag)
@@ -189,11 +200,22 @@ class VIEW_OT_SlideSetupOperator(Operator):
             if slide_coll.name not in [c.name for c in new_scene.collection.children]:
                 new_scene.collection.children.link(slide_coll)
             # -- Add camera named S000 in S000 collection
-            cam_obj = create_slide_camera(slide_coll, slide_coll_name)
+            # For first scene (S000), create a default camera with horizontal rotation
+            cam_data = bpy.data.cameras.new(slide_coll_name)
+            cam_obj = bpy.data.objects.new(slide_coll_name, cam_data)
+            cam_obj.location = (0, -10, 0)  # Move back on Y axis
+            cam_obj.rotation_euler = (1.5708, 0, 0)  # 90 degrees in radians for horizontal view
+            slide_coll.objects.link(cam_obj)
             new_scene.camera = cam_obj
             # -- Set frame range
             new_scene.frame_start = 1
             new_scene.frame_end = context.scene.slide_settings.frame_range
+            
+            # Reset timeline to start frame
+            new_scene.frame_current = new_scene.frame_start
+            bpy.ops.screen.animation_cancel(restore_frame=True)
+            bpy.ops.screen.frame_jump(end=False)
+            
             # self.report({'INFO'}, f"✅ Initial slide '{base_scene_name}' ready.")
             return {'FINISHED'}
 
@@ -251,6 +273,8 @@ class VIEW_OT_SlideSetupOperator(Operator):
         new_slide_name = get_next_s_name(insert_idx)
         new_scene = src_scene.copy()
         new_scene.name = new_slide_name
+        # Ensure the scene is kept even with 0 users
+        new_scene.use_fake_user = True
         bpy.context.window.scene = new_scene
         # Copy the slide settings from the current scene to maintain consistency
         new_scene.slide_settings.frame_range = context.scene.slide_settings.frame_range
@@ -260,8 +284,8 @@ class VIEW_OT_SlideSetupOperator(Operator):
         prev_scene_name = f"S{insert_idx-1:03d}"
         prev_scene = bpy.data.scenes.get(prev_scene_name)
         if prev_scene:
-            # Calculate start frame as the next frame after previous scene's range
-            new_scene.frame_start = ((prev_scene.frame_end // frame_range) * frame_range) + 1
+            # Calculate start frame directly based on previous scene's end frame
+            new_scene.frame_start = prev_scene.frame_end + 1
         else:
             new_scene.frame_start = 1
         # End frame will be start + duration - 1 to maintain exact duration length
@@ -284,9 +308,26 @@ class VIEW_OT_SlideSetupOperator(Operator):
             if new_slide_coll.name not in [c.name for c in new_scene.collection.children]:
                 new_scene.collection.children.link(new_slide_coll)
                 # self.report({'INFO'}, f"🔁 Linked existing collection '{new_slide_coll.name}'")
-        # Add new camera for this slide (named slide)
-        cam_obj = create_slide_camera(new_slide_coll, new_slide_name)
+        # Get the camera from the previous scene by name
+        prev_scene_name = f"S{insert_idx-1:03d}"
+        prev_scene = bpy.data.scenes.get(prev_scene_name)
+        if prev_scene and prev_scene.camera:
+            # Add new camera for this slide, copying from previous scene's camera
+            cam_obj = create_slide_camera(new_slide_coll, new_slide_name, source_camera=prev_scene.camera)
+        else:
+            # Fallback to copying from S000 if something goes wrong
+            base_scene = bpy.data.scenes.get("S000")
+            if base_scene and base_scene.camera:
+                cam_obj = create_slide_camera(new_slide_coll, new_slide_name, source_camera=base_scene.camera)
+            else:
+                cam_obj = create_slide_camera(new_slide_coll, new_slide_name)
         new_scene.camera = cam_obj
+
+        # Reset timeline to start frame
+        new_scene.frame_current = new_scene.frame_start
+        bpy.ops.screen.animation_cancel(restore_frame=True)
+        bpy.ops.screen.frame_jump(end=False)
+
         # self.report({'INFO'}, f"✅ Inserted slide '{new_slide_name}' with new collection & camera, scenes updated!")
         return {'FINISHED'}
 
