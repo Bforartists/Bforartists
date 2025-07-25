@@ -1366,6 +1366,9 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
   /* BFA - View2D reset option if view2d is initialized */
   if (region->v2d.flag & V2D_IS_INIT) {
     layout->op("VIEW2D_OT_reset", IFACE_("Reset Panel Zoom"), ICON_ZOOM_RESET, blender::wm::OpCallContext::InvokeDefault, UI_ITEM_NONE);
+    const short region_alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
+    const char *but_flip_str = region_alignment == RGN_ALIGN_LEFT ? IFACE_("Flip region to Right") : IFACE_("Flip region to Left");
+    layout->op("SCREEN_OT_region_flip", but_flip_str, ICON_FLIP, blender::wm::OpCallContext::InvokeDefault, UI_ITEM_NONE); /*BFA - icon added*/
     layout->separator();
     uiBlock *block = layout->block();
     uiBut *but = block->buttons.last().get();
