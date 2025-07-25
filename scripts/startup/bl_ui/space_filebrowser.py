@@ -715,10 +715,12 @@ class ASSETBROWSER_PT_display(asset_utils.AssetBrowserPanel, Panel):
             layout.prop(
                 params, "display_size_discrete", text="Text", expand=True
             )  # BFA - added quick thumbnail sizes.
-            layout.prop(params, "display_size", text="Size")
-        else:
+            layout.prop(params, "display_size", text="Preview Size") # BFA - changed to preview size, be consistent with horizontal list.
+        elif params.display_type == "LIST_HORIZONTAL":
+            layout.prop(
+                params, "list_display_size_discrete", text="Text", expand=True
+            )  # BFA - added quick horizontal list thumbnail sizes.
             layout.column().prop(params, "list_display_size", text="Preview Size")
-        if params.display_type == "LIST_HORIZONTAL":
             layout.column().prop(params, "list_column_size", text="Column Size")
 
         layout.label(text="Sort By")  # BFA - added label
