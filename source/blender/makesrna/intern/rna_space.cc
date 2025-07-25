@@ -7580,12 +7580,12 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
 
   /* BFA - Adjusted sizes to be more useful in Thumbnail View and match from menus dropdown */
   static const EnumPropertyItem display_size_items[] = {
-      {48, "TINY", 0, "Tiny", ""},
-      {96, "SMALL", 0, "Small", ""},
-      {128, "NORMAL", 0, "Medium", ""},
-      {256, "LARGE", 0, "Large", ""},
+      {32, "TINY", 0, "Tiny", ""},       // Matches toolshelf
+      {64, "SMALL", 0, "Small", ""},     // Asset shelf default
+      {128, "NORMAL", 0, "Medium", ""},  // Asset browser default
+      {256, "LARGE", 0, "Large", ""},    // Maximum size
       {0, nullptr, 0, nullptr, nullptr},
-  };
+};
 
   srna = RNA_def_struct(brna, "FileSelectParams", nullptr);
   RNA_def_struct_path_func(srna, "rna_FileSelectParams_path");

@@ -127,8 +127,8 @@ static void fileselect_ensure_updated_asset_params(SpaceFile *sfile)
   base_params->recursion_level = FILE_SELECT_MAX_RECURSIONS;
   /* 'SMALL' size by default. More reasonable since this is typically used as regular editor,
    * space is more of an issue here. */
-  base_params->thumbnail_size = 96;
-  base_params->list_thumbnail_size = 32;
+  base_params->thumbnail_size = 128; /* BFA - Matches MEDIUM in display_size_items */
+  base_params->list_thumbnail_size = 64;  /* Matches SMALL in display_size_items */
   base_params->list_column_size = 220;
 
   fileselect_initialize_params_common(sfile, base_params);
