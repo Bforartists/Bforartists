@@ -12,10 +12,10 @@ from bpy.props import EnumProperty # BFA
 
 # BFA - Preset sizes for asset shelf thumbnails
 thumbnail_sizes = {
-    "TINY" : 48,
-    "SMALL" : 96,
-    "MEDIUM" : 128,
-    "LARGE" : 256,
+    "TINY" : 32,      # Matches toolshelf
+    "SMALL" : 64,     # Asset shelf default
+    "MEDIUM" : 128,   # Asset browser default
+    "LARGE" : 256,    # Maximum size
 }
 
 # BFA - Preset sizes and their corresponding UI labels
@@ -26,11 +26,11 @@ class ASSETSHELF_OT_change_thumbnail_size(Operator):
     bl_label = "Change Thumbnail Size"
     bl_idname = "asset_shelf.change_thumbnail_size"
     bl_description = "Change the size of thumbnails in discrete steps"
-   
+
     size : EnumProperty(
         name="Thumbnail Size",
         description="Change the size of thumbnails in discrete steps",
-        default="TINY",
+        default="SMALL", # BFA - default to small
         items=thumbnail_size_labels
     )
 
