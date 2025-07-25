@@ -496,7 +496,7 @@ const EnumPropertyItem rna_enum_clip_editor_mode_items[] = {
 /* Actually populated dynamically through a function,
  * but helps for context-less access (e.g. doc, i18n...). */
 const EnumPropertyItem buttons_context_items[] = {
-    {BCONTEXT_TOOL, "TOOL", ICON_TOOL_SETTINGS, "Tool", "Active Tool and Workspace settings"}, 
+    {BCONTEXT_TOOL, "TOOL", ICON_TOOL_SETTINGS, "Tool", "Active Tool and Workspace settings"},
     {BCONTEXT_SCENE, "SCENE", ICON_SCENE_DATA, "Scene", "Scene Properties"},
     {BCONTEXT_RENDER, "RENDER", ICON_SCENE, "Render", "Render Properties"},
     {BCONTEXT_OUTPUT, "OUTPUT", ICON_OUTPUT, "Output", "Output Properties"},
@@ -7768,7 +7768,6 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, nullptr, "thumbnail_size");
   RNA_def_property_ui_text(prop, "Display Size", "Change the size of thumbnails");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_LIST, nullptr);
-  RNA_def_property_int_default(prop, 96);
   RNA_def_property_range(prop, 16, 256);
   RNA_def_property_ui_range(prop, 16, 256, 1, 0);
 
@@ -7777,6 +7776,13 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, display_size_items);
   RNA_def_property_ui_text(
       prop, "Display Size", "Change the size of thumbnails in discrete steps");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_LIST, nullptr);
+
+  prop = RNA_def_property(srna, "list_display_size_discrete", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "list_thumbnail_size");
+  RNA_def_property_enum_items(prop, display_size_items);
+  RNA_def_property_ui_text(
+      prop, "List Display Size", "Change the size of list thumbnails in discrete steps");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_LIST, nullptr);
 
   prop = RNA_def_property(srna, "list_display_size", PROP_INT, PROP_NONE);
