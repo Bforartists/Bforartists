@@ -489,7 +489,7 @@ void AbstractTreeViewItem::add_indent(uiLayout &row) const
   }
 
   /* Restore. */
-  UI_block_layout_set_current(block, &row);
+  block_layout_set_current(block, &row);
 }
 
 void AbstractTreeViewItem::collapse_chevron_click_fn(bContext *C,
@@ -531,16 +531,16 @@ void AbstractTreeViewItem::add_collapse_chevron(uiBlock &block) const
 void AbstractTreeViewItem::add_rename_button(uiLayout &row)
 {
   uiBlock *block = row.block();
-  blender::ui::EmbossType previous_emboss = UI_block_emboss_get(block);
+  EmbossType previous_emboss = UI_block_emboss_get(block);
 
   row.row(false);
   /* Enable emboss for the text button. */
-  UI_block_emboss_set(block, blender::ui::EmbossType::Emboss);
+  UI_block_emboss_set(block, EmbossType::Emboss);
 
   AbstractViewItem::add_rename_button(*block);
 
   UI_block_emboss_set(block, previous_emboss);
-  UI_block_layout_set_current(block, &row);
+  block_layout_set_current(block, &row);
 }
 
 bool AbstractTreeViewItem::has_active_child() const
@@ -857,7 +857,7 @@ void TreeViewLayoutBuilder::build_from_tree(AbstractTreeView &tree_view)
       but_scroll->visual_height = *visible_row_count;
     }
 
-    UI_block_layout_set_current(block, col);
+    block_layout_set_current(block, col);
     uiDefIconButI(block,
                   ButType::Grip,
                   0,
@@ -872,7 +872,7 @@ void TreeViewLayoutBuilder::build_from_tree(AbstractTreeView &tree_view)
                   "");
   }
 
-  UI_block_layout_set_current(block, &parent_layout);
+  block_layout_set_current(block, &parent_layout);
 }
 
 void TreeViewLayoutBuilder::build_row(AbstractTreeViewItem &item) const
@@ -886,7 +886,7 @@ void TreeViewLayoutBuilder::build_row(AbstractTreeViewItem &item) const
     return;
   }
 
-  blender::ui::EmbossType previous_emboss = UI_block_emboss_get(&block_);
+  EmbossType previous_emboss = UI_block_emboss_get(&block_);
 
   uiLayout *overlap = &prev_layout.overlap();
 
@@ -896,12 +896,12 @@ void TreeViewLayoutBuilder::build_row(AbstractTreeViewItem &item) const
 
   uiLayout *row = &overlap->row(false);
   /* Enable emboss for mouse hover highlight. */
-  row->emboss_set(blender::ui::EmbossType::Emboss);
+  row->emboss_set(EmbossType::Emboss);
   /* Every item gets one! Other buttons can be overlapped on top. */
   item.add_treerow_button(block_);
 
   /* After adding tree-row button (would disable hover highlighting). */
-  UI_block_emboss_set(&block_, blender::ui::EmbossType::NoneOrStatus);
+  UI_block_emboss_set(&block_, EmbossType::NoneOrStatus);
 
   /* Add little margin to align actual contents vertically. */
   uiLayout *content_col = &overlap->column(true);
@@ -928,7 +928,7 @@ void TreeViewLayoutBuilder::build_row(AbstractTreeViewItem &item) const
   uiLayoutListItemAddPadding(row);
 
   UI_block_emboss_set(&block_, previous_emboss);
-  UI_block_layout_set_current(&block_, &prev_layout);
+  block_layout_set_current(&block_, &prev_layout);
 }
 
 uiBlock &TreeViewLayoutBuilder::block() const
@@ -986,7 +986,7 @@ void TreeViewBuilder::build_tree_view(const bContext &C,
   ensure_min_rows_items(tree_view);
 
   /* Ensure the given layout is actually active. */
-  UI_block_layout_set_current(&block, &layout);
+  block_layout_set_current(&block, &layout);
 
   TreeViewLayoutBuilder builder(layout);
   builder.add_box_ = add_box;

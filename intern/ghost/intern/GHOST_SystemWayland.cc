@@ -2725,6 +2725,8 @@ static void cursor_buffer_set_surface_impl(const wl_cursor_image *wl_image,
   const int32_t image_size_y = int32_t(wl_image->height);
   GHOST_ASSERT((image_size_x % scale) == 0 && (image_size_y % scale) == 0,
                "The size must be a multiple of the scale!");
+  (void)image_size_x;
+  (void)image_size_y;
 
   wl_surface_set_buffer_scale(wl_surface, scale);
   wl_surface_attach(wl_surface, buffer, 0, 0);
@@ -5759,7 +5761,8 @@ static void text_input_handle_enter(void *data,
                                     zwp_text_input_v3 * /*zwp_text_input_v3*/,
                                     wl_surface *surface)
 {
-  if (!ghost_wl_surface_own(surface)) {
+  /* Can be null when closing a window, see: #141777. */
+  if (!ghost_wl_surface_own_with_null_check(surface)) {
     return;
   }
   CLOG_DEBUG(LOG, "enter");
@@ -8840,7 +8843,7 @@ GHOST_TSuccess GHOST_SystemWayland::cursor_bitmap_get(GHOST_CursorBitmapRef *bit
   bitmap->hot_spot[0] = cursor->wl.image.hotspot_x;
   bitmap->hot_spot[1] = cursor->wl.image.hotspot_y;
 
-  bitmap->data = static_cast<uint8_t *>(cursor->custom_data);
+  bitmap->data = static_cast<const uint8_t *>(cursor->custom_data);
 
   return GHOST_kSuccess;
 }

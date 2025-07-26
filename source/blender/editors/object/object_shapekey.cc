@@ -126,6 +126,12 @@ bool shape_key_report_if_any_locked(Object *ob, ReportList *reports)
   return false;
 }
 
+bool shape_key_is_selected(const Object &object, const KeyBlock &kb, const int keyblock_index)
+{
+  /* The active shape key is always considered selected. */
+  return (kb.flag & KEYBLOCK_SEL) || keyblock_index == object.shapenr - 1;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -150,23 +156,6 @@ static void object_shape_key_add(bContext *C, Object *ob, const bool from_mix)
 /* -------------------------------------------------------------------- */
 /** \name Remove Shape Key Function
  * \{ */
-
-static bool object_shapekey_remove(Main *bmain, Object *ob)
-{
-  KeyBlock *kb;
-  Key *key = BKE_key_from_object(ob);
-
-  if (key == nullptr) {
-    return false;
-  }
-
-  kb = static_cast<KeyBlock *>(BLI_findlink(&key->block, ob->shapenr - 1));
-  if (kb) {
-    return BKE_object_shapekey_remove(bmain, ob, kb);
-  }
-
-  return false;
-}
 
 static bool object_shape_key_mirror(
     bContext *C, Object *ob, int *r_totmirr, int *r_totfail, bool use_topology)
@@ -429,11 +418,50 @@ static wmOperatorStatus shape_key_remove_exec(bContext *C, wmOperator *op)
     changed = BKE_object_shapekey_free(bmain, ob);
   }
   else {
-    if (shape_key_report_if_active_locked(ob, op->reports)) {
-      return OPERATOR_CANCELLED;
+    int num_selected_but_locked = 0;
+    /* This could be moved into a function of its own at some point. Right now it's only used here,
+     * though, since its inner structure is taylored for allowing shapekey deletion. */
+    Key &key = *BKE_key_from_object(ob);
+    LISTBASE_FOREACH_MUTABLE (KeyBlock *, kb, &key.block) {
+      /* Always try to find the keyblock again, as the previous one may have been deleted. For
+       * the same reason, ob->shapenr has to be re-evaluated on every loop iteration. */
+      const int cur_index = BLI_findindex(&key.block, kb);
+      if (!shape_key_is_selected(*ob, *kb, cur_index)) {
+        continue;
+      }
+      if (kb->flag & KEYBLOCK_LOCKED_SHAPE) {
+        num_selected_but_locked++;
+        continue;
+      }
+
+      changed |= BKE_object_shapekey_remove(bmain, ob, kb);
+
+      /* When `BKE_object_shapekey_remove()` deletes the active shapekey, the active shapekeyindex
+       * is updated as well. It usually decrements, which means that even when the same index is
+       * re-visited, we don't see the active one any more. However, when the basis key (index=0) is
+       * deleted AND there are keys remaning, the active index remains set to 0, and so every
+       * iteration sees "the active shapekey", effectively deleting all of them. */
+      if (cur_index == 0) {
+        ob->shapenr = 0;
+      }
     }
 
-    changed = object_shapekey_remove(bmain, ob);
+    if (num_selected_but_locked) {
+      BKE_reportf(op->reports,
+                  changed ? RPT_WARNING : RPT_ERROR,
+                  "Could not delete %d locked shape key(s)",
+                  num_selected_but_locked);
+    }
+  }
+
+  /* Ensure that there is still a shapekey active, if there are any. See the comment above. Be
+   * extra careful here, because the deletion of the last shapekey can delete the entire Key ID,
+   * making our `key` reference (from the code above) invalid. */
+  if (ob->shapenr == 0) {
+    Key *key = BKE_key_from_object(ob);
+    if (key && key->totkey > 0) {
+      ob->shapenr = 1;
+    }
   }
 
   if (changed) {

@@ -394,7 +394,7 @@ class FILEBROWSER_PT_bookmarks_favorites(FileBrowserPanel, Panel):
                 space,
                 "bookmarks_active",
                 item_dyntip_propname="path",
-                rows=(2 if num_rows < 2 else 4),
+                rows=(3 if num_rows < 2 else 5),
                 maxrows=10,
             )
 
