@@ -22,6 +22,7 @@
 # Use at own risk. 
 # -----------------------------------------------------------------------------
 
+
 import bpy
 import os
 
@@ -38,6 +39,17 @@ from bpy.types import (
 
 from pathlib import Path
 from os import path as p
+
+####### SCRIPT TO PACK (run from Powershell) #######
+# cd "[PATH TO ADDON CONTENTS]"
+# blender --command extension build
+#
+# This will pack the addon contents into a zip file like this for extensions
+#
+# my_extension-0.0.1.zip
+# ├─ __init__.py
+# ├─ blender_manifest.toml
+# └─ (..
 
 bl_info = {
     "name": "Default Asset Library",
