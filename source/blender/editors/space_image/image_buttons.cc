@@ -17,6 +17,7 @@
 #include "BLI_listbase.h"
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
+#include "BLI_string_utf8.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.hh"
@@ -85,10 +86,10 @@ static void ui_imageuser_slot_menu(bContext *C, uiLayout *layout, void *image_p)
   LISTBASE_FOREACH_INDEX (RenderSlot *, slot, &image->renderslots, slot_id) {
     char str[64];
     if (slot->name[0] != '\0') {
-      STRNCPY(str, slot->name);
+      STRNCPY_UTF8(str, slot->name);
     }
     else {
-      SNPRINTF(str, IFACE_("Slot %d"), slot_id + 1);
+      SNPRINTF_UTF8(str, IFACE_("Slot %d"), slot_id + 1);
     }
     /* Default to "blank" for nicer alignment. */
     int icon = ICON_BLANK1;
@@ -187,7 +188,7 @@ static void ui_imageuser_layer_menu(bContext * /*C*/, uiLayout *layout, void *rn
     return;
   }
 
-  UI_block_layout_set_current(block, layout);
+  blender::ui::block_layout_set_current(block, layout);
   layout->column(false);
 
   const char *fake_name = ui_imageuser_layer_fake_name(rr);
@@ -262,7 +263,7 @@ static void ui_imageuser_pass_menu(bContext * /*C*/, uiLayout *layout, void *rnd
 
   rl = static_cast<RenderLayer *>(BLI_findlink(&rr->layers, rpass_index));
 
-  UI_block_layout_set_current(block, layout);
+  blender::ui::block_layout_set_current(block, layout);
   layout->column(false);
 
   nr = (rl == nullptr) ? 1 : 0;
@@ -333,7 +334,7 @@ static void ui_imageuser_view_menu_rr(bContext * /*C*/, uiLayout *layout, void *
     return;
   }
 
-  UI_block_layout_set_current(block, layout);
+  blender::ui::block_layout_set_current(block, layout);
   layout->column(false);
 
   uiDefBut(block,
@@ -381,7 +382,7 @@ static void ui_imageuser_view_menu_multiview(bContext * /*C*/, uiLayout *layout,
   int nr;
   ImageView *iv;
 
-  UI_block_layout_set_current(block, layout);
+  blender::ui::block_layout_set_current(block, layout);
   layout->column(false);
 
   uiDefBut(block,
@@ -595,13 +596,13 @@ static void uiblock_layer_pass_buttons(uiLayout *layout,
 
   /* menu buts */
   if (render_slot) {
-    char str[64];
     RenderSlot *slot = BKE_image_get_renderslot(image, *render_slot);
+    char str[sizeof(slot->name)];
     if (slot && slot->name[0] != '\0') {
-      STRNCPY(str, slot->name);
+      STRNCPY_UTF8(str, slot->name);
     }
     else {
-      SNPRINTF(str, IFACE_("Slot %d"), *render_slot + 1);
+      SNPRINTF_UTF8(str, IFACE_("Slot %d"), *render_slot + 1);
     }
 
     rnd_pt = ui_imageuser_data_copy(&rnd_pt_local);
@@ -1001,7 +1002,13 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
   col->use_property_split_set(true);
   col->use_property_decorate_set(false);
 
-  col->prop(imfptr, "file_format", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col->prop(imfptr, "media_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
+  /* Multi layer images and video media types only have a single supported format, so we needn't
+   * draw the format format enum. */
+  if (imf->media_type == MEDIA_TYPE_IMAGE) {
+    col->prop(imfptr, "file_format", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  }
 
   /* Multi-layer always saves raw unmodified channels. */
   if (imf->imtype != R_IMF_IMTYPE_MULTILAYER) {
@@ -1247,7 +1254,7 @@ void uiTemplateImageInfo(uiLayout *layout, bContext *C, Image *ima, ImageUser *i
       }
     }
 
-    eGPUTextureFormat texture_format = IMB_gpu_get_texture_format(
+    blender::gpu::TextureFormat texture_format = IMB_gpu_get_texture_format(
         ibuf, ima->flag & IMA_HIGH_BITDEPTH, ibuf->planes >= 8);
     const char *texture_format_description = GPU_texture_format_name(texture_format);
     ofs += BLI_snprintf_rlen(str + ofs, len - ofs, RPT_(", %s"), texture_format_description);

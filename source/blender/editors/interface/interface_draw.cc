@@ -370,7 +370,7 @@ void ui_draw_but_IMAGE(ARegion * /*region*/,
                         float(rect->ymin),
                         ibuf->x,
                         ibuf->y,
-                        GPU_RGBA8,
+                        blender::gpu::TextureFormat::UNORM_8_8_8_8,
                         false,
                         ibuf->byte_buffer.data,
                         1.0f,
@@ -1225,7 +1225,9 @@ void ui_draw_but_VECTORSCOPE(ARegion *region,
     }
     else if (scopes->vecscope_mode == SCOPES_VECSCOPE_LUMA) {
       GPU_blend(GPU_BLEND_ADDITIVE);
+      immUnbindProgram();
       waveform_draw_one(scopes->vecscope, scopes->waveform_tot, col);
+      immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     }
 
     GPU_matrix_pop();
@@ -2285,7 +2287,7 @@ void ui_draw_but_TRACKPREVIEW(ARegion *region,
                             rect.ymin + 1,
                             drawibuf->x,
                             drawibuf->y,
-                            GPU_RGBA8,
+                            blender::gpu::TextureFormat::UNORM_8_8_8_8,
                             true,
                             drawibuf->byte_buffer.data,
                             1.0f,

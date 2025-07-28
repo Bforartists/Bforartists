@@ -11,6 +11,7 @@
 #include <fmt/format.h>
 
 #include "DNA_ID.h"
+#include "DNA_brush_types.h"
 #include "DNA_curves_types.h"
 #include "DNA_grease_pencil_types.h"
 #include "DNA_mesh_types.h"
@@ -34,6 +35,7 @@
 #include "BKE_colortools.hh"
 #include "BKE_curves.hh"
 #include "BKE_idprop.hh"
+#include "BKE_image_format.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh_legacy_convert.hh"
@@ -41,6 +43,7 @@
 #include "BKE_node_legacy_types.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_pointcache.h"
+#include "BKE_report.hh"
 
 #include "BLT_translation.hh"
 
@@ -1129,6 +1132,109 @@ static void do_version_remove_lzo_and_lzma_compression(FileData *fd, Object *obj
   BLI_freelistN(&pidlist);
 }
 
+static void do_version_convert_gp_jitter_values(Brush *brush)
+{
+  /* Because this change is backported into the 4.5 branch, we need to avoid performing versioning
+   * in case the user updated their custom brush assets between using 4.5 and 5.0 to avoid
+   * overwriting their changes.
+   *
+   * See #142104
+   */
+  if ((brush->flag2 & BRUSH_JITTER_COLOR) != 0 || !is_zero_v3(brush->hsv_jitter)) {
+    return;
+  }
+
+  BrushGpencilSettings *settings = brush->gpencil_settings;
+  float old_hsv_jitter[3] = {
+      settings->random_hue, settings->random_saturation, settings->random_value};
+  if (!is_zero_v3(old_hsv_jitter)) {
+    brush->flag2 |= BRUSH_JITTER_COLOR;
+  }
+  copy_v3_v3(brush->hsv_jitter, old_hsv_jitter);
+  if (brush->curve_rand_hue) {
+    BKE_curvemapping_free_data(brush->curve_rand_hue);
+    BKE_curvemapping_copy_data(brush->curve_rand_hue, settings->curve_rand_hue);
+  }
+  else {
+    brush->curve_rand_hue = BKE_curvemapping_copy(settings->curve_rand_hue);
+  }
+  if (brush->curve_rand_saturation) {
+    BKE_curvemapping_free_data(brush->curve_rand_saturation);
+    BKE_curvemapping_copy_data(brush->curve_rand_saturation, settings->curve_rand_saturation);
+  }
+  else {
+    brush->curve_rand_saturation = BKE_curvemapping_copy(settings->curve_rand_saturation);
+  }
+  if (brush->curve_rand_value) {
+    BKE_curvemapping_free_data(brush->curve_rand_value);
+    BKE_curvemapping_copy_data(brush->curve_rand_value, settings->curve_rand_value);
+  }
+  else {
+    brush->curve_rand_value = BKE_curvemapping_copy(settings->curve_rand_value);
+  }
+}
+
+/* The Composite node was removed and a Group Output node should be used instead, so we need to
+ * make the replacement. But first note that the Group Output node relies on the node tree
+ * interface, so we ensure a default interface with a single input and output. This is only for
+ * root trees used as scene compositing node groups, for other node trees, we remove all composite
+ * nodes since they are no longer supported inside groups. */
+static void do_version_composite_node_in_scene_tree(bNodeTree &node_tree, bNode &node)
+{
+  blender::bke::node_tree_set_type(node_tree);
+
+  /* Remove inactive nodes. */
+  if (!(node.flag & NODE_DO_OUTPUT)) {
+    version_node_remove(node_tree, node);
+    return;
+  }
+
+  bNodeSocket *old_image_input = blender::bke::node_find_socket(node, SOCK_IN, "Image");
+
+  /* Find the link going into the Image input of the Composite node. */
+  bNodeLink *image_link = nullptr;
+  LISTBASE_FOREACH (bNodeLink *, link, &node_tree.links) {
+    if (link->tosock == old_image_input) {
+      image_link = link;
+    }
+  }
+
+  bNode *group_output_node = blender::bke::node_add_node(nullptr, node_tree, "NodeGroupOutput");
+  group_output_node->parent = node.parent;
+  group_output_node->location[0] = node.location[0];
+  group_output_node->location[1] = node.location[1];
+
+  bNodeSocket *image_input = static_cast<bNodeSocket *>(group_output_node->inputs.first);
+  BLI_assert(blender::StringRef(image_input->name) == "Image");
+  copy_v4_v4(image_input->default_value_typed<bNodeSocketValueRGBA>()->value,
+             old_image_input->default_value_typed<bNodeSocketValueRGBA>()->value);
+
+  if (image_link) {
+    version_node_add_link(
+        node_tree, *image_link->fromnode, *image_link->fromsock, *group_output_node, *image_input);
+    blender::bke::node_remove_link(&node_tree, *image_link);
+  }
+
+  version_node_remove(node_tree, node);
+}
+
+/* Updates the media type of the given format to match its imtype. */
+static void update_format_media_type(ImageFormatData *format)
+{
+  if (BKE_imtype_is_image(format->imtype)) {
+    format->media_type = MEDIA_TYPE_IMAGE;
+  }
+  else if (BKE_imtype_is_multi_layer_image(format->imtype)) {
+    format->media_type = MEDIA_TYPE_MULTI_LAYER_IMAGE;
+  }
+  else if (BKE_imtype_is_movie(format->imtype)) {
+    format->media_type = MEDIA_TYPE_VIDEO;
+  }
+  else {
+    BLI_assert_unreachable();
+  }
+}
+
 void do_versions_after_linking_500(FileData *fd, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 9)) {
@@ -1152,6 +1258,39 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
     LISTBASE_FOREACH (Object *, object, &bmain->objects) {
       do_version_remove_lzo_and_lzma_compression(fd, object);
     }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 41)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      bNodeTree *node_tree = version_get_scene_compositor_node_tree(bmain, scene);
+      if (node_tree) {
+        /* Add a default interface for the node tree. See the versioning function below for more
+         * details. */
+        node_tree->tree_interface.clear_items();
+        node_tree->tree_interface.add_socket(
+            DATA_("Image"), "", "NodeSocketColor", NODE_INTERFACE_SOCKET_INPUT, nullptr);
+        node_tree->tree_interface.add_socket(
+            DATA_("Image"), "", "NodeSocketColor", NODE_INTERFACE_SOCKET_OUTPUT, nullptr);
+
+        LISTBASE_FOREACH_BACKWARD_MUTABLE (bNode *, node, &node_tree->nodes) {
+          if (node->type_legacy == CMP_NODE_COMPOSITE_DEPRECATED) {
+            do_version_composite_node_in_scene_tree(*node_tree, *node);
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
+      blender::bke::node_tree_set_type(*node_tree);
+      if (node_tree->type == NTREE_COMPOSIT) {
+        LISTBASE_FOREACH_BACKWARD_MUTABLE (bNode *, node, &node_tree->nodes) {
+          if (node->type_legacy == CMP_NODE_COMPOSITE_DEPRECATED) {
+            /* See do_version_composite_node_in_scene_tree. */
+            version_node_remove(*node_tree, *node);
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
   }
 
   /**
@@ -1364,7 +1503,7 @@ void blo_do_versions_500(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
         if (node->type_legacy != CMP_NODE_TRANSLATE) {
           continue;
         }
-        if (node->storage != nullptr) {
+        if (node->storage == nullptr) {
           continue;
         }
         NodeTranslateData *data = static_cast<NodeTranslateData *>(node->storage);
@@ -1387,7 +1526,6 @@ void blo_do_versions_500(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
             data->extension_y = CMP_NODE_EXTENSION_MODE_REPEAT;
             break;
         }
-        node->storage = data;
       }
       FOREACH_NODETREE_END;
     }
@@ -1432,7 +1570,6 @@ void blo_do_versions_500(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
         NodeScaleData *data = static_cast<NodeScaleData *>(node->storage);
         data->extension_x = CMP_NODE_EXTENSION_MODE_ZERO;
         data->extension_y = CMP_NODE_EXTENSION_MODE_ZERO;
-        node->storage = data;
       }
       FOREACH_NODETREE_END;
     }
@@ -1514,6 +1651,44 @@ void blo_do_versions_500(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
         });
       }
     }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 40)) {
+    LISTBASE_FOREACH (Brush *, brush, &bmain->brushes) {
+      if (brush->gpencil_settings) {
+        do_version_convert_gp_jitter_values(brush);
+      }
+    }
+  }
+
+  /* ImageFormatData gained a new media type which we need to be set according to the existing
+   * imtype. */
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 42)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      update_format_media_type(&scene->r.im_format);
+    }
+
+    FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
+      if (node_tree->type != NTREE_COMPOSIT) {
+        continue;
+      }
+
+      LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
+        if (node->type_legacy != CMP_NODE_OUTPUT_FILE) {
+          continue;
+        }
+
+        NodeImageMultiFile *storage = static_cast<NodeImageMultiFile *>(node->storage);
+        update_format_media_type(&storage->format);
+
+        LISTBASE_FOREACH (bNodeSocket *, input, &node->inputs) {
+          NodeImageMultiFileSocket *input_storage = static_cast<NodeImageMultiFileSocket *>(
+              input->storage);
+          update_format_media_type(&input_storage->format);
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
   }
 
   /**

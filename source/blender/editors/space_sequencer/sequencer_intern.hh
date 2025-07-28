@@ -256,7 +256,7 @@ void SEQUENCER_OT_remove_scene_override(struct wmOperatorType *ot); /*BFA - 3D S
 /* `sequencer_select.cc` */
 
 void strip_rectf(const Scene *scene, const Strip *strip, rctf *r_rect);
-Strip *find_neighboring_strip(Scene *scene, Strip *test, int lr, int sel);
+Strip *find_neighboring_strip(const Scene *scene, const Strip *test, const int lr, int sel);
 void recurs_sel_strip(Strip *strip_meta);
 
 void SEQUENCER_OT_select_all(wmOperatorType *ot);

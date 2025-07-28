@@ -640,7 +640,7 @@ static float3x2 get_stroke_to_texture_matrix(const float uv_rotation,
   return texture_matrix;
 }
 
-static float4x3 expand_4x2_mat(float4x2 strokemat)
+static float4x3 expand_4x2_mat(const float4x2 &strokemat)
 {
   float4x3 strokemat4x3 = float4x3(strokemat);
 
@@ -727,8 +727,9 @@ void Drawing::set_texture_matrices(Span<float4x2> matrices, const IndexMask &sel
     const double4x3 strokemat4x3 = double4x3(expand_4x2_mat(strokemat));
 
     /*
-     * We want to solve for `texture_matrix` in the equation: `texspace = texture_matrix *
-     * strokemat4x3` Because these matrices are not square we can not use a standard inverse.
+     * We want to solve for `texture_matrix` in the equation:
+     * `texspace = texture_matrix * strokemat4x3`
+     * Because these matrices are not square we can not use a standard inverse.
      *
      * Our problem has the form of: `X = A * Y`
      * We can solve for `A` using: `A = X * B`
@@ -3161,10 +3162,6 @@ void GreasePencil::remove_drawings_with_no_users()
 {
   using namespace blender;
   using namespace blender::bke::greasepencil;
-
-#ifndef NDEBUG
-  this->validate_drawing_user_counts();
-#endif
 
   /* Compress the drawings array by finding unused drawings.
    * In every step two indices are found:

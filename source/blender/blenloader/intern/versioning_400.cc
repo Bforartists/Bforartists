@@ -23,6 +23,7 @@
 #include "DNA_modifier_types.h"
 #include "DNA_node_types.h"
 #include "DNA_particle_types.h"
+#include "DNA_screen_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_world_types.h"
 
@@ -46,6 +47,7 @@
 #include "BKE_node.hh"
 #include "BKE_node_legacy_types.hh"
 #include "BKE_node_runtime.hh"
+#include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_texture.h"
 #include "BKE_tracking.h"
@@ -318,7 +320,7 @@ void do_versions_after_linking_400(FileData *fd, Main *bmain)
       }
     }
 
-    /* XXX This was added several years ago in 'lib_link` code of Scene... Should be safe enough
+    /* XXX This was added several years ago in `lib_link` code of Scene... Should be safe enough
      * here. */
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->nodetree) {
@@ -326,7 +328,7 @@ void do_versions_after_linking_400(FileData *fd, Main *bmain)
       }
     }
 
-    /* XXX This was added many years ago (1c19940198) in 'lib_link` code of particles as a bug-fix.
+    /* XXX This was added many years ago (1c19940198) in `lib_link` code of particles as a bug-fix.
      * But this is actually versioning. Should be safe enough here. */
     LISTBASE_FOREACH (ParticleSettings *, part, &bmain->particles) {
       if (!part->effector_weights) {

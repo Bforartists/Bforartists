@@ -804,7 +804,7 @@ static void v3d_editvertex_buts(
 
     col = &row->column(true);
     subblock = col->block();
-    UI_block_layout_set_current(subblock, col);
+    blender::ui::block_layout_set_current(subblock, col);
 
     /* Should be no need to translate these. */
     but = uiDefButF(subblock,
@@ -875,12 +875,12 @@ static void v3d_editvertex_buts(
       UI_but_number_step_size_set(but, 1);
       UI_but_number_precision_set(but, 3);
     }
-    UI_block_layout_set_current(block, layout); /* bfa */
+    blender::ui::block_layout_set_current(block, layout); /* bfa */
 
     /* bfa */
     row = &layout->row(true); /* bfa - use high level UI when possible */
     subblock = row->block();
-    UI_block_layout_set_current(subblock, row);
+    blender::ui::block_layout_set_current(subblock, row);
 
     uiDefButBitS(subblock,
                  ButType::Toggle,
@@ -908,7 +908,7 @@ static void v3d_editvertex_buts(
                  0,
                  0,
                  TIP_("Displays local values"));
-    UI_block_layout_set_current(
+    blender::ui::block_layout_set_current(
         block,
         layout); /* bfa - restore layout, otherwise following UI elements will be messed up */
 
@@ -928,7 +928,7 @@ static void v3d_editvertex_buts(
 
         col = &row->column(false);
         subblock = col->block();
-        UI_block_layout_set_current(subblock, col);
+        blender::ui::block_layout_set_current(subblock, col);
 
         /* bfa */
         but = uiDefButF(block,
@@ -1005,7 +1005,7 @@ static void v3d_editvertex_buts(
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 3);
         /* bfa */
-        UI_block_layout_set_current(block, layout);
+        blender::ui::block_layout_set_current(block, layout);
       }
       if (totedgedata) {
         /* bfa */
@@ -1020,7 +1020,7 @@ static void v3d_editvertex_buts(
 
         col = &row->column(false);
         subblock = col->block();
-        UI_block_layout_set_current(subblock, col);
+        blender::ui::block_layout_set_current(subblock, col);
 
         /* customdata layer added on demand */
         /* bfa */
@@ -1054,7 +1054,7 @@ static void v3d_editvertex_buts(
                         TIP_("Weight used by the Subdivision Surface modifier"));
         UI_but_number_step_size_set(but, 1);
         UI_but_number_precision_set(but, 2);
-        UI_block_layout_set_current(block, layout); /* bfa */
+        blender::ui::block_layout_set_current(block, layout); /* bfa */
       }
     }
     /* Curve or GP... */
@@ -1108,7 +1108,7 @@ static void v3d_editvertex_buts(
 
       col = &row->column(false);
       subblock = col->block();
-      UI_block_layout_set_current(subblock, col);
+      blender::ui::block_layout_set_current(subblock, col);
 
       if (totcurvedata == 1) {
         /* bfa */
@@ -1212,7 +1212,7 @@ static void v3d_editvertex_buts(
         UI_but_unit_type_set(but, PROP_UNIT_ROTATION);
       }
 
-      UI_block_layout_set_current(block, layout); /*bfa*/
+      blender::ui::block_layout_set_current(block, layout); /*bfa*/
     }
     /* Lattice... */
     else if (totlattdata) {
@@ -1226,7 +1226,7 @@ static void v3d_editvertex_buts(
 
       col = &row->column(false);
       subblock = col->block();
-      UI_block_layout_set_current(subblock, col);
+      blender::ui::block_layout_set_current(subblock, col);
 
       if (totlattdata == 1) {
         uiDefButR(block,

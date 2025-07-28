@@ -46,7 +46,7 @@
 #include "BLI_math_base.h"
 #include "BLI_math_rotation.h"
 #include "BLI_path_utils.hh"
-#include "BLI_string.h"
+#include "BLI_string_utf8.h"
 #include "BLI_string_utils.hh"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
@@ -516,9 +516,11 @@ static void scene_foreach_toolsettings_id_pointer_process(
   }
 }
 
-/* Special handling is needed here, as `scene_foreach_toolsettings` (and its dependency
- * `scene_foreach_paint`) are also used by `scene_undo_preserve`, where `LibraryForeachIDData
- * *data` is nullptr. */
+/**
+ * Special handling is needed here, as `scene_foreach_toolsettings` (and its dependency
+ * `scene_foreach_paint`) are also used by `scene_undo_preserve`,
+ * where `LibraryForeachIDData *data` is nullptr.
+ */
 #define BKE_LIB_FOREACHID_UNDO_PRESERVE_PROCESS_IDSUPER_P( \
     _data, _id_p, _do_undo_restore, _action, _reader, _id_old_p, _cb_flag) \
   { \
@@ -1368,34 +1370,24 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
     /* link metastack, slight abuse of structs here,
      * have to restore pointer to internal part in struct */
     {
-      void *seqbase_poin;
-      void *channels_poin;
-      /* This whole thing with seqbasep offsets is really not good
-       * and prevents changes to the Sequence struct. A more correct approach
-       * would be to calculate offset using sDNA from the file (NOT from the
-       * current Blender). Even better would be having some sort of dedicated
-       * map of seqbase pointers to avoid this offset magic. */
-      constexpr intptr_t seqbase_offset = offsetof(Strip, seqbase);
-      constexpr intptr_t channels_offset = offsetof(Strip, channels);
-#if ARCH_CPU_64_BITS
-      static_assert(seqbase_offset == 264, "Sequence seqbase member offset cannot be changed");
-      static_assert(channels_offset == 280, "Sequence channels member offset cannot be changed");
-#else
-      static_assert(seqbase_offset == 204, "Sequence seqbase member offset cannot be changed");
-      static_assert(channels_offset == 212, "Sequence channels member offset cannot be changed");
-#endif
+      const int seqbase_offset_file = BLO_read_struct_member_offset(
+          reader, "Strip", "ListBase", "seqbase");
+      const int channels_offset_file = BLO_read_struct_member_offset(
+          reader, "Strip", "ListBase", "channels");
+      const size_t seqbase_offset_mem = offsetof(Strip, seqbase);
+      const size_t channels_offset_mem = offsetof(Strip, channels);
 
       /* seqbase root pointer */
-      if (ed->seqbasep == old_seqbasep) {
+      if (ed->seqbasep == old_seqbasep || seqbase_offset_file < 0) {
         ed->seqbasep = &ed->seqbase;
       }
       else {
-        seqbase_poin = POINTER_OFFSET(ed->seqbasep, -seqbase_offset);
+        void *seqbase_poin = POINTER_OFFSET(ed->seqbasep, -seqbase_offset_file);
 
         seqbase_poin = BLO_read_get_new_data_address_no_us(reader, seqbase_poin, sizeof(Strip));
 
         if (seqbase_poin) {
-          ed->seqbasep = (ListBase *)POINTER_OFFSET(seqbase_poin, seqbase_offset);
+          ed->seqbasep = (ListBase *)POINTER_OFFSET(seqbase_poin, seqbase_offset_mem);
         }
         else {
           ed->seqbasep = &ed->seqbase;
@@ -1403,16 +1395,18 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
       }
 
       /* Active channels root pointer. */
-      if (ELEM(ed->displayed_channels, old_displayed_channels, nullptr)) {
+      if (ELEM(ed->displayed_channels, old_displayed_channels, nullptr) ||
+          channels_offset_file < 0)
+      {
         ed->displayed_channels = &ed->channels;
       }
       else {
-        channels_poin = POINTER_OFFSET(ed->displayed_channels, -channels_offset);
+        void *channels_poin = POINTER_OFFSET(ed->displayed_channels, -channels_offset_file);
         channels_poin = BLO_read_get_new_data_address_no_us(
             reader, channels_poin, sizeof(SeqTimelineChannel));
 
         if (channels_poin) {
-          ed->displayed_channels = (ListBase *)POINTER_OFFSET(channels_poin, channels_offset);
+          ed->displayed_channels = (ListBase *)POINTER_OFFSET(channels_poin, channels_offset_mem);
         }
         else {
           ed->displayed_channels = &ed->channels;
@@ -1425,30 +1419,30 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
       LISTBASE_FOREACH (MetaStack *, ms, &ed->metastack) {
         BLO_read_struct(reader, Strip, &ms->parent_strip);
 
-        if (ms->oldbasep == old_seqbasep) {
+        if (ms->oldbasep == old_seqbasep || seqbase_offset_file < 0) {
           ms->oldbasep = &ed->seqbase;
         }
         else {
-          seqbase_poin = POINTER_OFFSET(ms->oldbasep, -seqbase_offset);
+          void *seqbase_poin = POINTER_OFFSET(ms->oldbasep, -seqbase_offset_file);
           seqbase_poin = BLO_read_get_new_data_address_no_us(reader, seqbase_poin, sizeof(Strip));
           if (seqbase_poin) {
-            ms->oldbasep = (ListBase *)POINTER_OFFSET(seqbase_poin, seqbase_offset);
+            ms->oldbasep = (ListBase *)POINTER_OFFSET(seqbase_poin, seqbase_offset_mem);
           }
           else {
             ms->oldbasep = &ed->seqbase;
           }
         }
 
-        if (ELEM(ms->old_channels, old_displayed_channels, nullptr)) {
+        if (ELEM(ms->old_channels, old_displayed_channels, nullptr) || channels_offset_file < 0) {
           ms->old_channels = &ed->channels;
         }
         else {
-          channels_poin = POINTER_OFFSET(ms->old_channels, -channels_offset);
+          void *channels_poin = POINTER_OFFSET(ms->old_channels, -channels_offset_file);
           channels_poin = BLO_read_get_new_data_address_no_us(
               reader, channels_poin, sizeof(SeqTimelineChannel));
 
           if (channels_poin) {
-            ms->old_channels = (ListBase *)POINTER_OFFSET(channels_poin, channels_offset);
+            ms->old_channels = (ListBase *)POINTER_OFFSET(channels_poin, channels_offset_mem);
           }
           else {
             ms->old_channels = &ed->channels;
@@ -2739,7 +2733,7 @@ SceneRenderView *BKE_scene_add_render_view(Scene *sce, const char *name)
   }
 
   SceneRenderView *srv = MEM_callocN<SceneRenderView>(__func__);
-  STRNCPY(srv->name, name);
+  STRNCPY_UTF8(srv->name, name);
   BLI_uniquename(&sce->r.views,
                  srv,
                  DATA_("RenderView"),
