@@ -81,17 +81,16 @@ class LIBADDON_APT_preferences(AddonPreferences):
     def draw(self, context: Context):
         layout: UILayout = self.layout
 
-        # Display addon information: Library name and Version.
-        addon_version = bl_info['version']
+        layout.label(
+            text="Instructions",
+            icon="INFO")
 
         layout.label(
-            text=f"{LIB_NAME} - Version {'.'.join(map(str, addon_version))}")
+            text="To access these default assets, switch to the Asset Browser editor,")
         layout.label(
-            text="To access these default assets, switch to the Assets workspace or Asset Browser editor,")
+            text="Go to the left library selector drop down and switch to the Smart Primitives Library.")
         layout.label(
-            text="Go to the Current Library drop down and switch to the Default Library.")
-        layout.label(
-            text="You will now see new categories, assets and more. Enjoy!")
+            text="You will now see new your assets. Enjoy!")
 
 
 def get_lib_path_index(prefs: Preferences, library_name: str):
