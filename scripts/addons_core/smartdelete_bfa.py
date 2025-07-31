@@ -197,7 +197,8 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
                                     bpy.ops.mesh.select_all(action='DESELECT')
 
                                     for v in vs:
-                                        me.vertices[v].select = True
+                                        if v < len(me.vertices):
+                                            me.vertices[v].select = True
                                     #self.report({'INFO'}, "Selected edges were removed.")
 
                     except RuntimeError as exception:
