@@ -3675,20 +3675,20 @@ void SEQUENCER_OT_cursor_set(wmOperatorType *ot)
 static bool sequencer_remove_scene_override_poll(bContext *C)
 {
   SpaceSeq *seq = CTX_wm_space_seq(C);
-  return (seq != NULL && seq->scene_override != NULL);
+  return (seq != nullptr && seq->scene_override != nullptr);
 }
 
 static wmOperatorStatus sequencer_remove_scene_override_exec(bContext *C, wmOperator *op)
 {
   SpaceSeq *seq = CTX_wm_space_seq(C);
 
-  if (seq == NULL) {
+  if (seq == nullptr) {
     BKE_report(op->reports, RPT_ERROR, "Incorrect context for removing scene override");
     return OPERATOR_CANCELLED;
   }
 
   /* Remove scene override. */
-  seq->scene_override = NULL;
+  seq->scene_override = nullptr;
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, CTX_data_scene(C));
 
