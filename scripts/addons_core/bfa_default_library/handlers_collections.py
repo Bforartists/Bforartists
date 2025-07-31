@@ -146,7 +146,14 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
 
         # Collection selection panel
         row = layout.row()
-        row.label(text="Select an existing collection of mesh objects to apply to mesh objects", icon="WIZARD")
+        
+        # Check if this is Bforartists
+        if "OUTLINER_MT_view" in dir(bpy.types):
+            icon = "WIZARD"
+        else:
+            icon = "INFO"
+
+        row.label(text="Select an existing collection of mesh objects to apply", icon=icon)
         row = layout.row()
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")
         row = layout.row()
