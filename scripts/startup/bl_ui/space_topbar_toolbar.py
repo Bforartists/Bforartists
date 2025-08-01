@@ -1584,63 +1584,6 @@ class TOPBAR_PT_animation(Panel):
         col.prop(addon_prefs, "topbar_animation_keyframetype",toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_animation_keyingset",toggle=addon_prefs.bfa_button_style)
 
-# BFA - removed as redundant, operators exist in space_toolbar.py
-'''
-######################################## Edit Apply Ops ########################################
-class VIEW3D_MT_topbar_object_apply_location(bpy.types.Operator):
-    """Applies the current location"""
-    bl_idname = "view3d.topbar_apply_location"
-    bl_label = "Apply Location"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
-        return {'FINISHED'}
-
-
-class VIEW3D_MT_topbar_object_apply_rotate(bpy.types.Operator):
-    """Applies the current rotation"""
-    bl_idname = "view3d.topbar_apply_rotate"
-    bl_label = "Apply Rotation"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-        return {'FINISHED'}
-
-
-class VIEW3D_MT_topbar_object_apply_scale(bpy.types.Operator):
-    """Applies the current scale"""
-    bl_idname = "view3d.topbar_apply_scale"
-    bl_label = "Apply Scale"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-        return {'FINISHED'}
-
-
-class VIEW3D_MT_topbar_object_apply_all(bpy.types.Operator):
-    """Applies the current location, rotation and scale"""
-    bl_idname = "view3d.topbar_apply_all"
-    bl_label = "Apply All"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-        return {'FINISHED'}
-
-
-class VIEW3D_MT_topbar_object_apply_rotscale(bpy.types.Operator):
-    """Applies the current rotation and scale"""
-    bl_idname = "view3d.topbar_apply_rotscale"
-    bl_label = "Apply Rotation & Scale"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-        return {'FINISHED'}
-'''
 
 ######################################## Edit Menu ########################################
 class TOPBAR_MT_edit(Menu):
@@ -1932,11 +1875,6 @@ classes = [
     TOPBAR_PT_misc,
     TOPBAR_PT_normals_autosmooth,
     TOPBAR_PT_menu_image,
-    #VIEW3D_MT_topbar_object_apply_location,
-    #VIEW3D_MT_topbar_object_apply_rotate,
-    #VIEW3D_MT_topbar_object_apply_scale,
-    #VIEW3D_MT_topbar_object_apply_all,
-    #VIEW3D_MT_topbar_object_apply_rotscale,
 ]
 
 if __name__ == "__main__":  # only for live edit.
