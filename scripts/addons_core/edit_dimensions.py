@@ -121,9 +121,19 @@ class ED_OT_SetDimensions(Operator):
 
 
 def add_button(self, context):
+    layout = self.layout
+    row = layout.row(align=True)
+    row.scale_x = 2
+    row.scale_y = 2
 
     if context.mode in {'EDIT_MESH'}:
-        self.layout.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        if column_count >= 4:
+            row.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")
+        else:
+            row.operator(ED_OT_SetDimensions.bl_idname, text="", icon="PLUGIN")
+
 
 classes = (
     ED_OT_SetDimensions,
