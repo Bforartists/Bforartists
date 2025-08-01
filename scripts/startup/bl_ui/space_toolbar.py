@@ -20,9 +20,6 @@ class TOOLBAR_HT_header(Header):
 
         layout = self.layout
 
-        window = context.window
-        scene = context.scene
-
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
@@ -348,9 +345,6 @@ class TOOLBAR_MT_toolbar_type(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-        rd = scene.render
-
         layout.operator("screen.toolbar_toolbox", text="Type")
 
 
@@ -434,8 +428,6 @@ class TOOLBAR_MT_file(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-
         layout.popover(panel="TOOLBAR_PT_menu_file", text = "")
 
         ## ------------------ Load / Save sub toolbars
@@ -657,8 +649,6 @@ class TOOLBAR_MT_meshedit(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-
         layout.popover(panel="TOOLBAR_PT_menu_meshedit", text = "")
 
         ## ------------------ Vertices
@@ -860,9 +850,6 @@ class TOOLBAR_MT_primitives(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-        #rd = scene.render
-
         layout.popover(panel="TOOLBAR_PT_menu_primitives", text = "")
 
         preferences = context.preferences
@@ -1328,8 +1315,6 @@ class TOOLBAR_MT_image(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-
         layout.popover(panel="TOOLBAR_PT_menu_image", text = "")
 
         preferences = context.preferences
@@ -1471,8 +1456,6 @@ class TOOLBAR_MT_tools(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-
         layout.popover(panel="TOOLBAR_PT_menu_tools", text = "")
 
         obj = context.object
@@ -1502,8 +1485,6 @@ class TOOLBAR_MT_tools(Menu):
 
 
                 if addon_prefs.tools_link_to_scn:
-
-                    operator_context_default = layout.operator_context
                     if len(bpy.data.scenes) > 10:
                         layout.operator_context = 'INVOKE_REGION_WIN'
                         layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
@@ -1626,7 +1607,6 @@ class TOOLBAR_MT_animation(Menu):
         scene = context.scene
         screen = context.screen
         toolsettings = context.tool_settings
-        userprefs = context.preferences
 
         layout.popover(panel="TOOLBAR_PT_menu_animation", text = "")
 
@@ -1830,7 +1810,6 @@ class TOOLBAR_MT_edit(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
         obj = context.object
 
         layout.popover(panel="TOOLBAR_PT_menu_edit", text = "")
