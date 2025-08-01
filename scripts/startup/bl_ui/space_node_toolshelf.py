@@ -12,6 +12,8 @@ from nodeitems_builtins import node_tree_group_type
 from .node_add_menu import draw_node_groups, add_empty_group
 
 
+# BFA - Custom panels for the sidebar toolshelf
+
 # Null object used to abstractly represent a separator
 Separator = object()
 
@@ -201,6 +203,9 @@ class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
         layout = self.layout
         in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("NodeGroupInput", poll=in_group),
             OperatorEntry("NodeGroupOutput", poll=in_group),
@@ -239,6 +244,9 @@ class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("NodeFrame"),
             OperatorEntry("NodeReroute"),
@@ -265,6 +273,9 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeFresnel", pad=23),
@@ -325,6 +336,9 @@ class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
         is_object_shader = is_shader_type(context, 'OBJECT')
         is_cycles =  is_engine(context, 'CYCLES')
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeOutputLineStyle", pad=1, poll=is_shader_type(context, 'LINESTYLE')),
@@ -362,6 +376,9 @@ class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
         
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeBrightContrast", pad=3),
@@ -406,6 +423,9 @@ class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeClamp", pad=17),
@@ -461,6 +481,9 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
         is_object = is_shader_type(context, 'OBJECT')
         is_eevee = is_engine(context, 'BLENDER_EEVEE')
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeAddShader", pad=18),
@@ -524,6 +547,9 @@ class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
         
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeTexEnvironment", pad=0),
@@ -573,6 +599,9 @@ class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeMapping", pad=22),
@@ -611,6 +640,9 @@ class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeScript"),
         )
@@ -632,6 +664,9 @@ class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeBokehImage", pad=11),
             OperatorEntry("CompositorNodeImage", pad=23),
@@ -656,6 +691,9 @@ class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePane
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeRGB", pad=20),
             OperatorEntry("ShaderNodeValue", pad=18),
@@ -677,6 +715,9 @@ class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeRLayers", pad=4),
             OperatorEntry("CompositorNodeSceneTime", pad=8),
@@ -701,6 +742,9 @@ class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeComposite", pad=9),
             OperatorEntry("CompositorNodeViewer", pad=15),
@@ -726,6 +770,9 @@ class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodePremulKey", pad=11),
             OperatorEntry("ShaderNodeBlackbody", pad=18),
@@ -752,6 +799,9 @@ class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel)
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeBrightContrast", pad=5),
             OperatorEntry("CompositorNodeColorBalance", pad=14),
@@ -780,6 +830,9 @@ class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeAlphaOver", pad=8),
             Separator,
@@ -808,6 +861,9 @@ class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeAntiAliasing", pad=1),
             OperatorEntry("CompositorNodeDenoise", pad=9),
@@ -839,6 +895,9 @@ class NODES_PT_toolshelf_compositor_add_filter_blur(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeBilateralblur", pad=7),
             OperatorEntry("CompositorNodeBlur", pad=22),
@@ -866,6 +925,9 @@ class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeChannelMatte", pad=5),
             OperatorEntry("CompositorNodeChromaMatte", pad=6),
@@ -896,6 +958,9 @@ class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeCryptomatteV2", pad=18),
             OperatorEntry("CompositorNodeCryptomatte", pad=1),
@@ -925,6 +990,9 @@ class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodePlaneTrackDeform", pad=0),
             OperatorEntry("CompositorNodeStabilize", pad=14),
@@ -948,6 +1016,9 @@ class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeTexBrick", pad=11),
             OperatorEntry("ShaderNodeTexChecker", pad=6),
@@ -978,6 +1049,9 @@ class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeRotate", pad=17),
             OperatorEntry("CompositorNodeScale", pad=19),
@@ -1013,6 +1087,9 @@ class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeMapRange", pad=13),
             OperatorEntry("ShaderNodeMath", pad=24),
@@ -1048,6 +1125,9 @@ class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeCombineXYZ", pad=2),
             OperatorEntry("ShaderNodeSeparateXYZ", pad=2),
@@ -1075,6 +1155,9 @@ class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("TextureNodeCoordinates", pad=0),
             OperatorEntry("TextureNodeCurveTime", pad=12),
@@ -1100,6 +1183,9 @@ class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("TextureNodeOutput", pad=4),
             OperatorEntry("TextureNodeViewer", pad=3),
@@ -1123,6 +1209,9 @@ class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("TextureNodeHueSaturation", pad=0),
             OperatorEntry("TextureNodeInvert", pad=16),
@@ -1151,6 +1240,9 @@ class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("TextureNodeValToRGB", pad=9),
             OperatorEntry("TextureNodeDistance", pad=14),
@@ -1178,6 +1270,9 @@ class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("TextureNodeAt", pad=19),
             OperatorEntry("TextureNodeRotate", pad=12),
@@ -1203,6 +1298,9 @@ class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("TextureNodeBricks", pad=4),
             OperatorEntry("TextureNodeChecker", pad=1),
@@ -1226,6 +1324,9 @@ class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("TextureNodeTexBlend", pad=18),
             OperatorEntry("TextureNodeTexClouds", pad=16),
@@ -1258,6 +1359,9 @@ class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeAttributeStatistic", pad=15),
             OperatorEntry("GeometryNodeAttributeDomainSize", pad=24),
@@ -1297,6 +1401,9 @@ class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("FunctionNodeInputBool",pad=8),
             OperatorEntry("GeometryNodeInputCollection",pad=5),
@@ -1326,6 +1433,9 @@ class NODES_PT_toolshelf_gn_add_input_gizmo(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeGizmoDial", pad=13),
             OperatorEntry("GeometryNodeGizmoLinear", pad=9),
@@ -1347,6 +1457,9 @@ class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeImportOBJ", pad=2),
             OperatorEntry("GeometryNodeImportPLY", pad=2),
@@ -1372,6 +1485,9 @@ class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         is_tool = is_tool_tree(context)
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeTool3DCursor", pad=21, poll=is_tool),
             OperatorEntry("GeometryNodeInputActiveCamera", pad=14),
@@ -1405,6 +1521,9 @@ class NODES_PT_toolshelf_gn_add_output(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeViewer", pad=4),
             OperatorEntry("GeometryNodeWarning", pad=2),
@@ -1428,6 +1547,9 @@ class NODES_PT_toolshelf_gn_add_geometry(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeGeometryToInstance", pad=2),
             OperatorEntry("GeometryNodeJoinGeometry", pad=14),
@@ -1453,6 +1575,9 @@ class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
         layout = self.layout
 
         is_tool = is_tool_tree(context)
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeInputID", pad=24),
             OperatorEntry("GeometryNodeInputIndex", pad=19),
@@ -1483,6 +1608,9 @@ class NODES_PT_toolshelf_gn_add_geometry_sample(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeProximity", pad=1),
             OperatorEntry("GeometryNodeIndexOfNearest", pad=5),
@@ -1510,6 +1638,9 @@ class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeSetGeometryName", pad=1),
             OperatorEntry("GeometryNodeSetID", pad=25),
@@ -1536,6 +1667,9 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeBake", pad=32),
             OperatorEntry("GeometryNodeBoundBox", pad=16),
@@ -1586,6 +1720,9 @@ class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeInputCurveHandlePositions", pad=0),
             OperatorEntry("GeometryNodeCurveLength", pad=17),
@@ -1618,6 +1755,9 @@ class NODES_PT_toolshelf_gn_add_curve_sample(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeSampleCurve"),
         )
@@ -1641,6 +1781,9 @@ class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeSetCurveNormal", pad=6),
             OperatorEntry("GeometryNodeSetCurveRadius", pad=7),
@@ -1671,6 +1814,9 @@ class NODES_PT_toolshelf_gn_add_curve_operations(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeCurvesToGreasePencil", pad=5),
             OperatorEntry("GeometryNodeCurveToMesh", pad=21),
@@ -1705,6 +1851,9 @@ class NODES_PT_toolshelf_gn_add_curve_primitives(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeCurveArc", pad=22),
             OperatorEntry("GeometryNodeCurvePrimitiveBezierSegment", pad=1),
@@ -1735,6 +1884,9 @@ class NODES_PT_toolshelf_gn_add_curve_topology(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeCurveOfPoint", pad=11),
             OperatorEntry("GeometryNodeOffsetPointInCurve", pad=0),
@@ -1776,6 +1928,9 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeInputNamedLayerSelection"),
         )
@@ -1799,6 +1954,9 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_write(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeSetGreasePencilColor", pad=7),
             OperatorEntry("GeometryNodeSetGreasePencilDepth", pad=6),
@@ -1824,6 +1982,9 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_operations(bpy.types.Panel, NodePa
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeGreasePencilToCurves", pad=0),
             OperatorEntry("GeometryNodeMergeLayers", pad=18),
@@ -1847,6 +2008,9 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeInstanceOnPoints", pad=8),
             OperatorEntry("GeometryNodeInstancesToPoints", pad=7),
@@ -1897,6 +2061,9 @@ class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeInputMeshEdgeAngle", pad=21),
             OperatorEntry("GeometryNodeInputMeshEdgeNeighbors", pad=13),
@@ -1935,6 +2102,9 @@ class NODES_PT_toolshelf_gn_add_mesh_sample(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeSampleNearestSurface", pad=0),
             OperatorEntry("GeometryNodeSampleUVSurface", pad=8),
@@ -1959,6 +2129,9 @@ class NODES_PT_toolshelf_gn_add_mesh_write(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeToolSetFaceSet", pad=10, poll=is_tool_tree(context)),
             OperatorEntry("GeometryNodeSetMeshNormal", pad=2),
@@ -1984,6 +2157,9 @@ class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeDualMesh", pad=23),
             OperatorEntry("GeometryNodeEdgePathsToCurves", pad=4),
@@ -2022,6 +2198,9 @@ class NODES_PT_toolshelf_gn_add_mesh_primitives(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeMeshCone", pad=12),
             OperatorEntry("GeometryNodeMeshCube", pad=12),
@@ -2053,6 +2232,9 @@ class NODES_PT_toolshelf_gn_add_mesh_topology(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeCornersOfEdge", pad=10),
             OperatorEntry("GeometryNodeCornersOfFace", pad=10),
@@ -2084,6 +2266,9 @@ class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeUVPackIslands", pad=8),
             OperatorEntry("GeometryNodeUVUnwrap", pad=16),
@@ -2107,6 +2292,9 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
         
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeDistributePointsInVolume", pad=1),
             OperatorEntry("GeometryNodeDistributePointsOnFaces", pad=3),
@@ -2136,6 +2324,9 @@ class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeVolumeCube", pad=5),
             OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
@@ -2159,6 +2350,9 @@ class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry(operator="node.add_simulation_zone", text="Simulation Zone", icon="TIME"),
         )
@@ -2181,6 +2375,9 @@ class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeReplaceMaterial", pad=3),
             OperatorEntry("GeometryNodeInputMaterialIndex", pad=7),
@@ -2207,6 +2404,9 @@ class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeTexBrick", pad=13),
             OperatorEntry("ShaderNodeTexChecker", pad=7),
@@ -2238,6 +2438,9 @@ class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry(operator="node.add_foreach_geometry_element_zone", pad=1, text="For Each Element", icon="FOR_EACH"),
             OperatorEntry("GeometryNodeIndexSwitch", pad=8),
@@ -2266,6 +2469,9 @@ class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeValToRGB", pad=6),
             OperatorEntry("ShaderNodeRGBCurve", pad=6),
@@ -2294,6 +2500,9 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("FunctionNodeFormatString", pad=9),
             OperatorEntry("GeometryNodeStringJoin", pad=12),
@@ -2326,6 +2535,9 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeVectorCurve", pad=3),
             OperatorEntry("ShaderNodeVectorMath", pad=7),
@@ -2354,6 +2566,9 @@ class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeAccumulateField", pad=7),
             OperatorEntry("GeometryNodeFieldAtIndex", pad=7),
@@ -2382,6 +2597,9 @@ class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("FunctionNodeBitMath", pad=14),
             OperatorEntry("FunctionNodeBooleanMath", pad=4),
@@ -2416,6 +2634,9 @@ class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("FunctionNodeCombineMatrix", pad=8),
             OperatorEntry("FunctionNodeCombineTransform", pad=1),
@@ -2449,6 +2670,9 @@ class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("FunctionNodeAlignRotationToVector", pad=2),
             OperatorEntry("FunctionNodeAxesToRotation", pad=15),
@@ -2482,6 +2706,9 @@ class NODES_PT_toolshelf_gn_add_utilities_deprecated(bpy.types.Panel, NodePanel)
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("FunctionNodeAlignEulerToVector", pad=2),
             OperatorEntry("FunctionNodeRotateEuler", pad=17),
@@ -2607,6 +2834,9 @@ classes = (
     NODES_PT_toolshelf_gn_add_utilities_deprecated,
     #-----------------------
 )
+
+# BFA - Custom panels for the sidebar toolshelf (END)
+
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
