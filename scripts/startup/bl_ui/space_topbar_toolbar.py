@@ -1,16 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-import os
-import math
 from pathlib import Path
 
 user_path = Path(bpy.utils.resource_path('USER')).parent
 local_path = Path(bpy.utils.resource_path('LOCAL')).parent
 
 from bpy.types import Header, Menu, Panel
-from bpy.types import Operator, Scene, AddonPreferences
-from bpy.props import BoolProperty, EnumProperty, IntProperty
 
 import bpy.utils.previews
 
@@ -19,7 +15,6 @@ from bl_ui.utils import (
 )
 
 from bpy.app.translations import (
-    pgettext_iface as iface_,
     contexts as i18n_contexts,
 )
 
@@ -31,9 +26,6 @@ class TOPBAR_HT_tool_bar(Header):
 
     def draw(self, context):
         layout = self.layout
-
-        window = context.window
-        scene = context.scene
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -357,9 +349,6 @@ class TOPBAR_MT_toolbar_type(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-        rd = scene.render
-
         layout.operator("screen.toolbar_toolbox", text="Type")
 
 ######################################## Toolbars ##############################################
@@ -375,8 +364,6 @@ class TOPBAR_MT_file(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
@@ -574,8 +561,6 @@ class TOPBAR_MT_meshedit(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
@@ -758,9 +743,6 @@ class TOPBAR_MT_primitives(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-        rd = scene.render
-
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
@@ -1157,8 +1139,6 @@ class TOPBAR_MT_image(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
@@ -1292,8 +1272,6 @@ class TOPBAR_MT_tools(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-
         obj = context.object
 
         preferences = context.preferences
@@ -1322,8 +1300,6 @@ class TOPBAR_MT_tools(Menu):
                         row.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' )
 
                     if addon_prefs.topbar_tools_link_to_scn:
-
-                        operator_context_default = layout.operator_context
                         if len(bpy.data.scenes) > 10:
                             layout.operator_context = 'INVOKE_REGION_WIN'
                             layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
@@ -1483,7 +1459,6 @@ class TOPBAR_MT_animation(Menu):
         scene = context.scene
         screen = context.screen
         toolsettings = context.tool_settings
-        userprefs = context.preferences
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -1601,7 +1576,6 @@ class TOPBAR_PT_animation(Panel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         col = layout.column(align = True)
-        row = col.row()
         col.label(text = "Animation Options:", icon="NONE")
         col.prop(addon_prefs, "topbar_animation_keyframes",toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_animation_range",toggle=addon_prefs.bfa_button_style)
@@ -1678,7 +1652,6 @@ class TOPBAR_MT_edit(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
         obj = context.object
 
         preferences = context.preferences
@@ -1822,7 +1795,6 @@ class TOPBAR_PT_edit(Panel):
         if obj is not None:
 
                 col = layout.column(align = True)
-                row = col.row()
                 col.alert=True
                 col.label(text="Edit Mode",icon="EDIT")
                 col.alert=False
@@ -1890,7 +1862,6 @@ class TOPBAR_MT_misc(Menu):
             if addon_prefs.topbar_misc_viewlayer:
 
                 window = context.window
-                screen = context.screen
                 scene = window.scene
 
                 row = layout.row(align=True)
