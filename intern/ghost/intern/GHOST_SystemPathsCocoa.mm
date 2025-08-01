@@ -30,7 +30,7 @@ static const char *GetApplicationSupportDir(const char *versionstr,
 
     snprintf(tempPath,
              len_tempPath,
-             "%s/Blender/%s",
+             "%s/Bforartists/%s", // bfa - changed from Blender to Bforartists
              [basePath cStringUsingEncoding:NSASCIIStringEncoding],
              versionstr);
   }
