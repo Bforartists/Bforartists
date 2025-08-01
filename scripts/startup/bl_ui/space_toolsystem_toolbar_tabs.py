@@ -750,7 +750,7 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
             col.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
             col.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
             col.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default, icon = "APPLY_PARENT_INVERSE")
-            col.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
+            col.operator("object.visual_geometry_to_objects", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
         # icon buttons
         else:
