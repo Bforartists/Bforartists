@@ -4813,6 +4813,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
             col.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon = "REMOVE_DOUBLES")
             col.operator("grease_pencil.reproject", text="Reproject Strokes", icon = "REPROJECT")
+            col.operator("grease_pencil.remove_fill_guides", icon="REMOVE_GUIDES")
 
         # icon buttons
         else:
@@ -4827,7 +4828,10 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
                 row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
                 row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
-                col.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
+                
+                row = col.row(align=True)
+                row.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
+                row.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
 
             elif column_count == 2:
 
@@ -4837,7 +4841,10 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
-                col.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
+                row.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
+
+                row = col.row(align=True)
+                row.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
 
             elif column_count == 1:
 
@@ -4848,7 +4855,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
                 col.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
                 col.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
-
+                col.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
 
 
 class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
