@@ -4727,7 +4727,7 @@ class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_context = "grease_pencil_edit"
-    bl_category = "Gpencil"
+    bl_category = "Grease Pencil"
     bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
@@ -4786,7 +4786,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_context = "grease_pencil_edit"
-    bl_category = "Gpencil"
+    bl_category = "Grease Pencil"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
@@ -4856,7 +4856,7 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_context = "grease_pencil_edit"
-    bl_category = "Gpencil"
+    bl_category = "Grease Pencil"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
