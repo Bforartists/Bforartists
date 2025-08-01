@@ -1301,8 +1301,13 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but, const wmEvent *ev
     }
   }
 
-  /* BFA - Add view2d reset option if view2d is initialized */
-  if (region->v2d.flag & V2D_IS_INIT) {
+  /* BFA - Add view2d reset option if view2d is initialized but only show in a zoomable area */
+  const ScrArea *area = CTX_wm_area(C);
+  if ((region->v2d.flag & V2D_IS_INIT) &&
+      (region->regiontype == RGN_TYPE_UI || 
+       region->regiontype == RGN_TYPE_TOOLS ||
+       (area && area->spacetype == SPACE_PROPERTIES && region->regiontype == RGN_TYPE_WINDOW)))
+  {
     wmOperatorType *ot = WM_operatortype_find("VIEW2D_OT_reset", true);
     if (ot) {
       layout->separator();
