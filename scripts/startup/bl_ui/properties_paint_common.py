@@ -1705,7 +1705,8 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
         layout.prop(brush, "use_frontface", text="Front Faces Only")
 
     # BFA - exposed in all areas
-    color_jitter_panel(layout, context, brush)
+    if context.space_data.type in {'VIEW_3D', 'IMAGE_EDITOR'}:
+        color_jitter_panel(layout, context, brush)
 
     # Brush modes
     header, panel = layout.panel("modes", default_closed=True)
