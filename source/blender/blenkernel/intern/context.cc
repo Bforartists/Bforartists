@@ -1174,6 +1174,12 @@ Scene *CTX_data_sequencer_scene(const bContext *C)
   if (ctx_data_pointer_verify(C, "sequencer_scene", (void **)&scene)) {
     return scene;
   }
+  // start BFA - 3D Sequencer
+  SpaceSeq *sseq = CTX_wm_space_seq(C);
+  if (sseq != nullptr && sseq->scene_override != nullptr) {
+    return sseq->scene_override;
+  }
+  // end bfa
   /* TODO: Use sequencer scene. */
   return C->data.scene;
 }
