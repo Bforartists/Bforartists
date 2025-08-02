@@ -18,6 +18,7 @@
 #include "BLI_listbase.h"
 #include "BLI_rand.hh"
 #include "BLI_string.h"
+#include "BLI_string_utf8.h"
 #include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
@@ -832,7 +833,7 @@ void ED_area_status_text(ScrArea *area, const char *str)
       if (ar->runtime->headerstr == nullptr) {
         ar->runtime->headerstr = MEM_malloc_arrayN<char>(UI_MAX_DRAW_STR, "headerprint");
       }
-      BLI_strncpy(ar->runtime->headerstr, str, UI_MAX_DRAW_STR);
+      BLI_strncpy_utf8(ar->runtime->headerstr, str, UI_MAX_DRAW_STR);
       BLI_str_rstrip(ar->runtime->headerstr);
     }
     else {
@@ -1432,18 +1433,12 @@ bool ED_region_is_overlap(int spacetype, int regiontype)
   }
   if (U.uiflag2 & USER_REGION_OVERLAP) {
     if (spacetype == SPACE_NODE) {
-      // bfa assetshelf node editor region
-      //if (regiontype == RGN_TYPE_TOOLS) {
       if (ELEM(regiontype,
-               //RGN_TYPE_TOOLS, //BFA - not necessary
-               //RGN_TYPE_UI, //BFA - not necessary
-               //RGN_TYPE_TOOL_PROPS, //BFA - not necessary
-               RGN_TYPE_FOOTER,
-               RGN_TYPE_TOOL_HEADER,
+               //RGN_TYPE_TOOLS, // BFA - not necessary
+               //RGN_TYPE_UI, // BFA - not necessary
                RGN_TYPE_ASSET_SHELF,
-               RGN_TYPE_ASSET_SHELF_HEADER
-               ))
-      { 
+               RGN_TYPE_ASSET_SHELF_HEADER))
+      {
         return true;
       }
     }
@@ -2940,7 +2935,7 @@ static void ed_panel_draw(const bContext *C,
     BLI_string_join(block_name, sizeof(block_name), pt->idname, unique_panel_str);
   }
   else {
-    STRNCPY(block_name, pt->idname);
+    STRNCPY_UTF8(block_name, pt->idname);
   }
   uiBlock *block = UI_block_begin(C, region, block_name, blender::ui::EmbossType::Emboss);
 
@@ -3400,14 +3395,20 @@ void ED_region_panels_draw(const bContext *C, ARegion *region)
   /* scrollers */
   bool use_mask = false;
   rcti mask;
-  if (region->runtime->category &&
-      (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) == RGN_ALIGN_RIGHT) &&
+  const short alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
+  if (region->runtime->category && ELEM(alignment, RGN_ALIGN_RIGHT, RGN_ALIGN_LEFT) &&
       UI_panel_category_is_visible(region))
   {
     use_mask = true;
     UI_view2d_mask_from_win(v2d, &mask);
-    mask.xmax -= round_fl_to_int(UI_view2d_scale_get_x(&region->v2d) *
-                                 UI_PANEL_CATEGORY_MARGIN_WIDTH);
+    const int category_width = round_fl_to_int(UI_view2d_scale_get_x(&region->v2d) *
+                                               UI_PANEL_CATEGORY_MARGIN_WIDTH);
+    if (alignment == RGN_ALIGN_RIGHT) {
+      mask.xmax -= category_width;
+    }
+    else if (alignment == RGN_ALIGN_LEFT) {
+      mask.xmin += category_width;
+    }
   }
 
   /* Hide scrollbars below a threshold. */
@@ -4147,7 +4148,7 @@ void ED_region_cache_draw_curfra_label(const int framenr, const float x, const f
   /* Format frame number. */
   char numstr[32];
   BLF_size(fontid, 11.0f * UI_SCALE_FAC);
-  SNPRINTF(numstr, "%d", framenr);
+  SNPRINTF_UTF8(numstr, "%d", framenr);
 
   float2 text_dims = {0.0f, 0.0f};
   BLF_width_and_height(fontid, numstr, sizeof(numstr), &text_dims.x, &text_dims.y);

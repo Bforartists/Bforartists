@@ -21,6 +21,7 @@
 #include "BLI_rand.hh"
 #include "BLI_set.hh"
 #include "BLI_string.h"
+#include "BLI_string_utf8.h"
 #include "BLI_vector.hh"
 
 #include "BLT_translation.hh"
@@ -530,7 +531,8 @@ static bool node_group_separate_selected(
   for (bNode *node : nodes_to_move) {
     bNode *newnode;
     if (make_copy) {
-      newnode = bke::node_copy_with_mapping(&ntree, *node, LIB_ID_COPY_DEFAULT, true, socket_map);
+      newnode = bke::node_copy_with_mapping(
+          &ntree, *node, LIB_ID_COPY_DEFAULT, std::nullopt, std::nullopt, socket_map);
       node_identifier_map.add(node->identifier, newnode->identifier);
     }
     else {
@@ -1425,7 +1427,7 @@ static bNode *node_group_make_from_node_declaration(bContext &C,
 
   /* Create a group node. */
   bNode *gnode = bke::node_add_node(&C, ntree, node_idname);
-  STRNCPY(gnode->name, BKE_id_name(wrapper_group->id));
+  STRNCPY_UTF8(gnode->name, BKE_id_name(wrapper_group->id));
   bke::node_unique_name(ntree, *gnode);
 
   /* Assign the newly created wrapper group to the new group node. */

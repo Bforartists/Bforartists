@@ -6868,7 +6868,9 @@ class VIEW3D_MT_edit_mesh_legacy(Menu):
         layout = self.layout
 
         layout.operator("mesh.bisect", text="Bisect", icon="BISECT")
-        layout.operator("mesh.knife_tool", text="Knife", icon="KNIFE")
+        props = layout.operator("mesh.knife_tool", text="Knife", icon="KNIFE")
+        props.use_occlude_geometry = True
+        props.only_selected = False
 
 
 # bfa menu
@@ -11631,6 +11633,9 @@ class VIEW3D_PT_overlay_grease_pencil_options(Panel):
             row.prop(
                 overlay, "use_gpencil_multiedit_line_only", text="Only in Multiframe"
             )
+            row = col.row()
+            row.separator()
+            row.prop(overlay, "display_handle", text="Handles")
 
         if ob.mode == "EDIT":
             col = layout.column(align=True)
