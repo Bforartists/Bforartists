@@ -610,9 +610,6 @@ void BKE_area_region_free(SpaceType *st, ARegion *region)
     region->runtime->type->free(region);
   }
 
-  /* BFA - Free our runtime data if it exists */
-  BKE_toolshelf_region_free(region);/* BFA */
-
   BKE_area_region_panels_free(&region->panels);
 
   LISTBASE_FOREACH (uiList *, uilst, &region->ui_lists) {
@@ -634,6 +631,10 @@ void BKE_area_region_free(SpaceType *st, ARegion *region)
   BLI_freelistN(&region->runtime->panels_category);
   BLI_freelistN(&region->panels_category_active);
   BLI_freelistN(&region->view_states);
+
+  /* BFA - WIP - Free our runtime data if it exists, apparently it will crash a swap in paint mode since it might not exist*/
+  //BKE_toolshelf_region_free(region);/* BFA */
+
   MEM_delete(region->runtime);
 }
 
