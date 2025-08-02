@@ -1530,7 +1530,7 @@ class TOPBAR_MT_edit(Menu):
 
                 if addon_prefs.topbar_edit_weightinedit:
                     mode = obj.mode
-                    if mode in ( 'EDIT', 'WEIGHT_PAINT'):
+                    if mode in ('EDIT', 'WEIGHT_PAINT'):
                         row = layout.row(align=True)
                         row.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="")
                         row.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="")

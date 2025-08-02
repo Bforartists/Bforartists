@@ -114,7 +114,7 @@ class TOOLBAR_PT_type(Panel):
         header.alignment = 'CENTER'
         header.label(text="Show/Hide Settings")
 
-        if (addon_prefs.bfa_toolbar_types == 'Files'):
+        if addon_prefs.bfa_toolbar_types == "Files":
             if context.area.file_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "file_load_save",toggle=addon_prefs.bfa_button_style)
@@ -137,7 +137,7 @@ class TOOLBAR_PT_type(Panel):
                 row.alert = True
                 row.label(text='Files is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Mesh Edit'):
+        if addon_prefs.bfa_toolbar_types == "Mesh Edit":
             if context.area.meshedit_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "mesh_vertices_splitconnect",toggle=addon_prefs.bfa_button_style)
@@ -157,7 +157,7 @@ class TOOLBAR_PT_type(Panel):
                 row.alert = True
                 row.label(text='Mesh Edit is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Primitives'):
+        if addon_prefs.bfa_toolbar_types == "Primitives":
             if context.area.primitives_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "primitives_mesh",toggle=addon_prefs.bfa_button_style)
@@ -181,7 +181,7 @@ class TOOLBAR_PT_type(Panel):
                 row.alert = True
                 row.label(text='Primitives is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Image'):
+        if addon_prefs.bfa_toolbar_types == "Image":
             if context.area.image_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "image_uv_mirror",toggle=addon_prefs.bfa_button_style)
@@ -195,7 +195,7 @@ class TOOLBAR_PT_type(Panel):
                 row.alert = True
                 row.label(text='Image is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Tools'):
+        if addon_prefs.bfa_toolbar_types == "Tools":
             if context.area.tools_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "tools_parent",toggle=addon_prefs.bfa_button_style)
@@ -228,7 +228,7 @@ class TOOLBAR_PT_type(Panel):
                 row.alert = True
                 row.label(text='Animation is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Edit'):
+        if addon_prefs.bfa_toolbar_types == "Edit":
             if context.area.edit_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "edit_edit",toggle=addon_prefs.bfa_button_style)
@@ -243,7 +243,7 @@ class TOOLBAR_PT_type(Panel):
                 row.alert = True
                 row.label(text='Edit is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Misc'):
+        if addon_prefs.bfa_toolbar_types == "Misc":
             if context.area.misc_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "misc_viewport",toggle=addon_prefs.bfa_button_style)
@@ -1793,7 +1793,7 @@ class TOOLBAR_MT_edit(Menu):
             if addon_prefs.edit_weightinedit:
                 mode = obj.mode
 
-                if mode in ( 'EDIT', 'WEIGHT_PAINT'):
+                if mode in ('EDIT', 'WEIGHT_PAINT'):
                     row = layout.row(align=True)
 
                     row.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="")
