@@ -2038,7 +2038,7 @@ static wmOperatorStatus collection_drop_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
   const bool use_override = RNA_boolean_get(op->ptr, "use_override"); // bfa use override for linked data-block
-  if (!use_override && RNA_boolean_get(op->ptr, "use_instance")) {
+  if (use_override || RNA_boolean_get(op->ptr, "use_instance")) {
     BKE_collection_child_remove(bmain, active_collection->collection, add_info->collection);
     DEG_id_tag_update(&active_collection->collection->id, ID_RECALC_SYNC_TO_EVAL);
     DEG_relations_tag_update(bmain);
@@ -2078,7 +2078,6 @@ static wmOperatorStatus collection_drop_exec(bContext *C, wmOperator *op)
   // bfa asset override, default fall back for adding override
   wmOperatorStatus r = OPERATOR_FINISHED;
   if (use_override){
-      //ViewLayer *view_layer = CTX_data_view_layer(C);
       r = collection_drop_override(C, op);
   }
   return r; // bfa end return OPERATOR_FINISHED;
