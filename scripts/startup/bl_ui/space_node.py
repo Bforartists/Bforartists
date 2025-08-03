@@ -1547,22 +1547,23 @@ class NODE_PT_view(bpy.types.Panel):
 
 
 # BFA - asset shelf
-# TODO: Finalize the node asset shelf poll, for now use the current "S_" Shader asset name
 class NodeAssetShelf:
     bl_space_type = 'NODE_EDITOR'
     bl_options = {'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
 
-
-class NODE_AST_composite_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
-
     @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'CompositorNodeTree'
-
-    @classmethod
-    def asset_poll(cls, asset):
-        if asset.id_type == 'NODETREE' and "Compositor" in asset.metadata.tags:
-            return True
+    def asset_type_poll(cls, asset, type, strict_tags):
+        """Shared method for asset shelf
+        strict_tags: Needed tags on asset to share between different files asset shelf
+        type: node tree type defined in rna (COMPOSITING, SHADER, GEOMETRY)
+        """
+        tree_type = bpy.types.NodeTree.bl_rna.properties["type"].enum_items[type]
+        # If it is a local asset then it can display on the asset shelf without a tag
+        # use [""] to make it behave like original
+        if asset.id_type == 'NODETREE' and (asset.local_id is not None or "" in strict_tags):
+            return asset.metadata.get("type") == tree_type.value
+        else:
+            return any([tag in asset.metadata.tags for tag in strict_tags])
 
 
 class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
@@ -1573,8 +1574,8 @@ class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
     @classmethod
     def asset_poll(cls, asset):
-        if asset.id_type == 'NODETREE' and "Geometry Nodes" in asset.metadata.tags:
-            return True
+        # Guided Curves and Hair for Blender Hair asset
+        return cls.asset_type_poll(asset, 'GEOMETRY', ["Guided Curves", "Hair", "Geometry Nodes"])
 
 
 class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
@@ -1585,13 +1586,11 @@ class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
     @classmethod
     def asset_poll(cls, asset):
-        if asset.id_type == 'NODETREE' and "Shader" in asset.metadata.tags:
-            return True
+        return cls.asset_type_poll(asset, 'SHADER', ["Shader"])
 
 
-class NODE_AST_compositor(bpy.types.AssetShelf):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
+# bfa add NodeAssetShelf, use asset_type_poll
+class NODE_AST_compositor(NodeAssetShelf, bpy.types.AssetShelf):
 
     @classmethod
     def poll(cls, context):
@@ -1599,8 +1598,7 @@ class NODE_AST_compositor(bpy.types.AssetShelf):
 
     @classmethod
     def asset_poll(cls, asset):
-        compositing_type = bpy.types.NodeTree.bl_rna.properties["type"].enum_items["COMPOSITING"]
-        return asset.id_type == 'NODETREE' and asset.metadata.get("type") == compositing_type.value
+        return cls.asset_type_poll(asset, 'COMPOSITING', ["Compositor"])
 
 
 classes = (
@@ -1663,7 +1661,6 @@ classes = (
     NODE_OT_switch_editors_in_geometry,
     NODE_OT_switch_editors_in_shadereditor,
     #bfa - assetshelf
-    NODE_AST_composite_node_groups,
     NODE_AST_geometry_node_groups,
     NODE_AST_shader_node_groups
 )

@@ -1438,24 +1438,6 @@ static void node_region_listener(const wmRegionListenerParams *params)
 
 }  // namespace blender::ed::space_node
 
-/* start bfa - add handlers, stuff you only do once or on area/region changes */
-static void node_asset_shelf_region_init(wmWindowManager *wm, ARegion *region)
-{
-  using namespace blender::ed;
-  wmKeyMap *keymap = WM_keymap_ensure(
-      wm->defaultconf, "Node Generic", SPACE_NODE, RGN_TYPE_WINDOW);
-  WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
-  // bfa asset shelf set default
-  RegionAssetShelf *shelf_data = static_cast<RegionAssetShelf *>(region->regiondata);
-  if (shelf_data && shelf_data->active_shelf &&
-      (AssetShelfImportMethod(shelf_data->active_shelf->settings.import_method) == SHELF_ASSET_IMPORT_LINK))
-  {
-    shelf_data->active_shelf->settings.import_method = SHELF_ASSET_IMPORT_APPEND;
-  }
-  // bfa end
-  asset::shelf::region_init(wm, region);
-}
-/* end bfa */
 
 /* Outside of blender namespace to avoid Python documentation build error with `ctypes`. */
 extern "C" {
@@ -1814,7 +1796,14 @@ static void node_asset_shelf_region_init(wmWindowManager *wm, ARegion *region)
   wmKeyMap *keymap = WM_keymap_ensure(
       wm->defaultconf, "Node Generic", SPACE_NODE, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
-
+  // bfa asset shelf set default
+  RegionAssetShelf *shelf_data = static_cast<RegionAssetShelf *>(region->regiondata);
+  if (shelf_data && shelf_data->active_shelf &&
+      (AssetShelfImportMethod(shelf_data->active_shelf->settings.import_method) == SHELF_ASSET_IMPORT_LINK))
+  {
+    shelf_data->active_shelf->settings.import_method = SHELF_ASSET_IMPORT_APPEND;
+  }
+  // bfa end
   asset::shelf::region_init(wm, region);
 }
 
@@ -1935,7 +1924,7 @@ void ED_spacetype_node()
   art->draw = node_toolbar_region_draw;
   BLI_addhead(&st->regiontypes, art);
 
-  /* bfa - regions: assetshelf */
+  /* regions: assetshelf */
   art = MEM_callocN<ARegionType>("spacetype node asset shelf region");
   art->regionid = RGN_TYPE_ASSET_SHELF;
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_ASSET_SHELF | ED_KEYMAP_FRAMES;
@@ -1964,7 +1953,6 @@ void ED_spacetype_node()
   art->context = asset::shelf::context;
   BLI_addhead(&st->regiontypes, art);
   asset::shelf::types_register(art, SPACE_NODE);
-  /* end bfa */
 
   WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_catalog_assets_menu_type()));
   WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_unassigned_assets_menu_type()));
