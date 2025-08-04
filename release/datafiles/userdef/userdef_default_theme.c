@@ -299,9 +299,14 @@ const bTheme U_theme_default = {
     .panel_header = RGBA(0x363636ff),
     .panel_back = RGBA(0x4d4d4dff),
     .panel_sub_back = RGBA(0x3c3c3cff),
-    .panel_outline = RGBA(0xffffff00),
-    .panel_title = RGBA(0xe6e6e600),
-    .panel_text = RGBA(0xe6e6e600),
+    .panel_outline = RGBA(0xffffff11),
+    .panel_title = RGBA(0xe6e6e6ff),
+    .panel_text = RGBA(0xe6e6e6ff),
+  },
+  .common = {
+    .anim = {
+      .preview_range = RGBA(0xa14d0066),
+    },
   },
   .space_properties = {
     .back = RGBA(0x40404000),
@@ -466,7 +471,6 @@ const bTheme U_theme_default = {
     .facedot_size = 4,
     .handle_vertex_select = RGBA(0xff8500ff),
     .handle_vertex_size = 6,
-    .anim_preview_range = RGBA(0xa14d0066),
   },
   .space_info = {
     .back = RGBA(0x46464600),
@@ -539,7 +543,6 @@ const bTheme U_theme_default = {
     .keyframe_scale_fac = 1.0f,
     .handle_vertex_size = 4,
     .anim_active = RGBA(0xcc701a66),
-    .anim_preview_range = RGBA(0xa14d0066),
   },
   .space_nla = {
     .back = RGBA(0x50505000),
@@ -573,7 +576,6 @@ const bTheme U_theme_default = {
     .handle_vertex_size = 4,
     .anim_active = RGBA(0xcc701a66),
     .anim_non_active = RGBA(0x9987614d),
-    .anim_preview_range = RGBA(0xa14d0066),
     .nla_tweaking = RGBA(0x4df31a4d),
     .nla_tweakdupli = RGBA(0xd90000ff),
     .nla_track = RGBA(0x545454ff),
@@ -643,7 +645,6 @@ const bTheme U_theme_default = {
     .gp_vertex_size = 3,
     .gp_vertex_select = RGBA(0xff8500ff),
     .row_alternate = RGBA(0xffffff0d),
-    .anim_preview_range = RGBA(0xa14d0066),
     .metadatatext = RGBA(0xffffffff),
   },
   .space_image = {
@@ -781,9 +782,9 @@ const bTheme U_theme_default = {
     .nodeclass_geometry = RGBA(0x358c77ff),
     .nodeclass_attribute = RGBA(0x3f5980ff),
     .node_zone_simulation = RGBA(0x66416233),
-    .node_zone_repeat = RGBA(0x76512f33),
+    .node_zone_repeat = RGBA(0x708C7233),
     .node_zone_foreach_geometry_element = RGBA(0x33527f33),
-    .node_zone_closure = RGBA(0x527f3333),
+    .node_zone_closure = RGBA(0x734F4233),
     .movie = RGBA(0x0f0f0f80),
     .gp_vertex_size = 3,
     .gp_vertex = RGBA(0x97979700),
@@ -863,7 +864,6 @@ const bTheme U_theme_default = {
     .path_keyframe_before = RGBA(0xffc4c4ff),
     .path_keyframe_after = RGBA(0xc4c4ffff),
     .gp_vertex_size = 1,
-    .anim_preview_range = RGBA(0xa14d0066),
     .metadatatext = RGBA(0xffffffff),
   },
   .space_topbar = {

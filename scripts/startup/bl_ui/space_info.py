@@ -94,8 +94,10 @@ class INFO_MT_area(Menu):
         layout.operator("screen.area_dupli", icon="NEW_WINDOW")
 
         layout.separator()
-
-        layout.operator("screen.screen_full_area", icon='MAXIMIZE_AREA')
+        if context.screen.show_fullscreen:
+            layout.operator("screen.screen_full_area", icon='MAXIMIZE_AREA', text="Restore Areas")
+        else:
+            layout.operator("screen.screen_full_area", icon='MAXIMIZE_AREA', text="Maximize Area")
         layout.operator(
             "screen.screen_full_area",
             text="Toggle Fullscreen Area",
