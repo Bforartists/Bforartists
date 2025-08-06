@@ -390,6 +390,7 @@ eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
       case UI_BUT_LABEL_ALIGN_COLUMN:
       case UI_BUT_LABEL_ALIGN_SPLIT_COLUMN: {
         const bool is_boolean = (type == PROP_BOOLEAN && !RNA_property_array_check(prop));
+        const bool is_boolean_vector = (type == PROP_BOOLEAN && RNA_property_array_check(prop)); /* BFA - align left if boolean vector prop */
 
         name = RNA_property_ui_name(prop);
 
@@ -404,8 +405,8 @@ eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
           BLI_assert(label_align == UI_BUT_LABEL_ALIGN_SPLIT_COLUMN);
           col = &layout->column(true);
           /* Let uiLayout::prop() create the split layout. */
-          col->use_property_split_set(!is_boolean); /* BFA - align left if boolean prop */
-          col->use_property_decorate_set(!is_boolean); /* bfa - align left if boolean prop */
+          col->use_property_split_set(!is_boolean && !is_boolean_vector); /* BFA - align left if boolean props */
+          col->use_property_decorate_set(!is_boolean && !is_boolean_vector); /* bfa - align left if boolean props */
         }
 
         break;
