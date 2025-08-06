@@ -952,26 +952,27 @@ static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
   uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Set Parent To"), ICON_NONE);
   uiLayout *layout = UI_popup_menu_layout(pup);
 
+  /* BFA - icons added*/
   PointerRNA opptr = layout->op(
-      ot, IFACE_("Object"), ICON_NONE, wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
+      ot, IFACE_("Object"), ICON_PARENT_OBJECT, wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", false);
 
   opptr = layout->op(ot,
                      IFACE_("Object (Keep Transform)"),
-                     ICON_NONE,
+                     ICON_PARENT_OBJECT,
                      wm::OpCallContext::ExecDefault,
                      UI_ITEM_NONE);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", true);
 
   PointerRNA op_ptr = layout->op(
-      "OBJECT_OT_parent_no_inverse_set", IFACE_("Object (Without Inverse)"), ICON_NONE);
+      "OBJECT_OT_parent_no_inverse_set", IFACE_("Object (Without Inverse)"), ICON_PARENT);
   RNA_boolean_set(&op_ptr, "keep_transform", false);
 
   op_ptr = layout->op("OBJECT_OT_parent_no_inverse_set",
                       IFACE_("Object (Keep Transform Without Inverse)"),
-                      ICON_NONE);
+                      ICON_PARENT);
   RNA_boolean_set(&op_ptr, "keep_transform", true);
 
   struct {
