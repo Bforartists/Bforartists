@@ -935,12 +935,14 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   layout->prop(op->ptr, "material", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   layout->use_property_decorate_set(false); /*bfa - checkboxes, don't split*/
-  col = &layout->column(true);
+  col = &layout->column(false);
+  col->use_property_split_set(false);  /* Disable property split for floating */
   col->prop(op->ptr, "harden_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "clamp_overlap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(op->ptr, "loop_slide", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(true, IFACE_("Mark"));
+  col = &layout->column(false, IFACE_("Mark"));
+  col->use_property_split_set(false);
   col->active_set(affect_type == BEVEL_AFFECT_EDGES);
   col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seams"), ICON_NONE);
   col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
@@ -1123,7 +1125,7 @@ void MESH_OT_bevel(wmOperatorType *ot)
                BEVEL_AFFECT_EDGES,
                "Affect",
                "Affect edges or vertices");
-
+    
   RNA_def_boolean(ot->srna,
                   "clamp_overlap",
                   false,
