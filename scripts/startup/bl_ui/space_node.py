@@ -1524,27 +1524,6 @@ def node_panel(cls):
 
     return node_cls
 
-## BFA - new view menu for consistency
-class NODE_PT_view(bpy.types.Panel):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Node"
-    bl_label = "View"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        snode = context.space_data
-        return snode.tree_type in ('CompositorNodeTree', 'TextureNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        snode = context.space_data
-
-        # Auto-offset nodes (called "insert_offset" in code)
-        layout.prop(snode, "use_insert_offset")
-
 
 # BFA - asset shelf
 class NodeAssetShelf:
@@ -1651,7 +1630,6 @@ classes = (
     node_panel(WORLD_PT_viewport_display),
     node_panel(DATA_PT_light),
     node_panel(DATA_PT_EEVEE_light),
-    NODE_PT_view,
 
     #bfa - toggles
     NODE_OT_switch_editors_to_compositor,
