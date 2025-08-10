@@ -3483,6 +3483,9 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
         layout.active = not strip.mute
 
         col.prop(strip, "strobe")
+        
+        # BFA - Align bool property left
+        col.use_property_split = False
         col.prop(strip, "use_reverse_frames")
 
 
