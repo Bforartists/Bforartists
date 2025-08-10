@@ -7151,8 +7151,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             # BFA-Draise - Legacy Operator Added to own group with consistent order
             col.operator("mesh.inset", icon="INSET_FACES")
 
-            col.separator()
-
             col.separator()  # BFA-Draise - Seperated extrude operators to be in own group for consistency
 
             if selected_faces_len >= 2:
@@ -7179,7 +7177,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("mesh.faces_shade_smooth", icon="SHADING_SMOOTH")
             col.operator("mesh.faces_shade_flat", icon="SHADING_FLAT")
 
-            layout.separator()
+            col.separator()
 
             # Removal Operators
             col.operator("mesh.unsubdivide", icon="UNSUBDIVIDE")
