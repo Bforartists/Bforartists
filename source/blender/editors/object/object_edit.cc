@@ -1938,10 +1938,11 @@ static void shade_auto_smooth_ui(bContext * /*C*/, wmOperator *op)
 {
   uiLayout *layout = op->layout;
 
+  /* BFA - Move this before `use_property_split_set` so it aligns left */
+  layout->prop(op->ptr, "use_auto_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
   layout->use_property_split_set(true);
   layout->use_property_decorate_set(false);
-
-  layout->prop(op->ptr, "use_auto_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiLayout *col = &layout->column(false);
   col->active_set(RNA_boolean_get(op->ptr, "use_auto_smooth"));
