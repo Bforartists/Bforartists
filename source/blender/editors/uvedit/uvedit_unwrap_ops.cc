@@ -2960,10 +2960,14 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
 
   if (is_slim) {
     col->prop(&ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    
+    col->use_property_split_set(false); /* BFA - Align boolean props left */
     col->prop(&ptr, "no_flip", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
+    
     col->separator();
     col->prop(&ptr, "use_weights", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    
+    col->use_property_split_set(true); /* BFA - Align boolean props left */
 
     if (RNA_boolean_get(op->ptr, "use_weights")) {
       col = &layout->column(true);
@@ -2972,14 +2976,18 @@ static void unwrap_draw(bContext * /*C*/, wmOperator *op)
     }
   }
   else {
+    col->use_property_split_set(false); /* BFA - Align boolean props left */
     col->prop(&ptr, "fill_holes", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    col->use_property_split_set(true); /* BFA - Align boolean props left */
   }
 
   col->separator();
+  col->use_property_split_set(false); /* BFA - Align boolean props left */
   col->prop(&ptr, "use_subsurf_data", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   col->separator();
   col->prop(&ptr, "correct_aspect", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col->use_property_split_set(true); /* BFA - Align boolean props left */
   col->prop(&ptr, "margin_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&ptr, "margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
