@@ -1,9 +1,9 @@
-name: Create Manual Issue in Documentation Repo
+name: Create Manual Issue for Documentation Update
 
 on:
   push:
     branches:
-      - main # Branch to monitor for changes
+      - main # Main repository branch
     types: [released] # Only trigger when a tag is pushed (after successful merge)
 
 jobs:
@@ -13,27 +13,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          repository: Bforartists # Your documentation repository
+          repository: bforartists/bforartists # Main repository
           token: ${{ secrets.ACCESS_TOKEN }}
           fetch-depth: 0 # Fetch the entire commit history
 
-      # Get the ID of the last commit
-      - name: Get last commit id
-        id: latest_commit
-        run: echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      # Get PR information
+      - name: Get Pull Request Details
+        id: pr_details
+        run: |
+          echo "PR_TITLE=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+          echo "PR_BODY=$(git log -1 --pretty=%b)" >> $GITHUB_OUTPUT
+          echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
-      # Create an issue in the documentation repository
-      - name: Create issue in documentation repo
+      # Create an issue in the manual repository
+      - name: Create Issue in Manual Repository
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.ACCESS_TOKEN }}
           script: |
-            const title = 'Fix for commit ${COMMIT_ID} - Update Documentation'
-            const body = `This issue was automatically created to update the documentation for commit \`${COMMIT_ID}\`.
+            const title = `Fix for commit ${process.env.COMMIT_ID} - Documentation Update`;
+            const body = `This commit requires an update to the documentation:\n\n${process.env.COMMIT_ID}\n\nPull Request Title: ${process.env.PR_TITLE}\nPull Request Body: ${process.env.PR_BODY}`;
 
-          #generate the issue
             github.rest.issues.create({
-              repo: 'Bforartists', # Your documentation repository
+              repo: 'bforartists/manual', # Manual repository
               title: title,
               body: body
-            })
+            });
