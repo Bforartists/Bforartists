@@ -1,40 +1,40 @@
-name: Create Manual Issue on Merge
+name: Create Manual Issue in Documentation Repo
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches:
+      - main # Branch to monitor for changes
+    types: [released] # Only trigger when a tag is pushed (after successful merge)
 
 jobs:
-  check-and-create-issue:
+  create_issue:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Benötigt, um den gesamten Commit-Verlauf abzurufen, required to call the whole commit history
+          repository: Bforartists # Your documentation repository
+          token: ${{ secrets.ACCESS_TOKEN }}
+          fetch-depth: 0 # Fetch the entire commit history
 
-      # Pull Request Informationen abrufen
-      - name: Get pull request details
-        id: pr_details
-        run: |
-          echo "PR_TITLE=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
-          echo "PR_BODY=$(git log -1 --pretty=%b)" >> $GITHUB_OUTPUT
+      # Get the ID of the last commit
+      - name: Get last commit id
+        id: latest_commit
+        run: echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
-      # Wenn es ein Merge ist, erstelle ein Issue im Manual-Repository
-      # in case it is a merge, create an issue in the Manual-Repository
-      - name: Create issue in manual repository (on merge)
-        if: github.event.pull_request.merged == true
+      # Create an issue in the documentation repository
+      - name: Create issue in documentation repo
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ACCESS_TOKEN }}
           script: |
-            const title = `[Merge] ${context.issue.title}`
-            const body = `${steps.pr_details.outputs.PR_BODY}\n\nPlease update the manual accordingly.`
+            const title = 'Fix for commit ${COMMIT_ID} - Update Documentation'
+            const body = `This issue was automatically created to update the documentation for commit \`${COMMIT_ID}\`.
 
-            // Erstelle ein neues Issue im Manual-Repository
+Please review and update the relevant sections.`
+
             github.rest.issues.create({
-              owner: 'Bforartists', // Owner des Manual-Repos
-              repo: 'Manual',   // Name des Manual-Repos
+              repo: 'Bforartists', # Your documentation repository
               title: title,
               body: body
             })
