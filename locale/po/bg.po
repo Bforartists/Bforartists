@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:34+0000\n"
 "Last-Translator: Just Adam <adam.abbas2009@gmail.com>\n"
 "Language-Team: Bulgarian <https://translate.blender.org/projects/blender-ui/ui/bg/>\n"
@@ -1136,6 +1136,10 @@ msgid "Mask"
 msgstr "Маскиране"
 
 
+msgid "UV Mapping"
+msgstr "UV Картиране"
+
+
 msgid "Light"
 msgstr "Светлина"
 
@@ -1166,10 +1170,6 @@ msgstr "Слей"
 
 msgid "Text"
 msgstr "Текст"
-
-
-msgid "UV Mapping"
-msgstr "UV Картиране"
 
 
 msgid "Languages..."
@@ -1987,8 +1987,8 @@ msgid "Print memory statistics to the console"
 msgstr "Принтирай статистиката на паметта в конзолата"
 
 
-msgid "Open a Bforartists file"
-msgstr "Отваряне на Bforartists файл"
+msgid "Open a Blender file"
+msgstr "Отваряне на Blender файл"
 
 
 msgid "Trusted Source"
@@ -1996,12 +1996,12 @@ msgstr "Надежден Източник"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Излез от Bforartists"
+msgid "Quit Blender"
+msgstr "Излез от Blender"
 
 
-msgid "Quit Bforartists"
-msgstr "Излез от Bforartists"
+msgid "Quit Blender"
+msgstr "Излез от Blender"
 
 
 msgid "Color Path"
@@ -2060,12 +2060,12 @@ msgstr "Преначертай относителните"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Запази Bforartists Файл"
+msgid "Save Blender File"
+msgstr "Запази Blender Файл"
 
 
-msgid "Save the current Bforartists file"
-msgstr "Запази текущия Bforartists файл"
+msgid "Save the current Blender file"
+msgstr "Запази текущия Blender файл"
 
 
 msgctxt "Operator"

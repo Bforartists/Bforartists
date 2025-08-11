@@ -348,11 +348,6 @@ struct bNodeType {
    * responsibility of the caller. */
   NodeGetCompositorOperationFunction get_compositor_operation = nullptr;
 
-  /* A message to display in the node header for unsupported compositor nodes. The message
-   * is assumed to be static and thus require no memory handling. This field is to be removed when
-   * all nodes are supported. */
-  const char *compositor_unsupported_message = nullptr;
-
   /* Build a multi-function for this node. */
   NodeMultiFunctionBuildFunction build_multi_function = nullptr;
 
@@ -965,7 +960,8 @@ void node_rebuild_id_vector(bNodeTree &node_tree);
 /**
  * \note keeps socket list order identical, for copying links.
  * \param dst_name: The name of the copied node. This is expected to be unique in the destination
- * tree if provided. If not provided, the src name is used and made unique.
+ *   tree if provided. If not provided, the src name is used and is made unique unless
+ *   allow_duplicate_names is true.
  * \param dst_identifier: Same ad dst_name, but for the identifier.
  */
 bNode *node_copy_with_mapping(bNodeTree *dst_tree,
@@ -973,9 +969,8 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
                               int flag,
                               std::optional<StringRefNull> dst_unique_name,
                               std::optional<int> dst_unique_identifier,
-                              Map<const bNodeSocket *, bNodeSocket *> &new_socket_map);
-
-bNode *node_copy(bNodeTree *dst_tree, const bNode &src_node, int flag, bool use_unique);
+                              Map<const bNodeSocket *, bNodeSocket *> &new_socket_map,
+                              bool allow_duplicate_names = false);
 
 /**
  * Move socket default from \a src (input socket) to locations specified by \a dst (output socket).
@@ -1015,7 +1010,7 @@ void node_internal_relink(bNodeTree &ntree, bNode &node);
 
 void node_position_relative(bNode &from_node,
                             const bNode &to_node,
-                            const bNodeSocket &from_sock,
+                            const bNodeSocket *from_sock,
                             const bNodeSocket &to_sock);
 
 void node_position_propagate(bNode &node);

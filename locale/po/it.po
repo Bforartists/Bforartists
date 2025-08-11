@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:25+0000\n"
 "Last-Translator: 32437w5k7 <32437w5k7@mozmail.com>\n"
 "Language-Team: Italian <https://translate.blender.org/projects/blender-ui/ui/it/>\n"
@@ -824,8 +824,8 @@ msgid "Fribidi Library"
 msgstr "Libreria Fribidi"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
-msgstr "La libreria compilata in C di FriBidi (.so in Linux, .dll in Windows). Probabilmente devi specificarla se stai utilizzando Windows, ad es. utilizzando quella inclutilizza nel repository delle librerie di Bforartists"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
+msgstr "La libreria compilata in C di FriBidi (.so in Linux, .dll in Windows). Probabilmente devi specificarla se stai utilizzando Windows, ad es. utilizzando quella inclutilizza nel repository delle librerie di Blender"
 
 
 msgid "Translation Root"
@@ -848,8 +848,8 @@ msgid "Source Root"
 msgstr "Root Sorgente"
 
 
-msgid "The Bforartists source root path"
-msgstr "Il percorso root della sorgente di Bforartists"
+msgid "The Blender source root path"
+msgstr "Il percorso root della sorgente di Blender"
 
 
 msgid "Spell Cache"
@@ -872,8 +872,8 @@ msgid "Persistent Data Path"
 msgstr "Percorso dei Dati Persistenti"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
-msgstr "Nome del file json per archiviare queste impostazioni (sfortunatamente il sistema di Bforartists qui non funziona)"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgstr "Nome del file json per archiviare queste impostazioni (sfortunatamente il sistema di Blender qui non funziona)"
 
 
 msgid "User Add-ons"
@@ -1736,8 +1736,8 @@ msgid "Catalog UUID"
 msgstr "UUID del Catalogo"
 
 
-msgid "Identifier for the asset's catalog, used by Bforartists to look up the asset's catalog path. Must be a UUID according to RFC4122."
-msgstr "Identificatore per il catalogo dell'asset, utilizzato da Bforartists per cercare il percorso del catalogo dell'asset. Deve essere un UUID secondo RFC4122."
+msgid "Identifier for the asset's catalog, used by Blender to look up the asset's catalog path. Must be a UUID according to RFC4122."
+msgstr "Identificatore per il catalogo dell'asset, utilizzato da Blender per cercare il percorso del catalogo dell'asset. Deve essere un UUID secondo RFC4122."
 
 
 msgid "Catalog Simple Name"
@@ -1853,16 +1853,16 @@ msgid "Current File"
 msgstr "File Corrente"
 
 
-msgid "Show the assets currently available in this Bforartists session"
-msgstr "Mostra le risorse attualmente disponibili in questa sessione di Bforartists"
+msgid "Show the assets currently available in this Blender session"
+msgstr "Mostra le risorse attualmente disponibili in questa sessione di Blender"
 
 
 msgid "Essentials"
 msgstr "Essenziali"
 
 
-msgid "Show the basic building blocks and utilities coming with Bforartists"
-msgstr "Mostra i moduli di base e le utilità fornite con Bforartists"
+msgid "Show the basic building blocks and utilities coming with Blender"
+msgstr "Mostra i moduli di base e le utilità fornite con Blender"
 
 
 msgid "Custom"
@@ -2165,8 +2165,8 @@ msgid "Is Internal"
 msgstr "È Interno"
 
 
-msgid "The attribute is meant for internal use by Bforartists"
-msgstr "L'attributo è pensato per uso interno da Bforartists"
+msgid "The attribute is meant for internal use by Blender"
+msgstr "L'attributo è pensato per uso interno da Blender"
 
 
 msgid "Is Required"
@@ -3426,12 +3426,12 @@ msgid "Source Library"
 msgstr "Libreria Sorgente"
 
 
-msgid "Bforartists RNA"
-msgstr "RNA Bforartists"
+msgid "Blender RNA"
+msgstr "RNA Blender"
 
 
-msgid "Bforartists RNA structure definitions"
-msgstr "Definizioni della struttura RNA di Bforartists"
+msgid "Blender RNA structure definitions"
+msgstr "Definizioni della struttura RNA di Blender"
 
 
 msgid "Structs"
@@ -4180,10 +4180,6 @@ msgid "Radius of head of bone (for Envelope deform only)"
 msgstr "Raggio della testa dell'osso (solo per Inviluppo deformazione)"
 
 
-msgid "Bone is not visible when it is not in Edit Mode (i.e. in Object or Pose Modes)"
-msgstr "L'osso non è visibile quando non si è in Modalità Modifica (es. in Modalità Oggetto o Posa)"
-
-
 msgid "Selectable"
 msgstr "Selezionabile"
 
@@ -4282,10 +4278,6 @@ msgstr "Quando l'osso ha un genitore, la testa dell'osso è attaccata alla coda 
 
 msgid "Cyclic Offset"
 msgstr "Offset Ciclico"
-
-
-msgid "When bone doesn't have a parent, it receives cyclic offset effects (Deprecated)"
-msgstr "Quando l'osso non ha un genitore, riceve effetti ciclici compensati"
 
 
 msgid "Deform"
@@ -6748,14 +6740,6 @@ msgid "Collection of Color Ramp Elements"
 msgstr "Raccolta di Elementi Rampa Colore"
 
 
-msgid "File Output Slots"
-msgstr "Slots Uscita File"
-
-
-msgid "Collection of File Output node slots"
-msgstr "Raccolta di slot nodi Uscita File"
-
-
 msgid "Console Input"
 msgstr "Immissione Console"
 
@@ -6797,8 +6781,8 @@ msgid "Lin error"
 msgstr "Errore lineare"
 
 
-msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
-msgstr "Ammontare di errore residuo nell'unità di spazio di Bforartists per i vincoli che funzionano sulla posizione"
+msgid "Amount of residual error in Blender space unit for constraints that work on position"
+msgstr "Ammontare di errore residuo nell'unità di spazio di Blender per i vincoli che funzionano sulla posizione"
 
 
 msgid "Rotation error"
@@ -9546,10 +9530,6 @@ msgid "Data Path"
 msgstr "Percorso Dati"
 
 
-msgid "The value to use if the data path can't be resolved"
-msgstr "Il valore da utilizzare se il percorso del dato non può essere risolto"
-
-
 msgid "Type of ID-block that can be used"
 msgstr "Tipo di blocco ID che può essere utilizzato"
 
@@ -9846,8 +9826,8 @@ msgid "Max Velocity"
 msgstr "Velocità Massima"
 
 
-msgid "Velocity considered as maximum influence (Bforartists units per frame)"
-msgstr "La velocità viene considerata come influenza massima (unità di Bforartists per fotogramma)"
+msgid "Velocity considered as maximum influence (Blender units per frame)"
+msgstr "La velocità viene considerata come influenza massima (unità di Blender per fotogramma)"
 
 
 msgid "Velocity Color Ramp"
@@ -10176,8 +10156,8 @@ msgid "Premultiply Alpha"
 msgstr "Premoltiplica Alfa"
 
 
-msgid "Multiply color by alpha (recommended for Bforartists input)"
-msgstr "Moltiplica colore per alpha (consigliato per input in Bforartists)"
+msgid "Multiply color by alpha (recommended for Blender input)"
+msgstr "Moltiplica colore per alpha (consigliato per input in Blender)"
 
 
 msgid "Use Shrink"
@@ -10494,10 +10474,6 @@ msgstr "Utilizza i colori degli assi per le trasformazioni e le proprietà color
 
 msgid "Auto WXYZ to YRGB"
 msgstr "WXYZ a YRGB automatico"
-
-
-msgid "Use axis colors for XYZ parts of transform, and yellow for the 'W' channel"
-msgstr "Utilizza i colori degli assi per le porzioni XYZ della trasformazione, e il giallo per il canale 'W'"
 
 
 msgid "User Defined"
@@ -12266,24 +12242,24 @@ msgid "Enable filtering of files"
 msgstr "Abilita il filtro dei file"
 
 
-msgid "Filter Bforartists Backup Files"
-msgstr "Filtra i File di Backup di Bforartists"
+msgid "Filter Blender Backup Files"
+msgstr "Filtra i File di Backup di Blender"
 
 
 msgid "Show .blend1, .blend2, etc. files"
 msgstr "Mostra file .blend1, .blend2, ecc."
 
 
-msgid "Filter Bforartists"
-msgstr "Filtra file Bforartists"
+msgid "Filter Blender"
+msgstr "Filtra file Blender"
 
 
 msgid "Show .blend files"
 msgstr "Mostra file .blend"
 
 
-msgid "Filter Bforartists IDs"
-msgstr "Filtra IDs Bforartists"
+msgid "Filter Blender IDs"
+msgstr "Filtra IDs Blender"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
@@ -13128,6 +13104,10 @@ msgstr "Tipo di Connettore"
 
 msgid "Menu"
 msgstr "Menu"
+
+
+msgid "Shader"
+msgstr "Shader"
 
 
 msgid "Collection"
@@ -15166,8 +15146,8 @@ msgid "Unprojected Radius"
 msgstr "Raggio Non Proiettato"
 
 
-msgid "Radius of brush in Bforartists units"
-msgstr "Raggio del pennello in unità Bforartists"
+msgid "Radius of brush in Blender units"
+msgstr "Raggio del pennello in unità Blender"
 
 
 msgid "Accumulate"
@@ -16679,48 +16659,24 @@ msgid "Format used for re-saving this file"
 msgstr "Formato utilizzato per risalvare questo file"
 
 
-msgid "Output image in bitmap format"
-msgstr "Immagine in formato bitmap"
+msgid "Output image in JPEG format"
+msgstr "Immagine in formato JPEG"
 
 
-msgid "Iris"
-msgstr "Iris"
-
-
-msgid "Output image in SGI IRIS format"
-msgstr "Immagine di output in formato SGI IRIS"
+msgid "Output image in OpenEXR format"
+msgstr "Immagine in formato OpenEXR"
 
 
 msgid "Output image in PNG format"
 msgstr "Immagine in formato PNG"
 
 
-msgid "Output image in JPEG format"
-msgstr "Immagine in formato JPEG"
+msgid "Output image in WebP format"
+msgstr "Immagine di output in formato WebP"
 
 
-msgid "Output image in JPEG 2000 format"
-msgstr "Immagine di output in formato JPEG 2000"
-
-
-msgid "Targa"
-msgstr "Targa"
-
-
-msgid "Output image in Targa format"
-msgstr "Immagine in formato Targa"
-
-
-msgid "Targa Raw"
-msgstr "Targa RAW"
-
-
-msgid "Output image in uncompressed Targa format"
-msgstr "Esporta l'immagine nel formato non compresso Targa"
-
-
-msgid "Cineon"
-msgstr "Cineon"
+msgid "Output image in bitmap format"
+msgstr "Immagine in formato bitmap"
 
 
 msgid "Output image in Cineon format"
@@ -16731,28 +16687,28 @@ msgid "Output image in DPX format"
 msgstr "Immagine in formato DPX"
 
 
-msgid "Output image in OpenEXR format"
-msgstr "Immagine in formato OpenEXR"
+msgid "Output image in SGI IRIS format"
+msgstr "Immagine di output in formato SGI IRIS"
 
 
-msgid "Radiance HDR"
-msgstr "Radiance HDR"
+msgid "Output image in JPEG 2000 format"
+msgstr "Immagine di output in formato JPEG 2000"
 
 
 msgid "Output image in Radiance HDR format"
 msgstr "Immagine in formato Radiance HDR"
 
 
+msgid "Output image in Targa format"
+msgstr "Immagine in formato Targa"
+
+
+msgid "Output image in uncompressed Targa format"
+msgstr "Esporta l'immagine nel formato non compresso Targa"
+
+
 msgid "Output image in TIFF format"
 msgstr "Immagine in formato TIFF"
-
-
-msgid "Output image in WebP format"
-msgstr "Immagine di output in formato WebP"
-
-
-msgid "OpenEXR MultiLayer"
-msgstr "OpenEXR MultiLivello"
 
 
 msgid "Output image in multilayer OpenEXR format"
@@ -16873,10 +16829,6 @@ msgstr "Pixels"
 
 msgid "Render Slots"
 msgstr "Slot Render"
-
-
-msgid "Width and height of the image buffer in pixels, zero when image data can't be loaded"
-msgstr "Larghezza e altezza del buffer dell'immagine in pixel, zero quando non è possibile caricare i dati dell'immagine"
 
 
 msgctxt "Image"
@@ -17073,8 +17025,8 @@ msgid "Path to the library .blend file"
 msgstr "Percorso al file .blend della libreria"
 
 
-msgid "Version of Bforartists the library .blend was saved with"
-msgstr "Versione di Bforartists con cui la libreria .blend è stata salvata"
+msgid "Version of Blender the library .blend was saved with"
+msgstr "Versione di Blender con cui la libreria .blend è stata salvata"
 
 
 msgctxt "Light"
@@ -17949,10 +17901,6 @@ msgid "Frame Rate"
 msgstr "Freq. Fotogrammi"
 
 
-msgid "Width and height in pixels, zero when image data can't be loaded"
-msgstr "Larghezza e altezza in pixel, zero quando non è possibile caricare i dati dell'immagine"
-
-
 msgid "Movie File"
 msgstr "File Filmato"
 
@@ -17999,10 +17947,6 @@ msgstr "Mascherino"
 
 msgid "Script"
 msgstr "Script"
-
-
-msgid "Shader"
-msgstr "Shader"
 
 
 msgid "Pattern"
@@ -20583,12 +20527,12 @@ msgid "Noise basis used for turbulence"
 msgstr "Rumore base utilizzato per la turbolenza"
 
 
-msgid "Bforartists Original"
-msgstr "Bforartists Originale"
+msgid "Blender Original"
+msgstr "Blender Originale"
 
 
-msgid "Noise algorithm - Bforartists original: Smooth interpolated noise"
-msgstr "Algoritmo rumore - Bforartists originale: Interpolazione del rumore morbida"
+msgid "Noise algorithm - Blender original: Smooth interpolated noise"
+msgstr "Algoritmo rumore - Blender originale: Interpolazione del rumore morbida"
 
 
 msgid "Original Perlin"
@@ -22077,10 +22021,6 @@ msgid "Identifier of operator to call on input event"
 msgstr "Identificativo dell'operatore da chiamare nell'evento di input"
 
 
-msgid "Is this keymap item user defined (doesn't just replace a builtin item)"
-msgstr "Questo oggetto mappa di tastiera è definito dall'utente (non sostituisce semplicemente un elemento incorporato)"
-
-
 msgid "User Modified"
 msgstr "Modificato da Utente"
 
@@ -23434,10 +23374,6 @@ msgid "Double Click"
 msgstr "Doppio Click"
 
 
-msgid "Click Drag"
-msgstr "Click Trascina"
-
-
 msgid "KeyMap Items"
 msgstr "Elementi Mappa Tasti"
 
@@ -24664,6 +24600,62 @@ msgid "Material slot name"
 msgstr "Nome dello slot materiale"
 
 
+msgid "Pivot Point"
+msgstr "Punto di Perno"
+
+
+msgid "Snap"
+msgstr "Aggancia"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Decadimento Modifica Proporzionale"
+
+
+msgid "Mask Edit"
+msgstr "Modifica Maschera"
+
+
+msgid "Automasking"
+msgstr "Automascheramento"
+
+
+msgid "Face Sets Edit"
+msgstr "Modifica Sets di Facce"
+
+
+msgid "Vertex Group Locks"
+msgstr "Blocchi del Gruppo di Vertici"
+
+
+msgid "Mirror"
+msgstr "Specchia"
+
+
+msgid "UV Mapping"
+msgstr "Mappatura UV"
+
+
+msgid "Local View"
+msgstr "Vista Locale"
+
+
+msgid "Viewpoint"
+msgstr "Punto di vista"
+
+
+msgid "Navigation"
+msgstr "Navigazione"
+
+
+msgid "Align View"
+msgstr "Allinea Vista"
+
+
+msgid "Align View to Active"
+msgstr "Allinea Vista a Attivo"
+
+
 msgid "View Regions"
 msgstr "Regione Vista"
 
@@ -24756,10 +24748,6 @@ msgid "Hooks"
 msgstr "Ganci"
 
 
-msgid "Vertex Group Locks"
-msgstr "Blocchi del Gruppo di Vertici"
-
-
 msgid "Face Sets Init"
 msgstr "Init Sets di Facce"
 
@@ -24834,58 +24822,6 @@ msgstr "Testo"
 
 msgid "Bone Roll"
 msgstr "Rollio Osso"
-
-
-msgid "Pivot Point"
-msgstr "Punto di Perno"
-
-
-msgid "Snap"
-msgstr "Aggancia"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Decadimento Modifica Proporzionale"
-
-
-msgid "Mask Edit"
-msgstr "Modifica Maschera"
-
-
-msgid "Automasking"
-msgstr "Automascheramento"
-
-
-msgid "Face Sets Edit"
-msgstr "Modifica Sets di Facce"
-
-
-msgid "Mirror"
-msgstr "Specchia"
-
-
-msgid "UV Mapping"
-msgstr "Mappatura UV"
-
-
-msgid "Local View"
-msgstr "Vista Locale"
-
-
-msgid "Viewpoint"
-msgstr "Punto di vista"
-
-
-msgid "Navigation"
-msgstr "Navigazione"
-
-
-msgid "Align View"
-msgstr "Allinea Vista"
-
-
-msgid "Align View to Active"
-msgstr "Allinea Vista a Attivo"
 
 
 msgid "Keyframe Insert Pie"
@@ -31453,16 +31389,6 @@ msgid "Map UV"
 msgstr "Mappa UV"
 
 
-msgctxt "NodeTree"
-msgid "Nearest"
-msgstr "il Più Vicino"
-
-
-msgctxt "NodeTree"
-msgid "Anisotropic"
-msgstr "Anisotropico"
-
-
 msgid "Size Source"
 msgstr "Sorgente Dimensione"
 
@@ -31487,24 +31413,12 @@ msgid "File Output"
 msgstr "Uscita File"
 
 
-msgid "Active Input Index"
-msgstr "Indice Input Attivo"
+msgid "Active Item Index"
+msgstr "Indice Elemento Attivo"
 
 
-msgid "Base Path"
-msgstr "Percorso Base"
-
-
-msgid "Base output path for the image"
-msgstr "Percorso di output di base per l'immagine"
-
-
-msgid "File Slots"
-msgstr "File Slots"
-
-
-msgid "EXR Layer Slots"
-msgstr "Slots del Livello EXR"
+msgid "Index of the active item"
+msgstr "Indice dell'elemento attivo"
 
 
 msgid "Save as Render"
@@ -31783,14 +31697,6 @@ msgid "Truncate"
 msgstr "Troncare"
 
 
-msgid "Active Item Index"
-msgstr "Indice Elemento Attivo"
-
-
-msgid "Index of the active item"
-msgstr "Indice dell'elemento attivo"
-
-
 msgid "Input value used for unconnected socket"
 msgstr "Valore d'ingresso utilizzato per connettore non collegato"
 
@@ -32023,10 +31929,6 @@ msgid "Fill Curve"
 msgstr "Riempi Curva"
 
 
-msgid "Triangles"
-msgstr "Triangoli"
-
-
 msgid "Flip Faces"
 msgstr "Capovolgi Facce"
 
@@ -32227,6 +32129,10 @@ msgid "Fill Type"
 msgstr "Tipo Riempimento"
 
 
+msgid "Triangles"
+msgstr "Triangoli"
+
+
 msgid "Ico Sphere"
 msgstr "Ico Sfera"
 
@@ -32271,10 +32177,6 @@ msgid "Remove Named Attribute"
 msgstr "Rimuove Attributo Nominato"
 
 
-msgid "Pattern Mode"
-msgstr "Modalitá Pattern"
-
-
 msgid "Repeat Output"
 msgstr "Ripeti Output"
 
@@ -32311,18 +32213,6 @@ msgid "Sample Grid"
 msgstr "Griglia Campione"
 
 
-msgid "Interpolation Mode"
-msgstr "Modalitá Interpolazione"
-
-
-msgid "Trilinear"
-msgstr "Trilineare"
-
-
-msgid "Triquadratic"
-msgstr "Triquadratico"
-
-
 msgid "Sample Grid Index"
 msgstr "Indice Griglia Campione"
 
@@ -32335,10 +32225,6 @@ msgid "Scale Elements"
 msgstr "Scala Elementi"
 
 
-msgid "Scale Mode"
-msgstr "Modalità Scala"
-
-
 msgid "Scale Instances"
 msgstr "Scala Istanze"
 
@@ -32349,10 +32235,6 @@ msgstr "Separa Componenti"
 
 msgid "Separate Geometry"
 msgstr "Separa Geometria"
-
-
-msgid "Z Up"
-msgstr "Z In Alto"
 
 
 msgid "Set Curve Radius"
@@ -32405,14 +32287,6 @@ msgstr "Converti tutte le facce di una mesh in facce triangolari"
 
 msgid "Pack UV Islands"
 msgstr "Compatta Isole UV"
-
-
-msgid "Angle Based"
-msgstr "Basato sull'Angolo"
-
-
-msgid "Conformal"
-msgstr "Conforme"
 
 
 msgid "Warning"
@@ -32747,12 +32621,12 @@ msgid "World space normal mapping"
 msgstr "Imposta lo spazio mondo della mappatura normale"
 
 
-msgid "Bforartists Object Space"
-msgstr "Spazio Oggetto Bforartists"
+msgid "Blender Object Space"
+msgstr "Spazio Oggetto Blender"
 
 
-msgid "Bforartists World Space"
-msgstr "Spazio Mondo Bforartists"
+msgid "Blender World Space"
+msgstr "Spazio Mondo Blender"
 
 
 msgid "UV Map for tangent space maps"
@@ -33316,10 +33190,6 @@ msgid "Collection of Node Links"
 msgstr "Raccolta di Collegamenti Nodo"
 
 
-msgid "Output File Slot"
-msgstr "Slot File Uscita"
-
-
 msgid "Node Outputs"
 msgstr "Uscite Nodo"
 
@@ -33509,7 +33379,7 @@ msgstr "Mostra Tutto"
 
 msgctxt "Operator"
 msgid "Open Blend File"
-msgstr "Apri File Bforartists"
+msgstr "Apri File Blender"
 
 
 msgid "Add or remove a Camera Preset"
@@ -34044,8 +33914,8 @@ msgid "Restore Key Map(s)"
 msgstr "Ripristina Mappa(e) Tasti"
 
 
-msgid "Load and apply a Bforartists XML theme file"
-msgstr "Carica e applica un file tema XML di Bforartists"
+msgid "Load and apply a Blender XML theme file"
+msgstr "Carica e applica un file tema XML di Blender"
 
 
 msgctxt "Operator"
@@ -34465,10 +34335,6 @@ msgstr "Estrapolazione Lineare"
 
 msgid "Make Cyclic (F-Modifier)"
 msgstr "Rendi Ciclico (Modificatore-F)"
-
-
-msgid "Add Cycles F-Modifier if one doesn't exist already"
-msgstr "Aggiunge Cicli del Modificatore Funzione se non ne esiste già uno"
 
 
 msgid "Clear Cyclic (F-Modifier)"
@@ -37725,6 +37591,10 @@ msgstr "X In Alto"
 
 msgid "Y Up"
 msgstr "Y In Alto"
+
+
+msgid "Z Up"
+msgstr "Z In Alto"
 
 
 msgid "-X Up"
@@ -42626,21 +42496,6 @@ msgid "Toggle option buttons display for selected nodes"
 msgstr "Attiva/disattiva la visualizzazione dei bottoni di opzione per i nodi selezionati"
 
 
-msgctxt "Operator"
-msgid "Add File Node Socket"
-msgstr "Aggiungi Connettore File Nodo"
-
-
-msgctxt "Operator"
-msgid "Move File Node Socket"
-msgstr "Muovi Connettore File Nodo"
-
-
-msgctxt "Operator"
-msgid "Remove File Node Socket"
-msgstr "Rimuovi Connettore File Nodo"
-
-
 msgid "Attach selected nodes"
 msgstr "Connetti i nodi selezionati"
 
@@ -43942,10 +43797,6 @@ msgstr "Specchia la shape key corrente lungo l'asse X locale"
 msgctxt "Operator"
 msgid "Move Shape Key"
 msgstr "Muovi Chiave Forma"
-
-
-msgid "Move the active shape key up/down in the list"
-msgstr "Sposta la shape key attiva su/giù nella lista"
 
 
 msgctxt "Operator"
@@ -46644,10 +46495,6 @@ msgid "Hide Panels"
 msgstr "Nascondi Pannelli"
 
 
-msgid "Hide all the panels"
-msgstr "Nasconde tutti i pannelli"
-
-
 msgctxt "Operator"
 msgid "Set Screen"
 msgstr "Imposta Schermo"
@@ -47179,8 +47026,8 @@ msgid "Add Scene Strip"
 msgstr "Aggiunge Spezzone Scena"
 
 
-msgid "Add a strip to the sequencer using a Bforartists scene as a source"
-msgstr "Aggiunge uno spezzone al sequencer utilizzando una scena Bforartists come sorgente"
+msgid "Add a strip to the sequencer using a Blender scene as a source"
+msgstr "Aggiunge uno spezzone al sequencer utilizzando una scena Blender come sorgente"
 
 
 msgid "Select a strip (last selected becomes the \"active strip\")"
@@ -48986,6 +48833,14 @@ msgid "Unwrapping method (Angle Based usually gives better results than Conforma
 msgstr "Metodo di sviluppo-scucitura (quello Basato sull'Angolo dà risultati miglior del Conforme, pur essendo un po' più lento)"
 
 
+msgid "Angle Based"
+msgstr "Basato sull'Angolo"
+
+
+msgid "Conformal"
+msgstr "Conforme"
+
+
 msgctxt "Operator"
 msgid "Weld"
 msgstr "Salda"
@@ -49869,8 +49724,8 @@ msgid "Open"
 msgstr "Apri"
 
 
-msgid "Open a Bforartists file"
-msgstr "Apre un file Bforartists"
+msgid "Open a Blender file"
+msgstr "Apre un file Blender"
 
 
 msgid "Load UI"
@@ -49950,12 +49805,12 @@ msgstr "Limiti Morbidi"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Esci da Bforartists"
+msgid "Quit Blender"
+msgstr "Esci da Blender"
 
 
-msgid "Quit Bforartists"
-msgstr "Esce da Bforartists"
+msgid "Quit Blender"
+msgstr "Esce da Blender"
 
 
 msgctxt "Operator"
@@ -50149,12 +50004,12 @@ msgstr "Salva questo come File di Avvio"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Salva File Bforartists"
+msgid "Save Blender File"
+msgstr "Salva File Blender"
 
 
-msgid "Save the current Bforartists file"
-msgstr "Salva il file Bforartists attuale"
+msgid "Save the current Blender file"
+msgstr "Salva il file Blender attuale"
 
 
 msgctxt "Operator"
@@ -50668,26 +50523,6 @@ msgid "Active Palette Color"
 msgstr "Colore Tavolozza Attivo"
 
 
-msgid "Snapping"
-msgstr "Ancoraggio"
-
-
-msgid "Transform Orientations"
-msgstr "Assi (Orientamenti Trasformazione)"
-
-
-msgid "Stroke Placement"
-msgstr "Giacitura Tratto"
-
-
-msgid "Stereoscopy"
-msgstr "Stereoscopia"
-
-
-msgid "Auto-Masking"
-msgstr "Auto-Mascheramento"
-
-
 msgid "Shadow Settings"
 msgstr "Impostazioni Ombra"
 
@@ -50722,6 +50557,26 @@ msgstr "Modalità Modifica Mesh"
 
 msgid "Measurement"
 msgstr "Misurazione"
+
+
+msgid "Snapping"
+msgstr "Ancoraggio"
+
+
+msgid "Transform Orientations"
+msgstr "Assi (Orientamenti Trasformazione)"
+
+
+msgid "Stroke Placement"
+msgstr "Giacitura Tratto"
+
+
+msgid "Stereoscopy"
+msgstr "Stereoscopia"
+
+
+msgid "Auto-Masking"
+msgstr "Auto-Mascheramento"
 
 
 msgid "Chain Scaling"
@@ -52502,8 +52357,8 @@ msgid "Edit Methods"
 msgstr "Metodi di Modifica"
 
 
-msgid "Settings for interacting with Bforartists data"
-msgstr "Impostazioni per l'interazione con i dati Bforartists"
+msgid "Settings for interacting with Blender data"
+msgstr "Impostazioni per l'interazione con i dati Blender"
 
 
 msgid "Default paths for external files"
@@ -52526,8 +52381,8 @@ msgid "Sort the recently searched items at the top"
 msgstr "Ordina gli elementi cercati di recente in alto"
 
 
-msgid "Version of Bforartists the userpref.blend was saved with"
-msgstr "Versione di Bforartists con cui il file userpref.blend è stato salvato"
+msgid "Version of Blender the userpref.blend was saved with"
+msgstr "Versione di Blender con cui il file userpref.blend è stato salvato"
 
 
 msgid "View & Controls"
@@ -54997,10 +54852,6 @@ msgid "Bake directly from multires object"
 msgstr "Effettua il precalcolo direttamente dal multires degli oggetti"
 
 
-msgid "User Scale"
-msgstr "Scala Utente"
-
-
 msgid "Render Region"
 msgstr "Regione Render"
 
@@ -56852,8 +56703,8 @@ msgid "Type of information to display"
 msgstr "Tipo di informazione da mostrare"
 
 
-msgid "Bforartists File"
-msgstr "File Bforartists"
+msgid "Blender File"
+msgstr "File Blender"
 
 
 msgid "Display data of current file and linked libraries"
@@ -58507,6 +58358,14 @@ msgid "Strips Selected"
 msgstr "Spezzoni Selezionati"
 
 
+msgid "Channel Group"
+msgstr "Gruppo Canale"
+
+
+msgid "Active Channel Group"
+msgstr "Gruppo Canale Attivo"
+
+
 msgid "Theme Console"
 msgstr "Tema Console"
 
@@ -58539,20 +58398,8 @@ msgid "Theme settings for the Dope Sheet"
 msgstr "Impostazioni del tema per il DopeSheet"
 
 
-msgid "Active Channel Group"
-msgstr "Gruppo Canale Attivo"
-
-
-msgid "Channel Group"
-msgstr "Gruppo Canale"
-
-
 msgid "Channels Selected"
 msgstr "Canali Selezionati"
-
-
-msgid "Dope Sheet Channel"
-msgstr "Canale DopeSheet"
 
 
 msgid "Color of Keyframe"
@@ -58791,10 +58638,6 @@ msgid "No Active Action"
 msgstr "Nessuna Azione Attiva"
 
 
-msgid "Animation data-block doesn't have active action"
-msgstr "Il blocco-dati animazione non ha una azione attiva"
-
-
 msgid "Meta Strips"
 msgstr "Meta Spezzoni"
 
@@ -58939,8 +58782,8 @@ msgid "Theme Preferences"
 msgstr "Tema Preferenze"
 
 
-msgid "Theme settings for the Bforartists Preferences"
-msgstr "Impostazioni del tema per le Preferenze di Bforartists"
+msgid "Theme settings for the Blender Preferences"
+msgstr "Impostazioni del tema per le Preferenze di Blender"
 
 
 msgid "Theme Properties"
@@ -61214,8 +61057,8 @@ msgstr "Licenza"
 
 
 msgctxt "Operator"
-msgid "Bforartists Website"
-msgstr "Sito web di Bforartists"
+msgid "Blender Website"
+msgstr "Sito web di Blender"
 
 
 msgctxt "Operator"
@@ -61248,8 +61091,8 @@ msgid "Release Notes"
 msgstr "Note di Rilascio"
 
 
-msgid "Read about what's new in this version of Bforartists"
-msgstr "Leggi cosa c'è di nuovo in questa versione di Bforartists"
+msgid "Read about what's new in this version of Blender"
+msgstr "Leggi cosa c'è di nuovo in questa versione di Blender"
 
 
 msgid "User Manual"
@@ -61577,16 +61420,6 @@ msgstr "Blocca Inverti Tutto"
 
 
 msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Cancella Tutti gli Shape Keys"
-
-
-msgctxt "Operator"
-msgid "Apply All Shape Keys"
-msgstr "Applica Tutti gli Shape Keys"
-
-
-msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "Ordina per Nome"
 
@@ -61622,23 +61455,8 @@ msgstr "Cancella Tutti i Gruppi"
 
 
 msgctxt "Operator"
-msgid "New Shape from Mix"
-msgstr "Nuova Forma dal Mix"
-
-
-msgctxt "Operator"
-msgid "Mirror Shape Key (Topology)"
-msgstr "Specchia Shape Key (Topologia)"
-
-
-msgctxt "Operator"
-msgid "Move to Top"
-msgstr "Muovi In Cima"
-
-
-msgctxt "Operator"
-msgid "Move to Bottom"
-msgstr "Muovi In Fondo"
+msgid "Flip"
+msgstr "Capovolgi"
 
 
 msgid "Auto Normalize"
@@ -62610,6 +62428,16 @@ msgstr "File di Testo"
 
 
 msgctxt "Operator"
+msgid "Move to Top"
+msgstr "Muovi In Cima"
+
+
+msgctxt "Operator"
+msgid "Move to Bottom"
+msgstr "Muovi In Fondo"
+
+
+msgctxt "Operator"
 msgid "Blend Offset"
 msgstr "Offset Fusione"
 
@@ -62860,11 +62688,6 @@ msgstr "Divisione Verticale"
 
 
 msgctxt "Operator"
-msgid "Toggle Fullscreen Area"
-msgstr "Attiva/disattiva Area a Schermo Intero"
-
-
-msgctxt "Operator"
 msgid "Sound"
 msgstr "Suono"
 
@@ -63087,6 +62910,11 @@ msgstr "Dissolvenza"
 msgctxt "Operator"
 msgid "Change Keying Set..."
 msgstr "Cambia Gruppo Chiavi..."
+
+
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "Cancella Keyframes..."
 
 
 msgctxt "Operator"
@@ -63998,11 +63826,6 @@ msgstr "Rendi Locale..."
 
 
 msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Cancella Keyframes..."
-
-
-msgctxt "Operator"
 msgid "Clear Keyframes..."
 msgstr "Pulisci Keyframes..."
 
@@ -64241,11 +64064,6 @@ msgstr "Forte"
 
 
 msgctxt "Operator"
-msgid "Flip"
-msgstr "Capovolgi"
-
-
-msgctxt "Operator"
 msgid "Rotate..."
 msgstr "Ruota..."
 
@@ -64326,17 +64144,9 @@ msgid "Mesh Edit Mode Overlays"
 msgstr "Sovrapposizioni in Modalità Modifica Mesh"
 
 
-msgid "Creases"
-msgstr "Pieghe"
-
-
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "Nitidi"
-
-
-msgid "Seams"
-msgstr "Cuciture"
 
 
 msgid "Vertex Group Weights"
@@ -65030,16 +64840,16 @@ msgid "Saved \"%s\""
 msgstr "Salvato \"%s\""
 
 
-msgid "File written by newer Bforartists binary (%d.%d), expect loss of data!"
-msgstr "File scritto nel nuovo formato binario Bforartists (%d.%d), possibile perdita di dati!"
+msgid "File written by newer Blender binary (%d.%d), expect loss of data!"
+msgstr "File scritto nel nuovo formato binario Blender (%d.%d), possibile perdita di dati!"
 
 
 msgid "Loading failed: "
 msgstr "Fallito caricamento: "
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Bforartists"
-msgstr "Collegano o incorporando un file in formato .blend molto vecchio (%d.%d), non sarà fatta alcuna conversione delle animazioni. Potresti salvare il tuo file libreria con la versione di Bforartists attuale"
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
+msgstr "Collegano o incorporando un file in formato .blend molto vecchio (%d.%d), non sarà fatta alcuna conversione delle animazioni. Potresti salvare il tuo file libreria con la versione di Blender attuale"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
@@ -66335,10 +66145,10 @@ msgstr "Scambia Aree"
 
 
 msgid ""
-"File saved by newer Bforartists\n"
+"File saved by newer Blender\n"
 "({}), expect loss of data"
 msgstr ""
-"File salvato dal Bforartists più recente\n"
+"File salvato dal Blender più recente\n"
 "({}), possibile perdita di dati"
 
 
@@ -66419,6 +66229,10 @@ msgid "Outer"
 msgstr "Esterno"
 
 
+msgid "Seams"
+msgstr "Cuciture"
+
+
 msgid "Intersection Type"
 msgstr "Tipo Intersezione"
 
@@ -66445,10 +66259,6 @@ msgstr "Necessarie facce selezionate"
 
 msgid "Path selection requires two matching elements to be selected"
 msgstr "La selezione di un percorso richiede che due elementi estremi siano selezionati"
-
-
-msgid "Cannot rip selected faces"
-msgstr "Impossibile strappare le facce selezionate"
 
 
 msgid "Cannot rip multiple disconnected vertices"
@@ -66701,10 +66511,6 @@ msgstr "Nessun livello UV attivo trovato per l'oggetto \"%s\""
 
 msgid "Circular dependency for image \"%s\" from object \"%s\""
 msgstr "Riferimento circolare per l'immagine \"%s\" dall'oggetto \"%s\""
-
-
-msgid "Object \"%s\" is not a mesh or can't be converted to a mesh (Curve, Text, Surface or Metaball)"
-msgstr "L'Oggetto \"%s\" non è una mesh o non può essere convertito in mesh (Curva, Testo, Superfice o Metaball)"
 
 
 msgid "Overwrite existing bake data?"
@@ -67151,20 +66957,12 @@ msgid "Time:"
 msgstr "Tempo:"
 
 
-msgid "Render..."
-msgstr "Render..."
-
-
 msgid "Scene has no camera"
 msgstr "La scena non ha camere"
 
 
 msgid "Write error: cannot save %s"
 msgstr "Errore di scrittura: impossibile salvare %s"
-
-
-msgid "Can't bake light probe while rendering"
-msgstr "Impossibile precalcolare il Sensore di Luce durante il rendering"
 
 
 msgid "Unable to remove material slot in edit mode"
@@ -67185,10 +66983,6 @@ msgstr "Ripristina Aree"
 
 msgid "Maximize Area"
 msgstr "Massimizza Area"
-
-
-msgid "Full Screen Area"
-msgstr "Area a Schermo Intero"
 
 
 msgid "Flip to Top"
@@ -67580,10 +67374,6 @@ msgid "See Modifiers panel below"
 msgstr "Vedi il pannello Modificatori sotto"
 
 
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "La Curva-Funzione non ha alcun keyframe, poichè contiene solo punti campionati"
-
-
 msgid "No active keyframe on F-Curve"
 msgstr "Nessun keyframe attivo sulla Curva-F"
 
@@ -67661,10 +67451,6 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "Hard coded Non-Lineare, Gamma:1.7"
 
 
-msgid "Can't Load Image"
-msgstr "Impossibile Caricare Immagine"
-
-
 msgid " RGBA float"
 msgstr " RGBA float"
 
@@ -67703,10 +67489,6 @@ msgstr "%d immagini saranno salvate in %s"
 
 msgid "Saved %s"
 msgstr "Salvato %s"
-
-
-msgid "can't save image while rendering"
-msgstr "impossibile salvare l'immagine durante il rendering"
 
 
 msgid "No packed files to unpack"
@@ -67897,8 +67679,8 @@ msgid "Columns:"
 msgstr "Colonne:"
 
 
-msgid "File Modified Outside and Inside Bforartists"
-msgstr "File Modificato Fuori e Dentro Bforartists"
+msgid "File Modified Outside and Inside Blender"
+msgstr "File Modificato Fuori e Dentro Blender"
 
 
 msgid "Reload from disk (ignore local changes)"
@@ -67913,16 +67695,16 @@ msgid "Make text internal (separate copy)"
 msgstr "Rendi testo interno (copia separata)"
 
 
-msgid "File Modified Outside Bforartists"
-msgstr "File Modificato Fuori da Bforartists"
+msgid "File Modified Outside Blender"
+msgstr "File Modificato Fuori da Blender"
 
 
 msgid "Reload from disk"
 msgstr "Ricarica dal disco"
 
 
-msgid "File Deleted Outside Bforartists"
-msgstr "File Cancellato Fuori da Bforartists"
+msgid "File Deleted Outside Blender"
+msgstr "File Cancellato Fuori da Blender"
 
 
 msgid "Make text internal"
@@ -69311,6 +69093,14 @@ msgid "Ray Length"
 msgstr "Lunghezza Raggio"
 
 
+msgid "Pattern Mode"
+msgstr "Modalitá Pattern"
+
+
+msgid "Scale Mode"
+msgstr "Modalità Scala"
+
+
 msgid "Inverted"
 msgstr "Invertito"
 
@@ -69697,8 +69487,8 @@ msgid "Rim"
 msgstr "Orlo"
 
 
-msgid "Bforartists File View"
-msgstr "Visualizza File di Bforartists"
+msgid "Blender File View"
+msgstr "Visualizza File di Blender"
 
 
 msgid "To make changes to Preferences permanent, use \"Save Preferences\""
@@ -69916,8 +69706,8 @@ msgid "Video Editing"
 msgstr "Montaggio Video"
 
 
-msgid "Bforartists Extensions"
-msgstr "Estensioni di Bforartists"
+msgid "Blender Extensions"
+msgstr "Estensioni di Blender"
 
 
 msgid "Pose Library"

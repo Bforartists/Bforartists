@@ -16,6 +16,8 @@
 #include "NOD_node_declaration.hh"
 #include "NOD_socket.hh"
 
+#include "GEO_foreach_geometry.hh"
+
 #include "BKE_geometry_fields.hh"
 #include "BKE_geometry_nodes_reference_set.hh"
 #include "BKE_geometry_set.hh"
@@ -576,31 +578,31 @@ static void init_socket_cpp_value_from_property(const IDProperty &property,
     case SOCK_OBJECT: {
       ID *id = IDP_Id(&property);
       Object *object = (id && GS(id->name) == ID_OB) ? (Object *)id : nullptr;
-      *(Object **)r_value = object;
+      bke::SocketValueVariant::ConstructIn(r_value, object);
       break;
     }
     case SOCK_COLLECTION: {
       ID *id = IDP_Id(&property);
       Collection *collection = (id && GS(id->name) == ID_GR) ? (Collection *)id : nullptr;
-      *(Collection **)r_value = collection;
+      bke::SocketValueVariant::ConstructIn(r_value, collection);
       break;
     }
     case SOCK_TEXTURE: {
       ID *id = IDP_Id(&property);
       Tex *texture = (id && GS(id->name) == ID_TE) ? (Tex *)id : nullptr;
-      *(Tex **)r_value = texture;
+      bke::SocketValueVariant::ConstructIn(r_value, texture);
       break;
     }
     case SOCK_IMAGE: {
       ID *id = IDP_Id(&property);
       Image *image = (id && GS(id->name) == ID_IM) ? (Image *)id : nullptr;
-      *(Image **)r_value = image;
+      bke::SocketValueVariant::ConstructIn(r_value, image);
       break;
     }
     case SOCK_MATERIAL: {
       ID *id = IDP_Id(&property);
       Material *material = (id && GS(id->name) == ID_MA) ? (Material *)id : nullptr;
-      *(Material **)r_value = material;
+      bke::SocketValueVariant::ConstructIn(r_value, material);
       break;
     }
     default: {
@@ -738,18 +740,11 @@ static MultiValueMap<bke::AttrDomain, OutputAttributeInfo> find_output_attribute
 static Vector<OutputAttributeToStore> compute_attributes_to_store(
     const bke::GeometrySet &geometry,
     const MultiValueMap<bke::AttrDomain, OutputAttributeInfo> &outputs_by_domain,
-    const bool do_instances)
+    const Span<const bke::GeometryComponent::Type> component_types)
 {
   Vector<OutputAttributeToStore> attributes_to_store;
-  for (const auto component_type : {bke::GeometryComponent::Type::Mesh,
-                                    bke::GeometryComponent::Type::PointCloud,
-                                    bke::GeometryComponent::Type::Curve,
-                                    bke::GeometryComponent::Type::Instance})
-  {
+  for (const auto component_type : component_types) {
     if (!geometry.has(component_type)) {
-      continue;
-    }
-    if (!do_instances && component_type == bke::GeometryComponent::Type::Instance) {
       continue;
     }
     const bke::GeometryComponent &component = *geometry.get_component(component_type);
@@ -838,24 +833,32 @@ static void store_output_attributes(bke::GeometrySet &geometry,
   if (outputs_by_domain.size() == 0) {
     return;
   }
+
+  {
+    /* Handle top level instances separately first. */
+    Vector<OutputAttributeToStore> attributes_to_store = compute_attributes_to_store(
+        geometry, outputs_by_domain, {bke::GeometryComponent::Type::Instance});
+    store_computed_output_attributes(geometry, attributes_to_store);
+  }
+
   const bool only_instance_attributes = outputs_by_domain.size() == 1 &&
                                         *outputs_by_domain.keys().begin() ==
                                             bke::AttrDomain::Instance;
   if (only_instance_attributes) {
-    /* No need to call #modify_geometry_sets when only adding attributes to top-level instances.
+    /* No need to call #foreach_real_geometry when only adding attributes to top-level instances.
      * This avoids some unnecessary data copies currently if some sub-geometries are not yet owned
      * by the geometry set, i.e. they use #GeometryOwnershipType::Editable/ReadOnly. */
-    Vector<OutputAttributeToStore> attributes_to_store = compute_attributes_to_store(
-        geometry, outputs_by_domain, true);
-    store_computed_output_attributes(geometry, attributes_to_store);
     return;
   }
 
-  geometry.modify_geometry_sets([&](bke::GeometrySet &instance_geometry) {
+  geometry::foreach_real_geometry(geometry, [&](bke::GeometrySet &instance_geometry) {
     /* Instance attributes should only be created for the top-level geometry. */
-    const bool do_instances = &geometry == &instance_geometry;
     Vector<OutputAttributeToStore> attributes_to_store = compute_attributes_to_store(
-        instance_geometry, outputs_by_domain, do_instances);
+        instance_geometry,
+        outputs_by_domain,
+        {bke::GeometryComponent::Type::Mesh,
+         bke::GeometryComponent::Type::PointCloud,
+         bke::GeometryComponent::Type::Curve});
     store_computed_output_attributes(instance_geometry, attributes_to_store);
   });
 }
@@ -902,7 +905,10 @@ bke::GeometrySet execute_geometry_nodes_on_geometry(const bNodeTree &btree,
     const bke::bNodeSocketType *typeinfo = interface_socket.socket_typeinfo();
     const eNodeSocketDatatype socket_type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
     if (socket_type == SOCK_GEOMETRY && i == 0) {
-      param_inputs[function.inputs.main[0]] = &input_geometry;
+      bke::SocketValueVariant *value = allocator.construct<bke::SocketValueVariant>().release();
+      value->set(input_geometry);
+      param_inputs[function.inputs.main[0]] = value;
+      inputs_to_destruct.append(value);
       continue;
     }
 
@@ -954,7 +960,8 @@ bke::GeometrySet execute_geometry_nodes_on_geometry(const bNodeTree &btree,
     ptr.destruct();
   }
 
-  bke::GeometrySet output_geometry = std::move(*param_outputs[0].get<bke::GeometrySet>());
+  bke::GeometrySet output_geometry =
+      param_outputs[0].get<bke::SocketValueVariant>()->extract<bke::GeometrySet>();
   store_output_attributes(output_geometry, btree, properties_set, param_outputs);
 
   for (const int i : IndexRange(num_outputs)) {

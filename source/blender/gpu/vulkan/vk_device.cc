@@ -39,7 +39,6 @@ void VKExtensions::log() const
              " - [%c] fragment shader barycentric\n"
              "Device extensions\n"
              " - [%c] descriptor buffer\n"
-             " - [%c] dynamic rendering\n"
              " - [%c] dynamic rendering local read\n"
              " - [%c] dynamic rendering unused attachments\n"
              " - [%c] external memory\n"
@@ -48,7 +47,6 @@ void VKExtensions::log() const
              shader_output_layer ? 'X' : ' ',
              fragment_shader_barycentric ? 'X' : ' ',
              descriptor_buffer ? 'X' : ' ',
-             dynamic_rendering ? 'X' : ' ',
              dynamic_rendering_local_read ? 'X' : ' ',
              dynamic_rendering_unused_attachments ? 'X' : ' ',
              external_memory ? 'X' : ' ',
@@ -75,7 +73,6 @@ void VKDevice::deinit()
   {
     while (!thread_data_.is_empty()) {
       VKThreadData *thread_data = thread_data_.pop_last();
-      thread_data->deinit(*this);
       delete thread_data;
     }
     thread_data_.clear();
@@ -140,7 +137,6 @@ void VKDevice::init(void *ghost_context)
   debug::object_label(vk_queue_, "GenericQueue");
   init_glsl_patch();
 
-  resources.use_dynamic_rendering = extensions_.dynamic_rendering;
   resources.use_dynamic_rendering_local_read = extensions_.dynamic_rendering_local_read;
   orphaned_data.timeline_ = 0;
 
@@ -502,13 +498,6 @@ VKThreadData::VKThreadData(VKDevice &device, pthread_t thread_id) : thread_id(th
   }
 }
 
-void VKThreadData::deinit(VKDevice &device)
-{
-  for (VKResourcePool &resource_pool : resource_pools) {
-    resource_pool.deinit(device);
-  }
-}
-
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -629,8 +618,8 @@ void VKDevice::debug_print()
   BLI_assert_msg(BLI_thread_is_main(),
                  "VKDevice::debug_print can only be called from the main thread.");
 
+  resources.debug_print();
   std::ostream &os = std::cout;
-
   os << "Pipelines\n";
   os << " Graphics: " << pipelines.graphic_pipelines_.size() << "\n";
   os << " Compute: " << pipelines.compute_pipelines_.size() << "\n";

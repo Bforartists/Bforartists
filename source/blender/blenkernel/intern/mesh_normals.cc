@@ -294,6 +294,10 @@ blender::bke::MeshNormalDomain Mesh::normals_domain(const bool support_sharp_fac
 {
   using namespace blender;
   using namespace blender::bke;
+  if (this->faces_num == 0) {
+    return MeshNormalDomain::Point;
+  }
+
   const bke::AttributeAccessor attributes = this->attributes();
   if (const std::optional<AttributeMetaData> custom = attributes.lookup_meta_data("custom_normal"))
   {
@@ -407,6 +411,9 @@ blender::Span<blender::float3> Mesh::face_normals() const
 {
   using namespace blender;
   using namespace blender::bke;
+  if (this->faces_num == 0) {
+    return {};
+  }
   this->runtime->face_normals_cache.ensure([&](NormalsCache &r_data) {
     if (const GAttributeReader custom = this->attributes().lookup("custom_normal")) {
       if (custom.varray.type().is<float3>()) {
@@ -459,6 +466,9 @@ blender::Span<blender::float3> Mesh::corner_normals() const
 {
   using namespace blender;
   using namespace blender::bke;
+  if (this->faces_num == 0) {
+    return {};
+  }
   this->runtime->corner_normals_cache.ensure([&](NormalsCache &r_data) {
     const OffsetIndices<int> faces = this->faces();
     switch (this->normals_domain()) {

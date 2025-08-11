@@ -3733,6 +3733,8 @@ blender::bke::greasepencil::Layer &GreasePencil::add_layer(const blender::String
   const int numLayers = layers().size();
   this->attribute_storage.wrap().resize(bke::AttrDomain::Layer, numLayers + 1);
   bke::greasepencil::Layer *new_layer = MEM_new<bke::greasepencil::Layer>(__func__, unique_name);
+  /* Enable Lights by default. */
+  new_layer->base.flag |= GP_LAYER_TREE_NODE_USE_LIGHTS;
   /* Hide masks by default. */
   new_layer->base.flag |= GP_LAYER_TREE_NODE_HIDE_MASKS;
   bke::greasepencil::Layer &layer = root_group().add_node(new_layer->as_node()).as_layer();
@@ -4173,21 +4175,21 @@ void GreasePencil::rename_node(Main &bmain,
     /* Update the layer name of the influence data of the modifiers. */
     LISTBASE_FOREACH (ModifierData *, md, &object->modifiers) {
       char *dst_layer_name = nullptr;
-      size_t dst_layer_name_len = 0;
+      size_t dst_layer_name_maxncpy = 0;
       /* LineArt doesn't use the `GreasePencilModifierInfluenceData` struct. */
       if (md->type == eModifierType_GreasePencilLineart) {
         auto *lmd = reinterpret_cast<GreasePencilLineartModifierData *>(md);
         dst_layer_name = lmd->target_layer;
-        dst_layer_name_len = sizeof(lmd->target_layer);
+        dst_layer_name_maxncpy = sizeof(lmd->target_layer);
       }
       else if (GreasePencilModifierInfluenceData *influence_data = influence_data_from_modifier(
                    md))
       {
         dst_layer_name = influence_data->layer_name;
-        dst_layer_name_len = sizeof(influence_data->layer_name);
+        dst_layer_name_maxncpy = sizeof(influence_data->layer_name);
       }
       if (dst_layer_name && STREQ(dst_layer_name, old_name.c_str())) {
-        BLI_strncpy(dst_layer_name, node.name().c_str(), dst_layer_name_len);
+        BLI_strncpy(dst_layer_name, node.name().c_str(), dst_layer_name_maxncpy);
       }
     }
   }

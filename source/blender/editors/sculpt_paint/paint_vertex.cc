@@ -507,6 +507,7 @@ void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr)
 {
   using namespace blender;
   const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
+  const PaintMode paint_mode = BKE_paintmode_get_active_from_context(C);
   SculptSession &ss = *ob.sculpt;
   StrokeCache *cache = ss.cache;
   Brush &brush = *BKE_paint_brush(&vp.paint);
@@ -524,7 +525,7 @@ void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr)
    * brush coord/pressure/etc.
    * It's more an events design issue, which doesn't split coordinate/pressure/angle
    * changing events. We should avoid this after events system re-design */
-  if (paint_supports_dynamic_size(brush, PaintMode::Sculpt) || cache->first_time) {
+  if (paint_supports_dynamic_size(brush, paint_mode) || cache->first_time) {
     cache->pressure = RNA_float_get(ptr, "pressure");
   }
 
@@ -535,8 +536,7 @@ void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr)
     BKE_brush_unprojected_radius_set(&vp.paint, &brush, cache->initial_radius);
   }
 
-  if (BKE_brush_use_size_pressure(&brush) && paint_supports_dynamic_size(brush, PaintMode::Sculpt))
-  {
+  if (BKE_brush_use_size_pressure(&brush) && paint_supports_dynamic_size(brush, paint_mode)) {
     cache->radius = cache->initial_radius * cache->pressure;
   }
   else {
@@ -744,8 +744,10 @@ static Color vpaint_blend_stroke(const VPaint &vp,
       stroke_buffer[index].a = 0;
     }
 
-    stroke_buffer[index] = BLI_mix_colors<Color, Traits>(
-        IMB_BlendMode::IMB_BLEND_MIX, stroke_buffer[index], brush_mark_color, brush_mark_alpha);
+    stroke_buffer[index] = BLI_mix_colors<Color, Traits>(IMB_BlendMode::IMB_BLEND_MIX,
+                                                         brush_mark_color,
+                                                         stroke_buffer[index],
+                                                         stroke_buffer[index].a);
 
     result = vpaint_blend<Color, Traits>(vp,
                                          prev_vertex_colors[index],

@@ -979,18 +979,6 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree)
       node_blend_write_storage(writer, ntree, node);
     }
 
-    if (node->type_legacy == CMP_NODE_OUTPUT_FILE) {
-      /* Inputs have their own storage data. */
-      NodeImageMultiFile *nimf = (NodeImageMultiFile *)node->storage;
-      BKE_image_format_blend_write(writer, &nimf->format);
-
-      LISTBASE_FOREACH (bNodeSocket *, sock, &node->inputs) {
-        NodeImageMultiFileSocket *sockdata = static_cast<NodeImageMultiFileSocket *>(
-            sock->storage);
-        BLO_write_struct(writer, NodeImageMultiFileSocket, sockdata);
-        BKE_image_format_blend_write(writer, &sockdata->format);
-      }
-    }
     if (ELEM(node->type_legacy, CMP_NODE_IMAGE, CMP_NODE_R_LAYERS)) {
       /* Write extra socket info. */
       LISTBASE_FOREACH (bNodeSocket *, sock, &node->outputs) {
@@ -1606,11 +1594,6 @@ static void node_blend_read_data_storage(BlendDataReader *reader, bNodeTree *ntr
     case TEX_NODE_IMAGE: {
       ImageUser *iuser = static_cast<ImageUser *>(node->storage);
       iuser->scene = nullptr;
-      break;
-    }
-    case CMP_NODE_OUTPUT_FILE: {
-      NodeImageMultiFile *nimf = static_cast<NodeImageMultiFile *>(node->storage);
-      BKE_image_format_blend_read_data(reader, &nimf->format);
       break;
     }
     default:
@@ -3356,7 +3339,8 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
                               const int flag,
                               const std::optional<StringRefNull> dst_unique_name,
                               const std::optional<int> dst_unique_identifier,
-                              Map<const bNodeSocket *, bNodeSocket *> &socket_map)
+                              Map<const bNodeSocket *, bNodeSocket *> &socket_map,
+                              const bool allow_duplicate_names)
 {
   bNode *node_dst = MEM_mallocN<bNode>(__func__);
   *node_dst = node_src;
@@ -3366,7 +3350,9 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
     STRNCPY_UTF8(node_dst->name, dst_unique_name->c_str());
   }
   else if (dst_tree) {
-    node_unique_name(*dst_tree, *node_dst);
+    if (!allow_duplicate_names) {
+      node_unique_name(*dst_tree, *node_dst);
+    }
   }
   if (dst_unique_identifier) {
     node_dst->identifier = *dst_unique_identifier;
@@ -3576,18 +3562,6 @@ void node_socket_move_default_value(Main & /*bmain*/,
   }
 }
 
-bNode *node_copy(bNodeTree *dst_tree, const bNode &src_node, const int flag, const bool use_unique)
-{
-  Map<const bNodeSocket *, bNodeSocket *> socket_map;
-  return node_copy_with_mapping(
-      dst_tree,
-      src_node,
-      flag,
-      use_unique ? std::nullopt : std::make_optional<StringRefNull>(src_node.name),
-      use_unique ? std::nullopt : std::make_optional(src_node.identifier),
-      socket_map);
-}
-
 static int node_count_links(const bNodeTree *ntree, const bNodeSocket *socket)
 {
   int count = 0;
@@ -3786,7 +3760,7 @@ void node_detach_node(bNodeTree &ntree, bNode &node)
 
 void node_position_relative(bNode &from_node,
                             const bNode &to_node,
-                            const bNodeSocket &from_sock,
+                            const bNodeSocket *from_sock,
                             const bNodeSocket &to_sock)
 {
   float offset_x;
@@ -3808,12 +3782,14 @@ void node_position_relative(bNode &from_node,
   float offset_y = U.widget_unit * tot_sock_idx;
 
   /* Output socket. */
-  if (eNodeSocketInOut(from_sock.in_out) == SOCK_IN) {
-    tot_sock_idx = BLI_listbase_count(&from_node.outputs);
-    tot_sock_idx += BLI_findindex(&from_node.inputs, &from_sock);
-  }
-  else {
-    tot_sock_idx = BLI_findindex(&from_node.outputs, &from_sock);
+  if (from_sock) {
+    if (eNodeSocketInOut(from_sock->in_out) == SOCK_IN) {
+      tot_sock_idx = BLI_listbase_count(&from_node.outputs);
+      tot_sock_idx += BLI_findindex(&from_node.inputs, from_sock);
+    }
+    else {
+      tot_sock_idx = BLI_findindex(&from_node.outputs, from_sock);
+    }
   }
 
   BLI_assert(tot_sock_idx != -1);
@@ -3829,7 +3805,7 @@ void node_position_propagate(bNode &node)
   LISTBASE_FOREACH (bNodeSocket *, socket, &node.inputs) {
     if (socket->link != nullptr) {
       bNodeLink *link = socket->link;
-      node_position_relative(*link->fromnode, *link->tonode, *link->fromsock, *link->tosock);
+      node_position_relative(*link->fromnode, *link->tonode, link->fromsock, *link->tosock);
       node_position_propagate(*link->fromnode);
     }
   }

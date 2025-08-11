@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:32+0000\n"
 "Last-Translator: Leevi Oksanen <laavi.oksanen@gmail.com>\n"
 "Language-Team: Finnish <https://translate.blender.org/projects/blender-ui/ui/fi/>\n"
@@ -1151,8 +1151,8 @@ msgid "Is Internal"
 msgstr "On sisäinen"
 
 
-msgid "The attribute is meant for internal use by Bforartists"
-msgstr "Attribuutti on tarkoitettu Bforartistsin sisäiseen käyttöön"
+msgid "The attribute is meant for internal use by Blender"
+msgstr "Attribuutti on tarkoitettu Blenderin sisäiseen käyttöön"
 
 
 msgid "Is Required"
@@ -5774,6 +5774,10 @@ msgid "Menu"
 msgstr "Menu"
 
 
+msgid "Shader"
+msgstr "Varjostin"
+
+
 msgid "Collection"
 msgstr "Kokoelma"
 
@@ -6310,50 +6314,6 @@ msgid "3D Location"
 msgstr "3D-sijainti"
 
 
-msgid "BMP"
-msgstr "BMP"
-
-
-msgid "Iris"
-msgstr "Iris"
-
-
-msgid "JPEG"
-msgstr "JPEG"
-
-
-msgid "JPEG 2000"
-msgstr "JPEG 2000"
-
-
-msgid "Targa"
-msgstr "Targa"
-
-
-msgid "Targa Raw"
-msgstr "Targa Raw"
-
-
-msgid "Cineon"
-msgstr "Cineon"
-
-
-msgid "DPX"
-msgstr "DPX"
-
-
-msgid "TIFF"
-msgstr "TIFF"
-
-
-msgid "WebP"
-msgstr "WebP"
-
-
-msgid "OpenEXR MultiLayer"
-msgstr "OpenEXR MultiLayer"
-
-
 msgid "FFmpeg Video"
 msgstr "FFmpeg Video"
 
@@ -6618,10 +6578,6 @@ msgstr "Attribuutti"
 
 msgid "Script"
 msgstr "Koodi"
-
-
-msgid "Shader"
-msgstr "Varjostin"
 
 
 msgid "Pattern"
@@ -7312,6 +7268,10 @@ msgid "Mask"
 msgstr "Maski"
 
 
+msgid "UV Mapping"
+msgstr "UV-kartoittaminen"
+
+
 msgid "Select More/Less"
 msgstr "Valitse enemmän/vähemmän"
 
@@ -7370,10 +7330,6 @@ msgstr "Muodon valintatila"
 
 msgid "Text"
 msgstr "Teksti"
-
-
-msgid "UV Mapping"
-msgstr "UV-kartoittaminen"
 
 
 msgid "Basic"
@@ -8012,6 +7968,10 @@ msgid "ITU 709"
 msgstr "ITU 709"
 
 
+msgid "JPEG"
+msgstr "JPEG"
+
+
 msgid "Combine Color"
 msgstr "Yhdistä väri"
 
@@ -8074,6 +8034,14 @@ msgstr "Sininen kanava"
 
 msgid "File Output"
 msgstr "Tiedoston ulostulo"
+
+
+msgid "Active Item Index"
+msgstr "Aktiivinen esineindeksi"
+
+
+msgid "Index of the active item"
+msgstr "Aktiivisen esineen indeksi"
 
 
 msgid "Save as Render"
@@ -8181,14 +8149,6 @@ msgstr "Pyöristä alaspäin"
 msgctxt "NodeTree"
 msgid "Truncate"
 msgstr "Poista luvun desimaaliosa"
-
-
-msgid "Active Item Index"
-msgstr "Aktiivinen esineindeksi"
-
-
-msgid "Index of the active item"
-msgstr "Aktiivisen esineen indeksi"
 
 
 msgctxt "NodeTree"
@@ -8595,10 +8555,6 @@ msgid "Sample Grid"
 msgstr "Kerää ruudukko"
 
 
-msgid "Nearest Neighbor"
-msgstr "Lähin naapuri"
-
-
 msgid "Sample Grid Index"
 msgstr "Kerää ruudukon indeksi"
 
@@ -8621,10 +8577,6 @@ msgstr "Kerää UV-pinta"
 
 msgid "Scale Elements"
 msgstr "Skaalaa elementtejä"
-
-
-msgid "Scale Mode"
-msgstr "Skaalaustila"
 
 
 msgid "Scale Instances"
@@ -10190,6 +10142,18 @@ msgid "Max Speed"
 msgstr "Maksiminopeus"
 
 
+msgid "BMP"
+msgstr "BMP"
+
+
+msgid "DPX"
+msgstr "DPX"
+
+
+msgid "TIFF"
+msgstr "TIFF"
+
+
 msgid "Mouse location"
 msgstr "Hiiren sijainti"
 
@@ -10623,8 +10587,8 @@ msgid "Texture Node Editor"
 msgstr "Tekstuurinoodieditori"
 
 
-msgid "Bforartists File"
-msgstr "Bforartists-tiedosto"
+msgid "Blender File"
+msgstr "Blender-tiedosto"
 
 
 msgid "Show visible objects"
@@ -12761,6 +12725,11 @@ msgstr "Ei lisättäviä tasoja"
 
 
 msgctxt "Operator"
+msgid "Flip"
+msgstr "Käännä"
+
+
+msgctxt "Operator"
 msgid "Search..."
 msgstr "Etsi..."
 
@@ -13676,11 +13645,6 @@ msgstr "Vahva"
 
 
 msgctxt "Operator"
-msgid "Flip"
-msgstr "Käännä"
-
-
-msgctxt "Operator"
 msgid "Edge Loops"
 msgstr "Reunasilmukat"
 
@@ -13697,10 +13661,6 @@ msgstr "Järjestä"
 
 msgid "Local Camera"
 msgstr "Lokaalikamera"
-
-
-msgid "Seams"
-msgstr "Saumat"
 
 
 msgctxt "Operator"
@@ -14378,6 +14338,10 @@ msgid "Icosphere"
 msgstr "Icopallo"
 
 
+msgid "Seams"
+msgstr "Saumat"
+
+
 msgid "Close"
 msgstr "Sulje"
 
@@ -14684,8 +14648,8 @@ msgid "Scene has no camera"
 msgstr "Kohtauksessa ei ole kameraa"
 
 
-msgid "Bforartists Render"
-msgstr "Bforartists renderöinti"
+msgid "Blender Render"
+msgstr "Blender renderöinti"
 
 
 msgid "Failed to open window!"
@@ -14968,10 +14932,6 @@ msgid "Select View"
 msgstr "Valitse näkymä"
 
 
-msgid "Can't Load Image"
-msgstr "Kuvaa ei voida ladata"
-
-
 msgid " RGBA float"
 msgstr " RGBA-liukuluku"
 
@@ -15138,14 +15098,6 @@ msgstr "(tyhjä)"
 
 msgid "Mask not found"
 msgstr "Maskia ei löydy"
-
-
-msgid "Can't create subtitle file"
-msgstr "Tekstitystiedostoa ei kyetty luomaan"
-
-
-msgid "Can't overwrite export file"
-msgstr "Vientitiedostoa ei voida päällekirjoittaa"
 
 
 msgid "Rows:"
@@ -16489,6 +16441,10 @@ msgid "Sample UV"
 msgstr "Kerää UV"
 
 
+msgid "Scale Mode"
+msgstr "Skaalaustila"
+
+
 msgid "Grid 1"
 msgstr "Ruudukko 1"
 
@@ -17022,8 +16978,8 @@ msgstr "Näytönohjaimesi tai macOS-vesio ei ole tuettu"
 
 
 msgctxt "WindowManager"
-msgid "Upgrading to the latest macOS version may improve Bforartists support"
-msgstr "Päivittäminen viimeisimpään macOS-versioon saattaa parantaa Bforartists-tukea"
+msgid "Upgrading to the latest macOS version may improve Blender support"
+msgstr "Päivittäminen viimeisimpään macOS-versioon saattaa parantaa Blender-tukea"
 
 
 msgid "Failed to create window"
@@ -17234,8 +17190,8 @@ msgid "Stroke and Fill"
 msgstr "Piirrä ja täytä"
 
 
-msgid "Bforartists 27x"
-msgstr "Bforartists 27x"
+msgid "Blender 27x"
+msgstr "Blender 27x"
 
 
 msgid "Industry Compatible"
@@ -17413,8 +17369,8 @@ msgid "Video Editing"
 msgstr "Videoeditointi"
 
 
-msgid "Bforartists Extensions"
-msgstr "Bforartists-laajennukset"
+msgid "Blender Extensions"
+msgstr "Blender-laajennukset"
 
 
 msgid "Copy Global Transform"
@@ -17441,8 +17397,8 @@ msgid "Manage UI translations"
 msgstr "Hallitse käyttöliittymän käännöksiä"
 
 
-msgid "Allows managing UI translations directly from Bforartists (update main .po files, update scripts' translations, etc.)"
-msgstr "Mahdollistaa käyttöliittymäkäännösten hallinnan suoraan Bforartistsistä (päivittää .po-päätiedostot, päivittää skriptien käännökset jne.)"
+msgid "Allows managing UI translations directly from Blender (update main .po files, update scripts' translations, etc.)"
+msgstr "Mahdollistaa käyttöliittymäkäännösten hallinnan suoraan Blenderistä (päivittää .po-päätiedostot, päivittää skriptien käännökset jne.)"
 
 
 msgid "Pose Library"

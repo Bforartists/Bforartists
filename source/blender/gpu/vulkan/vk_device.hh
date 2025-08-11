@@ -39,10 +39,6 @@ struct VKExtensions {
    * VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR::fragmentShaderBarycentric.
    */
   bool fragment_shader_barycentric = false;
-  /**
-   * Does the device support VK_KHR_dynamic_rendering enabled.
-   */
-  bool dynamic_rendering = false;
 
   /**
    * Does the device support VK_KHR_dynamic_rendering_local_read enabled.
@@ -127,7 +123,6 @@ class VKThreadData : public NonCopyable, NonMovable {
   int32_t rendering_depth = 0;
 
   VKThreadData(VKDevice &device, pthread_t thread_id);
-  void deinit(VKDevice &device);
 
   /**
    * Get the active resource pool.

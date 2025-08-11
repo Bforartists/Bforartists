@@ -336,7 +336,8 @@ static PyObject *bpy_bmesh_is_wrapped_get(BPy_BMesh *self, void * /*closure*/)
 PyDoc_STRVAR(
     /* Wrap. */
     bpy_bmesh_select_mode_doc,
-    "The selection mode, values can be {'VERT', 'EDGE', 'FACE'}, can't be assigned an empty set.\n"
+    "The selection mode, values can be {'VERT', 'EDGE', 'FACE'}, cannot be assigned an empty "
+    "set.\n"
     "\n"
     ":type: set");
 static PyObject *bpy_bmesh_select_mode_get(BPy_BMesh *self, void * /*closure*/)
@@ -357,7 +358,7 @@ static int bpy_bmesh_select_mode_set(BPy_BMesh *self, PyObject *value, void * /*
     return -1;
   }
   if (flag == 0) {
-    PyErr_SetString(PyExc_TypeError, "bm.select_mode: can't assign an empty value");
+    PyErr_SetString(PyExc_TypeError, "bm.select_mode: cannot assign an empty value");
     return -1;
   }
 
@@ -1194,7 +1195,7 @@ PyDoc_STRVAR(
     bpy_bmesh_to_mesh_doc,
     ".. method:: to_mesh(mesh)\n"
     "\n"
-    "   Writes this BMesh data into an existing Mesh datablock.\n"
+    "   Writes this BMesh data into an existing Mesh data-block.\n"
     "\n"
     "   :arg mesh: The mesh data to write into.\n"
     "   :type mesh: :class:`Mesh`\n");
@@ -1355,7 +1356,7 @@ PyDoc_STRVAR(
     ".. method:: from_mesh(mesh, face_normals=True, vertex_normals=True, use_shape_key=False, "
     "shape_key_index=0)\n"
     "\n"
-    "   Initialize this bmesh from existing mesh datablock.\n"
+    "   Initialize this bmesh from existing mesh data-block.\n"
     "\n"
     "   :arg mesh: The mesh data to load.\n"
     "   :type mesh: :class:`Mesh`\n"

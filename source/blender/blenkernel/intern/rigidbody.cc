@@ -1481,13 +1481,13 @@ void BKE_rigidbody_ensure_local_object(Main *bmain, Object *ob)
 bool BKE_rigidbody_add_object(Main *bmain, Scene *scene, Object *ob, int type, ReportList *reports)
 {
   if (ob->type != OB_MESH) {
-    BKE_report(reports, RPT_ERROR, "Can't add Rigid Body to non mesh object");
+    BKE_report(reports, RPT_ERROR, "Cannot add Rigid Body to non mesh object");
     return false;
   }
 
   /* Add object to rigid body world in scene. */
   if (!rigidbody_add_object_to_scene(bmain, scene, ob)) {
-    BKE_report(reports, RPT_ERROR, "Can't create Rigid Body world");
+    BKE_report(reports, RPT_ERROR, "Cannot create Rigid Body world");
     return false;
   }
 
@@ -2255,7 +2255,7 @@ void BKE_rigidbody_do_simulation(Depsgraph *depsgraph, Scene *scene, float ctime
 
     const float frame_diff = ctime - rbw->ltime;
     /* calculate how much time elapsed since last step in seconds */
-    const float timestep = 1.0f / float(FPS) * frame_diff * rbw->time_scale;
+    const float timestep = 1.0f / float(scene->frames_per_second()) * frame_diff * rbw->time_scale;
 
     const float substep = timestep / rbw->substeps_per_frame;
 

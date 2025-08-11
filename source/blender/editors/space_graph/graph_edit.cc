@@ -1163,7 +1163,7 @@ static wmOperatorStatus graphkeys_sound_to_samples_exec(bContext *C, wmOperator 
                                     RNA_boolean_get(op->ptr, "use_additive"),
                                     RNA_boolean_get(op->ptr, "use_square"),
                                     RNA_float_get(op->ptr, "sthreshold"),
-                                    FPS,
+                                    scene->frames_per_second(),
                                     &sbi.length,
                                     0);
 
@@ -1426,7 +1426,7 @@ static const EnumPropertyItem prop_graphkeys_expo_types[] = {
      "MAKE_CYCLIC",
      ICON_EXTRAPOLATION_CYCLIC,
      "Make Cyclic (F-Modifier)",
-     "Add Cycles F-Modifier if one doesn't exist already"},
+     "Add Cycles F-Modifier if one does not exist already"},
     {CLEAR_CYCLIC_EXPO,
      "CLEAR_CYCLIC",
      ICON_EXTRAPOLATION_CYCLIC_CLEAR,

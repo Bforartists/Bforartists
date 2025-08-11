@@ -180,14 +180,14 @@ static bool wm_link_append_item_poll(ReportList *reports,
       if (do_append) {
         BKE_reportf(reports,
                     RPT_ERROR_INVALID_INPUT,
-                    "Can't append data-block '%s' of type '%s'",
+                    "Cannot append data-block '%s' of type '%s'",
                     name,
                     group);
       }
       else {
         BKE_reportf(reports,
                     RPT_ERROR_INVALID_INPUT,
-                    "Can't link data-block '%s' of type '%s'",
+                    "Cannot link data-block '%s' of type '%s'",
                     name,
                     group);
       }
@@ -981,13 +981,13 @@ static wmOperatorStatus wm_lib_relocate_exec_do(bContext *C, wmOperator *op, boo
           continue;
         }
 
-        CLOG_DEBUG(&LOG, "\tCandidate new lib to reload datablocks from: %s", filepath);
+        CLOG_DEBUG(&LOG, "\tCandidate new lib to reload data-blocks from: %s", filepath);
         BKE_blendfile_link_append_context_library_add(lapp_context, filepath, nullptr);
       }
       RNA_END;
     }
     else {
-      CLOG_DEBUG(&LOG, "\tCandidate new lib to reload datablocks from: %s", filepath);
+      CLOG_DEBUG(&LOG, "\tCandidate new lib to reload data-blocks from: %s", filepath);
       BKE_blendfile_link_append_context_library_add(lapp_context, filepath, nullptr);
     }
   }

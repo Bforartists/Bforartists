@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:19+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Greek <https://translate.blender.org/projects/blender-ui/ui/el/>\n"
@@ -515,6 +515,14 @@ msgid "Keyboard"
 msgstr "Πληκτρολόγιο"
 
 
+msgid "Snap"
+msgstr "Προσκόλληση"
+
+
+msgid "Mirror"
+msgstr "Καθρέφτισμα"
+
+
 msgid "Select Linked"
 msgstr "Επιλογή Συνδεδεμένων"
 
@@ -549,14 +557,6 @@ msgstr "Συγχώνευση"
 
 msgid "Text"
 msgstr "Κείμενο"
-
-
-msgid "Snap"
-msgstr "Προσκόλληση"
-
-
-msgid "Mirror"
-msgstr "Καθρέφτισμα"
 
 
 msgid "Cache"
@@ -915,11 +915,11 @@ msgstr "Remove"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
+msgid "Quit Blender"
 msgstr "Έξοδος"
 
 
-msgid "Quit Bforartists"
+msgid "Quit Blender"
 msgstr "Έξοδος"
 
 

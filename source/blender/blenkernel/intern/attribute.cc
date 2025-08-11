@@ -533,7 +533,7 @@ bool BKE_attribute_remove(AttributeOwner &owner, const StringRef name, ReportLis
     return false;
   }
   if (BKE_attribute_required(owner, name)) {
-    BKE_report(reports, RPT_ERROR, "Attribute is required and can't be removed");
+    BKE_report(reports, RPT_ERROR, "Attribute is required and cannot be removed");
     return false;
   }
 
@@ -812,7 +812,7 @@ std::optional<blender::StringRefNull> BKE_attributes_active_name_get(AttributeOw
   }
   if (owner.type() != AttributeOwnerType::Mesh) {
     bke::AttributeStorage &storage = *owner.get_storage();
-    if (active_index >= storage.count()) {
+    if (!IndexRange(storage.count()).contains(active_index)) {
       return std::nullopt;
     }
     return storage.at_index(active_index).name();

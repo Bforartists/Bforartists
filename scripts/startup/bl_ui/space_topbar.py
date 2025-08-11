@@ -936,17 +936,13 @@ class TOPBAR_MT_workspace_menu(Menu):
         layout = self.layout
 
         layout.operator("workspace.duplicate", text="Duplicate", icon="DUPLICATE")
-        if len(bpy.data.workspaces) > 1:
+        if len(bpy.data.workspaces) > 1: # BFA - simpler logic
             layout.operator("workspace.delete", text="Delete", icon="DELETE")
 
         layout.separator()
 
-        layout.operator(
-            "workspace.reorder_to_front", text="Reorder to Front", icon="TRIA_LEFT_BAR"
-        )
-        layout.operator(
-            "workspace.reorder_to_back", text="Reorder to Back", icon="TRIA_RIGHT_BAR"
-        )
+        layout.operator("workspace.reorder_to_front", text="Reorder to Front", icon="TRIA_LEFT_BAR")
+        layout.operator("workspace.reorder_to_back", text="Reorder to Back", icon="TRIA_RIGHT_BAR")
 
         layout.separator()
 
@@ -959,6 +955,10 @@ class TOPBAR_MT_workspace_menu(Menu):
             "screen.workspace_cycle", text="Next Workspace", icon="FORWARD"
         )
         props.direction = "NEXT"
+
+        layout.separator()
+
+        layout.operator("workspace.delete_all_others")
 
 
 # Grease Pencil Object - Primitive curve

@@ -954,62 +954,37 @@ class NodeTreeMainUpdater {
   void update_socket_shapes(bNodeTree &ntree)
   {
     ntree.ensure_topology_cache();
-    if (U.experimental.use_socket_structure_type) {
-      for (bNode *node : ntree.all_nodes()) {
-        if (node->is_undefined()) {
-          continue;
-        }
-        /* For input/output nodes we use the inferred structure types. */
-        if (node->is_group_input() || node->is_group_output() ||
-            ELEM(node->type_legacy, NODE_CLOSURE_INPUT, NODE_CLOSURE_OUTPUT))
-        {
-          for (bNodeSocket *socket : node->input_sockets()) {
-            socket->display_shape = get_input_socket_shape(
-                *socket->runtime->declaration,
-                ntree.runtime->inferred_structure_types[socket->index_in_tree()]);
-          }
-          for (bNodeSocket *socket : node->output_sockets()) {
-            socket->display_shape = get_output_socket_shape(
-                *socket->runtime->declaration,
-                ntree.runtime->inferred_structure_types[socket->index_in_tree()]);
-          }
-          continue;
-        }
-        /* For other nodes we just use the static structure types defined in the declaration. */
+    for (bNode *node : ntree.all_nodes()) {
+      if (node->is_undefined()) {
+        continue;
+      }
+      /* For input/output nodes we use the inferred structure types. */
+      if (node->is_group_input() || node->is_group_output() ||
+          ELEM(node->type_legacy, NODE_CLOSURE_INPUT, NODE_CLOSURE_OUTPUT))
+      {
         for (bNodeSocket *socket : node->input_sockets()) {
-          if (const SocketDeclaration *declaration = socket->runtime->declaration) {
-            socket->display_shape = get_input_socket_shape(*declaration,
-                                                           declaration->structure_type);
-          }
+          socket->display_shape = get_input_socket_shape(
+              *socket->runtime->declaration,
+              ntree.runtime->inferred_structure_types[socket->index_in_tree()]);
         }
         for (bNodeSocket *socket : node->output_sockets()) {
-          if (const SocketDeclaration *declaration = socket->runtime->declaration) {
-            socket->display_shape = get_output_socket_shape(*declaration,
-                                                            declaration->structure_type);
-          }
+          socket->display_shape = get_output_socket_shape(
+              *socket->runtime->declaration,
+              ntree.runtime->inferred_structure_types[socket->index_in_tree()]);
+        }
+        continue;
+      }
+      /* For other nodes we just use the static structure types defined in the declaration. */
+      for (bNodeSocket *socket : node->input_sockets()) {
+        if (const SocketDeclaration *declaration = socket->runtime->declaration) {
+          socket->display_shape = get_input_socket_shape(*declaration,
+                                                         declaration->structure_type);
         }
       }
-    }
-    else {
-      if (ntree.type == NTREE_GEOMETRY) {
-        const Span<bke::FieldSocketState> field_states = ntree.runtime->field_states;
-        for (bNodeSocket *socket : ntree.all_sockets()) {
-          switch (field_states[socket->index_in_tree()]) {
-            case bke::FieldSocketState::RequiresSingle:
-              socket->display_shape = SOCK_DISPLAY_SHAPE_CIRCLE;
-              break;
-            case bke::FieldSocketState::CanBeField:
-              socket->display_shape = SOCK_DISPLAY_SHAPE_DIAMOND_DOT;
-              break;
-            case bke::FieldSocketState::IsField:
-              socket->display_shape = SOCK_DISPLAY_SHAPE_DIAMOND;
-              break;
-          }
-        }
-      }
-      else if (ntree.type == NTREE_COMPOSIT) {
-        for (bNodeSocket *socket : ntree.all_sockets()) {
-          socket->display_shape = SOCK_DISPLAY_SHAPE_CIRCLE;
+      for (bNodeSocket *socket : node->output_sockets()) {
+        if (const SocketDeclaration *declaration = socket->runtime->declaration) {
+          socket->display_shape = get_output_socket_shape(*declaration,
+                                                          declaration->structure_type);
         }
       }
     }
@@ -1363,7 +1338,7 @@ class NodeTreeMainUpdater {
         continue;
       }
       if (ntree.type == NTREE_GEOMETRY) {
-        if (link->fromsock->may_be_field() && !link->tosock->may_be_field()) {
+        if (this->is_invalid_field_link(*link)) {
           link->flag &= ~NODE_LINK_VALID;
           ntree.runtime->link_errors.add(
               NodeLinkKey{*link}, NodeLinkError{TIP_("The node input does not support fields")});
@@ -1411,6 +1386,24 @@ class NodeTreeMainUpdater {
         }
       }
     }
+  }
+
+  bool is_invalid_field_link(const bNodeLink &link)
+  {
+    if (!link.fromsock->may_be_field()) {
+      return false;
+    }
+    const nodes::SocketDeclaration *to_socket_decl = link.tosock->runtime->declaration;
+    if (!to_socket_decl) {
+      return false;
+    }
+    if (ELEM(to_socket_decl->structure_type, StructureType::Dynamic, StructureType::Field)) {
+      return false;
+    }
+    if (link.tonode->is_group_output() || link.tonode->is_type("NodeClosureOutput")) {
+      return false;
+    }
+    return true;
   }
 
   bool check_if_output_changed(const bNodeTree &tree)

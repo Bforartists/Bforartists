@@ -219,8 +219,13 @@ void EDBM_project_snap_verts(
 
 /* `editmesh_automerge.cc` */
 
-void EDBM_automerge(Object *obedit, bool update, char hflag, float dist);
-void EDBM_automerge_and_split(
+/** \return true if a change is made. */
+bool EDBM_automerge(Object *obedit, bool update, char hflag, float dist);
+/** \return true if a change is made. */
+bool EDBM_automerge_connected(Object *obedit, bool update, char hflag, float dist);
+
+/** \return true if a change is made. */
+bool EDBM_automerge_and_split(
     Object *obedit, bool split_edges, bool split_faces, bool update, char hflag, float dist);
 
 /* `editmesh_undo.cc` */
@@ -529,8 +534,8 @@ bool ED_mesh_color_ensure(Mesh *mesh, const char *name);
 int ED_mesh_color_add(
     Mesh *mesh, const char *name, bool active_set, bool do_init, ReportList *reports);
 
-void ED_mesh_report_mirror(wmOperator *op, int totmirr, int totfail);
-void ED_mesh_report_mirror_ex(wmOperator *op, int totmirr, int totfail, char selectmode);
+void ED_mesh_report_mirror(ReportList &reports, int totmirr, int totfail);
+void ED_mesh_report_mirror_ex(ReportList &reports, int totmirr, int totfail, char selectmode);
 
 KeyBlock *ED_mesh_get_edit_shape_key(const Mesh *me);
 

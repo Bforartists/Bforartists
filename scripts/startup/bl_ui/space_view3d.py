@@ -1681,9 +1681,7 @@ class VIEW3D_MT_uv_map(Menu):
         layout.separator()
 
         layout.operator("mesh.mark_seam", icon="MARK_SEAM").clear = False
-        layout.operator(
-            "mesh.mark_seam", text="Clear Seam", icon="CLEAR_SEAM"
-        ).clear = True
+        layout.operator("mesh.mark_seam", text="Clear Seam", icon="CLEAR_SEAM").clear = True
 
         layout.separator()
 
@@ -7091,9 +7089,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.mark_sharp", icon="MARKSHARPEDGES")
-            col.operator(
-                "mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES"
-            ).clear = True
+            col.operator("mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES").clear = True
             col.operator("mesh.set_sharpness_by_angle", icon="MARKSHARPANGLE")
 
             if with_freestyle:
@@ -7429,16 +7425,12 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.separator()
 
         layout.operator("mesh.mark_sharp", icon="MARKSHARPEDGES")
-        layout.operator(
-            "mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES"
-        ).clear = True
+        layout.operator("mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES").clear = True
 
-        layout.operator(
-            "mesh.mark_sharp", text="Mark Sharp from Vertices", icon="MARKSHARPVERTS"
-        ).use_verts = True
-        props = layout.operator(
-            "mesh.mark_sharp", text="Clear Sharp from Vertices", icon="CLEARSHARPVERTS"
-        )
+        # BFA - the mark sharp are redundant and in the UV menu 
+
+        layout.operator("mesh.mark_sharp", text="Mark Sharp from Vertices", icon="MARKSHARPVERTS").use_verts = True
+        props = layout.operator("mesh.mark_sharp", text="Clear Sharp from Vertices", icon="CLEARSHARPVERTS")
         props.use_verts = True
         props.clear = True
 
@@ -10720,7 +10712,7 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Mesh Edit Mode"
-    bl_ui_units_x = 12
+    bl_ui_units_x = 14
 
     @classmethod
     def poll(cls, context):
@@ -10740,6 +10732,20 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
         col = layout.column()
         col.active = display_all
 
+        row = col.row(align=True)
+        row.prop(overlay, "show_edge_bevel_weight", text="Bevel", icon='EDGE_BEVEL', toggle=True)
+        row.prop(overlay, "show_edge_crease", text="Crease", icon='EDGE_CREASE', toggle=True)
+        row.prop(overlay, "show_edge_seams", text="Seam", icon='EDGE_SEAM', toggle=True)
+        row.prop(
+            overlay,
+            "show_edge_sharp",
+            text="Sharp",
+            icon='EDGE_SHARP',
+            text_ctxt=i18n_contexts.plural,
+            toggle=True,
+        )
+
+        col.separator()
         split = col.split()
 
         sub = split.column()
@@ -10763,11 +10769,7 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
         row.prop(overlay, "show_edge_bevel_weight", text="Bevel", toggle=True)
         row.prop(overlay, "show_edge_seams", text="Seams", toggle=True)
 
-        if context.preferences.view.show_developer_ui:
-            col.label(text="Developer")
-            row = col.row()
-            row.separator()
-            row.prop(overlay, "show_extra_indices", text="Indices")
+        row.prop(overlay, "show_extra_indices", text="Indices")
 
 
 class VIEW3D_PT_overlay_edit_mesh_shading(Panel):
