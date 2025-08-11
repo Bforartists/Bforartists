@@ -31,8 +31,7 @@ jobs:
             const title = 'Fix for commit ${COMMIT_ID} - Update Documentation'
             const body = `This issue was automatically created to update the documentation for commit \`${COMMIT_ID}\`.
 
-Please review and update the relevant sections.`
-
+          #generate the issue
             github.rest.issues.create({
               repo: 'Bforartists', # Your documentation repository
               title: title,
