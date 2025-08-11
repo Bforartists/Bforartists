@@ -7952,7 +7952,8 @@ def draw_curve(self, context):
 
     layout.separator()
 
-    layout.menu("VIEW3D_MT_edit_curve_delete")
+    # BFA - Put menu items in top-level, the same way as in the context menu
+    layout.menu_contents("VIEW3D_MT_edit_curve_delete")
     if edit_object.type == 'CURVE':
         layout.operator("curve.dissolve_verts", icon="DISSOLVE_VERTS")
 
@@ -8082,14 +8083,8 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
         layout.operator("curve.split", icon="SPLIT")
         layout.operator("curve.decimate", icon="DECIMATE")
         layout.operator("curve.separate", icon="SEPARATE")
+        layout.menu_contents("VIEW3D_MT_edit_curve_delete") # BFA - Re-use same submenu used in "Curve" header menu
         layout.operator("curve.dissolve_verts", icon="DISSOLVE_VERTS")
-        layout.operator(
-            "curve.delete", text="Delete Segment", icon="DELETE"
-        ).type = 'SEGMENT'
-        layout.operator(
-            "curve.delete", text="Delete Point", icon="DELETE"
-        ).type = "VERT"
-
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_curve_showhide")  # BFA - added to context menu
@@ -8100,9 +8095,17 @@ class VIEW3D_MT_edit_curve_delete(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        
+        # BFA - Change label if menu is used as a popup
+        if layout.operator_context == 'EXEC_REGION_WIN':
+            vertices_label = "Vertices"
+            segment_label = "Segment"
+        else:
+            vertices_label = "Delete Vertices"
+            segment_label = "Delete Segment"
 
-        layout.operator("curve.delete", text="Vertices", icon="DELETE").type = "VERT"
-        layout.operator("curve.delete", text="Segment", icon="DELETE").type = 'SEGMENT'
+        layout.operator("curve.delete", text=vertices_label, icon="DELETE").type = "VERT"
+        layout.operator("curve.delete", text=segment_label, icon="DELETE").type = 'SEGMENT'
 
 
 class VIEW3D_MT_edit_curve_showhide(Menu):
