@@ -1,0 +1,40 @@
+name: Create Manual Issue on Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  check-and-create-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Benötigt, um den gesamten Commit-Verlauf abzurufen, required to call the whole commit history
+
+      # Pull Request Informationen abrufen
+      - name: Get pull request details
+        id: pr_details
+        run: |
+          echo "PR_TITLE=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+          echo "PR_BODY=$(git log -1 --pretty=%b)" >> $GITHUB_OUTPUT
+
+      # Wenn es ein Merge ist, erstelle ein Issue im Manual-Repository
+      # in case it is a merge, create an issue in the Manual-Repository
+      - name: Create issue in manual repository (on merge)
+        if: github.event.pull_request.merged == true
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = `[Merge] ${context.issue.title}`
+            const body = `${steps.pr_details.outputs.PR_BODY}\n\nPlease update the manual accordingly.`
+
+            // Erstelle ein neues Issue im Manual-Repository
+            github.rest.issues.create({
+              owner: 'Bforartists', // Owner des Manual-Repos
+              repo: 'Manual',   // Name des Manual-Repos
+              title: title,
+              body: body
+            })
