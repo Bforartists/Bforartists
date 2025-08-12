@@ -6,7 +6,7 @@ name: Create issue in manual when a PR is merged
 on:
   push:
     branches:
-      - main          # change if your default branch has another name
+      - master          # change if your default branch has another name
 
 jobs:
   issue_on_merge:
@@ -43,7 +43,7 @@ jobs:
           TARGET_REPO="bforartists/manual"    # target repository
           TITLE="Merged PR #$PR_NUM"
           BODY=$(cat <<EOF
-          Pull request #$PR_NUM was merged into \`main\` of **bforartists/bforartists**.
+          Pull request #$PR_NUM was merged into \`master\` of **bforartists/bforartists**.
 
           Please review the changes and verify that they meet our quality standards.
           EOF
