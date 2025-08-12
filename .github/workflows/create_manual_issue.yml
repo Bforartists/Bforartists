@@ -12,7 +12,7 @@ jobs:
   issue_on_merge:
     runs-on: ubuntu-latest
     # Only run when the commit is a merge of a pull‑request
-    if: github.event.head_commit.message contains 'Merge pull request'
+    if: contains(github.event.head_commit.message, 'Merge pull request')
 
     steps:
       - name: Checkout source repo (bforartists/bforartists)
