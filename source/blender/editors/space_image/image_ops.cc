@@ -2100,7 +2100,7 @@ static bool image_save_as_poll(bContext *C)
     Image *ima = image_from_context(C);
 
     if (ima->source == IMA_SRC_VIEWER) {
-      CTX_wm_operator_poll_msg_set(C, "can't save image while rendering");
+      CTX_wm_operator_poll_msg_set(C, "cannot save image while rendering");
       return false;
     }
   }
@@ -2435,7 +2435,7 @@ int ED_image_save_all_modified_info(const Main *bmain, ReportList *reports)
         else {
           BKE_reportf(reports,
                       RPT_WARNING,
-                      "Packed library image can't be saved: \"%s\" from \"%s\"",
+                      "Packed library image cannot be saved: \"%s\" from \"%s\"",
                       ima->id.name + 2,
                       ima->id.lib->filepath);
         }
@@ -2443,7 +2443,7 @@ int ED_image_save_all_modified_info(const Main *bmain, ReportList *reports)
       else if (!is_format_writable) {
         BKE_reportf(reports,
                     RPT_WARNING,
-                    "Image can't be saved, use a different file format: \"%s\"",
+                    "Image cannot be saved, use a different file format: \"%s\"",
                     ima->id.name + 2);
       }
       else {
@@ -2452,7 +2452,7 @@ int ED_image_save_all_modified_info(const Main *bmain, ReportList *reports)
           if (unique_paths.contains_as(ima->filepath)) {
             BKE_reportf(reports,
                         RPT_WARNING,
-                        "Multiple images can't be saved to an identical path: \"%s\"",
+                        "Multiple images cannot be saved to an identical path: \"%s\"",
                         ima->filepath);
           }
           else {
@@ -2462,7 +2462,7 @@ int ED_image_save_all_modified_info(const Main *bmain, ReportList *reports)
         else {
           BKE_reportf(reports,
                       RPT_WARNING,
-                      "Image can't be saved, no valid file path: \"%s\"",
+                      "Image cannot be saved, no valid file path: \"%s\"",
                       ima->filepath);
         }
       }

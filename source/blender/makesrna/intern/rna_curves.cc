@@ -34,7 +34,7 @@ const EnumPropertyItem rna_enum_curves_handle_type_items[] = {
      "FREE",
      ICON_HANDLE_FREE,
      "Free",
-     "The handle can be moved anywhere, and doesn't influence the point's other handle"},
+     "The handle can be moved anywhere, and does not influence the point's other handle"},
     {BEZIER_HANDLE_AUTO,
      "AUTO",
      ICON_HANDLE_AUTO,

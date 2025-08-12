@@ -119,7 +119,7 @@
 #  define FLAT(type, name) .flat(Type::type##_t, #name)
 #  define NO_PERSPECTIVE(type, name) .no_perspective(Type::type##_t, #name)
 
-/* LOCAL_GROUP_SIZE(int size_x, int size_y = -1, int size_z = -1) */
+/* LOCAL_GROUP_SIZE(int size_x, int size_y = 1, int size_z = 1) */
 #  define LOCAL_GROUP_SIZE(...) .local_group_size(__VA_ARGS__)
 
 #  define VERTEX_IN(slot, type, name) .vertex_in(slot, Type::type##_t, #name)
@@ -673,7 +673,7 @@ using GeneratedSourceList = Vector<shader::GeneratedSource, 0>;
 /**
  * \brief Describe inputs & outputs, stage interfaces, resources and sources of a shader.
  *        If all data is correctly provided, this is all that is needed to create and compile
- *        a #GPUShader.
+ *        a #blender::gpu::Shader.
  *
  * IMPORTANT: All strings are references only. Make sure all the strings used by a
  *            #ShaderCreateInfo are not freed until it is consumed or deleted.
@@ -992,7 +992,7 @@ struct ShaderCreateInfo {
     return *(Self *)this;
   }
 
-  Self &local_group_size(int local_size_x = -1, int local_size_y = -1, int local_size_z = -1)
+  Self &local_group_size(int local_size_x, int local_size_y = 1, int local_size_z = 1)
   {
     compute_layout_.local_size_x = local_size_x;
     compute_layout_.local_size_y = local_size_y;
@@ -1263,7 +1263,8 @@ struct ShaderCreateInfo {
   /* -------------------------------------------------------------------- */
   /** \name Push constants
    *
-   * Data managed by GPUShader. Can be set through uniform functions. Must be less than 128bytes.
+   * Data managed by blender::gpu::Shader. Can be set through uniform functions. Must be less than
+   * 128bytes.
    * \{ */
 
   Self &push_constant(Type type, StringRefNull name, int array_size = 0)
@@ -1374,9 +1375,11 @@ struct ShaderCreateInfo {
    * NOTE: These functions can be exposed as a pass-through on unsupported configurations.
    * \{ */
 
-  /* \name mtl_max_total_threads_per_threadgroup
-   * \a  max_total_threads_per_threadgroup - Provides compiler hint for maximum threadgroup size up
-   * front. Maximum value is 1024. */
+  /**
+   * \name mtl_max_total_threads_per_threadgroup
+   * \a max_total_threads_per_threadgroup - Provides compiler hint for maximum threadgroup size up
+   * front. Maximum value is 1024.
+   */
   Self &mtl_max_total_threads_per_threadgroup(ushort max_total_threads_per_threadgroup)
   {
 #  ifdef WITH_METAL_BACKEND

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:03+0000\n"
 "Last-Translator: Nooby Noober <iamanoobynoober@gmail.com>\n"
 "Language-Team: Persian <https://translate.blender.org/projects/blender-ui/ui/fa/>\n"
@@ -419,8 +419,8 @@ msgid "Fribidi Library"
 msgstr "FriBidi ﻪﻧﺎﺨﺑﺎﺘﮐ"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
-msgstr "Bforartists ﯼﺎﻫ‌ﻪﻧﺎﺨﺑﺎﺘﮐ ﻥﺰﺨﻣ ﺭﺩ ﺩﻮﺟﻮﻣ ﻥﺰﺨﻣ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ ﺎﺑ ﻝﺎﺜﻣ ﻥﺍﻮﻨﻋ ﻪﺑ ،ﺪﯿﻨﮐ ﺶﯾﺍﺮﯾﻭ ﺍﺭ ﻥﺁ ﺪﯾﺎﺑ ﻻً﻿ﺎﻤﺘﺣﺍ ،ﺪﯿﺘﺴﻫ ﺯﻭﺪﻨﯾﻭ ﺖﺤﺗ ﺮﮔﺍ ،(...ﺯﻭﺪﻨﯾﻭ ﺭﺩ dll. ،ﺲﮐﻮﻨﯿﻟ ﯼﺍﺮﺑ FriBidi C (.so ﻩﺪﺷ ﻞﯾﺎﭙﻣﺎﮐ ﻪﻧﺎﺨﺑﺎﺘﮐ"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
+msgstr "Blender ﯼﺎﻫ‌ﻪﻧﺎﺨﺑﺎﺘﮐ ﻥﺰﺨﻣ ﺭﺩ ﺩﻮﺟﻮﻣ ﻥﺰﺨﻣ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ ﺎﺑ ﻝﺎﺜﻣ ﻥﺍﻮﻨﻋ ﻪﺑ ،ﺪﯿﻨﮐ ﺶﯾﺍﺮﯾﻭ ﺍﺭ ﻥﺁ ﺪﯾﺎﺑ ﻻً﻿ﺎﻤﺘﺣﺍ ،ﺪﯿﺘﺴﻫ ﺯﻭﺪﻨﯾﻭ ﺖﺤﺗ ﺮﮔﺍ ،(...ﺯﻭﺪﻨﯾﻭ ﺭﺩ dll. ،ﺲﮐﻮﻨﯿﻟ ﯼﺍﺮﺑ FriBidi C (.so ﻩﺪﺷ ﻞﯾﺎﭙﻣﺎﮐ ﻪﻧﺎﺨﺑﺎﺘﮐ"
 
 
 msgid "Translation Root"
@@ -443,8 +443,8 @@ msgid "Source Root"
 msgstr "ﻊﺒﻨﻣ ﻪﺸﯾﺭ"
 
 
-msgid "The Bforartists source root path"
-msgstr "Bforartists ﻊﺒﻨﻣ ﻪﺸﯾﺭ ﺮﯿﺴﻣ"
+msgid "The Blender source root path"
+msgstr "Blender ﻊﺒﻨﻣ ﻪﺸﯾﺭ ﺮﯿﺴﻣ"
 
 
 msgid "Spell Cache"
@@ -467,8 +467,8 @@ msgid "Persistent Data Path"
 msgstr "ﺭﺍﺪﯾﺎﭘ ﻩﺩﺍﺩ ﺮﯿﺴﻣ"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
-msgstr "(ﺪﻨﮐ ﯽﻤﻧ ﺭﺎﮐ ﺎﺠﻨﯾﺍ ﺭﺩ Bforartists ﻢﺘﺴﯿﺳ ﻪﻧﺎﻔﺳﺎﺘﻣ) ﺪﻨﮐ ﯽﻣ ﻩﺮﯿﺧﺫ ﺍﺭ ﺕﺎﻤﯿﻈﻨﺗ ﻦﯾﺍ ﻪﮐ json ﻞﯾﺎﻓ ﮏﯾ ﻡﺎﻧ"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgstr "(ﺪﻨﮐ ﯽﻤﻧ ﺭﺎﮐ ﺎﺠﻨﯾﺍ ﺭﺩ Blender ﻢﺘﺴﯿﺳ ﻪﻧﺎﻔﺳﺎﺘﻣ) ﺪﻨﮐ ﯽﻣ ﻩﺮﯿﺧﺫ ﺍﺭ ﺕﺎﻤﯿﻈﻨﺗ ﻦﯾﺍ ﻪﮐ json ﻞﯾﺎﻓ ﮏﯾ ﻡﺎﻧ"
 
 
 msgid "User Add-ons"
@@ -1115,7 +1115,7 @@ msgid "Textures"
 msgstr "ﺎﻫ‌ﺖﻓﺎﺑ"
 
 
-msgid "Bforartists RNA"
+msgid "Blender RNA"
 msgstr "RNA ﺭﺪﻨﻠﺑ"
 
 
@@ -2957,6 +2957,14 @@ msgid "Mix"
 msgstr "ﻁﻮﻠﺨﻣ"
 
 
+msgid "Pivot Point"
+msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
+
+
+msgid "Mirror"
+msgstr "ﻪﻨﯾﺁ"
+
+
 msgid "Add Image"
 msgstr "ﺮﯾﻮﺼﺗ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -2975,14 +2983,6 @@ msgstr "ﻞﯾﺪﺒﺗ"
 
 msgid "Text"
 msgstr "ﻦﺘﻣ"
-
-
-msgid "Pivot Point"
-msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
-
-
-msgid "Mirror"
-msgstr "ﻪﻨﯾﺁ"
 
 
 msgid "Key"
@@ -4234,12 +4234,12 @@ msgid "Restrict"
 msgstr "ﻥﺩﺮﮐ ﺩﻭﺪﺤﻣ"
 
 
-msgid "Transform Orientations"
-msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
-
-
 msgid "Motion Tracking"
 msgstr "ﺖﮐﺮﺣ ﯽﺑﺎﯾﺩﺭ"
+
+
+msgid "Transform Orientations"
+msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
 msgid "Bone Constraints"
@@ -4803,14 +4803,6 @@ msgid "View Selected"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻩﺪﻫﺎﺸﻣ"
 
 
-msgid "Creases"
-msgstr "ﺎﻫ ﻦﯿﭼ"
-
-
-msgid "Seams"
-msgstr "ﺎﻫ ﺯﺭﺩ"
-
-
 msgid "Multi-Paint"
 msgstr "ﮓﻧﺭ ﺪﻨﭼ"
 
@@ -5054,6 +5046,10 @@ msgid "Stop animation playback"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺶﺨﭘ ﻒﻗﻮﺗ"
 
 
+msgid "Seams"
+msgstr "ﺎﻫ ﺯﺭﺩ"
+
+
 msgid "3D View "
 msgstr " .ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
 
@@ -5066,7 +5062,7 @@ msgid "Time:"
 msgstr ":ﻥﺎﻣﺯ"
 
 
-msgid "Bforartists Render"
+msgid "Blender Render"
 msgstr "ﺭﺪﻨﻠﺑ ﺭﺪﻧﺭ"
 
 
@@ -5166,7 +5162,7 @@ msgid "Old"
 msgstr "ﯽﻤﯾﺪﻗ"
 
 
-msgid "Bforartists File View"
+msgid "Blender File View"
 msgstr "ﺭﺪﻨﻠﺑ ﻞﯾﺎﻓ ﺶﯾﺎﻤﻧ"
 
 

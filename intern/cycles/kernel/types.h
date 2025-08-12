@@ -87,8 +87,9 @@ CCL_NAMESPACE_BEGIN
 
 /* BVH/sampling kernel features. */
 #define KERNEL_FEATURE_POINTCLOUD (1U << 12U)
-#define KERNEL_FEATURE_HAIR (1U << 13U)
+#define KERNEL_FEATURE_HAIR_RIBBON (1U << 13U)
 #define KERNEL_FEATURE_HAIR_THICK (1U << 14U)
+#define KERNEL_FEATURE_HAIR (KERNEL_FEATURE_HAIR_RIBBON | KERNEL_FEATURE_HAIR_THICK)
 #define KERNEL_FEATURE_OBJECT_MOTION (1U << 15U)
 
 /* Denotes whether baking functionality is needed. */
@@ -870,6 +871,8 @@ enum AttributeStandard {
   ATTR_STD_UV,
   ATTR_STD_UV_TANGENT,
   ATTR_STD_UV_TANGENT_SIGN,
+  ATTR_STD_UV_TANGENT_UNDISPLACED,
+  ATTR_STD_UV_TANGENT_SIGN_UNDISPLACED,
   ATTR_STD_VERTEX_COLOR,
   ATTR_STD_GENERATED,
   ATTR_STD_GENERATED_TRANSFORM,
@@ -1008,7 +1011,7 @@ enum ShaderDataFlag {
   SD_HOLDOUT = (1 << 5),
   /* Shader has non-zero volume extinction. */
   SD_EXTINCTION = (1 << 6),
-  /* Shader has have volume phase (scatter) closure. */
+  /* Shader has a volume phase (scatter) closure. */
   SD_SCATTER = (1 << 7),
   /* Shader is being evaluated in a volume. */
   SD_IS_VOLUME_SHADER_EVAL = (1 << 8),

@@ -1344,6 +1344,7 @@ class USERPREF_PT_theme_interface_gizmos(ThemePanel, CenterAlignMixIn, Panel):
         col.prop(ui, "axis_x", text="Axis X")
         col.prop(ui, "axis_y", text="Y")
         col.prop(ui, "axis_z", text="Z")
+        col.prop(ui, "axis_w", text="W")
 
         col = flow.column()
         col.prop(ui, "gizmo_primary")
@@ -3032,8 +3033,6 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                  ("blender/blender/projects/10", "Pipeline, Assets & IO Project Page")),
                 ({"property": "use_new_volume_nodes"}, ("blender/blender/issues/103248", "#103248")),
                 ({"property": "use_shader_node_previews"}, ("blender/blender/issues/110353", "#110353")),
-                ({"property": "use_bundle_and_closure_nodes"}, ("blender/blender/issues/134029", "#134029")),
-                ({"property": "use_socket_structure_type"}, ("blender/blender/issues/127106", "#127106")),
                 ({"property": "use_geometry_nodes_lists"}, ("blender/blender/issues/140918", "#140918")),
             ),
         )

@@ -3090,7 +3090,7 @@ static void rna_def_object(BlenderRNA *brna)
       prop,
       "Rotation Mode",
       /* This description is shared by other "rotation_mode" properties. */
-      "The kind of rotation to apply, values from other rotation modes aren't used");
+      "The kind of rotation to apply, values from other rotation modes are not used");
   RNA_def_property_update(prop, NC_OBJECT | ND_TRANSFORM, "rna_Object_internal_update");
 
   prop = RNA_def_property(srna, "scale", PROP_FLOAT, PROP_XYZ);
@@ -3715,7 +3715,7 @@ static void rna_def_object_light_linking(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "receiver_collection", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "Collection");
-  RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
   RNA_def_property_pointer_funcs(prop,
                                  "rna_LightLinking_receiver_collection_get",
                                  "rna_LightLinking_receiver_collection_set",
@@ -3728,7 +3728,7 @@ static void rna_def_object_light_linking(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "blocker_collection", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "Collection");
-  RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
   RNA_def_property_pointer_funcs(prop,
                                  "rna_LightLinking_blocker_collection_get",
                                  "rna_LightLinking_blocker_collection_set",

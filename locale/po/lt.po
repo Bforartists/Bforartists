@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:18+0000\n"
 "Last-Translator: Aras Pranckevičius <aras@nesnausk.org>\n"
 "Language-Team: Lithuanian <https://translate.blender.org/projects/blender-ui/ui/lt/>\n"
@@ -757,8 +757,8 @@ msgid "Current File"
 msgstr "Dabartinis failas"
 
 
-msgid "Show the assets currently available in this Bforartists session"
-msgstr "Rodyti išteklius pasiekiamus šioje Bforartists sesijoje"
+msgid "Show the assets currently available in this Blender session"
+msgstr "Rodyti išteklius pasiekiamus šioje Blender sesijoje"
 
 
 msgid "Essentials"
@@ -2525,38 +2525,6 @@ msgid "Last"
 msgstr "Paskutinė/-is"
 
 
-msgid "BMP"
-msgstr "„BMP“"
-
-
-msgid "Iris"
-msgstr "„Iris“"
-
-
-msgid "JPEG"
-msgstr "„JPEG“"
-
-
-msgid "Targa"
-msgstr "„Targa“"
-
-
-msgid "Cineon"
-msgstr "„Cineon“"
-
-
-msgid "DPX"
-msgstr "„DPX“"
-
-
-msgid "TIFF"
-msgstr "„TIFF“"
-
-
-msgid "WebP"
-msgstr "„WebP“"
-
-
 msgid "Pixels"
 msgstr "Pikseliai"
 
@@ -3189,8 +3157,8 @@ msgid "Python"
 msgstr "„Python“"
 
 
-msgid "Bforartists"
-msgstr "„Bforartists“"
+msgid "Blender"
+msgstr "„Blender“"
 
 
 msgid "System"
@@ -3259,6 +3227,10 @@ msgid "px"
 msgstr "pks."
 
 
+msgid "JPEG"
+msgstr "„JPEG“"
+
+
 msgid "Growing/shrinking mode"
 msgstr "Augimo/Susitraukimo veiksena"
 
@@ -3313,10 +3285,6 @@ msgstr "Projektuoti A ant B"
 msgctxt "NodeTree"
 msgid "Reflect"
 msgstr "Atspindys"
-
-
-msgid "Reflect A around the normal B. B doesn't need to be normalized."
-msgstr "A atspindys aplink normalę B. B ilgis nebūtinai vienetinis."
 
 
 msgctxt "NodeTree"
@@ -3455,8 +3423,8 @@ msgstr "„I18n“ išsaugojimo nustatymai"
 
 
 msgctxt "Operator"
-msgid "Update I18n Bforartists Repository"
-msgstr "Atnaujinti „I18n Bforartists“ saugyklą"
+msgid "Update I18n Blender Repository"
+msgstr "Atnaujinti „I18n Blender“ saugyklą"
 
 
 msgctxt "Operator"
@@ -3544,6 +3512,18 @@ msgid "Add Mode"
 msgstr "Pridėti veikseną"
 
 
+msgid "BMP"
+msgstr "„BMP“"
+
+
+msgid "DPX"
+msgstr "„DPX“"
+
+
+msgid "TIFF"
+msgstr "„TIFF“"
+
+
 msgctxt "Operator"
 msgid "Open/Close"
 msgstr "Atidaryti/Uždaryti"
@@ -3614,8 +3594,8 @@ msgid "Open"
 msgstr "Atidaryti"
 
 
-msgid "Open a Bforartists file"
-msgstr "Atidaryti „Bforartists“ failą"
+msgid "Open a Blender file"
+msgstr "Atidaryti „Blender“ failą"
 
 
 msgctxt "Operator"
@@ -3624,12 +3604,12 @@ msgstr "Importuoti „PLY“"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Išeiti iš „Bforartists“"
+msgid "Quit Blender"
+msgstr "Išeiti iš „Blender“"
 
 
-msgid "Quit Bforartists"
-msgstr "Išeiti iš „Bforartists“"
+msgid "Quit Blender"
+msgstr "Išeiti iš „Blender“"
 
 
 msgid "Save Copy"
@@ -3637,17 +3617,17 @@ msgstr "Išsaugoti kopiją"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Išsaugoti „Bforartists“ failą"
+msgid "Save Blender File"
+msgstr "Išsaugoti „Blender“ failą"
 
 
-msgid "Exit Bforartists after saving"
-msgstr "Išjungti „Bforartists“ po išsaugojimo"
+msgid "Exit Blender after saving"
+msgstr "Išjungti „Blender“ po išsaugojimo"
 
 
 msgctxt "Operator"
-msgid "About Bforartists"
-msgstr "Apie „Bforartists“"
+msgid "About Blender"
+msgstr "Apie „Blender“"
 
 
 msgctxt "Operator"
@@ -3655,8 +3635,8 @@ msgid "Import STL"
 msgstr "Importuoti „STL“"
 
 
-msgid "Bforartists Names"
-msgstr "„Bforartists“ pavadinimai"
+msgid "Blender Names"
+msgstr "„Blender“ pavadinimai"
 
 
 msgctxt "Operator"
@@ -3761,12 +3741,12 @@ msgid "Languages"
 msgstr "Kalbos"
 
 
-msgid "Bforartists 2.7"
-msgstr "„Bforartists 2.7“"
+msgid "Blender 2.7"
+msgstr "„Blender 2.7“"
 
 
-msgid "Bforartists 2.8"
-msgstr "„Bforartists 2.8“"
+msgid "Blender 2.8"
+msgstr "„Blender 2.8“"
 
 
 msgid "128 px"
@@ -3952,8 +3932,8 @@ msgid "ID From"
 msgstr "ID iš"
 
 
-msgid "Bforartists File"
-msgstr "„Bforartists“ failas"
+msgid "Blender File"
+msgstr "„Blender“ failas"
 
 
 msgctxt "ID"
@@ -4389,8 +4369,8 @@ msgstr "Atsiliepimas/-ai"
 
 
 msgctxt "Operator"
-msgid "Update Bforartists Repository"
-msgstr "Atnaujinti „Bforartists“ saugyklą"
+msgid "Update Blender Repository"
+msgstr "Atnaujinti „Blender“ saugyklą"
 
 
 msgctxt "Operator"
@@ -4408,8 +4388,8 @@ msgid "Open..."
 msgstr "Atidaryti..."
 
 
-msgid "Bforartists is free software"
-msgstr "„Bforartists“ yra nemokama taikomoji programa"
+msgid "Blender is free software"
+msgstr "„Blender“ yra nemokama taikomoji programa"
 
 
 msgctxt "Operator"
@@ -4418,17 +4398,17 @@ msgstr "Paremti"
 
 
 msgctxt "Operator"
-msgid "Bforartists Store"
-msgstr "„Bforartists“ parduotuvė"
+msgid "Blender Store"
+msgstr "„Blender“ parduotuvė"
 
 
 msgctxt "Operator"
-msgid "Bforartists Website"
-msgstr "„Bforartists“ tinklapis/svetainė"
+msgid "Blender Website"
+msgstr "„Blender“ tinklapis/svetainė"
 
 
-msgid "Bforartists's official web-site"
-msgstr "„Bforartists“ oficialus tinklapis"
+msgid "Blender's official web-site"
+msgstr "„Blender“ oficialus tinklapis"
 
 
 msgid "Object(s)"
@@ -4440,8 +4420,8 @@ msgid "New"
 msgstr "Nauja/-s/-i"
 
 
-msgid "Bforartists IDs"
-msgstr "„Bforartists“ ID (dgs.)"
+msgid "Blender IDs"
+msgstr "„Blender“ ID (dgs.)"
 
 
 msgctxt "Image"
@@ -4512,8 +4492,8 @@ msgid "Video Memory"
 msgstr "Vaizdo atmintis"
 
 
-msgid "Bforartists Version"
-msgstr "„Bforartists“ versija"
+msgid "Blender Version"
+msgstr "„Blender“ versija"
 
 
 msgid "Auto-Save"
@@ -4709,8 +4689,8 @@ msgid "New"
 msgstr "Nauja/-s/-i"
 
 
-msgid "Bforartists Data"
-msgstr "„Bforartists“ duomenys"
+msgid "Blender Data"
+msgstr "„Blender“ duomenys"
 
 
 msgid "Import {} files"
@@ -4726,8 +4706,8 @@ msgid "Magnet"
 msgstr "Magnetas"
 
 
-msgid "Bforartists Info Log"
-msgstr "„Bforartists“ informacijos žurnalas"
+msgid "Blender Info Log"
+msgstr "„Blender“ informacijos žurnalas"
 
 
 msgid "Saved %s"
@@ -4750,8 +4730,8 @@ msgid "(Unsaved)"
 msgstr "(Neišsaugota/-s)"
 
 
-msgid "Bforartists 27x"
-msgstr "„Bforartists 27x“"
+msgid "Blender 27x"
+msgstr "„Blender 27x“"
 
 
 msgctxt "WorkSpace"

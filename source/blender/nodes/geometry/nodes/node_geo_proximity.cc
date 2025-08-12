@@ -35,7 +35,10 @@ static void node_declare(NodeDeclarationBuilder &b)
           "individually");
   b.add_input<decl::Vector>("Sample Position", "Source Position")
       .implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_input<decl::Int>("Sample Group ID").hide_value().supports_field();
+  b.add_input<decl::Int>("Sample Group ID")
+      .hide_value()
+      .supports_field()
+      .structure_type(StructureType::Dynamic);
   b.add_output<decl::Vector>("Position").dependent_field({2, 3}).reference_pass_all();
   b.add_output<decl::Float>("Distance").dependent_field({2, 3}).reference_pass_all();
   b.add_output<decl::Bool>("Is Valid")
@@ -246,6 +249,13 @@ class ProximityFunction : public mf::MultiFunction {
         distances[i] = std::sqrt(nearest.dist_sq);
       }
     });
+  }
+
+  ExecutionHints get_execution_hints() const override
+  {
+    ExecutionHints hints;
+    hints.min_grain_size = 512;
+    return hints;
   }
 };
 

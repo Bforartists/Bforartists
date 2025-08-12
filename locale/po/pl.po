@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:14+0000\n"
 "Last-Translator: Kamil <uhkamil@gmail.com>\n"
 "Language-Team: Polish <https://translate.blender.org/projects/blender-ui/ui/pl/>\n"
@@ -700,8 +700,8 @@ msgid "Fribidi Library"
 msgstr "Biblioteka fribidi"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
-msgstr "Skompilowana z języka C biblioteka FriBidi (.so pod Linuxem, .dll pod Windows), prawdopodobnie potrzebuje dodatkowego ustaienia, gdy jesteś pod Windows, np. wykorzystując dołączone repozytorium bibliotek Bforartistsa"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
+msgstr "Skompilowana z języka C biblioteka FriBidi (.so pod Linuxem, .dll pod Windows), prawdopodobnie potrzebuje dodatkowego ustaienia, gdy jesteś pod Windows, np. wykorzystując dołączone repozytorium bibliotek Blendera"
 
 
 msgid "Translation Root"
@@ -724,8 +724,8 @@ msgid "Source Root"
 msgstr "Główny katalog"
 
 
-msgid "The Bforartists source root path"
-msgstr "Główny katalog w którym są pliki źródłowe Bforartistsa"
+msgid "The Blender source root path"
+msgstr "Główny katalog w którym są pliki źródłowe Blendera"
 
 
 msgid "Spell Cache"
@@ -748,8 +748,8 @@ msgid "Persistent Data Path"
 msgstr "Ścieżka do danych trwałych"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
-msgstr "Nazwa pliku json do przechowywania ustawień (niestety, system Bforartistsa tutaj nie działa)"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgstr "Nazwa pliku json do przechowywania ustawień (niestety, system Blendera tutaj nie działa)"
 
 
 msgid "User Add-ons"
@@ -1529,16 +1529,16 @@ msgid "Current File"
 msgstr "Bieżący plik"
 
 
-msgid "Show the assets currently available in this Bforartists session"
-msgstr "Pokazuje prefabrykaty aktualnie dostępne w tej sesji programu Bforartists"
+msgid "Show the assets currently available in this Blender session"
+msgstr "Pokazuje prefabrykaty aktualnie dostępne w tej sesji programu Blender"
 
 
 msgid "Essentials"
 msgstr "Podstawy"
 
 
-msgid "Show the basic building blocks and utilities coming with Bforartists"
-msgstr "Pokazuje podstawowe bloki konstrukcyjne i narzędzia dostarczane z programem Bforartists"
+msgid "Show the basic building blocks and utilities coming with Blender"
+msgstr "Pokazuje podstawowe bloki konstrukcyjne i narzędzia dostarczane z programem Blender"
 
 
 msgid "Custom"
@@ -2737,12 +2737,12 @@ msgid "Collection of worlds"
 msgstr "Kolekcja światów"
 
 
-msgid "Bforartists RNA"
-msgstr "Bforartists RNA"
+msgid "Blender RNA"
+msgstr "Blender RNA"
 
 
-msgid "Bforartists RNA structure definitions"
-msgstr "Definicje struktur RNA Bforartistsa"
+msgid "Blender RNA structure definitions"
+msgstr "Definicje struktur RNA Blendera"
 
 
 msgid "Structs"
@@ -3321,10 +3321,6 @@ msgid "Radius of head of bone (for Envelope deform only)"
 msgstr "Promień początkowej części kości, która definiuje obwiednię (tylko dla deformacji wyrażanej przez obwiednie)"
 
 
-msgid "Bone is not visible when it is not in Edit Mode (i.e. in Object or Pose Modes)"
-msgstr "Kość jest niewidoczna gdy nie jest w Trybie Edycji (np. gdy jest w Trybie Obiektowym lub w Trybie Pozy)"
-
-
 msgid "Selectable"
 msgstr "Klikalna"
 
@@ -3415,10 +3411,6 @@ msgstr "Gdy kość ma parenta, początek kości jest połączony z końcem paren
 
 msgid "Cyclic Offset"
 msgstr "Przesunięcie cykliczne"
-
-
-msgid "When bone doesn't have a parent, it receives cyclic offset effects (Deprecated)"
-msgstr "Gdy kość nie posiada kości nadrzędnej, używa cyklicznych efektów przesunięcia (przestarzałe)"
 
 
 msgid "Deform"
@@ -4772,8 +4764,8 @@ msgid "Lin error"
 msgstr "Błąd położenia"
 
 
-msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
-msgstr "Wielkość szczątkowego błędu w jednostkach Bforartistsa dla ograniczników które działają na położeniu"
+msgid "Amount of residual error in Blender space unit for constraints that work on position"
+msgstr "Wielkość szczątkowego błędu w jednostkach Blendera dla ograniczników które działają na położeniu"
 
 
 msgid "Amount of residual error in radians for constraints that work on orientation"
@@ -7270,8 +7262,8 @@ msgid "Max Velocity"
 msgstr "Maksymalna prędkość"
 
 
-msgid "Velocity considered as maximum influence (Bforartists units per frame)"
-msgstr "Prędkość rozumiana jako maksymalny wpływ (w jednostkach Bforartistsa na klatkę)"
+msgid "Velocity considered as maximum influence (Blender units per frame)"
+msgstr "Prędkość rozumiana jako maksymalny wpływ (w jednostkach Blendera na klatkę)"
 
 
 msgid "Clamp Waves"
@@ -8918,16 +8910,16 @@ msgid "Hide .blend files items that are not data-blocks with asset metadata"
 msgstr "Ukrywa przedmioty w plikach .blend, które nie są blokami danych z metadanymi prefabrykatów"
 
 
-msgid "Filter Bforartists Backup Files"
-msgstr "Sortuj pliki kopii zapasowych programu Bforartists"
+msgid "Filter Blender Backup Files"
+msgstr "Sortuj pliki kopii zapasowych programu Blender"
 
 
 msgid "Show .blend1, .blend2, etc. files"
 msgstr "Pokazuje pliki .blend1, .blend2 itd"
 
 
-msgid "Filter Bforartists"
-msgstr "Sortuj pliki programu Bforartists"
+msgid "Filter Blender"
+msgstr "Sortuj pliki programu Blender"
 
 
 msgid "Show .blend files"
@@ -9833,8 +9825,8 @@ msgid "External .blend file from which data is linked"
 msgstr "Zewnętrzny plik .blend, z którego pobierane są dane"
 
 
-msgid "Version of Bforartists the library .blend was saved with"
-msgstr "Wersja Bforartistsa, która została użyta do zapisu pliku .blend"
+msgid "Version of Blender the library .blend was saved with"
+msgstr "Wersja Blendera, która została użyta do zapisu pliku .blend"
 
 
 msgctxt "Light"
@@ -10706,8 +10698,8 @@ msgid "Asset Blend Path"
 msgstr "Ścieżka pliku .blend z prefabrykatem"
 
 
-msgid "Full path to the Bforartists file containing the active asset"
-msgstr "Pełna ścieżka do pliku programu Bforartists, który zawiera aktywny prefabrykat"
+msgid "Full path to the Blender file containing the active asset"
+msgstr "Pełna ścieżka do pliku programu Blender, który zawiera aktywny prefabrykat"
 
 
 msgid "Add-ons"
@@ -11580,6 +11572,30 @@ msgid "Mask"
 msgstr "Maska"
 
 
+msgid "Snap"
+msgstr "Przyciągnij"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Proporcjonalne edytowanie spadku"
+
+
+msgid "Mirror"
+msgstr "Odbicie lustrzane"
+
+
+msgid "Local View"
+msgstr "Widok lokalny"
+
+
+msgid "Viewpoint"
+msgstr "Punkt obserwacji"
+
+
+msgid "Navigation"
+msgstr "Nawigacja"
+
+
 msgid "Select Linked"
 msgstr "Zaznacz powiązane"
 
@@ -11646,30 +11662,6 @@ msgstr "Scal"
 
 msgid "Text"
 msgstr "Tekst"
-
-
-msgid "Snap"
-msgstr "Przyciągnij"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proporcjonalne edytowanie spadku"
-
-
-msgid "Mirror"
-msgstr "Odbicie lustrzane"
-
-
-msgid "Local View"
-msgstr "Widok lokalny"
-
-
-msgid "Viewpoint"
-msgstr "Punkt obserwacji"
-
-
-msgid "Navigation"
-msgstr "Nawigacja"
 
 
 msgid "Catalog"
@@ -13471,8 +13463,8 @@ msgstr "Kopiuj ustawienia bryły sztywnej"
 
 
 msgctxt "Operator"
-msgid "Update I18n Bforartists Repository"
-msgstr "Zaktualizuj repozytorium I18n Bforartistsa"
+msgid "Update I18n Blender Repository"
+msgstr "Zaktualizuj repozytorium I18n Blendera"
 
 
 msgctxt "Operator"
@@ -17040,12 +17032,12 @@ msgstr "Importuj PLY"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Zamknij Bforartistsa"
+msgid "Quit Blender"
+msgstr "Zamknij Blendera"
 
 
-msgid "Quit Bforartists"
-msgstr "Zamyka Bforartistsa"
+msgid "Quit Blender"
+msgstr "Zamyka Blendera"
 
 
 msgctxt "Operator"
@@ -17117,12 +17109,12 @@ msgstr "Zapisz plik startowy"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Zapisz plik Bforartistsa"
+msgid "Save Blender File"
+msgstr "Zapisz plik Blendera"
 
 
-msgid "Save the current Bforartists file"
-msgstr "Zapisuje bieżący plik Bforartistsa"
+msgid "Save the current Blender file"
+msgstr "Zapisuje bieżący plik Blendera"
 
 
 msgctxt "Operator"
@@ -17161,12 +17153,12 @@ msgstr "Otwiera ekran startowy z informacją o wydaniu"
 
 
 msgctxt "Operator"
-msgid "About Bforartists"
-msgstr "O Bforartistsze"
+msgid "About Blender"
+msgstr "O Blenderze"
 
 
-msgid "Open a window with information about Bforartists"
-msgstr "Otwiera okno z informacjami na temat programu Bforartists"
+msgid "Open a window with information about Blender"
+msgstr "Otwiera okno z informacjami na temat programu Blender"
 
 
 msgctxt "Operator"
@@ -17365,14 +17357,6 @@ msgid "Palette Color"
 msgstr "Kolor palety"
 
 
-msgid "Snapping"
-msgstr "Przyciąganie"
-
-
-msgid "Transform Orientations"
-msgstr "Orientacje przekształcenia"
-
-
 msgid "Active Tool"
 msgstr "Aktywne narzędzie"
 
@@ -17399,6 +17383,14 @@ msgstr "Pomiar"
 
 msgid "Curve Edit Mode"
 msgstr "Tryb edycji krzywej"
+
+
+msgid "Snapping"
+msgstr "Przyciąganie"
+
+
+msgid "Transform Orientations"
+msgstr "Orientacje przekształcenia"
 
 
 msgid "Aperture"
@@ -17816,8 +17808,8 @@ msgid "Recent Searches"
 msgstr "Ostanie wyszukiwania"
 
 
-msgid "Version of Bforartists the userpref.blend was saved with"
-msgstr "Wersja Bforartistsa, która została użyta do zapisania pliku userpref.blend"
+msgid "Version of Blender the userpref.blend was saved with"
+msgstr "Wersja Blendera, która została użyta do zapisania pliku userpref.blend"
 
 
 msgid "Add/Replace"
@@ -18056,8 +18048,8 @@ msgid "Show Memory"
 msgstr "Pokaż pamięć"
 
 
-msgid "Show Bforartists memory usage"
-msgstr "Pokazuje zużcyie pamięci Bforartistsa"
+msgid "Show Blender memory usage"
+msgstr "Pokazuje zużcyie pamięci Blendera"
 
 
 msgid "Show Scene Duration"
@@ -19162,8 +19154,8 @@ msgid "Texture Node Editor"
 msgstr "Edytor węzłów tekstury"
 
 
-msgid "Bforartists File"
-msgstr "Plik Bforartistsa"
+msgid "Blender File"
+msgstr "Plik Blendera"
 
 
 msgid "Data API"
@@ -20602,8 +20594,8 @@ msgid "Open..."
 msgstr "Otwórz..."
 
 
-msgid "Bforartists is free software"
-msgstr "Bforartists jest wolnym oprogramowaniem"
+msgid "Blender is free software"
+msgstr "Blender jest wolnym oprogramowaniem"
 
 
 msgid "Licensed under the GNU General Public License"
@@ -20640,13 +20632,13 @@ msgstr "Licencja"
 
 
 msgctxt "Operator"
-msgid "Bforartists Store"
-msgstr "Sklep Bforartistsa"
+msgid "Blender Store"
+msgstr "Sklep Blendera"
 
 
 msgctxt "Operator"
-msgid "Bforartists Website"
-msgstr "Strona Bforartistsa"
+msgid "Blender Website"
+msgstr "Strona Blendera"
 
 
 msgctxt "Operator"
@@ -20908,13 +20900,8 @@ msgstr "Usuń wszystkie grupy"
 
 
 msgctxt "Operator"
-msgid "Move to Top"
-msgstr "Przesuń w górę"
-
-
-msgctxt "Operator"
-msgid "Move to Bottom"
-msgstr "Przesuń w dół"
+msgid "Flip"
+msgstr "Odwróć"
 
 
 msgid "Resolution Viewport"
@@ -21332,6 +21319,16 @@ msgid "Volume Files"
 msgstr "Pliki kubatury"
 
 
+msgctxt "Operator"
+msgid "Move to Top"
+msgstr "Przesuń w górę"
+
+
+msgctxt "Operator"
+msgid "Move to Bottom"
+msgstr "Przesuń w dół"
+
+
 msgid "No active asset"
 msgstr "Brak aktywnego zasobu"
 
@@ -21726,6 +21723,11 @@ msgstr "Film"
 
 
 msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "Usuń klatki kluczowe..."
+
+
+msgctxt "Operator"
 msgid "Change Path/Files"
 msgstr "Zmień ścieżkę/pliki"
 
@@ -22100,8 +22102,8 @@ msgstr "Ogólne"
 
 
 msgctxt "Operator"
-msgid "Load Factory Bforartists Settings"
-msgstr "Załaduj ustawienia fabryczne Bforartistsa"
+msgid "Load Factory Blender Settings"
+msgstr "Załaduj ustawienia fabryczne Blendera"
 
 
 msgctxt "Operator"
@@ -22226,8 +22228,8 @@ msgid "Video Memory"
 msgstr "Pamięć wideo"
 
 
-msgid "Bforartists Version"
-msgstr "Wersja Bforartistsa"
+msgid "Blender Version"
+msgstr "Wersja Blendera"
 
 
 msgid "Align To"
@@ -22377,8 +22379,8 @@ msgstr "Użyj światła"
 
 
 msgctxt "Operator"
-msgid "Load Factory Bforartists Preferences"
-msgstr "Wczytaj preferencje fabryczne programu Bforartists"
+msgid "Load Factory Blender Preferences"
+msgstr "Wczytaj preferencje fabryczne programu Blender"
 
 
 msgid "Location:"
@@ -22644,11 +22646,6 @@ msgstr "Siatka płaszczyzny"
 
 
 msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Usuń klatki kluczowe..."
-
-
-msgctxt "Operator"
 msgid "Clear Keyframes..."
 msgstr "Wyczyść klatki kluczowe..."
 
@@ -22835,11 +22832,6 @@ msgstr "Wydłuż ściany"
 msgctxt "Operator"
 msgid "Extrude Faces Along Normals"
 msgstr "Wydłuż ściany wzdłuż wektorów normalnych"
-
-
-msgctxt "Operator"
-msgid "Flip"
-msgstr "Odwróć"
 
 
 msgctxt "Operator"
@@ -23070,7 +23062,7 @@ msgid "Saved \"%s\""
 msgstr "Zapisano '%s'"
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Bforartists"
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
 msgstr "Powiązanie lub dołączenie z bardzo starego formatu .blend (%d.%d), dane o animacji nie zostaną przystosowane! Spróbuj zapisać źródłowy plik zawierający bibliotekę w aktualnym formacie pliku .blend"
 
 
@@ -23340,14 +23332,6 @@ msgid "Undefined Type"
 msgstr "Niezdefiniowany typ"
 
 
-msgid "Can't add Rigid Body to non mesh object"
-msgstr "Nie można dodać Bryły Sztywnej do obiektu innego typu niż siatka"
-
-
-msgid "Can't create Rigid Body world"
-msgstr "Nie mogę utworzyć świata Brył Sztywnych"
-
-
 msgid "Compiled without Bullet physics engine"
 msgstr "Skompilowano bez silnika fizyki Bullet"
 
@@ -23377,8 +23361,8 @@ msgid "At least 8 common tracks on both keyframes are needed for reconstruction"
 msgstr "Do rekonstrukcji potrzebne jest przynajmniej 8 wspólnych traków na obu klatkach kluczowych"
 
 
-msgid "Bforartists is compiled without motion tracking library"
-msgstr "Bforartists został skompilowany bez biblioteki trakowania ruchu"
+msgid "Blender is compiled without motion tracking library"
+msgstr "Blender został skompilowany bez biblioteki trakowania ruchu"
 
 
 msgid "Original Mode"
@@ -23715,10 +23699,6 @@ msgstr "Nie usuwam klatek kluczowych w zablokowanej krzywej-F '%s', obiekt '%s'"
 
 msgid "\"%s\" property cannot be animated"
 msgstr "Właściwość \"%s\" nie moży być animowana"
-
-
-msgid "Button doesn't appear to have any property information attached (ptr.data = %p, prop = %p)"
-msgstr "Wygląda na to, że przycisk nie posiada załączonej żadnej informacji o właściwości (ptr.data = %p, prop = %p)"
 
 
 msgid "Cannot remove built in keying set"
@@ -24600,10 +24580,6 @@ msgid "Swap Areas"
 msgstr "Zamień obszary"
 
 
-msgid "Can't edit external library data"
-msgstr "Nie można edytować zewnętrznych danych biblioteki"
-
-
 msgid "No filepath given"
 msgstr "Nie podano ścieżki pliku"
 
@@ -24729,16 +24705,8 @@ msgid "Path selection requires two matching elements to be selected"
 msgstr "Zaznaczanie ścieżki wymaga zaznaczenia dwóch pasujących elementów"
 
 
-msgid "Cannot rip selected faces"
-msgstr "Nie mogę rozpruć zaznaczonych ścian"
-
-
 msgid "Cannot rip multiple disconnected vertices"
 msgstr "Nie mogę rozpruć wielu rozłączonych wierzchołków"
-
-
-msgid "Rip failed"
-msgstr "Rozpruwanie nie powiodło się"
 
 
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
@@ -25075,10 +25043,6 @@ msgid "No active image found in material \"%s\" (%d) for object \"%s\""
 msgstr "Nie odnaleziono aktywnego obrazu w materiale \"%s\" (%d) dla obiektu \"%s\""
 
 
-msgid "Object \"%s\" is not a mesh or can't be converted to a mesh (Curve, Text, Surface or Metaball)"
-msgstr "Obiekt \"%s\" nie jest siatką lub nie może być przekształcony na siatkę (Krzywa, Tekst, Powierzchnia lub Metaball)"
-
-
 msgid "Uninitialized image %s"
 msgstr "Nie zainicjowany obraz %s"
 
@@ -25169,10 +25133,6 @@ msgstr "Nie można edytować danych biblioteki"
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
 msgstr "Pomijam obiekt '%s', dane '%s' zostały już przerobione z poprzednim obiektem"
-
-
-msgid "Can't edit linked mesh or curve data"
-msgstr "Nie można edytować powiązanej siatki lub krzywej"
 
 
 msgid "Requires selected vertices or active vertex group"
@@ -25329,10 +25289,6 @@ msgstr "Osierocona biblioteka obiektów dodana do aktualnej sceny w celu unikni�
 
 msgid "Incorrect context for running object data unlink"
 msgstr "Nieprawidłowy kontekst dla odłączenia danych"
-
-
-msgid "Can't unlink this object data"
-msgstr "Nie mogę odłączyć tych danych obiektu"
 
 
 msgid "Select Collection"
@@ -26255,10 +26211,6 @@ msgid "See Modifiers panel below"
 msgstr "Patrz panel modyfikatorów poniżej"
 
 
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "Krzywa F nie posiada żadnych klatek kluczowych, ponieważ ma tylko próbkowane punkty"
-
-
 msgid "No active keyframe on F-Curve"
 msgstr "Brak aktywnej klatki kluczowej dla krzywej F"
 
@@ -26363,10 +26315,6 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "Twardo zakodowane nieliniowo, Gamma 1.7"
 
 
-msgid "Can't Load Image"
-msgstr "Nie można załadować obrazu"
-
-
 msgid "%d float channel(s)"
 msgstr "%d kanał(y) float"
 
@@ -26409,10 +26357,6 @@ msgstr "Zostanie zapisane %d obrazów w %s"
 
 msgid "Saved %s"
 msgstr "Zapisano %s"
-
-
-msgid "can't save image while rendering"
-msgstr "nie można zapisać obrazu podczas renderowania"
 
 
 msgid "No packed files to unpack"
@@ -26559,10 +26503,6 @@ msgid "Strip None"
 msgstr "Pasek None"
 
 
-msgid "Can't reload with running modal operators"
-msgstr "Nie można załadować ponownie gdy działa operator modalny"
-
-
 msgid "Movie clip not found"
 msgstr "Nie odnaleziono klipu filmowego"
 
@@ -26579,10 +26519,6 @@ msgid "Please select two strips"
 msgstr "Proszę zaznaczyć dwa paski"
 
 
-msgid "Can't overwrite export file"
-msgstr "Nie mogę nadpisać pliku do eksportu"
-
-
 msgid "Rows:"
 msgstr "Wiersze:"
 
@@ -26591,8 +26527,8 @@ msgid "Columns:"
 msgstr "Kolumny:"
 
 
-msgid "File Modified Outside and Inside Bforartists"
-msgstr "Plik zmieniony wewnątrz oraz poza Bforartistsem"
+msgid "File Modified Outside and Inside Blender"
+msgstr "Plik zmieniony wewnątrz oraz poza Blenderem"
 
 
 msgid "Reload from disk (ignore local changes)"
@@ -26607,16 +26543,16 @@ msgid "Make text internal (separate copy)"
 msgstr "Przerób tekst na wewnętrzny (internal) (oddzielna kopia)"
 
 
-msgid "File Modified Outside Bforartists"
-msgstr "Plik zmieniony poza Bforartistsem"
+msgid "File Modified Outside Blender"
+msgstr "Plik zmieniony poza Blenderem"
 
 
 msgid "Reload from disk"
 msgstr "Załaduj ponownie z dysku"
 
 
-msgid "File Deleted Outside Bforartists"
-msgstr "Plik usunięty poza Bforartistsem"
+msgid "File Deleted Outside Blender"
+msgstr "Plik usunięty poza Blenderem"
 
 
 msgid "Make text internal"
@@ -27019,10 +26955,6 @@ msgid "Bone selection count error"
 msgstr "Błąd ilości kości w selekcji"
 
 
-msgid "Linked data can't text-space transform"
-msgstr "Zlinkowane dane nie pozwalają na transformację text-space"
-
-
 msgid "Unsupported object type for text-space transform"
 msgstr "Nieobsługiwany format dla transformacji text-space"
 
@@ -27294,6 +27226,10 @@ msgstr "Nadpisać %s"
 
 msgid "UV Vertex"
 msgstr "Wierzchołek UV"
+
+
+msgid "Rip failed"
+msgstr "Rozpruwanie nie powiodło się"
 
 
 msgid "Cannot split selection when sync selection is enabled"
@@ -27774,8 +27710,8 @@ msgid "Modifier was not found in the stack"
 msgstr "Nie odnaleziono modyfikatora w stosie"
 
 
-msgid "Bforartists compiled without Audaspace support"
-msgstr "Kompilacja Bforartistsa nastąpiła bez wspomagania Audaspace"
+msgid "Blender compiled without Audaspace support"
+msgstr "Kompilacja Blendera nastąpiła bez wspomagania Audaspace"
 
 
 msgid "Sound not packed"
@@ -28379,7 +28315,7 @@ msgid "Colorize"
 msgstr "Koloruj"
 
 
-msgid "Bforartists File View"
+msgid "Blender File View"
 msgstr "Widok plików"
 
 
@@ -28516,8 +28452,8 @@ msgid "(Unsaved)"
 msgstr "(Niezapisane)"
 
 
-msgid "Bforartists 27x"
-msgstr "Bforartists 27x"
+msgid "Blender 27x"
+msgstr "Blender 27x"
 
 
 msgctxt "WorkSpace"

@@ -939,7 +939,7 @@ static void object_blend_read_after_liblink(BlendLibReader *reader, ID *id)
     if (ob->id.lib) {
       BLO_reportf_wrap(reports,
                        RPT_INFO,
-                       RPT_("Can't find object data of %s lib %s"),
+                       RPT_("Cannot find object data of %s lib %s"),
                        ob->id.name + 2,
                        ob->id.lib->filepath);
     }
@@ -2664,7 +2664,8 @@ Object *BKE_object_duplicate(Main *bmain,
      * using the original obdata ID, leading to them being falsly detected as being in Edit mode,
      * and therefore not remapping their obdata to the newly duplicated one.
      * See #139715. */
-    BKE_libblock_relink_to_newid(bmain, &obn->id, ID_REMAP_FORCE_OBDATA_IN_EDITMODE);
+    BKE_libblock_relink_to_newid(
+        bmain, &obn->id, ID_REMAP_FORCE_OBDATA_IN_EDITMODE | ID_REMAP_SKIP_USER_CLEAR);
 
 #ifndef NDEBUG
     /* Call to `BKE_libblock_relink_to_newid` above is supposed to have cleared all those flags. */

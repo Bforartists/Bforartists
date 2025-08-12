@@ -595,6 +595,10 @@ if(WITH_BLENDER)
       edgesel
       edit
       edit_external
+      edge_bevel
+      edge_crease
+      edge_seam
+      edge_sharp
       editmode_hlt
       empty_arrows
       empty_axis
@@ -1475,6 +1479,8 @@ if(WITH_BLENDER)
       play
       play_audio
       play_reverse
+      playhead_snap_off
+      playhead_snap_on
       plugin
       plus
       pmarker

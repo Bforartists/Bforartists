@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:31+0000\n"
 "Last-Translator: Balázs Füvesi <fuvesib@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.blender.org/projects/blender-ui/ui/hu/>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.12.1\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-SearchPath-0: E:\\PROJEKTEK\\Bforartists\\FORDITAS\\osszefuzes"
+"X-Poedit-SearchPath-0: E:\\PROJEKTEK\\Blender\\FORDITAS\\osszefuzes"
 
 
 msgid "Valid"
@@ -4675,36 +4675,20 @@ msgid "Display Aspect for this image, does not affect rendering"
 msgstr "A jelenlegi kép megjelenítési aránya, a renderelésre nincsen hatással"
 
 
-msgid "Output image in bitmap format"
-msgstr "Kimeneti kép bittérképes formátumbn"
+msgid "Output image in JPEG format"
+msgstr "Kimeneti kép JPEG formátumban"
+
+
+msgid "Output image in OpenEXR format"
+msgstr "Kimeneti kép OpenEXR formátumban"
 
 
 msgid "Output image in PNG format"
 msgstr "Kimeneti kép PNG formátumban"
 
 
-msgid "Output image in JPEG format"
-msgstr "Kimeneti kép JPEG formátumban"
-
-
-msgid "Targa"
-msgstr "Targa"
-
-
-msgid "Output image in Targa format"
-msgstr "Kimeneti kép Targa formátumban"
-
-
-msgid "Targa Raw"
-msgstr "Targa Raw (nyers)"
-
-
-msgid "Output image in uncompressed Targa format"
-msgstr "Kimeneti kép tömörítetlen Targa formátumban"
-
-
-msgid "Cineon"
-msgstr "Cineon"
+msgid "Output image in bitmap format"
+msgstr "Kimeneti kép bittérképes formátumbn"
 
 
 msgid "Output image in Cineon format"
@@ -4715,24 +4699,20 @@ msgid "Output image in DPX format"
 msgstr "Kimeneti kép DPX formátumban"
 
 
-msgid "Output image in OpenEXR format"
-msgstr "Kimeneti kép OpenEXR formátumban"
-
-
-msgid "Radiance HDR"
-msgstr "Radiance HDR"
-
-
 msgid "Output image in Radiance HDR format"
 msgstr "Kimeneti kép Radiancia HDR formátumban"
 
 
+msgid "Output image in Targa format"
+msgstr "Kimeneti kép Targa formátumban"
+
+
+msgid "Output image in uncompressed Targa format"
+msgstr "Kimeneti kép tömörítetlen Targa formátumban"
+
+
 msgid "Output image in TIFF format"
 msgstr "Kimeneti kép TIFF formátumban"
-
-
-msgid "OpenEXR MultiLayer"
-msgstr "OpenEXR MultiLayer"
 
 
 msgid "Output image in multilayer OpenEXR format"
@@ -6581,6 +6561,22 @@ msgid "Mask"
 msgstr "Maszk"
 
 
+msgid "Mirror"
+msgstr "Tükrözés"
+
+
+msgid "Local View"
+msgstr "Helyi nézet"
+
+
+msgid "Navigation"
+msgstr "Navigáció"
+
+
+msgid "Align View"
+msgstr "Nézet igazítása"
+
+
 msgid "Metaball"
 msgstr "Meta test"
 
@@ -6619,22 +6615,6 @@ msgstr "Összefésülés"
 
 msgid "Text"
 msgstr "Szöveg"
-
-
-msgid "Mirror"
-msgstr "Tükrözés"
-
-
-msgid "Local View"
-msgstr "Helyi nézet"
-
-
-msgid "Navigation"
-msgstr "Navigáció"
-
-
-msgid "Align View"
-msgstr "Nézet igazítása"
 
 
 msgctxt "MovieClip"
@@ -9262,10 +9242,6 @@ msgid "Bake"
 msgstr "Sütés"
 
 
-msgid "Triangles"
-msgstr "Háromszögek"
-
-
 msgid "Linear interpolation"
 msgstr "Lineáris interpoláció"
 
@@ -9274,16 +9250,16 @@ msgid "Edge Angle"
 msgstr "Élszög"
 
 
+msgid "Triangles"
+msgstr "Háromszögek"
+
+
 msgid "Object Info"
 msgstr "Objektum infó"
 
 
 msgid "Repeat Output"
 msgstr "Kimenet ismétlése"
-
-
-msgid "Z Up"
-msgstr "Z fel"
 
 
 msgid "Set Material"
@@ -9530,8 +9506,8 @@ msgid "Restore Key Map(s)"
 msgstr "Billentyű-hozzárendelések visszaállítása"
 
 
-msgid "Load and apply a Bforartists XML theme file"
-msgstr "Egy Bforartists XML témafájl betöltése és alkalmazása"
+msgid "Load and apply a Blender XML theme file"
+msgstr "Egy Blender XML témafájl betöltése és alkalmazása"
 
 
 msgctxt "Operator"
@@ -10176,6 +10152,10 @@ msgid "Y Up"
 msgstr "Y fel"
 
 
+msgid "Z Up"
+msgstr "Z fel"
+
+
 msgid "-X Up"
 msgstr "-X fel"
 
@@ -10633,8 +10613,8 @@ msgid "Scale FPS"
 msgstr "FPS skálázása"
 
 
-msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Bforartists frame"
-msgstr "A BVH képkockasebességnek a skálázása az aktuális jelenethez, másként minden BVH képkocka közvetlenül egy Bforartists képkockákra képeződik le"
+msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame"
+msgstr "A BVH képkockasebességnek a skálázása az aktuális jelenethez, másként minden BVH képkocka közvetlenül egy Blender képkockákra képeződik le"
 
 
 msgid "Image Search"
@@ -11160,10 +11140,6 @@ msgstr "Az aktuális formakulcs tükrözése a helyi X tengelyen"
 msgctxt "Operator"
 msgid "Move Shape Key"
 msgstr "Formakulcs mozgatása"
-
-
-msgid "Move the active shape key up/down in the list"
-msgstr "Az aktív formakulcs mozgatása fel/le a listában"
 
 
 msgctxt "Operator"
@@ -12651,8 +12627,8 @@ msgid "Include all scene frames"
 msgstr "Minden jelenet képkocka bevonása"
 
 
-msgid "Open a Bforartists file"
-msgstr "Bforartists fájl megnyitása"
+msgid "Open a Blender file"
+msgstr "Blender fájl megnyitása"
 
 
 msgid "Load UI"
@@ -12690,12 +12666,12 @@ msgstr "PLY importálása"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Kilépés a Bforartistsből"
+msgid "Quit Blender"
+msgstr "Kilépés a Blenderből"
 
 
-msgid "Quit Bforartists"
-msgstr "Kilépés a Bforartistsből"
+msgid "Quit Blender"
+msgstr "Kilépés a Blenderből"
 
 
 msgctxt "Operator"
@@ -12761,12 +12737,12 @@ msgstr "Indítófájl újratöltése"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Bforartists fájl mentése"
+msgid "Save Blender File"
+msgstr "Blender fájl mentése"
 
 
-msgid "Save the current Bforartists file"
-msgstr "Az aktuális Bforartists fájl mentése"
+msgid "Save the current Blender file"
+msgstr "Az aktuális Blender fájl mentése"
 
 
 msgctxt "Operator"
@@ -14329,8 +14305,8 @@ msgid "Channels of the image to draw"
 msgstr "A kép rajzolható csatornái"
 
 
-msgid "Bforartists File"
-msgstr "Bforartists fájl"
+msgid "Blender File"
+msgstr "Blender fájl"
 
 
 msgid "Show Object Children"
@@ -14623,24 +14599,20 @@ msgid "Color of selected marker"
 msgstr "Kijelölt marker színe"
 
 
-msgid "Theme Dope Sheet"
-msgstr "Kulcstábla témája"
+msgid "Channel Group"
+msgstr "Csatorna csoport"
 
 
 msgid "Active Channel Group"
 msgstr "Aktív csatorna csoport"
 
 
-msgid "Channel Group"
-msgstr "Csatorna csoport"
+msgid "Theme Dope Sheet"
+msgstr "Kulcstábla témája"
 
 
 msgid "Channels Selected"
 msgstr "Kijelölt csatornák"
-
-
-msgid "Dope Sheet Channel"
-msgstr "Kulcstábla csatorna"
 
 
 msgid "Keyframe Selected"
@@ -15496,11 +15468,6 @@ msgid "Delete All Groups"
 msgstr "Minden csoport törlése"
 
 
-msgctxt "Operator"
-msgid "Mirror Shape Key (Topology)"
-msgstr "Formakulcs tükrözése (Topológia)"
-
-
 msgid "Base Transparency"
 msgstr "Alap átlátszóság"
 
@@ -15774,6 +15741,11 @@ msgstr "Létrehozás"
 msgctxt "Operator"
 msgid "Movie"
 msgstr "Videó"
+
+
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "Kulcs-képkockák törlése..."
 
 
 msgctxt "Operator"
@@ -16096,11 +16068,6 @@ msgstr "Kamera"
 msgctxt "Operator"
 msgid "Speaker"
 msgstr "Hangszóró"
-
-
-msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Kulcs-képkockák törlése..."
 
 
 msgctxt "Operator"
@@ -16785,8 +16752,8 @@ msgid "Scene has no camera"
 msgstr "Nincs kamera a jelenetben"
 
 
-msgid "Bforartists Render"
-msgstr "Bforartists Render"
+msgid "Blender Render"
+msgstr "Blender Render"
 
 
 msgid "GPencil Interpolation: "
@@ -16875,10 +16842,6 @@ msgstr "Réteg kijelölése"
 
 msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "Fizikailag kódolt Nem-lineáris, Gamma:1.7"
-
-
-msgid "Can't Load Image"
-msgstr "Nem tölthető be kép"
 
 
 msgid "unsupported image format"

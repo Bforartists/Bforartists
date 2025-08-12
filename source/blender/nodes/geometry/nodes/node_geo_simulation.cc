@@ -592,9 +592,7 @@ class LazyFunctionForSimulationOutputNode final : public LazyFunction {
       if (geo_eval_log::GeoTreeLogger *tree_logger = local_user_data.try_get_tree_logger(
               user_data))
       {
-        const StringRefNull message = U.experimental.use_bundle_and_closure_nodes ?
-                                          TIP_("Simulation must not be in a loop or closure") :
-                                          TIP_("Simulation must not be in a loop");
+        const StringRefNull message = TIP_("Simulation must not be in a loop or closure");
         tree_logger->node_warnings.append(*tree_logger->allocator,
                                           {node_.identifier, {NodeWarningType::Error, message}});
       }
@@ -868,7 +866,7 @@ static void node_extra_info(NodeExtraInfoParams &params)
   }
   if (!ctx.is_bakeable_in_current_context) {
     NodeExtraInfoRow row;
-    row.text = TIP_("Can't bake in zone");
+    row.text = TIP_("Cannot bake in zone");
     row.icon = ICON_ERROR;
     params.rows.append(std::move(row));
   }

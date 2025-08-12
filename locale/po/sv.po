@@ -1,11 +1,11 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
-"PO-Revision-Date: 2025-07-23 15:25+0000\n"
-"Last-Translator: Peter Simonsson <peter@simonsson.com>\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
+"PO-Revision-Date: 2025-07-31 20:46+0000\n"
+"Last-Translator: Daniel Nylander <blender@danielnylander.se>\n"
 "Language-Team: Swedish <https://translate.blender.org/projects/blender-ui/ui/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -562,8 +562,8 @@ msgid "Bottom"
 msgstr "Botten"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
-msgstr "FriBidis C-kompilerade bibliotek (.so under Linux, .dll under Windows ...), du måste troligen redigera det om du är under Windows, t.ex. genom att använda det som ingår i Bforartists-bibliotekens förråd"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
+msgstr "FriBidis C-kompilerade bibliotek (.so under Linux, .dll under Windows ...), du måste troligen redigera det om du är under Windows, t.ex. genom att använda det som ingår i Blender-bibliotekens förråd"
 
 
 msgid "Translation Root"
@@ -1071,16 +1071,16 @@ msgid "Current File"
 msgstr "Aktuell fil"
 
 
-msgid "Show the assets currently available in this Bforartists session"
-msgstr "Visa tillgångarna som är tillgängliga i denna Bforartists-session"
+msgid "Show the assets currently available in this Blender session"
+msgstr "Visa tillgångarna som är tillgängliga i denna Blender-session"
 
 
 msgid "Essentials"
 msgstr "Grundläggande"
 
 
-msgid "Show the basic building blocks and utilities coming with Bforartists"
-msgstr "Visa de grundläggande byggstenarna och verktygen som kommer med Bforartists"
+msgid "Show the basic building blocks and utilities coming with Blender"
+msgstr "Visa de grundläggande byggstenarna och verktygen som kommer med Blender"
 
 
 msgid "Custom"
@@ -1287,8 +1287,8 @@ msgid "Is Internal"
 msgstr "Är intern"
 
 
-msgid "The attribute is meant for internal use by Bforartists"
-msgstr "Attributen är avsedd för intern användning av Bforartists"
+msgid "The attribute is meant for internal use by Blender"
+msgstr "Attributen är avsedd för intern användning av Blender"
 
 
 msgid "Is Required"
@@ -4725,16 +4725,16 @@ msgid "Only Assets"
 msgstr "Endast tillgångar"
 
 
-msgid "Filter Bforartists Backup Files"
-msgstr "Filtrera Bforartists säkerhetskopior"
+msgid "Filter Blender Backup Files"
+msgstr "Filtrera Blender säkerhetskopior"
 
 
 msgid "Show .blend1, .blend2, etc. files"
 msgstr "Visa .blend1, .blend2 osv. filer"
 
 
-msgid "Filter Bforartists"
-msgstr "Filtrera Bforartists"
+msgid "Filter Blender"
+msgstr "Filtrera Blender"
 
 
 msgid "Show .blend files"
@@ -4809,8 +4809,8 @@ msgid "Library Browser"
 msgstr "Biblioteksbläddrare"
 
 
-msgid "Whether we may browse Bforartists files' content or not"
-msgstr "Huruvida vi kan bläddra i Bforartists-filers innehåll eller inte"
+msgid "Whether we may browse Blender files' content or not"
+msgstr "Huruvida vi kan bläddra i Blender-filers innehåll eller inte"
 
 
 msgid "Reverse Sorting"
@@ -5149,6 +5149,10 @@ msgstr "Uttagstyp"
 
 msgid "Menu"
 msgstr "Meny"
+
+
+msgid "Shader"
+msgstr "Shader"
 
 
 msgid "Collection"
@@ -6330,40 +6334,36 @@ msgid "Color Space Settings"
 msgstr "Inställningar för färgrymd"
 
 
-msgid "BMP"
-msgstr "BMP"
+msgid "Output image in JPEG format"
+msgstr "Resultatbild i JPEG-format"
 
 
-msgid "Output image in bitmap format"
-msgstr "Resultatbild som pixelbild"
-
-
-msgid "Iris"
-msgstr "Iris"
+msgid "Output image in OpenEXR format"
+msgstr "Resultatbild i OpenEXR-format"
 
 
 msgid "Output image in PNG format"
 msgstr "Resultatbild i PNG-format"
 
 
-msgid "JPEG"
-msgstr "JPEG"
+msgid "Output image in bitmap format"
+msgstr "Resultatbild som pixelbild"
 
 
-msgid "Output image in JPEG format"
-msgstr "Resultatbild i JPEG-format"
+msgid "Output image in Cineon format"
+msgstr "Resultatbild i Cineon-format"
 
 
-msgid "JPEG 2000"
-msgstr "JPEG 2000"
+msgid "Output image in DPX format"
+msgstr "Resultatbild i DPX-format"
 
 
 msgid "Output image in JPEG 2000 format"
 msgstr "Resultatbild i JPEG 2000-format"
 
 
-msgid "Targa"
-msgstr "Targa"
+msgid "Output image in Radiance HDR format"
+msgstr "Resultatbild i Radiance HDR-format"
 
 
 msgid "Output image in Targa format"
@@ -6374,44 +6374,8 @@ msgid "Output image in uncompressed Targa format"
 msgstr "Resultatbild i okomprimerat TARGA-format"
 
 
-msgid "Cineon"
-msgstr "Cineon"
-
-
-msgid "Output image in Cineon format"
-msgstr "Resultatbild i Cineon-format"
-
-
-msgid "DPX"
-msgstr "DPX"
-
-
-msgid "Output image in DPX format"
-msgstr "Resultatbild i DPX-format"
-
-
-msgid "Output image in OpenEXR format"
-msgstr "Resultatbild i OpenEXR-format"
-
-
-msgid "Output image in Radiance HDR format"
-msgstr "Resultatbild i Radiance HDR-format"
-
-
-msgid "TIFF"
-msgstr "TIFF"
-
-
 msgid "Output image in TIFF format"
 msgstr "Resultatbild i TIFF-format"
-
-
-msgid "WebP"
-msgstr "WebP"
-
-
-msgid "OpenEXR MultiLayer"
-msgstr "OpenEXR MultiLayer"
 
 
 msgid "Output image in multilayer OpenEXR format"
@@ -6718,10 +6682,6 @@ msgstr "Filter"
 
 msgid "Script"
 msgstr "Skript"
-
-
-msgid "Shader"
-msgstr "Shader"
 
 
 msgid "Pattern"
@@ -8941,10 +8901,6 @@ msgid "Double Click"
 msgstr "Dubbelklick"
 
 
-msgid "Click Drag"
-msgstr "Klicka och dra"
-
-
 msgctxt "Action"
 msgid "Back"
 msgstr "Tillbaka"
@@ -9323,6 +9279,38 @@ msgid "Mask"
 msgstr "Mask"
 
 
+msgid "Pivot Point"
+msgstr "Fast punkt"
+
+
+msgid "Snap"
+msgstr "Snäpp"
+
+
+msgid "Mirror"
+msgstr "Spegla"
+
+
+msgid "Local View"
+msgstr "Lokal vy"
+
+
+msgid "Viewpoint"
+msgstr "Visningspunkt"
+
+
+msgid "Navigation"
+msgstr "Navigering"
+
+
+msgid "Align View"
+msgstr "Justera vy"
+
+
+msgid "Align View to Active"
+msgstr "Justera vy till aktiv"
+
+
 msgid "Select More/Less"
 msgstr "Markera mera/mindre"
 
@@ -9405,38 +9393,6 @@ msgstr "Specialtecken"
 
 msgid "Text"
 msgstr "Text"
-
-
-msgid "Pivot Point"
-msgstr "Fast punkt"
-
-
-msgid "Snap"
-msgstr "Snäpp"
-
-
-msgid "Mirror"
-msgstr "Spegla"
-
-
-msgid "Local View"
-msgstr "Lokal vy"
-
-
-msgid "Viewpoint"
-msgstr "Visningspunkt"
-
-
-msgid "Navigation"
-msgstr "Navigering"
-
-
-msgid "Align View"
-msgstr "Justera vy"
-
-
-msgid "Align View to Active"
-msgstr "Justera vy till aktiv"
 
 
 msgid "Animals"
@@ -10682,6 +10638,10 @@ msgid "ITU 709"
 msgstr "ITU 709"
 
 
+msgid "JPEG"
+msgstr "JPEG"
+
+
 msgid "Combine Color"
 msgstr "Kombinera färg"
 
@@ -10808,16 +10768,6 @@ msgstr "Blå kanal"
 
 msgid "Luminance"
 msgstr "Luminans"
-
-
-msgctxt "NodeTree"
-msgid "Nearest"
-msgstr "Närmast"
-
-
-msgctxt "NodeTree"
-msgid "Anisotropic"
-msgstr "Anisotropisk"
 
 
 msgid "Write image file to disk"
@@ -11193,10 +11143,6 @@ msgid "Generate a mesh on the XY plane with faces on the inside of input curves"
 msgstr "Generera en mesh på XY-planet med ytor på insidan av input-kurvorna"
 
 
-msgid "Triangles"
-msgstr "Trianglar"
-
-
 msgid "Geometry to Instance"
 msgstr "Geometri till instans"
 
@@ -11300,6 +11246,10 @@ msgid "N-Gon"
 msgstr "N-Gon"
 
 
+msgid "Triangles"
+msgstr "Trianglar"
+
+
 msgid "Generate a cone mesh"
 msgstr "Generera en kon-mesh"
 
@@ -11352,10 +11302,6 @@ msgid "Create a fog volume with the shape of the input mesh's surface"
 msgstr "Skapa en dim-volym med formen av input-meshens yta"
 
 
-msgid "How the voxel size is specified"
-msgstr "Hur voxel-storleken anges"
-
-
 msgid "UV Sphere"
 msgstr "UV-sfär"
 
@@ -11400,10 +11346,6 @@ msgid "Delete an attribute with a specified name from a geometry. Typically used
 msgstr "Ta bort en attribut med ett angivet namn från en geometri. Används oftast för att optimera prestanda"
 
 
-msgid "Wildcard"
-msgstr "Jokertecken"
-
-
 msgid "Repeat Input"
 msgstr "Upprepa inmatning"
 
@@ -11436,10 +11378,6 @@ msgid "All Curves"
 msgstr "Alla kurvor"
 
 
-msgid "Trilinear"
-msgstr "Trilinjär"
-
-
 msgid "Scale Elements"
 msgstr "Skala element"
 
@@ -11458,18 +11396,6 @@ msgstr "Skala individuella ytor eller närliggande ytöar"
 
 msgid "Scale individual edges or neighboring edge islands"
 msgstr "Skala individuella kanter eller närliggande kantöar"
-
-
-msgid "Scale Mode"
-msgstr "Skalningsläge"
-
-
-msgid "Scale elements by the same factor in every direction"
-msgstr "Skala element med samma faktor i alla riktningar"
-
-
-msgid "Scale elements in a single direction"
-msgstr "Skala element i en enskild riktning"
 
 
 msgid "Scale Instances"
@@ -13167,8 +13093,8 @@ msgid "Unlock All Repositories (Testing)"
 msgstr "Lås upp alla förråd (testning)"
 
 
-msgid "Allow internet access. Bforartists may access configured online extension repositories. Installed third party add-ons may access the internet for their own functionality"
-msgstr "Tillåt internetåtkomst. Bforartists kan få tillgång till konfigurerade tilläggsförråd på internet. Installerade tillägg från tredje part kan få tillgång till internet för sin egen funktionalitet"
+msgid "Allow internet access. Blender may access configured online extension repositories. Installed third party add-ons may access the internet for their own functionality"
+msgstr "Tillåt internetåtkomst. Blender kan få tillgång till konfigurerade tilläggsförråd på internet. Installerade tillägg från tredje part kan få tillgång till internet för sin egen funktionalitet"
 
 
 msgid "Edit image in an external application"
@@ -13546,8 +13472,8 @@ msgid "Uninstall Studio Light"
 msgstr "Avinstallera Studio Light"
 
 
-msgid "Load and apply a Bforartists XML theme file"
-msgstr "Läs in och tillämpa en Bforartists XML-temafil"
+msgid "Load and apply a Blender XML theme file"
+msgstr "Läs in och tillämpa en Blender XML-temafil"
 
 
 msgctxt "Operator"
@@ -13640,13 +13566,13 @@ msgid "I18n Save Settings"
 msgstr "Inställningar för I18n-sparning"
 
 
-msgid "Update i18n data (po files) in Bforartists source code repository"
-msgstr "Uppdatera i18n-data (po-filer) i Bforartistss källkodsförråd"
+msgid "Update i18n data (po files) in Blender source code repository"
+msgstr "Uppdatera i18n-data (po-filer) i Blenders källkodsförråd"
 
 
 msgctxt "Operator"
-msgid "Update I18n Bforartists Repository"
-msgstr "Uppdatera Bforartistss I18n-förråd"
+msgid "Update I18n Blender Repository"
+msgstr "Uppdatera Blenders I18n-förråd"
 
 
 msgctxt "Operator"
@@ -17934,6 +17860,10 @@ msgid "Replace with"
 msgstr "Ersätt med"
 
 
+msgid "BMP"
+msgstr "BMP"
+
+
 msgid "IRIS"
 msgstr "IRIS"
 
@@ -17950,8 +17880,16 @@ msgid "CINEON"
 msgstr "CINEON"
 
 
+msgid "DPX"
+msgstr "DPX"
+
+
 msgid "OPEN_EXR"
 msgstr "OPEN_EXR"
+
+
+msgid "TIFF"
+msgstr "TIFF"
 
 
 msgid "Toggle preview display for selected nodes"
@@ -19536,8 +19474,8 @@ msgid "Save Screenshot"
 msgstr "Spara skärmdump"
 
 
-msgid "Capture a picture of the whole Bforartists window"
-msgstr "Ta en bild av hela Bforartists-fönstret"
+msgid "Capture a picture of the whole Blender window"
+msgstr "Ta en bild av hela Blender-fönstret"
 
 
 msgctxt "Operator"
@@ -20839,8 +20777,8 @@ msgid "Open"
 msgstr "Öppna"
 
 
-msgid "Open a Bforartists file"
-msgstr "Öppna ett Bforartistsdokument"
+msgid "Open a Blender file"
+msgstr "Öppna ett Blenderdokument"
 
 
 msgid "Load UI"
@@ -21035,12 +20973,12 @@ msgstr "Spara uppstartsfil"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Spara Bforartists-fil"
+msgid "Save Blender File"
+msgstr "Spara Blender-fil"
 
 
-msgid "Save the current Bforartists file"
-msgstr "Spara den aktuella Bforartists-filen"
+msgid "Save the current Blender file"
+msgstr "Spara den aktuella Blender-filen"
 
 
 msgctxt "Operator"
@@ -21096,12 +21034,12 @@ msgstr "Öppna startskärmen med releaseinfo"
 
 
 msgctxt "Operator"
-msgid "About Bforartists"
-msgstr "Om Bforartists"
+msgid "About Blender"
+msgstr "Om Blender"
 
 
-msgid "Open a window with information about Bforartists"
-msgstr "Öppna ett fönster med information om Bforartists"
+msgid "Open a window with information about Blender"
+msgstr "Öppna ett fönster med information om Blender"
 
 
 msgctxt "Operator"
@@ -21417,14 +21355,6 @@ msgid "Palette Color"
 msgstr "Palettfärg"
 
 
-msgid "Stroke Placement"
-msgstr "Streckplacering"
-
-
-msgid "VR"
-msgstr "VR"
-
-
 msgid "Active Tool"
 msgstr "Aktivt verktyg"
 
@@ -21447,6 +21377,14 @@ msgstr "Visningsnod"
 
 msgid "Measurement"
 msgstr "Mätning"
+
+
+msgid "Stroke Placement"
+msgstr "Streckplacering"
+
+
+msgid "VR"
+msgstr "VR"
 
 
 msgid "Import Settings"
@@ -22190,8 +22128,8 @@ msgid "Recent Searches"
 msgstr "Senaste sökningarna"
 
 
-msgid "Version of Bforartists the userpref.blend was saved with"
-msgstr "Version av Bforartists som userpref.blend har sparats med"
+msgid "Version of Blender the userpref.blend was saved with"
+msgstr "Version av Blender som userpref.blend har sparats med"
 
 
 msgid "View & Controls"
@@ -22492,8 +22430,8 @@ msgid "Tablet API"
 msgstr "Tablet-API"
 
 
-msgid "Select the tablet API to use for pressure sensitivity (may require restarting Bforartists for changes to take effect)"
-msgstr "Välj tablet-API att använda för tryckkänslighet (kan kräva omstart av Bforartists för att ändringen ska träda i kraft)"
+msgid "Select the tablet API to use for pressure sensitivity (may require restarting Blender for changes to take effect)"
+msgstr "Välj tablet-API att använda för tryckkänslighet (kan kräva omstart av Blender för att ändringen ska träda i kraft)"
 
 
 msgid "Automatically choose Wintab or Windows Ink depending on the device"
@@ -22696,8 +22634,8 @@ msgid "GPU Backend"
 msgstr "GPU-backend"
 
 
-msgid "GPU backend to use (requires restarting Bforartists for changes to take effect)"
-msgstr "GPU-backend att använda (kräver att starta om Bforartists för att ändringen ska träda i kraft)"
+msgid "GPU backend to use (requires restarting Blender for changes to take effect)"
+msgstr "GPU-backend att använda (kräver att starta om Blender för att ändringen ska träda i kraft)"
 
 
 msgid "OpenGL"
@@ -22757,7 +22695,7 @@ msgstr "Är Microsoft Store installerad"
 
 
 msgid "Whether this blender installation is a sandboxed Microsoft Store version"
-msgstr "Huruvida denna Bforartists-installation är en sandboxad Microsoft Store-version"
+msgstr "Huruvida denna Blender-installation är en sandboxad Microsoft Store-version"
 
 
 msgid "For backwards compatibility only"
@@ -22800,8 +22738,8 @@ msgid "UI Line Width"
 msgstr "Gränssnitt linjebredd"
 
 
-msgid "Suggested line thickness and point size in pixels, for add-ons displaying custom user interface elements, based on operating system settings and Bforartists UI scale"
-msgstr "Föreslagen linjetjocklek och punktstorlek i pixlar, för tillägg som visar anpassade gränssnittselement, baserat på operativsystemets inställningar och Bforartistss gränssnittsskala"
+msgid "Suggested line thickness and point size in pixels, for add-ons displaying custom user interface elements, based on operating system settings and Blender UI scale"
+msgstr "Föreslagen linjetjocklek och punktstorlek i pixlar, för tillägg som visar anpassade gränssnittselement, baserat på operativsystemets inställningar och Blenders gränssnittsskala"
 
 
 msgid "UI Scale"
@@ -23096,8 +23034,8 @@ msgid "Show Memory"
 msgstr "Visa minne"
 
 
-msgid "Show Bforartists memory usage"
-msgstr "Visa hur mycket minne Bforartists använder"
+msgid "Show Blender memory usage"
+msgstr "Visa hur mycket minne Blender använder"
 
 
 msgid "Tooltips"
@@ -23727,10 +23665,6 @@ msgstr "Lågupplöst mesh"
 
 msgid "Calculate heights against unsubdivided low resolution mesh"
 msgstr "Beräkna höjder mot icke-uppdelat lågupplöst mesh"
-
-
-msgid "User Scale"
-msgstr "Användarskala"
 
 
 msgid "Render Region"
@@ -24542,16 +24476,16 @@ msgid "Active Theme Area"
 msgstr "Aktiv temadel"
 
 
-msgid "Theme Console"
-msgstr "Temakonsol"
+msgid "Channel Group"
+msgstr "Kanalgrupp"
 
 
 msgid "Active Channel Group"
 msgstr "Aktiv kanalgrupp"
 
 
-msgid "Channel Group"
-msgstr "Kanalgrupp"
+msgid "Theme Console"
+msgstr "Temakonsol"
 
 
 msgid "Summary"
@@ -24602,8 +24536,8 @@ msgid "Theme Preferences"
 msgstr "Temainställningar"
 
 
-msgid "Theme settings for the Bforartists Preferences"
-msgstr "Tema-inställningar för Bforartists-inställningarna"
+msgid "Theme settings for the Blender Preferences"
+msgstr "Tema-inställningar för Blender-inställningarna"
 
 
 msgid "Theme Properties"
@@ -25819,8 +25753,8 @@ msgid "Report a Bug"
 msgstr "Rapportera en bugg"
 
 
-msgid "Bforartists's extension repository must be enabled to install extensions!"
-msgstr "Bforartistss tilläggsförråd måste vara aktiverat för att installera tillägg!"
+msgid "Blender's extension repository must be enabled to install extensions!"
+msgstr "Blenders tilläggsförråd måste vara aktiverat för att installera tillägg!"
 
 
 msgctxt "Operator"
@@ -26233,8 +26167,8 @@ msgstr "Städa upp arbetsförråd"
 
 
 msgctxt "Operator"
-msgid "Update Bforartists Repository"
-msgstr "Uppdatera Bforartists-förråd"
+msgid "Update Blender Repository"
+msgstr "Uppdatera Blender-förråd"
 
 
 msgctxt "Operator"
@@ -26451,13 +26385,13 @@ msgstr "Licens"
 
 
 msgctxt "Operator"
-msgid "Bforartists Store"
-msgstr "Bforartists-butik"
+msgid "Blender Store"
+msgstr "Blender-butik"
 
 
 msgctxt "Operator"
-msgid "Bforartists Website"
-msgstr "Bforartistss webbplats"
+msgid "Blender Website"
+msgstr "Blenders webbplats"
 
 
 msgctxt "Operator"
@@ -26490,32 +26424,32 @@ msgid "Release Notes"
 msgstr "Versionsinformation"
 
 
-msgid "Read about what's new in this version of Bforartists"
-msgstr "Läs om vad som är nytt i denna version av Bforartists"
+msgid "Read about what's new in this version of Blender"
+msgstr "Läs om vad som är nytt i denna version av Blender"
 
 
 msgid "User Manual"
 msgstr "Användarmanual"
 
 
-msgid "The reference manual for this version of Bforartists"
-msgstr "Referensmanualen för denna version av Bforartists"
+msgid "The reference manual for this version of Blender"
+msgstr "Referensmanualen för denna version av Blender"
 
 
 msgid "Python API Reference"
 msgstr "Referens till Pythons API"
 
 
-msgid "The API reference manual for this version of Bforartists"
-msgstr "API-referensmanualen för denna version av Bforartists"
+msgid "The API reference manual for this version of Blender"
+msgstr "API-referensmanualen för denna version av Blender"
 
 
 msgid "Development Fund"
 msgstr "Utvecklingsfond"
 
 
-msgid "Bforartists's official web-site"
-msgstr "Bforartistss officiella webbplats"
+msgid "Blender's official web-site"
+msgstr "Blenders officiella webbplats"
 
 
 msgid "Credits"
@@ -26623,8 +26557,8 @@ msgstr "Material"
 
 
 msgctxt "Operator"
-msgid "Import Bforartists {:d}.{:d} Preferences"
-msgstr "Importera inställningar för Bforartists {:d}.{:d}"
+msgid "Import Blender {:d}.{:d} Preferences"
+msgstr "Importera inställningar för Blender {:d}.{:d}"
 
 
 msgid "Windowing Environment: {:s}"
@@ -26892,11 +26826,6 @@ msgstr "Pilstorlek"
 
 
 msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Ta bort alla formnycklar"
-
-
-msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "Sortera efter namn"
 
@@ -26927,13 +26856,8 @@ msgstr "Ta bort alla grupper"
 
 
 msgctxt "Operator"
-msgid "Move to Top"
-msgstr "Flytta till toppen"
-
-
-msgctxt "Operator"
-msgid "Move to Bottom"
-msgstr "Flytta till botten"
+msgid "Flip"
+msgstr "Vänd"
 
 
 msgid "Name collisions: "
@@ -27743,8 +27667,18 @@ msgid "Volume Files"
 msgstr "Volymfiler"
 
 
-msgid "Bforartists IDs"
-msgstr "Bforartists-ID:n"
+msgid "Blender IDs"
+msgstr "Blender-ID:n"
+
+
+msgctxt "Operator"
+msgid "Move to Top"
+msgstr "Flytta till toppen"
+
+
+msgctxt "Operator"
+msgid "Move to Bottom"
+msgstr "Flytta till botten"
 
 
 msgctxt "Operator"
@@ -28035,11 +27969,6 @@ msgstr "Dela vertikalt"
 
 
 msgctxt "Operator"
-msgid "Toggle Fullscreen Area"
-msgstr "Växla till helskärmsområde"
-
-
-msgctxt "Operator"
 msgid "Transition"
 msgstr "Övergång"
 
@@ -28320,6 +28249,11 @@ msgstr "Bild/sekvens"
 msgctxt "Operator"
 msgid "Fade"
 msgstr "Tona"
+
+
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "Ta bort keyframes..."
 
 
 msgid "Storage"
@@ -28717,8 +28651,8 @@ msgstr "Allmänt"
 
 
 msgctxt "Operator"
-msgid "Load Factory Bforartists Settings"
-msgstr "Läs in fabriksinställningar för Bforartists"
+msgid "Load Factory Blender Settings"
+msgstr "Läs in fabriksinställningar för Blender"
 
 
 msgctxt "Operator"
@@ -28823,8 +28757,8 @@ msgid "Video Memory"
 msgstr "Videominne"
 
 
-msgid "Bforartists Version"
-msgstr "Bforartists-version"
+msgid "Blender Version"
+msgstr "Blender-version"
 
 
 msgid "Link Materials To"
@@ -28916,16 +28850,16 @@ msgstr "Spara som studioljus"
 
 
 msgctxt "Operator"
-msgid "Load Factory Bforartists Preferences"
-msgstr "Läs in fabriksinställningar för Bforartists"
+msgid "Load Factory Blender Preferences"
+msgstr "Läs in fabriksinställningar för Blender"
 
 
-msgid "A restart of Bforartists is required"
-msgstr "En omstart av Bforartists krävs"
+msgid "A restart of Blender is required"
+msgstr "En omstart av Blender krävs"
 
 
-msgid "Open blend files with this Bforartists version"
-msgstr "Öppna blend-filer med denna Bforartists-version"
+msgid "Open blend files with this Blender version"
+msgstr "Öppna blend-filer med denna Blender-version"
 
 
 msgctxt "Operator"
@@ -29206,11 +29140,6 @@ msgstr "Gör lokal..."
 
 
 msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Ta bort keyframes..."
-
-
-msgctxt "Operator"
 msgid "Clear Keyframes..."
 msgstr "Rensa keyframes..."
 
@@ -29405,11 +29334,6 @@ msgstr "Stark"
 
 
 msgctxt "Operator"
-msgid "Flip"
-msgstr "Vänd"
-
-
-msgctxt "Operator"
 msgid "Rotate..."
 msgstr "Rotera..."
 
@@ -29452,10 +29376,6 @@ msgstr "Statistik"
 
 msgid "Color Opacity"
 msgstr "Färgopacitet"
-
-
-msgid "Seams"
-msgstr "Sömmar"
 
 
 msgctxt "Operator"
@@ -30370,6 +30290,10 @@ msgid "Unable to open blend <memory>"
 msgstr "Går inte att öppna blend <memory>"
 
 
+msgid "Blend file '%s' created by a Big Endian version of Blender, support for these files has been removed in Blender 5.0, use an older version of Blender to open and convert it."
+msgstr "Blend-filen '%s' skapades av en Big Endian-version av Blender, stöd för dessa filer kommer att tas bort i Blender 5.0. Använd en äldre version av Blender för att öppna och konvertera den."
+
+
 msgid "Unable to read '%s': %s"
 msgstr "Det går inte att läsa '%s': %s"
 
@@ -30480,10 +30404,6 @@ msgid "'%s' is not editable"
 msgstr "'%s' är inte redigerbar"
 
 
-msgid "Button doesn't appear to have any property information attached (ptr.data = %p, prop = %p)"
-msgstr "Knappen verkar inte ha någon egenskapsinformation kopplad till sig (ptr.data = %p, prop = %p)"
-
-
 msgid "Missing bone name"
 msgstr "Saknar bennamn"
 
@@ -30512,8 +30432,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "Tillgångskataloger kan inte redigeras i det här tillgångsbiblioteket"
 
 
-msgid "Cannot save asset catalogs before the Bforartists file is saved"
-msgstr "Kan inte spara katalog med tillgångar innan Bforartists-filen har sparats"
+msgid "Cannot save asset catalogs before the Blender file is saved"
+msgstr "Kan inte spara katalog med tillgångar innan Blender-filen har sparats"
 
 
 msgid "No changes to be saved"
@@ -31119,6 +31039,10 @@ msgid "Outer"
 msgstr "Yttre"
 
 
+msgid "Seams"
+msgstr "Sömmar"
+
+
 msgid "Close"
 msgstr "Stäng"
 
@@ -31428,10 +31352,6 @@ msgstr "Ersätt detta område"
 
 msgid "Select Area"
 msgstr "Välj område"
-
-
-msgid "Full Screen Area"
-msgstr "Område för helskärm"
 
 
 msgid "No fullscreen areas were found"
@@ -31833,10 +31753,6 @@ msgid "Select Layer"
 msgstr "Välj lager"
 
 
-msgid "Can't Load Image"
-msgstr "Kan inte läsa in bilden"
-
-
 msgid "%d × %d, "
 msgstr "%d × %d, "
 
@@ -31879,22 +31795,6 @@ msgstr "%d bild(er) kommer sparas i %s"
 
 msgid "Saved %s"
 msgstr "Sparade %s"
-
-
-msgid "Image can't be saved, use a different file format: \"%s\""
-msgstr "Bild kunde inte sparas, använd ett annat filformat: \"%s\""
-
-
-msgid "Multiple images can't be saved to an identical path: \"%s\""
-msgstr "Flera bilder kan inte sparas till en identisk sökväg: \"%s\""
-
-
-msgid "Image can't be saved, no valid file path: \"%s\""
-msgstr "Bild kunde inte sparas, ingen giltig sökväg: \"%s\""
-
-
-msgid "can't save image while rendering"
-msgstr "kan inte spara bild när rendering pågår"
 
 
 msgid "No images available"
@@ -32459,10 +32359,6 @@ msgid "Opacity: %3f"
 msgstr "Opacitet: %3f"
 
 
-msgid " or Alt) Even Thickness {}"
-msgstr " eller Alt) Jämn tjocklek {}"
-
-
 msgid "ScaleX: %s"
 msgstr "SkalaX: %s"
 
@@ -32563,28 +32459,12 @@ msgid "Unable to create new object"
 msgstr "Det går inte att skapa ett nytt objekt"
 
 
-msgid "%s: Can't resolve path %s"
-msgstr "%s: Kan inte slå upp sökvägen %s"
-
-
-msgid "%s: Can't write to asset %s: %s"
-msgstr "%s: Kan inte skriva till tillgången %s: %s"
-
-
-msgid "Can't write to asset %s:  %s"
-msgstr "Kan inte skriva till tillgång %s:  %s"
-
-
 msgid "One or more objects used as prototypes in 'Instance on Points' nodes either do not have 'As Instance' enabled in their 'Object Info' nodes, or the prototype is the base geometry input itself. Both cases prevent valid point instancer export. If it's the former, enable 'As Instance' to avoid incorrect self-referencing."
 msgstr "Ett eller flera objekt som används som prototyper i noder av typen ”Instans på punkter” har antingen inte alternativet ”Som instans” aktiverat i sina ’Objektinfo’-noder, eller så är prototypen själva basgeometrin som matats in. Båda fallen förhindrar export av giltiga punktinstanser. Om det är det förstnämnda fallet, aktivera ”Som instans” för att undvika felaktiga självreferenser."
 
 
 msgid "Unhandled Gprim type: %s (%s)"
 msgstr "Ohanterad Gprim-typ: %s (%s)"
-
-
-msgid "Instances number '%d' doesn't match transforms size '%d'"
-msgstr "Instansnummer ’%d’ matchar inte transformeringsstorlek ’%d’"
 
 
 msgid "Built-in fonts cannot be renamed"
@@ -32597,14 +32477,6 @@ msgstr "'%s' är av en typ som inte kan vara en tillgång"
 
 msgid "'%s' does not contain '%s' with prefix and suffix"
 msgstr "'%s' innehåller inte '%s' med prefix och suffix"
-
-
-msgid "'%s' doesn't have upper case alpha-numeric prefix"
-msgstr "'%s' har inte ett alfanumeriskt prefix med versaler"
-
-
-msgid "'%s' doesn't have an alpha-numeric suffix"
-msgstr "'%s' har inte ett alfanumeriskt suffix"
 
 
 msgid "%s: expected %s type, not %s"
@@ -33191,10 +33063,6 @@ msgid "Invalid format: \"{}\""
 msgstr "Ogiltigt format: \"{}\""
 
 
-msgid "Type \"{}\" can't be formatted"
-msgstr "Typen \"{}\" kan inte formateras"
-
-
 msgid "Line Break"
 msgstr "Radbrytning"
 
@@ -33234,10 +33102,6 @@ msgstr "Summa"
 
 msgid "Bake to Disk"
 msgstr "Baka till disk"
-
-
-msgid "Can't bake in zone"
-msgstr "Kan inte baka i zonen"
 
 
 msgid "Baked Frame {}"
@@ -33352,6 +33216,10 @@ msgid "The subdivision level is too large"
 msgstr "Subdivisionsnivån är för stor"
 
 
+msgid "How the voxel size is specified"
+msgstr "Hur voxel-storleken anges"
+
+
 msgid "As Instance"
 msgstr "Som instans"
 
@@ -33372,8 +33240,8 @@ msgid "Iteration"
 msgstr "Iteration"
 
 
-msgid "Value not found: \"{}\""
-msgstr "Värdet hittades inte: \"{}\""
+msgid "Scale Mode"
+msgstr "Skalningsläge"
 
 
 msgid "Inverted"
@@ -33586,8 +33454,8 @@ msgid "Load Factory \"{}\" Preferences."
 msgstr "Läs in fabriksinställningar \"{}\"."
 
 
-msgid "Load Factory Bforartists Preferences"
-msgstr "Läs in fabriksinställningar för Bforartists"
+msgid "Load Factory Blender Preferences"
+msgstr "Läs in fabriksinställningar för Blender"
 
 
 msgid "To make changes to Preferences permanent, use \"Save Preferences\""
@@ -33646,8 +33514,8 @@ msgid "unable to open the file"
 msgstr "kan inte öppna filen"
 
 
-msgid "This file was saved by a newer version of Bforartists (%s)."
-msgstr "Denna fil har sparats av en nyare version av Bforartists (%s)."
+msgid "This file was saved by a newer version of Blender (%s)."
+msgstr "Denna fil har sparats av en nyare version av Blender (%s)."
 
 
 msgid "saved as a new, regular file."
@@ -33658,8 +33526,8 @@ msgid "Cannot overwrite asset system files. Save as new file"
 msgstr "Det går inte att skriva över systemfiler för tillgångar. Spara som ny fil"
 
 
-msgid "with an older Bforartists version?"
-msgstr "med en äldre Bforartists-version?"
+msgid "with an older Blender version?"
+msgstr "med en äldre Blender-version?"
 
 
 msgid "Cannot overwrite asset system files. Save as new file?"
@@ -33770,8 +33638,8 @@ msgstr "Ditt grafikkort eller din macOS-version stöds inte"
 
 
 msgctxt "WindowManager"
-msgid "Upgrading to the latest macOS version may improve Bforartists support"
-msgstr "Uppgradering till den senaste macOS-versionen kan förbättra stödet för Bforartists"
+msgid "Upgrading to the latest macOS version may improve Blender support"
+msgstr "Uppgradering till den senaste macOS-versionen kan förbättra stödet för Blender"
 
 
 msgctxt "Operator"

@@ -2019,7 +2019,7 @@ static void single_obdata_users(
                                                  LIB_ID_COPY_DEFAULT | LIB_ID_COPY_ACTIONS));
             break;
           default:
-            printf("ERROR %s: can't copy %s\n", __func__, id->name);
+            printf("ERROR %s: cannot copy %s\n", __func__, id->name);
             BLI_assert_msg(0, "This should never happen.");
 
             /* We need to end the FOREACH_OBJECT_FLAG_BEGIN iterator to prevent memory leak. */
@@ -3168,7 +3168,7 @@ void OBJECT_OT_drop_geometry_nodes(wmOperatorType *ot)
   RNA_def_boolean(ot->srna,
                   "show_datablock_in_modifier",
                   true,
-                  "Show the datablock selector in the modifier",
+                  "Show the data-block selector in the modifier",
                   "");
 }
 
@@ -3202,7 +3202,7 @@ static wmOperatorStatus object_unlink_data_exec(bContext *C, wmOperator *op)
         ob->data = nullptr;
       }
       else {
-        BKE_report(op->reports, RPT_ERROR, "Can't unlink this object data");
+        BKE_report(op->reports, RPT_ERROR, "Cannot unlink this object data");
         return OPERATOR_CANCELLED;
       }
     }

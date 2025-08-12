@@ -131,7 +131,7 @@ def _test_import(module_name, loaded_modules):
     if module_name in loaded_modules:
         return None
     if "." in module_name:
-        print("Ignoring '{:s}', can't import files containing multiple periods".format(module_name))
+        print("Ignoring '{:s}', cannot import files containing multiple periods".format(module_name))
         return None
 
     if use_time:
@@ -200,7 +200,7 @@ def modules_from_path(path, loaded_modules):
 # Currently used for "startup" modules.
 _registered_module_names = []
 # Keep for comparisons, never ever reload this.
-import bpy_types as _bpy_types
+import _bpy_types
 
 
 def _register_module_call(mod):

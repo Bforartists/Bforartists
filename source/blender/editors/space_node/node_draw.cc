@@ -140,10 +140,6 @@ struct TreeDrawContext {
   geo_log::ContextualGeoTreeLogs tree_logs;
 
   NestedTreePreviews *nested_group_infos = nullptr;
-  /**
-   * True if there is an active compositor using the node tree, false otherwise.
-   */
-  bool used_by_compositor = false;
 
   Map<bNodeInstanceKey, timeit::Nanoseconds> *compositor_per_node_execution_time = nullptr;
 
@@ -1324,41 +1320,37 @@ static void node_update_collapsed(bNode &node, uiBlock &block)
     }
   }
 
-  float collapsedrad = COLLAPSED_RAD;
-  float tot = std::max(totin, totout);
-  if (tot > 4) {
-    collapsedrad += 5.0f * float(tot - 4);
-  }
+  const float dy = NODE_DY * 0.5f;
+  const float height = dy * std::max({totin, totout, 2}) + BASIS_RAD * 2.0f;
+  /* This offset for Y values keeps the text in the same spot as in non-collapsed nodes. */
+  const float offset = NODE_DY * -0.5f;
 
   node.runtime->draw_bounds.xmin = loc.x;
-  node.runtime->draw_bounds.xmax = loc.x + max_ff(NODE_WIDTH(node), 2 * collapsedrad);
-  node.runtime->draw_bounds.ymax = loc.y + (collapsedrad - 0.5f * NODE_DY);
-  node.runtime->draw_bounds.ymin = node.runtime->draw_bounds.ymax - 2 * collapsedrad;
+  node.runtime->draw_bounds.xmax = loc.x + NODE_WIDTH(node);
+  node.runtime->draw_bounds.ymax = loc.y + height * 0.5f + offset;
+  node.runtime->draw_bounds.ymin = loc.y - height * 0.5f + offset;
 
   /* Output sockets. */
-  float rad = float(M_PI) / (1.0f + float(totout));
-  float drad = rad;
-
-  for (bNodeSocket *socket : node.output_sockets()) {
-    if (socket->is_visible()) {
-      /* Round the socket location to stop it from jiggling. */
-      socket->runtime->location = {
-          round(node.runtime->draw_bounds.xmax - collapsedrad + sinf(rad) * collapsedrad),
-          round(node.runtime->draw_bounds.ymin + collapsedrad + cosf(rad) * collapsedrad)};
-      rad += drad;
+  {
+    const float x = node.runtime->draw_bounds.xmax;
+    float y = loc.y + dy * float(totout - 1) * 0.5f + offset;
+    for (bNodeSocket *socket : node.output_sockets()) {
+      if (socket->is_visible()) {
+        socket->runtime->location = {x, y};
+        y -= dy;
+      }
     }
   }
 
   /* Input sockets. */
-  rad = drad = -float(M_PI) / (1.0f + float(totin));
-
-  for (bNodeSocket *socket : node.input_sockets()) {
-    if (socket->is_visible()) {
-      /* Round the socket location to stop it from jiggling. */
-      socket->runtime->location = {
-          round(node.runtime->draw_bounds.xmin + collapsedrad + sinf(rad) * collapsedrad),
-          round(node.runtime->draw_bounds.ymin + collapsedrad + cosf(rad) * collapsedrad)};
-      rad += drad;
+  {
+    const float x = node.runtime->draw_bounds.xmin;
+    float y = loc.y + dy * float(totin - 1) * 0.5f + offset;
+    for (bNodeSocket *socket : node.input_sockets()) {
+      if (socket->is_visible()) {
+        socket->runtime->location = {x, y};
+        y -= dy;
+      }
     }
   }
 
@@ -2020,70 +2012,18 @@ static std::string node_errors_tooltip_fn(const Span<geo_log::NodeWarning> warni
 
 #define NODE_HEADER_ICON_SIZE (0.8f * U.widget_unit)
 
-static void node_add_unsupported_compositor_operation_error_message_button(const bNode &node,
-                                                                           uiBlock &block,
-                                                                           const rctf &rect,
-                                                                           float &icon_offset)
+static uiBut *add_error_message_button(uiBlock &block,
+                                       const rctf &rect,
+                                       const int icon,
+                                       float &icon_offset,
+                                       const char *tooltip = nullptr)
 {
-  icon_offset -= NODE_HEADER_ICON_SIZE;
-  UI_block_emboss_set(&block, ui::EmbossType::None);
-  uiDefIconBut(&block,
-               ButType::But,
-               0,
-               ICON_ERROR,
-               icon_offset,
-               rect.ymax - NODE_DY,
-               NODE_HEADER_ICON_SIZE,
-               UI_UNIT_Y,
-               nullptr,
-               0,
-               0,
-               TIP_(node.typeinfo->compositor_unsupported_message));
-  UI_block_emboss_set(&block, ui::EmbossType::Emboss);
-}
-
-static void node_add_error_message_button(const TreeDrawContext &tree_draw_ctx,
-                                          const bNode &node,
-                                          uiBlock &block,
-                                          const rctf &rect,
-                                          float &icon_offset)
-{
-  if (tree_draw_ctx.used_by_compositor && node.typeinfo->compositor_unsupported_message) {
-    node_add_unsupported_compositor_operation_error_message_button(node, block, rect, icon_offset);
-    return;
-  }
-
-  geo_log::GeoTreeLog *geo_tree_log = [&]() -> geo_log::GeoTreeLog * {
-    const bNodeTreeZones *zones = node.owner_tree().zones();
-    if (!zones) {
-      return nullptr;
-    }
-    const bNodeTreeZone *zone = zones->get_zone_by_node(node.identifier);
-    if (zone && ELEM(node.identifier, zone->input_node_id, zone->output_node_id)) {
-      zone = zone->parent_zone;
-    }
-    return tree_draw_ctx.tree_logs.get_main_tree_log(zone);
-  }();
-
-  Span<geo_log::NodeWarning> warnings;
-  if (geo_tree_log) {
-    geo_log::GeoNodeLog *node_log = geo_tree_log->nodes.lookup_ptr(node.identifier);
-    if (node_log != nullptr) {
-      warnings = node_log->warnings;
-    }
-  }
-  if (warnings.is_empty()) {
-    return;
-  }
-
-  const nodes::NodeWarningType display_type = node_error_highest_priority(warnings);
-
   icon_offset -= NODE_HEADER_ICON_SIZE;
   UI_block_emboss_set(&block, ui::EmbossType::None);
   uiBut *but = uiDefIconBut(&block,
                             ButType::But,
                             0,
-                            nodes::node_warning_type_icon(display_type),
+                            icon,
                             icon_offset,
                             rect.ymax - NODE_DY,
                             NODE_HEADER_ICON_SIZE,
@@ -2091,12 +2031,52 @@ static void node_add_error_message_button(const TreeDrawContext &tree_draw_ctx,
                             nullptr,
                             0,
                             0,
-                            nullptr);
-  UI_but_func_quick_tooltip_set(
-      but, [warnings = Array<geo_log::NodeWarning>(warnings)](const uiBut * /*but*/) {
-        return node_errors_tooltip_fn(warnings);
-      });
+                            tooltip);
   UI_block_emboss_set(&block, ui::EmbossType::Emboss);
+  return but;
+}
+
+static void node_add_error_message_button(const TreeDrawContext &tree_draw_ctx,
+                                          const bNodeTree &ntree,
+                                          const bNode &node,
+                                          uiBlock &block,
+                                          const rctf &rect,
+                                          float &icon_offset)
+{
+  if (ntree.type == NTREE_GEOMETRY) {
+    geo_log::GeoTreeLog *geo_tree_log = [&]() -> geo_log::GeoTreeLog * {
+      const bNodeTreeZones *zones = node.owner_tree().zones();
+      if (!zones) {
+        return nullptr;
+      }
+      const bNodeTreeZone *zone = zones->get_zone_by_node(node.identifier);
+      if (zone && ELEM(node.identifier, zone->input_node_id, zone->output_node_id)) {
+        zone = zone->parent_zone;
+      }
+      return tree_draw_ctx.tree_logs.get_main_tree_log(zone);
+    }();
+
+    Span<geo_log::NodeWarning> warnings;
+    if (geo_tree_log) {
+      geo_log::GeoNodeLog *node_log = geo_tree_log->nodes.lookup_ptr(node.identifier);
+      if (node_log != nullptr) {
+        warnings = node_log->warnings;
+      }
+    }
+    if (warnings.is_empty()) {
+      return;
+    }
+
+    const nodes::NodeWarningType display_type = node_error_highest_priority(warnings);
+
+    uiBut *but = add_error_message_button(
+        block, rect, nodes::node_warning_type_icon(display_type), icon_offset);
+    UI_but_func_quick_tooltip_set(
+        but, [warnings = Array<geo_log::NodeWarning>(warnings)](const uiBut * /*but*/) {
+          return node_errors_tooltip_fn(warnings);
+        });
+    return;
+  }
 }
 
 static std::optional<std::chrono::nanoseconds> geo_node_get_execution_time(
@@ -2549,12 +2529,7 @@ static void node_draw_extra_info_row(const bNode &node,
 
 static void node_draw_extra_info_panel_back(const bNode &node, const rctf &extra_info_rect)
 {
-  const rctf &node_rect = node.runtime->draw_bounds;
   rctf panel_back_rect = extra_info_rect;
-  /* Extend the panel behind hidden nodes to accommodate the large rounded corners. */
-  if (node.flag & NODE_COLLAPSED) {
-    panel_back_rect.ymin = BLI_rctf_cent_y(&node_rect);
-  }
 
   ColorTheme4f color;
   if (node.is_muted()) {
@@ -3030,7 +3005,7 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::Emboss);
   }
 
-  node_add_error_message_button(tree_draw_ctx, node, block, rct, iconofs);
+  node_add_error_message_button(tree_draw_ctx, ntree, node, block, rct, iconofs);
 
   /* Title. */
   if (node.flag & SELECT) {
@@ -3071,7 +3046,7 @@ static void node_draw_basis(const bContext &C,
                         ButType::Label,
                         0,
                         showname,
-                        int(rct.xmin + NODE_MARGIN_X + 0.4f),
+                        round_fl_to_int(rct.xmin + NODE_MARGIN_X),
                         int(rct.ymax - NODE_DY),
                         short(iconofs - rct.xmin - NODE_MARGIN_X),
                         NODE_DY,
@@ -3216,7 +3191,6 @@ static void node_draw_collapsed(const bContext &C,
 {
   const rctf &rct = node.runtime->draw_bounds;
   float centy = BLI_rctf_cent_y(&rct);
-  float collapsedrad = BLI_rctf_size_y(&rct) / 2.0f;
 
   float scale;
   UI_view2d_scale_get(&v2d, &scale, nullptr);
@@ -3226,7 +3200,7 @@ static void node_draw_collapsed(const bContext &C,
   node_draw_extra_info_panel(C, tree_draw_ctx, snode, node, nullptr, block);
 
   /* Shadow. */
-  node_draw_shadow(snode, node, collapsedrad, 1.0f);
+  node_draw_shadow(snode, node, BASIS_RAD, 1.0f);
 
   /* Wire across the node when muted/disabled. */
   if (node.is_muted()) {
@@ -3270,7 +3244,7 @@ static void node_draw_collapsed(const bContext &C,
         rct.ymax + padding,
     };
 
-    UI_draw_roundbox_4fv(&rect, true, collapsedrad + padding, color);
+    UI_draw_roundbox_4fv(&rect, true, BASIS_RAD + padding, color);
   }
 
   /* Title. */
@@ -3346,7 +3320,7 @@ static void node_draw_collapsed(const bContext &C,
     }
 
     UI_draw_roundbox_corner_set(UI_CNR_ALL);
-    UI_draw_roundbox_4fv(&rect, false, collapsedrad + outline_width, color_outline);
+    UI_draw_roundbox_4fv(&rect, false, BASIS_RAD + outline_width, color_outline);
   }
 
   if (node.is_muted()) {
@@ -4614,39 +4588,6 @@ static void snode_setup_v2d(SpaceNode &snode, ARegion &region, const float2 &cen
   snode.runtime->aspect = BLI_rctf_size_x(&v2d.cur) / float(region.winx);
 }
 
-/* Similar to DRW_is_viewport_compositor_enabled() in `draw_manager.cc` but checks all 3D views. */
-static bool compositor_is_in_use(const bContext &context)
-{
-  const Scene *scene = CTX_data_scene(&context);
-
-  if (!scene->compositing_node_group) {
-    return false;
-  }
-
-  wmWindowManager *wm = CTX_wm_manager(&context);
-  LISTBASE_FOREACH (const wmWindow *, win, &wm->windows) {
-    const bScreen *screen = WM_window_get_active_screen(win);
-    LISTBASE_FOREACH (const ScrArea *, area, &screen->areabase) {
-      const SpaceLink &space = *static_cast<const SpaceLink *>(area->spacedata.first);
-      if (space.spacetype == SPACE_VIEW3D) {
-        const View3D &view_3d = reinterpret_cast<const View3D &>(space);
-
-        if (view_3d.shading.use_compositor == V3D_SHADING_USE_COMPOSITOR_DISABLED) {
-          continue;
-        }
-
-        if (!(view_3d.shading.type >= OB_MATERIAL)) {
-          continue;
-        }
-
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
 static void draw_nodetree(const bContext &C,
                           ARegion &region,
                           bNodeTree &ntree,
@@ -4684,7 +4625,6 @@ static void draw_nodetree(const bContext &C,
   }
   else if (ntree.type == NTREE_COMPOSIT) {
     const Scene *scene = CTX_data_scene(&C);
-    tree_draw_ctx.used_by_compositor = compositor_is_in_use(C);
     tree_draw_ctx.compositor_per_node_execution_time =
         &scene->runtime->compositor.per_node_execution_time;
   }

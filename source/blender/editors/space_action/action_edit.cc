@@ -1418,7 +1418,7 @@ static const EnumPropertyItem prop_actkeys_expo_types[] = {
      "MAKE_CYCLIC",
      ICON_EXTRAPOLATION_CYCLIC,
      "Make Cyclic (F-Modifier)",
-     "Add Cycles F-Modifier if one doesn't exist already"},
+     "Add Cycles F-Modifier if one does not exist already"},
     {CLEAR_CYCLIC_EXPO,
      "CLEAR_CYCLIC",
      ICON_EXTRAPOLATION_CYCLIC_CLEAR,

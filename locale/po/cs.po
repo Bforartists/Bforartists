@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:14+0000\n"
 "Last-Translator: Jan Vavřínek <janvavrinek1@gmail.com>\n"
 "Language-Team: Czech <https://translate.blender.org/projects/blender-ui/ui/cs/>\n"
@@ -691,7 +691,7 @@ msgid "Source Root"
 msgstr "Zdrojový kořen"
 
 
-msgid "The Bforartists source root path"
+msgid "The Blender source root path"
 msgstr "Kořenová cesta zdroje blenderu"
 
 
@@ -715,8 +715,8 @@ msgid "Persistent Data Path"
 msgstr "Trvalá datová cesta"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
-msgstr "Název souboru json, který ukládá tato nastavení (bohužel zde nefunguje systém Bforartistsu)"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgstr "Název souboru json, který ukládá tato nastavení (bohužel zde nefunguje systém Blenderu)"
 
 
 msgid "User Add-ons"
@@ -2653,12 +2653,12 @@ msgid "ID Type"
 msgstr "ID typ"
 
 
-msgid "Bforartists RNA"
-msgstr "Bforartists RNA"
+msgid "Blender RNA"
+msgstr "Blender RNA"
 
 
-msgid "Bforartists RNA structure definitions"
-msgstr "Definice struktury Bforartists RNA"
+msgid "Blender RNA structure definitions"
+msgstr "Definice struktury Blender RNA"
 
 
 msgid "Structs"
@@ -4529,10 +4529,6 @@ msgstr "Prvky Rampy Barev"
 
 msgid "Collection of Color Ramp Elements"
 msgstr "Kolekce prvků rampy barev"
-
-
-msgid "File Output Slots"
-msgstr "Výstupní sloty souborů"
 
 
 msgid "Console Input"
@@ -7643,8 +7639,8 @@ msgid "Show .blend1, .blend2, etc. files"
 msgstr "Ukázat .blend soubory"
 
 
-msgid "Filter Bforartists"
-msgstr "Filtr Bforartistsu"
+msgid "Filter Blender"
+msgstr "Filtr Blenderu"
 
 
 msgid "Show .blend files"
@@ -8137,6 +8133,10 @@ msgstr "Stejné typy"
 
 msgid "Menu"
 msgstr "Nabídka"
+
+
+msgid "Shader"
+msgstr "Shader"
 
 
 msgid "Collection"
@@ -8781,7 +8781,7 @@ msgid "Unprojected Radius"
 msgstr "Plášť"
 
 
-msgid "Radius of brush in Bforartists units"
+msgid "Radius of brush in Blender units"
 msgstr "Konečná velikost vláken v pixelech"
 
 
@@ -9649,48 +9649,16 @@ msgid "Format used for re-saving this file"
 msgstr "Typ filtru"
 
 
-msgid "Iris"
-msgstr "Duhovka"
-
-
-msgid "Output image in SGI IRIS format"
-msgstr "Výstup obrázku v SGI IRIS formátu"
-
-
-msgid "Output image in PNG format"
-msgstr "Výstup obrázku v PNG formátu"
-
-
 msgid "Output image in JPEG format"
 msgstr "Výstup obrázku v JPEG formátu"
 
 
-msgid "JPEG 2000"
-msgstr "JPEG 2000"
+msgid "Output image in OpenEXR format"
+msgstr "Výstup obrázku v OpenEXR formátu"
 
 
-msgid "Output image in JPEG 2000 format"
-msgstr "Výstup obrázku v JPEG 2000 formáu"
-
-
-msgid "Targa"
-msgstr "Targa"
-
-
-msgid "Output image in Targa format"
-msgstr "Výstup obrázku v Targa formátu"
-
-
-msgid "Targa Raw"
-msgstr "Targa Raw"
-
-
-msgid "Output image in uncompressed Targa format"
-msgstr "Výstup obrázku v nekompresovaném formátu Targa"
-
-
-msgid "Cineon"
-msgstr "Uložit Cineon"
+msgid "Output image in PNG format"
+msgstr "Výstup obrázku v PNG formátu"
 
 
 msgid "Output image in Cineon format"
@@ -9701,24 +9669,28 @@ msgid "Output image in DPX format"
 msgstr "Výstup obrázku v DPX formátu"
 
 
-msgid "Output image in OpenEXR format"
-msgstr "Výstup obrázku v OpenEXR formátu"
+msgid "Output image in SGI IRIS format"
+msgstr "Výstup obrázku v SGI IRIS formátu"
 
 
-msgid "Radiance HDR"
-msgstr "Uložit Radiance HDR"
+msgid "Output image in JPEG 2000 format"
+msgstr "Výstup obrázku v JPEG 2000 formáu"
 
 
 msgid "Output image in Radiance HDR format"
 msgstr "Výsutp obrázku v Radiance HDR formátu"
 
 
+msgid "Output image in Targa format"
+msgstr "Výstup obrázku v Targa formátu"
+
+
+msgid "Output image in uncompressed Targa format"
+msgstr "Výstup obrázku v nekompresovaném formátu Targa"
+
+
 msgid "Output image in TIFF format"
 msgstr "Výstup obrázku v TIFF formátu"
-
-
-msgid "OpenEXR MultiLayer"
-msgstr "Multivrstva"
 
 
 msgid "Output image in multilayer OpenEXR format"
@@ -9914,11 +9886,11 @@ msgstr "W"
 
 
 msgid "Path to the library .blend file"
-msgstr "Uložit současný soubor Bforartistsu"
+msgstr "Uložit současný soubor Blenderu"
 
 
-msgid "Version of Bforartists the library .blend was saved with"
-msgstr "Verze Bforartistsu ve které byla knihovna .blend uložena"
+msgid "Version of Blender the library .blend was saved with"
+msgstr "Verze Blenderu ve které byla knihovna .blend uložena"
 
 
 msgctxt "Light"
@@ -10365,10 +10337,6 @@ msgstr "Slepecké Znaky"
 
 msgid "Script"
 msgstr "Skript"
-
-
-msgid "Shader"
-msgstr "Shader"
 
 
 msgid "Pattern"
@@ -11871,8 +11839,8 @@ msgid "Noise basis used for turbulence"
 msgstr "Spustit renderovani"
 
 
-msgid "Bforartists Original"
-msgstr "Bforartists Původní"
+msgid "Blender Original"
+msgstr "Blender Původní"
 
 
 msgid "Original Perlin"
@@ -13305,10 +13273,6 @@ msgid "Double Click"
 msgstr "Dvojklik"
 
 
-msgid "Click Drag"
-msgstr "Klikněte na Přetáhnout"
-
-
 msgid "Left Handle"
 msgstr "Vazby a spojení"
 
@@ -13918,6 +13882,38 @@ msgid "Material slot name"
 msgstr "Název okénka materiálu"
 
 
+msgid "Pivot Point"
+msgstr "Bod pro pivot"
+
+
+msgid "Snap"
+msgstr "Přichytit"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Způsob útlumu"
+
+
+msgid "Mirror"
+msgstr "Zrcadlit"
+
+
+msgid "UV Mapping"
+msgstr "UV mapování"
+
+
+msgid "Local View"
+msgstr "Lokální pohled"
+
+
+msgid "Navigation"
+msgstr "Navigace"
+
+
+msgid "Align View"
+msgstr "Zarovnat pohled"
+
+
 msgid "Select Linked"
 msgstr "Vybrat Propojené"
 
@@ -14004,38 +14000,6 @@ msgstr "Text"
 
 msgid "Bone Roll"
 msgstr "Kost"
-
-
-msgid "Pivot Point"
-msgstr "Bod pro pivot"
-
-
-msgid "Snap"
-msgstr "Přichytit"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Způsob útlumu"
-
-
-msgid "Mirror"
-msgstr "Zrcadlit"
-
-
-msgid "UV Mapping"
-msgstr "UV mapování"
-
-
-msgid "Local View"
-msgstr "Lokální pohled"
-
-
-msgid "Navigation"
-msgstr "Navigace"
-
-
-msgid "Align View"
-msgstr "Zarovnat pohled"
 
 
 msgid "Basic"
@@ -17179,26 +17143,6 @@ msgid "File Output"
 msgstr "Výstup souboru"
 
 
-msgid "Active Input Index"
-msgstr "Přidat primitivum"
-
-
-msgid "Base Path"
-msgstr "Důležité cesty"
-
-
-msgid "Base output path for the image"
-msgstr "Základní výstupní cesta pro obrázek"
-
-
-msgid "File Slots"
-msgstr "Důležité cesty"
-
-
-msgid "EXR Layer Slots"
-msgstr "Materiál"
-
-
 msgid "Save as Render"
 msgstr "Uložit jako Render"
 
@@ -17225,10 +17169,6 @@ msgstr "Větší"
 
 msgid "Rotate"
 msgstr "Otočit"
-
-
-msgid "Method to use to filter rotation"
-msgstr "Metoda, která se má použít k filtrování rotace"
 
 
 msgid "Set Alpha"
@@ -17391,10 +17331,6 @@ msgid "Distribution Method"
 msgstr "Metoda Distribuce"
 
 
-msgid "Triangles"
-msgstr "Trojúhleníky"
-
-
 msgid "Primary"
 msgstr "Hlavní"
 
@@ -17419,6 +17355,10 @@ msgid "Fill Type"
 msgstr "Fill Type"
 
 
+msgid "Triangles"
+msgstr "Trojúhleníky"
+
+
 msgid "Object Info"
 msgstr "Informace o objektu"
 
@@ -17435,10 +17375,6 @@ msgid "Target Geometry"
 msgstr "Cílová Geometrie"
 
 
-msgid "Z Up"
-msgstr "Posun nahoru"
-
-
 msgid "Tangent Space"
 msgstr "Prostor textury"
 
@@ -17449,14 +17385,6 @@ msgstr "Poloha Myši"
 
 msgid "Selection"
 msgstr "Výběr"
-
-
-msgid "Angle Based"
-msgstr "Přivlastnění"
-
-
-msgid "Conformal"
-msgstr "Dle normály"
 
 
 msgid "Warning"
@@ -18012,18 +17940,6 @@ msgid "To socket"
 msgstr "Na další"
 
 
-msgid "Output File Slot"
-msgstr "Výstup"
-
-
-msgid "Subpath used for this slot"
-msgstr "Faktor zvětšení textury"
-
-
-msgid "Output File Layer Slot"
-msgstr "Výstup"
-
-
 msgid "Node Socket"
 msgstr "Kopírovat atributy"
 
@@ -18577,8 +18493,8 @@ msgid "Uninstall Studio Light"
 msgstr "Odinstalovat Studiové Světlo"
 
 
-msgid "Load and apply a Bforartists XML theme file"
-msgstr "Načíst a použít soubor motivu Bforartists XML"
+msgid "Load and apply a Blender XML theme file"
+msgstr "Načíst a použít soubor motivu Blender XML"
 
 
 msgctxt "Operator"
@@ -21518,6 +21434,10 @@ msgid "Y Up"
 msgstr "Posun nahoru"
 
 
+msgid "Z Up"
+msgstr "Posun nahoru"
+
+
 msgid "-X Up"
 msgstr "-X nahoru"
 
@@ -22674,7 +22594,7 @@ msgstr "Uložit jako obrázek"
 
 
 msgid "Save As Render"
-msgstr "Uložit jako Bforartists soubor"
+msgstr "Uložit jako Blender soubor"
 
 
 msgctxt "Operator"
@@ -24887,21 +24807,6 @@ msgid "Toggle option buttons display for selected nodes"
 msgstr "Na Vybraných Klíčích"
 
 
-msgctxt "Operator"
-msgid "Add File Node Socket"
-msgstr "Skrýt/odkrýt socket"
-
-
-msgctxt "Operator"
-msgid "Move File Node Socket"
-msgstr "Kopírovat atributy"
-
-
-msgctxt "Operator"
-msgid "Remove File Node Socket"
-msgstr "Kopírovat atributy"
-
-
 msgid "Attach selected nodes"
 msgstr "Odstranit označené Objekt(y)"
 
@@ -25949,10 +25854,6 @@ msgstr "Zrcadlit UV"
 msgctxt "Operator"
 msgid "Move Shape Key"
 msgstr "Zaklíčovat tvar"
-
-
-msgid "Move the active shape key up/down in the list"
-msgstr "Odstraní duplicity označených vertexů"
 
 
 msgctxt "Operator"
@@ -28611,7 +28512,7 @@ msgstr "Vybrat obrázek pozadí"
 
 
 msgid "Pack the sound into the current blend file"
-msgstr "Uložit současný soubor Bforartistsu"
+msgstr "Uložit současný soubor Blenderu"
 
 
 msgctxt "Operator"
@@ -29204,8 +29105,8 @@ msgid "Eyedropper"
 msgstr "Kapátko"
 
 
-msgid "Sample a color from the Bforartists window to store in a property"
-msgstr "Vybrat vzorek barvy z okna Bforartistsu a uložit ji ve vlastnosti"
+msgid "Sample a color from the Blender window to store in a property"
+msgstr "Vybrat vzorek barvy z okna Blenderu a uložit ji ve vlastnosti"
 
 
 msgctxt "Operator"
@@ -29579,6 +29480,14 @@ msgstr "Limity"
 msgctxt "Operator"
 msgid "Unwrap"
 msgstr "Metoda rozbalení"
+
+
+msgid "Angle Based"
+msgstr "Přivlastnění"
+
+
+msgid "Conformal"
+msgstr "Dle normály"
 
 
 msgid "Use Subdivision Surface"
@@ -30220,8 +30129,8 @@ msgid "Open"
 msgstr "Otevřít"
 
 
-msgid "Open a Bforartists file"
-msgstr "Otevře Bforartists soubor"
+msgid "Open a Blender file"
+msgstr "Otevře Blender soubor"
 
 
 msgid "Load UI"
@@ -30280,12 +30189,12 @@ msgstr "Kontex"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Ukončit Bforartists"
+msgid "Quit Blender"
+msgstr "Ukončit Blender"
 
 
-msgid "Quit Bforartists"
-msgstr "Ukončit Bforartists"
+msgid "Quit Blender"
+msgstr "Ukončit Blender"
 
 
 msgid "Primary Data Path"
@@ -30422,16 +30331,16 @@ msgstr "Uložit Spouštěcí Soubor"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Uložit Bforartists soubor"
+msgid "Save Blender File"
+msgstr "Uložit Blender soubor"
 
 
-msgid "Save the current Bforartists file"
-msgstr "Uloží současný soubor Bforartistsu"
+msgid "Save the current Blender file"
+msgstr "Uloží současný soubor Blenderu"
 
 
-msgid "Exit Bforartists after saving"
-msgstr "Ukončit Bforartists po uložení"
+msgid "Exit Blender after saving"
+msgstr "Ukončit Blender po uložení"
 
 
 msgctxt "Operator"
@@ -30499,12 +30408,12 @@ msgstr "Otevřít uvítací okno s informacemi o vydání"
 
 
 msgctxt "Operator"
-msgid "About Bforartists"
-msgstr "O Bforartistsu"
+msgid "About Blender"
+msgstr "O Blenderu"
 
 
-msgid "Open a window with information about Bforartists"
-msgstr "Otevřít okno s informacemi o Bforartistsu"
+msgid "Open a window with information about Blender"
+msgstr "Otevřít okno s informacemi o Blenderu"
 
 
 msgctxt "Operator"
@@ -30831,26 +30740,6 @@ msgid "Restrict"
 msgstr "Omezit"
 
 
-msgid "Snapping"
-msgstr "Přichytávání"
-
-
-msgid "Transform Orientations"
-msgstr "Orientace transformací"
-
-
-msgid "Guides"
-msgstr "Vodítka"
-
-
-msgid "Stereoscopy"
-msgstr "Stereoskopie"
-
-
-msgid "Auto-Masking"
-msgstr "Auto-Maska"
-
-
 msgid "Active Tool"
 msgstr "Aktivní nástroj"
 
@@ -30875,6 +30764,10 @@ msgid "Overlays"
 msgstr "Překrytí"
 
 
+msgid "Guides"
+msgstr "Vodítka"
+
+
 msgid "Motion Tracking"
 msgstr "Sledování Pohybu"
 
@@ -30889,6 +30782,22 @@ msgstr "Měření"
 
 msgid "Curve Edit Mode"
 msgstr "Editační Režim Křivky"
+
+
+msgid "Snapping"
+msgstr "Přichytávání"
+
+
+msgid "Transform Orientations"
+msgstr "Orientace transformací"
+
+
+msgid "Stereoscopy"
+msgstr "Stereoskopie"
+
+
+msgid "Auto-Masking"
+msgstr "Auto-Maska"
 
 
 msgid "Chain Scaling"
@@ -33109,14 +33018,14 @@ msgstr "Zobrazit Uvítací Okno"
 
 
 msgid "Display splash screen on startup"
-msgstr "Zobrazit uvítací okno při startu Bforartistsu"
+msgstr "Zobrazit uvítací okno při startu Blenderu"
 
 
 msgid "Show Memory"
 msgstr "Zobrazit Paměť"
 
 
-msgid "Show Bforartists memory usage"
+msgid "Show Blender memory usage"
 msgstr "Zobrazit využití paměti"
 
 
@@ -33132,8 +33041,8 @@ msgid "Show Version"
 msgstr "Zobrazit Verzi"
 
 
-msgid "Show Bforartists version string"
-msgstr "Zobrazit verzi Bforartistsu"
+msgid "Show Blender version string"
+msgstr "Zobrazit verzi Blenderu"
 
 
 msgid "Show VRAM"
@@ -34128,12 +34037,12 @@ msgid "Z Axis Stiffness"
 msgstr "Tuhost Osy Z"
 
 
-msgid "Bforartists 2.7"
-msgstr "Bforartists 2.7"
+msgid "Blender 2.7"
+msgstr "Blender 2.7"
 
 
-msgid "Bforartists 2.8"
-msgstr "Bforartists 2.8"
+msgid "Blender 2.8"
+msgstr "Blender 2.8"
 
 
 msgid "Type of Rigid Body Constraint"
@@ -35167,8 +35076,8 @@ msgid "Type of information to display"
 msgstr "Jaký typ informace zobrazit"
 
 
-msgid "Bforartists File"
-msgstr "Otevřít Bforartists soubor"
+msgid "Blender File"
+msgstr "Otevřít Blender soubor"
 
 
 msgctxt "ID"
@@ -36258,6 +36167,14 @@ msgid "Strips Selected"
 msgstr "Skrýt označené"
 
 
+msgid "Channel Group"
+msgstr "Nelze vytvořit skupinu"
+
+
+msgid "Active Channel Group"
+msgstr "Akce"
+
+
 msgid "Theme Console"
 msgstr "Zobrazit kontrolery"
 
@@ -36280,14 +36197,6 @@ msgstr "Vstup"
 
 msgid "Line Output"
 msgstr "Výstup Řádku"
-
-
-msgid "Active Channel Group"
-msgstr "Akce"
-
-
-msgid "Channel Group"
-msgstr "Nelze vytvořit skupinu"
 
 
 msgid "Channels Selected"
@@ -37902,12 +37811,12 @@ msgstr "Licence"
 
 
 msgctxt "Operator"
-msgid "Bforartists Store"
-msgstr "Bforartists obchod"
+msgid "Blender Store"
+msgstr "Blender obchod"
 
 
 msgctxt "Operator"
-msgid "Bforartists Website"
+msgid "Blender Website"
 msgstr "Webové stránky blenderu"
 
 
@@ -38126,11 +38035,6 @@ msgstr "Převrátit osy"
 
 
 msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Odstranit Veškeré Tvarové Klíče"
-
-
-msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "Seřadit podle Názvu"
 
@@ -38161,13 +38065,8 @@ msgstr "Odstranit Všechny Skupiny"
 
 
 msgctxt "Operator"
-msgid "Move to Top"
-msgstr "Přesunout Nahoru"
-
-
-msgctxt "Operator"
-msgid "Move to Bottom"
-msgstr "Přesunout Dolů"
+msgid "Flip"
+msgstr "Flip"
 
 
 msgid "Auto Normalize"
@@ -39095,8 +38994,18 @@ msgid "Text Files"
 msgstr "Textové soubory"
 
 
-msgid "Bforartists IDs"
-msgstr "ID Bforartistsu"
+msgid "Blender IDs"
+msgstr "ID Blenderu"
+
+
+msgctxt "Operator"
+msgid "Move to Top"
+msgstr "Přesunout Nahoru"
+
+
+msgctxt "Operator"
+msgid "Move to Bottom"
+msgstr "Přesunout Dolů"
 
 
 msgctxt "Operator"
@@ -39437,6 +39346,11 @@ msgstr "Nejsou k dispozici žádné položky"
 msgctxt "Operator"
 msgid "Change Keying Set..."
 msgstr "Změnit klíčovací snímek..."
+
+
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "Odebrat klíčový snímek..."
 
 
 msgctxt "Operator"
@@ -39866,7 +39780,7 @@ msgid "Video Memory"
 msgstr "Videopamět"
 
 
-msgid "Bforartists Version"
+msgid "Blender Version"
 msgstr "Verze blenderu"
 
 
@@ -40167,11 +40081,6 @@ msgstr "Reproduktor"
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Vytvořit lokální..."
-
-
-msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Odebrat klíčový snímek..."
 
 
 msgctxt "Operator"
@@ -40478,11 +40387,6 @@ msgstr "Silné"
 
 
 msgctxt "Operator"
-msgid "Flip"
-msgstr "Flip"
-
-
-msgctxt "Operator"
 msgid "Set from Faces"
 msgstr "Sada z Ploch"
 
@@ -40557,17 +40461,9 @@ msgid "Origins (All)"
 msgstr "Původy (Všech)"
 
 
-msgid "Creases"
-msgstr "Záhyby"
-
-
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "Ostré"
-
-
-msgid "Seams"
-msgstr "Švy"
 
 
 msgid "Face Angle"
@@ -41881,10 +41777,6 @@ msgid "Stop animation playback"
 msgstr "Zastavit přehrávání animace"
 
 
-msgid "Can't edit external library data"
-msgstr "Nelze upravovat data externí knihovny"
-
-
 msgid "Use Schema"
 msgstr "Použít schéma"
 
@@ -41962,16 +41854,16 @@ msgid "Outer"
 msgstr "Vnější"
 
 
+msgid "Seams"
+msgstr "Švy"
+
+
 msgid "Not a valid selection for extrude"
 msgstr "Není platná selekce pro vytažení"
 
 
 msgid "You have to select a string of connected vertices too"
 msgstr "Vybrat náhodně: vertexy"
-
-
-msgid "Cannot rip selected faces"
-msgstr "Skrýt označené plošky"
 
 
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
@@ -42246,10 +42138,6 @@ msgstr "Objekty, jejichž zásobník modifikátorů je editován"
 
 msgid "Cannot edit library data"
 msgstr "Nelze upravovat data knihovny"
-
-
-msgid "Can't edit linked mesh or curve data"
-msgstr "Nelze upravovat připojená data sítě nebo křivky"
 
 
 msgid "No collection selected"
@@ -42568,8 +42456,8 @@ msgid "Unable to remove material slot in edit mode"
 msgstr "Zobrazit materiál daného objektu"
 
 
-msgid "Bforartists Render"
-msgstr "Bforartists render"
+msgid "Blender Render"
+msgstr "Blender render"
 
 
 msgid "Maximize Area"
@@ -42816,10 +42704,6 @@ msgid "Select Pass"
 msgstr "Vybrat méně"
 
 
-msgid "Can't Load Image"
-msgstr "Nelze načíst obrázek"
-
-
 msgid "unsupported image format"
 msgstr "nepodporovaný obrázkový typ souboru"
 
@@ -42898,10 +42782,6 @@ msgstr "Maska nebyla nalezena"
 
 msgid "Please select two strips"
 msgstr "Odstranit označené značky"
-
-
-msgid "Can't overwrite export file"
-msgstr "Nelze přepsat exportní soubor"
 
 
 msgid "Save to disk (ignore outside changes)"

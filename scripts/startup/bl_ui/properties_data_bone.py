@@ -367,10 +367,8 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         row.prop(bone, "display_type", text="Display As")
 
         # Figure out the pose bone.
-        ob = context.object
-        if not ob:
+        if not pose_bone:
             return
-        pose_bone = ob.pose.bones[bone.name]
 
         # Allow the layout to use the space normally occupied by the 'set a key' diamond.
         layout.use_property_decorate = False

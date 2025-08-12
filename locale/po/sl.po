@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-27 00:59+0000\n"
 "Last-Translator: Gorazd Gorup <gorupgorazd@gmail.com>\n"
 "Language-Team: Slovenian <https://translate.blender.org/projects/blender-ui/ui/sl/>\n"
@@ -868,8 +868,8 @@ msgid "Fribidi Library"
 msgstr "Knjižnica FriBidi"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
-msgstr "Prevedena C-jevska knjižnica FriBidi (končnica .so na Linuxu, .dll na Windowsih ...). Če ste na Windowsih, jo boste najbrž morali prilagoditi, lahko pa npr. uporabite tisto iz Bforartistsjevega repozitorija knjižnic"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
+msgstr "Prevedena C-jevska knjižnica FriBidi (končnica .so na Linuxu, .dll na Windowsih ...). Če ste na Windowsih, jo boste najbrž morali prilagoditi, lahko pa npr. uporabite tisto iz Blenderjevega repozitorija knjižnic"
 
 
 msgid "Translation Root"
@@ -892,8 +892,8 @@ msgid "Source Root"
 msgstr "Korenski imenik izvora"
 
 
-msgid "The Bforartists source root path"
-msgstr "Pot do korenskega imenika Bforartistsjeve izvorne kode"
+msgid "The Blender source root path"
+msgstr "Pot do korenskega imenika Blenderjeve izvorne kode"
 
 
 msgid "Spell Cache"
@@ -916,8 +916,8 @@ msgid "Persistent Data Path"
 msgstr "Pot do trajnih podatkov"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
-msgstr "Ime datoteke JSON, ki hrani te nastavitve (žal Bforartistsjev sistem tukaj ne deluje)"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgstr "Ime datoteke JSON, ki hrani te nastavitve (žal Blenderjev sistem tukaj ne deluje)"
 
 
 msgid "User Add-ons"
@@ -1876,8 +1876,8 @@ msgid "Catalog UUID"
 msgstr "UUID kataloga"
 
 
-msgid "Identifier for the asset's catalog, used by Bforartists to look up the asset's catalog path. Must be a UUID according to RFC4122."
-msgstr "Identifikator kataloga, ki mu sredstvo pripada. Z njegovo pomočjo Bforartists poišče pot do kataloga sredstva. Identifikator mora biti UUID, definiran po RFC4122."
+msgid "Identifier for the asset's catalog, used by Blender to look up the asset's catalog path. Must be a UUID according to RFC4122."
+msgstr "Identifikator kataloga, ki mu sredstvo pripada. Z njegovo pomočjo Blender poišče pot do kataloga sredstva. Identifikator mora biti UUID, definiran po RFC4122."
 
 
 msgid "Catalog Simple Name"
@@ -1993,7 +1993,7 @@ msgid "Current File"
 msgstr "Trenutna datoteka"
 
 
-msgid "Show the assets currently available in this Bforartists session"
+msgid "Show the assets currently available in this Blender session"
 msgstr "Pokaže sredstva, ki so na voljo v trenutni seji programa"
 
 
@@ -2001,8 +2001,8 @@ msgid "Essentials"
 msgstr "Osnove"
 
 
-msgid "Show the basic building blocks and utilities coming with Bforartists"
-msgstr "Pokaže osnovne gradnike in pripomočke, ki so privzeto v Bforartistsju"
+msgid "Show the basic building blocks and utilities coming with Blender"
+msgstr "Pokaže osnovne gradnike in pripomočke, ki so privzeto v Blenderju"
 
 
 msgid "Custom"
@@ -2309,8 +2309,8 @@ msgid "Is Internal"
 msgstr "Je notranji"
 
 
-msgid "The attribute is meant for internal use by Bforartists"
-msgstr "Mišljeno je, da atribut interno uporablja Bforartists"
+msgid "The attribute is meant for internal use by Blender"
+msgstr "Mišljeno je, da atribut interno uporablja Blender"
 
 
 msgid "Is Required"
@@ -3762,12 +3762,12 @@ msgid "Blendfile Import Context Library"
 msgstr "Kontekstna knjižnica uvoza datoteke blend"
 
 
-msgid "Bforartists RNA"
-msgstr "Bforartists RNA"
+msgid "Blender RNA"
+msgstr "Blender RNA"
 
 
-msgid "Bforartists RNA structure definitions"
-msgstr "Definicije strukture Bforartists RNA"
+msgid "Blender RNA structure definitions"
+msgstr "Definicije strukture Blender RNA"
 
 
 msgid "Structs"
@@ -4572,10 +4572,6 @@ msgid "Radius of head of bone (for Envelope deform only)"
 msgstr "Polmer kostne glave (le za ovojno deformacijo)"
 
 
-msgid "Bone is not visible when it is not in Edit Mode (i.e. in Object or Pose Modes)"
-msgstr "Kost ni vidna zunaj urejevalnega načina (npr. v objektnem ali pozirnem načinu)"
-
-
 msgid "Selectable"
 msgstr "Je na izbiro"
 
@@ -4706,10 +4702,6 @@ msgstr "Ko ima kost starša, je njena glava prilepljena na staršev rep"
 
 msgid "Cyclic Offset"
 msgstr "Krožni odklon"
-
-
-msgid "When bone doesn't have a parent, it receives cyclic offset effects (Deprecated)"
-msgstr "Ko kost nima starša, nanjo vpliva krožni odklon (zastarelo)"
 
 
 msgid "Deform"
@@ -7736,14 +7728,6 @@ msgid "Collection of Color Ramp Elements"
 msgstr "Zbirka elementov barvne rampe"
 
 
-msgid "File Output Slots"
-msgstr "Polja izhodnih datotek"
-
-
-msgid "Collection of File Output node slots"
-msgstr "Zbirka polj za vozlišča izhodnih datotek"
-
-
 msgid "Console Input"
 msgstr "Konzolni vhod"
 
@@ -7793,8 +7777,8 @@ msgid "Lin error"
 msgstr "Linearna napaka"
 
 
-msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
-msgstr "Količina presežne napake, izražene v Bforartistsjevi prostorski enoti, za omejevalnike, ki omejujejo položaj v prostoru"
+msgid "Amount of residual error in Blender space unit for constraints that work on position"
+msgstr "Količina presežne napake, izražene v Blenderjevi prostorski enoti, za omejevalnike, ki omejujejo položaj v prostoru"
 
 
 msgid "Rotation error"
@@ -9294,10 +9278,6 @@ msgstr "Najmanjši možni kot po Z"
 
 msgid "Legacy Behavior"
 msgstr "Stara funkcionalnost"
-
-
-msgid "Use the old semi-broken behavior that doesn't understand that rotations loop around"
-msgstr "Uporabi zastareli, nekoliko pokvarjeni način delovanja, ki ne upošteva, da rotacije lahko opravijo več krogov"
 
 
 msgid "Limit X"
@@ -11345,10 +11325,6 @@ msgid "Fallback"
 msgstr "Rezerva"
 
 
-msgid "The value to use if the data path can't be resolved"
-msgstr "Vrednost, ki se uporabi, če podatkovni poti ni mogoče slediti do cilja"
-
-
 msgid "ID-block that the specific property used can be found from (id_type property must be set first)"
 msgstr "ID-blok, v katerem je uporabljena lastnost (najprej je treba nastaviti lastnost id_type)"
 
@@ -11407,10 +11383,6 @@ msgstr "Povprečno skaliranje"
 
 msgid "Use Fallback"
 msgstr "Uporabi rezervo"
-
-
-msgid "Use the fallback value if the data path can't be resolved, instead of failing to evaluate the driver"
-msgstr "Če podatkovne poti ni mogoče razrešiti, uporabi rezervno vrednost"
 
 
 msgid "Driver Variable"
@@ -11697,8 +11669,8 @@ msgid "Max Velocity"
 msgstr "Največja hitrost"
 
 
-msgid "Velocity considered as maximum influence (Bforartists units per frame)"
-msgstr "Hitrost, ki ima največji možni vpliv (Bforartistsjeve enote na okvir)"
+msgid "Velocity considered as maximum influence (Blender units per frame)"
+msgstr "Hitrost, ki ima največji možni vpliv (Blenderjeve enote na okvir)"
 
 
 msgid "Velocity Color Ramp"
@@ -12079,8 +12051,8 @@ msgid "Premultiply Alpha"
 msgstr "Predmnoženje alfe"
 
 
-msgid "Multiply color by alpha (recommended for Bforartists input)"
-msgstr "Pomnoži barvo z alfo (priporočeno za vhod v Bforartistsju)"
+msgid "Multiply color by alpha (recommended for Blender input)"
+msgstr "Pomnoži barvo z alfo (priporočeno za vhod v Blenderju)"
 
 
 msgid "Use Shrink"
@@ -12449,10 +12421,6 @@ msgstr "Uporabi barve osi za transformacijske krivulje in krivulje barvnih lastn
 
 msgid "Auto WXYZ to YRGB"
 msgstr "Samodejno WXYZ v YRGB"
-
-
-msgid "Use axis colors for XYZ parts of transform, and yellow for the 'W' channel"
-msgstr "Uporabi barve osi za transformacijske komponente XYZ in rumeno barvo za komponento 'W'"
 
 
 msgid "User Defined"
@@ -14070,16 +14038,16 @@ msgid "Only Assets"
 msgstr "Samo sredstva"
 
 
-msgid "Filter Bforartists Backup Files"
-msgstr "Filter Bforartistsjevih varnostnih kopij"
+msgid "Filter Blender Backup Files"
+msgstr "Filter Blenderjevih varnostnih kopij"
 
 
-msgid "Filter Bforartists"
-msgstr "Filter Bforartistsjevih datotek"
+msgid "Filter Blender"
+msgstr "Filter Blenderjevih datotek"
 
 
-msgid "Filter Bforartists IDs"
-msgstr "Filtriraj Bforartistsjeve ID-je"
+msgid "Filter Blender IDs"
+msgstr "Filtriraj Blenderjeve ID-je"
 
 
 msgid "Filter Folder"
@@ -15036,6 +15004,10 @@ msgstr "Tip vtičnice"
 
 msgid "Menu"
 msgstr "Meni"
+
+
+msgid "Shader"
+msgstr "Senčilnik"
 
 
 msgid "Collection"
@@ -18582,54 +18554,6 @@ msgid "Display Aspect"
 msgstr "Prikazovalno razmerje"
 
 
-msgid "BMP"
-msgstr "BMP"
-
-
-msgid "Iris"
-msgstr "Iris"
-
-
-msgid "JPEG"
-msgstr "JPEG"
-
-
-msgid "JPEG 2000"
-msgstr "JPEG 2000"
-
-
-msgid "Targa"
-msgstr "Targa"
-
-
-msgid "Targa Raw"
-msgstr "Targa Raw"
-
-
-msgid "Cineon"
-msgstr "Cineon"
-
-
-msgid "DPX"
-msgstr "DPX"
-
-
-msgid "Radiance HDR"
-msgstr "Radiance HDR"
-
-
-msgid "TIFF"
-msgstr "TIFF"
-
-
-msgid "WebP"
-msgstr "WebP"
-
-
-msgid "OpenEXR MultiLayer"
-msgstr "OpenEXR MultiLayer"
-
-
 msgid "FFmpeg Video"
 msgstr "FFmpeg Video"
 
@@ -19593,10 +19517,6 @@ msgstr "Optična maska"
 
 msgid "Script"
 msgstr "Program"
-
-
-msgid "Shader"
-msgstr "Senčilnik"
 
 
 msgid "Pattern"
@@ -21171,12 +21091,12 @@ msgid "Noise basis used for turbulence"
 msgstr "Šumna podlaga za turbulenco"
 
 
-msgid "Bforartists Original"
-msgstr "Bforartistsjev izvirnik"
+msgid "Blender Original"
+msgstr "Blenderjev izvirnik"
 
 
-msgid "Noise algorithm - Bforartists original: Smooth interpolated noise"
-msgstr "Šumni algoritem - Bforartistsjev izvirnik: gladko interpoliran šum"
+msgid "Noise algorithm - Blender original: Smooth interpolated noise"
+msgstr "Šumni algoritem - Blenderjev izvirnik: gladko interpoliran šum"
 
 
 msgid "Original Perlin"
@@ -23697,10 +23617,6 @@ msgid "Double Click"
 msgstr "Dvoklik"
 
 
-msgid "Click Drag"
-msgstr "Klik in vleka"
-
-
 msgid "KeyMap Items"
 msgstr "Bližnjice"
 
@@ -24657,6 +24573,50 @@ msgid "Mask"
 msgstr "Maska"
 
 
+msgid "Pivot Point"
+msgstr "Osišče"
+
+
+msgid "Snap"
+msgstr "Pritrdi"
+
+
+msgid "Mask Edit"
+msgstr "Urejanje maske"
+
+
+msgid "Automasking"
+msgstr "Samodejno maskiranje"
+
+
+msgid "Mirror"
+msgstr "Zrcali"
+
+
+msgid "UV Mapping"
+msgstr "Preslikanje UV"
+
+
+msgid "Local View"
+msgstr "Krajevni pogled"
+
+
+msgid "Viewpoint"
+msgstr "Gledišče"
+
+
+msgid "Navigation"
+msgstr "Navigacija"
+
+
+msgid "Align View"
+msgstr "Poravnava pogleda"
+
+
+msgid "Align View to Active"
+msgstr "Poravnaj pogled na aktivno"
+
+
 msgid "View Regions"
 msgstr "Področja pogleda"
 
@@ -24807,50 +24767,6 @@ msgstr "Besedilo"
 
 msgid "Bone Roll"
 msgstr "Zasukaj kost"
-
-
-msgid "Pivot Point"
-msgstr "Osišče"
-
-
-msgid "Snap"
-msgstr "Pritrdi"
-
-
-msgid "Mask Edit"
-msgstr "Urejanje maske"
-
-
-msgid "Automasking"
-msgstr "Samodejno maskiranje"
-
-
-msgid "Mirror"
-msgstr "Zrcali"
-
-
-msgid "UV Mapping"
-msgstr "Preslikanje UV"
-
-
-msgid "Local View"
-msgstr "Krajevni pogled"
-
-
-msgid "Viewpoint"
-msgstr "Gledišče"
-
-
-msgid "Navigation"
-msgstr "Navigacija"
-
-
-msgid "Align View"
-msgstr "Poravnava pogleda"
-
-
-msgid "Align View to Active"
-msgstr "Poravnaj pogled na aktivno"
 
 
 msgid "Animals"
@@ -27287,7 +27203,7 @@ msgstr "Prostorska velikost"
 
 
 msgid "Size of the simulation domain (in meters), and of the generated geometry (in BU)"
-msgstr "Velikost simulacijske domene (v metrih) in generirane geometrije (v Bforartistsjevih enotah)"
+msgstr "Velikost simulacijske domene (v metrih) in generirane geometrije (v Blenderjevih enotah)"
 
 
 msgid "Spectrum"
@@ -29065,6 +28981,10 @@ msgid "ITU 709"
 msgstr "ITU 709"
 
 
+msgid "JPEG"
+msgstr "JPEG"
+
+
 msgid "Combine Color"
 msgstr "Združi barvo"
 
@@ -29083,6 +29003,14 @@ msgstr "Končni"
 
 msgid "Corner Pin"
 msgstr "Pripni vogale"
+
+
+msgid "X Extension Mode"
+msgstr "Način razširitve X"
+
+
+msgid "Y Extension Mode"
+msgstr "Način razširitve Y"
 
 
 msgid "Interpolation method"
@@ -29502,26 +29430,6 @@ msgid "Map UV"
 msgstr "Preslikava UV"
 
 
-msgctxt "NodeTree"
-msgid "Nearest"
-msgstr "Najbližje"
-
-
-msgctxt "NodeTree"
-msgid "Bilinear"
-msgstr "Bilinearno"
-
-
-msgctxt "NodeTree"
-msgid "Bicubic"
-msgstr "Bikubično"
-
-
-msgctxt "NodeTree"
-msgid "Anisotropic"
-msgstr "Anizotropija"
-
-
 msgid "Size Source"
 msgstr "Vir velikosti"
 
@@ -29552,30 +29460,6 @@ msgstr "Izhodna datoteka"
 
 msgid "Write image file to disk"
 msgstr "Zapiše slikovno datoteko na disk"
-
-
-msgid "Active Input Index"
-msgstr "Indeks aktivnega vhoda"
-
-
-msgid "Active input index in details view list"
-msgstr "Indeks aktivnega vhoda s seznama podrobnosti"
-
-
-msgid "Base Path"
-msgstr "Izhodiščna pot"
-
-
-msgid "Base output path for the image"
-msgstr "Izhodna pot slike"
-
-
-msgid "File Slots"
-msgstr "Datotečna polja"
-
-
-msgid "EXR Layer Slots"
-msgstr "Polja plasti EXR"
 
 
 msgid "Save as Render"
@@ -29666,20 +29550,8 @@ msgid "Rotate image by specified angle"
 msgstr "Rotira sliko za dani kot"
 
 
-msgid "Method to use to filter rotation"
-msgstr "Metoda za filtriranje rotacije"
-
-
 msgid "Change the size of the image"
 msgstr "Spremeni velikost slike"
-
-
-msgid "X Extension Mode"
-msgstr "Način razširitve X"
-
-
-msgid "Y Extension Mode"
-msgstr "Način razširitve Y"
 
 
 msgid "Coordinate space to scale relative to"
@@ -30274,18 +30146,6 @@ msgid "Capture Attribute"
 msgstr "Zajem atributa"
 
 
-msgid "Closure Input"
-msgstr "Vhod zaprtja"
-
-
-msgid "Paired Output"
-msgstr "Paren izhod"
-
-
-msgid "Closure Output"
-msgstr "Izhod zaprtja"
-
-
 msgid "Collection Info"
 msgstr "Informacije zbirke"
 
@@ -30514,20 +30374,16 @@ msgid "Fill Curve"
 msgstr "Zapolni krivuljo"
 
 
-msgid "Triangles"
-msgstr "Trikotniki"
-
-
-msgid "N-gons"
-msgstr "N-kotniki"
-
-
 msgid "Fillet Curve"
 msgstr "Zvezna krivulja"
 
 
 msgid "Flip Faces"
 msgstr "Preobrni lica"
+
+
+msgid "Paired Output"
+msgstr "Paren izhod"
 
 
 msgid "Inspection Index"
@@ -30839,6 +30695,10 @@ msgid "N-Gon"
 msgstr "N-kotnik"
 
 
+msgid "Triangles"
+msgstr "Trikotniki"
+
+
 msgid "Face Group Boundaries"
 msgstr "Meje skupin lic"
 
@@ -30919,14 +30779,6 @@ msgid "Remove Named Attribute"
 msgstr "Izbris atributa z imenom"
 
 
-msgid "Pattern Mode"
-msgstr "Način primerjave"
-
-
-msgid "Wildcard"
-msgstr "Nadomestni znak"
-
-
 msgid "Repeat Input"
 msgstr "Ponovi vhod"
 
@@ -30963,22 +30815,6 @@ msgid "Sample Grid"
 msgstr "Vzorči regularno mrežo"
 
 
-msgid "Interpolation Mode"
-msgstr "Način interpolacije"
-
-
-msgid "Nearest Neighbor"
-msgstr "Najbližji sosed"
-
-
-msgid "Trilinear"
-msgstr "Trilinearno"
-
-
-msgid "Triquadratic"
-msgstr "Trikvadratno"
-
-
 msgid "Sample Index"
 msgstr "Vzorčenje indeksa"
 
@@ -30999,20 +30835,12 @@ msgid "Scale Elements"
 msgstr "Skaliraj elemente"
 
 
-msgid "Scale Mode"
-msgstr "Način skaliranja"
-
-
 msgid "Scale Instances"
 msgstr "Skaliraj primerke"
 
 
 msgid "Self Object"
 msgstr "Lastniški objekt"
-
-
-msgid "Separate Bundle"
-msgstr "Loči sveženj"
 
 
 msgid "Separate Components"
@@ -31029,14 +30857,6 @@ msgstr "Nastavi položaje ročic"
 
 msgid "Set Curve Normal"
 msgstr "Nastavi normale krivulje"
-
-
-msgid "Minimum Twist"
-msgstr "Minimalno zvijanje"
-
-
-msgid "Z Up"
-msgstr "Z gor"
 
 
 msgid "Set Curve Radius"
@@ -31235,20 +31055,8 @@ msgid "Pack UV Islands"
 msgstr "Zapakiraj otoke UV"
 
 
-msgid "Shape Method"
-msgstr "Metoda oblikovanja"
-
-
 msgid "UV Unwrap"
 msgstr "Odvij UV"
-
-
-msgid "Angle Based"
-msgstr "Glede na kote"
-
-
-msgid "Conformal"
-msgstr "Konformno"
 
 
 msgid "Vertex of Corner"
@@ -31271,6 +31079,14 @@ msgid "Warning Type"
 msgstr "Tip opozorila"
 
 
+msgid "Closure Input"
+msgstr "Vhod zaprtja"
+
+
+msgid "Closure Output"
+msgstr "Izhod zaprtja"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Okvir"
@@ -31290,6 +31106,10 @@ msgstr "Aktivni izhod"
 
 msgid "Reroute"
 msgstr "Preusmeritev"
+
+
+msgid "Separate Bundle"
+msgstr "Loči sveženj"
 
 
 msgid "Shader Node"
@@ -32368,6 +32188,14 @@ msgid "Value to Normal"
 msgstr "Vrednost v normale"
 
 
+msgid "Structure Type"
+msgstr "Tip strukture"
+
+
+msgid "Collection of combine bundle items"
+msgstr "Zbirka elementov združenih svežnjev"
+
+
 msgid "Enum Item"
 msgstr "Element naštevne strukture"
 
@@ -32388,14 +32216,6 @@ msgid "Is Attribute"
 msgstr "Je atribut"
 
 
-msgid "Structure Type"
-msgstr "Tip strukture"
-
-
-msgid "Collection of combine bundle items"
-msgstr "Zbirka elementov združenih svežnjev"
-
-
 msgid "Generation Items"
 msgstr "Elementi generiranja"
 
@@ -32414,10 +32234,6 @@ msgstr "Glavni elementi"
 
 msgid "Collection of main items"
 msgstr "Zbirka glavnih elementov"
-
-
-msgid "Collection of separate bundle items"
-msgstr "Zbirka elementov ločenih svežnjev"
 
 
 msgid "Node Inputs"
@@ -32452,12 +32268,12 @@ msgid "Node Links"
 msgstr "Vozliščne povezave"
 
 
-msgid "Output File Slot"
-msgstr "Polje izhodne datoteke"
-
-
 msgid "Node Outputs"
 msgstr "Izhodi vozlišča"
+
+
+msgid "Collection of separate bundle items"
+msgstr "Zbirka elementov ločenih svežnjev"
 
 
 msgid "Node Socket"
@@ -33093,8 +32909,8 @@ msgid "Clear Status"
 msgstr "Počisti status"
 
 
-msgid "Allow internet access. Bforartists may access configured online extension repositories. Installed third party add-ons may access the internet for their own functionality"
-msgstr "Dovoli dostop do interneta. Bforartists lahko dostopa do nastavljenih spletnih repozitorijev razširitev. Nameščeni dodatki tretjih oseb lahko dostopajo do interneta"
+msgid "Allow internet access. Blender may access configured online extension repositories. Installed third party add-ons may access the internet for their own functionality"
+msgstr "Dovoli dostop do interneta. Blender lahko dostopa do nastavljenih spletnih repozitorijev razširitev. Nameščeni dodatki tretjih oseb lahko dostopajo do interneta"
 
 
 msgctxt "Operator"
@@ -34043,8 +33859,8 @@ msgstr "Shrani nastavitve I18n"
 
 
 msgctxt "Operator"
-msgid "Update I18n Bforartists Repository"
-msgstr "Posodobi Bforartistsjev repozitorij I18n"
+msgid "Update I18n Blender Repository"
+msgstr "Posodobi Blenderjev repozitorij I18n"
 
 
 msgctxt "Operator"
@@ -36605,6 +36421,10 @@ msgid "Y Up"
 msgstr "Y gor"
 
 
+msgid "Z Up"
+msgstr "Z gor"
+
+
 msgid "-X Up"
 msgstr "-X gor"
 
@@ -38520,8 +38340,8 @@ msgid "Pixels per Inch"
 msgstr "Piksli na palec"
 
 
-msgid "Pixels per Bforartists Unit"
-msgstr "Piksli na Bforartistsjevo enoto"
+msgid "Pixels per Blender Unit"
+msgstr "Piksli na Blenderjevo enoto"
 
 
 msgctxt "Operator"
@@ -40968,6 +40788,10 @@ msgid "Replace with"
 msgstr "Zamenja z"
 
 
+msgid "BMP"
+msgstr "BMP"
+
+
 msgid "IRIS"
 msgstr "IRIS"
 
@@ -40984,8 +40808,16 @@ msgid "CINEON"
 msgstr "CINEON"
 
 
+msgid "DPX"
+msgstr "DPX"
+
+
 msgid "OPEN_EXR"
 msgstr "OPEN_EXR"
+
+
+msgid "TIFF"
+msgstr "TIFF"
 
 
 msgid "Select Children"
@@ -43600,10 +43432,6 @@ msgid "Hide Panels"
 msgstr "Skrij plošče"
 
 
-msgid "Hide all the panels"
-msgstr "Skrije vse plošče"
-
-
 msgctxt "Operator"
 msgid "Set Screen"
 msgstr "Nastavi zaslon"
@@ -43618,8 +43446,8 @@ msgid "Save Screenshot"
 msgstr "Zajemi sliko okna"
 
 
-msgid "Capture a picture of the whole Bforartists window"
-msgstr "Zajame sliko celega Bforartistsjevega okna"
+msgid "Capture a picture of the whole Blender window"
+msgstr "Zajame sliko celega Blenderjevega okna"
 
 
 msgctxt "Operator"
@@ -44040,10 +43868,6 @@ msgstr "Aktivno oglišče"
 
 msgid "Mouse Position X"
 msgstr "Položaj miške X"
-
-
-msgid "Position of the mouse used for \"Surface\" mode"
-msgstr "Položaj miške, ki se uporablja za način \"Površina\""
 
 
 msgid "Mouse Position Y"
@@ -45508,6 +45332,10 @@ msgid "Axis-aligned (Vertical)"
 msgstr "Poravnano z osjo (navpično)"
 
 
+msgid "Shape Method"
+msgstr "Metoda oblikovanja"
+
+
 msgid "Pack to"
 msgstr "Zapakira v"
 
@@ -45680,6 +45508,14 @@ msgstr "Uporabi mejo"
 msgctxt "Operator"
 msgid "Unwrap"
 msgstr "Odvij"
+
+
+msgid "Angle Based"
+msgstr "Glede na kote"
+
+
+msgid "Conformal"
+msgstr "Konformno"
 
 
 msgid "Minimum Stretch"
@@ -46595,8 +46431,8 @@ msgid "Open"
 msgstr "Odpri"
 
 
-msgid "Open a Bforartists file"
-msgstr "Odpre datoteko programa Bforartists"
+msgid "Open a Blender file"
+msgstr "Odpre datoteko programa Blender"
 
 
 msgid "Display File Selector"
@@ -46725,12 +46561,12 @@ msgstr "Popustljive meje"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Zapiranje Bforartistsja"
+msgid "Quit Blender"
+msgstr "Zapiranje Blenderja"
 
 
-msgid "Quit Bforartists"
-msgstr "Zapiranje Bforartistsja"
+msgid "Quit Blender"
+msgstr "Zapiranje Blenderja"
 
 
 msgctxt "Operator"
@@ -46947,20 +46783,20 @@ msgstr "Nastavi, da se trenutna datoteka privzeto odpre ob zagonu"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Shrani datoteko Bforartists"
+msgid "Save Blender File"
+msgstr "Shrani datoteko Blender"
 
 
-msgid "Save the current Bforartists file"
-msgstr "Shrani trenutno datoteko Bforartistsja"
+msgid "Save the current Blender file"
+msgstr "Shrani trenutno datoteko Blenderja"
 
 
-msgid "Exit Bforartists after saving"
-msgstr "Shrani delo in nato zapre Bforartists"
+msgid "Exit Blender after saving"
+msgstr "Shrani delo in nato zapre Blender"
 
 
-msgid "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
-msgstr "Shrani trenutno datoteko Bforartistsja v novo datoteko s povečanim števcem v imenu, da ne prepiše obstoječih datotek"
+msgid "Save the current Blender file with a numerically incremented name that does not overwrite any existing files"
+msgstr "Shrani trenutno datoteko Blenderja v novo datoteko s povečanim števcem v imenu, da ne prepiše obstoječih datotek"
 
 
 msgctxt "Operator"
@@ -47122,12 +46958,12 @@ msgstr "Odpre pozdravno okno z informacijami o izdaji"
 
 
 msgctxt "Operator"
-msgid "About Bforartists"
-msgstr "O Bforartistsju"
+msgid "About Blender"
+msgstr "O Blenderju"
 
 
-msgid "Open a window with information about Bforartists"
-msgstr "Odpre okno z informacijami o Bforartistsju"
+msgid "Open a window with information about Blender"
+msgstr "Odpre okno z informacijami o Blenderju"
 
 
 msgctxt "Operator"
@@ -47229,8 +47065,8 @@ msgid "Allow Unicode"
 msgstr "Dovoli Unicode"
 
 
-msgid "Bforartists Names"
-msgstr "Bforartistsjeva imena"
+msgid "Blender Names"
+msgstr "Blenderjeva imena"
 
 
 msgid "Convert Orientation"
@@ -47266,7 +47102,7 @@ msgstr "Imenski prostor"
 
 
 msgid "If set, add the given namespace as a prefix to exported custom property names. This only applies to property names that do not already have a prefix (e.g., it would apply to name 'bar' but not 'foo:bar') and does not apply to blender object and data names which are always exported in the 'userProperties:blender' namespace"
-msgstr "Če je to nastavljeno, pripne navedeni imenski prostor pred imena izvoženih lastnosti po meri. To velja zgolj za imena lastnosti, ki še nimajo predpone (na primer, velja za ime 'bar', vendar ne za ime 'foo:bar'), in ne velja za imena Bforartistsjevih objektov in podatkov, ki se vedno izvozijo v imenskem prostoru 'userProperties:blender'"
+msgstr "Če je to nastavljeno, pripne navedeni imenski prostor pred imena izvoženih lastnosti po meri. To velja zgolj za imena lastnosti, ki še nimajo predpone (na primer, velja za ime 'bar', vendar ne za ime 'foo:bar'), in ne velja za imena Blenderjevih objektov in podatkov, ki se vedno izvozijo v imenskem prostoru 'userProperties:blender'"
 
 
 msgid "Use Settings for"
@@ -48005,6 +47841,74 @@ msgid "Panel containing UI elements"
 msgstr "Plošča, ki vsebuje elemente uporabniškega vmesnika"
 
 
+msgid "Active Tool"
+msgstr "Aktivno orodje"
+
+
+msgid "View Lock"
+msgstr "Zaklep pogleda"
+
+
+msgid "Selectability & Visibility"
+msgstr "Izbirljivost in vidnost"
+
+
+msgid "Wireframe Color"
+msgstr "Barva žičnega modela"
+
+
+msgid "Shadow Settings"
+msgstr "Nastavitve senc"
+
+
+msgid "SSAO Settings"
+msgstr "Nastavitve SSAO"
+
+
+msgid "Cavity"
+msgstr "Relief"
+
+
+msgid "Render Pass"
+msgstr "Obhod upodabljanja"
+
+
+msgid "Compositor"
+msgstr "Stavitelj slik"
+
+
+msgid "Overlays"
+msgstr "Pomagala"
+
+
+msgid "Guides"
+msgstr "Vodnice"
+
+
+msgid "Viewer Node"
+msgstr "Predogledno vozlišče"
+
+
+msgid "Motion Tracking"
+msgstr "Obrisovanje gibanja"
+
+
+msgid "Mesh Edit Mode"
+msgstr "Mrežni urejevalni način"
+
+
+msgid "Measurement"
+msgstr "Meritev"
+
+
+msgid "Curve Edit Mode"
+msgstr "Krivuljni urejevalni način"
+
+
+msgid "Curves Edit Mode"
+msgstr "Urejevalni način za krivulje"
+
+
 msgid "Snapping"
 msgstr "Pritrjevanje"
 
@@ -48019,10 +47923,6 @@ msgstr "Postavitev poteze"
 
 msgid "Drawing Plane"
 msgstr "Risalna ravnina"
-
-
-msgid "Guides"
-msgstr "Vodnice"
 
 
 msgid "Grease Pencil Options"
@@ -48067,70 +47967,6 @@ msgstr "glTF"
 
 msgid "glTF Animations"
 msgstr "Animacije glTF"
-
-
-msgid "Active Tool"
-msgstr "Aktivno orodje"
-
-
-msgid "View Lock"
-msgstr "Zaklep pogleda"
-
-
-msgid "Selectability & Visibility"
-msgstr "Izbirljivost in vidnost"
-
-
-msgid "Wireframe Color"
-msgstr "Barva žičnega modela"
-
-
-msgid "Shadow Settings"
-msgstr "Nastavitve senc"
-
-
-msgid "SSAO Settings"
-msgstr "Nastavitve SSAO"
-
-
-msgid "Cavity"
-msgstr "Relief"
-
-
-msgid "Render Pass"
-msgstr "Obhod upodabljanja"
-
-
-msgid "Compositor"
-msgstr "Stavitelj slik"
-
-
-msgid "Overlays"
-msgstr "Pomagala"
-
-
-msgid "Viewer Node"
-msgstr "Predogledno vozlišče"
-
-
-msgid "Motion Tracking"
-msgstr "Obrisovanje gibanja"
-
-
-msgid "Mesh Edit Mode"
-msgstr "Mrežni urejevalni način"
-
-
-msgid "Measurement"
-msgstr "Meritev"
-
-
-msgid "Curve Edit Mode"
-msgstr "Krivuljni urejevalni način"
-
-
-msgid "Curves Edit Mode"
-msgstr "Urejevalni način za krivulje"
 
 
 msgid "Import Settings"
@@ -50625,8 +50461,8 @@ msgid "Texture Time Out"
 msgstr "Iztečni čas teksture"
 
 
-msgid "Suggested line thickness and point size in pixels, for add-ons displaying custom user interface elements, based on operating system settings and Bforartists UI scale"
-msgstr "Predlagana debelina črt in velikosti točk v pikslih za dodatke, ki prikazujejo prilagojene elemente uporabniškega vmesnika. Predlagane vrednosti temeljijo na nastavitvah operacijskega sistema in velikosti Bforartistsjevega uporabniškega vmesnika"
+msgid "Suggested line thickness and point size in pixels, for add-ons displaying custom user interface elements, based on operating system settings and Blender UI scale"
+msgstr "Predlagana debelina črt in velikosti točk v pikslih za dodatke, ki prikazujejo prilagojene elemente uporabniškega vmesnika. Predlagane vrednosti temeljijo na nastavitvah operacijskega sistema in velikosti Blenderjevega uporabniškega vmesnika"
 
 
 msgid "UI Scale"
@@ -50641,8 +50477,8 @@ msgid "Allow Online Access"
 msgstr "Omogoči dostop do spleta"
 
 
-msgid "Allow Bforartists to access the internet. Add-ons that follow this setting will only connect to the internet if enabled. However, Bforartists cannot prevent third-party add-ons from violating this rule."
-msgstr "Omogoči Bforartistsju, da dostopa do interneta. Dodatki, ki upoštevajo to nastavitev, se bodo na internet povezali samo, če je omogočena. Žal pa Bforartists dodatkom tretjih oseb ne more preprečiti, da prekršijo to pravilo."
+msgid "Allow Blender to access the internet. Add-ons that follow this setting will only connect to the internet if enabled. However, Blender cannot prevent third-party add-ons from violating this rule."
+msgstr "Omogoči Blenderju, da dostopa do interneta. Dodatki, ki upoštevajo to nastavitev, se bodo na internet povezali samo, če je omogočena. Žal pa Blender dodatkom tretjih oseb ne more preprečiti, da prekršijo to pravilo."
 
 
 msgid "Region Overlap"
@@ -52410,10 +52246,6 @@ msgid "Bake from Multires"
 msgstr "Zapeci iz več ločljivosti"
 
 
-msgid "User Scale"
-msgstr "Merilo uporabnika"
-
-
 msgid "Render Region"
 msgstr "Upodobi območje po meri"
 
@@ -52562,12 +52394,12 @@ msgid "Spring Type"
 msgstr "Tip vzmeti"
 
 
-msgid "Bforartists 2.7"
-msgstr "Bforartists 2.7"
+msgid "Blender 2.7"
+msgstr "Blender 2.7"
 
 
-msgid "Bforartists 2.8"
-msgstr "Bforartists 2.8"
+msgid "Blender 2.8"
+msgstr "Blender 2.8"
 
 
 msgid "Breakable"
@@ -53883,8 +53715,8 @@ msgid "Space Outliner"
 msgstr "Prostor pregleda vsebine"
 
 
-msgid "Bforartists File"
-msgstr "Datoteka Bforartistsja"
+msgid "Blender File"
+msgstr "Datoteka Blenderja"
 
 
 msgid "Data API"
@@ -55517,6 +55349,10 @@ msgid "Path Keyframe Before"
 msgstr "Pot ključnih okvirjev prej"
 
 
+msgid "Sub-channel"
+msgstr "Podkanal"
+
+
 msgid "Summary"
 msgstr "Povzetek"
 
@@ -55627,10 +55463,6 @@ msgstr "Tema informacij"
 
 msgid "Active Action"
 msgstr "Aktivna akcija"
-
-
-msgid "Sub-channel"
-msgstr "Podkanal"
 
 
 msgid "Meta Strips"
@@ -57571,8 +57403,8 @@ msgid "Unlocked: {:s}"
 msgstr "Odklenjeno: {:s}"
 
 
-msgid "Warning! Before unlocking, ensure another instance of Bforartists is not running."
-msgstr "Pozor! Preden odklenete, se prepričajte, da kje ne teče še kakšen primerek Bforartistsja."
+msgid "Warning! Before unlocking, ensure another instance of Blender is not running."
+msgstr "Pozor! Preden odklenete, se prepričajte, da kje ne teče še kakšen primerek Blenderja."
 
 
 msgid "Force unlocking may be necessary in the case of a crash or power failure,"
@@ -57716,8 +57548,8 @@ msgid "Error in manifest {:s}"
 msgstr "Napaka v manifestu {:s}"
 
 
-msgid "Online access required to install or update. Launch Bforartists without --offline-mode"
-msgstr "Za namestitev ali posodabljanje je potreben dostop do interneta. Bforartists zaženite brez zastavice --offline-mode"
+msgid "Online access required to install or update. Launch Blender without --offline-mode"
+msgstr "Za namestitev ali posodabljanje je potreben dostop do interneta. Blender zaženite brez zastavice --offline-mode"
 
 
 msgid "Online access required to install or update. Enable online access in System preferences"
@@ -57728,20 +57560,16 @@ msgid "Add-on \"{:s}\" is already installed!"
 msgstr "Dodatek \"{:s}\" je že nameščen!"
 
 
-msgid "Bforartists was launched in offline mode, which cannot be changed at runtime"
-msgstr "Bforartists je bil zagnan v načinu brez internetne povezave (offline), česar med delovanjem ni mogoče spremeniti"
+msgid "Blender was launched in offline mode, which cannot be changed at runtime"
+msgstr "Blender je bil zagnan v načinu brez internetne povezave (offline), česar med delovanjem ni mogoče spremeniti"
 
 
 msgid "Online access required to install or update."
 msgstr "Za namestitev ali posodabljanje je potreben dostop do interneta."
 
 
-msgid "Launch Bforartists without --offline-mode"
-msgstr "Bforartists zaženite brez zastavice --offline-mode"
-
-
-msgid "Please turn Online Access on in the System settings."
-msgstr "V nastavitvah \"Sistem\" vključite dostop do spleta."
+msgid "Launch Blender without --offline-mode"
+msgstr "Blender zaženite brez zastavice --offline-mode"
 
 
 msgid "Internet access is required to install extensions from the internet."
@@ -57806,8 +57634,8 @@ msgid "Missing Built-in Add-ons"
 msgstr "Pogrešani vgrajeni dodatki"
 
 
-msgid "Add-ons previously shipped with Bforartists are now available from extensions.blender.org."
-msgstr "Dodatki, ki so prej prišli z Bforartistsjem, so zdaj na voljo na extensions.blender.org."
+msgid "Add-ons previously shipped with Blender are now available from extensions.blender.org."
+msgstr "Dodatki, ki so prej prišli z Blenderjem, so zdaj na voljo na extensions.blender.org."
 
 
 msgid "Missing Add-ons"
@@ -57883,8 +57711,8 @@ msgid "Maintainer"
 msgstr "Vzdrževalec/ka"
 
 
-msgid "Bforartists's extension repository not found!"
-msgstr "Ne najdem Bforartistsjevega repozitorija razširitev!"
+msgid "Blender's extension repository not found!"
+msgstr "Ne najdem Blenderjevega repozitorija razširitev!"
 
 
 msgid ":"
@@ -57922,8 +57750,8 @@ msgid "Report a Bug"
 msgstr "Prijavi hrošča"
 
 
-msgid "Bforartists's extension repository must be enabled to install extensions!"
-msgstr "Za nameščanje razširitev morate omogočiti Bforartistsjev repozitorij razširitev!"
+msgid "Blender's extension repository must be enabled to install extensions!"
+msgstr "Za nameščanje razširitev morate omogočiti Blenderjev repozitorij razširitev!"
 
 
 msgctxt "Operator"
@@ -57967,8 +57795,8 @@ msgid "Uninstall Marked"
 msgstr "Odstrani označeno"
 
 
-msgid "Bforartists's extension repository must be refreshed!"
-msgstr "Bforartistsjev repozitorij razširitev je treba osvežiti!"
+msgid "Blender's extension repository must be refreshed!"
+msgstr "Blenderjev repozitorij razširitev je treba osvežiti!"
 
 
 msgid "No permissions specified"
@@ -58078,8 +57906,8 @@ msgid "Use GPU accelerated denoising if supported, for the best performance. Pre
 msgstr "Za najučinkovitejše izvajanje uporabite grafično pospešeno razšumljanje. Raje izberite OpenImageDenoise kot OptiX"
 
 
-msgid "Bforartists was compiled without a viewport denoiser"
-msgstr "Bforartists je bil zgrajen brez razšumnika 3D pogleda"
+msgid "Blender was compiled without a viewport denoiser"
+msgstr "Blender je bil zgrajen brez razšumnika 3D pogleda"
 
 
 msgid "No compatible GPUs found for Cycles"
@@ -58341,8 +58169,8 @@ msgid "Motion Capture (.bvh)"
 msgstr "Obris gibanja (.bvh)"
 
 
-msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Bforartists scene have the same frame rate"
-msgstr "V razdelku MOTION datoteke BVH ni navedenega trajanja v številu okvirjev, zato predvidevam, da imata BVH in scena v Bforartistsju enako hitrost predvajanja"
+msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
+msgstr "V razdelku MOTION datoteke BVH ni navedenega trajanja v številu okvirjev, zato predvidevam, da imata BVH in scena v Blenderju enako hitrost predvajanja"
 
 
 msgid "Unable to update scene frame rate, as the BVH file contains a zero frame duration in its MOTION section"
@@ -59011,8 +58839,8 @@ msgid "Installing keymap failed: {:s}"
 msgstr "Nameščanje bližnjic ni uspelo: {:s}"
 
 
-msgid "This script was written for Bforartists version {:d}.{:d}.{:d} and might not function (correctly), though it is enabled"
-msgstr "Ta program je bil napisan za Bforartists {:d}.{:d}.{:d} in morda ne bo deloval (pravilno). Kljub temu je omogočen"
+msgid "This script was written for Blender version {:d}.{:d}.{:d} and might not function (correctly), though it is enabled"
+msgstr "Ta program je bil napisan za Blender {:d}.{:d}.{:d} in morda ne bo deloval (pravilno). Kljub temu je omogočen"
 
 
 msgid "File already installed to {!r}"
@@ -59087,8 +58915,8 @@ msgid "Open..."
 msgstr "Odpri ..."
 
 
-msgid "Bforartists is free software"
-msgstr "Bforartists je prosto programje"
+msgid "Blender is free software"
+msgstr "Blender je prosto programje"
 
 
 msgid "Licensed under the GNU General Public License"
@@ -59146,13 +58974,13 @@ msgstr "Licenca"
 
 
 msgctxt "Operator"
-msgid "Bforartists Store"
-msgstr "Trgovina Bforartists Store"
+msgid "Blender Store"
+msgstr "Trgovina Blender Store"
 
 
 msgctxt "Operator"
-msgid "Bforartists Website"
-msgstr "Bforartistsjevo spletišče"
+msgid "Blender Website"
+msgstr "Blenderjevo spletišče"
 
 
 msgctxt "Operator"
@@ -59181,24 +59009,24 @@ msgid "Release Notes"
 msgstr "Opombe ob izdaji"
 
 
-msgid "Read about what's new in this version of Bforartists"
-msgstr "Preberite si, kaj je novega v tej različici Bforartistsja"
+msgid "Read about what's new in this version of Blender"
+msgstr "Preberite si, kaj je novega v tej različici Blenderja"
 
 
 msgid "User Manual"
 msgstr "Uporabniški priročnik"
 
 
-msgid "The reference manual for this version of Bforartists"
-msgstr "Priročnik za to različico Bforartistsja"
+msgid "The reference manual for this version of Blender"
+msgstr "Priročnik za to različico Blenderja"
 
 
 msgid "Python API Reference"
 msgstr "Napotilo za Python API"
 
 
-msgid "The API reference manual for this version of Bforartists"
-msgstr "Referenčni priročnik API-ja za to različico Bforartistsja"
+msgid "The API reference manual for this version of Blender"
+msgstr "Referenčni priročnik API-ja za to različico Blenderja"
 
 
 msgid "Development Fund"
@@ -59209,16 +59037,16 @@ msgid "The donation program to support maintenance and improvements"
 msgstr "Donacijski program, s katerim podpiramo vzdrževanje in nadgrajevanje"
 
 
-msgid "Bforartists's official web-site"
-msgstr "Bforartistsjevo uradno spletišče"
+msgid "Blender's official web-site"
+msgstr "Blenderjevo uradno spletišče"
 
 
 msgid "Credits"
 msgstr "Zasluge"
 
 
-msgid "Lists committers to Bforartists's source code"
-msgstr "Izpiše vse, ki so prispevali uveljavitve k Bforartistsjevi izvorni kodi"
+msgid "Lists committers to Blender's source code"
+msgstr "Izpiše vse, ki so prispevali uveljavitve k Blenderjevi izvorni kodi"
 
 
 msgid "Extensions Platform"
@@ -59354,8 +59182,8 @@ msgstr "Neveljavni regularni izraz (zamenjava): "
 
 
 msgctxt "Operator"
-msgid "Import Bforartists {:d}.{:d} Preferences"
-msgstr "Uvozi nastavitve Bforartistsja {:d}.{:d}"
+msgid "Import Blender {:d}.{:d} Preferences"
+msgstr "Uvozi nastavitve Blenderja {:d}.{:d}"
 
 
 msgid "Windowing Environment: {:s}"
@@ -59919,16 +59747,6 @@ msgstr "Obrni zaklepe vseh"
 
 
 msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Izbriši vse oblikovne ključe"
-
-
-msgctxt "Operator"
-msgid "Apply All Shape Keys"
-msgstr "Uveljavi vse oblikovne ključe"
-
-
-msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "Razvrsti po imenu"
 
@@ -59964,23 +59782,8 @@ msgstr "Izbriši vse skupine"
 
 
 msgctxt "Operator"
-msgid "New Shape from Mix"
-msgstr "Nova oblika iz mešanice"
-
-
-msgctxt "Operator"
-msgid "Mirror Shape Key (Topology)"
-msgstr "Prezrcali oblikovni ključ (topologija)"
-
-
-msgctxt "Operator"
-msgid "Move to Top"
-msgstr "Premakni na vrh"
-
-
-msgctxt "Operator"
-msgid "Move to Bottom"
-msgstr "Premakni na dno"
+msgid "Flip"
+msgstr "Obrni"
 
 
 msgid "Auto Normalize"
@@ -62015,8 +61818,18 @@ msgid "Volume Files"
 msgstr "Datoteke volumnov"
 
 
-msgid "Bforartists IDs"
-msgstr "ID-ji Bforartists"
+msgid "Blender IDs"
+msgstr "ID-ji Blender"
+
+
+msgctxt "Operator"
+msgid "Move to Top"
+msgstr "Premakni na vrh"
+
+
+msgctxt "Operator"
+msgid "Move to Bottom"
+msgstr "Premakni na dno"
 
 
 msgctxt "Operator"
@@ -62458,11 +62271,6 @@ msgstr "Vodoravni razcep"
 msgctxt "Operator"
 msgid "Vertical Split"
 msgstr "Navpični razcep"
-
-
-msgctxt "Operator"
-msgid "Toggle Fullscreen Area"
-msgstr "Preklopi celozaslonsko"
 
 
 msgctxt "Operator"
@@ -62969,6 +62777,11 @@ msgstr "Preliv zvoka"
 msgctxt "Operator"
 msgid "Change Keying Set..."
 msgstr "Zamenjaj množico ključev ..."
+
+
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "Izbriši ključne okvirje ..."
 
 
 msgctxt "Operator"
@@ -63791,8 +63604,8 @@ msgstr "Splošno"
 
 
 msgctxt "Operator"
-msgid "Load Factory Bforartists Settings"
-msgstr "Naloži tovarniške nastavitve za Bforartists"
+msgid "Load Factory Blender Settings"
+msgstr "Naloži tovarniške nastavitve za Blender"
 
 
 msgctxt "Operator"
@@ -63952,8 +63765,8 @@ msgid "Video Memory"
 msgstr "Video pomnilnik"
 
 
-msgid "Bforartists Version"
-msgstr "Različica Bforartistsja"
+msgid "Blender Version"
+msgstr "Različica Blenderja"
 
 
 msgid "Top Level"
@@ -64225,16 +64038,16 @@ msgstr "Shrani kot Studijsko luč"
 
 
 msgctxt "Operator"
-msgid "Load Factory Bforartists Preferences"
-msgstr "Naloži tovarniške nastavitve za Bforartists"
+msgid "Load Factory Blender Preferences"
+msgstr "Naloži tovarniške nastavitve za Blender"
 
 
 msgid "Cycles is disabled in this build"
 msgstr "V tej izgradnji je Cycles onemogočen"
 
 
-msgid "A restart of Bforartists is required"
-msgstr "Bforartists je treba ponovno zagnati"
+msgid "A restart of Blender is required"
+msgstr "Blender je treba ponovno zagnati"
 
 
 msgid "Current Vulkan backend limitations:"
@@ -64741,11 +64554,6 @@ msgstr "Mrežna ravnina"
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Naredi krajevno ..."
-
-
-msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Izbriši ključne okvirje ..."
 
 
 msgctxt "Operator"
@@ -65358,11 +65166,6 @@ msgstr "Močno"
 
 
 msgctxt "Operator"
-msgid "Flip"
-msgstr "Obrni"
-
-
-msgctxt "Operator"
 msgid "Set from Faces"
 msgstr "Nastavi iz lic"
 
@@ -65517,17 +65320,9 @@ msgid "Mesh Edit Mode Overlays"
 msgstr "Pomagala za urejanje mreže"
 
 
-msgid "Creases"
-msgstr "Pregibi"
-
-
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "Ostro"
-
-
-msgid "Seams"
-msgstr "Šivi"
 
 
 msgid "Vertex Group Weights"
@@ -66786,8 +66581,8 @@ msgid "Saving preferences failed"
 msgstr "Shranjevanje nastavitev ni uspelo"
 
 
-msgid "File written by newer Bforartists binary (%d.%d), expect loss of data!"
-msgstr "Datoteka je bila zapisana z novejšo različico Bforartistsja (%d.%d), pričakujte izgubo podatkov!"
+msgid "File written by newer Blender binary (%d.%d), expect loss of data!"
+msgstr "Datoteka je bila zapisana z novejšo različico Blenderja (%d.%d), pričakujte izgubo podatkov!"
 
 
 msgid "File could not be read, critical data corruption detected"
@@ -66856,10 +66651,6 @@ msgstr "cache_files"
 
 msgid "cameras"
 msgstr "kamere"
-
-
-msgid "Can't initialize cloth"
-msgstr "Ne morem inicializirati tkanine"
 
 
 msgid "Null cloth object"
@@ -67005,10 +66796,6 @@ msgid "GP_Layer"
 msgstr "GP_Plast"
 
 
-msgid "grease_pencils"
-msgstr "grease_pencils"
-
-
 msgid "grease_pencils_v3"
 msgstr "grease_pencils_v3"
 
@@ -67151,10 +66938,6 @@ msgstr "Pretvorba ni podprta"
 
 msgid "Links can only go into a zone but not out"
 msgstr "Povezave lahko vodijo samo v območje, ne iz njega"
-
-
-msgid "Can't find object data of %s lib %s"
-msgstr "Ne najdem podatkov objeta %s iz knj. %s"
 
 
 msgid "Object %s lost data"
@@ -67362,8 +67145,8 @@ msgid "At least 8 common tracks on both keyframes are needed for reconstruction"
 msgstr "Za rekonstrukcijo potrebujem vsaj 8 obrisov, ki so skupni obema ključnima okvirjema"
 
 
-msgid "Bforartists is compiled without motion tracking library"
-msgstr "Ta izgradnja Bforartistsja ne vsebuje knjižnice za obrisovanje gibanja"
+msgid "Blender is compiled without motion tracking library"
+msgstr "Ta izgradnja Blenderja ne vsebuje knjižnice za obrisovanje gibanja"
 
 
 msgid "Original Mode"
@@ -67743,7 +67526,7 @@ msgstr "Ne morem prebrati Blenderjeve datoteke '%s', ker podatke v glavi niso po
 
 
 msgid "Failed to read file '%s', not a blend file"
-msgstr "Datoteke '%s' ni bilo mogoče prebrati, ker ni Bforartistsjeva datoteka"
+msgstr "Datoteke '%s' ni bilo mogoče prebrati, ker ni Blenderjeva datoteka"
 
 
 msgid "Unable to read '%s': %s"
@@ -67916,10 +67699,6 @@ msgstr "Optimiziram senčilnike (še {})"
 
 msgid "Error: Too many lights in the scene."
 msgstr "Napaka: na sceni je preveč luči."
-
-
-msgid "Bake Lighting"
-msgstr "Zapeci osvetlitev"
 
 
 msgid "Warning: Could not allocate light probes volume pool of {} MB, using {} MB instead."
@@ -68864,10 +68643,6 @@ msgid "G"
 msgstr "G"
 
 
-msgid "StudioLight Icon"
-msgstr "Ikona studijske luči"
-
-
 msgid "OS"
 msgstr "OS"
 
@@ -69448,19 +69223,15 @@ msgstr "Pokaži v urejevalniku infomacij"
 
 
 msgid ""
-"File saved by newer Bforartists\n"
+"File saved by newer Blender\n"
 "({}), expect loss of data"
 msgstr ""
-"Datoteka je bila shranjena z novejšim Bforartistsjem\n"
+"Datoteka je bila shranjena z novejšim Blenderjem\n"
 "({}), pričakujte izgubo podatkov"
 
 
-msgid "This file is managed by the Bforartists asset system and cannot be overridden"
-msgstr "Za to datoteko skrbi Bforartistsjev sistem sredstev, zato je ni mogoče povoziti"
-
-
-msgid "Can't edit external library data"
-msgstr "Ni mogoče urejati zunanjih knjižničnih podatkov"
+msgid "This file is managed by the Blender asset system and cannot be overridden"
+msgstr "Za to datoteko skrbi Blenderjev sistem sredstev, zato je ni mogoče povoziti"
 
 
 msgid "Samples Transform"
@@ -69560,8 +69331,8 @@ msgid "No filename given"
 msgstr "Ime datoteke ni podano"
 
 
-msgid "Bforartists Data"
-msgstr "Bforartistsjevi podatki"
+msgid "Blender Data"
+msgstr "Blenderjevi podatki"
 
 
 msgid "File References"
@@ -69653,6 +69424,10 @@ msgid "Miter Profile Shape"
 msgstr "Oblika profila širokega spoja"
 
 
+msgid "Seams"
+msgstr "Šivi"
+
+
 msgid "Intersection Type"
 msgstr "Tip presečišča"
 
@@ -69711,10 +69486,6 @@ msgstr "Omejitev kota"
 
 msgid "Extract"
 msgstr "Izloči"
-
-
-msgid "Rip failed"
-msgstr "Razparanje ni uspelo"
 
 
 msgid "No face selected"
@@ -69966,22 +69737,6 @@ msgid "LineArt"
 msgstr "LineArt"
 
 
-msgid "Multires Bake"
-msgstr "Peka večloč."
-
-
-msgid "Texture Bake"
-msgstr "Peka tekstur"
-
-
-msgid "Calculate Simulation"
-msgstr "Poračunaj simulacijo"
-
-
-msgid "Bake Nodes"
-msgstr "Zapeci vozlišča"
-
-
 msgid "Remove exporter?"
 msgstr "Naj odstranim izvoznika?"
 
@@ -70070,10 +69825,6 @@ msgid "Applied modifier: %s"
 msgstr "Uveljavljen modifikator: %s"
 
 
-msgid "Ocean Simulation"
-msgstr "Simulacija morja"
-
-
 msgid "Reshape can work only with higher levels of subdivisions"
 msgstr "Preoblikovanje deluje le z višjimi nivoji delitev"
 
@@ -70134,24 +69885,12 @@ msgid "The node group must have a geometry output socket"
 msgstr "Skupina vozlišč mora imeti vtičnico z geometrijskim izhodom"
 
 
-msgid "QuadriFlow Remesh"
-msgstr "Premreži s QuadriFlow"
-
-
 msgid "Select Collection"
 msgstr "Izberi zbirko"
 
 
 msgid "Object has no vertex groups"
 msgstr "Objekt nima skupin oglišč"
-
-
-msgid "Dynamic Paint Bake"
-msgstr "Peka dinamičnega barvanja"
-
-
-msgid "Fluid Free"
-msgstr "Sprostitev kapljevine"
 
 
 msgid "Acrylic"
@@ -70358,26 +70097,6 @@ msgid "Time:"
 msgstr "Čas:"
 
 
-msgid "Render..."
-msgstr "Upodobi ..."
-
-
-msgid "Viewport Render"
-msgstr "Upodobi 3D pogled"
-
-
-msgid "Load Previews"
-msgstr "Naloži predoglede"
-
-
-msgid "Icon Preview"
-msgstr "Predogled ikon"
-
-
-msgid "Shader Preview"
-msgstr "Predogled senčilnikov"
-
-
 msgid "Blender Render"
 msgstr "Upodabljalnik Blender"
 
@@ -70400,10 +70119,6 @@ msgstr "Povrni območja"
 
 msgid "Maximize Area"
 msgstr "Maksimiraj območje"
-
-
-msgid "Full Screen Area"
-msgstr "Celozaslonsko območje"
 
 
 msgid "Show Header"
@@ -70509,10 +70224,6 @@ msgstr "Dinamični učinki"
 
 msgid "Trace"
 msgstr "Sled"
-
-
-msgid "Trace Image"
-msgstr "Preriši sliko"
 
 
 msgid "PaintCurve"
@@ -70711,10 +70422,6 @@ msgid "File: %s"
 msgstr "Datoteka: %s"
 
 
-msgid "Prefetching"
-msgstr "Vnaprej prevzemam"
-
-
 msgid "Delete track corresponding to the selected curve?"
 msgstr "Naj izbrišem stezo, ki ustreza izbrani krivulji?"
 
@@ -70737,14 +70444,6 @@ msgstr "Na izbrišem izbrane obrise?"
 
 msgid "Need at least 4 selected point tracks to create a plane"
 msgstr "Ravnino lahko ustvarim le, če izberete 4 točkovne obrise"
-
-
-msgid "Solve Camera"
-msgstr "Reši kamero"
-
-
-msgid "Track Markers"
-msgstr "Obriši oznake"
 
 
 msgid "New Catalog"
@@ -71044,10 +70743,6 @@ msgid "Select View"
 msgstr "Izberi pogled"
 
 
-msgid "Can't Load Image"
-msgstr "Ni mogoče naložiti slike"
-
-
 msgid "%d × %d, "
 msgstr "%d × %d, "
 
@@ -71118,10 +70813,6 @@ msgstr "%d slik bo shranjenih v %s"
 
 msgid "Saved %s"
 msgstr "Shranjevanje %s uspelo"
-
-
-msgid "can't save image while rendering"
-msgstr "med upodabljanjem ne morem shraniti slike"
 
 
 msgid "No images available"
@@ -71580,14 +71271,6 @@ msgid "MetaStrip"
 msgstr "MetaTrak"
 
 
-msgid "Can't overwrite export file"
-msgstr "Ne morem prepisati izvozne datoteke"
-
-
-msgid "Strip Previews"
-msgstr "Predogledi trakov"
-
-
 msgid "Cannot create transition"
 msgstr "Ne morem ustvariti prehoda"
 
@@ -71662,8 +71345,8 @@ msgid "Jump to Line Number"
 msgstr "Skoči na vrstico"
 
 
-msgid "File Modified Outside and Inside Bforartists"
-msgstr "Datoteka spremenjena v Bforartistsju in drugje"
+msgid "File Modified Outside and Inside Blender"
+msgstr "Datoteka spremenjena v Blenderju in drugje"
 
 
 msgid "Reload from disk (ignore local changes)"
@@ -71678,16 +71361,16 @@ msgid "Make text internal (separate copy)"
 msgstr "Spravi besedilo v projekt (ločena kopija)"
 
 
-msgid "File Modified Outside Bforartists"
-msgstr "Datoteka spremenjena zunaj Bforartistsja"
+msgid "File Modified Outside Blender"
+msgstr "Datoteka spremenjena zunaj Blenderja"
 
 
 msgid "Reload from disk"
 msgstr "Ponovno pridobi z diska"
 
 
-msgid "File Deleted Outside Bforartists"
-msgstr "Datoteka izbrisana zunaj Bforartistsja"
+msgid "File Deleted Outside Blender"
+msgstr "Datoteka izbrisana zunaj Blenderja"
 
 
 msgid "Make text internal"
@@ -72226,6 +71909,10 @@ msgid "UV Vertex"
 msgstr "Oglišče UV"
 
 
+msgid "Rip failed"
+msgstr "Razparanje ni uspelo"
+
+
 msgid "Switch Island"
 msgstr "Zamenjaj otok"
 
@@ -72240,14 +71927,6 @@ msgstr "Zapakiraj otoke"
 
 msgid "Smart UV Project"
 msgstr "Pametna projekcija UV"
-
-
-msgid "USD Export"
-msgstr "Izvoz USD"
-
-
-msgid "USD Import"
-msgstr "Uvoz USD"
 
 
 msgid "This slot does not belong to this Action"
@@ -73453,10 +73132,6 @@ msgid "Unknown"
 msgstr "Neznano"
 
 
-msgid "Type \"{}\" can't be formatted"
-msgstr "Tipa \"{}\" ni mogoče oblikovati"
-
-
 msgid "Hash"
 msgstr "Zgostitev"
 
@@ -73783,6 +73458,10 @@ msgid "Hit Distance"
 msgstr "Razdalja do trka"
 
 
+msgid "Pattern Mode"
+msgstr "Način primerjave"
+
+
 msgctxt "NodeTree"
 msgid "Repeat"
 msgstr "Ponavljaj"
@@ -73790,6 +73469,10 @@ msgstr "Ponavljaj"
 
 msgid "Iteration"
 msgstr "Iteracija"
+
+
+msgid "Scale Mode"
+msgstr "Način skaliranja"
 
 
 msgid "Grid 1"
@@ -74179,10 +73862,6 @@ msgid "iScale"
 msgstr "iVelikost"
 
 
-msgid "Strip Thumbnails"
-msgstr "Sličice trakov"
-
-
 msgid "Channel %d"
 msgstr "Kanal %d"
 
@@ -74370,8 +74049,8 @@ msgstr "Vaša grafična kartica ali različica sistema macOS nista podprti"
 
 
 msgctxt "WindowManager"
-msgid "Upgrading to the latest macOS version may improve Bforartists support"
-msgstr "Posodobitev na najnovejšo različico sistema macOS bo morda nudila boljšo podporo za Bforartists"
+msgid "Upgrading to the latest macOS version may improve Blender support"
+msgstr "Posodobitev na najnovejšo različico sistema macOS bo morda nudila boljšo podporo za Blender"
 
 
 msgid "Intel binary detected. Expect reduced performance."
@@ -74767,8 +74446,8 @@ msgid "Stroke and Fill"
 msgstr "Poteza in polnilo"
 
 
-msgid "Bforartists 27x"
-msgstr "Bforartists 27x"
+msgid "Blender 27x"
+msgstr "Blender 27x"
 
 
 msgid "Industry Compatible"
@@ -74967,8 +74646,8 @@ msgid "Import-Export BVH from armature objects"
 msgstr "Uvoz-izvoz BVH iz skeletnih objektov"
 
 
-msgid "Bforartists Extensions"
-msgstr "Razširitve Bforartists"
+msgid "Blender Extensions"
+msgstr "Razširitve Blender"
 
 
 msgid "Extension repository support for remote repositories"
@@ -75019,8 +74698,8 @@ msgid "Manage UI translations"
 msgstr "Upravljanje prevodov uporabniškega vmesnika"
 
 
-msgid "Allows managing UI translations directly from Bforartists (update main .po files, update scripts' translations, etc.)"
-msgstr "Omogoča upravljanje s prevodi uporabniškega vmesnika neposredno v Bforartistsju (posodabljanje glavnih datotek .po, posodabljanje prevodov programov itd.)"
+msgid "Allows managing UI translations directly from Blender (update main .po files, update scripts' translations, etc.)"
+msgstr "Omogoča upravljanje s prevodi uporabniškega vmesnika neposredno v Blenderju (posodabljanje glavnih datotek .po, posodabljanje prevodov programov itd.)"
 
 
 msgid "Various tools to enhance and speed up node-based workflow"

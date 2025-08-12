@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:30+0000\n"
 "Last-Translator: Lee YeonJoo <yzoo2@naver.com>\n"
 "Language-Team: Korean <https://translate.blender.org/projects/blender-ui/ui/ko/>\n"
@@ -533,7 +533,7 @@ msgid "Source Root"
 msgstr "소스 루트"
 
 
-msgid "The Bforartists source root path"
+msgid "The Blender source root path"
 msgstr "블렌더 소스 루트 경로"
 
 
@@ -557,7 +557,7 @@ msgid "Persistent Data Path"
 msgstr "지속적인 데이터 경로"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
 msgstr "이러한 설정을 저장하는 json 파일의 이름 (불행히도 블렌더 시스템은 여기서 작동하지 않습니다)"
 
 
@@ -2314,11 +2314,11 @@ msgid "ID Type"
 msgstr "ID 유형"
 
 
-msgid "Bforartists RNA"
+msgid "Blender RNA"
 msgstr "블렌더 RNA"
 
 
-msgid "Bforartists RNA structure definitions"
+msgid "Blender RNA structure definitions"
 msgstr "블렌더 RNA 구조 정의"
 
 
@@ -3010,10 +3010,6 @@ msgid "Radius of head of bone (for Envelope deform only)"
 msgstr "본 헤드의 반경 (엔벨로프 변형에 한함)"
 
 
-msgid "Bone is not visible when it is not in Edit Mode (i.e. in Object or Pose Modes)"
-msgstr "에디트 모드가 아니면 본이 보이지 않습니다. (즉, 오브젝트 또는 포즈 모드에서 보이지 않음)"
-
-
 msgid "Selectable"
 msgstr "선택 가능"
 
@@ -3128,10 +3124,6 @@ msgstr "본에 부모가 있을 때, 본의 머리는 부모의 꼬리에 붙어
 
 msgid "Cyclic Offset"
 msgstr "사이클 오프셋"
-
-
-msgid "When bone doesn't have a parent, it receives cyclic offset effects (Deprecated)"
-msgstr "본에 부모가 없으면 순환 오프셋 효과를받습니다 (더 이상 사용되지 않음)"
 
 
 msgid "Deform"
@@ -5016,14 +5008,6 @@ msgid "Collection of Color Ramp Elements"
 msgstr "컬러 램프 요소의 컬렉션"
 
 
-msgid "File Output Slots"
-msgstr "파일 출력 슬롯"
-
-
-msgid "Collection of File Output node slots"
-msgstr "파일 출력 노드 슬롯의 컬렉션"
-
-
 msgid "Console Input"
 msgstr "콘솔 입력"
 
@@ -5069,7 +5053,7 @@ msgid "Lin error"
 msgstr "린 오류"
 
 
-msgid "Amount of residual error in Bforartists space unit for constraints that work on position"
+msgid "Amount of residual error in Blender space unit for constraints that work on position"
 msgstr "위치에서 작동하는 제약들에 대해 블렌더 공간 단위의 예측 오차의 양"
 
 
@@ -8358,7 +8342,7 @@ msgid "Max Velocity"
 msgstr "최대 속도"
 
 
-msgid "Velocity considered as maximum influence (Bforartists units per frame)"
+msgid "Velocity considered as maximum influence (Blender units per frame)"
 msgstr "최대의 영향으로 간주된 속도 (프레임 당 블렌더 단위)"
 
 
@@ -8702,7 +8686,7 @@ msgid "Premultiply Alpha"
 msgstr "사전 곱셈 알파"
 
 
-msgid "Multiply color by alpha (recommended for Bforartists input)"
+msgid "Multiply color by alpha (recommended for Blender input)"
 msgstr "알파로 컬러를 곱하기(블렌더 입력을 권장)"
 
 
@@ -9040,10 +9024,6 @@ msgstr "변형 및 컬러 속성에는 축 컬러를 사용하고 나머지에�
 
 msgid "Auto WXYZ to YRGB"
 msgstr "자동 WXYZ를 YRGB로"
-
-
-msgid "Use axis colors for XYZ parts of transform, and yellow for the 'W' channel"
-msgstr "변환의 XYZ 부분에는 축 컬러를 사용하고 'W'채널에는 노란색을 사용"
 
 
 msgid "User Defined"
@@ -10596,7 +10576,7 @@ msgid "Enable filtering of files"
 msgstr "파일의 필터링을 사용"
 
 
-msgid "Filter Bforartists Backup Files"
+msgid "Filter Blender Backup Files"
 msgstr "블렌더 백업 파일을 필터"
 
 
@@ -10604,7 +10584,7 @@ msgid "Show .blend1, .blend2, etc. files"
 msgstr ".blend1 .blend2 등 파일을 표시"
 
 
-msgid "Filter Bforartists"
+msgid "Filter Blender"
 msgstr "블렌더를 필터"
 
 
@@ -10612,8 +10592,8 @@ msgid "Show .blend files"
 msgstr ".blend 파일을 표시"
 
 
-msgid "Filter Bforartists IDs"
-msgstr "Bforartists ID를 필터"
+msgid "Filter Blender IDs"
+msgstr "Blender ID를 필터"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
@@ -11710,6 +11690,10 @@ msgstr "소켓 유형"
 
 msgid "Menu"
 msgstr "메뉴"
+
+
+msgid "Shader"
+msgstr "셰이더"
 
 
 msgid "Collection"
@@ -13611,7 +13595,7 @@ msgid "Unprojected Radius"
 msgstr "투사되지 않은 반경"
 
 
-msgid "Radius of brush in Bforartists units"
+msgid "Radius of brush in Blender units"
 msgstr "블렌더 단위 브러시의 반경"
 
 
@@ -14711,10 +14695,6 @@ msgid "Textbox Overflow"
 msgstr "텍스트박스 오버플로"
 
 
-msgid "Handle the text behavior when it doesn't fit in the text boxes"
-msgstr "텍스트 동작이 텍스트 박스에 맞지 않으면 처리합니다"
-
-
 msgid "Overflow"
 msgstr "오버플로우"
 
@@ -15499,48 +15479,20 @@ msgid "Format used for re-saving this file"
 msgstr "이 파일을 재저장하기 위해 사용하는 형식"
 
 
-msgid "Output image in bitmap format"
-msgstr "비트맵 형식으로 이미지 출력"
+msgid "Output image in JPEG format"
+msgstr "JPEG 형식으로 이미지 출력"
 
 
-msgid "Iris"
-msgstr "Iris"
+msgid "Output image in OpenEXR format"
+msgstr "OpenEXR 포맷으로 이미지 출력"
 
 
 msgid "Output image in PNG format"
 msgstr "PNG 형식으로 이미지 출력"
 
 
-msgid "Output image in JPEG format"
-msgstr "JPEG 형식으로 이미지 출력"
-
-
-msgid "JPEG 2000"
-msgstr "JPEG 2000"
-
-
-msgid "Output image in JPEG 2000 format"
-msgstr "JPEG 2000 형식의 이미지를 출력"
-
-
-msgid "Targa"
-msgstr "Targa"
-
-
-msgid "Output image in Targa format"
-msgstr "Targa 형식으로 이미지 출력"
-
-
-msgid "Targa Raw"
-msgstr "Targa Raw"
-
-
-msgid "Output image in uncompressed Targa format"
-msgstr "압축 해제된 Targa 형식에서 이미지 출력"
-
-
-msgid "Cineon"
-msgstr "Cineon"
+msgid "Output image in bitmap format"
+msgstr "비트맵 형식으로 이미지 출력"
 
 
 msgid "Output image in Cineon format"
@@ -15551,24 +15503,24 @@ msgid "Output image in DPX format"
 msgstr "DPX 형식으로 이미지 출력"
 
 
-msgid "Output image in OpenEXR format"
-msgstr "OpenEXR 포맷으로 이미지 출력"
-
-
-msgid "Radiance HDR"
-msgstr "Radiance HDR"
+msgid "Output image in JPEG 2000 format"
+msgstr "JPEG 2000 형식의 이미지를 출력"
 
 
 msgid "Output image in Radiance HDR format"
 msgstr "Radiance HDR 형식으로 이미지 출력"
 
 
+msgid "Output image in Targa format"
+msgstr "Targa 형식으로 이미지 출력"
+
+
+msgid "Output image in uncompressed Targa format"
+msgstr "압축 해제된 Targa 형식에서 이미지 출력"
+
+
 msgid "Output image in TIFF format"
 msgstr "TIFF 형식으로 이미지 출력"
-
-
-msgid "OpenEXR MultiLayer"
-msgstr "OpenEXR 멀티레이어"
 
 
 msgid "Output image in multilayer OpenEXR format"
@@ -15895,7 +15847,7 @@ msgid "Path to the library .blend file"
 msgstr "라이브러리 .blend 파일의 경로"
 
 
-msgid "Version of Bforartists the library .blend was saved with"
+msgid "Version of Blender the library .blend was saved with"
 msgstr "블렌더의 버전 라이브러리 .blend는 다음과 함께 저장"
 
 
@@ -16843,10 +16795,6 @@ msgstr "매트"
 
 msgid "Script"
 msgstr "스크립트"
-
-
-msgid "Shader"
-msgstr "셰이더"
 
 
 msgid "Pattern"
@@ -19393,11 +19341,11 @@ msgid "Noise basis used for turbulence"
 msgstr "난기류에 사용되는 노이즈 기반"
 
 
-msgid "Bforartists Original"
+msgid "Blender Original"
 msgstr "블렌더 원본"
 
 
-msgid "Noise algorithm - Bforartists original: Smooth interpolated noise"
+msgid "Noise algorithm - Blender original: Smooth interpolated noise"
 msgstr "노이즈 알고리즘 - 블렌더 오리지널: 스무스 보간된 노이즈"
 
 
@@ -20893,10 +20841,6 @@ msgid "Identifier of operator to call on input event"
 msgstr "입력 이벤트에 호출하는 작업자의 식별자"
 
 
-msgid "Is this keymap item user defined (doesn't just replace a builtin item)"
-msgstr "이 키맵 항목 커스텀됨 (기본 항목을 대체하지 않습니다)"
-
-
 msgid "User Modified"
 msgstr "사용자 수정됨"
 
@@ -21944,10 +21888,6 @@ msgstr "클릭"
 
 msgid "Double Click"
 msgstr "더블 클릭"
-
-
-msgid "Click Drag"
-msgstr "클릭 드레그"
 
 
 msgid "KeyMap Items"
@@ -23749,6 +23689,50 @@ msgid "Material slot name"
 msgstr "매테리얼 슬롯 이름"
 
 
+msgid "Pivot Point"
+msgstr "피벗 포인트"
+
+
+msgid "Snap"
+msgstr "스냅"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "비례 편집 감소"
+
+
+msgid "Mask Edit"
+msgstr "마스크 편집"
+
+
+msgid "Mirror"
+msgstr "미러"
+
+
+msgid "UV Mapping"
+msgstr "UV 맵핑"
+
+
+msgid "Local View"
+msgstr "로컬 뷰"
+
+
+msgid "Viewpoint"
+msgstr "뷰포트"
+
+
+msgid "Navigation"
+msgstr "네비게이션"
+
+
+msgid "Align View"
+msgstr "뷰를 정렬"
+
+
+msgid "Align View to Active"
+msgstr "뷰를 활성에 정렬"
+
+
 msgid "View Regions"
 msgstr "뷰 지역"
 
@@ -23899,50 +23883,6 @@ msgstr "텍스트"
 
 msgid "Bone Roll"
 msgstr "본 롤"
-
-
-msgid "Pivot Point"
-msgstr "피벗 포인트"
-
-
-msgid "Snap"
-msgstr "스냅"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "비례 편집 감소"
-
-
-msgid "Mask Edit"
-msgstr "마스크 편집"
-
-
-msgid "Mirror"
-msgstr "미러"
-
-
-msgid "UV Mapping"
-msgstr "UV 맵핑"
-
-
-msgid "Local View"
-msgstr "로컬 뷰"
-
-
-msgid "Viewpoint"
-msgstr "뷰포트"
-
-
-msgid "Navigation"
-msgstr "네비게이션"
-
-
-msgid "Align View"
-msgstr "뷰를 정렬"
-
-
-msgid "Align View to Active"
-msgstr "뷰를 활성에 정렬"
 
 
 msgid "Basic"
@@ -30764,30 +30704,6 @@ msgid "File Output"
 msgstr "파일 출력"
 
 
-msgid "Active Input Index"
-msgstr "활성 입력 인덱스"
-
-
-msgid "Active input index in details view list"
-msgstr "세부 사항 보기 목록에서 활성 인덱스 입력"
-
-
-msgid "Base Path"
-msgstr "베이스 경로"
-
-
-msgid "Base output path for the image"
-msgstr "이미지에 대한 베이스 출력 경로"
-
-
-msgid "File Slots"
-msgstr "파일 Slots"
-
-
-msgid "EXR Layer Slots"
-msgstr "EXR 레이어 슬롯"
-
-
 msgid "Apply render part of display transform when saving byte image"
 msgstr "바이트 이미지를 저장할 때 표시 변환의 렌더 일부를 적용"
 
@@ -30822,10 +30738,6 @@ msgstr "더 큰"
 
 msgid "Rotate"
 msgstr "회전"
-
-
-msgid "Method to use to filter rotation"
-msgstr "회전을 필터하는 데 사용하는 메서드"
 
 
 msgid "Coordinate space to scale relative to"
@@ -30984,10 +30896,6 @@ msgid "Only Faces"
 msgstr "페이스 만"
 
 
-msgid "Triangles"
-msgstr "삼각형"
-
-
 msgid "Primary"
 msgstr "기본"
 
@@ -31016,12 +30924,12 @@ msgid "Fill Type"
 msgstr "채우기 유형"
 
 
+msgid "Triangles"
+msgstr "삼각형"
+
+
 msgid "Object Info"
 msgstr "오브젝트 정보"
-
-
-msgid "Z Up"
-msgstr "Z 위쪽"
 
 
 msgid "Tangent Space"
@@ -31038,14 +30946,6 @@ msgstr "선택"
 
 msgid "Pack UV Islands"
 msgstr "UV 아일랜드를 포장"
-
-
-msgid "Angle Based"
-msgstr "각도 베이스"
-
-
-msgid "Conformal"
-msgstr "컨포멀"
 
 
 msgid "Warning"
@@ -31473,19 +31373,19 @@ msgid "World space normal mapping"
 msgstr "월드 공간 노멀 맵핑"
 
 
-msgid "Bforartists Object Space"
+msgid "Blender Object Space"
 msgstr "블렌더 오브젝트 공간"
 
 
-msgid "Object space normal mapping, compatible with Bforartists render baking"
+msgid "Object space normal mapping, compatible with Blender render baking"
 msgstr "오브젝트 공간 노멀 매핑, 블렌더 렌더 배이킹과 호환"
 
 
-msgid "Bforartists World Space"
+msgid "Blender World Space"
 msgstr "블렌더 월드 공간"
 
 
-msgid "World space normal mapping, compatible with Bforartists render baking"
+msgid "World space normal mapping, compatible with Blender render baking"
 msgstr "월드 공간 노멀 매핑, 블렌더 렌더 배이킹과 호환"
 
 
@@ -32091,30 +31991,6 @@ msgstr "노드 연결"
 
 msgid "Collection of Node Links"
 msgstr "노드 연결의 컬렉션"
-
-
-msgid "Output File Slot"
-msgstr "파일 슬롯 출력"
-
-
-msgid "Single layer file slot of the file output node"
-msgstr "파일 출력 노드의 싱글 레이어 파일 슬롯"
-
-
-msgid "Subpath used for this slot"
-msgstr "이 슬롯에 사용되는 하위 경로"
-
-
-msgid "Output File Layer Slot"
-msgstr "파일 레이어 슬롯 출력"
-
-
-msgid "Multilayer slot of the file output node"
-msgstr "파일 출력 노드의 멀티레이어 슬롯"
-
-
-msgid "OpenEXR layer name used for this slot"
-msgstr "OpenEXR 계층 이름이 슬롯에 사용"
 
 
 msgid "Node Outputs"
@@ -33102,7 +32978,7 @@ msgid "Uninstall Studio Light"
 msgstr "스튜디오 라이트를 제거"
 
 
-msgid "Load and apply a Bforartists XML theme file"
+msgid "Load and apply a Blender XML theme file"
 msgstr "블렌더 XML 테마 파일을 불러오기 및 적용"
 
 
@@ -33822,10 +33698,6 @@ msgstr "종료 부분의 직선 경사가 종료 포인트 키 프레임을 지�
 
 msgid "Make Cyclic (F-Modifier)"
 msgstr "사이클을 만들기 (F-모디파이어)"
-
-
-msgid "Add Cycles F-Modifier if one doesn't exist already"
-msgstr "아직 존재하지 않는 경우 Cycles F-모디파이어를 추가합니다"
 
 
 msgid "Clear Cyclic (F-Modifier)"
@@ -37490,7 +37362,7 @@ msgid "Apply Scalings"
 msgstr "축적 조정을 적용"
 
 
-msgid "How to apply custom and units scalings in generated FBX file (Bforartists uses FBX scale to detect units on import, but many other applications do not handle the same way)"
+msgid "How to apply custom and units scalings in generated FBX file (Blender uses FBX scale to detect units on import, but many other applications do not handle the same way)"
 msgstr "생성된 FBX 파일에 커스텀 및 단위 축적 조정을 적용하는 방법 (블렌더는 FBX 축적을 사용하여 가져올 때 단위를 감지하지만 다른 많은 응용 프로그램은 동일한 방식으로 처리하지 않습니다)"
 
 
@@ -37530,8 +37402,8 @@ msgid "Apply Unit"
 msgstr "단위를 적용"
 
 
-msgid "Take into account current Bforartists units settings (if unset, raw Bforartists Units values are used as-is)"
-msgstr "현재 Bforartists 단위 설정을 고려하십시오 (설정되지 않은 경우 Bforartists Units 값이 그대로 사용)"
+msgid "Take into account current Blender units settings (if unset, raw Blender Units values are used as-is)"
+msgstr "현재 Blender 단위 설정을 고려하십시오 (설정되지 않은 경우 Blender Units 값이 그대로 사용)"
 
 
 msgid "Armature FBXNode Type"
@@ -37542,8 +37414,8 @@ msgid "Null"
 msgstr "Null"
 
 
-msgid "'Null' FBX node, similar to Bforartists's Empty (default)"
-msgstr "'Null' FBX 노드, Bforartists의 엠프티 (기본값)와 비슷합니다"
+msgid "'Null' FBX node, similar to Blender's Empty (default)"
+msgstr "'Null' FBX 노드, Blender의 엠프티 (기본값)와 비슷합니다"
 
 
 msgid "'Root' FBX node, supposed to be the root of chains of bones..."
@@ -37588,6 +37460,10 @@ msgstr "X 위쪽"
 
 msgid "Y Up"
 msgstr "Y 위쪽"
+
+
+msgid "Z Up"
+msgstr "Z 위쪽"
 
 
 msgid "-X Up"
@@ -37822,8 +37698,8 @@ msgid "Use Modifiers Render Setting"
 msgstr "모디파이어 렌더 설정을 사용"
 
 
-msgid "Use render settings when applying modifiers to mesh objects (DISABLED in Bforartists 2.8)"
-msgstr "메쉬 오브젝트에 모디파이어를 적용 할 때 렌더 설정을 사용 (Bforartists 2.8에서는 DISABLED)"
+msgid "Use render settings when applying modifiers to mesh objects (DISABLED in Blender 2.8)"
+msgstr "메쉬 오브젝트에 모디파이어를 적용 할 때 렌더 설정을 사용 (Blender 2.8에서는 DISABLED)"
 
 
 msgid "Use Metadata"
@@ -38018,7 +37894,7 @@ msgid "Remember Export Settings"
 msgstr "내보내기 설정 저장"
 
 
-msgid "Store glTF export settings in the Bforartists project"
+msgid "Store glTF export settings in the Blender project"
 msgstr "블렌더 프로젝트에 glTF 내보내기 설정을 저장"
 
 
@@ -40083,8 +39959,8 @@ msgid "Scale FPS"
 msgstr "FPS 축적"
 
 
-msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Bforartists frame"
-msgstr "BVH에서 현재 씬으로 프레임 속도를 조절, 그렇지 않으면 각 BVH 프레임이 직접 Bforartists 프레임에 매핑됩니다"
+msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame"
+msgstr "BVH에서 현재 씬으로 프레임 속도를 조절, 그렇지 않으면 각 BVH 프레임이 직접 Blender 프레임에 매핑됩니다"
 
 
 msgid "Animation Offset"
@@ -40159,7 +40035,7 @@ msgid "Import FBX animation"
 msgstr "FBX 애니메이션을 가져오기"
 
 
-msgid "Import custom normals, if available (otherwise Bforartists will recompute them)"
+msgid "Import custom normals, if available (otherwise Blender will recompute them)"
 msgstr "커스텀 노멀을 가져 오기, 가능한 경우 (그렇지 않으면 블렌더로 다시 계산)"
 
 
@@ -40247,7 +40123,7 @@ msgid "Update Reports Display"
 msgstr "업데이트 보고서 표시"
 
 
-msgid "Update the display of reports in Bforartists UI (internal use)"
+msgid "Update the display of reports in Blender UI (internal use)"
 msgstr "블렌더 UI에서 보고서의 표시를 업데이트 (내부 사용)"
 
 
@@ -43675,29 +43551,6 @@ msgid "Toggle option buttons display for selected nodes"
 msgstr "선택된 노드에 대한 옵션 버튼 표시를 토글"
 
 
-msgctxt "Operator"
-msgid "Add File Node Socket"
-msgstr "파일 노드 소켓을 추가"
-
-
-msgid "Add a new input to a file output node"
-msgstr "파일 출력 노드에 새로운 입력을 추가"
-
-
-msgctxt "Operator"
-msgid "Move File Node Socket"
-msgstr "파일 노드 소켓 이동"
-
-
-msgid "Move the active input of a file output node up or down the list"
-msgstr "목록 위 또는 아래로 파일 출력 노드의 활성 입력을 움직입니다"
-
-
-msgctxt "Operator"
-msgid "Remove File Node Socket"
-msgstr "파일 노드 소켓을 제거"
-
-
 msgid "Attach selected nodes"
 msgstr "선택된 노드를 첨부"
 
@@ -45349,10 +45202,6 @@ msgstr "로컬 X 축을 따라 현재 키 셰이프를 미러"
 msgctxt "Operator"
 msgid "Move Shape Key"
 msgstr "셰이프 키를 이동"
-
-
-msgid "Move the active shape key up/down in the list"
-msgstr "목록에서 활성 셰이프 키를 위/아래로 움직입니다"
 
 
 msgctxt "Operator"
@@ -48761,10 +48610,6 @@ msgid "Hide Panels"
 msgstr "패널 숨기기"
 
 
-msgid "Hide all the panels"
-msgstr "모든 패널 숨기기"
-
-
 msgctxt "Operator"
 msgid "Set Screen"
 msgstr "화면을 설정"
@@ -49419,10 +49264,6 @@ msgstr "각 프레임의 길이"
 msgctxt "Operator"
 msgid "Lock Strips"
 msgstr "스트립을 잠금"
-
-
-msgid "Lock strips so they can't be transformed"
-msgstr "스트립을 변형할 수 없도록 잠그기"
 
 
 msgctxt "Operator"
@@ -50821,7 +50662,7 @@ msgid "Eyedropper"
 msgstr "아이드라퍼"
 
 
-msgid "Sample a color from the Bforartists window to store in a property"
+msgid "Sample a color from the Blender window to store in a property"
 msgstr "블렌더 윈도우에서 컬러를 샘플링하여 속성에 저장합니다"
 
 
@@ -50904,7 +50745,7 @@ msgid "Grease Pencil Eyedropper"
 msgstr "그리스 펜슬 스포이드"
 
 
-msgid "Sample a color from the Bforartists Window and create Grease Pencil material"
+msgid "Sample a color from the Blender Window and create Grease Pencil material"
 msgstr "블렌더 창에서 컬러를 샘플링하고 그리스 펜슬 매트리얼을 생성"
 
 
@@ -51616,6 +51457,14 @@ msgstr "편집중인 오브젝트의 메쉬를 펼칩니다"
 
 msgid "Unwrapping method (Angle Based usually gives better results than Conformal, while being somewhat slower)"
 msgstr "펼치기하는 방법 (각도 기반은 등각보다 좋은 결과를 보여 주지만 다소 느립니다)"
+
+
+msgid "Angle Based"
+msgstr "각도 베이스"
+
+
+msgid "Conformal"
+msgstr "컨포멀"
 
 
 msgid "Map UVs taking vertex position after Subdivision Surface modifier has been applied"
@@ -52334,7 +52183,7 @@ msgid "Run as Background Job"
 msgstr "백그라운드 작업으로 실행"
 
 
-msgid "Enable this to run the import in the background, disable to block Bforartists while importing. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
+msgid "Enable this to run the import in the background, disable to block Blender while importing. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
 msgstr "이 기능을 사용하면 배경에서 가져 오기를 실행할 수 있으며 가져 오는 동안 블렌더를 차단하려면 사용하지 않도록 설정하십시오. 이 옵션은 더 이상 사용되지 않습니다. 전경에서 실행되도록이 작업자를 EXECUTE하고 백그라운드 작업으로 실행하도록 INVOKE"
 
 
@@ -52455,7 +52304,7 @@ msgid "Load an Alembic archive"
 msgstr "Alembic 아카이브에서 블러오기"
 
 
-msgid "Enable this to run the export in the background, disable to block Bforartists while exporting. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
+msgid "Enable this to run the export in the background, disable to block Blender while exporting. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
 msgstr "이 기능을 사용하면 배경에서 내보내기를 실행하고, 내보내는 동안 블렌더를 차단할 수는 없습니다. 이 옵션은 더 이상 사용되지 않습니다. 전경에서 실행되도록이 작업자를 EXECUTE하고 백그라운드 작업으로 실행하도록 INVOKE"
 
 
@@ -52713,7 +52562,7 @@ msgid "Open"
 msgstr "열기"
 
 
-msgid "Open a Bforartists file"
+msgid "Open a Blender file"
 msgstr "블렌더 파일을 열기"
 
 
@@ -52870,11 +52719,11 @@ msgstr "속성 이름 편집"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
+msgid "Quit Blender"
 msgstr "블렌더를 끝내기"
 
 
-msgid "Quit Bforartists"
+msgid "Quit Blender"
 msgstr "블렌더를 끝내기"
 
 
@@ -53102,15 +52951,15 @@ msgstr "스타트업 파일을 저장"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
+msgid "Save Blender File"
 msgstr "블렌더 파일 저장"
 
 
-msgid "Save the current Bforartists file"
+msgid "Save the current Blender file"
 msgstr "현재 블렌더 파일을 저장함"
 
 
-msgid "Exit Bforartists after saving"
+msgid "Exit Blender after saving"
 msgstr "저장 후 블렌더를 종료"
 
 
@@ -53835,42 +53684,6 @@ msgid "Panel containing UI elements"
 msgstr "UI 요소가 포함된 패널"
 
 
-msgid "Snapping"
-msgstr "스냅하기"
-
-
-msgid "Transform Orientations"
-msgstr "변환 오리엔테이션"
-
-
-msgid "Stroke Placement"
-msgstr "스트로크 배치"
-
-
-msgid "Drawing Plane"
-msgstr "드로잉 평면"
-
-
-msgid "Guides"
-msgstr "가이드"
-
-
-msgid "Quad View"
-msgstr "쿼드 뷰"
-
-
-msgid "Onion Skin"
-msgstr "어니언 스킨"
-
-
-msgid "Stereoscopy"
-msgstr "입체 영상"
-
-
-msgid "Multi Frame"
-msgstr "다중 프레임"
-
-
 msgid "Active Tool"
 msgstr "활성 도구"
 
@@ -53899,6 +53712,10 @@ msgid "Overlays"
 msgstr "오버레이"
 
 
+msgid "Guides"
+msgstr "가이드"
+
+
 msgid "Motion Tracking"
 msgstr "모션 트래킹"
 
@@ -53913,6 +53730,38 @@ msgstr "측정"
 
 msgid "Curve Edit Mode"
 msgstr "커브 에디트 모드"
+
+
+msgid "Snapping"
+msgstr "스냅하기"
+
+
+msgid "Transform Orientations"
+msgstr "변환 오리엔테이션"
+
+
+msgid "Stroke Placement"
+msgstr "스트로크 배치"
+
+
+msgid "Drawing Plane"
+msgstr "드로잉 평면"
+
+
+msgid "Quad View"
+msgstr "쿼드 뷰"
+
+
+msgid "Onion Skin"
+msgstr "어니언 스킨"
+
+
+msgid "Stereoscopy"
+msgstr "입체 영상"
+
+
+msgid "Multi Frame"
+msgstr "다중 프레임"
 
 
 msgid "Bone Constraints"
@@ -56093,7 +55942,7 @@ msgid "Edit Methods"
 msgstr "메서드를 편집"
 
 
-msgid "Settings for interacting with Bforartists data"
+msgid "Settings for interacting with Blender data"
 msgstr "블렌더 데이터와 함께 상호 작용에 대한 설정"
 
 
@@ -56133,7 +55982,7 @@ msgid "Save preferences on exit when modified (unless factory settings have been
 msgstr "수정 종료시 환경 설정을 저장 (초기 설정 값을 불러오지 않은 경우)"
 
 
-msgid "Version of Bforartists the userpref.blend was saved with"
+msgid "Version of Blender the userpref.blend was saved with"
 msgstr "다음과 함께 userpref.blend가 저장된 블렌더 버전"
 
 
@@ -56733,7 +56582,7 @@ msgid "Max Threshold"
 msgstr "최대 임계 값"
 
 
-msgid "Raw input pressure value that is interpreted as 100% by Bforartists"
+msgid "Raw input pressure value that is interpreted as 100% by Blender"
 msgstr "블렌더에 의해 100%로 해석된 원시 입력 압력 값"
 
 
@@ -58657,10 +58506,6 @@ msgid "Vertical Split"
 msgstr "수직 분할"
 
 
-msgid "Region floats on screen, doesn't use any fixed alignment"
-msgstr "지역을 화면에 뛰우고 고정된 정렬을 사용하지 않습니다"
-
-
 msgid "Quad Split"
 msgstr "쿼드 분할"
 
@@ -59305,14 +59150,6 @@ msgid "Bake directly from multires object"
 msgstr "멀티리스 오브젝트에서 직접 베이크합니다"
 
 
-msgid "User Scale"
-msgstr "사용자 축적"
-
-
-msgid "Use a user scale for the derivative map"
-msgstr "디리버티브 맵에 대한 사용자 축적을 사용"
-
-
 msgid "Render Region"
 msgstr "렌더 지역"
 
@@ -59853,12 +59690,12 @@ msgid "Which implementation of spring to use"
 msgstr "사용할 스프링의 구현"
 
 
-msgid "Bforartists 2.7"
-msgstr "Bforartists 2.7"
+msgid "Blender 2.7"
+msgstr "Blender 2.7"
 
 
-msgid "Bforartists 2.8"
-msgstr "Bforartists 2.8"
+msgid "Blender 2.8"
+msgstr "Blender 2.8"
 
 
 msgid "New implementation available since 2.8"
@@ -62339,7 +62176,7 @@ msgid "Display collections and objects in the view layer"
 msgstr "뷰 레이어에 컬렉션 및 오브젝트를 표시"
 
 
-msgid "Bforartists File"
+msgid "Blender File"
 msgstr "블렌더 파일"
 
 
@@ -62351,7 +62188,7 @@ msgid "Data API"
 msgstr "데이터 API"
 
 
-msgid "Display low level Bforartists data and its properties"
+msgid "Display low level Blender data and its properties"
 msgstr "로우 레벨 블렌더 데이터 및 해당 속성을 표시"
 
 
@@ -62503,7 +62340,7 @@ msgid "Space Preferences"
 msgstr "공간 환경 설정"
 
 
-msgid "Bforartists preferences space data"
+msgid "Blender preferences space data"
 msgstr "블렌더 환경 설정 공간 데이터"
 
 
@@ -64719,14 +64556,6 @@ msgid "Color of path before current frame"
 msgstr "현재 프레임 이전에 경로의 컬러"
 
 
-msgid "Preview Range"
-msgstr "미리보기 범위"
-
-
-msgid "Color of preview range overlay"
-msgstr "미리보기 범위 오버레이의 색상"
-
-
 msgid "Selected Marker"
 msgstr "선택된 마커"
 
@@ -64749,6 +64578,22 @@ msgstr "스트립 선택됨"
 
 msgid "Scrubbing/Markers Region"
 msgstr "스크러빙/마커 지역"
+
+
+msgid "Channel Group"
+msgstr "채널 그룹"
+
+
+msgid "Active Channel Group"
+msgstr "활성 체널 구릅"
+
+
+msgid "Preview Range"
+msgstr "미리보기 범위"
+
+
+msgid "Color of preview range overlay"
+msgstr "미리보기 범위 오버레이의 색상"
 
 
 msgid "Theme Console"
@@ -64783,20 +64628,8 @@ msgid "Theme settings for the Dope Sheet"
 msgstr "도프시트에 대한 테마 설정"
 
 
-msgid "Active Channel Group"
-msgstr "활성 체널 구릅"
-
-
-msgid "Channel Group"
-msgstr "채널 그룹"
-
-
 msgid "Channels Selected"
 msgstr "채널 선택됨"
-
-
-msgid "Dope Sheet Channel"
-msgstr "도프시트 채널"
 
 
 msgid "Interpolation Line"
@@ -65107,14 +64940,6 @@ msgid "No Active Action"
 msgstr "활성 액션 없음"
 
 
-msgid "Animation data-block doesn't have active action"
-msgstr "애니메이션 데이터 블록은 활성 액션이 없습니다"
-
-
-msgid "Nonlinear Animation Channel"
-msgstr "논리니어 애니메이션 채널"
-
-
 msgid "Meta Strips"
 msgstr "메타 스트립"
 
@@ -65267,7 +65092,7 @@ msgid "Theme Preferences"
 msgstr "테마 환경 설정"
 
 
-msgid "Theme settings for the Bforartists Preferences"
+msgid "Theme settings for the Blender Preferences"
 msgstr "블렌더 환경 설정의 테마 설정"
 
 
@@ -67884,10 +67709,6 @@ msgid "External shader script must have .osl or .oso extension, or be a module n
 msgstr "외부 쉐이더 스크립트는 .osl 또는 .oso 확장자를 가져야하며, 또는 모듈 이름이어야 합니다"
 
 
-msgid "Can't read OSO bytecode to store in node at %r"
-msgstr "%r에서 노드에 저장할 OSO 바이트 코드를 읽을 수 없습니다"
-
-
 msgid "Failed to write .oso file next to external .osl file at "
 msgstr "외부 .osl 파일 옆에 .oso 파일을 쓰지 못했습니다 "
 
@@ -67978,7 +67799,7 @@ msgid "Deselect"
 msgstr "선택 해제"
 
 
-msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Bforartists scene have the same frame rate"
+msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
 msgstr "BVH 파일은 모션 섹션에 프레임 지속 시간을 포함하지 않음, BVH 및 블렌더 씬이 동일한 프레임 속도를 가지고 있다고 가정합니다"
 
 
@@ -68457,11 +68278,6 @@ msgstr "모두 잠금 반전"
 
 
 msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "모든 셰이프 키를 삭제"
-
-
-msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "이름으로 분류"
 
@@ -68497,18 +68313,8 @@ msgstr "모든 그룹을 삭제"
 
 
 msgctxt "Operator"
-msgid "Mirror Shape Key (Topology)"
-msgstr "미러 셰이프 키 (토폴로지)"
-
-
-msgctxt "Operator"
-msgid "Move to Top"
-msgstr "맨 위로 이동"
-
-
-msgctxt "Operator"
-msgid "Move to Bottom"
-msgstr "맨 아래로 이동"
+msgid "Flip"
+msgstr "뒤집기"
 
 
 msgid "Auto Normalize"
@@ -69966,8 +69772,18 @@ msgid "Text Files"
 msgstr "텍스트 파일"
 
 
-msgid "Bforartists IDs"
-msgstr "Bforartists IDs"
+msgid "Blender IDs"
+msgstr "Blender IDs"
+
+
+msgctxt "Operator"
+msgid "Move to Top"
+msgstr "맨 위로 이동"
+
+
+msgctxt "Operator"
+msgid "Move to Bottom"
+msgstr "맨 아래로 이동"
 
 
 msgctxt "Operator"
@@ -70208,11 +70024,6 @@ msgstr "수평 분할"
 msgctxt "Operator"
 msgid "Vertical Split"
 msgstr "수직 분할"
-
-
-msgctxt "Operator"
-msgid "Toggle Fullscreen Area"
-msgstr "전체 화면 영역을 토글"
 
 
 msgctxt "Operator"
@@ -70469,6 +70280,11 @@ msgstr "사운드 교차 페이드"
 msgctxt "Operator"
 msgid "Change Keying Set..."
 msgstr "키잉 설정을 변경..."
+
+
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "키 프레임을 삭제..."
 
 
 msgctxt "Operator"
@@ -71373,11 +71189,6 @@ msgstr "로컬을 만들기..."
 
 
 msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "키 프레임을 삭제..."
-
-
-msgctxt "Operator"
 msgid "Clear Keyframes..."
 msgstr "키 프레임을 지우기..."
 
@@ -71690,11 +71501,6 @@ msgstr "강한"
 
 
 msgctxt "Operator"
-msgid "Flip"
-msgstr "뒤집기"
-
-
-msgctxt "Operator"
 msgid "Rotate..."
 msgstr "회전..."
 
@@ -71771,17 +71577,9 @@ msgid "Origins (All)"
 msgstr "오리진 (모두)"
 
 
-msgid "Creases"
-msgstr "크리스"
-
-
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "샤프"
-
-
-msgid "Seams"
-msgstr "씨임"
 
 
 msgid "Vertex Group Weights"
@@ -72442,7 +72240,7 @@ msgid "Unable to create app-template userpref path"
 msgstr "앱 템플릿 userpref 경로를 생성할 수 없습니다"
 
 
-msgid "File written by newer Bforartists binary (%d.%d), expect loss of data!"
+msgid "File written by newer Blender binary (%d.%d), expect loss of data!"
 msgstr "최신 블렌더 바이너리 (%d.%d)로 작성된 파일, 데이터 손실이 예상 됩니다!"
 
 
@@ -72450,7 +72248,7 @@ msgid "Loading failed: "
 msgstr "불러오기 실패: "
 
 
-msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Bforartists"
+msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
 msgstr "매우 오래된 .blend 파일 형식 (%d.%d)에서 연결하거나 추가하면 애니메이션 변환이 수행되지 않습니다! 현재 블렌더로 lib 파일을 다시 저장하고 싶을 수도 있습니다"
 
 
@@ -72748,14 +72546,6 @@ msgid "Undefined Type"
 msgstr "정의되지 않은 유형"
 
 
-msgid "Can't add Rigid Body to non mesh object"
-msgstr "메쉬가 아닌 오브젝트에 리지드 바디를 추가할 수 없습니다"
-
-
-msgid "Can't create Rigid Body world"
-msgstr "리지드 바디 월드를 만들 수 없습니다"
-
-
 msgid "LIB: object lost from scene: '%s'"
 msgstr "LIB: 씬에서 오브젝트 손실: '%s'"
 
@@ -72773,7 +72563,7 @@ msgid "At least 8 common tracks on both keyframes are needed for reconstruction"
 msgstr "재구성을 위해 두 키 프레임 모두에 최소한 8 개의 공통 트랙이 필요합니다"
 
 
-msgid "Bforartists is compiled without motion tracking library"
+msgid "Blender is compiled without motion tracking library"
 msgstr "블렌더는 모션 트래킹 라이브러리 없이 컴파일됩니다"
 
 
@@ -72981,10 +72771,6 @@ msgid "Display action without any time remapping (when unpinned)"
 msgstr "시간 재매핑없이 액션을 표시 (고정 해제시)"
 
 
-msgid "Can't edit this property from a linked data-block"
-msgstr "재정의 데이터 블록에서 이 속성을 편집할 수 없습니다"
-
-
 msgid "No active object"
 msgstr "활성 오브젝트가 없음"
 
@@ -73115,10 +72901,6 @@ msgstr "%d 오브젝트에서 제거된 키 프레임이 없습니다"
 
 msgid "\"%s\" property cannot be animated"
 msgstr "\"%s\" 속성을 애니메이션으로 만들 수 없습니다"
-
-
-msgid "Button doesn't appear to have any property information attached (ptr.data = %p, prop = %p)"
-msgstr "버튼에 속성 정보가 첨부되어 있지 않습니다 (ptr.data = %p, prop = %p)"
 
 
 msgid "Not deleting keyframe for locked F-Curve for NLA Strip influence on %s - %s '%s'"
@@ -74079,7 +73861,7 @@ msgid "Swap Areas"
 msgstr "영역을 교환"
 
 
-msgid "Can't edit external library data"
+msgid "Cannot edit external library data"
 msgstr "외부 라이브러리 데이터를 편집 할 수 없습니다"
 
 
@@ -74152,6 +73934,10 @@ msgid "Outer"
 msgstr "바깥"
 
 
+msgid "Seams"
+msgstr "씨임"
+
+
 msgid "Selected edges/faces required"
 msgstr "선택된 에지/페이스 필요한"
 
@@ -74184,16 +73970,8 @@ msgid "Path selection requires two matching elements to be selected"
 msgstr "경로를 선택하려면 두 개의 일치하는 요소를 선택해야 합니다"
 
 
-msgid "Cannot rip selected faces"
-msgstr "선택된 페이스를 추출 할 수 없습니다"
-
-
 msgid "Cannot rip multiple disconnected vertices"
 msgstr "여러 개의 분리된 버택스를 추출 할 수 없습니다"
-
-
-msgid "Rip failed"
-msgstr "떼어내기 실패"
 
 
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
@@ -74407,10 +74185,6 @@ msgid "This data does not support joining in edit mode"
 msgstr "이 데이터는 에디트 모드에서 합치기를 지원하지 않습니다"
 
 
-msgid "Cannot edit external library data"
-msgstr "외부 라이브러리 데이터를 편집 할 수 없습니다"
-
-
 msgid "Cannot delete indirectly linked object '%s'"
 msgstr "간접적으로 연결된 오브젝트 '%s'를 삭제할 수 없습니다"
 
@@ -74527,10 +74301,6 @@ msgid "No active image found in material slot (%d) for object \"%s\""
 msgstr "소재 슬롯 (%d)에서 활성 이미지를 찾을 수 없습니다. 오브젝트 \"%s\"에 대해"
 
 
-msgid "Object \"%s\" is not a mesh or can't be converted to a mesh (Curve, Text, Surface or Metaball)"
-msgstr "오브젝트 \"%s\"는 메쉬가 없거나 메쉬로 변환할 수 없습니다 (커브, 텍스트, 표면 또는 메타볼)"
-
-
 msgid "Uninitialized image %s"
 msgstr "초기화되지 않은 이미지 %s"
 
@@ -74637,10 +74407,6 @@ msgstr "작업자가 고정되어 있으며 설정을 변경하면 고정 해제
 
 msgid "Skipping object '%s', data '%s' has already been processed with a previous object"
 msgstr "오브젝트 '%s' 를 건너뛰기, 데이터 '%s' 는 이미 이전 오브젝트로 처리되었습니다"
-
-
-msgid "Can't edit linked mesh or curve data"
-msgstr "연결된 메쉬나 커브 데이터를 편집할 수 없습니다"
 
 
 msgid "No collection selected"
@@ -74827,10 +74593,6 @@ msgid "Incorrect context for running object data unlink"
 msgstr "실행중인 오브젝트 데이터의 연결이 잘못되었습니다"
 
 
-msgid "Can't unlink this object data"
-msgstr "이 오브젝트는 데이터를 연결을 해제할 수 없습니다"
-
-
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
 msgstr "컬렉션 '%s'(활성 오브젝트로 인스턴스화 됨)을 재정의 할 수 없습니다"
 
@@ -74925,10 +74687,6 @@ msgstr "베이크 실패됨: 잘못된 캔버스"
 
 msgid "Removed %d double particle(s)"
 msgstr "%d개의 중첩 파티클을 제거했습니다"
-
-
-msgid "No hair connected (can't connect hair if particle system modifier is disabled)"
-msgstr "연결된 헤어가 없습니다 (파티클 시스템 모디파이어가 비활성화된 경우 헤어를 연결할 수 없음)"
 
 
 msgid "Copy particle systems to selected: %d done, %d failed"
@@ -75295,11 +75053,11 @@ msgid "Flip to Bottom"
 msgstr "아래쪽으로 뒤집기"
 
 
-msgid "Bforartists Drivers Editor"
+msgid "Blender Drivers Editor"
 msgstr "블렌더 드라이버 에디터"
 
 
-msgid "Bforartists Info Log"
+msgid "Blender Info Log"
 msgstr "블렌더 정보 로그"
 
 
@@ -75876,10 +75634,6 @@ msgid "See Modifiers panel below"
 msgstr "아래에 모디파이어 패널을 참조"
 
 
-msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "F-커브는 샘플된 포인트 만 포함하므로 키 프레임이 없습니다"
-
-
 msgid "No active keyframe on F-Curve"
 msgstr "F-커브에서 활성 키 프레임 없음"
 
@@ -76025,10 +75779,6 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "비선형 하드 코딩, 감마:1.7"
 
 
-msgid "Can't Load Image"
-msgstr "이미지를 불러올 수 없습니다"
-
-
 msgid "%d float channel(s)"
 msgstr "%d 실수 채널(들)"
 
@@ -76083,10 +75833,6 @@ msgstr "%d 이미지(들)은 %s에서 저장됨"
 
 msgid "Saved %s"
 msgstr "저장된 %s"
-
-
-msgid "can't save image while rendering"
-msgstr "렌더링하는 동안 이미지를 저장할 수 없습니다"
 
 
 msgid "No packed files to unpack"
@@ -76309,10 +76055,6 @@ msgid "Strip None"
 msgstr "스트립 없음"
 
 
-msgid "Can't reload with running modal operators"
-msgstr "실행중인 모달 작업자로 다시 불러올 수 없습니다"
-
-
 msgid "Movie clip not found"
 msgstr "무비 클립을 찾을 수 없습니다"
 
@@ -76329,14 +76071,6 @@ msgid "Please select two strips"
 msgstr "두 스트립을 선택하십시오"
 
 
-msgid "Can't create subtitle file"
-msgstr "자막 파일을 만들 수 없습니다"
-
-
-msgid "Can't overwrite export file"
-msgstr "내보내기 파일을 덮어 쓸 수 없습니다"
-
-
 msgid "No subtitles (text strips) to export"
 msgstr "내보낼 자막(텍스트 스트립)이 없음"
 
@@ -76345,11 +76079,7 @@ msgid "Select one or more strips"
 msgstr "하나 이상의 스트립을 선택하십시오"
 
 
-msgid "Can't set a negative range"
-msgstr "음수 범위를 설정할 수 없습니다"
-
-
-msgid "File Modified Outside and Inside Bforartists"
+msgid "File Modified Outside and Inside Blender"
 msgstr "블렌더 외부 및 내부 수정된 파일"
 
 
@@ -76365,7 +76095,7 @@ msgid "Make text internal (separate copy)"
 msgstr "내부에 텍스트를 만듭니다 (사본을 분리)"
 
 
-msgid "File Modified Outside Bforartists"
+msgid "File Modified Outside Blender"
 msgstr "블렌더 외부 수정된 파일"
 
 
@@ -76373,7 +76103,7 @@ msgid "Reload from disk"
 msgstr "디스크에서 다시 불러오기"
 
 
-msgid "File Deleted Outside Bforartists"
+msgid "File Deleted Outside Blender"
 msgstr "블렌더 외부 삭제된 파일"
 
 
@@ -76817,10 +76547,6 @@ msgid "Bone selection count error"
 msgstr "본 선택 개수 오류"
 
 
-msgid "Linked data can't text-space transform"
-msgstr "연결된 데이터는 텍스트 공간을 변형 할 수 없습니다"
-
-
 msgid "Unsupported object type for text-space transform"
 msgstr "텍스트 변환에 대한 지원되지 않는 오브젝트 유형"
 
@@ -77098,6 +76824,10 @@ msgid "UV Vertex"
 msgstr "UV 버텍스"
 
 
+msgid "Rip failed"
+msgstr "떼어내기 실패"
+
+
 msgid "Cannot split selection when sync selection is enabled"
 msgstr "동기화 선택이 활성화된 경우 선택 영역을 분할할 수 없습니다"
 
@@ -77180,22 +76910,6 @@ msgstr "제거하는 매테리얼이 없음"
 
 msgid "Registering id property class: '%s' is too long, maximum length is %d"
 msgstr "등록하는 ID 속성 클래스: '%s' 는 너무 깁니다, 최대 길이는 %d"
-
-
-msgid "This property is for internal use only and can't be edited"
-msgstr "이 속성은 내부용이므로 편집할 수 없습니다"
-
-
-msgid "Can't edit this property from an override data-block"
-msgstr "재정의 데이터 블록에서 이 속성을 편집 할 수 없습니다"
-
-
-msgid "'%s' doesn't have upper case alpha-numeric prefix"
-msgstr "'%s'에는 대문자 알파벳-숫자 접두사가 없습니다"
-
-
-msgid "'%s' doesn't have an alpha-numeric suffix"
-msgstr "'%s'에는 알파벳-숫자 접미사가 없습니다"
 
 
 msgid "Array length mismatch (expected %d, got %d)"
@@ -77611,14 +77325,6 @@ msgid "Bad vertex index in list"
 msgstr "목록에서 잘못된 버텍스 인덱스"
 
 
-msgid "Object '%s' can't be selected because it is not in View Layer '%s'!"
-msgstr "오브젝트 '%s'는 뷰 레이어 '%s'에 없으므로 선택할 수 없습니다!"
-
-
-msgid "Object '%s' can't be hidden because it is not in View Layer '%s'!"
-msgstr "오브젝트 '%s'는 뷰 레이어 '%s'에 없으므로 숨길 수 없습니다!"
-
-
 msgid "Object %s not in view layer %s"
 msgstr "오브젝트 %s은 뷰 레이어 %s에 존재하지 않습니다"
 
@@ -77699,7 +77405,7 @@ msgid "Modifier was not found in the stack"
 msgstr "스택에서 모디파이어를 찾을 수 없습니다"
 
 
-msgid "Bforartists compiled without Audaspace support"
+msgid "Blender compiled without Audaspace support"
 msgstr "Audaspace 지원 없이 블렌더 컴파일됨"
 
 
@@ -78296,7 +78002,7 @@ msgid "Rim"
 msgstr "가장자리"
 
 
-msgid "Bforartists File View"
+msgid "Blender File View"
 msgstr "블렌더 파일 보기"
 
 
@@ -78366,14 +78072,6 @@ msgstr "라이브러리가 아닙니다"
 
 msgid "Nothing indicated"
 msgstr "아무것도 표시하지 않음"
-
-
-msgid "Can't append data-block '%s' of type '%s'"
-msgstr "'%s'을 (를) 추가 할 수 없습니다. '%s'유형의 데이터 블록"
-
-
-msgid "Can't link data-block '%s' of type '%s'"
-msgstr "'%s' 을 연결할 수 없습니다. '%s'유형의 데이터 블록"
 
 
 msgid "'%s': cannot use current file as library"

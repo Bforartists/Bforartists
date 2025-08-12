@@ -55,14 +55,15 @@ class MESH_MT_shape_key_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.shape_key_add", icon='ADD', text="New Shape from Mix").from_mix = True
-        layout.operator("object.shape_key_copy", icon='DUPLICATE', text="Duplicate Shape Key")
+        layout.operator("object.shape_key_add", icon='ADD', text="New Combined").from_mix = True
+        layout.operator("object.shape_key_copy", icon='DUPLICATE', text="Duplicate")
+        layout.operator("object.shape_key_transfer", text="Copy from Objects")
         layout.separator()
         layout.operator("object.shape_key_mirror", icon='TRANSFORM_MIRROR').use_topology = False
         layout.operator("object.shape_key_mirror", text="Mirror Shape Key (Topology)", icon = "TRANSFORM_MIRROR").use_topology = True
         layout.separator()
-        layout.operator("object.join_shapes", icon = "JOIN")
-        layout.operator("object.update_shapes")
+        layout.operator("object.join_shapes", icon = "JOIN", text="New from Objects")
+        layout.operator("object.update_shapes", icon='FILE_REFRESH')
         layout.operator("object.shape_key_transfer", icon = "SHAPEKEY_DATA")
         layout.separator()
         props = layout.operator("object.shape_key_remove", icon='DELETE', text="Delete All Shape Keys")
@@ -76,8 +77,25 @@ class MESH_MT_shape_key_context_menu(Menu):
         layout.operator("object.shape_key_lock", icon='UNLOCKED', text="Unlock All").action = 'UNLOCK'
         layout.separator()
         layout.operator("object.shape_key_make_basis", text="Make Basis")
-        layout.operator("object.shape_key_move", icon='TRIA_UP_BAR', text="Move to Top").type = 'TOP'
-        layout.operator("object.shape_key_move", icon='TRIA_DOWN_BAR', text="Move to Bottom").type = 'BOTTOM'
+        layout.separator()
+        props = layout.operator("object.shape_key_remove", text="Apply All")
+        props.all = True
+        props.apply_mix = True
+        props = layout.operator("object.shape_key_remove", icon='X', text="Delete All")
+        props.all = True
+        props.apply_mix = False
+
+
+class MESH_MT_shape_key_tree_context_menu(Menu):
+    bl_label = "Shape Key context menu"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("object.shape_key_make_basis", text="Make Basis")
+        layout.operator("object.shape_key_copy", icon='DUPLICATE', text="Duplicate")
+        layout.separator()
+        layout.operator("object.shape_key_move", icon='TRIA_UP_BAR', text="Move After Basis").type = 'TOP'
+        layout.operator("object.shape_key_move", icon='TRIA_DOWN_BAR', text="Move to Last").type = 'BOTTOM'
 
 
 class MESH_MT_color_attribute_context_menu(Menu):
@@ -698,6 +716,7 @@ class DATA_PT_vertex_colors(MeshButtonsPanel, Panel):
 classes = (
     MESH_MT_vertex_group_context_menu,
     MESH_MT_shape_key_context_menu,
+    MESH_MT_shape_key_tree_context_menu,
     MESH_MT_color_attribute_context_menu,
     MESH_MT_attribute_context_menu,
     MESH_UL_vgroups,

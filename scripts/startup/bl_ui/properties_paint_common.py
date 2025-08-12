@@ -261,6 +261,7 @@ class UnifiedPaintPanel:
             context,
             brush,
             prop_name,
+            unified_paint_settings_override=None,
             unified_name=None,
             pressure_name=None,
             icon='NONE',
@@ -269,7 +270,10 @@ class UnifiedPaintPanel:
             header=False,
     ):
         """ Generalized way of adding brush options to the UI,
-            along with their pen pressure setting and global toggle, if they exist. """
+            along with their pen pressure setting and global toggle, if they exist.
+
+            :param unified_paint_settings_override allows a caller to pass in a specific object for usage. Needed for
+            some 'brush-like' tools."""
         row = layout.row(align=True)
         settings = UnifiedPaintPanel.paint_settings(context)
         if settings is None: # BFA - Early return if settings is None for the Annotation tool
@@ -2333,7 +2337,7 @@ def brush_basic_gpencil_weight_settings(layout, _context, brush, *, compact=Fals
 def brush_basic_gpencil_vertex_settings(layout, context, brush, *, compact=False):
     del compact  # UNUSED.
     gp_settings = brush.gpencil_settings
-    ups = context.tool_settings.unified_paint_settings
+    ups = context.tool_settings.gpencil_vertex_paint.unified_paint_settings
     brush_prop_owner = ups if ups.use_unified_size else brush
 
     # Brush details

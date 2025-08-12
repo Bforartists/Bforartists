@@ -101,17 +101,9 @@ static void ui_imageuser_slot_menu(bContext *C, uiLayout *layout, void *image_p)
     else if (slot->render != nullptr) {
       icon = ICON_DOT;
     }
-    uiDefIconTextButS(block,
-                      ButType::ButMenu,
-                      B_NOP,
-                      icon,
-                      str,
-                      0,
-                      0,
-                      UI_UNIT_X * 5,
-                      UI_UNIT_X,
-                      &image->render_slot,
-                      "");
+    uiBut *but = uiDefIconTextBut(
+        block, ButType::ButMenu, B_NOP, icon, str, 0, 0, UI_UNIT_X * 5, UI_UNIT_X, nullptr, "");
+    UI_but_func_set(but, [image, slot_id](bContext & /*C*/) { image->render_slot = slot_id; });
   }
 
   layout->separator();
@@ -1004,7 +996,11 @@ void uiTemplateImageSettings(uiLayout *layout,
   col->use_property_split_set(true);
   col->use_property_decorate_set(false);
 
-  col->prop(imfptr, "media_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /* The file output node draws the media type itself. */
+  const bool is_file_output = (id && GS(id->name) == ID_NT);
+  if (!is_file_output) {
+    col->prop(imfptr, "media_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  }
 
   /* Multi layer images and video media types only have a single supported format,
    * so we needn't draw the format enum. */
@@ -1237,7 +1233,7 @@ void uiTemplateImageInfo(uiLayout *layout, bContext *C, Image *ima, ImageUser *i
   col->alignment_set(blender::ui::LayoutAlign::Right);
 
   if (ibuf == nullptr) {
-    col->label(RPT_("Can't Load Image"), ICON_NONE);
+    col->label(RPT_("Cannot Load Image"), ICON_NONE);
   }
   else {
     char str[MAX_IMAGE_INFO_LEN] = {0};

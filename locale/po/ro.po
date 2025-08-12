@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 14:58+0000\n"
 "Last-Translator: Pastean_Narcis_Dan <dedeye1001@gmail.com>\n"
 "Language-Team: Romanian <https://translate.blender.org/projects/blender-ui/ui/ro/>\n"
@@ -482,8 +482,8 @@ msgid "Source Root"
 msgstr "Rădăcina Sursei"
 
 
-msgid "The Bforartists source root path"
-msgstr "Calea rădăcină sursă Bforartists"
+msgid "The Blender source root path"
+msgstr "Calea rădăcină sursă Blender"
 
 
 msgid "Spell Cache"
@@ -506,8 +506,8 @@ msgid "Persistent Data Path"
 msgstr "Calea a Datelor Persistentă"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
-msgstr "Numele unui fișier json care stochează acele setări (din păcate, sistemul Bforartists nu funcționează aici)"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgstr "Numele unui fișier json care stochează acele setări (din păcate, sistemul Blender nu funcționează aici)"
 
 
 msgid "User Add-ons"
@@ -3559,8 +3559,8 @@ msgid "Modifier '%s' not in object '%s'"
 msgstr "Modificatorul '%s' nu este în obiectul '%s'"
 
 
-msgid "Bforartists Render"
-msgstr "Render Bforartists"
+msgid "Blender Render"
+msgstr "Render Blender"
 
 
 msgid "Compiled without sound support"
@@ -3641,10 +3641,6 @@ msgstr "Selectare Strat"
 
 msgid "Select Pass"
 msgstr "Selectare Pass"
-
-
-msgid "Can't Load Image"
-msgstr "Nu s-a putut încărca imaginea"
 
 
 msgid " RGBA float"

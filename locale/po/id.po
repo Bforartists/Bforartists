@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 14:57+0000\n"
 "Last-Translator: Michael Tribayu Jatnika Natawiria <mike.natawiria@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.blender.org/projects/blender-ui/ui/id/>\n"
@@ -870,8 +870,8 @@ msgid "Fribidi Library"
 msgstr "Perpustakaan Fribidi"
 
 
-msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Bforartists libraries repository"
-msgstr "Perpustakaan FriBidi C yang tersusun (.so pada Linux, .dll pada windows...), kemungkinan besar Anda perlu mengeditnya jika Anda menggunakan Windows, misal jika menggunakan yang terdapat di repositori pustaka Bforartists"
+msgid "The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have to edit it if you’re under Windows, e.g. using the one included in Blender libraries repository"
+msgstr "Perpustakaan FriBidi C yang tersusun (.so pada Linux, .dll pada windows...), kemungkinan besar Anda perlu mengeditnya jika Anda menggunakan Windows, misal jika menggunakan yang terdapat di repositori pustaka Blender"
 
 
 msgid "Translation Root"
@@ -894,8 +894,8 @@ msgid "Source Root"
 msgstr "Direktori Sumber"
 
 
-msgid "The Bforartists source root path"
-msgstr "Direktori Sumber Bforartists"
+msgid "The Blender source root path"
+msgstr "Direktori Sumber Blender"
 
 
 msgid "Spell Cache"
@@ -918,8 +918,8 @@ msgid "Persistent Data Path"
 msgstr "Jalur Data yang Persisten"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
-msgstr "Nama dokumen json yang menyimpan pengaturan tersebut (sayangnya, sistem Bforartists tidak bekerja disini)"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
+msgstr "Nama dokumen json yang menyimpan pengaturan tersebut (sayangnya, sistem Blender tidak bekerja disini)"
 
 
 msgid "User Add-ons"
@@ -1734,8 +1734,8 @@ msgid "Catalog UUID"
 msgstr "UUID Katalog"
 
 
-msgid "Identifier for the asset's catalog, used by Bforartists to look up the asset's catalog path. Must be a UUID according to RFC4122."
-msgstr "Pengenal untuk katalog aset, digunakan Bforartists untuk melihat jalur katalog aset. Harus berupa UUID menurut RFC4122."
+msgid "Identifier for the asset's catalog, used by Blender to look up the asset's catalog path. Must be a UUID according to RFC4122."
+msgstr "Pengenal untuk katalog aset, digunakan Blender untuk melihat jalur katalog aset. Harus berupa UUID menurut RFC4122."
 
 
 msgid "Catalog Simple Name"
@@ -1851,16 +1851,16 @@ msgid "Current File"
 msgstr "Dokumen Sekarang"
 
 
-msgid "Show the assets currently available in this Bforartists session"
-msgstr "Menampilkan aset yang sekarang tersedia di sesi Bforartists ini"
+msgid "Show the assets currently available in this Blender session"
+msgstr "Menampilkan aset yang sekarang tersedia di sesi Blender ini"
 
 
 msgid "Essentials"
 msgstr "Hal-hal Penting"
 
 
-msgid "Show the basic building blocks and utilities coming with Bforartists"
-msgstr "Menampilkan blok pembangunan sederhana dan utilitas yang ada bersamaan dengan Bforartists"
+msgid "Show the basic building blocks and utilities coming with Blender"
+msgstr "Menampilkan blok pembangunan sederhana dan utilitas yang ada bersamaan dengan Blender"
 
 
 msgid "Custom"
@@ -2167,8 +2167,8 @@ msgid "Is Internal"
 msgstr "Merupakan Internal"
 
 
-msgid "The attribute is meant for internal use by Bforartists"
-msgstr "Atribut hanya untuk penggunaan internal oleh Bforartists"
+msgid "The attribute is meant for internal use by Blender"
+msgstr "Atribut hanya untuk penggunaan internal oleh Blender"
 
 
 msgid "Is Required"
@@ -3500,12 +3500,12 @@ msgid "Source Library"
 msgstr "Sumber Pustaka"
 
 
-msgid "Bforartists RNA"
-msgstr "RNA Bforartists"
+msgid "Blender RNA"
+msgstr "RNA Blender"
 
 
-msgid "Bforartists RNA structure definitions"
-msgstr "Definisi struktur Bforartists RNA"
+msgid "Blender RNA structure definitions"
+msgstr "Definisi struktur Blender RNA"
 
 
 msgid "Structs"
@@ -4262,10 +4262,6 @@ msgid "Radius of head of bone (for Envelope deform only)"
 msgstr "Radius tulang kepala (untuk Amplop deform/merusak bentuk saja)"
 
 
-msgid "Bone is not visible when it is not in Edit Mode (i.e. in Object or Pose Modes)"
-msgstr "Tulang tidak terlihat saat tidak di Mode Edit (i.e di Mode Objek atau Pose)"
-
-
 msgid "Selectable"
 msgstr "Terseleksi"
 
@@ -4392,10 +4388,6 @@ msgstr "Saat tulang ada induk, kepala tulang terjebak ke ekor induk"
 
 msgid "Cyclic Offset"
 msgstr "Offset Siklik"
-
-
-msgid "When bone doesn't have a parent, it receives cyclic offset effects (Deprecated)"
-msgstr "Saat tulang tidak mempunyai induk, tulang tersebut menerima efek offset siklik (Ditinggalkan)"
 
 
 msgid "Deform"
@@ -6682,10 +6674,6 @@ msgstr "Posisi"
 
 msgid "Set position of selected color stop"
 msgstr "Set posisi stop warna yang terseleksi"
-
-
-msgid "File Output Slots"
-msgstr "Slot Keluaran Dokumen"
 
 
 msgid "Console Input"
@@ -10303,24 +10291,24 @@ msgid "Only Assets"
 msgstr "Hanya Aset"
 
 
-msgid "Filter Bforartists Backup Files"
-msgstr "Flter Dokumen Backup Bforartists"
+msgid "Filter Blender Backup Files"
+msgstr "Flter Dokumen Backup Blender"
 
 
 msgid "Show .blend1, .blend2, etc. files"
 msgstr "Tampilkan blend1, .blend2, etc. dokumen"
 
 
-msgid "Filter Bforartists"
-msgstr "Filter Bforartists"
+msgid "Filter Blender"
+msgstr "Filter Blender"
 
 
 msgid "Show .blend files"
 msgstr "Tampilkan file .blend"
 
 
-msgid "Filter Bforartists IDs"
-msgstr "Filter ID Bforartists"
+msgid "Filter Blender IDs"
+msgstr "Filter ID Blender"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
@@ -12584,18 +12572,6 @@ msgid "Color Space Settings"
 msgstr "Partikel"
 
 
-msgid "JPEG 2000"
-msgstr "JPEG 2000"
-
-
-msgid "TIFF"
-msgstr "TIFF"
-
-
-msgid "WebP"
-msgstr "WebP"
-
-
 msgid "Duration"
 msgstr "Durasi"
 
@@ -14737,10 +14713,6 @@ msgid "Double Click"
 msgstr "Klik Dua Kali"
 
 
-msgid "Click Drag"
-msgstr "Klik Seret"
-
-
 msgid "KeyMap Items"
 msgstr "Item PetaKunci"
 
@@ -15347,6 +15319,18 @@ msgid "Mask"
 msgstr "Masker"
 
 
+msgid "Snap"
+msgstr "Jepret"
+
+
+msgid "Mirror"
+msgstr "Cermin"
+
+
+msgid "Navigation"
+msgstr "Navigasi"
+
+
 msgid "Select Linked"
 msgstr "Seleksi yang Terhubung"
 
@@ -15397,18 +15381,6 @@ msgstr "Menggabungkan"
 
 msgid "Text"
 msgstr "Teks"
-
-
-msgid "Snap"
-msgstr "Jepret"
-
-
-msgid "Mirror"
-msgstr "Cermin"
-
-
-msgid "Navigation"
-msgstr "Navigasi"
 
 
 msgctxt "MovieClip"
@@ -18049,22 +18021,6 @@ msgid "File Output"
 msgstr "Keluaran Dokumen"
 
 
-msgid "Active Input Index"
-msgstr "Indeks Masukan Aktif"
-
-
-msgid "Base Path"
-msgstr "Jalur Dasar"
-
-
-msgid "File Slots"
-msgstr "Slot Dokumen"
-
-
-msgid "EXR Layer Slots"
-msgstr "Slot Layer EXR"
-
-
 msgid "To Straight"
 msgstr "Ke Lurus"
 
@@ -18242,14 +18198,6 @@ msgid "Fill Curve"
 msgstr "Isi Kurva"
 
 
-msgid "Triangles"
-msgstr "Segitiga"
-
-
-msgid "How to choose number of vertices on fillet"
-msgstr "Bagaimana memilih angka simpul di fillet"
-
-
 msgid "Flip Faces"
 msgstr "Membalikkan Wajah"
 
@@ -18335,6 +18283,10 @@ msgid "Fill Type"
 msgstr "Tipe Isi"
 
 
+msgid "Triangles"
+msgstr "Segitiga"
+
+
 msgid "Ico Sphere"
 msgstr "Ico Bola"
 
@@ -18377,10 +18329,6 @@ msgstr "Sampel Permukaan Terdekat"
 
 msgid "Sample UV Surface"
 msgstr "Sampel Permukaan UV"
-
-
-msgid "Scale Mode"
-msgstr "Mode Skala"
 
 
 msgid "Scale Instances"
@@ -20672,8 +20620,8 @@ msgid "Scale FPS"
 msgstr "Skala FPS"
 
 
-msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Bforartists frame"
-msgstr "Skalakan framerate dari BVH ke adegan sekarang, jika tidak, setiap peta frame BVH secara langsung ke frame Bforartists"
+msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame"
+msgstr "Skalakan framerate dari BVH ke adegan sekarang, jika tidak, setiap peta frame BVH secara langsung ke frame Blender"
 
 
 msgid "Decal Offset"
@@ -21554,9 +21502,8 @@ msgid "Current"
 msgstr "Setelah Ini"
 
 
-msgctxt "Operator"
-msgid "Move File Node Socket"
-msgstr "Induk"
+msgid "TIFF"
+msgstr "TIFF"
 
 
 msgctxt "Operator"
@@ -22879,7 +22826,7 @@ msgstr "Setelah Ini"
 
 msgctxt "Operator"
 msgid "Render"
-msgstr "Situs Bforartists"
+msgstr "Situs Blender"
 
 
 msgctxt "Operator"
@@ -23188,10 +23135,6 @@ msgstr "Vertex Aktif"
 
 msgid "Mouse Position X"
 msgstr "Posisi X Tetikus"
-
-
-msgid "Position of the mouse used for \"Surface\" mode"
-msgstr "Posisi tetikus digunakan untuk mode \"Permukaan\""
 
 
 msgid "Mouse Position Y"
@@ -24715,8 +24658,8 @@ msgstr "Semua Tipe"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Situs Bforartists"
+msgid "Quit Blender"
+msgstr "Situs Blender"
 
 
 msgid "Image ID"
@@ -24751,8 +24694,8 @@ msgstr "Data Animasi"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Situs Bforartists"
+msgid "Save Blender File"
+msgstr "Situs Blender"
 
 
 msgctxt "Operator"
@@ -24770,12 +24713,12 @@ msgstr "Interlace"
 
 
 msgctxt "Operator"
-msgid "About Bforartists"
-msgstr "Tentang Bforartists"
+msgid "About Blender"
+msgstr "Tentang Blender"
 
 
-msgid "Open a window with information about Bforartists"
-msgstr "Buka jendela dengan informasi tentang Bforartists"
+msgid "Open a window with information about Blender"
+msgstr "Buka jendela dengan informasi tentang Blender"
 
 
 msgid "Preserve"
@@ -25762,10 +25705,6 @@ msgid "Text Color"
 msgstr "Warna Standar"
 
 
-msgid "User Scale"
-msgstr "Skala Pengguna"
-
-
 msgid "Render Region"
 msgstr "Wilayah Render"
 
@@ -26282,8 +26221,8 @@ msgid "Texture Node Editor"
 msgstr "Editor Simpul Tekstur"
 
 
-msgid "Bforartists File"
-msgstr "Situs Bforartists"
+msgid "Blender File"
+msgstr "Situs Blender"
 
 
 msgid "Key-Binding"
@@ -27657,8 +27596,8 @@ msgid "Open..."
 msgstr "Buka..."
 
 
-msgid "Bforartists is free software"
-msgstr "Bforartists adalah perangkat lunak yang gratis"
+msgid "Blender is free software"
+msgstr "Blender adalah perangkat lunak yang gratis"
 
 
 msgid "Licensed under the GNU General Public License"
@@ -27684,17 +27623,17 @@ msgstr "Lisensi"
 
 
 msgctxt "Operator"
-msgid "Bforartists Store"
-msgstr "Toko Bforartists"
+msgid "Blender Store"
+msgstr "Toko Blender"
 
 
 msgctxt "Operator"
-msgid "Bforartists Website"
-msgstr "Website Bforartists"
+msgid "Blender Website"
+msgstr "Website Blender"
 
 
-msgid "Read about what's new in this version of Bforartists"
-msgstr "Baca tentang apa yang baru dengan versi Bforartists terbaru ini"
+msgid "Read about what's new in this version of Blender"
+msgstr "Baca tentang apa yang baru dengan versi Blender terbaru ini"
 
 
 msgctxt "Operator"
@@ -27884,11 +27823,6 @@ msgstr "Ukuran Panah"
 
 
 msgctxt "Operator"
-msgid "Delete All Shape Keys"
-msgstr "Hapus Semua Kunci Bentuk"
-
-
-msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "Urut dari Nama"
 
@@ -27909,18 +27843,8 @@ msgstr "Hapus Semua Kelompok"
 
 
 msgctxt "Operator"
-msgid "New Shape from Mix"
-msgstr "Bentuk Baru dari Campuran"
-
-
-msgctxt "Operator"
-msgid "Move to Top"
-msgstr "Pindah ke Atas"
-
-
-msgctxt "Operator"
-msgid "Move to Bottom"
-msgstr "Pindah ke Bawah"
+msgid "Flip"
+msgstr "Balik"
 
 
 msgid "Update on Edit"
@@ -28863,8 +28787,18 @@ msgid "Volume Files"
 msgstr "Dokumen Volume"
 
 
-msgid "Bforartists IDs"
-msgstr "Bforartists ID"
+msgid "Blender IDs"
+msgstr "Blender ID"
+
+
+msgctxt "Operator"
+msgid "Move to Top"
+msgstr "Pindah ke Atas"
+
+
+msgctxt "Operator"
+msgid "Move to Bottom"
+msgstr "Pindah ke Bawah"
 
 
 msgctxt "Operator"
@@ -29208,6 +29142,11 @@ msgid "No Items Available"
 msgstr "Tidak ada Item yang Tersedia"
 
 
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "Hapus Keyframe..."
+
+
 msgid "Raw"
 msgstr "Raw"
 
@@ -29426,8 +29365,8 @@ msgid "Video Memory"
 msgstr "Memori Video"
 
 
-msgid "Bforartists Version"
-msgstr "Versi Bforartists"
+msgid "Blender Version"
+msgstr "Versi Blender"
 
 
 msgid "Align To"
@@ -29602,11 +29541,6 @@ msgstr "Tambah Gambar"
 
 
 msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Hapus Keyframe..."
-
-
-msgctxt "Operator"
 msgid "Clear Keyframes..."
 msgstr "Kosongkan Keyframe..."
 
@@ -29753,11 +29687,6 @@ msgstr "Lemah"
 msgctxt "Operator"
 msgid "Strong"
 msgstr "Kuat"
-
-
-msgctxt "Operator"
-msgid "Flip"
-msgstr "Balik"
 
 
 msgctxt "Operator"
@@ -30704,10 +30633,6 @@ msgid "Object not found"
 msgstr "Benda tidak ketemu"
 
 
-msgid "Object \"%s\" is not a mesh or can't be converted to a mesh (Curve, Text, Surface or Metaball)"
-msgstr "Objek \"%s\" bukan mesh atau tidak dapat diubah ke mesh (Kurva, Teks, Permukaan atau Metabola)"
-
-
 msgid "Bone already has an IK constraint"
 msgstr "Kamera"
 
@@ -30876,8 +30801,8 @@ msgid "Scene has no camera"
 msgstr "Hapus"
 
 
-msgid "Bforartists Render"
-msgstr "Render Bforartists"
+msgid "Blender Render"
+msgstr "Render Blender"
 
 
 msgid "Failed to open window!"
@@ -30912,12 +30837,12 @@ msgid "Flip to Bottom"
 msgstr "Balik ke Bawah"
 
 
-msgid "Bforartists Drivers Editor"
-msgstr "Editor Drivers Bforartists"
+msgid "Blender Drivers Editor"
+msgstr "Editor Drivers Blender"
 
 
-msgid "Bforartists Info Log"
-msgstr "Info Log Bforartists"
+msgid "Blender Info Log"
+msgstr "Info Log Blender"
 
 
 msgid "Missing surface mesh"
@@ -31064,10 +30989,6 @@ msgid "Select Pass"
 msgstr "Seleksi"
 
 
-msgid "Can't Load Image"
-msgstr "Gambar"
-
-
 msgid "Can only save sequence on image sequences"
 msgstr "Orientasi Transformasi"
 
@@ -31122,10 +31043,6 @@ msgstr "Penyunting Logika"
 
 msgid "Mask not found"
 msgstr "Gambar Latar"
-
-
-msgid "Can't overwrite export file"
-msgstr "Tidak dapat menimpa file ekspor"
 
 
 msgid "Columns:"
@@ -31744,6 +31661,10 @@ msgid "Intersecting Edges"
 msgstr "Tepi Persimpangan"
 
 
+msgid "How to choose number of vertices on fillet"
+msgstr "Bagaimana memilih angka simpul di fillet"
+
+
 msgid "Point Index"
 msgstr "Indeks Titik"
 
@@ -31862,6 +31783,10 @@ msgstr "Panjang Sinar"
 
 msgid "Which top-level instances to realize"
 msgstr "Dimana contoh-contoh level-atas yang perlu disadari"
+
+
+msgid "Scale Mode"
+msgstr "Mode Skala"
 
 
 msgid "Inverted"
@@ -32114,8 +32039,8 @@ msgid "Wave Effect"
 msgstr "Efek Gelombang"
 
 
-msgid "Bforartists File View"
-msgstr "Tampilan Dokumen Bforartists"
+msgid "Blender File View"
+msgstr "Tampilan Dokumen Blender"
 
 
 msgid "Allow Execution"
@@ -32156,14 +32081,6 @@ msgstr "Bukan perpustakaan"
 
 msgid "Nothing indicated"
 msgstr "Tidak ada yang berindikasi"
-
-
-msgid "Can't append data-block '%s' of type '%s'"
-msgstr "Tidak dapat menambahkan tipe '%s' dari data-blok '%s'"
-
-
-msgid "Can't link data-block '%s' of type '%s'"
-msgstr "Tidak dapat menghubungkan tipe '%s' dari data-blok '%s'"
 
 
 msgid "'%s': cannot use current file as library"
@@ -32275,8 +32192,8 @@ msgstr "Kartu grafis anda atau versi macOS tidak didukung"
 
 
 msgctxt "WindowManager"
-msgid "Upgrading to the latest macOS version may improve Bforartists support"
-msgstr "Meningkatkan ke versi macOS terbaru mungkin dapat meningkatkan dukungan Bforartists"
+msgid "Upgrading to the latest macOS version may improve Blender support"
+msgstr "Meningkatkan ke versi macOS terbaru mungkin dapat meningkatkan dukungan Blender"
 
 
 msgid "(Unsaved)"

@@ -172,13 +172,12 @@ void Instance::begin_sync()
   this->use_layer_fb = false;
   this->use_object_fb = false;
   this->use_mask_fb = false;
-  this->use_separate_pass =
-      draw_ctx->is_viewport_compositor_enabled() ?
-          bke::compositor::get_used_passes(*scene, view_layer).contains("GreasePencil") :
-          false;
-  /* Always use high precision for render and viewport compositor (viewport compositor only takes
-   * RGBA16F/32F formats). */
-  this->use_signed_fb = this->use_separate_pass || !this->is_viewport;
+
+  const bool use_viewport_compositor = draw_ctx->is_viewport_compositor_enabled();
+  const bool has_grease_pencil_pass =
+      bke::compositor::get_used_passes(*scene, view_layer).contains("GreasePencil");
+  this->use_separate_pass = use_viewport_compositor ? has_grease_pencil_pass : false;
+  this->use_signed_fb = !this->is_viewport;
 
   if (draw_ctx->v3d) {
     const bool hide_overlay = ((draw_ctx->v3d->flag2 & V3D_HIDE_OVERLAYS) != 0);
@@ -448,10 +447,10 @@ tObject *Instance::object_sync_do(Object *ob, ResourceHandleRange res_handle)
                             ((layer.base.flag & GP_LAYER_TREE_NODE_USE_LIGHTS) != 0) &&
                             (ob->dtx & OB_USE_GPENCIL_LIGHTS);
 
-    GPUUniformBuf *lights_ubo = (use_lights) ? this->global_light_pool->ubo :
-                                               this->shadeless_light_pool->ubo;
+    gpu::UniformBuf *lights_ubo = (use_lights) ? this->global_light_pool->ubo :
+                                                 this->shadeless_light_pool->ubo;
 
-    GPUUniformBuf *ubo_mat;
+    gpu::UniformBuf *ubo_mat;
     gpencil_material_resources_get(matpool, 0, nullptr, nullptr, &ubo_mat);
 
     pass.bind_ubo("gp_lights", lights_ubo);
@@ -503,7 +502,7 @@ tObject *Instance::object_sync_do(Object *ob, ResourceHandleRange res_handle)
         return;
       }
 
-      GPUUniformBuf *new_ubo_mat;
+      gpu::UniformBuf *new_ubo_mat;
       gpu::Texture *new_tex_fill = nullptr;
       gpu::Texture *new_tex_stroke = nullptr;
       gpencil_material_resources_get(
@@ -612,9 +611,7 @@ void Instance::acquire_resources()
 
   const int2 size = int2(draw_ctx->viewport_size_get());
 
-  const gpu::TextureFormat format_color = this->use_signed_fb ?
-                                              gpu::TextureFormat::SFLOAT_16_16_16_16 :
-                                              gpu::TextureFormat::UFLOAT_11_11_10;
+  const gpu::TextureFormat format_color = gpu::TextureFormat::SFLOAT_16_16_16_16;
   const gpu::TextureFormat format_reveal = this->use_signed_fb ?
                                                gpu::TextureFormat::SFLOAT_16_16_16_16 :
                                                gpu::TextureFormat::UNORM_10_10_10_2;

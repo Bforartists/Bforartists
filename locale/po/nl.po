@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 14:52+0000\n"
 "Last-Translator: Lisa <blendergirl@tutanota.com>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
@@ -2702,6 +2702,18 @@ msgid "Mask"
 msgstr "Mask"
 
 
+msgid "Mirror"
+msgstr "Spiegel"
+
+
+msgid "Local View"
+msgstr "Lokale Scherm"
+
+
+msgid "Navigation"
+msgstr "Navigatie"
+
+
 msgid "Select Similar"
 msgstr "Selecteer Vergelijkbaar"
 
@@ -2752,18 +2764,6 @@ msgstr "Namen"
 
 msgid "Text"
 msgstr "Tekst"
-
-
-msgid "Mirror"
-msgstr "Spiegel"
-
-
-msgid "Local View"
-msgstr "Lokale Scherm"
-
-
-msgid "Navigation"
-msgstr "Navigatie"
 
 
 msgctxt "MovieClip"
@@ -2826,8 +2826,8 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Bforartists"
-msgstr "Bforartists"
+msgid "Blender"
+msgstr "Blender"
 
 
 msgid "System"
@@ -5653,8 +5653,8 @@ msgid "Save Screenshot"
 msgstr "Sla screenshot op"
 
 
-msgid "Capture a picture of the whole Bforartists window"
-msgstr "Maak een afbeelding van het hele Bforartists scherm"
+msgid "Capture a picture of the whole Blender window"
+msgstr "Maak een afbeelding van het hele Blender scherm"
 
 
 msgctxt "Operator"
@@ -6156,8 +6156,8 @@ msgid "Object Properties"
 msgstr "Objecteigenschappen"
 
 
-msgid "Open a Bforartists file"
-msgstr "Open een Bforartists Bestand"
+msgid "Open a Blender file"
+msgstr "Open een Blender Bestand"
 
 
 msgctxt "Operator"
@@ -6175,12 +6175,12 @@ msgstr "Alle Types"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
-msgstr "Bforartists Afsluiten"
+msgid "Quit Blender"
+msgstr "Blender Afsluiten"
 
 
-msgid "Quit Bforartists"
-msgstr "Bforartists Afsluiten"
+msgid "Quit Blender"
+msgstr "Blender Afsluiten"
 
 
 msgctxt "Operator"
@@ -6245,12 +6245,12 @@ msgstr "Sla Opstartbestand Op"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
-msgstr "Sla Bforartists Bestand op"
+msgid "Save Blender File"
+msgstr "Sla Blender Bestand op"
 
 
-msgid "Save the current Bforartists file"
-msgstr "Sla het huidige Bforartists bestand op"
+msgid "Save the current Blender file"
+msgstr "Sla het huidige Blender bestand op"
 
 
 msgctxt "Operator"
@@ -6268,8 +6268,8 @@ msgstr "Interface"
 
 
 msgctxt "Operator"
-msgid "About Bforartists"
-msgstr "Over Bforartists"
+msgid "About Blender"
+msgstr "Over Blender"
 
 
 msgctxt "Operator"
@@ -6480,7 +6480,7 @@ msgstr "Sla instellingen Op"
 
 
 msgid "Blend Files"
-msgstr "Bforartistsbestanden"
+msgstr "Blenderbestanden"
 
 
 msgctxt "Operator"
@@ -7726,11 +7726,6 @@ msgstr "Spiegel Y"
 
 
 msgctxt "Operator"
-msgid "Toggle Fullscreen Area"
-msgstr "Volledig Scherm Gebied aan/uit"
-
-
-msgctxt "Operator"
 msgid "Sound"
 msgstr "Geluid"
 
@@ -7777,6 +7772,11 @@ msgstr "Vervagen"
 msgctxt "Operator"
 msgid "Change Keying Set..."
 msgstr "Pas Sleutel Set..."
+
+
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "Verwijder Sleutelframes..."
 
 
 msgctxt "Operator"
@@ -7968,8 +7968,8 @@ msgid "Scene Statistics"
 msgstr "Scene Statistieken"
 
 
-msgid "Bforartists Version"
-msgstr "Bforartists Versie"
+msgid "Blender Version"
+msgstr "Blender Versie"
 
 
 msgid "Show Warning"
@@ -8119,11 +8119,6 @@ msgstr "Luidspreker"
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Maak Lokaal..."
-
-
-msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Verwijder Sleutelframes..."
 
 
 msgctxt "Operator"
@@ -8285,10 +8280,6 @@ msgstr "Kijk Naar"
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "Scherp"
-
-
-msgid "Seams"
-msgstr "Naden"
 
 
 msgctxt "Operator"
@@ -8793,6 +8784,10 @@ msgid "Icosphere"
 msgstr "Icosphere"
 
 
+msgid "Seams"
+msgstr "Naden"
+
+
 msgid "Close"
 msgstr "Sluit"
 
@@ -8900,8 +8895,8 @@ msgid "Gold"
 msgstr "Goud"
 
 
-msgid "Bforartists Render"
-msgstr "Bforartists Render"
+msgid "Blender Render"
+msgstr "Blender Render"
 
 
 msgid "Failed to open window!"
@@ -8992,10 +8987,6 @@ msgid "Select Layer"
 msgstr "Selecteer Laag"
 
 
-msgid "Can't Load Image"
-msgstr "Kan Afbeelding Niet Laden"
-
-
 msgid "unsupported image format"
 msgstr "niet-ondersteunde afbeeldingsindeling"
 
@@ -9006,10 +8997,6 @@ msgstr "Afbeelding \"%s\" opgeslagen"
 
 msgid "Saved %s"
 msgstr "%s Opgeslagen"
-
-
-msgid "can't save image while rendering"
-msgstr "kan afbeelding niet opslaan tijdens renderen"
 
 
 msgid "Now"

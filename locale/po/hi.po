@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Bforartists 5.0.0 Alpha (b'a7042ca30c82')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'6dca66d606ed')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 08:51+0000\n"
+"POT-Creation-Date: 2025-08-11 08:28+0000\n"
 "PO-Revision-Date: 2025-07-23 15:34+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Hindi <https://translate.blender.org/projects/blender-ui/ui/hi/>\n"
@@ -207,7 +207,7 @@ msgid "Additional paths to add to sys.path (';' separated)"
 msgstr "Sys.path करने के लिए जोड़ने के लिए अतिरिक्त पथ (', ' अलग है)"
 
 
-msgid "The Bforartists source root path"
+msgid "The Blender source root path"
 msgstr "ब्लेंडर स्रोत रूट पथ"
 
 
@@ -227,7 +227,7 @@ msgid "Warn about messages not starting by a capitalized letter (with a few allo
 msgstr "संदेश (कुछ अनुमति प्राप्त अपवाद!) के साथ एक कैपिटल अक्षर से प्रारंभ नहीं करने के बारे में चेतावनी दें"
 
 
-msgid "The name of a json file storing those settings (unfortunately, Bforartists's system does not work here)"
+msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
 msgstr "एक json उन सेटिंग्स भंडारण संचिका का नाम (दुर्भाग्य से, ब्लेंडर की व्यवस्था यहां काम नहीं करता है)"
 
 
@@ -1435,7 +1435,7 @@ msgid "Show .blend1, .blend2, etc. files"
 msgstr ".blend1, .blend2, आदि संचिकाएँ दिखाएँ"
 
 
-msgid "Filter Bforartists"
+msgid "Filter Blender"
 msgstr "निस्पादक ब्लेंडर"
 
 
@@ -1865,10 +1865,6 @@ msgstr "धुंधलापन"
 
 msgid "Alpha Mode"
 msgstr "पारदर्शिता रूप"
-
-
-msgid "Iris"
-msgstr "आईरिस"
 
 
 msgid "Duration"
@@ -2328,7 +2324,7 @@ msgid "Wood"
 msgstr "लकड़ी"
 
 
-msgid "Bforartists Original"
+msgid "Blender Original"
 msgstr "ब्लेंडर मूल"
 
 
@@ -2584,6 +2580,14 @@ msgid "Mask"
 msgstr "आवरण"
 
 
+msgid "Snap"
+msgstr "स्नैप"
+
+
+msgid "Mirror"
+msgstr "दर्पण"
+
+
 msgid "Light"
 msgstr "प्रकाश"
 
@@ -2638,14 +2642,6 @@ msgstr "पाठ"
 
 msgid "Bone Roll"
 msgstr "हड्डी पंजी"
-
-
-msgid "Snap"
-msgstr "स्नैप"
-
-
-msgid "Mirror"
-msgstr "दर्पण"
 
 
 msgid "Basic"
@@ -3095,10 +3091,6 @@ msgstr "बराबर"
 
 msgid "Bake"
 msgstr "भर्जन"
-
-
-msgid "Z Up"
-msgstr "Z ऊर्ध्व"
 
 
 msgid "Unknown"
@@ -3587,6 +3579,10 @@ msgstr "X ऊर्ध्व"
 
 msgid "Y Up"
 msgstr "Y ऊर्ध्व"
+
+
+msgid "Z Up"
+msgstr "Z ऊर्ध्व"
 
 
 msgid "-X Up"
@@ -4358,7 +4354,7 @@ msgid "Wrap"
 msgstr "आच्छादन"
 
 
-msgid "Open a Bforartists file"
+msgid "Open a Blender file"
 msgstr "एक ब्लेंडर संचिका खोलें"
 
 
@@ -4371,11 +4367,11 @@ msgstr "संदर्भ"
 
 
 msgctxt "Operator"
-msgid "Quit Bforartists"
+msgid "Quit Blender"
 msgstr "ब्लेंडर त्यागें"
 
 
-msgid "Quit Bforartists"
+msgid "Quit Blender"
 msgstr "ब्लेंडर त्यागें"
 
 
@@ -4437,11 +4433,11 @@ msgstr "प्राथमिक संचिका सहेजें"
 
 
 msgctxt "Operator"
-msgid "Save Bforartists File"
+msgid "Save Blender File"
 msgstr "ब्लेंडर संचिका सहेजें"
 
 
-msgid "Save the current Bforartists file"
+msgid "Save the current Blender file"
 msgstr "वर्तमान ब्लेंडर संचिका सहेजें"
 
 
@@ -4474,12 +4470,12 @@ msgid "Lock Y"
 msgstr "तालाबंदी y"
 
 
-msgid "Transform Orientations"
-msgstr "दिक् विन्यास संरचनांतरण"
-
-
 msgid "Motion Tracking"
 msgstr "गति मार्गन"
+
+
+msgid "Transform Orientations"
+msgstr "दिक् विन्यास संरचनांतरण"
 
 
 msgid "Predefined tracking camera intrinsics"
@@ -4843,7 +4839,7 @@ msgid "Display warnings"
 msgstr "चेतावनियाँ प्रदर्शित करें"
 
 
-msgid "Bforartists File"
+msgid "Blender File"
 msgstr "ब्लेंडर संचिका"
 
 
@@ -5133,10 +5129,6 @@ msgstr "कोई पाठ या संचिका निर्दिष्�
 
 msgid "External shader script must have .osl or .oso extension, or be a module name"
 msgstr "बाह्य shader स्क्रिप्ट .osl या .oso एक्सटेंशन होना चाहिए, या एक मॉड्यूल का नाम हो"
-
-
-msgid "Can't read OSO bytecode to store in node at %r"
-msgstr "OSO bytecode %r पर नोड में संग्रहीत करने के लिए नहीं पढ़ सकता"
 
 
 msgid "Failed to write .oso file next to external .osl file at "
@@ -5483,6 +5475,11 @@ msgstr "चलचित्र"
 
 
 msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "अनुबोधक चिन्हों मिटाएँ..."
+
+
+msgctxt "Operator"
 msgid "Left"
 msgstr "बाईं ओर"
 
@@ -5630,11 +5627,6 @@ msgstr "वक्ता"
 
 
 msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "अनुबोधक चिन्हों मिटाएँ..."
-
-
-msgctxt "Operator"
 msgid "Change Shape"
 msgstr "आकृति बदलें"
 
@@ -5681,10 +5673,6 @@ msgstr "गणना"
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "पैना"
-
-
-msgid "Seams"
-msgstr "तेजी"
 
 
 msgctxt "Operator"
@@ -6146,6 +6134,10 @@ msgid "Outer"
 msgstr "बाहरी"
 
 
+msgid "Seams"
+msgstr "तेजी"
+
+
 msgid "No additional selected meshes with equal vertex count to join"
 msgstr "अंतर्गत होने के लिए कोई अतिरिक्त चयनित जाल बराबर शिरोबिन्दु के साथ गिनती"
 
@@ -6314,7 +6306,7 @@ msgid "Scene has no camera"
 msgstr "दृश्य में कोई प्रतिबिंबक नहीं"
 
 
-msgid "Bforartists Render"
+msgid "Blender Render"
 msgstr "ब्लेंडर  प्रतिपादन"
 
 
@@ -6382,7 +6374,7 @@ msgid "File '%s' could not be loaded"
 msgstr "संचिका '%s'  लोड नहीं किया जा सकता है"
 
 
-msgid "File Modified Outside and Inside Bforartists"
+msgid "File Modified Outside and Inside Blender"
 msgstr "ब्लेंडर के अंदर और बाहर संचिका संशोधित"
 
 
@@ -6394,7 +6386,7 @@ msgid "Save to disk (ignore outside changes)"
 msgstr "डिस्क पर सहेजें (बाहरी परिवर्तनों पर ध्यान न दें)"
 
 
-msgid "File Modified Outside Bforartists"
+msgid "File Modified Outside Blender"
 msgstr "ब्लेंडर के बाहर संचिका संशोधित की"
 
 
@@ -6402,7 +6394,7 @@ msgid "Reload from disk"
 msgstr "डिस्क से फिर से लोड करें"
 
 
-msgid "File Deleted Outside Bforartists"
+msgid "File Deleted Outside Blender"
 msgstr "ब्लेंडर के बाहर संचिका हटाए गए"
 
 
@@ -6608,7 +6600,7 @@ msgid "Rim"
 msgstr "रिम"
 
 
-msgid "Bforartists File View"
+msgid "Blender File View"
 msgstr "ब्लेंडर संचिका दृश्य"
 
 
