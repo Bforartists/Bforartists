@@ -1,26 +1,21 @@
 name: Create issue in manual when a PR is merged
 
-# --------------------------------------------------------------
-# 1. Trigger on any push to the default branch (e.g. main or master)
-# --------------------------------------------------------------
 on:
   push:
     branches:
-      - master          # change if your default branch has another name
+      - master
 
 jobs:
   issue_on_merge:
     runs-on: ubuntu-latest
-    # Only run when the commit is a merge of a pull‑request
-    if: contains(github.event.head_commit.message, 'Merge pull request')
+    if: |
+      contains(github.event.head_commit.message, 'Merge pull request') &&
+      contains(github.event.head_commit.message, '#')
 
     steps:
       - name: Checkout source repo (bforartists/bforartists)
         uses: actions/checkout@v4
 
-      # ------------------------------------------------------------
-      # 2. Extract PR number from commit message
-      # ------------------------------------------------------------
       - name: Extract PR number from commit message
         id: prnum
         run: |
@@ -32,27 +27,29 @@ jobs:
             exit 1
           fi
 
-      # ------------------------------------------------------------
-      # 3. Create issue in the target repo (bforartists/manual)
-      # ------------------------------------------------------------
       - name: Create issue in manual repo
         env:
-          GH_PAT_AUTO_ISSUE: ${{ secrets.GH_PAT_AUTO_ISSUE }}   # PAT from secret
+          GH_PAT_AUTO_ISSUE: ${{ secrets.GH_PAT_AUTO_ISSUE }}
         run: |
           PR_NUM="${{ steps.prnum.outputs.pr_number }}"
-          TARGET_REPO="bforartists/manual"    # target repository
+          TARGET_REPO="bforartists/manual"
           TITLE="Merged PR #$PR_NUM"
-          BODY=$(cat <<EOF
-          Pull request #$PR_NUM was merged into \`master\` of **bforartists/bforartists**.
 
-          Please review the changes and verify that they meet our quality standards.
-          EOF
-          )
+          BODY="Pull request #$PR_NUM was merged into \`master\` of **bforartists/bforartists**.
+
+          Please review the changes and verify that they meet our quality standards."
 
           echo "Creating issue: $TITLE"
 
-          curl -s \
+          RESPONSE=$(curl -s \
             -H "Authorization: token $GH_PAT_AUTO_ISSUE" \
             -X POST \
             -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" \
-            https://api.github.com/repos/$TARGET_REPO/issues
+            https://api.github.com/repos/$TARGET_REPO/issues)
+
+          if [ $? -ne 0 ]; then
+            echo "::error::Failed to create issue"
+            exit 1
+          fi
+
+          echo "Issue created successfully: $RESPONSE"
