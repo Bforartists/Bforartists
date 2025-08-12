@@ -1,41 +1,45 @@
-name: Create Manual Issue for Documentation Update
+name: Create issue on merge
 
 on:
   push:
     branches:
-      - main # Main repository branch
-    types: [released] # Only trigger when a tag is pushed (after successful merge)
+      - master          # change this to your main branch name if needed
 
 jobs:
   create_issue:
+    # Only run when a PR is merged (the `merged` flag exists in the event payload)
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          repository: bforartists/bforartists # Main repository
-          token: ${{ secrets.ACCESS_TOKEN }}
-          fetch-depth: 0 # Fetch the entire commit history
-
-      # Get PR information
-      - name: Get Pull Request Details
-        id: pr_details
+      - name: Create issue via GitHub API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT_AUTO_ISSUE }}   # personal access token secret
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
-          echo "PR_TITLE=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
-          echo "PR_BODY=$(git log -1 --pretty=%b)" >> $GITHUB_OUTPUT
-          echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          # Build the issue title and body
+          TITLE="Merge of PR #$PR_NUMBER"
+          BODY=$(cat <<EOF
+          ## Merge Details
 
-      # Create an issue in the manual repository
-      - name: Create Issue in Manual Repository
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.ACCESS_TOKEN }}
-          script: |
-            const title = `Fix for commit ${process.env.COMMIT_ID} - Documentation Update`;
-            const body = `This commit requires an update to the documentation:\n\n${process.env.COMMIT_ID}\n\nPull Request Title: ${process.env.PR_TITLE}\nPull Request Body: ${process.env.PR_BODY}`;
+          * **Pull‑Request**: [#$PR_NUMBER](https://github.com/$REPO_OWNER/$REPO_NAME/pull/$PR_NUMBER)
+          * **Commit**: [$COMMIT_SHA](https://github.com/$REPO_OWNER/$REPO_NAME/commit/$COMMIT_SHA)
 
-            github.rest.issues.create({
-              repo: 'bforartists/manual', # Manual repository
-              title: title,
-              body: body
-            });
+          > This issue was automatically created because PR #$PR_NUMBER was merged into the main branch.
+          EOF
+          )
+
+          # Create JSON payload for the API call
+          PAYLOAD=$(jq -n \
+            --arg title "$TITLE" \
+            --arg body "$BODY" \
+            '{title: $title, body: $body}')
+
+          # Call GitHub REST API to create the issue
+          curl -sSL -X POST "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues" \
+               -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github+json" \
+               --data "$PAYLOAD"
