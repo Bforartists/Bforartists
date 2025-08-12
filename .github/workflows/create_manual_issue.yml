@@ -1,45 +1,58 @@
-name: Create issue on merge
+name: Create issue in manual when a PR is merged
 
+# --------------------------------------------------------------
+# 1. Trigger on any push to the default branch (e.g. main or master)
+# --------------------------------------------------------------
 on:
   push:
     branches:
-      - master          # change this to your main branch name if needed
+      - main          # change if your default branch has another name
 
 jobs:
-  create_issue:
-    # Only run when a PR is merged (the `merged` flag exists in the event payload)
-    if: github.event.pull_request.merged == true
+  issue_on_merge:
     runs-on: ubuntu-latest
+    # Only run when the commit is a merge of a pull‑request
+    if: github.event.head_commit.message contains 'Merge pull request'
 
     steps:
-      - name: Create issue via GitHub API
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT_AUTO_ISSUE }}   # personal access token secret
-          REPO_OWNER: ${{ github.repository_owner }}
-          REPO_NAME: ${{ github.event.repository.name }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          COMMIT_SHA: ${{ github.sha }}
+      - name: Checkout source repo (bforartists/bforartists)
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------
+      # 2. Extract PR number from commit message
+      # ------------------------------------------------------------
+      - name: Extract PR number from commit message
+        id: prnum
         run: |
-          # Build the issue title and body
-          TITLE="Merge of PR #$PR_NUMBER"
+          MSG="${{ github.event.head_commit.message }}"
+          if [[ "$MSG" =~ \#([0-9]+) ]]; then
+            echo "pr_number=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Could not find PR number in commit message."
+            exit 1
+          fi
+
+      # ------------------------------------------------------------
+      # 3. Create issue in the target repo (bforartists/manual)
+      # ------------------------------------------------------------
+      - name: Create issue in manual repo
+        env:
+          GH_PAT_AUTO_ISSUE: ${{ secrets.GH_PAT_AUTO_ISSUE }}   # PAT from secret
+        run: |
+          PR_NUM="${{ steps.prnum.outputs.pr_number }}"
+          TARGET_REPO="bforartists/manual"    # target repository
+          TITLE="Merged PR #$PR_NUM"
           BODY=$(cat <<EOF
-          ## Merge Details
+          Pull request #$PR_NUM was merged into \`main\` of **bforartists/bforartists**.
 
-          * **Pull‑Request**: [#$PR_NUMBER](https://github.com/$REPO_OWNER/$REPO_NAME/pull/$PR_NUMBER)
-          * **Commit**: [$COMMIT_SHA](https://github.com/$REPO_OWNER/$REPO_NAME/commit/$COMMIT_SHA)
-
-          > This issue was automatically created because PR #$PR_NUMBER was merged into the main branch.
+          Please review the changes and verify that they meet our quality standards.
           EOF
           )
 
-          # Create JSON payload for the API call
-          PAYLOAD=$(jq -n \
-            --arg title "$TITLE" \
-            --arg body "$BODY" \
-            '{title: $title, body: $body}')
+          echo "Creating issue: $TITLE"
 
-          # Call GitHub REST API to create the issue
-          curl -sSL -X POST "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues" \
-               -H "Authorization: token $GITHUB_TOKEN" \
-               -H "Accept: application/vnd.github+json" \
-               --data "$PAYLOAD"
+          curl -s \
+            -H "Authorization: token $GH_PAT_AUTO_ISSUE" \
+            -X POST \
+            -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" \
+            https://api.github.com/repos/$TARGET_REPO/issues
