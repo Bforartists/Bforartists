@@ -389,12 +389,12 @@
           <ThemeCommonAnim
             playhead="#54b933"
             preview_range="#a14d0066"
-            time_marker="#ffffff4d"
+            time_marker="#00000060"
             time_marker_selected="#ffffffb3"
-            channel="#194e8080"
-            channel_sub="#0f2c4d80"
-            channel_group="#1a332d37"
-            channel_group_active="#216d5b67"
+            channel="#52606e24"
+            channel_sub="#7c899624"
+            channel_group="#4f654937"
+            channel_group_active="#68845f55"
             >
           </ThemeCommonAnim>
         </anim>

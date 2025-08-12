@@ -306,14 +306,14 @@ const bTheme U_theme_default = {
   },
   .common = {
     .anim = {
-      .playhead = RGBA(0x54b93300),
+      .playhead = RGBA(0x54b933ff),
       .preview_range = RGBA(0xa14d0066),
-      .time_marker = RGBA(0xffffff4d),
+      .time_marker = RGBA(0x00000060),
       .time_marker_selected = RGBA(0xffffffb3),
-      .channel = RGBA(0x194e8080),
-      .channel_sub = RGBA(0x0f2c4d80),
-      .channel_group = RGBA(0x1a332d37),
-      .channel_group_active = RGBA(0x216d5b67),
+      .channel = RGBA(0x52606e24),
+      .channel_sub = RGBA(0x7c899624),
+      .channel_group = RGBA(0x4f654937),
+      .channel_group_active = RGBA(0x68845f55),
     },
   },
   .space_properties = {
