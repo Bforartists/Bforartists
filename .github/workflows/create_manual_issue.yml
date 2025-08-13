@@ -2,32 +2,34 @@ name: Create issue in manual when a PR is merged
 
 on:
   pull_request:
-    types: [closed]   # Der Job läuft nur bei geschlossenen PRs (inklusive Merge)
+    types: [closed]   # Runs just at closed pull requests (including Merge)
 
 jobs:
   create_issue_on_merge:
     runs-on: ubuntu-latest
-    # Nur wenn der PR wirklich gemerged wurde
+    # Only when an actual merge happened
     if: github.event.pull_request.merged == true
 
     permissions:
-      contents: read          # Für actions/checkout (falls du Code brauchst)
-      issues: write           # Damit wir Issues im Zielrepo anlegen können
+      contents: read          # For actions/checkout (In case you need code)
+      issues: write           # So that we can create an issue
 
     steps:
       - name: Checkout source repo (bforartists/bforartists)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # optional, falls du später Git‑History brauchst
+          fetch-depth: 0   # optional, for the Git‑History
 
       - name: Create issue in manual repo
         env:
           GH_PAT_AUTO_ISSUE: ${{ secrets.GH_PAT_AUTO_ISSUE }}
         run: |
-          PR_NUM="${{ github.event.pull_request.number }}"
+          PR_NUM="${{ github.event.pull_request.number }}" # the pull request number
+          PR_TITLE="${{ github.event.pull_request.title }}" # the pull request title
+          PR_URL="${{ github.event.pull_request.html_url }}" # the pull request url
           TARGET_REPO="bforartists/manual"
-          TITLE="Merged PR #$PR_NUM"
-          BODY=$(printf '%s' "Pull request #$PR_NUM was merged into `master` of **bforartists/bforartists**.\n\nPlease review the changes and verify that they meet our quality standards.")
+          TITLE="Merged PR #$PR_NUM $PR_TITLE"
+          BODY=$(printf '%s' "Pull request #$PR_NUM was merged into the master branch in **bforartists/bforartists**.\nThe title of the pull request was #$PR_TITLE\nThe URL to the pull request is #$PR_URL\nPlease review the changes and update the manual.")
 
           echo "Creating issue: $TITLE"
 
