@@ -3255,16 +3255,16 @@ static void node_draw_collapsed(const bContext &C,
     UI_GetThemeColorBlendShade4fv(TH_SELECT, color_id, 0.4f, 10, color);
   }
 
+  float iconfs = rct.xmin + (NODE_MARGIN_X / 3);  // BFA: collapsed node icon
   /* Collapse/expand icon. */
   {
     const int but_size = U.widget_unit * 1.0f;
     UI_block_emboss_set(&block, ui::EmbossType::None);
-
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
                               0,
                               ICON_RIGHTARROW,
-                              rct.xmin + (NODE_MARGIN_X / 3),
+                              iconfs,
                               centy - but_size / 2,
                               but_size,
                               but_size,
@@ -3280,6 +3280,26 @@ static void node_draw_collapsed(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::Emboss);
   }
 
+  /* BFA - collapsed node icon */
+  const int iconbutw = U.widget_unit * 1.0f;
+  const float icon_right_margin = 0.85f * iconbutw;
+  float icon_x = rct.xmax - iconbutw - icon_right_margin;
+
+  UI_block_emboss_set(&block, blender::ui::EmbossType::None);
+  uiDefIconBut(&block,
+               ButType::But,
+               0,
+               RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
+               icon_x,
+               centy - iconbutw / 2,
+               iconbutw,
+               iconbutw,
+               nullptr,
+               0,
+               0,
+               "");
+  UI_block_emboss_set(&block, blender::ui::EmbossType::Emboss);
+
   const std::string showname = bke::node_label(ntree, node);
 
   uiBut *but = uiDefBut(&block,
@@ -3288,7 +3308,7 @@ static void node_draw_collapsed(const bContext &C,
                         showname,
                         round_fl_to_int(rct.xmin + NODE_MARGIN_X),
                         round_fl_to_int(centy - NODE_DY * 0.5f),
-                        short(BLI_rctf_size_x(&rct) - (2 * U.widget_unit)),
+                        short(BLI_rctf_size_x(&rct) - (3 * U.widget_unit)),  /* BFA - increased margin for new icon and moved name left by 1 more icon space */
                         NODE_DY,
                         nullptr,
                         0,
