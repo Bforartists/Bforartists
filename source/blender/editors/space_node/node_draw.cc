@@ -3281,9 +3281,7 @@ static void node_draw_collapsed(const bContext &C,
   }
 
   /* BFA - collapsed node icon */
-  //const int iconbutw = U.widget_unit * 1.0f;
   const int iconbutw = U.widget_unit * 1.0f;
-  /* Place icon at right edge inside widget, with margin of 0.5 icon width. */
   const float icon_right_margin = 0.85f * iconbutw;
   float icon_x = rct.xmax - iconbutw - icon_right_margin;
 
