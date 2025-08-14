@@ -3255,16 +3255,16 @@ static void node_draw_collapsed(const bContext &C,
     UI_GetThemeColorBlendShade4fv(TH_SELECT, color_id, 0.4f, 10, color);
   }
 
+  float iconfs = rct.xmin + (NODE_MARGIN_X / 3);  // BFA: collapsed node icon
   /* Collapse/expand icon. */
   {
     const int but_size = U.widget_unit * 1.0f;
     UI_block_emboss_set(&block, ui::EmbossType::None);
-
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
                               0,
                               ICON_RIGHTARROW,
-                              rct.xmin + (NODE_MARGIN_X / 3),
+                              iconfs,
                               centy - but_size / 2,
                               but_size,
                               but_size,
@@ -3279,6 +3279,27 @@ static void node_draw_collapsed(const bContext &C,
                     (void *)"NODE_OT_hide_toggle");
     UI_block_emboss_set(&block, ui::EmbossType::Emboss);
   }
+
+  /* BFA: collapsed node icon */
+
+  //const float iconbutw = NODE_HEADER_ICON_SIZE;
+  const int iconbutw = U.widget_unit * 1.0f;
+  //const float iconbutw = but_size;
+  iconfs += iconbutw;
+  UI_block_emboss_set(&block, blender::ui::EmbossType::None);
+  uiDefIconBut(&block,
+               ButType::But,
+               0,
+               RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
+               iconfs,
+               centy - iconbutw / 2,
+               iconbutw,
+               iconbutw,
+               nullptr,
+               0,
+               0,
+               "");
+  UI_block_emboss_set(&block, blender::ui::EmbossType::Emboss);
 
   const std::string showname = bke::node_label(ntree, node);
 
