@@ -3280,18 +3280,19 @@ static void node_draw_collapsed(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::Emboss);
   }
 
-  /* BFA: collapsed node icon */
-
-  //const float iconbutw = NODE_HEADER_ICON_SIZE;
+  /* BFA - collapsed node icon */
+  //const int iconbutw = U.widget_unit * 1.0f;
   const int iconbutw = U.widget_unit * 1.0f;
-  //const float iconbutw = but_size;
-  iconfs += iconbutw;
+  /* Place icon at right edge inside widget, with margin of 0.5 icon width. */
+  const float icon_right_margin = 0.85f * iconbutw;
+  float icon_x = rct.xmax - iconbutw - icon_right_margin;
+
   UI_block_emboss_set(&block, blender::ui::EmbossType::None);
   uiDefIconBut(&block,
                ButType::But,
                0,
                RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
-               iconfs,
+               icon_x,
                centy - iconbutw / 2,
                iconbutw,
                iconbutw,
@@ -3309,7 +3310,7 @@ static void node_draw_collapsed(const bContext &C,
                         showname,
                         round_fl_to_int(rct.xmin + NODE_MARGIN_X),
                         round_fl_to_int(centy - NODE_DY * 0.5f),
-                        short(BLI_rctf_size_x(&rct) - (2 * U.widget_unit)),
+                        short(BLI_rctf_size_x(&rct) - (3 * U.widget_unit)),  /* BFA - increased margin for new icon and moved name left by 1 more icon space */
                         NODE_DY,
                         nullptr,
                         0,
