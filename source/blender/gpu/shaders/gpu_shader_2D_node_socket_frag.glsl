@@ -99,7 +99,7 @@ void main()
     /* BFA - Change single socket shape to enlarged square*/
     /* The name _LINE is still kept though for compatibility */
     case SOCK_DISPLAY_SHAPE_LINE: {
-      distance_squared = square_sdf(co, float2(square_radius * 1.2));
+      distance_squared = square_sdf(co, float2(square_radius * 1.1));
       alpha_threshold = corner_rounding;
       break;
     }
