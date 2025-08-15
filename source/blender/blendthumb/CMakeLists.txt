@@ -58,16 +58,16 @@ if(WIN32)
 
 elseif(APPLE)
   # -----------------------------------------------------------------------------
-  # Build `blender-thumbnailer.appex` app extension.
+  # Build `bforartists-thumbnailer.appex` app extension.
   set(SRC_APPEX
     src/thumbnail_provider.h
     src/thumbnail_provider.mm
   )
 
-  add_executable(blender-thumbnailer MACOSX_BUNDLE ${SRC} ${SRC_APPEX})
-  setup_platform_linker_flags(blender-thumbnailer)
-  setup_platform_linker_libs(blender-thumbnailer)
-  target_link_libraries(blender-thumbnailer
+  add_executable(bforartists-thumbnailer MACOSX_BUNDLE ${SRC} ${SRC_APPEX})
+  setup_platform_linker_flags(bforartists-thumbnailer)
+  setup_platform_linker_libs(bforartists-thumbnailer)
+  target_link_libraries(bforartists-thumbnailer
     bf_blenlib
     bf_blenloader_core
     # Avoid linker error about undefined _main symbol.
@@ -76,7 +76,7 @@ elseif(APPLE)
   )
   # The RPATH here points to the main Blender Resources/lib directory.
   # Avoid duplicating the large `dylibs` (~300MB).
-  set_target_properties(blender-thumbnailer PROPERTIES
+  set_target_properties(bforartists-thumbnailer PROPERTIES
     INSTALL_RPATH "@loader_path/../../../../Resources/lib"
     # Prevent Xcode from overwriting the signature.
     XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
@@ -86,24 +86,24 @@ elseif(APPLE)
   # even on developer machine to generate thumbnails.
   # Command taken from XCode build process.
   add_custom_command(
-    TARGET blender-thumbnailer POST_BUILD
+    TARGET bforartists-thumbnailer POST_BUILD
     COMMAND codesign --deep --force --sign -
       --entitlements "${CMAKE_SOURCE_DIR}/release/darwin/thumbnailer_entitlements.plist"
-      --timestamp=none $<TARGET_BUNDLE_DIR:blender-thumbnailer>
+      --timestamp=none $<TARGET_BUNDLE_DIR:bforartists-thumbnailer>
   )
 elseif(UNIX)
   # -----------------------------------------------------------------------------
-  # Build `blender-thumbnailer` executable
+  # Build `bforartists-thumbnailer` executable
 
   set(SRC_CMD
     src/blender_thumbnailer.cc
   )
 
-  add_executable(blender-thumbnailer ${SRC} ${SRC_CMD})
-  setup_platform_linker_flags(blender-thumbnailer)
-  setup_platform_linker_libs(blender-thumbnailer)
-  target_link_libraries(blender-thumbnailer PRIVATE bf_blenlib bf_blenloader_core)
+  add_executable(bforartists-thumbnailer ${SRC} ${SRC_CMD})
+  setup_platform_linker_flags(bforartists-thumbnailer)
+  setup_platform_linker_libs(bforartists-thumbnailer)
+  target_link_libraries(bforartists-thumbnailer PRIVATE bf_blenlib bf_blenloader_core)
   if(DEFINED PTHREADS_LIBRARIES)
-    target_link_libraries(blender-thumbnailer PRIVATE ${PTHREADS_LIBRARIES})
+    target_link_libraries(bforartists-thumbnailer PRIVATE ${PTHREADS_LIBRARIES})
   endif()
 endif()

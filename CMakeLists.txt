@@ -218,7 +218,7 @@ thumbnails from `.blend` files."
   )
 elseif(UNIX AND NOT APPLE)
   option(WITH_BLENDER_THUMBNAILER "\
-Build stand-alone \"blender-thumbnailer\" command-line thumbnail extraction utility, \
+Build stand-alone \"bforartists-thumbnailer\" command-line thumbnail extraction utility, \
 intended for use by file-managers to extract PNG images from `.blend` files."
     ON
   )

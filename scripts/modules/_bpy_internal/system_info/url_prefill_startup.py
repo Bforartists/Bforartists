@@ -42,11 +42,11 @@ def url_from_blender() -> str:
     os_type = platform.system()
     script_directory = Path(__file__).parent.resolve()
     if os_type == "Darwin":  # macOS appears as Darwin.
-        blender_bin = script_directory.joinpath("../../../../../../MacOS/Blender")
+        blender_bin = script_directory.joinpath("../../../../../../MacOS/Bforartists")
     elif os_type == "Windows":
-        blender_bin = script_directory.joinpath("../../../../../Blender.exe")
+        blender_bin = script_directory.joinpath("../../../../../Bforartists.exe")
     else:  # Linux and other Unix systems.
-        blender_bin = script_directory.joinpath("../../../../../blender")
+        blender_bin = script_directory.joinpath("../../../../../bforartists")
 
     try:
         blender_output = subprocess.run(

@@ -1222,7 +1222,7 @@ void GHOST_WindowWin32::registerWindowAppUserModelProperties()
 
   /* Find the current executable, and see if it's blender.exe if not bail out. */
   GetModuleFileName(0, blender_path, sizeof(blender_path));
-  char *blender_app = strstr(blender_path, "blender.exe");
+  char *blender_app = strstr(blender_path, "bforartists.exe");
   if (!blender_app) {
     return;
   }
@@ -1234,7 +1234,7 @@ void GHOST_WindowWin32::registerWindowAppUserModelProperties()
 
   /* Set the launcher as the shell command so the console window will not flash.
    * when people pin blender to the taskbar. */
-  strcpy(blender_app, "blender-launcher.exe");
+  strcpy(blender_app, "bforartists-launcher.exe");
   wsprintfW(shell_command, L"\"%S\"", blender_path);
   UTF16_ENCODE(BLENDER_WIN_APPID);
   UTF16_ENCODE(BLENDER_WIN_APPID_FRIENDLY_NAME);
