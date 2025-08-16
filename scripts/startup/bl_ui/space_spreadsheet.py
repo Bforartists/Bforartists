@@ -5,28 +5,15 @@
 import bpy
 from bpy.types import Header, Menu, Panel
 
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_spreadsheet(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
-
 
 class SPREADSHEET_HT_header(bpy.types.Header):
     bl_space_type = 'SPREADSHEET'
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+
         layout = self.layout
         space = context.space_data
-
-        ALL_MT_editormenu_spreadsheet.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
         SPREADSHEET_MT_editor_menus.draw_collapsible(context, layout)
         layout.separator_spacer()
@@ -91,8 +78,6 @@ classes = (
 
     SPREADSHEET_MT_editor_menus,
     SPREADSHEET_MT_view,
-
-    ALL_MT_editormenu_spreadsheet, # BFA - menu
 )
 
 if __name__ == "__main__":  # Only for live edit.
