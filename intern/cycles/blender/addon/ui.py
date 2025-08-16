@@ -1209,13 +1209,23 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         col.label(text="Volume")
         row = col.row()
         row.separator()
-        row.prop(cycles_view_layer, "use_pass_volume_scatter", text="Scatter")
+        row.prop(cycles_view_layer, "use_pass_volume_direct", text="Direct")
         row = col.row()
         row.separator()
-        row.prop(cycles_view_layer, "use_pass_volume_transmit", text="Transmit")
-        row = col.row()
-        row.separator()
-        row.prop(cycles_view_layer, "use_pass_volume_majorant", text="Majorant")
+        row.prop(cycles_view_layer, "use_pass_volume_indirect", text="Indirect")
+
+        prefs = context.preferences
+        use_debug = prefs.experimental.use_cycles_debug and prefs.view.show_developer_ui
+        if use_debug:
+            row = col.row()
+            row.separator()
+            row.prop(cycles_view_layer, "use_pass_volume_scatter", text="Scatter")
+            row = col.row()
+            row.separator()
+            row.prop(cycles_view_layer, "use_pass_volume_transmit", text="Transmit")
+            row = col.row()
+            row.separator()
+            row.prop(cycles_view_layer, "use_pass_volume_majorant", text="Majorant")
 
         col = flow.column(align=True)
         col.label(text="Other")
