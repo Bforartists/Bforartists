@@ -62,7 +62,7 @@ BLENDER_DESKTOP = "bforartists.desktop"
 # The target binary.
 BLENDER_FILENAME = "bforartists"
 # The target binary (thumbnailer).
-BLENDER_THUMBNAILER_FILENAME = "blender-thumbnailer"
+BLENDER_THUMBNAILER_FILENAME = "bforartists-thumbnailer"
 
 
 # -----------------------------------------------------------------------------
