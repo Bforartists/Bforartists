@@ -748,8 +748,8 @@ class ClearAllRestrictRender(Operator):
 
 
 class TransformsToDeltas(Operator):
-    """Convert normal object transforms to delta transforms, """ \
-        """any existing delta transforms will be included as well"""
+    """Converts normal object transforms to delta transforms.\n""" \
+        """Any existing delta transform will be included as well""" # BFA
     bl_idname = "object.transforms_to_deltas"
     bl_label = "Transforms to Deltas"
     bl_options = {'REGISTER', 'UNDO'}
@@ -770,16 +770,6 @@ class TransformsToDeltas(Operator):
         description=("Clear transform values after transferring to deltas"),
         default=True,
     )
-
-    # bfa - description for the delta transforms
-    arg: bpy.props.StringProperty()
-
-    @classmethod
-    def description(cls, context, properties):
-        #return "arg is: " + properties.arg
-        return properties.arg
-
-    # bfa - description end
 
     @classmethod
     def poll(cls, context):
