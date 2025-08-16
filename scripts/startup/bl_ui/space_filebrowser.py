@@ -98,10 +98,7 @@ class FILEBROWSER_HT_header(Header):
         space_data = context.space_data
 
         if space_data.active_operator is None:
-            # layout.template_header()
-            ALL_MT_editormenu_filebrowser.draw_hidden(
-                context, layout
-            )  # bfa - show hide the editormenu, editor suffix is needed.
+            self.draw_editor_type_menu(context)
 
         if SpaceAssetInfo.is_asset_browser(space_data):
             ASSETBROWSER_MT_editor_menus.draw_collapsible(context, layout)
@@ -113,19 +110,6 @@ class FILEBROWSER_HT_header(Header):
 
         if not context.screen.show_statusbar:
             layout.template_running_jobs()
-
-
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_filebrowser(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
 
 
 class FileBrowserPanel:
@@ -1124,7 +1108,6 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
 
 classes = (
-    ALL_MT_editormenu_filebrowser,  # BFA
     FILEBROWSER_HT_header,
     FILEBROWSER_PT_display,
     FILEBROWSER_PT_filter,

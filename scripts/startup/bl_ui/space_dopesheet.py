@@ -283,13 +283,11 @@ class DOPESHEET_HT_header(Header):
     bl_space_type = 'DOPESHEET_EDITOR'
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+        
         layout = self.layout
 
         st = context.space_data
-
-        # bfa - show hide the editormenu, editor suffix is needed.
-        ALL_MT_editormenu_dopesheet.draw_hidden(context, layout)
-
         if st.mode == 'TIMELINE':
             from bl_ui.space_time import TIME_MT_editor_menus
             TIME_MT_editor_menus.draw_collapsible(context, layout)
@@ -314,18 +312,6 @@ class DOPESHEET_HT_header(Header):
             DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
             DOPESHEET_HT_editor_buttons.draw_header(context, layout)
 
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_dopesheet(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
 
 class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
     bl_space_type = 'DOPESHEET_EDITOR'
@@ -1346,7 +1332,6 @@ class DOPESHEET_PT_grease_pencil_layer_display(
 
 
 classes = (
-    ALL_MT_editormenu_dopesheet, # BFA menu
     ANIM_OT_switch_editors_to_dopesheet, # BFA menu
     ANIM_OT_switch_editors_to_graph, # BFA menu
     ANIM_OT_switch_editors_to_driver, # BFA menu

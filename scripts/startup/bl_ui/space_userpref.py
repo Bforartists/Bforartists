@@ -46,7 +46,7 @@ class USERPREF_HT_header(Header):
         layout = self.layout
         layout.operator_context = 'EXEC_AREA'
 
-        layout.template_header()
+        self.draw_editor_type_menu(context)
 
         USERPREF_MT_editor_menus.draw_collapsible(context, layout)
 

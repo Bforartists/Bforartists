@@ -16,6 +16,8 @@ class TOOLBAR_HT_header(Header):
     bl_space_type = 'TOOLBAR'
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+
         layout = self.layout
 
         window = context.window
@@ -23,8 +25,6 @@ class TOOLBAR_HT_header(Header):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        ALL_MT_editormenu_toolbar.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
 
         layout.popover(panel="TOOLBAR_PT_type", text = "")
 
@@ -79,22 +79,6 @@ class TOOLBAR_HT_header(Header):
 
             TOOLBAR_MT_misc.hide_misc_toolbar(context, layout)
 
-########################################################################
-
-# bfa - show hide the editortype menu
-class ALL_MT_editormenu_toolbar(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
-
-########################################################################
 
 ############################### Toolbar Type Panel ########################################
 
@@ -1934,7 +1918,6 @@ class TOOLBAR_MT_misc(Menu):
 classes = (
 
     TOOLBAR_HT_header,
-    ALL_MT_editormenu_toolbar,
     TOOLBAR_MT_toolbar_type,
     TOOLBAR_PT_menu_file,
     TOOLBAR_PT_menu_misc,

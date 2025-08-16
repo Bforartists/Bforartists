@@ -36,12 +36,12 @@ class PROPERTIES_HT_header(Header):
                 )
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+
         layout = self.layout
         view = context.space_data
         region = context.region
         ui_scale = context.preferences.system.ui_scale
-
-        ALL_MT_editormenu_properties.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         # bfa - The tab to switch to outliner
         row = layout.row(align=True)
@@ -188,25 +188,10 @@ class PropertiesAnimationMixin:
         anim.draw_action_and_slot_selector_for_id(layout, animated_id)
 
 
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_properties(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
-
-
 classes = (
     PROPERTIES_HT_header,
     PROPERTIES_PT_navigation_bar,
     PROPERTIES_PT_options,
-    ALL_MT_editormenu_properties, # BFA - menu
 )
 
 if __name__ == "__main__":  # only for live edit.

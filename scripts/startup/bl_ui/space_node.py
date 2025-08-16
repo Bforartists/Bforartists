@@ -122,6 +122,7 @@ class NODE_HT_header(Header):
     bl_space_type = 'NODE_EDITOR'
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
         layout = self.layout
 
         scene = context.scene
@@ -132,8 +133,6 @@ class NODE_HT_header(Header):
         tool_settings = context.tool_settings
         is_compositor = snode.tree_type == 'CompositorNodeTree'
         not_group = (len(snode.path) > 1) # BFA - don't show up arrow if at top level.
-
-        ALL_MT_editormenu_node.draw_hidden(context, layout) # BFA - show hide the editormenu, editor suffix is needed.
 
         # Now expanded via the `ui_type`.
         # layout.prop(snode, "tree_type", text="")
@@ -397,18 +396,6 @@ class NODE_PT_gizmo_display(Panel):
         colsub.active = snode.node_tree is not None and col.active
         colsub.prop(snode, "show_gizmo_active_node", text="Active Node")
 
-# BFA - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_node(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
 
 class NODE_MT_editor_menus(Menu):
     bl_idname = "NODE_MT_editor_menus"
@@ -1581,7 +1568,6 @@ class NODE_AST_compositor(NodeAssetShelf, bpy.types.AssetShelf):
 
 
 classes = (
-    ALL_MT_editormenu_node,  # BFA - Menu
     NODE_HT_header,
     NODE_MT_editor_menus,
     NODE_MT_add,

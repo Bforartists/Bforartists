@@ -1091,6 +1091,8 @@ class IMAGE_HT_header(Header):
                 layout.prop_search(mesh.uv_layers, "active", mesh, "uv_layers", text="")
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+        
         layout = self.layout
 
         sima = context.space_data
@@ -1103,8 +1105,6 @@ class IMAGE_HT_header(Header):
         show_render = sima.show_render
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
-
-        ALL_MT_editormenu_image.draw_hidden(context, layout)  # BFA - show hide the editormenu, editor suffix is needed.
 
         # BFA - hide disfunctional tools and settings for render result
         is_render = False
@@ -1212,20 +1212,6 @@ class IMAGE_HT_header(Header):
             row.prop(sima, "display_channels", icon_only=True)
 
         row.popover(panel="IMAGE_PT_image_options", text="Options")
-
-
-# BFA - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_image(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
 
 
 class IMAGE_MT_editor_menus(Menu):
@@ -2257,7 +2243,6 @@ class IMAGE_AST_brush_paint(ImageAssetShelf, AssetShelf):
         return context.space_data and context.space_data.mode == 'PAINT'
 
 classes = (
-    ALL_MT_editormenu_image, # BFA menu
     IMAGE_MT_view_legacy, # BFA menu
     IMAGE_MT_view,
     IMAGE_MT_view_pie_menus, # BFA menu

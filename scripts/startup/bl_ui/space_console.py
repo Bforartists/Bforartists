@@ -11,25 +11,13 @@ class CONSOLE_HT_header(Header):
     bl_space_type = 'CONSOLE'
 
     def draw(self, context):
-        layout = self.layout.row()
+        self.draw_editor_type_menu(context)
 
-        ALL_MT_editormenu_console.draw_hidden(context, layout) # bfa - show hide the editormenu, editor suffix is needed.
+        layout = self.layout.row()
         CONSOLE_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.operator("console.autocomplete", text="Autocomplete")
 
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_console(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
 
 class CONSOLE_MT_editor_menus(Menu):
     bl_idname = "CONSOLE_MT_editor_menus"
@@ -217,7 +205,6 @@ class CONSOLE_MT_context_menu(Menu):
 
 classes = (
     CONSOLE_HT_header,
-    ALL_MT_editormenu_console,
     CONSOLE_MT_edit_select_text, # bfa menu
     CONSOLE_MT_edit_move_cursor, # bfa menu
     CONSOLE_MT_edit, # BFA - menu

@@ -876,15 +876,14 @@ class VIEW3D_HT_header(Header):
             draw_topbar_grease_pencil_layer_panel(context, layout)
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+
         layout = self.layout
 
         tool_settings = context.tool_settings
         view = context.space_data
         shading = view.shading
         overlay = view.overlay
-
-        # bfa - show hide the editormenu, editor suffix is needed.
-        ALL_MT_editormenu_view3d.draw_hidden(context, layout)
 
         obj = context.active_object
         mode_string = context.mode
@@ -1232,26 +1231,6 @@ class VIEW3D_HT_header(Header):
     def _texture_mask_icon(ipaint):
         mask_enabled = ipaint.use_stencil_layer or ipaint.use_cavity
         return "MOD_MASK" if mask_enabled else "MOD_MASK_OFF"  # BFA - mask icon
-
-
-# BFA - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_view3d(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def _texture_mask_icon(ipaint):
-        mask_enabled = ipaint.use_stencil_layer or ipaint.use_cavity
-        return "MOD_MASK" if mask_enabled else "MOD_MASK_OFF"
-
-    @staticmethod
-    def draw_menus(layout, context):
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
-
-    # bfa - do not place any content here, it does not belong into this class !!!
 
 
 class VIEW3D_MT_editor_menus(Menu):
@@ -13081,7 +13060,6 @@ class VIEW3D_AST_object(bpy.types.AssetShelf):
 classes = (
     VIEW3D_HT_header,
     VIEW3D_HT_tool_header,
-    ALL_MT_editormenu_view3d,  # bfa menu
     VIEW3D_MT_editor_menus,
     VIEW3D_MT_transform,
     VIEW3D_MT_transform_object,

@@ -45,6 +45,7 @@ class NLA_HT_header(Header):
     bl_space_type = 'NLA_EDITOR'
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
         layout = self.layout
 
         st = context.space_data
@@ -52,8 +53,6 @@ class NLA_HT_header(Header):
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        ALL_MT_editormenu_nla.draw_hidden(context, layout)  # bfa - show hide the editormenu, editor suffix is needed.
 
         # Switch between the editors
 
@@ -145,19 +144,6 @@ class NLA_PT_snapping(Panel):
         col.prop(tool_settings, "snap_anim_element", expand=True)
         if tool_settings.snap_anim_element != "MARKER":
             col.prop(tool_settings, "use_snap_time_absolute")
-
-
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_nla(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
 
 
 class NLA_PT_filters(DopesheetFilterPopoverBase, Panel):
@@ -624,7 +610,6 @@ class NLA_MT_channel_context_menu(Menu):
 
 classes = (
     ANIM_OT_switch_editors_in_nla, # BFA - menu
-    ALL_MT_editormenu_nla, # BFA - menu
     NLA_HT_header,
     NLA_HT_playback_controls,
     NLA_MT_editor_menus,

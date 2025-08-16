@@ -16,13 +16,13 @@ class TEXT_HT_header(Header):
     bl_space_type = 'TEXT_EDITOR'
 
     def draw(self, context):
-        layout = self.layout
+        self.draw_editor_type_menu(context)
 
+        layout = self.layout
         st = context.space_data
         text = st.text
         is_syntax_highlight_supported = st.is_syntax_highlight_supported()
 
-        ALL_MT_editormenu_text.draw_hidden(context, layout)  # BFA - show hide the editormenu, editor suffix is needed.
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
@@ -90,20 +90,6 @@ class TEXT_HT_footer(Header):
                     else iface_("Text: Internal"),
                     translate=False,
                 )
-
-
-# BFA - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_text(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
 
 
 class TEXT_MT_editor_menus(Menu):
@@ -557,7 +543,6 @@ class TEXT_MT_edit_delete(Menu):
 
 
 classes = (
-    ALL_MT_editormenu_text, # BFA - menu
     TEXT_HT_header,
     TEXT_HT_footer,
     TEXT_MT_editor_menus,
