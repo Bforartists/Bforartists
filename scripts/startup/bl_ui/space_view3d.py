@@ -7427,7 +7427,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.operator("mesh.mark_sharp", icon="MARKSHARPEDGES")
         layout.operator("mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES").clear = True
 
-        # BFA - the mark sharp are redundant and in the UV menu 
+        # BFA - the mark sharp are redundant and in the UV menu
 
         layout.operator("mesh.mark_sharp", text="Mark Sharp from Vertices", icon="MARKSHARPVERTS").use_verts = True
         props = layout.operator("mesh.mark_sharp", text="Clear Sharp from Vertices", icon="CLEARSHARPVERTS")
@@ -8087,7 +8087,7 @@ class VIEW3D_MT_edit_curve_delete(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        
+
         # BFA - Change label if menu is used as a popup
         if layout.operator_context == 'EXEC_REGION_WIN':
             vertices_label = "Vertices"
@@ -10716,7 +10716,7 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.mode == "EDIT_MESH"
+        return context.mode == 'EDIT_MESH'
 
     def draw(self, context):
         layout = self.layout
@@ -10727,12 +10727,16 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
         overlay = view.overlay
         display_all = overlay.show_overlays
 
-        is_any_solid_shading = not (shading.show_xray or (shading.type == "WIREFRAME"))
+        is_any_solid_shading = not (shading.show_xray or (shading.type == 'WIREFRAME'))
 
         col = layout.column()
         col.active = display_all
 
+        split = col.split() # BFA - our layout
+        sub = split.column()  # BFA - our layout
+        row = sub.row() # BFA - our layout
         row = col.row(align=True)
+        row.separator() # BFA - our layout
         row.prop(overlay, "show_edge_bevel_weight", text="Bevel", icon='EDGE_BEVEL', toggle=True)
         row.prop(overlay, "show_edge_crease", text="Crease", icon='EDGE_CREASE', toggle=True)
         row.prop(overlay, "show_edge_seams", text="Seam", icon='EDGE_SEAM', toggle=True)
@@ -10746,29 +10750,14 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
         )
 
         col.separator()
-        split = col.split()
-
-        sub = split.column()
-        row = sub.row()
+        row = col.row() # BFA - our layout
         row.separator()
         row.prop(overlay, "show_faces", text="Faces")
-        sub = split.column()
-        sub.active = is_any_solid_shading
-        sub.prop(overlay, "show_face_center", text="Center")
+        row.active = is_any_solid_shading
+        row.prop(overlay, "show_face_center", text="Center") # BFA - our layout
 
-        row = col.row(align=True)
+        row = col.row() # BFA - our layout
         row.separator()
-        row.prop(overlay, "show_edge_crease", text="Creases", toggle=True)
-        row.prop(
-            overlay,
-            "show_edge_sharp",
-            text="Sharp",
-            text_ctxt=i18n_contexts.plural,
-            toggle=True,
-        )
-        row.prop(overlay, "show_edge_bevel_weight", text="Bevel", toggle=True)
-        row.prop(overlay, "show_edge_seams", text="Seams", toggle=True)
-
         row.prop(overlay, "show_extra_indices", text="Indices")
 
 
