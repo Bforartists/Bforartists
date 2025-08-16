@@ -337,6 +337,7 @@ class USERPREF_PT_interface_temporary_windows(InterfacePanel, CenterAlignMixIn, 
 
         flow.prop(view, "render_display_type", text="Render In") # BFA
         flow.prop(view, "filebrowser_display_type", text="File Browser") # BFA
+        flow.prop(view, "preferences_display_type", text="Preferences")  # BFA
 
 
 class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
@@ -1059,6 +1060,9 @@ class USERPREF_MT_interface_theme_presets(Menu):
         "ThemeBoneColorSet",
         "ThemeClipEditor",
         "ThemeCollectionColor",
+        "ThemeCommon",
+        "ThemeCommonAnim",
+        "ThemeCommonCurves",
         "ThemeConsole",
         "ThemeDopeSheet",
         "ThemeFileBrowser",

@@ -601,11 +601,8 @@ class CYCLES_RENDER_PT_volumes(CyclesButtonsPanel, Panel):
         scene = context.scene
         cscene = scene.cycles
 
-        col = layout.column(align=True)
-        col.prop(cscene, "volume_step_rate", text="Step Rate Render")
-        col.prop(cscene, "volume_preview_step_rate", text="Viewport")
-
-        layout.prop(cscene, "volume_max_steps", text="Max Steps")
+        col = layout.column()
+        col.prop(cscene, "volume_unbiased", text="Unbiased")
 
 
 class CYCLES_RENDER_PT_light_paths(CyclesButtonsPanel, Panel):
@@ -1212,10 +1209,13 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         col.label(text="Volume")
         row = col.row()
         row.separator()
-        row.prop(cycles_view_layer, "use_pass_volume_direct", text="Direct")
+        row.prop(cycles_view_layer, "use_pass_volume_scatter", text="Scatter")
         row = col.row()
         row.separator()
-        row.prop(cycles_view_layer, "use_pass_volume_indirect", text="Indirect")
+        row.prop(cycles_view_layer, "use_pass_volume_transmit", text="Transmit")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "use_pass_volume_majorant", text="Majorant")
 
         col = flow.column(align=True)
         col.label(text="Other")
@@ -2030,12 +2030,6 @@ class CYCLES_WORLD_PT_settings_volume(CyclesButtonsPanel, Panel):
         sub = col.column()
         sub.prop(cworld, "volume_sampling", text="Sampling")
         col.prop(cworld, "volume_interpolation", text="Interpolation")
-        col.use_property_split = False
-        col.prop(cworld, "homogeneous_volume", text="Homogeneous")
-        col.use_property_split = True
-        sub = col.column()
-        sub.active = not cworld.homogeneous_volume
-        sub.prop(cworld, "volume_step_size")
 
 
 class CYCLES_WORLD_PT_settings_light_group(CyclesButtonsPanel, Panel):
@@ -2208,11 +2202,6 @@ class CYCLES_MATERIAL_PT_settings_volume(CyclesButtonsPanel, Panel):
         sub = col.column()
         sub.prop(cmat, "volume_sampling", text="Sampling")
         col.prop(cmat, "volume_interpolation", text="Interpolation")
-        col.use_property_split = False
-        col.prop(cmat, "homogeneous_volume", text="Homogeneous")
-        sub = col.column()
-        sub.active = not cmat.homogeneous_volume
-        sub.prop(cmat, "volume_step_rate")
 
     def draw(self, context):
         self.draw_shared(self, context, context.material)

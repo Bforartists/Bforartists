@@ -1704,7 +1704,7 @@ static void rna_NodeTree_debug_zone_lazy_function_graph(
 static void rna_NodeTree_interface_update(bNodeTree *ntree, bContext *C)
 {
   Main *bmain = CTX_data_main(C);
-  ntree->tree_interface.tag_items_changed();
+  ntree->tree_interface.tag_items_changed_generic();
   BKE_main_ensure_invariants(*bmain, ntree->id);
 }
 
@@ -10609,7 +10609,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeSetAlpha", def_cmp_set_alpha, ICON_IMAGE_ALPHA);
   define(brna, "CompositorNode", "CompositorNodeSplit", def_cmp_split, ICON_NODE_VIWERSPLIT);
   define(brna, "CompositorNode", "CompositorNodeStabilize", def_cmp_stabilize2d, ICON_NODE_STABILIZE2D);
-  define(brna, "CompositorNode", "CompositorNodeSunBeams", nullptr, ICON_NODE_SUNBEAMS);
   define(brna, "CompositorNode", "CompositorNodeSwitch", nullptr, ICON_SWITCH_DIRECTION);
   define(brna, "CompositorNode", "CompositorNodeSwitchView", nullptr, ICON_VIEW_SWITCHACTIVECAM);
   define(brna, "CompositorNode", "CompositorNodeTime", def_time, ICON_NODE_CURVE_TIME);

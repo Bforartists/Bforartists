@@ -710,6 +710,10 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
                                             const int flag,
                                             const bool do_override = false /* bfa do override*/)
 {
+  BLI_assert_msg(
+      BLI_path_cmp(BKE_main_blendfile_path(bmain), filepath) != 0,
+      "Calling code should ensure it does not attempt to link/append from current blendfile");
+
   const bool do_append = (flag & FILE_LINK) == 0;
   /* Tag everything so we can make local only the new datablock. */
   BKE_main_id_tag_all(bmain, ID_TAG_PRE_EXISTING, true);
@@ -791,10 +795,8 @@ ID *WM_file_append_datablock(Main *bmain,
                              int flag)
 {
   BLI_assert((flag & FILE_LINK) == 0);
-  ID *id = wm_file_link_append_datablock_ex(
+  return wm_file_link_append_datablock_ex(
       bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag);
-
-  return id;
 }
 
 /** \} */
