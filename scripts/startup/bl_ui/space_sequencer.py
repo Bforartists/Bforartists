@@ -1185,6 +1185,8 @@ class SEQUENCER_MT_add_scene(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("sequencer.scene_strip_add_new", text="New Scene", icon="ADD").type = "EMPTY"
 
+        layout.menu_contents("SEQUENCER_MT_scene_add_root_catalogs")
+
         bpy_data_scenes_len = len(bpy.data.scenes)
         if bpy_data_scenes_len > 14:  # BFA - increased to 14 from 10
             layout.separator()
@@ -1193,7 +1195,7 @@ class SEQUENCER_MT_add_scene(Menu):
                 "sequencer.scene_strip_add", text="Scene...", icon="SEQUENCE"
             )  # BFA - added icon
         elif bpy_data_scenes_len > 1:
-            layout.separator()
+            layout.label(text="Scenes", icon='NONE')
             scene = context.scene
             for sc_item in bpy.data.scenes:
                 if sc_item == scene:
@@ -1421,6 +1423,7 @@ class SEQUENCER_MT_strip_animation(Menu):
         layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe with Keying Set", icon="KEYFRAMES_INSERT").always_prompt = True
         layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon="KEYINGSET")
         layout.operator("anim.keyframe_delete_vse", text="Delete Keyframes")
+        layout.operator("anim.keyframe_clear_vse", text="Clear Keyframes...")
 
 
 class SEQUENCER_MT_strip_input(Menu):

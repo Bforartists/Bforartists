@@ -150,7 +150,8 @@ void VKVertexBuffer::upload_data_direct(const VKBuffer &host_buffer)
 
 void VKVertexBuffer::upload_data_via_staging_buffer(VKContext &context)
 {
-  VKStagingBuffer staging_buffer(buffer_, VKStagingBuffer::Direction::HostToDevice);
+  VKStagingBuffer staging_buffer(
+      buffer_, VKStagingBuffer::Direction::HostToDevice, 0, this->size_used_get());
   VKBuffer &buffer = staging_buffer.host_buffer_get();
   if (buffer.is_allocated()) {
     upload_data_direct(buffer);
@@ -210,7 +211,8 @@ void VKVertexBuffer::allocate()
                  vk_buffer_usage,
                  0,
                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                 VmaAllocationCreateFlags(0));
+                 VmaAllocationCreateFlags(0),
+                 0.8f);
   debug::object_label(buffer_.vk_handle(), "VertexBuffer");
 }
 

@@ -299,6 +299,7 @@ struct ParserData {
           token_offsets.offsets.emplace_back(offset);
         }
       }
+      token_offsets.offsets.emplace_back(offset);
     }
     {
       /* Keywords detection. */
@@ -644,6 +645,16 @@ struct Token {
     return {data, index + 1};
   }
 
+  /* Only usable when building with whitespace. */
+  Token next_not_whitespace() const
+  {
+    Token next = this->next();
+    while (next == ' ' || next == '\n') {
+      next = next.next();
+    }
+    return next;
+  }
+
   /* Returns the scope that contains this token. */
   Scope scope() const;
 
@@ -655,6 +666,11 @@ struct Token {
   size_t str_index_last() const
   {
     return index_range().last();
+  }
+
+  size_t str_index_last_no_whitespace() const
+  {
+    return data->str.find_last_not_of(" \n", str_index_last());
   }
 
   /* Index of the first character of the line this token is. */
@@ -699,23 +715,27 @@ struct Token {
 
   TokenType type() const
   {
-    return TokenType(*this);
-  }
-
-  operator TokenType() const
-  {
     if (is_invalid()) {
       return Invalid;
     }
     return TokenType(data->token_types[index]);
   }
+
   bool operator==(TokenType type) const
   {
-    return TokenType(*this) == type;
+    return this->type() == type;
   }
   bool operator!=(TokenType type) const
   {
     return !(*this == type);
+  }
+  bool operator==(char type) const
+  {
+    return *this == TokenType(type);
+  }
+  bool operator!=(char type) const
+  {
+    return *this != TokenType(type);
   }
 };
 
@@ -758,6 +778,18 @@ struct Scope {
   {
     return data->str.substr(start().str_index_start(),
                             end().str_index_last() - start().str_index_start() + 1);
+  }
+
+  Token find_token(const char token_type) const
+  {
+    size_t pos = data->token_types.substr(range().start, range().size).find(token_type);
+    return (pos != std::string::npos) ? Token{data, int64_t(range().start + pos)} :
+                                        Token::invalid();
+  }
+
+  bool contains_token(const char token_type) const
+  {
+    return find_token(token_type).is_valid();
   }
 
   void foreach_match(const std::string &pattern,
@@ -850,6 +882,13 @@ struct Parser {
       callback(Scope{&data_, pos});
       pos += 1;
     }
+  }
+
+  void foreach_match(const std::string &pattern,
+                     std::function<void(const std::vector<Token>)> callback)
+  {
+    foreach_scope(ScopeType::Global,
+                  [&](const Scope scope) { scope.foreach_match(pattern, callback); });
   }
 
   /* Run a callback for all existing function scopes. */
@@ -961,6 +1000,11 @@ struct Parser {
     insert_after(at.str_index_last(), content);
   }
 
+  void insert_line_number(size_t at, int line)
+  {
+    insert_after(at, "#line " + std::to_string(line) + "\n");
+  }
+
   void insert_before(size_t at, const std::string &content)
   {
     IndexRange range = IndexRange(at, 0);
@@ -972,14 +1016,14 @@ struct Parser {
   }
 
   /* Return true if any mutation was applied. */
-  bool apply_mutations()
+  bool only_apply_mutations()
   {
     if (mutations_.empty()) {
       return false;
     }
 
     /* Order mutations so that they can be applied in one pass. */
-    std::sort(mutations_.begin(), mutations_.end());
+    std::stable_sort(mutations_.begin(), mutations_.end());
 
     int64_t offset = 0;
     for (const Mutation &mut : mutations_) {
@@ -987,14 +1031,22 @@ struct Parser {
       offset += mut.replacement.size() - mut.src_range.size;
     }
     mutations_.clear();
-    this->parse();
     return true;
+  }
+
+  bool apply_mutations()
+  {
+    bool applied = only_apply_mutations();
+    if (applied) {
+      this->parse();
+    }
+    return applied;
   }
 
   /* Apply mutations if any and get resulting string. */
   const std::string &result_get()
   {
-    apply_mutations();
+    only_apply_mutations();
     return data_.str;
   }
 
@@ -1009,7 +1061,11 @@ struct Parser {
   {
     std::string out;
     for (const Mutation &mut : mutations_) {
-      out += "Replace \"";
+      out += "Replace ";
+      out += std::to_string(mut.src_range.start);
+      out += " - ";
+      out += std::to_string(mut.src_range.size);
+      out += " \"";
       out += data_.str.substr(mut.src_range.start, mut.src_range.size);
       out += "\" by \"";
       out += mut.replacement;

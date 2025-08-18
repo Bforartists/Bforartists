@@ -5106,6 +5106,11 @@ uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short 
   bool show_color = true; /* BFA - dont theme our alert icons */
   ImBuf *ibuf = UI_icon_alert_imbuf_get((eAlertIcon)icon, float(width));
   if (ibuf) {
+    if (icon == ALERT_ICON_ERROR) {
+      uchar color[4];
+      UI_GetThemeColor4ubv(TH_ERROR, color);
+      return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, color);
+    }
     bTheme *btheme = UI_GetTheme();
     const uchar *color = btheme->tui.wcol_menu_back.text_sel;
     return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, show_color ? nullptr : color);  /* BFA - dont theme our alert icons */

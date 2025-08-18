@@ -957,21 +957,11 @@ else()
 endif()
 
 # Vulkan
-option(WITH_VULKAN_BACKEND "Enable Vulkan as graphics backend (experimental)" ON)
-mark_as_advanced(WITH_VULKAN_BACKEND)
-if(APPLE)
-  option(WITH_VULKAN_MOLTENVK "Enable Vulkan over MoltenVK (development option)" OFF)
-  mark_as_advanced(WITH_VULKAN_MOLTENVK)
-endif()
-
-if(APPLE AND NOT WITH_VULKAN_MOLTENVK)
+if(NOT APPLE)
+  option(WITH_VULKAN_BACKEND "Enable Vulkan as graphics backend" ON)
+  mark_as_advanced(WITH_VULKAN_BACKEND)
+else()
   set(WITH_VULKAN_BACKEND OFF)
-endif()
-if(NOT WITH_EXPERIMENTAL_FEATURES)
-  if(APPLE)
-    set(WITH_VULKAN_MOLTENVK OFF)
-    set(WITH_VULKAN_BACKEND OFF)
-  endif()
 endif()
 
 # Metal
@@ -1655,27 +1645,6 @@ endif()
 
 if(NOT WITH_SYSTEM_EIGEN3)
   set(EIGEN3_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/extern/Eigen3)
-endif()
-
-if(WITH_OPENVDB)
-  list(APPEND OPENVDB_DEFINITIONS -DWITH_OPENVDB)
-
-  if(WITH_OPENVDB_3_ABI_COMPATIBLE)
-    list(APPEND OPENVDB_DEFINITIONS -DOPENVDB_3_ABI_COMPATIBLE)
-  endif()
-
-  # OpenVDB headers use deprecated TBB headers, silence warning.
-  list(APPEND OPENVDB_DEFINITIONS -DTBB_SUPPRESS_DEPRECATED_MESSAGES=1)
-
-  list(APPEND OPENVDB_INCLUDE_DIRS
-    ${BOOST_INCLUDE_DIR}
-    ${TBB_INCLUDE_DIRS}
-    ${OPENEXR_INCLUDE_DIRS}
-  )
-
-  if(WITH_OPENVDB_BLOSC)
-    list(APPEND OPENVDB_DEFINITIONS -DWITH_OPENVDB_BLOSC)
-  endif()
 endif()
 
 # -----------------------------------------------------------------------------

@@ -6775,7 +6775,7 @@ static wmOperatorStatus userpref_show_exec(bContext *C, wmOperator *op)
   wmWindow *win_cur = CTX_wm_window(C);
   /* Use eventstate, not event from _invoke, so this can be called through exec(). */
   const wmEvent *event = win_cur->eventstate;
-  int sizex = (500 + UI_NAVIGATION_REGION_WIDTH) * UI_SCALE_FAC;
+  int sizex = (680 + UI_NAVIGATION_REGION_WIDTH) * UI_SCALE_FAC;
   int sizey = 520 * UI_SCALE_FAC;
 
   PropertyRNA *prop = RNA_struct_find_property(op->ptr, "section");
@@ -6797,24 +6797,20 @@ static wmOperatorStatus userpref_show_exec(bContext *C, wmOperator *op)
   };
 
   /* changes context! */
-  if (WM_window_open(C,
-                     nullptr, /*BFA wip - IFACE_("Bforartists Preferences"),*/
-                     &window_rect,
-                     SPACE_USERPREF,
-                     false,
-                     false,
-                     true,
-                     WIN_ALIGN_LOCATION_CENTER,
-                     nullptr,
-                     nullptr) != nullptr)
+  if (ScrArea *area = ED_screen_temp_space_open(
+          C,
+          nullptr, /*BFA wip - title uses IFACE_("Bforartists Preferences") string,*/
+          &window_rect,
+          SPACE_USERPREF,
+          U.preferences_display_type,
+          false))
   {
     /* The header only contains the editor switcher and looks empty.
      * So hiding in the temp window makes sense. */
-    ScrArea *area = CTX_wm_area(C);
-    ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
+    ARegion *region_header = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
 
-    region->flag |= RGN_FLAG_HIDDEN;
-    ED_region_visibility_change_update(C, area, region);
+    region_header->flag |= RGN_FLAG_HIDDEN;
+    ED_region_visibility_change_update(C, area, region_header);
 
     return OPERATOR_FINISHED;
   }

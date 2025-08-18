@@ -90,7 +90,9 @@ struct BuildDefs {
   bool with_freestyle;
   bool with_libmv;
   bool with_opencolorio;
+  bool with_opengl_backend;
   bool with_renderdoc;
+  bool with_vulkan_backend;
   bool with_xr_openxr;
 };
 
@@ -121,11 +123,17 @@ static void build_defs_init(BuildDefs *build_defs, bool force_all)
 #  ifdef WITH_LIBMV
   build_defs->with_libmv = true;
 #  endif
+#  ifdef WITH_OPENGL_BACKEND
+  build_defs->with_opengl_backend = true;
+#  endif
 #  ifdef WITH_OPENCOLORIO
   build_defs->with_opencolorio = true;
 #  endif
 #  ifdef WITH_RENDERDOC
   build_defs->with_renderdoc = true;
+#  endif
+#  ifdef WITH_VULKAN_BACKEND
+  build_defs->with_vulkan_backend = true;
 #  endif
 #  ifdef WITH_XR_OPENXR
   build_defs->with_xr_openxr = true;
@@ -750,9 +758,9 @@ static void print_help(bArgs *ba, bool all)
     BLI_args_print_arg_doc(ba, "--debug-gpu-scope-capture");
     BLI_args_print_arg_doc(ba, "--debug-gpu-renderdoc");
   }
-#  ifdef WITH_VULKAN_BACKEND
-  BLI_args_print_arg_doc(ba, "--debug-gpu-vulkan-local-read");
-#  endif
+  if (defs.with_vulkan_backend) {
+    BLI_args_print_arg_doc(ba, "--debug-gpu-vulkan-local-read");
+  }
   BLI_args_print_arg_doc(ba, "--debug-wm");
   if (defs.with_xr_openxr) {
     BLI_args_print_arg_doc(ba, "--debug-xr");
@@ -776,9 +784,10 @@ static void print_help(bArgs *ba, bool all)
   PRINT("\n");
   PRINT("GPU Options:\n");
   BLI_args_print_arg_doc(ba, "--gpu-backend");
-#  ifdef WITH_OPENGL_BACKEND
-  BLI_args_print_arg_doc(ba, "--gpu-compilation-subprocesses");
-#  endif
+  BLI_args_print_arg_doc(ba, "--gpu-vsync");
+  if (defs.with_opengl_backend) {
+    BLI_args_print_arg_doc(ba, "--gpu-compilation-subprocesses");
+  }
   BLI_args_print_arg_doc(ba, "--profile-gpu");
 
   PRINT("\n");
@@ -863,9 +872,6 @@ static void print_help(bArgs *ba, bool all)
   PRINT("  $BLENDER_CUSTOM_SPLASH     Full path to an image that replaces the splash screen.\n");
   PRINT(
       "  $BLENDER_CUSTOM_SPLASH_BANNER Full path to an image to overlay on the splash screen.\n");
-  PRINT(
-      "  $BLENDER_VSYNC             Set to 0 to disable Vsync.\n"
-      "                             With OpenGL, other values set the swap interval.\n");
 
   if (defs.with_opencolorio) {
     PRINT("  $OCIO                      Path to override the OpenColorIO configuration file.\n");
@@ -1379,11 +1385,9 @@ static const char arg_handle_debug_mode_generic_set_doc_depsgraph_uid[] =
 static const char arg_handle_debug_mode_generic_set_doc_gpu_force_workarounds[] =
     "\n\t"
     "Enable workarounds for typical GPU issues and disable all GPU extensions.";
-#  ifdef WITH_VULKAN_BACKEND
 static const char arg_handle_debug_mode_generic_set_doc_gpu_force_vulkan_local_read[] =
     "\n\t"
     "Force Vulkan dynamic rendering local read when supported by device.";
-#  endif
 
 static int arg_handle_debug_mode_generic_set(int /*argc*/, const char ** /*argv*/, void *data)
 {
@@ -1503,7 +1507,12 @@ static const char arg_handle_debug_gpu_scope_capture_set_doc[] =
 static int arg_handle_debug_gpu_scope_capture_set(int argc, const char **argv, void * /*data*/)
 {
   if (argc > 1) {
+#  ifdef WITH_RENDERDOC
     STRNCPY(G.gpu_debug_scope_name, argv[1]);
+#  else
+    UNUSED_VARS(argc, argv);
+    BLI_assert_unreachable();
+#  endif
     return 1;
   }
   fprintf(stderr, "\nError: you must specify a scope name to capture.\n");
@@ -1518,8 +1527,21 @@ static int arg_handle_debug_gpu_renderdoc_set(int /*argc*/,
                                               void * /*data*/)
 {
 #  ifdef WITH_RENDERDOC
-  G.debug |= G_DEBUG_GPU_RENDERDOC | G_DEBUG_GPU;
+  G.debug |= G_DEBUG_GPU_RENDERDOC | G_DEBUG_GPU | G_DEBUG_GPU_SHADER_DEBUG_INFO;
+#  else
+  BLI_assert_unreachable();
 #  endif
+  return 0;
+}
+
+static const char arg_handle_debug_gpu_shader_debug_info_set_doc[] =
+    "\n"
+    "\tEnable shader debug info generation (Vulkan only).";
+static int arg_handle_debug_gpu_shader_debug_info_set(int /*argc*/,
+                                                      const char ** /*argv*/,
+                                                      void * /*data*/)
+{
+  G.debug |= G_DEBUG_GPU_SHADER_DEBUG_INFO;
   return 0;
 }
 
@@ -1590,7 +1612,44 @@ static int arg_handle_gpu_backend_set(int argc, const char **argv, void * /*data
   return 1;
 }
 
-#  ifdef WITH_OPENGL_BACKEND
+static const char arg_handle_gpu_vsync_set_doc[] =
+    "\n"
+    "\tSet the VSync.\n"
+    "\tValid options are: 'on', 'off' & 'auto' for adaptive sync.\n"
+    "\n"
+    "\t* The default settings depend on the GPU driver.\n"
+    "\t* Disabling VSync can be useful for testing performance.\n"
+    "\t* 'auto' is only supported by the OpenGL backend.";
+static int arg_handle_gpu_vsync_set(int argc, const char **argv, void * /*data*/)
+{
+  const char *arg_id = "--gpu-vsync";
+
+  if (argc < 2) {
+    fprintf(stderr, "\nError: VSync value must follow '%s'.\n", arg_id);
+    return 0;
+  }
+
+  /* Must be compatible with #GHOST_TVSyncModes. */
+  int vsync;
+  if (STREQ(argv[1], "on")) {
+    vsync = 1;
+  }
+  else if (STREQ(argv[1], "off")) {
+    vsync = 0;
+  }
+  else if (STREQ(argv[1], "auto")) {
+    vsync = -1;
+  }
+  else {
+    fprintf(stderr, "\nError: expected a value in [on, off, auto] '%s %s'.\n", arg_id, argv[1]);
+    return 0;
+  }
+
+  GPU_backend_vsync_set_override(vsync);
+
+  return 1;
+}
+
 static const char arg_handle_gpu_compilation_subprocesses_set_doc[] =
     "\n"
     "\tOverride the Max Compilation Subprocesses setting (OpenGL only).";
@@ -1614,7 +1673,12 @@ static int arg_handle_gpu_compilation_subprocesses_set(int argc,
       return 0;
     }
 
+#  ifdef WITH_OPENGL_BACKEND
     GPU_compilation_subprocess_override_set(subprocesses);
+#  else
+    UNUSED_VARS(subprocesses);
+    BLI_assert_unreachable();
+#  endif
     return 1;
   }
   fprintf(stderr,
@@ -1624,7 +1688,6 @@ static int arg_handle_gpu_compilation_subprocesses_set(int argc,
           arg_id);
   return 0;
 }
-#  endif
 
 static const char arg_handle_debug_fpe_set_doc[] =
     "\n\t"
@@ -2731,13 +2794,14 @@ void main_args_setup(bContext *C, bArgs *ba, bool all)
   /* GPU backend selection should be part of #ARG_PASS_ENVIRONMENT for correct GPU context
    * selection for animation player. */
   BLI_args_add(ba, nullptr, "--gpu-backend", CB_ALL(arg_handle_gpu_backend_set), nullptr);
-#  ifdef WITH_OPENGL_BACKEND
-  BLI_args_add(ba,
-               nullptr,
-               "--gpu-compilation-subprocesses",
-               CB(arg_handle_gpu_compilation_subprocesses_set),
-               nullptr);
-#  endif
+  BLI_args_add(ba, nullptr, "--gpu-vsync", CB(arg_handle_gpu_vsync_set), nullptr);
+  if (defs.with_opengl_backend) {
+    BLI_args_add(ba,
+                 nullptr,
+                 "--gpu-compilation-subprocesses",
+                 CB(arg_handle_gpu_compilation_subprocesses_set),
+                 nullptr);
+  }
   BLI_args_add(ba, nullptr, "--profile-gpu", CB(arg_handle_profile_gpu_set), nullptr);
 
   /* Pass: Background Mode & Settings
@@ -2870,6 +2934,11 @@ void main_args_setup(bContext *C, bArgs *ba, bool all)
     BLI_args_add(
         ba, nullptr, "--debug-gpu-renderdoc", CB(arg_handle_debug_gpu_renderdoc_set), nullptr);
   }
+  BLI_args_add(ba,
+               nullptr,
+               "--debug-gpu-shader-debug-info",
+               CB(arg_handle_debug_gpu_shader_debug_info_set),
+               nullptr);
 
   BLI_args_add(ba,
                nullptr,
@@ -2917,13 +2986,13 @@ void main_args_setup(bContext *C, bArgs *ba, bool all)
                "--debug-gpu-force-workarounds",
                CB_EX(arg_handle_debug_mode_generic_set, gpu_force_workarounds),
                (void *)G_DEBUG_GPU_FORCE_WORKAROUNDS);
-#  ifdef WITH_VULKAN_BACKEND
-  BLI_args_add(ba,
-               nullptr,
-               "--debug-gpu-vulkan-local-read",
-               CB_EX(arg_handle_debug_mode_generic_set, gpu_force_vulkan_local_read),
-               (void *)G_DEBUG_GPU_FORCE_VULKAN_LOCAL_READ);
-#  endif
+  if (defs.with_vulkan_backend) {
+    BLI_args_add(ba,
+                 nullptr,
+                 "--debug-gpu-vulkan-local-read",
+                 CB_EX(arg_handle_debug_mode_generic_set, gpu_force_vulkan_local_read),
+                 (void *)G_DEBUG_GPU_FORCE_VULKAN_LOCAL_READ);
+  }
   BLI_args_add(ba, nullptr, "--debug-exit-on-error", CB(arg_handle_debug_exit_on_error), nullptr);
 
   BLI_args_add(ba, nullptr, "--verbose", CB(arg_handle_verbosity_set), nullptr);

@@ -493,8 +493,9 @@ class ImageOperation : public NodeOperation {
       return;
     }
 
+    const StringRef pass_name = this->get_pass_name(identifier);
     Result cached_image = context().cache_manager().cached_images.get(
-        context(), get_image(), get_image_user(), get_pass_name(identifier));
+        context(), get_image(), get_image_user(), pass_name.data());
 
     Result &result = get_result(identifier);
     if (!cached_image.is_allocated()) {
@@ -503,7 +504,7 @@ class ImageOperation : public NodeOperation {
     }
 
     /* Alpha is not an actual pass, but one that is extracted from the combined pass. */
-    if (identifier == "Alpha") {
+    if (identifier == "Alpha" && pass_name == RE_PASSNAME_COMBINED) {
       extract_alpha(context(), cached_image, result);
     }
     else {
@@ -828,9 +829,10 @@ class RenderLayerOperation : public NodeOperation {
       case ResultType::Int2:
       case ResultType::Float2:
       case ResultType::Bool:
+      case ResultType::Menu:
         /* Not supported. */
         break;
-      case ResultType::Menu:
+      case ResultType::String:
         /* Single only types do not support GPU code path. */
         BLI_assert(Result::is_single_value_only_type(pass.type()));
         BLI_assert_unreachable();
