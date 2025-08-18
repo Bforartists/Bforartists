@@ -1194,6 +1194,13 @@ class UIList(_StructRNA, _GenericUI, metaclass=_RNAMeta):
 class Header(_StructRNA, _GenericUI, metaclass=_RNAMeta):
     __slots__ = ()
 
+    # BFA - Helper function for optionally drawing the editor type menu
+    # As this can be enabled/disabled per area.
+    def draw_editor_type_menu(self, context):
+        if context.area.show_editortypemenu:
+            row = self.layout.row(align=True)
+            row.template_header()
+
 
 class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
     __slots__ = ()
@@ -1335,14 +1342,6 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
             layout.row(align=True).menu_contents(cls.__name__)
         else:
             layout.menu(cls.__name__, icon='COLLAPSEMENU')
-
-    # bfa - show hide the editortypemenu
-    @classmethod
-    def draw_hidden(cls, context, layout):
-        # helper function for (optionally) hidden editortype menu
-        # only usable within headers
-        if context.area.show_editortypemenu:
-            cls.draw_menus(layout, context)
 
     # bfa - show hide the file toolbar
     @classmethod

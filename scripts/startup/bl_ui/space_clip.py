@@ -279,14 +279,11 @@ class CLIP_HT_header(Header):
             row.popover(panel="CLIP_PT_display")
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+
         layout = self.layout
 
         sc = context.space_data
-
-        ALL_MT_editormenu_clip.draw_hidden(
-            context, layout
-        )  # bfa - show hide the editormenu, editor suffix is needed.
-
         layout.prop(sc, "mode", text="")
         if sc.mode == 'TRACKING':
             layout.prop(sc, "view", text="")
@@ -330,19 +327,6 @@ class CLIP_PT_options(Panel):
         col = layout.column(align=True)
         col.prop(sc, "show_seconds")
         col.prop(sc, "show_locked_time")
-
-
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_clip(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
 
 
 class CLIP_MT_tracking_editor_menus(Menu):
@@ -2458,7 +2442,6 @@ class CLIP_PT_gizmo_display(Panel):
 
 classes = (
     CLIP_PT_options, # BFA
-    ALL_MT_editormenu_clip, # BFA
     CLIP_UL_tracking_objects,
     CLIP_PT_proportional_edit,
     CLIP_HT_header,

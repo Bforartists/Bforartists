@@ -173,14 +173,11 @@ class SEQUENCER_HT_header(Header):
         pass
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+        
         layout = self.layout
 
         st = context.space_data
-
-        # bfa - show hide the editormenu, editor suffix is needed.
-        # layout.template_header()
-        ALL_MT_editormenu_sequencer.draw_hidden(context, layout)
-
         layout.prop(st, "view_type", text="")
 
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
@@ -429,20 +426,6 @@ class SEQUENCER_PT_sequencer_overlay_waveforms(Panel):
         row = layout.row()
         row.prop(overlay_settings, "waveform_display_style", expand=True)
         row.active = overlay_settings.waveform_display_type != 'NO_WAVEFORMS'
-
-
-# BFA - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_sequencer(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
-
 
 
 #BFA - Submenu
@@ -4377,7 +4360,6 @@ class SEQUENCER_MT_fades_add(Menu):
 
 
 classes = (
-    ALL_MT_editormenu_sequencer,
     SEQUENCER_MT_change,  # BFA - no longer used
     SEQUENCER_HT_tool_header,
     SEQUENCER_HT_header,

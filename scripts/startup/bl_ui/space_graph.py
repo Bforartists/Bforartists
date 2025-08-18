@@ -82,14 +82,12 @@ class GRAPH_HT_header(Header):
     bl_space_type = 'GRAPH_EDITOR'
 
     def draw(self, context):
+        self.draw_editor_type_menu(context)
+        
         layout = self.layout
         tool_settings = context.tool_settings
 
         st = context.space_data
-
-        ALL_MT_editormenu_graph.draw_hidden(
-            context, layout
-        )  # bfa - show hide the editormenu, editor suffix is needed.
 
         # Now a exposed as a sub-space type
         # layout.prop(st, "mode", text="")
@@ -185,19 +183,6 @@ class GRAPH_HT_header(Header):
 
         row = layout.row()
         row.popover(panel="GRAPH_PT_properties_view_options", text="Options")
-
-
-# bfa - show hide the editormenu, editor suffix is needed.
-class ALL_MT_editormenu_graph(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-        row = layout.row(align=True)
-        row.template_header()  # editor type menus
 
 
 class GRAPH_HT_playback_controls(Header):
@@ -981,7 +966,6 @@ class GRAPH_MT_snap_pie(Menu):
 classes = (
     ANIM_OT_switch_editor_in_graph, # BFA - menu
     ANIM_OT_switch_editor_in_driver, # BFA - menu
-    ALL_MT_editormenu_graph, # BFA - menu
     GRAPH_HT_header,
     GRAPH_PT_properties_view_options, # BFA - menu
     GRAPH_HT_playback_controls,
