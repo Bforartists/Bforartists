@@ -1750,22 +1750,15 @@ class TOOLBAR_MT_edit(Menu):
 
                     myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYMOVEDELTA")
                     myvar.mode = 'LOC'
-                    myvar.arg = 'Converts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                     myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYROTATEDELTA")
                     myvar.mode = 'ROT'
-                    myvar.arg = 'Converts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                     myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYSCALEDELTA")
                     myvar.mode = 'SCALE'
-                    myvar.arg = 'Converts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                     myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYALLDELTA")
                     myvar.mode = 'ALL'
-                    myvar.arg = 'Converts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
-
-
-
 
                     row.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
 
