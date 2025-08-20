@@ -10549,7 +10549,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeCombYCCA", def_cmp_ycc, ICON_NODE_COMBINEYCBCRA);
   define(brna, "CompositorNode", "CompositorNodeCombYUVA", nullptr, ICON_NODE_COMBINEYUVA);
   define(brna, "CompositorNode", "CompositorNodeConvertColorSpace", def_cmp_convert_color_space, ICON_COLOR_SPACE);
-  define(brna, "CompositorNode", "CompositorNodeCornerPin", nullptr, ICON_NODE_CORNERPIN);
+  define(brna, "CompositorNode", "CompositorNodeCornerPin", def_cmp_cornerpin, ICON_NODE_CORNERPIN);
   define(brna, "CompositorNode", "CompositorNodeCrop", nullptr, ICON_NODE_CROP);
   define(brna, "CompositorNode", "CompositorNodeCryptomatte", def_cmp_cryptomatte_legacy, ICON_CRYPTOMATTE);
   define(brna, "CompositorNode", "CompositorNodeCryptomatteV2", def_cmp_cryptomatte, ICON_CRYPTOMATTE);
