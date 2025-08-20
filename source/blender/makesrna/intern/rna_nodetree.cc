@@ -10560,7 +10560,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeDespeckle", nullptr, ICON_NODE_DESPECKLE);
   define(brna, "CompositorNode", "CompositorNodeDiffMatte", nullptr, ICON_SELECT_DIFFERENCE);
   define(brna, "CompositorNode", "CompositorNodeDilateErode", def_cmp_dilate_erode, ICON_NODE_ERODE);
-  define(brna, "CompositorNode", "CompositorNodeDisplace", nullptr, ICON_MOD_DISPLACE);
+  define(brna, "CompositorNode", "CompositorNodeDisplace", def_cmp_displace, ICON_MOD_DISPLACE);
   define(brna, "CompositorNode", "CompositorNodeDistanceMatte", def_cmp_distance_matte, ICON_DRIVER_DISTANCE);
   define(brna, "CompositorNode", "CompositorNodeDoubleEdgeMask", def_cmp_double_edge_mask, ICON_NODE_DOUBLEEDGEMASK);
   define(brna, "CompositorNode", "CompositorNodeEllipseMask", def_cmp_ellipsemask, ICON_NODE_ELLIPSEMASK);
