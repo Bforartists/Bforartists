@@ -595,7 +595,7 @@ class CYCLES_RENDER_PT_volumes(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False # BFA
         layout.use_property_decorate = False
 
         scene = context.scene
