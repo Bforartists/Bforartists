@@ -452,8 +452,7 @@ static void panel_draw(const bContext *C, Panel *panel)
                                0.1f);
 
       uiLayout *split = &adaptive_panel.body->split(0.4f, false);
-      split->column(true).label("", ICON_NONE);
-      uiLayout *col = &split->column(true);
+      uiLayout *col = &split->column(true); /* bfa - removed empty split label, to make the two below labels align left */
       col->label(fmt::format(fmt::runtime(RPT_("Viewport {:.2f} px")), preview), ICON_NONE);
       col->label(fmt::format(fmt::runtime(RPT_("Render {:.2f} px")), render), ICON_NONE);
     }
@@ -475,7 +474,7 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_limit_surface", 0); /*bfa - decorator*/
-    
+
     /* bfa - our layout */
     if (ob_use_adaptive_subdivision || RNA_boolean_get(ptr, "use_limit_surface")) {
       row = &col->row(false);
