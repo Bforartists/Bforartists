@@ -1198,6 +1198,8 @@ if(WITH_BLENDER)
       node_chroma
       node_clamp
       node_clouds
+      node_closure
+      node_closure_evaluate
       node_colorbalance
       node_colorcorrection
       node_colorramp

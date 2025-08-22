@@ -2550,6 +2550,36 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
+class NODES_PT_toolshelf_gn_add_utilities_closure(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Closure"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=12),
+            #OperatorEntry("NodeClosureInput", pad=12),
+            #OperatorEntry("NodeClosureOutput", pad=8),
+            OperatorEntry("NodeEvaluateClosure", pad=1),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
+
 class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Field"
@@ -2827,6 +2857,7 @@ classes = (
     NODES_PT_toolshelf_gn_add_utilities_color,
     NODES_PT_toolshelf_gn_add_utilities_text,
     NODES_PT_toolshelf_gn_add_utilities_vector,
+    NODES_PT_toolshelf_gn_add_utilities_closure,
     NODES_PT_toolshelf_gn_add_utilities_field,
     NODES_PT_toolshelf_gn_add_utilities_math,
     NODES_PT_toolshelf_gn_add_utilities_matrix,

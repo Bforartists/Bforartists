@@ -10426,10 +10426,10 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "NodeInternal", "NodeGroupOutput", def_group_output, ICON_GROUPOUTPUT);
   define(brna, "NodeInternal", "NodeReroute", def_reroute, ICON_NODE_REROUTE);
 
-  define(brna, "NodeInternal", "NodeClosureInput", def_closure_input, ICON_NONE);
-  define(brna, "NodeInternal", "NodeClosureOutput", def_closure_output, ICON_NONE);
+  define(brna, "NodeInternal", "NodeClosureInput", def_closure_input, ICON_NODE_CLOSURE);
+  define(brna, "NodeInternal", "NodeClosureOutput", def_closure_output, ICON_NODE_CLOSURE);
   define(brna, "NodeInternal", "NodeCombineBundle", def_combine_bundle, ICON_NONE);
-  define(brna, "NodeInternal", "NodeEvaluateClosure", def_evaluate_closure, ICON_NONE);
+  define(brna, "NodeInternal", "NodeEvaluateClosure", def_evaluate_closure, ICON_NODE_CLOSURE_EVALUATE);
   define(brna, "NodeInternal", "NodeSeparateBundle", def_separate_bundle, ICON_NONE);
 
   define(brna, "ShaderNode", "ShaderNodeAddShader", nullptr, ICON_NODE_ADD_SHADER);
