@@ -471,6 +471,7 @@ if(WITH_BLENDER)
       controlpointrow
       convexhull
       copy_id
+      copy_from_object
       copydown
       copymirrored
       copyright
