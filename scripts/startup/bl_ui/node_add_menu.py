@@ -204,7 +204,7 @@ def add_foreach_geometry_element_zone(layout, label):
 
 def add_closure_zone(layout, label):
     props = layout.operator(
-        "node.add_closure_zone", text=label, text_ctxt=i18n_contexts.default)
+        "node.add_closure_zone", text=label, text_ctxt=i18n_contexts.default, icon="NODE_CLOSURE")
     props.use_transform = True
     return props
 

@@ -1193,11 +1193,15 @@ if(WITH_BLENDER)
       node_boxmask
       node_brick
       node_bump
+      node_bundle_combine
+      node_bundle_separate
       node_channel
       node_checker
       node_chroma
       node_clamp
       node_clouds
+      node_closure
+      node_closure_evaluate
       node_colorbalance
       node_colorcorrection
       node_colorramp
