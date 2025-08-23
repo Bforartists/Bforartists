@@ -879,7 +879,7 @@ static void ui_node_draw_input(uiLayout &layout,
     }
 
     sub = &sub->row(true);
-    sub->alignment_set(ui::LayoutAlign::Right);
+    sub->alignment_set(ui::LayoutAlign::Left); /* BFA - Align labels left */
     sub->label(node_socket_get_label(&input, panel_label), ICON_NONE);
   }
 
