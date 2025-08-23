@@ -12609,7 +12609,7 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         split.use_property_split = False
         row = split.row()
         row.separator()
-        row.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
+        row.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (Inverted)") # BFA - Capitalize label
 
         is_cavity_active = (
             sculpt.use_automasking_cavity or sculpt.use_automasking_cavity_inverted
