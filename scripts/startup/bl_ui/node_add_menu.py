@@ -83,6 +83,10 @@ def draw_node_groups(context, layout):
     space_node = context.space_data
     node_tree = space_node.edit_tree
 
+    # BFA - Check if there's an active node tree
+    if node_tree is None:
+        return
+
     from nodeitems_builtins import node_tree_group_type
 
     prefs = context.preferences
