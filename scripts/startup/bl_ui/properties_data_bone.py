@@ -353,17 +353,22 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
     def draw_bone(self, context, layout):
         bone = context.bone
 
+        # Figure out the pose bone.
+        ob = context.object
+        pose_bone = ob and ob.pose.bones[bone.name]
+
         row = layout.row() # BFA
         row.use_property_split = False
         row.prop(bone, "hide", text = "Hide", toggle=False)
         row.prop_decorator(bone, "hide")
 
-        hide_select_sub = row.column()
-        if not bone.hide:
-            row = layout.row()
-            row.use_property_split = False
-            row.separator()
-            row.prop(bone, "hide_select", invert_checkbox=True)
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(bone, "hide_select", text="Selectable", invert_checkbox=True)
+        row.prop_decorator(bone, "hide_select")
+
+        row = layout.row()
+        row.use_property_split = True
         row.prop(bone, "display_type", text="Display As")
 
         # Figure out the pose bone.
