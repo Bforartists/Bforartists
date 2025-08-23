@@ -1531,7 +1531,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
         split.use_property_split = False
         row = split.row()
         row.separator()
-        row.prop(brush, "use_automasking_cavity_inverted", text="Cavity (inverted)")
+        row.prop(brush, "use_automasking_cavity_inverted", text="Cavity (Inverted)") # BFA - Capitalize label
 
         is_cavity_active = (
             brush.use_automasking_cavity or brush.use_automasking_cavity_inverted
