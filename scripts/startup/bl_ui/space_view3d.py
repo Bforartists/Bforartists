@@ -12522,6 +12522,10 @@ class VIEW3D_PT_sculpt_automasking(Panel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - Use split for non-boolean properties
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
         tool_settings = context.tool_settings
         sculpt = tool_settings.sculpt
         layout.label(text="Global Auto Masking")
