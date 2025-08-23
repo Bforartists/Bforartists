@@ -357,15 +357,20 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         ob = context.object
         pose_bone = ob and ob.pose.bones[bone.name]
 
-        row = layout.row() # BFA
+        row = layout.row() # BFA - changed to collapse disabled and alight left
         row.use_property_split = False
         row.prop(bone, "hide", text = "Hide", toggle=False)
+        if bone.hide:
+            row.label(icon='DISCLOSURE_TRI_RIGHT', text = "")
+        else:
+            row.label(icon='DISCLOSURE_TRI_DOWN', text = "")
         row.prop_decorator(bone, "hide")
 
-        row = layout.row()
-        row.use_property_split = False
-        row.prop(bone, "hide_select", text="Selectable", invert_checkbox=True)
-        row.prop_decorator(bone, "hide_select")
+        if not bone.hide:
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(bone, "hide_select", text="Selectable", invert_checkbox=True)
+            row.prop_decorator(bone, "hide_select")
 
         row = layout.row()
         row.use_property_split = True
@@ -395,15 +400,25 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         if bone is None:
             return
 
-        col = layout.column()
-        col.use_property_split = False # BFA - Left align checkbox
-        col.prop(bone, "hide", text="Hide", toggle=False)
+        row = layout.row() # BFA - changed to collapse disabled and alight left
+        row.use_property_split = False
+        row.prop(bone, "hide", text="Hide", toggle=False)
+        if bone.hide:
+            row.label(icon='DISCLOSURE_TRI_RIGHT', text = "")
+        else:
+            row.label(icon='DISCLOSURE_TRI_DOWN', text = "")
 
         if not bone.hide:
-            row = col.row()
-            row.separator()
-            row.prop(bone, "hide_select", invert_checkbox=True)
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(bone, "hide_select", text="Selectable", invert_checkbox=True)
+        
+        row = layout.row()
+        row.use_property_split = True
+        row.use_property_decorate = False # BFA - indicate to key only in pose mode
         row.prop(bone, "display_type", text="Display As")
+
+        row.use_property_decorate = False # BFA - no need, helps align
         layout.prop(bone.color, "palette", text="Bone Color")
         self.draw_bone_color_ui(layout, bone.color)
 
