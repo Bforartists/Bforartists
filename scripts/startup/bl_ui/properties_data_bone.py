@@ -357,7 +357,7 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         ob = context.object
         pose_bone = ob and ob.pose.bones[bone.name]
 
-        row = layout.row() # BFA - changed to collapse disabled and alight left
+        row = layout.row() # BFA - changed to collapse disabled and align left
         row.use_property_split = False
         row.prop(bone, "hide", text = "Hide", toggle=False)
         if bone.hide:
@@ -400,7 +400,7 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         if bone is None:
             return
 
-        row = layout.row() # BFA - changed to collapse disabled and alight left
+        row = layout.row() # BFA - changed to collapse disabled and align left
         row.use_property_split = False
         row.prop(bone, "hide", text="Hide", toggle=False)
         if bone.hide:
