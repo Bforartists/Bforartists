@@ -1248,7 +1248,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
 
             col2 = col.column()
             props = col2.operator("sculpt.mask_from_cavity", text="Mask From Cavity")
-            props.use_automask_settings = True
+            props.settings_source = 'OPERATOR'
 
             col2 = col.column()
 
