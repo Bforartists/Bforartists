@@ -766,7 +766,7 @@ const char *ED_info_statusbar_string_ex(Main *bmain,
       ofs += BLI_snprintf_utf8_rlen(info + ofs, len - ofs, " | ");
     }
     ofs += BLI_snprintf_rlen(
-        info + ofs, len - ofs, IFACE_("%s"), BKE_bforartists_version_string_compact());
+        info + ofs, len - ofs, IFACE_("%s"), BKE_bforartists_version_string());
   }
 
   return info;
