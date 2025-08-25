@@ -5496,7 +5496,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_statusbar_version", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "statusbar_flag", STATUSBAR_SHOW_VERSION);
-  RNA_def_property_ui_text(prop, "Show Version", "Show Bforartists version string");
+  RNA_def_property_ui_text(prop, "Show Version", "Show Bforartists version");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_INFO, "rna_userdef_update");
 
   prop = RNA_def_property(srna, "show_statusbar_stats", PROP_BOOLEAN, PROP_NONE);
@@ -5514,6 +5514,12 @@ static void rna_def_userdef_view(BlenderRNA *brna)
       prop, nullptr, "statusbar_flag", STATUSBAR_SHOW_EXTENSIONS_UPDATES);
   RNA_def_property_ui_text(prop, "Extensions Updates", "Show available Extensions Updates\nFor online access, open the preferences to adjust the internet access in the Extensions tab or System tab");/* BFA */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_INFO, "rna_userdef_update");
+  /* bfa start blender version*/
+  prop = RNA_def_property(srna, "show_statusbar_blender_version", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "statusbar_flag", STATUSBAR_SHOW_BLENDER_VERSION);
+  RNA_def_property_ui_text(prop, "Show Blender version", "Show Blender version");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_INFO, "rna_userdef_update");
+  /* bfa end */
 }
 
 static void rna_def_userdef_edit(BlenderRNA *brna)
