@@ -440,6 +440,10 @@ static void unlink_object_fn(bContext *C,
                              TreeStoreElem *tselem)
 {
   if (tsep && tsep->id) {
+
+    if (!TSE_IS_REAL_ID(tsep)) {
+      return;
+    }
     Main *bmain = CTX_data_main(C);
     Object *ob = (Object *)tselem->id;
     const eSpaceOutliner_Mode outliner_mode = eSpaceOutliner_Mode(
@@ -2219,7 +2223,7 @@ static void sequence_fn(int event, TreeElement *te, TreeStoreElem * /*tselem*/, 
   Strip *strip = &te_strip->get_strip();
   Scene *scene = (Scene *)scene_ptr;
   Editing *ed = seq::editing_get(scene);
-  if (BLI_findindex(ed->seqbasep, strip) != -1) {
+  if (BLI_findindex(ed->current_strips(), strip) != -1) {
     if (event == OL_DOP_SELECT) {
       vse::select_strip_single(scene, strip, true);
     }

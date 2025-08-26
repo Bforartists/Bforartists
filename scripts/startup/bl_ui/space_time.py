@@ -9,11 +9,17 @@ from bpy.app.translations import contexts as i18n_contexts
 # BFA - Added icons and floated properties left
 
 def playback_controls(layout, context):
-    scene = context.scene
+    st = context.space_data
+    is_sequencer = st.type == 'SEQUENCE_EDITOR' and st.view_type == 'SEQUENCER'
+
+    scene = context.scene if not is_sequencer else context.sequencer_scene
     tool_settings = context.tool_settings
     screen = context.screen
 
     row = layout.row(align=True)
+
+    if is_sequencer:
+        layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
 
     layout.separator_spacer()
     #BFA - moved dropdowns to consistently float right
@@ -25,7 +31,7 @@ def playback_controls(layout, context):
         # if using JACK and A/V sync:
         #   hide the play-reversed button
         #   since JACK transport doesn't support reversed playback
-        if scene.sync_mode == 'AUDIO_SYNC' and context.preferences.system.audio_device == 'JACK':
+        if scene and scene.sync_mode == 'AUDIO_SYNC' and context.preferences.system.audio_device == 'JACK':
             row.scale_x = 2
             row.operator("screen.animation_play", text="", icon='PLAY')
             row.scale_x = 1
@@ -41,13 +47,14 @@ def playback_controls(layout, context):
     row.operator("screen.frame_jump", text="", icon='FF').end = True
     row.operator("screen.animation_cancel", text = "", icon = 'LOOP_BACK').restore_frame = True
 
-    row = layout.row()
-    if scene.show_subframe:
-        row.scale_x = 1.15
-        row.prop(scene, "frame_float", text="")
-    else:
-        row.scale_x = 0.95
-        row.prop(scene, "frame_current", text="")
+    if scene:
+        row = layout.row()
+        if scene.show_subframe:
+            row.scale_x = 1.15
+            row.prop(scene, "frame_float", text="")
+        else:
+            row.scale_x = 0.95
+            row.prop(scene, "frame_current", text="")
 
         row = layout.row(align=True)
         row.prop(scene, "use_preview_range", text="", toggle=True)
@@ -217,7 +224,9 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         layout.use_property_decorate = False
 
         screen = context.screen
-        scene = context.scene
+        st = context.space_data
+        is_sequencer = st.type == 'SEQUENCE_EDITOR' and st.view_type == 'SEQUENCER'
+        scene = context.scene if not is_sequencer else context.sequencer_scene
 
         col = layout.column(align = True)
         col.label(text = "Audio")
@@ -283,7 +292,9 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
+        st = context.space_data
+        is_sequencer = st.type == 'SEQUENCE_EDITOR' and st.view_type == 'SEQUENCER'
+        scene = context.scene if not is_sequencer else context.sequencer_scene
         tool_settings = context.tool_settings
         prefs = context.preferences
 

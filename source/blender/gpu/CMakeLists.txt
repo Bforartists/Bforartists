@@ -29,6 +29,7 @@ set(INC
   ../draw/intern
   ../draw/intern/shaders
   metal/kernels
+  vulkan/shaders
   shaders/infos
 
 
@@ -112,6 +113,7 @@ set(SRC
   GPU_compute.hh
   GPU_context.hh
   GPU_debug.hh
+  GPU_format.hh
   GPU_framebuffer.hh
   GPU_immediate.hh
   GPU_immediate_util.hh
@@ -673,6 +675,10 @@ set(MSL_SRC
   shaders/metal/mtl_shader_common.msl
 )
 
+set(VULKAN_BACKEND_GLSL_SRC
+  vulkan/shaders/vk_backbuffer_blit_comp.glsl
+)
+
 if(WITH_GTESTS)
   if(WITH_GPU_BACKEND_TESTS)
     list(APPEND GLSL_SRC ${GLSL_SRC_TEST})
@@ -686,6 +692,10 @@ if(WITH_METAL_BACKEND)
   foreach(MSL_FILE ${MSL_SRC})
     data_to_c_simple(${MSL_FILE} MSL_C)
   endforeach()
+endif()
+
+if(WITH_VULKAN_BACKEND)
+  list(APPEND GLSL_SRC ${VULKAN_BACKEND_GLSL_SRC})
 endif()
 
 set(GLSL_C)

@@ -85,7 +85,7 @@ void remove_selection_attributes(
 /**
  * Get the position span associated with the given selection attribute name.
  */
-Span<float3> get_selection_attribute_positions(
+std::optional<Span<float3>> get_selection_attribute_positions(
     const bke::CurvesGeometry &curves,
     const bke::crazyspace::GeometryDeformation &deformation,
     StringRef attribute_name);
@@ -233,16 +233,24 @@ IndexMask retrieve_selected_curves(const Curves &curves_id, IndexMaskMemory &mem
  * or points in curves with a selection factor greater than zero).
  */
 IndexMask retrieve_selected_points(const bke::CurvesGeometry &curves, IndexMaskMemory &memory);
+IndexMask retrieve_selected_points(const Curves &curves_id, IndexMaskMemory &memory);
+/**
+ * Find points that are selected, for a given attribute_name, requires mask of all Bezier points.
+ * Note: When retrieving ".selection_handle_left" or ".selection_handle_right" all non-Bezier
+ * points will be deselected even if the raw attribute is selected.
+ */
 IndexMask retrieve_selected_points(const bke::CurvesGeometry &curves,
                                    StringRef attribute_name,
+                                   const IndexMask &bezier_points,
                                    IndexMaskMemory &memory);
-IndexMask retrieve_selected_points(const Curves &curves_id, IndexMaskMemory &memory);
 
 /**
  * Find points that are selected (a selection factor greater than zero) or have
  * any of their Bezier handle selected.
  */
-IndexMask retrieve_all_selected_points(const bke::CurvesGeometry &curves, IndexMaskMemory &memory);
+IndexMask retrieve_all_selected_points(const bke::CurvesGeometry &curves,
+                                       int handle_display,
+                                       IndexMaskMemory &memory);
 
 /**
  * If the selection_id attribute doesn't exist, create it with the requested type (bool or float).

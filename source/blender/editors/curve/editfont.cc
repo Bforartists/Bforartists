@@ -438,7 +438,7 @@ static int kill_selection(Object *obedit, int ins) /* ins == new character len *
   int selend, selstart, direction;
   int getfrom;
 
-  direction = BKE_vfont_select_get(obedit, &selstart, &selend);
+  direction = BKE_vfont_select_get(cu, &selstart, &selend);
   if (direction) {
     int size;
     if (ef->pos >= selstart) {
@@ -492,7 +492,7 @@ static bool font_paste_wchar(Object *obedit,
   EditFont *ef = cu->editfont;
   int selend, selstart;
 
-  if (BKE_vfont_select_get(obedit, &selstart, &selend) == 0) {
+  if (BKE_vfont_select_get(cu, &selstart, &selend) == 0) {
     selstart = selend = 0;
   }
 
@@ -560,11 +560,11 @@ static bool font_paste_utf8(bContext *C, const char *str, const size_t str_len)
 
 static char *font_select_to_buffer(Object *obedit)
 {
+  Curve *cu = static_cast<Curve *>(obedit->data);
   int selstart, selend;
-  if (!BKE_vfont_select_get(obedit, &selstart, &selend)) {
+  if (!BKE_vfont_select_get(cu, &selstart, &selend)) {
     return nullptr;
   }
-  Curve *cu = static_cast<Curve *>(obedit->data);
   EditFont *ef = cu->editfont;
   const char32_t *text_buf = ef->textbuf + selstart;
   const size_t text_buf_len = selend - selstart;
@@ -953,7 +953,7 @@ static wmOperatorStatus set_style(bContext *C, const int style, const bool clear
   EditFont *ef = cu->editfont;
   int i, selstart, selend;
 
-  if (!BKE_vfont_select_get(obedit, &selstart, &selend)) {
+  if (!BKE_vfont_select_get(cu, &selstart, &selend)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -1014,7 +1014,7 @@ static wmOperatorStatus toggle_style_exec(bContext *C, wmOperator *op)
 
   style = RNA_enum_get(op->ptr, "style");
   cu->curinfo.flag ^= style;
-  if (BKE_vfont_select_get(obedit, &selstart, &selend)) {
+  if (BKE_vfont_select_get(cu, &selstart, &selend)) {
     clear = (cu->curinfo.flag & style) == 0;
     return set_style(C, style, clear);
   }
@@ -1088,10 +1088,10 @@ void FONT_OT_select_all(wmOperatorType *ot)
 
 static void copy_selection(Object *obedit)
 {
+  Curve *cu = static_cast<Curve *>(obedit->data);
   int selstart, selend;
 
-  if (BKE_vfont_select_get(obedit, &selstart, &selend)) {
-    Curve *cu = static_cast<Curve *>(obedit->data);
+  if (BKE_vfont_select_get(cu, &selstart, &selend)) {
     EditFont *ef = cu->editfont;
     char *buf = nullptr;
     char32_t *text_buf;
@@ -1142,9 +1142,10 @@ void FONT_OT_text_copy(wmOperatorType *ot)
 static wmOperatorStatus cut_text_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *obedit = CTX_data_edit_object(C);
+  Curve *cu = static_cast<Curve *>(obedit->data);
   int selstart, selend;
 
-  if (!BKE_vfont_select_get(obedit, &selstart, &selend)) {
+  if (!BKE_vfont_select_get(cu, &selstart, &selend)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -1315,12 +1316,12 @@ static const EnumPropertyItem move_type_items[] = {
  */
 static bool move_cursor_drop_select(Object *obedit, int dir)
 {
+  Curve *cu = static_cast<Curve *>(obedit->data);
   int selstart, selend;
-  if (!BKE_vfont_select_get(obedit, &selstart, &selend)) {
+  if (!BKE_vfont_select_get(cu, &selstart, &selend)) {
     return false;
   }
 
-  Curve *cu = static_cast<Curve *>(obedit->data);
   EditFont *ef = cu->editfont;
   if (dir == -1) {
     ef->pos = selstart;
@@ -1350,32 +1351,10 @@ static wmOperatorStatus move_cursor(bContext *C, int type, const bool select)
 
   switch (type) {
     case LINE_BEGIN:
-      while (ef->pos > 0) {
-        if (ef->textbuf[ef->pos - 1] == '\n') {
-          break;
-        }
-        if (ef->textbufinfo[ef->pos - 1].flag & CU_CHINFO_WRAP) {
-          break;
-        }
-        ef->pos--;
-      }
-      cursmove = FO_CURS;
+      cursmove = FO_LINE_BEGIN;
       break;
-
     case LINE_END:
-      while (ef->pos < ef->len) {
-        if (ef->textbuf[ef->pos] == 0) {
-          break;
-        }
-        if (ef->textbuf[ef->pos] == '\n') {
-          break;
-        }
-        if (ef->textbufinfo[ef->pos].flag & CU_CHINFO_WRAP) {
-          break;
-        }
-        ef->pos++;
-      }
-      cursmove = FO_CURS;
+      cursmove = FO_LINE_END;
       break;
 
     case TEXT_BEGIN:
@@ -1567,7 +1546,7 @@ static wmOperatorStatus change_spacing_exec(bContext *C, wmOperator *op)
   int selstart, selend;
   bool changed = false;
 
-  const bool has_select = BKE_vfont_select_get(obedit, &selstart, &selend);
+  const bool has_select = BKE_vfont_select_get(cu, &selstart, &selend);
   if (has_select) {
     selstart -= 1;
   }
@@ -1743,7 +1722,7 @@ static wmOperatorStatus delete_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (BKE_vfont_select_get(obedit, &selstart, &selend)) {
+  if (BKE_vfont_select_get(cu, &selstart, &selend)) {
     if (type == DEL_NEXT_SEL) {
       type = DEL_SELECTION;
     }
@@ -1836,7 +1815,7 @@ static wmOperatorStatus delete_exec(bContext *C, wmOperator *op)
     ef->len -= len_remove;
     ef->textbuf[ef->len] = '\0';
 
-    BKE_vfont_select_clamp(obedit);
+    BKE_vfont_select_clamp(cu);
   }
 
   text_update_edited(C, obedit, FO_EDIT);
@@ -2285,7 +2264,7 @@ void ED_curve_editfont_make(Object *obedit)
   ef->selend = cu->selend;
 
   /* text may have been modified by Python */
-  BKE_vfont_select_clamp(obedit);
+  BKE_vfont_select_clamp(cu);
 }
 
 void ED_curve_editfont_load(Object *obedit)
@@ -2340,10 +2319,10 @@ static const EnumPropertyItem case_items[] = {
 static wmOperatorStatus set_case(bContext *C, int ccase)
 {
   Object *obedit = CTX_data_edit_object(C);
+  Curve *cu = static_cast<Curve *>(obedit->data);
   int selstart, selend;
 
-  if (BKE_vfont_select_get(obedit, &selstart, &selend)) {
-    Curve *cu = (Curve *)obedit->data;
+  if (BKE_vfont_select_get(cu, &selstart, &selend)) {
     EditFont *ef = cu->editfont;
     char32_t *str = &ef->textbuf[selstart];
 

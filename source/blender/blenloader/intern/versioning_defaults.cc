@@ -61,6 +61,7 @@
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.hh"
 #include "BKE_paint.hh"
+#include "BKE_paint_types.hh"
 #include "BKE_screen.hh"
 #include "BKE_workspace.hh"
 
@@ -513,6 +514,9 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   blo_update_defaults_paint(reinterpret_cast<Paint *>(ts->gp_sculptpaint));
   blo_update_defaults_paint(reinterpret_cast<Paint *>(ts->curves_sculpt));
   blo_update_defaults_paint(reinterpret_cast<Paint *>(&ts->imapaint));
+
+  /* Weight Paint settings */
+  ts->weightuser = OB_DRAW_GROUPUSER_ACTIVE;
 }
 
 void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
