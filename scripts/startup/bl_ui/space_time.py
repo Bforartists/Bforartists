@@ -88,7 +88,7 @@ def playback_controls(layout, context):
         row.popover(panel="TIME_PT_playback", text="Playback")
         row.popover(panel="TIME_PT_keyframing_settings", text="Keying")
 
-        if context.space_data.mode == 'TIMELINE': # BFA - Make this only show in the timeline editor to not show this in the footer.
+        if getattr(context.space_data, "mode", "") == 'TIMELINE': # BFA - Make this only show in the timeline editor to not show this in the footer.
             row.popover(panel = "TIME_PT_view_view_options", text = "")
 
 
