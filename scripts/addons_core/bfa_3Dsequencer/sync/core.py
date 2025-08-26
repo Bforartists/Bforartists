@@ -15,9 +15,15 @@ SequenceType = Type[bpy.types.Strip]
 class TimelineSyncSettings(bpy.types.PropertyGroup):
     """3D View Sync Settings."""
 
+    def is_sync():
+        return bpy.context.workspace_use_scene_time_sync
+
+    def set_sync(toggle):
+        bpy.context.workspace_use_scene_time_sync = toggle
+    
     enabled: bpy.props.BoolProperty(
         name="Enabled",
-        description="Status of 3D View Sync system",
+        description="Status of 3D View Sync system\n(TODO remove, use is_sync() and set_sync() instead)",
         default=False,
     )
 
@@ -408,7 +414,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
     # Discard update if disabled or not properly configured
     if (
-        not sync_settings.enabled
+        not sync_settings.is_sync()
         or not master_scene
         or not master_scene.sequence_editor
     ):
@@ -524,8 +530,8 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
     # Update strip's underlying scene frame before making it active in context's window
     # to avoid unwanted updates in case bidirectional sync is enabled.
-    if strip.scene.frame_current != inner_frame:
-        scene_frame_set(context, strip.scene, inner_frame)
+    # if strip.scene.frame_current != inner_frame:
+    #     scene_frame_set(context, strip.scene, inner_frame)
 
     if sync_settings.use_preview_range:
         # Update scene's preview range.
@@ -544,7 +550,8 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
         if window.scene != strip.scene:
             # Use scene_change_manager to optionnaly keep tool settings between scenes
             with scene_change_manager(context):
-                window.scene = strip.scene
+                pass
+                # window.scene = strip.scene  # TODO Scene Selector
         # Use strip camera if specified
         if strip.scene_camera and window.scene.camera != strip.scene_camera:
             window.scene.camera = strip.scene_camera
@@ -585,7 +592,7 @@ def update_sync_cache_from_current_state():
 def on_load_pre(*args):
     sync_settings = get_sync_settings()
     # Reset 3D View Sync settings
-    sync_settings.enabled = False
+    sync_settings.set_sync(False)
     sync_settings.master_scene = None
     sync_settings.last_master_frame = -1
     sync_settings.last_master_strip = ""
@@ -600,26 +607,25 @@ def on_load_post(*args):
     sync_settings = get_sync_settings()
     # Auto-setup the system for the new file if the active screen contains
     # a Sequence Editor area defining a scene override with at least 1 scene strip.
-    for area in bpy.context.screen.areas:
-        space = area.spaces.active
-        if isinstance(space, bpy.types.SpaceSequenceEditor) and getattr(
-            space, "scene_override", False
-        ):
-            seq_editor = area.spaces.active.scene_override.sequence_editor
-            if seq_editor and any(
-                isinstance(s, bpy.types.SceneStrip) for s in seq_editor.sequences
-            ):
-                sync_settings.master_scene = area.spaces.active.scene_override
-                sync_settings.enabled = True
-                update_sync_cache_from_current_state()
-                break
+    if bpy.context.workspace.sequencer_scene is not None:
+        for area in bpy.context.screen.areas:
+            space = area.spaces.active
+            if isinstance(space, bpy.types.SpaceSequenceEditor):
+                seq_editor = bpy.context.workspace.squencer_scene.sequence_editor
+                if seq_editor and any(
+                    isinstance(s, bpy.types.SceneStrip) for s in seq_editor.sequences
+                ):
+                    sync_settings.master_scene = bpy.context.workspace.sequencer_scene
+                    sync_settings.set_sync(True)
+                    update_sync_cache_from_current_state()
+                    break
 
 
 @bpy.app.handlers.persistent
 def on_undo_redo(scene, _):
     """Undo/Redo post handler callback."""
     sync_settings = get_sync_settings()
-    if not sync_settings.enabled:
+    if not sync_settings.is_sync():
         return
 
     # Explicitly update cached values on undo/redo events since

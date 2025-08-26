@@ -1592,6 +1592,27 @@ static void do_version_world_remove_use_nodes(Main *bmain, World *world)
   new_output.parent = frame;
 }
 
+// TODO Add proper working versioning
+static Scene *get_3d_sequencer_scene(Main *bmain){
+  LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+      LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+        if (sl->spacetype != SPACE_SEQ) {
+          continue;
+        }
+        SpaceSeq *seq = (SpaceSeq *)sl;
+        if (seq->scene_override != nullptr) {
+          Scene *scene_override = seq->scene_override;
+          printf("found scene");
+          seq->scene_override = nullptr;
+          return scene_override;
+        }
+      }
+    }
+  }
+  return nullptr;
+}
+
 void do_versions_after_linking_500(FileData *fd, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 9)) {
@@ -1681,11 +1702,16 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 63)) {
+    Scene *override_scene = get_3d_sequencer_scene(bmain); // bfa get 3d sequencer scene override 
     LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
       LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
         Scene *scene = WM_window_get_active_scene(win);
         WorkSpace *workspace = WM_window_get_active_workspace(win);
-        workspace->sequencer_scene = scene;
+        if (override_scene != nullptr) { // bfa set scene override if exists
+          workspace->sequencer_scene = override_scene; // bfa
+        } else {
+          workspace->sequencer_scene = scene;
+        }
       }
     }
   }

@@ -17,20 +17,23 @@ class WM_OT_timeline_sync_toggle(bpy.types.Operator):
 
     def execute(self, context: bpy.types.Context):
         sync_settings = get_sync_settings()
-        sync_settings.enabled = not sync_settings.enabled
+        sync_settings.set_sync(not sync_settings.is_sync())
 
         # Setup with active space's data if applicable
         if (
-            sync_settings.enabled
+            sync_settings.is_sync()
             and isinstance(context.space_data, bpy.types.SpaceSequenceEditor)
-            and context.space_data.scene_override
+            and context.sequencer_scene
         ):
             # Use overriden scene defined in the SpaceSequence editor as master scene
-            sync_settings.master_scene = context.space_data.scene_override
+            sync_settings.master_scene = context.sequencer_scene
 
         # Trigger sync system update
         sync_system_update(context)
 
+        # Using the Scene Sync button to activate "Sync scene time"
+        workspace = context.workspace
+        workspace.use_scene_time_sync = sync_settings.is_sync()
         return {"FINISHED"}
 
 

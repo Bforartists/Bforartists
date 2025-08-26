@@ -6896,7 +6896,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_struct_type(prop, "Scene");
   RNA_def_property_pointer_funcs(prop, nullptr, nullptr, nullptr, nullptr);
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_PTR_NO_OWNERSHIP);
-  RNA_def_property_ui_text(prop, "Scene Override", "Scene to use in this region");
+  RNA_def_property_ui_text(prop, "Scene Override", "Scene to use in this region (Deprecated: Scene Selector.)");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_Sequencer_view_type_update");
   /*############## BFA - 3D Sequencer END ##############*/
 }
