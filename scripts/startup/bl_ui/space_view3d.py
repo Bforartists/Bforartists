@@ -4584,7 +4584,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.spot_size"
                 props.input_scale = 0.01
-                props.header_text = rpt_("Spot Size: %.2f")
+                props.header_text = rpt_("Beam Angle: %.2f")
 
                 props = layout.operator(
                     "wm.context_modal_mouse",
@@ -10634,7 +10634,7 @@ class VIEW3D_PT_overlay_viewer_node(Panel):
         split = col.split()
         row = split.row()
         row.separator()
-        row.prop(overlay, "show_viewer_text", text="Text Overlay")
+        row.prop(overlay, "show_viewer_text", text="Attribute Text Overlay") # BFA - made explicit
 
 
 class VIEW3D_PT_overlay_motion_tracking(Panel):
@@ -12320,7 +12320,7 @@ class VIEW3D_PT_greasepencil_vertex_paint_context_menu(Panel):
         row.prop(brush, "use_pressure_size", text="", icon="STYLUS_PRESSURE")
 
         if brush.gpencil_vertex_brush_type in {'DRAW', 'BLUR', 'SMEAR'}:
-            ups = tool_settings.unified_paint_settings
+            ups = settings.unified_paint_settings
             strength_owner = ups if ups.use_unified_strength else brush
             row = layout.row(align=True)
             row.prop(strength_owner, "strength", text="")

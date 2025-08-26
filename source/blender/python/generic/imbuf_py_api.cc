@@ -257,7 +257,7 @@ PyDoc_STRVAR(
     py_imbuf_size_doc,
     "size of the image in pixels.\n"
     "\n"
-    ":type: pair of ints");
+    ":type: tuple[int, int]\n");
 static PyObject *py_imbuf_size_get(Py_ImBuf *self, void * /*closure*/)
 {
   PY_IMBUF_CHECK_OBJ(self);
@@ -270,7 +270,7 @@ PyDoc_STRVAR(
     py_imbuf_ppm_doc,
     "pixels per meter.\n"
     "\n"
-    ":type: pair of floats");
+    ":type: tuple[float, float]\n");
 static PyObject *py_imbuf_ppm_get(Py_ImBuf *self, void * /*closure*/)
 {
   PY_IMBUF_CHECK_OBJ(self);
@@ -303,7 +303,7 @@ PyDoc_STRVAR(
     py_imbuf_filepath_doc,
     "filepath associated with this image.\n"
     "\n"
-    ":type: str");
+    ":type: str\n");
 static PyObject *py_imbuf_filepath_get(Py_ImBuf *self, void * /*closure*/)
 {
   PY_IMBUF_CHECK_OBJ(self);
@@ -340,7 +340,7 @@ PyDoc_STRVAR(
     py_imbuf_planes_doc,
     "Number of bits associated with this image.\n"
     "\n"
-    ":type: int");
+    ":type: int\n");
 static PyObject *py_imbuf_planes_get(Py_ImBuf *self, void * /*closure*/)
 {
   PY_IMBUF_CHECK_OBJ(self);
@@ -353,7 +353,7 @@ PyDoc_STRVAR(
     py_imbuf_channels_doc,
     "Number of bit-planes.\n"
     "\n"
-    ":type: int");
+    ":type: int\n");
 static PyObject *py_imbuf_channels_get(Py_ImBuf *self, void * /*closure*/)
 {
   PY_IMBUF_CHECK_OBJ(self);
@@ -581,7 +581,7 @@ static PyObject *imbuf_load_from_memory_impl(const char *buffer,
       reinterpret_cast<const uchar *>(buffer), buffer_size, flags, "<imbuf.load_from_buffer>");
 
   if (ibuf == nullptr) {
-    PyErr_Format(PyExc_ValueError, "load_from_buffer: Unable to load image from memory");
+    PyErr_SetString(PyExc_ValueError, "load_from_buffer: Unable to load image from memory");
     return nullptr;
   }
 
@@ -784,7 +784,6 @@ PyDoc_STRVAR(
     "\n"
     "   Image buffer is also the structure used by :class:`bpy.types.Image`\n"
     "   ID type to store and manipulate image data at runtime.\n");
-
 static PyModuleDef IMB_types_module_def = {
     /*m_base*/ PyModuleDef_HEAD_INIT,
     /*m_name*/ "imbuf.types",

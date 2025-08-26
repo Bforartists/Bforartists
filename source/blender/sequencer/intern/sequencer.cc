@@ -356,7 +356,7 @@ SequencerToolSettings *tool_settings_init()
   tool_settings->snap_mode = SEQ_SNAP_TO_STRIPS | SEQ_SNAP_TO_CURRENT_FRAME |
                              SEQ_SNAP_TO_STRIP_HOLD | SEQ_SNAP_TO_MARKERS | SEQ_SNAP_TO_RETIMING |
                              SEQ_SNAP_TO_PREVIEW_BORDERS | SEQ_SNAP_TO_PREVIEW_CENTER |
-                             SEQ_SNAP_TO_STRIPS_PREVIEW;
+                             SEQ_SNAP_TO_STRIPS_PREVIEW | SEQ_SNAP_TO_FRAME_RANGE;
   tool_settings->snap_distance = 15;
   tool_settings->overlap_mode = SEQ_OVERLAP_SHUFFLE;
   tool_settings->pivot_point = V3D_AROUND_LOCAL_ORIGINS;
@@ -428,7 +428,7 @@ ListBase *active_seqbase_get(const Editing *ed)
     return nullptr;
   }
 
-  return ed->seqbasep;
+  return ed->current_strips();
 }
 
 void active_seqbase_set(Editing *ed, ListBase *seqbase)
@@ -1183,3 +1183,23 @@ Scene *get_ref_scene_for_notifiers(const bContext *C)
 /*############## BFA - 3D Sequencer END ##############*/
 
 }  // namespace blender::seq
+
+ListBase *Editing::current_strips()
+{
+  return this->seqbasep;
+}
+ListBase *Editing::current_strips() const
+{
+  /* NOTE: Const correctness is non-existent with ListBase anyway. */
+  return this->seqbasep;
+}
+
+ListBase *Editing::current_channels()
+{
+  return this->displayed_channels;
+}
+ListBase *Editing::current_channels() const
+{
+  /* NOTE: Const correctness is non-existent with ListBase anyway. */
+  return this->displayed_channels;
+}

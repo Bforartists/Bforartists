@@ -52,6 +52,33 @@ class ViewLayerButtonsPanel:
         return (context.engine in cls.COMPAT_ENGINES)
 
 
+class VIEWLAYER_PT_context_layer(ViewLayerButtonsPanel, Panel):
+    bl_label = ""
+    bl_options = {'HIDE_HEADER'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_WORKBENCH',
+    }
+
+    @classmethod
+    def poll(cls, context):
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        window = context.window
+        scene = context.scene
+
+        layout.template_search(
+            window, "view_layer",
+            scene, "view_layers",
+            new="scene.view_layer_add",
+            unlink="scene.view_layer_remove",
+        )
+
+
 class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
     bl_label = "View Layer"
     COMPAT_ENGINES = {
@@ -462,6 +489,7 @@ class VIEWLAYER_PT_layer_custom_props(PropertyPanel, Panel):
 classes = (
     VIEWLAYER_PT_context,  # bfa -  added the render engine prop
     VIEWLAYER_MT_lightgroup_sync,
+    VIEWLAYER_PT_context_layer,
     VIEWLAYER_PT_layer,
     VIEWLAYER_PT_layer_passes,
     VIEWLAYER_PT_workbench_layer_passes_data,
