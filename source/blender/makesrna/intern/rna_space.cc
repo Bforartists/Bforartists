@@ -6891,6 +6891,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Zoom", "Zoom percentage");
 
   /*############## BFA - 3D Sequencer ##############*/
+  // TODO Remove
   prop = RNA_def_property(srna, "scene_override", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "scene_override");
   RNA_def_property_struct_type(prop, "Scene");

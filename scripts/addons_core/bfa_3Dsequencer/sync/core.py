@@ -15,11 +15,11 @@ SequenceType = Type[bpy.types.Strip]
 class TimelineSyncSettings(bpy.types.PropertyGroup):
     """3D View Sync Settings."""
 
-    def is_sync():
-        return bpy.context.workspace_use_scene_time_sync
+    def is_sync(self):
+        return bpy.context.workspace.use_scene_time_sync
 
-    def set_sync(toggle):
-        bpy.context.workspace_use_scene_time_sync = toggle
+    def set_sync(self, toggle):
+        bpy.context.workspace.use_scene_time_sync = toggle
     
     enabled: bpy.props.BoolProperty(
         name="Enabled",

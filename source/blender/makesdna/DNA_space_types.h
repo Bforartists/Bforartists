@@ -363,7 +363,7 @@ typedef struct SpaceSeq {
   struct SequencerTimelineOverlay timeline_overlay;
   struct SequencerCacheOverlay cache_overlay;
 
-  struct Scene *scene_override DNA_DEPRECATED; /*BFA - 3D Sequencer - todo deprecated moving to scene selector*/ 
+  struct Scene *scene_override DNA_DEPRECATED; /*BFA - 3D Sequencer - deprecated moving to scene selector*/ 
 
   /** Multi-view current eye - for internal use. */
   char multiview_eye;

@@ -1174,20 +1174,11 @@ Scene *CTX_data_sequencer_scene(const bContext *C)
   if (ctx_data_pointer_verify(C, "sequencer_scene", (void **)&scene)) {
     return scene;
   }
-  // start BFA - 3D Sequencer
-  SpaceSeq *sseq = CTX_wm_space_seq(C);
-  if (sseq != nullptr && sseq->scene_override != nullptr) {
-    return sseq->scene_override;
+  WorkSpace *workspace = CTX_wm_workspace(C);
+  if (workspace) {
+   return workspace->sequencer_scene;
   }
-  // end bfa
-  /* BFA - TODO: Use sequencer scene. */
-  return C->data.scene;
-
-  //WorkSpace *workspace = CTX_wm_workspace(C);
-  //if (workspace) {
-  //  return workspace->sequencer_scene;
-  //}
-  //return nullptr;
+  return nullptr;
 }
 
 ViewLayer *CTX_data_view_layer(const bContext *C)

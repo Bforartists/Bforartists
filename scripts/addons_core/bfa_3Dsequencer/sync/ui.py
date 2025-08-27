@@ -30,7 +30,7 @@ class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
 
 def SEQUENCER_HT_Syncbutton(self, context):
     settings = get_sync_settings()
-    self.layout.operator("wm.timeline_sync_toggle", text="Sync", icon="VIEW3D", depress=settings.enabled)
+    self.layout.operator("wm.timeline_sync_toggle", text="Sync", icon="VIEW3D", depress=settings.is_sync())
 
 class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
     """3D View Sync advanced settings Panel."""
