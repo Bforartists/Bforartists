@@ -528,6 +528,13 @@ static void rna_UnifiedPaintSettings_update(bContext *C, PointerRNA * /*ptr*/)
   WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, scene);
 }
 
+static void rna_UnifiedPaintSettings_color_update(bContext *C, PointerRNA *ptr)
+{
+  UnifiedPaintSettings *ups = static_cast<UnifiedPaintSettings *>(ptr->data);
+  rna_UnifiedPaintSettings_update(C, ptr);
+  BKE_brush_color_sync_legacy(ups);
+}
+
 static void rna_UnifiedPaintSettings_size_set(PointerRNA *ptr, int value)
 {
   UnifiedPaintSettings *ups = static_cast<UnifiedPaintSettings *>(ptr->data);
@@ -647,7 +654,8 @@ static void rna_def_paint(BlenderRNA *brna)
                            "the last used brush on file load");
 
   prop = RNA_def_property(srna, "eraser_brush", PROP_POINTER, PROP_NONE);
-  RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_EDITABLE | PROP_NEVER_UNLINK);
+  RNA_def_property_clear_flag(prop, PROP_ID_REFCOUNT);
   RNA_def_property_struct_type(prop, "Brush");
   RNA_def_property_pointer_funcs(prop,
                                  "rna_Paint_eraser_brush_get",
@@ -850,19 +858,19 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Weight", "Weight to assign in vertex groups");
   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
 
-  prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR_GAMMA);
+  prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR);
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_range(prop, 0.0, 1.0);
-  RNA_def_property_float_sdna(prop, nullptr, "rgb");
+  RNA_def_property_float_sdna(prop, nullptr, "color");
   RNA_def_property_ui_text(prop, "Color", "");
-  RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
+  RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_color_update");
 
-  prop = RNA_def_property(srna, "secondary_color", PROP_FLOAT, PROP_COLOR_GAMMA);
+  prop = RNA_def_property(srna, "secondary_color", PROP_FLOAT, PROP_COLOR);
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_range(prop, 0.0, 1.0);
-  RNA_def_property_float_sdna(prop, nullptr, "secondary_rgb");
+  RNA_def_property_float_sdna(prop, nullptr, "secondary_color");
   RNA_def_property_ui_text(prop, "Secondary Color", "");
-  RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
+  RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_color_update");
 
   prop = RNA_def_property(srna, "use_color_jitter", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);

@@ -434,6 +434,27 @@ static void node_foreach_path(ID *id, BPathForeachPathData *bpath_data)
       }
       break;
     }
+    case NTREE_GEOMETRY: {
+      ntree->ensure_topology_cache(); /* Otherwise node->input_sockets() doesn't work. */
+      for (bNode *node : ntree->all_nodes()) {
+        for (bNodeSocket *socket : node->input_sockets()) {
+          /* Find file path input sockets. */
+          if (socket->type != SOCK_STRING) {
+            continue;
+          }
+          bNodeSocketValueString *socket_value = static_cast<bNodeSocketValueString *>(
+              socket->default_value);
+          if (socket_value->value[0] == '\0' || socket_value->subtype != PROP_FILEPATH) {
+            continue;
+          }
+
+          /* Process the file path. */
+          BKE_bpath_foreach_path_fixed_process(
+              bpath_data, socket_value->value, sizeof(socket_value->value));
+        }
+      }
+      break;
+    }
     default:
       break;
   }
@@ -777,6 +798,182 @@ static void write_legacy_properties(bNodeTree &ntree)
         }
       }
       break;
+    }
+    case NTREE_COMPOSIT: {
+      for (bNode *node : ntree.all_nodes()) {
+        if (node->type_legacy == CMP_NODE_BLUR) {
+          auto &storage = *static_cast<NodeBlurData *>(node->storage);
+          const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Type");
+          storage.filtertype = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_FILTER) {
+          const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Type");
+          node->custom1 = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_VIEW_LEVELS) {
+          const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Channel");
+          node->custom1 = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_DILATEERODE) {
+          const bNodeSocket *type_socket = node_find_socket(*node, SOCK_IN, "Type");
+          node->custom1 = type_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+
+          auto &storage = *static_cast<NodeDilateErode *>(node->storage);
+          const bNodeSocket *falloff_socket = node_find_socket(*node, SOCK_IN, "Falloff");
+          storage.falloff = falloff_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_TONEMAP) {
+          auto &storage = *static_cast<NodeTonemap *>(node->storage);
+          bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Type");
+          storage.type = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_LENSDIST) {
+          auto &storage = *static_cast<NodeLensDist *>(node->storage);
+          bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Type");
+          storage.distortion_type = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_KUWAHARA) {
+          auto &storage = *static_cast<NodeKuwaharaData *>(node->storage);
+          bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Type");
+          storage.variation = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_DENOISE) {
+          auto &storage = *static_cast<NodeDenoise *>(node->storage);
+          bNodeSocket *prefilter_socket = node_find_socket(*node, SOCK_IN, "Prefilter");
+          storage.prefilter = prefilter_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *quality_socket = node_find_socket(*node, SOCK_IN, "Quality");
+          storage.quality = quality_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_TRANSLATE) {
+          auto &storage = *static_cast<NodeTranslateData *>(node->storage);
+          bNodeSocket *interpolation_socket = node_find_socket(*node, SOCK_IN, "Interpolation");
+          storage.interpolation =
+              interpolation_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_x_socket = node_find_socket(*node, SOCK_IN, "Extension X");
+          storage.extension_x =
+              extension_x_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_y_socket = node_find_socket(*node, SOCK_IN, "Extension Y");
+          storage.extension_y =
+              extension_y_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_TRANSFORM) {
+          auto &storage = *static_cast<NodeTransformData *>(node->storage);
+          bNodeSocket *interpolation_socket = node_find_socket(*node, SOCK_IN, "Interpolation");
+          storage.interpolation =
+              interpolation_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_x_socket = node_find_socket(*node, SOCK_IN, "Extension X");
+          storage.extension_x =
+              extension_x_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_y_socket = node_find_socket(*node, SOCK_IN, "Extension Y");
+          storage.extension_y =
+              extension_y_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_CORNERPIN) {
+          auto &storage = *static_cast<NodeCornerPinData *>(node->storage);
+          bNodeSocket *interpolation_socket = node_find_socket(*node, SOCK_IN, "Interpolation");
+          storage.interpolation =
+              interpolation_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_x_socket = node_find_socket(*node, SOCK_IN, "Extension X");
+          storage.extension_x =
+              extension_x_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_y_socket = node_find_socket(*node, SOCK_IN, "Extension Y");
+          storage.extension_y =
+              extension_y_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_MAP_UV) {
+          auto &storage = *static_cast<NodeMapUVData *>(node->storage);
+          bNodeSocket *interpolation_socket = node_find_socket(*node, SOCK_IN, "Interpolation");
+          storage.interpolation =
+              interpolation_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_x_socket = node_find_socket(*node, SOCK_IN, "Extension X");
+          storage.extension_x =
+              extension_x_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_y_socket = node_find_socket(*node, SOCK_IN, "Extension Y");
+          storage.extension_y =
+              extension_y_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_SCALE) {
+          bNodeSocket *type_socket = node_find_socket(*node, SOCK_IN, "Type");
+          node->custom1 = type_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *frame_type_socket = node_find_socket(*node, SOCK_IN, "Frame Type");
+          node->custom2 = frame_type_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+
+          auto &storage = *static_cast<NodeScaleData *>(node->storage);
+          bNodeSocket *interpolation_socket = node_find_socket(*node, SOCK_IN, "Interpolation");
+          storage.interpolation =
+              interpolation_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_x_socket = node_find_socket(*node, SOCK_IN, "Extension X");
+          storage.extension_x =
+              extension_x_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_y_socket = node_find_socket(*node, SOCK_IN, "Extension Y");
+          storage.extension_y =
+              extension_y_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_ROTATE) {
+          auto &storage = *static_cast<NodeRotateData *>(node->storage);
+          bNodeSocket *interpolation_socket = node_find_socket(*node, SOCK_IN, "Interpolation");
+          storage.interpolation =
+              interpolation_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_x_socket = node_find_socket(*node, SOCK_IN, "Extension X");
+          storage.extension_x =
+              extension_x_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_y_socket = node_find_socket(*node, SOCK_IN, "Extension Y");
+          storage.extension_y =
+              extension_y_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_DISPLACE) {
+          auto &storage = *static_cast<NodeDisplaceData *>(node->storage);
+          bNodeSocket *interpolation_socket = node_find_socket(*node, SOCK_IN, "Interpolation");
+          storage.interpolation =
+              interpolation_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_x_socket = node_find_socket(*node, SOCK_IN, "Extension X");
+          storage.extension_x =
+              extension_x_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *extension_y_socket = node_find_socket(*node, SOCK_IN, "Extension Y");
+          storage.extension_y =
+              extension_y_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_STABILIZE2D) {
+          bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Interpolation");
+          node->custom1 = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_MASK_BOX) {
+          bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Operation");
+          node->custom1 = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_MASK_ELLIPSE) {
+          bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Operation");
+          node->custom1 = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_TRACKPOS) {
+          bNodeSocket *mode_socket = node_find_socket(*node, SOCK_IN, "Mode");
+          node->custom1 = mode_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *frame_socket = node_find_socket(*node, SOCK_IN, "Frame");
+          node->custom2 = frame_socket->default_value_typed<bNodeSocketValueInt>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_KEYING) {
+          auto &storage = *static_cast<NodeKeyingData *>(node->storage);
+          bNodeSocket *feather_falloff_socket = node_find_socket(
+              *node, SOCK_IN, "Feather Falloff");
+          storage.feather_falloff =
+              feather_falloff_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_MASK) {
+          bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Size Source");
+          node->custom1 = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_MOVIEDISTORTION) {
+          bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Type");
+          node->custom1 = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+        else if (node->type_legacy == CMP_NODE_GLARE) {
+          auto &storage = *static_cast<NodeGlare *>(node->storage);
+          bNodeSocket *type_socket = node_find_socket(*node, SOCK_IN, "Type");
+          storage.type = type_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          bNodeSocket *quality_socket = node_find_socket(*node, SOCK_IN, "Quality");
+          storage.quality = quality_socket->default_value_typed<bNodeSocketValueMenu>()->value;
+        }
+      }
     }
     default:
       break;
