@@ -305,12 +305,6 @@ class NODE_HT_header(Header):
                     row = layout.row()
                     row.prop(snode_id, "use_nodes")
 
-            if snode.shader_type == 'WORLD':
-
-                if snode_id:
-                    row = layout.row()
-                    row.prop(snode_id, "use_nodes")
-
             if snode.shader_type == 'LINESTYLE':
 
                 if lineset is not None:
