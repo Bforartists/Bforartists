@@ -746,7 +746,7 @@ class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeComposite", pad=9),
+            OperatorEntry("NodeGroupOutput", pad=9),
             OperatorEntry("CompositorNodeViewer", pad=15),
             Separator,
             OperatorEntry("CompositorNodeOutputFile", pad=8),
