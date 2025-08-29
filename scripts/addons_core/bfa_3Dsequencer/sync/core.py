@@ -14,12 +14,24 @@ SequenceType = Type[bpy.types.Strip]
 
 class TimelineSyncSettings(bpy.types.PropertyGroup):
     """3D View Sync Settings."""
+    
+    sync_mode: bpy.props.EnumProperty(
+        name="Enabled",
+        description="Status of 3D View Sync system\n(TODO remove, use is_sync() and set_sync() instead)",
+        items=(
+            ('BUILTIN', "Built-in", "Blender default Scene Selector Sync"),
+            ('LEGACY', "Legacy 3D Sequencer", "Bforartists 3D Sequencer Sync")
+        ),
+    )
 
     def is_sync(self):
-        return bpy.context.workspace.use_scene_time_sync
+        return bpy.context.workspace.use_scene_time_sync if self.sync_mode == 'BUILTIN' else self.enabled
 
     def set_sync(self, toggle):
-        bpy.context.workspace.use_scene_time_sync = toggle
+        if (self.sync_mode == 'BUILTIN'):
+            bpy.context.workspace.use_scene_time_sync = toggle
+        else:
+            self.enabled = toggle
     
     enabled: bpy.props.BoolProperty(
         name="Enabled",
@@ -37,12 +49,12 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     )
 
     bidirectional: bpy.props.BoolProperty(
-        name="Bidirectional",
+        name="Bidirectional (Scrubbing only)",
         description=(
             "Whether changing the active scene's time should update "
             "the Master Scene's current frame in the Sequencer"
         ),
-        default=True,
+        default=False,
     )
 
     sync_all_windows: bpy.props.BoolProperty(
@@ -358,7 +370,7 @@ def get_sync_master_strip(
     """
     settings = get_sync_settings()
     master_scene = settings.master_scene
-    if not settings.enabled or not master_scene or not master_scene.sequence_editor:
+    if not settings.is_sync() or not master_scene or not master_scene.sequence_editor:
         return None, -1
 
     if use_cache:

@@ -419,9 +419,7 @@ bool strip_point_image_isect(const Scene *scene, const Strip *strip, float point
 void sequencer_select_do_updates(const bContext *C, Scene * scene)
 {
   ED_outliner_select_sync_from_sequence_tag(C);
-  WM_event_add_notifier(C,
-                        NC_SCENE | ND_SEQUENCER | NA_SELECTED,
-                        scene);
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
 }
 
 /** \} */

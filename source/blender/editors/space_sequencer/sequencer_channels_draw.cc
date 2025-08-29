@@ -335,7 +335,6 @@ void draw_channels(const bContext *C, ARegion *region)
 
   Editing *ed = seq::editing_get(scene);
   if (ed == nullptr) {
-    draw_background();  /*BFA - 3D Sequencer*/
     return;
   }
 

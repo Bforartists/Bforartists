@@ -24,7 +24,7 @@ class DOPESHEET_PT_Sequence(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        return get_sync_settings().enabled
+        return get_sync_settings().is_sync()
 
     def draw(self, context: bpy.types.Context):
         self.layout.prop(

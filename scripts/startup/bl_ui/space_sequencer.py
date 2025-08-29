@@ -191,10 +191,6 @@ class SEQUENCER_HT_header(Header):
         layout.separator_spacer()
         row = layout.row()  # BFA - 3D Sequencer
         row.label(text="Timeline:", icon='VIEW3D')  # BFA - 3D Sequencer
-        # TODO remove
-        # row.template_ID(
-        #     st, "scene_override", unlink="sequencer.remove_scene_override"
-        # )  # BFA - 3D Sequencer
 
         # BFA - wip merge of new sequencer
         if st.view_type == 'SEQUENCER':

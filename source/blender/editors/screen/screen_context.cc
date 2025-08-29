@@ -671,21 +671,11 @@ static eContextResult screen_ctx_pose_object(const bContext *C, bContextDataResu
   }
   return CTX_RESULT_OK;
 }
-/**
- * BFA - 3D Sequencer, uses CTX_data_sequencer_scene instead 
- * BFA - TODO: remove for Scene Selector
-*/
-static Scene *bfa_3d_sequencer_get_active_scene(const bContext *C)
-{
-  return CTX_data_sequencer_scene(C);
-}
 
 static eContextResult screen_ctx_active_sequence_strip(const bContext *C,
                                                        bContextDataResult *result)
 {
-  Scene *scene = bfa_3d_sequencer_get_active_scene(C);  
-  // BFA - TODO
-  //Scene *scene = CTX_data_sequencer_scene(C);
+  Scene *scene = CTX_data_sequencer_scene(C);
   if (!scene) {
     return CTX_RESULT_NO_DATA;
   }
@@ -714,9 +704,7 @@ static eContextResult screen_ctx_sequences(const bContext *C, bContextDataResult
 }
 static eContextResult screen_ctx_selected_sequences(const bContext *C, bContextDataResult *result)
 {
-  Scene *scene = bfa_3d_sequencer_get_active_scene(C); /*BFA - 3D Sequencer*/
-  // BFA - TODO
-  //Scene *scene = CTX_data_sequencer_scene(C);
+  Scene *scene = CTX_data_sequencer_scene(C);
   if (!scene) {
     return CTX_RESULT_NO_DATA;
   }
@@ -735,9 +723,7 @@ static eContextResult screen_ctx_selected_sequences(const bContext *C, bContextD
 static eContextResult screen_ctx_selected_editable_sequences(const bContext *C,
                                                              bContextDataResult *result)
 {
-  Scene *scene = bfa_3d_sequencer_get_active_scene(C); /*BFA - 3D Sequencer*/
-  // BFA - TODO
-  //Scene *scene = CTX_data_sequencer_scene(C);
+  Scene *scene = CTX_data_sequencer_scene(C);
   if (!scene) {
     return CTX_RESULT_NO_DATA;
   }

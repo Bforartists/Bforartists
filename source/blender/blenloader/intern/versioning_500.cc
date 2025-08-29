@@ -1709,7 +1709,8 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
         WorkSpace *workspace = WM_window_get_active_workspace(win);
         if (override_scene != nullptr) { // bfa set scene override if exists
           workspace->sequencer_scene = override_scene; // bfa
-        } else {
+        } 
+        if (workspace->sequencer_scene == nullptr) {
           workspace->sequencer_scene = scene;
         }
       }
