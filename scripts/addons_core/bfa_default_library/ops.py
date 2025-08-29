@@ -300,7 +300,7 @@ class OBJECT_PT_GeometryNodesPanel(bpy.types.Panel):
         mod = next((m for m in obj.modifiers 
                    if m.type == 'NODES' and 
                    m.node_group and 
-                   m.node_group.name in self.smart_primitive_names), None)
+                   any(m.node_group.name.startswith(name) for name in self.smart_primitive_names)), None)
 
         if mod and mod.node_group:
             # Main panel header
@@ -374,7 +374,7 @@ class OBJECT_PT_SmartPrimitiveModifierPanel(bpy.types.Panel):
             for mod in context.object.modifiers:
                 if (mod.type == 'NODES' and
                     mod.node_group and
-                    mod.node_group.name in OBJECT_PT_GeometryNodesPanel.smart_primitive_names):
+                    any(mod.node_group.name.startswith(name) for name in OBJECT_PT_GeometryNodesPanel.smart_primitive_names)):
                     return True
         return False
 
@@ -411,7 +411,7 @@ def object_added_handler(scene):
             mod = next((m for m in obj.modifiers 
                        if m.type == 'NODES' and 
                        m.node_group and 
-                       m.node_group.name in OBJECT_PT_GeometryNodesPanel.smart_primitive_names), None)
+                       any(m.node_group.name.startswith(name) for name in OBJECT_PT_GeometryNodesPanel.smart_primitive_names)), None)
             if mod:
                 OBJECT_PT_GeometryNodesPanel.show_panel = True
             object_added_handler.known_objects.add(obj)
