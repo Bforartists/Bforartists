@@ -11552,8 +11552,6 @@ class VIEW3D_PT_overlay_grease_pencil_options(Panel):
             translate=False,
         )
 
-        layout.prop(overlay, "use_gpencil_onion_skin", text="Onion Skin")
-
         col = layout.column()
         row = col.row()
         row.separator()

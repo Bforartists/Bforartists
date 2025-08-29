@@ -972,6 +972,7 @@ bool MTLShader::generate_msl_from_glsl_compute(const shader::ShaderCreateInfo *i
     ss_compute << ATOMIC_DEFINE_STR;
   }
 
+  generate_specialization_constant_declarations(info, ss_compute);
   generate_compilation_constant_declarations(info, ss_compute);
 
   /* Conditional defines. */
