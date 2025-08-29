@@ -5517,7 +5517,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
-  prop = RNA_def_property(srna, "gpencil_grid_offset", PROP_FLOAT, PROP_DISTANCE);
+  prop = RNA_def_property(srna, "gpencil_grid_offset", PROP_FLOAT, PROP_XYZ); /* BFA - keep has PROP_XYZ from PROP_DISTANCE */
   RNA_def_property_float_sdna(prop, nullptr, "overlay.gpencil_grid_offset");
   RNA_def_property_array(prop, 2);
   RNA_def_property_ui_text(prop, "Offset", "Canvas grid offset");
