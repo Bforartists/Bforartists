@@ -98,6 +98,7 @@ float3x3 imbuf_scene_linear_to_rec709 = float3x3::zero();
 float3x3 imbuf_rec709_to_scene_linear = float3x3::zero();
 float3x3 imbuf_scene_linear_to_aces = float3x3::zero();
 float3x3 imbuf_aces_to_scene_linear = float3x3::zero();
+bool imbuf_scene_linear_is_rec709 = false;
 
 /* lock used by pre-cached processors getters, so processor wouldn't
  * be created several times
@@ -571,6 +572,9 @@ static bool colormanage_load_config(ocio::Config &config)
   imbuf_aces_to_scene_linear = imbuf_xyz_to_scene_linear * ocio::ACES_TO_XYZ;
   imbuf_scene_linear_to_aces = math::invert(imbuf_aces_to_scene_linear);
 
+  imbuf_scene_linear_is_rec709 = math::is_equal(
+      imbuf_scene_linear_to_rec709, float3x3::identity(), 0.0001f);
+
   return ok;
 }
 
@@ -777,9 +781,9 @@ static std::shared_ptr<const ocio::CPUProcessor> get_display_buffer_processor(
   display_parameters.tint = tint;
   display_parameters.use_white_balance = use_white_balance;
   display_parameters.inverse = false;
-  display_parameters.use_hdr = GPU_hdr_support() && target == DISPLAY_SPACE_DRAW &&
-                               IMB_colormanagement_display_is_hdr(&display_settings,
-                                                                  view_transform);
+  display_parameters.use_hdr_buffer = GPU_hdr_support();
+  display_parameters.use_hdr_display = IMB_colormanagement_display_is_hdr(&display_settings,
+                                                                          view_transform);
   display_parameters.use_display_emulation = target == DISPLAY_SPACE_DRAW;
 
   return g_config->get_display_cpu_processor(display_parameters);
@@ -1739,25 +1743,31 @@ static bool is_colorspace_same_as_display(const ColorSpace *colorspace,
   return false;
 }
 
+bool IMB_colormanagement_display_processor_needed(
+    const ImBuf *ibuf,
+    const ColorManagedViewSettings *view_settings,
+    const ColorManagedDisplaySettings *display_settings)
+{
+  if (ibuf->float_buffer.data == nullptr && ibuf->byte_buffer.colorspace) {
+    return !is_colorspace_same_as_display(
+        ibuf->byte_buffer.colorspace, view_settings, display_settings);
+  }
+  if (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.colorspace) {
+    return !is_colorspace_same_as_display(
+        ibuf->float_buffer.colorspace, view_settings, display_settings);
+  }
+  return true;
+}
+
 ColormanageProcessor *IMB_colormanagement_display_processor_for_imbuf(
     const ImBuf *ibuf,
     const ColorManagedViewSettings *view_settings,
     const ColorManagedDisplaySettings *display_settings,
     const ColorManagedDisplaySpace display_space)
 {
-  bool skip_transform = false;
-  if (ibuf->float_buffer.data == nullptr && ibuf->byte_buffer.colorspace) {
-    skip_transform = is_colorspace_same_as_display(
-        ibuf->byte_buffer.colorspace, view_settings, display_settings);
-  }
-  if (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.colorspace) {
-    skip_transform = is_colorspace_same_as_display(
-        ibuf->float_buffer.colorspace, view_settings, display_settings);
-  }
-  if (skip_transform) {
+  if (!IMB_colormanagement_display_processor_needed(ibuf, view_settings, display_settings)) {
     return nullptr;
   }
-
   return IMB_colormanagement_display_processor_new(view_settings, display_settings, display_space);
 }
 
@@ -2826,7 +2836,7 @@ bool IMB_colormanagement_display_is_wide_gamut(const ColorManagedDisplaySettings
     return false;
   }
   const ocio::View *view = display->get_view_by_name(view_name);
-  return (view) ? view->is_wide_gamut() : false;
+  return (view) ? view->gamut() != ocio::Gamut::Rec709 : false;
 }
 
 /** \} */
@@ -3763,9 +3773,9 @@ bool IMB_colormanagement_setup_glsl_draw_from_space(
                                           COLORMANAGE_VIEW_USE_WHITE_BALANCE) != 0;
   display_parameters.use_predivide = predivide;
   display_parameters.do_overlay_merge = do_overlay_merge;
-  display_parameters.use_hdr = GPU_hdr_support() &&
-                               IMB_colormanagement_display_is_hdr(display_settings,
-                                                                  display_parameters.view.c_str());
+  display_parameters.use_hdr_buffer = GPU_hdr_support();
+  display_parameters.use_hdr_display = IMB_colormanagement_display_is_hdr(
+      display_settings, display_parameters.view.c_str());
   display_parameters.use_display_emulation = true;
 
   /* Bind shader. Internally GPU shaders are created and cached on demand. */
